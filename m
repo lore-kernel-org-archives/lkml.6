@@ -1,98 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeEBUAu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 16:00:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54550 "EHLO mail.kernel.org"
+        id S1751202AbeEBUAo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 16:00:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750948AbeEBUAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 16:00:43 -0400
-Message-Id: <20180502200041.518016867@goodmis.org>
+        id S1750939AbeEBUAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 16:00:42 -0400
+Message-Id: <20180502200003.592877274@goodmis.org>
 User-Agent: quilt/0.63-1
-Date: Wed, 02 May 2018 16:00:05 -0400
+Date: Wed, 02 May 2018 16:00:03 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@redhat.com>, Howard McLauchlan <hmclauchlan@fb.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-        Miklos Szeredi <mszeredi@redhat.com>, Song Liu <songliubraving@fb.com>
-Subject: [PATCH 2/7] tracing: Remove igrab() iput() call from uprobes.c
-References: <20180502200003.592877274@goodmis.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Disposition: inline; filename=0002-tracing-Remove-igrab-iput-call-from-uprobes.c.patch
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 0/7] [GIT PULL] tracing: Some more fixes for 4.17
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
 
-Caller of uprobe_register is required to keep the inode and containing
-mount point referenced.
+Linus,
 
-There was misuse of igrab() in uprobes.c and trace_uprobe.c. This is
-because igrab() will not prevent umount of the containing mount point.
-To fix this, we added path to struct trace_uprobe, which keeps the inode
-and containing mount reference.
+Various fixes in tracing:
 
-For uprobes.c, it is not necessary to call igrab() in uprobe_register(),
-as the caller is required to keep the inode reference. The igrab() is
-removed and comments on this requirement is added to uprobe_register().
+ - Tracepoints should not give warning on OOM failures
 
-Link: http://lkml.kernel.org/r/CAELBmZB2XX=qEOLAdvGG4cPx4GEntcSnWQquJLUK1ongRj35cA@mail.gmail.com
-Link: http://lkml.kernel.org/r/20180423172135.4050588-2-songliubraving@fb.com
+ - Use special field for function pointer in trace event
 
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Howard McLauchlan <hmclauchlan@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Acked-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/events/uprobes.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ - Fix igrab issues in uprobes
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index ce6848e46e94..1725b902983f 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -491,7 +491,7 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
- 	if (!uprobe)
- 		return NULL;
- 
--	uprobe->inode = igrab(inode);
-+	uprobe->inode = inode;
- 	uprobe->offset = offset;
- 	init_rwsem(&uprobe->register_rwsem);
- 	init_rwsem(&uprobe->consumer_rwsem);
-@@ -502,7 +502,6 @@ static struct uprobe *alloc_uprobe(struct inode *inode, loff_t offset)
- 	if (cur_uprobe) {
- 		kfree(uprobe);
- 		uprobe = cur_uprobe;
--		iput(inode);
- 	}
- 
- 	return uprobe;
-@@ -701,7 +700,6 @@ static void delete_uprobe(struct uprobe *uprobe)
- 	rb_erase(&uprobe->rb_node, &uprobes_tree);
- 	spin_unlock(&uprobes_treelock);
- 	RB_CLEAR_NODE(&uprobe->rb_node); /* for uprobe_is_active() */
--	iput(uprobe->inode);
- 	put_uprobe(uprobe);
- }
- 
-@@ -873,7 +871,8 @@ static void __uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *u
-  * tuple).  Creation refcount stops uprobe_unregister from freeing the
-  * @uprobe even before the register operation is complete. Creation
-  * refcount is released when the last @uc for the @uprobe
-- * unregisters.
-+ * unregisters. Caller of uprobe_register() is required to keep @inode
-+ * (and the containing mount) referenced.
-  *
-  * Return errno if it cannot successully install probes
-  * else return 0 (success)
--- 
-2.17.0
+ - Fixes to the new histogram triggers
+
+Please pull the latest trace-v4.17-rc1-2 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v4.17-rc1-2
+
+Tag SHA1: a21207bca13342cd75fdb77962f4bc0ab96d9371
+Head SHA1: d66a270be3310d7aa132fec0cea77d3d32a0ff75
+
+
+Mathieu Desnoyers (1):
+      tracepoint: Do not warn on ENOMEM
+
+Rishabh Bhatnagar (1):
+      tracing: initcall: Ordered comparison of function pointers
+
+Song Liu (2):
+      tracing: Fix bad use of igrab in trace_uprobe.c
+      tracing: Remove igrab() iput() call from uprobes.c
+
+Tom Zanussi (3):
+      tracing: Restore proper field flag printing when displaying triggers
+      tracing: Add field parsing hist error for hist triggers
+      tracing: Add field modifier parsing hist error for hist triggers
+
+----
+ include/trace/events/initcall.h  | 14 +++++++++++---
+ kernel/events/uprobes.c          |  7 +++----
+ kernel/trace/trace_events_hist.c | 12 ++++++++++++
+ kernel/trace/trace_uprobe.c      | 35 ++++++++++++++---------------------
+ kernel/tracepoint.c              |  4 ++--
+ 5 files changed, 42 insertions(+), 30 deletions(-)
