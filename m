@@ -1,42 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751678AbeEBNgM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:36:12 -0400
-Received: from mail-qk0-f177.google.com ([209.85.220.177]:33925 "EHLO
-        mail-qk0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751637AbeEBNgI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:36:08 -0400
-X-Google-Smtp-Source: AB8JxZrclficC4iIuOcjqu0I9RJnYkEjsrdb/qUIrwve4ccQaWtnJUSry9IyamioYNJWR5zpjladBw==
-Date: Wed, 2 May 2018 10:36:03 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Michal Kubecek <mkubecek@suse.cz>
-Cc: Xin Long <lucien.xin@gmail.com>, network dev <netdev@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>, Gang He <ghe@suse.com>,
-        GuoQing Jiang <gqjiang@suse.com>
-Subject: Re: non-blocking connect for kernel SCTP sockets
-Message-ID: <20180502133603.GC5105@localhost.localdomain>
-References: <20180502090639.j55mnclmkzdts6xb@unicorn.suse.cz>
- <CADvbK_fT5qYmOKHgBf6KWyuRcDUT3Fa8DyMQkN75C8PFkPKLXw@mail.gmail.com>
- <20180502123227.x7yucbi4lejj55o5@unicorn.suse.cz>
+        id S1751456AbeEBNgq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:36:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44562 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750898AbeEBNgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:36:45 -0400
+Date: Wed, 2 May 2018 16:36:37 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Kevin Easton <kevin@guarana.org>
+Cc: David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org,
+        jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] vhost: make msg padding explicit
+Message-ID: <20180502162932-mutt-send-email-mst@kernel.org>
+References: <1524844881-178524-1-git-send-email-mst@redhat.com>
+ <20180501.112822.1871426720257639849.davem@davemloft.net>
+ <20180501201841-mutt-send-email-mst@kernel.org>
+ <20180501.140551.1944561534446599966.davem@davemloft.net>
+ <20180502062809.GA14485@la.guarana.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180502123227.x7yucbi4lejj55o5@unicorn.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180502062809.GA14485@la.guarana.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 02:32:28PM +0200, Michal Kubecek wrote:
-> On Wed, May 02, 2018 at 05:46:23PM +0800, Xin Long wrote:
-...
-> > It is a bug, https://bugzilla.redhat.com/show_bug.cgi?id=1251530
->
-> Not authorized. :-)
+On Wed, May 02, 2018 at 02:28:09AM -0400, Kevin Easton wrote:
+> On Tue, May 01, 2018 at 02:05:51PM -0400, David Miller wrote:
+> > From: "Michael S. Tsirkin" <mst@redhat.com>
+> > Date: Tue, 1 May 2018 20:19:19 +0300
+> > 
+> > > On Tue, May 01, 2018 at 11:28:22AM -0400, David Miller wrote:
+> > >> From: "Michael S. Tsirkin" <mst@redhat.com>
+> > >> Date: Fri, 27 Apr 2018 19:02:05 +0300
+> > >> 
+> > >> > There's a 32 bit hole just after type. It's best to
+> > >> > give it a name, this way compiler is forced to initialize
+> > >> > it with rest of the structure.
+> > >> > 
+> > >> > Reported-by: Kevin Easton <kevin@guarana.org>
+> > >> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> > >> 
+> > >> Michael, will you be sending this directly to Linus or would you like
+> > >> me to apply it to net or net-next?
+> > >> 
+> > >> Thanks.
+> > > 
+> > > I'd prefer you to apply it for net and cc stable if possible.
+> > 
+> > Ok, applied, and added to my -stable submission queue.
+> 
+> Hold on, this patch changes the layout for i386 (where there is
+> no padding at all).  And it's part of UAPI.
+> 
+>     - Kevin
+> 
+> > 
 
-Oups! I just made it public.
+Ouch.  True - and in particular the 32 bit ABI on 64 bit kernels doesn't
+work at all. Hmm. It's relatively new and maybe there aren't any 32 bit
+users yet. Thoughts?
 
-  Marcelo
+-- 
+MST
