@@ -1,111 +1,162 @@
-Return-Path: <jarkko.sakkinen@linux.intel.com>
-X-Cyrus-Session-Id: sloti22d1t05-2048198-1525329429-2-16074495030828493687
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-897776-1525271939-2-15040294134504142643
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, ME_NOAUTH 0.01, RCVD_IN_DNSWL_MED -2.3, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='134.134.136.20', Host='mga02.intel.com', Country='US',
-  FromHeader='com', MailFrom='com'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: jarkko.sakkinen@linux.intel.com
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525329428; b=gQF+Xlb6EOOGjVKlnkIhns+SG/tlOcavelPHH74zjXR6FIt2rb
-    BMRNSgLSPG7ndpXx3tmEVcFUjMEpofc0Ddo1neOIRPvp66TY4UiKWVMFwAdgFQ3Y
-    FyEGN3ypgySiVWru3O4eTVy39DdX3fcezLjfn8FPYmEtOWqA9roSuM9UVcgnFTHb
-    I4kStR2ijaCslqHJzaPAf/zYvTf3V6eFH7QKGP7YxFXH3lXLc8kq/1OKhsj/DVRB
-    8JjfLI1N4W+vBWp0b17+Mto9yvQsKucd5a3ew9V9XRetTDmkfZ0sEmPSgV6te1/+
-    hRAANdMg8o9skamcC9m2pwPqGUVk4hWJvQqg==
+    1525271938; b=Vj9ywTHh8JjGWDFIbsn2S1rBdBflFRpnMKOkj7Xs24ApGRvL1h
+    CFgr1MQgH9nHxgZjmRkhIY9qjGQFAvb1Cerw/IpCxjql3nnvQACG2YT6bC54LEcx
+    C4QKdgvdOdKUggIPB0T4qmkXzRcbnoFGEY/JLPZsDmGqO5A3iomnPHXmbZqJ2eCf
+    m7JVtJn9dbIGkQEQN5K4dvJ5U2nTUVl19N8iKIEuOdXliDedU0WqJ4Gf6T+sUwKG
+    q7C+60RdAq6HbQp7+IDpGRTPKCdb59y5KBJ2cacmzEZtB/C91HzoAyRhuVq+2Xx5
+    o2/aMtBICRRRLUFyJuiMYeL5Acy3GO9iLUPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to; s=fm2; t=
-    1525329428; bh=AMA+b3d2q9kXVrMYBvlQQruuIhmyBSd4n72J29H0/Io=; b=B
-    b518lxRibqR1HyXu+arWhC6xuUIHeA3vdeJ25Qjgz+a2Q6Stl72E8etaAtw7KP0J
-    098nWlXG0ifQ6y5cOhk50jLHJZE01eneXNe4rL6rlsaO5VND6nen2dFZLUAYFeem
-    BlHUSv7tXYtScL2swRL7pAzzmOZFGZR9sg8n2WNxEo2uJS4XOYOehY9tNEIjaDft
-    WHIbyTiIYQy7Jn5g2ELYnGSoiENIDOj+KnLidZvpprdRlkz6H95+GmBH6aOXVozm
-    xVvUzn01xSFRXWP9wEEswB+fUtOAv4BECYp1Q3yhYBgtmUNrSzlQHVVE8sdv5Yde
-    do8tC8JCMUu3PaBH0u2XA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525271938; bh=
+    Yz98tE2lPS8+Vb+v0YzmQhZ8lnuuyYJzX2iJqQFUsoo=; b=jbFAM/gGTxjmm3nk
+    h0crWnVPxoDFDKYrOeVINg4Dztr0COTvayclai8QjJx5up2a5hpIW8LQ4naeJfL3
+    J6E05yvFPv2gOdRf1dodR6vuiy9sOFylM4bVIKsqgarltyR5SjLJ0hnd7Uq1HyCS
+    bQzVpSkP64H1oAHT/RHyxDGhEwzmjwUiJDXghDuambR3zq4yqoXmF3NNjT8K+acq
+    XKjGq4RTqHOMl5wFpBGV7H4WxKZNa76Q2mq6eExl9k6nXkdajWj4bx8a3sfAWR60
+    4GVqgVGFSKbPF6OpBbWpetsx8tO979M3mncj6r+ATmJLaNBJaU5d7qxK0F3TVU4H
+    rB08qw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=134.134.136.20 (mga02.intel.com);
-    spf=none smtp.mailfrom=jarkko.sakkinen@linux.intel.com
-    smtp.helo=mga02.intel.com;
-    x-aligned-from=pass (Address match);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mga02.intel.com x-ptr-lookup=mga02.intel.com;
-    x-return-mx=pass smtp.domain=linux.intel.com smtp.result=pass
-    smtp_org.domain=intel.com smtp_org.result=pass smtp_is_org_domain=no
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=linux.intel.com header.result=pass
     header_org.domain=intel.com header_org.result=pass
     header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=134.134.136.20 (mga02.intel.com);
-    spf=none smtp.mailfrom=jarkko.sakkinen@linux.intel.com
-      smtp.helo=mga02.intel.com;
-    x-aligned-from=pass (Address match);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
     x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=mga02.intel.com x-ptr-lookup=mga02.intel.com;
-    x-return-mx=pass smtp.domain=linux.intel.com smtp.result=pass
-      smtp_org.domain=intel.com smtp_org.result=pass smtp_is_org_domain=no
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=linux.intel.com header.result=pass
       header_org.domain=intel.com header_org.result=pass
       header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfADvaRJdnqWInLR9PFVHb5+tVbSAcu/EzY+R3X2GxwP/asNW1yHvbH98ly/fqLjLLTyCy/vtNoqJoNVRDVPnb3hqkGne0eOWkx367vbHMJU6/l2/gAT1
-    6iiLjmGKcJ7A9RsnxdWSGYVwkiwNEhvh4oyTNEgCeXlDPa3F+cDH+dmY8GI8aoyBkIYSssMaOXE6oKIuX/Hr/fxNV/W/q5D9eRU=
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=h8G49c9N0KxIvQoKHXEdPQ==:117
-    a=h8G49c9N0KxIvQoKHXEdPQ==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=S5Q-Nb0Y3uzeC1jMc3AA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfE79M8Yv4+F26AuqY1oi/HzL680rkdOZz2KxB/hOFV1rT5LJ9RvPU57PHFhj4MqnJH0kiCOGDoWDNHduc/5P3q3fVMiI3bvDlCAl38wvTSl/5J0X3NN7
+    ljxnTZIapocXH3nnJGH85OBMyRQZIQKXlTelIXPAicHtmRpIQYo+IgoyfOwh5ybq3T8imJ42LJmPwvBOcqj2FClo067iaMUBfeGJZ19Dm8WWL9NB8edNleGb
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=EqdPLkY1AAAA:8
+    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=D19gQVrFAAAA:8 a=xNf9USuDAAAA:8
+    a=QyXUC8HyAAAA:8 a=G8M7vhz_oh36SSMXCAgA:9 a=dfeKg4RqpEhWThG6bP4-:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=W4TVW4IDbPiebHqcZpNg:22 a=SEwjQc04WA-l_NiBhQ7s:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
-X-Amp-Result: UNSCANNABLE
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751463AbeEBOiz (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 10:38:55 -0400
+Received: from mga17.intel.com ([192.55.52.151]:18995 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751574AbeEBOiw (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 2 May 2018 10:38:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="52811962"
-Date: Thu, 3 May 2018 09:37:02 +0300
+X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
+   d="scan'208";a="52592208"
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Greg KH <greg@kroah.com>
-Cc: stable@vger.kernel.org,
-	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"moderated list:TPM DEVICE DRIVER" <tpmdd-devel@lists.sourceforge.net>
-Subject: Re: [PATCH 0/2] fixes for 4.9.96
-Message-ID: <20180503063702.GB8702@linux.intel.com>
+To: stable@vger.kernel.org
+Cc: Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Marcel Selhorst <tpmdd@selhorst.net>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        tpmdd-devel@lists.sourceforge.net (moderated list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/2] tpm: self test failure should not cause suspend to fail
+Date: Wed,  2 May 2018 17:38:29 +0300
+Message-Id: <20180502143830.3534-3-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180502143830.3534-1-jarkko.sakkinen@linux.intel.com>
 References: <20180502143830.3534-1-jarkko.sakkinen@linux.intel.com>
- <20180502205239.GA18099@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180502205239.GA18099@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 02, 2018 at 01:52:39PM -0700, Greg KH wrote:
-> On Wed, May 02, 2018 at 05:38:27PM +0300, Jarkko Sakkinen wrote:
-> > Decided to add Enric's commit because it is also a bug fix instead
-> > of modifying Chris commit.
-> 
-> Both now applied, thanks.
-> 
-> greg k-h
+From: Chris Chiu <chiu@endlessm.com>
 
-Great, I'll send next updates to v4.4.
+commit 0803d7befa15cab5717d667a97a66214d2a4c083 upstream
 
-/Jarkko
+The Acer Acer Veriton X4110G has a TPM device detected as:
+  tpm_tis 00:0b: 1.2 TPM (device-id 0xFE, rev-id 71)
+
+After the first S3 suspend, the following error appears during resume:
+  tpm tpm0: A TPM error(38) occurred continue selftest
+
+Any following S3 suspend attempts will now fail with this error:
+  tpm tpm0: Error (38) sending savestate before suspend
+  PM: Device 00:0b failed to suspend: error 38
+
+Error 38 is TPM_ERR_INVALID_POSTINIT which means the TPM is
+not in the correct state. This indicates that the platform BIOS
+is not sending the usual TPM_Startup command during S3 resume.
+>From this point onwards, all TPM commands will fail.
+
+The same issue was previously reported on Foxconn 6150BK8MC and
+Sony Vaio TX3.
+
+The platform behaviour seems broken here, but we should not break
+suspend/resume because of this.
+
+When the unexpected TPM state is encountered, set a flag to skip the
+affected TPM_SaveState command on later suspends.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Link: http://lkml.kernel.org/r/CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com
+Link: https://lkml.org/lkml/2011/3/28/192
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=591031
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm-interface.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 5463b649bdf1..faf2db122ab9 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -803,6 +803,10 @@ int tpm_do_selftest(struct tpm_chip *chip)
+ 	loops = jiffies_to_msecs(duration) / delay_msec;
+ 
+ 	rc = tpm_continue_selftest(chip);
++	if (rc == TPM_ERR_INVALID_POSTINIT) {
++		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
++		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
++	}
+ 	/* This may fail if there was no TPM driver during a suspend/resume
+ 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
+ 	 */
+-- 
+2.17.0
