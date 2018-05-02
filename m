@@ -1,110 +1,112 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525271392; cv=none;
+Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
+X-Google-Smtp-Source: AB8JxZpA7hkVgcPMpnLCZrXLNXN/uXLFPnjrG+efO586phkJLwKppRBgBUa4TlgSXhYwfyiwU4HH
+ARC-Seal: i=1; a=rsa-sha256; t=1525270336; cv=none;
         d=google.com; s=arc-20160816;
-        b=GOt4kePYaCTjKvUpUW3MaVQwoVXo0gOfJbx0YbNVGIS8vvwxwvQfR07Tpo/QBAuUuZ
-         Gyd0BL7hcnzL0Eb4QGS1kkGyB3iGfFBn3/Rqs4bFsjBgJILReVPKt1BFxUjkejSIEIbK
-         15TxRl0v775deYN2jKGBpxJB4sJlsUBnftAMngeZ2CFZSSK/UL2LBYaFW4WCYcG+TIvw
-         MHsTMSvH1Y/h/to4o0rM9DH2E/21M6w4vM1AYUw6fCQ9ETq11A+MTZO7IIaGFMDvuD8S
-         3qgJ5BJo5ChQnvVRs6pGXNYh5n625YZmI0HgGOox3Thxd6GpPbs5optJOSNKIRsu2cnl
-         +GqA==
+        b=r+APWaEriqagsQyDFikVLUrCk34zpPlxwuOYzVx2PZ96Pyui/uMmT8bMRG+fLYXR2z
+         sXyuUajyqRvWGL51/3hT7LIiojp3vz1REAjZ2saM6Bnuo6OS4uq1BQhlLu48V5fOq+u8
+         8GecN3SPH9zhbllpNrIE7BfHLMpWOk+MSQsBz6M9/6IvsptJ/y8sxpvY5WCIfog5L+hy
+         zBxCWxB8ujWFxJVgtMEQM3K3QNeWuoJtlEGZ/8Mat0DbT7FsEWLE6K8MO8Nctr/e3vLj
+         9UJwhTmIuvX+hfZY4wCkGbklX096CCMdxMAGZsbsJ5W0NWGcoyKfYdw/Z4z2LFqbltL+
+         L5Fw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:cc:references:to:subject
          :arc-authentication-results;
-        bh=E/LLJKBeqZFD2sKZPFk32FqNdxYR7HYo66wdTxHwid4=;
-        b=M4Cu3BDJSYg7HEULKjk9flrtkLNABgJLpTnwiUIcEm2v21m8+pwsdD5Kxjd56JH480
-         RWib7pIfncDxjoKZapSKOK/eO+F5xdCxl5+1mzzH13YXFuvXWhkddZrFCep3WCVqfaz9
-         VtJeIBk4nbZd7wDjX9bF/kwMlERxDbFRDtap4UyzYS/basrI7YvDesu7oftvjTxc/UIR
-         /qQW8w/mUySBa8tILbqGnVo3yIHxOsHrPNyqcAEHQ5ykNXDII6r7Qftn5FZs4uL5KJM6
-         UZvX8gnYw2g/uvhfvhmSSnlCn5tgosSPGhbqrlEQiycR7rdxsqrPT1a+WDRSQUhPksmq
-         IGkg==
+        bh=IO2Jnn2nDhprExMD7knXrduEpTBW1m0kn78EWbqn06c=;
+        b=xD9pjqNO1HaXe0k6i18WJsqQ/iCgcxrO+XLUrVUUpavoEN+/eh71Lc1XXLQbRz9BqC
+         Qoh1KGOqDC7GUvC1Uh9K6UxTYlmNVhWLvgcBQlCATYDWKbvNI5M5WBDTP8gNBlj6SOgk
+         nlozvdLjU3SnSkJNr/C06Nctbr37foCE86Xi+RlSdYdXAlUHd87NaD0hbXzvbz3mvMkE
+         /PbjsQgaF8cTTqbK8uBNWsxZpkNryle+QouE32KcrFiybt1qOtA9IqOneRtqwgl1EjjM
+         lkviwDNx9oudnZjQuh3Spm+AMkl34mqVKkrskqZ+k1ZPZ7mvV4UyxJPp09zgf01EG33X
+         lBcQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=kfAVgNIy;
-       dkim=pass header.i=@chromium.org header.s=google header.b=edplCefn;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=kfAVgNIy;
-       dkim=pass header.i=@chromium.org header.s=google header.b=edplCefn;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AB8JxZreuzmT1g/WFeD3nIm6N21HtSV4oVxuLIOKL2LGNw2Q02vQjllclOk+NIgBStW2yBF8oIFxRGRf1D0e6MMrvuc=
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+Subject: Re: WARNING in sysfs_remove_group
+To: syzbot
+ <bot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        Jens Axboe <axboe@kernel.dk>
+References: <001a113ed2fa7bedfe055c8316a5@google.com>
+ <94eb2c030882b2b1b505610813df@google.com>
+Cc: dvyukov@google.com, gregkh@linuxfoundation.org
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <55ff5960-eaab-5a36-5605-4e2230b77607@I-love.SAKURA.ne.jp>
+Date: Wed, 2 May 2018 23:11:59 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <8d3e702b-470a-542e-4e0d-6a3c58419f0f@linux.ibm.com>
-References: <20180427123547.15727-1-tmricht@linux.ibm.com> <20180427134936.GA31171@kroah.com>
- <CAGXu5j+LK8-g9bg+RNn+-v1LpRC32sTCAUNZr1v0HXquiG9fQw@mail.gmail.com> <8d3e702b-470a-542e-4e0d-6a3c58419f0f@linux.ibm.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 2 May 2018 07:29:51 -0700
-X-Google-Sender-Auth: vb0hv48PPx4t7jJVN5EkkPQTFXM
-Message-ID: <CAGXu5j+Fr+=bdWMwkLh2jP2EA4JejTyxqXbr+L99Y7jrDV1X3w@mail.gmail.com>
-Subject: Re: [PATCH v2] inode: debugfs_create_dir uses mode permission from parent
-To: Thomas-Mich Richter <tmricht@linux.ibm.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, brueckner@linux.vnet.ibm.com,
-	Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <94eb2c030882b2b1b505610813df@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598885939373348657?=
-X-GMAIL-MSGID: =?utf-8?q?1599362975938475491?=
+X-GMAIL-THRID: =?utf-8?q?1582398672104881968?=
+X-GMAIL-MSGID: =?utf-8?q?1599361868320682332?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 2, 2018 at 12:16 AM, Thomas-Mich Richter
-<tmricht@linux.ibm.com> wrote:
-> On 04/27/2018 04:58 PM, Kees Cook wrote:
->> On Fri, Apr 27, 2018 at 6:49 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
->>> I'm going to add Kees and the kernel-hardning list here, as I'd like
->>> their opinions for the patch below.
->>>
->>> Kees, do you have any problems with this patch?  I know you worked on
->>> making debugfs more "secure" from non-root users, this should still keep
->>> the intial mount permissions all fine, right?  Anything I'm not
->>> considering here?
->>
->> This appears correct to me. I'd like to see some stronger rationale
->> for why this is needed, just so I have a "design" to compare the
->> implementation against. :)
->>
->> Normally, the top-level directory permissions should block all the
->> subdirectories too. The only time I think of this being needed is if
->> someone is explicitly bind-mounting a subdirectory to another location
->> (e.g. Chrome OS does this for the i915 subdirectory). In that case,
->> I'd expect them to tweak permissions too. Thomas, what's your
->> use-case?
->>
->> -Kees
->>
->
-> There is no 'real use case'. I wrote the patch because of discussions
-> regarding file permissions for files located deeply in the
-> directory tree, for example
->
->   -r--r--r-- 1 root root 0 Apr 27 14:23 /sys/kernel/debug/kprobes/blacklist
->
-> which gives the impression it is world readable.
-> This happened to me in recent discussions when I wrote patches to fix some
-> of the address randomized output of /sys files which broke the perf tool.
->
-> During discussion people often forgot that the root /sys/kernel/debug is rwx for
-> root only and blocks non root access to subdirectories and files. They simply
-> looked at the file permissions.
+syzbot has hit this bug for nearly 6000 times. Why not to fix this trivial one? ;-)
 
-Okay, sounds good. "Make permissions less surprising" is a perfectly
-good reason to make the change. :)
+>From 626d33de1b70b11ecaf95a9f83f7644998e54cbb Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Wed, 2 May 2018 23:03:48 +0900
+Subject: [PATCH] loop: remember whether sysfs_create_group() succeeded
 
-> I have not thought about the bind-mount case nor did I test this scenario.
+syzbot is hitting WARN() triggered by memory allocation fault
+injection [1] because loop module is calling sysfs_remove_group()
+when sysfs_create_group() failed.
+Fix this by remembering whether sysfs_create_group() succeeded.
 
-I think this case is fine too. Anyone doing this is likely doing some
-pretty special things with permissions already.
+[1] https://syzkaller.appspot.com/bug?id=3f86c0edf75c86d2633aeb9dd69eccc70bc7e90b
 
-So, FWIW:
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+9f03168400f56df89dbc6f1751f4458fe739ff29@syzkaller.appspotmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+---
+ drivers/block/loop.c | 11 ++++++-----
+ drivers/block/loop.h |  1 +
+ 2 files changed, 7 insertions(+), 5 deletions(-)
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
--Kees
-
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 5d4e316..1d758d8 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -809,16 +809,17 @@ static ssize_t loop_attr_dio_show(struct loop_device *lo, char *buf)
+ 	.attrs= loop_attrs,
+ };
+ 
+-static int loop_sysfs_init(struct loop_device *lo)
++static void loop_sysfs_init(struct loop_device *lo)
+ {
+-	return sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
+-				  &loop_attribute_group);
++	lo->sysfs_ready = !sysfs_create_group(&disk_to_dev(lo->lo_disk)->kobj,
++					      &loop_attribute_group);
+ }
+ 
+ static void loop_sysfs_exit(struct loop_device *lo)
+ {
+-	sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
+-			   &loop_attribute_group);
++	if (lo->sysfs_ready)
++		sysfs_remove_group(&disk_to_dev(lo->lo_disk)->kobj,
++				   &loop_attribute_group);
+ }
+ 
+ static void loop_config_discard(struct loop_device *lo)
+diff --git a/drivers/block/loop.h b/drivers/block/loop.h
+index b78de98..73c801f 100644
+--- a/drivers/block/loop.h
++++ b/drivers/block/loop.h
+@@ -58,6 +58,7 @@ struct loop_device {
+ 	struct kthread_worker	worker;
+ 	struct task_struct	*worker_task;
+ 	bool			use_dio;
++	bool			sysfs_ready;
+ 
+ 	struct request_queue	*lo_queue;
+ 	struct blk_mq_tag_set	tag_set;
 -- 
-Kees Cook
-Pixel Security
+1.8.3.1
