@@ -1,92 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeEBQTm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:19:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50440 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeEBQTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:19:33 -0400
-X-Google-Smtp-Source: AB8JxZrfIY/JsJU7ATfTWllx7ST6gQi06DWhP4uiOGUCSSu5cOtu1QLqBcd6eGqkRLM2QbCXHf1SysyK7mxNRSxeZX0=
-MIME-Version: 1.0
-References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
- <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
- <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
- <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
- <CA+55aFyZXWoiWnEU8S1PNNyUTWsi7UCnBuDKOobfMLaE8uFKJg@mail.gmail.com>
- <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
- <CA+55aFzDt1uvDBqgkB0T2o2-d5Fi0tBiGcy5iAZ-wRNdAL4uQw@mail.gmail.com>
- <CAPcyv4hQVKL=OtoYbWDGfOMdWen3MkF5qBPrek98+w2gODHvtg@mail.gmail.com>
- <CAPcyv4ixtVC3w9BE3Z2ME-qMPCh9evBKP51SDrNPXAsg7xH1RQ@mail.gmail.com> <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com>
-In-Reply-To: <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Wed, 02 May 2018 16:19:20 +0000
-X-Gmail-Original-Message-ID: <CALCETrXxnaj+YL_NDM1u0tM9v6p8ZtQw62n+y4Tv4ScB0DdZPw@mail.gmail.com>
-Message-ID: <CALCETrXxnaj+YL_NDM1u0tM9v6p8ZtQw62n+y4Tv4ScB0DdZPw@mail.gmail.com>
-Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751732AbeEBQVI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:21:08 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:47849 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751011AbeEBQVE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 12:21:04 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180502162101euoutp028fbfeea2e6020c8e31c77cd16d04611a~q4FDaoj301728517285euoutp02P
+X-AuditID: cbfec7f2-1dbff70000011644-90-5ae9e56cc714
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] thermal: ti-soc-thermal: fix incorrect entry in
+ omap5430_adc_to_temp[]
+Date: Wed, 02 May 2018 18:20:59 +0200
+Message-id: <1861949.NMJD6FHQNL@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180502154931.GS27619@mai>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHIsWRmVeSWpSXmKPExsWy7djPc7o5T19GGfTs4LeY91nWYv6Va6wW
+        p7Y3MVlc3jWHzWL2kn4Wi8+9RxgtnjzsY3Ng99g56y67x+I9L5k87lzbw+Zx/MZ2Jo/Pm+QC
+        WKO4bFJSczLLUov07RK4MtZum8hc8Ja14svjW4wNjDdZuhg5OSQETCQOL/rD3sXIxSEksIJR
+        oqdjIxOE85lRYuHlV0wwVTuX9UMlljFKzJxwGcr5zShx9OQFNpAqNgEriYntqxhBbBEBPYnG
+        921gRcwC+xkl9u17zwqSEBZIkJjeewZsOYuAqsT5roVgDbwCmhJfF89mB7FFBbwktuxrB1vN
+        CRTf19PDClEjKPFj8j2wXmYBeYl9+6eyQtg6EmePrWMEWSYhsINN4u3dNYwQd7tI/Ok9xgxh
+        C0u8Or6FHcKWkejsOMgE0dDMKPFtxx6oogmMEnvWC0HY1hKHj1+E2sAnMWnbdKAaDqA4r0RH
+        G1SJh8SF/9fYIGxHiR0rrzNDgmU2o0RLewP7BEbZWUgOn4Xk8FlIDl/AyLyKUTy1tDg3PbXY
+        MC+1XK84Mbe4NC9dLzk/dxMjMFWc/nf80w7Gr5eSDjEKcDAq8fAeOPsySog1say4MvcQowQH
+        s5II78qOZ1FCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeeM06qKEBNITS1KzU1MLUotgskwcnFIN
+        jLt4qt723jrR4T/74eSaN1fKl2893LPRzpaj8cGW+gtx+RXbZe6HfQt2nK224B37S43NquXy
+        qZMl1i75++D5hMuF1ydGq4lK3nshe2OKV9uk97a3Yk8b5zyedjgjpssj9+Kjd7fUd5TP/Bek
+        v6TwSfKfvLz+L1fTW2b/7Pl0UU/noZaIbK1JWZoSS3FGoqEWc1FxIgCfSUnKEQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrPLMWRmVeSWpSXmKPExsVy+t/xq7rZT19GGfz5q28x77Osxfwr11gt
+        Tm1vYrK4vGsOm8XsJf0sFp97jzBaPHnYx+bA7rFz1l12j8V7XjJ53Lm2h83j+I3tTB6fN8kF
+        sEZx2aSk5mSWpRbp2yVwZazdNpG54C1rxZfHtxgbGG+ydDFyckgImEjsXNbP1MXIxSEksIRR
+        4teu28wgCSGBv4wSD3YngthsAlYSE9tXMYLYIgJ6Eo3v28AamAX2M0p8aJnJDpIQFkiQmN57
+        Bmwqi4CqxPmuhWANvAKaEl8XzwarERXwktiyr50JxOYEiu/r6WGF2DyXUWJe7xE2iAZBiR+T
+        74ENYhaQl9i3fyorhK0lsX7ncaYJjPyzkJTNQlI2C0nZAkbmVYwiqaXFuem5xYZ6xYm5xaV5
+        6XrJ+bmbGIHBvO3Yz807GC9tDD7EKMDBqMTDe+Dsyygh1sSy4srcQ4wSHMxKIrwrO55FCfGm
+        JFZWpRblxxeV5qQWH2KU5mBREuc9b1AZJSSQnliSmp2aWpBaBJNl4uCUamBkSJCxWpUuajOb
+        vfDB2kXn5xmszbP6v3lp1TcL/9P+1f8q/3f8eDS9uuCHQLyuQMdExzj7OJ9WD2Pu9Ul/lGZG
+        6P86n/11xm7Zbekb0r5w/F1Ts8n0TGRe124DowefK4Ldr0z+tFFE6l7DWTvhkt+xkr4zn1Y4
+        cf3WXFAs1eed5NUUFuIvf1uJpTgj0VCLuag4EQCGuOqPYgIAAA==
+X-CMS-MailID: 20180502162059eucas1p1f9cb93b04c30933149fe7936db382e4b
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180502141432eucas1p1c85aa366979b73c59a46ec0c2f7ef8e6
+X-RootMTR: 20180502141432eucas1p1c85aa366979b73c59a46ec0c2f7ef8e6
+References: <CGME20180502141432eucas1p1c85aa366979b73c59a46ec0c2f7ef8e6@eucas1p1.samsung.com>
+        <17742083.Vu59BImYbG@amdc3058> <20180502154931.GS27619@mai>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 8:34 PM Linus Torvalds
-<torvalds@linux-foundation.org>
-wrote:
+On Wednesday, May 02, 2018 05:49:31 PM Daniel Lezcano wrote:
+> On Wed, May 02, 2018 at 04:14:32PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > Entry for Index 941 has one zero too much. Fix it.
+> > 
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> 
+> Good catch :)
 
-> On Tue, May 1, 2018 at 8:22 PM Dan Williams <dan.j.williams@intel.com>
-> wrote:
+Thanks. :)
 
-> > All that to say that having a typical RAM page covering poisoned pmem
-> > would complicate the 'clear badblocks' implementation.
+> I'm curious, how did you spot it ?
 
-> Ugh, ok.
+While I was reading the driver code I've noticed that
+omap5430_adc_to_temp[] and dra752_adc_to_temp[] look pretty
+similar so I've diff-ed them to find the actual differences
+(+ to see if one of the tables can be removed). One of such
+differences was the line containing the incorrect entry.
 
-> I guess the good news is that your patches aren't so big, and don't really
-> affect anything else.
-
-
-I pondered this a bit.  Doing better might be a big pain in the arse.  The
-interesting case is where ordinary kernel code (memcpy, plain old memory
-operands, etc) access faulty pmem.  This means that there's no extable
-entry around.  If we actually try to recover, we have a few problems:
-
-  - We can't sanely skip the instruction without causing random errors.
-
-  - If the access was through the kernel direct map, then we could plausibly
-remap a different page in place of the faulty page.  The problem is that,
-if the page is *writable* and we share it between more than one faulty
-page, then we're enabling a giant information leak.  But we still need to
-figure out how we're supposed to invalidate the old mapping from a random,
-potentially atomic context.
-
-  - If the access is through kmap or similar, then we're talking about
-modifying a PTE out from under kernel code that really isn't expecting us
-to modify it.
-
-  - How are we supposed to signal the process or fail a syscall?  The fault
-could have come from interrupt context, softirq context, kernel thread
-context, etc, and figuring out who's to blame seems quite awkward and
-fragile.
-
-All that being said, I suspect that we still have issues even with accesses
-to user VAs that are protected by extable entries.  The whole #MC mechanism
-is a supremely shitty interface for recoverable errors (especially on
-Intel), and I'm a bit scared of what happens if the offending access is,
-say, inside a perf NMI.
-
-Dan, is there any chance you could put some pressure on the architecture
-folks to invent an entirely new, less shitty way to tell the OS about
-recoverable memory errors?  And to make it testable by normal people?
-Needing big metal EINJ hardware to test the house of cards that is #MC is
-just awful and means that there are few enough kernel developers that are
-actually able to test that I can probably count them on one hand.  And I'm
-not one of them...
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
