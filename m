@@ -1,205 +1,192 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-755991-1525266422-2-10785987082615863474
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-675218-1525261692-2-2571678382315732849
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525266417; b=HTffn2gPUamFrm2lBxy4ucQHGroYetog8AlG/oQNgcYN2qpyxW
-    r8i+4tBEFVSkjkG/1t+/Yu4Qlb8O8tAAY1zObjdzBGAv/XF61J7lmQq3c/EXxQAm
-    mYo4Kat8orOeVU1HFVUeAY2TleXhQyObUb+6FkNxzFM6UnbtAYXk9L8r+MTPOrNo
-    TXZStLOYxlLG5yS6Yh3PklaCOFhG2A54TH7g5/618k33F0draUsNjsKSTfRWN4FI
-    R8f0tasCGZQXenFZUOUPiFTh3B64G3K9jxAbDd3P1dN0FSv41Jw/ZBaHuOG2liib
-    xXvMrLAKUwLuiz3TYwftJwItFH04K34qMBaw==
+    1525261691; b=JG6j9YK1E620zJtxqXj4gP8O4y3kWrmd6Cu/mnfVDFmMIp3bRi
+    msgFb43nHJhxGEyBFjLrRy9MvJRhYSSeg/gw5tR3bbCWE3ELkAnq7ELQn4vF/s/G
+    QstKNi47+hKz9v+NLK0N06ZDTigAf38TdYIZ8Zuyni9q6n5oERzRaL6ajeEN+18X
+    NzOs2o5Sq6zmAm1XNuf9ZN8pNECqmugyAbkwkOcCThRIdt7cDdrnhS75C4LIx1XM
+    fxXCiwXNwKfZH2HTShixiRU9z+xtENbcP4ggLT9zP+LzpeQ8vJmgorc2x7lJ+ycD
+    e6OJjva11uh++EFPE8bmuOQNMqCU+RtKJ9Qg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=cc:subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525266417;
-    bh=SU2ZucDd9kQo5PVDwZG4++dMmv70Im04PUMe/dMoBYI=; b=L0VicQ9dambg
-    J7mWzVU0wSQ9CTqJDn5rqJCpd7UDkFLwZAQ2sCiNtbl5FXQC9093yvmFOlnDOoud
-    yWNXbl3yGXgCEjuxK0q/aeGoTuFdHub/iF/X9Ly0jMiR0iqf+ViQEEHiPo6Vj6+j
-    /JCcEhMEFo1g2gNG+lEOXcZR78UfAnxQcyazLfVMKaRT7IAIkWMEUQu4lIkUVM4U
-    i0eh6WWpJX4Q1YbbuhrgTwc0Lg2uJPWCKaA0yaPXseMTJXQcKniM9Pl9lnUyjfnX
-    GAStI5zh5jkWXGWpMELUvRB4OH2zt9ddponmULjd5S5WFLvA0fTKWx0OexWtmEHD
-    yjcebIEJrA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=UGJUgef7 x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525261691; bh=HwCaN
+    Z8RWMzLtjAPTxQhedtUYWxmBTqoPO05UCSUVEE=; b=AerODrIpdCqn1BuDh2uNV
+    Qshsfg82aBYxTXKYi/86u3/L2HgWYLYs+Nk1yHy+qfxgEFfmBH7wSPyXKIkwWF/Q
+    EqnUs9yU9owf9VIrib1IrI98AbDKA1QyPaV0cBOvejZVURgti5iBRGEKbrjMPfGl
+    G9C7toNEZ4ymM9LgBuan6FEzoOh/5YeBCHI9m4CoFO/972nBiE6tKqeDIts4IaPK
+    Z33yX+qTGu4oup74axFeiEJBZFAiPWoDBJoeBj4sajaXmuNidkKQJg3M4FIpMPUp
+    wM+706q1hvcGGinBQcXGvSN4MMQjA3AowvaA5Baam0vaDgV6+mo3CfZOj+wtGBKi
+    A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=a8NxN6er;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=canonical.com header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=UGJUgef7 x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=a8NxN6er;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=canonical.com header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBTWLGMVPyqqtu1yxWOwL7EKFe2++Y8EecNcKmukhvOXj9eXPhRAxkacFnl7YdJ52uWyu+4x8zKuhKqTnhREjbsHSpMq8pCGWibuq0MqJne1NF2wurYc
-    0wnDxdQ5JiJiJy/bYISONCUxjNknslsTVtA+ueEu9qfO2dO8N9iKPLQWGptxGTiXh+jYjqeXK7fcbt7MJPPzSD4yAYHian/5bRceqQz4Xa+HGHOGtRCCACfZ
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=ZvkwkgPurpcA:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=GcyzOjIWAAAA:8
-    a=kB60VVGfhrFvc-s97boA:9 a=Vwn8hCKZZ_Rixo0P:21 a=7Q7sdM_MHv06FCcf:21
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=hQL3dl6oAZ8NdCsdz28n:22
+X-CM-Envelope: MS4wfN8mGpCNIHK+XjT+juD3veOX4mdIax6gWCpD0+ZmliyoxPLdyDX0exa4ilLXvQZSwWaI4UGIsQLLilGB2+9/S5KCRHa5U30x6aKnaL/6NlOfSPyQzRlT
+    naTkByF5Q7878GKz2Tbe5e56jDHyXs8ExlulDNaRpOZ/EjN1fw5JAm3LvZusUq9kf1xPR//C5U8urKDVb3N6wm5xKSylocNHtTInJZ2JqzAIg8CJPa6jFNF1
+    hCZOl1S1Su1wgntMvGvihg==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DfNHnWVPAAAA:8 a=DDOyTI_5AAAA:8
+    a=Frf6XfRpuPrtAsMFoH4A:9 a=CjuIK1q_8ugA:10 a=rjTVMONInIDnV1a_A2c_:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeEBNGo (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 09:06:44 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:53611 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751073AbeEBNGj (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 09:06:39 -0400
-X-Google-Smtp-Source: AB8JxZoJyM8aHAJMHS8gNzQm7iPlt39Xy4BXQtjMbm0oiBFCwCQmW86DK9xNUXjukWX79PHAlMalPg==
-Cc: mtk.manpages@gmail.com, John Hubbard <jhubbard@nvidia.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mmap.2: MAP_FIXED is okay if the address range has been
- reserved
-To: Michal Hocko <mhocko@kernel.org>, Jann Horn <jannh@google.com>
-References: <CAG48ez2w+3FDh9LM3+P2EHowicjM2Xw6giR6uq=26JfWHYsTAQ@mail.gmail.com>
- <20180413160435.GA17484@dhcp22.suse.cz>
- <CAG48ez3-xtmAt2EpRFR8GNKKPcsDsyg7XdwQ=D5w3Ym6w4Krjw@mail.gmail.com>
- <CAG48ez1PdzMs8hkatbzSLBWYucjTc75o8ovSmeC66+e9mLvSfA@mail.gmail.com>
- <20180416100736.GG17484@dhcp22.suse.cz>
- <CAG48ez3DwRXMtiinUWKnan6hAppLYLdx-w+VzXG6ubioZUacQg@mail.gmail.com>
- <20180416191805.GS17484@dhcp22.suse.cz>
- <CAG48ez1nf96nHj8a+aZy22RwqYTUZBGrsGFcz=ZhZBUWzaEZ9w@mail.gmail.com>
- <20180416195726.GT17484@dhcp22.suse.cz>
- <CAG48ez1bV_zZP3Y2ioDndP+H8mLCcxOtU1vCbWe7Q8myEGfXQQ@mail.gmail.com>
- <20180416211115.GU17484@dhcp22.suse.cz>
-From: "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <43db1d63-fa64-4b4a-f3c3-edc73892bd23@gmail.com>
-Date: Wed, 2 May 2018 15:06:34 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: Colin King <colin.king@canonical.com>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-media@vger.kernel.org, devel@driverdev.osuosl.org
+Subject: [PATCH][media-next][V2] media: davinci_vpfe: fix memory leaks of
+ params
+Date: Wed,  2 May 2018 12:48:00 +0100
+Message-Id: <20180502114800.28004-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <20180416211115.GU17484@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Jann, Micha,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 04/16/2018 11:11 PM, Michal Hocko wrote:
-> On Mon 16-04-18 22:17:40, Jann Horn wrote:
->> On Mon, Apr 16, 2018 at 9:57 PM, Michal Hocko <mhocko@kernel.org> wrote:
->>> On Mon 16-04-18 21:30:09, Jann Horn wrote:
->>>> On Mon, Apr 16, 2018 at 9:18 PM, Michal Hocko <mhocko@kernel.org> wrote:
->>> [...]
->>>>> Yes, reasonably well written application will not have this problem.
->>>>> That, however, requires an external synchronization and that's why
->>>>> called it error prone and racy. I guess that was the main motivation for
->>>>> that part of the man page.
->>>>
->>>> What requires external synchronization? I still don't understand at
->>>> all what you're talking about.
->>>>
->>>> The following code:
->>>>
->>>> void *try_to_alloc_addr(void *hint, size_t len) {
->>>>   char *x = mmap(hint, len, ...);
->>>>   if (x == MAP_FAILED) return NULL;
->>>>   if (x == hint) return x;
->>>
->>> Any other thread can modify the address space at this moment.
->>
->> But not parts of the address space that were returned by this mmap() call.
-> ?
->>> Just
->>> consider that another thread would does mmap(x, MAP_FIXED) (or any other
->>> address overlapping [x, x+len] range)
->>
->> If the other thread does that without previously having created a
->> mapping covering the area in question, that would be a bug in the
->> other thread.
-> 
-> MAP_FIXED is sometimes used without preallocated address ranges.
-> 
->> MAP_FIXED on an unmapped address is almost always a bug
->> (excluding single-threaded cases with no library code, and even then
->> it's quite weird) - for example, any malloc() call could also cause
->> libc to start using the memory range you're trying to map with
->> MAP_FIXED.
-> 
-> Yeah and that's why we there is such a large paragraph in the man page
-> ;)
-> 
->>> becaus it is seemingly safe as x
->>> != hint.
->>
->> I don't understand this part. Are you talking about a hypothetical
->> scenario in which a programmer attempts to segment the virtual memory
->> space into areas that are exclusively used by threads without creating
->> memory mappings for those areas?
-> 
-> Yeah, that doesn't sound all that over-exaggerated, right? And yes,
-> such a code would be subtle and most probably buggy. I am not trying to
-> argue for those hypothetical cases. All I am saying is that MAP_FIXED is
-> subtle.
-> 
-> I _do_ agree that using it solely on the preallocated and _properly_
-> managed address ranges is safe. I still maintain my position on error
-> prone though. And besides that there are usecases which do not operate
-> on preallocated address ranges so people really have to be careful.
-> 
-> I do not really care what is the form. I find the current wording quite
-> informative and showing examples of how things might be broken. I do
-> agree with your remark that "MAP_FIXED on preallocated ranges is safe"
-> should be added. But MAP_FIXED is dangerous API and should have few big
-> fat warnings.
+There are memory leaks of params; when copy_to_user fails and also
+the exit via the label 'error'. Also, there is a bogos memory allocation
+check on pointer 'to' when memory allocation fails on params.
 
-So, at this stage, is any further patch needed to the text describing
-MAP_FIXED/MAP_FIXED_REPLACE?
+Fix this by kfree'ing params in error exit path and jumping to this on
+the copy_to_user failure path.  Also check the to see if the allocation
+of params fails and remove the bogus null pointer checks on pointer 'to'.
 
-Cheers,
+Also explicitly return 0 on success rather than rval.
 
-Michael
+Detected by CoverityScan, CID#1467966 ("Resource leak")
 
+Fixes: da43b6ccadcf ("[media] davinci: vpfe: dm365: add IPIPE support for media controller driver")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
+V2: Add checks on allocation of params.  Remove bogus checks on
+    pointer 'to'. Explicitly return 0 on success. Thanks to
+    Dan Carpenter for the suggested improvements.
+
+---
+ drivers/staging/media/davinci_vpfe/dm365_ipipe.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+index 95942768639c..b135e38a18b3 100644
+--- a/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
++++ b/drivers/staging/media/davinci_vpfe/dm365_ipipe.c
+@@ -1252,12 +1252,12 @@ static const struct ipipe_module_if ipipe_modules[VPFE_IPIPE_MAX_MODULES] = {
+ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ {
+ 	struct vpfe_ipipe_device *ipipe = v4l2_get_subdevdata(sd);
++	struct ipipe_module_params *params;
+ 	unsigned int i;
+ 	int rval = 0;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(ipipe_modules); i++) {
+ 		const struct ipipe_module_if *module_if;
+-		struct ipipe_module_params *params;
+ 		void *from, *to;
+ 		size_t size;
+ 
+@@ -1269,25 +1269,31 @@ static int ipipe_s_config(struct v4l2_subdev *sd, struct vpfe_ipipe_config *cfg)
+ 
+ 		params = kmalloc(sizeof(struct ipipe_module_params),
+ 				 GFP_KERNEL);
++		if (!params) {
++			rval = -ENOMEM;
++			goto error;
++		}
+ 		to = (void *)params + module_if->param_offset;
+ 		size = module_if->param_size;
+ 
+-		if (to && from && size) {
++		if (from && size) {
+ 			if (copy_from_user(to, (void __user *)from, size)) {
+ 				rval = -EFAULT;
+-				break;
++				goto error;
+ 			}
+ 			rval = module_if->set(ipipe, to);
+ 			if (rval)
+ 				goto error;
+-		} else if (to && !from && size) {
++		} else if (!from && size) {
+ 			rval = module_if->set(ipipe, NULL);
+ 			if (rval)
+ 				goto error;
+ 		}
+ 		kfree(params);
+ 	}
++	return 0;
+ error:
++	kfree(params);
+ 	return rval;
+ }
+ 
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+2.17.0
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
