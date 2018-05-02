@@ -1,297 +1,134 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1503315-1525304347-2-12923321752179088466
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES encasv, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525304346; b=LVR/o3cDBSsLQqyBQZyZM2cIPMOsSFYRdS8eODTCU6wpW/TNyH
-    yvatEZZg3gQEO8ZwyAZNcWRR+IYF+Tw8RhP6FzHYuBIZVzxyqpgAOApRTj/DqjvU
-    L5JmxkROrpJ3Vg9USUIc+3/2JiADuEJPiXm5tvjttj0rQntelCvxkIrgGhoU58Qi
-    k6K2v5h74lDLjIu/tGB4d4Le7JGs/16S2GhwqGNXy6ksQNdzCvcHbc1x2I9gsJ05
-    QQDobNdkZMefcbRI6WRz1uvU41+2TuGinVirEtOCE7JP758gaGfdPkhu+1P+x1dB
-    Jtp7MN+UQjwRQXncprM1rynXD4HqWB4gVMXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1525304346; bh=gr/JR7U/cwTqwIlvwrJBNdWU5asgLO
-    1uPO1uSnSjFac=; b=kaYSOdQanBJRl8xfsH94lnz+48U7rA1fuMYQRVuvGKhrcJ
-    CwRRdz3+SweTu5E5rCJHeSvi18PFbSUXUdwzxFpnHvDT0RQGBufj/8JYd7pWYkVA
-    33hSNf2HI2msvReTurgQpQa/vZpMPJwkrwabP2Wk6gAzRs8pfiHcnHAINkMHr7Hw
-    4ySGb6hCpbXNKfZ7PN3R1E7qy3iddSf0Fys+5PHp0tVRNoLscbuVGYlhOgacBnPI
-    +Eb9Y7i7rYkJC+L4XbLpD0RtQfv2oszeseIi/r2RV33ZZhsxW+0SgOCr5chpqhdV
-    U+0Elev58I5OpvyRQKpJQj1F7wvYOVELn9YxoFkQ==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEYQXwgt/2N2mI3u+VPSdxtUql/5ezkqkVllaK50FvQh3ciSyaAa/y3utzRpB51CCz0wkK02jfP9IiTT4pcNV9BtDqI5BEWd2THr0jjasnyYcQUkmPYD
-    29QipIX6VXanFV/zC6jQvqJlPtWHLL3urBMMUeHoBT96Te3KaV5KcI5IRZQpBTtrIYnrMvXRysNw9DRUF5gIMWkCYeZra4BbZ6wgI+BjBJejIuHa86O3Ul4G
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=VwQbUJbxAAAA:8 a=CmAlYNrdc60C5nhTY5oA:9 a=c_f2tgl6RLWkr6zM:21
-    a=3PVS-NEa3XNnmLgR:21 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751841AbeEBXjE (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 19:39:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44794 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751840AbeEBXjD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 2 May 2018 19:39:03 -0400
-From: Lyude Paul <lyude@redhat.com>
-To: nouveau@lists.freedesktop.org
-Cc: Karol Herbst <kherbst@redhat.com>, stable@vger.kernel.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/nouveau: Fix deadlock in nv50_mstm_register_connector()
-Date: Wed,  2 May 2018 19:38:48 -0400
-Message-Id: <20180502233848.14886-1-lyude@redhat.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <kernel-hardening-return-13175-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZplXKot93Kc61bFmk6AoSKYm5E0DdFwcV5faDiu3G3hK2k003g6toUKZYPrdffP+9ITg+c+
+ARC-Seal: i=1; a=rsa-sha256; t=1525223153; cv=none;
+        d=google.com; s=arc-20160816;
+        b=u2y16xxR/wsX3aXc/ZVmBKy05mKhsg3Yuc9OqHNq1WvYZPEW7O/U4ird/zs1KVxXhD
+         YL9AF3caCDOrseg1nSMnclMhSPbcYsF3ZuQm/Lbf0QiKRQtHkHMKniy8lur2m3NqXaKA
+         jpNOWZhoz+l6Wzv52Gm+BqNMac3qeKvpoIPf3NDFXdbmdfZ3JMCY3dCJLCWAYGGVcvpQ
+         8TvAN0d89DIFwngQIacDNQD/DoBoiqooGauJZ1P2LTyGa4BzfRJ8WpvB0G7jTnFgHJ6v
+         rsLV5vPd+B8p3d4ZphlXZcFUF+b3q3eQEf2oTMJqryZNutEm22XjqmPXZ+Tu2o6nBwfD
+         mSJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature:delivered-to
+         :list-id:list-subscribe:list-unsubscribe:list-help:list-post
+         :precedence:mailing-list:arc-authentication-results;
+        bh=L+JDF9iTaljm+FXparRmo0KN96D2OqblEqICBrv6xUM=;
+        b=XQ1ggntewLvKiHIpHVo9LX/mWFs7+PlTQJpJZBkP/ip7LCK0gfITrdjVovL6QWkDBH
+         IS7jwrT5AqH5vPDQ6MvwqTSQFJWbrozOwvQ+OUKtEEZrZhy/vmUnJt71nec73G6nJuV9
+         YgEVjvv4BN2tWRfFIVqU3E2iBqJw9H98h45du1DVvYfP77UzHMK+qE0H7/n9jfow7l6N
+         2//u1MPrsFCkkbIzUmqcLBaHP+fkLxsiGdFw5LXMsFgaKSJoO1qNc5Z2GY1O8D0jK4Vy
+         u56zfoQT/Yeqp0UhKEYzdVm3q/IWDStSLB/759MYOyDCBQZ52x5rGR6wHIbOE6/IF8J0
+         1J1A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=EHRlsBjr;
+       spf=pass (google.com: domain of kernel-hardening-return-13175-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13175-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=EHRlsBjr;
+       spf=pass (google.com: domain of kernel-hardening-return-13175-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13175-gregkh=linuxfoundation.org@lists.openwall.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+From: Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To: mhocko@kernel.org,
+	akpm@linux-foundation.org,
+	keescook@chromium.org,
+	linux-mm@kvack.org,
+	kernel-hardening@lists.openwall.com,
+	linux-security-module@vger.kernel.org
+Cc: willy@infradead.org,
+	labbott@redhat.com,
+	linux-kernel@vger.kernel.org,
+	igor.stoppa@huawei.com
+Subject: [PATCH 0/3 v2] linux-next: mm: Track genalloc allocations
+Date: Wed,  2 May 2018 05:05:19 +0400
+Message-Id: <20180502010522.28767-1-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599312393247232673?=
+X-GMAIL-MSGID: =?utf-8?q?1599312393247232673?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently; we're grabbing all of the modesetting locks before adding MST
-connectors to fbdev. This isn't actually necessary, and causes a
-deadlock as well:
+This patchset was created as part of an older version of pmalloc, however
+it has value per-se, as it hardens the memory management for the generic
+allocator genalloc.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.17.0-rc3Lyude-Test+ #1 Tainted: G           O
-------------------------------------------------------
-kworker/1:0/18 is trying to acquire lock:
-00000000c832f62d (&helper->lock){+.+.}, at: drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
+Genalloc does not currently track the size of the allocations it hands
+out.
 
-but task is already holding lock:
-00000000942e28e2 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8e/0x1c0 [drm]
+Either by mistake, or due to an attack, it is possible that more memory
+than what was initially allocated is freed, leaving behind dangling
+pointers, ready for an use-after-free attack.
 
-which lock already depends on the new lock.
+With this patch, genalloc becomes capable of tracking the size of each
+allocation it has handed out, when it's time to free it.
 
-the existing dependency chain (in reverse order) is:
+It can either verify that the size received is correct, when free is
+invoked, or it can decide autonomously how much memory to free, if the
+value received for the size parameter is 0.
 
--> #3 (crtc_ww_class_mutex){+.+.}:
-       ww_mutex_lock+0x43/0x80
-       drm_modeset_lock+0x71/0x130 [drm]
-       drm_helper_probe_single_connector_modes+0x7d/0x6b0 [drm_kms_helper]
-       drm_setup_crtcs+0x15e/0xc90 [drm_kms_helper]
-       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
-       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
-       nouveau_drm_load+0x173/0x7e0 [nouveau]
-       drm_dev_register+0x134/0x1c0 [drm]
-       drm_get_pci_dev+0x8e/0x160 [drm]
-       nouveau_drm_probe+0x1a9/0x230 [nouveau]
-       pci_device_probe+0xcd/0x150
-       driver_probe_device+0x30b/0x480
-       __driver_attach+0xbc/0xe0
-       bus_for_each_dev+0x67/0x90
-       bus_add_driver+0x164/0x260
-       driver_register+0x57/0xc0
-       do_one_initcall+0x4d/0x323
-       do_init_module+0x5b/0x1f8
-       load_module+0x20e5/0x2ac0
-       __do_sys_finit_module+0xb7/0xd0
-       do_syscall_64+0x60/0x1b0
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+These patches are proposed for beign merged into linux-next, to verify
+that they do not introduce regressions, by comparing the value received
+from the callers of the free function with the internal tracking.
 
--> #2 (crtc_ww_class_acquire){+.+.}:
-       drm_helper_probe_single_connector_modes+0x58/0x6b0 [drm_kms_helper]
-       drm_setup_crtcs+0x15e/0xc90 [drm_kms_helper]
-       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
-       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
-       nouveau_drm_load+0x173/0x7e0 [nouveau]
-       drm_dev_register+0x134/0x1c0 [drm]
-       drm_get_pci_dev+0x8e/0x160 [drm]
-       nouveau_drm_probe+0x1a9/0x230 [nouveau]
-       pci_device_probe+0xcd/0x150
-       driver_probe_device+0x30b/0x480
-       __driver_attach+0xbc/0xe0
-       bus_for_each_dev+0x67/0x90
-       bus_add_driver+0x164/0x260
-       driver_register+0x57/0xc0
-       do_one_initcall+0x4d/0x323
-       do_init_module+0x5b/0x1f8
-       load_module+0x20e5/0x2ac0
-       __do_sys_finit_module+0xb7/0xd0
-       do_syscall_64+0x60/0x1b0
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+For this reason, the patchset does not contain the removal of the size
+parameter from users of the free() function.
 
--> #1 (&dev->mode_config.mutex){+.+.}:
-       drm_setup_crtcs+0x10c/0xc90 [drm_kms_helper]
-       __drm_fb_helper_initial_config_and_unlock+0x29/0x480 [drm_kms_helper]
-       nouveau_fbcon_init+0x138/0x1a0 [nouveau]
-       nouveau_drm_load+0x173/0x7e0 [nouveau]
-       drm_dev_register+0x134/0x1c0 [drm]
-       drm_get_pci_dev+0x8e/0x160 [drm]
-       nouveau_drm_probe+0x1a9/0x230 [nouveau]
-       pci_device_probe+0xcd/0x150
-       driver_probe_device+0x30b/0x480
-       __driver_attach+0xbc/0xe0
-       bus_for_each_dev+0x67/0x90
-       bus_add_driver+0x164/0x260
-       driver_register+0x57/0xc0
-       do_one_initcall+0x4d/0x323
-       do_init_module+0x5b/0x1f8
-       load_module+0x20e5/0x2ac0
-       __do_sys_finit_module+0xb7/0xd0
-       do_syscall_64+0x60/0x1b0
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Later on, the "size" parameter can be dropped, and each caller can be
+adjusted accordingly.
 
--> #0 (&helper->lock){+.+.}:
-       __mutex_lock+0x70/0x9d0
-       drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
-       nv50_mstm_register_connector+0x2c/0x50 [nouveau]
-       drm_dp_add_port+0x2f5/0x420 [drm_kms_helper]
-       drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
-       drm_dp_add_port+0x33f/0x420 [drm_kms_helper]
-       drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
-       drm_dp_check_and_send_link_address+0x87/0xd0 [drm_kms_helper]
-       drm_dp_mst_link_probe_work+0x4d/0x80 [drm_kms_helper]
-       process_one_work+0x20d/0x650
-       worker_thread+0x3a/0x390
-       kthread+0x11e/0x140
-       ret_from_fork+0x3a/0x50
+However, I do not have access to most of the HW required for confirming
+that all of its users are not negatively affected.
+This is where I believe having the patches in linux-next would help to
+coordinate with the maintaiers of the code that uses gen_alloc.
 
-other info that might help us debug this:
-Chain exists of:
-  &helper->lock --> crtc_ww_class_acquire --> crtc_ww_class_mutex
- Possible unsafe locking scenario:
-       CPU0                    CPU1
-       ----                    ----
-  lock(crtc_ww_class_mutex);
-                               lock(crtc_ww_class_acquire);
-                               lock(crtc_ww_class_mutex);
-  lock(&helper->lock);
+Since there were comments about the (lack-of) efficiency introduced by
+this patchset, I have added some more explanations and calculations to the
+description of the first patch, the one adding the bitmap.
+My conclusion is that this patch should not cause any major perfomance
+problem.
 
- *** DEADLOCK ***
-5 locks held by kworker/1:0/18:
- #0: 000000004a05cd50 ((wq_completion)"events_long"){+.+.}, at: process_one_work+0x187/0x650
- #1: 00000000601c11d1 ((work_completion)(&mgr->work)){+.+.}, at: process_one_work+0x187/0x650
- #2: 00000000586ca0df (&dev->mode_config.mutex){+.+.}, at: drm_modeset_lock_all+0x3a/0x1b0 [drm]
- #3: 00000000d3ca0ffa (crtc_ww_class_acquire){+.+.}, at: drm_modeset_lock_all+0x44/0x1b0 [drm]
- #4: 00000000942e28e2 (crtc_ww_class_mutex){+.+.}, at: drm_modeset_backoff+0x8e/0x1c0 [drm]
+Regarding the possibility of completely changing genalloc into some other
+type of allocator, I think it should not be a showstopper for this
+patchset, which aims to plug a security hole in genalloc, without
+introducing any major regression.
 
-stack backtrace:
-CPU: 1 PID: 18 Comm: kworker/1:0 Tainted: G           O      4.17.0-rc3Lyude-Test+ #1
-Hardware name: Gateway FX6840/FX6840, BIOS P01-A3         05/17/2010
-Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
-Call Trace:
- dump_stack+0x85/0xcb
- print_circular_bug.isra.38+0x1ce/0x1db
- __lock_acquire+0x128f/0x1350
- ? lock_acquire+0x9f/0x200
- ? lock_acquire+0x9f/0x200
- ? __ww_mutex_lock.constprop.13+0x8f/0x1000
- lock_acquire+0x9f/0x200
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- __mutex_lock+0x70/0x9d0
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- ? ww_mutex_lock+0x43/0x80
- ? _cond_resched+0x15/0x30
- ? ww_mutex_lock+0x43/0x80
- ? drm_modeset_lock+0xb2/0x130 [drm]
- ? drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- drm_fb_helper_add_one_connector+0x2a/0x60 [drm_kms_helper]
- nv50_mstm_register_connector+0x2c/0x50 [nouveau]
- drm_dp_add_port+0x2f5/0x420 [drm_kms_helper]
- ? mark_held_locks+0x50/0x80
- ? kfree+0xcf/0x2a0
- ? drm_dp_check_mstb_guid+0xd6/0x120 [drm_kms_helper]
- ? trace_hardirqs_on_caller+0xed/0x180
- ? drm_dp_check_mstb_guid+0xd6/0x120 [drm_kms_helper]
- drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
- drm_dp_add_port+0x33f/0x420 [drm_kms_helper]
- ? nouveau_connector_aux_xfer+0x7c/0xb0 [nouveau]
- ? find_held_lock+0x2d/0x90
- ? drm_dp_dpcd_access+0xd9/0xf0 [drm_kms_helper]
- ? __mutex_unlock_slowpath+0x3b/0x280
- ? drm_dp_dpcd_access+0xd9/0xf0 [drm_kms_helper]
- drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
- drm_dp_check_and_send_link_address+0x87/0xd0 [drm_kms_helper]
- drm_dp_mst_link_probe_work+0x4d/0x80 [drm_kms_helper]
- process_one_work+0x20d/0x650
- worker_thread+0x3a/0x390
- ? process_one_work+0x650/0x650
- kthread+0x11e/0x140
- ? kthread_create_worker_on_cpu+0x50/0x50
- ret_from_fork+0x3a/0x50
+The security flaw is clear and present, while the benefit of introducing a
+new allocator is not clear, at least for the current users of genalloc.
 
-Taking example from i915, the only time we need to hold any modesetting
-locks is when changing the port on the mstc, and in that case we only
-need to hold the connection mutex.
+And anyway the users of genalloc should be fixed to not pass any size
+parameter, which can be done after this patch is merged.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Karol Herbst <kherbst@redhat.com>
-Cc: stable@vger.kernel.org
+A newer, more efficient allocator will still benefit from not receiving a
+spurious parameter (size), when freeing memory.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/nouveau/nv50_display.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+Changes since v1:
 
-diff --git a/drivers/gpu/drm/nouveau/nv50_display.c b/drivers/gpu/drm/nouveau/nv50_display.c
-index 8bd739cfd00d..2b3ccd850750 100644
---- a/drivers/gpu/drm/nouveau/nv50_display.c
-+++ b/drivers/gpu/drm/nouveau/nv50_display.c
-@@ -3264,10 +3264,11 @@ nv50_mstm_destroy_connector(struct drm_dp_mst_topology_mgr *mgr,
- 
- 	drm_connector_unregister(&mstc->connector);
- 
--	drm_modeset_lock_all(drm->dev);
- 	drm_fb_helper_remove_one_connector(&drm->fbcon->helper, &mstc->connector);
-+
-+	drm_modeset_lock(&drm->dev->mode_config.connection_mutex, NULL);
- 	mstc->port = NULL;
--	drm_modeset_unlock_all(drm->dev);
-+	drm_modeset_unlock(&drm->dev->mode_config.connection_mutex);
- 
- 	drm_connector_unreference(&mstc->connector);
- }
-@@ -3277,9 +3278,7 @@ nv50_mstm_register_connector(struct drm_connector *connector)
- {
- 	struct nouveau_drm *drm = nouveau_drm(connector->dev);
- 
--	drm_modeset_lock_all(drm->dev);
- 	drm_fb_helper_add_one_connector(&drm->fbcon->helper, connector);
--	drm_modeset_unlock_all(drm->dev);
- 
- 	drm_connector_register(connector);
- }
+[http://www.openwall.com/lists/kernel-hardening/2018/04/29/1]
+
+* make the tester code a kernel module
+* turn selftest BUG() error exit paths into WARN()
+* add analysis of impact on current users of genalloc
+
+
+Igor Stoppa (3):
+  genalloc: track beginning of allocations
+  Add label and license to genalloc.rst
+  genalloc: selftest
+
+ Documentation/core-api/genalloc.rst |   4 +
+ include/linux/genalloc.h            | 112 +++---
+ lib/Kconfig.debug                   |  23 ++
+ lib/Makefile                        |   1 +
+ lib/genalloc.c                      | 742 ++++++++++++++++++++++++++----------
+ lib/test_genalloc.c                 | 419 ++++++++++++++++++++
+ 6 files changed, 1046 insertions(+), 255 deletions(-)
+ create mode 100644 lib/test_genalloc.c
+
 -- 
-2.14.3
+2.14.1
