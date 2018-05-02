@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751479AbeEBSA3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 14:00:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33779 "EHLO
+        id S1751544AbeEBSAg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 14:00:36 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:54783 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750918AbeEBSA0 (ORCPT
+        with ESMTP id S1750918AbeEBSAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 14:00:26 -0400
-Date: Wed, 2 May 2018 10:57:53 -0700
+        Wed, 2 May 2018 14:00:31 -0400
+Date: Wed, 2 May 2018 11:00:22 -0700
 From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-4pour7egur07tkrpbynawemv@git.kernel.org>
-Cc: hpa@zytor.com, jolsa@kernel.org, adrian.hunter@intel.com,
-        acme@redhat.com, wangnan0@huawei.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@kernel.org, namhyung@kernel.org,
-        dsahern@gmail.com
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org, dsahern@gmail.com,
-        namhyung@kernel.org, wangnan0@huawei.com, acme@redhat.com,
-        adrian.hunter@intel.com, jolsa@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de
+Message-ID: <tip-us590h81uqgxaumucfttqj50@git.kernel.org>
+Cc: david.gilbert@linaro.org, dsahern@gmail.com,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        adrian.hunter@intel.com, wangnan0@huawei.com, acme@redhat.com,
+        dave.martin@linaro.org, mingo@kernel.org, hpa@zytor.com,
+        jolsa@kernel.org, tglx@linutronix.de
+Reply-To: wangnan0@huawei.com, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, adrian.hunter@intel.com, david.gilbert@linaro.org,
+        dsahern@gmail.com, jolsa@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        acme@redhat.com, dave.martin@linaro.org, mingo@kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf map: Remove map_type arg from
- map_groups__find()
-Git-Commit-ID: e1f2a0d0f2d80c7fedb5f910367bc12d02e914a7
+Subject: [tip:perf/core] perf symbols: Use symbol type instead of map->type
+Git-Commit-ID: 18231d79466e6b183b4f3b2aa66231fb4052fb85
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,95 +34,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e1f2a0d0f2d80c7fedb5f910367bc12d02e914a7
-Gitweb:     https://git.kernel.org/tip/e1f2a0d0f2d80c7fedb5f910367bc12d02e914a7
+Commit-ID:  18231d79466e6b183b4f3b2aa66231fb4052fb85
+Gitweb:     https://git.kernel.org/tip/18231d79466e6b183b4f3b2aa66231fb4052fb85
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 26 Apr 2018 09:49:31 -0300
+AuthorDate: Thu, 26 Apr 2018 12:45:17 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 26 Apr 2018 13:47:18 -0300
+CommitDate: Thu, 26 Apr 2018 13:47:20 -0300
 
-perf map: Remove map_type arg from map_groups__find()
+perf symbols: Use symbol type instead of map->type
 
-One more step in ditching the split.
+map->type is going away, we can derive it from map->prot, so use
+the same logic as in the kernel's arch/arm/kernel/module.c file:
+
+  ELF32_ST_TYPE(sym->st_info) == STT_FUNC && !(sym->st_value & 1))
+
+This was introduced in b2f8fb237e9c ("perf symbols: Fix annotation of
+thumb code"), that fix is maintained with this change.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Martin <dave.martin@linaro.org>
 Cc: David Ahern <dsahern@gmail.com>
+Cc: Dr. David Alan Gilbert <david.gilbert@linaro.org>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-4pour7egur07tkrpbynawemv@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-us590h81uqgxaumucfttqj50@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arm/tests/dwarf-unwind.c     | 2 +-
- tools/perf/arch/arm64/tests/dwarf-unwind.c   | 2 +-
- tools/perf/arch/powerpc/tests/dwarf-unwind.c | 2 +-
- tools/perf/arch/x86/tests/dwarf-unwind.c     | 2 +-
- tools/perf/util/map.h                        | 3 ++-
- 5 files changed, 6 insertions(+), 5 deletions(-)
+ tools/perf/util/symbol-elf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/arm/tests/dwarf-unwind.c b/tools/perf/arch/arm/tests/dwarf-unwind.c
-index 7d7a65ca2e8d..9a0242e74cfc 100644
---- a/tools/perf/arch/arm/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/arm/tests/dwarf-unwind.c
-@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index cf2e6f428bb4..82a1aadc245f 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -982,7 +982,7 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 		/* On ARM, symbols for thumb functions have 1 added to
+ 		 * the symbol address as a flag - remove it */
+ 		if ((ehdr.e_machine == EM_ARM) &&
+-		    (map->type == MAP__FUNCTION) &&
++		    (GELF_ST_TYPE(sym.st_info) == STT_FUNC) &&
+ 		    (sym.st_value & 1))
+ 			--sym.st_value;
  
- 	sp = (unsigned long) regs[PERF_REG_ARM_SP];
- 
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-index f053eae3b6eb..5522ce384723 100644
---- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
- 
- 	sp = (unsigned long) regs[PERF_REG_ARM64_SP];
- 
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-index b22d643cb602..5f39efef0856 100644
---- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
- 
- 	sp = (unsigned long) regs[PERF_REG_POWERPC_R1];
- 
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/arch/x86/tests/dwarf-unwind.c b/tools/perf/arch/x86/tests/dwarf-unwind.c
-index 7da845026323..7879df34569a 100644
---- a/tools/perf/arch/x86/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/x86/tests/dwarf-unwind.c
-@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
- 
- 	sp = (unsigned long) regs[PERF_REG_X86_SP];
- 
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 579ad7d2711d..d035d8f0d5b2 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -222,7 +222,8 @@ static inline struct map *__map_groups__find(struct map_groups *mg,
- 
- static inline struct map *map_groups__find(struct map_groups *mg, u64 addr)
- {
--	return __map_groups__find(mg, MAP__FUNCTION, addr);
-+	struct map *map = __map_groups__find(mg, MAP__FUNCTION, addr);
-+	return map ?: __map_groups__find(mg, MAP__VARIABLE, addr);
- }
- 
- struct map *map_groups__first(struct map_groups *mg);
