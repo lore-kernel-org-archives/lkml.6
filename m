@@ -1,86 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751253AbeEBNzX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:55:23 -0400
-Received: from mga04.intel.com ([192.55.52.120]:52669 "EHLO mga04.intel.com"
+        id S1751461AbeEBNzd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:55:33 -0400
+Received: from mga01.intel.com ([192.55.52.88]:58147 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750921AbeEBNzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:55:21 -0400
+        id S1750930AbeEBNz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:55:29 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="225150666"
-Message-ID: <1525269317.21176.625.camel@linux.intel.com>
-Subject: Re: [RFC PATCH RESEND 2/3] leds: upboard: Add LED support
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Javier Arteaga <javier@emutex.com>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, "Dan O'Donovan" <dan@emutex.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 02 May 2018 16:55:17 +0300
-In-Reply-To: <20180426124922.haddppocljgnj2ei@localhost>
-References: <20180421085009.28773-1-javier@emutex.com>
-         <20180421085009.28773-3-javier@emutex.com>
-         <1524672945.21176.594.camel@linux.intel.com>
-         <20180426023441.f2a7337sjlyd6xhf@localhost>
-         <1524729349.21176.614.camel@linux.intel.com>
-         <20180426124922.haddppocljgnj2ei@localhost>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="225150712"
+From: changbin.du@intel.com
+To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
+Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
+        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
+Subject: [PATCH v2 0/5] kernel hacking: GCC optimization for debug experience (-Og)
+Date: Wed,  2 May 2018 21:44:55 +0800
+Message-Id: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-04-26 at 13:49 +0100, Javier Arteaga wrote:
-> On Thu, Apr 26, 2018 at 10:55:49AM +0300, Andy Shevchenko wrote:
-> > On Thu, 2018-04-26 at 03:34 +0100, Javier Arteaga wrote:
-> > > My understanding was that in this context, __init allows this
-> > > probe()
-> > > to
-> > > be dropped from memory after module load.
-> > > 
-> > > What am I doing wrong there?
-> > 
-> > Just give another thought about it. The keyword(s) here is(are):
-> > time to
-> > live of the objects in question. It's good to get knowing what
-> > unbind-
-> > bind means (for built-in drivers).
-> 
-> So this is the bit that I _believed_ applied to the platform drivers
-> for
-> these MFD-registered devices (from driver-model/platform.txt):
-> 
->   Or, in common situations where the device is known not to be hot-
-> pluggable,
->   the probe() routine can live in an init section to reduce the
-> driver's
->   runtime memory footprint:
-> 
->   	int platform_driver_probe(struct platform_driver *drv,
->   			  int (*probe)(struct platform_device *))
-> 
-> I'm thinking my misunderstanding probably stems from assuming that
-> these
-> leds/pinctrl drivers will always find all devices registered at init
-> time. Can't say I've validated that assumption - I just didn't see
-> anything obviously blowing up in my tests so far :)
-> 
-> I'll keep reading and test out a few more things so I fully
-> understand.
-> Until then, I've taken out __init annotations from next version.
+From: Changbin Du <changbin.du@intel.com>
 
-Just do one small test. Try to unbind the (built-in) driver and bind it
-back. Would it work? Would kernel survive this?
+Hi all,
+I know some kernel developers was searching for a method to dissable GCC
+optimizations, probably they want to apply GCC '-O0' option. But since Linux
+kernel replys on GCC optimization to remove some dead code, so '-O0' just
+breaks the build. They do need this because they want to debug kernel with
+qemu, simics, kgtp or kgdb.
+
+Thanks for the GCC '-Og' optimization level introduced in GCC 4.8, which
+offers a reasonable level of optimization while maintaining fast compilation
+and a good debugging experience. It is similar to '-O1' while perfer keeping
+debug ability over runtime speed. With '-Og', we can build a kernel with
+better debug ability and little performance drop after some simple change.
+
+In this series, firstly introduce a new config CONFIG_NO_AUTO_INLINE after two
+fixes for this new option. With this option, only functions explicitly marked
+with "inline" will  be inlined. This will allow the function tracer to trace
+more functions because it only traces functions that the compiler has not
+inlined.
+
+Then introduce new config CONFIG_DEBUG_EXPERIENCE which apply '-Og'
+optimization level for whole kernel, with a simple fix in fix_to_virt().
+Currently this option is only tested on a QEMU gust and it works fine.
+
+
+Comparison of vmlinux size: a bit smaller.
+
+    w/o CONFIG_DEBUG_EXPERIENCE
+    $ size vmlinux
+       text    data     bss     dec     hex filename
+    22665554   9709674  2920908 35296136        21a9388 vmlinux
+
+    w/ CONFIG_DEBUG_EXPERIENCE
+    $ size vmlinux
+       text    data     bss     dec     hex filename
+    21499032   10102758 2920908 34522698        20ec64a vmlinux
+
+
+Comparison of system performance: a bit drop (~6%).
+    This benchmark of kernel compilation is suggested by Ingo Molnar.
+    https://lkml.org/lkml/2018/5/2/74
+
+    Preparation: Set cpufreq to 'performance'.
+    for ((cpu=0; cpu<120; cpu++)); do
+      G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
+      [ -f $G ] && echo performance > $G
+    done
+
+    w/o CONFIG_DEBUG_EXPERIENCE
+    $ perf stat --repeat 5 --null --pre                 '\
+        cp -a kernel ../kernel.copy.$(date +%s);         \
+        rm -rf *;                                        \
+        git checkout .;                                  \
+        echo 1 > /proc/sys/vm/drop_caches;               \
+        find ../kernel* -type f | xargs cat >/dev/null;  \
+        make -j kernel >/dev/null;                       \
+        make clean >/dev/null 2>&1;                      \
+        sync                                            '\
+                                                         \
+        make -j8 >/dev/null
+
+     Performance counter stats for 'make -j8' (5 runs):
+
+        219.764246652 seconds time elapsed                   ( +-  0.78% )
+
+    w/ CONFIG_DEBUG_EXPERIENCE
+    $ perf stat --repeat 5 --null --pre                 '\
+        cp -a kernel ../kernel.copy.$(date +%s);         \
+        rm -rf *;                                        \
+        git checkout .;                                  \
+        echo 1 > /proc/sys/vm/drop_caches;               \
+        find ../kernel* -type f | xargs cat >/dev/null;  \
+        make -j kernel >/dev/null;                       \
+        make clean >/dev/null 2>&1;                      \
+        sync                                            '\
+                                                         \
+        make -j8 >/dev/null
+
+    Performance counter stats for 'make -j8' (5 runs):
+
+         233.574187771 seconds time elapsed                  ( +-  0.19% )
+
+Changbin Du (5):
+  x86/mm: surround level4_kernel_pgt with #ifdef
+    CONFIG_X86_5LEVEL...#endif
+  regulator: add dummy function of_find_regulator_by_node
+  kernel hacking: new config NO_AUTO_INLINE to disable compiler
+    auto-inline optimizations
+  kernel hacking: new config DEBUG_EXPERIENCE to apply GCC -Og
+    optimization
+  asm-generic: fix build error in fix_to_virt with
+    CONFIG_DEBUG_EXPERIENCE
+
+ Makefile                          | 10 ++++++++++
+ arch/x86/include/asm/pgtable_64.h |  2 ++
+ arch/x86/kernel/head64.c          | 13 ++++++-------
+ drivers/regulator/internal.h      |  9 +++++++--
+ include/asm-generic/fixmap.h      |  3 ++-
+ include/linux/compiler-gcc.h      |  2 +-
+ include/linux/compiler.h          |  2 +-
+ lib/Kconfig.debug                 | 39 +++++++++++++++++++++++++++++++++++++++
+ 8 files changed, 68 insertions(+), 12 deletions(-)
 
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.7.4
