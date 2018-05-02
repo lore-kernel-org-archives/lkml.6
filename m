@@ -1,121 +1,202 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1495249-1525720351-2-16722726210506089694
+X-Cyrus-Session-Id: sloti22d1t05-4018576-1525225510-2-11300751279161480913
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='utf-8'
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525720349; b=HebZNO8kyOhLLnP9mtifE8VTcV/8PcrQDjUOFEdhVsXzDkHpvC
-    cSRJJlOkhYls94/8Z/EfnqKoat6tqB1r4zWT8cN7l4FuzZDOltxB7ahW5MstVhf4
-    k6nlAgc6AQNonwkZwA54JOFzf1Nd4mncqRxPXPvAYI81POsXcZVw1u1qyWXf2AXY
-    OJGyzrjobl59+5RHva2EO7+Q2a2hOntZylFHSPwj/fSRJH8xygwF/bHc0Aoa7T0U
-    gvBaMNZC5lp5Q1Qj1oYjhcJj0VrSJfRj67ixRLH8hqJ5Q7kJAKImxOWSTJiB5hut
-    UTTgsjD4lJm/6yS1UOTFdWcK6n1mVOuR5vUg==
+    1525225509; b=m6zpB/elQUhMJOaAPUTQSvHJb9Y6FFNORJLLndSuFJksNRIlo0
+    3VJ4V4Ltw3JPFI+zeVjsdw0gmLiJ3FqAtHyOxU6nWiprmKwk75ZRfrKXUrT1/5rO
+    Y7q1fjeWN4GOe/6B+q8hPqlPYcKH6N6pUFkxT8A3KVHsgKaBG/lzSNdisCNWvlqj
+    0XlnifNwCUUq6I2OALzFQZDzxW46wTtzw5XyFcHtBjJ7/xO9va2LF2CG/vTCZ7zs
+    wdpqi5VvxBG6kEKlq3XsXaPUOF3FJRANKEsbuU/gNAodmoyxLgwc8YbeE76gUyUU
+    tQK+ZhSxdcXyJq6hgPLMzKkk/crLywY3ghwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
-    t=1525720349; bh=ldl003uV5kDL1QLPG4moUQvWegMY2mEFZyArfe/XX2A=; b=
-    aM/VUwGUPTUybo+iTdv6lCGzo+h3wwKljHbC676pzna9BsEayd75VT7e7V3Pgas5
-    G0Pv2Kfb9/OY3DAj96mA0PRXSmoP/c1ltotE0l3kKHX+hdMe6OjYc5XJ8SPYO9sy
-    3G6tSBOLRy1VUXJDEJfAQ7eOIIp7BcKMxLPmhs042j7NPQM2a/SxXigdnps/3Zt+
-    Etu7uSaYuz3kjd04ZdXx3WTZwqfrafRcvMvuJQtoXTKoNei+bAKa3bSuxzB0IRZP
-    /LGwflQyhPLNzm3EXUEREz5kYr2MP3ZYxFo5/F/gSp2CzeuLV/8JGjYTzu3kCYhT
-    Y7O2Dowrdo7p3fSzTZcM5Q==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525225509; bh=2sO3hbGpQ7mQfCj/WRq1JZdI+DMM7r
+    k2nUvsy/pNOmE=; b=niAMkl5cQLs6FeZiJtXu/3FNClmIVXeV9OC31eJGQaTShz
+    YBdTr3szKyuDrZfP1wrj/erS9gG33/62z7PPLWLGDsT/plnncjPLPeCSRc8mRhkT
+    gvZHrPaeKIcgVP5J738zx4u7kOcL+Xgju472LgTWNUcBQ5AH08ksuHPxmAaBNhv8
+    ChfF14xdtitvGqjOi8qEHhwg5p4CbcJyUeef0N6N/tnZ4zDIu7AygIPlVA8z9I/x
+    4tc5PMvMsyC5NzRH5672TvgfG2nz8FM5Rsu+nPi0yPsj0E8rPXyD1790bgfhcq8B
+    JTL3AH1/bU0E4ELLdqfCMlhyxvMRlrdPR5pcgEjw==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.com
-    header.i=@amazon.com header.b=gFznOUGT x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+    header.i=@google.com header.b=e5+UY0zX x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=gynH9t4G;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=amazon.com header.result=pass header_is_org_domain=yes;
+    header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=amazon.com
-      header.i=@amazon.com header.b=gFznOUGT x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=amazon201209;
-    dmarc=pass (p=quarantine,has-list-id=yes,d=none) header.from=amazon.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+      header.i=@google.com header.b=e5+UY0zX x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=gynH9t4G;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=amazon.com header.result=pass header_is_org_domain=yes;
+      header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDcN/M50W8bfK3VX/IT8CccUYhpZ9YG/IFekaT5AQaLEnyEnHGTbCJbDdby6yJ7h+JlLRYKZnTEdjkXw39xXXcoiG+IcKsFD7jQtDUEwvaPT+MbWvZ/c
-    ha+iQboB9Jg3MuDOumiLbxgQzSjCE8KHA1ElRMZp54+yvPIX93O3okM26GZUkjo9zZg9kU/Z2ZrNkSWKJtDbJ7LQX7gtCg3V2xr8mL+ks1G6m75I3DurJfEi
+X-CM-Envelope: MS4wfJmNv9QMDInBNBjyKdaxSJ0NeoCCydR3zXGA+IXTwfZW3mHTCYRugr2xtsbOuVIMlZJvHVvmQmBH58d5NzoFoTFvLovJt5bL4fQfBHVU9OccDRYTKJWl
+    2ixLtF8BrkVi53A9EQXjLKxi4hwZ3j0GS9A4GsvVvrbPNE6Zgi49wGO9ddmkl5NQziB5XQc30WRd4QsFR4Dy8WAB91gD6rvJmE1Hzg8JMD4ZtfVnDfvErzVH
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=2Vfq7ykRpsQA:10 a=IkcTkHD0fZMA:10
-    a=O76VCmqbo-wA:10 a=VUJBJC2UJ8kA:10 a=yPCof4ZbAAAA:8 a=Bfqbt9Xgqvb8JkKIDpAA:9
-    a=QEXdDO2ut3YA:10 a=wcPYYFxWKMAA:10 a=fkqBw3BD5RLjSgApC7jY:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=meVymXHHAAAA:8 a=JfrnYn6hAAAA:8 a=20KFwNOVAAAA:8 a=7d_E57ReAAAA:8
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
+    a=n8i27M1mAAAA:8 a=1XWaLZrsAAAA:8 a=avd3DLw0iyMjPW8tV1oA:9
+    a=2JgSa4NbpEOStq-L5dxp:22 a=1CNFftbPRP8L7MoqJWF3:22 a=jhqOcbufqs7Y1TYCrUUU:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752564AbeEGTM1 (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 7 May 2018 15:12:27 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:39255 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752335AbeEGTM0 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Mon, 7 May 2018 15:12:26 -0400
-X-IronPort-AV: E=Sophos;i="5.49,375,1520899200";
-   d="scan'208";a="677960183"
-From: "van der Linden, Frank" <fllinden@amazon.com>
-To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/1] x86/xen: Reset VCPU0 info pointer after shared_info
- remap
-Thread-Topic: [PATCH 1/1] x86/xen: Reset VCPU0 info pointer after shared_info
- remap
-Thread-Index: AQHT4+Qi8Y/Xj7e/qEORkG6cypvfEqQkZMKA//+4loCAAIVbgP//jtIA
-Date: Mon, 7 May 2018 19:12:22 +0000
-Message-ID: <93859B55-41C2-4AF2-9CD7-C8A8AB11097F@amazon.com>
-References: <C508E5F5-024E-4F71-A91E-7BB0BE046F5D@amazon.com>
- <965354d1-e2e7-1764-a14e-bb4258b9ed13@oracle.com>
- <B3C02FE4-651D-4A89-90BB-78E389764688@amazon.com>
- <ab71bf69-5074-ca7d-ceb5-1b42b0a70457@oracle.com>
-In-Reply-To: <ab71bf69-5074-ca7d-ceb5-1b42b0a70457@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.162.65]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A27F10D3DA154B41A56CB4DB1BFAD916@amazon.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        id S1751186AbeEBBpI (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 21:45:08 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41002 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751175AbeEBBpH (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 1 May 2018 21:45:07 -0400
+X-Google-Smtp-Source: AB8JxZrsU7VLh7ZOO6O3iEqFhHwH+RPuLXJXJuPboZuSmvhiUUN5703AS61qGSs1p3iNe9UZtQbFkg==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: Joel Fernandes <joelaf@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com,
+        stable@vger.kernel.org
+Subject: [PATCH] softirq: reorder trace_softirqs_on to prevent lockdep splat
+Date: Tue,  1 May 2018 18:44:39 -0700
+Message-Id: <20180502014439.87828-1-joelaf@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-DQoNCu+7v09uIDUvNy8xOCwgMTE6NTQgQU0sICJCb3JpcyBPc3Ryb3Zza3kiIDxib3Jpcy5vc3Ry
-b3Zza3lAb3JhY2xlLmNvbT4gd3JvdGU6DQoNCiAgICANCiAgICBPSywgZmFpciBlbm91Z2guIFRo
-aXMgc2hvdWxkIGdvIHRvIHN0YWJsZSBhcyB3ZWxsIEkgdGhpbmsgKDQuMTIrKSwNCiAgICBjb3B5
-aW5nIHRoZW0uDQogICAgDQogICAgUmV2aWV3ZWQtYnk6IEJvcmlzIE9zdHJvdnNreSA8Ym9yaXMu
-b3N0cm92c2t5QG9yYWNsZS5jb20+DQogICAgDQpHcmVhdCwgdGhhbmtzIEJvcmlzLg0KDQpGcmFu
-aw0KDQo=
+I'm able to reproduce a lockdep splat with config options:
+CONFIG_PROVE_LOCKING=y,
+CONFIG_DEBUG_LOCK_ALLOC=y and
+CONFIG_PREEMPTIRQ_EVENTS=y
+
+$ echo 1 > /d/tracing/events/preemptirq/preempt_enable/enable
+---
+[   26.112609] DEBUG_LOCKS_WARN_ON(current->softirqs_enabled)
+[   26.112636] WARNING: CPU: 0 PID: 118 at kernel/locking/lockdep.c:3854
+[...]
+[   26.144229] Call Trace:
+[   26.144926]  <IRQ>
+[   26.145506]  lock_acquire+0x55/0x1b0
+[   26.146499]  ? __do_softirq+0x46f/0x4d9
+[   26.147571]  ? __do_softirq+0x46f/0x4d9
+[   26.148646]  trace_preempt_on+0x8f/0x240
+[   26.149744]  ? trace_preempt_on+0x4d/0x240
+[   26.150862]  ? __do_softirq+0x46f/0x4d9
+[   26.151930]  preempt_count_sub+0x18a/0x1a0
+[   26.152985]  __do_softirq+0x46f/0x4d9
+[   26.153937]  irq_exit+0x68/0xe0
+[   26.154755]  smp_apic_timer_interrupt+0x271/0x280
+[   26.156056]  apic_timer_interrupt+0xf/0x20
+[   26.157105]  </IRQ>
+
+The issue was this:
+
+preempt_count = 1 << SOFTIRQ_SHIFT
+
+	__local_bh_enable(cnt = 1 << SOFTIRQ_SHIFT) {
+		if (softirq_count() == (cnt && SOFTIRQ_MASK)) {
+			trace_softirqs_on() {
+				current->softirqs_enabled = 1;
+			}
+		}
+		preempt_count_sub(cnt) {
+			trace_preempt_on() {
+				tracepoint() {
+					rcu_read_lock_sched() {
+						// jumps into lockdep
+
+Where preempt_count still has softirqs disabled, but
+current->softirqs_enabled is true, and we get a splat.
+
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zilstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Glexiner <tglx@linutronix.de>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Fenguang Wu <fengguang.wu@intel.com>
+Cc: Baohong Liu <baohong.liu@intel.com>
+Cc: Vedang Patel <vedang.patel@intel.com>
+Cc: kernel-team@android.com
+Cc: stable@vger.kernel.org
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Fixes: d59158162e032 ("tracing: Add support for preempt and irq enable/disable events")
+Signed-off-by: Joel Fernandes <joelaf@google.com>
+---
+ kernel/softirq.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index 24d243ef8e71..47e2f61938c0 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -139,9 +139,13 @@ static void __local_bh_enable(unsigned int cnt)
+ {
+ 	lockdep_assert_irqs_disabled();
+ 
++	if (preempt_count() == cnt)
++		trace_preempt_on(CALLER_ADDR0, get_lock_parent_ip());
++
+ 	if (softirq_count() == (cnt & SOFTIRQ_MASK))
+ 		trace_softirqs_on(_RET_IP_);
+-	preempt_count_sub(cnt);
++
++	__preempt_count_sub(cnt);
+ }
+ 
+ /*
+-- 
+2.17.0.441.gb46fe60e1d-goog
