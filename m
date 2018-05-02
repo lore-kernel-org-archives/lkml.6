@@ -1,84 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeEBCSt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 22:18:49 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:42923 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750766AbeEBCSr (ORCPT
+        id S1751307AbeEBCW3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 22:22:29 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34854 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750743AbeEBCW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 22:18:47 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Waiman Long <longman@redhat.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1524862838-8247-1-git-send-email-longman@redhat.com>
-Date: Tue, 01 May 2018 21:18:17 -0500
-In-Reply-To: <1524862838-8247-1-git-send-email-longman@redhat.com> (Waiman
-        Long's message of "Fri, 27 Apr 2018 17:00:30 -0400")
-Message-ID: <87po2ex0k6.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fDhLa-0007Dr-Th;;;mid=<87po2ex0k6.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX194fR8D97k8KGopeMkPAD/2gD+zliWQSiU=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4519]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Waiman Long <longman@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 719 ms - load_scoreonly_sql: 0.06 (0.0%),
-        signal_user_changed: 3.0 (0.4%), b_tie_ro: 2.00 (0.3%), parse: 1.14 (0.2%),
-        extract_message_metadata: 3.9 (0.5%), get_uri_detail_list: 1.51 (0.2%),
-        tests_pri_-1000: 5 (0.7%), tests_pri_-950: 2.0 (0.3%), tests_pri_-900: 1.67
-        (0.2%), tests_pri_-400: 26 (3.6%), check_bayes: 24 (3.3%), b_tokenize: 10
-        (1.3%), b_tok_get_all: 6 (0.9%), b_comp_prob: 3.4 (0.5%), b_tok_touch_all:
-        1.91 (0.3%), b_finish: 0.78 (0.1%), tests_pri_0: 649 (90.2%),
-        check_dkim_signature: 0.81 (0.1%), check_dkim_adsp: 319 (44.4%),
-        tests_pri_500: 6 (0.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v6 0/8] ipc: Clamp *mni to the real IPCMNI limit & increase that limit
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Tue, 1 May 2018 22:22:27 -0400
+X-Google-Smtp-Source: AB8JxZp+dw+Dp9aMINagTj5GPJGNq9czhffyOsbDGg9euhBL4JhXe0j76S9IMcVU8ElVGdLW4TtErg==
+Message-ID: <1525227744.14025.6.camel@arista.com>
+Subject: Re: [PATCHv4 1/2] iommu/vt-d: Ratelimit each dmar fault printing
+From: Dmitry Safonov <dima@arista.com>
+To: linux-kernel@vger.kernel.org, joro@8bytes.org
+Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
+Date: Wed, 02 May 2018 03:22:24 +0100
+In-Reply-To: <20180331003312.6390-1-dima@arista.com>
+References: <20180331003312.6390-1-dima@arista.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Joerg,
 
+is there anything I may do about those two patches?
+In 2/2 I've limited loop cnt as discussed in v3.
+This one solves softlockup for us, might be useful.
 
-> The sysctl parameters msgmni, shmmni and semmni have an inherent limit
-> of IPC_MNI (32k). However, users may not be aware of that because they
-> can write a value much higher than that without getting any error or
-> notification. Reading the parameters back will show the newly written
-> values which are not real.
->
-> Enforcing the limit by failing sysctl parameter write, however, may
-> cause regressions if existing user setup scripts set those parameters
-> above 32k as those scripts will now fail in this case.
-
-I have a serious problem with this approach.  Have you made any effort
-to identify any code that sets these values above 32k?  Have you looked
-to see if these applications actually care if you return an error when
-a value is set too large?
-
-Right now this seems like a lot of work to avoid breaking applications
-and or users that may or may not exist.  If you can find something that
-will care sure.  We need to avoid breaking userspace and causing
-regressions.  However as this stands it looks you are making maintenance
-of the kernel more difficult to avoid having to look to see if there are
-monsters under the bed.
-
-
-
-Eric
+On Sat, 2018-03-31 at 01:33 +0100, Dmitry Safonov wrote:
+> There is a ratelimit for printing, but it's incremented each time the
+> cpu recives dmar fault interrupt. While one interrupt may signal
+> about
+> *many* faults.
+> So, measuring the impact it turns out that reading/clearing one fault
+> takes < 1 usec, and printing info about the fault takes ~170 msec.
+> 
+> Having in mind that maximum number of fault recording registers per
+> remapping hardware unit is 256.. IRQ handler may run for (170*256)
+> msec.
+> And as fault-serving loop runs without a time limit, during servicing
+> new faults may occur..
+> 
+> Ratelimit each fault printing rather than each irq printing.
+> 
+> Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
+> 
+> BUG: spinlock lockup suspected on CPU#0, CliShell/9903
+>  lock: 0xffffffff81a47440, .magic: dead4ead, .owner:
+> kworker/u16:2/8915, .owner_cpu: 6
+> CPU: 0 PID: 9903 Comm: CliShell
+> Call Trace:$\n'
+> [..] dump_stack+0x65/0x83$\n'
+> [..] spin_dump+0x8f/0x94$\n'
+> [..] do_raw_spin_lock+0x123/0x170$\n'
+> [..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
+> [..] uart_chars_in_buffer+0x20/0x4d$\n'
+> [..] tty_chars_in_buffer+0x18/0x1d$\n'
+> [..] n_tty_poll+0x1cb/0x1f2$\n'
+> [..] tty_poll+0x5e/0x76$\n'
+> [..] do_select+0x363/0x629$\n'
+> [..] compat_core_sys_select+0x19e/0x239$\n'
+> [..] compat_SyS_select+0x98/0xc0$\n'
+> [..] sysenter_dispatch+0x7/0x25$\n'
+> [..]
+> NMI backtrace for cpu 6
+> CPU: 6 PID: 8915 Comm: kworker/u16:2
+> Workqueue: dmar_fault dmar_fault_work
+> Call Trace:$\n'
+> [..] wait_for_xmitr+0x26/0x8f$\n'
+> [..] serial8250_console_putchar+0x1c/0x2c$\n'
+> [..] uart_console_write+0x40/0x4b$\n'
+> [..] serial8250_console_write+0xe6/0x13f$\n'
+> [..] call_console_drivers.constprop.13+0xce/0x103$\n'
+> [..] console_unlock+0x1f8/0x39b$\n'
+> [..] vprintk_emit+0x39e/0x3e6$\n'
+> [..] printk+0x4d/0x4f$\n'
+> [..] dmar_fault+0x1a8/0x1fc$\n'
+> [..] dmar_fault_work+0x15/0x17$\n'
+> [..] process_one_work+0x1e8/0x3a9$\n'
+> [..] worker_thread+0x25d/0x345$\n'
+> [..] kthread+0xea/0xf2$\n'
+> [..] ret_from_fork+0x58/0x90$\n'
+> 
+> Cc: Alex Williamson <alex.williamson@redhat.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Lu Baolu <baolu.lu@linux.intel.com>
+> Cc: iommu@lists.linux-foundation.org
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
+> ---
+>  drivers/iommu/dmar.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> index accf58388bdb..6c4ea32ee6a9 100644
+> --- a/drivers/iommu/dmar.c
+> +++ b/drivers/iommu/dmar.c
+> @@ -1618,17 +1618,13 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
+>  	int reg, fault_index;
+>  	u32 fault_status;
+>  	unsigned long flag;
+> -	bool ratelimited;
+>  	static DEFINE_RATELIMIT_STATE(rs,
+>  				      DEFAULT_RATELIMIT_INTERVAL,
+>  				      DEFAULT_RATELIMIT_BURST);
+>  
+> -	/* Disable printing, simply clear the fault when ratelimited
+> */
+> -	ratelimited = !__ratelimit(&rs);
+> -
+>  	raw_spin_lock_irqsave(&iommu->register_lock, flag);
+>  	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
+> -	if (fault_status && !ratelimited)
+> +	if (fault_status && __ratelimit(&rs))
+>  		pr_err("DRHD: handling fault status reg %x\n",
+> fault_status);
+>  
+>  	/* TBD: ignore advanced fault log currently */
+> @@ -1638,6 +1634,8 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
+>  	fault_index = dma_fsts_fault_record_index(fault_status);
+>  	reg = cap_fault_reg_offset(iommu->cap);
+>  	while (1) {
+> +		/* Disable printing, simply clear the fault when
+> ratelimited */
+> +		bool ratelimited = !__ratelimit(&rs);
+>  		u8 fault_reason;
+>  		u16 source_id;
+>  		u64 guest_addr;
