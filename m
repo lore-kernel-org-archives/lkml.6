@@ -1,116 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751421AbeEBNkp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:40:45 -0400
-Received: from mail.stoffel.org ([104.236.43.127]:40614 "EHLO mail.stoffel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751127AbeEBNki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:40:38 -0400
+        id S1751492AbeEBNk6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:40:58 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:62797 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750921AbeEBNku (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:40:50 -0400
+From: "Reizer, Eyal" <eyalr@ti.com>
+To: "Nori, Sekhar" <nsekhar@ti.com>, Eyal Reizer <eyalreizer@gmail.com>,
+        "bcousson@baylibre.com" <bcousson@baylibre.com>,
+        "tony@atomide.com" <tony@atomide.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] arm: dts: am437x-sk-evm: add wilink8 support
+Thread-Topic: [PATCH] arm: dts: am437x-sk-evm: add wilink8 support
+Thread-Index: AQHT4e/o3j/tTV/a2U2rKUML7UrPhqQcciFA
+Date: Wed, 2 May 2018 13:40:39 +0000
+Message-ID: <d6e88ea0fe624c238bace4dfe5aaf882@ti.com>
+References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
+ <abebf4a1-11d6-413b-a3c0-4f46ac6fc485@ti.com>
+In-Reply-To: <abebf4a1-11d6-413b-a3c0-4f46ac6fc485@ti.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [137.167.25.139]
+x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Message-ID: <23273.49098.982175.973732@quad.stoffel.home>
-Date: Wed, 2 May 2018 09:40:26 -0400
-From: "John Stoffel" <john@stoffel.org>
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, eric.dumazet@gmail.com,
-        mst@redhat.com, netdev@vger.kernel.org, jasowang@redhat.com,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        dm-devel@redhat.com, Mikulas Patocka <mpatocka@redhat.com>,
-        Babka <vbabka@suse.cz>, virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>, edumazet@google.com
-Subject: Re: [dm-devel] kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
-In-Reply-To: <20180502133224.GA22123@redhat.com>
-References: <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
-        <20180421144757.GC14610@bombadil.infradead.org>
-        <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
-        <20180423151545.GU17484@dhcp22.suse.cz>
-        <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
-        <20180424133146.GG17484@dhcp22.suse.cz>
-        <alpine.LRH.2.02.1804241107010.31601@file01.intranet.prod.int.rdu2.redhat.com>
-        <20180424161242.GK17484@dhcp22.suse.cz>
-        <alpine.LRH.2.02.1804241229410.23702@file01.intranet.prod.int.rdu2.redhat.com>
-        <20180501173626.4593a87d0d64f6cc9d219d20@linux-foundation.org>
-        <20180502133224.GA22123@redhat.com>
-X-Mailer: VM 8.2.0b under 24.5.1 (x86_64-pc-linux-gnu)
-X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w42Df0V5017984
 
->>>>> "Mike" == Mike Snitzer <snitzer@redhat.com> writes:
+> 
+> ARM should be capitalized in subject line.
 
-Mike> On Tue, May 01 2018 at  8:36pm -0400,
-Mike> Andrew Morton <akpm@linux-foundation.org> wrote:
+OK, will be fixed in v2
+> 
+> > +
+> > +&mmc3 {
+> > +	status = "okay";
+> > +	/*
+> > +	 * these are on the crossbar and are outlined in the
+> > +	 * xbar-event-map element
+> > +	 */
+> > +	dmas = <&edma_xbar 30 0 1>,
+> > +		<&edma_xbar 31 0 2>;
+> > +	dma-names = "tx", "rx";
+> > +	vmmc-supply = <&vmmcwl_fixed>;
+> > +	bus-width = <4>;
+> > +	pinctrl-names = "default", "sleep";
+> > +	pinctrl-0 = <&mmc3_pins_default>;
+> > +	pinctrl-1 = <&mmc3_pins_sleep>;
+> > +	cap-power-off-card;
+> > +	keep-power-in-suspend;
+> > +	ti,non-removable;
+> > +
+> > +	#address-cells = <1>;
+> > +	#size-cells = <0>;
+> > +	wlcore: wlcore@0 {
+> 
+> wlcore@2
+> 
+Will be fixed in v2
 
->> On Tue, 24 Apr 2018 12:33:01 -0400 (EDT) Mikulas Patocka <mpatocka@redhat.com> wrote:
->> 
->> > 
->> > 
->> > On Tue, 24 Apr 2018, Michal Hocko wrote:
->> > 
->> > > On Tue 24-04-18 11:30:40, Mikulas Patocka wrote:
->> > > > 
->> > > > 
->> > > > On Tue, 24 Apr 2018, Michal Hocko wrote:
->> > > > 
->> > > > > On Mon 23-04-18 20:25:15, Mikulas Patocka wrote:
->> > > > > 
->> > > > > > Fixing __vmalloc code 
->> > > > > > is easy and it doesn't require cooperation with maintainers.
->> > > > > 
->> > > > > But it is a hack against the intention of the scope api.
->> > > > 
->> > > > It is not!
->> > > 
->> > > This discussion simply doesn't make much sense it seems. The scope API
->> > > is to document the scope of the reclaim recursion critical section. That
->> > > certainly is not a utility function like vmalloc.
->> > 
->> > That 15-line __vmalloc bugfix doesn't prevent you (or any other kernel 
->> > developer) from converting the code to the scope API. You make nonsensical 
->> > excuses.
->> > 
->> 
->> Fun thread!
->> 
->> Winding back to the original problem, I'd state it as
->> 
->> - Caller uses kvmalloc() but passes the address into vmalloc-naive
->> DMA API and
->> 
->> - Caller uses kvmalloc() but passes the address into kfree()
->> 
->> Yes?
-
-Mike> I think so.
-
->> If so, then...
->> 
->> Is there a way in which, in the kvmalloc-called-kmalloc path, we can
->> tag the slab-allocated memory with a "this memory was allocated with
->> kvmalloc()" flag?  I *think* there's extra per-object storage available
->> with suitable slab/slub debugging options?  Perhaps we could steal one
->> bit from the redzone, dunno.
->> 
->> If so then we can
->> 
->> a) set that flag in kvmalloc() if the kmalloc() call succeeded
->> 
->> b) check for that flag in the DMA code, WARN if it is set.
->> 
->> c) in kvfree(), clear that flag before calling kfree()
->> 
->> d) in kfree(), check for that flag and go WARN() if set.
->> 
->> So both potential bugs are detected all the time, dependent upon
->> CONFIG_SLUB_DEBUG (and perhaps other slub config options).
-
-Mike> Thanks Andrew, definitely the most sane proposal I've seen to resolve
-Mike> this.
-
-Cuts to the heart of the issue I think, and seems pretty sane.  Should
-the WARN be rate limited as well?
-
-John
+> > +		compatible = "ti,wl1835";
+> > +		pinctrl-names = "default", "sleep";
+> > +		pinctrl-0 = <&wlan_pins_default>;
+> > +		pinctrl-1 = <&wlan_pins_sleep>;
+> > +		reg = <2>;
+> > +		interrupt-parent = <&gpio4>;
+> > +		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
+> > +	};
+> > +};
+> 
+Best Regards,
+Eyal
