@@ -1,37 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeEBN6p (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:58:45 -0400
-Received: from mga02.intel.com ([134.134.136.20]:50032 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751185AbeEBN6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:58:43 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="47712852"
-Date: Wed, 2 May 2018 16:58:39 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] hwtracing: intel_th: Change return type to vm_fault_t
-Message-ID: <20180502135839.5ujlwpirizy2zyod@um.fi.intel.com>
-References: <20180417141547.GA30799@jordon-HP-15-Notebook-PC>
- <CAFqt6zYFxJPMbcyLbJp6qrRDmcy4A+KAk9NhEvy-kVMBL2dySg@mail.gmail.com>
+        id S1751514AbeEBN7v (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:59:51 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52416 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751078AbeEBN7r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:59:47 -0400
+From: Colin King <colin.king@canonical.com>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: sc6000: fix spelling mistake: "iomaped" -> "iomapped"
+Date: Wed,  2 May 2018 14:59:40 +0100
+Message-Id: <20180502135940.30915-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zYFxJPMbcyLbJp6qrRDmcy4A+KAk9NhEvy-kVMBL2dySg@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 11:14:48AM +0530, Souptick Joarder wrote:
-> Any comment for this patch ?
+From: Colin Ian King <colin.king@canonical.com>
 
-Looks good, I'm queuing this one for the next merge window.
+Trivial fix to spelling mistake in KERN_ERR error messages
 
-Thanks you!
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/isa/sc6000.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/sound/isa/sc6000.c b/sound/isa/sc6000.c
+index c09d9b914efe..a985e9183be9 100644
+--- a/sound/isa/sc6000.c
++++ b/sound/isa/sc6000.c
+@@ -592,7 +592,7 @@ static int snd_sc6000_probe(struct device *devptr, unsigned int dev)
+ 	*vport = devm_ioport_map(devptr, port[dev], 0x10);
+ 	if (*vport == NULL) {
+ 		snd_printk(KERN_ERR PFX
+-			   "I/O port cannot be iomaped.\n");
++			   "I/O port cannot be iomapped.\n");
+ 		err = -EBUSY;
+ 		goto err_unmap1;
+ 	}
+@@ -607,7 +607,7 @@ static int snd_sc6000_probe(struct device *devptr, unsigned int dev)
+ 	vmss_port = devm_ioport_map(devptr, mss_port[dev], 4);
+ 	if (!vmss_port) {
+ 		snd_printk(KERN_ERR PFX
+-			   "MSS port I/O cannot be iomaped.\n");
++			   "MSS port I/O cannot be iomapped.\n");
+ 		err = -EBUSY;
+ 		goto err_unmap2;
+ 	}
+-- 
+2.17.0
