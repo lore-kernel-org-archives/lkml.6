@@ -1,127 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751265AbeEBHzC (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:55:02 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:45907 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeEBHy7 (ORCPT
+        id S1751311AbeEBHzP (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:55:15 -0400
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:50750 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751087AbeEBHzM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:54:59 -0400
-X-Google-Smtp-Source: AB8JxZoLNN6Q8OTMHvuTMboxmCr2IR3CtGGbBVIs3PH4uA2Uzi9aPBbd815qr35a9E00r3Umz/SKaw==
-From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-To: ldufour@linux.vnet.ibm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Ganesh Mahendran <opensource.ganesh@gmail.com>
-Subject: [PATCH 2/2] arm64/mm: add speculative page fault
-Date: Wed,  2 May 2018 15:54:32 +0800
-Message-Id: <1525247672-2165-2-git-send-email-opensource.ganesh@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525247672-2165-1-git-send-email-opensource.ganesh@gmail.com>
-References: <1525247672-2165-1-git-send-email-opensource.ganesh@gmail.com>
+        Wed, 2 May 2018 03:55:12 -0400
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: neidhard.kim@lge.com
+X-Original-SENDERIP: 10.178.37.74
+X-Original-MAILFROM: neidhard.kim@lge.com
+Subject: Re: [PATCH] watchdog: sp805: add restart handler
+To: Guenter Roeck <linux@roeck-us.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: Chanho Min <chanho.min@lge.com>
+References: <20180430064433.28715-1-neidhard.kim@lge.com>
+ <452a2320-c297-2bd2-2e98-0b71a077c065@roeck-us.net>
+From: Jongsung Kim <neidhard.kim@lge.com>
+Message-ID: <c8502372-da23-f113-6cbc-78ef5683c28b@lge.com>
+Date: Wed, 2 May 2018 16:55:06 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <452a2320-c297-2bd2-2e98-0b71a077c065@roeck-us.net>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the speculative page fault on the arm64
-architecture.
+On 04/30/2018 08:18 PM, Guenter Roeck wrote:
+> On 04/29/2018 11:44 PM, Jongsung Kim wrote:
+>> Add restart handler for SP805 watchdog so that the driver can be
+>> used to reboot the system.
+>>
+>> Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
+>> ---
+>>   drivers/watchdog/sp805_wdt.c | 19 +++++++++++++++++++
+>>   1 file changed, 19 insertions(+)
+>>
+>> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+>> index 01d816251302..01f7b6c29f92 100644
+>> --- a/drivers/watchdog/sp805_wdt.c
+>> +++ b/drivers/watchdog/sp805_wdt.c
+>> @@ -23,6 +23,7 @@
+>>   #include <linux/module.h>
+>>   #include <linux/moduleparam.h>
+>>   #include <linux/pm.h>
+>> +#include <linux/reboot.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/spinlock.h>
+>>   #include <linux/types.h>
+>> @@ -67,6 +68,7 @@ struct sp805_wdt {
+>>       struct clk            *clk;
+>>       struct amba_device        *adev;
+>>       unsigned int            load_val;
+>> +    struct notifier_block        restart;
+>>   };
+>>     static bool nowayout = WATCHDOG_NOWAYOUT;
+>> @@ -200,6 +202,18 @@ static const struct watchdog_ops wdt_ops = {
+>>       .get_timeleft    = wdt_timeleft,
+>>   };
+>>   +static int
+>> +wdt_restart(struct notifier_block *this, unsigned long mode, void *cmd)
+>> +{
+>> +    struct sp805_wdt *wdt = container_of(this, struct sp805_wdt, restart);
+>> +
+>> +    writel_relaxed(0, wdt->base + WDTCONTROL);
+>> +    writel_relaxed(0, wdt->base + WDTLOAD);
+>> +    writel_relaxed(INT_ENABLE | RESET_ENABLE, wdt->base + WDTCONTROL);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>>   static int
+>>   sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>>   {
+>> @@ -241,6 +255,10 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+>>       }
+>>       amba_set_drvdata(adev, wdt);
+>>   +    wdt->restart.notifier_call = wdt_restart;
+>> +    wdt->restart.priority = 128;
+>> +    register_restart_handler(&wdt->restart);
+>> +
+>
+> Why not use the watchdog core ?
 
-I completed spf porting in 4.9. From the test result,
-we can see app launching time improved by about 10% in average.
-For the apps which have more than 50 threads, 15% or even more
-improvement can be got.
+Thank you for pointing this. I didn't noticed core changes about restart function because I'm still using old v4.4.xx..
 
-Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
----
-This patch is on top of Laurent's v10 spf
----
- arch/arm64/mm/fault.c | 38 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
-
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 4165485..e7992a3 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -322,11 +322,13 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
- 
- static int __do_page_fault(struct mm_struct *mm, unsigned long addr,
- 			   unsigned int mm_flags, unsigned long vm_flags,
--			   struct task_struct *tsk)
-+			   struct task_struct *tsk, struct vm_area_struct *vma)
- {
--	struct vm_area_struct *vma;
- 	int fault;
- 
-+	if (!vma || !can_reuse_spf_vma(vma, addr))
-+		vma = find_vma(mm, addr);
-+
- 	vma = find_vma(mm, addr);
- 	fault = VM_FAULT_BADMAP;
- 	if (unlikely(!vma))
-@@ -371,6 +373,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 	int fault, major = 0;
- 	unsigned long vm_flags = VM_READ | VM_WRITE;
- 	unsigned int mm_flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
-+	struct vm_area_struct *vma;
- 
- 	if (notify_page_fault(regs, esr))
- 		return 0;
-@@ -409,6 +412,25 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, addr);
- 
-+	if (IS_ENABLED(CONFIG_SPECULATIVE_PAGE_FAULT)) {
-+		fault = handle_speculative_fault(mm, addr, mm_flags, &vma);
-+		/*
-+		 * Page fault is done if VM_FAULT_RETRY is not returned.
-+		 * But if the memory protection keys are active, we don't know
-+		 * if the fault is due to key mistmatch or due to a
-+		 * classic protection check.
-+		 * To differentiate that, we will need the VMA we no
-+		 * more have, so let's retry with the mmap_sem held.
-+		 */
-+		if (fault != VM_FAULT_RETRY &&
-+			 fault != VM_FAULT_SIGSEGV) {
-+			perf_sw_event(PERF_COUNT_SW_SPF, 1, regs, addr);
-+			goto done;
-+		}
-+	} else {
-+		vma = NULL;
-+	}
-+
- 	/*
- 	 * As per x86, we may deadlock here. However, since the kernel only
- 	 * validly references user space from well defined areas of the code,
-@@ -431,7 +453,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- #endif
- 	}
- 
--	fault = __do_page_fault(mm, addr, mm_flags, vm_flags, tsk);
-+	fault = __do_page_fault(mm, addr, mm_flags, vm_flags, tsk, vma);
- 	major |= fault & VM_FAULT_MAJOR;
- 
- 	if (fault & VM_FAULT_RETRY) {
-@@ -454,11 +476,21 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 		if (mm_flags & FAULT_FLAG_ALLOW_RETRY) {
- 			mm_flags &= ~FAULT_FLAG_ALLOW_RETRY;
- 			mm_flags |= FAULT_FLAG_TRIED;
-+
-+			/*
-+			 * Do not try to reuse this vma and fetch it
-+			 * again since we will release the mmap_sem.
-+			 */
-+			if (IS_ENABLED(CONFIG_SPECULATIVE_PAGE_FAULT))
-+				vma = NULL;
-+
- 			goto retry;
- 		}
- 	}
- 	up_read(&mm->mmap_sem);
- 
-+done:
-+
- 	/*
- 	 * Handle the "normal" (no error) case first.
- 	 */
--- 
-1.9.1
+>
+> Guenter
+>
+>>       dev_info(&adev->dev, "registration successful\n");
+>>       return 0;
+>>   @@ -253,6 +271,7 @@ static int sp805_wdt_remove(struct amba_device *adev)
+>>   {
+>>       struct sp805_wdt *wdt = amba_get_drvdata(adev);
+>>   +    unregister_restart_handler(&wdt->restart);
+>>       watchdog_unregister_device(&wdt->wdd);
+>>       watchdog_set_drvdata(&wdt->wdd, NULL);
+>>  
+>
+>
