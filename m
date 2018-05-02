@@ -1,117 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751902AbeEBPpU (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:45:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46564 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751862AbeEBPpP (ORCPT
+        id S1751932AbeEBPpf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:45:35 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:36632 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeEBPo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:45:15 -0400
-Subject: Re: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 02 May 2018 11:45:04 -0400
-In-Reply-To: <87h8nqglpx.fsf@xmission.com>
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
-         <87h8nqglpx.fsf@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18050215-0040-0000-0000-0000045431C8
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050215-0041-0000-0000-000020F8531F
-Message-Id: <1525275904.5669.308.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805020131
+        Wed, 2 May 2018 11:44:28 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>
+Cc: Gwendal Grignou <gwendal@chromium.org>,
+        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
+        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com,
+        kernel@collabora.com
+Subject: [PATCH v4 1/3] mfd: cros_ec: Add USBPD charger commands and struct definitions.
+Date: Wed,  2 May 2018 17:44:16 +0200
+Message-Id: <20180502154418.2153-2-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180502154418.2153-1-enric.balletbo@collabora.com>
+References: <20180502154418.2153-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
-> > Allow LSMs and IMA to differentiate between the kexec_load and
-> > kexec_file_load syscalls by adding an "unnecessary" call to
-> > security_kernel_read_file() in kexec_load.  This would be similar to the
-> > existing init_module syscall calling security_kernel_read_file().
-> 
-> Given the reasonable desire to load a policy that ensures everything
-> has a signature I don't have fundamental objections.
-> 
-> security_kernel_read_file as a hook seems an odd choice.  At the very
-> least it has a bad name because there is no file reading going on here.
-> 
-> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
-> anywhere.  Which means I could have a kernel compiled without that and I
-> would be allowed to use kexec_file_load without signature checking.
-> While kexec_load would be denied.
-> 
-> Am I missing something here?
+From: Sameer Nanda <snanda@chromium.org>
 
-The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
-calls security_kernel_read_file().  So kexec_file_load and kexec_load
-syscall would be using the same method for enforcing signature
-verification.
+The USBPD charger driver gets information from the ChromeOS EC, this
+patch adds the USBPD charger definitions needed by this driver.
 
-This is independent of the architecture specific method for verifying
-signatures.  The coordination between these two methods was included
-in the lockdown patch set, but is being removed, as well the gating of
-kexec_load syscall.  Instead of being based on the lockdown flag, I
-assume the coordination between the two methods will reappear based on
-a secure boot flag of some sort.
+Signed-off-by: Sameer Nanda <snanda@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-Mimi
+Changes in v4: None
+Changes in v3:
+- [1/3] Use the BIT macro.
 
-> 
-> > Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-> > ---
-> >  kernel/kexec.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/kernel/kexec.c b/kernel/kexec.c
-> > index aed8fb2564b3..d1386cfc6796 100644
-> > --- a/kernel/kexec.c
-> > +++ b/kernel/kexec.c
-> > @@ -11,6 +11,7 @@
-> >  #include <linux/capability.h>
-> >  #include <linux/mm.h>
-> >  #include <linux/file.h>
-> > +#include <linux/security.h>
-> >  #include <linux/kexec.h>
-> >  #include <linux/mutex.h>
-> >  #include <linux/list.h>
-> > @@ -195,11 +196,21 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
-> >  static inline int kexec_load_check(unsigned long nr_segments,
-> >  				   unsigned long flags)
-> >  {
-> > +	int result;
-> > +
-> >  	/* We only trust the superuser with rebooting the system. */
-> >  	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
-> >  		return -EPERM;
-> >  
-> >  	/*
-> > +	 * Allow LSMs and IMA to differentiate between kexec_load and
-> > +	 * kexec_file_load syscalls.
-> > +	 */
-> > +	result = security_kernel_read_file(NULL, READING_KEXEC_IMAGE);
-> > +	if (result < 0)
-> > +		return result;
-> > +
-> > +	/*
-> >  	 * Verify we have a legal set of flags
-> >  	 * This leaves us room for future extensions.
-> >  	 */
-> 
+Changes in v2: None
+
+ include/linux/mfd/cros_ec_commands.h | 132 ++++++++++++++++++++++++++-
+ 1 file changed, 128 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+index f2edd9969b40..0d926492ac3a 100644
+--- a/include/linux/mfd/cros_ec_commands.h
++++ b/include/linux/mfd/cros_ec_commands.h
+@@ -2593,14 +2593,18 @@ struct ec_params_current_limit {
+ } __packed;
+ 
+ /*
+- * Set maximum external power current.
++ * Set maximum external voltage / current.
+  */
+-#define EC_CMD_EXT_POWER_CURRENT_LIMIT 0xa2
++#define EC_CMD_EXTERNAL_POWER_LIMIT 0x00A2
+ 
+-struct ec_params_ext_power_current_limit {
+-	uint32_t limit; /* in mA */
++/* Command v0 is used only on Spring and is obsolete + unsupported */
++struct ec_params_external_power_limit_v1 {
++	uint16_t current_lim; /* in mA, or EC_POWER_LIMIT_NONE to clear limit */
++	uint16_t voltage_lim; /* in mV, or EC_POWER_LIMIT_NONE to clear limit */
+ } __packed;
+ 
++#define EC_POWER_LIMIT_NONE 0xffff
++
+ /* Inform the EC when entering a sleep state */
+ #define EC_CMD_HOST_SLEEP_EVENT 0xa9
+ 
+@@ -2974,6 +2978,12 @@ enum usb_chg_type {
+ 	USB_CHG_TYPE_VBUS,
+ 	USB_CHG_TYPE_UNKNOWN,
+ };
++enum usb_power_roles {
++	USB_PD_PORT_POWER_DISCONNECTED,
++	USB_PD_PORT_POWER_SOURCE,
++	USB_PD_PORT_POWER_SINK,
++	USB_PD_PORT_POWER_SINK_NOT_CHARGING,
++};
+ 
+ struct usb_chg_measures {
+ 	uint16_t voltage_max;
+@@ -2991,6 +3001,120 @@ struct ec_response_usb_pd_power_info {
+ 	uint32_t max_power;
+ } __packed;
+ 
++struct ec_params_usb_pd_info_request {
++	uint8_t port;
++} __packed;
++
++/* Read USB-PD Device discovery info */
++#define EC_CMD_USB_PD_DISCOVERY 0x0113
++struct ec_params_usb_pd_discovery_entry {
++	uint16_t vid;  /* USB-IF VID */
++	uint16_t pid;  /* USB-IF PID */
++	uint8_t ptype; /* product type (hub,periph,cable,ama) */
++} __packed;
++
++/* Override default charge behavior */
++#define EC_CMD_PD_CHARGE_PORT_OVERRIDE 0x0114
++
++/* Negative port parameters have special meaning */
++enum usb_pd_override_ports {
++	OVERRIDE_DONT_CHARGE = -2,
++	OVERRIDE_OFF = -1,
++	/* [0, CONFIG_USB_PD_PORT_COUNT): Port# */
++};
++
++struct ec_params_charge_port_override {
++	int16_t override_port; /* Override port# */
++} __packed;
++
++/* Read (and delete) one entry of PD event log */
++#define EC_CMD_PD_GET_LOG_ENTRY 0x0115
++
++struct ec_response_pd_log {
++	uint32_t timestamp; /* relative timestamp in milliseconds */
++	uint8_t type;       /* event type : see PD_EVENT_xx below */
++	uint8_t size_port;  /* [7:5] port number [4:0] payload size in bytes */
++	uint16_t data;      /* type-defined data payload */
++	uint8_t payload[0]; /* optional additional data payload: 0..16 bytes */
++} __packed;
++
++/* The timestamp is the microsecond counter shifted to get about a ms. */
++#define PD_LOG_TIMESTAMP_SHIFT 10 /* 1 LSB = 1024us */
++
++#define PD_LOG_SIZE_MASK  0x1f
++#define PD_LOG_PORT_MASK  0xe0
++#define PD_LOG_PORT_SHIFT    5
++#define PD_LOG_PORT_SIZE(port, size) (((port) << PD_LOG_PORT_SHIFT) | \
++				      ((size) & PD_LOG_SIZE_MASK))
++#define PD_LOG_PORT(size_port) ((size_port) >> PD_LOG_PORT_SHIFT)
++#define PD_LOG_SIZE(size_port) ((size_port) & PD_LOG_SIZE_MASK)
++
++/* PD event log : entry types */
++/* PD MCU events */
++#define PD_EVENT_MCU_BASE       0x00
++#define PD_EVENT_MCU_CHARGE             (PD_EVENT_MCU_BASE+0)
++#define PD_EVENT_MCU_CONNECT            (PD_EVENT_MCU_BASE+1)
++/* Reserved for custom board event */
++#define PD_EVENT_MCU_BOARD_CUSTOM       (PD_EVENT_MCU_BASE+2)
++/* PD generic accessory events */
++#define PD_EVENT_ACC_BASE       0x20
++#define PD_EVENT_ACC_RW_FAIL   (PD_EVENT_ACC_BASE+0)
++#define PD_EVENT_ACC_RW_ERASE  (PD_EVENT_ACC_BASE+1)
++/* PD power supply events */
++#define PD_EVENT_PS_BASE        0x40
++#define PD_EVENT_PS_FAULT      (PD_EVENT_PS_BASE+0)
++/* PD video dongles events */
++#define PD_EVENT_VIDEO_BASE     0x60
++#define PD_EVENT_VIDEO_DP_MODE (PD_EVENT_VIDEO_BASE+0)
++#define PD_EVENT_VIDEO_CODEC   (PD_EVENT_VIDEO_BASE+1)
++/* Returned in the "type" field, when there is no entry available */
++#define PD_EVENT_NO_ENTRY       0xff
++
++/*
++ * PD_EVENT_MCU_CHARGE event definition :
++ * the payload is "struct usb_chg_measures"
++ * the data field contains the port state flags as defined below :
++ */
++/* Port partner is a dual role device */
++#define CHARGE_FLAGS_DUAL_ROLE         BIT(15)
++/* Port is the pending override port */
++#define CHARGE_FLAGS_DELAYED_OVERRIDE  BIT(14)
++/* Port is the override port */
++#define CHARGE_FLAGS_OVERRIDE          BIT(13)
++/* Charger type */
++#define CHARGE_FLAGS_TYPE_SHIFT               3
++#define CHARGE_FLAGS_TYPE_MASK       (0xf << CHARGE_FLAGS_TYPE_SHIFT)
++/* Power delivery role */
++#define CHARGE_FLAGS_ROLE_MASK         (7 <<  0)
++
++/*
++ * PD_EVENT_PS_FAULT data field flags definition :
++ */
++#define PS_FAULT_OCP                          1
++#define PS_FAULT_FAST_OCP                     2
++#define PS_FAULT_OVP                          3
++#define PS_FAULT_DISCH                        4
++
++/*
++ * PD_EVENT_VIDEO_CODEC payload is "struct mcdp_info".
++ */
++struct mcdp_version {
++	uint8_t major;
++	uint8_t minor;
++	uint16_t build;
++} __packed;
++
++struct mcdp_info {
++	uint8_t family[2];
++	uint8_t chipid[2];
++	struct mcdp_version irom;
++	struct mcdp_version fw;
++} __packed;
++
++/* struct mcdp_info field decoding */
++#define MCDP_CHIPID(chipid) ((chipid[0] << 8) | chipid[1])
++#define MCDP_FAMILY(family) ((family[0] << 8) | family[1])
++
+ /* Get info about USB-C SS muxes */
+ #define EC_CMD_USB_PD_MUX_INFO 0x11a
+ 
+-- 
+2.17.0
