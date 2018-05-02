@@ -1,49 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751361AbeEBKKw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:10:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48798 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751011AbeEBKKv (ORCPT
+        id S1751220AbeEBKMz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:12:55 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36312 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbeEBKMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:10:51 -0400
-From: Colin King <colin.king@canonical.com>
-To: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpu: drm: sti: fix spelling mistake: "initialze" -> "initialize"
-Date: Wed,  2 May 2018 11:10:48 +0100
-Message-Id: <20180502101048.8442-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 2 May 2018 06:12:49 -0400
+X-Google-Smtp-Source: AB8JxZq2mvtEiCkC8sojvEehG9Onj9Hmim8SAKLJ+xAY+qHl/jBKVphO6lItLGpyyXWc5iw430xprXjzNz8Z2ARdfr8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+References: <1524759587-7007-1-git-send-email-phil.edworthy@renesas.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 May 2018 12:12:48 +0200
+Message-ID: <CACRpkdYP=jxDVV9Z9HdCWQisgYHmm8WN0RZR6b_yOwytWY9Lgw@mail.gmail.com>
+Subject: Re: [PATCH v5] gpio: dwapb: Add support for 1 interrupt per port A GPIO
+To: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Hoan Tran <hotran@apm.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Lee Jones <lee.jones@linaro.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Thu, Apr 26, 2018 at 6:19 PM, Phil Edworthy
+<phil.edworthy@renesas.com> wrote:
 
-Trivial fix to spelling mistake in DRM_ERROR error message
+> The DesignWare GPIO IP can be configured for either 1 interrupt or 1
+> per GPIO in port A, but the driver currently only supports 1 interrupt.
+> See the DesignWare DW_apb_gpio Databook description of the
+> 'GPIO_INTR_IO' parameter.
+>
+> This change allows the driver to work with up to 32 interrupts, it will
+> get as many interrupts as specified in the DT 'interrupts' property.
+> It doesn't do anything clever with the different interrupts, it just calls
+> the same handler used for single interrupt hardware.
+>
+> ACPI companion code provided by Hoan Tran <hotran@apm.com>. This was tested
+> on X-Gene by Hoan.
+>
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/sti/sti_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Patch applied for v4.18 with Hoan's ACK.
 
-diff --git a/drivers/gpu/drm/sti/sti_crtc.c b/drivers/gpu/drm/sti/sti_crtc.c
-index 21e50d7b1f86..5824e6aca8f4 100644
---- a/drivers/gpu/drm/sti/sti_crtc.c
-+++ b/drivers/gpu/drm/sti/sti_crtc.c
-@@ -357,7 +357,7 @@ int sti_crtc_init(struct drm_device *drm_dev, struct sti_mixer *mixer,
- 	res = drm_crtc_init_with_planes(drm_dev, crtc, primary, cursor,
- 					&sti_crtc_funcs, NULL);
- 	if (res) {
--		DRM_ERROR("Can't initialze CRTC\n");
-+		DRM_ERROR("Can't initialize CRTC\n");
- 		return -EINVAL;
- 	}
- 
--- 
-2.17.0
+Yours,
+Linus Walleij
