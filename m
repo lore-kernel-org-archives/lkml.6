@@ -1,453 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751137AbeEBKW2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:22:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52616 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbeEBKWV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:22:21 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74015601A1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [v5 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1525164093-16645-1-git-send-email-tdas@codeaurora.org>
- <1525164093-16645-3-git-send-email-tdas@codeaurora.org>
- <152521007133.138124.1057969694939363822@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <c7770af2-364a-8c92-65b9-7eb625c83629@codeaurora.org>
-Date: Wed, 2 May 2018 15:52:12 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751268AbeEBKWm (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:22:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750966AbeEBKWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:22:40 -0400
+Date: Wed, 2 May 2018 13:22:37 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Doug Ledford <dledford@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>
+Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
+ tree
+Message-ID: <20180502102237.GG20375@mtr-leonro.local>
+References: <20180501101017.517b38af@canb.auug.org.au>
+ <1525136135.11756.94.camel@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <152521007133.138124.1057969694939363822@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="k3qmt+ucFURmlhDS"
+Content-Disposition: inline
+In-Reply-To: <1525136135.11756.94.camel@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Stephen for the comments.
 
-On 5/2/2018 2:57 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-05-01 01:41:33)
->> Add the RPMh clock driver to control the RPMh managed clock resources on
->> some of the Qualcomm Technologies, Inc. SoCs.
->>
->> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> 
-> Drop Amit's signoff, or make it "Co-authored-by" please. First signoff
-> should be the author and there should be a "From:" line either from the
-> email header of the sender or explicitly here before the commit text
-> body to indicate the authorship.
-> 
-> Overall this is looking close. Maybe one more round.
-> 
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> new file mode 100644
->> index 0000000..9cb7aa4
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -0,0 +1,387 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/err.h>
->> +#include <linux/kernel.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <soc/qcom/cmd-db.h>
->> +#include <soc/qcom/rpmh.h>
->> +
->> +#include <dt-bindings/clock/qcom,rpmh.h>
->> +
->> +#define CLK_RPMH_ARC_EN_OFFSET         0
->> +#define CLK_RPMH_VRM_EN_OFFSET         4
->> +
->> +/**
->> + * struct clk_rpmh - individual rpmh clock data structure
->> + * @hw:                        handle between common and hardware-specific interfaces
->> + * @res_name:          resource name for the rpmh clock
->> + * @div:               clock divider to compute the clock rate
->> + * @res_addr:          base address of the rpmh resource within the RPMh
->> + * @res_on_val:                rpmh clock enable value
->> + * @res_off_val:       rpmh clock disable value
-> 
-> It's still unused.
-> 
+--k3qmt+ucFURmlhDS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It is unused as the currently the resource off value is '0'. I would 
-remove, will add it back if any different value is required.
-
->> + * @state:             rpmh clock requested state
->> + * @aggr_state:                rpmh clock aggregated state
->> + * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
->> + * @valid_state_mask:  mask to determine the state of the rpmh clock
->> + * @rpmh_client:       handle used for rpmh communications
->> + * @dev:               device to which it is attached
->> + * @peer:              pointer to the clock rpmh sibling
->> + */
->> +struct clk_rpmh {
->> +       struct clk_hw hw;
->> +       const char *res_name;
->> +       u8  div;
-> 
-> Weird space here.
-> 
-This is no longer required, removed.
-
->> +       u32 res_addr;
->> +       u32 res_on_val;
->> +       u32 res_off_val;
->> +       u32 state;
->> +       u32 aggr_state;
->> +       u32 last_sent_aggr_state;
->> +       u32 valid_state_mask;
->> +       struct rpmh_client *rpmh_client;
->> +       struct device *dev;
->> +       struct clk_rpmh *peer;
->> +};
->> +
->> +struct clk_rpmh_desc {
->> +       struct clk_hw **clks;
->> +       size_t num_clks;
->> +};
->> +
->> +static DEFINE_MUTEX(rpmh_clk_lock);
->> +
->> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
->> +                         _res_en_offset, _res_on, _res_off)            \
->> +       static struct clk_rpmh _platform##_##_name_active;              \
->> +       static struct clk_rpmh _platform##_##_name = {                  \
->> +               .res_name = _res_name,                                  \
->> +               .res_addr = _res_en_offset,                             \
->> +               .res_on_val = _res_on,                                  \
->> +               .res_off_val = _res_off,                                \
->> +               .peer = &_platform##_##_name_active,                    \
->> +               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
->> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
->> +                                     BIT(RPMH_SLEEP_STATE)),           \
->> +               .hw.init = &(struct clk_init_data){                     \
->> +                       .ops = &clk_rpmh_ops,                           \
->> +                       .name = #_name,                                 \
->> +                       .parent_names = (const char *[]){ "xo_board" }, \
-> 
-> This would be different for the xo_board and the xo_board / 2 clk names.
-> 
-
-Would add parents "xo_board" & "xo_board_div".
-
->> +                       .num_parents = 1,                               \
->> +               },                                                      \
->> +       };                                                              \
->> +       static struct clk_rpmh _platform##_##_name_active = {           \
->> +               .res_name = _res_name,                                  \
->> +               .res_addr = _res_en_offset,                             \
->> +               .res_on_val = _res_on,                                  \
->> +               .res_off_val = _res_off,                                \
->> +               .peer = &_platform##_##_name,                           \
->> +               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
->> +                                       BIT(RPMH_ACTIVE_ONLY_STATE)),   \
->> +               .hw.init = &(struct clk_init_data){                     \
->> +                       .ops = &clk_rpmh_ops,                           \
->> +                       .name = #_name_active,                          \
->> +                       .parent_names = (const char *[]){ "xo_board" }, \
->> +                       .num_parents = 1,                               \
->> +               },                                                      \
->> +       }
->> +
->> +#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name, \
->> +                           _res_on, _res_off)                          \
->> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
->> +                         CLK_RPMH_ARC_EN_OFFSET, _res_on, _res_off)
->> +
->> +#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name) \
->> +       __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,    \
->> +                         CLK_RPMH_VRM_EN_OFFSET, true, false)
-> 
-> s/true, false/1, 0/ ?
-> 
-
-Would take care of this too.
-
->> +
->> +static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
->> +{
->> +       return container_of(_hw, struct clk_rpmh, hw);
->> +}
->> +
->> +static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
->> +{
->> +       return (c->last_sent_aggr_state & BIT(state))
->> +               != (c->aggr_state & BIT(state));
->> +}
->> +
->> +static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
->> +{
->> +       struct tcs_cmd cmd = { 0 };
->> +       u32 cmd_state, on_val;
->> +       enum rpmh_state state = RPMH_SLEEP_STATE;
->> +       int ret;
->> +
->> +       cmd.addr = c->res_addr;
->> +       cmd_state = c->aggr_state;
->> +       on_val = c->res_on_val;
->> +
->> +       for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
->> +               if (has_state_changed(c, state)) {
->> +                       cmd.data = (cmd_state & BIT(state)) ? on_val : 0;
-> 
-> Make this into an "if" please. Default is already 0 so just set bit if
-> cmd_state & BIT(state).
+On Mon, Apr 30, 2018 at 08:55:35PM -0400, Doug Ledford wrote:
+> On Tue, 2018-05-01 at 10:10 +1000, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the rdma tree got a conflict in:
+> >
+> >   drivers/infiniband/sw/rxe/rxe_resp.c
+> >
+> > between commit:
+> >
+> >   9fd4350ba895 ("B/rxe: avoid double kfree_skb")
+> >
+> > from the rdma-fixes tree and commit:
+> >
+> >   2e47350789eb ("IB/rxe: optimize the function duplicate_request")
+> >
+> > from the rdma tree.
+> >
+> > I fixed it up (I think - see below) and can carry the fix as necessary.
+> > This is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> >
 >
+> We will probably merge the for-rc branch into the for-next branch in the
+> next few days, at which point we will do the conflict resolution
+> ourselves and your need to carry anything should drop out.
 
-Would take care of it.
+Isn't "rdma/wip/for-testing" branch intended for this?
 
->> +                       ret = rpmh_write_async(c->rpmh_client, state,
->> +                                               &cmd, 1);
->> +                       if (ret) {
->> +                               dev_err(c->dev, "set %s state of %s failed: (%d)\n",
->> +                                       !state ? "sleep" :
->> +                                       state == RPMH_WAKE_ONLY_STATE   ?
->> +                                       "wake" : "active", c->res_name, ret);
->> +                               return ret;
->> +                       }
->> +               }
->> +       }
->> +
->> +       c->last_sent_aggr_state = c->aggr_state;
->> +       c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
->> +
->> +       return 0;
->> +}
->> +
->> +/*
->> + * Update state and aggregate state values based on enable value.
->> + */
->> +static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
->> +                                               bool enable)
->> +{
->> +       int ret;
->> +
->> +       c->state = enable ? c->valid_state_mask : 0;
->> +       c->aggr_state = c->state | c->peer->state;
->> +       c->peer->aggr_state = c->aggr_state;
->> +
->> +       ret = clk_rpmh_send_aggregate_command(c);
->> +       if (ret && enable) {
->> +               c->state = 0;
-> 
-> Why don't we print a WARN if it fails to enable?
-> 
-I would add a WARN for enable failure too.
+Thanks
 
->> +       } else if (ret) {
->> +               c->state = c->valid_state_mask;
->> +               WARN(1, "clk: %s failed to disable\n", c->res_name);
->> +       }
->> +
->> +       return ret;
->> +}
->> +
->> +static int clk_rpmh_prepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +       int ret = 0;
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +
->> +       if (!c->state)
-> 
-> Can we push this into clk_rpmh_aggregate_state_send_command()? Something
-> like:
-> 
-> 	/* Nothing to do if already off or on */
-> 	if (enable == c->state)
-> 		return 0;
-> 
-
-Thanks, would add these changes.
-
->> +               ret = clk_rpmh_aggregate_state_send_command(c, true);
->> +
->> +       mutex_unlock(&rpmh_clk_lock);
->> +       return ret;
->> +};
->> +
->> +static void clk_rpmh_unprepare(struct clk_hw *hw)
->> +{
->> +       struct clk_rpmh *c = to_clk_rpmh(hw);
->> +
->> +       mutex_lock(&rpmh_clk_lock);
->> +
->> +       if (c->state)
->> +               clk_rpmh_aggregate_state_send_command(c, false);
->> +
->> +       mutex_unlock(&rpmh_clk_lock);
->> +};
->> +
->> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
->> +                                               unsigned long prate)
->> +{
->> +       struct clk_rpmh *r = to_clk_rpmh(hw);
->> +       unsigned long rate;
->> +
->> +       /*
->> +        * RPMh clocks have a fixed rate.
->> +        */
->> +       rate =  prate;
->> +       do_div(rate, r->div);
->> +
->> +       return rate;
->> +}
-> 
-> You shouldn't need any recalc rate in this driver.
-> 
-
-Yes, these would be removed.
-
->> +
->> +static int clk_rpmh_probe(struct platform_device *pdev)
->> +{
->> +       struct clk *clk;
->> +       struct clk_hw_onecell_data *hw_data;
->> +       struct clk_hw **hw_clks;
->> +       struct clk_rpmh *rpmh_clk;
->> +       const struct clk_rpmh_desc *desc;
->> +       struct rpmh_client *rpmh_client;
->> +       struct device *dev;
->> +       size_t num_clks, i;
->> +       int ret;
->> +
->> +       dev = &pdev->dev;
-> 
-> Just do this when dev is defined please.
-> 
->> +
->> +       ret = cmd_db_ready();
->> +       if (ret) {
->> +               if (ret != -EPROBE_DEFER)
->> +                       dev_err(dev, "Command DB not available (%d)\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       rpmh_client = rpmh_get_client(pdev);
->> +       if (IS_ERR(rpmh_client)) {
->> +               ret = PTR_ERR(rpmh_client);
->> +               dev_err(dev, "Failed to request RPMh client, ret=%d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       desc = of_device_get_match_data(&pdev->dev);
->> +       hw_clks = desc->clks;
->> +       num_clks = desc->num_clks;
->> +
->> +       hw_data = devm_kzalloc(dev,
->> +                       sizeof(*hw_data) + num_clks * sizeof(struct clk_hw *),
->> +                       GFP_KERNEL);
->> +       if (!hw_data)
->> +               return -ENOMEM;
->> +
->> +       hw_data->num = num_clks;
->> +
->> +       for (i = 0; i < num_clks; i++) {
->> +               const char *clk_name;
->> +               struct property *prop;
->> +               const __be32 *p;
->> +               u32 res_addr;
->> +               int div, j = 0;
->> +
->> +               rpmh_clk = to_clk_rpmh(hw_clks[i]);
->> +               res_addr = cmd_db_read_addr(rpmh_clk->res_name);
->> +               if (!res_addr) {
->> +                       dev_err(dev, "missing RPMh resource address for %s\n",
->> +                                       rpmh_clk->res_name);
->> +                       ret = -ENODEV;
->> +                       goto err;
->> +               }
->> +               rpmh_clk->res_addr += res_addr;
-> 
-> Thanks!
-> 
->> +
->> +               rpmh_clk->rpmh_client = rpmh_client;
->> +
->> +               /* default div for all clocks */
->> +               if (!rpmh_clk->div)
->> +                       rpmh_clk->div = 1;
->> +
->> +               of_property_for_each_u32(pdev->dev.of_node, "assigned-clk-divs",
->> +                                               prop, p, div) {
->> +                       of_property_read_string_index(pdev->dev.of_node,
->> +                                       "clk-output-names", j, &clk_name);
->> +                       if (!strcmp(clk_name, hw_clks[i]->init->name)) {
->> +                               rpmh_clk->div = div;
->> +                               rpmh_clk->peer->div = div;
->> +                       }
->> +                       j++;
->> +               }
->> +
->> +               clk = devm_clk_register(&pdev->dev, hw_clks[i]);
->> +               if (IS_ERR(clk)) {
->> +                       ret = PTR_ERR(clk);
->> +                       dev_err(dev, "failed to register %s\n",
->> +                                       hw_clks[i]->init->name);
->> +                       goto err;
->> +               }
->> +
->> +               rpmh_clk->dev = &pdev->dev;
->> +       }
->> +
->> +       ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> 
-> Why not roll your own "getter" function and then just index directly
-> into your array of rpmh clks for sdm845? Then we don't have to copy
-> things from one place to another.
-> 
-
-Added a new function.
-
->> +                                     hw_data);
->> +       if (ret) {
->> +               dev_err(dev, "Failed to add clock provider\n");
->> +               goto err;
->> +       }
->> +
->> +       dev_dbg(dev, "Registered RPMh clocks\n");
->> +
->> +       return 0;
->> +err:
->> +       if (rpmh_client)
->> +               rpmh_release(rpmh_client);
->> +
->> +       return ret;
->> +}
->> +
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> Doug Ledford <dledford@redhat.com>
+>     GPG KeyID: B826A3330E572FDD
+>     Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
 
---
+
+--k3qmt+ucFURmlhDS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlrpkWwACgkQ5GN7iDZy
+WKf+0g/+MAcdJvrAyNJbZxCMzdVV/pyjSL1TKi0BaLXaT2PsM7YtSKeSVjkHacvN
+ifGhNhPE9F/i/diOMuBE1TIVFIx7Qg+bRtRmy+Lwq2nJPRf6Rjldg6SYZh0voJPn
+yv8uTUNQ0LjoY7CsN/NcHuyqMrnlkC5GhEQ7pLO5IFtpaGZ3Vw24u4GJKxv/cHFj
+i0qdN1puGhCcp/IGCzrPwM7i6Z7DnnmdKaAhYANUg9t3VWGP3/lGOmKnTTvr1aEg
+10uD8rgaHNTQ0a+8lmB4X/+uT0bH4TPjtIANQZ6055I2B+vDMS/EOrpId/F4MHCt
+S0bLXbvaZRPLj4G8/u81okWphJLAWaLVms6tWmVyZAJ2snn1FI84ftjuASWtzsJ3
+0POAaWZFp9YCah006PuknvEKomRnJM5X1tfc9hxpL2M9Ek3QQ25smd8NibnLPoA0
+4kfSixPSh+9LXGEknUMBGJA4lS3z+v6NvwJqoRn54dPSeS2BVJe4RTzJxaIJnt6d
+DEoNOW8MWwTQrq0Paf9lre9yMI8QtAdtEv5APNTP6y0lhzdZ8x5FQqzqcYbMAOGV
+zESNcP8mBc8Js6Z7qDcEoRy/Pl6AHmuZr0W302zZSrZBYcwGC4NCZ5SS/jwtpaq+
+eAc/xAUZ5QZLmNtPGYzKn0pBCUqv0M904t+uC9uBjVS+IvIPHe8=
+=L170
+-----END PGP SIGNATURE-----
+
+--k3qmt+ucFURmlhDS--
