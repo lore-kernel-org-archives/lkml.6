@@ -1,74 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751371AbeEBNB2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:01:28 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:54920 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751054AbeEBNB0 (ORCPT
+        id S1751348AbeEBNGf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:06:35 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37274 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751054AbeEBNGb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:01:26 -0400
-X-Google-Smtp-Source: AB8JxZqEwizUyqqbMsqyJFe3MMpnWzi8MT2j9zQGFqd50nfhGLfQD7cw38jXSJBG3pME/tO/quvrw+8vb3StUSyggk8=
+        Wed, 2 May 2018 09:06:31 -0400
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
+To: <jic23@kernel.org>, <robh+dt@kernel.org>, <alexandre.torgue@st.com>
+CC: <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>, <lars@metafoo.de>,
+        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <fabrice.gasnier@st.com>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@linaro.org>, <arnaud.pouliquen@st.com>
+Subject: [PATCH] iio: adc: stm32-dfsdm: Add support for stm32mp1
+Date: Wed, 2 May 2018 15:05:23 +0200
+Message-ID: <1525266323-4922-1-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
-References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
- <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com>
- <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com> <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
- <cc8d864a-e8e6-d30d-ae54-91819e5d0b8d@xilinx.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 May 2018 15:01:24 +0200
-Message-ID: <CACRpkdYgw+HaC5bUCZKiD7j+2ZLYbCTG+DdPdAEkRDq0xF5b3w@mail.gmail.com>
-Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
-To: Michal Simek <michal.simek@xilinx.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Rob Herring <robherring2@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 12:15 PM, Michal Simek <michal.simek@xilinx.com> wrote:
-> On 2.5.2018 12:10, Linus Walleij wrote:
->> On Thu, Apr 26, 2018 at 3:35 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+Add support for DFSDM (Digital Filter For Sigma Delta Modulators)
+to STM32MP1. This variant is close to STM32H7 DFSDM, it implements
+6 filter instances. Registers map is also increased.
 
->>> Yes, it is about legacy application which I have seen recently and there
->>> is no source code for application calls it because board vendor doesn't
->>> provide it.
->>>
->>> You are right that -1 was used from the beginning in mainline but
->>> unfortunately this driver was in vendor tree for a while and it uses 0
->>> there.
->>>
->>> In upstreaming this was changed to -1 but customers have a lot of code
->>> which developed against vendor tree and they want to use
->>> latest&greatest. And without this they are not able to run that
->>> applications.
->>>
->>> I found that this logic is already in 5 drivers in mainline that's why I
->>> send this patch to be +1.
->>
->> I see.
->>
->> Sadly comaptibility with out-of-tree driver code is none of our
->> (community) business.
->>
->> We do pay a lot of effort not to break the ABI to userspace, but
->> it needs to be an ABI coming from the mainline kernel, not from
->> a vendor tree.
->>
->> So to the mainline kernel this is no regression.
->
-> I understand your statement. On the other hand it is feature which was
-> permitted in past for some drivers and this is +1.
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ .../bindings/iio/adc/st,stm32-dfsdm-adc.txt         |  7 +++++--
+ drivers/iio/adc/stm32-dfsdm-core.c                  | 21 +++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 2 deletions(-)
 
-But was it permitted because of breaking out of tree code?
-
-I know people have done questionable things in the past, but
-two wrongs does not make one right.
-
-Yours,
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
+index ed7520d..75ba25d 100644
+--- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
+@@ -8,14 +8,16 @@ It is mainly targeted for:
+ - PDM microphones (audio digital microphone)
+ 
+ It features up to 8 serial digital interfaces (SPI or Manchester) and
+-up to 4 filters on stm32h7.
++up to 4 filters on stm32h7 or 6 filters on stm32mp1.
+ 
+ Each child node match with a filter instance.
+ 
+ Contents of a STM32 DFSDM root node:
+ ------------------------------------
+ Required properties:
+-- compatible: Should be "st,stm32h7-dfsdm".
++- compatible: Should be one of:
++  "st,stm32h7-dfsdm"
++  "st,stm32mp1-dfsdm"
+ - reg: Offset and length of the DFSDM block register set.
+ - clocks: IP and serial interfaces clocking. Should be set according
+ 		to rcc clock ID and "clock-names".
+@@ -45,6 +47,7 @@ Required properties:
+ 	"st,stm32-dfsdm-adc" for sigma delta ADCs
+ 	"st,stm32-dfsdm-dmic" for audio digital microphone.
+ - reg: Specifies the DFSDM filter instance used.
++	Valid values are from 0 to 3 on stm32h7, 0 to 5 on stm32mp1.
+ - interrupts: IRQ lines connected to each DFSDM filter instance.
+ - st,adc-channels:	List of single-ended channels muxed for this ADC.
+ 			valid values:
+diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
+index e50efdc..d924e6c 100644
+--- a/drivers/iio/adc/stm32-dfsdm-core.c
++++ b/drivers/iio/adc/stm32-dfsdm-core.c
+@@ -25,6 +25,8 @@ struct stm32_dfsdm_dev_data {
+ 
+ #define STM32H7_DFSDM_NUM_FILTERS	4
+ #define STM32H7_DFSDM_NUM_CHANNELS	8
++#define STM32MP1_DFSDM_NUM_FILTERS	6
++#define STM32MP1_DFSDM_NUM_CHANNELS	8
+ 
+ static bool stm32_dfsdm_volatile_reg(struct device *dev, unsigned int reg)
+ {
+@@ -61,6 +63,21 @@ static bool stm32_dfsdm_volatile_reg(struct device *dev, unsigned int reg)
+ 	.regmap_cfg = &stm32h7_dfsdm_regmap_cfg,
+ };
+ 
++static const struct regmap_config stm32mp1_dfsdm_regmap_cfg = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = sizeof(u32),
++	.max_register = 0x7fc,
++	.volatile_reg = stm32_dfsdm_volatile_reg,
++	.fast_io = true,
++};
++
++static const struct stm32_dfsdm_dev_data stm32mp1_dfsdm_data = {
++	.num_filters = STM32MP1_DFSDM_NUM_FILTERS,
++	.num_channels = STM32MP1_DFSDM_NUM_CHANNELS,
++	.regmap_cfg = &stm32mp1_dfsdm_regmap_cfg,
++};
++
+ struct dfsdm_priv {
+ 	struct platform_device *pdev; /* platform device */
+ 
+@@ -243,6 +260,10 @@ static int stm32_dfsdm_parse_of(struct platform_device *pdev,
+ 		.compatible = "st,stm32h7-dfsdm",
+ 		.data = &stm32h7_dfsdm_data,
+ 	},
++	{
++		.compatible = "st,stm32mp1-dfsdm",
++		.data = &stm32mp1_dfsdm_data,
++	},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, stm32_dfsdm_of_match);
+-- 
+1.9.1
