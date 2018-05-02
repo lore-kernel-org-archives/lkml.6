@@ -1,172 +1,102 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-368919-1525245743-2-3954447040413639659
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='utf-8', cc='iso-8859-1', plain='iso-8859-1'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525245743; b=DSr3De3TVlykoW4ESDgVBwXBNW3ql0fsypYchccIgR9jraGBP+
-    PUgWdtde5Eqx6q7TnYIE7KAp5uJWhj6AnyFtJw5HvPg+mCxcbLYIcJ7Zgxe+Kq+l
-    qHyqyfDTXH4e91FMRL3glN+rrizVSheRUU0/0gg17DtiFsYKhOnflD9nZ4bl8GdB
-    qYIGg0gt8klN3TmjZgvo3m/nNsOxxb6x/eZwezCjiF8M+CQjNypyfF921aQD/g9D
-    YO7tl1m/Qei7CbAa1EeS+wXgsjlx7SUlykaLI3k1R25C1py2VbRYFZO19GXRYo46
-    s/rZ4q+rpLNILlYQUXWe9xEke0V9LD4vZgzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1525245743; bh=dIs18935EGk
-    MrTfiP/e1a6bnN8YPspjb/HfWT5cLlUM=; b=Uz0+Z0xP7wiQ20hp6+M1JulMJ4B
-    /B4Ow12IcyWpFTS1DZ0A+g5n+VBw3YfPQ5REPIlMMCcrakFXe/U9h8B654o3bMwa
-    mKSc5FATXMaVK+f+cX2j2nRwwal2p1TZy9OWfQBSMkUWi5982pOPfHsSKiKwiVIj
-    NrRqdtR/tOjX7ZzZYq8q0IYH837mULRyNWhULUFzjlnLadCH/Bo4hkpYiHqXsEAh
-    YbSSblw7dYKYVX8h9Usy4KgVDiyznNlfWXFQFzmFdK6+uh7BWi5+WzgtcLzneisV
-    nXSoiNzmy1Xn59MNxf64YJ/qnXEBSqzR0e5p2Rddcrvmak6cn/wP3eWdeeA==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=D3pvANgu x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine)
-    header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=ran6c/Qk;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=D3pvANgu x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=quarantine,has-list-id=yes,d=quarantine)
-      header.from=kernel.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
-    x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=ran6c/Qk;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfISERfxJa5NXAsGeXyTPteZ3I5g8FGcqWmuVLKGkp4WZ8zK9nImut6pZIgOlryF8xcAjFx2lCXGA5byGdiWQeg1vcIT0G1A8NbkIEdf67lghR/lNgbtj
-    53/YeWLblETKdZ29BODSTaQ7rqPEMxsYESZbAa1pKVeL+3E1LUt637svPdcB2tVXHGxpCPLUSfo296rpSBFdf/YnWcQwtZm1ZvNyc1IpZBZUoDB50kHt2lvx
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=VUJBJC2UJ8kA:10
-    a=D4433MFfJ3aqb8AI6a8A:9 a=wPNLvfGTeEIA:10
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750925AbeEBHWU (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 03:22:20 -0400
-Received: from mail-lf0-f41.google.com ([209.85.215.41]:37246 "EHLO
-        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750867AbeEBHWS (ORCPT
-        <rfc822;stable@vger.kernel.org>); Wed, 2 May 2018 03:22:18 -0400
-X-Google-Smtp-Source: AB8JxZqF8FDEQAyXo5LRmYtGLkVpf8Bj0D5Qa9eV3mB99+fYrLn4ujxylpRF4yUl4wcJU4BW4vwoQA==
-Date: Wed, 2 May 2018 09:22:16 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dan Williams <dcbw@redhat.com>
-Cc: Johan Hovold <johan@kernel.org>, Lars Melin <larsm17@gmail.com>,
-        =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>,
-        SZ Lin =?utf-8?B?KOael+S4iuaZuik=?= <sz.lin@moxa.com>,
-        stable <stable@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: serial: option: adding support for ublox R410M
-Message-ID: <20180502072216.GA2285@localhost>
-References: <20180426070927.GT4615@localhost>
- <72c63853-aa2d-e74c-1112-36d54ef52a85@gmail.com>
- <20180426081403.GA335@localhost>
- <87r2n25i6i.fsf@miraculix.mork.no>
- <3895ed90-bbb9-e7ce-34c0-a1654646cf83@gmail.com>
- <98b50ae7-b889-6811-476e-9cdc8a62a484@gmail.com>
- <20180426161228.GW4615@localhost>
- <09866ede-25cf-3ca1-1be6-e720b4b5dd23@gmail.com>
- <20180426162921.GB335@localhost>
- <5fb0b88573985caeb5ce2732ae217f60fbcfe965.camel@redhat.com>
+Return-Path: <DavidWang@zhaoxin.com>
+X-Google-Smtp-Source: AB8JxZqYcCs8Kg6QhgWyabDzIhb8TRZhAL3aiGc/rmcWuLFOpc2AI8S/YkXfls6kYkdFb4Y493DJ
+ARC-Seal: i=1; a=rsa-sha256; t=1525245293; cv=none;
+        d=google.com; s=arc-20160816;
+        b=YpdFp67mtY4WNpHnXTA8KlDBKNCWKr0WamyN1UoF2Ik+M0caT/8k+vEuU8WIU5aeCP
+         RtfBLqyR0w3HIxOcoT6qWASlpVwVBcatKEcb6sENKMQQR1e7jxrz07s/3SlhazJSLH0O
+         n7wzjbKadCGBkXfCNMqlv01g3umyYvdHbuftDW38AE5nhvxDFV5i5FjLsqwmwjkpipRD
+         CALPsHaIyhVMS33ifY9tmmDn1L046Nkx2VZkUyhT6X1dAuvRO+f2W5QvorYsoqjmcIy8
+         GBOhESWYQEPi7BaA3qEgw2b7GkfgVATKCm1CJrtqvAGsL/37KK6DTFnhZ/hKkuue/+7n
+         Y76g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-language:thread-index:content-transfer-encoding
+         :mime-version:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=dyASemNqHyWpnN13MHqA8Do8XTE0mICQe/Hee8bRYj0=;
+        b=XvkdGhPJlwrZtkmUdOQyxLa99YRi4mJihVcmdOmcJlF1zLwnX84NREziwk4UBZiZUP
+         NhTi8zyFp9D4/TAyOm9IKJCwXyIYaFXm0ZMT3Q7g9Bad5yPCuJwYvRXTScaVQuxHaRLq
+         O1Psv0BkQtQogqhSy4acGJwTCpco6/HNYB1mnRYrn6OhM9f/IdgAsP/omI3XCvEt1QEn
+         61e2m7Bv6qXKjLkQD3bUqh8/zIcmtmxu9JNY+V1L1/+imGDwLN30jeL+qbYT2NV/VpoU
+         HlyMnx63oxLwDNBQ3go7LPtN3LzSyonKwWDN3j5D3C61o5D8g+oyFbbtcmdMdgubhcOE
+         k55g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 203.148.12.81 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 203.148.12.81 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
+From: David Wang <davidwang@zhaoxin.com>
+To: 'Thomas Gleixner' <tglx@linutronix.de>
+CC: <mingo@redhat.com>, <hpa@zytor.com>, <gregkh@linuxfoundation.org>,
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
+	<qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>, <lukelin@viacpu.com>,
+	<timguo@zhaoxin.com>
+Subject: Re: [PATCH v3] report correct CPU/cache topology
+Date: Wed, 2 May 2018 15:14:35 +0800
+Message-ID: <000001d3e1e5$39b15640$ad1402c0$@zhaoxin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5fb0b88573985caeb5ce2732ae217f60fbcfe965.camel@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdPh5OZG/ZPAdTjOTuCfG5Pk1Np1sQ==
+Content-Language: zh-cn
+X-Originating-IP: [10.29.8.18]
+X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
+ zxbjmbx3.zhaoxin.com (10.29.252.165)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598805408410089263?=
+X-GMAIL-MSGID: =?utf-8?q?1599335607908800243?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, Apr 26, 2018 at 02:12:32PM -0500, Dan Williams wrote:
-> On Thu, 2018-04-26 at 18:29 +0200, Johan Hovold wrote:
-> > On Thu, Apr 26, 2018 at 11:22:25PM +0700, Lars Melin wrote:
-> > > On 4/26/2018 23:12, Johan Hovold wrote:
-> > > > On Thu, Apr 26, 2018 at 06:40:46PM +0700, Lars Melin wrote:
-> > > > > On 4/26/2018 18:39, Lars Melin wrote:
-> > > > > > On 4/26/2018 18:19, Bjørn Mork wrote:
-> > > > > > > Anyway, Qualcomm based designs are definitely handled by
-> > > > > > > both drivers.  Using qcserial only makes sense if the
-> > > > > > > interface layout matches one of the defined shared
-> > > > > > > schemes, which currently are:
-> > > > > > > 
-> > > > > > >      QCSERIAL_G2K = 0,    /* Gobi 2000 */
-> > > > > > >      QCSERIAL_G1K = 1,    /* Gobi 1000 */
-> > > > > > >      QCSERIAL_SWI = 2,    /* Sierra Wireless */
-> > > > > > >      QCSERIAL_HWI = 3,    /* Huawei */
-> > > > > > 
-> > > > > > It seems to me that this Quectel device matches the
-> > > > > > interface layout for Gobi1K:
-> > > >
-> > > > Yeah, but qcserial appears to select a different altsetting for
-> > > > the DM port for Gobi 1000, an altsetting which this particular
-> > > > device does not have.
-> > > > 
-> > > > I didn't re-read the full thread I referred to earlier, but I
-> > > > think in it, Dan mentioned Gobi 1000 device requiring firmware
-> > > > to be loaded too.
-> > > > 
-> > > > So if it's not a G1K device, we probably shouldn't be using
-> > > > qcserial even if the interface layout happens to match.
-> > >
-> > > Good point, I forgot about the required firmware loading for
-> > > Gobi1K.
-> > > So this device should be handled by the option driver.
-> > 
-> > Yeah, we probably should document all of this at some point. :)
-> > 
-> > I didn't include the patch in this weeks -rc updates, but I've
-> > queued it up for the next batch.
-> 
-> Option is likely the right driver for this device.
-> 
-> qcaux was mainly for mobile phones that have a TTY (often cdc-acm) as
-> the modem port and a secondary DIAG/DM port driven by qcaux.  The DM
-> port doesn't have an interrupt endpoint thus it's not a normal modem
-> port requiring the larger buffers of option and its control signaling.
-> 
-> qcserial (as Bjorn mentioned) is only for actual Gobi-type devices with
-> the specific layouts and the firmware loading requirement where the 1K
-> and 2K devices start in a special 1-port mode waiting for firmware and
-> then become 4-port devices on firmware reboot.
 
-Thanks for that summary. I've applied SZ's patch now.
 
-Johan
+> -----Original Mail-----
+> Sender: Thomas Gleixner [mailto:tglx@linutronix.de]
+> Time: 2018=C4=EA4=D4=C226=C8=D5 19:56
+> Receiver: David Wang <davidwang@zhaoxin.com>
+> CC: mingo@redhat.com; hpa@zytor.com; gregkh@linuxfoundation.org;
+> x86@kernel.org; linux-kernel@vger.kernel.org; brucechang@via-
+> alliance.com; cooperyan@zhaoxin.com; qiyuanwang@zhaoxin.com;
+> benjaminpan@viatech.com; lukelin@viacpu.com; timguo@zhaoxin.com
+> Subject: Re: [PATCH v3] report correct CPU/cache topology
+>=20
+>=20
+>=20
+> On Thu, 26 Apr 2018, David Wang wrote:
+>=20
+> > Centaur CPUs enumerate the cache topology in the same way as Intel
+> > CPUs, but the function is unused so far.
+> > The Centaur init code also misses to initialize x86_info::max_cores,
+> > so the CPU topology can't be described correctly.
+> >
+> > Initialize x86_info::max_cores and invoke init_intel_cachinfo() to
+> > make CPU and cache topology information avaliable and correct
+>=20
+> Now that looks pretty good.
+>=20
+> > Signed-off-by: David Wang <davidwang@zhaoxin.com>
+> >
+> > Changes from v2 to v3:
+> > *1 define new detect_num_cpu_cores() in common.c to replace the
+> > original intel_num_cpu_cores;
+> > *2 move cpu_detect_cache_sizes inside init_intel_cacheinfo.
+>=20
+> But I asked for that being a separate patch with a separate changelog. =
+And
+> the intel_cache_info() change wants to be in a separate patch as well.
+Then
+> the third patch is the one which makes use of these changes for =
+centaur.
+>=20
+> Please read review comments carefully and rather ask when you have
+> doubts about the meaning.
+>=20
+> Thanks,
+>=20
+> 	tglx
+>=20
+	Sorry!=20
+	I will split the changes to three separate patches.
+	Thank you.
+---
+David
