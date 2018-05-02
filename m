@@ -1,99 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751268AbeEBKWm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:22:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750966AbeEBKWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:22:40 -0400
-Date: Wed, 2 May 2018 13:22:37 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Doug Ledford <dledford@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhu Yanjun <yanjun.zhu@oracle.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-Message-ID: <20180502102237.GG20375@mtr-leonro.local>
-References: <20180501101017.517b38af@canb.auug.org.au>
- <1525136135.11756.94.camel@redhat.com>
+        id S1751109AbeEBKYe (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:24:34 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33768 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750897AbeEBKYa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:24:30 -0400
+Date: Wed, 2 May 2018 12:24:16 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Waiman Long <longman@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
+        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
+        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
+        Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH v7 2/5] cpuset: Add cpuset.sched_load_balance to v2
+Message-ID: <20180502102416.GJ12180@hirez.programming.kicks-ass.net>
+References: <1524145624-23655-1-git-send-email-longman@redhat.com>
+ <1524145624-23655-3-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="k3qmt+ucFURmlhDS"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525136135.11756.94.camel@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1524145624-23655-3-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Apr 19, 2018 at 09:47:01AM -0400, Waiman Long wrote:
+> +  cpuset.sched_load_balance
+> +	A read-write single value file which exists on non-root cgroups.
 
---k3qmt+ucFURmlhDS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Uhhm.. it should very much exist in the root group too. Otherwise you
+cannot disable it there, which is required to allow smaller groups to
+load-balance between themselves.
 
-On Mon, Apr 30, 2018 at 08:55:35PM -0400, Doug Ledford wrote:
-> On Tue, 2018-05-01 at 10:10 +1000, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the rdma tree got a conflict in:
-> >
-> >   drivers/infiniband/sw/rxe/rxe_resp.c
-> >
-> > between commit:
-> >
-> >   9fd4350ba895 ("B/rxe: avoid double kfree_skb")
-> >
-> > from the rdma-fixes tree and commit:
-> >
-> >   2e47350789eb ("IB/rxe: optimize the function duplicate_request")
-> >
-> > from the rdma tree.
-> >
-> > I fixed it up (I think - see below) and can carry the fix as necessary.
-> > This is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >
->
-> We will probably merge the for-rc branch into the for-next branch in the
-> next few days, at which point we will do the conflict resolution
-> ourselves and your need to carry anything should drop out.
+> +	The default is "1" (on), and the other possible value is "0"
+> +	(off).
+> +
+> +	When it is on, tasks within this cpuset will be load-balanced
+> +	by the kernel scheduler.  Tasks will be moved from CPUs with
+> +	high load to other CPUs within the same cpuset with less load
+> +	periodically.
+> +
+> +	When it is off, there will be no load balancing among CPUs on
+> +	this cgroup.  Tasks will stay in the CPUs they are running on
+> +	and will not be moved to other CPUs.
+> +
+> +	This flag is hierarchical and is inherited by child cpusets. It
+> +	can be turned off only when the CPUs in this cpuset aren't
+> +	listed in the cpuset.cpus of other sibling cgroups, and all
+> +	the child cpusets, if present, have this flag turned off.
+> +
+> +	Once it is off, it cannot be turned back on as long as the
+> +	parent cgroup still has this flag in the off state.
 
-Isn't "rdma/wip/for-testing" branch intended for this?
+That too is wrong and broken. You explicitly want to turn it on for
+children.
 
-Thanks
+So the idea is that you can have:
 
->
-> --
-> Doug Ledford <dledford@redhat.com>
->     GPG KeyID: B826A3330E572FDD
->     Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+		R
+	      /   \
+            A       B
 
+With:
 
+	R cpus=0-3, load_balance=0
+	A cpus=0-1, load_balance=1
+	B cpus=2-3, load_balance=1
 
---k3qmt+ucFURmlhDS
-Content-Type: application/pgp-signature; name="signature.asc"
+Which will allow all tasks in A,B (and its children) to load-balance
+across 0-1 or 2-3 resp.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlrpkWwACgkQ5GN7iDZy
-WKf+0g/+MAcdJvrAyNJbZxCMzdVV/pyjSL1TKi0BaLXaT2PsM7YtSKeSVjkHacvN
-ifGhNhPE9F/i/diOMuBE1TIVFIx7Qg+bRtRmy+Lwq2nJPRf6Rjldg6SYZh0voJPn
-yv8uTUNQ0LjoY7CsN/NcHuyqMrnlkC5GhEQ7pLO5IFtpaGZ3Vw24u4GJKxv/cHFj
-i0qdN1puGhCcp/IGCzrPwM7i6Z7DnnmdKaAhYANUg9t3VWGP3/lGOmKnTTvr1aEg
-10uD8rgaHNTQ0a+8lmB4X/+uT0bH4TPjtIANQZ6055I2B+vDMS/EOrpId/F4MHCt
-S0bLXbvaZRPLj4G8/u81okWphJLAWaLVms6tWmVyZAJ2snn1FI84ftjuASWtzsJ3
-0POAaWZFp9YCah006PuknvEKomRnJM5X1tfc9hxpL2M9Ek3QQ25smd8NibnLPoA0
-4kfSixPSh+9LXGEknUMBGJA4lS3z+v6NvwJqoRn54dPSeS2BVJe4RTzJxaIJnt6d
-DEoNOW8MWwTQrq0Paf9lre9yMI8QtAdtEv5APNTP6y0lhzdZ8x5FQqzqcYbMAOGV
-zESNcP8mBc8Js6Z7qDcEoRy/Pl6AHmuZr0W302zZSrZBYcwGC4NCZ5SS/jwtpaq+
-eAc/xAUZ5QZLmNtPGYzKn0pBCUqv0M904t+uC9uBjVS+IvIPHe8=
-=L170
------END PGP SIGNATURE-----
-
---k3qmt+ucFURmlhDS--
+If you don't allow the root group to disable load_balance, it will
+always be the largest group and load-balancing will always happen system
+wide.
