@@ -1,68 +1,209 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751188AbeEBKj1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:39:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46107 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750849AbeEBKj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:39:26 -0400
-Date: Wed, 2 May 2018 12:39:14 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "richard@nod.at" <richard@nod.at>,
+        id S1751214AbeEBKkY (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:40:24 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:32819 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750918AbeEBKkU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:40:20 -0400
+Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "Bos, Ties \(Nokia - US/Sunnyvale\)" <ties.bos@nokia.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/2] Fix FSL NAND driver to read all ONFI parameter
- pages
-Message-ID: <20180502123914.3755a634@bbrezillon>
-In-Reply-To: <VI1PR07MB161575ACAE380B18882E8EE981810@VI1PR07MB1615.eurprd07.prod.outlook.com>
-References: <1524788396-32380-1-git-send-email-Jane.Wan@nokia.com>
-        <1524788396-32380-2-git-send-email-Jane.Wan@nokia.com>
-        <20180428134218.3ae857eb@xps13>
-        <VI1PR07MB161575ACAE380B18882E8EE981810@VI1PR07MB1615.eurprd07.prod.outlook.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+ <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
+ <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
+ <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
+ <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
+ <5d625d04-38fe-7d5a-67fc-5ea92039474c@ti.com>
+ <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
+From: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Message-ID: <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
+Date: Wed, 2 May 2018 11:39:00 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 May 2018 05:01:23 +0000
-"Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com> wrote:
+Hi Lorenzo,
 
-> Hi Miquèl and Boris,
+On 01/05/2018 15:26, Lorenzo Pieralisi wrote:
+> On Tue, May 01, 2018 at 05:53:59PM +0530, Kishon Vijay Abraham I wrote:
+>> Hi Lorenzo,
+>>
+>> On Tuesday 01 May 2018 05:24 PM, Lorenzo Pieralisi wrote:
+>>> On Tue, May 01, 2018 at 03:37:47PM +0530, Kishon Vijay Abraham I wrote:
+>>>> Hi Lorenzo,
+>>>>
+>>>> On Thursday 26 April 2018 10:26 PM, Lorenzo Pieralisi wrote:
+>>>>> On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
+>>>>>> Adds a seconds entry on the pci_epf_test_ids structure that disables the
+>>>>>
+>>>>> "Add a second entry to..."
+>>>>>
+>>>>>> linkup_notifier parameter on driver for the designware EP.
+>>>>>>
+>>>>>> This allows designware EPs that doesn't have linkup notification signal
+>>>>>> to work with pcitest.
+>>>>>>
+>>>>>> Updates the binding documentation accordingly.
+>>>>>
+>>>>> Valid for all the series: use imperative sentences.
+>>>>>
+>>>>> eg:
+>>>>>
+>>>>> "Update the binding documentation accordingly".
+>>>>>
+>>>>> not
+>>>>>
+>>>>> "Updates the binding documentation accordingly".
+>>>>>
+>>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>>>> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>>>> ---
+>>>>>> Change v2->v3:
+>>>>>>  - Added second entry in pci_epf_test_ids structure.
+>>>>>>  - Remove test_reg_bar field assignment on second entry.
+>>>>>> Changes v3->v4:
+>>>>>>  - Nothing changed, just to follow the patch set version.
+>>>>>> Changes v4->v5:
+>>>>>>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+>>>>>> Changes v5->v6:
+>>>>>>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+>>>>>> Changes v6->v7:
+>>>>>>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+>>>>>>
+>>>>>>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+>>>>>>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+>>>>>>  2 files changed, 10 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>>>>>> index 3b68b95..dc39f47 100644
+>>>>>> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>>>>>> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>>>>>> @@ -1,6 +1,8 @@
+>>>>>>  PCI TEST ENDPOINT FUNCTION
+>>>>>>  
+>>>>>>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
+>>>>>> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
+>>>>>> +      with a custom configuration for the designware EP.
+>>>>>
+>>>>> The link between the "name" and the device created is quite obscure and
+>>>>> reading pci-test-howto.txt certainly does not clarify it.
+>>>>>
+>>>>> In pci-test-howto.txt an explanation should be added to the configs
+>>>>> device creation paragraph to clarify it.
+>>>>>
+>>>>>>  Configurable Fields:
+>>>>>>  vendorid	 : should be 0x104c
+>>>>>> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>>>> index 7cef851..4ab463b 100644
+>>>>>> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>>>> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>>>> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>>>>>>  	return 0;
+>>>>>>  }
+>>>>>>  
+>>>>>> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
+>>>>>> +	.linkup_notifier = false
+>>>>>> +};
+>>>>>> +
+>>>>>>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+>>>>>>  	{
+>>>>>>  		.name = "pci_epf_test",
+>>>>>>  	},
+>>>>>> +	{
+>>>>>> +		.name = "pci_epf_test_dw",
+>>>>>> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
+>>>>>> +	},
+>>>>>>  	{},
+>>>>>
+>>>>> Should not this be a property derived from the controller compatible
+>>>>> property instead of the test device name written in configfs ?
+>>>>
+>>>> pci_epf_test is an independent driver on its own that operates in a layer above
+>>>> the controller driver. So it does not get the controller compatible (which is
+>>>> used in controller drivers like pcie-designware-plat.c). pci_epf_test uses
+>>>> "pci_epf_device_id" which is _similar_ to "of_device_id" used by platform drivers.
+>>>
+>>> I understand that, the problem is that the independent driver depends on
+>>> features of the related controller driver as this patch shows. This
+>>> patch basically says that if you use a specific path in configfs (that
+>>> includes pci_epf_test_dw) your device has specific HW features (eg
+>>> linkup notifier above), that obviously depends on the platform HW not on
+>>> the string you use in configfs.
+>>>
+>>> What I am questioning is a) if I understand this right and b) whether
+>>> this is the right approach.
+>>
+>> Your understanding is right. Ideally pci-epf-test driver shouldn't have any HW
+>> specific configuration. But different HW have different configurations and
+>> pci-epf-test should be informed of the configuration the HW supports.
 > 
-> Thank you for your response and feedback.  I've modified the fix based on your comments.  
-> Please see the updated patch file at the end of this message (also in attachment).
-> My answers to your comments/questions are inline in the previous message.
+> I am honestly very confused. First off, I do not understand what this
+> patch really does (or better what DW can't do so that it needs a
+> specific configfs string and therefore a specific configuration).
 > 
-> Here is the answer to Boris question in another email thread:
+> What's the purpose of the linkup notifier ? What does it mean that
+> the DW HW can't handle it ?
 > 
-> > What if some NANDs have 4 or more copies of the param page?  
->  [Jane] The ONFI spec defines that the parameter page and its two redundant copies are mandatory.  
-> The additional redundant pages are optional.  Currently, the FSL NAND driver only reads the first 
-> parameter page.  This patch is to fix the driver to meet the mandatory requirement in the spec. 
-> We got a batch of particularly bad NAND chips recently and we needed these changes to make them 
-> work reliably over temperature.  The patch was verified using these bad chips.
+> Are we referring to the pci_epf_linkup() function ?
+> 
+> If it is a HW configuration (ie the DW HW does not have a signal to
+> report that the link is up ?) its enablement must depend on HW
+> controller properties not configfs entries, I do not like what this
+> patch does (probably because I am confused and I do not understand it).
+> 
+> Please let me know your thoughts on this, thanks.
 
-And that proves my point. The core is reading 3 param pages [1], but
-since this driver was trying to guess how many bytes to read from
-->cmdfunc() and did not guess correctly you ended up with a partially
-working implementation (works only if the first PARAM page is valid).
-Now, you fix it to read 3 PARAM pages, but what if we decide to read
-more to cope with MLC NANDs where even more copy are needed to have one
-valid version? You'll have to patch ->cmdfunc() again, just because
-you're trying to guess something that the core is supposed to tell you.
+On my setup, the EP is unable generate a signal which is responsible for notify
+that the link is established, being therefore necessary to emulate it, this is
+done by setting the linkup_notifier variable to false.
 
-[1]https://elixir.bootlin.com/linux/v4.17-rc3/source/drivers/mtd/nand/raw/nand_base.c#L5115
+This signal allows the pci-epf-test driver on the EP side to startup with a
+cyclic task defined on pci_epf_test_cmd_handler() that checks a command register
+located on the BAR (by default on BAR 0) settled by pci_endpoint_test driver on
+the RC side that defines, by his turn defines which type of command to perform.
+
+> 
+> Lorenzo
+> 
+>>
+>> configfs is just one way of creating epf_device and it was mainly added since
+>> pci-epf-test cannot have a dt entry because it doesn't represent anything in
+>> the HW.
+>>
+>> The other option was to have a callback to EPC driver to get the features it
+>> supports. But a particular feature that is required might be specific to a EPF
+>> driver.
+>>
+>> I find the driver_data approach in pci_epf_device_id to be more clean.
+
+Since the linkup notifier and BAR index (where auxiliary registers are located)
+may be configurable and is something platform dependent, perhaps the
+configuration of this variables should be done by module parameter and not by
+configfs, leaving this configuration responsibility in charge of each platform.
+
+I think this option is also a good alternative, simple and clean. What do you think?
+
+>>
+>> Thanks
+>> Kishon
+
+Regards,
+Gustavo
