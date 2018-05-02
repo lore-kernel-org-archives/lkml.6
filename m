@@ -1,116 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751423AbeEBLwS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 07:52:18 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:47659 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750936AbeEBLwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 07:52:15 -0400
-Date: Wed, 02 May 2018 19:51:37 +0800
-In-Reply-To: <20180502114843.ou4qczp5eaigrdfo@flea>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com> <20180430114058.5061-16-jagan@amarulasolutions.com> <20180502114843.ou4qczp5eaigrdfo@flea>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH 15/21] drm: sun4i: add support for HVCC regulator for DWC HDMI glue
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-CC: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        id S1751347AbeEBLxS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 07:53:18 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39117 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750930AbeEBLxQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 07:53:16 -0400
+X-Google-Smtp-Source: AB8JxZrwzoq0+oQGXcoPqhOEYRH1ctvtn4cqNvH/bIygfb1GJ3fHpKdi7yirBU1BLcL5ZRWgFEcEjw==
+From: Michal Simek <michal.simek@xilinx.com>
+To: devicetree@vger.kernel.org
+Cc: monstr@monstr.eu, Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From: Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <2E519B6E-D1BA-4C6F-9105-446E564FBBB6@aosc.io>
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: zynqmp: Add support for Avnet Ultra96 rev1 board
+Date: Wed,  2 May 2018 13:53:14 +0200
+Message-Id: <80d21c84d427cb6b4122efd3dea7f1c4ab4cf2be.1525261987.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Avnet Ultra96 rev1 board is commercialized Xilinx zcu100 revC/D
+internal board. The patch is reusing zcu100 revC files but changing
+model description and compatible strings which are used for example by
+libmraa.
 
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
-于 2018年5月2日 GMT+08:00 下午7:48:43, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Mon, Apr 30, 2018 at 05:10:52PM +0530, Jagan Teki wrote:
->> From: Icenowy Zheng <icenowy@aosc.io>
->> 
->> Allwinner SoCs with DWC HDMI controller have a "HVCC" power pin for
->the
->> HDMI part, and on some boards it's connected to a dedicated regulator
->> rather than the main 3.3v.
->> 
->> Add support for optional HVCC regulator. For boards that doesn't use
->a
->> dedicated regulator to power it, the default dummy regulator is used.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> ---
->>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c | 14 ++++++++++++++
->>  drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h |  2 ++
->>  2 files changed, 16 insertions(+)
->> 
->> diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->> index 9f40a44b456b..7c33faff7ad4 100644
->> --- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->> +++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
->> @@ -73,6 +73,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
->struct device *master,
->>  	if (encoder->possible_crtcs == 0)
->>  		return -EPROBE_DEFER;
->>  
->> +	hdmi->vcc_hdmi = devm_regulator_get(dev, "hvcc");
->> +	if (IS_ERR(hdmi->vcc_hdmi)) {
->> +		dev_err(dev, "Could not get HDMI power supply\n");
->> +		return PTR_ERR(hdmi->vcc_hdmi);
->> +	}
->> +
->
->You're not making it optional here, unlike what your commit log
->says. Not that I'm fine with both, but we need to be consistent :)
+I choose this option because there are houndreds of zcu100 boards
+created and this will enable support both versions.
 
-If it's not set, regulator subsystem will generate a dummy
-regulator as a spaceholder, except using the exclusive variant
-of the function.
+Record avnet prefix was sent by separate patch.
+---
+ arch/arm64/boot/dts/xilinx/Makefile           |  1 +
+ .../boot/dts/xilinx/avnet-ultra96-rev1.dts    | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
 
-The word "optional" is from DT perspectove, as it's possible that
-it's bound to some critical regulators.
-
->
->>  	hdmi->rst_ctrl = devm_reset_control_get(dev, "ctrl");
->>  	if (IS_ERR(hdmi->rst_ctrl)) {
->>  		dev_err(dev, "Could not get ctrl reset control\n");
->> @@ -91,6 +97,12 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
->struct device *master,
->>  		return ret;
->>  	}
->>  
->> +	ret = regulator_enable(hdmi->vcc_hdmi);
->> +	if (ret) {
->> +		dev_err(dev, "Cannot enable HDMI power supply\n");
->> +		goto err_disable_vcc;
->> +	}
->> +
->>  	ret = clk_prepare_enable(hdmi->clk_tmds);
->>  	if (ret) {
->>  		dev_err(dev, "Could not enable tmds clock\n");
->> @@ -143,6 +155,8 @@ static int sun8i_dw_hdmi_bind(struct device *dev,
->struct device *master,
->>  	clk_disable_unprepare(hdmi->clk_tmds);
->>  err_assert_ctrl_reset:
->>  	reset_control_assert(hdmi->rst_ctrl);
->> +err_disable_vcc:
->> +	regulator_disable(hdmi->vcc_hdmi);
->
->
->The err_disable_vcc label will disable the regulator, but if there's
->an error in regulator_enable, it will disable it while it wasn't
->enabled in the first place, which is not really something we want to
->do.
->
->Maxime
+diff --git a/arch/arm64/boot/dts/xilinx/Makefile b/arch/arm64/boot/dts/xilinx/Makefile
+index d452f80e7601..60f5443f3ef4 100644
+--- a/arch/arm64/boot/dts/xilinx/Makefile
++++ b/arch/arm64/boot/dts/xilinx/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_ZYNQMP) += avnet-ultra96-rev1.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1232-revA.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1254-revA.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1275-revA.dtb
+diff --git a/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts b/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
+new file mode 100644
+index 000000000000..88aa06fa78a8
+--- /dev/null
++++ b/arch/arm64/boot/dts/xilinx/avnet-ultra96-rev1.dts
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * dts file for Avnet Ultra96 rev1
++ *
++ * (C) Copyright 2018, Xilinx, Inc.
++ *
++ * Michal Simek <michal.simek@xilinx.com>
++ */
++
++/dts-v1/;
++
++#include "zynqmp-zcu100-revC.dts"
++
++/ {
++	model = "Avnet Ultra96 Rev1";
++	compatible = "avnet,ultra96-rev1", "avnet,ultra96",
++		     "xlnx,zynqmp-zcu100-revC", "xlnx,zynqmp-zcu100",
++		     "xlnx,zynqmp";
++};
+-- 
+2.17.0
