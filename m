@@ -1,129 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeEBPU3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:20:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46162 "EHLO mail.kernel.org"
+        id S1751835AbeEBPUf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:20:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:10014 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751687AbeEBPUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:20:22 -0400
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 05/52] perf stat: Display time in precision based on std deviation
-Date: Wed,  2 May 2018 12:18:55 -0300
-Message-Id: <20180502151942.20542-6-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
-References: <20180502151942.20542-1-acme@kernel.org>
+        id S1751778AbeEBPU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:20:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
+   d="scan'208";a="221044821"
+Subject: Re: [alsa-devel] [PATCH] ASoC: Intel: bytcr_rt565: fix missing
+ assignment to ret_val
+To: Colin King <colin.king@canonical.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180502142945.31637-1-colin.king@canonical.com>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <81881453-1353-ecd8-c981-d1828738a996@linux.intel.com>
+Date: Wed, 2 May 2018 10:20:26 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180502142945.31637-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+On 5/2/18 9:29 AM, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently, the check that ret_val is not -ENOENT is always true and
+> the quirk bit BYT_RY5651_MCLK_EN is never being cleared because ret_val
+> is always zero at this point from a previous assignment earlier on.
+> I believe that ret_val should actually be assigned to the return from
+> devm_clk_get() as this can return -ENOENT (from a deeper call to
+> clk_get_sys) and that was the original intention to check this.
+> 
+> Detected by CoverityScan, CID#1460228 ("Logically dead code")
 
-Ingo suggested to display elapsed time for multirun workload (perf stat
--e) with precision based on the precision of the standard deviation.
+nice catch, the fix is consistent with what is done for rt5640.
 
-In his own words:
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-  > This output is a slightly bit misleading:
-
-  >  Performance counter stats for 'make -j128' (10 runs):
-  >      27.988995256 seconds time elapsed                  ( +-  0.39% )
-
-  > The 9 significant digits in the result, while only 1 is valid, suggests accuracy
-  > where none exists.
-
-  > It would be better if 'perf stat' would display elapsed time with a precision
-  > adjusted to stddev, it should display at most 2 more significant digits than
-  > the stddev inaccuracy.
-
-  > I.e. in the above case 0.39% is 0.109, so we only have accuracy for 1 digit, and
-  > so we should only display 3:
-
-  >        27.988 seconds time elapsed                       ( +-  0.39% )
-
-Plus a suggestion about the output, which is small enough and connected
-with the above change that I merged both changes together.
-
-  > Small output style nit - I think it would be nice if with --repeat the stddev was
-  > also displayed in absolute values, besides percentage:
-  >
-  >       27.988 +- 0.109 seconds time elapsed   ( +- 0.39% )
-
-The output is now:
-
-   Performance counter stats for './perf bench sched pipe' (5 runs):
-   SNIP
-           13.3667 +- 0.0256 seconds time elapsed  ( +-  0.19% )
-
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180423090823.32309-7-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-stat.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
-
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index f17dc601b0f3..3a94647ef6bc 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1764,19 +1764,37 @@ static void print_header(int argc, const char **argv)
- 	}
- }
- 
-+static int get_precision(double num)
-+{
-+	if (num > 1)
-+		return 0;
-+
-+	return lround(ceil(-log10(num)));
-+}
-+
- static void print_footer(void)
- {
-+	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
- 	FILE *output = stat_config.output;
- 	int n;
- 
- 	if (!null_run)
- 		fprintf(output, "\n");
--	fprintf(output, " %17.9f seconds time elapsed",
--			avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC);
--	if (run_count > 1) {
--		fprintf(output, "                                        ");
--		print_noise_pct(stddev_stats(&walltime_nsecs_stats),
--				avg_stats(&walltime_nsecs_stats));
-+
-+	if (run_count == 1) {
-+		fprintf(output, " %17.9f seconds time elapsed", avg);
-+	} else {
-+		double sd = stddev_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
-+		/*
-+		 * Display at most 2 more significant
-+		 * digits than the stddev inaccuracy.
-+		 */
-+		int precision = get_precision(sd) + 2;
-+
-+		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
-+			precision, avg, precision, sd);
-+
-+		print_noise_pct(sd, avg);
- 	}
- 	fprintf(output, "\n\n");
- 
--- 
-2.14.3
+> 
+> Fixes: 02c0a3b3047f ("ASoC: Intel: bytcr_rt5651: add MCLK, quirks and cleanups")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   sound/soc/intel/boards/bytcr_rt5651.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
+> index 3c7d93520c52..469e2695d121 100644
+> --- a/sound/soc/intel/boards/bytcr_rt5651.c
+> +++ b/sound/soc/intel/boards/bytcr_rt5651.c
+> @@ -856,9 +856,10 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
+>   	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
+>   		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+>   		if (IS_ERR(priv->mclk)) {
+> +			ret_val = PTR_ERR(priv->mclk);
+>   			dev_err(&pdev->dev,
+> -				"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
+> -				PTR_ERR(priv->mclk));
+> +				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
+> +				ret_val);
+>   			/*
+>   			 * Fall back to bit clock usage for -ENOENT (clock not
+>   			 * available likely due to missing dependencies), bail
+> 
