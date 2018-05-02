@@ -1,115 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751160AbeEBJZf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 05:25:35 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:54927 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750878AbeEBJZb (ORCPT
+        id S1751272AbeEBJdN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 05:33:13 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34572 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbeEBJdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 05:25:31 -0400
-X-Google-Smtp-Source: AB8JxZph3WcgMWGz3UnzrjDuCTYa7RGgc7JgAL+AZY2WZC3D96uUvv/yC1hF036tv11OTgUMmNCYr125SRovx7SFEVA=
+        Wed, 2 May 2018 05:33:11 -0400
+Subject: Re: [PATCH v2 1/3] mfd: cros_ec: Add USBPD charger commands and
+ struct definitions.
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
+        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com
+References: <20180430131403.14296-1-enric.balletbo@collabora.com>
+ <20180430131403.14296-2-enric.balletbo@collabora.com>
+ <20180501082905.GJ5147@dell>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <b8fd0545-4baa-ab82-462e-95179aa9b32d@collabora.com>
+Date: Wed, 2 May 2018 11:33:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1805021043510.1668@nanos.tec.linutronix.de>
-References: <CADDKRnBD=cgptLmDMu0YiaUThO-1ydKaAD4X3sTWfLuP5M5BEw@mail.gmail.com>
- <alpine.DEB.2.21.1804302151530.1596@nanos.tec.linutronix.de>
- <CADDKRnAi69PFNH-hyxCTLckJ5UU6-DKWvzGNzxZZhD0sA215qg@mail.gmail.com>
- <alpine.DEB.2.21.1805011458390.1596@nanos.tec.linutronix.de>
- <CA+55aFxKbPDrMQssyEtOnYZqE8HcOo=Zx6ASty6CybhwPfT9_g@mail.gmail.com>
- <CADDKRnC1V3KUR__PAo_JhMVdaWknQ9x1_XAQNewUWuO3cqFFFg@mail.gmail.com> <alpine.DEB.2.21.1805021043510.1668@nanos.tec.linutronix.de>
-From: =?UTF-8?Q?J=C3=B6rg_Otte?= <jrg.otte@gmail.com>
-Date: Wed, 2 May 2018 11:25:29 +0200
-Message-ID: <CADDKRnBn7rNN9UrwtYvNDPeJxqNQ-WHQVyHXAV7RwcVxX7jSDw@mail.gmail.com>
-Subject: Re: [v4.17-rcx] Lost IBPB, IBRS_FW support for spectre_v2 mitigation.
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180501082905.GJ5147@dell>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w429PeQu002765
 
-2018-05-02 11:02 GMT+02:00 Thomas Gleixner <tglx@linutronix.de>:
-> On Wed, 2 May 2018, Jörg Otte wrote:
->> With revert:
->>
->> jojo@fichte:~$ dmesg | grep -i -e spec -e micro -e "Linux version"
->>
->> [    0.000000] microcode: microcode updated early to revision 0x24,
->> date = 2018-01-21
->> [    0.000000] Linux version 4.17.0-rc3-revert-00001-gcb1069f
->> (jojo@fichte) (gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubu
->>
->> dmesg | grep -i -e spec -e micro -e "Linux version"
->>
->> [    0.000000] microcode: microcode updated early to revision 0x24,
->> date = 2018-01-21
->> [    0.000000] Linux version 4.17.0-rc3-patch-00001-gdc10603
->> (jojo@fichte) (gcc version 5.4.0 20160609 (Ubuntu
->> 5.4.0-6ubuntu1~16.04.9)) #20 SMP Wed May 2 09:08:07 CEST 2018
->> [    0.028417] Spectre V2 : Mitigation: Full generic retpoline
->> [    0.491803] microcode: sig=0x306c3, pf=0x10, revision=0x24
->> [    0.491831] microcode: Microcode Update Driver: v2.2.ntu1~16.04.9))
->> #21 SMP Wed May 2 09:14:29 CEST 2018
->> [    0.028414] Spectre V2 : Mitigation: Full generic retpoline
->> [    0.028415] Spectre V2 : Spectre v2 mitigation: Enabling Indirect
->> Branch Prediction Barrier
->> [    0.028415] Spectre V2 : Enabling Restricted Speculation for firmware calls
->> [    0.500157] microcode: sig=0x306c3, pf=0x10, revision=0x24
->> [    0.500183] microcode: Microcode Update Driver: v2.2.
->>
->>
->> With patch:
->>
->> dmesg | grep -i -e spec -e micro -e "Linux version"
->>
->> [    0.000000] microcode: microcode updated early to revision 0x24,
->> date = 2018-01-21
->> [    0.000000] Linux version 4.17.0-rc3-patch-00001-gdc10603
->> (jojo@fichte) (gcc version 5.4.0 20160609 (Ubuntu
->> 5.4.0-6ubuntu1~16.04.9)) #20 SMP Wed May 2 09:08:07 CEST 2018
->> [    0.028417] Spectre V2 : Mitigation: Full generic retpoline
->> [    0.491803] microcode: sig=0x306c3, pf=0x10, revision=0x24
->> [    0.491831] microcode: Microcode Update Driver: v2.2.
->
-> Ok, I think I know what's going wrong in that steaming pile of horrors of
-> CPUID detection. I need to analyze it down to the roots, but if you have
-> cycles, can you please test the patch below?
->
-> It's a hack and even if it fixes the problem I'm going to do it differently.
->
-> Thanks,
->
->         tglx
->
-> 8<-------------------
-> --- a/arch/x86/kernel/cpu/common.c
-> +++ b/arch/x86/kernel/cpu/common.c
-> @@ -848,6 +848,11 @@ void get_cpu_cap(struct cpuinfo_x86 *c)
->                 c->x86_power = edx;
->         }
->
-> +       if (c->extended_cpuid_level >= 0x80000008) {
-> +               cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
-> +               c->x86_capability[CPUID_8000_0008_EBX] = ebx;
-> +       }
-> +
->         if (c->extended_cpuid_level >= 0x8000000a)
->                 c->x86_capability[CPUID_8000_000A_EDX] = cpuid_edx(0x8000000a);
->
-> @@ -871,7 +876,6 @@ static void get_cpu_address_sizes(struct
->
->                 c->x86_virt_bits = (eax >> 8) & 0xff;
->                 c->x86_phys_bits = eax & 0xff;
-> -               c->x86_capability[CPUID_8000_0008_EBX] = ebx;
->         }
->  #ifdef CONFIG_X86_32
->         else if (cpu_has(c, X86_FEATURE_PAE) || cpu_has(c, X86_FEATURE_PSE36))
->
+Hi Lee,
 
-OK, that patch works for me!
+Thanks for the reviews.
 
-Thanks, Jörg
+On 01/05/18 10:29, Lee Jones wrote:
+> On Mon, 30 Apr 2018, Enric Balletbo i Serra wrote:
+> 
+>> From: Sameer Nanda <snanda@chromium.org>
+>>
+>> The USBPD charger driver gets information from the ChromeOS EC, this
+>> patch adds the USBPD charger definitions needed by this driver.
+>>
+>> Signed-off-by: Sameer Nanda <snanda@chromium.org>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>> ---
+>>
+>> Changes in v2: None
+>>
+>>  include/linux/mfd/cros_ec_commands.h | 132 ++++++++++++++++++++++++++-
+>>  1 file changed, 128 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+>> index f2edd9969b40..94dcf331796c 100644
+>> --- a/include/linux/mfd/cros_ec_commands.h
+>> +++ b/include/linux/mfd/cros_ec_commands.h
+> 
+> [...]
+> 
+>> +struct ec_response_pd_log {
+>> +	uint32_t timestamp; /* relative timestamp in milliseconds */
+>> +	uint8_t type;       /* event type : see PD_EVENT_xx below */
+>> +	uint8_t size_port;  /* [7:5] port number [4:0] payload size in bytes */
+>> +	uint16_t data;      /* type-defined data payload */
+>> +	uint8_t payload[0]; /* optional additional data payload: 0..16 bytes */
+>> +} __packed;
+> 
+> I think this whole file should be converted to Kerneldoc format.
+> 
+
+Ok, is something I can do, let me do this in a separate patchset though.
+
+> [...]
+> 
+>> +/*
+>> + * PD_EVENT_MCU_CHARGE event definition :
+>> + * the payload is "struct usb_chg_measures"
+>> + * the data field contains the port state flags as defined below :
+>> + */
+>> +/* Port partner is a dual role device */
+>> +#define CHARGE_FLAGS_DUAL_ROLE         (1 << 15)
+> 
+> BIT()?
+> 
+
+Changed in next version, there are also other places (not in this patch) where
+the BIT() macro is not used. I'll send separate patchset to change it and to
+convert to kerneldoc format.
+
+>> +/* Port is the pending override port */
+>> +#define CHARGE_FLAGS_DELAYED_OVERRIDE  (1 << 14)
+>> +/* Port is the override port */
+>> +#define CHARGE_FLAGS_OVERRIDE          (1 << 13)
+> 
+> [...]
+> 
