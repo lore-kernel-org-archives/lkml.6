@@ -1,222 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751134AbeEBAo3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 20:44:29 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:46366 "EHLO mail5.wrs.com"
+        id S1751174AbeEBArq (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 20:47:46 -0400
+Received: from vps-vb.mhejs.net ([37.28.154.113]:47276 "EHLO vps-vb.mhejs.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750755AbeEBAo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 20:44:28 -0400
-From: Zumeng Chen <zumeng.chen@gmail.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <michael.chan@broadcom.com>, <siva.kallam@broadcom.com>,
-        <prashant@broadcom.com>, <davem@davemloft.net>,
-        Zumeng Chen <zumeng.chen@windriver.com>,
-        Zumeng Chen <zumeng.chen@gmail.com>
-Subject: [v2 PATCH 1/1] tg3: fix meaningless hw_stats reading after tg3_halt memset 0 hw_stats
-Date: Wed, 2 May 2018 08:42:34 +0800
-Message-ID: <20180502004234.230662-1-zumeng.chen@gmail.com>
-X-Mailer: git-send-email 2.9.3
+        id S1750780AbeEBAro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 20:47:44 -0400
+Subject: Re: [PATCH v5 4/6] x86/microcode/AMD: Check microcode container data
+ in the late loader
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1524515406.git.mail@maciej.szmigiero.name>
+ <8f204a953dc4b46477e214ebd291021d7ab6fa6c.1524515406.git.mail@maciej.szmigiero.name>
+ <20180430090527.GC6509@pd.tnic>
+ <bce73502-0d18-e50c-b78b-8159dc9f8f66@maciej.szmigiero.name>
+ <20180501084317.GC31863@pd.tnic>
+ <e10212ef-c876-4965-6279-967005f53950@maciej.szmigiero.name>
+ <20180501200308.GC13171@pd.tnic>
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Message-ID: <9cf234e8-4d96-46f0-70e0-7d60d49671d8@maciej.szmigiero.name>
+Date: Wed, 2 May 2018 02:47:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20180501200308.GC13171@pd.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zumeng Chen <zumeng.chen@windriver.com>
+On 01.05.2018 22:03, Borislav Petkov wrote:
+> On Tue, May 01, 2018 at 06:19:56PM +0200, Maciej S. Szmigiero wrote:
+>> -EINVAL cast to unsigned int is 4294967274 and this value is also
+>> a valid count of bytes to skip that this function can return.
+> 
+> And where exactly in the *old* code do we do that?
+> 
 
-Reading hw_stats will get the actual data after a sucessfull tg3_reset_hw,
-which actually after tg3_timer_start, so TG3_FLAG_HALT is introduced to
-tell tg3_get_stats64 when hw_stats is ready to read. It will be set after
-having done memset(tp->hw_stats, 0) in tg3_halt and be clear when hw_init
-done. Both tg3_get_stats64 and tg3_halt are protected by tp->lock in all
-scope.
+The old code returned this value as a signed int, but then any
+"patch_size" value (which is u32) above INT_MAX read from a section header
+wrapped around to a negative pseudo-error code (which likely didn't match
+any actual error number).
 
-Meanwhile, this patch is also to fix a kernel BUG_ON(in_interrupt) crash
-when tg3_free_consistent is stuck in tp->lock, which might get a lot of
-in_softirq counts(512 or so), and BUG_ON when vunmap to unmap hw->stats.
-
-------------[ cut here ]------------
-kernel BUG at /kernel-source//mm/vmalloc.c:1621!
-Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
-task: ffffffc874310000 task.stack: ffffffc8742bc000
-PC is at vunmap+0x48/0x50
-LR is at __dma_free+0x98/0xa0
-pc : [<ffffff80081eb420>] lr : [<ffffff8008097fb8>] pstate: 00000145
-sp : ffffffc8742bfad0
-x29: ffffffc8742bfad0 x28: ffffffc874310000
-x27: ffffffc878931200 x26: ffffffc874530000
-x25: 0000000000000003 x24: ffffff800b3aa000
-x23: 00000000700bb000 x22: 0000000000000000
-x21: 0000000000000000 x20: ffffffc87aafd0a0
-x19: ffffff800b3aa000 x18: 0000000000000020
-x17: 0000007f9e191e10 x16: ffffff8008eb0d28
-x15: 000000000000000a x14: 0000000000070cc8
-x13: ffffff8008c65000 x12: 00000000ffffffff
-x11: 000000000000000a x10: ffffffbf21d0e220
-x9 : 0000000000000004 x8 : ffffff8008c65000
-x7 : 0000000000003ff0 x6 : 0000000000000000
-x5 : ffffff8008097f20 x4 : 0000000000000000
-x3 : ffffff8008fd4fff x2 : ffffffc87b361788
-x1 : ffffff800b3aafff x0 : 0000000000000201
-Process connmand (pid: 785, stack limit = 0xffffffc8742bc000)
-Stack: (0xffffffc8742bfad0 to 0xffffffc8742c0000)
-fac0:                                   ffffffc8742bfaf0 ffffff8008097fb8
-fae0: 0000000000001000 ffffff80ffffffff ffffffc8742bfb30 ffffff8000b717d4
-fb00: ffffffc87aafd0a0 ffffff8008a38000 ffffff800b3aa000 ffffffc874530904
-fb20: ffffffc874530900 00000000700bb000 ffffffc8742bfb80 ffffff8000b80324
-fb40: 0000000000000001 ffffffc874530900 0000000000000100 0000000000000200
-fb60: 0000000000009003 ffffffc874530000 0000000000000003 ffffffc874530000
-fb80: ffffffc8742bfbd0 ffffff8000b8aa5c ffffffc874530900 ffffffc874530000
-fba0: 00000000ffff0001 0000000000000000 0000000000009003 ffffffc878931210
-fbc0: 0000000000009002 ffffffc874530000 ffffffc8742bfc00 ffffff80088bf44c
-fbe0: ffffffc874530000 ffffffc8742bfc50 00000000ffff0001 ffffffc874310000
-fc00: ffffffc8742bfc30 ffffff80088bf5e4 ffffffc874530000 00000000ffff9002
-fc20: ffffffc8742bfc40 ffffffc874530000 ffffffc8742bfc60 ffffff80088c9d58
-fc40: ffffffc874530000 ffffff80088c9d34 ffffffc874530080 ffffffc874530080
-fc60: ffffffc8742bfca0 ffffff80088c9e4c ffffffc874530000 0000000000009003
-fc80: 0000000000008914 0000000000000000 0000007ffd94ba10 ffffffc8742bfd38
-fca0: ffffffc8742bfcd0 ffffff80089509f8 0000000000000000 00000000ffffff9d
-fcc0: 0000000000008914 0000000000000000 ffffffc8742bfd60 ffffff8008953088
-fce0: 0000000000008914 ffffffc874b49b80 0000007ffd94ba10 ffffff8008e9b400
-fd00: 0000000000000004 0000007ffd94ba10 0000000000000124 000000000000001d
-fd20: ffffff8008a32000 ffffff8008e9b400 0000000000000004 0000000034687465
-fd40: 0000000000000000 0000000000009002 0000000000000000 0000000000000000
-fd60: ffffffc8742bfd90 ffffff80088a1720 ffffffc874b49b80 0000000000008914
-fd80: 0000007ffd94ba10 0000000000000000 ffffffc8742bfdc0 ffffff80088a2648
-fda0: 0000000000008914 0000007ffd94ba10 ffffff8008e9b400 ffffffc878a73c00
-fdc0: ffffffc8742bfe00 ffffff800822e9e0 0000000000008914 0000007ffd94ba10
-fde0: ffffffc874b49bb0 ffffffc8747e5800 ffffffc8742bfe50 ffffff800823cd58
-fe00: ffffffc8742bfe80 ffffff800822f0ec 0000000000000000 ffffffc878a73c00
-fe20: ffffffc878a73c00 0000000000000004 0000000000008914 0000000000080000
-fe40: ffffffc8742bfe80 ffffff800822f0b0 0000000000000000 ffffffc878a73c00
-fe60: ffffffc878a73c00 0000000000000004 0000000000008914 ffffff8008083730
-fe80: 0000000000000000 ffffff8008083730 0000000000000000 00000048771fb000
-fea0: ffffffffffffffff 0000007f9e191e1c 0000000000000000 0000000000000015
-fec0: 0000000000000004 0000000000008914 0000007ffd94ba10 0000000000000000
-fee0: 000000000000002f 0000000000000004 0000000000000010 0000000000000000
-ff00: 000000000000001d 0000000fffffffff 0101010101010101 0000000000000000
-ff20: 6532336338646634 00656c6261635f38 0000007f9e46a220 0000007f9e45f318
-ff40: 00000000004c1a58 0000007f9e191e10 00000000000006df 0000000000000000
-ff60: 0000000000000004 00000000004c6470 00000000004c3c40 0000000000512d20
-ff80: 0000000000000001 0000000000000000 0000000000000000 0000000000000000
-ffa0: 0000000000000000 0000007ffd94b9f0 0000000000463dec 0000007ffd94b9f0
-ffc0: 0000007f9e191e1c 0000000000000000 0000000000000004 000000000000001d
-ffe0: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-Call trace:
-Exception stack(0xffffffc8742bf900 to 0xffffffc8742bfa30)
-f900: ffffff800b3aa000 0000008000000000 ffffffc8742bfad0 ffffff80081eb420
-f920: ffffff8000000000 ffffff80081a58ec ffffffc8742bf940 ffffff80081c3ea8
-f940: ffffffc8742bf990 ffffff80081a591c ffffffc8742bf970 ffffff8008a1d89c
-f960: ffffff8008eb1780 ffffff8008eb1780 ffffffc8742bf990 ffffff80081a59dc
-f980: ffffffbf21c4ae00 ffffffbf00000000 ffffffc8742bfa20 ffffff80081a5db4
-f9a0: 0000000000000201 ffffff800b3aafff ffffffc87b361788 ffffff8008fd4fff
-f9c0: 0000000000000000 ffffff8008097f20 0000000000000000 0000000000003ff0
-f9e0: ffffff8008c65000 0000000000000004 ffffffbf21d0e220 000000000000000a
-fa00: 00000000ffffffff ffffff8008c65000 0000000000070cc8 000000000000000a
-fa20: ffffff8008eb0d28 0000007f9e191e10
-[<ffffff80081eb420>] vunmap+0x48/0x50
-[<ffffff8008097fb8>] __dma_free+0x98/0xa0
-[<ffffff8000b717d4>] tg3_free_consistent+0x14c/0x190 [tg3]
-[<ffffff8000b80324>] tg3_stop+0x204/0x238 [tg3]
-[<ffffff8000b8aa5c>] tg3_close+0x34/0x98 [tg3]
-[<ffffff80088bf44c>] __dev_close_many+0x94/0xe8
-[<ffffff80088bf5e4>] __dev_close+0x34/0x50
-[<ffffff80088c9d58>] __dev_change_flags+0xa0/0x160
-[<ffffff80088c9e4c>] dev_change_flags+0x34/0x70
-[<ffffff80089509f8>] devinet_ioctl+0x740/0x808
-[<ffffff8008953088>] inet_ioctl+0x140/0x158
-[<ffffff80088a1720>] sock_do_ioctl+0x40/0x88
-[<ffffff80088a2648>] sock_ioctl+0x238/0x368
-[<ffffff800822e9e0>] do_vfs_ioctl+0xb0/0x730
-[<ffffff800822f0ec>] SyS_ioctl+0x8c/0xa8
-[<ffffff8008083730>] el0_svc_naked+0x24/0x28
-Code: f9400bf3 a8c27bfd d65f03c0 d503201f (d4210000)
----[ end trace e214990b7cc445ce ]---
-Kernel panic - not syncing: Fatal exception in interrupt
-
-Signed-off-by: Zumeng Chen <zumeng.chen@gmail.com>
----
-
-V2 changes:
-
-As Michael mentioned, use TG3_FLAG_HALT to flag the interface down.
-Sanity tests include building and runtime, passed.
-
-Cheers,
-Zumeng 
-
- drivers/net/ethernet/broadcom/tg3.c | 13 ++++++++-----
- drivers/net/ethernet/broadcom/tg3.h |  1 +
- 2 files changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index 537d571..690cdc6 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -8723,14 +8723,11 @@ static void tg3_free_consistent(struct tg3 *tp)
- 	tg3_mem_rx_release(tp);
- 	tg3_mem_tx_release(tp);
- 
--	/* Protect tg3_get_stats64() from reading freed tp->hw_stats. */
--	tg3_full_lock(tp, 0);
- 	if (tp->hw_stats) {
- 		dma_free_coherent(&tp->pdev->dev, sizeof(struct tg3_hw_stats),
- 				  tp->hw_stats, tp->stats_mapping);
- 		tp->hw_stats = NULL;
- 	}
--	tg3_full_unlock(tp);
- }
- 
- /*
-@@ -9334,6 +9331,7 @@ static int tg3_halt(struct tg3 *tp, int kind, bool silent)
- 
- 		/* And make sure the next sample is new data */
- 		memset(tp->hw_stats, 0, sizeof(struct tg3_hw_stats));
-+		tg3_flag_set(tp, HALT);
- 	}
- 
- 	return err;
-@@ -10732,6 +10730,7 @@ static int tg3_reset_hw(struct tg3 *tp, bool reset_phy)
-  */
- static int tg3_init_hw(struct tg3 *tp, bool reset_phy)
- {
-+	int retval;
- 	/* Chip may have been just powered on. If so, the boot code may still
- 	 * be running initialization. Wait for it to finish to avoid races in
- 	 * accessing the hardware.
-@@ -10743,7 +10742,11 @@ static int tg3_init_hw(struct tg3 *tp, bool reset_phy)
- 
- 	tw32(TG3PCI_MEM_WIN_BASE_ADDR, 0);
- 
--	return tg3_reset_hw(tp, reset_phy);
-+	retval = tg3_reset_hw(tp, reset_phy);
-+	if (retval == 0)
-+		tg3_flag_clear(tp, HALT);
-+
-+	return retval;
- }
- 
- #ifdef CONFIG_TIGON3_HWMON
-@@ -14155,7 +14158,7 @@ static void tg3_get_stats64(struct net_device *dev,
- 	struct tg3 *tp = netdev_priv(dev);
- 
- 	spin_lock_bh(&tp->lock);
--	if (!tp->hw_stats) {
-+	if (!tp->hw_stats || tg3_flag(tp, HALT)) {
- 		*stats = tp->net_stats_prev;
- 		spin_unlock_bh(&tp->lock);
- 		return;
-diff --git a/drivers/net/ethernet/broadcom/tg3.h b/drivers/net/ethernet/broadcom/tg3.h
-index 3b5e98e..c61d83c 100644
---- a/drivers/net/ethernet/broadcom/tg3.h
-+++ b/drivers/net/ethernet/broadcom/tg3.h
-@@ -3102,6 +3102,7 @@ enum TG3_FLAGS {
- 	TG3_FLAG_ROBOSWITCH,
- 	TG3_FLAG_ONE_DMA_AT_ONCE,
- 	TG3_FLAG_RGMII_MODE,
-+	TG3_FLAG_HALT,
- 
- 	/* Add new flags before this comment and TG3_FLAG_NUMBER_OF_FLAGS */
- 	TG3_FLAG_NUMBER_OF_FLAGS,	/* Last entry in enum TG3_FLAGS */
--- 
-2.9.3
+Maciej
