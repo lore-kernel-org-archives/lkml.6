@@ -1,64 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752315AbeEBP1N (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:27:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
+        id S1752051AbeEBP04 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:26:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751800AbeEBP1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:27:09 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
- <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <152527482828.138124.7114901348273696817@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed, 02 May 2018 08:27:08 -0700
+        id S1752116AbeEBPVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:21:40 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 32/52] perf symbols: Remove map_type arg from dso__find_symbol()
+Date: Wed,  2 May 2018 12:19:22 -0300
+Message-Id: <20180502151942.20542-33-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
+References: <20180502151942.20542-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w42FRK9F025968
 
-Quoting Taniya Das (2018-05-02 03:51:17)
-> +
-> +static DEFINE_MUTEX(rpmh_clk_lock);
-> +
-> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
-> +                         _res_en_offset, _res_on)                      \
-> +       static struct clk_rpmh _platform##_##_name_active;              \
-> +       static struct clk_rpmh _platform##_##_name = {                  \
-> +               .res_name = _res_name,                                  \
-> +               .res_addr = _res_en_offset,                             \
-> +               .res_on_val = _res_on,                                  \
-> +               .peer = &_platform##_##_name_active,                    \
-> +               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
-> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
-> +                                     BIT(RPMH_SLEEP_STATE)),           \
-> +               .hw.init = &(struct clk_init_data){                     \
-> +                       .ops = &clk_rpmh_ops,                           \
-> +                       .name = #_name,                                 \
-> +                       .parent_names = (const char *[]){ "xo_board",   \
-> +                                               "xo_board_div" },       \
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-The rpmh clks that do a div 2 can have a recalc_rate function that
-returns the xo_board clk rate divided by 2 all the time. That may be
-easier to do. Keep xo_board as parent, but then specify if it does div-2
-or div-1 in the SoC specific listing. Then DT can only show 38.4 MHz.
-The div 2 part is inside the SoC anyway so this seems more accurate too.
+One more step to ditch MAP__{VARIABLE,FUNCTION}
 
-> +                       .num_parents = 2,                               \
-> +               },                                                      \
-> +       };                                                              \
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-919d1k13ts62pjipnpibvgwd@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/db-export.c |  3 +--
+ tools/perf/util/map.c       |  4 ++--
+ tools/perf/util/symbol.c    | 10 +++++-----
+ tools/perf/util/symbol.h    | 12 ++++++++----
+ 4 files changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/tools/perf/util/db-export.c b/tools/perf/util/db-export.c
+index b0c2b5c5d337..04fb1a99c737 100644
+--- a/tools/perf/util/db-export.c
++++ b/tools/perf/util/db-export.c
+@@ -315,8 +315,7 @@ static struct call_path *call_path_from_sample(struct db_export *dbe,
+ 		al.addr = node->ip;
+ 
+ 		if (al.map && !al.sym)
+-			al.sym = dso__find_symbol(al.map->dso, MAP__FUNCTION,
+-						  al.addr);
++			al.sym = dso__find_symbol(al.map->dso, al.addr);
+ 
+ 		db_ids_from_al(dbe, &al, &dso_db_id, &sym_db_id, &offset);
+ 
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 91e2afb010f8..ab12f2bc7669 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -353,7 +353,7 @@ struct symbol *map__find_symbol(struct map *map, u64 addr)
+ 	if (map__load(map) < 0)
+ 		return NULL;
+ 
+-	return dso__find_symbol(map->dso, map->type, addr);
++	return __dso__find_symbol(map->dso, map->type, addr);
+ }
+ 
+ struct symbol *map__find_symbol_by_name(struct map *map, const char *name)
+@@ -364,7 +364,7 @@ struct symbol *map__find_symbol_by_name(struct map *map, const char *name)
+ 	if (!dso__sorted_by_name(map->dso, map->type))
+ 		dso__sort_by_name(map->dso, map->type);
+ 
+-	return dso__find_symbol_by_name(map->dso, map->type, name);
++	return __dso__find_symbol_by_name(map->dso, map->type, name);
+ }
+ 
+ struct map *map__clone(struct map *from)
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 5d77c60e63bf..2b81ccc94a7e 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -504,8 +504,8 @@ void dso__insert_symbol(struct dso *dso, enum map_type type, struct symbol *sym)
+ 	}
+ }
+ 
+-struct symbol *dso__find_symbol(struct dso *dso,
+-				enum map_type type, u64 addr)
++struct symbol *__dso__find_symbol(struct dso *dso,
++				  enum map_type type, u64 addr)
+ {
+ 	if (dso->last_find_result[type].addr != addr || dso->last_find_result[type].symbol == NULL) {
+ 		dso->last_find_result[type].addr   = addr;
+@@ -549,10 +549,10 @@ struct symbol *symbol__next_by_name(struct symbol *sym)
+ }
+ 
+  /*
+-  * Teturns first symbol that matched with @name.
++  * Returns first symbol that matched with @name.
+   */
+-struct symbol *dso__find_symbol_by_name(struct dso *dso, enum map_type type,
+-					const char *name)
++struct symbol *__dso__find_symbol_by_name(struct dso *dso, enum map_type type,
++					  const char *name)
+ {
+ 	struct symbol *s = symbols__find_by_name(&dso->symbol_names[type], name,
+ 						 SYMBOL_TAG_INCLUDE__NONE);
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index 924f465307b1..2b985ff2e725 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -262,10 +262,14 @@ int dso__load_kallsyms(struct dso *dso, const char *filename, struct map *map);
+ void dso__insert_symbol(struct dso *dso, enum map_type type,
+ 			struct symbol *sym);
+ 
+-struct symbol *dso__find_symbol(struct dso *dso, enum map_type type,
+-				u64 addr);
+-struct symbol *dso__find_symbol_by_name(struct dso *dso, enum map_type type,
+-					const char *name);
++struct symbol *__dso__find_symbol(struct dso *dso, enum map_type type, u64 addr);
++struct symbol *__dso__find_symbol_by_name(struct dso *dso, enum map_type type, const char *name);
++
++static inline struct symbol *dso__find_symbol(struct dso *dso, u64 addr)
++{
++	return __dso__find_symbol(dso, MAP__FUNCTION, addr);
++}
++
+ struct symbol *symbol__next_by_name(struct symbol *sym);
+ 
+ struct symbol *dso__first_symbol(struct dso *dso);
+-- 
+2.14.3
