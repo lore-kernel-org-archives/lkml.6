@@ -1,27 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeEBONk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:13:40 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36179 "EHLO
+        id S1751566AbeEBOOR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:14:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38615 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751594AbeEBONj (ORCPT
+        with ESMTP id S1750800AbeEBOOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:13:39 -0400
-Date: Wed, 2 May 2018 07:13:18 -0700
+        Wed, 2 May 2018 10:14:14 -0400
+Date: Wed, 2 May 2018 07:13:49 -0700
 From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-2aae7bcfa4104b770e6f612356adb8d66c6144d6@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, diego.viola@gmail.com, hpa@zytor.com,
-        mingo@kernel.org, peterz@infradead.org, rafael.j.wysocki@intel.com,
-        tglx@linutronix.de
-Reply-To: rafael.j.wysocki@intel.com, tglx@linutronix.de, hpa@zytor.com,
-        diego.viola@gmail.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, mingo@kernel.org
-In-Reply-To: <20180502135312.GS12217@hirez.programming.kicks-ass.net>
-References: <20180502135312.GS12217@hirez.programming.kicks-ass.net>
+Message-ID: <tip-5b9e886a4af97574ca3ce1147f35545da0e7afc7@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, diego.viola@gmail.com,
+        tglx@linutronix.de, mingo@kernel.org, rafael.j.wysocki@intel.com,
+        hpa@zytor.com, peterz@infradead.org
+Reply-To: hpa@zytor.com, peterz@infradead.org, rafael.j.wysocki@intel.com,
+        tglx@linutronix.de, mingo@kernel.org, diego.viola@gmail.com,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20180430100344.472662715@infradead.org>
+References: <20180430100344.472662715@infradead.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:timers/urgent] clocksource: Allow clocksource_mark_unstable()
- on unregistered clocksources
-Git-Commit-ID: 2aae7bcfa4104b770e6f612356adb8d66c6144d6
+Subject: [tip:timers/urgent] clocksource: Initialize cs->wd_list
+Git-Commit-ID: 5b9e886a4af97574ca3ce1147f35545da0e7afc7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -34,216 +33,44 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2aae7bcfa4104b770e6f612356adb8d66c6144d6
-Gitweb:     https://git.kernel.org/tip/2aae7bcfa4104b770e6f612356adb8d66c6144d6
+Commit-ID:  5b9e886a4af97574ca3ce1147f35545da0e7afc7
+Gitweb:     https://git.kernel.org/tip/5b9e886a4af97574ca3ce1147f35545da0e7afc7
 Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Mon, 23 Apr 2018 17:28:55 +0200
+AuthorDate: Mon, 30 Apr 2018 12:00:11 +0200
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Wed, 2 May 2018 16:10:40 +0200
 
-clocksource: Allow clocksource_mark_unstable() on unregistered clocksources
+clocksource: Initialize cs->wd_list
 
-Because of how the code flips between tsc-early and tsc clocksources
-it might need to mark one or both unstable. The current code in
-mark_tsc_unstable() only worked because previously it registered the
-tsc clocksource once and then never touched it.
+A number of places relies on list_empty(&cs->wd_list), however the
+list_head does not get initialized. Do so upon registration, such that
+thereafter it is possible to rely on list_empty() correctly reflecting
+the list membership status.
 
-Since it now unregisters the tsc-early clocksource, it needs to know
-if a clocksource got unregistered and the current cs->mult test
-doesn't work for that. Instead use list_empty(&cs->list) to test for
-registration.
-
-Furthermore, since clocksource_mark_unstable() needs to place the cs
-on the wd_list, it links the cs->list and cs->wd_list serialization.
-It must not see a clocsource registered (!empty cs->list) but already
-past dequeue_watchdog(). So place {en,de}queue{,_watchdog}() under the
-same lock.
-
-Provided cs->list is initialized to empty, this then allows us to
-unconditionally use clocksource_mark_unstable(), regardless of the
-registration state.
-
-Fixes: aa83c45762a2 ("x86/tsc: Introduce early tsc clocksource")
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Tested-by: Diego Viola <diego.viola@gmail.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: stable@vger.kernel.org
 Cc: len.brown@intel.com
 Cc: rjw@rjwysocki.net
-Cc: diego.viola@gmail.com
 Cc: rui.zhang@intel.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180502135312.GS12217@hirez.programming.kicks-ass.net
+Link: https://lkml.kernel.org/r/20180430100344.472662715@infradead.org
+
 ---
- kernel/time/clocksource.c | 50 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 34 insertions(+), 16 deletions(-)
+ kernel/time/clocksource.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index 0e974cface0b..c3d2b94723dc 100644
+index c3d2b94723dc..935f39eb8aac 100644
 --- a/kernel/time/clocksource.c
 +++ b/kernel/time/clocksource.c
-@@ -119,6 +119,16 @@ static DEFINE_SPINLOCK(watchdog_lock);
- static int watchdog_running;
- static atomic_t watchdog_reset_pending;
- 
-+static void inline clocksource_watchdog_lock(unsigned long *flags)
-+{
-+	spin_lock_irqsave(&watchdog_lock, *flags);
-+}
-+
-+static void inline clocksource_watchdog_unlock(unsigned long *flags)
-+{
-+	spin_unlock_irqrestore(&watchdog_lock, *flags);
-+}
-+
- static int clocksource_watchdog_kthread(void *data);
- static void __clocksource_change_rating(struct clocksource *cs, int rating);
- 
-@@ -142,6 +152,9 @@ static void __clocksource_unstable(struct clocksource *cs)
- 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
- 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
- 
-+	if (list_empty(&cs->list))
-+		return;
-+
- 	if (cs->mark_unstable)
- 		cs->mark_unstable(cs);
- 
-@@ -164,7 +177,7 @@ void clocksource_mark_unstable(struct clocksource *cs)
- 
- 	spin_lock_irqsave(&watchdog_lock, flags);
- 	if (!(cs->flags & CLOCK_SOURCE_UNSTABLE)) {
--		if (list_empty(&cs->wd_list))
-+		if (!list_empty(&cs->list) && list_empty(&cs->wd_list))
- 			list_add(&cs->wd_list, &watchdog_list);
- 		__clocksource_unstable(cs);
- 	}
-@@ -319,9 +332,6 @@ static void clocksource_resume_watchdog(void)
+@@ -332,6 +332,8 @@ static void clocksource_resume_watchdog(void)
  
  static void clocksource_enqueue_watchdog(struct clocksource *cs)
  {
--	unsigned long flags;
--
--	spin_lock_irqsave(&watchdog_lock, flags);
++	INIT_LIST_HEAD(&cs->wd_list);
++
  	if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
  		/* cs is a clocksource to be watched. */
  		list_add(&cs->wd_list, &watchdog_list);
-@@ -331,7 +341,6 @@ static void clocksource_enqueue_watchdog(struct clocksource *cs)
- 		if (cs->flags & CLOCK_SOURCE_IS_CONTINUOUS)
- 			cs->flags |= CLOCK_SOURCE_VALID_FOR_HRES;
- 	}
--	spin_unlock_irqrestore(&watchdog_lock, flags);
- }
- 
- static void clocksource_select_watchdog(bool fallback)
-@@ -373,9 +382,6 @@ static void clocksource_select_watchdog(bool fallback)
- 
- static void clocksource_dequeue_watchdog(struct clocksource *cs)
- {
--	unsigned long flags;
--
--	spin_lock_irqsave(&watchdog_lock, flags);
- 	if (cs != watchdog) {
- 		if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
- 			/* cs is a watched clocksource. */
-@@ -384,21 +390,19 @@ static void clocksource_dequeue_watchdog(struct clocksource *cs)
- 			clocksource_stop_watchdog();
- 		}
- 	}
--	spin_unlock_irqrestore(&watchdog_lock, flags);
- }
- 
- static int __clocksource_watchdog_kthread(void)
- {
- 	struct clocksource *cs, *tmp;
- 	unsigned long flags;
--	LIST_HEAD(unstable);
- 	int select = 0;
- 
- 	spin_lock_irqsave(&watchdog_lock, flags);
- 	list_for_each_entry_safe(cs, tmp, &watchdog_list, wd_list) {
- 		if (cs->flags & CLOCK_SOURCE_UNSTABLE) {
- 			list_del_init(&cs->wd_list);
--			list_add(&cs->wd_list, &unstable);
-+			__clocksource_change_rating(cs, 0);
- 			select = 1;
- 		}
- 		if (cs->flags & CLOCK_SOURCE_RESELECT) {
-@@ -410,11 +414,6 @@ static int __clocksource_watchdog_kthread(void)
- 	clocksource_stop_watchdog();
- 	spin_unlock_irqrestore(&watchdog_lock, flags);
- 
--	/* Needs to be done outside of watchdog lock */
--	list_for_each_entry_safe(cs, tmp, &unstable, wd_list) {
--		list_del_init(&cs->wd_list);
--		__clocksource_change_rating(cs, 0);
--	}
- 	return select;
- }
- 
-@@ -447,6 +446,9 @@ static inline int __clocksource_watchdog_kthread(void) { return 0; }
- static bool clocksource_is_watchdog(struct clocksource *cs) { return false; }
- void clocksource_mark_unstable(struct clocksource *cs) { }
- 
-+static void inline clocksource_watchdog_lock(unsigned long *flags) { }
-+static void inline clocksource_watchdog_unlock(unsigned long *flags) { }
-+
- #endif /* CONFIG_CLOCKSOURCE_WATCHDOG */
- 
- /**
-@@ -779,14 +781,19 @@ EXPORT_SYMBOL_GPL(__clocksource_update_freq_scale);
-  */
- int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
- {
-+	unsigned long flags;
- 
- 	/* Initialize mult/shift and max_idle_ns */
- 	__clocksource_update_freq_scale(cs, scale, freq);
- 
- 	/* Add clocksource to the clocksource list */
- 	mutex_lock(&clocksource_mutex);
-+
-+	clocksource_watchdog_lock(&flags);
- 	clocksource_enqueue(cs);
- 	clocksource_enqueue_watchdog(cs);
-+	clocksource_watchdog_unlock(&flags);
-+
- 	clocksource_select();
- 	clocksource_select_watchdog(false);
- 	mutex_unlock(&clocksource_mutex);
-@@ -808,8 +815,13 @@ static void __clocksource_change_rating(struct clocksource *cs, int rating)
-  */
- void clocksource_change_rating(struct clocksource *cs, int rating)
- {
-+	unsigned long flags;
-+
- 	mutex_lock(&clocksource_mutex);
-+	clocksource_watchdog_lock(&flags);
- 	__clocksource_change_rating(cs, rating);
-+	clocksource_watchdog_unlock(&flags);
-+
- 	clocksource_select();
- 	clocksource_select_watchdog(false);
- 	mutex_unlock(&clocksource_mutex);
-@@ -821,6 +833,8 @@ EXPORT_SYMBOL(clocksource_change_rating);
-  */
- static int clocksource_unbind(struct clocksource *cs)
- {
-+	unsigned long flags;
-+
- 	if (clocksource_is_watchdog(cs)) {
- 		/* Select and try to install a replacement watchdog. */
- 		clocksource_select_watchdog(true);
-@@ -834,8 +848,12 @@ static int clocksource_unbind(struct clocksource *cs)
- 		if (curr_clocksource == cs)
- 			return -EBUSY;
- 	}
-+
-+	clocksource_watchdog_lock(&flags);
- 	clocksource_dequeue_watchdog(cs);
- 	list_del_init(&cs->list);
-+	clocksource_watchdog_unlock(&flags);
-+
- 	return 0;
- }
- 
