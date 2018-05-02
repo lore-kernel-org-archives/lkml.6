@@ -1,57 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751287AbeEBDzG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 23:55:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52948 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeEBDzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 23:55:05 -0400
-Date: Tue, 1 May 2018 22:55:03 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <mathieu.poirier@linaro.org>, <mike.leach@linaro.org>,
-        <robert.walker@arm.com>, <mark.rutland@arm.com>, <will.deacon@arm.com>,
-        <robin.murphy@arm.com>, <sudeep.holla@arm.com>,
-        <frowand.list@gmail.com>, <robh@kernel.org>, <john.horley@arm.com>
-Subject: Re: [PATCH v2 21/27] coresight: Convert driver messages to dev_dbg
-Message-Id: <20180501225503.a55fb963795afb40163f3763@arm.com>
-In-Reply-To: <1525165857-11096-22-git-send-email-suzuki.poulose@arm.com>
-References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
-        <1525165857-11096-22-git-send-email-suzuki.poulose@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1750907AbeEBEAk (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 00:00:40 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40455 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750742AbeEBEAi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 00:00:38 -0400
+X-Google-Smtp-Source: AB8JxZpoYvGiZBcna9Ilv5hqQdf6lebdFLIL6UeLjcLbolEtlujfKgqfe4kcJAGIV7uqgVPcQ+pku3dliCqYaQ/iwxc=
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com>
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+ <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
+ <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+ <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
+ <CA+55aFyZXWoiWnEU8S1PNNyUTWsi7UCnBuDKOobfMLaE8uFKJg@mail.gmail.com>
+ <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
+ <CA+55aFzDt1uvDBqgkB0T2o2-d5Fi0tBiGcy5iAZ-wRNdAL4uQw@mail.gmail.com>
+ <CAPcyv4hQVKL=OtoYbWDGfOMdWen3MkF5qBPrek98+w2gODHvtg@mail.gmail.com>
+ <CAPcyv4ixtVC3w9BE3Z2ME-qMPCh9evBKP51SDrNPXAsg7xH1RQ@mail.gmail.com> <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 1 May 2018 21:00:37 -0700
+Message-ID: <CAPcyv4idV+hp-W56gyQDN4p9SQsYz+xondgVJwQSYphUMxkYnw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 1 May 2018 10:10:51 +0100
-Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+On Tue, May 1, 2018 at 8:33 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, May 1, 2018 at 8:22 PM Dan Williams <dan.j.williams@intel.com>
+> wrote:
+>
+>> All that to say that having a typical RAM page covering poisoned pmem
+>> would complicate the 'clear badblocks' implementation.
+>
+> Ugh, ok.
+>
+> I guess the good news is that your patches aren't so big, and don't really
+> affect anything else.
+>
+> But can we at least take this to be the impetus for just getting rid of
+> that disgusting unrolled memcpy? Ablout half of the lines in the patch set
+> comes from that thing.
+>
+> Is anybody seriously going to use pmem with some in-order chip that can't
+> even get something as simple as a memory copy loop right? "git blame"
+> fingers Tony Luck, I think he may have been influenced by the fumes from
+> Itanium.
+>
+> I  have some dim memory of "rep movs doesn't work well for pmem", but does
+> it *seriously* need unrolling to cacheline boundaries? And if it does, who
+> designed it, and why is anybody using it?
+>
 
-> Convert component enable/disable messages from dev_info to dev_dbg.
-> This is required to prevent LOCKDEP splats when operating in perf
-> mode where we could be called with locks held to enable a coresight
+I think this is an FAQ from the original submission, in fact some guy
+named "Linus Torvalds" asked [1]:
 
-Can we see the splats?  Doesn't lockdep turn itself off if it starts
-triggering too many splats?
+---
 
-> path. If someone wants to really see the messages, they can always
-> enable it at runtime via dynamic_debug.
+>  - why does this use the complex - and slower, on modern machines -
+> unrolled manual memory copy, when you might as well just use a single
+>
+>      rep ; movsb
+>
+>     which not only makes it smaller, but makes the exception fixup trivial.
 
-Won't the splats still occur when the messages are enabled with
-dynamic_debug?
+Because current generation cpus don't give a recoverable machine
+check if we consume with a "rep ; movsb" :-(
+When we have that we can pick the best copy function based
+on the capabilities of the cpu we are running on.
 
-So in effect this patch only tries to mitigate the splats, all the
-while making things harder for regular users that now have to recompile
-their kernels, in exchange for a very small convenience for kernel
-developers that happen to see a splat or two with DEBUG_LOCKDEP set?
+---
 
-Not the greatest choice...How about moving the dev_infos outside of the
-locks instead?
-
-Thanks,
-
-Kim
+[1]: https://lkml.org/lkml/2016/2/18/608
