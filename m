@@ -1,92 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751924AbeEBVvq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 17:51:46 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:41644 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751558AbeEBVvo (ORCPT
+        id S1751807AbeEBV4d (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 17:56:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50596 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751532AbeEBV4c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 17:51:44 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>
-Date: Wed, 02 May 2018 16:49:16 -0500
-Message-ID: <87r2mtybhf.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Wed, 2 May 2018 17:56:32 -0400
+Subject: Re: [PATCH 1/3] sched: remove select_idle_core() for scalability
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
+        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
+        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
+References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
+ <20180424004116.28151-2-subhra.mazumdar@oracle.com>
+ <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
+ <df8f4982-908a-23e6-5148-4d4e91d38be4@oracle.com>
+ <20180425174909.GB4043@hirez.programming.kicks-ass.net>
+ <e2011797-382b-0ac9-79eb-e17109ef4c96@oracle.com>
+ <20180501180348.GI12217@hirez.programming.kicks-ass.net>
+From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Message-ID: <1ea04602-041a-5b90-eba9-c20c7e98c92e@oracle.com>
+Date: Wed, 2 May 2018 14:58:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fDzeC-0007yJ-Vx;;;mid=<87r2mtybhf.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/1k2r2I5uA4PLbvCpZ1pQUyRunfTd9bHU=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4998]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Mimi Zohar <zohar@linux.vnet.ibm.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 210 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 2.9 (1.4%), b_tie_ro: 2.0 (1.0%), parse: 0.93 (0.4%),
-        extract_message_metadata: 22 (10.6%), get_uri_detail_list: 2.2 (1.0%),
-        tests_pri_-1000: 10 (4.8%), tests_pri_-950: 1.24 (0.6%), tests_pri_-900: 1.00
-        (0.5%), tests_pri_-400: 23 (10.9%), check_bayes: 22 (10.4%), b_tokenize: 7
-        (3.2%), b_tok_get_all: 7 (3.4%), b_comp_prob: 2.1 (1.0%), b_tok_touch_all:
-        3.0 (1.4%), b_finish: 0.66 (0.3%), tests_pri_0: 141 (67.2%),
-        check_dkim_signature: 0.61 (0.3%), check_dkim_adsp: 2.5 (1.2%),
-        tests_pri_500: 4.8 (2.3%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] evm: Don't update hmacs in user ns mounts
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <20180501180348.GI12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8881 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=939
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805020182
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Seth Forshee <seth.forshee@canonical.com>
-Date: Fri, 22 Dec 2017 15:32:35 +0100
-
-The kernel should not calculate new hmacs for mounts done by
-non-root users. Update evm_calc_hmac_or_hash() to refuse to
-calculate new hmacs for mounts for non-init user namespaces.
-
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: James Morris <james.l.morris@oracle.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
-Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
-Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
----
-
-Mimi this patch has been floating around for a while and it appears to
-be the only piece missing from the vfs to make unprivileged mounts safe
-(at least semantically).  Do you want to merge this through your integrity
-tree or should merge this through my userns tree?
-
- security/integrity/evm/evm_crypto.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index a46fba322340..facf9cdd577d 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -200,7 +200,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
- 	int size;
- 	bool ima_present = false;
- 
--	if (!(inode->i_opflags & IOP_XATTR))
-+	if (!(inode->i_opflags & IOP_XATTR) ||
-+	    inode->i_sb->s_user_ns != &init_user_ns)
- 		return -EOPNOTSUPP;
- 
- 	desc = init_desc(type);
--- 
-2.14.1
+On 05/01/2018 11:03 AM, Peter Zijlstra wrote:
+> On Mon, Apr 30, 2018 at 04:38:42PM -0700, Subhra Mazumdar wrote:
+>> I also noticed a possible bug later in the merge code. Shouldn't it be:
+>>
+>> if (busy < best_busy) {
+>>          best_busy = busy;
+>>          best_cpu = first_idle;
+>> }
+> Uhh, quite. I did say it was completely untested, but yes.. /me dons the
+> brown paper bag.
+I re-ran the test after fixing that bug but still get similar regressions
+for hackbench, while similar improvements on Uperf. I didn't re-run the
+Oracle DB tests but my guess is it will show similar improvement.
+
+merge:
+
+Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
+(lower is better):
+groups  baseline       %stdev  patch %stdev
+1       0.5742         21.13   0.5131 (10.64%) 4.11
+2       0.5776         7.87    0.5387 (6.73%) 2.39
+4       0.9578         1.12    1.0549 (-10.14%) 0.85
+8       1.7018         1.35    1.8516 (-8.8%) 1.56
+16      2.9955         1.36    3.2466 (-8.38%) 0.42
+32      5.4354         0.59    5.7738 (-6.23%) 0.38
+
+Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with
+message size = 8k (higher is better):
+threads baseline        %stdev  patch %stdev
+8       49.47           0.35    51.1 (3.29%) 0.13
+16      95.28           0.77    98.45 (3.33%) 0.61
+32      156.77          1.17    170.97 (9.06%) 5.62
+48      193.24          0.22    245.89 (27.25%) 7.26
+64      216.21          9.33    316.43 (46.35%) 0.37
+128     379.62          10.29   337.85 (-11%) 3.68
+
+I tried using the next_cpu technique with the merge but didn't help. I am
+open to suggestions.
+
+merge + next_cpu:
+
+Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
+(lower is better):
+groups  baseline       %stdev  patch %stdev
+1       0.5742         21.13   0.5107 (11.06%) 6.35
+2       0.5776         7.87    0.5917 (-2.44%) 11.16
+4       0.9578         1.12    1.0761 (-12.35%) 1.1
+8       1.7018         1.35    1.8748 (-10.17%) 0.8
+16      2.9955         1.36    3.2419 (-8.23%) 0.43
+32      5.4354         0.59    5.6958 (-4.79%) 0.58
+
+Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with
+message size = 8k (higher is better):
+threads baseline        %stdev  patch %stdev
+8       49.47           0.35    51.65 (4.41%) 0.26
+16      95.28           0.77    99.8 (4.75%) 1.1
+32      156.77          1.17    168.37 (7.4%) 0.6
+48      193.24          0.22    228.8 (18.4%) 1.75
+64      216.21          9.33    287.11 (32.79%) 10.82
+128     379.62          10.29   346.22 (-8.8%) 4.7
+
+Finally there was earlier suggestion by Peter in select_task_rq_fair to
+transpose the cpu offset that I had tried earlier but also regressed on
+hackbench. Just wanted to mention that so we have closure on that.
+
+transpose cpu offset in select_task_rq_fair:
+
+Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
+(lower is better):
+groups  baseline       %stdev  patch %stdev
+1       0.5742         21.13   0.5251 (8.55%) 2.57
+2       0.5776         7.87    0.5471 (5.28%) 11
+4       0.9578         1.12    1.0148 (-5.95%) 1.97
+8       1.7018         1.35    1.798 (-5.65%) 0.97
+16      2.9955         1.36    3.088 (-3.09%) 2.7
+32      5.4354         0.59    5.2815 (2.8%) 1.26
