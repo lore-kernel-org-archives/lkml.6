@@ -1,107 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751587AbeEBNdG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:33:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53262 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751570AbeEBNdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:33:02 -0400
-Date: Wed, 2 May 2018 09:33:01 -0400
-From: Mike Snitzer <snitzer@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mikulas Patocka <mpatocka@redhat.com>, dm-devel@redhat.com,
-        eric.dumazet@gmail.com, mst@redhat.com, netdev@vger.kernel.org,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@kernel.org>,
-        linux-mm@kvack.org, edumazet@google.com, Babka <vbabka@suse.cz>,
-        virtualization@lists.linux-foundation.org,
-        David Miller <davem@davemloft.net>
-Subject: Re: kvmalloc: always use vmalloc if CONFIG_DEBUG_VM
-Message-ID: <20180502133224.GA22123@redhat.com>
-References: <alpine.LRH.2.02.1804201704580.25408@file01.intranet.prod.int.rdu2.redhat.com>
- <20180421144757.GC14610@bombadil.infradead.org>
- <alpine.LRH.2.02.1804221733520.7995@file01.intranet.prod.int.rdu2.redhat.com>
- <20180423151545.GU17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804232006540.2299@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424133146.GG17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804241107010.31601@file01.intranet.prod.int.rdu2.redhat.com>
- <20180424161242.GK17484@dhcp22.suse.cz>
- <alpine.LRH.2.02.1804241229410.23702@file01.intranet.prod.int.rdu2.redhat.com>
- <20180501173626.4593a87d0d64f6cc9d219d20@linux-foundation.org>
+        id S1751561AbeEBNe0 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:34:26 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:54060 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751344AbeEBNeX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:34:23 -0400
+Date: Wed, 2 May 2018 15:34:18 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] clocksource: rework Atmel TCB timer driver
+Message-ID: <20180502133418.xa26c5ta2ytxxjcn@linutronix.de>
+References: <20180418105143.3577-1-alexandre.belloni@bootlin.com>
+ <20180426164623.tlv6kz5yopk6voxx@breakpoint.cc>
+ <20180426185233.GU4813@piout.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180501173626.4593a87d0d64f6cc9d219d20@linux-foundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180426185233.GU4813@piout.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01 2018 at  8:36pm -0400,
-Andrew Morton <akpm@linux-foundation.org> wrote:
-
-> On Tue, 24 Apr 2018 12:33:01 -0400 (EDT) Mikulas Patocka <mpatocka@redhat.com> wrote:
+On 2018-04-26 20:52:33 [+0200], Alexandre Belloni wrote:
 > 
-> > 
-> > 
-> > On Tue, 24 Apr 2018, Michal Hocko wrote:
-> > 
-> > > On Tue 24-04-18 11:30:40, Mikulas Patocka wrote:
-> > > > 
-> > > > 
-> > > > On Tue, 24 Apr 2018, Michal Hocko wrote:
-> > > > 
-> > > > > On Mon 23-04-18 20:25:15, Mikulas Patocka wrote:
-> > > > > 
-> > > > > > Fixing __vmalloc code 
-> > > > > > is easy and it doesn't require cooperation with maintainers.
-> > > > > 
-> > > > > But it is a hack against the intention of the scope api.
-> > > > 
-> > > > It is not!
+> I don't remember you posted anything for the TCB. Wasn't it focused on
+> getting rid of the PIT irq?
+
+the PIT irq which was shared with the UART one some devices, yes this
+was part of it. The other essential piece was using a higher frequency
+for the device:
+  https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git/tree/patches/clocksource-tclib-allow-higher-clockrates.patch?h=linux-4.14.y-rt-patches
+
+> As said below, this is solving multiple issues, including the one for
+> SoCs that don't have the PIT.
+will the PIT be removed? Where it needs the PIT?
+
+> Ok, if I understand correctly tc_clkevt2_set_oneshot is called from
+> atomic context so it shouldn't call tc_clkevt2_shutdown.
+> 
+> Back in 2016, tglx said:
+> "There was an earlier discussion about the clk stuff. Actually the lock
+> protecting disable/enable should be made raw, but there was some crap going on
+> in some of the clk callbacks which made that impossible. We realy should
+> revisit this."
+> 
+> Anyway, I'll try to avoid disabling the clock just to reenable it
+> afterwards.
+> 
+> (Actually, I've just checked before sending and I've found your patch,
+> I'll do something similar)
+thanks.
+
+> > >  - the current solution is wasting some TCB channels
 > > > 
-> > > This discussion simply doesn't make much sense it seems. The scope API
-> > > is to document the scope of the reclaim recursion critical section. That
-> > > certainly is not a utility function like vmalloc.
+> > > The plan is to get this driver upstream, then convert the TCB PWM driver to be
+> > > able to get rid of the tcb_clksrc driver along with atmel_tclib.
 > > 
-> > That 15-line __vmalloc bugfix doesn't prevent you (or any other kernel 
-> > developer) from converting the code to the scope API. You make nonsensical 
-> > excuses.
+> > The config options are now less than optimal (for me at least). On
+> > oldconfig it asks you for PIT and I say selected no because I wanted the
+> > new one. So I end up with nothing.
+> > Not sure you want do something about it…
 > > 
 > 
-> Fun thread!
-> 
-> Winding back to the original problem, I'd state it as
-> 
-> - Caller uses kvmalloc() but passes the address into vmalloc-naive
->   DMA API and
-> 
-> - Caller uses kvmalloc() but passes the address into kfree()
-> 
-> Yes?
+> I don't think you ending up with nothing but probably you removed the
+> PIT and kept ATMEL_TCLIB which is the combination that is really
+> difficult to protect from. I don't think it is worth the added Kconfig
+> complexity.
 
-I think so.
+TCLIB was still enabled yes. It is 'oldconfig'.
 
-> If so, then...
+> > Is the resolution more or the same compared what we have in -RT? On an
+> > idle system this clocks goes up to 180us/ 190us while the old clock
+> > started at 160us and moved to around 180us after one hackbench
+> > invocation. This could be nothing, it could be a lower frequency of the
+> > clockevents device.
+> > 
 > 
-> Is there a way in which, in the kvmalloc-called-kmalloc path, we can
-> tag the slab-allocated memory with a "this memory was allocated with
-> kvmalloc()" flag?  I *think* there's extra per-object storage available
-> with suitable slab/slub debugging options?  Perhaps we could steal one
-> bit from the redzone, dunno.
+> The driver shouldn't change anything on that side.
 > 
-> If so then we can
+> > If you intend to stick with this driver then I would replace the current
+> > hack in -RT with this series.
+> > 
 > 
-> a) set that flag in kvmalloc() if the kmalloc() call succeeded
+> That is one of the goal, yes.
 > 
-> b) check for that flag in the DMA code, WARN if it is set.
-> 
-> c) in kvfree(), clear that flag before calling kfree()
-> 
-> d) in kfree(), check for that flag and go WARN() if set.
-> 
-> So both potential bugs are detected all the time, dependent upon
-> CONFIG_SLUB_DEBUG (and perhaps other slub config options).
+> The remaining one would be "clocksource: TCLIB: Allow higher clock rates
+> for clock events"
 
-Thanks Andrew, definitely the most sane proposal I've seen to resolve
-this.
+I see. So I would need to keep that patch in queue after it was
+dismissed from duty…
+
+Sebastian
