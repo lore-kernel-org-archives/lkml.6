@@ -1,223 +1,556 @@
-Return-Path: <kernel-hardening-return-13195-gregkh=linuxfoundation.org@lists.openwall.com>
-X-Google-Smtp-Source: AB8JxZp9reccj2zXfhEsdOkOxtKqRnBStkcl3Lv2M3pr9F5XFwkEJigL4O+R9BR/7735ySFxMAkg
-ARC-Seal: i=1; a=rsa-sha256; t=1525302160; cv=none;
+Return-Path: <kernel-hardening-return-13178-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZqVlma8yvWElfK0BMVfFAw8RwM75OhP30azJGMHqrXl1WfmnpGKxEtbd6sJGTYQ2V0ebDjs
+ARC-Seal: i=1; a=rsa-sha256; t=1525223198; cv=none;
         d=google.com; s=arc-20160816;
-        b=oJ27kZHHHzh/W066rG+1V1gNv6zanWZjuGN/XScvtv2Qel9k1Qu8iBzTcfwoPHjmzj
-         leBYGFib11+/2JmADfYT+jQCbffFHnnjviqXWhO5A/kxVL2HP9TcpQ/EV1nl5tLSBVr1
-         0AohJWdC52w943x8jy93c22csqGJrSqPnyRhzic3O45ls1hbtqFm0EwIqMfNEMMWHYmE
-         KCjtv48NMXxGIOlpvmuWwwZcF5MdcaVo3cVe1q3OiPRIOXgD0mzp1Ma4eu4TDWUMQphP
-         pvHPMDZwTwvHw3l8zICz9PM1vc67L76qqF5/YmQrZn6MJrUogWTC7JlzyPs68t5WQL4U
-         1N1w==
+        b=rZtT+Sji9LQs/EgU/qgQEal1KoUBR6p9fzy1DLb9exwOLptuhhzPeItFpkVgMvfT8w
+         qjhjwFYdVGvOdZIyoRq4MmcXwQzkaZGzzyTp+CCIbh20TBDmtTFViXMlcZdoc9qjfEjn
+         DVQ2Grue190Y5LoNPp76rQ0yqG/p3PpqqGNVZ061uIfbweYboj8Nz2Ws79kypKcwNDMD
+         1bNhkVDpXGZxT7nN9OVeUvgVXHSCzS4MN2swfaJ7VMUwuCFQKFBqPPo6mw5ma/eG0dqe
+         boq0wIwbd+ddF0RiSqg0AvUpJp9xjLdH2jkF9qU7egRePT7oDDYz1mdiUBs5JVCUcTic
+         wdxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:delivered-to:list-id:list-subscribe:list-unsubscribe
          :list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=lhJJvNIjDLAo2Od0d61KaSRARTumrADZ/MehhoqVYBk=;
-        b=OKsO/16Zo3FDg0nA9VkFCorzR6LWKQUu8UGQxUcBmkV3IFmIpdBqjnxC5k2eXWuty2
-         2MotV3Z+iW0GnheuXKZy+peDGRRzgxutbYV91KbkIH+80UopICZg49seWF1VJde7KLBI
-         rYc0Cd1Kh1jx2zRVA5axC7CxNrkaUFKSOjkvDji0pfZBtfZZj20XT6KAeRAmGFZlomqk
-         SqcdDr5oo6Ll/UHQPpj01QDQqbsdU1tpYEg9ThRQE83+DOQmtT4Q9/uv9yC1QEjZs7bp
-         OK3bDU2Xq7CujJhGxaiwHBq/EkP6r/W4pKHFEu1opicyS6PcBuo0cHj7B+4yBfrUA8va
-         OBDw==
+        bh=AgvNHy2dyF1iVnSnk7J5qTL4wv2ZvF81CQQ3wZj/hpI=;
+        b=TL18ABhBgnf2eawH56fH/Z5uFrvW3mFlsAGKiIpsiB4rOix9efGripOvT34v6xq6Fq
+         FVolgVBHNid+OhYYtyia5A0Imr/gb/UNxAQp1MU12hBM57AVxwUPX0/RKfd/LognFWVC
+         rWixgzu4r5q+PXQ/+6RclCRAGZKVotqSkVqqPoGvwUQogxVnBV4o6V36x/H0/mxxgOyt
+         67YckSBRptyz7CQK2Nj9KDaZH54YObZIgFQ1odhDmLW6+DF21mxB3A7yzntoUAQYEOj4
+         967WUIjWnWEVYXtut9LrZnHq6sW7iy/7ibGWtEue3Mgrn0V0p9fdvXTxMIBoL8X60YWB
+         91fQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FkcatyqE;
-       spf=pass (google.com: domain of kernel-hardening-return-13195-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13195-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FOyiaISQ;
+       spf=pass (google.com: domain of kernel-hardening-return-13178-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13178-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FkcatyqE;
-       spf=pass (google.com: domain of kernel-hardening-return-13195-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13195-gregkh=linuxfoundation.org@lists.openwall.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FOyiaISQ;
+       spf=pass (google.com: domain of kernel-hardening-return-13178-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13178-gregkh=linuxfoundation.org@lists.openwall.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
 List-Post: <mailto:kernel-hardening@lists.openwall.com>
 List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
 List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
 List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
-Subject: Re: [PATCH 0/3 v2] linux-next: mm: Track genalloc allocations
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: mhocko@kernel.org, keescook@chromium.org, linux-mm@kvack.org,
- kernel-hardening@lists.openwall.com, linux-security-module@vger.kernel.org,
- willy@infradead.org, labbott@redhat.com, linux-kernel@vger.kernel.org,
- igor.stoppa@huawei.com
-References: <20180502010522.28767-1-igor.stoppa@huawei.com>
- <20180502145044.373c268eeaaa9022b99f9191@linux-foundation.org>
 From: Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <e0f32b09-550d-5384-7bf0-629f5933c148@gmail.com>
-Date: Thu, 3 May 2018 03:02:19 +0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180502145044.373c268eeaaa9022b99f9191@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+To: mhocko@kernel.org,
+	akpm@linux-foundation.org,
+	keescook@chromium.org,
+	linux-mm@kvack.org,
+	kernel-hardening@lists.openwall.com,
+	linux-security-module@vger.kernel.org
+Cc: willy@infradead.org,
+	labbott@redhat.com,
+	linux-kernel@vger.kernel.org,
+	igor.stoppa@huawei.com
+Subject: [PATCH 3/3] genalloc: selftest
+Date: Wed,  2 May 2018 05:05:22 +0400
+Message-Id: <20180502010522.28767-4-igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180502010522.28767-1-igor.stoppa@huawei.com>
+References: <20180502010522.28767-1-igor.stoppa@huawei.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599312393247232673?=
-X-GMAIL-MSGID: =?utf-8?q?1599395238085422114?=
+X-GMAIL-THRID: =?utf-8?q?1599312441057570805?=
+X-GMAIL-MSGID: =?utf-8?q?1599312441057570805?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Introduce a set of macros for writing concise test cases for genalloc.
 
+The test cases are meant to provide regression testing, when working on
+new functionality for genalloc.
 
-On 03/05/18 01:50, Andrew Morton wrote:
-> On Wed,  2 May 2018 05:05:19 +0400 Igor Stoppa <igor.stoppa@gmail.com> wrote:
-> 
->> This patchset was created as part of an older version of pmalloc, however
->> it has value per-se, as it hardens the memory management for the generic
->> allocator genalloc.
->>
->> Genalloc does not currently track the size of the allocations it hands
->> out.
->>
->> Either by mistake, or due to an attack, it is possible that more memory
->> than what was initially allocated is freed, leaving behind dangling
->> pointers, ready for an use-after-free attack.
->>
->> With this patch, genalloc becomes capable of tracking the size of each
->> allocation it has handed out, when it's time to free it.
->>
->> It can either verify that the size received is correct, when free is
->> invoked, or it can decide autonomously how much memory to free, if the
->> value received for the size parameter is 0.
->>
->> These patches are proposed for beign merged into linux-next, to verify
->> that they do not introduce regressions, by comparing the value received
->> from the callers of the free function with the internal tracking.
->>
->> For this reason, the patchset does not contain the removal of the size
->> parameter from users of the free() function.
->>
->> Later on, the "size" parameter can be dropped, and each caller can be
->> adjusted accordingly.
->>
->> However, I do not have access to most of the HW required for confirming
->> that all of its users are not negatively affected.
->> This is where I believe having the patches in linux-next would help to
->> coordinate with the maintaiers of the code that uses gen_alloc.
->>
->> Since there were comments about the (lack-of) efficiency introduced by
->> this patchset, I have added some more explanations and calculations to the
->> description of the first patch, the one adding the bitmap.
->> My conclusion is that this patch should not cause any major perfomance
->> problem.
->>
->> Regarding the possibility of completely changing genalloc into some other
->> type of allocator, I think it should not be a showstopper for this
->> patchset, which aims to plug a security hole in genalloc, without
->> introducing any major regression.
->>
->> The security flaw is clear and present, while the benefit of introducing a
->> new allocator is not clear, at least for the current users of genalloc.
->>
->> And anyway the users of genalloc should be fixed to not pass any size
->> parameter, which can be done after this patch is merged.
->>
->> A newer, more efficient allocator will still benefit from not receiving a
->> spurious parameter (size), when freeing memory.
->>
->> ...
->>
->>   Documentation/core-api/genalloc.rst |   4 +
->>   include/linux/genalloc.h            | 112 +++---
->>   lib/Kconfig.debug                   |  23 ++
->>   lib/Makefile                        |   1 +
->>   lib/genalloc.c                      | 742 ++++++++++++++++++++++++++----------
->>   lib/test_genalloc.c                 | 419 ++++++++++++++++++++
-> 
-> That's a big patch,
+Primarily they are meant to confirm that the various allocation strategy
+will continue to work as expected.
 
-True, but I am afraid I do not see how to split it further without 
-braking bisection.
+The execution of the self testing is controlled through a Kconfig option.
 
-  and I'm having trouble believing that it's
-> justified?  We're trying to reduce the harm in bugs (none of which are
-> known to exist) in a small number of drivers to avoid exploits, none of
-> which are known to exist and which may not even be possible.
+While it is possible to compile and executethe test as kenrel module, it
+is mostly useful to confirm that there are no problems.
+In case there were problems, the system is likely to crash well before
+modules can be loaded. When troubleshooting a crash, it is recommended
+to compile the tests into the monolithic kernel.
 
-Should I create one, to justify the patch?
-Maybe, what we are really discussing if security should be reactive or 
-preventive. And what amount of extra complexity is acceptable, without a 
-current, present threat that has already materialized.
+Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+---
+ lib/Kconfig.debug   |  23 +++
+ lib/Makefile        |   1 +
+ lib/test_genalloc.c | 419 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 443 insertions(+)
+ create mode 100644 lib/test_genalloc.c
 
-My personal take is, if I see something that I think I could exploit, 
-most likely those who do write exploits for a (really well paid) living 
-can do much more harm than I can even think of.
-
-> Or something like that.  Perhaps all this is taking defensiveness a bit
-> too far?
-
-My main goal was to remove the "size" parameter from the free() call, 
-without introducing noticeable performance regression.
-
-Is that a reasonable endeavor?
-
-After all, we have IOMMUs also for preventing similar types of attack.
-
-The current users of genalloc are primarily:
-* SRAM memory managers, which are attractive because they are used for 
-example to store system wide state inbetween transitions to off, when 
-some components (like the MMU) might not be even active.
-
-* DMA page allocators, another nice side channel, where a DMA controller 
-could be used to completely side-step the type of protection enforced by 
-the MMU
-
-> And a bitmap is a pretty crappy way of managing memory anyway, surely?
-
-I did not put it there :-P
-It also depends what one needs it for and if it's good enough.
-Or if something better is justified.
-
-> If this code is indeed performance-sensitive then perhaps a
-> reimplementation with some standard textbook allocator(?) is warranted?
-
-But, is it really performance sensitive?
-
-I might be wrong, but I think this change that I am proposing is not 
-really affecting performance.
-
-I did get a question/comment about performance implications.
-
-I have explained why I think my patches are not adding any real 
-performance problem, in the comment of the patch that does the actual 
-change to the bitmap, providing numbers that I think represent the 
-current real use cases.
-
-I was hoping in a reply to that. And a review of the code, also from 
-performance perspective.
-
-If I am making some wrong assumption or some mistake, I'll be the first 
-one to acknowledge it, once it is pointed out, however I have not 
-received specific comments about *why* this patch is either bad or 
-wrong, besides "bitmaps are crappy".
-
- From my POV, providing a better allocator would be nice, but I do not 
-have time for it, right now.
-
-And I am not even sure if it would make any real difference, with the 
-current users of genalloc.
-
-A new allocator would be a great thing for intensive allocation-release 
-patterns, with lots of fragmentation.
-
-The users of genalloc do not do that. If they did, I suspect someone 
-else would have already come up with a patch to replace genalloc.
-
-If a new allocator is being considered for the kernel, what I found to 
-be possibly the best available at the moment is jemalloc [jemalloc.net]
-
-It might even be better than other allocators currently in use in the 
-kernel. But it would really need its own project, imho.
-It shouldn't be done as side activity of kernel hardening.
-
-Coming back to genalloc, what I think *can* be said about it, is that:
-- it's risky because it blindly relies on freeing what its callers asks.
-- its current users probably wouldn't benefit from a better allocator
-- hardening the API, provided that there is no performance regression, 
-is a separate activity from rewriting the implementation
-
-Maybe genalloc should be renamed to low_frequency_alloc :-P
-
---
-igor
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index c40c7b734cd1..4f511ac20869 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1943,6 +1943,29 @@ config TEST_DEBUG_VIRTUAL
+ 
+ 	  If unsure, say N.
+ 
++config TEST_GENERIC_ALLOCATOR
++	tristate "genalloc tester"
++	default n
++	depends on GENERIC_ALLOCATOR
++	help
++	  Enable automated testing of the generic allocator.
++	  The testing is primarily for the tracking of allocated space,
++	  in particular, it tests that the size of each allcoation can be
++	  determined correctly.
++
++	  If unsure, say N.
++
++config TEST_GENERIC_ALLOCATOR_VERBOSE
++	bool "make the genalloc tester more verbose"
++	default n
++	depends on TEST_GENERIC_ALLOCATOR
++	help
++	  During the self-testing, it will be possibe to visualize the bit
++	  patterns that are expected to be produced by the sequence of
++	  memory-oriented operations.
++
++	  If unsure, say N
++
+ endif # RUNTIME_TESTING_MENU
+ 
+ config MEMTEST
+diff --git a/lib/Makefile b/lib/Makefile
+index 384713ff70d3..2c66346ab246 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -114,6 +114,7 @@ obj-$(CONFIG_LIBCRC32C)	+= libcrc32c.o
+ obj-$(CONFIG_CRC8)	+= crc8.o
+ obj-$(CONFIG_XXHASH)	+= xxhash.o
+ obj-$(CONFIG_GENERIC_ALLOCATOR) += genalloc.o
++obj-$(CONFIG_TEST_GENERIC_ALLOCATOR) += test_genalloc.o
+ 
+ obj-$(CONFIG_842_COMPRESS) += 842/
+ obj-$(CONFIG_842_DECOMPRESS) += 842/
+diff --git a/lib/test_genalloc.c b/lib/test_genalloc.c
+new file mode 100644
+index 000000000000..46ab7796c9ec
+--- /dev/null
++++ b/lib/test_genalloc.c
+@@ -0,0 +1,419 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * test_genalloc.c
++ *
++ * (C) Copyright 2017-18 Huawei Technologies Co. Ltd.
++ * Author: Igor Stoppa <igor.stoppa@huawei.com>
++ */
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/printk.h>
++#include <linux/vmalloc.h>
++#include <linux/string.h>
++#include <linux/debugfs.h>
++#include <linux/atomic.h>
++#include <linux/genalloc.h>
++
++/*
++ * Keep the bitmap small, while including case of cross-ulong mapping.
++ * For simplicity, the test cases use only 1 chunk of memory.
++ */
++#define BITMAP_SIZE_C 16
++#define ALLOC_ORDER 0
++
++#define ULONG_SIZE (sizeof(unsigned long))
++#define BITMAP_SIZE_UL (BITMAP_SIZE_C / ULONG_SIZE)
++#define MIN_ALLOC_SIZE (1 << ALLOC_ORDER)
++#define ENTRIES (BITMAP_SIZE_C * 8)
++#define CHUNK_SIZE  (MIN_ALLOC_SIZE * ENTRIES)
++
++#ifndef CONFIG_TEST_GENERIC_ALLOCATOR_VERBOSE
++
++static inline void print_first_chunk_bitmap(struct gen_pool *pool) {}
++
++#else
++
++static void print_first_chunk_bitmap(struct gen_pool *pool)
++{
++	struct gen_pool_chunk *chunk;
++	char bitmap[BITMAP_SIZE_C * 2 + 1];
++	unsigned long i;
++	char *bm = bitmap;
++	char *entry;
++
++	if (unlikely(pool == NULL || pool->chunks.next == NULL))
++		return;
++
++	chunk = container_of(pool->chunks.next, struct gen_pool_chunk,
++			     next_chunk);
++	entry = (void *)chunk->entries;
++	for (i = 1; i <= BITMAP_SIZE_C; i++)
++		bm += snprintf(bm, 3, "%02hhx", entry[BITMAP_SIZE_C - i]);
++	*bm = '\0';
++	pr_notice("chunk: %p    bitmap: 0x%s\n", chunk, bitmap);
++
++}
++
++#endif
++
++enum test_commands {
++	CMD_ALLOCATOR,
++	CMD_ALLOCATE,
++	CMD_FLUSH,
++	CMD_FREE,
++	CMD_NUMBER,
++	CMD_END = CMD_NUMBER,
++};
++
++struct null_struct {
++	void *null;
++};
++
++struct test_allocator {
++	genpool_algo_t algo;
++	union {
++		struct genpool_data_align align;
++		struct genpool_data_fixed offset;
++		struct null_struct null;
++	} data;
++};
++
++struct test_action {
++	unsigned int location;
++	char pattern[BITMAP_SIZE_C];
++	unsigned int size;
++};
++
++
++struct test_command {
++	enum test_commands command;
++	union {
++		struct test_allocator allocator;
++		struct test_action action;
++	};
++};
++
++
++/*
++ * To pass an array literal as parameter to a macro, it must go through
++ * this one, first.
++ */
++#define ARR(...) __VA_ARGS__
++
++#define SET_DATA(parameter, value)	\
++	.parameter = {			\
++		.parameter = value,	\
++	}				\
++
++#define SET_ALLOCATOR(alloc, parameter, value)		\
++{							\
++	.command = CMD_ALLOCATOR,			\
++	.allocator = {					\
++		.algo = (alloc),			\
++		.data = {				\
++			SET_DATA(parameter, value),	\
++		},					\
++	}						\
++}
++
++#define ACTION_MEM(act, mem_size, mem_loc, match)	\
++{							\
++	.command = act,					\
++	.action = {					\
++		.size = (mem_size),			\
++		.location = (mem_loc),			\
++		.pattern = match,			\
++	},						\
++}
++
++#define ALLOCATE_MEM(mem_size, mem_loc, match)	\
++	ACTION_MEM(CMD_ALLOCATE, mem_size, mem_loc, ARR(match))
++
++#define FREE_MEM(mem_size, mem_loc, match)	\
++	ACTION_MEM(CMD_FREE, mem_size, mem_loc, ARR(match))
++
++#define FLUSH_MEM()		\
++{				\
++	.command = CMD_FLUSH,	\
++}
++
++#define END()			\
++{				\
++	.command = CMD_END,	\
++}
++
++static inline int compare_bitmaps(const struct gen_pool *pool,
++				   const char *reference)
++{
++	struct gen_pool_chunk *chunk;
++	char *bitmap;
++	unsigned int i;
++
++	chunk = container_of(pool->chunks.next, struct gen_pool_chunk,
++			     next_chunk);
++	bitmap = (char *)chunk->entries;
++
++	for (i = 0; i < BITMAP_SIZE_C; i++)
++		if (bitmap[i] != reference[i])
++			return -1;
++	return 0;
++}
++
++static int callback_set_allocator(struct gen_pool *pool,
++				   const struct test_command *cmd,
++				   unsigned long *locations)
++{
++	gen_pool_set_algo(pool, cmd->allocator.algo,
++			  (void *)&cmd->allocator.data);
++	return 0;
++}
++
++static int callback_allocate(struct gen_pool *pool,
++			      const struct test_command *cmd,
++			      unsigned long *locations)
++{
++	const struct test_action *action = &cmd->action;
++
++	locations[action->location] = gen_pool_alloc(pool, action->size);
++	if (WARN_ON(!locations[action->location]))
++		return 1;
++	print_first_chunk_bitmap(pool);
++	return WARN_ON(compare_bitmaps(pool, action->pattern));
++}
++
++static int callback_flush(struct gen_pool *pool,
++			  const struct test_command *cmd,
++			  unsigned long *locations)
++{
++	unsigned int i;
++
++	for (i = 0; i < ENTRIES; i++)
++		if (locations[i]) {
++			gen_pool_free(pool, locations[i], 0);
++			locations[i] = 0;
++		}
++	return 0;
++}
++
++static int callback_free(struct gen_pool *pool,
++			  const struct test_command *cmd,
++			  unsigned long *locations)
++{
++	const struct test_action *action = &cmd->action;
++
++	gen_pool_free(pool, locations[action->location], 0);
++	locations[action->location] = 0;
++	print_first_chunk_bitmap(pool);
++	return WARN_ON(compare_bitmaps(pool, action->pattern));
++}
++
++static int (* const callbacks[CMD_NUMBER])(struct gen_pool *,
++					    const struct test_command *,
++					    unsigned long *) = {
++	[CMD_ALLOCATOR] = callback_set_allocator,
++	[CMD_ALLOCATE] = callback_allocate,
++	[CMD_FREE] = callback_free,
++	[CMD_FLUSH] = callback_flush,
++};
++
++static const struct test_command test_first_fit[] = {
++	SET_ALLOCATOR(gen_pool_first_fit, null, NULL),
++	ALLOCATE_MEM(3, 0, ARR({0x2b})),
++	ALLOCATE_MEM(2, 1, ARR({0xeb, 0x02})),
++	ALLOCATE_MEM(5, 2, ARR({0xeb, 0xae, 0x0a})),
++	FREE_MEM(2, 1,  ARR({0x2b, 0xac, 0x0a})),
++	ALLOCATE_MEM(1, 1, ARR({0xeb, 0xac, 0x0a})),
++	FREE_MEM(0, 2,  ARR({0xeb})),
++	FREE_MEM(0, 0,  ARR({0xc0})),
++	FREE_MEM(0, 1,	ARR({0x00})),
++	END(),
++};
++
++/*
++ * To make the test work for both 32bit and 64bit ulong sizes,
++ * allocate (8 / 2 * 4 - 1) = 15 bytes bytes, then 16, then 2.
++ * The first allocation prepares for the crossing of the 32bit ulong
++ * threshold. The following crosses the 32bit threshold and prepares for
++ * crossing the 64bit thresholds. The last is large enough (2 bytes) to
++ * cross the 64bit threshold.
++ * Then free the allocations in the order: 2nd, 1st, 3rd.
++ */
++static const struct test_command test_ulong_span[] = {
++	SET_ALLOCATOR(gen_pool_first_fit, null, NULL),
++	ALLOCATE_MEM(15, 0, ARR({0xab, 0xaa, 0xaa, 0x2a})),
++	ALLOCATE_MEM(16, 1, ARR({0xab, 0xaa, 0xaa, 0xea,
++				0xaa, 0xaa, 0xaa, 0x2a})),
++	ALLOCATE_MEM(2, 2, ARR({0xab, 0xaa, 0xaa, 0xea,
++			       0xaa, 0xaa, 0xaa, 0xea,
++			       0x02})),
++	FREE_MEM(0, 1, ARR({0xab, 0xaa, 0xaa, 0x2a,
++			   0x00, 0x00, 0x00, 0xc0,
++			   0x02})),
++	FREE_MEM(0, 0, ARR({0x00, 0x00, 0x00, 0x00,
++			   0x00, 0x00, 0x00, 0xc0,
++			   0x02})),
++	FREE_MEM(0, 2, ARR({0x00})),
++	END(),
++};
++
++/*
++ * Create progressively smaller allocations A B C D E.
++ * then free B and D.
++ * Then create new allocation that would fit in both of the gaps left by
++ * B and D. Verify that it uses the gap from B.
++ */
++static const struct test_command test_first_fit_gaps[] = {
++	SET_ALLOCATOR(gen_pool_first_fit, null, NULL),
++	ALLOCATE_MEM(10, 0, ARR({0xab, 0xaa, 0x0a})),
++	ALLOCATE_MEM(8, 1, ARR({0xab, 0xaa, 0xba, 0xaa,
++			       0x0a})),
++	ALLOCATE_MEM(6, 2, ARR({0xab, 0xaa, 0xba, 0xaa,
++			       0xba, 0xaa})),
++	ALLOCATE_MEM(4, 3, ARR({0xab, 0xaa, 0xba, 0xaa,
++			       0xba, 0xaa, 0xab})),
++	ALLOCATE_MEM(2, 4, ARR({0xab, 0xaa, 0xba, 0xaa,
++			       0xba, 0xaa, 0xab, 0x0b})),
++	FREE_MEM(0, 1, ARR({0xab, 0xaa, 0x0a, 0x00,
++			   0xb0, 0xaa, 0xab, 0x0b})),
++	FREE_MEM(0, 3, ARR({0xab, 0xaa, 0x0a, 0x00,
++			   0xb0, 0xaa, 0x00, 0x0b})),
++	ALLOCATE_MEM(3, 3, ARR({0xab, 0xaa, 0xba, 0x02,
++			       0xb0, 0xaa, 0x00, 0x0b})),
++	FLUSH_MEM(),
++	END(),
++};
++
++/* Test first fit align */
++static const struct test_command test_first_fit_align[] = {
++	SET_ALLOCATOR(gen_pool_first_fit_align, align, 4),
++	ALLOCATE_MEM(5, 0, ARR({0xab, 0x02})),
++	ALLOCATE_MEM(3, 1, ARR({0xab, 0x02, 0x2b})),
++	ALLOCATE_MEM(2, 2, ARR({0xab, 0x02, 0x2b, 0x0b})),
++	ALLOCATE_MEM(1, 3, ARR({0xab, 0x02, 0x2b, 0x0b, 0x03})),
++	FREE_MEM(0, 0, ARR({0x00, 0x00, 0x2b, 0x0b, 0x03})),
++	FREE_MEM(0, 2, ARR({0x00, 0x00, 0x2b, 0x00, 0x03})),
++	ALLOCATE_MEM(2, 0, ARR({0x0b, 0x00, 0x2b, 0x00, 0x03})),
++	FLUSH_MEM(),
++	END(),
++};
++
++
++/* Test fixed alloc */
++static const struct test_command test_fixed_data[] = {
++	SET_ALLOCATOR(gen_pool_fixed_alloc, offset, 1),
++	ALLOCATE_MEM(5, 0, ARR({0xac, 0x0a})),
++	SET_ALLOCATOR(gen_pool_fixed_alloc, offset, 8),
++	ALLOCATE_MEM(3, 1, ARR({0xac, 0x0a, 0x2b})),
++	SET_ALLOCATOR(gen_pool_fixed_alloc, offset, 6),
++	ALLOCATE_MEM(2, 2, ARR({0xac, 0xba, 0x2b})),
++	SET_ALLOCATOR(gen_pool_fixed_alloc, offset, 30),
++	ALLOCATE_MEM(40, 3, ARR({0xac, 0xba, 0x2b, 0x00,
++				0x00, 0x00, 0x00, 0xb0,
++				0xaa, 0xaa, 0xaa, 0xaa,
++				0xaa, 0xaa, 0xaa, 0xaa})),
++	FLUSH_MEM(),
++	END(),
++};
++
++
++/* Test first fit order align */
++static const struct test_command test_first_fit_order_align[] = {
++	SET_ALLOCATOR(gen_pool_first_fit_order_align, null, NULL),
++	ALLOCATE_MEM(5, 0, ARR({0xab, 0x02})),
++	ALLOCATE_MEM(3, 1, ARR({0xab, 0x02, 0x2b})),
++	ALLOCATE_MEM(2, 2, ARR({0xab, 0xb2, 0x2b})),
++	ALLOCATE_MEM(1, 3, ARR({0xab, 0xbe, 0x2b})),
++	ALLOCATE_MEM(1, 4, ARR({0xab, 0xbe, 0xeb})),
++	ALLOCATE_MEM(2, 5, ARR({0xab, 0xbe, 0xeb, 0x0b})),
++	FLUSH_MEM(),
++	END(),
++};
++
++
++/* 007 Test best fit */
++static const struct test_command test_best_fit[] = {
++	SET_ALLOCATOR(gen_pool_best_fit, null, NULL),
++	ALLOCATE_MEM(5, 0, ARR({0xab, 0x02})),
++	ALLOCATE_MEM(3, 1, ARR({0xab, 0xae})),
++	ALLOCATE_MEM(3, 2, ARR({0xab, 0xae, 0x2b})),
++	ALLOCATE_MEM(1, 3, ARR({0xab, 0xae, 0xeb})),
++	FREE_MEM(0, 0, ARR({0x00, 0xac, 0xeb})),
++	FREE_MEM(0, 2, ARR({0x00, 0xac, 0xc0})),
++	ALLOCATE_MEM(2, 0, ARR({0x00, 0xac, 0xcb})),
++	FLUSH_MEM(),
++	END(),
++};
++
++
++enum test_cases_indexes {
++	TEST_CASE_FIRST_FIT,
++	TEST_CASE_ULONG_SPAN,
++	TEST_CASE_FIRST_FIT_GAPS,
++	TEST_CASE_FIRST_FIT_ALIGN,
++	TEST_CASE_FIXED_DATA,
++	TEST_CASE_FIRST_FIT_ORDER_ALIGN,
++	TEST_CASE_BEST_FIT,
++	TEST_CASES_NUM,
++};
++
++static const struct test_command *test_cases[TEST_CASES_NUM] = {
++	[TEST_CASE_FIRST_FIT] = test_first_fit,
++	[TEST_CASE_ULONG_SPAN] = test_ulong_span,
++	[TEST_CASE_FIRST_FIT_GAPS] = test_first_fit_gaps,
++	[TEST_CASE_FIRST_FIT_ALIGN] = test_first_fit_align,
++	[TEST_CASE_FIXED_DATA] = test_fixed_data,
++	[TEST_CASE_FIRST_FIT_ORDER_ALIGN] = test_first_fit_order_align,
++	[TEST_CASE_BEST_FIT] = test_best_fit,
++};
++
++
++static int __init test_genalloc_init_module(void)
++{
++	static struct gen_pool *pool;
++	unsigned long locations[ENTRIES];
++	char chunk[CHUNK_SIZE];
++	unsigned int i;
++	const struct test_command *cmd;
++	int retval;
++
++	retval = -ENOMEM;
++	pool = gen_pool_create(ALLOC_ORDER, -1);
++	if (unlikely(!pool)) {
++		pr_err("genalloc: no memory for self-test.");
++		return -ENOMEM;
++	}
++
++	retval = gen_pool_add_virt(pool, (unsigned long)chunk, 0,
++				   CHUNK_SIZE, -1);
++	if (unlikely(retval)) {
++		pr_err("genalloc: could not register chunk for self-test.");
++		goto destroy_pool;
++	}
++
++	memset(locations, 0, ENTRIES * sizeof(unsigned long));
++	for (i = 0; i < TEST_CASES_NUM; i++)
++		for (cmd = test_cases[i]; cmd->command < CMD_END; cmd++)
++			if (callbacks[cmd->command](pool, cmd, locations)) {
++				pr_err("genalloc: failed test %d", i);
++				goto destroy_pool;
++			}
++	pr_notice("genalloc-selftest: executed successfully %d tests",
++		  TEST_CASES_NUM);
++
++destroy_pool:
++	gen_pool_destroy(pool);
++	return retval;
++}
++
++module_init(test_genalloc_init_module);
++
++static void __exit test_genalloc_cleanup_module(void)
++{
++}
++
++module_exit(test_genalloc_cleanup_module);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Igor Stoppa <igor.stoppa@huawei.com>");
++MODULE_DESCRIPTION("Test module for genalloc.");
+-- 
+2.14.1
