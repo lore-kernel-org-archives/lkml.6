@@ -1,31 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751054AbeEBSkt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 14:40:49 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52660 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750800AbeEBSks (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 14:40:48 -0400
-Date: Wed, 2 May 2018 19:40:47 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iov_iter: fix memory leak in pipe_get_pages_alloc()
-Message-ID: <20180502184047.GV30522@ZenIV.linux.org.uk>
-References: <1525285017-18616-1-git-send-email-idryomov@gmail.com>
- <1525285017-18616-2-git-send-email-idryomov@gmail.com>
+        id S1751178AbeEBSrL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 14:47:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750939AbeEBSrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 14:47:09 -0400
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525285017-18616-2-git-send-email-idryomov@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+To: "Nischal, Amit" <anischal@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <d311e4d7-7ba8-0b26-93c7-5ee06db466ef@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1524576771-31096-1-git-send-email-anischal@codeaurora.org>
+ <1524576771-31096-3-git-send-email-anischal@codeaurora.org>
+ <152521087780.138124.7623601052057968460@swboyd.mtv.corp.google.com>
+ <d311e4d7-7ba8-0b26-93c7-5ee06db466ef@codeaurora.org>
+Message-ID: <152528682776.138124.2183943878215041610@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] clk: qcom: Add video clock controller driver for SDM845
+Date: Wed, 02 May 2018 11:47:07 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w42IlHF2030822
 
-On Wed, May 02, 2018 at 08:16:57PM +0200, Ilya Dryomov wrote:
-> Make n signed to avoid leaking the pages array if __pipe_get_pages()
-> fails.
+Quoting Nischal, Amit (2018-05-02 00:56:35)
+> 
+> 
+> Thanks for the review.
+> As of now, there are no resets defined for VIDEOCC. So I will move
+> the #reset-cells tooptional property in the dt-binding.
+> Same will be updated in the next patch series.
 
-Applied, with s/fails/& to allocate any pages/.
+Please don't make it optional. It should be required in the binding,
+because there are resets in the hardware. If you don't want to add them
+into the driver, that's ok, but it isn't really that hard to add them so
+why not add them?
