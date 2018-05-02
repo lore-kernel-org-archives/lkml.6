@@ -1,52 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751555AbeEBPIp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:08:45 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:32912 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751078AbeEBPIn (ORCPT
+        id S1751739AbeEBPJg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:09:36 -0400
+Received: from fllnx209.ext.ti.com ([198.47.19.16]:10401 "EHLO
+        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751525AbeEBPJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:08:43 -0400
-Date: Wed, 02 May 2018 11:08:41 -0400 (EDT)
-Message-Id: <20180502.110841.378324128079268584.davem@davemloft.net>
-To: grygorii.strashko@ti.com
-Cc: netdev@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: ti: cpsw: fix packet leaking in
- dual_mac mode
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180501174122.11323-1-grygorii.strashko@ti.com>
-References: <20180501174122.11323-1-grygorii.strashko@ti.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+        Wed, 2 May 2018 11:09:23 -0400
+Subject: Re: [PATCH v9 03/27] clk: davinci: psc: allow for dev == NULL
+To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
+References: <20180427001745.4116-1-david@lechnology.com>
+ <20180427001745.4116-4-david@lechnology.com>
+ <8940259b-5811-ce9f-8262-17d39ca0a46f@ti.com>
+ <94d4cfc5-0ea7-e642-c7e3-8d549bdef8ce@lechnology.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <3cec9c1f-48fd-1c16-b642-eb93e41446fc@ti.com>
+Date: Wed, 2 May 2018 20:38:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <94d4cfc5-0ea7-e642-c7e3-8d549bdef8ce@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Date: Tue, 1 May 2018 12:41:22 -0500
+On Wednesday 02 May 2018 07:19 AM, David Lechner wrote:
+> On 05/01/2018 09:02 AM, Sekhar Nori wrote:
+>> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
+>>> +static inline void *_devm_kzalloc(struct device *dev, size_t size,
+>>> gfp_t flags)
+>>> +{
+>>> +    if (dev)
+>>> +        return devm_kzalloc(dev, size, flags);
+>>> +
+>>> +    return kzalloc(size, flags);
+>>> +}
+>>
+>> I have the same question on the utility of this. A memory allocation
+>> error so early on is not going to result in a bootable system anyway.
+>> So, I wonder if its better to just BUG() in such cases. That will
+>> actually help faster debug than returning an error back. I know the push
+>> back on using BUG(), but clock drivers are special, and I think thats
+>> why its seems to be used quite a bit already.
+>>
+> 
+> Same reply here as well. On DA850/DA830, you might not get a console,
+> but you will "boot" even if one of the PSC devices fails though.
 
-> In dual_mac mode packets arrived on one port should not be forwarded by
-> switch hw to another port. Only Linux Host can forward packets between
-> ports. The below test case (reported in [1]) shows that packet arrived on
-> one port can be leaked to anoter (reproducible with dual port evms):
->  - connect port 1 (eth0) to linux Host 0 and run tcpdump or Wireshark
->  - connect port 2 (eth1) to linux Host 1 with vlan 1 configured
->  - ping <IPx> from Host 1 through vlan 1 interface.
-> ARP packets will be seen on Host 0.
-> 
-> Issue happens because dual_mac mode is implemnted using two vlans: 1 (Port
-> 1+Port 0) and 2 (Port 2+Port 0), so there are vlan records created for for
-> each vlan. By default, the ALE will find valid vlan record in its table
-> when vlan 1 tagged packet arrived on Port 2 and so forwards packet to all
-> ports which are vlan 1 members (like Port.
-> 
-> To avoid such behaviorr the ALE VLAN ID Ingress Check need to be enabled
-> for each external CPSW port (ALE_PORTCTLn.VID_INGRESS_CHECK) so ALE will
-> drop ingress packets if Rx port is not VLAN member.
-> 
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Was not thinking of failure to boot due to clocks being disabled, but
+the fact that you are not able to allocate a small amount of memory so
+early in boot process. The chances of successful boot after memory
+allocation failures like that are close to zero.
 
-Applied and queued up for -stable, thank you.
+> WARN() is probably just as good as BUG() in this case too.
+
+Okay, but with WARN() you would continue to proceed to try to boot which
+is not going to be much fruitful (and might actually muddle the first
+failure). But up to you on this.
+
+Thanks,
+Sekhar
