@@ -1,104 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751459AbeEBWVo (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 18:21:44 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42342 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751148AbeEBWVm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 18:21:42 -0400
-X-Google-Smtp-Source: AB8JxZqjTTnc1FlNw7kp17kU5AQrrVSLxjsWlcS0GsJEMx9RN7+kAmKqFJA/lZOXQTvdGv/uVt9ayA==
-Date: Wed, 2 May 2018 15:21:38 -0700
-From: Kees Cook <keescook@chromium.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: dpt_i2o: Remove VLA usage
-Message-ID: <20180502222138.GA22088@beast>
+        id S1751479AbeEBWZ3 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 18:25:29 -0400
+Received: from imap.thunk.org ([74.207.234.97]:55634 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751148AbeEBWZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 18:25:27 -0400
+Date: Wed, 2 May 2018 18:25:22 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Justin Forbes <jmforbes@linuxtx.org>, Jeremy Cline <jeremy@jcline.org>,
+        Sultan Alsawaf <sultanxda@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180502222522.GA15457@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Laura Abbott <labbott@redhat.com>,
+        Justin Forbes <jmforbes@linuxtx.org>,
+        Jeremy Cline <jeremy@jcline.org>,
+        Sultan Alsawaf <sultanxda@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+References: <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
+ <20180429220519.GQ5965@thunk.org>
+ <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
+ <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
+ <20180501125518.GI20585@thunk.org>
+ <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
+ <20180502000250.GI10479@thunk.org>
+ <CAFxkdAp83uWnju0KZKd2edveuzmiDW_sqMORC7uoR+pwgQECNw@mail.gmail.com>
+ <20180502162653.GB3461@thunk.org>
+ <3851ac8b-357d-3c82-2195-936e3c459212@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <3851ac8b-357d-3c82-2195-936e3c459212@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the quest to remove all VLAs from the kernel[1] this moves the sg_list
-variable off the stack, as already done for other allocated buffers in
-adpt_i2o_passthru(). Additionally consolidates the error path for kfree().
+On Wed, May 02, 2018 at 10:49:34AM -0700, Laura Abbott wrote:
+> 
+> It is a Fedora patch we're carrying
+> https://src.fedoraproject.org/rpms/libgcrypt/blob/master/f/libgcrypt-1.6.2-fips-ctor.patch#_23
+> so yes, it is a Fedora specific use case.
+> From talking to the libgcrypt team, this is a FIPS mode requirement
+> to run power on self test at the library constructor and the self
+> test of libgrcypt ends up requiring a fully seeded RNG. Citation
+> is in section 9.10 of
+> https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validation-Program/documents/fips140-2/FIPS1402IG.pdf
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Forgive me if this is a stupid question, but does Fedora need FIPS
+compliance?  Or is this something which is only required for RHEL?
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/scsi/dpt_i2o.c | 21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+("Here's to FIPS: the cause of, and solution to, all of Life's
+problems."  :-)
 
-diff --git a/drivers/scsi/dpt_i2o.c b/drivers/scsi/dpt_i2o.c
-index 5ceea8da7bb6..37de8fb186d7 100644
---- a/drivers/scsi/dpt_i2o.c
-+++ b/drivers/scsi/dpt_i2o.c
-@@ -1706,7 +1706,7 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
- 	u32 reply_size = 0;
- 	u32 __user *user_msg = arg;
- 	u32 __user * user_reply = NULL;
--	void *sg_list[pHba->sg_tablesize];
-+	void **sg_list = NULL;
- 	u32 sg_offset = 0;
- 	u32 sg_count = 0;
- 	int sg_index = 0;
-@@ -1748,19 +1748,23 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
- 	msg[2] = 0x40000000; // IOCTL context
- 	msg[3] = adpt_ioctl_to_context(pHba, reply);
- 	if (msg[3] == (u32)-1) {
--		kfree(reply);
--		return -EBUSY;
-+		rcode = -EBUSY;
-+		goto free;
- 	}
- 
--	memset(sg_list,0, sizeof(sg_list[0])*pHba->sg_tablesize);
-+	sg_list = kcalloc(pHba->sg_tablesize, sizeof(*sg_list), GFP_KERNEL);
-+	if (!sg_list) {
-+		rcode = -ENOMEM;
-+		goto free;
-+	}
- 	if(sg_offset) {
- 		// TODO add 64 bit API
- 		struct sg_simple_element *sg =  (struct sg_simple_element*) (msg+sg_offset);
- 		sg_count = (size - sg_offset*4) / sizeof(struct sg_simple_element);
- 		if (sg_count > pHba->sg_tablesize){
- 			printk(KERN_DEBUG"%s:IOCTL SG List too large (%u)\n", pHba->name,sg_count);
--			kfree (reply);
--			return -EINVAL;
-+			rcode = -EINVAL;
-+			goto free;
- 		}
- 
- 		for(i = 0; i < sg_count; i++) {
-@@ -1879,7 +1883,6 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
- 	if (rcode != -ETIME && rcode != -EINTR) {
- 		struct sg_simple_element *sg =
- 				(struct sg_simple_element*) (msg +sg_offset);
--		kfree (reply);
- 		while(sg_index) {
- 			if(sg_list[--sg_index]) {
- 				dma_free_coherent(&pHba->pDev->dev,
-@@ -1889,6 +1892,10 @@ static int adpt_i2o_passthru(adpt_hba* pHba, u32 __user *arg)
- 			}
- 		}
- 	}
-+
-+free:
-+	kfree(sg_list);
-+	kfree(reply);
- 	return rcode;
- }
- 
--- 
-2.17.0
-
-
--- 
-Kees Cook
-Pixel Security
+	  	   		     - Ted
