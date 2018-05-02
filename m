@@ -1,165 +1,60 @@
-Return-Path: <linux_dti@icloud.com>
-X-Google-Smtp-Source: AB8JxZpS5cqL0jfcN97ozcbUFP0GGqnwSO/HfOQuP19pbKAa2SIPpCpZX2m4XbNLyLrEdsRJ97WY
-ARC-Seal: i=1; a=rsa-sha256; t=1525897213; cv=none;
+Return-Path: <hdegoede@redhat.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525295308; cv=none;
         d=google.com; s=arc-20160816;
-        b=fCiaznCMQbgH1NgIftqSzef0hTKX+wAj1fUvBaLxY6ZZveaV9gAv7NCHBnx9fIjUCa
-         NvlKKMBKfpuOWVkONttrrBQAfNf599DV5Onw41WTNEU/uGp/StqdzmHUws6mqAu7LFHM
-         kOuBvqgZkZcki7PV92BWMc/sjeZg8POFsseN3Xp6etGz3OJhgU+oGK8dbrdjY5QEnnbF
-         jkJKqPOHjx9sjQRo48NTzRT3MUrZAEWb6e1+/o/+sNa2Q5pcJg2LudT88fPLh+pY94ki
-         SBkl3G8kxZngVBCSFSOLuZ1SMIol8o/jU+0ymEgjEbe6LzdAP3wnutHWtophHlNlY85x
-         Sr0g==
+        b=d+i2DV1+8g4/ikIygXSE2uQnLCakWzX7F7Jj8gLCFyp9NJgWbaT/P9ZoJb/5RVc9r/
+         KH1H0yLjP3CiLchFi6X1Q9kVRljo+dirz75PLwYmcMfagvqPwZqi0yL6YO6IdzltcM5M
+         Tg8FyLNOGw+EqW9uC6jAnfpws4dpLvbnzJK3gXcYOgeU3aHEaSoK1AOZgsYA97FLaa+0
+         Ekh70TQ54ANCt6iec9u7II/3DW8JL/IjFnZ83uaisztSxW+5ZfcQkalRgDRiYBT3FVYR
+         X90UUQaBxi4iutcf0b7TevV89Uy2fl5J/K9LZFjBXT4WlJscs4hBwuJPidWcAB2GI9Qg
+         Lpvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-transfer-encoding
-         :content-disposition:mime-version:references:mail-followup-to
-         :message-id:subject:to:from:date:dkim-signature
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:to:subject
          :arc-authentication-results;
-        bh=SEAfCkSsLmo+GBtwURuFpoqCNCFhfDkN922CrZDZHXM=;
-        b=weE84Sh+mf3uopFC/jdh4TDoRl8CmzDMYMqhMEN12Xe0GRcx12uEdpKgJ/4wPTIQXr
-         rmJsZ4O4Fz/Xpuf+x8RkJrYse4FAlVDdYErym7RasdTCSI83dvGEIqn2nkkVUERWhC5m
-         hVOsNkmC2gsw9TEPA6yRYMQdJHmDvQD+66Adcvl1uCJUKFhskBuj+hMSYYutIQUQMRfg
-         RtxxERpqxKy2wvaWK0U2qWA//4KydG42CjWv3qVnYuUEhYlNSjXANMT6qctt4IqW+nZ9
-         K96cPMoK19Znnv86DI/UsnBjrkUCi9wdt5sC/pq2BAJq8IKvSgtPV7q1OEpZpLv/FwMl
-         GGaw==
+        bh=MVH3g2Vjr3yK9EtqIL6rg6MfHbORyHFnMP6FGFvRoTw=;
+        b=V4o63YKKrTn2EiMygG9GxLPbXuvpb86YP7YS3yxXWxNJHJ6Yn9V8AsR4I4qm8fSKM1
+         Diq59ChHCoMXydazoACJbzXIb+uKZtColNHqkyCbzYva+KFPWqaPvvywnLjSd+WA1zgT
+         /G47cFvZOQq+ZMDQDpf8czlqYE/3Tc53r6EulFys/4tzFXZWOQoQOrZPnjoh7iJN/Qc6
+         KcRlA33j+uMtHldJiRzWrp9f3acUvvGIe7xhw8I39n4ux1Y6Byy10aQSnXHYEPSp7cgd
+         HbtOz55crTAS8Wi+EFf0HLgAIVHDTvrVRdjJysWSMIz1HSur3ON9jXEoToUy/+6+KnID
+         dgYw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@icloud.com header.s=04042017 header.b=Q7Nu06ye;
-       spf=pass (google.com: domain of linux_dti@icloud.com designates 17.58.37.38 as permitted sender) smtp.mailfrom=linux_dti@icloud.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@icloud.com header.s=04042017 header.b=Q7Nu06ye;
-       spf=pass (google.com: domain of linux_dti@icloud.com designates 17.58.37.38 as permitted sender) smtp.mailfrom=linux_dti@icloud.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
- definitions=2018-05-09_07:,, signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
- clxscore=1015 suspectscore=2 malwarescore=0 phishscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1707230000 definitions=main-1805090189
-Date: Wed, 09 May 2018 22:20:04 +0200
-From: damian <linux_dti@icloud.com>
-To: Hans de Goede <hdegoede@redhat.com>, gregkh@linuxfoundation.org,
- arnd@arndb.de, linux-kernel@vger.kernel.org
+       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+X-Google-Smtp-Source: AB8JxZrDr3j+5hHznQEm93fBLnlVxki7YjjeKNd9+K5p3+99kMvNwQkgZwzogm67WwRHf62LNcNrZQ==
 Subject: Re: Bug in vboxguest: After commit Merge tag 'char-misc-4.17-rc3'
-Message-id: <20180509202004.GB8982@zrhn9910b>
-Mail-followup-to: Hans de Goede <hdegoede@redhat.com>,
- gregkh@linuxfoundation.org, arnd@arndb.de, linux-kernel@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
+ linux-kernel@vger.kernel.org
 References: <20180502193735.GA2444@zrhn9910b>
  <20180502200615.GB16341@kroah.com> <20180502204612.GA2089@zrhn9910b>
- <c589f2f9-e8e3-7f54-e1ab-9ac3baf700bf@redhat.com>
- <20180508194135.GA27020@zrhn9910b>
- <cbf215d0-b193-16fd-cfb7-b6cbf4dc6a74@redhat.com>
- <20180509201803.GA8982@zrhn9910b>
-MIME-version: 1.0
-Content-type: text/plain; charset=iso-8859-1
-Content-disposition: inline
-Content-transfer-encoding: 8bit
-In-reply-to: <20180509201803.GA8982@zrhn9910b>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+From: Hans de Goede <hdegoede@redhat.com>
+Message-ID: <2bc020fe-a298-f988-a95f-c33123d6be6c@redhat.com>
+Date: Wed, 2 May 2018 23:08:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180502204612.GA2089@zrhn9910b>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599382342256929089?=
-X-GMAIL-MSGID: =?utf-8?q?1600019196539682322?=
+X-GMAIL-MSGID: =?utf-8?q?1599388054224521793?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 09. May 22:18, damian wrote:
-> On Wed, 09. May 09:36, Hans de Goede wrote:
-> > Hi,
-> > 
-> > On 08-05-18 21:41, damian wrote:
-> > >On Tue, 08. May 13:42, Hans de Goede wrote:
-> > >>Hi Damian,
-> > >>
-> > >>On 02-05-18 22:46, damian wrote:
-> > >>>Hello Greg,
-> > >>>
-> > >>>it is PATCH 3 virt: vbox: Use __get_free_pages insteas of kmalloc for DMA32 memory.
-> > >>
-> > >>Thank you for the bug report, I've tried to reproduce this problem
-> > >>but for me everything works fine.
-> > >>
-> > >>Does your virtual-machine have more then 4G of RAM configured for its
-> > >>use?  If yes then what is likely happening is that you also have
-> > >>the out-of-tree version of the vboxguest modules installed and prior
-> > >>to the commit in question the out of tree version of the driver is
-> > >>loading, because before that commit the vboxguest driver in the
-> > >>mainline kernel fails to load on machines with more then 4G.
-> > >>
-> > >>Or alternatively before the commit in question you may not have
-> > >>any version of the vboxguest driver loaded.
-> > >>
-> > >>Using the upstream version of the driver should not make a noticeable
-> > >>difference, but before the vboxguest driver became a part of the
-> > >>mainline kernel the virtualbox upstream developers have done a
-> > >>cleanup / redesign of the userspace API of the vboxguest driver,
-> > >>so the vboxguest driver will only work with recent virtualbox-guest-additions
-> > >>and since you are using Ubuntu 16.04 chances are that you are
-> > >>using that with Ubuntu's quite old bundled virtualbox-guest-additions
-> > >>which will not work with the new driver and may be causing this
-> > >>issue.
-> > >>
-> > >>Can you try upgrading your virtualbox-guest-additions to 5.2.10
-> > >>please?
-> > >>
-> > >>Also if the above does not help, a couple of follow up
-> > >>questions to help this pin down further:
-> > >>
-> > >>1) Are you using vbox's 3d pass through functionality
-> > >>2) Which desktop-environment are you using?
-> > >>
-> > >>Regards,
-> > >>
-> > >>Hans
-> > >
-> > >Hi Hans,
-> > >
-> > >i will check my configutation and will come back
-> > >At the moment i dont use use the virtualbox-guest-additions, i use the driver from the staging area.
-> > 
-> > Ah I see, you may still have the Ubuntu pkg for them installed though,
-> > which may be an old version which actually starts to try and do stuff
-> > now that there is a vboxguest driver in mainline too, but that old
-> > version does not support the new, stable API as merged into the
-> > mainline.
-> > 
-> > So if you don't care about the add-ons instead of upgrading yopu
-> > can also remove the Ubuntu pkg for them.
-> > 
-> > Regards,
-> > 
-> > Hans
-> 
-> Hello Hans,
-> 
-> the reason why i dont use the virtual-guest-additions from virtualbox is the following with kernel 4.14rc4:
-> 
-> there are changes in the kernel and this need time to fix in virtualbox. 
-> 
-> 
->   CC [M]  /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbva_base.o
-> /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbox_ttm.c: In Funktion »vbox_ttm_tt_create«:
-> /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbox_ttm.c:219:22: Fehler: Übergabe des Arguments 2 von »ttm_tt_init« von inkompatiblem Zeigertyp [-Werror=incompatible-pointer-types]
->   if (ttm_tt_init(tt, bdev, size, page_flags, dummy_read_page)) {
->                       ^~~~
-> In file included from /home/damian/kernel/linux/include/drm/ttm/ttm_bo_driver.h:45,
->                  from /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbox_drv.h:69,
->                  from /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbox_ttm.c:31:
-> /home/damian/kernel/linux/include/drm/ttm/ttm_tt.h:161:63: Anmerkung: »struct ttm_buffer_object *« erwartet, aber Argument hat Typ »struct ttm_bo_device *«
->  int ttm_tt_init(struct ttm_tt *ttm, struct ttm_buffer_object *bo,
->                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~^~
-> /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbox_ttm.c:219:6: Fehler: zu viele Argumente für Funktion »ttm_tt_init«
->   if (ttm_tt_init(tt, bdev, size, page_flags, dummy_read_page)) {
->       ^~~~~~~~~~~
-> In file included from /home/damian/kernel/linux/include/drm/ttm/ttm_bo_driver.h:45,
->                  from /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbox_drv.h:69,
->                  from /opt/VBoxGuestAdditions-5.2.97/src/vboxguest-5.2.97/vboxvideo/vbox_ttm.c:31:
-> /home/damian/kernel/linux/include/drm/ttm/ttm_tt.h:161:5: Anmerkung: hier deklariert
->  int ttm_tt_init(struct ttm_tt *ttm, struct ttm_buffer_object *bo,
->      ^~~~~~~~~~~
-> 
-> Best regards
-> Damian
->
+Hi,
 
-Sorry I mean Kernel 4.17rc4 :-)
+On 05/02/2018 10:46 PM, damian wrote:
+> Hello Greg,
+> 
+> it is PATCH 3 virt: vbox: Use __get_free_pages insteas of kmalloc for DMA32 memory.
 
-Damian
- 
+Weird. I'm currently on vacation. I will look into this first thing next Monday.
+
+Regards,
+
+Hans
