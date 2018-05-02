@@ -1,85 +1,109 @@
-Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525168482; cv=none;
+Return-Path: <dougso@me.com>
+X-Google-Smtp-Source: AB8JxZpjtQMe12Xwfr87gCZ/TFk1z6XqlUCWNumSOyR3DMtce1RFQuU1plavhdwfRfuIboqc8o/o
+ARC-Seal: i=1; a=rsa-sha256; t=1525238557; cv=none;
         d=google.com; s=arc-20160816;
-        b=VMqzuC4N2SR35+lZ/2BmmNZZoJTPj37uhG+1Rj6fENbu72VNoQ8tPHQhrH62NRBTvW
-         RjHqD1nG64szm/mIolr9gKAuCSLamYfYZZhUcZVFVewG7JtmIazYma2sU9qypgyiJ6fa
-         VwdGqQFYvciZXt+tXuD7z2tBbAnz3OvK1ouZfmrV0jCXWB/ifcnx+mtqBz5MjInI7txX
-         kv8LHk1mjk7obaa9jYaAvvtgb95nO2HwL+0e/yG6Ckth+KSKYIykpEnXRr3WCsNdXClP
-         xPQQEugwuYk7B0lKs4xTCmqnBL1BLjfhMhoD6HU2J47x5n3IoJ7RzPw1boNgCtX2GWq6
-         5/Tg==
+        b=harcXFuSaMTtp+jCTJ3baVKzspu7wbfV4fcgP4K9Ji+bEzWhqMRIIBRIo2wIVBdTTN
+         OQjSs1Htlx/dnQlgWen7H2g7qBdI7RCJguZPKJXBDB5Xbemhx41ouEGzi+gBnKDJULGP
+         865ROYAS/Row+E6Mq4o3VfplY9QG84akuZaZ/nGIbgeKvG+zeGfw3XR4dgD7yUjm4784
+         Ke2jEl+N0nvw03AQtKCNgSJ+sE7A2/+qxmO2/GnPEa1OH4iLnitxbqiTSa8dZMY9Bk96
+         J84rAqP3nlTUZwxbGenIjyZU+0dvNaey4bpaixCavaI+4Ig5J5qkcayCF+wTj9QZtZGU
+         aRdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
+        h=message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=FZJLhXLBMFmphhfDvTNBaZN05HcVx1E+LnNrcIlfwbc=;
-        b=FMmaQ+x57u9hcxWQAOYxzGeEzoxlaJ0hYxtCbiyzQc7CERQKpDOuGn3p9m0EKs8nNm
-         gi1ROw5RviVVE9raf3oilaATCpmhOHtTcFZZ+tJ++tBbPIDcsjYk5tdPjuzLZOMmZFJk
-         4CHRTTLhnbfgIvQ1asB6erKBOyKCWM9SsKqB/T4FIxlcGVfIPk17DTUmw7BZRian8XA/
-         EnQfGW+hqzevTROvCgH4/e0qkrPdOlCSBvvYIAEerG/dYmr8FHzGorVFB7mKQJrPRtQp
-         wbILvc4eUvcXMfrQJwRTmS+hWGtf7lwJuZAX93OQotVU91Jd/MxcOmAD9w3Xa4zlUWH0
-         1Hww==
+        bh=bQ6xxOBfyhmW8Lo9xEhFC9PJ8D7TApBhoexeBlOmoIM=;
+        b=dg9ID+Z/NEjNVZpy9khaatvq81y3xhrTgL95vXQ2w16Gqjg+Au3KBkJNOV09j2/DiV
+         FWS8JCNrJ+LUzhtQRIVMtPDVO93Cswh4semVwEwaoVJyx+wnQfCoKTpVktaZExNbEaI8
+         bFEd4cTHn7JttmFViDcMzehztV2acBlnf24dLWLNX0/8oomaImBoT8JrK2cA0oPUa+Rz
+         eURsCfMi+818SZ+fI8VNMG838n9FDzbsH89DTGx6HGkv3Gk5N1HG/ZvovEPTjMuOMGB7
+         vkF0Lzw3BT6yfVmOv++uLSd7glaLK6w+tE30uRrZHejhswcTHASdQW96Fys3KWSCgZBB
+         Hcfw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@me.com header.s=04042017 header.b=FNO2/nad;
+       spf=pass (google.com: domain of dougso@me.com designates 17.58.37.33 as permitted sender) smtp.mailfrom=dougso@me.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AB8JxZrz+Xg4klXOaJPayMNmu5LyaL0l/01c2IQAiqkTbbcX898D1ZhN5mOp3mN7Jqr5jEa9/KERMw==
-Subject: Re: [PATCH 2/4] usb: typec: tcpm: Release the role mux when exiting
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20180430124158.45269-1-heikki.krogerus@linux.intel.com>
- <20180430124158.45269-3-heikki.krogerus@linux.intel.com>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <26404d4d-af38-ecf7-ae21-80bb23a4749a@redhat.com>
-Date: Tue, 1 May 2018 11:54:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180430124158.45269-3-heikki.krogerus@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+       dkim=pass header.i=@me.com header.s=04042017 header.b=FNO2/nad;
+       spf=pass (google.com: domain of dougso@me.com designates 17.58.37.33 as permitted sender) smtp.mailfrom=dougso@me.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-02_02:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1015 suspectscore=2 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805020053
+From: Doug Oucharek <dougso@me.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>,
+ James Simmons <jsimmons@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>,
+ Doug Oucahrek <dougso@me.com>, Alexander Boyko <alexander.boyko@seagate.com>
+Subject: [PATCH] staging: lustre: o2iblnd: fix race at kiblnd_connect_peer
+Date: Tue, 01 May 2018 22:22:19 -0700
+Message-id: <1525238539-12482-1-git-send-email-dougso@me.com>
+X-Mailer: git-send-email 1.8.3.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599175000832404757?=
-X-GMAIL-MSGID: =?utf-8?q?1599255066874154578?=
+X-GMAIL-THRID: =?utf-8?q?1599328545412707608?=
+X-GMAIL-MSGID: =?utf-8?q?1599328545412707608?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
+From: Doug Oucahrek <dougso@me.com>
 
-On 30-04-18 14:41, Heikki Krogerus wrote:
-> The ref count for the USB role switch device must be
-> released after we are done using the switch.
-> 
-> Fixes: c6962c29729c ("usb: typec: tcpm: Set USB role switch to device mode when configured as such")
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+cmid will be destroyed at OFED if kiblnd_cm_callback return error.
+if error happen before the end of kiblnd_connect_peer, it will touch
+destroyed cmid and fail as
+(o2iblnd_cb.c:1315:kiblnd_connect_peer())
+            ASSERTION( cmid->device != ((void *)0) ) failed:
 
-Makes sense:
+Signed-off-by: Alexander Boyko <alexander.boyko@seagate.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-10015
+Reviewed-by: Alexey Lyashkov <c17817@cray.com>
+Reviewed-by: Doug Oucharek <dougso@me.com>
+Reviewed-by: John L. Hammond <john.hammond@intel.com>
+Signed-off-by: Doug Oucharek <dougso@me.com>
+---
+ drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-> ---
->   drivers/usb/typec/tcpm.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/typec/tcpm.c b/drivers/usb/typec/tcpm.c
-> index 1ee259bc14a5..66dc0773b9bf 100644
-> --- a/drivers/usb/typec/tcpm.c
-> +++ b/drivers/usb/typec/tcpm.c
-> @@ -4652,6 +4652,7 @@ void tcpm_unregister_port(struct tcpm_port *port)
->   	for (i = 0; i < ARRAY_SIZE(port->port_altmode); i++)
->   		typec_unregister_altmode(port->port_altmode[i]);
->   	typec_unregister_port(port->typec_port);
-> +	usb_role_switch_put(port->role_sw);
->   	tcpm_debugfs_exit(port);
->   	destroy_workqueue(port->wq);
->   }
-> 
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+index b4a182d..a76c1f2 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -1290,11 +1290,6 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 		goto failed2;
+ 	}
+ 
+-	LASSERT(cmid->device);
+-	CDEBUG(D_NET, "%s: connection bound to %s:%pI4h:%s\n",
+-	       libcfs_nid2str(peer->ibp_nid), dev->ibd_ifname,
+-	       &dev->ibd_ifip, cmid->device->name);
+-
+ 	return;
+ 
+  failed2:
+@@ -2996,8 +2991,19 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 		} else {
+ 			rc = rdma_resolve_route(
+ 				cmid, *kiblnd_tunables.kib_timeout * 1000);
+-			if (!rc)
++			if (!rc) {
++				struct kib_net *net = peer->ibp_ni->ni_data;
++				struct kib_dev *dev = net->ibn_dev;
++
++				CDEBUG(D_NET, "%s: connection bound to "\
++				       "%s:%pI4h:%s\n",
++				       libcfs_nid2str(peer->ibp_nid),
++				       dev->ibd_ifname,
++				       &dev->ibd_ifip, cmid->device->name);
++
+ 				return 0;
++			}
++
+ 			/* Can't initiate route resolution */
+ 			CERROR("Can't resolve route for %s: %d\n",
+ 			       libcfs_nid2str(peer->ibp_nid), rc);
+-- 
+1.8.3.1
