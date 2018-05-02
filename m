@@ -1,11 +1,11 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4163049-1525230296-2-6635849139460282217
+X-Cyrus-Session-Id: sloti22d1t05-4163049-1525230279-2-2010553599405511610
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, DCC_CHECK 1.1, HEADER_FROM_DIFFERENT_DOMAINS 0.25,
-  MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES endasv, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: 
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525230295; b=H1r3/O+TA2Y2VpibFaDo3dqkpkoMgLR00/+OaJJzLoon1UxW3G
-    wAIwScdliqELQgh5OS4X2y81aAHedmiDgt+zWHC89fntvRczVQvlW/sZcRNZzkmd
-    tsncBNaANVmDAUil+4o2AXPlTRP80kei6Y3ED/qhhxrwZKBnAqOmWikua1da/Tn8
-    BbuKU/t4uyxpNDooBy1r2iJtfxMFsOkIyhQQi/DXSgmrAhgN+FomLUCFvJ1sdbua
-    uxF/qUr6mu5rUQNtywQuaj7apJIBdfjwnUCRdDhrC8g4PmcEf82Dxwcwb1pIjYKk
-    VjzlcpT4jt1xv183F5PtS0fZLo7pTlRDHEkw==
+    1525230278; b=DWGs6tLxROrptvlaYPQxOjjK/64q4np9mSwOiMqKWjLbcq8F2W
+    rL9I0A4e1ziJOu7t2TQp8VURrDQGiE16ldVRNTqhmXjZSBBq1ODVaUZwij1RULQL
+    YLOZ7aQR2uF0XqM4Eqxk1WA9btNTSEfwPTzHF4NYjPZF+bg58e/jwW6H3JryOvQZ
+    iVTVXPGeS64ODFp0ujpunepGEKmEyjS8nmQ7r3QtzS7FE6rN7ThsVBqbOzODtd6A
+    YWvlSdqPVCOGUz7+EK3tyUxsh5/t6HYyDeFdyHvjxnA52JI36sIXY0HdvvtTtuXW
+    fbYxSDwVozxpRrOXE9RGWPK/qmbK4MxzELww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525230295; bh=
-    1EuM4Gmp/ipVZeFLrmIK/FiVEmZa0DCnwpClgmADpGw=; b=NFANqZO3Ug8J5XMl
-    qiBLBqor8usbPcIviOClifFX4CLzHxpnakebL4MPSUoL4C+nBUizi2qziBsMfg/1
-    PlIAS2cyBq3vYh5YfWZycrRXW0bRWSINiFfsNgPnMgo2/UGAwezjQj1bp6gqHwWJ
-    rUb/pCGzbsfaoU1dKbp//sHxp8Q/+nxpCqHDFUoJv+7xFoQ2TEehT2DuWWVub2ko
-    XS9B09bCtkAQqWat3/uLcWciQbAqB7C15nHSO70Pma2+GzK/mgLFJ6Pd6M1gNqh9
-    F9Opuk3LrgYe7fNoBvWxgbVfvBb2cGMIZxEN5CZ5FYYVabFyJj8A8FgpdbJ2nzU2
-    KxLq6g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525230278; bh=
+    Jv+xd2LcTVJtovKzApaaS5LF21vKD35mm+pjQDq6wS0=; b=VO2PXIkv56PkjI3y
+    nwiCtnpVDThJyCd7aTmWzeCS+COwuTofUjFlEKANeBR171z3ElrgqChlmUkXn9p1
+    HERW6y2gRn7gj3Kj5f6ITzHe+AVyz+JyOnasoQ6cv5xR94otYkB6FP03ULwPtQV7
+    Dshxar1Ywo/Zr/JFEKYEZlWidN7ENnn/7kXxgbjBtCvZMcQiIgQnKfvhcDMuc9EN
+    2mNy5jyf92M1F2cxrdZBz3xmXiMJlYNOJKUofz3mWPtuHWVGrU9v5zKHw03Fq/vt
+    6bytk3zi3OPyIy6qdpuBSN5VG411NrpmXaE8sbB7/X0wUZKBIHPGr8W8FVx5fbBO
+    Qxd/Zg==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -41,8 +41,8 @@ ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -55,40 +55,36 @@ Authentication-Results: mx4.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEiVyr00hV5FP4AUix75iNARkDinQ6NnWxwXAkt5ajwOc3tu8X3bQWNePz2yQH6VywT3/3HJcCs1o7rwYaRhlwOnLQj/JcYTPRYIEwRGb0m+SJB8xfvq
-    E8maoyi2BP8wfByH7HOdJ2ntrRA2ZZszyQs89Rrhbh3SdSySuxxIXSPOtdfJl1/bF+lAs92HxyXpmd2Y+KqkqJk6ueeprjuZ2xHFj8bdgt99mL3ktu6pqm9v
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfJDkgY+L99+BRN7M2xBNiOKH0r0VEE/LjHp+NYJX0AWtBKO7nE9bGoi4BUzmgYFTHEeSyD6bwPuz1jwk/iTn1NFW+XWE97P2A134A2qgye35wfsPlRzc
+    knqjNYPkkm/q3MYiJkAl6CwoFp0T4cpW01FrpuaE/ZBVE4z2uOpO1SxVHyC5IrX30KRyiud1I8+Ue+vVoaU0p7FHsZtieiFPfaVSvcfU/EGsYxr1awolojgj
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=VwQbUJbxAAAA:8 a=B3Yxh08CrRpNUvMKeOkA:9 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=y-Gmv49SbNsKmzXHpHIA:9 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751558AbeEBDCm (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 1 May 2018 23:02:42 -0400
+        id S1751607AbeEBDEh (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 23:04:37 -0400
 Received: from mga12.intel.com ([192.55.52.136]:63852 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751551AbeEBDCi (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 1 May 2018 23:02:38 -0400
+        id S1751587AbeEBDCp (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 1 May 2018 23:02:45 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
-   d="scan'208";a="46058551"
+   d="scan'208";a="46058595"
 From: Wu Hao <hao.wu@intel.com>
 To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
-        yi.z.zhang@intel.com, hao.wu@intel.com,
-        Tim Whisonant <tim.whisonant@intel.com>,
-        Enno Luebbers <enno.luebbers@intel.com>,
-        Shiva Rao <shiva.rao@intel.com>,
-        Christopher Rauer <christopher.rauer@intel.com>
-Subject: [PATCH v5 21/28] fpga: dfl: add fpga region platform driver for FME
-Date: Wed,  2 May 2018 10:50:24 +0800
-Message-Id: <1525229431-3087-22-git-send-email-hao.wu@intel.com>
+        yi.z.zhang@intel.com, hao.wu@intel.com
+Subject: [PATCH v5 24/28] fpga: dfl: afu: add port ops support
+Date: Wed,  2 May 2018 10:50:27 +0800
+Message-Id: <1525229431-3087-25-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
 References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
@@ -98,154 +94,163 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds fpga region platform driver for FPGA Management Engine.
-It register an fpga region with given fpga manager / bridge device.
+This patch registers the port ops into the global list in the DFL
+framework, and it allows other modules to use the port ops. And
+This patch includes the implementation of the get_id and enable_set
+ops too.
 
-Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
-Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
-Signed-off-by: Shiva Rao <shiva.rao@intel.com>
-Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v3: rename driver to fpga-dfl-fme-region
-    fix fpga_mgr_put order problem in remove function.
-    rebased due to fpga api changes.
-v4: rename to dfl-fme-region, fix SPDX license issue
-    include dfl-fme-pr.h instead of dfl-fme.h and dfl.h
-    add Acked-by from Alan and Moritz
-v5: rebase, due to fpga region api changes.
----
- drivers/fpga/Kconfig          |  6 +++
- drivers/fpga/Makefile         |  1 +
- drivers/fpga/dfl-fme-region.c | 88 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 95 insertions(+)
- create mode 100644 drivers/fpga/dfl-fme-region.c
+ drivers/fpga/dfl-afu-main.c | 122 +++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 121 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index a8f939a..65d54a4 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -162,6 +162,12 @@ config FPGA_DFL_FME_BRIDGE
- 	help
- 	  Say Y to enable FPGA Bridge driver for FPGA Management Engine.
+diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+index 35bec47..4bdbe3d 100644
+--- a/drivers/fpga/dfl-afu-main.c
++++ b/drivers/fpga/dfl-afu-main.c
+@@ -19,6 +19,83 @@
  
-+config FPGA_DFL_FME_REGION
-+	tristate "FPGA DFL FME Region Driver"
-+	depends on FPGA_DFL_FME
-+	help
-+	  Say Y to enable FPGA Region driver for FPGA Management Engine.
-+
- config FPGA_DFL_PCI
- 	tristate "FPGA Device Feature List (DFL) PCIe Device Driver"
- 	depends on PCI && FPGA_DFL
-diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-index 75096e9..163894e 100644
---- a/drivers/fpga/Makefile
-+++ b/drivers/fpga/Makefile
-@@ -33,6 +33,7 @@ obj-$(CONFIG_FPGA_DFL)			+= dfl.o
- obj-$(CONFIG_FPGA_DFL_FME)		+= dfl-fme.o
- obj-$(CONFIG_FPGA_DFL_FME_MGR)		+= dfl-fme-mgr.o
- obj-$(CONFIG_FPGA_DFL_FME_BRIDGE)	+= dfl-fme-br.o
-+obj-$(CONFIG_FPGA_DFL_FME_REGION)	+= dfl-fme-region.o
+ #include "dfl.h"
  
- dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
- 
-diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
-new file mode 100644
-index 0000000..696b313
---- /dev/null
-+++ b/drivers/fpga/dfl-fme-region.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * FPGA Region Driver for FPGA Management Engine (FME)
++/**
++ * port_enable - enable a port
++ * @pdev: port platform device.
 + *
-+ * Copyright (C) 2017 Intel Corporation, Inc.
-+ *
-+ * Authors:
-+ *   Wu Hao <hao.wu@intel.com>
-+ *   Joseph Grecco <joe.grecco@intel.com>
-+ *   Enno Luebbers <enno.luebbers@intel.com>
-+ *   Tim Whisonant <tim.whisonant@intel.com>
-+ *   Ananda Ravuri <ananda.ravuri@intel.com>
-+ *   Henry Mitchel <henry.mitchel@intel.com>
++ * Enable Port by clear the port soft reset bit, which is set by default.
++ * The User AFU is unable to respond to any MMIO access while in reset.
++ * port_enable function should only be used after port_disable
++ * function.
 + */
-+
-+#include <linux/module.h>
-+#include <linux/fpga/fpga-region.h>
-+
-+#include "dfl-fme-pr.h"
-+
-+static int fme_region_get_bridges(struct fpga_region *region)
++static void port_enable(struct platform_device *pdev)
 +{
-+	struct dfl_fme_region_pdata *pdata = region->priv;
-+	struct device *dev = &pdata->br->dev;
++	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	void __iomem *base;
++	u64 v;
 +
-+	return fpga_bridge_get_to_list(dev, region->info, &region->bridge_list);
++	WARN_ON(!pdata->disable_count);
++
++	if (--pdata->disable_count != 0)
++		return;
++
++	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
++
++	/* Clear port soft reset */
++	v = readq(base + PORT_HDR_CTRL);
++	v &= ~PORT_CTRL_SFTRST;
++	writeq(v, base + PORT_HDR_CTRL);
 +}
 +
-+static int fme_region_probe(struct platform_device *pdev)
++#define RST_POLL_INVL 10 /* us */
++#define RST_POLL_TIMEOUT 1000 /* us */
++
++/**
++ * port_disable - disable a port
++ * @pdev: port platform device.
++ *
++ * Disable Port by setting the port soft reset bit, it puts the port into
++ * reset.
++ */
++static int port_disable(struct platform_device *pdev)
 +{
-+	struct dfl_fme_region_pdata *pdata = dev_get_platdata(&pdev->dev);
-+	struct device *dev = &pdev->dev;
-+	struct fpga_region *region;
-+	struct fpga_manager *mgr;
-+	int ret;
++	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	void __iomem *base;
++	u64 v;
 +
-+	mgr = fpga_mgr_get(&pdata->mgr->dev);
-+	if (IS_ERR(mgr))
-+		return -EPROBE_DEFER;
++	if (pdata->disable_count++ != 0)
++		return 0;
 +
-+	region = fpga_region_create(dev, mgr, fme_region_get_bridges);
-+	if (!region) {
-+		ret = -ENOMEM;
-+		goto eprobe_mgr_put;
++	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
++
++	/* Set port soft reset */
++	v = readq(base + PORT_HDR_CTRL);
++	v |= PORT_CTRL_SFTRST;
++	writeq(v, base + PORT_HDR_CTRL);
++
++	/*
++	 * HW sets ack bit to 1 when all outstanding requests have been drained
++	 * on this port and minimum soft reset pulse width has elapsed.
++	 * Driver polls port_soft_reset_ack to determine if reset done by HW.
++	 */
++	if (readq_poll_timeout(base + PORT_HDR_CTRL, v, v & PORT_CTRL_SFTRST,
++			       RST_POLL_INVL, RST_POLL_TIMEOUT)) {
++		dev_err(&pdev->dev, "timeout, fail to reset device\n");
++		return -ETIMEDOUT;
 +	}
 +
-+	region->priv = pdata;
-+	platform_set_drvdata(pdev, region);
-+
-+	ret = fpga_region_register(region);
-+	if (ret)
-+		goto region_free;
-+
-+	dev_dbg(dev, "DFL FME FPGA Region probed\n");
-+
 +	return 0;
++}
 +
-+region_free:
-+	fpga_region_free(region);
-+eprobe_mgr_put:
-+	fpga_mgr_put(mgr);
++static int port_get_id(struct platform_device *pdev)
++{
++	void __iomem *base;
++
++	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
++
++	return FIELD_GET(PORT_CAP_PORT_NUM, readq(base + PORT_HDR_CAP));
++}
++
+ static int port_hdr_init(struct platform_device *pdev,
+ 			 struct dfl_feature *feature)
+ {
+@@ -119,6 +196,28 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 	.unlocked_ioctl = afu_ioctl,
+ };
+ 
++static int port_enable_set(struct platform_device *pdev, bool enable)
++{
++	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
++	int ret = 0;
++
++	mutex_lock(&pdata->lock);
++	if (enable)
++		port_enable(pdev);
++	else
++		ret = port_disable(pdev);
++	mutex_unlock(&pdata->lock);
++
 +	return ret;
 +}
 +
-+static int fme_region_remove(struct platform_device *pdev)
-+{
-+	struct fpga_region *region = dev_get_drvdata(&pdev->dev);
-+
-+	fpga_region_unregister(region);
-+	fpga_mgr_put(region->mgr);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver fme_region_driver = {
-+	.driver	= {
-+		.name    = DFL_FPGA_FME_REGION,
-+	},
-+	.probe   = fme_region_probe,
-+	.remove  = fme_region_remove,
++static struct dfl_fpga_port_ops afu_port_ops = {
++	.name = DFL_FPGA_FEATURE_DEV_PORT,
++	.owner = THIS_MODULE,
++	.get_id = port_get_id,
++	.enable_set = port_enable_set,
 +};
 +
-+module_platform_driver(fme_region_driver);
+ static int afu_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -154,7 +253,28 @@ static int afu_remove(struct platform_device *pdev)
+ 	.remove  = afu_remove,
+ };
+ 
+-module_platform_driver(afu_driver);
++static int __init afu_init(void)
++{
++	int ret;
 +
-+MODULE_DESCRIPTION("FPGA Region for DFL FPGA Management Engine");
-+MODULE_AUTHOR("Intel Corporation");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:dfl-fme-region");
++	dfl_fpga_add_port_ops(&afu_port_ops);
++
++	ret = platform_driver_register(&afu_driver);
++	if (ret)
++		dfl_fpga_del_port_ops(&afu_port_ops);
++
++	return ret;
++}
++
++static void __exit afu_exit(void)
++{
++	platform_driver_unregister(&afu_driver);
++
++	dfl_fpga_del_port_ops(&afu_port_ops);
++}
++
++module_init(afu_init);
++module_exit(afu_exit);
+ 
+ MODULE_DESCRIPTION("FPGA Accelerated Function Unit driver");
+ MODULE_AUTHOR("Intel Corporation");
 -- 
 1.8.3.1
 
