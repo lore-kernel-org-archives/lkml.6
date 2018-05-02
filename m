@@ -1,45 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751109AbeEBHs3 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:48:29 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:39439 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750883AbeEBHs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:48:27 -0400
-Date: Wed, 2 May 2018 09:48:25 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: at91: sama5d4ek: use canonical compatible for
- touchscreen
-Message-ID: <20180502074825.GB18640@piout.net>
-References: <20180501224833.GA151132@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180501224833.GA151132@dtor-ws>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751120AbeEBHvO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:51:14 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33853 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751007AbeEBHvM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:51:12 -0400
+X-Google-Smtp-Source: AB8JxZpbBZyE1JuUbrQG08br+h8idjKeD+k7pnyqcNc5UquA49zBJLkCMDMbGrskSvToDzkBPzu7Ag==
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: DRI Development <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>, Eric Anholt <eric@anholt.net>,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: [PATCH] doc: botching-up-ioctls: Make it clearer why structs must be padded
+Date: Wed,  2 May 2018 09:51:06 +0200
+Message-Id: <20180502075106.7476-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/05/2018 15:48:33-0700, Dmitry Torokhov wrote:
-> The canonical compatible string is "atmel,maxtouch", let's use it. Also,
-> change the node name to be "touchscreen" rather than driver name.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  arch/arm/boot/dts/at91-sama5d4ek.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-Applied, thanks.
+This came up in discussions when reviewing drm patches.
 
+Cc: Eric Anholt <eric@anholt.net>
+Cc: linux-doc@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+
+--
+
+Aside: I wonder whether we shouldn't move this to some other place and
+rst-ify it? Any good suggestions?
+-Daniel
+---
+ Documentation/ioctl/botching-up-ioctls.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/ioctl/botching-up-ioctls.txt b/Documentation/ioctl/botching-up-ioctls.txt
+index d02cfb48901c..883fb034bd04 100644
+--- a/Documentation/ioctl/botching-up-ioctls.txt
++++ b/Documentation/ioctl/botching-up-ioctls.txt
+@@ -73,7 +73,9 @@ will have a second iteration or at least an extension for any given interface.
+    future extensions is going right down the gutters since someone will submit
+    an ioctl struct with random stack garbage in the yet unused parts. Which
+    then bakes in the ABI that those fields can never be used for anything else
+-   but garbage.
++   but garbage. This is also the reason why you must explicitly pad all
++   structures, even if you never use them in an array - the padding the compiler
++   might insert could contain garbage.
+ 
+  * Have simple testcases for all of the above.
+ 
 -- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
