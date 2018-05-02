@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752555AbeEBPXl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:23:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48462 "EHLO mail.kernel.org"
+        id S1752389AbeEBPYA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:24:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752411AbeEBPWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:22:33 -0400
+        id S1752402AbeEBPWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:22:30 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 49/52] perf symbols: kallsyms__delta() needs the kmap, not the map
-Date: Wed,  2 May 2018 12:19:39 -0300
-Message-Id: <20180502151942.20542-50-acme@kernel.org>
+Subject: [PATCH 48/52] perf symbols: Remove unused dso__load_all_kallsyms() 'map' parameter
+Date: Wed,  2 May 2018 12:19:38 -0300
+Message-Id: <20180502151942.20542-49-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
 References: <20180502151942.20542-1-acme@kernel.org>
@@ -26,61 +26,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-It was only using the map to obtain its kmap, so do the validation in
-its called, __dso__load_kallsyms() and pass the kmap, that will be used
-in the following patches in similar simplifications.
+Only the 'dso' is needed, so ditch the struct used to pass (map, dso),
+passing just the used 'dso' pointer.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-u6p9hbonlqzpl6o1z9xzxd75@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-17a4gkk1cs4up4smkviymi2g@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ tools/perf/util/symbol.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
 diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 2517f2c2454f..76de63cecf98 100644
+index efc16a3e0b45..2517f2c2454f 100644
 --- a/tools/perf/util/symbol.c
 +++ b/tools/perf/util/symbol.c
-@@ -1267,14 +1267,10 @@ static int dso__load_kcore(struct dso *dso, struct map *map,
-  * If the kernel is relocated at boot time, kallsyms won't match.  Compute the
-  * delta based on the relocation reference symbol.
-  */
--static int kallsyms__delta(struct map *map, const char *filename, u64 *delta)
-+static int kallsyms__delta(struct kmap *kmap, const char *filename, u64 *delta)
- {
--	struct kmap *kmap = map__kmap(map);
- 	u64 addr;
+@@ -608,11 +608,6 @@ int modules__parse(const char *filename, void *arg,
+ 	return err;
+ }
  
--	if (!kmap)
--		return -1;
+-struct process_kallsyms_args {
+-	struct map *map;
+-	struct dso *dso;
+-};
 -
- 	if (!kmap->ref_reloc_sym || !kmap->ref_reloc_sym->name)
- 		return 0;
- 
-@@ -1288,15 +1284,19 @@ static int kallsyms__delta(struct map *map, const char *filename, u64 *delta)
- int __dso__load_kallsyms(struct dso *dso, const char *filename,
- 			 struct map *map, bool no_kcore)
+ /*
+  * These are symbols in the kernel image, so make sure that
+  * sym is from a kernel DSO.
+@@ -648,8 +643,8 @@ static int map__process_kallsym_symbol(void *arg, const char *name,
+ 				       char type, u64 start)
  {
-+	struct kmap *kmap = map__kmap(map);
- 	u64 delta = 0;
+ 	struct symbol *sym;
+-	struct process_kallsyms_args *a = arg;
+-	struct rb_root *root = &a->dso->symbols;
++	struct dso *dso = arg;
++	struct rb_root *root = &dso->symbols;
  
+ 	if (!symbol_type__filter(type))
+ 		return 0;
+@@ -676,11 +671,9 @@ static int map__process_kallsym_symbol(void *arg, const char *name,
+  * so that we can in the next step set the symbol ->end address and then
+  * call kernel_maps__split_kallsyms.
+  */
+-static int dso__load_all_kallsyms(struct dso *dso, const char *filename,
+-				  struct map *map)
++static int dso__load_all_kallsyms(struct dso *dso, const char *filename)
+ {
+-	struct process_kallsyms_args args = { .map = map, .dso = dso, };
+-	return kallsyms__parse(filename, &args, map__process_kallsym_symbol);
++	return kallsyms__parse(filename, dso, map__process_kallsym_symbol);
+ }
+ 
+ static int dso__split_kallsyms_for_kcore(struct dso *dso, struct map *map)
+@@ -1300,7 +1293,7 @@ int __dso__load_kallsyms(struct dso *dso, const char *filename,
  	if (symbol__restricted_filename(filename, "/proc/kallsyms"))
  		return -1;
  
-+	if (!kmap || !kmap->kmaps)
-+		return -1;
-+
- 	if (dso__load_all_kallsyms(dso, filename) < 0)
+-	if (dso__load_all_kallsyms(dso, filename, map) < 0)
++	if (dso__load_all_kallsyms(dso, filename) < 0)
  		return -1;
  
--	if (kallsyms__delta(map, filename, &delta))
-+	if (kallsyms__delta(kmap, filename, &delta))
- 		return -1;
- 
- 	symbols__fixup_end(&dso->symbols);
+ 	if (kallsyms__delta(map, filename, &delta))
 -- 
 2.14.3
