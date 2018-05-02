@@ -1,40 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751915AbeEBPMb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:12:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44528 "EHLO mail.kernel.org"
+        id S1751723AbeEBPM4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:12:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44094 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751576AbeEBPMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:12:17 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1751805AbeEBPLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:11:17 -0400
+Date: Wed, 2 May 2018 15:11:13 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@vger.kernel.org>
+Subject: Re: [PATCH] mm: provide a fallback for PAGE_KERNEL_RO for
+ architectures
+Message-ID: <20180502151113.GB27853@wotan.suse.de>
+References: <20180428001526.22475-1-mcgrof@kernel.org>
+ <CAMuHMdUpc6=j62E7Xrcid6tKU5FRUZsiSVK7J=KD09epQ=9xfA@mail.gmail.com>
 MIME-Version: 1.0
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
-Message-ID: <152527393566.138124.2905882207625331342@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [v6 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed, 02 May 2018 08:12:15 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUpc6=j62E7Xrcid6tKU5FRUZsiSVK7J=KD09epQ=9xfA@mail.gmail.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w42FCaV5025727
 
-Quoting Taniya Das (2018-05-02 03:51:15)
->  [v6]
->    * Addressed comments from Rob
->    * Addressed comments from Stephen
+On Wed, May 02, 2018 at 12:08:57PM +0200, Geert Uytterhoeven wrote:
+> Hi Luis,
+> 
+> On Sat, Apr 28, 2018 at 2:15 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> > Some architectures do not define PAGE_KERNEL_RO, best we can do
+> > for them is to provide a fallback onto PAGE_KERNEL. Remove the
+> > hack from the firmware loader and move it onto the asm-generic
+> > header, and document while at it the affected architectures
+> > which do not have a PAGE_KERNEL_RO:
+> >
+> >   o alpha
+> >   o ia64
+> >   o m68k
+> >   o mips
+> >   o sparc64
+> >   o sparc
+> >
+> > Blessed-by: 0-day
+> > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+> 
+> I believe the "best we can do" is to add the missing definitions for the
+> architectures where the hardware does support it?
 
-Please actually describe what you addressed. Nobody wants to look back
-at the old emails to figure out what comments you addressed.
+True, but we cannot wait for every architecture to implement a feature to then
+such generics upstream, specially when we have common places which use that.
+Matthew did send a patch to add ia64 support for PAGE_KERNEL_RO, so I'll
+respin the patch to add that and also move the other define he suggested.
+
+At least we'd now have a list of documented archs which need further work too.
+
+  Luis
