@@ -1,93 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751339AbeEBBwt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 21:52:49 -0400
-Received: from ozlabs.org ([203.11.71.1]:44065 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751175AbeEBBwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 21:52:47 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Wed, 2 May 2018 11:52:43 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Winter <Thomas.Winter@alliedtelesis.co.nz>,
-        David Ahern <dsahern@gmail.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20180502115243.699a789a@canb.auug.org.au>
+        id S1751084AbeEBB44 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 21:56:56 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:1817 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750823AbeEBB4y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 21:56:54 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
+   d="scan'208";a="39469978"
+Subject: Re: recent patch "x86/acpi: Prevent X2APIC id 0xffffffff from being
+ accounted"
+To: Jan Beulich <JBeulich@suse.com>
+CC: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
+References: <5AE2CF8802000078001BF017@prv1-mh.provo.novell.com>
+ <12fd36d0-1678-ed57-fec3-c94b430bd23f@cn.fujitsu.com>
+ <5AE3130702000078001BF180@prv1-mh.provo.novell.com>
+From: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Message-ID: <769e14c9-298d-3049-4001-2a8fe903d21e@cn.fujitsu.com>
+Date: Wed, 2 May 2018 09:56:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qhvTbt=eys8S7VCgYrkRad="; protocol="application/pgp-signature"
+In-Reply-To: <5AE3130702000078001BF180@prv1-mh.provo.novell.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.226.106]
+X-yoursite-MailScanner-ID: 1D5D64B34D23.A8837
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: douly.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/qhvTbt=eys8S7VCgYrkRad=
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+At 04/27/2018 08:09 PM, Jan Beulich wrote:
+>>>> On 27.04.18 at 10:32, <douly.fnst@cn.fujitsu.com> wrote:
+>> At 04/27/2018 03:21 PM, Jan Beulich wrote:
+>>> I've just stumbled across this commit, and I'm wondering if that's actually
+>>> correct (I too have at least one system where such IDs are reported in
+>>> MADT): For offline/absent CPUs, the firmware may not know the APIC IDs
+>>
+>> The MADT table is not reasonable, the Local APIC entries(xAPIC/x2APIC)
+>> in MADT is not always correct as OS want. So, we should do this sanity
+>> check.
+> 
+> Of course, sanity checking is necessary.
+> 
+>>> at the point MADT is built, so I think it is quite reasonable to put ~0 in
+>>> there. The ACPID spec specifically calls out that the IDs must not change
+>>> across sleep states, which implies to me that they may change across an
+>>> offline period of a CPU. IOW I think such entries still need to contribute to
+>>> the count of disabled CPUs.
+>>
+>> Aha, there are no CPU devices which will map it's physical ID to the
+>> illegal number 0xffffffff, So it will never be used.
+> 
+> The ID will never be used, yes, but the CPU may be (after firmware has
+> assigned it a valid ID).
+> 
+>> BTW, Limiting the number of the disabled CPUs is also a goal.
+> 
+> I'm afraid I don't understand: Limiting the number of disabled CPUs is
+> certainly desirable when those can never be used, but why would you
+> want to do this when they might later get hotplugged? I'm not aware
 
-  include/net/ip6_route.h
+Let's see the workflow of CPU hotplug:
 
-between commit:
+   1) get the CPU device info from ACPI namespace
+      - it contains logical processor id
 
-  edd7ceb78296 ("ipv6: Allow non-gateway ECMP for IPv6")
+   2) through the logical processor id, get the LACPI entry in MADT.
 
-from the net tree and commit:
+   3) generate the CPU for kernel(will create a CPU id, can see by lscpu)
 
-  93c2fb253d17 ("net/ipv6: Rename fib6_info struct elements")
+Normally, there are no valid CPU devices in 1) which are mapped to
+the LACPI entries(0xff or 0xffffffff).
 
-from the net-next tree.
+The actually number of hotplugged CPUs depends on CPU devices/processors
+in ACPI namespace. The number calculated from MADT is the maximum
+situation which can be cut and doesn't affect CPU hotplug. Don't worry
+about it.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Now, in ACPI-based system, Linux gets the number of possible CPUs by
+MADT, We are going to use the ACPI namespace to make the number
+accurate. But it is so hard, because it's so late to initialize the ACPI
+namespace.
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks,
+	dou
 
-diff --cc include/net/ip6_route.h
-index abceb5864d99,8df4ff798b04..000000000000
---- a/include/net/ip6_route.h
-+++ b/include/net/ip6_route.h
-@@@ -66,9 -66,10 +66,9 @@@ static inline bool rt6_need_strict(cons
-  		(IPV6_ADDR_MULTICAST | IPV6_ADDR_LINKLOCAL | IPV6_ADDR_LOOPBACK);
-  }
- =20
-- static inline bool rt6_qualify_for_ecmp(const struct rt6_info *rt)
-+ static inline bool rt6_qualify_for_ecmp(const struct fib6_info *f6i)
-  {
-- 	return (rt->rt6i_flags & (RTF_ADDRCONF | RTF_DYNAMIC)) =3D=3D 0;
- -	return (f6i->fib6_flags & (RTF_GATEWAY|RTF_ADDRCONF|RTF_DYNAMIC)) =3D=3D
- -	       RTF_GATEWAY;
-++	return (f6i->fib6_flags & (RTF_ADDRCONF | RTF_DYNAMIC)) =3D=3D 0;
-  }
- =20
-  void ip6_route_input(struct sk_buff *skb);
+> of a way to tell, by just looking at the MADT, which of the two cases
+> apply.
+>
 
---Sig_/qhvTbt=eys8S7VCgYrkRad=
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrpGesACgkQAVBC80lX
-0Gyeswf/SMixHMHXWNENscUWeT2y3vGXJ9IucibMxyKBfftnK1vSA2Ga+1oAZRFM
-gcBReRGycfcz+6a/VUJXHE409F/CDBt+0j6/nSvuNI+VfsDvp8PuJ5V2nweKG/mV
-+D7jzUFhfNXmrZI7eNrrIS1CAQelyuiHpj5dVq46z27Pd19It/89V8Xs4LOP1Iiu
-G7oN9ozklkIaKZjxOSBqRD+0vvMOqYs8XeI1FS1mRSqfHzQGoZ6xFKvK7wHuh6Sy
-7iCAcb1IAA/yGJPyMm9Xh9pdcusRdjGNZC+JXDxJ3sSez56iaCklvlwrMwRqWFHQ
-3xPrqqWPGWHB4b/3QUHLvSkOLyuvmw==
-=QSx6
------END PGP SIGNATURE-----
 
---Sig_/qhvTbt=eys8S7VCgYrkRad=--
+> Jan
+> 
+> 
+> 
+> 
+> 
