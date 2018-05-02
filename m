@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751079AbeEBK1d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:27:33 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51870 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeEBK1a (ORCPT
+        id S1751236AbeEBK2C (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:28:02 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:54643 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbeEBK17 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:27:30 -0400
-X-Google-Smtp-Source: AB8JxZo8QjBFxHhfKFc7v+ye4EtP1C+6uQYyS4Xs4/U7ja4WvDgvy8mcMUoGKIkgcYo0osYesMzgMg==
-Subject: Re: [PATCH V4 2/8] soc: mediatek: pwrap: add caps flag for pwrap
+        Wed, 2 May 2018 06:27:59 -0400
+X-Google-Smtp-Source: AB8JxZohW7rCKZY6ghnBbrWTeTh1dFLguKLQZEeINXh3l6TRUoRHpckL/ZvMrAGQREShpMtm7hR/Nw==
+Subject: Re: [PATCH V4 3/8] soc: mediatek: pwrap: remove has_bridge flag
 To: argus.lin@mediatek.com, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -23,7 +23,7 @@ Cc: Chenglin Xu <chenglin.xu@mediatek.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
 References: <20180502092112.3991-1-argus.lin@mediatek.com>
- <20180502092112.3991-3-argus.lin@mediatek.com>
+ <20180502092112.3991-4-argus.lin@mediatek.com>
 From: Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -69,12 +69,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  XM8DY1aFdU79pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp
  3mlIFZ6fsEKIAN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHc
  UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <41027d71-a0b5-b78d-e9bf-aec4beb05a59@gmail.com>
-Date: Wed, 2 May 2018 12:27:26 +0200
+Message-ID: <490d35d0-1ea9-f2be-d362-48af56437ead@gmail.com>
+Date: Wed, 2 May 2018 12:27:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180502092112.3991-3-argus.lin@mediatek.com>
+In-Reply-To: <20180502092112.3991-4-argus.lin@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -87,71 +87,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 05/02/2018 11:21 AM, argus.lin@mediatek.com wrote:
 > From: Argus Lin <argus.lin@mediatek.com>
 > 
-> We use caps to describe pwrap's capability, used
-> to replace has_bridge flag for single meaning.
+> We use new flag caps to replace has_bridge.
+> Legacy chips support bridge use PWRAP_CAP_BRIDGE
+> to explain such capability.
 > 
 > Signed-off-by: Argus Lin <argus.lin@mediatek.com>
 > ---
->  drivers/soc/mediatek/mtk-pmic-wrap.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> index e9e054a15b7d..3a25ff6e6907 100644
-> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> @@ -76,6 +76,12 @@
->  #define PWRAP_SLV_CAP_SECURITY	BIT(2)
->  #define HAS_CAP(_c, _x)	(((_c) & (_x)) == (_x))
->  
-> +/* Group of bits used for shown pwrap capability */
-> +#define PWRAP_CAP_BRIDGE	BIT(0)
-> +#define PWRAP_CAP_RESET		BIT(1)
-> +#define PWRAP_CAP_DCM		BIT(2)
-> +#define PWRAP_CAP_INT1_EN	BIT(3)
-> +
 
-You are missing the logic to handle the caps.
-With out this logic, this patch is useless.
+Squash this one into 2/8.
 
 Regards,
 Matthias
 
->  /* defines for slave device wrapper registers */
->  enum dew_regs {
->  	PWRAP_DEW_BASE,
-> @@ -684,6 +690,8 @@ struct pmic_wrapper_type {
+>  drivers/soc/mediatek/mtk-pmic-wrap.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> index 3a25ff6e6907..911a8508f39f 100644
+> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
+> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
+> @@ -689,7 +689,6 @@ struct pmic_wrapper_type {
+>  	u32 int_en_all;
 >  	u32 spi_w;
 >  	u32 wdt_src;
->  	unsigned int has_bridge:1;
-> +	/* Flags indicating the capability for the target pwrap */
-> +	u8 caps;
+> -	unsigned int has_bridge:1;
+>  	/* Flags indicating the capability for the target pwrap */
+>  	u8 caps;
 >  	int (*init_reg_clock)(struct pmic_wrapper *wrp);
->  	int (*init_soc_specific)(struct pmic_wrapper *wrp);
->  };
-> @@ -1394,6 +1402,7 @@ static const struct pmic_wrapper_type pwrap_mt2701 = {
+> @@ -1306,7 +1305,7 @@ static int pwrap_init(struct pmic_wrapper *wrp)
+>  	pwrap_writel(wrp, 1, PWRAP_INIT_DONE0);
+>  	pwrap_writel(wrp, 1, PWRAP_INIT_DONE1);
+>  
+> -	if (wrp->master->has_bridge) {
+> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_BRIDGE)) {
+>  		writel(1, wrp->bridge_base + PWRAP_MT8135_BRIDGE_INIT_DONE3);
+>  		writel(1, wrp->bridge_base + PWRAP_MT8135_BRIDGE_INIT_DONE4);
+>  	}
+> @@ -1401,7 +1400,6 @@ static const struct pmic_wrapper_type pwrap_mt2701 = {
+>  	.int_en_all = ~(u32)(BIT(31) | BIT(2)),
 >  	.spi_w = PWRAP_MAN_CMD_SPI_WRITE_NEW,
 >  	.wdt_src = PWRAP_WDT_SRC_MASK_ALL,
->  	.has_bridge = 0,
-> +	.caps = PWRAP_CAP_RESET | PWRAP_CAP_DCM,
+> -	.has_bridge = 0,
+>  	.caps = PWRAP_CAP_RESET | PWRAP_CAP_DCM,
 >  	.init_reg_clock = pwrap_mt2701_init_reg_clock,
 >  	.init_soc_specific = pwrap_mt2701_init_soc_specific,
->  };
-> @@ -1406,6 +1415,7 @@ static const struct pmic_wrapper_type pwrap_mt7622 = {
+> @@ -1414,7 +1412,6 @@ static const struct pmic_wrapper_type pwrap_mt7622 = {
+>  	.int_en_all = ~(u32)BIT(31),
 >  	.spi_w = PWRAP_MAN_CMD_SPI_WRITE,
 >  	.wdt_src = PWRAP_WDT_SRC_MASK_ALL,
->  	.has_bridge = 0,
-> +	.caps = PWRAP_CAP_RESET | PWRAP_CAP_DCM,
+> -	.has_bridge = 0,
+>  	.caps = PWRAP_CAP_RESET | PWRAP_CAP_DCM,
 >  	.init_reg_clock = pwrap_common_init_reg_clock,
 >  	.init_soc_specific = pwrap_mt7622_init_soc_specific,
->  };
-> @@ -1418,6 +1428,7 @@ static const struct pmic_wrapper_type pwrap_mt8135 = {
+> @@ -1427,7 +1424,6 @@ static const struct pmic_wrapper_type pwrap_mt8135 = {
+>  	.int_en_all = ~(u32)(BIT(31) | BIT(1)),
 >  	.spi_w = PWRAP_MAN_CMD_SPI_WRITE,
 >  	.wdt_src = PWRAP_WDT_SRC_MASK_ALL,
->  	.has_bridge = 1,
-> +	.caps = PWRAP_CAP_BRIDGE | PWRAP_CAP_RESET | PWRAP_CAP_DCM,
+> -	.has_bridge = 1,
+>  	.caps = PWRAP_CAP_BRIDGE | PWRAP_CAP_RESET | PWRAP_CAP_DCM,
 >  	.init_reg_clock = pwrap_common_init_reg_clock,
 >  	.init_soc_specific = pwrap_mt8135_init_soc_specific,
+> @@ -1440,7 +1436,7 @@ static const struct pmic_wrapper_type pwrap_mt8173 = {
+>  	.int_en_all = ~(u32)(BIT(31) | BIT(1)),
+>  	.spi_w = PWRAP_MAN_CMD_SPI_WRITE,
+>  	.wdt_src = PWRAP_WDT_SRC_MASK_NO_STAUPD,
+> -	.has_bridge = 0,
+> +	.caps = PWRAP_CAP_RESET | PWRAP_CAP_DCM,
+>  	.init_reg_clock = pwrap_common_init_reg_clock,
+>  	.init_soc_specific = pwrap_mt8173_init_soc_specific,
 >  };
+> @@ -1509,7 +1505,7 @@ static int pwrap_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	if (wrp->master->has_bridge) {
+> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_BRIDGE)) {
+>  		res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>  				"pwrap-bridge");
+>  		wrp->bridge_base = devm_ioremap_resource(wrp->dev, res);
 > -- 
 > 2.12.5
 > 
