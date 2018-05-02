@@ -1,225 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751441AbeEBORO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:17:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58452 "EHLO mail.kernel.org"
+        id S1751525AbeEBORZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:17:25 -0400
+Received: from foss.arm.com ([217.140.101.70]:59292 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751144AbeEBORK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:17:10 -0400
-Date: Wed, 2 May 2018 10:17:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: changbin.du@intel.com
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] kernel hacking: new config DEBUG_EXPERIENCE to
- apply GCC -Og optimization
-Message-ID: <20180502101707.206984e9@gandalf.local.home>
-In-Reply-To: <1525268700-10631-5-git-send-email-changbin.du@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-        <1525268700-10631-5-git-send-email-changbin.du@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1750999AbeEBORV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:17:21 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v10 00/25] Speculative page faults
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+Date: Wed, 02 May 2018 15:17:19 +0100
+In-Reply-To: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+        (Laurent Dufour's message of "Tue, 17 Apr 2018 16:33:06 +0200")
+Message-ID: <87bmdynnv4.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  2 May 2018 21:44:59 +0800
-changbin.du@intel.com wrote:
+Hi Laurent,
 
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> This will apply GCC '-Og' optimization level which is supported
-> since GCC 4.8. This optimization level offers a reasonable level
-> of optimization while maintaining fast compilation and a good
-> debugging experience. It is similar to '-O1' while perfer keeping
-> debug ability over runtime speed.
-> 
-> If enabling this option breaks your kernel, you should either
-> disable this or find a fix (mostly in the arch code). Currently
-> this option has only be tested on x86_64 platform.
+One query below -
 
-If this becomes an issue, you probably need to add an arch config that
-it depends on like CONFIG_HAVE_DEBUG_EXPERIENCE (or another name, as I
-mention below).
+Laurent Dufour <ldufour@linux.vnet.ibm.com> writes:
 
-> 
-> This option can satisfy people who was searching for a method
-> to disable compiler optimizations so to achieve better kernel
-> debugging experience with kgdb or qemu.
-> 
-> The main problem of '-Og' is we must not use __attribute__((error(msg))).
-> The compiler will report error though the call to error function
-> still can be optimize out. So we must fallback to array tricky.
-> 
-> Comparison of vmlinux size: a bit smaller.
-> 
->     w/o CONFIG_DEBUG_EXPERIENCE
+[...]
 
-I hate the config name.
+>
+> Ebizzy:
+> -------
+> The test is counting the number of records per second it can manage, the
+> higher is the best. I run it like this 'ebizzy -mTRp'. To get consistent
+> result I repeated the test 100 times and measure the average result. The
+> number is the record processes per second, the higher is the best.
+>
+>   		BASE		SPF		delta	
+> 16 CPUs x86 VM	12405.52	91104.52	634.39%
+> 80 CPUs P8 node 37880.01	76201.05	101.16%
 
-I probably can't come up with better ones but let's try:
+How do you measure the number of records processed? Is there a specific
+version of ebizzy that reports this? I couldn't find a way to get this
+information with the ebizzy that's included in ltp.
 
- CONFIG_DEBUG_OPTIMIZE ?
- CONFIG_OPTIMIZE_DEBUG ?
+>
+> Here are the performance counter read during a run on a 16 CPUs x86 VM:
+>  Performance counter stats for './ebizzy -mRTp':
+>             860074      faults
+>             856866      spf
+>                285      pagefault:spf_pte_lock
+>               1506      pagefault:spf_vma_changed
+>                  0      pagefault:spf_vma_noanon
+>                 73      pagefault:spf_vma_notsup
+>                  0      pagefault:spf_vma_access
+>                  0      pagefault:spf_pmd_changed
+>
+> And the ones captured during a run on a 80 CPUs Power node:
+>  Performance counter stats for './ebizzy -mRTp':
+>             722695      faults
+>             699402      spf
+>              16048      pagefault:spf_pte_lock
+>               6838      pagefault:spf_vma_changed
+>                  0      pagefault:spf_vma_noanon
+>                277      pagefault:spf_vma_notsup
+>                  0      pagefault:spf_vma_access
+>                  0      pagefault:spf_pmd_changed
+>
+> In ebizzy's case most of the page fault were handled in a speculative way,
+> leading the ebizzy performance boost.
 
-But "EXPERIENCE" sounds like I'm on some DEBUG LSD.
+A trial run showed increased fault handling when SPF is enabled on an
+8-core ARM64 system running 4.17-rc3. I am using a port of your x86
+patch to enable spf on arm64.
 
+SPF
+---
 
+Performance counter stats for './ebizzy -vvvmTRp':
 
->     $ size vmlinux
->        text    data     bss     dec     hex filename
->     22665554   9709674  2920908 35296136        21a9388 vmlinux
-> 
->     w/ CONFIG_DEBUG_EXPERIENCE
->     $ size vmlinux
->        text    data     bss     dec     hex filename
->     21499032   10102758 2920908 34522698        20ec64a vmlinux
-> 
-> Comparison of system performance: a bit drop (~6%).
->     This benchmark of kernel compilation is suggested by Ingo Molnar.
->     https://lkml.org/lkml/2018/5/2/74
-> 
->     Preparation: Set cpufreq to 'performance'.
->     for ((cpu=0; cpu<120; cpu++)); do
->       G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
->       [ -f $G ] && echo performance > $G
->     done
-> 
->     w/o CONFIG_DEBUG_EXPERIENCE
->     $ perf stat --repeat 5 --null --pre                 '\
->         cp -a kernel ../kernel.copy.$(date +%s);         \
->         rm -rf *;                                        \
->         git checkout .;                                  \
->         echo 1 > /proc/sys/vm/drop_caches;               \
->         find ../kernel* -type f | xargs cat >/dev/null;  \
->         make -j kernel >/dev/null;                       \
->         make clean >/dev/null 2>&1;                      \
->         sync                                            '\
->                                                          \
->         make -j8 >/dev/null
-> 
->      Performance counter stats for 'make -j8' (5 runs):
-> 
->         219.764246652 seconds time elapsed                   ( +-  0.78% )
-> 
->     w/ CONFIG_DEBUG_EXPERIENCE
->     $ perf stat --repeat 5 --null --pre                 '\
->         cp -a kernel ../kernel.copy.$(date +%s);         \
->         rm -rf *;                                        \
->         git checkout .;                                  \
->         echo 1 > /proc/sys/vm/drop_caches;               \
->         find ../kernel* -type f | xargs cat >/dev/null;  \
->         make -j kernel >/dev/null;                       \
->         make clean >/dev/null 2>&1;                      \
->         sync                                            '\
->                                                          \
->         make -j8 >/dev/null
-> 
->     Performance counter stats for 'make -j8' (5 runs):
-> 
->          233.574187771 seconds time elapsed                  ( +-  0.19% )
-> 
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> 
-> ---
-> v2:
->   o Improve performance benchmark as suggested by Ingo.
->   o Grammar updates in description. (Randy Dunlap)
-> ---
->  Makefile                     |  4 ++++
->  include/linux/compiler-gcc.h |  2 +-
->  include/linux/compiler.h     |  2 +-
->  lib/Kconfig.debug            | 21 +++++++++++++++++++++
->  4 files changed, 27 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Makefile b/Makefile
-> index eb694f6..6a10469 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -639,6 +639,9 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
->  KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
->  KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
->  
-> +ifdef CONFIG_DEBUG_EXPERIENCE
-> +KBUILD_CFLAGS	+= $(call cc-option, -Og)
-> +else
->  ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
->  KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
->  KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
-> @@ -649,6 +652,7 @@ else
->  KBUILD_CFLAGS   += -O2
->  endif
->  endif
-> +endif
->  
->  KBUILD_CFLAGS += $(call cc-ifversion, -lt, 0409, \
->  			$(call cc-disable-warning,maybe-uninitialized,))
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index b4bf73f..b8b3832 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -192,7 +192,7 @@
->  
->  #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
->  
-> -#ifndef __CHECKER__
-> +#if !defined(__CHECKER__) && !defined(CONFIG_DEBUG_EXPERIENCE)
->  # define __compiletime_warning(message) __attribute__((warning(message)))
->  # define __compiletime_error(message) __attribute__((error(message)))
->  #endif /* __CHECKER__ */
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index ab4711c..952cc7f 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -301,7 +301,7 @@ unsigned long read_word_at_a_time(const void *addr)
->   * sparse see a constant array size without breaking compiletime_assert on old
->   * versions of GCC (e.g. 4.2.4), so hide the array from sparse altogether.
->   */
-> -# ifndef __CHECKER__
-> +# if !defined(__CHECKER__) && !defined(CONFIG_DEBUG_EXPERIENCE)
->  #  define __compiletime_error_fallback(condition) \
->  	do { ((void)sizeof(char[1 - 2 * condition])); } while (0)
->  # endif
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index ab55801..e264199 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -216,6 +216,27 @@ config NO_AUTO_INLINE
->  
->  	  If unsure, select N.
->  
-> +config DEBUG_EXPERIENCE
-> +	bool "Optimize for better debugging experience (-Og)"
-> +	default n
+         1,322,736      faults                                                      
+         1,299,241      software/config=11/                                         
 
-You don't need to add "default n" because that's the default if it
-isn't specified.
+      10.005348034 seconds time elapsed
 
--- Steve
+No SPF
+-----
 
-> +	select NO_AUTO_INLINE
-> +	depends on !CC_OPTIMIZE_FOR_SIZE
-> +	help
-> +	  This will apply GCC '-Og' optimization level which is supported
-> +	  since GCC 4.8. This optimization level offers a reasonable level
-> +	  of optimization while maintaining fast compilation and a good
-> +	  debugging experience. It is similar to '-O1' while preferring to
-> +	  keep debug ability over runtime speed. The overall performance
-> +	  will drop a bit (~6%).
-> +
-> +	  Use only if you want to debug the kernel, especially if you want
-> +	  to have better kernel debugging experience with gdb facilities
-> +	  like kgdb or qemu. If enabling this option breaks your kernel,
-> +	  you should either disable this or find a fix (mostly in the arch
-> +	  code). Currently this option has only be tested on x86_64 platform.
-> +
-> +	  If unsure, select N.
-> +
->  config ENABLE_WARN_DEPRECATED
->  	bool "Enable __deprecated logic"
->  	default y
+ Performance counter stats for './ebizzy -vvvmTRp':
+
+           708,916      faults
+                 0      software/config=11/
+
+      10.005807432 seconds time elapsed
+
+Thanks,
+Punit
+
+[...]
