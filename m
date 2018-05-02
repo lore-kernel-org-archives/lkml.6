@@ -1,82 +1,183 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751127AbeEBH0K (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:26:10 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34602 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750930AbeEBH0J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:26:09 -0400
-From: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: cohuck@redhat.com, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
-        pasic@linux.ibm.com, pmorel@linux.ibm.com,
-        Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Subject: [PATCH 1/1] vfio: ccw: fix error return in vfio_ccw_sch_event
-Date: Wed,  2 May 2018 09:25:59 +0200
-X-Mailer: git-send-email 2.13.5
-X-TM-AS-GCONF: 00
-x-cbid: 18050207-0028-0000-0000-00000988D7DE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008959; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01026304; UDB=6.00524157; IPR=6.00805535;
- MB=3.00020891; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-02 07:26:06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050207-0029-0000-0000-00003A9EDB03
-Message-Id: <20180502072559.50691-1-bjsdjshi@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805020074
+        id S1751265AbeEBH1j (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:27:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:56242 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750867AbeEBH1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:27:36 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
+   d="scan'208";a="37762389"
+Date: Wed, 2 May 2018 15:28:19 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
+Message-ID: <20180502072819.mf5l3dypk6dwx2s7@debian>
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <20180425051550.24342-5-tiwei.bie@intel.com>
+ <34781052-df9f-e505-cd3f-08e460b34dcc@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <34781052-df9f-e505-cd3f-08e460b34dcc@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If device has not been registered, or there is a pending work,
-we should reschedule a sch_event call again.
+On Wed, May 02, 2018 at 10:51:06AM +0800, Jason Wang wrote:
+> On 2018年04月25日 13:15, Tiwei Bie wrote:
+> > This commit introduces the event idx support in packed
+> > ring. This feature is temporarily disabled, because the
+> > implementation in this patch may not work as expected,
+> > and some further discussions on the implementation are
+> > needed, e.g. do we have to check the wrap counter when
+> > checking whether a kick is needed?
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c | 53 ++++++++++++++++++++++++++++++++++++++++----
+> >   1 file changed, 49 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index 0181e93897be..b1039c2985b9 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -986,7 +986,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+> >   static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > -	u16 flags;
+> > +	u16 new, old, off_wrap, flags;
+> >   	bool needs_kick;
+> >   	u32 snapshot;
+> > @@ -995,7 +995,12 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> >   	 * suppressions. */
+> >   	virtio_mb(vq->weak_barriers);
+> > +	old = vq->next_avail_idx - vq->num_added;
+> > +	new = vq->next_avail_idx;
+> > +	vq->num_added = 0;
+> > +
+> >   	snapshot = *(u32 *)vq->vring_packed.device;
+> > +	off_wrap = virtio16_to_cpu(_vq->vdev, snapshot & 0xffff);
+> >   	flags = cpu_to_virtio16(_vq->vdev, snapshot >> 16) & 0x3;
+> >   #ifdef DEBUG
+> > @@ -1006,7 +1011,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> >   	vq->last_add_time_valid = false;
+> >   #endif
+> > -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
+> > +	if (flags == VRING_EVENT_F_DESC)
+> > +		needs_kick = vring_need_event(off_wrap & ~(1<<15), new, old);
+> 
+> I wonder whether or not the math is correct. Both new and event are in the
+> unit of descriptor ring size, but old looks not.
 
-Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
----
- drivers/s390/cio/vfio_ccw_drv.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+What vring_need_event() cares is the distance between
+`new` and `old`, i.e. vq->num_added. So I think there
+is nothing wrong with `old`. But the calculation of the
+distance between `new` and `event_idx` isn't right when
+`new` wraps. How do you think about the below code:
 
-diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
-index ea6a2d0b2894..770fa9cfc310 100644
---- a/drivers/s390/cio/vfio_ccw_drv.c
-+++ b/drivers/s390/cio/vfio_ccw_drv.c
-@@ -177,6 +177,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
- {
- 	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
- 	unsigned long flags;
-+	int rc = -EAGAIN;
- 
- 	spin_lock_irqsave(sch->lock, flags);
- 	if (!device_is_registered(&sch->dev))
-@@ -187,6 +188,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
- 
- 	if (cio_update_schib(sch)) {
- 		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
-+		rc = 0;
- 		goto out_unlock;
- 	}
- 
-@@ -195,11 +197,12 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
- 		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
- 				 VFIO_CCW_STATE_STANDBY;
- 	}
-+	rc = 0;
- 
- out_unlock:
- 	spin_unlock_irqrestore(sch->lock, flags);
- 
--	return 0;
-+	return rc;
- }
- 
- static struct css_device_id vfio_ccw_sch_ids[] = {
--- 
-2.13.5
+	wrap_counter = off_wrap >> 15;
+	event_idx = off_wrap & ~(1<<15);
+	if (wrap_counter != vq->wrap_counter)
+		event_idx -= vq->vring_packed.num;
+	
+	needs_kick = vring_need_event(event_idx, new, old);
+
+Best regards,
+Tiwei Bie
+
+
+> 
+> Thanks
+> 
+> > +	else
+> > +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
+> >   	END_USE(vq);
+> >   	return needs_kick;
+> >   }
+> > @@ -1116,6 +1124,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
+> >   	if (vq->last_used_idx >= vq->vring_packed.num)
+> >   		vq->last_used_idx -= vq->vring_packed.num;
+> > +	/* If we expect an interrupt for the next entry, tell host
+> > +	 * by writing event index and flush out the write before
+> > +	 * the read in the next get_buf call. */
+> > +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
+> > +		virtio_store_mb(vq->weak_barriers,
+> > +				&vq->vring_packed.driver->off_wrap,
+> > +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
+> > +						(vq->wrap_counter << 15)));
+> > +
+> >   #ifdef DEBUG
+> >   	vq->last_add_time_valid = false;
+> >   #endif
+> > @@ -1143,10 +1160,17 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
+> >   	/* We optimistically turn back on interrupts, then check if there was
+> >   	 * more to do. */
+> > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
+> > +	 * either clear the flags bit or point the event index at the next
+> > +	 * entry. Always update the event index to keep code simple. */
+> > +
+> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
+> > +			vq->last_used_idx | (vq->wrap_counter << 15));
+> >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> >   		virtio_wmb(vq->weak_barriers);
+> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
+> > +						     VRING_EVENT_F_ENABLE;
+> >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> >   							vq->event_flags_shadow);
+> >   	}
+> > @@ -1172,15 +1196,34 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
+> >   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
+> >   {
+> >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > +	u16 bufs, used_idx, wrap_counter;
+> >   	START_USE(vq);
+> >   	/* We optimistically turn back on interrupts, then check if there was
+> >   	 * more to do. */
+> > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
+> > +	 * either clear the flags bit or point the event index at the next
+> > +	 * entry. Always update the event index to keep code simple. */
+> > +
+> > +	/* TODO: tune this threshold */
+> > +	bufs = (u16)(vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
+> > +
+> > +	used_idx = vq->last_used_idx + bufs;
+> > +	wrap_counter = vq->wrap_counter;
+> > +
+> > +	if (used_idx >= vq->vring_packed.num) {
+> > +		used_idx -= vq->vring_packed.num;
+> > +		wrap_counter ^= 1;
+> > +	}
+> > +
+> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
+> > +			used_idx | (wrap_counter << 15));
+> >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> >   		virtio_wmb(vq->weak_barriers);
+> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
+> > +						     VRING_EVENT_F_ENABLE;
+> >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> >   							vq->event_flags_shadow);
+> >   	}
+> > @@ -1822,8 +1865,10 @@ void vring_transport_features(struct virtio_device *vdev)
+> >   		switch (i) {
+> >   		case VIRTIO_RING_F_INDIRECT_DESC:
+> >   			break;
+> > +#if 0
+> >   		case VIRTIO_RING_F_EVENT_IDX:
+> >   			break;
+> > +#endif
+> >   		case VIRTIO_F_VERSION_1:
+> >   			break;
+> >   		case VIRTIO_F_IOMMU_PLATFORM:
+> 
