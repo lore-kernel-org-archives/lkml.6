@@ -1,68 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751952AbeEBXKH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 19:10:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44306 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751929AbeEBXKE (ORCPT
+        id S1751852AbeEBXYA (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 19:24:00 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:39525 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751587AbeEBXX4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 19:10:04 -0400
-From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-To: David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Keyrings <keyrings@vger.kernel.org>
-Cc: Linux Integrity <linux-integrity@vger.kernel.org>,
-        Linux Security <linux-security-module@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@us.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-Subject: [PATCH v6 4/4] KEYS: Print insert-sys-cert information to stdout instead of stderr
-Date: Wed,  2 May 2018 19:08:11 -0400
-X-Mailer: git-send-email 2.14.3 (Apple Git-98)
-In-Reply-To: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18050223-0020-0000-0000-00000DDA0670
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008959; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01026618; UDB=6.00524345; IPR=6.00805804;
- MB=3.00020894; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-02 23:10:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050223-0021-0000-0000-0000612E662E
-Message-Id: <20180502230811.2751-5-mkayaalp@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805020193
+        Wed, 2 May 2018 19:23:56 -0400
+X-Google-Smtp-Source: AB8JxZo3uLLAyS3giWcKXTL69ImudW6paexJl5ZSCaVDdEUv7VhI+Nm0w7MBE4+jGrrIuur2yQwXog==
+Date: Wed, 2 May 2018 20:23:52 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sctp: fix a potential missing-check bug
+Message-ID: <20180502232352.GJ5105@localhost.localdomain>
+References: <1525299165-27098-1-git-send-email-wang6495@umn.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525299165-27098-1-git-send-email-wang6495@umn.edu>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Detailed INFO output should go to stdout instead of stderr.
+Hi Wenwen,
 
-Signed-off-by: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
----
- scripts/insert-sys-cert.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, May 02, 2018 at 05:12:45PM -0500, Wenwen Wang wrote:
+> In sctp_setsockopt_maxseg(), the integer 'val' is compared against min_len
+> and max_len to check whether it is in the appropriate range. If it is not,
+> an error code -EINVAL will be returned. This is enforced by a security
+> check. But, this check is only executed when 'val' is not 0. In fact, if
 
-diff --git a/scripts/insert-sys-cert.c b/scripts/insert-sys-cert.c
-index a3bd7ea8a436..caa446fe91b8 100644
---- a/scripts/insert-sys-cert.c
-+++ b/scripts/insert-sys-cert.c
-@@ -32,7 +32,7 @@
- #define USED_SYM  "system_extra_cert_used"
- #define LSIZE_SYM "system_certificate_list_size"
- 
--#define info(format, args...) fprintf(stderr, "INFO:    " format, ## args)
-+#define info(format, args...) fprintf(stdout, "INFO:    " format, ## args)
- #define warn(format, args...) fprintf(stdout, "WARNING: " format, ## args)
- #define  err(format, args...) fprintf(stderr, "ERROR:   " format, ## args)
- 
--- 
-2.17.0
+Which makes sense, no? Especially if considering that 0 should be an
+allowed value as it turns off the user limit.
+
+> 'val' is 0, it will be assigned with a new value (if the return value of
+> the function sctp_id2assoc() is not 0) in the following execution. However,
+> this new value of 'val' is not checked before it is used to assigned to
+
+Which 'new value'? val is not set to something new during the
+function. It always contains the user supplied value.
+
+> asoc->user_frag. That means it is possible that the new value of 'val'
+> could be out of the expected range. This can cause security issues
+> such as buffer overflows, e.g., the new value of 'val' is used as an index
+> to access a buffer.
+>
+> This patch inserts a check for the new value of 'val' to see if it is in
+> the expected range. If it is not, an error code -EINVAL will be returned.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  net/sctp/socket.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+>
+> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+> index 80835ac..2beb601 100644
+> --- a/net/sctp/socket.c
+> +++ b/net/sctp/socket.c
+> @@ -3212,6 +3212,7 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
+>  	struct sctp_af *af = sp->pf->af;
+>  	struct sctp_assoc_value params;
+>  	struct sctp_association *asoc;
+> +	int min_len, max_len;
+>  	int val;
+>
+>  	if (optlen == sizeof(int)) {
+> @@ -3231,19 +3232,15 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
+>  		return -EINVAL;
+>  	}
+>
+> -	if (val) {
+> -		int min_len, max_len;
+> +	min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
+> +	min_len -= af->ip_options_len(sk);
+> +	min_len -= sizeof(struct sctphdr) +
+> +		   sizeof(struct sctp_data_chunk);
+
+On which tree did you base your patch on? Your patch lacks a tag so it
+defaults to net-next, and I reworked this section on current net-next
+and these MTU calculcations are now handled by sctp_mtu_payload().
+
+But even for net tree, I don't understand which issue you're fixing
+here. Actually it seems to me that both codes seems to do the same
+thing.
+
+>
+> -		min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
+> -		min_len -= af->ip_options_len(sk);
+> -		min_len -= sizeof(struct sctphdr) +
+> -			   sizeof(struct sctp_data_chunk);
+> +	max_len = SCTP_MAX_CHUNK_LEN - sizeof(struct sctp_data_chunk);
+>
+> -		max_len = SCTP_MAX_CHUNK_LEN - sizeof(struct sctp_data_chunk);
+> -
+> -		if (val < min_len || val > max_len)
+> -			return -EINVAL;
+> -	}
+> +	if (val && (val < min_len || val > max_len))
+> +		return -EINVAL;
+>
+>  	asoc = sctp_id2assoc(sk, params.assoc_id);
+>  	if (asoc) {
+> @@ -3253,6 +3250,8 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
+>  			val -= sizeof(struct sctphdr) +
+>  			       sctp_datachk_len(&asoc->stream);
+>  		}
+> +		if (val < min_len || val > max_len)
+> +			return -EINVAL;
+>  		asoc->user_frag = val;
+>  		asoc->frag_point = sctp_frag_point(asoc, asoc->pathmtu);
+>  	} else {
+> --
+> 2.7.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
