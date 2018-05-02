@@ -1,146 +1,341 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2842537-1525166171-2-9937690135084242952
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-4181815-1525233932-2-12855724620952802560
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FROM_EXCESS_BASE64 0.979,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: from='utf-8', to='utf-8', cc='utf-8', plain='iso-8859-1'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525166170; b=SxQLVK1e9jRn1WpXDE0VqqLZkzf63R5uI9Di2NZvqEcWi5Ofde
-    iRhmYwN7jy3z1wQJ7B4fF8nRij0jGNKc8TB2sncPPFpvymzDaEq55trYEsyrkDIm
-    lWuj5nMSq7qZYkwq0IceX3MeS+ke4WTX/uJcCm4KFTLeJje8k4aFEMYmcIBKw3aT
-    arNZ1mCJVBH0+xHg7C5TkAJUKaaoVBU+sNZB15zD0uTHc0X1SVQRalwGYsCPgwpq
-    3bzKEii3NLywv16R+BKdZaZK0UsD9fR4zHqMd62qeIsHNAjIOv9N7tf39tnqxqWz
-    xMG72nnAU7sKRcM6B0XV9LgcRq68F9VNbcNQ==
+    1525233931; b=nm7wl4LsXHSuQ6s6vVqq8Z8xTn0sdvYUtnIC6UDRMb7+TZc6FH
+    gFoWP6SWnLtbUTsvU2Mmu9U00Vb8ck6cuo4OG0uQTVZV9YVeh3xZqn8rR2vCeLJu
+    NExKkMkPLZ4GhrNted6h7emDZuhT7SO5U+knMWwTnuhHHyGsBy1FMT55buBwxfJD
+    BLH186gIgPfr/Qf7/n+xmW0xex1i0sLPZw6ZmjRNygBoCwlVIfUQE2O8hg6YraBs
+    FwUJJN5zhQfFgEF+ulPVzEBacWBvxMH34DI/UJKbfUns5qcF1z9FUpWW4TAvsHvH
+    boaZiuAt7aJGjkt51EYoCmaGl0ty3137z9BQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1525166170; bh=AN9zcnUluVH
-    VYp7O5jqMlyaZ1YtPzSKjnIJtaR1hmrw=; b=Tq/0UbigYtnp3qylOOiGIrYwjxe
-    WtwvgfoUfDcC937OY6r0glqg/SipHpg600DA5JvO/at2wENy67SoNAy5qRfyztd1
-    7nkFXfEoUU4macm8/uLEC+IDclmjLoNe8dw1VPnLacD+MXI1/BydUEo2w37DmEJ+
-    0GniKnnGoEh31NhLPlqb8mWwSrzVNuvcjitkNKzNx32Ncx3ow6G6vA9pve8zi6YA
-    EMSsmld40aHf+CKLQaBOB0QbdMTbWQgJ3azsMdNr2aH2oPb1sRYH+lNnPvMHne4T
-    dyalgYI3HTtsNkWomZMFR0vDGNKe1tVh8/4ylF3Ai4doqobKgxMu+3YduXg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=citrix.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525233931; bh=rx290
+    r3m+LVdNpDbIgmbbJiZfsw3+Qcd9WdzysXkN+c=; b=YuESiZmBkNZiNFOp5Txrv
+    1V9JgkTwBNRpeTUCmLLRTxGjd/my78lAjlc9b8CKhk4VZExKmOaY8IJ6/ChRFDO9
+    zjLFljPk5EMBnvQsZLdRzvDKdlKvTP6Z+Bnf2tLprryImmi+GGJvpavKpXUYraES
+    01sAkjmOeryvQvsd0X7LwZAdoHeonkVSkW1KJNB3Nnh3L1ISXVyn8IM3UZSdOoku
+    qbLceopzyWZ2JXXvosm/3Q3asUB/B2tfuCEtZKFPwMMNO4JaUhT1qwqqvb7R14b3
+    Wf2xT23ygkk/9ssr9M6j9w5eLLvQ8r9+R8tmhk4VwFH5YbOk7bBjfNkBQu3DlnnZ
+    Q==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=me.com header.i=@me.com header.b=gLkOo3wW x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=04042017;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=me.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=citrix.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-35 state=0
-Authentication-Results: mx2.messagingengine.com;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=me.com header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=citrix.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=me.com header.i=@me.com header.b=gLkOo3wW x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=04042017;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=me.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=citrix.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-35 state=0
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=me.com header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMoQgGXfS5EFF64X1IxxOx3ontxZsi5bG7ADSRD19diLRpsr0t6wXvR5rvWvbOghovBErpu/FsKtG/OTQNtAR7Eo5IbHCLNVzyoa8hJQR+fBkJf03ERw
-    Fhkih36vRtdN6r8EirqF/nHc1uH8sNVE61bmi5JA689Bwqe4qC9P07Mu2CKBO7CLa2ETG//6SE5QkOYFIuZzu5QFNwHJetwaDdSeCumQHUWtxwRLAOp22uf5
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=VUJBJC2UJ8kA:10
-    a=KxUqhg8yU9m4zpCWrgEA:9 a=wPNLvfGTeEIA:10
+X-CM-Envelope: MS4wfF9+Zw9lg0uy4wvlmLtyKzxYf4JEU7mx9TutBAJM1ynmXKllf65HI5lf38rONimaKTxNb5Z2ZWMWZ85islW7khAldK/t8RR6MhWeIybUMQVkIuPvlqoe
+    KtaAE2Jsy7Mpmtk3ztQGp9/tSMejCEpBfh0daH65xmvNTqRw/nTHhlRirZxoMUE4Q6F0VidPZ9MMVFp3feUZRgXgRRgG3KnSZ0yjzVqEIzw4Pcj1gBmGzzmv
+    bLHWj1czWFG80duMdc9CBg==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=ySfo2T4IAAAA:8
+    a=CjxXgO3LAAAA:8 a=HHGDD-5mAAAA:8 a=DDOyTI_5AAAA:8 a=46IIjZ-JkNM1COGNEo4A:9
+    a=z6dDOHJhoyVh766o:21 a=Cqk7TfsNk3d5aPvB:21 a=CjuIK1q_8ugA:10
+    a=ZUkhVnNHqyo2at-WnAgH:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755421AbeEAJP4 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 1 May 2018 05:15:56 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:27513 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754550AbeEAJPw (ORCPT
-        <rfc822;stable@vger.kernel.org>); Tue, 1 May 2018 05:15:52 -0400
-X-IronPort-AV: E=Sophos;i="5.49,350,1520899200";
-   d="scan'208";a="72420768"
-Date: Tue, 1 May 2018 10:15:26 +0100
-From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-CC: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?=
-        <marmarek@invisiblethingslab.com>, Juergen Gross <jgross@suse.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        open list <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>,
-        "open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-        <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [Xen-devel] [PATCH 6/6] xen-blkfront: prepare request locally,
- only then put it on the shared ring
-Message-ID: <20180501091526.6b6j6h6rh62646fx@MacBook-Pro-de-Roger.local>
-References: <cover.7ee732ab822b728ec486a3118ec12e9c06f0f325.1525122026.git-series.marmarek@invisiblethingslab.com>
- <951a221b0e655b3077d1f96ac365194320bc8809.1525122026.git-series.marmarek@invisiblethingslab.com>
- <20180501082231.dzdbcghtwvlbkoys@MacBook-Pro-de-Roger.local>
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-02_01:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1015 suspectscore=2 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805020039
+From: Doug Oucharek <dougso@me.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>,
+ James Simmons <jsimmons@infradead.org>
+Subject: [PATCH] staging: lustre: o2iblnd: Enable Multiple OPA Endpoints
+ between Nodes
+Date: Wed, 02 May 2018 00:05:14 -0400
+Message-id: <1525233914-8266-1-git-send-email-dougso@me.com>
+X-Mailer: git-send-email 1.8.3.1
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: Doug Oucharek <doug.s.oucharek@intel.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180501082231.dzdbcghtwvlbkoys@MacBook-Pro-de-Roger.local>
-User-Agent: NeoMutt/20180323
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 01, 2018 at 09:22:31AM +0100, Roger Pau Monné wrote:
-> On Mon, Apr 30, 2018 at 11:01:50PM +0200, Marek Marczykowski-Górecki wrote:
-> >  					    struct request *req,
-> > -					    struct blkif_request **ring_req)
-> > +					    struct blkif_request *ring_req)
-> >  {
-> >  	unsigned long id;
-> >  
-> > -	*ring_req = RING_GET_REQUEST(&rinfo->ring, rinfo->ring.req_prod_pvt);
-> > -	rinfo->ring.req_prod_pvt++;
-> > -
-> >  	id = get_id_from_freelist(rinfo);
-> >  	rinfo->shadow[id].request = req;
-> >  	rinfo->shadow[id].status = REQ_WAITING;
-> >  	rinfo->shadow[id].associated_id = NO_ASSOCIATED_ID;
-> >  
-> > -	(*ring_req)->u.rw.id = id;
-> > +	ring_req->u.rw.id = id;
-> >  
-> >  	return id;
-> >  }
-> > @@ -545,23 +542,28 @@ static unsigned long blkif_ring_get_request(struct blkfront_ring_info *rinfo,
-> >  static int blkif_queue_discard_req(struct request *req, struct blkfront_ring_info *rinfo)
-> >  {
-> >  	struct blkfront_info *info = rinfo->dev_info;
-> > -	struct blkif_request *ring_req;
-> > +	struct blkif_request ring_req = { 0 };
-> >  	unsigned long id;
-> >  
-> >  	/* Fill out a communications ring structure. */
-> >  	id = blkif_ring_get_request(rinfo, req, &ring_req);
-> 
-> Maybe I'm missing something obvious here, but you are adding a struct
-> allocated on the stack to the shadow ring copy, isn't this dangerous?
+OPA driver optimizations are based on the MPI model where it is
+expected to have multiple endpoints between two given nodes. To
+enable this optimization for Lustre, we need to make it possible,
+via an LND-specific tuneable, to create multiple endpoints and to
+balance the traffic over them.
 
-The above comment is wrong, you are storing a pointer to 'req' in the
-shadow ring copy, which is fine and is not the ring request.
+Both sides of a connection must have this patch for it to work.
+Only the active side of the connection (usually the client)
+needs to have the new tuneable set > 1.
 
-Roger.
+Signed-off-by: Doug Oucharek <doug.s.oucharek@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8943
+Reviewed-on: https://review.whamcloud.com/25168
+Reviewed-by: Amir Shehata <amir.shehata@intel.com>
+Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: Doug Oucharek <dougso@me.com>
+---
+ .../lustre/include/uapi/linux/lnet/lnet-dlc.h      |  3 ++-
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    | 17 ++++++++++++---
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c | 25 +++++++++++++++-------
+ .../lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c  |  9 ++++++++
+ 4 files changed, 42 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
+index e45d828..c1619f4 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
++++ b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
+@@ -53,7 +53,8 @@ struct lnet_ioctl_config_o2iblnd_tunables {
+ 	__u32 lnd_fmr_pool_size;
+ 	__u32 lnd_fmr_flush_trigger;
+ 	__u32 lnd_fmr_cache;
+-	__u32 pad;
++	__u16 lnd_conns_per_peer;
++	__u16 pad;
+ };
+ 
+ struct lnet_ioctl_config_lnd_tunables {
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
+index ca6e09d..da8929d 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
+@@ -568,6 +568,8 @@ struct kib_peer {
+ 	lnet_nid_t       ibp_nid;         /* who's on the other end(s) */
+ 	struct lnet_ni	*ibp_ni;         /* LNet interface */
+ 	struct list_head ibp_conns;       /* all active connections */
++	struct kib_conn	*ibp_next_conn;  /* next connection to send on for
++					    round robin */
+ 	struct list_head ibp_tx_queue;    /* msgs waiting for a conn */
+ 	__u64            ibp_incarnation; /* incarnation of peer */
+ 	/* when (in jiffies) I was last alive */
+@@ -581,7 +583,7 @@ struct kib_peer {
+ 	/* current active connection attempts */
+ 	unsigned short		ibp_connecting;
+ 	/* reconnect this peer later */
+-	unsigned short		ibp_reconnecting:1;
++	unsigned char		ibp_reconnecting;
+ 	/* counter of how many times we triggered a conn race */
+ 	unsigned char		ibp_races;
+ 	/* # consecutive reconnection attempts to this peer */
+@@ -744,10 +746,19 @@ struct kib_peer {
+ static inline struct kib_conn *
+ kiblnd_get_conn_locked(struct kib_peer *peer)
+ {
++	struct list_head *next;
++
+ 	LASSERT(!list_empty(&peer->ibp_conns));
+ 
+-	/* just return the first connection */
+-	return list_entry(peer->ibp_conns.next, struct kib_conn, ibc_list);
++	/* Advance to next connection, be sure to skip the head node */
++	if (!peer->ibp_next_conn ||
++	    peer->ibp_next_conn->ibc_list.next == &peer->ibp_conns)
++		next = peer->ibp_conns.next;
++	else
++		next = peer->ibp_next_conn->ibc_list.next;
++	peer->ibp_next_conn = list_entry(next, struct kib_conn, ibc_list);
++
++	return peer->ibp_next_conn;
+ }
+ 
+ static inline int
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+index b4a182d..303e4e1 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -1250,7 +1250,6 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	LASSERT(net);
+ 	LASSERT(peer->ibp_connecting > 0);
+-	LASSERT(!peer->ibp_reconnecting);
+ 
+ 	cmid = kiblnd_rdma_create_id(kiblnd_cm_callback, peer, RDMA_PS_TCP,
+ 				     IB_QPT_RC);
+@@ -1332,7 +1331,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	LASSERT(!peer->ibp_accepting && !peer->ibp_connecting &&
+ 		list_empty(&peer->ibp_conns));
+-	peer->ibp_reconnecting = 0;
++	peer->ibp_reconnecting--;
+ 
+ 	if (!kiblnd_peer_active(peer)) {
+ 		list_splice_init(&peer->ibp_tx_queue, &txs);
+@@ -1365,6 +1364,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	rwlock_t *g_lock = &kiblnd_data.kib_global_lock;
+ 	unsigned long flags;
+ 	int rc;
++	int		   i;
++	struct lnet_ioctl_config_o2iblnd_tunables *tunables;
+ 
+ 	/*
+ 	 * If I get here, I've committed to send, so I complete the tx with
+@@ -1461,7 +1462,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	/* Brand new peer */
+ 	LASSERT(!peer->ibp_connecting);
+-	peer->ibp_connecting = 1;
++	tunables = &peer->ibp_ni->ni_lnd_tunables->lt_tun_u.lt_o2ib;
++	peer->ibp_connecting = tunables->lnd_conns_per_peer;
+ 
+ 	/* always called with a ref on ni, which prevents ni being shutdown */
+ 	LASSERT(!((struct kib_net *)ni->ni_data)->ibn_shutdown);
+@@ -1474,7 +1476,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	write_unlock_irqrestore(g_lock, flags);
+ 
+-	kiblnd_connect_peer(peer);
++	for (i = 0; i < tunables->lnd_conns_per_peer; i++)
++		kiblnd_connect_peer(peer);
+ 	kiblnd_peer_decref(peer);
+ }
+ 
+@@ -1923,6 +1926,9 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	}
+ 
+ 	dev = ((struct kib_net *)peer->ibp_ni->ni_data)->ibn_dev;
++	if (peer->ibp_next_conn == conn)
++		/* clear next_conn so it won't be used */
++		peer->ibp_next_conn = NULL;
+ 	list_del(&conn->ibc_list);
+ 	/* connd (see below) takes over ibc_list's ref */
+ 
+@@ -2192,7 +2198,11 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	kiblnd_conn_addref(conn);
+ 	write_unlock_irqrestore(&kiblnd_data.kib_global_lock, flags);
+ 
+-	/* Schedule blocked txs */
++	/* Schedule blocked txs
++	 * Note: if we are running with conns_per_peer > 1, these blocked
++ 	 * txs will all get scheduled to the first connection which gets
++ 	 * scheduled.  We won't be using round robin on this first batch.
++ 	 */
+ 	spin_lock(&conn->ibc_lock);
+ 	list_for_each_entry_safe(tx, tmp, &txs, tx_list) {
+ 		list_del(&tx->tx_list);
+@@ -2561,7 +2571,6 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	LASSERT(conn->ibc_state == IBLND_CONN_ACTIVE_CONNECT);
+ 	LASSERT(peer->ibp_connecting > 0);     /* 'conn' at least */
+-	LASSERT(!peer->ibp_reconnecting);
+ 
+ 	if (cp) {
+ 		msg_size = cp->ibcp_max_msg_size;
+@@ -2579,7 +2588,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	 */
+ 	reconnect = (!list_empty(&peer->ibp_tx_queue) ||
+ 		     peer->ibp_version != version) &&
+-		    peer->ibp_connecting == 1 &&
++		    peer->ibp_connecting &&
+ 		    !peer->ibp_accepting;
+ 	if (!reconnect) {
+ 		reason = "no need";
+@@ -2640,7 +2649,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	}
+ 
+ 	conn->ibc_reconnect = 1;
+-	peer->ibp_reconnecting = 1;
++	peer->ibp_reconnecting++;
+ 	peer->ibp_version = version;
+ 	if (incarnation)
+ 		peer->ibp_incarnation = incarnation;
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
+index b923540..39d0792 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
+@@ -57,6 +57,10 @@
+ module_param(nscheds, int, 0444);
+ MODULE_PARM_DESC(nscheds, "number of threads in each scheduler pool");
+ 
++static unsigned int conns_per_peer = 1;
++module_param(conns_per_peer, uint, 0444);
++MODULE_PARM_DESC(conns_per_peer, "number of connections per peer");
++
+ /* NB: this value is shared by all CPTs, it can grow at runtime */
+ static int ntx = 512;
+ module_param(ntx, int, 0444);
+@@ -271,6 +275,10 @@ int kiblnd_tunables_setup(struct lnet_ni *ni)
+ 		tunables->lnd_fmr_flush_trigger = fmr_flush_trigger;
+ 	if (!tunables->lnd_fmr_cache)
+ 		tunables->lnd_fmr_cache = fmr_cache;
++	if (!tunables->lnd_conns_per_peer) {
++		tunables->lnd_conns_per_peer = (conns_per_peer) ?
++			conns_per_peer : 1;
++	}
+ 
+ 	return 0;
+ }
+@@ -284,4 +292,5 @@ void kiblnd_tunables_init(void)
+ 	default_tunables.lnd_fmr_pool_size = fmr_pool_size;
+ 	default_tunables.lnd_fmr_flush_trigger = fmr_flush_trigger;
+ 	default_tunables.lnd_fmr_cache = fmr_cache;
++	default_tunables.lnd_conns_per_peer = conns_per_peer;
+ }
+-- 
+1.8.3.1
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
