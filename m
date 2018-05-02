@@ -1,149 +1,122 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1065540-1525280163-2-10351138097442087061
+X-Cyrus-Session-Id: sloti22d1t05-437838-1525250698-2-7632773794294912713
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525280162; b=J2FXilYaBDDnbvAP0VxPQ/n/pu2D/ypoTefSSZDhdE32/mkza7
-    VdK43uhauDeIonSb/va2lU2ovp/dek4ncO09VQ1LJqNu8L7jlwAix2asGj7CQ/bP
-    HoKRrW1Sdxb8z8uHHo8anKD1GeegXCK/XA6cGem+njXl7EMzWF6KwP1QhEg72sSq
-    heTdsVnqzqCXWvbDLQ7ctFUinxA3NKsx+EDLxERMvHFQMWuxMZq8RPOMGsNI0hJt
-    aTQzVOPP1B0x/gR13LTvCD4McnWglVebal4YPp9CAVx1iNUQB/zkySWcL7co6w1T
-    UgUFS9DokABWNmIbBUXF2eCyUKKj4w+DeC2A==
+    1525250697; b=Qu1wn4+3qyuZJ6pCIz1Cz/y4/h/ysgH30V7/KoXICYodRzNIbq
+    p2xnKHKqEDLvg5IrZOzLHHnMIeGBVgeTMra5Z/2+Wsaz99h4EW674RReQ1ypejUp
+    m1hkfsf0AH5Bk2Y6p0C0XzV0xqKQq1JHVC8WdTQ+79iW509Z7nEonbCSDvo+y7t9
+    nKzO08ZWwkNPDv4FSZxJAMwgf0XIl/YwJZO+sHiFiV6hWVMJD0Nbc536EctAcpFn
+    krGzEqkic6PxzW6Rix9qagvg9/65/nA5IJd4TNZ5MV75Sdj1TV9YoXhhSuojaDER
+    oV+p2fbaTkwUn9A3/1qNidu9S/FiGVE6ZD9A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:references:in-reply-to:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1525280162; bh=mAFb+TZcZebNjbLLcTafC5LK5XhQL9DO3aN1J52fjB
-    g=; b=eLf2sTAiyLYqKtUztmLH/ys97YvEDDyoJ2EYDVUq2aAD+Shs/juDt5/i3F
-    vIxftBmtFR1K1IAh9SgW/x4OW14etj6gKJO4lLdFnsGA0E1PPY/ObXZBaEVZGbPL
-    qBxF4w0NbepIjERnIUI5P7j7TnN3A1wdUj80xWaknr7yf5/DVg+ZL7xxbwPufPHG
-    DQdGnWdjSYudwDcmoSsMoTTAFippDZZSA/T/HMa1EImizk317SMA40Gjlfv/D7cH
-    9QWj7TXqeXZZXfoZ6III8xto22548RGZzaqA3NzA/AUBdXhs8N6i3zEKjPfFP5wT
-    jM0N2s54SlcaDGXtN9q91gVApcJA==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=google.com header.i=@google.com header.b=KrC7+F0h x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525250697; bh=aKlB/lMqUe2lHG0dOXHMGMrLnMkrS6
+    KTaHPyMLCPsA8=; b=QtvVwE2yV1+M0VCK5YH9/S5EoC3jGxDMeBwpz5a2ewRyG6
+    ktcQHWyJw9cnwNJQU89d0eM2IVcMggP0zB+tivAGmsRplytoZMhG4ez/5Utful+c
+    CsxnP4gwktpS0Y9TiRqjF9RVP+pshyDVDLJObBPvxkW1RIkda4ek8JA0EaD1LaY/
+    Ql/T2H0v2LmXC3TYwLOMlYdxFMRnaaU3g9jDhyDNU3HGAuEZ7J0QHkZoYW4J+hbz
+    rvrVbcsABuy1adwCLeyf4evyYX8kSx0xa3VRTp/wEgvgOTL5Fv9/rBEIxdJTU0u6
+    Q+mfuNiF3lMGOBmuWkOl7jFP3vncbm/dMKD9dtkA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=infradead.org header.i=@infradead.org header.b=Urz6CUvP
+    x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=merlin.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=gVNO5fYf;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=google.com header.result=pass header_is_org_domain=yes;
+    header.domain=infradead.org header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=google.com header.i=@google.com header.b=KrC7+F0h x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=infradead.org header.i=@infradead.org header.b=Urz6CUvP
+      x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=merlin.20170209;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=gVNO5fYf;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=google.com header.result=pass header_is_org_domain=yes;
+      header.domain=infradead.org header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNP1RYrqQC3xtrq+q9nzH8a/RSvilCOk0mxEyxIk7tyh3W/R/z7StJ3RgpU0ahQfqD79HVi997iI7A5Xe1Xt6EnHt4jPsJScWoVe8ALGdaekHtxv65wg
-    RPpl7lVNGfUdny3bWosHGWd4kQGJDtWScWeJFJ4ydJ1t5vJd5G5bG8dnN+IBxFfrnNRmY111lQDm+KFcplH4Hp0AUdS/uxBaPHKRe0/xNLrbjgGtJevZN8Ec
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=meVymXHHAAAA:8 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=SWhmzX8CHmD3_NRxhBAA:9
-    a=RPw8_s6z2vd0UvpX:21 a=2JzY91faTCS7Iw2o:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=2JgSa4NbpEOStq-L5dxp:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfNV7Sj+FdT8kdiGTP6cXTlXHpYMeFbOqQ6caaq7h9lSaSqMrqVoLf3KbKknYjqOcgvqrcEkHRcBgwjC2Jp+eYHJUv+F8ycJS9pUhAMAv7u06a/gTtN1x
+    +uwwSDB0AEgamv83f956lFnAliQxZIJgp3nwakLLX7do5Ix5Ff27GPe6CDu9e5CEzYM+1u6MSTTfgN+ShbAvxHbt8nmbcYktuuhdsyQY2lcmDLXV6KDTnVQz
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=giMzFFmxwogncUu-seIA:9 a=r1lsvxauelOWCy9X:21
+    a=tGpJ8-T8j5qnld5c:21 a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751592AbeEBQz5 (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 12:55:57 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:36546 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeEBQz4 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 12:55:56 -0400
-X-Google-Smtp-Source: AB8JxZrxuOHZxBYMhbBPw4FjgNwXhQKflczidm28jhXpUrYCz4x+0bg4N7qqZZ7j3OJOOIRl3d+MrgGN3ovWyDfaqqM=
-MIME-Version: 1.0
-References: <20180430224433.17407-1-mathieu.desnoyers@efficios.com>
- <CAKOZuesa338sc_=w6-wvro25idrSN_zx_zrHFyo-bDiORs7FZw@mail.gmail.com>
- <660904075.9201.1525276988842.JavaMail.zimbra@efficios.com>
- <CAKOZueu_7Ha_WXMyxqMEScXo1aHWr9qYRxqyb-Rpd4k1JP3xHA@mail.gmail.com> <20180502124253.145253cb@gandalf.local.home>
-In-Reply-To: <20180502124253.145253cb@gandalf.local.home>
-From: Daniel Colascione <dancol@google.com>
-Date: Wed, 02 May 2018 16:55:44 +0000
-Message-ID: <CAKOZuetA0A8ML9V23aoFPSGqFiVgJ4enBTmjR2HEL7hE1QAJiQ@mail.gmail.com>
-Subject: Re: [RFC PATCH for 4.18 00/14] Restartable Sequences
-To: rostedt@goodmis.org
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        id S1750930AbeEBIoz (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 04:44:55 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52940 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750859AbeEBIoy (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 04:44:54 -0400
+Date: Wed, 2 May 2018 10:43:28 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Daniel Colascione <dancol@google.com>
+Cc: mathieu.desnoyers@efficios.com, paulmck@linux.vnet.ibm.com,
         boqun.feng@gmail.com, luto@amacapital.net, davejwatson@fb.com,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Paul Turner <pjt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        pjt@google.com, Andrew Morton <akpm@linux-foundation.org>,
         linux@arm.linux.org.uk, tglx@linutronix.de, mingo@redhat.com,
         hpa@zytor.com, Andrew Hunter <ahh@google.com>, andi@firstfloor.org,
-        cl@linux.com, bmaurer@fb.com, josh@joshtriplett.org,
-        torvalds@linux-foundation.org, catalin.marinas@arm.com,
-        will.deacon@arm.com,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        cl@linux.com, bmaurer@fb.com, rostedt@goodmis.org,
+        josh@joshtriplett.org, torvalds@linux-foundation.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        mtk.manpages@gmail.com, Joel Fernandes <joelaf@google.com>
+Subject: Re: [RFC PATCH for 4.18 00/14] Restartable Sequences
+Message-ID: <20180502084328.GE12180@hirez.programming.kicks-ass.net>
+References: <20180430224433.17407-1-mathieu.desnoyers@efficios.com>
+ <CAKOZuesa338sc_=w6-wvro25idrSN_zx_zrHFyo-bDiORs7FZw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKOZuesa338sc_=w6-wvro25idrSN_zx_zrHFyo-bDiORs7FZw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 2, 2018 at 9:42 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+On Wed, May 02, 2018 at 03:53:47AM +0000, Daniel Colascione wrote:
+> The usual approach to "better" is an "adaptive mutex". Such a thing, when
+> it attempts to acquire a lock another thread owns, spins for some number of
+> iterations, then falls back to futex. I guess that's a little better than
+> immediately jumping to futex, but it's not optimal. We can still spin when
+> the lock owner isn't scheduled, and the spin count is usually some guess
+> (either specified manually or estimated statistically) that's not
+> guaranteed to produce decent results. Even if we do pick a good spin count,
+> we run a very good chance of under- or over-spinning on any given
+> lock-acquire. We always want to sleep when spinning would be pointless.
 
-> On Wed, 02 May 2018 16:07:48 +0000
-> Daniel Colascione <dancol@google.com> wrote:
-
-> > Why couldn't we take a page fault just before schedule? The reason we
-can't
-> > take a page fault in atomic context is that doing so might call
-schedule.
-> > Here, we're about to call schedule _anyway_, so what harm does it do to
-> > call something that might call schedule? If we schedule via that call,
-we
-> > can skip the manual schedule we were going to perform.
-
-> Another issue is slowing down something that is considered a fast path.
-
-There are two questions: 1) does this feature slow down schedule when
-you're not using it? and 2) is schedule unacceptably slow when you are
-using this feature?
-
-The answer to #1 is no; rseq already tests current->rseq during task switch
-(via rseq_set_notify_resume), so adding a single further branch (which we'd
-only test when we follow the current->rseq path anyway) isn't a problem.
-
-Regarding #2: yes, a futex operation will increase path length for that one
-task switch, but in the no-page-fault case, only by a tiny amount. We can
-run benchmarks of course, but I don't see any reason to suspect that the
-proposal would make task switching unacceptably slow. If we *do* take a
-page fault, we won't have done much additional work overall, since
-*somebody* is going to take that page fault anyway when the lock is
-released, and the latency of the task switch shouldn't increase, since the
-futex code will very quickly realize that it needs to sleep and call
-schedule anyway.
+Look for the FUTEX_LOCK patches from Waiman.
