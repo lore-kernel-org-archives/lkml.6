@@ -1,82 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751029AbeEBEOy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 00:14:54 -0400
-Received: from mail-io0-f169.google.com ([209.85.223.169]:39586 "EHLO
-        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750878AbeEBEOx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 00:14:53 -0400
-X-Google-Smtp-Source: AB8JxZqlYKync3k7gAfrbNlbOVzPRkIxhhEuA6hQjoX/Z0VpwoKhFSNYp2Gw8KD2gvvZhMyonfRlqEBbtj7Ccg6MgK0=
+        id S1750948AbeEBEY1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 00:24:27 -0400
+Received: from mga06.intel.com ([134.134.136.31]:49121 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750836AbeEBEYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 00:24:25 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
+   d="scan'208";a="50757633"
+Date: Wed, 2 May 2018 09:59:10 +0530
+From: Vinod Koul <vinod.koul@intel.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>, dmaengine@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V2] dmaengine: stm32-mdma: fix spelling mistake:
+ "avalaible" -> "available"
+Message-ID: <20180502042910.GP6014@localhost>
+References: <20180428220352.19601-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
- <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
- <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
- <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
- <CA+55aFyZXWoiWnEU8S1PNNyUTWsi7UCnBuDKOobfMLaE8uFKJg@mail.gmail.com>
- <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
- <CA+55aFzDt1uvDBqgkB0T2o2-d5Fi0tBiGcy5iAZ-wRNdAL4uQw@mail.gmail.com>
- <CAPcyv4hQVKL=OtoYbWDGfOMdWen3MkF5qBPrek98+w2gODHvtg@mail.gmail.com>
- <CAPcyv4ixtVC3w9BE3Z2ME-qMPCh9evBKP51SDrNPXAsg7xH1RQ@mail.gmail.com>
- <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com> <CAPcyv4idV+hp-W56gyQDN4p9SQsYz+xondgVJwQSYphUMxkYnw@mail.gmail.com>
-In-Reply-To: <CAPcyv4idV+hp-W56gyQDN4p9SQsYz+xondgVJwQSYphUMxkYnw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 02 May 2018 04:14:41 +0000
-Message-ID: <CA+55aFwjaY6Nv7x0d8BQaSddZwAK7fukrYOHWEG_v2-1JZi5Qg@mail.gmail.com>
-Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180428220352.19601-1-colin.king@canonical.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 9:00 PM Dan Williams <dan.j.williams@intel.com>
-wrote:
-> >
-> > I  have some dim memory of "rep movs doesn't work well for pmem", but
-does
-> > it *seriously* need unrolling to cacheline boundaries? And if it does,
-who
-> > designed it, and why is anybody using it?
-> >
+On Sat, Apr 28, 2018 at 11:03:52PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in dev_err error message text and make
+> channel plural.
 
-> I think this is an FAQ from the original submission, in fact some guy
-> named "Linus Torvalds" asked [1]:
+Applied, thanks
 
-Oh, I already mentioned that  I remembered that "rep movs" didn't work well.
-
-But there's a big gap between "just use 'rep movs' and 'do some cacheline
-unrollong'".
-
-Why isn't it just doing a simple word-at-a-time loop and letting the CPU do
-the unrolling that it will already do on its own?
-
-I may have gotten that answered too, but there's no comment in the code
-about why it's such a disgusting mess, so I've long since forgotten _why_
-it's such a disgusting mess.
-
-That loop unrolling _used_ to be "hey, it's simple".
-
-Now it's "Hey, that's truly disgusting", with the separate fault handling
-for every single case in the unrolled loop.
-
-Just look at the nasty _ASM_EXTABLE_FAULT() uses and those E_cache_x error
-labels, and getting the number rof bytes copied right.
-
-And then ask yourself "what if we didn't unroll that thing 8 times, AND WE
-COULD GET RID OF ALL OF THOSE?"
-
-Maybe you already did ask yourself.  But I'm asking because it sure isn't
-explained in the code.
-
-             Linus
+-- 
+~Vinod
