@@ -1,87 +1,128 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751188AbeEBGRi (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 02:17:38 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:44850 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751069AbeEBGRg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 02:17:36 -0400
-X-Google-Smtp-Source: AB8JxZq8PQGlPpwOoxejB1HdrXrwDe2BRrik5+lWjJGAe8epKmSRbQhseMLsUF8nCBu4f4Dwm0qzIg==
-From: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-X-Google-Original-From: "Lee, Chun-Yi" <jlee@suse.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Lee, Chun-Yi" <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>,
-        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH] efi: Fix the size not consistent issue when unmapping memory map
-Date: Wed,  2 May 2018 14:17:24 +0800
-Message-Id: <20180502061724.25833-1-jlee@suse.com>
-X-Mailer: git-send-email 2.12.3
+        id S1751202AbeEBGVh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 02:21:37 -0400
+Received: from gate.crashing.org ([63.228.1.57]:43252 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751021AbeEBGVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 02:21:34 -0400
+Message-ID: <16794bf8075a3103279cbb4fe83aa8af7ce72d69.camel@kernel.crashing.org>
+Subject: [BUG ?] lockdep report from nbd on 4.16
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: linux-block@vger.kernel.org
+Cc: Josef Bacik <jbacik@fb.com>, linux-kernel@vger.kernel.org
+Date: Wed, 02 May 2018 16:21:28 +1000
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using kdump, SOMETIMES the "size not consistent" warning message
-shows up when the crash kernel boots with early_ioremap_debug parameter:
+Hi !
 
-WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
-early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
+I was playing with nbd on some little ARM bmc here with lockdep enabled and I
+get the following report. I don't have the bandwidth to dig into it this week
+to check if it's a false positive so I'm posting it here instead.
 
-The root cause is that the unmapping size of memory map doesn't
-match with the original size when mapping:
+Cheers,
+Ben.
 
-in __efi_memmap_init()
-	map.map = early_memremap(phys_map, data->size);
-
-in efi_memmap_unmap()
-        size = efi.memmap.desc_size * efi.memmap.nr_map;
-        early_memunmap(efi.memmap.map, size);
-
-But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
-of size was discarded when calculating the nr_map:
-        map.nr_map = data->size / data->desc_size;
-
-When the original size of memory map region does not equal to the
-result of multiplication. The "size not consistent" warning
-will be triggered.
-
-This issue sometimes was hit by kdump because kexec set the efi map
-size to align with 16 when loading crash kernel image:
-
-in bzImage64_load()
-        efi_map_sz = efi_get_runtime_map_size();
-        efi_map_sz = ALIGN(efi_map_sz, 16);
-
-Dave Young's a841aa83d patch fixed kexec issue. On UEFI side, this
-patch changes the logic in the unmapping function. Using the end
-address of map to calcuate original size.
-
-Thank Randy Wright for his report and testing. And also thank
-Takashi Iwai for his help to trace issue.
-
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Takashi Iwai <tiwai@suse.de>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Tested-by: Randy Wright <rwright@hpe.com>
-Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
----
- drivers/firmware/efi/memmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 5fc7052..1f592d8 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -121,7 +121,7 @@ void __init efi_memmap_unmap(void)
- 	if (!efi.memmap.late) {
- 		unsigned long size;
- 
--		size = efi.memmap.desc_size * efi.memmap.nr_map;
-+		size = efi.memmap.map_end - efi.memmap.map;
- 		early_memunmap(efi.memmap.map, size);
- 	} else {
- 		memunmap(efi.memmap.map);
--- 
-2.10.2
+# nbd-client pasglop /dev/nbd0 
+Warning: the oldstyle protocol is no longer supported.
+This method now uses the newstyle protocol with a default export
+Negotiation: ..size = 1431MB
+bs=1024, sz=1501[  518.762967] 
+[  518.765614] ======================================================
+[  518.771800] WARNING: possible circular locking dependency detected
+[  518.777983] 4.16.0-00009-ga7c2ef9375ca #240 Not tainted
+[  518.783212] ------------------------------------------------------
+[  518.789393] nbd-client/586 is trying to acquire lock:
+[  518.794446]  (&bdev->bd_mutex){+.+.}, at: [<d2ad63df>] blkdev_reread_part+0x18/0x34
+[  518.802185] 
+[  518.802185] but task is already holding lock:
+[  518.808024]  (&nbd->config_lock){+.+.}, at: [<67337fb4>] nbd_ioctl+0x50/0x35c
+[  518.815210] 
+[  518.815210] which lock already depends on the new lock.
+[  518.815210] 
+[  518.823389] 
+[  518.823389] the existing dependency chain (in reverse order) is:
+[  518.830867] 
+[  518.830867] -> #2 (&nbd->config_lock){+.+.}:
+[  518.836655]        mutex_lock_nested+0x1c/0x24
+[  518.841110]        nbd_open+0x70/0xd8
+[  518.844792]        __blkdev_get+0xa0/0x3f4
+[  518.848896]        blkdev_get+0x13c/0x358
+[  518.852933]        do_dentry_open.constprop.4+0x124/0x308
+[  518.858347]        path_openat+0x554/0x1168
+[  518.862536]        do_filp_open+0x60/0xc4
+[  518.866556]        do_sys_open+0x14c/0x1e8
+[  518.870657]        ret_fast_syscall+0x0/0x28
+[  518.874936]        0x7ef7c980
+[  518.877903] 
+[  518.877903] -> #1 (nbd_index_mutex){+.+.}:
+[  518.883517]        mutex_lock_nested+0x1c/0x24
+[  518.887980]        nbd_open+0x14/0xd8
+[  518.891662]        __blkdev_get+0xa0/0x3f4
+[  518.895764]        blkdev_get+0x13c/0x358
+[  518.899795]        do_dentry_open.constprop.4+0x124/0x308
+[  518.905204]        path_openat+0x554/0x1168
+[  518.909394]        do_filp_open+0x60/0xc4
+[  518.913407]        do_sys_open+0x14c/0x1e8
+[  518.917508]        ret_fast_syscall+0x0/0x28
+[  518.921785]        0x7ef7c980
+[  518.924755] 
+[  518.924755] -> #0 (&bdev->bd_mutex){+.+.}:
+[  518.930368]        __mutex_lock+0x74/0x638
+[  518.934470]        mutex_lock_nested+0x1c/0x24
+[  518.938938]        blkdev_reread_part+0x18/0x34
+[  518.943490]        nbd_ioctl+0x2d0/0x35c
+[  518.947425]        blkdev_ioctl+0x5a4/0xb18
+[  518.951626]        do_vfs_ioctl+0x8c/0x7cc
+[  518.955727]        SyS_ioctl+0x34/0x58
+[  518.959490]        ret_fast_syscall+0x0/0x28
+[  518.963767]        0x7ef7c984
+[  518.966736] 
+[  518.966736] other info that might help us debug this:
+[  518.966736] 
+[  518.974734] Chain exists of:
+[  518.974734]   &bdev->bd_mutex --> nbd_index_mutex --> &nbd->config_lock
+[  518.974734] 
+[  518.985715]  Possible unsafe locking scenario:
+[  518.985715] 
+[  518.991634]        CPU0                    CPU1
+[  518.996157]        ----                    ----
+[  519.000681]   lock(&nbd->config_lock);
+[  519.004443]                                lock(nbd_index_mutex);
+[  519.010544]                                lock(&nbd->config_lock);
+[  519.016810]   lock(&bdev->bd_mutex);
+[  519.020399] 
+[  519.020399]  *** DEADLOCK ***
+[  519.020399] 
+[  519.026323] 1 lock held by nbd-client/586:
+[  519.030419]  #0:  (&nbd->config_lock){+.+.}, at: [<67337fb4>] nbd_ioctl+0x50/0x35c
+[  519.038030] 
+[  519.038030] stack backtrace:
+[  519.042397] CPU: 0 PID: 586 Comm: nbd-client Not tainted 4.16.0-00009-ga7c2ef9375ca #240
+[  519.050484] Hardware name: Generic DT based system
+[  519.055328] [<8000ff20>] (unwind_backtrace) from [<8000da4c>] (show_stack+0x10/0x14)
+[  519.063110] [<8000da4c>] (show_stack) from [<8004bbf4>] (print_circular_bug.constprop.19+0x264/0x2bc)
+[  519.072348] [<8004bbf4>] (print_circular_bug.constprop.19) from [<8004a2ec>] (__lock_acquire+0x14f0/0x18d0)
+[  519.082101] [<8004a2ec>] (__lock_acquire) from [<8004ae30>] (lock_acquire+0x68/0x88)
+[  519.089866] [<8004ae30>] (lock_acquire) from [<8044db04>] (__mutex_lock+0x74/0x638)
+[  519.097540] [<8044db04>] (__mutex_lock) from [<8044e0e4>] (mutex_lock_nested+0x1c/0x24)
+[  519.105576] [<8044e0e4>] (mutex_lock_nested) from [<801d1c70>] (blkdev_reread_part+0x18/0x34)
+[  519.114129] [<801d1c70>] (blkdev_reread_part) from [<802abd44>] (nbd_ioctl+0x2d0/0x35c)
+[  519.122152] [<802abd44>] (nbd_ioctl) from [<801d2a88>] (blkdev_ioctl+0x5a4/0xb18)
+[  519.129655] [<801d2a88>] (blkdev_ioctl) from [<800f3c40>] (do_vfs_ioctl+0x8c/0x7cc)
+[  519.137325] [<800f3c40>] (do_vfs_ioctl) from [<800f43b4>] (SyS_ioctl+0x34/0x58)
+[  519.144649] [<800f43b4>] (SyS_ioctl) from [<80009000>] (ret_fast_syscall+0x0/0x28)
+[  519.152218] Exception stack(0x9f707fa8 to 0x9f707ff0)
+[  519.157275] 7fa0:                   59790000 00000000 00000004 0000ab04 76f316ac 00000001
+[  519.165454] 7fc0: 59790000 00000000 00000004 00000036 00000001 00000000 00000000 7ef7ce04
+[  519.173633] 7fe0: 00023a9c 7ef7c984 000125c4 76ebcb7c
+102080 bytes
+# [  519.219735]  nbd0: p1 p2
+[  519.222468] nbd0: p1 size 5863680 extends beyond EOD, truncated
+[  519.237500] nbd0: p2 start 5761760 is beyond EOD, truncated
