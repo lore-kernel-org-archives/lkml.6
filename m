@@ -1,73 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751755AbeEBVcQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 17:32:16 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:53653 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751318AbeEBVcN (ORCPT
+        id S1751688AbeEBVeq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 17:34:46 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33366 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751329AbeEBVeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 17:32:13 -0400
-Date: Wed, 2 May 2018 23:32:10 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Motorola Droid 4 progress, power consumption
-Message-ID: <20180502213210.GA10306@amd>
-References: <20180501183148.GA26996@amd>
- <20180502144158.GJ98604@atomide.com>
- <20180502191049.ximiyccwfkjqcj7m@devuan>
- <20180502194229.GM98604@atomide.com>
+        Wed, 2 May 2018 17:34:44 -0400
+Subject: Re: linux-next: Tree for May 2 (objtool bug!)
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20180502165939.2375cf6a@canb.auug.org.au>
+ <fb41f3ee-705e-4886-3f78-c7f88db5276d@infradead.org>
+ <20180502154319.cbi47tw2fmhxlnr4@treble>
+ <5ed0305b-bca8-3b50-7d33-32c5754a81fc@infradead.org>
+ <20180502210625.pehvcgtlqwqznnry@treble>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c425a9ed-3700-7019-b19c-4bdfd513892f@infradead.org>
+Date: Wed, 2 May 2018 14:34:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
-In-Reply-To: <20180502194229.GM98604@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180502210625.pehvcgtlqwqznnry@treble>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 05/02/2018 02:06 PM, Josh Poimboeuf wrote:
+> On Wed, May 02, 2018 at 08:59:38AM -0700, Randy Dunlap wrote:
+>> On 05/02/2018 08:43 AM, Josh Poimboeuf wrote:
+>>> On Wed, May 02, 2018 at 08:37:53AM -0700, Randy Dunlap wrote:
+>>>> On 05/01/2018 11:59 PM, Stephen Rothwell wrote:
+>>>>> Hi all,
+>>>>>
+>>>>> Changes since 20180501:
+>>>>>
+>>>>
+>>>> on x86_64 randconfig:
+>>>>
+>>>>   CC      fs/cifs/smbencrypt.o
+>>>> drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
+>>>> drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
+>>>
+>>> Can you share the object file (or at least the .config and GCC version)?
+>>>
+>>
+>> gcc (SUSE Linux) 4.8.5
+>>
+>> config and .o file are attached.
+> 
+> Thanks, can you verify this fixes it?
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, that's all good.  Thanks.
 
-Hi!
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
-> > I also have some hacks to allow configuration of the full
-> > voltage. Charging to 4.35V is pretty agressive, and I believe baterry
-> > will be damaged less if we only charge to 4.1V.
->=20
-> That should be based on the PMIC register values that Android
-> uses. Worth rechecking for sure, I thought it is higher than
-> normal too for the charge voltage.
 
-Actually that part is ok. Android probably charges it to 4.35V, and
-battery is designed to handle that... For a year, or two. But I don't need
-full capacity at the moment, and perhaps battery will last three years
-if it is only charged to 4.1V.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrqLloACgkQMOfwapXb+vK36ACeIVRUG8qo5IiJ6IEkHGYTXv8k
-5q8AoIt6016ajIioM5IFMwSGuNsvAVdI
-=LpUG
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+-- 
+~Randy
