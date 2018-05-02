@@ -1,141 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751862AbeEBQlk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:41:40 -0400
-Received: from mail.micronovasrl.com ([212.103.203.10]:57704 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751713AbeEBQli (ORCPT
+        id S1751755AbeEBQp7 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:45:59 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52748 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751100AbeEBQp4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:41:38 -0400
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-X-Spam-Flag: NO
-X-Spam-Score: -2.899
-Subject: Re: [PATCH 7/7] ARM: dts: sun7i: Add dts file for the A20-linova1-7
- HMI
-From: Giulio Benetti <giulio.benetti@micronovasrl.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
-References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
- <1521662593-25468-7-git-send-email-giulio.benetti@micronovasrl.com>
- <20180322180508.my64gobhh5rc2x2m@flea>
- <8ef3b259-03b4-6987-286e-36ff627a8b76@micronovasrl.com>
- <20180424084137.7xfwji2gcibxavvt@flea>
- <03a02abb-e95c-b4ec-748f-907c0af67969@micronovasrl.com>
- <20180425184016.xktppxw7egddr7li@flea>
- <42feccc9-1d09-9ff2-3ccc-1dea63bacfb6@micronovasrl.com>
-Message-ID: <839d2560-0250-9b3a-8019-4e83d9e931e2@micronovasrl.com>
-Date: Wed, 2 May 2018 18:41:34 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 12:45:56 -0400
+Subject: Re: [PATCH] [v3] x86: Convert x86_platform_ops to timespec64
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>, Andy Lutomirski <luto@kernel.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        jailhouse-dev@googlegroups.com, kvm@vger.kernel.org,
+        xen-devel <xen-devel@lists.xenproject.org>
+References: <20180427201435.3194219-1-arnd@arndb.de>
+ <b8d3167b-ee9f-f14d-e43e-73aa2719d6ae@oracle.com>
+ <CAK8P3a0T8RkPgHm6F+Y+RHBdi7v5ho1hQ8w+MwWFcOk5TbMaCw@mail.gmail.com>
+From: Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <92ef9d3a-d2bc-59db-de43-4845a46fd2d8@oracle.com>
+Date: Wed, 2 May 2018 17:44:47 +0100
 MIME-Version: 1.0
-In-Reply-To: <42feccc9-1d09-9ff2-3ccc-1dea63bacfb6@micronovasrl.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK8P3a0T8RkPgHm6F+Y+RHBdi7v5ho1hQ8w+MwWFcOk5TbMaCw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8881 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805020140
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
-
->> You don't have to handcode the fragments anymore with the new syntax,
->> and U-Boot makes it really trivial to use if you use the FIT image
->> format to have multiple overlays bundled in the same image. You can
->> choose to apply them dynamically, for example based on an EEPROM or
->> some other metric to see which combination you have.
+On 04/28/2018 11:09 AM, Arnd Bergmann wrote:
+> On Sat, Apr 28, 2018 at 12:21 AM, Joao Martins
+> <joao.m.martins@oracle.com> wrote:
+>> On 04/27/2018 09:13 PM, Arnd Bergmann wrote:
+>>> diff --git a/arch/x86/kernel/pvclock.c b/arch/x86/kernel/pvclock.c
+>>> index 761f6af6efa5..637982efecd8 100644
+>>> --- a/arch/x86/kernel/pvclock.c
+>>> +++ b/arch/x86/kernel/pvclock.c
+>>> @@ -123,28 +123,35 @@ u64 pvclock_clocksource_read(struct pvclock_vcpu_time_info *src)
+>>>
+>>>  void pvclock_read_wallclock(struct pvclock_wall_clock *wall_clock,
+>>>                           struct pvclock_vcpu_time_info *vcpu_time,
+>>> -                         struct timespec *ts)
+>>> +                         struct timespec64 *ts)
+>>>  {
+>>>       u32 version;
+>>>       u64 delta;
+>>> -     struct timespec now;
+>>> +     struct timespec64 now;
+>>>
+>>>       /* get wallclock at system boot */
+>>>       do {
+>>>               version = wall_clock->version;
+>>>               rmb();          /* fetch version before time */
+>>> +             /*
+>>> +              * Note: wall_clock->sec is a u32 value, so it can
+>>> +              * only store dates between 1970 and 2106. To allow
+>>> +              * times beyond that, we need to create a new hypercall
+>>> +              * interface with an extended pvclock_wall_clock structure
+>>> +              * like ARM has.
+>>> +              */
+>>>               now.tv_sec  = wall_clock->sec;
+>>
+>> IIUC the interface you're probably speaking about is common to both ARM and x86
+>> on Xen[*] (since Xen 4.6) i.e.
+>>
+>>         now.tv_sec  = ((uint64_t)s->wc_sec_hi << 32) | s->wc_sec;
+>>
+>> s representing struct shared_info like on ARM (there's a 32-bit hole where
+>> wc_sec_hi is placed on x86_64/ARM). Except on x86 32-bit guests wc_sec_hi is
+>> located elsewhere.
+>>
+>>         Joao
+>>
+>> [*]
+>> https://xenbits.xen.org/docs/4.6-testing/hypercall/x86_64/include,public,xen.h.html#incontents_startofday_shared
 > 
-> Ah, this is interesting. I'm going to experiment with that.
-> 
+> Ah, good. How portable is that? Will it do the right thing (i.e.
+> guarantee to have
+> zeroes on the upper half, or the epoch if supported) on all versions of both KVM
+> and Xen, or do we need an additional check in there?
+>
+The whole shared info page is zeroed out by Xen when allocated, so on
+unsupported platforms that includes the upper half. But I don't know if this is
+considered ABI or not. FWIW, the oldest release (2.0) has that behavior.
 
-I'm struggling against this, I don't really know how to proceed,
-except keeping monolithic dts files including other dtsi files.
+But this is Xen that I'm speaking about; KVM doesn't support this IIUC.
 
-About dt-overlays I've tried to look around lot of time,
-but the only thing I've found is this:
-https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/arch/arm/boot/dts?h=topic/renesas-overlays
+On KVM, there's HC_CLOCK_PAIRING hypercall or else *maybe* host could just write
+wc_sec_hi at the end of the wall_clock struct (with the current MSR) and given
+that it's (PAGE_SIZE aligned) guest memory, guest could always keep it zeroed
+out for unsupported platforms (that won't write more than 12bytes).
 
-where they use .dtso tagging them as "/plugin/;"
-and compile all .dtso found in dts folder.
-Then they obtain .dtbo files that should be the dt-overlays we have 
-spoken about right?
+> I'd suggest leaving the implementation of that to a follow-up patch that you
+> can add once my patch is merged.
 
-What I can't understand is if there's a real standard at this time to 
-follow, because on renesas-driver they use their way to handle all .dtso 
-files, but on mainline there seems to be nothing about that.
+/nods
 
-So at the moment I'm trying to compile dts tagged as /plugin/;
-but dtc gives me a lot of warnings.
-
-dts:
-"
-/dts-v1/;
-/plugin/;
-
-#include <dt-bindings/gpio/gpio.h>
-#include <dt-bindings/interrupt-controller/irq.h>
-
-&i2c2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&i2c2_pins_a>;
-	status = "okay";
-
-	ft5x {
-		compatible = "edt,edt-ft5306";
-		reg = <0x38>;
-		interrupt-parent = <&pio>;
-		interrupts = <7 2 IRQ_TYPE_EDGE_FALLING>; /* PH2 */
-		reset-gpios = <&pio 7 3 GPIO_ACTIVE_LOW>; /* PH3 */
-		touchscreen-size-x = <480>;
-		touchscreen-size-y = <272>;
-	};
-};
-"
-
-Build output issuing make ARCH=arm CROSS_COMPILE=arm-linux- aaa.dtb (I 
-use aaa.dts as source):
-"
-arch/arm/boot/dts/aaa.dtb: Warning (reg_format): 
-/fragment@0/__overlay__/ft5x:reg: property has invalid length (4 bytes) 
-(#address-cells == 2, #size-cells == 1)
-arch/arm/boot/dts/aaa.dtb: Warning (pci_device_bus_num): Failed 
-prerequisite 'reg_format'
-arch/arm/boot/dts/aaa.dtb: Warning (simple_bus_reg): Failed prerequisite 
-'reg_format'
-arch/arm/boot/dts/aaa.dtb: Warning (avoid_default_addr_size): 
-/fragment@0/__overlay__/ft5x: Relying on default #address-cells value
-arch/arm/boot/dts/aaa.dtb: Warning (avoid_default_addr_size): 
-/fragment@0/__overlay__/ft5x: Relying on default #size-cells value
-"
-
-Then in uboot I'm trying to do as follows:
-# fdt addr 0x43000000 (where dtb is)
-# fdt resize 8192
-# fdt apply 0x430c0000 (where dtbo is)
-But it gives me "libfdt fdt_check_header(): FDT_ERR_BADMAGIC"
-(I was expecting some error)
-
-Is there anywhere a guide for this?
-Is this what you've meant before?
-Using FIT for my use is not the best, so I would like to have many 
-overlays in /boot folder and use different boot.scr depending on hardware.
-
-Can you point me to somewhere or something?
-I don't really know where to beat my head!
-
-Thanks in advance.
-
--- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale ¤ 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+	Joao
