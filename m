@@ -1,40 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751639AbeEBNhd (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:37:33 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54086 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751100AbeEBNhb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:37:31 -0400
-Date: Wed, 2 May 2018 15:37:30 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: linux-kernel@vger.kernel.org, diego.viola@gmail.com,
-        len.brown@intel.com, rjw@rjwysocki.net, rui.zhang@intel.com
-Subject: Re: [PATCH v2 3/7] clocksource: Initialize cs->wd_list
-In-Reply-To: <20180430100344.472662715@infradead.org>
-Message-ID: <alpine.DEB.2.21.1805021536460.1560@nanos.tec.linutronix.de>
-References: <20180430100008.503783478@infradead.org> <20180430100344.472662715@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1751463AbeEBNiw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:38:52 -0400
+Received: from mail.stoffel.org ([104.236.43.127]:40562 "EHLO mail.stoffel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751011AbeEBNit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:38:49 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Message-ID: <23273.48986.516559.317965@quad.stoffel.home>
+Date: Wed, 2 May 2018 09:38:34 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: John Stoffel <john@stoffel.org>, Andrew@stoffel.org,
+        dm-devel@redhat.com, eric.dumazet@gmail.com, mst@redhat.com,
+        netdev@vger.kernel.org, jasowang@redhat.com,
+        Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, Hocko <mhocko@kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Michal@stoffel.org, edumazet@google.com, linux-mm@kvack.org,
+        David Rientjes <rientjes@google.com>,
+        Morton <akpm@linux-foundation.org>,
+        virtualization@lists.linux-foundation.org,
+        David Miller <davem@davemloft.net>, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [dm-devel] [PATCH v5] fault-injection: introduce kvmalloc
+ fallback options
+In-Reply-To: <alpine.LRH.2.02.1804301622480.4454@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20180421144757.GC14610@bombadil.infradead.org>
+        <20180424170349.GQ17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804241319390.28995@file01.intranet.prod.int.rdu2.redhat.com>
+        <20180424173836.GR17484@dhcp22.suse.cz>
+        <alpine.LRH.2.02.1804251556060.30569@file01.intranet.prod.int.rdu2.redhat.com>
+        <1114eda5-9b1f-4db8-2090-556b4a37c532@infradead.org>
+        <alpine.LRH.2.02.1804251656300.9428@file01.intranet.prod.int.rdu2.redhat.com>
+        <alpine.DEB.2.21.1804251417470.166306@chino.kir.corp.google.com>
+        <alpine.LRH.2.02.1804251720090.9428@file01.intranet.prod.int.rdu2.redhat.com>
+        <1524694663.4100.21.camel@HansenPartnership.com>
+        <alpine.LRH.2.02.1804251857070.31135@file01.intranet.prod.int.rdu2.redhat.com>
+        <1524697697.4100.23.camel@HansenPartnership.com>
+        <23266.8532.619051.784274@quad.stoffel.home>
+        <alpine.LRH.2.02.1804261726540.13401@file01.intranet.prod.int.rdu2.redhat.com>
+        <23271.24580.695738.853532@quad.stoffel.home>
+        <alpine.LRH.2.02.1804301622480.4454@file01.intranet.prod.int.rdu2.redhat.com>
+X-Mailer: VM 8.2.0b under 24.5.1 (x86_64-pc-linux-gnu)
+X-Clacks-Overhead: GNU Terry Pratchett
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 30 Apr 2018, Peter Zijlstra wrote:
+>>>>> "Mikulas" == Mikulas Patocka <mpatocka@redhat.com> writes:
 
-> A number of places relies on list_empty(&cs->wd_list), however the
-> list_head does not get initialized. Do so upon registration, such that
-> thereafter it is possible to rely on list_empty() correctly reflecting
-> the list membership status.
-> 
-> Tested-by: Diego Viola <diego.viola@gmail.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Mikulas> On Mon, 30 Apr 2018, John Stoffel wrote:
 
-The next patch is marked for stable, but this one not. Confused
+>> >>>>> "Mikulas" == Mikulas Patocka <mpatocka@redhat.com> writes:
+>> 
+Mikulas> On Thu, 26 Apr 2018, John Stoffel wrote:
+>> 
+Mikulas> I see your point - and I think the misunderstanding is this.
+>> 
+>> Thanks.
+>> 
+Mikulas> This patch is not really helping people to debug existing crashes. It is 
+Mikulas> not like "you get a crash" - "you google for some keywords" - "you get a 
+Mikulas> page that suggests to turn this option on" - "you turn it on and solve the 
+Mikulas> crash".
+>> 
+Mikulas> What this patch really does is that - it makes the kernel deliberately 
+Mikulas> crash in a situation when the code violates the specification, but it 
+Mikulas> would not crash otherwise or it would crash very rarely. It helps to 
+Mikulas> detect specification violations.
+>> 
+Mikulas> If the kernel developer (or tester) doesn't use this option, his buggy 
+Mikulas> code won't crash - and if it won't crash, he won't fix the bug or report 
+Mikulas> it. How is the user or developer supposed to learn about this option, if 
+Mikulas> he gets no crash at all?
+>> 
+>> So why do we make this a KConfig option at all?
 
-Thanks,
+Mikulas> Because other people see the KConfig option (so, they may enable it) and 
+Mikulas> they don't see the kernel parameter (so, they won't enable it).
 
-	tglx
+Mikulas> Close your eyes and say how many kernel parameters do you remember :-)
+
+>> Just turn it on and let it rip.
+
+Mikulas> I can't test if all the networking drivers use kvmalloc properly, because 
+Mikulas> I don't have the hardware. You can't test it neither. No one has all the 
+Mikulas> hardware that is supported by Linux.
+
+Mikulas> Driver issues can only be tested by a mass of users. And if the users 
+Mikulas> don't know about the debugging option, they won't enable it.
+
+>> >> I agree with James here.  Looking at the SLAB vs SLUB Kconfig entries
+>> >> tells me *nothing* about why I should pick one or the other, as an
+>> >> example.
+
+Mikulas> BTW. You can enable slub debugging either with CONFIG_SLUB_DEBUG_ON or 
+Mikulas> with the kernel parameter "slub_debug" - and most users who compile their 
+Mikulas> own kernel use CONFIG_SLUB_DEBUG_ON - just because it is visible.
+
+You miss my point, which is that there's no explanation of what the
+difference is between SLAB and SLUB and which I should choose.  The
+same goes here.  If the KConfig option doesn't give useful info, it's
+useless.
+
+>> Now I also think that Linus has the right idea to not just sprinkle 
+>> BUG_ONs into the code, just dump and oops and keep going if you can.  
+>> If it's a filesystem or a device, turn it read only so that people 
+>> notice right away.
+
+Mikulas> This vmalloc fallback is similar to
+Mikulas> CONFIG_DEBUG_KOBJECT_RELEASE.  CONFIG_DEBUG_KOBJECT_RELEASE
+Mikulas> changes the behavior of kobject_put in order to cause
+Mikulas> deliberate crashes (that wouldn't happen otherwise) in
+Mikulas> drivers that misuse kobject_put. In the same sense, we want
+Mikulas> to cause deliberate crashes (that wouldn't happen otherwise)
+Mikulas> in drivers that misuse kvmalloc.
+
+Mikulas> The crashes will only happen in debugging kernels, not in
+Mikulas> production kernels.
+
+Says you.  What about people or distros that enable it
+unconditionally?  They're going to get all kinds of reports and then
+turn it off again.  Crashing the system isn't the answer here.  
