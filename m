@@ -1,68 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751820AbeEBQSR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:18:17 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:38684 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751171AbeEBQSO (ORCPT
+        id S1751860AbeEBQTB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:19:01 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:61409 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751011AbeEBQS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:18:14 -0400
-X-Google-Smtp-Source: AB8JxZpDAjxQaYriWNw9cZI8MYH0KWghelpdH/O/UYKMXC1peihpl9Ogua9IoOHUEN4UFw375EuwRR2Ojm4vJSvPqFs=
+        Wed, 2 May 2018 12:18:58 -0400
+Subject: Re: [PATCH v2 0/5] Add STM32F7 I2C Support on STM32MP157C
+To: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Yangbo Lu <yangbo.lu@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1524476911-19056-1-git-send-email-pierre-yves.mordret@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <31786b0e-28cb-3bde-6d5e-03466dbbda8c@st.com>
+Date: Wed, 2 May 2018 18:10:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180413013046.404-1-tytso@mit.edu>
-References: <20180413013046.404-1-tytso@mit.edu>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 2 May 2018 18:18:13 +0200
-X-Google-Sender-Auth: rFuGidc6PzrXUxYqEDjAZS6W0S4
-Message-ID: <CAMuHMdWxU=gtLTDY-W0YCMD6eE4gSnjhFo5CRTqwq_Q=yH-zZA@mail.gmail.com>
-Subject: Re: [PATCH 1/5] random: fix crng_ready() test
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        stable <stable@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1524476911-19056-1-git-send-email-pierre-yves.mordret@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ted,
+Hi,
 
-On Fri, Apr 13, 2018 at 3:30 AM, Theodore Ts'o <tytso@mit.edu> wrote:
-> The crng_init variable has three states:
->
-> 0: The CRNG is not initialized at all
-> 1: The CRNG has a small amount of entropy, hopefully good enough for
->    early-boot, non-cryptographical use cases
-> 2: The CRNG is fully initialized and we are sure it is safe for
->    cryptographic use cases.
->
-> The crng_ready() function should only return true once we are in the
-> last state.
->
-> Reported-by: Jann Horn <jannh@google.com>
-> Fixes: e192be9d9a30 ("random: replace non-blocking pool...")
-> Cc: stable@kernel.org # 4.8+
-> Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> Reviewed-by: Jann Horn <jannh@google.com>
+On 04/23/2018 11:48 AM, Pierre-Yves MORDRET wrote:
+> 
+> This patch adds STM32MP157C I2C support on STM32MP157C with configs and device
+> tree.
+> In the same way I2C4 is enabled for STM32MP157C ED1 Daughter bord.
+> I2C2/5 is enabled on STM32MP157C EV1 Daughter board on Evaluation board.
+> ---
+>    Version history:
+>       v1:
+>          * Initial
+>       v2:
+>          * Disambiguate subjects
+> ---
+> 
+> Pierre-Yves MORDRET (5):
+>    ARM: multi_v7_defconfig: Add STM32F7 I2C support
+>    ARM: dts: stm32: Add STM32F7 I2C support for STM32MP157C SoC
+>    ARM: dts: stm32: Add I2Cs pin control on STM32MP157C
+>    ARM: dts: stm32: Add I2C4 support for STM32MP157C-ED1
+>    ARM: dts: stm32: Add I2C2/5 support for STM32MP157C-EV1
+> 
+>   arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 40 ++++++++++++++++
+>   arch/arm/boot/dts/stm32mp157c-ed1.dts     |  8 ++++
+>   arch/arm/boot/dts/stm32mp157c-ev1.dts     | 17 +++++++
+>   arch/arm/boot/dts/stm32mp157c.dtsi        | 77 +++++++++++++++++++++++++++++++
+>   arch/arm/configs/multi_v7_defconfig       |  1 +
+>   5 files changed, 143 insertions(+)
+> 
 
-Since commit 43838a23a05fbd13 ("random: fix crng_ready() test"),
-all (few) remaining users of %p are printing too early, leading to "(ptrval)"
-strings instead of actual hashed pointer values.
+Series applied on stm32-next.
 
-Sample timings on two platforms (arm / arm64) booting with lots of
-debug ingo:
-
-[   28.521158] random: crng init done
-[   17.792705] random: crng init done
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards
+Alex
