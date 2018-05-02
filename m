@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeEBUyn (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 16:54:43 -0400
+        id S1751570AbeEBUy4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 16:54:56 -0400
 Received: from mail-bl2nam02on0080.outbound.protection.outlook.com ([104.47.38.80]:32384
         "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750970AbeEBUyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 16:54:38 -0400
+        id S1751045AbeEBUyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 16:54:39 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Janakarajan.Natarajan@amd.com;
 From: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
@@ -17,10 +17,12 @@ Cc: Tom Lendacky <thomas.lendacky@amd.com>, Gary Hook <gary.hook@amd.com>,
         Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@suse.de>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-Subject: [PATCH 1/2] Add DOWNLOAD_FIRMWARE SEV command
-Date: Wed,  2 May 2018 15:54:08 -0500
-Message-Id: <a5a123a10172efc267d6d018094f643d373f3bb4.1525290220.git.Janakarajan.Natarajan@amd.com>
+Subject: [PATCH 2/2] Add GET_ID SEV command
+Date: Wed,  2 May 2018 15:54:09 -0500
+Message-Id: <db130e762c9752700688c2c073b994af560fe6f7.1525290220.git.Janakarajan.Natarajan@amd.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <a5a123a10172efc267d6d018094f643d373f3bb4.1525290220.git.Janakarajan.Natarajan@amd.com>
+References: <a5a123a10172efc267d6d018094f643d373f3bb4.1525290220.git.Janakarajan.Natarajan@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [165.204.77.1]
@@ -30,45 +32,46 @@ X-ClientProxiedBy: MWHPR2201CA0073.namprd22.prod.outlook.com
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1370;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;3:refPqx+D0BAg9FKanypaENx2zXee3eKbpQdxViprnyXphXi9e83fxJVgpXsfkTGGvhJa/kRMQgbczwrhvArqRQIxwbREv3skAMYx/KBIJIuassUssvl5YdBZcqlS6HhQq/n/MSS2RuQuSzX+d3QttYW/5dJkSzWqqZ69n5gzBbipyBNDcTuKjWdI1t2RH7flAiUc6zcTYKwwFP/Cg8B9Vh0KXARwb7cAdMIEZMobyh54ATqS36IjVkU3LtsfMDVA;25:CatHOHOIB7DgQU3tWXYhvr2KRxthNScKHlupnsYDkc1iw/A1sMLm3UnSAGfWnOhx885c9rQRrdGe6byjbhHtnKgM8SgJHoiiE/tW6n99FSMhRQs9OFFb/V7SN4UjE9w/tSlpORRHVux1ni2ObKibUTIAFTHU81tl7RWTV3arjwSdoksIoCqCkxi5ck8ri7Es8puDXhVK1xDNZ2l410egGX+6HL3DM0HZ2hfj10p+/gMiIy/XKTVbvCIBcUmMlHXDvHSzyuxIaSPfwrqf1NicYVR7RZnHezh4+oR+lGweXITpDA4P8af/NkGrEdeMcNvKHnRvrpfgl53QOpHoag9JgA==;31:kNxeh03oGGgbsUUtKRRJzapCilKflkd9YTlEW0Pztrvq0M6rS/9FJpol0Xsc2UYdWvopCN6TZAuheJooOloDFqBOL/ByXxB2ZBtjjhY6Z4AxeMI1bNJO85WzRORBOzm4msUS9bG/zaK73Ehz3UhbFb/v8h9fl+2bc79sUWs/vkTPeVwxv27p+woB+rmHnCAM5/mEAVej9Vl7/ZgsHFzwSepmaAbQW1lo1viK1PrXsKk=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;3:IEeiATEmikKvYgZWOzXAFQT+9SUWp0WLjgltEhKkDcxCFhal9+GfO+RwcDXM8JwnyelPo/zNSGfWw7xnwZWu1XxZy8qOEQdqGG1HQKogUXb1HJ95JD7c+do2UvkkHq9HWxG8u56U0pB/62B1RRyLXhwVZ8Fx03c/5JXAF9EDyBCH0d78idC20M0ZW2mgub0wPiVEAjniaAmtDCLm9IEZNZITNmIfcL6hCq6aqhs0TAMzLVbPgH/JAyTnOfPU+Kiq;25:a5vP4pQC9D6D/vZvckM1L2/I4AUfQgcDNhRABAqsQg/CFB9V5CntizESJSUbOMmwKg+yoq6znXwKIQsRLlV7qVU48Ey8IlwvylKM9Km4w0E1L2gWfA0wMXyRf6OpnNIsfwg7vERHo3QRci79mst6Zof/Jl8MN7efJJKaab8Ska2TU5FsNJNmOVoZiRfl2EhcP5mfy9pQRcMqFN4UAXYohb6ZzirYNcz6MEFfpU/GBUw+eo3Br6GmeexRDz19zrSl/3OZCYHr3313nQuWGE5QQq+8M1Z+9jjf3slPItX+rUSJJQ+HxXBwEjaSUOE9WlPRHqClRpZjMJyV+18G+E1+Dw==;31:iQbX/cbnAzwJxV+HezRXz4YBXGgSG6r1t9M9QZMcpE7gkXhUX/msSmJRnhdbt5J4SYzOa4aeVob+e5zUhin0wO8WmOXoqgv6Pz7X6ASQ46cL3shLHRE6q5F4mfBjZGhEnr5NMzKKRSCDMWyfRofWeKZyDGcBK4nwPvWygcij2Li42femIuzxV1tbguYWDLUNn8DPIcNiPOgVNqL8oJIVGKl0OI0V2CTVOFG8gYY+878=
 X-MS-TrafficTypeDiagnostic: DM5PR12MB1370:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;20:CBDVpa6iSJdS7A5SqtEmistztd8o+JmVAMoWxhmTjfhc7JoBnMoXwCiRkDwhpMPKT4feciZjF0QWb763VPpMLzLZiwc6hIQegzbIX8K9I5ADlNvuAVhqhZGKZXxouHrrznJq297atp/o3qMhykc0wE4NgF5wKvH8EMfnfQOrxS93h/7YwPzB1jMwcdGjLYYVdt32u5mqkCVsqXpkHtJRFS82d/twyDgAwMBaeYPWep4qkw2PTcupW6qKdj3TyPfzSeh8gi454Mb6mW/VMFmdMBQwbPPN1DHpF/1MJEXjgCdph8i49HLpoczYJmj63M2kJYMawt1zGRP4YhfZFwrqjTn6a7fUgG3yRz2R1YhVfRb1AZJrvrhMgSEAN1XhlW2usmYI3k9uBDbclzs9hCireCwTudB+1aerIZjtzfkgrrHU9nhdRVxNvjAcujX20B8NxGuYlLi7/1YWRKfaDC0lqzeYW7/kWm+tKy93dSULQ+iFmnFqoUog93meG8PxkCXq;4:4RkmhR2/fGlZol7yLqw5jQW5bF38BmeEzU35VmPZG+Ef+F6yAuQiYTMi+MqPJY/w5oeBTB48sJ4CDRhsX4Nhn88I+D7edZ/496JKIA73PhE1m2Z+YouVJCS9B0h6XAlTodaLMADGA0LuZ6qoejQfrVbs7ii2OUsz2lmW2iXaY6+E80KScTbabvNFWwjEbDIgtCyy9htTbHJC2cpfJy0ibLXkUNJ/6j04NxHGBnl+aNh6q2NsDhceCci1Nn+rPNqGaMuU8tghioCkt4tgzGmKrLEROgQ9WZ7BUYEb90DijaO0OIuBzGNXeTfCUPT9ZZI1
-X-Microsoft-Antispam-PRVS: <DM5PR12MB137030CB220575A603E398E7E7800@DM5PR12MB1370.namprd12.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;20:DfdOuuz52NO6JOequjbg/v+wPtOJmJZSxxhcol94t41KHM6r1dAZhoDhni7EQxh8/ZMDn3u1wyG1aXmackT0QJuxlABM7/1tD1TxnHiDaVSn2n1FCujmpeRqpC2zJIHqh78RXi+NNqKrBgWZqorh6j3fNHnZtSchAJouQNNlOVUwNNNEH7Or+EZZg4EI/EiiURg2JaCNBO5rj70Zot6BJ9Ix+QUU+FBZw+aQVgb2DffcWijB4krr5pfVf67Pe5yQVq8exYrFAMmXvwb4XQsxTzumlx+zS6J5H3nffJ5oIcDF97qPVA9xGJ7TUDiytMwM/95/mmOJU3L9U7NwyrE3ey1cReqOnp6b0jD8DnFoU6j7tUNlNNZuEoOi4NngoMxHAnXKBFBnAja53RB7k5nedzDQqnmYZNx5t0wWYS1zOGUWCnIdmc+8x/Eo52b74+5ksgfhS8/Ji4EuvCss3GKyzvaes7ThgslmWPWG1CBM4siZW93UzendkCHmVP00oGat;4:cnu+6BsLF1ZfYghq03z8DbjcmjV9a8Y8JgxQTl6RliplIL1M9RKrU1F8HWm9RNhXQ2gV8Vp8hOkTvTU009kMe6AkYvwZroExwc0pvuzoGPD33c7a3tldgKdDETjF/V4dL98MqEDB0juS0CqlX0LBgeC+5EFZ6y7TZPh1ULhG90ArwfdMCycd4oUUFNKJvMuIcJoTyxT1K1YSyDeI6M8OGCasQNPOK/JNx+oVUtMMwpToZIZrcpKKU/6FLlVm8aAY3Jn/Np/nnhdAUa1u3lBJeK6APODMtGXHO/z4GWvWp86WkAtZdSdHKpIf48+3Ylhx
+X-Microsoft-Antispam-PRVS: <DM5PR12MB137005AD52D413618EB320BEE7800@DM5PR12MB1370.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(6055026)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:DM5PR12MB1370;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1370;
 X-Forefront-PRVS: 06607E485E
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39380400002)(39860400002)(366004)(189003)(199004)(25786009)(72206003)(966005)(6666003)(5660300001)(575784001)(50226002)(6486002)(50466002)(47776003)(36756003)(66066001)(6116002)(48376002)(97736004)(3846002)(6306002)(68736007)(53936002)(4326008)(478600001)(81166006)(81156014)(16586007)(16526019)(26005)(8676002)(386003)(86362001)(52116002)(59450400001)(305945005)(118296001)(476003)(186003)(105586002)(2906002)(7696005)(8936002)(956004)(316002)(2616005)(106356001)(53416004)(486006)(51416003)(54906003)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1370;H:gi-joe.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR12MB1370;23:9AMKocfkhCRL1UIYyCqLGCo2yhfz9sLh1jxeThayv?=
- =?us-ascii?Q?WPbnN+9ZPJu0LRczfglYSYaOLfNKbGE4Muwk+dvj6nHFYFU8QitiTkxELbSD?=
- =?us-ascii?Q?LkUVJEyKlprqiY1gkyA4Y3xYP53vIDT9CuToIeleSDY9ofoFUCOhUHFt4EGv?=
- =?us-ascii?Q?95CfEDJwyh8gyal9yp0AC5FfGhqmHFWT5q7BqxQsZbElf78GDpzHw8NCFME0?=
- =?us-ascii?Q?s21rACh1QqCjUgc519z+vbkbbQUgpT/02JJblLnxfY9P/8uw8OGCRkR2F56b?=
- =?us-ascii?Q?FoyB9gYJlDjQI7RP5LV4QJ8tin9KHRemNg0fbVnvPeQgBmpYqh5OR2YEsYme?=
- =?us-ascii?Q?H1ggfbH2zkblsvqQODjHtUUzyq9xMPF6bOdvjK8oduKLtVOWitbqp30c4VM6?=
- =?us-ascii?Q?cK8Oo8TUuIxxjev6baSJxPOy40T4MCv6YlhGmZGZTld/Bd90i/4BOlA4Vabc?=
- =?us-ascii?Q?Dd0WojXhKtH4vXlcuAOx/rePZ9/dyzRkMRrrCPstHWrJlVpZoxo5B9786Gl0?=
- =?us-ascii?Q?lMQnLWu6kbRc9eqkaX4dUIMJRovkkdSGgQ4h6AB1ZXGD6Y11w8rw41PVp4Ne?=
- =?us-ascii?Q?u5Ysa729dPTgdCITkTAMAcAkvkAMh/1L4RL0laDBWRagnVmgbfgoA/nwQP6i?=
- =?us-ascii?Q?V7is+Fchye/fd3g0bUaqw1uOD6Ii43iX8cqjOe0vkSe7OfgpTL1n6Po7ZplC?=
- =?us-ascii?Q?uUrVamzBTqM6wkm6rtpCRm1kIzkz0BUWEb7Wp6nM+BuvHfU3f2le0BgRT+tw?=
- =?us-ascii?Q?CwhAaUwoOy+wJLyO/cZ87y2KxupDriRGThv6iv+XeONGaN2uHZdLQr3AijSW?=
- =?us-ascii?Q?2meaAEBdF4L1bVK4XlcY4wyw+/U7EqYCt3dP3kmm9DT7GXKUTnNVkyoanI7N?=
- =?us-ascii?Q?msiQ6VbuvpK5uh+x6hG9PTX7K7QZyoNQjibI4tnsra37kldOjR+22+nL1b/1?=
- =?us-ascii?Q?MnqHrF8DNLMpP+PDk/B1AddSaH14REa5N9ZYdWIcfpl2beuu3tVwOkuXQ4c4?=
- =?us-ascii?Q?tFhQYNiT7YAekkZ2DMZUp2o42fikfbtt8Q9DzfgUN++axJSla9piYiJBRXwB?=
- =?us-ascii?Q?nPMH1qIhI7D9jQTrupP2Q47lvY7IrUywLVpkTYt5GoTfaai7Y6b5aPN1jeRy?=
- =?us-ascii?Q?bz2zvDQquKmlFwGHpxS5pyEdIVLzaKks2D19Jr2vmSZrldf7Y3FkwJq9cX/u?=
- =?us-ascii?Q?8SZPEeDOFiJL8nlhHXBuP2rjK7sEiW3Js4jfw5nCvrK+m1/oblWqqWLkRVG8?=
- =?us-ascii?Q?7jdsS14039mKSyFGxU=3D?=
-X-Microsoft-Antispam-Message-Info: 64Bizn51mNx6wUIIxZZ4dQgYioRFiMciZLI+KoRPTzJKFtCAsMBiZ+9otAfGqtOQMBirl/+K6+maAT7K8FrKEzFoHv1DoP+PwkV5hLw5d+ITA/GCSO5qVPjEDm95MKiblK0xMNs+BNaikjvSzeKGRas0AHO56qp1k5tRk76/AMnWCmuT94oSqcod3cuzWdY6
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;6:1E8LLmzbJ4pkfwBwGCrMMj1D3wh23QwABQIMF8zKpnxl0v8RiKqpwXer5g3b5Us+9hFw43rg788ikFEgSaVDmTOtDyqfInpEqpulMaQ++ZYQrObX/JJzf9ZtzzyNg+7rvuMsMdZEw7+C7PYBTxXHQIoP1+DeUv0BuZRoLzJDUbiSuZ/Io2H+VAhuhoXQYjFFOJv+71muIJr0azWdctx8y8lImWjxCLyR1ZoExoYPBg5eJk/EmdlUWfeFilez6WO3qJtnNzwJ8X4PWr3F/eKpgIUxznc6aX2FS/4r0PTh0EuywLhOXuVlOI1cDomnLrj8sanx5fXYuwEEuZIUuV65QWSQB5JryJ5tIYAx+nXyfLne0jgJWEQ7P5k0sHlQhCt2sTBwQglxnHOoDNkahbGVNVnTIuernin5lL0DD/dONsyR8La0giaLhWODG5+Os+GYg+iTExbcSN5u/OyJInow0Q==;5:+aIIUizjuiUWyS2kx88qRO7z9t6DSgDHi2F3nOSemRYRYX+dhNaiQFQ4xwvBAL/Alki5Uhelkzd1FHbuaAFU2s8gHbWFFsqodvQwvKGjsTJ3a8cXQg2uhd38dcNgIXtFyepb7lAXmnMNM09x+QmoW140KI4ybKPaFxWw6/ASBBw=;24:y9MVP3mjwdexBrc11/oFcOjHPpp5ly3uTYdy/1TPH6GZBlyc55xH7jaNCjY9UwNxs5mThNIgVKn7Yb0h4ohSgSHiQEDxFJw/wOH2/CoVfl8=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(39380400002)(39860400002)(366004)(189003)(199004)(25786009)(72206003)(966005)(6666003)(5660300001)(50226002)(6486002)(50466002)(47776003)(36756003)(66066001)(6116002)(48376002)(97736004)(3846002)(6306002)(68736007)(53936002)(4326008)(478600001)(81166006)(81156014)(16586007)(76176011)(16526019)(26005)(8676002)(386003)(86362001)(52116002)(59450400001)(305945005)(118296001)(11346002)(476003)(186003)(105586002)(2906002)(7696005)(8936002)(956004)(316002)(2616005)(106356001)(446003)(53416004)(486006)(51416003)(54906003)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1370;H:gi-joe.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR12MB1370;23:+vI1FArrJUiQ1tIrIQazzyTQ+I4bf6JsfijFN6ZtS?=
+ =?us-ascii?Q?1DIOpHdQQmgpXaMrTgKsaDGoDlWnkp5TmZSjcEuAxUERrhrlOKOssVXcEYCw?=
+ =?us-ascii?Q?Zk3SqvKIVvOh5tWi514PNpbOT9zz7+lymsUqYRSxFTIS1CR1iBvNMqussp40?=
+ =?us-ascii?Q?93Msk/Y8H7IHK90zUg064d3Sm91JiACJZwb2eCQpqsTrpnipp7fXuFkYD+um?=
+ =?us-ascii?Q?Z2LKmSAePFu1EbnuMjsRdp3PZiRTBvBBf5qM4oAhDf/K0sU6FnbEN8ASCCpk?=
+ =?us-ascii?Q?wqFZrsUYRjNDSL6h5sAlHZ5bP1AsAN7j/VaysDYv2IgN8IU+YSutQqiu31ed?=
+ =?us-ascii?Q?4ADXYTAJAJwTL3F8RSnaxQbLL9RWsddYQScY9kudlz3yJ3Me8riP3bSu2snK?=
+ =?us-ascii?Q?fwUdPL14JZexr8tQ2lk81VS8G/Z7sdJ9mBeyoZGCNkqFBlDRnhZ1nok4WkrG?=
+ =?us-ascii?Q?xKMm6heUaeO04g5zQ1jc1OVFGbzpxd6as5N6PUQjtTZCtO5HUIas4zp5G6Yp?=
+ =?us-ascii?Q?mgxQ8D7E6ja3YwvrRJnwRHBnvFi8D0urxBJlOqt/vj7zxGinEZpVTbIqROz7?=
+ =?us-ascii?Q?G1fabB/dn0PKFjeEPsucIz6KStUIpns9UL0d4QSjJ2Rdlj52+BgASpLd+5aV?=
+ =?us-ascii?Q?t3joWv6zzM4r7c64XhEdfuv5NulN3GkHYcSTm8v8RY+D6QYGoFEtSZBhe9cA?=
+ =?us-ascii?Q?LA6jm+dgYorzgnKNOgBamgjqfhZsrebTuM9JSeAa7rxqSz6KcoXHSfwPkJwh?=
+ =?us-ascii?Q?j8qoto8qK/8gMTqplDYl3xwAJGqIBscCgpXtqh7JI7DgLwpnuEUiY6FsdJCs?=
+ =?us-ascii?Q?ukhQ8hDXT+4JA6IH965oI4AtSu3xZninXCK4T9LBIfUZGbraB6uxe6LiZbaq?=
+ =?us-ascii?Q?edDbynjWp7llUgik4ZGPc3eDtjzZ4dawLwYCw4OMFd5Wqj9H45TT1oFXRUlA?=
+ =?us-ascii?Q?sPY2wseG/4QO4GBi44gBvjy0cDDtKwD4MkNJfhmmcafalXbBajyQq09yrA07?=
+ =?us-ascii?Q?Bm4eVFQ72W4H7xOrAJ7I6fTZFoIpllMh1CT3aUJnRa3ktOtF+lT8vZV00+2y?=
+ =?us-ascii?Q?/H/c7XeDZLQEeB9mOWmi1sRajujtFbwvvfOz5zGBscwlQaBXWKaFxbbCXq1j?=
+ =?us-ascii?Q?JtiDCuWI5yP92xOZm7r8qd7XaKsvEcDBxwkme1M6LC7oLYWxPp67u/9o/Xjs?=
+ =?us-ascii?Q?+c7yy5lC+y4K8AmSIt+OeW9KOrJcyzejAtllDFYHPLkY/dv8kQYm+Opz6iJy?=
+ =?us-ascii?Q?aAWM40ZW5dqvUqlUSzObbdjqSDXoG67U1+Mv6p2DJx58Krn2EsXjGapF4MdH?=
+ =?us-ascii?B?dz09?=
+X-Microsoft-Antispam-Message-Info: OaygzQrwrOQNligt2ezq1xzPXIU9mjlcuM+UiIKijuiWfh7aorBxXcyYPtUiZp02jB0M+wNFfpgYktzOHPBqp7lpt/0Nmdm3P2jCSsu9jlXgFiJQMwV0E5V+SW4P6Ibu8ZRRi3lFHSvkTdqPS6Ke4YhEaTWr6da3lSRJ8CXdFhh7b8MqLH7ppvH4PQrknO1N
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;6:ZZXQAMw6TlNxUZDsfWfTn9QJFK3Dgt/Tfcq2GW7LqKuiNtGN1tGnH9x1mZqzTWKIoygRvMvMBC9vHXmMOb2i09j3gcwu43Jn2GrL130VXrbK9M+IZMjNAiqr1g1btB6ASyypubGQ6rQ4qglRpAogCW0LEUo5rQUJEJdVQZcKb0ayXOryqJJFx7wJE4tN/xCKam/Q7/1oMB/wYXV5Mpa/dOEo88EYb6uf+0llBumOUk9OZbQYdv6oJ2C8f8BYdMGxEDW2sH6T9FUjnfUP3rwNINJwYt4bqR/rm4GmnKS0NyqFmUONuxsyOLe0DBaiUMzZJTlPchQlp1HERFvgSdhdfYTXFw2R0xaQv0tpxDBgOam4fZ5/DKwlzep3RG7ujXiyZb+t289VZs7rbAQaF+bT+FkkSJhSmrKqcO0k5+84DTTr4DSNNcGxHJeniGok+FQzCxtvRnSLmZqxbRupaki1cQ==;5:8lI/Kn4oLiKbKRQsVxO6kA+pyc9UegkjnptTgq/a++6cq8NnzqA9SnM8uiAybJEIJg0OVRGQbN+MDcaZ5PQQZgbnl0YhAc/R4tADr6siRNQdMTc7wHF7wmunwkjSabqCcvB7aH0kFLM6odLrx9vOtxjzEtkDCVEaQw0oR0fquG8=;24:YOxNXX4YkbmugXdoqMyqlHwJZUsPrC1JuewIBRGzmaqWUKxgMAVDCFTyU0gBxLFTcPFz49NOtPT8w4zj0CZXbyuWCOZfNQWZqFrt+HtyW0w=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;7:XDZp2bP7zqRsPl8SG1EieRLNn0PGV7s9iMob2ewzlgX+D58nHY7bOkfBdATWTzpReZStSw87ajHlJrPLtUv94jnBocyagJG2OMg2O8MdO1ykZaxKBibLces1ILNkIOqhvntVbxwL/3M22gDNXhmZUPFj7nhjuciMIr5bqRpFAU4N7OyjGBBgQvtNKNOENKI4xACowiPfY+DMB99EeXlNAqswbHsQITt4eWdcoByIG0A1MSgwQVj9xt8WHIpfGTbV;20:LgsDQhxe+kh2Jgu7opWNEfeyNRQb+BFtTELnVHuyhe6LZttArQ9eBOzEb4rX9+JJBouz5BfeiPO9YmCWZZYkVWslhdjYYC0N4sE7AcGTF00wMT/LNLvSJwEnaAcCoAjGkTfxdbGNBI/cMN0eeRsSbSEG/GEn279dcgAuc4N4ng/lPZoakMb+Mx3NjWSG7Up5g8nSyshv4kLFfWjDDnpJGLvMLHA0HUaGBjsOd/ai6ufpBIr6c12AIoABPbqdbj+x
-X-MS-Office365-Filtering-Correlation-Id: a1951561-5c5f-4b11-6dee-08d5b06ee993
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB1370;7:mDuWDFATIaSL6X5G7KR3F/eRTf9pm3jUebk4/9luJaXLoQ92p9k96hBfeNbxNB3O3A19SFqT+ZomATI5yamZdrHkWX5dNkj+VSpoH87hMo1uET5bmF/gCj7xHkmv5PinbdmSpp/bCJLNRw9kW4WxmSai49UHTb84qFcnp1w4SbO3q2H2T5HfJObf8UIE0nrMZ+KCJUn3v/oJ2eK5lrz2TikU8aTipPpr32IcGUk87KBEeraZ3XEiF1bnGWjZPA9H;20:pn7BXZSaXflAIIJp7avIEioUIsW9owGNQ0T+AGR2Gyu0eI7CCNmQ3mR++89fIM4Gljsx25W79SQZMCA5apYUcGqMCg2WP2SR8M1sS5NmYYW7uIZ591h766GZ7sqXWbvEY9R9ot31Ch5bAEetJlJuf3+0bc91xw2GwgMbaKBUCK/fPwZfKPktpf6YLxca1Xw9ui5+dQ6g3KCH8AWb7pb2tlxq2Lv0j03sVYzZFtnWij7h0PP002JzF18KFyjXec0C
+X-MS-Office365-Filtering-Correlation-Id: 886730b5-2d7d-479a-afa8-08d5b06eea93
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2018 20:54:34.1907 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1951561-5c5f-4b11-6dee-08d5b06ee993
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2018 20:54:35.8681 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 886730b5-2d7d-479a-afa8-08d5b06eea93
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1370
@@ -76,215 +79,148 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DOWNLOAD_FIRMWARE command, added as of SEV API v0.15, allows the OS
-to install SEV firmware newer than the currently active SEV firmware.
+The GET_ID command, added as of SEV API v0.16, allows the SEV firmware
+to be queried about a unique CPU ID. This unique ID can then be used
+to obtain the public certificate containing the Chip Endorsement Key
+(CEK) public key signed by the AMD SEV Signing Key (ASK).
 
-For the new SEV firmware to be applied it must:
-* Pass the validation test performed by the existing firmware.
-* Be of the same build or a newer build compared to the existing firmware.
-
-For more information please refer to "Section 5.11 DOWNLOAD_FIRMWARE" of
+For more information please refer to "Section 5.12 GET_ID" of
 https://support.amd.com/TechDocs/55766_SEV-KM%20API_Specification.pdf
 
 Signed-off-by: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
 ---
- drivers/crypto/ccp/psp-dev.c | 96 +++++++++++++++++++++++++++++++++++++++-----
- drivers/crypto/ccp/psp-dev.h |  4 ++
- include/linux/psp-sev.h      | 12 ++++++
- 3 files changed, 102 insertions(+), 10 deletions(-)
+ drivers/crypto/ccp/psp-dev.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/psp-sev.h      | 11 +++++++++++
+ include/uapi/linux/psp-sev.h | 12 ++++++++++++
+ 3 files changed, 67 insertions(+)
 
 diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-index d95ec52..1c78a2e 100644
+index 1c78a2e..d33a763 100644
 --- a/drivers/crypto/ccp/psp-dev.c
 +++ b/drivers/crypto/ccp/psp-dev.c
-@@ -22,11 +22,17 @@
- #include <linux/delay.h>
- #include <linux/hw_random.h>
- #include <linux/ccp.h>
-+#include <linux/firmware.h>
- 
- #include "sp-dev.h"
- #include "psp-dev.h"
- 
-+#define SEV_VERSION_CHECK(_maj, _min)			\
-+		((psp_master->api_major) >= _maj &&	\
-+		 (psp_master->api_minor) >= _min)
-+
- #define DEVICE_NAME	"sev"
-+#define SEV_FW_FILE	"amd-sev.fw"
- 
- static DEFINE_MUTEX(sev_cmd_mutex);
- static struct sev_misc_dev *misc_dev;
-@@ -112,6 +118,7 @@ static int sev_cmd_buffer_len(int cmd)
- 	case SEV_CMD_RECEIVE_UPDATE_DATA:	return sizeof(struct sev_data_receive_update_data);
+@@ -119,6 +119,7 @@ static int sev_cmd_buffer_len(int cmd)
  	case SEV_CMD_RECEIVE_UPDATE_VMSA:	return sizeof(struct sev_data_receive_update_vmsa);
  	case SEV_CMD_LAUNCH_UPDATE_SECRET:	return sizeof(struct sev_data_launch_secret);
-+	case SEV_CMD_DOWNLOAD_FIRMWARE:		return sizeof(struct sev_data_download_firmware);
+ 	case SEV_CMD_DOWNLOAD_FIRMWARE:		return sizeof(struct sev_data_download_firmware);
++	case SEV_CMD_GET_ID:			return sizeof(struct sev_data_get_id);
  	default:				return 0;
  	}
  
-@@ -378,6 +385,77 @@ void *psp_copy_user_blob(u64 __user uaddr, u32 len)
+@@ -508,6 +509,46 @@ static int sev_ioctl_do_pek_import(struct sev_issue_cmd *argp)
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(psp_copy_user_blob);
  
-+static int get_sev_api_version(void)
++static int sev_ioctl_do_get_id(struct sev_issue_cmd *argp)
 +{
-+	struct sev_user_data_status *status;
-+	int error, ret;
++	struct sev_data_get_id *data;
++	u64 data_size, user_size;
++	void *id_blob, *mem;
++	int ret;
 +
-+	status = &psp_master->status_cmd_buf;
-+	ret = sev_platform_status(status, &error);
-+	if (ret) {
-+		dev_err(psp_master->dev,
-+			"SEV: failed to get status. Error: %#x\n", error);
-+		return 1;
++	/* SEV GET_ID available from SEV API v0.16 and up */
++	if (!SEV_VERSION_CHECK(0, 16))
++		return -ENOTSUPP;
++
++	/* SEV FW expects the buffer it fills with the ID to be
++	 * 8-byte aligned. Memory allocated should be enough to
++	 * hold data structure + alignment padding + memory
++	 * where SEV FW writes the ID.
++	 */
++	data_size = ALIGN(sizeof(struct sev_data_get_id), 8);
++	user_size = sizeof(struct sev_user_data_get_id);
++
++	mem = kzalloc(data_size + user_size, GFP_KERNEL);
++	if (!mem)
++		return -ENOMEM;
++
++	data = mem;
++	id_blob = mem + data_size;
++
++	data->address = __psp_pa(id_blob);
++	data->len = user_size;
++
++	ret = __sev_do_cmd_locked(SEV_CMD_GET_ID, data, &argp->error);
++	if (!ret) {
++		if (copy_to_user((void __user *)argp->data, id_blob, data->len))
++			ret = -EFAULT;
 +	}
 +
-+	psp_master->api_major = status->api_major;
-+	psp_master->api_minor = status->api_minor;
-+	psp_master->build = status->build;
++	kfree(mem);
 +
-+	return 0;
++	return ret;
 +}
 +
-+/* Don't fail if SEV FW couldn't be updated. Continue with existing SEV FW */
-+static void sev_update_firmware(struct device *dev)
-+{
-+	struct sev_data_download_firmware *data;
-+	const struct firmware *firmware;
-+	int ret, error, order;
-+	struct page *p;
-+	u64 data_size;
-+
-+	ret = request_firmware(&firmware, SEV_FW_FILE, dev);
-+	if (ret < 0)
-+		return;
-+
-+	/*
-+	 * SEV FW expects the physical address given to it to be 32
-+	 * byte aligned. Memory allocated has structure placed at the
-+	 * beginning followed by the firmware being passed to the SEV
-+	 * FW. Allocate enough memory for data structure + alignment
-+	 * padding + SEV FW.
-+	 */
-+	data_size = ALIGN(sizeof(struct sev_data_download_firmware), 32);
-+
-+	order = get_order(firmware->size + data_size);
-+	p = alloc_pages(GFP_KERNEL, order);
-+	if (!p)
-+		goto fw_err;
-+
-+	/*
-+	 * Copy firmware data to a kernel allocated contiguous
-+	 * memory region.
-+	 */
-+	data = page_address(p);
-+	memcpy(page_address(p) + data_size, firmware->data, firmware->size);
-+
-+	data->address = __psp_pa(page_address(p) + data_size);
-+	data->len = firmware->size;
-+
-+	ret = sev_do_cmd(SEV_CMD_DOWNLOAD_FIRMWARE, data, &error);
-+	if (ret) {
-+		dev_dbg(dev, "Failed to update SEV firmware: %#x\n", error);
-+	} else {
-+		dev_info(dev, "SEV firmware update successful\n");
-+		get_sev_api_version();
-+	}
-+
-+	__free_pages(p, order);
-+
-+fw_err:
-+	release_firmware(firmware);
-+}
-+
- static int sev_ioctl_do_pek_import(struct sev_issue_cmd *argp)
+ static int sev_ioctl_do_pdh_export(struct sev_issue_cmd *argp)
  {
- 	struct sev_user_data_pek_cert_import input;
-@@ -750,7 +828,6 @@ EXPORT_SYMBOL_GPL(sev_issue_cmd_external_user);
- 
- void psp_pci_init(void)
- {
--	struct sev_user_data_status *status;
- 	struct sp_device *sp;
- 	int error, rc;
- 
-@@ -760,6 +837,12 @@ void psp_pci_init(void)
- 
- 	psp_master = sp->psp_data;
- 
-+	if (get_sev_api_version())
-+		goto err;
-+
-+	if (SEV_VERSION_CHECK(0, 15))
-+		sev_update_firmware(psp_master->dev);
-+
- 	/* Initialize the platform */
- 	rc = sev_platform_init(&error);
- 	if (rc) {
-@@ -767,16 +850,9 @@ void psp_pci_init(void)
- 		goto err;
- 	}
- 
--	/* Display SEV firmware version */
--	status = &psp_master->status_cmd_buf;
--	rc = sev_platform_status(status, &error);
--	if (rc) {
--		dev_err(sp->dev, "SEV: failed to get status error %#x\n", error);
--		goto err;
--	}
-+	dev_info(sp->dev, "SEV API:%d.%d build:%d\n", psp_master->api_major,
-+		 psp_master->api_minor, psp_master->build);
- 
--	dev_info(sp->dev, "SEV API:%d.%d build:%d\n", status->api_major,
--		 status->api_minor, status->build);
- 	return;
- 
- err:
-diff --git a/drivers/crypto/ccp/psp-dev.h b/drivers/crypto/ccp/psp-dev.h
-index c81f0b1..c7e9098a 100644
---- a/drivers/crypto/ccp/psp-dev.h
-+++ b/drivers/crypto/ccp/psp-dev.h
-@@ -78,6 +78,10 @@ struct psp_device {
- 	struct sev_misc_dev *sev_misc;
- 	struct sev_user_data_status status_cmd_buf;
- 	struct sev_data_init init_cmd_buf;
-+
-+	u8 api_major;
-+	u8 api_minor;
-+	u8 build;
- };
- 
- #endif /* __PSP_DEV_H */
+ 	struct sev_user_data_pdh_cert_export input;
+@@ -645,6 +686,9 @@ static long sev_ioctl(struct file *file, unsigned int ioctl, unsigned long arg)
+ 	case SEV_PDH_CERT_EXPORT:
+ 		ret = sev_ioctl_do_pdh_export(&input);
+ 		break;
++	case SEV_GET_ID:
++		ret = sev_ioctl_do_get_id(&input);
++		break;
+ 	default:
+ 		ret = -EINVAL;
+ 		goto out;
 diff --git a/include/linux/psp-sev.h b/include/linux/psp-sev.h
-index 93addfa..1d24962 100644
+index 1d24962..827c601 100644
 --- a/include/linux/psp-sev.h
 +++ b/include/linux/psp-sev.h
-@@ -54,6 +54,7 @@ enum sev_cmd {
- 	SEV_CMD_PDH_CERT_EXPORT		= 0x008,
+@@ -55,6 +55,7 @@ enum sev_cmd {
  	SEV_CMD_PDH_GEN			= 0x009,
  	SEV_CMD_DF_FLUSH		= 0x00A,
-+	SEV_CMD_DOWNLOAD_FIRMWARE	= 0x00B,
+ 	SEV_CMD_DOWNLOAD_FIRMWARE	= 0x00B,
++	SEV_CMD_GET_ID			= 0x00C,
  
  	/* Guest commands */
  	SEV_CMD_DECOMMISSION		= 0x020,
-@@ -130,6 +131,17 @@ struct sev_data_pek_cert_import {
+@@ -142,6 +143,16 @@ struct sev_data_download_firmware {
  } __packed;
  
  /**
-+ * struct sev_data_download_firmware - DOWNLOAD_FIRMWARE command parameters
++ * struct sev_data_get_id - GET_ID command parameters
 + *
-+ * @address: physical address of firmware image
-+ * @len: len of the firmware image
++ * @address: physical address of region to place unique CPU ID(s)
++ * @len: len of the region
 + */
-+struct sev_data_download_firmware {
++struct sev_data_get_id {
 +	u64 address;				/* In */
-+	u32 len;				/* In */
++	u32 len;				/* In/Out */
 +} __packed;
-+
 +/**
   * struct sev_data_pdh_cert_export - PDH_CERT_EXPORT command parameters
   *
   * @pdh_address: PDH certificate address
+diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
+index 9008f31..ac8c60b 100644
+--- a/include/uapi/linux/psp-sev.h
++++ b/include/uapi/linux/psp-sev.h
+@@ -30,6 +30,7 @@ enum {
+ 	SEV_PDH_GEN,
+ 	SEV_PDH_CERT_EXPORT,
+ 	SEV_PEK_CERT_IMPORT,
++	SEV_GET_ID,
+ 
+ 	SEV_MAX,
+ };
+@@ -124,6 +125,17 @@ struct sev_user_data_pdh_cert_export {
+ } __packed;
+ 
+ /**
++ * struct sev_user_data_get_id - GET_ID command parameters
++ *
++ * @socket1: Buffer to pass unique ID of first socket
++ * @socket2: Buffer to pass unique ID of second socket
++ */
++struct sev_user_data_get_id {
++	__u8 socket1[64];			/* Out */
++	__u8 socket2[64];			/* Out */
++} __packed;
++
++/**
+  * struct sev_issue_cmd - SEV ioctl parameters
+  *
+  * @cmd: SEV commands to execute
 -- 
 2.7.4
