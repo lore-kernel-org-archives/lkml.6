@@ -1,56 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752276AbeEBP0f (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:26:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47678 "EHLO mail.kernel.org"
+        id S1752315AbeEBP1N (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:27:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751491AbeEBPVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:21:47 -0400
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 34/52] perf machine: Use machine__find_kernel_function() instead of open coded version
-Date: Wed,  2 May 2018 12:19:24 -0300
-Message-Id: <20180502151942.20542-35-acme@kernel.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
-References: <20180502151942.20542-1-acme@kernel.org>
+        id S1751800AbeEBP1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:27:09 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, Taniya Das <tdas@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+ <1525258277-3478-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <152527482828.138124.7114901348273696817@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Wed, 02 May 2018 08:27:08 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w42FRK9F025968
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Quoting Taniya Das (2018-05-02 03:51:17)
+> +
+> +static DEFINE_MUTEX(rpmh_clk_lock);
+> +
+> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
+> +                         _res_en_offset, _res_on)                      \
+> +       static struct clk_rpmh _platform##_##_name_active;              \
+> +       static struct clk_rpmh _platform##_##_name = {                  \
+> +               .res_name = _res_name,                                  \
+> +               .res_addr = _res_en_offset,                             \
+> +               .res_on_val = _res_on,                                  \
+> +               .peer = &_platform##_##_name_active,                    \
+> +               .valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |        \
+> +                                     BIT(RPMH_ACTIVE_ONLY_STATE) |     \
+> +                                     BIT(RPMH_SLEEP_STATE)),           \
+> +               .hw.init = &(struct clk_init_data){                     \
+> +                       .ops = &clk_rpmh_ops,                           \
+> +                       .name = #_name,                                 \
+> +                       .parent_names = (const char *[]){ "xo_board",   \
+> +                                               "xo_board_div" },       \
 
-We have that equivalent, shorter helper, use it.
+The rpmh clks that do a div 2 can have a recalc_rate function that
+returns the xo_board clk rate divided by 2 all the time. That may be
+easier to do. Keep xo_board as parent, but then specify if it does div-2
+or div-1 in the SoC specific listing. Then DT can only show 38.4 MHz.
+The div 2 part is inside the SoC anyway so this seems more accurate too.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-1hcgu3k7vxdy4vknqf3kbtzt@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/machine.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 10364e829aba..a00e82b83e0a 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2367,7 +2367,7 @@ char *machine__resolve_kernel_addr(void *vmachine, unsigned long long *addrp, ch
- {
- 	struct machine *machine = vmachine;
- 	struct map *map;
--	struct symbol *sym = map_groups__find_symbol(&machine->kmaps, MAP__FUNCTION, *addrp, &map);
-+	struct symbol *sym = machine__find_kernel_function(machine, *addrp, &map);
- 
- 	if (sym == NULL)
- 		return NULL;
--- 
-2.14.3
+> +                       .num_parents = 2,                               \
+> +               },                                                      \
+> +       };                                                              \
