@@ -1,79 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751143AbeEBIIv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 04:08:51 -0400
-Received: from mail.netline.ch ([148.251.143.178]:56977 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeEBIIr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 04:08:47 -0400
-Subject: Re: [PATCH v2 1/2] drm/ttm: Only allocate huge pages with new flag
- TTM_PAGE_FLAG_TRANSHUGE
-To: Ilia Mirkin <imirkin@alum.mit.edu>
-Cc: amd-gfx mailing list <amd-gfx@lists.freedesktop.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180426150618.13470-1-michel@daenzer.net>
- <20180427130811.7642-1-michel@daenzer.net>
- <CAKb7Uvj6FFRK6dtvR7xpfZDzs0o3QKHq7ESueBBmr_VnQt6XDQ@mail.gmail.com>
- <e8166443-14f0-1eb3-a6a2-d425792b0643@daenzer.net>
- <CAKb7UvibaW0d3H++c4dMFgeXQUYTMVFhi1qO=5W-NFbDWVDT2w@mail.gmail.com>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <d3fdbdd3-cbc8-449d-d589-e1eb0bffafb2@daenzer.net>
-Date: Wed, 2 May 2018 10:08:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751240AbeEBIKR convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 04:10:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40168 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750883AbeEBIKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 04:10:14 -0400
+Date: Wed, 2 May 2018 10:10:11 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>
+Cc: Boris Brezillon <Boris.Brezillon@bootlin.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
+        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
+        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>
+Subject: Re: [PATCH 1/2] Fix FSL NAND driver to read all ONFI parameter
+ pages
+Message-ID: <20180502101011.797e4ec4@xps13>
+In-Reply-To: <VI1PR07MB161575ACAE380B18882E8EE981810@VI1PR07MB1615.eurprd07.prod.outlook.com>
+References: <1524788396-32380-1-git-send-email-Jane.Wan@nokia.com>
+        <1524788396-32380-2-git-send-email-Jane.Wan@nokia.com>
+        <20180428134218.3ae857eb@xps13>
+        <VI1PR07MB161575ACAE380B18882E8EE981810@VI1PR07MB1615.eurprd07.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <CAKb7UvibaW0d3H++c4dMFgeXQUYTMVFhi1qO=5W-NFbDWVDT2w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-29 01:56 AM, Ilia Mirkin wrote:
-> On Sat, Apr 28, 2018 at 7:02 PM, Michel Dänzer <michel@daenzer.net> wrote:
->>
->> Unfortunately, there was an swiotlb regression (not directly related to
->> Christian's work) shortly after this fix, also in 4.16-rc1, which is now
->> fixed in 4.17-rc1 and will be backported to 4.16.y.
+Hi Jane,
+
+On Tue, 1 May 2018 05:01:23 +0000, "Wan, Jane (Nokia - US/Sunnyvale)"
+<jane.wan@nokia.com> wrote:
+
+> Hi Miquèl and Boris,
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git/commit/?h=v4.16.5&id=2c9dacf5bfe1e45d96dfe97cb71d2b717786a7b9
+> Thank you for your response and feedback.  I've modified the fix based on your comments.  
+> Please see the updated patch file at the end of this message (also in attachment).
+> My answers to your comments/questions are inline in the previous message.
+
+Usually we answer inline in each e-mail, then we post a new version
+with a version counter incremented (use the '-v2- of 'git format-patch'
+to add the '[PATCH v2 x/y]' prefix automatically). Reposting is
+important as maintainers use 'patchwork' to follow the evolution of
+each patch. So in your case, nothing shows that you posted a v2.
+
 > 
-> This guy? Didn't help. I'm running 4.16.4 right now.
-
-Try https://patchwork.freedesktop.org/patch/219765/ .
-
-
->>> We now have *two* broken releases, v4.15 and v4.16 (anything that
->>> spews error messages and stack traces ad-infinitum in dmesg is, by
->>> definition, broken).
->>
->> I haven't seen any evidence that there's still an issue in 4.15, is
->> there any?
+> Here is the answer to Boris question in another email thread:
 > 
-> Well, I did have a late 4.15 rc kernel in addition to the 'suppress
-> warning' patch. Now I'm questioning my memory of whether the issue was
-> resolved there or not. I'm pretty sure that 'not', but no longer 100%.
+> > What if some NANDs have 4 or more copies of the param page?  
+>  [Jane] The ONFI spec defines that the parameter page and its two redundant copies are mandatory.  
+> The additional redundant pages are optional.  Currently, the FSL NAND driver only reads the first 
+> parameter page.  This patch is to fix the driver to meet the mandatory requirement in the spec. 
+> We got a batch of particularly bad NAND chips recently and we needed these changes to make them 
+> work reliably over temperature.  The patch was verified using these bad chips.
 
-It seems pretty clear it is in fact resolved in 4.15. Even if it indeed
-wasn't for you, did you expect us to find out by monitoring you on IRC 24/7?
+I think Boris' remark was much more general than just this use case.
+The whole logic of tailoring ->cmdfunc() in each driver by guessing the
+data length, while there is absolutely no indication of it in this hook
+is broken. The core is moving to a new interface called ->exec_op(),
+and we would welcome a migration of this driver to this hook, that
+would be much much more easy to maintain for everyone.
 
 
-> As a user who is not in a position to debug this directly due to lack
-> of time and knowledge, [...]
+Thanks,
+Miquèl
 
-I have plenty of other things to do other than looking into this and
-coming up with the fix above as well, and I'm no more knowledgeable
-about the SWIOTLB code than you.
+> 
+> Best regards,
+> Jane
+> 
+> Updated patch:
+> From 701de4146aa6355c951e97a77476e12d2da56d42 Mon Sep 17 00:00:00 2001
+> From: Jane Wan <Jane.Wan@nokia.com>
+> Date: Mon, 30 Apr 2018 13:30:46 -0700
+> Subject: [PATCH 1/2] mtd: rawnand: fsl_ifc: fix FSL NAND driver to read all
+>  ONFI parameter pages
+> 
+> Per ONFI specification (Rev. 4.0), if the CRC of the first parameter page
+> read is not valid, the host should read redundant parameter page copies.
+> Fix FSL NAND driver to read the two redundant copies which are mandatory
+> in the specification.
+> 
+> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
+> ---
+>  drivers/mtd/nand/raw/fsl_ifc_nand.c |   17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/fsl_ifc_nand.c b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> index 61aae02..98aac1f 100644
+> --- a/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> +++ b/drivers/mtd/nand/raw/fsl_ifc_nand.c
+> @@ -342,9 +342,16 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
+>  
+>  	case NAND_CMD_READID:
+>  	case NAND_CMD_PARAM: {
+> +		/*
+> +		 * For READID, read 8 bytes that are currently used.
+> +		 * For PARAM, read all 3 copies of 256-bytes pages.
+> +		 */
+> +		int len = 8;
+>  		int timing = IFC_FIR_OP_RB;
+> -		if (command == NAND_CMD_PARAM)
+> +		if (command == NAND_CMD_PARAM) {
+>  			timing = IFC_FIR_OP_RBCD;
+> +			len = 256 * 3;
+> +		}
+>  
+>  		ifc_out32((IFC_FIR_OP_CW0 << IFC_NAND_FIR0_OP0_SHIFT) |
+>  			  (IFC_FIR_OP_UA  << IFC_NAND_FIR0_OP1_SHIFT) |
+> @@ -354,12 +361,8 @@ static void fsl_ifc_cmdfunc(struct mtd_info *mtd, unsigned int command,
+>  			  &ifc->ifc_nand.nand_fcr0);
+>  		ifc_out32(column, &ifc->ifc_nand.row3);
+>  
+> -		/*
+> -		 * although currently it's 8 bytes for READID, we always read
+> -		 * the maximum 256 bytes(for PARAM)
+> -		 */
+> -		ifc_out32(256, &ifc->ifc_nand.nand_fbcr);
+> -		ifc_nand_ctrl->read_bytes = 256;
+> +		ifc_out32(len, &ifc->ifc_nand.nand_fbcr);
+> +		ifc_nand_ctrl->read_bytes = len;
+>  
+>  		set_addr(mtd, 0, 0, 0);
+>  		fsl_ifc_run_command(mtd);
 
-Anyway, nobody can track down every problem they run into. But let me
-kindly ask you to more carefully look at the information available
-before deciding which tree to bark up in the future.
 
 
 -- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+Miquel Raynal, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
