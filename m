@@ -1,91 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752662AbeEBPZt (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:25:49 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:49208 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751880AbeEBPZq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:25:46 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <linux@armlinux.org.uk>, <arnd@arndb.de>, <alexandre.torgue@st.com>,
-        <mcoquelin.stm32@gmail.com>
-CC: <fabrice.gasnier@st.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ARM: multi_v7_defconfig: enable STM32 analog & timer drivers
-Date: Wed, 2 May 2018 17:24:56 +0200
-Message-ID: <1525274696-11968-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_06:,,
- signatures=0
+        id S1752276AbeEBP0f (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:26:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47678 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751491AbeEBPVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:21:47 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 34/52] perf machine: Use machine__find_kernel_function() instead of open coded version
+Date: Wed,  2 May 2018 12:19:24 -0300
+Message-Id: <20180502151942.20542-35-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
+References: <20180502151942.20542-1-acme@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This enables drivers for STM32 timer, low power timer and analog hardware
-that can be used on STM32MP1 SoC:
-- Timer & LP Timer MFD core, PWM, trigger & encoder drivers
-- IIO ADC/DAC/DFSDM
-- vrefbuf regu driver (voltage reference buffer).
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+We have that equivalent, shorter helper, use it.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-1hcgu3k7vxdy4vknqf3kbtzt@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- arch/arm/configs/multi_v7_defconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ tools/perf/util/machine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index e6b3c96..40f5dd8 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -535,6 +535,7 @@ CONFIG_MFD_TPS65217=y
- CONFIG_MFD_TPS65218=y
- CONFIG_MFD_TPS6586X=y
- CONFIG_MFD_TPS65910=y
-+CONFIG_MFD_STM32_LPTIMER=y
- CONFIG_REGULATOR_ACT8945A=y
- CONFIG_REGULATOR_AB8500=y
- CONFIG_REGULATOR_ACT8865=y
-@@ -567,6 +568,7 @@ CONFIG_REGULATOR_QCOM_SMD_RPM=y
- CONFIG_REGULATOR_RN5T618=y
- CONFIG_REGULATOR_S2MPS11=y
- CONFIG_REGULATOR_S5M8767=y
-+CONFIG_REGULATOR_STM32_VREFBUF=y
- CONFIG_REGULATOR_TI_ABB=y
- CONFIG_REGULATOR_TPS51632=y
- CONFIG_REGULATOR_TPS62360=y
-@@ -935,13 +937,19 @@ CONFIG_AT91_SAMA5D2_ADC=m
- CONFIG_BERLIN2_ADC=m
- CONFIG_CPCAP_ADC=m
- CONFIG_EXYNOS_ADC=m
-+CONFIG_STM32_ADC_CORE=y
-+CONFIG_STM32_ADC=y
-+CONFIG_STM32_DFSDM_ADC=y
- CONFIG_VF610_ADC=m
- CONFIG_XILINX_XADC=y
-+CONFIG_STM32_LPTIMER_CNT=y
-+CONFIG_STM32_DAC=y
- CONFIG_MPU3050_I2C=y
- CONFIG_CM36651=m
- CONFIG_AK8975=y
- CONFIG_RASPBERRYPI_POWER=y
- CONFIG_IIO_HRTIMER_TRIGGER=y
-+CONFIG_IIO_STM32_LPTIMER_TRIGGER=y
- CONFIG_PWM=y
- CONFIG_PWM_ATMEL=m
- CONFIG_PWM_ATMEL_HLCDC_PWM=m
-@@ -951,6 +959,8 @@ CONFIG_PWM_RCAR=m
- CONFIG_PWM_RENESAS_TPU=y
- CONFIG_PWM_ROCKCHIP=m
- CONFIG_PWM_SAMSUNG=m
-+CONFIG_PWM_STM32=y
-+CONFIG_PWM_STM32_LP=y
- CONFIG_PWM_SUN4I=y
- CONFIG_PWM_TEGRA=y
- CONFIG_PWM_VT8500=y
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 10364e829aba..a00e82b83e0a 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2367,7 +2367,7 @@ char *machine__resolve_kernel_addr(void *vmachine, unsigned long long *addrp, ch
+ {
+ 	struct machine *machine = vmachine;
+ 	struct map *map;
+-	struct symbol *sym = map_groups__find_symbol(&machine->kmaps, MAP__FUNCTION, *addrp, &map);
++	struct symbol *sym = machine__find_kernel_function(machine, *addrp, &map);
+ 
+ 	if (sym == NULL)
+ 		return NULL;
 -- 
-1.9.1
+2.14.3
