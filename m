@@ -1,207 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751152AbeEBKrI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:47:08 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:55624 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeEBKrH (ORCPT
+        id S1751192AbeEBKv1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:51:27 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:60017 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751132AbeEBKvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:47:07 -0400
-Subject: Re: [PATCH v3] mtd: onenand: omap2: Disable DMA for HIGHMEM buffers
-To: Ladislav Michl <ladis@linux-mips.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        Roger Quadros <rogerq@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andreas Kemnade <andreas@kemnade.info>
-References: <20180502104132.GA12979@lenoch>
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <d89fb08e-0c7d-580d-9280-3cbac9af8f32@ti.com>
-Date: Wed, 2 May 2018 13:46:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 06:51:24 -0400
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Joey Pabalinas <joeypabalinas@gmail.com>
+Cc: linux-acpi@vger.kernel.org, Len Brown <lenb@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ACPI: prefer bool over int for predicates
+Date: Wed, 02 May 2018 12:51:05 +0200
+Message-ID: <1824583.Oe7ze6gOva@aspire.rjw.lan>
+In-Reply-To: <20180408084627.xignebybfxyds2t5@gmail.com>
+References: <20180408084627.xignebybfxyds2t5@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180502104132.GA12979@lenoch>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2018-05-02 13:41, Ladislav Michl wrote:
-> dma_map_single does not work for vmalloc-ed buffers,
-> so disable DMA in this case.
-
-Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-> Reported-by: "H. Nikolaus Schaller" <hns@goldelico.com>
-> Tested-by: "H. Nikolaus Schaller" <hns@goldelico.com>
-> ---
->  Changes:
->   -v2: Added Tested-by tag, based on v4.17-rc1 (no change in patch itself)
->   -v3: Reworded commit log
+On Sunday, April 8, 2018 10:46:27 AM CEST Joey Pabalinas wrote:
 > 
->  drivers/mtd/nand/onenand/omap2.c | 105 +++++++++++--------------------
->  1 file changed, 38 insertions(+), 67 deletions(-)
+> --dohnnvt2hwn6rmo4
+> Content-Type: text/plain; charset=us-ascii
+> Content-Disposition: inline
+> Content-Transfer-Encoding: quoted-printable
 > 
-> diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
-> index 9c159f0dd9a6..321137158ff3 100644
-> --- a/drivers/mtd/nand/onenand/omap2.c
-> +++ b/drivers/mtd/nand/onenand/omap2.c
-> @@ -375,56 +375,42 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
->  {
->  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
->  	struct onenand_chip *this = mtd->priv;
-> -	dma_addr_t dma_src, dma_dst;
-> -	int bram_offset;
-> +	struct device *dev = &c->pdev->dev;
->  	void *buf = (void *)buffer;
-> +	dma_addr_t dma_src, dma_dst;
-> +	int bram_offset, err;
->  	size_t xtra;
-> -	int ret;
->  
->  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
-> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
-> -		goto out_copy;
-> -
-> -	/* panic_write() may be in an interrupt context */
-> -	if (in_interrupt() || oops_in_progress)
-> +	/*
-> +	 * If the buffer address is not DMA-able, len is not long enough to make
-> +	 * DMA transfers profitable or panic_write() may be in an interrupt
-> +	 * context fallback to PIO mode.
-> +	 */
-> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
-> +	    count < 384 || in_interrupt() || oops_in_progress )
->  		goto out_copy;
->  
-> -	if (buf >= high_memory) {
-> -		struct page *p1;
-> -
-> -		if (((size_t)buf & PAGE_MASK) !=
-> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
-> -			goto out_copy;
-> -		p1 = vmalloc_to_page(buf);
-> -		if (!p1)
-> -			goto out_copy;
-> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
-> -	}
-> -
->  	xtra = count & 3;
->  	if (xtra) {
->  		count -= xtra;
->  		memcpy(buf + count, this->base + bram_offset + count, xtra);
->  	}
->  
-> +	dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
->  	dma_src = c->phys_base + bram_offset;
-> -	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
-> -	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
-> -		dev_err(&c->pdev->dev,
-> -			"Couldn't DMA map a %d byte buffer\n",
-> -			count);
-> -		goto out_copy;
-> -	}
->  
-> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> -	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
-> -
-> -	if (ret) {
-> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
-> +	if (dma_mapping_error(dev, dma_dst)) {
-> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
->  		goto out_copy;
->  	}
->  
-> -	return 0;
-> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> +	dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
-> +	if (!err)
-> +		return 0;
-> +
-> +	dev_err(dev, "timeout waiting for DMA\n");
->  
->  out_copy:
->  	memcpy(buf, this->base + bram_offset, count);
-> @@ -437,49 +423,34 @@ static int omap2_onenand_write_bufferram(struct mtd_info *mtd, int area,
->  {
->  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
->  	struct onenand_chip *this = mtd->priv;
-> -	dma_addr_t dma_src, dma_dst;
-> -	int bram_offset;
-> +	struct device *dev = &c->pdev->dev;
->  	void *buf = (void *)buffer;
-> -	int ret;
-> +	dma_addr_t dma_src, dma_dst;
-> +	int bram_offset, err;
->  
->  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
-> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
-> -		goto out_copy;
-> -
-> -	/* panic_write() may be in an interrupt context */
-> -	if (in_interrupt() || oops_in_progress)
-> +	/*
-> +	 * If the buffer address is not DMA-able, len is not long enough to make
-> +	 * DMA transfers profitable or panic_write() may be in an interrupt
-> +	 * context fallback to PIO mode.
-> +	 */
-> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
-> +	    count < 384 || in_interrupt() || oops_in_progress )
->  		goto out_copy;
->  
-> -	if (buf >= high_memory) {
-> -		struct page *p1;
-> -
-> -		if (((size_t)buf & PAGE_MASK) !=
-> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
-> -			goto out_copy;
-> -		p1 = vmalloc_to_page(buf);
-> -		if (!p1)
-> -			goto out_copy;
-> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
-> -	}
-> -
-> -	dma_src = dma_map_single(&c->pdev->dev, buf, count, DMA_TO_DEVICE);
-> +	dma_src = dma_map_single(dev, buf, count, DMA_TO_DEVICE);
->  	dma_dst = c->phys_base + bram_offset;
-> -	if (dma_mapping_error(&c->pdev->dev, dma_src)) {
-> -		dev_err(&c->pdev->dev,
-> -			"Couldn't DMA map a %d byte buffer\n",
-> -			count);
-> -		return -1;
-> -	}
-> -
-> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> -	dma_unmap_single(&c->pdev->dev, dma_src, count, DMA_TO_DEVICE);
-> -
-> -	if (ret) {
-> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
-> +	if (dma_mapping_error(dev, dma_src)) {
-> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
->  		goto out_copy;
->  	}
->  
-> -	return 0;
-> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> +	dma_unmap_page(dev, dma_src, count, DMA_TO_DEVICE);
-> +	if (!err)
-> +		return 0;
-> +
-> +	dev_err(dev, "timeout waiting for DMA\n");
->  
->  out_copy:
->  	memcpy(this->base + bram_offset, buf, count);
+> Prefer bool over int for variables / returns which are
+> predicate expressions to make it explicit that these
+> expressions are evaluating simple "yes or no?" queries.
+
+In new code - yes.
+
+But changing old code just for this purpose is at least questionable.
+
+> This makes it more obvious which expressions are _not_
+> that simple and require more attention, e.g. an `int ret`
+> meant to hold 0 or -ENOENT as a return value or an
+> `unsigned nmemb` meant to refer to the number of valid
+> members in some arbitrary array.
 > 
+> Change relevant variable / return types from int to bool and
+> prefer a true / false value for predicate expressions versus
+> a plain 1 / 0 value.
 
-- Péter
+This makes a bunch of unrelated changes without a clear pattern
+in many places and I'm not convinced that the reason is good enough.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Signed-off-by: Joey Pabalinas <joeypabalinas@gmail.com>
+> 
+>  drivers/acpi/battery.c  |  4 ++--
+>  drivers/acpi/ec.c       | 20 +++++++++-----------
+>  drivers/acpi/pci_root.c | 17 ++++++-----------
+>  drivers/acpi/scan.c     |  6 +++---
+>  include/acpi/acpi_bus.h |  2 +-
+>  5 files changed, 21 insertions(+), 28 deletions(-)
+> 
+> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> index bdb24d636d9acc9c1a..f1a5fb5252969f0478 100644
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -1416,7 +1416,7 @@ static int acpi_battery_add(struct acpi_device *devic=
+> e)
+>  	battery->pm_nb.notifier_call =3D battery_notify;
+>  	register_pm_notifier(&battery->pm_nb);
+> =20
+
+Broken whitespace.
+
+> -	device_init_wakeup(&device->dev, 1);
+> +	device_init_wakeup(&device->dev, true);
+> =20
+>  	return result;
+> =20
+> @@ -1434,7 +1434,7 @@ static int acpi_battery_remove(struct acpi_device *de=
+> vice)
+> =20
+>  	if (!device || !acpi_driver_data(device))
+>  		return -EINVAL;
+> -	device_init_wakeup(&device->dev, 0);
+> +	device_init_wakeup(&device->dev, false);
+>  	battery =3D acpi_driver_data(device);
+>  	unregister_pm_notifier(&battery->pm_nb);
+>  #ifdef CONFIG_ACPI_PROCFS_POWER
+> diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+> index 30a5729565575f83cb..d4a564ab9cdd53046c 100644
+> --- a/drivers/acpi/ec.c
+> +++ b/drivers/acpi/ec.c
+> @@ -350,7 +350,7 @@ static inline bool acpi_ec_is_gpe_raised(struct acpi_ec=
+>  *ec)
+>  	acpi_event_status gpe_status =3D 0;
+> =20
+>  	(void)acpi_get_gpe_status(NULL, ec->gpe, &gpe_status);
+> -	return (gpe_status & ACPI_EVENT_FLAG_STATUS_SET) ? true : false;
+> +	return gpe_status & ACPI_EVENT_FLAG_STATUS_SET;
+
+And this isn't entirely correct even.
+
+You should apply !! to the expression to get the same result really.
+
+Thanks,
+Rafael
