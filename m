@@ -1,168 +1,127 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1359032-1525295672-2-1857010679927478261
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525295671; b=gXdDNwLP51bOVlumM7wV6SDfNJmOYAIMMlDhC0CEXNJgAVQAMP
-    9EEOSsnYmF4L2qjC5hAnkmdcfmDGgcF+39LsH15FPSoLD9KxBcSb2V2+XG6Fechh
-    lEYfW4pQ973rsKzksFKm47sr+dmZfb2n0ZhMkEc2jdZsGpUZlY1fdlazPmn9xILp
-    pT92LFT+5bo3Vx/Fp/SVxFzKQJoWh+eRGUE0MKL435IAn78zsTkbCs904JCX1mQw
-    24paC9lo12khJ6bQZXLfmKuHMOQUppF/2tAn5FfCiN2HBZwX5vOsQg+QmvXH8itL
-    Sp2EE9jxCCdHx2f8Ocj76lmnt/s7a6/CxVMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525295671;
-    bh=72JnI+JEj4YoV4MAwZTgwB5mqAczNaRHwv4wNhpXJjY=; b=HTQ6YtDrPzXg
-    ybgTN97jkz92o1vKqh4Es6ZnvDUhWLPY96VXREGFnSUS0Upfypb5K9BWcJU/VPCl
-    i6DNrGvsR16tNtsGnoR2/cHq+DRrpJVR7PdjzOIGjNnBBWJARs7i9NuqksiLZlAF
-    AIj+/zdaNDQjzHsFsn2O5jElpD+oDc+4AK2ElDO2yeT+4uYHQ7Fbx0uSaYVUTTkG
-    JzJCyNCxsqic6vxvtDojBXUskpdsjNcxdszDnXjmhcZzcM/akIjgoQUaGZFvktBU
-    Iy58h9yDZGTZVIkUb+IVNY1TlYr0MrP2dsjp89FCQVBSmup09+rfEJqAe5XEBIye
-    0/H4Wzm+1w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=oracle.com header.i=@oracle.com header.b=pU5j3IdZ x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=oracle.com header.i=@oracle.com header.b=pU5j3IdZ x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGw1FTxvg77Yoh3Ybs2sNBXe9V6DezM7pLNfRFY6al394HsLRsL2LZZAkIk5pBSDsApTXHOLuLipd3daZC/OPZRpQIT4YwX0Sjm+VIdpfJC0iPa0HxRH
-    9duEz/O7LPO/PvPveyRZABLUL4wuMK6ILyiHxbuw2sIu1uW1uE8KWV1XmtmvmR/JjinnxUaE4Q7vAfiA42utjCJj/HLNoitEFYZ56Ns3YMzI2Dc4YAN2JXd5
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=qqHblvjzxz2coTAlHHIA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751152AbeEBVOa (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 17:14:30 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:38884 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeEBVO3 (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 17:14:29 -0400
-Subject: Re: [PATCH 2/3] mm: add find_alloc_contig_pages() interface
-To: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
-Cc: Reinette Chatre <reinette.chatre@intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Guy Shattah <sguy@mellanox.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        David Nellans <dnellans@nvidia.com>,
-        Laura Abbott <labbott@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180417020915.11786-1-mike.kravetz@oracle.com>
- <20180417020915.11786-3-mike.kravetz@oracle.com>
- <deb9dd1d-84bf-75c7-2880-a7bcec880d47@suse.cz>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <af56d281-fea1-2bd7-aff1-108fa1d9f3be@oracle.com>
-Date: Wed, 2 May 2018 14:13:32 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+Return-Path: <geert.uytterhoeven@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525295475; cv=none;
+        d=google.com; s=arc-20160816;
+        b=N7xeUJ6ImZ8UMw9EmWKh+4lvMoHa9+8Zmv0zPGYuBF3PW6lFjO5vqxRv5pH09fUsaS
+         GRzajxnsR8LZe9SkgYiCReRWAalis3D0EgNck7bfoLacOjZkLwU8By3mzb1erJVfMlTR
+         13dFIgZbX/+OKRRWh2fjbKVTl0EdTCk2p40nVGoJTwXnpUHe0cHcggz6sdLOCsbVAxvZ
+         LEzZbGKPhwAjgNs8woGMMcUZdjKvlonhAGKSnW7lM1zDrGowWxq1hgvoLTmz1OVj/X+1
+         UnAYd7OjounBBYRYr/itQNA/JyCXIzyx5WJfPYHo9YDKumLJMtRcQHvoTWVgxiqveFiK
+         HhTg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=iAsDCiysLpb2MDNHCAHWgQ1LWxmW6WediMztGiEoDpw=;
+        b=cvWs6tca/GyVIcZYlzt/MCaLQcBb4/iLIbqBsD7uvJwPnzumHyD/IMGgA1HTGdiF/d
+         KTOXhKwYWlloADs1ZGoGCxS0PMqQTk/LTE4uaEOTmDjlurxv5COyqHsDORSgkMVMpPby
+         kktPGADHrIuyKIlFAryjJ0Y72nNVoQiKxL3PwoaeZURrnvxABcqGBU+VVytXv9iKLHtk
+         gB284P7ZfU4IOsYj7wYVcagn1TFd5lNozVK0/Ux0xtxZHGscr9rLwNcT5DIbVzMzEH93
+         izCyBWdYdOb26VVhw6kujd/8ABGMTifAA0YXim9UIUrzZ3hp8AKhzE4wdToTDhEW1Kog
+         rjyA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=r2PLEGWa;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=r2PLEGWa;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+X-Google-Smtp-Source: AB8JxZoHtVAB63EzGAsRwHZehgPGzbikRRCwiv7jjB9ZXQhobY+aeIrAfWXfB+9P3qT0wlicIAziZnRZMm8Nw/06SpA=
 MIME-Version: 1.0
-In-Reply-To: <deb9dd1d-84bf-75c7-2880-a7bcec880d47@suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8881 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=855
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805020177
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+Sender: geert.uytterhoeven@gmail.com
+In-Reply-To: <CAK8P3a0tMp2QURp-9WuHehqE0b6-BO1wJ38siTdxhxgwCb-ERw@mail.gmail.com>
+References: <20180426152920.21569-1-brgl@bgdev.pl> <20180426173151.GJ3094@brightrain.aerifal.cx>
+ <6d1f9114-f1d1-961f-4f36-74adff059dc3@lechnology.com> <CAK8P3a0oCH7zyBs8nQd4p+xLrFwDQiJsaKKCF1m04nyXsZxk=g@mail.gmail.com>
+ <CAMpxmJUR+31axmAe2TNq00aUg40bnC=5k=2cVX019Vncr7cRkw@mail.gmail.com>
+ <CAK8P3a2xtTLx-VHVWok-b19=o1z5FbTNcaWq7Y_HSdaH6pWnZg@mail.gmail.com>
+ <CAMRc=MdomjLCq-bJyktaToH00kNQAuTLgkSFRrY9Jmre8McT3A@mail.gmail.com> <CAK8P3a0tMp2QURp-9WuHehqE0b6-BO1wJ38siTdxhxgwCb-ERw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 2 May 2018 23:11:14 +0200
+X-Google-Sender-Auth: S0uXDNy5rykkEpHG0jUizsZyJH4
+Message-ID: <CAMuHMdU7b86fWAFaK6LQ0gHukJebc4fegUetHPCvu7ujdjSfRw@mail.gmail.com>
+Subject: Re: [PATCH RFC PoC 0/2] platform: different approach to early
+ platform drivers
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Mark Rutland <mark.rutland@arm.com>, Rich Felker <dalias@libc.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>, Michael Turquette <mturquette@baylibre.com>,
+	Sekhar Nori <nsekhar@ti.com>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Frank Rowand <frowand.list@gmail.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Kevin Hilman <khilman@kernel.org>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Bartosz Golaszewski <bgolaszewski@baylibre.com>, Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Michal Suchanek <msuchanek@suse.de>, DTML <devicetree@vger.kernel.org>,
+	David Lechner <david@lechnology.com>, Marc Zyngier <marc.zyngier@arm.com>,
+	Rob Herring <robh+dt@kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Arend van Spriel <aspriel@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598823149958129846?=
+X-GMAIL-MSGID: =?utf-8?q?1599388228890425848?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/21/2018 09:16 AM, Vlastimil Babka wrote:
-> On 04/17/2018 04:09 AM, Mike Kravetz wrote:
->> find_alloc_contig_pages() is a new interface that attempts to locate
->> and allocate a contiguous range of pages.  It is provided as a more
->> convenient interface than alloc_contig_range() which is currently
->> used by CMA and gigantic huge pages.
+On Fri, Apr 27, 2018 at 2:40 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Apr 27, 2018 at 1:53 PM, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>> 2018-04-27 12:18 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
+>>> On Fri, Apr 27, 2018 at 10:57 AM, Bartosz Golaszewski
+>>> <bgolaszewski@baylibre.com> wrote:
+>>>> 2018-04-27 9:52 GMT+02:00 Arnd Bergmann <arnd@arndb.de>:
+>>>>> On Fri, Apr 27, 2018 at 4:28 AM, David Lechner <david@lechnology.com> wrote:
+>>>> My patch tries to address exactly the use cases we're facing - for
+>>>> example by providing means to probe devices twice (early and late) and
+>>>> to check the state we're at in order for users to be able to just do
+>>>> the critical initialization early on and then continue with regular
+>>>> stuff later.
+>>>
+>>> Maybe the problem is reusing the name and some of the code from
+>>> an existing functionality that we've been trying to get rid of.
+>>>
 >>
->> When attempting to allocate a range of pages, migration is employed
->> if possible.  There is no guarantee that the routine will succeed.
->> So, the user must be prepared for failure and have a fall back plan.
+>> I'm not reusing the name - in fact I set the prefix to earlydev_
+>> exactly in order to not confuse anyone. I'm also not reusing any code
+>> in the second series.
+>
+> Ok.
+>
+>>> If what you want to do is completely different from the existing
+>>> early_platform implementation, how about starting by moving that
+>>> out of drivers/base/platform.c into something under arch/sh/
+>>> and renaming it to something with an sh_ prefix.
+>>>
 >>
->> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-> 
-> Hi, just two quick observations, maybe discussion pointers for the
-> LSF/MM session:
-> - it's weird that find_alloc_contig_pages() takes an order, and
-> free_contig_pages() takes a nr_pages. I suspect the interface would be
-> more future-proof with both using nr_pages? Perhaps also minimum
-> alignment for the allocation side? Order is fine for hugetlb, but what
-> about other potential users?
+>> Yes, this is a good idea, but what about the sh-specific drivers that
+>> rely on it? Is including headers from arch/ in driver code still an
+>> accepted practice?
+>
+> I think it's fine here, since we're just move it out of the way and
+> there are only very few drivers using it:
+>
+> drivers/clocksource/sh_cmt.c:early_platform_init("earlytimer",
+> &sh_cmt_device_driver);
+> drivers/clocksource/sh_mtu2.c:early_platform_init("earlytimer",
+> &sh_mtu2_device_driver);
+> drivers/clocksource/sh_tmu.c:early_platform_init("earlytimer",
+> &sh_tmu_device_driver);
+> drivers/clocksource/timer-ti-dm.c:early_platform_init("earlytimer",
+> &omap_dm_timer_driver);
+> drivers/tty/serial/sh-sci.c:early_platform_init_buffer("earlyprintk",
+> &sci_driver,
+>
+> For timer-ti-dm, it seems like a leftover from old times that can
+> be removed. The other four are shared between arch/sh and
+> arch/arm/mach-shmobile and already have some #ifdef
+> to handle those two cases.
 
-Agreed, and I am changing this to nr_pages and adding alignment.
+Sh-sci is also used on arm64, for R-Car Gen3 SoCs.
+While the latter has CMT and TMU hardware blocks, so far we haven't enabled
+support for it yet (just using the ARM arch timer is too convenient? ;-)
 
-> - contig_alloc_migratetype_ok() says that MIGRATE_CMA blocks are OK to
-> allocate from. This silently assumes that everything allocated by this
-> will be migratable itself, or it might eat CMA reserves. Is it the case?
-> Also you then call alloc_contig_range() with MIGRATE_MOVABLE, so it will
-> skip/fail on MIGRATE_CMA anyway IIRC.
+Gr{oetje,eeting}s,
 
-When looking closer at the code, alloc_contig_range currently has comments
-saying migratetype must be MIGRATE_MOVABLE or MIGRATE_CMA.  However, this
-is not checked/enforced anywhere in the code (that I can see).  The
-migratetype passed to alloc_contig_range() will be used to set the migrate
-type of all pageblocks in the range.  If there is an error, one side effect
-is that some pageblocks may have their migrate type changed to migratetype.
-Depending on how far we got before hitting the error, the number of pageblocks
-changed is unknown.  This actually can happen at the lower level routine
-start_isolate_page_range().
-
-My first thought was to make start_isolate_page_range/set_migratetype_isolate
-check that the migrate type of a pageblock was migratetype before isolating.
-This would work for CMA, and I could make it work for the new allocator.
-However, offline_pages also calls start_isolate_page_range and I believe we
-do not want to enforce such a rule (all pageblocks must be of the same migrate
-type) for memory hotplug/offline?
-
-Should we be concerned at all about this potential changing of migrate type
-on error?  The only way I can think to avoid this is to save the original
-migrate type before isolation.
+                        Geert
 
 -- 
-Mike Kravetz
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
