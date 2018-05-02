@@ -1,85 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751769AbeEBN5C (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:57:02 -0400
-Received: from mga01.intel.com ([192.55.52.88]:58147 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751271AbeEBNzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:55:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="225150729"
-From: changbin.du@intel.com
-To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
-Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v2 1/5] x86/mm: surround level4_kernel_pgt with #ifdef CONFIG_X86_5LEVEL...#endif
-Date: Wed,  2 May 2018 21:44:56 +0800
-Message-Id: <1525268700-10631-2-git-send-email-changbin.du@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+        id S1751537AbeEBN5s (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:57:48 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:41680 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750936AbeEBN5r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:57:47 -0400
+From: Gabriel FERNANDEZ <gabriel.fernandez@st.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+CC: "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Olivier BIDEAU <olivier.bideau@st.com>,
+        "Loic PALLARDY" <loic.pallardy@st.com>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Subject: Re: [PATCH] clk: stm32mp1: Add CLK_IGNORE_UNUSED to ck_sys_dbg clock
+Thread-Topic: [PATCH] clk: stm32mp1: Add CLK_IGNORE_UNUSED to ck_sys_dbg clock
+Thread-Index: AQHT26IegJG+GpTXWkeXcO0ng8oO16QbWYOAgAEIroA=
+Date: Wed, 2 May 2018 13:57:23 +0000
+Message-ID: <fc59c88c-b25a-8e6f-ec14-5e7abba07829@st.com>
+References: <1524556723-26926-1-git-send-email-gabriel.fernandez@st.com>
+ <152521260300.138124.15551649788620481848@swboyd.mtv.corp.google.com>
+In-Reply-To: <152521260300.138124.15551649788620481848@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.49]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8EB821F0BA818442A264F974E894EEED@st.com>
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w42DvrNN021489
 
-From: Changbin Du <changbin.du@intel.com>
+Hi Stephen,
 
-The level4_kernel_pgt is only defined when X86_5LEVEL is enabled. So
-surround level4_kernel_pgt with #ifdef CONFIG_X86_5LEVEL...#endif to
-make code correct.
+This patch is not a critical fix for this merge window.
 
-Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- arch/x86/include/asm/pgtable_64.h |  2 ++
- arch/x86/kernel/head64.c          | 13 ++++++-------
- 2 files changed, 8 insertions(+), 7 deletions(-)
+Thanks
 
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 877bc27..9e7f667 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -15,7 +15,9 @@
- #include <linux/bitops.h>
- #include <linux/threads.h>
- 
-+#ifdef CONFIG_X86_5LEVEL
- extern p4d_t level4_kernel_pgt[512];
-+#endif
- extern p4d_t level4_ident_pgt[512];
- extern pud_t level3_kernel_pgt[512];
- extern pud_t level3_ident_pgt[512];
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 0c408f8..775d7a6 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -143,16 +143,15 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 
- 	pgd = fixup_pointer(&early_top_pgt, physaddr);
- 	p = pgd + pgd_index(__START_KERNEL_map);
--	if (la57)
--		*p = (unsigned long)level4_kernel_pgt;
--	else
--		*p = (unsigned long)level3_kernel_pgt;
--	*p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
--
-+#ifdef CONFIG_X86_5LEVEL
- 	if (la57) {
-+		*p = (unsigned long)level4_kernel_pgt;
- 		p4d = fixup_pointer(&level4_kernel_pgt, physaddr);
- 		p4d[511] += load_delta;
--	}
-+	} else
-+#endif
-+		*p = (unsigned long)level3_kernel_pgt;
-+	*p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
- 
- 	pud = fixup_pointer(&level3_kernel_pgt, physaddr);
- 	pud[510] += load_delta;
--- 
-2.7.4
+Gabriel
+
+
+On 05/02/2018 12:10 AM, Stephen Boyd wrote:
+> Quoting gabriel.fernandez@st.com (2018-04-24 00:58:43)
+>> From: Gabriel Fernandez <gabriel.fernandez@st.com>
+>>
+>> Don't disable the dbg clock if was set by bootloader.
+>>
+>> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+>> ---
+> Is this a critical fix for this merge window? Please add "Fixes:" tag.
+>
