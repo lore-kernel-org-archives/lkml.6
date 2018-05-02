@@ -1,101 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750928AbeEBEDk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 00:03:40 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:31821 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750836AbeEBEDj (ORCPT
+        id S1751029AbeEBEOy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 00:14:54 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:39586 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750878AbeEBEOx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 00:03:39 -0400
-X-UUID: 1a5377590c8b4d779a8a206bbb826be4-20180502
-From: <sean.wang@mediatek.com>
-To: <matthias.bgg@gmail.com>, <rjw@rjwysocki.net>, <khilman@baylibre.com>
-CC: <ulf.hansson@linaro.org>, <linux-mediatek@lists.infradead.org>,
-        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v3] soc: mediatek: add a fixed wait for SRAM stable
-Date: Wed, 2 May 2018 12:03:29 +0800
-Message-ID: <90f83c1bd359bb39cdae334e489037d6fb8ac69b.1525233544.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Wed, 2 May 2018 00:14:53 -0400
+X-Google-Smtp-Source: AB8JxZqlYKync3k7gAfrbNlbOVzPRkIxhhEuA6hQjoX/Z0VpwoKhFSNYp2Gw8KD2gvvZhMyonfRlqEBbtj7Ccg6MgK0=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+ <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
+ <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+ <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
+ <CA+55aFyZXWoiWnEU8S1PNNyUTWsi7UCnBuDKOobfMLaE8uFKJg@mail.gmail.com>
+ <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
+ <CA+55aFzDt1uvDBqgkB0T2o2-d5Fi0tBiGcy5iAZ-wRNdAL4uQw@mail.gmail.com>
+ <CAPcyv4hQVKL=OtoYbWDGfOMdWen3MkF5qBPrek98+w2gODHvtg@mail.gmail.com>
+ <CAPcyv4ixtVC3w9BE3Z2ME-qMPCh9evBKP51SDrNPXAsg7xH1RQ@mail.gmail.com>
+ <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com> <CAPcyv4idV+hp-W56gyQDN4p9SQsYz+xondgVJwQSYphUMxkYnw@mail.gmail.com>
+In-Reply-To: <CAPcyv4idV+hp-W56gyQDN4p9SQsYz+xondgVJwQSYphUMxkYnw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 02 May 2018 04:14:41 +0000
+Message-ID: <CA+55aFwjaY6Nv7x0d8BQaSddZwAK7fukrYOHWEG_v2-1JZi5Qg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On Tue, May 1, 2018 at 9:00 PM Dan Williams <dan.j.williams@intel.com>
+wrote:
+> >
+> > I  have some dim memory of "rep movs doesn't work well for pmem", but
+does
+> > it *seriously* need unrolling to cacheline boundaries? And if it does,
+who
+> > designed it, and why is anybody using it?
+> >
 
-MT7622_POWER_DOMAIN_WB doesn't send an ACK when its managed SRAM becomes
-stable, which is not like the behavior the other power domains should
-have. Therefore, it's necessary for such a power domain to have a fixed
-and well-predefined duration to wait until its managed SRAM can be allowed
-to access by all functions running on the top.
+> I think this is an FAQ from the original submission, in fact some guy
+> named "Linus Torvalds" asked [1]:
 
-v1 -> v2:
- - use MTK_SCPD_FWAIT_SRAM flag as an indication requiring force waiting.
+Oh, I already mentioned that  I remembered that "rep movs" didn't work well.
 
-v2 -> v3:
- - change the order for condition judgment with we check an existence of
-   the MTK_SCPD_FWAIT_SRAM first to get rid of any oversight on negative
-   condition.
+But there's a big gap between "just use 'rep movs' and 'do some cacheline
+unrollong'".
 
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Weiyi Lu <weiyi.lu@mediatek.com>
----
- drivers/soc/mediatek/mtk-scpsys.c | 23 +++++++++++++++++------
- 1 file changed, 17 insertions(+), 6 deletions(-)
+Why isn't it just doing a simple word-at-a-time loop and letting the CPU do
+the unrolling that it will already do on its own?
 
-diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index b1b45e4..2080c8f 100644
---- a/drivers/soc/mediatek/mtk-scpsys.c
-+++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -32,6 +32,7 @@
- #define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
- 
- #define MTK_SCPD_ACTIVE_WAKEUP		BIT(0)
-+#define MTK_SCPD_FWAIT_SRAM		BIT(1)
- #define MTK_SCPD_CAPS(_scpd, _x)	((_scpd)->data->caps & (_x))
- 
- #define SPM_VDE_PWR_CON			0x0210
-@@ -237,11 +238,21 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	val &= ~scpd->data->sram_pdn_bits;
- 	writel(val, ctl_addr);
- 
--	/* wait until SRAM_PDN_ACK all 0 */
--	ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
--				 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
--	if (ret < 0)
--		goto err_pwr_ack;
-+	/* Either wait until SRAM_PDN_ACK all 0 or have a force wait */
-+	if (MTK_SCPD_CAPS(scpd, MTK_SCPD_FWAIT_SRAM)) {
-+		/*
-+		 * Currently, MTK_SCPD_FWAIT_SRAM is necessary only for
-+		 * MT7622_POWER_DOMAIN_WB and thus just a trivial setup is
-+		 * applied here.
-+		 */
-+		usleep_range(12000, 12100);
-+
-+	} else {
-+		ret = readl_poll_timeout(ctl_addr, tmp, (tmp & pdn_ack) == 0,
-+					 MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
-+		if (ret < 0)
-+			goto err_pwr_ack;
-+	};
- 
- 	if (scpd->data->bus_prot_mask) {
- 		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
-@@ -785,7 +796,7 @@ static const struct scp_domain_data scp_domain_data_mt7622[] = {
- 		.sram_pdn_ack_bits = 0,
- 		.clk_id = {CLK_NONE},
- 		.bus_prot_mask = MT7622_TOP_AXI_PROT_EN_WB,
--		.caps = MTK_SCPD_ACTIVE_WAKEUP,
-+		.caps = MTK_SCPD_ACTIVE_WAKEUP | MTK_SCPD_FWAIT_SRAM,
- 	},
- };
- 
--- 
-2.7.4
+I may have gotten that answered too, but there's no comment in the code
+about why it's such a disgusting mess, so I've long since forgotten _why_
+it's such a disgusting mess.
+
+That loop unrolling _used_ to be "hey, it's simple".
+
+Now it's "Hey, that's truly disgusting", with the separate fault handling
+for every single case in the unrolled loop.
+
+Just look at the nasty _ASM_EXTABLE_FAULT() uses and those E_cache_x error
+labels, and getting the number rof bytes copied right.
+
+And then ask yourself "what if we didn't unroll that thing 8 times, AND WE
+COULD GET RID OF ALL OF THOSE?"
+
+Maybe you already did ask yourself.  But I'm asking because it sure isn't
+explained in the code.
+
+             Linus
