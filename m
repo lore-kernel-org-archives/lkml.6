@@ -1,75 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751699AbeEBVGa (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 17:06:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750945AbeEBVG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 17:06:26 -0400
-Date: Wed, 2 May 2018 16:06:25 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: Tree for May 2 (objtool bug!)
-Message-ID: <20180502210625.pehvcgtlqwqznnry@treble>
-References: <20180502165939.2375cf6a@canb.auug.org.au>
- <fb41f3ee-705e-4886-3f78-c7f88db5276d@infradead.org>
- <20180502154319.cbi47tw2fmhxlnr4@treble>
- <5ed0305b-bca8-3b50-7d33-32c5754a81fc@infradead.org>
+        id S1751572AbeEBVLp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 17:11:45 -0400
+Received: from namei.org ([65.99.196.166]:59182 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751133AbeEBVLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 17:11:43 -0400
+Date: Thu, 3 May 2018 07:11:36 +1000 (AEST)
+From: James Morris <jmorris@namei.org>
+To: Tyler Hicks <tyhicks@canonical.com>
+cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+        Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-audit@redhat.com, linux-security-module@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] seccomp: Configurable separator for the actions_logged
+ string
+In-Reply-To: <1525276400-7161-3-git-send-email-tyhicks@canonical.com>
+Message-ID: <alpine.LRH.2.21.1805030711200.30206@namei.org>
+References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com> <1525276400-7161-3-git-send-email-tyhicks@canonical.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5ed0305b-bca8-3b50-7d33-32c5754a81fc@infradead.org>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 08:59:38AM -0700, Randy Dunlap wrote:
-> On 05/02/2018 08:43 AM, Josh Poimboeuf wrote:
-> > On Wed, May 02, 2018 at 08:37:53AM -0700, Randy Dunlap wrote:
-> >> On 05/01/2018 11:59 PM, Stephen Rothwell wrote:
-> >>> Hi all,
-> >>>
-> >>> Changes since 20180501:
-> >>>
-> >>
-> >> on x86_64 randconfig:
-> >>
-> >>   CC      fs/cifs/smbencrypt.o
-> >> drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
-> >> drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
-> > 
-> > Can you share the object file (or at least the .config and GCC version)?
-> > 
-> 
-> gcc (SUSE Linux) 4.8.5
-> 
-> config and .o file are attached.
+On Wed, 2 May 2018, Tyler Hicks wrote:
 
-Thanks, can you verify this fixes it?
+> The function that converts a bitmask of seccomp actions that are
+> allowed to be logged is currently only used for constructing the display
+> string for the kernel.seccomp.actions_logged sysctl. That string wants a
+> space character to be used for the separator between actions.
+> 
+> A future patch will make use of the same function for building a string
+> that will be sent to the audit subsystem for tracking modifications to
+> the kernel.seccomp.actions_logged sysctl. That string will need to use a
+> comma as a separator. This patch allows the separator character to be
+> configurable to meet both needs.
+> 
+> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 92b6a2c21631..dae568fef2c1 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -190,9 +190,13 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
- 					continue;
- 
- 				if (recursion == 5) {
--					WARN_FUNC("infinite recursion (objtool bug!)",
--						  dest->sec, dest->offset);
--					return -1;
-+					/*
-+					 * Infinite recursion: two functions
-+					 * have sibling calls to each other.
-+					 * This is a very rare case.  It means
-+					 * they aren't dead ends.
-+					 */
-+					return 0;
- 				}
- 
- 				return __dead_end_function(file, dest_func,
+
+Reviewed-by: James Morris <james.morris@microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
