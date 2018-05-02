@@ -1,116 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751144AbeEBOUf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:20:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46582 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751365AbeEBOUa (ORCPT
+        id S1751828AbeEBOV1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:21:27 -0400
+Received: from www62.your-server.de ([213.133.104.62]:53323 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751718AbeEBOVV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:20:30 -0400
+        Wed, 2 May 2018 10:21:21 -0400
+Subject: Re: arch/x86/net/bpf_jit_comp conflicts. was: [tip:x86/cleanups]
+ x86/bpf: Clean up non-standard comments, to make the code more readable
+To: Alexei Starovoitov <ast@fb.com>, peterz@infradead.org,
+        edumazet@google.com, davem@davemloft.net, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, bp@alien8.de, hpa@zytor.com,
+        mingo@kernel.org, tglx@linutronix.de,
+        linux-tip-commits@vger.kernel.org, netdev@vger.kernel.org
+References: <tip-5f26c50143f58f256535bee8d93a105f36d4d2da@git.kernel.org>
+ <44202670-ed43-366b-caf2-f72863ee7c6a@iogearbox.net>
+ <7741d4cc-2d1d-9831-e0ce-38afdd41f0a1@fb.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <7b7cf2b1-d27f-ecce-4258-a7b4b5d8d7f4@iogearbox.net>
+Date: Wed, 2 May 2018 16:21:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+In-Reply-To: <7741d4cc-2d1d-9831-e0ce-38afdd41f0a1@fb.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Date: Wed, 02 May 2018 10:20:19 -0400
-From: Agustin Vega-Frias <agustinv@codeaurora.org>
-To: Yisheng Xie <xieyisheng1@huawei.com>
-Cc: Neil Leeder <neil.m.leeder@gmail.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Mark Langsdorf <mlangsdo@redhat.com>, Mark Salter <msalter@redhat.com>,
-        Jon Masters <jcm@redhat.com>, Timur Tabi <timur@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] perf: add arm64 smmuv3 pmu driver
-In-Reply-To: <c1f9230b-8ff0-5b2e-def9-cbf6b2e2e99c@huawei.com>
-References: <1501876754-1064-1-git-send-email-nleeder@codeaurora.org>
- <1501876754-1064-3-git-send-email-nleeder@codeaurora.org>
- <883d32ce-6581-ecf6-5088-ecb238322ebe@huawei.com>
- <e55ab4404143ea0b3cc4795a93e37480@codeaurora.org>
- <14f90cc6-f2c1-5a63-67c6-a5c8ddb4799e@gmail.com>
- <c1f9230b-8ff0-5b2e-def9-cbf6b2e2e99c@huawei.com>
-Message-ID: <93b3738c386c528193b158da0f85fd27@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-04-02 02:37, Yisheng Xie wrote:
-> Hi Neil,
+On 04/28/2018 12:16 AM, Alexei Starovoitov wrote:
+> On 4/27/18 5:13 AM, Daniel Borkmann wrote:
+>> On 04/27/2018 01:00 PM, tip-bot for Ingo Molnar wrote:
+>>> Commit-ID:  5f26c50143f58f256535bee8d93a105f36d4d2da
+>>> Gitweb:     https://git.kernel.org/tip/5f26c50143f58f256535bee8d93a105f36d4d2da
+>>> Author:     Ingo Molnar <mingo@kernel.org>
+>>> AuthorDate: Fri, 27 Apr 2018 11:54:40 +0200
+>>> Committer:  Ingo Molnar <mingo@kernel.org>
+>>> CommitDate: Fri, 27 Apr 2018 12:42:04 +0200
+>>>
+>>> x86/bpf: Clean up non-standard comments, to make the code more readable
+>>>
+>>> So by chance I looked into x86 assembly in arch/x86/net/bpf_jit_comp.c and
+>>> noticed the weird and inconsistent comment style it mistakenly learned from
+>>> the networking code:
+>>>
+>>>  /* Multi-line comment ...
+>>>   * ... looks like this.
+>>>   */
+>>>
+[...]
+>>> No change in functionality.
+>>
+>> Thanks for the cleanup, looks fine to me!
 > 
-> On 2018/4/1 13:44, Neil Leeder wrote:
->> Hi Yisheng Xie,
->> 
->> On 3/29/2018 03:03 AM, Yisheng Xie wrote:
->>> 
->>> Hi Neil,
->>> 
->>> On 2017/8/5 3:59, Neil Leeder wrote:
->>>> +    mem_resource_0 = platform_get_resource(pdev, IORESOURCE_MEM, 
->>>> 0);
->>>> +    mem_map_0 = devm_ioremap_resource(&pdev->dev, mem_resource_0);
->>>> +
->>> Can we use devm_ioremap instead? for the reg_base of smmu_pmu is
->>> IMPLEMENTATION DEFINED. If the reg of smmu_pmu is inside smmu,
->>> devm_ioremap_resource will failed and return -EBUSY, eg.:
->>> 
->>>   smmu reg ranges:        0x180000000 ~ 0x1801fffff
->>>   its smmu_pmu reg ranges:    0x180001000 ~ 0x180001fff
->>> 
->> Just to let you know that I no longer work at Qualcomm and I won't be 
->> able to provide updates to this patchset. I expect that others from my 
->> former team at Qualcomm will pick up ownership.
+> same here. thanks for the cleanup!
 > 
-> Thanks for this infomation.
+>>> ( In case this commit causes conflicts with pending development code
+>>>   I'll be glad to help resolve any conflicts! )
+>>
+>> Any objections if we would simply route this via bpf-next tree, otherwise
+>> this will indeed cause really ugly merge conflicts throughout the JIT with
+>> pending work.
+
+Since no one hollered I've cherry picked this into bpf-next tree so that
+upcoming BPF work can be rebased on top of this, thanks Ingo!
+
+> right. would be much better to route this patch via bpf-next.
+> Though all the changes are cleanups in comments I'm pretty sure
+> they will conflict with other changes we're doing.
 > 
-> hi Agustin and Timur,
+> Ingo,
+> could you please drop this patch from tip tree and resend it to us?
+> I cannot find the original patch in any public mailing list.
+> Only in tip-bot notification.
 > 
-> Is there any new status about this patchset?
+> Personally I don't care whether bpf jit code uses networking
+> or non-networking style of comments, but will be happy to enforce
+> non-networking for this file in the future, since that seems to be the
+> preference.
 > 
-
-Hi,
-
-Apologies for the slow response.
-We are having some internal discussions about when/if to do this.
-I expect to have more clarity within a few weeks.
-
-For what is worth let me take the opportunity to outline the approach
-we would like to see for a V2 either developed by us or somebody else
-in the community:
-
-1. Rework to comply with the IORT spec changes.
-
-2. Rework probing to extract extra information from the IORT table
-    about SMMU/device associations.
-
-   With this information and some perf user space work I think it's 
-possible
-   to have a single dynamic PMU node and use a similar approach to what 
-is
-   used in the Coresight drivers to pass the device we want to monitor 
-and
-   for the driver to find the PMU/PMCG. E.g.:
-
-   $ lspci
-   0001:00:00.0 PCI bridge: Airgo Networks, Inc. Device 0401
-   0002:00:00.0 PCI bridge: Airgo Networks, Inc. Device 0401
-   0002:01:00.0 Ethernet controller: Mellanox Technologies MT27500 Family 
-[ConnectX-3]
-   0003:00:00.0 PCI bridge: Airgo Networks, Inc. Device 0401
-   0003:01:00.0 Ethernet controller: Mellanox Technologies MT27500 Family 
-[ConnectX-3]
-
-   # Monitor TLB misses on root complex 2 (no stream filter is applied)
-   perf stat -a -e smmu/tlb_miss,@0002:00:00.0/ <workload>
-
-   # Monitor TLB misses on a device on root complex 2 (derive the stream 
-number from the RID)
-   perf stat -a -e smmu/tlb_miss,@0002:01:00.0/ <workload>
-
-Thanks,
-Agustín
-
--- 
-Qualcomm Datacenter Technologies, Inc. on behalf of the Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a 
-Linux Foundation Collaborative Project.
+> Thanks
