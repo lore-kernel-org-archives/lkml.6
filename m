@@ -1,85 +1,165 @@
-Return-Path: <brgl@bgdev.pl>
-ARC-Seal: i=1; a=rsa-sha256; t=1525254508; cv=none;
-        d=google.com; s=arc-20160816;
-        b=c2lhQz6Z7FwOZqOMDxgzJ6Q+9BZIhpZoXo1fbVDvK1m1NwPlVrDmkL/8MDBeeoYDHw
-         e7dAnVt+JuSnfRD/hA5ZjeuIK8Q/Rttuk6SKEndv4K2IR7+rh3DDKy7Tq0LG9mF+/FAp
-         GS+iaFOrQ52iW0c5Kyvl5RYmTK5W6WHkeeW58S3TvJBR9dKutIufuVnG7HzWqZ8nGitW
-         qvs66M2eTSWuJ4AWypEnVyGFcM9HDDtsEthnENV4lsX3GpoJWwkoz/Ys+hRPxvaH8cgw
-         M4ZEVRnkJuXD/9puNmjbc0zFwYdRnwyrw8vg/evoooaMyZzSEr+reb40Ypw014wIZcp+
-         MYcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=8oh/OIT/9h7vCEGTmCnH0Ht+WYiSAYFVks6ovjWTYxY=;
-        b=tV3y/2hm6Yi+yb3hvOlqLSGzhCrkOQEnnEawfOLHon6lytNcnilEtWYqD+8BLlZFpR
-         3XQRnkmjbGgUnxfkGAYi9J1zeDiw9uWemTali+FrThgxDZbjR/1UyH9kV4x8AVx1063u
-         sRPSMtWI5fKqtF78dIVR7sM0o8q4xgun9wOh21qlZZSFiWpZCojgIr/2LRYn7JCxEpci
-         eXd6wh5JRCbpt6zON4tEdYmPV0NNVFUn67FBYx4e+eBTcaHqKj3z1m3n+PwBvjUc5H/3
-         ITaBdUvKr0uvIQfPsOSDbq4ymWUe3qJGuz+ceHWK+WaRaBwOuHriPqfrnPZD0ytR68Dn
-         V2AA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=z515WefC;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@bgdev-pl.20150623.gappssmtp.com header.s=20150623 header.b=z515WefC;
-       spf=neutral (google.com: 209.85.220.65 is neither permitted nor denied by best guess record for domain of brgl@bgdev.pl) smtp.mailfrom=brgl@bgdev.pl
-X-Google-Smtp-Source: AB8JxZoLqgmlhumqI05D8PZFN3xsuI52hrK9OWhLbBhKTtYQvnujf8EffrgHp3XMHddOc3Xsvjnq6w==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Sekhar Nori <nsekhar@ti.com>,
-	Kevin Hilman <khilman@kernel.org>,
-	David Lechner <david@lechnology.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Marc Zyngier <marc.zyngier@arm.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Peter Rosin <peda@axentia.se>,
-	Jiri Slaby <jslaby@suse.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 1/3] clocksource: timer-ti-dm: remove the early platform driver registration
-Date: Wed,  2 May 2018 11:48:19 +0200
-Message-Id: <20180502094821.2907-2-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180502094821.2907-1-brgl@bgdev.pl>
-References: <20180502094821.2907-1-brgl@bgdev.pl>
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1358616-1525294846-2-10153027831300910459
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525294846; b=H2G1MwubbbGFU2qozm0MoTOSnVTcHGHTFura+V5LBxQMOr5Stv
+    /JPLTo4wCJBEJonCzhMzH4vd+MuqJTARUWFSIqoj0KMiV4FMOy1qGGzgrw7PNZKe
+    ghzwTRuRCZutDCJm821PTyEEx3zNQiW733rgKcO/ZxrUHj2JDfzt2j7mEQp8UdBW
+    I2QR1tHEofnsmFDK+7gDigFCHVr6JVp3Qs3TbyPsYV4LLwAu+iMA4DkHl6qzhUIF
+    WY+FhwrZrZKQ8Wht5mQnWW/tEWrJrsOr1yATrowhNWmHar+Cf1r6SMJg9ZWY7rDi
+    wpXBtmcRpIRig02FHsUT9d34PCyDq2nNdyYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525294846; bh=T8OZS0uJJnjKiqsvLZhP//zxeODeMc
+    S0FcG221JihcU=; b=cDcuAroN95r/L+e48Yy83RWo1Lw4+GHXHonMO8eqgz3VBF
+    GbbNJROhKV5AWCUuSC7PELT2BSZ1IUo2+KvLi0FfIfhCAT+t0k4wDoCJvU+LzHR2
+    2hI55qD5eg+Ud3B+Qhe7Rpsjofqk3yyiVS/5AcaEwyU/gCAR0PzENkvPGi6fd8Y8
+    cOwKT/fBHLjNsww+b1477UxVKQr3qmSiubsE5agaa7RJ+CHh3SmVEvR3QSjU0RCo
+    NSAXpGaqUzdzTXSGBXJ9h5qG/1/m0UqK/eGOsdmLveFV60eWPQuRE9NG6hfc1uWE
+    zz6tQnQRtFDuYeXi6UzbCQmI/CWMzOaKNILcmc/Q==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=QDkOxHe2
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=WM9Vgvv3
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=codeaurora.org header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=QDkOxHe2
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=WM9Vgvv3
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=codeaurora.org header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfIsMDD1tYDwI439g0Hgjnng6ayPuNQYu6y/xpeYJ7IULhadkynjh8soVEyQOz5MxSZl51wb/PDNzrLYZ2qJg7A2lQe1y7F4SuvYBjOt7SpkCZ85JdLxm
+    WgLW5X/t+ZMbxqoh76AxGGPf/8VZVxVkb8hkm9dtrrtXicHlz7pcAk8di1RgX56En+kRkILrCaDC4lhfziZy1IyIwa6Yx5ljfsSkh9iDfW50kSYcwfWRmwPX
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
+    a=kwsehtL-y21D_42V8LkA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751469AbeEBVAb (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 17:00:31 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53596 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750970AbeEBVA3 (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 2 May 2018 17:00:29 -0400
+X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Remote-Spam-Level: 
+X-Remote-Spam-Status: No, score=-2.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,T_DKIM_INVALID autolearn=no autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0DC7760555
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+From: Manu Gautam <mgautam@codeaurora.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>, robh@kernel.org,
+        sboyd@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dianders@chromium.org, evgreen@chromium.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: [PATCH v5 0/7] phy: qcom: Updates for USB PHYs on SDM845
+Date: Thu,  3 May 2018 02:30:06 +0530
+Message-Id: <1525294813-15225-1-git-send-email-mgautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599345271215291308?=
-X-GMAIL-MSGID: =?utf-8?q?1599345271215291308?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+SDM845 has two USB instances each with QUSB2 and QMP PHYs.
+One of the QMP PHY is USB-DP (DisplayPort) combo PHY where
+as other one is single lane UNI-PHY (without DP support).
+Changes are related to PHY configuration for electrical
+parameters tuning to improve eye-diagram and some fixes.
 
-This driver is no longer used as an early platform driver. Remove the
-registration macro.
+First gcc-msm8996 driver patch is dependent on following
+patch which is now applied by Stephen.
+https://patchwork.kernel.org/patch/10375043/
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- drivers/clocksource/timer-ti-dm.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index 4cce6b224b87..595124074821 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -991,7 +991,6 @@ static struct platform_driver omap_dm_timer_driver = {
- 	},
- };
- 
--early_platform_init("earlytimer", &omap_dm_timer_driver);
- module_platform_driver(omap_dm_timer_driver);
- 
- MODULE_DESCRIPTION("OMAP Dual-Mode Timer Driver");
+Changes since v4:
+ - Addressed Doug's review comments to have QUSB2 PHY tuning
+   values in header file.
+ - Updated msm8996-gcc patch to use BRANCH_HALT_SKIP flag
+   added by patch - https://patchwork.kernel.org/patch/10375041/
+   
+Changes since v3:
+ - As per Doug's review comments added device tree parameters
+   to handle board level differences in PHY tuning values instead
+   of adding separate device tree bindings.
+ - Replace PHY version specific bindings names with SOC name as
+   no one is going to use generic binding names.
+ - Update halt_check to not check for pipe clock status that
+   allows to simplify pipe_clk handling in QMP driver.
+
+Changes since v2:
+ - Use separate phy_ops for USB to not register power_on op.
+ - And other minor changes as per review comments from Stephen.
+
+Changes since v1:
+ - Updated qusb2 compatibility name as per comment from Vivek.
+
+Manu Gautam (7):
+  clk: msm8996-gcc: Mark halt check as no-op for USB/PCIE pipe_clk
+  phy: qcom-qmp: Enable pipe_clk before PHY initialization
+  phy: qcom-qusb2: Fix crash if nvmem cell not specified
+  dt-bindings: phy-qcom-qmp: Update bindings for sdm845
+  phy: qcom-qmp: Add QMP V3 USB3 UNI PHY support for sdm845
+  dt-bindings: phy-qcom-usb2: Add support to override tuning values
+  phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845
+
+ .../devicetree/bindings/phy/qcom-qmp-phy.txt       |   3 +-
+ .../devicetree/bindings/phy/qcom-qusb2-phy.txt     |  23 ++-
+ drivers/clk/qcom/gcc-msm8996.c                     |   4 +
+ drivers/phy/qualcomm/phy-qcom-qmp.c                | 169 +++++++++++++++++++--
+ drivers/phy/qualcomm/phy-qcom-qmp.h                |   5 +
+ drivers/phy/qualcomm/phy-qcom-qusb2.c              | 130 +++++++++++++++-
+ include/dt-bindings/phy/phy-qcom-qusb2.h           |  37 +++++
+ 7 files changed, 346 insertions(+), 25 deletions(-)
+ create mode 100644 include/dt-bindings/phy/phy-qcom-qusb2.h
+
 -- 
-2.17.0
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
