@@ -1,80 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeEBOmD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:42:03 -0400
-Received: from muru.com ([72.249.23.125]:39722 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751109AbeEBOmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:42:02 -0400
-Date: Wed, 2 May 2018 07:41:58 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Motorola Droid 4 progress, power consumption
-Message-ID: <20180502144158.GJ98604@atomide.com>
-References: <20180501183148.GA26996@amd>
+        id S1751678AbeEBOm4 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:42:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48598 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751392AbeEBOmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:42:55 -0400
+Date: Wed, 2 May 2018 16:42:51 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, borntraeger@de.ibm.com, bjsdjshi@linux.ibm.com,
+        pasic@linux.ibm.com, pmorel@linux.ibm.com
+Subject: Re: [PATCH 1/1] vfio: ccw: fix error return in vfio_ccw_sch_event
+Message-ID: <20180502164251.577e2af8.cohuck@redhat.com>
+In-Reply-To: <20180502072559.50691-1-bjsdjshi@linux.vnet.ibm.com>
+References: <20180502072559.50691-1-bjsdjshi@linux.vnet.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180501183148.GA26996@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180501 18:33]:
-> Hi!
+On Wed,  2 May 2018 09:25:59 +0200
+Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+
+> If device has not been registered, or there is a pending work,
+
+s/a pending work/work pending/
+
+> we should reschedule a sch_event call again.
 > 
-> 4.17-rc1 is quite usable on droid 4; basically everything
-> works. OHCI is running all the time, which means we burn a lot of
-> power needlessly.
+> Signed-off-by: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
 
-To work around that we can use n_gsm and and then suspend USB
-device. That will need the modem wake gpio working that I'll
-be sending patches for at some point.
+Slightly off-topic question: Is the mail address with or without the
+'vnet' the one to go for?
 
-And we should make cdc_wdm, qcaux and ohci support runtime PM
-for autosuspend at some point. For *hci, we can make it work
-along what Roger did in his earlier series here except by using
-Linux generic wakeirq support:
-
-https://lkml.org/lkml/2013/7/10/355
-
-> Anyway, >5.5hours of standby with screen off, GSM on is already
-> usable.
-
-Just to rub that in, you do mean GSM usable for voice calls and
-SMS with your unicsy_demo with mainline kernel plus the pending
-LCD related patches, right? :)
-
-> This is the core of code I'm using.
+> ---
+>  drivers/s390/cio/vfio_ccw_drv.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> https://github.com/pavelmachek/unicsy_demo
-> 
-> Battery graphs are attached. I'm not sure if the battery was really
-> close to empty at that point -- voltage curve should have different
-> shape if that was the case. 
+> diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+> index ea6a2d0b2894..770fa9cfc310 100644
+> --- a/drivers/s390/cio/vfio_ccw_drv.c
+> +++ b/drivers/s390/cio/vfio_ccw_drv.c
+> @@ -177,6 +177,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+>  {
+>  	struct vfio_ccw_private *private = dev_get_drvdata(&sch->dev);
+>  	unsigned long flags;
+> +	int rc = -EAGAIN;
+>  
+>  	spin_lock_irqsave(sch->lock, flags);
+>  	if (!device_is_registered(&sch->dev))
+> @@ -187,6 +188,7 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+>  
+>  	if (cio_update_schib(sch)) {
+>  		vfio_ccw_fsm_event(private, VFIO_CCW_EVENT_NOT_OPER);
+> +		rc = 0;
+>  		goto out_unlock;
+>  	}
+>  
+> @@ -195,11 +197,12 @@ static int vfio_ccw_sch_event(struct subchannel *sch, int process)
+>  		private->state = private->mdev ? VFIO_CCW_STATE_IDLE :
+>  				 VFIO_CCW_STATE_STANDBY;
+>  	}
+> +	rc = 0;
+>  
+>  out_unlock:
+>  	spin_unlock_irqrestore(sch->lock, flags);
+>  
+> -	return 0;
+> +	return rc;
+>  }
+>  
+>  static struct css_device_id vfio_ccw_sch_ids[] = {
 
-Cool. BTW, the value for POWER_SUPPLY_POWER_AVG should be quite
-accurate for the whole device power consumption.
+Patch looks good to me.
 
-It comes from the shunt resistor measured by the PMIC. Sorry I don't
-remember how often it needs to be polled but I'm guessing polling it
-once a minute or so should be plenty.
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
 
-Hmm oh and the POWER_SUPPLY_CHARGE_COUNTER value should be monitored
-by your libbattery and it's low value and high value should be saved
-to a file. Low should be saved when we get the battery low interrupt
-and battery state changes to POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL.
-High value should be saved on POWER_SUPPLY_CAPACITY_LEVEL_FULL.
-
-Then when you know the high value and low value, you can calculate
-the remaining capacity based on the current value and
-POWER_SUPPLY_POWER_AVG.
-
-Regards,
-
-Tony
+I guess I should pick this for 4.17?
