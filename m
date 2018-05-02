@@ -1,27 +1,27 @@
 Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525275940; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525275939; cv=none;
         d=google.com; s=arc-20160816;
-        b=ms5zkb/XqQzfmrTARerqTZgrjYJ+AnjQzqRl7MwHAqT69H0JndfMh12hI+XKI2OM84
-         cj+mpmubEfH9X9K7zQ1ElZuxie/EU2yGYp/2jNtn64t/4ielyVAYquiEpaW/m23IbAsu
-         UBvo4/f+odBYWgMpU0y3ETSfBAK5ehFUKTgalaj/fef/bHZ+nx7QBuPWYmv7cXf0NHmv
-         QVc2I9+YVJ61p+mMpMe2PDLx7cF6v+xKomS07hIQCi5nBpdwMM2IjscborfQBnc1N/ap
-         r4rynbnYv/YmajGoqAfFKGAs8Hl01ptQYSq+ArJQHhPdvj28drztoTv2MJNzyJLBBLGJ
-         dhGQ==
+        b=JisxPJuDP0sUfPmGGH0tH+3cY04S0P9PrkZNhzjizfiQXEoDOz9W4AVim6pQ0VwGiL
+         JFasz+lHnbmrgd4W2YFcXpHbqOszf2sfaZe6GK9aEIDSRzqFHE1PnaX+IAx6cpF4+2IP
+         ff15N4lxMK5EUKkGRgo+hzIED0ytuOP8gYxHB+oimrengVvdnUjVyms8KI7rZLzxK6QT
+         AmESdzBSY9NdC12TXo1PfObMUFPIaXROs7l1tjszZTf+KKSiut3+BX2AufdthbDLYOmz
+         RMaD6/yT2Kp3A4Gyom/rIjKLsLvGRACymWo/RThGbxCM1N1MRONZobnuqbb2sfk8n1uK
+         atCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=IMf2Pr1TxcF66z3wx6sc/5l5PJQpw/ZqZjzXFeue0Jk=;
-        b=B+naAWyqfBHBzDqw8Cp97QPNRGap4mUPTevkQTPZh/jzjohkO0NN+9bKa9Bmzuooel
-         Vv5ONiDuvcix9zIxGQonW5ycGlzA3ffIyimRQ4cudcJ90/jtUmkqQsvorCod9NAX0Rtg
-         j9z8a0enfAdbGZ1xKMT0Sbp0rvJpBuQHwLlZDDKWAZxzdN6klzRgAt1Z5qqvFQ5xjhoR
-         EY0WRWC+FjQ4JnxZiuAsweZJPERpxww8PquOCVtDprhqz2smcjAx15X6pgieUbbt1m+Q
-         QAfY+cE1qFobIT08Sbh09Ija8UOgZo9Jdllk8DHEtbj9QmoUCrYN8x4jhLeGGE2DY5eJ
-         yGmg==
+        bh=Dj+2Cxg/uq1k/vjjQWLe2eEAN5uLxlTlaKS/jcLhPKY=;
+        b=m50qgpzer2x/5/kAK0lzN9rzcOLK23RPlBgYHC24pfKUr3LLPikEVJI4ILKAHWKLLa
+         znLJMOkQRSyApmuP2JE6JYfoVq6Z9a2psH0VC1FSEow+PWKxUgaOlGHGtABu7P5biOwN
+         4CaszjtmUffmLs3qFM51WmO6VS3dB2gC/j4z2cNWT3L+5g89DGibyU8WcsLVTrDghxd1
+         IWK90QwZI9ppFS27qXnkzPxhBi/lNHQV10IBW11gG3edclW5NJs2s5S6F1d9v7duORGC
+         q/nh+BinuxzBTq7Ws2YcSYfyepW3fL6trbCjun5HLAUHnBdHvUf3rXP6nmJs0Fia5gNb
+         gPbg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AB8JxZoP9E4vvYQK/br3IYe/wRDuq11XiU4366qekTpaDzGVe0X3QW0JiOxnvXN3H8ta7DLwh57bTA==
+X-Google-Smtp-Source: AB8JxZralKz7gbhHJaD0HlZx0koEt9z6ov3pm0v9uZlbK3Gzs9whTLK8i8NhaE2pFo6jqIKm261RHQ==
 From: Christian Brauner <christian.brauner@ubuntu.com>
 To: viro@zeniv.linux.org.uk,
 	torvalds@linux-foundation.org,
@@ -33,15 +33,15 @@ Cc: tglx@linutronix.de,
 	gregkh@linuxfoundation.org,
 	pombredanne@nexb.com,
 	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 4/6 resend] statfs: add ST_SHARED
-Date: Wed,  2 May 2018 17:42:37 +0200
-Message-Id: <20180502154239.14013-5-christian.brauner@ubuntu.com>
+Subject: [PATCH 3/6 resend] statfs: add ST_UNBINDABLE
+Date: Wed,  2 May 2018 17:42:36 +0200
+Message-Id: <20180502154239.14013-4-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180502154239.14013-1-christian.brauner@ubuntu.com>
 References: <20180502154239.14013-1-christian.brauner@ubuntu.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599367744442373961?=
-X-GMAIL-MSGID: =?utf-8?q?1599367744442373961?=
+X-GMAIL-THRID: =?utf-8?q?1599367743470515267?=
+X-GMAIL-MSGID: =?utf-8?q?1599367743470515267?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,27 +52,27 @@ Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
  2 files changed, 3 insertions(+)
 
 diff --git a/fs/statfs.c b/fs/statfs.c
-index 61b3063d3921..2fc6f9c3793c 100644
+index 5b2a24f0f263..61b3063d3921 100644
 --- a/fs/statfs.c
 +++ b/fs/statfs.c
-@@ -31,6 +31,8 @@ static int flags_by_mnt(int mnt_flags)
+@@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
+ 		flags |= ST_NODIRATIME;
+ 	if (mnt_flags & MNT_RELATIME)
  		flags |= ST_RELATIME;
- 	if (mnt_flags & MNT_UNBINDABLE)
- 		flags |= ST_UNBINDABLE;
-+	if (mnt_flags & MNT_SHARED)
-+		flags |= ST_SHARED;
++	if (mnt_flags & MNT_UNBINDABLE)
++		flags |= ST_UNBINDABLE;
  	return flags;
  }
  
 diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index e1b84d0388c1..5416b2936dd9 100644
+index b336c04e793c..e1b84d0388c1 100644
 --- a/include/linux/statfs.h
 +++ b/include/linux/statfs.h
-@@ -41,5 +41,6 @@ struct kstatfs {
+@@ -40,5 +40,6 @@ struct kstatfs {
+ #define ST_NOATIME	(1<<10) /* do not update access times */
  #define ST_NODIRATIME	(1<<11) /* do not update directory access times */
  #define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
- #define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
-+#define ST_SHARED	(1<<20)	/* change to shared */
++#define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
  
  #endif
 -- 
