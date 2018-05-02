@@ -1,82 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751253AbeEBG0Y (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 02:26:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41978 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeEBG0U (ORCPT
+        id S1751275AbeEBG10 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 02:27:26 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39537 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751025AbeEBG1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 02:26:20 -0400
+        Wed, 2 May 2018 02:27:24 -0400
+X-Google-Smtp-Source: AB8JxZrdsKOhlm8W724Ne0fZqX4co4LPDUSZOcRN4ZxKwGFylQVeMxLRtgEddkHgeoEfmhUHsQqtAc7kOLLNbLtaNJQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Wed, 02 May 2018 11:56:19 +0530
-From: Vikash Garodia <vgarodia@codeaurora.org>
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media-owner@vger.kernel.org
-Subject: Re: [PATCH 10/28] venus: vdec: call session_continue in insufficient
- event
-In-Reply-To: <20180424124436.26955-11-stanimir.varbanov@linaro.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
- <20180424124436.26955-11-stanimir.varbanov@linaro.org>
-Message-ID: <85963ca3e12f4d71f2bc2db7d601d4b2@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <20180501161909.GA1728@rob-hp-laptop>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-9-jagan@amarulasolutions.com> <20180501161909.GA1728@rob-hp-laptop>
+From: Jagan Teki <jagan@amarulasolutions.com>
+Date: Wed, 2 May 2018 11:57:22 +0530
+Message-ID: <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
+Subject: Re: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
+To: Rob Herring <robh@kernel.org>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stanimir,
+Hi Rob,
 
-On 2018-04-24 18:14, Stanimir Varbanov wrote:
-> Call session_continue for Venus 4xx version even when the event
-> says that the buffer resources are not sufficient. Leaving a
-> comment with more information about the workaround.
-> 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/vdec.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c
-> b/drivers/media/platform/qcom/venus/vdec.c
-> index c45452634e7e..91c7384ff9c8 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -873,6 +873,14 @@ static void vdec_event_notify(struct venus_inst
-> *inst, u32 event,
-> 
->  			dev_dbg(dev, "event not sufficient resources (%ux%u)\n",
->  				data->width, data->height);
-> +			/*
-> +			 * Workaround: Even that the firmware send and event for
-> +			 * insufficient buffer resources it is safe to call
-> +			 * session_continue because actually the event says that
-> +			 * the number of capture buffers is lower.
-> +			 */
-> +			if (IS_V4(core))
-> +				hfi_session_continue(inst);
->  			break;
->  		case HFI_EVENT_RELEASE_BUFFER_REFERENCE:
->  			venus_helper_release_buf_ref(inst, data->tag);
+On Tue, May 1, 2018 at 9:49 PM, Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Apr 30, 2018 at 05:10:45PM +0530, Jagan Teki wrote:
+> > HDMI PHY on Allwinner A64 has similar like H3/H5.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > index 9ea4353caadd..7dcd1d64dfe4 100644
+> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> > @@ -104,6 +104,7 @@ Required properties:
+> >    - compatible: value must be one of:
+> >      * allwinner,sun8i-a83t-hdmi-phy
+> >      * allwinner,sun8i-h3-hdmi-phy
+> > +    * allwinner,sun50i-a64-hdmi-phy
+>
+> This should be one valid combination per line. The dts shows that the h3
+> string is a fallback which should be captured in the binding doc.
 
-Insufficient event from video firmware could be sent either,
-1. due to insufficient buffer resources
-2. due to lower capture buffers
-
-It cannot be assumed that the event received by the host is due to lower 
-capture
-buffers. Incase the buffer resource is insufficient, let say there is a 
-bitstream
-resolution switch from 720p to 1080p, capture buffers needs to be 
-reallocated.
-
-The driver should be sending the V4L2_EVENT_SOURCE_CHANGE to client 
-instead of ignoring
-the event from firmware.
-
-Thanks,
-Vikash
+The fallback compatible "allwinner,sun8i-h3-hdmi-phy" is already
+documented above, what we need to capture here? or did I miss anything
+here?
