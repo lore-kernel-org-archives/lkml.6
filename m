@@ -1,95 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751996AbeEBQLX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:11:23 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:36778 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751842AbeEBQLU (ORCPT
+        id S1751807AbeEBQOn (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:14:43 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:31346 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751557AbeEBQOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:11:20 -0400
-Subject: Re: [PATCH v2 4/5] dt-bindings: devfreq: rk3399_dmc: remove
- interrupts as is not required.
-To: Rob Herring <robh@kernel.org>
-Cc: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        devicetree@vger.kernel.org, ulf.hansson@linaro.org, heiko@sntech.de,
-        linux-pm@vger.kernel.org, dbasehore@chromium.org,
-        linux-kernel@vger.kernel.org, dianders@google.com, groeck@chromium.org,
-        kernel@collabora.com, hl@rock-chips.com,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20180424083742.14042-1-enric.balletbo@collabora.com>
- <20180424083742.14042-5-enric.balletbo@collabora.com>
- <20180427200029.elq3drn46nkwbvf2@rob-hp-laptop>
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <66622ef7-6b8a-c524-1f6e-e71ccbc72011@collabora.com>
-Date: Wed, 2 May 2018 18:11:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 12:14:39 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w42GEH5S018552
+X-Nifty-SrcIP: [209.85.213.52]
+X-Google-Smtp-Source: AB8JxZook4qxcD0/Mz8+jpq/YsPF1mAjU0A49qa7inc6/8GZdmzvuL4y3aKG24ZYY52EPYb7OOyPKgOUnxnv+DlVbjg=
 MIME-Version: 1.0
-In-Reply-To: <20180427200029.elq3drn46nkwbvf2@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAAqcGHn+3HMC_tVsOsLB1Vycdv7SYZ=1SYc0Cg3Gx-Xe=sExMg@mail.gmail.com>
+References: <20180423195055.26069-1-malat@debian.org> <CAAqcGHn+3HMC_tVsOsLB1Vycdv7SYZ=1SYc0Cg3Gx-Xe=sExMg@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Thu, 3 May 2018 01:13:36 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARbfOrqSb_n0q=q2-6JMAVfCfEzY4-ES3P-CL2y9UyUoA@mail.gmail.com>
+Message-ID: <CAK7LNARbfOrqSb_n0q=q2-6JMAVfCfEzY4-ES3P-CL2y9UyUoA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild/debian: Use KBUILD_BUILD_* when set
+To: Riku Voipio <riku.voipio@linaro.org>
+Cc: Mathieu Malaterre <malat@debian.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+2018-05-02 20:30 GMT+09:00 Riku Voipio <riku.voipio@linaro.org>:
+> On 23 April 2018 at 22:50, Mathieu Malaterre <malat@debian.org> wrote:
+>> Be nice to the user and check env vars KBUILD_BUILD_USER &
+>> KBUILD_BUILD_HOST when those are set.
+>
+> mkdebian sets the maintainer address as "$name <$email>", but this
+> patch only sets the email part. I also wonder about the precedence, I
+> think KBUILD_* should be considered over the generic Debian variables.
 
-Thanks for the review.
+How come?
 
-On 27/04/18 22:00, Rob Herring wrote:
-> On Tue, Apr 24, 2018 at 10:37:41AM +0200, Enric Balletbo i Serra wrote:
->> In ATF we already wait for DDR dvfs finish, so don't need to do this in
->> kernel, so remove the interrupts properties as is not longer required.
-> 
-> If the hardware has an interrupt, then the DT should have one. The 
-> partitioning with ATF shouldn't matter.
-> 
-> Now, if you want to make ATF remove the interrupt, then maybe that is 
-> okay. But it's not clear to me why you'd expose some of the h/w and not 
-> all.
-> 
 
-Ok, sounds good if I move interrupts to be optional then?
+If you see scripts/mkcompile_h,
+KBUILD_BUILD_USER and KBUILD_BUILD_HOST are used
+for overriding 'whoami' and 'hostname', respectively.
 
-Best regards,
- Enric
+So, I think it is reasonable to put
 
->>
->> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+  email=$KBUILD_BUILD_USER@$KBUILD_BUILD_HOST
+
+over
+
+  email=$(id -nu)@$(hostname -f 2>/dev/null || hostname)
+
+
+But, it is questionable to put it even over $DEBEMAIL.
+
+
+
+I think the intention of this patch is to support
+another (a bit better) fallback in case DEBEMAIL is not set.
+
+
+
+> Riku
+>
+>> Signed-off-by: Mathieu Malaterre <malat@debian.org>
 >> ---
+>>  scripts/package/mkdebian | 2 ++
+>>  1 file changed, 2 insertions(+)
 >>
->> Changes in v2:
->> - [4/6] Add Reviewed-by Chanwoo Choi.
+>> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+>> index 6adb3a16ba3b..05d58d3ae8a0 100755
+>> --- a/scripts/package/mkdebian
+>> +++ b/scripts/package/mkdebian
+>> @@ -76,6 +76,8 @@ if [ -n "$DEBEMAIL" ]; then
+>>         email=$DEBEMAIL
+>>  elif [ -n "$EMAIL" ]; then
+>>         email=$EMAIL
+>> +elif [ -n "$KBUILD_BUILD_USER" ] && [ -n "$KBUILD_BUILD_HOST" ]; then
+>> +       email=$KBUILD_BUILD_USER@$KBUILD_BUILD_HOST
+>>  else
+>>         email=$(id -nu)@$(hostname -f 2>/dev/null || hostname)
+>>  fi
+>> --
+>> 2.11.0
 >>
->>  Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt | 5 -----
->>  1 file changed, 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
->> index 834637c7bae7..e7f0ef9548b7 100644
->> --- a/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
->> +++ b/Documentation/devicetree/bindings/devfreq/rk3399_dmc.txt
->> @@ -5,10 +5,6 @@ Required properties:
->>  - devfreq-events:	 Node to get DDR loading, Refer to
->>  			 Documentation/devicetree/bindings/devfreq/event/
->>  			 rockchip-dfi.txt
->> -- interrupts:		 The CPU interrupt number. The interrupt specifier
->> -			 format depends on the interrupt controller.
->> -			 It should be a DCF interrupt. When DDR DVFS finishes
->> -			 a DCF interrupt is triggered.
->>  - clocks:		 Phandles for clock specified in "clock-names" property
->>  - clock-names :		 The name of clock used by the DFI, must be
->>  			 "pclk_ddr_mon";
->> @@ -172,7 +168,6 @@ Example:
->>  	dmc: dmc {
->>  		compatible = "rockchip,rk3399-dmc";
->>  		devfreq-events = <&dfi>;
->> -		interrupts = <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
->>  		clocks = <&cru SCLK_DDRCLK>;
->>  		clock-names = "dmc_clk";
->>  		operating-points-v2 = <&dmc_opp_table>;
->> -- 
->> 2.17.0
->>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
