@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751272AbeEBKvg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:51:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:37086 "EHLO
+        id S1751329AbeEBKvq (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:51:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37158 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751132AbeEBKvc (ORCPT
+        with ESMTP id S1751132AbeEBKvj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:51:32 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DFBE96055D
+        Wed, 2 May 2018 06:51:39 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 01D22601A0
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From: Taniya Das <tdas@codeaurora.org>
@@ -21,62 +21,109 @@ Cc: Andy Gross <andy.gross@linaro.org>,
         linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [v6 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-Date: Wed,  2 May 2018 16:21:15 +0530
-Message-Id: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH 1/2] dt-bindings: clock: Introduce QCOM RPMh clock bindings
+Date: Wed,  2 May 2018 16:21:16 +0530
+Message-Id: <1525258277-3478-2-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
+References: <1525258277-3478-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- [v6]
-   * Addressed comments from Rob
-   * Addressed comments from Stephen
+Add RPMh clock device bindings for Qualcomm Technology Inc's SoCs. These
+devices would be used for communicating resource state requests to control
+the clocks managed by RPMh.
 
- [v5]
-   * Addressed comments from Stephen
-   * Introduced a new DT property to take clock divs
-
- [v4]
-  * Addressed comments from Stephen
-
- [v3]
-  * Addressed documentation & code review comments from Bjorn
-  * Addressed bindings comments from Rob
-  * Updated the patch series order for bindings
-
- [v2]
-  * Addressed comments from Stephen
-  * Addressed comments from Evan
-
-This patch series adds a driver and device tree documentation binding
-for the clock control via Resource Power Manager-hardened (RPMh) on some
-Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
-would send requests for the RPMh managed clock resources.
-
-The RPMh clock driver depends upon the RPMh driver [1] and command DB
-driver [2] which are both still undergoing review.
-
-Thanks,
-Taniya
-
-[1]: https://lkml.org/lkml/2018/3/9/979
-[2]: https://lkml.org/lkml/2018/3/14/787
-
-Taniya Das (2):
-  dt-bindings: clock: Introduce QCOM RPMh clock bindings
-  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-
- .../devicetree/bindings/clock/qcom,rpmh-clk.txt    |  53 +++
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-rpmh.c                        | 368 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmh.h              |  22 ++
- 5 files changed, 453 insertions(+)
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 46 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmh.h              | 22 +++++++++++
+ 2 files changed, 68 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
- create mode 100644 drivers/clk/qcom/clk-rpmh.c
  create mode 100644 include/dt-bindings/clock/qcom,rpmh.h
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+new file mode 100644
+index 0000000..2632cae
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+@@ -0,0 +1,46 @@
++Qualcomm Technologies, Inc. RPMh Clocks
++-------------------------------------------------------
++
++Resource Power Manager Hardened (RPMh) manages shared resources on
++some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
++other hardware subsystems via RSC to control clocks.
++
++Required properties :
++- compatible : shall contain "qcom,sdm845-rpmh-clk"
++
++- #clock-cells : must contain 1
++
++Optional properties :
++
++These below properities would be required in the cases where the parent of the
++clocks would be "xo_board_div". The default parent for the clock is "xo_board".
++
++- assigned-clocks: from the common clock binding;
++		should be: clock specifier for each output clock of this
++		provider node
++
++- assigned-clock-parents: from the common clock binding;
++		should be: phandle of input clock listed in clocks
++		property
++Example :
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++	&apps_rsc {
++		rpmhcc: clock-controller {
++			compatible = "qcom,sdm845-rpmh-clk";
++			#clock-cells = <1>;
++			assigned-clocks = <&clock_rpmh RPMH_CXO_CLK>,
++					<&clock_rpmh RPMH_CXO_CLK_A>,
++					<&clock_rpmh RPMH_LN_BB_CLK2>,
++					<&clock_rpmh RPMH_LN_BB_CLK2_A>,
++					<&clock_rpmh RPMH_LN_BB_CLK3>,
++					<&clock_rpmh RPMH_LN_BB_CLK3_A>;
++			assigned-clock-parents = <&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
++						<&xo_board_div>,
++		};
++	};
+diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+new file mode 100644
+index 0000000..f48fbd6
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,rpmh.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++
++#ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
++#define _DT_BINDINGS_CLK_MSM_RPMH_H
++
++/* RPMh controlled clocks */
++#define RPMH_CXO_CLK				0
++#define RPMH_CXO_CLK_A				1
++#define RPMH_LN_BB_CLK2				2
++#define RPMH_LN_BB_CLK2_A			3
++#define RPMH_LN_BB_CLK3				4
++#define RPMH_LN_BB_CLK3_A			5
++#define RPMH_RF_CLK1				6
++#define RPMH_RF_CLK1_A				7
++#define RPMH_RF_CLK2				8
++#define RPMH_RF_CLK2_A				9
++#define RPMH_RF_CLK3				10
++#define RPMH_RF_CLK3_A				11
++
++#endif
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
