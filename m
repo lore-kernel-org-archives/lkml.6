@@ -1,67 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751374AbeEBMuR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 08:50:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751076AbeEBMuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 08:50:16 -0400
-Date: Wed, 2 May 2018 08:50:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: mingo@redhat.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@ozlabs.org
-Subject: Re: [PATCH] tracing: Remove PPC32 wart from config TRACING_SUPPORT
-Message-ID: <20180502085013.2571183b@gandalf.local.home>
-In-Reply-To: <20180502112948.1747-1-mpe@ellerman.id.au>
-References: <20180502112948.1747-1-mpe@ellerman.id.au>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751271AbeEBMvw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 08:51:52 -0400
+Received: from mail-it0-f53.google.com ([209.85.214.53]:53840 "EHLO
+        mail-it0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751020AbeEBMvs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 08:51:48 -0400
+X-Google-Smtp-Source: AB8JxZpGLDc5RRxivzwJ5Aoh/vwLDyy6UFP/tW+89vg9jSZS46GdJWZQD75KHzwd898cskJOZLcvUm7RTHMRJ8pc7q8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1525201801-25682-3-git-send-email-matheus@castello.eng.br>
+References: <201805011855.LvT1SKBS%fengguang.wu@intel.com> <1525201801-25682-1-git-send-email-matheus@castello.eng.br>
+ <1525201801-25682-3-git-send-email-matheus@castello.eng.br>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 May 2018 14:51:47 +0200
+Message-ID: <CACRpkda0cztaOQb0yfC-s96Lyw4dyADJz_qWmg8dVuK-exp6nA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pinctrl: generic: improve apply_setting error verbosity
+To: Matheus Castello <matheus@castello.eng.br>
+Cc: kbuild-all@01.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  2 May 2018 21:29:48 +1000
-Michael Ellerman <mpe@ellerman.id.au> wrote:
+On Tue, May 1, 2018 at 9:10 PM, Matheus Castello
+<matheus@castello.eng.br> wrote:
 
-> config TRACING_SUPPORT has an exception for PPC32, because PPC32
-> didn't have irqflags tracing support.
-> 
-> But that hasn't been true since commit 5d38902c4838 ("powerpc: Add
-> irqtrace support for 32-bit powerpc") (Jun 2009).
-> 
-> So remove the exception for PPC32 and the comment.
-> 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> For generic pinconf: print the dev_error with the pinctrl vendor
+> driver name, error code, the sub-node property name used and the
+> pin that was tried to set.
+>
+> Improves the undestading of the error if use a generic sub-node
+> property that generic-pinconf can do parse but the vendor pinctrl
+> driver does not support.
+>
+> Signed-off-by: Matheus Castello <matheus@castello.eng.br>
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> +#include <linux/pinctrl/pinconf-generic.h>
+>  #include "core.h"
+>  #include "pinconf.h"
+>
+> @@ -169,9 +170,21 @@ int pinconf_apply_setting(const struct pinctrl_setting *setting)
+>                                 setting->data.configs.configs,
+>                                 setting->data.configs.num_configs);
+>                 if (ret < 0) {
+> +#ifdef CONFIG_OF
 
-Feel free to take this patch through the PPC tree.
+This doesn't seem right.
 
-Thanks!
+If this is restricted for OF only the root cause to why it is
+like that needs to be found and the code refactored to fit anyone,
+there is also ACPI support in the works I think, surely they should
+be able to get verbose messages.
 
--- Steve
+>                         dev_err(pctldev->dev,
+> -                               "pin_config_set op failed for pin %d\n",
+> +                               "%s error %d setting %s for pin %d\n",
+> +                               pctldev->desc->name, ret,
+> +                               pinconf_generic_get_param_property_name(
+> +                                       pctldev, setting->data.configs.num_configs,
+> +                                       setting->data.configs.configs),
+>                                 setting->data.configs.group_or_pin);
 
-> ---
->  kernel/trace/Kconfig | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index c4f0f2e4126e..dd6c0a2ad969 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -110,11 +110,7 @@ config GENERIC_TRACER
->  #
->  config TRACING_SUPPORT
->  	bool
-> -	# PPC32 has no irqflags tracing support, but it can use most of the
-> -	# tracers anyway, they were tested to build and work. Note that new
-> -	# exceptions to this list aren't welcomed, better implement the
-> -	# irqflags tracing for your architecture.
-> -	depends on TRACE_IRQFLAGS_SUPPORT || PPC32
-> +	depends on TRACE_IRQFLAGS_SUPPORT
->  	depends on STACKTRACE_SUPPORT
->  	default y
->  
+This doesn't seem right. First argument is a %d, yet this
+is pctldev->desc->name?
+
+Something is fishy with the argument list.
+
+Yours,
+Linus Walleij
