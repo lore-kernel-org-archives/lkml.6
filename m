@@ -1,34 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751825AbeEBXtb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 19:49:31 -0400
-Received: from mga11.intel.com ([192.55.52.93]:25572 "EHLO mga11.intel.com"
+        id S1751852AbeEBX4m (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 19:56:42 -0400
+Received: from mga02.intel.com ([134.134.136.20]:36610 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751447AbeEBXt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 19:49:27 -0400
+        id S1751698AbeEBX4k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 19:56:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="42603486"
-Subject: Re: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in irq
- handler
-To: Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, "Raj, Ashok" <ashok.raj@intel.com>
-References: <20180331003312.6390-1-dima@arista.com>
- <20180331003312.6390-2-dima@arista.com> <5AE95BFF.5040306@linux.intel.com>
- <1525264687.14025.20.camel@arista.com>
-Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+   d="scan'208";a="225337584"
+Subject: Re: [RESEND][PATCH] iommu/vt-d: fix shift-out-of-bounds in bug
+ checking
+To: changbin.du@intel.com, jroedel@suse.de,
         iommu@lists.linux-foundation.org
+References: <1524897587-15125-1-git-send-email-changbin.du@intel.com>
+Cc: linux-kernel@vger.kernel.org
 From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5AEA4E84.6050609@linux.intel.com>
-Date: Thu, 3 May 2018 07:49:24 +0800
+Message-ID: <5AEA502B.70502@linux.intel.com>
+Date: Thu, 3 May 2018 07:56:27 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
  Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <1525264687.14025.20.camel@arista.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1524897587-15125-1-git-send-email-changbin.du@intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -36,51 +32,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 05/02/2018 08:38 PM, Dmitry Safonov wrote:
-> Hi Lu,
+On 04/28/2018 02:39 PM, changbin.du@intel.com wrote:
+> From: Changbin Du <changbin.du@intel.com>
 >
-> On Wed, 2018-05-02 at 14:34 +0800, Lu Baolu wrote:
->> Hi,
->>
->> On 03/31/2018 08:33 AM, Dmitry Safonov wrote:
->>> Theoretically, on some machines faults might be generated faster
->>> than
->>> they're cleared by CPU.
->> Is this a real case?
-> No. 1/2 is a real case and this one was discussed on v3:
-> lkml.kernel.org/r/<20180215191729.15777-1-dima@arista.com>
+> It allows to flush more than 4GB of device TLBs. So the mask should be
+> 64bit wide. UBSAN captured this fault as below.
 >
-> It's not possible on my hw as far as I tried, but the discussion result
-> was to fix this theoretical issue too.
+> [    3.760024] ================================================================================
+> [    3.768440] UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1348:3
+> [    3.774864] shift exponent 64 is too large for 32-bit type 'int'
+> [    3.780853] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G     U            4.17.0-rc1+ #89
+> [    3.788661] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.2.8 01/26/2016
+> [    3.796034] Call Trace:
+> [    3.798472]  <IRQ>
+> [    3.800479]  dump_stack+0x90/0xfb
+> [    3.803787]  ubsan_epilogue+0x9/0x40
+> [    3.807353]  __ubsan_handle_shift_out_of_bounds+0x10e/0x170
+> [    3.812916]  ? qi_flush_dev_iotlb+0x124/0x180
+> [    3.817261]  qi_flush_dev_iotlb+0x124/0x180
+> [    3.821437]  iommu_flush_dev_iotlb+0x94/0xf0
+> [    3.825698]  iommu_flush_iova+0x10b/0x1c0
+> [    3.829699]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.833527]  iova_domain_flush+0x25/0x40
+> [    3.837448]  fq_flush_timeout+0x55/0x160
+> [    3.841368]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.845200]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.849034]  call_timer_fn+0xbe/0x310
+> [    3.852696]  ? fq_ring_free+0x1d0/0x1d0
+> [    3.856530]  run_timer_softirq+0x223/0x6e0
+> [    3.860625]  ? sched_clock+0x5/0x10
+> [    3.864108]  ? sched_clock+0x5/0x10
+> [    3.867594]  __do_softirq+0x1b5/0x6f5
+> [    3.871250]  irq_exit+0xd4/0x130
+> [    3.874470]  smp_apic_timer_interrupt+0xb8/0x2f0
+> [    3.879075]  apic_timer_interrupt+0xf/0x20
+> [    3.883159]  </IRQ>
+> [    3.885255] RIP: 0010:poll_idle+0x60/0xe7
+> [    3.889252] RSP: 0018:ffffb1b201943e30 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> [    3.896802] RAX: 0000000080200000 RBX: 000000000000008e RCX: 000000000000001f
+> [    3.903918] RDX: 0000000000000000 RSI: 000000002819aa06 RDI: 0000000000000000
+> [    3.911031] RBP: ffff9e93c6b33280 R08: 00000010f717d567 R09: 000000000010d205
+> [    3.918146] R10: ffffb1b201943df8 R11: 0000000000000001 R12: 00000000e01b169d
+> [    3.925260] R13: 0000000000000000 R14: ffffffffb12aa400 R15: 0000000000000000
+> [    3.932382]  cpuidle_enter_state+0xb4/0x470
+> [    3.936558]  do_idle+0x222/0x310
+> [    3.939779]  cpu_startup_entry+0x78/0x90
+> [    3.943693]  start_secondary+0x205/0x2e0
+> [    3.947607]  secondary_startup_64+0xa5/0xb0
+> [    3.951783] ================================================================================
 
-If faults are generated faster than CPU can clear them, the PCIe
-device should be in a very very bad state. How about disabling
-the PCIe device and ask the administrator to replace it? Anyway,
-I don't think that's goal of this patch series. :-)
-
->
->>>  Let's limit the cleaning-loop by number of hw
->>> fault registers.
->> Will this cause the fault recording registers full of faults, hence
->> new faults will be dropped without logging?
-> If faults come faster then they're being cleared - some of them will be
-> dropped without logging. Not sure if it's worth to report all faults in
-> such theoretical(!) situation.
-> If amount of reported faults for such situation is not enough and it's
-> worth to keep all the faults, then probably we should introduce a
-> workqueue here (which I did in v1, but it was rejected by the reason
-> that it will introduce some latency in fault reporting).
->
->> And even worse, new faults will not generate interrupts?
-> They will, we clear page fault overflow outside of the loop, so any new
-> fault will raise interrupt, iiuc.
->
-
-I am afraid that they might not generate interrupts any more.
-
-Say, the fault registers are full of events that are not cleared,
-then a new fault comes. There is no room for this event and
-hence the hardware might drop it silently.
+This looks good to me.
 
 Best regards,
 Lu Baolu
+
+> Signed-off-by: Changbin Du <changbin.du@intel.com>
+> ---
+>  drivers/iommu/dmar.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+> index accf5838..e4ae600 100644
+> --- a/drivers/iommu/dmar.c
+> +++ b/drivers/iommu/dmar.c
+> @@ -1345,7 +1345,7 @@ void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16 qdep,
+>  	struct qi_desc desc;
+>  
+>  	if (mask) {
+> -		BUG_ON(addr & ((1 << (VTD_PAGE_SHIFT + mask)) - 1));
+> +		BUG_ON(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
+>  		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
+>  		desc.high = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
+>  	} else
