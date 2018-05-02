@@ -1,61 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753385AbeEBACz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 20:02:55 -0400
-Received: from imap.thunk.org ([74.207.234.97]:51058 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753312AbeEBACy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 20:02:54 -0400
-Date: Tue, 1 May 2018 20:02:50 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Justin Forbes <jmforbes@linuxtx.org>
-Cc: Jeremy Cline <jeremy@jcline.org>, Sultan Alsawaf <sultanxda@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, LKML <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180502000250.GI10479@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Justin Forbes <jmforbes@linuxtx.org>,
-        Jeremy Cline <jeremy@jcline.org>,
-        Sultan Alsawaf <sultanxda@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-References: <20180427201036.GL5965@thunk.org>
- <20180429143205.GD13475@amd>
- <20180429170541.lrzwyihrd6d75rql@sultan-box>
- <20180429184101.GA31156@amd>
- <20180429202033.ysmc42mj2rrk3h7p@sultan-box>
- <20180429220519.GQ5965@thunk.org>
- <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
- <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
- <20180501125518.GI20585@thunk.org>
- <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
+        id S1753335AbeEBAFU (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 20:05:20 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:42065 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751825AbeEBAFR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 1 May 2018 20:05:17 -0400
+X-Google-Smtp-Source: AB8JxZoZCOu+SLtaBaN7z2sMZv6Owipbt5AvVcJXpUplCfGRdSF2WXVZExrrAbVNNWfQN8CZdA+8dw==
+Subject: Re: [PATCH 0/2] mm: tweaks for improving use of vmap_area
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, igor.stoppa@huawei.com
+References: <20180426234243.22267-1-igor.stoppa@huawei.com>
+ <20180430161515.118e6538e4d4f1cc4ae425cc@linux-foundation.org>
+From: Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <d9f91dc9-958c-e3ec-3ca4-ecb0ddfd58f3@gmail.com>
+Date: Wed, 2 May 2018 04:05:14 +0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180430161515.118e6538e4d4f1cc4ae425cc@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 05:35:56PM -0500, Justin Forbes wrote:
+
+On 01/05/18 03:15, Andrew Morton wrote:
+> On Fri, 27 Apr 2018 03:42:41 +0400 Igor Stoppa <igor.stoppa@gmail.com> wrote:
 > 
-> I have not reproduced in GCE myself.  We did get some confirmation
-> that removing dracut-fips does make the problem less dire (but I
-> wouldn't call a 4 minute boot a win, but booting in 4 minutes is
-> better than not booting at all).  Specifically systemd calls libgcrypt
-> before it even opens the log with fips there, and this is before
-> virtio-rng modules could even load. Right now though, we are looking
-> at pretty much any possible options as the majority of people are
-> calling for me to backout the patches completely from rawhide.
+>> These two patches were written in preparation for the creation of
+>> protectable memory, however their use is not limited to pmalloc and can
+>> improve the use of virtually contiguous memory.
+>>
+>> The first provides a faster path from struct page to the vm_struct that
+>> tracks it.
+>>
+>> The second patch renames a single linked list field inside of vmap_area.
+>> The list is currently used only for disposing of the data structure, once
+>> it is not in use anymore.
+>> Which means that it cold be used for other purposes while it's not queued
+>> for destruction.
+> 
+> The patches look benign to me (feel free to add my ack),
 
-FWIW, Debian Testing is using systemd 238, and from what I can tell
-it's calling libgcrypt and it has the same (as near as I can tell)
-totally pointless hmac nonsense, and it's not a problem that I can
-see.  Of course, Debian and Fedora may have a different set of
-patches....
+thank you
 
-	       	   	      	     - Ted
+> but I'm not seeing a reason to apply them at this time?
+
+I thought they might come useful to others playing with vmap_areas, I'll 
+resubmit them anyway with the protected memory set.
+
+But I was also hoping to get some more review, especially for the 
+second, which had not received any definitive ACK/NACK, till now.
+
+So, I'm also ok if they can be merged once the others are ACK'ed.
+
+--
+igor
