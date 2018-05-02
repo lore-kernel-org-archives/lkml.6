@@ -1,556 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751726AbeEBKC1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:02:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44159 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750883AbeEBKAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:00:13 -0400
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
-Subject: [PATCH 02/10] crypto: inside-secure - rework cipher functions for future AEAD support
-Date: Wed,  2 May 2018 11:57:17 +0200
-Message-Id: <20180502095725.31935-3-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180502095725.31935-1-antoine.tenart@bootlin.com>
-References: <20180502095725.31935-1-antoine.tenart@bootlin.com>
+        id S1751598AbeEBKDu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:03:50 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39659 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751138AbeEBKDs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:03:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180502100346euoutp01cae6ba6d31ae48eae59b7bc1c8a17b76~qy7qcWicq2272222722euoutp01O
+X-AuditID: cbfec7f5-b5fff700000028a9-c2-5ae98d01d677
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 16/18] thermal: exynos: cleanup code for enabling
+ threshold interrupts
+Date: Wed, 02 May 2018 12:03:44 +0200
+Message-id: <17338828.V5XOYeIB5l@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180501110239.GM27619@mai>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7djP87qMvS+jDDZ/l7OY91nWYv6Va6wW
+        l3fNYbP43HuE0WLG+X1MFk8e9rE5sHnsnHWX3WPxnpdMHneu7WHz+LxJLoAlissmJTUnsyy1
+        SN8ugSvj8IKPbAVHpCtOX+tgb2DsEeti5OCQEDCRmD45tIuRi0NIYAWjxPaDS1ghnM+MEg++
+        fWOHKbqw2wAivoxR4s+nTcwQzm9GicbtjWxdjJwcbAJWEhPbVzGC2CICehKN79uYQIqYBVYx
+        SvR/escEkhAWiJE4cvUdWBGLgKrEnfkvweK8AloSs9qnsYDYogJeElv2tYPFOQU0JdrXnGeF
+        qBGU+DH5HlgNs4C8xL79U1khbB2Js8fWgc2UEFjDJnGrKRjiaheJzt3BEGFhiVfHt7BD2DIS
+        lyd3s4DcJiHQzCjxbcceZojEBEaJPeuFIGxricPHL0LN55OYtG06M8RMXomONqgSD4n5X/ZD
+        zXSU6F3YwQYPlHuf57FMYJSdheTsWUjOnoXk7AWMzKsYxVNLi3PTU4uN81LL9YoTc4tL89L1
+        kvNzNzEC08Hpf8e/7mDc9yfpEKMAB6MSD69B3osoIdbEsuLK3EOMEhzMSiK8KzueRQnxpiRW
+        VqUW5ccXleakFh9ilOZgURLnjdOoixISSE8sSc1OTS1ILYLJMnFwSjUw2muaGUzP8FIqYa+W
+        fFHRbjnt24MDWsn7DLXf/uCU+nvhrUWxXJeh3/KoI7y9IU2d3GIOukrNRgWbw3bGXOlIi9Ht
+        V5xzcq9myQxxjtXXWm3WNjjJX3h4ReGs8dvlxbZn2kPW3WTbN3fRHtl7E7/xpn65sPPKo9n8
+        n8uSTN/dd5F/fnOL3NNeJZbijERDLeai4kQAE+pRdgMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrCLMWRmVeSWpSXmKPExsVy+t/xa7qMvS+jDLb0MFvM+yxrMf/KNVaL
+        y7vmsFl87j3CaDHj/D4miycP+9gc2Dx2zrrL7rF4z0smjzvX9rB5fN4kF8ASxWWTkpqTWZZa
+        pG+XwJVxeMFHtoIj0hWnr3WwNzD2iHUxcnBICJhIXNht0MXIxSEksIRRYt3eu0xdjJxAzl9G
+        ie3vLUFsNgEriYntqxhBbBEBPYnG921MIA3MAqsYJVa29jKDJIQFYiSuTp4DVsQioCpxZ/5L
+        sEG8AloSs9qnsYDYogJeElv2tYPFOQU0JdrXnGeF2LycUeL2q5uMEA2CEj8m3wNrYBaQl9i3
+        fyorhK0lsX7ncaYJjPyzkJTNQlI2C0nZAkbmVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIFh
+        u+3Yzy07GLveBR9iFOBgVOLhNch7ESXEmlhWXJl7iFGCg1lJhHdlx7MoId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxSDYynciK+Bt0xyWSo3vKM08fou+2D
+        tsqZ+Z8VTx26HPskYtHytye1TU7xW3w5oxvIVZI+2+LHREsXz60/d4R/t1eL33aF02jC/TXh
+        GjMuWtpfiw6reqB4ncHhSZKQn4TFj7n9Txx7ZpXOP3yg+MolVTnHiY/M7vGdSro7Q2+vzs/3
+        oo+3G7dcblVVYinOSDTUYi4qTgQAMrRVLlcCAAA=
+X-CMS-MailID: 20180502100345eucas1p27280d10571f3e9d7c5b5a62a364dd439
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180502100345eucas1p27280d10571f3e9d7c5b5a62a364dd439
+X-RootMTR: 20180502100345eucas1p27280d10571f3e9d7c5b5a62a364dd439
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+        <1524743493-28113-17-git-send-email-b.zolnierkie@samsung.com>
+        <20180501110239.GM27619@mai>
+        <CGME20180502100345eucas1p27280d10571f3e9d7c5b5a62a364dd439@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch reworks the Inside Secure cipher functions, to remove all
-skcipher specific information and structure from all functions generic
-enough to be shared between skcipher and aead algorithms.
+On Tuesday, May 01, 2018 01:02:39 PM Daniel Lezcano wrote:
+> On Thu, Apr 26, 2018 at 01:51:31PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > Cleanup code for enabling threshold interrupts in ->tmu_control
+> > method implementations.
+> > 
+> > There should be no functional changes caused by this patch.
+> > 
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/thermal/samsung/exynos_tmu.c | 101 ++++++++++++-----------------------
+> >  1 file changed, 34 insertions(+), 67 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index abe0737..9639acf 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -76,9 +76,6 @@
+> >  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
+> >  
+> >  #define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
+> > -#define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
+> > -#define EXYNOS_TMU_INTEN_RISE2_SHIFT	8
+> > -#define EXYNOS_TMU_INTEN_RISE3_SHIFT	12
+> >  #define EXYNOS_TMU_INTEN_FALL0_SHIFT	16
+> >  
+> >  #define EXYNOS_EMUL_TIME	0x57F0
+> > @@ -136,13 +133,6 @@
+> >  #define EXYNOS7_TMU_TEMP_MASK			0x1ff
+> >  #define EXYNOS7_PD_DET_EN_SHIFT			23
+> >  #define EXYNOS7_TMU_INTEN_RISE0_SHIFT		0
+> > -#define EXYNOS7_TMU_INTEN_RISE1_SHIFT		1
+> > -#define EXYNOS7_TMU_INTEN_RISE2_SHIFT		2
+> > -#define EXYNOS7_TMU_INTEN_RISE3_SHIFT		3
+> > -#define EXYNOS7_TMU_INTEN_RISE4_SHIFT		4
+> > -#define EXYNOS7_TMU_INTEN_RISE5_SHIFT		5
+> > -#define EXYNOS7_TMU_INTEN_RISE6_SHIFT		6
+> > -#define EXYNOS7_TMU_INTEN_RISE7_SHIFT		7
+> >  #define EXYNOS7_EMUL_DATA_SHIFT			7
+> >  #define EXYNOS7_EMUL_DATA_MASK			0x1ff
+> >  
+> > @@ -615,29 +605,27 @@ static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
+> >  {
+> >  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+> >  	struct thermal_zone_device *tz = data->tzd;
+> > -	unsigned int con, interrupt_en;
+> > +	unsigned int con, interrupt_en = 0, i;
+> >  
+> >  	con = get_con_reg(data, readl(data->base + EXYNOS_TMU_REG_CONTROL));
+> >  
+> >  	if (on) {
+> > -		con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+> > -		interrupt_en =
+> > -			(of_thermal_is_trip_valid(tz, 3)
+> > -			 << EXYNOS_TMU_INTEN_RISE3_SHIFT) |
+> > -			(of_thermal_is_trip_valid(tz, 2)
+> > -			 << EXYNOS_TMU_INTEN_RISE2_SHIFT) |
+> > -			(of_thermal_is_trip_valid(tz, 1)
+> > -			 << EXYNOS_TMU_INTEN_RISE1_SHIFT) |
+> > -			(of_thermal_is_trip_valid(tz, 0)
+> > -			 << EXYNOS_TMU_INTEN_RISE0_SHIFT);
+> > +		for (i = 0; i < data->ntrip; i++) {
+> > +			if (!of_thermal_is_trip_valid(tz, i))
+> > +				continue;
+> > +
+> > +			interrupt_en |=
+> > +				(1 << (EXYNOS_TMU_INTEN_RISE0_SHIFT + i * 4));
+> > +		}
+> 
+> As EXYNOS_TMU_INTEN_RISE0_SHIFT is equal to zero, may be you can replace this
+> by BITS(i * 4) ?
+> 
+> Same comments for exynos5433 and exynos7 below.
 
-This is a cosmetic only patch.
+Good point, I will replace it by using BIT() macro.
 
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- .../crypto/inside-secure/safexcel_cipher.c    | 236 ++++++++++--------
- 1 file changed, 129 insertions(+), 107 deletions(-)
+> I don't know which one was intended : 
 
-diff --git a/drivers/crypto/inside-secure/safexcel_cipher.c b/drivers/crypto/inside-secure/safexcel_cipher.c
-index bafb60505fab..a5e904a404d7 100644
---- a/drivers/crypto/inside-secure/safexcel_cipher.c
-+++ b/drivers/crypto/inside-secure/safexcel_cipher.c
-@@ -38,18 +38,16 @@ struct safexcel_cipher_req {
- 	bool needs_inv;
- };
- 
--static void safexcel_cipher_token(struct safexcel_cipher_ctx *ctx,
--				  struct crypto_async_request *async,
--				  struct safexcel_command_desc *cdesc,
--				  u32 length)
-+static void safexcel_skcipher_token(struct safexcel_cipher_ctx *ctx, u8 *iv,
-+				    struct safexcel_command_desc *cdesc,
-+				    u32 length)
- {
--	struct skcipher_request *req = skcipher_request_cast(async);
- 	struct safexcel_token *token;
- 	unsigned offset = 0;
- 
- 	if (ctx->mode == CONTEXT_CONTROL_CRYPTO_MODE_CBC) {
- 		offset = AES_BLOCK_SIZE / sizeof(u32);
--		memcpy(cdesc->control_data.token, req->iv, AES_BLOCK_SIZE);
-+		memcpy(cdesc->control_data.token, iv, AES_BLOCK_SIZE);
- 
- 		cdesc->control_data.options |= EIP197_OPTION_4_TOKEN_IV_CMD;
- 	}
-@@ -65,8 +63,8 @@ static void safexcel_cipher_token(struct safexcel_cipher_ctx *ctx,
- 				EIP197_TOKEN_INS_TYPE_OUTPUT;
- }
- 
--static int safexcel_aes_setkey(struct crypto_skcipher *ctfm, const u8 *key,
--			       unsigned int len)
-+static int safexcel_skcipher_aes_setkey(struct crypto_skcipher *ctfm,
-+					const u8 *key, unsigned int len)
- {
- 	struct crypto_tfm *tfm = crypto_skcipher_tfm(ctfm);
- 	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
-@@ -100,11 +98,10 @@ static int safexcel_aes_setkey(struct crypto_skcipher *ctfm, const u8 *key,
- 
- static int safexcel_context_control(struct safexcel_cipher_ctx *ctx,
- 				    struct crypto_async_request *async,
-+				    struct safexcel_cipher_req *sreq,
- 				    struct safexcel_command_desc *cdesc)
- {
- 	struct safexcel_crypto_priv *priv = ctx->priv;
--	struct skcipher_request *req = skcipher_request_cast(async);
--	struct safexcel_cipher_req *sreq = skcipher_request_ctx(req);
- 	int ctrl_size;
- 
- 	if (sreq->direction == SAFEXCEL_ENCRYPT)
-@@ -140,9 +137,12 @@ static int safexcel_context_control(struct safexcel_cipher_ctx *ctx,
- 
- static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int ring,
- 				      struct crypto_async_request *async,
-+				      struct scatterlist *src,
-+				      struct scatterlist *dst,
-+				      unsigned int cryptlen,
-+				      struct safexcel_cipher_req *sreq,
- 				      bool *should_complete, int *ret)
- {
--	struct skcipher_request *req = skcipher_request_cast(async);
- 	struct safexcel_result_desc *rdesc;
- 	int ndesc = 0;
- 
-@@ -171,16 +171,16 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
- 	safexcel_complete(priv, ring);
- 	spin_unlock_bh(&priv->ring[ring].egress_lock);
- 
--	if (req->src == req->dst) {
--		dma_unmap_sg(priv->dev, req->src,
--			     sg_nents_for_len(req->src, req->cryptlen),
-+	if (src == dst) {
-+		dma_unmap_sg(priv->dev, src,
-+			     sg_nents_for_len(src, cryptlen),
- 			     DMA_BIDIRECTIONAL);
- 	} else {
--		dma_unmap_sg(priv->dev, req->src,
--			     sg_nents_for_len(req->src, req->cryptlen),
-+		dma_unmap_sg(priv->dev, src,
-+			     sg_nents_for_len(src, cryptlen),
- 			     DMA_TO_DEVICE);
--		dma_unmap_sg(priv->dev, req->dst,
--			     sg_nents_for_len(req->dst, req->cryptlen),
-+		dma_unmap_sg(priv->dev, dst,
-+			     sg_nents_for_len(dst, cryptlen),
- 			     DMA_FROM_DEVICE);
- 	}
- 
-@@ -189,39 +189,41 @@ static int safexcel_handle_req_result(struct safexcel_crypto_priv *priv, int rin
- 	return ndesc;
- }
- 
--static int safexcel_aes_send(struct crypto_async_request *async,
--			     int ring, struct safexcel_request *request,
--			     int *commands, int *results)
-+static int safexcel_aes_send(struct crypto_async_request *base, int ring,
-+			     struct safexcel_request *request,
-+			     struct safexcel_cipher_req *sreq,
-+			     struct scatterlist *src, struct scatterlist *dst,
-+			     unsigned int cryptlen, u8 *iv, int *commands,
-+			     int *results)
- {
--	struct skcipher_request *req = skcipher_request_cast(async);
--	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(req->base.tfm);
-+	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(base->tfm);
- 	struct safexcel_crypto_priv *priv = ctx->priv;
- 	struct safexcel_command_desc *cdesc;
- 	struct safexcel_result_desc *rdesc;
- 	struct scatterlist *sg;
--	int nr_src, nr_dst, n_cdesc = 0, n_rdesc = 0, queued = req->cryptlen;
-+	int nr_src, nr_dst, n_cdesc = 0, n_rdesc = 0, queued = cryptlen;
- 	int i, ret = 0;
- 
--	if (req->src == req->dst) {
--		nr_src = dma_map_sg(priv->dev, req->src,
--				    sg_nents_for_len(req->src, req->cryptlen),
-+	if (src == dst) {
-+		nr_src = dma_map_sg(priv->dev, src,
-+				    sg_nents_for_len(src, cryptlen),
- 				    DMA_BIDIRECTIONAL);
- 		nr_dst = nr_src;
- 		if (!nr_src)
- 			return -EINVAL;
- 	} else {
--		nr_src = dma_map_sg(priv->dev, req->src,
--				    sg_nents_for_len(req->src, req->cryptlen),
-+		nr_src = dma_map_sg(priv->dev, src,
-+				    sg_nents_for_len(src, cryptlen),
- 				    DMA_TO_DEVICE);
- 		if (!nr_src)
- 			return -EINVAL;
- 
--		nr_dst = dma_map_sg(priv->dev, req->dst,
--				    sg_nents_for_len(req->dst, req->cryptlen),
-+		nr_dst = dma_map_sg(priv->dev, dst,
-+				    sg_nents_for_len(dst, cryptlen),
- 				    DMA_FROM_DEVICE);
- 		if (!nr_dst) {
--			dma_unmap_sg(priv->dev, req->src,
--				     sg_nents_for_len(req->src, req->cryptlen),
-+			dma_unmap_sg(priv->dev, src,
-+				     sg_nents_for_len(src, cryptlen),
- 				     DMA_TO_DEVICE);
- 			return -EINVAL;
- 		}
-@@ -232,7 +234,7 @@ static int safexcel_aes_send(struct crypto_async_request *async,
- 	spin_lock_bh(&priv->ring[ring].egress_lock);
- 
- 	/* command descriptors */
--	for_each_sg(req->src, sg, nr_src, i) {
-+	for_each_sg(src, sg, nr_src, i) {
- 		int len = sg_dma_len(sg);
- 
- 		/* Do not overflow the request */
-@@ -240,7 +242,7 @@ static int safexcel_aes_send(struct crypto_async_request *async,
- 			len = queued;
- 
- 		cdesc = safexcel_add_cdesc(priv, ring, !n_cdesc, !(queued - len),
--					   sg_dma_address(sg), len, req->cryptlen,
-+					   sg_dma_address(sg), len, cryptlen,
- 					   ctx->base.ctxr_dma);
- 		if (IS_ERR(cdesc)) {
- 			/* No space left in the command descriptor ring */
-@@ -250,8 +252,8 @@ static int safexcel_aes_send(struct crypto_async_request *async,
- 		n_cdesc++;
- 
- 		if (n_cdesc == 1) {
--			safexcel_context_control(ctx, async, cdesc);
--			safexcel_cipher_token(ctx, async, cdesc, req->cryptlen);
-+			safexcel_context_control(ctx, base, sreq, cdesc);
-+			safexcel_skcipher_token(ctx, iv, cdesc, cryptlen);
- 		}
- 
- 		queued -= len;
-@@ -260,7 +262,7 @@ static int safexcel_aes_send(struct crypto_async_request *async,
- 	}
- 
- 	/* result descriptors */
--	for_each_sg(req->dst, sg, nr_dst, i) {
-+	for_each_sg(dst, sg, nr_dst, i) {
- 		bool first = !i, last = (i == nr_dst - 1);
- 		u32 len = sg_dma_len(sg);
- 
-@@ -276,7 +278,7 @@ static int safexcel_aes_send(struct crypto_async_request *async,
- 
- 	spin_unlock_bh(&priv->ring[ring].egress_lock);
- 
--	request->req = &req->base;
-+	request->req = base;
- 
- 	*commands = n_cdesc;
- 	*results = n_rdesc;
-@@ -291,16 +293,16 @@ static int safexcel_aes_send(struct crypto_async_request *async,
- 
- 	spin_unlock_bh(&priv->ring[ring].egress_lock);
- 
--	if (req->src == req->dst) {
--		dma_unmap_sg(priv->dev, req->src,
--			     sg_nents_for_len(req->src, req->cryptlen),
-+	if (src == dst) {
-+		dma_unmap_sg(priv->dev, src,
-+			     sg_nents_for_len(src, cryptlen),
- 			     DMA_BIDIRECTIONAL);
- 	} else {
--		dma_unmap_sg(priv->dev, req->src,
--			     sg_nents_for_len(req->src, req->cryptlen),
-+		dma_unmap_sg(priv->dev, src,
-+			     sg_nents_for_len(src, cryptlen),
- 			     DMA_TO_DEVICE);
--		dma_unmap_sg(priv->dev, req->dst,
--			     sg_nents_for_len(req->dst, req->cryptlen),
-+		dma_unmap_sg(priv->dev, dst,
-+			     sg_nents_for_len(dst, cryptlen),
- 			     DMA_FROM_DEVICE);
- 	}
- 
-@@ -309,11 +311,10 @@ static int safexcel_aes_send(struct crypto_async_request *async,
- 
- static int safexcel_handle_inv_result(struct safexcel_crypto_priv *priv,
- 				      int ring,
--				      struct crypto_async_request *async,
-+				      struct crypto_async_request *base,
- 				      bool *should_complete, int *ret)
- {
--	struct skcipher_request *req = skcipher_request_cast(async);
--	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(req->base.tfm);
-+	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(base->tfm);
- 	struct safexcel_result_desc *rdesc;
- 	int ndesc = 0, enq_ret;
- 
-@@ -354,7 +355,7 @@ static int safexcel_handle_inv_result(struct safexcel_crypto_priv *priv,
- 	ctx->base.ring = ring;
- 
- 	spin_lock_bh(&priv->ring[ring].queue_lock);
--	enq_ret = crypto_enqueue_request(&priv->ring[ring].queue, async);
-+	enq_ret = crypto_enqueue_request(&priv->ring[ring].queue, base);
- 	spin_unlock_bh(&priv->ring[ring].queue_lock);
- 
- 	if (enq_ret != -EINPROGRESS)
-@@ -368,9 +369,10 @@ static int safexcel_handle_inv_result(struct safexcel_crypto_priv *priv,
- 	return ndesc;
- }
- 
--static int safexcel_handle_result(struct safexcel_crypto_priv *priv, int ring,
--				  struct crypto_async_request *async,
--				  bool *should_complete, int *ret)
-+static int safexcel_skcipher_handle_result(struct safexcel_crypto_priv *priv,
-+					   int ring,
-+					   struct crypto_async_request *async,
-+					   bool *should_complete, int *ret)
- {
- 	struct skcipher_request *req = skcipher_request_cast(async);
- 	struct safexcel_cipher_req *sreq = skcipher_request_ctx(req);
-@@ -381,24 +383,24 @@ static int safexcel_handle_result(struct safexcel_crypto_priv *priv, int ring,
- 		err = safexcel_handle_inv_result(priv, ring, async,
- 						 should_complete, ret);
- 	} else {
--		err = safexcel_handle_req_result(priv, ring, async,
-+		err = safexcel_handle_req_result(priv, ring, async, req->src,
-+						 req->dst, req->cryptlen, sreq,
- 						 should_complete, ret);
- 	}
- 
- 	return err;
- }
- 
--static int safexcel_cipher_send_inv(struct crypto_async_request *async,
-+static int safexcel_cipher_send_inv(struct crypto_async_request *base,
- 				    int ring, struct safexcel_request *request,
- 				    int *commands, int *results)
- {
--	struct skcipher_request *req = skcipher_request_cast(async);
--	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(req->base.tfm);
-+	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(base->tfm);
- 	struct safexcel_crypto_priv *priv = ctx->priv;
- 	int ret;
- 
--	ret = safexcel_invalidate_cache(async, priv,
--					ctx->base.ctxr_dma, ring, request);
-+	ret = safexcel_invalidate_cache(base, priv, ctx->base.ctxr_dma, ring,
-+					request);
- 	if (unlikely(ret))
- 		return ret;
- 
-@@ -408,9 +410,9 @@ static int safexcel_cipher_send_inv(struct crypto_async_request *async,
- 	return 0;
- }
- 
--static int safexcel_send(struct crypto_async_request *async,
--			 int ring, struct safexcel_request *request,
--			 int *commands, int *results)
-+static int safexcel_skcipher_send(struct crypto_async_request *async, int ring,
-+				  struct safexcel_request *request,
-+				  int *commands, int *results)
- {
- 	struct skcipher_request *req = skcipher_request_cast(async);
- 	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(req->base.tfm);
-@@ -421,59 +423,69 @@ static int safexcel_send(struct crypto_async_request *async,
- 	BUG_ON(priv->version == EIP97 && sreq->needs_inv);
- 
- 	if (sreq->needs_inv)
--		ret = safexcel_cipher_send_inv(async, ring, request,
--					       commands, results);
-+		ret = safexcel_cipher_send_inv(async, ring, request, commands,
-+					       results);
- 	else
--		ret = safexcel_aes_send(async, ring, request,
-+		ret = safexcel_aes_send(async, ring, request, sreq, req->src,
-+					req->dst, req->cryptlen, req->iv,
- 					commands, results);
- 	return ret;
- }
- 
--static int safexcel_cipher_exit_inv(struct crypto_tfm *tfm)
-+static int safexcel_cipher_exit_inv(struct crypto_tfm *tfm,
-+				    struct crypto_async_request *base,
-+				    struct safexcel_cipher_req *sreq,
-+				    struct safexcel_inv_result *result)
- {
- 	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
- 	struct safexcel_crypto_priv *priv = ctx->priv;
--	SKCIPHER_REQUEST_ON_STACK(req, __crypto_skcipher_cast(tfm));
--	struct safexcel_cipher_req *sreq = skcipher_request_ctx(req);
--	struct safexcel_inv_result result = {};
- 	int ring = ctx->base.ring;
- 
--	memset(req, 0, sizeof(struct skcipher_request));
-+	init_completion(&result->completion);
- 
--	/* create invalidation request */
--	init_completion(&result.completion);
--	skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
--				      safexcel_inv_complete, &result);
--
--	skcipher_request_set_tfm(req, __crypto_skcipher_cast(tfm));
--	ctx = crypto_tfm_ctx(req->base.tfm);
-+	ctx = crypto_tfm_ctx(base->tfm);
- 	ctx->base.exit_inv = true;
- 	sreq->needs_inv = true;
- 
- 	spin_lock_bh(&priv->ring[ring].queue_lock);
--	crypto_enqueue_request(&priv->ring[ring].queue, &req->base);
-+	crypto_enqueue_request(&priv->ring[ring].queue, base);
- 	spin_unlock_bh(&priv->ring[ring].queue_lock);
- 
- 	queue_work(priv->ring[ring].workqueue,
- 		   &priv->ring[ring].work_data.work);
- 
--	wait_for_completion(&result.completion);
-+	wait_for_completion(&result->completion);
- 
--	if (result.error) {
-+	if (result->error) {
- 		dev_warn(priv->dev,
- 			"cipher: sync: invalidate: completion error %d\n",
--			 result.error);
--		return result.error;
-+			 result->error);
-+		return result->error;
- 	}
- 
- 	return 0;
- }
- 
--static int safexcel_aes(struct skcipher_request *req,
--			enum safexcel_cipher_direction dir, u32 mode)
-+static int safexcel_skcipher_exit_inv(struct crypto_tfm *tfm)
- {
--	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(req->base.tfm);
-+	SKCIPHER_REQUEST_ON_STACK(req, __crypto_skcipher_cast(tfm));
- 	struct safexcel_cipher_req *sreq = skcipher_request_ctx(req);
-+	struct safexcel_inv_result result = {};
-+
-+	memset(req, 0, sizeof(struct skcipher_request));
-+
-+	skcipher_request_set_callback(req, CRYPTO_TFM_REQ_MAY_BACKLOG,
-+				      safexcel_inv_complete, &result);
-+	skcipher_request_set_tfm(req, __crypto_skcipher_cast(tfm));
-+
-+	return safexcel_cipher_exit_inv(tfm, &req->base, sreq, &result);
-+}
-+
-+static int safexcel_aes(struct crypto_async_request *base,
-+			struct safexcel_cipher_req *sreq,
-+			enum safexcel_cipher_direction dir, u32 mode)
-+{
-+	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(base->tfm);
- 	struct safexcel_crypto_priv *priv = ctx->priv;
- 	int ret, ring;
- 
-@@ -489,7 +501,7 @@ static int safexcel_aes(struct skcipher_request *req,
- 	} else {
- 		ctx->base.ring = safexcel_select_ring(priv);
- 		ctx->base.ctxr = dma_pool_zalloc(priv->context_pool,
--						 EIP197_GFP_FLAGS(req->base),
-+						 EIP197_GFP_FLAGS(*base),
- 						 &ctx->base.ctxr_dma);
- 		if (!ctx->base.ctxr)
- 			return -ENOMEM;
-@@ -498,7 +510,7 @@ static int safexcel_aes(struct skcipher_request *req,
- 	ring = ctx->base.ring;
- 
- 	spin_lock_bh(&priv->ring[ring].queue_lock);
--	ret = crypto_enqueue_request(&priv->ring[ring].queue, &req->base);
-+	ret = crypto_enqueue_request(&priv->ring[ring].queue, base);
- 	spin_unlock_bh(&priv->ring[ring].queue_lock);
- 
- 	queue_work(priv->ring[ring].workqueue,
-@@ -509,14 +521,14 @@ static int safexcel_aes(struct skcipher_request *req,
- 
- static int safexcel_ecb_aes_encrypt(struct skcipher_request *req)
- {
--	return safexcel_aes(req, SAFEXCEL_ENCRYPT,
--			    CONTEXT_CONTROL_CRYPTO_MODE_ECB);
-+	return safexcel_aes(&req->base, skcipher_request_ctx(req),
-+			    SAFEXCEL_ENCRYPT, CONTEXT_CONTROL_CRYPTO_MODE_ECB);
- }
- 
- static int safexcel_ecb_aes_decrypt(struct skcipher_request *req)
- {
--	return safexcel_aes(req, SAFEXCEL_DECRYPT,
--			    CONTEXT_CONTROL_CRYPTO_MODE_ECB);
-+	return safexcel_aes(&req->base, skcipher_request_ctx(req),
-+			    SAFEXCEL_DECRYPT, CONTEXT_CONTROL_CRYPTO_MODE_ECB);
- }
- 
- static int safexcel_skcipher_cra_init(struct crypto_tfm *tfm)
-@@ -526,34 +538,44 @@ static int safexcel_skcipher_cra_init(struct crypto_tfm *tfm)
- 		container_of(tfm->__crt_alg, struct safexcel_alg_template,
- 			     alg.skcipher.base);
- 
--	ctx->priv = tmpl->priv;
--	ctx->base.send = safexcel_send;
--	ctx->base.handle_result = safexcel_handle_result;
--
- 	crypto_skcipher_set_reqsize(__crypto_skcipher_cast(tfm),
- 				    sizeof(struct safexcel_cipher_req));
- 
-+	ctx->priv = tmpl->priv;
-+
-+	ctx->base.send = safexcel_skcipher_send;
-+	ctx->base.handle_result = safexcel_skcipher_handle_result;
- 	return 0;
- }
- 
--static void safexcel_skcipher_cra_exit(struct crypto_tfm *tfm)
-+static int safexcel_cipher_cra_exit(struct crypto_tfm *tfm)
- {
- 	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
--	struct safexcel_crypto_priv *priv = ctx->priv;
--	int ret;
- 
- 	memzero_explicit(ctx->key, 8 * sizeof(u32));
- 
- 	/* context not allocated, skip invalidation */
- 	if (!ctx->base.ctxr)
--		return;
-+		return -ENOMEM;
- 
- 	memzero_explicit(ctx->base.ctxr->data, 8 * sizeof(u32));
-+	return 0;
-+}
-+
-+static void safexcel_skcipher_cra_exit(struct crypto_tfm *tfm)
-+{
-+	struct safexcel_cipher_ctx *ctx = crypto_tfm_ctx(tfm);
-+	struct safexcel_crypto_priv *priv = ctx->priv;
-+	int ret;
-+
-+	if (safexcel_cipher_cra_exit(tfm))
-+		return;
- 
- 	if (priv->version == EIP197) {
--		ret = safexcel_cipher_exit_inv(tfm);
-+		ret = safexcel_skcipher_exit_inv(tfm);
- 		if (ret)
--			dev_warn(priv->dev, "cipher: invalidation error %d\n", ret);
-+			dev_warn(priv->dev, "skcipher: invalidation error %d\n",
-+				 ret);
- 	} else {
- 		dma_pool_free(priv->context_pool, ctx->base.ctxr,
- 			      ctx->base.ctxr_dma);
-@@ -563,7 +585,7 @@ static void safexcel_skcipher_cra_exit(struct crypto_tfm *tfm)
- struct safexcel_alg_template safexcel_alg_ecb_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_SKCIPHER,
- 	.alg.skcipher = {
--		.setkey = safexcel_aes_setkey,
-+		.setkey = safexcel_skcipher_aes_setkey,
- 		.encrypt = safexcel_ecb_aes_encrypt,
- 		.decrypt = safexcel_ecb_aes_decrypt,
- 		.min_keysize = AES_MIN_KEY_SIZE,
-@@ -586,20 +608,20 @@ struct safexcel_alg_template safexcel_alg_ecb_aes = {
- 
- static int safexcel_cbc_aes_encrypt(struct skcipher_request *req)
- {
--	return safexcel_aes(req, SAFEXCEL_ENCRYPT,
--			    CONTEXT_CONTROL_CRYPTO_MODE_CBC);
-+	return safexcel_aes(&req->base, skcipher_request_ctx(req),
-+			    SAFEXCEL_ENCRYPT, CONTEXT_CONTROL_CRYPTO_MODE_CBC);
- }
- 
- static int safexcel_cbc_aes_decrypt(struct skcipher_request *req)
- {
--	return safexcel_aes(req, SAFEXCEL_DECRYPT,
--			    CONTEXT_CONTROL_CRYPTO_MODE_CBC);
-+	return safexcel_aes(&req->base, skcipher_request_ctx(req),
-+			    SAFEXCEL_DECRYPT, CONTEXT_CONTROL_CRYPTO_MODE_CBC);
- }
- 
- struct safexcel_alg_template safexcel_alg_cbc_aes = {
- 	.type = SAFEXCEL_ALG_TYPE_SKCIPHER,
- 	.alg.skcipher = {
--		.setkey = safexcel_aes_setkey,
-+		.setkey = safexcel_skcipher_aes_setkey,
- 		.encrypt = safexcel_cbc_aes_encrypt,
- 		.decrypt = safexcel_cbc_aes_decrypt,
- 		.min_keysize = AES_MIN_KEY_SIZE,
--- 
-2.17.0
+The one that doesn't change the driver behavior as stated in the patch
+description.
+
+>  ((EXYNOS_TMU_INTEN_RISE0_SHIFT + i) * 4) or
+>   (EXYNOS_TMU_INTEN_RISE0_SHIFT + (i * 4))
+> 
+> but if it is the former it is lucky it works because the macro is zero.
+> 
+> Is it possible to have the registers layout, that would facilitate the review.
+
+I'm sorry but Exynos TMU documentation is not publicly available.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
