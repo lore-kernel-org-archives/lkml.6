@@ -1,71 +1,327 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751694AbeEBWzv (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 18:55:51 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46015 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751045AbeEBWzs (ORCPT
+        id S1751645AbeEBXHG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 19:07:06 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:34841 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751148AbeEBXHE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 18:55:48 -0400
-X-Google-Smtp-Source: AB8JxZpdclIVqxhXK0SOfWGifQ78Yn7hIth20EDAzIuRlBMhdFXg/ugdgklN7dmcUzLtOW9PmWqLSQ==
-Date: Wed, 2 May 2018 15:55:45 -0700
-From: Kees Cook <keescook@chromium.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Boaz Harrosh <ooo@electrozaur.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: libosd: Remove VLA usage
-Message-ID: <20180502225545.GA45533@beast>
+        Wed, 2 May 2018 19:07:04 -0400
+X-Google-Smtp-Source: AB8JxZoyPRHwr0T0ojud2aPBA6zDsKvSLVX3FW27zzZUQSen2qqlDAAwUE8ZmIgOFA4qKeru3HDlWw==
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+To: Kees Cook <keescook@chromium.org>
+Cc: Alexander Popov <alex.popov@linux.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20180502203326.9491-1-labbott@redhat.com>
+ <20180502203326.9491-3-labbott@redhat.com>
+ <CAGXu5jK1_--omGSqz03sfB8twQVzy9ZQR9Xzi-uxseekp+r1jQ@mail.gmail.com>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <4b7e94c1-79c9-0380-25c6-762762ed595f@redhat.com>
+Date: Wed, 2 May 2018 16:07:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In-Reply-To: <CAGXu5jK1_--omGSqz03sfB8twQVzy9ZQR9Xzi-uxseekp+r1jQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On the quest to remove all VLAs from the kernel[1] this rearranges the
-code to avoid a VLA warning under -Wvla (gcc doesn't recognize "const"
-variables as not triggering VLA creation). Additionally cleans up variable
-naming to avoid 80 character column limit.
+On 05/02/2018 02:31 PM, Kees Cook wrote:
+> On Wed, May 2, 2018 at 1:33 PM, Laura Abbott <labbott@redhat.com> wrote:
+>>
+>> Implementation of stackleak based heavily on the x86 version
+> 
+> Awesome! Notes below for both you and Alexander, since I think we can
+> create a common code base instead of having near-duplicates in the
+> arch/ trees...
+> 
+>>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> ---
+>> Now written in C instead of a bunch of assembly.
+>> ---
+>>   arch/arm64/Kconfig                    |  1 +
+>>   arch/arm64/include/asm/processor.h    |  6 ++++
+>>   arch/arm64/kernel/Makefile            |  3 ++
+>>   arch/arm64/kernel/entry.S             |  6 ++++
+>>   arch/arm64/kernel/erase.c             | 55 +++++++++++++++++++++++++++++++++++
+>>   arch/arm64/kernel/process.c           | 16 ++++++++++
+>>   drivers/firmware/efi/libstub/Makefile |  3 +-
+>>   scripts/Makefile.gcc-plugins          |  5 +++-
+>>   8 files changed, 93 insertions(+), 2 deletions(-)
+>>   create mode 100644 arch/arm64/kernel/erase.c
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index eb2cf4938f6d..b0221db95dc9 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -92,6 +92,7 @@ config ARM64
+>>          select HAVE_ARCH_MMAP_RND_BITS
+>>          select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+>>          select HAVE_ARCH_SECCOMP_FILTER
+>> +       select HAVE_ARCH_STACKLEAK
+>>          select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+>>          select HAVE_ARCH_TRACEHOOK
+>>          select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+>> diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+>> index 767598932549..d31ab80ff647 100644
+>> --- a/arch/arm64/include/asm/processor.h
+>> +++ b/arch/arm64/include/asm/processor.h
+>> @@ -124,6 +124,12 @@ struct thread_struct {
+>>          unsigned long           fault_address;  /* fault info */
+>>          unsigned long           fault_code;     /* ESR_EL1 value */
+>>          struct debug_info       debug;          /* debugging */
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +       unsigned long           lowest_stack;
+>> +#ifdef CONFIG_STACKLEAK_METRICS
+>> +       unsigned long           prev_lowest_stack;
+>> +#endif
+>> +#endif
+> 
+> I wonder if x86 and arm64 could include a common struct here that was
+> empty when the plugin is disabled... it would keep the ifdefs in one
+> place. Maybe include/linux/stackleak.h could be:
+> 
+> ---start---
+> /* Poison value points to the unused hole in the virtual memory map */
+> #define STACKLEAK_POISON -0xBEEF
+> #define STACKLEAK_POISON_CHECK_DEPTH 128
+> 
+> struct stackleak {
+> #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>         unsigned long           lowest;
+> #ifdef CONFIG_STACKLEAK_METRICS
+>         unsigned long           prev_lowest;
+> #endif
+> #endif
+> };
+> 
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Is this well defined across all compilers if the plugin is off?
+This seems to compile with gcc at least but 0 sized structs
+make me a little uneasy.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/scsi/osd/osd_initiator.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+> asmlinkage void erase_kstack(void);
+> ---eof---
+> 
+> and arch/*/include/asm/processor.h could do:
+> 
+> @@ -124,6 +124,12 @@ struct thread_struct {
+>          unsigned long           fault_address;  /* fault info */
+>          unsigned long           fault_code;     /* ESR_EL1 value */
+>          struct debug_info       debug;          /* debugging */
+> +       struct stackleak         stackleak;
+> 
+> and arch/x86/entry/erase.c could move to maybe kernel/stackleak.c?
+> (Oh, I notice this needs an SPDX line too.)
+> 
+>>   static inline void arch_thread_struct_whitelist(unsigned long *offset,
+>> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+>> index bf825f38d206..0ceea613c65b 100644
+>> --- a/arch/arm64/kernel/Makefile
+>> +++ b/arch/arm64/kernel/Makefile
+>> @@ -55,6 +55,9 @@ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+>>   arm64-obj-$(CONFIG_CRASH_DUMP)         += crash_dump.o
+>>   arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)  += sdei.o
+>>
+>> +arm64-obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += erase.o
+>> +KASAN_SANITIZE_erase.o := n
+>> +
+>>   obj-y                                  += $(arm64-obj-y) vdso/ probes/
+>>   obj-m                                  += $(arm64-obj-m)
+>>   head-y                                 := head.o
+>> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+>> index ec2ee720e33e..3144f1ebdc18 100644
+>> --- a/arch/arm64/kernel/entry.S
+>> +++ b/arch/arm64/kernel/entry.S
+>> @@ -401,6 +401,11 @@ tsk        .req    x28             // current thread_info
+>>
+>>          .text
+>>
+>> +       .macro  ERASE_KSTACK
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +       bl      erase_kstack
+>> +#endif
+>> +       .endm
+>>   /*
+>>    * Exception vectors.
+>>    */
+>> @@ -906,6 +911,7 @@ ret_to_user:
+>>          cbnz    x2, work_pending
+>>   finish_ret_to_user:
+>>          enable_step_tsk x1, x2
+>> +       ERASE_KSTACK
+>>          kernel_exit 0
+>>   ENDPROC(ret_to_user)
+> 
+> Nice. All of the return paths end up here (I went looking for
+> ret_from_fork's path). :)
+> 
+>>
+>> diff --git a/arch/arm64/kernel/erase.c b/arch/arm64/kernel/erase.c
+>> new file mode 100644
+>> index 000000000000..b8b5648d893b
+>> --- /dev/null
+>> +++ b/arch/arm64/kernel/erase.c
+>> @@ -0,0 +1,55 @@
+>> +#include <linux/bug.h>
+>> +#include <linux/sched.h>
+>> +#include <asm/current.h>
+>> +#include <asm/linkage.h>
+>> +#include <asm/processor.h>
+>> +
+>> +asmlinkage void erase_kstack(void)
+>> +{
+>> +       unsigned long p = current->thread.lowest_stack;
+>> +       unsigned long boundary = p & ~(THREAD_SIZE - 1);
+>> +       unsigned long poison = 0;
+>> +       const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
+>> +                                                       sizeof(unsigned long);
+>> +
+>> +       /*
+>> +        * Let's search for the poison value in the stack.
+>> +        * Start from the lowest_stack and go to the bottom.
+>> +        */
+>> +       while (p > boundary && poison <= check_depth) {
+>> +               if (*(unsigned long *)p == STACKLEAK_POISON)
+>> +                       poison++;
+>> +               else
+>> +                       poison = 0;
+>> +
+>> +               p -= sizeof(unsigned long);
+>> +       }
+>> +
+>> +       /*
+>> +        * One long int at the bottom of the thread stack is reserved and
+>> +        * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
+>> +        */
+>> +       if (p == boundary)
+>> +               p += sizeof(unsigned long);
+>> +
+>> +#ifdef CONFIG_STACKLEAK_METRICS
+>> +       current->thread.prev_lowest_stack = p;
+>> +#endif
+>> +
+>> +       /*
+>> +        * So let's write the poison value to the kernel stack.
+>> +        * Start from the address in p and move up till the new boundary.
+>> +        */
+>> +       boundary = current_stack_pointer;
+> 
+> This is the only difference between x86 and arm64 in this code. What
+> do you think about implementing on_thread_stack() to match x86:
+> 
+>          if (on_thread_stack())
+>                  boundary = current_stack_pointer;
+>          else
+>                  boundary = current_top_of_stack();
+> 
+> then we could make this common code too instead of having two copies in arch/?
+> 
 
-diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
-index e18877177f1b..917a86a2ae8c 100644
---- a/drivers/scsi/osd/osd_initiator.c
-+++ b/drivers/scsi/osd/osd_initiator.c
-@@ -1842,14 +1842,14 @@ int osd_req_decode_sense_full(struct osd_request *or,
- 		case osd_sense_response_integrity_check:
- 		{
- 			struct osd_sense_response_integrity_check_descriptor
--				*osricd = cur_descriptor;
--			const unsigned len =
--					  sizeof(osricd->integrity_check_value);
--			char key_dump[len*4 + 2]; /* 2nibbles+space+ASCII */
--
--			hex_dump_to_buffer(osricd->integrity_check_value, len,
--				       32, 1, key_dump, sizeof(key_dump), true);
--			OSD_SENSE_PRINT2("response_integrity [%s]\n", key_dump);
-+				*d = cur_descriptor;
-+			/* 2nibbles+space+ASCII */
-+			char dump[sizeof(d->integrity_check_value) * 4 + 2];
-+
-+			hex_dump_to_buffer(d->integrity_check_value,
-+					sizeof(d->integrity_check_value),
-+					32, 1, dump, sizeof(dump), true);
-+			OSD_SENSE_PRINT2("response_integrity [%s]\n", dump);
- 		}
- 		case osd_sense_attribute_identification:
- 		{
--- 
-2.17.0
+The issue isn't on_thread_stack, it's current_top_of_stack which isn't
+defined on arm64. I agree it would be good if the code would be common
+but I'm not sure how much we want to start trying to force APIs.
 
+>> +       BUG_ON(boundary - p >= THREAD_SIZE);
+>> +
+>> +       while (p < boundary) {
+>> +               *(unsigned long *)p = STACKLEAK_POISON;
+>> +               p += sizeof(unsigned long);
+>> +       }
+>> +
+>> +       /* Reset the lowest_stack value for the next syscall */
+>> +       current->thread.lowest_stack = current_stack_pointer;
+>> +}
+>> +
+>> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+>> index f08a2ed9db0d..156fa0a0da19 100644
+>> --- a/arch/arm64/kernel/process.c
+>> +++ b/arch/arm64/kernel/process.c
+>> @@ -364,6 +364,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
+>>          p->thread.cpu_context.pc = (unsigned long)ret_from_fork;
+>>          p->thread.cpu_context.sp = (unsigned long)childregs;
+>>
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +       p->thread.lowest_stack = (unsigned long)task_stack_page(p);
+>> +#endif
+>>          ptrace_hw_copy_thread(p);
+>>
+>>          return 0;
+>> @@ -493,3 +496,16 @@ void arch_setup_new_exec(void)
+>>   {
+>>          current->mm->context.flags = is_compat_task() ? MMCF_AARCH32 : 0;
+>>   }
+>> +
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +void __used check_alloca(unsigned long size)
+>> +{
+>> +       unsigned long sp, stack_left;
+>> +
+>> +       sp = current_stack_pointer;
+>> +
+>> +       stack_left = sp & (THREAD_SIZE - 1);
+>> +       BUG_ON(stack_left < 256 || size >= stack_left - 256);
+>> +}
+>> +EXPORT_SYMBOL(check_alloca);
+> 
+> This is pretty different from x86. Is this just an artifact of ORC, or
+> something else?
+> 
 
--- 
-Kees Cook
-Pixel Security
+This was based on the earlier version of x86. I'll confess to
+not seeing how the current x86 version ended up with get_stack_info
+but I suspect it's either related to ORC unwinding or it's best
+practice.
+
+>> +#endif
+>> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+>> index a34e9290a699..25dd2a14560d 100644
+>> --- a/drivers/firmware/efi/libstub/Makefile
+>> +++ b/drivers/firmware/efi/libstub/Makefile
+>> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)  += -I$(srctree)/scripts/dtc/libfdt
+>>   KBUILD_CFLAGS                  := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>>                                     -D__NO_FORTIFY \
+>>                                     $(call cc-option,-ffreestanding) \
+>> -                                  $(call cc-option,-fno-stack-protector)
+>> +                                  $(call cc-option,-fno-stack-protector) \
+>> +                                  $(DISABLE_STACKLEAK_PLUGIN)
+>>
+>>   GCOV_PROFILE                   := n
+>>   KASAN_SANITIZE                 := n
+>> diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+>> index 8d6070fc538f..6cc0e35d3324 100644
+>> --- a/scripts/Makefile.gcc-plugins
+>> +++ b/scripts/Makefile.gcc-plugins
+>> @@ -37,11 +37,14 @@ ifdef CONFIG_GCC_PLUGINS
+>>
+>>     gcc-plugin-$(CONFIG_GCC_PLUGIN_STACKLEAK)    += stackleak_plugin.so
+>>     gcc-plugin-cflags-$(CONFIG_GCC_PLUGIN_STACKLEAK)     += -DSTACKLEAK_PLUGIN -fplugin-arg-stackleak_plugin-track-min-size=$(CONFIG_STACKLEAK_TRACK_MIN_SIZE)
+>> +  ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +    DISABLE_STACKLEAK_PLUGIN           += -fplugin-arg-stackleak_plugin-disable
+>> +  endif
+>>
+>>     GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
+>>
+>>     export PLUGINCC GCC_PLUGINS_CFLAGS GCC_PLUGIN GCC_PLUGIN_SUBDIR
+>> -  export SANCOV_PLUGIN DISABLE_LATENT_ENTROPY_PLUGIN
+>> +  export SANCOV_PLUGIN DISABLE_LATENT_ENTROPY_PLUGIN DISABLE_STACKLEAK_PLUGIN
+>>
+>>     ifneq ($(PLUGINCC),)
+>>       # SANCOV_PLUGIN can be only in CFLAGS_KCOV because avoid duplication.
+>> --
+>> 2.14.3
+>>
+> 
+> -Kees
+> 
+
+Thanks,
+Laura
