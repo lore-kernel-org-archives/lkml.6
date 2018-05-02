@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4163049-1525230279-2-2010553599405511610
+X-Cyrus-Session-Id: sloti22d1t05-4163049-1525230275-4-1092885759788669028
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525230278; b=DWGs6tLxROrptvlaYPQxOjjK/64q4np9mSwOiMqKWjLbcq8F2W
-    rL9I0A4e1ziJOu7t2TQp8VURrDQGiE16ldVRNTqhmXjZSBBq1ODVaUZwij1RULQL
-    YLOZ7aQR2uF0XqM4Eqxk1WA9btNTSEfwPTzHF4NYjPZF+bg58e/jwW6H3JryOvQZ
-    iVTVXPGeS64ODFp0ujpunepGEKmEyjS8nmQ7r3QtzS7FE6rN7ThsVBqbOzODtd6A
-    YWvlSdqPVCOGUz7+EK3tyUxsh5/t6HYyDeFdyHvjxnA52JI36sIXY0HdvvtTtuXW
-    fbYxSDwVozxpRrOXE9RGWPK/qmbK4MxzELww==
+    1525230275; b=VklenjwTRsyTH1wrodBmhImQ7tPBnwkEbta1+f9wGDNXuKvfJf
+    hKC7m56EhmRM/FPH+jAY2EB9s2xRyMrikNLTqHTQWaRnWyXtH+qSxuNcRhDbsvge
+    kgpIhxX6Ge79x7uovn4rNDlB+2Tbgfl+zBPPBjDaM5Q4EPHxE6JYZ/RMzGesTTuc
+    8Ga4wDRqXPqK7SwugpKXcw371Nc7HAdn7AsCvNI4Z3nr3VkT7K1PZUR7PgSV5d3c
+    4R1tt6huvPd4bbN+IZvIlvjiWYESTI2WfUVxXsVSzTl+iYtyXu/Sw06Yf+Ydwb+I
+    0Pk9ZwMB6FBr81Chfs+PTQ/JhktU6g+LiyrQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525230278; bh=
-    Jv+xd2LcTVJtovKzApaaS5LF21vKD35mm+pjQDq6wS0=; b=VO2PXIkv56PkjI3y
-    nwiCtnpVDThJyCd7aTmWzeCS+COwuTofUjFlEKANeBR171z3ElrgqChlmUkXn9p1
-    HERW6y2gRn7gj3Kj5f6ITzHe+AVyz+JyOnasoQ6cv5xR94otYkB6FP03ULwPtQV7
-    Dshxar1Ywo/Zr/JFEKYEZlWidN7ENnn/7kXxgbjBtCvZMcQiIgQnKfvhcDMuc9EN
-    2mNy5jyf92M1F2cxrdZBz3xmXiMJlYNOJKUofz3mWPtuHWVGrU9v5zKHw03Fq/vt
-    6bytk3zi3OPyIy6qdpuBSN5VG411NrpmXaE8sbB7/X0wUZKBIHPGr8W8FVx5fbBO
-    Qxd/Zg==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525230275; bh=
+    nTn3Lif41TOwgWOBoCsYAZkAgkGtkULsVbx0j+d1L1M=; b=ixGMmDF8ONuV4q5u
+    yDZipk2LPVD5D0HB+26C8pFhInNa7xFcqCHYTlNScIWDXc8Y14DFhSgfieEq9m+u
+    OZ10hb+ytnsav9k8jEVckF0l4CR3c/E77mYqSMtCeZHpjtBE6N3h2SIIxtt3+4Yx
+    W6JpVowkiq97KKkxAoCx3VvTFzv9ZaF1roPq7W+FC6F8yIF167764wYF+3Pc3SM+
+    T3ePb4vNzf1d/ogekbEkj5GCBol4dUrhNRLGLsyvNNcr4X7bTXJhdu8zvqe4UTxL
+    IQGC5eU4FWRMLQBBd4ke0MsQv6iJLCtGTm8g5FT2tgSJpKJvxupXWpymlMukZ/gX
+    w1SOLg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -41,7 +41,7 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
@@ -55,36 +55,41 @@ Authentication-Results: mx3.messagingengine.com;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJDkgY+L99+BRN7M2xBNiOKH0r0VEE/LjHp+NYJX0AWtBKO7nE9bGoi4BUzmgYFTHEeSyD6bwPuz1jwk/iTn1NFW+XWE97P2A134A2qgye35wfsPlRzc
-    knqjNYPkkm/q3MYiJkAl6CwoFp0T4cpW01FrpuaE/ZBVE4z2uOpO1SxVHyC5IrX30KRyiud1I8+Ue+vVoaU0p7FHsZtieiFPfaVSvcfU/EGsYxr1awolojgj
+X-CM-Envelope: MS4wfPheVj3QgpLCwx5JV3bqrs2BTuFIU/sSb/zyxXcQ9SVG56W60LNWdGdxEPu20UmWBK9uMDJL/3+G9pCXrZBTt86Ot+i7/dv10BtBx4nW68Q4uZyC2w1p
+    /LYeLeHbF28S9zRoQuE6uWvd5Ce4xPzu0ZLz7fs75sfdzXDaX6iCI24E2NZvtV7ql07cQAuyJYyvOvRVUNXDb8SWATyDv6sn/kVfnt93Xn7ijHRFNLFb+S/Q
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=VwQbUJbxAAAA:8 a=y-Gmv49SbNsKmzXHpHIA:9 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=79JVqncWIo8JHLkT62oA:9 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751607AbeEBDEh (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 1 May 2018 23:04:37 -0400
+        id S1751598AbeEBDCq (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 23:02:46 -0400
 Received: from mga12.intel.com ([192.55.52.136]:63852 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751587AbeEBDCp (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 1 May 2018 23:02:45 -0400
+        id S1751566AbeEBDCn (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 1 May 2018 23:02:43 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
-   d="scan'208";a="46058595"
+   d="scan'208";a="46058583"
 From: Wu Hao <hao.wu@intel.com>
 To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
-        yi.z.zhang@intel.com, hao.wu@intel.com
-Subject: [PATCH v5 24/28] fpga: dfl: afu: add port ops support
-Date: Wed,  2 May 2018 10:50:27 +0800
-Message-Id: <1525229431-3087-25-git-send-email-hao.wu@intel.com>
+        yi.z.zhang@intel.com, hao.wu@intel.com,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: [PATCH v5 23/28] fpga: dfl: add FPGA Accelerated Function Unit driver basic framework
+Date: Wed,  2 May 2018 10:50:26 +0800
+Message-Id: <1525229431-3087-24-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
 References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
@@ -94,163 +99,238 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch registers the port ops into the global list in the DFL
-framework, and it allows other modules to use the port ops. And
-This patch includes the implementation of the get_id and enable_set
-ops too.
+On DFL FPGA devices, the Accelerated Function Unit (AFU), can be
+reprogrammed for different functions. It connects to the FPGA
+infrastructure (static FPGA region) via a Port. Port CSRs are
+implemented separately from the AFU CSRs to provide control and
+status of the Port. Once valid PR bitstream is programmed into
+the AFU, it allows access to the AFU CSRs in the AFU MMIO space.
 
+This patch only implements basic driver framework for AFU, including
+device file operation framework.
+
+Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
 Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
 ---
- drivers/fpga/dfl-afu-main.c | 122 +++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 121 insertions(+), 1 deletion(-)
+v3: rename driver to dfl-afu-main.c
+v4: rename to dfl-port and fix SPDX license issue.
+v5: rebase, and add Acked-by from Alan.
+    fix uinit order in remove function.
+---
+ drivers/fpga/Kconfig        |   9 +++
+ drivers/fpga/Makefile       |   2 +
+ drivers/fpga/dfl-afu-main.c | 162 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 173 insertions(+)
+ create mode 100644 drivers/fpga/dfl-afu-main.c
 
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 65d54a4..4c6b45f 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -168,6 +168,15 @@ config FPGA_DFL_FME_REGION
+ 	help
+ 	  Say Y to enable FPGA Region driver for FPGA Management Engine.
+ 
++config FPGA_DFL_AFU
++	tristate "FPGA DFL AFU Driver"
++	depends on FPGA_DFL
++	help
++	  This is the driver for FPGA Accelerated Function Unit (AFU) which
++	  implements AFU and Port management features. A User AFU connects
++	  to the FPGA infrastructure via a Port. There may be more than 1
++	  Port/AFU per DFL based FPGA device.
++
+ config FPGA_DFL_PCI
+ 	tristate "FPGA Device Feature List (DFL) PCIe Device Driver"
+ 	depends on PCI && FPGA_DFL
+diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+index 163894e..5c9607b 100644
+--- a/drivers/fpga/Makefile
++++ b/drivers/fpga/Makefile
+@@ -34,8 +34,10 @@ obj-$(CONFIG_FPGA_DFL_FME)		+= dfl-fme.o
+ obj-$(CONFIG_FPGA_DFL_FME_MGR)		+= dfl-fme-mgr.o
+ obj-$(CONFIG_FPGA_DFL_FME_BRIDGE)	+= dfl-fme-br.o
+ obj-$(CONFIG_FPGA_DFL_FME_REGION)	+= dfl-fme-region.o
++obj-$(CONFIG_FPGA_DFL_AFU)		+= dfl-afu.o
+ 
+ dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
++dfl-afu-objs := dfl-afu-main.o
+ 
+ # Drivers for FPGAs which implement DFL
+ obj-$(CONFIG_FPGA_DFL_PCI)		+= dfl-pci.o
 diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-index 35bec47..4bdbe3d 100644
---- a/drivers/fpga/dfl-afu-main.c
+new file mode 100644
+index 0000000..35bec47
+--- /dev/null
 +++ b/drivers/fpga/dfl-afu-main.c
-@@ -19,6 +19,83 @@
- 
- #include "dfl.h"
- 
-+/**
-+ * port_enable - enable a port
-+ * @pdev: port platform device.
+@@ -0,0 +1,162 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for FPGA Accelerated Function Unit (AFU)
 + *
-+ * Enable Port by clear the port soft reset bit, which is set by default.
-+ * The User AFU is unable to respond to any MMIO access while in reset.
-+ * port_enable function should only be used after port_disable
-+ * function.
-+ */
-+static void port_enable(struct platform_device *pdev)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	void __iomem *base;
-+	u64 v;
-+
-+	WARN_ON(!pdata->disable_count);
-+
-+	if (--pdata->disable_count != 0)
-+		return;
-+
-+	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
-+
-+	/* Clear port soft reset */
-+	v = readq(base + PORT_HDR_CTRL);
-+	v &= ~PORT_CTRL_SFTRST;
-+	writeq(v, base + PORT_HDR_CTRL);
-+}
-+
-+#define RST_POLL_INVL 10 /* us */
-+#define RST_POLL_TIMEOUT 1000 /* us */
-+
-+/**
-+ * port_disable - disable a port
-+ * @pdev: port platform device.
++ * Copyright (C) 2017 Intel Corporation, Inc.
 + *
-+ * Disable Port by setting the port soft reset bit, it puts the port into
-+ * reset.
++ * Authors:
++ *   Wu Hao <hao.wu@intel.com>
++ *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
++ *   Joseph Grecco <joe.grecco@intel.com>
++ *   Enno Luebbers <enno.luebbers@intel.com>
++ *   Tim Whisonant <tim.whisonant@intel.com>
++ *   Ananda Ravuri <ananda.ravuri@intel.com>
++ *   Henry Mitchel <henry.mitchel@intel.com>
 + */
-+static int port_disable(struct platform_device *pdev)
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++
++#include "dfl.h"
++
++static int port_hdr_init(struct platform_device *pdev,
++			 struct dfl_feature *feature)
 +{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	void __iomem *base;
-+	u64 v;
-+
-+	if (pdata->disable_count++ != 0)
-+		return 0;
-+
-+	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
-+
-+	/* Set port soft reset */
-+	v = readq(base + PORT_HDR_CTRL);
-+	v |= PORT_CTRL_SFTRST;
-+	writeq(v, base + PORT_HDR_CTRL);
-+
-+	/*
-+	 * HW sets ack bit to 1 when all outstanding requests have been drained
-+	 * on this port and minimum soft reset pulse width has elapsed.
-+	 * Driver polls port_soft_reset_ack to determine if reset done by HW.
-+	 */
-+	if (readq_poll_timeout(base + PORT_HDR_CTRL, v, v & PORT_CTRL_SFTRST,
-+			       RST_POLL_INVL, RST_POLL_TIMEOUT)) {
-+		dev_err(&pdev->dev, "timeout, fail to reset device\n");
-+		return -ETIMEDOUT;
-+	}
++	dev_dbg(&pdev->dev, "PORT HDR Init.\n");
 +
 +	return 0;
 +}
 +
-+static int port_get_id(struct platform_device *pdev)
++static void port_hdr_uinit(struct platform_device *pdev,
++			   struct dfl_feature *feature)
 +{
-+	void __iomem *base;
-+
-+	base = dfl_get_feature_ioaddr_by_id(&pdev->dev, PORT_FEATURE_ID_HEADER);
-+
-+	return FIELD_GET(PORT_CAP_PORT_NUM, readq(base + PORT_HDR_CAP));
++	dev_dbg(&pdev->dev, "PORT HDR UInit.\n");
 +}
 +
- static int port_hdr_init(struct platform_device *pdev,
- 			 struct dfl_feature *feature)
- {
-@@ -119,6 +196,28 @@ static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	.unlocked_ioctl = afu_ioctl,
- };
- 
-+static int port_enable_set(struct platform_device *pdev, bool enable)
-+{
-+	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	int ret = 0;
-+
-+	mutex_lock(&pdata->lock);
-+	if (enable)
-+		port_enable(pdev);
-+	else
-+		ret = port_disable(pdev);
-+	mutex_unlock(&pdata->lock);
-+
-+	return ret;
-+}
-+
-+static struct dfl_fpga_port_ops afu_port_ops = {
-+	.name = DFL_FPGA_FEATURE_DEV_PORT,
-+	.owner = THIS_MODULE,
-+	.get_id = port_get_id,
-+	.enable_set = port_enable_set,
++static const struct dfl_feature_ops port_hdr_ops = {
++	.init = port_hdr_init,
++	.uinit = port_hdr_uinit,
 +};
 +
- static int afu_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -154,7 +253,28 @@ static int afu_remove(struct platform_device *pdev)
- 	.remove  = afu_remove,
- };
- 
--module_platform_driver(afu_driver);
-+static int __init afu_init(void)
++static struct dfl_feature_driver port_feature_drvs[] = {
++	{
++		.id = PORT_FEATURE_ID_HEADER,
++		.ops = &port_hdr_ops,
++	},
++	{
++		.ops = NULL,
++	}
++};
++
++static int afu_open(struct inode *inode, struct file *filp)
++{
++	struct platform_device *fdev = dfl_fpga_inode_to_feature_dev(inode);
++	struct dfl_feature_platform_data *pdata;
++	int ret;
++
++	pdata = dev_get_platdata(&fdev->dev);
++	if (WARN_ON(!pdata))
++		return -ENODEV;
++
++	ret = dfl_feature_dev_use_begin(pdata);
++	if (ret)
++		return ret;
++
++	dev_dbg(&fdev->dev, "Device File Open\n");
++	filp->private_data = fdev;
++
++	return 0;
++}
++
++static int afu_release(struct inode *inode, struct file *filp)
++{
++	struct platform_device *pdev = filp->private_data;
++	struct dfl_feature_platform_data *pdata;
++
++	dev_dbg(&pdev->dev, "Device File Release\n");
++
++	pdata = dev_get_platdata(&pdev->dev);
++
++	dfl_feature_dev_use_end(pdata);
++
++	return 0;
++}
++
++static long afu_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
++{
++	struct platform_device *pdev = filp->private_data;
++	struct dfl_feature_platform_data *pdata;
++	struct dfl_feature *f;
++	long ret;
++
++	dev_dbg(&pdev->dev, "%s cmd 0x%x\n", __func__, cmd);
++
++	pdata = dev_get_platdata(&pdev->dev);
++
++	switch (cmd) {
++	default:
++		/*
++		 * Let sub-feature's ioctl function to handle the cmd
++		 * Sub-feature's ioctl returns -ENODEV when cmd is not
++		 * handled in this sub feature, and returns 0 and other
++		 * error code if cmd is handled.
++		 */
++		dfl_fpga_dev_for_each_feature(pdata, f)
++			if (f->ops && f->ops->ioctl) {
++				ret = f->ops->ioctl(pdev, f, cmd, arg);
++				if (ret != -ENODEV)
++					return ret;
++			}
++	}
++
++	return -EINVAL;
++}
++
++static const struct file_operations afu_fops = {
++	.owner = THIS_MODULE,
++	.open = afu_open,
++	.release = afu_release,
++	.unlocked_ioctl = afu_ioctl,
++};
++
++static int afu_probe(struct platform_device *pdev)
 +{
 +	int ret;
 +
-+	dfl_fpga_add_port_ops(&afu_port_ops);
++	dev_dbg(&pdev->dev, "%s\n", __func__);
 +
-+	ret = platform_driver_register(&afu_driver);
++	ret = dfl_fpga_dev_feature_init(pdev, port_feature_drvs);
 +	if (ret)
-+		dfl_fpga_del_port_ops(&afu_port_ops);
++		return ret;
++
++	ret = dfl_fpga_register_dev_ops(pdev, &afu_fops, THIS_MODULE);
++	if (ret)
++		dfl_fpga_dev_feature_uinit(pdev);
 +
 +	return ret;
 +}
 +
-+static void __exit afu_exit(void)
++static int afu_remove(struct platform_device *pdev)
 +{
-+	platform_driver_unregister(&afu_driver);
++	dev_dbg(&pdev->dev, "%s\n", __func__);
 +
-+	dfl_fpga_del_port_ops(&afu_port_ops);
++	dfl_fpga_unregister_dev_ops(pdev);
++	dfl_fpga_dev_feature_uinit(pdev);
++
++	return 0;
 +}
 +
-+module_init(afu_init);
-+module_exit(afu_exit);
- 
- MODULE_DESCRIPTION("FPGA Accelerated Function Unit driver");
- MODULE_AUTHOR("Intel Corporation");
++static struct platform_driver afu_driver = {
++	.driver	= {
++		.name    = DFL_FPGA_FEATURE_DEV_PORT,
++	},
++	.probe   = afu_probe,
++	.remove  = afu_remove,
++};
++
++module_platform_driver(afu_driver);
++
++MODULE_DESCRIPTION("FPGA Accelerated Function Unit driver");
++MODULE_AUTHOR("Intel Corporation");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:dfl-port");
 -- 
 1.8.3.1
 
