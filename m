@@ -1,44 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeEBQ5l (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:57:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46336 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751344AbeEBQ5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:57:40 -0400
-Date: Wed, 2 May 2018 18:57:37 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Stephane Eranian <eranian@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC] perf record: dead code perf_event__synthesize_id_index()
-Message-ID: <20180502165737.GF11539@krava>
-References: <CABPqkBTm+9Wsa21GVXpogWUDNkpRF4eyZOPGa8QJCvdV2Lz2rA@mail.gmail.com>
+        id S1751770AbeEBQ7s (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:59:48 -0400
+Received: from mail.netline.ch ([148.251.143.178]:38133 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeEBQ7r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 12:59:47 -0400
+Subject: Re: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
+To: Christoph Hellwig <hch@lst.de>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        iommu@lists.linux-foundation.org,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180501132411.2311-1-michel@daenzer.net>
+ <786ca83f-45c4-264b-2aef-d84fb18d3d28@gmail.com>
+ <CAKMK7uH2+v3_UUqXdCjz_8=H4VRt1zB+dgE99PuuPqd+XM2=-w@mail.gmail.com>
+ <20180502124151.GA22857@lst.de>
+ <1066dfa2-2f78-815d-c65a-9d09eb35458c@daenzer.net>
+ <20180502162145.GA26787@lst.de>
+From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Message-ID: <ba310210-6f3c-f4e6-29e5-5ae6e791ebeb@daenzer.net>
+Date: Wed, 2 May 2018 18:59:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABPqkBTm+9Wsa21GVXpogWUDNkpRF4eyZOPGa8QJCvdV2Lz2rA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20180502162145.GA26787@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 04:38:33PM +0000, Stephane Eranian wrote:
-> Hi,
+On 2018-05-02 06:21 PM, Christoph Hellwig wrote:
+> On Wed, May 02, 2018 at 04:31:09PM +0200, Michel Dänzer wrote:
+>>> No.  __GFP_NOWARN (and gfp_t flags in general) are the wrong interface
+>>> for dma allocations and just cause problems.  I actually plan to
+>>> get rid of the gfp_t argument in dma_alloc_attrs sooner, and only
+>>> allow either GFP_KERNEL or GFP_DMA passed in dma_alloc_coherent.
+>>
+>> How about GFP_TRANSHUGE_LIGHT? TTM uses that to opportunistically
+>> allocate huge pages (GFP_TRANSHUGE can result in unacceptably long
+>> delays with memory pressure).
 > 
-> It looks like perf_event__synthesize_id_index() is dead code in the current
-> tip
-> tree. I don't see any invocation of the function anywhere in perf.I
-> understand why
-> you'd want to keep the rest of the code related to  PERF_RECORD_ID_INDEX
-> because some perf.data file may have this user-level record type. But the
-> synthesize code is not needed anymore, in my opinion.
+> Well, that is exactly what I don't want drivers to do - same for
+> __GFP_COMP in some drm code.  This very much assumes the page allocator
+> is used to back dma allocations, which very often it actually isn't, and
+> any use of magic gfp flags creates a tight coupling of consumers with a
+> specific implementation.
 > 
-> Shouldn't we remove this code?
+> In general I can't think of a good reason not to actually use
+> GFP_TRANSHUGE_LIGHT by default in the dma allocator unless
+> DMA_ATTR_ALLOC_SINGLE_PAGES is set.  Can you prepare a patch for that?
 
-looks like there never was any user of it, probably some
-preparation for follow up that haven't happened yet.. Adrian?
+I'm afraid I'll have to leave that to somebody else.
 
-jirka
+
+-- 
+Earthling Michel Dänzer               |               http://www.amd.com
+Libre software enthusiast             |             Mesa and X developer
