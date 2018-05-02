@@ -1,109 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751063AbeEBHdG (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:33:06 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:50717 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750895AbeEBHdC (ORCPT
+        id S1751181AbeEBHdZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:33:25 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39954 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751116AbeEBHdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:33:02 -0400
-X-Google-Smtp-Source: AB8JxZpBqIC2wtkgz80ZpmMhiMYwTzwn5WDNKJFK7iEdxJNM+KqWhkF1fkHVrTu7PS4vE1jytq9qqwZvK6oP8+UgKK29aabdfKH/
+        Wed, 2 May 2018 03:33:20 -0400
+X-Google-Smtp-Source: AB8JxZqvjjYp8i2CjIGQ0Az0V5g5jtYTUldSg1aHpW607EEK3gUNI8/5mD/zM2foN+ZSLPT7wPSRLA==
+Date: Wed, 2 May 2018 09:33:15 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: changbin.du@intel.com
+Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
+        x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH 0/5] kernel hacking: GCC optimization for debug
+ experience (-Og)
+Message-ID: <20180502073315.sso3aaak45aeuyst@gmail.com>
+References: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
 MIME-Version: 1.0
-Date: Wed, 02 May 2018 00:33:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000cbaaf6056b341859@google.com>
-Subject: general protection fault in lo_ioctl (2)
-From: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+* changbin.du@intel.com <changbin.du@intel.com> wrote:
 
-HEAD commit:    fff75eb2a08c Merge tag 'errseq-v4.17' of  
-git://git.kernel.o...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?id=5301511529693184
-kernel config:   
-https://syzkaller.appspot.com/x/.config?id=6493557782959164711
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf89c128e05dd6c62523
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller  
-repro:https://syzkaller.appspot.com/x/repro.syz?id=5000693362458624
+> Comparison of system performance: a bit drop.
+> 
+>     w/o CONFIG_DEBUG_EXPERIENCE
+>     $ time make -j4
+>     real    6m43.619s
+>     user    19m5.160s
+>     sys     2m20.287s
+> 
+>     w/ CONFIG_DEBUG_EXPERIENCE
+>     $ time make -j4
+>     real    6m55.054s
+>     user    19m11.129s
+>     sys     2m36.345s
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com
+Sorry, that's not a proper kbuild performance measurement - there's no noise 
+estimation at all.
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 0 PID: 10637 Comm: syz-executor1 Not tainted 4.17.0-rc3+ #52
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:loop_set_fd drivers/block/loop.c:901 [inline]
-RIP: 0010:lo_ioctl+0x1ae8/0x2130 drivers/block/loop.c:1397
-RSP: 0018:ffff8801bd6dfc08 EFLAGS: 00010202
-RAX: 0000000000000037 RBX: ffff8801d296db00 RCX: dffffc0000000000
-RDX: 0000000000000000 RSI: ffffffff84b2cd57 RDI: 00000000000001b8
-RBP: ffff8801bd6dfc80 R08: ffff8801c46943c0 R09: ffffed003b5c46c2
-R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8801b58561a0 R15: ffff8801b58560c0
-FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:00000000f7f2eb40
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000008138024 CR3: 00000001d03df000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  lo_compat_ioctl+0xc1/0x170 drivers/block/loop.c:1602
-  compat_blkdev_ioctl+0x3c2/0x1b20 block/compat_ioctl.c:406
-  __do_compat_sys_ioctl fs/compat_ioctl.c:1461 [inline]
-  __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
-  __ia32_compat_sys_ioctl+0x221/0x640 fs/compat_ioctl.c:1407
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f32cb9
-RSP: 002b:00000000f7f2e0ac EFLAGS: 00000282 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000004c00
-RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-Code: e8 03 80 3c 08 00 0f 85 2c 02 00 00 4d 8b ad f0 00 00 00 48 b9 00 00  
-00 00 00 fc ff df 49 8d bd b8 01 00 00 48 89 f8 48 c1 e8 03 <80> 3c 08 00  
-0f 85 f9 01 00 00 4d 8b ad b8 01 00 00 48 b9 00 00
-RIP: loop_set_fd drivers/block/loop.c:901 [inline] RSP: ffff8801bd6dfc08
-RIP: lo_ioctl+0x1ae8/0x2130 drivers/block/loop.c:1397 RSP: ffff8801bd6dfc08
----[ end trace a15583efe355602c ]---
+Below is a description that should produce more reliable numbers.
+
+Thanks,
+
+	Ingo
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+=========================>
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+So here's a pretty reliable way to measure kernel build time, which tries to avoid 
+the various pitfalls of caching.
+
+First I make sure that cpufreq is set to 'performance':
+
+  for ((cpu=0; cpu<120; cpu++)); do
+    G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
+    [ -f $G ] && echo performance > $G
+  done
+
+[ ... because it can be *really* annoying to discover that an ostensible 
+  performance regression was a cpufreq artifact ... again. ;-) ]
+
+Then I copy a kernel tree to /tmp (ramfs) as root:
+
+	cd /tmp
+	rm -rf linux
+	git clone ~/linux linux
+	cd linux
+	make defconfig >/dev/null
+	
+... and then we can build the kernel in such a loop (as root again):
+
+  perf stat --repeat 10 --null --pre			'\
+	cp -a kernel ../kernel.copy.$(date +%s);	 \
+	rm -rf *;					 \
+	git checkout .;					 \
+	echo 1 > /proc/sys/vm/drop_caches;		 \
+	find ../kernel* -type f | xargs cat >/dev/null;  \
+	make -j kernel >/dev/null;			 \
+	make clean >/dev/null 2>&1;			 \
+	sync						'\
+							 \
+	make -j16 >/dev/null
+
+( I have tested these by pasting them into a terminal. Adjust the ~/linux source 
+  git tree and the '-j16' to your system. )
+
+Notes:
+
+ - the 'pre' script portion is not timed by 'perf stat', only the raw build times
+
+ - we flush all caches via drop_caches and re-establish everything again, but:
+
+ - we also introduce an intentional memory leak by slowly filling up ramfs with 
+   copies of 'kernel/', thus continously changing the layout of free memory, 
+   cached data such as compiler binaries and the source code hierarchy. (Note 
+   that the leak is about 8MB per iteration, so it isn't massive.)
+
+With 10 iterations this is the statistical stability I get this on a big box:
+
+ Performance counter stats for 'make -j128 kernel' (10 runs):
+
+      26.346436425 seconds time elapsed    (+- 0.19%)
+
+... which, despite a high iteration count of 10, is still surprisingly noisy, 
+right?
+
+A 0.2% stddev is probably not enough to call a 0.7% regression with good 
+confidence, so I had to use *30* iterations to make measurement noise to be about 
+an order of magnitude lower than the effect I'm trying to measure:
+
+ Performance counter stats for 'make -j128' (30 runs):
+
+      26.334767571 seconds time elapsed    (+- 0.09% )
+
+i.e. "26.334 +- 0.023" seconds is a number we can have pretty high confidence in, 
+on this system.
+
+And just to demonstrate that it's all real, I repeated the whole 30-iteration 
+measurement again:
+
+ Performance counter stats for 'make -j128' (30 runs):
+
+      26.311166142 seconds time elapsed    (+- 0.07%)
