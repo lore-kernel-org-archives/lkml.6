@@ -1,83 +1,82 @@
-Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AB8JxZo3MUnrOmxncOWCYWr9ayg9Q/Q8mQSEKbPjShNP1jUlHHNC9H8K+WOKKplZxr1D/m89/COR
-ARC-Seal: i=1; a=rsa-sha256; t=1525226847; cv=none;
+Return-Path: <tytso@thunk.org>
+X-Google-Smtp-Source: AB8JxZq2jJ3ROlTaowIrv0204TiQmjS589svmDllKQ+jq/dwF9WaeFv+HrmR4bOxo5J8HX8J2cwh
+ARC-Seal: i=1; a=rsa-sha256; t=1525220365; cv=none;
         d=google.com; s=arc-20160816;
-        b=Td/jIVsmT5DwWaXcZMMVKay9iRRp8a8/cNo53VJkeXKt/gB1dnJE8726WQ0t5MW6Yh
-         GjEbmFH4YLz/1e+gszAaAkGWzEk7kCMn+CWlBbrWmsVrQdPb8+Vh1HQokxOLceyBPkgo
-         LTemk4FKGyg4ZKbS0EySBTH0+R8OywsZapFpp96g23S623YcPQ0TvrrTyHMyltnI4Tr1
-         hfRFVaNtgPlY/dytmFiTYXrRqPi0Bt4U1v9+eW0t8kHa5Wj0ol/pcmnGnINxAldLWk6Q
-         e9piJczBP9EAz4n5LFJG0wJ9p9wqLjQjKEcWqYtwKboYm+FI02tm3kLleIM+Jwz4ctAL
-         Pd/A==
+        b=G7Rfhuw8sumAD9/FLxH/NlarIpKJ3UBIYvlxApSN32EeudT0w1B/X4+AJViA/rKLp7
+         Ve+8Mq8PWsKLc3M/VVzcNjASIiKBhxl2JBv1SJPNhG9FW3Vw/s806kJ6PoCQUAfYTvB8
+         TA9ahYfxgtwvM3wsGrzneIOls6YxzzgebXZ3l3FzyzB/XpeLh9B8IK4PtC3MBViU/B0C
+         jWiOxlCJ8FwgT6WUg2AnFjt+jfu0npNkU+3hbnvZLjSZp+rlouHJ4FZvqfdySJFgOoWe
+         usJFfHpTGpYdqaXEOCpSB56ndL10/77Gdngo+7Rbm5oQ0g9RYMb0QsLPgECa5HHZm369
+         kq1g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature:dkim-signature
+         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=7n8b+O/j1/JLNmLZE7eifO3fZLkV03qhmHmfrqScx0U=;
-        b=PIgZigy4V2wx+CanBY1L02mvGw8tuJc8TLE4L1UkObTaGIwHtHJE8WIil0oE4Hjy+e
-         v2JWfhitcvjY67tA7ttA7SqISqRKEbAIwfUaFMcDPBX1MVQUwYzOHCwmB5Bcl7WNJISW
-         mmfHJ0ricx9pJMA6EllnohtdK8LWoawMhx2y/4p/w7i7O8mIMBArjwb4BxuX62PUG0zL
-         N9pV6cGksu10hf6SAWBFrsbB90rFeSTRvhjBB5wJRQsvMsFDxJHYgA1RYObsTez+Ui/B
-         LpFen9uuGGkUGSVYmUn59G63Sbpe/nPtBAOiCVRdxlnCpVe6u2m9HGIkveqaDhPAYl/b
-         jSzg==
+        bh=x1TmdzjGMRoATkCl5MFDlmNDH1ATg7+vMQq9qRb7ZR4=;
+        b=sVVtOkOScqj287TfHfKKPeH/ntwx6OdjPnWnp4C7/h7joDvbhB6ou0wWh5OU4tjQJy
+         XBsit1CCPYPpwcTl7p3Slc04NWs7uMmZeysx1KvkYLtCmWq9dQ+zWaEEi4TSWiwm7uFd
+         w+y5VxGx/X79j4J2MqD4McZbZeDUy7JqUWmkkjGtL+jdE9xN4sHkthXj/QrwMFACheL+
+         PfMLmTUvQSXujzhVCbdubOJvfXjwqkia3z4oYa0fxbVymN5W2Gs6o+Y3fyHMP3zYL2Xv
+         tqeXD6JDSn0q5p5gnOa0kdM4TmJbIseARHzh31stfIYUKarrZmtyLYdvWB7nBoQX0mdS
+         up1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=B4oedvxF;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=d5fhWhQ/;
-       spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+       dkim=pass header.i=@thunk.org header.s=ef5046eb header.b=jVsfs9ts;
+       spf=pass (google.com: domain of tytso@thunk.org designates 74.207.234.97 as permitted sender) smtp.mailfrom=tytso@thunk.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=B4oedvxF;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=d5fhWhQ/;
-       spf=neutral (google.com: 66.111.4.26 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Sender: <xms:XR3pWkpYFDrxFdgzwNf5SzGRKyjTIHkfxLlQttwGx86vSD6IvaILbA>
-Date: Wed, 2 May 2018 12:07:22 +1000
-From: "Tobin C. Harding" <me@tobin.cc>
-To: Steven Rostedt <rostedt@goodmis.org>
+       dkim=pass header.i=@thunk.org header.s=ef5046eb header.b=jVsfs9ts;
+       spf=pass (google.com: domain of tytso@thunk.org designates 74.207.234.97 as permitted sender) smtp.mailfrom=tytso@thunk.org
+Date: Tue, 1 May 2018 20:19:21 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: "Tobin C. Harding" <me@tobin.cc>
 Cc: linux-kernel@vger.kernel.org,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
 	Kees Cook <keescook@chromium.org>,
 	Anna-Maria Gleixner <anna-maria@linutronix.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Theodore Ts'o <tytso@mit.edu>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH 2/3] random: Return nbytes filled from hw RNG
-Message-ID: <20180502020722.GF3791@eros>
+Message-ID: <20180502001921.GB24100@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+	"Tobin C. Harding" <me@tobin.cc>, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Kees Cook <keescook@chromium.org>,
+	Anna-Maria Gleixner <anna-maria@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
 References: <1525217620-4107-1-git-send-email-me@tobin.cc>
  <1525217620-4107-3-git-send-email-me@tobin.cc>
- <20180501213902.4ea6bbf9@vmware.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180501213902.4ea6bbf9@vmware.local.home>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1525217620-4107-3-git-send-email-me@tobin.cc>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599306642017406992?=
-X-GMAIL-MSGID: =?utf-8?q?1599316266562477173?=
+X-GMAIL-MSGID: =?utf-8?q?1599309469628063521?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 01, 2018 at 09:39:02PM -0400, Steven Rostedt wrote:
-> On Wed,  2 May 2018 09:33:39 +1000
-> "Tobin C. Harding" <me@tobin.cc> wrote:
+On Wed, May 02, 2018 at 09:33:39AM +1000, Tobin C. Harding wrote:
+> Currently the function get_random_bytes_arch() has return value 'void'.
+> If the hw RNG fails we currently fall back to using get_random_bytes().
+> This defeats the purpose of requesting random material from the hw RNG
+> in the first place.
 > 
-> > diff --git a/drivers/char/random.c b/drivers/char/random.c
-> > index 031d18b31e0f..3a66507ea60b 100644
-> > --- a/drivers/char/random.c
-> > +++ b/drivers/char/random.c
-> > @@ -1725,26 +1725,28 @@ EXPORT_SYMBOL(del_random_ready_callback);
-> >   * key known by the NSA).  So it's useful if we need the speed, but
-> >   * only if we're willing to trust the hardware manufacturer not to
-> >   * have put in a back door.
-> > + *
-> > + * Return number of bytes filled in.
-> >   */
-> > -void get_random_bytes_arch(void *buf, int nbytes)
-> > +int __must_check get_random_bytes_arch(void *buf, int nbytes)
+> There are currently no intree users of get_random_bytes_arch().
 > 
-> The "__must_check" makes no sense in the C file. It belongs in the
-> header file. There wont be any complaint about it here.
+> Only get random bytes from the hw RNG, make function return the number
+> of bytes retrieved from the hw RNG.
+> 
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Tobin C. Harding <me@tobin.cc>
 
-Oh thanks.
-
-/steve schooling noobs all day long
+Acked-by: Theodore Ts'o <tytso@mit.edu>
