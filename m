@@ -1,162 +1,201 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2505978-1525351468-2-18355834899388933823
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525351467; b=VvZioBIGfXHXcno3CxT3KTeZ7PAmE8AK4dcg63hPdgdlOZI0VW
-    UIyxCZPgU1aT+qWfiPiQI+2nlheeKJB6rFdFC1wvCaDbCpntc4XgPKQG1jujo4h3
-    xN7XnlQFw4GOWlk/DU00xwYmTatlyI9BDeLHI0wPd9nBXaI4cU40PL8enNn+OcJY
-    Qz3lMOmAd55aqDXIYy+Xk4EI6dMo0B6eW4IHVja6x1CSCvG2keJ8dqm/jqa8K3Fq
-    uu7eV5KCPagY+HUQXEPBOzRcbdg24EjaAX0a7nDwKaaBkIq/e0m1n7NZ+4q+GVK8
-    WmQVCmr4ERLp42cWoC5B51REY97Q3wJnKknQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525351467; bh=
-    HkKf1XhmG2eTTfCvXPxs40kVnswO3jtDrGDn+JT9YVE=; b=M3WFFnlpTfbVjWoc
-    HveDzaeT/h8y2eyS2ZFhsU1re3Jq0mA2BGt1hY4OHj5ewQxwBrUlcAAYtFICwFax
-    GcwR9f/AqPvv6KmuRzazFPWTtuNxdv2ss71U3QA6y9CrJclf9WNXjf2PjpTUdk7q
-    wqnwWqd3r/sI39XGb9qej+tGoCiHVbtfZwXteUxdmzzXJAtp8hhYq6CMGia7N4Dg
-    IKwryqfBZNLUiwQQjK7MhNlDNtee04hiY35fYFlXif1EBOTAapLKqLkw6q6arI2b
-    5QXR1FLu+SURnii7EAn+hcOgfvjLvMHFxDRjhi9iNJnc/+3bIRCEvA8eEJz867oQ
-    lppkTQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.intel.com header.result=pass
-    header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.intel.com header.result=pass
-      header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJIVX0guiCR39olmEtoEWvl86utGWkTnFD6Yp9MbeqT+17VTv+oQtoC+ZOo1IkmImzlF3nGDNe9LLnoVo0pk63glVfG0UteFSb7TV8RuHu7YcGm8Hd1d
-    7Xq8KSe0MiBydepbomVIxVgPl68qrvLnL49LZ/FAkBuQaoVjUGNqdDvYDNfaZIwqyvJvAP3DDzM5rNWXvfOhL8Vsf5lbqNp9l483Atd+g3HWorVdZ36wqcYl
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=EqdPLkY1AAAA:8
-    a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=D19gQVrFAAAA:8 a=xNf9USuDAAAA:8
-    a=QyXUC8HyAAAA:8 a=G8M7vhz_oh36SSMXCAgA:9 a=dfeKg4RqpEhWThG6bP4-:22
-    a=AjGcO6oz07-iQ99wixmX:22 a=W4TVW4IDbPiebHqcZpNg:22 a=SEwjQc04WA-l_NiBhQ7s:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751751AbeECMoB (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 08:44:01 -0400
-Received: from mga17.intel.com ([192.55.52.151]:64796 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750999AbeECMn4 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 3 May 2018 08:43:56 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="52087207"
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: stable@vger.kernel.org
-Cc: Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Marcel Selhorst <tpmdd@selhorst.net>,
-        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        tpmdd-devel@lists.sourceforge.net (moderated list:TPM DEVICE DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/2] tpm: self test failure should not cause suspend to fail
-Date: Thu,  3 May 2018 15:43:34 +0300
-Message-Id: <20180503124334.8468-3-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180503124334.8468-1-jarkko.sakkinen@linux.intel.com>
-References: <20180503124334.8468-1-jarkko.sakkinen@linux.intel.com>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+Return-Path: <gityuan@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525271413; cv=none;
+        d=google.com; s=arc-20160816;
+        b=JrniMm6JEzvwyNrJiRaQ150Ke/ICV09p/ogsim8XsuQO83uyclqw6q3vzvsz/AMV94
+         xbiJHAKkvmI25M9aJRNXoREFN9RJ2SpR/Gx5RFDrbEJkcSWux/N7zwoa4I2AQs8l+PpX
+         Y9EM1pYvqWbSnCTqi6O9wlAITjtB4NY0hmPYi6O0qCyG13gdu6LqyL8eGug0eNlp1xA/
+         obYmacWJ/m8kbewEufB/HKnUpGNi/XgEWrbV+ki9pnHdxBsLHr4wHAr4UkVxUItFD0w5
+         tXyS5t7phhnzPCoGZ5aVw0XdRas0h3pmi1BbP4WeQqd440vG55CdCz8GPMDYXQoCXJ0n
+         GNZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=Vj5pXrTn5cQmRPen7Z00dXxTqzIn5mDYyg5yVTNg4wU=;
+        b=x8SnOsher/6wRITns3KUVolHezuHOYgCnoAUCbcpZMT4AQicAD2w8Loewej+YCAAMm
+         D39dd8koStOBnvcuelRQFu1iDVAoUrwfnPpK7JhvNW7JnsJBEsmDgMkDQdMEsO7q9sDr
+         DjhTXfM8lN8nFTIgyjct9mBeVbQTVzko2F/5rPCLGS9HMSrc00Gf5oofutZkEWaHrya9
+         fA0ezaGyoHhK8TEsdD7BwkX2AIVAxkY2fD3pVNAbYk4bNVcxP/HbTG9Bbtjf8blCqwnd
+         ixrn9Qq46Le/k53ESfpWIMWubK9Qjebx1IaIHEldCdg1TDAJpehxPtnh9nlOLdajDg56
+         lxTA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vWW0FOI3;
+       spf=pass (google.com: domain of gityuan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gityuan@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=vWW0FOI3;
+       spf=pass (google.com: domain of gityuan@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=gityuan@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZq+7uXVPZpcEY+CIiHSpdMCCFrcipbFNXKvuMCXpmHIg+6RPeOqVp8O1fk/wQN0g73H+/SB7w==
+From: gityuan@gmail.com
+X-Google-Original-From: yuanhuihui@xiaomi.com
+To: gregkh@linuxfoundation.org,
+	maco@android.com,
+	tkjos@google.com,
+	arve@android.com
+Cc: devel@driverdev.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	yuanhuihui <yuanhuihui@xiaomi.com>
+Subject: [PATCH] ANDROID: binder: fix binder work return error is wrongly consumed
+Date: Wed,  2 May 2018 22:30:08 +0800
+Message-Id: <20180502143008.25582-1-yuanhuihui@xiaomi.com>
+X-Mailer: git-send-email 2.14.1
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599362997711826317?=
+X-GMAIL-MSGID: =?utf-8?q?1599362997711826317?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Chris Chiu <chiu@endlessm.com>
+From: yuanhuihui <yuanhuihui@xiaomi.com>
 
-commit 0803d7befa15cab5717d667a97a66214d2a4c083 upstream
+transaction consume mismatched binder work. as follow:
 
-The Acer Acer Veriton X4110G has a TPM device detected as:
-  tpm_tis 00:0b: 1.2 TPM (device-id 0xFE, rev-id 71)
+1) Client send transaction when left binder work in the thread->todo
+list.
 
-After the first S3 suspend, the following error appears during resume:
-  tpm tpm0: A TPM error(38) occurred continue selftest
+2) in kernel space, client consumed BC_TRANSACTION, and produced
+BINDER_WORK_RETURN_ERROR into thread->todo list as target proc is dead
 
-Any following S3 suspend attempts will now fail with this error:
-  tpm tpm0: Error (38) sending savestate before suspend
-  PM: Device 00:0b failed to suspend: error 38
+3) Client should get return error from thread->todo firstly,
+finish this transaction, and back to userspace immediately.
 
-Error 38 is TPM_ERR_INVALID_POSTINIT which means the TPM is
-not in the correct state. This indicates that the platform BIOS
-is not sending the usual TPM_Startup command during S3 resume.
->From this point onwards, all TPM commands will fail.
+4) In fact, client pick up mismatched binder work cause unexpected
+results because of the previous remaining binder work. maybe cause return error
+consumed by other transaction context.
 
-The same issue was previously reported on Foxconn 6150BK8MC and
-Sony Vaio TX3.
+Recently I encountered some versions of mobile phones to reproduce this
+problem that is  oneway binder call can be blocked forever in
+system_server process. the root cause is that BINDER_WORK_RETURN_ERROR
+is comsumed by mismatch transacation context. binder thread is waiting
+for BINDER_WORK_RETURN_ERROR:
 
-The platform behaviour seems broken here, but we should not break
-suspend/resume because of this.
+    "Binder:1253_C" prio=5 tid=107 Native
+    at android.os.BinderProxy.transactNative(Native method)
+    at android.os.BinderProxy.transact(Binder.java:767)
+    at android.app.IApplicationThread$Stub$Proxy.bindApplication(IApplicationThread.java:1398)
+    at com.android.server.am.ActivityManagerService.attachApplicationLocked(ActivityManagerService.java:7320)
+    at com.android.server.am.ActivityManagerService.attachApplication(ActivityManagerService.java:7425)
+    - locked <0x0bc6ee81> (a com.android.server.am.ActivityManagerService)
+    at android.app.IActivityManager$Stub.onTransact(IActivityManager.java:291)
+    at com.android.server.am.ActivityManagerService.onTransact(ActivityManagerService.java:2997)
+    at android.os.Binder.execTransact(Binder.java:700)
 
-When the unexpected TPM state is encountered, set a flag to skip the
-affected TPM_SaveState command on later suspends.
+I see newest binder driver fixed by "ANDROID: binder: don't enqueue
+death notifications to thread todo". It really can solve the
+BINDER_WORK_DEAD_BINDER nesting  scenarios :)
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Chris Chiu <chiu@endlessm.com>
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Link: http://lkml.kernel.org/r/CAB4CAwfSCvj1cudi+MWaB5g2Z67d9DwY1o475YOZD64ma23UiQ@mail.gmail.com
-Link: https://lkml.org/lkml/2011/3/28/192
-Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=591031
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+But there is potential risks in the future, future functional extensions
+need to consider nesting issues, maybe extending more methods where we
+push to thread->todo. I think that using queueing return error transaction
+to the head of thread todo list is more appropriate, as follows:
+
+1) During a transaction, the client will add BINDER_WORK_RETURN_ERROR into
+thread->todo list, however, it would be better to pick up
+BINDER_WORK_RETURN_ERROR firstly and finish the transaction immediately,
+jump out of the nest.
+
+2) Client pick up the left binder work from thread->todo, using the
+same thread, do not need wake up other idle binder thread.
+
+3) It works fine in the old binder version (before split big binder
+lock), binder_transaction only set thread return_error when target
+process has dead, do not add BINDER_WORK_RETURN_ERROR into thread->todo,
+but binder_thread_read() check return_error firstly. If occurs return_error,
+finish this transaction and back to userspace immediately.
+
+So I prefer to put the BINDER_WORK_RETURN_ERROR to the head of the
+queue, same as the old version of binder driver, once and for all.
+
+Signed-off-by: yuanhuihui <yuanhuihui@xiaomi.com>
 ---
- drivers/char/tpm/tpm-interface.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/android/binder.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 57 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 247dd2b6504a..be0547115d34 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -787,6 +787,10 @@ int tpm_do_selftest(struct tpm_chip *chip)
- 	loops = jiffies_to_msecs(duration) / delay_msec;
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 4eab5be3d00f..1ed1809b8769 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -861,6 +861,60 @@ binder_enqueue_thread_work(struct binder_thread *thread,
+ 	binder_inner_proc_unlock(thread->proc);
+ }
  
- 	rc = tpm_continue_selftest(chip);
-+	if (rc == TPM_ERR_INVALID_POSTINIT) {
-+		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
-+		dev_info(&chip->dev, "TPM not ready (%d)\n", rc);
-+	}
- 	/* This may fail if there was no TPM driver during a suspend/resume
- 	 * cycle; some may return 10 (BAD_ORDINAL), others 28 (FAILEDSELFTEST)
- 	 */
++/**
++ * binder_enqueue_work_head_ilocked() - Add an item to the head of work list
++ * @work:         struct binder_work to add to list
++ * @target_list:  list to add work to
++ *
++ * Adds the work to the specified list. Asserts that work
++ * is not already on a list.
++ *
++ * Requires the proc->inner_lock to be held.
++ */
++static void
++binder_enqueue_work_head_ilocked(struct binder_work *work,
++			   struct list_head *target_list)
++{
++	BUG_ON(target_list == NULL);
++	BUG_ON(work->entry.next && !list_empty(&work->entry));
++	list_add(&work->entry, target_list);
++}
++
++/**
++ * binder_enqueue_thread_work_head_ilocked() - Add an item to the head of thread work list
++ * @thread:       thread to queue work to
++ * @work:         struct binder_work to add to list
++ *
++ * Adds the work to the head of thread todo list, and enables processing
++ * of the todo queue.
++ *
++ * Requires the proc->inner_lock to be held.
++ */
++static void
++binder_enqueue_thread_work_head_ilocked(struct binder_thread *thread,
++				   struct binder_work *work)
++{
++	binder_enqueue_work_head_ilocked(work, &thread->todo);
++	thread->process_todo = true;
++}
++
++/**
++ * binder_enqueue_thread_work_head() - Add an item to the head of thread work list
++ * @thread:       thread to queue work to
++ * @work:         struct binder_work to add to list
++ *
++ * Adds the work to the head of thread todo list, and enables processing
++ * of the todo queue.
++ */
++static void
++binder_enqueue_thread_work_head(struct binder_thread *thread,
++			   struct binder_work *work)
++{
++	binder_inner_proc_lock(thread->proc);
++	binder_enqueue_thread_work_head_ilocked(thread, work);
++	binder_inner_proc_unlock(thread->proc);
++}
++
+ static void
+ binder_dequeue_work_ilocked(struct binder_work *work)
+ {
+@@ -3287,11 +3341,11 @@ static void binder_transaction(struct binder_proc *proc,
+ 	BUG_ON(thread->return_error.cmd != BR_OK);
+ 	if (in_reply_to) {
+ 		thread->return_error.cmd = BR_TRANSACTION_COMPLETE;
+-		binder_enqueue_thread_work(thread, &thread->return_error.work);
++		binder_enqueue_thread_work_head(thread, &thread->return_error.work);
+ 		binder_send_failed_reply(in_reply_to, return_error);
+ 	} else {
+ 		thread->return_error.cmd = return_error;
+-		binder_enqueue_thread_work(thread, &thread->return_error.work);
++		binder_enqueue_thread_work_head(thread, &thread->return_error.work);
+ 	}
+ }
+ 
+@@ -3929,6 +3983,7 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			ptr += sizeof(uint32_t);
+ 
+ 			binder_stat_br(proc, thread, e->cmd);
++			goto done; /* RETURN_ERROR notifications can finish transactions */
+ 		} break;
+ 		case BINDER_WORK_TRANSACTION_COMPLETE: {
+ 			binder_inner_proc_unlock(proc);
 -- 
-2.17.0
+2.14.1
