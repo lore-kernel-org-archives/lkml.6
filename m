@@ -1,69 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751681AbeEBJ56 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 05:57:58 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40822 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751432AbeEBJ5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 05:57:11 -0400
-X-Google-Smtp-Source: AB8JxZoSLrOnWCZ13A3ff65kRIPOk8tVVSHocR5OVqEcVrruBbRoKHOUwQO5DkquK8hUtZpD3lq8zg==
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sekhar Nori <nsekhar@ti.com>, David Lechner <david@lechnology.com>,
-        Suman Anna <s-anna@ti.com>, Aparna Balasubramanian <aparnab@ti.com>,
-        Kevin Hilman <khilman@kernel.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 1/3] remoteproc/davinci: add the missing retval check for clk_enable()
-Date: Wed,  2 May 2018 11:56:57 +0200
-Message-Id: <20180502095659.3626-2-brgl@bgdev.pl>
+        id S1751511AbeEBKAO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:00:14 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:44157 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750878AbeEBKAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:00:13 -0400
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: herbert@gondor.apana.org.au, davem@davemloft.net
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, oferh@marvell.com, igall@marvell.com
+Subject: [PATCH 01/10] crypto: aead - allow to allocate AEAD requests on the stack
+Date: Wed,  2 May 2018 11:57:16 +0200
+Message-Id: <20180502095725.31935-2-antoine.tenart@bootlin.com>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180502095659.3626-1-brgl@bgdev.pl>
-References: <20180502095659.3626-1-brgl@bgdev.pl>
+In-Reply-To: <20180502095725.31935-1-antoine.tenart@bootlin.com>
+References: <20180502095725.31935-1-antoine.tenart@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Adds the AEAD_REQUEST_ON_STACK primitive to allow allocating AEAD
+requests on the stack, as it can already be done with various other
+crypto algorithms within the kernel.
 
-The davinci platform is being switched to using the common clock
-framework, where clk_enable() can fail. Add the return value check.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Acked-by: Suman Anna <s-anna@ti.com>
-Reviewed-by: David Lechner <david@lechnology.com>
-Reviewed-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 ---
- drivers/remoteproc/da8xx_remoteproc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/crypto/aead.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/remoteproc/da8xx_remoteproc.c b/drivers/remoteproc/da8xx_remoteproc.c
-index bf3b9034c319..2b24291337b7 100644
---- a/drivers/remoteproc/da8xx_remoteproc.c
-+++ b/drivers/remoteproc/da8xx_remoteproc.c
-@@ -138,6 +138,7 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 	struct device *dev = rproc->dev.parent;
- 	struct da8xx_rproc *drproc = (struct da8xx_rproc *)rproc->priv;
- 	struct clk *dsp_clk = drproc->dsp_clk;
-+	int ret;
+diff --git a/include/crypto/aead.h b/include/crypto/aead.h
+index 1e26f790b03f..b67064786546 100644
+--- a/include/crypto/aead.h
++++ b/include/crypto/aead.h
+@@ -151,6 +151,11 @@ struct aead_alg {
+ 	struct crypto_alg base;
+ };
  
- 	/* hw requires the start (boot) address be on 1KB boundary */
- 	if (rproc->bootaddr & 0x3ff) {
-@@ -148,7 +149,12 @@ static int da8xx_rproc_start(struct rproc *rproc)
- 
- 	writel(rproc->bootaddr, drproc->bootreg);
- 
--	clk_enable(dsp_clk);
-+	ret = clk_enable(dsp_clk);
-+	if (ret) {
-+		dev_err(dev, "clk_enable() failed: %d\n", ret);
-+		return ret;
-+	}
++#define AEAD_REQUEST_ON_STACK(name, tfm) \
++	char __##name##_desc[sizeof(struct aead_request) + \
++		crypto_aead_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
++	struct aead_request *name = (void *)__##name##_desc
 +
- 	davinci_clk_reset_deassert(dsp_clk);
- 
- 	return 0;
+ struct crypto_aead {
+ 	unsigned int authsize;
+ 	unsigned int reqsize;
 -- 
 2.17.0
