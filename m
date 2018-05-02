@@ -1,139 +1,167 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3085648-1525601039-2-17680547599888870174
+X-Cyrus-Session-Id: sloti22d1t05-1338824-1525293458-2-2814333723543528705
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525601039; b=mUEA+wRi0F6u1PL2jL3qFf9v+MbIOYXmncqiLZJ9xUEsPrav3t
-    2GulXT4V/auhnrF96xU9aZyOrQM8mKxIzBo91Trpg+RkAf9ORRGE6WeAt8I7JcP1
-    NGr+gF/qduWutNtt6WJs5KU+fAOM4pw9een455kX80Q3EyTnQMfhqctzA/rBIuw/
-    q9bEYwJ1OMapZmJpGdHp39jyUNfoMQGQKW/J9Kqs3dOhaqvz7ftS8PG6wwJG9uaZ
-    IihblQTgV4k+PUnwz1cdLYCMhtUKKbGNmfg77dVx6BZP8NO9jMWSbj0S64ZfmWnX
-    b1BIfnBijIaYuY1p1VREyU90oxFLmXginfsw==
+    1525293458; b=D64FbEQc0JpjhGLOXeiswZp6pfTKRAt0vuKgXACGEIIZ/kQadE
+    1SdOGApv0Z5TakFSx4wpfhWqxpX0l/QrTXPE3T0GQ/6i7+5gy67HHNvELlSl0Mga
+    Zgyj3bWu6PMDz+0fbeoEC5ePngj+AQFc61gks7SMxlw8bvzfnwyru8SVs4uwuRVv
+    5zmp72goCYVGHkjao4YYYDCE06ghwf7Ohym4oBgz7obtuiOmOppLGqbe2lw2t5mf
+    sOd2KC+Wx7q71U5mWoGTnefXdQbncFs/3ILr2NATwrJMXzuoX7QWmcwdf5Q4NDJq
+    2WqUYsGnUKhblGVuH2lYtbXvGZJWE0J3ldQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:references:mime-version:content-type:sender:list-id;
-    s=fm2; t=1525601039; bh=/ep37HPKXkEvMPwPp1lRctTx5BXFX4FvKjL0aVo
-    q3H8=; b=iWA3Djj2MghobhMCovzDOH8yhF6xqMJkfoVu9v7bbkO3GYROluQBCQl
-    U1kM1+d9i8yD7D4JAljX+WVmhXbsgD1HPETRPLCkc0qADQczwm8Q9Bp2LaqnmDQz
-    Pzzel/nJvSPSF7wTnudCoTrdGZOKXeJOO/nOfX6ckGo1cTqZktj/fMaFaO2dD8td
-    PEWgyfsrED2xHSTY9O0oNSFi0BlHermaDuK5R/TTwX3770ShLUWytG2eoL+2Nnkx
-    YE0tbDDaid4uAHYCA3M7l1xqLdg20QBiag9n4VrKl4wXCW2kpMHPx/5RNZK5gcg3
-    tapWQFDLrEsgbO4MI/S6IdtxhX26L1Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linutronix.de;
+    messagingengine.com; h=mime-version:references:in-reply-to:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1525293458; bh=UKCURdDaSCy45k7SRaPNsV/e+kyKkESschemnvuyzQ
+    Q=; b=msXYQ7xJ6vCNmPa/TfH/52KFVLExKEWk36sJW63yjtp348mqTl5HZQxxaD
+    Y+0URMZkf2jkXAEJx9DNezntNZGs4mlukOI1R5tqCfYt2CCMvfPQEON/gJROSnqK
+    7h27PqCRxR+NANwz0LN6K1Ibn/RqYBFLDbdNt3I/uQMen2cTT4uS/8WSyVEXQJhI
+    tLKoPttROB872Cnt79VyMI/uMDYVMRjUrgqKazA0J3mQFNcFi3+hEgSHbnBRJscT
+    bLYWnpHWS1OD1NB/CbdLHv4scgkBzK/5XYn4Ybb+RfR2H1WmpMsrisNCTyEGVMFB
+    77PIH08KvsLDzyGuydsoQq+F+T0A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=google.com header.i=@google.com header.b=YklaQuKO x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=G445C7+Q;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linutronix.de header.result=pass
-    header_is_org_domain=yes;
+    header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linutronix.de;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=google.com header.i=@google.com header.b=YklaQuKO x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=reject,has-list-id=yes,d=reject) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=G445C7+Q;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linutronix.de header.result=pass
-      header_is_org_domain=yes;
+      header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD86qDcV4UM1WszHZyhTNcg88UlMlZt074Ky1t+q8zQhxMSAqNWH8WHxGAARF2S405nM9RmE8TE/FJvG0+ZgMhaE5Q3G4mewmoM0qKtLy81r2nzCcl+n
-    IH6fUzh+BAaQcisFCACAon67G/QdY3OgJ1bedaepx+rcxsS+ATV6cuCRKOWs0pI8cycOfIvLVqLmAMCOBhJAMTc+GglNZhRYHiPPkRFFWsYKjH1poivEO66g
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=NIdzBBMyTS-0PfTVrOMA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfKv02MFLraBcKvqvedwEEjAFIZuROToQ2637wunxHGMfFqou16dxebG1zIlzkw9+jr48yzDf3XEDgspIgyHGWMj1SLbiWulUT0MAvKH6K2XqvNSl64Ae
+    nQdl5gqT00H3eMv9pjpLgpfHfxEy4GeMtKjQ7sPgO4DJmYt9vMzl4n1iY2xCW0XxmTjSVNajZMetLcsMsoFa/lVhSlYhXiRbkwJn/TpvCTNqjO3FelA3jgas
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=JfrnYn6hAAAA:8 a=VwQbUJbxAAAA:8 a=XT7g224mjikRb-yCuZIA:9 a=QEXdDO2ut3YA:10
     a=x8gzFH9gYPwA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751203AbeEFKDz (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 6 May 2018 06:03:55 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47411 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751187AbeEFKDy (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Sun, 6 May 2018 06:03:54 -0400
-Date: Sun, 6 May 2018 12:03:32 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
+        id S1750993AbeEBUhZ (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 16:37:25 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53571 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeEBUhY (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 16:37:24 -0400
+X-Google-Smtp-Source: AB8JxZp3zi3QZAUKvdBkCdD30nDEliiMyfsWGANIMeebrsGugoWnLuAXXDI8HBjXLcF16OL5Dqzp2Zmbu0+KVwjUAKA=
+MIME-Version: 1.0
+References: <20180430224433.17407-1-mathieu.desnoyers@efficios.com>
+ <CAKOZuesa338sc_=w6-wvro25idrSN_zx_zrHFyo-bDiORs7FZw@mail.gmail.com>
+ <20180502172218.GL12180@hirez.programming.kicks-ass.net> <CAKOZuesjF8QxfphgsyRKctO89jR9VAM727dspTe7PX1z8KFpyw@mail.gmail.com>
+ <20180502202233.GV12217@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180502202233.GV12217@hirez.programming.kicks-ass.net>
+From: Daniel Colascione <dancol@google.com>
+Date: Wed, 02 May 2018 20:37:13 +0000
+Message-ID: <CAKOZuevUq-XsT632VHU1TQQ5_rGqNROXiZAqv7S+ky=-wcQ3bQ@mail.gmail.com>
+Subject: Re: [RFC PATCH for 4.18 00/14] Restartable Sequences
 To: Peter Zijlstra <peterz@infradead.org>
-cc: Daniel Colascione <dancol@google.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Paul McKenney <paulmck@linux.vnet.ibm.com>,
         boqun.feng@gmail.com, luto@amacapital.net, davejwatson@fb.com,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Paul Turner <pjt@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux@arm.linux.org.uk, mingo@redhat.com, hpa@zytor.com,
-        Andrew Hunter <ahh@google.com>, andi@firstfloor.org,
+        linux@arm.linux.org.uk, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, Andrew Hunter <ahh@google.com>, andi@firstfloor.org,
         cl@linux.com, bmaurer@fb.com, rostedt@goodmis.org,
         josh@joshtriplett.org, torvalds@linux-foundation.org,
         catalin.marinas@arm.com, will.deacon@arm.com,
         Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
         Joel Fernandes <joelaf@google.com>
-Subject: Re: [RFC PATCH for 4.18 00/14] Restartable Sequences
-In-Reply-To: <20180502202233.GV12217@hirez.programming.kicks-ass.net>
-Message-ID: <alpine.DEB.2.21.1805061202550.1685@nanos.tec.linutronix.de>
-References: <20180430224433.17407-1-mathieu.desnoyers@efficios.com> <CAKOZuesa338sc_=w6-wvro25idrSN_zx_zrHFyo-bDiORs7FZw@mail.gmail.com> <20180502172218.GL12180@hirez.programming.kicks-ass.net> <CAKOZuesjF8QxfphgsyRKctO89jR9VAM727dspTe7PX1z8KFpyw@mail.gmail.com>
- <20180502202233.GV12217@hirez.programming.kicks-ass.net>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2 May 2018, Peter Zijlstra wrote:
+On Wed, May 2, 2018 at 1:23 PM Peter Zijlstra <peterz@infradead.org> wrote:
 
 > On Wed, May 02, 2018 at 06:27:22PM +0000, Daniel Colascione wrote:
-> > On Wed, May 2, 2018 at 10:22 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Wed, May 2, 2018 at 10:22 AM Peter Zijlstra <peterz@infradead.org>
+wrote:
 > > >> On Wed, May 02, 2018 at 03:53:47AM +0000, Daniel Colascione wrote:
-> > > > Suppose we make a userspace mutex implemented with a lock word having
+> > > > Suppose we make a userspace mutex implemented with a lock word
+having
 > > three
-> > > > bits: acquired, sleep_mode, and wait_pending, with the rest of the word
+> > > > bits: acquired, sleep_mode, and wait_pending, with the rest of the
+word
 > > not
 > > > > being relevant at the moment.
-> > 
-> > > So ideally we'd kill FUTEX_WAIT/FUTEX_WAKE for mutexes entirely, and go
+> >
+> > > So ideally we'd kill FUTEX_WAIT/FUTEX_WAKE for mutexes entirely, and
+go
 > > > with FUTEX_LOCK/FUTEX_UNLOCK that have the same semantics as the
 > > > existing FUTEX_LOCK_PI/FUTEX_UNLOCK_PI, namely, the word contains the
 > > > owner TID.
-> > 
+> >
 > > That doesn't work if you want to use the rest of the word for something
-> > else, like a recursion count. With FUTEX_WAIT and FUTEX_WAKE, you can make
+> > else, like a recursion count. With FUTEX_WAIT and FUTEX_WAKE, you can
+make
 > > a lock with two bits.
-> 
+
 > Recursive locks are teh most horrible crap ever. And having the tid in
+
+What happened to providing mechanism, not policy?
+
+You can't wish away recursive locking. It's baked into Java and the CLR,
+and it's enshrined in POSIX. It's not going away, and there's no reason not
+to support it efficiently.
+
 > the word allows things like kernel based optimistic spins and possibly
 > PI related things.
 
-FWIW, robust futex have also the TID requirement.
+Sure. A lot of people don't want PI though, or at least they want to opt
+into it. And we shouldn't require an entry into the kernel for what we can
+in principle do efficiently in userspace.
 
-Thanks,
+> > > As brought up in the last time we talked about spin loops, why do we
+> > > care if the spin loop is in userspace or not? Aside from the whole PTI
+> > > thing, the syscall cost was around 150 cycle or so, while a LOCK
+CMPXCHG
+> > > is around 20 cycles. So ~7 spins gets you the cost of entry.
+> >
+> > That's pre-KPTI, isn't it?
 
-	tglx
+> Yes, and once the hardware gets sorted, we'll be there again. I don't
+> think we should design interfaces for 'broken' hardware.
+
+It would be a mistake to design interfaces under the assumption that
+everyone has fast permission level transitions.
