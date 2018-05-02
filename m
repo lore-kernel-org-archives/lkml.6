@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-873245-1525271925-2-10435179590377374795
+X-Cyrus-Session-Id: sloti22d1t05-897776-1525271968-2-12641765690709274679
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525271925; b=alXOhTXZwXxXvR73faP1P8xCG+1zxfbPsb2mva2LaKX3oIZN3r
-    ocpAljOwOP3mQizc76wWtGEa84dCndCtaEyTPcKW3uNk1kvRfD+XzRP9HXuHswuD
-    yqfZSjOmTLbDSZvCdLPHjIxrPXGorgVkuFY+xNjF895pST0wHL+YdXpIZjKGFYXw
-    NKCRw97sy2OFnQB97igjrwd01K0q96Wx0AZ2xZ26lc4kGizMX8frkZuY6GLs9s7G
-    SnkDYcmpGjUM7CKkR26yC5gbQusuWS/Tbi2aCWjxfSMzunkNVayNHyFTl5jGN32O
-    l44sjoZ+or2L4FrfQlTRdvtZWdf6/qwccBHQ==
+    1525271967; b=Nhr9tRcq2lt6vkRbiowjZn6/5kg6swnHBO7LpS1M00DYaGdE3u
+    5V0ZrNa0f3D3Lg/8lQuLVyYr4WOW9AQsXTNyCIMmk4aFtd7G8BnWUuwBEiczHkq8
+    rHZSVJd9T7k6wrjdQrgEHyiB1ey588p1KADBCYBmOmWSS+qEQOyvO8Ni/QTAoIqm
+    6HSWm0ApTxZOXewGWLgoRA3pFA2cIEJI20zeo/E7GsM3augcwP7nr4Peaa03xty2
+    HPNcmnOp9j1THNw+Z81qWni9FQi/7+GPiUK00KYpH83K9QUlyu4hNrzKae0Pl8ig
+    ngEp8sxabn8DKxZDI/FHYUxN6UICJlvlAEXA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1525271925; bh=4KslvGs/Nf5av+KBJ9nkJc0scGEbXc
-    5bKLLSUmPtHRY=; b=K2t/gzGB8GBo7mmPFlibvgxV8doPxGz5QdiaWtboYPuvHt
-    cG9eAtYDMuxMX12upsvO+PwodrFT87VPGFoNuvzgOh+edfumGvfpB7mrTj8siH+o
-    4mRqdl4ODE/cU0oLKysFOXhABQ9GTxxeEDmlVpFreSkowRi3ktpCynhS8Bu/V0K7
-    9qqy2JG/aeej9p5u5VbXs/dfFG80vSzax9bYq4whqQ2/Vfo7yz8SxxsfiRKM1PcI
-    TkCfEMWjggd+GepKk4hUBjHKC+ARF60XeYM3/XLMLHyf8vj6kWsi7ZEnaran5wEK
-    3L/OWkVUjCZmAddUZVkGFr+UvEYcvveoBVTDIA8g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525271967; bh=
+    jrMmW0/OpfRv9Wxo2Hi//rLuuYHF91njT5rjPctpiXI=; b=Ho2pg3bT2q9q52Bz
+    KbLFW5JL9MgGwEDawybUqyabjZTfwzG9l25WKGMjG4HzlUgTCkHqB+q/+vS3Y0rZ
+    +5qehO5qhpwskFAdntrCS7wO1Qfx13lsd4udSVjsC1Ebrao7Be3Yb02fV7DP2uGq
+    dYoSXeKLuIb7/Tes6GwfmIk203B8D2XJQQZ0087nImDNNfMbhIgckxqybzGfJ+yD
+    ZL/fA3F8BiJIyKtXG5kY8istGJ1YPwyKr1QDy/P+D3SAy53z67r/D7uiYTgLzbUU
+    +ga27w/YOGpwitVJy39VummedFMPSTtH6LGMxAPorHZI/WP5nhdbbJ44Wey++V7e
+    M7HlRA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,7 +44,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header_org.domain=intel.com header_org.result=pass
     header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
@@ -60,53 +61,110 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGm2NXuRNbKhIUVbewucdSBcuLR4TqOnnYu2AaSSJUVsvEM+b+EMO01Mk4h8tW0PScb7KZjoOjAevkzGPadrvTYZ/kXs7ETwDFJNzZ/O/8eUG5RF+J0R
-    PqFyWaHd7KoOlTvZy6825bQ5gBnCXQOpjXTepns5WsGc8lRdSwUxs+iDcEJdYWTXbt3+R42Pf5KwoYN2Ai8xZWop56+w+AkmHTISZLR9Bx+CC/HTU+ZIT4K/
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=xI3QqhJHLw-kyKY4pjkA:9
+X-CM-Envelope: MS4wfHwXkGeMMzHIyAtouXzRqZsm0+b0tdxsGApFFVq4wacT6T2nGlaX6FkrabMWA/9T3oE04ZkRT3ighMIzNctwMlTOG0TwkunjHeqEi9e1XaaX2EQFsiEs
+    QB2LT7telJ+f6763EueFdUztmyDR3DD2zcwOkt9Ja1oqd25e8IzM8jYGHkrWASbDnkIcFceyUmQvky9fSbbpbnx0lcoYh2P8ooL5+1dLjDzrDN+96Hr+f6NL
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QX4gbG5DAAAA:8
+    a=cm27Pg_UAAAA:8 a=B-4895p5AAAA:8 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8
+    a=GLfBnjawS6cr2_Z4g3YA:9 a=AbAUZ8qAyYyZVLSsDulk:22 a=xmb-EsYY8bH0VWELuYED:22
+    a=CvvKU93EpHcLr5xCDv7z:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751348AbeEBOik (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 10:38:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:18983 "EHLO mga17.intel.com"
+        id S1751701AbeEBOjN (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 10:39:13 -0400
+Received: from mga02.intel.com ([134.134.136.20]:52865 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750936AbeEBOik (ORCPT <rfc822;stable@vger.kernel.org>);
-        Wed, 2 May 2018 10:38:40 -0400
+        id S1751408AbeEBOiq (ORCPT <rfc822;stable@vger.kernel.org>);
+        Wed, 2 May 2018 10:38:46 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="55373932"
+   d="scan'208";a="52592167"
 From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To: stable@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Sonny Rao <sonnyrao@chromium.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Marcel Selhorst <tpmdd@selhorst.net>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        linux-kernel@vger.kernel.org (open list),
-        tpmdd-devel@lists.sourceforge.net (moderated list:TPM DEVICE DRIVER)
-Subject: [PATCH 0/2] fixes for 4.9.96
-Date: Wed,  2 May 2018 17:38:27 +0300
-Message-Id: <20180502143830.3534-1-jarkko.sakkinen@linux.intel.com>
+        tpmdd-devel@lists.sourceforge.net (moderated list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] tpm: do not suspend/resume if power stays on
+Date: Wed,  2 May 2018 17:38:28 +0300
+Message-Id: <20180502143830.3534-2-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180502143830.3534-1-jarkko.sakkinen@linux.intel.com>
+References: <20180502143830.3534-1-jarkko.sakkinen@linux.intel.com>
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Decided to add Enric's commit because it is also a bug fix instead
-of modifying Chris commit.
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Chris Chiu (1):
-  tpm: self test failure should not cause suspend to fail
+commit b5d0ebc99bf5d0801a5ecbe958caa3d68b8eaee8 upstream
 
-Enric Balletbo i Serra (1):
-  tpm: do not suspend/resume if power stays on
+The suspend/resume behavior of the TPM can be controlled by setting
+"powered-while-suspended" in the DTS. This is useful for the cases
+when hardware does not power-off the TPM.
 
- drivers/char/tpm/tpm-interface.c | 7 +++++++
+Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
+---
+ drivers/char/tpm/tpm-interface.c | 3 +++
  drivers/char/tpm/tpm.h           | 2 ++
  drivers/char/tpm/tpm_of.c        | 3 +++
- 3 files changed, 12 insertions(+)
+ 3 files changed, 8 insertions(+)
 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 830d7e30e508..5463b649bdf1 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -969,6 +969,9 @@ int tpm_pm_suspend(struct device *dev)
+ 	if (chip == NULL)
+ 		return -ENODEV;
+ 
++	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
++		return 0;
++
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		tpm2_shutdown(chip, TPM2_SU_STATE);
+ 		return 0;
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index aa4299cf7e5a..41756a9e9ad8 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -143,6 +143,8 @@ enum tpm_chip_flags {
+ 	TPM_CHIP_FLAG_TPM2		= BIT(1),
+ 	TPM_CHIP_FLAG_IRQ		= BIT(2),
+ 	TPM_CHIP_FLAG_VIRTUAL		= BIT(3),
++	TPM_CHIP_FLAG_HAVE_TIMEOUTS	= BIT(4),
++	TPM_CHIP_FLAG_ALWAYS_POWERED	= BIT(5),
+ };
+ 
+ struct tpm_chip {
+diff --git a/drivers/char/tpm/tpm_of.c b/drivers/char/tpm/tpm_of.c
+index 570f30c5c5f4..669f4a046398 100644
+--- a/drivers/char/tpm/tpm_of.c
++++ b/drivers/char/tpm/tpm_of.c
+@@ -37,6 +37,9 @@ int read_log(struct tpm_bios_log *log)
+ 		return -ENODEV;
+ 	}
+ 
++	if (of_property_read_bool(np, "powered-while-suspended"))
++		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
++
+ 	sizep = of_get_property(np, "linux,sml-size", NULL);
+ 	if (sizep == NULL) {
+ 		pr_err("%s: ERROR - SML size not found\n", __func__);
 -- 
 2.17.0
