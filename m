@@ -1,118 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751807AbeEBV4d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 17:56:33 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:50596 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751532AbeEBV4c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 17:56:32 -0400
-Subject: Re: [PATCH 1/3] sched: remove select_idle_core() for scalability
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com,
-        daniel.lezcano@linaro.org, steven.sistare@oracle.com,
-        dhaval.giani@oracle.com, rohit.k.jain@oracle.com
-References: <20180424004116.28151-1-subhra.mazumdar@oracle.com>
- <20180424004116.28151-2-subhra.mazumdar@oracle.com>
- <20180424124621.GQ4082@hirez.programming.kicks-ass.net>
- <df8f4982-908a-23e6-5148-4d4e91d38be4@oracle.com>
- <20180425174909.GB4043@hirez.programming.kicks-ass.net>
- <e2011797-382b-0ac9-79eb-e17109ef4c96@oracle.com>
- <20180501180348.GI12217@hirez.programming.kicks-ass.net>
-From: Subhra Mazumdar <subhra.mazumdar@oracle.com>
-Message-ID: <1ea04602-041a-5b90-eba9-c20c7e98c92e@oracle.com>
-Date: Wed, 2 May 2018 14:58:42 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180501180348.GI12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8881 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=939
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805020182
+        id S1751503AbeEBWAo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 18:00:44 -0400
+Received: from mga14.intel.com ([192.55.52.115]:50955 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751148AbeEBWAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 18:00:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
+   d="scan'208";a="225283788"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+        Larry Woodman <lwoodman@redhat.com>, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCHv2] x86/mm: Introduce 'no5lvl' kernel parameter
+Date: Thu,  3 May 2018 01:00:36 +0300
+Message-Id: <20180502220036.18209-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The kernel parameter allows to force kernel to use 4-level paging even
+if hardware and kernel support 5-level paging.
 
+The option may be useful to workaround regressions related to 5-level
+paging.
 
-On 05/01/2018 11:03 AM, Peter Zijlstra wrote:
-> On Mon, Apr 30, 2018 at 04:38:42PM -0700, Subhra Mazumdar wrote:
->> I also noticed a possible bug later in the merge code. Shouldn't it be:
->>
->> if (busy < best_busy) {
->>          best_busy = busy;
->>          best_cpu = first_idle;
->> }
-> Uhh, quite. I did say it was completely untested, but yes.. /me dons the
-> brown paper bag.
-I re-ran the test after fixing that bug but still get similar regressions
-for hackbench, while similar improvements on Uperf. I didn't re-run the
-Oracle DB tests but my guess is it will show similar improvement.
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+---
+ v2:
+  - Fix build issue.
+---
+ Documentation/admin-guide/kernel-parameters.txt |  3 +++
+ arch/x86/boot/compressed/cmdline.c              |  2 +-
+ arch/x86/boot/compressed/head_64.S              |  1 +
+ arch/x86/boot/compressed/pgtable_64.c           | 12 ++++++++++--
+ arch/x86/kernel/cpu/common.c                    |  6 ++++++
+ arch/x86/kernel/head64.c                        | 10 ++++++----
+ 6 files changed, 27 insertions(+), 7 deletions(-)
 
-merge:
-
-Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
-(lower is better):
-groups  baseline       %stdev  patch %stdev
-1       0.5742         21.13   0.5131 (10.64%) 4.11
-2       0.5776         7.87    0.5387 (6.73%) 2.39
-4       0.9578         1.12    1.0549 (-10.14%) 0.85
-8       1.7018         1.35    1.8516 (-8.8%) 1.56
-16      2.9955         1.36    3.2466 (-8.38%) 0.42
-32      5.4354         0.59    5.7738 (-6.23%) 0.38
-
-Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with
-message size = 8k (higher is better):
-threads baseline        %stdev  patch %stdev
-8       49.47           0.35    51.1 (3.29%) 0.13
-16      95.28           0.77    98.45 (3.33%) 0.61
-32      156.77          1.17    170.97 (9.06%) 5.62
-48      193.24          0.22    245.89 (27.25%) 7.26
-64      216.21          9.33    316.43 (46.35%) 0.37
-128     379.62          10.29   337.85 (-11%) 3.68
-
-I tried using the next_cpu technique with the merge but didn't help. I am
-open to suggestions.
-
-merge + next_cpu:
-
-Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
-(lower is better):
-groups  baseline       %stdev  patch %stdev
-1       0.5742         21.13   0.5107 (11.06%) 6.35
-2       0.5776         7.87    0.5917 (-2.44%) 11.16
-4       0.9578         1.12    1.0761 (-12.35%) 1.1
-8       1.7018         1.35    1.8748 (-10.17%) 0.8
-16      2.9955         1.36    3.2419 (-8.23%) 0.43
-32      5.4354         0.59    5.6958 (-4.79%) 0.58
-
-Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with
-message size = 8k (higher is better):
-threads baseline        %stdev  patch %stdev
-8       49.47           0.35    51.65 (4.41%) 0.26
-16      95.28           0.77    99.8 (4.75%) 1.1
-32      156.77          1.17    168.37 (7.4%) 0.6
-48      193.24          0.22    228.8 (18.4%) 1.75
-64      216.21          9.33    287.11 (32.79%) 10.82
-128     379.62          10.29   346.22 (-8.8%) 4.7
-
-Finally there was earlier suggestion by Peter in select_task_rq_fair to
-transpose the cpu offset that I had tried earlier but also regressed on
-hackbench. Just wanted to mention that so we have closure on that.
-
-transpose cpu offset in select_task_rq_fair:
-
-Hackbench process on 2 socket, 44 core and 88 threads Intel x86 machine
-(lower is better):
-groups  baseline       %stdev  patch %stdev
-1       0.5742         21.13   0.5251 (8.55%) 2.57
-2       0.5776         7.87    0.5471 (5.28%) 11
-4       0.9578         1.12    1.0148 (-5.95%) 1.97
-8       1.7018         1.35    1.798 (-5.65%) 0.97
-16      2.9955         1.36    3.088 (-3.09%) 2.7
-32      5.4354         0.59    5.2815 (2.8%) 1.26
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..364a33c1534d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2600,6 +2600,9 @@
+ 			emulation library even if a 387 maths coprocessor
+ 			is present.
+ 
++	no5lvl		[X86-64] Disable 5-level paging mode. Forces
++			kernel to use 4-level paging instead.
++
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+ 			Disable suspending of consoles during suspend and
+diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
+index 0cb325734cfb..af6cda0b7900 100644
+--- a/arch/x86/boot/compressed/cmdline.c
++++ b/arch/x86/boot/compressed/cmdline.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "misc.h"
+ 
+-#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE
++#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE || CONFIG_X86_5LEVEL
+ 
+ static unsigned long fs;
+ static inline void set_fs(unsigned long seg)
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index c433c21703e6..6490697f1133 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -346,6 +346,7 @@ ENTRY(startup_64)
+ 	 * this function call.
+ 	 */
+ 	pushq	%rsi
++	movq	%rsi, %rdi		/* real mode address */
+ 	call	paging_prepare
+ 	popq	%rsi
+ 
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 3a0578f54550..7230c9cc5bc0 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -37,16 +37,23 @@ extern char *top_pgtable;
+  */
+ unsigned long *trampoline_32bit __section(.data);
+ 
+-struct paging_config paging_prepare(void)
++extern struct boot_params *boot_params;
++int cmdline_find_option_bool(const char *option);
++
++struct paging_config paging_prepare(void *rmode)
+ {
+ 	struct paging_config paging_config = {};
+ 	unsigned long bios_start, ebda_start;
+ 
++	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
++	boot_params = rmode;
++
+ 	/*
+ 	 * Check if LA57 is desired and supported.
+ 	 *
+-	 * There are two parts to the check:
++	 * There are several parts to the check:
+ 	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
++	 *   - if user asked to disable 5-level paging: no5lvl in cmdline
+ 	 *   - if the machine supports 5-level paging:
+ 	 *     + CPUID leaf 7 is supported
+ 	 *     + the leaf has the feature bit set
+@@ -54,6 +61,7 @@ struct paging_config paging_prepare(void)
+ 	 * That's substitute for boot_cpu_has() in early boot code.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
++			!cmdline_find_option_bool("no5lvl") &&
+ 			native_cpuid_eax(0) >= 7 &&
+ 			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
+ 		paging_config.l5_required = 1;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 8a5b185735e1..4aa5ad8bf9b8 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1004,6 +1004,12 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	 */
+ 	setup_clear_cpu_cap(X86_FEATURE_PCID);
+ #endif
++
++#ifdef CONFIG_X86_5LEVEL
++	/* Clear the 5-level paging feature if user asked for 'no5lvl' */
++	if (!__pgtable_l5_enabled)
++		setup_clear_cpu_cap(X86_FEATURE_LA57);
++#endif
+ }
+ 
+ void __init early_cpu_init(void)
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 0c408f8c4ed4..8ca65d35b93a 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -82,10 +82,12 @@ static unsigned int __head *fixup_int(void *ptr, unsigned long physaddr)
+ 
+ static bool __head check_la57_support(unsigned long physaddr)
+ {
+-	if (native_cpuid_eax(0) < 7)
+-		return false;
+-
+-	if (!(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
++	/*
++	 * 5-level paging is detected and enabled on kernel decomression
++	 * stage. Back off if 5-level paging mode has not yet enabled by
++	 * this point.
++	 */
++	if (!(native_read_cr4() & X86_CR4_LA57))
+ 		return false;
+ 
+ 	*fixup_int(&pgtable_l5_enabled, physaddr) = 1;
+-- 
+2.17.0
