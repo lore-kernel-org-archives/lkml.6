@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752119AbeEBP6I (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:58:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7220 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752044AbeEBP5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:57:44 -0400
+        id S1752029AbeEBP5d (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:57:33 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54553 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751635AbeEBP51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:57:27 -0400
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>,
+        <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 11/11] scsi: hisi_sas: workaround a v3 hw hilink bug
-Date: Wed, 2 May 2018 23:56:34 +0800
-Message-ID: <1525276594-92173-12-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 02/11] scsi: hisi_sas: Add some checks to avoid free'ing a sas_task twice
+Date: Wed, 2 May 2018 23:56:25 +0800
+Message-ID: <1525276594-92173-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
 References: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
@@ -25,87 +25,159 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaofei Tan <tanxiaofei@huawei.com>
+From: Xiang Chen <chenxiang66@hisilicon.com>
 
-There is an SoC bug of v3 hw development version. When hot-
-unplugging a directly attached disk, the PHY down interrupt
-may not happen. It is very easy to appear on some boards.
+If the SCSI host enters EH, any pending IO will be processed
+by SCSI EH. However it is possible that SCSI EH will try to
+abort the IO and also at the same time the IO completes in the
+driver. In this situation there is a small changes of freeing the
+sas_task twice.
 
-When this issue occurs, the controller will receive many invalid
-dword frames, and the "alos" fields of register HILINK_ERR_DFX
-can indicate that disk was unplugged.
+Then if another IO re-uses freed sas_task before the second time
+of free'ing sas_task, it is possible that freeing incorrect sas_task.
 
-As an workaround solution, this patch detects this issue in
-the channel interrupt, and workaround it by following steps:
-- Disable the PHY
-- Clear error code and interrupt
-- Enable the PHY
+So to avoid this situation, add some checks to crease reliability.
+The sas_task task state flag SAS_TASK_STATE_ABORTED is used to
+mutually protect the LLDD and libsas free'ing the task.
 
-Then the HW will reissue PHY down interrupt.
-
-Signed-off-by: Xiaofei Tan <tanxiaofei@huawei.com>
+Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ drivers/scsi/hisi_sas/hisi_sas_main.c  |  4 ++++
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 22 +++++++---------------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 21 +++++++--------------
+ 3 files changed, 18 insertions(+), 29 deletions(-)
 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index d1a61b1..52746e2 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -1174,10 +1174,14 @@ static int hisi_sas_abort_task(struct sas_task *task)
+ 		return TMF_RESP_FUNC_FAILED;
+ 	}
+ 
++	spin_lock_irqsave(&task->task_state_lock, flags);
+ 	if (task->task_state_flags & SAS_TASK_STATE_DONE) {
++		spin_unlock_irqrestore(&task->task_state_lock, flags);
+ 		rc = TMF_RESP_FUNC_COMPLETE;
+ 		goto out;
+ 	}
++	task->task_state_flags |= SAS_TASK_STATE_ABORTED;
++	spin_unlock_irqrestore(&task->task_state_lock, flags);
+ 
+ 	sas_dev->dev_status = HISI_SAS_DEV_EH;
+ 	if (task->lldd_task && task->task_proto & SAS_PROTOCOL_SSP) {
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+index 384e4ef..8ca0044 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+@@ -2386,7 +2386,6 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
+ 	struct hisi_sas_complete_v2_hdr *complete_hdr =
+ 			&complete_queue[slot->cmplt_queue_slot];
+ 	unsigned long flags;
+-	int aborted;
+ 
+ 	if (unlikely(!task || !task->lldd_task || !task->dev))
+ 		return -EINVAL;
+@@ -2396,7 +2395,6 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
+ 	sas_dev = device->lldd_dev;
+ 
+ 	spin_lock_irqsave(&task->task_state_lock, flags);
+-	aborted = task->task_state_flags & SAS_TASK_STATE_ABORTED;
+ 	task->task_state_flags &=
+ 		~(SAS_TASK_STATE_PENDING | SAS_TASK_AT_INITIATOR);
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+@@ -2404,15 +2402,6 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
+ 	memset(ts, 0, sizeof(*ts));
+ 	ts->resp = SAS_TASK_COMPLETE;
+ 
+-	if (unlikely(aborted)) {
+-		dev_dbg(dev, "slot_complete: task(%p) aborted\n", task);
+-		ts->stat = SAS_ABORTED_TASK;
+-		spin_lock_irqsave(&hisi_hba->lock, flags);
+-		hisi_sas_slot_task_free(hisi_hba, task, slot);
+-		spin_unlock_irqrestore(&hisi_hba->lock, flags);
+-		return ts->stat;
+-	}
+-
+ 	if (unlikely(!sas_dev)) {
+ 		dev_dbg(dev, "slot complete: port has no device\n");
+ 		ts->stat = SAS_PHY_DOWN;
+@@ -2523,13 +2512,16 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
+ 	}
+ 
+ out:
++	hisi_sas_slot_task_free(hisi_hba, task, slot);
++	sts = ts->stat;
+ 	spin_lock_irqsave(&task->task_state_lock, flags);
++	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
++		spin_unlock_irqrestore(&task->task_state_lock, flags);
++		dev_info(dev, "slot complete: task(%p) aborted\n", task);
++		return SAS_ABORTED_TASK;
++	}
+ 	task->task_state_flags |= SAS_TASK_STATE_DONE;
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+-	spin_lock_irqsave(&hisi_hba->lock, flags);
+-	hisi_sas_slot_task_free(hisi_hba, task, slot);
+-	spin_unlock_irqrestore(&hisi_hba->lock, flags);
+-	sts = ts->stat;
+ 
+ 	if (task->task_done)
+ 		task->task_done(task);
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index 28bb71e..492c3be 100644
+index afc1242..7346110 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -106,6 +106,7 @@
- #define COMPL_Q_0_RD_PTR		0x4f0
- #define AWQOS_AWCACHE_CFG	0xc84
- #define ARQOS_ARCACHE_CFG	0xc88
-+#define HILINK_ERR_DFX		0xe04
+@@ -1576,7 +1576,6 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
+ 			hisi_hba->complete_hdr[slot->cmplt_queue];
+ 	struct hisi_sas_complete_v3_hdr *complete_hdr =
+ 			&complete_queue[slot->cmplt_queue_slot];
+-	int aborted;
+ 	unsigned long flags;
  
- /* phy registers requiring init */
- #define PORT_BASE			(0x2000)
-@@ -167,6 +168,7 @@
- #define CHL_INT1_DMAC_RX_AXI_RD_ERR_OFF	22
- #define CHL_INT2			(PORT_BASE + 0x1bc)
- #define CHL_INT2_SL_IDAF_TOUT_CONF_OFF	0
-+#define CHL_INT2_RX_INVLD_DW_OFF	30
- #define CHL_INT2_STP_LINK_TIMEOUT_OFF	31
- #define CHL_INT0_MSK			(PORT_BASE + 0x1c0)
- #define CHL_INT1_MSK			(PORT_BASE + 0x1c4)
-@@ -1345,6 +1347,7 @@ static irqreturn_t int_chnl_int_v3_hw(int irq_no, void *p)
- {
- 	struct hisi_hba *hisi_hba = p;
- 	struct device *dev = hisi_hba->dev;
-+	struct pci_dev *pci_dev = hisi_hba->pci_dev;
- 	u32 irq_msk;
- 	int phy_no = 0;
+ 	if (unlikely(!task || !task->lldd_task || !task->dev))
+@@ -1587,21 +1586,12 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
+ 	sas_dev = device->lldd_dev;
  
-@@ -1410,8 +1413,28 @@ static irqreturn_t int_chnl_int_v3_hw(int irq_no, void *p)
+ 	spin_lock_irqsave(&task->task_state_lock, flags);
+-	aborted = task->task_state_flags & SAS_TASK_STATE_ABORTED;
+ 	task->task_state_flags &=
+ 		~(SAS_TASK_STATE_PENDING | SAS_TASK_AT_INITIATOR);
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
  
- 			hisi_sas_phy_write32(hisi_hba, phy_no,
- 					     CHL_INT2, irq_value2);
--		}
+ 	memset(ts, 0, sizeof(*ts));
+ 	ts->resp = SAS_TASK_COMPLETE;
+-	if (unlikely(aborted)) {
+-		dev_dbg(dev, "slot complete: task(%p) aborted\n", task);
+-		ts->stat = SAS_ABORTED_TASK;
+-		spin_lock_irqsave(&hisi_hba->lock, flags);
+-		hisi_sas_slot_task_free(hisi_hba, task, slot);
+-		spin_unlock_irqrestore(&hisi_hba->lock, flags);
+-		return ts->stat;
+-	}
  
-+			if ((irq_value2 & BIT(CHL_INT2_RX_INVLD_DW_OFF)) &&
-+			    (pci_dev->revision == 0x20)) {
-+				u32 reg_value;
-+				int rc;
-+
-+				rc = hisi_sas_read32_poll_timeout_atomic(
-+					HILINK_ERR_DFX, reg_value,
-+					!((reg_value >> 8) & BIT(phy_no)),
-+					1000, 10000);
-+				if (rc) {
-+					disable_phy_v3_hw(hisi_hba, phy_no);
-+					hisi_sas_phy_write32(hisi_hba, phy_no,
-+						CHL_INT2,
-+						BIT(CHL_INT2_RX_INVLD_DW_OFF));
-+					hisi_sas_phy_read32(hisi_hba, phy_no,
-+						ERR_CNT_INVLD_DW);
-+					mdelay(1);
-+					enable_phy_v3_hw(hisi_hba, phy_no);
-+				}
-+			}
-+		}
+ 	if (unlikely(!sas_dev)) {
+ 		dev_dbg(dev, "slot complete: port has not device\n");
+@@ -1699,13 +1689,16 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
+ 	}
  
- 		if (irq_msk & (2 << (phy_no * 4)) && irq_value0) {
- 			hisi_sas_phy_write32(hisi_hba, phy_no,
+ out:
++	hisi_sas_slot_task_free(hisi_hba, task, slot);
++	sts = ts->stat;
+ 	spin_lock_irqsave(&task->task_state_lock, flags);
++	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
++		spin_unlock_irqrestore(&task->task_state_lock, flags);
++		dev_info(dev, "slot complete: task(%p) aborted\n", task);
++		return SAS_ABORTED_TASK;
++	}
+ 	task->task_state_flags |= SAS_TASK_STATE_DONE;
+ 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+-	spin_lock_irqsave(&hisi_hba->lock, flags);
+-	hisi_sas_slot_task_free(hisi_hba, task, slot);
+-	spin_unlock_irqrestore(&hisi_hba->lock, flags);
+-	sts = ts->stat;
+ 
+ 	if (task->task_done)
+ 		task->task_done(task);
 -- 
 1.9.1
