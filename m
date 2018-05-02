@@ -1,85 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751451AbeEBHqF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:46:05 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20087 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751410AbeEBHp4 (ORCPT
+        id S1751240AbeEBHqz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:46:55 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:35347 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750920AbeEBHqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:45:56 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <jic23@kernel.org>, <robh+dt@kernel.org>, <alexandre.torgue@st.com>
-CC: <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>, <lars@metafoo.de>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <fabrice.gasnier@st.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@linaro.org>
-Subject: [PATCH v2 3/3] ARM: dts: stm32: Add ADC support to stm32mp157c
-Date: Wed, 2 May 2018 09:44:51 +0200
-Message-ID: <1525247091-18143-4-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525247091-18143-1-git-send-email-fabrice.gasnier@st.com>
-References: <1525247091-18143-1-git-send-email-fabrice.gasnier@st.com>
+        Wed, 2 May 2018 03:46:53 -0400
+X-Originating-IP: 2.224.242.101
+Date: Wed, 2 May 2018 09:46:31 +0200
+From: jacopo mondi <jacopo@jmondi.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: ysato@users.sourceforge.jp, dalias@libc.org,
+        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
+        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] sh: mm: Fix unprotected access to struct device
+Message-ID: <20180502074600.GC27261@w540>
+References: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_03:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="UnaWdueM1EBWVRzC"
+Content-Disposition: inline
+In-Reply-To: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stm32mp157c has an ADC block with two physical ADCs.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- arch/arm/boot/dts/stm32mp157c.dtsi | 32 ++++++++++++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+--UnaWdueM1EBWVRzC
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-index bc3eddc..7758a90 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -160,6 +160,38 @@
- 			status = "disabled";
- 		};
- 
-+		adc: adc@48003000 {
-+			compatible = "st,stm32mp1-adc-core";
-+			reg = <0x48003000 0x400>;
-+			interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&rcc ADC12>, <&rcc ADC12_K>;
-+			clock-names = "bus", "adc";
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+
-+			adc1: adc@0 {
-+				compatible = "st,stm32mp1-adc";
-+				#io-channel-cells = <1>;
-+				reg = <0x0>;
-+				interrupt-parent = <&adc>;
-+				interrupts = <0>;
-+				status = "disabled";
-+			};
-+
-+			adc2: adc@100 {
-+				compatible = "st,stm32mp1-adc";
-+				#io-channel-cells = <1>;
-+				reg = <0x100>;
-+				interrupt-parent = <&adc>;
-+				interrupts = <1>;
-+				status = "disabled";
-+			};
-+		};
-+
- 		rcc: rcc@50000000 {
- 			compatible = "st,stm32mp1-rcc", "syscon";
- 			reg = <0x50000000 0x1000>;
--- 
-1.9.1
+Hi again Christoph,
+
+    The gentle ping actually applies to this version of the patch.
+
+Sorry for the confusion.
+Thanks
+   j
+
+On Wed, Apr 18, 2018 at 11:42:35AM +0200, Jacopo Mondi wrote:
+> With commit ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping
+> operations observe dev->dma_pfn_offset") the generic DMA allocation
+> function on which the SH 'dma_alloc_coherent()' function relies on,
+> accesses the 'dma_pfn_offset' field of struct device.
+>
+> Unfortunately the 'dma_generic_alloc_coherent()' function is called from
+> several places with a NULL struct device argument, halting the CPU
+> during the boot process.
+>
+> This patch fixes the issue by protecting access to dev->dma_pfn_offset,
+> with a trivial check for validity. It also passes a valid 'struct device'
+> in the 'platform_resource_setup_memory()' function which is the main user
+> of 'dma_alloc_coherent()', and inserts a WARN_ON() check to remind to future
+> (and existing) bogus users of this function to provide a valid 'struct device'
+> whenever possible.
+>
+> Fixes: ce88313069c36eef80f21fd7 ("arch/sh: make the DMA mapping operations observe dev->dma_pfn_offset")
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+>
+> ---
+> v2 -> v3:
+> - remove (now) useless parenthesis around pfn assignement as suggested
+>   by Sergei
+> - Add changelog to the patch, which I forgot in v2
+>
+> v1 -> v2:
+> - Move WARN_ON() closer to dev validity check as suggested by Geert
+>
+> ---
+>  arch/sh/mm/consistent.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
+> index 8ce9869..f1b4469 100644
+> --- a/arch/sh/mm/consistent.c
+> +++ b/arch/sh/mm/consistent.c
+> @@ -59,7 +59,9 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+>
+>  	split_page(pfn_to_page(virt_to_phys(ret) >> PAGE_SHIFT), order);
+>
+> -	*dma_handle = virt_to_phys(ret) - PFN_PHYS(dev->dma_pfn_offset);
+> +	*dma_handle = virt_to_phys(ret);
+> +	if (!WARN_ON(!dev))
+> +		*dma_handle -= PFN_PHYS(dev->dma_pfn_offset);
+>
+>  	return ret_nocache;
+>  }
+> @@ -69,9 +71,12 @@ void dma_generic_free_coherent(struct device *dev, size_t size,
+>  			       unsigned long attrs)
+>  {
+>  	int order = get_order(size);
+> -	unsigned long pfn = (dma_handle >> PAGE_SHIFT) + dev->dma_pfn_offset;
+> +	unsigned long pfn = dma_handle >> PAGE_SHIFT;
+>  	int k;
+>
+> +	if (!WARN_ON(!dev))
+> +		pfn += dev->dma_pfn_offset;
+> +
+>  	for (k = 0; k < (1 << order); k++)
+>  		__free_pages(pfn_to_page(pfn + k), 0);
+>
+> @@ -143,7 +148,7 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
+>  	if (!memsize)
+>  		return 0;
+>
+> -	buf = dma_alloc_coherent(NULL, memsize, &dma_handle, GFP_KERNEL);
+> +	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
+>  	if (!buf) {
+>  		pr_warning("%s: unable to allocate memory\n", name);
+>  		return -ENOMEM;
+> --
+> 2.7.4
+>
+
+--UnaWdueM1EBWVRzC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJa6WzXAAoJEHI0Bo8WoVY8VHgQAJ+f+VrWABtAj1hPotWX8Mxb
+GbTWMa5uMBOrDckb3bSTWqpIu4cW+nKfLbLSWFNNNZiy2VfzyH95sqqYQdgt0XZB
+X/iAduQx5bfLxPziOiYSrzB8AAN7L8MQ5ZEvCXkoSo1Lx6vKoLgbdpGgYSrdhjZQ
+iz4cUu/MxFHt3MbPwlFTeNqMQg55ZwCh1QHC9RlqcpAWXRkz07Mbox9L0Wl+9F/S
+Zwlbo6i/K1QRzmoCCq+RAAmHAAw2nCQwUNB/FyCXQgntACHVpSsDFdRT8sAzqmoL
+v7MkpXUXEZqvNF6dWLUIWlo8+Cw8jZBctFZb4QqvTGnwY7qVj65x1OBnffHDvER1
+2L25LOBVN+VaoD00SmgIz2pLFl0CcOfwJBRqfPsRro0dxChvmxjWQOJ3Tp4a2/D1
+q+PW8h6tj1AyyytkVJgi0VM5cimj4TcbBtufm/QQqVQUtghqUeLk6XRwb4JtvwQx
+t9qnbNo5ch/Ox1k7foYQrHEymgac+GVuuEfX5P1R8X54QrQ9VeiFoPS+lOUd/Qxj
+iWxzBKG3egX1zyodYuJK4cs/kcjWh8HSL8cro9LkznEqcjlTXW2SMlnQTG6wPjnQ
+o2kDJDjPfKxEGxgB0PioALF5Ha9qiciw2HARleNdoL3mcvVZiqViLJVGkbc8Kg6I
+24PCZUT1CSudq2qg4xT6
+=WEro
+-----END PGP SIGNATURE-----
+
+--UnaWdueM1EBWVRzC--
