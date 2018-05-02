@@ -1,53 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751132AbeEBIao (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 04:30:44 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:59726 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750859AbeEBIan (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 04:30:43 -0400
-Date: Wed, 2 May 2018 10:30:21 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
-Message-ID: <20180502083021.GC2851@pd.tnic>
-References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
- <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
- <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
- <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
+        id S1751412AbeEBIbT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 04:31:19 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:49613 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751185AbeEBIbO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 04:31:14 -0400
+Subject: Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8 support
+To: Eyal Reizer <eyalreizer@gmail.com>, <bcousson@baylibre.com>,
+        <tony@atomide.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Eyal Reizer <eyalr@ti.com>
+References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
+Message-ID: <abebf4a1-11d6-413b-a3c0-4f46ac6fc485@ti.com>
+Date: Wed, 2 May 2018 14:00:52 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <1525159453-32489-1-git-send-email-eyalr@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 07:25:57PM -0700, Dan Williams wrote:
-> Right, but the only way to make MCE non-fatal is to teach the machine
-> check handler about recoverable conditions. This patch teaches the
-> machine check handler how to recover copy_to_iter() errors.
+On Tuesday 01 May 2018 12:54 PM, Eyal Reizer wrote:
+> enable mmc3 used for wlan and uart1 used for bluetooth
+> configure the gpios used for wlan and bluetooth controls
+> add fixed voltage regulator used for wlan power control
+> 
+> Signed-off-by: Eyal Reizer <eyalr@ti.com>
 
-Yeah, about that: maybe we talked about this at the time but does the
-actual MCE signature state the error was caused by a read from an nvdimm
-range?
+ARM should be capitalized in subject line.
 
-Because if so, we could lower the severity of the error when we look at
-it in the #MC handler and do some more graceful handling later...
+> +
+> +&mmc3 {
+> +	status = "okay";
+> +	/*
+> +	 * these are on the crossbar and are outlined in the
+> +	 * xbar-event-map element
+> +	 */
+> +	dmas = <&edma_xbar 30 0 1>,
+> +		<&edma_xbar 31 0 2>;
+> +	dma-names = "tx", "rx";
+> +	vmmc-supply = <&vmmcwl_fixed>;
+> +	bus-width = <4>;
+> +	pinctrl-names = "default", "sleep";
+> +	pinctrl-0 = <&mmc3_pins_default>;
+> +	pinctrl-1 = <&mmc3_pins_sleep>;
+> +	cap-power-off-card;
+> +	keep-power-in-suspend;
+> +	ti,non-removable;
+> +
+> +	#address-cells = <1>;
+> +	#size-cells = <0>;
+> +	wlcore: wlcore@0 {
 
--- 
-Regards/Gruss,
-    Boris.
+wlcore@2
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> +		compatible = "ti,wl1835";
+> +		pinctrl-names = "default", "sleep";
+> +		pinctrl-0 = <&wlan_pins_default>;
+> +		pinctrl-1 = <&wlan_pins_sleep>;
+> +		reg = <2>;
+> +		interrupt-parent = <&gpio4>;
+> +		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +};
+
+Thanks,
+Sekhar
