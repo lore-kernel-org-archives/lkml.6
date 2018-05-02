@@ -1,59 +1,189 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeEBMJR (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 08:09:17 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:33093 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750939AbeEBMJM (ORCPT
+        id S1751361AbeEBMKa (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 08:10:30 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:60669 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750939AbeEBMK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 08:09:12 -0400
-X-Google-Smtp-Source: AB8JxZoZ2Kl2dBpok7k8U90X5OvVYQIfP1QMVkXmyI8101BDTedogFlbW9roXZui1KBQvc1yhbKeuEhvjNmLbW5pVqc=
+        Wed, 2 May 2018 08:10:28 -0400
+Subject: Re: [PATCH] ARM: dts: stm32: Add LPtimer support to stm32mp157c
+To: Fabrice Gasnier <fabrice.gasnier@st.com>, <robh+dt@kernel.org>
+CC: <mcoquelin.stm32@gmail.com>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1524037433-25915-1-git-send-email-fabrice.gasnier@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <654c83fa-1aed-def1-63f0-1b432b27c10f@st.com>
+Date: Wed, 2 May 2018 14:09:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180502000250.GI10479@thunk.org>
-References: <20180427201036.GL5965@thunk.org> <20180429143205.GD13475@amd>
- <20180429170541.lrzwyihrd6d75rql@sultan-box> <20180429184101.GA31156@amd>
- <20180429202033.ysmc42mj2rrk3h7p@sultan-box> <20180429220519.GQ5965@thunk.org>
- <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
- <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
- <20180501125518.GI20585@thunk.org> <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
- <20180502000250.GI10479@thunk.org>
-From: Justin Forbes <jmforbes@linuxtx.org>
-Date: Wed, 2 May 2018 07:09:11 -0500
-Message-ID: <CAFxkdAp83uWnju0KZKd2edveuzmiDW_sqMORC7uoR+pwgQECNw@mail.gmail.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Justin Forbes <jmforbes@linuxtx.org>, Jeremy Cline <jeremy@jcline.org>,
-        Sultan Alsawaf <sultanxda@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1524037433-25915-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 7:02 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> On Tue, May 01, 2018 at 05:35:56PM -0500, Justin Forbes wrote:
->>
->> I have not reproduced in GCE myself.  We did get some confirmation
->> that removing dracut-fips does make the problem less dire (but I
->> wouldn't call a 4 minute boot a win, but booting in 4 minutes is
->> better than not booting at all).  Specifically systemd calls libgcrypt
->> before it even opens the log with fips there, and this is before
->> virtio-rng modules could even load. Right now though, we are looking
->> at pretty much any possible options as the majority of people are
->> calling for me to backout the patches completely from rawhide.
->
-> FWIW, Debian Testing is using systemd 238, and from what I can tell
-> it's calling libgcrypt and it has the same (as near as I can tell)
-> totally pointless hmac nonsense, and it's not a problem that I can
-> see.  Of course, Debian and Fedora may have a different set of
-> patches....
->
-Yes, Fedora libgcrypt is carrying a patch which makes it particularly
-painful for us, we have reached out to the libgcrypt maintainer to
-follow up on that end. But as I said before, even without that code
-path (no dracut-fips) we are seeing some instances of 4 minute boots.
-This is not really a workable user experience.  And are you sure that
-every cloud platform and VM platform offers, makes it possible to
-config virtio-rng?
+Hi Fabrice
 
-Justin
+On 04/18/2018 09:43 AM, Fabrice Gasnier wrote:
+> Add LPtimer definitions, depending on features they provide:
+> - lptimer1 & 2 can act as PWM, trigger and encoder/counter
+> - lptimer3 can act as PWM and trigger
+> - lptimer4 & 5 can act as PWM
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+
+Applied on stm32-next.
+
+I fixed out DTC warning:
+
+/soc/timer@50023000: unnecessary #address-cells/#size-cells without 
+"ranges" or child "reg" property
+/soc/timer@50024000: unnecessary #address-cells/#size-cells without 
+"ranges" or child "reg" property
+
+Thanks.
+Alex
+
+
+
+>   arch/arm/boot/dts/stm32mp157c.dtsi | 108 +++++++++++++++++++++++++++++++++++++
+>   1 file changed, 108 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+> index bc3eddc..7e6301c 100644
+> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> @@ -104,6 +104,33 @@
+>   		interrupt-parent = <&intc>;
+>   		ranges;
+>   
+> +		lptimer1: timer@40009000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32-lptimer";
+> +			reg = <0x40009000 0x400>;
+> +			clocks = <&rcc LPTIM1_K>;
+> +			clock-names = "mux";
+> +			status = "disabled";
+> +
+> +			pwm {
+> +				compatible = "st,stm32-pwm-lp";
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			trigger@0 {
+> +				compatible = "st,stm32-lptimer-trigger";
+> +				reg = <0>;
+> +				status = "disabled";
+> +			};
+> +
+> +			counter {
+> +				compatible = "st,stm32-lptimer-counter";
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+>   		usart2: serial@4000e000 {
+>   			compatible = "st,stm32h7-uart";
+>   			reg = <0x4000e000 0x400>;
+> @@ -167,6 +194,87 @@
+>   			#reset-cells = <1>;
+>   		};
+>   
+> +		lptimer2: timer@50021000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32-lptimer";
+> +			reg = <0x50021000 0x400>;
+> +			clocks = <&rcc LPTIM2_K>;
+> +			clock-names = "mux";
+> +			status = "disabled";
+> +
+> +			pwm {
+> +				compatible = "st,stm32-pwm-lp";
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			trigger@1 {
+> +				compatible = "st,stm32-lptimer-trigger";
+> +				reg = <1>;
+> +				status = "disabled";
+> +			};
+> +
+> +			counter {
+> +				compatible = "st,stm32-lptimer-counter";
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+> +		lptimer3: timer@50022000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32-lptimer";
+> +			reg = <0x50022000 0x400>;
+> +			clocks = <&rcc LPTIM3_K>;
+> +			clock-names = "mux";
+> +			status = "disabled";
+> +
+> +			pwm {
+> +				compatible = "st,stm32-pwm-lp";
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +
+> +			trigger@2 {
+> +				compatible = "st,stm32-lptimer-trigger";
+> +				reg = <2>;
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+> +		lptimer4: timer@50023000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32-lptimer";
+> +			reg = <0x50023000 0x400>;
+> +			clocks = <&rcc LPTIM4_K>;
+> +			clock-names = "mux";
+> +			status = "disabled";
+> +
+> +			pwm {
+> +				compatible = "st,stm32-pwm-lp";
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+> +		lptimer5: timer@50024000 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			compatible = "st,stm32-lptimer";
+> +			reg = <0x50024000 0x400>;
+> +			clocks = <&rcc LPTIM5_K>;
+> +			clock-names = "mux";
+> +			status = "disabled";
+> +
+> +			pwm {
+> +				compatible = "st,stm32-pwm-lp";
+> +				#pwm-cells = <3>;
+> +				status = "disabled";
+> +			};
+> +		};
+> +
+>   		usart1: serial@5c000000 {
+>   			compatible = "st,stm32h7-uart";
+>   			reg = <0x5c000000 0x400>;
+> 
