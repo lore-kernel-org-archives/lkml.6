@@ -1,226 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeEBKJ1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:09:27 -0400
-Received: from foss.arm.com ([217.140.101.70]:56148 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751045AbeEBKJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:09:22 -0400
-Subject: Re: [PATCH 2/2] PCI: mediatek: Using chained IRQ to setup IRQ handle
-To: Honghui Zhang <honghui.zhang@mediatek.com>
-Cc: lorenzo.pieralisi@arm.com, bhelgaas@google.com, matthias.bgg@gmail.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
-        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
-        youlin.pei@mediatek.com, yong.wu@mediatek.com, yt.shen@mediatek.com,
-        sean.wang@mediatek.com, xinping.qian@mediatek.com
-References: <1524201910-22836-1-git-send-email-honghui.zhang@mediatek.com>
- <1524201910-22836-3-git-send-email-honghui.zhang@mediatek.com>
- <a2f7e70a-fdef-d925-8838-be3051c2e96d@arm.com>
- <1525254064.22948.11.camel@mhfsdcap03>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <e04ea8b1-731f-e72b-8944-5c067e1a04da@arm.com>
-Date: Wed, 2 May 2018 11:09:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751268AbeEBKKg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:10:36 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:55297 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750999AbeEBKKe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 06:10:34 -0400
+X-Google-Smtp-Source: AB8JxZqAXE0nwgEJQkmeSrZG6Q8dc4CNZKdVGk+dLdEXA1VIUUHmIdwbBG8MFF4tYBt2xAqpS44OGlU6eii+gH+WuTc=
 MIME-Version: 1.0
-In-Reply-To: <1525254064.22948.11.camel@mhfsdcap03>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
+References: <6ee982f8eb6e07f9ecbb0cc5093152f4a16b9c31.1523454899.git.michal.simek@xilinx.com>
+ <CACRpkdbOa+AvhQT1RCWA_zQuTpp4qfNjZBFDOKLdaFqMGAe+cw@mail.gmail.com> <f9dd4f64-4026-f495-5810-32affb5b0944@xilinx.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 May 2018 12:10:32 +0200
+Message-ID: <CACRpkdaxwRc0zoDKogVGisXTPJ0EwLbOQjHzz1pSEjvWCsSCTQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: zynq: Setup chip->base based on alias ID
+To: Michal Simek <michal.simek@xilinx.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robherring2@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/05/18 10:41, Honghui Zhang wrote:
-> On Mon, 2018-04-30 at 12:03 +0100, Marc Zyngier wrote:
->> Hi Zhang,
+On Thu, Apr 26, 2018 at 3:35 PM, Michal Simek <michal.simek@xilinx.com> wrote:
+
+>> The only use case which I can think about is userspace sysfs
+>> and then I would really like to know why these userspace
+>> users cannot use the character device that is nowadays
+>> supported by libgpiod and there is even patches for some
+>> IoT libraries to use it. The character device makes the
+>> GPIO Linux "base" irrelevant for userspace.
 >>
->> On 20/04/18 06:25, honghui.zhang@mediatek.com wrote:
->>> From: Honghui Zhang <honghui.zhang@mediatek.com>
->>>
->>> Using irq_chip solution to setup IRQs for the consistent with IRQ framework.
->>>
->>> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
->>> ---
->>>  drivers/pci/host/pcie-mediatek.c | 192 +++++++++++++++++++++------------------
->>>  1 file changed, 105 insertions(+), 87 deletions(-)
->>>
->>> diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
->>> index c3dc549..1d9c6f1 100644
->>> --- a/drivers/pci/host/pcie-mediatek.c
->>> +++ b/drivers/pci/host/pcie-mediatek.c
->>> @@ -11,8 +11,10 @@
->>>  #include <linux/delay.h>
->>>  #include <linux/iopoll.h>
->>>  #include <linux/irq.h>
->>> +#include <linux/irqchip/chained_irq.h>
->>>  #include <linux/irqdomain.h>
->>>  #include <linux/kernel.h>
->>> +#include <linux/msi.h>
->>>  #include <linux/of_address.h>
->>>  #include <linux/of_pci.h>
->>>  #include <linux/of_platform.h>
->>> @@ -130,14 +132,12 @@ struct mtk_pcie_port;
->>>  /**
->>>   * struct mtk_pcie_soc - differentiate between host generations
->>>   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
->>> - * @has_msi: whether this host supports MSI interrupts or not
->>>   * @ops: pointer to configuration access functions
->>>   * @startup: pointer to controller setting functions
->>>   * @setup_irq: pointer to initialize IRQ functions
->>>   */
->>>  struct mtk_pcie_soc {
->>>  	bool need_fix_class_id;
->>> -	bool has_msi;
->>>  	struct pci_ops *ops;
->>>  	int (*startup)(struct mtk_pcie_port *port);
->>>  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
->>> @@ -161,7 +161,9 @@ struct mtk_pcie_soc {
->>>   * @lane: lane count
->>>   * @slot: port slot
->>>   * @irq_domain: legacy INTx IRQ domain
->>> + * @inner_domain: inner IRQ domain
->>>   * @msi_domain: MSI IRQ domain
->>> + * @lock: protect the msi_irq_in_use bitmap
->>>   * @msi_irq_in_use: bit map for assigned MSI IRQ
->>>   */
->>>  struct mtk_pcie_port {
->>> @@ -179,7 +181,9 @@ struct mtk_pcie_port {
->>>  	u32 lane;
->>>  	u32 slot;
->>>  	struct irq_domain *irq_domain;
->>> +	struct irq_domain *inner_domain;
->>>  	struct irq_domain *msi_domain;
->>> +	struct mutex lock;
->>>  	DECLARE_BITMAP(msi_irq_in_use, MTK_MSI_IRQS_NUM);
->>>  };
->>>  
->>> @@ -446,103 +450,122 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->>>  	return 0;
->>>  }
->>>  
->>> -static int mtk_pcie_msi_alloc(struct mtk_pcie_port *port)
->>> +static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
->>>  {
->>> -	int msi;
->>> +	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
->>> +	phys_addr_t addr;
->>>  
->>> -	msi = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
->>> -	if (msi < MTK_MSI_IRQS_NUM)
->>> -		set_bit(msi, port->msi_irq_in_use);
->>> -	else
->>> -		return -ENOSPC;
->>> +	/* MT2712/MT7622 only support 32-bit MSI addresses */
->>> +	addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
->>> +	msg->address_hi = 0;
->>> +	msg->address_lo = lower_32_bits(addr);
->>>  
->>> -	return msi;
->>> +	msg->data = data->hwirq;
->>> +
->>> +	dev_dbg(port->pcie->dev, "msi#%d address_hi %#x address_lo %#x\n",
->>> +		(int)data->hwirq, msg->address_hi, msg->address_lo);
->>>  }
->>>  
->>> -static void mtk_pcie_msi_free(struct mtk_pcie_port *port, unsigned long hwirq)
->>> +static int mtk_msi_set_affinity(struct irq_data *irq_data,
->>> +				   const struct cpumask *mask, bool force)
->>>  {
->>> -	clear_bit(hwirq, port->msi_irq_in_use);
->>> +	return -EINVAL;
->>>  }
->>>  
->>> -static int mtk_pcie_msi_setup_irq(struct msi_controller *chip,
->>> -				  struct pci_dev *pdev, struct msi_desc *desc)
->>> -{
->>> -	struct mtk_pcie_port *port;
->>> -	struct msi_msg msg;
->>> -	unsigned int irq;
->>> -	int hwirq;
->>> -	phys_addr_t msg_addr;
->>> +static struct irq_chip mtk_msi_bottom_irq_chip = {
->>> +	.name			= "MTK MSI",
->>> +	.irq_compose_msi_msg	= mtk_compose_msi_msg,
->>> +	.irq_set_affinity	= mtk_msi_set_affinity,
->>> +	.irq_mask		= pci_msi_mask_irq,
->>> +	.irq_unmask	= pci_msi_unmask_irq,
->>> +};
->>>  
->>> -	port = mtk_pcie_find_port(pdev->bus, pdev->devfn);
->>> -	if (!port)
->>> -		return -EINVAL;
->>> +static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
->>> +				     unsigned int nr_irqs, void *args)
->>> +{
->>> +	struct mtk_pcie_port *port = domain->host_data;
->>> +	unsigned long bit;
->>>  
->>> -	hwirq = mtk_pcie_msi_alloc(port);
->>> -	if (hwirq < 0)
->>> -		return hwirq;
->>> +	WARN_ON(nr_irqs != 1);
->>> +	mutex_lock(&port->lock);
->>>  
->>> -	irq = irq_create_mapping(port->msi_domain, hwirq);
->>> -	if (!irq) {
->>> -		mtk_pcie_msi_free(port, hwirq);
->>> -		return -EINVAL;
->>> +	bit = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
->>> +	if (bit >= MTK_MSI_IRQS_NUM) {
->>> +		mutex_unlock(&port->lock);
->>> +		return -ENOSPC;
->>>  	}
->>>  
->>> -	chip->dev = &pdev->dev;
->>> -
->>> -	irq_set_msi_desc(irq, desc);
->>> +	__set_bit(bit, port->msi_irq_in_use);
->>>  
->>> -	/* MT2712/MT7622 only support 32-bit MSI addresses */
->>> -	msg_addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
->>> -	msg.address_hi = 0;
->>> -	msg.address_lo = lower_32_bits(msg_addr);
->>> -	msg.data = hwirq;
->>> +	mutex_unlock(&port->lock);
->>>  
->>> -	pci_write_msi_msg(irq, &msg);
->>> +	irq_domain_set_info(domain, virq, bit, &mtk_msi_bottom_irq_chip,
->>> +			    domain->host_data, handle_simple_irq,
+>> GPIO sysfs is deprecated and moved to the obsolete ABI.
 >>
->> Why don't you handle the interrupt as an edge interrupt
->> (handle_edge_irq)? That's what it really is, and the fact that you use
->> "handle_simple_irq" makes me think that wou're papering over some other
->> issue (see below).
-> 
-> Hi, Marc,
-> 
-> Thanks very much for your comments.
-> 
-> I guess the MSI irq is more like a level IRQ instead of edge IRQ.
-> When a MSI IRQ arrived, the corresponding bit of MSI status register
-> will be asserted and stay asserted until it's been cleared by software.
+>> If there are legacy applications that use this I would have
+>> to consider it, but since this has been -1 since the driver
+>> was merged I find that unlikely.
+>
+> Yes, it is about legacy application which I have seen recently and there
+> is no source code for application calls it because board vendor doesn't
+> provide it.
+>
+> You are right that -1 was used from the beginning in mainline but
+> unfortunately this driver was in vendor tree for a while and it uses 0
+> there.
+>
+> In upstreaming this was changed to -1 but customers have a lot of code
+> which developed against vendor tree and they want to use
+> latest&greatest. And without this they are not able to run that
+> applications.
+>
+> I found that this logic is already in 5 drivers in mainline that's why I
+> send this patch to be +1.
 
-There is some confusion here. The MSI itself is always edge-triggered.
-That's by definition, and you cannot change it. The interrupt that is
-used to signal that MSIs are pending (the multiplexing interrupt) can
-itself be level triggered (and goes low once all the MSIs have been
-acknowledged).
+I see.
 
-> I will try to using handle_level_irq and add some callbacks of irq_ack
-> in the next version.
+Sadly comaptibility with out-of-tree driver code is none of our
+(community) business.
 
-The interrupt above seem to be the MSI itself, and not the multiplexing
-interrupt. It should be handled as an edge.
+We do pay a lot of effort not to break the ABI to userspace, but
+it needs to be an ABI coming from the mainline kernel, not from
+a vendor tree.
 
-If that doesn't work, we need to understand why.
+So to the mainline kernel this is no regression.
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Yours,
+Linus Walleij
