@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752491AbeEBPWl (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:22:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48518 "EHLO mail.kernel.org"
+        id S1752501AbeEBPWu (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:22:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752436AbeEBPWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:22:36 -0400
+        id S1752436AbeEBPWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:22:42 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 50/52] perf symbols: Move split_kallsyms to struct map_groups
-Date: Wed,  2 May 2018 12:19:40 -0300
-Message-Id: <20180502151942.20542-51-acme@kernel.org>
+Subject: [PATCH 52/52] perf machine: Ditch find_kernel_function variants
+Date: Wed,  2 May 2018 12:19:42 -0300
+Message-Id: <20180502151942.20542-53-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
 References: <20180502151942.20542-1-acme@kernel.org>
@@ -26,122 +26,188 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since it mainly will populate symtabs of its maps (kernel modules).
-
-While looking at this I wonder if map_groups__split_kallsyms_for_kcore()
-shouldn't be all that we need, seems much simpler.
+Since we do not have split symtabs anymore, no need to have explicit
+find_kernel_function variants, use the find_kernel_symbol ones.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-3d1f3iby76popdr8ia9yimsc@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-hiw2ryflju000f6wl62128it@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ tools/perf/builtin-kallsyms.c       |  2 +-
+ tools/perf/builtin-kmem.c           |  6 +++---
+ tools/perf/tests/vmlinux-kallsyms.c |  4 ++--
+ tools/perf/util/machine.c           |  2 +-
+ tools/perf/util/machine.h           | 15 ---------------
+ tools/perf/util/map.h               |  7 -------
+ tools/perf/util/probe-event.c       | 15 ++-------------
+ 7 files changed, 9 insertions(+), 42 deletions(-)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 76de63cecf98..f48dc157c2bd 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -676,9 +676,8 @@ static int dso__load_all_kallsyms(struct dso *dso, const char *filename)
- 	return kallsyms__parse(filename, dso, map__process_kallsym_symbol);
+diff --git a/tools/perf/builtin-kallsyms.c b/tools/perf/builtin-kallsyms.c
+index bcfb363112d3..90d1a2305b72 100644
+--- a/tools/perf/builtin-kallsyms.c
++++ b/tools/perf/builtin-kallsyms.c
+@@ -27,7 +27,7 @@ static int __cmd_kallsyms(int argc, const char **argv)
+ 
+ 	for (i = 0; i < argc; ++i) {
+ 		struct map *map;
+-		struct symbol *symbol = machine__find_kernel_function_by_name(machine, argv[i], &map);
++		struct symbol *symbol = machine__find_kernel_symbol_by_name(machine, argv[i], &map);
+ 
+ 		if (symbol == NULL) {
+ 			printf("%s: not found\n", argv[i]);
+diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+index ae11e4c3516a..54d3f21b0e62 100644
+--- a/tools/perf/builtin-kmem.c
++++ b/tools/perf/builtin-kmem.c
+@@ -1004,7 +1004,7 @@ static void __print_slab_result(struct rb_root *root,
+ 		if (is_caller) {
+ 			addr = data->call_site;
+ 			if (!raw_ip)
+-				sym = machine__find_kernel_function(machine, addr, &map);
++				sym = machine__find_kernel_symbol(machine, addr, &map);
+ 		} else
+ 			addr = data->ptr;
+ 
+@@ -1068,7 +1068,7 @@ static void __print_page_alloc_result(struct perf_session *session, int n_lines)
+ 		char *caller = buf;
+ 
+ 		data = rb_entry(next, struct page_stat, node);
+-		sym = machine__find_kernel_function(machine, data->callsite, &map);
++		sym = machine__find_kernel_symbol(machine, data->callsite, &map);
+ 		if (sym)
+ 			caller = sym->name;
+ 		else
+@@ -1110,7 +1110,7 @@ static void __print_page_caller_result(struct perf_session *session, int n_lines
+ 		char *caller = buf;
+ 
+ 		data = rb_entry(next, struct page_stat, node);
+-		sym = machine__find_kernel_function(machine, data->callsite, &map);
++		sym = machine__find_kernel_symbol(machine, data->callsite, &map);
+ 		if (sym)
+ 			caller = sym->name;
+ 		else
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index 702cea7371ac..7691980b7df1 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -118,7 +118,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 		mem_start = vmlinux_map->unmap_ip(vmlinux_map, sym->start);
+ 		mem_end = vmlinux_map->unmap_ip(vmlinux_map, sym->end);
+ 
+-		first_pair = machine__find_kernel_function(&kallsyms, mem_start, NULL);
++		first_pair = machine__find_kernel_symbol(&kallsyms, mem_start, NULL);
+ 		pair = first_pair;
+ 
+ 		if (pair && UM(pair->start) == mem_start) {
+@@ -147,7 +147,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 				 */
+ 				continue;
+ 			} else {
+-				pair = machine__find_kernel_function_by_name(&kallsyms, sym->name, NULL);
++				pair = machine__find_kernel_symbol_by_name(&kallsyms, sym->name, NULL);
+ 				if (pair) {
+ 					if (UM(pair->start) == mem_start)
+ 						goto next_pair;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index b707041f9a22..72a351613d85 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2327,7 +2327,7 @@ char *machine__resolve_kernel_addr(void *vmachine, unsigned long long *addrp, ch
+ {
+ 	struct machine *machine = vmachine;
+ 	struct map *map;
+-	struct symbol *sym = machine__find_kernel_function(machine, *addrp, &map);
++	struct symbol *sym = machine__find_kernel_symbol(machine, *addrp, &map);
+ 
+ 	if (sym == NULL)
+ 		return NULL;
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index a625a0a6330d..388fb4741c54 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -210,21 +210,6 @@ struct symbol *machine__find_kernel_symbol_by_name(struct machine *machine,
+ 	return map_groups__find_symbol_by_name(&machine->kmaps, name, mapp);
  }
  
--static int dso__split_kallsyms_for_kcore(struct dso *dso, struct map *map)
-+static int map_groups__split_kallsyms_for_kcore(struct map_groups *kmaps, struct dso *dso)
+-static inline
+-struct symbol *machine__find_kernel_function(struct machine *machine, u64 addr,
+-					     struct map **mapp)
+-{
+-	return machine__find_kernel_symbol(machine,  addr, mapp);
+-}
+-
+-static inline
+-struct symbol *machine__find_kernel_function_by_name(struct machine *machine,
+-						     const char *name,
+-						     struct map **mapp)
+-{
+-	return map_groups__find_function_by_name(&machine->kmaps, name, mapp);
+-}
+-
+ struct map *machine__findnew_module_map(struct machine *machine, u64 start,
+ 					const char *filename);
+ int arch__fix_module_text_start(u64 *start, const char *name);
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 6eaa9f19dd47..f1afe1ab6ff7 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -225,13 +225,6 @@ struct addr_map_symbol;
+ 
+ int map_groups__find_ams(struct addr_map_symbol *ams);
+ 
+-static inline
+-struct symbol *map_groups__find_function_by_name(struct map_groups *mg,
+-						 const char *name, struct map **mapp)
+-{
+-	return map_groups__find_symbol_by_name(mg, name, mapp);
+-}
+-
+ int map_groups__fixup_overlappings(struct map_groups *mg, struct map *map,
+ 				   FILE *fp);
+ 
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index fefe2fdd1b83..3094f11e7d81 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -111,17 +111,6 @@ void exit_probe_symbol_maps(void)
+ 	symbol__exit();
+ }
+ 
+-static struct symbol *__find_kernel_function_by_name(const char *name,
+-						     struct map **mapp)
+-{
+-	return machine__find_kernel_function_by_name(host_machine, name, mapp);
+-}
+-
+-static struct symbol *__find_kernel_function(u64 addr, struct map **mapp)
+-{
+-	return machine__find_kernel_function(host_machine, addr, mapp);
+-}
+-
+ static struct ref_reloc_sym *kernel_get_ref_reloc_sym(void)
  {
--	struct map_groups *kmaps = map__kmaps(map);
- 	struct map *curr_map;
- 	struct symbol *pos;
- 	int count = 0;
-@@ -728,11 +727,11 @@ static int dso__split_kallsyms_for_kcore(struct dso *dso, struct map *map)
-  * kernel range is broken in several maps, named [kernel].N, as we don't have
-  * the original ELF section names vmlinux have.
-  */
--static int dso__split_kallsyms(struct dso *dso, struct map *map, u64 delta)
-+static int map_groups__split_kallsyms(struct map_groups *kmaps, struct dso *dso, u64 delta,
-+				      struct map *initial_map)
- {
--	struct map_groups *kmaps = map__kmaps(map);
- 	struct machine *machine;
--	struct map *curr_map = map;
-+	struct map *curr_map = initial_map;
- 	struct symbol *pos;
- 	int count = 0, moved = 0;
- 	struct rb_root *root = &dso->symbols;
-@@ -758,7 +757,7 @@ static int dso__split_kallsyms(struct dso *dso, struct map *map, u64 delta)
- 			*module++ = '\0';
- 
- 			if (strcmp(curr_map->dso->short_name, module)) {
--				if (curr_map != map &&
-+				if (curr_map != initial_map &&
- 				    dso->kernel == DSO_TYPE_GUEST_KERNEL &&
- 				    machine__is_default_guest(machine)) {
- 					/*
-@@ -777,7 +776,7 @@ static int dso__split_kallsyms(struct dso *dso, struct map *map, u64 delta)
- 					         "inconsistency while looking "
- 						 "for \"%s\" module!\n",
- 						 machine->root_dir, module);
--					curr_map = map;
-+					curr_map = initial_map;
- 					goto discard_symbol;
- 				}
- 
-@@ -787,11 +786,11 @@ static int dso__split_kallsyms(struct dso *dso, struct map *map, u64 delta)
- 			}
- 			/*
- 			 * So that we look just like we get from .ko files,
--			 * i.e. not prelinked, relative to map->start.
-+			 * i.e. not prelinked, relative to initial_map->start.
- 			 */
- 			pos->start = curr_map->map_ip(curr_map, pos->start);
- 			pos->end   = curr_map->map_ip(curr_map, pos->end);
--		} else if (curr_map != map) {
-+		} else if (curr_map != initial_map) {
- 			char dso_name[PATH_MAX];
- 			struct dso *ndso;
- 
-@@ -802,7 +801,7 @@ static int dso__split_kallsyms(struct dso *dso, struct map *map, u64 delta)
- 			}
- 
- 			if (count == 0) {
--				curr_map = map;
-+				curr_map = initial_map;
- 				goto add_symbol;
- 			}
- 
-@@ -836,7 +835,7 @@ static int dso__split_kallsyms(struct dso *dso, struct map *map, u64 delta)
- 			pos->end -= delta;
+ 	/* kmap->ref_reloc_sym should be set if host_machine is initialized */
+@@ -149,7 +138,7 @@ static int kernel_get_symbol_address_by_name(const char *name, u64 *addr,
+ 	if (reloc_sym && strcmp(name, reloc_sym->name) == 0)
+ 		*addr = (reloc) ? reloc_sym->addr : reloc_sym->unrelocated_addr;
+ 	else {
+-		sym = __find_kernel_function_by_name(name, &map);
++		sym = machine__find_kernel_symbol_by_name(host_machine, name, &map);
+ 		if (!sym)
+ 			return -ENOENT;
+ 		*addr = map->unmap_ip(map, sym->start) -
+@@ -2097,7 +2086,7 @@ static int find_perf_probe_point_from_map(struct probe_trace_point *tp,
  		}
- add_symbol:
--		if (curr_map != map) {
-+		if (curr_map != initial_map) {
- 			rb_erase(&pos->rb_node, root);
- 			symbols__insert(&curr_map->dso->symbols, pos);
- 			++moved;
-@@ -849,7 +848,7 @@ static int dso__split_kallsyms(struct dso *dso, struct map *map, u64 delta)
- 		symbol__delete(pos);
+ 		if (addr) {
+ 			addr += tp->offset;
+-			sym = __find_kernel_function(addr, &map);
++			sym = machine__find_kernel_symbol(host_machine, addr, &map);
+ 		}
  	}
  
--	if (curr_map != map &&
-+	if (curr_map != initial_map &&
- 	    dso->kernel == DSO_TYPE_GUEST_KERNEL &&
- 	    machine__is_default_guest(kmaps->machine)) {
- 		dso__set_loaded(curr_map->dso);
-@@ -1308,9 +1307,9 @@ int __dso__load_kallsyms(struct dso *dso, const char *filename,
- 		dso->symtab_type = DSO_BINARY_TYPE__KALLSYMS;
- 
- 	if (!no_kcore && !dso__load_kcore(dso, map, filename))
--		return dso__split_kallsyms_for_kcore(dso, map);
-+		return map_groups__split_kallsyms_for_kcore(kmap->kmaps, dso);
- 	else
--		return dso__split_kallsyms(dso, map, delta);
-+		return map_groups__split_kallsyms(kmap->kmaps, dso, delta, map);
- }
- 
- int dso__load_kallsyms(struct dso *dso, const char *filename,
 -- 
 2.14.3
