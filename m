@@ -1,170 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751360AbeEBLMw (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 07:12:52 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49756 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751101AbeEBLMr (ORCPT
+        id S1751246AbeEBLTR (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 07:19:17 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:44619 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750939AbeEBLTM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 07:12:47 -0400
-Subject: Re: [Regression] PCI / PM: Simplify device wakeup settings code
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        1745646@bugs.launchpad.net,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-References: <56a8953c-d833-837c-57d5-fe758d4db02a@canonical.com>
- <CAJZ5v0j8GAatWoAra37y3c-ti2Ft5am75KONgEkjB6AaypkCqg@mail.gmail.com>
- <ae84e595-dede-1409-4aff-3a29a310f2ba@canonical.com>
- <CAJZ5v0gapMMf=KqBAoDTv0SUBeusrUFPyEz6Z4k8Y3Szizdm5Q@mail.gmail.com>
- <1f67f00a-8141-f9af-2120-c78f7cfecb1d@canonical.com>
- <CAJZ5v0iPsoxCLxsq156RvyZ1cWtM9jNMLUPMnE3cqi5r1jk8jg@mail.gmail.com>
- <20180501195501.GB11698@bhelgaas-glaptop.roam.corp.google.com>
- <CAJZ5v0geYMuzcEhCKcaCHNP-j_ceeyZM0CqEaOTeE3jqVd6zaA@mail.gmail.com>
-From: Joseph Salisbury <joseph.salisbury@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=joseph.salisbury@canonical.com; prefer-encrypt=mutual;
- keydata=
- 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
- p24lPxLL08SuCEzuBw==
-Message-ID: <d83a8403-1916-29bc-20ea-fe21b8ff8c2f@canonical.com>
-Date: Wed, 2 May 2018 07:12:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 07:19:12 -0400
+X-Google-Smtp-Source: AB8JxZqJafPvBYn2FgQV+xXMBbNMZzV4iZ5SVrRPs6+DTm3TwBrXeC1/dyW0y3e/g2KcM90MRk9sF8vs0SMHVYF/wFU=
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0geYMuzcEhCKcaCHNP-j_ceeyZM0CqEaOTeE3jqVd6zaA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <CAD1Xb+-kbRLxe1XNSkhY-VXZWV8fSy-gZeeGhtKH2hO42VJKzA@mail.gmail.com>
+References: <CAD1Xb+-kbRLxe1XNSkhY-VXZWV8fSy-gZeeGhtKH2hO42VJKzA@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 2 May 2018 13:18:51 +0200
+Message-ID: <CACT4Y+Y-=9wmOOm3Q5BpNOL+2H123YAaRvBCbv-zCBv3Y4Ysew@mail.gmail.com>
+Subject: Re: Use-after-scope Write in mem_cgroup_uncharge' bug.(Plain text)
+To: Dongsong Yu <yudongsong1992@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, cgroups@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 06:41 AM, Rafael J. Wysocki wrote:
-> On Tue, May 1, 2018 at 9:55 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
->> On Tue, May 01, 2018 at 10:34:29AM +0200, Rafael J. Wysocki wrote:
->>> On Mon, Apr 30, 2018 at 4:22 PM, Joseph Salisbury
->>> <joseph.salisbury@canonical.com> wrote:
->>>> On 04/16/2018 11:58 AM, Rafael J. Wysocki wrote:
->>>>> On Mon, Apr 16, 2018 at 5:31 PM, Joseph Salisbury
->>>>> <joseph.salisbury@canonical.com> wrote:
->>>>>> On 04/13/2018 05:34 PM, Rafael J. Wysocki wrote:
->>>>>>> On Fri, Apr 13, 2018 at 7:56 PM, Joseph Salisbury
->>>>>>> <joseph.salisbury@canonical.com> wrote:
->>>>>>>> Hi Rafael,
->>>>>>>>
->>>>>>>> A kernel bug report was opened against Ubuntu [0].  After a kernel
->>>>>>>> bisect, it was found that reverting the following two commits resolved
->>>>>>>> this bug:
->>>>>>>>
->>>>>>>> 0ce3fcaff929 ("PCI / PM: Restore PME Enable after config space restoration")
->>>>>>>> 0847684cfc5f("PCI / PM: Simplify device wakeup settings code")
->>>>>>>>
->>>>>>>> This is a regression introduced in v4.13-rc1 and still exists in
->>>>>>>> mainline.  The bug causes the battery to drain when the system is
->>>>>>>> powered down and unplugged, which does not happed prior to these two
->>>>>>>> commits.
->>>>>>> What system and what do you mean by "powered down"?  How much time
->>>>>>> does it take for the battery to drain now?
->>>>>> By powered down, the bug reporter is saying physically powered off and
->>>>>> unplugged.  The system is a HP laptop:
->>>>>>
->>>>>> dmi.chassis.vendor: HP
->>>>>> dmi.product.family: 103C_5335KV HP Notebook
->>>>>> dmi.product.name: HP Notebook
->>>>>> vendor_id    : GenuineIntel
->>>>>> cpu family    : 6
->>>>>>
->>>>>>
->>>>>>>> The bisect actually pointed to commit de3ef1e, but reverting
->>>>>>>> these two commits fixes the issue.
->>>>>>>>
->>>>>>>> I was hoping to get your feedback, since you are the patch author.  Do
->>>>>>>> you think gathering any additional data will help diagnose this issue,
->>>>>>>> or would it be best to submit a revert request?
->>>>>>> First, reverting these is not an option or you will break systems
->>>>>>> relying on them now.  4.13 is three releases back at this point.
->>>>>>>
->>>>>>> Second, your issue appears to be related to the suspend/shutdown path
->>>>>>> whereas commit 0ce3fcaff929 is mostly about resume, so presumably the
->>>>>>> change in pci_enable_wake() causes the problem to happen.  Can you try
->>>>>>> to revert this one alone and see if that helps?
->>>>>> A test kernel with commits 0ce3fcaff929 and de3ef1eb1cd0 reverted was
->>>>>> tested.  However, the test kernel still exhibited the bug.
->>>>> So essentially the bisection result cannot be trusted.
->>>> We performed some more testing and confirmed just a revert of the
->>>> following commit resolves the bug:
->>>>
->>>> 0847684cfc5f0 ("PCI / PM: Simplify device wakeup settings code")
->>> Thanks for confirming this!
->>>
->>>> Can you think of any suggestions to help debug further?
->>> The root cause of the regression is likely the change in
->>> pci_enable_wake() removing the device_may_wakeup() check from it.
->>>
->>> Probably, one of the drivers in the platform calls pci_enable_wake()
->>> directly from its ->shutdown() callback and that causes the device to
->>> be set up for system wakeup which in turn causes the power draw while
->>> the system is off to increase.
->>>
->>> I would look at the PCI drivers used on that platform to find which of
->>> them call pci_enable_wake() directly from ->shutdown() and I would
->>> make these calls conditional on device_may_wakeup().
->> I took a quick look with
->>
->>   git grep -E "pci_enable_wake\(.*[^0]\);|device_may_wakeup"
->>
->> and didn't notice any pci_enable_wake() callers that called
->> device_may_wakeup() first.
-> I've just look at a bunch of network drivers doing that.
+On Wed, May 2, 2018 at 1:11 PM, Dongsong Yu <yudongsong1992@gmail.com> wrote:
+> Hi,
+> I've got the following bug report while fuzzing linux kenrel (4.16.0) on
+> arm64 with syzkaller.
+> The kernel config file and poc generated by C reproducer are attached.
 >
-> It looks like I may need to restore __pci_enable_wake() with an extra
-> "runtime" argument for internal use.
->
-> Joseph, can you ask the reporter to test the Bjorn's patch, please?
+> Syzkaller hit 'KASAN: use-after-scope Write in mem_cgroup_uncharge' bug.
 
-Yes, I'll get him a test kernel and respond with the results.
+Hi Dongsong,
+
+If I am looking at the right source:
+https://elixir.bootlin.com/linux/v4.16/source/mm/memcontrol.c#L5667
+this report does not make sense.
+What version of compiler do you use?
+Please post disasm of mem_cgroup_uncharge with source/line annotations.
+
+Thanks
+
+
+
+> ==================================================================
+> BUG: KASAN: use-after-scope in uncharge_gather_clear mm/memcontrol.c:5546
+> [inline]
+> BUG: KASAN: use-after-scope in mem_cgroup_uncharge+0xcc/0xf0
+> mm/memcontrol.c:5667
+> Write of size 64 at addr ffff8000738c6cf0 by task syzkaller348646/1477
+>
+> CPU: 0 PID: 1477 Comm: syzkaller348646 Not tainted 4.16.0 #2
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>   dump_backtrace+0x0/0x350 arch/arm64/kernel/time.c:64
+>   show_stack+0x20/0x30 arch/arm64/kernel/traps.c:151
+>   __dump_stack lib/dump_stack.c:17 [inline]
+>   dump_stack+0x11c/0x198 lib/dump_stack.c:53
+>   print_address_description+0x60/0x270 mm/kasan/report.c:256
+>   kasan_report_error mm/kasan/report.c:354 [inline]
+>   kasan_report+0x248/0x348 mm/kasan/report.c:412
+>   check_memory_region_inline mm/kasan/kasan.c:253 [inline]
+>   check_memory_region+0x148/0x198 mm/kasan/kasan.c:267
+>   memset+0x2c/0x50 mm/kasan/kasan.c:285
+>   uncharge_gather_clear mm/memcontrol.c:5546 [inline]
+>   mem_cgroup_uncharge+0xcc/0xf0 mm/memcontrol.c:5667
+>   __page_cache_release+0x11c/0x640 mm/swap.c:73
+>   __put_compound_page+0x30/0x70 mm/swap.c:93
+>   release_pages+0x6b4/0x990 mm/swap.c:760
+>   free_pages_and_swap_cache+0x1e8/0x250 mm/swap_state.c:322
+>   tlb_flush_mmu_free+0x6c/0xb8 mm/memory.c:259
+>   tlb_flush_mmu+0x3c/0x48 mm/memory.c:268
+>   arch_tlb_finish_mmu+0x70/0xc0 mm/memory.c:283
+>   tlb_finish_mmu+0xd0/0x128 mm/memory.c:433
+>   unmap_region+0x248/0x2b8 mm/mmap.c:2514
+>   do_munmap+0x3b8/0x670 mm/mmap.c:2726
+>   mmap_region+0x3b8/0xa78 mm/mmap.c:1646
+>   do_mmap+0x448/0x6a0 mm/mmap.c:1483
+>   do_mmap_pgoff include/linux/mm.h:2223 [inline]
+>   vm_mmap_pgoff+0x17c/0x1b8 mm/util.c:355
+>   SYSC_mmap_pgoff mm/mmap.c:1533 [inline]
+>   SyS_mmap_pgoff+0x184/0x3e8 mm/mmap.c:1491
+>   sys_mmap+0x58/0x80 arch/arm64/kernel/sys.c:37
+>   el0_svc_naked+0x30/0x34
+>
+> The buggy address belongs to the page:
+> page:ffff7e0001ce3180 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> flags: 0x4fffc00000000000()
+> raw: 4fffc00000000000 0000000000000000 0000000000000000 00000000ffffffff
+> raw: 0000000000000000 ffff7e0001ce31a0 0000000000000000 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>   ffff8000738c6b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>   ffff8000738c6c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> ffff8000738c6c80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f1 f1 f1 f1 f8 f8
+>                                                               ^
+>   ffff8000738c6d00: f8 f8 f8 f8 f8 f8 f3 f3 f3 f3 f8 f8 f8 f8 f8 f8
+>   ffff8000738c6d80: f8 f8 f8 f8 f8 f8 00 00 00 00 00 00 00 00 00 00
+> ==================================================================
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
