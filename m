@@ -1,72 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751453AbeEBMiO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 08:38:14 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:35827 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751054AbeEBMiL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 08:38:11 -0400
-X-Google-Smtp-Source: AB8JxZojlF5dBqBE6U0ONH5+nCExM2GSBKgtJ0hKtqZWELQoqpvE+vcDHH9avce3ErXlewZiPIn2oA==
-Message-ID: <1525264687.14025.20.camel@arista.com>
-Subject: Re: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in
- irq handler
-From: Dmitry Safonov <dima@arista.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, "Raj, Ashok" <ashok.raj@intel.com>
-Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        iommu@lists.linux-foundation.org
-Date: Wed, 02 May 2018 13:38:07 +0100
-In-Reply-To: <5AE95BFF.5040306@linux.intel.com>
-References: <20180331003312.6390-1-dima@arista.com>
-         <20180331003312.6390-2-dima@arista.com> <5AE95BFF.5040306@linux.intel.com>
+        id S1751533AbeEBMiX (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 08:38:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59550 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751121AbeEBMiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 08:38:17 -0400
+X-Google-Smtp-Source: AB8JxZojlzYlhe2i20DfMFMzTy+/PHTX/g3rofr/kcdlpbdkbaQG2xN2rkGTBC58ss6aoJcw21q1UP+ylMbmDVMna74=
+MIME-Version: 1.0
+In-Reply-To: <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
+References: <20180430114058.5061-1-jagan@amarulasolutions.com>
+ <20180430114058.5061-9-jagan@amarulasolutions.com> <20180501161909.GA1728@rob-hp-laptop>
+ <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 2 May 2018 07:37:55 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK4rUB0M1Ta-HR9Yk+7-VzUhCodBbTfBFo3PcJWHFRVSg@mail.gmail.com>
+Message-ID: <CAL_JsqK4rUB0M1Ta-HR9Yk+7-VzUhCodBbTfBFo3PcJWHFRVSg@mail.gmail.com>
+Subject: Re: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
+To: Jagan Teki <jagan@amarulasolutions.com>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lu,
+On Wed, May 2, 2018 at 1:27 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
+> Hi Rob,
+>
+> On Tue, May 1, 2018 at 9:49 PM, Rob Herring <robh@kernel.org> wrote:
+>>
+>> On Mon, Apr 30, 2018 at 05:10:45PM +0530, Jagan Teki wrote:
+>> > HDMI PHY on Allwinner A64 has similar like H3/H5.
+>> >
+>> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>> > ---
+>> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
+>> >  1 file changed, 1 insertion(+)
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > index 9ea4353caadd..7dcd1d64dfe4 100644
+>> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+>> > @@ -104,6 +104,7 @@ Required properties:
+>> >    - compatible: value must be one of:
+>> >      * allwinner,sun8i-a83t-hdmi-phy
+>> >      * allwinner,sun8i-h3-hdmi-phy
+>> > +    * allwinner,sun50i-a64-hdmi-phy
+>>
+>> This should be one valid combination per line. The dts shows that the h3
+>> string is a fallback which should be captured in the binding doc.
+>
+> The fallback compatible "allwinner,sun8i-h3-hdmi-phy" is already
+> documented above, what we need to capture here? or did I miss anything
+> here?
 
-On Wed, 2018-05-02 at 14:34 +0800, Lu Baolu wrote:
-> Hi,
-> 
-> On 03/31/2018 08:33 AM, Dmitry Safonov wrote:
-> > Theoretically, on some machines faults might be generated faster
-> > than
-> > they're cleared by CPU.
-> 
-> Is this a real case?
+The documentation should make it clear which of these is valid in a dts:
 
-No. 1/2 is a real case and this one was discussed on v3:
-lkml.kernel.org/r/<20180215191729.15777-1-dima@arista.com>
+"allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
 
-It's not possible on my hw as far as I tried, but the discussion result
-was to fix this theoretical issue too.
+or:
 
-> 
-> >  Let's limit the cleaning-loop by number of hw
-> > fault registers.
-> 
-> Will this cause the fault recording registers full of faults, hence
-> new faults will be dropped without logging?
+"allwinner,sun50i-a64-hdmi-phy"
 
-If faults come faster then they're being cleared - some of them will be
-dropped without logging. Not sure if it's worth to report all faults in
-such theoretical(!) situation.
-If amount of reported faults for such situation is not enough and it's
-worth to keep all the faults, then probably we should introduce a
-workqueue here (which I did in v1, but it was rejected by the reason
-that it will introduce some latency in fault reporting).
 
-> And even worse, new faults will not generate interrupts?
+IOW, your list should look like this:
 
-They will, we clear page fault overflow outside of the loop, so any new
-fault will raise interrupt, iiuc.
+* "allwinner,sun8i-a83t-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
+* "allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
+* "allwinner,sun8i-h3-hdmi-phy"
 
--- 
-Thanks,
-             Dmitry
+Depending on whether the a83t is also compatible with h3.
+
+Rob
