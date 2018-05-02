@@ -1,29 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751331AbeEBRmI (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 13:42:08 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49939 "EHLO
+        id S1751346AbeEBRmf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 13:42:35 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:47099 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750859AbeEBRmE (ORCPT
+        with ESMTP id S1750800AbeEBRme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 13:42:04 -0400
-Date: Wed, 2 May 2018 10:41:43 -0700
+        Wed, 2 May 2018 13:42:34 -0400
+Date: Wed, 2 May 2018 10:42:12 -0700
 From: tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-bc22de9bcdb2249150fb5b3c48fdc4f6bedd3ad7@git.kernel.org>
-Cc: tglx@linutronix.de, acme@redhat.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, peterz@infradead.org, dsahern@gmail.com,
-        mingo@kernel.org, alexander.shishkin@linux.intel.com,
-        ak@linux.intel.com, hpa@zytor.com, jolsa@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, ak@linux.intel.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org, acme@redhat.com,
-        tglx@linutronix.de, namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        dsahern@gmail.com, peterz@infradead.org
-In-Reply-To: <20180423090823.32309-7-jolsa@kernel.org>
-References: <20180423090823.32309-7-jolsa@kernel.org>
+Message-ID: <tip-e55c14af488a728d314777f038bd05db18afc1e9@git.kernel.org>
+Cc: acme@redhat.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        dsahern@gmail.com, jolsa@kernel.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org
+Reply-To: peterz@infradead.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jolsa@kernel.org, dsahern@gmail.com, hpa@zytor.com, tglx@linutronix.de,
+        namhyung@kernel.org, acme@redhat.com,
+        alexander.shishkin@linux.intel.com
+In-Reply-To: <20180423090823.32309-8-jolsa@kernel.org>
+References: <20180423090823.32309-8-jolsa@kernel.org>
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Display time in precision based on std
- deviation
-Git-Commit-ID: bc22de9bcdb2249150fb5b3c48fdc4f6bedd3ad7
+Subject: [tip:perf/core] perf stat: Add --table option to display time of
+ each run
+Git-Commit-ID: e55c14af488a728d314777f038bd05db18afc1e9
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -36,110 +36,236 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bc22de9bcdb2249150fb5b3c48fdc4f6bedd3ad7
-Gitweb:     https://git.kernel.org/tip/bc22de9bcdb2249150fb5b3c48fdc4f6bedd3ad7
+Commit-ID:  e55c14af488a728d314777f038bd05db18afc1e9
+Gitweb:     https://git.kernel.org/tip/e55c14af488a728d314777f038bd05db18afc1e9
 Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Mon, 23 Apr 2018 11:08:20 +0200
+AuthorDate: Mon, 23 Apr 2018 11:08:21 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 26 Apr 2018 09:30:27 -0300
 
-perf stat: Display time in precision based on std deviation
+perf stat: Add --table option to display time of each run
 
-Ingo suggested to display elapsed time for multirun workload (perf stat
--e) with precision based on the precision of the standard deviation.
+Add --table option to display time for each run (-r option), like:
 
-In his own words:
-
-  > This output is a slightly bit misleading:
-
-  >  Performance counter stats for 'make -j128' (10 runs):
-  >      27.988995256 seconds time elapsed                  ( +-  0.39% )
-
-  > The 9 significant digits in the result, while only 1 is valid, suggests accuracy
-  > where none exists.
-
-  > It would be better if 'perf stat' would display elapsed time with a precision
-  > adjusted to stddev, it should display at most 2 more significant digits than
-  > the stddev inaccuracy.
-
-  > I.e. in the above case 0.39% is 0.109, so we only have accuracy for 1 digit, and
-  > so we should only display 3:
-
-  >        27.988 seconds time elapsed                       ( +-  0.39% )
-
-Plus a suggestion about the output, which is small enough and connected
-with the above change that I merged both changes together.
-
-  > Small output style nit - I think it would be nice if with --repeat the stddev was
-  > also displayed in absolute values, besides percentage:
-  >
-  >       27.988 +- 0.109 seconds time elapsed   ( +- 0.39% )
-
-The output is now:
+  $ perf stat --null -r 5 --table perf bench sched pipe
 
    Performance counter stats for './perf bench sched pipe' (5 runs):
-   SNIP
-           13.3667 +- 0.0256 seconds time elapsed  ( +-  0.19% )
+
+             # Table of individual measurements:
+             5.379 (-0.176)
+             5.243 (-0.311)
+             5.238 (-0.317)
+             5.536 (-0.019)
+             6.377 (+0.823)
+
+             # Final result:
+             5.555 +- 0.213 seconds time elapsed  ( +-  3.83% )
 
 Suggested-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180423090823.32309-7-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20180423090823.32309-8-jolsa@kernel.org
+[ Document the new option in 'perf stat's man page ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ tools/perf/Documentation/perf-stat.txt | 16 ++++++++++
+ tools/perf/builtin-stat.c              | 56 +++++++++++++++++++++++++++++++---
+ tools/perf/util/stat.h                 |  3 +-
+ 3 files changed, 69 insertions(+), 6 deletions(-)
 
+diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
+index e6c3b4e555c2..72a2414513bd 100644
+--- a/tools/perf/Documentation/perf-stat.txt
++++ b/tools/perf/Documentation/perf-stat.txt
+@@ -116,6 +116,22 @@ Do not aggregate counts across all monitored CPUs.
+ print counts using a CSV-style output to make it easy to import directly into
+ spreadsheets. Columns are separated by the string specified in SEP.
+ 
++--table:: Display time for each run (-r option), in a table format, e.g.:
++
++  $ perf stat --null -r 5 --table perf bench sched pipe
++
++   Performance counter stats for 'perf bench sched pipe' (5 runs):
++
++             # Table of individual measurements:
++             5.379 (-0.176)
++             5.243 (-0.311)
++             5.238 (-0.317)
++             5.536 (-0.019)
++             6.377 (+0.823)
++
++             # Final result:
++             5.555 +- 0.213 seconds time elapsed  ( +-  3.83% )
++
+ -G name::
+ --cgroup name::
+ monitor only in the container (cgroup) called "name". This option is available only
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index f17dc601b0f3..3a94647ef6bc 100644
+index 3a94647ef6bc..72553937c010 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -1764,19 +1764,37 @@ static void print_header(int argc, const char **argv)
- 	}
+@@ -164,6 +164,7 @@ static bool			forever				= false;
+ static bool			metric_only			= false;
+ static bool			force_metric_only		= false;
+ static bool			no_merge			= false;
++static bool			walltime_run_table		= false;
+ static struct timespec		ref_time;
+ static struct cpu_map		*aggr_map;
+ static aggr_get_id_t		aggr_get_id;
+@@ -173,6 +174,7 @@ static const char		*output_name;
+ static int			output_fd;
+ static int			print_free_counters_hint;
+ static int			print_mixed_hw_group_error;
++static u64			*walltime_run;
+ 
+ struct perf_stat {
+ 	bool			 record;
+@@ -569,7 +571,7 @@ static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
+ 	return leader;
  }
  
-+static int get_precision(double num)
-+{
-+	if (num > 1)
-+		return 0;
+-static int __run_perf_stat(int argc, const char **argv)
++static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ {
+ 	int interval = stat_config.interval;
+ 	int times = stat_config.times;
+@@ -752,6 +754,9 @@ try_again:
+ 
+ 	t1 = rdclock();
+ 
++	if (walltime_run_table)
++		walltime_run[run_idx] = t1 - t0;
 +
-+	return lround(ceil(-log10(num)));
+ 	update_stats(&walltime_nsecs_stats, t1 - t0);
+ 
+ 	/*
+@@ -766,7 +771,7 @@ try_again:
+ 	return WEXITSTATUS(status);
+ }
+ 
+-static int run_perf_stat(int argc, const char **argv)
++static int run_perf_stat(int argc, const char **argv, int run_idx)
+ {
+ 	int ret;
+ 
+@@ -779,7 +784,7 @@ static int run_perf_stat(int argc, const char **argv)
+ 	if (sync_run)
+ 		sync();
+ 
+-	ret = __run_perf_stat(argc, argv);
++	ret = __run_perf_stat(argc, argv, run_idx);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1772,6 +1777,27 @@ static int get_precision(double num)
+ 	return lround(ceil(-log10(num)));
+ }
+ 
++static void print_table(FILE *output, int precision, double avg)
++{
++	char tmp[64];
++	int idx, indent = 0;
++
++	scnprintf(tmp, 64, " %17.*f", precision, avg);
++	while (tmp[indent] == ' ')
++		indent++;
++
++	fprintf(output, "%*s# Table of individual measurements:\n", indent, "");
++
++	for (idx = 0; idx < run_count; idx++) {
++		double run = (double) walltime_run[idx] / NSEC_PER_SEC;
++
++		fprintf(output, " %17.*f (%+.*f)\n",
++			precision, run, precision, run - avg);
++	}
++
++	fprintf(output, "\n%*s# Final result:\n", indent, "");
 +}
 +
  static void print_footer(void)
  {
-+	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
- 	FILE *output = stat_config.output;
- 	int n;
+ 	double avg = avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
+@@ -1791,6 +1817,9 @@ static void print_footer(void)
+ 		 */
+ 		int precision = get_precision(sd) + 2;
  
- 	if (!null_run)
- 		fprintf(output, "\n");
--	fprintf(output, " %17.9f seconds time elapsed",
--			avg_stats(&walltime_nsecs_stats) / NSEC_PER_SEC);
--	if (run_count > 1) {
--		fprintf(output, "                                        ");
--		print_noise_pct(stddev_stats(&walltime_nsecs_stats),
--				avg_stats(&walltime_nsecs_stats));
++		if (walltime_run_table)
++			print_table(output, precision, avg);
 +
-+	if (run_count == 1) {
-+		fprintf(output, " %17.9f seconds time elapsed", avg);
-+	} else {
-+		double sd = stddev_stats(&walltime_nsecs_stats) / NSEC_PER_SEC;
-+		/*
-+		 * Display at most 2 more significant
-+		 * digits than the stddev inaccuracy.
-+		 */
-+		int precision = get_precision(sd) + 2;
-+
-+		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
-+			precision, avg, precision, sd);
-+
-+		print_noise_pct(sd, avg);
+ 		fprintf(output, " %17.*f +- %.*f seconds time elapsed",
+ 			precision, avg, precision, sd);
+ 
+@@ -1970,6 +1999,8 @@ static const struct option stat_options[] = {
+ 		    "be more verbose (show counter open errors, etc)"),
+ 	OPT_INTEGER('r', "repeat", &run_count,
+ 		    "repeat command and print average + stddev (max: 100, forever: 0)"),
++	OPT_BOOLEAN(0, "table", &walltime_run_table,
++		    "display details about each run (only with -r option)"),
+ 	OPT_BOOLEAN('n', "null", &null_run,
+ 		    "null run - dont start any counters"),
+ 	OPT_INCR('d', "detailed", &detailed_run,
+@@ -2861,6 +2892,13 @@ int cmd_stat(int argc, const char **argv)
+ 		goto out;
  	}
- 	fprintf(output, "\n\n");
  
++	if (walltime_run_table && run_count <= 1) {
++		fprintf(stderr, "--table is only supported with -r\n");
++		parse_options_usage(stat_usage, stat_options, "r", 1);
++		parse_options_usage(NULL, stat_options, "table", 0);
++		goto out;
++	}
++
+ 	if (output_fd < 0) {
+ 		fprintf(stderr, "argument to --log-fd must be a > 0\n");
+ 		parse_options_usage(stat_usage, stat_options, "log-fd", 0);
+@@ -2915,6 +2953,14 @@ int cmd_stat(int argc, const char **argv)
+ 		run_count = 1;
+ 	}
+ 
++	if (walltime_run_table) {
++		walltime_run = zalloc(run_count * sizeof(walltime_run[0]));
++		if (!walltime_run) {
++			pr_err("failed to setup -r option");
++			goto out;
++		}
++	}
++
+ 	if ((stat_config.aggr_mode == AGGR_THREAD) &&
+ 		!target__has_task(&target)) {
+ 		if (!target.system_wide || target.cpu_list) {
+@@ -3030,7 +3076,7 @@ int cmd_stat(int argc, const char **argv)
+ 			fprintf(output, "[ perf stat: executing run #%d ... ]\n",
+ 				run_idx + 1);
+ 
+-		status = run_perf_stat(argc, argv);
++		status = run_perf_stat(argc, argv, run_idx);
+ 		if (forever && status != -1) {
+ 			print_counters(NULL, argc, argv);
+ 			perf_stat__reset_stats();
+@@ -3078,6 +3124,8 @@ int cmd_stat(int argc, const char **argv)
+ 	perf_stat__exit_aggr_mode();
+ 	perf_evlist__free_stats(evsel_list);
+ out:
++	free(walltime_run);
++
+ 	if (smi_cost && smi_reset)
+ 		sysfs__write_int(FREEZE_ON_SMI_PATH, 0);
+ 
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 8f56ba4fd258..36efb986f7fc 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -7,8 +7,7 @@
+ #include "xyarray.h"
+ #include "rblist.h"
+ 
+-struct stats
+-{
++struct stats {
+ 	double n, mean, M2;
+ 	u64 max, min;
+ };
