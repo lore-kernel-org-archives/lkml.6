@@ -1,106 +1,97 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AB8JxZqgsyK5D/L+jS1VPSE1q6YdAU4WcnAc2YcgweLz6Bckpij5u3vVTfPx/MsaJl+tHM/sAC0H
-ARC-Seal: i=1; a=rsa-sha256; t=1525342894; cv=none;
+Return-Path: <amit.pundir@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525283303; cv=none;
         d=google.com; s=arc-20160816;
-        b=nUAtt+t0+qEqD2LEXcEkQgPcbJV/6YB0yoYdoSgNx0ZkPvFe1nPsV7BJgc4xq9gb2Q
-         ++outb+508oSTEjP1WrciC0yCUFjzT44S+GeqvHSzc+3PGTMzjFumrZ0bFID4mdw8Jgx
-         aZb4T13TkXjR8S4a973pmdEVsRbtm183CjVK3Ft45tn1yHTA2v2t8E8PYqEi5bGLfuKl
-         7OYmLiRnsJ5yjE+DqkTRkBpCRBs4jHBeu54onJqhYkXeGKW5jHhbMit1uk0Vl4uw7m4R
-         2S7z73hpbH9kK1WApdkP36PYuQgvs7vj822z/4Ykf9zDYKmNDhFRVyjKciuZtJDWOP0o
-         sVjw==
+        b=E4fbIAsmQ2SdDoPUAukxQErZt0SQL37TG04HBRwQ7fOAks6DCRa9bNrsXqAkBtIAl1
+         jjFhTp3hMOaSsRCNM1/v9Slx+MAuYWKauYsqFZPu1n58tefRxBsyqFka5jcpW717ftzQ
+         F6I9u85VpKbJbTI//MWajD7LzpXsa2OS1jDoBVFyE5lR2rY06lzfDHBe5wkBQiD8b3Up
+         4XkA7bRkAtybnFCrvVc0uHIU01BbXHg+e1JY5e0OT7i031sniZdDkKOY44bbpN+NcnI0
+         ynuB9COHAW0zPxLNVT9NC6ThTeFFMxVyfkliP27HDuUlqpcpKwc7Vo+/OH4OdDad56gd
+         vc6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results;
-        bh=mz5ciXNn4qA6ZNLl2CYMIkPeCU9tJu85b2xS23ANBOk=;
-        b=niLRoPOT2LwXTKWIkFGy9f/lWf9tQD+DOwI9hR838OAQ5xt+/R2dekUIZ5jLd3/xge
-         tnXXD+wGVhH10ggHaBw2iYb1yXG7K1KoHqGRbucmsFAezoAeaG0hp4kTAgDHEZoy2Zr7
-         NAspNWtkH78zgQdSkQjwIXPKXjD4JJcecyMJqJHZ9+Loq6ePdQONiAlPXJZaFaXrDYQ4
-         LaN1lT+mfY/Lr8eLnYhA3d2fa9M79Vkd2kl5K5A7inp9v9l/OXwsgqNDlMDmg8zuWw3E
-         +o1P04P/3sSwCOYQ2AiQWO7wyJALFErtXmq9mKygrkS0eali7+su6bln86l25H/yh6dO
-         2xdg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=z47AkYrZrCYwdJHLcba161nVjfCLWE0I/WK1pjwAC5w=;
+        b=NWycrBMq42ppP863YIHaovPA2+SpUgkAOudTFEsavEEzfRljNyEvONpHwu9XSbWkF2
+         tK49CsvskUKcTEELeMppCCWlRzaupDZz7bGEOGsIzr+4zcUIUeMdaicwYocpxnmNqIPc
+         F5zrqQSKwNxNLGw2yW8TMc7rJ/7a5k1MN2XFl3RjaZwM1tuIecmDBk1X4SL+ij4jdeZ/
+         Vhr3IsuPhq1kVptzIj1wFyofPE6igJ8tMmZedgvjgcJpJI/7OynAzkQJD81xWN1F9yhd
+         4hKRRyZ9Ku+LnTFV6qvT2NlKYomq0Btzg0vDbLKSh3rEZDjr6sjdxx9S/Jdc4zOlCcNA
+         iP6g==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       dkim=pass header.i=@linaro.org header.s=google header.b=djnVsbdS;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="38353668"
-Message-ID: <1525342889.21176.636.camel@linux.intel.com>
-Subject: Re: [PATCH v2 0/3] Few NFC fixes from android-4.14 tree
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Amit Pundir <amit.pundir@linaro.org>, lkml
- <linux-kernel@vger.kernel.org>,  linux-wireless@vger.kernel.org
-Cc: Suren Baghdasaryan <surenb@google.com>, Samuel Ortiz
- <sameo@linux.intel.com>,  Christophe Ricard <christophe.ricard@gmail.com>,
- Greg KH <gregkh@linuxfoundation.org>, John Stultz <john.stultz@linaro.org>,
- Dmitry Shmidt <dimitrysh@google.com>, Todd Kjos <tkjos@google.com>, Android
- Kernel Team <kernel-team@android.com>
-Date: Thu, 03 May 2018 13:21:29 +0300
+       dkim=pass header.i=@linaro.org header.s=google header.b=djnVsbdS;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZpePEAO5Srxckv0RyNKCGQ9RbIbze61W4GYNhkxSQvrQN8shUf4O7++T6uz5lVv8naUoWyNNA==
+From: Amit Pundir <amit.pundir@linaro.org>
+To: lkml <linux-kernel@vger.kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	Samuel Ortiz <sameo@linux.intel.com>,
+	Christophe Ricard <christophe.ricard@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Dmitry Shmidt <dimitrysh@google.com>,
+	Todd Kjos <tkjos@google.com>,
+	Android Kernel Team <kernel-team@android.com>
+Subject: [PATCH v2 2/3] NFC: Fix possible memory corruption when handling SHDLC I-Frame commands
+Date: Wed,  2 May 2018 23:18:07 +0530
+Message-Id: <1525283288-7027-3-git-send-email-amit.pundir@linaro.org>
+X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525283288-7027-1-git-send-email-amit.pundir@linaro.org>
 References: <1525283288-7027-1-git-send-email-amit.pundir@linaro.org>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599375456929773839?=
-X-GMAIL-MSGID: =?utf-8?q?1599437950079485805?=
+X-GMAIL-THRID: =?utf-8?q?1599375465381931693?=
+X-GMAIL-MSGID: =?utf-8?q?1599375465381931693?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2018-05-02 at 23:18 +0530, Amit Pundir wrote:
-> Hi,
-> 
-> Submitting v2 of NFC fixes I picked up from android-4.14 tree[1]
-> for review and comments.
-> 
-> Again like to point out that I have not feature tested these patches
-> at all. Only made small cosmetic changes to the original patches
-> (removed Android-only tag and internal bug ID) and build tested for
-> arm, before posting them here for review.
-> 
-> Really appreciate any comments or feedback on how to take it forward.
-> 
-> Changes since v1:
-> * Dropped "NFC: st21nfca: Fix memory OOB and leak issues in
-> connectivity
->   events handler" patch for now. I'm yet to verify if the additional
->   aid_len and params_len checks for buffer size are really required,
-> and
->   I didn't want to hold up this patch series for one patch alone.
-> * Dropped redundant __func__ use dev_dbg() in "NFC: fdp: Fix possible
->   buffer overflow in WCS4000 NFC driver" patch.
-> 
-> Also drivers/nfc/fdp/ is full of __func__ parameter usage in
-> dev_dbg(),
-> so submitting a new patch separately to clean that up.
-> 
+From: Suren Baghdasaryan <surenb@google.com>
 
-After addressing one comment, FWIW,
+When handling SHDLC I-Frame commands "pipe" field used for indexing
+into an array should be checked before usage. If left unchecked it
+might access memory outside of the array of size NFC_HCI_MAX_PIPES(127).
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+---
+v2:
+Resend. No changes.
 
-> Regards,
-> Amit Pundir
-> [1] https://android.googlesource.com/kernel/common/+log/android-4.14
-> 
-> Suren Baghdasaryan (3):
->   NFC: st21nfca: Fix out of bounds kernel access when handling ATR_REQ
->   NFC: Fix possible memory corruption when handling SHDLC I-Frame
->     commands
->   NFC: fdp: Fix possible buffer overflow in WCS4000 NFC driver
-> 
->  drivers/nfc/fdp/fdp.c      | 22 +++++++++++-----------
->  drivers/nfc/fdp/i2c.c      | 29 ++++++++++++++++++-----------
->  drivers/nfc/st21nfca/dep.c |  3 ++-
->  net/nfc/hci/core.c         | 10 ++++++++++
->  4 files changed, 41 insertions(+), 23 deletions(-)
-> 
+ net/nfc/hci/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
+diff --git a/net/nfc/hci/core.c b/net/nfc/hci/core.c
+index ac8030c4..19cb2e4 100644
+--- a/net/nfc/hci/core.c
++++ b/net/nfc/hci/core.c
+@@ -209,6 +209,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
+ 		}
+ 		create_info = (struct hci_create_pipe_resp *)skb->data;
+ 
++		if (create_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		/* Save the new created pipe and bind with local gate,
+ 		 * the description for skb->data[3] is destination gate id
+ 		 * but since we received this cmd from host controller, we
+@@ -232,6 +237,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
+ 		}
+ 		delete_info = (struct hci_delete_pipe_noti *)skb->data;
+ 
++		if (delete_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		hdev->pipes[delete_info->pipe].gate = NFC_HCI_INVALID_GATE;
+ 		hdev->pipes[delete_info->pipe].dest_host = NFC_HCI_INVALID_HOST;
+ 		break;
 -- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+2.7.4
