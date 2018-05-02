@@ -1,128 +1,207 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751045AbeEBKpk (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:45:40 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:33485 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750883AbeEBKpj (ORCPT
+        id S1751152AbeEBKrI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:47:08 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:55624 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbeEBKrH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:45:39 -0400
-X-Google-Smtp-Source: AB8JxZpd4A1L3ryTVPAfnWFTPyUxm1Gx5tiqylSLM3KtNYnD5ENO7Ez2g99fAIh1laqRm9fA5jpFwy+w62X8ryTnMN8=
+        Wed, 2 May 2018 06:47:07 -0400
+Subject: Re: [PATCH v3] mtd: onenand: omap2: Disable DMA for HIGHMEM buffers
+To: Ladislav Michl <ladis@linux-mips.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        Roger Quadros <rogerq@ti.com>, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+References: <20180502104132.GA12979@lenoch>
+From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <d89fb08e-0c7d-580d-9280-3cbac9af8f32@ti.com>
+Date: Wed, 2 May 2018 13:46:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <447b4f2f-27c8-f552-d058-3b2eba71a765@ti.com>
-References: <20180430082453.8091-1-brgl@bgdev.pl> <20180430082453.8091-2-brgl@bgdev.pl>
- <3dccc5af-2df1-8374-e4e8-0a8b9ea1ae99@ti.com> <8b7e4588-5a35-6c18-fe60-148d6ccf778c@ti.com>
- <447b4f2f-27c8-f552-d058-3b2eba71a765@ti.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 2 May 2018 12:45:38 +0200
-Message-ID: <CAMRc=Md4_QvyMP_vwwD8qpONr3SmWoxn+BJDd1OBHdR6rCLoWg@mail.gmail.com>
-Subject: Re: [PATCH 01/12] mtd: nand: davinci: store the core chipselect
- number in platform data
-To: Sekhar Nori <nsekhar@ti.com>
-Cc: Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>, Tony Lindgren <tony@atomide.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mtd@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180502104132.GA12979@lenoch>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-01 12:29 GMT+02:00 Sekhar Nori <nsekhar@ti.com>:
-> On Tuesday 01 May 2018 03:23 PM, Sekhar Nori wrote:
->> On Tuesday 01 May 2018 02:55 PM, Sekhar Nori wrote:
->>> On Monday 30 April 2018 01:54 PM, Bartosz Golaszewski wrote:
->>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>>
->>>> We have the 'ti,davinci-chipselect' property in the device tree, but
->>>> when using platform data the driver silently uses the id field of
->>>> struct platform_device as the chipselect. This is confusing and we
->>>> almost broke the nand support again recently after converting the
->>>> platform to common clock framework (which changed the device id in the
->>>> clock lookup - the problem is gone now that we no longer acquire the
->>>> clock in the nand driver.
->>>>
->>>> This patch adds a new filed - core_chipsel - to the platform_data.
->>>
->>> s/filed/field
->>>
->>>> Subsequent patches will convert the platforms to using this new field.
->>>
->>> Can you add a comment for this new field too, like how we have for most
->>> other fields?
->>>
->>> Curious on what 'core' in core_chipsel means. Something to do with
->>> chip-select offset we have on DA850?
->>
->> Looks like you may have just picked the terminology from DaVinci NAND
->> driver (introduced back in 2009). But in this context, it means the
->> 0-indexed chip-select number that of the asynchronous memory interface
->> to which the NAND device is connected.
->>
->> So, may be a comment here will suffice.
->
-> This is what I committed:
->
 
-I don't see it in your tree yet.
 
-> --8<--
-> commit 533d93703fa717fdf74c4fb711c868c4fdc8b475 (HEAD -> refs/heads/v4.18/nand-cs-simplification)
-> Author:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> AuthorDate: Mon Apr 30 10:24:42 2018 +0200
-> Commit:     Sekhar Nori <nsekhar@ti.com>
-> CommitDate: Tue May 1 15:57:47 2018 +0530
->
->     mtd: nand: davinci: store the core chipselect number in platform data
->
->     We have the 'ti,davinci-chipselect' property in the device tree, but
->     when using platform data the driver silently uses the id field of
->     struct platform_device as the chipselect. This is confusing and we
->     almost broke the nand support again recently after converting the
->     platform to common clock framework (which changed the device id in the
->     clock lookup - the problem is gone now that we no longer acquire the
->     clock in the nand driver.
->
->     This patch adds a new field - core_chipsel - to the platform_data.
->     Subsequent patches will convert the platforms to using this new field.
->
->     Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->     Signed-off-by: Sekhar Nori <nsekhar@ti.com>
->
-> diff --git a/include/linux/platform_data/mtd-davinci.h b/include/linux/platform_data/mtd-davinci.h
-> index f1a2cf655bdb..1bbfa27cccb4 100644
-> --- a/include/linux/platform_data/mtd-davinci.h
-> +++ b/include/linux/platform_data/mtd-davinci.h
-> @@ -56,6 +56,16 @@ struct davinci_nand_pdata {          /* platform_data */
->         uint32_t                mask_ale;
->         uint32_t                mask_cle;
->
-> +       /*
-> +        * 0-indexed chip-select number of the asynchronous
-> +        * interface to which the NAND device has been connected.
-> +        *
-> +        * So, if you have NAND connected to CS3 of DA850, you
-> +        * will pass '1' here. Since the asynchronous interface
-> +        * on DA850 starts from CS2.
-> +        */
+On 2018-05-02 13:41, Ladislav Michl wrote:
+> dma_map_single does not work for vmalloc-ed buffers,
+> so disable DMA in this case.
 
-Maybe we should add that on all other DaVinci SoCs the async interface
-starts from CS0?
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-> +       uint32_t                core_chipsel;
+> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+> Reported-by: "H. Nikolaus Schaller" <hns@goldelico.com>
+> Tested-by: "H. Nikolaus Schaller" <hns@goldelico.com>
+> ---
+>  Changes:
+>   -v2: Added Tested-by tag, based on v4.17-rc1 (no change in patch itself)
+>   -v3: Reworded commit log
+> 
+>  drivers/mtd/nand/onenand/omap2.c | 105 +++++++++++--------------------
+>  1 file changed, 38 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
+> index 9c159f0dd9a6..321137158ff3 100644
+> --- a/drivers/mtd/nand/onenand/omap2.c
+> +++ b/drivers/mtd/nand/onenand/omap2.c
+> @@ -375,56 +375,42 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
+>  {
+>  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
+>  	struct onenand_chip *this = mtd->priv;
+> -	dma_addr_t dma_src, dma_dst;
+> -	int bram_offset;
+> +	struct device *dev = &c->pdev->dev;
+>  	void *buf = (void *)buffer;
+> +	dma_addr_t dma_src, dma_dst;
+> +	int bram_offset, err;
+>  	size_t xtra;
+> -	int ret;
+>  
+>  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
+> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
+> -		goto out_copy;
+> -
+> -	/* panic_write() may be in an interrupt context */
+> -	if (in_interrupt() || oops_in_progress)
+> +	/*
+> +	 * If the buffer address is not DMA-able, len is not long enough to make
+> +	 * DMA transfers profitable or panic_write() may be in an interrupt
+> +	 * context fallback to PIO mode.
+> +	 */
+> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
+> +	    count < 384 || in_interrupt() || oops_in_progress )
+>  		goto out_copy;
+>  
+> -	if (buf >= high_memory) {
+> -		struct page *p1;
+> -
+> -		if (((size_t)buf & PAGE_MASK) !=
+> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
+> -			goto out_copy;
+> -		p1 = vmalloc_to_page(buf);
+> -		if (!p1)
+> -			goto out_copy;
+> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
+> -	}
+> -
+>  	xtra = count & 3;
+>  	if (xtra) {
+>  		count -= xtra;
+>  		memcpy(buf + count, this->base + bram_offset + count, xtra);
+>  	}
+>  
+> +	dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
+>  	dma_src = c->phys_base + bram_offset;
+> -	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
+> -	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
+> -		dev_err(&c->pdev->dev,
+> -			"Couldn't DMA map a %d byte buffer\n",
+> -			count);
+> -		goto out_copy;
+> -	}
+>  
+> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> -	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
+> -
+> -	if (ret) {
+> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
+> +	if (dma_mapping_error(dev, dma_dst)) {
+> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
+>  		goto out_copy;
+>  	}
+>  
+> -	return 0;
+> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> +	dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
+> +	if (!err)
+> +		return 0;
 > +
->         /* for packages using two chipselects */
->         uint32_t                mask_chipsel;
->
->
+> +	dev_err(dev, "timeout waiting for DMA\n");
+>  
+>  out_copy:
+>  	memcpy(buf, this->base + bram_offset, count);
+> @@ -437,49 +423,34 @@ static int omap2_onenand_write_bufferram(struct mtd_info *mtd, int area,
+>  {
+>  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
+>  	struct onenand_chip *this = mtd->priv;
+> -	dma_addr_t dma_src, dma_dst;
+> -	int bram_offset;
+> +	struct device *dev = &c->pdev->dev;
+>  	void *buf = (void *)buffer;
+> -	int ret;
+> +	dma_addr_t dma_src, dma_dst;
+> +	int bram_offset, err;
+>  
+>  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
+> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
+> -		goto out_copy;
+> -
+> -	/* panic_write() may be in an interrupt context */
+> -	if (in_interrupt() || oops_in_progress)
+> +	/*
+> +	 * If the buffer address is not DMA-able, len is not long enough to make
+> +	 * DMA transfers profitable or panic_write() may be in an interrupt
+> +	 * context fallback to PIO mode.
+> +	 */
+> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
+> +	    count < 384 || in_interrupt() || oops_in_progress )
+>  		goto out_copy;
+>  
+> -	if (buf >= high_memory) {
+> -		struct page *p1;
+> -
+> -		if (((size_t)buf & PAGE_MASK) !=
+> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
+> -			goto out_copy;
+> -		p1 = vmalloc_to_page(buf);
+> -		if (!p1)
+> -			goto out_copy;
+> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
+> -	}
+> -
+> -	dma_src = dma_map_single(&c->pdev->dev, buf, count, DMA_TO_DEVICE);
+> +	dma_src = dma_map_single(dev, buf, count, DMA_TO_DEVICE);
+>  	dma_dst = c->phys_base + bram_offset;
+> -	if (dma_mapping_error(&c->pdev->dev, dma_src)) {
+> -		dev_err(&c->pdev->dev,
+> -			"Couldn't DMA map a %d byte buffer\n",
+> -			count);
+> -		return -1;
+> -	}
+> -
+> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> -	dma_unmap_single(&c->pdev->dev, dma_src, count, DMA_TO_DEVICE);
+> -
+> -	if (ret) {
+> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
+> +	if (dma_mapping_error(dev, dma_src)) {
+> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
+>  		goto out_copy;
+>  	}
+>  
+> -	return 0;
+> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> +	dma_unmap_page(dev, dma_src, count, DMA_TO_DEVICE);
+> +	if (!err)
+> +		return 0;
+> +
+> +	dev_err(dev, "timeout waiting for DMA\n");
+>  
+>  out_copy:
+>  	memcpy(this->base + bram_offset, buf, count);
+> 
 
-Thanks,
-Bart
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
