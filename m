@@ -1,36 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751829AbeEBQFT (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:05:19 -0400
-Received: from mail-ot0-f182.google.com ([74.125.82.182]:46977 "EHLO
-        mail-ot0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751428AbeEBQFS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:05:18 -0400
-X-Google-Smtp-Source: AB8JxZrAuAtMSTmaLDLsl97DvY37ao9j/B3Fg7IGWMIqbpUigadC1TNlwazHigMXsVZ93aUH0TTWRQ==
-To: Linux-MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From: Laura Abbott <labbott@redhat.com>
-Subject: New patchwork instance for linux-mm
-Message-ID: <4eede0d4-e905-d541-a0d2-280f955127cf@redhat.com>
-Date: Wed, 2 May 2018 09:05:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751889AbeEBQI2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:08:28 -0400
+Received: from mga12.intel.com ([192.55.52.136]:22478 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751525AbeEBQI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 12:08:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
+   d="scan'208";a="38728085"
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Subject: [PATCH] x86/boot/compressed: Exclude 'top_pgtable' from relocation
+Date: Wed,  2 May 2018 19:08:16 +0300
+Message-Id: <20180502160816.35986-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I went ahead and requested a patchwork instance on patchwork.kernel.org
-and it's up and running https://patchwork.kernel.org/project/linux-mm/list/
-Hopefully someone else will find this useful. It's a nice way to view
-Acks/Tested-by for those who pay attention to such things.
+startup_64() copies kernel (including .data section) to the new place.
+It's required for safe in-place decompression.
 
-Thanks,
-Laura
+This is a problem if the original place is referenced: by mistake I've
+put 'top_pgtable' into .data section and the address is loaded into CR3.
+If the original place gets overwritten during image decompression the
+kernel will crash and the machine will be rebooted.
 
-P.S. I put myself down as admin for this, but if anyone else would like
-those rights, e-mail me privately.
+Move 'top_pgtable' into .pgtable section where the rest of page tables
+are. This section is not subject for relocation.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Fixes: e9d0e6330eb8 ("x86/boot/compressed/64: Prepare new top-level page table for trampoline")
+---
+ arch/x86/boot/compressed/head_64.S    | 8 ++++++++
+ arch/x86/boot/compressed/pgtable_64.c | 4 +---
+ 2 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index fca012baba19..c433c21703e6 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -649,3 +649,11 @@ boot_stack_end:
+ 	.balign 4096
+ pgtable:
+ 	.fill BOOT_PGT_SIZE, 1, 0
++
++/*
++ * The page table is going to be used instead of page table in the trampoline
++ * memory.
++ */
++	.global top_pgtable
++top_pgtable:
++	.fill PAGE_SIZE, 1, 0
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index 32af1cbcd903..3a0578f54550 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -25,10 +25,8 @@ static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
+ /*
+  * The page table is going to be used instead of page table in the trampoline
+  * memory.
+- *
+- * It must not be in BSS as BSS is cleared after cleanup_trampoline().
+  */
+-static char top_pgtable[PAGE_SIZE] __aligned(PAGE_SIZE) __section(.data);
++extern char *top_pgtable;
+ 
+ /*
+  * Trampoline address will be printed by extract_kernel() for debugging
+-- 
+2.17.0
