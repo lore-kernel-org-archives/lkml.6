@@ -1,49 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751522AbeEBMca (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 08:32:30 -0400
-Received: from mail-io0-f173.google.com ([209.85.223.173]:45958 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeEBMcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 08:32:25 -0400
-X-Google-Smtp-Source: AB8JxZpnabrnmAqRsfYEmmxjzyf3ozCdUpjVO34H97StA9bDlXXXeDCANkpcjavRc8uKnz60c1OZPRRji2ZGqcLwpwU=
+        id S1751555AbeEBMcf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 08:32:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44475 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751521AbeEBMcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 08:32:31 -0400
+Date: Wed, 2 May 2018 14:32:28 +0200
+From: Michal Kubecek <mkubecek@suse.cz>
+To: Xin Long <lucien.xin@gmail.com>
+Cc: network dev <netdev@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>, Gang He <ghe@suse.com>,
+        GuoQing Jiang <gqjiang@suse.com>
+Subject: Re: non-blocking connect for kernel SCTP sockets
+Message-ID: <20180502123227.x7yucbi4lejj55o5@unicorn.suse.cz>
+References: <20180502090639.j55mnclmkzdts6xb@unicorn.suse.cz>
+ <CADvbK_fT5qYmOKHgBf6KWyuRcDUT3Fa8DyMQkN75C8PFkPKLXw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180426235818.10018-3-digetx@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com> <20180426235818.10018-3-digetx@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 2 May 2018 14:32:23 +0200
-Message-ID: <CACRpkdYP88CnsqakjcgBfHgjsR2i4jKvY_--Tw+hgZ_EuA+e6Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] pinctrl: tegra20: Provide CDEV1/2 clock muxes
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_fT5qYmOKHgBf6KWyuRcDUT3Fa8DyMQkN75C8PFkPKLXw@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 1:58 AM, Dmitry Osipenko <digetx@gmail.com> wrote:
+On Wed, May 02, 2018 at 05:46:23PM +0800, Xin Long wrote:
+> On Wed, May 2, 2018 at 5:06 PM, Michal Kubecek <mkubecek@suse.cz> wrote:
+> > Hello,
+> >
+> > while investigating a bug, we noticed that DLM tries to connect an SCTP
+> > socket in non-blocking mode using
+> >
+> >         result = sock->ops->connect(sock, (struct sockaddr *)&daddr, addr_len,
+> >                                     O_NONBLOCK);
+> >
+> > which does not work. The reason is that inet_dgram_connect() cannot pass
+> > its flags argument to sctp_connect() so that __sctp_connect() which does
+> > the actual waiting resorts to checking sk->sk_socket->file->f_flags
+> > instead. As the socket used by DLM is a kernel socket with no associated
+> > file, it ends up blocking.
+> >
+> > TCP doesn't suffer from this problem as for TCP, the waiting is done in
+> > inet_stream_connect() which has the flags argument. I also checked other
+> > proto::connect handlers and sctp_connect() seems to be the only one with
+> > this kind of problem.
+> >
+> > This could be worked around in DLM and further experiments indicate
+> > current DLM code wouldn't actually handle the non-blocking connect
+> > properly. But I still feel ignoring the flags argument is rather a trap
+> > that should be fixed.
+> It is a bug, https://bugzilla.redhat.com/show_bug.cgi?id=1251530
 
-> Muxing of pins MCLK1/2 determine the muxing of the corresponding clocks.
-> Make pinctrl driver to provide clock muxes for the CDEV1/2 pingroups, so
-> that main clk-controller driver could get an actual parent clock for the
-> CDEV1/2 clocks.
->
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Not authorized. :-)
 
-If this can be applied separately from the other patches, then please
-send it separately after fixing Peter's review nits and adding his
-review-tag, thanks!
+> We have the fix which also includes some cleanup, and needs to do
+> more testing.
 
-Yours,
-Linus Walleij
+OK, I'll wait for your submission.
+
+> > I have prepared a series adding flags argument to proto::connect and
+> > using it in sctp_connect() and __sctp_connect(). But I'm not sure if
+> > it's not too big hammer to address issue only affecting one handler.
+> > So my question is: would such generic approach be preferred or should we,
+> > rather make SCTP work the way TCP does, i.e. move the waiting from,
+> > proto::connect() to proto_ops::connect()? This would require introducing
+> > inet_seqpacket_connect() as inet_dgram_connect() is primarily intended
+> > for use with UDP.)
+> We don't fix it in the generic proto::connect, which will afftect
+> many other places.
+
+That was my concern, too. On the other hand, the TCP specific waiting
+code in inet_stream_connect() makes me wonder if it wouldn't be cleaner
+to move it into the TCP specific handler as well (which is something
+this approach would allow).
+
+> We're replacing only sctp's proto_ops::connect with sctp_connect and
+> leave its proto::connect as NULL, so that it can get this flags param
+> without touching the generic struct and code.
+
+Yes, that should do the trick (and makes backporting to distribution
+kernels with frozen kABI much easier). I guess I was too fixed on the
+split between proto_ops::connect and proto::connect to see this
+solution.
+
+Michal Kubecek
