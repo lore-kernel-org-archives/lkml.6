@@ -1,100 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751196AbeEBHTg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:19:36 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:50269 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751021AbeEBHTd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:19:33 -0400
-X-Google-Smtp-Source: AB8JxZpaY2RN4Hcb2ivv8C7U7Wney3I9ma+ZWz72njgg6NT429Fu6ifWWTSJHCeXMHc0Rc18A6QPaii1d3RTvj5sGOg=
-MIME-Version: 1.0
-In-Reply-To: <1525224594.2901.4.camel@hxt-semitech.com>
-References: <1524625806-23133-1-git-send-email-shunyong.yang@hxt-semitech.com>
- <CAKv+Gu89B-E+L2qybT9n5j72c+1vm1az4H9Cp7E71aP3i3VE6A@mail.gmail.com> <1525224594.2901.4.camel@hxt-semitech.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Wed, 2 May 2018 09:19:32 +0200
-Message-ID: <CAKv+Gu_QfR0=md3kqQXEufw+3j5BF-hgzfxSy=PTNKrusyUsiw@mail.gmail.com>
-Subject: Re: [PATCH] efi/capsule-loader: Don't output reset log when header
- flags is not set
-To: "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
+        id S1751245AbeEBHW6 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:22:58 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:48108 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751132AbeEBHW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:22:57 -0400
+Message-ID: <89cac24ddcb5f4ac710a697a4433c927e5c7e71e.camel@paulk.fr>
+Subject: Re: [PATCH v2 6/9] drm/panel: Add Netron DY E231732
+From: Paul Kocialkowski <contact@paulk.fr>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
+        David Airlie <airlied@linux.ie>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Date: Wed, 02 May 2018 09:20:30 +0200
+In-Reply-To: <20160909143510.GB8881@lukather>
+References: <20160906144620.6322-1-maxime.ripard@free-electrons.com>
+         <20160906144620.6322-7-maxime.ripard@free-electrons.com>
+         <CAGb2v64RQdHZod7z4ErycNgGremj41-o4R_V_i7ThrCPLNhZOw@mail.gmail.com>
+         <20160909143510.GB8881@lukather>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 May 2018 at 03:29, Yang, Shunyong <shunyong.yang@hxt-semitech.com> wrote:
-> Hi, Ard,
->
-> On Tue, 2018-05-01 at 11:54 +0200, Ard Biesheuvel wrote:
->> On 25 April 2018 at 05:10, Shunyong Yang <shunyong.yang@hxt-semitech.
->> com> wrote:
->> >
->> > It means firmware attempts to immediately process or launch the
->> > capsule
->> > when flags in capsule header is not set. Moreover, reset is not
->> > needed
->> > in this case. Current code will output log to indicate reset.
->> >
->> > This patch adds a branch to avoid reset log output when the flags
->> > is not
->> > set.
->> >
->> > Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
->> > Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
->> > ---
->> >  drivers/firmware/efi/capsule-loader.c | 13 +++++++++----
->> >  1 file changed, 9 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/drivers/firmware/efi/capsule-loader.c
->> > b/drivers/firmware/efi/capsule-loader.c
->> > index e456f4602df1..a63b8e5bde23 100644
->> > --- a/drivers/firmware/efi/capsule-loader.c
->> > +++ b/drivers/firmware/efi/capsule-loader.c
->> > @@ -134,10 +134,15 @@ static ssize_t
->> > efi_capsule_submit_update(struct capsule_info *cap_info)
->> >
->> >         /* Indicate capsule binary uploading is done */
->> >         cap_info->index = NO_FURTHER_WRITE_ACTION;
->> > -       pr_info("Successfully upload capsule file with reboot type
->> > '%s'\n",
->> > -               !cap_info->reset_type ? "RESET_COLD" :
->> > -               cap_info->reset_type == 1 ? "RESET_WARM" :
->> > -               "RESET_SHUTDOWN");
->> > +
->> > +       if (cap_info->header.flags)
->> You should check for the relevant flag bits here, because the 16
->> lower
->> bits are platform dependent.
-> In current three bits in flags, CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE and
-> CAPSULE_FLAGS_INITIATE_RESET are dependent on
-> CAPSULE_FLAGS_PERSIST_ACROSS_RESET.
->
-> So, maybe I only need to check CAPSULE_FLAGS_PERSIST_ACROSS_RESET?
->
+Hi,
 
-Yes I think that's fine
+Le vendredi 09 septembre 2016 à 16:35 +0200, Maxime Ripard a écrit :
+> On Wed, Sep 07, 2016 at 12:01:56AM +0800, Chen-Yu Tsai wrote:
+> > Hi,
+> > 
+> > On Tue, Sep 6, 2016 at 10:46 PM, Maxime Ripard
+> > <maxime.ripard@free-electrons.com> wrote:
+> > > The E231732 is a 7" panel with a resolution of 800x480.
+> > 
+> > From what I could make out of an archived version of Netron's
+> > website
+> > (it's unreachable from my place), they are a manufacturer of printed
+> > ribbon cables, not LCD panels. This is probably a no-go.
+> 
+> I don't know. I haven't been able to find any website for Netron DY,
+> however, googling the part number I used find numerous matches on ebay
+> and alibaba.
 
->>
->> >
->> > +               pr_info("Successfully upload capsule file with
->> > reboot type '%s'\n",
->> > +                       !cap_info->reset_type ? "RESET_COLD" :
->> > +                       cap_info->reset_type == 1 ? "RESET_WARM" :
->> > +                       "RESET_SHUTDOWN");
->> > +       else
->> > +               pr_info("Successfully upload, process and launch
->> > capsule file\n");
->> > +
->> >         return 0;
->> >  }
->> >
->> > --
->> > 1.8.3.1
->> > --
-> To unsubscribe from this list: send the line "unsubscribe linux-efi" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+While starting a port for the A13-based TZX-Q8-713B7 tablet, it appears
+that my LCD cable also has the Netron-DY E231732 marking, but is
+definitely different from the one on the SinA33. So I think Chen-Yu's
+comment was founded and "Netron DY E231732" does not reflect the panel
+name.
+
+Here are some details regarding the LCD cable on both devices:
+
+The SinA33 has a 1024x600 panel with the following markings:
+7300101463
+E231732
+NETRON-DY <> 1
+94V-0\1310
+
+The TZX-Q8-713B7 has a 800x480 panel with the following markings:
+7300101448
+E231732
+NETRON-DY <> 2
+94V-0\1249
+
+So it seems that the distinctive part of the name is
+7300101463/7300101448.
+
+Also, it seems that various online shops list the panels with a name
+like "E231732 7300101463". So maybe we could change the bindings to
+have:
+
+- netron-dy,e231732-7300101463
+- netron-dy,e231732-7300101448
+
+What do you think? Does that make sense?
+
+We should probably also fallback netron-dy,e231732 to the sina33's panel
+in order to avoid breaking the ABI.
+
+Cheers,
+
+-- 
+Paul Kocialkowski,
+
+developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
