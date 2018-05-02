@@ -1,59 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751084AbeEBFh1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 01:37:27 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:45328 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750926AbeEBFhY (ORCPT
+        id S1751148AbeEBFhv (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 01:37:51 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:40250 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751115AbeEBFhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 01:37:24 -0400
-X-Google-Smtp-Source: AB8JxZrP6msb0fjhTfFzR/3o8d4lUisTVjh+BSCmjoSS2EOQsnHtBQB8SkRUVmFAm+GSLVse34Y5LA==
-Date: Wed, 2 May 2018 11:07:21 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Colin King <colin.king@canonical.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: s3c2440: fix spelling mistake: "divsiors" ->
- "divisors"
-Message-ID: <20180502053721.5h6jhicjsjss2ixe@vireshk-i7>
-References: <20180430144801.6727-1-colin.king@canonical.com>
+        Wed, 2 May 2018 01:37:48 -0400
+X-Google-Smtp-Source: AB8JxZp9MquNPGwQiB41DoGg8fgqen6Iakha9o4ZYOp99aQ8wA2vArqIWBLkAN+Pi/0fq/E1sw9VWUJOjPj2yJWDjqo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180430144801.6727-1-colin.king@canonical.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <CA+55aFwjaY6Nv7x0d8BQaSddZwAK7fukrYOHWEG_v2-1JZi5Qg@mail.gmail.com>
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+ <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
+ <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+ <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
+ <CA+55aFyZXWoiWnEU8S1PNNyUTWsi7UCnBuDKOobfMLaE8uFKJg@mail.gmail.com>
+ <CAPcyv4jTUn2gSPSB1r7p9A7VNxBf54Aa5dnGbGsomDqmbvsHLQ@mail.gmail.com>
+ <CA+55aFzDt1uvDBqgkB0T2o2-d5Fi0tBiGcy5iAZ-wRNdAL4uQw@mail.gmail.com>
+ <CAPcyv4hQVKL=OtoYbWDGfOMdWen3MkF5qBPrek98+w2gODHvtg@mail.gmail.com>
+ <CAPcyv4ixtVC3w9BE3Z2ME-qMPCh9evBKP51SDrNPXAsg7xH1RQ@mail.gmail.com>
+ <CA+55aFy2LAzRbjCEghN_7SAZgAOr0RoUFDwYkkB+V91jdTg-YA@mail.gmail.com>
+ <CAPcyv4idV+hp-W56gyQDN4p9SQsYz+xondgVJwQSYphUMxkYnw@mail.gmail.com> <CA+55aFwjaY6Nv7x0d8BQaSddZwAK7fukrYOHWEG_v2-1JZi5Qg@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 1 May 2018 22:37:47 -0700
+Message-ID: <CAPcyv4istib0jmFHxpaVNjUy4JDrH_eo9kGGqz56Q2fZ+apP6w@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30-04-18, 15:48, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in s3c_freq_dbg debug message text.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/cpufreq/s3c2440-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/s3c2440-cpufreq.c b/drivers/cpufreq/s3c2440-cpufreq.c
-> index d0d75b65ddd6..d2f67b7a20dd 100644
-> --- a/drivers/cpufreq/s3c2440-cpufreq.c
-> +++ b/drivers/cpufreq/s3c2440-cpufreq.c
-> @@ -143,7 +143,7 @@ static void s3c2440_cpufreq_setdivs(struct s3c_cpufreq_config *cfg)
->  {
->  	unsigned long clkdiv, camdiv;
->  
-> -	s3c_freq_dbg("%s: divsiors: h=%d, p=%d\n", __func__,
-> +	s3c_freq_dbg("%s: divisors: h=%d, p=%d\n", __func__,
->  		     cfg->divs.h_divisor, cfg->divs.p_divisor);
->  
->  	clkdiv = __raw_readl(S3C2410_CLKDIVN);
+On Tue, May 1, 2018 at 9:14 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, May 1, 2018 at 9:00 PM Dan Williams <dan.j.williams@intel.com>
+> wrote:
+>> >
+>> > I  have some dim memory of "rep movs doesn't work well for pmem", but
+> does
+>> > it *seriously* need unrolling to cacheline boundaries? And if it does,
+> who
+>> > designed it, and why is anybody using it?
+>> >
+>
+>> I think this is an FAQ from the original submission, in fact some guy
+>> named "Linus Torvalds" asked [1]:
+>
+> Oh, I already mentioned that  I remembered that "rep movs" didn't work well.
+>
+> But there's a big gap between "just use 'rep movs' and 'do some cacheline
+> unrollong'".
+>
+> Why isn't it just doing a simple word-at-a-time loop and letting the CPU do
+> the unrolling that it will already do on its own?
+>
+> I may have gotten that answered too, but there's no comment in the code
+> about why it's such a disgusting mess, so I've long since forgotten _why_
+> it's such a disgusting mess.
+>
+> That loop unrolling _used_ to be "hey, it's simple".
+>
+> Now it's "Hey, that's truly disgusting", with the separate fault handling
+> for every single case in the unrolled loop.
+>
+> Just look at the nasty _ASM_EXTABLE_FAULT() uses and those E_cache_x error
+> labels, and getting the number rof bytes copied right.
+>
+> And then ask yourself "what if we didn't unroll that thing 8 times, AND WE
+> COULD GET RID OF ALL OF THOSE?"
+>
+> Maybe you already did ask yourself.  But I'm asking because it sure isn't
+> explained in the code.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+Ah, sorry. Yeah, I don't see a good reason to keep the unrolling. It
+would definitely clean up the fault handling, I'll respin.
