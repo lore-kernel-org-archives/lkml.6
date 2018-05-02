@@ -1,87 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751533AbeEBMiX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 08:38:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59550 "EHLO mail.kernel.org"
+        id S1751447AbeEBMjT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 08:39:19 -0400
+Received: from verein.lst.de ([213.95.11.211]:38997 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751121AbeEBMiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 08:38:17 -0400
-X-Google-Smtp-Source: AB8JxZojlzYlhe2i20DfMFMzTy+/PHTX/g3rofr/kcdlpbdkbaQG2xN2rkGTBC58ss6aoJcw21q1UP+ylMbmDVMna74=
+        id S1751020AbeEBMjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 08:39:17 -0400
+Date: Wed, 2 May 2018 14:41:51 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
+Message-ID: <20180502124151.GA22857@lst.de>
+References: <20180501132411.2311-1-michel@daenzer.net> <786ca83f-45c4-264b-2aef-d84fb18d3d28@gmail.com> <CAKMK7uH2+v3_UUqXdCjz_8=H4VRt1zB+dgE99PuuPqd+XM2=-w@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-9-jagan@amarulasolutions.com> <20180501161909.GA1728@rob-hp-laptop>
- <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 2 May 2018 07:37:55 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK4rUB0M1Ta-HR9Yk+7-VzUhCodBbTfBFo3PcJWHFRVSg@mail.gmail.com>
-Message-ID: <CAL_JsqK4rUB0M1Ta-HR9Yk+7-VzUhCodBbTfBFo3PcJWHFRVSg@mail.gmail.com>
-Subject: Re: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uH2+v3_UUqXdCjz_8=H4VRt1zB+dgE99PuuPqd+XM2=-w@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 1:27 AM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> Hi Rob,
->
-> On Tue, May 1, 2018 at 9:49 PM, Rob Herring <robh@kernel.org> wrote:
->>
->> On Mon, Apr 30, 2018 at 05:10:45PM +0530, Jagan Teki wrote:
->> > HDMI PHY on Allwinner A64 has similar like H3/H5.
->> >
->> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->> > ---
->> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
->> >  1 file changed, 1 insertion(+)
->> >
->> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > index 9ea4353caadd..7dcd1d64dfe4 100644
->> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
->> > @@ -104,6 +104,7 @@ Required properties:
->> >    - compatible: value must be one of:
->> >      * allwinner,sun8i-a83t-hdmi-phy
->> >      * allwinner,sun8i-h3-hdmi-phy
->> > +    * allwinner,sun50i-a64-hdmi-phy
->>
->> This should be one valid combination per line. The dts shows that the h3
->> string is a fallback which should be captured in the binding doc.
->
-> The fallback compatible "allwinner,sun8i-h3-hdmi-phy" is already
-> documented above, what we need to capture here? or did I miss anything
-> here?
+On Wed, May 02, 2018 at 02:18:56PM +0200, Daniel Vetter wrote:
+> Other dma-api backends like cma just shut up when __GFP_NOWARN is
+> passed. And afaiui Christoph Hellwig has plans to nuke the DMA_ATTR
+> stuff (or at least clean it up) - should we just remove
+> DMA_ATTR_NO_WARN and instead only look at __GFP_NOWARN?
 
-The documentation should make it clear which of these is valid in a dts:
+No.  __GFP_NOWARN (and gfp_t flags in general) are the wrong interface
+for dma allocations and just cause problems.  I actually plan to
+get rid of the gfp_t argument in dma_alloc_attrs sooner, and only
+allow either GFP_KERNEL or GFP_DMA passed in dma_alloc_coherent.
 
-"allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
+> Or maybe we should at least enforce that both or none are set, for
+> consistency for now?
 
-or:
-
-"allwinner,sun50i-a64-hdmi-phy"
-
-
-IOW, your list should look like this:
-
-* "allwinner,sun8i-a83t-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
-* "allwinner,sun50i-a64-hdmi-phy", "allwinner,sun8i-h3-hdmi-phy"
-* "allwinner,sun8i-h3-hdmi-phy"
-
-Depending on whether the a83t is also compatible with h3.
-
-Rob
+The interface should be DMA_ATTR_NO_WARN.  __GFP_NOWARN in this
+context was never documented, and just slipped in.
