@@ -1,23 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752534AbeEBPXL (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:23:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48592 "EHLO mail.kernel.org"
+        id S1752438AbeEBPWf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:22:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752468AbeEBPWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:22:39 -0400
+        id S1751891AbeEBPW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:22:27 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Colin Ian King <colin.king@canonical.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, kernel-janitors@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 51/52] perf tools: Fix spelling mistake: "builid" -> "buildid"
-Date: Wed,  2 May 2018 12:19:41 -0300
-Message-Id: <20180502151942.20542-52-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 47/52] perf symbols: Split kernel symbol processing from dso__load_sym()
+Date: Wed,  2 May 2018 12:19:37 -0300
+Message-Id: <20180502151942.20542-48-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
 References: <20180502151942.20542-1-acme@kernel.org>
@@ -25,34 +24,255 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Trivial fix to spelling mistake in error message text
+More should be done to split this function, removing stuff map
+relocation steps from the actual symbol table loading.
 
-Signed-off-by: Colin King <colin.king@canonical.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Arch specific stuff also should go elsewhere, to tools/arch/ and
+we should have it keyed by data from the perf_env either in the
+perf.data header or from the running environment.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: kernel-janitors@vger.kernel.org
-Link: http://lkml.kernel.org/r/20180427193158.17932-1-colin.king@canonical.com
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-236gyo6cx6iet90u3uc01cws@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/genelf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/symbol-elf.c | 205 +++++++++++++++++++++++--------------------
+ 1 file changed, 108 insertions(+), 97 deletions(-)
 
-diff --git a/tools/perf/util/genelf.c b/tools/perf/util/genelf.c
-index c540d47583e7..aafbe54fd3fa 100644
---- a/tools/perf/util/genelf.c
-+++ b/tools/perf/util/genelf.c
-@@ -114,7 +114,7 @@ gen_build_id(struct buildid_note *note,
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 0b230f1a31c4..48943b834f11 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -797,6 +797,110 @@ static u64 ref_reloc(struct kmap *kmap)
+ void __weak arch__sym_update(struct symbol *s __maybe_unused,
+ 		GElf_Sym *sym __maybe_unused) { }
  
- 	fd = open("/dev/urandom", O_RDONLY);
- 	if (fd == -1)
--		err(1, "cannot access /dev/urandom for builid");
-+		err(1, "cannot access /dev/urandom for buildid");
++static int dso__process_kernel_symbol(struct dso *dso, struct map *map,
++				      GElf_Sym *sym, GElf_Shdr *shdr,
++				      struct map_groups *kmaps, struct kmap *kmap,
++				      struct dso **curr_dsop, struct map **curr_mapp,
++				      const char *section_name,
++				      bool adjust_kernel_syms, bool kmodule, bool *remap_kernel)
++{
++	struct dso *curr_dso = *curr_dsop;
++	struct map *curr_map;
++	char dso_name[PATH_MAX];
++
++	/* Adjust symbol to map to file offset */
++	if (adjust_kernel_syms)
++		sym->st_value -= shdr->sh_addr - shdr->sh_offset;
++
++	if (strcmp(section_name, (curr_dso->short_name + dso->short_name_len)) == 0)
++		return 0;
++
++	if (strcmp(section_name, ".text") == 0) {
++		/*
++		 * The initial kernel mapping is based on
++		 * kallsyms and identity maps.  Overwrite it to
++		 * map to the kernel dso.
++		 */
++		if (*remap_kernel && dso->kernel) {
++			*remap_kernel = false;
++			map->start = shdr->sh_addr + ref_reloc(kmap);
++			map->end = map->start + shdr->sh_size;
++			map->pgoff = shdr->sh_offset;
++			map->map_ip = map__map_ip;
++			map->unmap_ip = map__unmap_ip;
++			/* Ensure maps are correctly ordered */
++			if (kmaps) {
++				map__get(map);
++				map_groups__remove(kmaps, map);
++				map_groups__insert(kmaps, map);
++				map__put(map);
++			}
++		}
++
++		/*
++		 * The initial module mapping is based on
++		 * /proc/modules mapped to offset zero.
++		 * Overwrite it to map to the module dso.
++		 */
++		if (*remap_kernel && kmodule) {
++			*remap_kernel = false;
++			map->pgoff = shdr->sh_offset;
++		}
++
++		*curr_mapp = map;
++		*curr_dsop = dso;
++		return 0;
++	}
++
++	if (!kmap)
++		return 0;
++
++	snprintf(dso_name, sizeof(dso_name), "%s%s", dso->short_name, section_name);
++
++	curr_map = map_groups__find_by_name(kmaps, dso_name);
++	if (curr_map == NULL) {
++		u64 start = sym->st_value;
++
++		if (kmodule)
++			start += map->start + shdr->sh_offset;
++
++		curr_dso = dso__new(dso_name);
++		if (curr_dso == NULL)
++			return -1;
++		curr_dso->kernel = dso->kernel;
++		curr_dso->long_name = dso->long_name;
++		curr_dso->long_name_len = dso->long_name_len;
++		curr_map = map__new2(start, curr_dso);
++		dso__put(curr_dso);
++		if (curr_map == NULL)
++			return -1;
++
++		if (adjust_kernel_syms) {
++			curr_map->start  = shdr->sh_addr + ref_reloc(kmap);
++			curr_map->end	 = curr_map->start + shdr->sh_size;
++			curr_map->pgoff	 = shdr->sh_offset;
++		} else {
++			curr_map->map_ip = curr_map->unmap_ip = identity__map_ip;
++		}
++		curr_dso->symtab_type = dso->symtab_type;
++		map_groups__insert(kmaps, curr_map);
++		/*
++		 * Add it before we drop the referece to curr_map, i.e. while
++		 * we still are sure to have a reference to this DSO via
++		 * *curr_map->dso.
++		 */
++		dsos__add(&map->groups->machine->dsos, curr_dso);
++		/* kmaps already got it */
++		map__put(curr_map);
++		dso__set_loaded(curr_dso);
++		*curr_mapp = curr_map;
++		*curr_dsop = curr_dso;
++	} else
++		*curr_dsop = curr_map->dso;
++
++	return 0;
++}
++
+ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 		  struct symsrc *runtime_ss, int kmodule)
+ {
+@@ -973,102 +1077,9 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 			--sym.st_value;
  
- 	sret = read(fd, note->build_id, sz);
- 
+ 		if (dso->kernel || kmodule) {
+-			char dso_name[PATH_MAX];
+-
+-			/* Adjust symbol to map to file offset */
+-			if (adjust_kernel_syms)
+-				sym.st_value -= shdr.sh_addr - shdr.sh_offset;
+-
+-			if (strcmp(section_name,
+-				   (curr_dso->short_name +
+-				    dso->short_name_len)) == 0)
+-				goto new_symbol;
+-
+-			if (strcmp(section_name, ".text") == 0) {
+-				/*
+-				 * The initial kernel mapping is based on
+-				 * kallsyms and identity maps.  Overwrite it to
+-				 * map to the kernel dso.
+-				 */
+-				if (remap_kernel && dso->kernel) {
+-					remap_kernel = false;
+-					map->start = shdr.sh_addr +
+-						     ref_reloc(kmap);
+-					map->end = map->start + shdr.sh_size;
+-					map->pgoff = shdr.sh_offset;
+-					map->map_ip = map__map_ip;
+-					map->unmap_ip = map__unmap_ip;
+-					/* Ensure maps are correctly ordered */
+-					if (kmaps) {
+-						map__get(map);
+-						map_groups__remove(kmaps, map);
+-						map_groups__insert(kmaps, map);
+-						map__put(map);
+-					}
+-				}
+-
+-				/*
+-				 * The initial module mapping is based on
+-				 * /proc/modules mapped to offset zero.
+-				 * Overwrite it to map to the module dso.
+-				 */
+-				if (remap_kernel && kmodule) {
+-					remap_kernel = false;
+-					map->pgoff = shdr.sh_offset;
+-				}
+-
+-				curr_map = map;
+-				curr_dso = dso;
+-				goto new_symbol;
+-			}
+-
+-			if (!kmap)
+-				goto new_symbol;
+-
+-			snprintf(dso_name, sizeof(dso_name),
+-				 "%s%s", dso->short_name, section_name);
+-
+-			curr_map = map_groups__find_by_name(kmaps, dso_name);
+-			if (curr_map == NULL) {
+-				u64 start = sym.st_value;
+-
+-				if (kmodule)
+-					start += map->start + shdr.sh_offset;
+-
+-				curr_dso = dso__new(dso_name);
+-				if (curr_dso == NULL)
+-					goto out_elf_end;
+-				curr_dso->kernel = dso->kernel;
+-				curr_dso->long_name = dso->long_name;
+-				curr_dso->long_name_len = dso->long_name_len;
+-				curr_map = map__new2(start, curr_dso);
+-				dso__put(curr_dso);
+-				if (curr_map == NULL) {
+-					goto out_elf_end;
+-				}
+-				if (adjust_kernel_syms) {
+-					curr_map->start = shdr.sh_addr +
+-							  ref_reloc(kmap);
+-					curr_map->end = curr_map->start +
+-							shdr.sh_size;
+-					curr_map->pgoff = shdr.sh_offset;
+-				} else {
+-					curr_map->map_ip = identity__map_ip;
+-					curr_map->unmap_ip = identity__map_ip;
+-				}
+-				curr_dso->symtab_type = dso->symtab_type;
+-				map_groups__insert(kmaps, curr_map);
+-				/*
+-				 * Add it before we drop the referece to curr_map,
+-				 * i.e. while we still are sure to have a reference
+-				 * to this DSO via curr_map->dso.
+-				 */
+-				dsos__add(&map->groups->machine->dsos, curr_dso);
+-				/* kmaps already got it */
+-				map__put(curr_map);
+-				dso__set_loaded(curr_dso);
+-			} else
+-				curr_dso = curr_map->dso;
++			if (dso__process_kernel_symbol(dso, map, &sym, &shdr, kmaps, kmap, &curr_dso, &curr_map,
++						       section_name, adjust_kernel_syms, kmodule, &remap_kernel))
++				goto out_elf_end;
+ 		} else if ((used_opd && runtime_ss->adjust_symbols) ||
+ 			   (!used_opd && syms_ss->adjust_symbols)) {
+ 			pr_debug4("%s: adjusting symbol: st_value: %#" PRIx64 " "
+@@ -1077,7 +1088,7 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 				  (u64)shdr.sh_offset);
+ 			sym.st_value -= shdr.sh_addr - shdr.sh_offset;
+ 		}
+-new_symbol:
++
+ 		demangled = demangle_sym(dso, kmodule, elf_name);
+ 		if (demangled != NULL)
+ 			elf_name = demangled;
 -- 
 2.14.3
