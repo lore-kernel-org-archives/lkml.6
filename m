@@ -1,183 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751265AbeEBH1j (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:27:39 -0400
-Received: from mga06.intel.com ([134.134.136.31]:56242 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750867AbeEBH1g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:27:36 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="37762389"
-Date: Wed, 2 May 2018 15:28:19 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
-Message-ID: <20180502072819.mf5l3dypk6dwx2s7@debian>
-References: <20180425051550.24342-1-tiwei.bie@intel.com>
- <20180425051550.24342-5-tiwei.bie@intel.com>
- <34781052-df9f-e505-cd3f-08e460b34dcc@redhat.com>
+        id S1751063AbeEBHdG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:33:06 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:50717 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750895AbeEBHdC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:33:02 -0400
+X-Google-Smtp-Source: AB8JxZpBqIC2wtkgz80ZpmMhiMYwTzwn5WDNKJFK7iEdxJNM+KqWhkF1fkHVrTu7PS4vE1jytq9qqwZvK6oP8+UgKK29aabdfKH/
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <34781052-df9f-e505-cd3f-08e460b34dcc@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Date: Wed, 02 May 2018 00:33:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cbaaf6056b341859@google.com>
+Subject: general protection fault in lo_ioctl (2)
+From: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 10:51:06AM +0800, Jason Wang wrote:
-> On 2018年04月25日 13:15, Tiwei Bie wrote:
-> > This commit introduces the event idx support in packed
-> > ring. This feature is temporarily disabled, because the
-> > implementation in this patch may not work as expected,
-> > and some further discussions on the implementation are
-> > needed, e.g. do we have to check the wrap counter when
-> > checking whether a kick is needed?
-> > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c | 53 ++++++++++++++++++++++++++++++++++++++++----
-> >   1 file changed, 49 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 0181e93897be..b1039c2985b9 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -986,7 +986,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
-> >   static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> >   {
-> >   	struct vring_virtqueue *vq = to_vvq(_vq);
-> > -	u16 flags;
-> > +	u16 new, old, off_wrap, flags;
-> >   	bool needs_kick;
-> >   	u32 snapshot;
-> > @@ -995,7 +995,12 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> >   	 * suppressions. */
-> >   	virtio_mb(vq->weak_barriers);
-> > +	old = vq->next_avail_idx - vq->num_added;
-> > +	new = vq->next_avail_idx;
-> > +	vq->num_added = 0;
-> > +
-> >   	snapshot = *(u32 *)vq->vring_packed.device;
-> > +	off_wrap = virtio16_to_cpu(_vq->vdev, snapshot & 0xffff);
-> >   	flags = cpu_to_virtio16(_vq->vdev, snapshot >> 16) & 0x3;
-> >   #ifdef DEBUG
-> > @@ -1006,7 +1011,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
-> >   	vq->last_add_time_valid = false;
-> >   #endif
-> > -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> > +	if (flags == VRING_EVENT_F_DESC)
-> > +		needs_kick = vring_need_event(off_wrap & ~(1<<15), new, old);
-> 
-> I wonder whether or not the math is correct. Both new and event are in the
-> unit of descriptor ring size, but old looks not.
+Hello,
 
-What vring_need_event() cares is the distance between
-`new` and `old`, i.e. vq->num_added. So I think there
-is nothing wrong with `old`. But the calculation of the
-distance between `new` and `event_idx` isn't right when
-`new` wraps. How do you think about the below code:
+syzbot found the following crash on:
 
-	wrap_counter = off_wrap >> 15;
-	event_idx = off_wrap & ~(1<<15);
-	if (wrap_counter != vq->wrap_counter)
-		event_idx -= vq->vring_packed.num;
-	
-	needs_kick = vring_need_event(event_idx, new, old);
+HEAD commit:    fff75eb2a08c Merge tag 'errseq-v4.17' of  
+git://git.kernel.o...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?id=5301511529693184
+kernel config:   
+https://syzkaller.appspot.com/x/.config?id=6493557782959164711
+dashboard link: https://syzkaller.appspot.com/bug?extid=bf89c128e05dd6c62523
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
+syzkaller  
+repro:https://syzkaller.appspot.com/x/repro.syz?id=5000693362458624
 
-Best regards,
-Tiwei Bie
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+Modules linked in:
+CPU: 0 PID: 10637 Comm: syz-executor1 Not tainted 4.17.0-rc3+ #52
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:loop_set_fd drivers/block/loop.c:901 [inline]
+RIP: 0010:lo_ioctl+0x1ae8/0x2130 drivers/block/loop.c:1397
+RSP: 0018:ffff8801bd6dfc08 EFLAGS: 00010202
+RAX: 0000000000000037 RBX: ffff8801d296db00 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: ffffffff84b2cd57 RDI: 00000000000001b8
+RBP: ffff8801bd6dfc80 R08: ffff8801c46943c0 R09: ffffed003b5c46c2
+R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff8801b58561a0 R15: ffff8801b58560c0
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:00000000f7f2eb40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000008138024 CR3: 00000001d03df000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  lo_compat_ioctl+0xc1/0x170 drivers/block/loop.c:1602
+  compat_blkdev_ioctl+0x3c2/0x1b20 block/compat_ioctl.c:406
+  __do_compat_sys_ioctl fs/compat_ioctl.c:1461 [inline]
+  __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
+  __ia32_compat_sys_ioctl+0x221/0x640 fs/compat_ioctl.c:1407
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f32cb9
+RSP: 002b:00000000f7f2e0ac EFLAGS: 00000282 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 0000000000004c00
+RDX: 0000000000000003 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Code: e8 03 80 3c 08 00 0f 85 2c 02 00 00 4d 8b ad f0 00 00 00 48 b9 00 00  
+00 00 00 fc ff df 49 8d bd b8 01 00 00 48 89 f8 48 c1 e8 03 <80> 3c 08 00  
+0f 85 f9 01 00 00 4d 8b ad b8 01 00 00 48 b9 00 00
+RIP: loop_set_fd drivers/block/loop.c:901 [inline] RSP: ffff8801bd6dfc08
+RIP: lo_ioctl+0x1ae8/0x2130 drivers/block/loop.c:1397 RSP: ffff8801bd6dfc08
+---[ end trace a15583efe355602c ]---
 
 
-> 
-> Thanks
-> 
-> > +	else
-> > +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
-> >   	END_USE(vq);
-> >   	return needs_kick;
-> >   }
-> > @@ -1116,6 +1124,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
-> >   	if (vq->last_used_idx >= vq->vring_packed.num)
-> >   		vq->last_used_idx -= vq->vring_packed.num;
-> > +	/* If we expect an interrupt for the next entry, tell host
-> > +	 * by writing event index and flush out the write before
-> > +	 * the read in the next get_buf call. */
-> > +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
-> > +		virtio_store_mb(vq->weak_barriers,
-> > +				&vq->vring_packed.driver->off_wrap,
-> > +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
-> > +						(vq->wrap_counter << 15)));
-> > +
-> >   #ifdef DEBUG
-> >   	vq->last_add_time_valid = false;
-> >   #endif
-> > @@ -1143,10 +1160,17 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
-> >   	/* We optimistically turn back on interrupts, then check if there was
-> >   	 * more to do. */
-> > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> > +	 * either clear the flags bit or point the event index at the next
-> > +	 * entry. Always update the event index to keep code simple. */
-> > +
-> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > +			vq->last_used_idx | (vq->wrap_counter << 15));
-> >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> >   		virtio_wmb(vq->weak_barriers);
-> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > +						     VRING_EVENT_F_ENABLE;
-> >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> >   							vq->event_flags_shadow);
-> >   	}
-> > @@ -1172,15 +1196,34 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
-> >   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
-> >   {
-> >   	struct vring_virtqueue *vq = to_vvq(_vq);
-> > +	u16 bufs, used_idx, wrap_counter;
-> >   	START_USE(vq);
-> >   	/* We optimistically turn back on interrupts, then check if there was
-> >   	 * more to do. */
-> > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
-> > +	 * either clear the flags bit or point the event index at the next
-> > +	 * entry. Always update the event index to keep code simple. */
-> > +
-> > +	/* TODO: tune this threshold */
-> > +	bufs = (u16)(vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
-> > +
-> > +	used_idx = vq->last_used_idx + bufs;
-> > +	wrap_counter = vq->wrap_counter;
-> > +
-> > +	if (used_idx >= vq->vring_packed.num) {
-> > +		used_idx -= vq->vring_packed.num;
-> > +		wrap_counter ^= 1;
-> > +	}
-> > +
-> > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
-> > +			used_idx | (wrap_counter << 15));
-> >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
-> >   		virtio_wmb(vq->weak_barriers);
-> > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
-> > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
-> > +						     VRING_EVENT_F_ENABLE;
-> >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
-> >   							vq->event_flags_shadow);
-> >   	}
-> > @@ -1822,8 +1865,10 @@ void vring_transport_features(struct virtio_device *vdev)
-> >   		switch (i) {
-> >   		case VIRTIO_RING_F_INDIRECT_DESC:
-> >   			break;
-> > +#if 0
-> >   		case VIRTIO_RING_F_EVENT_IDX:
-> >   			break;
-> > +#endif
-> >   		case VIRTIO_F_VERSION_1:
-> >   			break;
-> >   		case VIRTIO_F_IOMMU_PLATFORM:
-> 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
