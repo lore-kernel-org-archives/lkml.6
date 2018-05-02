@@ -1,120 +1,139 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751348AbeEBNGf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:06:35 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37274 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751054AbeEBNGb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:06:31 -0400
-From: Fabrice Gasnier <fabrice.gasnier@st.com>
-To: <jic23@kernel.org>, <robh+dt@kernel.org>, <alexandre.torgue@st.com>
-CC: <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>, <lars@metafoo.de>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <fabrice.gasnier@st.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@linaro.org>, <arnaud.pouliquen@st.com>
-Subject: [PATCH] iio: adc: stm32-dfsdm: Add support for stm32mp1
-Date: Wed, 2 May 2018 15:05:23 +0200
-Message-ID: <1525266323-4922-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
+        id S1751421AbeEBNIs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:08:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50935 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751020AbeEBNIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:08:45 -0400
+Date: Wed, 2 May 2018 15:08:42 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
+Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
+        geert@linux-m68k.org, magnus.damm@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 07/12] ARM: sunxi: Add initialization of CNTVOFF
+Message-ID: <20180502130842.pecjwahxrvx5addq@flea>
+References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
+ <20180501123131.7738-8-mylene.josserand@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG1NODE1.st.com (10.75.127.1) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_05:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qomsyjim3m7utmym"
+Content-Disposition: inline
+In-Reply-To: <20180501123131.7738-8-mylene.josserand@bootlin.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for DFSDM (Digital Filter For Sigma Delta Modulators)
-to STM32MP1. This variant is close to STM32H7 DFSDM, it implements
-6 filter instances. Registers map is also increased.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
----
- .../bindings/iio/adc/st,stm32-dfsdm-adc.txt         |  7 +++++--
- drivers/iio/adc/stm32-dfsdm-core.c                  | 21 +++++++++++++++++++++
- 2 files changed, 26 insertions(+), 2 deletions(-)
+--qomsyjim3m7utmym
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
-index ed7520d..75ba25d 100644
---- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
-@@ -8,14 +8,16 @@ It is mainly targeted for:
- - PDM microphones (audio digital microphone)
- 
- It features up to 8 serial digital interfaces (SPI or Manchester) and
--up to 4 filters on stm32h7.
-+up to 4 filters on stm32h7 or 6 filters on stm32mp1.
- 
- Each child node match with a filter instance.
- 
- Contents of a STM32 DFSDM root node:
- ------------------------------------
- Required properties:
--- compatible: Should be "st,stm32h7-dfsdm".
-+- compatible: Should be one of:
-+  "st,stm32h7-dfsdm"
-+  "st,stm32mp1-dfsdm"
- - reg: Offset and length of the DFSDM block register set.
- - clocks: IP and serial interfaces clocking. Should be set according
- 		to rcc clock ID and "clock-names".
-@@ -45,6 +47,7 @@ Required properties:
- 	"st,stm32-dfsdm-adc" for sigma delta ADCs
- 	"st,stm32-dfsdm-dmic" for audio digital microphone.
- - reg: Specifies the DFSDM filter instance used.
-+	Valid values are from 0 to 3 on stm32h7, 0 to 5 on stm32mp1.
- - interrupts: IRQ lines connected to each DFSDM filter instance.
- - st,adc-channels:	List of single-ended channels muxed for this ADC.
- 			valid values:
-diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
-index e50efdc..d924e6c 100644
---- a/drivers/iio/adc/stm32-dfsdm-core.c
-+++ b/drivers/iio/adc/stm32-dfsdm-core.c
-@@ -25,6 +25,8 @@ struct stm32_dfsdm_dev_data {
- 
- #define STM32H7_DFSDM_NUM_FILTERS	4
- #define STM32H7_DFSDM_NUM_CHANNELS	8
-+#define STM32MP1_DFSDM_NUM_FILTERS	6
-+#define STM32MP1_DFSDM_NUM_CHANNELS	8
- 
- static bool stm32_dfsdm_volatile_reg(struct device *dev, unsigned int reg)
- {
-@@ -61,6 +63,21 @@ static bool stm32_dfsdm_volatile_reg(struct device *dev, unsigned int reg)
- 	.regmap_cfg = &stm32h7_dfsdm_regmap_cfg,
- };
- 
-+static const struct regmap_config stm32mp1_dfsdm_regmap_cfg = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = sizeof(u32),
-+	.max_register = 0x7fc,
-+	.volatile_reg = stm32_dfsdm_volatile_reg,
-+	.fast_io = true,
-+};
-+
-+static const struct stm32_dfsdm_dev_data stm32mp1_dfsdm_data = {
-+	.num_filters = STM32MP1_DFSDM_NUM_FILTERS,
-+	.num_channels = STM32MP1_DFSDM_NUM_CHANNELS,
-+	.regmap_cfg = &stm32mp1_dfsdm_regmap_cfg,
-+};
-+
- struct dfsdm_priv {
- 	struct platform_device *pdev; /* platform device */
- 
-@@ -243,6 +260,10 @@ static int stm32_dfsdm_parse_of(struct platform_device *pdev,
- 		.compatible = "st,stm32h7-dfsdm",
- 		.data = &stm32h7_dfsdm_data,
- 	},
-+	{
-+		.compatible = "st,stm32mp1-dfsdm",
-+		.data = &stm32mp1_dfsdm_data,
-+	},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, stm32_dfsdm_of_match);
--- 
-1.9.1
+On Tue, May 01, 2018 at 02:31:26PM +0200, Myl=E8ne Josserand wrote:
+> Add the initialization of CNTVOFF for sun8i-a83t.
+>=20
+> For boot CPU, create a new machine that handles this
+> function's call in an "init_early" callback. We need to initialize
+> CNTVOFF before the arch timer's initialization otherwise, it will
+> not be taken into account and fails to boot correctly.
+> Because of that, this function can't be called in SMP's early_initcall
+> function which is called after timer's init.
+>=20
+> For secondary CPUs, add this function into secondary_startup
+> assembly entry.
+>=20
+> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> ---
+>  arch/arm/mach-sunxi/headsmp.S |  1 +
+>  arch/arm/mach-sunxi/sunxi.c   | 20 +++++++++++++++++++-
+>  2 files changed, 20 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/mach-sunxi/headsmp.S b/arch/arm/mach-sunxi/headsmp.S
+> index 37dc772701f3..32d76be98541 100644
+> --- a/arch/arm/mach-sunxi/headsmp.S
+> +++ b/arch/arm/mach-sunxi/headsmp.S
+> @@ -71,6 +71,7 @@ ENDPROC(sunxi_mc_smp_cluster_cache_enable)
+> =20
+>  ENTRY(sunxi_mc_smp_secondary_startup)
+>  	bl	sunxi_mc_smp_cluster_cache_enable
+> +	bl	secure_cntvoff_init
+>  	b	secondary_startup
+>  ENDPROC(sunxi_mc_smp_secondary_startup)
+> =20
+> diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+> index 5e9602ce1573..2770a31a9278 100644
+> --- a/arch/arm/mach-sunxi/sunxi.c
+> +++ b/arch/arm/mach-sunxi/sunxi.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/platform_device.h>
+> =20
+>  #include <asm/mach/arch.h>
+> +#include <asm/secure_cntvoff.h>
+> =20
+>  static const char * const sunxi_board_dt_compat[] =3D {
+>  	"allwinner,sun4i-a10",
+> @@ -62,7 +63,6 @@ MACHINE_END
+>  static const char * const sun8i_board_dt_compat[] =3D {
+>  	"allwinner,sun8i-a23",
+>  	"allwinner,sun8i-a33",
+> -	"allwinner,sun8i-a83t",
+>  	"allwinner,sun8i-h2-plus",
+>  	"allwinner,sun8i-h3",
+>  	"allwinner,sun8i-r40",
+> @@ -75,6 +75,24 @@ DT_MACHINE_START(SUN8I_DT, "Allwinner sun8i Family")
+>  	.dt_compat	=3D sun8i_board_dt_compat,
+>  MACHINE_END
+> =20
+> +void __init sun8i_a83t_cntvoff_init(void)
+> +{
+> +#ifdef CONFIG_SMP
+> +	secure_cntvoff_init();
+> +#endif
+> +}
+> +
+> +static const char * const sun8i_a83t_cntvoff_board_dt_compat[] =3D {
+> +	"allwinner,sun8i-a83t",
+> +	NULL,
+> +};
+> +
+> +DT_MACHINE_START(SUN8I_CNTVOFF_DT, "Allwinner sun8i-a83t board")
+
+I put my Acked-by on the condition that you would fix this. And you
+still didn't.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--qomsyjim3m7utmym
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpuFkACgkQ0rTAlCFN
+r3TppA//Y3aBrB8/M8v7Uwy8P1GV1q7jpBYBddtAbbq6NfGAF4yDXuQ6bhy7Bq7U
+Gz1+TQuGoCmksq+RwXXLo43X0BtL8iBtDXGA06kMQGZvEDk4BlU7QPhaLzskHDAG
+pvZweyq0wAKzRzlPuZX5PsBsh8vKqR/vKZqPYpV3dGwx/oGd9wJel88So+A7HbCX
+lSV0/wc31h57Zl+2Oe2ZusHBOgchs/AU/3bRA9pYgBSKKulyxwmYiEFb72xnnGnX
+VBtbeW81MvZG4brKdtS4DeerP+oCfrsPdGIpgYp7prUYQ+PgHrUd/uWSuZdf04gL
+KNdxXkPof9Eyak3jECKHbx2lgcH5Jfbodd+BVfJiaGqi7H2C0E8EtYVlz7ECIN2p
+P7E5Otm94jEncBxNm4Ha/XSmy35IV8pUmWQRO1yHGWFKMEl+15fAP/F9NQXSenJ3
+jLoUBCVGe58PLp2Uc5Ni4hXNT6oQJdCEIap9IdOooBTtiqqsOfA0/vMhkvAMSWBb
+5hB+EvpVWPctdSVZBoUXpE3BeS1sPaEcow9Zz9PEEyMfTYL24FZ6UnHtA5z7+DNE
+A9AaIKB6Vqt7MKWeoQz/HGPM3U1npAK5dlBZ9SBfL8hrY7WvHg30Kc232gsSLdCO
+L5LYfTyBtNGsvzctqmDVCzuIzI4vXdfgeInjcFN7iNcze9A2cZo=
+=5fSi
+-----END PGP SIGNATURE-----
+
+--qomsyjim3m7utmym--
