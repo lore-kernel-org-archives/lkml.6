@@ -1,80 +1,263 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751317AbeEBIBz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 04:01:55 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:43766 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750869AbeEBIBx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 04:01:53 -0400
-X-Google-Smtp-Source: AB8JxZrOs7MD1T/1TB8z3Z7dn1RaImBZ10BR7z3WggrV0BM7nDtMyD9O0QLqgsvrYDidgYA8MBnjXd0IoO5Wj5gifUQ=
+        id S1751245AbeEBIEh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 04:04:37 -0400
+Received: from mga03.intel.com ([134.134.136.65]:19623 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750947AbeEBIEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 04:04:35 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
+   d="scan'208";a="37773141"
+Date: Wed, 2 May 2018 16:05:18 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jfreimann@redhat.com, wexu@redhat.com
+Subject: Re: [RFC V3 PATCH 1/8] vhost: move get_rx_bufs to vhost.c
+Message-ID: <20180502080518.h52wme46fnqpyfpf@debian>
+References: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
+ <1524461700-5469-2-git-send-email-jasowang@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180406195231.14868-1-malat@debian.org>
-References: <20180406195231.14868-1-malat@debian.org>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Wed, 2 May 2018 10:01:32 +0200
-X-Google-Sender-Auth: zPiWQuklSk0KDRYMFdyPz03Te40
-Message-ID: <CA+7wUsxOsU6pw3wGt9VTj=wBf6uW6wTUdydU5jJQw+STVBiJ8Q@mail.gmail.com>
-Subject: Re: [PATCH] fs: Add MODULE_SOFTDEP declarations for hard-coded crypto drivers
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Milan Kupcevic <milan@debian.org>, Ben Hutchings <ben@decadent.org.uk>,
-        Mathieu Malaterre <malat@debian.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1524461700-5469-2-git-send-email-jasowang@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 6, 2018 at 9:52 PM, Mathieu Malaterre <malat@debian.org> wrote:
-> This helps initramfs builders and other tools to find the full
-> dependencies of a module.
+On Mon, Apr 23, 2018 at 01:34:53PM +0800, Jason Wang wrote:
+> Move get_rx_bufs() to vhost.c and rename it to
+> vhost_get_rx_bufs(). This helps to hide vring internal layout from
 
-Replaced by:
+A small typo. Based on the code change in this patch, it
+seems that this function is renamed to vhost_get_bufs().
 
-https://github.com/torvalds/linux/commit/7ef79ad521367
+Thanks
 
-> Debian on powerpc (ppc32) still uses yaboot as default boot loader. Using a
-> default installation (debian-installer) 64bit and metadata_csum feature are
-> not setup in ext4. This is discussed in more details at:
->
-> https://bugs.debian.org/825110#81
->
-> and implemented here:
->
-> https://anonscm.debian.org/cgit/d-i/partman-ext3.git/patch/?id=f87dc92157262de1ad8dd3f2343436f08271b4dc
->
-> This means that building the kernel as default debian package:
->
->   make ARCH=powerpc XYZ_defconfig
->   make -j8 ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- bindeb-pkg
->
-> Will lead to the following boot failure (initramfs prompt):
->
->   /dev/sda3: clean, 127679/305216 files, 11128559/1220703 blocks done.
->   [    5.592819] EXT4-fs (sda3): Cannot load crc32c driver.
->   mount: mounting /dev/sda3 on /root failed: No such file or directory
->
-> Link: https://bugs.debian.org/819725
-> Link: https://salsa.debian.org/kernel-team/linux/blob/master/debian/patches/bugfix/all/fs-add-module_softdep-declarations-for-hard-coded-cr.patch
-> Suggested-by: Ben Hutchings <ben@decadent.org.uk>
-> Cc: Milan Kupcevic <milan@debian.org>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+
+> specific device implementation. Packed ring implementation will
+> benefit from this.
+> 
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
 > ---
->  fs/ext4/super.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 185f7e61f4cf..10bda040e78f 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -5886,5 +5886,6 @@ static void __exit ext4_exit_fs(void)
->  MODULE_AUTHOR("Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others");
->  MODULE_DESCRIPTION("Fourth Extended Filesystem");
->  MODULE_LICENSE("GPL");
-> +MODULE_SOFTDEP("pre: crypto-crc32c");
->  module_init(ext4_init_fs)
->  module_exit(ext4_exit_fs)
-> --
-> 2.11.0
->
+>  drivers/vhost/net.c   | 83 ++-------------------------------------------------
+>  drivers/vhost/vhost.c | 78 +++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/vhost/vhost.h |  7 +++++
+>  3 files changed, 88 insertions(+), 80 deletions(-)
+> 
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index 986058a..762aa81 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -664,83 +664,6 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
+>  	return len;
+>  }
+>  
+> -/* This is a multi-buffer version of vhost_get_desc, that works if
+> - *	vq has read descriptors only.
+> - * @vq		- the relevant virtqueue
+> - * @datalen	- data length we'll be reading
+> - * @iovcount	- returned count of io vectors we fill
+> - * @log		- vhost log
+> - * @log_num	- log offset
+> - * @quota       - headcount quota, 1 for big buffer
+> - *	returns number of buffer heads allocated, negative on error
+> - */
+> -static int get_rx_bufs(struct vhost_virtqueue *vq,
+> -		       struct vring_used_elem *heads,
+> -		       int datalen,
+> -		       unsigned *iovcount,
+> -		       struct vhost_log *log,
+> -		       unsigned *log_num,
+> -		       unsigned int quota)
+> -{
+> -	unsigned int out, in;
+> -	int seg = 0;
+> -	int headcount = 0;
+> -	unsigned d;
+> -	int r, nlogs = 0;
+> -	/* len is always initialized before use since we are always called with
+> -	 * datalen > 0.
+> -	 */
+> -	u32 uninitialized_var(len);
+> -
+> -	while (datalen > 0 && headcount < quota) {
+> -		if (unlikely(seg >= UIO_MAXIOV)) {
+> -			r = -ENOBUFS;
+> -			goto err;
+> -		}
+> -		r = vhost_get_vq_desc(vq, vq->iov + seg,
+> -				      ARRAY_SIZE(vq->iov) - seg, &out,
+> -				      &in, log, log_num);
+> -		if (unlikely(r < 0))
+> -			goto err;
+> -
+> -		d = r;
+> -		if (d == vq->num) {
+> -			r = 0;
+> -			goto err;
+> -		}
+> -		if (unlikely(out || in <= 0)) {
+> -			vq_err(vq, "unexpected descriptor format for RX: "
+> -				"out %d, in %d\n", out, in);
+> -			r = -EINVAL;
+> -			goto err;
+> -		}
+> -		if (unlikely(log)) {
+> -			nlogs += *log_num;
+> -			log += *log_num;
+> -		}
+> -		heads[headcount].id = cpu_to_vhost32(vq, d);
+> -		len = iov_length(vq->iov + seg, in);
+> -		heads[headcount].len = cpu_to_vhost32(vq, len);
+> -		datalen -= len;
+> -		++headcount;
+> -		seg += in;
+> -	}
+> -	heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
+> -	*iovcount = seg;
+> -	if (unlikely(log))
+> -		*log_num = nlogs;
+> -
+> -	/* Detect overrun */
+> -	if (unlikely(datalen > 0)) {
+> -		r = UIO_MAXIOV + 1;
+> -		goto err;
+> -	}
+> -	return headcount;
+> -err:
+> -	vhost_discard_vq_desc(vq, headcount);
+> -	return r;
+> -}
+> -
+>  /* Expects to be always run from workqueue - which acts as
+>   * read-size critical section for our kind of RCU. */
+>  static void handle_rx(struct vhost_net *net)
+> @@ -790,9 +713,9 @@ static void handle_rx(struct vhost_net *net)
+>  	while ((sock_len = vhost_net_rx_peek_head_len(net, sock->sk))) {
+>  		sock_len += sock_hlen;
+>  		vhost_len = sock_len + vhost_hlen;
+> -		headcount = get_rx_bufs(vq, vq->heads + nheads, vhost_len,
+> -					&in, vq_log, &log,
+> -					likely(mergeable) ? UIO_MAXIOV : 1);
+> +		headcount = vhost_get_bufs(vq, vq->heads + nheads, vhost_len,
+> +					   &in, vq_log, &log,
+> +					   likely(mergeable) ? UIO_MAXIOV : 1);
+>  		/* On error, stop handling until the next kick. */
+>  		if (unlikely(headcount < 0))
+>  			goto out;
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index f3bd8e9..6b455f6 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -2097,6 +2097,84 @@ int vhost_get_vq_desc(struct vhost_virtqueue *vq,
+>  }
+>  EXPORT_SYMBOL_GPL(vhost_get_vq_desc);
+>  
+> +/* This is a multi-buffer version of vhost_get_desc, that works if
+> + *	vq has read descriptors only.
+> + * @vq		- the relevant virtqueue
+> + * @datalen	- data length we'll be reading
+> + * @iovcount	- returned count of io vectors we fill
+> + * @log		- vhost log
+> + * @log_num	- log offset
+> + * @quota       - headcount quota, 1 for big buffer
+> + *	returns number of buffer heads allocated, negative on error
+> + */
+> +int vhost_get_bufs(struct vhost_virtqueue *vq,
+> +		   struct vring_used_elem *heads,
+> +		   int datalen,
+> +		   unsigned *iovcount,
+> +		   struct vhost_log *log,
+> +		   unsigned *log_num,
+> +		   unsigned int quota)
+> +{
+> +	unsigned int out, in;
+> +	int seg = 0;
+> +	int headcount = 0;
+> +	unsigned d;
+> +	int r, nlogs = 0;
+> +	/* len is always initialized before use since we are always called with
+> +	 * datalen > 0.
+> +	 */
+> +	u32 uninitialized_var(len);
+> +
+> +	while (datalen > 0 && headcount < quota) {
+> +		if (unlikely(seg >= UIO_MAXIOV)) {
+> +			r = -ENOBUFS;
+> +			goto err;
+> +		}
+> +		r = vhost_get_vq_desc(vq, vq->iov + seg,
+> +				      ARRAY_SIZE(vq->iov) - seg, &out,
+> +				      &in, log, log_num);
+> +		if (unlikely(r < 0))
+> +			goto err;
+> +
+> +		d = r;
+> +		if (d == vq->num) {
+> +			r = 0;
+> +			goto err;
+> +		}
+> +		if (unlikely(out || in <= 0)) {
+> +			vq_err(vq, "unexpected descriptor format for RX: "
+> +				"out %d, in %d\n", out, in);
+> +			r = -EINVAL;
+> +			goto err;
+> +		}
+> +		if (unlikely(log)) {
+> +			nlogs += *log_num;
+> +			log += *log_num;
+> +		}
+> +		heads[headcount].id = cpu_to_vhost32(vq, d);
+> +		len = iov_length(vq->iov + seg, in);
+> +		heads[headcount].len = cpu_to_vhost32(vq, len);
+> +		datalen -= len;
+> +		++headcount;
+> +		seg += in;
+> +	}
+> +	heads[headcount - 1].len = cpu_to_vhost32(vq, len + datalen);
+> +	*iovcount = seg;
+> +	if (unlikely(log))
+> +		*log_num = nlogs;
+> +
+> +	/* Detect overrun */
+> +	if (unlikely(datalen > 0)) {
+> +		r = UIO_MAXIOV + 1;
+> +		goto err;
+> +	}
+> +	return headcount;
+> +err:
+> +	vhost_discard_vq_desc(vq, headcount);
+> +	return r;
+> +}
+> +EXPORT_SYMBOL_GPL(vhost_get_bufs);
+> +
+>  /* Reverse the effect of vhost_get_vq_desc. Useful for error handling. */
+>  void vhost_discard_vq_desc(struct vhost_virtqueue *vq, int n)
+>  {
+> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+> index 6c844b9..52edd242 100644
+> --- a/drivers/vhost/vhost.h
+> +++ b/drivers/vhost/vhost.h
+> @@ -185,6 +185,13 @@ int vhost_get_vq_desc(struct vhost_virtqueue *,
+>  		      struct iovec iov[], unsigned int iov_count,
+>  		      unsigned int *out_num, unsigned int *in_num,
+>  		      struct vhost_log *log, unsigned int *log_num);
+> +int vhost_get_bufs(struct vhost_virtqueue *vq,
+> +		   struct vring_used_elem *heads,
+> +		   int datalen,
+> +		   unsigned *iovcount,
+> +		   struct vhost_log *log,
+> +		   unsigned *log_num,
+> +		   unsigned int quota);
+>  void vhost_discard_vq_desc(struct vhost_virtqueue *, int n);
+>  
+>  int vhost_vq_init_access(struct vhost_virtqueue *);
+> -- 
+> 2.7.4
+> 
