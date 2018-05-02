@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751439AbeEBTiO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 15:38:14 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38310 "EHLO
+        id S1751538AbeEBTix (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 15:38:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38758 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751214AbeEBTiA (ORCPT
+        with ESMTP id S1751350AbeEBTiG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 15:38:00 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3B50860588
+        Wed, 2 May 2018 15:38:06 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7F9C7607CF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -15,11 +15,10 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v7 02/10] dt-bindings: introduce RPMH RSC bindings for Qualcomm SoCs
-Date: Wed,  2 May 2018 13:37:41 -0600
-Message-Id: <20180502193749.31004-3-ilina@codeaurora.org>
+        dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH v7 08/10] drivers: qcom: rpmh: allow requests to be sent asynchronously
+Date: Wed,  2 May 2018 13:37:47 -0600
+Message-Id: <20180502193749.31004-9-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180502193749.31004-1-ilina@codeaurora.org>
 References: <20180502193749.31004-1-ilina@codeaurora.org>
@@ -27,179 +26,142 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device binding documentation for Qualcomm Technology Inc's RPMH RSC
-driver. The driver is used for communicating resource state requests for
-shared resources.
+Platform drivers that want to send a request but do not want to block
+until the RPMH request completes have now a new API -
+rpmh_write_async().
 
-Cc: devicetree@vger.kernel.org
+The API allocates memory and send the requests and returns the control
+back to the platform driver. The tx_done callback from the controller is
+handled in the context of the controller's thread and frees the
+allocated memory. This API allows RPMH requests from atomic contexts as
+well.
+
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-Changes in v7:
-	- Fix example
 
 Changes in v6:
-	- Address comments from Stephen Boyd
-
-Changes in v3:
-	- Move to soc/qcom
-	- Amend text per Stephen's suggestions
-
-Changes in v2:
-	- Amend text to describe the registers in reg property
-	- Add reg-names for the registers
-	- Update examples to use GIC_SPI in interrupts instead of 0
-	- Rephrase incorrect description
-
-Changes in v3:
-	- Fix unwanted capitalization
-	- Remove clients from the examples, this doc does not describe
-	  them
-	- Rephrase introductory paragraph
-	- Remove hardware specifics from DT bindings
+	- replace rpmh_client with device *
 ---
- .../devicetree/bindings/soc/qcom/rpmh-rsc.txt | 132 ++++++++++++++++++
- 1 file changed, 132 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
+ drivers/soc/qcom/rpmh.c | 52 +++++++++++++++++++++++++++++++++++++++++
+ include/soc/qcom/rpmh.h |  7 ++++++
+ 2 files changed, 59 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-new file mode 100644
-index 000000000000..950d56325284
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/qcom/rpmh-rsc.txt
-@@ -0,0 +1,132 @@
-+RPMH RSC:
-+------------
+diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+index 23fcbd9487cd..1bb62876795c 100644
+--- a/drivers/soc/qcom/rpmh.c
++++ b/drivers/soc/qcom/rpmh.c
+@@ -33,6 +33,7 @@
+ 		.cmd = { { 0 } },			\
+ 		.completion = q,			\
+ 		.dev = dev,				\
++		.free = NULL,				\
+ 	}
+ 
+ /**
+@@ -58,6 +59,7 @@ struct cache_req {
+  * @completion: triggered when request is done
+  * @dev: the device making the request
+  * @err: err return from the controller
++ * @free: the request object to be freed at tx_done
+  */
+ struct rpmh_request {
+ 	struct tcs_request msg;
+@@ -65,6 +67,7 @@ struct rpmh_request {
+ 	struct completion *completion;
+ 	const struct device *dev;
+ 	int err;
++	struct rpmh_request *free;
+ };
+ 
+ /**
+@@ -137,6 +140,8 @@ void rpmh_tx_done(const struct tcs_request *msg, int r)
+ 		dev_err(rpm_msg->dev, "RPMH TX fail in msg addr=%#x, err=%d\n",
+ 			rpm_msg->msg.cmds[0].addr, r);
+ 
++	kfree(rpm_msg->free);
 +
-+Resource Power Manager Hardened (RPMH) is the mechanism for communicating with
-+the hardened resource accelerators on Qualcomm SoCs. Requests to the resources
-+can be written to the Trigger Command Set (TCS)  registers and using a (addr,
-+val) pair and triggered. Messages in the TCS are then sent in sequence over an
-+internal bus.
+ 	/* Signal the blocking thread we are done */
+ 	if (compl)
+ 		complete(compl);
+@@ -248,6 +253,53 @@ static int __rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	return ret;
+ }
+ 
++static struct rpmh_request *__get_rpmh_msg_async(enum rpmh_state state,
++						 const struct tcs_cmd *cmd,
++						 u32 n)
++{
++	struct rpmh_request *req;
 +
-+The hardware block (Direct Resource Voter or DRV) is a part of the h/w entity
-+(Resource State Coordinator a.k.a RSC) that can handle multiple sleep and
-+active/wake resource requests. Multiple such DRVs can exist in a SoC and can
-+be written to from Linux. The structure of each DRV follows the same template
-+with a few variations that are captured by the properties here.
++	if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
++		return ERR_PTR(-EINVAL);
 +
-+A TCS may be triggered from Linux or triggered by the F/W after all the CPUs
-+have powered off to facilitate idle power saving. TCS could be classified as -
++	req = kzalloc(sizeof(*req), GFP_ATOMIC);
++	if (!req)
++		return ERR_PTR(-ENOMEM);
 +
-+	SLEEP   /* Triggered by F/W */
-+	WAKE    /* Triggered by F/W */
-+	ACTIVE  /* Triggered by Linux */
-+	CONTROL /* Triggered by F/W */
++	memcpy(req->cmd, cmd, n * sizeof(*cmd));
 +
-+The order in which they are described in the DT, should match the hardware
-+configuration.
++	req->msg.state = state;
++	req->msg.cmds = req->cmd;
++	req->msg.num_cmds = n;
++	req->free = req;
 +
-+Requests can be made for the state of a resource, when the subsystem is active
-+or idle. When all subsystems like Modem, GPU, CPU are idle, the resource state
-+will be an aggregate of the sleep votes from each of those subsystems. Clients
-+may request a sleep value for their shared resources in addition to the active
-+mode requests.
++	return req;
++}
 +
-+Properties:
++/**
++ * rpmh_write_async: Write a set of RPMH commands
++ *
++ * @dev: The device making the request
++ * @state: Active/sleep set
++ * @cmd: The payload data
++ * @n: The number of elements in payload
++ *
++ * Write a set of RPMH commands, the order of commands is maintained
++ * and will be sent as a single shot.
++ */
++int rpmh_write_async(const struct device *dev, enum rpmh_state state,
++		     const struct tcs_cmd *cmd, u32 n)
++{
++	struct rpmh_request *rpm_msg;
 +
-+- compatible:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Should be "qcom,rpmh-rsc".
++	rpm_msg = __get_rpmh_msg_async(state, cmd, n);
++	if (IS_ERR(rpm_msg))
++		return PTR_ERR(rpm_msg);
 +
-+- reg:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The first register specifies the base address of the
-+		    DRV(s). The number of DRVs in the dependent on the RSC.
-+	            The tcs-offset specifies the start address of the
-+	            TCS in the DRVs.
++	return __rpmh_write(dev, state, rpm_msg);
++}
++EXPORT_SYMBOL(rpmh_write_async);
 +
-+- reg-names:
-+	Usage: required
-+	Value type: <string>
-+	Definition: Maps the register specified in the reg property. Must be
-+	            "drv-0", "drv-1", "drv-2" etc and "tcs-offset". The
+ /**
+  * rpmh_write: Write a set of RPMH commands and block until response
+  *
+diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+index 42e62a0d26d8..1161a5c77e75 100644
+--- a/include/soc/qcom/rpmh.h
++++ b/include/soc/qcom/rpmh.h
+@@ -14,6 +14,9 @@
+ int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 	       const struct tcs_cmd *cmd, u32 n);
+ 
++int rpmh_write_async(const struct device *dev, enum rpmh_state state,
++		     const struct tcs_cmd *cmd, u32 n);
 +
-+- interrupts:
-+	Usage: required
-+	Value type: <prop-encoded-interrupt>
-+	Definition: The interrupt that trips when a message complete/response
-+	           is received for this DRV from the accelerators.
-+
-+- qcom,drv-id:
-+	Usage: required
-+	Value type: <u32>
-+	Definition: The id of the DRV in the RSC block that will be used by
-+		    this controller.
-+
-+- qcom,tcs-config:
-+	Usage: required
-+	Value type: <prop-encoded-array>
-+	Definition: The tuple defining the configuration of TCS.
-+	            Must have 2 cells which describe each TCS type.
-+	            <type number_of_tcs>.
-+	            The order of the TCS must match the hardware
-+	            configuration.
-+	- Cell #1 (TCS Type): TCS types to be specified -
-+	            SLEEP_TCS
-+	            WAKE_TCS
-+	            ACTIVE_TCS
-+	            CONTROL_TCS
-+	- Cell #2 (Number of TCS): <u32>
-+
-+- label:
-+	Usage: optional
-+	Value type: <string>
-+	Definition: Name for the RSC. The name would be used in trace logs.
-+
-+Drivers that want to use the RSC to communicate with RPMH must specify their
-+bindings as child nodes of the RSC controllers they wish to communicate with.
-+
-+Example 1:
-+
-+For a TCS whose RSC base address is is 0x179C0000 and is at a DRV id of 2, the
-+register offsets for DRV2 start at 0D00, the register calculations are like
-+this -
-+DRV0: 0x179C0000
-+DRV2: 0x179C0000 + 0x10000 = 0x179D0000
-+DRV2: 0x179C0000 + 0x10000 * 2 = 0x179E0000
-+TCS-OFFSET: 0xD00
-+
-+	apps_rsc: rsc@179c0000 {
-+		label = "apps_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0x179c0000 0x10000>, <0x179d0000 0x10000>,
-+		      <0x179e0000 0x10000>, <0xd00 0>;
-+		reg-names = "drv-0", "drv-1", "drv-2", "tcs-offset";
-+		interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,drv-id = <2>;
-+		qcom,tcs-config = <SLEEP_TCS   3>,
-+				  <WAKE_TCS    3>,
-+				  <ACTIVE_TCS  2>,
-+				  <CONTROL_TCS 1>;
-+	};
-+
-+Example 2:
-+
-+For a TCS whose RSC base address is 0xAF20000 and is at DRV id of 0, the
-+register offsets for DRV0 start at 01C00, the register calculations are like
-+this -
-+DRV0: 0xAF20000
-+TCS-OFFSET: 0x1C00
-+
-+	disp_rsc: rsc@af20000 {
-+		label = "disp_rsc";
-+		compatible = "qcom,rpmh-rsc";
-+		reg = <0xaf20000 0x10000>, <0x1c00 0>;
-+		reg-names = "drv-0", "tcs-offset";
-+		interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>;
-+		qcom,drv-id = <0>;
-+		qcom,tcs-config = <SLEEP_TCS   1>,
-+				  <WAKE_TCS    1>,
-+				  <ACTIVE_TCS  0>,
-+				  <CONTROL_TCS 0>;
-+	};
+ int rpmh_flush(const struct device *dev);
+ 
+ int rpmh_invalidate(const struct device *dev);
+@@ -24,6 +27,10 @@ static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+ 			     const struct tcs_cmd *cmd, u32 n)
+ { return -ENODEV; }
+ 
++static inline int rpmh_write_async(const struct device *dev,
++				   enum rpmh_state state,
++				   const struct tcs_cmd *cmd, u32 n)
++{ return -ENODEV; }
+ 
+ static inline int rpmh_flush(const struct device *dev)
+ { return -ENODEV; }
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
