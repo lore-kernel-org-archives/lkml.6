@@ -1,173 +1,110 @@
-Return-Path: <labbott@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1526324141; cv=none;
+Return-Path: <kernel-hardening-return-13179-gregkh=linuxfoundation.org@lists.openwall.com>
+X-Google-Smtp-Source: AB8JxZqDRirx4jsm/4e/4Qu36WPzbQDJoFwmjRcvUn/bS8fTVbLXyVAzbuPBMw19tMApN2AaDPYd
+ARC-Seal: i=1; a=rsa-sha256; t=1525250574; cv=none;
         d=google.com; s=arc-20160816;
-        b=c3fsLZBUDJkB7K6oXvQKYZOdAqpnQDFPDOGFmKlfuLIzfFIQPaL6jqbHAnD7+amZ5t
-         zo9BzmhsoWhE0lm1kj4/sQ/pV2dns3JEPNWlx7xziBfSIcqNS34x2SVPQ4h2A2wJ8TkP
-         D9AMCYTTQYMDwaenCSSeQHsKdxlPb9mow341QiVk23lYQ9tpU5RYdYVttF9UiSRubDJq
-         R4cJhk7+t7SdgM/YP7j24OdtNLpL0d7+vWgO1cNTbztpjOJZVPgLimHO/ZjRRGVRpqbc
-         leVgt5gyQIcV/JLdK532ZIsksfGteM9ecIbgJRwPAgRRc7jQUkYy1U/JkfVpjue1A/xR
-         hEGA==
+        b=FvLFj2nNI1coE72QyAF4KIlKiA7wK14E2bU8IKz8Jk9SWCdzh0qUOIkrPwJafYtJxK
+         X6nGOO3PT67z65jwZGb3lt/ZiGyjpu6UJpsfTWsS6xGOk3RpucV4vhqDZeGw3TTNVfCp
+         0pD0KHy+2cLOMqBLRrgBmTh5utgxO8VZPLmdXWKZfsH8C8Fp76JX2dUbzd4K6Gc5zpA0
+         qksJFCXIqfWucZ1mv/3gw254YLtWZSYW4UUNe4If0ZcauqiJzMOtqum/izV7XnL0oDUz
+         j+18vzWqG6umgJAVrSrEu19okf7xtfqoh/D4yvq43BstUVZEYaMd/9qCwWFc56PSR6k8
+         HM0Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
+        h=mime-version:user-agent:references:message-id:in-reply-to:subject
+         :cc:to:from:date:delivered-to:list-id:list-subscribe
+         :list-unsubscribe:list-help:list-post:precedence:mailing-list
          :arc-authentication-results;
-        bh=NEISp5fRuwfJUtmj/CkXGO+j2Fl33zSVdGweKopND4M=;
-        b=w3J6g8GPgTqfaDFfpTdOAYFOl9wF4t7sKzoxN7/08auHHcj8uzAOKx7EvGYGwZD3sZ
-         cSuoq98D5aAE4BaTMxcUSYdYe6XaTfhGIXiiwsE6feyvpguG5O1uUNldoYCiVkolLWKB
-         f3llCOKbs/h0A0RaHNYM8cdtSQsuRPOzzIWuCi/Vmva45uYTGufD1zka1ksSWw/vfShk
-         yrv3xEsAYM6Z0qhHTM+lkYMlC9OTT30YqeJB0b2dU6rzrgRcIUKHRpgia/3hQJxCiVZ0
-         7Snc1YKnyitwkD+L79ASo5MJBs0nFr1MzRJ7J9kkxUoDzCEVDaHRD0EdKMeISamkCL47
-         gzAQ==
+        bh=pPgv79tWXrPVwjb9fqhfHSjTofry29PPKLXj/whz5e4=;
+        b=ORIkmDE6rZN9C65CwwQaRPFK8IdIxD4S7CVWEOeSluMhZ/rv4dPIoXNUxTxOjf1MG2
+         emvgv8/3GZT8ETIWgwgekovnrrzS49WjSqvBsgw7jES1vdBwR3yHp9IiyKLBWs8M9N9I
+         z0qXjlyH6ugDJp6WV0dTsnLFwrVcTdlLG85ysYT7YnnbGgqBCQSAHTo/jdsFdo+SviZG
+         i1Tiq0i74hHFYAx1s3GnuRDuZzUEa+j5e9kMpc5Z4awRgWCU+CtCtbnHtxdgAwWlFP4N
+         qlTQ/gIZZi/w67lusrzWe0ae4bh10Fqk2HsnZlsEPUW4d51TCfIYHQIksbTMzGbbPBrh
+         FSlA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of labbott@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=labbott@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of kernel-hardening-return-13179-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13179-gregkh=linuxfoundation.org@lists.openwall.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of labbott@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=labbott@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AB8JxZppz9qJ4UCYAITiaTfrx91RPczaZi54RsOkynxoyRI19pfs/F3fbbwJx9lo8QFu6S0ByI2VtA==
-Subject: Re: [PATCH v11 0/6] Introduce the STACKLEAK feature and a test for it
-To: Alexander Popov <alex.popov@linux.com>,
- kernel-hardening@lists.openwall.com, Kees Cook <keescook@chromium.org>,
- PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
- Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- Tycho Andersen <tycho@tycho.ws>, Mark Rutland <mark.rutland@arm.com>,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
- Richard Sandiford <richard.sandiford@arm.com>,
- Thomas Gleixner <tglx@linutronix.de>, "H . Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <a.p.zijlstra@chello.nl>, "Dmitry V . Levin"
- <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrey Ryabinin <aryabinin@virtuozzo.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Thomas Garnier <thgarnie@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Al Viro <viro@zeniv.linux.org.uk>, "David S . Miller" <davem@davemloft.net>,
- Ding Tianhong <dingtianhong@huawei.com>, David Woodhouse
- <dwmw@amazon.co.uk>, Josh Poimboeuf <jpoimboe@redhat.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Dominik Brodowski <linux@dominikbrodowski.net>,
- Juergen Gross <jgross@suse.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dan Williams <dan.j.williams@intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Mathias Krause <minipli@googlemail.com>,
- Vikas Shivappa <vikas.shivappa@linux.intel.com>, Kyle Huey
- <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
- Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
- Florian Weimer <fweimer@redhat.com>,
- Boris Lukashev <blukashev@sempervictus.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <5726d16d-23f3-7d55-d488-e4e0ce262edf@redhat.com>
-Date: Mon, 14 May 2018 11:55:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       spf=pass (google.com: domain of kernel-hardening-return-13179-gregkh=linuxfoundation.org@lists.openwall.com designates 195.42.179.200 as permitted sender) smtp.mailfrom=kernel-hardening-return-13179-gregkh=linuxfoundation.org@lists.openwall.com
+Mailing-List: contact kernel-hardening-help@lists.openwall.com; run by ezmlm
+List-Post: <mailto:kernel-hardening@lists.openwall.com>
+List-Help: <mailto:kernel-hardening-help@lists.openwall.com>
+List-Unsubscribe: <mailto:kernel-hardening-unsubscribe@lists.openwall.com>
+List-Subscribe: <mailto:kernel-hardening-subscribe@lists.openwall.com>
+Date: Wed, 2 May 2018 10:42:21 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Kees Cook <keescook@chromium.org>
+cc: Dave Hansen <dave.hansen@linux.intel.com>,
+    Linus Torvalds <torvalds@linux-foundation.org>,
+    Alexander Popov <alex.popov@linux.com>,
+    Kernel Hardening <kernel-hardening@lists.openwall.com>,
+    PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
+    Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+    Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
+    Mark Rutland <mark.rutland@arm.com>,
+    Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
+    Richard Sandiford <richard.sandiford@arm.com>,
+    "H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+    "Dmitry V . Levin" <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>,
+    Jonathan Corbet <corbet@lwn.net>,
+    Andrey Ryabinin <aryabinin@virtuozzo.com>,
+    "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+    Thomas Garnier <thgarnie@google.com>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
+    Masami Hiramatsu <mhiramat@kernel.org>,
+    Nicholas Piggin <npiggin@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+    "David S . Miller" <davem@davemloft.net>,
+    Ding Tianhong <dingtianhong@huawei.com>,
+    David Woodhouse <dwmw@amazon.co.uk>, Josh Poimboeuf <jpoimboe@redhat.com>,
+    Steven Rostedt <rostedt@goodmis.org>,
+    Dominik Brodowski <linux@dominikbrodowski.net>,
+    Juergen Gross <jgross@suse.com>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Dan Williams <dan.j.williams@intel.com>,
+    Mathias Krause <minipli@googlemail.com>,
+    Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+    Kyle Huey <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
+    Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+    Florian Weimer <fweimer@redhat.com>,
+    Boris Lukashev <blukashev@sempervictus.com>, X86 ML <x86@kernel.org>,
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel
+ stack at the end of syscalls
+In-Reply-To: <CAGXu5jJ_0e63QSv0YZsQoT_=zN8U-83nwxrQ10h=QjszbHK-aQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1805021041260.1668@nanos.tec.linutronix.de>
+References: <1523024546-6150-1-git-send-email-alex.popov@linux.com> <1523024546-6150-3-git-send-email-alex.popov@linux.com> <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com> <CAGXu5jJ_0e63QSv0YZsQoT_=zN8U-83nwxrQ10h=QjszbHK-aQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597007016485998750?=
-X-GMAIL-MSGID: =?utf-8?q?1600466862410838200?=
+X-GMAIL-THRID: =?utf-8?q?1597007022879408472?=
+X-GMAIL-MSGID: =?utf-8?q?1599341146627482488?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 04/06/2018 07:22 AM, Alexander Popov wrote:
-> This is the 11th version of the patch series introducing STACKLEAK to the
-> mainline kernel. The 9th version raised a fervent discussion[0].
-> The assembly code introduced by that version irritated the reviewers.
-> 
-> I've found the way to bypass the obstacles[1] of the C implementation.
-> So I dare come again. Let me ask you to look at this code without
-> preconception.
-> 
-> Motivation
-> ==========
-> 
-> STACKLEAK (initially developed by PaX Team):
-> 
->   1. reduces the information that can be revealed through kernel stack leak bugs.
->      The idea of erasing the thread stack at the end of syscalls is similar to
->      CONFIG_PAGE_POISONING and memzero_explicit() in kernel crypto, which all
->      comply with FDP_RIP.2 (Full Residual Information Protection) of the
->      Common Criteria standard.
-> 
->   2. blocks some uninitialized stack variable attacks (e.g. CVE-2017-17712,
->      CVE-2010-2963). That kind of bugs should be killed by improving C compilers
->      in future, which might take a long time.
-> 
->   3. blocks stack depth overflow caused by alloca (aka Stack Clash attack).
->      That is orthogonal to the mainline kernel VLA cleanup and protects
->      un-upstreamed code.
-> 
-> Performance impact
-> ==================
-> 
-> Hardware: Intel Core i7-4770, 16 GB RAM
-> 
-> Test #1: building the Linux kernel on a single core
-> 	0.91% slowdown
-> 
-> Test #2: hackbench -s 4096 -l 2000 -g 15 -f 25 -P
-> 	4.2% slowdown
-> 
-> So the STACKLEAK description in Kconfig includes:
-> "The tradeoff is the performance impact: on a single CPU system kernel
-> compilation sees a 1% slowdown, other systems and workloads may vary and you are
-> advised to test this feature on your expected workload before deploying it".
-> 
-> Links
-> =====
-> 
-> [0] http://www.openwall.com/lists/kernel-hardening/2018/03/03/7
-> [1] http://www.openwall.com/lists/kernel-hardening/2018/03/21/4
-> 
-> 
-> Alexander Popov (6):
->    gcc-plugins: Clean up the cgraph_create_edge* macros
->    x86/entry: Add STACKLEAK erasing the kernel stack at the end of
->      syscalls
->    gcc-plugins: Add STACKLEAK plugin for tracking the kernel stack
->    lkdtm: Add a test for STACKLEAK
->    fs/proc: Show STACKLEAK metrics in the /proc file system
->    doc: self-protection: Add information about STACKLEAK feature
-> 
->   Documentation/security/self-protection.rst |  23 +-
->   Documentation/x86/x86_64/mm.txt            |   2 +
->   arch/Kconfig                               |  53 ++++
->   arch/x86/Kconfig                           |   1 +
->   arch/x86/entry/Makefile                    |   3 +
->   arch/x86/entry/calling.h                   |  14 +
->   arch/x86/entry/entry_32.S                  |   7 +
->   arch/x86/entry/entry_64.S                  |   3 +
->   arch/x86/entry/entry_64_compat.S           |   5 +
->   arch/x86/entry/erase.c                     |  58 ++++
->   arch/x86/include/asm/processor.h           |   7 +
->   arch/x86/kernel/dumpstack.c                |  19 ++
->   arch/x86/kernel/process_32.c               |   8 +
->   arch/x86/kernel/process_64.c               |   8 +
->   drivers/misc/Makefile                      |   3 +
->   drivers/misc/lkdtm.h                       |   4 +
->   drivers/misc/lkdtm_core.c                  |   2 +
->   drivers/misc/lkdtm_stackleak.c             | 141 +++++++++
->   fs/proc/base.c                             |  18 ++
->   include/linux/compiler.h                   |   4 +
->   mm/util.c                                  |  33 ++
->   scripts/Makefile.gcc-plugins               |   3 +
->   scripts/gcc-plugins/gcc-common.h           |  26 +-
->   scripts/gcc-plugins/stackleak_plugin.c     | 470 +++++++++++++++++++++++++++++
->   24 files changed, 896 insertions(+), 19 deletions(-)
->   create mode 100644 arch/x86/entry/erase.c
->   create mode 100644 drivers/misc/lkdtm_stackleak.c
->   create mode 100644 scripts/gcc-plugins/stackleak_plugin.c
-> 
+On Mon, 30 Apr 2018, Kees Cook wrote:
 
-As a point of reference, this series mitigates the leak
-fixed by https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0a0b98734479aa5b3c671d5190e86273372cab95
+> On Mon, Apr 23, 2018 at 9:23 PM, Dave Hansen
+> <dave.hansen@linux.intel.com> wrote:
+> > Hi Alexander,
+> >
+> > You can add:
+> >
+> > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+> >
+> > for this patch if you like.  I haven't taken a super close look at the
+> > rest, but this is certainly minimally invasive from my point of view for
+> > the entry code.  Thanks, again for reworking it.
+> 
+> Thanks Dave!
+> 
+> Given this improvement and your review, I'm going to start carrying
+> this for linux-next. Linus, if you're still opposed to this even after
+> the changes here in v11, please let us know. I'd rather hash things
+> out now instead of during a NAK in the 4.18 merge window. :)
+
+Kees, can we please route that x86/entry stuff through tip to avoid
+conflicts as there are other changes in that area on the horizon.
 
 Thanks,
-Laura
+
+	tglx
