@@ -1,103 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751790AbeEBWdF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 18:33:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50892 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751688AbeEBWdA (ORCPT
+        id S1751802AbeEBWgf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 18:36:35 -0400
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:53754 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751673AbeEBWgc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 18:33:00 -0400
-Date: Wed, 2 May 2018 15:32:58 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Chengguang Xu <cgxu519@gmx.com>
-Cc: ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [V9fs-developer] [PATCH v2 1/2] net/9p: detecting invalid
- options as much as possible
-Message-Id: <20180502153258.39b65209a0a85063441c6d85@linux-foundation.org>
-In-Reply-To: <1523947502-6103-1-git-send-email-cgxu519@gmx.com>
-References: <1523947502-6103-1-git-send-email-cgxu519@gmx.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 2 May 2018 18:36:32 -0400
+X-Google-Smtp-Source: AB8JxZqxSovJLaQq96rSMtG3on3YZYxeVZls0hCfVNjCbrNiMz2sJSrBrwjKjdAjGh6cjJSTPfr4qw==
+From: Wenwen Wang <wang6495@umn.edu>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Wolfram Sang <wsa@the-dreams.de>,
+        linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] i2c: core-smbus: fix a potential uninitialization bug
+Date: Wed,  2 May 2018 17:36:21 -0500
+Message-Id: <1525300581-27217-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 14:45:01 +0800 Chengguang Xu <cgxu519@gmx.com> wrote:
+In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
+which are used to save a series of messages, as mentioned in the comment.
+According to the value of the variable "size", msgbuf0 is initialized to
+various values. In contrast, msgbuf1 is left uninitialized until the
+function i2c_transfer() is invoked. However, mgsbuf1 is not always
+initialized on all possible execution paths (implementation) of
+i2c_transfer(). Thus, it is possible that mgsbuf1 may still not be
+uninitialized even after the invocation of the function i2c_transfer(). In
+the following execution, the uninitialized msgbuf1 will be used, such as
+for security checks. Since uninitialized values can be random and
+arbitrary, this will cause undefined behaviors or even check bypass. For
+example, it is expected that if the value of "size" is
+I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
+than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
+value read from msgbuf1 is assigned to data->block[0], which can
+potentially lead to invalid block write size, as demonstrated in the error
+message.
 
-> Currently when detecting invalid options in option parsing,
-> some options(e.g. msize) just set errno and allow to continuously
-> validate other options so that it can detect invalid options
-> as much as possible and give proper error messages together.
-> 
-> This patch applies same rule to option 'trans' and 'version'
-> when detecting EINVAL.
-> 
-> ...
+This patch simply initializes the buffer msgbuf1 with 0 to avoid undefined
+behaviors or security issues.
 
-A few issues:
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/i2c/i2c-core-smbus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -199,7 +199,7 @@ static int parse_opts(char *opts, struct p9_client *clnt)
->  					s);
->  				ret = -EINVAL;
->  				kfree(s);
-> -				goto free_and_return;
-> +				continue;
->  			}
->  			kfree(s);
->  			break;
-
-Here we can just do
-
---- a/net/9p/client.c~net-9p-detecting-invalid-options-as-much-as-possible-fix
-+++ a/net/9p/client.c
-@@ -198,8 +198,6 @@ static int parse_opts(char *opts, struct
- 				pr_info("Could not find request transport: %s\n",
- 					s);
- 				ret = -EINVAL;
--				kfree(s);
--				continue;
- 			}
- 			kfree(s);
- 			break;
-
-> @@ -217,7 +217,7 @@ static int parse_opts(char *opts, struct p9_client *clnt)
->  			ret = get_protocol_version(s);
-
-And here's the patch introduces a bug: if `ret' has value -EINVAL from
-an earlier parsing error, this code will overwrite that error code with
-zero.
-
-So you'll need to introduce a new temporary variable here.  And I
-suggest that for future-safety, we permit all error returns from
-get_protocol_version(), not just -EINVAL.  So something like:
-
---- a/net/9p/client.c~net-9p-detecting-invalid-options-as-much-as-possible-fix
-+++ a/net/9p/client.c
-@@ -214,13 +214,12 @@ static int parse_opts(char *opts, struct
- 					 "problem allocating copy of version arg\n");
- 				goto free_and_return;
- 			}
--			ret = get_protocol_version(s);
--			if (ret == -EINVAL) {
--				kfree(s);
--				continue;
--			}
-+			pv = get_protocol_version(s);
-+			if (pv >= 0)
-+				clnt->proto_version = pv;
-+			else
-+				ret = pv;
- 			kfree(s);
--			clnt->proto_version = ret;
- 			break;
- 		default:
- 			continue;
-_
-
-
-Similar changes can be made to patch 2/2.
+diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+index b5aec33..0fcca75 100644
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -324,7 +324,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+ 	 * somewhat simpler.
+ 	 */
+ 	unsigned char msgbuf0[I2C_SMBUS_BLOCK_MAX+3];
+-	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2];
++	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2] = {0};
+ 	int num = read_write == I2C_SMBUS_READ ? 2 : 1;
+ 	int i;
+ 	u8 partial_pec = 0;
+-- 
+2.7.4
