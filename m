@@ -1,268 +1,135 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AB8JxZrUalHa39xdTXMHu4idrr/k49IAde9/h7zGXlg0/3ivKbFKKXN0t3yUnpdNxysf3PoWchOG
-ARC-Seal: i=1; a=rsa-sha256; t=1525336643; cv=none;
-        d=google.com; s=arc-20160816;
-        b=isT5rDE7TOpYBrzj0YME+0qJoT9KEeOl6kguVwe8vzq8yUoU9Toc0U4PDg77QGBK0g
-         kAVm3GW0hI42DhAVsT1dcKUNeBN9rhMSWwqDYgz0419h96XgAhqlenN7F6oyLW41pyFg
-         wiQ5fibg3xiwFL60YSOAknEWrwmKtgBgRVj7nR0f4kGc+vzjnsYPDUBC8EFa8ZKiTnu5
-         FElD+4GjfEVoA8Ft23j5XLnKc93CMdiop2OvRkjMozgYOxthknN8NsRo5q3tTrIZw5Y3
-         EnsWy1rrOZXWAFz2eOFXCk1Q4Q1rhhk1h3WV/w+81sxJwJBm1tSDnrjXdjcMiQXqdQAl
-         FL8w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results;
-        bh=bXYz3JEY43WBhrWNFHJK2NK0Ii0qhOBPOF8UxJ3Bj1s=;
-        b=M8zEpc8DHb4km065gu36LJ8xApzBvuDDVOvWjtpxQ8SHIxPCok7oYpn7iMFh/RNjga
-         Em9lr4F+RINoxLgjmoAW9oCGm7Ow1+OKAcF6OnrX0Fu2e6PuGVF0JPAFrx1ygAOtTJsQ
-         leVdq/jCrwFuSckQobooxunz+vXdSO6YK6Vh+wHyCMhLbXvyFm2eS3yvhEfwtLsq4BgJ
-         3iFFWFFKAiSYyHb8+VhBJv0eGq+65BtXXOKOen8JFb5SfRhhsYDS3zbEGfhh2ltM7BMW
-         1VQ2+W+C0CH7kEu1OkK2l8Bb9O+ZeUjNQLNLGob6jmwW8nL+9hcRa7vWlTGWoax8z2dM
-         W+gw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 134.134.136.126 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,357,1520924400";
-   d="scan'208";a="51163086"
-Message-ID: <1525336639.21176.634.camel@linux.intel.com>
-Subject: Re: [PATCH v2] NFC: fdp: Remove __func__ from dev_dbg()
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Amit Pundir <amit.pundir@linaro.org>, lkml
- <linux-kernel@vger.kernel.org>,  linux-wireless@vger.kernel.org
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Christophe Ricard
-	 <christophe.ricard@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, John
-	Stultz <john.stultz@linaro.org>
-Date: Thu, 03 May 2018 11:37:19 +0300
-In-Reply-To: <1525326979-16897-1-git-send-email-amit.pundir@linaro.org>
-References: <1525326979-16897-1-git-send-email-amit.pundir@linaro.org>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-437838-1525248987-2-7529737216694430513
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='US-ASCII'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525248986; b=mdMgyFhhHVdFGQMXbC3tf04+zboRfVWpj6UxbbcTEKBKaxh9Ob
+    FjdN6AJMn3MTwO2/13gfIYPOvBhtvHJ08/nrYAgRldC6tlXIdGvg9MB/beWv6Glx
+    UWTKG+0wJPmh3DVs0vh9iW/eUnExoPUe89fucnzl3wmpOivlIIGQkFdSBDE7fTHI
+    Si7ohsW06GWwaUa56sgm6YZMrP2aHwKzJJlbsZIuEVdCqaIJxzhlBW12U5Pmtj6X
+    DmLGSrEMQcZZ0L2KWWVsjmBbS+ovXz/sRKXFUn3+S38c10VXC3ajyVpP5PKsEa0k
+    xjhiiWMnFAOa/HKcbzfydnVKAivkfgctdmfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=message-id:date:from:to:cc:subject
+    :references:in-reply-to:mime-version:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525248986;
+    bh=fp5atlUzASM/FpoakrN6YNUEF7wgRgHyiMLu29t6W70=; b=bglI2N1yKAze
+    TNrRzqN38cnmkegV6nvo6o+mUhhQ3SlZkK0aviTupGB2uxuwRNDOIWCXs9xaSH/X
+    9rHaXABCwQ++IOtWYJ8yvNmqG6k3ggYcQNaVBozB7/MCXwIeTRBn16aZ3MJ5cu8K
+    LDI11WCMZgavqD1UDB2nDNsY2SE08Q9zjB+cXyC0aXM73hpBuJXNTTaDRyZdYxKR
+    XKAfmXdprByQdpKkE2bwRVBysKTmmZvq0BDwR2dYK8UZlMb0FPvwQYTegISrD55B
+    CzfS9F1ZNSmmXFrCO0m+grXYGdc1OxJHAfcyrVHywDRSNrhQQE64pyh9YWklYthX
+    WoDYdiHKWQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-90 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=suse.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=suse.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-90 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPWgZAOcVkyz8fUXp1o2dFJ7Bry/N1G9wf0clBwfdLlS5C0cew1q0fvOlWwJ1sjTGq4KgrTUL53Zpwv9CT3ktqSAhqdXUEEjKiUdgPMcDWrwg7DzO6m2
+    PyA6ZEuJ9Fl38jGqjwhv/yBly6ZHTsLmZncEvrs3y8xQ3vKPY2Unal1dn9G579GkBvSqfRjs/w/9+pJwk4QHPzs0OZEb/YeQ4qsWbdwA5RALcpanGI2SZchW
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=yPCof4ZbAAAA:8 a=ZOODMjqyJcwrYCzWUJcA:9 a=IRlLSGNwzZ5svOmX:21
+    a=wfQc8d6fhBaG_zbS:21 a=CjuIK1q_8ugA:10
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751279AbeEBIQX convert rfc822-to-8bit (ORCPT
+        <rfc822;greg@kroah.com>); Wed, 2 May 2018 04:16:23 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:42734 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbeEBIQW (ORCPT
+        <rfc822;groupwise-stable@vger.kernel.org:4:2>);
+        Wed, 2 May 2018 04:16:22 -0400
+Message-Id: <5AE973CD02000078001C008E@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date: Wed, 02 May 2018 02:16:13 -0600
+From: "Jan Beulich" <JBeulich@suse.com>
+To: "Boris Ostrovsky" <boris.ostrovsky@oracle.com>
+Cc: "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>
+Subject: Re: [Xen-devel] [PATCH 3/4] xen/PVH: Set up GS segment for
+ stack canary
+References: <20180430162339.17143-1-boris.ostrovsky@oracle.com>
+ <20180430162339.17143-4-boris.ostrovsky@oracle.com>
+In-Reply-To: <20180430162339.17143-4-boris.ostrovsky@oracle.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599421268320906778?=
-X-GMAIL-MSGID: =?utf-8?q?1599431396466440676?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 2018-05-03 at 11:26 +0530, Amit Pundir wrote:
-> Remove redundant __func__ parameter from dev_dgb() calls.
-> 
-> v2:
-> Deleted empty dev_dbg() trace calls, which are redundant if
-> function tracer is enabled.
+>>> On 30.04.18 at 18:23, <boris.ostrovsky@oracle.com> wrote:
+> --- a/arch/x86/xen/xen-pvh.S
+> +++ b/arch/x86/xen/xen-pvh.S
+> @@ -54,6 +54,9 @@
+>   * charge of setting up it's own stack, GDT and IDT.
+>   */
+>  
+> +#define PVH_GDT_ENTRY_CANARY    4
+> +#define PVH_CANARY_SEL          (PVH_GDT_ENTRY_CANARY * 8)
 
-Actually this would be indeed part of commit message.
+I can only advise against doing it this way: There's no safeguard against
+someone changing asm/segment.h without changing this value (in fact
+this applies to all of the GDT selectors populated in this file). At the very
+least tie this to GDT_ENTRY_BOOT_TSS / __BOOT_TSS?
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> @@ -64,6 +67,9 @@ ENTRY(pvh_start_xen)
+>  	mov %eax,%es
+>  	mov %eax,%ss
+>  
+> +	mov $(PVH_CANARY_SEL),%eax
+> +	mov %eax,%gs
+> +
+>  	/* Stash hvm_start_info. */
+>  	mov $_pa(pvh_start_info), %edi
+>  	mov %ebx, %esi
+> @@ -150,6 +156,7 @@ gdt_start:
+>  	.quad 0x00cf9a000000ffff            /* __BOOT_CS */
+>  #endif
+>  	.quad 0x00cf92000000ffff            /* __BOOT_DS */
+> +	.quad 0x0040900000000018            /* PVH_CANARY_SEL */
 
-> 
-> Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-> ---
->  drivers/nfc/fdp/fdp.c | 18 +++---------------
->  drivers/nfc/fdp/i2c.c | 17 ++++-------------
->  2 files changed, 7 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
-> index d5784a4..f64a6fd 100644
-> --- a/drivers/nfc/fdp/fdp.c
-> +++ b/drivers/nfc/fdp/fdp.c
-> @@ -249,8 +249,6 @@ static int fdp_nci_open(struct nci_dev *ndev)
->  	struct fdp_nci_info *info = nci_get_drvdata(ndev);
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->  	r = info->phy_ops->enable(info->phy);
->  
->  	return r;
-> @@ -261,7 +259,6 @@ static int fdp_nci_close(struct nci_dev *ndev)
->  	struct fdp_nci_info *info = nci_get_drvdata(ndev);
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
->  	return 0;
->  }
->  
-> @@ -270,8 +267,6 @@ static int fdp_nci_send(struct nci_dev *ndev,
-> struct sk_buff *skb)
->  	struct fdp_nci_info *info = nci_get_drvdata(ndev);
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->  	if (atomic_dec_and_test(&info->data_pkt_counter))
->  		info->data_pkt_counter_cb(ndev);
->  
-> @@ -283,7 +278,6 @@ int fdp_nci_recv_frame(struct nci_dev *ndev,
-> struct sk_buff *skb)
->  	struct fdp_nci_info *info = nci_get_drvdata(ndev);
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
->  	return nci_recv_frame(ndev, skb);
->  }
->  EXPORT_SYMBOL(fdp_nci_recv_frame);
-> @@ -498,8 +492,6 @@ static int fdp_nci_setup(struct nci_dev *ndev)
->  	int r;
->  	u8 patched = 0;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->  	r = nci_core_init(ndev);
->  	if (r)
->  		goto error;
-> @@ -609,7 +601,6 @@ static int fdp_nci_core_reset_ntf_packet(struct
-> nci_dev *ndev,
->  	struct fdp_nci_info *info = nci_get_drvdata(ndev);
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
->  	info->setup_reset_ntf = 1;
->  	wake_up(&info->setup_wq);
->  
-> @@ -622,7 +613,6 @@ static int fdp_nci_prop_patch_ntf_packet(struct
-> nci_dev *ndev,
->  	struct fdp_nci_info *info = nci_get_drvdata(ndev);
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
->  	info->setup_patch_ntf = 1;
->  	info->setup_patch_status = skb->data[0];
->  	wake_up(&info->setup_wq);
-> @@ -637,7 +627,7 @@ static int fdp_nci_prop_patch_rsp_packet(struct
-> nci_dev *ndev,
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  	u8 status = skb->data[0];
->  
-> -	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
-> +	dev_dbg(dev, "status 0x%x\n", status);
->  	nci_req_complete(ndev, status);
->  
->  	return 0;
-> @@ -650,7 +640,7 @@ static int
-> fdp_nci_prop_set_production_data_rsp_packet(struct nci_dev *ndev,
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  	u8 status = skb->data[0];
->  
-> -	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
-> +	dev_dbg(dev, "status 0x%x\n", status);
->  	nci_req_complete(ndev, status);
->  
->  	return 0;
-> @@ -695,7 +685,7 @@ static int
-> fdp_nci_core_get_config_rsp_packet(struct nci_dev *ndev,
->  	dev_dbg(dev, "OTP version %d\n", info->otp_version);
->  	dev_dbg(dev, "RAM version %d\n", info->ram_version);
->  	dev_dbg(dev, "key index %d\n", info->key_index);
-> -	dev_dbg(dev, "%s: status 0x%x\n", __func__, rsp->status);
-> +	dev_dbg(dev, "status 0x%x\n", rsp->status);
->  
->  	nci_req_complete(ndev, rsp->status);
->  
-> @@ -798,8 +788,6 @@ void fdp_nci_remove(struct nci_dev *ndev)
->  	struct fdp_nci_info *info = nci_get_drvdata(ndev);
->  	struct device *dev = &info->phy->i2c_dev->dev;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->  	nci_unregister_device(ndev);
->  	nci_free_device(ndev);
->  }
-> diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
-> index c4da50e..f355ab2 100644
-> --- a/drivers/nfc/fdp/i2c.c
-> +++ b/drivers/nfc/fdp/i2c.c
-> @@ -57,7 +57,6 @@ static int fdp_nci_i2c_enable(void *phy_id)
->  {
->  	struct fdp_i2c_phy *phy = phy_id;
->  
-> -	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
->  	fdp_nci_i2c_reset(phy);
->  
->  	return 0;
-> @@ -67,7 +66,6 @@ static void fdp_nci_i2c_disable(void *phy_id)
->  {
->  	struct fdp_i2c_phy *phy = phy_id;
->  
-> -	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
->  	fdp_nci_i2c_reset(phy);
->  }
->  
-> @@ -113,8 +111,8 @@ static int fdp_nci_i2c_write(void *phy_id, struct
-> sk_buff *skb)
->  	}
->  
->  	if (r < 0 || r != skb->len)
-> -		dev_dbg(&client->dev, "%s: error err=%d len=%d\n",
-> -			__func__, r, skb->len);
-> +		dev_dbg(&client->dev, "error err=%d len=%d\n",
-> +			r, skb->len);
->  
->  	if (r >= 0) {
->  		if (r != skb->len) {
-> @@ -152,8 +150,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy
-> *phy, struct sk_buff **skb)
->  
->  		r = i2c_master_recv(client, tmp, len);
->  		if (r != len) {
-> -			dev_dbg(&client->dev, "%s: i2c recv err:
-> %d\n",
-> -				__func__, r);
-> +			dev_dbg(&client->dev, "i2c recv err: %d\n",
-> r);
->  			goto flush;
->  		}
->  
-> @@ -167,8 +164,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy
-> *phy, struct sk_buff **skb)
->  		 * and force resynchronization
->  		 */
->  		if (lrc) {
-> -			dev_dbg(&client->dev, "%s: corrupted
-> packet\n",
-> -				__func__);
-> +			dev_dbg(&client->dev, "corrupted packet\n");
->  			phy->next_read_size = 5;
->  			goto flush;
->  		}
-> @@ -215,7 +211,6 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int
-> irq, void *phy_id)
->  	}
->  
->  	client = phy->i2c_dev;
-> -	dev_dbg(&client->dev, "%s\n", __func__);
->  
->  	r = fdp_nci_i2c_read(phy, &skb);
->  
-> @@ -296,8 +291,6 @@ static int fdp_nci_i2c_probe(struct i2c_client
-> *client)
->  	u32 clock_freq;
->  	int r = 0;
->  
-> -	dev_dbg(dev, "%s\n", __func__);
-> -
->  	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
-> {
->  		nfc_err(dev, "No I2C_FUNC_I2C support\n");
->  		return -ENODEV;
-> @@ -359,8 +352,6 @@ static int fdp_nci_i2c_remove(struct i2c_client
-> *client)
->  {
->  	struct fdp_i2c_phy *phy = i2c_get_clientdata(client);
->  
-> -	dev_dbg(&client->dev, "%s\n", __func__);
-> -
->  	fdp_nci_remove(phy->ndev);
->  	fdp_nci_i2c_disable(phy);
->  
+Without any further code before loading the selector, this points at
+physical address 0. Don't you need to add in the base address of
+the per-CPU stack_canary?
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Jan
