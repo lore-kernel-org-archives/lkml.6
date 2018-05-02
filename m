@@ -1,10 +1,11 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1358616-1525295774-2-5886615972321144504
+X-Cyrus-Session-Id: sloti22d1t05-1359032-1525295750-2-15394922272086921178
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
   MailFrom='org'
 X-Spam-charsets: 
@@ -12,25 +13,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525295773; b=cxK0L+jUBzdNRMGaQ6nxwRqATqOjBx+VIDDY/vE1+dgxeQcdsm
-    rZrmicyCNKIq4DtXNS8/4+gOIA0s7rYc6L09b2ht/qZI3qz+mXSdQadKGAW5jUKS
-    mkOuF/UVc9w9xs9fn5/GlXIY0BDLNIMgMmU0qx9IMFkg663SCkGMX5w2zslohSe/
-    UJqcGmgurk9qxUCwt7xp1Q5KK5rLiyNszYWDrOc5a3uYyYqZ2WdE/DJ0HccdIlym
-    eL3xjtkAEK4jajfs4RqqwT/l7joktFOiq3MQjqTiABbRKMq7xlW56jQSzddJJDIB
-    kvtxk6PltfAKUA6yX3yIbyTHRAcq6Ub6UjSA==
+    1525295749; b=ZpKkvX0ajw6cV8X8vHhwAZs/31xdS9XTgAip+FoT1pTwwQOqPK
+    g+U83UxhXOkmyfX/PE3Hf4qWc1QH1Qn3uXNlnbWgXDND0sv2uwMY1ZegbrRhBAUr
+    muuM16lcCFZoYamrMW1Gb6k5wNO5Ytd3l0V72mxlMKnakLe5LM90NbA7TPulUCke
+    tbZMat1Qn3M7xUA2pykyDAT/9UQJy7mDiyztyhhHzkXAcc4mUR+vNOQ2hZGZj999
+    yAPxNremIJTfYAdjFoZ5mMKjoNzVCgJLXWUzz8ZNZ2MND+UGfRBgF5csb+KU8C1Z
+    NvSBSgW3o7Fx/gf0l8uFODyecta7qZnQvyNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525295773; bh=
-    YaLhptsgXaBRoJwnWDmZq1gH27POTQUtRI1RReqg5/0=; b=Z/r0nfx+Gx4ty9l9
-    iiUZBIM1ERDuTo3388jGQZiOdSB4ocxOdur+ravl89MeN6gEuNvQ2Co+54NYLX4x
-    5ZdDSQgYIcUH0JY5xT+tbA6qDKQedL5vjC040TPNwUUKfTMnk9kdoWe9KTG84PRd
-    8lTL6Lu1GJhqfHR6i3MXz3TIdYnPCtZq0G0VudyomRxi9ojU+8zwz+IExYCMtyRz
-    yjhXG4ncaKIocu53BZvTLpuaMmRl+pc5jdOYDD4+a6FGZBcqkfgPuAngGi29XbTy
-    9lLuh5GNt0bx6TB31uCYxsdHA2LeEMmWb9wKtbt9ZZhj8A63Wmb8Qb2PUlRzmDIV
-    4xn/Vg==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525295749; bh=
+    ckKQa3rvm5pm0sP/q/mLtFrhi6sPjSIp4F0iJFPYDUs=; b=NjCRTfqA+3K8dbkj
+    U4F56TcEP0Y5jbpoWg7UZf2dDdBnV2anK7XWWxzRk+xSya8yVZoArE2FFeiTYOwa
+    aQmP5NqGvJ9lJn8t6vSsx+i+0w99Kf0T7ZOCWMXm7P0CIxDEwGXDjzu1sEix/Egd
+    8cuo9bRUXs05i7kxWC1ahPZ4t1u/SAdMVfAFvnc4pHCbUvVXZc8a1OOl1cTU2ds1
+    AZ0yNKFDNLhcWbNRIB0lx2fqEwWJFqldC1K20JVBMGfV+LIM45Zf+3ztltcHbIdG
+    VQVcfmnx9HYqAgsCMp1U4IEXA5QwGOg2Wzb8gUT/qDbc37nKMFpudKynd0LxzW/0
+    wpa1Iw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=infradead.org header.i=@infradead.org header.b=HFTZnlYZ
+    header.d=infradead.org header.i=@infradead.org header.b=hDGQ72K6
     x-bits=2048 x-keytype=rsa x-algorithm=sha256
     x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -44,10 +45,10 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=infradead.org header.i=@infradead.org header.b=HFTZnlYZ
+      header.d=infradead.org header.i=@infradead.org header.b=hDGQ72K6
       x-bits=2048 x-keytype=rsa x-algorithm=sha256
       x-selector=bombadil.20170209;
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
@@ -62,29 +63,29 @@ Authentication-Results: mx2.messagingengine.com;
       header.domain=lst.de header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHDg4m50Hd3G7Mza/gxETZOa8cjnM3qZuJap2fYpskNAn6s7WQMEQ/uWLtCOAr8VGcTk1A50vJGSoZjukLos8iPdV3A3c1AYe89CaZNoCEzKndNfx8+c
-    dDR6GapG54OpaRaaZX+7irf2o4fjvESXezQLfs92oiSJtB/WoOsgwS0lQeCFFufHxMtGPiCGGh8Qx4Ak6Q7jfExBEPBLYPwHvF/qyMIRFn4uibUw79afs/ok
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=ag1SF4gXAAAA:8 a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=BU7OBiu2QJBTmSxWuzEA:9
-    a=x8gzFH9gYPwA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfM1/f6xOiVpQ2n2BbCY6XU+1jCwG9WbP0Mu/6Btz2SpehCxbkyCZj7mgZgIOlwFcvI8kHIVaGoSZdAgL5aB9Lu/OWNGiSRh9oZ0g0HLERUo4XUVcHpI+
+    uQKHV0Ujq77+4lKISfRjXZnAjLJ28umaVOz0E1n6CfG7JE24j3CrC9wFLUv1TcoH9RFKdgcFtjTayqp3decuBpxZgkPErfWSlYWMbnzMXEzUWTqELhhyh8IU
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=ag1SF4gXAAAA:8
+    a=yPCof4ZbAAAA:8 a=VwQbUJbxAAAA:8 a=WnEx2ZbQ94QqvHYnlNwA:9 a=x8gzFH9gYPwA:10
+    a=Yupwre4RP9_Eg_Bd0iYG:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751851AbeEBVPz (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 17:15:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37892 "EHLO
+        id S1751809AbeEBVPV (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 17:15:21 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37906 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751570AbeEBVPP (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 17:15:15 -0400
+        with ESMTP id S1751420AbeEBVPS (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Wed, 2 May 2018 17:15:18 -0400
 From: Christoph Hellwig <hch@lst.de>
 To: viro@zeniv.linux.org.uk
 Cc: Avi Kivity <avi@scylladb.com>, linux-aio@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/7] aio: refactor read/write iocb setup
-Date: Wed,  2 May 2018 23:14:46 +0200
-Message-Id: <20180502211448.18276-6-hch@lst.de>
+Subject: [PATCH 6/7] aio: implement IOCB_CMD_FSYNC and IOCB_CMD_FDSYNC
+Date: Wed,  2 May 2018 23:14:47 +0200
+Message-Id: <20180502211448.18276-7-hch@lst.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180502211448.18276-1-hch@lst.de>
 References: <20180502211448.18276-1-hch@lst.de>
@@ -95,343 +96,91 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Don't reference the kiocb structure from the common aio code, and move
-any use of it into helper specific to the read/write path.  This is in
-preparation for aio_poll support that wants to use the space for different
-fields.
+Simple workqueue offload for now, but prepared for adding a real aio_fsync
+method if the need arises.  Based on an earlier patch from Dave Chinner.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Jeff Moyer <jmoyer@redhat.com>
 Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 ---
- fs/aio.c | 161 +++++++++++++++++++++++++++++++------------------------
- 1 file changed, 92 insertions(+), 69 deletions(-)
+ fs/aio.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
 diff --git a/fs/aio.c b/fs/aio.c
-index e5866e2fc331..d07c27b3fe88 100644
+index d07c27b3fe88..61d2e6942951 100644
 --- a/fs/aio.c
 +++ b/fs/aio.c
-@@ -170,7 +170,9 @@ struct kioctx {
- #define KIOCB_CANCELLED		((void *) (~0ULL))
+@@ -156,6 +156,12 @@ struct kioctx {
+ 	unsigned		id;
+ };
  
++struct fsync_iocb {
++	struct work_struct	work;
++	struct file		*file;
++	bool			datasync;
++};
++
+ /*
+  * We use ki_cancel == KIOCB_CANCELLED to indicate that a kiocb has been either
+  * cancelled or completed (this makes a certain amount of sense because
+@@ -172,6 +178,7 @@ struct kioctx {
  struct aio_kiocb {
--	struct kiocb		common;
-+	union {
-+		struct kiocb		rw;
-+	};
+ 	union {
+ 		struct kiocb		rw;
++		struct fsync_iocb	fsync;
+ 	};
  
  	struct kioctx		*ki_ctx;
- 	kiocb_cancel_fn		*ki_cancel;
-@@ -549,7 +551,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
- 
- void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
- {
--	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, common);
-+	struct aio_kiocb *req = container_of(iocb, struct aio_kiocb, rw);
- 	struct kioctx *ctx = req->ki_ctx;
- 	unsigned long flags;
- 
-@@ -581,7 +583,7 @@ static int kiocb_cancel(struct aio_kiocb *kiocb)
- 		cancel = cmpxchg(&kiocb->ki_cancel, old, KIOCB_CANCELLED);
- 	} while (cancel != old);
- 
--	return cancel(&kiocb->common);
-+	return cancel(&kiocb->rw);
+@@ -1573,6 +1580,36 @@ static ssize_t aio_write(struct kiocb *req, struct iocb *iocb, bool vectored,
+ 	return ret;
  }
  
- /*
-@@ -1046,15 +1048,6 @@ static inline struct aio_kiocb *aio_get_req(struct kioctx *ctx)
- 	return NULL;
- }
- 
--static void kiocb_free(struct aio_kiocb *req)
--{
--	if (req->common.ki_filp)
--		fput(req->common.ki_filp);
--	if (req->ki_eventfd != NULL)
--		eventfd_ctx_put(req->ki_eventfd);
--	kmem_cache_free(kiocb_cachep, req);
--}
--
- static struct kioctx *lookup_ioctx(unsigned long ctx_id)
- {
- 	struct aio_ring __user *ring  = (void __user *)ctx_id;
-@@ -1085,27 +1078,14 @@ static struct kioctx *lookup_ioctx(unsigned long ctx_id)
- /* aio_complete
-  *	Called when the io request on the given iocb is complete.
-  */
--static void aio_complete(struct kiocb *kiocb, long res, long res2)
-+static void aio_complete(struct aio_kiocb *iocb, long res, long res2)
- {
--	struct aio_kiocb *iocb = container_of(kiocb, struct aio_kiocb, common);
- 	struct kioctx	*ctx = iocb->ki_ctx;
- 	struct aio_ring	*ring;
- 	struct io_event	*ev_page, *event;
- 	unsigned tail, pos, head;
- 	unsigned long	flags;
- 
--	if (kiocb->ki_flags & IOCB_WRITE) {
--		struct file *file = kiocb->ki_filp;
--
--		/*
--		 * Tell lockdep we inherited freeze protection from submission
--		 * thread.
--		 */
--		if (S_ISREG(file_inode(file)->i_mode))
--			__sb_writers_acquired(file_inode(file)->i_sb, SB_FREEZE_WRITE);
--		file_end_write(file);
--	}
--
- 	if (!list_empty_careful(&iocb->ki_list)) {
- 		unsigned long flags;
- 
-@@ -1167,11 +1147,12 @@ static void aio_complete(struct kiocb *kiocb, long res, long res2)
- 	 * eventfd. The eventfd_signal() function is safe to be called
- 	 * from IRQ context.
- 	 */
--	if (iocb->ki_eventfd != NULL)
-+	if (iocb->ki_eventfd) {
- 		eventfd_signal(iocb->ki_eventfd, 1);
-+		eventfd_ctx_put(iocb->ki_eventfd);
-+	}
- 
--	/* everything turned out well, dispose of the aiocb. */
--	kiocb_free(iocb);
-+	kmem_cache_free(kiocb_cachep, iocb);
- 
- 	/*
- 	 * We have to order our ring_info tail store above and test
-@@ -1434,6 +1415,45 @@ SYSCALL_DEFINE1(io_destroy, aio_context_t, ctx)
- 	return -EINVAL;
- }
- 
-+static void aio_complete_rw(struct kiocb *kiocb, long res, long res2)
++static void aio_fsync_work(struct work_struct *work)
 +{
-+	struct aio_kiocb *iocb = container_of(kiocb, struct aio_kiocb, rw);
-+
-+	if (kiocb->ki_flags & IOCB_WRITE) {
-+		struct inode *inode = file_inode(kiocb->ki_filp);
-+
-+		/*
-+		 * Tell lockdep we inherited freeze protection from submission
-+		 * thread.
-+		 */
-+		if (S_ISREG(inode->i_mode))
-+			__sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
-+		file_end_write(kiocb->ki_filp);
-+	}
-+
-+	fput(kiocb->ki_filp);
-+	aio_complete(iocb, res, res2);
-+}
-+
-+static int aio_prep_rw(struct kiocb *req, struct iocb *iocb)
-+{
++	struct fsync_iocb *req = container_of(work, struct fsync_iocb, work);
 +	int ret;
 +
-+	req->ki_filp = fget(iocb->aio_fildes);
-+	if (unlikely(!req->ki_filp))
-+		return -EBADF;
-+	req->ki_complete = aio_complete_rw;
-+	req->ki_pos = iocb->aio_offset;
-+	req->ki_flags = iocb_flags(req->ki_filp);
-+	if (iocb->aio_flags & IOCB_FLAG_RESFD)
-+		req->ki_flags |= IOCB_EVENTFD;
-+	req->ki_hint = file_write_hint(req->ki_filp);
-+	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
-+	if (unlikely(ret))
-+		fput(req->ki_filp);
-+	return ret;
++	ret = vfs_fsync(req->file, req->datasync);
++	fput(req->file);
++	aio_complete(container_of(req, struct aio_kiocb, fsync), ret, 0);
 +}
 +
- static int aio_setup_rw(int rw, struct iocb *iocb, struct iovec **iovec,
- 		bool vectored, bool compat, struct iov_iter *iter)
- {
-@@ -1453,7 +1473,7 @@ static int aio_setup_rw(int rw, struct iocb *iocb, struct iovec **iovec,
- 	return import_iovec(rw, buf, len, UIO_FASTIOV, iovec, iter);
- }
- 
--static inline ssize_t aio_ret(struct kiocb *req, ssize_t ret)
-+static inline ssize_t aio_rw_ret(struct kiocb *req, ssize_t ret)
- {
- 	switch (ret) {
- 	case -EIOCBQUEUED:
-@@ -1469,7 +1489,7 @@ static inline ssize_t aio_ret(struct kiocb *req, ssize_t ret)
- 		ret = -EINTR;
- 		/*FALLTHRU*/
- 	default:
--		aio_complete(req, ret, 0);
-+		aio_complete_rw(req, ret, 0);
- 		return 0;
- 	}
- }
-@@ -1477,59 +1497,79 @@ static inline ssize_t aio_ret(struct kiocb *req, ssize_t ret)
- static ssize_t aio_read(struct kiocb *req, struct iocb *iocb, bool vectored,
- 		bool compat)
- {
--	struct file *file = req->ki_filp;
- 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
- 	struct iov_iter iter;
-+	struct file *file;
- 	ssize_t ret;
- 
-+	ret = aio_prep_rw(req, iocb);
-+	if (ret)
-+		return ret;
-+	file = req->ki_filp;
++static int aio_fsync(struct fsync_iocb *req, struct iocb *iocb, bool datasync)
++{
++	if (unlikely(iocb->aio_buf || iocb->aio_offset || iocb->aio_nbytes ||
++			iocb->aio_rw_flags))
++		return -EINVAL;
 +
-+	ret = -EBADF;
- 	if (unlikely(!(file->f_mode & FMODE_READ)))
--		return -EBADF;
-+		goto out_fput;
-+	ret = -EINVAL;
- 	if (unlikely(!file->f_op->read_iter))
--		return -EINVAL;
-+		goto out_fput;
- 
- 	ret = aio_setup_rw(READ, iocb, &iovec, vectored, compat, &iter);
- 	if (ret)
--		return ret;
-+		goto out_fput;
- 	ret = rw_verify_area(READ, file, &req->ki_pos, iov_iter_count(&iter));
- 	if (!ret)
--		ret = aio_ret(req, call_read_iter(file, req, &iter));
-+		ret = aio_rw_ret(req, call_read_iter(file, req, &iter));
- 	kfree(iovec);
-+out_fput:
-+	if (unlikely(ret && ret != -EIOCBQUEUED))
-+		fput(file);
- 	return ret;
- }
- 
- static ssize_t aio_write(struct kiocb *req, struct iocb *iocb, bool vectored,
- 		bool compat)
- {
--	struct file *file = req->ki_filp;
- 	struct iovec inline_vecs[UIO_FASTIOV], *iovec = inline_vecs;
- 	struct iov_iter iter;
-+	struct file *file;
- 	ssize_t ret;
- 
-+	ret = aio_prep_rw(req, iocb);
-+	if (ret)
-+		return ret;
-+	file = req->ki_filp;
++	req->file = fget(iocb->aio_fildes);
++	if (unlikely(!req->file))
++		return -EBADF;
++	if (unlikely(!req->file->f_op->fsync)) {
++		fput(req->file);
++		return -EINVAL;
++	}
 +
-+	ret = -EBADF;
- 	if (unlikely(!(file->f_mode & FMODE_WRITE)))
--		return -EBADF;
-+		goto out_fput;
-+	ret = -EINVAL;
- 	if (unlikely(!file->f_op->write_iter))
--		return -EINVAL;
-+		goto out_fput;
- 
- 	ret = aio_setup_rw(WRITE, iocb, &iovec, vectored, compat, &iter);
- 	if (ret)
--		return ret;
-+		goto out_fput;
- 	ret = rw_verify_area(WRITE, file, &req->ki_pos, iov_iter_count(&iter));
- 	if (!ret) {
- 		/*
- 		 * Open-code file_start_write here to grab freeze protection,
--		 * which will be released by another thread in aio_complete().
--		 * Fool lockdep by telling it the lock got released so that it
--		 * doesn't complain about the held lock when we return to
--		 * userspace.
-+		 * which will be released by another thread in
-+		 * aio_complete_rw().  Fool lockdep by telling it the lock got
-+		 * released so that it doesn't complain about the held lock when
-+		 * we return to userspace.
- 		 */
- 		if (S_ISREG(file_inode(file)->i_mode)) {
- 			__sb_start_write(file_inode(file)->i_sb, SB_FREEZE_WRITE, true);
- 			__sb_writers_release(file_inode(file)->i_sb, SB_FREEZE_WRITE);
- 		}
- 		req->ki_flags |= IOCB_WRITE;
--		ret = aio_ret(req, call_write_iter(file, req, &iter));
-+		ret = aio_rw_ret(req, call_write_iter(file, req, &iter));
- 	}
- 	kfree(iovec);
-+out_fput:
-+	if (unlikely(ret && ret != -EIOCBQUEUED))
-+		fput(file);
- 	return ret;
- }
- 
-@@ -1537,7 +1577,6 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
++	req->datasync = datasync;
++	INIT_WORK(&req->work, aio_fsync_work);
++	schedule_work(&req->work);
++	return -EIOCBQUEUED;
++}
++
+ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
  			 struct iocb *iocb, bool compat)
  {
- 	struct aio_kiocb *req;
--	struct file *file;
- 	ssize_t ret;
- 
- 	/* enforce forwards compatibility on users */
-@@ -1560,16 +1599,6 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
- 	if (unlikely(!req))
- 		return -EAGAIN;
- 
--	req->common.ki_filp = file = fget(iocb->aio_fildes);
--	if (unlikely(!req->common.ki_filp)) {
--		ret = -EBADF;
--		goto out_put_req;
--	}
--	req->common.ki_pos = iocb->aio_offset;
--	req->common.ki_complete = aio_complete;
--	req->common.ki_flags = iocb_flags(req->common.ki_filp);
--	req->common.ki_hint = file_write_hint(file);
--
- 	if (iocb->aio_flags & IOCB_FLAG_RESFD) {
- 		/*
- 		 * If the IOCB_FLAG_RESFD flag of aio_flags is set, get an
-@@ -1583,14 +1612,6 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
- 			req->ki_eventfd = NULL;
- 			goto out_put_req;
- 		}
--
--		req->common.ki_flags |= IOCB_EVENTFD;
--	}
--
--	ret = kiocb_set_rw_flags(&req->common, iocb->aio_rw_flags);
--	if (unlikely(ret)) {
--		pr_debug("EINVAL: aio_rw_flags\n");
--		goto out_put_req;
- 	}
- 
- 	ret = put_user(KIOCB_KEY, &user_iocb->aio_key);
-@@ -1604,16 +1625,16 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
- 
- 	switch (iocb->aio_lio_opcode) {
- 	case IOCB_CMD_PREAD:
--		ret = aio_read(&req->common, iocb, false, compat);
-+		ret = aio_read(&req->rw, iocb, false, compat);
- 		break;
- 	case IOCB_CMD_PWRITE:
--		ret = aio_write(&req->common, iocb, false, compat);
-+		ret = aio_write(&req->rw, iocb, false, compat);
- 		break;
- 	case IOCB_CMD_PREADV:
--		ret = aio_read(&req->common, iocb, true, compat);
-+		ret = aio_read(&req->rw, iocb, true, compat);
- 		break;
+@@ -1636,6 +1673,12 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
  	case IOCB_CMD_PWRITEV:
--		ret = aio_write(&req->common, iocb, true, compat);
-+		ret = aio_write(&req->rw, iocb, true, compat);
+ 		ret = aio_write(&req->rw, iocb, true, compat);
  		break;
++	case IOCB_CMD_FSYNC:
++		ret = aio_fsync(&req->fsync, iocb, false);
++		break;
++	case IOCB_CMD_FDSYNC:
++		ret = aio_fsync(&req->fsync, iocb, true);
++		break;
  	default:
  		pr_debug("invalid aio operation %d\n", iocb->aio_lio_opcode);
-@@ -1633,7 +1654,9 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
- out_put_req:
- 	put_reqs_available(ctx, 1);
- 	percpu_ref_put(&ctx->reqs);
--	kiocb_free(req);
-+	if (req->ki_eventfd)
-+		eventfd_ctx_put(req->ki_eventfd);
-+	kmem_cache_free(kiocb_cachep, req);
- 	return ret;
- }
- 
+ 		ret = -EINVAL;
 -- 
 2.17.0
 
