@@ -1,158 +1,189 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1604446-1525727584-2-4821552389221175510
+X-Cyrus-Session-Id: sloti22d1t05-4163049-1525230505-2-2930102704723871096
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525727583; b=cbCUcbax2dX60CsyfDYUyBiATMPDMlNOllZO6ESq+q4A2X5XeR
-    +CKmO8wKZQ++hPwWb+8EcxWEW2H5iM0yG5MtaS1UZVvoerX7ZJQUttMmzhHuLjbM
-    DRJr3ypgQ9nedC7isRpEVCplk0+u9V6Dy4YByVcpC0Pcm4f0Agf/yDhHn8tdI2fq
-    K1fnGsi6i1Za1SRBS5JVf1HGy+9V1ae5aYiPOZpX1lr2ViEOCXiafFseKZA4Tu09
-    gtIwegU9DdRUNikAsfzYavRa9BW4MRUDoXNyFe8oumfgZIAIODyMzmmIwluzXQWY
-    RpW6UZonVXa8zBVMEDIb40gAUWJDqV8J0Bww==
+    1525230504; b=bGTOm5e1HOIfAp2Ma/eM7OLuwG3wvWdHuRJKLW06GtiP61+DLl
+    +pd9/KrftPX41JApo76pIDkIPrAG3OGGKMZVoaCH9C/sc8Q75uZv3shyRqLp/isB
+    gQFBc28WM35z4T5vXsnzQYyUT3zDJkeSwRhz+KjiMbDr5Vi5XvSpuhuYJ1u7AHO/
+    7QvhInh8O8QPAJ9tgW2fHnIVhQKvGenybL4kMYdDReYcBHDLZQu73zHXNRmQhoC4
+    S2vnVQEI3CCbU4iGtVQAo0t7x6NoQM7HPfZ2Oaf0NEeB2PVj4c9AdwcsnIbvath7
+    t4Us7wnGZQOT3txXcry9ip2siabpQ8XRj8pQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1525727583; bh=I2QGiVo8w60ffx+z6SOk1fRMBiDIxC13GB1WY9O6W1
-    Q=; b=OAwjDtVkFvvNc/lKDAJ92binljxRz3EigjZLnpSDG6wVnviHzKttt+Biw+
-    TywH5NTuJENpwlsbYPGs0iS4NPDVJ3IMO2ExpQgWjWWeob4HLIISxrTPQZS2k3W8
-    ab4HxaaHLidSO3qy2h8RdN36+clc3BeajLTIvbVpeqFhaKYo6TO3XL4O17TPPoGy
-    cWHR+kVKsFoXZWeUVq5m5RSSJmxB+dfqRY1b7S+/eQBGlGMBFLOtnxscWp5WNmi8
-    Zb+CEst6+3zQt8DG30LwQCuyg/oCvhQDQUnYVa6FLPWDYCm8aYt3WeeyX63DRvOR
-    Hn/5cYSKg2d47xYE31wRf0aFJ+kg==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=evSbalSF x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525230504; bh=
+    yW76xP3TSSkvGz53sYwncvstILQj35AwlkukmOfPCs0=; b=RHEowjOx6TRvzwDH
+    h4x5cKp1DN6AZ9lrxnJmrSJWXxoFMHrpgB67fuhVQBpxRepLMaYiaN2G2NteyFSZ
+    68GG9qQZTc7SNvPnCUlp9LEaTRr+VMCeK/wgv4EoSk9wshXE1szHrx94pz75Bc/C
+    jmPS3BeaydjuugEg4YOEyC0hFuyANVhdvMf64sTLGmISwEp0cLz0Td5dykW741eq
+    h9NElNdd0TfBEPcxFdbpMVD4qn877Ve7RFgoCfUqxnquc5T5h83RAs/Mxo6r9GpE
+    W6dyoZSw1gEv7COAiamtMaHurL9usZ9Xg4I1S70HNQvN/+gqfiJVNrUgDHutz6g1
+    zpt3Vg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+    header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=evSbalSF x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPwHHkwkusxlGvT2h64dRQCb38qRTxtUR9UCZ59xJLMJRqWtu/Ozbt6L2EY/NCyp1tH/gn5OGFivGXyH6kUXbJA7d5msf0xdR0dJbSS0ezn/xU9j7sYL
-    ecDlHlkMkqLzreEzIEGl4faGxfPGspYCW360AOQQN/OXA1dzwm7Vd3G0kI7bOTW5KXuehIRIV54NYDji6Son7BeGGmflGf/MypSHXJP55mhv5yy6x8d9boBs
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=EVFJ7BQ72y2q6q7T_LYA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfHY4sj3UvuscTyCvRd2bIJgI0nAhEBFVi8DcouBgNEvUSvxVoohcVq2APHUUbt3WWgEhf3xwfJwPR3qge6TpLgg8eyh/o8qNOSA1m49ctOB2JteWwGgK
+    +3FPlsn5YpWbBG99QbYg2tgWmPUvWPnYohsWyzgfpMeOxYjMo22UzdhdZEOWKFKLoEFnVSJdsFliKpbBWWkbQhXMd4aK2r0Yn6xPuyNDIGeLv9TPCpsRkM+q
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
+    a=VwQbUJbxAAAA:8 a=ORLigIeDGzOt-AVRv0kA:9 a=CRMob9CPfJQA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752790AbeEGVNA (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 7 May 2018 17:13:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59954 "EHLO mail.kernel.org"
+        id S1751311AbeEBDB6 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 23:01:58 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63823 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752389AbeEGVNA (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Mon, 7 May 2018 17:13:00 -0400
-X-Google-Smtp-Source: AB8JxZpPXIHiwA5kys9fKWLpcRHxtyhXbS/EwODGVamMARC/dsMajYSOM70vU8jYVzviH0neCZbBCtKggzywhzQ5dGg=
-MIME-Version: 1.0
-In-Reply-To: <1525229431-3087-20-git-send-email-hao.wu@intel.com>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com> <1525229431-3087-20-git-send-email-hao.wu@intel.com>
-From: Alan Tull <atull@kernel.org>
-Date: Mon, 7 May 2018 16:12:17 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRjZMnAtFMxka-O+AgMedGrbXNYZsNH7cLx=yJwmhFm=g@mail.gmail.com>
-Message-ID: <CANk1AXRjZMnAtFMxka-O+AgMedGrbXNYZsNH7cLx=yJwmhFm=g@mail.gmail.com>
-Subject: Re: [PATCH v5 19/28] fpga: dfl: fme-mgr: add compat_id support
-To: Wu Hao <hao.wu@intel.com>
-Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751287AbeEBDBw (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Tue, 1 May 2018 23:01:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
+   d="scan'208";a="46058257"
+From: Wu Hao <hao.wu@intel.com>
+To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
+        yi.z.zhang@intel.com, hao.wu@intel.com
+Subject: [PATCH v5 05/28] fpga: region: add compat_id support
+Date: Wed,  2 May 2018 10:50:08 +0800
+Message-Id: <1525229431-3087-6-git-send-email-hao.wu@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
+References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
+This patch introduces a compat_id pointer member and sysfs interface
+for each fpga region, similar as compat_id for fpga manager, it allows
+applications to read the per region compat_id for compatibility
+checking before other actions on this fpga-region (e.g PR).
 
-Hi Hao,
+Signed-off-by: Wu Hao <hao.wu@intel.com>
+---
+v5: use pointer for compat_id as it's optional to implement.
+---
+ Documentation/ABI/testing/sysfs-class-fpga-region |  9 +++++++++
+ drivers/fpga/fpga-region.c                        | 22 ++++++++++++++++++++++
+ include/linux/fpga/fpga-region.h                  |  2 ++
+ 3 files changed, 33 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-fpga-region
 
-> This patch adds compat_id support to fme manager driver, it
-> reads the ID from the hardware register. And it could be used
-> for compatibility check before partial reconfiguration.
->
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-Acked-by: Alan Tull <atull@kernel.org>
+diff --git a/Documentation/ABI/testing/sysfs-class-fpga-region b/Documentation/ABI/testing/sysfs-class-fpga-region
+new file mode 100644
+index 0000000..9618f74
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-class-fpga-region
+@@ -0,0 +1,9 @@
++What:		/sys/class/fpga_region/<region>/compat_id
++Date:		May 2018
++KernelVersion:	4.17
++Contact:	Wu Hao <hao.wu@intel.com>
++Description:	FPGA region id for compatibility check, e.g compatibility
++		of the FPGA reconfiguration hardware and image. This value
++		is defined or calculated by the layer that is creating the
++		FPGA region. This interface returns the compat_id value or
++		just error code -ENOENT in case compat_id is not used.
+diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+index d6a9dd2..6929178 100644
+--- a/drivers/fpga/fpga-region.c
++++ b/drivers/fpga/fpga-region.c
+@@ -162,6 +162,27 @@ int fpga_region_program_fpga(struct fpga_region *region)
+ }
+ EXPORT_SYMBOL_GPL(fpga_region_program_fpga);
+ 
++static ssize_t compat_id_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
++{
++	struct fpga_region *region = to_fpga_region(dev);
++
++	if (!region->compat_id)
++		return -ENOENT;
++
++	return sprintf(buf, "%016llx%016llx\n",
++		       (unsigned long long)region->compat_id->id_h,
++		       (unsigned long long)region->compat_id->id_l);
++}
++
++static DEVICE_ATTR_RO(compat_id);
++
++static struct attribute *fpga_region_attrs[] = {
++	&dev_attr_compat_id.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(fpga_region);
++
+ /**
+  * fpga_region_create - alloc and init a struct fpga_region
+  * @dev: device parent
+@@ -262,6 +283,7 @@ static int __init fpga_region_init(void)
+ 	if (IS_ERR(fpga_region_class))
+ 		return PTR_ERR(fpga_region_class);
+ 
++	fpga_region_class->dev_groups = fpga_region_groups;
+ 	fpga_region_class->dev_release = fpga_region_dev_release;
+ 
+ 	return 0;
+diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
+index f2e215b..e8ad979 100644
+--- a/include/linux/fpga/fpga-region.h
++++ b/include/linux/fpga/fpga-region.h
+@@ -12,6 +12,7 @@
+  * @bridge_list: list of FPGA bridges specified in region
+  * @mgr: FPGA manager
+  * @info: FPGA image info
++ * @compat_id: FPGA region id for compatibility check.
+  * @priv: private data
+  * @get_bridges: optional function to get bridges to a list
+  */
+@@ -21,6 +22,7 @@ struct fpga_region {
+ 	struct list_head bridge_list;
+ 	struct fpga_manager *mgr;
+ 	struct fpga_image_info *info;
++	struct fpga_compat_id *compat_id;
+ 	void *priv;
+ 	int (*get_bridges)(struct fpga_region *region);
+ };
+-- 
+1.8.3.1
 
-> ---
->  drivers/fpga/dfl-fme-mgr.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
-> index 1c5bc5a..afcdb39 100644
-> --- a/drivers/fpga/dfl-fme-mgr.c
-> +++ b/drivers/fpga/dfl-fme-mgr.c
-> @@ -272,9 +272,17 @@ static u64 fme_mgr_status(struct fpga_manager *mgr)
->         .status = fme_mgr_status,
->  };
->
-> +static void fme_mgr_get_compat_id(void __iomem *fme_pr,
-> +                                 struct fpga_compat_id *id)
-> +{
-> +       id->id_l = readq(fme_pr + FME_PR_INTFC_ID_L);
-> +       id->id_h = readq(fme_pr + FME_PR_INTFC_ID_H);
-> +}
-> +
->  static int fme_mgr_probe(struct platform_device *pdev)
->  {
->         struct dfl_fme_mgr_pdata *pdata = dev_get_platdata(&pdev->dev);
-> +       struct fpga_compat_id *compat_id;
->         struct device *dev = &pdev->dev;
->         struct fme_mgr_priv *priv;
->         struct fpga_manager *mgr;
-> @@ -295,11 +303,18 @@ static int fme_mgr_probe(struct platform_device *pdev)
->                         return PTR_ERR(priv->ioaddr);
->         }
->
-> +       compat_id = devm_kzalloc(dev, sizeof(*compat_id), GFP_KERNEL);
-> +       if (!compat_id)
-> +               return -ENOMEM;
-> +
-> +       fme_mgr_get_compat_id(priv->ioaddr, compat_id);
-> +
->         mgr = fpga_mgr_create(dev, "DFL FME FPGA Manager",
->                               &fme_mgr_ops, priv);
->         if (!mgr)
->                 return -ENOMEM;
->
-> +       mgr->compat_id = compat_id;
->         platform_set_drvdata(pdev, mgr);
->
->         ret = fpga_mgr_register(mgr);
-> --
-> 1.8.3.1
->
