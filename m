@@ -1,152 +1,203 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-490216-1525254167-2-12402120552235056632
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525254166; b=G0SgP69/rPnzOgCgcCdheqTILWYM/9YdwXKVvvsAHXVo45+CuW
-    3BvyBjXs23Q+CkkIom553o8ggAmnFwZ/NJlBjOAMPTtI4TzE4aFkUAtJcUyBtAcL
-    v+47WSqhe+vZWktEXeakxWt3/COpZgRjrzKY64b8bZifM7684GINAvPEyZSI4h5M
-    PtoLq2LL8KybtxTobmsaW1s1//nUc/a9nuJSGmQlPhiv6cToIg3z3RVAqGrBuFIj
-    tUmVQ7Y4b4i9ogXjOawidq+x2YeCnRoa4UTMdOye9oml8uzvbBDB7Td5fL4T7yzd
-    0rwVZGxC+PD26sVwxhhNZib0YEorwzmgpniA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525254166; bh=UWSwt
-    BDED2MVN9uOv4pFYOY4gkCCLTdzwvsbWbNiUJs=; b=in1p52D0otmtinIOzvbWq
-    aCPM2CdA7aH7bVg31k74WiG803sMnvhqJO7LOUJdNjUtwJckM8/We+UoBEDLipJG
-    Mmp3mmrVIdtuy69xCrEjvYko+WVspSPB5BzhXQkeNMCJeecPX8RCWNmeB3GV54BU
-    b0ZmVE6kaif+u4OsoikIcD/RGiE1VSL0LvPkktQVES1gOD2MCwod6gHUy4GxA01E
-    bux5u5jNdrOvMHqY6U00dMwO1SVLr/Mqf+wG13W34yIk1sQ8qPlwgSz3gEuY5Jtd
-    4XCd/f4TBBa9txclm5mPpNZpSl/XmZFKRzKGSKg4v0asxwoE8YoBdOgNyH/+KK0I
-    g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=microchip.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=microchip.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLVm/x7X7uffy5autZsluorx5FylYUK1uo4uuo9c7mcIkM0t3DIVdq8fleeJLsf5rT5nopgPN00gQlb0I+axBVcUIvfWG7fm3/DCkeTUhx04tMANnm7N
-    jn9fjj+vZjhKTAj/mXojTRgM3OKVc1TXImcyWOhGlmN3SlbYZeoEO20GUfOUkROht7dM0azROyqH8uVsgeIQURXMgmwRFPGcVxydir9zQD+Dxd7m2aXLpqks
-    dISTYU9elM4hCRxLhs36+g==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yPCof4ZbAAAA:8 a=DDOyTI_5AAAA:8
-    a=Sm64sKN7g9hzAlDLMIAA:9 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400"; d="scan'208";a="13460973"
-Date: Wed, 2 May 2018 15:12:29 +0530
-From: Ajay Singh <ajay.kathat@microchip.com>
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH] staging: wilc1000: fix infinite loop and out-of-bounds
- access
-Message-ID: <20180502151229.4be29ec8@ajaysk-VirtualBox>
-In-Reply-To: <20180502083935.uw4mxvcgnpayv3h3@mwanda>
-References: <20180430125040.GA19050@embeddedor.com>
- <20180430195916.596a93eb@ajaysk-VirtualBox>
- <20180430152321.7pq4ol2ed7tzsrl4@mwanda>
- <20180502111735.5a2c6faa@ajaysk-VirtualBox>
- <20180502083935.uw4mxvcgnpayv3h3@mwanda>
-Organization: Microchip Technology
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Return-Path: <domenico.andreoli.it@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525248765; cv=none;
+        d=google.com; s=arc-20160816;
+        b=NoAr2SMEU8M1NmTD030arzeEy/rdFGm7rLCxAiy+4kWu+uMIXwjYz3FCr7npN9bzH5
+         JA7S4FbteJs34E4bTQk1r/ht3Py3G59albXd6zFG+J9gHQFAAxSryZIRx3tT8QBQ6x1e
+         0DDIt47m5BOQbcndW6xSTGwNP6GQfRX3WW5hLHT+sd30jWYcMPZ1EzWs0HHmrDoibBNX
+         ARriCEas7aAXrUYVOqaaXeUXvIjF3RpOrDsLPJUQythFsiCp6NsgMe7+EDmMqo2FaJTF
+         I9HlpNotz8ALBFMGEJBXTftEadWeIB7OnBdV/HM8Vi2cVTSA9zbgVrbmtNgb0zKu5OxU
+         CciA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:sender:dkim-signature:arc-authentication-results;
+        bh=91bDGPUDwZKF4VXv0v6R+RzLJuX8w0+xlGc0blPbM48=;
+        b=zQMfDHFEf+l6Nob1rhW8TEtAq7OLQM95n2ZrirgfqHp7opWdsvJwQQyIHQOuyCF5Bu
+         EoCm6hUi3gdc8oE8uQpuFC3gLk+YW4BK7yrewH2bkeoPBysx/0gpCzX3rxVDQs/KA9dB
+         FYahbA2SPBtmzGZB4i2sB4IN+6A2ZeQpiY2zxcyTTozwEwfftSMgo7E40jxAK+u01Jp8
+         zRCYh+NXRJQEIyDK0fDZ+vRNXKbZezxRF+oxBFUfsSF32gJotzrcPLRo4a+9FQrFGsDH
+         n+Gh313xYTBjXcu2z1/WSk87lBfka+6wfoymorlgAQphrhHt108qmJJJtIOarzU9BP+W
+         bYFg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cE7eyF/k;
+       spf=pass (google.com: domain of domenico.andreoli.it@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=domenico.andreoli.it@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=cE7eyF/k;
+       spf=pass (google.com: domain of domenico.andreoli.it@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=domenico.andreoli.it@gmail.com
+X-Google-Smtp-Source: AB8JxZrx5SfgANuKGwVgENd0woDZk8z0IfZt3vWUB3oQFckhZKzwVxHSsYUbuX0ejiQH1ajqszVg1A==
+Sender: Domenico Andreoli <domenico.andreoli.it@gmail.com>
+Date: Wed, 2 May 2018 10:06:31 +0200
+From: Domenico Andreoli <domenico.andreoli@linux.com>
+To: Mathias Nyman <mathias.nyman@intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Marc Zyngier <marc.zyngier@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Regression due to "Workaround for uPD72020x USB3 chips"
+Message-ID: <20180502080631.sriwquzcky6t24c2@localhost>
 MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
- linux-wireless@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ganesh
- Krishna <ganesh.krishna@microchip.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599339249338945359?=
+X-GMAIL-MSGID: =?utf-8?q?1599339249338945359?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2 May 2018 11:39:36 +0300
-Dan Carpenter <dan.carpenter@oracle.com> wrote:
+Dear all,
 
-> We're mainly discussing readability, right?
-> 
-> To me when people use "int" that tells me as a reader that we don't
-> need to think about the type.  It's going to be a small number.
-> 
-> Say you have data which the user can control, then it's super
-> important to focus on the data types.  We don't focus on it
-> enough.  There is some kind of idea that good developers should
-> just be super focused on everything all the time, but I don't think
-> humans can do it.  So to me it's useful when the author tells me,
-> "This an int type.  It's fine. This is not critical."
-> 
-> If you make request->n_ssids a u8 or u16, that isn't going to save
-> any memory because the struct is padded.  You'd also need to audit
-> a bunch of code to make sure that we don't overflow the u16.  If
-> you wanted to overflow the int, you'd need to allocate several gigs
-> of memory but kmalloc() is capped at KMALLOC_MAX_SIZE (4MB) so
-> that's not possible. How many of these structs do we allocate?  Is
-> it really worth optimizing the heck out of it?
-> 
-> There are times where want to be very deliberate with our types
-> because we're dealing the large numbers, or user data or fast
-> paths.  But there are other times where int is fine...
-> 
+  my home machine stopped to boot starting from kernel version 4.12.7.
 
-As in this case, its fine to be of 'int' type.
-So we can retain the current data type('int') for 'i' and 'slot_id'. 
-Thank you for sharing your insights,it was very helpful.
+The last message I read is about resetting some USB3 bus. It's 100%
+reproducible also with any recent kernel up to 4.17.0-rc3.
 
-Regards,
-Ajay
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+I bisected down to the following commit:
+
+commit 0e1f0eaed6c20db41ff61e024b361ee3ec9d686c (tag: my_broken_xhci)
+Author: Marc Zyngier <marc.zyngier@arm.com>
+Date:   Tue Aug 1 20:11:08 2017 -0500
+
+    xhci: Reset Renesas uPD72020x USB controller for 32-bit DMA issue
+    
+    commit 8466489ef5ba48272ba4fa4ea9f8f403306de4c7 upstream.
+    
+    The Renesas uPD72020x XHCI controller seems to suffer from a really
+    annoying bug, where it may retain some of its DMA programming across a XHCI
+    reset, and despite the driver correctly programming new DMA addresses.
+    This is visible if the device has been using 64-bit DMA addresses, and is
+    then switched to using 32-bit DMA addresses.  The top 32 bits of the
+    address (now zero) are ignored are replaced by the 32 bits from the
+    *previous* programming.  Sticking with 64-bit DMA always works, but doesn't
+    seem very appropriate.
+    
+    A PCI reset of the device restores the normal functionality, which is done
+    at probe time.  Unfortunately, this has to be done before any quirk has
+    been discovered, hence the intrusive nature of the fix.
+    
+    Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+    Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+    Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+diff --git drivers/usb/host/pci-quirks.c drivers/usb/host/pci-quirks.c
+index 5f4ca7890435..c8f38649f749 100644
+--- drivers/usb/host/pci-quirks.c
++++ drivers/usb/host/pci-quirks.c
+@@ -1157,3 +1157,23 @@ static void quirk_usb_early_handoff(struct pci_dev *pdev)
+ }
+ DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_ANY_ID, PCI_ANY_ID,
+                        PCI_CLASS_SERIAL_USB, 8, quirk_usb_early_handoff);
++
++bool usb_xhci_needs_pci_reset(struct pci_dev *pdev)
++{
++       /*
++        * Our dear uPD72020{1,2} friend only partially resets when
++        * asked to via the XHCI interface, and may end up doing DMA
++        * at the wrong addresses, as it keeps the top 32bit of some
++        * addresses from its previous programming under obscure
++        * circumstances.
++        * Give it a good wack at probe time. Unfortunately, this
++        * needs to happen before we've had a chance to discover any
++        * quirk, or the system will be in a rather bad state.
++        */
++       if (pdev->vendor == PCI_VENDOR_ID_RENESAS &&
++           (pdev->device == 0x0014 || pdev->device == 0x0015))
++               return true;
++
++       return false;
++}
++EXPORT_SYMBOL_GPL(usb_xhci_needs_pci_reset);
+diff --git drivers/usb/host/pci-quirks.h drivers/usb/host/pci-quirks.h
+index 655994480198..5582cbafecd4 100644
+--- drivers/usb/host/pci-quirks.h
++++ drivers/usb/host/pci-quirks.h
+@@ -15,6 +15,7 @@ void usb_asmedia_modifyflowcontrol(struct pci_dev *pdev);
+ void usb_enable_intel_xhci_ports(struct pci_dev *xhci_pdev);
+ void usb_disable_xhci_ports(struct pci_dev *xhci_pdev);
+ void sb800_prefetch(struct device *dev, int on);
++bool usb_xhci_needs_pci_reset(struct pci_dev *pdev);
+ #else
+ struct pci_dev;
+ static inline void usb_amd_quirk_pll_disable(void) {}
+diff --git drivers/usb/host/xhci-pci.c drivers/usb/host/xhci-pci.c
+index 1ef622ededfd..cefa223f9f08 100644
+--- drivers/usb/host/xhci-pci.c
++++ drivers/usb/host/xhci-pci.c
+@@ -285,6 +285,13 @@ static int xhci_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 
+        driver = (struct hc_driver *)id->driver_data;
+ 
++       /* For some HW implementation, a XHCI reset is just not enough... */
++       if (usb_xhci_needs_pci_reset(dev)) {
++               dev_info(&dev->dev, "Resetting\n");
++               if (pci_reset_function_locked(dev))
++                       dev_warn(&dev->dev, "Reset failed");
++       }
++
+        /* Prevent runtime suspending between USB-2 and USB-3 initialization */
+        pm_runtime_get_noresume(&dev->dev);
+ 
+---
+
+Commenting out the call to pci_reset_function_locked() makes 4.17.0-rc3
+boot again so I think this bug qualifies as regression.
+
+I investigated a bit, the culprit is pci_reset_secondary_bus().
+
+pci_reset_function_locked ->
+  __pci_reset_function_locked ->
+    pci_reset_bridge_secondary_bus ->
+      pcibios_reset_secondary_bus ->
+        pci_reset_secondary_bus ->>>>>> here the system dies/hangs/stops
+
+I can read the printk I put right before PCI_BRIDGE_CTL_BUS_RESET is
+written in PCI_BRIDGE_CONTROL. I cannot read the printk I put right
+after.
+
+It seems my system doesn't like that PCI reset at all. I cannot swear
+that it is completely frozen, some disk activity might be happening
+shortly after, but my only option is to power cycle.
+
+I cannot debug easily. I tried to boot with a patched module and just
+attempted to work at it on a live machine but as soon I unload the
+module I'm left without keyboard/mouse (apparently all the accessible
+USB ports are going through the xhci-pci module) and at the moment I
+cannot go via network.
+
+This is the output of lspci -vt:
+
+-[0000:00]-+-00.0  Intel Corporation 4th Gen Core Processor DRAM Controller
+           +-01.0-[01]----00.0  NVIDIA Corporation GM108M [GeForce 840M]
+           +-02.0  Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor Integrated Graphics Controller
+           +-03.0  Intel Corporation Xeon E3-1200 v3/4th Gen Core Processor HD Audio Controller
+           +-14.0  Intel Corporation 8 Series/C220 Series Chipset Family USB xHCI
+           +-16.0  Intel Corporation 8 Series/C220 Series Chipset Family MEI Controller #1
+           +-1a.0  Intel Corporation 8 Series/C220 Series Chipset Family USB EHCI #2
+           +-1b.0  Intel Corporation 8 Series/C220 Series Chipset High Definition Audio Controller
+           +-1c.0-[02]--
+           +-1c.2-[03]----00.0  Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller
+           +-1c.3-[04]----00.0  Realtek Semiconductor Co., Ltd. RTS5229 PCI Express Card Reader
+           +-1c.4-[05]----00.0  Realtek Semiconductor Co., Ltd. RTL8821AE 802.11ac PCIe Wireless Network Adapter
+           +-1c.5-[06]----00.0  Renesas Technology Corp. uPD720202 USB 3.0 Host Controller
+           +-1d.0  Intel Corporation 8 Series/C220 Series Chipset Family USB EHCI #1
+           +-1f.0  Intel Corporation C220 Series Chipset Family H81 Express LPC Controller
+           +-1f.2  Intel Corporation 8 Series/C220 Series Chipset Family 6-port SATA Controller 1 [AHCI mode]
+           \-1f.3  Intel Corporation 8 Series/C220 Series Chipset Family SMBus Controller
+
+The call to pci_reset_secondary_bus() is correctly applied to -1c.5-.
+
+I suspect that -1c.5- might benefit from having PCI_DEV_FLAGS_NO_BUS_RESET
+in its dev->dev_flags but I'm not sure that it's the proper fix and how
+exactly it could end up there.
+
+Any suggestion on how to proceed further?
+
+Please ask more info if needed.
+
+Kind regards,
+Domenico
+
+-- 
+3B10 0CA1 8674 ACBA B4FE  FCD2 CE5B CF17 9960 DE13
