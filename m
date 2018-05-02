@@ -1,150 +1,240 @@
-Return-Path: <jsimmons@infradead.org>
-X-Google-Smtp-Source: AB8JxZqDKsNDjQQhsww/tvu7aCvP4SnF7ENDc35pG6C8mrO0CT+t7LwnKax7NwiPfs5qkSOnP/lf
-ARC-Seal: i=1; a=rsa-sha256; t=1525284621; cv=none;
+Return-Path: <amit.pundir@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525283384; cv=none;
         d=google.com; s=arc-20160816;
-        b=rkk1+tLJu8xE8eASpUYtrwqQNrq9KiNWZ3DqSxuQ+jIg7M+J2RNxqWepC/wl0oxAnH
-         Zc9ANbcQli4heS5+RCfDCkKk1DVPULlmrJ8NZ0HPater+/lEl8orvktI2KACbGI3oYdg
-         WcHlPTh4CQJcQfojyHdJ4mriZUthuEiabhDZYsTT+AWcG9QYhHeP2WrAw9nQkWfXpvnS
-         dd5A9boqCnzct6GOdacXcvacAavPrZZiNGDJ/raH3g878K8Fs+UVggqbb2hYiJ9Nqtau
-         8C82GmHeJ1SoKEUweA05gJQi7CibtvTKphMS5Tm5h8P/NgrURo3Dp/0V+3mc4yFEyXyP
-         AVGQ==
+        b=NuJTQIqsfGTSozS5o6jH4sjAxtIvGs8TU053nUoDRkCyr3ViHuXmFXjf9lY+Y9u2fJ
+         VlLj7IC9Yvm/4+UV3JgburmdYh/BGhxhU4eKy2j5wSmE5GI+ZltNeonEudwJkdk3Qe3U
+         jgaPTSD+qY/xJBn/gvRc3DChiyPyhuLCK1yatIh6tahWWT69JgwuOVlyt5/ARs3oIB2O
+         kpmZKqOrkJlv9hUId5suXtfn9458PQQL5m/uzD2mjNlTsF/GpzdUl5ZZZ7tqEueTZgxK
+         WVMt7TW95G0c/dVO/yQTNjfXZTTalhqR8tl8cLaXvbVptawuuVlzUREb9GzFVwGO353f
+         LGnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:from:date:dkim-signature:arc-authentication-results;
-        bh=D5eIdhP9Fk9j4q9bqh019KYyN/C2fmOVGBqZ6ZJW+4Y=;
-        b=NeV0WLmgIu8Ba2qOtNb3H9amdXA3x+Aj0IN9KscPKscLX/xAdBYww7Z/RQskcKn/Q4
-         BWrxEzNg4p7udpuUUHiZ8tj5Pu7YF6LPi50GWvBazCyLE+T4ukuut1u3Zi0ztwFDUeu1
-         5kjwaqLAWDWLpQnvK1mguiOKfM2UolzhItyE+gBeFtRxQzd1k2QdS5W9gBG1SVftjONU
-         VuKTYVki8tkPhUS6rZzLKlBAiAMkvAgJQFKS5BgaNP10cERTxaUXecMGQRQtyR+EseKD
-         H1uetdcHLizFxM8xw4+qNRCjfIniC+o0C1ZE9hqkAilPQ38EHbaLmbTkVXqfnqZjvPpI
-         LOkA==
+        h=author:message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=k963rsKbRvZ0iKEU2kAKepLfS69IrhXu8/g9e07LQVM=;
+        b=R7jFPwh+jN2WY1EPI40fXBrTyrgVU6kxL7Yv9nisMC8GYNWZJVFmTXKnhCpHWf0/2W
+         X04CdpFr+y3ehKd+QMq+kZjxTTGyEH5t1IMiK+p9cKbiAEmRok1HkyD3NMmS+6qenGw5
+         t2cGPRFk76B7gx1Gay3GZZaEBRO/6TNXu65m/TVYwXlmlr7d9ruw8Wx7ixXf2mvI9R+T
+         BRcqZTCEK5Z/tyVEi3nBoK+br6pDnWLdHh2AaCYrT5gcL/c0Hd2gYJnTzTWMygFhuEKY
+         LcrqTw7tukI95Knju6Cq2WCjdJ5K9vn7ochP6AImpFLU19iIaddWBPJhTIOiz/O65tHt
+         IiPA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=P7aXt6YH;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
+       dkim=pass header.i=@linaro.org header.s=google header.b=AxbxUT9q;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@infradead.org header.s=casper.20170209 header.b=P7aXt6YH;
-       spf=pass (google.com: best guess record for domain of jsimmons@infradead.org designates 2001:8b0:10b:1236::1 as permitted sender) smtp.mailfrom=jsimmons@infradead.org
-Date: Wed, 2 May 2018 19:10:15 +0100 (BST)
-From: James Simmons <jsimmons@infradead.org>
-To: Fengguang Wu <fengguang.wu@intel.com>
-cc: lustre-devel@lists.lustre.org, Oleg Drokin <oleg.drokin@intel.com>,
-    Andreas Dilger <andreas.dilger@intel.com>,
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    Linus Torvalds <torvalds@linux-foundation.org>, devel@driverdev.osuosl.org,
-    linux-kernel@vger.kernel.org, lkp@01.org
-Subject: Re: [lustre_init] BUG: unable to handle kernel NULL pointer dereference
- at 0000000000000004
-In-Reply-To: <20180502122749.vwak4yuerrzzbme6@wfg-t540p.sh.intel.com>
-Message-ID: <alpine.LFD.2.21.1805021907400.24633@casper.infradead.org>
-References: <20180502122749.vwak4yuerrzzbme6@wfg-t540p.sh.intel.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20180502_191015_212769_CE909D3F 
-X-CRM114-Status: GOOD (  12.87  )
-X-Spam-Score: -0.0 (/)
-X-Spam-Report: SpamAssassin version 3.4.1 on casper.infradead.org summary:
- Content analysis details:   (-0.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 NO_RELAYS              Informational: message was not relayed via SMTP
+       dkim=pass header.i=@linaro.org header.s=google header.b=AxbxUT9q;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZrn6m14V/TNA2gQtQ7NhFK2eIdPtVJDY+pR3VFsfyWovGpX5yvVZV6QQ1gp+l3xi1tmHP5hUg==
+From: Amit Pundir <amit.pundir@linaro.org>
+To: lkml <linux-kernel@vger.kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: Samuel Ortiz <sameo@linux.intel.com>,
+	Christophe Ricard <christophe.ricard@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	John Stultz <john.stultz@linaro.org>
+Subject: [PATCH] NFC: fdp: Remove __func__ parameter from dev_dbg() call
+Date: Wed,  2 May 2018 23:19:39 +0530
+Message-Id: <1525283379-7141-1-git-send-email-amit.pundir@linaro.org>
+X-Mailer: git-send-email 2.7.4
+Author: Amit Pundir <amit.pundir@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599355318480008040?=
-X-GMAIL-MSGID: =?utf-8?q?1599376847379389853?=
+X-GMAIL-THRID: =?utf-8?q?1599375551043714716?=
+X-GMAIL-MSGID: =?utf-8?q?1599375551043714716?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Remove redundant __func__ parameter from dev_dgb() calls.
 
-> Hello,
-> 
-> FYI this happens in mainline kernel 4.17.0-rc3.
-> It looks like a new regression since v4.17-rc1.
-> 
-> It occurs in 2 out of 2 boots.
-> 
-> [   54.222599]   Magic number: 14:276:994
-> [   54.223261] tty ttyd7: hash matches
-> [   54.223841] tty ttyaa: hash matches
-> [   54.227288] Lustre: Lustre: Build Version: 2.6.99
-> [   54.232977] LustreError: 1:0:(class_obd.c:465:obdclass_init()) cannot register 241 err -16
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+---
+ drivers/nfc/fdp/fdp.c | 22 +++++++++++-----------
+ drivers/nfc/fdp/i2c.c | 20 +++++++++-----------
+ 2 files changed, 20 insertions(+), 22 deletions(-)
 
-This looks like the misc register bug that is now fixed in the 
-staging-test branch. Can you try 
-
-git commit ba833f145745c5ca4d1d45b1de2541fe34b8f100 (staging: lustre: 
-libcfs: use  dynamic minors for /dev/{lnet, obd})
-
-from the staging-test branch to see if it resolves your problems?
-
-> [   54.236561] BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
-> [   54.237836] PGD 0 P4D 0
-> [   54.238266] Oops: 0000 [#1] SMP
-> [   54.238780] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.17.0-rc3 #1
-> [   54.239775] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [   54.241214] RIP: 0010:kmem_cache_alloc+0x27/0x2ce:
-> 						slob_alloc_node at mm/slob.c:546
-> 						 (inlined by) kmem_cache_alloc at mm/slob.c:567
-> [   54.241956] RSP: 0000:ffff88001d21bde8 EFLAGS: 00010246
-> [   54.242791] RAX: 0000000000000000 RBX: 0000000001408040 RCX: 0000000000000000
-> [   54.243933] RDX: ffff88001d216000 RSI: 0000000000000000 RDI: ffffffff83752918
-> [   54.245072] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> [   54.246213] R10: 0000000000000000 R11: 0000000000000020 R12: 00000000a0000000
-> [   54.247337] R13: 0000000000000000 R14: 00000000a0000000 R15: ffffffff8407cb7e
-> [   54.248613] FS:  0000000000000000(0000) GS:ffff88001e400000(0000) knlGS:0000000000000000
-> [   54.249887] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   54.250803] CR2: 0000000000000004 CR3: 0000000003269000 CR4: 00000000000006a0
-> [   54.251939] Call Trace:
-> [   54.252358]  ? native_patch+0x195/0x195:
-> 						__raw_callee_save___native_queued_spin_unlock at ??:?
-> [   54.252976]  ? lustre_init+0x189/0x247:
-> 						IS_ERR at include/linux/err.h:36
-> 						 (inlined by) lustre_init at drivers/staging/lustre/lustre/llite/super25.c:133
-> [   54.253590]  cl_env_new+0x2b/0xb9:
-> 						cl_env_new at drivers/staging/lustre/lustre/obdclass/cl_object.c:597
-> [   54.254126]  cl_env_alloc+0x11/0xae:
-> 						IS_ERR at include/linux/err.h:36
-> 						 (inlined by) cl_env_alloc at drivers/staging/lustre/lustre/obdclass/cl_object.c:718
-> [   54.254713]  ? lmv_init+0x2d/0x2d:
-> 						cfs_cdebug_show at drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:111
-> 						 (inlined by) lustre_init at drivers/staging/lustre/lustre/llite/super25.c:97
-> [   54.255259]  lustre_init+0x189/0x247:
-> 						IS_ERR at include/linux/err.h:36
-> 						 (inlined by) lustre_init at drivers/staging/lustre/lustre/llite/super25.c:133
-> [   54.255839]  do_one_initcall+0x13d/0x36c:
-> 						__read_once_size at include/linux/compiler.h:188
-> 						 (inlined by) arch_atomic_read at arch/x86/include/asm/atomic.h:31
-> 						 (inlined by) atomic_read at include/asm-generic/atomic-instrumented.h:22
-> 						 (inlined by) static_key_count at include/linux/jump_label.h:194
-> 						 (inlined by) static_key_false at include/linux/jump_label.h:206
-> 						 (inlined by) trace_initcall_finish at include/trace/events/initcall.h:44
-> 						 (inlined by) do_one_initcall at init/main.c:884
-> [   54.256597]  ? parse_args+0x81/0x273:
-> 						arch_local_save_flags at arch/x86/include/asm/paravirt.h:778
-> 						 (inlined by) parse_args at kernel/params.c:190
-> [   54.257177]  ? do_early_param+0x88/0x88:
-> 						repair_env_string at init/main.c:251
-> [   54.257791]  kernel_init_freeable+0x338/0x3d3:
-> 						do_initcall_level at init/main.c:950
-> 						 (inlined by) do_initcalls at init/main.c:959
-> 						 (inlined by) do_basic_setup at init/main.c:977
-> 						 (inlined by) kernel_init_freeable at init/main.c:1127
-> [   54.258492]  ? rest_init+0x13c/0x13c:
-> 						kernel_init at init/main.c:1053
-> [   54.259068]  kernel_init+0x5/0xe6:
-> 						kernel_init at init/main.c:1055
-> [   54.259609]  ret_from_fork+0x1f/0x30:
-> 						ret_from_fork at arch/x86/entry/entry_64.S:418
-> [   54.260189] Code: 0c 31 c0 c3 41 57 41 56 41 55 41 54 55 53 48 89 fd 48 83 ec 18 8b 1d 52 2e 6b 02 21 f3 89 df e8 90 0c fb ff 89 df e8 b9 0c fb ff <8b> 7d 04 81 ff ff 0f 00 00 0f 87 f3 00 00 00 8b 55 08 89 de e8
-> [   54.263237] RIP: kmem_cache_alloc+0x27/0x2ce:
-> 						slob_alloc_node at mm/slob.c:546
-> 						 (inlined by) kmem_cache_alloc at mm/slob.c:567 RSP: ffff88001d21bde8
-> [   54.264322] CR2: 0000000000000004
-> [   54.264865] ---[ end trace 612192cbc2d7395d ]---
-> [   54.265604] Kernel panic - not syncing: Fatal exception
-> 
-> Attached the full dmesg, kconfig and reproduce scripts.
-> 
-> Thanks,
-> Fengguang
-> 
+diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
+index d5784a4..3251346 100644
+--- a/drivers/nfc/fdp/fdp.c
++++ b/drivers/nfc/fdp/fdp.c
+@@ -249,7 +249,7 @@ static int fdp_nci_open(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 
+ 	r = info->phy_ops->enable(info->phy);
+ 
+@@ -261,7 +261,7 @@ static int fdp_nci_close(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 	return 0;
+ }
+ 
+@@ -270,7 +270,7 @@ static int fdp_nci_send(struct nci_dev *ndev, struct sk_buff *skb)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 
+ 	if (atomic_dec_and_test(&info->data_pkt_counter))
+ 		info->data_pkt_counter_cb(ndev);
+@@ -283,7 +283,7 @@ int fdp_nci_recv_frame(struct nci_dev *ndev, struct sk_buff *skb)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 	return nci_recv_frame(ndev, skb);
+ }
+ EXPORT_SYMBOL(fdp_nci_recv_frame);
+@@ -498,7 +498,7 @@ static int fdp_nci_setup(struct nci_dev *ndev)
+ 	int r;
+ 	u8 patched = 0;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 
+ 	r = nci_core_init(ndev);
+ 	if (r)
+@@ -609,7 +609,7 @@ static int fdp_nci_core_reset_ntf_packet(struct nci_dev *ndev,
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 	info->setup_reset_ntf = 1;
+ 	wake_up(&info->setup_wq);
+ 
+@@ -622,7 +622,7 @@ static int fdp_nci_prop_patch_ntf_packet(struct nci_dev *ndev,
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 	info->setup_patch_ntf = 1;
+ 	info->setup_patch_status = skb->data[0];
+ 	wake_up(&info->setup_wq);
+@@ -637,7 +637,7 @@ static int fdp_nci_prop_patch_rsp_packet(struct nci_dev *ndev,
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 	u8 status = skb->data[0];
+ 
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
++	dev_dbg(dev, "status 0x%x\n", status);
+ 	nci_req_complete(ndev, status);
+ 
+ 	return 0;
+@@ -650,7 +650,7 @@ static int fdp_nci_prop_set_production_data_rsp_packet(struct nci_dev *ndev,
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 	u8 status = skb->data[0];
+ 
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
++	dev_dbg(dev, "status 0x%x\n", status);
+ 	nci_req_complete(ndev, status);
+ 
+ 	return 0;
+@@ -695,7 +695,7 @@ static int fdp_nci_core_get_config_rsp_packet(struct nci_dev *ndev,
+ 	dev_dbg(dev, "OTP version %d\n", info->otp_version);
+ 	dev_dbg(dev, "RAM version %d\n", info->ram_version);
+ 	dev_dbg(dev, "key index %d\n", info->key_index);
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, rsp->status);
++	dev_dbg(dev, "status 0x%x\n", rsp->status);
+ 
+ 	nci_req_complete(ndev, rsp->status);
+ 
+@@ -798,7 +798,7 @@ void fdp_nci_remove(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 
+ 	nci_unregister_device(ndev);
+ 	nci_free_device(ndev);
+diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
+index b80d1ad..3138730 100644
+--- a/drivers/nfc/fdp/i2c.c
++++ b/drivers/nfc/fdp/i2c.c
+@@ -57,7 +57,7 @@ static int fdp_nci_i2c_enable(void *phy_id)
+ {
+ 	struct fdp_i2c_phy *phy = phy_id;
+ 
+-	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
++	dev_dbg(&phy->i2c_dev->dev, "\n");
+ 	fdp_nci_i2c_reset(phy);
+ 
+ 	return 0;
+@@ -67,7 +67,7 @@ static void fdp_nci_i2c_disable(void *phy_id)
+ {
+ 	struct fdp_i2c_phy *phy = phy_id;
+ 
+-	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
++	dev_dbg(&phy->i2c_dev->dev, "\n");
+ 	fdp_nci_i2c_reset(phy);
+ }
+ 
+@@ -113,8 +113,8 @@ static int fdp_nci_i2c_write(void *phy_id, struct sk_buff *skb)
+ 	}
+ 
+ 	if (r < 0 || r != skb->len)
+-		dev_dbg(&client->dev, "%s: error err=%d len=%d\n",
+-			__func__, r, skb->len);
++		dev_dbg(&client->dev, "error err=%d len=%d\n",
++			r, skb->len);
+ 
+ 	if (r >= 0) {
+ 		if (r != skb->len) {
+@@ -152,8 +152,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
+ 
+ 		r = i2c_master_recv(client, tmp, len);
+ 		if (r != len) {
+-			dev_dbg(&client->dev, "%s: i2c recv err: %d\n",
+-				__func__, r);
++			dev_dbg(&client->dev, "i2c recv err: %d\n", r);
+ 			goto flush;
+ 		}
+ 
+@@ -167,8 +166,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
+ 		 * and force resynchronization
+ 		 */
+ 		if (lrc) {
+-			dev_dbg(&client->dev, "%s: corrupted packet\n",
+-				__func__);
++			dev_dbg(&client->dev, "corrupted packet\n");
+ 			phy->next_read_size = 5;
+ 			goto flush;
+ 		}
+@@ -224,7 +222,7 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
+ 	}
+ 
+ 	client = phy->i2c_dev;
+-	dev_dbg(&client->dev, "%s\n", __func__);
++	dev_dbg(&client->dev, "\n");
+ 
+ 	r = fdp_nci_i2c_read(phy, &skb);
+ 
+@@ -305,7 +303,7 @@ static int fdp_nci_i2c_probe(struct i2c_client *client)
+ 	u32 clock_freq;
+ 	int r = 0;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
++	dev_dbg(dev, "\n");
+ 
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+ 		nfc_err(dev, "No I2C_FUNC_I2C support\n");
+@@ -368,7 +366,7 @@ static int fdp_nci_i2c_remove(struct i2c_client *client)
+ {
+ 	struct fdp_i2c_phy *phy = i2c_get_clientdata(client);
+ 
+-	dev_dbg(&client->dev, "%s\n", __func__);
++	dev_dbg(&client->dev, "\n");
+ 
+ 	fdp_nci_remove(phy->ndev);
+ 	fdp_nci_i2c_disable(phy);
+-- 
+2.7.4
