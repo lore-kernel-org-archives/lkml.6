@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752260AbeEBPWD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:22:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47858 "EHLO mail.kernel.org"
+        id S1752282AbeEBPWG (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751740AbeEBPV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:21:56 -0400
+        id S1751729AbeEBPV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:21:59 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 37/52] perf map: Remove map_type arg from map_groups__find()
-Date: Wed,  2 May 2018 12:19:27 -0300
-Message-Id: <20180502151942.20542-38-acme@kernel.org>
+Subject: [PATCH 38/52] perf symbols: Store the ELF symbol type in the symbol struct
+Date: Wed,  2 May 2018 12:19:28 -0300
+Message-Id: <20180502151942.20542-39-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
 References: <20180502151942.20542-1-acme@kernel.org>
@@ -26,88 +26,157 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-One more step in ditching the split.
+There is code that needs to see if a resolved address is a function, so,
+since we're going to ditch the MAP__{FUNCTION,VARIABLE} split, store
+that info in the per symbol struct.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-4pour7egur07tkrpbynawemv@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-9ugwxz0i8ryg5702rx8u5q6z@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arm/tests/dwarf-unwind.c     | 2 +-
- tools/perf/arch/arm64/tests/dwarf-unwind.c   | 2 +-
- tools/perf/arch/powerpc/tests/dwarf-unwind.c | 2 +-
- tools/perf/arch/x86/tests/dwarf-unwind.c     | 2 +-
- tools/perf/util/map.h                        | 3 ++-
- 5 files changed, 6 insertions(+), 5 deletions(-)
+ tools/perf/tests/hists_common.c | 2 +-
+ tools/perf/util/db-export.c     | 2 +-
+ tools/perf/util/srcline.c       | 1 +
+ tools/perf/util/symbol-elf.c    | 7 ++++---
+ tools/perf/util/symbol.c        | 7 ++++---
+ tools/perf/util/symbol.h        | 5 +++--
+ 6 files changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/tools/perf/arch/arm/tests/dwarf-unwind.c b/tools/perf/arch/arm/tests/dwarf-unwind.c
-index 7d7a65ca2e8d..9a0242e74cfc 100644
---- a/tools/perf/arch/arm/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/arm/tests/dwarf-unwind.c
-@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
+diff --git a/tools/perf/tests/hists_common.c b/tools/perf/tests/hists_common.c
+index f7c5b613d667..d0366fde72a3 100644
+--- a/tools/perf/tests/hists_common.c
++++ b/tools/perf/tests/hists_common.c
+@@ -138,7 +138,7 @@ struct machine *setup_fake_machine(struct machines *machines)
+ 			struct fake_sym *fsym = &fake_symbols[i].syms[k];
  
- 	sp = (unsigned long) regs[PERF_REG_ARM_SP];
+ 			sym = symbol__new(fsym->start, fsym->length,
+-					  STB_GLOBAL, fsym->name);
++					  STB_GLOBAL, STT_FUNC, fsym->name);
+ 			if (sym == NULL) {
+ 				dso__put(dso);
+ 				goto out;
+diff --git a/tools/perf/util/db-export.c b/tools/perf/util/db-export.c
+index 04fb1a99c737..12d60703c8fc 100644
+--- a/tools/perf/util/db-export.c
++++ b/tools/perf/util/db-export.c
+@@ -247,7 +247,7 @@ static int db_ids_from_al(struct db_export *dbe, struct addr_location *al,
+ 		*dso_db_id = dso->db_id;
  
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-index f053eae3b6eb..5522ce384723 100644
---- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
-@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
+ 		if (!al->sym) {
+-			al->sym = symbol__new(al->addr, 0, 0, "unknown");
++			al->sym = symbol__new(al->addr, 0, 0, 0, "unknown");
+ 			if (al->sym)
+ 				dso__insert_symbol(dso, al->map->type, al->sym);
+ 		}
+diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+index 3c21fd059b64..09d6746e6ec8 100644
+--- a/tools/perf/util/srcline.c
++++ b/tools/perf/util/srcline.c
+@@ -103,6 +103,7 @@ static struct symbol *new_inline_sym(struct dso *dso,
+ 		inline_sym = symbol__new(base_sym ? base_sym->start : 0,
+ 					 base_sym ? base_sym->end : 0,
+ 					 base_sym ? base_sym->binding : 0,
++					 base_sym ? base_sym->type : 0,
+ 					 funcname);
+ 		if (inline_sym)
+ 			inline_sym->inlined = 1;
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index b6be6062cae0..88f6f3050665 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -364,7 +364,7 @@ int dso__synthesize_plt_symbols(struct dso *dso, struct symsrc *ss, struct map *
+ 			free(demangled);
  
- 	sp = (unsigned long) regs[PERF_REG_ARM64_SP];
+ 			f = symbol__new(plt_offset, plt_entry_size,
+-					STB_GLOBAL, sympltname);
++					STB_GLOBAL, STT_FUNC, sympltname);
+ 			if (!f)
+ 				goto out_elf_end;
  
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-index b22d643cb602..5f39efef0856 100644
---- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
-@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
+@@ -390,7 +390,7 @@ int dso__synthesize_plt_symbols(struct dso *dso, struct symsrc *ss, struct map *
+ 			free(demangled);
  
- 	sp = (unsigned long) regs[PERF_REG_POWERPC_R1];
+ 			f = symbol__new(plt_offset, plt_entry_size,
+-					STB_GLOBAL, sympltname);
++					STB_GLOBAL, STT_FUNC, sympltname);
+ 			if (!f)
+ 				goto out_elf_end;
  
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/arch/x86/tests/dwarf-unwind.c b/tools/perf/arch/x86/tests/dwarf-unwind.c
-index 7da845026323..7879df34569a 100644
---- a/tools/perf/arch/x86/tests/dwarf-unwind.c
-+++ b/tools/perf/arch/x86/tests/dwarf-unwind.c
-@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
+@@ -1102,7 +1102,8 @@ int dso__load_sym(struct dso *dso, struct map *map, struct symsrc *syms_ss,
+ 			elf_name = demangled;
  
- 	sp = (unsigned long) regs[PERF_REG_X86_SP];
- 
--	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
-+	map = map_groups__find(thread->mg, (u64)sp);
- 	if (!map) {
- 		pr_debug("failed to get stack map\n");
- 		free(buf);
-diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
-index 579ad7d2711d..d035d8f0d5b2 100644
---- a/tools/perf/util/map.h
-+++ b/tools/perf/util/map.h
-@@ -222,7 +222,8 @@ static inline struct map *__map_groups__find(struct map_groups *mg,
- 
- static inline struct map *map_groups__find(struct map_groups *mg, u64 addr)
- {
--	return __map_groups__find(mg, MAP__FUNCTION, addr);
-+	struct map *map = __map_groups__find(mg, MAP__FUNCTION, addr);
-+	return map ?: __map_groups__find(mg, MAP__VARIABLE, addr);
+ 		f = symbol__new(sym.st_value, sym.st_size,
+-				GELF_ST_BIND(sym.st_info), elf_name);
++				GELF_ST_BIND(sym.st_info),
++				GELF_ST_TYPE(sym.st_info), elf_name);
+ 		free(demangled);
+ 		if (!f)
+ 			goto out_elf_end;
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index 2b81ccc94a7e..e1fd236c96d3 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -256,7 +256,7 @@ void __map_groups__fixup_end(struct map_groups *mg, enum map_type type)
+ 	up_write(&maps->lock);
  }
  
- struct map *map_groups__first(struct map_groups *mg);
+-struct symbol *symbol__new(u64 start, u64 len, u8 binding, const char *name)
++struct symbol *symbol__new(u64 start, u64 len, u8 binding, u8 type, const char *name)
+ {
+ 	size_t namelen = strlen(name) + 1;
+ 	struct symbol *sym = calloc(1, (symbol_conf.priv_size +
+@@ -274,6 +274,7 @@ struct symbol *symbol__new(u64 start, u64 len, u8 binding, const char *name)
+ 
+ 	sym->start   = start;
+ 	sym->end     = len ? start + len : start;
++	sym->type    = type;
+ 	sym->binding = binding;
+ 	sym->namelen = namelen - 1;
+ 
+@@ -682,7 +683,7 @@ static int map__process_kallsym_symbol(void *arg, const char *name,
+ 	 * symbols, setting length to 0, and rely on
+ 	 * symbols__fixup_end() to fix it up.
+ 	 */
+-	sym = symbol__new(start, 0, kallsyms2elf_binding(type), name);
++	sym = symbol__new(start, 0, kallsyms2elf_binding(type), kallsyms2elf_type(type), name);
+ 	if (sym == NULL)
+ 		return -ENOMEM;
+ 	/*
+@@ -1395,7 +1396,7 @@ static int dso__load_perf_map(const char *map_path, struct dso *dso,
+ 		if (len + 2 >= line_len)
+ 			continue;
+ 
+-		sym = symbol__new(start, size, STB_GLOBAL, line + len);
++		sym = symbol__new(start, size, STB_GLOBAL, STT_FUNC, line + len);
+ 
+ 		if (sym == NULL)
+ 			goto out_delete_line;
+diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+index 2b985ff2e725..3e2ac485c6d9 100644
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -57,7 +57,8 @@ struct symbol {
+ 	u64		start;
+ 	u64		end;
+ 	u16		namelen;
+-	u8		binding;
++	u8		type:4;
++	u8		binding:4;
+ 	u8		idle:1;
+ 	u8		ignore:1;
+ 	u8		inlined:1;
+@@ -292,7 +293,7 @@ void symbol__exit(void);
+ void symbol__elf_init(void);
+ int symbol__annotation_init(void);
+ 
+-struct symbol *symbol__new(u64 start, u64 len, u8 binding, const char *name);
++struct symbol *symbol__new(u64 start, u64 len, u8 binding, u8 type, const char *name);
+ size_t __symbol__fprintf_symname_offs(const struct symbol *sym,
+ 				      const struct addr_location *al,
+ 				      bool unknown_as_addr,
 -- 
 2.14.3
