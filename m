@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752218AbeEBPVy (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:21:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47746 "EHLO mail.kernel.org"
+        id S1752260AbeEBPWD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:22:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751504AbeEBPVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:21:50 -0400
+        id S1751740AbeEBPV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:21:56 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 35/52] perf thread: Ditch __thread__find_symbol()
-Date: Wed,  2 May 2018 12:19:25 -0300
-Message-Id: <20180502151942.20542-36-acme@kernel.org>
+Subject: [PATCH 37/52] perf map: Remove map_type arg from map_groups__find()
+Date: Wed,  2 May 2018 12:19:27 -0300
+Message-Id: <20180502151942.20542-38-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
 References: <20180502151942.20542-1-acme@kernel.org>
@@ -26,98 +26,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Simulate having all symbols in just one tree by searching the still
-existing two trees.
+One more step in ditching the split.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-uss70e8tvzzbzs326330t83q@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-4pour7egur07tkrpbynawemv@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c |  2 +-
- tools/perf/util/event.c    |  8 ++++----
- tools/perf/util/machine.c  | 10 +---------
- tools/perf/util/thread.h   | 10 ++--------
- 4 files changed, 8 insertions(+), 22 deletions(-)
+ tools/perf/arch/arm/tests/dwarf-unwind.c     | 2 +-
+ tools/perf/arch/arm64/tests/dwarf-unwind.c   | 2 +-
+ tools/perf/arch/powerpc/tests/dwarf-unwind.c | 2 +-
+ tools/perf/arch/x86/tests/dwarf-unwind.c     | 2 +-
+ tools/perf/util/map.h                        | 3 ++-
+ 5 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index afec6f9ffd89..c7effcfc40ed 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2036,7 +2036,7 @@ static int trace__pgfault(struct trace *trace,
+diff --git a/tools/perf/arch/arm/tests/dwarf-unwind.c b/tools/perf/arch/arm/tests/dwarf-unwind.c
+index 7d7a65ca2e8d..9a0242e74cfc 100644
+--- a/tools/perf/arch/arm/tests/dwarf-unwind.c
++++ b/tools/perf/arch/arm/tests/dwarf-unwind.c
+@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
  
- 	fprintf(trace->output, "] => ");
+ 	sp = (unsigned long) regs[PERF_REG_ARM_SP];
  
--	__thread__find_symbol(thread, sample->cpumode, MAP__VARIABLE, sample->addr, &al);
-+	thread__find_symbol(thread, sample->cpumode, sample->addr, &al);
+-	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = map_groups__find(thread->mg, (u64)sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/arch/arm64/tests/dwarf-unwind.c b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+index f053eae3b6eb..5522ce384723 100644
+--- a/tools/perf/arch/arm64/tests/dwarf-unwind.c
++++ b/tools/perf/arch/arm64/tests/dwarf-unwind.c
+@@ -25,7 +25,7 @@ static int sample_ustack(struct perf_sample *sample,
  
- 	if (!al.map) {
- 		thread__find_symbol(thread, sample->cpumode, sample->addr, &al);
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 241d3c827fae..7b67771cd478 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1565,12 +1565,12 @@ struct map *__thread__find_map(struct thread *thread, u8 cpumode, enum map_type
- 	return al->map;
- }
+ 	sp = (unsigned long) regs[PERF_REG_ARM64_SP];
  
--struct symbol *__thread__find_symbol(struct thread *thread, u8 cpumode,
--				     enum map_type type, u64 addr,
--				     struct addr_location *al)
-+struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
-+				   u64 addr, struct addr_location *al)
+-	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = map_groups__find(thread->mg, (u64)sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/arch/powerpc/tests/dwarf-unwind.c b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+index b22d643cb602..5f39efef0856 100644
+--- a/tools/perf/arch/powerpc/tests/dwarf-unwind.c
++++ b/tools/perf/arch/powerpc/tests/dwarf-unwind.c
+@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
+ 
+ 	sp = (unsigned long) regs[PERF_REG_POWERPC_R1];
+ 
+-	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = map_groups__find(thread->mg, (u64)sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/arch/x86/tests/dwarf-unwind.c b/tools/perf/arch/x86/tests/dwarf-unwind.c
+index 7da845026323..7879df34569a 100644
+--- a/tools/perf/arch/x86/tests/dwarf-unwind.c
++++ b/tools/perf/arch/x86/tests/dwarf-unwind.c
+@@ -26,7 +26,7 @@ static int sample_ustack(struct perf_sample *sample,
+ 
+ 	sp = (unsigned long) regs[PERF_REG_X86_SP];
+ 
+-	map = __map_groups__find(thread->mg, MAP__VARIABLE, (u64) sp);
++	map = map_groups__find(thread->mg, (u64)sp);
+ 	if (!map) {
+ 		pr_debug("failed to get stack map\n");
+ 		free(buf);
+diff --git a/tools/perf/util/map.h b/tools/perf/util/map.h
+index 579ad7d2711d..d035d8f0d5b2 100644
+--- a/tools/perf/util/map.h
++++ b/tools/perf/util/map.h
+@@ -222,7 +222,8 @@ static inline struct map *__map_groups__find(struct map_groups *mg,
+ 
+ static inline struct map *map_groups__find(struct map_groups *mg, u64 addr)
  {
- 	al->sym = NULL;
--	if (__thread__find_map(thread, cpumode, type, addr, al))
-+	if (__thread__find_map(thread, cpumode, MAP__FUNCTION, addr, al) ||
-+	    __thread__find_map(thread, cpumode, MAP__VARIABLE, addr, al))
- 		al->sym = map__find_symbol(al->map, al->addr);
- 	return al->sym;
- }
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index a00e82b83e0a..3422ef67ec21 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1677,15 +1677,7 @@ static void ip__resolve_data(struct thread *thread,
- 
- 	memset(&al, 0, sizeof(al));
- 
--	__thread__find_symbol(thread, m, MAP__VARIABLE, addr, &al);
--	if (al.map == NULL) {
--		/*
--		 * some shared data regions have execute bit set which puts
--		 * their mapping in the MAP__FUNCTION type array.
--		 * Check there as a fallback option before dropping the sample.
--		 */
--		thread__find_symbol(thread, m, addr, &al);
--	}
-+	thread__find_symbol(thread, m, addr, &al);
- 
- 	ams->addr = addr;
- 	ams->al_addr = al.addr;
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index d6209c73f32d..54aa24d6151e 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -101,14 +101,8 @@ static inline struct map *thread__find_map(struct thread *thread, u8 cpumode,
- 	return __thread__find_map(thread, cpumode, MAP__FUNCTION, addr, al);
+-	return __map_groups__find(mg, MAP__FUNCTION, addr);
++	struct map *map = __map_groups__find(mg, MAP__FUNCTION, addr);
++	return map ?: __map_groups__find(mg, MAP__VARIABLE, addr);
  }
  
--struct symbol *__thread__find_symbol(struct thread *thread, u8 cpumode, enum map_type type,
--				     u64 addr, struct addr_location *al);
--
--static inline struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
--						 u64 addr, struct addr_location *al)
--{
--	return __thread__find_symbol(thread, cpumode, MAP__FUNCTION, addr, al);
--}
-+struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
-+				   u64 addr, struct addr_location *al);
- 
- void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
- 					struct addr_location *al);
+ struct map *map_groups__first(struct map_groups *mg);
 -- 
 2.14.3
