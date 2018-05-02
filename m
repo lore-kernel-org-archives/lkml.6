@@ -1,100 +1,143 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751245AbeEBHW6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 03:22:58 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:48108 "EHLO leonov.paulk.fr"
+        id S1751292AbeEBHXd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 03:23:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751132AbeEBHW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 03:22:57 -0400
-Message-ID: <89cac24ddcb5f4ac710a697a4433c927e5c7e71e.camel@paulk.fr>
-Subject: Re: [PATCH v2 6/9] drm/panel: Add Netron DY E231732
-From: Paul Kocialkowski <contact@paulk.fr>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>,
-        David Airlie <airlied@linux.ie>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Date: Wed, 02 May 2018 09:20:30 +0200
-In-Reply-To: <20160909143510.GB8881@lukather>
-References: <20160906144620.6322-1-maxime.ripard@free-electrons.com>
-         <20160906144620.6322-7-maxime.ripard@free-electrons.com>
-         <CAGb2v64RQdHZod7z4ErycNgGremj41-o4R_V_i7ThrCPLNhZOw@mail.gmail.com>
-         <20160909143510.GB8881@lukather>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1751115AbeEBHXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 03:23:30 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Amit Nischal <anischal@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Amit Nischal <anischal@codeaurora.org>
+References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+ <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
+Message-ID: <152524580953.138124.2159165461856101134@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v6 3/3] clk: qcom: Add Global Clock controller (GCC) driver for
+ SDM845
+Date: Wed, 02 May 2018 00:23:29 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w427NcTQ026086
 
-Hi,
+Quoting Amit Nischal (2018-04-30 09:20:10)
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc.txt         |    1 +
+>  drivers/clk/qcom/Kconfig                           |   10 +-
+>  drivers/clk/qcom/Makefile                          |    1 +
+>  drivers/clk/qcom/gcc-sdm845.c                      | 3480 ++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sdm845.h        |  239 ++
 
-Le vendredi 09 septembre 2016 à 16:35 +0200, Maxime Ripard a écrit :
-> On Wed, Sep 07, 2016 at 12:01:56AM +0800, Chen-Yu Tsai wrote:
-> > Hi,
-> > 
-> > On Tue, Sep 6, 2016 at 10:46 PM, Maxime Ripard
-> > <maxime.ripard@free-electrons.com> wrote:
-> > > The E231732 is a 7" panel with a resolution of 800x480.
-> > 
-> > From what I could make out of an archived version of Netron's
-> > website
-> > (it's unreachable from my place), they are a manufacturer of printed
-> > ribbon cables, not LCD panels. This is probably a no-go.
+Do the split that Rob suggests please, given that you're resending. And
+also include his reviewed-by tag.
+
+>  5 files changed, 3727 insertions(+), 4 deletions(-)
+>  create mode 100644 drivers/clk/qcom/gcc-sdm845.c
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
 > 
-> I don't know. I haven't been able to find any website for Netron DY,
-> however, googling the part number I used find numerous matches on ebay
-> and alibaba.
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index e42e1af..3298beb 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -218,13 +218,15 @@ config MSM_MMCC_8996
+>           Say Y if you want to support multimedia devices such as display,
+>           graphics, video encode/decode, camera, etc.
+> 
+> -config MSM_GCC_8998
+> -       tristate "MSM8998 Global Clock Controller"
+> +config SDM_GCC_845
+> +       tristate "SDM845 Global Clock Controller"
+> +       select QCOM_GDSC
+>         depends on COMMON_CLK_QCOM
+>         help
+> -         Support for the global clock controller on msm8998 devices.
+> +         Support for the global clock controller on Qualcomm Technologies, Inc
+> +         sdm845 devices.
+>           Say Y if you want to use peripheral devices such as UART, SPI,
+> -         i2c, USB, UFS, SD/eMMC, PCIe, etc.
+> +         I2C, USB, UFS, SDDC, PCIe, etc.
 
-While starting a port for the A13-based TZX-Q8-713B7 tablet, it appears
-that my LCD cable also has the Netron-DY E231732 marking, but is
-definitely different from the one on the SinA33. So I think Chen-Yu's
-comment was founded and "Netron DY E231732" does not reflect the panel
-name.
+This is all wrong.
 
-Here are some details regarding the LCD cable on both devices:
+> 
+>  config SPMI_PMIC_CLKDIV
+>         tristate "SPMI PMIC clkdiv Support"
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> new file mode 100644
+> index 0000000..6484cba
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -0,0 +1,3480 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+[...]
+> +                       .name = "gcc_disp_axi_clk",
+> +                       .ops = &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_disp_gpll0_clk_src = {
+> +       .halt_reg = 0x52004,
+> +       .halt_check = BRANCH_HALT_DELAY,
 
-The SinA33 has a 1024x600 panel with the following markings:
-7300101463
-E231732
-NETRON-DY <> 1
-94V-0\1310
+What about this one? It's not a phy so I'm confused again why we're
+unable to check the halt bit. To be clear(er), I don't see why we ever
+want to have HALT_DELAY used. Hopefully we can remove that flag.
 
-The TZX-Q8-713B7 has a 800x480 panel with the following markings:
-7300101448
-E231732
-NETRON-DY <> 2
-94V-0\1249
+>From what I recall, the flag is there for clks that don't toggle their
+status bit at all, but that we know take a few cycles to ungate the
+upstream clk. So we threw a delay into the code to make sure that when
+clk_enable() returned, a driver wouldn't try to use hardware before the
+clk was actually on. But these cases should pretty much never happen,
+hence all the pushback against this flag.
 
-So it seems that the distinctive part of the name is
-7300101463/7300101448.
+> +       .clkr = {
+> +               .enable_reg = 0x52004,
+> +               .enable_mask = BIT(18),
+> +               .hw.init = &(struct clk_init_data){
+> +                       .name = "gcc_disp_gpll0_clk_src",
+> +                       .parent_names = (const char *[]){
+> +                               "gpll0",
+> +                       },
+> +                       .num_parents = 1,
+[...]
+> +               .enable_reg = 0x7508c,
+> +               .enable_mask = BIT(0),
+> +               .hw.init = &(struct clk_init_data){
+> +                       .name = "gcc_ufs_card_phy_aux_clk",
+> +                       .parent_names = (const char *[]){
+> +                               "gcc_ufs_card_phy_aux_clk_src",
+> +                       },
+> +                       .num_parents = 1,
+> +                       .flags = CLK_SET_RATE_PARENT,
+> +                       .ops = &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
+> +       .halt_reg = 0x75018,
+> +       .halt_check = BRANCH_HALT_DELAY,
 
-Also, it seems that various online shops list the panels with a name
-like "E231732 7300101463". So maybe we could change the bindings to
-have:
+There are still HALT_DELAY flags for UFS though? Why?
 
-- netron-dy,e231732-7300101463
-- netron-dy,e231732-7300101448
-
-What do you think? Does that make sense?
-
-We should probably also fallback netron-dy,e231732 to the sina33's panel
-in order to avoid breaking the ABI.
-
-Cheers,
-
--- 
-Paul Kocialkowski,
-
-developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+Also, are you going to send DFS support for the QUP clks? I would like
+to see that code merged soon.
