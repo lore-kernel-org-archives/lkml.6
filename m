@@ -1,93 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeEBTKw convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 15:10:52 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50186 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbeEBTKv (ORCPT
+        id S1751236AbeEBT0g (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 15:26:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57398 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbeEBT0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 15:10:51 -0400
-Date: Wed, 2 May 2018 21:10:49 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Motorola Droid 4 progress, power consumption
-Message-ID: <20180502191049.ximiyccwfkjqcj7m@devuan>
-References: <20180501183148.GA26996@amd>
- <20180502144158.GJ98604@atomide.com>
+        Wed, 2 May 2018 15:26:34 -0400
+Subject: Re: [PATCH v2 4/5] kernel hacking: new config DEBUG_EXPERIENCE to
+ apply GCC -Og optimization
+To: changbin.du@intel.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org
+Cc: rostedt@goodmis.org, x86@kernel.org, lgirdwood@gmail.com,
+        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+ <1525268700-10631-5-git-send-email-changbin.du@intel.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <34ba017d-2e94-7411-a675-0e3e2a6b0682@infradead.org>
+Date: Wed, 2 May 2018 12:26:30 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20180502144158.GJ98604@atomide.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1525268700-10631-5-git-send-email-changbin.du@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
-
-> > Anyway, >5.5hours of standby with screen off, GSM on is already
-> > usable.
+On 05/02/2018 06:44 AM, changbin.du@intel.com wrote:
+> From: Changbin Du <changbin.du@intel.com>
 > 
-> Just to rub that in, you do mean GSM usable for voice calls and
-> SMS with your unicsy_demo with mainline kernel plus the pending
-> LCD related patches, right? :)
 
-Plus some other patches, yes.
+Sorry, I missed one:
 
-> > This is the core of code I'm using.
-> > 
-> > https://github.com/pavelmachek/unicsy_demo
-> > 
-> > Battery graphs are attached. I'm not sure if the battery was really
-> > close to empty at that point -- voltage curve should have different
-> > shape if that was the case. 
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index ab55801..e264199 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -216,6 +216,27 @@ config NO_AUTO_INLINE
+>  
+>  	  If unsure, select N.
+>  
+> +config DEBUG_EXPERIENCE
+> +	bool "Optimize for better debugging experience (-Og)"
+> +	default n
+> +	select NO_AUTO_INLINE
+> +	depends on !CC_OPTIMIZE_FOR_SIZE
+> +	help
+> +	  This will apply GCC '-Og' optimization level which is supported
+> +	  since GCC 4.8. This optimization level offers a reasonable level
+> +	  of optimization while maintaining fast compilation and a good
+> +	  debugging experience. It is similar to '-O1' while preferring to
+> +	  keep debug ability over runtime speed. The overall performance
+> +	  will drop a bit (~6%).
+> +
+> +	  Use only if you want to debug the kernel, especially if you want
+> +	  to have better kernel debugging experience with gdb facilities
+> +	  like kgdb or qemu. If enabling this option breaks your kernel,
+> +	  you should either disable this or find a fix (mostly in the arch
+> +	  code). Currently this option has only be tested on x86_64 platform.
+
+	                                        been tested
+
+> +
+> +	  If unsure, select N.
+> +
+>  config ENABLE_WARN_DEPRECATED
+>  	bool "Enable __deprecated logic"
+>  	default y
 > 
-> Cool. BTW, the value for POWER_SUPPLY_POWER_AVG should be quite
-> accurate for the whole device power consumption.
 
-Aha, I was looking in the wrong directory. Yes, these look useful.
 
-> It comes from the shunt resistor measured by the PMIC. Sorry I don't
-> remember how often it needs to be polled but I'm guessing polling it
-> once a minute or so should be plenty.
-
-Ok. I normally do once in 30 seconds.
-
-> Hmm oh and the POWER_SUPPLY_CHARGE_COUNTER value should be monitored
-> by your libbattery and it's low value and high value should be saved
-> to a file. Low should be saved when we get the battery low interrupt
-> and battery state changes to POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL.
-> High value should be saved on POWER_SUPPLY_CAPACITY_LEVEL_FULL.
-> 
-> Then when you know the high value and low value, you can calculate
-> the remaining capacity based on the current value and
-> POWER_SUPPLY_POWER_AVG.
-
-Ok, more stuff on TODO list. I actually use python hacks, and not
-libbattery now.
-
-Is this one correct?
-
-voltage_min_design:3100000
-
-I believe you mentioned flash stops working at 3.3V. What is important
-from my point of view is to shut the system down when the battery is
-low. I believe that still needs to be implemented.
-
-Is it appropriate to shutdown at POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL?
-But then libbattery will race with shutdown to save the thresholds...
-
-I also have some hacks to allow configuration of the full
-voltage. Charging to 4.35V is pretty agressive, and I believe baterry
-will be damaged less if we only charge to 4.1V.
-
-Best regards,
-									Pavel
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+~Randy
