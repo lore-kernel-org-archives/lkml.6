@@ -1,67 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeEBUB5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 16:01:57 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35047 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751551AbeEBUBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 16:01:52 -0400
-X-Google-Smtp-Source: AB8JxZpGRBci2lwCHnUHYCUeFhcimSUp18GQXtY87soWM4CAc/DpT7Nj5I+6X/h2krvpoJijTcbUZQ==
-From: Mathieu Malaterre <malat@debian.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: malat@debian.org, Riku Voipio <riku.voipio@linaro.org>,
-        Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] kbuild/debian: Use KBUILD_BUILD_* when set
-Date: Wed,  2 May 2018 22:01:36 +0200
-Message-Id: <20180502200137.6870-1-malat@debian.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180423195055.26069-1-malat@debian.org>
-References: <20180423195055.26069-1-malat@debian.org>
+        id S1751645AbeEBUCB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 16:02:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751027AbeEBUAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 16:00:43 -0400
+Message-Id: <20180502200041.809542155@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Wed, 02 May 2018 16:00:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [PATCH 4/7] tracing: Restore proper field flag printing when displaying triggers
+References: <20180502200003.592877274@goodmis.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0004-tracing-Restore-proper-field-flag-printing-when-disp.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Be nice to the user and check env vars KBUILD_BUILD_USER &
-KBUILD_BUILD_HOST when those are set.
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Since DEBEMAIL accept a syntax where the full name is present, be extra
-nice to user and extract email address only.
+The flag-printing code used when displaying hist triggers somehow got
+dropped during refactoring of the inter-event patchset.  This restores
+it.
 
-Cc: Riku Voipio <riku.voipio@linaro.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Below are a couple examples - in the first case, .usecs wasn't being
+displayed properly for common_timestamps and the second illustrates
+the same for other flags such as .execname.
+
+Before:
+
+  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  hist:keys=common_pid:vals=hitcount,count:sort=count:size=2048 [active]
+
+  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  hist:keys=pid:vals=hitcount:ts0=common_timestamp:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
+
+After:
+
+  # echo 'hist:key=common_pid.execname:val=count:sort=count' > /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  # cat /sys/kernel/debug/tracing/events/syscalls/sys_enter_read/trigger
+  hist:keys=common_pid.execname:vals=hitcount,count:sort=count:size=2048 [active]
+
+  # echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="cyclictest"' >> /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  # cat /sys/kernel/debug/tracing/events/sched/sched_wakeup/trigger
+  hist:keys=pid:vals=hitcount:ts0=common_timestamp.usecs:sort=hitcount:size=2048:clock=global if comm=="cyclictest" [active]
+
+Link: http://lkml.kernel.org/r/492bab42ff21806600af98a8ea901af10efbee0c.1524790601.git.tom.zanussi@linux.intel.com
+
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
-v2: update patch since syntax of DEBEMAIL may contain full name
+ kernel/trace/trace_events_hist.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- scripts/package/mkdebian | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 6adb3a16ba3b..3f4e43446db3 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -73,9 +73,19 @@ fi
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 0d7b3ffbecc2..66c87be4ebb2 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -4913,6 +4913,16 @@ static void hist_field_print(struct seq_file *m, struct hist_field *hist_field)
+ 		seq_printf(m, "%s", field_name);
+ 	} else if (hist_field->flags & HIST_FIELD_FL_TIMESTAMP)
+ 		seq_puts(m, "common_timestamp");
++
++	if (hist_field->flags) {
++		if (!(hist_field->flags & HIST_FIELD_FL_VAR_REF) &&
++		    !(hist_field->flags & HIST_FIELD_FL_EXPR)) {
++			const char *flags = get_hist_field_flags(hist_field);
++
++			if (flags)
++				seq_printf(m, ".%s", flags);
++		}
++	}
+ }
  
- # Try to determine maintainer and email values
- if [ -n "$DEBEMAIL" ]; then
--       email=$DEBEMAIL
-+       case "$DEBEMAIL" in
-+         *\ * )
-+           email=$(echo $DEBEMAIL | cut -d '<' -f2 | cut -d '>' -f1)
-+           echo >&2 "Extracting email from DEBEMAIL. Use DEBFULLNAME instead."
-+           ;;
-+         *)
-+           email=$DEBEMAIL
-+           ;;
-+       esac
- elif [ -n "$EMAIL" ]; then
-        email=$EMAIL
-+elif [ -n "$KBUILD_BUILD_USER" ] && [ -n "$KBUILD_BUILD_HOST" ]; then
-+       email=$KBUILD_BUILD_USER@$KBUILD_BUILD_HOST
- else
-        email=$(id -nu)@$(hostname -f 2>/dev/null || hostname)
- fi
+ static int event_hist_trigger_print(struct seq_file *m,
 -- 
-2.11.0
+2.17.0
