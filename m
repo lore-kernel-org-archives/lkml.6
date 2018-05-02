@@ -1,49 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeEBQTM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:19:12 -0400
-Received: from verein.lst.de ([213.95.11.211]:39917 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751447AbeEBQTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:19:11 -0400
-Date: Wed, 2 May 2018 18:21:46 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Michel =?iso-8859-1?Q?D=E4nzer?= <michel@daenzer.net>
-Cc: Christoph Hellwig <hch@lst.de>, Daniel Vetter <daniel@ffwll.ch>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
-Message-ID: <20180502162145.GA26787@lst.de>
-References: <20180501132411.2311-1-michel@daenzer.net> <786ca83f-45c4-264b-2aef-d84fb18d3d28@gmail.com> <CAKMK7uH2+v3_UUqXdCjz_8=H4VRt1zB+dgE99PuuPqd+XM2=-w@mail.gmail.com> <20180502124151.GA22857@lst.de> <1066dfa2-2f78-815d-c65a-9d09eb35458c@daenzer.net>
+        id S1751910AbeEBQTb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:19:31 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37492 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751174AbeEBQT2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 12:19:28 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1066dfa2-2f78-815d-c65a-9d09eb35458c@daenzer.net>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Google-Smtp-Source: AB8JxZpriBwVwX0r7Zam+1sXcs7o5xw6N1cQoMcQBYMWcm3SiSuJGU4W7veyVKZniDFoSRsI+5rSmg==
+From: DongDongJu <commisori@kookmin.ac.kr>
+X-Google-Original-From: DongDongJu <commisori28@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: DongDongJu <commisori28@gmail.com>
+Subject: [PATCH] modified: arch/x86/mm/pageattr.c
+Date: Thu,  3 May 2018 01:19:21 +0900
+Message-Id: <1525277961-6158-1-git-send-email-commisori28@gmail.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset="US-ASCII"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 04:31:09PM +0200, Michel Dänzer wrote:
-> > No.  __GFP_NOWARN (and gfp_t flags in general) are the wrong interface
-> > for dma allocations and just cause problems.  I actually plan to
-> > get rid of the gfp_t argument in dma_alloc_attrs sooner, and only
-> > allow either GFP_KERNEL or GFP_DMA passed in dma_alloc_coherent.
-> 
-> How about GFP_TRANSHUGE_LIGHT? TTM uses that to opportunistically
-> allocate huge pages (GFP_TRANSHUGE can result in unacceptably long
-> delays with memory pressure).
+fix mistypo
 
-Well, that is exactly what I don't want drivers to do - same for
-__GFP_COMP in some drm code.  This very much assumes the page allocator
-is used to back dma allocations, which very often it actually isn't, and
-any use of magic gfp flags creates a tight coupling of consumers with a
-specific implementation.
+cehck -> check
 
-In general I can't think of a good reason not to actually use
-GFP_TRANSHUGE_LIGHT by default in the dma allocator unless
-DMA_ATTR_ALLOC_SINGLE_PAGES is set.  Can you prepare a patch for that?
+Signed-off-by: DongJoo Seo <commisori28@gmail.com>
+---
+ arch/x86/mm/pageattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index 3bded76e..3b4cf12 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -1451,7 +1451,7 @@ static int change_page_attr_set_clr(unsigned long *addr, int numpages,
+ 	} else if (!(in_flag & CPA_PAGES_ARRAY)) {
+ 		/*
+ 		 * in_flag of CPA_PAGES_ARRAY implies it is aligned.
+-		 * No need to cehck in that case
++		 * No need to check in that case
+ 		 */
+ 		if (*addr & ~PAGE_MASK) {
+ 			*addr &= PAGE_MASK;
+-- 
+2.7.4
+
+
+-- 
