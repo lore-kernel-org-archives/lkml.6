@@ -1,66 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751275AbeEBG10 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 02:27:26 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:39537 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751025AbeEBG1Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 02:27:24 -0400
-X-Google-Smtp-Source: AB8JxZrdsKOhlm8W724Ne0fZqX4co4LPDUSZOcRN4ZxKwGFylQVeMxLRtgEddkHgeoEfmhUHsQqtAc7kOLLNbLtaNJQ=
+        id S1751307AbeEBG2P (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 02:28:15 -0400
+Received: from la.guarana.org ([173.254.219.205]:50544 "EHLO la.guarana.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751069AbeEBG2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 02:28:12 -0400
+Date: Wed, 2 May 2018 02:28:09 -0400
+From: Kevin Easton <kevin@guarana.org>
+To: David Miller <davem@davemloft.net>
+Cc: mst@redhat.com, linux-kernel@vger.kernel.org, jasowang@redhat.com,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] vhost: make msg padding explicit
+Message-ID: <20180502062809.GA14485@la.guarana.org>
+References: <1524844881-178524-1-git-send-email-mst@redhat.com>
+ <20180501.112822.1871426720257639849.davem@davemloft.net>
+ <20180501201841-mutt-send-email-mst@kernel.org>
+ <20180501.140551.1944561534446599966.davem@davemloft.net>
 MIME-Version: 1.0
-In-Reply-To: <20180501161909.GA1728@rob-hp-laptop>
-References: <20180430114058.5061-1-jagan@amarulasolutions.com>
- <20180430114058.5061-9-jagan@amarulasolutions.com> <20180501161909.GA1728@rob-hp-laptop>
-From: Jagan Teki <jagan@amarulasolutions.com>
-Date: Wed, 2 May 2018 11:57:22 +0530
-Message-ID: <CAMty3ZBBo41Odbife0WtPG__3qWaHZtkqUfOLTmqhzc_of+iYw@mail.gmail.com>
-Subject: Re: [PATCH 08/21] bindings: display: Add compatible for A64 HDMI PHY
-To: Rob Herring <robh@kernel.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180501.140551.1944561534446599966.davem@davemloft.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Tue, May 01, 2018 at 02:05:51PM -0400, David Miller wrote:
+> From: "Michael S. Tsirkin" <mst@redhat.com>
+> Date: Tue, 1 May 2018 20:19:19 +0300
+> 
+> > On Tue, May 01, 2018 at 11:28:22AM -0400, David Miller wrote:
+> >> From: "Michael S. Tsirkin" <mst@redhat.com>
+> >> Date: Fri, 27 Apr 2018 19:02:05 +0300
+> >> 
+> >> > There's a 32 bit hole just after type. It's best to
+> >> > give it a name, this way compiler is forced to initialize
+> >> > it with rest of the structure.
+> >> > 
+> >> > Reported-by: Kevin Easton <kevin@guarana.org>
+> >> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+> >> 
+> >> Michael, will you be sending this directly to Linus or would you like
+> >> me to apply it to net or net-next?
+> >> 
+> >> Thanks.
+> > 
+> > I'd prefer you to apply it for net and cc stable if possible.
+> 
+> Ok, applied, and added to my -stable submission queue.
 
-On Tue, May 1, 2018 at 9:49 PM, Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Apr 30, 2018 at 05:10:45PM +0530, Jagan Teki wrote:
-> > HDMI PHY on Allwinner A64 has similar like H3/H5.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > index 9ea4353caadd..7dcd1d64dfe4 100644
-> > --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-> > @@ -104,6 +104,7 @@ Required properties:
-> >    - compatible: value must be one of:
-> >      * allwinner,sun8i-a83t-hdmi-phy
-> >      * allwinner,sun8i-h3-hdmi-phy
-> > +    * allwinner,sun50i-a64-hdmi-phy
->
-> This should be one valid combination per line. The dts shows that the h3
-> string is a fallback which should be captured in the binding doc.
+Hold on, this patch changes the layout for i386 (where there is
+no padding at all).  And it's part of UAPI.
 
-The fallback compatible "allwinner,sun8i-h3-hdmi-phy" is already
-documented above, what we need to capture here? or did I miss anything
-here?
+    - Kevin
+
+> 
