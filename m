@@ -1,77 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752323AbeEBQAe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:00:34 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54538 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751637AbeEBP52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:57:28 -0400
-From: John Garry <john.garry@huawei.com>
-To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 05/11] scsi: hisi_sas: check sas_dev gone earlier in hisi_sas_abort_task()
-Date: Wed, 2 May 2018 23:56:28 +0800
-Message-ID: <1525276594-92173-6-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
-References: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
+        id S1751729AbeEBQEI (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:04:08 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:52269 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751138AbeEBQEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 12:04:00 -0400
+Subject: Re: [PATCH 07/11] irqchip: stm32: add stm32mp1 support with hierarchy
+ domain
+To: Rob Herring <robh@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
+ <1524759514-12392-8-git-send-email-ludovic.Barre@st.com>
+ <20180501145611.GA6842@rob-hp-laptop>
+From: Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <6fdb652b-e7f9-7035-3eda-39f763ed7ea3@st.com>
+Date: Wed, 2 May 2018 18:03:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180501145611.GA6842@rob-hp-laptop>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.49]
+X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+Hi Rob
 
-It is possible to dereference a NULL-pointer in hisi_sas_abort_task()
-in special scenario when the device has been removed.
 
-If an SMP task times-out, it will call hisi_sas_abort_task() to
-recover. And currently there is a check in hisi_sas_abort_task() to
-avoid the situation of processing the abort for the removed device.
+On 05/01/2018 04:56 PM, Rob Herring wrote:
+> On Thu, Apr 26, 2018 at 06:18:30PM +0200, Ludovic Barre wrote:
+>> From: Ludovic Barre <ludovic.barre@st.com>
+>>
+>> Exti controller has been differently integrated on stm32mp1 SoC.
+>> A parent irq has only one external interrupt. A hierachy domain could
+>> be used. Handlers are call by parent, each parent interrupt could be
+>> masked and unmasked according to the needs.
+>>
+>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>> ---
+>>   .../interrupt-controller/st,stm32-exti.txt         |   3 +
+>>   drivers/irqchip/irq-stm32-exti.c                   | 322 +++++++++++++++++++++
+>>   2 files changed, 325 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>> index edf03f0..136bd61 100644
+>> --- a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>> @@ -5,11 +5,14 @@ Required properties:
+>>   - compatible: Should be:
+>>       "st,stm32-exti"
+>>       "st,stm32h7-exti"
+>> +    "st,stm32mp1-exti"
+>>   - reg: Specifies base physical address and size of the registers
+>>   - interrupt-controller: Indentifies the node as an interrupt controller
+>>   - #interrupt-cells: Specifies the number of cells to encode an interrupt
+>>     specifier, shall be 2
+>>   - interrupts: interrupts references to primary interrupt controller
+>> +  (only needed for exti controller with multiple exti under
+>> +  same parent interrupt: st,stm32-exti and st,stm32h7-exti")
+>>   
+>>   Example:
+>>   
+>> diff --git a/drivers/irqchip/irq-stm32-exti.c b/drivers/irqchip/irq-stm32-exti.c
+>> index b38c655..ebf7146 100644
+>> --- a/drivers/irqchip/irq-stm32-exti.c
+>> +++ b/drivers/irqchip/irq-stm32-exti.c
+> 
+> [...]
+> 
+>> +static const struct stm32_desc_irq stm32mp1_desc_irq[] = {
+>> +	{ .exti = 1, .irq_parent = 7 },
+>> +	{ .exti = 2, .irq_parent = 8 },
+>> +	{ .exti = 3, .irq_parent = 9 },
+>> +	{ .exti = 4, .irq_parent = 10 },
+>> +	{ .exti = 5, .irq_parent = 23 },
+>> +	{ .exti = 6, .irq_parent = 64 },
+>> +	{ .exti = 7, .irq_parent = 65 },
+>> +	{ .exti = 8, .irq_parent = 66 },
+>> +	{ .exti = 9, .irq_parent = 67 },
+>> +	{ .exti = 10, .irq_parent = 40 },
+>> +	{ .exti = 11, .irq_parent = 42 },
+>> +	{ .exti = 12, .irq_parent = 76 },
+>> +	{ .exti = 13, .irq_parent = 77 },
+>> +	{ .exti = 14, .irq_parent = 121 },
+>> +	{ .exti = 15, .irq_parent = 127 },
+>> +	{ .exti = 16, .irq_parent = 1 },
+>> +	{ .exti = 65, .irq_parent = 144 },
+>> +	{ .exti = 68, .irq_parent = 143 },
+>> +	{ .exti = 73, .irq_parent = 129 },
+>> +};
+> 
+> You can use an interrupt-map property rather than put this into the
+> driver.
 
-However we have an ordering problem, in that we may reference
-a task for the removed device before checking if the device has
-been removed.
+interrupt-map seemed interesting and promising like used in pci host.
+At first sight this property can't be used into node with
+"interrupt-controller" property (see in drivers/of/irq.c function: 
+of_irq_parse_raw) because "of_irq_parse_raw" checks if node got
+it first, and after lookup the interrupt-map.
 
-Fix this by only referencing the sas_dev after we know it is still
-present.
+Rob, Thomas, Jason, Marc what do you prefers or the right ways...?
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/hisi_sas/hisi_sas_main.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index 8f8e642..24416bb 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -1166,15 +1166,16 @@ static int hisi_sas_abort_task(struct sas_task *task)
- 	struct hisi_sas_tmf_task tmf_task;
- 	struct domain_device *device = task->dev;
- 	struct hisi_sas_device *sas_dev = device->lldd_dev;
--	struct hisi_hba *hisi_hba = dev_to_hisi_hba(task->dev);
--	struct device *dev = hisi_hba->dev;
-+	struct hisi_hba *hisi_hba;
-+	struct device *dev;
- 	int rc = TMF_RESP_FUNC_FAILED;
- 	unsigned long flags;
- 
--	if (!sas_dev) {
--		dev_warn(dev, "Device has been removed\n");
-+	if (!sas_dev)
- 		return TMF_RESP_FUNC_FAILED;
--	}
-+
-+	hisi_hba = dev_to_hisi_hba(task->dev);
-+	dev = hisi_hba->dev;
- 
- 	spin_lock_irqsave(&task->task_state_lock, flags);
- 	if (task->task_state_flags & SAS_TASK_STATE_DONE) {
--- 
-1.9.1
+> 
