@@ -1,81 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeEBNOg (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:14:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51158 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751076AbeEBNOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:14:33 -0400
-Date: Wed, 2 May 2018 15:14:31 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: =?utf-8?Q?Myl=C3=A8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: linux@armlinux.org.uk, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 10/12] ARM: sun8i: smp: Add support for A83T
-Message-ID: <20180502131431.j7jaz74ko5ueotwn@flea>
-References: <20180501123131.7738-1-mylene.josserand@bootlin.com>
- <20180501123131.7738-11-mylene.josserand@bootlin.com>
+        id S1751483AbeEBNPQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:15:16 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:36984 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751292AbeEBNPM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:15:12 -0400
+X-Google-Smtp-Source: AB8JxZqOWsAXGhU0EtETzEiWbKtLYlYVQUks7R5MgLQxCg8VJsmuM+2f8h5mIiaMzSvhd8rhNKD0sNg3Ji1fY779EtI=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="v3li36dd5jhn3acu"
-Content-Disposition: inline
-In-Reply-To: <20180501123131.7738-11-mylene.josserand@bootlin.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180427114723.2687-1-kishon@ti.com>
+References: <20180427114723.2687-1-kishon@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 2 May 2018 15:15:11 +0200
+Message-ID: <CAPDyKFqb=Dyi=UMZBLKcrBbmaWbGEjf-Vp5vQ0b7_F__+YnXHQ@mail.gmail.com>
+Subject: Re: [PATCH v5 00/14] mmc: sdhci-omap: Add UHS/HS200 mode support
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-omap <linux-omap@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 27 April 2018 at 13:47, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> Add UHS/HS200 mode support in sdhci-omap. The programming sequence
+> for voltage switching, tuning is followed from AM572x TRM
+> http://www.ti.com/lit/ug/spruhz6j/spruhz6j.pdf
+> (Similar to all AM57x/DRA7x SoCs). The patch series also implements
+> workaround for errata published in
+> http://www.ti.com/lit/er/sprz429l/sprz429l.pdf
+>
+> patches are created on top of
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git next
+>
+> The patches along with dt has also been pushed to
+> https://github.com/kishon/linux-wip.git sdhci_uhs_v5
 
---v3li36dd5jhn3acu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks, applied for next!
 
-On Tue, May 01, 2018 at 02:31:29PM +0200, Myl=E8ne Josserand wrote:
-> Add the support for A83T.
->=20
-> A83T SoC has an additional register than A80 to handle CPU configurations:
-> R_CPUS_CFG. Information about the register comes from Allwinner's BSP
-> driver.
-> An important difference is the Power Off Gating register for clusters
-> which is BIT(4) in case of SUN9I-A80 and BIT(0) in case of SUN8I-A83T.
-> There is also a bit swap between sun8i-a83t and sun9i-a80 that must be
-> handled.
->=20
-> Signed-off-by: Myl=E8ne Josserand <mylene.josserand@bootlin.com>
+Kind regards
+Uffe
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---v3li36dd5jhn3acu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrpubYACgkQ0rTAlCFN
-r3Qqlg//YFe09MMg2NNFb3wlQITSJ7vYVeBfO9MheU8Nf4Zf0wit7OR9f9d1hPxr
-iqlgfBIoXdj3nrdukW4pR+sHBYxhzpICIw79tcFvlhUv+1TzndVdWQf7TYtScvfF
-9cpjv3+kJcytQH+is9+r+KhrQbYTjNNKf1oXOYZupXOEL9KJmeZeRqjyj+AffF+x
-f6K9eQPedtSLrD4QCpoYhn+kLAP+8VN4aun3RymwwDgenKQiOVmME7AYNyeSlW0M
-XqV3xeP4xCGDTYaWh/Q3En6fE28ss0Jwrekzl2e9JU8U88kF606p6i0D2yM8LcHR
-vPIjGSmGdC850pZ3+87b1OlyP5gU4ehHCWO9YvUE5OTm83+Dlbd1aqWOuGcSqGx1
-3goL7QTOEKunZgP/J3GiR88Wwqi4aXC4atlpg3TBewMN1fnR1CxXCjBO1qTYG1ZH
-wfBuNpDs+01dhD5aMX2mgGBQfZz/vD/KNFBS6+ZQeEAl5wJHHk+M95UIGYpezY0L
-PMyqfWhwQN1XSgXFK5d4SiyrRhGUya22C8a9QgZrOPnhVgPfOTHSmjdSiAtpxXyw
-LP/Jh0FL+F8L4qQO3YusZzIBB5zCjcRdqF9oupQuK9GS/NuTmeIwzsxGMewuu2Ew
-V6rwoCoj+H9ONd1e/2rhLJtmFq/AGS4CKyUfpnIZbtoRDdPBj2I=
-=JGi0
------END PGP SIGNATURE-----
-
---v3li36dd5jhn3acu--
+>
+> Changes from v4:
+> *) Added comment in sdhci for disabling HS200/HS400 mode
+> *) Fixed a couple of chunks in "Program a relatively accurate SW timeout
+>    value" which were missed in the previous revision
+> *) Added a patch in sdhci-omap to get IODelay values of 3.3v DDR mode.
+> *) Added pinctrl binding documentation for sdhci-omap which was missed
+>    before.
+>
+> Changes from v3:
+> *) Fixed Adrian's comment on error handling when __sdhci_add_host()
+>    fails
+> *) Used Adrian's patches for programming SW timeout value.
+>
+> Changes from v2:
+> *) Patches in v2 already applied to mmc -next are dropped from the
+>    series.
+> *) Changed SW timeout logic as per Adrians's suggestion
+> *) Validated SDIO with the current patches (added a couple of fixes
+>    found while adding SDIO support).
+> *) Used soc_device_match() instead of pdata-quirks as per Tony's
+>    suggestions.
+>
+> Changes from v1:
+> *) Only poll on DAT0 and DATI for card_busy status
+> *) Cleanup iodelay patch as suggested by Tony.
+> *) Added quirk to disable HW timeout
+> *) Use the existing data timer but program a relatively accurate
+>    SW timeout value (Impacts all platforms)
+> *) Fix a bug in sdhci which was using data_timer for non data line
+>    commands
+>
+> Adrian Hunter (2):
+>   mmc: sdhci: Add quirk to disable HW timeout
+>   mmc: sdhci: Factor out target_timeout calculation
+>
+> Kishon Vijay Abraham I (12):
+>   mmc: sdhci-omap: Fix when capabilities are obtained from
+>     SDHCI_CAPABILITIES reg
+>   mmc: sdhci-omap: Remove setting ADMA capability in driver
+>   mmc: sdhci-omap: Workaround for Errata i843
+>   mmc: sdhci-omap: Invoke sdhci_get_of_property to read sdhci dt
+>     properties
+>   mmc: sdhci: Disable 1.8v modes (HS200/HS400/UHS) if controller can't
+>     support 1.8v
+>   mmc: sdhci: Program a relatively accurate SW timeout value
+>   mmc: sdhci-omap: Workaround for Errata i834
+>   dt-bindings: sdhci-omap: Add K2G specific binding
+>   mmc: sdhci-omap: Add support for MMC/SD controller in k2g SoC
+>   mmc: sdhci-omap: Add sdhci_omap specific ops for enable_sdio_irq
+>   dt-bindings: sdhci-omap: Add pinctrl bindings
+>   mmc: sdhci-omap: Get IODelay values for 3.3v DDR mode
+>
+>  .../devicetree/bindings/mmc/sdhci-omap.txt    |   7 +
+>  drivers/mmc/host/sdhci-omap.c                 |  92 +++++++++--
+>  drivers/mmc/host/sdhci.c                      | 148 ++++++++++++++----
+>  drivers/mmc/host/sdhci.h                      |  15 ++
+>  include/linux/mmc/host.h                      |   4 +
+>  5 files changed, 226 insertions(+), 40 deletions(-)
+>
+> --
+> 2.17.0
+>
