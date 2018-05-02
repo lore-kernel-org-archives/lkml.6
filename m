@@ -1,138 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751434AbeEBJhE (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 05:37:04 -0400
-Received: from mga01.intel.com ([192.55.52.88]:47635 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750883AbeEBJhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 05:37:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="46134581"
-Date: Wed, 2 May 2018 17:27:01 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
-        akpm@linux-foundation.org, x86@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH 3/5] kernel hacking: new config NO_AUTO_INLINE to disable
- compiler atuo-inline optimizations
-Message-ID: <20180502092700.i4tpyi7gbf7jz7ax@intel.com>
-References: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
- <1525179614-14571-4-git-send-email-changbin.du@intel.com>
- <20180501105420.07e41578@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180501105420.07e41578@gandalf.local.home>
-User-Agent: NeoMutt/20180323-6-5ca392
+        id S1751460AbeEBJhS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 05:37:18 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46394 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750883AbeEBJhO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 05:37:14 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180502093711euoutp02504abb8144170a24e29f16f4b1e3d4ce~qykdpdx5H1521415214euoutp02v
+X-AuditID: cbfec7f4-6f9ff700000043e4-18-5ae986c64871
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/18] thermal: exynos: set trips in ascending order in
+ exynos7_tmu_initialize()
+Date: Wed, 02 May 2018 11:37:08 +0200
+Message-id: <3681690.4QzPMdFsyU@amdc3058>
+User-Agent: KMail/4.13.3 (Linux/3.13.0-96-generic; KDE/4.13.3; x86_64; ; )
+In-reply-to: <20180501100242.GJ27619@mai>
+MIME-version: 1.0
+Content-transfer-encoding: 7Bit
+Content-type: text/plain; charset="us-ascii"
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsWy7djPc7rH2l5GGbz5xmkx77Osxfwr11gt
+        Lu+aw2bxufcIo8WM8/uYLJ487GNzYPPYOesuu8fiPS+ZPO5c28Pm8XmTXABLFJdNSmpOZllq
+        kb5dAldG3xW5gvfcFeu/9LE0MN7i7GLk5JAQMJHomjqbrYuRi0NIYAWjxLx/e6Ccz4wSzYva
+        WWCqzk+8yghiCwksY5RYtSQVoug3o8SMXxvBitgErCQmtq8CKxIR0JNofN/GBFLELLCKUaL/
+        0zsmkISwQJrEnP8H2UFsFgFVibZf/5m7GDk4eAU0JdadCgIJiwp4SWzZ1w5WzgkUPnB1DSuI
+        zSsgKPFj8j2wXcwC8hL79k9lhbB1JM4eW8cIsktCYA2bxOO9v6CudpHY2n8GyhaWeHV8CzuE
+        LSNxeXI3C0RDM6PEtx17mCESExgl9qwXgrCtJQ4fvwi1gU9i0rbpYIdKCPBKdLRBlXhILG05
+        wgIRdpRouscDD5SN+9YwTmCUnYXk7llI7p6F5O4FjMyrGMVTS4tz01OLjfJSy/WKE3OLS/PS
+        9ZLzczcxAtPB6X/Hv+xg3PUn6RCjAAejEg+vQd6LKCHWxLLiytxDjBIczEoivCs7nkUJ8aYk
+        VlalFuXHF5XmpBYfYpTmYFES543TqIsSEkhPLEnNTk0tSC2CyTJxcEo1MPa/s/xZUPAl7323
+        xGlJRZGuS4Yc0xZJiPgvWFoVnulW/2yn/grRy113Atq5nuyWWf5k1cvemFij77xshYHGYatd
+        g+NXWEddWig989j1T7wntn3QYXuzwbrvdZ+AbVzK+SdyCqd4/ywLerrmW+I8kfVe/13/TZWt
+        9K0/t6lhoWLJTqGAKXvvtCuxFGckGmoxFxUnAgCdcV8aAwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMLMWRmVeSWpSXmKPExsVy+t/xa7pH215GGRw8w2cx77Osxfwr11gt
+        Lu+aw2bxufcIo8WM8/uYLJ487GNzYPPYOesuu8fiPS+ZPO5c28Pm8XmTXABLFJdNSmpOZllq
+        kb5dAldG3xW5gvfcFeu/9LE0MN7i7GLk5JAQMJE4P/EqI4gtJLCEUeJ2a1QXIxeQ/ZdR4tjJ
+        32AJNgEriYntq8BsEQE9icb3bUwgRcwCqxglVrb2MoMkhAXSJOb8P8gOYrMIqEq0/foPFOfg
+        4BXQlFh3KggkLCrgJbFlXzsTiM0JFD5wdQ0rxLLljBKbf99gA0nwCghK/Jh8jwXEZhaQl9i3
+        fyorhK0lsX7ncaYJjPyzkJTNQlI2C0nZAkbmVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIFB
+        u+3Yzy07GLveBR9iFOBgVOLhNch7ESXEmlhWXJl7iFGCg1lJhHdlx7MoId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rznDSqjhATSE0tSs1NTC1KLYLJMHJxSDYzTnb7O2lbLuP/JtW06zb3f54oe
+        U9hYPDf60Y7cLD+Rirl611/tkldsFPPJ2VYq/TNi3nHxZyt0LP2jCkvORvNscljj4DY5LfyE
+        8ubr9fEM5/888LvQI/W4UH9TzarawOOBmh51R5k1LnPMWtjdd+HUocI1szKzNv0U1Z56xemF
+        yJyQDw3L0i2UWIozEg21mIuKEwHv0KZOVgIAAA==
+X-CMS-MailID: 20180502093709eucas1p177dd30efffed16e763fcad10686af159
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180502093709eucas1p177dd30efffed16e763fcad10686af159
+X-RootMTR: 20180502093709eucas1p177dd30efffed16e763fcad10686af159
+References: <1524743493-28113-1-git-send-email-b.zolnierkie@samsung.com>
+        <1524743493-28113-14-git-send-email-b.zolnierkie@samsung.com>
+        <20180501100242.GJ27619@mai>
+        <CGME20180502093709eucas1p177dd30efffed16e763fcad10686af159@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 10:54:20AM -0400, Steven Rostedt wrote:
-> On Tue,  1 May 2018 21:00:12 +0800
-> changbin.du@intel.com wrote:
-> 
-> > From: Changbin Du <changbin.du@intel.com>
+On Tuesday, May 01, 2018 12:02:42 PM Daniel Lezcano wrote:
+> On Thu, Apr 26, 2018 at 01:51:28PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > Set trips in ascending order in exynos7_tmu_initialize() (it should
+> > make no difference in driver operation). This prepares the driver
+> > code to moving trips setting from ->tmu_initialize method to
+> > exynos_tmu_initialize().
 > > 
-> > This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
-> > this option will make compiler not auto-inline kernel functions. By
-> > enabling this option, all the kernel functions (including static ones)
-> > will not be optimized out except those marked as inline or always_inline.
-> > This is useful when you are using ftrace to understand the control flow
-> > of kernel code or tracing some static functions.
-> 
-> I'm not against this patch, but it's up to others if this gets included
-> or not.
-> 
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@intel.com>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > > ---
-> >  Makefile          |  6 ++++++
-> >  lib/Kconfig.debug | 13 +++++++++++++
-> >  2 files changed, 19 insertions(+)
+> >  drivers/thermal/samsung/exynos_tmu.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
 > > 
-> > diff --git a/Makefile b/Makefile
-> > index 619a85a..eb694f6 100644
-> > --- a/Makefile
-> > +++ b/Makefile
-> > @@ -775,6 +775,12 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
-> >  		   $(call cc-option,-fno-var-tracking)
-> >  endif
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> > index 12b60e2..571511f 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -618,7 +618,7 @@ static void exynos7_tmu_initialize(struct platform_device *pdev)
+> >  	sanitize_temp_error(data, trim_info);
 > >  
-> > +ifdef CONFIG_NO_AUTO_INLINE
-> > +KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
-> > +		   $(call cc-option, -fno-inline-small-functions) \
-> > +		   $(call cc-option, -fno-inline-functions-called-once)
-> > +endif
-> > +
-> >  ifdef CONFIG_FUNCTION_TRACER
-> >  ifndef CC_FLAGS_FTRACE
-> >  CC_FLAGS_FTRACE := -pg
-> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> > index c40c7b7..90f35ad 100644
-> > --- a/lib/Kconfig.debug
-> > +++ b/lib/Kconfig.debug
-> > @@ -198,6 +198,19 @@ config GDB_SCRIPTS
-> >  	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
-> >  	  for further details.
-> >  
-> > +config NO_AUTO_INLINE
-> > +	bool "Disable compiler atuo-inline optimizations"
+> >  	/* Write temperature code for rising and falling threshold */
+> > -	for (i = (of_thermal_get_ntrips(tz) - 1); i >= 0; i--) {
+> > +	for (i = 0; i < of_thermal_get_ntrips(tz); i++) {
 > 
-> typo: s/atuo/auto/
-> 
-> > +	default n
-> > +	help
-> > +	  This will make compiler not auto-inline kernel functions for
-> > +	  optimization. By enabling this option, all the kernel functions
-> > +	  (including static ones) will not be optimized out except those
-> > +	  marked as inline or always_inline. This is useful when you are
-> > +	  using ftrace to understand the control flow of kernel code or
-> > +	  tracing some static functions.
-> 
-> Some grammar updates:
-> 
-> 	  This will prevent the compiler from optimizing the kernel by
-> 	  auto-inlining functions not marked with the inline keyword.
-> 	  With this option, only functions explicitly marked with
-> 	  "inline" will be inlined. This will allow the function tracer
-> 	  to trace more functions because it only traces functions that
-> 	  the compiler has not inlined.
-> 
-> 	  Enabling this function can help debugging a kernel if using
-> 	  the function tracer. But it can also change how the kernel
-> 	  works, because inlining functions may change the timing,
-> 	  which could make it difficult while debugging race conditions.
-> 
+> Capped with data->ntrip ?
 
-Thanks for your kind grammar updates. I will update them. :)
+No need to, the code in question is removed in patch #14 (also Exynos7
+DTS doesn't define more trip points than data->ntrip).
 
-> > +
-> > +	  Use only if you want to debug the kernel.
-> 
-> The proper way to say the above is:
-> 
-> 	  If unsure, select N
->
-Agree.
+> >  		tz->ops->get_trip_temp(tz, i, &temp);
+> >  		temp /= MCELSIUS;
+> >  		exynos7_tmu_set_trip_temp(data, i, temp);
 
-> -- Steve
-> 
-> > +
-> >  config ENABLE_WARN_DEPRECATED
-> >  	bool "Enable __deprecated logic"
-> >  	default y
-> 
-
-
--- 
-Thanks,
-Changbin Du
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
