@@ -1,69 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751711AbeEBNVu (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:21:50 -0400
-Received: from ozlabs.org ([203.11.71.1]:44427 "EHLO ozlabs.org"
+        id S1751807AbeEBNWb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:22:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751414AbeEBNVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:21:12 -0400
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: linuxppc-dev@ozlabs.org
-Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] powerpc/syscalls: kill ppc32_select()
-Date: Wed,  2 May 2018 23:20:50 +1000
-Message-Id: <20180502132051.28861-5-mpe@ellerman.id.au>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180502132051.28861-1-mpe@ellerman.id.au>
-References: <20180502132051.28861-1-mpe@ellerman.id.au>
+        id S1751783AbeEBNW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:22:28 -0400
+Date: Wed, 2 May 2018 21:22:18 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Cc: Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, kernel@collabora.com
+Subject: Re: [PATCH] ARM: dts: imx53-ppd: Use IRQ_TYPE_* constants
+Message-ID: <20180502132216.GL3443@dragon>
+References: <20180420154553.18070-1-sebastian.reichel@collabora.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420154553.18070-1-sebastian.reichel@collabora.co.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Al Viro <viro@zeniv.linux.org.uk>
+On Fri, Apr 20, 2018 at 05:45:53PM +0200, Sebastian Reichel wrote:
+> Replace magic numbers with IRQ_TYPE_* constants to improve
+> DT readability.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-it had always been pointless - compat_sys_select() sign-extends
-the first argument just fine on its own.
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-[mpe: Use COMPAT_SPU_NEW() to keep systbl_chk.sh happy]
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
----
- arch/powerpc/include/asm/systbl.h | 2 +-
- arch/powerpc/kernel/sys_ppc32.c   | 9 ---------
- 2 files changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/systbl.h b/arch/powerpc/include/asm/systbl.h
-index b91701c0711a..cdf528089a63 100644
---- a/arch/powerpc/include/asm/systbl.h
-+++ b/arch/powerpc/include/asm/systbl.h
-@@ -147,7 +147,7 @@ SYSCALL_SPU(setfsuid)
- SYSCALL_SPU(setfsgid)
- SYSCALL_SPU(llseek)
- COMPAT_SYS_SPU(getdents)
--SYSX_SPU(sys_select,ppc32_select,sys_select)
-+COMPAT_SPU_NEW(select)
- SYSCALL_SPU(flock)
- SYSCALL_SPU(msync)
- COMPAT_SYS_SPU(readv)
-diff --git a/arch/powerpc/kernel/sys_ppc32.c b/arch/powerpc/kernel/sys_ppc32.c
-index c11c73373691..bdf58ba1a94b 100644
---- a/arch/powerpc/kernel/sys_ppc32.c
-+++ b/arch/powerpc/kernel/sys_ppc32.c
-@@ -52,15 +52,6 @@
- #include <asm/syscalls.h>
- #include <asm/switch_to.h>
- 
--
--asmlinkage long ppc32_select(u32 n, compat_ulong_t __user *inp,
--		compat_ulong_t __user *outp, compat_ulong_t __user *exp,
--		compat_uptr_t tvp_x)
--{
--	/* sign extend n */
--	return compat_sys_select((int)n, inp, outp, exp, compat_ptr(tvp_x));
--}
--
- unsigned long compat_sys_mmap2(unsigned long addr, size_t len,
- 			  unsigned long prot, unsigned long flags,
- 			  unsigned long fd, unsigned long pgoff)
--- 
-2.14.1
+Applied, thanks.
