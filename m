@@ -1,69 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751825AbeEBPtm (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:49:42 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39800 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751658AbeEBPtg (ORCPT
+        id S1751689AbeEBPuo (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:50:44 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:51209 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751020AbeEBPul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:49:36 -0400
-X-Google-Smtp-Source: AB8JxZoMWMzefU2UFnS5q/freDNNFC1ge1YxncrRNRdDDSlJieepwYcWLEkbxRpkkkBb+kKCZvuthw==
-Date: Wed, 2 May 2018 17:49:31 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Keerthy <j-keerthy@ti.com>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] thermal: ti-soc-thermal: fix incorrect entry in
- omap5430_adc_to_temp[]
-Message-ID: <20180502154931.GS27619@mai>
-References: <CGME20180502141432eucas1p1c85aa366979b73c59a46ec0c2f7ef8e6@eucas1p1.samsung.com>
- <17742083.Vu59BImYbG@amdc3058>
+        Wed, 2 May 2018 11:50:41 -0400
+Subject: Re: [PATCH 0/4] ARM: dts: Add cryptographic support for stm32mp157c
+To: Lionel Debieve <lionel.debieve@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20180423151947.2526-1-lionel.debieve@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <27c3293a-bfbf-6410-68da-6750371e79e6@st.com>
+Date: Wed, 2 May 2018 17:50:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <17742083.Vu59BImYbG@amdc3058>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180423151947.2526-1-lionel.debieve@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 04:14:32PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Entry for Index 941 has one zero too much. Fix it.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Hi Lionel,
 
-Good catch :)
-
-I'm curious, how did you spot it ?
-
-> ---
-> v2:
-> - Fix patch description.
+On 04/23/2018 05:19 PM, Lionel Debieve wrote:
+> Patches serie add support or RNG, CRYP and CRC IPs for stm32mp157c SoC
+> and add RNG default support for ev1 board.
 > 
->  drivers/thermal/ti-soc-thermal/omap5-thermal-data.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Lionel Debieve (4):
+>    ARM: dts: stm32: Add RNG support on stm32mp157c
+>    ARM: dts: stm32: Enable RNG for stm32mp157c-ed1
+>    ARM: dts: stm32: Add CRYP support on stm32mp157c
+>    ARM: dts: stm32: Add CRC support on stm32mp157c
 > 
-> Index: b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
-> ===================================================================
-> --- a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c	2018-04-30 16:23:42.000000000 +0200
-> +++ b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c	2018-05-02 14:16:09.461434201 +0200
-> @@ -310,7 +310,7 @@ omap5430_adc_to_temp[
->  	119800, 120200, 120600, 121000, 121400, 121800, 122400, 122600, 123000,
->  	123400,
->  	/* Index 940 - 945 */
-> -	123800, 1242000, 124600, 124900, 125000, 125000,
-> +	123800, 124200, 124600, 124900, 125000, 125000,
->  };
->  
->  /* OMAP54xx ES2.0 data */
+>   arch/arm/boot/dts/stm32mp157c-ed1.dts |  4 ++++
+>   arch/arm/boot/dts/stm32mp157c.dtsi    | 25 +++++++++++++++++++++++++
+>   2 files changed, 29 insertions(+)
 > 
 
--- 
+Series applied on stm32-next.
 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Regards
+Alex
