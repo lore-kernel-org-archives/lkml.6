@@ -1,40 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751483AbeEBOhO (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:37:14 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:34716 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750936AbeEBOhL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:37:11 -0400
-X-Google-Smtp-Source: AB8JxZo4+X0bkQbl2Vr0D6UmT7poPyjNjwjzompipiNS1rFxwQi828fJXOYHIA2Oa+Bn2VI7sbPYE0IHeFQtRTJSppo=
+        id S1751755AbeEBOkT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:40:19 -0400
+Received: from la.guarana.org ([173.254.219.205]:47710 "EHLO la.guarana.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751175AbeEBOkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:40:17 -0400
+Date: Wed, 2 May 2018 10:40:15 -0400
+From: Kevin Easton <kevin@guarana.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org,
+        jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] vhost: make msg padding explicit
+Message-ID: <20180502144015.GA18389@la.guarana.org>
+References: <20180501.140551.1944561534446599966.davem@davemloft.net>
+ <20180502062809.GA14485@la.guarana.org>
+ <20180502162932-mutt-send-email-mst@kernel.org>
+ <20180502.100446.106883595468297057.davem@davemloft.net>
+ <20180502171909-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180502043230.GQ6014@localhost>
-References: <2484918.HKVQc3yJkt@bear> <20180502043230.GQ6014@localhost>
-From: Frank Mori Hess <fmh6jj@gmail.com>
-Date: Wed, 2 May 2018 10:37:09 -0400
-Message-ID: <CAJz5OpfTVD7aEH8DK-nSdSrbaS-1DcSK+44FKHkej59KDUX=dw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "dmaengine: pl330: add DMA_PAUSE feature"
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Vinod Koul <vkoul@kernel.org>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        r.baldyga@hackerion.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180502171909-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 12:32 AM, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Sat, Apr 28, 2018 at 05:50:58PM -0400, Frank Mori Hess wrote:
->> This reverts commit 88987d2c7534a0269f567fb101e6d71a08f0f01d.
->>
->
-> I am dropping the orignal patch for queue, so no need for revert patch.
->
+On Wed, May 02, 2018 at 05:19:27PM +0300, Michael S. Tsirkin wrote:
+> On Wed, May 02, 2018 at 10:04:46AM -0400, David Miller wrote:
+> > From: "Michael S. Tsirkin" <mst@redhat.com>
+> > Date: Wed, 2 May 2018 16:36:37 +0300
+> > 
+> > > Ouch.  True - and in particular the 32 bit ABI on 64 bit kernels doesn't
+> > > work at all. Hmm. It's relatively new and maybe there aren't any 32 bit
+> > > users yet. Thoughts?
+> > 
+> > If it's been in a released kernel version, we really aren't at liberty
+> > to play "maybe nobody uses this" UAPI changing games.
+> > 
+> > Please send me a revert.
+> 
+> Sent. Looking at compat mess now.
 
-I don't understand, 88987d2c7534a0269f567fb101e6d71a08f0f01d made it
-into the mainline kernel in 2015?
+Just naming the padding field isn't sufficient anyway, there also needs to
+be code in vhost_new_msg() to initialise it using the name.
 
-
--- 
-Frank
+    - Kevin
