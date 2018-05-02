@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751704AbeEBTji (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 15:39:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38612 "EHLO
+        id S1751751AbeEBTjp (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 15:39:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38512 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbeEBTiE (ORCPT
+        with ESMTP id S1751316AbeEBTiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 15:38:04 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2924960588
+        Wed, 2 May 2018 15:38:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 013C7607A2
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
@@ -16,9 +16,9 @@ To: andy.gross@linaro.org, david.brown@linaro.org,
 Cc: rnayak@codeaurora.org, bjorn.andersson@linaro.org,
         linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
         dianders@chromium.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH v7 06/10] drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
-Date: Wed,  2 May 2018 13:37:45 -0600
-Message-Id: <20180502193749.31004-7-ilina@codeaurora.org>
+Subject: [PATCH v7 05/10] drivers: qcom: rpmh-rsc: write sleep/wake requests to TCS
+Date: Wed,  2 May 2018 13:37:44 -0600
+Message-Id: <20180502193749.31004-6-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180502193749.31004-1-ilina@codeaurora.org>
 References: <20180502193749.31004-1-ilina@codeaurora.org>
@@ -26,81 +26,213 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow sleep and wake commands to be cleared from the respective TCSes,
-so that they can be re-populated.
+Sleep and wake requests are sent when the application processor
+subsystem of the SoC is entering deep sleep states like in suspend.
+These requests help lower the system power requirements when the
+resources are not in use.
+
+Sleep and wake requests are written to the TCS slots but are not
+triggered at the time of writing. The TCS are triggered by the firmware
+after the last of the CPUs has executed its WFI. Since these requests
+may come in different batches of requests, it is the job of this
+controller driver to find and arrange the requests into the available
+TCSes.
 
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+
 ---
 
 Changes in v7:
-	- Move bitmap_zero() outside the loop
-
-Changes in v6:
-	- remove unnecessary locks around __tcs_invalidate
-	- rename function to tcs_invaldiate
-
-Changes in v4:
-	- refactored the rphm_rsc_invalidate()
+	- Bug fix in find_match()
 ---
- drivers/soc/qcom/rpmh-rsc.c | 45 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ drivers/soc/qcom/rpmh-internal.h |   8 +++
+ drivers/soc/qcom/rpmh-rsc.c      | 118 +++++++++++++++++++++++++++++++
+ 2 files changed, 126 insertions(+)
 
+diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+index d9a21726e568..6e19fe458c31 100644
+--- a/drivers/soc/qcom/rpmh-internal.h
++++ b/drivers/soc/qcom/rpmh-internal.h
+@@ -14,6 +14,7 @@
+ #define MAX_CMDS_PER_TCS		16
+ #define MAX_TCS_PER_TYPE		3
+ #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
++#define MAX_TCS_SLOTS			(MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
+ #define RPMH_MAX_CTRLR			2
+ 
+ struct rsc_drv;
+@@ -30,6 +31,8 @@ struct rsc_drv;
+  * @ncpt:      number of commands in each TCS
+  * @lock:      lock for synchronizing this TCS writes
+  * @req:       requests that are sent from the TCS
++ * @cmd_cache: flattened cache of cmds in sleep/wake TCS
++ * @slots:     indicates which of @cmd_addr are occupied
+  */
+ struct tcs_group {
+ 	struct rsc_drv *drv;
+@@ -40,6 +43,8 @@ struct tcs_group {
+ 	int ncpt;
+ 	spinlock_t lock;
+ 	const struct tcs_request *req[MAX_TCS_PER_TYPE];
++	u32 *cmd_cache;
++	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
+ };
+ 
+ /**
+@@ -69,6 +74,9 @@ struct rsc_drv {
+ extern struct list_head rsc_drv_list;
+ 
+ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
++			     const struct tcs_request *msg);
++int rpmh_rsc_invalidate(struct rsc_drv *drv);
+ 
+ void rpmh_tx_done(const struct tcs_request *msg, int r);
+ 
 diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 4e2144a14c31..42aedf2d80fe 100644
+index 33270b1d5991..4e2144a14c31 100644
 --- a/drivers/soc/qcom/rpmh-rsc.c
 +++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -104,6 +104,51 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
- 	return &drv->tcs[type];
+@@ -113,6 +113,12 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 	case RPMH_ACTIVE_ONLY_STATE:
+ 		type = ACTIVE_TCS;
+ 		break;
++	case RPMH_WAKE_ONLY_STATE:
++		type = WAKE_TCS;
++		break;
++	case RPMH_SLEEP_STATE:
++		type = SLEEP_TCS;
++		break;
+ 	default:
+ 		return ERR_PTR(-EINVAL);
+ 	}
+@@ -353,6 +359,105 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
  }
+ EXPORT_SYMBOL(rpmh_rsc_send_data);
  
-+static int tcs_invalidate(struct rsc_drv *drv, int type)
++static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
++		      int len)
 +{
-+	int m;
-+	struct tcs_group *tcs;
++	int i, j;
 +
-+	tcs = get_tcs_of_type(drv, type);
-+	if (IS_ERR(tcs))
-+		return PTR_ERR(tcs);
-+
-+	spin_lock(&tcs->lock);
-+	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
-+		spin_unlock(&tcs->lock);
-+		return 0;
-+	}
-+
-+	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
-+		if (!tcs_is_free(drv, m)) {
-+			spin_unlock(&tcs->lock);
-+			return -EAGAIN;
++	/* Check for already cached commands */
++	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
++		if (tcs->cmd_cache[i] != cmd[0].addr)
++			continue;
++		for (j = 0; j < len; j++) {
++			if (tcs->cmd_cache[i + j] != cmd[j].addr) {
++				WARN(1, "Message does not match previous sequence.\n");
++				return -EINVAL;
++			}
 +		}
-+		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
++		return i;
 +	}
-+	bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
-+	spin_unlock(&tcs->lock);
++
++	return -ENODATA;
++}
++
++static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
++		      int *tcs_id, int *cmd_id)
++{
++	int slot, offset;
++	int i = 0;
++
++	/* Find if we already have the msg in our TCS */
++	slot = find_match(tcs, msg->cmds, msg->num_cmds);
++	if (slot >= 0)
++		goto copy_data;
++
++	/* Do over, until we can fit the full payload in a TCS */
++	do {
++		slot = bitmap_find_next_zero_area(tcs->slots, MAX_TCS_SLOTS,
++						  i, msg->num_cmds, 0);
++		if (slot == MAX_TCS_SLOTS)
++			return -ENOMEM;
++		i += tcs->ncpt;
++	} while (slot + msg->num_cmds - 1 >= i);
++
++copy_data:
++	bitmap_set(tcs->slots, slot, msg->num_cmds);
++	/* Copy the addresses of the resources over to the slots */
++	for (i = 0; i < msg->num_cmds; i++)
++		tcs->cmd_cache[slot + i] = msg->cmds[i].addr;
++
++	offset = slot / tcs->ncpt;
++	*tcs_id = offset + tcs->offset;
++	*cmd_id = slot % tcs->ncpt;
 +
 +	return 0;
 +}
 +
-+/**
-+ * rpmh_rsc_invalidate - Invalidate sleep and wake TCSes
-+ *
-+ * @drv: the RSC controller
-+ */
-+int rpmh_rsc_invalidate(struct rsc_drv *drv)
++static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
 +{
++	struct tcs_group *tcs;
++	int tcs_id = 0, cmd_id = 0;
++	unsigned long flags;
 +	int ret;
 +
-+	ret = tcs_invalidate(drv, SLEEP_TCS);
++	tcs = get_tcs_for_msg(drv, msg);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
++
++	spin_lock_irqsave(&tcs->lock, flags);
++	/* find the m-th TCS and the n-th position in the TCS to write to */
++	ret = find_slots(tcs, msg, &tcs_id, &cmd_id);
 +	if (!ret)
-+		ret = tcs_invalidate(drv, WAKE_TCS);
++		__tcs_buffer_write(drv, tcs_id, cmd_id, msg);
++	spin_unlock_irqrestore(&tcs->lock, flags);
 +
 +	return ret;
 +}
-+EXPORT_SYMBOL(rpmh_rsc_invalidate);
 +
- static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
- 					 const struct tcs_request *msg)
++/**
++ * rpmh_rsc_write_ctrl_data: Write request to the controller
++ *
++ * @drv: the controller
++ * @msg: the data to be written to the controller
++ *
++ * There is no response returned for writing the request to the controller.
++ */
++int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv, const struct tcs_request *msg)
++{
++	if (!msg || !msg->cmds || !msg->num_cmds ||
++	    msg->num_cmds > MAX_RPMH_PAYLOAD) {
++		pr_err("Payload error\n");
++		return -EINVAL;
++	}
++
++	/* Data sent to this API will not be sent immediately */
++	if (msg->state == RPMH_ACTIVE_ONLY_STATE)
++		return -EINVAL;
++
++	return tcs_ctrl_write(drv, msg);
++}
++EXPORT_SYMBOL(rpmh_rsc_write_ctrl_data);
++
+ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 				 struct rsc_drv *drv)
  {
+@@ -426,6 +531,19 @@ static int rpmh_probe_tcs_config(struct platform_device *pdev,
+ 		tcs->mask = ((1 << tcs->num_tcs) - 1) << st;
+ 		tcs->offset = st;
+ 		st += tcs->num_tcs;
++
++		/*
++		 * Allocate memory to cache sleep and wake requests to
++		 * avoid reading TCS register memory.
++		 */
++		if (tcs->type == ACTIVE_TCS)
++			continue;
++
++		tcs->cmd_cache = devm_kcalloc(&pdev->dev,
++					      tcs->num_tcs * ncpt, sizeof(u32),
++					      GFP_KERNEL);
++		if (!tcs->cmd_cache)
++			return -ENOMEM;
+ 	}
+ 
+ 	drv->num_tcs = st;
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
