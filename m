@@ -1,154 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751736AbeEBO4i (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:56:38 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36524 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751371AbeEBO4g (ORCPT
+        id S1751814AbeEBO4u (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:56:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38052 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751747AbeEBO4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:56:36 -0400
-X-Google-Smtp-Source: AB8JxZrOMyW3AYnZLPsUSOmkRS5p8697Q4Diq4cws5c+78IfGWYBoWYa6W2u7ovh5nO0bhwnkcc3nw==
-Date: Wed, 2 May 2018 15:56:31 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: changbin.du@intel.com
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] kernel hacking: GCC optimization for debug
- experience (-Og)
-Message-ID: <20180502145631.bzfqpw4izlrqhda6@holly.lan>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+        Wed, 2 May 2018 10:56:44 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E963B60115
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date: Wed, 2 May 2018 08:56:42 -0600
+From: Lina Iyer <ilina@codeaurora.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>, linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 02/10] dt-bindings: introduce RPMH RSC bindings for
+ Qualcomm SoCs
+Message-ID: <20180502145642.GA21162@codeaurora.org>
+References: <20180419221635.17849-1-ilina@codeaurora.org>
+ <20180419221635.17849-3-ilina@codeaurora.org>
+ <CAD=FV=WfC5x12kFd7Uw8DTR=OFx4HFJhJrd-sDZ5EJgkWL3tQw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <CAD=FV=WfC5x12kFd7Uw8DTR=OFx4HFJhJrd-sDZ5EJgkWL3tQw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 09:44:55PM +0800, changbin.du@intel.com wrote:
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> Hi all,
-> I know some kernel developers was searching for a method to dissable GCC
-> optimizations, probably they want to apply GCC '-O0' option. But since Linux
-> kernel replys on GCC optimization to remove some dead code, so '-O0' just
-> breaks the build. They do need this because they want to debug kernel with
-> qemu, simics, kgtp or kgdb.
-> 
-> Thanks for the GCC '-Og' optimization level introduced in GCC 4.8, which
-> offers a reasonable level of optimization while maintaining fast compilation
-> and a good debugging experience. It is similar to '-O1' while perfer keeping
-> debug ability over runtime speed. With '-Og', we can build a kernel with
-> better debug ability and little performance drop after some simple change.
-> 
-> In this series, firstly introduce a new config CONFIG_NO_AUTO_INLINE after two
-> fixes for this new option. With this option, only functions explicitly marked
-> with "inline" will  be inlined. This will allow the function tracer to trace
-> more functions because it only traces functions that the compiler has not
-> inlined.
-> 
-> Then introduce new config CONFIG_DEBUG_EXPERIENCE which apply '-Og'
-> optimization level for whole kernel, with a simple fix in fix_to_virt().
-> Currently this option is only tested on a QEMU gust and it works fine.
-> 
-> 
-> Comparison of vmlinux size: a bit smaller.
-> 
->     w/o CONFIG_DEBUG_EXPERIENCE
->     $ size vmlinux
->        text    data     bss     dec     hex filename
->     22665554   9709674  2920908 35296136        21a9388 vmlinux
-> 
->     w/ CONFIG_DEBUG_EXPERIENCE
->     $ size vmlinux
->        text    data     bss     dec     hex filename
->     21499032   10102758 2920908 34522698        20ec64a vmlinux
-> 
-> 
-> Comparison of system performance: a bit drop (~6%).
->     This benchmark of kernel compilation is suggested by Ingo Molnar.
->     https://lkml.org/lkml/2018/5/2/74
+On Tue, May 01 2018 at 17:45 -0600, Doug Anderson wrote:
+>Hi,
+>
+>On Thu, Apr 19, 2018 at 3:16 PM, Lina Iyer <ilina@codeaurora.org> wrote:
+>> +TCS-OFFSET: 0xD00
+>> +
+>> +       apps_rsc: rsc@179e000 {
+>
+>This label is wrong in two ways:
+>
+>1. I believe it's supposed to be the first reg listed, so 179c0000
+>
+>2. There's only 3 0's at the end.
+>
+>Thus, it should be:
+>
+>apps_rsc: rsc@179c0000
+>
+Ok. Will fix.
 
-In my mind was the opposite question. When running on the same kernel
-does a kernel whose config contains CONFIG_DEBUG_EXPERIENCE build faster
-than one without (due to the disabled optimization passes).
+I did not hear back on this idea. Does this binding work for everyone
+else?
 
-To be honest this is more curiosity than a review comment though... if
-you have the figures please share, if not then don't sweat it on my
-account!
+Thanks,
+Lina
 
-
-Daniel.
-
-
-
-> 
->     Preparation: Set cpufreq to 'performance'.
->     for ((cpu=0; cpu<120; cpu++)); do
->       G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
->       [ -f $G ] && echo performance > $G
->     done
-> 
->     w/o CONFIG_DEBUG_EXPERIENCE
->     $ perf stat --repeat 5 --null --pre                 '\
->         cp -a kernel ../kernel.copy.$(date +%s);         \
->         rm -rf *;                                        \
->         git checkout .;                                  \
->         echo 1 > /proc/sys/vm/drop_caches;               \
->         find ../kernel* -type f | xargs cat >/dev/null;  \
->         make -j kernel >/dev/null;                       \
->         make clean >/dev/null 2>&1;                      \
->         sync                                            '\
->                                                          \
->         make -j8 >/dev/null
-> 
->      Performance counter stats for 'make -j8' (5 runs):
-> 
->         219.764246652 seconds time elapsed                   ( +-  0.78% )
-> 
->     w/ CONFIG_DEBUG_EXPERIENCE
->     $ perf stat --repeat 5 --null --pre                 '\
->         cp -a kernel ../kernel.copy.$(date +%s);         \
->         rm -rf *;                                        \
->         git checkout .;                                  \
->         echo 1 > /proc/sys/vm/drop_caches;               \
->         find ../kernel* -type f | xargs cat >/dev/null;  \
->         make -j kernel >/dev/null;                       \
->         make clean >/dev/null 2>&1;                      \
->         sync                                            '\
->                                                          \
->         make -j8 >/dev/null
-> 
->     Performance counter stats for 'make -j8' (5 runs):
-> 
->          233.574187771 seconds time elapsed                  ( +-  0.19% )
-> 
-> Changbin Du (5):
->   x86/mm: surround level4_kernel_pgt with #ifdef
->     CONFIG_X86_5LEVEL...#endif
->   regulator: add dummy function of_find_regulator_by_node
->   kernel hacking: new config NO_AUTO_INLINE to disable compiler
->     auto-inline optimizations
->   kernel hacking: new config DEBUG_EXPERIENCE to apply GCC -Og
->     optimization
->   asm-generic: fix build error in fix_to_virt with
->     CONFIG_DEBUG_EXPERIENCE
-> 
->  Makefile                          | 10 ++++++++++
->  arch/x86/include/asm/pgtable_64.h |  2 ++
->  arch/x86/kernel/head64.c          | 13 ++++++-------
->  drivers/regulator/internal.h      |  9 +++++++--
->  include/asm-generic/fixmap.h      |  3 ++-
->  include/linux/compiler-gcc.h      |  2 +-
->  include/linux/compiler.h          |  2 +-
->  lib/Kconfig.debug                 | 39 +++++++++++++++++++++++++++++++++++++++
->  8 files changed, 68 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
+>> +               label = "apps_rsc";
+>> +               compatible = "qcom,rpmh-rsc";
+>> +               reg = <0x179c0000 0x10000>, <0x179d0000 0x10000>,
+>> +                     <0x179e0000 0x10000>, <0xd00 0>;
+>> +               reg-names = "drv-0", "drv-1", "drv-2", "tcs-offset";
+>> +               interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+>> +               qcom,drv-id = <2>;
+>> +               qcom,tcs-config = <SLEEP_TCS   3>,
+>> +                                 <WAKE_TCS    3>,
+>> +                                 <ACTIVE_TCS  2>,
+>> +                                 <CONTROL_TCS 1>;
+>> +       };
