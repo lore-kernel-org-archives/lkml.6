@@ -1,78 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeEBQI2 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:08:28 -0400
-Received: from mga12.intel.com ([192.55.52.136]:22478 "EHLO mga12.intel.com"
+        id S1751947AbeEBQKg (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:10:36 -0400
+Received: from mga01.intel.com ([192.55.52.88]:1664 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751525AbeEBQI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:08:27 -0400
+        id S1751495AbeEBQKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 12:10:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,354,1520924400";
-   d="scan'208";a="38728085"
+   d="scan'208";a="51797802"
 From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 To: Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>
-Cc: Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org,
+Cc: Dave Hansen <dave.hansen@intel.com>,
+        Larry Woodman <lwoodman@redhat.com>, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH] x86/boot/compressed: Exclude 'top_pgtable' from relocation
-Date: Wed,  2 May 2018 19:08:16 +0300
-Message-Id: <20180502160816.35986-1-kirill.shutemov@linux.intel.com>
+Subject: [PATCH] x86/mm: Introduce 'no5vl kernel parameter
+Date: Wed,  2 May 2018 19:10:27 +0300
+Message-Id: <20180502161027.36395-1-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-startup_64() copies kernel (including .data section) to the new place.
-It's required for safe in-place decompression.
+The kernel parameter allows to force kernel to use 4-level paging even
+if hardware and kernel support 5-level paging.
 
-This is a problem if the original place is referenced: by mistake I've
-put 'top_pgtable' into .data section and the address is loaded into CR3.
-If the original place gets overwritten during image decompression the
-kernel will crash and the machine will be rebooted.
-
-Move 'top_pgtable' into .pgtable section where the rest of page tables
-are. This section is not subject for relocation.
+The option may be useful to workaround regressions related to 5-level
+paging.
 
 Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Fixes: e9d0e6330eb8 ("x86/boot/compressed/64: Prepare new top-level page table for trampoline")
 ---
- arch/x86/boot/compressed/head_64.S    | 8 ++++++++
- arch/x86/boot/compressed/pgtable_64.c | 4 +---
- 2 files changed, 9 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/kernel-parameters.txt |  3 +++
+ arch/x86/boot/compressed/cmdline.c              |  2 +-
+ arch/x86/boot/compressed/head_64.S              |  1 +
+ arch/x86/boot/compressed/pgtable_64.c           | 12 ++++++++++--
+ arch/x86/kernel/cpu/common.c                    |  4 ++++
+ arch/x86/kernel/head64.c                        | 10 ++++++----
+ 6 files changed, 25 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11fc28ecdb6d..364a33c1534d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2600,6 +2600,9 @@
+ 			emulation library even if a 387 maths coprocessor
+ 			is present.
+ 
++	no5lvl		[X86-64] Disable 5-level paging mode. Forces
++			kernel to use 4-level paging instead.
++
+ 	no_console_suspend
+ 			[HW] Never suspend the console
+ 			Disable suspending of consoles during suspend and
+diff --git a/arch/x86/boot/compressed/cmdline.c b/arch/x86/boot/compressed/cmdline.c
+index 0cb325734cfb..af6cda0b7900 100644
+--- a/arch/x86/boot/compressed/cmdline.c
++++ b/arch/x86/boot/compressed/cmdline.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "misc.h"
+ 
+-#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE
++#if CONFIG_EARLY_PRINTK || CONFIG_RANDOMIZE_BASE || CONFIG_X86_5LEVEL
+ 
+ static unsigned long fs;
+ static inline void set_fs(unsigned long seg)
 diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index fca012baba19..c433c21703e6 100644
+index c433c21703e6..6490697f1133 100644
 --- a/arch/x86/boot/compressed/head_64.S
 +++ b/arch/x86/boot/compressed/head_64.S
-@@ -649,3 +649,11 @@ boot_stack_end:
- 	.balign 4096
- pgtable:
- 	.fill BOOT_PGT_SIZE, 1, 0
-+
-+/*
-+ * The page table is going to be used instead of page table in the trampoline
-+ * memory.
-+ */
-+	.global top_pgtable
-+top_pgtable:
-+	.fill PAGE_SIZE, 1, 0
+@@ -346,6 +346,7 @@ ENTRY(startup_64)
+ 	 * this function call.
+ 	 */
+ 	pushq	%rsi
++	movq	%rsi, %rdi		/* real mode address */
+ 	call	paging_prepare
+ 	popq	%rsi
+ 
 diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index 32af1cbcd903..3a0578f54550 100644
+index 3a0578f54550..7230c9cc5bc0 100644
 --- a/arch/x86/boot/compressed/pgtable_64.c
 +++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -25,10 +25,8 @@ static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
- /*
-  * The page table is going to be used instead of page table in the trampoline
-  * memory.
-- *
-- * It must not be in BSS as BSS is cleared after cleanup_trampoline().
+@@ -37,16 +37,23 @@ extern char *top_pgtable;
   */
--static char top_pgtable[PAGE_SIZE] __aligned(PAGE_SIZE) __section(.data);
-+extern char *top_pgtable;
+ unsigned long *trampoline_32bit __section(.data);
  
- /*
-  * Trampoline address will be printed by extract_kernel() for debugging
+-struct paging_config paging_prepare(void)
++extern struct boot_params *boot_params;
++int cmdline_find_option_bool(const char *option);
++
++struct paging_config paging_prepare(void *rmode)
+ {
+ 	struct paging_config paging_config = {};
+ 	unsigned long bios_start, ebda_start;
+ 
++	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
++	boot_params = rmode;
++
+ 	/*
+ 	 * Check if LA57 is desired and supported.
+ 	 *
+-	 * There are two parts to the check:
++	 * There are several parts to the check:
+ 	 *   - if the kernel supports 5-level paging: CONFIG_X86_5LEVEL=y
++	 *   - if user asked to disable 5-level paging: no5lvl in cmdline
+ 	 *   - if the machine supports 5-level paging:
+ 	 *     + CPUID leaf 7 is supported
+ 	 *     + the leaf has the feature bit set
+@@ -54,6 +61,7 @@ struct paging_config paging_prepare(void)
+ 	 * That's substitute for boot_cpu_has() in early boot code.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_X86_5LEVEL) &&
++			!cmdline_find_option_bool("no5lvl") &&
+ 			native_cpuid_eax(0) >= 7 &&
+ 			(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31)))) {
+ 		paging_config.l5_required = 1;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 8a5b185735e1..8da50947e053 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1004,6 +1004,10 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
+ 	 */
+ 	setup_clear_cpu_cap(X86_FEATURE_PCID);
+ #endif
++
++	/* Clear the 5-level paging feature if user asked for 'no5lvl' */
++	if (!__pgtable_l5_enabled)
++		setup_clear_cpu_cap(X86_FEATURE_LA57);
+ }
+ 
+ void __init early_cpu_init(void)
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 0c408f8c4ed4..8ca65d35b93a 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -82,10 +82,12 @@ static unsigned int __head *fixup_int(void *ptr, unsigned long physaddr)
+ 
+ static bool __head check_la57_support(unsigned long physaddr)
+ {
+-	if (native_cpuid_eax(0) < 7)
+-		return false;
+-
+-	if (!(native_cpuid_ecx(7) & (1 << (X86_FEATURE_LA57 & 31))))
++	/*
++	 * 5-level paging is detected and enabled on kernel decomression
++	 * stage. Back off if 5-level paging mode has not yet enabled by
++	 * this point.
++	 */
++	if (!(native_read_cr4() & X86_CR4_LA57))
+ 		return false;
+ 
+ 	*fixup_int(&pgtable_l5_enabled, physaddr) = 1;
 -- 
 2.17.0
