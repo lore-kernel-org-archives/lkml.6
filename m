@@ -1,248 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751365AbeEBMMe (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 08:12:34 -0400
-Received: from mail-wm0-f52.google.com ([74.125.82.52]:36305 "EHLO
-        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeEBMMb (ORCPT
+        id S1751236AbeEBMRD (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 08:17:03 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:33082 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750930AbeEBMRA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 08:12:31 -0400
-X-Google-Smtp-Source: AB8JxZoZU/tQYjhUPMxoTzWHoaHzj7phwEHMp1D8+DcWLtnl5UrVuTqtk58maEBGDD0NNjQZhjC0Buluftg7NLvZnp8=
+        Wed, 2 May 2018 08:17:00 -0400
+X-Google-Smtp-Source: AB8JxZpkj9BcNCEk+SvGTtG7CGY3tWt4f9hutiEXw4beLvhoHMO1DZJfXS9PgZwS7ADScA0zEy2tZlv+LTLn6Kz3rOg=
 MIME-Version: 1.0
-In-Reply-To: <20180502110811.10886-1-gi-oh.kim@profitbricks.com>
-References: <20180502110811.10886-1-gi-oh.kim@profitbricks.com>
-From: Gi-Oh Kim <gi-oh.kim@profitbricks.com>
-Date: Wed, 2 May 2018 14:11:49 +0200
-Message-ID: <CAJX1YtYhbutYFC-cT+dRoRvjqkOY_qSWtU_tSUZ99Q9-yGUF_g@mail.gmail.com>
-Subject: Re: [PATCH] md/raid1: add error handling of read error from FailFast device
-To: shli@kernel.org
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gioh Kim <gi-oh.kim@profitbricks.com>
+In-Reply-To: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
+References: <20180427014905.19520-1-suzuki.katsuhiro@socionext.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 2 May 2018 14:16:59 +0200
+Message-ID: <CACRpkdZUypgGfgWMOy_Vjcu_djRhX1Ue8ReLUNeJ2BQ4LSfF6w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] pinctrl: uniphier: add LD20 MPEG2-TS I/O pin-mux settings
+To: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w42CCc1K013993
 
-On Wed, May 2, 2018 at 1:08 PM, Gioh Kim <gi-oh.kim@profitbricks.com> wrote:
-> Current handle_read_error() function calls fix_read_error()
-> only if md device is RW and rdev does not include FailFast flag.
-> It does not handle a read error from a RW device including
-> FailFast flag.
+On Fri, Apr 27, 2018 at 3:49 AM, Katsuhiro Suzuki
+<suzuki.katsuhiro@socionext.com> wrote:
+
+> The MPEG2-TS input/output core both accepts serial TS and parallel TS.
 >
-> I am not sure it is intended. But I found that write IO error
-> sets rdev faulty. The md module should handle the read IO error and
-> write IO error equally. So I think read IO error should set rdev faulty.
+> The serial TS interface uses following pins:
+>   hscin0_s : HS0DOUT[0-3]
+>   hscin1_s : HS0DOUT[4-7]
+>   hscin2_s : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN0
+>   hscin3_s : HS1DIN[2-5]
+>   hscout0_s: HS0DOUT[0-3]
+>   hscout1_s: HS0DOUT[4-7]
 >
-> Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
-> ---
->  drivers/md/raid1.c | 2 ++
->  1 file changed, 2 insertions(+)
+> And the parallel TS interface uses following pins:
+>   hscin0_p : HS0BCLKIN, HS0SYNCIN, HS0VALIN, HS0DIN[0-7]
+>   hscin1_p : HS1BCLKIN, HS1SYNCIN, HS1VALIN, HS1DIN[0-7]
+>   hscout0_p: HS0BCLKOUT, HS0SYNCOUT, HS0VALOUT, HS0DOUT[0-7]
 >
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index e9e3308cb0a7..4445179aa4c8 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -2474,6 +2474,8 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->                 fix_read_error(conf, r1_bio->read_disk,
->                                r1_bio->sector, r1_bio->sectors);
->                 unfreeze_array(conf);
-> +       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
-> +               md_error(mddev, rdev);
->         } else {
->                 r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
->         }
-> --
-> 2.14.1
->
+> Signed-off-by: Katsuhiro Suzuki <suzuki.katsuhiro@socionext.com>
+> Changes in v2:
 
-I think it would be helpful to show how I tested it.
+This v2 version applied with Masahiro's ACK.
 
-As following I used Ubuntu 17.10 and mdadm v4.0.
-# cat /etc/lsb-release
-DISTRIB_ID=Ubuntu
-DISTRIB_RELEASE=17.10
-DISTRIB_CODENAME=artful
-DISTRIB_DESCRIPTION="Ubuntu 17.10"
-# uname -a
-Linux ws00837 4.13.0-16-generic #19-Ubuntu SMP Wed Oct 11 18:35:14 UTC
-2017 x86_64 x86_64 x86_64 GNU/Linux
-# mdadm --version
-mdadm - v4.0 - 2017-01-09
-
-Following is how I generated the read IO error and checked md device.
-After read IO, no device was set as faulty
-
-# modprobe scsi_debug num_parts=2
-# man mdadm
-# mdadm -C /dev/md111 --failfast -l 1 -n 2 /dev/sdc1 /dev/sdc2
-mdadm: Note: this array has metadata at the start and
-    may not be suitable as a boot device.  If you plan to
-    store '/boot' on this device please ensure that
-    your boot-loader understands md/v1.x metadata, or use
-    --metadata=0.90
-mdadm: largest drive (/dev/sdc2) exceeds size (3904K) by more than 1%
-Continue creating array? y
-mdadm: Defaulting to version 1.2 metadata
-mdadm: array /dev/md111 started.
-# mdadm -D /dev/md111
-/dev/md111:
-        Version : 1.2
-  Creation Time : Wed May  2 10:55:35 2018
-     Raid Level : raid1
-     Array Size : 3904
-  Used Dev Size : 3904
-   Raid Devices : 2
-  Total Devices : 2
-    Persistence : Superblock is persistent
-
-    Update Time : Wed May  2 10:55:36 2018
-          State : clean
- Active Devices : 2
-Working Devices : 2
- Failed Devices : 0
-  Spare Devices : 0
-
-           Name : ws00837:111  (local to host ws00837)
-           UUID : 9f214193:03cf7c97:3208da22:d6ab8a13
-         Events : 17
-
-    Number   Major   Minor   RaidDevice State
-       0       8       33        0      active sync failfast   /dev/sdc1
-       1       8       34        1      active sync failfast   /dev/sdc2
-# cat /proc/mdstat
-Personalities : [raid1]
-md111 : active raid1 sdc2[1] sdc1[0]
-      3904 blocks super 1.2 [2/2] [UU]
-
-unused devices: <none>
-# echo -1 > /sys/module/scsi_debug/parameters/every_nth && echo 4 >
-/sys/module/scsi_debug/parameters/opts
-# dd if=/dev/md111 of=/dev/null bs=4K count=1 iflag=direct &
-[1] 6322
-# dd: error reading '/dev/md111': Input/output error
-0+0 records in
-0+0 records out
-0 bytes copied, 124,376 s, 0,0 kB/s
-
-[1]+  Exit 1                  dd if=/dev/md111 of=/dev/null bs=4K
-count=1 iflag=direct
-# mdadm -D /dev/md111/dev/md111:
-        Version : 1.2
-  Creation Time : Wed May  2 10:55:35 2018
-     Raid Level : raid1
-     Array Size : 3904
-  Used Dev Size : 3904
-   Raid Devices : 2
-  Total Devices : 2
-    Persistence : Superblock is persistent
-
-    Update Time : Wed May  2 10:55:36 2018
-          State : clean
- Active Devices : 2
-Working Devices : 2
- Failed Devices : 0
-  Spare Devices : 0
-
-    Number   Major   Minor   RaidDevice State
-       0       8       33        0      active sync failfast   /dev/sdc1
-       1       8       34        1      active sync failfast   /dev/sdc2
-
-
-Following is how I generated the write IO error and checked md device.
-After write IO error, one device was set as faulty.
-
-gohkim@ws00837:~$ sudo modprobe scsi_debug num_parts=2
-gohkim@ws00837:~$ sudo mdadm -C /dev/md111 --failfast -l 1 -n 2
-/dev/sdc1 /dev/sdc2
-mdadm: Note: this array has metadata at the start and
-    may not be suitable as a boot device.  If you plan to
-    store '/boot' on this device please ensure that
-    your boot-loader understands md/v1.x metadata, or use
-    --metadata=0.90
-mdadm: largest drive (/dev/sdc2) exceeds size (3904K) by more than 1%
-Continue creating array? y
-mdadm: Defaulting to version 1.2 metadata
-mdadm: array /dev/md111 started.
-gohkim@ws00837:~$ sudo mdadm -D /dev/md111
-/dev/md111:
-        Version : 1.2
-  Creation Time : Wed May  2 14:03:30 2018
-     Raid Level : raid1
-     Array Size : 3904
-  Used Dev Size : 3904
-   Raid Devices : 2
-  Total Devices : 2
-    Persistence : Superblock is persistent
-
-    Update Time : Wed May  2 14:03:31 2018
-          State : clean
- Active Devices : 2
-Working Devices : 2
- Failed Devices : 0
-  Spare Devices : 0
-
-           Name : ws00837:111  (local to host ws00837)
-           UUID : ba51fe65:c517a25a:a381ccc5:3617322b
-         Events : 17
-
-    Number   Major   Minor   RaidDevice State
-       0       8       33        0      active sync failfast   /dev/sdc1
-       1       8       34        1      active sync failfast   /dev/sdc2
-gohkim@ws00837:~$ echo -1 | sudo tee /sys/module/scsi_debug/parameters/every_nth
--1
-gohkim@ws00837:~$ echo 4 | sudo tee /sys/module/scsi_debug/parameters/opts
-4
-gohkim@ws00837:~$ sudo dd if=/dev/zero of=/dev/md111 bs=4K count=1
-oflag=direct &
-[1] 13081
-gohkim@ws00837:~$ dd: error writing '/dev/md111': Input/output error
-1+0 records in
-0+0 records out
-0 bytes copied, 184,523 s, 0,0 kB/s
-
-[1]+  Exit 1                  sudo dd if=/dev/zero of=/dev/md111 bs=4K
-count=1 oflag=direct
-gohkim@ws00837:~$ sudo mdadm -D /dev/md111
-/dev/md111:
-        Version : 1.2
-  Creation Time : Wed May  2 14:03:30 2018
-     Raid Level : raid1
-     Array Size : 3904
-  Used Dev Size : 3904
-   Raid Devices : 2
-  Total Devices : 2
-    Persistence : Superblock is persistent
-
-    Update Time : Wed May  2 14:07:47 2018
-          State : clean, degraded
- Active Devices : 1
-Working Devices : 1
- Failed Devices : 1
-  Spare Devices : 0
-
-    Number   Major   Minor   RaidDevice State
-       0       8       33        0      active sync failfast   /dev/sdc1
-       -       0        0        1      removed
-
-       1       8       34        -      faulty failfast   /dev/sdc2
-
-
-
--- 
-GIOH KIM
-Linux Kernel Entwickler
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Tel:       +49 176 2697 8962
-Fax:      +49 30 577 008 299
-Email:    gi-oh.kim@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
+Yours,
+Linus Walleij
