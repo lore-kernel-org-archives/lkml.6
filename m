@@ -1,234 +1,140 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751021AbeEBEi1 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 00:38:27 -0400
-Received: from mga07.intel.com ([134.134.136.100]:54871 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750822AbeEBEiY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 00:38:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
-   d="scan'208";a="47595737"
-Subject: Re: [PATCH 8/9] iommu/vt-d: Use per-domain pasid table
-To: "Liu, Yi L" <yi.l.liu@intel.com>,
-        David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>
-References: <1523934202-21669-1-git-send-email-baolu.lu@linux.intel.com>
- <1523934202-21669-9-git-send-email-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C257439BE7558@SHSMSX104.ccr.corp.intel.com>
-Cc: "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>, "Sun, Yi Y" <yi.y.sun@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5AE940BA.8050407@linux.intel.com>
-Date: Wed, 2 May 2018 12:38:18 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1751045AbeEBEkz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 00:40:55 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:39266 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750822AbeEBEkv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 00:40:51 -0400
+From: Song Liu <songliubraving@fb.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+CC: Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        "Linux-Next Mailing List" <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Yonghong Song <yhs@fb.com>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
+Thread-Topic: linux-next: manual merge of the bpf-next tree with the bpf tree
+Thread-Index: AQHT4bqqrCyw41qupE6Snx2x08TdlqQb2+IA
+Date: Wed, 2 May 2018 04:40:20 +0000
+Message-ID: <0942C278-336F-4795-BE63-FAD7FBAA231B@fb.com>
+References: <20180502120921.654cc338@canb.auug.org.au>
+In-Reply-To: <20180502120921.654cc338@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.6.18)
+x-originating-ip: [2620:10d:c090:180::1:3698]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR15MB1194;7:JNqTTTWYRfWCmQ5zKl72tZgm3wZ2Ogri0QatJfxXywqULDJzcvdGNjIVVkrbscJkecpx26m6mnAo+XvqYUtq7lGdcIhA8dSU8FbJZFg9crxa7fQILaQo0r7j/loIqcsuk88AaXtUlu6Qw4HCIqHpRd0hV1AUgJL5oqbQL1wvnFLRoDO3KNZe34K2AsmfnioqYybr1NltO1wIzRE91HlS6PNiN28QW/O5ruewCG24lSonZ44cf8o+n0s6s8a//tX3;20:7tBK/I5AQYTtxp/PVEG9OpZiSU+siGsnTyOCdu/JuVHSTXgJ3yXvhf6uUWydN/+Sa00YlNIrRi6Hrfa7Nwc+hTTb1pcFmxWPKrE5oG5nqt15LI417wvtkBA4tvG2G9MCFX075puMrWB6tbPH7ZMPpO3x6iXV+3AYfiXKRznsVJ4=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(39380400002)(376002)(396003)(366004)(39860400002)(346002)(199004)(189003)(53754006)(83716003)(6506007)(102836004)(53936002)(53546011)(6512007)(106356001)(36756003)(575784001)(6436002)(5660300001)(76176011)(33656002)(86362001)(97736004)(57306001)(99286004)(105586002)(478600001)(25786009)(54906003)(446003)(2906002)(3280700002)(14454004)(81166006)(229853002)(6246003)(81156014)(68736007)(6916009)(50226002)(8936002)(82746002)(3660700001)(5250100002)(46003)(8676002)(305945005)(6486002)(2900100001)(2616005)(476003)(11346002)(486006)(4326008)(6116002)(316002)(186003)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1194;H:DM5PR15MB1548.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1194;
+x-ms-traffictypediagnostic: DM5PR15MB1194:
+x-microsoft-antispam-prvs: <DM5PR15MB1194B45F07AF1457F7E7A4D3B3800@DM5PR15MB1194.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231254)(11241501184)(944501410)(52105095)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011);SRVR:DM5PR15MB1194;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1194;
+x-forefront-prvs: 06607E485E
+x-microsoft-antispam-message-info: 5AhmYinLiYvet4ZuW9zOs/7rykKCBWVPPQf/Jh7vfSTXfXxkBAV1CG7QlTf+MeCnr9QyOkCobllLPq0QKe8njKs2eLmnGRmtch0RZVpjdNQ3ZPk6mxksZpz8Gmy2SJNhIOvmlotugRCtvgK8djJRbte5jX0uPJvRyKabdGgZ0DZjUN/MIm/P9r9aHJrav5dX
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E61EC67A3C5E7C459973C23488EB61CB@namprd15.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <A2975661238FB949B60364EF0F2C257439BE7558@SHSMSX104.ccr.corp.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+X-MS-Office365-Filtering-Correlation-Id: f1f11003-3832-4926-0f30-08d5afe6cfb0
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1f11003-3832-4926-0f30-08d5afe6cfb0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2018 04:40:20.2835
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1194
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_01:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w424f10e008982
 
-Hi,
 
-On 05/01/2018 05:23 PM, Liu, Yi L wrote:
->> From: Lu Baolu [mailto:baolu.lu@linux.intel.com]
->> Sent: Tuesday, April 17, 2018 11:03 AM
->>
->> This patch replaces current per iommu pasid table with
->> the new added per domain pasid table. Each svm-capable
->> PCI device will have its own pasid table.
-> This is not accurate. pasid table is per-iommu domain. May
-> more accurate "Each svm-capable PCI device will be configed
-> with a pasid table which shares with other svm-capable device
-> within its iommu domain"
 
-Yes. Should be refined.
+> On May 1, 2018, at 7:09 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> Hi all,
+> 
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+> 
+>  tools/testing/selftests/bpf/test_progs.c
+> 
+> between commit:
+> 
+>  a4e21ff8d9a3 ("bpf: minor fix to selftest test_stacktrace_build_id()")
+> 
+> from the bpf tree and commit:
+> 
+>  79b453501310 ("tools/bpf: add a test for bpf_get_stack with tracepoint prog")
+> 
+> from the bpf-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc tools/testing/selftests/bpf/test_progs.c
+> index fac581f1c57f,aa336f0abebc..000000000000
+> --- a/tools/testing/selftests/bpf/test_progs.c
+> +++ b/tools/testing/selftests/bpf/test_progs.c
+> @@@ -1137,9 -1193,14 +1193,14 @@@ static void test_stacktrace_build_id(vo
+>  		  err, errno))
+>  		goto disable_pmu;
+> 
+> + 	stack_amap_fd = bpf_find_map(__func__, obj, "stack_amap");
+> + 	if (CHECK(stack_amap_fd < 0, "bpf_find_map stack_amap",
+> + 		  "err %d errno %d\n", err, errno))
+> + 		goto disable_pmu;
+> + 
+>  	assert(system("dd if=/dev/urandom of=/dev/zero count=4 2> /dev/null")
+>  	       == 0);
+> -	assert(system("./urandom_read if=/dev/urandom of=/dev/zero count=4 2> /dev/null") == 0);
+> +	assert(system("./urandom_read") == 0);
+>  	/* disable stack trace collection */
+>  	key = 0;
+>  	val = 1;
+> @@@ -1188,8 -1249,15 +1249,15 @@@
+>  		previous_key = key;
+>  	} while (bpf_map_get_next_key(stackmap_fd, &previous_key, &key) == 0);
+> 
+> - 	CHECK(build_id_matches < 1, "build id match",
+> - 	      "Didn't find expected build ID from the map\n");
+> + 	if (CHECK(build_id_matches < 1, "build id match",
+> -		  "Didn't find expected build ID from the map"))
+> ++		  "Didn't find expected build ID from the map\n"))
 
->
-> Can include my reviewed by after refining the description.
->
-> Reviewed-by: Liu, Yi L <yi.l.liu@intel.com>
+^^^  Is there a "+" at the beginning of this line? 
 
-Sure.
+Thanks,
+Song
 
->
-> Thanks,
-> Yi Liu
-
-Best regards,
-Lu Baolu
-
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>  drivers/iommu/intel-iommu.c |  6 +++---
->>  drivers/iommu/intel-svm.c   | 37 +++++++++++++++++++++++++------------
->>  2 files changed, 28 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index d4f9cea..5fe7f91 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -5191,7 +5191,7 @@ int intel_iommu_enable_pasid(struct intel_iommu
->> *iommu, struct intel_svm_dev *sd
->>  	if (!(ctx_lo & CONTEXT_PASIDE)) {
->>  		if (iommu->pasid_state_table)
->>  			context[1].hi = (u64)virt_to_phys(iommu-
->>> pasid_state_table);
->> -		context[1].lo = (u64)virt_to_phys(iommu->pasid_table) |
->> +		context[1].lo = (u64)virt_to_phys(domain->pasid_table) |
->>  			intel_iommu_get_pts(domain);
->>
->>  		wmb();
->> @@ -5259,8 +5259,8 @@ struct intel_iommu *intel_svm_device_to_iommu(struct
->> device *dev)
->>  		return NULL;
->>  	}
->>
->> -	if (!iommu->pasid_table) {
->> -		dev_err(dev, "PASID not enabled on IOMMU; cannot enable
->> SVM\n");
->> +	if (!intel_pasid_get_table(dev)) {
->> +		dev_err(dev, "No PASID table for device; cannot enable SVM\n");
->>  		return NULL;
->>  	}
->>
->> diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
->> index 3abc94f..3b14819 100644
->> --- a/drivers/iommu/intel-svm.c
->> +++ b/drivers/iommu/intel-svm.c
->> @@ -256,6 +256,7 @@ static void intel_flush_pasid_dev(struct intel_svm *svm,
->> struct intel_svm_dev *s
->>  static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
->>  {
->>  	struct intel_svm *svm = container_of(mn, struct intel_svm, notifier);
->> +	struct pasid_entry *pasid_table;
->>  	struct intel_svm_dev *sdev;
->>
->>  	/* This might end up being called from exit_mmap(), *before* the page
->> @@ -270,11 +271,16 @@ static void intel_mm_release(struct mmu_notifier *mn,
->> struct mm_struct *mm)
->>  	 * page) so that we end up taking a fault that the hardware really
->>  	 * *has* to handle gracefully without affecting other processes.
->>  	 */
->> -	svm->iommu->pasid_table[svm->pasid].val = 0;
->> -	wmb();
->> -
->>  	rcu_read_lock();
->>  	list_for_each_entry_rcu(sdev, &svm->devs, list) {
->> +		pasid_table = intel_pasid_get_table(sdev->dev);
->> +		if (!pasid_table)
->> +			continue;
->> +
->> +		pasid_table[svm->pasid].val = 0;
->> +		/* Make sure the entry update is visible before translation. */
->> +		wmb();
->> +
->>  		intel_flush_pasid_dev(svm, sdev, svm->pasid);
->>  		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
->>  	}
->> @@ -295,6 +301,7 @@ static LIST_HEAD(global_svm_list);
->>  int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops
->> *ops)
->>  {
->>  	struct intel_iommu *iommu = intel_svm_device_to_iommu(dev);
->> +	struct pasid_entry *pasid_table;
->>  	struct intel_svm_dev *sdev;
->>  	struct intel_svm *svm = NULL;
->>  	struct mm_struct *mm = NULL;
->> @@ -302,7 +309,8 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int
->> flags, struct svm_dev_
->>  	int pasid_max;
->>  	int ret;
->>
->> -	if (WARN_ON(!iommu || !iommu->pasid_table))
->> +	pasid_table = intel_pasid_get_table(dev);
->> +	if (WARN_ON(!iommu || !pasid_table))
->>  		return -EINVAL;
->>
->>  	if (dev_is_pci(dev)) {
->> @@ -380,8 +388,8 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int
->> flags, struct svm_dev_
->>  		}
->>  		svm->iommu = iommu;
->>
->> -		if (pasid_max > iommu->pasid_max)
->> -			pasid_max = iommu->pasid_max;
->> +		if (pasid_max > intel_pasid_max_id)
->> +			pasid_max = intel_pasid_max_id;
->>
->>  		/* Do not use PASID 0 in caching mode (virtualised IOMMU) */
->>  		ret = intel_pasid_alloc_id(svm,
->> @@ -414,7 +422,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int
->> flags, struct svm_dev_
->>  		if (cpu_feature_enabled(X86_FEATURE_LA57))
->>  			pasid_entry_val |= PASID_ENTRY_FLPM_5LP;
->>
->> -		iommu->pasid_table[svm->pasid].val = pasid_entry_val;
->> +		pasid_table[svm->pasid].val = pasid_entry_val;
->>
->>  		wmb();
->>
->> @@ -442,6 +450,7 @@ EXPORT_SYMBOL_GPL(intel_svm_bind_mm);
->>
->>  int intel_svm_unbind_mm(struct device *dev, int pasid)
->>  {
->> +	struct pasid_entry *pasid_table;
->>  	struct intel_svm_dev *sdev;
->>  	struct intel_iommu *iommu;
->>  	struct intel_svm *svm;
->> @@ -449,7 +458,8 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
->>
->>  	mutex_lock(&pasid_mutex);
->>  	iommu = intel_svm_device_to_iommu(dev);
->> -	if (!iommu || !iommu->pasid_table)
->> +	pasid_table = intel_pasid_get_table(dev);
->> +	if (!iommu || !pasid_table)
->>  		goto out;
->>
->>  	svm = intel_pasid_lookup_id(pasid);
->> @@ -472,11 +482,14 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
->>  				intel_flush_pasid_dev(svm, sdev, svm->pasid);
->>  				intel_flush_svm_range_dev(svm, sdev, 0, -1,
->> 0, !svm->mm);
->>  				kfree_rcu(sdev, rcu);
->> +				pasid_table[svm->pasid].val = 0;
->> +				/*
->> +				 * Make sure the entry update is visible
->> +				 * before translation.
->> +				 */
->> +				wmb();
->>
->>  				if (list_empty(&svm->devs)) {
->> -					svm->iommu->pasid_table[svm->pasid].val
->> = 0;
->> -					wmb();
->> -
->>  					intel_pasid_free_id(svm->pasid);
->>  					if (svm->mm)
->>  						mmu_notifier_unregister(&svm-
->>> notifier, svm->mm);
->> @@ -509,7 +522,7 @@ int intel_svm_is_pasid_valid(struct device *dev, int pasid)
->>
->>  	mutex_lock(&pasid_mutex);
->>  	iommu = intel_svm_device_to_iommu(dev);
->> -	if (!iommu || !iommu->pasid_table)
->> +	if (!iommu)
->>  		goto out;
->>
->>  	svm = intel_pasid_lookup_id(pasid);
->> --
->> 2.7.4
->
+> + 		goto disable_pmu;
+> + 
+> + 	stack_trace_len = PERF_MAX_STACK_DEPTH
+> + 		* sizeof(struct bpf_stack_build_id);
+> + 	err = compare_stack_ips(stackmap_fd, stack_amap_fd, stack_trace_len);
+> + 	CHECK(err, "compare_stack_ips stackmap vs. stack_amap",
+> + 	      "err %d errno %d\n", err, errno);
+> 
+>  disable_pmu:
+>  	ioctl(pmu_fd, PERF_EVENT_IOC_DISABLE);
