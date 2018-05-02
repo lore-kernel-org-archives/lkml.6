@@ -1,29 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeEBQhW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:37:22 -0400
-Received: from mail-ua0-f178.google.com ([209.85.217.178]:42596 "EHLO
-        mail-ua0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751529AbeEBQhT (ORCPT
+        id S1751778AbeEBQit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:38:49 -0400
+Received: from mail-wr0-f178.google.com ([209.85.128.178]:33543 "EHLO
+        mail-wr0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751174AbeEBQiq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:37:19 -0400
-X-Google-Smtp-Source: AB8JxZotRSHff6/a2sVBdyV7hxqF586hx63rKD5qt68MatqCV4BrrakjdcH4c3Y6b8e1WfesuC/8KeKTy2utKyxojOY=
+        Wed, 2 May 2018 12:38:46 -0400
+X-Google-Smtp-Source: AB8JxZp8GbPfZz2Be7GSYUDWg+IgPQfLC9SJuKzzxO17QQLSHNto/6iy74lLFdUGTAYQSEjBjuz3xV3Paery1zYNPn0=
 MIME-Version: 1.0
-In-Reply-To: <39b676d2ba7dac2436196cc5a090c6f151498dc8.1523673467.git.collinsd@codeaurora.org>
-References: <cover.1523673467.git.collinsd@codeaurora.org> <39b676d2ba7dac2436196cc5a090c6f151498dc8.1523673467.git.collinsd@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 2 May 2018 09:37:15 -0700
-X-Google-Sender-Auth: t9jarKAORBNoX-7y9_RO95rpgQw
-Message-ID: <CAD=FV=UDUKg58xe+3C5QUbFwFkO8d3c_tzxmfPDzdv1KXZ3W9g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-To: David Collins <collinsd@codeaurora.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
+From: Stephane Eranian <eranian@google.com>
+Date: Wed, 02 May 2018 16:38:33 +0000
+Message-ID: <CABPqkBTm+9Wsa21GVXpogWUDNkpRF4eyZOPGa8QJCvdV2Lz2rA@mail.gmail.com>
+Subject: [RFC] perf record: dead code perf_event__synthesize_id_index()
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>, mingo@elte.hu,
+        Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -31,19 +25,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Fri, Apr 13, 2018 at 7:50 PM, David Collins <collinsd@codeaurora.org> wrote:
-> +- vdd_l26-supply
-> +- vdd_lvs1_lvs2-supply
-> +- vdd_lvs1_lvs2-supply
-> +       Usage:      optional (PM8998 only)
-> +       Value type: <phandle>
-> +       Definition: phandle of the parent supply regulator of one or more of the
-> +                   regulators for this PMIC.
+It looks like perf_event__synthesize_id_index() is dead code in the current
+tip
+tree. I don't see any invocation of the function anywhere in perf.I
+understand why
+you'd want to keep the rest of the code related to  PERF_RECORD_ID_INDEX
+because some perf.data file may have this user-level record type. But the
+synthesize code is not needed anymore, in my opinion.
 
-One small additional nit here is that "vdd_lvs1_lvs2-supply" is listed twice.
-
-Also on the schematics (and in the PM8998 datasheet) I have this is
-"VIN_LVS_1_2".  It seems like you should be consistent here and call
-this "vin-lvs-1-2-supply".
-
--Doug
+Shouldn't we remove this code?
