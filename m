@@ -1,73 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751711AbeEBOCp (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:02:45 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56356 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751365AbeEBOCn (ORCPT
+        id S1751347AbeEBOEw (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:04:52 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:60270 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750800AbeEBOEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:02:43 -0400
-Date: Wed, 2 May 2018 16:02:26 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH v7 2/5] cpuset: Add cpuset.sched_load_balance to v2
-Message-ID: <20180502140226.GU12217@hirez.programming.kicks-ass.net>
-References: <1524145624-23655-1-git-send-email-longman@redhat.com>
- <1524145624-23655-3-git-send-email-longman@redhat.com>
- <20180502102416.GJ12180@hirez.programming.kicks-ass.net>
- <14d7604c-1254-1146-e2b6-23f4cc020b34@redhat.com>
- <20180502134225.GR12217@hirez.programming.kicks-ass.net>
- <94c80e1c-049d-6ec3-8e8c-40eb88d1341d@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94c80e1c-049d-6ec3-8e8c-40eb88d1341d@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Wed, 2 May 2018 10:04:50 -0400
+Date: Wed, 02 May 2018 10:04:46 -0400 (EDT)
+Message-Id: <20180502.100446.106883595468297057.davem@davemloft.net>
+To: mst@redhat.com
+Cc: kevin@guarana.org, linux-kernel@vger.kernel.org, jasowang@redhat.com,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] vhost: make msg padding explicit
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180502162932-mutt-send-email-mst@kernel.org>
+References: <20180501.140551.1944561534446599966.davem@davemloft.net>
+        <20180502062809.GA14485@la.guarana.org>
+        <20180502162932-mutt-send-email-mst@kernel.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 09:47:00AM -0400, Waiman Long wrote:
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Date: Wed, 2 May 2018 16:36:37 +0300
 
-> > I've read half of the next patch that adds the isolation thing. And
-> > while that kludges around the whole root cgorup is magic thing, it
-> > doesn't help if you move the above scenario on level down:
-> >
-> >
-> > 	R
-> >      /    \
-> >    A        B
-> >           /   \
-> >         C       D
-> >
-> >
-> > R: cpus=0-7, load_balance=0
-> > A: cpus=0-1, load_balance=1
-> > B: cpus=2-7, load_balance=0
-> > C: cpus=2-3, load_balance=1
-> > D: cpus=4-7, load_balance=1
-> >
-> >
-> > Also, I feel we should strive to have a minimal amount of tasks that
-> > cannot be moved out of the root group; the current set is far too large.
-> 
-> What exactly is the use case you have in mind with loading balancing
-> disabled in B, but enabled in C and D? We would like to support some
-> sensible use cases, but not every possible combinations.
+> Ouch.  True - and in particular the 32 bit ABI on 64 bit kernels doesn't
+> work at all. Hmm. It's relatively new and maybe there aren't any 32 bit
+> users yet. Thoughts?
 
-Suppose A is your system group, and C and D are individual RT workloads
-or something.
+If it's been in a released kernel version, we really aren't at liberty
+to play "maybe nobody uses this" UAPI changing games.
 
-Or suppose B has siblings and each group at that level is a delegate to
-a particular user/container. And the user/container in B happens to need
-2 partitioned VMs or whatever.
-
-The idea is the same in all the examples, you want to allow
-sub-partitions.
+Please send me a revert.
