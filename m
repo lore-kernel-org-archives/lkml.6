@@ -1,127 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751852AbeEBXYA (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 19:24:00 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:39525 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751587AbeEBXX4 (ORCPT
+        id S1751770AbeEBXa2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 19:30:28 -0400
+Received: from rcdn-iport-3.cisco.com ([173.37.86.74]:47636 "EHLO
+        rcdn-iport-3.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751587AbeEBXa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 19:23:56 -0400
-X-Google-Smtp-Source: AB8JxZo3uLLAyS3giWcKXTL69ImudW6paexJl5ZSCaVDdEUv7VhI+Nm0w7MBE4+jGrrIuur2yQwXog==
-Date: Wed, 2 May 2018 20:23:52 -0300
-From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sctp: fix a potential missing-check bug
-Message-ID: <20180502232352.GJ5105@localhost.localdomain>
-References: <1525299165-27098-1-git-send-email-wang6495@umn.edu>
+        Wed, 2 May 2018 19:30:26 -0400
+X-IronPort-AV: E=Sophos;i="5.49,356,1520899200";
+   d="scan'208";a="379295479"
+Subject: Re: config option for SQUASHFS_CACHED_BLKS,
+From: Daniel Walker <danielwa@cisco.com>
+To: Phillip Lougher <phillip@squashfs.org.uk>, Yixia Si <yisi@cisco.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Daniel Walker <dwalker@fifo99.com>,
+        "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
+References: <63c599b5-0ac1-6d37-920f-33d502e33dfb@cisco.com>
+Message-ID: <a064ddeb-7b0b-8ff3-78df-3df6344d3edb@cisco.com>
+Date: Wed, 2 May 2018 16:21:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525299165-27098-1-git-send-email-wang6495@umn.edu>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <63c599b5-0ac1-6d37-920f-33d502e33dfb@cisco.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Auto-Response-Suppress: DR, OOF, AutoReply
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wenwen,
+On 04/25/2018 01:34 PM, Daniel Walker wrote:
+>
+> Hi,
+>
+>
+> We have found that we can attain a better boot time by increasing 
+> SQUASHFS_CACHED_BLKS from 8 to 11. We also noticed that you made a 
+> special config option for allow people to configure fragment cache 
+> size (i.e. SQUASHFS_FRAGMENT_CACHE_SIZE).
+>
+>
+> Is there anything unsafe about altering the value of 
+> SQUASHFS_CACHED_BLKS ?
+>
+>
+> Would you be open to accepting a patch to add a config option for this 
+> similar to the pre-existing SQUASHFS_FRAGMENT_CACHE_SIZE ? 
 
-On Wed, May 02, 2018 at 05:12:45PM -0500, Wenwen Wang wrote:
-> In sctp_setsockopt_maxseg(), the integer 'val' is compared against min_len
-> and max_len to check whether it is in the appropriate range. If it is not,
-> an error code -EINVAL will be returned. This is enforced by a security
-> check. But, this check is only executed when 'val' is not 0. In fact, if
 
-Which makes sense, no? Especially if considering that 0 should be an
-allowed value as it turns off the user limit.
+Phillip, did you have any comments on this ?
 
-> 'val' is 0, it will be assigned with a new value (if the return value of
-> the function sctp_id2assoc() is not 0) in the following execution. However,
-> this new value of 'val' is not checked before it is used to assigned to
-
-Which 'new value'? val is not set to something new during the
-function. It always contains the user supplied value.
-
-> asoc->user_frag. That means it is possible that the new value of 'val'
-> could be out of the expected range. This can cause security issues
-> such as buffer overflows, e.g., the new value of 'val' is used as an index
-> to access a buffer.
->
-> This patch inserts a check for the new value of 'val' to see if it is in
-> the expected range. If it is not, an error code -EINVAL will be returned.
->
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-> ---
->  net/sctp/socket.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
->
-> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> index 80835ac..2beb601 100644
-> --- a/net/sctp/socket.c
-> +++ b/net/sctp/socket.c
-> @@ -3212,6 +3212,7 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
->  	struct sctp_af *af = sp->pf->af;
->  	struct sctp_assoc_value params;
->  	struct sctp_association *asoc;
-> +	int min_len, max_len;
->  	int val;
->
->  	if (optlen == sizeof(int)) {
-> @@ -3231,19 +3232,15 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
->  		return -EINVAL;
->  	}
->
-> -	if (val) {
-> -		int min_len, max_len;
-> +	min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
-> +	min_len -= af->ip_options_len(sk);
-> +	min_len -= sizeof(struct sctphdr) +
-> +		   sizeof(struct sctp_data_chunk);
-
-On which tree did you base your patch on? Your patch lacks a tag so it
-defaults to net-next, and I reworked this section on current net-next
-and these MTU calculcations are now handled by sctp_mtu_payload().
-
-But even for net tree, I don't understand which issue you're fixing
-here. Actually it seems to me that both codes seems to do the same
-thing.
-
->
-> -		min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
-> -		min_len -= af->ip_options_len(sk);
-> -		min_len -= sizeof(struct sctphdr) +
-> -			   sizeof(struct sctp_data_chunk);
-> +	max_len = SCTP_MAX_CHUNK_LEN - sizeof(struct sctp_data_chunk);
->
-> -		max_len = SCTP_MAX_CHUNK_LEN - sizeof(struct sctp_data_chunk);
-> -
-> -		if (val < min_len || val > max_len)
-> -			return -EINVAL;
-> -	}
-> +	if (val && (val < min_len || val > max_len))
-> +		return -EINVAL;
->
->  	asoc = sctp_id2assoc(sk, params.assoc_id);
->  	if (asoc) {
-> @@ -3253,6 +3250,8 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
->  			val -= sizeof(struct sctphdr) +
->  			       sctp_datachk_len(&asoc->stream);
->  		}
-> +		if (val < min_len || val > max_len)
-> +			return -EINVAL;
->  		asoc->user_frag = val;
->  		asoc->frag_point = sctp_frag_point(asoc, asoc->pathmtu);
->  	} else {
-> --
-> 2.7.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Daniel
