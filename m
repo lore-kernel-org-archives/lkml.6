@@ -1,82 +1,253 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751551AbeEBRqq (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 13:46:46 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38163 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751064AbeEBRqo (ORCPT
+        id S1751568AbeEBRrN (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 13:47:13 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46392 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbeEBRrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 13:46:44 -0400
-Date: Wed, 2 May 2018 10:46:33 -0700
-From: tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-03nx3aod955yqnf9l06im28j@git.kernel.org>
-Cc: acme@redhat.com, jolsa@kernel.org, eranian@google.com,
-        tglx@linutronix.de, wangnan0@huawei.com, mingo@kernel.org,
-        hpa@zytor.com, adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, dsahern@gmail.com
-Reply-To: dsahern@gmail.com, adrian.hunter@intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, wangnan0@huawei.com, hpa@zytor.com,
-        mingo@kernel.org, acme@redhat.com, jolsa@kernel.org,
-        eranian@google.com, tglx@linutronix.de
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf script: Use thread__find_symbol() instead of
- ad-hoc equivalent
-Git-Commit-ID: cc5f02f2be8d3354986bad5703ee8a983872f140
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Wed, 2 May 2018 13:47:10 -0400
+X-Google-Smtp-Source: AB8JxZr7Ft1gAUcWnzZcSgtylYkMmVdnGUNSKJvOFIcYR0/JeXBOs35YB9dAOBnoEnHM2Ns3qJAw+g==
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Cong Wang <xiyou.wangcong@gmail.com>, Paul Turner <pjt@google.com>,
+        Peter Zijlstra <peterz@infradead.org>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+Subject: [Patch v2] sched/fair: make CFS bandwidth slice per cpu group
+Date: Wed,  2 May 2018 10:46:58 -0700
+Message-Id: <20180502174658.13013-1-xiyou.wangcong@gmail.com>
+X-Mailer: git-send-email 2.9.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cc5f02f2be8d3354986bad5703ee8a983872f140
-Gitweb:     https://git.kernel.org/tip/cc5f02f2be8d3354986bad5703ee8a983872f140
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 24 Apr 2018 11:32:30 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 26 Apr 2018 13:47:08 -0300
+We saw tasks in a CPU cgroup got throttled for many times even
+when they don't apparently over-burn the CPU's. I tried to trace
+the cause and noticed that one of the problems here is that the
+local CPU which got the last chunk of quota doesn't use all of
+them and prevents other CPUs to reuse the unused CPU time. So
+reducing sched_cfs_bandwidth_slice_us from the default 5ms to 1ms
+mostly solves the problem, at least no tasks got throttled after
+this change in my test case.
 
-perf script: Use thread__find_symbol() instead of ad-hoc equivalent
+However, the sched_cfs_bandwidth_slice_us is a global setting which
+affects all cgroups. Different cgroups may want different values based
+on their own workload, 5ms or 1ms is not suitable for all the cgroups.
+A smaller slice distributes CPU time more fairly at a cost of slightly
+higher overhead. We have to minimize the impact of the slice change.
+On the other hand, the global pool filled periodically is per cgroup,
+each cgroup should have the right to distribute its own quota to the
+local CPUs with its own preferred frequency.
 
-In dc323ce8e72d ("perf script: Enable printing of branch stack") it
-first tries to find the map for an address, then the symbol in the DSO
-backing that map, for that address, well, this is what
-thread__find_symbol() does, so just use it and make the code shorter.
+This patch intrdouces cpu.cfs_slice_us which allows each cgroup to
+specify its own slice length without any global impact. And the
+global sysctl sched_cfs_bandwidth_slice_us now becomes the default
+value of each cpu.cfs_slice_us. Note, updating this sysctl does not
+automatically update existing cgroups using a default value, users
+will have to update each existing cgroup accordingly to make a global
+change.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-03nx3aod955yqnf9l06im28j@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 ---
- tools/perf/builtin-script.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ Documentation/scheduler/sched-bwc.txt | 14 +++++++----
+ kernel/sched/core.c                   | 44 +++++++++++++++++++++++++++++++++++
+ kernel/sched/fair.c                   | 22 +++++++++++-------
+ kernel/sched/sched.h                  |  1 +
+ 4 files changed, 69 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 5ec1c73bbfaf..ffd02faee87b 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -764,13 +764,8 @@ static int perf_sample__fprintf_brstacksym(struct perf_sample *sample,
- 		from = br->entries[i].from;
- 		to   = br->entries[i].to;
+diff --git a/Documentation/scheduler/sched-bwc.txt b/Documentation/scheduler/sched-bwc.txt
+index f6b1873f68ab..b2d6ff02e5b3 100644
+--- a/Documentation/scheduler/sched-bwc.txt
++++ b/Documentation/scheduler/sched-bwc.txt
+@@ -48,19 +48,25 @@ and return the group to an unconstrained state once more.
+ Any updates to a group's bandwidth specification will result in it becoming
+ unthrottled if it is in a constrained state.
  
--		thread__find_map(thread, sample->cpumode, from, &alf);
--		if (alf.map)
--			alf.sym = map__find_symbol(alf.map, alf.addr);
+-System wide settings
++Slice
+ --------------------
+ For efficiency run-time is transferred between the global pool and CPU local
+ "silos" in a batch fashion.  This greatly reduces global accounting pressure
+ on large systems.  The amount transferred each time such an update is required
+ is described as the "slice".
+ 
+-This is tunable via procfs:
+-	/proc/sys/kernel/sched_cfs_bandwidth_slice_us (default=5ms)
 -
--		thread__find_map(thread, sample->cpumode, to, &alt);
--		if (alt.map)
--			alt.sym = map__find_symbol(alt.map, alt.addr);
-+		thread__find_symbol(thread, sample->cpumode, from, &alf);
-+		thread__find_symbol(thread, sample->cpumode, to, &alt);
+ Larger slice values will reduce transfer overheads, while smaller values allow
+ for more fine-grained consumption.
  
- 		printed += symbol__fprintf_symname_offs(alf.sym, &alf, fp);
- 		if (PRINT_FIELD(DSO)) {
++The per-group file cpu.cfs_slice_us controls the slice length within each CPU
++group, different groups could set different values for their own preference.
++Its default value is tunable via procfs:
++
++	/proc/sys/kernel/sched_cfs_bandwidth_slice_us (default=5ms)
++
++Note, updating this file does not automatically update existing groups using
++a default slice.
++
+ Statistics
+ ----------
+ A group's bandwidth statistics are exported via 3 fields in cpu.stat.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 5e10aaeebfcc..48a7547b6744 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6670,6 +6670,33 @@ long tg_get_cfs_period(struct task_group *tg)
+ 	return cfs_period_us;
+ }
+ 
++static int tg_set_cfs_slice(struct task_group *tg, long cfs_slice_us)
++{
++	u64 quota, slice;
++
++	if (cfs_slice_us <= 0)
++		return -ERANGE;
++	quota = tg->cfs_bandwidth.quota;
++	if (quota == RUNTIME_INF)
++		return -EINVAL;
++	slice = (u64)cfs_slice_us * NSEC_PER_USEC;
++	if (slice > quota)
++		return -EINVAL;
++
++	tg->cfs_bandwidth.slice = slice;
++	return 0;
++}
++
++static long tg_get_cfs_slice(struct task_group *tg)
++{
++	u64 slice_us;
++
++	slice_us = tg->cfs_bandwidth.slice;
++	do_div(slice_us, NSEC_PER_USEC);
++
++	return slice_us;
++}
++
+ static s64 cpu_cfs_quota_read_s64(struct cgroup_subsys_state *css,
+ 				  struct cftype *cft)
+ {
+@@ -6694,6 +6721,18 @@ static int cpu_cfs_period_write_u64(struct cgroup_subsys_state *css,
+ 	return tg_set_cfs_period(css_tg(css), cfs_period_us);
+ }
+ 
++static s64 cpu_cfs_slice_read_s64(struct cgroup_subsys_state *css,
++				  struct cftype *cft)
++{
++	return tg_get_cfs_slice(css_tg(css));
++}
++
++static int cpu_cfs_slice_write_s64(struct cgroup_subsys_state *css,
++				   struct cftype *cftype, s64 cfs_quota_us)
++{
++	return tg_set_cfs_slice(css_tg(css), cfs_quota_us);
++}
++
+ struct cfs_schedulable_data {
+ 	struct task_group *tg;
+ 	u64 period, quota;
+@@ -6837,6 +6876,11 @@ static struct cftype cpu_legacy_files[] = {
+ 		.write_u64 = cpu_cfs_period_write_u64,
+ 	},
+ 	{
++		.name = "cfs_slice_us",
++		.read_s64 = cpu_cfs_slice_read_s64,
++		.write_s64 = cpu_cfs_slice_write_s64,
++	},
++	{
+ 		.name = "stat",
+ 		.seq_show = cpu_cfs_stat_show,
+ 	},
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 54dc31e7ab9b..b4f93a334566 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4539,11 +4539,6 @@ static inline u64 default_cfs_period(void)
+ 	return 100000000ULL;
+ }
+ 
+-static inline u64 sched_cfs_bandwidth_slice(void)
+-{
+-	return (u64)sysctl_sched_cfs_bandwidth_slice * NSEC_PER_USEC;
+-}
+-
+ /*
+  * Replenish runtime according to assigned quota and update expiration time.
+  * We use sched_clock_cpu directly instead of rq->clock to avoid adding
+@@ -4577,6 +4572,11 @@ static inline u64 cfs_rq_clock_task(struct cfs_rq *cfs_rq)
+ 	return rq_clock_task(rq_of(cfs_rq)) - cfs_rq->throttled_clock_task_time;
+ }
+ 
++static inline u64 cfs_bandwidth_slice(struct cfs_bandwidth *cfs_b)
++{
++	return cfs_b->slice;
++}
++
+ /* returns 0 on failure to allocate runtime */
+ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ {
+@@ -4585,7 +4585,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ 	u64 amount = 0, min_amount, expires;
+ 
+ 	/* note: this is a positive sum as runtime_remaining <= 0 */
+-	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
++	min_amount = cfs_bandwidth_slice(cfs_b) - cfs_rq->runtime_remaining;
+ 
+ 	raw_spin_lock(&cfs_b->lock);
+ 	if (cfs_b->quota == RUNTIME_INF)
+@@ -5004,7 +5004,7 @@ static void __return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+ 		cfs_b->runtime += slack_runtime;
+ 
+ 		/* we are under rq->lock, defer unthrottling using a timer */
+-		if (cfs_b->runtime > sched_cfs_bandwidth_slice() &&
++		if (cfs_b->runtime > cfs_bandwidth_slice(cfs_b) &&
+ 		    !list_empty(&cfs_b->throttled_cfs_rq))
+ 			start_cfs_slack_bandwidth(cfs_b);
+ 	}
+@@ -5031,7 +5031,7 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+  */
+ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ {
+-	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
++	u64 runtime = 0, slice = cfs_bandwidth_slice(cfs_b);
+ 	u64 expires;
+ 
+ 	/* confirm we're still not at a refresh boundary */
+@@ -5151,12 +5151,18 @@ static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
+ 	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
+ }
+ 
++static inline u64 cfs_default_bandwidth_slice(void)
++{
++	return (u64)sysctl_sched_cfs_bandwidth_slice * NSEC_PER_USEC;
++}
++
+ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+ {
+ 	raw_spin_lock_init(&cfs_b->lock);
+ 	cfs_b->runtime = 0;
+ 	cfs_b->quota = RUNTIME_INF;
+ 	cfs_b->period = ns_to_ktime(default_cfs_period());
++	cfs_b->slice = cfs_default_bandwidth_slice();
+ 
+ 	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
+ 	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 15750c222ca2..35e8ca4e35a2 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -331,6 +331,7 @@ struct cfs_bandwidth {
+ 	raw_spinlock_t		lock;
+ 	ktime_t			period;
+ 	u64			quota;
++	u64			slice;
+ 	u64			runtime;
+ 	s64			hierarchical_quota;
+ 	u64			runtime_expires;
+-- 
+2.13.0
