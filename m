@@ -1,67 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751755AbeEBJuF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 05:50:05 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37743 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751731AbeEBJuB (ORCPT
+        id S1751477AbeEBJxz (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 05:53:55 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34756 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751063AbeEBJxx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 05:50:01 -0400
-X-Google-Smtp-Source: AB8JxZoPyMNPWDMNr8dsBOxk7JkXzmwuyqO3T3zZ6mA88KutI8D4AjsXhM9vGMfWjCDbIdslPMzDfg==
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
-To: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20180501132411.2311-1-michel@daenzer.net>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <786ca83f-45c4-264b-2aef-d84fb18d3d28@gmail.com>
-Date: Wed, 2 May 2018 11:49:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180501132411.2311-1-michel@daenzer.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Wed, 2 May 2018 05:53:53 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: Lee Jones <lee.jones@linaro.org>, Sebastian Reichel <sre@kernel.org>
+Cc: Gwendal Grignou <gwendal@chromium.org>,
+        Sameer Nanda <snanda@chromium.org>, linux-pm@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org,
+        Benson Leung <bleung@chromium.org>, miguel.ojeda.sandonis@gmail.com,
+        kernel@collabora.com
+Subject: [PATCH v3 0/3] mfd/power: cros_ec: add support for USBPD charger driver.
+Date: Wed,  2 May 2018 11:53:40 +0200
+Message-Id: <20180502095343.17092-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 01.05.2018 um 15:24 schrieb Michel Dänzer:
-> From: Michel Dänzer <michel.daenzer@amd.com>
->
-> The result was printing the warning only when we were explicitly asked
-> not to.
->
-> Cc: stable@vger.kernel.org
-> Fixes: 0176adb004065d6815a8e67946752df4cd947c5b "swiotlb: refactor
->   coherent buffer allocation"
-> Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
 
-Good catch, looked at the code multiple times and haven't seen that 
-myself :)
+Dear all,
 
-Reviewed-by: Christian König <christian.koenig@amd.com>.
+This is a third version of a patched to add support for the ChromeOS EC
+USBPD charger driver, the driver has been used on Chromebooks kernel for
+long time and has been ported now to mainline. The patches were tested
+successfully with a Samsung Chromebook Plus and an Pixel 2 Chromebook.
 
-Christian.
+This version is a rework with respect the first version, some features
+like the PD log have been removed and will be send as follow up patches
+for further discuss.
 
-> ---
->   lib/swiotlb.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/lib/swiotlb.c b/lib/swiotlb.c
-> index c43ec2271469..e9ac21540628 100644
-> --- a/lib/swiotlb.c
-> +++ b/lib/swiotlb.c
-> @@ -750,7 +750,7 @@ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
->   	swiotlb_tbl_unmap_single(dev, phys_addr, size, DMA_TO_DEVICE,
->   			DMA_ATTR_SKIP_CPU_SYNC);
->   out_warn:
-> -	if ((attrs & DMA_ATTR_NO_WARN) && printk_ratelimit()) {
-> +	if (!(attrs & DMA_ATTR_NO_WARN) && printk_ratelimit()) {
->   		dev_warn(dev,
->   			"swiotlb: coherent allocation failed, size=%zu\n",
->   			size);
+The second patch of this series depends on these series that are queued
+for 4.18:
+
+- https://lkml.org/lkml/2018/4/23/602 ([PATCH v8 0/6] typec: tcpm: Add
+  sink side support for PPS)
+
+The third patch of this series depends on the following patch to apply
+cleanly:
+
+- https://lkml.org/lkml/2018/4/18/229 ([RESEND PATCH v5 4/7] mfd:
+  cros_ec_dev: Register cros-ec-rtc driver as a subdevice.)
+
+Best regards,
+ Enric
+
+Changes in v3:
+- [1/3] Use the BIT macro.
+- [2/3] Add missing POWER_SUPPLY_PROP_USB_TYPE and a list of supported USB types.
+- [2/3] Fix SPDX header -> GPL-2.0+
+- [2/3] Unregister blocking_notifier_chain on remove.
+
+Changes in v2:
+- [2/3] Add SPDX header, use devm_ variant and drop .owner
+- [2/3] Removed the PD log functionality (will be send on a follow up patch)
+- [2/3] Removed the extra custom sysfs attributes (will be send on a follow up patch)
+- [3/3] Use ARRAY_SIZE instead of hardcoded 1.
+
+Enric Balletbo i Serra (1):
+  mfd: cros_ec_dev: Register cros_usbpd-charger driver as a subdevice.
+
+Sameer Nanda (2):
+  mfd: cros_ec: Add USBPD charger commands and struct definitions.
+  power: supply: add cros-ec USBPD charger driver.
+
+ drivers/mfd/cros_ec_dev.c                 |  16 +
+ drivers/power/supply/Kconfig              |  10 +
+ drivers/power/supply/Makefile             |   1 +
+ drivers/power/supply/cros_usbpd-charger.c | 545 ++++++++++++++++++++++
+ include/linux/mfd/cros_ec.h               |   2 +
+ include/linux/mfd/cros_ec_commands.h      | 132 +++++-
+ 6 files changed, 702 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/power/supply/cros_usbpd-charger.c
+
+-- 
+2.17.0
