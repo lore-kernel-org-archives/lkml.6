@@ -1,53 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751702AbeEBQyh (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:54:37 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:32925 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751174AbeEBQyd (ORCPT
+        id S1751869AbeEBQ44 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 12:56:56 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:56281 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751795AbeEBQ4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:54:33 -0400
-X-Google-Smtp-Source: AB8JxZraGTJXBk5TNEGvig68kiG/YB9X+HusiMwM8Lour+L0Gt6NPS9H1RfoP69ZV0tbH2WLz9+5Pw==
-Subject: Re: Warning for driver i915 for 4.17.0-rcX
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: intel-gfx <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <a16d75eb-56ad-6b10-502b-b9f5174b6e21@lwfinger.net>
- <87o9hyd1ru.fsf@intel.com>
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <4371fd28-49fb-f019-1fc3-f1318b9562fd@lwfinger.net>
-Date: Wed, 2 May 2018 11:54:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 12:56:52 -0400
+X-Google-Smtp-Source: AB8JxZpIm1VQd3bXE+n/tSCtmhjtZEPmAKnQi5CxZouhOe/cJC74VrefP3CNRxmKpeW4NlU3n3XLyIXPLTHBjS7lE7g=
 MIME-Version: 1.0
-In-Reply-To: <87o9hyd1ru.fsf@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1525237251-32496-1-git-send-email-leo.yan@linaro.org>
+References: <1525237251-32496-1-git-send-email-leo.yan@linaro.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Wed, 2 May 2018 10:56:50 -0600
+Message-ID: <CANLsYkyR3=oZkHfot7CtFNu3WBXSQCz8qNc63a2djsTGM7jUWA@mail.gmail.com>
+Subject: Re: [PATCH] coresight: Remove %px for printing pcsr value
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 01:12 AM, Jani Nikula wrote:
-> On Mon, 30 Apr 2018, Larry Finger <Larry.Finger@lwfinger.net> wrote:
->> With kernel 4.17.0-rc3, I noted the following warning from driver i915.
->>
->> kernel: ------------[ cut here ]------------
->> kernel: Could not determine valid watermarks for inherited state
->> kernel: WARNING: CPU: 3 PID: 224 at drivers/gpu/drm/i915/intel_display.c:14584
->> intel_modeset_init+0x3be/0x1060 [i915]
-> 
-> Please try [1], see also the related bug [2].
-> 
-> BR,
-> Jani.
-> 
-> [1] http://patchwork.freedesktop.org/patch/msgid/20180426163015.14232-1-ville.syrjala@linux.intel.com
-> [2] https://bugs.freedesktop.org/show_bug.cgi?id=105992
+On 1 May 2018 at 23:00, Leo Yan <leo.yan@linaro.org> wrote:
+> The driver prints pcsr twice: the first time it uses specifier %px to
+> print hexadecimal pcsr value and the second time uses specifier %pS for
+> output kernel symbols.
+>
+> As suggested by Kees, using %pS should be sufficient and %px isn't
+> necessary; the reason is if the pcsr is a kernel space address, we can
+> easily get to know the code line from %pS format, on the other hand, if
+> the pcsr value doesn't fall into kernel space range (e.g. if the CPU is
+> stuck in firmware), %pS also gives out pcsr hexadecimal value.
+>
+> So this commit removes useless %px and update section "Output format"
+> in the document for alignment between the code and document.
+>
+> Suggested-by: Kees Cook <keescook@chromium.org>
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
 
-Thanks for your reply. Patch [1] above does fix my warning.
+Applied - thanks,
+Mathieu
 
-Larry
+
+> ---
+>  Documentation/trace/coresight-cpu-debug.txt       | 4 ++--
+>  drivers/hwtracing/coresight/coresight-cpu-debug.c | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/trace/coresight-cpu-debug.txt b/Documentation/trace/coresight-cpu-debug.txt
+> index 2b9b51c..89ab09e 100644
+> --- a/Documentation/trace/coresight-cpu-debug.txt
+> +++ b/Documentation/trace/coresight-cpu-debug.txt
+> @@ -177,11 +177,11 @@ Here is an example of the debugging output format:
+>  ARM external debug module:
+>  coresight-cpu-debug 850000.debug: CPU[0]:
+>  coresight-cpu-debug 850000.debug:  EDPRSR:  00000001 (Power:On DLK:Unlock)
+> -coresight-cpu-debug 850000.debug:  EDPCSR:  [<ffff00000808e9bc>] handle_IPI+0x174/0x1d8
+> +coresight-cpu-debug 850000.debug:  EDPCSR:  handle_IPI+0x174/0x1d8
+>  coresight-cpu-debug 850000.debug:  EDCIDSR: 00000000
+>  coresight-cpu-debug 850000.debug:  EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
+>  coresight-cpu-debug 852000.debug: CPU[1]:
+>  coresight-cpu-debug 852000.debug:  EDPRSR:  00000001 (Power:On DLK:Unlock)
+> -coresight-cpu-debug 852000.debug:  EDPCSR:  [<ffff0000087fab34>] debug_notifier_call+0x23c/0x358
+> +coresight-cpu-debug 852000.debug:  EDPCSR:  debug_notifier_call+0x23c/0x358
+>  coresight-cpu-debug 852000.debug:  EDCIDSR: 00000000
+>  coresight-cpu-debug 852000.debug:  EDVIDSR: 90000000 (State:Non-secure Mode:EL1/0 Width:64bits VMID:0)
+> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> index 9cdb3fb..78a054e 100644
+> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+> @@ -315,7 +315,7 @@ static void debug_dump_regs(struct debug_drvdata *drvdata)
+>         }
+>
+>         pc = debug_adjust_pc(drvdata);
+> -       dev_emerg(dev, " EDPCSR:  [<%px>] %pS\n", (void *)pc, (void *)pc);
+> +       dev_emerg(dev, " EDPCSR:  %pS\n", (void *)pc);
+>
+>         if (drvdata->edcidsr_present)
+>                 dev_emerg(dev, " EDCIDSR: %08x\n", drvdata->edcidsr);
+> --
+> 2.7.4
+>
