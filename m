@@ -1,93 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753367AbeEBAJg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 20:09:36 -0400
-Received: from mail-io0-f177.google.com ([209.85.223.177]:35111 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbeEBAJf (ORCPT
+        id S1753362AbeEBAMb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 20:12:31 -0400
+Received: from mail-pg0-f45.google.com ([74.125.83.45]:47096 "EHLO
+        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751825AbeEBAM2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 20:09:35 -0400
-X-Google-Smtp-Source: AB8JxZpRT/OioL2j82qjzpTb7kQvnIBioARqqPizQSVh6u/k2SuB/spE+NoNovDVfqtBDTtO/sSW0//yF1J8kupuE8A=
-MIME-Version: 1.0
-References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com> <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
-In-Reply-To: <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 02 May 2018 00:09:23 +0000
-Message-ID: <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 1 May 2018 20:12:28 -0400
+X-Google-Smtp-Source: AB8JxZqlff30b32PIS2v4lQ05QDjCNLmZAu6VLONDVyPN6CjrNGFDfwUh83twOwBfVzajxRK6iKDOA==
+Date: Wed, 2 May 2018 10:12:14 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Joel Fernandes <joel.opensrc@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH] tracing/irqtrace: only call trace_hardirqs_on/off when
+ state changes
+Message-ID: <20180502101214.746650bc@roar.ozlabs.ibm.com>
+In-Reply-To: <CAEi0qNkbjrdx8A4rfNCJd-1BGMUXZRbbLJEkZuVab+oprWhcDQ@mail.gmail.com>
+References: <20171116161506.19691-1-npiggin@gmail.com>
+        <20180501144620.1e832a09@gandalf.local.home>
+        <20180501191951.GJ12217@hirez.programming.kicks-ass.net>
+        <20180501153840.7281022a@gandalf.local.home>
+        <20180501194838.GK12217@hirez.programming.kicks-ass.net>
+        <20180501160059.6df6aae4@gandalf.local.home>
+        <CAEi0qNkbjrdx8A4rfNCJd-1BGMUXZRbbLJEkZuVab+oprWhcDQ@mail.gmail.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 1, 2018 at 4:03 PM Dan Williams <dan.j.williams@intel.com>
-wrote:
+On Tue, 1 May 2018 14:15:14 -0700
+Joel Fernandes <joel.opensrc@gmail.com> wrote:
 
-> I'm confused. Are you talking about getting rid of the block-layer
-> bypass or changing how MCS errors are handled?
+> On Tue, May 1, 2018 at 1:00 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+> > On Tue, 1 May 2018 21:48:38 +0200
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >  
+> >> On Tue, May 01, 2018 at 03:38:40PM -0400, Steven Rostedt wrote:  
+> >> > On Tue, 1 May 2018 21:19:51 +0200
+> >> > Peter Zijlstra <peterz@infradead.org> wrote:  
+> >>  
+> >> > > Now, lockdep only minimally tracks these otherwise redundant operations;
+> >> > > see redundant_hardirqs_{on,off} counters, and loosing that doesn't seen
+> >> > > like a big issue.
+> >> > >
+> >> > > But I'm confused how this helps track superfluous things, it looks like
+> >> > > it explicitly tracks _less_ superfluous transitions.  
+> >> >
+> >> > I think it is about triggering on OFF->OFF a warning, as that would
+> >> > only happen if we have:
+> >> >
+> >> >     local_irq_save(flags);
+> >> >     [..]
+> >> >     local_irq_disable();
+> >> >  
+> >>
+> >> Ahh, ok. Yes, that is easier to do with these changes. The alternative
+> >> is to add more information to the tracehooks such that we can do the
+> >> same internally, but whatever.
+> >>
+> >> Yeah, I'm fine with the proposed change, but maybe improve the Changelog
+> >> a little for slow people like me :-)  
+> >
+> > Great!
+> >
+> > Nicholas,
+> >
+> > I know this is an old patch (from last November), but want to send it
+> > again with a proper change log and signed off by?  
+> 
+> I actually wrote the exact same patch yesterday with changes Matsami
+> suggested. However I decided not to send it, since it didn't have any
+> performance improvement (which was the reason I wrote it).
+> 
+> Also with my recent set, I don't think it will help detect repeated
+> calls to trace_hardirqs_off because we are handling that recursive
+> case by using per-cpu variable and bailing out if there is a
+> recursion, before even calling into lockdep.
+> 
+> I have mixed feelings about this patch, I am Ok with this patch but I
+> suggest its sent with the follow-up patch that shows its use of this.
+> And also appreciate if such a follow-up patch is rebased onto the IRQ
+> tracepoint work: https://patchwork.kernel.org/patch/10373129/
+> 
+> What do you think?
 
-The latter.
+I'll try to dig it up and resend. Thanks for the feedback on it.
 
-> If it's the latter, MCS error handling, I don't see how get
-> around something like copy_to_iter_mcsafe().
-
-So the basic issue is that since everybody wants mmap() to be at least an
-option (and preferably one of the _main_ options), I think that the whole
-"MCS errors are fatal" is fundamentally flawed.
-
-Which means that MCS errors can't be fatal.
-
-Which in turn means that the whole "special memcpy" seems very suspect.
-
-Can't we just do
-
-  - use a normal memcpy()
-
-  - basically set an "IO error flag" on MCE.
-
-  - for a user access the IO error flag potentially causes a SIGBUS as you
-mention, but even there it's not 100% clear that's necessarily possible or
-a good idea (I'm assuming that it can be damned hard to figure out _who_
-caused the problem if it was a cached write that causes an MCE much much
-later).
-
-  - for the kernel, the "IO error flag" can hopefully be then (again,
-assuming you can correlate the MCE with the right process) be turned into
-EIO.
-
-> You mention mmap. Yes, we want the predominant access model to be
-> dax-mmap for Persistent Memory, but there's still the question about
-> what to do with media errors. To date we are trying to mirror the
-> error handling model for System Memory, i.e. SIGBUS to the process
-> that consumed the error. Is that error handling model also problematic
-> in your view?
-
-See above: if you can handle user space errors "gracefully" (ie with a
-SIGBUS, no crazy "system fatal (reboot)" garbage), then I really don't see
-why you can't do the same for the kernel accesses.
-
-IOW, why do we need that special "copy_to_iter_mcsafe()", when a normal
-"copy_to_iter()" should just work (and basically _has_ to work) anyway?
-
-Put another way: I think the whole basic premis of your patch is wrong,
-because (to quote your original patch descriptor), the fundamental starting
-point is garbage:
-
-    The result of the bypass is that the kernel treats machine checks during
-    read as system fatal (reboot) [..]
-
-See? If you are able to map that memory into user space, and recover, then
-why the whole crazy "system fatal" thing for kernel accesses?
-
-             Linus
+Thanks,
+Nick
