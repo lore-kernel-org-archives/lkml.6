@@ -1,144 +1,128 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1097881-1525700333-2-15877673792854882181
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-4101065-1525230376-2-10424378256944707375
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, RCVD_IN_SORBS_WEB 1.5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525700332; b=XxoWVTtepNPa8aC176FFhQ6GiDL466TJBMgkoVYh9+A2oFbaaX
-    3Nib2U+PFvmORAYGHw0IjAlNdGydURYZnfFcS/cddHldpVmr26Ny9DpqTE9v3i9l
-    m6QqbPyTbK2a514HIBH7uKBfVdd/YYzqTbi5z06GkmPjG7FIbtGDe3eeJZ3QxaHS
-    Oyy0/NMT9P1WSgDtbC0LcvCo74IIxVu/kxf3m2uG0+tluIeLRzeuM2caP+G1ENBk
-    f2W+VZQcYUoN6ublYmHqrq4SGjRJuNN5RUELENhOxK0ds0+eB+3Mo9reie+551nt
-    x81eCG/yvzWbzgnpNkWt5YJdLbogwEsqXy9Q==
+    1525230375; b=YNY+cKKn5GjcDuO5BfHe6NF8kPaRy3+eLQhkUSG9/Gda8v8UZB
+    jPhMgKBTjBYoWMem3DrPBfZCxJfSuvr/SJ8SL4g9Ds3nCO8Gm6wi6OnQ7GqezFOn
+    rvvhT8I24k+XdkLRqUHuMf98yvgXwQXNMBu0iFidHUUr2UzkiWnv3Hf564DQPJKZ
+    CjZpqmvx2Wzh8XzK/Qn9/fQDzRoijM6rE6O9fNhM2fha9fUSh/khcAb+Fdm4lu3d
+    3BTGjjea5t2KgTr33wMRNW5gOfdM9a6JNo73V+0y8jcE6db20Tj3zMMXVd8RuqDO
+    z7TZvKrG6k2lEoI/jaHcTcWMdo36P/mKCeUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:references:from:message-id
-    :date:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc
-    :content-transfer-encoding:content-type:sender; s=fm2; t=
-    1525700332; bh=SeOiVwU6zjZDXJ2vBP75qe+PYIpgfuMffbhWI1DSd5U=; b=V
-    v9LysW44+L5n+vCliQqx5PDtXL0e7rC8UNvJqr8oW2ppVy2tERKhIHZaj+dPXlG8
-    /w753/FZ5afNabbi/SRz13Wq5ieZUkKOWiqqFHywthbCZSwrPsdMMCsppeNxEbqr
-    FhvcNW+JwjieeqrnmAWCyavBxh+Amv37O6XBAI4ayhKXnsSGlgysZPMlMyuW0DV/
-    wGQgKSGKvviiRznLQkjWItvS4DhpHSxYsRins6CXmGehx2ZMnnijY3CcbKMtBLMC
-    C7suVrUWDzcePi7MOOsSmxhVqzdHmlBr5KC7LfHsto0YHPB2dn+U5hH/54XhJJxn
-    vZt/rBbeiiewnEmyY60og==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525230375; bh=87moivpugfiBGobvjag8KDYC7WtC4I
+    o6sptqVxJtlHo=; b=girOiJ+ly/E5Bx3WT9vdbjze9vNSBY43OzJ5289q9XHQe+
+    mCNJFWCwBW9GPtvhX/K8OsBgZfDiF38JmwtD1VqrDTyDuavn8gNBvHHP1X/IIRtB
+    csEFBSUCluiNqYF01MRhPsYKB9AloI9+ujtKQTb8+sEBu18WDKTFnnGMIBU/t+tX
+    htJBq72ou6cafsHuvL0TnoUI5cQGE1RkZ1vjZgwWRNoJGTrpU0LRtb36MlC0dK8F
+    LY9I4AWNq/HCNWKe2473js9v8U/aN43NRnYGgmbNFnrw2RTVoRVUa/rsvdAkC5nu
+    f+9GEtp1QWqjuyqHyyWymwRc7C29KltyN9yhUbmA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=V3TsOEAu;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=rock-chips.com header.result=pass
     header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=V3TsOEAu;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=rock-chips.com header.result=pass
       header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDWDqBh+g68OzL1aucLIiw9vSoMOB7JQJOURMyJ2fU75pC6rQEVz1ewxsv0r759ZkmE2SBBjkHvH17hF1Hqs44u3VHQv0An3gaq+ZIAMxLsy4zEDIBsL
-    AqwnQ7h4isP8zUEqsNkA3WI3dFW1JkJLMjgJuvcDnG6MxdOTJ7OfgeCFvvgeVOaL4pZoZDjDT8X5+mfc3uHQOVq9SDjuU59yCL58YvmV6vvhFoiF0aLazkdU
-    pIbI5YxdCM7W0+R6jXqTqA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
-    a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=DDOyTI_5AAAA:8 a=J6ulxgwZo8azD8rbA9QA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfOOLDVh1rIm12hBrIBL6ZAQaQftuWs1bc2w6rA3zrR/fhlN8uiSKLPzNXYAN2mNqOblSA9noZMCFlzP/y7kRSo1anzIJAYSmS0aThThjKtERv/gXQCqU
+    7wCuct/DWgAX5m9jVCQD555EqsLepFF6BydjtRgaOSi6wQWfXOHA5XBxgZnTylSRGM5N4sRh+HpG8lQLVskD4duoXaz9RETxP9WmG5ARSIKQ7wtQWDAbL+l0
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=Ndx7yIVex8M7RJDNeXoA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZosgdNa6RjBKkX9aHifCv0RIUD+y5XVs2ViGlYnqEqUcBRurZz0XAqvFe0NOcikmGP671oIoA==
-Subject: Re: [PATCH 2/2] staging: android: ion: Remove unnecessary blank line
-To: Nathan Chancellor <natechancellor@gmail.com>, devel@driverdev.osuosl.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <20180507011854.12627-1-natechancellor@gmail.com>
- <20180507011854.12627-2-natechancellor@gmail.com>
-From: Laura Abbott <labbott@redhat.com>
-Message-ID: <4dc477ae-4f62-e344-26f5-133f0c043b14@redhat.com>
-Date: Mon, 7 May 2018 06:38:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180507011854.12627-2-natechancellor@gmail.com>
-Content-Language: en-US
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Todd Kjos <tkjos@android.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
- Martijn Coenen <maco@android.com>, Sumit Semwal <sumit.semwal@linaro.org>
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751809AbeEBDGM (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 1 May 2018 23:06:12 -0400
+Received: from regular1.263xmail.com ([211.150.99.137]:33901 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751763AbeEBDGK (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Tue, 1 May 2018 23:06:10 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: william.wu@rock-chips.com
+X-FST-TO: hminas@synopsys.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: william.wu@rock-chips.com
+X-UNIQUE-TAG: <42b11df21b18771cf7ca8eba497602ad>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: William Wu <william.wu@rock-chips.com>
+To: hminas@synopsys.com, felipe.balbi@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc: sergei.shtylyov@cogentembedded.com, heiko@sntech.de,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, frank.wang@rock-chips.com,
+        huangtao@rock-chips.com, dianders@google.com,
+        daniel.meng@rock-chips.com, John.Youn@synopsys.com,
+        william.wu@rock-chips.com, wzz@rock-chips.com, zsq@rock-chips.com,
+        Allen.Hsu@quantatw.com, StanTsui@AOPEN.com
+Subject: [PATCH v2 0/2] usb: dwc2: fix isoc split in transfer issue
+Date: Wed,  2 May 2018 11:04:46 +0800
+Message-Id: <1525230288-6014-1-git-send-email-william.wu@rock-chips.com>
+X-Mailer: git-send-email 2.0.0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/06/2018 06:18 PM, Nathan Chancellor wrote:
-> Fixes a checkpatch.pl warning.
-> 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->   drivers/staging/android/ion/ion.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-> index 269a431646be..d10b60fe4a29 100644
-> --- a/drivers/staging/android/ion/ion.c
-> +++ b/drivers/staging/android/ion/ion.c
-> @@ -95,7 +95,6 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
->   		goto err1;
->   	}
->   
-> -
->   	INIT_LIST_HEAD(&buffer->attachments);
->   	mutex_init(&buffer->lock);
->   	mutex_lock(&dev->buffer_lock);
-> 
+This patch fix dma unaligned problem and data lost problem for
+isoc split in transfer.
 
-Acked-by: Laura Abbott <labbott@redhat.com>
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
+fs audio device (Plantronics headset) to capture and playback.
+
+William Wu (2):
+  usb: dwc2: alloc dma aligned buffer for isoc split in
+  usb: dwc2: fix isoc split in transfer with no data
+
+ drivers/usb/dwc2/hcd.c       | 63 +++++++++++++++++++++++++++++++++++++++++---
+ drivers/usb/dwc2/hcd.h       | 10 +++++++
+ drivers/usb/dwc2/hcd_intr.c  | 10 ++++++-
+ drivers/usb/dwc2/hcd_queue.c |  8 +++++-
+ 4 files changed, 86 insertions(+), 5 deletions(-)
+
+-- 
+2.0.0
+
+
