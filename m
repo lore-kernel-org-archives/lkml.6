@@ -1,63 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751770AbeEBQ7s (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 12:59:48 -0400
-Received: from mail.netline.ch ([148.251.143.178]:38133 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeEBQ7r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 12:59:47 -0400
-Subject: Re: [PATCH] swiotlb: Fix inversed DMA_ATTR_NO_WARN test
-To: Christoph Hellwig <hch@lst.de>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        iommu@lists.linux-foundation.org,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180501132411.2311-1-michel@daenzer.net>
- <786ca83f-45c4-264b-2aef-d84fb18d3d28@gmail.com>
- <CAKMK7uH2+v3_UUqXdCjz_8=H4VRt1zB+dgE99PuuPqd+XM2=-w@mail.gmail.com>
- <20180502124151.GA22857@lst.de>
- <1066dfa2-2f78-815d-c65a-9d09eb35458c@daenzer.net>
- <20180502162145.GA26787@lst.de>
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <ba310210-6f3c-f4e6-29e5-5ae6e791ebeb@daenzer.net>
-Date: Wed, 2 May 2018 18:59:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751889AbeEBRBZ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 13:01:25 -0400
+Received: from anholt.net ([50.246.234.109]:56694 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751719AbeEBRBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 13:01:22 -0400
+From: Eric Anholt <eric@anholt.net>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH] drm/vc4: Fix oops dereferencing DPI's connector since panel_bridge.
+In-Reply-To: <20180309233256.1667-1-eric@anholt.net>
+References: <20180309233256.1667-1-eric@anholt.net>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date: Wed, 02 May 2018 10:01:20 -0700
+Message-ID: <87vac63sbj.fsf@anholt.net>
 MIME-Version: 1.0
-In-Reply-To: <20180502162145.GA26787@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-02 06:21 PM, Christoph Hellwig wrote:
-> On Wed, May 02, 2018 at 04:31:09PM +0200, Michel Dänzer wrote:
->>> No.  __GFP_NOWARN (and gfp_t flags in general) are the wrong interface
->>> for dma allocations and just cause problems.  I actually plan to
->>> get rid of the gfp_t argument in dma_alloc_attrs sooner, and only
->>> allow either GFP_KERNEL or GFP_DMA passed in dma_alloc_coherent.
->>
->> How about GFP_TRANSHUGE_LIGHT? TTM uses that to opportunistically
->> allocate huge pages (GFP_TRANSHUGE can result in unacceptably long
->> delays with memory pressure).
-> 
-> Well, that is exactly what I don't want drivers to do - same for
-> __GFP_COMP in some drm code.  This very much assumes the page allocator
-> is used to back dma allocations, which very often it actually isn't, and
-> any use of magic gfp flags creates a tight coupling of consumers with a
-> specific implementation.
-> 
-> In general I can't think of a good reason not to actually use
-> GFP_TRANSHUGE_LIGHT by default in the dma allocator unless
-> DMA_ATTR_ALLOC_SINGLE_PAGES is set.  Can you prepare a patch for that?
+--=-=-=
+Content-Type: text/plain
 
-I'm afraid I'll have to leave that to somebody else.
+Eric Anholt <eric@anholt.net> writes:
 
+> In the cleanup, I didn't notice that we needed to dereference the
+> connector for the bus_format.  Fix the regression by looking up the
+> first (and only) connector attached to us, and assume that its
+> bus_format is what we want.  Some day it would be good to have that
+> part of display_info attached to the bridge, instead.
 
--- 
-Earthling Michel Dänzer               |               http://www.amd.com
-Libre software enthusiast             |             Mesa and X developer
+Could anyone comment on this patch?
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlrp7uAACgkQtdYpNtH8
+nui8aQ/9EF/zPniNfsKtS5+ByeuCaFE2ZDbnZhVo+6EyG968Luk4+QAz7dfCURU4
+pXo6JuBgqnWC4b0YAAOliab/1OPMYDPg2gnfs9JbDkwKbWQgj54ajMyilM03zVtw
+12EHg67ZPpEX7VWhLpN64WmmjXxCUcRFpXHeKU/gkRe+1V0bWmzWSY5KZ9ihXYif
+lpeslrv5wyC3xY9WFjiqvwmmZKC52jiV6Nb4pHrjs26P6Ru4r5OVRs3TyCaKxG3f
+/Zs1JTKJc8NTWi9YU7pBCrizMoIxla46TyMwJN3wnIqE7DBRtH9vOjpMAis+d3Z6
+pC/nWeVNSC3lBKxLn/5NmaNY4IsKL9yzaxUycHSpTv+LjyDNv047AZlYX/qDJXuP
+FEBm9TcWE/hhRi2vr87oafJXpxUxwBO2VVAnKGeoGxKmEZsCLHQWj7kZ/8FyEZKF
+bx+aRfT/YXV0yXy2elJV3prqvqeX9MyytvIBnXJSIy9d4+NQU4ZhFskhk8Qcw7E5
+oMe0Jh9TQddTe+TBUFrV69Bpg1+2eJPMx4/h+CN0QpnqQmvdGBuohk0X1al06YHl
+HghCpioqVrlJlo+FjeEfOlXOyKtj8+NZssx9+3Xo2+TqLqO9+eb+ECjPngOUNO1j
+la8u+yLEXTqpF3jwqLmUw7+zoJfiuiXJrl0cgqDb0LVh+Y0dLtE=
+=ojZg
+-----END PGP SIGNATURE-----
+--=-=-=--
