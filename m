@@ -1,45 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751421AbeEBJqS convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 05:46:18 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:55023 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750897AbeEBJqP (ORCPT
+        id S1751469AbeEBJq1 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 05:46:27 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:44175 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750897AbeEBJqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 05:46:15 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Content-Type: text/plain; charset="utf-8"
+        Wed, 2 May 2018 05:46:24 -0400
+X-Google-Smtp-Source: AB8JxZpF3BJec12zyOwpqCRaejH8YWHGA5VfwERpM8gcgjIJSAzVr2a711cVM7hIkeFJNsDlHmJ46bdYYD8G4XNwPDQ=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Matthias Kaehlcke <mka@chromium.org>,
-        "Jani Nikula" <jani.nikula@linux.intel.com>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        "David Airlie" <airlied@linux.ie>
-From: Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20180501182440.70121-1-mka@chromium.org>
-Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, "Guenter Roeck" <groeck@chromium.org>,
-        "Matthias Kaehlcke" <mka@chromium.org>
-References: <20180501182440.70121-1-mka@chromium.org>
-Message-ID: <152525436760.32109.17749926643981003077@mail.alporthouse.com>
-User-Agent: alot/0.3.6
-Subject: Re: [PATCH v3] drm/i915: Disable some extra clang warnings
-Date: Wed, 02 May 2018 10:46:07 +0100
+In-Reply-To: <20180502090639.j55mnclmkzdts6xb@unicorn.suse.cz>
+References: <20180502090639.j55mnclmkzdts6xb@unicorn.suse.cz>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Wed, 2 May 2018 17:46:23 +0800
+Message-ID: <CADvbK_fT5qYmOKHgBf6KWyuRcDUT3Fa8DyMQkN75C8PFkPKLXw@mail.gmail.com>
+Subject: Re: non-blocking connect for kernel SCTP sockets
+To: Michal Kubecek <mkubecek@suse.cz>
+Cc: network dev <netdev@vger.kernel.org>, linux-sctp@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>, Gang He <ghe@suse.com>,
+        GuoQing Jiang <gqjiang@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matthias Kaehlcke (2018-05-01 19:24:40)
-> Commit 39bf4de89ff7 ("drm/i915: Add -Wall -Wextra to our build, set
-> warnings to full") enabled extra warnings for i915 to spot possible
-> bugs in new code, and then disabled a subset of these warnings to keep
-> the current code building without warnings (with gcc). Enabling the
-> extra warnings also enabled some additional clang-only warnings, as a
-> result building i915 with clang currently is extremely noisy. For now
-> also disable the clang warnings sign-compare, sometimes-uninitialized,
-> unneeded-internal-declaration and initializer-overrides. If desired
-> they can be re-enabled after the code has been fixed.
-> 
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+On Wed, May 2, 2018 at 5:06 PM, Michal Kubecek <mkubecek@suse.cz> wrote:
+> Hello,
+>
+> while investigating a bug, we noticed that DLM tries to connect an SCTP
+> socket in non-blocking mode using
+>
+>         result = sock->ops->connect(sock, (struct sockaddr *)&daddr, addr_len,
+>                                     O_NONBLOCK);
+>
+> which does not work. The reason is that inet_dgram_connect() cannot pass
+> its flags argument to sctp_connect() so that __sctp_connect() which does
+> the actual waiting resorts to checking sk->sk_socket->file->f_flags
+> instead. As the socket used by DLM is a kernel socket with no associated
+> file, it ends up blocking.
+>
+> TCP doesn't suffer from this problem as for TCP, the waiting is done in
+> inet_stream_connect() which has the flags argument. I also checked other
+> proto::connect handlers and sctp_connect() seems to be the only one with
+> this kind of problem.
+>
+> This could be worked around in DLM and further experiments indicate
+> current DLM code wouldn't actually handle the non-blocking connect
+> properly. But I still feel ignoring the flags argument is rather a trap
+> that should be fixed.
+It is a bug, https://bugzilla.redhat.com/show_bug.cgi?id=1251530
+
+We have the fix which also includes some cleanup, and needs to do
+more testing.
+
+>
+> I have prepared a series adding flags argument to proto::connect and
+> using it in sctp_connect() and __sctp_connect(). But I'm not sure if
+> it's not too big hammer to address issue only affecting one handler.
+> So my question is: would such generic approach be preferred or should we,
+> rather make SCTP work the way TCP does, i.e. move the waiting from,
+> proto::connect() to proto_ops::connect()? This would require introducing
+> inet_seqpacket_connect() as inet_dgram_connect() is primarily intended
+> for use with UDP.)
+We don't fix it in the generic proto::connect, which will afftect
+many other places.
+
+We're replacing only sctp's proto_ops::connect with sctp_connect and
+leave its proto::connect as NULL, so that it can get this flags param
+without touching the generic struct and code.
