@@ -1,62 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751414AbeEBLau (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 07:30:50 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:40048 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750954AbeEBLap (ORCPT
+        id S1751469AbeEBLcd (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 07:32:33 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46228 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751079AbeEBLc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 07:30:45 -0400
-X-Google-Smtp-Source: AB8JxZoEgNtvQ+kPIUtrWixybavONcyJF/Hn2qD4fBGxVzlPlFBoiW9o9SdReuWO+YMTIulBnsIFYJEFIXoGCwlWaI4=
+        Wed, 2 May 2018 07:32:29 -0400
+Subject: Re: [PATCH] ARM: dts: stm32: Add vrefbuf support to stm32mp157c
+To: Fabrice Gasnier <fabrice.gasnier@st.com>, <robh+dt@kernel.org>
+CC: <mcoquelin.stm32@gmail.com>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1524037665-26178-1-git-send-email-fabrice.gasnier@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <664e594b-067d-9abb-ecd3-8240cce91449@st.com>
+Date: Wed, 2 May 2018 13:31:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180423195055.26069-1-malat@debian.org>
-References: <20180423195055.26069-1-malat@debian.org>
-From: Riku Voipio <riku.voipio@linaro.org>
-Date: Wed, 2 May 2018 14:30:43 +0300
-Message-ID: <CAAqcGHn+3HMC_tVsOsLB1Vycdv7SYZ=1SYc0Cg3Gx-Xe=sExMg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild/debian: Use KBUILD_BUILD_* when set
-To: Mathieu Malaterre <malat@debian.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1524037665-26178-1-git-send-email-fabrice.gasnier@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-02_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23 April 2018 at 22:50, Mathieu Malaterre <malat@debian.org> wrote:
-> Be nice to the user and check env vars KBUILD_BUILD_USER &
-> KBUILD_BUILD_HOST when those are set.
+Hi Fabrice,
 
-mkdebian sets the maintainer address as "$name <$email>", but this
-patch only sets the email part. I also wonder about the precedence, I
-think KBUILD_* should be considered over the generic Debian variables.
-
-Riku
-
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+On 04/18/2018 09:47 AM, Fabrice Gasnier wrote:
+> stm32mp157c has vrefbuf regulator that can provide analog reference
+> voltage from 1500mV to 2500mV.
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 > ---
->  scripts/package/mkdebian | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 6adb3a16ba3b..05d58d3ae8a0 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -76,6 +76,8 @@ if [ -n "$DEBEMAIL" ]; then
->         email=$DEBEMAIL
->  elif [ -n "$EMAIL" ]; then
->         email=$EMAIL
-> +elif [ -n "$KBUILD_BUILD_USER" ] && [ -n "$KBUILD_BUILD_HOST" ]; then
-> +       email=$KBUILD_BUILD_USER@$KBUILD_BUILD_HOST
->  else
->         email=$(id -nu)@$(hostname -f 2>/dev/null || hostname)
->  fi
-> --
-> 2.11.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>   arch/arm/boot/dts/stm32mp157c.dtsi | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+> index bc3eddc..7df3c99 100644
+> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> @@ -167,6 +167,15 @@
+>   			#reset-cells = <1>;
+>   		};
+>   
+> +		vrefbuf: vrefbuf@50025000 {
+> +			compatible = "st,stm32-vrefbuf";
+> +			reg = <0x50025000 0x8>;
+> +			regulator-min-microvolt = <1500000>;
+> +			regulator-max-microvolt = <2500000>;
+> +			clocks = <&rcc VREF>;
+> +			status = "disabled";
+> +		};
+> +
+>   		usart1: serial@5c000000 {
+>   			compatible = "st,stm32h7-uart";
+>   			reg = <0x5c000000 0x400>;
+> 
+
+Applied on stm32-next.
+
+Thanks.
+Alex
