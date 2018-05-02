@@ -1,50 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751371AbeEBNw0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 09:52:26 -0400
-Received: from mail-oi0-f45.google.com ([209.85.218.45]:39168 "EHLO
-        mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750898AbeEBNwV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 09:52:21 -0400
-X-Google-Smtp-Source: AB8JxZrtvZeDf0mb5QLSr/MSM+SqGA6BbT2L+ihdspI0rut3GyVY2MNXvoB+Vy8s/hyGaCTETovJlH+Wr/G9uFOSmaw=
+        id S1751410AbeEBNws (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 09:52:48 -0400
+Received: from foss.arm.com ([217.140.101.70]:59062 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750921AbeEBNwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 09:52:47 -0400
+Subject: Re: [PATCH v2 21/27] coresight: Convert driver messages to dev_dbg
+To: Kim Phillips <kim.phillips@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mathieu.poirier@linaro.org, mike.leach@linaro.org,
+        robert.walker@arm.com, mark.rutland@arm.com, will.deacon@arm.com,
+        sudeep.holla@arm.com, frowand.list@gmail.com, robh@kernel.org,
+        john.horley@arm.com
+References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
+ <1525165857-11096-22-git-send-email-suzuki.poulose@arm.com>
+ <20180501225503.a55fb963795afb40163f3763@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <adf2465b-dd2c-dc0f-51ca-da7f1a8836ba@arm.com>
+Date: Wed, 2 May 2018 14:52:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180502083021.GC2851@pd.tnic>
-References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
- <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com>
- <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
- <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com> <20180502083021.GC2851@pd.tnic>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Wed, 2 May 2018 06:52:19 -0700
-Message-ID: <CAPcyv4h_5DHBwMr_9VKy-HT5HGquGZ8gJfqBVqATawJmw9YO8w@mail.gmail.com>
-Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180501225503.a55fb963795afb40163f3763@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 1:30 AM, Borislav Petkov <bp@alien8.de> wrote:
-> On Tue, May 01, 2018 at 07:25:57PM -0700, Dan Williams wrote:
->> Right, but the only way to make MCE non-fatal is to teach the machine
->> check handler about recoverable conditions. This patch teaches the
->> machine check handler how to recover copy_to_iter() errors.
->
-> Yeah, about that: maybe we talked about this at the time but does the
-> actual MCE signature state the error was caused by a read from an nvdimm
-> range?
+On 02/05/18 04:55, Kim Phillips wrote:
+> On Tue, 1 May 2018 10:10:51 +0100
+> Suzuki K Poulose <suzuki.poulose@arm.com> wrote:
+> 
+>> Convert component enable/disable messages from dev_info to dev_dbg.
+>> This is required to prevent LOCKDEP splats when operating in perf
+>> mode where we could be called with locks held to enable a coresight
+> 
+> Can we see the splats?  Doesn't lockdep turn itself off if it starts
+> triggering too many splats?
 
-It does not, and this routine would still need to support emulated
-persistent memory, or physical address ranges that the administrator
-has forced the kernel to treat as pmem that are otherwise not known to
-platform firmware.
+Without some very careful and robust reasoning for why the condition 
+being reported by lockdep could not actually occur in practice, 
+"avoiding the splats" is far, far less important than "avoiding the 
+potential deadlock that they are reporting".
+
+>> path. If someone wants to really see the messages, they can always
+>> enable it at runtime via dynamic_debug.
+> 
+> Won't the splats still occur when the messages are enabled with
+> dynamic_debug?
+> 
+> So in effect this patch only tries to mitigate the splats, all the
+> while making things harder for regular users that now have to recompile
+> their kernels, in exchange for a very small convenience for kernel
+> developers that happen to see a splat or two with DEBUG_LOCKDEP set?
+
+FWIW, if "regular users" means people running distro kernels, then 
+chances are that they probably have DYNAMIC_DEBUG set already (100% of 
+my local sample of 2 - Ubuntu x86_64 and Arch aarch64 - certainly do). 
+Either way, though, this particular log spam really does only look 
+vaguely useful to people debugging the coresight stack itself, so anyone 
+going out of their way to turn it on has surely already gone beyond 
+regular use (even if they're just reproducing an issue with additional 
+logging at the request of kernel developers, rather than debugging it 
+themselves).
+
+Reducing the scope for possible deadlock from the general case to just 
+debugging scenarios is certainly not a bad thing, but as you say I think 
+we need a closer look at the underlying issue to know whether even 
+dev_dbg() is wise.
+
+Robin.
