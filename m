@@ -1,68 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeEBUbW (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 16:31:22 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:32912 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750939AbeEBUbS (ORCPT
+        id S1751291AbeEBUdh (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 16:33:37 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:45073 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbeEBUdc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 16:31:18 -0400
-X-Google-Smtp-Source: AB8JxZoRzVzviweIVMwibyVwvm4WspVScj1VmC1br7p4QbXPiiG6fSue3iFHIUYYV2T68mMm9TmBHg==
-From: Andrei Vagin <avagin@openvz.org>
-To: qla2xxx-upstream@qlogic.com
-Cc: linux-scsi@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, Andrei Vagin <avagin@openvz.org>
-Subject: [PATCH] scsi: qla2xxx: remove the unused tcm_qla2xxx_cmd_wq
-Date: Wed,  2 May 2018 13:31:13 -0700
-Message-Id: <20180502203113.13183-1-avagin@openvz.org>
+        Wed, 2 May 2018 16:33:32 -0400
+X-Google-Smtp-Source: AB8JxZqmSX/KxMvn2vs1xj62a6OsjsVwK8TxgcLI8N+YgojAn8Mmrjhdjt1tir51hYPpCX11tEeQwA==
+From: Laura Abbott <labbott@redhat.com>
+To: Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Laura Abbott <labbott@redhat.com>, kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Stackleak for arm64
+Date: Wed,  2 May 2018 13:33:24 -0700
+Message-Id: <20180502203326.9491-1-labbott@redhat.com>
 X-Mailer: git-send-email 2.14.3
+In-Reply-To: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Andrei Vagin <avagin@openvz.org>
----
- drivers/scsi/qla2xxx/tcm_qla2xxx.c | 10 ----------
- 1 file changed, 10 deletions(-)
+This is an extension of the arm64 stackleak plugin, based on top of the
+v11 version for x86. The biggest change from the previous version is the
+conversion from assembly to C. It's mostly taken straight from the x86
+version modulo a few cleanups and seems to work just fine. If this gets
+Acks, I'd like Kees to start carrying in his tree for -next.
 
-diff --git a/drivers/scsi/qla2xxx/tcm_qla2xxx.c b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-index aadfeaac3898..b63440fec18e 100644
---- a/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-+++ b/drivers/scsi/qla2xxx/tcm_qla2xxx.c
-@@ -48,7 +48,6 @@
- #include "tcm_qla2xxx.h"
- 
- static struct workqueue_struct *tcm_qla2xxx_free_wq;
--static struct workqueue_struct *tcm_qla2xxx_cmd_wq;
- 
- /*
-  * Parse WWN.
-@@ -1976,16 +1975,8 @@ static int tcm_qla2xxx_register_configfs(void)
- 		goto out_fabric_npiv;
- 	}
- 
--	tcm_qla2xxx_cmd_wq = alloc_workqueue("tcm_qla2xxx_cmd", 0, 0);
--	if (!tcm_qla2xxx_cmd_wq) {
--		ret = -ENOMEM;
--		goto out_free_wq;
--	}
--
- 	return 0;
- 
--out_free_wq:
--	destroy_workqueue(tcm_qla2xxx_free_wq);
- out_fabric_npiv:
- 	target_unregister_template(&tcm_qla2xxx_npiv_ops);
- out_fabric:
-@@ -1995,7 +1986,6 @@ static int tcm_qla2xxx_register_configfs(void)
- 
- static void tcm_qla2xxx_deregister_configfs(void)
- {
--	destroy_workqueue(tcm_qla2xxx_cmd_wq);
- 	destroy_workqueue(tcm_qla2xxx_free_wq);
- 
- 	target_unregister_template(&tcm_qla2xxx_ops);
+Laura Abbott (2):
+  stackleak: Update for arm64
+  arm64: Clear the stack
+
+ arch/arm64/Kconfig                     |  1 +
+ arch/arm64/include/asm/processor.h     |  6 ++++
+ arch/arm64/kernel/Makefile             |  3 ++
+ arch/arm64/kernel/entry.S              |  6 ++++
+ arch/arm64/kernel/erase.c              | 55 ++++++++++++++++++++++++++++++++++
+ arch/arm64/kernel/process.c            | 16 ++++++++++
+ drivers/firmware/efi/libstub/Makefile  |  3 +-
+ scripts/Makefile.gcc-plugins           |  5 +++-
+ scripts/gcc-plugins/stackleak_plugin.c |  4 +++
+ 9 files changed, 97 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/kernel/erase.c
+
 -- 
 2.14.3
