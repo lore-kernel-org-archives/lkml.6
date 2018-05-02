@@ -1,121 +1,165 @@
-Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZrGsaX3PGvPwuEn99iyz2y1+wNbKgDvbibB2+9y09AUrE/9Zw/GrjCYUGI4h/qbID9PXSdM
-ARC-Seal: i=1; a=rsa-sha256; t=1525390014; cv=none;
-        d=google.com; s=arc-20160816;
-        b=c5VSjhsif6KWAsKW6+7B4yPBU6fKZpYOmfNBkF7o2eRobFCU6yG0uqO9iBn0xfK2lr
-         sLaKuA5vhI/CNzQUuzrB+9Z/Us9VBB6mj/ZTt+WXel7Bf1eNYX2eR4f0iPVlCE0q7Nfe
-         Bi9B3dTWQ1UDsTpFaBnMNBerFGhS5U6+gOVCKKwbBmhnl59ohYY7p57hDrZoJkYuhAET
-         nm/trgtz81mR1ql7VYsvz4CbV6jL81V5cH77FdJpqrCRRLageJxg+pwyY3WchFPl+ofA
-         hsU6IG+6kx52SdaHFICGX4Ruq9MF1kdbbN2CtBfNMeWhCwyNJlDRPPRrpQD2zRgLGvBD
-         HILQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
-         :from:arc-authentication-results;
-        bh=8dTrA0nYBiFyOWYZH1l/nkcZK36dSAHhQuUEHKz1ucw=;
-        b=hDffK8XrQoWxhlwisyBFoDx9jY2ZxZE+oJ5c9Kvx8EbfyXIP6/dfrXPvnCPfIy4rLz
-         4ZLdyslrtEHYu7v7uw6UoXYfn9BVxe96y7LQOASy6sk/LG3BfV8DzkpJJs4bDHKOuw0I
-         IxVaSb3oYpdgXQD42LRA0KKyTd4HPAL8z2RNB9t9gFTUMvc6HJHTlkr9rVB3JVfdz0wE
-         2lsjVSG7jELkfSzRPpr4bNHuyxKFKudxKW91K/V15b9EHUQCGaWwH/LMarQAkte6rd7m
-         yXo+j6rIfwHdUEzhw/xKSMwA6GLWBCLO8XCY7wjArv97cgOJlTjt3C27qKHzl6enz/JZ
-         9rvw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
-From: NeilBrown <neilb@suse.com>
-To: David Laight <David.Laight@ACULAB.COM>, 'James Simmons' <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel\@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Lai Siyao <lai.siyao@intel.com>, Jinshan Xiong <jinshan.xiong@intel.com>
-Date: Fri, 04 May 2018 09:26:36 +1000
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Lustre
- Development List" <lustre-devel@lists.lustre.org>, Li Xi <lixi@ddn.com>, "Gu
- Zheng" <gzheng@ddn.com>
-Subject: RE: [PATCH 1/4] staging: lustre: obdclass: change spinlock of key to rwlock
-In-Reply-To: <a3594bd7c393418c8fda5150a075ff1a@AcuMS.aculab.com>
-References: <1525285308-15347-1-git-send-email-jsimmons@infradead.org> <1525285308-15347-2-git-send-email-jsimmons@infradead.org> <a3594bd7c393418c8fda5150a075ff1a@AcuMS.aculab.com>
-Message-ID: <87po2cfhhv.fsf@notabene.neil.brown.name>
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-1143910-1525285323-2-14704986659320110047
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525285322; b=IsXh727WDZWhg8+mbghYTNFeeXvUg/+nfUNszZ8o3NfWiW3MaP
+    Tjbvfx7PYNuowfGBkgz0yehaolJLz79UK4I3C5RtV8XPPX0s/Ldupch/QwJ+vzhf
+    7JDABs7jmREYkXyUjJATLIy/Ee7qcx+3ziyELo76YlEmLsAR+EDhs3ky5IX+iMxG
+    S3cZoLw+GHdygoHqJljX3d9tUsUI6b0Ci65V8KQyTbgyu2z7ojLewI9VK2l9SjKh
+    gwjB4+BWet9RGWyTTla09WzXn2znnut8KovkKbs5DPdVjEVB/NzKG2UjE3H6iTpZ
+    xFMmKu/46uWn6z6gWOvyKm9cv49yCATp8Kzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525285322; bh=39bvf
+    Dk/GBFlEEXPutpN7ZaBxnNX49uq/PmizVEb3oc=; b=RXMwgJ9GATKeikI1RJn2e
+    PrbMvl69BEm+24JkGT/LoiTX1byb/d7vcK1+EG5+wfujG7eHDCsIAdq98mjMwdl3
+    hfJpN6yuPk5B2KALfANIR2COQLH7hfvpRFsAZo1U6XsrCltQIj5CcHRYLmUM4ZHn
+    2m7U0fIHNQo2fShS0CC6zZFE3Sc3bGsFUbIfIx3ZnRPAl62SXs00/kuUzV6IzOu4
+    S8gMGWGTS4QZGrQMoMjZ2D9u6CUrIevJ4IF8VzXLXI7Z5apJ+ZLOJXaEgKJniHHd
+    OwXFpiFhb0WqyKB0lTsi0aZ/p7aY96LjlOpEuIcqp5Ky1eoQXlk9SCWUQBbLkMY0
+    Q==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=infradead.org header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=infradead.org;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=infradead.org header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPl1Bq09m2M5S0+Uf0NygXtmS+imlMlvTT72oQwt+Py2fWkw+gxoBObkzvS6W5HRX/4XDwWJdLnyEJdn2obht/BuOMq1aD+mhsyvc03T+IR8czHYfnRP
+    +xLTSKh81ajmvKQctTEwycv6YZ3tyFNNdByB6WlqrVaRUh/ShYiYYcBJNF9ev596IGsXfw7oCWrZczQunimVrBaEaGTcbNNR41h93fyDqJty3qZVglAPCARJ
+    //aBrfxmnJD4FRT6DUpNrA==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=ySfo2T4IAAAA:8
+    a=pGLkceISAAAA:8 a=JfrnYn6hAAAA:8 a=DDOyTI_5AAAA:8 a=nhO6SZ1-xRM643X4H_YA:9
+    a=CjuIK1q_8ugA:10 a=ZUkhVnNHqyo2at-WnAgH:22 a=1CNFftbPRP8L7MoqJWF3:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: James Simmons <jsimmons@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Andreas Dilger <andreas.dilger@intel.com>,
+ Oleg Drokin <oleg.drokin@intel.com>, Lai Siyao <lai.siyao@intel.com>,
+ Jinshan Xiong <jinshan.xiong@intel.com>, NeilBrown <neilb@suse.com>
+Subject: [PATCH 2/4] staging: lustre: obdclass: hoist locking in
+ lu_context_exit()
+Date: Wed,  2 May 2018 14:21:46 -0400
+Message-Id: <1525285308-15347-3-git-send-email-jsimmons@infradead.org>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1525285308-15347-1-git-send-email-jsimmons@infradead.org>
+References: <1525285308-15347-1-git-send-email-jsimmons@infradead.org>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: "John L. Hammond" <john.hammond@intel.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599377573675786314?=
-X-GMAIL-MSGID: =?utf-8?q?1599487359677424866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+From: "John L. Hammond" <john.hammond@intel.com>
 
-On Thu, May 03 2018, David Laight wrote:
+Hoist lu_keys_guard locking out of the for loop in lu_context_exit().
 
-> From: James Simmons
->> Sent: 02 May 2018 19:22
->> From: Li Xi <lixi@ddn.com>
->>=20
->> Most of the time, keys are never changed. So rwlock might be
->> better for the concurrency of key read.
->
-> OTOH unless there is contention on the spin lock during reads the
-> additional cost of a rwlock (probably double that of a spinlock)
-> will hurt performance.
+Signed-off-by: John L. Hammond <john.hammond@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8918
+Reviewed-on: https://review.whamcloud.com/24217
+Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Reviewed-by: Jinshan Xiong <jinshan.xiong@gmail.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: James Simmons <jsimmons@infradead.org>
+---
+ drivers/staging/lustre/lustre/obdclass/lu_object.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-That's roughly what I was going to say - rwlocks are rarely a win.
-I think the second patch which caused the lock to be taken less often
-would have a bigger impact that the switch to rwlocks.
+diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+index 04475e9..4e4dd58 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
++++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+@@ -1711,10 +1711,11 @@ void lu_context_exit(struct lu_context *ctx)
+ 	LINVRNT(ctx->lc_state == LCS_ENTERED);
+ 	ctx->lc_state = LCS_LEFT;
+ 	if (ctx->lc_tags & LCT_HAS_EXIT && ctx->lc_value) {
++		/* could race with key quiescency */
++		if (ctx->lc_tags & LCT_REMEMBER)
++			read_lock(&lu_keys_guard);
++
+ 		for (i = 0; i < ARRAY_SIZE(lu_keys); ++i) {
+-			/* could race with key quiescency */
+-			if (ctx->lc_tags & LCT_REMEMBER)
+-				read_lock(&lu_keys_guard);
+ 			if (ctx->lc_value[i]) {
+ 				struct lu_context_key *key;
+ 
+@@ -1723,9 +1724,10 @@ void lu_context_exit(struct lu_context *ctx)
+ 					key->lct_exit(ctx,
+ 						      key, ctx->lc_value[i]);
+ 			}
+-			if (ctx->lc_tags & LCT_REMEMBER)
+-				read_unlock(&lu_keys_guard);
+ 		}
++
++		if (ctx->lc_tags & LCT_REMEMBER)
++			read_unlock(&lu_keys_guard);
+ 	}
+ }
+ EXPORT_SYMBOL(lu_context_exit);
+-- 
+1.8.3.1
 
-However I suspect a better approach would be to investigate some sort of
-lockless solution.
-I think the use of the spinlock in lu_context_key_register() could be
-replaced with a careful cmp_xchg().  I'm less sure about
-lu_context_key_degister(), but it might be possible.
-
->
-> ...
->> -	spin_lock(&lu_keys_guard);
->> +	read_lock(&lu_keys_guard);
->>  	atomic_inc(&lu_key_initing_cnt);
->> -	spin_unlock(&lu_keys_guard);
->> +	read_unlock(&lu_keys_guard);
->
-> WTF, seems unlikely that you need to hold any kind of lock
-> over an atomic_inc().
->
-> If this is just ensuring that no code holds the lock then
-> it would need to request the write_lock().
-> (and would need a comment)
-
-There is a comment - that patch showed the last 2 lines of it.
-This is for synchronization with lu_context_key_quiesce().
-That spins(!! calling schedule, but still... not good) until
-the lu_key_initing_cnt is zero while it holds the write lock.
-Then it is sure that the code protected by this counter isn't
-running.
-I'm sure this can be improved!  I would need to study it carefully to
-see how.
-
-Note that I don't object to these patches going in - if they provide a
-measurable improvement which seems likely, then in they go.  But I
-hope the code won't stay like this long term.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrrmqwACgkQOeye3VZi
-gbmdGxAAgBcMxEEM49WNOVfIDnNije4MPuD0Qo2e32hwQFXE2EvBDFWro1zoDKCE
-QdsUFeOurwjS9frS7wjy9QiJEVP22S5ePskSiOEf0bjJ3pq0mLn+J0PT+vi/vtlP
-Z+LmwS80/uQqnxf9bfHd4dExoQiSQMbU52U93Pm3ByKt86XVaktM9ACFtTbfqeVb
-LpxMexL7X/moYXHjB3aeohVKsfLLxPQ5eVh0O8LTogugN8zbOPbYDxUKJ21Dsk/O
-8ja1vwuvfntMePMZX0tW2LOcUVu/GX5lZmSKn7FmHnVtNKlL2BeUx/XHGsWXZe24
-+jPUZZxFlYEiZJjwW9ucIQVQzWCHlB/9iHE85y6fLyrB12QjY9qboJCnUv+MSGik
-r5l9HLQ+3WUaR9F1YMK2sY7I/YwHop5ayXQuqba5Hbw8NSB1nr7vW0ccBNQTB3pY
-RBfqHovEeCRqIKs5uFJadLq5E/8hEo43EqD0TGmY6N4WwBXvO50T1eEw2bKqAq62
-zdW7Rlr+Cad533tASCWvsc5DDGC7ZzISnZtxUUXdyM6fOMpcOGtX9McaqgUP8mZG
-HIYrt0Ms6qOmCq/O4wzX6Zjf1G4GzcjrGWvYYeTB3lCMdoeEHChSsi7giAcrVD3G
-c7xoUOq8RwSViCc4SBW18T9yjQ+TjlpRRyiWWPOBrFhS8ZC3rDo=
-=9e77
------END PGP SIGNATURE-----
---=-=-=--
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
