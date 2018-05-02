@@ -1,134 +1,156 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3970764-1526045448-2-3122173805928541395
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
- in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526045447; b=VIMGOoHHO8biSEa/DJaoWX8UvD/1T8m9MYm0ER+nffthtpMW/e
-    CXnqDZY4zzT6WhtQGPTTmE3rkDWzhbKZUo3gjr1/wFbq7bkSFElsHm49OB+i9U0q
-    tjf4rEOzeaTbd9cG7JBueZIwGcG5dNHR30KLb6hfa2+3XpLdpRnbroVIaYVufq3j
-    jW1kL3UV64jCqijLh3cxUwc4uPYI386xF4X8WjT4UFrajTZ4DkQEgOD/Ow7427sQ
-    aN/g74uSpgRNGKPAE/lgvmSJtRpIepGaZVip/LH7ruWEjK2bK5LH5QArFmt8VAdF
-    GXL0UzEUYAoYCHJfzr7u0z6lDqXpd+d9OLRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1526045447; bh=/3nxclLm3v/aioJ8LxI6a0ejAejT2q
-    lah5icbeAAyY0=; b=aQm/G5SsCaP3XIWdRjpv32ha1d02yYXIoW2Zd8mc0fZRgf
-    uwJOJ6sjjQE/HhsY6DZg+gxSq0JVmy3wpf8zySD2dGIZjmKQMY7YJWj7rbjvwZLr
-    YOaGWm31md6hBegCQ2ufOeQxymraxweYx1Tinh1ffKkL3zmwb1KYNsJYH/UivmiK
-    j5Qjyc3abzew1nwMiohhSCT7rgG2ziTiDeU4i4/FjNEQUzb4+6IUzbnanbdje3cL
-    cXBePW9t9ZdKxZfsyNUIPl9CSSCqHZglxrn2syXugeUHaArd+pnHEqohGoM1DllO
-    2wnnkOokebSMNFUDXCjWQ3cCFr9SExdEkPi8igMA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-    header.i=@messagingengine.com header.b=d0nvG9pZ x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kroah.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-      header.i=@messagingengine.com header.b=d0nvG9pZ x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kroah.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDdLINzK6G4K6r9alrjSM6HdSOagi2Gh3SbXx6gndRplYZ5f7kJbgfxkyG+JpOY11xtBHKiAtFBewYxWeUzklLPvJrtVyWf4Lrrct+GnkR/GAq20VXJ4
-    2nkHc1kDekQn7Gn8ZS5fTRs40l6iyuRMLekgGjOLE753SdPKk95nyq0vE0KDT5efLcN51jDjDxeI+exUIEoElwiEnVJNk6Xa8C6NspuHPjBviw+xGy7rVbKx
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8 a=5hbFD1BkjCuMjG_J0ygA:9 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752981AbeEKNao (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 11 May 2018 09:30:44 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48325 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752948AbeEKNao (ORCPT
-        <rfc822;stable@vger.kernel.org>); Fri, 11 May 2018 09:30:44 -0400
-X-ME-Sender: <xms:A5v1WsTTyUSlMcC8syI9Rdp2X9rq50HZlD-3DlES-VLP83CZPOQLmw>
-Date: Fri, 11 May 2018 15:28:44 +0200
-From: Greg KH <greg@kroah.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, mark.rutland@arm.com
-Subject: Re: [PATCH] [stable 4.14] arm64: Add work around for Arm Cortex-A55
- Erratum 1024718
-Message-ID: <20180511132844.GC31231@kroah.com>
-References: <1526037802-13305-1-git-send-email-suzuki.poulose@arm.com>
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525271923; cv=none;
+        d=google.com; s=arc-20160816;
+        b=0zXoTD8Pgvt+A7P5NJJMshTykVbDjP1cpQfdJYdLbnAAUQR5CzzLzI4sRHuWlnlD6N
+         zEehqCbOaKBunjYxECbNMZdKVwauoAvVgJl++11E+elOoItc4dx7Y4DMYbVgU1xqGFcf
+         3yor+0wgMaBwQWOE/imI5/fDiyTXuUilSIX9bC9K2cDLpsJn0WIKB2W/kPBy3V7pKg0M
+         2kNQA1Oc3GWyxH7zXOX4567DWsIxrV0N4d1yE5t5VQsYHhtssE8H+QHvmkZLX6UtAaY3
+         cSiIpHHaRDHPTNIG4Vm4SJk8XimQwaszL9IuirWUV85+mlnjMz8LqvT6/3Bo4WkAPC8+
+         nEHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=DXU0ue7x0O5Z2LY9ESQDuy7uCc1Z+sCJDx4n4/AVxi0=;
+        b=t3ZJTPnxVjMqleWZOCUkyoDbC6uQx8R1BQrIymQdRivxINpKkx1r66XfDvIQ9J9+zJ
+         esejUs06RJ+tZ8aGVS74DjwYXlUF8bQ7AbzjHXjCQrKaIs7+jgFE+QVXqneoouu5X6j3
+         QzArn9/cbY9X3kAWbjSRnjznv0IPWBT8HVA+PcYKJI2L/AgHt7zbSGlhmw8hFFqp8Ozb
+         7nQzUJ4/AgHOn5WF6Hp4UEzXJ2+kW0q+LkhxTrlOa4xLqOnvHcFjeYXE3GWvij123q4Q
+         /1BreRB+Cr7NHTKyZGIjw7M9igV0dHg5yHe1yd6OBO0GtbjtSFOOict8cMp+d3/MJfEU
+         RucQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=luHD/RO1;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=luHD/RO1;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AB8JxZoV9iQFv8pLmN1CdwSNsYbEoZN8AXd9juaA1vjowJKYmTHzaBfy/MraSWa0Wr0qBhTDIEYnj9EbtK4zMco6wvU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1526037802-13305-1-git-send-email-suzuki.poulose@arm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <20180426174714.4jtb72q56w3xonsa@armageddon.cambridge.arm.com>
+References: <cover.1524077494.git.andreyknvl@google.com> <0db34d04fa16be162336106e3b4a94f3dacc0af4.1524077494.git.andreyknvl@google.com>
+ <20180426174714.4jtb72q56w3xonsa@armageddon.cambridge.arm.com>
+From: Andrey Konovalov <andreyknvl@google.com>
+Date: Wed, 2 May 2018 16:38:42 +0200
+Message-ID: <CAAeHK+zY8p9E4FZa7mbdgR=wR0u-RDS552dn=h9fKRC-ArYLdw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] mm, arm64: untag user addresses in mm/gup.c
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>, Robin Murphy <robin.murphy@arm.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, James Morse <james.morse@arm.com>,
+	Kees Cook <keescook@chromium.org>, Bart Van Assche <bart.vanassche@wdc.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>, Zi Yan <zi.yan@cs.rutgers.edu>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, linux-doc@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux Memory Management List <linux-mm@kvack.org>, Jacob Bramley <Jacob.Bramley@arm.com>,
+	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>, Lee Smith <Lee.Smith@arm.com>,
+	Kostya Serebryany <kcc@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>, Evgeniy Stepanov <eugenis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598111199483906995?=
+X-GMAIL-MSGID: =?utf-8?q?1599363532352517668?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 11, 2018 at 12:23:22PM +0100, Suzuki K Poulose wrote:
-> commit ece1397cbc89c51914fae1aec729539cfd8bd62b upstream
-> 
-> Some variants of the Arm Cortex-55 cores (r0p0, r0p1, r1p0) suffer
-> from an erratum 1024718, which causes incorrect updates when DBM/AP
-> bits in a page table entry is modified without a break-before-make
-> sequence. The work around is to disable the hardware DBM feature
-> on the affected cores. The hardware Access Flag management features
-> is not affected.
-> 
-> The hardware DBM feature is a non-conflicting capability, i.e, the
-> kernel could handle cores using the feature and those without having
-> the features running at the same time. So this work around is detected
-> at early boot time, rather than delaying it until the CPUs are brought
-> up into the kernel with MMU turned on. This also avoids other complexities
-> with late CPUs turning online, with or without the hardware DBM features.
-> 
-> Cc: stable@vger.kernel.org # v4.14
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
-> Note: The upstream commit is on top of a reworked capability
-> infrastructure for arm64 heterogeneous systems, which allows
-> delaying the CPU model checks. This backport is based on the
-> original version of the patch [0], which checks the affected
-> CPU models during the early boot.
-> 
-> [0] https://lkml.kernel.org/r/20180116102323.3470-1-suzuki.poulose@arm.com
+On Thu, Apr 26, 2018 at 7:47 PM, Catalin Marinas
+<catalin.marinas@arm.com> wrote:
 
-Thanks for the backport, now applied.
+My approach with this was to add untagging to every gup.c function
+that is exposed for external use, but perhaps adding untagging only
+where it is actually required is a better approach.
 
-greg k-h
+> On Wed, Apr 18, 2018 at 08:53:13PM +0200, Andrey Konovalov wrote:
+>> diff --git a/mm/gup.c b/mm/gup.c
+>> index 76af4cfeaf68..fb375de7d40d 100644
+>> --- a/mm/gup.c
+>> +++ b/mm/gup.c
+>> @@ -386,6 +386,8 @@ struct page *follow_page_mask(struct vm_area_struct *vma,
+>>       struct page *page;
+>>       struct mm_struct *mm = vma->vm_mm;
+>>
+>> +     address = untagged_addr(address);
+>> +
+>>       *page_mask = 0;
+>>
+>>       /* make this handle hugepd */
+>
+> Does having a tagged address here makes any difference? I couldn't hit a
+> failure with my simple tests (LD_PRELOAD a library that randomly adds
+> tags to pointers returned by malloc).
+
+I think you're right, follow_page_mask is only called from
+__get_user_pages, which already untagged the address. I'll remove
+untagging here.
+
+>
+>> @@ -647,6 +649,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
+>>       if (!nr_pages)
+>>               return 0;
+>>
+>> +     start = untagged_addr(start);
+>> +
+>>       VM_BUG_ON(!!pages != !!(gup_flags & FOLL_GET));
+>>
+>>       /*
+>> @@ -801,6 +805,8 @@ int fixup_user_fault(struct task_struct *tsk, struct mm_struct *mm,
+>>       struct vm_area_struct *vma;
+>>       int ret, major = 0;
+>>
+>> +     address = untagged_addr(address);
+>> +
+>>       if (unlocked)
+>>               fault_flags |= FAULT_FLAG_ALLOW_RETRY;
+>>
+>> @@ -854,6 +860,8 @@ static __always_inline long __get_user_pages_locked(struct task_struct *tsk,
+>>       long ret, pages_done;
+>>       bool lock_dropped;
+>>
+>> +     start = untagged_addr(start);
+>> +
+>>       if (locked) {
+>>               /* if VM_FAULT_RETRY can be returned, vmas become invalid */
+>>               BUG_ON(vmas);
+>
+> Isn't __get_user_pages() untagging enough to cover this case as well?
+> Can this function not cope with tagged pointers?
+
+Yes, I think you're right here as well. I'll remove untagging here.
+
+>
+>> @@ -1751,6 +1759,8 @@ int __get_user_pages_fast(unsigned long start, int nr_pages, int write,
+>>       unsigned long flags;
+>>       int nr = 0;
+>>
+>> +     start = untagged_addr(start);
+>> +
+>>       start &= PAGE_MASK;
+>>       addr = start;
+>>       len = (unsigned long) nr_pages << PAGE_SHIFT;
+>> @@ -1803,6 +1813,8 @@ int get_user_pages_fast(unsigned long start, int nr_pages, int write,
+>>       unsigned long addr, len, end;
+>>       int nr = 0, ret = 0;
+>>
+>> +     start = untagged_addr(start);
+>> +
+>>       start &= PAGE_MASK;
+>>       addr = start;
+>>       len = (unsigned long) nr_pages << PAGE_SHIFT;
+>
+> Have you hit a problem with the fast gup functions and tagged pointers?
+> The page table walking macros (e.g. p*d_index()) should mask the tag out
+> already.
+
+I didn't hit a problem, but the plan was to add untagging to all gup.c
+interface functions as I mentioned above. Here get_user_pages_fast can
+cope with tagged addresses as long as gup_pgd_range can. And looks
+like the latter can indeed do that since it only uses addr through the
+page table walking macros you mentioned. I'll remove untagging here as
+well.
+
+Thanks!
