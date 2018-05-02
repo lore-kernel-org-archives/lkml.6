@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752029AbeEBP5d (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:57:33 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:54553 "EHLO huawei.com"
+        id S1752215AbeEBP6q (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:58:46 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54589 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751635AbeEBP51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:57:27 -0400
+        id S1751933AbeEBP53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:57:29 -0400
 From: John Garry <john.garry@huawei.com>
 To: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
 CC: <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, Xiang Chen <chenxiang66@hisilicon.com>,
         "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 02/11] scsi: hisi_sas: Add some checks to avoid free'ing a sas_task twice
-Date: Wed, 2 May 2018 23:56:25 +0800
-Message-ID: <1525276594-92173-3-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 07/11] scsi: hisi_sas: update PHY linkrate after a controller reset
+Date: Wed, 2 May 2018 23:56:30 +0800
+Message-ID: <1525276594-92173-8-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
 References: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
@@ -27,157 +27,177 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xiang Chen <chenxiang66@hisilicon.com>
 
-If the SCSI host enters EH, any pending IO will be processed
-by SCSI EH. However it is possible that SCSI EH will try to
-abort the IO and also at the same time the IO completes in the
-driver. In this situation there is a small changes of freeing the
-sas_task twice.
+After the controller is reset, we currently may not honour the
+PHY max linkrate set via sysfs, in that after a reset we always
+revert to max linkrate of 12Gbps, ignoring the value set via
+sysfs.
 
-Then if another IO re-uses freed sas_task before the second time
-of free'ing sas_task, it is possible that freeing incorrect sas_task.
-
-So to avoid this situation, add some checks to crease reliability.
-The sas_task task state flag SAS_TASK_STATE_ABORTED is used to
-mutually protect the LLDD and libsas free'ing the task.
+This patch modifies to policy to set the programmed PHY linkrate,
+honouring the max linkrate programmed via sysfs.
 
 Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/scsi/hisi_sas/hisi_sas_main.c  |  4 ++++
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 22 +++++++---------------
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 21 +++++++--------------
- 3 files changed, 18 insertions(+), 29 deletions(-)
+ drivers/scsi/hisi_sas/hisi_sas.h       |  1 +
+ drivers/scsi/hisi_sas/hisi_sas_main.c  | 16 ++++++++++++++++
+ drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 31 ++++++++++++++++++-------------
+ drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 31 ++++++++++++++++++-------------
+ 4 files changed, 53 insertions(+), 26 deletions(-)
 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index 04a40c4..4410538 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -463,4 +463,5 @@ extern void hisi_sas_slot_task_free(struct hisi_hba *hisi_hba,
+ extern bool hisi_sas_notify_phy_event(struct hisi_sas_phy *phy,
+ 				enum hisi_sas_phy_event event);
+ extern void hisi_sas_release_tasks(struct hisi_hba *hisi_hba);
++extern u8 hisi_sas_get_prog_phy_linkrate_mask(enum sas_linkrate max);
+ #endif
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index d1a61b1..52746e2 100644
+index 1f27f84..ff5b8d7 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -1174,10 +1174,14 @@ static int hisi_sas_abort_task(struct sas_task *task)
- 		return TMF_RESP_FUNC_FAILED;
- 	}
+@@ -135,6 +135,22 @@ int hisi_sas_get_ncq_tag(struct sas_task *task, u32 *tag)
+ }
+ EXPORT_SYMBOL_GPL(hisi_sas_get_ncq_tag);
  
-+	spin_lock_irqsave(&task->task_state_lock, flags);
- 	if (task->task_state_flags & SAS_TASK_STATE_DONE) {
-+		spin_unlock_irqrestore(&task->task_state_lock, flags);
- 		rc = TMF_RESP_FUNC_COMPLETE;
- 		goto out;
- 	}
-+	task->task_state_flags |= SAS_TASK_STATE_ABORTED;
-+	spin_unlock_irqrestore(&task->task_state_lock, flags);
- 
- 	sas_dev->dev_status = HISI_SAS_DEV_EH;
- 	if (task->lldd_task && task->task_proto & SAS_PROTOCOL_SSP) {
++/*
++ * This function assumes linkrate mask fits in 8 bits, which it
++ * does for all HW versions supported.
++ */
++u8 hisi_sas_get_prog_phy_linkrate_mask(enum sas_linkrate max)
++{
++	u16 rate = 0;
++	int i;
++
++	max -= SAS_LINK_RATE_1_5_GBPS;
++	for (i = 0; i <= max; i++)
++		rate |= 1 << (i * 2);
++	return rate;
++}
++EXPORT_SYMBOL_GPL(hisi_sas_get_prog_phy_linkrate_mask);
++
+ static struct hisi_hba *dev_to_hisi_hba(struct domain_device *device)
+ {
+ 	return device->port->ha->lldd_ha;
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index 384e4ef..8ca0044 100644
+index 6dda6eb..9e68731 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -2386,7 +2386,6 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 	struct hisi_sas_complete_v2_hdr *complete_hdr =
- 			&complete_queue[slot->cmplt_queue_slot];
- 	unsigned long flags;
--	int aborted;
- 
- 	if (unlikely(!task || !task->lldd_task || !task->dev))
- 		return -EINVAL;
-@@ -2396,7 +2395,6 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 	sas_dev = device->lldd_dev;
- 
- 	spin_lock_irqsave(&task->task_state_lock, flags);
--	aborted = task->task_state_flags & SAS_TASK_STATE_ABORTED;
- 	task->task_state_flags &=
- 		~(SAS_TASK_STATE_PENDING | SAS_TASK_AT_INITIATOR);
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
-@@ -2404,15 +2402,6 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
- 	memset(ts, 0, sizeof(*ts));
- 	ts->resp = SAS_TASK_COMPLETE;
- 
--	if (unlikely(aborted)) {
--		dev_dbg(dev, "slot_complete: task(%p) aborted\n", task);
--		ts->stat = SAS_ABORTED_TASK;
--		spin_lock_irqsave(&hisi_hba->lock, flags);
--		hisi_sas_slot_task_free(hisi_hba, task, slot);
--		spin_unlock_irqrestore(&hisi_hba->lock, flags);
--		return ts->stat;
--	}
--
- 	if (unlikely(!sas_dev)) {
- 		dev_dbg(dev, "slot complete: port has no device\n");
- 		ts->stat = SAS_PHY_DOWN;
-@@ -2523,13 +2512,16 @@ static void slot_err_v2_hw(struct hisi_hba *hisi_hba,
+@@ -1216,7 +1216,22 @@ static void init_reg_v2_hw(struct hisi_hba *hisi_hba)
  	}
  
- out:
-+	hisi_sas_slot_task_free(hisi_hba, task, slot);
-+	sts = ts->stat;
- 	spin_lock_irqsave(&task->task_state_lock, flags);
-+	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
-+		spin_unlock_irqrestore(&task->task_state_lock, flags);
-+		dev_info(dev, "slot complete: task(%p) aborted\n", task);
-+		return SAS_ABORTED_TASK;
-+	}
- 	task->task_state_flags |= SAS_TASK_STATE_DONE;
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
--	spin_lock_irqsave(&hisi_hba->lock, flags);
--	hisi_sas_slot_task_free(hisi_hba, task, slot);
--	spin_unlock_irqrestore(&hisi_hba->lock, flags);
--	sts = ts->stat;
+ 	for (i = 0; i < hisi_hba->n_phy; i++) {
+-		hisi_sas_phy_write32(hisi_hba, i, PROG_PHY_LINK_RATE, 0x855);
++		struct hisi_sas_phy *phy = &hisi_hba->phy[i];
++		struct asd_sas_phy *sas_phy = &phy->sas_phy;
++		u32 prog_phy_link_rate = 0x800;
++
++		if (!sas_phy->phy || (sas_phy->phy->maximum_linkrate <
++				SAS_LINK_RATE_1_5_GBPS)) {
++			prog_phy_link_rate = 0x855;
++		} else {
++			enum sas_linkrate max = sas_phy->phy->maximum_linkrate;
++
++			prog_phy_link_rate =
++				hisi_sas_get_prog_phy_linkrate_mask(max) |
++				0x800;
++		}
++		hisi_sas_phy_write32(hisi_hba, i, PROG_PHY_LINK_RATE,
++			prog_phy_link_rate);
+ 		hisi_sas_phy_write32(hisi_hba, i, SAS_PHY_CTRL, sas_phy_ctrl);
+ 		hisi_sas_phy_write32(hisi_hba, i, SL_TOUT_CFG, 0x7d7d7d7d);
+ 		hisi_sas_phy_write32(hisi_hba, i, SL_CONTROL, 0x0);
+@@ -1585,13 +1600,10 @@ static enum sas_linkrate phy_get_max_linkrate_v2_hw(void)
+ static void phy_set_linkrate_v2_hw(struct hisi_hba *hisi_hba, int phy_no,
+ 		struct sas_phy_linkrates *r)
+ {
+-	u32 prog_phy_link_rate =
+-		hisi_sas_phy_read32(hisi_hba, phy_no, PROG_PHY_LINK_RATE);
+ 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
+ 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
+-	int i;
+ 	enum sas_linkrate min, max;
+-	u32 rate_mask = 0;
++	u32 prog_phy_link_rate = 0x800;
  
- 	if (task->task_done)
- 		task->task_done(task);
+ 	if (r->maximum_linkrate == SAS_LINK_RATE_UNKNOWN) {
+ 		max = sas_phy->phy->maximum_linkrate;
+@@ -1604,14 +1616,7 @@ static void phy_set_linkrate_v2_hw(struct hisi_hba *hisi_hba, int phy_no,
+ 
+ 	sas_phy->phy->maximum_linkrate = max;
+ 	sas_phy->phy->minimum_linkrate = min;
+-
+-	max -= SAS_LINK_RATE_1_5_GBPS;
+-
+-	for (i = 0; i <= max; i++)
+-		rate_mask |= 1 << (i * 2);
+-
+-	prog_phy_link_rate &= ~0xff;
+-	prog_phy_link_rate |= rate_mask;
++	prog_phy_link_rate |= hisi_sas_get_prog_phy_linkrate_mask(max);
+ 
+ 	disable_phy_v2_hw(hisi_hba, phy_no);
+ 	msleep(100);
 diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index afc1242..7346110 100644
+index 5c0d968..ffa3cea 100644
 --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
 +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -1576,7 +1576,6 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 			hisi_hba->complete_hdr[slot->cmplt_queue];
- 	struct hisi_sas_complete_v3_hdr *complete_hdr =
- 			&complete_queue[slot->cmplt_queue_slot];
--	int aborted;
- 	unsigned long flags;
+@@ -429,7 +429,22 @@ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
+ 	hisi_sas_write32(hisi_hba, HYPER_STREAM_ID_EN_CFG, 1);
  
- 	if (unlikely(!task || !task->lldd_task || !task->dev))
-@@ -1587,21 +1586,12 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 	sas_dev = device->lldd_dev;
+ 	for (i = 0; i < hisi_hba->n_phy; i++) {
+-		hisi_sas_phy_write32(hisi_hba, i, PROG_PHY_LINK_RATE, 0x855);
++		struct hisi_sas_phy *phy = &hisi_hba->phy[i];
++		struct asd_sas_phy *sas_phy = &phy->sas_phy;
++		u32 prog_phy_link_rate = 0x800;
++
++		if (!sas_phy->phy || (sas_phy->phy->maximum_linkrate <
++				SAS_LINK_RATE_1_5_GBPS)) {
++			prog_phy_link_rate = 0x855;
++		} else {
++			enum sas_linkrate max = sas_phy->phy->maximum_linkrate;
++
++			prog_phy_link_rate =
++				hisi_sas_get_prog_phy_linkrate_mask(max) |
++				0x800;
++		}
++		hisi_sas_phy_write32(hisi_hba, i, PROG_PHY_LINK_RATE,
++			prog_phy_link_rate);
+ 		hisi_sas_phy_write32(hisi_hba, i, SAS_RX_TRAIN_TIMER, 0x13e80);
+ 		hisi_sas_phy_write32(hisi_hba, i, CHL_INT0, 0xffffffff);
+ 		hisi_sas_phy_write32(hisi_hba, i, CHL_INT1, 0xffffffff);
+@@ -1869,13 +1884,10 @@ static int hisi_sas_v3_init(struct hisi_hba *hisi_hba)
+ static void phy_set_linkrate_v3_hw(struct hisi_hba *hisi_hba, int phy_no,
+ 		struct sas_phy_linkrates *r)
+ {
+-	u32 prog_phy_link_rate =
+-		hisi_sas_phy_read32(hisi_hba, phy_no, PROG_PHY_LINK_RATE);
+ 	struct hisi_sas_phy *phy = &hisi_hba->phy[phy_no];
+ 	struct asd_sas_phy *sas_phy = &phy->sas_phy;
+-	int i;
+ 	enum sas_linkrate min, max;
+-	u32 rate_mask = 0;
++	u32 prog_phy_link_rate = 0x800;
  
- 	spin_lock_irqsave(&task->task_state_lock, flags);
--	aborted = task->task_state_flags & SAS_TASK_STATE_ABORTED;
- 	task->task_state_flags &=
- 		~(SAS_TASK_STATE_PENDING | SAS_TASK_AT_INITIATOR);
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
+ 	if (r->maximum_linkrate == SAS_LINK_RATE_UNKNOWN) {
+ 		max = sas_phy->phy->maximum_linkrate;
+@@ -1888,14 +1900,7 @@ static void phy_set_linkrate_v3_hw(struct hisi_hba *hisi_hba, int phy_no,
  
- 	memset(ts, 0, sizeof(*ts));
- 	ts->resp = SAS_TASK_COMPLETE;
--	if (unlikely(aborted)) {
--		dev_dbg(dev, "slot complete: task(%p) aborted\n", task);
--		ts->stat = SAS_ABORTED_TASK;
--		spin_lock_irqsave(&hisi_hba->lock, flags);
--		hisi_sas_slot_task_free(hisi_hba, task, slot);
--		spin_unlock_irqrestore(&hisi_hba->lock, flags);
--		return ts->stat;
--	}
+ 	sas_phy->phy->maximum_linkrate = max;
+ 	sas_phy->phy->minimum_linkrate = min;
+-
+-	max -= SAS_LINK_RATE_1_5_GBPS;
+-
+-	for (i = 0; i <= max; i++)
+-		rate_mask |= 1 << (i * 2);
+-
+-	prog_phy_link_rate &= ~0xff;
+-	prog_phy_link_rate |= rate_mask;
++	prog_phy_link_rate |= hisi_sas_get_prog_phy_linkrate_mask(max);
  
- 	if (unlikely(!sas_dev)) {
- 		dev_dbg(dev, "slot complete: port has not device\n");
-@@ -1699,13 +1689,16 @@ static irqreturn_t fatal_axi_int_v3_hw(int irq_no, void *p)
- 	}
- 
- out:
-+	hisi_sas_slot_task_free(hisi_hba, task, slot);
-+	sts = ts->stat;
- 	spin_lock_irqsave(&task->task_state_lock, flags);
-+	if (task->task_state_flags & SAS_TASK_STATE_ABORTED) {
-+		spin_unlock_irqrestore(&task->task_state_lock, flags);
-+		dev_info(dev, "slot complete: task(%p) aborted\n", task);
-+		return SAS_ABORTED_TASK;
-+	}
- 	task->task_state_flags |= SAS_TASK_STATE_DONE;
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
--	spin_lock_irqsave(&hisi_hba->lock, flags);
--	hisi_sas_slot_task_free(hisi_hba, task, slot);
--	spin_unlock_irqrestore(&hisi_hba->lock, flags);
--	sts = ts->stat;
- 
- 	if (task->task_done)
- 		task->task_done(task);
+ 	disable_phy_v3_hw(hisi_hba, phy_no);
+ 	msleep(100);
 -- 
 1.9.1
