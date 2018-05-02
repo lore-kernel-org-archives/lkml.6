@@ -1,106 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeEBOH5 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:07:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56742 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751020AbeEBOHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:07:52 -0400
-Date: Wed, 2 May 2018 10:07:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: changbin.du@intel.com
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] kernel hacking: new config NO_AUTO_INLINE to
- disable compiler auto-inline optimizations
-Message-ID: <20180502100748.3fd41bae@gandalf.local.home>
-In-Reply-To: <1525268700-10631-4-git-send-email-changbin.du@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-        <1525268700-10631-4-git-send-email-changbin.du@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751521AbeEBOHy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:07:54 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:33608 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750936AbeEBOHv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 10:07:51 -0400
+Subject: Re: [PATCH] net: stmmac: Avoid VLA usage
+To: Kees Cook <keescook@chromium.org>,
+        Jose Abreu <Jose.Abreu@synopsys.com>
+References: <20180501210130.GA47709@beast>
+ <2587c245-1d02-22a2-d24b-90b498183fc9@synopsys.com>
+ <CAGXu5jKrpEOrUVng7zrq0Em9DsAwKfidaqa2AKGrz3ZSXXLn1g@mail.gmail.com>
+CC: Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Network Development" <netdev@vger.kernel.org>
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Message-ID: <4c209618-8da0-ef1d-ff79-5da3f235b9bc@synopsys.com>
+Date: Wed, 2 May 2018 15:07:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAGXu5jKrpEOrUVng7zrq0Em9DsAwKfidaqa2AKGrz3ZSXXLn1g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.59]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  2 May 2018 21:44:58 +0800
-changbin.du@intel.com wrote:
 
-> From: Changbin Du <changbin.du@intel.com>
-> 
-> This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
-> this option will prevent the compiler from optimizing the kernel by
-> auto-inlining functions not marked with the inline keyword.
-> 
-> With this option, only functions explicitly marked with "inline" will
-> be inlined. This will allow the function tracer to trace more functions
-> because it only traces functions that the compiler has not inlined.
-> 
-> Signed-off-by: Changbin Du <changbin.du@intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
 
-I'm fine with this patch if others are OK with it too.
+On 02-05-2018 13:36, Kees Cook wrote:
+> On Wed, May 2, 2018 at 1:54 AM, Jose Abreu <Jose.Abreu@synopsys.com> wrote:
+>> Hi Kees,
+>>
+>> On 01-05-2018 22:01, Kees Cook wrote:
+>>> In the quest to remove all stack VLAs from the kernel[1], this switches
+>>> the "status" stack buffer to use the existing small (8) upper bound on
+>>> how many queues can be checked for DMA, and adds a sanity-check just to
+>>> make sure it doesn't operate under pathological conditions.
+>>>
+>>> [1] https://urldefense.proofpoint.com/v2/url?u=http-3A__lkml.kernel.org_r_CA-2B55aFzCG-2DzNmZwX4A2FQpadafLfEzK6CC-3DqPXydAacU1RqZWA-40mail.gmail.com&d=DwIBAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=WHDsc6kcWAl4i96Vm5hJ_19IJiuxx_p_Rzo2g-uHDKw&m=TBD6a7UY2VbpPmV9LOW_eHAyg8uPq1ZPDhq93VROTVE&s=4fvOST1HhWmZ4lThQe-dHCJYEXNOwey00BCXOWm8tKo&e=
+>>>
+>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>>
+>> I rather prefer the variables declaration in reverse-tree order,
+>> but thats just a minor pick.
+> I can explicitly reorder the other variables, if you want?
 
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+No need by me, unless Giuseppe or Alexandre prefer that. Thanks!
 
--- Steve
+Best Regards,
+Jose Miguel Abreu
 
-> 
-> ---
-> v2: Some grammar updates from Steven.
-> ---
->  Makefile          |  6 ++++++
->  lib/Kconfig.debug | 18 ++++++++++++++++++
->  2 files changed, 24 insertions(+)
-> 
-> diff --git a/Makefile b/Makefile
-> index 619a85a..eb694f6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -775,6 +775,12 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
->  		   $(call cc-option,-fno-var-tracking)
->  endif
->  
-> +ifdef CONFIG_NO_AUTO_INLINE
-> +KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
-> +		   $(call cc-option, -fno-inline-small-functions) \
-> +		   $(call cc-option, -fno-inline-functions-called-once)
-> +endif
-> +
->  ifdef CONFIG_FUNCTION_TRACER
->  ifndef CC_FLAGS_FTRACE
->  CC_FLAGS_FTRACE := -pg
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index c40c7b7..ab55801 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -198,6 +198,24 @@ config GDB_SCRIPTS
->  	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
->  	  for further details.
->  
-> +config NO_AUTO_INLINE
-> +	bool "Disable compiler auto-inline optimizations"
-> +	default n
-> +	help
-> +	  This will prevent the compiler from optimizing the kernel by
-> +	  auto-inlining functions not marked with the inline keyword.
-> +	  With this option, only functions explicitly marked with
-> +	  "inline" will be inlined. This will allow the function tracer
-> +	  to trace more functions because it only traces functions that
-> +	  the compiler has not inlined.
-> +
-> +	  Enabling this function can help debugging a kernel if using
-> +	  the function tracer. But it can also change how the kernel
-> +	  works, because inlining functions may change the timing,
-> +	  which could make it difficult while debugging race conditions.
-> +
-> +	  If unsure, select N.
-> +
->  config ENABLE_WARN_DEPRECATED
->  	bool "Enable __deprecated logic"
->  	default y
+>
+>> Reviewed-by: Jose Abreu <joabreu@synopsys.com>
+> Thanks!
+>
+>> PS: Is VLA warning switch in gcc already active? Because I didn't
+>> see this warning in my builds.
+> It is not. A bunch of people have been building with KCFLAGS=-Wvla to
+> find the VLAs and sending patches. Once we get rid of them all, we can
+> add the flag to the top-level Makefile.
+>
+> -Kees
+>
