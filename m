@@ -1,127 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751514AbeEBOxM (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 10:53:12 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:48650 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750921AbeEBOxH (ORCPT
+        id S1751655AbeEBOya convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 10:54:30 -0400
+Received: from smtp-out4.electric.net ([192.162.216.182]:63961 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751460AbeEBOy1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 10:53:07 -0400
-Message-ID: <1525272784.4115.3.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 4.17-rc3
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date: Wed, 02 May 2018 07:53:04 -0700
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 2 May 2018 10:54:27 -0400
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'Antoine Tenart'" <antoine.tenart@bootlin.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "nadavh@marvell.com" <nadavh@marvell.com>,
+        "oferh@marvell.com" <oferh@marvell.com>,
+        "igall@marvell.com" <igall@marvell.com>
+Subject: RE: [PATCH 01/10] crypto: aead - allow to allocate AEAD requests on
+ the stack
+Thread-Topic: [PATCH 01/10] crypto: aead - allow to allocate AEAD requests on
+ the stack
+Thread-Index: AQHT4fyKUNgtSEFab0iAsqaTkmQI1KQchwzA
+Date: Wed, 2 May 2018 14:55:19 +0000
+Message-ID: <02ad9eb93c494314a85db69886cf787a@AcuMS.aculab.com>
+References: <20180502095725.31935-1-antoine.tenart@bootlin.com>
+ <20180502095725.31935-2-antoine.tenart@bootlin.com>
+In-Reply-To: <20180502095725.31935-2-antoine.tenart@bootlin.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS: TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Three small bug fixes: an illegally overlapping memcmp in target code,
-a potential infinite loop in isci under certain rare phy conditions and
-an ATA queue depth (performance) correction for storvsc.
+From: Antoine Tenart
+> Sent: 02 May 2018 10:57
+> Adds the AEAD_REQUEST_ON_STACK primitive to allow allocating AEAD
+> requests on the stack, as it can already be done with various other
+> crypto algorithms within the kernel.
+> 
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> ---
+>  include/crypto/aead.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/crypto/aead.h b/include/crypto/aead.h
+> index 1e26f790b03f..b67064786546 100644
+> --- a/include/crypto/aead.h
+> +++ b/include/crypto/aead.h
+> @@ -151,6 +151,11 @@ struct aead_alg {
+>  	struct crypto_alg base;
+>  };
+> 
+> +#define AEAD_REQUEST_ON_STACK(name, tfm) \
+> +	char __##name##_desc[sizeof(struct aead_request) + \
+> +		crypto_aead_reqsize(tfm)] CRYPTO_MINALIGN_ATTR; \
+> +	struct aead_request *name = (void *)__##name##_desc
+> +
 
-The patch is available here:
+This looks stunningly like a VLA.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-
-The short changelog is:
-
-Bryant G Ly (1):
-      scsi: target: Fix fortify_panic kernel exception
-
-Colin Ian King (1):
-      scsi: isci: Fix infinite loop in while loop
-
-Long Li (1):
-      scsi: storvsc: Set up correct queue depth values for IDE devices
-
-And the diffstat:
-
- drivers/scsi/isci/port_config.c     | 3 +--
- drivers/scsi/storvsc_drv.c          | 7 +++++--
- drivers/target/target_core_iblock.c | 8 ++++----
- 3 files changed, 10 insertions(+), 8 deletions(-)
-
-With full diff below.
-
-James
-
----
-
-diff --git a/drivers/scsi/isci/port_config.c b/drivers/scsi/isci/port_config.c
-index edb7be786c65..9e8de1462593 100644
---- a/drivers/scsi/isci/port_config.c
-+++ b/drivers/scsi/isci/port_config.c
-@@ -291,7 +291,7 @@ sci_mpc_agent_validate_phy_configuration(struct isci_host *ihost,
- 		 * Note: We have not moved the current phy_index so we will actually
- 		 *       compare the startting phy with itself.
- 		 *       This is expected and required to add the phy to the port. */
--		while (phy_index < SCI_MAX_PHYS) {
-+		for (; phy_index < SCI_MAX_PHYS; phy_index++) {
- 			if ((phy_mask & (1 << phy_index)) == 0)
- 				continue;
- 			sci_phy_get_sas_address(&ihost->phys[phy_index],
-@@ -311,7 +311,6 @@ sci_mpc_agent_validate_phy_configuration(struct isci_host *ihost,
- 					      &ihost->phys[phy_index]);
- 
- 			assigned_phy_mask |= (1 << phy_index);
--			phy_index++;
- 		}
- 
- 	}
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index 8c51d628b52e..a2ec0bc9e9fa 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -1722,11 +1722,14 @@ static int storvsc_probe(struct hv_device *device,
- 		max_targets = STORVSC_MAX_TARGETS;
- 		max_channels = STORVSC_MAX_CHANNELS;
- 		/*
--		 * On Windows8 and above, we support sub-channels for storage.
-+		 * On Windows8 and above, we support sub-channels for storage
-+		 * on SCSI and FC controllers.
- 		 * The number of sub-channels offerred is based on the number of
- 		 * VCPUs in the guest.
- 		 */
--		max_sub_channels = (num_cpus / storvsc_vcpus_per_sub_channel);
-+		if (!dev_is_ide)
-+			max_sub_channels =
-+				(num_cpus - 1) / storvsc_vcpus_per_sub_channel;
- 	}
- 
- 	scsi_driver.can_queue = (max_outstanding_req_per_channel *
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index 07c814c42648..60429011292a 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -427,8 +427,8 @@ iblock_execute_zero_out(struct block_device *bdev, struct se_cmd *cmd)
- {
- 	struct se_device *dev = cmd->se_dev;
- 	struct scatterlist *sg = &cmd->t_data_sg[0];
--	unsigned char *buf, zero = 0x00, *p = &zero;
--	int rc, ret;
-+	unsigned char *buf, *not_zero;
-+	int ret;
- 
- 	buf = kmap(sg_page(sg)) + sg->offset;
- 	if (!buf)
-@@ -437,10 +437,10 @@ iblock_execute_zero_out(struct block_device *bdev, struct se_cmd *cmd)
- 	 * Fall back to block_execute_write_same() slow-path if
- 	 * incoming WRITE_SAME payload does not contain zeros.
- 	 */
--	rc = memcmp(buf, p, cmd->data_length);
-+	not_zero = memchr_inv(buf, 0x00, cmd->data_length);
- 	kunmap(sg_page(sg));
- 
--	if (rc)
-+	if (not_zero)
- 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
- 
- 	ret = blkdev_issue_zeroout(bdev,
+	David
