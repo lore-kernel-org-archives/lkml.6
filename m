@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751763AbeEBPyJ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:54:09 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54836 "EHLO
+        id S1751839AbeEBPyS (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:54:18 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:54846 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751100AbeEBPyG (ORCPT
+        with ESMTP id S1751100AbeEBPyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:54:06 -0400
+        Wed, 2 May 2018 11:54:11 -0400
 From: Tyler Hicks <tyhicks@canonical.com>
 To: linux-kernel@vger.kernel.org
 Cc: Kees Cook <keescook@chromium.org>,
@@ -15,57 +15,117 @@ Cc: Kees Cook <keescook@chromium.org>,
         Steve Grubb <sgrubb@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
         linux-audit@redhat.com, linux-security-module@vger.kernel.org,
         linux-doc@vger.kernel.org
-Subject: [PATCH v2 0/4] Better integrate seccomp logging and auditing
-Date: Wed,  2 May 2018 15:53:16 +0000
-Message-Id: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+Subject: [PATCH v2 1/4] seccomp: Separate read and write code for actions_logged sysctl
+Date: Wed,  2 May 2018 15:53:17 +0000
+Message-Id: <1525276400-7161-2-git-send-email-tyhicks@canonical.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Seccomp received improved logging controls in v4.14. Applications can opt into
-logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
-SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
-They can also debug filter matching with the new SECCOMP_RET_LOG action.
-Administrators can prevent specific actions from being logged using the
-kernel.seccomp.actions_logged sysctl.
+Break the read and write paths of the kernel.seccomp.actions_logged
+sysctl into separate functions to maintain readability. An upcoming
+change will need to audit writes, but not reads, of this sysctl which
+would introduce too many conditional code paths on whether or not the
+'write' parameter evaluates to true.
 
-However, one corner case intentionally wasn't addressed in those v4.14 changes.
-When a process is being inspected by the audit subsystem, seccomp's decision
-making for logging ignores the new controls and unconditionally logs every
-action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
-many existing applications don't intend to log handled actions due to them
-occurring very frequently. This amount of logging fills the audit logs without
-providing many benefits now that application authors have fine grained controls
-at their disposal.
+Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
+---
+ kernel/seccomp.c | 60 +++++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 38 insertions(+), 22 deletions(-)
 
-This patch set aligns the seccomp logging behavior for both audited and
-non-audited processes. It also emits an audit record, if auditing is enabled,
-when the kernel.seccomp.actions_logged sysctl is written to so that there's a
-paper trail when entire actions are quieted.
-
-Changes since v1:
-* Patch 1
-  - No changes
-* Patch 2
-  - New patch, allowing for a configurable separator between action names
-* Patch 3
-  - The value of the actions field in the audit record now uses a comma instead
-    of a space
-  - The value of the actions field in the audit record is no longer enclosed in
-    quotes
-  - audit_log_start() is called with the current processes' audit_context in
-    audit_seccomp_actions_logged()
-  - audit_seccomp_actions_logged() no longer records the pid, uid, auid, tty,
-    ses, task context, comm, or executable path
-  - The new and old value of seccomp_actions_logged is recorded in the
-    AUDIT_CONFIG_CHANGE record
-  - The value of the "res" field in the CONFIG_CHANGE audit record is corrected
-    (1 indicates success, 0 failure)
-  - Updated patch 3's commit message to reflect the updated audit record format
-    in the examples
-* Patch 4
-  - A function comment for audit_seccomp() was added to explain, among other
-    things, that event filtering is performed in seccomp_log()
-
-Tyler
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index dc77548..f4afe67 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -1199,48 +1199,64 @@ static bool seccomp_actions_logged_from_names(u32 *actions_logged, char *names)
+ 	return true;
+ }
+ 
+-static int seccomp_actions_logged_handler(struct ctl_table *ro_table, int write,
+-					  void __user *buffer, size_t *lenp,
+-					  loff_t *ppos)
++static int read_actions_logged(struct ctl_table *ro_table, void __user *buffer,
++			       size_t *lenp, loff_t *ppos)
+ {
+ 	char names[sizeof(seccomp_actions_avail)];
+ 	struct ctl_table table;
++
++	memset(names, 0, sizeof(names));
++
++	if (!seccomp_names_from_actions_logged(names, sizeof(names),
++					       seccomp_actions_logged))
++		return -EINVAL;
++
++	table = *ro_table;
++	table.data = names;
++	table.maxlen = sizeof(names);
++	return proc_dostring(&table, 0, buffer, lenp, ppos);
++}
++
++static int write_actions_logged(struct ctl_table *ro_table, void __user *buffer,
++				size_t *lenp, loff_t *ppos)
++{
++	char names[sizeof(seccomp_actions_avail)];
++	struct ctl_table table;
++	u32 actions_logged;
+ 	int ret;
+ 
+-	if (write && !capable(CAP_SYS_ADMIN))
++	if (!capable(CAP_SYS_ADMIN))
+ 		return -EPERM;
+ 
+ 	memset(names, 0, sizeof(names));
+ 
+-	if (!write) {
+-		if (!seccomp_names_from_actions_logged(names, sizeof(names),
+-						       seccomp_actions_logged))
+-			return -EINVAL;
+-	}
+-
+ 	table = *ro_table;
+ 	table.data = names;
+ 	table.maxlen = sizeof(names);
+-	ret = proc_dostring(&table, write, buffer, lenp, ppos);
++	ret = proc_dostring(&table, 1, buffer, lenp, ppos);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (write) {
+-		u32 actions_logged;
+-
+-		if (!seccomp_actions_logged_from_names(&actions_logged,
+-						       table.data))
+-			return -EINVAL;
+-
+-		if (actions_logged & SECCOMP_LOG_ALLOW)
+-			return -EINVAL;
++	if (!seccomp_actions_logged_from_names(&actions_logged, table.data))
++		return -EINVAL;
+ 
+-		seccomp_actions_logged = actions_logged;
+-	}
++	if (actions_logged & SECCOMP_LOG_ALLOW)
++		return -EINVAL;
+ 
++	seccomp_actions_logged = actions_logged;
+ 	return 0;
+ }
+ 
++static int seccomp_actions_logged_handler(struct ctl_table *ro_table, int write,
++					  void __user *buffer, size_t *lenp,
++					  loff_t *ppos)
++{
++	if (write)
++		return write_actions_logged(ro_table, buffer, lenp, ppos);
++	else
++		return read_actions_logged(ro_table, buffer, lenp, ppos);
++}
++
+ static struct ctl_path seccomp_sysctl_path[] = {
+ 	{ .procname = "kernel", },
+ 	{ .procname = "seccomp", },
+-- 
+2.7.4
