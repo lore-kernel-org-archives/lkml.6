@@ -1,137 +1,144 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-616729-1525463276-2-2626127091479407396
+X-Cyrus-Session-Id: sloti22d1t05-1359032-1525295216-2-9868984683825781329
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525463275; b=B7Gh+rWp4E3CSRu/sZK8ztjGMtINo/fgUPcgc9aoaPS4teugmo
-    /RxhculrT4ddJHu0bkXuSkfw+arntXj0vG6zrxNBRlHzkgrMs8QFSbxNu1XWZTsZ
-    o5/VeL8H3ffYkSp7qa31PDceatLhNh2Sy/Q9augMf1ZdHw6VmtRwuf/RhR7c84X2
-    Cb71Ovh5EwcU6BErSn1ucoT4sO0BVd4MMOMZ9p7ELa1ZA0puq0ieAgG/Bdm6nVMS
-    sehJ7EFQw7Eip+bRrbsvrNvYr8hRWcI8Xf3P36mi57/Byn1gu71YT926UuaZrpad
-    TBSEMstn+wkO4lqC+Hkts33aAvRsYU8dNz3g==
+    1525295216; b=UkV4PeV9gYb5C8JRkhEQNKHP7ygiZKG8DoKF8sRKGvujQNeVPf
+    WnZXXCKFl6R331lRIt9/bcTt8Rw79PM02ExgzOgXRA4j7NYT8A7SDfI+g1A2Z2ZA
+    1BtL1eQ6Zicu3UiAp30PYyzj8y7lhQGBF+ac29dd1VpOUabcltW9zKsbyOiaMSJk
+    W6GqN34o/G+bA/2ERoEVWWlvHWlgXxbKRhGLXuNfS1e7+03LOLl08A6I2L0OHs6/
+    ztk43cswjrfm+udmeHSulkzIMS5Gw3uUp6SuesT3JNRk1Zqu0beJHi/faAMJL4zm
+    1rTTr60PbeVMeBG9N98aVVKuJBNpDVv+jvJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1525463275; bh=Pa+p3l8KE77jUQ/aoJYGKuw3KwWtK9NtYl+Oj82Ari
-    4=; b=LYdh2+01uFHomQyDUOGXXcYX7lMxvZeikaf53XzM2K6XquHC+LFgZuZwb0
-    j9C6/cJ0SeXfCFkYefhXrTd96doHHroiaeRD9ULwTGVrpAP078zzlEsqeKwPIbbi
-    WSZT7MZNWld80FehyRLN/+UgduJtYQKlgqph+NbrcwSTPKbYD1sQEi5U3QwB6edw
-    hQkhip+RTVG/G3c3wCFTStP4myYGv0tbOgxSscLQga3V8LCzPXpgu6PWuCIi/wr0
-    Br+SalG/lGHYnW7sKSjaKJX9fseFeQ5CWc9wbVkVmmmFmXmXY2YaaOk7/Se+l/cr
-    Cgw/+KRrzHMKUts45O4ey1opoYdg==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=chromium.org header.i=@chromium.org header.b=JtJ2j4Ya
-    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=google.com header.i=@google.com header.b=OXoewgsO x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525295216; bh=
+    EUBLHYaesAIiJT6EeRrNOxFSB+V716v/mwnal6LBJVM=; b=I9V0y4pF1mmxgrIC
+    dHQa+SpSVEa3U/o7uO3wKuhRn1i8c8ZswfDMnEPtP9pO5jRdbcaawEzvD7MPz+P/
+    vT4m9Zdf5ESDi+jm2PP9qBRDn6zFdHDXUOPamkablD4an6bqLaaGfF5FtdYizZve
+    KxcRsbcbb7ULlmCGFg/WydXAeh07nyTfVHvIPdIAkuC2tT1XU7KJp3V/Ml2N9VDX
+    hLHAqj+gclNkIAt+q5fLqigrf8tN6mbg4GKzTnY6EJmQcp8lbRaXBSUupi8bxtwg
+    jR//ZTps3bZMmoTVHHouL9l3hW9p5y3Ew0b6lfAOogJvyonPkDVO5XqqDWQ3VL1R
+    0rzf5Q==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=QcMW3bPJ
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=RKTEVQht
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=NJbh9otk;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=chromium.org header.result=pass
+    header.domain=codeaurora.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=chromium.org header.i=@chromium.org header.b=JtJ2j4Ya
-      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=google.com header.i=@google.com header.b=OXoewgsO x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=QcMW3bPJ
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=RKTEVQht
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=NJbh9otk;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=chromium.org header.result=pass
+      header.domain=codeaurora.org header.result=pass
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD6SZiSh3cyGxqZV/axMxVTMe8J7+/lKCSal7IdMf8BmzENaiXFchYwm8XaPmAB0p/O5xkemOckD88eK0pbKZMfvHsjz8u0bHXeS7Pk8rARGGQ782zFC
-    l4g8b/tAdOQP0rChA+kdkjkJKNnTuTTGqVkNoEmaA1Ot/bvO50FL1A76YxJviBMz14ANt8mXuQAW25v4WmbScKu1j/jqik3Axfs88rl3L7uAjGpLBC7ZWvjY
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=LpQP-O61AAAA:8 a=cm27Pg_UAAAA:8 a=VwQbUJbxAAAA:8 a=1u7RdJkFspxwNcgz678A:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=pioyyrs4ZptJ924tMmac:22
-    a=xmb-EsYY8bH0VWELuYED:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfPjV/UtbAHcBpswU/tzl/86GJG4QEQPx2wBkiGxB2Nm5saE67Dv0orAewCV0EX/FygVC+dN8CUpmZ++V+sEeQQ9BDAUspAJpINDorbfTKvSy3XgKarE0
+    mBQDKa+5uKFiXKhtWaivy22HBDTZ3RZe14IvLL8Pz4VmKapz8xDQvB+lKXWWRYsojpiDEVIXEbBoRppeDTm7kt/LoIvMEsOtIeBc/1TtsntVen4+CJ24eq8V
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=cm27Pg_UAAAA:8
+    a=LpQP-O61AAAA:8 a=VwQbUJbxAAAA:8 a=zxfXNnv1NuezMT6pO8MA:9 a=x8gzFH9gYPwA:10
+    a=xmb-EsYY8bH0VWELuYED:22 a=pioyyrs4ZptJ924tMmac:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751785AbeEDTrW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 4 May 2018 15:47:22 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:39315 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751774AbeEDTrU (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Fri, 4 May 2018 15:47:20 -0400
-X-Google-Smtp-Source: AB8JxZrwfA410cp9GSBo5cavJzHSIcxPCv/HynxPrZCHnyZGAArtQgO8UpGnYnaKQPz9Cemy3aJx5cvwEinwgfTm/jM=
-MIME-Version: 1.0
-In-Reply-To: <1525295174-15995-7-git-send-email-mgautam@codeaurora.org>
-References: <1525295174-15995-1-git-send-email-mgautam@codeaurora.org> <1525295174-15995-7-git-send-email-mgautam@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 4 May 2018 12:47:18 -0700
-X-Google-Sender-Auth: k2UsTL5dVsLutqSFLnLend1c9wY
-Message-ID: <CAD=FV=Ux+Ei0HE5FWnUrMBjWqh4ZVfobfbZfJTfKn54o4fmq5g@mail.gmail.com>
-Subject: Re: [PATCH v5 6/7] dt-bindings: phy-qcom-usb2: Add support to
- override tuning values
-To: Manu Gautam <mgautam@codeaurora.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
+        id S1751469AbeEBVGx (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 17:06:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59768 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751445AbeEBVGt (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Wed, 2 May 2018 17:06:49 -0400
+X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Remote-Spam-Level: 
+X-Remote-Spam-Status: No, score=-2.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,T_DKIM_INVALID autolearn=no autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 87C6F607E4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+From: Manu Gautam <mgautam@codeaurora.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>, robh@kernel.org,
+        sboyd@kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dianders@chromium.org, evgreen@chromium.org,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: [PATCH v5 4/7] dt-bindings: phy-qcom-qmp: Update bindings for sdm845
+Date: Thu,  3 May 2018 02:36:11 +0530
+Message-Id: <1525295174-15995-5-git-send-email-mgautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525295174-15995-1-git-send-email-mgautam@codeaurora.org>
+References: <1525295174-15995-1-git-send-email-mgautam@codeaurora.org>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi,
-
-On Wed, May 2, 2018 at 2:06 PM, Manu Gautam <mgautam@codeaurora.org> wrote:
-> To improve eye diagram for PHYs on different boards of same SOC,
-> some parameters may need to be changed. Provide device tree
-> properties to override these from board specific device tree
-> files. While at it, replace "qcom,qusb2-v2-phy" with compatible
-> string for USB2 PHY on sdm845 which was earlier added for
-> sdm845 only.
->
-> Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-> ---
->  .../devicetree/bindings/phy/qcom-qusb2-phy.txt     | 23 +++++++++++++-
->  include/dt-bindings/phy/phy-qcom-qusb2.h           | 37 ++++++++++++++++++++++
->  2 files changed, 59 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/phy/phy-qcom-qusb2.h
-
-Thanks for adding the #defines, describing the defaults, and including
-which SoCs the new properties work on.  This looks great to me now,
-thanks!
+Update compatible strings for USB3 PHYs on SDM845.
+One is QMPv3 DisplayPort-USB combo PHY and other one
+is USB UNI PHY which is single lane USB3 PHY without
+DP capability. While at it also remove "qcom,qmp-v3-usb3-phy"
+compatible string which was earlier added for sdm845
+only as there wouldn't be any user of same.
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+---
+ Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+index dcf1b8f..266a1bb 100644
+--- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
++++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+@@ -9,7 +9,8 @@ Required properties:
+ 	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
+ 	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
+ 	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
+-	       "qcom,qmp-v3-usb3-phy" for USB3 QMP V3 phy.
++	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
++	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845.
+ 
+  - reg: offset and length of register set for PHY's common serdes block.
+ 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
