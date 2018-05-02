@@ -1,135 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeEBCW3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 22:22:29 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34854 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750743AbeEBCW1 (ORCPT
+        id S1751279AbeEBC0C (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 22:26:02 -0400
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:44014 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbeEBCZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 22:22:27 -0400
-X-Google-Smtp-Source: AB8JxZp+dw+Dp9aMINagTj5GPJGNq9czhffyOsbDGg9euhBL4JhXe0j76S9IMcVU8ElVGdLW4TtErg==
-Message-ID: <1525227744.14025.6.camel@arista.com>
-Subject: Re: [PATCHv4 1/2] iommu/vt-d: Ratelimit each dmar fault printing
-From: Dmitry Safonov <dima@arista.com>
-To: linux-kernel@vger.kernel.org, joro@8bytes.org
-Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
-Date: Wed, 02 May 2018 03:22:24 +0100
-In-Reply-To: <20180331003312.6390-1-dima@arista.com>
-References: <20180331003312.6390-1-dima@arista.com>
+        Tue, 1 May 2018 22:25:59 -0400
+X-Google-Smtp-Source: AB8JxZo/eAuRou9Qo+Nt+ebBupy+djYStY5NAQuxAmM1BDVdUTj/Ywv3IijdUXVug8MaYKkXOBOtFGtnrK2getu4Llc=
+MIME-Version: 1.0
+In-Reply-To: <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+References: <152520750404.36522.15462513519590065300.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CA+55aFwoOee_8H-1KRnY1G-Ud4Rez16s8xjVbG8YOPn1jqxxtg@mail.gmail.com>
+ <CAPcyv4jA98NVNqYFpj29OHE45HVp1DMH9oFO4-neWKA_4WKTwA@mail.gmail.com> <CA+55aFwZ3hrrOJ5W-C8gdam3aGNxz8FEAq9gPnRBkVmwu4BvYA@mail.gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 1 May 2018 19:25:57 -0700
+Message-ID: <CAPcyv4i=cjQr9xvxt+Mjp-fhzyNJdTTp7uaAtpJN9R4gPg_j-Q@mail.gmail.com>
+Subject: Re: [PATCH 0/6] use memcpy_mcsafe() for copy_to_iter()
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>, Ingo Molnar <mingo@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joerg,
+On Tue, May 1, 2018 at 5:09 PM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, May 1, 2018 at 4:03 PM Dan Williams <dan.j.williams@intel.com>
+> wrote:
+>
+>> I'm confused. Are you talking about getting rid of the block-layer
+>> bypass or changing how MCS errors are handled?
+>
+> The latter.
+>
+>> If it's the latter, MCS error handling, I don't see how get
+>> around something like copy_to_iter_mcsafe().
+>
+> So the basic issue is that since everybody wants mmap() to be at least an
+> option (and preferably one of the _main_ options), I think that the whole
+> "MCS errors are fatal" is fundamentally flawed.
+>
+> Which means that MCS errors can't be fatal.
+>
+> Which in turn means that the whole "special memcpy" seems very suspect.
+>
+> Can't we just do
+>
+>   - use a normal memcpy()
+>
+>   - basically set an "IO error flag" on MCE.
+>
+>   - for a user access the IO error flag potentially causes a SIGBUS as you
+> mention, but even there it's not 100% clear that's necessarily possible or
+> a good idea (I'm assuming that it can be damned hard to figure out _who_
+> caused the problem if it was a cached write that causes an MCE much much
+> later).
 
-is there anything I may do about those two patches?
-In 2/2 I've limited loop cnt as discussed in v3.
-This one solves softlockup for us, might be useful.
+Writes don't trigger MCE. Only consumed poison / media errors trigger
+MCE. I.e. even a read-modify-write operation to write-back a partially
+dirty cacheline will not trigger an MCE because the read is not
+consumed by the core only the cache. We'll get notified when that
+happens, but only by CMCI interrupt not an MCE exception.
 
-On Sat, 2018-03-31 at 01:33 +0100, Dmitry Safonov wrote:
-> There is a ratelimit for printing, but it's incremented each time the
-> cpu recives dmar fault interrupt. While one interrupt may signal
-> about
-> *many* faults.
-> So, measuring the impact it turns out that reading/clearing one fault
-> takes < 1 usec, and printing info about the fault takes ~170 msec.
-> 
-> Having in mind that maximum number of fault recording registers per
-> remapping hardware unit is 256.. IRQ handler may run for (170*256)
-> msec.
-> And as fault-serving loop runs without a time limit, during servicing
-> new faults may occur..
-> 
-> Ratelimit each fault printing rather than each irq printing.
-> 
-> Fixes: commit c43fce4eebae ("iommu/vt-d: Ratelimit fault handler")
-> 
-> BUG: spinlock lockup suspected on CPU#0, CliShell/9903
->  lock: 0xffffffff81a47440, .magic: dead4ead, .owner:
-> kworker/u16:2/8915, .owner_cpu: 6
-> CPU: 0 PID: 9903 Comm: CliShell
-> Call Trace:$\n'
-> [..] dump_stack+0x65/0x83$\n'
-> [..] spin_dump+0x8f/0x94$\n'
-> [..] do_raw_spin_lock+0x123/0x170$\n'
-> [..] _raw_spin_lock_irqsave+0x32/0x3a$\n'
-> [..] uart_chars_in_buffer+0x20/0x4d$\n'
-> [..] tty_chars_in_buffer+0x18/0x1d$\n'
-> [..] n_tty_poll+0x1cb/0x1f2$\n'
-> [..] tty_poll+0x5e/0x76$\n'
-> [..] do_select+0x363/0x629$\n'
-> [..] compat_core_sys_select+0x19e/0x239$\n'
-> [..] compat_SyS_select+0x98/0xc0$\n'
-> [..] sysenter_dispatch+0x7/0x25$\n'
-> [..]
-> NMI backtrace for cpu 6
-> CPU: 6 PID: 8915 Comm: kworker/u16:2
-> Workqueue: dmar_fault dmar_fault_work
-> Call Trace:$\n'
-> [..] wait_for_xmitr+0x26/0x8f$\n'
-> [..] serial8250_console_putchar+0x1c/0x2c$\n'
-> [..] uart_console_write+0x40/0x4b$\n'
-> [..] serial8250_console_write+0xe6/0x13f$\n'
-> [..] call_console_drivers.constprop.13+0xce/0x103$\n'
-> [..] console_unlock+0x1f8/0x39b$\n'
-> [..] vprintk_emit+0x39e/0x3e6$\n'
-> [..] printk+0x4d/0x4f$\n'
-> [..] dmar_fault+0x1a8/0x1fc$\n'
-> [..] dmar_fault_work+0x15/0x17$\n'
-> [..] process_one_work+0x1e8/0x3a9$\n'
-> [..] worker_thread+0x25d/0x345$\n'
-> [..] kthread+0xea/0xf2$\n'
-> [..] ret_from_fork+0x58/0x90$\n'
-> 
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Joerg Roedel <joro@8bytes.org>
-> Cc: Lu Baolu <baolu.lu@linux.intel.com>
-> Cc: iommu@lists.linux-foundation.org
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
-> ---
->  drivers/iommu/dmar.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> index accf58388bdb..6c4ea32ee6a9 100644
-> --- a/drivers/iommu/dmar.c
-> +++ b/drivers/iommu/dmar.c
-> @@ -1618,17 +1618,13 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
->  	int reg, fault_index;
->  	u32 fault_status;
->  	unsigned long flag;
-> -	bool ratelimited;
->  	static DEFINE_RATELIMIT_STATE(rs,
->  				      DEFAULT_RATELIMIT_INTERVAL,
->  				      DEFAULT_RATELIMIT_BURST);
->  
-> -	/* Disable printing, simply clear the fault when ratelimited
-> */
-> -	ratelimited = !__ratelimit(&rs);
-> -
->  	raw_spin_lock_irqsave(&iommu->register_lock, flag);
->  	fault_status = readl(iommu->reg + DMAR_FSTS_REG);
-> -	if (fault_status && !ratelimited)
-> +	if (fault_status && __ratelimit(&rs))
->  		pr_err("DRHD: handling fault status reg %x\n",
-> fault_status);
->  
->  	/* TBD: ignore advanced fault log currently */
-> @@ -1638,6 +1634,8 @@ irqreturn_t dmar_fault(int irq, void *dev_id)
->  	fault_index = dma_fsts_fault_record_index(fault_status);
->  	reg = cap_fault_reg_offset(iommu->cap);
->  	while (1) {
-> +		/* Disable printing, simply clear the fault when
-> ratelimited */
-> +		bool ratelimited = !__ratelimit(&rs);
->  		u8 fault_reason;
->  		u16 source_id;
->  		u64 guest_addr;
+>   - for the kernel, the "IO error flag" can hopefully be then (again,
+> assuming you can correlate the MCE with the right process) be turned into
+> EIO.
+
+This is precisely the current implementation / usage of
+memcpy_mcsafe(). Reads go through the driver and the driver does the
+right / simple thing to turn an MCE into EIO. I'd like to make this
+the only model and kill the driver bypass in fs/dax.c so that the vfs
+does not need to contend with these low level architecture details.
+
+To be clear I'm not against dax specific optimization that does not go
+through the block layer, but it should still be a driver call.
+
+>> You mention mmap. Yes, we want the predominant access model to be
+>> dax-mmap for Persistent Memory, but there's still the question about
+>> what to do with media errors. To date we are trying to mirror the
+>> error handling model for System Memory, i.e. SIGBUS to the process
+>> that consumed the error. Is that error handling model also problematic
+>> in your view?
+>
+> See above: if you can handle user space errors "gracefully" (ie with a
+> SIGBUS, no crazy "system fatal (reboot)" garbage), then I really don't see
+> why you can't do the same for the kernel accesses.
+>
+> IOW, why do we need that special "copy_to_iter_mcsafe()", when a normal
+> "copy_to_iter()" should just work (and basically _has_ to work) anyway?
+>
+> Put another way: I think the whole basic premis of your patch is wrong,
+> because (to quote your original patch descriptor), the fundamental starting
+> point is garbage:
+>
+>     The result of the bypass is that the kernel treats machine checks during
+>     read as system fatal (reboot) [..]
+>
+> See? If you are able to map that memory into user space, and recover, then
+> why the whole crazy "system fatal" thing for kernel accesses?
+
+Right, but the only way to make MCE non-fatal is to teach the machine
+check handler about recoverable conditions. This patch teaches the
+machine check handler how to recover copy_to_iter() errors.
+
+We already have copy_from_iter_flushcache() that is used as a 'struct
+dax_operations' op. I can do the same for this copy_to_iter() case so
+at least it's up to the driver and not the vfs (fs/dax.c) to decide
+how to handle this case.
