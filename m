@@ -1,68 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751484AbeEBIWX (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 04:22:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52606 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751021AbeEBIWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 04:22:21 -0400
-Date: Wed, 2 May 2018 10:22:17 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>
-Cc: Pierre Morel <pmorel@linux.vnet.ibm.com>, pasic@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ
- event
-Message-ID: <20180502102217.702870af.cohuck@redhat.com>
-In-Reply-To: <20180502074622.GV5428@bjsdjshi@linux.vnet.ibm.com>
-References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
-        <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
-        <20180426073053.GZ12194@bjsdjshi@linux.vnet.ibm.com>
-        <20180426074806.GB12194@bjsdjshi@linux.vnet.ibm.com>
-        <20180430173305.632faa80.cohuck@redhat.com>
-        <20180502074622.GV5428@bjsdjshi@linux.vnet.ibm.com>
-Organization: Red Hat GmbH
+        id S1751417AbeEBIY2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 04:24:28 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:36188 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750867AbeEBIYY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 04:24:24 -0400
+X-Google-Smtp-Source: AB8JxZqgcdkaqaujNeaRT/kPY2IfwKVyrFCHt1aDIVnXOafu+w/yUmgkgW/JCLNAzGVbQ4y+zuvE3A==
+Subject: Re: [PATCH v3 2/2] nvmem: Add RAVE SP EEPROM driver
+To: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+        Aleksander Morgado <aleksander@aleksander.es>
+References: <20180501052952.26765-1-andrew.smirnov@gmail.com>
+ <20180501052952.26765-3-andrew.smirnov@gmail.com>
+ <e6f74f86-a427-4165-cbc0-27fe129dab8e@linaro.org>
+ <CAHQ1cqGmiRvE+sUdpOcFQ=oGjA79sVQGc+noQBv7SP_0rKggvw@mail.gmail.com>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <2733c63f-f7c6-cdbc-e725-03126d8a7ed5@linaro.org>
+Date: Wed, 2 May 2018 09:24:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAHQ1cqGmiRvE+sUdpOcFQ=oGjA79sVQGc+noQBv7SP_0rKggvw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 May 2018 15:46:22 +0800
-Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 
-> * Cornelia Huck <cohuck@redhat.com> [2018-04-30 17:33:05 +0200]:
+
+On 01/05/18 19:35, Andrey Smirnov wrote:
+> On Tue, May 1, 2018 at 8:33 AM, Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
+>>
+>>
+>> On 01/05/18 06:29, Andrey Smirnov wrote:
+>>>
+>>> +// SPDX-License-Identifier: GPL-2.0+
+>>
+>> ...
+>>>
+>>> +MODULE_LICENSE("GPL");
+>>
+>> I think this should be
+>> MODULE_LICENSE("GPL v2");
 > 
-> > On Thu, 26 Apr 2018 15:48:06 +0800
-> > Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
-> >   
-> > > * Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> [2018-04-26 15:30:54 +0800]:
-> > > 
-> > > [...]
-> > >   
-> > > > > @@ -179,7 +160,7 @@ static int fsm_irq(struct vfio_ccw_private *private,
-> > > > >  	if (private->io_trigger)
-> > > > >  		eventfd_signal(private->io_trigger, 1);
-> > > > > 
-> > > > > -	return private->state;
-> > > > > +	return VFIO_CCW_STATE_IDLE;    
-> > > > This is not right. For example, if we are in STANDBY state (subch driver
-> > > > is probed, but mdev device is not created), we can not jump to IDLE
-> > > > state.
-> > > >     
-> > > I see my problem, for STANDBY state, we should introduce another event
-> > > callback for VFIO_CCW_EVENT_INTERRUPT. It doesn't make sense to call
-> > > fsm_irq() which tries to signal userspace with interrupt notification
-> > > when mdev is not created yet... So we'd need a separated fix for this
-> > > issue too.  
-> > 
-> > But how do we even get into that situation when we don't have an mdev
-> > yet?
-> >   
-> We cann't... So let's assign fsm_nop() as the interrupt callback for
-> STANDBY state?
+> With that change the two statements would contradict each other. "GPL"
+> means "GNU Public License v2 or later", whereas "GPL v2" means "GNU
+> Public License v2" as per
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/module.h#n175
+> 
+Yep, You are correct, I missed the +.
+I will send these patches to Greg during rc4-rc5 time.
 
-Either that, or have a special fsm_should_not_happen() function that
-can pop out a trace message and then continue to do nothing.
+thanks,
+srini
