@@ -1,86 +1,81 @@
-Return-Path: <christianvanbrauner@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525275936; cv=none;
+Return-Path: <viro@ftp.linux.org.uk>
+X-Google-Smtp-Source: AB8JxZo9L0m2wsmbvC0MxNwelOT3ZejtLRmWq0yGhg7JpiFmzxc8ZAFoOJ/5/r6pVB342jnf7uZs
+ARC-Seal: i=1; a=rsa-sha256; t=1525277385; cv=none;
         d=google.com; s=arc-20160816;
-        b=Lt6jAFFVzv1uNvLEiZUIyPoFL9LkXifuuGlVKuB5mo87v5nGL/gyp7uMI9BAq2+Yy+
-         Y8mzaRO/LYK9yZi7r2mZNC86tBUnTB4/0VYShHCa4/WW/TZXk2vnKQ+BXmXizbRtDxHf
-         Yo/BHopymERXYYpTXrwDs2B3Me8JNSdxStoS3QoQzH8rMwLvZcDoDjJS0NmV9xjnt95w
-         WrLwqJSLVgt+tm6fXIy4Rzs281kkCo+9QIJmA+faeTxfxzWRlR6CeO9UI6+dI3NgOzQH
-         cag3lKMsUWQ0SZajt4XK4WZqe+zzNdVVqRMiqu+YyXcHFk4DD23znD4fMGSLbSCIJ4DB
-         8TwA==
+        b=w3fNKSvqPxo4XHAsmk6X0dgs1sNIYCEy01WgEt98KWxinCbfGATqXn55LumlcHhNef
+         mY16rbPCMd88AHp7IHNtpeWfIF/YE3eMrVQMbKuieyGoWjZNInDV4FGx7LwmET6kad93
+         /VJcJ52Kh7p7Hk9TBs6SzQ+pPMDbuR/vt3ATJGaaqprgYp1yw58zVaebRnHxO227NnJY
+         DOza76Rgumfr7xzuDRd0G8zBp2VA7u7qEe54ES+dEBzQOgWkk3F4Ts6N70EtcxtRDXdz
+         CwUTRiI7L8KvHvUaOHrIm0sUYxTc80t7purdcCB9zUw44hushAHuPqUWnss3aR2AJWea
+         xPdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=YSHR4mz100tqITQVjZB7GOSUUFz2JZ3qcD3oM9++yJQ=;
-        b=yrsnb129xrUmgFsOaJ5lHbtEohhxmLLLNuJwGhqUO3HZLr1LaA80mHxgx3LPOMlvFQ
-         E3oMry/5V2iwsU4TWTDn8vIuMuJrZC8AvVCXzpcqSOTO+8Y5KoqEAyM2lcJOzS3kCk63
-         EqKDjyGJVrZK7oY0vqcfAGHLLJ4075qmLBC7qXnjC18d2RcTQWcZdI0mkV9PVUE6OcTC
-         0DoWQRL8s5lY14c8VaWdygq5+wMM7Hm8o9yhsj6VVUnySVGvF3sZuh/bT8jWH1YTcxmx
-         exXfCByXTZy6HuD/lln7+9p85xHxJJGP4M61Gx4M43oH57wlX3u+s3iNr6qqcha1LOuA
-         AtXA==
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=5yBtrllCXDaXdxYRt8q6bEOS+BOmT15Iriq0zDUmcBE=;
+        b=MLfEnYHyoUOIB6WFMQeOna7PDXH4QYZ5bOy/53ATVKhEYwWQKh5N/t3pl8X2qjrufw
+         nQMqW7QuWuhMWnAAxuDSAKq5kWczS8/OHcc2XiNvinUb9UI+KjGNMmNOiKpP8DZki9Ms
+         Kv1SU+FB+hOzMOP2OC95sxNIPhveDb2e5RLSU075Nv7r7ITSu0+wIkHYPH5POh8G41Xp
+         Axf9Vdb/+PAGgUaPZJkve+oo32a5Wo66CD7SuCT3BYUotfvHMjVOIPTjtXi0Hc0NKK3R
+         IZgbQjg5lasuAX+eTArsj6XDS4K8o2Xev/ZgCip17WPDRDZeuvWcJmlaLGSft5hFzxR6
+         TYiw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
+       spf=pass (google.com: best guess record for domain of viro@ftp.linux.org.uk designates 195.92.253.2 as permitted sender) smtp.mailfrom=viro@ftp.linux.org.uk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of christianvanbrauner@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=christianvanbrauner@gmail.com
-X-Google-Smtp-Source: AB8JxZpSqQC0NsaAk36g9xJ13n+ggPYaj+ByJs8pqaVUDrvLYzw4gbQB1c2Yuf1DMNbqIXil0QC9RQ==
-From: Christian Brauner <christian.brauner@ubuntu.com>
-To: viro@zeniv.linux.org.uk,
-	torvalds@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hch@infradead.org
-Cc: tglx@linutronix.de,
-	kstewart@linuxfoundation.org,
-	gregkh@linuxfoundation.org,
-	pombredanne@nexb.com,
-	Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 0/6 resend] statfs: handle mount propagation
-Date: Wed,  2 May 2018 17:42:33 +0200
-Message-Id: <20180502154239.14013-1-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.17.0
+       spf=pass (google.com: best guess record for domain of viro@ftp.linux.org.uk designates 195.92.253.2 as permitted sender) smtp.mailfrom=viro@ftp.linux.org.uk
+Date: Wed, 2 May 2018 17:09:39 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, tglx@linutronix.de,
+	kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+	pombredanne@nexb.com, linux-api@vger.kernel.org
+Subject: Re: [PATCH 0/6 resend] statfs: handle mount propagation
+Message-ID: <20180502160939.GU30522@ZenIV.linux.org.uk>
+References: <20180502154239.14013-1-christian.brauner@ubuntu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180502154239.14013-1-christian.brauner@ubuntu.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599367740433603357?=
-X-GMAIL-MSGID: =?utf-8?q?1599367740433603357?=
+X-GMAIL-MSGID: =?utf-8?q?1599369259669839112?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hey,
+On Wed, May 02, 2018 at 05:42:33PM +0200, Christian Brauner wrote:
+> Hey,
+> 
+> This is the second resend of this patchset. I'm not sure whether it has
+> simply been overlooked but the number of people get_maintainer.pl was
+> rather small and seemed a little random so I added Linus and Christoph,
+> two people I know that do look at VFS stuff at least from time to time,
+> although they weren't listed by get_maintainer.pl. I hope that's ok.
+> 
+> This little series
+> - unifies the definition of constants in statfs.h and fs.h
+>   *Note, that Andreas has expressed doubts whether this unification is
+>   useful. Please see https://lkml.org/lkml/2018/4/13/571 . I still think
+>   it is but I'm happy to drop these two patches if others agree.*
+> - extends statfs to handle mount propagation. This will let userspace
+>   easily query a given mountpoint for MS_UNBINDABLE, MS_SHARED,
+>   MS_PRIVATE and MS_SLAVE without always having to do costly parsing of
+>   /proc/<pid>/mountinfo.
+>   To this end the flags:
+>   - ST_UNBINDABLE
+>   - ST_SHARED
+>   - ST_PRIVATE
+>   - ST_SLAVE
+>   are added. They have the same value as their MS_* counterparts.
 
-This is the second resend of this patchset. I'm not sure whether it has
-simply been overlooked but the number of people get_maintainer.pl was
-rather small and seemed a little random so I added Linus and Christoph,
-two people I know that do look at VFS stuff at least from time to time,
-although they weren't listed by get_maintainer.pl. I hope that's ok.
+How about some rationale for that in the first place?  statfs() looks like
+a bad match for that - not to mention anything else, there's no way to
+get anything beyond "it is a peer of something", not even "do these two
+get propagation between them".  What would be using that, what would the
+userland side of users look like, etc...
 
-This little series
-- unifies the definition of constants in statfs.h and fs.h
-  *Note, that Andreas has expressed doubts whether this unification is
-  useful. Please see https://lkml.org/lkml/2018/4/13/571 . I still think
-  it is but I'm happy to drop these two patches if others agree.*
-- extends statfs to handle mount propagation. This will let userspace
-  easily query a given mountpoint for MS_UNBINDABLE, MS_SHARED,
-  MS_PRIVATE and MS_SLAVE without always having to do costly parsing of
-  /proc/<pid>/mountinfo.
-  To this end the flags:
-  - ST_UNBINDABLE
-  - ST_SHARED
-  - ST_PRIVATE
-  - ST_SLAVE
-  are added. They have the same value as their MS_* counterparts.
-
-Thanks!
-Christian
-
-Christian Brauner (6):
-  fs: use << for MS_* flags
-  statfs: use << to align with fs header
-  statfs: add ST_UNBINDABLE
-  statfs: add ST_SHARED
-  statfs: add ST_SLAVE
-  statfs: add ST_PRIVATE
-
- fs/statfs.c             | 16 +++++++++++++++-
- include/linux/statfs.h  | 30 +++++++++++++++++-------------
- include/uapi/linux/fs.h | 33 +++++++++++++++++----------------
- 3 files changed, 49 insertions(+), 30 deletions(-)
-
--- 
-2.17.0
+And in any case linux-api should've been Cc'd.  I'm not saying that this
+(or something similar) would be an inherently bad idea, but the question
+"why this way?" deserves a bit more than "parsing is costly"...
