@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751175AbeEBPVF (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 11:21:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46812 "EHLO mail.kernel.org"
+        id S1752009AbeEBPVK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 11:21:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751952AbeEBPU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 11:20:57 -0400
+        id S1751171AbeEBPVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 11:21:05 -0400
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -14,9 +14,9 @@ Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>, Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 17/52] perf thread: Make thread__find_symbol() return the symbol searched
-Date: Wed,  2 May 2018 12:19:07 -0300
-Message-Id: <20180502151942.20542-18-acme@kernel.org>
+Subject: [PATCH 20/52] perf machine: Introduce machine__kernel_maps()
+Date: Wed,  2 May 2018 12:19:10 -0300
+Message-Id: <20180502151942.20542-21-acme@kernel.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180502151942.20542-1-acme@kernel.org>
 References: <20180502151942.20542-1-acme@kernel.org>
@@ -26,101 +26,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Instead of just returning it in al.sym, allowing for some simplification
-in its users, and to make it consistent with thread__find_map().
+That returns the a data structure contained the ordered list of kernel
+modules + the main kernel maps, one more step in removing the
+MAP__{FUNCTION,VARIABLE} split.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-4axi2sigslffdixzxbehvgoj@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-qsgbxfyaohc80c9ma049dubm@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-timechart.c           |  7 ++-----
- tools/perf/util/event.c                  | 10 +++++-----
- tools/perf/util/thread.h                 |  8 ++++----
- tools/perf/util/unwind-libunwind-local.c |  4 +---
- 4 files changed, 12 insertions(+), 17 deletions(-)
+ tools/perf/tests/vmlinux-kallsyms.c |  4 ++--
+ tools/perf/util/event.c             |  3 +--
+ tools/perf/util/machine.h           | 12 ++++++++++++
+ tools/perf/util/probe-event.c       |  3 +--
+ 4 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
-index 38fcbb5ddce8..a827919c6263 100644
---- a/tools/perf/builtin-timechart.c
-+++ b/tools/perf/builtin-timechart.c
-@@ -533,11 +533,8 @@ static const char *cat_backtrace(union perf_event *event,
- 		}
+diff --git a/tools/perf/tests/vmlinux-kallsyms.c b/tools/perf/tests/vmlinux-kallsyms.c
+index d80416e07f4b..9bb84fe365e2 100644
+--- a/tools/perf/tests/vmlinux-kallsyms.c
++++ b/tools/perf/tests/vmlinux-kallsyms.c
+@@ -20,7 +20,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 	struct map *kallsyms_map, *vmlinux_map, *map;
+ 	struct machine kallsyms, vmlinux;
+ 	enum map_type type = MAP__FUNCTION;
+-	struct maps *maps = &vmlinux.kmaps.maps[type];
++	struct maps *maps = machine__kernel_maps(&vmlinux);
+ 	u64 mem_start, mem_end;
+ 	bool header_printed;
  
- 		tal.filtered = 0;
--		thread__find_symbol(al.thread, cpumode, ip, &tal);
--
--		if (tal.sym)
--			fprintf(f, "..... %016" PRIx64 " %s\n", ip,
--				tal.sym->name);
-+		if (thread__find_symbol(al.thread, cpumode, ip, &tal))
-+			fprintf(f, "..... %016" PRIx64 " %s\n", ip, tal.sym->name);
- 		else
- 			fprintf(f, "..... %016" PRIx64 "\n", ip);
- 	}
+@@ -228,7 +228,7 @@ int test__vmlinux_matches_kallsyms(struct test *test __maybe_unused, int subtest
+ 
+ 	header_printed = false;
+ 
+-	maps = &kallsyms.kmaps.maps[type];
++	maps = machine__kernel_maps(&kallsyms);
+ 
+ 	for (map = maps__first(maps); map; map = map__next(map)) {
+ 		if (!map->priv) {
 diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 48e4b252f6ff..9d94c59046d1 100644
+index 9d94c59046d1..542bd5b79e48 100644
 --- a/tools/perf/util/event.c
 +++ b/tools/perf/util/event.c
-@@ -1566,14 +1566,14 @@ struct map *__thread__find_map(struct thread *thread, u8 cpumode, enum map_type
- 	return al->map;
- }
- 
--void __thread__find_symbol(struct thread *thread, u8 cpumode,
--			   enum map_type type, u64 addr,
--			   struct addr_location *al)
-+struct symbol *__thread__find_symbol(struct thread *thread, u8 cpumode,
-+				     enum map_type type, u64 addr,
-+				     struct addr_location *al)
+@@ -464,8 +464,7 @@ int perf_event__synthesize_modules(struct perf_tool *tool,
  {
-+	al->sym = NULL;
- 	if (__thread__find_map(thread, cpumode, type, addr, al))
- 		al->sym = map__find_symbol(al->map, al->addr);
--	else
--		al->sym = NULL;
-+	return al->sym;
+ 	int rc = 0;
+ 	struct map *pos;
+-	struct map_groups *kmaps = &machine->kmaps;
+-	struct maps *maps = &kmaps->maps[MAP__FUNCTION];
++	struct maps *maps = machine__kernel_maps(machine);
+ 	union perf_event *event = zalloc((sizeof(event->mmap) +
+ 					  machine->id_hdr_size));
+ 	if (event == NULL) {
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index 66cc200ef86f..92303ac718a6 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -70,12 +70,24 @@ struct map *__machine__kernel_map(struct machine *machine, enum map_type type)
+ 	return machine->vmlinux_maps[type];
  }
  
- /*
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 1961e4bc1c2c..1b130b0a4a48 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -101,11 +101,11 @@ static inline struct map *thread__find_map(struct thread *thread, u8 cpumode,
- 	return __thread__find_map(thread, cpumode, MAP__FUNCTION, addr, al);
- }
- 
--void __thread__find_symbol(struct thread *thread, u8 cpumode, enum map_type type,
--			   u64 addr, struct addr_location *al);
-+struct symbol *__thread__find_symbol(struct thread *thread, u8 cpumode, enum map_type type,
-+				     u64 addr, struct addr_location *al);
- 
--static inline void thread__find_symbol(struct thread *thread, u8 cpumode,
--				       u64 addr, struct addr_location *al)
-+static inline struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
-+						 u64 addr, struct addr_location *al)
++/*
++ * The main kernel (vmlinux) map
++ */
+ static inline
+ struct map *machine__kernel_map(struct machine *machine)
  {
- 	return __thread__find_symbol(thread, cpumode, MAP__FUNCTION, addr, al);
+ 	return __machine__kernel_map(machine, MAP__FUNCTION);
  }
-diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
-index 4662590ef091..2afb22b0a1a9 100644
---- a/tools/perf/util/unwind-libunwind-local.c
-+++ b/tools/perf/util/unwind-libunwind-local.c
-@@ -584,11 +584,9 @@ static int entry(u64 ip, struct thread *thread,
- 	struct unwind_entry e;
- 	struct addr_location al;
  
--	thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
--
-+	e.sym = thread__find_symbol(thread, PERF_RECORD_MISC_USER, ip, &al);
- 	e.ip = al.addr;
- 	e.map = al.map;
--	e.sym = al.sym;
++/*
++ * kernel (the one returned by machine__kernel_map()) plus kernel modules maps
++ */
++static inline
++struct maps *machine__kernel_maps(struct machine *machine)
++{
++	return &machine->kmaps.maps[MAP__FUNCTION];
++}
++
+ int machine__get_kernel_start(struct machine *machine);
  
- 	pr_debug("unwind: %s:ip = 0x%" PRIx64 " (0x%" PRIx64 ")\n",
- 		 al.sym ? al.sym->name : "''",
+ static inline u64 machine__kernel_start(struct machine *machine)
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index d5e2516d5981..50139764c6d7 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -161,8 +161,7 @@ static int kernel_get_symbol_address_by_name(const char *name, u64 *addr,
+ 
+ static struct map *kernel_get_module_map(const char *module)
+ {
+-	struct map_groups *grp = &host_machine->kmaps;
+-	struct maps *maps = &grp->maps[MAP__FUNCTION];
++	struct maps *maps = machine__kernel_maps(host_machine);
+ 	struct map *pos;
+ 
+ 	/* A file path -- this is an offline module */
 -- 
 2.14.3
