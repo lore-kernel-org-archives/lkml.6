@@ -1,118 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751268AbeEBCMF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 1 May 2018 22:12:05 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:37957 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750921AbeEBCMD (ORCPT
+        id S1751271AbeEBCSt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 1 May 2018 22:18:49 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:42923 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750766AbeEBCSr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 1 May 2018 22:12:03 -0400
-X-Google-Smtp-Source: AB8JxZq5ovz0hQakQG+nbO4JpvVW0UV8bz9q0DAs8phKWfPpa+tgAnhaSWqJqopyFnJUQvjxGtCwfYGdYWU8NPB65TppwNYLC1Aw
+        Tue, 1 May 2018 22:18:47 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Waiman Long <longman@redhat.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+References: <1524862838-8247-1-git-send-email-longman@redhat.com>
+Date: Tue, 01 May 2018 21:18:17 -0500
+In-Reply-To: <1524862838-8247-1-git-send-email-longman@redhat.com> (Waiman
+        Long's message of "Fri, 27 Apr 2018 17:00:30 -0400")
+Message-ID: <87po2ex0k6.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Date: Tue, 01 May 2018 19:12:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d3fc4d056b2f9ca2@google.com>
-Subject: WARNING in __snd_pcm_lib_xfer
-From: syzbot <syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com>
-To: alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        o-takashi@sakamocchi.jp, perex@perex.cz,
-        syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain
+X-XM-SPF: eid=1fDhLa-0007Dr-Th;;;mid=<87po2ex0k6.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX194fR8D97k8KGopeMkPAD/2gD+zliWQSiU=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4519]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Waiman Long <longman@redhat.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 719 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 3.0 (0.4%), b_tie_ro: 2.00 (0.3%), parse: 1.14 (0.2%),
+        extract_message_metadata: 3.9 (0.5%), get_uri_detail_list: 1.51 (0.2%),
+        tests_pri_-1000: 5 (0.7%), tests_pri_-950: 2.0 (0.3%), tests_pri_-900: 1.67
+        (0.2%), tests_pri_-400: 26 (3.6%), check_bayes: 24 (3.3%), b_tokenize: 10
+        (1.3%), b_tok_get_all: 6 (0.9%), b_comp_prob: 3.4 (0.5%), b_tok_touch_all:
+        1.91 (0.3%), b_finish: 0.78 (0.1%), tests_pri_0: 649 (90.2%),
+        check_dkim_signature: 0.81 (0.1%), check_dkim_adsp: 319 (44.4%),
+        tests_pri_500: 6 (0.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH v6 0/8] ipc: Clamp *mni to the real IPCMNI limit & increase that limit
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    fff75eb2a08c Merge tag 'errseq-v4.17' of  
-git://git.kernel.o...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?id=6530078334779392
-kernel config:   
-https://syzkaller.appspot.com/x/.config?id=6493557782959164711
-dashboard link: https://syzkaller.appspot.com/bug?extid=1dac3a4f6bc9c1c675d4
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller  
-repro:https://syzkaller.appspot.com/x/repro.syz?id=5691583680741376
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-IPVS: ftp: loaded support on port[0] = 21
-WARNING: CPU: 1 PID: 4520 at sound/core/pcm_lib.c:2057 pcm_sanity_check  
-sound/core/pcm_lib.c:2057 [inline]
-WARNING: CPU: 1 PID: 4520 at sound/core/pcm_lib.c:2057  
-__snd_pcm_lib_xfer+0x7c3/0x1d10 sound/core/pcm_lib.c:2122
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 4520 Comm: syz-executor0 Not tainted 4.17.0-rc3+ #52
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:pcm_sanity_check sound/core/pcm_lib.c:2057 [inline]
-RIP: 0010:__snd_pcm_lib_xfer+0x7c3/0x1d10 sound/core/pcm_lib.c:2122
-RSP: 0018:ffff8801d97b7898 EFLAGS: 00010293
-RAX: ffff8801ad00e0c0 RBX: ffff8801d965e100 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff85c3d333 RDI: ffff8801d965e418
-RBP: ffff8801d97b7b38 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000003 R11: 0000000000000000 R12: ffffffff884945c0
-R13: 0000000000000000 R14: ffff8801d965e100 R15: ffff8801cdd2c940
-  snd_pcm_lib_readv include/sound/pcm.h:1113 [inline]
-  snd_pcm_ioctl_xfern_compat+0x266/0x330 sound/core/pcm_compat.c:448
-  snd_pcm_ioctl_compat+0xc96/0x1c90 sound/core/pcm_compat.c:716
-  __do_compat_sys_ioctl fs/compat_ioctl.c:1461 [inline]
-  __se_compat_sys_ioctl fs/compat_ioctl.c:1407 [inline]
-  __ia32_compat_sys_ioctl+0x221/0x640 fs/compat_ioctl.c:1407
-  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
-  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f51cb9
-RSP: 002b:00000000ffafd6ac EFLAGS: 00000282 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000800c4153
-RDX: 0000000020000040 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> The sysctl parameters msgmni, shmmni and semmni have an inherent limit
+> of IPC_MNI (32k). However, users may not be aware of that because they
+> can write a value much higher than that without getting any error or
+> notification. Reading the parameters back will show the newly written
+> values which are not real.
+>
+> Enforcing the limit by failing sysctl parameter write, however, may
+> cause regressions if existing user setup scripts set those parameters
+> above 32k as those scripts will now fail in this case.
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+I have a serious problem with this approach.  Have you made any effort
+to identify any code that sets these values above 32k?  Have you looked
+to see if these applications actually care if you return an error when
+a value is set too large?
+
+Right now this seems like a lot of work to avoid breaking applications
+and or users that may or may not exist.  If you can find something that
+will care sure.  We need to avoid breaking userspace and causing
+regressions.  However as this stands it looks you are making maintenance
+of the kernel more difficult to avoid having to look to see if there are
+monsters under the bed.
+
+
+
+Eric
