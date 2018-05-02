@@ -1,99 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751294AbeEBKOC convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 06:14:02 -0400
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.114]:51937 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750942AbeEBKN7 (ORCPT
+        id S1751339AbeEBKOL (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 06:14:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40146 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbeEBKOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 06:13:59 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEKsWRWlGSWpSXmKPExsUSt3OpsW5q/8s
-  og/Y56hanWvawW0y7s5vV4srFQ0wWUx8+YbNonDGf1eLblQ4mi8u75rBZdO7qZ7XY8H0towOn
-  x4bPTWwerZf+snnMbrjI4rFz1l12j02rOtk89r1dxuaxfstVFo/Pm+QCOKJYM/OS8isSWDNWv
-  //IVHCBt6Lz2TaWBsbfXF2MXBxCAksYJbYeOcTaxcjJwSZgITH5xAM2EFtEIEKi495lNpAiZo
-  EpzBL9y/6zgySEgRJrl91jgiiKlGhcdogZwnaS6FtxBsxmEVCRaPi2EWwor0CAxNxLD1khtm1
-  ilNh2bAIjSIJTwEjiw4kZLCA2o4CsxJfG1WDNzALiEreezAdbICEgILFkz3lmCFtU4uXjf6wQ
-  trzE9m+/2SFse4nX996xQNj6Eo8eP2KEsA0lVk07ABU3l9iwbCc7xHwdiQW7P7FB2NoSyxa+Z
-  oY4VFDi5MwnLBMYxWchOWMWkpZZSFpmIWlZwMiyitEiqSgzPaMkNzEzR9fQwEDX0NBY10TXwk
-  QvsUo3SS+1VDc5Na+kKBEoqZdYXqxXXJmbnJOil5dasokRmBYYgGAH4/HpKYcYJTmYlER5V/m
-  +jBLiS8pPqcxILM6ILyrNSS0+xCjDwaEkwfuoFygnWJSanlqRlpkDTFAwaQkOHiUR3sw+oDRv
-  cUFibnFmOkTqFKOilDivBkhCACSRUZoH1wZLipcYZaWEeRmBDhHiKUgtys0sQZV/xSjOwagkz
-  KsGMoUnM68EbvoroMVMQIs/f30OsrgkESEl1cDoZJyl2x70//Zz5/Mnzvhvd2Y4rndzikGY0S
-  mmBbvmqH+TsO38uDz85eNIqcV/83yUOOSZzYrzZZv+ly02cL9s9EJ39t2eWeLLfZ+p5/8rtMt
-  0Mr5X2HUodPFlm+aCN9+OPvvV/0RR+IaP9cv6GRcb3We8fP+4Za/kUlfuLbkXP7G+jxfPZJBR
-  YinOSDTUYi4qTgQAjtv71oUDAAA=
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-37.tower-246.messagelabs.com!1525256037!198845!1
-X-Originating-IP: [94.185.165.51]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-To: Mark Brown <broonie@kernel.org>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-CC: Akshu Agrawal <akshu.agrawal@amd.com>,
-        "djkurtz@chromium.org" <djkurtz@chromium.org>,
-        "Alexander.Deucher@amd.com" <Alexander.Deucher@amd.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Jaroslav Kysela <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] ASoC: da7219: read fmw property to get mclk for
- non-dts systems
-Thread-Topic: [PATCH v2] ASoC: da7219: read fmw property to get mclk for
- non-dts systems
-Thread-Index: AQHT4GUsuHphZND160Sqg+RURjmwB6QZqjfggAGgMwCAAO2sQA==
-Date: Wed, 2 May 2018 10:13:55 +0000
-Message-ID: <2E89032DDAA8B9408CB92943514A0337014C1E9782@SW-EX-MBX01.diasemi.com>
-References: <1525080203-18947-1-git-send-email-akshu.agrawal@amd.com>
- <2E89032DDAA8B9408CB92943514A0337014C1E93BC@SW-EX-MBX01.diasemi.com>
- <20180501205006.GE2714@sirena.org.uk>
-In-Reply-To: <20180501205006.GE2714@sirena.org.uk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.20.24.43]
-x-kse-attachmentfiltering-interceptor-info: protection disabled
-x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
-x-kse-antivirus-interceptor-info: scan successful
-x-kse-antivirus-info: Clean, bases: 02/05/2018 07:47:00
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 2 May 2018 06:14:04 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 12B3F6028D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=gkohli@codeaurora.org
+Subject: Re: [PATCH v1] kthread/smpboot: Serialize kthread parking against
+ wakeup
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tglx@linutronix.de, mpe@ellerman.id.au, mingo@kernel.org,
+        bigeasy@linutronix.de, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Neeraj Upadhyay <neeraju@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>, Oleg Nesterov <oleg@redhat.com>
+References: <20180426085719.GW4129@hirez.programming.kicks-ass.net>
+ <4d3f68f8-e599-6b27-a2e8-9e96b401d57a@codeaurora.org>
+ <20180430111744.GE4082@hirez.programming.kicks-ass.net>
+ <3af3365b-4e3f-e388-8e90-45a3bd4120fd@codeaurora.org>
+ <20180501101845.GE12217@hirez.programming.kicks-ass.net>
+ <f134c8d8-e56f-bf29-0177-e6702ae79f2b@codeaurora.org>
+ <20180501113132.GF12217@hirez.programming.kicks-ass.net>
+ <745d762d-9ab3-0749-9b87-9bb03d913071@codeaurora.org>
+ <20180501131904.GG12217@hirez.programming.kicks-ass.net>
+ <9b289790-9b3a-73bd-7166-bf39f32cefd8@codeaurora.org>
+ <20180502082011.GB12180@hirez.programming.kicks-ass.net>
+From: "Kohli, Gaurav" <gkohli@codeaurora.org>
+Message-ID: <830d7225-af90-a55a-991a-bb2023d538f1@codeaurora.org>
+Date: Wed, 2 May 2018 15:43:52 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <20180502082011.GB12180@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01 May 2018 21:50, Mark Brown wrote:
 
-> On Mon, Apr 30, 2018 at 07:05:19PM +0000, Adam Thomson wrote:
+
+On 5/2/2018 1:50 PM, Peter Zijlstra wrote:
+> On Wed, May 02, 2018 at 10:45:52AM +0530, Kohli, Gaurav wrote:
+>> On 5/1/2018 6:49 PM, Peter Zijlstra wrote:
 > 
-> > There is already a means via DT to specify the MCLK for a device using the
-> > generic clock DT bindings, and this driver already uses that. Should ACPI not
-> > have something similar to that which is generic, rather than adding device
-> > specific bindings/properties to achieve the same? There will be other drivers
-> > that will want to do the same.
+>>>    - complete(&kthread->parked), which we can do inside schedule(); this
+>>>      solves the problem because then kthread_park() will not return early
+>>>      and the task really is blocked.
+>>
+>> I think complete will not help, as problem is like below :
+>>
+>> Control Thread                                CPUHP thread
+>> 					
+>> 					      cpuhp_thread_fun
+>> 					      Wake control thread
+>> 					      complete(&st->done);
+>>
+>> takedown_cpu
+>> kthread_park
+>> set_bit(KTHREAD_SHOULD_PARK
+>>
+>> 					     Here cpuhp is looping,
+>> 					//success case
+>> 					     Generally when issue is not
+>> 					     coming
+>> 					     it schedule out by below :
+>>                                             ht->thread_should_run(td->cpu
+>> 					      scheduler
+>> 					//failure case
+>> 					before schedule
+>> 					loop check
+>> 					(kthread_should_park()
+>> 				         enter here as PARKED set
+>>
+>> wake_up_process(k)
 > 
-> There's a lot of things that ACPI *should* do but doesn't - it's a bit
-> of a shambles how ACPI standards get defined and what's there is not
-> really intended to handle systems like these semi-embedded ones.  One of
-> the big gaps in ACPI is that it has no handling at all of clocks, that's
-> supposed to be done transparently by firmware in the ACPI model.  What a
-> lot of the embedded Intel people have been doing is coopting the DT
-> bindings wholesale for ACPI systems but that has problems when you get
-> into areas which should be handled in some way on ACPI systems like
-> power and unfortunately clocks are kind of power adjacent so might be a
-> bit sketchy here.
+> If k has TASK_PARKED, then wake_up_process() which uses TASK_NORMAL will
+> no-op, because:
+> 
+> 	TASK_PARKED & TASK_NORMAL == 0
+> 
+>> 					__kthread_parkme
+>> 					 complete(&self->parked);
+>> SETS RUNNING
+>> 		                         schedule			
+> 
+> But suppose, you do get that store, and we get to schedule with
+> TASK_RUNNING, then schedule will no-op and we'll go around the loop and
+> not complete.
+> 
+> See also: lkml.kernel.org/r/20180430111744.GE4082@hirez.programming.kicks-ass.net
+> 
+> Either TASK_RUNNING gets set before we do schedule() and we go around
+> again, re-set TASK_PARKED, resched the condition and re-call schedule(),
+> or we schedule() first and ttwu() will not issue the TASK_RUNNING store.
+> 
+> In either case, we'll eventually hit schedule() with TASK_PARKED. Then,
+> and only then will the complete() happen.
+> 
+>> wait_for_completion(&kthread->parked);
+> 
+> The point is, we'll only ever complete ^ that completion when we've
+> scheduled out the task in TASK_PARKED state. If the task didn't get
+> parked, no completion.
 
-Yes I was aware that previously that was the case, although have not followed
-this for a while. It just feels here that we should aim for something more
-generic rather than a device specific property/binding, if possible, as that
-feels messy to me and I'm sure other drivers could take advantage of this as
-well. I've not looked at the clock code in too much detail though, at least with
-regards to this area, so not sure how feasible that is.
+Thanks for the detailed explanation, yes in all cases unpark will 
+observe parked state only.
+> 
+> 
+> And that is the reason I like this approach above the others. It
+> guarantees the task really is parked when we ask for it. We don't have
+> to deal with the task still running and getting migrated to another CPU
+> nonsense.
+> 
 
-As a suggestion for ACPI would it be possible to re-use the 'clock-names'
-property and add something in the framework to handle this?
+-- 
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, 
+Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project.
