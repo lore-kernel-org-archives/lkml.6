@@ -1,76 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeEBLJ0 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 07:09:26 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44964 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751133AbeEBLJW (ORCPT
+        id S1751459AbeEBLKM (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 07:10:12 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36817 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751109AbeEBLKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 07:09:22 -0400
-X-Google-Smtp-Source: AB8JxZqn1uM7p5JWiq7Mt3J6tXxFlkdpmrFLP4ndd95kB2cYG7+PUzosceEXEZM2sOOGYos2I503Xw==
-Date: Wed, 2 May 2018 13:09:18 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH 0/5] kernel hacking: GCC optimization for debug
- experience (-Og)
-Message-ID: <20180502110917.wnat6cjxfbtrdh7t@gmail.com>
-References: <1525179614-14571-1-git-send-email-changbin.du@intel.com>
- <20180502073315.sso3aaak45aeuyst@gmail.com>
- <20180502090756.tztulppgfefccd7q@intel.com>
+        Wed, 2 May 2018 07:10:06 -0400
+X-Google-Smtp-Source: AB8JxZpP3+XddyAF79G8xlbG7URBwzhOvVnihF4vgBhnVKVjaNe+e+hOACnR8Whqwhji9yjLfGrxIQ==
+Date: Wed, 2 May 2018 13:10:02 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Colin King <colin.king@canonical.com>
+Cc: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpu: drm: sti: fix spelling mistake: "initialze" ->
+ "initialize"
+Message-ID: <20180502111002.GB12521@phenom.ffwll.local>
+Mail-Followup-To: Colin King <colin.king@canonical.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180502101048.8442-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180502090756.tztulppgfefccd7q@intel.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <20180502101048.8442-1-colin.king@canonical.com>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 02, 2018 at 11:10:48AM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in DRM_ERROR error message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-* Du, Changbin <changbin.du@intel.com> wrote:
+Applied to drm-misc-next, thanks.
+-Daniel
 
-> On Wed, May 02, 2018 at 09:33:15AM +0200, Ingo Molnar wrote:
-> > 
-> > * changbin.du@intel.com <changbin.du@intel.com> wrote:
-> > 
-> > > Comparison of system performance: a bit drop.
-> > > 
-> > >     w/o CONFIG_DEBUG_EXPERIENCE
-> > >     $ time make -j4
-> > >     real    6m43.619s
-> > >     user    19m5.160s
-> > >     sys     2m20.287s
-> > > 
-> > >     w/ CONFIG_DEBUG_EXPERIENCE
-> > >     $ time make -j4
-> > >     real    6m55.054s
-> > >     user    19m11.129s
-> > >     sys     2m36.345s
-> > 
-> > Sorry, that's not a proper kbuild performance measurement - there's no noise 
-> > estimation at all.
-> > 
-> > Below is a description that should produce more reliable numbers.
-> > 
-> > Thanks,
-> > 
-> > 	Ingo
-> >
-> Thanks for your suggestion, I will try your tips to eliminate noise. Since it is
-> tested in KVM guest, so I just reboot the guest before testing. But in host side
-> I still need to consider these noises.
+> ---
+>  drivers/gpu/drm/sti/sti_crtc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/sti/sti_crtc.c b/drivers/gpu/drm/sti/sti_crtc.c
+> index 21e50d7b1f86..5824e6aca8f4 100644
+> --- a/drivers/gpu/drm/sti/sti_crtc.c
+> +++ b/drivers/gpu/drm/sti/sti_crtc.c
+> @@ -357,7 +357,7 @@ int sti_crtc_init(struct drm_device *drm_dev, struct sti_mixer *mixer,
+>  	res = drm_crtc_init_with_planes(drm_dev, crtc, primary, cursor,
+>  					&sti_crtc_funcs, NULL);
+>  	if (res) {
+> -		DRM_ERROR("Can't initialze CRTC\n");
+> +		DRM_ERROR("Can't initialize CRTC\n");
+>  		return -EINVAL;
+>  	}
+>  
+> -- 
+> 2.17.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Please test the impact on the host, guest tests are typically too noisy for such 
-comparisons.
-
-BTW., for guest tests rebooting the guest is not enough to replicate the method I 
-suggested.
-
-Thanks,
-
-	Ingo
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
