@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751419AbeECH0B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:26:01 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:41267 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750939AbeECHZ5 (ORCPT
+        id S1751495AbeECH0N (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:26:13 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:44571 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751380AbeECH0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:25:57 -0400
-X-Google-Smtp-Source: AB8JxZqjl8OxLqcsXlJ0U1XRfSS+F9P+Sp2CPRy9oh+xfoR/Xz3/wd3U4iKZOj7P7PmAqVH6pMFyoXomQTZl44HGr7w=
+        Thu, 3 May 2018 03:26:00 -0400
+X-Google-Smtp-Source: AB8JxZpiCKXBMTCbAvq7X6ZBfvMA22Vm3SKfKlGLEaUoUma/1VxTIK87IDvS1+7t2C68seC8J7egeHCXn/MGrECSIOs=
 MIME-Version: 1.0
-In-Reply-To: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org>
-References: <S1751632AbeECEYA/20180503042400Z+254@vger.kernel.org>
+In-Reply-To: <S1752057AbeECEYP/20180503042418Z+1168@vger.kernel.org>
+References: <S1752057AbeECEYP/20180503042418Z+1168@vger.kernel.org>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 May 2018 09:25:56 +0200
-X-Google-Sender-Auth: wYVP_4XNH2wNi7K_IEGoU-ln_AQ
-Message-ID: <CAMuHMdUAxmVZLekekvVrnMbbL18oyY86sF9QX087idSqcKMiPQ@mail.gmail.com>
-Subject: Re: [PATCH net] macmace: Set platform device coherent_dma_mask
+Date: Thu, 3 May 2018 09:25:59 +0200
+X-Google-Sender-Auth: gFxoiVjfBst33hrsOC-YEfScMIA
+Message-ID: <CAMuHMdXyafqbhyXBeRmF7hCMbz=oU6K5qfq-FCu4FqUk3GOKpA@mail.gmail.com>
+Subject: Re: [PATCH net] macsonic: Set platform device coherent_dma_mask
 To: Finn Thain <fthain@telegraphics.com.au>
 Cc: "David S. Miller" <davem@davemloft.net>,
         linux-m68k <linux-m68k@vger.kernel.org>,
@@ -28,28 +28,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Finn,
 
-On Thu, May 3, 2018 at 6:23 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
+On Thu, May 3, 2018 at 6:24 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
 > Set the device's coherent_dma_mask to avoid a WARNING splat.
 > Please see commit 205e1b7f51e4 ("dma-mapping: warn when there is
 > no coherent_dma_mask").
 >
 > Cc: linux-m68k@lists.linux-m68k.org
-> Tested-by: Stan Johnson <userm57@yahoo.com>
 > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
 
 Thanks for your patch!
 
-> --- a/drivers/net/ethernet/apple/macmace.c
-> +++ b/drivers/net/ethernet/apple/macmace.c
-> @@ -203,6 +203,10 @@ static int mace_probe(struct platform_device *pdev)
->         unsigned char checksum = 0;
+> --- a/drivers/net/ethernet/natsemi/macsonic.c
+> +++ b/drivers/net/ethernet/natsemi/macsonic.c
+> @@ -523,6 +523,10 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
+>         struct sonic_local *lp;
 >         int err;
 >
 > +       err = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
 > +       if (err)
 > +               return err;
 > +
->         dev = alloc_etherdev(PRIV_BYTES);
+>         dev = alloc_etherdev(sizeof(struct sonic_local));
 >         if (!dev)
 >                 return -ENOMEM;
 
