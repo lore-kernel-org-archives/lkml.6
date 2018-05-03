@@ -1,137 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeECNPZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:15:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54913 "EHLO mx2.suse.de"
+        id S1751253AbeECNQw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:16:52 -0400
+Received: from 8bytes.org ([81.169.241.247]:54522 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751069AbeECNPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:15:21 -0400
-Date: Thu, 3 May 2018 15:15:18 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
-        npiggin@gmail.com
-Subject: Re: [PATCH 3/6] powerpc/64s: Patch barrier_nospec in modules
-Message-ID: <20180503151518.00a2ede0@kitsune.suse.cz>
-In-Reply-To: <20180424041559.32410-3-mpe@ellerman.id.au>
-References: <20180424041559.32410-1-mpe@ellerman.id.au>
-        <20180424041559.32410-3-mpe@ellerman.id.au>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1750922AbeECNQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:16:49 -0400
+Date: Thu, 3 May 2018 15:16:48 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+Cc: alex.williamson@redhat.com, eric.auger@redhat.com,
+        pmorel@linux.vnet.ibm.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linuxarm@huawei.com, john.garry@huawei.com, xuwei5@hisilicon.com
+Subject: Re: [PATCH v6 4/7] iommu/dma: Move PCI window region reservation
+ back into dma specific path.
+Message-ID: <20180503131648.GX15462@8bytes.org>
+References: <20180418114045.7968-1-shameerali.kolothum.thodi@huawei.com>
+ <20180418114045.7968-5-shameerali.kolothum.thodi@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180418114045.7968-5-shameerali.kolothum.thodi@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Apr 2018 14:15:56 +1000
-Michael Ellerman <mpe@ellerman.id.au> wrote:
-
-> From: Michal Suchanek <msuchanek@suse.de>
+On Wed, Apr 18, 2018 at 12:40:42PM +0100, Shameer Kolothum wrote:
+> This pretty much reverts commit 273df9635385 ("iommu/dma: Make PCI
+> window reservation generic")  by moving the PCI window region
+> reservation back into the dma specific path so that these regions
+> doesn't get exposed via the IOMMU API interface. With this change,
+> the vfio interface will report only iommu specific reserved regions
+> to the user space.
 > 
-> Note that unlike RFI which is patched only in kernel the nospec state
-> reflects settings at the time the module was loaded.
-> 
-> Iterating all modules and re-patching every time the settings change
-> is not implemented.
-> 
-> Based on lwsync patching.
-> 
-> Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 > ---
->  arch/powerpc/include/asm/setup.h  |  6 ++++++
->  arch/powerpc/kernel/module.c      |  6 ++++++
->  arch/powerpc/lib/feature-fixups.c | 16 +++++++++++++---
->  3 files changed, 25 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/setup.h
-> b/arch/powerpc/include/asm/setup.h index afc7280cce3b..4335cddc1cf2
-> 100644 --- a/arch/powerpc/include/asm/setup.h
-> +++ b/arch/powerpc/include/asm/setup.h
-> @@ -54,6 +54,12 @@ void setup_rfi_flush(enum l1d_flush_type, bool
-> enable); void do_rfi_flush_fixups(enum l1d_flush_type types);
->  void do_barrier_nospec_fixups(bool enable);
->  
-> +#ifdef CONFIG_PPC_BOOK3S_64
-> +void do_barrier_nospec_fixups_range(bool enable, void *start, void
-> *end); +#else
-> +static inline void do_barrier_nospec_fixups_range(bool enable, void
-> *start, void *end) { }; +#endif
-> +
->  #endif /* !__ASSEMBLY__ */
->  
->  #endif	/* _ASM_POWERPC_SETUP_H */
-> diff --git a/arch/powerpc/kernel/module.c
-> b/arch/powerpc/kernel/module.c index 3f7ba0f5bf29..a72698cd3dd0 100644
-> --- a/arch/powerpc/kernel/module.c
-> +++ b/arch/powerpc/kernel/module.c
-> @@ -72,6 +72,12 @@ int module_finalize(const Elf_Ehdr *hdr,
->  		do_feature_fixups(powerpc_firmware_features,
->  				  (void *)sect->sh_addr,
->  				  (void *)sect->sh_addr +
-> sect->sh_size); +
-> +	sect = find_section(hdr, sechdrs, "__spec_barrier_fixup");
-> +	if (sect != NULL)
-> +		do_barrier_nospec_fixups_range(true,
+>  drivers/iommu/dma-iommu.c | 54 ++++++++++++++++++++++-------------------------
+>  1 file changed, 25 insertions(+), 29 deletions(-)
 
-This saves a global but always patches modules with the ORI
-flush. The patching also produces a log message which can be confusing
-to the user. Even when barrier is disabled "barrier-nospec: using ORI
-speculation barrier" is logged when modules are loaded.
+Applied to my iommu/fixes branch.
 
-For consistency when debugging the settings I would suggest to keep the
-export.
+Thanks,
 
-It is also no longer consistent with the commit message.
-
-Thanks
-
-Michal
-
-> +				  (void *)sect->sh_addr,
-> +				  (void *)sect->sh_addr +
-> sect->sh_size); #endif
->  
->  	sect = find_section(hdr, sechdrs, "__lwsync_fixup");
-> diff --git a/arch/powerpc/lib/feature-fixups.c
-> b/arch/powerpc/lib/feature-fixups.c index 093c1d2ea5fd..3b37529f82f8
-> 100644 --- a/arch/powerpc/lib/feature-fixups.c
-> +++ b/arch/powerpc/lib/feature-fixups.c
-> @@ -163,14 +163,14 @@ void do_rfi_flush_fixups(enum l1d_flush_type
-> types) : "unknown");
->  }
->  
-> -void do_barrier_nospec_fixups(bool enable)
-> +void do_barrier_nospec_fixups_range(bool enable, void *fixup_start,
-> void *fixup_end) {
->  	unsigned int instr, *dest;
->  	long *start, *end;
->  	int i;
->  
-> -	start = PTRRELOC(&__start___barrier_nospec_fixup),
-> -	end = PTRRELOC(&__stop___barrier_nospec_fixup);
-> +	start = fixup_start;
-> +	end = fixup_end;
->  
->  	instr = 0x60000000; /* nop */
->  
-> @@ -189,6 +189,16 @@ void do_barrier_nospec_fixups(bool enable)
->  	printk(KERN_DEBUG "barrier-nospec: patched %d locations\n",
-> i); }
->  
-> +void do_barrier_nospec_fixups(bool enable)
-> +{
-> +	void *start, *end;
-> +
-> +	start = PTRRELOC(&__start___barrier_nospec_fixup),
-> +	end = PTRRELOC(&__stop___barrier_nospec_fixup);
-> +
-> +	do_barrier_nospec_fixups_range(enable, start, end);
-> +}
-> +
->  #endif /* CONFIG_PPC_BOOK3S_64 */
->  
->  void do_lwsync_fixups(unsigned long value, void *fixup_start, void
-> *fixup_end)
+	Joerg
