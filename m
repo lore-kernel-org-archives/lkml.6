@@ -1,121 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751301AbeECTsj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 15:48:39 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42964 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751178AbeECTsi (ORCPT
+        id S1751412AbeECTtC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 15:49:02 -0400
+Received: from mail-yw0-f181.google.com ([209.85.161.181]:44491 "EHLO
+        mail-yw0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751178AbeECTs7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 15:48:38 -0400
-Smtp-Origin-Hostprefix: devbig
-From: Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To: <linux-kernel@vger.kernel.org>
-CC: Song Liu <songliubraving@fb.com>, <kernel-team@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH] perf: fix group with mixed hw and sw events
-Date: Thu, 3 May 2018 12:47:16 -0700
-Message-ID: <20180503194716.162815-1-songliubraving@fb.com>
-X-Mailer: git-send-email 2.9.5
-X-FB-Internal: Safe
+        Thu, 3 May 2018 15:48:59 -0400
+X-Google-Smtp-Source: AB8JxZrQUYqgnbAn9l+5dhud4EMfE6b6zxJcOmKNGXfT6xXWhhg/ejzCS+KrK49KsKhp7GaVTT65/elJu/u0upzpjQs=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CAOssrKd+EjBYWMmGxVSCKQmFWhBf99eic4XLJ0YhZu3r0Kad5g@mail.gmail.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-20-mszeredi@redhat.com>
+ <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com> <CAOssrKd+EjBYWMmGxVSCKQmFWhBf99eic4XLJ0YhZu3r0Kad5g@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 3 May 2018 22:48:58 +0300
+Message-ID: <CAOQ4uxjkf4Sv4c56HLTxuSov4eFqskhyv9V1Q_OAz4pp1GqpHA@mail.gmail.com>
+Subject: Re: [RFC PATCH 19/35] ovl: readd reflink/copyfile/dedup support
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When hw and sw events are mixed in the same group, they are all attached
-to the hw perf_event_context. This sometimes requires moving group of
-perf_event to a different context. We found an issue in the moving. Here
-is an example of it.
+On Thu, May 3, 2018 at 7:04 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> On Tue, Apr 17, 2018 at 10:31 PM, Amir Goldstein <amir73il@gmail.com> wrote:
+>> On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+>>> Since set of arguments are so similar, handle in a common helper.
+>>>
+>>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>>> ---
+>>>  fs/overlayfs/file.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>>  1 file changed, 79 insertions(+)
+>>>
+>>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>>> index 9670e160967e..39b1b73334ad 100644
+>>> --- a/fs/overlayfs/file.c
+>>> +++ b/fs/overlayfs/file.c
+>>> @@ -352,6 +352,81 @@ long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>>>         return ret;
+>>>  }
+>>>
+>>> +enum ovl_copyop {
+>>> +       OVL_COPY,
+>>> +       OVL_CLONE,
+>>> +       OVL_DEDUPE,
+>>> +};
+>>> +
+>>> +static ssize_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+>>> +                           struct file *file_out, loff_t pos_out,
+>>> +                           u64 len, unsigned int flags, enum ovl_copyop op)
+>>> +{
+>>> +       struct inode *inode_out = file_inode(file_out);
+>>> +       struct fd real_in, real_out;
+>>> +       const struct cred *old_cred;
+>>> +       int ret;
+>>> +
+>>> +       ret = ovl_real_file(file_out, &real_out);
+>>> +       if (ret)
+>>> +               return ret;
+>>> +
+>>> +       ret = ovl_real_file(file_in, &real_in);
+>>> +       if (ret) {
+>>> +               fdput(real_out);
+>>> +               return ret;
+>>> +       }
+>>> +
+>>> +       old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
+>>> +       switch (op) {
+>>> +       case OVL_COPY:
+>>> +               ret = vfs_copy_file_range(real_in.file, pos_in,
+>>> +                                         real_out.file, pos_out, len, flags);
+>>
+>> Problem:
+>> vfs_copy_file_range(ovl_lower_file, ovl_upper_file) on non samefs
+>> will get -EXDEV from  ovl_copy_file_range(), so will not fall back
+>> to do_splice_direct().
+>
+> This is not a regression, right?
 
-   perf stat -e '{faults,ref-cycles,faults}'  -I 1000
+Right.
 
-     1.005591180              1,297      faults
-     1.005591180        457,476,576      ref-cycles
-     1.005591180    <not supported>      faults
+>
+>> We may be better off checking in_sb != out_sb and returning
+>> -EOPNOTSUPP? not sure.
+>
+> I think we should fix vfs_copy_file_range() to fall back to copying if
+> not on the same fs.   Not sure why it doesn't do that now.
+>
 
-First, sw event "faults" is attached to the sw context, and become the
-group leader. Then, hw event "ref-cycles" is attached, so both events
-are moved to hw context. Last, another sw "faults" tries to attach,
-but it fails because of mismatch between the new target ctx (from sw
-pmu) and the group_leader's ctx (hw context, same as ref-cycles).
+There seems to be a posting to fix that as we speak...
 
-The broken condition is:
-   group_leader is sw event;
-   group_leader is on hw context;
-   add a sw event to the group.
+I seem to recall some flames from hch about a similar change
+that NFS folks where trying to push for. Let's see how this one goes.
 
-This patch fixes this scenario by checking group_leader's context
-(instead of just event type). If group_leader is on hw context, use
-pmu of this context to look up context for the new event.
 
-Fixes: b04243ef7006 ("perf: Complete software pmu grouping")
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- include/linux/perf_event.h |  8 ++++++++
- kernel/events/core.c       | 21 +++++++++++----------
- 2 files changed, 19 insertions(+), 10 deletions(-)
+>>
+>>
+>>> +               break;
+>>> +
+>>> +       case OVL_CLONE:
+>>> +               ret = vfs_clone_file_range(real_in.file, pos_in,
+>>> +                                          real_out.file, pos_out, len);
+>>> +               break;
+>>> +
+>>> +       case OVL_DEDUPE:
+>>> +               ret = vfs_dedupe_file_range_one(real_in.file, pos_in, len,
+>>> +                                               real_out.file, pos_out);
+>>
+>> Problem:
+>> real_out can be a readonly fd (for is_admin), so we will be deduping
+>> the lower file.
+>
+> Ugh...
+>
+>> I guess this problem is mitigated in current code by may_write_real().
+>>
+>> How can we deal with that sort of "write leak" without patching
+>>  mnt_want_write_file()?
+>
+> We need to check before calling dedupe on real files that both are on upper.
+>
+> My problem is what error code to return.  Neither EXDEV nor EINVAL
+> descibe the error adequately.  It should be "We could dedupe if we
+> really wanted to, but it makes no sense to do so"...  So now it
+> returns -EBADE, which means "data was different", but at least that
+> one should at least be expected by callers.
+>
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index e71e99e..def866f 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1016,6 +1016,14 @@ static inline int is_software_event(struct perf_event *event)
- 	return event->event_caps & PERF_EV_CAP_SOFTWARE;
- }
- 
-+/*
-+ * Return 1 for event in sw context, 0 for event in hw context
-+ */
-+static inline int in_software_context(struct perf_event *event)
-+{
-+	return event->ctx->pmu->task_ctx_nr == perf_sw_context;
-+}
-+
- extern struct static_key perf_swevent_enabled[PERF_COUNT_SW_MAX];
- 
- extern void ___perf_sw_event(u32, u64, struct pt_regs *, u64);
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 67612ce..ce6aa5f 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -10521,19 +10521,20 @@ SYSCALL_DEFINE5(perf_event_open,
- 	if (pmu->task_ctx_nr == perf_sw_context)
- 		event->event_caps |= PERF_EV_CAP_SOFTWARE;
- 
--	if (group_leader &&
--	    (is_software_event(event) != is_software_event(group_leader))) {
--		if (is_software_event(event)) {
-+	if (group_leader) {
-+		if (is_software_event(event) &&
-+		    !in_software_context(group_leader)) {
- 			/*
--			 * If event and group_leader are not both a software
--			 * event, and event is, then group leader is not.
-+			 * If the event is a sw event, but the group_leader
-+			 * is on hw context.
- 			 *
--			 * Allow the addition of software events to !software
--			 * groups, this is safe because software events never
--			 * fail to schedule.
-+			 * Allow the addition of software events to hw
-+			 * groups, this is safe because software events
-+			 * never fail to schedule.
- 			 */
--			pmu = group_leader->pmu;
--		} else if (is_software_event(group_leader) &&
-+			pmu = group_leader->ctx->pmu;
-+		} else if (!is_software_event(event) &&
-+			   is_software_event(group_leader) &&
- 			   (group_leader->group_caps & PERF_EV_CAP_SOFTWARE)) {
- 			/*
- 			 * In case the group is a pure software group, and we
--- 
-2.9.5
+EPERM  dest_fd is immutable
+
+Which exactly what may_write_real() returns today.
+
+Thanks,
+Amir.
