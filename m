@@ -1,280 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751789AbeECJhu (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:37:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41236 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751591AbeECJhk (ORCPT
+        id S1751809AbeECJiO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:38:14 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:23335 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751145AbeECJgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:37:40 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 479EA6037B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-Subject: Re: [PATCH RFC 1/4] mmc: host: Register changes for sdcc V5
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Jeremy McNicoll <jeremymc@redhat.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>, vbadigan@codeaurora.org,
-        Doug Anderson <dianders@google.com>, sayalil@codeaurora.org
-References: <1525171153-24476-1-git-send-email-vviswana@codeaurora.org>
- <1525171153-24476-2-git-send-email-vviswana@codeaurora.org>
- <CAPDyKFq9vbCB_g+JYDPnm3M1yuZ3wTv3oq-zBDgo1ev+3bFLSw@mail.gmail.com>
-From: Vijay Viswanath <vviswana@codeaurora.org>
-Message-ID: <84491eb7-307f-f681-7a02-4ad36f272b60@codeaurora.org>
-Date: Thu, 3 May 2018 15:07:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 3 May 2018 05:36:33 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfyq4sHQ=="
+X-RZG-CLASS-ID: mo00
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+To: Johan Hovold <johan@kernel.org>, afd@ti.com,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>, Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 0/6] gnss: special driver for Wi2Wi w2sg0004 GPS module on GTA04 board
+Date: Thu,  3 May 2018 11:35:45 +0200
+Message-Id: <cover.1525340143.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFq9vbCB_g+JYDPnm3M1yuZ3wTv3oq-zBDgo1ev+3bFLSw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes V7:
+* propose a separate and dedicated driver because the w2sg0004 is quite special
+* moved all code to drivers/gnss
+* adapted to make use of the newly proposed gnss framework
+* dropped support for w2sg0084(i) with WAKEUP feedback because that
+  case is covered by the sirfstar driver
+NOTE: must beapplied on top of GNSS framework
 
+Changes V6: -- was not posted --
+* worked in some feedbacks by Johan Hovold:
+  risk of rfkill race, use gpiod, fix typos
+* make consistent use of bool type
+* factor out creation of user-space tty interface into a "gps-core"
+  to make the chip driver code independent of such core features
+  (originally suggested by Andrew F. Davis)
 
-On 5/2/2018 1:58 PM, Ulf Hansson wrote:
-> On 1 May 2018 at 12:39, Vijay Viswanath <vviswana@codeaurora.org> wrote:
->> From: Sayali Lokhande <sayalil@codeaurora.org>
->>
->> For SDCC version 5.0.0, MCI registers are removed from SDCC
->> interface and some registers are moved to HC. This change is
->> to support MCI register removal for msmfalcon. New compatible
->> string "qcom,sdhci-msm-v5" is added for msmfalcon to support
->> this change.
-> 
-> To simplify review, I would recommend to split this up in a few more
-> pieces, a few re-factoring while the final change adds the
-> qcom,sdhci-msm-v5 support.
-> 
+2017-12-01 08:49:41: Changes V5:
+* clarified to keep it in drivers/misc and not create a new group drivers/gps
+* fix formatting of new entry in omap3-gta04.dtsi (suggested by Tony Lindgren)
+* removed MODULE_ALIAS (suggested by Andrew F. Davis)
+* some more formatting, code&style fixes (suggested by Andrew F. Davis)
+* apply __maybe_unused for PM (suggested by Andrew F. Davis)
+* fixed copyright and author records (suggested by Andrew F. Davis)
 
-Will do
+2017-11-15 22:38:01: Changes V4:
+* removed all pdata remains (suggested by Arnd Bergmann and Rob Herring)
+* fixed minor issues and subject/commit messages (suggested by Rob Herring)
+* added one missing Signed-off-By: (suggested by Andreas Färber)
+* added SPDX header (suggested by Rob Herring)
 
->>
->> Change-Id: I0febfd9bb2222436a8eff20c20107dd4180c9781
->> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
->> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->> ---
->>   .../devicetree/bindings/mmc/sdhci-msm.txt          |   5 +-
-> 
-> Please move DT changes into separate patches and make sure to sent it
-> to DT maintainers as well.
-> 
->>   drivers/mmc/host/sdhci-msm.c                       | 485 +++++++++++++++------
->>   2 files changed, 365 insertions(+), 125 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> index bfdcdc4..c2b7b2b 100644
->> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> @@ -4,7 +4,10 @@ This file documents differences between the core properties in mmc.txt
->>   and the properties used by the sdhci-msm driver.
->>
->>   Required properties:
->> -- compatible: Should contain "qcom,sdhci-msm-v4".
->> +- compatible: Should contain "qcom,sdhci-msm-v4" or "qcom,sdhci-msm-v5".
->> +                For SDCC version 5.0.0, MCI registers are removed from SDCC
->> +                interface and some registers are moved to HC. New compatible
->> +                string is added to support this change - "qcom,sdhci-msm-v5".
->>   - reg: Base address and length of the register in the following order:
->>          - Host controller register map (required)
->>          - SD Core register map (required)
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index bb11916..d4d432b 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
-> 
-> [...]
-> 
->>
->> +struct sdhci_msm_offset {
-> 
-> I think a better idea is to create a struct sdhci_msm_variant and make
-> it contain all the variant specific data. So, not only the offsets,
-> but other variant data as well.
-> 
-> More comments below.
-> 
->> +       u32 core_mci_data_cnt;
->> +       u32 core_mci_status;
->> +       u32 core_mci_fifo_cnt;
->> +       u32 core_mci_version;
->> +       u32 core_generics;
->> +       u32 core_testbus_config;
->> +       u32 core_testbus_sel2_bit;
->> +       u32 core_testbus_ena;
->> +       u32 core_testbus_sel2;
->> +       u32 core_pwrctl_status;
->> +       u32 core_pwrctl_mask;
->> +       u32 core_pwrctl_clear;
->> +       u32 core_pwrctl_ctl;
->> +       u32 core_sdcc_debug_reg;
->> +       u32 core_dll_config;
->> +       u32 core_dll_status;
->> +       u32 core_vendor_spec;
->> +       u32 core_vendor_spec_adma_err_addr0;
->> +       u32 core_vendor_spec_adma_err_addr1;
->> +       u32 core_vendor_spec_func2;
->> +       u32 core_vendor_spec_capabilities0;
->> +       u32 core_ddr_200_cfg;
->> +       u32 core_vendor_spec3;
->> +       u32 core_dll_config_2;
->> +       u32 core_ddr_config;
->> +       u32 core_ddr_config_2;
->> +};
->> +
->> +struct sdhci_msm_offset sdhci_msm_offset_mci_removed = {
->> +       .core_mci_data_cnt = 0x35c,
->> +       .core_mci_status = 0x324,
->> +       .core_mci_fifo_cnt = 0x308,
->> +       .core_mci_version = 0x318,
->> +       .core_generics = 0x320,
->> +       .core_testbus_config = 0x32c,
->> +       .core_testbus_sel2_bit = 3,
->> +       .core_testbus_ena = (1 << 31),
->> +       .core_testbus_sel2 = (1 << 3),
->> +       .core_pwrctl_status = 0x240,
->> +       .core_pwrctl_mask = 0x244,
->> +       .core_pwrctl_clear = 0x248,
->> +       .core_pwrctl_ctl = 0x24c,
->> +       .core_sdcc_debug_reg = 0x358,
->> +       .core_dll_config = 0x200,
->> +       .core_dll_status = 0x208,
->> +       .core_vendor_spec = 0x20c,
->> +       .core_vendor_spec_adma_err_addr0 = 0x214,
->> +       .core_vendor_spec_adma_err_addr1 = 0x218,
->> +       .core_vendor_spec_func2 = 0x210,
->> +       .core_vendor_spec_capabilities0 = 0x21c,
->> +       .core_ddr_200_cfg = 0x224,
->> +       .core_vendor_spec3 = 0x250,
->> +       .core_dll_config_2 = 0x254,
->> +       .core_ddr_config = 0x258,
->> +       .core_ddr_config_2 = 0x25c,
->> +};
->> +
->> +struct sdhci_msm_offset sdhci_msm_offset_mci_present = {
->> +       .core_mci_data_cnt = 0x30,
->> +       .core_mci_status = 0x34,
->> +       .core_mci_fifo_cnt = 0x44,
->> +       .core_mci_version = 0x050,
->> +       .core_generics = 0x70,
->> +       .core_testbus_config = 0x0CC,
->> +       .core_testbus_sel2_bit = 4,
->> +       .core_testbus_ena = (1 << 3),
->> +       .core_testbus_sel2 = (1 << 4),
->> +       .core_pwrctl_status = 0xDC,
->> +       .core_pwrctl_mask = 0xE0,
->> +       .core_pwrctl_clear = 0xE4,
->> +       .core_pwrctl_ctl = 0xE8,
->> +       .core_sdcc_debug_reg = 0x124,
->> +       .core_dll_config = 0x100,
->> +       .core_dll_status = 0x108,
->> +       .core_vendor_spec = 0x10C,
->> +       .core_vendor_spec_adma_err_addr0 = 0x114,
->> +       .core_vendor_spec_adma_err_addr1 = 0x118,
->> +       .core_vendor_spec_func2 = 0x110,
->> +       .core_vendor_spec_capabilities0 = 0x11C,
->> +       .core_ddr_200_cfg = 0x184,
->> +       .core_vendor_spec3 = 0x1B0,
->> +       .core_dll_config_2 = 0x1B4,
->> +       .core_ddr_config = 0x1B8,
->> +       .core_ddr_config_2 = 0x1BC,
->> +};
->> +
->>   struct sdhci_msm_host {
->>          struct platform_device *pdev;
->>          void __iomem *core_mem; /* MSM SDCC mapped address */
->> @@ -156,8 +232,72 @@ struct sdhci_msm_host {
->>          wait_queue_head_t pwr_irq_wait;
->>          bool pwr_irq_flag;
->>          u32 caps_0;
->> +       bool mci_removed;
->> +       const struct sdhci_msm_offset *offset;
->>   };
->>
->> +/*
->> + * APIs to write to vendor specific registers which were there in the core_mem
->> + * region before MCI was removed.
->> + */
->> +u8 sdhci_msm_vendor_readb_relaxed(struct sdhci_host *host, u32 offset)
->> +{
->> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +       struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->> +       void __iomem *base_addr;
->> +
->> +       if (msm_host->mci_removed)
->> +               base_addr = host->ioaddr;
-> 
-> I would rather use a separate set of functions, which you assign at ->probe().
-> 
-> That may speed things up a little bit, as you don't need to check for
-> "mci_removed", each time in these read/write functions.
-> 
->> +       else
->> +               base_addr = msm_host->core_mem;
->> +
->> +       return readb_relaxed(base_addr + offset);
->> +}
-> 
-> [...]
-> 
->>   static const struct of_device_id sdhci_msm_dt_match[] = {
->>          { .compatible = "qcom,sdhci-msm-v4" },
->> +       {.compatible = "qcom,sdhci-msm-v5"},
->>          {},
->>   };
->>
->> @@ -1430,6 +1651,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->>          u16 host_version, core_minor;
->>          u32 core_version, config;
->>          u8 core_major;
->> +       const struct sdhci_msm_offset *msm_offset;
->>
->>          host = sdhci_pltfm_init(pdev, &sdhci_msm_pdata, sizeof(*msm_host));
->>          if (IS_ERR(host))
->> @@ -1445,6 +1667,15 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->>          if (ret)
->>                  goto pltfm_free;
->>
->> +       if (of_find_compatible_node(NULL, NULL, "qcom,sdhci-msm-v5")) {
->> +               msm_host->mci_removed = true;
->> +               msm_host->offset = &sdhci_msm_offset_mci_removed;
-> 
-> I would suggest to extend your array of "struct of_device_id" to use
-> the .data member to store all the variant specific data (such as the
-> offsets for example).
-> 
-> Then you can use of_device_get_match_data(), to get the variant data.
-> 
->> +       } else {
->> +               msm_host->mci_removed = false;
->> +               msm_host->offset = &sdhci_msm_offset_mci_present;
->> +       }
->> +       msm_offset = msm_host->offset;
->> +
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+2017-11-15 16:19:17: Changes V3:
+* worked in suggestions by kbuild test robot
+* added misc+serdev to the subject
 
-I will explore the approach you suggested and will get back to you.
+2017-11-12 22:00:02: Changes V2:
+* reduced to submit only w2sg00x4 GPS driver code
+* add DT node for GTA04 device to make use of the driver
+* split into base code and a debugging Kconfig option (brings device into false power state after boot)
+* worked in comments by kbuild robot and Rob Herring
 
-Thanks,
-Vijay
+2017-05-21 12:44:07: RFC V1
+* RFC concerning new serdev based drivers for Wi2Wi w2sg00x4 GPS module and w2cbw003 bluetooth
+
+Years long history of getting this devices supported (original work by Neil Brown).
+
+H. Nikolaus Schaller (6):
+  dt-bindings: define vendor prefix for Wi2Wi, Inc.
+  dt-bindings: gnss: add w2sg0004 bindings documentation
+  DTS: gta04: add uart2 child node for w2sg0004 GPS receiver
+  misc gnss serdev: Add w2sg0004 power control driver
+  gnss: add w2sg0004 to Makefile
+  gnss: add w2sg0004 to Kconfig
+
+ .../devicetree/bindings/gnss/wi2wi,w2sg0004.txt    |  23 ++
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ arch/arm/boot/dts/omap3-gta04.dtsi                 |   7 +
+ drivers/gnss/Kconfig                               |  10 +
+ drivers/gnss/Makefile                              |   3 +
+ drivers/gnss/w2sg0004.c                            | 435 +++++++++++++++++++++
+ 6 files changed, 479 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gnss/wi2wi,w2sg0004.txt
+ create mode 100644 drivers/gnss/w2sg0004.c
+
+-- 
+2.12.2
