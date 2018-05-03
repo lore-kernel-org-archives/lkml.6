@@ -1,90 +1,91 @@
-Return-Path: <sdias@codeaurora.org>
-X-Google-Smtp-Source: AB8JxZqYEtgx07ZYn2rVaVGaSxTdEjpPPIzdwBQ6infGUON1m8J/eHq5KiR5QkqleChKcf9ypAb8
-ARC-Seal: i=1; a=rsa-sha256; t=1525403107; cv=none;
+Return-Path: <maxime.ripard@bootlin.com>
+X-Google-Smtp-Source: AB8JxZrXvWW0XDSAyAp+vNZH/ht9YB0JiOhdYf0AN2g/2lQyP/Nwk0GE8Klp9q2lg2BgoRzGYt2K
+ARC-Seal: i=1; a=rsa-sha256; t=1525367651; cv=none;
         d=google.com; s=arc-20160816;
-        b=fuNGdyJHPZFKfGyO6fYjBylDqFwZiMlJGObO4aet7a99Lwli2gx8DUnHPul7V/H7aH
-         VyuzoG0VRoTxZuynoMkHLAu3kAi6cF1DbC3BJfC7W8u4PxFE5t24hDLcXYf7xqKV+KnG
-         x8MCuikeVKwurmPDOd+4PDhn5eV/DpoIjW3O8Q6BTJ8kDB32lQHorNPk0t4lxrh/Rw11
-         t2MMAfWa4qHkyHNixpBKOsf8tEFcZWvmzbQ8hR3gYP7mx+kfngQ+Rd8w+buQJ3WNE7zS
-         79+eckoZh7Zn0GrmAiyNTfhhuxaRfQszC/zo8GHzPXvmdHhrWpM6zw4Y7zgLgp3bEk0Z
-         KnFA==
+        b=mojQ6Zs+/GVPGYNO1WSg98gw4rw3M63BC1eq+LbU0keLyffHXF9eOre5t6ABXCljwY
+         DKBDX2V1qurfw4RPsG8X71psa+W++eRw+dBpyTT5H+xyXq2OnfGo32BnhWpFeXnODTpR
+         ZwVIztqtDJaOvOc+8nEca7zWGuq5M6YdnSr7Lez9+puVghQuEUrCqmEEUBuh/TrY6eA1
+         sEwAHgZNbPx7jgeK4mdysdflSdLdSobSPZS1bAMTML853UWe8PorzQuLVjk4u3AGG6sM
+         ZK73xlb94qaYCoCdqkhIpVGQb4lXvoaOcRFvRqI6OnXaVHw7khvUXl09q0OcbiI9j3OP
+         M95A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dmarc-filter:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=ajB3X5WyhdyzymMtootBRVBZEQXmyq/hoQ6v4Vcc00E=;
-        b=So7JuzOA64wCNmfJ+jE7UjH5UYuUsxoktxFW2HIG08phN+821gsOpo/JHuYD3VUzpp
-         o7f+3D6KUGQjQwFjVWBftOq0D+vW4oHlYj9LJ2eogENoOVtRKfYQ+DDqWKv6ou0M9J68
-         AAJD8rXsGXoIaVkp95Z9t4TDSpwT747ErSLy4XQcNCfFzSIMlOSSpjU6vwHWMXB5ftDp
-         PixLAQlSDZpiqIlCpBiVr7xecuwoiBGv2gi7+SftM30zBlUNOzsGust0yoE5UfTejRK4
-         uiyuCAZc5NEB+QoelOHP1xd8gcHBPuevc01IgaEBhqE5uJMbQtFXR7LHACIud5BgM5ZO
-         ufiQ==
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=N3/90tXBFD+WxXSm4cj0K7EVMmlFGyjbeym6+9iML2k=;
+        b=aG7WSZh+H3yoVEB+O1bcTxQ2nLyunetoE7+xu8Gt5Y58k7VpEz3zfRMGkLtURVFDOw
+         ZswW03CWmDwq628R6xFC4yFKwGcAZSprPCpZ84p7K0zPqYSVVzwip/adLlIWnjLUzwc6
+         NAXuThqDgntzg6611J6m8Ka4EVrj7TqsZ1H4WwtI5vpxeHwTn6QbOOUKepenPvaBgZIY
+         tKhutKF0whSHu1XlPGf8Fbf2s1m6ucrsdFyvfcrzeusm1kZTgEHHIK71QCibdDr5baXO
+         H3CsDE//w+4iu3ISzoFNUaLFgp31VS3huRn7NOLXz4ME7npecsDSnWeng1a5SPfwr5+x
+         fuXQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Q7w2T4/M;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Q7w2T4/M;
-       spf=pass (google.com: domain of sdias@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=sdias@codeaurora.org
+       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Q7w2T4/M;
-       dkim=pass header.i=@codeaurora.org header.s=default header.b=Q7w2T4/M;
-       spf=pass (google.com: domain of sdias@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=sdias@codeaurora.org
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org ECBE36028D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sdias@codeaurora.org
-Subject: Re: [PATCH v1 1/4] mhi_bus: core: Add support for MHI host interface
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Tony Truong <truong@codeaurora.org>
-References: <1524795811-21399-1-git-send-email-sdias@codeaurora.org>
- <1524795811-21399-2-git-send-email-sdias@codeaurora.org>
- <20180503192110.bjd46afhe2ein3qm@devuan>
-From: Sujeev Dias <sdias@codeaurora.org>
-Message-ID: <d7c9fdd2-6078-503a-517a-f20dd6d8098f@codeaurora.org>
-Date: Thu, 3 May 2018 20:05:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+       spf=pass (google.com: domain of maxime.ripard@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=maxime.ripard@bootlin.com
+Date: Thu, 3 May 2018 19:14:10 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Yong Deng <yong.deng@magewell.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Hans Verkuil <hans.verkuil@cisco.com>,
+	Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+	Yannick Fertre <yannick.fertre@st.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Todor Tomov <todor.tomov@linaro.org>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v9 0/2] Initial Allwinner V3s CSI Support
+Message-ID: <20180503171410.q52ak27u47gycy6o@flea>
+References: <1520301070-48769-1-git-send-email-yong.deng@magewell.com>
 MIME-Version: 1.0
-In-Reply-To: <20180503192110.bjd46afhe2ein3qm@devuan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1520301070-48769-1-git-send-email-yong.deng@magewell.com>
+User-Agent: NeoMutt/20180323
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598864306474861315?=
-X-GMAIL-MSGID: =?utf-8?q?1599501088778996966?=
+X-GMAIL-THRID: =?utf-8?q?1594151284000328035?=
+X-GMAIL-MSGID: =?utf-8?q?1599463910716590726?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Pavel
+Hi Yong,
 
+On Tue, Mar 06, 2018 at 09:51:10AM +0800, Yong Deng wrote:
+> This patchset add initial support for Allwinner V3s CSI.
+>=20
+> Allwinner V3s SoC features two CSI module. CSI0 is used for MIPI CSI-2
+> interface and CSI1 is used for parallel interface. This is not
+> documented in datasheet but by test and guess.
+>=20
+> This patchset implement a v4l2 framework driver and add a binding=20
+> documentation for it.=20
+>=20
+> Currently, the driver only support the parallel interface. And has been
+> tested with a BT1120 signal which generating from FPGA. The following
+> fetures are not support with this patchset:
+>   - ISP=20
+>   - MIPI-CSI2
+>   - Master clock for camera sensor
+>   - Power regulator for the front end IC
 
-On 05/03/2018 12:21 PM, Pavel Machek wrote:
-> Hi!
->
->> MHI Host Interface is a communication protocol to be used by the host
->> to control and communcate with modem over a high speed peripheral bus.
->> This module will allow host to communicate with external devices that
->> support MHI protocol.
-> I have Motorola Droid 4 cellphone here, with Qualcomm GSM modem. But
-> it talks over serial line and USB. I guess MHI is not applicable to my
-> hardware?
->
-MHI is for PCIe based modem, in any case I can't comment about 
-commercial devices.
->> +MHI Devices
->> +-----------
->> +Logical device that bind to maximum of two physical MHI channels. Once MHI is in
->> +powered on state, each supported channel by controller will be allocated as a
->> +mhi_device.
-> What kind of protocol is running over MHI? I guess its not AT
-> commands. QMI? Or something entirely different?
-All modem services between external modem and host go over MHI.
-So QMI, AT, all other data and control services go thru MHI host driver.
-> 									Pavel
+Do you plan on sending another version some time soon? It would be
+awesome to have this in 4.18.
 
-Thanks
-Sujeev
+Thanks!
+Maxime
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
