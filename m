@@ -1,118 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752047AbeECCoQ (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 22:44:16 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38663 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751940AbeECCoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 22:44:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="38019966"
-Subject: Re: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in irq
- handler
-To: Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, "Raj, Ashok" <ashok.raj@intel.com>
-References: <20180331003312.6390-1-dima@arista.com>
- <20180331003312.6390-2-dima@arista.com> <5AE95BFF.5040306@linux.intel.com>
- <1525264687.14025.20.camel@arista.com> <5AEA4E84.6050609@linux.intel.com>
- <1525308755.14025.25.camel@arista.com> <5AEA66BC.5050202@linux.intel.com>
- <1525312776.14025.29.camel@arista.com> <5AEA70FD.1010209@linux.intel.com>
- <1525314890.14025.38.camel@arista.com>
-Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        iommu@lists.linux-foundation.org
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5AEA777C.1060901@linux.intel.com>
-Date: Thu, 3 May 2018 10:44:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1752045AbeECCr2 (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 22:47:28 -0400
+Received: from mail-ot0-f180.google.com ([74.125.82.180]:46347 "EHLO
+        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751929AbeECCrZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 22:47:25 -0400
+X-Google-Smtp-Source: AB8JxZoCrmR8kktQ1eB1Aab94cTDZkk+ETD6d1knXrfeW94vmB+B5g3JHH1XPxFxh5iXS2kykKjysmHgt+1Yi0zrBhY=
 MIME-Version: 1.0
-In-Reply-To: <1525314890.14025.38.camel@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ac506aa3-e5f6-9bfa-a18b-441e04b21d97@infradead.org>
+References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
+ <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <25f6b309-9346-7e28-beeb-a37e69a91ce8@infradead.org>
+ <ac506aa3-e5f6-9bfa-a18b-441e04b21d97@infradead.org>
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Thu, 3 May 2018 04:47:24 +0200
+Message-ID: <CAFkk2KTE+h+UY83vvbFDgG9zcyNy4jZYg+-O3p1yOBmLH-K9Xw@mail.gmail.com>
+Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w432lZLF015280
 
-Hi,
-
-On 05/03/2018 10:34 AM, Dmitry Safonov wrote:
-> On Thu, 2018-05-03 at 10:16 +0800, Lu Baolu wrote:
->> Hi,
->>
->> On 05/03/2018 09:59 AM, Dmitry Safonov wrote:
->>> On Thu, 2018-05-03 at 09:32 +0800, Lu Baolu wrote:
->>>> Hi,
+On Tue, May 1, 2018 at 8:52 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 05/01/2018 11:13 AM, Randy Dunlap wrote:
+>> On 05/01/2018 10:56 AM, Randy Dunlap wrote:
+>>> On 04/30/2018 05:57 PM, Ulf Magnusson wrote:
+>>>> Hello,
 >>>>
->>>> On 05/03/2018 08:52 AM, Dmitry Safonov wrote:
->>>>> AFAICS, we're doing fault-clearing in a loop inside irq
->>>>> handler.
->>>>> That means that while we're clearing if a fault raises, it'll
->>>>> make
->>>>> an irq level triggered (or on edge) on lapic. So, whenever we
->>>>> return
->>>>> from the irq handler, irq will raise again.
->>>>>
->>>> Uhm, double checked with the spec. Interrupts should be generated
->>>> since we always clear the fault overflow bit.
+>>>> Kconfiglib (https://github.com/ulfalizer/Kconfiglib) now has a
+>>>> terminal menuconfig implementation, implemented in plain curses
+>>>> (which is in the Python standard library).
 >>>>
->>>> Anyway, we can't clear faults in a limited loop, as the spec says
->>>> in
->>>> 7.3.1:
->>> Mind to elaborate?
->>> ITOW, I do not see a contradiction. We're still clearing faults in
->>> FIFO
->>> fashion. There is no limitation to do some spare work in between
->>> clearings (return from interrupt, then fault again and continue).
->> Hardware maintains an internal index to reference the fault recording
->> register in which the next fault can be recorded. When a fault comes,
->> hardware will check the Fault bit (bit 31 of the 4th 32-bit register
->> recording
->> register) referenced by the internal index. If this bit is set,
->> hardware will
->> not record the fault.
+>>>> The interface should feel familiar to people used to mconf. It has
+>>>> some features that mconf lacks:
+>>>>
+>>>>   - Seamless resizing
+>>>>
+>>>>   - Unicode support
+>>>>
+>>>>   - Runs on Windows (via 'pip install windows-curses', which uses
+>>>>     PDCurses)
+>>>>
+>>>>   - Improved information displays:
+>>>>
+>>>>     * All expressions are split into readable chunks
+>>>>
+>>>>     * Menus and comments have information displays
+>>>>
+>>>>   - Relatively easy-to-read and easy-to-tweak code.
+>>>>
+>>>>     Kconfiglib automatically invalidates symbols as needed, and
+>>>>     values can never get stale, which helps.
+>>>>
+>>>> Some upcoming features are mouse support and a search feature that
+>>>> can jump directly to the definition of a symbol. The jump-to feature
+>>>> will use a "show-all" mode in case the symbol isn't visible.
+>>>>
+>>>> See the Kconfiglib GitHub page for screenshots. The menuconfig
+>>>> implementation is at
+>>>> https://github.com/ulfalizer/Kconfiglib/blob/master/menuconfig.py.
+>>>> The docstring at the top has some more information.
+>>>
+>>> Hi,
+>>>
+>>> I'm probably missing some python additive (I hope it's that easy), but
+>>> menuconfig.py is not liking the "degree" symbol in drivers/net/can/peak_canfd/Kconfig:
+>>>
+>>> config CAN_PEAK_PCIEFD
+>>>      depends on PCI
+>>>      tristate "PEAK-System PCAN-PCIe FD cards"
+>>>      ---help---
+>>>        This driver adds support for the PEAK-System PCI Express FD
+>>>        CAN-FD cards family.
+>>>        These 1x or 2x CAN-FD channels cards offer CAN 2.0 a/b as well as
+>>>        CAN-FD access to the CAN bus. Besides the nominal bitrate of up to
+>>>        1 Mbit/s, the data bytes of CAN-FD frames can be transmitted with
+>>>        up to 12 Mbit/s. A galvanic isolation of the CAN ports protects the
+>>>        electronics of the card and the respective computer against
+>>>        disturbances of up to 500 Volts. The PCAN-PCI Express FD can be
+>>>        operated with ambient temperatures in a range of -40 to +85 °C.
+>>>
+>>>
+>>> kconfiglib.KconfigSyntaxError:
+>>> Malformed ascii in drivers/net/can/peak_canfd/Kconfig
+>>> Context: b't temperatures in a range of -40 to +85 \xc2\xb0C.\n'
+>>> Problematic data: b'\xc2'
+>>> Reason: ordinal not in range(128)
 >>
->> Since we now don't clear the F bit until a register entry which has
->> the F bit
->> cleared, we might exit the fault handling with some register entries
->> still
->> have the F bit set.
->>
->>   F
->>> 0 |  xxxxxxxxxxxxx|
->>> 0 |  xxxxxxxxxxxxx|
->>> 0 |  xxxxxxxxxxxxx|  <--- Fault record index in fault status
->>> register
->>> 0 |  xxxxxxxxxxxxx|
->>> 1 |  xxxxxxxxxxxxx|  <--- hardware maintained index
->>> 1 |  xxxxxxxxxxxxx|
->>> 1 |  xxxxxxxxxxxxx|
->>> 0 |  xxxxxxxxxxxxx|
->>> 0 |  xxxxxxxxxxxxx|
->>> 0 |  xxxxxxxxxxxxx|
->>> 0 |  xxxxxxxxxxxxx|
->> Take an example as above, hardware could only record 2 more faults
->> with
->> others all dropped.
-> Ugh, yeah, I got what you're saying.. Thanks for explanations.
-> So, we shouldn't mark faults as cleared until we've actually processed
-> them here:
-> :        writel(DMA_FSTS_PFO | DMA_FSTS_PPF | DMA_FSTS_PRO,
-> :               iommu->reg + DMAR_FSTS_REG);
+>> BTW, after modifying 4 other instances of this "error," I have it running.
+>> Now looking/testing. :)
 >
-> As Joerg mentioned, we do care about latency here, so this fault work
-> can't be moved entirely into workqueue.. but we might limit loop and
-> check if we've hit the limit - to proceed servicing faults in a wq,
-> as in that case we should care about being too long in irq-disabled
-> section more than about latencies.
-> Does that makes any sense, what do you think?
+> Hi Ulf,
 >
-> I can possibly re-write 2/2 with idea above..
+> Here are a few comments for you FWIW.
+>
+> menuconfig.py uses the terminal window space better than menuconfig:
+> fewer margins, less Help text so more usable lines.
+>
+> ESC/q is nicer than in ESC+ESC in menuconfig.
+>
+> What is the lower colored line for? I don't see it being used.
 
-Very appreciated. I am open to the idea. :-)
+It might show "Show-all mode enabled" now too. ;)
 
-Best regards,
-Lu Baolu
+>
+> On Quit, don't need to prompt for Save when the file is already saved
+> or has not been modified.
+
+Fixed.
+
+>
+> When menuconfig displays the Kconfig menu tree and it is over term-width
+> characters, it truncates on the left so that the user can see all of
+> the current menu name. menuconfig.py truncates on the right so that
+> the current menu name may be partially lost or totally lost.
+
+Fixed. The menu path now scrolls to the right as needed. Maybe "..."
+could be displayed as well, though I'm not sure if it's helpful in
+practice.
+
+>
+> To enable=y a tristate symbol, cannot enter Y, must do Space Space to cycle
+> from N to M to Y.
+
+Fixed.
+
+>
+> No / symbol search. I use that a lot, but I don't claim to be a
+> typical user.
+
+Coming soon. I have added a "show-all" mode in preparation for it, as
+you might want to jump to invisible symbols.
+
+Screenshot: https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss9.png
+
+>
+>
+> Thanks.
+> --
+> ~Randy
+
+Thanks for the feedback! Tell me if you spot anything else.
+
+Cheers,
+Ulf
