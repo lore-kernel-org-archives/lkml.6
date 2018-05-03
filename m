@@ -1,53 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751234AbeECWHE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 18:07:04 -0400
-Received: from mail-qk0-f195.google.com ([209.85.220.195]:34454 "EHLO
-        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeECWHB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 18:07:01 -0400
-X-Google-Smtp-Source: AB8JxZo3a0kehfBHlN2eZwie9B2xjEl2we6fZL4PNnaWYqk34j6NxB6u6Nu8szZygX+xj+jMmmX94EfdjH2ogEHxMAU=
+        id S1751279AbeECWHW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 18:07:22 -0400
+Received: from muru.com ([72.249.23.125]:40186 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751239AbeECWHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 18:07:21 -0400
+Date: Thu, 3 May 2018 15:07:17 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: Droid 4: very confusing config around OHCI_OMAP3_HCD
+Message-ID: <20180503220717.GZ98604@atomide.com>
+References: <20180503192510.GB32572@amd>
+ <20180503192838.GY98604@atomide.com>
+ <20180503193837.GC32572@amd>
 MIME-Version: 1.0
-In-Reply-To: <20180503125627.6elsr4iiknnv227c@valkosipuli.retiisi.org.uk>
-References: <20180425213044.1535393-1-arnd@arndb.de> <20180503125627.6elsr4iiknnv227c@valkosipuli.retiisi.org.uk>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Thu, 3 May 2018 18:06:58 -0400
-X-Google-Sender-Auth: gBiO31_O31x76OEv-6AGMeLSRSM
-Message-ID: <CAK8P3a0M5iKCXmKwQAzd9EKWo7Sr_0OR82Q=ozmj3f3Xtyde6A@mail.gmail.com>
-Subject: Re: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of omap3isp_stat_data
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180503193837.GC32572@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 8:56 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> On Wed, Apr 25, 2018 at 11:30:10PM +0200, Arnd Bergmann wrote:
->> @@ -165,7 +167,14 @@ struct omap3isp_h3a_aewb_config {
->>   * @config_counter: Number of the configuration associated with the data.
->>   */
->>  struct omap3isp_stat_data {
->> +#ifdef __KERNEL__
->> +     struct {
->> +             __s64   tv_sec;
->> +             __s64   tv_usec;
->
-> Any particular reason for __s64 here instead of e.g. long or __s32? Kernel
-> appears to use long in the timespec64 definition.
+* Pavel Machek <pavel@ucw.cz> [180503 19:40]:
+> On Thu 2018-05-03 12:28:38, Tony Lindgren wrote:
+> Ok, what about this? (Should I do the same for the other drivers?)
+> Or at least put (DEPRECATED) as other drivers do?
+> 
+> Situation is quite confusing if you already have PLATFORM=y. OMAP=m
+> can be selected, but nothing happens.
 
-The user space 'timeval' definition is 16 bytes wide, with the layout
-designed to be compatible between 32-bit and 64-bit, so it has to be like
-this to match what user spaces sees with the old header files and a new
-libc.
+Sure works for me, let's see what linux-usb people think.
 
-We don't yet know what the exact definition of timeval will be in all
-libc implementations, but if they have a 32-bit tv_user field, it needs
-padding next to it so the lower 32 bits are in the same place as they
-would be using that 64-bit field I used.
+Regards,
 
-         Arnd
+Tony
+
+
+> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+> index 5d958da..67c151a 100644
+> --- a/drivers/usb/host/Kconfig
+> +++ b/drivers/usb/host/Kconfig
+> @@ -455,7 +455,7 @@ config USB_OHCI_HCD_AT91
+>            Atmel chips.
+>  
+>  config USB_OHCI_HCD_OMAP3
+> -	tristate "OHCI support for OMAP3 and later chips"
+> +	tristate "dummy option for backwards compatibility"
+>  	depends on (ARCH_OMAP3 || ARCH_OMAP4 || SOC_OMAP5)
+>  	select USB_OHCI_HCD_PLATFORM
+>  	default y
+> @@ -463,9 +463,6 @@ config USB_OHCI_HCD_OMAP3
+>  	  This option is deprecated now and the driver was removed, use
+>  	  USB_OHCI_HCD_PLATFORM instead.
+>  
+> -	  Enables support for the on-chip OHCI controller on
+> -	  OMAP3 and later chips.
+> -
+>  config USB_OHCI_HCD_DAVINCI
+>  	tristate "OHCI support for TI DaVinci DA8xx"
+>  	depends on ARCH_DAVINCI_DA8XX
+> 
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
