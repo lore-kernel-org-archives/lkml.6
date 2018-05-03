@@ -1,50 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeECNfP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:35:15 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:43068 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750947AbeECNfJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:35:09 -0400
-From: Colin King <colin.king@canonical.com>
-To: Saeed Mahameed <saeedm@mellanox.com>,
-        Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net/mlx5: fix spelling mistake: "modfiy" -> "modify"
-Date: Thu,  3 May 2018 14:35:03 +0100
-Message-Id: <20180503133503.14508-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751517AbeECNfU (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:35:20 -0400
+Received: from mga06.intel.com ([134.134.136.31]:7807 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751465AbeECNfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:35:14 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="42784238"
+Date: Thu, 3 May 2018 21:25:08 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org, rdunlap@infradead.org, x86@kernel.org,
+        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] asm-generic: fix build error in fix_to_virt with
+ CONFIG_DEBUG_EXPERIENCE
+Message-ID: <20180503132508.qudxf67tyijvjndo@intel.com>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+ <1525268700-10631-6-git-send-email-changbin.du@intel.com>
+ <20180502101930.25a5437d@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180502101930.25a5437d@gandalf.local.home>
+User-Agent: NeoMutt/20180323-6-5ca392
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, May 02, 2018 at 10:19:30AM -0400, Steven Rostedt wrote:
+> On Wed,  2 May 2018 21:45:00 +0800
+> changbin.du@intel.com wrote:
+> 
+> > From: Changbin Du <changbin.du@intel.com>
+> > 
+> > With '-Og' optimization level, GCC would not optimize a count for a loop
+> > as a constant value. But BUILD_BUG_ON() only accept compile-time constant
+> > values.
+> > 
+> > arch/arm/mm/mmu.o: In function `fix_to_virt':
+> > /home/changbin/work/linux/./include/asm-generic/fixmap.h:31: undefined reference to `__compiletime_assert_31'
+> > Makefile:1051: recipe for target 'vmlinux' failed
+> > make: *** [vmlinux] Error 1
+> > 
+> > Signed-off-by: Changbin Du <changbin.du@intel.com>
+> > ---
+> >  include/asm-generic/fixmap.h | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/asm-generic/fixmap.h b/include/asm-generic/fixmap.h
+> > index 827e4d3..a6576d4 100644
+> > --- a/include/asm-generic/fixmap.h
+> > +++ b/include/asm-generic/fixmap.h
+> > @@ -28,7 +28,8 @@
+> >   */
+> >  static __always_inline unsigned long fix_to_virt(const unsigned int idx)
+> >  {
+> > -	BUILD_BUG_ON(idx >= __end_of_fixed_addresses);
+> > +	BUILD_BUG_ON(__builtin_constant_p(idx) &&
+> > +		     idx >= __end_of_fixed_addresses);
+> 
+> Hmm, this changes the check slightly. Perhaps we should only do this
+> when your config is active:
+> 
+> {
+> 	BUILD_BUG_ON(
+> /* CONFIG_DEBUG_OPTIMIZE may cause idx not to be constant */
+> #ifdef CONFIG_DEBUG_OPTIMIZE
+> 		__builtin_constant_p(idx) &&
+> #endif
+> 		idx >= __end_of_fixed_addresses);
+> 
+> }
+I think fix_to_virt() is designed for constant idx only. So I think we should
+fix it at the caller side by replacing it with __fix_to_virt().
 
-Trivial fix to spelling mistake in netdev_warn warning message
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -1599,7 +1599,7 @@ static void __init early_fixmap_shutdown(void)
+                pte_t *pte;
+                struct map_desc map;
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+-               map.virtual = fix_to_virt(i);
++               map.virtual = __fix_to_virt(i);
+                pte = pte_offset_early_fixmap(pmd_off_k(map.virtual), map.virtual);
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-index 610d485c4b03..f64b5e78519b 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-@@ -565,7 +565,7 @@ static void arfs_modify_rule_rq(struct mlx5e_priv *priv,
- 	err =  mlx5_modify_rule_destination(rule, &dst, NULL);
- 	if (err)
- 		netdev_warn(priv->netdev,
--			    "Failed to modfiy aRFS rule destination to rq=%d\n", rxq);
-+			    "Failed to modify aRFS rule destination to rq=%d\n", rxq);
- }
- 
- static void arfs_handle_work(struct work_struct *work)
+> 
+> -- Steve
+> 
+> >  	return __fix_to_virt(idx);
+> >  }
+> >  
+> 
+
 -- 
-2.17.0
+Thanks,
+Changbin Du
