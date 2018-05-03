@@ -1,104 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752039AbeECCcH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 22:32:07 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38215 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751929AbeECCcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 22:32:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="38017365"
-Subject: Re: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in irq
- handler
-To: Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, "Raj, Ashok" <ashok.raj@intel.com>
-References: <20180331003312.6390-1-dima@arista.com>
- <20180331003312.6390-2-dima@arista.com> <5AE95BFF.5040306@linux.intel.com>
- <1525264687.14025.20.camel@arista.com> <5AEA4E84.6050609@linux.intel.com>
- <1525308755.14025.25.camel@arista.com> <5AEA66BC.5050202@linux.intel.com>
- <1525312776.14025.29.camel@arista.com> <5AEA70FD.1010209@linux.intel.com>
-Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        iommu@lists.linux-foundation.org
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5AEA74A3.8000909@linux.intel.com>
-Date: Thu, 3 May 2018 10:32:03 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        id S1752122AbeECCdT (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 22:33:19 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:39943 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752070AbeECCc6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 22:32:58 -0400
+X-Google-Smtp-Source: AB8JxZqzluMkPuOuEcnoeD8t7FPqbSEpKi1XbNUaVpCEsBCiKwMrlz8Cepcj5BS+8KwDKgm6hoOHooTVuQ8nlSHMJlI=
 MIME-Version: 1.0
-In-Reply-To: <5AEA70FD.1010209@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+X-Originating-IP: [108.20.156.165]
+In-Reply-To: <CAGXu5jLnD=g=LxR5KTrvcwr1qaYiYXbH-ersvhs5NPRR6JA91w@mail.gmail.com>
+References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+ <1525276400-7161-5-git-send-email-tyhicks@canonical.com> <CAGXu5jLnD=g=LxR5KTrvcwr1qaYiYXbH-ersvhs5NPRR6JA91w@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 2 May 2018 22:32:55 -0400
+Message-ID: <CAHC9VhQNaYrZeA487DyhuKGc-2GcydFC2Fr7vUrpoDPhbi4v4A@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] seccomp: Don't special case audited processes when logging
+To: Kees Cook <keescook@chromium.org>
+Cc: Tyler Hicks <tyhicks@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Linux Audit <linux-audit@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, May 2, 2018 at 12:57 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, May 2, 2018 at 8:53 AM, Tyler Hicks <tyhicks@canonical.com> wrote:
+>> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+>> index da78835..9029d9d 100644
+>> --- a/kernel/seccomp.c
+>> +++ b/kernel/seccomp.c
+>> @@ -584,18 +584,13 @@ static inline void seccomp_log(unsigned long syscall, long signr, u32 action,
+>>         }
+>>
+>>         /*
+>> -        * Force an audit message to be emitted when the action is RET_KILL_*,
+>> -        * RET_LOG, or the FILTER_FLAG_LOG bit was set and the action is
+>> -        * allowed to be logged by the admin.
+>> +        * Emit an audit message when the action is RET_KILL_*, RET_LOG, or the
+>> +        * FILTER_FLAG_LOG bit was set. The admin has the ability to silence
+>> +        * any action from being logged by removing the action name from the
+>> +        * seccomp_actions_logged sysctl.
+>>          */
+>>         if (log)
+>> -               return __audit_seccomp(syscall, signr, action);
+>> -
+>> -       /*
+>> -        * Let the audit subsystem decide if the action should be audited based
+>> -        * on whether the current task itself is being audited.
+>> -        */
+>> -       return audit_seccomp(syscall, signr, action);
+>> +               audit_seccomp(syscall, signr, action);
+>>  }
+>
+> This whole series looks great to me. If I can get an Ack from Paul for
+> the audit bits, I can take it via the seccomp tree.
 
-On 05/03/2018 10:16 AM, Lu Baolu wrote:
-> Hi,
->
-> On 05/03/2018 09:59 AM, Dmitry Safonov wrote:
->> On Thu, 2018-05-03 at 09:32 +0800, Lu Baolu wrote:
->>> Hi,
->>>
->>> On 05/03/2018 08:52 AM, Dmitry Safonov wrote:
->>>> AFAICS, we're doing fault-clearing in a loop inside irq handler.
->>>> That means that while we're clearing if a fault raises, it'll make
->>>> an irq level triggered (or on edge) on lapic. So, whenever we
->>>> return
->>>> from the irq handler, irq will raise again.
->>>>
->>> Uhm, double checked with the spec. Interrupts should be generated
->>> since we always clear the fault overflow bit.
->>>
->>> Anyway, we can't clear faults in a limited loop, as the spec says in
->>> 7.3.1:
->> Mind to elaborate?
->> ITOW, I do not see a contradiction. We're still clearing faults in FIFO
->> fashion. There is no limitation to do some spare work in between
->> clearings (return from interrupt, then fault again and continue).
-> Hardware maintains an internal index to reference the fault recording
-> register in which the next fault can be recorded. When a fault comes,
-> hardware will check the Fault bit (bit 31 of the 4th 32-bit register recording
-> register) referenced by the internal index. If this bit is set, hardware will
-> not record the fault.
->
-> Since we now don't clear the F bit until a register entry which has the F bit
-> cleared, we might exit the fault handling with some register entries still
-> have the F bit set.
->
->   F
-> | 0 |  xxxxxxxxxxxxx|
-> | 0 |  xxxxxxxxxxxxx|
-> | 0 |  xxxxxxxxxxxxx|  <--- Fault record index in fault status register
+I got stuck doing some day job things today and didn't get a chance to
+look at v2 today, but I'll do that tomorrow.
 
-Forgot to mention, this fault record index that software reads from
-the fault status register is also maintained by hardware. It means
-the index of the first fault recording register that hardware records
-the faults last time.
+I'm not sure if you've already got anything queued up in your seccomp
+tree Kees, but if not I'm happy to take these patches via the audit
+tree; that was my original plan, assuming I got a positive nod from
+you.  Either way, as long as it hits Linus' tree eventually I'll be
+happy (assuming everything looks good post-review of course).
 
-Software doesn't maintains its own index, right? So there might some
-registers left there with F bit set.
+> ... One minor nit on
+> seccomp_log() above, I'd probably change this to show the "exception"
+> case as "out of line" of normal code flow. i.e. instead of "if (log)
+> audit_seccomp", invert it to return early:
+>
+> ...
+>     if (!log)
+>         return;
+>
+>     audit_seccomp(syscall, signr, action);
+> }
+>
+> But if there isn't some other need for a v3, I can just make this
+> change when I commit.
+>
+> Thanks for fixing this up!
+>
+> -Kees
+>
+> --
+> Kees Cook
+> Pixel Security
 
-Best regards,
-Lu Baolu
 
-> | 0 |  xxxxxxxxxxxxx|
-> | 1 |  xxxxxxxxxxxxx|  <--- hardware maintained index
-> | 1 |  xxxxxxxxxxxxx|
-> | 1 |  xxxxxxxxxxxxx|
-> | 0 |  xxxxxxxxxxxxx|
-> | 0 |  xxxxxxxxxxxxx|
-> | 0 |  xxxxxxxxxxxxx|
-> | 0 |  xxxxxxxxxxxxx|
->
-> Take an example as above, hardware could only record 2 more faults with
-> others all dropped.
->
-> Best regards,
-> Lu Baolu
->
+
+-- 
+paul moore
+www.paul-moore.com
