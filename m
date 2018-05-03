@@ -1,35 +1,35 @@
 Return-Path: <hch@lst.de>
-X-Google-Smtp-Source: AB8JxZrHCYcwov45SpTq11F3uMptwvtHHEjrjHxOm1brwMdxNBtx1+G1I0aSpIOmDebtR6uEAtR6
-ARC-Seal: i=1; a=rsa-sha256; t=1525349944; cv=none;
+X-Google-Smtp-Source: AB8JxZrdWRBsEtWnvwqa5DzVnJPjHT+34Rleq77w14HnWya+DU4mX567R52URbjua8+dz43us+l4
+ARC-Seal: i=1; a=rsa-sha256; t=1525349931; cv=none;
         d=google.com; s=arc-20160816;
-        b=Qii7TTAsepnxTle/UpqF1ItttV+ahtrMuF4PThb31bjt9obJX4WGuE1Fom85lrF/ia
-         z/zP+ZYsFf0wDFP+rGO/Urhx0ve2NY2YeAbmujqSllgcHw5sryISTJf0u1jsrPM9Zkw0
-         UqFGifjpThIhba5wILfZywJLpoZRwqjwIjKPFs/br2kZjJXsh8/RNBHCH269nzKnOD4J
-         53YLyy1+W1wQxqYexLcn2Tvypq1Fm1sYkalkgkffnoTLtRy9YozeETvrwU9jbE0WqnFi
-         Iu45AppbzDADrNeN4v1SPvSmpXIkW2MbsYLOgNkKPWi3YocOHz8IcigplS/YXP36yGW9
-         h16g==
+        b=kpw84N4P+PUelBCKJi4pDlKV9cQi8fU9KFasDeNgEHtLh5CX5iWMGFUEpCqIbmiSAh
+         MyXe0y5gal7ZmUoBui8t44Oaf0DWFbkpdg4ZRUsOvKJeWwCYa06T88WhEzmQ3pYsldaj
+         1+bbuxXEuoUugm47GJob0XPxVrV68kGF9JSGZFE3nWshwBI+oXuoBgd/B3V7B2BJYtQo
+         EG2XiCVO3HbXP+SvmY/unqpQSLB8qaQ57LA8bpr3TwWBpUbwRUc9I20qav4mRmzhlDEj
+         /Q2hB22Q1yfx7jPermSREuEgHGdCyNgwNXQPUM3CgAVLbY9ViOiXNQgGk1DKGtTfRGjo
+         ceMw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
          :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=L8VBDVEZrdrxVuB0+WcZjB+1iky8X1Z2nebBsUs4uwo=;
-        b=QADd8D6u2QuZEP2hpsKWpsznIW5h24uXMIw2I9ShcTNX5Sr75w0bySLS3iQxqy88Vd
-         PGOyCkrOCE1PvlosXiTvefCQ1gMoGZt0+4qcdEVwtgx+Lvh339/olqo6pjEYHr2NKtq5
-         Iw0OZoJUhb6IF08jsT1/nDm/7o15ztVvb6+pg2UdYvwlBIhqmIk3LDbCfuu5LaOZ9Iht
-         TsX2+QrFD60kzYPrbOKdKHWUlh5n5oAkc47RL4mbtrQ8wGU+Nr6zU1KP/jkSVmhaDtHH
-         sy87Yn7YuvkCUzpVcHbWQ3+9jeNNneZYdqZml0dEE19fpfODWeL3N2K0+fQXBJ8/ozjs
-         qtCA==
+        bh=dfV4S+tIfSLRut/pUgxnCYN19qQBWskzIL/ZLW3N9xo=;
+        b=Uhb8Gr3/y8EGEo9hKGq7R6RcTgAd9oLp052fZnED3jxwUpfQd5bdtgtuei9NCjlGKR
+         nfzJ7zceyVXSXm5IpdtYcKE340UaOpyv9t4i7ZUVe5/t/yRBoFksFLbSlTwbvT57QGPg
+         AlggEEF7zznJ/jo6o16RiiGUsw1seaOj0p4CRzHs2eLOdAzr1jEqBEsvWaPnVEDgnUug
+         Jc5jDEzt1fFTlmme3IZnGqXiaFgHUUDkrALdPn8dJkdDtvl174YHgOQSiAaMWrUu35/R
+         RIMVBxasx60/1uReeA1zJMxGvNmzXdVPH4BpVRxo6KxlDbOAhcW5r29SM39BFZRN36kA
+         wNWA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: best guess record for domain of hch@lst.de designates 213.95.11.211 as permitted sender) smtp.mailfrom=hch@lst.de
 Authentication-Results: mx.google.com;
        spf=pass (google.com: best guess record for domain of hch@lst.de designates 213.95.11.211 as permitted sender) smtp.mailfrom=hch@lst.de
-Date: Thu, 3 May 2018 14:21:47 +0200
+Date: Thu, 3 May 2018 14:21:33 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Nipun Gupta <nipun.gupta@nxp.com>, robin.murphy@arm.com, hch@lst.de,
-	linux@armlinux.org.uk, gregkh@linuxfoundation.org,
-	m.szyprowski@samsung.com, bhelgaas@google.com, zajec5@gmail.com,
-	andy.gross@linaro.org, david.brown@linaro.org,
-	dan.j.williams@intel.com, vinod.koul@intel.com, robh+dt@kernel.org,
+To: Nipun Gupta <nipun.gupta@nxp.com>
+Cc: robin.murphy@arm.com, hch@lst.de, linux@armlinux.org.uk,
+	gregkh@linuxfoundation.org, m.szyprowski@samsung.com,
+	bhelgaas@google.com, zajec5@gmail.com, andy.gross@linaro.org,
+	david.brown@linaro.org, dan.j.williams@intel.com,
+	vinod.koul@intel.com, thierry.reding@gmail.com, robh+dt@kernel.org,
 	frowand.list@gmail.com, jarkko.sakkinen@linux.intel.com,
 	rafael.j.wysocki@intel.com, dmitry.torokhov@gmail.com,
 	johan@kernel.org, msuchanek@suse.de, linux-kernel@vger.kernel.org,
@@ -41,37 +41,22 @@ Cc: Nipun Gupta <nipun.gupta@nxp.com>, robin.murphy@arm.com, hch@lst.de,
 	leoyang.li@nxp.com
 Subject: Re: [PATCH v4 1/2] dma-mapping: move dma configuration to bus
 	infrastructure
-Message-ID: <20180503122147.GB18590@lst.de>
-References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com> <1524883919-29484-1-git-send-email-nipun.gupta@nxp.com> <20180430104124.GE2476@ulmo>
+Message-ID: <20180503122133.GA18590@lst.de>
+References: <1520868292-2479-1-git-send-email-nipun.gupta@nxp.com> <1524883919-29484-1-git-send-email-nipun.gupta@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180430104124.GE2476@ulmo>
+In-Reply-To: <1524883919-29484-1-git-send-email-nipun.gupta@nxp.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1594746017210545974?=
-X-GMAIL-MSGID: =?utf-8?q?1599445343796711576?=
+X-GMAIL-MSGID: =?utf-8?q?1599445329683879120?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, Apr 30, 2018 at 12:41:24PM +0200, Thierry Reding wrote:
-> On Sat, Apr 28, 2018 at 08:21:58AM +0530, Nipun Gupta wrote:
-> [...]
-> > diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-> > index 88a3558..a9ec99d 100644
-> > --- a/drivers/gpu/host1x/bus.c
-> > +++ b/drivers/gpu/host1x/bus.c
-> > @@ -314,6 +314,13 @@ static int host1x_device_match(struct device *dev, struct device_driver *drv)
-> >  	return strcmp(dev_name(dev), drv->name) == 0;
-> >  }
-> >  
-> > +static int host1x_dma_configure(struct device *dev)
-> > +{
-> > +	if (dev->of_node)
-> > +		return of_dma_configure(dev, dev->of_node);
-> 
-> The conditional here is somewhat pointless since the of_node should
-> always be set. If it weren't it should be considered a bug and this
-> function welcome to crash to make that very obvious.
+This still fails to apply against either 4.17-rc3 or current Linus
+master for me.  Please resend against it, and mention the tree it
+is against.
 
-Agreed.  Please remove the check for the resend.
+Also please resend it in a separate email thread (all your patches
+were replies to the previous ones) and include a cover letter.
