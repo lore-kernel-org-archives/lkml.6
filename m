@@ -1,80 +1,202 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751174AbeECISG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:18:06 -0400
-Received: from mail-ot0-f170.google.com ([74.125.82.170]:42351 "EHLO
-        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeECISC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:18:02 -0400
-X-Google-Smtp-Source: AB8JxZp95vLWi7Rfc+TpFwEvph0J/zXzYyIG1tv9zjHcMFXt3zmib7wGnf5GKeQ6YcnNFkdNy8J6lF4IPkuP0sclZ98=
+        id S1751152AbeECIUA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:20:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:45190 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750781AbeECITz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 04:19:55 -0400
+Date: Thu, 3 May 2018 10:19:42 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Ladislav Michl <ladis@linux-mips.org>
+Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, Roger Quadros <rogerq@ti.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Andreas Kemnade <andreas@kemnade.info>
+Subject: Re: [PATCH v3] mtd: onenand: omap2: Disable DMA for HIGHMEM buffers
+Message-ID: <20180503101942.6851a4fc@bbrezillon>
+In-Reply-To: <20180502104132.GA12979@lenoch>
+References: <20180502104132.GA12979@lenoch>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Originating-IP: [194.176.227.33]
-In-Reply-To: <CAJfpegvMYGt-Mo2LmZVXHDd1KhxqS+iWNKfO7xCUhA1ZcG7KyQ@mail.gmail.com>
-References: <20180502222635.1862-1-mszeredi@redhat.com> <20180502224533.GW30522@ZenIV.linux.org.uk>
- <CAJfpegvMYGt-Mo2LmZVXHDd1KhxqS+iWNKfO7xCUhA1ZcG7KyQ@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 3 May 2018 10:18:01 +0200
-Message-ID: <CAJfpegvhW-EHkJ_KPm5mYA9igt0QRz1ZwwDZE7qj6HFvkVdyHA@mail.gmail.com>
-Subject: Re: [PATCH] dcache: fix quadratic behavior with parallel shrinkers
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 9:44 AM, Miklos Szeredi <miklos@szeredi.hu> wrote:
-> On Thu, May 3, 2018 at 12:45 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->> On Thu, May 03, 2018 at 12:26:35AM +0200, Miklos Szeredi wrote:
->>> When multiple shrinkers are operating on a directory containing many
->>> dentries, it takes much longer than if only one shrinker is operating on
->>> the directory.
->>>
->>> Call the shrinker instances A and B, which shrink DIR containing NUM
->>> dentries.
->>>
->>> Assume A wins the race for locking DIR's d_lock, then it goes onto moving
->>> all unlinked dentries to its dispose list.  When it's done, then B will
->>> scan the directory once again, but will find that all dentries are already
->>> being shrunk, so it will have an empty dispose list.  Both A and B will
->>> have found NUM dentries (data.found == NUM).
->>>
->>> Now comes the interesting part: A will proceed to shrink the dispose list
->>> by killing individual dentries and decrementing the refcount of the parent
->>> (which is DIR).  NB: decrementing DIR's refcount will block if DIR's d_lock
->>> is held.  B will shrink a zero size list and then immediately restart
->>> scanning the directory, where it will lock DIR's d_lock, scan the remaining
->>> dentries and find no dentry to dispose.
->>>
->>> So that results in B doing the directory scan over and over again, holding
->>> d_lock of DIR, while A is waiting for a chance to decrement refcount of DIR
->>> and making very slow progress because of this.  B is wasting time and
->>> holding up progress of A at the same time.
->>>
->>> Proposed fix is to check this situation in B (found some dentries, but
->>> all are being shrunk already) and just sleep for some time, before retrying
->>> the scan.  The sleep is proportional to the number of found dentries.
->>
->> The thing is, the majority of massive shrink_dcache_parent() can be killed.
->> Let's do that first and see if anything else is really needed.
->>
->> As it is, rmdir() and rename() are ridiculously bad - they should only call
->> shrink_dcache_parent() after successful ->rmdir() or ->rename().  Sure,
->> there are other places where we do large shrink_dcache_parent() runs,
->> but those won't trigger in parallel on the same tree.
->
-> I think we are cat hit this also with lru pruner (prune_dcache_sb(),
-> shrink_dcache_sb()) running in parallel with shrink_dcache_parent().
-> Although shrink_dcache_sb() looks better in this regard, since it will
-> only hold up to 1024 dentries in the dispose list.
+On Wed, 2 May 2018 12:41:32 +0200
+Ladislav Michl <ladis@linux-mips.org> wrote:
 
-Looking more, prune_dcache_sb() will also batch with a max of 1024
-objects.  Which mitigates the problem, but doesn't make it go away.
-Killing 1024 dentries still takes on the order of 100us without
-contention on d_lock.  If shrink_dcache_parent() is busy looping on
-those dentries, then contention will make this much worse.
+> dma_map_single does not work for vmalloc-ed buffers,
+> so disable DMA in this case.
+> 
+> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+> Reported-by: "H. Nikolaus Schaller" <hns@goldelico.com>
+> Tested-by: "H. Nikolaus Schaller" <hns@goldelico.com>
+
+Applied to mtd/master. Will be part of the next fixes PR I'll send
+later this week.
 
 Thanks,
-Miklos
+
+Boris
+
+> ---
+>  Changes:
+>   -v2: Added Tested-by tag, based on v4.17-rc1 (no change in patch itself)
+>   -v3: Reworded commit log
+> 
+>  drivers/mtd/nand/onenand/omap2.c | 105 +++++++++++--------------------
+>  1 file changed, 38 insertions(+), 67 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
+> index 9c159f0dd9a6..321137158ff3 100644
+> --- a/drivers/mtd/nand/onenand/omap2.c
+> +++ b/drivers/mtd/nand/onenand/omap2.c
+> @@ -375,56 +375,42 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
+>  {
+>  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
+>  	struct onenand_chip *this = mtd->priv;
+> -	dma_addr_t dma_src, dma_dst;
+> -	int bram_offset;
+> +	struct device *dev = &c->pdev->dev;
+>  	void *buf = (void *)buffer;
+> +	dma_addr_t dma_src, dma_dst;
+> +	int bram_offset, err;
+>  	size_t xtra;
+> -	int ret;
+>  
+>  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
+> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
+> -		goto out_copy;
+> -
+> -	/* panic_write() may be in an interrupt context */
+> -	if (in_interrupt() || oops_in_progress)
+> +	/*
+> +	 * If the buffer address is not DMA-able, len is not long enough to make
+> +	 * DMA transfers profitable or panic_write() may be in an interrupt
+> +	 * context fallback to PIO mode.
+> +	 */
+> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
+> +	    count < 384 || in_interrupt() || oops_in_progress )
+>  		goto out_copy;
+>  
+> -	if (buf >= high_memory) {
+> -		struct page *p1;
+> -
+> -		if (((size_t)buf & PAGE_MASK) !=
+> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
+> -			goto out_copy;
+> -		p1 = vmalloc_to_page(buf);
+> -		if (!p1)
+> -			goto out_copy;
+> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
+> -	}
+> -
+>  	xtra = count & 3;
+>  	if (xtra) {
+>  		count -= xtra;
+>  		memcpy(buf + count, this->base + bram_offset + count, xtra);
+>  	}
+>  
+> +	dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
+>  	dma_src = c->phys_base + bram_offset;
+> -	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
+> -	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
+> -		dev_err(&c->pdev->dev,
+> -			"Couldn't DMA map a %d byte buffer\n",
+> -			count);
+> -		goto out_copy;
+> -	}
+>  
+> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> -	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
+> -
+> -	if (ret) {
+> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
+> +	if (dma_mapping_error(dev, dma_dst)) {
+> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
+>  		goto out_copy;
+>  	}
+>  
+> -	return 0;
+> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> +	dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
+> +	if (!err)
+> +		return 0;
+> +
+> +	dev_err(dev, "timeout waiting for DMA\n");
+>  
+>  out_copy:
+>  	memcpy(buf, this->base + bram_offset, count);
+> @@ -437,49 +423,34 @@ static int omap2_onenand_write_bufferram(struct mtd_info *mtd, int area,
+>  {
+>  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
+>  	struct onenand_chip *this = mtd->priv;
+> -	dma_addr_t dma_src, dma_dst;
+> -	int bram_offset;
+> +	struct device *dev = &c->pdev->dev;
+>  	void *buf = (void *)buffer;
+> -	int ret;
+> +	dma_addr_t dma_src, dma_dst;
+> +	int bram_offset, err;
+>  
+>  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
+> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
+> -		goto out_copy;
+> -
+> -	/* panic_write() may be in an interrupt context */
+> -	if (in_interrupt() || oops_in_progress)
+> +	/*
+> +	 * If the buffer address is not DMA-able, len is not long enough to make
+> +	 * DMA transfers profitable or panic_write() may be in an interrupt
+> +	 * context fallback to PIO mode.
+> +	 */
+> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
+> +	    count < 384 || in_interrupt() || oops_in_progress )
+>  		goto out_copy;
+>  
+> -	if (buf >= high_memory) {
+> -		struct page *p1;
+> -
+> -		if (((size_t)buf & PAGE_MASK) !=
+> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
+> -			goto out_copy;
+> -		p1 = vmalloc_to_page(buf);
+> -		if (!p1)
+> -			goto out_copy;
+> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
+> -	}
+> -
+> -	dma_src = dma_map_single(&c->pdev->dev, buf, count, DMA_TO_DEVICE);
+> +	dma_src = dma_map_single(dev, buf, count, DMA_TO_DEVICE);
+>  	dma_dst = c->phys_base + bram_offset;
+> -	if (dma_mapping_error(&c->pdev->dev, dma_src)) {
+> -		dev_err(&c->pdev->dev,
+> -			"Couldn't DMA map a %d byte buffer\n",
+> -			count);
+> -		return -1;
+> -	}
+> -
+> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> -	dma_unmap_single(&c->pdev->dev, dma_src, count, DMA_TO_DEVICE);
+> -
+> -	if (ret) {
+> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
+> +	if (dma_mapping_error(dev, dma_src)) {
+> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
+>  		goto out_copy;
+>  	}
+>  
+> -	return 0;
+> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
+> +	dma_unmap_page(dev, dma_src, count, DMA_TO_DEVICE);
+> +	if (!err)
+> +		return 0;
+> +
+> +	dev_err(dev, "timeout waiting for DMA\n");
+>  
+>  out_copy:
+>  	memcpy(this->base + bram_offset, buf, count);
