@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751824AbeECLzc (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 07:55:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34502 "EHLO
+        id S1751653AbeECLz7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 07:55:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34226 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751785AbeECLxb (ORCPT
+        with ESMTP id S1751855AbeECLxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 07:53:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F0E060310
+        Thu, 3 May 2018 07:53:19 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFAE060AD4
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
 From: Ilia Lin <ilialin@codeaurora.org>
@@ -22,9 +22,9 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         rnayak@codeaurora.org, ilialin@codeaurora.org,
         amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
         celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v5 08/14] dt: qcom: Add opp and thermal to the msm8996
-Date: Thu,  3 May 2018 14:52:29 +0300
-Message-Id: <1525348355-25471-9-git-send-email-ilialin@codeaurora.org>
+Subject: [PATCH v5 06/14] clk: qcom: cpu-8996: Add support to switch below 600Mhz
+Date: Thu,  3 May 2018 14:52:27 +0300
+Message-Id: <1525348355-25471-7-git-send-email-ilialin@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
 References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
@@ -32,406 +32,121 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 269 ++++++++++++++++++++++++++++++++--
- 1 file changed, 260 insertions(+), 9 deletions(-)
+From: Rajendra Nayak <rnayak@codeaurora.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 37b7152c..e6cf290 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -14,6 +14,7 @@
- #include <dt-bindings/clock/qcom,gcc-msm8996.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
-+#include <dt-bindings/thermal/thermal.h>
+The CPU clock controller's primary PLL operates on a single VCO range,
+between 600MHz and 3GHz. However the CPUs do support OPPs with
+frequencies between 300MHz and 600MHz. In order to support running the
+CPUs at those frequencies we end up having to lock the PLL at twice the
+rate and drive the CPU clk via the PLL/2 output and SMUX.
+
+So for frequencies above 600MHz we follow the following path
+ Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+and for frequencies between 300MHz and 600MHz we follow
+ Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+
+Conflicts:
+	drivers/clk/qcom/clk-cpu-8996.c
+---
+ drivers/clk/qcom/clk-cpu-8996.c | 25 ++++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+index 390b369..3ea0446 100644
+--- a/drivers/clk/qcom/clk-cpu-8996.c
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -77,6 +77,8 @@ enum _pmux_input {
+ 	NUM_OF_PMUX_INPUTS
+ };
  
- / {
- 	model = "Qualcomm Technologies, Inc. MSM8996";
-@@ -97,6 +98,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -109,6 +113,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -117,6 +124,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -129,6 +139,9 @@
- 			compatible = "qcom,kryo";
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -155,6 +168,182 @@
- 		};
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
++#define DIV_2_THRESHOLD		600000000
 +
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <307200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-422400000 {
-+			opp-hz = /bits/ 64 <422400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <556800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <652800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-844800000 {
-+			opp-hz = /bits/ 64 <844800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-960000000 {
-+			opp-hz = /bits/ 64 <960000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 <1113600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1228800000 {
-+			opp-hz = /bits/ 64 <1228800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 <1324800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 <1401600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 <1478400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 <1593600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
+ static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
+        [PLL_OFF_L_VAL] = 0x04,
+        [PLL_OFF_ALPHA_VAL] = 0x08,
+@@ -104,10 +106,11 @@ enum _pmux_input {
+ 
+ static const struct alpha_pll_config hfpll_config = {
+ 	.l = 60,
+-	.config_ctl_val = 0x200d4828,
++	.config_ctl_val = 0x200d4aa8,
+ 	.config_ctl_hi_val = 0x006,
+ 	.pre_div_mask = BIT(12),
+ 	.post_div_mask = 0x3 << 8,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -149,7 +152,7 @@ enum _pmux_input {
+ 	.vco_mask = 0x3 << 20,
+ 	.config_ctl_val = 0x4001051b,
+ 	.post_div_mask = 0x3 << 8,
+-	.post_div_val = 0x1,
++	.post_div_val = 0x1 << 8,
+ 	.main_output_mask = BIT(0),
+ 	.early_output_mask = BIT(3),
+ };
+@@ -190,6 +193,7 @@ struct clk_cpu_8996_mux {
+ 	u8	width;
+ 	struct notifier_block nb;
+ 	struct clk_hw	*pll;
++	struct clk_hw	*pll_div_2;
+ 	struct clk_regmap clkr;
+ };
+ 
+@@ -235,6 +239,13 @@ static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
+ 	struct clk_hw *parent = cpuclk->pll;
+ 
++	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
++		if (req->rate < (DIV_2_THRESHOLD / 2))
++			return -EINVAL;
 +
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
++		parent = cpuclk->pll_div_2;
++	}
 +
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <307200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-403200000 {
-+			opp-hz = /bits/ 64 <403200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <480000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <556800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <652800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <729600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-806400000 {
-+			opp-hz = /bits/ 64 <806400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-883200000 {
-+			opp-hz = /bits/ 64 <883200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-940800000 {
-+			opp-hz = /bits/ 64 <940800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 <1036800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 <1113600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 <1190400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1248000000 {
-+			opp-hz = /bits/ 64 <1248000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 <1324800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 <1401600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 <1478400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1555200000 {
-+			opp-hz = /bits/ 64 <1555200000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 <1632000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 <1708800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 <1785600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1824000000 {
-+			opp-hz = /bits/ 64 <1824000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1920000000 {
-+			opp-hz = /bits/ 64 <1920000000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 <1996800000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2073600000 {
-+			opp-hz = /bits/ 64 <2073600000>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2150400000 {
-+			opp-hz = /bits/ 64 <2150400000>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
- 	thermal-zones {
- 		cpu-thermal0 {
- 			polling-delay-passive = <250>;
-@@ -163,18 +352,34 @@
- 			thermal-sensors = <&tsens0 3>;
+ 	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
+ 	req->best_parent_hw = parent;
  
- 			trips {
--				cpu_alert0: trip0 {
-+				cpu_alert0: cpu_alert0 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn0: cpu_warn0 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
+@@ -246,13 +257,19 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ {
+ 	int ret;
+ 	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
++	struct clk_notifier_data *cnd = data;
  
--				cpu_crit0: trip1 {
-+				cpu_crit0: cpu_crit0 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn0>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal1 {
-@@ -184,18 +389,34 @@
- 			thermal-sensors = <&tsens0 5>;
- 
- 			trips {
--				cpu_alert1: trip0 {
-+				cpu_alert1: cpu_alert1 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn1: cpu_warn1 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu_crit1: trip1 {
-+				cpu_crit1: cpu_crit1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn1>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal2 {
-@@ -205,18 +426,33 @@
- 			thermal-sensors = <&tsens0 8>;
- 
- 			trips {
--				cpu_alert2: trip0 {
-+				cpu_alert2: cpu_alert2 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn2: cpu_warn2 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
--				cpu_crit2: trip1 {
-+				cpu_crit2: cpu_crit2 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn2>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu-thermal3 {
-@@ -226,9 +462,14 @@
- 			thermal-sensors = <&tsens0 10>;
- 
- 			trips {
--				cpu_alert3: trip0 {
-+				cpu_alert3: cpu_alert3 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn3: cpu_warn3 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
-@@ -238,6 +479,16 @@
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn3>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 	};
- 
-@@ -414,7 +665,7 @@
- 		};
- 
- 		kryocc: clock-controller@6400000 {
--			compatible = "qcom,apcc-msm8996";
-+			compatible = "qcom,msm8996-apcc";
- 			reg = <0x6400000 0x90000>;
- 			#clock-cells = <1>;
- 		};
-@@ -1001,7 +1252,7 @@
- 
- 				pinctrl-names = "default", "sleep";
- 				pinctrl-0 = <&pcie2_clkreq_default &pcie2_perst_default &pcie2_wake_default>;
--				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep >;
-+				pinctrl-1 = <&pcie2_clkreq_sleep &pcie2_perst_default &pcie2_wake_sleep>;
- 
- 				vdda-supply = <&pm8994_l28>;
- 
+ 	switch (event) {
+ 	case PRE_RATE_CHANGE:
+ 		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
+ 		break;
+ 	case POST_RATE_CHANGE:
+-		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, PLL_INDEX);
++		if (cnd->new_rate < DIV_2_THRESHOLD)
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  DIV_2_INDEX);
++		else
++			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
++							  PLL_INDEX);
+ 		break;
+ 	default:
+ 		ret = 0;
+@@ -304,6 +321,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &pwrcl_pll.clkr.hw,
++	.pll_div_2 = &pwrcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "pwrcl_pmux",
+@@ -324,6 +342,7 @@ int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
+ 	.shift = 0,
+ 	.width = 2,
+ 	.pll = &perfcl_pll.clkr.hw,
++	.pll_div_2 = &perfcl_smux.clkr.hw,
+ 	.nb.notifier_call = cpu_clk_notifier_cb,
+ 	.clkr.hw.init = &(struct clk_init_data) {
+ 		.name = "perfcl_pmux",
 -- 
 1.9.1
