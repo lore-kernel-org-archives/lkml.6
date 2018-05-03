@@ -1,119 +1,148 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AB8JxZr0KB3MV4VHYrXYHGJJ6oKp4cWKipG264AILRAVAQ+1P6A+l3E9d9cVJUT/adMSQflCUH8b
-ARC-Seal: i=1; a=rsa-sha256; t=1525344361; cv=none;
-        d=google.com; s=arc-20160816;
-        b=jYiMTyrmCqoyb+zLMfVxcF0ZXhGd8atW95lam+/wRu4FGKmg0nFWP7iIyDgG88SWFo
-         UKRwD/BtE1vMxBboy9tqJZtZMlYMVqRyLYUsz1XDTakx0qSXJhGR9DKsVUx5G4sMtZvT
-         M6F8mCP6n1Z3145KaaUCqOalgMWl/THUY5ZTyBxMIFrQ0SNR2xDqevxh5sXVonvcm1F3
-         05gMMRoq2NnuZce9aitUzsV3SMnPnzj1jfwZLjhgD/UVEMjrjGvaUn05uTHaae8940M2
-         ewogKxnfkiwU3p/qUSXtGc/qEQnU7KtQ/gcWA+AChZF3NVWRFvpHpRwBD7eLhcF1eSA0
-         1E/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:date:cc:to:from:subject:message-id
-         :arc-authentication-results;
-        bh=V3ub3gDp2azT6+ObeiBAFisZvOyKLhYuyTrRW4Q5Cns=;
-        b=zUMnKHLOaT0NjY8a6j+2nUhofVoAVj40WUoCVA/XA5ZxCROkUSO1wNeikHF39vocjl
-         0L/G0rDSGz/xLnfEFUWuyXIx4MIEng3VtlROPQDbVr8ddttU0HIgmkQFjRaJ1KGodsCD
-         lYZBHosvqdVv0YXkRWdss9s++B0fugBfLgDfYsUgbeNP/JH4N3wz9Iyr/IKq3SWyeqTI
-         KsM6+SnnuiI55Gc1u0jYEa5Q+RaMjdwnYaVm5tilKhD+/XN6yTt+vn9ThsRMKXTEo6Mx
-         z6sYnuTAG3vTznGUJhQlwLGHFMszE1xm7EFCWFUAbjlyXTJelzzB9JPbAoADkf5xXr3+
-         Gr8A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.151 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="36550198"
-Message-ID: <1525344358.21176.643.camel@linux.intel.com>
-Subject: Re: [PATCH v1 4/6] x86/boot: Assume MMIO if serial base address
- supplied via earlyprintk
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "H. Peter Anvin"
-	 <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	 <mingo@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 03 May 2018 13:45:58 +0300
-In-Reply-To: <20180116155520.gqdztulncpsmu5zp@gmail.com>
-References: <20180114143254.15429-1-andriy.shevchenko@linux.intel.com>
-	 <20180114143254.15429-4-andriy.shevchenko@linux.intel.com>
-	 <20180116031342.bxczth3ylbzdvk2r@gmail.com>
-	 <1516100104.7000.1001.camel@linux.intel.com>
-	 <20180116155520.gqdztulncpsmu5zp@gmail.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Return-Path: <linux-fsdevel-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2298957-1525339093-5-2121898723303587252
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
+X-Resolved-to: linux@kroah.com
+X-Delivered-to: linux@kroah.com
+X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525339093; b=M4AWOOgdnvRifFptFg6CPYYZPk6RlL9YF50pvYSIhDHMtFnQVm
+    822CfHOASPRD0mm/3E8VXP5ob0ioxkKTf9J+sK3LX1Sab8o9WI3M3AA/IWMZLOxm
+    9pOZgIWHXFRmai9m/F5qwEhKt0jK9Ymu+ign1eWdR28RzsL7kILbOhzfAir2gUcY
+    ov0hSuVYEhuCrRQWcAQM2Y2Iogrp6xHIOsEOJCZyvTrVpVnYvno0zuuvdiNKM8mn
+    dFHu6p9SUuMaA77j/M9rfD5ylX2bc8EFdEFMMZDHTu0kXxlFXIWyiFG7GNXXNwpE
+    F8fJc3zuPwj5w8wUH/XrHsrC1bOtWi2SDtwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525339093; bh=a+E+uLoOV30yoFfxqN2db8bCrcJmj7
+    YvwL1DHyplt+E=; b=i2GjpZk2W3YTDwNmsJH5Pq/ECZzmT3kSQrm5CVNdqjo8LM
+    SNhbLB0lhnlzAC8DZq+XxSDbYBsYhfQOuzqclyY7xVXdayAAKFuygooDBVX6vIXX
+    mZEkOr81/ylvPQu2ng/25wrtktwXTDqWQqoeQYJA9C0Ls39UQLBXNU0ly04220+o
+    Ws3nkwCKeVUhFhDu/yRH5rGojzeDKMiOj97hPkJRxXZTSpAcYy7zVFnipwrqjhhv
+    wYia1saogX9Sfx0JynEUTidMkCgPRVjLRb+0diVhgzUCaPkjhzI3vBfJTYIsMc4M
+    CPRF+Mu0t1ifUwCcCiz1upGmpql/cHJFrGZB0Cyw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfPclMrVfnyEmFD8nu4guWqj6a+TGNOv2oeWBUlm1Jm+TQijDSg/MuMAQeq7MwNbGGNiFbwN7NF76TyiluZiehCcOVLvIv+0jN05RZVb3pyStucO0SsFn
+    cwaQLqasPSw3TnZsIChtCbKn49O5xZVxwHnw0ro/XySbBubTVzqcIJ2wLE+VPiPJiXXYH86aAZaDyEykG2l+3axmst45NHSF3ymVzpqC2XQvYRSgTGeRBeF6
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=M8rcC2nyAAAA:8
+    a=RXnXJx7MAAAA:8 a=kJN-5EVp-gxxPv1zTmsA:9 a=QEXdDO2ut3YA:10 a=0dxXHNIcbWwA:10
+    a=gA6IeH5FQcgA:10 a=NWVoK91CQyQA:10 a=F8o1otVkKab_vsnVrbwA:9 a=ONNS8QRKHyMA:10
+    a=K9tzwgKBnWaK51F8Cre1:22 a=U_UV0sFCMgXoaKVbI-EZ:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750969AbeECJSI (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 3 May 2018 05:18:08 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41573 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750930AbeECJSH (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Thu, 3 May 2018 05:18:07 -0400
+Date: Thu, 3 May 2018 11:18:06 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Martin Steigerwald <martin@lichtvoll.de>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Moving unmaintained filesystems to staging
+Message-ID: <20180503091806.GA32180@amd>
+References: <20180425154602.GA8546@bombadil.infradead.org>
+ <20180426061108.GB4977@amd>
+ <4153280.6zxFApgOmi@merkaba>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Disposition: inline
+In-Reply-To: <4153280.6zxFApgOmi@merkaba>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+Sender: linux-fsdevel-owner@vger.kernel.org
+X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1589717159850476715?=
-X-GMAIL-MSGID: =?utf-8?q?1599439489280788032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 2018-01-16 at 16:55 +0100, Ingo Molnar wrote:
-> * Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > On Tue, 2018-01-16 at 04:13 +0100, Ingo Molnar wrote:
-> > > * Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > 
-> > > > If user supplied serial base address via kernel command line and
-> > > > value
-> > > > is higher than IO space limit (64k boundary), assume for now
-> > > > that
-> > > > MMIO
-> > > > byte access is required.
-> > > > 
-> > > > Later we might expand or modify this if needed.
-> > > 
-> > > Is this a standard pattern for serial code configuration values?
-> > 
-> > I didn't get what you meant under "standard" here.
-> > 
-> > IO space limit comes from generic io.h header and AFAIU is a
-> > hardware
-> > limitation (outN (%dx), ...; inX (%dx); dx is 16 bit register).
-> > 
-> > Using mmio8 out of the IO space is dictated by the (modern) x86
-> > platforms with non-standard (okay, high speed) UART location in
-> > address
-> > space.
-> 
-> So I was wondering whether we should just make mmio configuration an
-> explicit 
-> parameter instead of a 'range hack'.
 
-I _think_ it can be done later without breaking any existed
-configurations.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Since we are introducing something entirely new the choice is ours.
-> 
-> Doing it that way would technically be cleaner, as, at least
-> theoretically,
-> there could be platforms with mmio addresses below 64k physical,
-> right?
+On Thu 2018-04-26 12:36:50, Martin Steigerwald wrote:
+> Pavel Machek - 26.04.18, 08:11:
+> > On Wed 2018-04-25 08:46:02, Matthew Wilcox wrote:
+> > > Recently ncpfs got moved to staging.  Also recently, we had some
+> > > fuzzer developers report bugs in hfs, which they deem a security
+> > > hole because Ubuntu attempts to automount an inserted USB device as
+> > > hfs.
+> >=20
+> > We promise "no-regressions" for code in main repository, no such
+> > promise for staging. We have quite a lot of code without maintainer.
+> >=20
+> > Moving code to staging means it will get broken -- staging was not
+> > designed for this. I believe moving anything there is bad idea.
+> >=20
+> > Staging is for ugly code, not for code that needs new maintainter.
+>=20
+> Good point.
+>=20
+> Moving things in and out to some "unmaintained" directory=E2=80=A6 I am n=
+ot sure=20
+> about that either. I tend to think that moving code around does not=20
+> solve the underlying issue.
+>=20
+> Which, according to what I got from Matthew, was that distributors=20
+> enable just about every filesystem they can enable which lead to hfs=20
+> being used for automounting an USB stick formatted with it.
 
-Correct, though we are talking about x86 world where I have no example
-like this. Either we have LPC ports (I/O 0x3f8 and alike) or HS UARTS on
-higher MMIO addresses. Note, that PCI code guarantees that range bump as
-well when resources would be allocated for unassigned, by firmware, PCI
-UART controllers.
+If distro's are shipping it, they are also willing to fix it. So
+=2E.. no need to drop the code just yet.
 
-> It's also more self-documenting if the new configuration/parameter
-> says 'mmio' 
-> explicitly.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-I would look at it, though it might make things much more complicated to
-implement. And yes, it wouldn't reduce fragility of the parser anyway.
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Perhaps we can unify earlycon parser with earlyprintk one (not sure if
-it's possible since this nice trick with sharing same code between
-compressed and boot code).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+iEYEARECAAYFAlrq084ACgkQMOfwapXb+vI0RgCdGQM/1OfUo5SKsCqPuq/o6IBY
+t2IAn3HRqsyXUzYaoKFuv2PdBBIFhbGH
+=dgPV
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
