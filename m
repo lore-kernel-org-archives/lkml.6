@@ -1,214 +1,223 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeECHTd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:19:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37650 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751279AbeECHT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:19:26 -0400
-Date: Thu, 3 May 2018 08:19:18 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: Clear the stack
-Message-ID: <20180503071917.xm2xvgagvzkworay@salmiak>
-References: <20180502203326.9491-1-labbott@redhat.com>
- <20180502203326.9491-3-labbott@redhat.com>
+        id S1751154AbeECHZZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:25:25 -0400
+Received: from lucky1.263xmail.com ([211.157.147.131]:60732 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751058AbeECHZX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 03:25:23 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: shawn.lin@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: shawn.lin@rock-chips.com
+X-UNIQUE-TAG: <b50485db7b1b87f3665bb300f69fb331>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Cc: shawn.lin@rock-chips.com, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 1/3] mmc: dw_mmc-bluefield: Add driver extension
+To: Liming Sun <lsun@mellanox.com>, Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+ <1525198787-46403-1-git-send-email-lsun@mellanox.com>
+ <c95b926f-2129-c6de-7112-728eea9c7a3a@rock-chips.com>
+ <AM2PR05MB0753973D8C92F831D48DA19CA1800@AM2PR05MB0753.eurprd05.prod.outlook.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+Message-ID: <485d5c78-e16f-5034-9314-9e17e48d3570@rock-chips.com>
+Date: Thu, 3 May 2018 15:25:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180502203326.9491-3-labbott@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <AM2PR05MB0753973D8C92F831D48DA19CA1800@AM2PR05MB0753.eurprd05.prod.outlook.com>
+Content-Type: text/plain; charset=iso-2022-jp; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura,
 
-On Wed, May 02, 2018 at 01:33:26PM -0700, Laura Abbott wrote:
+On 2018/5/2 20:45, Liming Sun wrote:
+> Please see response inline.
 > 
-> Implementation of stackleak based heavily on the x86 version
+> Thanks,
+> Liming
 > 
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> Now written in C instead of a bunch of assembly.
+>> -----Original Message-----
+>> From: Shawn Lin [mailto:shawn.lin@rock-chips.com]
+>> Sent: Tuesday, May 1, 2018 9:02 PM
+>> To: Liming Sun <lsun@mellanox.com>; Mark Rutland
+>> <mark.rutland@arm.com>; Jaehoon Chung <jh80.chung@samsung.com>;
+>> Catalin Marinas <catalin.marinas@arm.com>; Will Deacon
+>> <will.deacon@arm.com>
+>> Cc: Ulf Hansson <ulf.hansson@linaro.org>; Rob Herring
+>> <robh+dt@kernel.org>; shawn.lin@rock-chips.com; linux-
+>> mmc@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; stable@kernel.org
+>> Subject: Re: [PATCH v5 1/3] mmc: dw_mmc-bluefield: Add driver extension
+>>
+>> On 2018/5/2 2:19, Liming Sun wrote:
+>>> This commit adds extension to the dw_mmc driver for Mellanox BlueField
+>>> SoC. It updates the UHS_REG_EXT register to bring up the eMMC card on
+>>> this SoC.
+>>>
+>>> Cc: stable@kernel.org
+>>
+>> Why?
+> 
+> [Liming] This is recommended value from HW team. Without this setting, the eMMC
+> controller and cards can be found in Linux, but not stable. Writing to it could caused
+> CRC error.
 
-This looks neat!
+Well, I refered to the "Cc: stable@kernel.org" in the commit msg.
 
-I have a few minor comments below.
-
-> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-> index bf825f38d206..0ceea613c65b 100644
-> --- a/arch/arm64/kernel/Makefile
-> +++ b/arch/arm64/kernel/Makefile
-> @@ -55,6 +55,9 @@ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
->  arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
->  arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
->  
-> +arm64-obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += erase.o
-> +KASAN_SANITIZE_erase.o	:= n
-
-I suspect we want to avoid the full set of instrumentation suspects here, e.g.
-GKOV, KASAN, UBSAN, and KCOV.
-
-> +
->  obj-y					+= $(arm64-obj-y) vdso/ probes/
->  obj-m					+= $(arm64-obj-m)
->  head-y					:= head.o
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index ec2ee720e33e..3144f1ebdc18 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -401,6 +401,11 @@ tsk	.req	x28		// current thread_info
->  
->  	.text
->  
-> +	.macro	ERASE_KSTACK
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	bl	erase_kstack
-> +#endif
-> +	.endm
-
-Nit: The rest of our asm macros are lower-case -- can we stick to that here?
-
->  /*
->   * Exception vectors.
->   */
-> @@ -906,6 +911,7 @@ ret_to_user:
->  	cbnz	x2, work_pending
->  finish_ret_to_user:
->  	enable_step_tsk x1, x2
-> +	ERASE_KSTACK
->  	kernel_exit 0
->  ENDPROC(ret_to_user)
-
-I believe we also need this in ret_fast_syscall.
-
-[...]
-
-> +asmlinkage void erase_kstack(void)
-> +{
-> +	unsigned long p = current->thread.lowest_stack;
-> +	unsigned long boundary = p & ~(THREAD_SIZE - 1);
-> +	unsigned long poison = 0;
-> +	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
-> +							sizeof(unsigned long);
-> +
-> +	/*
-> +	 * Let's search for the poison value in the stack.
-> +	 * Start from the lowest_stack and go to the bottom.
-> +	 */
-> +	while (p > boundary && poison <= check_depth) {
-> +		if (*(unsigned long *)p == STACKLEAK_POISON)
-> +			poison++;
-> +		else
-> +			poison = 0;
-> +
-> +		p -= sizeof(unsigned long);
-> +	}
-> +
-> +	/*
-> +	 * One long int at the bottom of the thread stack is reserved and
-> +	 * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
-> +	 */
-> +	if (p == boundary)
-> +		p += sizeof(unsigned long);
-
-I wonder if end_of_stack() should be taught about CONFIG_SCHED_STACK_END_CHECK,
-given that's supposed to return the last *usable* long on the stack, and we
-don't account for this elsewhere.
-
-If we did, then IIUC we could do:
-
-	unsigned long boundary = (unsigned long)end_of_stack(current);
-
-... at the start of the function, and not have to worry about this explicitly.
-
-> +
-> +#ifdef CONFIG_STACKLEAK_METRICS
-> +	current->thread.prev_lowest_stack = p;
-> +#endif
-> +
-> +	/*
-> +	 * So let's write the poison value to the kernel stack.
-> +	 * Start from the address in p and move up till the new boundary.
-> +	 */
-> +	boundary = current_stack_pointer;
-
-I worry a little that the compiler can move the SP during a function's
-lifetime, but maybe that's only the case when there are VLAs, or something like
-that?
-
-> +
-> +	BUG_ON(boundary - p >= THREAD_SIZE);
-> +
-> +	while (p < boundary) {
-> +		*(unsigned long *)p = STACKLEAK_POISON;
-> +		p += sizeof(unsigned long);
-> +	}
-> +
-> +	/* Reset the lowest_stack value for the next syscall */
-> +	current->thread.lowest_stack = current_stack_pointer;
-> +}
-
-Once this function returns, its data is left on the stack. Is that not a problem?
-
-No strong feelings either way, but it might be worth mentioning in the commit
-message.
-
-> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
-> index f08a2ed9db0d..156fa0a0da19 100644
-> --- a/arch/arm64/kernel/process.c
-> +++ b/arch/arm64/kernel/process.c
-> @@ -364,6 +364,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
->  	p->thread.cpu_context.pc = (unsigned long)ret_from_fork;
->  	p->thread.cpu_context.sp = (unsigned long)childregs;
->  
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +	p->thread.lowest_stack = (unsigned long)task_stack_page(p);
-
-Nit: end_of_stack(p) would be slightly better semantically, even though
-currently equivalent to task_stack_page(p).
-
-[...]
-
-> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> +void __used check_alloca(unsigned long size)
-> +{
-> +	unsigned long sp, stack_left;
-> +
-> +	sp = current_stack_pointer;
-> +
-> +	stack_left = sp & (THREAD_SIZE - 1);
-> +	BUG_ON(stack_left < 256 || size >= stack_left - 256);
-> +}
-
-Is this arbitrary, or is there something special about 256?
-
-Even if this is arbitrary, can we give it some mnemonic?
-
-> +EXPORT_SYMBOL(check_alloca);
-> +#endif
-> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> index a34e9290a699..25dd2a14560d 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
->  KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
->  				   -D__NO_FORTIFY \
->  				   $(call cc-option,-ffreestanding) \
-> -				   $(call cc-option,-fno-stack-protector)
-> +				   $(call cc-option,-fno-stack-protector) \
-> +				   $(DISABLE_STACKLEAK_PLUGIN)
->  
->  GCOV_PROFILE			:= n
->  KASAN_SANITIZE			:= n
-
-I believe we'll also need to do this for the KVM hyp code in arch/arm64/kvm/hyp/.
-
-Thanks,
-Mark.
+> 
+>>
+>>> Signed-off-by: Liming Sun <lsun@mellanox.com>
+>>> Reviewed-by: David Woods <dwoods@mellanox.com>
+>>> ---
+>>>    drivers/mmc/host/Kconfig            |  9 +++++
+>>>    drivers/mmc/host/Makefile           |  1 +
+>>>    drivers/mmc/host/dw_mmc-bluefield.c | 72
+>> +++++++++++++++++++++++++++++++++++++
+>>>    3 files changed, 82 insertions(+)
+>>>    create mode 100644 drivers/mmc/host/dw_mmc-bluefield.c
+>>>
+>>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>>> index 9589f9c..26ac6b5 100644
+>>> --- a/drivers/mmc/host/Kconfig
+>>> +++ b/drivers/mmc/host/Kconfig
+>>> @@ -717,6 +717,15 @@ config MMC_DW_K3
+>>>    	  Synopsys DesignWare Memory Card Interface driver. Select this
+>> option
+>>>    	  for platforms based on Hisilicon K3 SoC's.
+>>>
+>>> +config MMC_DW_BLUEFIELD
+>>
+>> And did you have feedback of my comment in V2？
+>> http://lists-archives.com/linux-kernel/29104830-mmc-dw_mmc-bluefield-
+>> add-driver-extension.html
+>>
+>>> +	tristate "BlueField specific extensions for Synopsys DW Memory Card
+>> Interface"
+>>> +	depends on MMC_DW
+>>> +	select MMC_DW_PLTFM
+>>> +	help
+>>> +	  This selects support for Mellanox BlueField SoC specific extensions
+>> to
+>>> +	  the Synopsys DesignWare Memory Card Interface driver. Select this
+>>> +	  option for platforms based on Mellanox BlueField SoC's.
+>>> +
+>>>    config MMC_DW_PCI
+>>>    	tristate "Synopsys Designware MCI support on PCI bus"
+>>>    	depends on MMC_DW && PCI
+>>> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+>>> index 6aead24..267b3f1 100644
+>>> --- a/drivers/mmc/host/Makefile
+>>> +++ b/drivers/mmc/host/Makefile
+>>> @@ -55,6 +55,7 @@ obj-$(CONFIG_MMC_DW_K3)		+= dw_mmc-
+>> k3.o
+>>>    obj-$(CONFIG_MMC_DW_PCI)	+= dw_mmc-pci.o
+>>>    obj-$(CONFIG_MMC_DW_ROCKCHIP)	+= dw_mmc-rockchip.o
+>>>    obj-$(CONFIG_MMC_DW_ZX)		+= dw_mmc-zx.o
+>>> +obj-$(CONFIG_MMC_DW_BLUEFIELD)	+= dw_mmc-bluefield.o
+>>>    obj-$(CONFIG_MMC_SH_MMCIF)	+= sh_mmcif.o
+>>>    obj-$(CONFIG_MMC_JZ4740)	+= jz4740_mmc.o
+>>>    obj-$(CONFIG_MMC_VUB300)	+= vub300.o
+>>> diff --git a/drivers/mmc/host/dw_mmc-bluefield.c
+>> b/drivers/mmc/host/dw_mmc-bluefield.c
+>>> new file mode 100644
+>>> index 0000000..12067b1
+>>> --- /dev/null
+>>> +++ b/drivers/mmc/host/dw_mmc-bluefield.c
+>>> @@ -0,0 +1,72 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Copyright (C) 2018 Mellanox Technologies.
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License as published by
+>>> + * the Free Software Foundation; either version 2 of the License, or
+>>> + * (at your option) any later version.
+>>> + */
+>>> +
+>>> +#include <linux/module.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/irq.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/pm_runtime.h>
+>>> +#include <linux/mmc/host.h>
+>>> +#include <linux/mmc/mmc.h>
+>>> +#include <linux/of.h>
+>>> +
+>>> +#include "dw_mmc.h"
+>>> +#include "dw_mmc-pltfm.h"
+>>> +
+>>> +static void dw_mci_bluefield_set_ios(struct dw_mci *host, struct
+>> mmc_ios *ios)
+>>> +{
+>>> +	u32 regs;
+>>> +
+>>> +	/* Set drive=4 (bit 29:23) and sample=2 (bit 22:16) in UHS_REG_EXT.
+>> */
+>>> +	regs = mci_readl(host, UHS_REG_EXT);
+>>> +	regs = (regs & ~0x3F100000 & ~0x7F0000) | (4 << 23) | (2 << 16);
+>>> +	mci_writel(host, UHS_REG_EXT, regs);
+>>> +}
+>>> +
+>>> +static const struct dw_mci_drv_data bluefield_drv_data = {
+>>> +	.set_ios		= dw_mci_bluefield_set_ios
+>>> +};
+>>> +
+>>> +static const struct of_device_id dw_mci_bluefield_match[] = {
+>>> +	{ .compatible = "mellanox,bluefield-dw-mshc",
+>>> +		.data = &bluefield_drv_data },
+>>> +	{},
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, dw_mci_bluefield_match);
+>>> +
+>>> +static int dw_mci_bluefield_probe(struct platform_device *pdev)
+>>> +{
+>>> +	const struct dw_mci_drv_data *drv_data = NULL;
+>>> +	const struct of_device_id *match;
+>>> +
+>>> +	if (pdev->dev.of_node) {
+>>> +		match = of_match_node(dw_mci_bluefield_match,
+>>> +				      pdev->dev.of_node);
+>>> +		drv_data = match->data;
+>>> +	}
+>>> +
+>>> +	return dw_mci_pltfm_register(pdev, drv_data);
+>>> +}
+>>> +
+>>> +static struct platform_driver dw_mci_bluefield_pltfm_driver = {
+>>> +	.probe		= dw_mci_bluefield_probe,
+>>> +	.remove		= dw_mci_pltfm_remove,
+>>> +	.driver		= {
+>>> +		.name		= "dwmmc_bluefield",
+>>> +		.of_match_table	= dw_mci_bluefield_match,
+>>> +		.pm		= &dw_mci_pltfm_pmops,
+>>> +	},
+>>> +};
+>>> +
+>>> +module_platform_driver(dw_mci_bluefield_pltfm_driver);
+>>> +
+>>> +MODULE_DESCRIPTION("BlueField DW Multimedia Card driver");
+>>> +MODULE_AUTHOR("Mellanox Technologies");
+>>> +MODULE_LICENSE("GPL v2");
+>>>
+> 
+> 
+> 
+> 
