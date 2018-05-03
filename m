@@ -1,46 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeECN71 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:59:27 -0400
-Received: from 8bytes.org ([81.169.241.247]:55494 "EHLO theia.8bytes.org"
+        id S1751403AbeECN7g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:59:36 -0400
+Received: from mga18.intel.com ([134.134.136.126]:1897 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeECN7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:59:23 -0400
-Date: Thu, 3 May 2018 15:59:21 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Gil Kupfer <gilkup@gmail.com>, dwmw2@infradead.org,
-        bhelgaas@google.com, iommu@lists.linux-foundation.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nadav.amit@gmail.com, Gil Kupfer <gilkup@cs.technion.ac.il>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [RFC/RFT] Add noats flag to boot parameters
-Message-ID: <20180503135920.o2rdh3exai7qmkvu@8bytes.org>
-References: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
- <20180503133459.waawna3ebtu3udn6@8bytes.org>
- <359d736a-a7ac-f0e4-f4db-dc7bb506481c@codeaurora.org>
+        id S1750947AbeECN7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:59:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="37174385"
+Date: Thu, 3 May 2018 21:49:26 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org, rostedt@goodmis.org, rdunlap@infradead.org,
+        x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] kernel hacking: GCC optimization for debug
+ experience (-Og)
+Message-ID: <20180503134925.eyqna4ydogtkmvph@intel.com>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+ <20180502145631.bzfqpw4izlrqhda6@holly.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <359d736a-a7ac-f0e4-f4db-dc7bb506481c@codeaurora.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180502145631.bzfqpw4izlrqhda6@holly.lan>
+User-Agent: NeoMutt/20180323-6-5ca392
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 09:46:34AM -0400, Sinan Kaya wrote:
-> I also like the idea in general.
-> Minor nit..
+On Wed, May 02, 2018 at 03:56:31PM +0100, Daniel Thompson wrote:
+> On Wed, May 02, 2018 at 09:44:55PM +0800, changbin.du@intel.com wrote:
+> > From: Changbin Du <changbin.du@intel.com>
+> > 
+> > Hi all,
+> > I know some kernel developers was searching for a method to dissable GCC
+> > optimizations, probably they want to apply GCC '-O0' option. But since Linux
+> > kernel replys on GCC optimization to remove some dead code, so '-O0' just
+> > breaks the build. They do need this because they want to debug kernel with
+> > qemu, simics, kgtp or kgdb.
+> > 
+> > Thanks for the GCC '-Og' optimization level introduced in GCC 4.8, which
+> > offers a reasonable level of optimization while maintaining fast compilation
+> > and a good debugging experience. It is similar to '-O1' while perfer keeping
+> > debug ability over runtime speed. With '-Og', we can build a kernel with
+> > better debug ability and little performance drop after some simple change.
+> > 
+> > In this series, firstly introduce a new config CONFIG_NO_AUTO_INLINE after two
+> > fixes for this new option. With this option, only functions explicitly marked
+> > with "inline" will  be inlined. This will allow the function tracer to trace
+> > more functions because it only traces functions that the compiler has not
+> > inlined.
+> > 
+> > Then introduce new config CONFIG_DEBUG_EXPERIENCE which apply '-Og'
+> > optimization level for whole kernel, with a simple fix in fix_to_virt().
+> > Currently this option is only tested on a QEMU gust and it works fine.
+> > 
+> > 
+> > Comparison of vmlinux size: a bit smaller.
+> > 
+> >     w/o CONFIG_DEBUG_EXPERIENCE
+> >     $ size vmlinux
+> >        text    data     bss     dec     hex filename
+> >     22665554   9709674  2920908 35296136        21a9388 vmlinux
+> > 
+> >     w/ CONFIG_DEBUG_EXPERIENCE
+> >     $ size vmlinux
+> >        text    data     bss     dec     hex filename
+> >     21499032   10102758 2920908 34522698        20ec64a vmlinux
+> > 
+> > 
+> > Comparison of system performance: a bit drop (~6%).
+> >     This benchmark of kernel compilation is suggested by Ingo Molnar.
+> >     https://lkml.org/lkml/2018/5/2/74
 > 
-> Shouldn't this be an iommu parameter rather than a PCI kernel command line parameter?
-> We now have an iommu.passthrough argument that prevents page translation.
+> In my mind was the opposite question. When running on the same kernel
+> does a kernel whose config contains CONFIG_DEBUG_EXPERIENCE build faster
+> than one without (due to the disabled optimization passes).
 > 
-> Doesn't this fit into the same category especially when it is the IOMMU drivers that
-> call ATS functions for enablement not the PCI drivers.
+> To be honest this is more curiosity than a review comment though... if
+> you have the figures please share, if not then don't sweat it on my
+> account!
+> 
+> 
+> Daniel.
+>
+Sorry I don't have the data yet. Per the comment in GCC, I think it should be a
+little faster but not obviously.
 
-ATS is a bit of a grey area between PCI and IOMMU, but since ATS is
-PCI-specific and the code to enable/disable it is in PCI as well, I
-think the parameter makes sense for PCI too.
-
-
-	Joerg
+> 
+-- 
+Thanks,
+Changbin Du
