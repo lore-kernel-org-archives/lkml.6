@@ -1,59 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751148AbeECOPd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:15:33 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50445 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750944AbeECOPa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:15:30 -0400
-X-Google-Smtp-Source: AB8JxZpn7A1nqTM0sVXejVmKy8SGuyotWGOqxrS8DdAlOc2AQkZQQWcPzpmfpdwQva25JOxAVdsfoA==
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: DRI Development <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>
-Subject: [PATCH] backlight: remove obsolete comment for ->state
-Date: Thu,  3 May 2018 16:15:17 +0200
-Message-Id: <20180503141517.28207-1-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.17.0
+        id S1751027AbeECOQO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:16:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751220AbeECOQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:16:10 -0400
+Date: Thu, 3 May 2018 10:16:06 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v2 3/5] kernel hacking: new config NO_AUTO_INLINE to
+ disable compiler auto-inline optimizations
+Message-ID: <20180503101606.51b7a6a2@gandalf.local.home>
+In-Reply-To: <20180503130013.lcsem2xubk5jqmcg@intel.com>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+        <1525268700-10631-4-git-send-email-changbin.du@intel.com>
+        <CAK8P3a01sgKSYKmzptkNn4xfoGzV=k+uHu0+wco_-x-iMFtVYQ@mail.gmail.com>
+        <20180503130013.lcsem2xubk5jqmcg@intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jani spotted this when reviewing my earlier patch to remove the driver
-internal usage of this field in
+On Thu, 3 May 2018 21:00:13 +0800
+"Du, Changbin" <changbin.du@intel.com> wrote:
 
-commit 3cf91adaa594e8933af1727942ac560e5c7bc70e
-Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Wed Apr 25 19:42:52 2018 +0200
+> On Wed, May 02, 2018 at 04:27:47PM -0400, Arnd Bergmann wrote:
+> > On Wed, May 2, 2018 at 9:44 AM,  <changbin.du@intel.com> wrote:  
+> > > From: Changbin Du <changbin.du@intel.com>
+> > >
+> > > This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
+> > > this option will prevent the compiler from optimizing the kernel by
+> > > auto-inlining functions not marked with the inline keyword.
+> > >
+> > > With this option, only functions explicitly marked with "inline" will
+> > > be inlined. This will allow the function tracer to trace more functions
+> > > because it only traces functions that the compiler has not inlined.
+> > >
+> > > Signed-off-by: Changbin Du <changbin.du@intel.com>
+> > > Cc: Steven Rostedt <rostedt@goodmis.org>  
+> > 
+> > Should this be closer to CONFIG_OPTIMIZE_INLINING or
+> > possibly mutually exclusive with it?
+> >  
+> They are not related I think. CONFIG_OPTIMIZE_INLINING only has effect on
+> functions which are explicitly marked as inline.
+> 
 
-    backlight: Nuke BL_CORE_DRIVER1
+Agreed, as OPTIMIZE_INLINING is to make functions marked inline not to
+be inlined. And I just noticed (doing a git grep), that that config is
+now only available in arch/x86. Maybe it always was, but sparc
+undefines it for vclock_gettime.c.
 
-Cc: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>
----
- include/linux/backlight.h | 1 -
- 1 file changed, 1 deletion(-)
+$ git grep OPTIMIZE_INLIN
+arch/sparc/vdso/vdso32/vclock_gettime.c:#undef  CONFIG_OPTIMIZE_INLINING
+arch/x86/Kconfig.debug:config OPTIMIZE_INLINING
+arch/x86/configs/i386_defconfig:CONFIG_OPTIMIZE_INLINING=y
+arch/x86/configs/x86_64_defconfig:CONFIG_OPTIMIZE_INLINING=y
+arch/x86/entry/vdso/vdso32/vclock_gettime.c:#undef CONFIG_OPTIMIZE_INLINING
+include/linux/compiler-gcc.h:    !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
+kernel/configs/tiny.config:CONFIG_OPTIMIZE_INLINING=y
 
-diff --git a/include/linux/backlight.h b/include/linux/backlight.h
-index 7fbf0539e14a..0b5897446dca 100644
---- a/include/linux/backlight.h
-+++ b/include/linux/backlight.h
-@@ -79,7 +79,6 @@ struct backlight_properties {
- 	/* Backlight type */
- 	enum backlight_type type;
- 	/* Flags used to signal drivers of state changes */
--	/* Upper 4 bits are reserved for driver internal use */
- 	unsigned int state;
- 
- #define BL_CORE_SUSPENDED	(1 << 0)	/* backlight is suspended */
--- 
-2.17.0
+-- Steve
