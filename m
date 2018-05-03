@@ -1,60 +1,108 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751710AbeECOR2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:17:28 -0400
-Received: from mout.gmx.net ([212.227.17.21]:44123 "EHLO mout.gmx.net"
+        id S1751399AbeECOSG (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:18:06 -0400
+Received: from muru.com ([72.249.23.125]:39908 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeECORY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:17:24 -0400
-Message-ID: <1525357015.5577.2.camel@gmx.de>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-From: Mike Galbraith <efault@gmx.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>
-Date: Thu, 03 May 2018 16:16:55 +0200
-In-Reply-To: <20180503135617.GC12217@hirez.programming.kicks-ass.net>
-References: <20180417142119.GA4511@codeblueprint.co.uk>
-         <20180420095005.GH4064@hirez.programming.kicks-ass.net>
-         <20180424133325.GA3179@codeblueprint.co.uk>
-         <1525349542.9956.2.camel@gmx.de>
-         <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
-         <1525351221.9956.4.camel@gmx.de>
-         <20180503124943.GB12217@hirez.programming.kicks-ass.net>
-         <1525354359.5576.1.camel@gmx.de>
-         <20180503135617.GC12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:P1S5Al/8+5dbjTcBD70nCYfqNghpWZZF1hPeLGsdGl22TxYDQCu
- Nio4Z8GbJFHxLozKSrgUg/dt1KL9hNxf09bKV+sRX+ve4mh2RlJVNKFLVhcL5VP/Vx5LO7c
- rE4as59TGkVHcqq35AIaLdyzh+yCdl0oLNbNhghUcSZbblt7mp6PlC8nfEW8jDLVTd961MI
- ay0asyyWKhKU+EiX25Jlg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:8bST8YTjpvg=:Ac7uJarTWTdxo8wLuHazPt
- iCA9zNepswJykuzkbH1s3JE1TsLjLN7WazYZRqAjgmZT7YQQlh4v8xbBNoSs1o3NnuBdUf/9K
- su9OoQGVgC0uUGF1n7VWzzNY7xiN/lnHkeOuqcV9m/Or34bCQVg9Gz7JpOY3oDIy1/ifHCRfl
- /9jpD9C/si6cvm7envBcAzvvrZgYKcKCniY6z575lI28cIQG2bzoT1SZidnATKFe17JuA+Jv1
- GSfTbkDhuRI2XCjVtC4Qp9INFKi0VEI6qEjDYuVejBtjMysERBf3XeBhfQpWMO4DW7Z1YTmSS
- bdIBLRK4WGQ2v+UcvmGlGMEfJ/dCuro/TboV+FPeO6pBgruqWQrLUZBeK/jlKCPF44duQemUE
- Qr7S/9QFEbOj2M0zQ+jFMLSfR3j1DVQX7Awo2AjYk2D3dR1urMfyvBzDACaM9g87ePsa1HcB9
- TiIdiuDM03TZwhGku/7RJTc9q6l+mPIW68/IW8bec82ubys8qQQ4Afnsiyg77UJXAK7QnOsea
- LIYv/Z+0bD+5ygEsZ0RYwMwCWsfBTswJBn1M/BdLLLUqLGn34gAb5UUiZUU02KZpTOl+hkOcI
- Rw55YcyKxaJOFmUO4aHVPbsk8EGwqC+atY7cjQ6useNj2VGFyG/WEATRWQ8Fwdwl5k+aD97CN
- gi5Lf4Ym4Za5mJXXRrlE9ZuOcT7qMyTjHebM/at4LGT3fQiigFleaZ4KlKcd8WBdnfjH5T74N
- yBBktRVs4RWfS6JNOXUfaTz/CVM/9HsLNUf5hZPo0DdVj9wWUy/p6e8RVSksWAd0epv048mhV
- O95f7GY
+        id S1751371AbeECOSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:18:03 -0400
+Date: Thu, 3 May 2018 07:17:59 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: "Reizer, Eyal" <eyalr@ti.com>
+Cc: Eyal Reizer <eyalreizer@gmail.com>,
+        "bcousson@baylibre.com" <bcousson@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
+ support
+Message-ID: <20180503141759.GP98604@atomide.com>
+References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
+ <20180502145100.GK98604@atomide.com>
+ <5cc906da15da45ab96e06957f878b65b@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5cc906da15da45ab96e06957f878b65b@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-03 at 15:56 +0200, Peter Zijlstra wrote:
-> On Thu, May 03, 2018 at 03:32:39PM +0200, Mike Galbraith wrote:
+* Reizer, Eyal <eyalr@ti.com> [180503 06:43]:
+> > 
+> > * Eyal Reizer <eyalreizer@gmail.com> [180501 00:26]:
+> > > enable mmc3 used for wlan and uart1 used for bluetooth
+> > > configure the gpios used for wlan and bluetooth controls
+> > > add fixed voltage regulator used for wlan power control
+> > ...
+> > >  / {
+> > >  	model = "TI AM437x SK EVM";
+> > > @@ -158,6 +159,22 @@
+> > >  			};
+> > >  		};
+> > >  	};
+> > > +
+> > > +	vmmcwl_fixed: fixedregulator-mmcwl {
+> > > +		/*
+> > > +		 * WL_EN is not SDIO standard compliant. It is an out of band
+> > > +		 * signal and hard to be dealt with in a standard way by the
+> > > +		 * SDIO core driver.
+> > > +		 * So modelling the WL_EN line as a regulator was a natural
+> > > +		 * choice as the MMC core already deals with MMC supplies.
+> > > +		 */
+> > > +		compatible = "regulator-fixed";
+> > > +		regulator-name = "vmmcwl_fixed";
+> > > +		regulator-min-microvolt = <1800000>;
+> > > +		regulator-max-microvolt = <1800000>;
+> > > +		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
+> > > +		enable-active-high;
+> > > +	};
+> > >  };
+> > 
+> > Interesting that it needs much longer delay here compared to the
+> > earlier?
 > 
-> > Dang.  With $subject fix applied as well..
-> 
-> That's a NO then... :-(
+> Where do you see a delay in here?
+> There is no startup-delay-us value used in this patch.
 
-Could say who cares about oddball offline wakeup stat. <cringe>
+Oops sorry, I misread the voltage above as the startup-delay-us
+value :)
+
+> > BTW, I do have a patch in work to add pwrseq support for wlcore that
+> > allows leaving out the regulator here. It still needs a bit more
+> > work though.
+> > 
+> > And I also have a series in work to make wlcore use runtime PM that
+> > needs even more work, just FYI to avoid any duplicate work.
+> > 
+> > Hmm you don't happen to have a patch series somewhere making
+> > wlcore use the SDIO dat lien interrupt?
+> wilink has always used out of band interrupt (using wlan_irq gpio).
+> in-band interrupts was not supported.
+> See section 10.5.2 in this the wl18xx hardware integration guide:
+> http://www.ti.com/lit/ug/swru437/swru437.pdf
+
+Hmm yeah I've been wondering about that. Why not follow the SDIO
+standard here though? Do you have links to documentation explaining
+that?
+
+> > I think we should use that when idle rather than the (edge) gpio
+> > interrupt as the SDIO dat interrupt is level sensitive and wired
+> > to the always on gpio bank for most SDIO controller instances.
+> > On runtime PM wakeup, there's no status anywhere to been with the
+> > GPIO edge interrupt.
+> > 
+> I agree that it would have been better, especially for cases such as wake 
+> On wlan, but again, in-band interrupt was something that was talked 
+> about way back but it was never implemented.
+
+I think we can have both if performance is the reason for the
+out of band interrupt. We could still use SDIO dat line interrupt
+during idle for wake-up events.
+
+Regards,
+
+Tony
