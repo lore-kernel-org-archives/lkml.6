@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751346AbeECLuq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 07:50:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45320 "EHLO mx1.redhat.com"
+        id S1751416AbeECLwX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 07:52:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45498 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750930AbeECLun (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 07:50:43 -0400
+        id S1751132AbeECLwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 07:52:20 -0400
 Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
  virtualization mode
 To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
@@ -54,8 +54,8 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
-Date: Thu, 3 May 2018 13:50:39 +0200
+Message-ID: <c44f948b-21ab-fbcf-4d8c-eb426684814d@redhat.com>
+Date: Thu, 3 May 2018 13:52:16 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
@@ -68,16 +68,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 03/05/2018 13:32, Alexander Shishkin wrote:
->>  
->> +/* Default is SYSTEM mode. */
->> +static int __read_mostly pt_mode = PT_MODE_SYSTEM;
->> +module_param(pt_mode, int, S_IRUGO);
-> So, it's an explicit module parameter? One apparent problem with this
-> is that one would need to reload kvm module(s) to be able to use PT,
-> which is not ideal.
+>> +static inline bool cpu_has_vmx_pt_use_gpa(void)
+>> +{
+>> +	return vmcs_config.cpu_based_2nd_exec_ctrl & SECONDARY_EXEC_PT_USE_GPA;
+>> +}
+> 
+> I can deduce the meaning of the previous one, but not this one, and there's
+> no explanation.
 
-If you want to do tracing system-wide, that by definition must disable
-guest tracing, so I think the module parameter is appropriate.  The
-question is more, what is the best default.
+Within KVM, GPA always means guest physical address.
+
+>> +	if (pt_mode == PT_MODE_SYSTEM)
+>> +		vmexit_control &= ~(VM_EXIT_CLEAR_IA32_RTIT_CTL |
+>> +				    VM_EXIT_PT_CONCEAL_PIP);
+> 
+> Ok, so what we really want to know is: is there an encompassing PT
+> event on this cpu when we go into VMLAUNCH/VMRESTORE, right?
+> We can find this out from the pt_ctx and avoid the pt_mode entirely.
+> IOW, instead of having the 3 modes that you describe at the top, you
+> can use something like the following:
+> 
+> 1. Do we have an event in pt_ctx?
+>  * No -> Set up the context for VMX.
+>  * Yes -> 2. Is attr.exclude_guest set?
+>              * No -> Guest trace goes to the host's buffer, do nothing.
+> 	     * Yes -> Set up/switch the context for VMX.
+
+Can you explain this more clearly?
+
+Thanks,
 
 Paolo
