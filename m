@@ -1,96 +1,127 @@
 Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AB8JxZrEepq+74UmVawswFEFvm+GVkCRJxIrgRWLtxuk1laggAcgNykNnbHenoOFsgfxcWm37tI9
-ARC-Seal: i=1; a=rsa-sha256; t=1525405834; cv=none;
+X-Google-Smtp-Source: AB8JxZr+x6IAGmEAHmzZkmK4Q3kE4RA3VowLjbvEtth9HW09egNyFjTD75cqJ4AlSAFHKyPfEfUw
+ARC-Seal: i=1; a=rsa-sha256; t=1525388908; cv=none;
         d=google.com; s=arc-20160816;
-        b=tGRp98Mdf87o+7upG/aZa+XCGux/pU3DQtr6VEd0p2pD9lQat1r/tSQANOUWLjEcxt
-         W5E/EnTIakNXPKJ8gJAb7L4PqVgi6sWpf0el7SbuTVSCvrnKFr0uPuHIPhHzj4rkE0jV
-         EuFV9l9DPw3lCkM1Fui8QNrp+Z/VFcBmWd7lPSlgYjsTWdSKL4iKyt6e2mMTTvJBTCKy
-         wi6/inxcI8QNOydYY7DFYMv20F1ZqN38/yLfDg3dDTxFdLZ/fK4XD8EnA05P0ml1oltd
-         k9DP2vQtMmSKIF0+DA1QiywtJHXfMkd8PWicFwWpD6yVewzFeEzSJN1z0QcI5XuXJSiO
-         ml7g==
+        b=K3mJRmWM3We7V7150LllNivmaQdyU2addITQU39kqWTmrrI7VJnAAO+fLZT7UHlnUf
+         zKYJ2qjnK4YQlS6UdalW/pyEorMMzurDn8I4ByGFVPCFfFk8hTgeOZomSWvs5WO/4i+i
+         pc8GCiBn0760yPm1J2z2xUZqC2kbAfcTKOsk5nXv3TxCJRfva9HCejhOiIK6rR9r7Wmp
+         oCjLjzmtDwRceZJxQlYzYs+YLgB9sRx7C4aJzVBPVhwEgPwOHuNqKJ4uTZDlt6TL0s1e
+         JNrMcLWR96ZhY/DyEYRgSLz6ngC7puMUYgBvdRqtHgOvSYkmvQFX5R0nJ24LE89mFh5J
+         akFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:to:from:date:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=OotEfvRz6U+s9vyB+nxFcZVz2f7A48NO/UsGuENEZdU=;
-        b=WZePSwkIEr6u4FYCqYruAT/bQjK3PgNO6FGtXLD5O0WZGpPQ0d5N9HjQESTnOs5lzy
-         6nectp0s6cvdy6IirYI1YFKe4Sg8IOBJQIVATw5lNtD+CZfc0xtEc0be1i8z1z8UCcuQ
-         2knehkK5LE+Ivs9McQV/53u3PlSY8kTVtPYCLQKa/SsMPQ2XOBCrx3myiqG2zCinaGQU
-         4o9qXOQNGkAVzH20T6/FbNqgndkHGxCpjEyWL7tbYu/vy9gXWKkG4IhBH+v6JLDyXODK
-         9fIaAfzQrFXav5OLDLoBnl+6N5RsKbca2bCr6iwGfjxkPUkCLP+AxBzywGuqfex30iaA
-         oZKA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:dkim-signature:arc-authentication-results;
+        bh=qGsbPnbjAn+OdAeASeUUk9Tl4g6tJZfd7FtCGPTYLYE=;
+        b=eub9WYfGztGM9e0xn/lQQU3QTnrfCyXHZPMWmQvm3L//hUrMkkCBYIj5LRuuHXAOF2
+         F7PTDetPlqfDJ88RnhiknlWOtV+KDGWtbQWRdL3CLKllKWbLV8diEYlYeBEzJ8RI9F3b
+         moc11t0qnOra3Eb0LpjnVYLqVXdSrlr9AOtD1zX8WB6yepaKyo081db4zsbdT6n6aa6J
+         213xUpf8Bt1VZhY5IR4AYDOgMcZ0oHF5TPklgN7aFpVyBJ5WIcNYudtIBnoZ6v02RwPX
+         pyA0S4UpMemqp5JansmWty+3VckboRYDW5B5JHc6C9vmrVkzoAO4U0HltNM2YnFemjYX
+         dh+A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=c7CtET3h;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Kz3NDhhE;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=W3xTsa1V;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=lPcLzYHp;
        spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=c7CtET3h;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=Kz3NDhhE;
+       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=W3xTsa1V;
+       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=lPcLzYHp;
        spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Sender: <xms:idjrWiFwqCJftNjNLVG_qs4kFnCIRb2H-j69IbBuig632WH8mvVUow>
-Date: Fri, 4 May 2018 13:50:29 +1000
+X-ME-Sender: <xms:a5brWi1bxukcoOD1a_snzVKJddEiX44m3NHcWvznqqDkl6mZV-PaVw>
 From: "Tobin C. Harding" <me@tobin.cc>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+To: linux-kernel@vger.kernel.org
+Cc: "Tobin C. Harding" <me@tobin.cc>,
 	Linus Torvalds <torvalds@linux-foundation.org>,
 	Randy Dunlap <rdunlap@infradead.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Kees Cook <keescook@chromium.org>,
 	Anna-Maria Gleixner <anna-maria@linutronix.de>,
 	Andrew Morton <akpm@linux-foundation.org>,
+	"Theodore Ts'o" <tytso@mit.edu>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 0/4] enable early printing of hashed pointers
-Message-ID: <20180504035029.GB3712@eros>
+Subject: [PATCH v3 4/4] vsprintf: Add command line option debug_early_boot
+Date: Fri,  4 May 2018 09:07:41 +1000
+Message-Id: <1525388861-27018-5-git-send-email-me@tobin.cc>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525388861-27018-1-git-send-email-me@tobin.cc>
 References: <1525388861-27018-1-git-send-email-me@tobin.cc>
- <20180504022349.GH29205@thunk.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180504022349.GH29205@thunk.org>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599486185375481881?=
-X-GMAIL-MSGID: =?utf-8?q?1599503948388033820?=
+X-GMAIL-THRID: =?utf-8?q?1599486200324402788?=
+X-GMAIL-MSGID: =?utf-8?q?1599486200324402788?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 10:23:49PM -0400, Theodore Y. Ts'o wrote:
-> On Fri, May 04, 2018 at 09:07:37AM +1000, Tobin C. Harding wrote:
-> > Currently if an attempt is made to print a pointer before there is
-> > enough entropy then '(____ptrval____)' is printed.  This makes debugging
-> > stack traces during early boot difficult.
-> > 
-> > It was observed that we can relax the requirement for cryptographically
-> > secure hashing when debugging while still maintaining pointer hashing
-> > behaviour.  This allows kernels to be debugged without developers
-> > relying on different pointer printing behavior.
-> > 
-> > Using the hw RNG if available solves this problem for those machines
-> > that have a hardware RNG, we would like to solve it for _all_ machines.
-> > 
-> > Patch 1 - Whitespace fixes.
-> > Patch 2 - Fix get_random_bytes_arch()
-> > Patch 3 - Use hw RNG for pointer hashing if available (by default).
-> > Patch 4 - Use insecure hashing with command line option 'debug_early_boot'.
-> 
-> What tree are these patches going in?  It seems to be equally split
-> between random and core kernel code.  I'm happy taking it in via the
-> random tree, or if it goes in some other patch (I've already ack'ed
-> the random changes).  I just want to make sure other folks aren't
-> assuming I was going take the patches, while I was assuming it would
-> go to Linus some other way.
+Currently printing [hashed] pointers requires either a hw RNG or enough
+entropy to be available.  Early in the boot sequence these conditions
+may not be met resulting in a dummy string '(____ptrval____)' being
+printed.  This makes debugging the early boot sequence difficult.  We
+can relax the requirement to use cryptographically secure hashing during
+debugging.  This enables debugging while keeping development/production
+kernel behaviour the same.
 
-Thanks for verifying this Ted, I was wondering the same thing.  Perhaps
-this set should be split up, patch 4 is not related to the first three.
-Assuming no comments come in over the next few days it looks like people
-are ok with the first 3 patches, perhaps you could take those through
-your tree (I can resend separately if easier for you).  I could then
-re-spin the final patch a few more times and perhaps Andrew would take
-it through his tree?
+If new command line option debug_early_boot is enabled use
+cryptographically insecure hashing and hash pointer value immediately.
 
-Feel free to violently correct me, I'm still learning the ins-and-outs
-of the patch pathway to Linus.
+Signed-off-by: Tobin C. Harding <me@tobin.cc>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  8 ++++++++
+ lib/vsprintf.c                                  | 18 ++++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
-thanks,
-Tobin.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b8d1379aa039..ab619c4ccbf2 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -748,6 +748,14 @@
+ 
+ 	debug		[KNL] Enable kernel debugging (events log level).
+ 
++	debug_early_boot
++			[KNL] Enable debugging early in the boot sequence.  If
++			enabled, we use a weak hash instead of siphash to hash
++			pointers.  Use this option if you need to see pointer
++			values during early boot (i.e you are seeing instances
++			of '(___ptrval___)') - cryptographically insecure,
++			please do not use on production kernels.
++
+ 	debug_locks_verbose=
+ 			[KNL] verbose self-tests
+ 			Format=<0|1>
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index 3697a19c2b25..2c48884f00eb 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -1654,6 +1654,18 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
+ 	return widen_string(buf, buf - buf_start, end, spec);
+ }
+ 
++/* Make pointers available for printing early in the boot sequence. */
++static int debug_early_boot __ro_after_init;
++EXPORT_SYMBOL(debug_early_boot);
++
++static int __init debug_early_boot_enable(char *str)
++{
++	debug_early_boot = 1;
++	pr_info("debug_early_boot enabled\n");
++	return 0;
++}
++early_param("debug_early_boot", debug_early_boot_enable);
++
+ static bool have_filled_random_ptr_key __read_mostly;
+ static siphash_key_t ptr_key __read_mostly;
+ 
+@@ -1707,6 +1719,12 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+ 	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
+ 	unsigned long hashval;
+ 
++	/* When debugging early boot use non-cryptographically secure hash */
++	if (unlikely(debug_early_boot)) {
++		hashval = hash_long((unsigned long)ptr, 32);
++		return pointer_string(buf, end, (const void *)hashval, spec);
++	}
++
+ 	if (unlikely(!have_filled_random_ptr_key)) {
+ 		spec.field_width = 2 * sizeof(ptr);
+ 		/* string length must be less than default_width */
+-- 
+2.7.4
