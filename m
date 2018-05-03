@@ -1,30 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752189AbeECHNI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:13:08 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:49832 "EHLO
+        id S1752134AbeECHOO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:14:14 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:49932 "EHLO
         relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751961AbeECHNE (ORCPT
+        with ESMTP id S1751961AbeECHOL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:13:04 -0400
-Subject: Re: [PATCH v2 00/10] PCI: leak fixes, removable generic PCI host,
- assorted stuff
+        Thu, 3 May 2018 03:14:11 -0400
+Subject: Re: [PATCH v2 03/10] PCI: Factor out
+ __of_pci_get_host_bridge_resources()
 To: Jan Kiszka <jan.kiszka@siemens.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
 References: <cover.1525067324.git.jan.kiszka@siemens.com>
-CC: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Will Deacon <will.deacon@arm.com>
+ <35efe707d03c886f1ac1e0c9634810c9da59c88a.1525067324.git.jan.kiszka@siemens.com>
 From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <e15c1cf5-0844-e5f1-d7af-e196207be6d4@mentor.com>
-Date: Thu, 3 May 2018 10:12:54 +0300
+Message-ID: <63e44c62-df98-0e73-5981-fdf2094e2fb2@mentor.com>
+Date: Thu, 3 May 2018 10:14:06 +0300
 User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
  Icedove/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <cover.1525067324.git.jan.kiszka@siemens.com>
+In-Reply-To: <35efe707d03c886f1ac1e0c9634810c9da59c88a.1525067324.git.jan.kiszka@siemens.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [137.202.0.87]
@@ -34,29 +31,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
-
 On 04/30/2018 08:48 AM, Jan Kiszka wrote:
-> Changes in v2:
->  - patch 1: commit message reworking as suggested by Lorenzo
->  - patch 3-6: split-up as suggested by Bjorn
->  - patch 8: new
->  - patch 10: select PCI_DOMAINS from PCI_HOST_GENERIC, rather than
->    allowing manual choice, as suggested by Lorenzo
+> From: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> This primarily enables to unbind the generic PCI host controller without
-> leaving lots of memory leaks behind. A previous proposal patch 5 was
-> rejected because of those issues [1].
+> This will be needed for sharing the core logic between current
+> of_pci_get_host_bridge_resources() and upcoming
+> devm_of_pci_get_host_bridge_resources().
 > 
-> The fixes have been validated in the Jailhouse setup, where we add and
-> remove a virtual PCI host controller on hypervisor activation/
-> deactivation, with the help of kmemleak.
+> Already rename the dev parameter to dev_node in order to free the
+> namespace for a real device parameter.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 
-by chance I was looking into a memleak in of_pci_get_host_bridge_resources(),
-so I can give you a number of review tags.
-
-FWIW the state of unfixably broken https://patchwork.kernel.org/patch/9662893/
-should be changed to obsoleted/deprecated/rejected.
+Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Tested-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
 --
 With best wishes,
