@@ -1,101 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751236AbeECR5Z (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 13:57:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36660 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750947AbeECR5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 13:57:21 -0400
-Date: Thu, 3 May 2018 20:57:20 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: jasowang@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
-Message-ID: <20180503203108-mutt-send-email-mst@kernel.org>
-References: <20180503025955.28816-1-tiwei.bie@intel.com>
+        id S1751301AbeECSGI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:06:08 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:34467 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751054AbeECSGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 14:06:05 -0400
+Date: Thu, 3 May 2018 20:05:53 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [linux-sunxi] [PATCH 3/3] arm64: allwinner: h6: enable MMC0/2 on
+ Pine H64
+Message-ID: <20180503180553.qjjgnw5jnvtdn46n@flea>
+References: <20180426140728.43155-1-icenowy@aosc.io>
+ <20180426140728.43155-4-icenowy@aosc.io>
+ <03cc2e8c-4a35-3fb4-b408-fd8d4ba3e407@arm.com>
+ <83EDF187-5EB2-4FEB-99BC-9D5B728D3A45@aosc.io>
+ <45956397-a593-e51e-8637-655178c5901c@arm.com>
+ <20180502093601.fvkacdv62aqxshbr@flea>
+ <aa2d6072-87a5-cd52-d3a5-17df889e6bc9@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180503025955.28816-1-tiwei.bie@intel.com>
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <aa2d6072-87a5-cd52-d3a5-17df889e6bc9@arm.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 10:59:55AM +0800, Tiwei Bie wrote:
-> This patch introduces the support for VIRTIO_F_IO_BARRIER.
-> When this feature is negotiated, driver will use the barriers
-> suitable for hardware devices.
+On Wed, May 02, 2018 at 12:01:53PM +0100, Andre Przywara wrote:
+> >>>> It looks like there are more users of those power rails, so we could
+> >>>> keep those supplies connected to these fixed regulators here, even with
+> >>>> AXP-805 support in the kernel.
+> >>>
+> >>> It's not a good choice.
+> >>>
+> >>>>
+> >>>> Or we keep this back until we get proper AXP support in the kernel? I
+> >>>> guess it's quite close to the existing PMICs, so it might be more a
+> >>>> copy&paste exercise to support the AXP-805?
+> >>>
+> >>> It's not a reason to keep it back.
+> >>
+> >> So I compared the manuals of the AXP806 and the AXP805, the register
+> >> interface looks identical to me. I only have a (somewhat) Chinese
+> >> version of the AXP806 manual, so couldn't really find the difference
+> >> between the two. Do you know more about it? Is it just maybe the
+> >> packaging and the electrical properties (like max current supported)?
+> >>
+> >> If the I2C register interface is really the same, we could just add the
+> >> DT nodes for the regulator and be done.
+> > 
+> > And that argument is only valid if you 100% trust the fact that both
+> > datasheet are complete and accurate.
+> > 
+> > And experience show that you can't.
 > 
-> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> Well, but I wonder how paranoid we are going to be? And in this case we
+> have confirmation from Wink that they are the same.
 
-Thanks!
+Paranoid enough so that we don't blindly trust that the reviewer had a
+coffee, no interruptions or moment of distraction, or that the
+datasheet is correct.
 
-> ---
->  drivers/virtio/virtio_ring.c       | 5 +++++
->  include/uapi/linux/virtio_config.h | 8 +++++++-
->  2 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index 21d464a29cf8..edb565643bf4 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
->  		!context;
->  	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
->  
-> +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
-> +		vq->weak_barriers = false;
-> +
->  	/* No callback?  Tell other side not to bother us. */
->  	if (!callback) {
->  		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+But not so paranoid that having the driver running on a kernel is
+enough.
 
-One issue worth looking at is that at least on Intel strong barriers are
-actually typically overkill.  We should probably switch weak_barriers ==
-false case over to dma barriers.
+> So I think we can go with just a DT addition, given that we test it
+> and confirm that it works for our use case. Should we discover
+> something odd or undocumented later, I'd consider this a bug fix,
+> which we then (and only then!) could fix by adding the compatible
+> string to the driver. Any DT would be fine already, because we list
+> both compatible strings in there.
 
-> @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
->  			break;
->  		case VIRTIO_F_IOMMU_PLATFORM:
->  			break;
-> +		case VIRTIO_F_IO_BARRIER:
-> +			break;
->  		default:
->  			/* We don't understand this bit. */
->  			__virtio_clear_bit(vdev, i);
-> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> index 308e2096291f..6ca8d24bf468 100644
-> --- a/include/uapi/linux/virtio_config.h
-> +++ b/include/uapi/linux/virtio_config.h
+In this particular case, yeah, it seems reasonable.
 
-Any virtio UAPI changes must be CC'd to one of the virtio TC mailing lists
-(subscriber-only, sorry about that).
+Maxime
 
-> @@ -49,7 +49,7 @@
->   * transport being used (eg. virtio_ring), the rest are per-device feature
->   * bits. */
->  #define VIRTIO_TRANSPORT_F_START	28
-> -#define VIRTIO_TRANSPORT_F_END		34
-> +#define VIRTIO_TRANSPORT_F_END		38
->  
->  #ifndef VIRTIO_CONFIG_NO_LEGACY
->  /* Do we get callbacks when the ring is completely used, even if we've
-> @@ -71,4 +71,10 @@
->   * this is for compatibility with legacy systems.
->   */
->  #define VIRTIO_F_IOMMU_PLATFORM		33
-> +
-> +/*
-> + * If clear - driver may use barriers suitable for CPU cores.
-> + * If set - driver must use barriers suitable for hardware devices.
-> + */
-> +#define VIRTIO_F_IO_BARRIER		37
->  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-
-Why 37? I'd use 34 I think.
-
-> -- 
-> 2.11.0
+-- 
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
