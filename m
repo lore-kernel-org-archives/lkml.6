@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeECJgp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:36:45 -0400
-Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.172]:8417 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751440AbeECJgh (ORCPT
+        id S1751652AbeECJgw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:36:52 -0400
+Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.176]:22568 "EHLO
+        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751532AbeECJgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:36:37 -0400
+        Thu, 3 May 2018 05:36:45 -0400
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfyq4sHQ=="
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -26,9 +26,9 @@ To: Johan Hovold <johan@kernel.org>, afd@ti.com,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 3/6] DTS: gta04: add uart2 child node for w2sg0004 GPS receiver
-Date: Thu,  3 May 2018 11:35:48 +0200
-Message-Id: <9ebb28aed589aca8e9b5bc5c910f1d2f0d62669d.1525340143.git.hns@goldelico.com>
+Subject: [PATCH v7 6/6] gnss: add w2sg0004 to Kconfig
+Date: Thu,  3 May 2018 11:35:51 +0200
+Message-Id: <7035d90fb71c4bc9d2e7c1090b77bdd6bdfd9871.1525340143.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1525340143.git.hns@goldelico.com>
 References: <cover.1525340143.git.hns@goldelico.com>
@@ -38,38 +38,31 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GTA04 has a W2SG0004 module connected to UART2 of the OMAP3
-processor. A GPIO can pulse the on/off toggle switch.
-
-Note that there is no WAKEUP output from the W2SG0004,
-hence we can't use the generic SirfStar binding.
-
-The VSIM regulator is used to power on/off the LNA of an
-external active GPS antenna so that a driver can turn the
-LNA off if GPS is not needed to save battery energy.
+Allow to configure for w2sg0004 driver.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gnss/Kconfig | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index 4170be70460e..1c9e1ccf2346 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -478,6 +478,13 @@
- &uart2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart2_pins>;
-+
-+	gps: gps {
-+		compatible = "wi2wi,w2sg0004";
-+		lna-supply = <&vsim>;   /* LNA regulator */
-+		/* GPIO_145: trigger for on/off-impulse for w2sg0004 */
-+		enable-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
-+	};
- };
+diff --git a/drivers/gnss/Kconfig b/drivers/gnss/Kconfig
+index 6abc88514512..ccc128bd0a3f 100644
+--- a/drivers/gnss/Kconfig
++++ b/drivers/gnss/Kconfig
+@@ -40,4 +40,14 @@ config GNSS_UBX_SERIAL
  
- &uart3 {
+ 	  If unsure, say N.
+ 
++config GNSS_W2SG0004
++	tristate "W2SG00x4 power on/off driver"
++	depends on GPIOLIB && SERIAL_DEV_BUS
++	help
++	  Enable on/off control of W2SG00x4 GPS module connected
++	  to some SoC UART to allow powering up/down if the /dev/gnss
++	  is opened/closed.
++
++	  It also provides a "rfkill gps" name to control the LNA power.
++
+ endif # GNSS
 -- 
 2.12.2
