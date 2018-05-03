@@ -1,202 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeECCDH (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 22:03:07 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:41217 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751837AbeECCDF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 22:03:05 -0400
-X-Google-Smtp-Source: AB8JxZrrJAMNsFdIhGRoR7IUx3OxO7ZFhFxhZS64ucClXu/Y8IL8QoEE/uUhRNh8jnMTLhGHNjVc7g==
-Subject: Re: [PATCH] KVM: arm/arm64: fix unaligned hva start and end in
- handle_hva_to_gpa
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>,
-        li.zhang@hxt-semitech.com, Suzuki Poulose <Suzuki.Poulose@arm.com>
-References: <1525244911-5519-1-git-send-email-hejianet@gmail.com>
- <04e6109f-cbbd-24b0-03bb-9247b930d42c@arm.com>
-From: Jia He <hejianet@gmail.com>
-Message-ID: <85e04362-05dd-c697-e9c4-ad5824e63819@gmail.com>
-Date: Thu, 3 May 2018 10:02:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751991AbeECCJK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 22:09:10 -0400
+Received: from mga18.intel.com ([134.134.136.126]:3122 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751837AbeECCJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 22:09:07 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
+   d="scan'208";a="55539037"
+Date: Thu, 3 May 2018 10:09:49 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
+        jfreimann@redhat.com
+Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
+Message-ID: <20180503020949.5u3qz32gsk33z6vk@debian>
+References: <20180425051550.24342-1-tiwei.bie@intel.com>
+ <20180425051550.24342-5-tiwei.bie@intel.com>
+ <34781052-df9f-e505-cd3f-08e460b34dcc@redhat.com>
+ <20180502072819.mf5l3dypk6dwx2s7@debian>
+ <20180502164828-mutt-send-email-mst@kernel.org>
+ <20180502151255.h3x6rhszxa3euinl@debian>
+ <20180502184015-mutt-send-email-mst@kernel.org>
+ <20180503011116.qvoyblcpklinrk26@debian>
+ <20180503044218-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <04e6109f-cbbd-24b0-03bb-9247b930d42c@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180503044218-mutt-send-email-mst@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc
+On Thu, May 03, 2018 at 04:44:39AM +0300, Michael S. Tsirkin wrote:
+> On Thu, May 03, 2018 at 09:11:16AM +0800, Tiwei Bie wrote:
+> > On Wed, May 02, 2018 at 06:42:57PM +0300, Michael S. Tsirkin wrote:
+> > > On Wed, May 02, 2018 at 11:12:55PM +0800, Tiwei Bie wrote:
+> > > > On Wed, May 02, 2018 at 04:51:01PM +0300, Michael S. Tsirkin wrote:
+> > > > > On Wed, May 02, 2018 at 03:28:19PM +0800, Tiwei Bie wrote:
+> > > > > > On Wed, May 02, 2018 at 10:51:06AM +0800, Jason Wang wrote:
+> > > > > > > On 2018年04月25日 13:15, Tiwei Bie wrote:
+> > > > > > > > This commit introduces the event idx support in packed
+> > > > > > > > ring. This feature is temporarily disabled, because the
+> > > > > > > > implementation in this patch may not work as expected,
+> > > > > > > > and some further discussions on the implementation are
+> > > > > > > > needed, e.g. do we have to check the wrap counter when
+> > > > > > > > checking whether a kick is needed?
+> > > > > > > > 
+> > > > > > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > > > > > > ---
+> > > > > > > >   drivers/virtio/virtio_ring.c | 53 ++++++++++++++++++++++++++++++++++++++++----
+> > > > > > > >   1 file changed, 49 insertions(+), 4 deletions(-)
+> > > > > > > > 
+> > > > > > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > > > > > index 0181e93897be..b1039c2985b9 100644
+> > > > > > > > --- a/drivers/virtio/virtio_ring.c
+> > > > > > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > > > > > @@ -986,7 +986,7 @@ static inline int virtqueue_add_packed(struct virtqueue *_vq,
+> > > > > > > >   static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> > > > > > > >   {
+> > > > > > > >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > > > > > > > -	u16 flags;
+> > > > > > > > +	u16 new, old, off_wrap, flags;
+> > > > > > > >   	bool needs_kick;
+> > > > > > > >   	u32 snapshot;
+> > > > > > > > @@ -995,7 +995,12 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> > > > > > > >   	 * suppressions. */
+> > > > > > > >   	virtio_mb(vq->weak_barriers);
+> > > > > > > > +	old = vq->next_avail_idx - vq->num_added;
+> > > > > > > > +	new = vq->next_avail_idx;
+> > > > > > > > +	vq->num_added = 0;
+> > > > > > > > +
+> > > > > > > >   	snapshot = *(u32 *)vq->vring_packed.device;
+> > > > > > > > +	off_wrap = virtio16_to_cpu(_vq->vdev, snapshot & 0xffff);
+> > > > > > > >   	flags = cpu_to_virtio16(_vq->vdev, snapshot >> 16) & 0x3;
+> > > > > > > >   #ifdef DEBUG
+> > > > > > > > @@ -1006,7 +1011,10 @@ static bool virtqueue_kick_prepare_packed(struct virtqueue *_vq)
+> > > > > > > >   	vq->last_add_time_valid = false;
+> > > > > > > >   #endif
+> > > > > > > > -	needs_kick = (flags != VRING_EVENT_F_DISABLE);
+> > > > > > > > +	if (flags == VRING_EVENT_F_DESC)
+> > > > > > > > +		needs_kick = vring_need_event(off_wrap & ~(1<<15), new, old);
+> > > > > > > 
+> > > > > > > I wonder whether or not the math is correct. Both new and event are in the
+> > > > > > > unit of descriptor ring size, but old looks not.
+> > > > > > 
+> > > > > > What vring_need_event() cares is the distance between
+> > > > > > `new` and `old`, i.e. vq->num_added. So I think there
+> > > > > > is nothing wrong with `old`. But the calculation of the
+> > > > > > distance between `new` and `event_idx` isn't right when
+> > > > > > `new` wraps. How do you think about the below code:
+> > > > > > 
+> > > > > > 	wrap_counter = off_wrap >> 15;
+> > > > > > 	event_idx = off_wrap & ~(1<<15);
+> > > > > > 	if (wrap_counter != vq->wrap_counter)
+> > > > > > 		event_idx -= vq->vring_packed.num;
+> > > > > > 	
+> > > > > > 	needs_kick = vring_need_event(event_idx, new, old);
+> > > > > 
+> > > > > I suspect this hack won't work for non power of 2 ring.
+> > > > 
+> > > > Above code doesn't require the ring size to be a power of 2.
+> > > > 
+> > > > For (__u16)(new_idx - old), what we want to get is vq->num_added.
+> > > > 
+> > > > old = vq->next_avail_idx - vq->num_added;
+> > > > new = vq->next_avail_idx;
+> > > > 
+> > > > When vq->next_avail_idx >= vq->num_added, it's obvious that,
+> > > > (__u16)(new_idx - old) is vq->num_added.
+> > > > 
+> > > > And when vq->next_avail_idx < vq->num_added, new will be smaller
+> > > > than old (old will be a big unsigned number), but (__u16)(new_idx
+> > > > - old) is still vq->num_added.
+> > > > 
+> > > > For (__u16)(new_idx - event_idx - 1), when new wraps and event_idx
+> > > > doesn't wrap, the most straightforward way to calculate it is:
+> > > > (new + vq->vring_packed.num) - event_idx - 1.
+> > > 
+> > > So how about we use the straightforward way then?
+> > 
+> > You mean we do new += vq->vring_packed.num instead
+> > of event_idx -= vq->vring_packed.num before calling
+> > vring_need_event()?
+> > 
+> > The problem is that, the second param (new_idx) of
+> > vring_need_event() will be used for:
+> > 
+> > (__u16)(new_idx - event_idx - 1)
+> > (__u16)(new_idx - old)
+> > 
+> > So if we change new, we will need to change old too.
+> 
+> I think that since we have a branch there anyway,
+> we are better off just special-casing if (wrap_counter != vq->wrap_counter).
+> Treat is differenty and avoid casts.
+> 
+> > And that would be an ugly hack..
+> > 
+> > Best regards,
+> > Tiwei Bie
+> 
+> I consider casts and huge numbers with two's complement
+> games even uglier.
 
-Thanks for the review
+The dependency on two's complement game is introduced
+since the split ring.
 
+In packed ring, old is calculated via:
 
-On 5/2/2018 10:26 PM, Marc Zyngier Wrote:
-> [+ Suzuki]
->
-> On 02/05/18 08:08, Jia He wrote:
->> From: Jia He <jia.he@hxt-semitech.com>
->>
->> In our armv8a server (QDF2400), I noticed a WARN_ON as follows:
->>
->> [  800.202850] WARNING: CPU: 33 PID: 255 at arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1670 kvm_age_hva_handler+0xcc/0xd4
-> Which kernel version is that? I don't have a WARN_ON() at this line in
-> 4.17. Do you have a reproducer?
-My running kernel version is v4.14-15, but I can reproduced it in 4.17 (start 20 
-guests and run memhog in the host)
-In 4.17, the warn_on is at
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/virt/kvm/arm/mmu.c#n1826
->
->> [  800.213535] Modules linked in: vhost_net vhost tap xt_CHECKSUM ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm vfat fat iw_cm mlx5_ib ib_core dm_mirror dm_region_hash dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
->> [  800.284115]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
->> [  800.300382] CPU: 33 PID: 255 Comm: khugepaged Tainted: G        W       4.14.36+ #6
->> [  800.308030] Hardware name: <snip for confidential issues>
-> Well, that's QDF2400, right? ;-)
-yes, exactly :)
->
->> [  800.318717] task: ffff8017c949c000 task.stack: ffff8017c9498000
->> [  800.324629] PC is at kvm_age_hva_handler+0xcc/0xd4
->> [  800.329412] LR is at handle_hva_to_gpa+0xec/0x15c
->> [  800.334109] pc : [<ffff0000080b4f2c>] lr : [<ffff0000080b4838>] pstate: 20400145
->> [  800.341496] sp : ffff8017c949b260
->> [  800.344804] x29: ffff8017c949b260 x28: ffff801663e25008
->> [  800.350110] x27: 0000000000020000 x26: 00000001fb1a0000
->> [  800.355416] x25: 0000ffff605b0200 x24: 0000ffff605a0200
->> [  800.360722] x23: 0000000000000000 x22: 000000000000ffff
->> [  800.366028] x21: 00000001fb1a0000 x20: ffff8017c085a000
->> [  800.371334] x19: ffff801663e20008 x18: 0000000000000000
->> [  800.376641] x17: 0000000000000000 x16: 0000000000000000
->> [  800.381947] x15: 0000000000000000 x14: 3d646e655f617668
->> [  800.387254] x13: 2c30303230623530 x12: 36666666663d646e
->> [  800.392560] x11: 652c303032306135 x10: 3036666666663d74
->> [  800.397867] x9 : 0000000000003796 x8 : 655f6e66672c3030
->> [  800.403173] x7 : ffff00000859434c x6 : ffff8017f9c30cb8
->> [  800.408479] x5 : ffff8017f9c30cb8 x4 : ffff0000080b4e60
->> [  800.413786] x3 : 0000000000000000 x2 : 0000000000020000
->> [  800.419092] x1 : 00000001fb1a0000 x0 : 0000000020000000
->> [  800.424398] Call trace:
->> [  800.426838] Exception stack(0xffff8017c949b120 to 0xffff8017c949b260)
->> [  800.433272] b120: 0000000020000000 00000001fb1a0000 0000000000020000 0000000000000000
->> [  800.441095] b140: ffff0000080b4e60 ffff8017f9c30cb8 ffff8017f9c30cb8 ffff00000859434c
->> [  800.448918] b160: 655f6e66672c3030 0000000000003796 3036666666663d74 652c303032306135
->> [  800.456740] b180: 36666666663d646e 2c30303230623530 3d646e655f617668 0000000000000000
->> [  800.464563] b1a0: 0000000000000000 0000000000000000 0000000000000000 ffff801663e20008
->> [  800.472385] b1c0: ffff8017c085a000 00000001fb1a0000 000000000000ffff 0000000000000000
->> [  800.480208] b1e0: 0000ffff605a0200 0000ffff605b0200 00000001fb1a0000 0000000000020000
->> [  800.488030] b200: ffff801663e25008 ffff8017c949b260 ffff0000080b4838 ffff8017c949b260
->> [  800.495853] b220: ffff0000080b4f2c 0000000020400145 0000000000000001 ffff8017c949b2a0
->> [  800.503676] b240: ffffffffffffffff ffff8017c949b260 ffff8017c949b260 ffff0000080b4f2c
->> [  800.511498] [<ffff0000080b4f2c>] kvm_age_hva_handler+0xcc/0xd4
->> [  800.517324] [<ffff0000080b4838>] handle_hva_to_gpa+0xec/0x15c
->> [  800.523063] [<ffff0000080b6c5c>] kvm_age_hva+0x5c/0xcc
->> [  800.528194] [<ffff0000080a7c3c>] kvm_mmu_notifier_clear_flush_young+0x54/0x90
->> [  800.535324] [<ffff00000827a0e8>] __mmu_notifier_clear_flush_young+0x6c/0xa8
->> [  800.542279] [<ffff00000825a644>] page_referenced_one+0x1e0/0x1fc
->> [  800.548279] [<ffff00000827e8f8>] rmap_walk_ksm+0x124/0x1a0
->> [  800.553759] [<ffff00000825c974>] rmap_walk+0x94/0x98
->> [  800.558717] [<ffff00000825ca98>] page_referenced+0x120/0x180
->> [  800.564369] [<ffff000008228c58>] shrink_active_list+0x218/0x4a4
->> [  800.570281] [<ffff000008229470>] shrink_node_memcg+0x58c/0x6fc
->> [  800.576107] [<ffff0000082296c4>] shrink_node+0xe4/0x328
->> [  800.581325] [<ffff000008229c9c>] do_try_to_free_pages+0xe4/0x3b8
->> [  800.587324] [<ffff00000822a094>] try_to_free_pages+0x124/0x234
->> [  800.593150] [<ffff000008216aa0>] __alloc_pages_nodemask+0x564/0xf7c
->> [  800.599412] [<ffff000008292814>] khugepaged_alloc_page+0x38/0xb8
->> [  800.605411] [<ffff0000082933bc>] collapse_huge_page+0x74/0xd70
->> [  800.611238] [<ffff00000829470c>] khugepaged_scan_mm_slot+0x654/0xa98
->> [  800.617585] [<ffff000008294e0c>] khugepaged+0x2bc/0x49c
->> [  800.622803] [<ffff0000080ffb70>] kthread+0x124/0x150
->> [  800.627762] [<ffff0000080849f0>] ret_from_fork+0x10/0x1c
->> [  800.633066] ---[ end trace 944c130b5252fb01 ]---
->> -------------------------------------------------------------------------
->>
->> The root cause might be: we can't guarantee that the parameter start and end
->> in handle_hva_to_gpa is PAGE_SIZE aligned, let alone hva_start and hva_end.
-> So why not aligning them the first place?
-at the first place of handle_hva_to_gpa()?
-but boundary check is needed in each loop of kvm_for_each_memslot. Am I missing 
-anything here?
->
->> This bug is introduced by commit 056aad67f836 ("kvm: arm/arm64: Rework gpa
->> callback handlers")
->>
->> It fixes the bug by use pfn size converted.
->>
->> Fixes: 056aad67f836 ("kvm: arm/arm64: Rework gpa callback handlers")
->>
->> Signed-off-by: jia.he@hxt-semitech.com
->> Signed-off-by: li.zhang@hxt-semitech.com
->> ---
->>   virt/kvm/arm/mmu.c | 10 ++++++----
->>   1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index 7f6a944..9dd7ae4 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1744,7 +1744,7 @@ static int handle_hva_to_gpa(struct kvm *kvm,
->>   	/* we only care about the pages that the guest sees */
->>   	kvm_for_each_memslot(memslot, slots) {
->>   		unsigned long hva_start, hva_end;
->> -		gfn_t gpa;
->> +		gpa_t gpa, gpa_end;
->>   
->>   		hva_start = max(start, memslot->userspace_addr);
->>   		hva_end = min(end, memslot->userspace_addr +
->> @@ -1753,7 +1753,9 @@ static int handle_hva_to_gpa(struct kvm *kvm,
->>   			continue;
->>   
->>   		gpa = hva_to_gfn_memslot(hva_start, memslot) << PAGE_SHIFT;
->> -		ret |= handler(kvm, gpa, (u64)(hva_end - hva_start), data);
->> +		gpa_end = hva_to_gfn_memslot(hva_end + PAGE_SIZE - 1, memslot)
->> +							 << PAGE_SHIFT;
->> +		ret |= handler(kvm, gpa, (u64)(gpa_end - gpa), data);
-> But we're looking for the mapping in the same memslot, so the distance
-> between hva and hva_end is the same as the one between gpa and gpa_end
-> if you didn't align it.
-maybe not, sometimes hva_end-hva != gpa_end-gpa
-start=fffdc37f0200,hva_start=fffdc37f0200,end=fffdc3800200,hva_end=fffdc3800000,gpa=3ff0000,gfn_end=4000000
+old = vq->next_avail_idx - vq->num_added;
 
-but sometimes it is:
-start=ffff60590200,hva_start=ffff60590200,end=ffff605a0200,hva_end=ffff605a0200,gpa=1fb190000,gfn_end=1fb1b0000
+In split ring, old is calculated via:
 
-IMO, the unalignment is caused by the ksm stable page flag STABLE_FLAG. I will
-propose another ksm patch to fix it。
-But from handle_hva_to_gpa's point of view, arm kvm needs to void the followup
-exception, just like what powerpc andx86 have done.
+old = vq->avail_idx_shadow - vq->num_added;
 
->
-> So why not align both start and end and skip the double lookup?
->
->>   	}
->>   
->>   	return ret;
->> @@ -1823,7 +1825,7 @@ static int kvm_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
->>   	pmd_t *pmd;
->>   	pte_t *pte;
->>   
->> -	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
->> +	WARN_ON((size & ~PAGE_MASK) != 0);
->>   	pmd = stage2_get_pmd(kvm, NULL, gpa);
->>   	if (!pmd || pmd_none(*pmd))	/* Nothing there */
->>   		return 0;
->> @@ -1843,7 +1845,7 @@ static int kvm_test_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *
->>   	pmd_t *pmd;
->>   	pte_t *pte;
->>   
->> -	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
->> +	WARN_ON((size & ~PAGE_MASK) != 0);
->>   	pmd = stage2_get_pmd(kvm, NULL, gpa);
->>   	if (!pmd || pmd_none(*pmd))	/* Nothing there */
->>   		return 0;
->>
-> I'll let Suzuki comment on this, but I'm a bit suspicious of this patch.
-sure, more comments, more clear for the issue.
+In both cases, when vq->num_added is bigger, old will
+be a big number.
 
--- 
-Cheers,
-Jia
+Best regards,
+Tiwei Bie
+
+> 
+> > > 
+> > > > But we can also calculate it in this way:
+> > > > 
+> > > > event_idx -= vq->vring_packed.num;
+> > > > (event_idx will be a big unsigned number)
+> > > > 
+> > > > Then (__u16)(new_idx - event_idx - 1) will be the value we want.
+> > > > 
+> > > > Best regards,
+> > > > Tiwei Bie
+> > > 
+> > > 
+> > > > > 
+> > > > > 
+> > > > > > Best regards,
+> > > > > > Tiwei Bie
+> > > > > > 
+> > > > > > 
+> > > > > > > 
+> > > > > > > Thanks
+> > > > > > > 
+> > > > > > > > +	else
+> > > > > > > > +		needs_kick = (flags != VRING_EVENT_F_DISABLE);
+> > > > > > > >   	END_USE(vq);
+> > > > > > > >   	return needs_kick;
+> > > > > > > >   }
+> > > > > > > > @@ -1116,6 +1124,15 @@ static void *virtqueue_get_buf_ctx_packed(struct virtqueue *_vq,
+> > > > > > > >   	if (vq->last_used_idx >= vq->vring_packed.num)
+> > > > > > > >   		vq->last_used_idx -= vq->vring_packed.num;
+> > > > > > > > +	/* If we expect an interrupt for the next entry, tell host
+> > > > > > > > +	 * by writing event index and flush out the write before
+> > > > > > > > +	 * the read in the next get_buf call. */
+> > > > > > > > +	if (vq->event_flags_shadow == VRING_EVENT_F_DESC)
+> > > > > > > > +		virtio_store_mb(vq->weak_barriers,
+> > > > > > > > +				&vq->vring_packed.driver->off_wrap,
+> > > > > > > > +				cpu_to_virtio16(_vq->vdev, vq->last_used_idx |
+> > > > > > > > +						(vq->wrap_counter << 15)));
+> > > > > > > > +
+> > > > > > > >   #ifdef DEBUG
+> > > > > > > >   	vq->last_add_time_valid = false;
+> > > > > > > >   #endif
+> > > > > > > > @@ -1143,10 +1160,17 @@ static unsigned virtqueue_enable_cb_prepare_packed(struct virtqueue *_vq)
+> > > > > > > >   	/* We optimistically turn back on interrupts, then check if there was
+> > > > > > > >   	 * more to do. */
+> > > > > > > > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
+> > > > > > > > +	 * either clear the flags bit or point the event index at the next
+> > > > > > > > +	 * entry. Always update the event index to keep code simple. */
+> > > > > > > > +
+> > > > > > > > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
+> > > > > > > > +			vq->last_used_idx | (vq->wrap_counter << 15));
+> > > > > > > >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> > > > > > > >   		virtio_wmb(vq->weak_barriers);
+> > > > > > > > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> > > > > > > > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
+> > > > > > > > +						     VRING_EVENT_F_ENABLE;
+> > > > > > > >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> > > > > > > >   							vq->event_flags_shadow);
+> > > > > > > >   	}
+> > > > > > > > @@ -1172,15 +1196,34 @@ static bool virtqueue_poll_packed(struct virtqueue *_vq, unsigned last_used_idx)
+> > > > > > > >   static bool virtqueue_enable_cb_delayed_packed(struct virtqueue *_vq)
+> > > > > > > >   {
+> > > > > > > >   	struct vring_virtqueue *vq = to_vvq(_vq);
+> > > > > > > > +	u16 bufs, used_idx, wrap_counter;
+> > > > > > > >   	START_USE(vq);
+> > > > > > > >   	/* We optimistically turn back on interrupts, then check if there was
+> > > > > > > >   	 * more to do. */
+> > > > > > > > +	/* Depending on the VIRTIO_RING_F_USED_EVENT_IDX feature, we need to
+> > > > > > > > +	 * either clear the flags bit or point the event index at the next
+> > > > > > > > +	 * entry. Always update the event index to keep code simple. */
+> > > > > > > > +
+> > > > > > > > +	/* TODO: tune this threshold */
+> > > > > > > > +	bufs = (u16)(vq->next_avail_idx - vq->last_used_idx) * 3 / 4;
+> > > > > > > > +
+> > > > > > > > +	used_idx = vq->last_used_idx + bufs;
+> > > > > > > > +	wrap_counter = vq->wrap_counter;
+> > > > > > > > +
+> > > > > > > > +	if (used_idx >= vq->vring_packed.num) {
+> > > > > > > > +		used_idx -= vq->vring_packed.num;
+> > > > > > > > +		wrap_counter ^= 1;
+> > > > > > > > +	}
+> > > > > > > > +
+> > > > > > > > +	vq->vring_packed.driver->off_wrap = cpu_to_virtio16(_vq->vdev,
+> > > > > > > > +			used_idx | (wrap_counter << 15));
+> > > > > > > >   	if (vq->event_flags_shadow == VRING_EVENT_F_DISABLE) {
+> > > > > > > >   		virtio_wmb(vq->weak_barriers);
+> > > > > > > > -		vq->event_flags_shadow = VRING_EVENT_F_ENABLE;
+> > > > > > > > +		vq->event_flags_shadow = vq->event ? VRING_EVENT_F_DESC :
+> > > > > > > > +						     VRING_EVENT_F_ENABLE;
+> > > > > > > >   		vq->vring_packed.driver->flags = cpu_to_virtio16(_vq->vdev,
+> > > > > > > >   							vq->event_flags_shadow);
+> > > > > > > >   	}
+> > > > > > > > @@ -1822,8 +1865,10 @@ void vring_transport_features(struct virtio_device *vdev)
+> > > > > > > >   		switch (i) {
+> > > > > > > >   		case VIRTIO_RING_F_INDIRECT_DESC:
+> > > > > > > >   			break;
+> > > > > > > > +#if 0
+> > > > > > > >   		case VIRTIO_RING_F_EVENT_IDX:
+> > > > > > > >   			break;
+> > > > > > > > +#endif
+> > > > > > > >   		case VIRTIO_F_VERSION_1:
+> > > > > > > >   			break;
+> > > > > > > >   		case VIRTIO_F_IOMMU_PLATFORM:
+> > > > > > > 
