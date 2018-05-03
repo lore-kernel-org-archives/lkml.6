@@ -1,103 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751777AbeECVo7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 17:44:59 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:36021 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751392AbeECVnQ (ORCPT
+        id S1751342AbeECVw6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 17:52:58 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33486 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750911AbeECVw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 17:43:16 -0400
-X-Google-Smtp-Source: AB8JxZqoIIdGBun5tZgDAOQKBx7PsspGSpnH4DxdGFMDvwlhPlcfQSGVjq5MRjXOJAmCAqZ0G+t4Ow==
-From: Connor McAdams <conmanx360@gmail.com>
-Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
-        <jeremy.lefaure@lse.epita.fr>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/9] Add PCI region2 iomap for SBZ
-Date: Thu,  3 May 2018 17:42:44 -0400
-Message-Id: <1525383771-11105-3-git-send-email-conmanx360@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525383771-11105-1-git-send-email-conmanx360@gmail.com>
-References: <1525383771-11105-1-git-send-email-conmanx360@gmail.com>
-To: unlisted-recipients:; (no To-header on input)
+        Thu, 3 May 2018 17:52:57 -0400
+Date: Thu, 3 May 2018 23:52:55 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-kernel@vger.kernel.org, Tomas Hlavacek <tomas.hlavacek@nic.cz>
+Subject: Re: led: hw-trigger, global brightness and multi-colored leds
+Message-ID: <20180503215255.GA13829@amd>
+References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
+ <20180502212105.GA9869@amd>
+ <69651d45-7566-95ad-2a83-53dd76e5680e@kleine-koenig.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Disposition: inline
+In-Reply-To: <69651d45-7566-95ad-2a83-53dd76e5680e@kleine-koenig.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds iomapping for the region2 section of memory on the SBZ.
-This memory region is used in later patches for setting inputs and
-outputs. If the mapping fails, the quirk is changed back to QUIRK_NONE
-to avoid attempts to write to uninitialized memory.
 
-It also adds a new exit sequence to unmap the iomem for the SBZ.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Connor McAdams <conmanx360@gmail.com>
----
- sound/pci/hda/patch_ca0132.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
+Hi!
 
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 9347c9d..2f7f964 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -29,6 +29,9 @@
- #include <linux/firmware.h>
- #include <linux/kernel.h>
- #include <sound/core.h>
-+#include <linux/types.h>
-+#include <linux/io.h>
-+#include <linux/pci.h>
- #include "hda_codec.h"
- #include "hda_local.h"
- #include "hda_auto_parser.h"
-@@ -760,6 +763,11 @@ struct ca0132_spec {
- #ifdef ENABLE_TUNING_CONTROLS
- 	long cur_ctl_vals[TUNING_CTLS_COUNT];
- #endif
-+	/*
-+	 * Sound Blaster Z PCI region 2 iomem, used for input and output
-+	 * switching, and other unknown commands.
-+	 */
-+	void __iomem *mem_base;
- };
- 
- /*
-@@ -4691,8 +4699,17 @@ static void ca0132_free(struct hda_codec *codec)
- 
- 	cancel_delayed_work_sync(&spec->unsol_hp_work);
- 	snd_hda_power_up(codec);
--	snd_hda_sequence_write(codec, spec->base_exit_verbs);
--	ca0132_exit_chip(codec);
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		iounmap(spec->mem_base);
-+		snd_hda_sequence_write(codec, spec->base_exit_verbs);
-+		ca0132_exit_chip(codec);
-+		break;
-+	default:
-+		snd_hda_sequence_write(codec, spec->base_exit_verbs);
-+		ca0132_exit_chip(codec);
-+		break;
-+	}
- 	snd_hda_power_down(codec);
- 	kfree(spec->spec_init_verbs);
- 	kfree(codec->spec);
-@@ -4909,6 +4926,15 @@ static int patch_ca0132(struct hda_codec *codec)
- 	else
- 		spec->quirk = QUIRK_NONE;
- 
-+	/* Setup BAR Region 2 for Sound Blaster Z */
-+	if (spec->quirk == QUIRK_SBZ) {
-+		spec->mem_base = pci_iomap(codec->bus->pci, 2, 0xC20);
-+		if (spec->mem_base == NULL) {
-+			codec_dbg(codec, "pci_iomap failed!");
-+			codec_dbg(codec, "perhaps this is not an SBZ?");
-+			spec->quirk = QUIRK_NONE;
-+		}
-+	}
- 	spec->dsp_state = DSP_DOWNLOAD_INIT;
- 	spec->num_mixers = 1;
- 	spec->mixers[0] = ca0132_mixer;
--- 
-2.7.4
+> > "Native mode" is quite common. We have it for example on Nokia N900
+> > here (charger has hw option to automatically control the LED).
+>=20
+> git grep -i n900 -- drivers/leds doesn't yield any output. Do I miss
+> anything?
+
+Try grepping arch/arm/boot/..*.dts :-).
+
+drivers/leds/leds-lp5523.c
+
+But the hardware/software switch is pretty well hidden. In the charger
+code, probably. Aha, here:
+
+echo 0 > /sys/class/power_supply/bq24150a-0/stat_pin_enable
+
+That one influences R and G channels of the RGB LED.
+
+> >> Another feature of the LED device is that there is a global brightness
+> >> register that influences all LED's brightness (if on) independent of t=
+he
+> >> operating mode.
+> >=20
+> > We can't describe that easily.
+>=20
+> Given that I can give an RGB value (i.e. 3x 8 bit) for the LED, I can
+> change brightness per LED. Have to play around a bit.
+
+Ok, so do we need global brightness support at all?
+
+> >> Further the color of each LED can be set to an RGB triplet.
+> >=20
+> > We normally handle RGB LED as three independend LEDs, like
+> > notify::red, notify::green, notify::blue. Again, example is Nokia N900
+> > or Motorola Droid 4.
+>=20
+> I cannot find source code for LEDs on the Droid 4 either.
+
+That would be
+
+arch/arm/boot/dts/motorola-cpcap-mapphone.dtsi
+motorola,cpcap-led-red
+
+> An ugly property here is that the hardware trigger only operates on all
+> three colors at once. Hmm, will think a bit about the way to go.
+
+Fun.
+
+So... it would be nice to treat RGB LED as one LED, not three. I even
+made some patches in that direction, but I went to HSV colors and that
+did not work well.
+
+Sorry, I should sleep.
+
+Good luck,
+									Pavel
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrrhLcACgkQMOfwapXb+vKqkwCdFI5SYTsRvn1vvSSleBlYX/qn
+wcQAnj+1pjS+C0pIBcU1Fai9I47yuBQv
+=XJeP
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
