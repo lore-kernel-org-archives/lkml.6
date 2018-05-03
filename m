@@ -1,61 +1,166 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeECNTo (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:19:44 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:9646 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750978AbeECNTl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:19:41 -0400
-Subject: Re: [PATCH v9 09/27] ARM: davinci: dm644x: add new clock init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-10-david@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <cfce1685-296a-a669-bb7d-bf14d43004ed@ti.com>
-Date: Thu, 3 May 2018 18:48:20 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180427001745.4116-10-david@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1751360AbeECNUk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:20:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41552 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750922AbeECNUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:20:39 -0400
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        catalin.marinas@arm.com, christoffer.dall@arm.com, drjones@redhat.com,
+        marc.zyngier@arm.com, mark.rutland@arm.com,
+        ramana.radhakrishnan@arm.com, suzuki.poulose@arm.com,
+        will.deacon@arm.com, awallis@codeaurora.org
+Subject: [PATCHv4 00/10] ARMv8.3 pointer authentication userspace support
+Date: Thu,  3 May 2018 14:20:21 +0100
+Message-Id: <20180503132031.25705-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Friday 27 April 2018 05:47 AM, David Lechner wrote:
->  void __init dm644x_init_time(void)
->  {
-> +#ifdef CONFIG_COMMON_CLK
-> +	void __iomem *pll1, *psc;
-> +	struct clk *clk;
-> +
-> +	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
-> +
-> +	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
-> +	dm355_pll1_init(NULL, pll1, NULL);
+This series adds support for the ARMv8.3 pointer authentication extension,
+enabling userspace return address protection with recent versions of GCC.
 
-This should be dm644x_*()
+Since RFC [1]:
+* Make the KVM context switch (semi-lazy)
+* Rebase to v4.13-rc1
+* Improve pointer authentication documentation
+* Add hwcap documentation
+* Various minor cleanups
 
-> +
-> +	psc = ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-> +	dm355_psc_init(NULL, psc);
+Since v1 [2]:
+* Rebase to v4.15-rc1
+* Settle on per-process keys
+* Strip PACs when unwinding userspace
+* Don't expose an XPAC hwcap (this is implied by ID registers)
+* Leave APIB, ABPDA, APDB, and APGA keys unsupported for now
+* Support IMP DEF algorithms
+* Rely on KVM ID register emulation
+* Various cleanups
 
-This one should be dm644x_*()
+Since v2 [3]:
+* Unify HCR_EL2 initialization
+* s/POINTER_AUTHENTICATION/PTR_AUTH/
+* Drop KVM support (for now)
+* Drop detection of generic authentication
 
-With those fixes, I was able to bootup on DM644x EVM and a visual
-inspection of clock debug dump shows it remains same before and after
-the conversion.
+Since v3 [4]:
+* Drop KVM logging to kvm_debug()
+* Init keys in init_new_context()
+* Drop mm_hooks changes
+* Commit message cleanups
+* Minor formatting fixups
+* Fold in acks and other tags
+
+While there are use-cases for keys other than APIAKey, the only software that
+I'm aware of with pointer authentication support is GCC, which only makes use
+of APIAKey. I'm happy to add support for other keys as users appear.
+
+I've pushed the series to the arm64/pointer-auth branch [5] of my linux tree.
+The aarch64 bootwrapper [6] does the necessary EL3 setup.
+
+
+Extension Overview 
+==================
+
+The ARMv8.3 pointer authentication extension adds functionality to detect
+modification of pointer values, mitigating certain classes of attack such as
+stack smashing, and making return oriented programming attacks harder
+
+The extension introduces the concept of a pointer authentication code (PAC),
+which is stored in some upper bits of pointers. Each PAC is derived from the
+original pointer, another 64-bit value (e.g. the stack pointer), and a secret
+128-bit key.
+
+New instructions are added which can be used to:
+
+* Insert a PAC into a pointer
+* Strip a PAC from a pointer
+* Authenticate strip a PAC from a pointer
+
+If authentication succeeds, the code is removed, yielding the original pointer.
+If authentication fails, bits are set in the pointer such that it is guaranteed
+to cause a fault if used.
+
+These instructions can make use of four keys:
+
+* APIAKey (A.K.A. Instruction A key)
+* APIBKey (A.K.A. Instruction B key)
+* APDAKey (A.K.A. Data A key)
+* APDBKey (A.K.A. Data B Key)
+
+A subset of these instruction encodings have been allocated from the HINT
+space, and will operate as NOPs on any ARMv8-A parts which do not feature the
+extension (or if purposefully disabled by the kernel). Software using only this
+subset of the instructions should function correctly on all ARMv8-A parts.
+
+Additionally, instructions are added to authenticate small blocks of memory in
+similar fashion, using APGAKey (A.K.A. Generic key).
+
+
+This Series
+===========
+
+This series enables the use of instructions using APIAKey, which is initialised
+and maintained per-process (shared by all threads). This series does not add
+support for APIBKey, APDAKey, APDBKey, nor APGAKey.
+
+I've given this some basic testing with a homebrew test suite. More ideally,
+we'd add some tests to the kernel source tree.
+
+For the time being, pointer authentication functionality is hidden from
+guests via ID register trapping.
 
 Thanks,
-Sekhar
+Mark.
+
+[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2017-April/498941.html
+[2] https://lkml.kernel.org/r/1500480092-28480-1-git-send-email-mark.rutland@arm.com
+[3] https://lkml.kernel.org/r/20171127163806.31435-1-mark.rutland@arm.com
+[4] https://lkml.kernel.org/r/20180417183735.56985-1-mark.rutland@arm.com
+[5] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git arm64/pointer-auth
+[6] git://git.kernel.org/pub/scm/linux/kernel/git/mark/boot-wrapper-aarch64.git
+
+Mark Rutland (10):
+  arm64: add pointer authentication register bits
+  arm64/kvm: consistently handle host HCR_EL2 flags
+  arm64/kvm: hide ptrauth from guests
+  arm64: Don't trap host pointer auth use to EL2
+  arm64/cpufeature: detect pointer authentication
+  arm64: add basic pointer authentication support
+  arm64: expose user PAC bit positions via ptrace
+  arm64: perf: strip PAC when unwinding userspace
+  arm64: enable pointer authentication
+  arm64: docs: document pointer authentication
+
+ Documentation/arm64/booting.txt                |  8 +++
+ Documentation/arm64/elf_hwcaps.txt             |  6 ++
+ Documentation/arm64/pointer-authentication.txt | 84 ++++++++++++++++++++++++
+ arch/arm64/Kconfig                             | 23 +++++++
+ arch/arm64/include/asm/cpucaps.h               |  5 +-
+ arch/arm64/include/asm/esr.h                   |  3 +-
+ arch/arm64/include/asm/kvm_arm.h               |  3 +
+ arch/arm64/include/asm/mmu.h                   |  5 ++
+ arch/arm64/include/asm/mmu_context.h           | 11 +++-
+ arch/arm64/include/asm/pointer_auth.h          | 90 ++++++++++++++++++++++++++
+ arch/arm64/include/asm/sysreg.h                | 30 +++++++++
+ arch/arm64/include/uapi/asm/hwcap.h            |  1 +
+ arch/arm64/include/uapi/asm/ptrace.h           |  7 ++
+ arch/arm64/kernel/cpufeature.c                 | 56 ++++++++++++++++
+ arch/arm64/kernel/cpuinfo.c                    |  1 +
+ arch/arm64/kernel/head.S                       |  5 +-
+ arch/arm64/kernel/perf_callchain.c             |  5 +-
+ arch/arm64/kernel/ptrace.c                     | 38 +++++++++++
+ arch/arm64/kvm/handle_exit.c                   | 18 ++++++
+ arch/arm64/kvm/hyp/switch.c                    |  2 +-
+ arch/arm64/kvm/sys_regs.c                      |  8 +++
+ include/uapi/linux/elf.h                       |  1 +
+ 22 files changed, 402 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/arm64/pointer-authentication.txt
+ create mode 100644 arch/arm64/include/asm/pointer_auth.h
+
+-- 
+2.11.0
