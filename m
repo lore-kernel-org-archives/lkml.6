@@ -1,33 +1,31 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3467994-1525400993-2-17293577505605412409
+X-Cyrus-Session-Id: sloti22d1t05-3209358-1525384749-2-4612492371728443224
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525400993; b=l7jwOWfQYmZeCHsDQv/5AdzuspRU+BgMX37GivDmuzy1JaeDwO
-    Zzv9eymSgrxUIZuDropDIhKyQQ1Kyk6cAFkiG9rQwsBWXEaObCeAdS+viN14WFVx
-    y+uMQtR2cksGJSGVbNmoBI1xOo+qJjDpUHcU1dZcgX74EGNdtUQbI7juY+e4uF/i
-    Wm4rFCSbFXTAnZSreObtryyeb+OTnCuxdhplMyiZIpPiWCMaLVDjlftyR63muJYG
-    ObXX71X7fiUZMDqvi2mIUOIWtaAaDHP2jX9sLNJvWIyKvWIVURUvA/VAoizNpOQp
-    quBMQ3hX5QYiiEzadNqEHGfX4GSIRT07LRQA==
+    1525384749; b=Pgm5Ps1wdCdb9sPXvY3FCzNXYr+W+dh74nxGPlnxavkvbie++1
+    N4HKBoCAnmuXHypeDIwjnLcluhHRHnxm8EAH9cRuwzAwTgoFN2N6umI29tgymKWO
+    likXTc70HXdYEi8wWy6X1PjIiPeHtpsLTAm2CaT1buJe+I1hy79bb+jwN1h/6vhD
+    9pT8JmGCSqlxuW1Jz/YlGL9JEjj/uU1ksvDrooEaXDF6+xjmve6QAA/DPEvliv7i
+    mc4rCliTgmDomTBzyXBAgOFzy8y4J6TbV/h3jPa3C8oaCbDFMu2t5n9F+YVzo5UY
+    WMSmZTdJRrRnbnwYpGIOopHUIBZPiYcrz2gA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:from:to:cc:date:in-reply-to
-    :references:content-type:mime-version:content-transfer-encoding
-    :message-id:sender:list-id; s=fm2; t=1525400993; bh=ehyoViVmalOw
-    u4GLbuFylWLDuwvEGqgU0T23ofjuLYE=; b=lTrZELcKp2XfH6A9VErqmSiomax0
-    BYCfc3G19Oask0vPRTLIRuh51QDWIMF3JZrBXEvfMkRA67kJ45HCRi0x//ROvM06
-    Hbmb6DgQAUeqro5+bX3TGTlr0JwApWxnHJCaVAWXPxtDGxpNGbkatwbjQbjKpITi
-    6hgr9k0u3X6DC5xoETz1DWypgYOP30nAqxZyUG9bgJ2M1mpPYxXSz+kgvNQWkSC+
-    t4Sv3WF9gaU06QgSuVU5xzuDs39NgAtC2XOzGgMcoubgpQ7OHsh9EIzsjn+UkSh3
-    4xLYKwz0K5PuLjSBDR7Ge0gczczA0nwFD3JWRvQSS72M1Y00Dq6Rwo8kaw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:references:date:in-reply-to
+    :message-id:mime-version:content-type:subject:sender:list-id; s=
+    fm2; t=1525384749; bh=m6YtoPM1Kx4q5SFQC/ND66/pR3Ll3zQY9NuofXOgPY
+    E=; b=ML7n5BAh6kcv6sSdQY36ByeW333d1cidNVIZ0troxYzJst3mM3Fs8VmCfU
+    y9IRG/MJCm77dLsQC9SwjkCwhZSJqtX4EZP0ezQplkfP7l8Jrd/Mpid6ZRzD03DL
+    W/2b4hDT3rbtpDJRhWHdVoEl1Qxzk9UV1YDysk78ylE1bzd+EtUa3vX2H1CE2K/V
+    jWejrj5Ds+WXZ875BA3CWh3w93umNt19Jytt0TuBu0P3VHswvtiFJIo2lQ3lGR3K
+    lzZ8bhGBAi70h2NelwLpJGqMjbXHCprqCynTLWbvkrXi3W0zvziwuncXqAuylxpe
+    MzSpCypcrdvsbIrD9uU7hwuLF+pA==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,15 +34,13 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=xmission.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -53,145 +49,151 @@ Authentication-Results: mx1.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=xmission.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfE3xkPX0owPRauPzbFSAEyplum8rgrfkR2DPV88cEVoPC60JbVFGTUfkYdC/MwheZVgzGGYopiD6n/uioMKk2TnJGvz1VEr351ZhSXRmYbNRFROvG7Al
-    7mz5I82wiWPkHl4bH4evqtChB0JZiEhXGi9EvSvKoClB9kCAqhCCgWROesYHgf1Vdq/MvZ/bMnG+XKe/o0r944pPwVZTu1o7Ct8iEkEDw0s5lKJilFN5MEwF
-    BuQqz+Cn1Ei08ZM6IdWasg==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=2xhMSbFQTtTxrfdvk3kA:9
-    a=9yt3iPXVMMyElQPM:21 a=ifY9Sr3a1q6qj8k9:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEOwXsi4TeTj0voa2N2CaPqLFmCDbFxGmGW1NEqK3cRIpeA/0dq1AZOtJbJJVLVmMVyKvTm8FHZTq1TABaV9z0VY/+JzlJyUmrgWmpGvd/jHHUZ9KGXw
+    Yf6f5vMYsiMP3jthzZRYzlaYZjTMGasutT72UCje1tLm1xtcCCxe2covdDBTJfvGf2DFzfwtjrICtrLH/3juvz0Ud/es8RVWj8lYfc4DBHPhgNKKompJ80XJ
+    LQqagsfnbn/CdoJRzSlwzw==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=1XWaLZrsAAAA:8
+    a=PtDNVHqPAAAA:8 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=zpPTWrBIHONCbDHKR4AA:9
+    a=QjWodh3xu9JfAFf9:21 a=xaSVUV0ITnvzrM0V:21 a=x8gzFH9gYPwA:10
+    a=BpimnaHY1jUKGyF_4-AF:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751240AbeEDC3s (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 3 May 2018 22:29:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37948 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751236AbeEDC3r (ORCPT
+        id S1751190AbeECV7G (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 3 May 2018 17:59:06 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:49392 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750911AbeECV7F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 May 2018 22:29:47 -0400
-Subject: Re: [PATCH 0/3] kexec: limit kexec_load syscall
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>,
+        Thu, 3 May 2018 17:59:05 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Matthew Garrett <mjg59@google.com>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
-Date: Thu, 03 May 2018 22:29:37 -0400
-In-Reply-To: <87fu38jq98.fsf@xmission.com>
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kexec@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-         <87r2mso5up.fsf@xmission.com>  <1525383075.3539.67.camel@linux.vnet.ibm.com>
-         <87d0yco1vy.fsf@xmission.com>  <1525384675.3539.89.camel@linux.vnet.ibm.com>
-         <87fu38jq98.fsf@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18050402-0008-0000-0000-000004F2C83F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050402-0009-0000-0000-00001E86F269
-Message-Id: <1525400977.3539.199.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805040020
+        <87r2mso5up.fsf@xmission.com>
+        <CACdnJuukT4SYLcDwi7+ObqbCDS4ZEAMpgz57OL3_eSevW0QuVg@mail.gmail.com>
+Date: Thu, 03 May 2018 16:58:56 -0500
+In-Reply-To: <CACdnJuukT4SYLcDwi7+ObqbCDS4ZEAMpgz57OL3_eSevW0QuVg@mail.gmail.com>
+        (Matthew Garrett's message of "Thu, 03 May 2018 20:39:48 +0000")
+Message-ID: <876044l7tr.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fEMFj-00049U-Hg;;;mid=<876044l7tr.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+LOxRAoenxX49z7AISsDfqQqRn4pd+cnY=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  0.1 XMSolicitRefs_0 Weightloss drug
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Matthew Garrett <mjg59@google.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 653 ms - load_scoreonly_sql: 0.08 (0.0%),
+        signal_user_changed: 3.7 (0.6%), b_tie_ro: 2.6 (0.4%), parse: 1.64 (0.3%),
+        extract_message_metadata: 28 (4.3%), get_uri_detail_list: 4.0 (0.6%),
+        tests_pri_-1000: 11 (1.6%), tests_pri_-950: 2.2 (0.3%), tests_pri_-900: 1.78
+        (0.3%), tests_pri_-400: 38 (5.8%), check_bayes: 36 (5.4%), b_tokenize: 14
+        (2.1%), b_tok_get_all: 9 (1.4%), b_comp_prob: 6 (0.9%), b_tok_touch_all: 2.8
+        (0.4%), b_finish: 0.85 (0.1%), tests_pri_0: 553 (84.6%),
+        check_dkim_signature: 1.14 (0.2%), check_dkim_adsp: 6 (0.9%), tests_pri_500:
+        9 (1.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/3] kexec: limit kexec_load syscall
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, 2018-05-03 at 18:03 -0500, Eric W. Biederman wrote:
-> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> 
-> > On Thu, 2018-05-03 at 16:38 -0500, Eric W. Biederman wrote:
-> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> >> 
-> >> > [Cc'ing Kees and kernel-hardening]
-> >> >
-> >> > On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
-> >> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
-> >> >> 
-> >> >> > In environments that require the kexec kernel image to be signed, prevent
-> >> >> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
-> >> >> > between kexec_load and kexec_file_load syscalls, this patch set adds a
-> >> >> > call to security_kernel_read_file() in kexec_load_check().
-> >> >> 
-> >> >> Having thought about it some more this justification for these changes
-> >> >> does not work.  The functionality of kexec_load is already root-only.
-> >> >> So in environments that require the kernel image to be signed just don't
-> >> >> use kexec_load.  Possibly even compile kexec_load out to save space
-> >> >> because you will never need it.  You don't need a new security hook to
-> >> >> do any of that.  Userspace is a very fine mechanism for being the
-> >> >> instrument of policy.
-> >> >
-> >> > True, for those building their own kernel, they can disable the old
-> >> > syscalls.  The concern is not for those building their own kernels,
-> >> > but for those using stock kernels.  
-> >> >
-> >> > By adding an LSM hook here in the kexec_load syscall, as opposed to an
-> >> > IMA specific hook, other LSMs can piggy back on top of it.  Currently,
-> >> > both load_pin and SELinux are gating the kernel module syscalls based
-> >> > on security_kernel_read_file.
-> >> >
-> >> > If there was a similar option for the kernel image, I'm pretty sure
-> >> > other LSMs would use it.
-> >> >
-> >> > From an IMA perspective, there needs to be some method for only
-> >> > allowing signed code to be loaded, executed, etc. - kernel modules,
-> >> > kernel image/initramfs, firmware, policies.
-> >> 
-> >> What is the IMA perspective.  Why can't IMA trust appropriately
-> >> authorized userspace?
-> >
-> > Suppose a system owner wants to define a system wide policy that
-> > requires all code be signed - kernel modules, firmware, kexec image &
-> > initramfs, executables, mmapped files, etc - without having to rebuild
-> > the kernel.  Without a call in kexec_load that isn't possible.
-> 
-> Of course it is.  You just make it a requirement that before an
-> executable will be signed it will be audited to see that it doesn't
-> call sys_kexec_load.  Signing presumably means something.  So it should
-> not be hard to enforce a policy like that on a specialty system call
-> that most applications will never call.
+Matthew Garrett <mjg59@google.com> writes:
 
-Initially I'm hoping that files will simply come signed, providing
-file provenance.  Anything else is gravy.
+> On Thu, May 3, 2018 at 1:13 PM Eric W. Biederman <ebiederm@xmission.com>
+> wrote:
+>
+>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>
+>> > In environments that require the kexec kernel image to be signed,
+> prevent
+>> > using the kexec_load syscall.  In order for LSMs and IMA to
+> differentiate
+>> > between kexec_load and kexec_file_load syscalls, this patch set adds a
+>> > call to security_kernel_read_file() in kexec_load_check().
+>
+>> Having thought about it some more this justification for these changes
+>> does not work.  The functionality of kexec_load is already root-only.
+>> So in environments that require the kernel image to be signed just don't
+>> use kexec_load.  Possibly even compile kexec_load out to save space
+>> because you will never need it.  You don't need a new security hook to
+>> do any of that.  Userspace is a very fine mechanism for being the
+>> instrument of policy.
+>
+>> If you don't trust userspace that needs to be spelled out very clearly.
+>> You need to talk about what your threat models are.
+>
+> kexec_load gives root arbitrary power to modify the running kernel image,
+> including the ability to disable enforcement of module signatures.
 
-> >> >> If you don't trust userspace that needs to be spelled out very clearly.
-> >> >> You need to talk about what your threat models are.
-> >> >> 
-> >> >> If the only justification is so that that we can't boot windows if
-> >> >> someone hacks into userspace it has my nack because that is another kind
-> >> >> of complete non-sense.
-> >> >
-> >> > The usecase is the ability to gate the kexec_load usage in stock
-> >> > kernels.
-> >> 
-> >> But kexec_load is already gated.  It requires CAP_SYS_BOOT.
-> >
-> > It isn't a matter of kexec_load already being gated, but of wanting a
-> > single place for defining a system wide policy, as described above.
-> 
-> Signing is only a tool to enforce a policy.  Signing by itself is not a
-> policy.  Enforcing any quality controls in the signed executables should
-> trivially prevent kexec_load from being used.
+No.  It does absolutely nothing to the running kernel image.
+Combined with reboot(..., LINUX_REBOOT_CMD_KEXE, ...) it does allow
+booting something different.  It is argubably a little more efficient
+than writing to a file to direct the bootloader to boot something
+different and then calling reboot.  But it is not fundamentally
+different.
 
-Existing kernels might not support the newer kexec_file_load syscall,
-so packages are currently being built to try one syscall and fallback
-to using the other one.  In this case, it has nothing to do with
-quality control.
+> Given
+> that it weakens other security mechanisms that are designed to prevent root
+> from disabling them, it makes sense to allow the imposition of an
+> equivalent restriction.
 
-Mimi
+Say what.  You are saying a lot of words without any specifics.  Not a
+specific threat mode.  Not which security mecahnisms you are worried
+about weakening.  Not what classes of problems you are trying to defend
+against.
+
+I absolutely hate this nonsense.  I thought you already went 20 rounds
+with Linus and learned you need to be upfront with what you are
+concerned about.
+
+I believe reasonable situations can be constructed.  But I am not seeing
+that happen here.
+
+My hand wavy argument to go with yours is that code paths that are root
+only are not audited for security properties.  As such the number of
+exploitable bus you can find in them is larger than normal.  It might be
+a little harder to mount xfs or another filesystem with an exploitable
+file system image but I expect it exists.
+
+Further nothing I have seen you involved with has been about truly
+hardening the system against a hostile root.  I have for the last
+several years been chipping away at that and you have been nowhere to be
+found.
+
+So please be specific.  Talk about which threat you are worried about.
+Because so far this looks like someones effort to look like they were
+doing something without actually caring about real world threats.
+
+Eric
+
+
+
+
 
