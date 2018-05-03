@@ -1,40 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752068AbeECMge (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:36:34 -0400
-Received: from gloria.sntech.de ([95.129.55.99]:43640 "EHLO gloria.sntech.de"
+        id S1751808AbeECMkO (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:40:14 -0400
+Received: from 8bytes.org ([81.169.241.247]:54106 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751439AbeECMga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:36:30 -0400
-From: Heiko Stuebner <heiko@sntech.de>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Emil Renner Berthing <kernel@esmil.dk>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: use canonical compatible for touchpad/touchscreen
-Date: Thu, 03 May 2018 14:36:13 +0200
-Message-ID: <3507285.Efm3MEd05V@phil>
-In-Reply-To: <20180501224628.GA150745@dtor-ws>
-References: <20180501224628.GA150745@dtor-ws>
+        id S1751459AbeECMkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:40:12 -0400
+Date: Thu, 3 May 2018 14:40:10 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Dmitry Safonov <dima@arista.com>
+Cc: linux-kernel@vger.kernel.org, 0x7f454c46@gmail.com,
+        Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>, iommu@lists.linux-foundation.org
+Subject: Re: [PATCHv4 1/2] iommu/vt-d: Ratelimit each dmar fault printing
+Message-ID: <20180503124010.n73opdv2k7qrpfoo@8bytes.org>
+References: <20180331003312.6390-1-dima@arista.com>
+ <1525227744.14025.6.camel@arista.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525227744.14025.6.camel@arista.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 2. Mai 2018, 00:46:28 CEST schrieb Dmitry Torokhov:
-> "atmel,atmel_mxt_tp" and "atmel,atmel_mxt_ts" are ChromeOS inventions,
-> let's replace them with canonical compatible string "atmel,maxtouch".
+On Wed, May 02, 2018 at 03:22:24AM +0100, Dmitry Safonov wrote:
+> Hi Joerg,
 > 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> is there anything I may do about those two patches?
+> In 2/2 I've limited loop cnt as discussed in v3.
+> This one solves softlockup for us, might be useful.
 
-I've amended the patch subject with a "on gru-kevin" and applied
-it for 4.18 with Brian's Reviewed-by
+Applied the first patch, thanks. Please re-work the second one according
+to the comments.
 
 
-Thanks
-Heiko
+Thanks,
+
+	Joerg
