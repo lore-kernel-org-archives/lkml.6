@@ -1,127 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751336AbeECI02 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:26:28 -0400
-Received: from mga03.intel.com ([134.134.136.65]:40160 "EHLO mga03.intel.com"
+        id S1751174AbeECI3f (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:29:35 -0400
+Received: from mga01.intel.com ([192.55.52.88]:51862 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751277AbeECI00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:26:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1750849AbeECI3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 04:29:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,357,1520924400";
-   d="scan'208";a="36521343"
-Subject: Re: [PATCH 05/12] perf pmu: Fix pmu events parsing rule
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <20180425160008.3407-1-acme@kernel.org>
- <20180425160008.3407-6-acme@kernel.org>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
-Date: Thu, 3 May 2018 11:25:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+   d="scan'208";a="51161583"
+Date: Thu, 3 May 2018 16:30:15 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com
+Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
+Message-ID: <20180503083015.kb7po26ga46g66tc@debian>
+References: <20180503025955.28816-1-tiwei.bie@intel.com>
+ <ab66939d-47fb-5f43-3938-0c156ffc6918@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180425160008.3407-6-acme@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ab66939d-47fb-5f43-3938-0c156ffc6918@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
-
-This breaks Intel PT i.e.
-
-$ perf record -e intel_pt//u uname
-event syntax error: 'intel_pt//u'
-                             \___ parser error
-Run 'perf list' for a list of valid events
-
- Usage: perf record [<options>] [<command>]
-    or: perf record [<options>] -- <command> [<options>]
-
-    -e, --event <event>   event selector. use 'perf list' to list available events
-
-See below for cause.
-
-On 25/04/18 19:00, Arnaldo Carvalho de Melo wrote:
-> From: Jiri Olsa <jolsa@kernel.org>
+On Thu, May 03, 2018 at 03:30:03PM +0800, Jason Wang wrote:
+> On 2018年05月03日 10:59, Tiwei Bie wrote:
+> > This patch introduces the support for VIRTIO_F_IO_BARRIER.
+> > When this feature is negotiated, driver will use the barriers
+> > suitable for hardware devices.
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/virtio/virtio_ring.c       | 5 +++++
+> >   include/uapi/linux/virtio_config.h | 8 +++++++-
+> >   2 files changed, 12 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > index 21d464a29cf8..edb565643bf4 100644
+> > --- a/drivers/virtio/virtio_ring.c
+> > +++ b/drivers/virtio/virtio_ring.c
+> > @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> >   		!context;
+> >   	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> > +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
+> > +		vq->weak_barriers = false;
+> > +
+> >   	/* No callback?  Tell other side not to bother us. */
+> >   	if (!callback) {
+> >   		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+> > @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
+> >   			break;
+> >   		case VIRTIO_F_IOMMU_PLATFORM:
+> >   			break;
+> > +		case VIRTIO_F_IO_BARRIER:
+> > +			break;
+> >   		default:
+> >   			/* We don't understand this bit. */
+> >   			__virtio_clear_bit(vdev, i);
+> > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> > index 308e2096291f..6ca8d24bf468 100644
+> > --- a/include/uapi/linux/virtio_config.h
+> > +++ b/include/uapi/linux/virtio_config.h
+> > @@ -49,7 +49,7 @@
+> >    * transport being used (eg. virtio_ring), the rest are per-device feature
+> >    * bits. */
+> >   #define VIRTIO_TRANSPORT_F_START	28
+> > -#define VIRTIO_TRANSPORT_F_END		34
+> > +#define VIRTIO_TRANSPORT_F_END		38
+> >   #ifndef VIRTIO_CONFIG_NO_LEGACY
+> >   /* Do we get callbacks when the ring is completely used, even if we've
+> > @@ -71,4 +71,10 @@
+> >    * this is for compatibility with legacy systems.
+> >    */
+> >   #define VIRTIO_F_IOMMU_PLATFORM		33
+> > +
+> > +/*
+> > + * If clear - driver may use barriers suitable for CPU cores.
+> > + * If set - driver must use barriers suitable for hardware devices.
+> > + */
+> > +#define VIRTIO_F_IO_BARRIER		37
+> >   #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
 > 
-> Currently all the event parsing fails end up in the event_pmu rule, and
-> display misleading help like:
+> Hi:
 > 
->   $ perf stat -e inst kill
->   event syntax error: 'inst'
->                        \___ Cannot find PMU `inst'. Missing kernel support?
->   ...
+> I believe this depends on Michael's patch of
 > 
-> The reason is that the event_pmu is too strong and match also single
-> string. Changing it to force the '/' separators to be part of the rule,
-> and getting the proper error now:
+> "[PATCH] virtio_ring: switch to dma_XX barriers for rpmsg"
 > 
->   $ perf stat -e inst kill
->   event syntax error: 'inst'
->                        \___ parser error
->   Run 'perf list' for a list of valid events
->   ...
+> ?
 > 
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> Reported-by: Ingo Molnar <mingo@kernel.org>
-> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: David Ahern <dsahern@gmail.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Link: http://lkml.kernel.org/r/20180423090823.32309-5-jolsa@kernel.org
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/util/parse-events.y | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-> index 7afeb80cc39e..d14464c42714 100644
-> --- a/tools/perf/util/parse-events.y
-> +++ b/tools/perf/util/parse-events.y
-> @@ -224,15 +224,15 @@ event_def: event_pmu |
->  	   event_bpf_file
->  
->  event_pmu:
-> -PE_NAME opt_event_config
-> +PE_NAME '/' event_config '/'
+> Thanks
 
-These are not equivalent because opt_event_config allows '//'
-but event_config cannot be an empty string.
+We already have below commit and some other related commits
+in the tree:
 
->  {
->  	struct list_head *list, *orig_terms, *terms;
->  
-> -	if (parse_events_copy_term_list($2, &orig_terms))
-> +	if (parse_events_copy_term_list($3, &orig_terms))
->  		YYABORT;
->  
->  	ALLOC_LIST(list);
-> -	if (parse_events_add_pmu(_parse_state, list, $1, $2, false)) {
-> +	if (parse_events_add_pmu(_parse_state, list, $1, $3, false)) {
->  		struct perf_pmu *pmu = NULL;
->  		int ok = 0;
->  		char *pattern;
-> @@ -262,7 +262,7 @@ PE_NAME opt_event_config
->  		if (!ok)
->  			YYABORT;
->  	}
-> -	parse_events_terms__delete($2);
-> +	parse_events_terms__delete($3);
->  	parse_events_terms__delete(orig_terms);
->  	$$ = list;
->  }
-> 
+7b21e34fd1c2 ("virtio: harsher barriers for rpmsg.")
+
+They should have already guaranteed that virtio_Xmb() will
+be OK for hardware devices when vq->weak_barriers is false.
+If my understanding is correct, the barriers used in this
+case are overkill. So Michael's patch is to make the barriers
+weaker (or better).
+
+Best regards,
+Tiwei Bie
