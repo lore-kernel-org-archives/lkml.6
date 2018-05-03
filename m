@@ -1,99 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751403AbeECN7g (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:59:36 -0400
-Received: from mga18.intel.com ([134.134.136.126]:1897 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeECN7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:59:32 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="37174385"
-Date: Thu, 3 May 2018 21:49:26 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
-        akpm@linux-foundation.org, rostedt@goodmis.org, rdunlap@infradead.org,
-        x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] kernel hacking: GCC optimization for debug
- experience (-Og)
-Message-ID: <20180503134925.eyqna4ydogtkmvph@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
- <20180502145631.bzfqpw4izlrqhda6@holly.lan>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180502145631.bzfqpw4izlrqhda6@holly.lan>
-User-Agent: NeoMutt/20180323-6-5ca392
+        id S1751160AbeECOFV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:05:21 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36080 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeECOFQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:05:16 -0400
+X-Google-Smtp-Source: AB8JxZpzyQcCR4kBuoqqh/pY8ESD0rtHP5rIBl3nK2gh9/CJoV36W4UbXLKK5/C0Eq6sr4E4B36r5A==
+From: Lidong Chen <jemmy858585@gmail.com>
+X-Google-Original-From: Lidong Chen <lidongchen@tencent.com>
+To: dledford@redhat.com, jgg@ziepe.ca, akpm@linux-foundation.org,
+        qing.huang@oracle.com, leon@kernel.org, artemyko@mellanox.com,
+        dan.j.williams@intel.com
+Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
+        Lidong Chen <lidongchen@tencent.com>
+Subject: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
+Date: Thu,  3 May 2018 22:04:34 +0800
+Message-Id: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 03:56:31PM +0100, Daniel Thompson wrote:
-> On Wed, May 02, 2018 at 09:44:55PM +0800, changbin.du@intel.com wrote:
-> > From: Changbin Du <changbin.du@intel.com>
-> > 
-> > Hi all,
-> > I know some kernel developers was searching for a method to dissable GCC
-> > optimizations, probably they want to apply GCC '-O0' option. But since Linux
-> > kernel replys on GCC optimization to remove some dead code, so '-O0' just
-> > breaks the build. They do need this because they want to debug kernel with
-> > qemu, simics, kgtp or kgdb.
-> > 
-> > Thanks for the GCC '-Og' optimization level introduced in GCC 4.8, which
-> > offers a reasonable level of optimization while maintaining fast compilation
-> > and a good debugging experience. It is similar to '-O1' while perfer keeping
-> > debug ability over runtime speed. With '-Og', we can build a kernel with
-> > better debug ability and little performance drop after some simple change.
-> > 
-> > In this series, firstly introduce a new config CONFIG_NO_AUTO_INLINE after two
-> > fixes for this new option. With this option, only functions explicitly marked
-> > with "inline" will  be inlined. This will allow the function tracer to trace
-> > more functions because it only traces functions that the compiler has not
-> > inlined.
-> > 
-> > Then introduce new config CONFIG_DEBUG_EXPERIENCE which apply '-Og'
-> > optimization level for whole kernel, with a simple fix in fix_to_virt().
-> > Currently this option is only tested on a QEMU gust and it works fine.
-> > 
-> > 
-> > Comparison of vmlinux size: a bit smaller.
-> > 
-> >     w/o CONFIG_DEBUG_EXPERIENCE
-> >     $ size vmlinux
-> >        text    data     bss     dec     hex filename
-> >     22665554   9709674  2920908 35296136        21a9388 vmlinux
-> > 
-> >     w/ CONFIG_DEBUG_EXPERIENCE
-> >     $ size vmlinux
-> >        text    data     bss     dec     hex filename
-> >     21499032   10102758 2920908 34522698        20ec64a vmlinux
-> > 
-> > 
-> > Comparison of system performance: a bit drop (~6%).
-> >     This benchmark of kernel compilation is suggested by Ingo Molnar.
-> >     https://lkml.org/lkml/2018/5/2/74
-> 
-> In my mind was the opposite question. When running on the same kernel
-> does a kernel whose config contains CONFIG_DEBUG_EXPERIENCE build faster
-> than one without (due to the disabled optimization passes).
-> 
-> To be honest this is more curiosity than a review comment though... if
-> you have the figures please share, if not then don't sweat it on my
-> account!
-> 
-> 
-> Daniel.
->
-Sorry I don't have the data yet. Per the comment in GCC, I think it should be a
-little faster but not obviously.
+The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+exited, get_pid_task will return NULL, ib_umem_release does not decrease
+mm->pinned_vm. This patch fixes it by use tgid.
 
-> 
+Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+---
+ drivers/infiniband/core/umem.c | 12 ++++++------
+ include/rdma/ib_umem.h         |  2 +-
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+index 9a4e899..8813ba5 100644
+--- a/drivers/infiniband/core/umem.c
++++ b/drivers/infiniband/core/umem.c
+@@ -119,7 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 	umem->length     = size;
+ 	umem->address    = addr;
+ 	umem->page_shift = PAGE_SHIFT;
+-	umem->pid	 = get_task_pid(current, PIDTYPE_PID);
++	umem->tgid	 = get_task_pid(current->group_leader, PIDTYPE_PID);
+ 	/*
+ 	 * We ask for writable memory if any of the following
+ 	 * access flags are set.  "Local write" and "remote write"
+@@ -132,7 +132,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
+ 
+ 	if (access & IB_ACCESS_ON_DEMAND) {
+-		put_pid(umem->pid);
++		put_pid(umem->tgid);
+ 		ret = ib_umem_odp_get(context, umem, access);
+ 		if (ret) {
+ 			kfree(umem);
+@@ -148,7 +148,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 
+ 	page_list = (struct page **) __get_free_page(GFP_KERNEL);
+ 	if (!page_list) {
+-		put_pid(umem->pid);
++		put_pid(umem->tgid);
+ 		kfree(umem);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+@@ -231,7 +231,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+ 	if (ret < 0) {
+ 		if (need_release)
+ 			__ib_umem_release(context->device, umem, 0);
+-		put_pid(umem->pid);
++		put_pid(umem->tgid);
+ 		kfree(umem);
+ 	} else
+ 		current->mm->pinned_vm = locked;
+@@ -274,8 +274,8 @@ void ib_umem_release(struct ib_umem *umem)
+ 
+ 	__ib_umem_release(umem->context->device, umem, 1);
+ 
+-	task = get_pid_task(umem->pid, PIDTYPE_PID);
+-	put_pid(umem->pid);
++	task = get_pid_task(umem->tgid, PIDTYPE_PID);
++	put_pid(umem->tgid);
+ 	if (!task)
+ 		goto out;
+ 	mm = get_task_mm(task);
+diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
+index 23159dd..2398849 100644
+--- a/include/rdma/ib_umem.h
++++ b/include/rdma/ib_umem.h
+@@ -48,7 +48,7 @@ struct ib_umem {
+ 	int                     writable;
+ 	int                     hugetlb;
+ 	struct work_struct	work;
+-	struct pid             *pid;
++	struct pid             *tgid;
+ 	struct mm_struct       *mm;
+ 	unsigned long		diff;
+ 	struct ib_umem_odp     *odp_data;
 -- 
-Thanks,
-Changbin Du
+1.8.3.1
