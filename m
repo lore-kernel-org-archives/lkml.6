@@ -1,87 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751286AbeECIbN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:31:13 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43985 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbeECIbH (ORCPT
+        id S1751349AbeECIcV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:32:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47206 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751127AbeECIcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:31:07 -0400
-X-Google-Smtp-Source: AB8JxZrQ1MLYE/1aqSsMpHvR6HY2Fdi3KBrumIN01pSF1WHIzDALSsZXZLxxeRjkUpc3JlHCkZzjFrE/KcWnHSNDB+M=
+        Thu, 3 May 2018 04:32:16 -0400
+Subject: Re: [PATCH v3 0/9] trace_uprobe: Support SDT markers having reference
+ count (semaphore)
+To: mhiramat@kernel.org, oleg@redhat.com
+Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, peterz@infradead.org,
+        srikar@linux.vnet.ibm.com, rostedt@goodmis.org, acme@kernel.org,
+        ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
+        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
+        corbet@lwn.net, dan.j.williams@intel.com, jolsa@redhat.com,
+        kan.liang@intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
+        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com
+References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date: Thu, 3 May 2018 14:02:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrUmNyMQ9Aqgwg-Ncf08fYgAqaY_MckvxqsrUq7mr-LQg@mail.gmail.com>
-References: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org> <CAPDyKFrUmNyMQ9Aqgwg-Ncf08fYgAqaY_MckvxqsrUq7mr-LQg@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 3 May 2018 10:31:06 +0200
-X-Google-Sender-Auth: 0EdrzPKR-DxuhPC7Orz44vC5qeU
-Message-ID: <CAJZ5v0gze0Purjaq0U3gqcCBfjW3pHBUMY8LdaYuY9ZfP2xTVQ@mail.gmail.com>
-Subject: Re: [PATCH 00/11] PM / Domains: Fixup error paths with dev_pm_domain_attach()
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Mark Brown <broonie@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@armlinux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18050308-0020-0000-0000-0000041872DA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050308-0021-0000-0000-000042AD934F
+Message-Id: <f77789c0-9277-23bf-9abb-92f3f36c4baa@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030081
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 26 April 2018 at 10:52, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> While I was on working adding support for multiple PM domains to genpd, I
->> stumbled over several problems in the error path related to
->> dev_pm_domain_attach(). Hence, I decided to fix these problems first, which is
->> what this series intends to address.
->>
->> There first patch is material for stable, as it fixes a real bug in genpd,
->> while the rest may be considered as improvement of the error paths when devices
->> fails to be attached to their PM domains.
->>
->> I am seeking acks from subsystem maintainers and suggest with funnel the hole
->> series through Rafael's linux-pm tree, unless there are objections to that of
->> course.
->>
->> Ulf Hansson (11):
->>   PM / Domains: Fix error path during attach in genpd
->>   PM / Domains: Drop comment in genpd about legacy Samsung DT binding
->>   PM / Domains: Drop redundant code in genpd while attaching devices
->>   PM / Domains: Check for existing PM domain in dev_pm_domain_attach()
->>   PM / Domains: Allow a better error handling of dev_pm_domain_attach()
->>   amba: Respect all error codes from dev_pm_domain_attach()
->>   driver core: Respect all error codes from dev_pm_domain_attach()
->>   i2c: Respect all error codes from dev_pm_domain_attach()
->>   mmc: sdio: Respect all error codes from dev_pm_domain_attach()
->>   soundwire: Respect all error codes from dev_pm_domain_attach()
->>   spi: Respect all error codes from dev_pm_domain_attach()
->>
->>  drivers/acpi/device_pm.c     |  9 +++------
->>  drivers/amba/bus.c           |  4 ++--
->>  drivers/base/platform.c      | 17 ++++++++---------
->>  drivers/base/power/common.c  | 10 +++++++---
->>  drivers/base/power/domain.c  | 45 +++++++++++++++-----------------------------
->>  drivers/i2c/i2c-core-base.c  |  2 +-
->>  drivers/mmc/core/sdio_bus.c  |  2 +-
->>  drivers/soundwire/bus_type.c | 15 +++++++--------
->>  drivers/spi/spi.c            | 11 ++++++-----
->>  include/linux/acpi.h         |  2 +-
->>  include/linux/pm_domain.h    |  2 +-
->>  11 files changed, 52 insertions(+), 67 deletions(-)
->
-> Rafael,
->
-> I understand if you are busy so this is not a ping. :-)
->
-> However, perhaps I can simplify by sending you a PR with these!?
 
-Yes, please.
+On 04/17/2018 10:02 AM, Ravi Bangoria wrote:
+> Userspace Statically Defined Tracepoints[1] are dtrace style markers
+> inside userspace applications. Applications like PostgreSQL, MySQL,
+> Pthread, Perl, Python, Java, Ruby, Node.js, libvirt, QEMU, glib etc
+> have these markers embedded in them. These markers are added by developer
+> at important places in the code. Each marker source expands to a single
+> nop instruction in the compiled code but there may be additional
+> overhead for computing the marker arguments which expands to couple of
+> instructions. In case the overhead is more, execution of it can be
+> omitted by runtime if() condition when no one is tracing on the marker:
+>
+>     if (reference_counter > 0) {
+>         Execute marker instructions;
+>     }   
+>
+> Default value of reference counter is 0. Tracer has to increment the 
+> reference counter before tracing on a marker and decrement it when
+> done with the tracing.
 
-I'm going to have a look at the patches anyway, but I'm not expecting
-to see anything objectionable in them honestly. :-)
+Hi Oleg, Masami,
+
+Can you please review this :) ?
+
+Thanks.
