@@ -1,115 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751390AbeECO5c (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:57:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34644 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeECO52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:57:28 -0400
-Date: Thu, 3 May 2018 23:57:21 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: Re: [PATCH v3 8/9] trace_uprobe/sdt: Document about reference
- counter
-Message-Id: <20180503235721.d1dbc6f5bfdfc97e6200b7de@kernel.org>
-In-Reply-To: <20180417043244.7501-9-ravi.bangoria@linux.vnet.ibm.com>
-References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
-        <20180417043244.7501-9-ravi.bangoria@linux.vnet.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1751174AbeECO6t (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:58:49 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36960 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750954AbeECO6q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:58:46 -0400
+Subject: Re: [PATCH 0/3] ARM: dts: stm32: Add display support on
+ stm32f469-disco
+To: Philippe Cornu <philippe.cornu@st.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Vincent Abriou <vincent.abriou@st.com>
+References: <20180215082014.30383-1-philippe.cornu@st.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <0b6b2bac-a9b5-2e08-5da6-e367a083b03d@st.com>
+Date: Thu, 3 May 2018 16:58:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180215082014.30383-1-philippe.cornu@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Apr 2018 10:02:43 +0530
-Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+Hi Philippe
 
-> From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+On 02/15/2018 09:20 AM, Philippe Cornu wrote:
+> This serie adds the mipi dsi support to stm32f469 and enables it
+> on the stm32f469-disco board.
 > 
-> Reference counter gate the invocation of probe. If present,
-> by default reference count is 0. Kernel needs to increment
-> it before tracing the probe and decrement it when done. This
-> is identical to semaphore in Userspace Statically Defined
-> Tracepoints (USDT).
+> Philippe CORNU (1):
+>    ARM: dts: stm32: Add display support on stm32f469-disco
 > 
-> Document usage of reference counter.
+> Philippe Cornu (2):
+>    ARM: dts: stm32: Add dt-bindings gpio.h include on stm32f469-disco
+>    ARM: dts: stm32: Add new stm32f469 dtsi file with mipi dsi
 > 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thanks!
-
-> ---
->  Documentation/trace/uprobetracer.txt | 16 +++++++++++++---
->  kernel/trace/trace.c                 |  2 +-
->  2 files changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/trace/uprobetracer.txt b/Documentation/trace/uprobetracer.txt
-> index bf526a7c..cb6751d 100644
-> --- a/Documentation/trace/uprobetracer.txt
-> +++ b/Documentation/trace/uprobetracer.txt
-> @@ -19,15 +19,25 @@ user to calculate the offset of the probepoint in the object.
->  
->  Synopsis of uprobe_tracer
->  -------------------------
-> -  p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe
-> -  r[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a return uprobe (uretprobe)
-> -  -:[GRP/]EVENT                           : Clear uprobe or uretprobe event
-> +  p[:[GRP/]EVENT] PATH:OFFSET[(REF_CTR_OFFSET)] [FETCHARGS]
-> +  r[:[GRP/]EVENT] PATH:OFFSET[(REF_CTR_OFFSET)] [FETCHARGS]
-> +  -:[GRP/]EVENT
-> +
-> +  p : Set a uprobe
-> +  r : Set a return uprobe (uretprobe)
-> +  - : Clear uprobe or uretprobe event
->  
->    GRP           : Group name. If omitted, "uprobes" is the default value.
->    EVENT         : Event name. If omitted, the event name is generated based
->                    on PATH+OFFSET.
->    PATH          : Path to an executable or a library.
->    OFFSET        : Offset where the probe is inserted.
-> +  REF_CTR_OFFSET: Reference counter offset. Optional field. Reference count
-> +		  gate the invocation of probe. If present, by default
-> +		  reference count is 0. Kernel needs to increment it before
-> +		  tracing the probe and decrement it when done. This is
-> +		  identical to semaphore in Userspace Statically Defined
-> +		  Tracepoints (USDT).
->  
->    FETCHARGS     : Arguments. Each probe can have up to 128 args.
->     %REG         : Fetch register REG
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 300f4ea..d211937 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -4604,7 +4604,7 @@ static int tracing_trace_options_open(struct inode *inode, struct file *file)
->    "place (kretprobe): [<module>:]<symbol>[+<offset>]|<memaddr>\n"
->  #endif
->  #ifdef CONFIG_UPROBE_EVENTS
-> -	"\t    place: <path>:<offset>\n"
-> +  "   place (uprobe): <path>:<offset>[(ref_ctr_offset)]\n"
->  #endif
->  	"\t     args: <name>=fetcharg[:type]\n"
->  	"\t fetcharg: %<register>, @<address>, @<symbol>[+|-<offset>],\n"
-> -- 
-> 1.8.3.1
+>   arch/arm/boot/dts/stm32f469-disco.dts | 54 +++++++++++++++++++++++++++++++++--
+>   arch/arm/boot/dts/stm32f469.dtsi      | 19 ++++++++++++
+>   2 files changed, 71 insertions(+), 2 deletions(-)
+>   create mode 100644 arch/arm/boot/dts/stm32f469.dtsi
 > 
 
+Thanks for new dtsi file. Series applied on stm32-next.
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Regards
+Alex
