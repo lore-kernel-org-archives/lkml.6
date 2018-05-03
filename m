@@ -1,105 +1,195 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeECGla (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 02:41:30 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:49291 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbeECGl1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 02:41:27 -0400
-From: "Reizer, Eyal" <eyalr@ti.com>
-To: Tony Lindgren <tony@atomide.com>, Eyal Reizer <eyalreizer@gmail.com>
-CC: "bcousson@baylibre.com" <bcousson@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
-   support
-Thread-Topic: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
-   support
-Thread-Index: AQHT4iT/7H0+EMEe30+rXGHYgl+MB6QdiDjA
-Date: Thu, 3 May 2018 06:41:19 +0000
-Message-ID: <5cc906da15da45ab96e06957f878b65b@ti.com>
-References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
- <20180502145100.GK98604@atomide.com>
-In-Reply-To: <20180502145100.GK98604@atomide.com>
+        id S1752092AbeECGmf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:42:35 -0400
+Received: from mga17.intel.com ([192.55.52.151]:51135 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751968AbeECGma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 02:42:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,357,1520924400";
+   d="scan'208";a="38064322"
+From: "Winkler, Tomas" <tomas.winkler@intel.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Thread-Topic: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Thread-Index: AQHTzovCXbr+Xqq9jkSj9yBS1IttZ6P4GCYAgAGeicCAAAoXAIAAs/uQgA9COvCABkUzAIAANFFggAw0OwCAADKoEIAA6v0AgAAyhcA=
+Date: Thu, 3 May 2018 06:42:26 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9427B9A6@hasmsx108.ger.corp.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+ <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+ <20180424160328.GA5119@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+ <20180502133246.GA6091@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+ <20180503063508.GA8702@linux.intel.com>
+In-Reply-To: <20180503063508.GA8702@linux.intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [137.167.25.139]
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDIyNzlmOTQtMTA4Yi00MzVmLWFhM2YtYzlkYmMyODk4NGMwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJMd2s1TlNvK3pzV0txanNHbVJvWUhUTEU5VmlLMG5tQ0FQY3RvMHR2a0t1bHBtUjFYZlpxMlFcL2t1TUZcL2dFd08ifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.135]
 Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w436fabK014413
 
-> 
-> * Eyal Reizer <eyalreizer@gmail.com> [180501 00:26]:
-> > enable mmc3 used for wlan and uart1 used for bluetooth
-> > configure the gpios used for wlan and bluetooth controls
-> > add fixed voltage regulator used for wlan power control
-> ...
-> >  / {
-> >  	model = "TI AM437x SK EVM";
-> > @@ -158,6 +159,22 @@
-> >  			};
-> >  		};
-> >  	};
-> > +
-> > +	vmmcwl_fixed: fixedregulator-mmcwl {
-> > +		/*
-> > +		 * WL_EN is not SDIO standard compliant. It is an out of band
-> > +		 * signal and hard to be dealt with in a standard way by the
-> > +		 * SDIO core driver.
-> > +		 * So modelling the WL_EN line as a regulator was a natural
-> > +		 * choice as the MMC core already deals with MMC supplies.
-> > +		 */
-> > +		compatible = "regulator-fixed";
-> > +		regulator-name = "vmmcwl_fixed";
-> > +		regulator-min-microvolt = <1800000>;
-> > +		regulator-max-microvolt = <1800000>;
-> > +		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-> > +		enable-active-high;
-> > +	};
-> >  };
-> 
-> Interesting that it needs much longer delay here compared to the
-> earlier?
 
-Where do you see a delay in here?
-There is no startup-delay-us value used in this patch.
+> >
+> > >
+> > > On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
+> > > > > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+> > > > >
+> > > > > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > > > > > In crb_map_io() function, __crb_request_locality()
+> > > > > > > > > > > is called prior to crb_cmd_ready(), but if one of
+> > > > > > > > > > > the consecutive function fails the flow bails out
+> > > > > > > > > > > instead of trying to relinquish
+> > > > > locality.
+> > > > > > > > > > > This patch adds goto jump to
+> > > > > > > > > > > __crb_relinquish_locality() on the error path.
+> > > > > > > > > > >
+> > > > > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be
+> > > > > > > > > > > issued only after granting
+> > > > > > > > > > > locality)
+> > > > > > > > > > > Signed-off-by: Tomas Winkler
+> > > > > > > > > > > <tomas.winkler@intel.com>
+> > > > > > > > > > > ---
+> > > > > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > > > > > >
+> > > > > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > > b/drivers/char/tpm/tpm_crb.c index
+> > > > > > > > > > > 7f78482cd157..34fbc6cb097b
+> > > > > > > > > > > 100644
+> > > > > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
+> > > > > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > > > > >
+> > > > > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res,
+> > > > > > > > > > > buf-
+> > > > > > > > > > > >control_address,
+> > > > > > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > > > > +	}
+> > > > > > > > > > >
+> > > > > > > > > > >  	/*
+> > > > > > > > > > >  	 * PTT HW bug w/a: wake up the device to access
+> @@
+> > > > > > > > > > > -520,7
+> > > > > > > > > > > +522,7
+> > > > > > > > > >
+> > > > > > > > > > @@
+> > > > > > > > > > > static int crb_map_io(struct acpi_device *device,
+> > > > > > > > > > > struct crb_priv *priv,
+> > > > > > > > > > >  	 */
+> > > > > > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > > > > > >  	if (ret)
+> > > > > > > > > > > -		return ret;
+> > > > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > > > >
+> > > > > > > > > > >  	pa_high = ioread32(&priv->regs_t-
+> >ctrl_cmd_pa_high);
+> > > > > > > > > > >  	pa_low  =
+> > > > > > > > > > > ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
+> > > > > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > > > > >
+> > > > > > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > > > > > >
+> > > > > > > > > > > +out_relinquish_locality:
+> > > > > > > > > > > +
+> > > > > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > > > > > >
+> > > > > > > > > > >  	return ret;
+> > > > > > > > > >
+> > > > > > > > > > Thanks, please just call it before returning in the error path.
+> > > > > > > > >
+> > > > > > > > > Can you please elaborate why, isn't the centralized
+> > > > > > > > > exiting of functions preferred kernel coding style?
+> > > > > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-sty
+> > > > > > > > > le.h
+> > > > > > > > > tml#
+> > > > > > > > > cent
+> > > > > > > > > ra
+> > > > > > > > > lized-ex
+> > > > > > > > > iting-of-functions
+> > > > > > > >
+> > > > > > > > You exit only from one location (not multiple) and not
+> > > > > > > > from a nested context. Here you just add more complexity by
+> doing this.
+> > > > > > >
+> > > > > > > Where is the complexity ? I see it as a standard way of
+> > > > > > > undoing on
+> > > exit.
+> > > > > > > Tomas
+> > > > > >
+> > > > > > Jarkko, can you please respond.
+> > > > > > Thanks
+> > > > > > Tomas
+> > > > >
+> > > > > I was away for Mon-Wed last week and did not work on TPM for Thu-
+> Fri.
+> > > > >
+> > > > > My earlier comment was incorrect as there are two locations to
+> > > > > exit (not sure how I managed to overlook the patch that way).
+> > > > >
+> > > > > Thus, I have only two very  minor requets:
+> > > > >
+> > > > > * Remove the extra newline (the last line addition in the patch).
+> > > > Okay
+> > > > > * Use just label named out as we have only one exception handler.
+> > > > Cannot do that, as the bail out is prior to cmd_ready request so
+> > > > there is no
+> > > need for go_idle which is under out label.
+> > > > >
+> > > > > I'll move on to testing, and if it it passes, I can do those updates
+> myself.
+> > > > Thanks,  I prefer to resend myself.
+> > > >
+> > > > Tomas
+> > >
+> > > Add my tested-by as it is cosmectic change, thanks.
+> >
+> >
+> > What change exactly? I had impression you've accepted the patch as is?
+> > Thanks
+> > Tomas
+> 
+> Hmm... maybe there is some misunderstandig but I thought you were going
+> to make the updates above yourself and send a revised patch.
 
-> 
-> BTW, I do have a patch in work to add pwrseq support for wlcore that
-> allows leaving out the regulator here. It still needs a bit more
-> work though.
-> 
-> And I also have a series in work to make wlcore use runtime PM that
-> needs even more work, just FYI to avoid any duplicate work.
-> 
-> Hmm you don't happen to have a patch series somewhere making
-> wlcore use the SDIO dat lien interrupt?
-wilink has always used out of band interrupt (using wlan_irq gpio).
-in-band interrupts was not supported.
-See section 10.5.2 in this the wl18xx hardware integration guide:
-http://www.ti.com/lit/ug/swru437/swru437.pdf
 
-> 
-> I think we should use that when idle rather than the (edge) gpio
-> interrupt as the SDIO dat interrupt is level sensitive and wired
-> to the always on gpio bank for most SDIO controller instances.
-> On runtime PM wakeup, there's no status anywhere to been with the
-> GPIO edge interrupt.
-> 
-I agree that it would have been better, especially for cases such as wake 
-On wlan, but again, in-band interrupt was something that was talked 
-about way back but it was never implemented.
+Probably,  if I remember there were to mails going in asynchronous, I've received your tested-by, the second I've sent this answer,
+so I thought you came to the conclusion that there is nothing to change in the patch yourself.
+Frankly I've checked the patch and there are no even extra new lines in my version unless it has scrambled on the way.
 
-Best Regards,
-Eyal
+Thanks
+Tomas
