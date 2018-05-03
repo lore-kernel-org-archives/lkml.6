@@ -1,33 +1,33 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3422286-1525396828-2-6485711735361187296
+X-Cyrus-Session-Id: sloti22d1t05-3227126-1525386994-2-13563029643202203445
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525396828; b=E45KxuTqtiBt/6bYNhkbYhukmQj9jvt5PYSub8jcW34xQu0O0g
-    2ZxWyBB1l7BI7uYOviVjb5RxavBXp3gzFIdedCi7Hk9RBwiOY6frUFk/ajOEnaot
-    cM5IHVnztX6Y4v9pWI3W2NXKHJmrWZQVcGxYqjyrgR5P2mwA6YkJvpD05HlxRNxi
-    LK34m72BcdLI1GwRI5TjntIxE00Ha+2S1IVn1GJ4MwPiZretnrmnBcFu4edBRvZ4
-    bU+T2reAR4GML1K2e0J8ZJM4zGNcOHoq5VP2qHOiWGmp/R1mdpBsLawavhWVBuvP
-    /B5jC6vJmINgjTXrxg0ExWGoAmMaS4RvhH5Q==
+    1525386993; b=UseTultpVzakYNC1gU7ygUCf9n65kTKq/AqqIdpUkJdI7frciM
+    VD8vLIAG4s07sgrZWMC/fcWKtLon2gMtaDaawZFummNMLKTKjr+ysbh4jBZHitvV
+    Co82apy4HDVIGxP5effCFqQAlvXbmEi/7pcngqGOSAABJmi/Me50bC8yz8FuTeWy
+    nJ23j+S9Ad5vWUNCzcj2U78bSVv0wIvSPzXlo7d0ZIn5evxkCInWozxos+Xfq7br
+    /XF6a6kVxwUQ9Sfpx8i8/HZrF6wwltWD6sIfKzgxrJKfPTbXo3Q0qSWyoZB0Jt2N
+    uRVO5yCPyAWdXs2ry9GXZoOjLx+QxyyhslFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=content-type:mime-version:subject:from
-    :in-reply-to:date:cc:content-transfer-encoding:references:to
-    :message-id:sender:list-id; s=fm2; t=1525396828; bh=Ak/qcxhwE14e
-    5zJvAdQZDlU5CGtdWmvYInjfg3Z13CU=; b=jHJPjFBDafDSV0zMeaeYlXHq4rFL
-    9vDqPqXlncck0qJpsssstvreOnk9nY+7AeX+tIk8YFR0Fy7Etd1RKG2OSPVlTCV1
-    sZVW9PMpfuknwnSRL11xyLyiS2vssKMWrZv3lxMKSi/FRLJDmGDPlzOa0hIPnEXI
-    K7gaY8HSmih98YtP4/KbrjWkClV7jzxwcuLsEkidgK3c8gTmk8j72QkJkX57v6Ez
-    C/5rBEXn6J7VvR/+cPOqtVWeSfjXKqWF0bNrCgYAgm3cVetBMLlJnvCZZYxNz5Ji
-    t43XDq9CbaC8UAT2A18vrTD+QwSQc5iQ8Q2oFA94GKsMMVGbbvSiY5BpPw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type:sender:list-id; s=
+    fm2; t=1525386993; bh=DX3LXcDK/Jsj4UBJDBn4DYCbHB9PbOH1N1yP1NwWBo
+    0=; b=Hwadaycd9I5J6UReWNYOSpfyFPWj49ah2IIh8BUSo1BE2A7E/9li54LwYN
+    4Qu18OIEEgBmI0MvwzxXIhlnm6L9+4xx7LV/JHQyAO6vUa/WJFdinO56aiZ1KVO+
+    dDQNHwukbhFOkixLCCCx6MgO8hVjn5BMgdBuwUj1NJYKLY6vG4ef+yaGCjxF7IQY
+    aYmEDMNsoD9Qs2/JOE8Ydlqvnz4wsfoe+kx8fZoEpwOq1660eySJl/SjFGXOwpaU
+    dnN7esspxZ8iAwBbmJqmq8NakMEPrUreqDEHet8VnbhrfZrPxXuKmAXP5OKA5xco
+    Ma08R9mN+Eo1v2+wYftavSDdnWhg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,15 +36,13 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
+    header.domain=canonical.com header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -53,133 +51,285 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
+      header.domain=canonical.com header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKi8GOTF3qKYKaB7qfmP1pXDzvYmlqWSSZ1Vl4vGMKdtvTu15cFgPY6tOhdvkw8sTSRsyeHFZOWTf8Wwz8UU5wJ1el5/aqef8mMa9BlD2OmRUlZjepC5
-    svtBF/BYDOsTWTJa/+OkD1SE7BpXsiS1a6/iU6rL8L7qzF1HwDm67UPVMI9o5y2CfhaKujJXEsn0bAOSl6wKatbzjqt38SG5vpJdMGls3vnXsOqId2IMVXlL
-    dbBDjReY0PumUyuHiTNZzQ==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=jlY5g9R6hR36p1gyXV8A:9
-    a=VFAflaYM64q-Nwar:21 a=wyxssFzoII3yipSt:21 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfMeHGSTY3E8G1XBSd3p1898pnhNxz3nRJmj6CmeGSjXp9uRPM/YMI3h6l2Iko1FXmlpBRAtljywYD5I/Hpkq3BBsdYXP4Dfd1I/3atMymnwLI/tKIXJ8
+    uGmvWFkGi+6FpurYl+i+RqdwA4R48cIZ78gdQNyeuamvshuXVZH/a8NxkGZ8YQPmaApSsAkcezvZ5b/p8vfdFDq3xJvv+mHEnNlKJ7gq6NZyO+c7zUp487U5
+    Oo/TWeqewBOXsKHi4T/LJg==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=13zjGPudsaEWiJwPRgMA:9
+    a=20KFwNOVAAAA:8 a=GfyVyMdr-37WVbhFusYA:9 a=QEXdDO2ut3YA:10
+    a=jPdnbbFCA0-t1ScOwTMA:9 a=ONNS8QRKHyMA:10 a=VwQbUJbxAAAA:8
+    a=6nUXITN49fC6jhMlmTEA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeEDBUY convert rfc822-to-8bit (ORCPT
-        <rfc822;linux@kroah.com>); Thu, 3 May 2018 21:20:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46322 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751420AbeEDBUW (ORCPT
+        id S1751148AbeECWgb (ORCPT <rfc822;linux@kroah.com>);
+        Thu, 3 May 2018 18:36:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50628 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751074AbeECWg3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 May 2018 21:20:22 -0400
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-In-Reply-To: <1525383720.3539.76.camel@linux.vnet.ibm.com>
-Date: Thu, 3 May 2018 21:20:16 -0400
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Keyrings <keyrings@vger.kernel.org>,
-        Linux Integrity <linux-integrity@vger.kernel.org>,
-        Linux Security <linux-security-module@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@us.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Patrick Callaghan <patrickc@us.ibm.com>
-Content-Transfer-Encoding: 8BIT
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
- <alpine.LRH.2.21.1805040311050.12843@namei.org>
- <1525383720.3539.76.camel@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>
-X-Mailer: Apple Mail (2.3445.6.18)
-X-TM-AS-GCONF: 00
-x-cbid: 18050401-0008-0000-0000-00000302904A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008965; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01027141; UDB=6.00524651; IPR=6.00806274;
- MB=3.00020917; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-04 01:20:20
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050401-0009-0000-0000-000039203FCF
-Message-Id: <04EE0041-8DF1-4FF3-9C59-64ECF0182CC5@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805040011
+        Thu, 3 May 2018 18:36:29 -0400
+Subject: Re: [PATCH v2 3/4] seccomp: Audit attempts to modify the
+ actions_logged sysctl
+To: Steve Grubb <sgrubb@redhat.com>, Paul Moore <paul@paul-moore.com>
+Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Eric Paris <eparis@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, linux-audit@redhat.com,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org
+References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+ <CAHC9VhSq=56twBxnzZ8T=APGvtZV39FrHFVqmDMiKOK=WeWJRA@mail.gmail.com>
+ <d8e1c48b-70d0-13a7-e563-755a8760b25f@canonical.com> <2397134.HQDQRr6h1X@x2>
+From: Tyler Hicks <tyhicks@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tyhicks@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <e23b61ec-9400-4c40-cdb1-92d224f05967@canonical.com>
+Date: Thu, 3 May 2018 17:36:18 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <2397134.HQDQRr6h1X@x2>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="9kzE7y2OHYL2UW2KxreBjb6n6R9MuqpRR"
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--9kzE7y2OHYL2UW2KxreBjb6n6R9MuqpRR
+Content-Type: multipart/mixed; boundary="Z6x5O0M52QzElqflQ6iCsyOYlIR0un3Cs";
+ protected-headers="v1"
+From: Tyler Hicks <tyhicks@canonical.com>
+To: Steve Grubb <sgrubb@redhat.com>, Paul Moore <paul@paul-moore.com>
+Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+ Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
+ Eric Paris <eparis@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-audit@redhat.com, linux-security-module@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Message-ID: <e23b61ec-9400-4c40-cdb1-92d224f05967@canonical.com>
+Subject: Re: [PATCH v2 3/4] seccomp: Audit attempts to modify the
+ actions_logged sysctl
+References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com>
+ <CAHC9VhSq=56twBxnzZ8T=APGvtZV39FrHFVqmDMiKOK=WeWJRA@mail.gmail.com>
+ <d8e1c48b-70d0-13a7-e563-755a8760b25f@canonical.com> <2397134.HQDQRr6h1X@x2>
+In-Reply-To: <2397134.HQDQRr6h1X@x2>
 
-> On May 3, 2018, at 5:42 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
-> 
-> On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
->> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
->> 
->>> These patches add support for modifying the reserved space for extra
->>> certificates in a compressed bzImage in x86. This allows separating the
->>> system keyring certificate from the kernel build process. After the kernel
->>> image is distributed, the insert-sys-cert script can be used to insert the
->>> certificate for x86.
->> 
->> Can you provide more explanation of how this is useful and who would use 
->> it?
-> 
-> I'm involved in a number projects that rely on a kernel build group to
-> actually build kernels for their systems.  Reserving memory for
-> additional public keys, allows product groups to insert public keys
-> post build.  Initially the product groups might insert development
-> keys, but eventually they would insert the product's public key.
-> 
-> Mimi
+--Z6x5O0M52QzElqflQ6iCsyOYlIR0un3Cs
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-With CONFIG_SYSTEM_TRUSTED_KEYRING, we have a system keyring populated
-with keys that we trust. Initial keys are compiled-in:
--The module signing key, as specified by CONFIG_MODULE_SIG_KEY,
--Additional keys, as specified by CONFIG_SYSTEM_TRUSTED_KEYS.
+On 05/03/2018 04:12 PM, Steve Grubb wrote:
+> On Thursday, May 3, 2018 4:51:36 PM EDT Tyler Hicks wrote:
+>> On 05/03/2018 03:48 PM, Paul Moore wrote:
+>>> On Thu, May 3, 2018 at 4:42 PM, Steve Grubb <sgrubb@redhat.com> wrote=
+:
+>>>> On Thursday, May 3, 2018 4:18:26 PM EDT Paul Moore wrote:
+>>>>> On Wed, May 2, 2018 at 2:18 PM, Steve Grubb <sgrubb@redhat.com> wro=
+te:
+>>>>>> On Wednesday, May 2, 2018 11:53:19 AM EDT Tyler Hicks wrote:
+>>>>>>> The decision to log a seccomp action will always be subject to th=
+e
+>>>>>>> value of the kernel.seccomp.actions_logged sysctl, even for proce=
+sses
+>>>>>>> that are being inspected via the audit subsystem, in an upcoming
+>>>>>>> patch.
+>>>>>>> Therefore, we need to emit an audit record on attempts at writing=
+ to
+>>>>>>> the
+>>>>>>> actions_logged sysctl when auditing is enabled.
+>>>>>>>
+>>>>>>> This patch updates the write handler for the actions_logged sysct=
+l to
+>>>>>>> emit an audit record on attempts to write to the sysctl. Successf=
+ul
+>>>>>>> writes to the sysctl will result in a record that includes a
+>>>>>>> normalized
+>>>>>>> list of logged actions in the "actions" field and a "res" field e=
+qual
+>>>>>>> to
+>>>>>>> 0. Unsuccessful writes to the sysctl will result in a record that=
 
-In userspace, we can add more keys to the system keyring, only if they can be
-verified by keys already in the keyring.
+>>>>>>> doesn't include the "actions" field and has a "res" field equal t=
+o 1.
+>>>>>>>
+>>>>>>> Not all unsuccessful writes to the sysctl are audited. For exampl=
+e,
+>>>>>>> an
+>>>>>>> audit record will not be emitted if an unprivileged process attem=
+pts
+>>>>>>> to
+>>>>>>> open the sysctl file for reading since that access control check =
+is
+>>>>>>> not
+>>>>>>> part of the sysctl's write handler.
+>>>>>>>
+>>>>>>> Below are some example audit records when writing various strings=
+ to
+>>>>>>> the
+>>>>>>> actions_logged sysctl.
+>>>>>>>
+>>>>>>> Writing "not-a-real-action", when the kernel.seccomp.actions_logg=
+ed
+>>>>>>> sysctl previously was "kill_process kill_thread trap errno trace
+>>>>>>> log",
+>>>>>>>
+>>>>>>> emits this audit record:
+>>>>>>>  type=3DCONFIG_CHANGE msg=3Daudit(1525275273.537:130): op=3Dsecco=
+mp-logging
+>>>>>>>  old-actions=3Dkill_process,kill_thread,trap,errno,trace,log res=3D=
+0
+>>>>>>>
+>>>>>>> If you then write "kill_process kill_thread errno trace log", thi=
+s
+>>>>>>> audit
+>>>>>>>
+>>>>>>> record is emitted:
+>>>>>>>  type=3DCONFIG_CHANGE msg=3Daudit(1525275310.208:136): op=3Dsecco=
+mp-logging
+>>>>>>>  actions=3Dkill_process,kill_thread,errno,trace,log
+>>>>>>>  old-actions=3Dkill_process,kill_thread,trap,errno,trace,log res=3D=
+1
+>>>>>>>
+>>>>>>> If you then write the string "log log errno trace kill_process
+>>>>>>> kill_thread", which is unordered and contains the log action twic=
+e,
+>>>>>>>
+>>>>>>> it results in the same actions value as the previous record:
+>>>>>>>  type=3DCONFIG_CHANGE msg=3Daudit(1525275325.613:142): op=3Dsecco=
+mp-logging
+>>>>>>>  actions=3Dkill_process,kill_thread,errno,trace,log
+>>>>>>>  old-actions=3Dkill_process,kill_thread,errno,trace,log res=3D1
+>>>>>>>
+>>>>>>> No audit records are generated when reading the actions_logged
+>>>>>>> sysctl.
+>>>>>>
+>>>>>> ACK for the format of the records.
+>>>>>
+>>>>> I just wanted to clarify the record format with you Steve ... the
+>>>>> "actions" and "old-actions" fields may not be included in the recor=
+d
+>>>>> in cases where there is an error building the action value string, =
+are
+>>>>> you okay with that or would you prefer the fields to always be
+>>>>> included but with a "?" for the value?
+>>>>
+>>>> A ? would be more in line with how other things are handled.
+>>>
+>>> That's what I thought.
+>>>
+>>> Would you mind putting together a v3 Tyler? :)
+>>
+>> To be clear, "?" is only to be used when the call to
+>> seccomp_names_from_actions_logged() fails, right?
+>=20
+> Yes and that is a question mark with no quotes in the audit record.
+>=20
+>> If the sysctl write fails for some other reason, such as when an inval=
+id
+>> action name is specified, can you confirm that you still want *no*
+>> "actions" field,=20
+>=20
+> Its best that fields do not disappear. In the case of invalid input, yo=
+u can=20
+> just leave the new value as ? so that nothing malicious can be injected=
+ into=20
+> the logs
+>=20
+>> the "old-actions" field to be the value prior to attempting the update=
+ to
+>> the sysctl, and res to be 0?
+>=20
+> Yes
 
-In kernel or modules, we can bypass this restriction by using the
-KEY_ALLOC_BYPASS_RESTRICTION flag. As far as I can tell, only the compiled-in
-keys are loaded this way in the upstream kernel.
+I came up with one more question after hitting a corner case while testin=
+g.
 
-Other asymmetric keyrings can specify the same restriction using the
-"builtin_trusted" option. Currently, CONFIG_INTEGRITY_TRUSTED_KEYRING creates
-".ima" and ".evm" keyrings with this restriction. As a result, in order to
-add a key to an integrity keyring, either that key needs to be compiled-in,
-or it must be signed with a key that is in the system keyring, which again
-needs to be compiled-in.
+It is valid to write an empty string to the sysctl. If the sysctl was
+set to "errno" and then later set to "", you'd see this with the current
+revision:
 
-If a user is not compiling their own kernel, and has no access to the module
-signing key (or any other compiled-in key), then how can they add their own
-keys to the integrity keyrings?
+ type=3DCONFIG_CHANGE msg=3Daudit(1525385824.643:173): op=3Dseccomp-loggi=
+ng
+ actions=3D old-actions=3Derrno res=3D1
 
-This patchset allows the user to take the kernel from a distro, insert their 
-own key, sign the resulting image as required for their secure boot method,  
-and when booted, the system keyring will include their key, which can be used 
-to control the integrity keys.
+Is that what you want or should the value of the "actions" field be
+something be something like this:
 
-An alternative way is to allow the "secondary" trusted keyring to verify the 
-IMA keys with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY, but 
-it is the same problem. Some distros carry patches that populate the 
-secondary keyring with UEFI keys during kernel initialization, which would 
-mean having access to a UEFI key (which is also needed with this patchset, 
-for signing the resulting image), would be enough to add integrity keys. But 
-that is much more permissive, since ANY key that goes into the secondary 
-keyring, coming from UEFI, could then be used to control the integrity keys. 
+ actions=3D(none)
 
-Mehmet
+Tyler
 
+
+--Z6x5O0M52QzElqflQ6iCsyOYlIR0un3Cs--
+
+--9kzE7y2OHYL2UW2KxreBjb6n6R9MuqpRR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEPgU+cN5AsTrekT5+1pIAPaoCxwoFAlrrjuIACgkQ1pIAPaoC
+xwqu0BAAwyRlqGQ5TStWh6CvMpMXQqKCq8yZysZNTnq2jjwpgNro/Hx4dYIBkHe4
+C+FpRdV4w726wrp0GR9iR4UCAUeCKS6KfAMFech6fh4kdRX8mlN9txrUf4ZpiBr0
+NT6IPCD0B/fRdxP9/FDwWSnIvD8TjcWD4XtW5v90NZMrUvVcfr6OugWVbzsgTdmK
+w4Fvbac1FmV4g/qr616UXF6O53JPDJ1+40kRVMWYciz5wRRcbxZEru8HcE0FHaKX
+xPVzUTnfi9ikoTGPIDxdKt4iabgxwv+95TIhBuGSt9Zi9sAovD5lQ/3Up6uGEOZ9
+ou6wk9Sco/M8vdUM20479uV4JDaP+vL2bkeTa8LHhumFH3r0Y3Mi7WBww0MNJjXV
+R2UIkzI/xmE7c8PaKVyiKsvKdjyDHmQZqJyrLhSUPpa1AEQRLyto/ynItA1wRcF8
+Ul+BvNbEhhnyAUGVvcQ4NbLRSja4i+iXTzRKeKjlA1im1UH4TVTCXb2tsMtPfTZM
+45gytgvY2z/+TR8z8ABWNhEdmu+eJ8pidbrXhe9iLXTBVgB1EftV5TSM1ZrWsD1j
+c0GEbB0RCwLuDeCt71vgOPIisXQ4nd7heAbY25o8bLl/v7J17WQYuf5WAFmkVvvR
+6SIPAcPfewR9e680zu5GWG/mWU2TPokm2GGQuw/2WyCS/5rEfQs=
+=1oYl
+-----END PGP SIGNATURE-----
+
+--9kzE7y2OHYL2UW2KxreBjb6n6R9MuqpRR--
