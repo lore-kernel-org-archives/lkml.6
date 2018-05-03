@@ -1,352 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752081AbeECF7K (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 01:59:10 -0400
-Received: from mailout1.samsung.com ([203.254.224.24]:59072 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbeECF7F (ORCPT
+        id S1752034AbeECGHt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:07:49 -0400
+Received: from mail-pf0-f181.google.com ([209.85.192.181]:46942 "EHLO
+        mail-pf0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751623AbeECGHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 01:59:05 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20180503055904epoutp01407b52bbe8bf74546d2603cf296d8dc1~rDPTAToEz1340613406epoutp01J
-X-AuditID: b6c32a4b-19dff70000001094-7e-5aeaa527dbb0
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-To: Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Mali DP Maintainers <malidp@foss.arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc: Satendra Singh Thakur <satendra.t@samsung.com>,
-        Madhur Verma <madhur.verma@samsung.com>,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>
-Subject: [PATCH] drm/kms/mode: added a new helper for calculating videomode
- from crtc's display mode
-Date: Thu,  3 May 2018 11:28:37 +0530
-Message-Id: <1525327118-26078-1-git-send-email-satendra.t@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA0WTe0xTVxzHc+69vb0+ul2rhjP+IM2Ne0hG7a0tHDbZIzPkZrgMQzaWGlNv
-        yrUQ+mC9rZMtywhT5LGuzDHtBCtkoFmFjVWkgkEJGE1V2jGdURwPH5vQETfGIyTItt7dkv33
-        +f1+32++5/xyDoWrR8lUqsThFlwO3saQq4nuwc0vZDzfFjfpQsvrkDcawdChxyeV6MJVH4Hu
-        X/0RoJvzf5CoZ6JXieKxaRwdHq8n0OTYMIF8D37HUSzWqURDldNKFHpwS4Fu9DaRyB+7gKH+
-        tkMEapk5S6DBr1pJdHLuOoHCZ1pw1BE7SKDRziGA/F9Oka+lcO2BdsAF2j/iGiuGCe7U3VEF
-        FwrWkFx4YULBBSI7ufG6Kxh3pvUT7pfFNsD1HO7DuM+7goCbDaXlq0zCtmKBLxJcGsFhcRaV
-        OKw5TF6B+Q2zMVPHZrDZKIvROHi7kMNs35GfkVtiS9yd0ezjbZ5EK58XRWbLK9tcTo9b0BQ7
-        RXcOs4tl9VpWl6XV6/Vag3H3S3pjQrJHKK5smgNl9wv29/x8HK8A1bm1YBUFaQPsG7mNS6ym
-        zwP4Q/e6WrA6wX8BeGJplpCLBQAXY0vEimP5Yi+QB30Anu2qT6rmAfzm7iQmqciE6lGTXyEN
-        NtBBEoaPXiOlAqfrAPT2HUgkUtR6ei/86e93JQNBPwsbH10nJVbRudDbdVopx6XBO9EaXPJC
-        ulsJAwuDmDzYDn+dG0/yehi/0pU0pMIpX5VSNnwK4MR3LcniMwCray4nVa/CAw39hHQKnN4M
-        v+/dIrdz4LVwp0JinH4KepceYpIE0ipYXaWWJZvgt5OD+ErWk+ZahcwcrLw9k+TXYXB4GMhb
-        3Q3DHXGsHqQd+z+sGYAgeEYoE+1WQTSWbXUIH2hF3i56HFatxWkPgf+ednreORCK7hgANAWY
-        tar+oSmTWsHvE8vtAwBSOLNB1VAXN6lVRXz5h4LLaXZ5bII4AIyJbX6Bp260OBMfxeE2s4Zs
-        nSEzM4vV6bINTIrqTmTMpKatvFsoFYQywbXiw6hVqRXguYvN0ePLf+4iHgY7wiNPvBrFkRr/
-        HrXIv/9Ox1vl/1D3PE/zEeEess0YLOObXn587LeP/aU3Tjtv7b/5onrM39AfSbFXr+m5lD2N
-        D2yN7Fz75intmmhB+nuFR/ICG32NI+bZEylOxve2lSgtnSsMhRbn2YOXp5Dq67qqXEthazdD
-        iMU8m467RP5fZRtj5vADAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42LZdlhJXldt6asog5+HDC16z51ksmh/t4zd
-        Yt+pfhaLR6cuMFpc+fqezWLng13sFq/Ov2G2mHR/AovFi3sXWSz6H79mtjh/fgO7xdmmN+wW
-        mx5fY7W4vGsOm8WM8/uYLA4sbWexWPhxK4vF4alL2CyWfTnDYrF980Jmi7XnW1ks7m44y2gx
-        Y/JLNgdxjzXz1jB6zFtT7TG74SKLx/Lbd1k9Nq3qZPPY/u0Bq8e8k4Ee97uPM3lsXlLvcefH
-        UkaPnZP2Mnn0bVnF6PF5k1wAbxSXTUpqTmZZapG+XQJXRtOcL4wFj4Irdl6dy9zA2OHWxcjJ
-        ISFgIvF3/y7GLkYuDiGB3YwSsx62MkEkpCSWvdnGBmELS6z895wdougzo8Tv6T/YQRJsQN3P
-        58xgBUmICOxik3g/bx4ziMMs0Mso8WL/frAqYYEUiV933oCNZRFQlZj9/AzYWF4BN4neLavZ
-        IVbISdw818k8gZFnASPDKkbJ1ILi3PTcYsMCo7zUcr3ixNzi0rx0veT83E2M4KjR0trBeOJE
-        /CFGAQ5GJR7eA2dfRgmxJpYVV+YeYpTgYFYS4Z3S/SpKiDclsbIqtSg/vqg0J7X4EKM0B4uS
-        OK98/rFIIYH0xJLU7NTUgtQimCwTB6dUA2OPfGeOutZhk46NKkw3T1SeEI4+MGuhyTalCMeG
-        Lb9nP9h4z5rX5/vdZ9UPo9f+/Wfm8qJYpU2Ex36Hs8WeZp9bzzRWevw7FxjzvUGwSthp64P/
-        ffbB0stmn9xz+tskpQPLe8w9XVjefT8i0Pfkp6gcw5tNmdJOUb/sPhjXdf95Wqv3c76fTq4S
-        S3FGoqEWc1FxIgCZAZGPlgIAAA==
-X-CMS-MailID: 20180503055902epcas5p2eea7b9f58dc630e60fb28c8fc2ffad7b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180503055902epcas5p2eea7b9f58dc630e60fb28c8fc2ffad7b
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180503055902epcas5p2eea7b9f58dc630e60fb28c8fc2ffad7b
-X-RootMTR: 20180503055902epcas5p2eea7b9f58dc630e60fb28c8fc2ffad7b
-References: <CGME20180503055902epcas5p2eea7b9f58dc630e60fb28c8fc2ffad7b@epcas5p2.samsung.com>
+        Thu, 3 May 2018 02:07:46 -0400
+X-Google-Smtp-Source: AB8JxZqAK0u/FAkBIU8fG0zp0tPSS1Jy9x3K09QkQEQgOgspGW7eo6tEMGs2tulR4uFhqLBTTHPLEG6n1WoMWngJPBk=
+MIME-Version: 1.0
+In-Reply-To: <1356afb7-80cf-d9d9-c282-e4e819807376@I-love.SAKURA.ne.jp>
+References: <000000000000d2fe62056b3ccca5@google.com> <1356afb7-80cf-d9d9-c282-e4e819807376@I-love.SAKURA.ne.jp>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Thu, 3 May 2018 08:07:24 +0200
+Message-ID: <CACT4Y+aJoMQMthMW8UXQ0eVSuwxk3HqFSuSgMtZTFHAuD5bP5A@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in __schedule
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: syzbot <syzbot+f16b3e3512a1e3c1d1f6@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-ppp@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, paulus@samba.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w4367xcF006690
 
-1.
--Added a new helper drm_display_mode_crtc_to_videomode
--This helper calculates mode parameters like
-  horizontal front_porch, back_porch, sync length
-  vertical front_porch, back_porch, sync length
-  using crtc_* fields of struct drm_display_mode
--It uses following fields of crtc mode
- horizontal sync start/end, active and total length
- vertical sync start/end, active and total length
-2.
--Most of the driver use user-supplied mode for calculating videomode
--However, few drivers use HW (crtc) mode for calculating videomode
--This helper will be useful for such drivers
-3.
--Currently following drivers will be using this new helper
--arm hdlcd
--atmel hlcdc
--exynos 5433 decon
--exynos7 decon
--exynos fimd
-4.
--This patch removes related duplicate code from above mentioned drivers
+On Thu, May 3, 2018 at 7:45 AM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> I'm not sure whether this is a PPP bug.
+>
+> As of uptime = 484, RCU says that it stalled for 125 seconds.
+>
+> ----------
+> [  484.407032] INFO: rcu_sched self-detected stall on CPU
+> [  484.412488]  0-...!: (125000 ticks this GP) idle=f3e/1/4611686018427387906 softirq=112858/112858 fqs=0
+> [  484.422300]   (t=125000 jiffies g=61626 c=61625 q=1534)
+> [  484.427663] rcu_sched kthread starved for 125000 jiffies! g61626 c61625 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x402 ->cpu=0
+> ----------
+>
+> 484 - 125 = 359, which was about to start SND related fuzzing in that log.
+>
+> ----------
+> 2033/05/18 03:36:31 executing program 1:
+> r0 = socket(0x40000a, 0x5, 0x7)
+> setsockopt$inet_int(r0, 0x0, 0x18, &(0x7f0000000000)=0x200, 0x4)
+> bind$inet6(r0, &(0x7f00000000c0)={0xa, 0x0, 0x0, @loopback={0x0, 0x1}}, 0x1c)
+> perf_event_open(&(0x7f0000000040)={0x2, 0x70, 0x3e5}, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0)
+> timer_create(0x0, &(0x7f00000001c0)={0x0, 0x15, 0x0, @thr={&(0x7f0000000440), &(0x7f0000000540)}}, &(0x7f0000000200))
+> timer_getoverrun(0x0)
+> perf_event_open(&(0x7f000025c000)={0x2, 0x78, 0x3e3}, 0x0, 0x0, 0xffffffffffffffff, 0x0)
+> r1 = syz_open_dev$sndctrl(&(0x7f0000000200)='/dev/snd/controlC#\x00', 0x2, 0x0)
+> perf_event_open(&(0x7f0000001000)={0x0, 0x70, 0x0, 0x0, 0x0, 0x0, 0x0, 0x8ce, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x7, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xfffffffffffffff8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, @perf_bp={&(0x7f0000005000), 0x2}, 0x1000000000c}, 0x0, 0x0, 0xffffffffffffffff, 0x0)
+> ioctl$SNDRV_CTL_IOCTL_SUBSCRIBE_EVENTS(r1, 0xc0045516, &(0x7f00000000c0)=0x1)
+> r2 = syz_open_dev$sndpcmp(&(0x7f0000000100)='/dev/snd/pcmC#D#p\x00', 0x1, 0x4000)
+> ioctl$SNDRV_SEQ_IOCTL_GET_QUEUE_CLIENT(r2, 0xc04c5349, &(0x7f0000000240)={0x200, 0xfffffffffffffcdc, 0x1})
+> syz_open_dev$tun(&(0x7f00000003c0)='/dev/net/tun\x00', 0x0, 0x20402)
+> ioctl$SNDRV_CTL_IOCTL_PVERSION(r1, 0xc1105517, &(0x7f0000001000)=""/250)
+> ioctl$SNDRV_CTL_IOCTL_SUBSCRIBE_EVENTS(r1, 0xc0045516, &(0x7f0000000000))
+>
+> 2033/05/18 03:36:31 executing program 4:
+> syz_emit_ethernet(0x3e, &(0x7f00000000c0)={@broadcast=[0xff, 0xff, 0xff, 0xff, 0xff, 0xff], @empty=[0x0, 0x0, 0xb00000000000000], [], {@ipv4={0x800, {{0x5, 0x4, 0x0, 0x0, 0x30, 0x0, 0x0, 0x0, 0x1, 0x0, @remote={0xac, 0x14, 0x14, 0xbb}, @dev={0xac, 0x14, 0x14}}, @icmp=@parameter_prob={0x5, 0x4, 0x0, 0x0, 0x0, 0x0, {0x5, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, @local={0xac, 0x223, 0x14, 0xaa}, @dev={0xac, 0x14, 0x14}}}}}}}, &(0x7f0000000000)={0x0, 0x2, [0x0, 0x2e6]})
+>
+> 2033/05/18 03:36:31 executing program 1:
+> r0 = socket$pppoe(0x18, 0x1, 0x0)
+> connect$pppoe(r0, &(0x7f00000000c0)={0x18, 0x0, {0x1, @broadcast=[0xff, 0xff, 0xff, 0xff, 0xff, 0xff], 'ip6_vti0\x00'}}, 0x1e)
+> r1 = socket(0x3, 0xb, 0x80000001)
+> setsockopt$inet_sctp6_SCTP_ADAPTATION_LAYER(r1, 0x84, 0x7, &(0x7f0000000100)={0x2}, 0x4)
+> ioctl$sock_inet_SIOCGIFADDR(r0, 0x8915, &(0x7f0000000040)={'veth1_to_bridge\x00', {0x2, 0x4e21}})
+> r2 = syz_open_dev$admmidi(&(0x7f0000000000)='/dev/admmidi#\x00', 0x6, 0x8000)
+> setsockopt$SO_VM_SOCKETS_BUFFER_MAX_SIZE(r2, 0x28, 0x2, &(0x7f0000000080)=0xffffffffffffff00, 0x8)
+>
+> [  359.306427] snd_virmidi snd_virmidi.0: control 112:0:0:� :0 is already present
+> ----------
 
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
----
- drivers/gpu/drm/arm/hdlcd_crtc.c               |  8 +-------
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c |  7 +------
- drivers/gpu/drm/drm_modes.c                    | 20 ++++++++++++++++++++
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c  | 22 ++++++++++------------
- drivers/gpu/drm/exynos/exynos7_drm_decon.c     | 23 ++++++++++-------------
- drivers/gpu/drm/exynos/exynos_drm_fimd.c       | 22 +++++++++-------------
- include/drm/drm_modes.h                        |  2 ++
- 7 files changed, 53 insertions(+), 51 deletions(-)
 
-diff --git a/drivers/gpu/drm/arm/hdlcd_crtc.c b/drivers/gpu/drm/arm/hdlcd_crtc.c
-index cf5cbd6..d20e471 100644
---- a/drivers/gpu/drm/arm/hdlcd_crtc.c
-+++ b/drivers/gpu/drm/arm/hdlcd_crtc.c
-@@ -130,13 +130,7 @@ static void hdlcd_crtc_mode_set_nofb(struct drm_crtc *crtc)
- 	struct videomode vm;
- 	unsigned int polarities, err;
- 
--	vm.vfront_porch = m->crtc_vsync_start - m->crtc_vdisplay;
--	vm.vback_porch = m->crtc_vtotal - m->crtc_vsync_end;
--	vm.vsync_len = m->crtc_vsync_end - m->crtc_vsync_start;
--	vm.hfront_porch = m->crtc_hsync_start - m->crtc_hdisplay;
--	vm.hback_porch = m->crtc_htotal - m->crtc_hsync_end;
--	vm.hsync_len = m->crtc_hsync_end - m->crtc_hsync_start;
--
-+	drm_display_mode_crtc_to_videomode(m, &vm);
- 	polarities = HDLCD_POLARITY_DATAEN | HDLCD_POLARITY_DATA;
- 
- 	if (m->flags & DRM_MODE_FLAG_PHSYNC)
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-index d732810..bafcef6 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
-@@ -81,12 +81,7 @@ static void atmel_hlcdc_crtc_mode_set_nofb(struct drm_crtc *c)
- 	unsigned int cfg;
- 	int div;
- 
--	vm.vfront_porch = adj->crtc_vsync_start - adj->crtc_vdisplay;
--	vm.vback_porch = adj->crtc_vtotal - adj->crtc_vsync_end;
--	vm.vsync_len = adj->crtc_vsync_end - adj->crtc_vsync_start;
--	vm.hfront_porch = adj->crtc_hsync_start - adj->crtc_hdisplay;
--	vm.hback_porch = adj->crtc_htotal - adj->crtc_hsync_end;
--	vm.hsync_len = adj->crtc_hsync_end - adj->crtc_hsync_start;
-+	drm_display_mode_crtc_to_videomode(adj, &vm);
- 
- 	regmap_write(regmap, ATMEL_HLCDC_CFG(1),
- 		     (vm.hsync_len - 1) | ((vm.vsync_len - 1) << 16));
-diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-index e82b61e..a406749 100644
---- a/drivers/gpu/drm/drm_modes.c
-+++ b/drivers/gpu/drm/drm_modes.c
-@@ -654,6 +654,26 @@ void drm_display_mode_to_videomode(const struct drm_display_mode *dmode,
- 		vm->flags |= DISPLAY_FLAGS_DOUBLECLK;
- }
- EXPORT_SYMBOL_GPL(drm_display_mode_to_videomode);
-+/**
-+ * drm_display_mode_crtc_to_videomode - fill in @vm using crtc fields of@dmode,
-+ * @dmode: drm_display_mode structure to use as source
-+ * @vm: videomode structure to use as destination
-+ *
-+ * Fills out @vm using the crtc display mode specified in @dmode.
-+ */
-+void drm_display_mode_crtc_to_videomode(const struct drm_display_mode *dmode,
-+				   struct videomode *vm)
-+{
-+	vm->hfront_porch = dmode->crtc_hsync_start - dmode->crtc_hdisplay;
-+	vm->hsync_len = dmode->crtc_hsync_end - dmode->crtc_hsync_start;
-+	vm->hback_porch = dmode->crtc_htotal - dmode->crtc_hsync_end;
-+
-+	vm->vfront_porch = dmode->crtc_vsync_start - dmode->crtc_vdisplay;
-+	vm->vsync_len = dmode->crtc_vsync_end - dmode->crtc_vsync_start;
-+	vm->vback_porch = dmode->crtc_vtotal - dmode->crtc_vsync_end;
-+
-+}
-+EXPORT_SYMBOL_GPL(drm_display_mode_crtc_to_videomode);
- 
- /**
-  * drm_bus_flags_from_videomode - extract information about pixelclk and
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 1c330f2..1ba73a8 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -20,6 +20,7 @@
- #include <linux/of_gpio.h>
- #include <linux/pm_runtime.h>
- #include <linux/regmap.h>
-+#include <video/videomode.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
-@@ -225,26 +226,23 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
- 	writel(val, ctx->addr + DECON_VIDTCON2);
- 
- 	if (!crtc->i80_mode) {
--		int vbp = m->crtc_vtotal - m->crtc_vsync_end;
--		int vfp = m->crtc_vsync_start - m->crtc_vdisplay;
-+		struct videomode vm;
- 
-+		drm_display_mode_crtc_to_videomode(m, &vm);
- 		if (interlaced)
--			vbp = vbp / 2 - 1;
--		val = VIDTCON00_VBPD_F(vbp - 1) | VIDTCON00_VFPD_F(vfp - 1);
-+			vm.vback_porch = (vm.vback_porch >> 1) - 1;
-+		val = VIDTCON00_VBPD_F(vm.vback_porch - 1) |
-+			VIDTCON00_VFPD_F(vm.vfront_porch - 1);
- 		writel(val, ctx->addr + DECON_VIDTCON00);
- 
--		val = VIDTCON01_VSPW_F(
--				m->crtc_vsync_end - m->crtc_vsync_start - 1);
-+		val = VIDTCON01_VSPW_F(vm.vsync_len - 1);
- 		writel(val, ctx->addr + DECON_VIDTCON01);
- 
--		val = VIDTCON10_HBPD_F(
--				m->crtc_htotal - m->crtc_hsync_end - 1) |
--			VIDTCON10_HFPD_F(
--				m->crtc_hsync_start - m->crtc_hdisplay - 1);
-+		val = VIDTCON10_HBPD_F(vm.hback_porch - 1) |
-+			VIDTCON10_HFPD_F(vm.hfront_porch - 1);
- 		writel(val, ctx->addr + DECON_VIDTCON10);
- 
--		val = VIDTCON11_HSPW_F(
--				m->crtc_hsync_end - m->crtc_hsync_start - 1);
-+		val = VIDTCON11_HSPW_F(vm.hsync_len - 1);
- 		writel(val, ctx->addr + DECON_VIDTCON11);
- 	}
- 
-diff --git a/drivers/gpu/drm/exynos/exynos7_drm_decon.c b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-index 3931d5e..148daae 100644
---- a/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos7_drm_decon.c
-@@ -25,6 +25,7 @@
- 
- #include <video/of_display_timing.h>
- #include <video/of_videomode.h>
-+#include <video/videomode.h>
- 
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_plane.h"
-@@ -168,28 +169,24 @@ static void decon_commit(struct exynos_drm_crtc *crtc)
- 		return;
- 
- 	if (!ctx->i80_if) {
--		int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
-+		struct videomode vm;
-+
-+		drm_display_mode_crtc_to_videomode(mode, &vm);
- 	      /* setup vertical timing values. */
--		vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
--		vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
--		vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
- 
--		val = VIDTCON0_VBPD(vbpd - 1) | VIDTCON0_VFPD(vfpd - 1);
-+		val = VIDTCON0_VBPD(vm.vback_porch - 1) |
-+			VIDTCON0_VFPD(vm.vfront_porch - 1);
- 		writel(val, ctx->regs + VIDTCON0);
- 
--		val = VIDTCON1_VSPW(vsync_len - 1);
-+		val = VIDTCON1_VSPW(vm.vsync_len - 1);
- 		writel(val, ctx->regs + VIDTCON1);
- 
- 		/* setup horizontal timing values.  */
--		hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
--		hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
--		hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
--
--		/* setup horizontal timing values.  */
--		val = VIDTCON2_HBPD(hbpd - 1) | VIDTCON2_HFPD(hfpd - 1);
-+		val = VIDTCON2_HBPD(vm.hback_porch - 1) |
-+			VIDTCON2_HFPD(vm.hfront_porch - 1);
- 		writel(val, ctx->regs + VIDTCON2);
- 
--		val = VIDTCON3_HSPW(hsync_len - 1);
-+		val = VIDTCON3_HSPW(vm.hsync_len - 1);
- 		writel(val, ctx->regs + VIDTCON3);
- 	}
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index d42ae2b..b3ab89d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -25,6 +25,7 @@
- 
- #include <video/of_display_timing.h>
- #include <video/of_videomode.h>
-+#include <video/videomode.h>
- #include <video/samsung_fimd.h>
- #include <drm/exynos_drm.h>
- 
-@@ -463,7 +464,7 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
- 			return;
- 		}
- 	} else {
--		int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
-+		struct videomode vm;
- 		u32 vidcon1;
- 
- 		/* setup polarity values */
-@@ -474,24 +475,19 @@ static void fimd_commit(struct exynos_drm_crtc *crtc)
- 			vidcon1 |= VIDCON1_INV_HSYNC;
- 		writel(vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
- 
-+		drm_display_mode_crtc_to_videomode(mode, &vm);
- 		/* setup vertical timing values. */
--		vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
--		vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
--		vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
- 
--		val = VIDTCON0_VBPD(vbpd - 1) |
--			VIDTCON0_VFPD(vfpd - 1) |
--			VIDTCON0_VSPW(vsync_len - 1);
-+		val = VIDTCON0_VBPD(vm.vback_porch - 1) |
-+			VIDTCON0_VFPD(vm.vfront_porch - 1) |
-+			VIDTCON0_VSPW(vm.vsync_len - 1);
- 		writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
- 
- 		/* setup horizontal timing values.  */
--		hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
--		hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
--		hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
- 
--		val = VIDTCON1_HBPD(hbpd - 1) |
--			VIDTCON1_HFPD(hfpd - 1) |
--			VIDTCON1_HSPW(hsync_len - 1);
-+		val = VIDTCON1_HBPD(vm.hback_porch - 1) |
-+			VIDTCON1_HFPD(vm.hfront_porch - 1) |
-+			VIDTCON1_HSPW(vm.hsync_len - 1);
- 		writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
- 	}
- 
-diff --git a/include/drm/drm_modes.h b/include/drm/drm_modes.h
-index 0d310be..9ac764b 100644
---- a/include/drm/drm_modes.h
-+++ b/include/drm/drm_modes.h
-@@ -473,6 +473,8 @@ void drm_display_mode_from_videomode(const struct videomode *vm,
- 				     struct drm_display_mode *dmode);
- void drm_display_mode_to_videomode(const struct drm_display_mode *dmode,
- 				   struct videomode *vm);
-+void drm_display_mode_crtc_to_videomode(const struct drm_display_mode *dmode,
-+				   struct videomode *vm);
- void drm_bus_flags_from_videomode(const struct videomode *vm, u32 *bus_flags);
- int of_get_drm_display_mode(struct device_node *np,
- 			    struct drm_display_mode *dmode, u32 *bus_flags,
--- 
-2.7.4
+It's the next one that caused the hang (the number in "Comm:
+syz-executor1" matches with the number in "executing program 1"):
+
+[  359.306427] snd_virmidi snd_virmidi.0: control 112:0:0:� :0 is
+already present
+2033/05/18 03:36:31 executing program 1:
+r0 = openat$ptmx(0xffffffffffffff9c,
+&(0x7f0000000140)='/dev/ptmx\x00', 0x0, 0x0)
+ioctl$TCSETS(r0, 0x40045431, &(0x7f00005befdc))
+r1 = syz_open_pts(r0, 0x20201)
+fcntl$setstatus(r1, 0x4, 0x2800)
+ioctl$TCXONC(r1, 0x540a, 0x0)
+perf_event_open(&(0x7f000025c000)={0x2, 0x70, 0x3e5, 0x0, 0x0, 0x0,
+0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, @perf_bp={&(0x7f000031f000)}}, 0x0,
+0x0, 0xffffffffffffffff, 0x0)
+write(r1, &(0x7f0000fd6000)='z', 0x1)
+r2 = openat$ipvs(0xffffffffffffff9c,
+&(0x7f0000000000)='/proc/sys/net/ipv4/vs/sync_ports\x00', 0x2, 0x0)
+ioctl$ifreq_SIOCGIFINDEX_team(0xffffffffffffff9c, 0x8933,
+&(0x7f00000012c0)={'team0\x00', <r3=>0x0})
+bind$packet(r2, &(0x7f0000001300)={0x11, 0x1f, r3, 0x1, 0x0, 0x6,
+@random="31e8917e98e6"}, 0x14)
+ioctl$TIOCSETD(r1, 0x5423, &(0x7f00000000c0)=0x3)
+ioctl$TCFLSH(r0, 0x540b, 0x0)
+close(r0)
