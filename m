@@ -1,97 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751975AbeECMXP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:23:15 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:62848 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751360AbeECMXL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:23:11 -0400
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="11659498"
-Subject: Re: [RFC PATCH 4/5] net: macb: Add support for suspend/resume with
- full power down
-To: Harini Katakam <harinik@xilinx.com>
-CC: Nicolas Ferre <nicolas.ferre@atmel.com>,
-        David Miller <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <michals@xilinx.com>,
-        <appanad@xilinx.com>
-References: <1521726700-22634-1-git-send-email-harinikatakamlinux@gmail.com>
- <1521726700-22634-5-git-send-email-harinikatakamlinux@gmail.com>
- <35d980af-b9d5-495e-88af-c4fc911b8429@microchip.com>
- <CAFcVECK3UO+tckXnTKvLpWe3+RiZ7fyDmS+3JjgOdeQTRwy_FQ@mail.gmail.com>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <585eabe8-aae4-cfd3-01aa-bad17197a28d@microchip.com>
-Date: Thu, 3 May 2018 15:23:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752174AbeECMXZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:23:25 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:43348 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751185AbeECMXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:23:21 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>, Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 50/61] thermal: simplify getting .drvdata
+Date: Thu, 03 May 2018 14:23:07 +0200
+Message-ID: <3499277.H47n29vZV6@phil>
+In-Reply-To: <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
+References: <20180419140641.27926-1-wsa+renesas@sang-engineering.com> <20180419140641.27926-51-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFcVECK3UO+tckXnTKvLpWe3+RiZ7fyDmS+3JjgOdeQTRwy_FQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Donnerstag, 19. April 2018, 16:06:20 CEST schrieb Wolfram Sang:
+> We should get drvdata from struct device directly. Going via
+> platform_device is an unneeded step back and forth.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> 
+> Build tested only. buildbot is happy. Please apply individually.
+> 
+>  drivers/thermal/rockchip_thermal.c | 8 +++-----
+>  drivers/thermal/spear_thermal.c    | 8 +++-----
+>  drivers/thermal/zx2967_thermal.c   | 6 ++----
+>  3 files changed, 8 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index f36375d5a16c..9c7643d62ed7 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -1327,8 +1327,7 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
+>  
+>  static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  
+>  	for (i = 0; i < thermal->chip->chn_num; i++)
+> @@ -1346,8 +1345,7 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>  
+>  static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  {
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+> +	struct rockchip_thermal_data *thermal = dev_get_drvdata(dev);
+>  	int i;
+>  	int error;
+>  
+> @@ -1376,7 +1374,7 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>  					      id, thermal->regs,
+>  					      thermal->tshut_temp);
+>  		if (error)
+> -			dev_err(&pdev->dev, "%s: invalid tshut=%d, error=%d\n",
+> +			dev_err(dev, "%s: invalid tshut=%d, error=%d\n",
+>  				__func__, thermal->tshut_temp, error);
+>  	}
+>  
 
-
-On 03.05.2018 14:20, Harini Katakam wrote:
-> Hi Claudiu,
-> 
-> On Thu, May 3, 2018 at 3:39 PM, Claudiu Beznea
-> <Claudiu.Beznea@microchip.com> wrote:
->>
->>
->> On 22.03.2018 15:51, harinikatakamlinux@gmail.com wrote:
->>> From: Harini Katakam <harinik@xilinx.com>
->>>
->>> When macb device is suspended and system is powered down, the clocks
->>> are removed and hence macb should be closed gracefully and restored
->>> upon resume.
->>
->> Is this a power saving mode which shut down the core?
-> 
-> The Ethernet IP is suspended and a majority of the SoC is shut down, yes.
-> 
-> <snip>
->>> +             netif_device_detach(netdev);
->>> +     } else {
->>> +             netif_device_detach(netdev);
->>> +             for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
->>> +                     napi_disable(&queue->napi);
->>> +             phy_stop(netdev->phydev);
->>> +             phy_suspend(netdev->phydev);
->>> +             spin_lock_irqsave(&bp->lock, flags);
->>> +             macb_reset_hw(bp);
->>> +             spin_unlock_irqrestore(&bp->lock, flags);
->>
->> Wouldn't be simple to just call macb_close() here?
-> 
-> <snip>
->>
->> Wouln't be simpler to call macb_open() here?
-> 
-> No, I think that would be excessive for suspend. This does just
-> enough to put the IP into suspend and cut off clocks.
-> For ex., the RX and TX buffers are not freed and allocated again
-> in this cycle, just the buffer descriptors.
-> 
-
-For me looks simpler to just call macb_close()/macb_open() in suspend/resume
-hooks. Maybe this doesn't fit to your needs... But most of the code you
-added in suspend/resume hooks is already present in macb_open()/macb_close(),
-except the TX/RX buffers alloc/free.
-
-SAMA5D2 also uses this IP. SAMA5d2 has a power saving mode where core power is cut
-off (including this IP). We are using macb_open()/macb_close() + restoring all
-few other registers after this (by calling macb_set_rx_mode() and a variant of
-macb_set_features() and few other registers). This is not yet mainlined. I was
-intending to send soon a version.
-
-Thank you,
-Claudiu
-
-> Regards,
-> Harini
-> 
+for the Rockchip-part
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
