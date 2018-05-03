@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeECPN4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 11:13:56 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7649 "EHLO huawei.com"
+        id S1751522AbeECPOA (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 11:14:00 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7650 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750954AbeECPNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751140AbeECPNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 May 2018 11:13:48 -0400
 From: John Garry <john.garry@huawei.com>
 To: <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
@@ -13,9 +13,9 @@ CC: <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
         <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
         <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>,
         John Garry <john.garry@huawei.com>
-Subject: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI support
-Date: Thu, 3 May 2018 23:08:38 +0800
-Message-ID: <1525360119-102166-2-git-send-email-john.garry@huawei.com>
+Subject: [PATCH 2/2] HISI LPC: Add ACPI UART support
+Date: Thu, 3 May 2018 23:08:39 +0800
+Message-ID: <1525360119-102166-3-git-send-email-john.garry@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
 References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
@@ -27,160 +27,114 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently for ACPI support the driver models the host as
-an MFD. For a device connected to the LPC bus, we dynamically
-create an MFD cell for that device, configuring the cell
-name and ACPI match parameters manually. This makes supporting
-named devices and also special setup handling for certain devices
-awkward, as we would need to introduce some special ACPI device
-handling according to device HID.
+On the Huawei D03 development board the system UART is
+the UART connected on the LPC bus.
 
-To avoid this, create reference static MFD cells for known
-child devices, so when adding an MFD cell we can fix the cell
-platform data as required. For this, a setup callback function
-is added.
+The profile for the device driver required for this HW
+would be as follows:
+- platform driver
+- supports 16550
+- supports ACPI
+- supports polling mode
+- supports IO space
 
-For now, only the IPMI cell is added.
+In principle we should use the PNP driver (8250_dw.c) for
+8250-devices with ACPI FW. However since this host driver
+does not support PNP devices, and modifying the PNP core
+code to support it is not worth the effort, use the generic
+8250 isa driver.
+
+For this, we need to setup the MFD cell platform data for
+a serial 8250 Port.
+
+In addition to this change, we also make the following
+changes:
+- set child ACPI device as enumerated. This fixes a conflict
+  in serdev setup for the UART
+- use platform device ID auto for creating the uart child
+  platform device to avoid conflict with platform devices
+  created for serial8250_isa_devs from 8250_core.c
 
 Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- drivers/bus/hisi_lpc.c | 89 ++++++++++++++++++++++++++++++--------------------
- 1 file changed, 53 insertions(+), 36 deletions(-)
+ drivers/bus/hisi_lpc.c | 41 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 40 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-index 2d4611e..71693d77 100644
+index 71693d77..b0ee2fa 100644
 --- a/drivers/bus/hisi_lpc.c
 +++ b/drivers/bus/hisi_lpc.c
-@@ -341,15 +341,6 @@ static void hisi_lpc_comm_outs(void *hostdata, unsigned long pio,
+@@ -17,6 +17,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pci.h>
++#include <linux/serial_8250.h>
+ #include <linux/slab.h>
+ 
+ #define DRV_NAME "hisi-lpc"
+@@ -362,6 +363,35 @@ static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
+ 	.pnpid = "IPI0001",
  };
  
- #ifdef CONFIG_ACPI
--#define MFD_CHILD_NAME_PREFIX DRV_NAME"-"
--#define MFD_CHILD_NAME_LEN (ACPI_ID_LEN + sizeof(MFD_CHILD_NAME_PREFIX) - 1)
--
--struct hisi_lpc_mfd_cell {
--	struct mfd_cell_acpi_match acpi_match;
--	char name[MFD_CHILD_NAME_LEN];
--	char pnpid[ACPI_ID_LEN];
--};
--
- static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
- 				     struct acpi_device *host,
- 				     struct resource *res)
-@@ -367,6 +358,40 @@ static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
- 	return 0;
- }
- 
-+static const struct mfd_cell_acpi_match hisi_lpc_acpi_mfd_match_ipmi = {
-+	.pnpid = "IPI0001",
++static const struct mfd_cell_acpi_match hisi_lpc_acpi_mfd_match_uart = {
++	.pnpid = "HISI1031",
 +};
 +
-+struct hisi_lpc_acpi_mfd_cell {
-+	struct mfd_cell mfd_cell;
-+	int (*setup)(struct device *hostdev, struct mfd_cell *mfd_cell);
-+} static const hisi_lpc_acpi_mfd_cells[] = {
-+	/* ipmi */
-+	{
-+		.mfd_cell = {
-+			.name = "hisi-lpc-ipmi",
-+			.acpi_match = &hisi_lpc_acpi_mfd_match_ipmi,
-+		},
-+	},
-+	{}
-+};
-+
-+static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char *hid)
++static int hisi_lpc_acpi_uart_setup(struct device *hostdev,
++				    struct mfd_cell *mfd_cell)
 +{
-+	const struct hisi_lpc_acpi_mfd_cell *cell = hisi_lpc_acpi_mfd_cells;
++	const struct resource * const resource = mfd_cell->resources;
++	struct plat_serial8250_port ref_port[] = {
++		{
++			.iobase = resource->start,
++			.uartclk = 1843200,
++			.iotype = UPIO_PORT,
++			.flags = UPF_BOOT_AUTOCONF,
++		},
++		{}
++	};
 +
-+	for (; cell && cell->mfd_cell.name; cell++) {
-+		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
-+		const struct mfd_cell_acpi_match *acpi_match;
++	mfd_cell->platform_data = devm_kmemdup(hostdev, &ref_port,
++					       sizeof(ref_port), GFP_KERNEL);
++	if (!mfd_cell->platform_data)
++		return -ENOMEM;
 +
-+		acpi_match = mfd_cell->acpi_match;
-+		if (!strcmp(acpi_match->pnpid, hid))
-+			return mfd_cell;
-+	}
++	mfd_cell->pdata_size = sizeof(ref_port);
 +
-+	return NULL;
++	return 0;
 +}
 +
- /*
-  * hisi_lpc_acpi_set_io_res - set the resources for a child's MFD
-  * @child: the device node to be updated the I/O resource
-@@ -464,7 +489,6 @@ static int hisi_lpc_acpi_set_io_res(struct device *child,
- static int hisi_lpc_acpi_probe(struct device *hostdev)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(hostdev);
--	struct hisi_lpc_mfd_cell *hisi_lpc_mfd_cells;
- 	struct mfd_cell *mfd_cells;
- 	struct acpi_device *child;
- 	int size, ret, count = 0, cell_num = 0;
-@@ -472,39 +496,24 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
- 	list_for_each_entry(child, &adev->children, node)
- 		cell_num++;
- 
--	/* allocate the mfd cell and companion ACPI info, one per child */
--	size = sizeof(*mfd_cells) + sizeof(*hisi_lpc_mfd_cells);
-+	/* allocate the mfd cells, one per child */
-+	size = sizeof(*mfd_cells);
- 	mfd_cells = devm_kcalloc(hostdev, cell_num, size, GFP_KERNEL);
- 	if (!mfd_cells)
- 		return -ENOMEM;
- 
--	hisi_lpc_mfd_cells = (struct hisi_lpc_mfd_cell *)&mfd_cells[cell_num];
- 	/* Only consider the children of the host */
- 	list_for_each_entry(child, &adev->children, node) {
- 		struct mfd_cell *mfd_cell = &mfd_cells[count];
--		struct hisi_lpc_mfd_cell *hisi_lpc_mfd_cell =
--					&hisi_lpc_mfd_cells[count];
--		struct mfd_cell_acpi_match *acpi_match =
--					&hisi_lpc_mfd_cell->acpi_match;
--		char *name = hisi_lpc_mfd_cell[count].name;
--		char *pnpid = hisi_lpc_mfd_cell[count].pnpid;
--		struct mfd_cell_acpi_match match = {
--			.pnpid = pnpid,
--		};
--
--		/*
--		 * For any instances of this host controller (Hip06 and Hip07
--		 * are the only chipsets), we would not have multiple slaves
--		 * with the same HID. And in any system we would have just one
--		 * controller active. So don't worrry about MFD name clashes.
--		 */
--		snprintf(name, MFD_CHILD_NAME_LEN, MFD_CHILD_NAME_PREFIX"%s",
--			 acpi_device_hid(child));
--		snprintf(pnpid, ACPI_ID_LEN, "%s", acpi_device_hid(child));
--
--		memcpy(acpi_match, &match, sizeof(*acpi_match));
--		mfd_cell->name = name;
--		mfd_cell->acpi_match = acpi_match;
-+		const struct mfd_cell *mfd_cell_ref;
-+		const char *hid = acpi_device_hid(child);
-+		struct hisi_lpc_acpi_mfd_cell *cell;
 +
-+		mfd_cell_ref = hisi_lpc_acpi_mfd_get_cell(hid);
-+		if (!mfd_cell_ref)
-+			return -ENOENT;
-+
-+		memcpy(mfd_cell, mfd_cell_ref, sizeof(*mfd_cell));
+ struct hisi_lpc_acpi_mfd_cell {
+ 	struct mfd_cell mfd_cell;
+ 	int (*setup)(struct device *hostdev, struct mfd_cell *mfd_cell);
+@@ -373,6 +403,14 @@ struct hisi_lpc_acpi_mfd_cell {
+ 			.acpi_match = &hisi_lpc_acpi_mfd_match_ipmi,
+ 		},
+ 	},
++	/* 8250-compatible uart */
++	{
++		.mfd_cell = {
++			.name = "serial8250",
++			.acpi_match = &hisi_lpc_acpi_mfd_match_uart,
++		},
++		.setup = hisi_lpc_acpi_uart_setup,
++	},
+ 	{}
+ };
  
- 		ret = hisi_lpc_acpi_set_io_res(&child->dev, &adev->dev,
- 					       &mfd_cell->resources,
-@@ -513,6 +522,14 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
- 			dev_warn(&child->dev, "set resource fail (%d)\n", ret);
- 			return ret;
+@@ -530,10 +568,11 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
+ 				return ret;
  		}
-+
-+		cell = container_of(mfd_cell_ref, typeof(*cell), mfd_cell);
-+		if (cell->setup) {
-+			ret = cell->setup(hostdev, mfd_cell);
-+			if (ret)
-+				return ret;
-+		}
-+
+ 
++		acpi_device_set_enumerated(child);
  		count++;
  	}
  
+-	ret = mfd_add_devices(hostdev, PLATFORM_DEVID_NONE,
++	ret = mfd_add_devices(hostdev, PLATFORM_DEVID_AUTO,
+ 			      mfd_cells, cell_num, NULL, 0, NULL);
+ 	if (ret) {
+ 		dev_err(hostdev, "failed to add mfd cells (%d)\n", ret);
 -- 
 1.9.1
