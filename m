@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752279AbeECKT1 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:19:27 -0400
+        id S1752355AbeECKVR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:21:17 -0400
 Received: from mga06.intel.com ([134.134.136.31]:65500 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751847AbeECKTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:19:20 -0400
+        id S1752124AbeECKT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:19:26 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="36546511"
+   d="scan'208";a="36546555"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, peterz@infradead.org, chao.p.peng@linux.intel.com,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v7 07/13] KVM: x86: Add Intel Processor Trace cpuid emulation
-Date: Thu,  3 May 2018 20:13:22 +0800
-Message-Id: <1525349608-10352-8-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v7 09/13] KVM: x86: Implement Intel Processor Trace context switch
+Date: Thu,  3 May 2018 20:13:24 +0800
+Message-Id: <1525349608-10352-10-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1525349608-10352-1-git-send-email-luwei.kang@intel.com>
 References: <1525349608-10352-1-git-send-email-luwei.kang@intel.com>
@@ -29,131 +29,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Expose Intel Processor Trace to guest only when PT work in
-HOST_GUEST mode.
+Load/Store Intel processor trace register in context switch.
+MSR IA32_RTIT_CTL is loaded/stored automatically from VMCS.
+In HOST mode, we just need to restore the status of IA32_RTIT_CTL.
+In HOST_GUEST mode, we need load/resore PT MSRs only when PT is
+enabled in guest.
 
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/include/asm/kvm_host.h |  1 +
- arch/x86/kvm/cpuid.c            | 22 ++++++++++++++++++++--
- arch/x86/kvm/svm.c              |  6 ++++++
- arch/x86/kvm/vmx.c              |  6 ++++++
- 4 files changed, 33 insertions(+), 2 deletions(-)
+ arch/x86/kvm/vmx.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index c25775f..03875aa 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1025,6 +1025,7 @@ struct kvm_x86_ops {
- 	bool (*mpx_supported)(void);
- 	bool (*xsaves_supported)(void);
- 	bool (*umip_emulated)(void);
-+	bool (*pt_supported)(void);
- 
- 	int (*check_nested_events)(struct kvm_vcpu *vcpu, bool external_intr);
- 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 82055b9..e04bf67 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -336,6 +336,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 	unsigned f_mpx = kvm_mpx_supported() ? F(MPX) : 0;
- 	unsigned f_xsaves = kvm_x86_ops->xsaves_supported() ? F(XSAVES) : 0;
- 	unsigned f_umip = kvm_x86_ops->umip_emulated() ? F(UMIP) : 0;
-+	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
- 
- 	/* cpuid 1.edx */
- 	const u32 kvm_cpuid_1_edx_x86_features =
-@@ -393,7 +394,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 		F(BMI2) | F(ERMS) | f_invpcid | F(RTM) | f_mpx | F(RDSEED) |
- 		F(ADX) | F(SMAP) | F(AVX512IFMA) | F(AVX512F) | F(AVX512PF) |
- 		F(AVX512ER) | F(AVX512CD) | F(CLFLUSHOPT) | F(CLWB) | F(AVX512DQ) |
--		F(SHA_NI) | F(AVX512BW) | F(AVX512VL);
-+		F(SHA_NI) | F(AVX512BW) | F(AVX512VL) | f_intel_pt;
- 
- 	/* cpuid 0xD.1.eax */
- 	const u32 kvm_cpuid_D_1_eax_x86_features =
-@@ -423,7 +424,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 
- 	switch (function) {
- 	case 0:
--		entry->eax = min(entry->eax, (u32)0xd);
-+		entry->eax = min(entry->eax, (u32)(f_intel_pt ? 0x14 : 0xd));
- 		break;
- 	case 1:
- 		entry->edx &= kvm_cpuid_1_edx_x86_features;
-@@ -595,6 +596,23 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 		}
- 		break;
- 	}
-+	/* Intel PT */
-+	case 0x14: {
-+		int t, times = entry->eax;
-+
-+		if (!f_intel_pt)
-+			break;
-+
-+		entry->flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
-+		for (t = 1; t <= times; ++t) {
-+			if (*nent >= maxnent)
-+				goto out;
-+			do_cpuid_1_ent(&entry[t], function, t);
-+			entry[t].flags |= KVM_CPUID_FLAG_SIGNIFCANT_INDEX;
-+			++*nent;
-+		}
-+		break;
-+	}
- 	case KVM_CPUID_SIGNATURE: {
- 		static const char signature[12] = "KVMKVMKVM\0\0";
- 		const u32 *sigptr = (const u32 *)signature;
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 80ea262..23a1ef9 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5877,6 +5877,11 @@ static bool svm_umip_emulated(void)
- 	return false;
- }
- 
-+static bool svm_pt_supported(void)
-+{
-+	return false;
-+}
-+
- static bool svm_has_wbinvd_exit(void)
- {
- 	return true;
-@@ -7102,6 +7107,7 @@ static int svm_unregister_enc_region(struct kvm *kvm,
- 	.mpx_supported = svm_mpx_supported,
- 	.xsaves_supported = svm_xsaves_supported,
- 	.umip_emulated = svm_umip_emulated,
-+	.pt_supported = svm_pt_supported,
- 
- 	.set_supported_cpuid = svm_set_supported_cpuid,
- 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 8680cd5..27cf417 100644
+index 9a5c26d..a08c61b 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -9563,6 +9563,11 @@ static bool vmx_umip_emulated(void)
- 		SECONDARY_EXEC_DESC;
+@@ -2385,6 +2385,55 @@ static unsigned long segment_base(u16 selector)
  }
+ #endif
  
-+static bool vmx_pt_supported(void)
++static inline void pt_load_msr(struct pt_ctx *ctx, u32 range_cnt)
 +{
-+	return (pt_mode == PT_MODE_HOST_GUEST);
++	u32 i;
++
++	wrmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
++	wrmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
++	wrmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
++	wrmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
++	for (i = 0; i < range_cnt; i++)
++		wrmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
 +}
 +
- static void vmx_recover_nmi_blocking(struct vcpu_vmx *vmx)
++static inline void pt_save_msr(struct pt_ctx *ctx, u32 range_cnt)
++{
++	u32 i;
++
++	rdmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
++	rdmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
++	rdmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
++	rdmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
++	for (i = 0; i < range_cnt; i++)
++		rdmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
++}
++
++static void pt_guest_enter(struct vcpu_vmx *vmx)
++{
++	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
++		rdmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
++
++	if (pt_mode == PT_MODE_HOST_GUEST &&
++		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
++		wrmsrl(MSR_IA32_RTIT_CTL, 0);
++		pt_save_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
++		pt_load_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
++	}
++}
++
++static void pt_guest_exit(struct vcpu_vmx *vmx)
++{
++	if (pt_mode == PT_MODE_HOST_GUEST &&
++		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
++		pt_save_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
++		pt_load_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
++	}
++
++	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
++		wrmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
++}
++
+ static void vmx_save_host_state(struct kvm_vcpu *vcpu)
  {
- 	u32 exit_intr_info;
-@@ -12790,6 +12795,7 @@ static int enable_smi_window(struct kvm_vcpu *vcpu)
- 	.mpx_supported = vmx_mpx_supported,
- 	.xsaves_supported = vmx_xsaves_supported,
- 	.umip_emulated = vmx_umip_emulated,
-+	.pt_supported = vmx_pt_supported,
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+@@ -6119,6 +6168,13 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
+ 		vmcs_write64(PML_ADDRESS, page_to_phys(vmx->pml_pg));
+ 		vmcs_write16(GUEST_PML_INDEX, PML_ENTITY_NUM - 1);
+ 	}
++
++	if (pt_mode == PT_MODE_HOST_GUEST) {
++		memset(&vmx->pt_desc, 0, sizeof(vmx->pt_desc));
++		/* Bit[6~0] are forced to 1, writes are ignored. */
++		vmx->pt_desc.guest.output_mask = 0x7F;
++		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
++	}
+ }
  
- 	.check_nested_events = vmx_check_nested_events,
+ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+@@ -9794,6 +9850,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	    vcpu->arch.pkru != vmx->host_pkru)
+ 		__write_pkru(vcpu->arch.pkru);
  
++	pt_guest_enter(vmx);
++
+ 	atomic_switch_perf_msrs(vmx);
+ 
+ 	vmx_arm_hv_timer(vcpu);
+@@ -9988,6 +10046,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 				  | (1 << VCPU_EXREG_CR3));
+ 	vcpu->arch.regs_dirty = 0;
+ 
++	pt_guest_exit(vmx);
++
+ 	/*
+ 	 * eager fpu is enabled if PKEY is supported and CR4 is switched
+ 	 * back on host, so it is safe to read guest PKRU from current
 -- 
 1.8.3.1
