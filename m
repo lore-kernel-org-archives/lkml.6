@@ -1,62 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751730AbeECMCZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:02:25 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41476 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750930AbeECMCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:02:22 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="38966162"
-Date: Thu, 3 May 2018 15:02:15 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
-        peterz@infradead.org, chao.p.peng@linux.intel.com
-Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
- virtualization mode
-Message-ID: <20180503120215.dev7ti43zk7yoovn@um.fi.intel.com>
-References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
- <20180503113223.x2ykby6wglppgdwf@um.fi.intel.com>
- <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
+        id S1751818AbeECMCh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:02:37 -0400
+Received: from mta-p3.oit.umn.edu ([134.84.196.203]:57508 "EHLO
+        mta-p3.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751735AbeECMCd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:02:33 -0400
+X-Google-Smtp-Source: AB8JxZoWqNDNl0YsFxoqmTsmHn4pLildM4TXx8VAErvhW3vRuYKGxzhichVaggIHkssNwEHyBUFcWpcHfRkkb9CRC9E=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180503014838.GL5105@localhost.localdomain>
+References: <1525310145-28102-1-git-send-email-wang6495@umn.edu>
+ <20180503012402.GK5105@localhost.localdomain> <CAAa=b7f+dfDUZR7tHvmSQgTcNDmGjvCn9ZK9eevKGF+bNd2Aqg@mail.gmail.com>
+ <20180503014838.GL5105@localhost.localdomain>
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Thu, 3 May 2018 07:01:51 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7eebr23Pjs2LE0Ri0=gki8ZDAbLmfPWOqzWHO0i6E2aNA@mail.gmail.com>
+Message-ID: <CAAa=b7eebr23Pjs2LE0Ri0=gki8ZDAbLmfPWOqzWHO0i6E2aNA@mail.gmail.com>
+Subject: Re: [PATCH] sctp: fix a potential missing-check bug
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc: Kangjie Lu <kjlu@umn.edu>, Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 01:50:39PM +0200, Paolo Bonzini wrote:
-> On 03/05/2018 13:32, Alexander Shishkin wrote:
-> >>  
-> >> +/* Default is SYSTEM mode. */
-> >> +static int __read_mostly pt_mode = PT_MODE_SYSTEM;
-> >> +module_param(pt_mode, int, S_IRUGO);
-> > So, it's an explicit module parameter? One apparent problem with this
-> > is that one would need to reload kvm module(s) to be able to use PT,
-> > which is not ideal.
-> 
-> If you want to do tracing system-wide, that by definition must disable
-> guest tracing,
+On Wed, May 2, 2018 at 8:48 PM, Marcelo Ricardo Leitner
+<marcelo.leitner@gmail.com> wrote:
+> On Wed, May 02, 2018 at 08:27:05PM -0500, Wenwen Wang wrote:
+>> On Wed, May 2, 2018 at 8:24 PM, Marcelo Ricardo Leitner
+>> <marcelo.leitner@gmail.com> wrote:
+>> > On Wed, May 02, 2018 at 08:15:45PM -0500, Wenwen Wang wrote:
+>> >> In sctp_setsockopt_maxseg(), the integer 'val' is compared against min_len
+>> >> and max_len to check whether it is in the appropriate range. If it is not,
+>> >> an error code -EINVAL will be returned. This is enforced by a security
+>> >> check. But, this check is only executed when 'val' is not 0. In fact, if
+>> >> 'val' is 0, it will be assigned with a new value (if the return value of
+>> >> the function sctp_id2assoc() is not 0) in the following execution. However,
+>> >> this new value of 'val' is not checked before it is used to assigned to
+>> >> asoc->user_frag. That means it is possible that the new value of 'val'
+>> >> could be out of the expected range. This can cause security issues
+>> >> such as buffer overflows, e.g., the new value of 'val' is used as an index
+>> >> to access a buffer.
+>> >>
+>> >> This patch inserts a check for the new value of 'val' to see if it is in
+>> >> the expected range. If it is not, an error code -EINVAL will be returned.
+>> >>
+>> >> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+>> >> ---
+>> >>  net/sctp/socket.c | 22 +++++++++++-----------
+>> >>  1 file changed, 11 insertions(+), 11 deletions(-)
+>> >
+>> > ?
+>> > This patch is the same as previous one. git send-email <old file>
+>> > maybe?
+>> >
+>> >   Marcelo
+>>
+>> Thanks for your suggestion, Marcelo. I can send the old file. But, I
+>> have added a line of comment in this patch.
+>
+> I meant if you had sent the old patch again by accident, because you
+> said you worked on an old version of the tree, but then posted a patch
+> that also doesn't use the new MTU function I mentioned.
+>
+>   Marcelo
 
-Sure.
+I worked on the latest kernel. But, I didn't find the MTU function
+sctp_mtu_payload().
 
-> so I think the module parameter is appropriate.
+The problematic function that I found is sctp_setsockopt_maxseg()
+located in the file net/sctp/socket.c.
 
-I don't see why. System-wide tracing takes place while perf record is
-running. When it's done, it's done and we can un-disable the guest
-tracing, without requiring the user to kill all their VMs and reload
-modules.
+Thanks,
 
-Regards,
---
-Alex
+Wenwen
