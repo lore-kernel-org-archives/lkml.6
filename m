@@ -1,39 +1,38 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2569529-1525354108-2-4269595767387851818
+X-Cyrus-Session-Id: sloti22d1t05-2309188-1525340850-2-3339939802746401639
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='cz',
+  MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-Attached: signature.asc
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525354107; b=U77GUSnCFcE6ug892qNVTLqXpCBMSSW2muDbEaCTM8tzMUcCCD
-    0+6u0EUkv+VJNFj62vFOlHqgvXNn/YVcc4Q81gM/HcqiG+K6eUcxVt97CojN66v/
-    nPFNbdwAkchOLpw8AzZRxM5BD85G+LwFHnEAB2sD5QcAGQrmf3Xswr9QXHaQ4HyZ
-    rYrVREb+rs7t04GTaYPIY+5mxhDhp/1dsli6seoy0ELlpFZ11TyttQE5pt7EcpWI
-    JYrWDtuvug4hP9OoSvrjHqSWiHEC36AURQuhV/L0iH8LTA3U/VdlTPXBQUPFX5CK
-    W27XqEw3fBftwkgW8pCa5KnFQrVnP5lWUcTg==
+    1525340849; b=KrojF8+CUy84MNijhpPnaGzcfSlJvq+mlzv1BthHlBmPt3YAXT
+    V05oGK9Oci7LT6vh4gKplnk0cJFUANLOaBKUTOHaXC1x1jviO+D0xVAD5Wa9D1Rh
+    FCMWfLIDSqD69/hUecrMVNWM7YIbjT/8mTjZExfDld7ZVaVNGIJlut+wYJloSY52
+    pA0iFXyQjLmzOTRfH80TCrBwVrFjReAS6tvkChsKf1jzMOD4Q12N8fUjI7qIzMdp
+    FyMPfPItlKmBOSOvTB/5QcWvX8dw7Cr3S656CbQEjftsw4eQ/HqHx8aj1ApK6SY0
+    M4/H7WuLyWKfuBO7nIm+WHtWEScAhihgDIjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :references:in-reply-to:content-type:content-id
-    :content-transfer-encoding:mime-version:sender:list-id; s=fm2;
-    t=1525354107; bh=i5qeX2Yt3chNgboQzikYDxTyZNgsmswzOXx1rLOimgE=; b=
-    KP1U38Z2FXF6M1Zc6Qarx1iwtzdKhfBfkS0vH9UyCLkUbpAIwZpwsNyTJqXTuZ2o
-    IVGjPQXNgtbc2ZNruNTZMm+Qd+CwTqI75nu4enuewN/gaEqUz0suMAa+s/AKzMHE
-    7T9wjVn6BlCbfpm66zqc5jGhbID3DFr+DXU8X9YjxPC6uMO/szh2AT+J/9Hae6Z0
-    jrqWYX0+uncSG4KRsz1aGnS5mVjnyQ9/rRZiPFU7Q0jXhZeSOYNuL3dtB3KX+NFJ
-    oGYAiebqLGe/pPs9iLokjx5loa2l6s8l6dXLUHg4RQX846XHttTKqkn4UpwpfV4m
-    bdT3IwqkjyEAp38ixLEmTw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com
-    header.i=@microsoft.com header.b=l5nOyVly x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525340849; bh=OzNdmQgmXTV10K8ObetSbuuf6lgoiS
+    ZGX2V/wSmVGuI=; b=lteulBrjdB0Gq3JqSuo/cDNprhfvxVvPFq3ThintP/uDBs
+    0MVa9xps4C/x4oypgHyUoRJDMZdB8RI2ebs1M8lDTxOKM2IZZzMcMfZ6vRD/nZ/S
+    xvke6UusokDKmcR0sv9Sg+RPXhLszFqaVgLk3DBYSeUYsBZB/7lybdujigdz5xXl
+    4ZfIAP9GSCmRJXA7FJ68DH4aTko+eQhAEVTeVyriaBgKR3txzqe6qh6lm6oEDnoY
+    00RyPx5ZdJHzvCl12pd4VLr1H/QHZOBnBPeBL4S2L/ohzYbIYkZp3PHIWifPFaLd
+    VroiaQAzBQKWS3UmysaVTwm70VBhRYhhBrW2EzhA==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -42,15 +41,12 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=microsoft.com header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=microsoft.com
-      header.i=@microsoft.com header.b=l5nOyVly x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=selector1;
-    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=microsoft.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -59,33 +55,32 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=microsoft.com header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-51 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfANgtSQ80CamgBcEjtCHboKqPfENfPRb9H35FH6wyyTlUnKdiTGL12xZ8sHpSN73VMKXjm/ea2DXEVYAIKMr9at91E+2aqTpmhO5st+ywLzrgaPkjG/z
-    PN3ZUA04tTrHRxYH+ryLTVGRtFOJd6zzp1ki1Qzxbwas08rYeE4C4qI24/HuIhAuCiV2Xwd2rasss+V0PTixKlbeup5IKrx5dvpk8R/uloopXYGqTTjFpZg6
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=wRwT6uffUbIA:10 a=t_PdEiP4ckcA:10
-    a=F7qjIGpQ-GgA:10 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
-    a=Lf-vpJhqX20A:10 a=VwQbUJbxAAAA:8 a=t7jK0ymkFd3tSvDWxrMA:9
-    a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEXY/AvlvZL7S6azD+LVhcz+pkBnVB8rVJCZyOiRC1Wz5EjR840EDclXmsNlGWmmnC4Qek0wJxnfNH1QGe9XuDJsNo+c5ukLJIC3raK8IVjAQaLTfUtb
+    eBVRDu3WCsWLVPRii4ZgimuzrRMTf0o+PYa87YJvBf6Zfuok6GIJL0sMxXZpGSzmnp7KOkp3YHZy5BSI5vAMZpM4xdYQWoDAZlYkGxIJ2PP/Zs/NDD5Vg64E
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=M8rcC2nyAAAA:8
+    a=RXnXJx7MAAAA:8 a=i9TR73pm-2qQ186Mq7wA:9 a=Eopp7V1aPKT-vB2q:21
+    a=EKeaPU_0Go1w2n5V:21 a=CjuIK1q_8ugA:10 a=0dxXHNIcbWwA:10 a=gA6IeH5FQcgA:10
+    a=NWVoK91CQyQA:10 a=1lKgfcP6AdNkLPN26kUA:9 a=ONNS8QRKHyMA:10
+    a=K9tzwgKBnWaK51F8Cre1:22 a=U_UV0sFCMgXoaKVbI-EZ:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751443AbeECN2K (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 09:28:10 -0400
-Received: from mail-bl2nam02on0119.outbound.protection.outlook.com ([104.47.38.119]:57656
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750947AbeECN2J (ORCPT <rfc822;stable@vger.kernel.org>);
-        Thu, 3 May 2018 09:28:09 -0400
-From: Sasha Levin <Alexander.Levin@microsoft.com>
-To: Pavel Machek <pavel@ucw.cz>
-CC: "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Jan Kara <jack@suse.cz>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        id S1751077AbeECJr1 (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 05:47:27 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:42401 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750969AbeECJr0 (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 3 May 2018 05:47:26 -0400
+Date: Thu, 3 May 2018 11:47:24 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Sasha Levin <Alexander.Levin@microsoft.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Petr Mladek <pmladek@suse.com>,
         "stable@vger.kernel.org" <stable@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -96,138 +91,107 @@ CC: "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@kernel.org>,
         Vlastimil Babka <vbabka@suse.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Byungchul Park <byungchul.park@lge.com>,
         Tejun Heo <tj@kernel.org>
 Subject: Re: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
  waiter logic to load balance console writes
-Thread-Topic: [PATCH AUTOSEL for 4.14 015/161] printk: Add console owner and
- waiter logic to load balance console writes
-Thread-Index: AQHTz5h7IvK2v80d0k6VVqDoPwJEM6P4GK8AgAnYKwCAAX5DAIAAHfKAgAAFIICAAAchAIAAAugAgAAB5YCAAAMcgIAAAh8AgAAH3gCAAATcgIABMtsAgAAewoCAACg7gIAABqKAgBi0yoCAAECVAA==
-Date: Thu, 3 May 2018 13:28:04 +0000
-Message-ID: <20180503132800.GH18390@sasha-vm>
-References: <20180416161911.GA2341@sasha-vm>
- <20180416123019.4d235374@gandalf.local.home> <20180416163754.GD2341@sasha-vm>
- <20180416170604.GC11034@amd> <20180416172327.GK2341@sasha-vm>
- <20180417114144.ov27khlig5thqvyo@quack2.suse.cz>
- <20180417133149.GR2341@sasha-vm>
- <20180417155549.6lxmoiwnlwtwdgld@quack2.suse.cz>
- <20180417161933.GY2341@sasha-vm> <20180503093651.GC32180@amd>
-In-Reply-To: <20180503093651.GC32180@amd>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [52.168.54.252]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MW2PR2101MB0905;7:aTj8rIJOIeQ2ClXOvsDT6oMS7ix5iRXAeA+k6+NwoPQUBGrNfbclIdTwwmRyl8C2OO3fRGHMqtfSBXM3gD60wu2RXpv34zko6vCUpzLfSaF4J7L/UL7lt06shIVoolESoKIcA2rKlvdhT4tcZS+w+greiSgxEuQy98RePCMJdjFL26J48LzFfHo4/H68IEbPu6b9IonV6Nv9G3RX+ZgZuZU6omxSDqag9/iiEwcqmqSHElPbDS0/TOBKRNxLAlrC;20:4OZR9bRyduSJLA86wC79dsYeN0GpPw0erXldvwyR1tknk0QmNXvvUAaAH4/La4FcTqvG5loKSL+n3r19SO1sgfsivX4lSdWuYFxcKOFC+ZtxUxfTITqnU4EDq/HKuRLGdlUnGoMZkupDmaMKL2q59W+49Uw65D7M3lqcJSIyTqM=
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:MW2PR2101MB0905;
-x-ms-traffictypediagnostic: MW2PR2101MB0905:
-x-microsoft-antispam-prvs: <MW2PR2101MB0905B9575801CDB922C2750DFB870@MW2PR2101MB0905.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(84791874153150);
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231254)(2018427008)(944501410)(52105095)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011);SRVR:MW2PR2101MB0905;BCL:0;PCL:0;RULEID:;SRVR:MW2PR2101MB0905;
-x-forefront-prvs: 066153096A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(39860400002)(396003)(39380400002)(346002)(366004)(189003)(199004)(52164004)(377424004)(86612001)(68736007)(5250100002)(53936002)(2900100001)(4326008)(6916009)(25786009)(229853002)(6436002)(6306002)(6512007)(14454004)(105586002)(66066001)(9686003)(478600001)(33896004)(97736004)(6246003)(39060400002)(72206003)(10090500001)(5660300001)(1076002)(486006)(2906002)(76176011)(81166006)(966005)(26005)(316002)(446003)(3660700001)(476003)(11346002)(305945005)(54906003)(22452003)(6486002)(33716001)(7736002)(33656002)(86362001)(575784001)(81156014)(6506007)(8676002)(102836004)(10290500003)(6346003)(186003)(3280700002)(7416002)(106356001)(59450400001)(93886005)(3846002)(99286004)(6116002)(8936002)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:MW2PR2101MB0905;H:MW2PR2101MB1003.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alexander.Levin@microsoft.com;
-x-microsoft-antispam-message-info: kF2W2GkH2yLihUPdr0xJt/d4y+xAAqrNrU2C5OAX5YSuwHs4/dvCGA3helj3Kc6iN+fNB3vvRJAJQ5Jl5mPZ0AH7lz57zw/u0Iuw7JC1+TwFWsdUart1dzlwnEhlRqwnhycbeS5Ng/M4e0eBU9JgfqBvF006+mxNNvuUHfo9JdH0Of1n+SZAp/nxv8KLshcW
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <889546DA857A2243B0CBD37E2EF4F4DB@namprd21.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <20180503094724.GD32180@amd>
+References: <20180416153031.GA5039@amd>
+ <20180416155031.GX2341@sasha-vm>
+ <20180416160608.GA7071@amd>
+ <20180416161412.GZ2341@sasha-vm>
+ <20180416170501.GB11034@amd>
+ <20180416171607.GJ2341@sasha-vm>
+ <alpine.LRH.2.00.1804162214260.26111@gjva.wvxbf.pm>
+ <20180416203629.GO2341@sasha-vm>
+ <nycvar.YFH.7.76.1804162238500.28129@cbobk.fhfr.pm>
+ <20180416211845.GP2341@sasha-vm>
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 4dd53718-df56-413d-082b-08d5b0f9b3df
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4dd53718-df56-413d-082b-08d5b0f9b3df
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 May 2018 13:28:05.0595
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW2PR2101MB0905
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="kvUQC+jR9YzypDnK"
+Content-Disposition: inline
+In-Reply-To: <20180416211845.GP2341@sasha-vm>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 11:36:51AM +0200, Pavel Machek wrote:
->On Tue 2018-04-17 16:19:35, Sasha Levin wrote:
->> On Tue, Apr 17, 2018 at 05:55:49PM +0200, Jan Kara wrote:
->> >On Tue 17-04-18 13:31:51, Sasha Levin wrote:
->> >> We may be able to guesstimate the 'regression chance', but there's no
->> >> way we can guess the 'annoyance' once. There are so many different us=
-e
->> >> cases that we just can't even guess how many people would get "annoye=
-d"
->> >> by something.
->> >
->> >As a maintainer, I hope I have reasonable idea what are common use case=
-s
->> >for my subsystem. Those I cater to when estimating 'annoyance'. Sure I =
-don't
->> >know all of the use cases so people doing unusual stuff hit more bugs a=
-nd
->> >have to report them to get fixes included in -stable. But for me this i=
-s a
->> >preferable tradeoff over the risk of regression so this is the rule I u=
-se
->> >when tagging for stable. Now I'm not a -stable maintainer and I fully a=
-gree
->> >with "those who do the work decide" principle so pick whatever patches =
-you
->> >think are appropriate, I just wanted explain why I don't think more pat=
-ches
->> >in stable are necessarily good.
->>
->> The AUTOSEL story is different for subsystems that don't do -stable, and
->> subsystems that are actually doing the work (like yourself).
->>
->> I'm not trying to override active maintainers, I'm trying to help them
->> make decisions.
->
->Ok, cool. Can you exclude LED subsystem, Hibernation and Nokia N900
->stuff from autosel work?
 
-Curiousity got me, and I had to see what these subsystems do as far as
-stable commits:
+--kvUQC+jR9YzypDnK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-$ git log --oneline --grep 'stable@vger' --since=3D"01-01-2016" kernel/powe=
-r drivers/leds drivers/media/i2c/et8ek8 drivers/media/i2c/ad5820.c arch/x86=
-/kernel/acpi/ | wc -l
-7
+On Mon 2018-04-16 21:18:47, Sasha Levin wrote:
+> On Mon, Apr 16, 2018 at 10:43:28PM +0200, Jiri Kosina wrote:
+> >On Mon, 16 Apr 2018, Sasha Levin wrote:
+> >
+> >> So I think that Linus's claim that users come first applies here as
+> >> well. If there's a user that cares about a particular feature being
+> >> broken, then we go ahead and fix his bug rather then ignoring him.
+> >
+> >So one extreme is fixing -stable *iff* users actually do report an issue.
+> >
+> >The other extreme is backporting everything that potentially looks like a
+> >potential fix of "something" (according to some arbitrary metric),
+> >pro-actively.
+> >
+> >The former voilates the "users first" rule, the latter has a very, very
+> >high risk of regressions.
+> >
+> >So this whole debate is about finding a compromise.
+> >
+> >My gut feeling always was that the statement in
+> >
+> >	Documentation/process/stable-kernel-rules.rst
+> >
+> >is very reasonable, but making the process way more "aggresive" when
+> >backporting patches is breaking much of its original spirit for me.
+>=20
+> I agree that as an enterprise distro taking everything from -stable
+> isn't the best idea. Ideally you'd want to be close to the first
 
-Which got me a bit surprised: maybe indeed leds is mostly fine, but
-hibernation is definitely tricky, I've been stung by it a few times...
+Original purpose of -stable was "to be common base of enterprise
+distros" and our documentation still says it is.
 
-So why not pick something an actual user reported, and see how that was
-dealt with?
+> I think that we can agree that it's impossible to expect every single
+> Linux user to go on LKML and complain about a bug he encountered, so the
+> rule quickly becomes "It must fix a real bug that can bother
+> people".
 
-Googling first showed this:
+I think you are playing dangerous word games.
 
-	https://bugzilla.kernel.org/show_bug.cgi?id=3D97201
+> My "aggressiveness" comes from the whole "bother" part: it doesn't have
+> to be critical, it doesn't have to cause data corruption, it doesn't
+> have to be a security issue. It's enough that the bug actually affects a
+> user in a way he didn't expect it to (if a user doesn't have
+> expectations, it would fall under the "This could be a problem..."
+> exception.
 
-Which was fixed by:
+And it seems documentation says you should be less aggressive and
+world tells you they expect to be less aggressive. So maybe that's
+what you should do?
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
-?id=3Dbdbc98abb3aa323f6323b11db39c740e6f8fc5b1
+--kvUQC+jR9YzypDnK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-But that's not in any -stable tree. Hmm.. ok..
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Next one on google was:
+iEYEARECAAYFAlrq2qwACgkQMOfwapXb+vL+vwCghFP6TJ8cVqGOVUOEE9yh53Rb
+wjgAniEpje+ePNmPY5rjf6cYo/adCPLu
+=8oqh
+-----END PGP SIGNATURE-----
 
-	https://bugzilla.kernel.org/show_bug.cgi?id=3D117971
-
-Which, in turn, was fixed by:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
-?id=3D5b3f249c94ce1f46bacd9814385b0ee2d1ae52f3
-
-Oh look at that, it's not in -stable either...
-
-So seeing how you have concerns with my selection of -stable commits,
-maybe you could explain to me why these commits didn't end up in
--stable?=
+--kvUQC+jR9YzypDnK--
