@@ -1,78 +1,75 @@
-Return-Path: <andriy.shevchenko@linux.intel.com>
-X-Google-Smtp-Source: AB8JxZrz+RFjHxd61t6mjLN+rMrK2i6w+nnNuV8Be1uNXVFkP+gixLknAIN3ab8LPDjs6xDy/KKr
-ARC-Seal: i=1; a=rsa-sha256; t=1525364275; cv=none;
+Return-Path: <axboe@kernel.dk>
+ARC-Seal: i=1; a=rsa-sha256; t=1525361820; cv=none;
         d=google.com; s=arc-20160816;
-        b=dX2NF/5txRRKmJfej0BkwjG4wUJHAJc2REo89oy4mCj0aC8HI0wFW+zI7mdE1lV9cl
-         gqhGAP246fZ+UcJy7XEgK/BRnl+zYqAD8y57KN8M7nuRs1ArJ3rZ2vRp6dMbeAXgwDhy
-         Alol1de1bEsLY2xvXil7GY1SYkHe3PAF04pkhfTKn9dRWGLZL19xhoExSOXAMwZqbbWi
-         XWICHZnyCqCrv8b99ZUPlOr8BSpRbkIbSiDjCbdoIyAZAWaaK/0rjCeWEeBbh60irccb
-         eiKQO8r7YGM7ztH4f19yE2GuphounTrJ8NH/8/ljxwEu5hKwAbM7crrBwEdAgLM/ArBe
-         iqfA==
+        b=DRPP7cHUojqxZseKZufnYDVINfK819e13ORk1RQ+c+LyqIkdWUG/usUwDZEODvGGtH
+         dfBXCIH+D2s9ITYUuon1Chb+tt43Dj6VUVyOZxFRw4xR4Gj2rN3zQZm1GBemPN5pi2CH
+         udsGTIpsIf9MUG7mtecm5ZFS1OoqtpwYP1e+kvsRCn4XaGB20ypvh1kARyDU/rklofOB
+         JoiKqCzgYTN6a70A9OJNgXc0Wt6ECFc1N3YFyjqUZLNhx9N844TPuILfCFNAiEooNof6
+         EyBvELoH85z6sfSIPqE5vxQpFDswdQrdvW5v+MxDFU308ZLVuWWEIag6WjOf2VTApAeZ
+         Z1ww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=Y3rGq5gJ5kt99sh9zGu+GkzzAt+/tCy1il0TB1zPDm4=;
-        b=uW8WdLZEz6Kp/lYo7/kTckBt2Rll8yittm1jnR/p/vUJqjpd+K7m+9idl8SVnCiVrO
-         RmPM7RUDf6/ST/ThTKMnTvo59i/goFuQHhMc9dxllTjWZd7h4wWFPyxQ6LrdVFHZ8Fdc
-         doHACyTzD5ZD4SVdTyhnvU17NDdCO8Cvj2uyiubqQpLM+WG08vdHhMACYldAyZ+lyFok
-         YfaJvY7PAMHlnXpuzVqv7zzAPLyFzY1n1cDLzef8lUznTZMFTWIbO2XspeXZ0rL0CZyD
-         g2JZ9AHHISeZycS9yl3BCjFZTRaeVVrhNoCJg2dBzSxLzVoBroADaf2HmImiEKrcdg+l
-         XZVQ==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=Y2AOU4bMAM1LYmkU6mF2laC0jM/eVfs2WsiWjIQUv10=;
+        b=JXEYs3KLQ58tPuNHUpbmj1b9G6ZVSQILqLSmIQg7293URVBHfWfCONS2mOXo3pLgmx
+         I12jAkxnkJqOQnas9s4IWwm6xMiBSFS9huQpr1kFcRuGze4Oj3gm+rY3IRGDAgRXt4Ho
+         +8gJ1mF0p2OafXNfZNGWFWG1xWsDMEkEfdnrPKD8zcp81v1ZGfM/ZIgGzaAt9SIbJHLF
+         0apmOkt0Rl0onM25FX3IxPkR2FtoMMEra4qHJS/P7A1noD9xriSa5a6USDVPg9TmwtIh
+         tj7w6AcYeoHOXPNxIYBjb/t7SOQf8FQ7tOpVumF2NfYEowiBJ604KDXQJewaCJ3Hx3p2
+         p6Cw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
+       dkim=pass header.i=@kernel-dk.20150623.gappssmtp.com header.s=20150623 header.b=eu1UCTTJ;
+       spf=pass (google.com: domain of axboe@kernel.dk designates 209.85.220.41 as permitted sender) smtp.mailfrom=axboe@kernel.dk
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of andriy.shevchenko@linux.intel.com designates 192.55.52.115 as permitted sender) smtp.mailfrom=andriy.shevchenko@linux.intel.com
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,359,1520924400";
-   d="scan'208";a="225526549"
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	Nicolai Stange <nicstange@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] debugfs: Re-use kstrtobool_from_user()
-Date: Thu,  3 May 2018 19:17:52 +0300
-Message-Id: <20180503161752.19401-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.17.0
+       dkim=pass header.i=@kernel-dk.20150623.gappssmtp.com header.s=20150623 header.b=eu1UCTTJ;
+       spf=pass (google.com: domain of axboe@kernel.dk designates 209.85.220.41 as permitted sender) smtp.mailfrom=axboe@kernel.dk
+X-Google-Smtp-Source: AB8JxZrPhYDVQNTN7BQ631xuYGgBHaxIQr0OKCC8w2OACqFtxrrtozdudZZIx6SiSwSC/Z5ce6DafQ==
+Subject: Re: KASAN: use-after-free Read in debugfs_remove (2)
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ syzbot <syzbot+db48ce201b524603190a@syzkaller.appspotmail.com>,
+ syzkaller-bugs@googlegroups.com, weiping zhang
+ <zhangweiping@didichuxing.com>, Jan Kara <jack@suse.cz>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+References: <000000000000fbda89056a818f20@google.com>
+ <a5b6e0ff-ad8e-18f4-8c24-cdfafe4e3883@I-love.SAKURA.ne.jp>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <7156e8d9-4c4a-1a98-2767-3508b9b3798f@kernel.dk>
+Date: Thu, 3 May 2018 09:36:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <a5b6e0ff-ad8e-18f4-8c24-cdfafe4e3883@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599460370633363778?=
-X-GMAIL-MSGID: =?utf-8?q?1599460370633363778?=
+X-GMAIL-THRID: =?utf-8?q?1598532704298959546?=
+X-GMAIL-MSGID: =?utf-8?q?1599457796377597249?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Re-use kstrtobool_from_user() instead of open coded variant.
+On 4/23/18 4:34 AM, Tetsuo Handa wrote:
+> From be88e559ec13f49b1c3aec2457c14c70f6b1926a Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Mon, 23 Apr 2018 11:21:03 +0900
+> Subject: [PATCH] bdi: Fix use after free bug in debugfs_remove()
+> 
+> syzbot is reporting use after free bug in debugfs_remove() [1].
+> 
+> This is because fault injection made memory allocation for
+> debugfs_create_file() from bdi_debug_register() from bdi_register_va()
+> fail and continued with setting WB_registered. But when debugfs_remove()
+> is called from debugfs_remove(bdi->debug_dir) from bdi_debug_unregister()
+>  from bdi_unregister() from release_bdi() because WB_registered was set
+> by bdi_register_va(), IS_ERR_OR_NULL(bdi->debug_dir) == false despite
+> debugfs_remove(bdi->debug_dir) was already called from bdi_register_va().
+> 
+> Fix this by making IS_ERR_OR_NULL(bdi->debug_dir) == true.
+> 
+> [1] https://syzkaller.appspot.com/bug?id=5ab4efd91a96dcea9b68104f159adf4af2a6dfc1
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- fs/debugfs/file.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+Applied for 4.17, thanks.
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 1f99678ff5d3..4fce1da7db23 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -796,19 +796,13 @@ EXPORT_SYMBOL_GPL(debugfs_read_file_bool);
- ssize_t debugfs_write_file_bool(struct file *file, const char __user *user_buf,
- 				size_t count, loff_t *ppos)
- {
--	char buf[32];
--	size_t buf_size;
- 	bool bv;
- 	int r;
- 	bool *val = file->private_data;
- 	struct dentry *dentry = F_DENTRY(file);
- 
--	buf_size = min(count, (sizeof(buf)-1));
--	if (copy_from_user(buf, user_buf, buf_size))
--		return -EFAULT;
--
--	buf[buf_size] = '\0';
--	if (strtobool(buf, &bv) == 0) {
-+	r = kstrtobool_from_user(user_buf, count, &bv);
-+	if (!r) {
- 		r = debugfs_file_get(dentry);
- 		if (unlikely(r))
- 			return r;
 -- 
-2.17.0
+Jens Axboe
