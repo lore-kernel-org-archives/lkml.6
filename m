@@ -1,109 +1,174 @@
-Return-Path: <helgaas@kernel.org>
-X-Google-Smtp-Source: AB8JxZqGAvozrCAT3CPCWMcupZaohqGjPRZHwcg410M/wulwksyTyiJImeZilAstcbxiLdl5YRX6
-ARC-Seal: i=1; a=rsa-sha256; t=1525969669; cv=none;
+Return-Path: <poza@qualcomm.com>
+X-Google-Smtp-Source: AB8JxZojBScwdUexXaKScxXcvRYexMTeYzAc9huNcWd7Ju7sIu8YcSwRMLB+iqv58769cqotzCpR
+ARC-Seal: i=1; a=rsa-sha256; t=1525323846; cv=none;
         d=google.com; s=arc-20160816;
-        b=As41jLwKrCWZ70gjnzcUOeVXJ24qhzksSk+/deMn0ryp0RYRb/aXTXOUKqcvJXQzwI
-         WVXijKsAmdcDSurCD2x02oufxUmN9linwHIqCt19y6A/lL4N2weioyji7CdHIWILlmZO
-         /8f6en5PHxNQ6rHAPaYbD3dbyCQyKdqUPTLSFHAT3187qqe6ffKkPuNyhLuy77TxmK18
-         2MGcBnKMiaHwSQ0kgH33giAbOsdKRBtzZ4iqbFcjvH0kxwFqO1n0Ccr1ig0XYptZk09B
-         qCHprDqmgn8fkbKIb8pGk1PwlvuWzlIgv/CFFFI5KQEGyPAvbNfL671epiDaIRuisu9m
-         IsBg==
+        b=VH4NKv3i1Vpe+9w1ftcbLXddOGoGzKXuvZW+wjOpMRWgUwrEl3jwBFtr+0wrh9QMQt
+         sEikhqpHWYMI1dNoi2JTCf3zDeTjeqwQmg2+/4Bi8RDqyPEFPN1MSjJNg3jNAzq1LwRO
+         OGeHOx1U7JZV2kSS2JYV6qCOVK+hVexnOYpD2jw4xPLSI3WxuDelINEmcO/IPGs4Kx9+
+         GN30/RS2WlJXIQGQeGUQWMeNKu61+8gnmWlD0z2dV1BxoEMyjlCFI3CKbirPAiZ2/mcV
+         f65lP39Wv8o2VbtdAxwgAYz4GebujopRp/WfTUPXb+HdOxv3rajwB9xCdBr5pp01pqPL
+         V95A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=reQESOcGnrWsrk08LKA6B2VzDTdfpAZxuDyN8V69jKE=;
-        b=O3ou36ZUnJQQFAdfWh5nkzKGAnU2PNbBOUJ1D7C2K9oCA8Hy73sEHHkRCLfef4DUNJ
-         w4ahJsjTweEFtqsxYv3mYKN8E6w150CBU3FfU1V+DZo90MZvgM41S9+6URmEZLBifMcV
-         7c683hMFN/mK1rpLs/9ig1wEIaditA09D3SytFAci5PyFpVhyIMbO1Y0RNysNmCkAsAc
-         GX0IPA3k377bfG6YAX8gMYNODhtSps1HpBL2Z4X9MkekPKvGUeG+yKMD+atLWWAsS0f9
-         0K7m1jLIOIa8oMWHhBZDMCXzDEL5S5yK1fXZ9UUTHf955rmUU0xAb6xZ6aTbnMhpjvKu
-         XWfw==
+        bh=rbDJPF8reTwDuA6mqr3Qn8HMsERKz+JaMXLkz+6cP50=;
+        b=Xc+5J1v5QNRN0QI1Z7v1wyzkW8WqVlMD1jYjCNrNxbgLyFPRmz9oKWIh0oKrOYwG2m
+         PxhY2Lnu8ZixSBBw75dp3y9wLTLwEAKn5iv+4r8eNrcZ8hBBVafO3hQrSzslbbOwj4gh
+         gaRrGmOrpbsUq50KrI1P7weSx2oYLek4i4JkTFbH2/WMwgp4motuChYzbDXYkuMcCi3f
+         QhWtdgdqIVqUZ25BtXby5SJIddxzOJk7o7iO0upowrCCj1fQkH+sRxJGJf4Ag550+WWK
+         8+O4/qPHtA0BT95B4vEqZPgv3W712rCW8ZNZPYQ+7DnzhSUsG0p2gsm5U0IVSiihNl/z
+         EpfQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QxCkZ1hS;
-       spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=QxCkZ1hS;
-       spf=pass (google.com: domain of helgaas@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=helgaas@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Thu, 10 May 2018 11:27:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: poza@codeaurora.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
+       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
+   d="scan'208";a="126361294"
+X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="152473228"
+From: Oza Pawandeep <poza@codeaurora.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Kate Stewart <kstewart@linuxfoundation.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	Dongdong Liu <liudongdong3@huawei.com>,
-	Keith Busch <keith.busch@intel.com>, Wei Zhang <wzhang@fb.com>,
+	Keith Busch <keith.busch@intel.com>,
+	Wei Zhang <wzhang@fb.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
-	Timur Tabi <timur@codeaurora.org>, linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH v15 8/9] PCI/DPC: Unify and plumb error handling into DPC
-Message-ID: <20180510162746.GA190385@bhelgaas-glaptop.roam.corp.google.com>
+	Timur Tabi <timur@codeaurora.org>
+Cc: Oza Pawandeep <poza@codeaurora.org>
+Subject: [PATCH v15 3/9] PCI/AER: Handle ERR_FATAL with removal and re-enumeration of devices
+Date: Thu,  3 May 2018 01:03:52 -0400
+Message-Id: <1525323838-1735-4-git-send-email-poza@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
 References: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
- <1525323838-1735-9-git-send-email-poza@codeaurora.org>
- <20180510132222.GE173327@bhelgaas-glaptop.roam.corp.google.com>
- <29c21a3fbaeb56c0581da66b9203dfd1@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29c21a3fbaeb56c0581da66b9203dfd1@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599417976795916736?=
-X-GMAIL-MSGID: =?utf-8?q?1600095172373215157?=
+X-GMAIL-THRID: =?utf-8?q?1599417977501212020?=
+X-GMAIL-MSGID: =?utf-8?q?1599417977501212020?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 10, 2018 at 07:56:00PM +0530, poza@codeaurora.org wrote:
-> On 2018-05-10 18:52, Bjorn Helgaas wrote:
-> > On Thu, May 03, 2018 at 01:03:57AM -0400, Oza Pawandeep wrote:
-> ...
+This patch alters the behavior of handling of ERR_FATAL, where removal
+of devices is initiated, followed by reset link, followed by
+re-enumeration.
 
-> > > -static pci_ers_result_t reset_link(struct pci_dev *dev)
-> > > +static pci_ers_result_t reset_link(struct pci_dev *dev, int severity)
-> > >  {
-> > >  	struct pci_dev *udev;
-> > >  	pci_ers_result_t status;
-> > >  	struct pcie_port_service_driver *driver;
-> > > +	u32 service;
-> > > 
-> > >  	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-> > >  		/* Reset this port for all subordinates */
-> > > @@ -196,7 +197,12 @@ static pci_ers_result_t reset_link(struct
-> > > pci_dev *dev)
-> > >  	}
-> > > 
-> > >  	/* Use the aer driver of the component firstly */
-> > > -	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
-> > > +	if (severity == DPC_FATAL)
-> > > +		service = PCIE_PORT_SERVICE_DPC;
-> > > +	else
-> > > +		service = PCIE_PORT_SERVICE_AER;
-> > > +
-> > > +	driver = pcie_port_find_service(udev, service);
-> > 
-> > This is where I was wondering about passing in "service" directly
-> > instead
-> > of "severity".
-> 
-> passing service directly instead of severity ? (I do not think you meant to
-> write severity there)
+So the errors are handled in a different way as follows:
+ERR_NONFATAL => call driver recovery entry points
+ERR_FATAL    => remove and re-enumerate
 
-I did mean "severity".
+please refer to Documentation/PCI/pci-error-recovery.txt for more details.
 
-> perhaps do you mean following ?
-> 
-> if (severity == DPC_FATAL)
->          pcie_port_find_service(udev, PCIE_PORT_SERVICE_DPC);
-> else
->          pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-No, my thought was that most of the places that use "severity" only
-use it to decide between PCIE_PORT_SERVICE_DPC and
-PCIE_PORT_SERVICE_AER, so if you just passed in "service" directly,
-you wouldn't need this "if" statement.
-
-Bjorn
+diff --git a/drivers/pci/pcie/aer/aerdrv.c b/drivers/pci/pcie/aer/aerdrv.c
+index 779b387..206f590 100644
+--- a/drivers/pci/pcie/aer/aerdrv.c
++++ b/drivers/pci/pcie/aer/aerdrv.c
+@@ -330,6 +330,13 @@ static pci_ers_result_t aer_root_reset(struct pci_dev *dev)
+ 	reg32 |= ROOT_PORT_INTR_ON_MESG_MASK;
+ 	pci_write_config_dword(dev, pos + PCI_ERR_ROOT_COMMAND, reg32);
+ 
++	/*
++	 * This function is called only on ERR_FATAL now, and since
++	 * the pci_report_resume is called only in ERR_NONFATAL case,
++	 * the clearing part has to be taken care here.
++	 */
++	aer_error_resume(dev);
++
+ 	return PCI_ERS_RESULT_RECOVERED;
+ }
+ 
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 0ea5acc..655d4e8 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -20,6 +20,7 @@
+ #include <linux/slab.h>
+ #include <linux/kfifo.h>
+ #include "aerdrv.h"
++#include "../../pci.h"
+ 
+ #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
+ 				 PCI_EXP_DEVCTL_FERE | PCI_EXP_DEVCTL_URRE)
+@@ -474,6 +475,44 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ 	return status;
+ }
+ 
++static pci_ers_result_t do_fatal_recovery(struct pci_dev *dev, int severity)
++{
++	struct pci_dev *udev;
++	struct pci_bus *parent;
++	struct pci_dev *pdev, *temp;
++	pci_ers_result_t result = PCI_ERS_RESULT_RECOVERED;
++
++	if (severity == AER_FATAL)
++		pci_cleanup_aer_uncorrect_error_status(dev);
++
++	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
++		udev = dev;
++	else
++		udev = dev->bus->self;
++
++	parent = udev->subordinate;
++	pci_lock_rescan_remove();
++	list_for_each_entry_safe_reverse(pdev, temp, &parent->devices,
++				 bus_list) {
++		pci_dev_get(pdev);
++		pci_dev_set_disconnected(pdev, NULL);
++		if (pci_has_subordinate(pdev))
++			pci_walk_bus(pdev->subordinate,
++				     pci_dev_set_disconnected, NULL);
++		pci_stop_and_remove_bus_device(pdev);
++		pci_dev_put(pdev);
++	}
++
++	result = reset_link(udev);
++	if (result == PCI_ERS_RESULT_RECOVERED)
++		if (pcie_wait_for_link(udev, true))
++			pci_rescan_bus(udev->bus);
++
++	pci_unlock_rescan_remove();
++
++	return result;
++}
++
+ /**
+  * do_recovery - handle nonfatal/fatal error recovery process
+  * @dev: pointer to a pci_dev data structure of agent detecting an error
+@@ -485,11 +524,15 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+  */
+ static void do_recovery(struct pci_dev *dev, int severity)
+ {
+-	pci_ers_result_t status, result = PCI_ERS_RESULT_RECOVERED;
++	pci_ers_result_t status;
+ 	enum pci_channel_state state;
+ 
+-	if (severity == AER_FATAL)
+-		state = pci_channel_io_frozen;
++	if (severity == AER_FATAL) {
++		status = do_fatal_recovery(dev, severity);
++		if (status != PCI_ERS_RESULT_RECOVERED)
++			goto failed;
++		return;
++	}
+ 	else
+ 		state = pci_channel_io_normal;
+ 
+@@ -498,12 +541,6 @@ static void do_recovery(struct pci_dev *dev, int severity)
+ 			"error_detected",
+ 			report_error_detected);
+ 
+-	if (severity == AER_FATAL) {
+-		result = reset_link(dev);
+-		if (result != PCI_ERS_RESULT_RECOVERED)
+-			goto failed;
+-	}
+-
+ 	if (status == PCI_ERS_RESULT_CAN_RECOVER)
+ 		status = broadcast_error_message(dev,
+ 				state,
+-- 
+2.7.4
