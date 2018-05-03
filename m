@@ -1,71 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeECQyS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:54:18 -0400
-Received: from mout.gmx.net ([212.227.17.21]:37951 "EHLO mout.gmx.net"
+        id S1751360AbeECQyv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:54:51 -0400
+Received: from mga02.intel.com ([134.134.136.20]:61249 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeECQyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:54:14 -0400
-Date: Thu, 3 May 2018 18:54:00 +0200
-From: Helge Deller <deller@gmx.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        John David Anglin <dave.anglin@bell.net>
-Subject: [GIT PULL] parisc fixes for 4.17-rc4
-Message-ID: <20180503165400.GA6897@ls3530.fritz.box>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Provags-ID: V03:K1:AqrPFRq7HdDaPiMHCqRngWd/jaKIdqlSaXNCqCxGzuPMEtLhXeO
- NbhDQdu5W//sO4LuLfo9fqVorES/JWbD+Ovrcn6ARb8HX62kbc4e+LSMOJ5oIfBKvox9Lsj
- de70OmPHh95foASJ70W9CtgJqF3KdPhZIM2U6Nxb4FxMR9hbKcxaL7AGdJX56IzQEVEnuox
- sfhGdCAbdkT37nYWXCugA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:yOGlHZzQ3D8=:K6EYqeBmNlRIcFERfMdRWA
- dIEylfymIRoSZgGW4/0SFtasQtdKoj1YvYuIe+WR99HdYzUkQhvPPexG46F8iYgdH5ty7TF+r
- IB+GPJQwCSknuAzvq9xM9sUxmC6m+mhspIg2ehRo87f139CL5czO4abQIiC+UnmqQVQ9jBlLc
- lqyQGjbw1s4rCdAYoC5bUwE+miH70CZ3fcPHO/Fpy5ZybQ4OOAJsSTnBStjurUVVmjuq04v8f
- YUqKvrhyaSWr+QDcgsjrzTOc//Lsprdxj7uqPM7jbWNrNqe/cMRdqaA4yjIf8RFNxV9nDJCeT
- K5XVkf20o5gsaVx/LwFeN8PjsTlFxbmco5YUj/lNnomyypUmVXvyryzxCncfis+sTi60eigTB
- kpTxDH02rF0TWLS/Wn7/BYFgUZkn6h0nulTMZgHft6D0eWcZmDQU1iRWZMdNvn35latgZtK3K
- ygkieG56/4LTqN7SQoE2bx1ChXMbGXg50PU+t0ptvha7qPuRbIv5TOxF20seBXd7qI4tcO3z0
- BeYGpJw1dUUoukAwblkrlzCu7c0oo/Dbn1lNSyMFN+iMXC6yIn/Ljm8Aaya3q6i8Q/C7mh8uU
- etZtrJiDwUpBy+JneQVy/9FpG8QodBwguYs0SkY2PEHIjSCsg/9IfROVFgvxZ/TYnTBTcdXvt
- zxMmfrijEKaXhfffL6wdz+ZSHRHj3FJPLJFE9PPZRUvuQYwhG0VAm6B/gSI1CvyYAPbdO+p6I
- AfKStTr8qpN0eUiWPRNerpgVh/kgu6ssqNeUOctq3/Re/zOlEjw5rG02RkI=
+        id S1750954AbeECQyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 12:54:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,359,1520924400";
+   d="scan'208";a="52949643"
+Message-ID: <1525366486.21176.653.camel@linux.intel.com>
+Subject: Re: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI
+ support
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: John Garry <john.garry@huawei.com>, xuwei5@huawei.com,
+        mika.westerberg@linux.intel.com, lee.jones@linaro.org
+Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org, arnd@arndb.de,
+        graeme.gregory@linaro.org, helgaas@kernel.org,
+        z.liuxinliang@hisilicon.com, linuxarm@huawei.com
+Date: Thu, 03 May 2018 19:54:46 +0300
+In-Reply-To: <1525360119-102166-2-git-send-email-john.garry@huawei.com>
+References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
+         <1525360119-102166-2-git-send-email-john.garry@huawei.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.5-1+b1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, 2018-05-03 at 23:08 +0800, John Garry wrote:
+> Currently for ACPI support the driver models the host as
+> an MFD. For a device connected to the LPC bus, we dynamically
+> create an MFD cell for that device, configuring the cell
+> name and ACPI match parameters manually. This makes supporting
+> named devices and also special setup handling for certain devices
+> awkward, as we would need to introduce some special ACPI device
+> handling according to device HID.
+> 
+> To avoid this, create reference static MFD cells for known
+> child devices, so when adding an MFD cell we can fix the cell
+> platform data as required. For this, a setup callback function
+> is added.
+> 
+> For now, only the IPMI cell is added.
 
-please pull a few fixes and documentation updates for the parisc architecture from:
+> +static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char
+> *hid)
+> +{
+> +	const struct hisi_lpc_acpi_mfd_cell *cell =
+> hisi_lpc_acpi_mfd_cells;
+> +
+> +	for (; cell && cell->mfd_cell.name; cell++) {
+> +		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
+> +		const struct mfd_cell_acpi_match *acpi_match;
+> +
+> +		acpi_match = mfd_cell->acpi_match;
+> +		if (!strcmp(acpi_match->pnpid, hid))
+> +			return mfd_cell;
+> +	}
+> +
+> +	return NULL;
+> +}
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.17-4
+I'm not sure I understand why MFD core can't do it (as seen in lines
+drivers/mfd/core.c:105 and below).
 
-Fix two section mismatches, convert to read_persistent_clock64(), add further
-documentation regarding the HPMC crash handler and make bzImage the default
-build target.
+> +	/* allocate the mfd cells, one per child */
+> +	size = sizeof(*mfd_cells);
+>  	mfd_cells = devm_kcalloc(hostdev, cell_num, size,
+> GFP_KERNEL);
+>  	if (!mfd_cells)
+>  		return -ENOMEM;
 
-Thanks,
-Helge
+And since you have structures already, I'm not sure why you need another
+allocation for them. Only what you would need is to apply resources and
+call devm_mfd_add_devices() per each found device.
 
-----------------------------------------------------------------
-Baolin Wang (1):
-      parisc: time: Convert read_persistent_clock() to read_persistent_clock64()
+> +		cell = container_of(mfd_cell_ref, typeof(*cell),
+> mfd_cell);
 
-Helge Deller (4):
-      parisc: Make bzImage default build target
-      parisc: Document rules regarding checksum of HPMC handler
-      parisc: drivers.c: Fix section mismatches
-      parisc: Fix section mismatches
+Why we can't iterate over inherited type of objects directly?
 
- arch/parisc/Makefile         |  3 +++
- arch/parisc/kernel/drivers.c |  7 ++++---
- arch/parisc/kernel/pci.c     |  2 +-
- arch/parisc/kernel/time.c    |  2 +-
- arch/parisc/kernel/traps.c   | 11 +++++++++++
- arch/parisc/mm/init.c        |  2 +-
- drivers/parisc/ccio-dma.c    |  2 +-
- 7 files changed, 22 insertions(+), 7 deletions(-)
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
