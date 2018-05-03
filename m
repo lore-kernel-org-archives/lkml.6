@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751652AbeECJgw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:36:52 -0400
-Received: from mo4-p04-ob.smtp.rzone.de ([81.169.146.176]:22568 "EHLO
-        mo4-p04-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751532AbeECJgp (ORCPT
+        id S1751511AbeECJgn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:36:43 -0400
+Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.173]:17314 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751443AbeECJgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:36:45 -0400
+        Thu, 3 May 2018 05:36:37 -0400
 X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNO4Ij0Nfyq4sHQ=="
 X-RZG-CLASS-ID: mo00
 From: "H. Nikolaus Schaller" <hns@goldelico.com>
@@ -26,9 +26,9 @@ To: Johan Hovold <johan@kernel.org>, afd@ti.com,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org, letux-kernel@openphoenux.org,
         kernel@pyra-handheld.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v7 6/6] gnss: add w2sg0004 to Kconfig
-Date: Thu,  3 May 2018 11:35:51 +0200
-Message-Id: <7035d90fb71c4bc9d2e7c1090b77bdd6bdfd9871.1525340143.git.hns@goldelico.com>
+Subject: [PATCH v7 5/6] gnss: add w2sg0004 to Makefile
+Date: Thu,  3 May 2018 11:35:50 +0200
+Message-Id: <5eed31aa4617b100f1e8687a90f044ef873c0ab0.1525340143.git.hns@goldelico.com>
 X-Mailer: git-send-email 2.12.2
 In-Reply-To: <cover.1525340143.git.hns@goldelico.com>
 References: <cover.1525340143.git.hns@goldelico.com>
@@ -38,31 +38,23 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to configure for w2sg0004 driver.
+Add the w2sg0004 driver to the gnss framework.
 
 Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
 ---
- drivers/gnss/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gnss/Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gnss/Kconfig b/drivers/gnss/Kconfig
-index 6abc88514512..ccc128bd0a3f 100644
---- a/drivers/gnss/Kconfig
-+++ b/drivers/gnss/Kconfig
-@@ -40,4 +40,14 @@ config GNSS_UBX_SERIAL
+diff --git a/drivers/gnss/Makefile b/drivers/gnss/Makefile
+index 5cf0ebe0330a..c3c0b5548c94 100644
+--- a/drivers/gnss/Makefile
++++ b/drivers/gnss/Makefile
+@@ -14,3 +14,6 @@ gnss-sirf-y := sirf.o
  
- 	  If unsure, say N.
- 
-+config GNSS_W2SG0004
-+	tristate "W2SG00x4 power on/off driver"
-+	depends on GPIOLIB && SERIAL_DEV_BUS
-+	help
-+	  Enable on/off control of W2SG00x4 GPS module connected
-+	  to some SoC UART to allow powering up/down if the /dev/gnss
-+	  is opened/closed.
+ obj-$(CONFIG_GNSS_UBX_SERIAL)		+= gnss-ubx.o
+ gnss-ubx-y := ubx.o
 +
-+	  It also provides a "rfkill gps" name to control the LNA power.
-+
- endif # GNSS
++obj-$(CONFIG_GNSS_W2SG0004)		+= gnss-w2sg0004.o
++gnss-w2sg0004-y := w2sg0004.o
 -- 
 2.12.2
