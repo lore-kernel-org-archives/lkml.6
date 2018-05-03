@@ -1,23 +1,23 @@
 Return-Path: <DavidWang@zhaoxin.com>
-X-Google-Smtp-Source: AB8JxZoaaQ51uBAIIk4DnlYidG+BKswqwt4ZNIGhNJJq+X94IeY8ac7rm9WVpBKZvNfuDV0TEFzX
-ARC-Seal: i=1; a=rsa-sha256; t=1525314781; cv=none;
+X-Google-Smtp-Source: AB8JxZpDEZ3u2hUL69gNlaOTHxrV6s3CyiHFWeb51hIC8HjRGhOHPdxsw4njf5Mc89rzfw8j5EV+
+ARC-Seal: i=1; a=rsa-sha256; t=1525314780; cv=none;
         d=google.com; s=arc-20160816;
-        b=oywv4IUezJZce7IiPNrSXYN0lns5Ojl4tRB6gNJKiY28TTJmDLHlg0QF04TZ3h1NBN
-         YHX+eZKdC9mprsmGnMMmPBfLgw/VxT+IFI7wambV4D5AGteDxG29LW5AT1ob+yWQrbUA
-         x5TaRR8wPEJppaQmgucx8G5ckQNaDfETNgi27BmSniNijdohpDVy889NYoSv1I2jyrLa
-         zPqjJnLOHqjYYEN0GRfqjGmJyndYHugSmyMEwUt8NC4Znq6MJeIf67ePBPiFs4RxSy54
-         pzSunLUcYPhej5/z6fJKOqGIaEX4nYSyHZWzLtkgB3L+VXVxH2cPTYAdnLvWKB7XYlxg
-         Luyg==
+        b=ZecxQrdTt+1LHiVcGDVxvO/rp71jFST6uU/8ynE+tkbQquDHArUNrEkfUDC+CUSRny
+         4FXplJXeW4eYcNBoUENSjSK3xuaFxhSi/RLTNdFxBfGFxcUplFa4G6UcNlMGIS8j7S1D
+         lfiu+bExQxC/pIy4CRMzIaNVHz7pi+zSj6I1ahR5zW5/CukwC6MCZiRdHUFL9vMt6yCV
+         pCrgzp/ZqbnE3tPxeIsNv9ABTNel47hfe75thclGURxlBr8+i0pkIAhzOLKwe4YiFKaZ
+         9X3x4bxnk7Id63PIKx1qlK2MK8EKPEeuLaB1aCHflWRC/mFjEw203NOj9ZEYAMEktg0A
+         I1JQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
          :from:arc-authentication-results;
-        bh=dLAjyCdFJfqt+MXOirh6ny8g9YZ+bkRAih6M7M70zBM=;
-        b=wUWznxLrTVHZQ1y4wxXJy6vzSmlH9ilvh5c3qA7ETJ3+TGS7XK1Oz/p8HUApSYBRlG
-         5PvSICKFYI8lLPlKDa+zcjHNLURqtkXmzasD2MKuR5xgqLsSYbeybwVYNxemb+snpt8Q
-         NaK/jEfeStLrPVkC39LaqI9k9hLho6DNu0zWOw2X2pP4C2Fdbe8JUD3TwFKYMYR2bnvz
-         6z+5uSrak71faB23ASoGJello1maWxTMZxB+QOhNUm7BXsns4Tjufpht2PYm/FkWn0tv
-         9/B4YC4feIeqk73WfrOpaQ/sY65QGBRQTISrXJPDd9Orkp9C8zEkvN6WUip9DVw/9Vx4
-         6Rhg==
+        bh=L92Zn3BtLFqJgsZVTEEl/CNX0Bh3gb1PUHteh+d9lhA=;
+        b=kSZAdPKRS2gTQfGsDPwFhbR+ZZzYNI9QrMBQvoGtD7IOJ4AB0cbcsNpV8FtXc6Av4f
+         Cg7SdwJxssrNu2Xbkn7P2Z/x26lcnmGzen9nHKLqFRoohy/y47uZcMc5SbSvWWEJV87y
+         XXeR3iXeBPVWxne88BRjUxAopyaIQMWVvrj4S/oFUL9FFDUoUkx0MKzceychUsWWQ+cJ
+         on/CpxHal4SUVY0HqVbxoPyyeN6rg3cNSUUHoHRfuPfqfN85WanK2eXSTyzpe+7tY1ec
+         tz1wZPp4eM7vGj/S0rrqZGUNOeyj5N+izdXuHN3y4zTHEBz0dT9piwVkQFtt6nrwkbGO
+         JJMw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=neutral (google.com: 203.148.12.82 is neither permitted nor denied by best guess record for domain of davidwang@zhaoxin.com) smtp.mailfrom=DavidWang@zhaoxin.com
 Authentication-Results: mx.google.com;
@@ -29,9 +29,9 @@ To: <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
 CC: <brucechang@via-alliance.com>, <cooperyan@zhaoxin.com>,
 	<qiyuanwang@zhaoxin.com>, <benjaminpan@viatech.com>, <lukelin@viacpu.com>,
 	<timguo@zhaoxin.com>, David Wang <davidwang@zhaoxin.com>
-Subject: [PATCH 2/3] x86/cpu: Include cpu_detect_cache_sizes in init_intel_cacheinfo
-Date: Thu, 3 May 2018 10:32:45 +0800
-Message-ID: <1525314766-18910-3-git-send-email-davidwang@zhaoxin.com>
+Subject: [PATCH 1/3] x86/CPU: Replace intel_num_cpu_cores with detect_num_cpu_cores
+Date: Thu, 3 May 2018 10:32:44 +0800
+Message-ID: <1525314766-18910-2-git-send-email-davidwang@zhaoxin.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525314766-18910-1-git-send-email-davidwang@zhaoxin.com>
 References: <1525314766-18910-1-git-send-email-davidwang@zhaoxin.com>
@@ -41,62 +41,96 @@ X-Originating-IP: [10.29.8.54]
 X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
  zxbjmbx3.zhaoxin.com (10.29.252.165)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599408472355997701?=
-X-GMAIL-MSGID: =?utf-8?q?1599408472355997701?=
+X-GMAIL-THRID: =?utf-8?q?1599408470681476300?=
+X-GMAIL-MSGID: =?utf-8?q?1599408470681476300?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Clean up the silly cpu_detect_cache_sizes() calling by including the
-cpu_detect_cache_sizes() inside the init_intel_cacheinfo(). 
+intel_num_cpu_cores() is a static defination in intel.c which can't be used by 
+other files. Define another function called detect_num_cpu_cores() in common.c
+to replace this function.
 
 Signed-off-by: David Wang <davidwang@zhaoxin.com>
 ---
- arch/x86/kernel/cpu/intel.c           | 8 +-------
- arch/x86/kernel/cpu/intel_cacheinfo.c | 6 ++++++
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/processor.h |  1 +
+ arch/x86/kernel/cpu/common.c     | 14 ++++++++++++++
+ arch/x86/kernel/cpu/intel.c      | 20 +-------------------
+ 3 files changed, 16 insertions(+), 19 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index f683f7d..56e3259 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -659,13 +659,7 @@ static void init_intel(struct cpuinfo_x86 *c)
- #endif
- 	}
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index e56fe7c..b0553f6 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -192,6 +192,7 @@ extern u32 get_scattered_cpuid_leaf(unsigned int level,
+ 				    enum cpuid_regs_idx reg);
+ extern unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c);
+ extern void init_amd_cacheinfo(struct cpuinfo_x86 *c);
++extern int detect_num_cpu_cores(struct cpuinfo_x86 *c);
  
--	l2 = init_intel_cacheinfo(c);
--
--	/* Detect legacy cache sizes if init_intel_cacheinfo did not */
--	if (l2 == 0) {
--		cpu_detect_cache_sizes(c);
--		l2 = c->x86_cache_size;
--	}
-+	init_intel_cacheinfo(c);
- 
- 	if (c->cpuid_level > 9) {
- 		unsigned eax = cpuid_eax(10);
-diff --git a/arch/x86/kernel/cpu/intel_cacheinfo.c b/arch/x86/kernel/cpu/intel_cacheinfo.c
-index 54d04d5..2a0597c 100644
---- a/arch/x86/kernel/cpu/intel_cacheinfo.c
-+++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
-@@ -20,6 +20,8 @@
- #include <asm/amd_nb.h>
- #include <asm/smp.h>
- 
-+#include "cpu.h"
-+
- #define LVL_1_INST	1
- #define LVL_1_DATA	2
- #define LVL_2		3
-@@ -802,6 +804,10 @@ unsigned int init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 
- 	c->x86_cache_size = l3 ? l3 : (l2 ? l2 : (l1i+l1d));
- 
-+	if (!l2) {
-+		cpu_detect_cache_sizes(c);
-+		l2 = c->x86_cache_size;
-+	}
- 	return l2;
+ extern void detect_extended_topology(struct cpuinfo_x86 *c);
+ extern void detect_ht(struct cpuinfo_x86 *c);
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 8a5b185..0c80d50 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -577,6 +577,20 @@ static void get_model_name(struct cpuinfo_x86 *c)
+ 	*(s + 1) = '\0';
  }
  
++int detect_num_cpu_cores(struct cpuinfo_x86 *c)
++{
++	unsigned int eax, ebx, ecx, edx;
++
++	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
++		return 1;
++
++	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
++	if (eax & 0x1f)
++		return (eax >> 26) + 1;
++	else
++		return 1;
++}
++
+ void cpu_detect_cache_sizes(struct cpuinfo_x86 *c)
+ {
+ 	unsigned int n, dummy, ebx, ecx, edx, l2size;
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 60d1897..f683f7d 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -453,24 +453,6 @@ static void srat_detect_node(struct cpuinfo_x86 *c)
+ #endif
+ }
+ 
+-/*
+- * find out the number of processor cores on the die
+- */
+-static int intel_num_cpu_cores(struct cpuinfo_x86 *c)
+-{
+-	unsigned int eax, ebx, ecx, edx;
+-
+-	if (!IS_ENABLED(CONFIG_SMP) || c->cpuid_level < 4)
+-		return 1;
+-
+-	/* Intel has a non-standard dependency on %ecx for this CPUID level. */
+-	cpuid_count(4, 0, &eax, &ebx, &ecx, &edx);
+-	if (eax & 0x1f)
+-		return (eax >> 26) + 1;
+-	else
+-		return 1;
+-}
+-
+ static void detect_vmx_virtcap(struct cpuinfo_x86 *c)
+ {
+ 	/* Intel VMX MSR indicated features */
+@@ -671,7 +653,7 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 		 * let's use the legacy cpuid vector 0x1 and 0x4 for topology
+ 		 * detection.
+ 		 */
+-		c->x86_max_cores = intel_num_cpu_cores(c);
++		c->x86_max_cores = detect_num_cpu_cores(c);
+ #ifdef CONFIG_X86_32
+ 		detect_ht(c);
+ #endif
 -- 
 1.9.1
