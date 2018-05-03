@@ -1,31 +1,31 @@
 Return-Path: <amit.pundir@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525372755; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525372746; cv=none;
         d=google.com; s=arc-20160816;
-        b=pmQ91zp5e1/YJ2nfDP1nCJRBt/Ah6VR3V0zk3QQTJK5mCp6eEBdZDb6wKYHFJBqzLU
-         SqdHGzpEVlqR+xIt5P8FvaYkNbsNoaeZh0AfvnwvQXHL6HSt5cNGInxMn++uu7LM7JYl
-         bN4HCDcm45Lpa/fz6dZ7qOgfIO+GTadqX6XQVg/g9KJ7N5+wVLy0KbmwdqAGzsbQXe3K
-         OQ+gLWSuvx68uTeDqQqoPVyix7y7VGk6/GnX0C4kN8ZAI5wK32dfalogteZyvctm8MVj
-         7YI4YWIlMpSv1kUNeuDgN7zrDA4u9Pgq+euXbugTwShkG9LnzstSf2VfU+FHMo+H17MS
-         j1DA==
+        b=rRXAGRZPe7KVsYMTd4mw7p+M9bYZyUWJ0fg1RjsiKusy9opE0MWAJeY77Q/SDBq2G5
+         Ywr+ODU8bEuLla8eU5AhLogOasY2cs2OQjyvwgLvHLG4wUJFHF+s2gqJ1bay8B0R3GLP
+         rYdoMrgq7AXGDV44PWD5rnSA7osqN1ABouyPlw5XIKb9Roz2/d687monLN/pBSwmLpDO
+         w8jhLoAlVtn3GAzf7xhbPxZjVE7vkYObT7ipjxwsUgXQbM5T0bF4+j6SKEOCN6tZ8Q8u
+         qxkSbFk7s48XmI39OgQqZ5T3yiox5vpw20gmtF6CdMdisalzUBF0Hqw26QB6tY4e+AUO
+         n1tw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=9iZpnFi91fGjnnkmlx0FIIj7BaEja2eKczsD9g4Djr4=;
-        b=0V/Xrsv9uSTZ9AuVytN+qrRm102yGxgI8FfBfQ1Yx5j5ngQFhi1q7n5PdlnOXuH7Dx
-         kFiAW+c14jovxcXNu4PgoKUQt6Z2I2Ov3RCbk75+gWvbOChKlz4GlkVVGD4nRv/K4y6q
-         V+8e1dZ8D4YdCyhzt87jZiqX1I/FugOpx6zjgTH0o1kvsa6L9TkWMBdPUD4uL60HBM+M
-         MLR0beOY3Ddi3MZFF+CoZCTrEu5ymYXrQ+3OEn8yiejoaURrrFtkyMVJkbeM445Oi/6w
-         wvvkGkd9NowIow8zxp4q33g4UqJYFJroVn1BOFly5JFd3IXB37Gg2fMyqVYKT5ZLUHUg
-         KXRg==
+        bh=bQVjZYBsVQrcd9EmtkKcL4YPUtSEKCns/vDF2NvsVJQ=;
+        b=DeFiYHKXRV/yBaAjOASWRnsJiBJmiJeGu4S6r1IoVjsej8Gd5OGLnXyhZCq/+Oc0zq
+         whRYZ5t+9L3bE/DEyxU9QakFx9dTLFPDQXhvryjW+b6J/m8ARjkE9QoQT/9L61LU1FGG
+         0lP3KEWPZnC0ehjh1aCwScCH356rgR5GjZ3by/T3uLi6Q95TJD9fFSKuZw+PWQfD+6Aa
+         kDPuOqp/hI3ebyQJ4m050sBofBIJuYbP3YDg0bfksB5vLfSOvKj9FOGWO5IQRT9tqMjB
+         g0j2fru6ipiSlRFuR1Cp8KpPEx4FQyPVlNn1cR+G7kbCHMnbTCsUyqKURZ7AJS4iLBnN
+         BZxQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=I7PGfRR4;
+       dkim=pass header.i=@linaro.org header.s=google header.b=jsWz82eU;
        spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=I7PGfRR4;
+       dkim=pass header.i=@linaro.org header.s=google header.b=jsWz82eU;
        spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZo0sYXsps3upkO94KQEClkZtjcFxABvaDipEJJsJPTifAw+9Eeu1rJRNqltgcbARnjcOaKmdw==
+X-Google-Smtp-Source: AB8JxZonBjbfVrJfdSQ2mzDF3IDb5ZEhljE6qQJ3WI3SOVLeulrzyHlPB8DYSM9qUQWs0dFxLqiPHg==
 From: Amit Pundir <amit.pundir@linaro.org>
 To: lkml <linux-kernel@vger.kernel.org>,
 	linux-wireless@vger.kernel.org
@@ -37,212 +37,64 @@ Cc: Suren Baghdasaryan <surenb@google.com>,
 	John Stultz <john.stultz@linaro.org>,
 	Dmitry Shmidt <dimitrysh@google.com>,
 	Todd Kjos <tkjos@google.com>,
-	Android Kernel Team <kernel-team@android.com>
-Subject: [PATCH v3 4/4] NFC: fdp: Remove __func__ from dev_dbg()
-Date: Fri,  4 May 2018 00:08:56 +0530
-Message-Id: <1525372736-25094-4-git-send-email-amit.pundir@linaro.org>
+	Android Kernel Team <kernel-team@android.com>,
+	Stable <stable@vger.kernel.org>
+Subject: [PATCH v3 2/4] NFC: Fix possible memory corruption when handling SHDLC I-Frame commands
+Date: Fri,  4 May 2018 00:08:54 +0530
+Message-Id: <1525372736-25094-2-git-send-email-amit.pundir@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525372736-25094-1-git-send-email-amit.pundir@linaro.org>
 References: <1525372736-25094-1-git-send-email-amit.pundir@linaro.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599469262045919417?=
-X-GMAIL-MSGID: =?utf-8?q?1599469262045919417?=
+X-GMAIL-THRID: =?utf-8?q?1599469253695427905?=
+X-GMAIL-MSGID: =?utf-8?q?1599469253695427905?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Remove redundant __func__ parameter from dev_dgb() calls and
-delete empty dev_dbg() trace calls, which are redundant if
-function tracer is enabled.
+From: Suren Baghdasaryan <surenb@google.com>
 
+When handling SHDLC I-Frame commands "pipe" field used for indexing
+into an array should be checked before usage. If left unchecked it
+might access memory outside of the array of size NFC_HCI_MAX_PIPES(127).
+
+cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
-v3:
-Updated commit message.
+v3..v1:
+Resend. No changes.
 
-v2:
-Deleted empty dev_dbg() trace calls, which are redundant if
-function tracer is enabled.
+ net/nfc/hci/core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- drivers/nfc/fdp/fdp.c | 18 +++---------------
- drivers/nfc/fdp/i2c.c | 17 ++++-------------
- 2 files changed, 7 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
-index d5784a47fc13..f64a6fd65c41 100644
---- a/drivers/nfc/fdp/fdp.c
-+++ b/drivers/nfc/fdp/fdp.c
-@@ -249,8 +249,6 @@ static int fdp_nci_open(struct nci_dev *ndev)
- 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 
--	dev_dbg(dev, "%s\n", __func__);
--
- 	r = info->phy_ops->enable(info->phy);
- 
- 	return r;
-@@ -261,7 +259,6 @@ static int fdp_nci_close(struct nci_dev *ndev)
- 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 
--	dev_dbg(dev, "%s\n", __func__);
- 	return 0;
- }
- 
-@@ -270,8 +267,6 @@ static int fdp_nci_send(struct nci_dev *ndev, struct sk_buff *skb)
- 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 
--	dev_dbg(dev, "%s\n", __func__);
--
- 	if (atomic_dec_and_test(&info->data_pkt_counter))
- 		info->data_pkt_counter_cb(ndev);
- 
-@@ -283,7 +278,6 @@ int fdp_nci_recv_frame(struct nci_dev *ndev, struct sk_buff *skb)
- 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 
--	dev_dbg(dev, "%s\n", __func__);
- 	return nci_recv_frame(ndev, skb);
- }
- EXPORT_SYMBOL(fdp_nci_recv_frame);
-@@ -498,8 +492,6 @@ static int fdp_nci_setup(struct nci_dev *ndev)
- 	int r;
- 	u8 patched = 0;
- 
--	dev_dbg(dev, "%s\n", __func__);
--
- 	r = nci_core_init(ndev);
- 	if (r)
- 		goto error;
-@@ -609,7 +601,6 @@ static int fdp_nci_core_reset_ntf_packet(struct nci_dev *ndev,
- 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 
--	dev_dbg(dev, "%s\n", __func__);
- 	info->setup_reset_ntf = 1;
- 	wake_up(&info->setup_wq);
- 
-@@ -622,7 +613,6 @@ static int fdp_nci_prop_patch_ntf_packet(struct nci_dev *ndev,
- 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 
--	dev_dbg(dev, "%s\n", __func__);
- 	info->setup_patch_ntf = 1;
- 	info->setup_patch_status = skb->data[0];
- 	wake_up(&info->setup_wq);
-@@ -637,7 +627,7 @@ static int fdp_nci_prop_patch_rsp_packet(struct nci_dev *ndev,
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 	u8 status = skb->data[0];
- 
--	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
-+	dev_dbg(dev, "status 0x%x\n", status);
- 	nci_req_complete(ndev, status);
- 
- 	return 0;
-@@ -650,7 +640,7 @@ static int fdp_nci_prop_set_production_data_rsp_packet(struct nci_dev *ndev,
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 	u8 status = skb->data[0];
- 
--	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
-+	dev_dbg(dev, "status 0x%x\n", status);
- 	nci_req_complete(ndev, status);
- 
- 	return 0;
-@@ -695,7 +685,7 @@ static int fdp_nci_core_get_config_rsp_packet(struct nci_dev *ndev,
- 	dev_dbg(dev, "OTP version %d\n", info->otp_version);
- 	dev_dbg(dev, "RAM version %d\n", info->ram_version);
- 	dev_dbg(dev, "key index %d\n", info->key_index);
--	dev_dbg(dev, "%s: status 0x%x\n", __func__, rsp->status);
-+	dev_dbg(dev, "status 0x%x\n", rsp->status);
- 
- 	nci_req_complete(ndev, rsp->status);
- 
-@@ -798,8 +788,6 @@ void fdp_nci_remove(struct nci_dev *ndev)
- 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
- 	struct device *dev = &info->phy->i2c_dev->dev;
- 
--	dev_dbg(dev, "%s\n", __func__);
--
- 	nci_unregister_device(ndev);
- 	nci_free_device(ndev);
- }
-diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
-index 2c5ed2224c5e..bb14d30c568c 100644
---- a/drivers/nfc/fdp/i2c.c
-+++ b/drivers/nfc/fdp/i2c.c
-@@ -57,7 +57,6 @@ static int fdp_nci_i2c_enable(void *phy_id)
- {
- 	struct fdp_i2c_phy *phy = phy_id;
- 
--	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
- 	fdp_nci_i2c_reset(phy);
- 
- 	return 0;
-@@ -67,7 +66,6 @@ static void fdp_nci_i2c_disable(void *phy_id)
- {
- 	struct fdp_i2c_phy *phy = phy_id;
- 
--	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
- 	fdp_nci_i2c_reset(phy);
- }
- 
-@@ -113,8 +111,8 @@ static int fdp_nci_i2c_write(void *phy_id, struct sk_buff *skb)
- 	}
- 
- 	if (r < 0 || r != skb->len)
--		dev_dbg(&client->dev, "%s: error err=%d len=%d\n",
--			__func__, r, skb->len);
-+		dev_dbg(&client->dev, "error err=%d len=%d\n",
-+			r, skb->len);
- 
- 	if (r >= 0) {
- 		if (r != skb->len) {
-@@ -152,8 +150,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
- 
- 		r = i2c_master_recv(client, tmp, len);
- 		if (r != len) {
--			dev_dbg(&client->dev, "%s: i2c recv err: %d\n",
--				__func__, r);
-+			dev_dbg(&client->dev, "i2c recv err: %d\n", r);
- 			goto flush;
+diff --git a/net/nfc/hci/core.c b/net/nfc/hci/core.c
+index ac8030c4bcf8..19cb2e473ea6 100644
+--- a/net/nfc/hci/core.c
++++ b/net/nfc/hci/core.c
+@@ -209,6 +209,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
  		}
+ 		create_info = (struct hci_create_pipe_resp *)skb->data;
  
-@@ -167,8 +164,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
- 		 * and force resynchronization
- 		 */
- 		if (lrc) {
--			dev_dbg(&client->dev, "%s: corrupted packet\n",
--				__func__);
-+			dev_dbg(&client->dev, "corrupted packet\n");
- 			phy->next_read_size = 5;
- 			goto flush;
++		if (create_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		/* Save the new created pipe and bind with local gate,
+ 		 * the description for skb->data[3] is destination gate id
+ 		 * but since we received this cmd from host controller, we
+@@ -232,6 +237,11 @@ void nfc_hci_cmd_received(struct nfc_hci_dev *hdev, u8 pipe, u8 cmd,
  		}
-@@ -224,7 +220,6 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
- 	}
+ 		delete_info = (struct hci_delete_pipe_noti *)skb->data;
  
- 	client = phy->i2c_dev;
--	dev_dbg(&client->dev, "%s\n", __func__);
- 
- 	r = fdp_nci_i2c_read(phy, &skb);
- 
-@@ -305,8 +300,6 @@ static int fdp_nci_i2c_probe(struct i2c_client *client)
- 	u32 clock_freq;
- 	int r = 0;
- 
--	dev_dbg(dev, "%s\n", __func__);
--
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
- 		nfc_err(dev, "No I2C_FUNC_I2C support\n");
- 		return -ENODEV;
-@@ -368,8 +361,6 @@ static int fdp_nci_i2c_remove(struct i2c_client *client)
- {
- 	struct fdp_i2c_phy *phy = i2c_get_clientdata(client);
- 
--	dev_dbg(&client->dev, "%s\n", __func__);
--
- 	fdp_nci_remove(phy->ndev);
- 	fdp_nci_i2c_disable(phy);
- 
++		if (delete_info->pipe >= NFC_HCI_MAX_PIPES) {
++			status = NFC_HCI_ANY_E_NOK;
++			goto exit;
++		}
++
+ 		hdev->pipes[delete_info->pipe].gate = NFC_HCI_INVALID_GATE;
+ 		hdev->pipes[delete_info->pipe].dest_host = NFC_HCI_INVALID_HOST;
+ 		break;
 -- 
 2.7.4
