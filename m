@@ -1,71 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeECQXt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:23:49 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:53104 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751141AbeECQXs (ORCPT
+        id S1751501AbeECQZd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:25:33 -0400
+Received: from www62.your-server.de ([213.133.104.62]:58959 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751141AbeECQZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:23:48 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <alpine.DEB.2.21.1804272122390.1596@nanos.tec.linutronix.de>
-        <20180428091823.h3iajtxkqdwdcpst@gmail.com>
-        <CA+55aFwgcmpSoNh17Pbtsw8j8KzufdvroC9Rsd3K-UbTTP9qPg@mail.gmail.com>
-        <CA+55aFyVEJtiRjcazfTst7swGNXXZFHByHO5++-Foq6TDZWjTg@mail.gmail.com>
-        <86ff0f5c-0215-798a-2ab8-71fe1677255c@linux.intel.com>
-        <20180502140008.GE2851@pd.tnic>
-Date: Thu, 03 May 2018 11:23:40 -0500
-In-Reply-To: <20180502140008.GE2851@pd.tnic> (Borislav Petkov's message of
-        "Wed, 2 May 2018 16:00:08 +0200")
-Message-ID: <87vac4r9mb.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 3 May 2018 12:25:31 -0400
+Subject: Re: [PATCH v6] bpf, x86_32: add eBPF JIT compiler for ia32
+To: Wang YanQing <udknight@gmail.com>, ast@kernel.org,
+        illusionist.neo@gmail.com, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, davem@davemloft.net, x86@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180503061043.GA4674@udknight>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <5c635081-21fb-dcc7-8840-19e122a4920a@iogearbox.net>
+Date: Thu, 3 May 2018 18:25:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fEH1G-0000GX-VX;;;mid=<87vac4r9mb.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+l1EHhLgAScVt3JLAj3mTGJBn+r0/56Wg=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        * -0.0 BAYES_40 BODY: Bayes spam probability is 20 to 40%
-        *      [score: 0.3132]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Borislav Petkov <bp@alien8.de>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 129 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 2.3 (1.8%), b_tie_ro: 1.55 (1.2%), parse: 0.68 (0.5%),
-        extract_message_metadata: 12 (8.9%), get_uri_detail_list: 0.67 (0.5%),
-        tests_pri_-1000: 7 (5.5%), tests_pri_-950: 1.22 (0.9%), tests_pri_-900: 0.99
-        (0.8%), tests_pri_-400: 15 (11.3%), check_bayes: 14 (10.5%), b_tokenize: 4.1
-        (3.2%), b_tok_get_all: 4.0 (3.1%), b_comp_prob: 1.39 (1.1%), b_tok_touch_all:
-        2.4 (1.9%), b_finish: 0.57 (0.4%), tests_pri_0: 83 (64.1%),
-        check_dkim_signature: 0.59 (0.5%), check_dkim_adsp: 2.4 (1.9%),
-        tests_pri_500: 6 (4.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [RFD] x86: The future of MPX
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <20180503061043.GA4674@udknight>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Borislav Petkov <bp@alien8.de> writes:
+On 05/03/2018 08:10 AM, Wang YanQing wrote:
+> The JIT compiler emits ia32 bit instructions. Currently, It supports eBPF
+> only. Classic BPF is supported because of the conversion by BPF core.
+> 
+> Almost all instructions from eBPF ISA supported except the following:
+> BPF_ALU64 | BPF_DIV | BPF_K
+> BPF_ALU64 | BPF_DIV | BPF_X
+> BPF_ALU64 | BPF_MOD | BPF_K
+> BPF_ALU64 | BPF_MOD | BPF_X
+> BPF_STX | BPF_XADD | BPF_W
+> BPF_STX | BPF_XADD | BPF_DW
+> 
+> It doesn't support BPF_JMP|BPF_CALL with BPF_PSEUDO_CALL at the moment.
+> 
+> IA32 has few general purpose registers, EAX|EDX|ECX|EBX|ESI|EDI. I use
+> EAX|EDX|ECX|EBX as temporary registers to simulate instructions in eBPF
+> ISA, and allocate ESI|EDI to BPF_REG_AX for constant blinding, all others
+> eBPF registers, R0-R10, are simulated through scratch space on stack.
+> 
+> The reasons behind the hardware registers allocation policy are:
+> 1:MUL need EAX:EDX, shift operation need ECX, so they aren't fit
+>   for general eBPF 64bit register simulation.
+> 2:We need at least 4 registers to simulate most eBPF ISA operations
+>   on registers operands instead of on register&memory operands.
+> 3:We need to put BPF_REG_AX on hardware registers, or constant blinding
+>   will degrade jit performance heavily.
+> 
+> Tested on PC (Intel(R) Core(TM) i5-5200U CPU).
+> Testing results on i5-5200U:
+> 1) test_bpf: Summary: 349 PASSED, 0 FAILED, [319/341 JIT'ed]
+> 2) test_progs: Summary: 83 PASSED, 0 FAILED.
+> 3) test_lpm: OK
+> 4) test_lru_map: OK
+> 5) test_verifier: Summary: 828 PASSED, 0 FAILED.
+> 
+> Above tests are all done in following two conditions separately:
+> 1:bpf_jit_enable=1 and bpf_jit_harden=0
+> 2:bpf_jit_enable=1 and bpf_jit_harden=2
+> 
+> Below are some numbers for this jit implementation:
+> Note:
+>   I run test_progs in kselftest 100 times continuously for every condition,
+>   the numbers are in format: total/times=avg.
+>   The numbers that test_bpf reports show almost the same relation.
+> 
+> a:jit_enable=0 and jit_harden=0            b:jit_enable=1 and jit_harden=0
+>   test_pkt_access:PASS:ipv4:15622/100=156    test_pkt_access:PASS:ipv4:10674/100=106
+>   test_pkt_access:PASS:ipv6:9130/100=91      test_pkt_access:PASS:ipv6:4855/100=48
+>   test_xdp:PASS:ipv4:240198/100=2401         test_xdp:PASS:ipv4:138912/100=1389
+>   test_xdp:PASS:ipv6:137326/100=1373         test_xdp:PASS:ipv6:68542/100=685
+>   test_l4lb:PASS:ipv4:61100/100=611          test_l4lb:PASS:ipv4:37302/100=373
+>   test_l4lb:PASS:ipv6:101000/100=1010        test_l4lb:PASS:ipv6:55030/100=550
+> 
+> c:jit_enable=1 and jit_harden=2
+>   test_pkt_access:PASS:ipv4:10558/100=105
+>   test_pkt_access:PASS:ipv6:5092/100=50
+>   test_xdp:PASS:ipv4:131902/100=1319
+>   test_xdp:PASS:ipv6:77932/100=779
+>   test_l4lb:PASS:ipv4:38924/100=389
+>   test_l4lb:PASS:ipv6:57520/100=575
+> 
+> The numbers show we get 30%~50% improvement.
+> 
+> See Documentation/networking/filter.txt for more information.
+> 
+> Signed-off-by: Wang YanQing <udknight@gmail.com>
 
-> On Sun, Apr 29, 2018 at 09:44:00PM -0700, Dave Hansen wrote:
->> The loss of the GCC support is definitely a bummer.
->
-> https://gcc.gnu.org/ml/gcc-patches/2018-05/msg00027.html
->
-> Will go into gcc9.
-
-So we should see this in a released version of gcc in about a year?
-
-Eric
+Applied to bpf-next, thanks Wang!
