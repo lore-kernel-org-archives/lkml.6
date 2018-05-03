@@ -1,574 +1,450 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752069AbeECL5B (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 07:57:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33532 "EHLO
+        id S1751913AbeECL5o (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 07:57:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44594 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751730AbeECLxC (ORCPT
+        with ESMTP id S1751464AbeECL5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 07:53:02 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F10260C65
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
-From: Ilia Lin <ilialin@codeaurora.org>
-To: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        mark.rutland@arm.com, rjw@rjwysocki.net, viresh.kumar@linaro.org,
-        lgirdwood@gmail.com, broonie@kernel.org, andy.gross@linaro.org,
-        david.brown@linaro.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        rnayak@codeaurora.org, ilialin@codeaurora.org,
-        amit.kucheria@linaro.org, nicolas.dechesne@linaro.org,
-        celster@codeaurora.org, tfinkel@codeaurora.org
-Subject: [PATCH v5 03/14] clk: qcom: Add CPU clock driver for msm8996
-Date: Thu,  3 May 2018 14:52:24 +0300
-Message-Id: <1525348355-25471-4-git-send-email-ilialin@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org>
+        Thu, 3 May 2018 07:57:39 -0400
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Thu, 03 May 2018 17:27:37 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v6 1/3] clk: qcom: Configure the RCGs to a safe source as
+ needed
+In-Reply-To: <152524713612.138124.1776677011439726084@swboyd.mtv.corp.google.com>
+References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+ <1525105210-8689-2-git-send-email-anischal@codeaurora.org>
+ <152524713612.138124.1776677011439726084@swboyd.mtv.corp.google.com>
+Message-ID: <68f6216b3de12d90a54207a6a0110c6b@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each of the CPU clusters (Power and Perf) on msm8996 are
-clocked via 2 PLLs, a primary and alternate. There are also
-2 Mux'es, a primary and secondary all connected together
-as shown below
+On 2018-05-02 13:15, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-04-30 09:20:08)
+>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+>> index 2a7489a..f795b3e 100644
+>> --- a/drivers/clk/qcom/clk-rcg.h
+>> +++ b/drivers/clk/qcom/clk-rcg.h
+>> @@ -1,5 +1,5 @@
+>>  /*
+>> - * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2013, 2018, The Linux Foundation. All rights 
+>> reserved.
+> 
+> Given that you're updating this, can you move this to SPDX as well? If
+> that causes some sort of delay, it's OK to defer, but please send a
+> patch to do it sometime soon after this series.
+> 
 
-                             +-------+
-              XO             |       |
-          +------------------>0      |
-                             |       |
-                   PLL/2     | SMUX  +----+
-                     +------->1      |    |
-                     |       |       |    |
-                     |       +-------+    |    +-------+
-                     |                    +---->0      |
-                     |                         |       |
-+---------------+    |             +----------->1      | CPU clk
-|Primary PLL    +----+ PLL_EARLY   |           |       +------>
-|               +------+-----------+    +------>2 PMUX |
-+---------------+      |                |      |       |
-                       |   +------+     |   +-->3      |
-                       +--^+  ACD +-----+   |  +-------+
-+---------------+          +------+         |
-|Alt PLL        |                           |
-|               +---------------------------+
-+---------------+         PLL_EARLY
+ok sure, I will update the same to SPDX as suggested in the next patch
+series.
 
-The primary PLL is what drives the CPU clk, except for times
-when we are reprogramming the PLL itself (for rate changes) when
-we temporarily switch to an alternate PLL. A subsequent patch adds
-support to switch between primary and alternate PLL during rate
-changes.
+>>   *
+>>   * This software is licensed under the terms of the GNU General 
+>> Public
+>>   * License version 2, as published by the Free Software Foundation, 
+>> and
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index e63db10..4a23a7b 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -249,7 +249,8 @@ static int clk_rcg2_determine_floor_rate(struct 
+>> clk_hw *hw,
+>>         return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, 
+>> FLOOR);
+>>  }
+>> 
+>> -static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct 
+>> freq_tbl *f)
+>> +static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct 
+>> freq_tbl *f,
+>> +                               bool update_rcg_config)
+> 
+> Please leave clk_rcg2_configure() signature alone. Don't add a flag to
+> say "hit the update". Instead, make a __clk_rcg2_configure() that
+> doesn't hit the update bit, but does everything else and then have
+> clk_rcg2_configure() call that function and also hit the update bit.
+> 
 
-The primary PLL operates on a single VCO range, between 600MHz
-and 3GHz. However the CPUs do support OPPs with frequencies
-between 300MHz and 600MHz. In order to support running the CPUs
-at those frequencies we end up having to lock the PLL at twice
-the rate and drive the CPU clk via the PLL/2 output and SMUX.
+Thanks for the suggestion. Will take care of the same in the next
+patch series.
 
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-Support for this is added in a subsequent patch as well.
+>>  {
+>>         u32 cfg, mask;
+>>         struct clk_hw *hw = &rcg->clkr.hw;
+>> @@ -287,6 +288,9 @@ static int clk_rcg2_configure(struct clk_rcg2 
+>> *rcg, const struct freq_tbl *f)
+>>         if (ret)
+>>                 return ret;
+>> 
+>> +       if (!update_rcg_config)
+>> +               return 0;
+>> +
+> 
+> Then this logic doesn't have to exist.
 
-ACD stands for Adaptive Clock Distribution and is used to
-detect voltage droops. We do not add support for ACD as yet.
+Yes true. Above logic is not required anymore.
 
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
----
- drivers/clk/clk-fixed-factor.c   |   2 +-
- drivers/clk/qcom/Kconfig         |   9 +
- drivers/clk/qcom/Makefile        |   1 +
- drivers/clk/qcom/clk-alpha-pll.h |   6 +
- drivers/clk/qcom/clk-cpu-8996.c  | 412 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 429 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+> 
+>>         return update_config(rcg);
+>>  }
+>> 
+>> @@ -310,7 +314,7 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>>         if (!f)
+>>                 return -EINVAL;
+>> 
+>> -       return clk_rcg2_configure(rcg, f);
+>> +       return clk_rcg2_configure(rcg, f, true);
+>>  }
+>> 
+>>  static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+>> @@ -419,7 +423,7 @@ static int clk_edp_pixel_set_rate(struct clk_hw 
+>> *hw, unsigned long rate,
+>>                 f.m = frac->num;
+>>                 f.n = frac->den;
+>> 
+>> -               return clk_rcg2_configure(rcg, &f);
+>> +               return clk_rcg2_configure(rcg, &f, true);
+>>         }
+>> 
+>>         return -EINVAL;
+>> @@ -523,7 +527,7 @@ static int clk_byte_set_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>> 
+>>         f.pre_div = div;
+>> 
+>> -       return clk_rcg2_configure(rcg, &f);
+>> +       return clk_rcg2_configure(rcg, &f, true);
+>>  }
+>> 
+>>  static int clk_byte_set_rate_and_parent(struct clk_hw *hw,
+>> @@ -589,7 +593,7 @@ static int clk_byte2_set_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>>         for (i = 0; i < num_parents; i++) {
+>>                 if (cfg == rcg->parent_map[i].cfg) {
+>>                         f.src = rcg->parent_map[i].src;
+>> -                       return clk_rcg2_configure(rcg, &f);
+>> +                       return clk_rcg2_configure(rcg, &f, true);
+>>                 }
+>>         }
+>> 
+>> @@ -682,7 +686,7 @@ static int clk_pixel_set_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>>                 f.m = frac->num;
+>>                 f.n = frac->den;
+>> 
+>> -               return clk_rcg2_configure(rcg, &f);
+>> +               return clk_rcg2_configure(rcg, &f, true);
+>>         }
+>>         return -EINVAL;
+>>  }
+> 
+> And all those hunks don't happen. Yay!
+> 
+>> @@ -790,3 +794,194 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, 
+>> unsigned long rate,
+>> +
+>> +static int
+>> +clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct 
+>> freq_tbl *f)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +       int ret;
+>> +
+>> +       if (!f)
+>> +               return -EINVAL;
+>> +
+>> +       ret = clk_rcg2_set_force_enable(hw);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = clk_rcg2_configure(rcg, f, true);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return clk_rcg2_clear_force_enable(hw);
+>> +}
+>> +
+>> +static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long 
+>> rate,
+>> +                                   unsigned long parent_rate)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +       const struct freq_tbl *f;
+>> +
+>> +       f = qcom_find_freq(rcg->freq_tbl, rate);
+>> +       if (!f)
+>> +               return -EINVAL;
+>> +
+>> +       /*
+>> +        * Store freq_tbl corresponding to requested rate in case 
+>> disable() op
+>> +        * clears the cached registers - disable() gets call after 
+>> set_rate().
+>> +        */
+>> +       rcg->current_freq_tbl = f;
+> 
+> Shouldn't be needed.
+> 
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index a5d402d..8e39bda 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -94,7 +94,7 @@ struct clk_hw *clk_hw_register_fixed_factor(struct device *dev,
- 	init.num_parents = 1;
- 
- 	hw = &fix->hw;
--	ret = clk_hw_register(dev, hw);
-+	ret = devm_clk_hw_register(dev, hw);
- 	if (ret) {
- 		kfree(fix);
- 		hw = ERR_PTR(ret);
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e42e1af..866ce1f 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -33,6 +33,15 @@ config QCOM_CLK_APCS_MSM8916
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as msm8916.
- 
-+config QCOM_CLK_APCC_MSM8996
-+	tristate "MSM8996 CPU Clock Controller"
-+	depends on COMMON_CLK_QCOM
-+	select QCOM_KRYO_L2_ACCESSORS
-+	help
-+	  Support for the CPU clock controller on msm8996 devices.
-+	  Say Y if you want to support CPU clock scaling using CPUfreq
-+	  drivers for dyanmic power management.
-+
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 7c09ab1..a822fc8 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
- obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
-+obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
- obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index f981b48..9ce2a32 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -50,6 +50,12 @@ struct pll_vco {
- 	u32 val;
- };
- 
-+#define VCO(a, b, c) { \
-+	.val = a,\
-+	.min_freq = b,\
-+	.max_freq = c,\
-+}
-+
- /**
-  * struct clk_alpha_pll - phase locked loop (PLL)
-  * @offset: base address of registers
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-new file mode 100644
-index 0000000..beb97eb
---- /dev/null
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -0,0 +1,412 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 and
-+ * only version 2 as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ */
-+
-+/*
-+ * Each of the CPU clusters (Power and Perf) on msm8996 are
-+ * clocked via 2 PLLs, a primary and alternate. There are also
-+ * 2 Mux'es, a primary and secondary all connected together
-+ * as shown below
-+ *
-+ *                              +-------+
-+ *               XO             |       |
-+ *           +------------------>0      |
-+ *                              |       |
-+ *                    PLL/2     | SMUX  +----+
-+ *                      +------->1      |    |
-+ *                      |       |       |    |
-+ *                      |       +-------+    |    +-------+
-+ *                      |                    +---->0      |
-+ *                      |                         |       |
-+ * +---------------+    |             +----------->1      | CPU clk
-+ * |Primary PLL    +----+ PLL_EARLY   |           |       +------>
-+ * |               +------+-----------+    +------>2 PMUX |
-+ * +---------------+      |                |      |       |
-+ *                        |   +------+     |   +-->3      |
-+ *                        +--^+  ACD +-----+   |  +-------+
-+ * +---------------+          +------+         |
-+ * |Alt PLL        |                           |
-+ * |               +---------------------------+
-+ * +---------------+         PLL_EARLY
-+ *
-+ * The primary PLL is what drives the CPU clk, except for times
-+ * when we are reprogramming the PLL itself (for rate changes) when
-+ * we temporarily switch to an alternate PLL. A subsequent patch adds
-+ * support to switch between primary and alternate PLL during rate
-+ * changes.
-+ *
-+ * The primary PLL operates on a single VCO range, between 600MHz
-+ * and 3GHz. However the CPUs do support OPPs with frequencies
-+ * between 300MHz and 600MHz. In order to support running the CPUs
-+ * at those frequencies we end up having to lock the PLL at twice
-+ * the rate and drive the CPU clk via the PLL/2 output and SMUX.
-+ *
-+ * So for frequencies above 600MHz we follow the following path
-+ *  Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-+ * and for frequencies between 300MHz and 600MHz we follow
-+ *  Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-+ * Support for this is added in a subsequent patch as well.
-+ *
-+ * ACD stands for Adaptive Clock Distribution and is used to
-+ * detect voltage droops. We do not add support for ACD as yet.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-regmap.h"
-+
-+enum _pmux_input {
-+	DIV_2_INDEX = 0,
-+	PLL_INDEX,
-+	ACD_INDEX,
-+	ALT_INDEX,
-+	NUM_OF_PMUX_INPUTS
-+};
-+
-+static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-+       [PLL_OFF_L_VAL] = 0x04,
-+       [PLL_OFF_ALPHA_VAL] = 0x08,
-+       [PLL_OFF_USER_CTL] = 0x10,
-+       [PLL_OFF_CONFIG_CTL] = 0x18,
-+       [PLL_OFF_CONFIG_CTL_U] = 0x1c,
-+       [PLL_OFF_TEST_CTL] = 0x20,
-+       [PLL_OFF_TEST_CTL_U] = 0x24,
-+       [PLL_OFF_STATUS] = 0x28,
-+};
-+
-+static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
-+       [PLL_OFF_L_VAL] = 0x04,
-+       [PLL_OFF_ALPHA_VAL] = 0x08,
-+       [PLL_OFF_ALPHA_VAL_U] = 0x0c,
-+       [PLL_OFF_USER_CTL] = 0x10,
-+       [PLL_OFF_USER_CTL_U] = 0x14,
-+       [PLL_OFF_CONFIG_CTL] = 0x18,
-+       [PLL_OFF_TEST_CTL] = 0x20,
-+       [PLL_OFF_TEST_CTL_U] = 0x24,
-+       [PLL_OFF_STATUS] = 0x28,
-+};
-+
-+/* PLLs */
-+
-+static const struct alpha_pll_config hfpll_config = {
-+	.l = 60,
-+	.config_ctl_val = 0x200d4828,
-+	.config_ctl_hi_val = 0x006,
-+	.pre_div_mask = BIT(12),
-+	.post_div_mask = 0x3 << 8,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll perfcl_pll = {
-+	.offset = 0x80000,
-+	.regs = prim_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "perfcl_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_huayra_ops,
-+	},
-+};
-+
-+static struct clk_alpha_pll pwrcl_pll = {
-+	.offset = 0x0,
-+	.regs = prim_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pwrcl_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_huayra_ops,
-+	},
-+};
-+
-+static const struct pll_vco alt_pll_vco_modes[] = {
-+	VCO(3,  250000000,  500000000),
-+	VCO(2,  500000000,  750000000),
-+	VCO(1,  750000000, 1000000000),
-+	VCO(0, 1000000000, 2150400000),
-+};
-+
-+static const struct alpha_pll_config altpll_config = {
-+	.l = 16,
-+	.vco_val = 0x3 << 20,
-+	.vco_mask = 0x3 << 20,
-+	.config_ctl_val = 0x4001051b,
-+	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll perfcl_alt_pll = {
-+	.offset = 0x80100,
-+	.regs = alt_pll_regs,
-+	.vco_table = alt_pll_vco_modes,
-+	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-+	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_alt_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+static struct clk_alpha_pll pwrcl_alt_pll = {
-+	.offset = 0x100,
-+	.regs = alt_pll_regs,
-+	.vco_table = alt_pll_vco_modes,
-+	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-+	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_alt_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+/* Mux'es */
-+
-+struct clk_cpu_8996_mux {
-+	u32	reg;
-+	u8	shift;
-+	u8	width;
-+	struct clk_hw	*pll;
-+	struct clk_regmap clkr;
-+};
-+
-+static inline
-+struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
-+{
-+	return container_of(to_clk_regmap(hw), struct clk_cpu_8996_mux, clkr);
-+}
-+
-+static u8 clk_cpu_8996_mux_get_parent(struct clk_hw *hw)
-+{
-+	u32 val;
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	u32 mask = (u32)GENMASK(cpuclk->width - 1, 0);
-+
-+	regmap_read(clkr->regmap, cpuclk->reg, &val);
-+	val >>= (u32)(cpuclk->shift);
-+
-+	return (u8)(val & mask);
-+}
-+
-+static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	u32 val;
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	unsigned int mask = GENMASK(cpuclk->width + cpuclk->shift - 1,
-+				    cpuclk->shift);
-+
-+	val = (u32)index;
-+	val <<= (u32)(cpuclk->shift);
-+
-+	return regmap_update_bits(clkr->regmap, cpuclk->reg, mask, val);
-+}
-+
-+static int
-+clk_cpu_8996_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
-+{
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	struct clk_hw *parent = cpuclk->pll;
-+
-+	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
-+	req->best_parent_hw = parent;
-+
-+	return 0;
-+}
-+
-+const struct clk_ops clk_cpu_8996_mux_ops = {
-+	.set_parent = clk_cpu_8996_mux_set_parent,
-+	.get_parent = clk_cpu_8996_mux_get_parent,
-+	.determine_rate = clk_cpu_8996_mux_determine_rate,
-+};
-+
-+static struct clk_cpu_8996_mux pwrcl_smux = {
-+	.reg = 0x40,
-+	.shift = 2,
-+	.width = 2,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_smux",
-+		.parent_names = (const char *[]){
-+			"xo",
-+			"pwrcl_pll_main",
-+		},
-+		.num_parents = 2,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_cpu_8996_mux perfcl_smux = {
-+	.reg = 0x80040,
-+	.shift = 2,
-+	.width = 2,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_smux",
-+		.parent_names = (const char *[]){
-+			"xo",
-+			"perfcl_pll_main",
-+		},
-+		.num_parents = 2,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_cpu_8996_mux pwrcl_pmux = {
-+	.reg = 0x40,
-+	.shift = 0,
-+	.width = 2,
-+	.pll = &pwrcl_pll.clkr.hw,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_pmux",
-+		.parent_names = (const char *[]){
-+			"pwrcl_smux",
-+			"pwrcl_pll",
-+			"pwrcl_pll_acd",
-+			"pwrcl_alt_pll",
-+		},
-+		.num_parents = 4,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static struct clk_cpu_8996_mux perfcl_pmux = {
-+	.reg = 0x80040,
-+	.shift = 0,
-+	.width = 2,
-+	.pll = &perfcl_pll.clkr.hw,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_pmux",
-+		.parent_names = (const char *[]){
-+			"perfcl_smux",
-+			"perfcl_pll",
-+			"perfcl_pll_acd",
-+			"perfcl_alt_pll",
-+		},
-+		.num_parents = 4,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
-+static const struct regmap_config cpu_msm8996_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x80210,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+struct clk_regmap *clks[] = {
-+	&perfcl_pll.clkr,
-+	&pwrcl_pll.clkr,
-+	&perfcl_alt_pll.clkr,
-+	&pwrcl_alt_pll.clkr,
-+	&perfcl_smux.clkr,
-+	&pwrcl_smux.clkr,
-+	&perfcl_pmux.clkr,
-+	&pwrcl_pmux.clkr,
-+};
-+
-+static int
-+qcom_cpu_clk_msm8996_register_clks(struct device *dev, struct regmap *regmap)
-+{
-+	int i, ret;
-+
-+	perfcl_smux.pll = clk_hw_register_fixed_factor(dev, "perfcl_pll_main",
-+						       "perfcl_pll",
-+						   CLK_SET_RATE_PARENT, 1, 2);
-+
-+	pwrcl_smux.pll = clk_hw_register_fixed_factor(dev, "pwrcl_pll_main",
-+						      "pwrcl_pll",
-+						   CLK_SET_RATE_PARENT, 1, 2);
-+
-+	for (i = 0; i < ARRAY_SIZE(clks); i++) {
-+		ret = devm_clk_register_regmap(dev, clks[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
-+	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
-+
-+	return ret;
-+}
-+
-+static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+	void __iomem *base;
-+	struct resource *res;
-+	struct regmap *regmap;
-+	struct clk_hw_onecell_data *data;
-+	struct device *dev = &pdev->dev;
-+
-+	data = devm_kzalloc(dev, sizeof(*data) + 2 * sizeof(struct clk_hw *),
-+			    GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &cpu_msm8996_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	ret = qcom_cpu_clk_msm8996_register_clks(dev, regmap);
-+	if (ret)
-+		return ret;
-+
-+	data->hws[0] = &pwrcl_pmux.clkr.hw;
-+	data->hws[1] = &perfcl_pmux.clkr.hw;
-+	data->num = 2;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
-+}
-+
-+static const struct of_device_id qcom_cpu_clk_msm8996_match_table[] = {
-+	{ .compatible = "qcom,msm8996-apcc" },
-+	{}
-+};
-+
-+static struct platform_driver qcom_cpu_clk_msm8996_driver = {
-+	.probe = qcom_cpu_clk_msm8996_driver_probe,
-+	.driver = {
-+		.name = "qcom-msm8996-apcc",
-+		.of_match_table = qcom_cpu_clk_msm8996_match_table,
-+	},
-+};
-+module_platform_driver(qcom_cpu_clk_msm8996_driver);
-+
-+MODULE_ALIAS("platform:msm8996-apcc");
-+MODULE_DESCRIPTION("QCOM MSM8996 CPU Clock Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+Yes with new implementation it is not required to store freq_tbl.
+Please have a look at my last comment where I have explained the
+new logic.
+
+>> +
+>> +       /*
+>> +        * In case clock is disabled, update the CFG, M, N and D 
+>> registers
+>> +        * and do not hit the update bit of CMD register.
+>> +        */
+>> +       if (!__clk_is_enabled(hw->clk))
+>> +               /* Skip the configuration update */
+>> +               return clk_rcg2_configure(rcg, rcg->current_freq_tbl, 
+>> false);
+>> +
+>> +       return clk_rcg2_shared_force_enable_clear(hw, 
+>> rcg->current_freq_tbl);
+>> +}
+>> +
+>> +static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
+>> +               unsigned long rate, unsigned long parent_rate, u8 
+>> index)
+>> +{
+>> +       return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
+>> +}
+>> +
+>> +static unsigned long
+>> +clk_rcg2_shared_recalc_rate(struct clk_hw *hw, unsigned long 
+>> parent_rate)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +
+>> +       if (!__clk_is_enabled(hw->clk) && rcg->current_freq_tbl)
+>> +               return rcg->current_freq_tbl->freq;
+> 
+> Why can't we read the hardware? The M, N, D registers should always 
+> have
+> the latest configuration of the frequency when recalc is called
+> regardless of the on/off state.
+> 
+
+With new implementation, it is not required to make a decision based
+on the clk on/off status. Please have a look at my last comment.
+
+>> +
+>> +       return clk_rcg2_recalc_rate(hw, parent_rate);
+>> +}
+>> +
+>> +static int clk_rcg2_shared_enable(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +       struct freq_tbl safe_src_tbl = { 0 };
+>> +       int ret;
+>> +       u32 cfg_src;
+>> +
+>> +       regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, 
+>> &cfg_src);
+>> +
+>> +       cfg_src = cfg_src & CFG_SRC_SEL_MASK;
+>> +       cfg_src >>= CFG_SRC_SEL_SHIFT;
+>> +
+>> +       if (!rcg->current_freq_tbl) {
+>> +               /*
+>> +                * In the case where clk_enable() would be called
+>> +                * without a clk_set_rate(), check for RCG 
+>> configuration
+>> +                * if done previously.
+>> +                */
+>> +
+>> +               if (cfg_src)
+>> +                       return 0;
+>> +
+>> +               /*
+>> +                * Configure RCG to safe_src, if following conditions
+>> +                * holds true:
+>> +                * - Bootloader configures the RCG to run from 
+>> safe_src.
+>> +                * - RCG's frequency table does not hold entry for
+>> +                *   safe_src speed.
+>> +                */
+>> +               safe_src_tbl.src = rcg->safe_src_index;
+>> +               return clk_rcg2_shared_force_enable_clear(hw, 
+>> &safe_src_tbl);
+>> +       }
+>> +
+>> +       /*
+>> +        * Switch from safe source to the stashed mux selection. The 
+>> current
+>> +        * parent has already been prepared and enabled at this point, 
+>> and
+>> +        * the safe source is always on while application processor 
+>> subsystem
+>> +        * is online. Therefore, the RCG can safely switch its source.
+>> +        */
+>> +
+>> +       if (!cfg_src)
+>> +               /*
+>> +                * Reconfigure the RCG if cached registers are 
+>> overwritten
+>> +                * by clk_disable() after clk_set_rate().
+>> +                */
+>> +               return clk_rcg2_shared_force_enable_clear(hw,
+>> +                                               
+>> rcg->current_freq_tbl);
+>> +
+>> +       /*
+>> +        * Set the update bit only as other required configuration has 
+>> been
+>> +        * already done inside set_rate().
+>> +        */
+>> +       ret = clk_rcg2_set_force_enable(hw);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = update_config(rcg);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       return clk_rcg2_clear_force_enable(hw);
+> 
+> This whole function seems overly complicated. Please see my comment
+> below.
+> 
+>> +}
+>> +
+>> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +       struct freq_tbl safe_src_tbl = { 0 };
+>> +
+>> +       /*
+>> +        * Park the RCG at a safe configuration - sourced off from 
+>> safe source.
+>> +        * Force enable and disable the RCG while configuring it to 
+>> safeguard
+>> +        * against any update signal coming from the downstream clock.
+>> +        * The current parent is still prepared and enabled at this 
+>> point, and
+>> +        * the safe source is always on while application processor 
+>> subsystem
+>> +        * is online. Therefore, the RCG can safely switch its parent.
+>> +        */
+>> +       safe_src_tbl.src = rcg->safe_src_index;
+>> +       clk_rcg2_shared_force_enable_clear(hw, &safe_src_tbl);
+> 
+> This should then re-dirty the config register to have the software
+> frequency settings that existed in the hardware when disable was 
+> called.
+> Given that MND shouldn't be changed here, this should be as simple as
+> saving away the CFG register, forcing it to XO speed by changing the 
+> src
+> and disabling dual edge in the CFG register (please don't call
+> force_enable_clear with some frequency pointer, just do this inline
+> here), and then rewriting the cfg register with the "real" settings for
+> whatever frequency it's supposed to run at and then returning from this
+> function.
+> 
+> I guess we have to do a read cfg from hardware, write cfg, hit update
+> config, and then write cfg again each time we disable. For enable, we
+> just do an update config (if it's dirty?) inside of a force
+> enable/disable pair. And set_rate doesn't really change except it 
+> either
+> does or doesn't hit the update config bit if the clk is enabled or
+> disabled respectively.
+> 
+
+We have done the below changes suggested by you and that logic seems to 
+be
+working fine. But we have one concern about leaving the RCG registers in
+dirty state and would like to have a little bit modification as 
+explained
+below:
+
+Suggested Logic:
+1. set_rate()--> Update CFG, M, N and D registers and don't hit the 
+update
+                  bit if clock is disabled - call new 
+__clk_rcg2_configure().
+                  Above will make the CFG register as dirty.
+
+2. _disable()--> 2.1 - Store the CFG register configuration in a 
+variable.
+                  2.2 - Move to the safe source (XO) and hit the update 
+bit.
+                        It will only touch the CFG register and M, N, D
+                        register values will remain as it was.
+                  2.3 - Write back the stored CFG value done in step #2.1
+                        This will again redirty the CFG register.
+
+3. _enable()--> Just hit the update bit as the configuration write will
+                 be taken care in the steps #1 and #2.
+
+It would be great if we don't redirty the CFG register and leave the RCG
+CFG register to at safe source(XO) in disable() path.
+
+This would help us to debug the issues where device crashes and we want
+to dump the RCG registers to know whether from software, we have 
+actually
+moved to safe source or not. Otherwise, we would get the dirty register
+values in crash dumps.
+
+So instead of writing back the stored CFG(corresponding to real rate
+settings) in disable path, we want to restore the stored CFG in enable
+path and then hit the update bit.
+CFG configuration store can happen at two places - set_rate() and 
+disable()
+path and above logic will be modified as below:
+
+1. set_rate()--> 1.1 - Update CFG, M, N and D registers and don't hit 
+the
+                        update bit if clock is disabled.
+                  1.2 - Store CFG register value in 'current_cfg' member
+                        of 'rcg2' structure.
+
+2. _disable()--> 2.1 - Store the CFG register value in 'current_cfg' 
+before
+                        switching to the safe source (XO).
+                  2.2 - Move to the safe source (XO) and hit the update 
+bit.
+                        Now RCG configuration wil not be dirty.
+
+3. _enable()--> 3.1 - Check for 'current_cfg' value and if 0 then 
+return.
+                       This would catch the below one time condition:
+                       - when clk_enable() gets call without set_rate().
+                 3.2 - Write the CFG value from 'current_cfg' to CFG 
+register.
+                 3.2 - Hit the update bit as we have already written the 
+latest
+                       configuration in step #3.2.
+                 3.3 - Clear the 'current_cfg' value.
+
+We feel above logic will work as expected and in this way, we don't have 
+CFG
+registers in dirty state when clock is disabled.
+Could you please inform us your thoughts about above implementation and 
+based
+on that I will send the required changes.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
