@@ -1,73 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751377AbeECJJS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:09:18 -0400
-Received: from guitar.tcltek.co.il ([192.115.133.116]:59780 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751132AbeECJJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751445AbeECJJX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:09:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38975 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751160AbeECJJP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 May 2018 05:09:15 -0400
-Date: Thu, 3 May 2018 12:09:09 +0300
-From: Baruch Siach <baruch@tkos.co.il>
-To: Jacob Chen <jacob-chen@iotwrt.com>
-Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mchehab@kernel.org,
-        linux-media@vger.kernel.org, sakari.ailus@linux.intel.com,
-        hans.verkuil@cisco.com, tfiga@chromium.org, zhengsq@rock-chips.com,
-        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
-        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
-        devicetree@vger.kernel.org, heiko@sntech.de,
-        Jacob Chen <jacob2.chen@rock-chips.com>,
-        Jacob Chen <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-Subject: Re: [PATCH v6 05/17] media: rkisp1: add Rockchip ISP1 subdev driver
-Message-ID: <20180503090909.o3dyhukzs2y7em5z@tarshish>
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
- <20180308094807.9443-6-jacob-chen@iotwrt.com>
+From: Colin King <colin.king@canonical.com>
+To: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+        linux-pm@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] cpupower: fix spelling mistake: "logilename" -> "logfilename"
+Date: Thu,  3 May 2018 10:09:10 +0100
+Message-Id: <20180503090910.29144-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180308094807.9443-6-jacob-chen@iotwrt.com>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
+From: Colin Ian King <colin.king@canonical.com>
 
-On Thu, Mar 08, 2018 at 05:47:55PM +0800, Jacob Chen wrote:
-> +static int rkisp1_isp_sd_s_power(struct v4l2_subdev *sd, int on)
-> +{
-> +	struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
-> +	int ret;
-> +
-> +	v4l2_dbg(1, rkisp1_debug, &isp_dev->v4l2_dev, "s_power: %d\n", on);
-> +
-> +	if (on) {
-> +		ret = pm_runtime_get_sync(isp_dev->dev);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		rkisp1_config_clk(isp_dev);
-> +	} else {
-> +		ret = pm_runtime_put(isp_dev->dev);
+Trivial fix to spelling mistake in dprintf message
 
-I commented this line out to make more than one STREAMON work. Otherwise, the 
-second STREAMON hangs. I guess the bug is not this driver. Probably something 
-in drivers/soc/rockchip/pm_domains.c. Just noting that in case you or someone 
-on Cc would like to investigate it further.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/power/cpupower/bench/parse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I tested v4.16-rc4 on the Tinkerboard.
-
-baruch
-
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-
+diff --git a/tools/power/cpupower/bench/parse.c b/tools/power/cpupower/bench/parse.c
+index 9b65f052081f..9ba8a44ad2a7 100644
+--- a/tools/power/cpupower/bench/parse.c
++++ b/tools/power/cpupower/bench/parse.c
+@@ -104,7 +104,7 @@ FILE *prepare_output(const char *dirname)
+ 			dirname, time(NULL));
+ 	}
+ 
+-	dprintf("logilename: %s\n", filename);
++	dprintf("logfilename: %s\n", filename);
+ 
+ 	output = fopen(filename, "w+");
+ 	if (output == NULL) {
 -- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
+2.17.0
