@@ -1,17 +1,17 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752285AbeECFJR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 01:09:17 -0400
-Received: from mga18.intel.com ([134.134.136.126]:57747 "EHLO mga18.intel.com"
+        id S1752324AbeECFJX (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 01:09:23 -0400
+Received: from mga05.intel.com ([192.55.52.43]:56979 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751624AbeECFJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 01:09:09 -0400
+        id S1752293AbeECFJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 01:09:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="38046275"
-Subject: [PATCH v2 5/9] x86, memcpy_mcsafe: define copy_to_iter_mcsafe()
+   d="scan'208";a="52792654"
+Subject: [PATCH v2 7/9] dax: report bytes remaining in dax_iomap_actor()
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
 Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
@@ -24,8 +24,8 @@ Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>, hch@lst.de,
         linux-kernel@vger.kernel.org, tony.luck@intel.com,
         linux-fsdevel@vger.kernel.org
-Date: Wed, 02 May 2018 21:59:07 -0700
-Message-ID: <152532354781.17218.7424857107546723514.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date: Wed, 02 May 2018 21:59:23 -0700
+Message-ID: <152532356340.17218.13406212965402419668.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <152532351517.17218.3583455156840230837.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <152532351517.17218.3583455156840230837.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -36,10 +36,9 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the updated memcpy_mcsafe() implementation to define
-copy_user_mcsafe() and copy_to_iter_mcsafe(). The most significant
-difference from typical copy_to_iter() is that the ITER_KVEC and
-ITER_BVEC iterator types can fail to complete a full transfer.
+In preparation for protecting the dax read(2) path from media errors
+with copy_to_iter_mcsafe() (via dax_copy_to_iter()), convert the
+implementation to report the bytes successfully transferred.
 
 Cc: <x86@kernel.org>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -53,148 +52,48 @@ Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- arch/x86/Kconfig                  |    1 +
- arch/x86/include/asm/uaccess_64.h |   11 +++++++
- include/linux/uio.h               |   15 +++++++++
- lib/iov_iter.c                    |   61 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 88 insertions(+)
+ fs/dax.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index c07f492b871a..6ca22706cd64 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -60,6 +60,7 @@ config X86
- 	select ARCH_HAS_PMEM_API		if X86_64
- 	select ARCH_HAS_REFCOUNT
- 	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
-+	select ARCH_HAS_UACCESS_MCSAFE		if X86_64
- 	select ARCH_HAS_SET_MEMORY
- 	select ARCH_HAS_SG_CHAIN
- 	select ARCH_HAS_STRICT_KERNEL_RWX
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index c63efc07891f..62acb613114b 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -47,6 +47,17 @@ copy_user_generic(void *to, const void *from, unsigned len)
- }
+diff --git a/fs/dax.c b/fs/dax.c
+index a64afdf7ec0d..34a2d435ae4b 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -991,6 +991,7 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	struct iov_iter *iter = data;
+ 	loff_t end = pos + length, done = 0;
+ 	ssize_t ret = 0;
++	size_t xfer;
+ 	int id;
  
- static __always_inline __must_check unsigned long
-+copy_to_user_mcsafe(void *to, const void *from, unsigned len)
-+{
-+	unsigned long ret;
-+
-+	__uaccess_begin();
-+	ret = memcpy_mcsafe(to, from, len);
-+	__uaccess_end();
-+	return ret;
-+}
-+
-+static __always_inline __must_check unsigned long
- raw_copy_from_user(void *dst, const void __user *src, unsigned long size)
- {
- 	int ret = 0;
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index e67e12adb136..f5766e853a77 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -154,6 +154,12 @@ size_t _copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i);
- #define _copy_from_iter_flushcache _copy_from_iter_nocache
- #endif
+ 	if (iov_iter_rw(iter) == READ) {
+@@ -1054,19 +1055,20 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 		 * vfs_write(), depending on which operation we are doing.
+ 		 */
+ 		if (iov_iter_rw(iter) == WRITE)
+-			map_len = dax_copy_from_iter(dax_dev, pgoff, kaddr,
++			xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
+ 					map_len, iter);
+ 		else
+-			map_len = dax_copy_to_iter(dax_dev, pgoff, kaddr,
++			xfer = dax_copy_to_iter(dax_dev, pgoff, kaddr,
+ 					map_len, iter);
+-		if (map_len <= 0) {
+-			ret = map_len ? map_len : -EFAULT;
+-			break;
+-		}
  
-+#ifdef CONFIG_ARCH_HAS_UACCESS_MCSAFE
-+size_t _copy_to_iter_mcsafe(void *addr, size_t bytes, struct iov_iter *i);
-+#else
-+#define _copy_to_iter_mcsafe _copy_to_iter
-+#endif
+-		pos += map_len;
+-		length -= map_len;
+-		done += map_len;
++		pos += xfer;
++		length -= xfer;
++		done += xfer;
 +
- static __always_inline __must_check
- size_t copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
- {
-@@ -163,6 +169,15 @@ size_t copy_from_iter_flushcache(void *addr, size_t bytes, struct iov_iter *i)
- 		return _copy_from_iter_flushcache(addr, bytes, i);
- }
++		if (xfer == 0)
++			ret = -EFAULT;
++		if (xfer < map_len)
++			break;
+ 	}
+ 	dax_read_unlock(id);
  
-+static __always_inline __must_check
-+size_t copy_to_iter_mcsafe(void *addr, size_t bytes, struct iov_iter *i)
-+{
-+	if (unlikely(!check_copy_size(addr, bytes, false)))
-+		return 0;
-+	else
-+		return _copy_to_iter_mcsafe(addr, bytes, i);
-+}
-+
- size_t iov_iter_zero(size_t bytes, struct iov_iter *);
- unsigned long iov_iter_alignment(const struct iov_iter *i);
- unsigned long iov_iter_gap_alignment(const struct iov_iter *i);
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 970212670b6a..70ebc8ede143 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -573,6 +573,67 @@ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
- }
- EXPORT_SYMBOL(_copy_to_iter);
- 
-+#ifdef CONFIG_ARCH_HAS_UACCESS_MCSAFE
-+static int copyout_mcsafe(void __user *to, const void *from, size_t n)
-+{
-+	if (access_ok(VERIFY_WRITE, to, n)) {
-+		kasan_check_read(from, n);
-+		n = copy_to_user_mcsafe((__force void *) to, from, n);
-+	}
-+	return n;
-+}
-+
-+static unsigned long memcpy_mcsafe_to_page(struct page *page, size_t offset,
-+		const char *from, size_t len)
-+{
-+	unsigned long ret;
-+	char *to;
-+
-+	to = kmap_atomic(page);
-+	ret = memcpy_mcsafe(to + offset, from, len);
-+	kunmap_atomic(to);
-+
-+	return ret;
-+}
-+
-+size_t _copy_to_iter_mcsafe(const void *addr, size_t bytes, struct iov_iter *i)
-+{
-+	const char *from = addr;
-+	unsigned long rem, curr_addr, s_addr = (unsigned long) addr;
-+
-+	if (unlikely(i->type & ITER_PIPE)) {
-+		WARN_ON(1);
-+		return 0;
-+	}
-+	if (iter_is_iovec(i))
-+		might_fault();
-+	iterate_and_advance(i, bytes, v,
-+		copyout_mcsafe(v.iov_base, (from += v.iov_len) - v.iov_len, v.iov_len),
-+		({
-+		rem = memcpy_mcsafe_to_page(v.bv_page, v.bv_offset,
-+                               (from += v.bv_len) - v.bv_len, v.bv_len);
-+		if (rem) {
-+			curr_addr = (unsigned long) from;
-+			bytes = curr_addr - s_addr - rem;
-+			return bytes;
-+		}
-+		}),
-+		({
-+		rem = memcpy_mcsafe(v.iov_base, (from += v.iov_len) - v.iov_len,
-+				v.iov_len);
-+		if (rem) {
-+			curr_addr = (unsigned long) from;
-+			bytes = curr_addr - s_addr - rem;
-+			return bytes;
-+		}
-+		})
-+	)
-+
-+	return bytes;
-+}
-+EXPORT_SYMBOL_GPL(_copy_to_iter_mcsafe);
-+#endif /* CONFIG_ARCH_HAS_UACCESS_MCSAFE */
-+
- size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
- {
- 	char *to = addr;
