@@ -1,54 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751419AbeECOwa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:52:30 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43670 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751079AbeECOw1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:52:27 -0400
-Date: Thu, 3 May 2018 16:52:21 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-Message-ID: <20180503145221.GE12217@hirez.programming.kicks-ass.net>
-References: <20180417142119.GA4511@codeblueprint.co.uk>
- <20180420095005.GH4064@hirez.programming.kicks-ass.net>
- <20180424133325.GA3179@codeblueprint.co.uk>
- <1525349542.9956.2.camel@gmx.de>
- <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
- <1525351221.9956.4.camel@gmx.de>
- <20180503124943.GB12217@hirez.programming.kicks-ass.net>
- <1525354359.5576.1.camel@gmx.de>
- <20180503135617.GC12217@hirez.programming.kicks-ass.net>
- <20180503143941.GH26088@linux.vnet.ibm.com>
+        id S1751674AbeECOyB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:54:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46200 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751279AbeECOx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:53:56 -0400
+Date: Thu, 3 May 2018 16:53:54 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        bart.vanassche@wdc.com, ming.lei@redhat.com, rjw@rjwysocki.net,
+        mguzik@redhat.com, linux-pm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs: move documentation for thaw_super() where
+ appropriate
+Message-ID: <20180503145354.unbzycfj6axeumfl@quack2.suse.cz>
+References: <20180420235904.27496-1-mcgrof@kernel.org>
+ <20180420235904.27496-2-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180503143941.GH26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180420235904.27496-2-mcgrof@kernel.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 07:39:41AM -0700, Paul E. McKenney wrote:
-> Huh.
+On Fri 20-04-18 16:59:02, Luis R. Rodriguez wrote:
+> On commit 08fdc8a0138a ("buffer.c: call thaw_super during emergency thaw")
+> Mateusz added thaw_super_locked() and made thaw_super() use it, but
+> forgot to move the documentation.
 > 
-> No, RCU_NONIDLE() only works for idle, not for offline.
+> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
-Oh bummer..
+Looks good (modulo the -- which is probably worth fixing when touching the
+comment anyway). You can add:
 
-> Maybe...  Let me take a look.  There must be some way to mark a
-> specific lock acquisition and release as being lockdep-invisible...
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-But I suspect it flags a real issue. Shutting it up isn't the issue as
-such. There could be a concurrent sched domain rebuild while we do this
-setup, and if we free that domain while we're looking at it, bad things
-happen.
+								Honza
 
-... I wonder what brought this failure to pass now. This code has been
-like this a for a long time.
+> ---
+>  fs/super.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 5fa9a8d8d865..9d0eb5e20a1f 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1532,12 +1532,6 @@ int freeze_super(struct super_block *sb)
+>  }
+>  EXPORT_SYMBOL(freeze_super);
+>  
+> -/**
+> - * thaw_super -- unlock filesystem
+> - * @sb: the super to thaw
+> - *
+> - * Unlocks the filesystem and marks it writeable again after freeze_super().
+> - */
+>  static int thaw_super_locked(struct super_block *sb)
+>  {
+>  	int error;
+> @@ -1573,6 +1567,12 @@ static int thaw_super_locked(struct super_block *sb)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * thaw_super -- unlock filesystem
+> + * @sb: the super to thaw
+> + *
+> + * Unlocks the filesystem and marks it writeable again after freeze_super().
+> + */
+>  int thaw_super(struct super_block *sb)
+>  {
+>  	down_write(&sb->s_umount);
+> -- 
+> 2.16.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
