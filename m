@@ -1,23 +1,30 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752110AbeECMbR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:31:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47624 "EHLO mx1.redhat.com"
+        id S1751776AbeECMdB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:33:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47772 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751173AbeECMbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:31:12 -0400
-Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
- virtualization mode
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
-        peterz@infradead.org, chao.p.peng@linux.intel.com
+        id S1750999AbeECMc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:32:57 -0400
+Subject: Re: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function to
+ get capability of Intel PT
+To: "Kang, Luwei" <luwei.kang@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
 References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
- <20180503113223.x2ykby6wglppgdwf@um.fi.intel.com>
- <c44f948b-21ab-fbcf-4d8c-eb426684814d@redhat.com>
- <20180503120928.gsqwreqnu5sllzw2@um.fi.intel.com>
+ <1525349323-9938-6-git-send-email-luwei.kang@intel.com>
+ <20180503105032.h73n5lcrwkdbahgm@um.fi.intel.com>
+ <82D7661F83C1A047AF7DC287873BF1E167F6DDCE@SHSMSX101.ccr.corp.intel.com>
+ <20180503121301.nlbm4cotbv26tc7l@um.fi.intel.com>
+ <82D7661F83C1A047AF7DC287873BF1E167F6DFFA@SHSMSX101.ccr.corp.intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -55,12 +62,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <d1f07932-e062-385e-cc83-04b4e1b1eeed@redhat.com>
-Date: Thu, 3 May 2018 14:31:01 +0200
+Message-ID: <349c6c61-6b6a-31b8-c8c5-24aed5716929@redhat.com>
+Date: Thu, 3 May 2018 14:32:53 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180503120928.gsqwreqnu5sllzw2@um.fi.intel.com>
+In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E167F6DFFA@SHSMSX101.ccr.corp.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,19 +75,17 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 14:09, Alexander Shishkin wrote:
->>> 1. Do we have an event in pt_ctx?
->>>  * No -> Set up the context for VMX.
->>>  * Yes -> 2. Is attr.exclude_guest set?
->>>              * No -> Guest trace goes to the host's buffer, do nothing.
->>> 	     * Yes -> Set up/switch the context for VMX.
->> Can you explain this more clearly?
-> Let's see; in the intel_pt driver we have a per-cpu PT "context", from which
-> we can tell if there is a host event that wants to trace the guest. This
-> should provide enough information to make a decision whether we want to
-> context switch PT MSRs or not on the spot, instead of having a module
-> parameter.
+On 03/05/2018 14:30, Kang, Luwei wrote:
+>> Can you elaborate on this, what information do we need besides
+>> MSR_IA32_VMX_MISC[14]?
+>
+> Enable Intel PT in guest depend on SECONDARY_EXEC_PT_USE_GPA, EPT,
+> MSR_IA32_VMX_MISC[14] and the capability of " PT_CAP_topa_output" on
+> hardware. PT driver will return " -ENODEV" if hardware not support
+> "PT_CAP_topa_output".
 
-I still don't understand how the host event is useful...
+I actually don't understand why PT_CAP_topa_output matters for the
+purpose of enabling PT in the guest.  However you still need
+__pt_cap_get() in the CPUID checks.
 
 Paolo
