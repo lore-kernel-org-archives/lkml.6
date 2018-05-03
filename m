@@ -1,97 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751799AbeECOyw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:54:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33996 "EHLO mail.kernel.org"
+        id S1751776AbeECOyt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:54:49 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57783 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751598AbeECOyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751456AbeECOyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 May 2018 10:54:46 -0400
-X-Google-Smtp-Source: AB8JxZqv/xJqUJBHIU4jrQsik+hnrFVTCvoPwKQ8XNUZKVb1RwQd/N7pTbWBmUr55UYvnB9hTmU2TqC7AFxxQ+HEcp8=
+Date: Thu, 3 May 2018 16:54:08 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Danny Milosavljevic <dannym@scratchpost.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrea Bondavalli <andrea.bondavalli74@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.xyz>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v14 8/8] ASoC: sun4i-codec: Add Left Capture Select,
+ Right Capture Select
+Message-ID: <20180503145408.yymk2ndt4sm2yt4i@flea>
+References: <20180502210800.1971-1-dannym@scratchpost.org>
+ <20180502210800.1971-9-dannym@scratchpost.org>
 MIME-Version: 1.0
-In-Reply-To: <1525359006-27251-1-git-send-email-krzk@kernel.org>
-References: <1525359006-27251-1-git-send-email-krzk@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Thu, 3 May 2018 16:54:43 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPenZiTaXL+4b8gyGMLK_06LG5+ACZqfFN+oGRPAkzGYPw@mail.gmail.com>
-Message-ID: <CAJKOXPenZiTaXL+4b8gyGMLK_06LG5+ACZqfFN+oGRPAkzGYPw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: tegra: Add support for 256 MB Colibri-T20 (plus
- such board on Iris)
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="odizj5wdfscxpmbv"
+Content-Disposition: inline
+In-Reply-To: <20180502210800.1971-9-dannym@scratchpost.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 4:50 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-> (with 1024 MB NAND) flavors.  Add support for the 256 MB version on Iris
-> evaluation board.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+--odizj5wdfscxpmbv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Wed, May 02, 2018 at 11:08:00PM +0200, Danny Milosavljevic wrote:
+> Add Left Capture Select and Right Capture Select for Allwinner A10 and
+> Allwinner A20.
+>=20
+> Signed-off-by: Danny Milosavljevic <dannym@scratchpost.org>
 > ---
->  Documentation/devicetree/bindings/arm/tegra.txt    |   1 +
->  arch/arm/boot/dts/Makefile                         |   1 +
->  arch/arm/boot/dts/tegra20-colibri-256.dtsi         |  11 +
->  arch/arm/boot/dts/tegra20-colibri-512.dtsi         | 531 +--------------------
->  ...gra20-colibri-512.dtsi => tegra20-colibri.dtsi} |   4 -
->  arch/arm/boot/dts/tegra20-iris-256.dts             |  10 +
->  arch/arm/boot/dts/tegra20-iris-512.dts             |  98 +---
->  ...gra20-iris-512.dts => tegra20-iris-common.dtsi} |  11 +-
->  8 files changed, 31 insertions(+), 636 deletions(-)
->  create mode 100644 arch/arm/boot/dts/tegra20-colibri-256.dtsi
->  copy arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi} (99%)
->  create mode 100644 arch/arm/boot/dts/tegra20-iris-256.dts
->  copy arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris-common.dtsi} (85%)
->
-> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-> index 32f62bb7006d..d304574ae441 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra.txt
-> +++ b/Documentation/devicetree/bindings/arm/tegra.txt
-> @@ -49,6 +49,7 @@ board-specific compatible values:
->    toradex,apalis_t30-eval
->    toradex,apalis-tk1
->    toradex,apalis-tk1-eval
-> +  toradex,colibri_t20-256
->    toradex,colibri_t20-512
->    toradex,colibri_t30
->    toradex,colibri_t30-eval-v3
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index da7d08c3ae98..d63214c6967c 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -1031,6 +1031,7 @@ dtb-$(CONFIG_ARCH_TANGO) += \
->         tango4-vantage-1172.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
->         tegra20-harmony.dtb \
-> +       tegra20-iris-256.dtb \
->         tegra20-iris-512.dtb \
->         tegra20-medcom-wide.dtb \
->         tegra20-paz00.dtb \
-> diff --git a/arch/arm/boot/dts/tegra20-colibri-256.dtsi b/arch/arm/boot/dts/tegra20-colibri-256.dtsi
-> new file mode 100644
-> index 000000000000..8f8922b0b7e7
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/tegra20-colibri-256.dtsi
-> @@ -0,0 +1,11 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include "tegra20-colibri.dtsi"
-> +
-> +/ {
-> +       model = "Toradex Colibri T20 256MB";
-> +       compatible = "toradex,colibri_t20-256", "nvidia,tegra20";
-> +
-> +       memory {
-> +               reg = <0x00000000 0x20000000>;
+>  sound/soc/sunxi/sun4i-codec.c | 50 +++++++++++++++++++++++++++++++++++++=
+++++++
+>  1 file changed, 50 insertions(+)
+>=20
+> diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
+> index 45dcb80a1da9..1a4ba3bae5da 100644
+> --- a/sound/soc/sunxi/sun4i-codec.c
+> +++ b/sound/soc/sunxi/sun4i-codec.c
+> @@ -706,6 +706,25 @@ static DECLARE_TLV_DB_RANGE(sun7i_codec_micin_preamp=
+_gain_scale,
+>  			    0, 0, TLV_DB_SCALE_ITEM(0, 0, 0),
+>  			    1, 7, TLV_DB_SCALE_ITEM(2400, 300, 0));
+> =20
+> +static const char * const sun4i_codec_capture_source[] =3D {
+> +	"Line",
+> +	"FM",
+> +	"Mic1",
+> +	"Mic2",
+> +	"Mic1,Mic2",
+> +	"Mic1+Mic2",
+> +	"Output Mixer",
+> +	"Line,Mic1",
+> +};
 
-... and obviously this is not 256 MB so I need to resend.
+Shouldn't that be defined in a more generic way? As far as I know,
+there's no way to tell what the difference between "Mic1,Mic2" and
+"Mic1+Mic2" would be from the userspace.
 
-Sorry for the noise.
+I guess the larger issue is that you'd need to have controls that are
+common to both channels (ie that would change the routing of both
+mixers), but aren't sharing the same controls structure since the
+label would be different.
 
-Best regards,
-Krzysztof
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--odizj5wdfscxpmbv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrrIo8ACgkQ0rTAlCFN
+r3R4ihAAjeNAv1d3i+hQ8vO6K4uLt/wziSi+/U0/a8axRtU4M0XrmgIdoE2BIAJK
+clXkJWbn/CU9k5ooKT9c55hUV3oLrgCzmRNzczBTEpfGxN7aJVlOWNZAOMeMn/Mc
+zDC/pupLe/vXHu7GyGOV4Osw8vON18SUcIy60dN6PcXbqYeujMnaEBQufJ2ny1ld
+ltn4Q/AAK6GsgIkn4O3dMZeiuadYe6FwEr8SjWgwoqSLyE2/I+7tNfhvdvfPrT9J
+1H4euJ+KPjabeBX6tro3lsQjKDZtlJ9N+CmpKOdwvH1Bi0j80Ai8Zi0NRZ698UCy
+MFJGpk5AxBwnZ2A3lrSvNWjKNa79/Ehwkghx5QxlrKculDTRBp9SxSEZPeTxBHiO
+fTjpU7rsSv4YhZ/8Rod12nyQIBu8mh7IIiqJKdWnFBXtOp+JEV2hjBgwc2bh+Fkf
+mxVYHVhbO8EzZ1xGr+ENt24zFw1uvtItcRHzAqGaMlBTEql+wIa2ngMAiQ+oE8Ey
+6QBuDWTYHOHz1sIzfDxIhp84aO5HDdhV+eJiJwP28LvtRC1IPRoomoxTNC48LNaX
+q0ZeMm+4fGgb+ZbOyMNMBS/M5Axj4+vJLG6N5X9PosDbBg6JeNYhoHcAviY8wbpm
+jjS69VenVoYvGJh2/0wLOdrXwL1uUoZzsSTiYJP3pOPvquD6j1o=
+=T22u
+-----END PGP SIGNATURE-----
+
+--odizj5wdfscxpmbv--
