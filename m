@@ -1,600 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751501AbeECJjq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:39:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47094 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeECJjn (ORCPT
+        id S1751261AbeECJmF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:42:05 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:3216 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750954AbeECJmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:39:43 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8000C607E5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-Subject: Re: [PATCH RFC 2/4] mmc: sdhci-msm: Add and use voltage regulator
- related APIs
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Jeremy McNicoll <jeremymc@redhat.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Harjani Ritesh <riteshh@codeaurora.org>, vbadigan@codeaurora.org,
-        Doug Anderson <dianders@google.com>, sayalil@codeaurora.org,
-        Subhash Jadavani <subhashj@codeaurora.org>
-References: <1525171153-24476-1-git-send-email-vviswana@codeaurora.org>
- <1525171153-24476-3-git-send-email-vviswana@codeaurora.org>
- <CAPDyKFo9MpwjfF6jz2H-fRVMsCbsiHVHKYjEkQjD4WWcDU8FXg@mail.gmail.com>
-From: Vijay Viswanath <vviswana@codeaurora.org>
-Message-ID: <f225ea93-3d76-76ab-4ee8-d453dc3526e7@codeaurora.org>
-Date: Thu, 3 May 2018 15:09:24 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFo9MpwjfF6jz2H-fRVMsCbsiHVHKYjEkQjD4WWcDU8FXg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Thu, 3 May 2018 05:42:02 -0400
+X-UUID: a2d79c68060a47e782a668a7b5ef8977-20180503
+Message-ID: <1525340514.22948.25.camel@mhfsdcap03>
+Subject: Re: [PATCH 2/2] PCI: mediatek: Using chained IRQ to setup IRQ handle
+From: Honghui Zhang <honghui.zhang@mediatek.com>
+To: Marc Zyngier <marc.zyngier@arm.com>
+CC: <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <matthias.bgg@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <ryder.lee@mediatek.com>, <hongkun.cao@mediatek.com>,
+        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
+        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>,
+        <xinping.qian@mediatek.com>
+Date: Thu, 3 May 2018 17:41:54 +0800
+In-Reply-To: <e04ea8b1-731f-e72b-8944-5c067e1a04da@arm.com>
+References: <1524201910-22836-1-git-send-email-honghui.zhang@mediatek.com>
+         <1524201910-22836-3-git-send-email-honghui.zhang@mediatek.com>
+         <a2f7e70a-fdef-d925-8838-be3051c2e96d@arm.com>
+         <1525254064.22948.11.camel@mhfsdcap03>
+         <e04ea8b1-731f-e72b-8944-5c067e1a04da@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK: N
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-05-02 at 11:09 +0100, Marc Zyngier wrote:
+> On 02/05/18 10:41, Honghui Zhang wrote:
+> > On Mon, 2018-04-30 at 12:03 +0100, Marc Zyngier wrote:
+> >> Hi Zhang,
+> >>
+> >> On 20/04/18 06:25, honghui.zhang@mediatek.com wrote:
+> >>> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> >>>
+> >>> Using irq_chip solution to setup IRQs for the consistent with IRQ framework.
+> >>>
+> >>> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> >>> ---
+> >>>  drivers/pci/host/pcie-mediatek.c | 192 +++++++++++++++++++++------------------
+> >>>  1 file changed, 105 insertions(+), 87 deletions(-)
+> >>>
+> >>> diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
+> >>> index c3dc549..1d9c6f1 100644
+> >>> --- a/drivers/pci/host/pcie-mediatek.c
+> >>> +++ b/drivers/pci/host/pcie-mediatek.c
+> >>> @@ -11,8 +11,10 @@
+> >>>  #include <linux/delay.h>
+> >>>  #include <linux/iopoll.h>
+> >>>  #include <linux/irq.h>
+> >>> +#include <linux/irqchip/chained_irq.h>
+> >>>  #include <linux/irqdomain.h>
+> >>>  #include <linux/kernel.h>
+> >>> +#include <linux/msi.h>
+> >>>  #include <linux/of_address.h>
+> >>>  #include <linux/of_pci.h>
+> >>>  #include <linux/of_platform.h>
+> >>> @@ -130,14 +132,12 @@ struct mtk_pcie_port;
+> >>>  /**
+> >>>   * struct mtk_pcie_soc - differentiate between host generations
+> >>>   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
+> >>> - * @has_msi: whether this host supports MSI interrupts or not
+> >>>   * @ops: pointer to configuration access functions
+> >>>   * @startup: pointer to controller setting functions
+> >>>   * @setup_irq: pointer to initialize IRQ functions
+> >>>   */
+> >>>  struct mtk_pcie_soc {
+> >>>  	bool need_fix_class_id;
+> >>> -	bool has_msi;
+> >>>  	struct pci_ops *ops;
+> >>>  	int (*startup)(struct mtk_pcie_port *port);
+> >>>  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
+> >>> @@ -161,7 +161,9 @@ struct mtk_pcie_soc {
+> >>>   * @lane: lane count
+> >>>   * @slot: port slot
+> >>>   * @irq_domain: legacy INTx IRQ domain
+> >>> + * @inner_domain: inner IRQ domain
+> >>>   * @msi_domain: MSI IRQ domain
+> >>> + * @lock: protect the msi_irq_in_use bitmap
+> >>>   * @msi_irq_in_use: bit map for assigned MSI IRQ
+> >>>   */
+> >>>  struct mtk_pcie_port {
+> >>> @@ -179,7 +181,9 @@ struct mtk_pcie_port {
+> >>>  	u32 lane;
+> >>>  	u32 slot;
+> >>>  	struct irq_domain *irq_domain;
+> >>> +	struct irq_domain *inner_domain;
+> >>>  	struct irq_domain *msi_domain;
+> >>> +	struct mutex lock;
+> >>>  	DECLARE_BITMAP(msi_irq_in_use, MTK_MSI_IRQS_NUM);
+> >>>  };
+> >>>  
+> >>> @@ -446,103 +450,122 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> >>>  	return 0;
+> >>>  }
+> >>>  
+> >>> -static int mtk_pcie_msi_alloc(struct mtk_pcie_port *port)
+> >>> +static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+> >>>  {
+> >>> -	int msi;
+> >>> +	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
+> >>> +	phys_addr_t addr;
+> >>>  
+> >>> -	msi = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
+> >>> -	if (msi < MTK_MSI_IRQS_NUM)
+> >>> -		set_bit(msi, port->msi_irq_in_use);
+> >>> -	else
+> >>> -		return -ENOSPC;
+> >>> +	/* MT2712/MT7622 only support 32-bit MSI addresses */
+> >>> +	addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
+> >>> +	msg->address_hi = 0;
+> >>> +	msg->address_lo = lower_32_bits(addr);
+> >>>  
+> >>> -	return msi;
+> >>> +	msg->data = data->hwirq;
+> >>> +
+> >>> +	dev_dbg(port->pcie->dev, "msi#%d address_hi %#x address_lo %#x\n",
+> >>> +		(int)data->hwirq, msg->address_hi, msg->address_lo);
+> >>>  }
+> >>>  
+> >>> -static void mtk_pcie_msi_free(struct mtk_pcie_port *port, unsigned long hwirq)
+> >>> +static int mtk_msi_set_affinity(struct irq_data *irq_data,
+> >>> +				   const struct cpumask *mask, bool force)
+> >>>  {
+> >>> -	clear_bit(hwirq, port->msi_irq_in_use);
+> >>> +	return -EINVAL;
+> >>>  }
+> >>>  
+> >>> -static int mtk_pcie_msi_setup_irq(struct msi_controller *chip,
+> >>> -				  struct pci_dev *pdev, struct msi_desc *desc)
+> >>> -{
+> >>> -	struct mtk_pcie_port *port;
+> >>> -	struct msi_msg msg;
+> >>> -	unsigned int irq;
+> >>> -	int hwirq;
+> >>> -	phys_addr_t msg_addr;
+> >>> +static struct irq_chip mtk_msi_bottom_irq_chip = {
+> >>> +	.name			= "MTK MSI",
+> >>> +	.irq_compose_msi_msg	= mtk_compose_msi_msg,
+> >>> +	.irq_set_affinity	= mtk_msi_set_affinity,
+> >>> +	.irq_mask		= pci_msi_mask_irq,
+> >>> +	.irq_unmask	= pci_msi_unmask_irq,
+> >>> +};
+> >>>  
+> >>> -	port = mtk_pcie_find_port(pdev->bus, pdev->devfn);
+> >>> -	if (!port)
+> >>> -		return -EINVAL;
+> >>> +static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
+> >>> +				     unsigned int nr_irqs, void *args)
+> >>> +{
+> >>> +	struct mtk_pcie_port *port = domain->host_data;
+> >>> +	unsigned long bit;
+> >>>  
+> >>> -	hwirq = mtk_pcie_msi_alloc(port);
+> >>> -	if (hwirq < 0)
+> >>> -		return hwirq;
+> >>> +	WARN_ON(nr_irqs != 1);
+> >>> +	mutex_lock(&port->lock);
+> >>>  
+> >>> -	irq = irq_create_mapping(port->msi_domain, hwirq);
+> >>> -	if (!irq) {
+> >>> -		mtk_pcie_msi_free(port, hwirq);
+> >>> -		return -EINVAL;
+> >>> +	bit = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
+> >>> +	if (bit >= MTK_MSI_IRQS_NUM) {
+> >>> +		mutex_unlock(&port->lock);
+> >>> +		return -ENOSPC;
+> >>>  	}
+> >>>  
+> >>> -	chip->dev = &pdev->dev;
+> >>> -
+> >>> -	irq_set_msi_desc(irq, desc);
+> >>> +	__set_bit(bit, port->msi_irq_in_use);
+> >>>  
+> >>> -	/* MT2712/MT7622 only support 32-bit MSI addresses */
+> >>> -	msg_addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
+> >>> -	msg.address_hi = 0;
+> >>> -	msg.address_lo = lower_32_bits(msg_addr);
+> >>> -	msg.data = hwirq;
+> >>> +	mutex_unlock(&port->lock);
+> >>>  
+> >>> -	pci_write_msi_msg(irq, &msg);
+> >>> +	irq_domain_set_info(domain, virq, bit, &mtk_msi_bottom_irq_chip,
+> >>> +			    domain->host_data, handle_simple_irq,
+> >>
+> >> Why don't you handle the interrupt as an edge interrupt
+> >> (handle_edge_irq)? That's what it really is, and the fact that you use
+> >> "handle_simple_irq" makes me think that wou're papering over some other
+> >> issue (see below).
+> > 
+> > Hi, Marc,
+> > 
+> > Thanks very much for your comments.
+> > 
+> > I guess the MSI irq is more like a level IRQ instead of edge IRQ.
+> > When a MSI IRQ arrived, the corresponding bit of MSI status register
+> > will be asserted and stay asserted until it's been cleared by software.
+> 
+> There is some confusion here. The MSI itself is always edge-triggered.
+> That's by definition, and you cannot change it. The interrupt that is
+> used to signal that MSIs are pending (the multiplexing interrupt) can
+> itself be level triggered (and goes low once all the MSIs have been
+> acknowledged).
 
+Hi, Marc, thanks for your comments.
 
-On 5/2/2018 2:19 PM, Ulf Hansson wrote:
-> On 1 May 2018 at 12:39, Vijay Viswanath <vviswana@codeaurora.org> wrote:
->> From: Asutosh Das <asutoshd@codeaurora.org>
->>
->> Some platforms require that the voltage switching happen only after
->> the register write occurs and controller is ready for the switch. When
->> the controller is ready, it will inform through power irq.
->>
->> Add voltage regulator APIs and use them during power irq to switch
->> voltage instead of relying on core layer voltage switching.
-> 
-> This is way to simplified. 529 lines of new code deserves some more
-> explanations.
-> 
->>
->> Change-Id: Iaa98686e71a5bfe0092c68e9ffa563b060c5ac60
-> 
-> Remove this.
-> 
->> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
->> Signed-off-by: Venkat Gopalakrishnan <venkatg@codeaurora.org>
->> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
->> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->> ---
->>   .../devicetree/bindings/mmc/sdhci-msm.txt          |  27 +-
-> 
-> Split DT changes and add DT maintainers.
-> 
+Yes, PCIe SPEC have defined that the MSI must be edge trigged. But I'm
+not sure whether the HW design needed to following some edge irq
+standard. In our design, when there's MSI irq trigged(which may is edge
+trigged in hw implemented), the corresponding msi irq status bits will
+be asserted until it's been cleared by software. It's more like that the
+HW IP have translate the edge irq to level status. Do you think using
+handle_level_irq or handle_simple_irq(which most of the pci host driver
+now doing) is acceptable in this case?
 
-Will do
+BTW, I'm still struggling in trying the handle_edge_irq solution. Seems
+that I could not get the msi index in irq_ack callback from
+irq_data->hwirq, the hwirq was set by pci_msi_domain_calc_hwirq() which
+I'm still try to figure out the proper routine in my driver.
 
->>   drivers/mmc/host/sdhci-msm.c                       | 537 +++++++++++++++++++--
->>   2 files changed, 529 insertions(+), 35 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> index c2b7b2b..c454046 100644
->> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.txt
->> @@ -23,6 +23,22 @@ Required properties:
->>          "xo"    - TCXO clock (optional)
->>          "cal"   - reference clock for RCLK delay calibration (optional)
->>          "sleep" - sleep clock for RCLK delay calibration (optional)
->> +- <supply-name>-supply: phandle to the regulator device tree node if voltage
->> +               regulators needs to be handled from within sdhci-msm layer.
->> +               Supported "supply-name" are "vdd" and "vdd-io".
->> +
->> +Optional Properties:
->> +       - qcom,<supply>-always-on - specifies whether supply should be kept
->> +               "on" always.
->> +       - qcom,<supply>-lpm_sup - specifies whether supply can be kept in low
->> +               power mode (lpm).
->> +       - qcom,<supply>-voltage_level - specifies voltage levels for supply.
->> +               Should be specified in pairs (min, max), units uV.
->> +       - qcom,<supply>-current_level - specifies load levels for supply in lpm
->> +               or high power mode (hpm). Should be specified in
->> +               pairs (lpm, hpm), units uA.
->> +
->> +
+thanks.
 > 
-> This looks really weird.
+> > I will try to using handle_level_irq and add some callbacks of irq_ack
+> > in the next version.
 > 
-> What's so special here that requires you to have your own specific
-> regulator bindings?
+> The interrupt above seem to be the MSI itself, and not the multiplexing
+> interrupt. It should be handled as an edge.
 > 
->>
->>   Example:
->>
->> @@ -33,8 +49,15 @@ Example:
->>                  bus-width = <8>;
->>                  non-removable;
->>
->> -               vmmc-supply = <&pm8941_l20>;
->> -               vqmmc-supply = <&pm8941_s3>;
->> +               vdd-supply = <&pm8941_l20>;
->> +               qcom,vdd-voltage-level = <2950000 2950000>;
->> +               qcom,vdd-current-level = <9000 800000>;
->> +
->> +               vdd-io-supply = <&pm8941_s3>;
->> +               qcom,vdd-io-always-on;
->> +               qcom,vdd-io-lpm-sup;
->> +               qcom,vdd-io-voltage-level = <1800000 2950000>;
->> +               qcom,vdd-io-current-level = <6 22000>;
->>
->>                  pinctrl-names = "default";
->>                  pinctrl-0 = <&sdc1_clk &sdc1_cmd &sdc1_data>;
->> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->> index d4d432b..0e0f12d 100644
->> --- a/drivers/mmc/host/sdhci-msm.c
->> +++ b/drivers/mmc/host/sdhci-msm.c
->> @@ -213,6 +213,33 @@ struct sdhci_msm_offset sdhci_msm_offset_mci_present = {
->>          .core_ddr_config_2 = 0x1BC,
->>   };
->>
->> +/* This structure keeps information per regulator */
->> +struct sdhci_msm_reg_data {
->> +       /* voltage regulator handle */
->> +       struct regulator *reg;
->> +       /* regulator name */
->> +       const char *name;
->> +       /* voltage level to be set */
->> +       u32 low_vol_level;
->> +       u32 high_vol_level;
->> +       /* Load values for low power and high power mode */
->> +       u32 lpm_uA;
->> +       u32 hpm_uA;
->> +       /* is this regulator enabled? */
->> +       bool is_enabled;
->> +       /* is this regulator needs to be always on? */
->> +       bool is_always_on;
->> +       /* is low power mode setting required for this regulator? */
->> +       bool lpm_sup;
->> +       bool set_voltage_sup;
->> +};
->> +
->> +struct sdhci_msm_pltfm_data {
->> +       /* Change-Id: Ide3a658ad51a3c3d4a05c47c0e8f013f647c9516 */
->> +       struct sdhci_msm_reg_data *vdd_data;
->> +       struct sdhci_msm_reg_data *vdd_io_data;
->> +};
->> +
->>   struct sdhci_msm_host {
->>          struct platform_device *pdev;
->>          void __iomem *core_mem; /* MSM SDCC mapped address */
->> @@ -234,6 +261,8 @@ struct sdhci_msm_host {
->>          u32 caps_0;
->>          bool mci_removed;
->>          const struct sdhci_msm_offset *offset;
->> +       bool pltfm_init_done;
->> +       struct sdhci_msm_pltfm_data pdata;
->>   };
->>
->>   /*
->> @@ -298,6 +327,336 @@ void sdhci_msm_vendor_writel_relaxed(u32 val, struct sdhci_host *host,
->>          writel_relaxed(val, base_addr + offset);
->>   }
->>
->> +enum vdd_io_level {
->> +       /* set vdd_io_data->low_vol_level */
->> +       VDD_IO_LOW,
->> +       /* set vdd_io_data->high_vol_level */
->> +       VDD_IO_HIGH,
->> +       /*
->> +        * set whatever there in voltage_level (third argument) of
->> +        * sdhci_msm_set_vdd_io_vol() function.
->> +        */
->> +       VDD_IO_SET_LEVEL,
->> +};
->> +
->> +#define MAX_PROP_SIZE 32
->> +static int sdhci_msm_dt_parse_vreg_info(struct device *dev,
->> +               struct sdhci_msm_reg_data **vreg_data, const char *vreg_name)
->> +{
->> +       int len, ret = 0;
->> +       const __be32 *prop;
->> +       char prop_name[MAX_PROP_SIZE];
->> +       struct sdhci_msm_reg_data *vreg;
->> +       struct device_node *np = dev->of_node;
->> +
->> +       snprintf(prop_name, MAX_PROP_SIZE, "%s-supply", vreg_name);
->> +       if (!of_parse_phandle(np, prop_name, 0)) {
->> +               dev_warn(dev, "No internal vreg data found for %s\n",
->> +                               vreg_name);
->> +               ret = -EINVAL;
->> +               return ret;
->> +       }
->> +       vreg = devm_kzalloc(dev, sizeof(*vreg), GFP_KERNEL);
->> +       if (!vreg) {
->> +               ret = -ENOMEM;
->> +               return ret;
->> +       }
->> +       vreg->name = vreg_name;
->> +       snprintf(prop_name, MAX_PROP_SIZE,
->> +                       "qcom,%s-always-on", vreg_name);
->> +       if (of_get_property(np, prop_name, NULL))
->> +               vreg->is_always_on = true;
->> +
->> +       snprintf(prop_name, MAX_PROP_SIZE,
->> +                       "qcom,%s-lpm-sup", vreg_name);
->> +       if (of_get_property(np, prop_name, NULL))
->> +               vreg->lpm_sup = true;
->> +       snprintf(prop_name, MAX_PROP_SIZE,
->> +                       "qcom,%s-voltage-level", vreg_name);
->> +       prop = of_get_property(np, prop_name, &len);
->> +       if (!prop || (len != (2 * sizeof(__be32)))) {
->> +               dev_warn(dev, "%s %s property\n",
->> +                               prop ? "invalid format" : "no", prop_name);
->> +       } else {
->> +               vreg->low_vol_level = be32_to_cpup(&prop[0]);
->> +               vreg->high_vol_level = be32_to_cpup(&prop[1]);
->> +       }
->> +       snprintf(prop_name, MAX_PROP_SIZE,
->> +                       "qcom,%s-current-level", vreg_name);
->> +       prop = of_get_property(np, prop_name, &len);
->> +       if (!prop || (len != (2 * sizeof(__be32)))) {
->> +               dev_warn(dev, "%s %s property\n",
->> +                               prop ? "invalid format" : "no", prop_name);
->> +       } else {
->> +               vreg->lpm_uA = be32_to_cpup(&prop[0]);
->> +               vreg->hpm_uA = be32_to_cpup(&prop[1]);
->> +       }
->> +       *vreg_data = vreg;
->> +       dev_dbg(dev, "%s: %s %s vol=[%d %d]uV, curr=[%d %d]uA\n",
->> +                       vreg->name, vreg->is_always_on ? "always_on," : "",
->> +                       vreg->lpm_sup ? "lpm_sup," : "", vreg->low_vol_level,
->> +                       vreg->high_vol_level, vreg->lpm_uA, vreg->hpm_uA);
+> If that doesn't work, we need to understand why.
 > 
-> So again, I don't get why this isn't being implemented as a regular
-> regulator and why is this code in the mmc driver?
+> Thanks,
 > 
->> +
->> +       return ret;
->> +}
->> +
->> +/* Regulator utility functions */
->> +static int sdhci_msm_vreg_init_reg(struct device *dev,
->> +                                       struct sdhci_msm_reg_data *vreg)
->> +{
->> +       int ret = 0;
->> +
->> +       /* check if regulator is already initialized? */
->> +       if (vreg->reg)
->> +               goto out;
->> +
->> +       /* Get the regulator handle */
->> +       vreg->reg = devm_regulator_get(dev, vreg->name);
->> +       if (IS_ERR(vreg->reg)) {
->> +               ret = PTR_ERR(vreg->reg);
->> +               pr_err("%s: devm_regulator_get(%s) failed. ret=%d\n",
->> +                       __func__, vreg->name, ret);
->> +               goto out;
->> +       }
->> +
->> +       if (regulator_count_voltages(vreg->reg) > 0) {
->> +               vreg->set_voltage_sup = true;
->> +               /* sanity check */
->> +               if (!vreg->high_vol_level || !vreg->hpm_uA) {
->> +                       pr_err("%s: %s invalid constraints specified high_vol_level: %d hpm_uA: %d\n",
->> +                              __func__, vreg->name, vreg->high_vol_level,
->> +                              vreg->hpm_uA);
->> +                       ret = -EINVAL;
->> +               }
->> +       }
->> +
->> +out:
->> +       return ret;
->> +}
->> +
->> +static void sdhci_msm_vreg_deinit_reg(struct sdhci_msm_reg_data *vreg)
->> +{
->> +       if (vreg->reg)
->> +               devm_regulator_put(vreg->reg);
->> +}
->> +
->> +static int sdhci_msm_vreg_set_optimum_mode(struct sdhci_msm_reg_data
->> +                                                 *vreg, int uA_load)
->> +{
->> +       int ret = 0;
->> +
->> +       /*
->> +        * regulators that do not support regulator_set_voltage also
->> +        * do not support regulator_set_optimum_mode
->> +        */
-> 
-> If that's the case, the regulator core should return proper error
-> codes and you should need to have these kind of checks here. Right?
-> 
-> Or at least there should be a helper function telling what you can do
-> with your regulator, instead of encoding it at in the mmc driver.
-> 
->> +       if (vreg->set_voltage_sup) {
->> +               ret = regulator_set_load(vreg->reg, uA_load);
->> +               if (ret < 0)
->> +                       pr_err("%s: regulator_set_load(reg=%s,uA_load=%d) failed. ret=%d\n",
->> +                              __func__, vreg->name, uA_load, ret);
->> +               else
->> +                       /*
->> +                        * regulator_set_load() can return non zero
->> +                        * value even for success case.
->> +                        */
->> +                       ret = 0;
->> +       }
->> +       return ret;
->> +}
->> +
->> +static int sdhci_msm_vreg_set_voltage(struct sdhci_msm_reg_data *vreg,
->> +                                       int min_uV, int max_uV)
->> +{
->> +       int ret = 0;
->> +
->> +       if (vreg && vreg->set_voltage_sup) {
-> 
-> Ditto.
-> 
->> +               ret = regulator_set_voltage(vreg->reg, min_uV, max_uV);
->> +               if (ret) {
->> +                       pr_err("%s: regulator_set_voltage(%s)failed. min_uV=%d,max_uV=%d,ret=%d\n",
->> +                              __func__, vreg->name, min_uV, max_uV, ret);
->> +               }
->> +       }
->> +
->> +       return ret;
->> +}
->> +
->> +static int sdhci_msm_vreg_enable(struct sdhci_msm_reg_data *vreg)
->> +{
->> +       int ret = 0;
->> +
->> +       /* Put regulator in HPM (high power mode) */
->> +       ret = sdhci_msm_vreg_set_optimum_mode(vreg, vreg->hpm_uA);
->> +       if (ret < 0)
->> +               return ret;
->> +
->> +       if (!vreg->is_enabled) {
->> +               /* Set voltage level */
->> +               ret = sdhci_msm_vreg_set_voltage(vreg, vreg->high_vol_level,
->> +                                               vreg->high_vol_level);
->> +               if (ret)
->> +                       return ret;
->> +       }
->> +       ret = regulator_enable(vreg->reg);
->> +       if (ret) {
->> +               pr_err("%s: regulator_enable(%s) failed. ret=%d\n",
->> +                               __func__, vreg->name, ret);
->> +               return ret;
->> +       }
->> +       vreg->is_enabled = true;
->> +       return ret;
-> 
-> Why don't you use the mmc_regulator_*() APIs? It seems like lots of
-> open coding here.
-> 
->> +}
->> +
->> +static int sdhci_msm_vreg_disable(struct sdhci_msm_reg_data *vreg)
->> +{
->> +       int ret = 0;
->> +
->> +       /* Never disable regulator marked as always_on */
->> +       if (vreg->is_enabled && !vreg->is_always_on) {
->> +               ret = regulator_disable(vreg->reg);
->> +               if (ret) {
->> +                       pr_err("%s: regulator_disable(%s) failed. ret=%d\n",
->> +                               __func__, vreg->name, ret);
->> +                       goto out;
->> +               }
->> +               vreg->is_enabled = false;
->> +
->> +               ret = sdhci_msm_vreg_set_optimum_mode(vreg, 0);
->> +               if (ret < 0)
->> +                       goto out;
->> +
->> +               /* Set min. voltage level to 0 */
->> +               ret = sdhci_msm_vreg_set_voltage(vreg, 0, vreg->high_vol_level);
->> +               if (ret)
->> +                       goto out;
->> +       } else if (vreg->is_enabled && vreg->is_always_on) {
->> +               if (vreg->lpm_sup) {
->> +                       /* Put always_on regulator in LPM (low power mode) */
->> +                       ret = sdhci_msm_vreg_set_optimum_mode(vreg,
->> +                                                             vreg->lpm_uA);
->> +                       if (ret < 0)
->> +                               goto out;
->> +               }
->> +       }
->> +out:
->> +       return ret;
->> +}
-> 
-> Ditto.
-> 
-> [...]
-> 
->> +
->> +/* Parse platform data */
->> +static void sdhci_msm_populate_pdata(struct device *dev,
->> +               struct sdhci_msm_pltfm_data *pdata)
->> +{
->> +       int ret = 0;
->> +
->> +       ret = sdhci_msm_dt_parse_vreg_info(dev, &pdata->vdd_data, "vdd");
->> +       if (ret)
->> +               dev_warn(dev, "failed parsing vdd data (%d)\n", ret);
->> +
->> +       ret = sdhci_msm_dt_parse_vreg_info(dev, &pdata->vdd_io_data, "vdd-io");
->> +       if (ret)
->> +               dev_warn(dev, "failed parsing vdd-io data (%d)\n", ret);
->> +
->> +}
->> +
->>   static unsigned int msm_get_clock_rate_for_bus_mode(struct sdhci_host *host,
->>                                                      unsigned int clock)
->>   {
->> @@ -1326,6 +1685,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->>          u32 pwr_state = 0, io_level = 0;
->>          u32 config;
->>          const struct sdhci_msm_offset *msm_offset = msm_host->offset;
->> +       int ret = 0;
->>
->>          irq_status = sdhci_msm_vendor_readl_relaxed(host,
->>                          msm_offset->core_pwrctl_status);
->> @@ -1358,21 +1718,54 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->>
->>          /* Handle BUS ON/OFF*/
->>          if (irq_status & CORE_PWRCTL_BUS_ON) {
->> +               ret = sdhci_msm_setup_vreg(&msm_host->pdata, true, false);
->> +               if (!ret) {
->> +                       ret = sdhci_msm_set_vdd_io_vol(&msm_host->pdata,
->> +                                       VDD_IO_HIGH, 0);
->> +                       if (ret)
->> +                               pr_err("%s: error setting vdd io in BUS_ON: %d\n",
->> +                                               mmc_hostname(host->mmc), ret);
->> +               } else {
->> +                       pr_err("%s: error setting up vreg ON : %d\n",
->> +                                       mmc_hostname(host->mmc), ret);
->> +               }
->>                  pwr_state = REQ_BUS_ON;
->>                  io_level = REQ_IO_HIGH;
->>                  irq_ack |= CORE_PWRCTL_BUS_SUCCESS;
->>          }
->>          if (irq_status & CORE_PWRCTL_BUS_OFF) {
->> +               if (msm_host->pltfm_init_done)
->> +                       ret = sdhci_msm_setup_vreg(&msm_host->pdata,
->> +                                       false, false);
->> +               if (!ret) {
->> +                       ret = sdhci_msm_set_vdd_io_vol(&msm_host->pdata,
->> +                                       VDD_IO_LOW, 0);
->> +                       if (ret)
->> +                               pr_err("%s: error setting vdd io in BUS_OFF: %d\n",
->> +                                               mmc_hostname(host->mmc), ret);
->> +               } else {
->> +                       pr_err("%s: error setting up vreg OFF: %d\n",
->> +                                       mmc_hostname(host->mmc), ret);
->> +               }
->>                  pwr_state = REQ_BUS_OFF;
->>                  io_level = REQ_IO_LOW;
->>                  irq_ack |= CORE_PWRCTL_BUS_SUCCESS;
->>          }
->>          /* Handle IO LOW/HIGH */
->>          if (irq_status & CORE_PWRCTL_IO_LOW) {
->> +               ret = sdhci_msm_set_vdd_io_vol(&msm_host->pdata, VDD_IO_LOW, 0);
->> +               if (ret)
->> +                       pr_err("%s: error setting up vdd io low: %d\n",
->> +                                       mmc_hostname(host->mmc), ret);
->>                  io_level = REQ_IO_LOW;
->>                  irq_ack |= CORE_PWRCTL_IO_SUCCESS;
->>          }
->>          if (irq_status & CORE_PWRCTL_IO_HIGH) {
->> +               ret = sdhci_msm_set_vdd_io_vol(&msm_host->pdata,
->> +                               VDD_IO_HIGH, 0);
->> +               if (ret)
->> +                       pr_err("%s: error setting up vdd io high: %d\n",
->> +                                       mmc_hostname(host->mmc), ret);
->>                  io_level = REQ_IO_HIGH;
->>                  irq_ack |= CORE_PWRCTL_IO_SUCCESS;
->>          }
->> @@ -1380,7 +1773,7 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
->>          /*
->>           * The driver has to acknowledge the interrupt, switch voltages and
->>           * report back if it succeded or not to this register. The voltage
->> -        * switches are handled by the sdhci core, so just report success.
->> +        * switches may be handled by the sdhci core, so just report success.
->>           */
->>          sdhci_msm_vendor_writel_relaxed(irq_ack, host,
->>                          msm_offset->core_pwrctl_ctl);
->> @@ -1612,6 +2005,74 @@ static void sdhci_msm_set_regulator_caps(struct sdhci_msm_host *msm_host)
->>          pr_debug("%s: supported caps: 0x%08x\n", mmc_hostname(mmc), caps);
->>   }
->>
->> +static void sdhci_msm_set_default_hw_caps(struct device *dev,
->> +               struct sdhci_msm_host *msm_host,
->> +               struct sdhci_host *host)
->> +{
->> +       u32 version, config;
->> +       u16 minor;
->> +       u8 major;
->> +       const struct sdhci_msm_offset *msm_offset = msm_host->offset;
->> +       struct sdhci_msm_reg_data *vdd_io_reg = msm_host->pdata.vdd_io_data;
->> +       u32 caps = 0;
->> +
->> +       version =  sdhci_msm_vendor_readl_relaxed(host,
->> +                       msm_offset->core_mci_version);
->> +       major = (version & CORE_VERSION_MAJOR_MASK) >>
->> +               CORE_VERSION_MAJOR_SHIFT;
->> +       minor = version & CORE_VERSION_MINOR_MASK;
->> +       dev_dbg(dev, "MCI Version: 0x%08x, major: 0x%04x, minor: 0x%02x\n",
->> +                       version, major, minor);
->> +
->> +       /*
->> +        * If voltage regulators are controlled by msm host layer and
->> +        * IO voltage regulator can support 1.8V, we need to
->> +        * update the capabilities here before sdhci host is added.
->> +        */
->> +       if (vdd_io_reg && (vdd_io_reg->low_vol_level < 1950000))
->> +               caps |= CORE_1_8V_SUPPORT;
->> +       if (vdd_io_reg && (vdd_io_reg->low_vol_level > 2700000))
->> +               caps |= CORE_3_0V_SUPPORT;
->> +       if (caps) {
->> +               msm_host->caps_0 |= caps;
->> +               config =  readl_relaxed(host->ioaddr +
->> +                               msm_offset->core_vendor_spec);
->> +               config |= CORE_IO_PAD_PWR_SWITCH_EN;
->> +               writel_relaxed(config,
->> +                               host->ioaddr + msm_offset->core_vendor_spec);
->> +       }
->> +
->> +       caps = readl_relaxed(host->ioaddr + SDHCI_CAPABILITIES);
->> +
->> +       if (major == 1 && minor >= 0x42)
->> +               msm_host->use_14lpp_dll_reset = true;
->> +       /*
->> +        * SDCC 5 controller with major version 1, minor version 0x34 and later
->> +        * with HS 400 mode support will use CM DLL instead of CDC LP 533 DLL.
->> +        */
->> +       if (major == 1 && minor < 0x34)
->> +               msm_host->use_cdclp533 = true;
->> +
->> +       /*
->> +        * Support for some capabilities is not advertised by newer
->> +        * controller versions and must be explicitly enabled.
->> +        */
->> +       if (major >= 1 && minor != 0x11 && minor != 0x12) {
->> +
->> +               vdd_io_reg = msm_host->pdata.vdd_io_data;
->> +               caps |= SDHCI_CAN_VDD_300 | SDHCI_CAN_DO_8BIT;
->> +               if (msm_host->caps_0 & CORE_1_8V_SUPPORT)
->> +                       caps |= CORE_1_8V_SUPPORT;
->> +       }
->> +       msm_host->caps_0 |= caps;
->> +       writel_relaxed(msm_host->caps_0, host->ioaddr +
->> +                       msm_offset->core_vendor_spec_capabilities0);
->> +
->> +       /* Set more host capabilities */
->> +       msm_host->mmc->caps |= MMC_CAP_WAIT_WHILE_BUSY;
->> +       msm_host->mmc->caps2 |= MMC_CAP2_BOOTPART_NOACC;
-> 
-> Is really all above only related to regulators, as according to the
-> change log? Probably not.
-> 
-> Reaching this point in the review, it certainly seems like the change
-> needs to be split up in quite a few smaller pieces. Can you please do
-> that!?
-> 
-> [...]
-> 
-> Kind regards
-> Uffe
-> 
-
-I am checking this. Will get back to you.
-
-Thanks,
-Vijay
+> 	M.
