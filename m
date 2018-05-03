@@ -1,91 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751360AbeECQyv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:54:51 -0400
-Received: from mga02.intel.com ([134.134.136.20]:61249 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750954AbeECQyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:54:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,359,1520924400";
-   d="scan'208";a="52949643"
-Message-ID: <1525366486.21176.653.camel@linux.intel.com>
-Subject: Re: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI
- support
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: John Garry <john.garry@huawei.com>, xuwei5@huawei.com,
-        mika.westerberg@linux.intel.com, lee.jones@linaro.org
-Cc: rjw@rjwysocki.net, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        graeme.gregory@linaro.org, helgaas@kernel.org,
-        z.liuxinliang@hisilicon.com, linuxarm@huawei.com
-Date: Thu, 03 May 2018 19:54:46 +0300
-In-Reply-To: <1525360119-102166-2-git-send-email-john.garry@huawei.com>
-References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
-         <1525360119-102166-2-git-send-email-john.garry@huawei.com>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1751567AbeECQzI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:55:08 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45204 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751527AbeECQzF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 12:55:05 -0400
+Date: Thu, 3 May 2018 18:54:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kernel test robot <lkp@intel.com>
+Cc: LKP <lkp@01.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, wfg@linux.intel.com
+Subject: Re: 85f1abe001 ("kthread, sched/wait: Fix kthread_parkme() .."):
+ WARNING: CPU: 0 PID: 1 at kernel/kthread.c:486 kthread_park
+Message-ID: <20180503165452.GH12217@hirez.programming.kicks-ass.net>
+References: <5aeb303f.ZSZnAoV6lBIOMHs0%lkp@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5aeb303f.ZSZnAoV6lBIOMHs0%lkp@intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-03 at 23:08 +0800, John Garry wrote:
-> Currently for ACPI support the driver models the host as
-> an MFD. For a device connected to the LPC bus, we dynamically
-> create an MFD cell for that device, configuring the cell
-> name and ACPI match parameters manually. This makes supporting
-> named devices and also special setup handling for certain devices
-> awkward, as we would need to introduce some special ACPI device
-> handling according to device HID.
-> 
-> To avoid this, create reference static MFD cells for known
-> child devices, so when adding an MFD cell we can fix the cell
-> platform data as required. For this, a setup callback function
-> is added.
-> 
-> For now, only the IPMI cell is added.
+On Thu, May 03, 2018 at 11:52:31PM +0800, kernel test robot wrote:
+> [    0.011005] CPU: GenuineIntel Intel Core Processor (Haswell) (family: 0x6, model: 0x3c, stepping: 0x4)
+> [    0.012011] Spectre V2 : Spectre mitigation: kernel not compiled with retpoline; no mitigation available!
+> [    0.013949] Performance Events: no PMU driver, software events only.
+> [    0.019490] NMI watchdog: Perf event create on CPU 0 failed with -2
+> [    0.020005] NMI watchdog: Perf NMI watchdog permanently disabled
+> [    0.020692] WARNING: CPU: 0 PID: 1 at kernel/kthread.c:486 kthread_park+0x2b/0x56
+> [    0.021000] CPU: 0 PID: 1 Comm: swapper Not tainted 4.17.0-rc3-00038-g85f1abe #687
+> [    0.021000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [    0.021000] EIP: kthread_park+0x2b/0x56
+> [    0.021000] EFLAGS: 00210202 CPU: 0
+> [    0.021000] EAX: cf464d40 EBX: cf422500 ECX: 00000000 EDX: 00000004
+> [    0.021000] ESI: c221e2c0 EDI: 00000000 EBP: cf42df68 ESP: cf42df60
+> [    0.021000]  DS: 007b ES: 007b FS: 0000 GS: 00e0 SS: 0068
+> [    0.021000] CR0: 80050033 CR2: ffffffff CR3: 022e8000 CR4: 00140690
+> [    0.021000] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> [    0.021000] DR6: fffe0ff0 DR7: 00000400
+> [    0.021000] Call Trace:
+> [    0.021000]  smpboot_update_cpumask_percpu_thread+0x28/0x42
+> [    0.021000]  softlockup_update_smpboot_threads+0x37/0x39
+> [    0.021000]  lockup_detector_reconfigure+0x17/0x62
+> [    0.021000]  lockup_detector_init+0x5d/0x69
+> [    0.021000]  kernel_init_freeable+0x52/0x15c
+> [    0.021000]  ? rest_init+0xf4/0xf4
+> [    0.021000]  kernel_init+0x8/0xd0
+> [    0.021000]  ret_from_fork+0x19/0x30
+> [    0.021000] Code: 55 89 e5 56 53 8b 50 14 0f ba e2 15 72 02 0f 0b 8b 98 44 03 00 00 80 e2 04 74 09 0f 0b be da ff ff ff eb 2c 8b 13 80 e2 04 74 09 <0f> 0b be f0 ff ff ff eb 1c 80 0b 04 8b 15 70 de f6 c1 31 f6 39 
+> [    0.021000] ---[ end trace 3a71adb42feecba7 ]---
+> [    0.021060] TSC deadline timer enabled
 
-> +static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char
-> *hid)
-> +{
-> +	const struct hisi_lpc_acpi_mfd_cell *cell =
-> hisi_lpc_acpi_mfd_cells;
-> +
-> +	for (; cell && cell->mfd_cell.name; cell++) {
-> +		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
-> +		const struct mfd_cell_acpi_match *acpi_match;
-> +
-> +		acpi_match = mfd_cell->acpi_match;
-> +		if (!strcmp(acpi_match->pnpid, hid))
-> +			return mfd_cell;
-> +	}
-> +
-> +	return NULL;
-> +}
+Clearly my machine didn't do that :-)
 
-I'm not sure I understand why MFD core can't do it (as seen in lines
-drivers/mfd/core.c:105 and below).
+I think I see what's going on, this path actually does a kthread_park()
+when already parked, which sorta used to work.
 
-> +	/* allocate the mfd cells, one per child */
-> +	size = sizeof(*mfd_cells);
->  	mfd_cells = devm_kcalloc(hostdev, cell_num, size,
-> GFP_KERNEL);
->  	if (!mfd_cells)
->  		return -ENOMEM;
-
-And since you have structures already, I'm not sure why you need another
-allocation for them. Only what you would need is to apply resources and
-call devm_mfd_add_devices() per each found device.
-
-> +		cell = container_of(mfd_cell_ref, typeof(*cell),
-> mfd_cell);
-
-Why we can't iterate over inherited type of objects directly?
-
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Let me try and fix that.
