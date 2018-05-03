@@ -1,57 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751339AbeECXAT (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 19:00:19 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:40542 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751111AbeECXAR (ORCPT
+        id S1751377AbeECXAw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 19:00:52 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37372 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751111AbeECXAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 19:00:17 -0400
-Date: Fri, 4 May 2018 07:00:06 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "'Antoine Tenart'" <antoine.tenart@bootlin.com>
-Cc: David Laight <David.Laight@aculab.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "nadavh@marvell.com" <nadavh@marvell.com>,
-        "oferh@marvell.com" <oferh@marvell.com>,
-        "igall@marvell.com" <igall@marvell.com>
-Subject: Re: [PATCH 01/10] crypto: aead - allow to allocate AEAD requests on
- the stack
-Message-ID: <20180503230006.oq6vycplwsomfprw@gondor.apana.org.au>
-References: <20180502095725.31935-1-antoine.tenart@bootlin.com>
- <20180502095725.31935-2-antoine.tenart@bootlin.com>
- <02ad9eb93c494314a85db69886cf787a@AcuMS.aculab.com>
- <20180503122330.GB3324@kwain>
+        Thu, 3 May 2018 19:00:51 -0400
+X-Google-Smtp-Source: AB8JxZqbe2PKCt++FmK3W8pSJwFLow+x5Z9mIj1wwPLz0jm0Mic2M1QZAVZFarUW523WtQL1uthVGg==
+Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
+To: Kees Cook <keescook@chromium.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>
+References: <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com>
+ <alpine.DEB.2.20.1803072212160.2814@hadrien>
+ <20180308025812.GA9082@bombadil.infradead.org>
+ <alpine.DEB.2.20.1803080722300.3754@hadrien>
+ <20180308230512.GD29073@bombadil.infradead.org>
+ <alpine.DEB.2.20.1803131818550.3117@hadrien>
+ <20180313183220.GA21538@bombadil.infradead.org>
+ <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
+ <20180429203023.GA11891@bombadil.infradead.org>
+ <CAGXu5j+N9tt4rxaUMxoZnE-ziqU_yu-jkt-cBZ=R8wmYq6XBTg@mail.gmail.com>
+ <20180430201607.GA7041@bombadil.infradead.org>
+ <4ad99a55-9c93-5ea1-5954-3cb6e5ba7df9@rasmusvillemoes.dk>
+ <CAGXu5j+tYhQOfVMkZdPzW5CX103LHpm8SYSN51VFLufn0Z0y6Q@mail.gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <4e25ff5b-f8fc-7012-83c2-b56e6928e8bc@rasmusvillemoes.dk>
+Date: Fri, 4 May 2018 01:00:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503122330.GB3324@kwain>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAGXu5j+tYhQOfVMkZdPzW5CX103LHpm8SYSN51VFLufn0Z0y6Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 02:23:30PM +0200, 'Antoine Tenart' wrote:
->
-> I was expecting this question :) The thing is this define looks *a lot*
-> like the ones defined in other places in the crypto framework, such as
-> SKCIPHER_REQUEST_ON_STACK and AHASH_REQUEST_ON_STACK. Those haven't been
-> tackled down so far by the whole VLA removal so the idea was that the
-> same solution will apply to the 3 of them (and then I'm not really
-> adding a new one).
+On 2018-05-01 19:00, Kees Cook wrote:
+> On Mon, Apr 30, 2018 at 2:29 PM, Rasmus Villemoes
+> <linux@rasmusvillemoes.dk> wrote:
+>>
+>> gcc 5.1+ (I think) have the __builtin_OP_overflow checks that should
+>> generate reasonable code. Too bad there's no completely generic
+>> check_all_ops_in_this_expression(a+b*c+d/e, or_jump_here). Though it's
+>> hard to define what they should be checked against - probably would
+>> require all subexpressions (including the variables themselves) to have
+>> the same type.
+>>
+>> plug: https://lkml.org/lkml/2015/7/19/358
+> 
+> That's a very nice series. Why did it never get taken?
 
-Those constructs only exist for reasons of backwards compatibility.
+Well, nobody seemed particularly interested, and then
+https://lkml.org/lkml/2015/10/28/215 happened... but he did later seem
+to admit that it could be useful for the multiplication checking, and
+that "the gcc interface for multiplication overflow is fine".
 
-There is no such reason for AEAD.  So why do you need this?
+I still think even for unsigned types overflow checking can be subtle. E.g.
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+u32 somevar;
+
+if (somevar + sizeof(foo) < somevar)
+  return -EOVERFLOW;
+somevar += sizeof(this);
+
+is broken, because the LHS is promoted to unsigned long/size_t, then so
+is the RHS for the comparison, and the comparison is thus always false
+(on 64bit). It gets worse if the two types are more "opaque", and in any
+case it's not always easy to verify at a glance that the types are the
+same, or at least that the expression of the widest type is on the RHS.
+
+> It seems to do the right things quite correctly.
+
+Yes, I wouldn't suggest it without the test module verifying corner
+cases, and checking it has the same semantics whether used with old or
+new gcc.
+
+Would you shepherd it through if I updated the patches and resent?
+
+Rasmus
