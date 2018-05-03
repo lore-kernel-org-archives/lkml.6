@@ -1,187 +1,537 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751350AbeECRaJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 13:30:09 -0400
-Received: from mail-dm3nam03on0084.outbound.protection.outlook.com ([104.47.41.84]:40161
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751007AbeECRaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 13:30:05 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Christian.Koenig@amd.com;
-Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
-To: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <b8acf835-df94-9967-2327-8f0e39d88511@amd.com>
- <805645c1-ea40-2e57-88eb-5dd34e579b2e@deltatee.com>
- <3e4e0126-f444-8d88-6793-b5eb97c61f76@amd.com>
- <ce2e5351-f32a-bd80-1c77-b7fc38842175@deltatee.com>
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Message-ID: <38d866cf-f7b4-7118-d737-5a5dcd9f3784@amd.com>
-Date: Thu, 3 May 2018 19:29:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751355AbeECRbq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 13:31:46 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45148 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751007AbeECRbp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 13:31:45 -0400
+X-Google-Smtp-Source: AB8JxZpuSBiqRGRhCX91X+Ophc0Nrr4gjsNzBPDIigCF+X818RFumbdDPZFvm8jomqbLhPpyZgiv0Q==
+Date: Thu, 3 May 2018 11:31:41 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
+        frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com
+Subject: Re: [PATCH v2 04/27] coresight: Introduce support for Coresight
+ Addrss Translation Unit
+Message-ID: <20180503173141.GB11425@xps15>
+References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
+ <1525165857-11096-5-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <ce2e5351-f32a-bd80-1c77-b7fc38842175@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
-X-ClientProxiedBy: AM0PR01CA0002.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:69::15) To CY4PR12MB1718.namprd12.prod.outlook.com
- (2603:10b6:903:121::12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:CY4PR12MB1718;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1718;3:aPc46D9a5TuUQYSrXWgxN6bQwoSArndt+TAH7IaWjyRxvhyZ/p8Tae1k0AgZ4zAWQC1kafvjd3QSJ4KOC5gOdx6TxXRG3zSrdVE1WTYv7p49UdQt2kLgOsovuGJoBeUzImUZaHuD6WqQDZQqOLhPVFbp3q/C1wstY2zuM8NQhVpG+vrV/NdREBZvpVMUpG0G5X+RfLaHblKa8BekRLkDX48naCYWEC2B4M97zaCYlw1VpsANLdoJHKnCfKycyTI8;25:UcG+q7a80ah8zH8suCBjZ2ttKTvbnNguET31VxyHvLNXFrUz078YewmgmiECVEFnaywJyD2EGWsLmkVI2ixxOgmt94lQSdfTi/TW5SQ9vGcfUI15fbN9mvcZ5l9A1snG/RCi7Wu20js6gyJ178QyGdgumJLeOcXLfx6paml7KiCntXjSNJFBMB19ygt1sPTSdt86LWksUdq4x2GEyigo1dIvb2iGZ/mVHSGNzvGmi7h/twP1Ckx2Q5nz0jRfOCVzLdJ+AKM5JAPdQ6wZH/cDoeiJt4JvTPJNZM5vWD5WsFIBdHGlznMebcQTC+SdKZXHJG1kZvN6ETSMYI/uqNmMjQ==;31:+isb+OeahnHBomOlZXHk+8Z7btwuVo4rvdlNdEAMCAXehmp1y9UYGZejNZ23PzYpO6EXfO17KpFtotXxkMZ3/pckVyEpy/jHDYhPlJkHFBvvQbVecqMbPJpS3cu3+J7t9LTVWcN8/o8Mh6YZno2Kg6IiY9jnKMM3uAjJE2bkRVTO0UH/CQRufqz3QchVRjyXjcbgugqve5FdjbpIj6b83sp8llXPoM+BgLdekWY2vR4=
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1718:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1718;20:HpUIfwofpK7/mMC0D+7qB3Md7st6S/aiZMBMuoMK5flc5nR2hAg2YjZX0Arpke99UeicbXTACk8ppEarYFdwjNQBKaGwJ7P9QUwe8C0Kg9WOrNECkYlNo/8dbeMRq8y5uITarsN9hGMMz0Qb779MFZrZt+eL745n0peJSYPeG8p9BgXqWiAJexWas+xgAYxNkZjcsWkbt2OttPEFetMeWJw+hbVH3dJXi68419cx7LCFPnHJrCePkacdSGxLIhMcj+mPDaIOxiux5YNTewxGOLLzCGbf0hkZ1I6KlOOq9JXHEHwPbPm7oj2UUaPaT6AJHEpa9AGKWjMdfxcSAI7GLvDkOlVlEI2da2WAE4er4Fs+8u21qa3lQJS978MmmcKvyFRMbZ6dE/9GAujzrTmL7KTektvCoMZ6ySpmkA48bp/wuDMbvfWYYogBJpLM529zgqTsdFwFwjQ5KxxqLObE+gLNgTKad1GdPtVXxmiaF4EiDjqDG0dxaa0uI1XxlXID;4:QWd/92KNnwqyLLMdqYmnlW0bP9XEttWpqFF+80050qAAffHVWKZm2giP8xQ8/syZBIKjyyKbjAC8+cV1ssrzQx/XkUG+Vqy9e2+v5u4DVCUJA/A8Zz6Ceus6Pa/AyigHy6WiKS7QyiAh6lEk7AGr5rybURp7c/CYaO+9xQ6sNJeUJNkKuSfCYe2gw+jm6CRBc1TfqAbQ93Jc8ZydNJAQIIs7SqEYSiZDgRkM7vMnxWZSpwfVywNRGWOMUCd19XRYIVJZh93/OPDsJfoYccwpew==
-X-Microsoft-Antispam-PRVS: <CY4PR12MB17182232A90B76C1A19B78D883870@CY4PR12MB1718.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(6055026)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011);SRVR:CY4PR12MB1718;BCL:0;PCL:0;RULEID:;SRVR:CY4PR12MB1718;
-X-Forefront-PRVS: 066153096A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(39380400002)(376002)(39860400002)(366004)(396003)(199004)(189003)(57704003)(51914003)(305945005)(31686004)(81156014)(105586002)(8936002)(8676002)(81166006)(97736004)(93886005)(54906003)(58126008)(316002)(50466002)(6116002)(68736007)(1706002)(47776003)(65956001)(551934003)(65806001)(46003)(11346002)(5660300001)(446003)(2616005)(476003)(486006)(76176011)(16526019)(186003)(72206003)(65826007)(53546011)(67846002)(53936002)(36756003)(386003)(52116002)(478600001)(59450400001)(6246003)(52146003)(23676004)(31696002)(52396003)(2486003)(6486002)(106356001)(2870700001)(86362001)(64126003)(25786009)(2906002)(4326008)(7416002)(6666003)(229853002)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1718;H:[IPv6:2a02:908:1257:4460:1ab8:55c1:a639:6740];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTRQUjEyTUIxNzE4OzIzOm1uOUI5bWZ1NHB5aUx5NlZiZ0JrRlF3RmhX?=
- =?utf-8?B?YTJGd0tzZmh2NllHamtPazBiemMyWi9ic1d3YmFuajA3R0tFaXBaRFVpd0wv?=
- =?utf-8?B?VzMwQWc0M1BwVnZTcld0bzVicUJRZWhXZTJXTEc3Y3dyeWR3VkFPREc2STdu?=
- =?utf-8?B?b1BlK2FEV3hSVktqQXZnM3Q2Mk5KQkhTbkZIZXkzYSsyalIwVStDN1RwMnVQ?=
- =?utf-8?B?MXFia1libTdmZ2VMNlMxUnNOa25MZHA4YkVUS25ReFd3MDRyL3hXZStBYSs1?=
- =?utf-8?B?YnJ4VXYwMkNVQkQ2YTFjWm5CSGFRamY2UDNRTU1XT3Zmdi8vMGdORDgySGRp?=
- =?utf-8?B?MlpuQ3EvWkRCV2ZGZFZhRTFXQ2xwVWFlQmd3WWNqSWp6SmY4YlN6SkJxbFdD?=
- =?utf-8?B?R1FRQWUySWg2UUcwOVNPZytpazdkOXZNQjdBZ3pWNkdRc1RyZXltK3FoNENQ?=
- =?utf-8?B?VWJRZ0NEQnhqTEdNSGNrSGtCbEY0TklwQ2x3Tm8vRHgxRHRTYThFTDFucjVm?=
- =?utf-8?B?K0krZDM1eW1OMjFWaklhT2ZhQUV3TXNaNGhFQjVHQll4THV6Wm1WYkJyV29x?=
- =?utf-8?B?d2hlRDlMMWlxaVdJR0ZaSUV2SWx1aE1VcmtMcGtaUWRuVzkvQkMxblhxUmZs?=
- =?utf-8?B?Vnd0YmUxLzVDbFZtdWhxOU53TW5jcVprQUdaSnF4U0ZtNThIMGVJUHNNWUR1?=
- =?utf-8?B?RmdnWDgySnpuNnF0UytVSVlGZG0raERxT2t4SE9VaStOLzYvN3orR2xNRmZO?=
- =?utf-8?B?WlJPd2d5ZzVhQmc5c1p0bkpXK2h0QmFTRUprQVZkaHc4Z09aNDExdWlGUk02?=
- =?utf-8?B?U2QvU3N0ZUJLL1UveDRJKzI1WDd0TzFzTENpWlduZXErRHVidit2VThjQ0VG?=
- =?utf-8?B?bWthNytvZ0NzNmdlZVlCUkJMQXhrbHFRcDNNLzRYejlZcVM5MjZWY0I5TkNz?=
- =?utf-8?B?UVBBcGVoMy9na01TMGs1Rk5vMGk1V09lbVZBL3pUYnI4VVgyTXQwakdyMFc5?=
- =?utf-8?B?eWIwUEJxM0hyd29MNWcya2xXRnA1MjZNV1RsQW9tVnVCOFczT052T0NRN1NY?=
- =?utf-8?B?U3dsT3hML01FNEJjVUNraENwLzZhZkp6N2Ezb0ZKZHI0NmluVkVCcHBTYTNz?=
- =?utf-8?B?ejA1cE93Q1htNVhkcFp4Z0E0ZEZqd1dKR28rbGpySjhKQ3dGbEFlbVlvRUQ5?=
- =?utf-8?B?dXdtMEwrYlJkaW01dysyTnRHdk1xT0w4M0dKNnYyRDAxNzkyeFdjelA5eUNv?=
- =?utf-8?B?TnlUUmpOSHJ6WEVrR1RYRmJIbTI5VDBPeE1uRnd5RFBOQk05TkVKQVRnNi9Z?=
- =?utf-8?B?NWtpZkVLQjlHTjFTRFYrd2sra0pPZjlhbld3WGF3dFRCOWdpNTl5MjltRkl3?=
- =?utf-8?B?RFZtU1YzUXNMMm1ZMU5UdFM5UGZUZlN1aUg1RFJrSTNkVlhlNjB2dktpb3hh?=
- =?utf-8?B?cmU1bkZwL0N1Q2txSjlDbm9HTm44SzVtdms1eHBEYm1LNGRTVndVNnhUQ1Bt?=
- =?utf-8?B?dTZMaGJVMEF5d2xqRzFwUmRGYnl3SEZubklObVJuK2ZVVm1Cb0RuRlpHOHNp?=
- =?utf-8?B?TzB4ekhKTDBLVW9LNXhjQnNnSUdZRnlUbUpQQ2RGK1dRYWJjYTFRM2lJSVZq?=
- =?utf-8?B?SWloVEk0SHZJRStSV1U5OFlYU2hxdlo1ODE3bis5cDRCVm1rZ3BqNFQxUGty?=
- =?utf-8?B?ZXIwNllFVUJyaTI0c3VpK2NFdi9ZSVN1SUNzZFZCUWNGb1JrbExRVkp1Uytr?=
- =?utf-8?B?MG1aZzlnazJXSHFqT3Y1b044Z2V5VFlZMWtwNVJ6UUoxUnJhWXZyV1dHcFBs?=
- =?utf-8?B?Z2FPVFoyblplQ2dWNjlUYTZuVTZnZ3pqV3BmYlJaUEdXd3RESExOZGQreGZK?=
- =?utf-8?B?d1BmdzNDK3B4a3F2bnJBTTN5ZWgyWGtnYWxyZjh3eGxpU1Q1QkxPeTdFYUY5?=
- =?utf-8?B?MUNwT1RsdVAvMUZBYlFwclRGNjkzakc5UlRpNXdheWZSYi9KVFludFFsNHJw?=
- =?utf-8?B?WFFLOVp3TlBsd2VwN0N2eUxiVkt6dkVTY2hrZGk2TjYrV25XMEo0ai85Rm94?=
- =?utf-8?Q?K1gSpRuDVp6PfYr5w8Qt4VPIb?=
-X-Microsoft-Antispam-Message-Info: OtU0TH7vwqRR1dm4iaqojZVx6DDAcYdyBqoWQZ05GPdm3UAe8ZGFVtTp4FM9BNNpNdtQDJJdNFsUgMCF0ErBr744QXEtcmNoLTQWNxFhS+tZGHWWbYygdZcmT5B/NTaRlL0iw7ksCQPglxMs6gUPm9HYW5v0tcQkMm7hc/5Ks4Q0HiE2EODI6XTQPp7xg6Ms
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1718;6:9XZfzBjjEgoNj+8bepI83Kuh+mG+z9SQJh8Ace5WfQG6gEtKI6IWsj4hoa3bwhiSclzJoaJ0KXcWopd6ZcxtxFCBbPvqUjMeI6ZYXhvABgJyECNzz+SSNoWb8Lb4pWngTERZCp8e1LvhgcmXrU1BUDiJgQWk3gR46Rgk063aTx8q6FafECRsIf4XJ+ARm3j7NV9kIhIYjZ4Nuelw9PYYJeY92GSxLdlQwqep1jBU3AuMxVi12XqEtqFHMmdGKcHWd+2nFic0wkV4fZBhSI9MKH7iI/3FNqD0nnrgSAPtXaG2TC5f/u4vZfrBbdG9s8xfH5VJxjz3R/myAzjMfxmGdMNhzl1W62Kog/cjTXEE8EzVAQmpCj8FEH73W83IIHuzy8ZmASSqlFGWxsS5ptj2fLsXDxAH/7qoWa6NFO0hyDcopo/Q2mb0iTArCz1p3eV70swMJ0o+Q0nZN1ZDHHUjJg==;5:dOtO+/qcPbBVdkYg2bV5B7McHbTSUsq6VkUT+F2w5WWA1wOUUnMOxh3zQtQWfeJCPNfkH3NBL2hRjfhyoWSroFsimaTQiQK/A/DPHlD+1X8+RS7nSH3u5ycPl0DKzDcRZWELyVlnhrWJiuHbACT/rwnKxAyOSQcwEce8dS0jzn0=;24:Zy8xiv06NkNigSxSOA9irvqLgy92zuaDy4+ZWXEYwq+/SHQMBrrVVu2BYKXNvOAZR4HKEwOxNUEpZzBcg3ZgqZPIJyqcULf3X1cX/Ho2ioI=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR12MB1718;7:hPEbjK+7+pdf++NQucm9ZIqvI4vKnne3D34E2hiM+zRO3zYnlfD7RqXVv2FVDN/EFrVfPqrA32kUa5RxGK6XMhM9A+cVZVUWzuiekVYClPwhWudifaEcrNZh6N877YQIM7vfzK0IhIU/piVhn58uVk6zLj7BdkSxlm23amtcCTwOBc2yKcScVrwAGJgKbkQ5aaqt3uh9UsUDsxzFilzdO7xHo9MfI0Yoqs1UdGKKftftygVESCc0fdX2hdcXNqaI;20:j3KGZChkq07NtWmOjDB0vxHdpOpAkznDblZYPvt6bPpgIXicQDZamEYYOHpnUcCRTWS3FqhmJ2PRDU+Be/47M9kUwRn6JzZ76Aqsw1PSNGkoIQLt5qx5/Q/MrKNexEdKPQ4nAYbvMp4GLqxkqaCaoykYiH2Xflfk2lDQQXjdgnNfWyMkIRAZlZuePYDX3iBi331AKrIlQSDNyjBiDzKRdJ9DAVND6iUu6vOy1aI80nw3jZmdVRphSHdAfZCYqaEx
-X-MS-Office365-Filtering-Correlation-Id: 06362dbc-178f-4d90-d0a4-08d5b11b8065
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2018 17:29:57.7463 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06362dbc-178f-4d90-d0a4-08d5b11b8065
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1718
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525165857-11096-5-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 03.05.2018 um 17:59 schrieb Logan Gunthorpe:
-> On 03/05/18 03:05 AM, Christian König wrote:
->> Second question is how to you want to handle things when device are not
->> behind the same root port (which is perfectly possible in the cases I
->> deal with)?
-> I think we need to implement a whitelist. If both root ports are in the
-> white list and are on the same bus then we return a larger distance
-> instead of -1.
+On Tue, May 01, 2018 at 10:10:34AM +0100, Suzuki K Poulose wrote:
+> Add the initial support for Coresight Address Translation Unit, which
+> augments the TMC in Coresight SoC-600 by providing an improved Scatter
+> Gather mechanism. CATU is always connected to a single TMC-ETR and
+> converts the AXI address with a translated address (from a given SG
+> table with specific format). The CATU should be programmed in pass
+> through mode and enabled if the ETR doesn't translation by CATU.
+> 
+> This patch provides mechanism to enable/disable the CATU always in the
+> pass through mode.
+> 
+> We reuse the existing ports mechanism to link the TMC-ETR to the
+> connected CATU.
+> 
+> i.e, TMC-ETR:output_port0 -> CATU:input_port0
+> 
+> Reference manual for  CATU component is avilable in version r2p0 of :
+> "Arm Coresight System-on-Chip SoC-600 Technical Reference Manual",
+> under Section 4.9.
 
-Sounds good.
+Please remove the part about the TRM as it is bound to change.  
 
->> Third question why multiple clients? That feels a bit like you are
->> pushing something special to your use case into the common PCI
->> subsystem. Something which usually isn't a good idea.
-> No, I think this will be pretty standard. In the simple general case you
-> are going to have one provider and at least two clients (one which
-> writes the memory and one which reads it). However, one client is
-> likely, but not necessarily, the same as the provider.
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/hwtracing/coresight/Kconfig             |  10 ++
+>  drivers/hwtracing/coresight/Makefile            |   1 +
+>  drivers/hwtracing/coresight/coresight-catu.c    | 195 ++++++++++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-catu.h    |  89 +++++++++++
+>  drivers/hwtracing/coresight/coresight-tmc-etr.c |  26 ++++
+>  drivers/hwtracing/coresight/coresight-tmc.h     |  27 ++++
+>  include/linux/coresight.h                       |   1 +
+>  7 files changed, 349 insertions(+)
+>  create mode 100644 drivers/hwtracing/coresight/coresight-catu.c
+>  create mode 100644 drivers/hwtracing/coresight/coresight-catu.h
+> 
+> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
+> index ef9cb3c..21f638f 100644
+> --- a/drivers/hwtracing/coresight/Kconfig
+> +++ b/drivers/hwtracing/coresight/Kconfig
+> @@ -31,6 +31,16 @@ config CORESIGHT_LINK_AND_SINK_TMC
+>  	  complies with the generic implementation of the component without
+>  	  special enhancement or added features.
+>  
+> +config CORESIGHT_CATU
+> +	bool "Coresight Address Translation Unit (CATU) driver"
+> +	depends on CORESIGHT_LINK_AND_SINK_TMC
+> +	help
+> +	   Enable support for the Coresight Address Translation Unit (CATU).
+> +	   CATU supports a scatter gather table of 4K pages, with forward/backward
+> +	   lookup. CATU helps TMC ETR to use large physically non-contiguous trace
+> +	   buffer by translating the addersses used by ETR to the corresponding
+> +	   physical adderss by looking up the table.
 
-Ok, that is the point where I'm stuck. Why do we need that in one 
-function call in the PCIe subsystem?
+There is a couple of typos in the last sentence.
 
-The problem at least with GPUs is that we seriously don't have that 
-information here, cause the PCI subsystem might not be aware of all the 
-interconnections.
+> +
+>  config CORESIGHT_SINK_TPIU
+>  	bool "Coresight generic TPIU driver"
+>  	depends on CORESIGHT_LINKS_AND_SINKS
+> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
+> index 61db9dd..41870de 100644
+> --- a/drivers/hwtracing/coresight/Makefile
+> +++ b/drivers/hwtracing/coresight/Makefile
+> @@ -18,3 +18,4 @@ obj-$(CONFIG_CORESIGHT_SOURCE_ETM4X) += coresight-etm4x.o \
+>  obj-$(CONFIG_CORESIGHT_DYNAMIC_REPLICATOR) += coresight-dynamic-replicator.o
+>  obj-$(CONFIG_CORESIGHT_STM) += coresight-stm.o
+>  obj-$(CONFIG_CORESIGHT_CPU_DEBUG) += coresight-cpu-debug.o
+> +obj-$(CONFIG_CORESIGHT_CATU) += coresight-catu.o
+> diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
+> new file mode 100644
+> index 0000000..2cd69a6
+> --- /dev/null
+> +++ b/drivers/hwtracing/coresight/coresight-catu.c
+> @@ -0,0 +1,195 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
 
-For example it isn't uncommon to put multiple GPUs on one board. To the 
-PCI subsystem that looks like separate devices, but in reality all GPUs 
-are interconnected and can access each others memory directly without 
-going over the PCIe bus.
+Extra line
 
-I seriously don't want to model that in the PCI subsystem, but rather 
-the driver. That's why it feels like a mistake to me to push all that 
-into the PCI function.
+> +/*
+> + * Copyright (C) 2017 ARM Limited. All rights reserved.
 
-> In the NVMeof case, we might have N clients: 1 RDMA device and N-1 block
-> devices. The code doesn't care which device provides the memory as it
-> could be the RDMA device or one/all of the block devices (or, in theory,
-> a completely separate device with P2P-able memory). However, it does
-> require that all devices involved are accessible per
-> pci_p2pdma_distance() or it won't use P2P transactions.
->
-> I could also imagine other use cases: ie. an RDMA NIC sends data to a
-> GPU for processing and then sends the data to an NVMe device for storage
-> (or vice-versa). In this case we have 3 clients and one provider.
+You sure you don't want to bump this to 2018?
 
-Why can't we model that as two separate transactions?
+> + *
+> + * Coresight Address Translation Unit support
+> + *
+> + * Author: Suzuki K Poulose <suzuki.poulose@arm.com>
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/device.h>
+> +#include <linux/amba/bus.h>
+> +#include <linux/io.h>
+> +#include <linux/slab.h>
 
-E.g. one from the RDMA NIC to the GPU memory. And another one from the 
-GPU memory to the NVMe device.
+List in alphabetical order is possible.
 
-That would also match how I get this information from userspace.
+> +
+> +#include "coresight-catu.h"
+> +#include "coresight-priv.h"
+> +
+> +#define csdev_to_catu_drvdata(csdev)	\
+> +	dev_get_drvdata(csdev->dev.parent)
+> +
+> +coresight_simple_reg32(struct catu_drvdata, control, CATU_CONTROL);
+> +coresight_simple_reg32(struct catu_drvdata, status, CATU_STATUS);
+> +coresight_simple_reg32(struct catu_drvdata, mode, CATU_MODE);
+> +coresight_simple_reg32(struct catu_drvdata, axictrl, CATU_AXICTRL);
+> +coresight_simple_reg32(struct catu_drvdata, irqen, CATU_IRQEN);
+> +coresight_simple_reg64(struct catu_drvdata, sladdr,
+> +		       CATU_SLADDRLO, CATU_SLADDRHI);
+> +coresight_simple_reg64(struct catu_drvdata, inaddr,
+> +		       CATU_INADDRLO, CATU_INADDRHI);
+> +
+> +static struct attribute *catu_mgmt_attrs[] = {
+> +	&dev_attr_control.attr,
+> +	&dev_attr_status.attr,
+> +	&dev_attr_mode.attr,
+> +	&dev_attr_axictrl.attr,
+> +	&dev_attr_irqen.attr,
+> +	&dev_attr_sladdr.attr,
+> +	&dev_attr_inaddr.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group catu_mgmt_group = {
+> +	.attrs = catu_mgmt_attrs,
+> +	.name = "mgmt",
+> +};
+> +
+> +static const struct attribute_group *catu_groups[] = {
+> +	&catu_mgmt_group,
+> +	NULL,
+> +};
+> +
+> +
+> +static inline int catu_wait_for_ready(struct catu_drvdata *drvdata)
+> +{
+> +	return coresight_timeout(drvdata->base,
+> +				 CATU_STATUS, CATU_STATUS_READY, 1);
+> +}
+> +
+> +static int catu_enable_hw(struct catu_drvdata *drvdata, void *__unused)
+> +{
+> +	u32 control;
+> +
+> +	if (catu_wait_for_ready(drvdata))
+> +		dev_warn(drvdata->dev, "Timeout while waiting for READY\n");
+> +
+> +	control = catu_read_control(drvdata);
+> +	if (control & BIT(CATU_CONTROL_ENABLE)) {
+> +		dev_warn(drvdata->dev, "CATU is already enabled\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	control |= BIT(CATU_CONTROL_ENABLE);
+> +	catu_write_mode(drvdata, CATU_MODE_PASS_THROUGH);
+> +	catu_write_control(drvdata, control);
+> +	dev_dbg(drvdata->dev, "Enabled in Pass through mode\n");
+> +	return 0;
+> +}
+> +
+> +static int catu_enable(struct coresight_device *csdev, void *data)
+> +{
+> +	int rc;
+> +	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+> +
+> +	CS_UNLOCK(catu_drvdata->base);
+> +	rc = catu_enable_hw(catu_drvdata, data);
+> +	CS_LOCK(catu_drvdata->base);
+> +	return rc;
+> +}
+> +
+> +static int catu_disable_hw(struct catu_drvdata *drvdata)
+> +{
+> +	int rc = 0;
+> +
+> +	if (catu_wait_for_ready(drvdata)) {
+> +		dev_info(drvdata->dev, "Timeout while waiting for READY\n");
+> +		rc = -EAGAIN;
+> +	}
+> +
+> +	catu_write_control(drvdata, 0);
+> +	dev_dbg(drvdata->dev, "Disabled\n");
+> +	return rc;
+> +}
+> +
+> +static int catu_disable(struct coresight_device *csdev, void *__unused)
+> +{
+> +	int rc;
+> +	struct catu_drvdata *catu_drvdata = csdev_to_catu_drvdata(csdev);
+> +
+> +	CS_UNLOCK(catu_drvdata->base);
+> +	rc = catu_disable_hw(catu_drvdata);
+> +	CS_LOCK(catu_drvdata->base);
+> +
 
->> As far as I can see we need a function which return the distance between
->> a initiator and target device. This function then returns -1 if the
->> transaction can't be made and a positive value otherwise.
-> If you need to make a simpler convenience function for your use case I'm
-> not against it.
+I suppose you can remove the extra line as catu_enable() doesn't have one.
 
-Yeah, same for me. If Bjorn is ok with that specialized NVM functions 
-that I'm fine with that as well.
+> +	return rc;
+> +}
+> +
+> +const struct coresight_ops_helper catu_helper_ops = {
+> +	.enable = catu_enable,
+> +	.disable = catu_disable,
+> +};
+> +
+> +const struct coresight_ops catu_ops = {
+> +	.helper_ops = &catu_helper_ops,
+> +};
+> +
+> +static int catu_probe(struct amba_device *adev, const struct amba_id *id)
+> +{
+> +	int ret = 0;
+> +	struct catu_drvdata *drvdata;
+> +	struct coresight_desc catu_desc;
+> +	struct coresight_platform_data *pdata = NULL;
+> +	struct device *dev = &adev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	void __iomem *base;
+> +
+> +	if (np) {
+> +		pdata = of_get_coresight_platform_data(dev, np);
+> +		if (IS_ERR(pdata)) {
+> +			ret = PTR_ERR(pdata);
+> +			goto out;
+> +		}
+> +		dev->platform_data = pdata;
+> +	}
+> +
+> +	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+> +	if (!drvdata) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	drvdata->dev = dev;
+> +	dev_set_drvdata(dev, drvdata);
+> +	base = devm_ioremap_resource(dev, &adev->res);
+> +	if (IS_ERR(base)) {
+> +		ret = PTR_ERR(base);
+> +		goto out;
+> +	}
+> +
+> +	drvdata->base = base;
+> +	catu_desc.pdata = pdata;
+> +	catu_desc.dev = dev;
+> +	catu_desc.groups = catu_groups;
+> +	catu_desc.type = CORESIGHT_DEV_TYPE_HELPER;
+> +	catu_desc.subtype.helper_subtype = CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
+> +	catu_desc.ops = &catu_ops;
+> +	drvdata->csdev = coresight_register(&catu_desc);
+> +	if (IS_ERR(drvdata->csdev))
+> +		ret = PTR_ERR(drvdata->csdev);
+> +	if (!ret)
+> +		dev_info(drvdata->dev, "initialized\n");
 
-I think it would just be more convenient when we can come up with 
-functions which can handle all use cases, cause there still seems to be 
-a lot of similarities.
+Please remove as it 1) doesn't convey HW related information and 2) the TMC
+doesn't out put anything. 
 
->
->> We also need to give the direction of the transaction and have a
->> whitelist root complex PCI-IDs which can handle P2P transactions from
->> different ports for a certain DMA direction.
-> Yes. In the NVMeof case we need all devices to be able to DMA in both
-> directions so we did not need the DMA direction. But I can see this
-> being useful once we add the whitelist.
+> +out:
+> +	pm_runtime_put(&adev->dev);
+> +	return ret;
+> +}
+> +
+> +static struct amba_id catu_ids[] = {
+> +	{
+> +		.id	= 0x000bb9ee,
+> +		.mask	= 0x000fffff,
+> +	},
+> +	{},
+> +};
+> +
+> +static struct amba_driver catu_driver = {
+> +	.drv = {
+> +		.name			= "coresight-catu",
+> +		.owner			= THIS_MODULE,
+> +		.suppress_bind_attrs	= true,
+> +	},
+> +	.probe				= catu_probe,
+> +	.id_table			= catu_ids,
+> +};
+> +
+> +builtin_amba_driver(catu_driver);
+> diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
+> new file mode 100644
+> index 0000000..cd58d6f
+> --- /dev/null
+> +++ b/drivers/hwtracing/coresight/coresight-catu.h
+> @@ -0,0 +1,89 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
 
-Ok, I agree that can be added later on. For simplicity let's assume for 
-now we always to bidirectional transfers.
+Extra line
 
-Thanks for the explanation,
-Christian.
+> +/*
+> + * Copyright (C) 2017 ARM Limited. All rights reserved.
+> + *
+> + * Author: Suzuki K Poulose <suzuki.poulose@arm.com>
+> + *
 
->
-> Logan
+Extra line. In coresight-catu.c there isn't one.
+
+> + */
+> +
+> +#ifndef _CORESIGHT_CATU_H
+> +#define _CORESIGHT_CATU_H
+> +
+> +#include "coresight-priv.h"
+> +
+> +/* Register offset from base */
+> +#define CATU_CONTROL		0x000
+> +#define CATU_MODE		0x004
+> +#define CATU_AXICTRL		0x008
+> +#define CATU_IRQEN		0x00c
+> +#define CATU_SLADDRLO		0x020
+> +#define CATU_SLADDRHI		0x024
+> +#define CATU_INADDRLO		0x028
+> +#define CATU_INADDRHI		0x02c
+> +#define CATU_STATUS		0x100
+> +#define CATU_DEVARCH		0xfbc
+> +
+> +#define CATU_CONTROL_ENABLE	0
+> +
+> +#define CATU_MODE_PASS_THROUGH	0U
+> +#define CATU_MODE_TRANSLATE	1U
+> +
+> +#define CATU_STATUS_READY	8
+> +#define CATU_STATUS_ADRERR	0
+> +#define CATU_STATUS_AXIERR	4
+> +
+> +
+
+Extra line.
+
+> +#define CATU_IRQEN_ON		0x1
+> +#define CATU_IRQEN_OFF		0x0
+> +
+> +
+
+Extra line.
+
+> +struct catu_drvdata {
+> +	struct device *dev;
+> +	void __iomem *base;
+> +	struct coresight_device *csdev;
+> +	int irq;
+> +};
+> +
+> +#define CATU_REG32(name, offset)					\
+> +static inline u32							\
+> +catu_read_##name(struct catu_drvdata *drvdata)				\
+> +{									\
+> +	return coresight_read_reg_pair(drvdata->base, offset, -1);	\
+> +}									\
+> +static inline void							\
+> +catu_write_##name(struct catu_drvdata *drvdata, u32 val)		\
+> +{									\
+> +	coresight_write_reg_pair(drvdata->base, val, offset, -1);	\
+> +}
+> +
+> +#define CATU_REG_PAIR(name, lo_off, hi_off)				\
+> +static inline u64							\
+> +catu_read_##name(struct catu_drvdata *drvdata)				\
+> +{									\
+> +	return coresight_read_reg_pair(drvdata->base, lo_off, hi_off);	\
+> +}									\
+> +static inline void							\
+> +catu_write_##name(struct catu_drvdata *drvdata, u64 val)		\
+> +{									\
+> +	coresight_write_reg_pair(drvdata->base, val, lo_off, hi_off);	\
+> +}
+> +
+> +CATU_REG32(control, CATU_CONTROL);
+> +CATU_REG32(mode, CATU_MODE);
+> +CATU_REG_PAIR(sladdr, CATU_SLADDRLO, CATU_SLADDRHI)
+> +CATU_REG_PAIR(inaddr, CATU_INADDRLO, CATU_INADDRHI)
+> +
+> +static inline bool coresight_is_catu_device(struct coresight_device *csdev)
+> +{
+> +	enum coresight_dev_subtype_helper subtype;
+> +
+> +	/* Make the checkpatch happy */
+> +	subtype = csdev->subtype.helper_subtype;
+> +
+> +	return IS_ENABLED(CONFIG_CORESIGHT_CATU) &&
+> +	       csdev->type == CORESIGHT_DEV_TYPE_HELPER &&
+> +	       subtype == CORESIGHT_DEV_SUBTYPE_HELPER_CATU;
+> +}
+> +
+> +#endif
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index 68fbc8f..9b0c620 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -17,9 +17,26 @@
+>  
+>  #include <linux/coresight.h>
+>  #include <linux/dma-mapping.h>
+> +#include "coresight-catu.h"
+>  #include "coresight-priv.h"
+>  #include "coresight-tmc.h"
+>  
+> +static inline void tmc_etr_enable_catu(struct tmc_drvdata *drvdata)
+> +{
+> +	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
+> +
+> +	if (catu && helper_ops(catu)->enable)
+> +		helper_ops(catu)->enable(catu, NULL);
+> +}
+> +
+> +static inline void tmc_etr_disable_catu(struct tmc_drvdata *drvdata)
+> +{
+> +	struct coresight_device *catu = tmc_etr_get_catu_device(drvdata);
+> +
+> +	if (catu && helper_ops(catu)->disable)
+> +		helper_ops(catu)->disable(catu, NULL);
+> +}
+> +
+>  static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
+>  {
+>  	u32 axictl, sts;
+> @@ -27,6 +44,12 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
+>  	/* Zero out the memory to help with debug */
+>  	memset(drvdata->vaddr, 0, drvdata->size);
+>  
+> +	/*
+> +	 * If this ETR is connected to a CATU, enable it before we turn
+> +	 * this on
+> +	 */
+> +	tmc_etr_enable_catu(drvdata);
+> +
+>  	CS_UNLOCK(drvdata->base);
+>  
+>  	/* Wait for TMCSReady bit to be set */
+> @@ -116,6 +139,9 @@ static void tmc_etr_disable_hw(struct tmc_drvdata *drvdata)
+>  	tmc_disable_hw(drvdata);
+>  
+>  	CS_LOCK(drvdata->base);
+> +
+> +	/* Disable CATU device if this ETR is connected to one */
+> +	tmc_etr_disable_catu(drvdata);
+>  }
+>  
+>  static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index 8df7a81..cdff853 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -19,6 +19,7 @@
+>  #define _CORESIGHT_TMC_H
+>  
+>  #include <linux/miscdevice.h>
+> +#include "coresight-catu.h"
+>  
+>  #define TMC_RSZ			0x004
+>  #define TMC_STS			0x00c
+> @@ -222,4 +223,30 @@ static inline bool tmc_etr_has_cap(struct tmc_drvdata *drvdata, u32 cap)
+>  	return !!(drvdata->etr_caps & cap);
+>  }
+>  
+> +/*
+> + * TMC ETR could be connected to a CATU device, which can provide address
+> + * translation service. This is represented by the Output port of the TMC
+> + * (ETR) connected to the input port of the CATU.
+> + *
+> + * Returns	: coresight_device ptr for the CATU device if a CATU is found.
+> + *		: NULL otherwise.
+> + */
+> +static inline struct coresight_device *
+> +tmc_etr_get_catu_device(struct tmc_drvdata *drvdata)
+> +{
+> +	int i;
+> +	struct coresight_device *tmp, *etr = drvdata->csdev;
+> +
+> +	if (!IS_ENABLED(CONFIG_CORESIGHT_CATU))
+> +		return NULL;
+> +
+> +	for (i = 0; i < etr->nr_outport; i++) {
+> +		tmp = etr->conns[0].child_dev;
+> +		if (tmp && coresight_is_catu_device(tmp))
+> +			return tmp;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>  #endif
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index 5e926f7..c0e1568 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -72,6 +72,7 @@ enum coresight_dev_subtype_source {
+>  
+>  enum coresight_dev_subtype_helper {
+>  	CORESIGHT_DEV_SUBTYPE_HELPER_NONE,
+> +	CORESIGHT_DEV_SUBTYPE_HELPER_CATU,
+>  };
+>  
+>  /**
+> -- 
+> 2.7.4
+> 
