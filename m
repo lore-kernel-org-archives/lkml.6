@@ -1,50 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751178AbeECIwz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:52:55 -0400
-Received: from smtp-out12.electric.net ([89.104.206.35]:58396 "EHLO
-        smtp-out12.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751065AbeECIwu (ORCPT
+        id S1751127AbeECIyT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:54:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57370 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750859AbeECIyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:52:50 -0400
-From: =?iso-8859-1?Q?Bj=F8rn_Damstedt_Rasmussen?= <bjra@terma.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: SWIOTLB buffer runs full
-Thread-Topic: SWIOTLB buffer runs full
-Thread-Index: AdPivBr4uiBu7YalQHS4xag4G7VuFw==
-Date: Thu, 3 May 2018 08:52:46 +0000
-Message-ID: <5BD0C36065EAAD4BA6A60ACFBB09F30AE5B7B72F@Exch03.terma.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.20.5.171]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Thu, 3 May 2018 04:54:15 -0400
+Subject: Re: [PATCH v2 3/3] perf/buildid-cache: Support --purge-all option
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>, jolsa@redhat.com,
+        acme@redhat.com, kstewart@linuxfoundation.org, tglx@linutronix.de,
+        pombredanne@nexb.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        uneedsihyeon@gmail.com, kjlx@templeofstupid.com
+References: <20180417041346.5617-1-ravi.bangoria@linux.vnet.ibm.com>
+ <20180417041346.5617-4-ravi.bangoria@linux.vnet.ibm.com>
+ <20180423160219.b58fdc600e5d6927105ba57b@kernel.org>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date: Thu, 3 May 2018 14:24:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-Authenticated: smtp.out@terma.com
-X-Outbound-IP: 193.163.1.101
-X-Env-From: bjra@terma.com
-X-Proto: esmtpsa
-X-Revdns: r2d2.lystrup.terma.com
-X-HELO: EXCH01.terma.com
-X-TLS: TLSv1:ECDHE-RSA-AES256-SHA:256
-X-Authenticated_ID: smtp.out@terma.com
-X-PolicySMART: 6001202
+In-Reply-To: <20180423160219.b58fdc600e5d6927105ba57b@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18050308-0044-0000-0000-0000054E7632
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050308-0045-0000-0000-0000288F9B44
+Message-Id: <b72d8419-2933-d241-2662-899a72032aa8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030085
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After a long and bloody battle I managed to port Xilinx's Temac ethernet driver (drivers/net/ethernet/xilinx/ll_temac_main.c) to Intel x86_64 platform.
+Hi Masami,
 
-The Temac driver tries to allocate up to 512 DMA buffers of 9018 bytes using dma_map_single() during high load. But when there's high load I start getting this message:
-	xilinx_temac xilinx_temac.0: swiotlb buffer is full (sz: 9018 bytes)
+On 04/23/2018 12:32 PM, Masami Hiramatsu wrote:
+> On Tue, 17 Apr 2018 09:43:46 +0530
+> Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
+>
+>> +	pr_debug("Purged all: %s\n", err ? "FAIL" : "Ok");
+> Hmm, I think this should use pr_info(or pr_warning), at least for Failure case.
 
+Actually, I followed what is already there for other options.
 
-When the SWIOTLB buffer reports full then performance drops significantly and the kernel log is being blasted with the above message.
-
-If I reduce the DMA buffer size to 2000 bytes then I don't get the above error, so I guess the problem is because there's only very few DMA buffers greater than 2K bytes. I tried appending swiotlb=131072 to kernel parameter (i.e. 256MB, default is 64MB) but the SWIOTLB buffer is still being depleted.
-
-So my question is how do I increase the amount of DMA buffers that can hold 9018 bytes? Is it a soft or hardware setting? I run Linux kernel v4.4.97 on Intel(R) Core(TM) i7-2610UE CPU @ 1.50GHz (family: 0x6, model: 0x2a, stepping: 0x7).
-
-Bjørn Damstedt Rasmussen
+Thanks,
+Ravi
