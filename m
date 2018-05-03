@@ -1,154 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeECIfM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:35:12 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37648 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeECIfH (ORCPT
+        id S1751374AbeECIgS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:36:18 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:56519 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeECIgM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:35:07 -0400
-X-Google-Smtp-Source: AB8JxZp2nhaTsTGgmf/aCfY2+AWssxeABmeYCTAaeXmAlbOYu4PTr9rJEOREDBl61U4CwOjMKMEMRA==
-From: Jia He <hejianet@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Jia He <hejianet@gmail.com>,
-        jia.he@hxt-semitech.com
-Subject: [PATCH] mm/ksm: ignore STABLE_FLAG of rmap_item->address in rmap_walk_ksm
-Date: Thu,  3 May 2018 16:34:48 +0800
-Message-Id: <1525336488-25447-1-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Thu, 3 May 2018 04:36:12 -0400
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180503083610epoutp02890cabe6cab4989b59a64852787bf8a2~rFYeUSER21669716697epoutp029
+X-AuditID: b6c32a4a-a79ff700000010d4-98-5aeac9fa548c
+From: Satendra Singh Thakur <satendra.t@samsung.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc: Satendra Singh Thakur <satendra.t@samsung.com>,
+        Madhur Verma <madhur.verma@samsung.com>,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>
+Subject: [PATCH 01/13] drm/kms/mode/atmel-hlcdc: using helper func
+ drm_display_mode_to_videomode for calculating timing parameters
+Date: Thu,  3 May 2018 14:06:00 +0530
+Message-Id: <b9ad5cb3c236c149b14df031d0a50226ee1fbff7.1525087679.git.satendra.t@samsung.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1525087679.git.satendra.t@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSe0hTcRjtt7tdp7W6TKtfgjpuD5jg2p2bXkV7mq0XWP7VKtxNf+houxv3
+        bvbClNLK2UxBQc1qlZXZC1ZkWppopYYZPQiiJxlUaz3IR5K97rxK/53zfedwDh+fHFOW4pFy
+        C+tEHMtYSTxMeq1LrY772es3ab3DobSnv1dCH/hyJoRuv3dYSj8Z/orT/gcBjPYNPJXRj1vr
+        cbqrugGnm6+cwOiLD0qkS8KMxy7sNjaPvJEZX5d1S4xXGgqNL0ZPA2P51SZgHPRFZ4SYUEoe
+        YnIQp0Jstj3Hwuamkmsys5ZnGRK0VByVRCeSKpaxoVQybW1GXLrFKrQjVfmM1SWMMhieJxcu
+        SuHsLidS5dl5Zyq5iaJ0GkqbqNHpdBq9YUuyziBIzCjv25F0R9GsHf4fdBE4pHSDUDkk9PDt
+        hSEQxEriBoA3RyJE/B3A6mOr3CBMwCMA+qp7QiYNfY3PZeKiDcBPrR4gkmEAD5adlQRVuKB6
+        X18zroogjkrg17pOaZBgRBmAnrZiLEjCiWIA3S0D4xYpMR96y8vHsYLYDP/03QJiYDR81l8q
+        GOTyUCIZ3hzaGvRCogOH3+6dx0VNGnxad1si4nDo7746UTYSDn5pw0XDPgDfXDoRIpJDQtnS
+        uxOqxbC4qkMaTMAINbzculAcp8KHLbWyIMaI6dAz9k4SlEBCAQ/un7jePHjuQxc2mfXL65aJ
+        2Aj3Bionui2F7QGPTLyqB8AS38oKEFP3P8wLQBOYgxy8LRfxBoeORds1PGPjXWyuJttu84Hx
+        N4xdfR2c6V/bCQg5IKcpOu5/NCllTD6/09YJoBwjIxRVZX6TUpHD7NyFOHsW57IivhMYhMNW
+        YpEzs+3CU7POLEqfpNUnJCRSWm2SnpyteNb7yqQkchkn2oaQA3GTPok8NLIIrO+fUbTnd80N
+        NPCXGz1V8GlKclSsJX5FvC3zTmb21L51VTXqnpLGs4PtMwcstZs+x0c1Pio2O8g7XHPghRVq
+        58XcLTBXn3QHji6IYu3HayrcFQ959YIIrG5u7+VoC5FQTy1bbc4fedmkHyrsuaUyd6dsyNwY
+        vnvM62rwu8ymFlLK5zFULMbxzD+bUBjtnAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsWy7bCSnO6Pk6+iDA51m1n0njvJZNH+bhm7
+        xb5T/SwWV76+Z7N4df4Ns8Wmx9dYLS7vmsNmcXjqEjaL7ZsXMlusPd/K4sDlMW9Ntcf2bw9Y
+        Pe53H2fy2Lyk3uPOj6WMHn1bVjF6fN4kF8AexWWTkpqTWZZapG+XwJXxYbZbQYNYxavvFg2M
+        PUJdjJwcEgImEmdW3GbtYuTiEBLYzSgxaf82NoiElMSyNzC2sMTKf8/ZIYo+M0psmXWJGSTB
+        BtT9fM4MsG4RgcVMErfn/mUEcZgFehklXuzfD9YiLNDEKLFhw1x2kBYWAVWJBX19TCA2r0CM
+        xL8z+xkhdshJ3DzXCTSWg4NTwEpiz5ckkLCQgKVEe99h1gmMfAsYGVYxSqYWFOem5xYbFhjl
+        pZbrFSfmFpfmpesl5+duYgQHqZbWDsYTJ+IPMQpwMCrx8B44+zJKiDWxrLgy9xCjBAezkgjv
+        lO5XUUK8KYmVValF+fFFpTmpxYcYpTlYlMR55fOPRQoJpCeWpGanphakFsFkmTg4pRoY57V/
+        kH68wve6b3ytJ7vZHWVhockLteYZNf5Wuux/Jm5z+vu7U/ymq6e4TNvvaM0sYeqwpobbyybD
+        QOIci5pEzJ2zMsdXcSmYVwV9ufXw991ZBU5b+hf/NTjGfzVs9tO9Qjf9dRc0l+8zu/vT1n8C
+        54/gBesffpSb/UTqocgkHamXF464nfwkqsRSnJFoqMVcVJwIALAvAi9OAgAA
+X-CMS-MailID: 20180503083608epcas5p4c9cda0f0b42af8232691baa7cbde96c9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-MTR: 20180503083608epcas5p4c9cda0f0b42af8232691baa7cbde96c9
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180503083608epcas5p4c9cda0f0b42af8232691baa7cbde96c9
+X-RootMTR: 20180503083608epcas5p4c9cda0f0b42af8232691baa7cbde96c9
+References: <cover.1525087679.git.satendra.t@samsung.com>
+        <CGME20180503083608epcas5p4c9cda0f0b42af8232691baa7cbde96c9@epcas5p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In our armv8a server(QDF2400), I noticed a WARN_ON caused by PAGE_SIZE
-unaligned for rmap_item->address.
+To avoid duplicate logic for the same:
+There is a function in drm-core to calculate display timing parameters:
+horizontal front porch, back porch, sync length,
+vertical front porch, back porch, sync length and
+clock in Hz.
+However, some drivers are still calculating these parameters themselves.
+Therefore, there is a duplication of the code.
+This patch series replaces this redundant code with the function
+drm_display_mode_to_videomode.
+This removes nearly 100 redundant lines from the related drivers.
 
---------------------------begin--------------------------------------
-[  410.853828] WARNING: CPU: 4 PID: 4641 at
-arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1826
-kvm_age_hva_handler+0xc0/0xc8
-[  410.864518] Modules linked in: vhost_net vhost tap xt_CHECKSUM
-ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT
-nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink
-ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6
-nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security
-ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4
-nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw
-ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter
-rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi
-ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm
-ib_ucm ib_umad rdma_cm ib_cm iw_cm mlx5_ib vfat fat ib_uverbs dm_mirror
-dm_region_hash ib_core dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
-[  410.935101]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs
-libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform
-libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
-[  410.951369] CPU: 4 PID: 4641 Comm: memhog Tainted: G        W
-4.17.0-rc3+ #8
-[  410.959104] Hardware name: <snip for confidential issues>
-[  410.969791] pstate: 80400005 (Nzcv daif +PAN -UAO)
-[  410.974575] pc : kvm_age_hva_handler+0xc0/0xc8
-[  410.979012] lr : handle_hva_to_gpa+0xa8/0xe0
-[  410.983274] sp : ffff801761553290
-[  410.986581] x29: ffff801761553290 x28: 0000000000000000
-[  410.991888] x27: 0000000000000002 x26: 0000000000000000
-[  410.997195] x25: ffff801765430058 x24: ffff0000080b5608
-[  411.002501] x23: 0000000000000000 x22: ffff8017ccb84000
-[  411.007807] x21: 0000000003ff0000 x20: ffff8017ccb84000
-[  411.013113] x19: 000000000000fe00 x18: ffff000008fb3c08
-[  411.018419] x17: 0000000000000000 x16: 0060001645820bd3
-[  411.023725] x15: ffff80176aacbc08 x14: 0000000000000000
-[  411.029031] x13: 0000000000000040 x12: 0000000000000228
-[  411.034337] x11: 0000000000000000 x10: 0000000000000000
-[  411.039643] x9 : 0000000000000010 x8 : 0000000000000004
-[  411.044949] x7 : 0000000000000000 x6 : 00008017f0770000
-[  411.050255] x5 : 0000fffda59f0200 x4 : 0000000000000000
-[  411.055561] x3 : 0000000000000000 x2 : 000000000000fe00
-[  411.060867] x1 : 0000000003ff0000 x0 : 0000000020000000
-[  411.066173] Call trace:
-[  411.068614]  kvm_age_hva_handler+0xc0/0xc8
-[  411.072703]  handle_hva_to_gpa+0xa8/0xe0
-[  411.076619]  kvm_age_hva+0x4c/0xe8
-[  411.080014]  kvm_mmu_notifier_clear_flush_young+0x54/0x98
-[  411.085408]  __mmu_notifier_clear_flush_young+0x6c/0xa0
-[  411.090627]  page_referenced_one+0x154/0x1d8
-[  411.094890]  rmap_walk_ksm+0x12c/0x1d0
-[  411.098632]  rmap_walk+0x94/0xa0
-[  411.101854]  page_referenced+0x194/0x1b0
-[  411.105770]  shrink_page_list+0x674/0xc28
-[  411.109772]  shrink_inactive_list+0x26c/0x5b8
-[  411.114122]  shrink_node_memcg+0x35c/0x620
-[  411.118211]  shrink_node+0x100/0x430
-[  411.121778]  do_try_to_free_pages+0xe0/0x3a8
-[  411.126041]  try_to_free_pages+0xe4/0x230
-[  411.130045]  __alloc_pages_nodemask+0x564/0xdc0
-[  411.134569]  alloc_pages_vma+0x90/0x228
-[  411.138398]  do_anonymous_page+0xc8/0x4d0
-[  411.142400]  __handle_mm_fault+0x4a0/0x508
-[  411.146489]  handle_mm_fault+0xf8/0x1b0
-[  411.150321]  do_page_fault+0x218/0x4b8
-[  411.154064]  do_translation_fault+0x90/0xa0
-[  411.158239]  do_mem_abort+0x68/0xf0
-[  411.161721]  el0_da+0x24/0x28
----------------------------end---------------------------------------
-
-In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
-then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
-Thus it causes exceptions in handle_hva_to_gpa on arm64.
-
-This patch fixes it by ignoring the low bits of rmap_item->address when
-doing rmap_walk_ksm.
-
-Signed-off-by: jia.he@hxt-semitech.com
+Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+Cc: Madhur Verma <madhur.verma@samsung.com>
+Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
 ---
- mm/ksm.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index e3cbf9a..3f0d980 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -199,6 +199,8 @@ struct rmap_item {
- #define SEQNR_MASK	0x0ff	/* low bits of unstable tree seqnr */
- #define UNSTABLE_FLAG	0x100	/* is a node of the unstable tree */
- #define STABLE_FLAG	0x200	/* is listed from the stable tree */
-+#define KSM_FLAG_MASK	(SEQNR_MASK|UNSTABLE_FLAG|STABLE_FLAG)
-+				/* to mask all the flags */
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+index c1ea5c3..3dfeef0 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+@@ -26,6 +26,7 @@
+ #include <linux/pm_runtime.h>
  
- /* The stable and unstable tree heads */
- static struct rb_root one_stable_tree[1] = { RB_ROOT };
-@@ -2570,10 +2572,13 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
- 		anon_vma_lock_read(anon_vma);
- 		anon_vma_interval_tree_foreach(vmac, &anon_vma->rb_root,
- 					       0, ULONG_MAX) {
-+			unsigned long addr;
-+
- 			cond_resched();
- 			vma = vmac->vma;
--			if (rmap_item->address < vma->vm_start ||
--			    rmap_item->address >= vma->vm_end)
-+
-+			addr = rmap_item->address;
-+			if (addr < vma->vm_start || addr >= vma->vm_end)
- 				continue;
- 			/*
- 			 * Initially we examine only the vma which covers this
-@@ -2587,8 +2592,10 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
- 			if (rwc->invalid_vma && rwc->invalid_vma(vma, rwc->arg))
- 				continue;
+ #include "atmel_hlcdc_dc.h"
++#include <video/videomode.h>
  
--			if (!rwc->rmap_one(page, vma,
--					rmap_item->address, rwc->arg)) {
-+			if (addr & STABLE_FLAG)
-+				addr &= ~KSM_FLAG_MASK;
+ #define ATMEL_HLCDC_LAYER_IRQS_OFFSET		8
+ 
+@@ -393,27 +394,24 @@ enum drm_mode_status
+ atmel_hlcdc_dc_mode_valid(struct atmel_hlcdc_dc *dc,
+ 			  const struct drm_display_mode *mode)
+ {
+-	int vfront_porch = mode->vsync_start - mode->vdisplay;
+-	int vback_porch = mode->vtotal - mode->vsync_end;
+-	int vsync_len = mode->vsync_end - mode->vsync_start;
+-	int hfront_porch = mode->hsync_start - mode->hdisplay;
+-	int hback_porch = mode->htotal - mode->hsync_end;
+-	int hsync_len = mode->hsync_end - mode->hsync_start;
+-
+-	if (hsync_len > dc->desc->max_spw + 1 || hsync_len < 1)
++	struct videomode vm;
 +
-+			if (!rwc->rmap_one(page, vma, addr, rwc->arg)) {
- 				anon_vma_unlock_read(anon_vma);
- 				return;
- 			}
++	drm_display_mode_to_videomode(mode, &vm);
++
++	if (vm.hsync_len > dc->desc->max_spw + 1 || vm.hsync_len < 1)
+ 		return MODE_HSYNC;
+ 
+-	if (vsync_len > dc->desc->max_spw + 1 || vsync_len < 1)
++	if (vm.vsync_len > dc->desc->max_spw + 1 || vm.vsync_len < 1)
+ 		return MODE_VSYNC;
+ 
+-	if (hfront_porch > dc->desc->max_hpw + 1 || hfront_porch < 1 ||
+-	    hback_porch > dc->desc->max_hpw + 1 || hback_porch < 1 ||
+-	    mode->hdisplay < 1)
++	if (vm.hfront_porch > dc->desc->max_hpw + 1 || vm.hfront_porch < 1 ||
++	    vm.hback_porch > dc->desc->max_hpw + 1 || vm.hback_porch < 1 ||
++	    vm.hactive < 1)
+ 		return MODE_H_ILLEGAL;
+ 
+-	if (vfront_porch > dc->desc->max_vpw + 1 || vfront_porch < 1 ||
+-	    vback_porch > dc->desc->max_vpw || vback_porch < 0 ||
+-	    mode->vdisplay < 1)
++	if (vm.vfront_porch > dc->desc->max_vpw + 1 || vm.vfront_porch < 1 ||
++	    vm.vback_porch > dc->desc->max_vpw || vm.vback_porch < 0 ||
++	    vm.vactive < 1)
+ 		return MODE_V_ILLEGAL;
+ 
+ 	return MODE_OK;
 -- 
-1.8.3.1
+2.7.4
