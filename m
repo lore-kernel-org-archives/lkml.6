@@ -1,90 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751441AbeECNdy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:33:54 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39894 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751343AbeECNds (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:33:48 -0400
-X-Google-Smtp-Source: AB8JxZrCWeSrsmT0hOaRNEL9z9u5dXbfmyLXgHUuLVB87U95EhjBv38p5nmURc6LYGEbNz4beRGxSg==
-Date: Thu, 3 May 2018 15:33:42 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Cc: Satendra Singh Thakur <satendra.t@samsung.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>,
-        Madhur Verma <madhur.verma@samsung.com>
-Subject: Re: [PATCH] drm/atomic: Handling the case when setting old crtc for
- plane
-Message-ID: <20180503133342.GM12521@phenom.ffwll.local>
-Mail-Followup-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>,
-        Madhur Verma <madhur.verma@samsung.com>
-References: <CGME20180503055008epcas5p2e98aff943c031a90a14df1a85e359d6c@epcas5p2.samsung.com>
- <1525326572-25854-1-git-send-email-satendra.t@samsung.com>
- <20180503092458.GH12521@phenom.ffwll.local>
- <20180503105503.GQ23723@intel.com>
+        id S1751399AbeECNfF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:35:05 -0400
+Received: from 8bytes.org ([81.169.241.247]:54712 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750947AbeECNfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:35:02 -0400
+Date: Thu, 3 May 2018 15:35:00 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Gil Kupfer <gilkup@gmail.com>
+Cc: dwmw2@infradead.org, bhelgaas@google.com,
+        iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
+        Gil Kupfer <gilkup@cs.technion.ac.il>
+Subject: Re: [RFC/RFT] Add noats flag to boot parameters
+Message-ID: <20180503133459.waawna3ebtu3udn6@8bytes.org>
+References: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180503105503.GQ23723@intel.com>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 01:55:03PM +0300, Ville Syrjälä wrote:
-> On Thu, May 03, 2018 at 11:24:59AM +0200, Daniel Vetter wrote:
-> > On Thu, May 03, 2018 at 11:19:32AM +0530, Satendra Singh Thakur wrote:
-> > > In the func drm_atomic_set_crtc_for_plane, with the current code,
-> > > if crtc of the plane_state and crtc passed as argument to the func
-> > > are same, entire func will executed in vein.
-> > > It will get state of crtc and clear and set the bits in plane_mask.
-> > > All these steps are not required for same old crtc.
-> > > Ideally, we should do nothing in this case, this patch handles the same,
-> > > and causes the program to return without doing anything in such scenario.
-> > > 
-> > > Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-> > > Cc: Madhur Verma <madhur.verma@samsung.com>
-> > > Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
-> > > ---
-> > >  drivers/gpu/drm/drm_atomic.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> > > index 7d25c42..5bd3365 100644
-> > > --- a/drivers/gpu/drm/drm_atomic.c
-> > > +++ b/drivers/gpu/drm/drm_atomic.c
-> > > @@ -1421,7 +1421,9 @@ drm_atomic_set_crtc_for_plane(struct drm_plane_state *plane_state,
-> > >  {
-> > >  	struct drm_plane *plane = plane_state->plane;
-> > >  	struct drm_crtc_state *crtc_state;
-> > > -
-> > > +	/* Nothing to do for same crtc*/
-> > > +	if (plane_state->crtc == crtc)
-> > > +		return 0;
-> > 
-> > I didn't do this (both here and in the set_crtc_for_connector functions)
-> > because the overhead is probably way down in the noise compared to the
-> > overall atomic commit machinery. Do you really see this as a hotpath?
+On Sun, Apr 29, 2018 at 09:16:48PM +0300, Gil Kupfer wrote:
+> This patch adds noats option to the pci boot parameter.
+> When noats is selected, all ATS related functions fail immediately and
+> the IOMMU is configured to not use device-iotlb.
 > 
-> drm_atomic_set_crtc_for_connector() actually has this since commit
-> e2d800a3ce1b ("drm: Avoid connector reference imbalance on error path")
+> Any function that checks for ATS capabilities directly against the
+> devices should also check this flag. (Currently, such functions exist
+> only in IOMMU drivers, and they are covered by this patch.)
+> 
+> The motivation behind this patch is the existence of malicious devices.
+> Lots of research has been done about how to utilitize the IOMMU as a
+> protection from such devices. When ATS is supported, any I/O device can
+> access any physical access by faking device-IOTLB entries.
+> Adding the ability to ignore these entries lets sysadmins enhance system
+> security.
+> 
+> Signed-off-by: Gil Kupfer <gilkup@cs.technion.ac.il>
 
-Ok, applied for consistency. Thanks for the patch.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+This has also been on my list, thanks for doing that.
+
+Acked-by: Joerg Roedel <jroedel@suse.de>
