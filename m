@@ -1,100 +1,204 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751459AbeECOjP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:39:15 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:54765 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeECOjO (ORCPT
+        id S1751286AbeECOlw (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:41:52 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40136 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751076AbeECOlu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:39:14 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-References: <20180426130700.GP17484@dhcp22.suse.cz>
-        <87efj2q6sq.fsf@xmission.com> <20180426192818.GX17484@dhcp22.suse.cz>
-        <20180427070848.GA17484@dhcp22.suse.cz> <87r2n01q58.fsf@xmission.com>
-        <87o9hz2sw3.fsf@xmission.com> <87h8nr2sa3.fsf_-_@xmission.com>
-        <20180502084708.GC26305@dhcp22.suse.cz>
-        <20180502132026.GB16060@cmpxchg.org> <87lgd1zww0.fsf_-_@xmission.com>
-        <20180503133338.GA23401@redhat.com>
-Date: Thu, 03 May 2018 09:39:03 -0500
-In-Reply-To: <20180503133338.GA23401@redhat.com> (Oleg Nesterov's message of
-        "Thu, 3 May 2018 15:33:39 +0200")
-Message-ID: <87y3h0x0qg.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 3 May 2018 10:41:50 -0400
+Subject: Re: [PATCH v4 08/15] KVM: s390: interfaces to (de)configure guest's
+ AP matrix
+To: Pierre Morel <pmorel@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <99f4752a-1358-61e4-bf9e-5672b2d4036f@linux.vnet.ibm.com>
+ <0f47c442-47b8-ee57-d014-5200c59125d7@linux.vnet.ibm.com>
+ <54e4c3ef-0750-981b-7b0e-6b18d1a77c3c@linux.vnet.ibm.com>
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+Date: Thu, 3 May 2018 10:41:39 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fEFO2-0002Vz-PS;;;mid=<87y3h0x0qg.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19cLS7CrME7Ifkj3V6NEEyzbLSCtXYY4SU=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Oleg Nesterov <oleg@redhat.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 312 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 5 (1.7%), b_tie_ro: 3.2 (1.0%), parse: 1.27 (0.4%),
-        extract_message_metadata: 3.4 (1.1%), get_uri_detail_list: 1.17 (0.4%),
-        tests_pri_-1000: 7 (2.2%), tests_pri_-950: 1.86 (0.6%), tests_pri_-900: 1.61
-        (0.5%), tests_pri_-400: 40 (12.7%), check_bayes: 38 (12.2%), b_tokenize: 11
-        (3.5%), b_tok_get_all: 11 (3.5%), b_comp_prob: 2.7 (0.9%), b_tok_touch_all: 7
-        (2.2%), b_finish: 3.8 (1.2%), tests_pri_0: 235 (75.5%), check_dkim_signature:
-        0.94 (0.3%), check_dkim_adsp: 2.9 (0.9%), tests_pri_500: 5 (1.7%),
-        rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+In-Reply-To: <54e4c3ef-0750-981b-7b0e-6b18d1a77c3c@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18050314-0008-0000-0000-000009B4719A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008962; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01026928; UDB=6.00524525; IPR=6.00806061;
+ MB=3.00020905; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-03 14:41:47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050314-0009-0000-0000-000047156222
+Message-Id: <7a733e41-3956-6828-9efa-899c9a954c20@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030129
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov <oleg@redhat.com> writes:
-
-> On 05/02, Eric W. Biederman wrote:
+On 05/02/2018 10:57 AM, Pierre Morel wrote:
+> On 25/04/2018 18:21, Tony Krowiak wrote:
+>> On 04/23/2018 09:46 AM, Pierre Morel wrote:
+>>> On 15/04/2018 23:22, Tony Krowiak wrote:
+>>>> Provides interfaces to assign AP adapters, usage domains
+>>>> and control domains to a KVM guest.
+>>>>
+> ...
+>>>> +/**
+>>>> + * kvm_ap_matrix_create
+>>>> + *
+>>>> + * Create an AP matrix to hold a configuration of AP adapters, 
+>>>> domains and
+>>>> + * control domains.
+>>>> + *
+>>>> + * @ap_matrix: holds the matrix that is created
+>>>> + *
+>>>> + * Returns 0 if the matrix is successfully created. Returns an 
+>>>> error if an APQN
+>>>> + * derived from the cross product of the AP adapter IDs and AP 
+>>>> queue indexes
+>>>> + * comprising the AP matrix is configured for another guest.
+>>>> + */
+>>>> +int kvm_ap_matrix_create(struct kvm_ap_matrix **ap_matrix);
+>>>
+>>> why not simply return the pointer?
 >>
->> +static void mem_cgroup_fork(struct task_struct *tsk)
->> +{
->> +	struct cgroup_subsys_state *css;
->> +
->> +	rcu_read_lock();
->> +	css = task_css(tsk, memory_cgrp_id);
->> +	if (css && css_tryget(css))
->> +		task_update_memcg(tsk, mem_cgroup_from_css(css));
->> +	rcu_read_unlock();
->> +}
+>> The function returns a value indicating the reason a matrix could not 
+>> be created.
+>> Returning a NULL pointer provides no clue as to why the call failed.
 >
-> Why do we need it?
+> That is why the ERR_PTR exist :)
+
+The point it moot, I'm getting rid of this function call and including the
+struct kvm_ap_matrix as a static member of the parent struct ap_matrix_mdev
+and not a pointer.
+
 >
-> The child's mm->memcg was already initialized by mm_init_memcg() and we can't
-> race with migrate until cgroup_threadgroup_change_end() ?
+>
+>
+> ...
+>>>> + * Returns 0 if the APQNs are valid, otherwise; returns -EBUSY.
+>>>> + */
+>>>> +static int kvm_ap_validate_queue_sharing(struct kvm *kvm,
+>>>> +                     struct kvm_ap_matrix *matrix)
+>>>> +{
+>>>> +    struct kvm *vm;
+>>>> +    unsigned long *apm, *aqm;
+>>>> +    unsigned long apid, apqi;
+>>>> +
+>>>> +
+>>>> +    /* No other VM may share an AP Queue with the input VM */
+>>>
+>>> I wonder if these functions and structures should really belong to KVM.
+>>> The only have sense with the VFIO driver.
+>>> My opinion is that they belong there, in the VFIO driver code.
+>>
+>> I disagree for two reasons:
+>>
+>> 1. The vfio_ap driver should not have to know how to configure the KVM
+>>    guest's matrix nor anything else about KVM for that matter.
+>>
+>> 2. The interfaces and structures defined in kvm-ap.h and implemented
+>> in kvm-ap.c don't have anything to do with VFIO and can stand alone
+>>    to be used by any client code to configure a guest's matrix.
+>
+> Doing this you will have to change KVM if the AP VFIO matrix protocol 
+> to access the queues change.
+> i.e. suppose some day the queues may be shared between guests.
+> ...
 
-I admit I missed the cgroup_threadgroup_change_begin
-cgroup_threadgroup_change_end pair in fs fork.  In this case it doesn't
-matter because mm_init_memcg is called from:
+The kvm_ap_configure_matrix(kvm, matrix) interface configures the APM, 
+AQM and ADM in the
+guest's CRYCB which implies AP instructions are being interpreted. There 
+is nothing in SIE
+precluding the sharing of AP queues between guests using SIE to 
+interpret AP instructions,
+it is my opinion - along with several others - that this is not 
+advisable given the
+results are not predictable, not to mention the security concerns. If 
+the protocol to access
+queues changes, then we create a different interface. The other option 
+is to include a flag
+on the kvm_ap_configure_matrix(kvm, matrix) interface to indicate 
+whether sharing is
+allowed. I don't like this, because we have no way of knowing if the 
+caller has taken the
+proper care to ensure the VM sharing the queue should be allowed access. 
+Besides, when
+queue sharing is implemented, it is my opinion that we will intercept 
+the AP instructions
+and the matrix will not be configured in the CRYCB. I stick by my 
+response above.
 
-   copy_mm
-      dup_mm
-        mm_init
+>
+>>>> +static int kvm_ap_matrix_apm_create(struct kvm_ap_matrix *ap_matrix,
+>>>> +                    struct ap_config_info *config)
+>>>> +{
+>>>> +    int apm_max = (config && config->apxa) ? config->Na + 1 : 16;
+>>>
+>>> At this moment you already know the format of the crycb.
+>>
+>> How?
+>
+> you calculated this in kvm_ap_build_crycbd() which is called from 
+> kvm_s390_crypto_init()
+> itself called from kvm_arch_init_vm().
+> It is when starting the VM.
 
-And copy_mm is called before we call cgroup_threadgroup_change_begin.
-So the race remains.
+This structure is used by the vfio_ap driver to store the mediated 
+matrix device's matrix
+configuration as well as to configure the CRYCB. The mediated device's 
+matrix is
+configured before the guest is started ... it is the means for 
+configuring the guest's
+matrix after all. The bottom line is, this function will be called long 
+before the
+kvm_ap_build_crycbd() function is called.
 
-We could move move cgroup_threadgroup_change_begin earlier, to remove
-the need for mem_cgroup_fork.  But I have not analyzed that.
+Having said that, I am including the struct kvm_ap_matrix as a static 
+field in
+struct ap_matrix_mdev - i.e., not a pointer. Consequently, the apm_max, 
+aqm_max
+and adm_max fields will be set by the driver when the mediated matrix 
+device is
+created.
 
-Eric
+>
+>
+> kvm_ap_matrix_apm_create() is called much later when realizing the device
+
+The kvm_ap_matrix_apm_create() is called by the kvm_ap_matrix_create() 
+which is called when
+the mediated matrix device is created - i.e., the vfio_ap_mdev_create() 
+function is vfio_ap_ops.c.
+The mediated device is created when the UUID is written to the sysfs 
+create file. The mediated
+device is used when the guest is started to configure it's CRYCB, so the 
+kvm_ap_matrix_apm_create()
+is called long before the device is realized.
+
+Again the point is moot because I am getting rid of the dynamic 
+allocation of struct kvm_ap_matrix.
+
+>
+>
+> ...
+>
+>
+>
