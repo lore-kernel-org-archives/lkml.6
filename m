@@ -1,77 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751355AbeECJpa (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:45:30 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51451 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeECJp0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:45:26 -0400
-X-Google-Smtp-Source: AB8JxZq0IQnxjgMIfqaS3n6Osvw1eC6o+1DjG4baYbZGzTryhROPFV5k0SXpAtbRIPAngRn0idXB0A==
-Date: Thu, 3 May 2018 11:45:23 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARM: tegra: apalis-tk1: fix high speed uart compatible
-Message-ID: <20180503094523.GB3251@ulmo>
-References: <20180503074646.24300-1-marcel@ziswiler.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="LpQ9ahxlCli8rRTG"
-Content-Disposition: inline
-In-Reply-To: <20180503074646.24300-1-marcel@ziswiler.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751145AbeECJpk (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:45:40 -0400
+Received: from mout.gmx.net ([212.227.17.20]:52023 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750945AbeECJpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 05:45:32 -0400
+From: Chengguang Xu <cgxu519@gmx.com>
+To: akpm@linux-foundation.org, ericvh@gmail.com, rminnich@sandia.gov,
+        lucho@ionkov.net
+Cc: v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chengguang Xu <cgxu519@gmx.com>
+Subject: [V9fs-developer][PATCH v3 2/2] fs/9p: detecting invalid options as much as possible
+Date: Thu,  3 May 2018 17:44:36 +0800
+Message-Id: <1525340676-34072-2-git-send-email-cgxu519@gmx.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1525340676-34072-1-git-send-email-cgxu519@gmx.com>
+References: <1525340676-34072-1-git-send-email-cgxu519@gmx.com>
+X-Provags-ID: V03:K1:Kbp36WcdSVRXZf1r7dKpijA8VjF61OLAGRu64XEExjwwyGJjLJB
+ LmDs6u28fCfbwqwsCXJwtGC+j+xHXOXKOX0YQEPxQ4nXO9MgzHz5DHqaRMIz/OufvX3c4d3
+ HmRjeDZpMylwf57D/wA1e0mruutWow7tKp8U6ILrdAo6tDuxT1BmN9SCOO565JkgLlh52/m
+ 1l1i8ce2GAMkrDzmrbSqg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vhlUq6m6WZc=:dAjLnfvm3k6eS+ev/YLtP3
+ GDZxB9pskiJT9ssAGIJJEKWr01kCmNNT3fbNhYuhllOM9JWVn0U8qw2dvrcGCn4VRzfmXopNk
+ It9ND2BsXgd5HzzxWjvFSb/MT7tIhKSezC2nHgi11xYfP7r6UP8wR31pkuGBlqTdqLq1F3txC
+ N0562nQTPFQKez3u+tpY/CKxavjDt+0yPSX0PcBN2tTmkRUoBjLBROZXo9G6YT6drotmHNSR+
+ l/TPzCucbhX66uQHqsSvc5rKxCaGYuMqJvEGlL+fTRcis3phi377bF3jDdRdhT362I/9l0bU0
+ lE9KQsTCxfDuipjHT6PJc8Wyjia/cCaK/UHZHp6Nx6WEfdYWy/KIUwlmdHhZlnhftejyrqm2L
+ wF9PFoYzdTykIxvHoZJYpVvsmLIUDOSgrXJleGWy/7pV637K6dp9B3uSiPVMP5sJwDfamp2qV
+ E/jK8rWJ9Dn2mXSICKu5sLhOzMk+hQuI55k0J9mb7iOnRPJW0QVn2IvX6iPM9HCs0lWG/q7sz
+ RSu4fa9emhsxnIyUS6nhaPc7O7Zru39MeC7ynrf18kKV6oVlKzZHCo9oc5mJREH9E6o/Z3KbW
+ AVtRyEQaudgnaKyAkEup84g7Gr2En4mYKFzDxuIwem4AukI4cdpgdOqZRKgjmQAh0eG53vYQc
+ 2l3cugknLTvmFnBXPuGIDllb/5ElEtaEgG05mnGclfrrKtNLfV8nflJPVBijO3QBFbs1wqx2P
+ BJ0gEusv0YLZSZJ9J8RYdHa8Z6YEzWydg2+BLcKJLxn3Mm9EWqalZz+cvA4=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently when detecting invalid options in option parsing,
+some options(e.g. msize) just set errno and allow to continuously
+validate other options so that it can detect invalid options
+as much as possible and give proper error messages together.
 
---LpQ9ahxlCli8rRTG
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch applies same rule to option 'cache' and 'access'
+when detecting -EINVAL.
 
-On Thu, May 03, 2018 at 09:46:46AM +0200, Marcel Ziswiler wrote:
-> From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->=20
-> Turns out the compatible "nvidia,tegra124-hsuart" does not (yet) exit
-> and everybody else also uses it only in conjunction with
-> "nvidia,tegra30-hsuart".
->=20
-> Reported-by: Martin =C5=A0afa=C5=99=C3=ADk <msafarik@retia.cz>
-> Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
->=20
-> ---
->=20
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 6 +++---
->  arch/arm/boot/dts/tegra124-apalis.dtsi      | 6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+Changes since v2:
+- Introduce a new temporary variable to avoid overriding error code.
+- Delete redundant continue in error case.
 
-Applied, thanks.
+Changes since v1:
+- Do not change behavior when detecting ENOMEM or unrecognized options. 
 
-Thierry
+ fs/9p/v9fs.c | 29 ++++++++++++-----------------
+ 1 file changed, 12 insertions(+), 17 deletions(-)
 
---LpQ9ahxlCli8rRTG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrq2jMACgkQ3SOs138+
-s6HC4w/+LXFnOp8re0nyWyA5EYdCjhaX8tWdNlDpnJiBUW+mPUM/VkWGR+XOJSdP
-XjJpyXE2L22UaIN0qJli5jqRmL9m3zFS9ZKOw+CNX42aipJjVDjtaZkmf433SsEC
-ykUj5hCpfKSGDD/zzfW8oCHzsUBshgLOgbo6YU8fffLiE734pZBANzI3JKxyhqXp
-qOnkAT5gblKotWFt+Qdqc8O27H2AwOsxZu19rMWb6kU79AjUf2ZRUePoPlhLhFWn
-N2ys4J4wdr1CGHUc+88aPGU8dHIPFfA24/kUlGHJyNzi/4jFecJ2wQd1uBVryr8z
-Zv5sJQ/zUC1ujIBQz0zstjuk/v20IlyezN8O5XobtO9Nfocxr9m7XyNUMTrRowVt
-mAAC5ZQV3zMhu0RbSA7rs4G++z/8vkZ7Oswi1be/QN/o1htD58rx3nMEerEJrviy
-t2tOGkzYq6u8lrvSS53irGUdApzK7oMRxbio0xD69TZ2numHLYi6Wsi5BCVwIYOL
-FCUkWV+A2ocDdm+ozgVS2kwky9ztqsX/NQmNP0CIFrF8tJagPKON0ctGgwQUTCs3
-KIFoRVvCcZyP87tYIzV/cpJFrq1jFwqbxWAc719ApgjPkVEYMETH9i2ObDI7ej9L
-9+oOzAVY6BDMftB/wCueJsf+XfzrLySnjMUdPNDiPU4L5KIjaxw=
-=gipg
------END PGP SIGNATURE-----
-
---LpQ9ahxlCli8rRTG--
+diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+index e622f0f..0429c8e 100644
+--- a/fs/9p/v9fs.c
++++ b/fs/9p/v9fs.c
+@@ -210,12 +210,12 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 				p9_debug(P9_DEBUG_ERROR,
+ 					 "integer field, but no integer?\n");
+ 				ret = r;
+-				continue;
+-			}
+-			v9ses->debug = option;
++			} else {
++				v9ses->debug = option;
+ #ifdef CONFIG_NET_9P_DEBUG
+-			p9_debug_level = option;
++				p9_debug_level = option;
+ #endif
++			}
+ 			break;
+ 
+ 		case Opt_dfltuid:
+@@ -231,7 +231,6 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 				p9_debug(P9_DEBUG_ERROR,
+ 					 "uid field, but not a uid?\n");
+ 				ret = -EINVAL;
+-				continue;
+ 			}
+ 			break;
+ 		case Opt_dfltgid:
+@@ -247,7 +246,6 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 				p9_debug(P9_DEBUG_ERROR,
+ 					 "gid field, but not a gid?\n");
+ 				ret = -EINVAL;
+-				continue;
+ 			}
+ 			break;
+ 		case Opt_afid:
+@@ -256,9 +254,9 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 				p9_debug(P9_DEBUG_ERROR,
+ 					 "integer field, but no integer?\n");
+ 				ret = r;
+-				continue;
++			} else {
++				v9ses->afid = option;
+ 			}
+-			v9ses->afid = option;
+ 			break;
+ 		case Opt_uname:
+ 			kfree(v9ses->uname);
+@@ -306,13 +304,12 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 					 "problem allocating copy of cache arg\n");
+ 				goto free_and_return;
+ 			}
+-			ret = get_cache_mode(s);
+-			if (ret == -EINVAL) {
+-				kfree(s);
+-				goto free_and_return;
+-			}
++			r = get_cache_mode(s);
++			if (r < 0)
++				ret = r;
++			else
++				v9ses->cache = r;
+ 
+-			v9ses->cache = ret;
+ 			kfree(s);
+ 			break;
+ 
+@@ -341,14 +338,12 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
+ 					pr_info("Unknown access argument %s\n",
+ 						s);
+ 					kfree(s);
+-					goto free_and_return;
++					continue;
+ 				}
+ 				v9ses->uid = make_kuid(current_user_ns(), uid);
+ 				if (!uid_valid(v9ses->uid)) {
+ 					ret = -EINVAL;
+ 					pr_info("Uknown uid %s\n", s);
+-					kfree(s);
+-					goto free_and_return;
+ 				}
+ 			}
+ 
+-- 
+1.8.3.1
