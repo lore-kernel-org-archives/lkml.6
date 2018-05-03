@@ -1,114 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751412AbeECPNt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 11:13:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50617 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751027AbeECPNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 11:13:47 -0400
-Date: Thu, 3 May 2018 17:13:43 +0200
-From: Jan Kara <jack@suse.cz>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: axboe@kernel.dk, torvalds@linux-foundation.org, jack@suse.cz,
-        tj@kernel.org, syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com,
-        christophe.jaillet@wanadoo.fr, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        zhangweiping@didichuxing.com, akpm@linux-foundation.org,
-        dvyukov@google.com, linux-block@vger.kernel.org
-Subject: Re: INFO: task hung in wb_shutdown (2)
-Message-ID: <20180503151343.2ijvp3mzdqfwbiay@quack2.suse.cz>
-References: <94eb2c05b2d83650030568cc8bd9@google.com>
- <e56c1600-8923-dd6b-d065-c2fd2a720404@I-love.SAKURA.ne.jp>
- <43302799-1c50-4cab-b974-9fe1ca584813@I-love.SAKURA.ne.jp>
- <CA+55aFxaa_+uZ=bOVdevcUwG7ncue7O+i06q4Kb=bWACGwCBjQ@mail.gmail.com>
- <bd3e8460-9794-6b57-e7d6-7e18ea34ac0c@kernel.dk>
- <201805020714.FDD52145.OOJtOFVFSMLQFH@I-love.SAKURA.ne.jp>
+        id S1751495AbeECPN4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 11:13:56 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7649 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750954AbeECPNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 11:13:48 -0400
+From: John Garry <john.garry@huawei.com>
+To: <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
+        <andriy.shevchenko@linux.intel.com>, <lee.jones@linaro.org>
+CC: <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
+        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
+        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI support
+Date: Thu, 3 May 2018 23:08:38 +0800
+Message-ID: <1525360119-102166-2-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
+References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201805020714.FDD52145.OOJtOFVFSMLQFH@I-love.SAKURA.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 02-05-18 07:14:51, Tetsuo Handa wrote:
-> >From 1b90d7f71d60e743c69cdff3ba41edd1f9f86f93 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Wed, 2 May 2018 07:07:55 +0900
-> Subject: [PATCH v2] bdi: wake up concurrent wb_shutdown() callers.
-> 
-> syzbot is reporting hung tasks at wait_on_bit(WB_shutting_down) in
-> wb_shutdown() [1]. This seems to be because commit 5318ce7d46866e1d ("bdi:
-> Shutdown writeback on all cgwbs in cgwb_bdi_destroy()") forgot to call
-> wake_up_bit(WB_shutting_down) after clear_bit(WB_shutting_down).
-> 
-> Introduce a helper function clear_and_wake_up_bit() and use it, in order
-> to avoid similar errors in future.
-> 
-> [1] https://syzkaller.appspot.com/bug?id=b297474817af98d5796bc544e1bb806fc3da0e5e
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Reported-by: syzbot <syzbot+c0cf869505e03bdf1a24@syzkaller.appspotmail.com>
-> Fixes: 5318ce7d46866e1d ("bdi: Shutdown writeback on all cgwbs in cgwb_bdi_destroy()")
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Jens Axboe <axboe@fb.com>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Currently for ACPI support the driver models the host as
+an MFD. For a device connected to the LPC bus, we dynamically
+create an MFD cell for that device, configuring the cell
+name and ACPI match parameters manually. This makes supporting
+named devices and also special setup handling for certain devices
+awkward, as we would need to introduce some special ACPI device
+handling according to device HID.
 
-Thanks for debugging this and for the fix Tetsuo! The patch looks good to
-me. You can add:
+To avoid this, create reference static MFD cells for known
+child devices, so when adding an MFD cell we can fix the cell
+platform data as required. For this, a setup callback function
+is added.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+For now, only the IPMI cell is added.
 
-								Honza
+Signed-off-by: John Garry <john.garry@huawei.com>
+---
+ drivers/bus/hisi_lpc.c | 89 ++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 53 insertions(+), 36 deletions(-)
 
-> ---
->  include/linux/wait_bit.h | 17 +++++++++++++++++
->  mm/backing-dev.c         |  2 +-
->  2 files changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/wait_bit.h b/include/linux/wait_bit.h
-> index 9318b21..2b0072f 100644
-> --- a/include/linux/wait_bit.h
-> +++ b/include/linux/wait_bit.h
-> @@ -305,4 +305,21 @@ struct wait_bit_queue_entry {
->  	__ret;								\
->  })
->  
-> +/**
-> + * clear_and_wake_up_bit - clear a bit and wake up anyone waiting on that bit
-> + *
-> + * @bit: the bit of the word being waited on
-> + * @word: the word being waited on, a kernel virtual address
-> + *
-> + * You can use this helper if bitflags are manipulated atomically rather than
-> + * non-atomically under a lock.
-> + */
-> +static inline void clear_and_wake_up_bit(int bit, void *word)
-> +{
-> +	clear_bit_unlock(bit, word);
-> +	/* See wake_up_bit() for which memory barrier you need to use. */
-> +	smp_mb__after_atomic();
-> +	wake_up_bit(word, bit);
-> +}
-> +
->  #endif /* _LINUX_WAIT_BIT_H */
-> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-> index 023190c..fa5e6d7 100644
-> --- a/mm/backing-dev.c
-> +++ b/mm/backing-dev.c
-> @@ -383,7 +383,7 @@ static void wb_shutdown(struct bdi_writeback *wb)
->  	 * the barrier provided by test_and_clear_bit() above.
->  	 */
->  	smp_wmb();
-> -	clear_bit(WB_shutting_down, &wb->state);
-> +	clear_and_wake_up_bit(WB_shutting_down, &wb->state);
->  }
->  
->  static void wb_exit(struct bdi_writeback *wb)
-> -- 
-> 1.8.3.1
+diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
+index 2d4611e..71693d77 100644
+--- a/drivers/bus/hisi_lpc.c
++++ b/drivers/bus/hisi_lpc.c
+@@ -341,15 +341,6 @@ static void hisi_lpc_comm_outs(void *hostdata, unsigned long pio,
+ };
+ 
+ #ifdef CONFIG_ACPI
+-#define MFD_CHILD_NAME_PREFIX DRV_NAME"-"
+-#define MFD_CHILD_NAME_LEN (ACPI_ID_LEN + sizeof(MFD_CHILD_NAME_PREFIX) - 1)
+-
+-struct hisi_lpc_mfd_cell {
+-	struct mfd_cell_acpi_match acpi_match;
+-	char name[MFD_CHILD_NAME_LEN];
+-	char pnpid[ACPI_ID_LEN];
+-};
+-
+ static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
+ 				     struct acpi_device *host,
+ 				     struct resource *res)
+@@ -367,6 +358,40 @@ static int hisi_lpc_acpi_xlat_io_res(struct acpi_device *adev,
+ 	return 0;
+ }
+ 
++static const struct mfd_cell_acpi_match hisi_lpc_acpi_mfd_match_ipmi = {
++	.pnpid = "IPI0001",
++};
++
++struct hisi_lpc_acpi_mfd_cell {
++	struct mfd_cell mfd_cell;
++	int (*setup)(struct device *hostdev, struct mfd_cell *mfd_cell);
++} static const hisi_lpc_acpi_mfd_cells[] = {
++	/* ipmi */
++	{
++		.mfd_cell = {
++			.name = "hisi-lpc-ipmi",
++			.acpi_match = &hisi_lpc_acpi_mfd_match_ipmi,
++		},
++	},
++	{}
++};
++
++static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char *hid)
++{
++	const struct hisi_lpc_acpi_mfd_cell *cell = hisi_lpc_acpi_mfd_cells;
++
++	for (; cell && cell->mfd_cell.name; cell++) {
++		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
++		const struct mfd_cell_acpi_match *acpi_match;
++
++		acpi_match = mfd_cell->acpi_match;
++		if (!strcmp(acpi_match->pnpid, hid))
++			return mfd_cell;
++	}
++
++	return NULL;
++}
++
+ /*
+  * hisi_lpc_acpi_set_io_res - set the resources for a child's MFD
+  * @child: the device node to be updated the I/O resource
+@@ -464,7 +489,6 @@ static int hisi_lpc_acpi_set_io_res(struct device *child,
+ static int hisi_lpc_acpi_probe(struct device *hostdev)
+ {
+ 	struct acpi_device *adev = ACPI_COMPANION(hostdev);
+-	struct hisi_lpc_mfd_cell *hisi_lpc_mfd_cells;
+ 	struct mfd_cell *mfd_cells;
+ 	struct acpi_device *child;
+ 	int size, ret, count = 0, cell_num = 0;
+@@ -472,39 +496,24 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
+ 	list_for_each_entry(child, &adev->children, node)
+ 		cell_num++;
+ 
+-	/* allocate the mfd cell and companion ACPI info, one per child */
+-	size = sizeof(*mfd_cells) + sizeof(*hisi_lpc_mfd_cells);
++	/* allocate the mfd cells, one per child */
++	size = sizeof(*mfd_cells);
+ 	mfd_cells = devm_kcalloc(hostdev, cell_num, size, GFP_KERNEL);
+ 	if (!mfd_cells)
+ 		return -ENOMEM;
+ 
+-	hisi_lpc_mfd_cells = (struct hisi_lpc_mfd_cell *)&mfd_cells[cell_num];
+ 	/* Only consider the children of the host */
+ 	list_for_each_entry(child, &adev->children, node) {
+ 		struct mfd_cell *mfd_cell = &mfd_cells[count];
+-		struct hisi_lpc_mfd_cell *hisi_lpc_mfd_cell =
+-					&hisi_lpc_mfd_cells[count];
+-		struct mfd_cell_acpi_match *acpi_match =
+-					&hisi_lpc_mfd_cell->acpi_match;
+-		char *name = hisi_lpc_mfd_cell[count].name;
+-		char *pnpid = hisi_lpc_mfd_cell[count].pnpid;
+-		struct mfd_cell_acpi_match match = {
+-			.pnpid = pnpid,
+-		};
+-
+-		/*
+-		 * For any instances of this host controller (Hip06 and Hip07
+-		 * are the only chipsets), we would not have multiple slaves
+-		 * with the same HID. And in any system we would have just one
+-		 * controller active. So don't worrry about MFD name clashes.
+-		 */
+-		snprintf(name, MFD_CHILD_NAME_LEN, MFD_CHILD_NAME_PREFIX"%s",
+-			 acpi_device_hid(child));
+-		snprintf(pnpid, ACPI_ID_LEN, "%s", acpi_device_hid(child));
+-
+-		memcpy(acpi_match, &match, sizeof(*acpi_match));
+-		mfd_cell->name = name;
+-		mfd_cell->acpi_match = acpi_match;
++		const struct mfd_cell *mfd_cell_ref;
++		const char *hid = acpi_device_hid(child);
++		struct hisi_lpc_acpi_mfd_cell *cell;
++
++		mfd_cell_ref = hisi_lpc_acpi_mfd_get_cell(hid);
++		if (!mfd_cell_ref)
++			return -ENOENT;
++
++		memcpy(mfd_cell, mfd_cell_ref, sizeof(*mfd_cell));
+ 
+ 		ret = hisi_lpc_acpi_set_io_res(&child->dev, &adev->dev,
+ 					       &mfd_cell->resources,
+@@ -513,6 +522,14 @@ static int hisi_lpc_acpi_probe(struct device *hostdev)
+ 			dev_warn(&child->dev, "set resource fail (%d)\n", ret);
+ 			return ret;
+ 		}
++
++		cell = container_of(mfd_cell_ref, typeof(*cell), mfd_cell);
++		if (cell->setup) {
++			ret = cell->setup(hostdev, mfd_cell);
++			if (ret)
++				return ret;
++		}
++
+ 		count++;
+ 	}
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+1.9.1
