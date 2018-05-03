@@ -1,123 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeECBhb (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 21:37:31 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:53652 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751837AbeECBh3 (ORCPT
+        id S1751962AbeECBjf (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 21:39:35 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50594 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751837AbeECBjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 21:37:29 -0400
-Date: Wed, 2 May 2018 21:37:08 -0400
-From: Rich Felker <dalias@libc.org>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Rob Landley <rob@landley.net>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
- device tree
-Message-ID: <20180503013708.GC1392@brightrain.aerifal.cx>
-References: <1467564402-2649-1-git-send-email-ysato@users.sourceforge.jp>
- <c1ec211d-cbe2-1139-edb0-8baa0e7364e8@physik.fu-berlin.de>
- <8c75b447-fc14-871e-1a04-733132527b65@landley.net>
- <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
- <20171117191706.GF1627@brightrain.aerifal.cx>
- <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
- <20180105212857.GR1627@brightrain.aerifal.cx>
+        Wed, 2 May 2018 21:39:33 -0400
+Date: Thu, 3 May 2018 10:39:19 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Cc: Akshu Agrawal <akshu.agrawal@amd.com>,
+        "djkurtz@chromium.org" <djkurtz@chromium.org>,
+        "Alexander.Deucher@amd.com" <Alexander.Deucher@amd.com>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ASoC: da7219: read fmw property to get mclk for
+ non-dts systems
+Message-ID: <20180503013919.GN2714@sirena.org.uk>
+References: <1525080203-18947-1-git-send-email-akshu.agrawal@amd.com>
+ <2E89032DDAA8B9408CB92943514A0337014C1E93BC@SW-EX-MBX01.diasemi.com>
+ <20180501205006.GE2714@sirena.org.uk>
+ <2E89032DDAA8B9408CB92943514A0337014C1E9782@SW-EX-MBX01.diasemi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="MSd2ShuMixI0uVaZ"
 Content-Disposition: inline
-In-Reply-To: <20180105212857.GR1627@brightrain.aerifal.cx>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <2E89032DDAA8B9408CB92943514A0337014C1E9782@SW-EX-MBX01.diasemi.com>
+X-Cookie: Rubber bands have snappy endings!
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 05, 2018 at 04:28:57PM -0500, Rich Felker wrote:
-> On Fri, Nov 17, 2017 at 08:54:47PM +0100, John Paul Adrian Glaubitz wrote:
-> > On 11/17/2017 08:17 PM, Rich Felker wrote:
-> > > There were significant problems that I don't think were ever
-> > > addressed, including incompatible changes in how boot command line was
-> > > handled and possibly ambiguity about what a physical address means
-> > > (zero based vs based in the zone SH3/4 excludes from MMU mapping) in
-> > > the contract for how the bootloader passes a DTB pointer in to the
-> > > kernel, or something similar.
-> > 
-> > I see, thanks for the heads-up.
-> > 
-> > > This is a large part of why I want to get to the point where I can
-> > > build and boot a kernel on the LANDISK -- not being able to test any
-> > > of this is a blocker for moving everything to device tree.
-> > 
-> > I can actually help you with that. I know what to do to get the kernel
-> > to boot on the LANDISK device. I've got everything working except
-> > being unable to detect the IDE controller. The attached config builds
-> > a kernel which boots with the attached output.
-> > 
-> > Furthermore, in order to install the kernel, you need to use the
-> > cross-LILO version from [1] which allows to install the bootloader
-> > on an x86 machine into the SuperH LANDISK image.
-> > 
-> > Instructions can be found in [2]. A base filesystem can be found in [3].
-> > 
-> > And I could also send you an USL-5P which is also a LANDISK device,
-> > just in a different form-factor.
-> > 
-> > Adrian
-> > 
-> > > [1]http://iohack.osdn.jp/kogiidena/debian26/base/landisk-tools-20070612.tgz
-> > > [2] https://www.with.de/fw/pub/Computing/PlextorPX-EH/LANDISKdebian.pdf
-> > > [3] http://iohack.osdn.jp/kogiidena/debian26/base/
-> 
-> I'm trying to reproduce this but can't find any documentation for
-> cross-LILO in [2], much less any code except possibly the binary
-> "lilo.x86" in [1]. Googling cross-lilo isn't finding anything
-> meaningful except this thread. Is there anywhere to find source and
-> information on what it's doing, or is this going to be something I
-> have to reverse-engineer?
 
-Progress on all this! I've got my LANDISK working again, but with the
-disk image Sato-san provided me, which is using (a patched?) U-Boot
-and a kernel based on this patch series. I don't know how to recreate
-the U-Boot setup from scratch, but I might be able to figure out how
-to replace the kernel image it's using. It's possible I may be able to
-get lilo working too -- I tried building it but I'm still not sure how
-to use it, and in any case I need to image the existing system before
-I clobber it since I'm not sure I have the original image.
+--MSd2ShuMixI0uVaZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On a better note, I've reviewed this patch series in more depth and
-understand it pretty well now, and have classified the patches as
-follows:
+On Wed, May 02, 2018 at 10:13:55AM +0000, Adam Thomson wrote:
+> On 01 May 2018 21:50, Mark Brown wrote:
 
-01-04 -- about P1 vs absolute interpretation of "physical addresses",
-and can be completely dropped if we just use the latter. The former
-does not work with full-32-bit address space.
+> > There's a lot of things that ACPI *should* do but doesn't - it's a bit
+> > of a shambles how ACPI standards get defined and what's there is not
+> > really intended to handle systems like these semi-embedded ones.  One of
+> > the big gaps in ACPI is that it has no handling at all of clocks, that's
+> > supposed to be done transparently by firmware in the ACPI model.  What a
+> > lot of the embedded Intel people have been doing is coopting the DT
+> > bindings wholesale for ACPI systems but that has problems when you get
+> > into areas which should be handled in some way on ACPI systems like
+> > power and unfortunately clocks are kind of power adjacent so might be a
+> > bit sketchy here.
 
-05 -- change in command line interpretation. Something like this might
-be desired at some point, if we make it non-conflicting with current
-use, but it's independent and not needed.
+> Yes I was aware that previously that was the case, although have not followed
+> this for a while. It just feels here that we should aim for something more
+> generic rather than a device specific property/binding, if possible, as that
+> feels messy to me and I'm sure other drivers could take advantage of this as
+> well. I've not looked at the clock code in too much detail though, at least with
+> regards to this area, so not sure how feasible that is.
 
-06-09 -- extending arch/sh device tree support with functionality
-needed to get traditional sh systems using it. These look roughly ok,
-but might need minor cleanup. Just applying these and linking in a
-minimal DTB, I should be able to get a non-board-specific kernel that
-boots and shows console messages until it gets stuck with no interrupt
-controller or devices. This is the milestone I'm looking to get to
-first.
+> As a suggestion for ACPI would it be possible to re-use the 'clock-names'
+> property and add something in the framework to handle this?
 
-10 -- LANDISK board-specific init stuff, moved into of-generic.c. This
-is not where it belongs, but I don't know where it should be, or if we
-can get it to book without this. If not, it can be applied as a hack
-for testing.
+I completely agree that ACPI should have handling for clocks but it
+really feels like something that should be done as a proper spec rather
+than just ad hoc by Linux like the x86 embedded people often do - it's
+too close to the power management stuff that ACPI definitely does
+handle.
 
-11-13,19 -- new style device tree drivers for clock, pci bus, and irq
-controller. They'll have to go through subsystem maintainers unless we
-want to move them into arch/sh/drivers. Without these the system is
-not going to be usable to the point of reaching userspace.
+--MSd2ShuMixI0uVaZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-14,20 -- device trees. The evt2irq/irq2evt macros probably don't make
-sense and should be either irqdomain mappings or just removed. But
-these can be used out-of-tree anyway to make a DTB while testing.
+-----BEGIN PGP SIGNATURE-----
 
-15-17 -- might also be needed for PCI to work. Not sure about them.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrqaEYACgkQJNaLcl1U
+h9DjEwf/akcOq3FX7OJHawOodNuod6nfkVvTE5kWue1W5AVdzCXlsTknOiOkIn1z
+pEPHEJ1G56wzcFt4ezga+5DkIYnB1RNzxCdC0noLuFEQNSegwJ7oskOQUaAwRTgd
+2FlNUEi2pmEpP7A4bU6EonrIkhrC1zN5MHgmh4VjfBXpbVKEPvbxeTMDr1X8b2I2
+sXXGMNDAn76mlG0xiEskLThHEpqyAFbxjBQIIBGmbgpjRIJJWg87WXT/0aLTBAEn
+WzUK8iaNFiPeIqYNFH3drHquTqSHwZyXdhZwifT6m2hpK+UfHXTcEQNtf+6jbkEF
+D1KA6ISg0/rcMVBzr40DQpx1qvCunA==
+=nEHY
+-----END PGP SIGNATURE-----
 
-Rich
+--MSd2ShuMixI0uVaZ--
