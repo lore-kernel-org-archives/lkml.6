@@ -1,111 +1,353 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeECOyt (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:54:49 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57783 "EHLO mail.bootlin.com"
+        id S1751302AbeECO5V (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:57:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751456AbeECOyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:54:46 -0400
-Date: Thu, 3 May 2018 16:54:08 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Danny Milosavljevic <dannym@scratchpost.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrea Bondavalli <andrea.bondavalli74@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.xyz>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v14 8/8] ASoC: sun4i-codec: Add Left Capture Select,
- Right Capture Select
-Message-ID: <20180503145408.yymk2ndt4sm2yt4i@flea>
-References: <20180502210800.1971-1-dannym@scratchpost.org>
- <20180502210800.1971-9-dannym@scratchpost.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="odizj5wdfscxpmbv"
-Content-Disposition: inline
-In-Reply-To: <20180502210800.1971-9-dannym@scratchpost.org>
-User-Agent: NeoMutt/20180323
+        id S1751152AbeECO5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:57:19 -0400
+Date: Thu, 3 May 2018 23:57:13 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
+        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
+        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
+        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
+        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
+        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
+        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Subject: Re: [PATCH v3 9/9] perf probe: Support SDT markers having reference
+ counter (semaphore)
+Message-Id: <20180503235713.6dff5b19b3a26b888abdb08b@kernel.org>
+In-Reply-To: <20180417043244.7501-10-ravi.bangoria@linux.vnet.ibm.com>
+References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
+        <20180417043244.7501-10-ravi.bangoria@linux.vnet.ibm.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 17 Apr 2018 10:02:44 +0530
+Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com> wrote:
 
---odizj5wdfscxpmbv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> 
+> With this, perf buildid-cache will save SDT markers with reference
+> counter in probe cache. Perf probe will be able to probe markers
+> having reference counter. Ex,
+> 
+>   # readelf -n /tmp/tick | grep -A1 loop2
+>     Name: loop2
+>     ... Semaphore: 0x0000000010020036
+> 
+>   # ./perf buildid-cache --add /tmp/tick
+>   # ./perf probe sdt_tick:loop2
+>   # ./perf stat -e sdt_tick:loop2 /tmp/tick
+>     hi: 0
+>     hi: 1
+>     hi: 2
+>     ^C
+>      Performance counter stats for '/tmp/tick':
+>                  3      sdt_tick:loop2
+>        2.561851452 seconds time elapsed
+> 
+> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-Hi,
+Looks good to me.
 
-On Wed, May 02, 2018 at 11:08:00PM +0200, Danny Milosavljevic wrote:
-> Add Left Capture Select and Right Capture Select for Allwinner A10 and
-> Allwinner A20.
->=20
-> Signed-off-by: Danny Milosavljevic <dannym@scratchpost.org>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thanks!
+
 > ---
->  sound/soc/sunxi/sun4i-codec.c | 50 +++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 50 insertions(+)
->=20
-> diff --git a/sound/soc/sunxi/sun4i-codec.c b/sound/soc/sunxi/sun4i-codec.c
-> index 45dcb80a1da9..1a4ba3bae5da 100644
-> --- a/sound/soc/sunxi/sun4i-codec.c
-> +++ b/sound/soc/sunxi/sun4i-codec.c
-> @@ -706,6 +706,25 @@ static DECLARE_TLV_DB_RANGE(sun7i_codec_micin_preamp=
-_gain_scale,
->  			    0, 0, TLV_DB_SCALE_ITEM(0, 0, 0),
->  			    1, 7, TLV_DB_SCALE_ITEM(2400, 300, 0));
-> =20
-> +static const char * const sun4i_codec_capture_source[] =3D {
-> +	"Line",
-> +	"FM",
-> +	"Mic1",
-> +	"Mic2",
-> +	"Mic1,Mic2",
-> +	"Mic1+Mic2",
-> +	"Output Mixer",
-> +	"Line,Mic1",
+>  tools/perf/util/probe-event.c | 39 ++++++++++++++++++++++++++++++++----
+>  tools/perf/util/probe-event.h |  1 +
+>  tools/perf/util/probe-file.c  | 34 ++++++++++++++++++++++++++------
+>  tools/perf/util/probe-file.h  |  1 +
+>  tools/perf/util/symbol-elf.c  | 46 ++++++++++++++++++++++++++++++++-----------
+>  tools/perf/util/symbol.h      |  7 +++++++
+>  6 files changed, 106 insertions(+), 22 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index e1dbc98..9b9c26e 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -1832,6 +1832,12 @@ int parse_probe_trace_command(const char *cmd, struct probe_trace_event *tev)
+>  			tp->offset = strtoul(fmt2_str, NULL, 10);
+>  	}
+>  
+> +	if (tev->uprobes) {
+> +		fmt2_str = strchr(p, '(');
+> +		if (fmt2_str)
+> +			tp->ref_ctr_offset = strtoul(fmt2_str + 1, NULL, 0);
+> +	}
+> +
+>  	tev->nargs = argc - 2;
+>  	tev->args = zalloc(sizeof(struct probe_trace_arg) * tev->nargs);
+>  	if (tev->args == NULL) {
+> @@ -2025,6 +2031,22 @@ static int synthesize_probe_trace_arg(struct probe_trace_arg *arg,
+>  	return err;
+>  }
+>  
+> +static int
+> +synthesize_uprobe_trace_def(struct probe_trace_event *tev, struct strbuf *buf)
+> +{
+> +	struct probe_trace_point *tp = &tev->point;
+> +	int err;
+> +
+> +	err = strbuf_addf(buf, "%s:0x%lx", tp->module, tp->address);
+> +
+> +	if (err >= 0 && tp->ref_ctr_offset) {
+> +		if (!uprobe_ref_ctr_is_supported())
+> +			return -1;
+> +		err = strbuf_addf(buf, "(0x%lx)", tp->ref_ctr_offset);
+> +	}
+> +	return err >= 0 ? 0 : -1;
+> +}
+> +
+>  char *synthesize_probe_trace_command(struct probe_trace_event *tev)
+>  {
+>  	struct probe_trace_point *tp = &tev->point;
+> @@ -2054,15 +2076,17 @@ char *synthesize_probe_trace_command(struct probe_trace_event *tev)
+>  	}
+>  
+>  	/* Use the tp->address for uprobes */
+> -	if (tev->uprobes)
+> -		err = strbuf_addf(&buf, "%s:0x%lx", tp->module, tp->address);
+> -	else if (!strncmp(tp->symbol, "0x", 2))
+> +	if (tev->uprobes) {
+> +		err = synthesize_uprobe_trace_def(tev, &buf);
+> +	} else if (!strncmp(tp->symbol, "0x", 2)) {
+>  		/* Absolute address. See try_to_find_absolute_address() */
+>  		err = strbuf_addf(&buf, "%s%s0x%lx", tp->module ?: "",
+>  				  tp->module ? ":" : "", tp->address);
+> -	else
+> +	} else {
+>  		err = strbuf_addf(&buf, "%s%s%s+%lu", tp->module ?: "",
+>  				tp->module ? ":" : "", tp->symbol, tp->offset);
+> +	}
+> +
+>  	if (err)
+>  		goto error;
+>  
+> @@ -2646,6 +2670,13 @@ static void warn_uprobe_event_compat(struct probe_trace_event *tev)
+>  {
+>  	int i;
+>  	char *buf = synthesize_probe_trace_command(tev);
+> +	struct probe_trace_point *tp = &tev->point;
+> +
+> +	if (tp->ref_ctr_offset && !uprobe_ref_ctr_is_supported()) {
+> +		pr_warning("A semaphore is associated with %s:%s and "
+> +			   "seems your kernel doesn't support it.\n",
+> +			   tev->group, tev->event);
+> +	}
+>  
+>  	/* Old uprobe event doesn't support memory dereference */
+>  	if (!tev->uprobes || tev->nargs == 0 || !buf)
+> diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
+> index 45b14f0..15a98c3 100644
+> --- a/tools/perf/util/probe-event.h
+> +++ b/tools/perf/util/probe-event.h
+> @@ -27,6 +27,7 @@ struct probe_trace_point {
+>  	char		*symbol;	/* Base symbol */
+>  	char		*module;	/* Module name */
+>  	unsigned long	offset;		/* Offset from symbol */
+> +	unsigned long	ref_ctr_offset;	/* SDT reference counter offset */
+>  	unsigned long	address;	/* Actual address of the trace point */
+>  	bool		retprobe;	/* Return probe flag */
+>  };
+> diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+> index 4ae1123..a17ba6a 100644
+> --- a/tools/perf/util/probe-file.c
+> +++ b/tools/perf/util/probe-file.c
+> @@ -697,8 +697,16 @@ int probe_cache__add_entry(struct probe_cache *pcache,
+>  #ifdef HAVE_GELF_GETNOTE_SUPPORT
+>  static unsigned long long sdt_note__get_addr(struct sdt_note *note)
+>  {
+> -	return note->bit32 ? (unsigned long long)note->addr.a32[0]
+> -		 : (unsigned long long)note->addr.a64[0];
+> +	return note->bit32 ?
+> +		(unsigned long long)note->addr.a32[SDT_NOTE_IDX_LOC] :
+> +		(unsigned long long)note->addr.a64[SDT_NOTE_IDX_LOC];
+> +}
+> +
+> +static unsigned long long sdt_note__get_ref_ctr_offset(struct sdt_note *note)
+> +{
+> +	return note->bit32 ?
+> +		(unsigned long long)note->addr.a32[SDT_NOTE_IDX_REFCTR] :
+> +		(unsigned long long)note->addr.a64[SDT_NOTE_IDX_REFCTR];
+>  }
+>  
+>  static const char * const type_to_suffix[] = {
+> @@ -776,14 +784,21 @@ static char *synthesize_sdt_probe_command(struct sdt_note *note,
+>  {
+>  	struct strbuf buf;
+>  	char *ret = NULL, **args;
+> -	int i, args_count;
+> +	int i, args_count, err;
+> +	unsigned long long ref_ctr_offset;
+>  
+>  	if (strbuf_init(&buf, 32) < 0)
+>  		return NULL;
+>  
+> -	if (strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
+> -				sdtgrp, note->name, pathname,
+> -				sdt_note__get_addr(note)) < 0)
+> +	err = strbuf_addf(&buf, "p:%s/%s %s:0x%llx",
+> +			sdtgrp, note->name, pathname,
+> +			sdt_note__get_addr(note));
+> +
+> +	ref_ctr_offset = sdt_note__get_ref_ctr_offset(note);
+> +	if (ref_ctr_offset && err >= 0)
+> +		err = strbuf_addf(&buf, "(0x%llx)", ref_ctr_offset);
+> +
+> +	if (err < 0)
+>  		goto error;
+>  
+>  	if (!note->args)
+> @@ -999,6 +1014,7 @@ int probe_cache__show_all_caches(struct strfilter *filter)
+>  enum ftrace_readme {
+>  	FTRACE_README_PROBE_TYPE_X = 0,
+>  	FTRACE_README_KRETPROBE_OFFSET,
+> +	FTRACE_README_UPROBE_REF_CTR,
+>  	FTRACE_README_END,
+>  };
+>  
+> @@ -1010,6 +1026,7 @@ enum ftrace_readme {
+>  	[idx] = {.pattern = pat, .avail = false}
+>  	DEFINE_TYPE(FTRACE_README_PROBE_TYPE_X, "*type: * x8/16/32/64,*"),
+>  	DEFINE_TYPE(FTRACE_README_KRETPROBE_OFFSET, "*place (kretprobe): *"),
+> +	DEFINE_TYPE(FTRACE_README_UPROBE_REF_CTR, "*ref_ctr_offset*"),
+>  };
+>  
+>  static bool scan_ftrace_readme(enum ftrace_readme type)
+> @@ -1065,3 +1082,8 @@ bool kretprobe_offset_is_supported(void)
+>  {
+>  	return scan_ftrace_readme(FTRACE_README_KRETPROBE_OFFSET);
+>  }
+> +
+> +bool uprobe_ref_ctr_is_supported(void)
+> +{
+> +	return scan_ftrace_readme(FTRACE_README_UPROBE_REF_CTR);
+> +}
+> diff --git a/tools/perf/util/probe-file.h b/tools/perf/util/probe-file.h
+> index 63f29b1..2a24918 100644
+> --- a/tools/perf/util/probe-file.h
+> +++ b/tools/perf/util/probe-file.h
+> @@ -69,6 +69,7 @@ struct probe_cache_entry *probe_cache__find_by_name(struct probe_cache *pcache,
+>  int probe_cache__show_all_caches(struct strfilter *filter);
+>  bool probe_type_is_available(enum probe_type type);
+>  bool kretprobe_offset_is_supported(void);
+> +bool uprobe_ref_ctr_is_supported(void);
+>  #else	/* ! HAVE_LIBELF_SUPPORT */
+>  static inline struct probe_cache *probe_cache__new(const char *tgt __maybe_unused, struct nsinfo *nsi __maybe_unused)
+>  {
+> diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+> index 2de7705..45b7dba 100644
+> --- a/tools/perf/util/symbol-elf.c
+> +++ b/tools/perf/util/symbol-elf.c
+> @@ -1803,6 +1803,34 @@ void kcore_extract__delete(struct kcore_extract *kce)
+>  }
+>  
+>  #ifdef HAVE_GELF_GETNOTE_SUPPORT
+> +
+> +static void sdt_adjust_loc(struct sdt_note *tmp, GElf_Addr base_off)
+> +{
+> +	if (!base_off)
+> +		return;
+> +
+> +	if (tmp->bit32)
+> +		tmp->addr.a32[SDT_NOTE_IDX_LOC] =
+> +			tmp->addr.a32[SDT_NOTE_IDX_LOC] + base_off -
+> +			tmp->addr.a32[SDT_NOTE_IDX_BASE];
+> +	else
+> +		tmp->addr.a64[SDT_NOTE_IDX_LOC] =
+> +			tmp->addr.a64[SDT_NOTE_IDX_LOC] + base_off -
+> +			tmp->addr.a64[SDT_NOTE_IDX_BASE];
+> +}
+> +
+> +static void sdt_adjust_refctr(struct sdt_note *tmp, GElf_Addr base_addr,
+> +			      GElf_Addr base_off)
+> +{
+> +	if (!base_off)
+> +		return;
+> +
+> +	if (tmp->bit32)
+> +		tmp->addr.a32[SDT_NOTE_IDX_REFCTR] -= (base_addr - base_off);
+> +	else
+> +		tmp->addr.a64[SDT_NOTE_IDX_REFCTR] -= (base_addr - base_off);
+> +}
+> +
+>  /**
+>   * populate_sdt_note : Parse raw data and identify SDT note
+>   * @elf: elf of the opened file
+> @@ -1820,7 +1848,6 @@ static int populate_sdt_note(Elf **elf, const char *data, size_t len,
+>  	const char *provider, *name, *args;
+>  	struct sdt_note *tmp = NULL;
+>  	GElf_Ehdr ehdr;
+> -	GElf_Addr base_off = 0;
+>  	GElf_Shdr shdr;
+>  	int ret = -EINVAL;
+>  
+> @@ -1916,17 +1943,12 @@ static int populate_sdt_note(Elf **elf, const char *data, size_t len,
+>  	 * base address in the description of the SDT note. If its different,
+>  	 * then accordingly, adjust the note location.
+>  	 */
+> -	if (elf_section_by_name(*elf, &ehdr, &shdr, SDT_BASE_SCN, NULL)) {
+> -		base_off = shdr.sh_offset;
+> -		if (base_off) {
+> -			if (tmp->bit32)
+> -				tmp->addr.a32[0] = tmp->addr.a32[0] + base_off -
+> -					tmp->addr.a32[1];
+> -			else
+> -				tmp->addr.a64[0] = tmp->addr.a64[0] + base_off -
+> -					tmp->addr.a64[1];
+> -		}
+> -	}
+> +	if (elf_section_by_name(*elf, &ehdr, &shdr, SDT_BASE_SCN, NULL))
+> +		sdt_adjust_loc(tmp, shdr.sh_offset);
+> +
+> +	/* Adjust reference counter offset */
+> +	if (elf_section_by_name(*elf, &ehdr, &shdr, SDT_PROBES_SCN, NULL))
+> +		sdt_adjust_refctr(tmp, shdr.sh_addr, shdr.sh_offset);
+>  
+>  	list_add_tail(&tmp->note_list, sdt_notes);
+>  	return 0;
+> diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
+> index 70c16741..aa095bf 100644
+> --- a/tools/perf/util/symbol.h
+> +++ b/tools/perf/util/symbol.h
+> @@ -384,12 +384,19 @@ struct sdt_note {
+>  int cleanup_sdt_note_list(struct list_head *sdt_notes);
+>  int sdt_notes__get_count(struct list_head *start);
+>  
+> +#define SDT_PROBES_SCN ".probes"
+>  #define SDT_BASE_SCN ".stapsdt.base"
+>  #define SDT_NOTE_SCN  ".note.stapsdt"
+>  #define SDT_NOTE_TYPE 3
+>  #define SDT_NOTE_NAME "stapsdt"
+>  #define NR_ADDR 3
+>  
+> +enum {
+> +	SDT_NOTE_IDX_LOC = 0,
+> +	SDT_NOTE_IDX_BASE,
+> +	SDT_NOTE_IDX_REFCTR,
 > +};
+> +
+>  struct mem_info *mem_info__new(void);
+>  struct mem_info *mem_info__get(struct mem_info *mi);
+>  void   mem_info__put(struct mem_info *mi);
+> -- 
+> 1.8.3.1
+> 
 
-Shouldn't that be defined in a more generic way? As far as I know,
-there's no way to tell what the difference between "Mic1,Mic2" and
-"Mic1+Mic2" would be from the userspace.
 
-I guess the larger issue is that you'd need to have controls that are
-common to both channels (ie that would change the routing of both
-mixers), but aren't sharing the same controls structure since the
-label would be different.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---odizj5wdfscxpmbv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrrIo8ACgkQ0rTAlCFN
-r3R4ihAAjeNAv1d3i+hQ8vO6K4uLt/wziSi+/U0/a8axRtU4M0XrmgIdoE2BIAJK
-clXkJWbn/CU9k5ooKT9c55hUV3oLrgCzmRNzczBTEpfGxN7aJVlOWNZAOMeMn/Mc
-zDC/pupLe/vXHu7GyGOV4Osw8vON18SUcIy60dN6PcXbqYeujMnaEBQufJ2ny1ld
-ltn4Q/AAK6GsgIkn4O3dMZeiuadYe6FwEr8SjWgwoqSLyE2/I+7tNfhvdvfPrT9J
-1H4euJ+KPjabeBX6tro3lsQjKDZtlJ9N+CmpKOdwvH1Bi0j80Ai8Zi0NRZ698UCy
-MFJGpk5AxBwnZ2A3lrSvNWjKNa79/Ehwkghx5QxlrKculDTRBp9SxSEZPeTxBHiO
-fTjpU7rsSv4YhZ/8Rod12nyQIBu8mh7IIiqJKdWnFBXtOp+JEV2hjBgwc2bh+Fkf
-mxVYHVhbO8EzZ1xGr+ENt24zFw1uvtItcRHzAqGaMlBTEql+wIa2ngMAiQ+oE8Ey
-6QBuDWTYHOHz1sIzfDxIhp84aO5HDdhV+eJiJwP28LvtRC1IPRoomoxTNC48LNaX
-q0ZeMm+4fGgb+ZbOyMNMBS/M5Axj4+vJLG6N5X9PosDbBg6JeNYhoHcAviY8wbpm
-jjS69VenVoYvGJh2/0wLOdrXwL1uUoZzsSTiYJP3pOPvquD6j1o=
-=T22u
------END PGP SIGNATURE-----
-
---odizj5wdfscxpmbv--
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
