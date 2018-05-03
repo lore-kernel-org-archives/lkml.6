@@ -1,154 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751340AbeECXc7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 19:32:59 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:37219 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751036AbeECXc6 (ORCPT
+        id S1751342AbeECXi5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 19:38:57 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34460 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750930AbeECXiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 19:32:58 -0400
-X-Google-Smtp-Source: AB8JxZrV0qkrAieJ8v0h2D4zJa1mIcha/XEu25nL6h5UqLFabMJMr6dXSnkERmHrmDsKMYkhOM7baD/mCmJmR9sXVYI=
+        Thu, 3 May 2018 19:38:55 -0400
+Date: Fri, 4 May 2018 08:38:49 +0900
+From: Mark Brown <broonie@kernel.org>
+To: Girish Mahadevan <girishm@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        sdharia@codeaurora.org, kramasub@codeaurora.org, dianders@chromium.org,
+        linux-arm-msm@vger.kernel.org, swboyd@chromium.org
+Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI
+ based QUP
+Message-ID: <20180503233849.GF13402@sirena.org.uk>
+References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180503225716.154235-1-ksspiers@google.com>
-References: <20180503225716.154235-1-ksspiers@google.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 3 May 2018 16:32:55 -0700
-X-Google-Sender-Auth: TydYU7LFG00Zic-6Sp3QWfTyHH8
-Message-ID: <CAGXu5j+AvMCFTuzTQ-qaA14M9ZaNnfwdwYZ37jx+LdAs4pYyPQ@mail.gmail.com>
-Subject: Re: [PATCH] async_pq: Remove VLA usage
-To: Kyle Spiers <ksspiers@google.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, vinod.koul@intel.com,
-        ray.jui@broadcom.com, anup.patel@broadcom.com,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ULyIDA2m8JTe+TiX"
+Content-Disposition: inline
+In-Reply-To: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
+X-Cookie: Advancement in position.
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 3:57 PM, Kyle Spiers <ksspiers@google.com> wrote:
-> In the quest to remove VLAs from the kernel[1], this moves the
-> allocation of coefs and blocks from the stack to being kmalloc()ed.
->
-> [1] https://lkml.org/lkml/2018/3/7/621
->
-> Signed-off-by: Kyle Spiers <ksspiers@google.com>
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+--ULyIDA2m8JTe+TiX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks for working on this one!
+On Thu, May 03, 2018 at 03:34:43PM -0600, Girish Mahadevan wrote:
+> This driver supports GENI based SPI Controller in the Qualcomm SOCs. The
+> Qualcomm Generic Interface (GENI) is a programmable module supporting a
+> wide range of serial interfaces including SPI. This driver supports SPI
+> operations using FIFO mode of transfer.
 
--Kees
+This is a DT based driver but there is no binding documentation.
+Binding documentation is required for any new DT stuff.
 
-> ---
->  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
->  crypto/async_tx/raid6test.c |  8 +++++++-
->  2 files changed, 21 insertions(+), 5 deletions(-)
->
-> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
-> index 56bd612927ab..af1912313a23 100644
-> --- a/crypto/async_tx/async_pq.c
-> +++ b/crypto/async_tx/async_pq.c
-> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->             (src_cnt <= dma_maxpq(device, 0) ||
->              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
->             is_dma_pq_aligned(device, offset, 0, len)) {
-> -               struct dma_async_tx_descriptor *tx;
-> +               struct dma_async_tx_descriptor *tx = NULL;
->                 enum dma_ctrl_flags dma_flags = 0;
-> -               unsigned char coefs[src_cnt];
-> +               unsigned char *coefs;
->                 int i, j;
->
->                 /* run the p+q asynchronously */
-> @@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->                  * sources and update the coefficients accordingly
->                  */
->                 unmap->len = len;
-> +               coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
-> +               if (!coefs)
-> +                       goto out;
->                 for (i = 0, j = 0; i < src_cnt; i++) {
->                         if (blocks[i] == NULL)
->                                 continue;
-> @@ -240,7 +243,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
->                 }
->
->                 tx = do_async_gen_syndrome(chan, coefs, j, unmap, dma_flags, submit);
-> +out:
->                 dmaengine_unmap_put(unmap);
-> +               kfree(coefs);
->                 return tx;
->         }
->
-> @@ -298,8 +303,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
->  {
->         struct dma_chan *chan = pq_val_chan(submit, blocks, disks, len);
->         struct dma_device *device = chan ? chan->device : NULL;
-> -       struct dma_async_tx_descriptor *tx;
-> -       unsigned char coefs[disks-2];
-> +       struct dma_async_tx_descriptor *tx = NULL;
-> +       unsigned char *coefs = NULL;
->         enum dma_ctrl_flags dma_flags = submit->cb_fn ? DMA_PREP_INTERRUPT : 0;
->         struct dmaengine_unmap_data *unmap = NULL;
->
-> @@ -318,6 +323,9 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
->                          __func__, disks, len);
->
->                 unmap->len = len;
-> +               coefs = kmalloc_array(disks - 2, sizeof(*coefs), GFP_KERNEL);
-> +               if (!coefs)
-> +                       goto out;
->                 for (i = 0; i < disks-2; i++)
->                         if (likely(blocks[i])) {
->                                 unmap->addr[j] = dma_map_page(dev, blocks[i],
-> @@ -423,6 +431,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
->                 async_tx_sync_epilog(submit);
->                 tx = NULL;
->         }
-> +out:
-> +       kfree(coefs);
->         dmaengine_unmap_put(unmap);
->
->         return tx;
-> diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
-> index dad95f45b88f..ea036b531ef2 100644
-> --- a/crypto/async_tx/raid6test.c
-> +++ b/crypto/async_tx/raid6test.c
-> @@ -81,11 +81,16 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
->                         init_async_submit(&submit, 0, NULL, NULL, NULL, addr_conv);
->                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
->                 } else {
-> -                       struct page *blocks[disks];
-> +                       struct page **blocks;
->                         struct page *dest;
->                         int count = 0;
->                         int i;
->
-> +                       blocks = kmalloc_array(disks, sizeof(*blocks),
-> +                                                       GFP_KERNEL);
-> +                       if (!blocks)
-> +                               return;
+> +       depends on ARCH_QCOM || (ARM && COMPILE_TEST)
+
+Why the ARM dependency?  There's no architecture specific headers
+included...
+
+>  obj-$(CONFIG_SPI_PXA2XX_PCI)		+= spi-pxa2xx-pci.o
+>  obj-$(CONFIG_SPI_QUP)			+= spi-qup.o
+> +obj-$(CONFIG_SPI_QCOM_GENI)		+= spi-geni-qcom.o
+>  obj-$(CONFIG_SPI_ROCKCHIP)		+= spi-rockchip.o
+
+Please keep Kconfig and Makefile alphabetically sorted to reduce
+conflicts.
+
+> +static struct spi_master *get_spi_master(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct spi_master *spi = platform_get_drvdata(pdev);
 > +
->                         /* data+Q failure.  Reconstruct data from P,
->                          * then rebuild syndrome
->                          */
-> @@ -101,6 +106,7 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
->
->                         init_async_submit(&submit, 0, tx, NULL, NULL, addr_conv);
->                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
-> +                       kfree(blocks);
->                 }
->         } else {
->                 if (failb == disks-2) {
-> --
-> 2.17.0.441.gb46fe60e1d-goog
->
+> +	return spi;
+> +}
 
+This doesn't look at all driver specific with the current naming but it
+actually is given that other drivers may use other driver data so it
+should be renamed.  I'm also not clear why it's bouncing through the
+platform device, dev_get_drvdata() exists.
 
+> +static int spi_geni_unprepare_message(struct spi_master *spi_mas,
+> +					struct spi_message *spi_msg)
+> +{
+> +	struct spi_geni_master *mas = spi_master_get_devdata(spi_mas);
+> +
+> +	mas->cur_speed_hz = 0;
+> +	mas->cur_word_len = 0;
+> +	return 0;
+> +}
 
--- 
-Kees Cook
-Pixel Security
+Is this really useful?  If the driver needs to reconfigure for every
+message then it should just do that and not care about the state.  If it
+might end up caring about the state anyway that suggests there's some
+kind of bug somewhere that's being masked.
+
+> +static int spi_geni_prepare_transfer_hardware(struct spi_master *spi)
+> +{
+> +	struct spi_geni_master *mas = spi_master_get_devdata(spi);
+> +	int ret = 0;
+> +	struct geni_se *se = &mas->se;
+> +
+> +	ret = pm_runtime_get_sync(mas->dev);
+> +	if (ret < 0) {
+
+Use auto_runtime_pm.
+
+> +	if (unlikely(!mas->setup)) {
+> +		int proto = geni_se_read_proto(se);
+
+Does this really need a likely/unlikely annotation - it shouldn't be any
+kind of hot path...  There's a lot of these annotations in the code.
+
+> +		ret = devm_request_irq(mas->dev, mas->irq, geni_spi_isr,
+> +			       IRQF_TRIGGER_HIGH, "spi_geni", mas);
+> +		if (ret) {
+> +			dev_err(mas->dev, "Request_irq failed:%d: err:%d\n",
+
+Why are we dynamically requesting the IRQ outside of probe?  Normally an
+interrupt is requested on startup and held through the life of the
+device.  I'm also not seeing any sign that it's freed except via devm...
+
+> +	spi->bus_num = of_alias_get_id(pdev->dev.of_node, "spi");
+
+Don't do this, just set bus_num to -1 and let the core assign an ID.
+
+> +	spi->dev.of_node = pdev->dev.of_node;
+
+This is broken, the virtual SPI device does not exist in DT and this
+might break things.
+
+> +	pm_runtime_enable(&pdev->dev);
+> +	ret = spi_register_master(spi);
+
+No devm?
+
+--ULyIDA2m8JTe+TiX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrrnYgACgkQJNaLcl1U
+h9C0ZAf9HBm4HdgsBUt/v0XEybYkzizuKBtsvq9KvjJC8ngbNW2m0nivSBZu0QYq
+DFpJa6p/CjzCbviF7OMFLtNLukR7KLAWrP3JYYUz9AWW0o+5sjCUmxtQQi6wYM7d
+hvD0DEDfQ3FkvuCUi2pUaFX6xu6u1t8b+uqC21pR6T2iUA1jLxkuoPbPXN5N98kh
+TDXscnglEnMZ0CCc1zia2Rxrr1556BzyjDyU6f7PTjDMBb+zQG70pXE1Ddv+5HkV
+ExV5MkOZig+lZqMHrAdoy1u2fI9YNk3KccdQ8hw9FI+vDCaLRTzNSAHeOLvn9w3T
+nty8LPMugARReOwVQbWEGSqKnUsH3Q==
+=Fbhk
+-----END PGP SIGNATURE-----
+
+--ULyIDA2m8JTe+TiX--
