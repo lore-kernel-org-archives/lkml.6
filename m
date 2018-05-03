@@ -1,70 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751924AbeECMkU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:40:20 -0400
-Received: from mga18.intel.com ([134.134.136.126]:63060 "EHLO mga18.intel.com"
+        id S1751932AbeECMkt (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:40:49 -0400
+Received: from mout.gmx.net ([212.227.17.21]:43019 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751811AbeECMkO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:40:14 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="52086526"
-Date: Thu, 3 May 2018 15:40:09 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: Thiebaud Weksteen <tweek@google.com>
-Cc: Nayna Jain <nayna@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] tpm: Add explicit endianness cast
-Message-ID: <20180503124009.GA7825@linux.intel.com>
-References: <20180425132641.106385-1-tweek@google.com>
- <20180501114940.GD20978@linux.intel.com>
- <CA+zpnLdasAFPKRXB=5SgiAi5=W08tgkbQTjO26V=PxjphJai=w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+zpnLdasAFPKRXB=5SgiAi5=W08tgkbQTjO26V=PxjphJai=w@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751272AbeECMkr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:40:47 -0400
+Message-ID: <1525351221.9956.4.camel@gmx.de>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>
+Date: Thu, 03 May 2018 14:40:21 +0200
+In-Reply-To: <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
+References: <20180417142119.GA4511@codeblueprint.co.uk>
+         <20180420095005.GH4064@hirez.programming.kicks-ass.net>
+         <20180424133325.GA3179@codeblueprint.co.uk>
+         <1525349542.9956.2.camel@gmx.de>
+         <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Mhwmdhf+jSzP9cnAtS4oZlYn5YvAYsei5WhCKCq8KVnsZ+8k3Mv
+ Cs998eGquwGwnn7o99mPuOVPaj5oGax+N5NtZC6z/XTXobdgUj3CjFuPdbdWu5VUk2iUTT8
+ QgP/jq53HFhks8sdWNRaC2D/svjDT1qS15UxLufQo76Zz9xr/iIn5iqfOzmCLLYqhZNIZoy
+ 3xKKmp/XYtjVhWEOJg4xQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:n/pnxpDiroA=:6KJdMJXgmc4RXKOk74/Go7
+ sRp2jpftEwbm9famEryZKVGrHsEV08a0RoSelKtL3cGbemdzFCK2NBU/U1Q9wfBUvpHsgSSz/
+ 4/RJTPun5FocIHcX05IOuKn0f1KhDRpaRvgJlyq61lyLPiQLU8zF1yfC+bSRBfzvEgBwl8zqi
+ fo/cjwHdKtFj4SPPyEriOW/zistdhOYn+l9mLEVxWIFk3msTVsCxJQ0bf1yxfTrIff6aRMb4x
+ xiICP9iCLAFQYoB4ArBlT8xJlyymLPdJEJ5ZWWjb63aYywx7eCFFDVOjzzA6dP1BdsUhgQFCt
+ UDDMrwdSnt0bvkFHTrse6NBTgG4Q7sPViz2ftz0jDFXJsoG8meIKMVKkYt5MFysT0m1LALJWq
+ AbUmnjSNmf8QN0bIQM4V6Od1Q2iFm0bhKritJzBAis1CQbJwgwCQRNU0ZIBy+sG3GnUF/uTAw
+ 9MxGDV5TVztheFABjrxGjwdadFRhmL69JTcna/YTiq6+gWb11Bf6bm/zbKXBnhzqqpaHcjbFL
+ /wgzdJ0Q8LLmK9aCmfkVDwlmT3m0QeDxrg/jpwDudd3h08l5Akpa71mJkAwOgrUv2xVVBOAxE
+ CF0MLsDoGBQHrqVf3dCO3xaVKLOgoQLMonvmjT2lnR4A0H87WIGm6AY8w4WDgTGcPqxJkIHsb
+ oE63dOXGOUOAp/H3wG2+om9HWSPf9JYd5j4welL3RCGpbD/QH7udsddRjAt3cplemm4bATUB2
+ +aCJo4GUbf1CcTD7trHuSUEl/EE1+Q97mpt+IM6dMOwudhsGEzUMEyXOc9vjVZNVXJE3icI4+
+ 9efEOoz
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 08:49:41AM +0000, Thiebaud Weksteen wrote:
-> On Tue, May 1, 2018 at 1:49 PM Jarkko Sakkinen <
-> jarkko.sakkinen@linux.intel.com> wrote:
+On Thu, 2018-05-03 at 14:28 +0200, Peter Zijlstra wrote:
 > 
-> > On Wed, Apr 25, 2018 at 03:26:41PM +0200, Thiebaud Weksteen wrote:
-> > > Signed-off-by: Thiebaud Weksteen <tweek@google.com>
-> > > ---
-> > >  drivers/char/tpm/tpm_eventlog_of.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/char/tpm/tpm_eventlog_of.c
-> b/drivers/char/tpm/tpm_eventlog_of.c
-> > > index 96fd5646f866..ea0f16f19d73 100644
-> > > --- a/drivers/char/tpm/tpm_eventlog_of.c
-> > > +++ b/drivers/char/tpm/tpm_eventlog_of.c
-> > > @@ -56,8 +56,8 @@ int tpm_read_log_of(struct tpm_chip *chip)
-> > >        * but physical tpm needs the conversion.
-> > >        */
-> > >       if (of_property_match_string(np, "compatible", "IBM,vtpm") < 0) {
-> > > -             size = be32_to_cpup(sizep);
-> > > -             base = be64_to_cpup(basep);
-> > > +             size = be32_to_cpup((__force __be32 *)sizep);
-> > > +             base = be64_to_cpup((__force __be64 *)basep);
-> > >       } else {
-> > >               size = *sizep;
-> > >               base = *basep;
-> > > --
-> > > 2.17.0.484.g0c8726318c-goog
-> > >
-> 
-> > Repeal and replace, right (no change log)?
-> 
-> Yep, that's right. Thanks.
+> Hurm.. I don't see how this is 'new'. We moved the wakeup out from under
+> stopper lock, but that should not affect the RCU state.
 
-Done.
+No, not new, just an additional woes from same spot.
 
-/Jarkko
+	-Mike
