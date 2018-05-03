@@ -1,68 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751220AbeECOMw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:12:52 -0400
-Received: from muru.com ([72.249.23.125]:39892 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750978AbeECOMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:12:49 -0400
-Date: Thu, 3 May 2018 07:12:45 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Subject: Re: [PATCH v5 00/14] mmc: sdhci-omap: Add UHS/HS200 mode support
-Message-ID: <20180503141245.GO98604@atomide.com>
-References: <20180427114723.2687-1-kishon@ti.com>
- <CAPDyKFqb=Dyi=UMZBLKcrBbmaWbGEjf-Vp5vQ0b7_F__+YnXHQ@mail.gmail.com>
- <20180502145551.GL98604@atomide.com>
- <CAPDyKFr4=p5Q1oEDVQct+8GeDm-rbQCLyE8+3RqGBkWLvDTKdA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFr4=p5Q1oEDVQct+8GeDm-rbQCLyE8+3RqGBkWLvDTKdA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1751148AbeECOPd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:15:33 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50445 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750944AbeECOPa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:15:30 -0400
+X-Google-Smtp-Source: AB8JxZpn7A1nqTM0sVXejVmKy8SGuyotWGOqxrS8DdAlOc2AQkZQQWcPzpmfpdwQva25JOxAVdsfoA==
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: DRI Development <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>
+Subject: [PATCH] backlight: remove obsolete comment for ->state
+Date: Thu,  3 May 2018 16:15:17 +0200
+Message-Id: <20180503141517.28207-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Ulf Hansson <ulf.hansson@linaro.org> [180503 08:53]:
-> On 2 May 2018 at 16:55, Tony Lindgren <tony@atomide.com> wrote:
-> > * Ulf Hansson <ulf.hansson@linaro.org> [180502 13:17]:
-> >> On 27 April 2018 at 13:47, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> >> > Add UHS/HS200 mode support in sdhci-omap. The programming sequence
-> >> > for voltage switching, tuning is followed from AM572x TRM
-> >> > http://www.ti.com/lit/ug/spruhz6j/spruhz6j.pdf
-> >> > (Similar to all AM57x/DRA7x SoCs). The patch series also implements
-> >> > workaround for errata published in
-> >> > http://www.ti.com/lit/er/sprz429l/sprz429l.pdf
-> >> >
-> >> > patches are created on top of
-> >> > git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git next
-> >> >
-> >> > The patches along with dt has also been pushed to
-> >> > https://github.com/kishon/linux-wip.git sdhci_uhs_v5
-> >>
-> >> Thanks, applied for next!
-> >
-> > OK. Ulf, can I use some commit id from your next as a base for
-> > the related dts changes?
-> >
-> 
-> No, I am re-basing my next branch from time to time so it's not a good idea.
-> 
-> Instead I have shared an immutable branch for your to pull/merge:
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git sdhci_omap
-> 
-> I also signed the top commit on this branch: sdhci-omap-v4.17-rc3
-> 
-> The branch is based on 4.17-rc3.
+Jani spotted this when reviewing my earlier patch to remove the driver
+internal usage of this field in
 
-OK great, thanks a lot!
+commit 3cf91adaa594e8933af1727942ac560e5c7bc70e
+Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Wed Apr 25 19:42:52 2018 +0200
 
-Tony
+    backlight: Nuke BL_CORE_DRIVER1
+
+Cc: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+---
+ include/linux/backlight.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/linux/backlight.h b/include/linux/backlight.h
+index 7fbf0539e14a..0b5897446dca 100644
+--- a/include/linux/backlight.h
++++ b/include/linux/backlight.h
+@@ -79,7 +79,6 @@ struct backlight_properties {
+ 	/* Backlight type */
+ 	enum backlight_type type;
+ 	/* Flags used to signal drivers of state changes */
+-	/* Upper 4 bits are reserved for driver internal use */
+ 	unsigned int state;
+ 
+ #define BL_CORE_SUSPENDED	(1 << 0)	/* backlight is suspended */
+-- 
+2.17.0
