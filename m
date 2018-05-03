@@ -1,202 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751152AbeECIUA (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:20:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45190 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750781AbeECITz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:19:55 -0400
-Date: Thu, 3 May 2018 10:19:42 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Ladislav Michl <ladis@linux-mips.org>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>, Roger Quadros <rogerq@ti.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Andreas Kemnade <andreas@kemnade.info>
-Subject: Re: [PATCH v3] mtd: onenand: omap2: Disable DMA for HIGHMEM buffers
-Message-ID: <20180503101942.6851a4fc@bbrezillon>
-In-Reply-To: <20180502104132.GA12979@lenoch>
-References: <20180502104132.GA12979@lenoch>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751272AbeECIUf convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:20:35 -0400
+Received: from mail1.bemta5.messagelabs.com ([195.245.231.145]:38291 "EHLO
+        mail1.bemta5.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751115AbeECIU3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 04:20:29 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGKsWRWlGSWpSXmKPExsUSt3Opsa73sVd
+  RBsv+c1ucatnDbjHtzm5WiysXDzFZTH34hM2iccZ8VotvVzqYLC7vmsNmseH7WkYHDo8Nn5vY
+  PFov/WXzmN1wkcVj56y77B6bVnWyeazfcpXF4/MmuQD2KNbMvKT8igTWjHXT9rIUvOKr6Nvwn
+  rGB8T53FyMXh5DAEkaJu/OOsXQxcnKwCVhITD7xgA3EFhGIkOi4d5kNpIhZ4AOTxPctX8CKhA
+  VSJa6uncwCUZQmMf/1P6gGP4mZixvB4iwCKhIzDjUxg9i8AgESW29PYofYNp9J4tnBaUBFHBy
+  cAkYSDx/EgtQwCshKfGlcDVbPLCAucevJfCYQW0JAQGLJnvPMELaoxMvH/1ghbHmJ7d9+s0PY
+  9hKv770DGykhoC/R11gMETaUWDXtAAuEbS6x+M9OJojxOhILdn9ig7C1JZYtfA11pqDEyZlPW
+  CYwis9CcsUsJC2zkLTMQtKygJFlFaNGcWpRWWqRrqGFXlJRZnpGSW5iZo6uoYGpXm5qcXFiem
+  pOYlKxXnJ+7iZGYHwzAMEOxqbtnocYJTmYlER5v598GSXEl5SfUpmRWJwRX1Sak1p8iFGGg0N
+  JgvfrkVdRQoJFqempFWmZOcBEA5OW4OBREuG9DJLmLS5IzC3OTIdInWJUlBLnZTsKlBAASWSU
+  5sG1wZLbJUZZKWFeRqBDhHgKUotyM0tQ5V8xinMwKgnzdoCM58nMK4Gb/gpoMRPQ4s9fn4MsL
+  klESEk1MOb07JE/94pvyYpqGTf77T2L4zdOirLpSHl2e+te2+qZxQk1aX/DXBSzGMxPtBbmf9
+  hpOd8sqFSy+lm/pEODOdcjd2Xm7ldOu1I5r/pf/vCqV3PlkZWFHscMott5c8/YmHfcmWQ1tdX
+  0y/EJue89kiv+x88UuvT/9aWbUcvM1SaL2j/dznJ/uhJLcUaioRZzUXEiABJZEv5pAwAA
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-4.tower-178.messagelabs.com!1525335626!113191922!1
+X-Originating-IP: [94.185.165.51]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+To: Mark Brown <broonie@kernel.org>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+CC: "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        Support Opensource <Support.Opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "open list" <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        "djkurtz@chromium.org" <djkurtz@chromium.org>,
+        "Alexander.Deucher@amd.com" <Alexander.Deucher@amd.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>
+Subject: RE: [alsa-devel] [PATCH v2] ASoC: da7219: read fmw property to get
+ mclk for non-dts systems
+Thread-Topic: [alsa-devel] [PATCH v2] ASoC: da7219: read fmw property to get
+ mclk for non-dts systems
+Thread-Index: AQHT4GUsuHphZND160Sqg+RURjmwB6QZqjfggAGgMwCAAO2sQIAA9XeAgACASeA=
+Date: Thu, 3 May 2018 08:20:25 +0000
+Message-ID: <2E89032DDAA8B9408CB92943514A0337014C1E9A89@SW-EX-MBX01.diasemi.com>
+References: <1525080203-18947-1-git-send-email-akshu.agrawal@amd.com>
+ <2E89032DDAA8B9408CB92943514A0337014C1E93BC@SW-EX-MBX01.diasemi.com>
+ <20180501205006.GE2714@sirena.org.uk>
+ <2E89032DDAA8B9408CB92943514A0337014C1E9782@SW-EX-MBX01.diasemi.com>
+ <20180503013919.GN2714@sirena.org.uk>
+In-Reply-To: <20180503013919.GN2714@sirena.org.uk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.20.24.43]
+x-kse-attachmentfiltering-interceptor-info: protection disabled
+x-kse-serverinfo: sw-ex-cashub01.diasemi.com, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 03/05/2018 06:33:00
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 May 2018 12:41:32 +0200
-Ladislav Michl <ladis@linux-mips.org> wrote:
+On 03 May 2018 02:39, Mark Brown wrote:
 
-> dma_map_single does not work for vmalloc-ed buffers,
-> so disable DMA in this case.
+> On Wed, May 02, 2018 at 10:13:55AM +0000, Adam Thomson wrote:
+> > On 01 May 2018 21:50, Mark Brown wrote:
 > 
-> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
-> Reported-by: "H. Nikolaus Schaller" <hns@goldelico.com>
-> Tested-by: "H. Nikolaus Schaller" <hns@goldelico.com>
-
-Applied to mtd/master. Will be part of the next fixes PR I'll send
-later this week.
-
-Thanks,
-
-Boris
-
-> ---
->  Changes:
->   -v2: Added Tested-by tag, based on v4.17-rc1 (no change in patch itself)
->   -v3: Reworded commit log
+> > > There's a lot of things that ACPI *should* do but doesn't - it's a bit
+> > > of a shambles how ACPI standards get defined and what's there is not
+> > > really intended to handle systems like these semi-embedded ones.  One of
+> > > the big gaps in ACPI is that it has no handling at all of clocks, that's
+> > > supposed to be done transparently by firmware in the ACPI model.  What a
+> > > lot of the embedded Intel people have been doing is coopting the DT
+> > > bindings wholesale for ACPI systems but that has problems when you get
+> > > into areas which should be handled in some way on ACPI systems like
+> > > power and unfortunately clocks are kind of power adjacent so might be a
+> > > bit sketchy here.
 > 
->  drivers/mtd/nand/onenand/omap2.c | 105 +++++++++++--------------------
->  1 file changed, 38 insertions(+), 67 deletions(-)
+> > Yes I was aware that previously that was the case, although have not followed
+> > this for a while. It just feels here that we should aim for something more
+> > generic rather than a device specific property/binding, if possible, as that
+> > feels messy to me and I'm sure other drivers could take advantage of this as
+> > well. I've not looked at the clock code in too much detail though, at least with
+> > regards to this area, so not sure how feasible that is.
 > 
-> diff --git a/drivers/mtd/nand/onenand/omap2.c b/drivers/mtd/nand/onenand/omap2.c
-> index 9c159f0dd9a6..321137158ff3 100644
-> --- a/drivers/mtd/nand/onenand/omap2.c
-> +++ b/drivers/mtd/nand/onenand/omap2.c
-> @@ -375,56 +375,42 @@ static int omap2_onenand_read_bufferram(struct mtd_info *mtd, int area,
->  {
->  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
->  	struct onenand_chip *this = mtd->priv;
-> -	dma_addr_t dma_src, dma_dst;
-> -	int bram_offset;
-> +	struct device *dev = &c->pdev->dev;
->  	void *buf = (void *)buffer;
-> +	dma_addr_t dma_src, dma_dst;
-> +	int bram_offset, err;
->  	size_t xtra;
-> -	int ret;
->  
->  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
-> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
-> -		goto out_copy;
-> -
-> -	/* panic_write() may be in an interrupt context */
-> -	if (in_interrupt() || oops_in_progress)
-> +	/*
-> +	 * If the buffer address is not DMA-able, len is not long enough to make
-> +	 * DMA transfers profitable or panic_write() may be in an interrupt
-> +	 * context fallback to PIO mode.
-> +	 */
-> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
-> +	    count < 384 || in_interrupt() || oops_in_progress )
->  		goto out_copy;
->  
-> -	if (buf >= high_memory) {
-> -		struct page *p1;
-> -
-> -		if (((size_t)buf & PAGE_MASK) !=
-> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
-> -			goto out_copy;
-> -		p1 = vmalloc_to_page(buf);
-> -		if (!p1)
-> -			goto out_copy;
-> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
-> -	}
-> -
->  	xtra = count & 3;
->  	if (xtra) {
->  		count -= xtra;
->  		memcpy(buf + count, this->base + bram_offset + count, xtra);
->  	}
->  
-> +	dma_dst = dma_map_single(dev, buf, count, DMA_FROM_DEVICE);
->  	dma_src = c->phys_base + bram_offset;
-> -	dma_dst = dma_map_single(&c->pdev->dev, buf, count, DMA_FROM_DEVICE);
-> -	if (dma_mapping_error(&c->pdev->dev, dma_dst)) {
-> -		dev_err(&c->pdev->dev,
-> -			"Couldn't DMA map a %d byte buffer\n",
-> -			count);
-> -		goto out_copy;
-> -	}
->  
-> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> -	dma_unmap_single(&c->pdev->dev, dma_dst, count, DMA_FROM_DEVICE);
-> -
-> -	if (ret) {
-> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
-> +	if (dma_mapping_error(dev, dma_dst)) {
-> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
->  		goto out_copy;
->  	}
->  
-> -	return 0;
-> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> +	dma_unmap_single(dev, dma_dst, count, DMA_FROM_DEVICE);
-> +	if (!err)
-> +		return 0;
-> +
-> +	dev_err(dev, "timeout waiting for DMA\n");
->  
->  out_copy:
->  	memcpy(buf, this->base + bram_offset, count);
-> @@ -437,49 +423,34 @@ static int omap2_onenand_write_bufferram(struct mtd_info *mtd, int area,
->  {
->  	struct omap2_onenand *c = container_of(mtd, struct omap2_onenand, mtd);
->  	struct onenand_chip *this = mtd->priv;
-> -	dma_addr_t dma_src, dma_dst;
-> -	int bram_offset;
-> +	struct device *dev = &c->pdev->dev;
->  	void *buf = (void *)buffer;
-> -	int ret;
-> +	dma_addr_t dma_src, dma_dst;
-> +	int bram_offset, err;
->  
->  	bram_offset = omap2_onenand_bufferram_offset(mtd, area) + area + offset;
-> -	if (bram_offset & 3 || (size_t)buf & 3 || count < 384)
-> -		goto out_copy;
-> -
-> -	/* panic_write() may be in an interrupt context */
-> -	if (in_interrupt() || oops_in_progress)
-> +	/*
-> +	 * If the buffer address is not DMA-able, len is not long enough to make
-> +	 * DMA transfers profitable or panic_write() may be in an interrupt
-> +	 * context fallback to PIO mode.
-> +	 */
-> +	if (!virt_addr_valid(buf) || bram_offset & 3 || (size_t)buf & 3 ||
-> +	    count < 384 || in_interrupt() || oops_in_progress )
->  		goto out_copy;
->  
-> -	if (buf >= high_memory) {
-> -		struct page *p1;
-> -
-> -		if (((size_t)buf & PAGE_MASK) !=
-> -		    ((size_t)(buf + count - 1) & PAGE_MASK))
-> -			goto out_copy;
-> -		p1 = vmalloc_to_page(buf);
-> -		if (!p1)
-> -			goto out_copy;
-> -		buf = page_address(p1) + ((size_t)buf & ~PAGE_MASK);
-> -	}
-> -
-> -	dma_src = dma_map_single(&c->pdev->dev, buf, count, DMA_TO_DEVICE);
-> +	dma_src = dma_map_single(dev, buf, count, DMA_TO_DEVICE);
->  	dma_dst = c->phys_base + bram_offset;
-> -	if (dma_mapping_error(&c->pdev->dev, dma_src)) {
-> -		dev_err(&c->pdev->dev,
-> -			"Couldn't DMA map a %d byte buffer\n",
-> -			count);
-> -		return -1;
-> -	}
-> -
-> -	ret = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> -	dma_unmap_single(&c->pdev->dev, dma_src, count, DMA_TO_DEVICE);
-> -
-> -	if (ret) {
-> -		dev_err(&c->pdev->dev, "timeout waiting for DMA\n");
-> +	if (dma_mapping_error(dev, dma_src)) {
-> +		dev_err(dev, "Couldn't DMA map a %d byte buffer\n", count);
->  		goto out_copy;
->  	}
->  
-> -	return 0;
-> +	err = omap2_onenand_dma_transfer(c, dma_src, dma_dst, count);
-> +	dma_unmap_page(dev, dma_src, count, DMA_TO_DEVICE);
-> +	if (!err)
-> +		return 0;
-> +
-> +	dev_err(dev, "timeout waiting for DMA\n");
->  
->  out_copy:
->  	memcpy(this->base + bram_offset, buf, count);
+> > As a suggestion for ACPI would it be possible to re-use the 'clock-names'
+> > property and add something in the framework to handle this?
+> 
+> I completely agree that ACPI should have handling for clocks but it
+> really feels like something that should be done as a proper spec rather
+> than just ad hoc by Linux like the x86 embedded people often do - it's
+> too close to the power management stuff that ACPI definitely does
+> handle.
+
+Yep, agreed. Be nice if someone could do that rather than us having workarounds.
