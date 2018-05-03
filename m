@@ -1,30 +1,30 @@
 Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AB8JxZq4XvlTZ286KY+kqCPrrcDmU785/TME72v6wHJXC5xaY8+cU0km3rSgMCCf6fXVkLX66xMm
+X-Google-Smtp-Source: AB8JxZoS6p8bWNrLojoS5ShioDRzmLAlvg+RrA9N/kQO8JGzTGFUiFqx360LFpztVBgU57fZphDF
 ARC-Seal: i=1; a=rsa-sha256; t=1525323846; cv=none;
         d=google.com; s=arc-20160816;
-        b=Mm3bwmv17ro1Gk2iEF2+HB6bfgQVdAS7zFo1Z7Pz4IdJK6Vq70XSIvh5TQVtn3T93O
-         rCQdsgTuejDYwVzFa6pDhDwFHR2JiFqagoeSBty1eyBtEcYmti0gl2hG+a+MwQKAdGVQ
-         0pVemRloKhImRZOy7at0iaZA87xfjOtq7T1LVY2iN/xSzFBVOd7wKNIF7NAOP2KW+deb
-         XeTmTdQOPUjrWaMD+AxC/ARWgexv80UAT+M9NlA7YPccZxrFPCNbG5wWwAwy3pqQfOvg
-         l/fEpAkh7Z2z/RkajhHdR0Objy7t68lSn/9P6X4TJctZ9g5BDC37A7j2Yk9LDOlaVWIc
-         LcDg==
+        b=ebVbi0k8FNvZNsxwSoqUV/Fue/XYqdzHaDzSb1M10j9Ztr4OJM+ZyL+o6lE7qA0fv1
+         NyEf0Hxk274F7gXXtg9ueOtVXmRw6cKzGgS+ORk5tnsh7ruskMTRW1xcwk9azgMQnaaC
+         FDgrL3SBHDqunTvG6D66xFQqE928s84i+vnbhdlymqM4JxGVTqOYVmhOYNx13EruHvEC
+         IMO3GPaTDiRKtghxL+jBF+NxtCqUyQTvaT8Gio+d7VGyMUuxSjrY7Exb+fFeOutdUzsu
+         LT1mY034ln+97Aixg37QjZN6EnEmo1MRdSOUJhClOp6QTdq6/teC7dVSeVcYisDu6Ofm
+         KByQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=0RMJqL3Uz9nuAK6QtHNgOVgYQ8l8aRRhaV+xXnIIR6g=;
-        b=D7VlJWzyjn2lhPV8o0C9Xp7BZS86BKqoM31Ml9Thb6kAOsIUWORBRlC3bo6JfTtKYV
-         NFQK5woC0J/NI8Hj6kTpqtF+BQIuDb3mWLYttHmaXwBClzVq088qlQQoZg3gpE1vVvBV
-         WV+4pB5hkehhu9egC12Fi0ItImoes1k8gJjKxdj96TVL5nkxnfGJZq0yv5S9avNCbBl6
-         sJcNKUZRHL1a94jMbf08tckEtpjsrOF6ttWzY1MP8s9mSFd83/cIWRYgYFdjD0jP8L7/
-         dxP3PJa4OWeHKCbEXD0ZKoOERpBm7h0gctOlAMliI7kxQiGaXhy8LfUuvd+2Rkj9pFGb
-         +I+Q==
+        bh=5XHei5eJxNesxHpVuu9xyl0mRv6j984eYXvalHLI+G4=;
+        b=GkIn2QrO0AvO4hTB+K5k9JJDS6jcyHZYems4+XHYFFeSrn+wfcTVc8140jSP+iHXv3
+         nOaaLZ2jnyLXZvVX8bvjwg2pyFm44lbouMImY9zPUFu8MPnwCImY4ELllgVFu/x1Yw5b
+         zG3l657MMUgSx6gV7VUOI8xTuqxTZEm4Ci8LLMYoda695/HIEaWD2vPQrSIUnUpyvjhV
+         WnPP5T89qtvRINPjFNevnUEyDzyRBjza4Tvxwt2dpB+v26HR1iYvkpYule7Hbn3Z4WWc
+         yFsf9CTHQ6jhrGhTuvPMowIVZEuUISczgOYkoXDFaxSA7erpOA3o3Rd/NN1vcG/izHv3
+         v8DA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="126361295"
-X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="152473227"
+   d="scan'208";a="17319047"
+X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="76225529"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
@@ -39,95 +39,149 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v15 2/9] pci-error-recovery: Add AER_FATAL handling
-Date: Thu,  3 May 2018 01:03:51 -0400
-Message-Id: <1525323838-1735-3-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v15 6/9] PCI/PORTDRV: Implement generic find service
+Date: Thu,  3 May 2018 01:03:55 -0400
+Message-Id: <1525323838-1735-7-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
 References: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599417977816685243?=
-X-GMAIL-MSGID: =?utf-8?q?1599417977816685243?=
+X-GMAIL-THRID: =?utf-8?q?1599417977769925395?=
+X-GMAIL-MSGID: =?utf-8?q?1599417977769925395?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-It adds description on AER_FATAL error handling.
+This patch implements generic pcie_port_find_service() routine.
 
 Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
+Reviewed-by: Keith Busch <keith.busch@intel.com>
 
-diff --git a/Documentation/PCI/pci-error-recovery.txt b/Documentation/PCI/pci-error-recovery.txt
-index 0b6bb3e..688b691 100644
---- a/Documentation/PCI/pci-error-recovery.txt
-+++ b/Documentation/PCI/pci-error-recovery.txt
-@@ -110,7 +110,7 @@ The actual steps taken by a platform to recover from a PCI error
- event will be platform-dependent, but will follow the general
- sequence described below.
+diff --git a/drivers/pci/pcie/aer/aerdrv_core.c b/drivers/pci/pcie/aer/aerdrv_core.c
+index 51515d1..a525296 100644
+--- a/drivers/pci/pcie/aer/aerdrv_core.c
++++ b/drivers/pci/pcie/aer/aerdrv_core.c
+@@ -228,32 +228,6 @@ static bool find_source_device(struct pci_dev *parent,
+ 	return true;
+ }
  
--STEP 0: Error Event
-+STEP 0: Error Event: ERR_NONFATAL
- -------------------
- A PCI bus error is detected by the PCI hardware.  On powerpc, the slot
- is isolated, in that all I/O is blocked: all reads return 0xffffffff,
-@@ -228,13 +228,7 @@ proceeds to either STEP3 (Link Reset) or to STEP 5 (Resume Operations).
- If any driver returned PCI_ERS_RESULT_NEED_RESET, then the platform
- proceeds to STEP 4 (Slot Reset)
- 
--STEP 3: Link Reset
--------------------
--The platform resets the link.  This is a PCI-Express specific step
--and is done whenever a fatal error has been detected that can be
--"solved" by resetting the link.
+-static int find_aer_service_iter(struct device *device, void *data)
+-{
+-	struct pcie_port_service_driver *service_driver, **drv;
 -
--STEP 4: Slot Reset
-+STEP 3: Slot Reset
- ------------------
+-	drv = (struct pcie_port_service_driver **) data;
+-
+-	if (device->bus == &pcie_port_bus_type && device->driver) {
+-		service_driver = to_service_driver(device->driver);
+-		if (service_driver->service == PCIE_PORT_SERVICE_AER) {
+-			*drv = service_driver;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev)
+-{
+-	struct pcie_port_service_driver *drv = NULL;
+-
+-	device_for_each_child(&dev->dev, &drv, find_aer_service_iter);
+-
+-	return drv;
+-}
+-
+ /**
+  * handle_error_source - handle logging error into an event log
+  * @aerdev: pointer to pcie_device data structure of the root port
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 55df974..877785d 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -195,10 +195,8 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ 		udev = dev->bus->self;
+ 	}
  
- In response to a return value of PCI_ERS_RESULT_NEED_RESET, the
-@@ -320,7 +314,7 @@ Failure).
- >>> However, it probably should.
+-#if IS_ENABLED(CONFIG_PCIEAER)
+ 	/* Use the aer driver of the component firstly */
+-	driver = find_aer_service(udev);
+-#endif
++	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
  
+ 	if (driver && driver->reset_link) {
+ 		status = driver->reset_link(udev);
+diff --git a/drivers/pci/pcie/portdrv.h b/drivers/pci/pcie/portdrv.h
+index 47c9824..ba6c963 100644
+--- a/drivers/pci/pcie/portdrv.h
++++ b/drivers/pci/pcie/portdrv.h
+@@ -112,5 +112,6 @@ static inline bool pcie_pme_no_msi(void) { return false; }
+ static inline void pcie_pme_interrupt_enable(struct pci_dev *dev, bool en) {}
+ #endif /* !CONFIG_PCIE_PME */
  
--STEP 5: Resume Operations
-+STEP 4: Resume Operations
- -------------------------
- The platform will call the resume() callback on all affected device
- drivers if all drivers on the segment have returned
-@@ -332,7 +326,7 @@ a result code.
- At this point, if a new error happens, the platform will restart
- a new error recovery sequence.
+-struct pcie_port_service_driver *find_aer_service(struct pci_dev *dev);
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service);
+ #endif /* _PORTDRV_H_ */
+diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+index c9c0663..d843055 100644
+--- a/drivers/pci/pcie/portdrv_core.c
++++ b/drivers/pci/pcie/portdrv_core.c
+@@ -18,6 +18,10 @@
  
--STEP 6: Permanent Failure
-+STEP 5: Permanent Failure
- -------------------------
- A "permanent failure" has occurred, and the platform cannot recover
- the device.  The platform will call error_detected() with a
-@@ -355,6 +349,27 @@ errors. See the discussion in powerpc/eeh-pci-error-recovery.txt
- for additional detail on real-life experience of the causes of
- software errors.
+ #include "../pci.h"
+ #include "portdrv.h"
++struct portdrv_service_data {
++	struct pcie_port_service_driver *drv;
++	u32 service;
++};
  
-+STEP 0: Error Event: ERR_FATAL
-+-------------------
-+PCI bus error is detected by the PCI hardware. On powerpc, the slot is
-+isolated, in that all I/O is blocked: all reads return 0xffffffff, all
-+writes are ignored.
+ /**
+  * release_pcie_device - free PCI Express port service device structure
+@@ -398,6 +402,46 @@ static int remove_iter(struct device *dev, void *data)
+ 	return 0;
+ }
+ 
++static int find_service_iter(struct device *device, void *data)
++{
++	struct pcie_port_service_driver *service_driver;
++	struct portdrv_service_data *pdrvs;
++	u32 service;
 +
-+STEP 1: Remove devices
-+--------------------
-+Platform removes the devices depending on the error agent, it could be
-+this port for all subordinates or upstream component (likely downstream
-+port)
++	pdrvs = (struct portdrv_service_data *) data;
++	service = pdrvs->service;
 +
-+STEP 2: Reset link
-+--------------------
-+The platform resets the link.  This is a PCI-Express specific step and is
-+done whenever a fatal error has been detected that can be "solved" by
-+resetting the link.
++	if (device->bus == &pcie_port_bus_type && device->driver) {
++		service_driver = to_service_driver(device->driver);
++		if (service_driver->service == service) {
++			pdrvs->drv = service_driver;
++			return 1;
++		}
++	}
 +
-+STEP 3: Re-enumerate the devices
-+--------------------
-+Initiates the re-enumeration.
- 
- Conclusion; General Remarks
- ---------------------------
++	return 0;
++}
++/**
++ * pcie_port_find_service - find the service driver
++ * @dev: PCI Express port the service devices associated with
++ * @service: Service to find
++ *
++ * Find PCI Express port service driver associated with given service
++ */
++struct pcie_port_service_driver *pcie_port_find_service(struct pci_dev *dev,
++							u32 service)
++{
++	struct pcie_port_service_driver *drv;
++	struct portdrv_service_data pdrvs;
++
++	pdrvs.drv = NULL;
++	pdrvs.service = service;
++	device_for_each_child(&dev->dev, &pdrvs, find_service_iter);
++
++	drv = pdrvs.drv;
++	return drv;
++}
++
+ /**
+  * pcie_port_device_remove - unregister PCI Express port service devices
+  * @dev: PCI Express port the service devices to unregister are associated with
 -- 
 2.7.4
