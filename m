@@ -1,422 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751982AbeECKNx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:13:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57806 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751949AbeECKNs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:13:48 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7DA6606DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
-From: Kiran Gunda <kgunda@codeaurora.org>
-To: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org,
-        Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V2 5/5] backlight: qcom-wled: Add auto string detection logic
-Date: Thu,  3 May 2018 15:42:32 +0530
-Message-Id: <1525342352-25072-6-git-send-email-kgunda@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
-References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
+        id S1752006AbeECKON (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:14:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:34418 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751765AbeECKOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:14:08 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="38109665"
+From: Luwei Kang <luwei.kang@intel.com>
+To: kvm@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
+        joro@8bytes.org, peterz@infradead.org, chao.p.peng@linux.intel.com,
+        Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v7 00/13] Intel Processor Trace virtualization enabling
+Date: Thu,  3 May 2018 20:08:30 +0800
+Message-Id: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The auto string detection algorithm checks if the current WLED
-sink configuration is valid. It tries enabling every sink and
-checks if the OVP fault is observed. Based on this information
-it detects and enables the valid sink configuration.
-Auto calibration will be triggered when the OVP fault interrupts
-are seen frequently thereby it tries to fix the sink configuration.
+Hi All,
 
-Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
----
- drivers/video/backlight/qcom-wled.c | 302 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 302 insertions(+)
+Here is a patch-series which adding Processor Trace enabling in KVM guest. You can get It's software developer manuals from:
+https://software.intel.com/sites/default/files/managed/c5/15/architecture-instruction-set-extensions-programming-reference.pdf
+In Chapter 4 INTEL PROCESSOR TRACE: VMX IMPROVEMENTS.
 
-diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index 80ae084..bacdf3f 100644
---- a/drivers/video/backlight/qcom-wled.c
-+++ b/drivers/video/backlight/qcom-wled.c
-@@ -33,11 +33,14 @@
- #define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
- 
- #define WLED3_CTRL_REG_INT_RT_STS			0x10
-+#define  WLED3_CTRL_REG_OVP_FAULT_STATUS		BIT(1)
- 
- #define WLED3_CTRL_REG_MOD_EN				0x46
- #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
- #define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
- 
-+#define WLED3_CTRL_REG_FEEDBACK_CONTROL			0x48
-+
- #define WLED3_CTRL_REG_FREQ				0x4c
- #define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
- 
-@@ -152,6 +155,7 @@ struct wled_config {
- 	bool ext_gen;
- 	bool cabc;
- 	bool external_pfet;
-+	bool auto_detection_enabled;
- };
- 
- struct wled {
-@@ -160,8 +164,10 @@ struct wled {
- 	struct regmap *regmap;
- 	struct mutex lock;	/* Lock to avoid race from ISR */
- 	ktime_t last_short_event;
-+	ktime_t start_ovp_fault_time;
- 	u16 ctrl_addr;
- 	u16 sink_addr;
-+	u16 auto_detection_ovp_count;
- 	u32 brightness;
- 	u32 max_brightness;
- 	u32 short_count;
-@@ -170,6 +176,7 @@ struct wled {
- 	int ovp_irq;
- 	bool force_mod_disable;
- 	bool ovp_irq_disabled;
-+	bool auto_detection_done;
- 
- 	struct wled_config cfg;
- 	struct delayed_work ovp_work;
-@@ -386,6 +393,292 @@ static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
- 	return IRQ_HANDLED;
- }
- 
-+#define AUTO_DETECT_BRIGHTNESS		200
-+static int wled_auto_string_detection(struct wled *wled)
-+{
-+	int rc = 0, i;
-+	u32 sink_config = 0, int_sts;
-+	u8 sink_test = 0, sink_valid = 0, val;
-+
-+	if (wled->auto_detection_done)
-+		return 0;
-+
-+	/* read configured sink configuration */
-+	rc = regmap_read(wled->regmap, wled->sink_addr +
-+			 WLED4_SINK_REG_CURR_SINK, &sink_config);
-+	if (rc < 0) {
-+		pr_err("Failed to read SINK configuration rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	/* disable the module before starting detection */
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED3_CTRL_REG_MOD_EN,
-+				WLED3_CTRL_REG_MOD_EN_MASK, 0);
-+	if (rc < 0) {
-+		pr_err("Failed to disable WLED module rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	/* set low brightness across all sinks */
-+	rc = wled4_set_brightness(wled, AUTO_DETECT_BRIGHTNESS);
-+	if (rc < 0) {
-+		pr_err("Failed to set brightness for auto detection rc=%d\n",
-+		       rc);
-+		goto failed_detect;
-+	}
-+
-+	if (wled->cfg.cabc) {
-+		for (i = 0; i < wled->cfg.num_strings; i++) {
-+			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
-+						WLED4_SINK_REG_STR_CABC(i),
-+						WLED4_SINK_REG_STR_CABC_MASK,
-+						0);
-+			if (rc < 0)
-+				goto failed_detect;
-+		}
-+	}
-+
-+	/* disable all sinks */
-+	rc = regmap_write(wled->regmap,
-+			  wled->sink_addr + WLED4_SINK_REG_CURR_SINK, 0);
-+	if (rc < 0) {
-+		pr_err("Failed to disable all sinks rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	/* iterate through the strings one by one */
-+	for (i = 0; i < wled->cfg.num_strings; i++) {
-+		sink_test = BIT((WLED4_SINK_REG_CURR_SINK_SHFT + i));
-+
-+		/* Enable feedback control */
-+		rc = regmap_write(wled->regmap, wled->ctrl_addr +
-+				  WLED3_CTRL_REG_FEEDBACK_CONTROL, i + 1);
-+		if (rc < 0) {
-+			pr_err("Failed to enable feedback for SINK %d rc = %d\n",
-+			       i + 1, rc);
-+			goto failed_detect;
-+		}
-+
-+		/* enable the sink */
-+		rc = regmap_write(wled->regmap, wled->sink_addr +
-+				  WLED4_SINK_REG_CURR_SINK, sink_test);
-+		if (rc < 0) {
-+			pr_err("Failed to configure SINK %d rc=%d\n", i + 1,
-+			       rc);
-+			goto failed_detect;
-+		}
-+
-+		/* Enable the module */
-+		rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-+					WLED3_CTRL_REG_MOD_EN,
-+					WLED3_CTRL_REG_MOD_EN_MASK,
-+					WLED3_CTRL_REG_MOD_EN_MASK);
-+		if (rc < 0) {
-+			pr_err("Failed to enable WLED module rc=%d\n", rc);
-+			goto failed_detect;
-+		}
-+
-+		usleep_range(WLED_SOFT_START_DLY_US,
-+			     WLED_SOFT_START_DLY_US + 1000);
-+
-+		rc = regmap_read(wled->regmap, wled->ctrl_addr +
-+				 WLED3_CTRL_REG_INT_RT_STS, &int_sts);
-+		if (rc < 0) {
-+			pr_err("Error in reading WLED3_CTRL_INT_RT_STS rc=%d\n",
-+			       rc);
-+			goto failed_detect;
-+		}
-+
-+		if (int_sts & WLED3_CTRL_REG_OVP_FAULT_STATUS)
-+			pr_debug("WLED OVP fault detected with SINK %d\n",
-+				 i + 1);
-+		else
-+			sink_valid |= sink_test;
-+
-+		/* Disable the module */
-+		rc = regmap_update_bits(wled->regmap,
-+					wled->ctrl_addr + WLED3_CTRL_REG_MOD_EN,
-+					WLED3_CTRL_REG_MOD_EN_MASK, 0);
-+		if (rc < 0) {
-+			pr_err("Failed to disable WLED module rc=%d\n", rc);
-+			goto failed_detect;
-+		}
-+	}
-+
-+	if (sink_valid == sink_config) {
-+		pr_debug("WLED auto-detection complete, default sink-config=%x OK!\n",
-+			 sink_config);
-+	} else {
-+		pr_warn("Invalid WLED default sink config=%x changing it to=%x\n",
-+			sink_config, sink_valid);
-+		sink_config = sink_valid;
-+	}
-+
-+	if (!sink_config) {
-+		pr_err("No valid WLED sinks found\n");
-+		wled->force_mod_disable = true;
-+		goto failed_detect;
-+	}
-+
-+	/* write the new sink configuration */
-+	rc = regmap_write(wled->regmap,
-+			  wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
-+			  sink_config);
-+	if (rc < 0) {
-+		pr_err("Failed to reconfigure the default sink rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	/* Enable valid sinks */
-+	for (i = 0; i < wled->cfg.num_strings; i++) {
-+		if (wled->cfg.cabc) {
-+			rc = regmap_update_bits(wled->regmap, wled->sink_addr +
-+						WLED4_SINK_REG_STR_CABC(i),
-+						WLED4_SINK_REG_STR_CABC_MASK,
-+						WLED4_SINK_REG_STR_CABC_MASK);
-+			if (rc < 0)
-+				goto failed_detect;
-+		}
-+
-+		if (sink_config & BIT(WLED4_SINK_REG_CURR_SINK_SHFT + i))
-+			val = WLED4_SINK_REG_STR_MOD_MASK;
-+		else
-+			val = 0x0; /* disable modulator_en for unused sink */
-+
-+		rc = regmap_write(wled->regmap, wled->sink_addr +
-+				  WLED4_SINK_REG_STR_MOD_EN(i), val);
-+		if (rc < 0) {
-+			pr_err("Failed to configure MODULATOR_EN rc=%d\n", rc);
-+			goto failed_detect;
-+		}
-+	}
-+
-+	/* restore the feedback setting */
-+	rc = regmap_write(wled->regmap,
-+			  wled->ctrl_addr + WLED3_CTRL_REG_FEEDBACK_CONTROL, 0);
-+	if (rc < 0) {
-+		pr_err("Failed to restore feedback setting rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	/* restore  brightness */
-+	rc = wled4_set_brightness(wled, wled->brightness);
-+	if (rc < 0) {
-+		pr_err("Failed to set brightness after auto detection rc=%d\n",
-+		       rc);
-+		goto failed_detect;
-+	}
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED3_CTRL_REG_MOD_EN,
-+				WLED3_CTRL_REG_MOD_EN_MASK,
-+				WLED3_CTRL_REG_MOD_EN_MASK);
-+	if (rc < 0) {
-+		pr_err("Failed to enable WLED module rc=%d\n", rc);
-+		goto failed_detect;
-+	}
-+
-+	wled->auto_detection_done = true;
-+
-+failed_detect:
-+	return rc;
-+}
-+
-+#define WLED_AUTO_DETECT_OVP_COUNT		5
-+#define WLED_AUTO_DETECT_CNT_DLY_US		HZ /* 1 second */
-+static bool wled_auto_detection_required(struct wled *wled)
-+{
-+	s64 elapsed_time_us;
-+
-+	if (*wled->version == WLED_PM8941)
-+		return false;
-+	/*
-+	 * Check if the OVP fault was an occasional one
-+	 * or if it's firing continuously, the latter qualifies
-+	 * for an auto-detection check.
-+	 */
-+	if (!wled->auto_detection_ovp_count) {
-+		wled->start_ovp_fault_time = ktime_get();
-+		wled->auto_detection_ovp_count++;
-+	} else {
-+		elapsed_time_us = ktime_us_delta(ktime_get(),
-+						 wled->start_ovp_fault_time);
-+		if (elapsed_time_us > WLED_AUTO_DETECT_CNT_DLY_US)
-+			wled->auto_detection_ovp_count = 0;
-+		else
-+			wled->auto_detection_ovp_count++;
-+
-+		if (wled->auto_detection_ovp_count >=
-+				WLED_AUTO_DETECT_OVP_COUNT) {
-+			wled->auto_detection_ovp_count = 0;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static int wled_auto_detection_at_init(struct wled *wled)
-+{
-+	int rc;
-+	u32 fault_status = 0, rt_status = 0;
-+
-+	if (*wled->version == WLED_PM8941)
-+		return 0;
-+
-+	if (!wled->cfg.auto_detection_enabled)
-+		return 0;
-+
-+	rc = regmap_read(wled->regmap,
-+			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS,
-+			 &rt_status);
-+	if (rc < 0) {
-+		pr_err("Failed to read RT status rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	rc = regmap_read(wled->regmap,
-+			 wled->ctrl_addr + WLED3_CTRL_REG_FAULT_STATUS,
-+			 &fault_status);
-+	if (rc < 0) {
-+		pr_err("Failed to read fault status rc=%d\n", rc);
-+		return rc;
-+	}
-+
-+	if ((rt_status & WLED3_CTRL_REG_OVP_FAULT_STATUS) ||
-+	    (fault_status & WLED3_CTRL_REG_OVP_FAULT_BIT)) {
-+		mutex_lock(&wled->lock);
-+		rc = wled_auto_string_detection(wled);
-+		if (!rc)
-+			wled->auto_detection_done = true;
-+		mutex_unlock(&wled->lock);
-+	}
-+
-+	return rc;
-+}
-+
-+static void handle_ovp_fault(struct wled *wled)
-+{
-+	if (!wled->cfg.auto_detection_enabled)
-+		return;
-+
-+	mutex_lock(&wled->lock);
-+	if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
-+		disable_irq_nosync(wled->ovp_irq);
-+		wled->ovp_irq_disabled = true;
-+	}
-+
-+	if (wled_auto_detection_required(wled))
-+		wled_auto_string_detection(wled);
-+
-+	if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
-+		enable_irq(wled->ovp_irq);
-+		wled->ovp_irq_disabled = false;
-+	}
-+	mutex_unlock(&wled->lock);
-+}
-+
- static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
- {
- 	struct wled *wled = _wled;
-@@ -413,6 +706,9 @@ static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
- 		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
- 			int_sts, fault_sts);
- 
-+	if (fault_sts & WLED3_CTRL_REG_OVP_FAULT_BIT)
-+		handle_ovp_fault(wled);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -575,6 +871,10 @@ static int wled4_setup(struct wled *wled)
- 		return rc;
- 	}
- 
-+	rc = wled_auto_detection_at_init(wled);
-+	if (rc < 0)
-+		return rc;
-+
- 	if (wled->cfg.external_pfet) {
- 		/* Unlock the secure register access */
- 		rc = regmap_write(wled->regmap, wled->ctrl_addr +
-@@ -602,6 +902,7 @@ static int wled4_setup(struct wled *wled)
- 	.enabled_strings = 0xf,
- 	.cabc = false,
- 	.external_pfet = true,
-+	.auto_detection_enabled = false,
- };
- 
- static const u32 wled3_boost_i_limit_values[] = {
-@@ -785,6 +1086,7 @@ static int wled_configure(struct wled *wled)
- 		{ "qcom,ext-gen", &cfg->ext_gen, },
- 		{ "qcom,cabc", &cfg->cabc, },
- 		{ "qcom,external-pfet", &cfg->external_pfet, },
-+		{ "qcom,auto-string-detection", &cfg->auto_detection_enabled, },
- 	};
- 
- 	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
+Introduction:
+Intel Processor Trace (Intel PT) is an extension of Intel Architecture that captures information about software execution using dedicated hardware facilities that cause only minimal performance perturbation to the software being traced. Details on the Intel PT infrastructure and trace capabilities can be found in the Intel 64 and IA-32 Architectures Software Developer’s Manual, Volume 3C.
+
+The suite of architecture changes serve to simplify the process of virtualizing Intel PT for use by a guest software. There are two primary elements to this new architecture support for VMX support improvements made for Intel PT.
+1. Addition of a new guest IA32_RTIT_CTL value field to the VMCS.
+  — This serves to speed and simplify the process of disabling trace on VM exit, and restoring it on VM entry.
+2. Enabling use of EPT to redirect PT output.
+  — This enables the VMM to elect to virtualize the PT output buffer using EPT. In this mode, the CPU will treat PT output addresses as Guest Physical Addresses (GPAs) and translate them using EPT. This means that Intel PT output reads (of the ToPA table) and writes (of trace output) can cause EPT violations, and other output events.
+
+Processor Trace virtualization can be work in one of 3 possible modes by set new option "pt_mode". Default value is system mode.
+ a. system-wide: trace both host/guest and output to host buffer;
+ b. host-only: only trace host and output to host buffer;
+ c. host-guest: trace host/guest simultaneous and output to their respective buffer.
+
+>From V6:
+ - split pathes 1~2 to four separate patches (these patches do 2 things) and add more descriptions.
+
+>From V5:
+ - rename the function from pt_cap_get_ex() to __pt_cap_get();
+ - replace the most of function from vmx_pt_supported() to "pt_mode == PT_MODE_HOST_GUEST"(or !=).
+
+>From V4:
+ - add data check when setting the value of MSR_IA32_RTIT_CTL;
+ - Invoke new interface to set the intercept of MSRs read/write after "MSR bitmap per-vcpu" patches.
+
+>From V3:
+ - change default mode to SYSTEM mode;
+ - add a new patch to move PT out of scattered features;
+ - add a new fucntion kvm_get_pt_addr_cnt() to get the number of address ranges;
+ - add a new function vmx_set_rtit_ctl() to set the value of guest RTIT_CTL, GUEST_IA32_RTIT_CTL and MSRs intercept.
+
+>From v2:
+ - replace *_PT_SUPPRESS_PIP to *_PT_CONCEAL_PIP;
+ - clean SECONDARY_EXEC_PT_USE_GPA, VM_EXIT_CLEAR_IA32_RTIT_CTL and VM_ENTRY_LOAD_IA32_RTIT_CTL in SYSTEM mode. These bits must be all set or all clean;
+ - move processor tracing out of scattered features;
+ - add a new function to enable/disable intercept MSRs read/write;
+ - add all Intel PT MSRs read/write and disable intercept when PT is enabled in guest;
+ - disable Intel PT and enable intercept MSRs when L1 guest VMXON;
+ - performance optimization.
+   In Host only mode. we just need to save host RTIT_CTL before vm-entry and restore host RTIT_CTL after vm-exit;
+   In HOST_GUEST mode. we need to save and restore all MSRs only when PT has enabled in guest.
+ - use XSAVES/XRESTORES implement context switch.
+   Haven't implementation in this version and still in debuging. will make a separate patch work on this.
+
+>From v1:
+ - remove guest-only mode because guest-only mode can be covered by host-guest mode;
+ - always set "use GPA for processor tracing" in secondary execution control if it can be;
+ - trap RTIT_CTL read/write. Forbid write this msr when VMXON in L1 hypervisor.
+
+Chao Peng (8):
+  perf/x86/intel/pt: Move Intel-PT MSRs bit definitions to a public
+    header
+  perf/x86/intel/pt: Change pt_cap_get() to a public function
+  KVM: x86: Add Intel Processor Trace virtualization mode
+  KVM: x86: Add Intel Processor Trace cpuid emulation
+  KVM: x86: Add Intel processor trace context for each vcpu
+  KVM: x86: Implement Intel Processor Trace context switch
+  KVM: x86: Implement Intel Processor Trace MSRs read/write
+  KVM: x86: Set intercept for Intel PT MSRs read/write
+
+Luwei Kang (5):
+  perf/x86/intel/pt: Add new bit definitions for Intel PT MSRs
+  perf/x86/intel/pt: add new capability for Intel PT
+  perf/x86/intel/pt: Introduce a new function to get capability of Intel
+    PT
+  KVM: x86: Introduce a function to initialize the PT configuration
+  KVM: x86: Disable Intel Processor Trace when VMXON in L1 guest
+
+ arch/x86/events/intel/pt.c       |  12 +-
+ arch/x86/events/intel/pt.h       |  58 ------
+ arch/x86/include/asm/intel_pt.h  |  40 ++++
+ arch/x86/include/asm/kvm_host.h  |   1 +
+ arch/x86/include/asm/msr-index.h |  38 ++++
+ arch/x86/include/asm/vmx.h       |   8 +
+ arch/x86/kvm/cpuid.c             |  22 ++-
+ arch/x86/kvm/svm.c               |   6 +
+ arch/x86/kvm/vmx.c               | 412 ++++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c               |  33 +++-
+ 10 files changed, 563 insertions(+), 67 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
- a Linux Foundation Collaborative Project
+1.8.3.1
