@@ -1,52 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751561AbeECMDp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:03:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42098 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750999AbeECMDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:03:44 -0400
-Date: Thu, 3 May 2018 14:03:38 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Matthew Wilcox <willy6545@gmail.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Julia Lawall <julia.lawall@lip6.fr>, linux-mm@kvack.org, cl@linux.com,
-        Jan Kara <jack@suse.cz>, matthew@wil.cx, x86@kernel.org,
-        luto@amacapital.net, martin.petersen@oracle.com, jthumshirn@suse.de,
-        broonie@kernel.org, Juergen Gross <jgross@suse.com>,
-        linux-spi@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "lsf-pc@lists.linux-foundation.org"
-        <lsf-pc@lists.linux-foundation.org>
-Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
-Message-ID: <20180503120338.GG4535@dhcp22.suse.cz>
-References: <20180426215406.GB27853@wotan.suse.de>
- <20180427053556.GB11339@infradead.org>
- <20180427161456.GD27853@wotan.suse.de>
- <20180428084221.GD31684@infradead.org>
- <20180428185514.GW27853@wotan.suse.de>
- <CAFhKne8u7KcBkpgiQ0fFZyh5_EorfY-_MJJaEYk3feCOd9LsRQ@mail.gmail.com>
+        id S1751411AbeECMF4 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:05:56 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52706 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750999AbeECMFw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:05:52 -0400
+X-Google-Smtp-Source: AB8JxZpzmCl/Z/RINm+dPXuBqriYhwYM+CfT4jSXeyuzieI2l2RVdUUm5y3fZwKTmEXG24XD6j5ICCN5EIBHUTatpU8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFhKne8u7KcBkpgiQ0fFZyh5_EorfY-_MJJaEYk3feCOd9LsRQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180502061724.25833-1-jlee@suse.com>
+References: <20180502061724.25833-1-jlee@suse.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 3 May 2018 14:05:51 +0200
+Message-ID: <CAKv+Gu_1vNmNy6vYEdSRW6r97DSxj_t=1LmWFE-nsv7oA=1ApQ@mail.gmail.com>
+Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
+ memory map
+To: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
+Cc: linux-efi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>,
+        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 28-04-18 19:10:47, Matthew Wilcox wrote:
-> Another way we could approach this is to get rid of ZONE_DMA. Make GFP_DMA
-> a flag which doesn't map to a zone. Rather, it redirects to a separate
-> allocator. At boot, we hand all memory under 16MB to the DMA allocator. The
-> DMA allocator can have a shrinker which just hands back all the memory once
-> we're under memory pressure (if it's never had an allocation).
+On 2 May 2018 at 08:17, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
+> When using kdump, SOMETIMES the "size not consistent" warning message
+> shows up when the crash kernel boots with early_ioremap_debug parameter:
+>
+> WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
+> early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
+>
+> The root cause is that the unmapping size of memory map doesn't
+> match with the original size when mapping:
+>
+> in __efi_memmap_init()
+>         map.map = early_memremap(phys_map, data->size);
+>
+> in efi_memmap_unmap()
+>         size = efi.memmap.desc_size * efi.memmap.nr_map;
+>         early_memunmap(efi.memmap.map, size);
+>
+> But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
+> of size was discarded when calculating the nr_map:
+>         map.nr_map = data->size / data->desc_size;
+>
+> When the original size of memory map region does not equal to the
+> result of multiplication. The "size not consistent" warning
+> will be triggered.
+>
+> This issue sometimes was hit by kdump because kexec set the efi map
+> size to align with 16 when loading crash kernel image:
+>
+> in bzImage64_load()
+>         efi_map_sz = efi_get_runtime_map_size();
+>         efi_map_sz = ALIGN(efi_map_sz, 16);
+>
+> Dave Young's a841aa83d patch fixed kexec issue. On UEFI side, this
+> patch changes the logic in the unmapping function. Using the end
+> address of map to calcuate original size.
+>
 
-Yeah, that was exactly the plan with the CMA allocator... We wouldn't
-need the shrinker because who cares about 16MB which is not usable
-anyway.
--- 
-Michal Hocko
-SUSE Labs
+Why do we still need this patch? I.e., in which circumstances will
+efi_memory_map_data::size assume a value that is rounded up or
+otherwise incorrect?
+
+> Thank Randy Wright for his report and testing. And also thank
+> Takashi Iwai for his help to trace issue.
+>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Takashi Iwai <tiwai@suse.de>
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Tested-by: Randy Wright <rwright@hpe.com>
+> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
+> ---
+>  drivers/firmware/efi/memmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
+> index 5fc7052..1f592d8 100644
+> --- a/drivers/firmware/efi/memmap.c
+> +++ b/drivers/firmware/efi/memmap.c
+> @@ -121,7 +121,7 @@ void __init efi_memmap_unmap(void)
+>         if (!efi.memmap.late) {
+>                 unsigned long size;
+>
+> -               size = efi.memmap.desc_size * efi.memmap.nr_map;
+> +               size = efi.memmap.map_end - efi.memmap.map;
+>                 early_memunmap(efi.memmap.map, size);
+>         } else {
+>                 memunmap(efi.memmap.map);
+> --
+> 2.10.2
+>
