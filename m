@@ -1,56 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751802AbeECKCC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:02:02 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:54162 "EHLO mail.skyhub.de"
+        id S1751721AbeECKCs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:02:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:48131 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751593AbeECKB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:01:57 -0400
-Date: Thu, 3 May 2018 12:01:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] x86/microcode/AMD: Check microcode container data
- in the late loader
-Message-ID: <20180503100133.GB20023@pd.tnic>
-References: <cover.1524515406.git.mail@maciej.szmigiero.name>
- <8f204a953dc4b46477e214ebd291021d7ab6fa6c.1524515406.git.mail@maciej.szmigiero.name>
- <20180430090527.GC6509@pd.tnic>
- <bce73502-0d18-e50c-b78b-8159dc9f8f66@maciej.szmigiero.name>
- <20180501084317.GC31863@pd.tnic>
- <e10212ef-c876-4965-6279-967005f53950@maciej.szmigiero.name>
- <20180501200308.GC13171@pd.tnic>
- <9cf234e8-4d96-46f0-70e0-7d60d49671d8@maciej.szmigiero.name>
+        id S1751141AbeECKCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:02:43 -0400
+Date: Thu, 3 May 2018 12:02:41 +0200
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+To: Arushi Singhal <arushisinghal19971997@gmail.com>
+Cc: dwmw2@infradead.org,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Subject: Re: [PATCH v2] mtd: chips: Replace printk() with pr_*()
+Message-ID: <20180503120241.4b2d5010@bbrezillon>
+In-Reply-To: <20180324163145.GA472@seema-Inspiron-15-3567>
+References: <20180324163145.GA472@seema-Inspiron-15-3567>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9cf234e8-4d96-46f0-70e0-7d60d49671d8@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 02:47:39AM +0200, Maciej S. Szmigiero wrote:
-> On 01.05.2018 22:03, Borislav Petkov wrote:
-> > On Tue, May 01, 2018 at 06:19:56PM +0200, Maciej S. Szmigiero wrote:
-> >> -EINVAL cast to unsigned int is 4294967274 and this value is also
-> >> a valid count of bytes to skip that this function can return.
-> > 
-> > And where exactly in the *old* code do we do that?
+On Sat, 24 Mar 2018 22:01:45 +0530
+Arushi Singhal <arushisinghal19971997@gmail.com> wrote:
+
+> Using pr_<loglevel>() is more concise than printk(KERN_<LOGLEVEL>).
+> This patch:
+> * Replace printks having a log level with the appropriate
+> pr_*() macros.
+> * Indent the code where possible.
+> * Remove periods from messages.
 > 
-> The old code returned this value as a signed int, but then any
-> "patch_size" value (which is u32) above INT_MAX read from a section header
-> wrapped around to a negative pseudo-error code (which likely didn't match
-> any actual error number).
+> Signed-off-by: Arushi Singhal <arushisinghal19971997@gmail.com>
+> ---
+> changes:
+> Before printk() is changes to dev_*macro(), but it was not good idea
+> because mtd->dev is only initialized after mtd_device_register() is called.
+> 
+>  drivers/mtd/chips/cfi_cmdset_0001.c | 130 +++++++++++++++++++-----------------
 
-Lemme repeat my question: *where* *exactly* in the old code do we do that?
-
-Feel free to paste snippets to show what you mean.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+I see printk(KERN_ ...) in other files inside this directory. This
+should be fixed too.
