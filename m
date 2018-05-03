@@ -1,79 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeECG4N (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 02:56:13 -0400
-Received: from regular1.263xmail.com ([211.150.99.139]:60290 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751951AbeECG4M (ORCPT
+        id S1752104AbeECG6x (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:58:53 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38506 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751968AbeECG6t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 02:56:12 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-IP-DOMAINF: 1
-X-RL-SENDER: jeffy.chen@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 103.29.142.67
-X-LOGIN-NAME: jeffy.chen@rock-chips.com
-X-UNIQUE-TAG: <92eaf1be5e7c96fd754aef668736512d>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-From: Jeffy Chen <jeffy.chen@rock-chips.com>
-To: linux-kernel@vger.kernel.org
-Cc: briannorris@google.com, heiko@sntech.de,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        linux-rockchip@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing it's capability
-Date: Thu,  3 May 2018 14:55:53 +0800
-Message-Id: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 3 May 2018 02:58:49 -0400
+From: Thomas Richter <tmricht@linux.ibm.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc: brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [PATCH] perf: test 60 fails on s390 inline missing on s390
+Date: Thu,  3 May 2018 08:58:37 +0200
+X-Mailer: git-send-email 2.13.5
+X-TM-AS-GCONF: 00
+x-cbid: 18050306-0008-0000-0000-000004F26BC8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050306-0009-0000-0000-00001E869034
+Message-Id: <20180503065837.71043-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030065
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We saw spurious irq when changing irq's trigger type, for example
-setting gpio-keys's wakeup irq trigger type.
+perf test 60: probe libc's inet_pton & backtrace it with ping
+fails on 4.17.0rc3. It turned out that function __inet_pton
+is reported as inline:
 
-And according to the TRM:
-"Programming the GPIO registers for interrupt capability, edge-sensitive
-or level-sensitive interrupts, and interrupt polarity should be
-completed prior to enabling the interrupts on Port A in order to prevent
-spurious glitches on the interrupt lines to the interrupt controller."
+[root@s8360047 perf]# ./perf script -i /tmp/perf.data.111
+ping 12457 [000]  1584.478959: probe_libc:inet_pton: (3ffb5a347e8)
+                  1347e8 __inet_pton (inlined)
+                   f19d7 gaih_inet.constprop.5 (/usr/lib64/libc-2.24.so)
+                   f4c3f __GI_getaddrinfo (inlined)
+                    410b main (/usr/bin/ping)
 
-Reported-by: Brian Norris <briannorris@google.com>
-Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+Allow __inet_pton listed as inline.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
 ---
+ tools/perf/tests/shell/record+probe_libc_inet_pton.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- drivers/pinctrl/pinctrl-rockchip.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-index 3924779f55785..7ff45ec8330d1 100644
---- a/drivers/pinctrl/pinctrl-rockchip.c
-+++ b/drivers/pinctrl/pinctrl-rockchip.c
-@@ -2727,9 +2727,19 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
- 		return -EINVAL;
- 	}
- 
-+	/**
-+	 * According to the TRM, we should keep irq disabled during programming
-+	 * interrupt capability to prevent spurious glitches on the interrupt
-+	 * lines to the interrupt controller.
-+	 */
-+	data = readl(bank->reg_base + GPIO_INTEN);
-+	writel_relaxed(data & ~mask, gc->reg_base + GPIO_INTEN);
-+
- 	writel_relaxed(level, gc->reg_base + GPIO_INTTYPE_LEVEL);
- 	writel_relaxed(polarity, gc->reg_base + GPIO_INT_POLARITY);
- 
-+	writel_relaxed(data, gc->reg_base + GPIO_INTEN);
-+
- 	irq_gc_unlock(gc);
- 	raw_spin_unlock_irqrestore(&bank->slock, flags);
- 	clk_disable(bank->clk);
+diff --git a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+index 016882d..ee86473 100755
+--- a/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
++++ b/tools/perf/tests/shell/record+probe_libc_inet_pton.sh
+@@ -16,7 +16,7 @@ nm -g $libc 2>/dev/null | fgrep -q inet_pton || exit 254
+ trace_libc_inet_pton_backtrace() {
+ 	idx=0
+ 	expected[0]="ping[][0-9 \.:]+probe_libc:inet_pton: \([[:xdigit:]]+\)"
+-	expected[1]=".*inet_pton[[:space:]]\($libc\)$"
++	expected[1]=".*inet_pton[[:space:]]\($libc|inlined\)$"
+ 	case "$(uname -m)" in
+ 	s390x)
+ 		eventattr='call-graph=dwarf,max-stack=4'
 -- 
-2.11.0
+2.9.3
