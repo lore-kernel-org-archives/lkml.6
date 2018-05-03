@@ -1,140 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751856AbeECKJw (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:09:52 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:51639 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751403AbeECKJt (ORCPT
+        id S1751769AbeECKMz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:12:55 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56744 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751141AbeECKMw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:09:49 -0400
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="13743814"
-Subject: Re: [RFC PATCH 4/5] net: macb: Add support for suspend/resume with
- full power down
-To: <harinikatakamlinux@gmail.com>, <nicolas.ferre@atmel.com>,
-        <davem@davemloft.net>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <harinik@xilinx.com>, <michals@xilinx.com>, <appanad@xilinx.com>
-References: <1521726700-22634-1-git-send-email-harinikatakamlinux@gmail.com>
- <1521726700-22634-5-git-send-email-harinikatakamlinux@gmail.com>
-From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Message-ID: <35d980af-b9d5-495e-88af-c4fc911b8429@microchip.com>
-Date: Thu, 3 May 2018 13:09:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1521726700-22634-5-git-send-email-harinikatakamlinux@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 3 May 2018 06:12:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9B2F6607A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
+From: Kiran Gunda <kgunda@codeaurora.org>
+To: bjorn.andersson@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
+Subject: [PATCH V2 0/5] backlight: qcom-wled: Support for QCOM wled driver
+Date: Thu,  3 May 2018 15:42:27 +0530
+Message-Id: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series renames the pm8941-wled.c driver to qcom-wled.c to add
+the support for multiple PMICs supported by qualcomm. This patch series
+supports both PM8941 and PMI8998 WLED. The PMI8998 WLED has the support
+to handle the OVP (over voltage protection) and the SC (short circuit protection)
+interrupts. It also has the auto calibration algorithm support to
+configure the right strings if the user specified string configuration
+is in-correct. These three features are added in this series for PMI8998.
 
+changes from v1:
+	Fixed the commit message for 
+	backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
 
-On 22.03.2018 15:51, harinikatakamlinux@gmail.com wrote:
-> From: Harini Katakam <harinik@xilinx.com>
-> 
-> When macb device is suspended and system is powered down, the clocks
-> are removed and hence macb should be closed gracefully and restored
-> upon resume. 
+Kiran Gunda (5):
+  backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+  backlight: qcom-wled: Add support for WLED4 peripheral
+  backlight: qcom-wled: Add support for short circuit handling
+  backlight: qcom-wled: Add support for OVP interrupt handling
+  backlight: qcom-wled: Add auto string detection logic
 
-Is this a power saving mode which shut down the core?
+ .../bindings/leds/backlight/pm8941-wled.txt        |   42 -
+ .../bindings/leds/backlight/qcom-wled.txt          |  158 +++
+ drivers/video/backlight/Kconfig                    |    8 +-
+ drivers/video/backlight/Makefile                   |    2 +-
+ drivers/video/backlight/pm8941-wled.c              |  432 -------
+ drivers/video/backlight/qcom-wled.c                | 1329 ++++++++++++++++++++
+ 6 files changed, 1492 insertions(+), 479 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
+ delete mode 100644 drivers/video/backlight/pm8941-wled.c
+ create mode 100644 drivers/video/backlight/qcom-wled.c
 
-This patch does the same by switching off the net device,
-> suspending phy and performing necessary cleanup of interrupts and BDs.
-> Upon resume, all these are reinitialized again.
-> 
-> Reset of macb device is done only when GEM is not a wake device.
-> Even when gem is a wake device, tx queues can be stopped and ptp device
-> can be closed (tsu clock will be disabled in pm_runtime_suspend) as
-> wake event detection has no dependency on this.
-> 
-> Signed-off-by: Kedareswara rao Appana <appanad@xilinx.com>
-> Signed-off-by: Harini Katakam <harinik@xilinx.com>
-> ---
->  drivers/net/ethernet/cadence/macb_main.c | 38 ++++++++++++++++++++++++++++++--
->  1 file changed, 36 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index ce75088..bca91bd 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -4167,16 +4167,33 @@ static int __maybe_unused macb_suspend(struct device *dev)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct net_device *netdev = platform_get_drvdata(pdev);
->  	struct macb *bp = netdev_priv(netdev);
-> +	struct macb_queue *queue = bp->queues;
-> +	unsigned long flags;
-> +	unsigned int q;
-> +
-> +	if (!netif_running(netdev))
-> +		return 0;
->  
-> -	netif_carrier_off(netdev);
-> -	netif_device_detach(netdev);
->  
->  	if (bp->wol & MACB_WOL_ENABLED) {
->  		macb_writel(bp, IER, MACB_BIT(WOL));
->  		macb_writel(bp, WOL, MACB_BIT(MAG));
->  		enable_irq_wake(bp->queues[0].irq);
-> +		netif_device_detach(netdev);
-> +	} else {
-> +		netif_device_detach(netdev);
-> +		for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
-> +			napi_disable(&queue->napi);
-> +		phy_stop(netdev->phydev);
-> +		phy_suspend(netdev->phydev);
-> +		spin_lock_irqsave(&bp->lock, flags);
-> +		macb_reset_hw(bp);
-> +		spin_unlock_irqrestore(&bp->lock, flags);
-
-Wouldn't be simple to just call macb_close() here?
-
->  	}
->  
-> +	netif_carrier_off(netdev);
-> +	if (bp->ptp_info)
-> +		bp->ptp_info->ptp_remove(netdev);
->  	pm_runtime_force_suspend(dev);
->  
->  	return 0;
-> @@ -4187,6 +4204,11 @@ static int __maybe_unused macb_resume(struct device *dev)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct net_device *netdev = platform_get_drvdata(pdev);
->  	struct macb *bp = netdev_priv(netdev);
-> +	struct macb_queue *queue = bp->queues;
-> +	unsigned int q;
-> +
-> +	if (!netif_running(netdev))
-> +		return 0;
->  
->  	pm_runtime_force_resume(dev);
->  
-> @@ -4194,9 +4216,21 @@ static int __maybe_unused macb_resume(struct device *dev)
->  		macb_writel(bp, IDR, MACB_BIT(WOL));
->  		macb_writel(bp, WOL, 0);
->  		disable_irq_wake(bp->queues[0].irq);
-> +	} else {
-> +		macb_writel(bp, NCR, MACB_BIT(MPE));
-> +		for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
-> +			napi_enable(&queue->napi);
-> +		netif_carrier_on(netdev);
-> +		phy_resume(netdev->phydev);
-> +		phy_start(netdev->phydev);
->  	}
->  
-> +	bp->macbgem_ops.mog_init_rings(bp);
-> +	macb_init_hw(bp);
-> +	macb_set_rx_mode(netdev);
->  	netif_device_attach(netdev);
-> +	if (bp->ptp_info)
-> +		bp->ptp_info->ptp_init(netdev);
-
-Wouln't be simpler to call macb_open() here?
-
->  
->  	return 0;
->  }
-> 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+ a Linux Foundation Collaborative Project
