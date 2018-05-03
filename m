@@ -1,110 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751916AbeECLPq (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 07:15:46 -0400
-Received: from alexa-out-tai-02.qualcomm.com ([103.229.16.227]:53647 "EHLO
-        alexa-out-tai-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751454AbeECLOR (ORCPT
+        id S1751484AbeECLUC (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 07:20:02 -0400
+Received: from mail-qt0-f195.google.com ([209.85.216.195]:40724 "EHLO
+        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750993AbeECLUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 07:14:17 -0400
-X-IronPort-AV: E=Sophos;i="5.49,358,1520870400";
-   d="scan'208";a="447818"
-X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="7302708"
-From: Asutosh Das <asutoshd@codeaurora.org>
-To: subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        linux-mmc@vger.kernel.org
-Cc: linux-scsi@vger.kernel.org, Vijay Viswanath <vviswana@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 10/10] scsi: ufs: Add clock ungating to a separate workqueue
-Date: Thu,  3 May 2018 16:37:22 +0530
-Message-Id: <0bfae28dbfb4cf86e80435639b92c7f4023041dc.1525343531.git.asutoshd@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1525341340.git.asutoshd@codeaurora.org>
-References: <cover.1525341340.git.asutoshd@codeaurora.org>
-In-Reply-To: <cover.1525343531.git.asutoshd@codeaurora.org>
-References: <cover.1525343531.git.asutoshd@codeaurora.org>
+        Thu, 3 May 2018 07:20:01 -0400
+X-Google-Smtp-Source: AB8JxZootJlnfaiU1RV9puaTune/qmBSIERphHhIICuBxwdsfJo2unKdrEx2KyNpRvpMwh6ud/thF+ehn4K0TL08YIo=
+MIME-Version: 1.0
+In-Reply-To: <35d980af-b9d5-495e-88af-c4fc911b8429@microchip.com>
+References: <1521726700-22634-1-git-send-email-harinikatakamlinux@gmail.com>
+ <1521726700-22634-5-git-send-email-harinikatakamlinux@gmail.com> <35d980af-b9d5-495e-88af-c4fc911b8429@microchip.com>
+From: Harini Katakam <harinik@xilinx.com>
+Date: Thu, 3 May 2018 16:50:00 +0530
+X-Google-Sender-Auth: Yb2vFKdIcjw5NMtILdraWTu-X-M
+Message-ID: <CAFcVECK3UO+tckXnTKvLpWe3+RiZ7fyDmS+3JjgOdeQTRwy_FQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/5] net: macb: Add support for suspend/resume with
+ full power down
+To: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Cc: Nicolas Ferre <nicolas.ferre@atmel.com>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, michals@xilinx.com, appanad@xilinx.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vijay Viswanath <vviswana@codeaurora.org>
+Hi Claudiu,
 
-UFS driver can receive a request during memory reclaim by kswapd.
-So when ufs driver puts the ungate work in queue, and if there are no
-idle workers, kthreadd is invoked to create a new kworker. Since
-kswapd task holds a mutex which kthreadd also needs, this can cause
-a deadlock situation. So ungate work must be done in a separate
-work queue with WQ_MEM_RECLAIM flag enabled.
-Such a workqueue will have a rescue thread which will be called
-when the above deadlock condition is possible.
+On Thu, May 3, 2018 at 3:39 PM, Claudiu Beznea
+<Claudiu.Beznea@microchip.com> wrote:
+>
+>
+> On 22.03.2018 15:51, harinikatakamlinux@gmail.com wrote:
+>> From: Harini Katakam <harinik@xilinx.com>
+>>
+>> When macb device is suspended and system is powered down, the clocks
+>> are removed and hence macb should be closed gracefully and restored
+>> upon resume.
+>
+> Is this a power saving mode which shut down the core?
 
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
----
- drivers/scsi/ufs/ufshcd.c | 11 ++++++++++-
- drivers/scsi/ufs/ufshcd.h |  1 +
- 2 files changed, 11 insertions(+), 1 deletion(-)
+The Ethernet IP is suspended and a majority of the SoC is shut down, yes.
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 557d538..3be61b7 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -1483,7 +1483,8 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
- 		hba->clk_gating.state = REQ_CLKS_ON;
- 		trace_ufshcd_clk_gating(dev_name(hba->dev),
- 					hba->clk_gating.state);
--		schedule_work(&hba->clk_gating.ungate_work);
-+		queue_work(hba->clk_gating.clk_gating_workq,
-+			   &hba->clk_gating.ungate_work);
- 		/*
- 		 * fall through to check if we should wait for this
- 		 * work to be done or not.
-@@ -1669,6 +1670,8 @@ static ssize_t ufshcd_clkgate_enable_store(struct device *dev,
- 
- static void ufshcd_init_clk_gating(struct ufs_hba *hba)
- {
-+	char wq_name[sizeof("ufs_clk_gating_00")];
-+
- 	if (!ufshcd_is_clkgating_allowed(hba))
- 		return;
- 
-@@ -1676,6 +1679,11 @@ static void ufshcd_init_clk_gating(struct ufs_hba *hba)
- 	INIT_DELAYED_WORK(&hba->clk_gating.gate_work, ufshcd_gate_work);
- 	INIT_WORK(&hba->clk_gating.ungate_work, ufshcd_ungate_work);
- 
-+	snprintf(wq_name, ARRAY_SIZE(wq_name), "ufs_clk_gating_%d",
-+		 hba->host->host_no);
-+	hba->clk_gating.clk_gating_workq = alloc_ordered_workqueue(wq_name,
-+							   WQ_MEM_RECLAIM);
-+
- 	hba->clk_gating.is_enabled = true;
- 
- 	hba->clk_gating.delay_attr.show = ufshcd_clkgate_delay_show;
-@@ -1703,6 +1711,7 @@ static void ufshcd_exit_clk_gating(struct ufs_hba *hba)
- 	device_remove_file(hba->dev, &hba->clk_gating.enable_attr);
- 	cancel_work_sync(&hba->clk_gating.ungate_work);
- 	cancel_delayed_work_sync(&hba->clk_gating.gate_work);
-+	destroy_workqueue(hba->clk_gating.clk_gating_workq);
- }
- 
- /* Must be called with host lock acquired */
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 76c31d5..2e6bdc0 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -361,6 +361,7 @@ struct ufs_clk_gating {
- 	struct device_attribute enable_attr;
- 	bool is_enabled;
- 	int active_reqs;
-+	struct workqueue_struct *clk_gating_workq;
- };
- 
- struct ufs_saved_pwr_info {
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+<snip>
+>> +             netif_device_detach(netdev);
+>> +     } else {
+>> +             netif_device_detach(netdev);
+>> +             for (q = 0, queue = bp->queues; q < bp->num_queues; ++q, ++queue)
+>> +                     napi_disable(&queue->napi);
+>> +             phy_stop(netdev->phydev);
+>> +             phy_suspend(netdev->phydev);
+>> +             spin_lock_irqsave(&bp->lock, flags);
+>> +             macb_reset_hw(bp);
+>> +             spin_unlock_irqrestore(&bp->lock, flags);
+>
+> Wouldn't be simple to just call macb_close() here?
+
+<snip>
+>
+> Wouln't be simpler to call macb_open() here?
+
+No, I think that would be excessive for suspend. This does just
+enough to put the IP into suspend and cut off clocks.
+For ex., the RX and TX buffers are not freed and allocated again
+in this cycle, just the buffer descriptors.
+
+Regards,
+Harini
