@@ -1,54 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751344AbeECPSx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 11:18:53 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36372 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751276AbeECPSr (ORCPT
+        id S1751440AbeECPTl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 11:19:41 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45056 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbeECPTi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 11:18:47 -0400
-X-Google-Smtp-Source: AB8JxZod3xbpVPfK74bxRw0p2vfCzzWWZpFkqCJOPqaoLezXqXi1kPA4uo4Y66MMxJv3OTTyVam1QQ==
-From: Leo Yan <leo.yan@linaro.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        coresight@lists.linaro.org
-Cc: Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH 2/2] perf cs-etm: Remove redundant space
-Date: Thu,  3 May 2018 23:18:23 +0800
-Message-Id: <1525360703-26159-2-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525360703-26159-1-git-send-email-leo.yan@linaro.org>
-References: <1525360703-26159-1-git-send-email-leo.yan@linaro.org>
+        Thu, 3 May 2018 11:19:38 -0400
+From: Colin King <colin.king@canonical.com>
+To: Ariel Elior <Ariel.Elior@cavium.com>, everest-linux-l2@cavium.com,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] qed: fix spelling mistake: "offloded" -> "offloaded"
+Date: Thu,  3 May 2018 16:19:32 +0100
+Message-Id: <20180503151932.22458-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There have two spaces ahead function name cs_etm__set_pid_tid_cpu(), so
-remove one space and correct indentation.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Trivial fix to spelling mistake in DP_NOTICE message
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- tools/perf/util/cs-etm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_roce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 417302c..3137fbe 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -612,8 +612,8 @@ cs_etm__get_trace(struct cs_etm_buffer *buff, struct cs_etm_queue *etmq)
- 	return buff->len;
- }
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_roce.c b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+index fb7c2d1562ae..6acfd43c1a4f 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_roce.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_roce.c
+@@ -848,7 +848,7 @@ int qed_roce_query_qp(struct qed_hwfn *p_hwfn,
  
--static void  cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
--				     struct auxtrace_queue *queue)
-+static void cs_etm__set_pid_tid_cpu(struct cs_etm_auxtrace *etm,
-+				    struct auxtrace_queue *queue)
- {
- 	struct cs_etm_queue *etmq = queue->priv;
+ 	if (!(qp->resp_offloaded)) {
+ 		DP_NOTICE(p_hwfn,
+-			  "The responder's qp should be offloded before requester's\n");
++			  "The responder's qp should be offloaded before requester's\n");
+ 		return -EINVAL;
+ 	}
  
 -- 
-2.7.4
+2.17.0
