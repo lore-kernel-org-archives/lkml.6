@@ -1,128 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeECXTH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 19:19:07 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57660 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750965AbeECXTF (ORCPT
+        id S1751220AbeECXXR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 19:23:17 -0400
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:39425 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750965AbeECXXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 19:19:05 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Cc: Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
-        tiwai@suse.com, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, afd@ti.com,
-        dannenberg@ti.com, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: tas6424: Allow disabling auto diagnostics for faster power-on" to the asoc tree
-In-Reply-To: <1525332987-5266-1-git-send-email-jjhiblot@ti.com>
-Message-Id: <20180503231848.2B7AD44007A@finisterre.ee.mobilebroadband>
-Date: Fri,  4 May 2018 00:18:48 +0100 (BST)
+        Thu, 3 May 2018 19:23:15 -0400
+X-Google-Smtp-Source: AB8JxZqbGKi1jHo3QqjVhoN0Ywnucow/8oEHHoHV0VgjD3Yb3a3y+VMsmKt2JZp8a2zK7CBS5u31iQ==
+Subject: Re: [PATCH] proc: use #pragma once
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, dsterba@suse.cz,
+        Christoph Hellwig <hch@infradead.org>, linux-kernel@vger.kernel.org
+References: <20180423213534.GA9043@avx2>
+ <20180424135409.GA22709@infradead.org> <20180425205531.GA9020@avx2>
+ <20180426102629.scwtdeijbo3342gp@twin.jikos.cz> <20180426192444.GA4919@avx2>
+ <20180501151319.33dcb1d48a8526ed521fae9c@linux-foundation.org>
+ <85dc7f54-c17f-b49f-df4d-04a339b260d7@rasmusvillemoes.dk>
+ <20180503224257.GE30522@ZenIV.linux.org.uk>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <94db646a-4fd8-9ce3-2111-b2e4852ad324@rasmusvillemoes.dk>
+Date: Fri, 4 May 2018 01:23:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180503224257.GE30522@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 2018-05-04 00:42, Al Viro wrote:
+> On Fri, May 04, 2018 at 12:14:57AM +0200, Rasmus Villemoes wrote:
+> 
+>> FWIW, it's not just removing some identifiers from cpp's hash tables, it
+>> also reduces I/O: Due to our header mess, we have some cyclic includes,
+>> e.g mm.h -> memremap.h -> mm.h. While parsing mm.h, cpp sees the #define
+>> _LINUX_MM_H, then goes parsing memremap.h, but since it hasn't reached
+>> the end of mm.h yet (seeing that there's nothing but comments outside
+>> the #ifndef/#endif pair), it hasn't had a chance to set the internal
+>> flag for mm.h, so it goes slurping in mm.h again. Obviously, the
+>> definedness of _LINUX_MM_H at that point means it "only" has to parse
+>> those 87K for comments and matching up #ifs, #ifdefs,#endifs etc. With
+>> #pragma once, the flag gets set for mm.h immediately, so the #include
+>> from memremap.h is entirely ignored. This can easily be verified with
+>> strace. And mm.h is not the only header getting read twice.
+> 
+> Which gcc version it is?
 
-   ASoC: tas6424: Allow disabling auto diagnostics for faster power-on
+When I stumbled on this a few years ago (I was stracing gcc for some
+reason), 4.something. Verifying today, 5.4.
 
-has been applied to the asoc tree at
+> Does it *really* read anything twice?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Yes, just do "strace -f" and grep 'open.*= [0-9]'.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> After all, you are going to read (and tokenize) the rest of mm.h anyway, so if it
+> throws away the file it has read, only to reread it again, it's bloody
+> dumb.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Hm, yes, gcc should be able to hang the buffer off of the structure it
+keeps around anyway for tracking the status of mm.h. But it doesn't.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+> Note that sequence of preprocessor tokens does not depend upon the ifdefs;
+> anything under #if 0 *is* tokenized all the same.  So it's not even that
+> "parsing" (tokenizing, actually) has to be repeated.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Are you sure about that? Maybe formally it has to (if the phases are
+done strictly sequentially), but can't it go into some fast-forward mode
+under #if 0 (or #ifndef $some-defined-macro) where it only looks for
+string and char literals, comments and "control-flow" directives?
+libcpp/internal.h does have
 
-Thanks,
-Mark
+  /* True if we are skipping a failed conditional group.  */
+  unsigned char skipping;
 
->From 396888772ab738eca923d13fd3d55733091c5daf Mon Sep 17 00:00:00 2001
-From: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Date: Thu, 3 May 2018 09:36:27 +0200
-Subject: [PATCH] ASoC: tas6424: Allow disabling auto diagnostics for faster
- power-on
-
-The TAS6424 incorporates both DC-load and AC-load diagnostics which are
-used to determine the status of the load. The DC diagnostics runs when any
-channel is directed to leave the Hi-Z state and enter the MUTE or PLAY
-state.
-The DC diagnostics are turned on by default but, if a fast startup without
-diagnostics is required, the diagnostics can be disabled using a dedicated
-ALSA control.
-
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/codecs/tas6424.c | 13 +++++++++++--
- sound/soc/codecs/tas6424.h |  4 ++++
- 2 files changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/tas6424.c b/sound/soc/codecs/tas6424.c
-index 89fd0c1b3903..14999b999fd3 100644
---- a/sound/soc/codecs/tas6424.c
-+++ b/sound/soc/codecs/tas6424.c
-@@ -64,6 +64,8 @@ static const struct snd_kcontrol_new tas6424_snd_controls[] = {
- 		       TAS6424_CH3_VOL_CTRL, 0, 0xff, 0, dac_tlv),
- 	SOC_SINGLE_TLV("Speaker Driver CH4 Playback Volume",
- 		       TAS6424_CH4_VOL_CTRL, 0, 0xff, 0, dac_tlv),
-+	SOC_SINGLE_STROBE("Auto Diagnostics Switch", TAS6424_DC_DIAG_CTRL1,
-+			  TAS6424_LDGBYPASS_SHIFT, 1),
- };
- 
- static int tas6424_dac_event(struct snd_soc_dapm_widget *w,
-@@ -297,6 +299,11 @@ static int tas6424_power_on(struct snd_soc_component *component)
- 	struct tas6424_data *tas6424 = snd_soc_component_get_drvdata(component);
- 	int ret;
- 	u8 chan_states;
-+	int no_auto_diags = 0;
-+	unsigned int reg_val;
-+
-+	if (!regmap_read(tas6424->regmap, TAS6424_DC_DIAG_CTRL1, &reg_val))
-+		no_auto_diags = reg_val & TAS6424_LDGBYPASS_MASK;
- 
- 	ret = regulator_bulk_enable(ARRAY_SIZE(tas6424->supplies),
- 				    tas6424->supplies);
-@@ -327,9 +334,11 @@ static int tas6424_power_on(struct snd_soc_component *component)
- 	snd_soc_component_write(component, TAS6424_CH_STATE_CTRL, chan_states);
- 
- 	/* any time we come out of HIZ, the output channels automatically run DC
--	 * load diagnostics, wait here until this completes
-+	 * load diagnostics if autodiagnotics are enabled. wait here until this
-+	 * completes.
- 	 */
--	msleep(230);
-+	if (!no_auto_diags)
-+		msleep(230);
- 
- 	return 0;
- }
-diff --git a/sound/soc/codecs/tas6424.h b/sound/soc/codecs/tas6424.h
-index 430588328a06..b5958c45ed0e 100644
---- a/sound/soc/codecs/tas6424.h
-+++ b/sound/soc/codecs/tas6424.h
-@@ -111,6 +111,10 @@
- 					 TAS6424_CH3_STATE_DIAG | \
- 					 TAS6424_CH4_STATE_DIAG)
- 
-+/* TAS6424_DC_DIAG_CTRL1 */
-+#define TAS6424_LDGBYPASS_SHIFT		0
-+#define TAS6424_LDGBYPASS_MASK		BIT(TAS6424_LDGBYPASS_SHIFT)
-+
- /* TAS6424_GLOB_FAULT1_REG */
- #define TAS6424_FAULT_CLOCK		BIT(4)
- #define TAS6424_FAULT_PVDD_OV		BIT(3)
--- 
-2.17.0
+Rasmus
