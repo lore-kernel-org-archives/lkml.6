@@ -1,152 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752057AbeECGXr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 02:23:47 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:36838 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751894AbeECGXn (ORCPT
+        id S1752045AbeECGd2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:33:28 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:14525 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751872AbeECGd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 02:23:43 -0400
-X-Google-Smtp-Source: AB8JxZpYZHOLCes7w8LO4T7XUcnnHvKxUtnYh06BfbpNhMgFes3LZgfMCgv+BMnuhrGCTIJQl1byIA==
-From: Doug Smythies <doug.smythies@gmail.com>
-X-Google-Original-From: Doug Smythies <dsmythies@telus.net>
-To: srinivas.pandruvada@linux.intel.com, rjw@rjwysocki.net
-Cc: dsmythies@telus.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH V5] cpufreq: intel_pstate: allow trace in passive mode
-Date: Wed,  2 May 2018 23:22:47 -0700
-Message-Id: <1525328567-23747-1-git-send-email-dsmythies@telus.net>
-X-Mailer: git-send-email 2.7.4
+        Thu, 3 May 2018 02:33:26 -0400
+Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
+ <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
+ <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
+ <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
+ <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
+ <5d625d04-38fe-7d5a-67fc-5ea92039474c@ti.com>
+ <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
+ <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
+ <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
+CC: "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <cf2772d5-26c0-b0e3-1e5b-ace91c1ea105@ti.com>
+Date: Thu, 3 May 2018 12:03:15 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow use of the trace_pstate_sample trace function
-when the intel_pstate driver is in passive mode.
-Since the core_busy and scaled_busy fields are not
-used, and it might be desirable to know which path
-through the driver was used, either intel_cpufreq_target
-or intel_cpufreq_fast_switch, re-task the core_busy
-field as a flag indicator.
+Hi Lorenzo,
 
-The user can then use the intel_pstate_tracer.py utility
-to summarize and plot the trace.
+On Wednesday 02 May 2018 10:21 PM, Lorenzo Pieralisi wrote:
+> On Wed, May 02, 2018 at 11:39:00AM +0100, Gustavo Pimentel wrote:
+>> Hi Lorenzo,
+>>
+>> On 01/05/2018 15:26, Lorenzo Pieralisi wrote:
+>>> On Tue, May 01, 2018 at 05:53:59PM +0530, Kishon Vijay Abraham I wrote:
+>>>> Hi Lorenzo,
+>>>>
+>>>> On Tuesday 01 May 2018 05:24 PM, Lorenzo Pieralisi wrote:
+>>>>> On Tue, May 01, 2018 at 03:37:47PM +0530, Kishon Vijay Abraham I wrote:
+>>>>>> Hi Lorenzo,
+>>>>>>
+>>>>>> On Thursday 26 April 2018 10:26 PM, Lorenzo Pieralisi wrote:
+>>>>>>> On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
+>>>>>>>> Adds a seconds entry on the pci_epf_test_ids structure that disables the
+>>>>>>>
+>>>>>>> "Add a second entry to..."
+>>>>>>>
+>>>>>>>> linkup_notifier parameter on driver for the designware EP.
+>>>>>>>>
+>>>>>>>> This allows designware EPs that doesn't have linkup notification signal
+>>>>>>>> to work with pcitest.
+>>>>>>>>
+>>>>>>>> Updates the binding documentation accordingly.
+>>>>>>>
+>>>>>>> Valid for all the series: use imperative sentences.
+>>>>>>>
+>>>>>>> eg:
+>>>>>>>
+>>>>>>> "Update the binding documentation accordingly".
+>>>>>>>
+>>>>>>> not
+>>>>>>>
+>>>>>>> "Updates the binding documentation accordingly".
+>>>>>>>
+>>>>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+>>>>>>>> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>>>>>> ---
+>>>>>>>> Change v2->v3:
+>>>>>>>>  - Added second entry in pci_epf_test_ids structure.
+>>>>>>>>  - Remove test_reg_bar field assignment on second entry.
+>>>>>>>> Changes v3->v4:
+>>>>>>>>  - Nothing changed, just to follow the patch set version.
+>>>>>>>> Changes v4->v5:
+>>>>>>>>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
+>>>>>>>> Changes v5->v6:
+>>>>>>>>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
+>>>>>>>> Changes v6->v7:
+>>>>>>>>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
+>>>>>>>>
+>>>>>>>>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
+>>>>>>>>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
+>>>>>>>>  2 files changed, 10 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>>>>>>>> index 3b68b95..dc39f47 100644
+>>>>>>>> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>>>>>>>> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
+>>>>>>>> @@ -1,6 +1,8 @@
+>>>>>>>>  PCI TEST ENDPOINT FUNCTION
+>>>>>>>>  
+>>>>>>>>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
+>>>>>>>> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
+>>>>>>>> +      with a custom configuration for the designware EP.
+>>>>>>>
+>>>>>>> The link between the "name" and the device created is quite obscure and
+>>>>>>> reading pci-test-howto.txt certainly does not clarify it.
+>>>>>>>
+>>>>>>> In pci-test-howto.txt an explanation should be added to the configs
+>>>>>>> device creation paragraph to clarify it.
+>>>>>>>
+>>>>>>>>  Configurable Fields:
+>>>>>>>>  vendorid	 : should be 0x104c
+>>>>>>>> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>>>>>> index 7cef851..4ab463b 100644
+>>>>>>>> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>>>>>> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+>>>>>>>> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>>>>>>>>  	return 0;
+>>>>>>>>  }
+>>>>>>>>  
+>>>>>>>> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
+>>>>>>>> +	.linkup_notifier = false
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
+>>>>>>>>  	{
+>>>>>>>>  		.name = "pci_epf_test",
+>>>>>>>>  	},
+>>>>>>>> +	{
+>>>>>>>> +		.name = "pci_epf_test_dw",
+>>>>>>>> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
+>>>>>>>> +	},
+>>>>>>>>  	{},
+>>>>>>>
+>>>>>>> Should not this be a property derived from the controller compatible
+>>>>>>> property instead of the test device name written in configfs ?
+>>>>>>
+>>>>>> pci_epf_test is an independent driver on its own that operates in a layer above
+>>>>>> the controller driver. So it does not get the controller compatible (which is
+>>>>>> used in controller drivers like pcie-designware-plat.c). pci_epf_test uses
+>>>>>> "pci_epf_device_id" which is _similar_ to "of_device_id" used by platform drivers.
+>>>>>
+>>>>> I understand that, the problem is that the independent driver depends on
+>>>>> features of the related controller driver as this patch shows. This
+>>>>> patch basically says that if you use a specific path in configfs (that
+>>>>> includes pci_epf_test_dw) your device has specific HW features (eg
+>>>>> linkup notifier above), that obviously depends on the platform HW not on
+>>>>> the string you use in configfs.
+>>>>>
+>>>>> What I am questioning is a) if I understand this right and b) whether
+>>>>> this is the right approach.
+>>>>
+>>>> Your understanding is right. Ideally pci-epf-test driver shouldn't have any HW
+>>>> specific configuration. But different HW have different configurations and
+>>>> pci-epf-test should be informed of the configuration the HW supports.
+>>>
+>>> I am honestly very confused. First off, I do not understand what this
+>>> patch really does (or better what DW can't do so that it needs a
+>>> specific configfs string and therefore a specific configuration).
+>>>
+>>> What's the purpose of the linkup notifier ? What does it mean that
+>>> the DW HW can't handle it ?
+>>>
+>>> Are we referring to the pci_epf_linkup() function ?
+>>>
+>>> If it is a HW configuration (ie the DW HW does not have a signal to
+>>> report that the link is up ?) its enablement must depend on HW
+>>> controller properties not configfs entries, I do not like what this
+>>> patch does (probably because I am confused and I do not understand it).
+>>>
+>>> Please let me know your thoughts on this, thanks.
+>>
+>> On my setup, the EP is unable generate a signal which is responsible
+>> for notify that the link is established, being therefore necessary to
+>> emulate it, this is done by setting the linkup_notifier variable to
+>> false.
+> 
+> What I do not understand is why the workqueue notification can't be called
+> irrespective of the linkup notifier value from pci_epf_test_bind(),
+> what's the point in calling it earlier with pci_epf_linkup() (or the
+> other way around why is it safe to call it a bind() time if there
+> is no notification available - which is the DW case).
 
-Note: The core_busy feild still goes by that name
-in include/trace/events/power.h and within the
-intel_pstate_tracer.py script and csv file headers,
-but it is graphed as "performance", and called
-core_avg_perf now in the intel_pstate driver.
+The linkup notifier is used just to prevent the system from wasting cpu cycles.
+Without linkup notifier, pci_epf_test will start checking for commands from
+host after the pci_epf_test is bound to the EP controller (bind() callback)
+though the host can issue commands only when after the link is up. So for
+platforms which supports linkup notification, it's better we poll command
+register only after link is established.
+> 
+> [...]
+> 
+>> Since the linkup notifier and BAR index (where auxiliary registers are
+>> located) may be configurable and is something platform dependent,
+>> perhaps the configuration of this variables should be done by module
+>> parameter and not by configfs, leaving this configuration
+>> responsibility in charge of each platform.
+> 
+> They are platform dependent because they depend on the EP controller.
+> That's why I said that those are EP controller parameters. I do not
+> think they are module parameters either - they should be part of HW
+> description in firmware.
 
-Sometimes, in passive mode, the driver is not called for
-many tens or even hundreds of seconds. The user
-needs to understand, and not be confused by, this limitation.
+The problem is because pci-epf-test cannot be described in HW. pci-epf-test is
+also not automatically bound to the EP controller but is bound by the user like
+below
+ln -s functions/pci_epf_test/func1 controllers/51000000.pcie_ep/
 
-Signed-off-by: Doug Smythies <dsmythies@telus.net>
+So given that user anyways has to bind the epf device to the controller, based
+on the platform the user can use a different configfs entry like below
+ln -s functions/pci_epf_test_dw/func1 controllers/51000000.pcie_ep/ or
+ln -s functions/pci_epf_test_k2g/func1 controllers/21800000.pcie-ep/
 
----
+If the epf can be described in dt, then something like below can be done
+pcie1_ep: pcie_ep@51000000 {
+	compatible = "ti,dra7-pcie-ep";
+	interrupts = <0 232 0x4>;
+	num-lanes = <1>;
+	num-ib-windows = <4>;
+	num-ob-windows = <16>;
+	phys = <&pcie1_phy>;
+	phy-names = "pcie-phy0";
+	pci_epf_test: pci_epf_test@0 {
+		name = "pci_epf_test_dw";
+		<other properties>;
+	}
+};
 
-V5: Changes as per Rafael J. Wysocki feedback.
-    See: https://lkml.org/lkml/2018/1/7/270
+With this pci-dra7xx.c driver should create pci_epf_device using
+pci_epf_create("pci_epf_test_dw");
 
-V4: Only execute the trace specific overhead code if trace
-    is enabled. Suggested by Srinivas Pandruvada.
+Then the driver_data corresponding to "pci_epf_test_dw" will select linkup
+notifier or BAR index etc.
 
-V3: Move largely duplicate code to a subroutine.
-    Suggested by Rafael J. Wysocki.
+Having different pci_epf_device_id entries and corresponding driver_data for
+each entry seems fine to me (as done in this patch). We use configfs only since
+pci_epf_test cannot be described in dt.
 
-V2: prepare for resend. Rebase to current kernel, 4.15-rc3.
-
----
- drivers/cpufreq/intel_pstate.c | 44 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 42 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 17e566af..4a08686 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1939,13 +1939,49 @@ static int intel_cpufreq_verify_policy(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
-+/* Use of trace in passive mode:
-+ *
-+ * In passive mode the trace core_busy field (also known as the
-+ * performance field, and lablelled as such on the graphs; also known as
-+ * core_avg_perf) is not needed and so is re-assigned to indicate if the
-+ * driver call was via the normal or fast switch path. Various graphs
-+ * output from the intel_pstate_tracer.py utility that include core_busy
-+ * (or performance or core_avg_perf) have a fixed y-axis from 0 to 100%,
-+ * so we use 10 to indicate the the normal path through the driver, and
-+ * 90 to indicate the fast switch path through the driver.
-+ * The scaled_busy field is not used, and is set to 0.
-+ */
-+
-+#define	INTEL_PSTATE_TRACE_TARGET 10
-+#define	INTEL_PSTATE_TRACE_FAST_SWITCH 90
-+
-+static void intel_cpufreq_trace(struct cpudata *cpu, unsigned int trace_type, int old_pstate)
-+{
-+	struct sample *sample;
-+
-+	if (!trace_pstate_sample_enabled())
-+		return;
-+	if (!intel_pstate_sample(cpu, ktime_get()))
-+		return;
-+	sample = &cpu->sample;
-+	trace_pstate_sample(trace_type,
-+		0,
-+		old_pstate,
-+		cpu->pstate.current_pstate,
-+		sample->mperf,
-+		sample->aperf,
-+		sample->tsc,
-+		get_avg_frequency(cpu),
-+		fp_toint(cpu->iowait_boost * 100));
-+}
-+
- static int intel_cpufreq_target(struct cpufreq_policy *policy,
- 				unsigned int target_freq,
- 				unsigned int relation)
- {
- 	struct cpudata *cpu = all_cpu_data[policy->cpu];
- 	struct cpufreq_freqs freqs;
--	int target_pstate;
-+	int target_pstate, old_pstate;
- 
- 	update_turbo_state();
- 
-@@ -1965,12 +2001,14 @@ static int intel_cpufreq_target(struct cpufreq_policy *policy,
- 		break;
- 	}
- 	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
-+	old_pstate = cpu->pstate.current_pstate;
- 	if (target_pstate != cpu->pstate.current_pstate) {
- 		cpu->pstate.current_pstate = target_pstate;
- 		wrmsrl_on_cpu(policy->cpu, MSR_IA32_PERF_CTL,
- 			      pstate_funcs.get_val(cpu, target_pstate));
- 	}
- 	freqs.new = target_pstate * cpu->pstate.scaling;
-+	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_TARGET, old_pstate);
- 	cpufreq_freq_transition_end(policy, &freqs, false);
- 
- 	return 0;
-@@ -1980,13 +2018,15 @@ static unsigned int intel_cpufreq_fast_switch(struct cpufreq_policy *policy,
- 					      unsigned int target_freq)
- {
- 	struct cpudata *cpu = all_cpu_data[policy->cpu];
--	int target_pstate;
-+	int target_pstate, old_pstate;
- 
- 	update_turbo_state();
- 
- 	target_pstate = DIV_ROUND_UP(target_freq, cpu->pstate.scaling);
- 	target_pstate = intel_pstate_prepare_request(cpu, target_pstate);
-+	old_pstate = cpu->pstate.current_pstate;
- 	intel_pstate_update_pstate(cpu, target_pstate);
-+	intel_cpufreq_trace(cpu, INTEL_PSTATE_TRACE_FAST_SWITCH, old_pstate);
- 	return target_pstate * cpu->pstate.scaling;
- }
- 
--- 
-2.7.4
+Thanks
+Kishon
