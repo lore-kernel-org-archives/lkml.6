@@ -1,121 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751261AbeECQpP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:45:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57868 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750947AbeECQpN (ORCPT
+        id S1751317AbeECQpm (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:45:42 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:41959 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbeECQpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:45:13 -0400
-Date: Thu, 3 May 2018 18:45:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-Message-ID: <20180503164508.GG12217@hirez.programming.kicks-ass.net>
-References: <20180424133325.GA3179@codeblueprint.co.uk>
- <1525349542.9956.2.camel@gmx.de>
- <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
- <1525351221.9956.4.camel@gmx.de>
- <20180503124943.GB12217@hirez.programming.kicks-ass.net>
- <1525354359.5576.1.camel@gmx.de>
- <20180503135617.GC12217@hirez.programming.kicks-ass.net>
- <1525357015.5577.2.camel@gmx.de>
- <20180503144450.GD12217@hirez.programming.kicks-ass.net>
- <20180503161231.GI26088@linux.vnet.ibm.com>
+        Thu, 3 May 2018 12:45:38 -0400
+X-Google-Smtp-Source: AB8JxZqfVgGr+bZzpJWgZxWD7v3228QlnkqDEe24I9Ul5++7zgr7YUc2qAnR+edZ2Bv/kGFehr3FqP4gDKUSi5PC2Ng=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503161231.GI26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <fc4f2832-4e8f-3e70-6ab0-9f077790eca0@linux.com>
+References: <20180502203326.9491-1-labbott@redhat.com> <20180502203326.9491-3-labbott@redhat.com>
+ <CAGXu5jK1_--omGSqz03sfB8twQVzy9ZQR9Xzi-uxseekp+r1jQ@mail.gmail.com>
+ <4b7e94c1-79c9-0380-25c6-762762ed595f@redhat.com> <fc4f2832-4e8f-3e70-6ab0-9f077790eca0@linux.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 3 May 2018 09:45:36 -0700
+X-Google-Sender-Auth: 3jOW1CDSBlxiKlq0wiEGRFggOJk
+Message-ID: <CAGXu5jJ7ER58PvF4V=-BiNpmhxU2=_C8tkcNSPR5ANp2B7Seeg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+To: Alexander Popov <alex.popov@linux.com>
+Cc: Laura Abbott <labbott@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 09:12:31AM -0700, Paul E. McKenney wrote:
-> On Thu, May 03, 2018 at 04:44:50PM +0200, Peter Zijlstra wrote:
-> > On Thu, May 03, 2018 at 04:16:55PM +0200, Mike Galbraith wrote:
-> > > On Thu, 2018-05-03 at 15:56 +0200, Peter Zijlstra wrote:
-> > > > On Thu, May 03, 2018 at 03:32:39PM +0200, Mike Galbraith wrote:
-> > > > 
-> > > > > Dang.  With $subject fix applied as well..
-> > > > 
-> > > > That's a NO then... :-(
-> > > 
-> > > Could say who cares about oddball offline wakeup stat. <cringe>
-> > 
-> > Yeah, nobody.. but I don't want to have to change the wakeup code to
-> > deal with this if at all possible. That'd just add conditions that are
-> > 'always' false, except in this exceedingly rare circumstance.
-> > 
-> > So ideally we manage to tell RCU that it needs to pay attention while
-> > we're doing this here thing, which is what I thought RCU_NONIDLE() was
-> > about.
-> 
-> One straightforward approach would be to provide a arch-specific
-> Kconfig option that tells notify_cpu_starting() not to bother invoking
-> rcu_cpu_starting().  Then x86 selects this Kconfig option and invokes
-> rcu_cpu_starting() itself early enough to avoid splats.
-> 
-> See the (untested, probably does not even build) patch below.
-> 
-> I have no idea where to insert either the "select" or the call to
-> rcu_cpu_starting(), so I left those out.  I know that putting the
-> call too early will cause trouble, but I have no idea what constitutes
-> "too early".  :-/
+On Thu, May 3, 2018 at 9:05 AM, Alexander Popov <alex.popov@linux.com> wrote:
+> Hello Laura and Kees,
+>
+> On 03.05.2018 02:07, Laura Abbott wrote:
+>> On 05/02/2018 02:31 PM, Kees Cook wrote:
+>>> On Wed, May 2, 2018 at 1:33 PM, Laura Abbott <labbott@redhat.com> wrote:
+>>>>
+>>>> Implementation of stackleak based heavily on the x86 version
+>>>
+>>> Awesome! Notes below for both you and Alexander, since I think we can
+>>> create a common code base instead of having near-duplicates in the
+>>> arch/ trees...
+>
+> Yes, sure.
+>
+> I will extract the common part and send v12 for x86. Then Laura will be able to
+> add arm64 support in a separate patch series. Is it fine?
 
-Something like so perhaps? Mike, can you play around with that? Could
-burn your granny and eat your cookies.
+Sure, though if you could fold the plugin fix from her, that would be
+ideal. I'll likely carry both patch sets together once the arm64 one
+stabilizes.
 
+>> This was based on the earlier version of x86. I'll confess to
+>> not seeing how the current x86 version ended up with get_stack_info
+>> but I suspect it's either related to ORC unwinding or it's best
+>> practice.
+>
+> I've changed that in v4. Quote from the changelog:
+>   - Fixed the surplus and erroneous code for calculating stack_left in
+>      check_alloca() on x86_64. That code repeats the work which is already
+>      done in get_stack_info() and it misses the fact that different
+>      exception stacks on x86_64 have different size.
+>
+> http://www.openwall.com/lists/kernel-hardening/2017/10/04/68
+>
+> We can see that in arch/x86/kernel/dumpstack_64.c.
+>
+> Is it fine if check_alloca() would be arch-specific?
 
-diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
-index 7468de429087..07360523c3ce 100644
---- a/arch/x86/kernel/cpu/mtrr/main.c
-+++ b/arch/x86/kernel/cpu/mtrr/main.c
-@@ -793,6 +793,9 @@ void mtrr_ap_init(void)
- 
- 	if (!use_intel() || mtrr_aps_delayed_init)
- 		return;
-+
-+	rcu_cpu_starting(smp_processor_id());
-+
- 	/*
- 	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
- 	 * changed, but this routine will be called in cpu boot time,
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 2a734692a581..4dab46950fdb 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
- 	return 0;
- }
- 
-+static DEFINE_PER_CPU(int, rcu_cpu_started);
-+
- /*
-  * Mark the specified CPU as being online so that subsequent grace periods
-  * (both expedited and normal) will wait on it.  Note that this means that
-@@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
- 	struct rcu_node *rnp;
- 	struct rcu_state *rsp;
- 
-+	if (per_cpu(rcu_cpu_started, cpu))
-+		return;
-+
-+	per_cpu(rcu_cpu_started, cpu) = 1;
-+
- 	for_each_rcu_flavor(rsp) {
- 		rdp = per_cpu_ptr(rsp->rda, cpu);
- 		rnp = rdp->mynode;
-@@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
- 	preempt_enable();
- 	for_each_rcu_flavor(rsp)
- 		rcu_cleanup_dying_idle_cpu(cpu, rsp);
-+
-+	per_cpu(rcu_cpu_started, cpu) = 0;
- }
- 
- /* Migrate the dead CPU's callbacks to the current CPU. */
+I'm fine if check_alloca() remains arch-specific.
+
+Thanks!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
