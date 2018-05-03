@@ -1,239 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751269AbeECIeD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:34:03 -0400
-Received: from mail-co1nam03on0089.outbound.protection.outlook.com ([104.47.40.89]:12791
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750849AbeECId4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:33:56 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com;
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: djkurtz@chromium.org, akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Shaoyun Liu <Shaoyun.Liu@amd.com>, Dave Airlie <airlied@redhat.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK)
-Subject: [PATCH v2] clk: x86: Add ST oscout platform clock
-Date: Thu,  3 May 2018 16:30:26 +0800
-Message-Id: <1525336264-29243-1-git-send-email-akshu.agrawal@amd.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: PN1PR0101CA0072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c00:d::34) To DM5PR12MB2360.namprd12.prod.outlook.com
- (2603:10b6:4:b4::13)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2360;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2360;3:+D+M6QGuGTaFWUYBljElHPGuru1qjE2YETDyyQ84AaQzsy2dZ98h1pwP5xtekzoxEZJc+oGV7YbJ0Wy4mhLys+pqF3AnL7J0RGvWydK5QY+iI9qYilLPyY/tjMLaOIrBb3qoRAjZvWk8cLPryxCfsdrS2hhy0JHGsiyxelz66xwlhanY1xV3O+g79hZw/blSFgAUVtnnG13mm1I3NswquPUtMg9BU1IpIhEf2ZlTzh7o+//Jqzcprz8qvZHEvaxK;25:4mVVH+3UYxxZ8c8ttcOt3EzfBRfp8tXRb+xlu5DJ5MBT7NMECbo4Fcy1vhfTN8/j06P6fmEjJL6ZdJwcHN06d7lKcZimGiSQm3KkT6t5FHpAcXxlW/R7E3kkHRcalcWkoF50hVhntKy2uj10ZjBa778xEqRppAihMH3Cgg6lcl0swEefc1bGqCIFwRjxrUsnx6ndJL77LmxsgGAzPfRCDrzKKR5eC8FfHQzkUjHfjsOnuQ+kIXDIhkVorS68L0Jokg2djAqsODVOOnohIcm765n7j8fBBhEZJkkJymLEDaLar1KzIIzWa8p7X+58y1O6rI771Gnd1zRC0VzyG4biXw==;31:tuoeCGKQvlqoAfaVFsaKfQWG0MwzCAcbEUKILZal4b7GJnRvgthjEhMyHNBeNpz2x+tj8cOlXlw7qFIyf/DeOSt/YYVQEIHDNFZR7mjNEIU7ptZ5lifXa586dqJNfsgkMWtkzHH26K6fclAtv/oFiQp1Nl/R+nnSxPo5q3FwAkblOKBfnio6OuFqAmXZj/SQeOtpIr46Jlol7ZEuA992ss6Lt8jJ8aLYtZxXzxLOEs8=
-X-MS-TrafficTypeDiagnostic: DM5PR12MB2360:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2360;20:gyC+OcLXHH/ntJz9HnB66shWEONDp10t091Yd3cNE0th8Q1Rpj4fJkl8J8GAlXEzrP7tzBKB4CHNNGwpa0cysiYdwXMzXnP0c9qA35w+pssKvtD6VnMyaOv9ZHeTSHSqKLbfMGcC0M3C0UmswcJPIOU8+g60vYK2ilh75eP8/4hazoYdfZLbvt0qnoeGUoN182mhHzF6HChcwR+8VPOAA2NXvHhTp9FeuJHHDKkX1RjidTUOeAkM+UBgQ6h5gwTV8/7NOueY3UigWHVCPv8saL4fO8TVP8LI0NihN2OoA0s3O8nSk9SzJ1uIMDk9SxN7rAMbGsPGijKkaHGkJ5OYBn2k1Sg9SBbXVprnr6HgwbihP2B/EVhsxEKZrOsn8nBEgtzj9KTGvU0G6147svk1ixzYQPfQqT9S8KwKIV2tbTn9z3pMXuOtsdSQS4at3UrBBVDvanLGoO4A5JobtwHpFlycMwsbgeoUdQ/VRpjyDUKdLuUcgEBhcrkzJcynhJQQ;4:AHrpoZMYGGgZrsOnPb9wtGGpaaPtiesCD04aJ8UnFapCkxLAA3MxB6hdHQHu9Kf2rjp/ibcr5iDvisEPBOZt6Tqwj0AP5fx8g6FPQXU7kXMRHKHqsMPEfkkGq9tNoYUJhzbJS/WO0dOfvF5/3xE+9lfwFIJjnegoo0EdU/Lktyl1+hKLNK1uvyLSWdWEYtzhB67M/IHIuzXo+rFvBg1Vs8F+wD9FYaGpkERDXJjeFj7NNuw+1Ej1OqCK3ZX1wX/Zm3fNymlh8K6dZZz75JKTpTtGYL9uXdjxRvr6nBTbi+Ag6uYCFh9HfWAUyMpf/C4u
-X-Microsoft-Antispam-PRVS: <DM5PR12MB23601E992E6E442ADE47743CF8870@DM5PR12MB2360.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231254)(944501410)(52105095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR12MB2360;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2360;
-X-Forefront-PRVS: 066153096A
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39380400002)(39860400002)(396003)(199004)(189003)(2616005)(86362001)(6506007)(36756003)(386003)(66066001)(52116002)(6486002)(53416004)(44832011)(476003)(486006)(25786009)(59450400001)(81156014)(8936002)(26005)(186003)(7736002)(50226002)(8676002)(16526019)(97736004)(81166006)(50466002)(316002)(305945005)(6116002)(105586002)(3846002)(48376002)(106356001)(51416003)(54906003)(478600001)(16586007)(72206003)(6512007)(68736007)(69596002)(4326008)(5660300001)(1671002)(109986005)(47776003)(2906002)(6666003)(53936002)(956004)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2360;H:akshu-HP-EliteBook-745-G2.mshome.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR12MB2360;23:Xsc6kYQ+yGjz72xUiS1ZROK0F85cKbLyLcKv3P1LW?=
- =?us-ascii?Q?NL0EwKalTzSgGYWpiYuGv/TMXvf5nodWgk/9q0YczY0/InliLEcxnoOaJgA8?=
- =?us-ascii?Q?6PDcjloQg9vIb2zQdh2Po3o2N4of+st6IQtEuSA/ERSfyo/td0uBXiGu9ZZW?=
- =?us-ascii?Q?argGCBBM3lVhBeOuKIbI8DC8b9zGOvTVJ4ObzY07276meB9c9dpU2L39PQeM?=
- =?us-ascii?Q?Bw5YJYHnEHoHdJB0QbOERlUQJNvwXHa5kI7NgxYjWsGYunKtHuo7W5EzkxsF?=
- =?us-ascii?Q?L+s7VEHgqDQIGlkXCoMksvPTpO5rJCiCf6xiHu/vGf4+Deq7sSUF90sCwi/r?=
- =?us-ascii?Q?eF/gHEgXYRvOEC9gPFifTe2w9ZiAvH17XV9GbMZrESBhsDN8O7/65B+lPB0I?=
- =?us-ascii?Q?rJ8VzxSBix5QO8zngXcZxmIuWhP9v5hYbFMUHr50T0NG+gIpqaAJbmI10Kr2?=
- =?us-ascii?Q?P+CoIyWM38DiCuwzhyUuVE63ejSVtOt3oe+xhiDGnPcFB4cAzh4a38KLfXMB?=
- =?us-ascii?Q?Vu4q6/73Kulku0iU+rnWWLRqoQbjJKnFrH4tBm3KvEB4SRACd259/AQbf99G?=
- =?us-ascii?Q?uiPEy6u676pHBL72k4IEu6E8YH2uv9keugVa3feHja8Df/Aien8ZFlKd9xsN?=
- =?us-ascii?Q?nAUQIGtakKayDzdSpxye1RswyRo1VeFulgMJKqvMw8MaqIRHGjriG8dwzYV/?=
- =?us-ascii?Q?j2xKAlCXGuh0exyxQtR086Od4F44vIL0uPoLeHhzYME3l3htVl8DUWEdbfdV?=
- =?us-ascii?Q?xZfsIdAAx6/NS6IO+0u5wtv4+n+l6T676AZ42kz+vzNw66bOBtKN4GNmFGyU?=
- =?us-ascii?Q?FKWovCW0Qkt12jH/kCL+SwTsoRH4eQuJ5K/JAiCjVxtbHac/0/1Xlq5tPIcu?=
- =?us-ascii?Q?WPrS09e3/UEP3zcnADhKHHMk9KyDUow7z3R5dI9NoL/NT6scqm9V+yuss72V?=
- =?us-ascii?Q?3vT4LouNuj3qqKLtKMsZJKBR1eRvtbLUTPhXKP4nE8DffgBo++lv6FEf+uii?=
- =?us-ascii?Q?VgjVZ6vyBlo3lEZ+68B9P8+2qMWmrp+9+ZwfUZPj3UgZ4sBzKtDw1gVEXJFy?=
- =?us-ascii?Q?Mc/YeJVPtq74HdfhhAC6ifqwQvxp2kMMSOBCmmrkuDKxFILfP3HV/beLavL8?=
- =?us-ascii?Q?uCKbj2rXOFlP0IdbSOUI3N18WRtibbH+1Ej77wvT22+hFnyfN2nxr6cf4mj8?=
- =?us-ascii?Q?bnj3CbGV/5H+Fk4GwDNisxx/n99WFIvKewZ3D2JNM1LlPgLCOM5M9lgw84L+?=
- =?us-ascii?Q?0En+WtRy1kREB3mhL+Go4Di5pHVRf+Do0KTf0PDDpQLmT/5BmkQBdTQhtrxC?=
- =?us-ascii?B?UT09?=
-X-Microsoft-Antispam-Message-Info: qpLgflS5CeDTVYsj8oBdeNkREzYZtZi3NIPJIwouo4F4argNgXNkoxxkpMDvE1TARLjH0NP0alLasUCqltd1v0m1IuzeXfppl1qUNTMpVw4NK6SpN+xBiHGqgF+uvzNQs1cGUuthc1/O5XfcIDS7VSZLFisDRKGfKcIUgGLedReDPuV5D7rIgCsFABdawijv
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2360;6:GHA/Zi7px5vETm5lnl01KlyA+ToW8aO9EkYT1OyUGkt6iDCWTM5dK8eoDvPMeeH9moAA2snL5eJRYK+89hY7X8eoinOWgejAaepFBm57gs+7rSWrGP8iwzSJTnLxPTG6mn0lxy53Ptg0nLcvLwT1pTgx6pmg4OLXej4W0Qr0qpZxTGQnbCn9gewuLkx7at8ZQIifcXBtk+QkFgRJCKZVutK9Mief6gJNmJBg4rw3wD9SNAVIL0rJ4OVPv5//HF6kxD6kmTQBF+kjdByUtaFnRDmp2ZHd7oPqIN+pQeL3zjfjLmgoxtt4YUW5PTES0qvV1lBawQj3v8AcDu1ZignjPNDYLddc+WZQ8Pi6cNqHx4g1jULjjIYNExVCGM9qNZ7DMfUMc1FuR1NcmQ+w13RRl5hU4mynP2P5yJdx3boSssMjAvHdA0aAoG+pt2X8GsTlJAJvU9UEe4IEE3RjW6TWiw==;5:d0kjIVbmmQrk+n28s/CI//aeJiV+wmr+RFHFptxLGDEDOe0acMV6PGQfGy21wKJR5F1LM4xL41iVjdLBy6IJFq8Toc/dniTn0kklHcWxW2FTUE+kdFKGiJ7FeZlWyf7vSceiKAXEzpyKK9xb7HJR9ogmmzAONywZt0aJv93O/cU=;24:vNnIBSadOqspB5l10oLCnGO9XdP54Pcy35zRib9mWXaNSjksEPcpmnYuL4/1IkE2fJ/pa4c3DVepNz/MG1kYWyDQX8dbFfKxYlq0aqoJWy8=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2360;7:CCCGkoTL4dbDpG3HNM82Xn6esyAAcUwF5Iy4lcnFEzqcHlY8aDHcR3vabNHsxAl833pOPhwCNpoAtq+rGRsMXLgFgSGx/wzpQQ/sEmB9gvMVKOVrGgSMAjDMid6onVO/gyRcbHa/0QnuQ7jAqXkmPr84rIH0sG1zQ/0HLHh7dxFGUDvikQo9N7LFyd/vDJJWek+YlE+dGZrjAT4nXOTV24lkDeJxg0l7wyb2WW210o21LsBHKRedbLH5VI938YbR;20:36J4GdgtQDPCmwgn5QiUbkWqNXP0TpbmYj9tCmx4ZxiYpCKdu4w/MZy8OV1T50sO16nNdnhoq3V6BE56oHDkAdNA5SLhVGxQ5cysrJVtJoFlaEQ00BfNrhjlsZful5f8M5MVjEDPvuoH5/DsV23vJSTh1AUsXEGw4mf6bZc0ExzwUTVPqHsC4heTGhy/rll36hHp6NooO/yd10IBcunxDNLqctYKh7m/99b4pUg9z37iR/W+NijjZ8ykB2q9IoV1
-X-MS-Office365-Filtering-Correlation-Id: 02b1443b-ff2b-48a2-0588-08d5b0d09ada
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 May 2018 08:33:45.7020 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02b1443b-ff2b-48a2-0588-08d5b0d09ada
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2360
-To: unlisted-recipients:; (no To-header on input)
+        id S1751354AbeECIfM (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:35:12 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:37648 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750945AbeECIfH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 04:35:07 -0400
+X-Google-Smtp-Source: AB8JxZp2nhaTsTGgmf/aCfY2+AWssxeABmeYCTAaeXmAlbOYu4PTr9rJEOREDBl61U4CwOjMKMEMRA==
+From: Jia He <hejianet@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Jia He <hejianet@gmail.com>,
+        jia.he@hxt-semitech.com
+Subject: [PATCH] mm/ksm: ignore STABLE_FLAG of rmap_item->address in rmap_walk_ksm
+Date: Thu,  3 May 2018 16:34:48 +0800
+Message-Id: <1525336488-25447-1-git-send-email-hejianet@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stoney SoC provides oscout clock. This clock can support 25Mhz and
-48Mhz of frequency.
-The clock is available for general system use.
+In our armv8a server(QDF2400), I noticed a WARN_ON caused by PAGE_SIZE
+unaligned for rmap_item->address.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+--------------------------begin--------------------------------------
+[  410.853828] WARNING: CPU: 4 PID: 4641 at
+arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1826
+kvm_age_hva_handler+0xc0/0xc8
+[  410.864518] Modules linked in: vhost_net vhost tap xt_CHECKSUM
+ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT
+nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink
+ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6
+nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security
+ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4
+nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw
+ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter
+rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi
+ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm
+ib_ucm ib_umad rdma_cm ib_cm iw_cm mlx5_ib vfat fat ib_uverbs dm_mirror
+dm_region_hash ib_core dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
+[  410.935101]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs
+libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform
+libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
+[  410.951369] CPU: 4 PID: 4641 Comm: memhog Tainted: G        W
+4.17.0-rc3+ #8
+[  410.959104] Hardware name: <snip for confidential issues>
+[  410.969791] pstate: 80400005 (Nzcv daif +PAN -UAO)
+[  410.974575] pc : kvm_age_hva_handler+0xc0/0xc8
+[  410.979012] lr : handle_hva_to_gpa+0xa8/0xe0
+[  410.983274] sp : ffff801761553290
+[  410.986581] x29: ffff801761553290 x28: 0000000000000000
+[  410.991888] x27: 0000000000000002 x26: 0000000000000000
+[  410.997195] x25: ffff801765430058 x24: ffff0000080b5608
+[  411.002501] x23: 0000000000000000 x22: ffff8017ccb84000
+[  411.007807] x21: 0000000003ff0000 x20: ffff8017ccb84000
+[  411.013113] x19: 000000000000fe00 x18: ffff000008fb3c08
+[  411.018419] x17: 0000000000000000 x16: 0060001645820bd3
+[  411.023725] x15: ffff80176aacbc08 x14: 0000000000000000
+[  411.029031] x13: 0000000000000040 x12: 0000000000000228
+[  411.034337] x11: 0000000000000000 x10: 0000000000000000
+[  411.039643] x9 : 0000000000000010 x8 : 0000000000000004
+[  411.044949] x7 : 0000000000000000 x6 : 00008017f0770000
+[  411.050255] x5 : 0000fffda59f0200 x4 : 0000000000000000
+[  411.055561] x3 : 0000000000000000 x2 : 000000000000fe00
+[  411.060867] x1 : 0000000003ff0000 x0 : 0000000020000000
+[  411.066173] Call trace:
+[  411.068614]  kvm_age_hva_handler+0xc0/0xc8
+[  411.072703]  handle_hva_to_gpa+0xa8/0xe0
+[  411.076619]  kvm_age_hva+0x4c/0xe8
+[  411.080014]  kvm_mmu_notifier_clear_flush_young+0x54/0x98
+[  411.085408]  __mmu_notifier_clear_flush_young+0x6c/0xa0
+[  411.090627]  page_referenced_one+0x154/0x1d8
+[  411.094890]  rmap_walk_ksm+0x12c/0x1d0
+[  411.098632]  rmap_walk+0x94/0xa0
+[  411.101854]  page_referenced+0x194/0x1b0
+[  411.105770]  shrink_page_list+0x674/0xc28
+[  411.109772]  shrink_inactive_list+0x26c/0x5b8
+[  411.114122]  shrink_node_memcg+0x35c/0x620
+[  411.118211]  shrink_node+0x100/0x430
+[  411.121778]  do_try_to_free_pages+0xe0/0x3a8
+[  411.126041]  try_to_free_pages+0xe4/0x230
+[  411.130045]  __alloc_pages_nodemask+0x564/0xdc0
+[  411.134569]  alloc_pages_vma+0x90/0x228
+[  411.138398]  do_anonymous_page+0xc8/0x4d0
+[  411.142400]  __handle_mm_fault+0x4a0/0x508
+[  411.146489]  handle_mm_fault+0xf8/0x1b0
+[  411.150321]  do_page_fault+0x218/0x4b8
+[  411.154064]  do_translation_fault+0x90/0xa0
+[  411.158239]  do_mem_abort+0x68/0xf0
+[  411.161721]  el0_da+0x24/0x28
+---------------------------end---------------------------------------
+
+In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
+then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
+Thus it causes exceptions in handle_hva_to_gpa on arm64.
+
+This patch fixes it by ignoring the low bits of rmap_item->address when
+doing rmap_walk_ksm.
+
+Signed-off-by: jia.he@hxt-semitech.com
 ---
-v2: config change, added SPDX tag and used clk_hw_register_.
- drivers/clk/x86/Makefile             |  1 +
- drivers/clk/x86/clk-st.c             | 86 ++++++++++++++++++++++++++++++++++++
- include/linux/platform_data/clk-st.h | 35 +++++++++++++++
- 3 files changed, 122 insertions(+)
- create mode 100644 drivers/clk/x86/clk-st.c
- create mode 100644 include/linux/platform_data/clk-st.h
+ mm/ksm.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-index 1367afb..2aee002 100644
---- a/drivers/clk/x86/Makefile
-+++ b/drivers/clk/x86/Makefile
-@@ -1,3 +1,4 @@
- clk-x86-lpss-objs		:= clk-lpt.o
- obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
- obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
-+obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
-diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-new file mode 100644
-index 0000000..d8c283c
---- /dev/null
-+++ b/drivers/clk/x86/clk-st.c
-@@ -0,0 +1,86 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * clock framework for AMD Stoney based clocks
-+ *
-+ * Copyright 2018 Advanced Micro Devices, Inc.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
-+ */
+diff --git a/mm/ksm.c b/mm/ksm.c
+index e3cbf9a..3f0d980 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -199,6 +199,8 @@ struct rmap_item {
+ #define SEQNR_MASK	0x0ff	/* low bits of unstable tree seqnr */
+ #define UNSTABLE_FLAG	0x100	/* is a node of the unstable tree */
+ #define STABLE_FLAG	0x200	/* is listed from the stable tree */
++#define KSM_FLAG_MASK	(SEQNR_MASK|UNSTABLE_FLAG|STABLE_FLAG)
++				/* to mask all the flags */
+ 
+ /* The stable and unstable tree heads */
+ static struct rb_root one_stable_tree[1] = { RB_ROOT };
+@@ -2570,10 +2572,13 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
+ 		anon_vma_lock_read(anon_vma);
+ 		anon_vma_interval_tree_foreach(vmac, &anon_vma->rb_root,
+ 					       0, ULONG_MAX) {
++			unsigned long addr;
 +
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_data/clk-st.h>
-+#include <linux/platform_device.h>
+ 			cond_resched();
+ 			vma = vmac->vma;
+-			if (rmap_item->address < vma->vm_start ||
+-			    rmap_item->address >= vma->vm_end)
 +
-+/* Clock Driving Strength 2 register */
-+#define CLKDRVSTR2	0x28
-+/* Clock Control 1 register */
-+#define MISCCLKCNTL1	0x40
-+/* Auxiliary clock1 enable bit */
-+#define OSCCLKENB	2
-+/* 25Mhz auxiliary output clock freq bit */
-+#define OSCOUT1CLK25MHZ	16
++			addr = rmap_item->address;
++			if (addr < vma->vm_start || addr >= vma->vm_end)
+ 				continue;
+ 			/*
+ 			 * Initially we examine only the vma which covers this
+@@ -2587,8 +2592,10 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
+ 			if (rwc->invalid_vma && rwc->invalid_vma(vma, rwc->arg))
+ 				continue;
+ 
+-			if (!rwc->rmap_one(page, vma,
+-					rmap_item->address, rwc->arg)) {
++			if (addr & STABLE_FLAG)
++				addr &= ~KSM_FLAG_MASK;
 +
-+#define ST_CLK_48M	0
-+#define ST_CLK_25M	1
-+#define ST_CLK_MUX	2
-+#define ST_CLK_GATE	3
-+#define ST_MAX_CLKS	4
-+
-+static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
-+
-+static int st_clk_probe(struct platform_device *pdev)
-+{
-+	struct st_clk_data *st_data;
-+	struct clk_hw **hws;
-+
-+	st_data = dev_get_platdata(&pdev->dev);
-+	if (!st_data || !st_data->base)
-+		return -EINVAL;
-+
-+	hws = kzalloc(sizeof(*hws) * ST_MAX_CLKS, GFP_KERNEL);
-+
-+	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
-+						     48000000);
-+	hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
-+						     25000000);
-+
-+	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-+		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
-+		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
-+
-+	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-+
-+	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
-+		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-+		CLK_GATE_SET_TO_DISABLE, NULL);
-+
-+	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver st_clk_driver = {
-+	.driver = {
-+		.name = "clk-st",
-+	},
-+	.probe = st_clk_probe,
-+};
-+builtin_platform_driver(st_clk_driver);
-diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
-new file mode 100644
-index 0000000..6a992e9
---- /dev/null
-+++ b/include/linux/platform_data/clk-st.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * clock framework for AMD Stoney based clock
-+ *
-+ * Copyright 2018 Advanced Micro Devices, Inc.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#ifndef __CLK_ST_H
-+#define __CLK_ST_H
-+
-+#include <linux/compiler.h>
-+
-+struct st_clk_data {
-+	void __iomem *base;
-+};
-+
-+#endif /* __CLK_ST_H */
++			if (!rwc->rmap_one(page, vma, addr, rwc->arg)) {
+ 				anon_vma_unlock_read(anon_vma);
+ 				return;
+ 			}
 -- 
-1.9.1
+1.8.3.1
