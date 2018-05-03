@@ -1,168 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752068AbeECGfS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 02:35:18 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44630 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751872AbeECGfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 02:35:15 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="55587385"
-Date: Thu, 3 May 2018 09:35:08 +0300
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To: "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
-        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
-        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
-        "'linux-security-module@vger.kernel.org'"
-        <linux-security-module@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-Message-ID: <20180503063508.GA8702@linux.intel.com>
-References: <20180407161236.22969-1-tomas.winkler@intel.com>
- <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
- <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
- <20180424160328.GA5119@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
- <20180502133246.GA6091@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1752085AbeECGg6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:36:58 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38196 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751872AbeECGgz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 02:36:55 -0400
+X-Google-Smtp-Source: AB8JxZqs254fQ8qZOwy7ZCPKTIqefrSpdldFCF7v44ZzYsQ1EhtPSPdRBWcXstLSvPLkxDrYmpzGpw==
+From: Jongseok Kim <ks77sj@gmail.com>
+To: Vitaly Wool <vitalywool@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Jongseok Kim <ks77sj@gmail.com>
+Subject: [PATCH v2] z3fold: fix reclaim lock-ups
+Date: Thu,  3 May 2018 15:36:18 +0900
+Message-Id: <1525329378-1864-1-git-send-email-ks77sj@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 01:35:47PM +0000, Winkler, Tomas wrote:
-> 
-> 
-> > 
-> > On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
-> > > > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
-> > > >
-> > > > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
-> > > > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
-> > > > > > > > >
-> > > > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
-> > > > > > > > > > In crb_map_io() function, __crb_request_locality() is
-> > > > > > > > > > called prior to crb_cmd_ready(), but if one of the
-> > > > > > > > > > consecutive function fails the flow bails out instead of
-> > > > > > > > > > trying to relinquish
-> > > > locality.
-> > > > > > > > > > This patch adds goto jump to __crb_relinquish_locality()
-> > > > > > > > > > on the error path.
-> > > > > > > > > >
-> > > > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be
-> > > > > > > > > > issued only after granting
-> > > > > > > > > > locality)
-> > > > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> > > > > > > > > > ---
-> > > > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
-> > > > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > > > > > > > > >
-> > > > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > b/drivers/char/tpm/tpm_crb.c index
-> > > > > > > > > > 7f78482cd157..34fbc6cb097b
-> > > > > > > > > > 100644
-> > > > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
-> > > > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
-> > > > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > > > >
-> > > > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
-> > > > > > > > > > >control_address,
-> > > > > > > > > >  				   sizeof(struct crb_regs_tail));
-> > > > > > > > > > -	if (IS_ERR(priv->regs_t))
-> > > > > > > > > > -		return PTR_ERR(priv->regs_t);
-> > > > > > > > > > +	if (IS_ERR(priv->regs_t)) {
-> > > > > > > > > > +		ret = PTR_ERR(priv->regs_t);
-> > > > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > > > +	}
-> > > > > > > > > >
-> > > > > > > > > >  	/*
-> > > > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@
-> > > > > > > > > > -520,7
-> > > > > > > > > > +522,7
-> > > > > > > > >
-> > > > > > > > > @@
-> > > > > > > > > > static int crb_map_io(struct acpi_device *device, struct
-> > > > > > > > > > crb_priv *priv,
-> > > > > > > > > >  	 */
-> > > > > > > > > >  	ret = crb_cmd_ready(dev, priv);
-> > > > > > > > > >  	if (ret)
-> > > > > > > > > > -		return ret;
-> > > > > > > > > > +		goto out_relinquish_locality;
-> > > > > > > > > >
-> > > > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
-> > > > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
-> > > > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
-> > > > > > > > > > acpi_device *device, struct crb_priv *priv,
-> > > > > > > > > >
-> > > > > > > > > >  	crb_go_idle(dev, priv);
-> > > > > > > > > >
-> > > > > > > > > > +out_relinquish_locality:
-> > > > > > > > > > +
-> > > > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
-> > > > > > > > > >
-> > > > > > > > > >  	return ret;
-> > > > > > > > >
-> > > > > > > > > Thanks, please just call it before returning in the error path.
-> > > > > > > >
-> > > > > > > > Can you please elaborate why, isn't the centralized exiting
-> > > > > > > > of functions preferred kernel coding style?
-> > > > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.h
-> > > > > > > > tml#
-> > > > > > > > cent
-> > > > > > > > ra
-> > > > > > > > lized-ex
-> > > > > > > > iting-of-functions
-> > > > > > >
-> > > > > > > You exit only from one location (not multiple) and not from a
-> > > > > > > nested context. Here you just add more complexity by doing this.
-> > > > > >
-> > > > > > Where is the complexity ? I see it as a standard way of undoing on
-> > exit.
-> > > > > > Tomas
-> > > > >
-> > > > > Jarkko, can you please respond.
-> > > > > Thanks
-> > > > > Tomas
-> > > >
-> > > > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
-> > > >
-> > > > My earlier comment was incorrect as there are two locations to exit
-> > > > (not sure how I managed to overlook the patch that way).
-> > > >
-> > > > Thus, I have only two very  minor requets:
-> > > >
-> > > > * Remove the extra newline (the last line addition in the patch).
-> > > Okay
-> > > > * Use just label named out as we have only one exception handler.
-> > > Cannot do that, as the bail out is prior to cmd_ready request so there is no
-> > need for go_idle which is under out label.
-> > > >
-> > > > I'll move on to testing, and if it it passes, I can do those updates myself.
-> > > Thanks,  I prefer to resend myself.
-> > >
-> > > Tomas
-> > 
-> > Add my tested-by as it is cosmectic change, thanks.
-> 
-> 
-> What change exactly? I had impression you've accepted the patch as is?
-> Thanks
-> Tomas
+In the processing of headless pages, there was a problem that the
+zhdr pointed to another page or a page was alread released in
+z3fold_free(). So, the wrong page is encoded in headless, or test_bit
+does not work properly in z3fold_reclaim_page(). This patch fixed these
+problems.
 
-Hmm... maybe there is some misunderstandig but I thought you were
-going to make the updates above yourself and send a revised patch.
+Signed-off-by: Jongseok Kim <ks77sj@gmail.com>
+---
+ mm/z3fold.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-/Jarkko
+diff --git a/mm/z3fold.c b/mm/z3fold.c
+index d5b3f49..a36ffa5ab 100644
+--- a/mm/z3fold.c
++++ b/mm/z3fold.c
+@@ -819,6 +819,7 @@ static void z3fold_free(struct z3fold_pool *pool, unsigned long handle)
+ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ {
+ 	int i, ret = 0;
++	bool is_headless;
+ 	struct z3fold_header *zhdr = NULL;
+ 	struct page *page = NULL;
+ 	struct list_head *pos;
+@@ -836,11 +837,11 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 		}
+ 		list_for_each_prev(pos, &pool->lru) {
+ 			page = list_entry(pos, struct page, lru);
++			zhdr = page_address(page);
+ 			if (test_bit(PAGE_HEADLESS, &page->private))
+ 				/* candidate found */
+ 				break;
+ 
+-			zhdr = page_address(page);
+ 			if (!z3fold_page_trylock(zhdr))
+ 				continue; /* can't evict at this point */
+ 			kref_get(&zhdr->refcount);
+@@ -873,9 +874,11 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 			 * reference to this page
+ 			 */
+ 			z3fold_page_unlock(zhdr);
++			is_headless = false;
+ 		} else {
+ 			first_handle = encode_handle(zhdr, HEADLESS);
+ 			last_handle = middle_handle = 0;
++			is_headless = true;
+ 		}
+ 
+ 		/* Issue the eviction callback(s) */
+@@ -895,11 +898,10 @@ static int z3fold_reclaim_page(struct z3fold_pool *pool, unsigned int retries)
+ 				goto next;
+ 		}
+ next:
+-		if (test_bit(PAGE_HEADLESS, &page->private)) {
+-			if (ret == 0) {
+-				free_z3fold_page(page);
++		if (is_headless) {
++			if (ret == 0)
+ 				return 0;
+-			}
++
+ 			spin_lock(&pool->lock);
+ 			list_add(&page->lru, &pool->lru);
+ 			spin_unlock(&pool->lock);
+-- 
+2.7.4
