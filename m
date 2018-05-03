@@ -1,67 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751277AbeECVmM (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 17:42:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43802 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751195AbeECVmK (ORCPT
+        id S1751340AbeECVm0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 17:42:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57282 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeECVmY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 17:42:10 -0400
-Subject: Re: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: James Morris <jmorris@namei.org>,
-        Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
-Cc: David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Keyrings <keyrings@vger.kernel.org>,
-        Linux Integrity <linux-integrity@vger.kernel.org>,
-        Linux Security <linux-security-module@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        George Wilson <gcwilson@us.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Patrick Callaghan <patrickc@us.ibm.com>
-Date: Thu, 03 May 2018 17:42:00 -0400
-In-Reply-To: <alpine.LRH.2.21.1805040311050.12843@namei.org>
-References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
-         <alpine.LRH.2.21.1805040311050.12843@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+        Thu, 3 May 2018 17:42:24 -0400
+Date: Thu, 3 May 2018 14:42:22 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Chintan Pandya <cpandya@codeaurora.org>
+Cc: vbabka@suse.cz, labbott@redhat.com, catalin.marinas@arm.com,
+        hannes@cmpxchg.org, f.fainelli@gmail.com, xieyisheng1@huawei.com,
+        ard.biesheuvel@linaro.org, richard.weiyang@gmail.com,
+        byungchul.park@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, khandual@linux.vnet.ibm.com,
+        mhocko@kernel.org
+Subject: Re: [PATCH v2 2/2] mm: vmalloc: Pass proper vm_start into
+ debugobjects
+Message-Id: <20180503144222.bcb5c63bb96309bc3b37fb6f@linux-foundation.org>
+In-Reply-To: <1523961828-9485-3-git-send-email-cpandya@codeaurora.org>
+References: <1523961828-9485-1-git-send-email-cpandya@codeaurora.org>
+        <1523961828-9485-3-git-send-email-cpandya@codeaurora.org>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18050321-0008-0000-0000-000004F2B903
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050321-0009-0000-0000-00001E86E241
-Message-Id: <1525383720.3539.76.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805030187
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
-> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
-> 
-> > These patches add support for modifying the reserved space for extra
-> > certificates in a compressed bzImage in x86. This allows separating the
-> > system keyring certificate from the kernel build process. After the kernel
-> > image is distributed, the insert-sys-cert script can be used to insert the
-> > certificate for x86.
-> 
-> Can you provide more explanation of how this is useful and who would use 
-> it?
+On Tue, 17 Apr 2018 16:13:48 +0530 Chintan Pandya <cpandya@codeaurora.org> wrote:
 
-I'm involved in a number projects that rely on a kernel build group to
-actually build kernels for their systems.  Reserving memory for
-additional public keys, allows product groups to insert public keys
-post build.  Initially the product groups might insert development
-keys, but eventually they would insert the product's public key.
+> Client can call vunmap with some intermediate 'addr'
+> which may not be the start of the VM area. Entire
+> unmap code works with vm->vm_start which is proper
+> but debug object API is called with 'addr'. This
+> could be a problem within debug objects.
+> 
+> Pass proper start address into debug object API.
+> 
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1124,15 +1124,15 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+>  	BUG_ON(addr > VMALLOC_END);
+>  	BUG_ON(!PAGE_ALIGNED(addr));
+>  
+> -	debug_check_no_locks_freed(mem, size);
+> -
+>  	if (likely(count <= VMAP_MAX_ALLOC)) {
+> +		debug_check_no_locks_freed(mem, size);
+>  		vb_free(mem, size);
+>  		return;
+>  	}
+>  
+>  	va = find_vmap_area(addr);
+>  	BUG_ON(!va);
+> +	debug_check_no_locks_freed(va->va_start, (va->va_end - va->va_start));
+>  	free_unmap_vmap_area(va);
+>  }
+>  EXPORT_SYMBOL(vm_unmap_ram);
 
-Mimi
+hm, how did this sneak through?
+
+mm/vmalloc.c:1139:29: warning: passing argument 1 of debug_check_no_locks_freed makes pointer from integer without a cast [-Wint-conversion]
+  debug_check_no_locks_freed(va->va_start, (va->va_end - va->va_start));
+
+--- a/mm/vmalloc.c~mm-vmalloc-pass-proper-vm_start-into-debugobjects-fix
++++ a/mm/vmalloc.c
+@@ -1136,7 +1136,8 @@ void vm_unmap_ram(const void *mem, unsig
+ 
+ 	va = find_vmap_area(addr);
+ 	BUG_ON(!va);
+-	debug_check_no_locks_freed(va->va_start, (va->va_end - va->va_start));
++	debug_check_no_locks_freed((void *)va->va_start,
++				    (va->va_end - va->va_start));
+ 	free_unmap_vmap_area(va);
+ }
+ EXPORT_SYMBOL(vm_unmap_ram);
