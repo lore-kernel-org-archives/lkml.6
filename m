@@ -1,126 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751539AbeEDCmX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 22:42:23 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:35443 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751361AbeEDCle (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751354AbeEDCle (ORCPT <rfc822;w@1wt.eu>);
         Thu, 3 May 2018 22:41:34 -0400
-X-Google-Smtp-Source: AB8JxZpzk6Q3cslPUKozzaQFthTqQAHrgTB5demkYqpbVT5Yo6iE6axBaUNKWS+v8J8hwVtH1Jiz1YNhjwsJHKUJSe0=
-MIME-Version: 1.0
-In-Reply-To: <20180503153310.GA9738@ziepe.ca>
-References: <1525356274-736-1-git-send-email-lidongchen@tencent.com> <20180503153310.GA9738@ziepe.ca>
-From: 858585 jemmy <jemmy858585@gmail.com>
-Date: Fri, 4 May 2018 10:41:33 +0800
-Message-ID: <CAOGPPbe_kDROfPampoiGW=v-AsYeBQjQ01wwfuMKPkSk-yqHoA@mail.gmail.com>
-Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
-        leon@kernel.org, artemyko@mellanox.com, dan.j.williams@intel.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        adido@mellanox.com, Gal Shachaf <galsha@mellanox.com>,
-        Aviad Yehezkel <aviadye@mellanox.com>,
-        Lidong Chen <lidongchen@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+Received: from mga11.intel.com ([192.55.52.93]:18422 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751316AbeEDClb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 22:41:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
+   d="scan'208";a="221513536"
+From: kan.liang@intel.com
+To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc: acme@kernel.org, eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@intel.com>
+Subject: [RESEND PATCH V7 3/8] perf/x86/intel/uncore: Correct fixed counter index check in generic code
+Date: Thu,  3 May 2018 11:25:08 -0700
+Message-Id: <1525371913-10597-3-git-send-email-kan.liang@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
+References: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 11:33 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
->> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
->> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
->> exited, get_pid_task will return NULL, ib_umem_release does not decrease
->> mm->pinned_vm. This patch fixes it by use tgid.
->>
->> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
->> ---
->>  drivers/infiniband/core/umem.c | 12 ++++++------
->>  include/rdma/ib_umem.h         |  2 +-
->>  2 files changed, 7 insertions(+), 7 deletions(-)
->
-> Why are we even using a struct pid for this? Does anyone know?
->
-> I'm surprised that struct task isn't held in the struct ib_umem..
->
-> Is group_leader really OK and always guarenteed to return the same
-> struct mm?? For some reason I have this recollection that the leader
-> can change under some situation..
+From: Kan Liang <kan.liang@intel.com>
 
-I read kernel code, it seems that the userspace thread can guarantee
-to return the same struct mm.
-in the copy_process function, it checks the CLONE_THREAD,
-CLONE_SIGHAND, CLONE_VM must use
-at the same time.
-And I do not find any other part code change the mm and group_leader
-for userspace thread.
+There is no index which is bigger than UNCORE_PMC_IDX_FIXED. The only
+exception is client IMC uncore, which has been specially handled.
+For generic code, it is not correct to use >= to check fixed counter.
+The code quality issue will bring problem when a new counter index is
+introduced.
 
->
->> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
->> index 9a4e899..8813ba5 100644
->> --- a/drivers/infiniband/core/umem.c
->> +++ b/drivers/infiniband/core/umem.c
->> @@ -119,7 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>       umem->length     = size;
->>       umem->address    = addr;
->>       umem->page_shift = PAGE_SHIFT;
->> -     umem->pid        = get_task_pid(current, PIDTYPE_PID);
->> +     umem->tgid       = get_task_pid(current->group_leader, PIDTYPE_PID);
->>       /*
->>        * We ask for writable memory if any of the following
->>        * access flags are set.  "Local write" and "remote write"
->> @@ -132,7 +132,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>                IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
->>
->>       if (access & IB_ACCESS_ON_DEMAND) {
->> -             put_pid(umem->pid);
->> +             put_pid(umem->tgid);
->>               ret = ib_umem_odp_get(context, umem, access);
->>               if (ret) {
->>                       kfree(umem);
->> @@ -148,7 +148,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>
->>       page_list = (struct page **) __get_free_page(GFP_KERNEL);
->>       if (!page_list) {
->> -             put_pid(umem->pid);
->> +             put_pid(umem->tgid);
->>               kfree(umem);
->>               return ERR_PTR(-ENOMEM);
->>       }
->> @@ -231,7 +231,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>       if (ret < 0) {
->>               if (need_release)
->>                       __ib_umem_release(context->device, umem, 0);
->> -             put_pid(umem->pid);
->> +             put_pid(umem->tgid);
->>               kfree(umem);
->>       } else
->>               current->mm->pinned_vm = locked;
->> @@ -274,8 +274,8 @@ void ib_umem_release(struct ib_umem *umem)
->>
->>       __ib_umem_release(umem->context->device, umem, 1);
->>
->> -     task = get_pid_task(umem->pid, PIDTYPE_PID);
->> -     put_pid(umem->pid);
->> +     task = get_pid_task(umem->tgid, PIDTYPE_PID);
->> +     put_pid(umem->tgid);
->>       if (!task)
->>               goto out;
->>       mm = get_task_mm(task);
->> diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
->> index 23159dd..2398849 100644
->> --- a/include/rdma/ib_umem.h
->> +++ b/include/rdma/ib_umem.h
->> @@ -48,7 +48,7 @@ struct ib_umem {
->>       int                     writable;
->>       int                     hugetlb;
->>       struct work_struct      work;
->> -     struct pid             *pid;
->> +     struct pid             *tgid;
->>       struct mm_struct       *mm;
->>       unsigned long           diff;
->>       struct ib_umem_odp     *odp_data;
->> --
->> 1.8.3.1
->>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Kan Liang <kan.liang@intel.com>
+---
+
+No changes since V6
+
+ arch/x86/events/intel/uncore.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index a7956fc..3b0f93e 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -218,7 +218,7 @@ void uncore_perf_event_update(struct intel_uncore_box *box, struct perf_event *e
+ 	u64 prev_count, new_count, delta;
+ 	int shift;
+ 
+-	if (event->hw.idx >= UNCORE_PMC_IDX_FIXED)
++	if (event->hw.idx == UNCORE_PMC_IDX_FIXED)
+ 		shift = 64 - uncore_fixed_ctr_bits(box);
+ 	else
+ 		shift = 64 - uncore_perf_ctr_bits(box);
+-- 
+2.7.4
