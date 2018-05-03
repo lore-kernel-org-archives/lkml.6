@@ -1,89 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeECBjf (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 21:39:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50594 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751837AbeECBjd (ORCPT
+        id S1751969AbeECBnO (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 21:43:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51088 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751861AbeECBnK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 21:39:33 -0400
-Date: Thu, 3 May 2018 10:39:19 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Cc: Akshu Agrawal <akshu.agrawal@amd.com>,
-        "djkurtz@chromium.org" <djkurtz@chromium.org>,
-        "Alexander.Deucher@amd.com" <Alexander.Deucher@amd.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ASoC: da7219: read fmw property to get mclk for
- non-dts systems
-Message-ID: <20180503013919.GN2714@sirena.org.uk>
-References: <1525080203-18947-1-git-send-email-akshu.agrawal@amd.com>
- <2E89032DDAA8B9408CB92943514A0337014C1E93BC@SW-EX-MBX01.diasemi.com>
- <20180501205006.GE2714@sirena.org.uk>
- <2E89032DDAA8B9408CB92943514A0337014C1E9782@SW-EX-MBX01.diasemi.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MSd2ShuMixI0uVaZ"
-Content-Disposition: inline
-In-Reply-To: <2E89032DDAA8B9408CB92943514A0337014C1E9782@SW-EX-MBX01.diasemi.com>
-X-Cookie: Rubber bands have snappy endings!
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Wed, 2 May 2018 21:43:10 -0400
+Subject: Re: [PATCH] evm: Don't update hmacs in user ns mounts
+From: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, James Morris <james.l.morris@oracle.com>
+Date: Wed, 02 May 2018 21:43:03 -0400
+In-Reply-To: <87r2mtybhf.fsf@xmission.com>
+References: <87r2mtybhf.fsf@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18050301-0040-0000-0000-000004355780
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050301-0041-0000-0000-0000263977BC
+Message-Id: <1525311783.3238.19.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030012
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-05-02 at 16:49 -0500, Eric W. Biederman wrote:
+> From: Seth Forshee <seth.forshee@canonical.com>
+> Date: Fri, 22 Dec 2017 15:32:35 +0100
+> 
+> The kernel should not calculate new hmacs for mounts done by
+> non-root users. Update evm_calc_hmac_or_hash() to refuse to
+> calculate new hmacs for mounts for non-init user namespaces.
+> 
+> Cc: linux-integrity@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: James Morris <james.l.morris@oracle.com>
+> Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Signed-off-by: Seth Forshee <seth.forshee@canonical.com>
+> Signed-off-by: Dongsu Park <dongsu@kinvolk.io>
+> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+> ---
+> 
+> Mimi this patch has been floating around for a while and it appears to
+> be the only piece missing from the vfs to make unprivileged mounts safe
+> (at least semantically).  Do you want to merge this through your integrity
+> tree or should merge this through my userns tree?
 
---MSd2ShuMixI0uVaZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Matthew's EVM patches don't conflict with this change, so either way
+is fine.
 
-On Wed, May 02, 2018 at 10:13:55AM +0000, Adam Thomson wrote:
-> On 01 May 2018 21:50, Mark Brown wrote:
+Mimi
 
-> > There's a lot of things that ACPI *should* do but doesn't - it's a bit
-> > of a shambles how ACPI standards get defined and what's there is not
-> > really intended to handle systems like these semi-embedded ones.  One of
-> > the big gaps in ACPI is that it has no handling at all of clocks, that's
-> > supposed to be done transparently by firmware in the ACPI model.  What a
-> > lot of the embedded Intel people have been doing is coopting the DT
-> > bindings wholesale for ACPI systems but that has problems when you get
-> > into areas which should be handled in some way on ACPI systems like
-> > power and unfortunately clocks are kind of power adjacent so might be a
-> > bit sketchy here.
-
-> Yes I was aware that previously that was the case, although have not followed
-> this for a while. It just feels here that we should aim for something more
-> generic rather than a device specific property/binding, if possible, as that
-> feels messy to me and I'm sure other drivers could take advantage of this as
-> well. I've not looked at the clock code in too much detail though, at least with
-> regards to this area, so not sure how feasible that is.
-
-> As a suggestion for ACPI would it be possible to re-use the 'clock-names'
-> property and add something in the framework to handle this?
-
-I completely agree that ACPI should have handling for clocks but it
-really feels like something that should be done as a proper spec rather
-than just ad hoc by Linux like the x86 embedded people often do - it's
-too close to the power management stuff that ACPI definitely does
-handle.
-
---MSd2ShuMixI0uVaZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrqaEYACgkQJNaLcl1U
-h9DjEwf/akcOq3FX7OJHawOodNuod6nfkVvTE5kWue1W5AVdzCXlsTknOiOkIn1z
-pEPHEJ1G56wzcFt4ezga+5DkIYnB1RNzxCdC0noLuFEQNSegwJ7oskOQUaAwRTgd
-2FlNUEi2pmEpP7A4bU6EonrIkhrC1zN5MHgmh4VjfBXpbVKEPvbxeTMDr1X8b2I2
-sXXGMNDAn76mlG0xiEskLThHEpqyAFbxjBQIIBGmbgpjRIJJWg87WXT/0aLTBAEn
-WzUK8iaNFiPeIqYNFH3drHquTqSHwZyXdhZwifT6m2hpK+UfHXTcEQNtf+6jbkEF
-D1KA6ISg0/rcMVBzr40DQpx1qvCunA==
-=nEHY
------END PGP SIGNATURE-----
-
---MSd2ShuMixI0uVaZ--
+> 
+>  security/integrity/evm/evm_crypto.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> 
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index a46fba322340..facf9cdd577d 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -200,7 +200,8 @@ static int evm_calc_hmac_or_hash(struct dentry *dentry,
+>  	int size;
+>  	bool ima_present = false;
+> 
+> -	if (!(inode->i_opflags & IOP_XATTR))
+> +	if (!(inode->i_opflags & IOP_XATTR) ||
+> +	    inode->i_sb->s_user_ns != &init_user_ns)
+>  		return -EOPNOTSUPP;
+> 
+>  	desc = init_desc(type);
