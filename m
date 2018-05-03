@@ -1,108 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeECOSG (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:18:06 -0400
-Received: from muru.com ([72.249.23.125]:39908 "EHLO muru.com"
+        id S1751380AbeECOTZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:19:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751371AbeECOSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:18:03 -0400
-Date: Thu, 3 May 2018 07:17:59 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: "Reizer, Eyal" <eyalr@ti.com>
-Cc: Eyal Reizer <eyalreizer@gmail.com>,
-        "bcousson@baylibre.com" <bcousson@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
- support
-Message-ID: <20180503141759.GP98604@atomide.com>
-References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
- <20180502145100.GK98604@atomide.com>
- <5cc906da15da45ab96e06957f878b65b@ti.com>
+        id S1751111AbeECOTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:19:23 -0400
+Date: Thu, 3 May 2018 10:19:20 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Du, Changbin" <changbin.du@intel.com>
+Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
+        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
+        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] asm-generic: fix build error in fix_to_virt with
+ CONFIG_DEBUG_EXPERIENCE
+Message-ID: <20180503101920.3157f63f@gandalf.local.home>
+In-Reply-To: <20180503132508.qudxf67tyijvjndo@intel.com>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+        <1525268700-10631-6-git-send-email-changbin.du@intel.com>
+        <20180502101930.25a5437d@gandalf.local.home>
+        <20180503132508.qudxf67tyijvjndo@intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cc906da15da45ab96e06957f878b65b@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Reizer, Eyal <eyalr@ti.com> [180503 06:43]:
-> > 
-> > * Eyal Reizer <eyalreizer@gmail.com> [180501 00:26]:
-> > > enable mmc3 used for wlan and uart1 used for bluetooth
-> > > configure the gpios used for wlan and bluetooth controls
-> > > add fixed voltage regulator used for wlan power control
-> > ...
-> > >  / {
-> > >  	model = "TI AM437x SK EVM";
-> > > @@ -158,6 +159,22 @@
-> > >  			};
-> > >  		};
-> > >  	};
-> > > +
-> > > +	vmmcwl_fixed: fixedregulator-mmcwl {
-> > > +		/*
-> > > +		 * WL_EN is not SDIO standard compliant. It is an out of band
-> > > +		 * signal and hard to be dealt with in a standard way by the
-> > > +		 * SDIO core driver.
-> > > +		 * So modelling the WL_EN line as a regulator was a natural
-> > > +		 * choice as the MMC core already deals with MMC supplies.
-> > > +		 */
-> > > +		compatible = "regulator-fixed";
-> > > +		regulator-name = "vmmcwl_fixed";
-> > > +		regulator-min-microvolt = <1800000>;
-> > > +		regulator-max-microvolt = <1800000>;
-> > > +		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-> > > +		enable-active-high;
-> > > +	};
-> > >  };
-> > 
-> > Interesting that it needs much longer delay here compared to the
-> > earlier?
+On Thu, 3 May 2018 21:25:08 +0800
+"Du, Changbin" <changbin.du@intel.com> wrote:
+
+> I think fix_to_virt() is designed for constant idx only. So I think we should
+> fix it at the caller side by replacing it with __fix_to_virt().
 > 
-> Where do you see a delay in here?
-> There is no startup-delay-us value used in this patch.
+> --- a/arch/arm/mm/mmu.c
+> +++ b/arch/arm/mm/mmu.c
+> @@ -1599,7 +1599,7 @@ static void __init early_fixmap_shutdown(void)
+>                 pte_t *pte;
+>                 struct map_desc map;
+> 
+> -               map.virtual = fix_to_virt(i);
+> +               map.virtual = __fix_to_virt(i);
+>                 pte = pte_offset_early_fixmap(pmd_off_k(map.virtual), map.virtual);
 
-Oops sorry, I misread the voltage above as the startup-delay-us
-value :)
+That's a better solution than the current patch.
 
-> > BTW, I do have a patch in work to add pwrseq support for wlcore that
-> > allows leaving out the regulator here. It still needs a bit more
-> > work though.
-> > 
-> > And I also have a series in work to make wlcore use runtime PM that
-> > needs even more work, just FYI to avoid any duplicate work.
-> > 
-> > Hmm you don't happen to have a patch series somewhere making
-> > wlcore use the SDIO dat lien interrupt?
-> wilink has always used out of band interrupt (using wlan_irq gpio).
-> in-band interrupts was not supported.
-> See section 10.5.2 in this the wl18xx hardware integration guide:
-> http://www.ti.com/lit/ug/swru437/swru437.pdf
-
-Hmm yeah I've been wondering about that. Why not follow the SDIO
-standard here though? Do you have links to documentation explaining
-that?
-
-> > I think we should use that when idle rather than the (edge) gpio
-> > interrupt as the SDIO dat interrupt is level sensitive and wired
-> > to the always on gpio bank for most SDIO controller instances.
-> > On runtime PM wakeup, there's no status anywhere to been with the
-> > GPIO edge interrupt.
-> > 
-> I agree that it would have been better, especially for cases such as wake 
-> On wlan, but again, in-band interrupt was something that was talked 
-> about way back but it was never implemented.
-
-I think we can have both if performance is the reason for the
-out of band interrupt. We could still use SDIO dat line interrupt
-during idle for wake-up events.
-
-Regards,
-
-Tony
+-- Steve
