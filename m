@@ -1,223 +1,125 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2626299-1525357001-2-3175154868541398164
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enrosk.us-ascii,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525357000; b=STy8AkmRv8BdePwI8FdwgHZ1wfukqSMEbg9+rcnkq8UZR3bu6X
-    t137pAsTPA/FcbgU8Nonou/7dIJ6qRub4G4R/6R4YnRq4jXh1j6Zpu728tzeryFp
-    XsN8XIysQGm77AmnTBP1tL2jGKYQGcQhSHy3CqV2eOjgyrJP2yo0jzMdGoFOmZeO
-    v4hP8ctzbkT9upwq8iRmavK2iquqLeyzyP3lBqyzY043xtP3bwAIIseNU9bb/OMJ
-    cWH7falpkJXx2iZEktq501uno4QZKQDLIbPdnKZnCsdNiG5z5F7xEFXbiFJVsj1/
-    gXxslX7of2w5mmXsYHHF10goIgXL0g1uEPfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525357000; bh=77I9n
-    iV5eeclzpCiB+On7fQLQ14Ob31uOtdc/0eAuKo=; b=C7pci1P/yTIK+fOHbEEOP
-    8Lgov4Xb8PvEiWHSqBoZY9FnOv0Q7SRl2kqnRkCuVjpQBhS+AAEBi60tH3j9JjJU
-    rnV8EOLWVLA3siemEZGxq0B5+jEa95HZ5KoXSnU8IHZLFgPiom/Ys5Ovm7GqYKNp
-    AYlF9AlZm68LiL/r24yHiE2E1ReEFtX+0V5TrR91JunFhn+7OZoOCZE5o2w0SFEa
-    OTuR646JwUgvd5FT16WMT54OincwT2zJKFU7U7ekvSex6Ddu4rGmE7T+JrebqR9r
-    svkqc1kqMHUCvEH79SxXz47HiPcHoJtTX+c9JvBOynmuQXJmr33RO49b1I6P765a
-    g==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=canonical.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=canonical.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHrF8uWTl56xGwH+E3PQs/QuIjBbnfHMxU2YEkxTXskdF6hme+gRTT1tkSCoqgBmKoGNS/pqiMuX6Jrp37adpoY3Ak4+/N2iXgZpbox3HecbEgfkoURa
-    PT3T91VHs2C98B83g+K1M+WfvRp6DIW+NGZ/MQC5IUMpZpBLHExJsKIljPCoKnWdAn/OSdLadwQ+Zc5Yd8QyTZF9g2or4dAzxRTOPWFP8Yj5z1XQ7MZm1SPd
-    LJzNeGf9CLXyNGOwMXjCww==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DfNHnWVPAAAA:8 a=DDOyTI_5AAAA:8
-    a=s7wyiga02AELGEiQm0oA:9 a=CjuIK1q_8ugA:10 a=rjTVMONInIDnV1a_A2c_:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Colin King <colin.king@canonical.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ping-Ke Shih <pkshih@realtek.com>,
- Larry Finger <Larry.Finger@lwfinger.net>, devel@driverdev.osuosl.org
-Subject: [PATCH] staging: r8822be: fix typo in variable name "offest" ->
- "offset"
-Date: Thu,  3 May 2018 15:16:28 +0100
-Message-Id: <20180503141628.32330-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+Return-Path: <andreyknvl@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525356949; cv=none;
+        d=google.com; s=arc-20160816;
+        b=QT10zi8s9m7bFDMwwH7e0dlqoxqakWRWZ2QOvamjT9hHcV9RsvsW1xM5jzLcYWRTQE
+         +5eGZzjDHumYi8JmvS2xNvV8BjI8R4Soaj3kSg4df3SzmAvMj+ERhWeCXlHffnCx/c1c
+         TulkWbpC3t2YFhZ2AaeZS3409osIETDL1uA6t+elWaH9YKRysDeAHSKQtXlQnUUwj357
+         Xiq/ceCQR/9q6zQtpo2lFvFEz0+kLJ4Z+YCQbaJhlfLON4U/bvPtUopD2f5gqRmIJvWI
+         NNjneWaMKLWZEDnKQsaB7+53sEYYcP6U92agrSoONsa963iIHl95vth1bE6WgTw24YZX
+         nh9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:arc-authentication-results;
+        bh=3iyOCvdTtKCcNI/lruG5bBsgXD2YXzDb9B51QoQdONA=;
+        b=jJo7UbjdBhaSAc4pSJakEhUa2WUJRDsM+AfLbM3e+7/s8pw8cVBUBTU4uJGr2rxCey
+         8rlzqiPdXdPEaVgMrowl2oxJV49LGd2MC4AQxTfRYvfOqJkrkthQYuUTMp5B6KsduouO
+         Jk6zOjK4Lz+bXNyBV5bT5DmAzQAc0Mb4Ex/jhwsDFwgkFg4XV6Sjquz3F5bNEO5Tzfdk
+         2vYlWvtVMF1FwHWmYLO/MDl4v3wBL1MpY1FPLY6Fe8uKNWcD5SKKlbJvolYCaDOiJ4nx
+         CEjge7vh/0QdEtI+bw28Wm0fQIReoyn1PGygXZ1nX7hRQGqinIFXOpo7OyYXfMIdpHA8
+         a4jA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=HNL7tfGR;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=HNL7tfGR;
+       spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
+X-Google-Smtp-Source: AB8JxZpUMKviSo9q3U7HtXcB5vYNzMNA6xKRTvKqUylty4bgDSbMUK5dKwetBGk4P8N6EkBT4qoYFw==
+From: Andrey Konovalov <andreyknvl@google.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will.deacon@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Andrey Konovalov <andreyknvl@google.com>,
+	James Morse <james.morse@arm.com>,
+	Kees Cook <keescook@chromium.org>,
+	Bart Van Assche <bart.vanassche@wdc.com>,
+	Kate Stewart <kstewart@linuxfoundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Philippe Ombredanne <pombredanne@nexb.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+	Zi Yan <zi.yan@cs.rutgers.edu>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+	Kostya Serebryany <kcc@google.com>,
+	Evgeniy Stepanov <eugenis@google.com>,
+	Lee Smith <Lee.Smith@arm.com>,
+	Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+	Jacob Bramley <Jacob.Bramley@arm.com>,
+	Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+	Chintan Pandya <cpandya@codeaurora.org>
+Subject: [PATCH v2 0/6] arm64: untag user pointers passed to the kernel
+Date: Thu,  3 May 2018 16:15:38 +0200
+Message-Id: <cover.1525356769.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599452688673669320?=
+X-GMAIL-MSGID: =?utf-8?q?1599452688673669320?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Colin Ian King <colin.king@canonical.com>
+Hi!
 
-There are multiple occurrances of typos of "offest" that should be
-"offset". Fix these.
+arm64 has a feature called Top Byte Ignore, which allows to embed pointer
+tags into the top byte of each pointer. Userspace programs (such as
+HWASan, a memory debugging tool [1]) might use this feature and pass
+tagged user pointers to the kernel through syscalls or other interfaces.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../rtlwifi/phydm/rtl8822b/halphyrf_8822b.c   | 34 +++++++++----------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+This patch makes a few of the kernel interfaces accept tagged user
+pointers. The kernel is already able to handle user faults with tagged
+pointers and has the untagged_addr macro, which this patchset reuses.
 
-diff --git a/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c b/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c
-index ae3e2278fefd..14c3fb52f5b8 100644
---- a/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c
-+++ b/drivers/staging/rtlwifi/phydm/rtl8822b/halphyrf_8822b.c
-@@ -29,7 +29,7 @@
- static bool
- get_mix_mode_tx_agc_bb_swing_offset_8822b(void *dm_void,
- 					  enum pwrtrack_method method,
--					  u8 rf_path, u8 tx_power_index_offest)
-+					  u8 rf_path, u8 tx_power_index_offset)
- {
- 	struct phy_dm_struct *dm = (struct phy_dm_struct *)dm_void;
- 	struct dm_rf_calibration_struct *cali_info = &dm->rf_calibrate_info;
-@@ -42,24 +42,24 @@ get_mix_mode_tx_agc_bb_swing_offset_8822b(void *dm_void,
- 
- 	ODM_RT_TRACE(
- 		dm, ODM_COMP_TX_PWR_TRACK,
--		"Path_%d cali_info->absolute_ofdm_swing_idx[rf_path]=%d, tx_power_index_offest=%d\n",
-+		"Path_%d cali_info->absolute_ofdm_swing_idx[rf_path]=%d, tx_power_index_offset=%d\n",
- 		rf_path, cali_info->absolute_ofdm_swing_idx[rf_path],
--		tx_power_index_offest);
-+		tx_power_index_offset);
- 
--	if (tx_power_index_offest > 0XF)
--		tx_power_index_offest = 0XF;
-+	if (tx_power_index_offset > 0XF)
-+		tx_power_index_offset = 0XF;
- 
- 	if (cali_info->absolute_ofdm_swing_idx[rf_path] >= 0 &&
- 	    cali_info->absolute_ofdm_swing_idx[rf_path] <=
--		    tx_power_index_offest) {
-+		    tx_power_index_offset) {
- 		tx_agc_index = cali_info->absolute_ofdm_swing_idx[rf_path];
- 		tx_bb_swing_index = cali_info->default_ofdm_index;
- 	} else if (cali_info->absolute_ofdm_swing_idx[rf_path] >
--		   tx_power_index_offest) {
--		tx_agc_index = tx_power_index_offest;
-+		   tx_power_index_offset) {
-+		tx_agc_index = tx_power_index_offset;
- 		cali_info->remnant_ofdm_swing_idx[rf_path] =
- 			cali_info->absolute_ofdm_swing_idx[rf_path] -
--			tx_power_index_offest;
-+			tx_power_index_offset;
- 		tx_bb_swing_index = cali_info->default_ofdm_index +
- 				    cali_info->remnant_ofdm_swing_idx[rf_path];
- 
-@@ -85,9 +85,9 @@ get_mix_mode_tx_agc_bb_swing_offset_8822b(void *dm_void,
- 
- 	ODM_RT_TRACE(
- 		dm, ODM_COMP_TX_PWR_TRACK,
--		"MixMode Offset Path_%d   cali_info->absolute_ofdm_swing_idx[rf_path]=%d   cali_info->bb_swing_idx_ofdm[rf_path]=%d   tx_power_index_offest=%d\n",
-+		"MixMode Offset Path_%d   cali_info->absolute_ofdm_swing_idx[rf_path]=%d   cali_info->bb_swing_idx_ofdm[rf_path]=%d   tx_power_index_offset=%d\n",
- 		rf_path, cali_info->absolute_ofdm_swing_idx[rf_path],
--		cali_info->bb_swing_idx_ofdm[rf_path], tx_power_index_offest);
-+		cali_info->bb_swing_idx_ofdm[rf_path], tx_power_index_offset);
- 
- 	return true;
- }
-@@ -97,7 +97,7 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
- {
- 	struct phy_dm_struct *dm = (struct phy_dm_struct *)dm_void;
- 	struct dm_rf_calibration_struct *cali_info = &dm->rf_calibrate_info;
--	u8 tx_power_index_offest = 0;
-+	u8 tx_power_index_offset = 0;
- 	u8 tx_power_index = 0;
- 
- 	struct rtl_priv *rtlpriv = (struct rtl_priv *)dm->adapter;
-@@ -139,11 +139,11 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
- 	if (tx_power_index >= 63)
- 		tx_power_index = 63;
- 
--	tx_power_index_offest = 63 - tx_power_index;
-+	tx_power_index_offset = 63 - tx_power_index;
- 
- 	ODM_RT_TRACE(dm, ODM_COMP_TX_PWR_TRACK,
--		     "tx_power_index=%d tx_power_index_offest=%d rf_path=%d\n",
--		     tx_power_index, tx_power_index_offest, rf_path);
-+		     "tx_power_index=%d tx_power_index_offset=%d rf_path=%d\n",
-+		     tx_power_index, tx_power_index_offset, rf_path);
- 
- 	if (method ==
- 	    BBSWING) { /*use for mp driver clean power tracking status*/
-@@ -178,7 +178,7 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
- 		switch (rf_path) {
- 		case ODM_RF_PATH_A:
- 			get_mix_mode_tx_agc_bb_swing_offset_8822b(
--				dm, method, rf_path, tx_power_index_offest);
-+				dm, method, rf_path, tx_power_index_offset);
- 			odm_set_bb_reg(
- 				dm, 0xC94, (BIT(29) | BIT(28) | BIT(27) |
- 					    BIT(26) | BIT(25)),
-@@ -201,7 +201,7 @@ void odm_tx_pwr_track_set_pwr8822b(void *dm_void, enum pwrtrack_method method,
- 
- 		case ODM_RF_PATH_B:
- 			get_mix_mode_tx_agc_bb_swing_offset_8822b(
--				dm, method, rf_path, tx_power_index_offest);
-+				dm, method, rf_path, tx_power_index_offset);
- 			odm_set_bb_reg(
- 				dm, 0xE94, (BIT(29) | BIT(28) | BIT(27) |
- 					    BIT(26) | BIT(25)),
+We're not trying to cover all possible ways the kernel accepts user
+pointers in one patchset, so this one should be considered as a start.
+
+Thanks!
+
+[1] http://clang.llvm.org/docs/HardwareAssistedAddressSanitizerDesign.html
+
+Changes in v2:
+- Rebased onto 2d618bdf (4.17-rc3+).
+- Removed excessive untagging in gup.c.
+- Removed untagging pointers returned from __uaccess_mask_ptr.
+
+Changes in v1:
+- Rebased onto 4.17-rc1.
+
+Changes in RFC v2:
+- Added "#ifndef untagged_addr..." fallback in linux/uaccess.h instead of
+  defining it for each arch individually.
+- Updated Documentation/arm64/tagged-pointers.txt.
+- Dropped “mm, arm64: untag user addresses in memory syscalls”.
+- Rebased onto 3eb2ce82 (4.16-rc7).
+
+Andrey Konovalov (6):
+  arm64: add type casts to untagged_addr macro
+  uaccess: add untagged_addr definition for other arches
+  arm64: untag user addresses in access_ok and __uaccess_mask_ptr
+  mm, arm64: untag user addresses in mm/gup.c
+  lib, arm64: untag addrs passed to strncpy_from_user and strnlen_user
+  arm64: update Documentation/arm64/tagged-pointers.txt
+
+ Documentation/arm64/tagged-pointers.txt |  5 +++--
+ arch/arm64/include/asm/uaccess.h        | 14 +++++++++-----
+ include/linux/uaccess.h                 |  4 ++++
+ lib/strncpy_from_user.c                 |  2 ++
+ lib/strnlen_user.c                      |  2 ++
+ mm/gup.c                                |  4 ++++
+ 6 files changed, 24 insertions(+), 7 deletions(-)
+
 -- 
-2.17.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.17.0.441.gb46fe60e1d-goog
