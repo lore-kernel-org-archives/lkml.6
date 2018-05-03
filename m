@@ -1,247 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeECGd2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 02:33:28 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:14525 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751872AbeECGd0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 02:33:26 -0400
-Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
- entry
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
- <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
- <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
- <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
- <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
- <5d625d04-38fe-7d5a-67fc-5ea92039474c@ti.com>
- <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
- <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
- <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <cf2772d5-26c0-b0e3-1e5b-ace91c1ea105@ti.com>
-Date: Thu, 3 May 2018 12:03:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        id S1752068AbeECGfS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:35:18 -0400
+Received: from mga06.intel.com ([134.134.136.31]:44630 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751872AbeECGfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 02:35:15 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
+   d="scan'208";a="55587385"
+Date: Thu, 3 May 2018 09:35:08 +0300
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: "'Jason Gunthorpe'" <jgg@ziepe.ca>,
+        "Usyskin, Alexander" <alexander.usyskin@intel.com>,
+        "'linux-integrity@vger.kernel.org'" <linux-integrity@vger.kernel.org>,
+        "'linux-security-module@vger.kernel.org'"
+        <linux-security-module@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+Message-ID: <20180503063508.GA8702@linux.intel.com>
+References: <20180407161236.22969-1-tomas.winkler@intel.com>
+ <c06b86c0b58888f750e6e00c33be33ab54d39257.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252660@hasmsx108.ger.corp.intel.com>
+ <4984305eae452b7a72b8a13aa20cecec420df580.camel@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94252945@hasmsx108.ger.corp.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B942627FD@hasmsx108.ger.corp.intel.com>
+ <20180424160328.GA5119@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B94272F33@hasmsx108.ger.corp.intel.com>
+ <20180502133246.GA6091@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9427B083@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
-
-On Wednesday 02 May 2018 10:21 PM, Lorenzo Pieralisi wrote:
-> On Wed, May 02, 2018 at 11:39:00AM +0100, Gustavo Pimentel wrote:
->> Hi Lorenzo,
->>
->> On 01/05/2018 15:26, Lorenzo Pieralisi wrote:
->>> On Tue, May 01, 2018 at 05:53:59PM +0530, Kishon Vijay Abraham I wrote:
->>>> Hi Lorenzo,
->>>>
->>>> On Tuesday 01 May 2018 05:24 PM, Lorenzo Pieralisi wrote:
->>>>> On Tue, May 01, 2018 at 03:37:47PM +0530, Kishon Vijay Abraham I wrote:
->>>>>> Hi Lorenzo,
->>>>>>
->>>>>> On Thursday 26 April 2018 10:26 PM, Lorenzo Pieralisi wrote:
->>>>>>> On Tue, Apr 24, 2018 at 02:44:40PM +0100, Gustavo Pimentel wrote:
->>>>>>>> Adds a seconds entry on the pci_epf_test_ids structure that disables the
->>>>>>>
->>>>>>> "Add a second entry to..."
->>>>>>>
->>>>>>>> linkup_notifier parameter on driver for the designware EP.
->>>>>>>>
->>>>>>>> This allows designware EPs that doesn't have linkup notification signal
->>>>>>>> to work with pcitest.
->>>>>>>>
->>>>>>>> Updates the binding documentation accordingly.
->>>>>>>
->>>>>>> Valid for all the series: use imperative sentences.
->>>>>>>
->>>>>>> eg:
->>>>>>>
->>>>>>> "Update the binding documentation accordingly".
->>>>>>>
->>>>>>> not
->>>>>>>
->>>>>>> "Updates the binding documentation accordingly".
->>>>>>>
->>>>>>>> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
->>>>>>>> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>>>>>> ---
->>>>>>>> Change v2->v3:
->>>>>>>>  - Added second entry in pci_epf_test_ids structure.
->>>>>>>>  - Remove test_reg_bar field assignment on second entry.
->>>>>>>> Changes v3->v4:
->>>>>>>>  - Nothing changed, just to follow the patch set version.
->>>>>>>> Changes v4->v5:
->>>>>>>>  - Changed pci_epf_test_cfg2 to pci_epf_test_designware.
->>>>>>>> Changes v5->v6:
->>>>>>>>  - Changed name field from pci_epf_test_designware to pci_epf_test_dw.
->>>>>>>> Changes v6->v7:
->>>>>>>>  - Changed variable name from data_cfg2 to data_linkup_notifier_disabled.
->>>>>>>>
->>>>>>>>  Documentation/PCI/endpoint/function/binding/pci-test.txt | 2 ++
->>>>>>>>  drivers/pci/endpoint/functions/pci-epf-test.c            | 8 ++++++++
->>>>>>>>  2 files changed, 10 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/Documentation/PCI/endpoint/function/binding/pci-test.txt b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->>>>>>>> index 3b68b95..dc39f47 100644
->>>>>>>> --- a/Documentation/PCI/endpoint/function/binding/pci-test.txt
->>>>>>>> +++ b/Documentation/PCI/endpoint/function/binding/pci-test.txt
->>>>>>>> @@ -1,6 +1,8 @@
->>>>>>>>  PCI TEST ENDPOINT FUNCTION
->>>>>>>>  
->>>>>>>>  name: Should be "pci_epf_test" to bind to the pci_epf_test driver.
->>>>>>>> +name: Should be "pci_epf_test_dw" to bind to the pci_epf_test driver
->>>>>>>> +      with a custom configuration for the designware EP.
->>>>>>>
->>>>>>> The link between the "name" and the device created is quite obscure and
->>>>>>> reading pci-test-howto.txt certainly does not clarify it.
->>>>>>>
->>>>>>> In pci-test-howto.txt an explanation should be added to the configs
->>>>>>> device creation paragraph to clarify it.
->>>>>>>
->>>>>>>>  Configurable Fields:
->>>>>>>>  vendorid	 : should be 0x104c
->>>>>>>> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
->>>>>>>> index 7cef851..4ab463b 100644
->>>>>>>> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
->>>>>>>> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
->>>>>>>> @@ -459,10 +459,18 @@ static int pci_epf_test_bind(struct pci_epf *epf)
->>>>>>>>  	return 0;
->>>>>>>>  }
->>>>>>>>  
->>>>>>>> +static const struct pci_epf_test_data data_linkup_notifier_disabled = {
->>>>>>>> +	.linkup_notifier = false
->>>>>>>> +};
->>>>>>>> +
->>>>>>>>  static const struct pci_epf_device_id pci_epf_test_ids[] = {
->>>>>>>>  	{
->>>>>>>>  		.name = "pci_epf_test",
->>>>>>>>  	},
->>>>>>>> +	{
->>>>>>>> +		.name = "pci_epf_test_dw",
->>>>>>>> +		.driver_data = (kernel_ulong_t)&data_linkup_notifier_disabled,
->>>>>>>> +	},
->>>>>>>>  	{},
->>>>>>>
->>>>>>> Should not this be a property derived from the controller compatible
->>>>>>> property instead of the test device name written in configfs ?
->>>>>>
->>>>>> pci_epf_test is an independent driver on its own that operates in a layer above
->>>>>> the controller driver. So it does not get the controller compatible (which is
->>>>>> used in controller drivers like pcie-designware-plat.c). pci_epf_test uses
->>>>>> "pci_epf_device_id" which is _similar_ to "of_device_id" used by platform drivers.
->>>>>
->>>>> I understand that, the problem is that the independent driver depends on
->>>>> features of the related controller driver as this patch shows. This
->>>>> patch basically says that if you use a specific path in configfs (that
->>>>> includes pci_epf_test_dw) your device has specific HW features (eg
->>>>> linkup notifier above), that obviously depends on the platform HW not on
->>>>> the string you use in configfs.
->>>>>
->>>>> What I am questioning is a) if I understand this right and b) whether
->>>>> this is the right approach.
->>>>
->>>> Your understanding is right. Ideally pci-epf-test driver shouldn't have any HW
->>>> specific configuration. But different HW have different configurations and
->>>> pci-epf-test should be informed of the configuration the HW supports.
->>>
->>> I am honestly very confused. First off, I do not understand what this
->>> patch really does (or better what DW can't do so that it needs a
->>> specific configfs string and therefore a specific configuration).
->>>
->>> What's the purpose of the linkup notifier ? What does it mean that
->>> the DW HW can't handle it ?
->>>
->>> Are we referring to the pci_epf_linkup() function ?
->>>
->>> If it is a HW configuration (ie the DW HW does not have a signal to
->>> report that the link is up ?) its enablement must depend on HW
->>> controller properties not configfs entries, I do not like what this
->>> patch does (probably because I am confused and I do not understand it).
->>>
->>> Please let me know your thoughts on this, thanks.
->>
->> On my setup, the EP is unable generate a signal which is responsible
->> for notify that the link is established, being therefore necessary to
->> emulate it, this is done by setting the linkup_notifier variable to
->> false.
+On Wed, May 02, 2018 at 01:35:47PM +0000, Winkler, Tomas wrote:
 > 
-> What I do not understand is why the workqueue notification can't be called
-> irrespective of the linkup notifier value from pci_epf_test_bind(),
-> what's the point in calling it earlier with pci_epf_linkup() (or the
-> other way around why is it safe to call it a bind() time if there
-> is no notification available - which is the DW case).
-
-The linkup notifier is used just to prevent the system from wasting cpu cycles.
-Without linkup notifier, pci_epf_test will start checking for commands from
-host after the pci_epf_test is bound to the EP controller (bind() callback)
-though the host can issue commands only when after the link is up. So for
-platforms which supports linkup notification, it's better we poll command
-register only after link is established.
 > 
-> [...]
+> > 
+> > On Tue, Apr 24, 2018 at 08:04:01PM +0000, Winkler, Tomas wrote:
+> > > > Subject: Re: [PATCH] tpm: tpm_crb: relinquish locality on error path.
+> > > >
+> > > > On Fri, Apr 20, 2018 at 01:19:12PM +0000, Winkler, Tomas wrote:
+> > > > > > > On Tue, 2018-04-10 at 09:00 +0000, Winkler, Tomas wrote:
+> > > > > > > > >
+> > > > > > > > > On Sat, 2018-04-07 at 19:12 +0300, Tomas Winkler wrote:
+> > > > > > > > > > In crb_map_io() function, __crb_request_locality() is
+> > > > > > > > > > called prior to crb_cmd_ready(), but if one of the
+> > > > > > > > > > consecutive function fails the flow bails out instead of
+> > > > > > > > > > trying to relinquish
+> > > > locality.
+> > > > > > > > > > This patch adds goto jump to __crb_relinquish_locality()
+> > > > > > > > > > on the error path.
+> > > > > > > > > >
+> > > > > > > > > > Fixes: 888d867df441 (tpm: cmd_ready command can be
+> > > > > > > > > > issued only after granting
+> > > > > > > > > > locality)
+> > > > > > > > > > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+> > > > > > > > > > ---
+> > > > > > > > > >  drivers/char/tpm/tpm_crb.c | 10 +++++++---
+> > > > > > > > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > > > > > > > >
+> > > > > > > > > > diff --git a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > b/drivers/char/tpm/tpm_crb.c index
+> > > > > > > > > > 7f78482cd157..34fbc6cb097b
+> > > > > > > > > > 100644
+> > > > > > > > > > --- a/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > +++ b/drivers/char/tpm/tpm_crb.c
+> > > > > > > > > > @@ -511,8 +511,10 @@ static int crb_map_io(struct
+> > > > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > > > >
+> > > > > > > > > >  	priv->regs_t = crb_map_res(dev, priv, &io_res, buf-
+> > > > > > > > > > >control_address,
+> > > > > > > > > >  				   sizeof(struct crb_regs_tail));
+> > > > > > > > > > -	if (IS_ERR(priv->regs_t))
+> > > > > > > > > > -		return PTR_ERR(priv->regs_t);
+> > > > > > > > > > +	if (IS_ERR(priv->regs_t)) {
+> > > > > > > > > > +		ret = PTR_ERR(priv->regs_t);
+> > > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > > > +	}
+> > > > > > > > > >
+> > > > > > > > > >  	/*
+> > > > > > > > > >  	 * PTT HW bug w/a: wake up the device to access @@
+> > > > > > > > > > -520,7
+> > > > > > > > > > +522,7
+> > > > > > > > >
+> > > > > > > > > @@
+> > > > > > > > > > static int crb_map_io(struct acpi_device *device, struct
+> > > > > > > > > > crb_priv *priv,
+> > > > > > > > > >  	 */
+> > > > > > > > > >  	ret = crb_cmd_ready(dev, priv);
+> > > > > > > > > >  	if (ret)
+> > > > > > > > > > -		return ret;
+> > > > > > > > > > +		goto out_relinquish_locality;
+> > > > > > > > > >
+> > > > > > > > > >  	pa_high = ioread32(&priv->regs_t->ctrl_cmd_pa_high);
+> > > > > > > > > >  	pa_low  = ioread32(&priv->regs_t->ctrl_cmd_pa_low);
+> > > > > > > > > > @@ -565,6 +567,8 @@ static int crb_map_io(struct
+> > > > > > > > > > acpi_device *device, struct crb_priv *priv,
+> > > > > > > > > >
+> > > > > > > > > >  	crb_go_idle(dev, priv);
+> > > > > > > > > >
+> > > > > > > > > > +out_relinquish_locality:
+> > > > > > > > > > +
+> > > > > > > > > >  	__crb_relinquish_locality(dev, priv, 0);
+> > > > > > > > > >
+> > > > > > > > > >  	return ret;
+> > > > > > > > >
+> > > > > > > > > Thanks, please just call it before returning in the error path.
+> > > > > > > >
+> > > > > > > > Can you please elaborate why, isn't the centralized exiting
+> > > > > > > > of functions preferred kernel coding style?
+> > > > > > > > https://www.kernel.org/doc/html/v4.11/process/coding-style.h
+> > > > > > > > tml#
+> > > > > > > > cent
+> > > > > > > > ra
+> > > > > > > > lized-ex
+> > > > > > > > iting-of-functions
+> > > > > > >
+> > > > > > > You exit only from one location (not multiple) and not from a
+> > > > > > > nested context. Here you just add more complexity by doing this.
+> > > > > >
+> > > > > > Where is the complexity ? I see it as a standard way of undoing on
+> > exit.
+> > > > > > Tomas
+> > > > >
+> > > > > Jarkko, can you please respond.
+> > > > > Thanks
+> > > > > Tomas
+> > > >
+> > > > I was away for Mon-Wed last week and did not work on TPM for Thu-Fri.
+> > > >
+> > > > My earlier comment was incorrect as there are two locations to exit
+> > > > (not sure how I managed to overlook the patch that way).
+> > > >
+> > > > Thus, I have only two very  minor requets:
+> > > >
+> > > > * Remove the extra newline (the last line addition in the patch).
+> > > Okay
+> > > > * Use just label named out as we have only one exception handler.
+> > > Cannot do that, as the bail out is prior to cmd_ready request so there is no
+> > need for go_idle which is under out label.
+> > > >
+> > > > I'll move on to testing, and if it it passes, I can do those updates myself.
+> > > Thanks,  I prefer to resend myself.
+> > >
+> > > Tomas
+> > 
+> > Add my tested-by as it is cosmectic change, thanks.
 > 
->> Since the linkup notifier and BAR index (where auxiliary registers are
->> located) may be configurable and is something platform dependent,
->> perhaps the configuration of this variables should be done by module
->> parameter and not by configfs, leaving this configuration
->> responsibility in charge of each platform.
 > 
-> They are platform dependent because they depend on the EP controller.
-> That's why I said that those are EP controller parameters. I do not
-> think they are module parameters either - they should be part of HW
-> description in firmware.
+> What change exactly? I had impression you've accepted the patch as is?
+> Thanks
+> Tomas
 
-The problem is because pci-epf-test cannot be described in HW. pci-epf-test is
-also not automatically bound to the EP controller but is bound by the user like
-below
-ln -s functions/pci_epf_test/func1 controllers/51000000.pcie_ep/
+Hmm... maybe there is some misunderstandig but I thought you were
+going to make the updates above yourself and send a revised patch.
 
-So given that user anyways has to bind the epf device to the controller, based
-on the platform the user can use a different configfs entry like below
-ln -s functions/pci_epf_test_dw/func1 controllers/51000000.pcie_ep/ or
-ln -s functions/pci_epf_test_k2g/func1 controllers/21800000.pcie-ep/
-
-If the epf can be described in dt, then something like below can be done
-pcie1_ep: pcie_ep@51000000 {
-	compatible = "ti,dra7-pcie-ep";
-	interrupts = <0 232 0x4>;
-	num-lanes = <1>;
-	num-ib-windows = <4>;
-	num-ob-windows = <16>;
-	phys = <&pcie1_phy>;
-	phy-names = "pcie-phy0";
-	pci_epf_test: pci_epf_test@0 {
-		name = "pci_epf_test_dw";
-		<other properties>;
-	}
-};
-
-With this pci-dra7xx.c driver should create pci_epf_device using
-pci_epf_create("pci_epf_test_dw");
-
-Then the driver_data corresponding to "pci_epf_test_dw" will select linkup
-notifier or BAR index etc.
-
-Having different pci_epf_device_id entries and corresponding driver_data for
-each entry seems fine to me (as done in this patch). We use configfs only since
-pci_epf_test cannot be described in dt.
-
-Thanks
-Kishon
+/Jarkko
