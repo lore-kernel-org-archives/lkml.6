@@ -1,60 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeECNds (ORCPT <rfc822;w@1wt.eu>);
+        id S1751441AbeECNdy (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:33:54 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39894 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751343AbeECNds (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 May 2018 09:33:48 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750930AbeECNdo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:33:44 -0400
-Date: Thu, 3 May 2018 15:33:39 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-Message-ID: <20180503133338.GA23401@redhat.com>
-References: <20180426130700.GP17484@dhcp22.suse.cz>
- <87efj2q6sq.fsf@xmission.com>
- <20180426192818.GX17484@dhcp22.suse.cz>
- <20180427070848.GA17484@dhcp22.suse.cz>
- <87r2n01q58.fsf@xmission.com>
- <87o9hz2sw3.fsf@xmission.com>
- <87h8nr2sa3.fsf_-_@xmission.com>
- <20180502084708.GC26305@dhcp22.suse.cz>
- <20180502132026.GB16060@cmpxchg.org>
- <87lgd1zww0.fsf_-_@xmission.com>
+X-Google-Smtp-Source: AB8JxZrCWeSrsmT0hOaRNEL9z9u5dXbfmyLXgHUuLVB87U95EhjBv38p5nmURc6LYGEbNz4beRGxSg==
+Date: Thu, 3 May 2018 15:33:42 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc: Satendra Singh Thakur <satendra.t@samsung.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>,
+        Madhur Verma <madhur.verma@samsung.com>
+Subject: Re: [PATCH] drm/atomic: Handling the case when setting old crtc for
+ plane
+Message-ID: <20180503133342.GM12521@phenom.ffwll.local>
+Mail-Followup-To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>,
+        Satendra Singh Thakur <satendra.t@samsung.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>,
+        Madhur Verma <madhur.verma@samsung.com>
+References: <CGME20180503055008epcas5p2e98aff943c031a90a14df1a85e359d6c@epcas5p2.samsung.com>
+ <1525326572-25854-1-git-send-email-satendra.t@samsung.com>
+ <20180503092458.GH12521@phenom.ffwll.local>
+ <20180503105503.GQ23723@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <87lgd1zww0.fsf_-_@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180503105503.GQ23723@intel.com>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02, Eric W. Biederman wrote:
->
-> +static void mem_cgroup_fork(struct task_struct *tsk)
-> +{
-> +	struct cgroup_subsys_state *css;
-> +
-> +	rcu_read_lock();
-> +	css = task_css(tsk, memory_cgrp_id);
-> +	if (css && css_tryget(css))
-> +		task_update_memcg(tsk, mem_cgroup_from_css(css));
-> +	rcu_read_unlock();
-> +}
+On Thu, May 03, 2018 at 01:55:03PM +0300, Ville Syrjälä wrote:
+> On Thu, May 03, 2018 at 11:24:59AM +0200, Daniel Vetter wrote:
+> > On Thu, May 03, 2018 at 11:19:32AM +0530, Satendra Singh Thakur wrote:
+> > > In the func drm_atomic_set_crtc_for_plane, with the current code,
+> > > if crtc of the plane_state and crtc passed as argument to the func
+> > > are same, entire func will executed in vein.
+> > > It will get state of crtc and clear and set the bits in plane_mask.
+> > > All these steps are not required for same old crtc.
+> > > Ideally, we should do nothing in this case, this patch handles the same,
+> > > and causes the program to return without doing anything in such scenario.
+> > > 
+> > > Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+> > > Cc: Madhur Verma <madhur.verma@samsung.com>
+> > > Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
+> > > ---
+> > >  drivers/gpu/drm/drm_atomic.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> > > index 7d25c42..5bd3365 100644
+> > > --- a/drivers/gpu/drm/drm_atomic.c
+> > > +++ b/drivers/gpu/drm/drm_atomic.c
+> > > @@ -1421,7 +1421,9 @@ drm_atomic_set_crtc_for_plane(struct drm_plane_state *plane_state,
+> > >  {
+> > >  	struct drm_plane *plane = plane_state->plane;
+> > >  	struct drm_crtc_state *crtc_state;
+> > > -
+> > > +	/* Nothing to do for same crtc*/
+> > > +	if (plane_state->crtc == crtc)
+> > > +		return 0;
+> > 
+> > I didn't do this (both here and in the set_crtc_for_connector functions)
+> > because the overhead is probably way down in the noise compared to the
+> > overall atomic commit machinery. Do you really see this as a hotpath?
+> 
+> drm_atomic_set_crtc_for_connector() actually has this since commit
+> e2d800a3ce1b ("drm: Avoid connector reference imbalance on error path")
 
-Why do we need it?
-
-The child's mm->memcg was already initialized by mm_init_memcg() and we can't
-race with migrate until cgroup_threadgroup_change_end() ?
-
-Oleg.
+Ok, applied for consistency. Thanks for the patch.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
