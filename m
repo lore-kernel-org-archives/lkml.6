@@ -1,78 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751027AbeECOQO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:16:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49166 "EHLO mail.kernel.org"
+        id S1751613AbeECOQ5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:16:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751220AbeECOQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:16:10 -0400
-Date: Thu, 3 May 2018 10:16:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] kernel hacking: new config NO_AUTO_INLINE to
- disable compiler auto-inline optimizations
-Message-ID: <20180503101606.51b7a6a2@gandalf.local.home>
-In-Reply-To: <20180503130013.lcsem2xubk5jqmcg@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-        <1525268700-10631-4-git-send-email-changbin.du@intel.com>
-        <CAK8P3a01sgKSYKmzptkNn4xfoGzV=k+uHu0+wco_-x-iMFtVYQ@mail.gmail.com>
-        <20180503130013.lcsem2xubk5jqmcg@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1751554AbeECOQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:16:52 -0400
+Message-ID: <71ed4a99241a6478b91246f967b9e1bc3d68fa9f.camel@kernel.org>
+Subject: Re: [PATCH RESEND] SUNRPC: fix include for cmpxchg_relaxed()
+From: Jeff Layton <jlayton@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
+Cc: Trond Myklebust <trond.myklebust@primarydata.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        "David S . Miller" <davem@davemloft.net>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Date: Thu, 03 May 2018 10:16:49 -0400
+In-Reply-To: <20180503135050.15778-1-mark.rutland@arm.com>
+References: <20180503135050.15778-1-mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 3 May 2018 21:00:13 +0800
-"Du, Changbin" <changbin.du@intel.com> wrote:
-
-> On Wed, May 02, 2018 at 04:27:47PM -0400, Arnd Bergmann wrote:
-> > On Wed, May 2, 2018 at 9:44 AM,  <changbin.du@intel.com> wrote:  
-> > > From: Changbin Du <changbin.du@intel.com>
-> > >
-> > > This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
-> > > this option will prevent the compiler from optimizing the kernel by
-> > > auto-inlining functions not marked with the inline keyword.
-> > >
-> > > With this option, only functions explicitly marked with "inline" will
-> > > be inlined. This will allow the function tracer to trace more functions
-> > > because it only traces functions that the compiler has not inlined.
-> > >
-> > > Signed-off-by: Changbin Du <changbin.du@intel.com>
-> > > Cc: Steven Rostedt <rostedt@goodmis.org>  
-> > 
-> > Should this be closer to CONFIG_OPTIMIZE_INLINING or
-> > possibly mutually exclusive with it?
-> >  
-> They are not related I think. CONFIG_OPTIMIZE_INLINING only has effect on
-> functions which are explicitly marked as inline.
+On Thu, 2018-05-03 at 14:50 +0100, Mark Rutland wrote:
+> Currently net/sunrpc/xprtmultipath.c is the only file outside of arch/
+> headers and asm-generic/ headers to include <asm/cmpxhcg.h>, apparently
+> for the use of cmpxchg_relaxed().
 > 
+> However, many architectures do not provide cmpxchg_relaxed() in their
+> <asm/cmpxhcg.h>, and it is necessary to include <linux/atomic.h> to get
+> this definition, as noted in Documentation/core-api/atomic_ops.rst:
+> 
+>   If someone wants to use xchg(), cmpxchg() and their variants,
+>   linux/atomic.h should be included rather than asm/cmpxchg.h, unless
+>   the code is in arch/* and can take care of itself.
+> 
+> Evidently we're getting the right header this via some transitive
+> include today, but this isn't something we can/should rely upon,
+> especially with ongoing rework of the atomic headers for KASAN
+> instrumentation.
+> 
+> Let's fix the code to include <linux/atomic.h>, avoiding fragility.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Cc: Trond Myklebust <trond.myklebust@primarydata.com>
+> Cc: Anna Schumaker <anna.schumaker@netapp.com>
+> Cc: J. Bruce Fields <bfields@fieldses.org>
+> Cc: Jeff Layton <jlayton@poochiereds.net>
+> Cc: David S. Miller <davem@davemloft.net>
+> Cc: linux-nfs@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> ---
+>  net/sunrpc/xprtmultipath.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> I sent this about a year ago [1], but got no response. This still applies atop
+> of v4.17-rc3.
+> 
+> I'm currently trying to implement instrumented atomics for arm64, and it would
+> be great to have this fixed.
+> 
+> Mark.
+> 
+> [1] https://lkml.kernel.org/r/1489574142-20856-1-git-send-email-mark.rutland@arm.com
+> 
+> diff --git a/net/sunrpc/xprtmultipath.c b/net/sunrpc/xprtmultipath.c
+> index e2d64c7138c3..d897f41be244 100644
+> --- a/net/sunrpc/xprtmultipath.c
+> +++ b/net/sunrpc/xprtmultipath.c
+> @@ -13,7 +13,7 @@
+>  #include <linux/rcupdate.h>
+>  #include <linux/rculist.h>
+>  #include <linux/slab.h>
+> -#include <asm/cmpxchg.h>
+> +#include <linux/atomic.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/sunrpc/xprt.h>
+>  #include <linux/sunrpc/addr.h>
 
-Agreed, as OPTIMIZE_INLINING is to make functions marked inline not to
-be inlined. And I just noticed (doing a git grep), that that config is
-now only available in arch/x86. Maybe it always was, but sparc
-undefines it for vclock_gettime.c.
+Looks fine.
 
-$ git grep OPTIMIZE_INLIN
-arch/sparc/vdso/vdso32/vclock_gettime.c:#undef  CONFIG_OPTIMIZE_INLINING
-arch/x86/Kconfig.debug:config OPTIMIZE_INLINING
-arch/x86/configs/i386_defconfig:CONFIG_OPTIMIZE_INLINING=y
-arch/x86/configs/x86_64_defconfig:CONFIG_OPTIMIZE_INLINING=y
-arch/x86/entry/vdso/vdso32/vclock_gettime.c:#undef CONFIG_OPTIMIZE_INLINING
-include/linux/compiler-gcc.h:    !defined(CONFIG_OPTIMIZE_INLINING) || (__GNUC__ < 4)
-kernel/configs/tiny.config:CONFIG_OPTIMIZE_INLINING=y
-
--- Steve
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
