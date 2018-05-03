@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752023AbeECKO0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:14:26 -0400
-Received: from mga03.intel.com ([134.134.136.65]:44378 "EHLO mga03.intel.com"
+        id S1752045AbeECKOe (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:14:34 -0400
+Received: from mga18.intel.com ([134.134.136.126]:57722 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751699AbeECKOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:14:18 -0400
+        id S1751699AbeECKO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:14:29 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="38109700"
+   d="scan'208";a="38109721"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, peterz@infradead.org, chao.p.peng@linux.intel.com,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v7 01/13] perf/x86/intel/pt: Move Intel-PT MSRs bit definitions to a public header
-Date: Thu,  3 May 2018 20:08:31 +0800
-Message-Id: <1525349323-9938-2-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v7 02/13] perf/x86/intel/pt: Change pt_cap_get() to a public function
+Date: Thu,  3 May 2018 20:08:32 +0800
+Message-Id: <1525349323-9938-3-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
 References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
@@ -29,117 +29,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chao Peng <chao.p.peng@linux.intel.com>
 
-Intel Processor Trace virtualization enabling in KVM guest
-need to access these MSRs bit definitions, so move them to
-public header file msr-index.h.
+Change pt_cap_get() to a public function that KVM
+can access this function to check if specific
+feature is supported on hardware.
 
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/events/intel/pt.h       | 37 -------------------------------------
- arch/x86/include/asm/msr-index.h | 34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+), 37 deletions(-)
+ arch/x86/events/intel/pt.c      |  3 ++-
+ arch/x86/events/intel/pt.h      | 21 ---------------------
+ arch/x86/include/asm/intel_pt.h | 23 +++++++++++++++++++++++
+ 3 files changed, 25 insertions(+), 22 deletions(-)
 
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index 81fd41d..a5a7e44 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -75,7 +75,7 @@
+ 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
+ };
+ 
+-static u32 pt_cap_get(enum pt_capabilities cap)
++u32 pt_cap_get(enum pt_capabilities cap)
+ {
+ 	struct pt_cap_desc *cd = &pt_caps[cap];
+ 	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
+@@ -83,6 +83,7 @@ static u32 pt_cap_get(enum pt_capabilities cap)
+ 
+ 	return (c & cd->mask) >> shift;
+ }
++EXPORT_SYMBOL_GPL(pt_cap_get);
+ 
+ static ssize_t pt_cap_show(struct device *cdev,
+ 			   struct device_attribute *attr,
 diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
-index 0eb41d0..0050ca1 100644
+index 0050ca1..269e15a 100644
 --- a/arch/x86/events/intel/pt.h
 +++ b/arch/x86/events/intel/pt.h
-@@ -20,43 +20,6 @@
- #define __INTEL_PT_H__
+@@ -45,30 +45,9 @@ struct topa_entry {
+ 	u64	rsvd4	: 16;
+ };
  
- /*
-- * PT MSR bit definitions
-- */
--#define RTIT_CTL_TRACEEN		BIT(0)
--#define RTIT_CTL_CYCLEACC		BIT(1)
--#define RTIT_CTL_OS			BIT(2)
--#define RTIT_CTL_USR			BIT(3)
--#define RTIT_CTL_PWR_EVT_EN		BIT(4)
--#define RTIT_CTL_FUP_ON_PTW		BIT(5)
--#define RTIT_CTL_CR3EN			BIT(7)
--#define RTIT_CTL_TOPA			BIT(8)
--#define RTIT_CTL_MTC_EN			BIT(9)
--#define RTIT_CTL_TSC_EN			BIT(10)
--#define RTIT_CTL_DISRETC		BIT(11)
--#define RTIT_CTL_PTW_EN			BIT(12)
--#define RTIT_CTL_BRANCH_EN		BIT(13)
--#define RTIT_CTL_MTC_RANGE_OFFSET	14
--#define RTIT_CTL_MTC_RANGE		(0x0full << RTIT_CTL_MTC_RANGE_OFFSET)
--#define RTIT_CTL_CYC_THRESH_OFFSET	19
--#define RTIT_CTL_CYC_THRESH		(0x0full << RTIT_CTL_CYC_THRESH_OFFSET)
--#define RTIT_CTL_PSB_FREQ_OFFSET	24
--#define RTIT_CTL_PSB_FREQ      		(0x0full << RTIT_CTL_PSB_FREQ_OFFSET)
--#define RTIT_CTL_ADDR0_OFFSET		32
--#define RTIT_CTL_ADDR0      		(0x0full << RTIT_CTL_ADDR0_OFFSET)
--#define RTIT_CTL_ADDR1_OFFSET		36
--#define RTIT_CTL_ADDR1      		(0x0full << RTIT_CTL_ADDR1_OFFSET)
--#define RTIT_CTL_ADDR2_OFFSET		40
--#define RTIT_CTL_ADDR2      		(0x0full << RTIT_CTL_ADDR2_OFFSET)
--#define RTIT_CTL_ADDR3_OFFSET		44
--#define RTIT_CTL_ADDR3      		(0x0full << RTIT_CTL_ADDR3_OFFSET)
--#define RTIT_STATUS_FILTEREN		BIT(0)
--#define RTIT_STATUS_CONTEXTEN		BIT(1)
--#define RTIT_STATUS_TRIGGEREN		BIT(2)
--#define RTIT_STATUS_BUFFOVF		BIT(3)
--#define RTIT_STATUS_ERROR		BIT(4)
--#define RTIT_STATUS_STOPPED		BIT(5)
+-#define PT_CPUID_LEAVES		2
+-#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
 -
--/*
-  * Single-entry ToPA: when this close to region boundary, switch
-  * buffers to avoid losing data.
-  */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 53d5b1b..c168e26 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -106,7 +106,40 @@
- #define MSR_PEBS_LD_LAT_THRESHOLD	0x000003f6
+ /* TSC to Core Crystal Clock Ratio */
+ #define CPUID_TSC_LEAF		0x15
  
- #define MSR_IA32_RTIT_CTL		0x00000570
-+#define RTIT_CTL_TRACEEN		BIT(0)
-+#define RTIT_CTL_CYCLEACC		BIT(1)
-+#define RTIT_CTL_OS			BIT(2)
-+#define RTIT_CTL_USR			BIT(3)
-+#define RTIT_CTL_PWR_EVT_EN		BIT(4)
-+#define RTIT_CTL_FUP_ON_PTW		BIT(5)
-+#define RTIT_CTL_CR3EN			BIT(7)
-+#define RTIT_CTL_TOPA			BIT(8)
-+#define RTIT_CTL_MTC_EN			BIT(9)
-+#define RTIT_CTL_TSC_EN			BIT(10)
-+#define RTIT_CTL_DISRETC		BIT(11)
-+#define RTIT_CTL_PTW_EN			BIT(12)
-+#define RTIT_CTL_BRANCH_EN		BIT(13)
-+#define RTIT_CTL_MTC_RANGE_OFFSET	14
-+#define RTIT_CTL_MTC_RANGE		(0x0full << RTIT_CTL_MTC_RANGE_OFFSET)
-+#define RTIT_CTL_CYC_THRESH_OFFSET	19
-+#define RTIT_CTL_CYC_THRESH		(0x0full << RTIT_CTL_CYC_THRESH_OFFSET)
-+#define RTIT_CTL_PSB_FREQ_OFFSET	24
-+#define RTIT_CTL_PSB_FREQ      		(0x0full << RTIT_CTL_PSB_FREQ_OFFSET)
-+#define RTIT_CTL_ADDR0_OFFSET		32
-+#define RTIT_CTL_ADDR0      		(0x0full << RTIT_CTL_ADDR0_OFFSET)
-+#define RTIT_CTL_ADDR1_OFFSET		36
-+#define RTIT_CTL_ADDR1      		(0x0full << RTIT_CTL_ADDR1_OFFSET)
-+#define RTIT_CTL_ADDR2_OFFSET		40
-+#define RTIT_CTL_ADDR2      		(0x0full << RTIT_CTL_ADDR2_OFFSET)
-+#define RTIT_CTL_ADDR3_OFFSET		44
-+#define RTIT_CTL_ADDR3      		(0x0full << RTIT_CTL_ADDR3_OFFSET)
- #define MSR_IA32_RTIT_STATUS		0x00000571
-+#define RTIT_STATUS_FILTEREN		BIT(0)
-+#define RTIT_STATUS_CONTEXTEN		BIT(1)
-+#define RTIT_STATUS_TRIGGEREN		BIT(2)
-+#define RTIT_STATUS_BUFFOVF		BIT(3)
-+#define RTIT_STATUS_ERROR		BIT(4)
-+#define RTIT_STATUS_STOPPED		BIT(5)
- #define MSR_IA32_RTIT_ADDR0_A		0x00000580
- #define MSR_IA32_RTIT_ADDR0_B		0x00000581
- #define MSR_IA32_RTIT_ADDR1_A		0x00000582
-@@ -115,6 +148,7 @@
- #define MSR_IA32_RTIT_ADDR2_B		0x00000585
- #define MSR_IA32_RTIT_ADDR3_A		0x00000586
- #define MSR_IA32_RTIT_ADDR3_B		0x00000587
-+#define MSR_IA32_RTIT_ADDR_COUNT	8
- #define MSR_IA32_RTIT_CR3_MATCH		0x00000572
- #define MSR_IA32_RTIT_OUTPUT_BASE	0x00000560
- #define MSR_IA32_RTIT_OUTPUT_MASK	0x00000561
+-enum pt_capabilities {
+-	PT_CAP_max_subleaf = 0,
+-	PT_CAP_cr3_filtering,
+-	PT_CAP_psb_cyc,
+-	PT_CAP_ip_filtering,
+-	PT_CAP_mtc,
+-	PT_CAP_ptwrite,
+-	PT_CAP_power_event_trace,
+-	PT_CAP_topa_output,
+-	PT_CAP_topa_multiple_entries,
+-	PT_CAP_single_range_output,
+-	PT_CAP_payloads_lip,
+-	PT_CAP_num_address_ranges,
+-	PT_CAP_mtc_periods,
+-	PT_CAP_cycle_thresholds,
+-	PT_CAP_psb_periods,
+-};
+-
+ struct pt_pmu {
+ 	struct pmu		pmu;
+ 	u32			caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
+diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
+index b523f51..4270421 100644
+--- a/arch/x86/include/asm/intel_pt.h
++++ b/arch/x86/include/asm/intel_pt.h
+@@ -2,10 +2,33 @@
+ #ifndef _ASM_X86_INTEL_PT_H
+ #define _ASM_X86_INTEL_PT_H
+ 
++#define PT_CPUID_LEAVES		2
++#define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
++
++enum pt_capabilities {
++	PT_CAP_max_subleaf = 0,
++	PT_CAP_cr3_filtering,
++	PT_CAP_psb_cyc,
++	PT_CAP_ip_filtering,
++	PT_CAP_mtc,
++	PT_CAP_ptwrite,
++	PT_CAP_power_event_trace,
++	PT_CAP_topa_output,
++	PT_CAP_topa_multiple_entries,
++	PT_CAP_single_range_output,
++	PT_CAP_payloads_lip,
++	PT_CAP_num_address_ranges,
++	PT_CAP_mtc_periods,
++	PT_CAP_cycle_thresholds,
++	PT_CAP_psb_periods,
++};
++
+ #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
+ void cpu_emergency_stop_pt(void);
++extern u32 pt_cap_get(enum pt_capabilities cap);
+ #else
+ static inline void cpu_emergency_stop_pt(void) {}
++static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
+ #endif
+ 
+ #endif /* _ASM_X86_INTEL_PT_H */
 -- 
 1.8.3.1
