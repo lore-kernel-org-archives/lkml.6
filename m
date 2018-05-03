@@ -1,100 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751425AbeECOm0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:42:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:42930 "EHLO foss.arm.com"
+        id S1751525AbeECOnB (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:43:01 -0400
+Received: from mga17.intel.com ([192.55.52.151]:5588 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750944AbeECOmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:42:20 -0400
-Subject: Re: [PATCH v2 05/17] arm64: Helper for parange to PASize
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, ard.biesheuvel@linaro.org,
-        kvm@vger.kernel.org, marc.zyngier@arm.com, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, kristina.martsenko@arm.com,
-        pbonzini@redhat.com, kvmarm@lists.cs.columbia.edu
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-6-git-send-email-suzuki.poulose@arm.com>
-From: James Morse <james.morse@arm.com>
-Message-ID: <b44930d9-b25d-acd4-9676-6f779e2c590a@arm.com>
-Date: Thu, 3 May 2018 15:39:20 +0100
+        id S1751236AbeECOm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:42:58 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="51238648"
+Subject: Re: BUG: Bad page map in process python2 pte:10000000000
+ pmd:17e8be067
+To: Huaitong Han <oenhan@gmail.com>
+References: <20180419054047.xxiljmzaf2u7odc6@wfg-t540p.sh.intel.com>
+ <17463682-dc08-358d-8b44-02821352604c@intel.com>
+ <CAAuJbeKT1eBxT4Y8FgQBrQcFDU_3R8ad=s_8zsyj+GPiZT7VhQ@mail.gmail.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Huang Ying <ying.huang@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Message-ID: <7d386ba4-85ba-85dd-4f81-4cc984b149dd@intel.com>
+Date: Thu, 3 May 2018 07:42:57 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1522156531-28348-6-git-send-email-suzuki.poulose@arm.com>
+In-Reply-To: <CAAuJbeKT1eBxT4Y8FgQBrQcFDU_3R8ad=s_8zsyj+GPiZT7VhQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On 05/02/2018 08:20 PM, Huaitong Han wrote:
+> 
+> kernel: swap_free: Bad swap file entry 1000000000103256
+> kernel: BUG: Bad page map in process in:imjournal  pte:8192b1000 pmd:3ff9324067
+> kernel: addr:00007f920adc5000 vm_flags:080000d1 anon_vma:
+> (null) mapping:ffff883fe5284960 index:3f8
+> kernel: vma->vm_ops->fault: shmem_fault+0x0/0x1d0
+> kernel: vma->vm_file->f_op->mmap: shmem_mmap+0x0/0x30
+> kernel: CPU: 5 PID: 9166 Comm: in:imjournal Tainted: G        W  OE
+> K------------   3.10.0-514.16.1.el7.x86_64 #1
 
-Nit: KVM in the subject line?
-
-On 27/03/18 14:15, Suzuki K Poulose wrote:
-> Add a helper to convert ID_AA64MMFR0_EL1:PARange to they physical
-> size shift. Limit the size to the maximum supported by the kernel.
-> We are about to move the user of this code and this helps to
-> keep the changes cleaner.
-
-> diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> index fbf0aab..1f2a5dd 100644
-> --- a/arch/arm64/include/asm/cpufeature.h
-> +++ b/arch/arm64/include/asm/cpufeature.h
-> @@ -311,6 +311,22 @@ static inline u64 read_zcr_features(void)
->  	return zcr;
->  }
->  
-> +static inline u32 id_aa64mmfr0_parange_to_phys_shift(int parange)
-> +{
-> +	switch (parange) {
-> +	case 0: return 32;
-> +	case 1: return 36;
-> +	case 2: return 40;
-> +	case 3: return 42;
-> +	case 4: return 44;
-> +	/* Report 48 bit if the kernel doesn't support 52bit */
-> +	default:
-> +	case 5: return 48;
-> +#ifdef CONFIG_ARM64_PA_BITS_52
-> +	case 6: return 52;
-> +#endif
-
-Eeew. I thought 'default' had to appear at the end of the list, but evidently
-not! If the last three bit value ever gets used this is going to look really weird.
-
-Can't we have a helper that just does the mapping, then apply the clamping with
-something like:
-| parange = min(CONFIG_ARM64_PA_BITS, parange);
-
-
-Its odd that the helper has the id-register in the name, but expects you do the
-shift and mask for it...
-
-(and for this patch, KVM has already done the 52bit clamping with:
-| 	if (parange > ID_AA64MMFR0_PARANGE_MAX)
-|		parange = ID_AA64MMFR0_PARANGE_MAX;
-)
-
-
-> diff --git a/arch/arm64/kvm/hyp/s2-setup.c b/arch/arm64/kvm/hyp/s2-setup.c
-> index 603e1ee..b1129c8 100644
-> --- a/arch/arm64/kvm/hyp/s2-setup.c
-> +++ b/arch/arm64/kvm/hyp/s2-setup.c
-> @@ -19,11 +19,13 @@
->  #include <asm/kvm_arm.h>
->  #include <asm/kvm_asm.h>
->  #include <asm/kvm_hyp.h>
-> +#include <asm/cpufeature.h>
->  
->  u32 __hyp_text __init_stage2_translation(void)
->  {
-
-Nit: Why change the variable you put this in, if its all removed again in patch 11?
-
-
-Thanks,
-
-James
+This looks like an entirely different signature.  There are lots of bits
+set in the bad swap entry instead of a single one.  It's also a vintage
+RHEL kernel, not mainline.
