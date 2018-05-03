@@ -1,219 +1,382 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2688196-1525777954-2-5497703690421303541
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, T_TVD_MIME_EPI 0.01,
-  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
-  MailFrom='org'
-X-Spam-charsets: to='UTF-8', plain='utf-8'
-X-Attached: signature.asc
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525777954; b=b3d6Kdp3wZlISPaYULOts9xefrtZjSeea4UYs4T9s38TuN4R6E
-    Gezb39xZ0t5fJKGVzSx2V5NevwAKUT2bXQPHJzbl2BaLtDQvpJxOM0XBiHTj2LNL
-    Ajvr+RnKVsXWi/MlCQBpdiSNtVNWu8kstH1Pivh3y2A6vyDpHi+VNhTCZeAarUFQ
-    IPFddEDcHu7OR/WX2NGSuKIXXLVeGRpzkBAsqTVyBkoTwylpd3J4tnJB6LIXn1O3
-    NjUTjWu/55smUTq0zJBZ6QCxzW5mweUPUKYzYm3u+ThcSvrcQMqE74Mxg30sFUIK
-    xuoeF6qREMYciDQzy7aE9sXHlnP0lXmSBBKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type:sender:list-id; s=
-    fm2; t=1525777954; bh=85QQL0S5Zjhww/RrcZj+pyEa2ZaH+aEgXutytEC+zF
-    I=; b=M8asb5wAq4q4vu7e6yMMRPTPuTqGQscydtV8WppKPViWgJFWbki7LQN+Ik
-    EQkA45XACiU/LxLLYrCKoOHOoIrLYbFPT1iJQxxRPNqXtXVmiVds8gaw5VR0NcxJ
-    PsAjZRbZXEXK/Z4Fm1dblXmVmrUAO3rxML6eZguAmHiv4OPLPxMACWr5DVYoLw+M
-    Pi9euvFgCgqiHz8o1uPgIuIDpVjA4GxQ8kTfZ3OBRn+kehGcaI5WhtPghC2+9co8
-    BMBX8pST6x3LTPpiBO9i9+ereZeQpwLy0myNPELDxqlqI6qftdMHU5NzU/x9P689
-    n6oxrdMzcio4w214kZGfe5bdP7gA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=pengutronix.de header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=pengutronix.de header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLYB2hch53qk1Kdds7ODefhgP5drqflsoCWx1rLlqubzcD9o4UuchG53KMS7t0v++8vYdFE256qAxQc1+mHx+/hOm9jLO7N3fVPvYXpr6kqnPh3wTW8z
-    f9lMijGL/F7gFn6An/l3YBchiMeLqHh3KUihDxLEVZbAf3//AnIsFtSUP+Vl7faayk/H+0hTyBh8U8lKPVCdN/jk0joYtjLLfS/ZDu7hQgZ1pAW2UfolnXSG
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
-    a=13zjGPudsaEWiJwPRgMA:9 a=bGNZPXyTAAAA:8 a=useyDANMDqUxOr65ZS4A:9
-    a=QEXdDO2ut3YA:10 a=YnJ7z29UcaildSkAyRUA:9 a=ONNS8QRKHyMA:10 a=VwQbUJbxAAAA:8
-    a=_3iAN5dmJPxjh_Nw_akA:9 a=x8gzFH9gYPwA:10 a=yL4RfsBhuEsimFDS2qtJ:22
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753235AbeEHLM2 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 07:12:28 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:37243 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752446AbeEHLM1 (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Tue, 8 May 2018 07:12:27 -0400
-Subject: Re: [PATCH v3 2/3] can: simplify LED trigger handling
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-serial@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-can@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        Robin Murphy <robin.murphy@arm.com>, linux-leds@vger.kernel.org
-References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
- <20180508100543.12559-3-u.kleine-koenig@pengutronix.de>
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mkl@pengutronix.de; keydata=
- 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
- /6jKeO1yNpD5UgI9bzazBn1mwg==
-Message-ID: <7135a44f-85db-758b-cf51-1a924e114e9b@pengutronix.de>
-Date: Tue, 8 May 2018 13:04:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Return-Path: <lurodriguez@suse.de>
+X-Google-Smtp-Source: AB8JxZqE/2orrzdzDPyNYADmSGbspquHanPPI5aQwpW38zqwoZ73oCL6iSvfCyJtKt+EygoNITpg
+ARC-Seal: i=1; a=rsa-sha256; t=1525390166; cv=none;
+        d=google.com; s=arc-20160816;
+        b=k/P9B7yTVtNlQyrGp34NbrKiQ164TgFxSwI1wEIY9GI+GPsxeF4E5tuAULX/yN541W
+         8UYVr/Wts/ZgF1XSF6WclzlOir8skkMYlU0VnvpdraWle8g9OZumzpatT1qy6B8WUBse
+         3Rz/o96jER+hLoYiY8PMXhDVBgWHFCnAHO0R9Up+FGBBmF3Biycc5fDa6P8pNB13rVMA
+         NSlCqPc6qunhw2xDxaJkEBtFnu7Jqx0WzfI6KERut5ypOQmCaejOxURLWdFGBUiQmJEu
+         9LeiVoEAh7NRhBQGJKAC4GcFbNuNJXzPSu9iCoiqq0aC8N0UzIokiQN1ammZ37wf+jSq
+         EZIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=jumBzbzTyfX3VhuP/8vfxOJqfpBls4FsWzK+kgpZU70=;
+        b=c6WQv1YtC9qsLSNVIEn7UiO8KoCSgZNQzcZIYhqe7B1sTFPfj7+YNLFji0A1nGA440
+         z2FGQtRIaaDCyElKCNCr4/qxmZd82qnq74anFIBwWWPqNjOQYBw3Fp5UXXR+0LCC1fZZ
+         N/Dr+O++Fh7uqcitN7z7VqVKBP1vbDRq9uDL0h617avo6EA4Vu2V35wmgtpIhiL2/Qso
+         Lywnn8mAIqHss2NCFaYQ3Ifiv1EHikSraTEPKEI5tK5UApmdmtcNdVId339JpqNzVLGn
+         3igQJ6is0qk1rC67JlSUNb4U33/kLzI3KcgMPpdt57Oa9M1W1Wmqe1qWL6NoMu0EjiAh
+         CGaA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Thu, 3 May 2018 23:29:21 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>,
+	Will Deacon <will.deacon@arm.com>, andresx7@gmail.com,
+	Andy Lutomirski <luto@kernel.org>,
+	Matt Fleming <matt@codeblueprint.co.uk>,
+	David Howells <dhowells@redhat.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	Josh Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
+	mfuzzey@parkeon.com, Kalle Valo <kvalo@codeaurora.org>,
+	Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, nbroeking@me.com,
+	bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>,
+	Kees Cook <keescook@chromium.org>, x86@kernel.org,
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] efi: Add embedded peripheral firmware support
+Message-ID: <20180503232920.GF27853@wotan.suse.de>
+References: <20180429093558.5411-1-hdegoede@redhat.com>
+ <20180429093558.5411-3-hdegoede@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180508100543.12559-3-u.kleine-koenig@pengutronix.de>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="gYZvSXtRcjeVT1CDJqBXsIpJ6D8Hcz2nk"
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-serial@vger.kernel.org
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180429093558.5411-3-hdegoede@redhat.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599072709046551146?=
+X-GMAIL-MSGID: =?utf-8?q?1599487519433783875?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---gYZvSXtRcjeVT1CDJqBXsIpJ6D8Hcz2nk
-Content-Type: multipart/mixed; boundary="0ICkFqecWJdx7A8SxnvOHdXHqUwrKryoo";
- protected-headers="v1"
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
- Florian Fainelli <f.fainelli@gmail.com>, linux-serial@vger.kernel.org,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- linux-can@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kernel@pengutronix.de, Robin Murphy <robin.murphy@arm.com>,
- linux-leds@vger.kernel.org
-Message-ID: <7135a44f-85db-758b-cf51-1a924e114e9b@pengutronix.de>
-Subject: Re: [PATCH v3 2/3] can: simplify LED trigger handling
-References: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
- <20180508100543.12559-3-u.kleine-koenig@pengutronix.de>
-In-Reply-To: <20180508100543.12559-3-u.kleine-koenig@pengutronix.de>
+Please Cc andresx7@gmail.com  on future patches.
 
---0ICkFqecWJdx7A8SxnvOHdXHqUwrKryoo
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: quoted-printable
+On Sun, Apr 29, 2018 at 11:35:55AM +0200, Hans de Goede wrote:
+> Just like with PCI options ROMs, which we save in the setup_efi_pci*
+> functions from arch/x86/boot/compressed/eboot.c, the EFI code / ROM itself
+> sometimes may contain data which is useful/necessary for peripheral drivers
+> to have access to.
 
-On 05/08/2018 12:05 PM, Uwe Kleine-K=C3=B6nig wrote:
-> The new function led_trigger_register_format allows one to simplify LED=
+Interesting. Mimi you may want to look into that for appraisal gap coverage.
 
-> trigger handling considerably.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+> Specifically the EFI code may contain an embedded copy of firmware which
+> needs to be (re)loaded into the peripheral. Normally such firmware would be
+> part of linux-firmware, but in some cases this is not feasible, for 2
+> reasons:
 
-Acked-by: Marc Kleine-Budde <mkl@pengutronix.de>
+This and other reasons have been scattered through mailing lists, and
+documentation, our Kconfig does not reflect which of the reasons are
+currently addressed as how. Our goal for your commit log would be to
+document the precise reason you can't use any of the existing interfaces
+exposed. Let's see if some of the reasons you state cannot be used
+with the existing APIs.
 
-Marc
+> 1) The firmware is customized for a specific use-case of the chipset / use
+> with a specific hardware model, so we cannot have a single firmware file
+> for the chipset. E.g. touchscreen controller firmwares are compiled
+> specifically for the hardware model they are used with, as they are
+> calibrated for a specific model digitizer.
 
---=20
-Pengutronix e.K.                  | Marc Kleine-Budde           |
-Industrial Linux Solutions        | Phone: +49-231-2826-924     |
-Vertretung West/Dortmund          | Fax:   +49-5121-206917-5555 |
-Amtsgericht Hildesheim, HRA 2686  | http://www.pengutronix.de   |
+In such cases the firmware may be stashed in a separate partition of a custom
+device and firmwared could be used with a uevent and the fallback mechanism,
+enabling userspace to do whatever it needs.
+
+However in your case the firmware has been found on EFI.
+
+> 2) Despite repeated attempts we have failed to get permission to
+> redistribute the firmware. This is especially a problem with customized
+> firmwares, these get created by the chip vendor for a specific ODM and the
+> copyright may partially belong with the ODM, so the chip vendor cannot
+> give a blanket permission to distribute these.
+
+Indeed, we don't have a good way to deal with this now except the above
+noted firmwared use case, and that still ponies up the redistribution problem
+up to a system integrator somehow.
+
+But also -- your solution is super custom to only two drivers, does not
+follow a standard of any sort either, and I fear of setting any wrong
+precedents which will be hard to later not support.
+
+Just look at the fallback mechanism and how hairy it got, I've put some
+love into it recently but it was a pain to even comprehend. Once we add
+this interface we are going to have to support it for a while so I want
+to be sure we get the architecture right. Specially if were going to enable
+*other* vendors to start using such interface.
+
+Is your goal to enable or encourage other vendors in similar predicament to
+use the same strategy?
+
+There is nothing wrong in setting de-facto standards for Linux, we do this
+all the time, but if we are going to do it I want to be sure we document
+this well and provide proper justifications in the commit log and
+documentation.
+
+> This commit adds support for finding peripheral firmware embedded in the
+> EFI code 
+
+Please specify this is through a custom scheme.... as it reads now it seems
+to read this is a sort of standard.
+
+> diff --git a/Documentation/driver-api/firmware/request_firmware.rst b/Documentation/driver-api/firmware/request_firmware.rst
+> index c8bddbdcfd10..560dfed76e38 100644
+> --- a/Documentation/driver-api/firmware/request_firmware.rst
+> +++ b/Documentation/driver-api/firmware/request_firmware.rst
+> @@ -73,3 +73,69 @@ If something went wrong firmware_request() returns non-zero and fw_entry
+>  is set to NULL. Once your driver is done with processing the firmware it
+>  can call call firmware_release(fw_entry) to release the firmware image
+>  and any related resource.
+> +
+> +EFI embedded firmware support
+> +=============================
+
+This is a new fallback mechanism, please see:
+
+Documentation/driver-api/firmware/fallback-mechanisms.rst
+
+Refer to the section "Types of fallback mechanisms", augument the list there
+and then move the section "Firmware sysfs loading facility" to a new file, and
+then add a new file for your own.
+
+> +
+> +On some devices the system's EFI code / ROM may contain an embedded copy
+> +of firmware for some of the system's integrated peripheral devices and
+> +the peripheral's Linux device-driver needs to access this firmware.
+
+You in no way indicate this is a just an invented scheme, a custom solution and
+nothing standard.  I realize Ard criticized that the EFI Firmware Volume Protocol
+is not part of the UEFI spec -- however it is a bit more widely used right?
+Why can't Linux support it instead?
+
+Could your new scheme grow to support the EFI Firmware Volume Protocol rather
+easily if someone wants to wrap up their sleeves? If so what likely would change?
+
+Ensure that the documentation answers the question then, when would folks
+use the EFI Firmware Volume Protocol? Why can't Linux support it? Why and would
+use this alternative scheme?
+
+Granted, we seem to have reverse engineered it, but we can certainly improve
+upon it, and if we're going to make a new de-facto standard for Linux best
+we cover our bases for our justifications.
+
+> +
+> +A device driver which needs this can describe the firmware it needs
+> +using an efi_embedded_fw_desc struct:
+> +
+> +.. kernel-doc:: include/linux/efi_embedded_fw.h
+> +   :functions: efi_embedded_fw_desc
+> +
+> +The EFI embedded-fw code works by scanning all EFI_BOOT_SERVICES_CODE memory
+> +segments for an eight byte sequence matching prefix, if the prefix is found it
+> +then does a crc32 over length bytes and if that matches makes a copy of length
+> +bytes and adds that to its list with found firmwares.
+> +
+> +To avoid doing this somewhat expensive scan on all systems,
+
+Well we should also only enable this for systems that enable these drivers
+*and* enable this kernel feature. Ie, if the drivers are enabled but
+the feature is disabled nothing new should happen.
+
+I'd like this feature disabled by default for now.
+
+>  dmi matching is
+> +used. Drivers are expected to export a dmi_system_id array, with each entries'
+> +driver_data pointing to an efi_embedded_fw_desc.
+> +
+> +To register this array with the efi-embedded-fw code, a driver needs to:
+> +
+> +1. Always be builtin to the kernel or store the dmi_system_id array in a
+> +   separate object file which always gets builtin.
+> +
+> +2. Add an extern declaration for the dmi_system_id array to
+> +   include/linux/efi_embedded_fw.h.
+> +
+> +3. Add the dmi_system_id array to the embedded_fw_table in
+> +   drivers/firmware/efi/embedded-firmware.c wrapped in a #ifdef testing that
+> +   the driver is being builtin.
+> +
+> +4. Add "select EFI_EMBEDDED_FIRMWARE if EFI_STUB" to its Kconfig entry.
+> +
+> +The request_firmware() function will always first try to load firmware with
+> +the specified name directly from the disk, so the EFI embedded-fw can always
+> +be overridden by placing a file under /lib/firmare.
+> +
+> +To make request_firmware() fallback to trying 
+
+This sounds funny, best to just start off describing that this is just a new
+fallback mechanism.
+
+> EFI embedded firmwares after this,
+> +the driver must set a boolean "efi-embedded-firmware" device-property on the
+> +device before passing it to request_firmware()
+
+Mention that this is for struct platform_device's and what you'd use is
+PROPERTY_ENTRY_BOOL(). Provide an example.
+
+Anyway, I'm in no way a fan of this being the only requirement. It makes
+no sense to call into EFI or check a device property if the driver didn't
+even  mean it to happen.
+
+As I have been asking for a while now, please also add a new
+firmware_request_efi() which if called would enable a new internal
+firmware_loader flag FW_OPT_EFI which you'd kdoc'ify and add to
+drivers/base/firmware_loader/firmware.h.
+Then only if *this* internal flag is set would we call fw_get_efi_embedded_fw()
+(I'm also asking you to rename this to firmware_fallback_efi() below).
+
+> . Note that this disables the
+> +usual usermodehelper fallback, so you may want to only set this on systems
+> +which match your dmi_system_id array.
+
+You'll need both the device property and for the driver to use this new
+firmware_request_efi() call.
+
+> +
+> +Once the device-property is set, the driver can use the regular
+> +request_firmware() function to get the firmware, using the name filled in
+> +in the efi_embedded_fw_desc.
+
+And nuke this.
+
+> +
+> +Note that:
+> +
+> +1. The code scanning for EFI embbedded-firmware runs near the end
+> +   of start_kernel(), just before calling rest_init(). For normal drivers and
+> +   subsystems using subsys_initcall() to register themselves this does not
+> +   matter. This means that code running earlier cannot use EFI
+> +   embbedded-firmware.
+> +
+> +2. ATM the EFI embedded-fw code assumes that firmwares always start at an offset
+> +   which is a multiple of 8 bytes, if this is not true for your case send in
+> +   a patch to fix this.
+> +
+> +3. ATM the EFI embedded-fw code only works on x86 because other archs free
+> +   EFI_BOOT_SERVICES_CODE before the EFI embedded-fw code gets a chance to
+> +   scan it.
+> diff --git a/drivers/base/firmware_loader/Makefile b/drivers/base/firmware_loader/Makefile
+> index a97eeb0be1d8..365a040995d3 100644
+> --- a/drivers/base/firmware_loader/Makefile
+> +++ b/drivers/base/firmware_loader/Makefile
+> @@ -5,3 +5,4 @@ obj-y			:= fallback_table.o
+>  obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
+>  firmware_class-objs := main.o
+>  firmware_class-$(CONFIG_FW_LOADER_USER_HELPER) += fallback.o
+> +firmware_class-$(CONFIG_EFI_EMBEDDED_FIRMWARE) += fallback_efi.o
+
+Please add a CONFIG_FW_LOADER_FALLBACK_EFI which will be properly
+documented on a Kconfig which then if selected would select
+CONFIG_EFI_EMBEDDED_FIRMWARE which enables the efi_check_for_embedded_firmwares().
+Note you'd be expanding CONFIG_FW_LOADER_FALLBACK_EFI with the new call too.
 
 
---0ICkFqecWJdx7A8SxnvOHdXHqUwrKryoo--
+> diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
+> index 8cfaa3299bb7..92f462415d25 100644
+> --- a/drivers/base/firmware_loader/fallback.h
+> +++ b/drivers/base/firmware_loader/fallback.h
+> @@ -66,4 +66,16 @@ static inline void unregister_sysfs_loader(void)
+>  }
+>  #endif /* CONFIG_FW_LOADER_USER_HELPER */
+>  
+> +#ifdef CONFIG_EFI_EMBEDDED_FIRMWARE
+> +int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv,
+> +			   enum fw_opt *opt_flags, int ret);
+> +#else
+> +static inline int fw_get_efi_embedded_fw(struct device *dev,
+> +					 struct fw_priv *fw_priv,
+> +					 enum fw_opt *opt_flags, int ret)
+> +{
+> +	return ret;
+> +}
+> +#endif /* CONFIG_EFI_EMBEDDED_FIRMWARE */
+> +
+>  #endif /* __FIRMWARE_FALLBACK_H */
+> diff --git a/drivers/base/firmware_loader/fallback_efi.c b/drivers/base/firmware_loader/fallback_efi.c
+> new file mode 100644
+> index 000000000000..82ba82f48a79
+> --- /dev/null
+> +++ b/drivers/base/firmware_loader/fallback_efi.c
+> @@ -0,0 +1,51 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/efi_embedded_fw.h>
+> +#include <linux/property.h>
+> +#include <linux/security.h>
+> +#include <linux/vmalloc.h>
+> +
+> +#include "fallback.h"
+> +#include "firmware.h"
+> +
+> +int fw_get_efi_embedded_fw(struct device *dev, struct fw_priv *fw_priv,
+> +			   enum fw_opt *opt_flags, int ret)
+> +{
 
---gYZvSXtRcjeVT1CDJqBXsIpJ6D8Hcz2nk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Please rename to firmware_fallback_efi() and kdocify it above. I'll soon post a
+patch which does the same for firmware_fallback_sysfs(). Andres's
+pending patch renames fw_sysfs_fallback() to firmware_sysfs_fallback()
+but in retrospect it should be firmware_fallback_sysfs() -- I'll fix this.
 
------BEGIN PGP SIGNATURE-----
+> +	enum kernel_read_file_id id = READING_FIRMWARE;
+> +	size_t size, max = INT_MAX;
+> +	int rc;
+> +
+> +	if (!dev)
+> +		return ret;
+> +
+> +	if (!device_property_read_bool(dev, "efi-embedded-firmware"))
+> +		return ret;
+> +
+> +	*opt_flags |= FW_OPT_NO_WARN | FW_OPT_NOCACHE | FW_OPT_NOFALLBACK;
+> +
+> +	/* Already populated data member means we're loading into a buffer */
+> +	if (fw_priv->data) {
+> +		id = READING_FIRMWARE_PREALLOC_BUFFER;
+> +		max = fw_priv->allocated_size;
+> +	}
+> +
+> +	rc = efi_get_embedded_fw(fw_priv->fw_name, &fw_priv->data, &size, max);
+> +	if (rc) {
+> +		dev_warn(dev, "Firmware %s not in EFI\n", fw_priv->fw_name);
+> +		return ret;
+> +	}
+> +
+> +	rc = security_kernel_post_read_file(NULL, fw_priv->data, size, id);
+> +	if (rc) {
+> +		if (id != READING_FIRMWARE_PREALLOC_BUFFER) {
+> +			vfree(fw_priv->data);
+> +			fw_priv->data = NULL;
+> +		}
+> +		return rc;
+> +	}
+> +
+> +	dev_dbg(dev, "using efi-embedded fw %s\n", fw_priv->fw_name);
+> +	fw_priv->size = size;
+> +	fw_state_done(fw_priv);
+> +	return 0;
+> +}
+> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> index f009566acd35..23c5392eb59e 100644
+> --- a/drivers/base/firmware_loader/main.c
+> +++ b/drivers/base/firmware_loader/main.c
+> @@ -576,6 +576,8 @@ _firmware_request(const struct firmware **firmware_p, const char *name,
+>  		goto out;
+>  
+>  	ret = fw_get_filesystem_firmware(device, fw->priv);
+> +	if (ret)
+> +		ret = fw_get_efi_embedded_fw(device, fw->priv, &opt_flags, ret);
 
-iQEzBAEBCgAdFiEENrCndlB/VnAEWuH5k9IU1zQoZfEFAlrxhCQACgkQk9IU1zQo
-ZfFpIggAio5/LgOFMhPfvaQGn/D3Xx2ZmwOT3sK4d70czLJhGXVBr1gRgxsJ7Afg
-Y9dHffyMcs4Eb9Rc+ziO7XzUPd7bWf1AgXOmE61Q9NbuQrwNMlNBRaNo6Eo1Watp
-Q/QcHRmIEwjUsFz18nesRMhiPGCEvvwaflA+iKApp1zSVmxPoGqBo23YS2gNdwmt
-ZeaIHuNJWfFlnLxAsqhHM3H1NLvUyQNvwqzhLyqtL5/l/sup9Yxe4SmBdXP8iKhx
-2ikoINhAS4E3PI/GGeW5plwlk8O8VmThnPaSCJkQCmPg9ipg1HYVKvWToLsdUopf
-Ount8LLdEnaWb+4pv51phN34736+dQ==
-=osvr
------END PGP SIGNATURE-----
+This is going to get complex. If you can come up with a nicer scheme for dealing
+with fallback that'd be appreciated. If you this is the most legible you can
+come up with I understand though, I can have a look later.
 
---gYZvSXtRcjeVT1CDJqBXsIpJ6D8Hcz2nk--
+  Luis
