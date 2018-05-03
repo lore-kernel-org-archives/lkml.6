@@ -1,61 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751603AbeECMNJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:13:09 -0400
-Received: from mga03.intel.com ([134.134.136.65]:48675 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750930AbeECMNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:13:08 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="225491764"
-Date: Thu, 3 May 2018 15:13:01 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: "Kang, Luwei" <luwei.kang@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
-Subject: Re: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function to
- get capability of Intel PT
-Message-ID: <20180503121301.nlbm4cotbv26tc7l@um.fi.intel.com>
-References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-6-git-send-email-luwei.kang@intel.com>
- <20180503105032.h73n5lcrwkdbahgm@um.fi.intel.com>
- <82D7661F83C1A047AF7DC287873BF1E167F6DDCE@SHSMSX101.ccr.corp.intel.com>
+        id S1751800AbeECMNl (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:13:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38018 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751185AbeECMNj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:13:39 -0400
+Date: Thu, 3 May 2018 05:13:22 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Matthew Wilcox <willy6545@gmail.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Julia Lawall <julia.lawall@lip6.fr>, linux-mm@kvack.org, cl@linux.com,
+        Jan Kara <jack@suse.cz>, matthew@wil.cx, x86@kernel.org,
+        luto@amacapital.net, martin.petersen@oracle.com, jthumshirn@suse.de,
+        broonie@kernel.org, Juergen Gross <jgross@suse.com>,
+        linux-spi@vger.kernel.org, Joerg Roedel <joro@8bytes.org>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "lsf-pc@lists.linux-foundation.org"
+        <lsf-pc@lists.linux-foundation.org>
+Subject: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
+Message-ID: <20180503121322.GA14864@infradead.org>
+References: <20180426215406.GB27853@wotan.suse.de>
+ <20180427053556.GB11339@infradead.org>
+ <20180427161456.GD27853@wotan.suse.de>
+ <20180428084221.GD31684@infradead.org>
+ <20180428185514.GW27853@wotan.suse.de>
+ <CAFhKne8u7KcBkpgiQ0fFZyh5_EorfY-_MJJaEYk3feCOd9LsRQ@mail.gmail.com>
+ <20180503120338.GG4535@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E167F6DDCE@SHSMSX101.ccr.corp.intel.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180503120338.GG4535@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 11:04:52AM +0000, Kang, Luwei wrote:
-> > > New function __pt_cap_get() will be invoked in KVM to check if a
-> > > specific capability is availiable in KVM guest.
-> > > Another function pt_cap_get() can only check the hardware capabilities
-> > > but this may different with KVM guest because some features may not be
-> > > exposed to guest.
-> > 
-> > Do we really need both in KVM?
+On Thu, May 03, 2018 at 02:03:38PM +0200, Michal Hocko wrote:
+> On Sat 28-04-18 19:10:47, Matthew Wilcox wrote:
+> > Another way we could approach this is to get rid of ZONE_DMA. Make GFP_DMA
+> > a flag which doesn't map to a zone. Rather, it redirects to a separate
+> > allocator. At boot, we hand all memory under 16MB to the DMA allocator. The
+> > DMA allocator can have a shrinker which just hands back all the memory once
+> > we're under memory pressure (if it's never had an allocation).
 > 
-> Yes, KVM need get host capability to estimate if can expose this feature
-> to guest
+> Yeah, that was exactly the plan with the CMA allocator... We wouldn't
+> need the shrinker because who cares about 16MB which is not usable
+> anyway.
 
-Can you elaborate on this, what information do we need besides
-MSR_IA32_VMX_MISC[14]?
-
-Thanks,
---
-Alex
+The CMA pool sounds fine.  But please kill GFP_DMA off first / at the
+same time.  95% of the users are either completely bogus or should be
+using the DMA API, and the few other can use the new allocator directly.
