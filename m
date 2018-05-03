@@ -1,89 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeECX07 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 19:26:59 -0400
-Received: from vps-vb.mhejs.net ([37.28.154.113]:38310 "EHLO vps-vb.mhejs.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750965AbeECX0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 19:26:55 -0400
-Subject: Re: [PATCH v5 4/6] x86/microcode/AMD: Check microcode container data
- in the late loader
-To: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1524515406.git.mail@maciej.szmigiero.name>
- <8f204a953dc4b46477e214ebd291021d7ab6fa6c.1524515406.git.mail@maciej.szmigiero.name>
- <20180430090527.GC6509@pd.tnic>
- <bce73502-0d18-e50c-b78b-8159dc9f8f66@maciej.szmigiero.name>
- <20180501084317.GC31863@pd.tnic>
- <e10212ef-c876-4965-6279-967005f53950@maciej.szmigiero.name>
- <20180501200308.GC13171@pd.tnic>
- <9cf234e8-4d96-46f0-70e0-7d60d49671d8@maciej.szmigiero.name>
- <20180503100133.GB20023@pd.tnic>
-From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Message-ID: <756e5bd8-6cd8-5f28-6cab-c60396dc5de4@maciej.szmigiero.name>
-Date: Fri, 4 May 2018 01:26:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1751340AbeECXc7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 19:32:59 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:37219 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751036AbeECXc6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 19:32:58 -0400
+X-Google-Smtp-Source: AB8JxZrV0qkrAieJ8v0h2D4zJa1mIcha/XEu25nL6h5UqLFabMJMr6dXSnkERmHrmDsKMYkhOM7baD/mCmJmR9sXVYI=
 MIME-Version: 1.0
-In-Reply-To: <20180503100133.GB20023@pd.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180503225716.154235-1-ksspiers@google.com>
+References: <20180503225716.154235-1-ksspiers@google.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Thu, 3 May 2018 16:32:55 -0700
+X-Google-Sender-Auth: TydYU7LFG00Zic-6Sp3QWfTyHH8
+Message-ID: <CAGXu5j+AvMCFTuzTQ-qaA14M9ZaNnfwdwYZ37jx+LdAs4pYyPQ@mail.gmail.com>
+Subject: Re: [PATCH] async_pq: Remove VLA usage
+To: Kyle Spiers <ksspiers@google.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, vinod.koul@intel.com,
+        ray.jui@broadcom.com, anup.patel@broadcom.com,
+        linux-crypto <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03.05.2018 12:01, Borislav Petkov wrote:
-> On Wed, May 02, 2018 at 02:47:39AM +0200, Maciej S. Szmigiero wrote:
->> On 01.05.2018 22:03, Borislav Petkov wrote:
->>> On Tue, May 01, 2018 at 06:19:56PM +0200, Maciej S. Szmigiero wrote:
->>>> -EINVAL cast to unsigned int is 4294967274 and this value is also
->>>> a valid count of bytes to skip that this function can return.
->>>
->>> And where exactly in the *old* code do we do that?
->>
->> The old code returned this value as a signed int, but then any
->> "patch_size" value (which is u32) above INT_MAX read from a section header
->> wrapped around to a negative pseudo-error code (which likely didn't match
->> any actual error number).
-> 
-> Lemme repeat my question: *where* *exactly* in the old code do we do that?
-> 
-> Feel free to paste snippets to show what you mean.
-> 
+On Thu, May 3, 2018 at 3:57 PM, Kyle Spiers <ksspiers@google.com> wrote:
+> In the quest to remove VLAs from the kernel[1], this moves the
+> allocation of coefs and blocks from the stack to being kmalloc()ed.
+>
+> [1] https://lkml.org/lkml/2018/3/7/621
+>
+> Signed-off-by: Kyle Spiers <ksspiers@google.com>
 
->From verify_and_add_patch():
-> static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
-> {
-> 	struct microcode_header_amd *mc_hdr;
-> 	struct ucode_patch *patch;
-> 	unsigned int patch_size, crnt_size, ret;
-> 	u32 proc_fam;
-> 	u16 proc_id;
-> 
-> 	patch_size  = *(u32 *)(fw + 4);
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Here we read a u32 (= unsigned int) value from a section header
-and store it into an unsigned int variable.
+Thanks for working on this one!
 
-> 	crnt_size   = patch_size + SECTION_HDR_SIZE;
+-Kees
 
-Here we add 8 (SECTION_HDR_SIZE) to this value and once again store it
-into an unsigned int variable.
+> ---
+>  crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
+>  crypto/async_tx/raid6test.c |  8 +++++++-
+>  2 files changed, 21 insertions(+), 5 deletions(-)
+>
+> diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
+> index 56bd612927ab..af1912313a23 100644
+> --- a/crypto/async_tx/async_pq.c
+> +++ b/crypto/async_tx/async_pq.c
+> @@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>             (src_cnt <= dma_maxpq(device, 0) ||
+>              dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
+>             is_dma_pq_aligned(device, offset, 0, len)) {
+> -               struct dma_async_tx_descriptor *tx;
+> +               struct dma_async_tx_descriptor *tx = NULL;
+>                 enum dma_ctrl_flags dma_flags = 0;
+> -               unsigned char coefs[src_cnt];
+> +               unsigned char *coefs;
+>                 int i, j;
+>
+>                 /* run the p+q asynchronously */
+> @@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>                  * sources and update the coefficients accordingly
+>                  */
+>                 unmap->len = len;
+> +               coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
+> +               if (!coefs)
+> +                       goto out;
+>                 for (i = 0, j = 0; i < src_cnt; i++) {
+>                         if (blocks[i] == NULL)
+>                                 continue;
+> @@ -240,7 +243,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+>                 }
+>
+>                 tx = do_async_gen_syndrome(chan, coefs, j, unmap, dma_flags, submit);
+> +out:
+>                 dmaengine_unmap_put(unmap);
+> +               kfree(coefs);
+>                 return tx;
+>         }
+>
+> @@ -298,8 +303,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>  {
+>         struct dma_chan *chan = pq_val_chan(submit, blocks, disks, len);
+>         struct dma_device *device = chan ? chan->device : NULL;
+> -       struct dma_async_tx_descriptor *tx;
+> -       unsigned char coefs[disks-2];
+> +       struct dma_async_tx_descriptor *tx = NULL;
+> +       unsigned char *coefs = NULL;
+>         enum dma_ctrl_flags dma_flags = submit->cb_fn ? DMA_PREP_INTERRUPT : 0;
+>         struct dmaengine_unmap_data *unmap = NULL;
+>
+> @@ -318,6 +323,9 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>                          __func__, disks, len);
+>
+>                 unmap->len = len;
+> +               coefs = kmalloc_array(disks - 2, sizeof(*coefs), GFP_KERNEL);
+> +               if (!coefs)
+> +                       goto out;
+>                 for (i = 0; i < disks-2; i++)
+>                         if (likely(blocks[i])) {
+>                                 unmap->addr[j] = dma_map_page(dev, blocks[i],
+> @@ -423,6 +431,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+>                 async_tx_sync_epilog(submit);
+>                 tx = NULL;
+>         }
+> +out:
+> +       kfree(coefs);
+>         dmaengine_unmap_put(unmap);
+>
+>         return tx;
+> diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
+> index dad95f45b88f..ea036b531ef2 100644
+> --- a/crypto/async_tx/raid6test.c
+> +++ b/crypto/async_tx/raid6test.c
+> @@ -81,11 +81,16 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+>                         init_async_submit(&submit, 0, NULL, NULL, NULL, addr_conv);
+>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
+>                 } else {
+> -                       struct page *blocks[disks];
+> +                       struct page **blocks;
+>                         struct page *dest;
+>                         int count = 0;
+>                         int i;
+>
+> +                       blocks = kmalloc_array(disks, sizeof(*blocks),
+> +                                                       GFP_KERNEL);
+> +                       if (!blocks)
+> +                               return;
+> +
+>                         /* data+Q failure.  Reconstruct data from P,
+>                          * then rebuild syndrome
+>                          */
+> @@ -101,6 +106,7 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+>
+>                         init_async_submit(&submit, 0, tx, NULL, NULL, addr_conv);
+>                         tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
+> +                       kfree(blocks);
+>                 }
+>         } else {
+>                 if (failb == disks-2) {
+> --
+> 2.17.0.441.gb46fe60e1d-goog
+>
 
-> 	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
-> 	proc_id	    = mc_hdr->processor_rev_id;
-> 
-> 	proc_fam = find_cpu_family_by_equiv_cpu(proc_id);
-> 	if (!proc_fam) {
-> 		pr_err("No patch family for equiv ID: 0x%04x\n", proc_id);
-> 		return crnt_size;
 
-Here we return this variable, implicitly converting it into a
-(signed) int.
-Any value above INT_MAX will wrap around to a negative pseudo-error
-code (which might not match any actual error number).
 
-Maciej
+-- 
+Kees Cook
+Pixel Security
