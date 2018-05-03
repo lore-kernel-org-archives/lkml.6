@@ -1,132 +1,147 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3672311-1525410059-2-16589381694105031363
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1990919-1525328047-2-2127924429059587719
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, TRACKER_ID 1.306, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='name', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='hk',
+  MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525410059; b=kdPnxW6wv5xLb2PjWvEFju3VaqmLXrNG0r22b1iGmy1KFlxgkg
-    Di77btnuSBWPb/+KnindCVyKpE3x9GUNW87cezAIul4HWxWpHUyA3AMbhrlqE1Rf
-    f8fLrGgZMOLNHLOEmMbKHccclkKMl8zsH0XpTW8IUMw4LBTQA2oaH6DpngUEMAnR
-    eoYSJ8CMCqIorZBzXyPDn9egUstpaxW1NV5v+3y3SIYlH0+k5Dw5/NbKyBIjae6L
-    XJAJjkDQUwOazH3j0fOzdMcJ6CmD0CQRgoW92/P5IQ5zr6hznkuaHqdKSz9jaMMJ
-    h4ElaIevaBINc+BkbRXXdaZ6Sf3j779fSNVg==
+    1525328046; b=N+CGkW1z749rQpMDyc6hZsU6VtGWPpPRYZckOpsZ7KtEuGDuRC
+    uZL4dib2Ec++eOVeZYkKP3uG3C5564ma/U7NhqV+dKN+UE4amRBAiP52bY+pwMBB
+    jZhuqwtcZpJH6Q7YDBaZ1XIzZ1xOUYoQJYF7Oh+pHVKYX7QPM63KtY6NUPRNQPtM
+    q9jLQQuJRw9XBTvS27KKc1e7/W2lDCkZ7jpzgVcb0uMiNRAtiJLusOfw2bGgBBCF
+    OMtKXBXZOcwQPYJzEkdYECD/DQecUDaR/jngIUhLat+N4iFbvrUgiQ7Vjgl0qLNp
+    8q1+LW68UiNoG51Qz5IZD3KPb86LxAqRCX9Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:date:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525410059; bh=alp9m
-    KCYDWiNU9cnG7ngMu0K0j8r5hlNEPuMrFNJCtY=; b=DiZp6qmB8T/QVr9wD0GVH
-    Wo31Q7w5Khi+eLfZJ47ui5G40Ak8vJwERE0le+jgxmVNfOmRGC6NJKc+xefw2yfl
-    7ySe70yrzGaQT0MRbyEJW0qsDbtoBgYL4XDgMBknQgXYfzK91CKma84FZYSosfzb
-    KavDvXLoKtvDDv611TtRWF7QRUBL0UuzDSkS2o84oDaRuaImaqqzZcU1xon/w11e
-    Eg22F+WQQD7YkBzAiSvT3uSgx8HFa71ObKQYKuDKhL2h0xgaVsKOolvNrmb6XjhC
-    PnwjgVI8S+yY6gerIzA5XnGMRtpt/T0z54CIFQHqKvzGChtXyQr80i+TgWYbAdLp
-    A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525328046;
+    bh=jMiHSPe/V0gQhrFUo46BruK3OIMecR5Zrz58yGxmaHQ=; b=eqQ6eSQMwRaK
+    CigOIdSjE4bqw2wLgNGk3BYGwbnAES0AAuxEQTO8P/TxjrdzKFVE+XgEwD0zCyfq
+    VaZDxmIwXEStqMoukRHU9yWc4OY/Yrim3OGFJiahro1fVjuKMjT5g9nNqpevKPXx
+    Hee1lvqpwRNAy3SIdoSDYrJhWynxcNbvwJPSYJDARVeCFckIQYuMZ9tkJVu7CknA
+    w3zFXLD4UXKF+MXyGeLeWu3G959f2B9CxsfR6qGLD+kg3GLjKfKKKczaj7YuqmKG
+    WyCndwLHso+exBp7ATNDX+68TWR7ytGfe4XA58S7dkIZR0akk2xlhpPw4QsqvBTG
+    2ux9S1b8jw==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gtsys.com.hk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=brown.name header.result=pass
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=gtsys.com.hk header.result=pass
     header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gtsys.com.hk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=brown.name header.result=pass
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=gtsys.com.hk header.result=pass
       header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDor9URSIxOUqMHV6JB/WiTisnb6p1MTmH79AHfteFfyXs9bu5iu4yG5qn5cCXT9l+FeV0eWrrxDyDP7c4XBCz9Wa2Y/gt7wlNM74p7ttvCQRS1wVqCG
-    i/Fw2mWOrS5X1WO+e21GmEF6CB9LkdyXUq1fSCZBjyMeObYrMOIm7LMPES8picXlT28SkS6AAy8tw8eUPzuVpax+Ex3TTIvnr5zzZGmC/aA7Ayt+uZR1efMv
-    CqdbinhqDD2Kbaf5aVBKzQ==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
-    a=VUJBJC2UJ8kA:10 a=qEKT6kP3PEYA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=go3m4GvL071v4VyiW80A:9 a=CjuIK1q_8ugA:10
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfH79OZ8+Zvw4D1280kZC9dh95kcT6xqASCjs7PZYQ857DRR7sw9sbde214umGcqjBbJG9E2d43/ZFe1gOToOVJLDRO4h4Pc5ZkfEA9zX8ctNoJ3SqjE9
+    Cx4814CqGfQrpBYqD6ArDff1AVujqPnwrUFzO51LAmUo7sRkM7hpnLHSoENs5t3FfvBpYCDB8qEx5kSN90ZtvelV+s4R01v+oVRoN6vK7D59NviAa0KSB2N+
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=O7zmUmNSAAAA:8 a=VwQbUJbxAAAA:8 a=qzlHCkm23KfD0gQRDXcA:9
+    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=IJxu9zi5bFdC9NS7oKyv:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: NeilBrown <neil@brown.name>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751622AbeECGOD (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 02:14:03 -0400
+Received: from sh1.xit.com.hk ([111.91.236.50]:50674 "EHLO sh1.xit.com.hk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750923AbeECGOC (ORCPT <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 3 May 2018 02:14:02 -0400
+Subject: Re: [PATCH] serial: imx: enable IMX21_UCR3_RXDMUXSEL for non-dte-mode
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 04 May 2018 14:58:35 +1000
-Subject: [PATCH 1/8] staging: mt7621-eth: Lock is never unlocked.
-Message-ID: <152540991585.12190.1091705512182182698.stgit@noble>
-In-Reply-To: <152540982998.12190.15220622955317261586.stgit@noble>
-References: <152540982998.12190.15220622955317261586.stgit@noble>
-User-Agent: StGit/0.17.1-dirty
+Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1524186479-25315-1-git-send-email-chris.ruehl@gtsys.com.hk>
+ <20180420061316.sakoupltqxn2qhfr@pengutronix.de>
+From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
+Message-ID: <ca240b4a-aa42-b747-9bab-49b18290ca49@gtsys.com.hk>
+Date: Thu, 3 May 2018 14:13:53 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20180420061316.sakoupltqxn2qhfr@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-mtk_phy_link_adjust takes a spinlock and disables
-interrupts, but never unlocks.
-This can leave interrupts disabled on one CPU and
-various things stop working.
+Hi Greg,
 
-Signed-off-by: NeilBrown <neil@brown.name>
----
- drivers/staging/mt7621-eth/mdio.c |    1 +
- 1 file changed, 1 insertion(+)
+On Friday, April 20, 2018 02:13 PM, Uwe Kleine-König wrote:
+> Hello Chris,
+> 
+> On Fri, Apr 20, 2018 at 09:07:59AM +0800, Chris Ruehl wrote:
+>> Fix a problem introduced with
+>> commit e61c38d85b73 ("serial: imx: setup DCEDTE early and ensure DCD and RI irqs to be off")
+>> result in non dte-mode imx-uart fail receive data.
+>> By add back IMX21_UCR3_RXDMUXSEL the serial port works as expected.
+>>
+>> Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
+>> ---
+>>   drivers/tty/serial/imx.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+>> index 91f3a1a..3d09933 100644
+>> --- a/drivers/tty/serial/imx.c
+>> +++ b/drivers/tty/serial/imx.c
+>> @@ -1391,7 +1391,7 @@ static int imx_uart_startup(struct uart_port *port)
+>>   
+>>   		ucr3 = imx_uart_readl(sport, UCR3);
+>>   
+>> -		ucr3 |= UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
+>> +		ucr3 |= IMX21_UCR3_RXDMUXSEL | UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
+>>   
+>>   		if (sport->dte_mode)
+>>   			/* disable broken interrupts */
+> 
+> Doesn't 6df765dca378bddf994cfd2044acafa501bd800f fix this for you?
+> 
+> Best regards
+> Uwe
+> 
 
-diff --git a/drivers/staging/mt7621-eth/mdio.c b/drivers/staging/mt7621-eth/mdio.c
-index 9d713078ef90..c6db11aad9e4 100644
---- a/drivers/staging/mt7621-eth/mdio.c
-+++ b/drivers/staging/mt7621-eth/mdio.c
-@@ -57,6 +57,7 @@ static void mtk_phy_link_adjust(struct net_device *dev)
- 			}
- 		}
- 	}
-+	spin_unlock_irqrestore(&eth->phy->lock, flags);
- }
- 
- int mtk_connect_phy_node(struct mtk_eth *eth, struct mtk_mac *mac,
+The IMX serial driver is broken in the 4.9.x tree since 4.9.89.
+Uwe's patch
 
+6df765dca378bddf994cfd2044acafa501bd800f
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+please apply to clear the situation.
+
+I know you very busy! -
+
+Chris
