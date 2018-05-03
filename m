@@ -1,114 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751414AbeECNns (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:43:48 -0400
-Received: from mta-p3.oit.umn.edu ([134.84.196.203]:47144 "EHLO
-        mta-p3.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750944AbeECNnp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:43:45 -0400
-X-Google-Smtp-Source: AB8JxZrSObX7IesPZN7kedheFg8iW3R27cGahNhX7WZ0VdYWkt9/A4XC+GSVs4EYYLI8XYcUN8p4jF/VSFHh4tyJQyo=
+        id S1751454AbeECNoF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:44:05 -0400
+Received: from 8bytes.org ([81.169.241.247]:55076 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750944AbeECNoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:44:04 -0400
+Date: Thu, 3 May 2018 15:44:02 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Gary R Hook <gary.hook@amd.com>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] iommu - Enable debugfs exposure of the IOMMU
+Message-ID: <20180503134402.uqn2y6pso5so2pl7@8bytes.org>
+References: <152511783026.8963.5818249217042882958.stgit@taos>
+ <152511832970.8963.10801049423048266747.stgit@taos>
 MIME-Version: 1.0
-In-Reply-To: <20180503133945.GN5105@localhost.localdomain>
-References: <1525310145-28102-1-git-send-email-wang6495@umn.edu>
- <20180503012402.GK5105@localhost.localdomain> <CAAa=b7f+dfDUZR7tHvmSQgTcNDmGjvCn9ZK9eevKGF+bNd2Aqg@mail.gmail.com>
- <20180503014838.GL5105@localhost.localdomain> <CAAa=b7eebr23Pjs2LE0Ri0=gki8ZDAbLmfPWOqzWHO0i6E2aNA@mail.gmail.com>
- <20180503124629.GM5105@localhost.localdomain> <CAAa=b7dvAFnVbFuMuUsCfEUJiKFgbW0UoNSuHEXwmVPdb_pWuA@mail.gmail.com>
- <20180503133945.GN5105@localhost.localdomain>
-From: Wenwen Wang <wang6495@umn.edu>
-Date: Thu, 3 May 2018 08:43:03 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7d-jws4=DC9SQ=JL-UZtV+1=AMYCe9feXk3y2H8p3xLzg@mail.gmail.com>
-Message-ID: <CAAa=b7d-jws4=DC9SQ=JL-UZtV+1=AMYCe9feXk3y2H8p3xLzg@mail.gmail.com>
-Subject: Re: [PATCH] sctp: fix a potential missing-check bug
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: Kangjie Lu <kjlu@umn.edu>, Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wang6495@umn.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152511832970.8963.10801049423048266747.stgit@taos>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 8:39 AM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Thu, May 03, 2018 at 08:31:28AM -0500, Wenwen Wang wrote:
->> On Thu, May 3, 2018 at 7:46 AM, Marcelo Ricardo Leitner
->> <marcelo.leitner@gmail.com> wrote:
->> > On Thu, May 03, 2018 at 07:01:51AM -0500, Wenwen Wang wrote:
->> >> On Wed, May 2, 2018 at 8:48 PM, Marcelo Ricardo Leitner
->> >> <marcelo.leitner@gmail.com> wrote:
->> >> > On Wed, May 02, 2018 at 08:27:05PM -0500, Wenwen Wang wrote:
->> >> >> On Wed, May 2, 2018 at 8:24 PM, Marcelo Ricardo Leitner
->> >> >> <marcelo.leitner@gmail.com> wrote:
->> >> >> > On Wed, May 02, 2018 at 08:15:45PM -0500, Wenwen Wang wrote:
->> >> >> >> In sctp_setsockopt_maxseg(), the integer 'val' is compared against min_len
->> >> >> >> and max_len to check whether it is in the appropriate range. If it is not,
->> >> >> >> an error code -EINVAL will be returned. This is enforced by a security
->> >> >> >> check. But, this check is only executed when 'val' is not 0. In fact, if
->> >> >> >> 'val' is 0, it will be assigned with a new value (if the return value of
->> >> >> >> the function sctp_id2assoc() is not 0) in the following execution. However,
->> >> >> >> this new value of 'val' is not checked before it is used to assigned to
->> >> >> >> asoc->user_frag. That means it is possible that the new value of 'val'
->> >> >> >> could be out of the expected range. This can cause security issues
->> >> >> >> such as buffer overflows, e.g., the new value of 'val' is used as an index
->> >> >> >> to access a buffer.
->> >> >> >>
->> >> >> >> This patch inserts a check for the new value of 'val' to see if it is in
->> >> >> >> the expected range. If it is not, an error code -EINVAL will be returned.
->> >> >> >>
->> >> >> >> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
->> >> >> >> ---
->> >> >> >>  net/sctp/socket.c | 22 +++++++++++-----------
->> >> >> >>  1 file changed, 11 insertions(+), 11 deletions(-)
->> >> >> >
->> >> >> > ?
->> >> >> > This patch is the same as previous one. git send-email <old file>
->> >> >> > maybe?
->> >> >> >
->> >> >> >   Marcelo
->> >> >>
->> >> >> Thanks for your suggestion, Marcelo. I can send the old file. But, I
->> >> >> have added a line of comment in this patch.
->> >> >
->> >> > I meant if you had sent the old patch again by accident, because you
->> >> > said you worked on an old version of the tree, but then posted a patch
->> >> > that also doesn't use the new MTU function I mentioned.
->> >> >
->> >> >   Marcelo
->> >>
->> >> I worked on the latest kernel. But, I didn't find the MTU function
->> >> sctp_mtu_payload().
->> >
->> > Which tree are you using?
->> > [a] git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git
->> >    or
->> > [b] git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
->> > ?
->> >
->> > The function isn't on [a] yet, but it is on [b].
->> >
->> >   Marcelo
->>
->> Many thanks for your patience, Marcelo :)
->>
->> The tree I am working on is:
->> git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->
-> Ahh! That explains the discrepancy :)
-> For networking patches, please refer to
-> Documentation/networking/netdev-FAQ.txt
-> It describes what the 2 trees I pointed out are and how they should be
-> used.
-> In short, both net and net-next are always newer than the one you're
-> using for networking subsystem.
->
-> Regards,
-> Marcelo
+On Mon, Apr 30, 2018 at 02:58:49PM -0500, Gary R Hook wrote:
+> Provide base enablement for using debugfs to expose internal data of
+> an IOMMU driver. When called, create the /sys/kernel/debug/iommu
+> directory.  Emit a strong warning at boot time to indicate that this
+> feature is enabled.
+> 
+> This patch adds a top-level function that will create the (above)
+> directory, under which a driver may create a hw-specific directory for
+> its use. The function
+> 
+> 	iommu_debugfs_setup()
 
-I see now. Will work on the new networking trees. Thanks!
+That function should be called in iommu core-code, in case we want to
+export some generic information from there.
 
-Wenwen
+Each driver then calls a separate function like
+
+	dentry = iommu_debugfs_driver_dir("amd_iommu");
+
+to create a driver-specific directory.
+
+> +config IOMMU_DEBUGFS
+> +	bool "Enable IOMMU internals in DebugFS"
+
+s/Enable/Export/
+
+> + * static struct dentry *my_debugfs;
+> + *
+> + *    struct dentry *d_top;
+
+Missing newline
+
+> + *    if (!my_debugfs) {
+> + *        d_top = iommu_debugfs_setup();
+> + *        if (d_top)
+> + *            my_debugfs = debugfs_create_dir("vendor", d_top);
+> + *    }
+> + *
+> + * Since the IOMMU driver can not be removed from the running system, there
+> + * is no need for an "off" function.
+> + */
+> +struct dentry *iommu_debugfs_setup(void)
+> +{
+> +	if (!iommu_debugfs_dir) {
+> +		iommu_debugfs_dir = debugfs_create_dir("iommu", NULL);
+> +		if (iommu_debugfs_dir)
+> +			pr_warn("WARNING: IOMMU DEBUGFS SUPPORT HAS BEEN ENABLED IN THIS KERNEL\n");
+
+This warning needs to be a lot bigger. See the trace_printk() warning
+for an example of what I have in mind.
