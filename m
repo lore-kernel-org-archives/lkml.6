@@ -1,155 +1,133 @@
-Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525679868; cv=none;
-        d=google.com; s=arc-20160816;
-        b=obrHhzYaQ0z0n81OgzoADjzOEF9tZ0v4BjKoYaateWHp+yqxyS3wuo1v4yyHnjETZV
-         3YfTrtZlRm6jZxYle0UKtwcK7JUaLLcR1ix3pGM66vmTQUn82ECwEm1TwkfEFB3cUGxt
-         UeaXTSkI0/Xc7MG6EuC4tYBbpOeKxIO6M4bvuWXp3oxThyWLq/fpop5MF3v9oKa7DQVj
-         AcvnsZNo9+NnXIVn6LHJcLrLQfEYzbHrFVDaSVDxEPnbz2vP7MJpbKnUVQIOPry3ym+s
-         emeAlUg1HNYp/dUlXf8D4YrzNQnF3tkIuBBcCTACe2mwaNYAV01+ZZRGpwoltToAqL2W
-         qVKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=/VzuEq7u+284TbkrLjTHvh+qrVteUcrV4bO1LSCVkAc=;
-        b=NQmlp8J9pVacHjGBBHpxxNex04AsJIMY4MlaPi6GQ+ssvQVwCAFc1jOgUHybdlaqmF
-         cDA2rd6ttjuLYkLMaX1P//OdW1LRksCzJZbZ0LMMsSb5nu6nNCpsNr52bcWRbeIAN1T7
-         +FxdRNZGH4lszFhdHem7xgMKBxLXDyMZdyZsoNd3tir0rsczWke2p9bt0qmTKlUlshYk
-         RoUlUapGu9dvD/drp1xomEmpTX0XTDsMgigTU0E9B1Z65i7U1AYolphOQ/Nhc81OQqxj
-         ZiQ2idrqYea9Wqbf95wKssbRPAd++oALlodBNpx3Ur15LCMaPqzX/w0fsmAm+j7jiFU2
-         z5Pw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=kzenOqN4;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=kzenOqN4;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqNVsHDoBkEq5u8b7yXL9VWFcFhCdc5PeXdzqva5QInZFfFFZJolYRgJQAe+s67zwkC5ZAaymfoJ19JZJnWEUc=
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a2eXo6MkLLkzQVDtk_W+2x+68iphsX3MXAtzpTYDaREiQ@mail.gmail.com>
-References: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525417306.git.baolin.wang@linaro.org>
- <2d0bcca30f61036e413ba01c686ce6506f187462.1525417306.git.baolin.wang@linaro.org>
- <CAK8P3a2eXo6MkLLkzQVDtk_W+2x+68iphsX3MXAtzpTYDaREiQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Mon, 7 May 2018 15:57:47 +0800
-Message-ID: <CAMz4kuJBw3MFvdju7MoLxcW8wJuBbhiXe_TQut2dw2_dpAVQZw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] MIPS: Convert update_persistent_clock() to update_persistent_clock64()
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <jhogan@kernel.org>, chenhc@lemote.com,
-	Kate Stewart <kstewart@linuxfoundation.org>, gregkh <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>,
-	Mark Brown <broonie@kernel.org>, Paul Burton <paul.burton@mips.com>,
-	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1656041-1525314111-2-10431121717614104076
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enro, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='nz',
+  MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525314110; b=eIB1dBqTQg/U+tUY5wzP2/xFrKJF2psfGGhRZABx46iHXaW7+7
+    LETjKItzdKDTIz9mwf06wzWCWLH7WQh7CGBUg6BJlTcl6aZSbWLzUNdWJSpuwS2f
+    IrCzwXoTJ56kgzHcCjPvUZX2F2ct6miXbR8SxCbHSPs3TESOtpZOxTx4NzHTRgPX
+    QINL3r4t2E8oMoWVHvON3iPt6L3yixUZqmnOWQUgNl8au8B9dyHXwlqu03+Madsd
+    lKymwuxfbR38q4f12Bbf+vnevF6fSxSdKqwK4W+5cLGaDzuTgZi71k0wW1nzxDsf
+    XDoEU2Y5dLaInFbjckBOOMibXoMbBQWS6fog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525314110; bh=xubPi4fOiCwBp5jibacT2uQnQmlkS/
+    WAvE35GWbWdto=; b=DUS90pBL1iOVwwq2vtgY9Gj4nc+prIXytd9MxwK1YiLF+i
+    oyAs2S79AIcPrwXEQ5kaOmJ7fYfwwFsJQWnDAHmTMC/OyVvE3WTz2dSL3kf/4dgQ
+    OtKE4y/y8SSBma9ThQGw541VJB65vctYYRnlyRuwHbjqF+744wGEST4Y9575ms3O
+    vWjfewtwpi6JdAqIaDWmWN7kCB40xz5NvBDCKSNrNnpfxqQWr85Gtas4zk2L1xJr
+    H+W5OtqRlsrlifQvu4WGe0Z6V1Z8qvfKGEhN6ppvKLlIjTJdnV2XtWfQwLsyjOwe
+    2u3nN3RNpULeFqcOYaoTQoM+v7eed32WZe37iuHg==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=alliedtelesis.co.nz
+    header.i=@alliedtelesis.co.nz header.b=Eq1szInE x-bits=1024
+    x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    dmarc=pass (p=none,has-list-id=yes,d=none)
+    header.from=alliedtelesis.co.nz;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=alliedtelesis.co.nz header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=alliedtelesis.co.nz
+      header.i=@alliedtelesis.co.nz header.b=Eq1szInE x-bits=1024
+      x-keytype=rsa x-algorithm=sha256 x-selector=mail;
+    dmarc=pass (p=none,has-list-id=yes,d=none)
+      header.from=alliedtelesis.co.nz;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=alliedtelesis.co.nz header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfHPVdFM0YI5JNSkqJcAacDcGIW5iVn7cBR4V0uhGd0c7Cc/hcmcBWYcaJ5uY//1tzDtRntuyDBfRGOkE/BJVi6ZN3j5vnx8lZ5qdMCTFFXwaBlXhhF0s
+    4GGcPpuN2iFZUVuvkF+rM/k1wQzVyW98IoUojNMCjAjCSV286/8ttm+R2CD6oIcOpVL83sTX9UwULAHOyav+nMRxvN5ZmuTIQBDkW0pGdYYcn+gagNnNsZ+P
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
+    a=4aEAohT2_9LeTJTm9NIA:9 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751929AbeECCVq (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 22:21:46 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:47181 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751837AbeECCVp (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 2 May 2018 22:21:45 -0400
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: miquel.raynal@bootlin.com, boris.brezillon@bootlin.com
+Cc: linux-mtd@lists.infradead.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        stable@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mtd: rawnand: marvell: pass ms delay to wait_op
+Date: Thu,  3 May 2018 14:21:28 +1200
+Message-Id: <20180503022128.10702-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.17.0
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599409843687594194?=
-X-GMAIL-MSGID: =?utf-8?q?1599791293183208396?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 6 May 2018 at 11:04, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, May 4, 2018 at 3:07 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> Since struct timespec is not y2038 safe on 32bit machines, this patch
->> converts update_persistent_clock() to update_persistent_clock64() using
->> struct timespec64.
->>
->> The rtc_mips_set_time() and rtc_mips_set_mmss() interfaces were using
->> 'unsigned long' type that is not y2038 safe on 32bit machines, moreover
->> there is only one platform implementing rtc_mips_set_time() and two
->> platforms implementing rtc_mips_set_mmss(), so we can just make them each
->> implement update_persistent_clock64() directly, to get that helper out
->> of the common mips code by removing rtc_mips_set_time() and
->> rtc_mips_set_mmss() interfaces.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->
-> Looks good overall, but I still found a bug and one minor issue. With
-> those fixed,
->
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
->
->> diff --git a/arch/mips/dec/time.c b/arch/mips/dec/time.c
->> index 9e992cf..934db6f 100644
->> --- a/arch/mips/dec/time.c
->> +++ b/arch/mips/dec/time.c
->> @@ -59,14 +59,15 @@ void read_persistent_clock64(struct timespec64 *ts)
->>  }
->>
->>  /*
->> - * In order to set the CMOS clock precisely, rtc_mips_set_mmss has to
->> + * In order to set the CMOS clock precisely, update_persistent_clock64 has to
->>   * be called 500 ms after the second nowtime has started, because when
->>   * nowtime is written into the registers of the CMOS clock, it will
->>   * jump to the next second precisely 500 ms later.  Check the Dallas
->>   * DS1287 data sheet for details.
->>   */
->> -int rtc_mips_set_mmss(unsigned long nowtime)
->> +int update_persistent_clock64(struct timespec64 now)
->>  {
->> +       time64_t nowtime = now.tv_sec;
->>         int retval = 0;
->>         int real_seconds, real_minutes, cmos_minutes;
->>         unsigned char save_control, save_freq_select;
->
->
-> It looks like you now get an invalid 64-bit division in here,
-> you have to change it to either use div_u64_rem() or possibly
-> time64_to_tm() or rtc_time64_to_tm() (the latter requires
-> CONFIG_RTC_LIB).
+marvell_nfc_wait_op() expects the delay to be expressed in milliseconds
+but nand_sdr_timings uses picoseconds. Use PSEC_TO_MSEC when passing
+tPROG_max to marvell_nfc_wait_op().
 
-I will use div_u64_rem() to calculate real_seconds and real_minutes.
+Fixes: 02f26ecf8c772 ("mtd: nand: add reworked Marvell NAND controller driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ drivers/mtd/nand/raw/marvell_nand.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
->
->> diff --git a/arch/mips/lasat/ds1603.c b/arch/mips/lasat/ds1603.c
->> index d75c887..061815e 100644
->> --- a/arch/mips/lasat/ds1603.c
->> +++ b/arch/mips/lasat/ds1603.c
->> @@ -98,7 +98,7 @@ static void rtc_write_byte(unsigned int byte)
->>         }
->>  }
->>
->> -static void rtc_write_word(unsigned long word)
->> +static void rtc_write_word(time64_t word)
->>  {
->>         int i;
->>
->
-> I would say this function should take a 'u32' argument (or keep the
-> unsigned long) to match the name and implementation, but then have a
-> type cast in the caller with a comment about the loss of range and overflow
-> in y2106.
-
-OK.
-
->
->> diff --git a/arch/mips/lasat/sysctl.c b/arch/mips/lasat/sysctl.c
->> index 6f74224..76f7b62 100644
->> --- a/arch/mips/lasat/sysctl.c
->> +++ b/arch/mips/lasat/sysctl.c
->> @@ -73,8 +73,12 @@ int proc_dolasatrtc(struct ctl_table *table, int write,
->>         if (r)
->>                 return r;
->>
->> -       if (write)
->> -               rtc_mips_set_mmss(rtctmp);
->> +       if (write) {
->> +               ts.tv_sec = rtctmp;
->> +               ts.tv_nsec = 0;
->> +
->> +               update_persistent_clock64(ts);
->> +       }
->>
-> ... and probably also a comment here to explain that we can't actually use
-> the full 64-bit range because of HW limits.
->
-
-OK. Thanks for your comments.
-
+diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
+index 1d779a35ac8e..e4b964fd40d8 100644
+--- a/drivers/mtd/nand/raw/marvell_nand.c
++++ b/drivers/mtd/nand/raw/marvell_nand.c
+@@ -1074,7 +1074,7 @@ static int marvell_nfc_hw_ecc_hmg_do_write_page(struct nand_chip *chip,
+ 		return ret;
+ 
+ 	ret = marvell_nfc_wait_op(chip,
+-				  chip->data_interface.timings.sdr.tPROG_max);
++				  PSEC_TO_MSEC(chip->data_interface.timings.sdr.tPROG_max));
+ 	return ret;
+ }
+ 
+@@ -1494,7 +1494,7 @@ static int marvell_nfc_hw_ecc_bch_write_page(struct mtd_info *mtd,
+ 	}
+ 
+ 	ret = marvell_nfc_wait_op(chip,
+-				  chip->data_interface.timings.sdr.tPROG_max);
++				  PSEC_TO_MSEC(chip->data_interface.timings.sdr.tPROG_max));
+ 
+ 	marvell_nfc_disable_hw_ecc(chip);
+ 
 -- 
-Baolin.wang
-Best Regards
+2.17.0
