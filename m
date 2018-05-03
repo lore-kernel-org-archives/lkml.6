@@ -1,123 +1,109 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751324AbeECJGP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:06:15 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41275 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751050AbeECJGN (ORCPT
+        id S1751360AbeECJG5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:06:57 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38927 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbeECJGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:06:13 -0400
-Date: Thu, 3 May 2018 11:06:11 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Motorola Droid 4 progress, power consumption
-Message-ID: <20180503090611.GA14451@amd>
-References: <20180501183148.GA26996@amd>
- <20180502144158.GJ98604@atomide.com>
+        Thu, 3 May 2018 05:06:53 -0400
+X-Google-Smtp-Source: AB8JxZre6FAo9WxBIk7jwBCxb/qJsGA2tgds8pmqGp2J1qE4YY/eqwf5s9gBMqf6K5/3H/V/eoRvMw==
+Date: Thu, 3 May 2018 11:06:48 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
+        Vincent Abriou <vincent.abriou@st.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
+ added
+Message-ID: <20180503090648.GG12521@phenom.ffwll.local>
+Mail-Followup-To: Peter Rosin <peda@axentia.se>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
+        Vincent Abriou <vincent.abriou@st.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180502074025.12421-1-peda@axentia.se>
+ <20180502074025.12421-2-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180502144158.GJ98604@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180502074025.12421-2-peda@axentia.se>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, May 02, 2018 at 09:40:23AM +0200, Peter Rosin wrote:
+> The more natural approach would perhaps be to add an drm_bridge_add,
+> but there are several other bridges that never call drm_bridge_add.
+> Just removing the drm_bridge_remove is the easier fix.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
---BOKacYhQ+x31HxR3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This mess is much bigger. There's 2 pairs of bridge functions:
 
-Hi!
+- drm_bridge_attach/detach. Those are meant to be called by the overall
+  drm driver to connect/disconnect a drm_bridge.
 
-> > Anyway, >5.5hours of standby with screen off, GSM on is already
-> > usable.
->=20
-> Just to rub that in, you do mean GSM usable for voice calls and
-> SMS with your unicsy_demo with mainline kernel plus the pending
-> LCD related patches, right? :)
->=20
-> > This is the core of code I'm using.
-> >=20
-> > https://github.com/pavelmachek/unicsy_demo
-> >=20
-> > Battery graphs are attached. I'm not sure if the battery was really
-> > close to empty at that point -- voltage curve should have different
-> > shape if that was the case.=20
->=20
-> Cool. BTW, the value for POWER_SUPPLY_POWER_AVG should be quite
-> accurate for the whole device power consumption.
->=20
-> It comes from the shunt resistor measured by the PMIC. Sorry I don't
-> remember how often it needs to be polled but I'm guessing polling it
-> once a minute or so should be plenty.
+- drm_bridge_add/remove. These are supposed to be called by the bridge
+  driver itself to register/unregister itself. Maybe we should rename
+  them, since the same issue happens with drm_panel, with the same
+  confusion.
 
-I'd like current_avg more, but if I cat it manually, it changes on
-order of seconds, and quite significantly... which suggest shorter
-polling interval would be needed.
+I thought someone was working on a cleanup series to fix this mess, but I
+didn't find anything.
+-Daniel
 
-user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-current_avg
-Thu May  3 09:33:05 CEST 2018
--71000
--218408
-user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-current_avg
-Thu May  3 09:33:06 CEST 2018
--61000
--200238
-user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-current_avg
-Thu May  3 09:33:06 CEST 2018
--51000
--209879
-user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-current_avg
-Thu May  3 09:33:07 CEST 2018
--56000
--72308
-user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-current_avg
-Thu May  3 09:33:08 CEST 2018
--37000
--211362
+> ---
+>  drivers/gpu/drm/sti/sti_hda.c  | 1 -
+>  drivers/gpu/drm/sti/sti_hdmi.c | 1 -
+>  2 files changed, 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+> index 67bbdb49fffc..199db13f565c 100644
+> --- a/drivers/gpu/drm/sti/sti_hda.c
+> +++ b/drivers/gpu/drm/sti/sti_hda.c
+> @@ -721,7 +721,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+>  	return 0;
+>  
+>  err_sysfs:
+> -	drm_bridge_remove(bridge);
+>  	return -EINVAL;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+> index 58f431102512..932724784942 100644
+> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> @@ -1315,7 +1315,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+>  	return 0;
+>  
+>  err_sysfs:
+> -	drm_bridge_remove(bridge);
+>  	hdmi->drm_connector = NULL;
+>  	return -EINVAL;
+>  }
+> -- 
+> 2.11.0
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-> Hmm oh and the POWER_SUPPLY_CHARGE_COUNTER value should be monitored
-> by your libbattery and it's low value and high value should be saved
-> to a file. Low should be saved when we get the battery low interrupt
-> and battery state changes to POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL.
-> High value should be saved on POWER_SUPPLY_CAPACITY_LEVEL_FULL.
->=20
-> Then when you know the high value and low value, you can calculate
-> the remaining capacity based on the current value and
-> POWER_SUPPLY_POWER_AVG.
-
-I'll look into that... but probably will do experiments with python,
-first.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---BOKacYhQ+x31HxR3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrq0QMACgkQMOfwapXb+vLVQwCfQUh3rhVufZcX3VSHSWpuh9U5
-IiUAnjdWoOgeIP4u/ynto3KLxU+ywDj8
-=Cru+
------END PGP SIGNATURE-----
-
---BOKacYhQ+x31HxR3--
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
