@@ -1,153 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751566AbeECJ0U (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:26:20 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:39266 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750969AbeECJ0R (ORCPT
+        id S1751603AbeECJ01 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:26:27 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51219 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751050AbeECJ0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:26:17 -0400
-From: Colin King <colin.king@canonical.com>
-To: James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][V2] scsi: lpfc: fix spelling mistakes: "mabilbox" and "maibox"
-Date: Thu,  3 May 2018 10:26:12 +0100
-Message-Id: <20180503092612.30007-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 3 May 2018 05:26:23 -0400
+Date: Thu, 3 May 2018 02:25:28 -0700
+From: tip-bot for Vincent Guittot <tipbot@zytor.com>
+Message-ID: <tip-457be908c83637ee10bda085a23dc05afa3b14a0@git.kernel.org>
+Cc: mingo@kernel.org, hpa@zytor.com, paulmck@linux.vnet.ibm.com,
+        hkallweit1@gmail.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        geert+renesas@glider.be, vincent.guittot@linaro.org,
+        peterz@infradead.org, torvalds@linux-foundation.org
+Reply-To: hkallweit1@gmail.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, mingo@kernel.org, hpa@zytor.com,
+        paulmck@linux.vnet.ibm.com, peterz@infradead.org,
+        torvalds@linux-foundation.org, geert+renesas@glider.be,
+        vincent.guittot@linaro.org
+In-Reply-To: <20180426103133.GA6953@linaro.org>
+References: <20180426103133.GA6953@linaro.org>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/urgent] sched/fair: Fix the update of blocked load when
+ newly idle
+Git-Commit-ID: 457be908c83637ee10bda085a23dc05afa3b14a0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Commit-ID:  457be908c83637ee10bda085a23dc05afa3b14a0
+Gitweb:     https://git.kernel.org/tip/457be908c83637ee10bda085a23dc05afa3b14a0
+Author:     Vincent Guittot <vincent.guittot@linaro.org>
+AuthorDate: Thu, 26 Apr 2018 12:19:32 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 3 May 2018 07:38:03 +0200
 
-Trivial fix to spelling mistakes in lpfc_printf_log log message
+sched/fair: Fix the update of blocked load when newly idle
 
-"mabilbox" -> "mailbox"
-"maibox" -> "mailbox"
+With commit:
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+  31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+
+... we release the rq->lock when updating blocked load of idle CPUs.
+
+This opens a time window during which another CPU can add a task to this
+CPU's cfs_rq.
+
+The check for newly added task of idle_balance() is not in the common path.
+Move the out label to include this check.
+
+Reported-by: Heiner Kallweit <hkallweit1@gmail.com>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 31e77c93e432 ("sched/fair: Update blocked load when newly idle")
+Link: http://lkml.kernel.org/r/20180426103133.GA6953@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
+ kernel/sched/fair.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-V2: Add maibox fixes
-
----
- drivers/scsi/lpfc/lpfc_bsg.c  | 20 ++++++++++----------
- drivers/scsi/lpfc/lpfc_init.c |  4 ++--
- 2 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/scsi/lpfc/lpfc_bsg.c b/drivers/scsi/lpfc/lpfc_bsg.c
-index 0f174ca80f67..edb1a18a6414 100644
---- a/drivers/scsi/lpfc/lpfc_bsg.c
-+++ b/drivers/scsi/lpfc/lpfc_bsg.c
-@@ -3621,7 +3621,7 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
- 		bsg_reply->result = 0;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 54dc31e7ab9b..e3002e5ada31 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9847,6 +9847,7 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+ 	if (curr_cost > this_rq->max_idle_balance_cost)
+ 		this_rq->max_idle_balance_cost = curr_cost;
  
- 		lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
--				"2937 SLI_CONFIG ext-buffer maibox command "
-+				"2937 SLI_CONFIG ext-buffer mailbox command "
- 				"(x%x/x%x) complete bsg job done, bsize:%d\n",
- 				phba->mbox_ext_buf_ctx.nembType,
- 				phba->mbox_ext_buf_ctx.mboxType, size);
-@@ -3632,7 +3632,7 @@ lpfc_bsg_issue_mbox_ext_handle_job(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
- 					phba->mbox_ext_buf_ctx.mbx_dmabuf, 0);
- 	} else {
- 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
--				"2938 SLI_CONFIG ext-buffer maibox "
-+				"2938 SLI_CONFIG ext-buffer mailbox "
- 				"command (x%x/x%x) failure, rc:x%x\n",
- 				phba->mbox_ext_buf_ctx.nembType,
- 				phba->mbox_ext_buf_ctx.mboxType, rc);
-@@ -3666,7 +3666,7 @@ lpfc_bsg_issue_read_mbox_ext_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
- 		pmboxq->u.mb.mbxStatus = MBXERR_ERROR;
++out:
+ 	/*
+ 	 * While browsing the domains, we released the rq lock, a task could
+ 	 * have been enqueued in the meantime. Since we're not going idle,
+@@ -9855,7 +9856,6 @@ static int idle_balance(struct rq *this_rq, struct rq_flags *rf)
+ 	if (this_rq->cfs.h_nr_running && !pulled_task)
+ 		pulled_task = 1;
  
- 	lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
--			"2939 SLI_CONFIG ext-buffer rd maibox command "
-+			"2939 SLI_CONFIG ext-buffer rd mailbox command "
- 			"complete, ctxState:x%x, mbxStatus:x%x\n",
- 			phba->mbox_ext_buf_ctx.state, pmboxq->u.mb.mbxStatus);
- 
-@@ -3706,7 +3706,7 @@ lpfc_bsg_issue_write_mbox_ext_cmpl(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmboxq)
- 		pmboxq->u.mb.mbxStatus = MBXERR_ERROR;
- 
- 	lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
--			"2940 SLI_CONFIG ext-buffer wr maibox command "
-+			"2940 SLI_CONFIG ext-buffer wr mailbox command "
- 			"complete, ctxState:x%x, mbxStatus:x%x\n",
- 			phba->mbox_ext_buf_ctx.state, pmboxq->u.mb.mbxStatus);
- 
-@@ -3988,12 +3988,12 @@ lpfc_bsg_sli_cfg_read_cmd_ext(struct lpfc_hba *phba, struct bsg_job *job,
- 	if ((rc == MBX_SUCCESS) || (rc == MBX_BUSY)) {
- 		lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
- 				"2947 Issued SLI_CONFIG ext-buffer "
--				"maibox command, rc:x%x\n", rc);
-+				"mailbox command, rc:x%x\n", rc);
- 		return SLI_CONFIG_HANDLED;
- 	}
- 	lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
- 			"2948 Failed to issue SLI_CONFIG ext-buffer "
--			"maibox command, rc:x%x\n", rc);
-+			"mailbox command, rc:x%x\n", rc);
- 	rc = -EPIPE;
- 
- job_error:
-@@ -4147,12 +4147,12 @@ lpfc_bsg_sli_cfg_write_cmd_ext(struct lpfc_hba *phba, struct bsg_job *job,
- 		if ((rc == MBX_SUCCESS) || (rc == MBX_BUSY)) {
- 			lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
- 					"2955 Issued SLI_CONFIG ext-buffer "
--					"maibox command, rc:x%x\n", rc);
-+					"mailbox command, rc:x%x\n", rc);
- 			return SLI_CONFIG_HANDLED;
- 		}
- 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
- 				"2956 Failed to issue SLI_CONFIG ext-buffer "
--				"maibox command, rc:x%x\n", rc);
-+				"mailbox command, rc:x%x\n", rc);
- 		rc = -EPIPE;
- 		goto job_error;
- 	}
-@@ -4492,12 +4492,12 @@ lpfc_bsg_write_ebuf_set(struct lpfc_hba *phba, struct bsg_job *job,
- 		if ((rc == MBX_SUCCESS) || (rc == MBX_BUSY)) {
- 			lpfc_printf_log(phba, KERN_INFO, LOG_LIBDFC,
- 					"2969 Issued SLI_CONFIG ext-buffer "
--					"maibox command, rc:x%x\n", rc);
-+					"mailbox command, rc:x%x\n", rc);
- 			return SLI_CONFIG_HANDLED;
- 		}
- 		lpfc_printf_log(phba, KERN_ERR, LOG_LIBDFC,
- 				"2970 Failed to issue SLI_CONFIG ext-buffer "
--				"maibox command, rc:x%x\n", rc);
-+				"mailbox command, rc:x%x\n", rc);
- 		rc = -EPIPE;
- 		goto job_error;
- 	}
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index 060f0e2f6ff5..dc4334fa41bb 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -5117,7 +5117,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
- 		if (rc) {
- 			lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
- 					LOG_DISCOVERY,
--					"2772 Issue FCF rediscover mabilbox "
-+					"2772 Issue FCF rediscover mailbox "
- 					"command failed, fail through to FCF "
- 					"dead event\n");
- 			spin_lock_irq(&phba->hbalock);
-@@ -5209,7 +5209,7 @@ lpfc_sli4_async_fip_evt(struct lpfc_hba *phba,
- 				lpfc_printf_log(phba, KERN_ERR, LOG_FIP |
- 						LOG_DISCOVERY,
- 						"2774 Issue FCF rediscover "
--						"mabilbox command failed, "
-+						"mailbox command failed, "
- 						"through to CVL event\n");
- 				spin_lock_irq(&phba->hbalock);
- 				phba->fcf.fcf_flag &= ~FCF_ACVL_DISC;
--- 
-2.17.0
+-out:
+ 	/* Move the next balance forward */
+ 	if (time_after(this_rq->next_balance, next_balance))
+ 		this_rq->next_balance = next_balance;
