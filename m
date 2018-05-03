@@ -1,74 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751261AbeECOXI (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:23:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33198 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751132AbeECOXG (ORCPT
+        id S1751075AbeECO0i (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:26:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60980 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751236AbeECO0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:23:06 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8AEE8601A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
-Subject: Re: [RFC/RFT] Add noats flag to boot parameters
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Gil Kupfer <gilkup@gmail.com>, dwmw2@infradead.org,
-        bhelgaas@google.com, iommu@lists.linux-foundation.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nadav.amit@gmail.com, Gil Kupfer <gilkup@cs.technion.ac.il>,
-        Will Deacon <will.deacon@arm.com>, Bjorn Helgaas <helgaas@kernel.org>
-References: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
- <20180503133459.waawna3ebtu3udn6@8bytes.org>
- <359d736a-a7ac-f0e4-f4db-dc7bb506481c@codeaurora.org>
- <20180503135920.o2rdh3exai7qmkvu@8bytes.org>
-From: Sinan Kaya <okaya@codeaurora.org>
-Message-ID: <5cf699f1-90c1-5ad8-07fe-a65042395d05@codeaurora.org>
-Date: Thu, 3 May 2018 10:23:02 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Thu, 3 May 2018 10:26:36 -0400
+Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ event
+To: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Cc: pasic@linux.vnet.ibm.com, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180426073053.GZ12194@bjsdjshi@linux.vnet.ibm.com>
+ <20180426074806.GB12194@bjsdjshi@linux.vnet.ibm.com>
+ <20180430173305.632faa80.cohuck@redhat.com>
+ <20180502074622.GV5428@bjsdjshi@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 3 May 2018 16:26:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180503135920.o2rdh3exai7qmkvu@8bytes.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180502074622.GV5428@bjsdjshi@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18050314-0012-0000-0000-000005D19525
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050314-0013-0000-0000-0000194EBCB8
+Message-Id: <5816643d-5406-06b9-0727-fdcd771aba63@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030126
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Bjorn,
-
-On 5/3/2018 9:59 AM, Joerg Roedel wrote:
-> On Thu, May 03, 2018 at 09:46:34AM -0400, Sinan Kaya wrote:
->> I also like the idea in general.
->> Minor nit..
+On 02/05/2018 09:46, Dong Jia Shi wrote:
+> * Cornelia Huck <cohuck@redhat.com> [2018-04-30 17:33:05 +0200]:
+>
+>> On Thu, 26 Apr 2018 15:48:06 +0800
+>> Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
 >>
->> Shouldn't this be an iommu parameter rather than a PCI kernel command line parameter?
->> We now have an iommu.passthrough argument that prevents page translation.
+>>> * Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> [2018-04-26 15:30:54 +0800]:
+>>>
+>>> [...]
+>>>
+>>>>> @@ -179,7 +160,7 @@ static int fsm_irq(struct vfio_ccw_private *private,
+>>>>>   	if (private->io_trigger)
+>>>>>   		eventfd_signal(private->io_trigger, 1);
+>>>>>
+>>>>> -	return private->state;
+>>>>> +	return VFIO_CCW_STATE_IDLE;
+>>>> This is not right. For example, if we are in STANDBY state (subch driver
+>>>> is probed, but mdev device is not created), we can not jump to IDLE
+>>>> state.
+>>>>    
+>>> I see my problem, for STANDBY state, we should introduce another event
+>>> callback for VFIO_CCW_EVENT_INTERRUPT. It doesn't make sense to call
+>>> fsm_irq() which tries to signal userspace with interrupt notification
+>>> when mdev is not created yet... So we'd need a separated fix for this
+>>> issue too.
+>> But how do we even get into that situation when we don't have an mdev
+>> yet?
 >>
->> Doesn't this fit into the same category especially when it is the IOMMU drivers that
->> call ATS functions for enablement not the PCI drivers.
-> 
-> ATS is a bit of a grey area between PCI and IOMMU, but since ATS is
-> PCI-specific and the code to enable/disable it is in PCI as well, I
-> think the parameter makes sense for PCI too.
-> 
+> We cann't... So let's assign fsm_nop() as the interrupt callback for
+> STANDBY state?
+>
 
-OK. Bjorn was interested in having a command line driven feature enables in driver/pci
-directory with bitmasks for each optional PCI spec capability rather than noXYZ feature.
-
-This would allow us to troubleshoot code breakage as well as the platform bring up to
-turn off all optional features.
-
-Sounds like this would be a good match for that work.
-
-
-> 
-> 	Joerg
-> 
-> 
+:) Isn't it exactly what my patch series handle?
 
 
 -- 
-Sinan Kaya
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
