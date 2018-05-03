@@ -1,62 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeECBUB (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 21:20:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751745AbeECBT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 21:19:59 -0400
-Date: Wed, 2 May 2018 21:19:56 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
-        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] kernel hacking: new config DEBUG_EXPERIENCE to
- apply GCC -Og optimization
-Message-ID: <20180502211956.6c9e8d7b@vmware.local.home>
-In-Reply-To: <20180502134558.1f388e097dcde6f589635404@linux-foundation.org>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-        <1525268700-10631-5-git-send-email-changbin.du@intel.com>
-        <20180502101707.206984e9@gandalf.local.home>
-        <20180502134558.1f388e097dcde6f589635404@linux-foundation.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751975AbeECBYJ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 21:24:09 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36769 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751745AbeECBYH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 21:24:07 -0400
+X-Google-Smtp-Source: AB8JxZoMF4VyPD8cBrRAdd9AoYKCadAzW46VYsAzk0B19eOJywkimcqxw5s7Prtrf18bl30pvn2h0A==
+Date: Wed, 2 May 2018 22:24:02 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Vlad Yasevich <vyasevich@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] sctp: fix a potential missing-check bug
+Message-ID: <20180503012402.GK5105@localhost.localdomain>
+References: <1525310145-28102-1-git-send-email-wang6495@umn.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525310145-28102-1-git-send-email-wang6495@umn.edu>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 May 2018 13:45:58 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
+On Wed, May 02, 2018 at 08:15:45PM -0500, Wenwen Wang wrote:
+> In sctp_setsockopt_maxseg(), the integer 'val' is compared against min_len
+> and max_len to check whether it is in the appropriate range. If it is not,
+> an error code -EINVAL will be returned. This is enforced by a security
+> check. But, this check is only executed when 'val' is not 0. In fact, if
+> 'val' is 0, it will be assigned with a new value (if the return value of
+> the function sctp_id2assoc() is not 0) in the following execution. However,
+> this new value of 'val' is not checked before it is used to assigned to
+> asoc->user_frag. That means it is possible that the new value of 'val'
+> could be out of the expected range. This can cause security issues
+> such as buffer overflows, e.g., the new value of 'val' is used as an index
+> to access a buffer.
+>
+> This patch inserts a check for the new value of 'val' to see if it is in
+> the expected range. If it is not, an error code -EINVAL will be returned.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  net/sctp/socket.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
 
-> On Wed, 2 May 2018 10:17:07 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > > Comparison of vmlinux size: a bit smaller.
-> > > 
-> > >     w/o CONFIG_DEBUG_EXPERIENCE  
-> > 
-> > I hate the config name.
-> > 
-> > I probably can't come up with better ones but let's try:
-> > 
-> >  CONFIG_DEBUG_OPTIMIZE ?
-> >  CONFIG_OPTIMIZE_DEBUG ?
-> > 
-> > But "EXPERIENCE" sounds like I'm on some DEBUG LSD.  
-> 
-> Metoo, but the gcc people decided on "-Og: Optimize debugging
-> experience ..." and I think there are benefits if the kernel is to
-> align the naming with that.
+?
+This patch is the same as previous one. git send-email <old file>
+maybe?
 
-I still see that as "Optimize debugging" and "experience" is just the
-platform of what was done.
-
-With that gcc comment, I still think CONFIG_OPTIMIZE_DEBUG is more
-inline with what it is and understandable than
-CONFIG_DEBUG_EXPERIENCE. The "OPTIMIZE" is the key word there.
-
--- Steve
+  Marcelo
