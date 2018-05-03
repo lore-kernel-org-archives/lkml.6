@@ -1,82 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751501AbeECOTh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:19:37 -0400
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:34713 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751234AbeECOTY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:19:24 -0400
-X-Google-Smtp-Source: AB8JxZoz06FwJNI6MQ4c2WKjKL9TDsMKGtfZADRXocRa+cVRV9jbJh7yB4aSGVgSIXCZp7SdP4K2RPjkwioAfG5Ti64=
+        id S1751145AbeECOWp convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:22:45 -0400
+Received: from muru.com ([72.249.23.125]:39926 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750944AbeECOWo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:22:44 -0400
+Date: Thu, 3 May 2018 07:22:40 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: Motorola Droid 4 progress, power consumption
+Message-ID: <20180503142240.GQ98604@atomide.com>
+References: <20180501183148.GA26996@amd>
+ <20180502144158.GJ98604@atomide.com>
+ <20180503090611.GA14451@amd>
 MIME-Version: 1.0
-In-Reply-To: <69d19601-df56-687d-730e-d043b2cf7161@nextfour.com>
-References: <152532351517.17218.3583455156840230837.stgit@dwillia2-desk3.amr.corp.intel.com>
- <152532354268.17218.11923624861859552990.stgit@dwillia2-desk3.amr.corp.intel.com>
- <69d19601-df56-687d-730e-d043b2cf7161@nextfour.com>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Thu, 3 May 2018 07:19:23 -0700
-Message-ID: <CAPcyv4gqu-3w+nPrfYPWxWQYOPrHaNzsr=0YSe562Ns-Ygz4bQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] x86, memcpy_mcsafe: add write-protection-fault handling
-To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
-Cc: linux-nvdimm <linux-nvdimm@lists.01.org>, X86 ML <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20180503090611.GA14451@amd>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w43EJgUu023378
 
-On Wed, May 2, 2018 at 10:29 PM, Mika Penttilä
-<mika.penttila@nextfour.com> wrote:
-> On 05/03/2018 07:59 AM, Dan Williams wrote:
->> In preparation for using memcpy_mcsafe() to handle user copies it needs
->> to be to handle write-protection faults while writing user pages. Add
->> MMU-fault handlers alongside the machine-check exception handlers.
->>
->> Note that the machine check fault exception handling makes assumptions
->> about source buffer alignment and poison alignment. In the write fault
->> case, given the destination buffer is arbitrarily aligned, it needs a
->> separate / additional fault handling approach. The mcsafe_handle_tail()
->> helper is reused. The @limit argument is set to @len since there is no
->> safety concern about retriggering an MMU fault, and this simplifies the
->> assembly.
->>
->
->> diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
->> index 75d3776123cc..9787f5ee0cf9 100644
->> --- a/arch/x86/lib/usercopy_64.c
->> +++ b/arch/x86/lib/usercopy_64.c
->> @@ -75,6 +75,23 @@ copy_user_handle_tail(char *to, char *from, unsigned len)
->>       return len;
->>  }
->>
->> +/*
->> + * Similar to copy_user_handle_tail, probe for the write fault point,
->> + * but reuse __memcpy_mcsafe in case a new read error is encountered.
->> + * clac() is handled in _copy_to_iter_mcsafe().
->> + */
->> +__visible unsigned long
->> +mcsafe_handle_tail(char *to, char *from, unsigned len)
->> +{
->> +     for (; len; --len, to++) {
->> +             unsigned long rem = memcpy_mcsafe(to, from, 1);
->> +
->
->
-> Hmm why not
->         for (; len; --len, from++, to++)
->
->
+* Pavel Machek <pavel@ucw.cz> [180503 09:08]:
+> I'd like current_avg more, but if I cat it manually, it changes on
+> order of seconds, and quite significantly... which suggest shorter
+> polling interval would be needed.
+> 
+> user@devuan:/sys/class/power_supply/battery$ date; cat current_now
+> current_avg
+> Thu May  3 09:33:05 CEST 2018
+> -71000
+> -218408
+> user@devuan:/sys/class/power_supply/battery$ date; cat current_now
+> current_avg
+> Thu May  3 09:33:06 CEST 2018
+> -61000
+> -200238
+> user@devuan:/sys/class/power_supply/battery$ date; cat current_now
+> current_avg
+> Thu May  3 09:33:06 CEST 2018
+> -51000
+> -209879
+> user@devuan:/sys/class/power_supply/battery$ date; cat current_now
+> current_avg
+> Thu May  3 09:33:07 CEST 2018
+> -56000
+> -72308
+> user@devuan:/sys/class/power_supply/battery$ date; cat current_now
+> current_avg
+> Thu May  3 09:33:08 CEST 2018
+> -37000
+> -211362
 
-Why not indeed. Great catch, I'll fix this and extend the unit test to
-verify the data transfer as well.
+I recall it just being calculated based on the time between
+the reads. Hard to say what it does, -ENODOCS.. Maybe the mc13783
+PMIC docs have something similar.
+
+> > Hmm oh and the POWER_SUPPLY_CHARGE_COUNTER value should be monitored
+> > by your libbattery and it's low value and high value should be saved
+> > to a file. Low should be saved when we get the battery low interrupt
+> > and battery state changes to POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL.
+> > High value should be saved on POWER_SUPPLY_CAPACITY_LEVEL_FULL.
+> > 
+> > Then when you know the high value and low value, you can calculate
+> > the remaining capacity based on the current value and
+> > POWER_SUPPLY_POWER_AVG.
+> 
+> I'll look into that... but probably will do experiments with python,
+> first.
+
+Sure. The reason why I think we should not do it in the kernel in
+addition to the earlier reasoning is that we don't have a place
+to store the min and max values across reboot. I think there's
+some flash on the battery over 1w bus, but it probably just
+contains battery serial number or something and is not intended
+for writing much to it. I guess the min and max values should be
+really keyd based on this battery id in case the battery gets
+changed.
+
+Regards,
+
+Tony
