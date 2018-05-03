@@ -1,51 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751380AbeECOTZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:19:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751111AbeECOTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:19:23 -0400
-Date: Thu, 3 May 2018 10:19:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Du, Changbin" <changbin.du@intel.com>
-Cc: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org,
-        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] asm-generic: fix build error in fix_to_virt with
- CONFIG_DEBUG_EXPERIENCE
-Message-ID: <20180503101920.3157f63f@gandalf.local.home>
-In-Reply-To: <20180503132508.qudxf67tyijvjndo@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
-        <1525268700-10631-6-git-send-email-changbin.du@intel.com>
-        <20180502101930.25a5437d@gandalf.local.home>
-        <20180503132508.qudxf67tyijvjndo@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751501AbeECOTh (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:19:37 -0400
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:34713 "EHLO
+        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbeECOTY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:19:24 -0400
+X-Google-Smtp-Source: AB8JxZoz06FwJNI6MQ4c2WKjKL9TDsMKGtfZADRXocRa+cVRV9jbJh7yB4aSGVgSIXCZp7SdP4K2RPjkwioAfG5Ti64=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <69d19601-df56-687d-730e-d043b2cf7161@nextfour.com>
+References: <152532351517.17218.3583455156840230837.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <152532354268.17218.11923624861859552990.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <69d19601-df56-687d-730e-d043b2cf7161@nextfour.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Thu, 3 May 2018 07:19:23 -0700
+Message-ID: <CAPcyv4gqu-3w+nPrfYPWxWQYOPrHaNzsr=0YSe562Ns-Ygz4bQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] x86, memcpy_mcsafe: add write-protection-fault handling
+To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@nextfour.com>
+Cc: linux-nvdimm <linux-nvdimm@lists.01.org>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w43EJgUu023378
 
-On Thu, 3 May 2018 21:25:08 +0800
-"Du, Changbin" <changbin.du@intel.com> wrote:
+On Wed, May 2, 2018 at 10:29 PM, Mika Penttilä
+<mika.penttila@nextfour.com> wrote:
+> On 05/03/2018 07:59 AM, Dan Williams wrote:
+>> In preparation for using memcpy_mcsafe() to handle user copies it needs
+>> to be to handle write-protection faults while writing user pages. Add
+>> MMU-fault handlers alongside the machine-check exception handlers.
+>>
+>> Note that the machine check fault exception handling makes assumptions
+>> about source buffer alignment and poison alignment. In the write fault
+>> case, given the destination buffer is arbitrarily aligned, it needs a
+>> separate / additional fault handling approach. The mcsafe_handle_tail()
+>> helper is reused. The @limit argument is set to @len since there is no
+>> safety concern about retriggering an MMU fault, and this simplifies the
+>> assembly.
+>>
+>
+>> diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+>> index 75d3776123cc..9787f5ee0cf9 100644
+>> --- a/arch/x86/lib/usercopy_64.c
+>> +++ b/arch/x86/lib/usercopy_64.c
+>> @@ -75,6 +75,23 @@ copy_user_handle_tail(char *to, char *from, unsigned len)
+>>       return len;
+>>  }
+>>
+>> +/*
+>> + * Similar to copy_user_handle_tail, probe for the write fault point,
+>> + * but reuse __memcpy_mcsafe in case a new read error is encountered.
+>> + * clac() is handled in _copy_to_iter_mcsafe().
+>> + */
+>> +__visible unsigned long
+>> +mcsafe_handle_tail(char *to, char *from, unsigned len)
+>> +{
+>> +     for (; len; --len, to++) {
+>> +             unsigned long rem = memcpy_mcsafe(to, from, 1);
+>> +
+>
+>
+> Hmm why not
+>         for (; len; --len, from++, to++)
+>
+>
 
-> I think fix_to_virt() is designed for constant idx only. So I think we should
-> fix it at the caller side by replacing it with __fix_to_virt().
-> 
-> --- a/arch/arm/mm/mmu.c
-> +++ b/arch/arm/mm/mmu.c
-> @@ -1599,7 +1599,7 @@ static void __init early_fixmap_shutdown(void)
->                 pte_t *pte;
->                 struct map_desc map;
-> 
-> -               map.virtual = fix_to_virt(i);
-> +               map.virtual = __fix_to_virt(i);
->                 pte = pte_offset_early_fixmap(pmd_off_k(map.virtual), map.virtual);
-
-That's a better solution than the current patch.
-
--- Steve
+Why not indeed. Great catch, I'll fix this and extend the unit test to
+verify the data transfer as well.
