@@ -1,45 +1,214 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751246AbeECHTZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:19:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59378 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751019AbeECHTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:19:24 -0400
-Subject: Re: [RFC V3 PATCH 1/8] vhost: move get_rx_bufs to vhost.c
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jfreimann@redhat.com, wexu@redhat.com
-References: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
- <1524461700-5469-2-git-send-email-jasowang@redhat.com>
- <20180502080518.h52wme46fnqpyfpf@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <19846c31-45b2-6809-6e7b-6b738cd7d2ca@redhat.com>
-Date: Thu, 3 May 2018 15:19:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751354AbeECHTd (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:19:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37650 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751279AbeECHT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 03:19:26 -0400
+Date: Thu, 3 May 2018 08:19:18 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+Message-ID: <20180503071917.xm2xvgagvzkworay@salmiak>
+References: <20180502203326.9491-1-labbott@redhat.com>
+ <20180502203326.9491-3-labbott@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180502080518.h52wme46fnqpyfpf@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180502203326.9491-3-labbott@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Laura,
 
+On Wed, May 02, 2018 at 01:33:26PM -0700, Laura Abbott wrote:
+> 
+> Implementation of stackleak based heavily on the x86 version
+> 
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> Now written in C instead of a bunch of assembly.
 
-On 2018年05月02日 16:05, Tiwei Bie wrote:
-> On Mon, Apr 23, 2018 at 01:34:53PM +0800, Jason Wang wrote:
->> Move get_rx_bufs() to vhost.c and rename it to
->> vhost_get_rx_bufs(). This helps to hide vring internal layout from
-> A small typo. Based on the code change in this patch, it
-> seems that this function is renamed to vhost_get_bufs().
->
-> Thanks
->
+This looks neat!
 
-Right, let me fix it in the next version.
+I have a few minor comments below.
 
-Thanks
+> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+> index bf825f38d206..0ceea613c65b 100644
+> --- a/arch/arm64/kernel/Makefile
+> +++ b/arch/arm64/kernel/Makefile
+> @@ -55,6 +55,9 @@ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+>  arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
+>  arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
+>  
+> +arm64-obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += erase.o
+> +KASAN_SANITIZE_erase.o	:= n
+
+I suspect we want to avoid the full set of instrumentation suspects here, e.g.
+GKOV, KASAN, UBSAN, and KCOV.
+
+> +
+>  obj-y					+= $(arm64-obj-y) vdso/ probes/
+>  obj-m					+= $(arm64-obj-m)
+>  head-y					:= head.o
+> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+> index ec2ee720e33e..3144f1ebdc18 100644
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@ -401,6 +401,11 @@ tsk	.req	x28		// current thread_info
+>  
+>  	.text
+>  
+> +	.macro	ERASE_KSTACK
+> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> +	bl	erase_kstack
+> +#endif
+> +	.endm
+
+Nit: The rest of our asm macros are lower-case -- can we stick to that here?
+
+>  /*
+>   * Exception vectors.
+>   */
+> @@ -906,6 +911,7 @@ ret_to_user:
+>  	cbnz	x2, work_pending
+>  finish_ret_to_user:
+>  	enable_step_tsk x1, x2
+> +	ERASE_KSTACK
+>  	kernel_exit 0
+>  ENDPROC(ret_to_user)
+
+I believe we also need this in ret_fast_syscall.
+
+[...]
+
+> +asmlinkage void erase_kstack(void)
+> +{
+> +	unsigned long p = current->thread.lowest_stack;
+> +	unsigned long boundary = p & ~(THREAD_SIZE - 1);
+> +	unsigned long poison = 0;
+> +	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
+> +							sizeof(unsigned long);
+> +
+> +	/*
+> +	 * Let's search for the poison value in the stack.
+> +	 * Start from the lowest_stack and go to the bottom.
+> +	 */
+> +	while (p > boundary && poison <= check_depth) {
+> +		if (*(unsigned long *)p == STACKLEAK_POISON)
+> +			poison++;
+> +		else
+> +			poison = 0;
+> +
+> +		p -= sizeof(unsigned long);
+> +	}
+> +
+> +	/*
+> +	 * One long int at the bottom of the thread stack is reserved and
+> +	 * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
+> +	 */
+> +	if (p == boundary)
+> +		p += sizeof(unsigned long);
+
+I wonder if end_of_stack() should be taught about CONFIG_SCHED_STACK_END_CHECK,
+given that's supposed to return the last *usable* long on the stack, and we
+don't account for this elsewhere.
+
+If we did, then IIUC we could do:
+
+	unsigned long boundary = (unsigned long)end_of_stack(current);
+
+... at the start of the function, and not have to worry about this explicitly.
+
+> +
+> +#ifdef CONFIG_STACKLEAK_METRICS
+> +	current->thread.prev_lowest_stack = p;
+> +#endif
+> +
+> +	/*
+> +	 * So let's write the poison value to the kernel stack.
+> +	 * Start from the address in p and move up till the new boundary.
+> +	 */
+> +	boundary = current_stack_pointer;
+
+I worry a little that the compiler can move the SP during a function's
+lifetime, but maybe that's only the case when there are VLAs, or something like
+that?
+
+> +
+> +	BUG_ON(boundary - p >= THREAD_SIZE);
+> +
+> +	while (p < boundary) {
+> +		*(unsigned long *)p = STACKLEAK_POISON;
+> +		p += sizeof(unsigned long);
+> +	}
+> +
+> +	/* Reset the lowest_stack value for the next syscall */
+> +	current->thread.lowest_stack = current_stack_pointer;
+> +}
+
+Once this function returns, its data is left on the stack. Is that not a problem?
+
+No strong feelings either way, but it might be worth mentioning in the commit
+message.
+
+> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> index f08a2ed9db0d..156fa0a0da19 100644
+> --- a/arch/arm64/kernel/process.c
+> +++ b/arch/arm64/kernel/process.c
+> @@ -364,6 +364,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
+>  	p->thread.cpu_context.pc = (unsigned long)ret_from_fork;
+>  	p->thread.cpu_context.sp = (unsigned long)childregs;
+>  
+> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> +	p->thread.lowest_stack = (unsigned long)task_stack_page(p);
+
+Nit: end_of_stack(p) would be slightly better semantically, even though
+currently equivalent to task_stack_page(p).
+
+[...]
+
+> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> +void __used check_alloca(unsigned long size)
+> +{
+> +	unsigned long sp, stack_left;
+> +
+> +	sp = current_stack_pointer;
+> +
+> +	stack_left = sp & (THREAD_SIZE - 1);
+> +	BUG_ON(stack_left < 256 || size >= stack_left - 256);
+> +}
+
+Is this arbitrary, or is there something special about 256?
+
+Even if this is arbitrary, can we give it some mnemonic?
+
+> +EXPORT_SYMBOL(check_alloca);
+> +#endif
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index a34e9290a699..25dd2a14560d 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+>  KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>  				   -D__NO_FORTIFY \
+>  				   $(call cc-option,-ffreestanding) \
+> -				   $(call cc-option,-fno-stack-protector)
+> +				   $(call cc-option,-fno-stack-protector) \
+> +				   $(DISABLE_STACKLEAK_PLUGIN)
+>  
+>  GCOV_PROFILE			:= n
+>  KASAN_SANITIZE			:= n
+
+I believe we'll also need to do this for the KVM hyp code in arch/arm64/kvm/hyp/.
+
+Thanks,
+Mark.
