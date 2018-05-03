@@ -1,135 +1,139 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3120198-1525380794-5-18325840905434411497
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2941320-1525372747-2-210818367942780298
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='iso-8859-1'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525380794; b=R/85Uaob/bXhojrfhNKYnqws28uWH4P+bT91GebxzUhFx0ITj1
-    E05jtE5B1J2JUf4KN3NxtiCrhrYs/iKIOL5O/kVZVYC89ohI6RausR5M2quzhI0+
-    0hsK0w9n1RpVoE3SlU7h+YA6cfd0XY5FX+ZGtulqwZlHh41OGGNyaWSMFIr3eV+X
-    +zQrshGEbag5tLrS10q3MmJGDddq0yD16YU2+GK2x8H2bym2xr3xxCKVxRiZqNyI
-    fdGIG97xcDHd/5BAH+zz6+PhdO7huHVsQ4vMUtIi9gIEviaGpoeRHMYlX2YK+uiV
-    Y2H6VbeYxA7NYygPQg62QI1Ozm9fCl8f7v/Q==
+    1525372747; b=CXFNGglmdqIUoFE5omv0kwQgwtsoPDHUicAKvUS8U3gx2UPjpt
+    9vxQfjedQe3w8/6BylUhEeMax4Ac+1GyOwupMnPU2ggayNOh/438kGaQHZcU4/eP
+    LGikY0dPEqfGbRP85S8NGx9YhpJ3+UO5jYMm2xzCXuUDhP9YNuZwbWQiav2lV3PA
+    81A2CyKzFM9bZR5hbAf+5SdkfcbGDPImUQOq/4fneM3iMNeT4wC9RMdk50420ebH
+    nev/d25pvg6ekG30/HRjnYVbQCbYsylcLGUVUK57GZU6/1fksGjRH6gJx+XjEPid
+    jnJobWJjJkbb6DXZXKPRgtl0XCHNtgIEsD8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525380794; bh=NGz0O
-    RNHvJ57iI8aycBZntccD6zdvRfuIKFR2WGN2lM=; b=S2WzEUSnj/XXicQW+2o9X
-    jzeEKOhd/WISAhAOtz3jVN2LuzT/vtRSZ7QtXbaMMLdykoUBru+diW0vpLpCU9pr
-    6q4XzLLiMrHL3MuAS0ZBde3CwS2l76CO78tGhrHUaawOotrz2QbkHY3TB4li6K4X
-    2GRjEHamGFREkCn8UTHc39H4hlmUJJTIG8TYIaJ8TOSk7kXpTh/n+gblt5Mt3QIu
-    84G9mte4hj5XVkW1Fyi8OZuai/9JMoZfjg6DWTJxPMTo2s4wtPMCW8NT4i9hOtKl
-    qRxjtGjKVjvHs9/NuJKgRinAQaUoL+URQhqgJsD5dl/Fp9zRoVWbKNWJTcsaOFHv
-    Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=RpFziXYQ x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525372747; bh=aZuHMnS8HoYQvymWT9toB6eMu7hXaR
+    3HCblMyZn8Yd8=; b=gNAxBDDhJU0Xzsr0EzeIrIbTIyjLDwXdObL6XNZw6f2IFC
+    vM9DeJIDF+LZYQ2JKaTKk4pnrn6IUySE71NOQh3XAtyPJwiAqQ054bl0QEttczNI
+    A1cWchTZ3TsfXVe8o2gc4e41N7xD+HSbPwj0LRF/wTp55nSczrVJQtIACPvL7dPF
+    xBBWbtzIdN9J9IkvaPpwpMUb8ZLn1L4eGqPTSa/mjlraWpg+gOjZK8vgUcBsc4tE
+    qcP99gdWNLmx1Se3nmjtGuHuAvejXl804zEbEFRssPRaPnyHDZTP1j6lunn2ncQJ
+    teI06FZaiQM/XY/7OrLjBMSuwv3vNQJ6r7vJZ5bQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+    header.i=@linaro.org header.b=AFrJSQ3g x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linuxfoundation.org
-    header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=gnDrxMMF;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=RpFziXYQ x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
+      header.i=@linaro.org header.b=AFrJSQ3g x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=google;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linuxfoundation.org
-      header.result=pass header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=gnDrxMMF;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfB2u2Y0B1zwhb667nkOKz5Yc2HwPuhu720acO6+KbsJjr7PPEGeLeD3E8IHHuH5eTTaomQ2aelchPYbeOW+zdwpm4EBfX1VGpjQT79YZQQeCPRECsfQb
-    M/6mUhVwxM1iRoGT2bxuaEeErDwaBPkgoHHAk3aL01OVu/wOOEWTWrM/Ha5o3plRMjDkXnB8zRD0mkbRcbRTYlurNIcAEi4RSxYVGB9j4AwoTWMdTlHjRsts
-    4yO5elPJHO6qvrCe7Gcd/g==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=8nJEP1OIZ-IA:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=ag1SF4gXAAAA:8 a=n8i27M1mAAAA:8
-    a=1XWaLZrsAAAA:8 a=lTbjQzD5AAAA:8 a=DDOyTI_5AAAA:8 a=Q4d8F40EPhmmkEFLAHcA:9
-    a=wPNLvfGTeEIA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 a=w8YF5asEQ23juLwKoPR8:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfP0PamcdrbX70ZfHciLd1WZii0u2VV0jKGslGcmBRLY0Z9U2zamf8iMKJ7UFRZ3990WYIXAvuFlvDqKpSAHSANOKmKNtvuAZzVebATJb32L5vgeX0/qU
+    /WrZacpX0BdMlR58y6EpA6TW2gQJp1EywHW0FfKl5PayePOn7iJ84BGkBjhGQcdrJ9W0d86Lc0DmPZ7WYEvENqPIQWT5iUlfdhBsgsMxLJgVoIopHS8DTX49
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=1XWaLZrsAAAA:8
+    a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8 a=Aqq4grhJvZhRwofscVwA:9
+    a=GHMYYBXT_GxAYqGE:21 a=Xiwt8V8h-9Bp-ZgQ:21 a=AjGcO6oz07-iQ99wixmX:22
+    a=cvBusfyB2V15izCimMoJ:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 3 May 2018 13:52:54 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alistair Strachan <astrachan@google.com>
-Subject: Re: [PATCH 3/3] staging: Android: Fix sparse warnings in vsoc driver.
-Message-ID: <20180503205254.GA26297@kroah.com>
-References: <20180503044616.157167-1-astrachan@google.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180503044616.157167-1-astrachan@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
- Martijn Coenen <maco@android.com>, Greg Hartman <ghartman@google.com>,
- linux-kernel@vger.kernel.org,
- Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>, kernel-team@android.com
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751236AbeECSjE (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 14:39:04 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39740 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbeECSjC (ORCPT
+        <rfc822;stable@vger.kernel.org>); Thu, 3 May 2018 14:39:02 -0400
+X-Google-Smtp-Source: AB8JxZrcgQ5eOVoX6zWGPEsSZb60ZBV6e4tQHDR7GhJQ596RpyjIx9O6uIZ+P8iyzFMApGpMiWcY/w==
+From: Amit Pundir <amit.pundir@linaro.org>
+To: lkml <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
+Cc: Suren Baghdasaryan <surenb@google.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        Christophe Ricard <christophe.ricard@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Dmitry Shmidt <dimitrysh@google.com>,
+        Todd Kjos <tkjos@google.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Stable <stable@vger.kernel.org>
+Subject: [PATCH v3 1/4] NFC: st21nfca: Fix out of bounds kernel access when handling ATR_REQ
+Date: Fri,  4 May 2018 00:08:53 +0530
+Message-Id: <1525372736-25094-1-git-send-email-amit.pundir@linaro.org>
+X-Mailer: git-send-email 2.7.4
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 02, 2018 at 09:46:16PM -0700, Alistair Strachan wrote:
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Arve Hj=F8nnev=E5g <arve@android.com>
-> Cc: Todd Kjos <tkjos@android.com>
-> Cc: Martijn Coenen <maco@android.com>
-> Cc: Greg Hartman <ghartman@google.com>
-> Cc: devel@driverdev.osuosl.org
-> Cc: kernel-team@android.com
-> Signed-off-by: Alistair Strachan <astrachan@google.com>
+From: Suren Baghdasaryan <surenb@google.com>
 
-Normally I don't like to merge patches without any changelog text, so in
-the future please provide it for all patches.
+Out of bounds kernel accesses in st21nfca's NFC HCI layer
+might happen when handling ATR_REQ events if user-specified
+atr_req->length is bigger than the buffer size. In
+that case memcpy() inside st21nfca_tm_send_atr_res() will
+read extra bytes resulting in OOB read from the kernel heap.
 
-thanks,
+cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v3..v1:
+Resend. No changes.
 
-greg k-h
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ drivers/nfc/st21nfca/dep.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/nfc/st21nfca/dep.c b/drivers/nfc/st21nfca/dep.c
+index fd08be2917e6..3420c5104c94 100644
+--- a/drivers/nfc/st21nfca/dep.c
++++ b/drivers/nfc/st21nfca/dep.c
+@@ -217,7 +217,8 @@ static int st21nfca_tm_recv_atr_req(struct nfc_hci_dev *hdev,
+ 
+ 	atr_req = (struct st21nfca_atr_req *)skb->data;
+ 
+-	if (atr_req->length < sizeof(struct st21nfca_atr_req)) {
++	if (atr_req->length < sizeof(struct st21nfca_atr_req) ||
++	    atr_req->length > skb->len) {
+ 		r = -EPROTO;
+ 		goto exit;
+ 	}
+-- 
+2.7.4
