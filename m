@@ -1,55 +1,51 @@
-Return-Path: <axboe@kernel.dk>
-ARC-Seal: i=1; a=rsa-sha256; t=1525361820; cv=none;
+Return-Path: <jack@suse.cz>
+X-Google-Smtp-Source: AB8JxZp4ljMfyiStnN+4lEzwS5wS9/qOFtTcwD+nMd+AxEs8fxoMvGzm7+FJXWxVH7n2t6cFAdlF
+ARC-Seal: i=1; a=rsa-sha256; t=1525361635; cv=none;
         d=google.com; s=arc-20160816;
-        b=DRPP7cHUojqxZseKZufnYDVINfK819e13ORk1RQ+c+LyqIkdWUG/usUwDZEODvGGtH
-         dfBXCIH+D2s9ITYUuon1Chb+tt43Dj6VUVyOZxFRw4xR4Gj2rN3zQZm1GBemPN5pi2CH
-         udsGTIpsIf9MUG7mtecm5ZFS1OoqtpwYP1e+kvsRCn4XaGB20ypvh1kARyDU/rklofOB
-         JoiKqCzgYTN6a70A9OJNgXc0Wt6ECFc1N3YFyjqUZLNhx9N844TPuILfCFNAiEooNof6
-         EyBvELoH85z6sfSIPqE5vxQpFDswdQrdvW5v+MxDFU308ZLVuWWEIag6WjOf2VTApAeZ
-         Z1ww==
+        b=AxWBciK5GbRv5QX6FaUoAzUr8zfka09ccfjmQhNBoa890dt1GbrC6/RvnCgXxJMq27
+         ZoDINl6AHp6fxM7VqXnzbQ3AmwrY1nk9yz5vWfNaPlAr0eU7rk5fN4TL+/RDvF0F4ZzP
+         AEyXKmHpotOM6ZGR3a6XWI3/CGipZySlud+mZFlLCmaM1IjCtckCE3qn/cmZDzuK7l+N
+         q5o2g3+PSfBlYM5zCj1e03RpsEJWt14tjioXSJ3poOxTLt8XlbyQbcfE0G26bPcROAxz
+         9yCeRkIeJoOcMFMlYmQA3RQ5yYg02Lwll1nKHVRUgzApt4XTTfV2JksKyMuub0eGcj3n
+         TuKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :dkim-signature:arc-authentication-results;
-        bh=Y2AOU4bMAM1LYmkU6mF2laC0jM/eVfs2WsiWjIQUv10=;
-        b=JXEYs3KLQ58tPuNHUpbmj1b9G6ZVSQILqLSmIQg7293URVBHfWfCONS2mOXo3pLgmx
-         I12jAkxnkJqOQnas9s4IWwm6xMiBSFS9huQpr1kFcRuGze4Oj3gm+rY3IRGDAgRXt4Ho
-         +8gJ1mF0p2OafXNfZNGWFWG1xWsDMEkEfdnrPKD8zcp81v1ZGfM/ZIgGzaAt9SIbJHLF
-         0apmOkt0Rl0onM25FX3IxPkR2FtoMMEra4qHJS/P7A1noD9xriSa5a6USDVPg9TmwtIh
-         tj7w6AcYeoHOXPNxIYBjb/t7SOQf8FQ7tOpVumF2NfYEowiBJ604KDXQJewaCJ3Hx3p2
-         p6Cw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=COZSdTRREV3i4igF7cjJMtyze6wvXZxTfzNuFn895Zc=;
+        b=Gb2pYV1FirW/SOcHXGotU2JksoUJpBn9AOQ/SAB3O+1cXPd0Q0dmDUOZKPUAJo13Je
+         WGz5GrrMUKbMIn0YMlVlJNdPx8iXKG3YIDYO5t/3gCQ27TIHYH1UwtQib1Vq/Xk7eu5T
+         XOEd3QQq14oG3kNt52ZB31+UD5C379rayrgk9xGIzIm45TIDJVJursMWYQUludyPs0He
+         bOjmGpR/VuGyQyXNYjJUqnE/KyPVce+ir3on9Z4VEUmOgY5M6mwFn5PDxVdfidbROktc
+         AAOH8qqobRDhEbkL3dcA+N9gAleNleR2YsOmOUp1Lfd4cfvkWa4P/GDly5mzgOZmdgWX
+         pwNw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel-dk.20150623.gappssmtp.com header.s=20150623 header.b=eu1UCTTJ;
-       spf=pass (google.com: domain of axboe@kernel.dk designates 209.85.220.41 as permitted sender) smtp.mailfrom=axboe@kernel.dk
+       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel-dk.20150623.gappssmtp.com header.s=20150623 header.b=eu1UCTTJ;
-       spf=pass (google.com: domain of axboe@kernel.dk designates 209.85.220.41 as permitted sender) smtp.mailfrom=axboe@kernel.dk
-X-Google-Smtp-Source: AB8JxZrPhYDVQNTN7BQ631xuYGgBHaxIQr0OKCC8w2OACqFtxrrtozdudZZIx6SiSwSC/Z5ce6DafQ==
+       spf=pass (google.com: domain of jack@suse.cz designates 195.135.220.15 as permitted sender) smtp.mailfrom=jack@suse.cz
+Date: Thu, 3 May 2018 17:33:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot <syzbot+db48ce201b524603190a@syzkaller.appspotmail.com>,
+	syzkaller-bugs@googlegroups.com,
+	weiping zhang <zhangweiping@didichuxing.com>,
+	Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 Subject: Re: KASAN: use-after-free Read in debugfs_remove (2)
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- syzbot <syzbot+db48ce201b524603190a@syzkaller.appspotmail.com>,
- syzkaller-bugs@googlegroups.com, weiping zhang
- <zhangweiping@didichuxing.com>, Jan Kara <jack@suse.cz>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
+Message-ID: <20180503153351.zmtmo2g6gxw5p6a4@quack2.suse.cz>
 References: <000000000000fbda89056a818f20@google.com>
  <a5b6e0ff-ad8e-18f4-8c24-cdfafe4e3883@I-love.SAKURA.ne.jp>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <7156e8d9-4c4a-1a98-2767-3508b9b3798f@kernel.dk>
-Date: Thu, 3 May 2018 09:36:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <a5b6e0ff-ad8e-18f4-8c24-cdfafe4e3883@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+User-Agent: NeoMutt/20170421 (1.8.2)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598532704298959546?=
-X-GMAIL-MSGID: =?utf-8?q?1599457796377597249?=
+X-GMAIL-MSGID: =?utf-8?q?1599457601993976501?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 4/23/18 4:34 AM, Tetsuo Handa wrote:
+On Mon 23-04-18 19:34:45, Tetsuo Handa wrote:
 > From be88e559ec13f49b1c3aec2457c14c70f6b1926a Mon Sep 17 00:00:00 2001
 > From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 > Date: Mon, 23 Apr 2018 11:21:03 +0900
@@ -68,8 +64,41 @@ On 4/23/18 4:34 AM, Tetsuo Handa wrote:
 > Fix this by making IS_ERR_OR_NULL(bdi->debug_dir) == true.
 > 
 > [1] https://syzkaller.appspot.com/bug?id=5ab4efd91a96dcea9b68104f159adf4af2a6dfc1
+> 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Reported-by: syzbot <syzbot+049cb4ae097049dac137@syzkaller.appspotmail.com>
+> Fixes: 97f07697932e6faf ("bdi: convert bdi_debug_register to int")
+> Cc: weiping zhang <zhangweiping@didichuxing.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Jens Axboe <axboe@kernel.dk>
 
-Applied for 4.17, thanks.
+Looks good to me. You can add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+Jens, can you please merge this fix? Thanks!
+
+								Honza
+
+> ---
+>  mm/backing-dev.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+> index 023190c..7fe73fa 100644
+> --- a/mm/backing-dev.c
+> +++ b/mm/backing-dev.c
+> @@ -115,6 +115,7 @@ static int bdi_debug_register(struct backing_dev_info *bdi, const char *name)
+>  					       bdi, &bdi_debug_stats_fops);
+>  	if (!bdi->debug_stats) {
+>  		debugfs_remove(bdi->debug_dir);
+> +		bdi->debug_dir = NULL;
+>  		return -ENOMEM;
+>  	}
+>  
+> -- 
+> 1.8.3.1
+> 
 -- 
-Jens Axboe
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
