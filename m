@@ -1,49 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751568AbeECHO0 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:14:26 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:49960 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750849AbeECHOY (ORCPT
+        id S1751277AbeECHOp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:14:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48918 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751078AbeECHOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:14:24 -0400
-Subject: Re: [PATCH v2 04/10] PCI: Add dev parameter to
- __of_pci_get_host_bridge_resources()
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
- <cfab525f3d0436f75187fbd65907ada909d7692f.1525067324.git.jan.kiszka@siemens.com>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <e06087fd-3258-89d4-cdc3-06196bd61dbe@mentor.com>
-Date: Thu, 3 May 2018 10:14:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        Thu, 3 May 2018 03:14:41 -0400
+Date: Thu, 3 May 2018 09:14:34 +0200
+From: Christoph Hellwig <hch@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] dma mapping fix for 4.17-rc4
+Message-ID: <20180503071434.GA13895@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <cfab525f3d0436f75187fbd65907ada909d7692f.1525067324.git.jan.kiszka@siemens.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/30/2018 08:48 AM, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> When non-NULL, use the new dev parameter of
-> __of_pci_get_host_bridge_resources() to allocate the resource data
-> structures via devm_kzalloc. That allows to release them automatically
-> during device destruction.
-> 
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+The following changes since commit 2d618bdf71635463a4aa4ad0fe46ec852292bc0c:
 
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Tested-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+  Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rkuo/linux-hexagon-kernel (2018-05-01 19:54:22 -0700)
 
---
-With best wishes,
-Vladimir
+are available in the Git repository at:
+
+  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-4.17-4
+
+for you to fetch changes up to 892a0be43edd63e1cd228af3453a064e9e94f08e:
+
+  swiotlb: fix inversed DMA_ATTR_NO_WARN test (2018-05-02 14:48:55 +0200)
+
+----------------------------------------------------------------
+Fix an incorrect warning selection introduces in the last merge window.
+
+----------------------------------------------------------------
+Michel Dänzer (1):
+      swiotlb: fix inversed DMA_ATTR_NO_WARN test
+
+ lib/swiotlb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
