@@ -1,93 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751724AbeECNWf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:22:35 -0400
-Received: from foss.arm.com ([217.140.101.70]:41588 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751064AbeECNUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:20:44 -0400
-From: Mark Rutland <mark.rutland@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        catalin.marinas@arm.com, christoffer.dall@arm.com, drjones@redhat.com,
-        marc.zyngier@arm.com, mark.rutland@arm.com,
-        ramana.radhakrishnan@arm.com, suzuki.poulose@arm.com,
-        will.deacon@arm.com, awallis@codeaurora.org
-Subject: [PATCHv4 02/10] arm64/kvm: consistently handle host HCR_EL2 flags
-Date: Thu,  3 May 2018 14:20:23 +0100
-Message-Id: <20180503132031.25705-3-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180503132031.25705-1-mark.rutland@arm.com>
-References: <20180503132031.25705-1-mark.rutland@arm.com>
+        id S1751528AbeECNX0 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:23:26 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:38725 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751069AbeECNXY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:23:24 -0400
+X-Google-Smtp-Source: AB8JxZpKU/omf8/HZwCD33xrT+Bx97bLwJtu9Xmhv3bQv8zhe6wyIuNW0aQpsCI9lc5wko1QLd2aUw==
+Subject: Re: [PATCH] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
+ rmap_walk_ksm
+To: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com
+References: <1525336488-25447-1-git-send-email-hejianet@gmail.com>
+ <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <5bc6dde6-1663-6720-8b3c-a473899cdb9b@gmail.com>
+Date: Thu, 3 May 2018 21:23:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In KVM we define the configuration of HCR_EL2 for a VHE HOST in
-HCR_HOST_VHE_FLAGS, but we don't have a similar definition for the
-non-VHE host flags, and open-code HCR_RW. Further, in head.S we
-open-code the flags for VHE and non-VHE configurations.
 
-In future, we're going to want to configure more flags for the host, so
-lets add a HCR_HOST_NVHE_FLAGS defintion, and consistently use both
-HCR_HOST_VHE_FLAGS and HCR_HOST_NVHE_FLAGS in the kvm code and head.S.
 
-We now use mov_q to generate the HCR_EL2 value, as we use when
-configuring other registers in head.S.
+On 5/3/2018 6:44 PM, Claudio Imbrenda Wrote:
+> On Thu,  3 May 2018 16:34:48 +0800
+> Jia He <hejianet@gmail.com> wrote:
+>
+>> In our armv8a server(QDF2400), I noticed a WARN_ON caused by PAGE_SIZE
+>> unaligned for rmap_item->address.
+>>
+>> --------------------------begin--------------------------------------
+>> [  410.853828] WARNING: CPU: 4 PID: 4641 at
+>> arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1826
+>> kvm_age_hva_handler+0xc0/0xc8
+>> [  410.864518] Modules linked in: vhost_net vhost tap xt_CHECKSUM
+>> ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT
+>> nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set
+>> nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat
+>> nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle
+>> ip6table_security ip6table_raw iptable_nat nf_conntrack_ipv4
+>> nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle
+>> iptable_security iptable_raw ebtable_filter ebtables ip6table_filter
+>> ip6_tables iptable_filter rpcrdma ib_isert iscsi_target_mod ib_iser
+>> libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp
+>> scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_umad rdma_cm ib_cm
+>> iw_cm mlx5_ib vfat fat ib_uverbs dm_mirror dm_region_hash ib_core
+>> dm_log dm_mod crc32_ce ipmi_ssif sg nfsd [  410.935101]  auth_rpcgss
+>> nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c mlx5_core ixgbe
+>> mlxfw devlink mdio ahci_platform libahci_platform qcom_emac libahci
+>> hdma hdma_mgmt i2c_qup [  410.951369] CPU: 4 PID: 4641 Comm: memhog
+>> Tainted: G        W 4.17.0-rc3+ #8
+>> [  410.959104] Hardware name: <snip for confidential issues>
+>> [  410.969791] pstate: 80400005 (Nzcv daif +PAN -UAO)
+>> [  410.974575] pc : kvm_age_hva_handler+0xc0/0xc8
+>> [  410.979012] lr : handle_hva_to_gpa+0xa8/0xe0
+>> [  410.983274] sp : ffff801761553290
+>> [  410.986581] x29: ffff801761553290 x28: 0000000000000000
+>> [  410.991888] x27: 0000000000000002 x26: 0000000000000000
+>> [  410.997195] x25: ffff801765430058 x24: ffff0000080b5608
+>> [  411.002501] x23: 0000000000000000 x22: ffff8017ccb84000
+>> [  411.007807] x21: 0000000003ff0000 x20: ffff8017ccb84000
+>> [  411.013113] x19: 000000000000fe00 x18: ffff000008fb3c08
+>> [  411.018419] x17: 0000000000000000 x16: 0060001645820bd3
+>> [  411.023725] x15: ffff80176aacbc08 x14: 0000000000000000
+>> [  411.029031] x13: 0000000000000040 x12: 0000000000000228
+>> [  411.034337] x11: 0000000000000000 x10: 0000000000000000
+>> [  411.039643] x9 : 0000000000000010 x8 : 0000000000000004
+>> [  411.044949] x7 : 0000000000000000 x6 : 00008017f0770000
+>> [  411.050255] x5 : 0000fffda59f0200 x4 : 0000000000000000
+>> [  411.055561] x3 : 0000000000000000 x2 : 000000000000fe00
+>> [  411.060867] x1 : 0000000003ff0000 x0 : 0000000020000000
+>> [  411.066173] Call trace:
+>> [  411.068614]  kvm_age_hva_handler+0xc0/0xc8
+>> [  411.072703]  handle_hva_to_gpa+0xa8/0xe0
+>> [  411.076619]  kvm_age_hva+0x4c/0xe8
+>> [  411.080014]  kvm_mmu_notifier_clear_flush_young+0x54/0x98
+>> [  411.085408]  __mmu_notifier_clear_flush_young+0x6c/0xa0
+>> [  411.090627]  page_referenced_one+0x154/0x1d8
+>> [  411.094890]  rmap_walk_ksm+0x12c/0x1d0
+>> [  411.098632]  rmap_walk+0x94/0xa0
+>> [  411.101854]  page_referenced+0x194/0x1b0
+>> [  411.105770]  shrink_page_list+0x674/0xc28
+>> [  411.109772]  shrink_inactive_list+0x26c/0x5b8
+>> [  411.114122]  shrink_node_memcg+0x35c/0x620
+>> [  411.118211]  shrink_node+0x100/0x430
+>> [  411.121778]  do_try_to_free_pages+0xe0/0x3a8
+>> [  411.126041]  try_to_free_pages+0xe4/0x230
+>> [  411.130045]  __alloc_pages_nodemask+0x564/0xdc0
+>> [  411.134569]  alloc_pages_vma+0x90/0x228
+>> [  411.138398]  do_anonymous_page+0xc8/0x4d0
+>> [  411.142400]  __handle_mm_fault+0x4a0/0x508
+>> [  411.146489]  handle_mm_fault+0xf8/0x1b0
+>> [  411.150321]  do_page_fault+0x218/0x4b8
+>> [  411.154064]  do_translation_fault+0x90/0xa0
+>> [  411.158239]  do_mem_abort+0x68/0xf0
+>> [  411.161721]  el0_da+0x24/0x28
+>> ---------------------------end---------------------------------------
+>>
+>> In rmap_walk_ksm, the rmap_item->address might still have the
+>> STABLE_FLAG, then the start and end in handle_hva_to_gpa might not be
+>> PAGE_SIZE aligned. Thus it causes exceptions in handle_hva_to_gpa on
+>> arm64.
+>>
+>> This patch fixes it by ignoring the low bits of rmap_item->address
+>> when doing rmap_walk_ksm.
+>>
+>> Signed-off-by: jia.he@hxt-semitech.com
+>> ---
+>>   mm/ksm.c | 15 +++++++++++----
+>>   1 file changed, 11 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/mm/ksm.c b/mm/ksm.c
+>> index e3cbf9a..3f0d980 100644
+>> --- a/mm/ksm.c
+>> +++ b/mm/ksm.c
+>> @@ -199,6 +199,8 @@ struct rmap_item {
+>>   #define SEQNR_MASK	0x0ff	/* low bits of unstable tree
+>> seqnr */ #define UNSTABLE_FLAG	0x100	/* is a node of
+>> the unstable tree */ #define STABLE_FLAG	0x200	/* is
+>> listed from the stable tree */ +#define KSM_FLAG_MASK
+>> (SEQNR_MASK|UNSTABLE_FLAG|STABLE_FLAG)
+>> +				/* to mask all the flags */
+>>
+>>   /* The stable and unstable tree heads */
+>>   static struct rb_root one_stable_tree[1] = { RB_ROOT };
+>> @@ -2570,10 +2572,13 @@ void rmap_walk_ksm(struct page *page, struct
+>> rmap_walk_control *rwc) anon_vma_lock_read(anon_vma);
+>>   		anon_vma_interval_tree_foreach(vmac,
+>> &anon_vma->rb_root, 0, ULONG_MAX) {
+>> +			unsigned long addr;
+>> +
+>>   			cond_resched();
+>>   			vma = vmac->vma;
+>> -			if (rmap_item->address < vma->vm_start ||
+>> -			    rmap_item->address >= vma->vm_end)
+>> +
+>> +			addr = rmap_item->address;
+> why not just: addr = rmap_item->address & ~KSM_FLAG_MASK;
+yes, thank you.
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
----
- arch/arm64/include/asm/kvm_arm.h | 1 +
- arch/arm64/kernel/head.S         | 5 ++---
- arch/arm64/kvm/hyp/switch.c      | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Cheers,
+Jia
+>> +			if (addr < vma->vm_start || addr >=
+>> vma->vm_end) continue;
+>>   			/*
+>>   			 * Initially we examine only the vma which
+>> covers this @@ -2587,8 +2592,10 @@ void rmap_walk_ksm(struct page
+>> *page, struct rmap_walk_control *rwc) if (rwc->invalid_vma &&
+>> rwc->invalid_vma(vma, rwc->arg)) continue;
+>>
+>> -			if (!rwc->rmap_one(page, vma,
+>> -					rmap_item->address,
+>> rwc->arg)) {
+>> +			if (addr & STABLE_FLAG)
+>> +				addr &= ~KSM_FLAG_MASK;
+> then you would not need the IF above, and it would be more readable.
+>
+>> +
+>> +			if (!rwc->rmap_one(page, vma, addr,
+>> rwc->arg)) { anon_vma_unlock_read(anon_vma);
+>>   				return;
+>>   			}
+>
+> best regards,
+>
+> Claudio Imbrenda
+>
+>
 
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index 6dd285e979c9..89b3dda7e3cb 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -86,6 +86,7 @@
- 			 HCR_AMO | HCR_SWIO | HCR_TIDCP | HCR_RW | HCR_TLOR | \
- 			 HCR_FMO | HCR_IMO)
- #define HCR_VIRT_EXCP_MASK (HCR_VSE | HCR_VI | HCR_VF)
-+#define HCR_HOST_NVHE_FLAGS (HCR_RW)
- #define HCR_HOST_VHE_FLAGS (HCR_RW | HCR_TGE | HCR_E2H)
- 
- /* TCR_EL2 Registers bits */
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index b0853069702f..651a06b1980f 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -494,10 +494,9 @@ ENTRY(el2_setup)
- #endif
- 
- 	/* Hyp configuration. */
--	mov	x0, #HCR_RW			// 64-bit EL1
-+	mov_q	x0, HCR_HOST_NVHE_FLAGS
- 	cbz	x2, set_hcr
--	orr	x0, x0, #HCR_TGE		// Enable Host Extensions
--	orr	x0, x0, #HCR_E2H
-+	mov_q	x0, HCR_HOST_VHE_FLAGS
- set_hcr:
- 	msr	hcr_el2, x0
- 	isb
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index d9645236e474..cdae330e15e9 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -143,7 +143,7 @@ static void __hyp_text __deactivate_traps_nvhe(void)
- 	mdcr_el2 |= MDCR_EL2_E2PB_MASK << MDCR_EL2_E2PB_SHIFT;
- 
- 	write_sysreg(mdcr_el2, mdcr_el2);
--	write_sysreg(HCR_RW, hcr_el2);
-+	write_sysreg(HCR_HOST_NVHE_FLAGS, hcr_el2);
- 	write_sysreg(CPTR_EL2_DEFAULT, cptr_el2);
- }
- 
 -- 
-2.11.0
+Cheers,
+Jia
