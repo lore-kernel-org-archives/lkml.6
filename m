@@ -1,105 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751517AbeECNfU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:35:20 -0400
-Received: from mga06.intel.com ([134.134.136.31]:7807 "EHLO mga06.intel.com"
+        id S1751403AbeECNie (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:38:34 -0400
+Received: from mga03.intel.com ([134.134.136.65]:52117 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751465AbeECNfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:35:14 -0400
+        id S1751120AbeECNia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:38:30 -0400
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="42784238"
-Date: Thu, 3 May 2018 21:25:08 +0800
-From: "Du, Changbin" <changbin.du@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
-        akpm@linux-foundation.org, rdunlap@infradead.org, x86@kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] asm-generic: fix build error in fix_to_virt with
- CONFIG_DEBUG_EXPERIENCE
-Message-ID: <20180503132508.qudxf67tyijvjndo@intel.com>
-References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
- <1525268700-10631-6-git-send-email-changbin.du@intel.com>
- <20180502101930.25a5437d@gandalf.local.home>
+   d="scan'208";a="48014210"
+Date: Thu, 3 May 2018 16:38:23 +0300
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
+        peterz@infradead.org, chao.p.peng@linux.intel.com
+Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
+ virtualization mode
+Message-ID: <20180503133823.tqbraql3b7ltuo6a@um.fi.intel.com>
+References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
+ <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
+ <20180503113223.x2ykby6wglppgdwf@um.fi.intel.com>
+ <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
+ <20180503120215.dev7ti43zk7yoovn@um.fi.intel.com>
+ <221c297b-1270-371b-70a3-4cff4bed7a7e@redhat.com>
+ <20180503124847.tcrizs2sxy3j6mu2@um.fi.intel.com>
+ <26505f7a-9e6b-efb9-e5f9-8aae3756be49@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180502101930.25a5437d@gandalf.local.home>
-User-Agent: NeoMutt/20180323-6-5ca392
+In-Reply-To: <26505f7a-9e6b-efb9-e5f9-8aae3756be49@redhat.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 10:19:30AM -0400, Steven Rostedt wrote:
-> On Wed,  2 May 2018 21:45:00 +0800
-> changbin.du@intel.com wrote:
+On Thu, May 03, 2018 at 02:50:12PM +0200, Paolo Bonzini wrote:
+> On 03/05/2018 14:48, Alexander Shishkin wrote:
+> >> Guest tracing can only be enabled at boot time, because the guest's
+> >> CPUID changes depending on whether it's enabled.  And likewise if perf
+> >> record can do system-wide tracing at any time during the guest's
+> >> execution, we need to know it at boot time in order to set the guest CPUID.
+> >
+> > CPUID is immaterial here; the real trick is to disallow the use of PT at
+> > runtime when the host suddenly decides to trace the guest, in such a way
+> > that the guest user is informed that their trace is incomplete due to the
+> > host activity.
 > 
-> > From: Changbin Du <changbin.du@intel.com>
-> > 
-> > With '-Og' optimization level, GCC would not optimize a count for a loop
-> > as a constant value. But BUILD_BUG_ON() only accept compile-time constant
-> > values.
-> > 
-> > arch/arm/mm/mmu.o: In function `fix_to_virt':
-> > /home/changbin/work/linux/./include/asm-generic/fixmap.h:31: undefined reference to `__compiletime_assert_31'
-> > Makefile:1051: recipe for target 'vmlinux' failed
-> > make: *** [vmlinux] Error 1
-> > 
-> > Signed-off-by: Changbin Du <changbin.du@intel.com>
-> > ---
-> >  include/asm-generic/fixmap.h | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/asm-generic/fixmap.h b/include/asm-generic/fixmap.h
-> > index 827e4d3..a6576d4 100644
-> > --- a/include/asm-generic/fixmap.h
-> > +++ b/include/asm-generic/fixmap.h
-> > @@ -28,7 +28,8 @@
-> >   */
-> >  static __always_inline unsigned long fix_to_virt(const unsigned int idx)
-> >  {
-> > -	BUILD_BUG_ON(idx >= __end_of_fixed_addresses);
-> > +	BUILD_BUG_ON(__builtin_constant_p(idx) &&
-> > +		     idx >= __end_of_fixed_addresses);
-> 
-> Hmm, this changes the check slightly. Perhaps we should only do this
-> when your config is active:
-> 
-> {
-> 	BUILD_BUG_ON(
-> /* CONFIG_DEBUG_OPTIMIZE may cause idx not to be constant */
-> #ifdef CONFIG_DEBUG_OPTIMIZE
-> 		__builtin_constant_p(idx) &&
-> #endif
-> 		idx >= __end_of_fixed_addresses);
-> 
-> }
-I think fix_to_virt() is designed for constant idx only. So I think we should
-fix it at the caller side by replacing it with __fix_to_virt().
+> How do you do that?
 
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -1599,7 +1599,7 @@ static void __init early_fixmap_shutdown(void)
-                pte_t *pte;
-                struct map_desc map;
+Off the top of my head:
+  * you don't;
+  * you write something to the PT stream;
+  * you signal an error via RTIT_STATUS;
+  * guest always prevails: host gets PARTIAL records in case of a conflict.
 
--               map.virtual = fix_to_virt(i);
-+               map.virtual = __fix_to_virt(i);
-                pte = pte_offset_early_fixmap(pmd_off_k(map.virtual), map.virtual);
+> And you still need the module parameter to decide
+> whether the host is _allowed_ to cause incomplete traces in the guest.
 
-> 
-> -- Steve
-> 
-> >  	return __fix_to_virt(idx);
-> >  }
-> >  
-> 
+Or rather a parameter to decide who wins in case both host and guest want
+to trace the guest. That's arguably better than having different versions of
+PT in the guest depending on a module parameter setting.
 
--- 
-Thanks,
-Changbin Du
+Regards,
+--
+Alex
