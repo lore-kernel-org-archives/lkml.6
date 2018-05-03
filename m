@@ -1,76 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751432AbeECSm7 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 14:42:59 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:36014 "EHLO hermes.aosc.io"
+        id S1751502AbeECSnI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:43:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751101AbeECSm5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:42:57 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 6/7] arm64: allwinner: h6: add R_I2C controller
-Date: Fri,  4 May 2018 02:38:46 +0800
-Message-Id: <20180503183847.11046-7-icenowy@aosc.io>
-In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
-References: <20180503183847.11046-1-icenowy@aosc.io>
+        id S1751342AbeECSnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 14:43:05 -0400
+Date: Thu, 3 May 2018 21:43:01 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Lidong Chen <jemmy858585@gmail.com>, dledford@redhat.com,
+        akpm@linux-foundation.org, qing.huang@oracle.com,
+        artemyko@mellanox.com, dan.j.williams@intel.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
+        Lidong Chen <lidongchen@tencent.com>
+Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
+Message-ID: <20180503184301.GD4473@mtr-leonro.local>
+References: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
+ <20180503153310.GA9738@ziepe.ca>
+ <20180503181235.GB4473@mtr-leonro.local>
+ <20180503182656.GB14956@ziepe.ca>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="hHWLQfXTYDoKhP50"
+Content-Disposition: inline
+In-Reply-To: <20180503182656.GB14956@ziepe.ca>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner H6 SoC has a R_I2C controller wired to the PL0/PL1 pins, which
-are used in the reference design to connect AXP805 PMIC.
 
-Add support for it.
+--hHWLQfXTYDoKhP50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+On Thu, May 03, 2018 at 12:26:56PM -0600, Jason Gunthorpe wrote:
+> On Thu, May 03, 2018 at 09:12:35PM +0300, Leon Romanovsky wrote:
+> > On Thu, May 03, 2018 at 09:33:10AM -0600, Jason Gunthorpe wrote:
+> > > On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
+> > > > The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+> > > > If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+> > > > exited, get_pid_task will return NULL, ib_umem_release does not decrease
+> > > > mm->pinned_vm. This patch fixes it by use tgid.
+> > > >
+> > > > Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+> > > >  drivers/infiniband/core/umem.c | 12 ++++++------
+> > > >  include/rdma/ib_umem.h         |  2 +-
+> > > >  2 files changed, 7 insertions(+), 7 deletions(-)
+> > >
+> > > Why are we even using a struct pid for this? Does anyone know?
+> > >
+> >
+> > Can it be related to "fork" support?
+>
+> Not sure..
+>
+> Ideally we want to hold the struct mm, but we can't hold it long
+> term, so pid is a surrogate for that.
+>
+> > > I'm surprised that struct task isn't held in the struct ib_umem..
+> > >
+> >
+> > I think that this code can be removed and all accesses to mm_struct can
+> > be done with "current->mm".
+>
+> That sounds wrong for fork support, as the mm used in destroy MUST
+> exactly match the mm used in create..
+>
+> How does this accounting work in fork anyhow?
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index b0b342c8c189..37c2e11fca2e 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -5,7 +5,9 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/sun50i-h6-ccu.h>
-+#include <dt-bindings/clock/sun50i-h6-r-ccu.h>
- #include <dt-bindings/reset/sun50i-h6-ccu.h>
-+#include <dt-bindings/reset/sun50i-h6-r-ccu.h>
- 
- / {
- 	interrupt-parent = <&gic>;
-@@ -204,6 +206,24 @@
- 			#gpio-cells = <3>;
- 			interrupt-controller;
- 			#interrupt-cells = <3>;
-+
-+			r_i2c_pins: r-i2c {
-+				pins = "PL0", "PL1";
-+				function = "s_i2c";
-+			};
-+		};
-+
-+		r_i2c: i2c@7081400 {
-+			compatible = "allwinner,sun6i-a31-i2c";
-+			reg = <0x07081400 0x400>;
-+			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&r_ccu CLK_R_APB2_I2C>;
-+			resets = <&r_ccu RST_R_APB2_I2C>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&r_i2c_pins>;
-+			status = "disabled";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
- 		};
- 	};
- };
--- 
-2.15.1
+We are not supporting fork, so this is why I proposed to remove it.
+
+Thanks
+
+>
+> Jason
+
+--hHWLQfXTYDoKhP50
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlrrWDUACgkQ5GN7iDZy
+WKf4sw//c7zy4xf0dcdK6BLTm21txkqjxdQ15RBej3Il0DRP0WrALvXQrSwdx+zK
+0BdcLcY6jCnsLEeDLbttp6H2uPgx6vXH64B7rJjKBWquw5ry0dPs5fEFCbNljSyK
+wMHzstFh5E+SU/Nd6Y3kBFyyFVoje8bpry4sQR4+8dv6+ynEs0hM0Biw2d9o2yIi
+fPIdxJLDJr0p6BouW7QfvV1QYdLYWgDu4o5MUk/FLIt70Fb20cldOrsz8RXsBXss
+EOPl/ZFbfQMWj1srqd+TWFn+ZcmkMwsMioHjceSdy2Gl0HmuRrZBidxYdO/xVr9H
+7hiRKHVsDK1l5AggI22DqnE4JO0KpFWXatzgCiOlpk/mof7fVmaOvY9dHNDZIEQO
+io8Wn9VufL9afs2+2q/DvY5sloWDBFExVdYG8bh4C6t0naw30/l9fxcK0w1fZedL
+XvtDHQJxgxgqrle36VQrN2lJQENSMUCAHK+HbzeKflLDlM1YfUvPWAu/2EW9OISk
+InZeKzvWXgtjDu722wUgQ/d7QYiQJnCxqWciknlAi7hOBN++FqLlBiFAS4Sho+gx
+iFId3QACZnrmBc1goyEipJRGMBVNlIe5a6XPVASIHqcZ9mbxofxlKiYBeLA+3bjU
+UZQWztUzL9udAPUhpMGnxaLFx+q41r1NzqXku0qUonCaFjrVG0U=
+=ztQs
+-----END PGP SIGNATURE-----
+
+--hHWLQfXTYDoKhP50--
