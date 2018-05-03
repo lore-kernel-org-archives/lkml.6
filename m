@@ -1,38 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751145AbeECJpk (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:45:40 -0400
-Received: from mout.gmx.net ([212.227.17.20]:52023 "EHLO mout.gmx.net"
+        id S1751539AbeECJpo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:45:44 -0400
+Received: from mout.gmx.net ([212.227.17.22]:38779 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750945AbeECJpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:45:32 -0400
+        id S1751160AbeECJp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 05:45:29 -0400
 From: Chengguang Xu <cgxu519@gmx.com>
 To: akpm@linux-foundation.org, ericvh@gmail.com, rminnich@sandia.gov,
         lucho@ionkov.net
 Cc: v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
         Chengguang Xu <cgxu519@gmx.com>
-Subject: [V9fs-developer][PATCH v3 2/2] fs/9p: detecting invalid options as much as possible
-Date: Thu,  3 May 2018 17:44:36 +0800
-Message-Id: <1525340676-34072-2-git-send-email-cgxu519@gmx.com>
+Subject: [V9fs-developer][PATCH v3 1/2] net/9p: detecting invalid options as much as possible
+Date: Thu,  3 May 2018 17:44:35 +0800
+Message-Id: <1525340676-34072-1-git-send-email-cgxu519@gmx.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1525340676-34072-1-git-send-email-cgxu519@gmx.com>
-References: <1525340676-34072-1-git-send-email-cgxu519@gmx.com>
-X-Provags-ID: V03:K1:Kbp36WcdSVRXZf1r7dKpijA8VjF61OLAGRu64XEExjwwyGJjLJB
- LmDs6u28fCfbwqwsCXJwtGC+j+xHXOXKOX0YQEPxQ4nXO9MgzHz5DHqaRMIz/OufvX3c4d3
- HmRjeDZpMylwf57D/wA1e0mruutWow7tKp8U6ILrdAo6tDuxT1BmN9SCOO565JkgLlh52/m
- 1l1i8ce2GAMkrDzmrbSqg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:vhlUq6m6WZc=:dAjLnfvm3k6eS+ev/YLtP3
- GDZxB9pskiJT9ssAGIJJEKWr01kCmNNT3fbNhYuhllOM9JWVn0U8qw2dvrcGCn4VRzfmXopNk
- It9ND2BsXgd5HzzxWjvFSb/MT7tIhKSezC2nHgi11xYfP7r6UP8wR31pkuGBlqTdqLq1F3txC
- N0562nQTPFQKez3u+tpY/CKxavjDt+0yPSX0PcBN2tTmkRUoBjLBROZXo9G6YT6drotmHNSR+
- l/TPzCucbhX66uQHqsSvc5rKxCaGYuMqJvEGlL+fTRcis3phi377bF3jDdRdhT362I/9l0bU0
- lE9KQsTCxfDuipjHT6PJc8Wyjia/cCaK/UHZHp6Nx6WEfdYWy/KIUwlmdHhZlnhftejyrqm2L
- wF9PFoYzdTykIxvHoZJYpVvsmLIUDOSgrXJleGWy/7pV637K6dp9B3uSiPVMP5sJwDfamp2qV
- E/jK8rWJ9Dn2mXSICKu5sLhOzMk+hQuI55k0J9mb7iOnRPJW0QVn2IvX6iPM9HCs0lWG/q7sz
- RSu4fa9emhsxnIyUS6nhaPc7O7Zru39MeC7ynrf18kKV6oVlKzZHCo9oc5mJREH9E6o/Z3KbW
- AVtRyEQaudgnaKyAkEup84g7Gr2En4mYKFzDxuIwem4AukI4cdpgdOqZRKgjmQAh0eG53vYQc
- 2l3cugknLTvmFnBXPuGIDllb/5ElEtaEgG05mnGclfrrKtNLfV8nflJPVBijO3QBFbs1wqx2P
- BJ0gEusv0YLZSZJ9J8RYdHa8Z6YEzWydg2+BLcKJLxn3Mm9EWqalZz+cvA4=
+X-Provags-ID: V03:K1:N5FBsrGKC4PMvW6gLQ0PdzTNmWNEQqh5gUegPbtdbfLM9MD0xI/
+ O+2mPSrCVRxufT2vQhzXUR2XHFr1Ln6naolUS0b0hI4I1eTWKGfl2uLKF/WCtuUrBMXpJ0r
+ +KFoq47LelmKmAZjrfRJv3SEtPtlyu8t0nA44/D9PVxkqsRpJ86jndGMQAxvgaLvHBsW+8o
+ aD24Of4WukTXZ+BIq89tw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:M3uHICW6JVw=:1X+8fFLCljsaTQFB/qNwfb
+ UHkzL4BaJ9qL0p1Cdwc7y+0eVrZEoe8kjcD7Kd0XqCY/kGasCIrqNcMD/n7KgegEfb4hANZsr
+ ge67s+CqF8y6gbZ082JzYvEZifexkqdrekp/vJAN3VLxgF32EqvLE1thpE2AJ0KDkZVCWvsX2
+ URTXPupyftbhzH6IKkiUupnIGDXVb97aEaKzId2tofs9n7cVsOte5NS7kvTGJRdY4E7bjIAyM
+ LpftVi4WUUsX/7AClMq7y1hNIp2r0BaWAyUXxinVNZ0yma0m4CIjwVZ552m8I37Jqam5wy2h8
+ t5TTqmqvIhlg7YStrh7YQatN0gfP3ftI3tKIFoiuL1UiG9j3vGwLhFnUrjJ43QfcFuDJhuoAv
+ OaHE4WOY4NOJ63DmuatTNrZsYg4mbMU0eTrDow6kpHi+YQ2vMMyPQnLRqVaIIF2BNbk7BX5rg
+ 1dnNfDyFSrgOlinsNv80da18Z9fA914KS0/OljDK8Yl2DZXjQSTzBzTNOXBFG5QvxG/ijEXbf
+ Cw5SXKyMeJXQ8eFk86pteStmCcMaUaIXX8FJ5AGutT876IrNt9QTlEh/q/HNpN3nPxQVOXE92
+ H8o9pJ6aMy6DgAa1rOF944VdM41DuVFF3Ub0UB7mjRGOlpfjgGXguCXeiFL/62hRt9bP9fXJD
+ PZd9hbVi6sSa4YAimGAQt8zomb91kBTwmQo5RzkucM6IHFKfOuaMpY2qCt/+cVRSgzJmfpa5u
+ rr55vWxpx3jiPKNh5fgBvjBEp3HJVxrsTiPQFSggnyKceSYTzEUf14OJz8E=
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -42,104 +40,51 @@ some options(e.g. msize) just set errno and allow to continuously
 validate other options so that it can detect invalid options
 as much as possible and give proper error messages together.
 
-This patch applies same rule to option 'cache' and 'access'
+This patch applies same rule to option 'trans' and 'version'
 when detecting -EINVAL.
 
 Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 ---
 Changes since v2:
 - Introduce a new temporary variable to avoid overriding error code.
-- Delete redundant continue in error case.
 
 Changes since v1:
-- Do not change behavior when detecting ENOMEM or unrecognized options. 
+- Do not change behavior when detecting ENOMEM or unrecognized options.
 
- fs/9p/v9fs.c | 29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+ net/9p/client.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
-index e622f0f..0429c8e 100644
---- a/fs/9p/v9fs.c
-+++ b/fs/9p/v9fs.c
-@@ -210,12 +210,12 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 				p9_debug(P9_DEBUG_ERROR,
- 					 "integer field, but no integer?\n");
- 				ret = r;
--				continue;
--			}
--			v9ses->debug = option;
-+			} else {
-+				v9ses->debug = option;
- #ifdef CONFIG_NET_9P_DEBUG
--			p9_debug_level = option;
-+				p9_debug_level = option;
- #endif
-+			}
- 			break;
- 
- 		case Opt_dfltuid:
-@@ -231,7 +231,6 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 				p9_debug(P9_DEBUG_ERROR,
- 					 "uid field, but not a uid?\n");
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 21e6df1..18c5271 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -198,8 +198,6 @@ static int parse_opts(char *opts, struct p9_client *clnt)
+ 				pr_info("Could not find request transport: %s\n",
+ 					s);
  				ret = -EINVAL;
--				continue;
+-				kfree(s);
+-				goto free_and_return;
  			}
+ 			kfree(s);
  			break;
- 		case Opt_dfltgid:
-@@ -247,7 +246,6 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 				p9_debug(P9_DEBUG_ERROR,
- 					 "gid field, but not a gid?\n");
- 				ret = -EINVAL;
--				continue;
- 			}
- 			break;
- 		case Opt_afid:
-@@ -256,9 +254,9 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 				p9_debug(P9_DEBUG_ERROR,
- 					 "integer field, but no integer?\n");
- 				ret = r;
--				continue;
-+			} else {
-+				v9ses->afid = option;
- 			}
--			v9ses->afid = option;
- 			break;
- 		case Opt_uname:
- 			kfree(v9ses->uname);
-@@ -306,13 +304,12 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 					 "problem allocating copy of cache arg\n");
+@@ -214,13 +212,12 @@ static int parse_opts(char *opts, struct p9_client *clnt)
+ 					 "problem allocating copy of version arg\n");
  				goto free_and_return;
  			}
--			ret = get_cache_mode(s);
+-			ret = get_protocol_version(s);
 -			if (ret == -EINVAL) {
 -				kfree(s);
 -				goto free_and_return;
 -			}
-+			r = get_cache_mode(s);
++			r = get_protocol_version(s);
 +			if (r < 0)
 +				ret = r;
 +			else
-+				v9ses->cache = r;
- 
--			v9ses->cache = ret;
++				clnt->proto_version = r;
  			kfree(s);
+-			clnt->proto_version = ret;
  			break;
- 
-@@ -341,14 +338,12 @@ static int v9fs_parse_options(struct v9fs_session_info *v9ses, char *opts)
- 					pr_info("Unknown access argument %s\n",
- 						s);
- 					kfree(s);
--					goto free_and_return;
-+					continue;
- 				}
- 				v9ses->uid = make_kuid(current_user_ns(), uid);
- 				if (!uid_valid(v9ses->uid)) {
- 					ret = -EINVAL;
- 					pr_info("Uknown uid %s\n", s);
--					kfree(s);
--					goto free_and_return;
- 				}
- 			}
- 
+ 		default:
+ 			continue;
 -- 
 1.8.3.1
