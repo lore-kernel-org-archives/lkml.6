@@ -1,151 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751566AbeECJzx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:55:53 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:38764 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751391AbeECJza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:55:30 -0400
-Subject: Re: [PATCH 07/11] irqchip: stm32: add stm32mp1 support with hierarchy
- domain
-To: Rob Herring <robh@kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald BAEZA <gerald.baeza@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>
-References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
- <1524759514-12392-8-git-send-email-ludovic.Barre@st.com>
- <20180501145611.GA6842@rob-hp-laptop>
- <6fdb652b-e7f9-7035-3eda-39f763ed7ea3@st.com>
- <CAL_JsqLvbGdPC9ifPZ5+tVxznHbsDuWGRg4R47st8Y9BtnNYUQ@mail.gmail.com>
-From: Ludovic BARRE <ludovic.barre@st.com>
-Message-ID: <26de0a75-e4e1-7c43-e31d-599d3c7de0ff@st.com>
-Date: Thu, 3 May 2018 11:55:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751425AbeECJ5m (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:57:42 -0400
+Received: from mga04.intel.com ([192.55.52.120]:51315 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751050AbeECJ5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 05:57:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="36542217"
+Date: Thu, 3 May 2018 17:58:23 +0800
+From: Tiwei Bie <tiwei.bie@intel.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: mst@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com
+Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
+Message-ID: <20180503095823.zpxskdts7etpwl6x@debian>
+References: <20180503025955.28816-1-tiwei.bie@intel.com>
+ <ab66939d-47fb-5f43-3938-0c156ffc6918@redhat.com>
+ <20180503083015.kb7po26ga46g66tc@debian>
+ <1292c46c-34ad-ea21-1f05-164044a5f35a@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLvbGdPC9ifPZ5+tVxznHbsDuWGRg4R47st8Y9BtnNYUQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG6NODE1.st.com (10.75.127.16) To SFHDAG6NODE1.st.com
- (10.75.127.16)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_05:,,
- signatures=0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1292c46c-34ad-ea21-1f05-164044a5f35a@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/02/2018 07:45 PM, Rob Herring wrote:
-> On Wed, May 2, 2018 at 11:03 AM, Ludovic BARRE <ludovic.barre@st.com> wrote:
->> Hi Rob
->>
->>
->>
->> On 05/01/2018 04:56 PM, Rob Herring wrote:
->>>
->>> On Thu, Apr 26, 2018 at 06:18:30PM +0200, Ludovic Barre wrote:
->>>>
->>>> From: Ludovic Barre <ludovic.barre@st.com>
->>>>
->>>> Exti controller has been differently integrated on stm32mp1 SoC.
->>>> A parent irq has only one external interrupt. A hierachy domain could
->>>> be used. Handlers are call by parent, each parent interrupt could be
->>>> masked and unmasked according to the needs.
->>>>
->>>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
->>>> ---
->>>>    .../interrupt-controller/st,stm32-exti.txt         |   3 +
->>>>    drivers/irqchip/irq-stm32-exti.c                   | 322
->>>> +++++++++++++++++++++
->>>>    2 files changed, 325 insertions(+)
->>>>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
->>>> b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
->>>> index edf03f0..136bd61 100644
->>>> ---
->>>> a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
->>>> +++
->>>> b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
->>>> @@ -5,11 +5,14 @@ Required properties:
->>>>    - compatible: Should be:
->>>>        "st,stm32-exti"
->>>>        "st,stm32h7-exti"
->>>> +    "st,stm32mp1-exti"
->>>>    - reg: Specifies base physical address and size of the registers
->>>>    - interrupt-controller: Indentifies the node as an interrupt controller
->>>>    - #interrupt-cells: Specifies the number of cells to encode an
->>>> interrupt
->>>>      specifier, shall be 2
->>>>    - interrupts: interrupts references to primary interrupt controller
->>>> +  (only needed for exti controller with multiple exti under
->>>> +  same parent interrupt: st,stm32-exti and st,stm32h7-exti")
->>>>      Example:
->>>>    diff --git a/drivers/irqchip/irq-stm32-exti.c
->>>> b/drivers/irqchip/irq-stm32-exti.c
->>>> index b38c655..ebf7146 100644
->>>> --- a/drivers/irqchip/irq-stm32-exti.c
->>>> +++ b/drivers/irqchip/irq-stm32-exti.c
->>>
->>>
->>> [...]
->>>
->>>> +static const struct stm32_desc_irq stm32mp1_desc_irq[] = {
->>>> +       { .exti = 1, .irq_parent = 7 },
->>>> +       { .exti = 2, .irq_parent = 8 },
->>>> +       { .exti = 3, .irq_parent = 9 },
->>>> +       { .exti = 4, .irq_parent = 10 },
->>>> +       { .exti = 5, .irq_parent = 23 },
->>>> +       { .exti = 6, .irq_parent = 64 },
->>>> +       { .exti = 7, .irq_parent = 65 },
->>>> +       { .exti = 8, .irq_parent = 66 },
->>>> +       { .exti = 9, .irq_parent = 67 },
->>>> +       { .exti = 10, .irq_parent = 40 },
->>>> +       { .exti = 11, .irq_parent = 42 },
->>>> +       { .exti = 12, .irq_parent = 76 },
->>>> +       { .exti = 13, .irq_parent = 77 },
->>>> +       { .exti = 14, .irq_parent = 121 },
->>>> +       { .exti = 15, .irq_parent = 127 },
->>>> +       { .exti = 16, .irq_parent = 1 },
->>>> +       { .exti = 65, .irq_parent = 144 },
->>>> +       { .exti = 68, .irq_parent = 143 },
->>>> +       { .exti = 73, .irq_parent = 129 },
->>>> +};
->>>
->>>
->>> You can use an interrupt-map property rather than put this into the
->>> driver.
->>
->>
->> interrupt-map seemed interesting and promising like used in pci host.
->> At first sight this property can't be used into node with
->> "interrupt-controller" property (see in drivers/of/irq.c function:
->> of_irq_parse_raw) because "of_irq_parse_raw" checks if node got
->> it first, and after lookup the interrupt-map.
->>
->> Rob, Thomas, Jason, Marc what do you prefers or the right ways...?
+On Thu, May 03, 2018 at 05:09:44PM +0800, Jason Wang wrote:
+> On 2018年05月03日 16:30, Tiwei Bie wrote:
+> > On Thu, May 03, 2018 at 03:30:03PM +0800, Jason Wang wrote:
+> > > On 2018年05月03日 10:59, Tiwei Bie wrote:
+> > > > This patch introduces the support for VIRTIO_F_IO_BARRIER.
+> > > > When this feature is negotiated, driver will use the barriers
+> > > > suitable for hardware devices.
+> > > > 
+> > > > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > > > ---
+> > > >    drivers/virtio/virtio_ring.c       | 5 +++++
+> > > >    include/uapi/linux/virtio_config.h | 8 +++++++-
+> > > >    2 files changed, 12 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> > > > index 21d464a29cf8..edb565643bf4 100644
+> > > > --- a/drivers/virtio/virtio_ring.c
+> > > > +++ b/drivers/virtio/virtio_ring.c
+> > > > @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+> > > >    		!context;
+> > > >    	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+> > > > +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
+> > > > +		vq->weak_barriers = false;
+> > > > +
+> > > >    	/* No callback?  Tell other side not to bother us. */
+> > > >    	if (!callback) {
+> > > >    		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+> > > > @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
+> > > >    			break;
+> > > >    		case VIRTIO_F_IOMMU_PLATFORM:
+> > > >    			break;
+> > > > +		case VIRTIO_F_IO_BARRIER:
+> > > > +			break;
+> > > >    		default:
+> > > >    			/* We don't understand this bit. */
+> > > >    			__virtio_clear_bit(vdev, i);
+> > > > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> > > > index 308e2096291f..6ca8d24bf468 100644
+> > > > --- a/include/uapi/linux/virtio_config.h
+> > > > +++ b/include/uapi/linux/virtio_config.h
+> > > > @@ -49,7 +49,7 @@
+> > > >     * transport being used (eg. virtio_ring), the rest are per-device feature
+> > > >     * bits. */
+> > > >    #define VIRTIO_TRANSPORT_F_START	28
+> > > > -#define VIRTIO_TRANSPORT_F_END		34
+> > > > +#define VIRTIO_TRANSPORT_F_END		38
+> > > >    #ifndef VIRTIO_CONFIG_NO_LEGACY
+> > > >    /* Do we get callbacks when the ring is completely used, even if we've
+> > > > @@ -71,4 +71,10 @@
+> > > >     * this is for compatibility with legacy systems.
+> > > >     */
+> > > >    #define VIRTIO_F_IOMMU_PLATFORM		33
+> > > > +
+> > > > +/*
+> > > > + * If clear - driver may use barriers suitable for CPU cores.
+> > > > + * If set - driver must use barriers suitable for hardware devices.
+> > > > + */
+> > > > +#define VIRTIO_F_IO_BARRIER		37
+> > > >    #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+> > > Hi:
+> > > 
+> > > I believe this depends on Michael's patch of
+> > > 
+> > > "[PATCH] virtio_ring: switch to dma_XX barriers for rpmsg"
+> > > 
+> > > ?
+> > > 
+> > > Thanks
+> > We already have below commit and some other related commits
+> > in the tree:
+> > 
+> > 7b21e34fd1c2 ("virtio: harsher barriers for rpmsg.")
+> > 
+> > They should have already guaranteed that virtio_Xmb() will
+> > be OK for hardware devices when vq->weak_barriers is false.
+> > If my understanding is correct, the barriers used in this
+> > case are overkill. So Michael's patch is to make the barriers
+> > weaker (or better).
+> > 
+> > Best regards,
+> > Tiwei Bie
 > 
-> I believe the correct thing to do is simply drop "interrupt-controller".
+> Well, I think we need dma barriers for some platforms according to previous
+> discussion? Without Michael's patch, we won't use any dma barriers in fact
+> for virtio.
 
-if I drop "interrupt-controller" of my node, my driver will not be
-initialized by "of_irq_init"
-(start_kernel->init_IRQ->irqchip_init->of_irq_init).
-Probably, we could replace "IRQCHIP_DECLARE" by a
-"module_platform_driver" or "postcore_initcall" but I'm not a big fan of
-this solution. what do you think ?
+You are right. Thanks! Are you suggesting to add a
+reference to Michael's patch in this patch to make
+sure that it won't be applied before that patch?
+
+Best regards,
+Tiwei Bie
 
 > 
-> Rob
-> 
+> Thanks
