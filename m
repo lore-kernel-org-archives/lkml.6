@@ -1,92 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751272AbeECHuf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:50:35 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54634 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751138AbeECHud (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:50:33 -0400
-Subject: Re: [PATCH] ARM: dts: stm32: add USB Host (USBH) support to
- stm32mp157c
-To: Amelie Delaunay <amelie.delaunay@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1524569080-22475-1-git-send-email-amelie.delaunay@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <2c40257d-f368-d057-b397-bc8e085f3bef@st.com>
-Date: Thu, 3 May 2018 09:50:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751308AbeECHvP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:51:15 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60212 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750947AbeECHvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 03:51:14 -0400
+Date: Thu, 3 May 2018 09:51:11 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Huaisheng Ye <yehs1@lenovo.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, pasha.tatashin@oracle.com,
+        hannes@cmpxchg.org, penguin-kernel@I-love.SAKURA.ne.jp, colyli@suse.de,
+        chengnt@lenovo.com
+Subject: Re: [PATCH] mm/page_alloc: Remove useless parameter of finalise_ac
+Message-ID: <20180503075111.GB4535@dhcp22.suse.cz>
+References: <1525318929-91048-1-git-send-email-yehs1@lenovo.com>
 MIME-Version: 1.0
-In-Reply-To: <1524569080-22475-1-git-send-email-amelie.delaunay@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.75.127.44]
-X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_04:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525318929-91048-1-git-send-email-yehs1@lenovo.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amélie,
-
-On 04/24/2018 01:24 PM, Amelie Delaunay wrote:
-> Add support for USBH (USB Host) to STM32MP157C SoC.
-> USBH is a USB Host controller supporting the standard registers used for
-> full- and low-speed (OHCI controller) and high-speed (EHCI controller).
+On Thu 03-05-18 11:42:09, Huaisheng Ye wrote:
+> finalise_ac has parameter order which is not used at all.
+> Remove it.
 > 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+
+Acked-by: Michal Hocko <mhocko@suse.com>
+
 > ---
->   arch/arm/boot/dts/stm32mp157c.dtsi | 20 ++++++++++++++++++++
->   1 file changed, 20 insertions(+)
+>  mm/page_alloc.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
-> index bc3eddc..cc06d6b 100644
-> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
-> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-> @@ -5,6 +5,7 @@
->    */
->   #include <dt-bindings/interrupt-controller/arm-gic.h>
->   #include <dt-bindings/clock/stm32mp1-clks.h>
-> +#include <dt-bindings/reset/stm32mp1-resets.h>
->   
->   / {
->   	#address-cells = <1>;
-> @@ -167,6 +168,25 @@
->   			#reset-cells = <1>;
->   		};
->   
-> +		usbh_ohci: usbh-ohci@5800c000 {
-> +			compatible = "generic-ohci";
-> +			reg = <0x5800c000 0x1000>;
-> +			clocks = <&rcc USBH>;
-> +			resets = <&rcc USBH_R>;
-> +			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-> +			status = "disabled";
-> +		};
-> +
-> +		usbh_ehci: usbh-ehci@5800d000 {
-> +			compatible = "generic-ehci";
-> +			reg = <0x5800d000 0x1000>;
-> +			clocks = <&rcc USBH>;
-> +			resets = <&rcc USBH_R>;
-> +			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-> +			companion = <&usbh_ohci>;
-> +			status = "disabled";
-> +		};
-> +
->   		usart1: serial@5c000000 {
->   			compatible = "st,stm32h7-uart";
->   			reg = <0x5c000000 0x400>;
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 905db9d..291e194 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -4326,8 +4326,7 @@ static inline bool prepare_alloc_pages(gfp_t gfp_mask, unsigned int order,
+>  }
+>  
+>  /* Determine whether to spread dirty pages and what the first usable zone */
+> -static inline void finalise_ac(gfp_t gfp_mask,
+> -		unsigned int order, struct alloc_context *ac)
+> +static inline void finalise_ac(gfp_t gfp_mask, struct alloc_context *ac)
+>  {
+>  	/* Dirty zone balancing only done in the fast path */
+>  	ac->spread_dirty_pages = (gfp_mask & __GFP_WRITE);
+> @@ -4358,7 +4357,7 @@ struct page *
+>  	if (!prepare_alloc_pages(gfp_mask, order, preferred_nid, nodemask, &ac, &alloc_mask, &alloc_flags))
+>  		return NULL;
+>  
+> -	finalise_ac(gfp_mask, order, &ac);
+> +	finalise_ac(gfp_mask, &ac);
+>  
+>  	/* First allocation attempt */
+>  	page = get_page_from_freelist(alloc_mask, order, alloc_flags, &ac);
+> -- 
+> 1.8.3.1
 > 
 
-Applied on stm32-next.
-
-Thanks.
-Alex
+-- 
+Michal Hocko
+SUSE Labs
