@@ -1,85 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752073AbeECC7T (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 22:59:19 -0400
-Received: from mga14.intel.com ([192.55.52.115]:63857 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751993AbeECC7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 22:59:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="38273855"
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: mst@redhat.com, jasowang@redhat.com, pbonzini@redhat.com,
-        stefanha@redhat.com, virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.daly@intel.com, cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: [RFC] virtio: support VIRTIO_F_IO_BARRIER
-Date: Thu,  3 May 2018 10:59:55 +0800
-Message-Id: <20180503025955.28816-1-tiwei.bie@intel.com>
-X-Mailer: git-send-email 2.11.0
+        id S1752086AbeECDEy (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 23:04:54 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:45914 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751993AbeECDEu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 23:04:50 -0400
+X-Google-Smtp-Source: AB8JxZrfFmdtxltNLrPlfapLN3ZZvG7B8h6beXYwigeNH4J5axwjPmKOxDJtxRZYScHpjBWUinUaWg==
+From: Chris Chiu <chiu@endlessm.com>
+To: corentin.chary@gmail.com, dvhart@infradead.org, andy@infradead.org
+Cc: acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, Chris Chiu <chiu@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH v2] platform/x86: asus-wmi: Add keyboard backlight toggle support
+Date: Thu,  3 May 2018 11:04:38 +0800
+Message-Id: <20180503030438.51150-1-chiu@endlessm.com>
+X-Mailer: git-send-email 2.15.1 (Apple Git-101)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces the support for VIRTIO_F_IO_BARRIER.
-When this feature is negotiated, driver will use the barriers
-suitable for hardware devices.
+Some Asus laptops like UX550GE has hotkey (Fn+F7) for keyboard
+backlight toggle. In this UX550GE, the hotkey incremet the level
+of brightness for each keypress from 1 to 3, and then switch it
+off when the brightness has been the max. This commit interprets
+the code 0xc7 generated from hotkey to KEY_KBDILLUMUP to increment
+the brightness, then pass KEY_KBDILLUMTOGGLE to user space after
+the brightness max been reached for switching the led off.
 
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Tested-by: Jian-Hong Pan <jian-hong@endlessm.com>
 ---
- drivers/virtio/virtio_ring.c       | 5 +++++
- include/uapi/linux/virtio_config.h | 8 +++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 21d464a29cf8..edb565643bf4 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
- 		!context;
- 	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+Notes:
+    v2:
+    - Remove redundant 'else' branch logic
+
+ drivers/platform/x86/asus-nb-wmi.c | 1 +
+ drivers/platform/x86/asus-wmi.c    | 5 +++++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index 136ff2b4cce5..14c502e18579 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -496,6 +496,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
+ 	{ KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
+ 	{ KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
+ 	{ KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
++	{ KE_KEY, 0xC7, { KEY_KBDILLUMTOGGLE } },
+ 	{ KE_END, 0},
+ };
  
-+	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
-+		vq->weak_barriers = false;
-+
- 	/* No callback?  Tell other side not to bother us. */
- 	if (!callback) {
- 		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
-@@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
- 			break;
- 		case VIRTIO_F_IOMMU_PLATFORM:
- 			break;
-+		case VIRTIO_F_IO_BARRIER:
-+			break;
- 		default:
- 			/* We don't understand this bit. */
- 			__virtio_clear_bit(vdev, i);
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index 308e2096291f..6ca8d24bf468 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -49,7 +49,7 @@
-  * transport being used (eg. virtio_ring), the rest are per-device feature
-  * bits. */
- #define VIRTIO_TRANSPORT_F_START	28
--#define VIRTIO_TRANSPORT_F_END		34
-+#define VIRTIO_TRANSPORT_F_END		38
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 1f6e68f0b646..4a3ba575c9ce 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -67,6 +67,7 @@ MODULE_LICENSE("GPL");
+ #define NOTIFY_BRNDOWN_MAX		0x2e
+ #define NOTIFY_KBD_BRTUP		0xc4
+ #define NOTIFY_KBD_BRTDWN		0xc5
++#define NOTIFY_KBD_BRTTOGGLE		0xc7
  
- #ifndef VIRTIO_CONFIG_NO_LEGACY
- /* Do we get callbacks when the ring is completely used, even if we've
-@@ -71,4 +71,10 @@
-  * this is for compatibility with legacy systems.
-  */
- #define VIRTIO_F_IOMMU_PLATFORM		33
+ /* WMI Methods */
+ #define ASUS_WMI_METHODID_SPEC	        0x43455053 /* BIOS SPECification */
+@@ -1745,6 +1746,10 @@ static void asus_wmi_notify(u32 value, void *context)
+ 		}
+ 	}
+ 
++	if (code == NOTIFY_KBD_BRTTOGGLE)
++		if (asus->kbd_led_wk < asus->kbd_led.max_brightness)
++			code = NOTIFY_KBD_BRTUP;
 +
-+/*
-+ * If clear - driver may use barriers suitable for CPU cores.
-+ * If set - driver must use barriers suitable for hardware devices.
-+ */
-+#define VIRTIO_F_IO_BARRIER		37
- #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+ 	if (is_display_toggle(code) &&
+ 	    asus->driver->quirks->no_display_toggle)
+ 		goto exit;
 -- 
-2.11.0
+2.14.1
