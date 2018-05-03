@@ -1,89 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751382AbeECLjS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 07:39:18 -0400
-Received: from mga07.intel.com ([134.134.136.100]:53562 "EHLO mga07.intel.com"
+        id S1751492AbeECLj2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 07:39:28 -0400
+Received: from mga06.intel.com ([134.134.136.31]:3772 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750999AbeECLjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 07:39:16 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1751185AbeECLj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 07:39:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="52875427"
-Date: Thu, 3 May 2018 14:39:09 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Luwei Kang <luwei.kang@intel.com>
-Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org, joro@8bytes.org, peterz@infradead.org,
-        chao.p.peng@linux.intel.com
-Subject: Re: [PATCH v7 08/13] KVM: x86: Add Intel processor trace context for
- each vcpu
-Message-ID: <20180503113909.52osvumzlueetsn4@um.fi.intel.com>
-References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-9-git-send-email-luwei.kang@intel.com>
+   d="scan'208";a="36559215"
+Subject: Re: [PATCH 05/12] perf pmu: Fix pmu events parsing rule
+To: Jiri Olsa <jolsa@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20180425160008.3407-1-acme@kernel.org>
+ <20180425160008.3407-6-acme@kernel.org>
+ <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
+ <20180503103717.GA14776@krava>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
+Date: Thu, 3 May 2018 14:38:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525349323-9938-9-git-send-email-luwei.kang@intel.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20180503103717.GA14776@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 08:08:38PM +0800, Luwei Kang wrote:
-> From: Chao Peng <chao.p.peng@linux.intel.com>
+On 03/05/18 13:37, Jiri Olsa wrote:
+> On Thu, May 03, 2018 at 11:25:16AM +0300, Adrian Hunter wrote:
+>> Hi
+>>
+>> This breaks Intel PT i.e.
+>>
+>> $ perf record -e intel_pt//u uname
+>> event syntax error: 'intel_pt//u'
+>>                              \___ parser error
+>> Run 'perf list' for a list of valid events
+>>
+>>  Usage: perf record [<options>] [<command>]
+>>     or: perf record [<options>] -- <command> [<options>]
+>>
+>>     -e, --event <event>   event selector. use 'perf list' to list available events
+>>
+>> See below for cause.
+>>
+>> On 25/04/18 19:00, Arnaldo Carvalho de Melo wrote:
+>>> From: Jiri Olsa <jolsa@kernel.org>
+>>>
+>>> Currently all the event parsing fails end up in the event_pmu rule, and
+>>> display misleading help like:
+>>>
+>>>   $ perf stat -e inst kill
+>>>   event syntax error: 'inst'
+>>>                        \___ Cannot find PMU `inst'. Missing kernel support?
+>>>   ...
+>>>
+>>> The reason is that the event_pmu is too strong and match also single
+>>> string. Changing it to force the '/' separators to be part of the rule,
+>>> and getting the proper error now:
+>>>
+>>>   $ perf stat -e inst kill
+>>>   event syntax error: 'inst'
+>>>                        \___ parser error
+>>>   Run 'perf list' for a list of valid events
+>>>   ...
+>>>
+>>> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+>>> Reported-by: Ingo Molnar <mingo@kernel.org>
+>>> Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>>> Cc: David Ahern <dsahern@gmail.com>
+>>> Cc: Namhyung Kim <namhyung@kernel.org>
+>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>> Link: http://lkml.kernel.org/r/20180423090823.32309-5-jolsa@kernel.org
+>>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>>> ---
+>>>  tools/perf/util/parse-events.y | 8 ++++----
+>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+>>> index 7afeb80cc39e..d14464c42714 100644
+>>> --- a/tools/perf/util/parse-events.y
+>>> +++ b/tools/perf/util/parse-events.y
+>>> @@ -224,15 +224,15 @@ event_def: event_pmu |
+>>>  	   event_bpf_file
+>>>  
+>>>  event_pmu:
+>>> -PE_NAME opt_event_config
+>>> +PE_NAME '/' event_config '/'
+>>
+>> These are not equivalent because opt_event_config allows '//'
+>> but event_config cannot be an empty string.
 > 
-> Add a data structure to save Intel Processor Trace context.
-> It mainly include the value of Intel PT host/guest MSRs
-> and guest CPUID information.
+> yep, overlooked this one, how about patch below
 
-I'd say that code and data should be in the same patch.
+Seems to work but gives build warnings:
 
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+util/parse-events.y: warning: 1 shift/reduce conflict [-Wconflicts-sr]
+util/parse-events.y: warning: 1 reduce/reduce conflict [-Wconflicts-rr]
+
+
+> 
+> jirka
+> 
 > ---
->  arch/x86/kvm/vmx.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 27cf417..9a5c26d 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -597,6 +597,23 @@ static inline int pi_test_sn(struct pi_desc *pi_desc)
->  			(unsigned long *)&pi_desc->control);
+> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+> index d14464c42714..1ed2befeca8a 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -523,6 +523,10 @@ event_term
+>  	list_add_tail(&term->list, head);
+>  	$$ = head;
 >  }
+> +|
+> +{
+> +	$$ = NULL;
+> +}
 >  
-> +struct pt_ctx {
-> +	u64 ctl;
-> +	u64 status;
-> +	u64 output_base;
-> +	u64 output_mask;
-> +	u64 cr3_match;
-> +	u64 addrs[MSR_IA32_RTIT_ADDR_COUNT];
-> +};
-> +
-> +struct pt_desc {
-> +	u64 ctl_bitmask;
-> +	u32 range_cnt;
-> +	u32 caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
-> +	struct pt_ctx host;
-> +	struct pt_ctx guest;
-> +};
-> +
->  struct vcpu_vmx {
->  	struct kvm_vcpu       vcpu;
->  	unsigned long         host_rsp;
-> @@ -693,6 +710,8 @@ struct vcpu_vmx {
->  	 */
->  	u64 msr_ia32_feature_control;
->  	u64 msr_ia32_feature_control_valid_bits;
-> +
-> +	struct pt_desc pt_desc;
->  };
->  
->  enum segment_cache_field {
-> -- 
-> 1.8.3.1
+>  event_term:
+>  PE_NAME '=' PE_NAME
 > 
