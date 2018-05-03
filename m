@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752355AbeECKVR (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:21:17 -0400
+        id S1752345AbeECKWW (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:22:22 -0400
 Received: from mga06.intel.com ([134.134.136.31]:65500 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752124AbeECKT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:19:26 -0400
+        id S1751993AbeECKTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:19:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="36546555"
+   d="scan'208";a="36546479"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, peterz@infradead.org, chao.p.peng@linux.intel.com,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v7 09/13] KVM: x86: Implement Intel Processor Trace context switch
-Date: Thu,  3 May 2018 20:13:24 +0800
-Message-Id: <1525349608-10352-10-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function to get capability of Intel PT
+Date: Thu,  3 May 2018 20:13:20 +0800
+Message-Id: <1525349608-10352-6-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1525349608-10352-1-git-send-email-luwei.kang@intel.com>
 References: <1525349608-10352-1-git-send-email-luwei.kang@intel.com>
@@ -27,111 +27,60 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+New function __pt_cap_get() will be invoked in KVM to check
+if a specific capability is availiable in KVM guest.
+Another function pt_cap_get() can only check the hardware
+capabilities but this may different with KVM guest because
+some features may not be exposed to guest.
 
-Load/Store Intel processor trace register in context switch.
-MSR IA32_RTIT_CTL is loaded/stored automatically from VMCS.
-In HOST mode, we just need to restore the status of IA32_RTIT_CTL.
-In HOST_GUEST mode, we need load/resore PT MSRs only when PT is
-enabled in guest.
-
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/kvm/vmx.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/x86/events/intel/pt.c      | 10 ++++++++--
+ arch/x86/include/asm/intel_pt.h |  2 ++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 9a5c26d..a08c61b 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -2385,6 +2385,55 @@ static unsigned long segment_base(u16 selector)
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index d5819a2..a1fe6ff 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -76,14 +76,20 @@
+ 	PT_CAP(psb_periods,		1, CPUID_EBX, 0xffff0000),
+ };
+ 
+-u32 pt_cap_get(enum pt_capabilities cap)
++u32 __pt_cap_get(u32 *caps, enum pt_capabilities cap)
+ {
+ 	struct pt_cap_desc *cd = &pt_caps[cap];
+-	u32 c = pt_pmu.caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
++	u32 c = caps[cd->leaf * PT_CPUID_REGS_NUM + cd->reg];
+ 	unsigned int shift = __ffs(cd->mask);
+ 
+ 	return (c & cd->mask) >> shift;
  }
++EXPORT_SYMBOL_GPL(__pt_cap_get);
++
++u32 pt_cap_get(enum pt_capabilities cap)
++{
++	return __pt_cap_get(pt_pmu.caps, cap);
++}
+ EXPORT_SYMBOL_GPL(pt_cap_get);
+ 
+ static ssize_t pt_cap_show(struct device *cdev,
+diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
+index 2de4db0..3a4f524 100644
+--- a/arch/x86/include/asm/intel_pt.h
++++ b/arch/x86/include/asm/intel_pt.h
+@@ -27,9 +27,11 @@ enum pt_capabilities {
+ #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
+ void cpu_emergency_stop_pt(void);
+ extern u32 pt_cap_get(enum pt_capabilities cap);
++extern u32 __pt_cap_get(u32 *caps, enum pt_capabilities cap);
+ #else
+ static inline void cpu_emergency_stop_pt(void) {}
+ static inline u32 pt_cap_get(enum pt_capabilities cap) { return 0; }
++static u32 __pt_cap_get(u32 *caps, enum pt_capabilities cap) { return 0; }
  #endif
  
-+static inline void pt_load_msr(struct pt_ctx *ctx, u32 range_cnt)
-+{
-+	u32 i;
-+
-+	wrmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	wrmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	wrmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < range_cnt; i++)
-+		wrmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
-+}
-+
-+static inline void pt_save_msr(struct pt_ctx *ctx, u32 range_cnt)
-+{
-+	u32 i;
-+
-+	rdmsrl(MSR_IA32_RTIT_STATUS, ctx->status);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_BASE, ctx->output_base);
-+	rdmsrl(MSR_IA32_RTIT_OUTPUT_MASK, ctx->output_mask);
-+	rdmsrl(MSR_IA32_RTIT_CR3_MATCH, ctx->cr3_match);
-+	for (i = 0; i < range_cnt; i++)
-+		rdmsrl(MSR_IA32_RTIT_ADDR0_A + i, ctx->addrs[i]);
-+}
-+
-+static void pt_guest_enter(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
-+		rdmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
-+
-+	if (pt_mode == PT_MODE_HOST_GUEST &&
-+		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		wrmsrl(MSR_IA32_RTIT_CTL, 0);
-+		pt_save_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
-+		pt_load_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
-+	}
-+}
-+
-+static void pt_guest_exit(struct vcpu_vmx *vmx)
-+{
-+	if (pt_mode == PT_MODE_HOST_GUEST &&
-+		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-+		pt_save_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
-+		pt_load_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
-+	}
-+
-+	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
-+		wrmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
-+}
-+
- static void vmx_save_host_state(struct kvm_vcpu *vcpu)
- {
- 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-@@ -6119,6 +6168,13 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
- 		vmcs_write64(PML_ADDRESS, page_to_phys(vmx->pml_pg));
- 		vmcs_write16(GUEST_PML_INDEX, PML_ENTITY_NUM - 1);
- 	}
-+
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		memset(&vmx->pt_desc, 0, sizeof(vmx->pt_desc));
-+		/* Bit[6~0] are forced to 1, writes are ignored. */
-+		vmx->pt_desc.guest.output_mask = 0x7F;
-+		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
-+	}
- }
- 
- static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
-@@ -9794,6 +9850,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 	    vcpu->arch.pkru != vmx->host_pkru)
- 		__write_pkru(vcpu->arch.pkru);
- 
-+	pt_guest_enter(vmx);
-+
- 	atomic_switch_perf_msrs(vmx);
- 
- 	vmx_arm_hv_timer(vcpu);
-@@ -9988,6 +10046,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
- 				  | (1 << VCPU_EXREG_CR3));
- 	vcpu->arch.regs_dirty = 0;
- 
-+	pt_guest_exit(vmx);
-+
- 	/*
- 	 * eager fpu is enabled if PKEY is supported and CR4 is switched
- 	 * back on host, so it is safe to read guest PKRU from current
+ #endif /* _ASM_X86_INTEL_PT_H */
 -- 
 1.8.3.1
