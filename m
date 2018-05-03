@@ -1,80 +1,105 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751456AbeECHPy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:15:54 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:59611 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750773AbeECHPw (ORCPT
+        id S1751025AbeECHSb (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:18:31 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:50345 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750703AbeECHSa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:15:52 -0400
-X-Originating-IP: 2.224.242.101
-Date: Thu, 3 May 2018 09:15:39 +0200
-From: jacopo mondi <jacopo@jmondi.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
-        geert@linux-m68k.org, sergei.shtylyov@cogentembedded.com,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] sh: mm: Fix unprotected access to struct device
-Message-ID: <20180503071539.GA19612@w540>
-References: <1524044555-20610-1-git-send-email-jacopo+renesas@jmondi.org>
- <20180502074600.GC27261@w540>
- <20180502123909.GA9546@infradead.org>
+        Thu, 3 May 2018 03:18:30 -0400
+Subject: Re: [PATCH v2 07/10] PCI: Convert of_pci_get_host_bridge_resources()
+ users to devm variant
+To: Jan Kiszka <jan.kiszka@siemens.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+References: <cover.1525067324.git.jan.kiszka@siemens.com>
+ <ed3e6df4feca5febefa14716d62aaddd5b4a39d1.1525067324.git.jan.kiszka@siemens.com>
+CC: Jingoo Han <jingoohan1@gmail.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Message-ID: <dbfa80fb-5fe8-3ccd-6886-4604ef9e058b@mentor.com>
+Date: Thu, 3 May 2018 10:18:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
+ Icedove/45.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <20180502123909.GA9546@infradead.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <ed3e6df4feca5febefa14716d62aaddd5b4a39d1.1525067324.git.jan.kiszka@siemens.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [137.202.0.87]
+X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
+ SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jan,
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On 04/30/2018 08:48 AM, Jan Kiszka wrote:
+> From: Jan Kiszka <jan.kiszka@siemens.com>
+> 
+> Straightforward for all of them, no more leaks afterwards.
+> 
+> CC: Jingoo Han <jingoohan1@gmail.com>
+> CC: Joao Pinto <Joao.Pinto@synopsys.com>
+> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> Acked-by: Jingoo Han <jingoo1han@gmail.com>
 
-Hi Christoph,
+[snip]
 
-On Wed, May 02, 2018 at 05:39:09AM -0700, Christoph Hellwig wrote:
-> On Wed, May 02, 2018 at 09:46:31AM +0200, jacopo mondi wrote:
-> > Hi again Christoph,
-> >
-> >     The gentle ping actually applies to this version of the patch.
-> >
-> > Sorry for the confusion.
->
-> I'd expect this to go in through the sh tree, but if the sh maintainers
-> are fine with it I can take it through the dma-mapping tree.
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+> index 6ab28f29ac6a..6eb36c924983 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -1067,12 +1067,11 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
+>  {
+>  	int err;
+>  	struct device *dev = pci->dev;
+> -	struct device_node *np = dev->of_node;
+>  	resource_size_t iobase;
+>  	struct resource_entry *win, *tmp;
+>  
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
+> -					       &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    &pci->resources, &iobase);
+>  	if (err)
+>  		return err;
+>  
 
-Oh, that's fine then. I'll let Rich comment if he plans to send a pull
-requets for v4.17 fixes or not.
+this one snippet is obsoleted by https://patchwork.ozlabs.org/patch/904326/
 
-Thanks
-   j
+If 08/10 remains a deprecation, then it is sufficient to exclude the R-Car change,
+otherwise I hope maintainers can deal with the proper ordering.
 
+For PCI OF change:
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index f16b343d3b85..5a88d46a41b7 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -645,12 +645,12 @@ int pci_parse_request_of_pci_ranges(struct device *dev,
+>  				    struct resource **bus_range)
+>  {
+>  	int err, res_valid = 0;
+> -	struct device_node *np = dev->of_node;
+>  	resource_size_t iobase;
+>  	struct resource_entry *win, *tmp;
+>  
+>  	INIT_LIST_HEAD(resources);
+> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources, &iobase);
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, resources,
+> +						    &iobase);
+>  	if (err)
+>  		return err;
+>  
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
+Tested-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
 
-iQIcBAEBAgAGBQJa6rcaAAoJEHI0Bo8WoVY89iYP/jPTuCaXIzhScnXmAedpdgFB
-8VP2yJmji6BIIOpF0jaICjW3yByUgLi/pRFkiF66RA6IC9nIVRmBfe5xSr73YLJZ
-PdxvlSCbRUa3V0q0GXS2FI/fkzRsApOe6XayYd59TPqko5elTHw31cDEPEk7tiTW
-OcsTdLC7w36UX9Nfjy+v2ck9aOupwLXMAP+FAeY7/jS7ULKwiXWSlD6rsuXOemAb
-USDoKD8lFqj7Q+bOzE56EcA1n2qHFOoP1+e1VePk/RPOvK1pxrVbk/YDkqAVAQw9
-Yu027S/sahZEADx+5ZetQMsIXfMoZO621yQ1hYJiQVBlbUshpuIx36zOEje0p9Wi
-8jsTpAhRGAzd8jd+dE9BZ8qk8HIPr0j8jZokRrkCkdg0tnh3LsdSCCHN8lP5O2ap
-qsAqKdPJyNrRfpNCSDXbt/vTJPNZ/Y23gdKE4/GKsZoijyHCmpgjUfEGwRawrL+N
-W4aEeW58+D/Bmw81yazNys7elEfOfaplKdmOrYP9zwVbIWilj36WlGmV6oSjNltp
-+itagpj/7bvnCtpR6P4aIZLPihdYGnhUgf2qFcCqpqJCm0b3DB/XFbvtq8ESoTYu
-kZM17sPUXQG55BVl5L9z+o6VXTXtP8BJNvZIYXnJ2QRorhxTA6PD0sSI8SRQTYMu
-/BBst4PDHy8BDoiVfiVG
-=Pt0o
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+--
+With best wishes,
+Vladimir
