@@ -1,172 +1,148 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525248997; cv=none;
+Return-Path: <hns@goldelico.com>
+X-Google-Smtp-Source: AB8JxZqGr3svwpl/QH++hfGeJJ3nNWWyIioUweDu4ZosWA3tVvnvat72QsaU1lAVKlSRjwZ/FJLh
+ARC-Seal: i=1; a=rsa-sha256; t=1525340124; cv=none;
         d=google.com; s=arc-20160816;
-        b=mDjvWJ1DCJcEIbGX+HoITYy88k3NDPQhBPFvUYOpGHx+g0dt6O2Pgh4jbva2VHXl1t
-         B5nvcid3oiGf9MHe2jAi5bgkTXLorA8IHKK5aiArB713cmljpSMOMSYR2CuwzSe47pYu
-         jiWjja55Jiu1iCcUVFjj5WsfBdFnBv2E3dSXduc5wAaK6U7PkyBBVlQHQK5ZWXOmly5z
-         LE8JDIqpSEa3h8DyA5ctrqbTl4pbRW9u0ICKzytEyveQ5LvCKfDIk0BBZk37xm9hpYcf
-         iaUhVUNE6dO5hFomK5R6M1U+WkON19kz7m1S9EjGaFqruKspFENdWw88m5Z6z2ejJ71S
-         7+BQ==
+        b=Ek/zE+7H9v24fvoBrtD2BFZd1baJXP5Q3ys9mvPKdZT8SAfwik55/ZupnR9G7mpJEe
+         Yy61i5uxuEhTcXN2bpzh/HP3F0GLs7KnlGoxLeA7QXHm1pN6bqLEzl0g7A51rLJqiO6E
+         rCdCarFnun2Hu9AKrWw1P17tlLhyj9qPXsVx7aFztvvYqzxVnqCWBvcLb8Bomb9ZNdF/
+         H3MEjOpOLgzEX9QWMMKZCnSZYOAL+N5TDj1t37j5rn9IdzXaEHVIV3RorouY5XlR5Yu1
+         IY4B27NgEBck3GVZjgKTVcShoIwUs80PIO6JNSedzYfeplRP6tOPAK1t1L0AAtsKwGNN
+         xdFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:dkim-signature
          :arc-authentication-results;
-        bh=YcYJ1YGO1ae7Pc871FHTaoKvMVYTby8Y5ifSXj8Tw4g=;
-        b=ZbZhJG9EiCoSfef7wDNIBSHuhrBqMa/Rk3cpPI7FKvfP8jSxWVJ455MMmR4Mt79JCz
-         0Ur4AT8mt+5H/qhT8oQnT6HfE+sQ0qTFci23+/YkZ4l18HeRWS612PCjrdLsUpAktA44
-         IWubbOANln98YKOkM/xNHh/8Hi55fiR28oHndaJjrOcth2l47EVVv8gu/VOQC/vGRUa6
-         UqWghfo8b9d9UHujp8BmFvTpxMwqRbOSX9oVYP+qcMBdQZcyn8r2P1Rk8kjW78Mdb1pD
-         ed8aOcL7uxnURqZUlryLkexs9M1OxXckLiBtmuotIMas918AFALLjxYSJWvjE5cTPBFl
-         /fqQ==
+        bh=7INNERHV1VMzTUZKH5bm9OrWNfhr6vXDWKe5PXN08zo=;
+        b=ucDKPf8yfgoB5DxSypCoOPzgYL+fNCaSiN8KnZZl0weqpwr1cgOtZTXoF11jfFDwde
+         JL+Ruo4gYG5K2/UhcHplkBXQnBK08NiE8bXaA/XcXdadFznj++gEX8HBbtx621z4XNiw
+         NOx9nnzEO0a8FSHyN6XHKUQfbSsT3Xe8/DEbSPUZwHXHACmUXWhxofwHKLF6wKQqOZMC
+         aNveoOuD/HyolqP9FlPdmUqxVapIbnM5mOgCBqP0zOM+mb2JXzEAglaIqCNkKZ464mRb
+         j6fSFFRkqJUjtusyBZYR/NgYbALZxVxe9bqwgOaiYvOEBUFNLB8HLcnJIIVPgG4X+zxg
+         YIcw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hBsM/YtT;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
+       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=BLf/Mt4x;
+       spf=neutral (google.com: 2a01:238:20a:202:5301::10 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=hBsM/YtT;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=jhovold@gmail.com
-X-Google-Smtp-Source: AB8JxZp0HGHAyaVtgmgEgzL3iL6ujdta/FZc6Gdl5hLpUpKZuZmb6jyX5prsQDd09wLpgn8Nu/5H+g==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Wed, 2 May 2018 10:16:37 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"H . Nikolaus Schaller" <hns@goldelico.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/7] dt-bindings: gnss: add u-blox binding
-Message-ID: <20180502081637.GE2285@localhost>
-References: <20180424163458.11947-1-johan@kernel.org>
- <20180424163458.11947-5-johan@kernel.org>
- <CAL_Jsq+mCp=geT8t_j+0fuTxAB7C9RYn6pESRpLc2GH273fM1Q@mail.gmail.com>
- <20180426091018.GU4615@localhost>
- <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com>
-MIME-Version: 1.0
+       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=BLf/Mt4x;
+       spf=neutral (google.com: 2a01:238:20a:202:5301::10 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN1FD6Y"
+X-RZG-CLASS-ID: mo00
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 4/7] dt-bindings: gnss: add u-blox binding
+From: H. Nikolaus Schaller <hns@goldelico.com>
+In-Reply-To: <20180502081637.GE2285@localhost>
+Date: Thu, 3 May 2018 11:35:21 +0200
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Andreas Kemnade <andreas@kemnade.info>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Pavel Machek <pavel@ucw.cz>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh+dt@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <5242FCAD-3139-4A9C-B9FA-7BBAA0E6AE57@goldelico.com>
+References: <20180424163458.11947-1-johan@kernel.org> <20180424163458.11947-5-johan@kernel.org> <CAL_Jsq+mCp=geT8t_j+0fuTxAB7C9RYn6pESRpLc2GH273fM1Q@mail.gmail.com> <20180426091018.GU4615@localhost> <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com> <20180502081637.GE2285@localhost>
+To: Johan Hovold <johan@kernel.org>
+X-Mailer: Apple Mail (2.3124)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598647064088300079?=
-X-GMAIL-MSGID: =?utf-8?q?1599339492955889853?=
+X-GMAIL-MSGID: =?utf-8?q?1599435046065189112?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 01, 2018 at 09:05:42AM -0500, Rob Herring wrote:
-> On Thu, Apr 26, 2018 at 4:10 AM, Johan Hovold <johan@kernel.org> wrote:
-> > On Wed, Apr 25, 2018 at 01:16:58PM -0500, Rob Herring wrote:
-> >> On Tue, Apr 24, 2018 at 11:34 AM, Johan Hovold <johan@kernel.org> wrote:
-> >> > Add binding for u-blox GNSS receivers.
-> >> >
-> >> > Note that the u-blox product names encodes form factor (e.g. "neo"),
-> >> > chipset (e.g. "8") and variant (e.g. "q"), but that only formfactor and
-> >> > chipset is used for the compatible strings (for now).
-> >> >
-> >> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> >> > ---
-> >> >  .../devicetree/bindings/gnss/u-blox.txt       | 31 +++++++++++++++++++
-> >> >  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
-> >> >  2 files changed, 32 insertions(+)
-> >> >  create mode 100644 Documentation/devicetree/bindings/gnss/u-blox.txt
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/gnss/u-blox.txt b/Documentation/devicetree/bindings/gnss/u-blox.txt
-> >> > new file mode 100644
-> >> > index 000000000000..bb54b83a177f
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/gnss/u-blox.txt
-> >> > @@ -0,0 +1,31 @@
-> >> > +u-blox GNSS Receiver DT binding
-> >> > +
-> >> > +The u-blox GNSS receivers can use UART, DDC (I2C), SPI and USB interfaces.
-> >> > +
-> >> > +Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
-> >> > +properties.
-> >> > +
-> >> > +Required Properties:
-> >> > +
-> >> > +- compatible   : Must be one of
-> >> > +
-> >> > +                       "u-blox,neo-8"
-> >> > +                       "u-blox,neo-m8"
-> >> > +
-> >> > +- vcc-supply   : Main voltage regulator (VCC)
-> >>
-> >> What about V_BCKP?
-> >
-> > That's the backup supply for for the RTC and batter-backed RAM. In
-> > configurations where a battery is not used it should be connected to
-> > VCC.
-> >
-> > How would you model that? I can enable a vbckp regulator at probe, but
-> > what if someone then accurately describes the corresponding pin as being
-> > connected to VCC?
-> 
-> You mean how to model a battery? It would just be a 'regulator'
-> because the regulator binding covers any supply really.
-> 
-> Then you just set both rails to the same supply phandle.
 
-Yes, but...
+> Am 02.05.2018 um 10:16 schrieb Johan Hovold <johan@kernel.org>:
+>=20
+> On Tue, May 01, 2018 at 09:05:42AM -0500, Rob Herring wrote:
+>> On Thu, Apr 26, 2018 at 4:10 AM, Johan Hovold <johan@kernel.org> =
+wrote:
+>>=20
+>> Though with the enable-gpios I was debating the name for sirfstar a
+>> bit because it isn't the normal drive it active to enable, but rather
+>> a pulse to enable or disable.
+>=20
+> I had some concerns along those lines as well, and if you agree I'll
+> change the property name to on_off-gpios (or onoff-gpios) which =
+matches
+> the vendor data sheets for this pin, and which I think would be =
+better.
 
-> > I guess we can check if the regulators are identical,
-> > and then just have the driver ignore V_BKUP. Knowing whether there is
-> > a (hopefully charged) battery connected could be useful.
-> 
-> Regulators are ref counted, so just enable it twice. Or the driver can
-> just ignore it until it supports battery backup.
+In our original submission of our w2sg bindings we also did call that
+"on-off-gpios", but Rob suggested to use the standard way of =
+"enable-gpios":
 
-...my point was that in case there's no backup battery, you don't want
-to enable vcc (via v_bckp) at probe (and instead have the device cold
-boot whenever it's used).
+https://patchwork.kernel.org/patch/9738981/
 
-Hence, the driver would need to check if the v_bckp-supply is identical
-to vcc and not enable the former at probe in that case (i.e. similar to
-if no v_bckp had been specified and we considered it optional).
+We changed this and got his acked-by for our w2sg bindings:
 
-> >> > +- timepulse-gpios      : Timepulse (e.g. 1PPS) GPIO (TIMEPULSE)
-> >>
-> >> Why the 3rd "TIMEPULSE"?
-> >
-> > That's the pin name, which in this case is identical to the property
-> > name, so I'll drop it here.
-> 
-> Then what is the 2nd "Timepulse"?
+https://patchwork.kernel.org/patch/10054911/
 
-That's the generic function name.
+We also have found an agreed wording for the description:
 
-> Maybe just a "pin name: X" prefix so it is clear.
+- enable-gpios:  the GPIO that controls the module's power toggle
+         input. A positive impulse of sufficent length toggles the
+         power state.
 
-For u-blox devices, where property-, function- and pin name coincide, I
-could just change this to:
+But what should I expect from someone who constantly ignores, rejects
+and belittles previous work of others and prefers to reinvent almost
+the same thing and claims that it is 100% original work?
 
-+- timepulse-gpios      : Timepulse GPIO
+I am so heavily upset this time because we had been asked by reviewers =
+if
+it was not Neil Brown who laid the foundation and yes, we of course =
+looked
+how to formulate proper attribution:
 
-and then for the sirfstar binding, which will be used by devices from
-multiple vendors which have decided to name their pins differently, I
-can add a "pin name: " prefix for clarity?
+https://patchwork.kernel.org/patch/10059705/
 
-> > Take a look at the sirf binding; vendors use different names for their
-> > timepulse pins and in that case I added the actual pin names (1PPS, TM)
-> > in parenthesis after the description.
-> >
-> > Note that I mentioned "timepulse-gpios" in the generic binding with the
-> > intent of trying to enforce a generic name for pins with such a
-> > function (similarly for "enable-gpios", which I guess is already
-> > established).
-> 
-> Yes, I think that's good.
-> 
-> Though with the enable-gpios I was debating the name for sirfstar a
-> bit because it isn't the normal drive it active to enable, but rather
-> a pulse to enable or disable.
+I stand to my view that this is a good example how to ruin the =
+willingness
+of volunteers to send submissions for review, since the paycheck a =
+volunteer
+receives uses the currency of being welcome, recognition and visibility =
+in
+the final git log.
 
-I had some concerns along those lines as well, and if you agree I'll
-change the property name to on_off-gpios (or onoff-gpios) which matches
-the vendor data sheets for this pin, and which I think would be better.
+And I had expected that reviewers from kernel.org are more =
+generous/liberal
+with code flaws (finding them is IMHO the sole purpose of the review =
+process)
+and don't expect that everyone has the same background.
 
-Thanks,
-Johan
+Anyways, let's forget this type of discussion and come back to a =
+technical
+level:
+
+I have realized that the w2sg0004 is an exception (although a Sirf chip)
+that it does not provide a WAKEUP signal. And another significant
+difference is that we have to keep the serdev UART enabled even if there
+is no user-space client. Otherwise we are not able to detect unexpected
+activity. So we unfortunately can't move serdev open/close into the =
+.open
+and .close ops but need to open it in probe.
+
+Therefore, it is in my opinion still better to have a separate driver =
+for
+the w2sg0004 instead of hacking the support of this chip into your =
+WAKEUP
+capable sirfstar driver. So I suggest that you make WAKEUP a required
+property.
+
+We had faced a comparable decision last year with the ov9650 and ov9655 =
+camera
+sensors which are almost the same. But not same enough to integrate both =
+into
+a single driver.
+
+So (despite my grown doubts about the review process), I'll now submit a =
+v7
+of our w2sg0004 driver, adjusted to your gnss framework API and tested =
+on
+GTA04 hardware. It is only covering the w2sg0004 module and not even =
+claiming
+to handle the w2sg0084(i) to avoid overlap with your work.
+
+BR,
+Nikolaus
