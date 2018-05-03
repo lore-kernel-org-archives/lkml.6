@@ -1,122 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751799AbeECQEi (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:04:38 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:35491 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751621AbeECQEg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:04:36 -0400
-X-Google-Smtp-Source: AB8JxZoPf41I0E2+jNOuFlKTBH5+AEMs6vrxUOxsejoT+V22WHrS9yYOyto1DbOVEdp6M/Q5dlnip48amr1oXOowaIg=
-MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-20-mszeredi@redhat.com>
- <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com>
-From: Miklos Szeredi <mszeredi@redhat.com>
-Date: Thu, 3 May 2018 18:04:35 +0200
-Message-ID: <CAOssrKd+EjBYWMmGxVSCKQmFWhBf99eic4XLJ0YhZu3r0Kad5g@mail.gmail.com>
-Subject: Re: [RFC PATCH 19/35] ovl: readd reflink/copyfile/dedup support
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751805AbeECQFI (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:05:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:43958 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751455AbeECQFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 12:05:06 -0400
+From: Mark Rutland <mark.rutland@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org
+Subject: [PATCH] bpf: fix possible spectre-v1 in find_and_alloc_map()
+Date: Thu,  3 May 2018 17:04:59 +0100
+Message-Id: <20180503160459.4111-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 17, 2018 at 10:31 PM, Amir Goldstein <amir73il@gmail.com> wrote:
-> On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
->> Since set of arguments are so similar, handle in a common helper.
->>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> ---
->>  fs/overlayfs/file.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 79 insertions(+)
->>
->> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->> index 9670e160967e..39b1b73334ad 100644
->> --- a/fs/overlayfs/file.c
->> +++ b/fs/overlayfs/file.c
->> @@ -352,6 +352,81 @@ long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->>         return ret;
->>  }
->>
->> +enum ovl_copyop {
->> +       OVL_COPY,
->> +       OVL_CLONE,
->> +       OVL_DEDUPE,
->> +};
->> +
->> +static ssize_t ovl_copyfile(struct file *file_in, loff_t pos_in,
->> +                           struct file *file_out, loff_t pos_out,
->> +                           u64 len, unsigned int flags, enum ovl_copyop op)
->> +{
->> +       struct inode *inode_out = file_inode(file_out);
->> +       struct fd real_in, real_out;
->> +       const struct cred *old_cred;
->> +       int ret;
->> +
->> +       ret = ovl_real_file(file_out, &real_out);
->> +       if (ret)
->> +               return ret;
->> +
->> +       ret = ovl_real_file(file_in, &real_in);
->> +       if (ret) {
->> +               fdput(real_out);
->> +               return ret;
->> +       }
->> +
->> +       old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
->> +       switch (op) {
->> +       case OVL_COPY:
->> +               ret = vfs_copy_file_range(real_in.file, pos_in,
->> +                                         real_out.file, pos_out, len, flags);
->
-> Problem:
-> vfs_copy_file_range(ovl_lower_file, ovl_upper_file) on non samefs
-> will get -EXDEV from  ovl_copy_file_range(), so will not fall back
-> to do_splice_direct().
+It's possible for userspace to control attr->map_type. Sanitize it when
+using it as an array index to prevent an out-of-bounds value being used
+under speculation.
 
-This is not a regression, right?
+Found by smatch.
 
-> We may be better off checking in_sb != out_sb and returning
-> -EOPNOTSUPP? not sure.
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: netdev@vger.kernel.org
+---
+ kernel/bpf/syscall.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I think we should fix vfs_copy_file_range() to fall back to copying if
-not on the same fs.   Not sure why it doesn't do that now.
+I found this when running smatch over a v4.17-rc2 arm64 allyesconfig kernel.
 
->
->
->> +               break;
->> +
->> +       case OVL_CLONE:
->> +               ret = vfs_clone_file_range(real_in.file, pos_in,
->> +                                          real_out.file, pos_out, len);
->> +               break;
->> +
->> +       case OVL_DEDUPE:
->> +               ret = vfs_dedupe_file_range_one(real_in.file, pos_in, len,
->> +                                               real_out.file, pos_out);
->
-> Problem:
-> real_out can be a readonly fd (for is_admin), so we will be deduping
-> the lower file.
+IIUC this may allow for a speculative branch to an arbitrary gadget when we
+subsequently call ops->map_alloc_check(attr).
 
-Ugh...
+Mark.
 
-> I guess this problem is mitigated in current code by may_write_real().
->
-> How can we deal with that sort of "write leak" without patching
->  mnt_want_write_file()?
-
-We need to check before calling dedupe on real files that both are on upper.
-
-My problem is what error code to return.  Neither EXDEV nor EINVAL
-descibe the error adequately.  It should be "We could dedupe if we
-really wanted to, but it makes no sense to do so"...  So now it
-returns -EBADE, which means "data was different", but at least that
-one should at least be expected by callers.
-
-Thanks,
-Miklos
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 4ca46df19c9a..8a7acd0dbeb6 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -26,6 +26,7 @@
+ #include <linux/cred.h>
+ #include <linux/timekeeping.h>
+ #include <linux/ctype.h>
++#include <linux/nospec.h>
+ 
+ #define IS_FD_ARRAY(map) ((map)->map_type == BPF_MAP_TYPE_PROG_ARRAY || \
+ 			   (map)->map_type == BPF_MAP_TYPE_PERF_EVENT_ARRAY || \
+@@ -102,12 +103,14 @@ const struct bpf_map_ops bpf_map_offload_ops = {
+ static struct bpf_map *find_and_alloc_map(union bpf_attr *attr)
+ {
+ 	const struct bpf_map_ops *ops;
++	u32 type = attr->map_type;
+ 	struct bpf_map *map;
+ 	int err;
+ 
+-	if (attr->map_type >= ARRAY_SIZE(bpf_map_types))
++	if (type >= ARRAY_SIZE(bpf_map_types))
+ 		return ERR_PTR(-EINVAL);
+-	ops = bpf_map_types[attr->map_type];
++	type = array_index_nospec(type, ARRAY_SIZE(bpf_map_types));
++	ops = bpf_map_types[type];
+ 	if (!ops)
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -122,7 +125,7 @@ static struct bpf_map *find_and_alloc_map(union bpf_attr *attr)
+ 	if (IS_ERR(map))
+ 		return map;
+ 	map->ops = ops;
+-	map->map_type = attr->map_type;
++	map->map_type = type;
+ 	return map;
+ }
+ 
+-- 
+2.11.0
