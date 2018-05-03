@@ -1,68 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751291AbeECS1F (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 14:27:05 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:40879 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751095AbeECS1D (ORCPT
+        id S1751354AbeECS1O (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:27:14 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:28048 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbeECS1J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:27:03 -0400
-X-Google-Smtp-Source: AB8JxZqgdj1ZEtKWIveMQfausEf/p42OgD5cbYFzKe4LSqxLa0hfsFmppYdY7T9UKGhK1Z1lY31TVQ==
-Date: Thu, 3 May 2018 12:26:56 -0600
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Lidong Chen <jemmy858585@gmail.com>, dledford@redhat.com,
-        akpm@linux-foundation.org, qing.huang@oracle.com,
-        artemyko@mellanox.com, dan.j.williams@intel.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
-        Lidong Chen <lidongchen@tencent.com>
-Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
-Message-ID: <20180503182656.GB14956@ziepe.ca>
-References: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
- <20180503153310.GA9738@ziepe.ca>
- <20180503181235.GB4473@mtr-leonro.local>
+        Thu, 3 May 2018 14:27:09 -0400
+Subject: Re: [ANNOUNCE] v4.14.29-rt25
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+CC: Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+References: <20180325101204.ibuvdpnusv3vutyc@linutronix.de>
+ <b04275af-000d-7b29-3031-508c9a01cd91@ti.com>
+ <20180420171116.w2hxytgzvp4jgpyl@linutronix.de>
+ <764d0abc-7e88-a696-17a0-0bf807148d5b@ti.com>
+ <20180423191023.qtinidsq4vj3lmha@linutronix.de>
+ <8933b3b9-7f70-0f3f-a8b8-19d4369b35d4@ti.com>
+ <20180503152417.sztoptu5fcbw2b5h@linutronix.de>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <0096e540-7966-f6bf-522c-c6c18c13da95@ti.com>
+Date: Thu, 3 May 2018 13:26:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503181235.GB4473@mtr-leonro.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180503152417.sztoptu5fcbw2b5h@linutronix.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 09:12:35PM +0300, Leon Romanovsky wrote:
-> On Thu, May 03, 2018 at 09:33:10AM -0600, Jason Gunthorpe wrote:
-> > On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
-> > > The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
-> > > If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
-> > > exited, get_pid_task will return NULL, ib_umem_release does not decrease
-> > > mm->pinned_vm. This patch fixes it by use tgid.
-> > >
-> > > Signed-off-by: Lidong Chen <lidongchen@tencent.com>
-> > >  drivers/infiniband/core/umem.c | 12 ++++++------
-> > >  include/rdma/ib_umem.h         |  2 +-
-> > >  2 files changed, 7 insertions(+), 7 deletions(-)
-> >
-> > Why are we even using a struct pid for this? Does anyone know?
-> >
+
+
+On 05/03/2018 10:24 AM, Sebastian Andrzej Siewior wrote:
+> On 2018-05-01 10:04:13 [-0500], Grygorii Strashko wrote:
+>> Hi Sebastian,
+> Hi Grygorii,
 > 
-> Can it be related to "fork" support?
-
-Not sure..
-
-Ideally we want to hold the struct mm, but we can't hold it long
-term, so pid is a surrogate for that.
-
-> > I'm surprised that struct task isn't held in the struct ib_umem..
-> >
+>> Sry, it took some time as i found some instability -
+>> test "stress-ng --class os --all 0 -t 5m " not always finished :(
+>> So, I've tried to rollback to v4.14.29-rt25 and use as TI RT kernel as
+>> pure rt-devel. Still not sure if this is some sort of regression or not.
 > 
-> I think that this code can be removed and all accesses to mm_struct can
-> be done with "current->mm".
+> is this new? So v4.14.29-rt25 works and v4.14.29-rt25 with this does
+> not? This patch just silences the warning so it should not break
+> anything…
 
-That sounds wrong for fork support, as the mm used in destroy MUST
-exactly match the mm used in create..
+Yes. It seems not related.
 
-How does this accounting work in fork anyhow?
-
-Jason
+-- 
+regards,
+-grygorii
