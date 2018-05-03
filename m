@@ -1,149 +1,248 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2941320-1525372776-2-16960272075894177655
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525372776; b=VmeaBVA9h1Ediz8mchIhTUyvkGc1Jzlye85j0FjrBxic8gzkFg
-    ahypSyPrIjWLSO84k90Otfgy3piMBycVNgCIykfqbqBc4rkWY+fCYzcQkfsXP+0I
-    tgu9uj+oWks4BZ3VfmgU9nWL046yZYze/CxcPcdz2uzJVJyNw0ny1fZOjrMKMFaA
-    J2YSSROEhyjS5iTseGblnOl4ImxCdILUigkBalS4u5GBsCM3ctp85nnlIFAAmVDC
-    4srKsRTEX2X6T0g9Rd7w4qZIgtNeQWt4qAvmEOscS7WLTN6RkuecLBUZGSSTvmVm
-    wptSqDiy/t4WHcizezY/VZa6ek918zdCgiyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525372776; bh=
-    xcTzDdC7kS4mNsgue4/ljEInDC8m7hROwHlFKZV6S2A=; b=Je4ZroLvbUSA86Vr
-    pAbNlsraYozrUKHsiky/m+zqvIkJ3ioKu1Fkh+C+8iExZEVda+hvDo35OMEBMa/p
-    4/SxcSTAP+4XLqnrKxaTb65s39bPMVQMkOKSVfRsbzyWZMlxFwB8mTQvppL7lc+D
-    Qh+LikTeVY0htw0lMMbd1yNqUw1+y3raHBCsTXZ0c+wzYxripiqUkNfZK5cSDRaZ
-    B24K7U1zoAnQxHqnft+sNQGlgJLto1IZ2sP8Cws0MeXKMG+J/pdEKMaBrCeNBQKX
-    sreDhGfriXGAWVCx1fTNjhW5vFs07D5wOluaUe5vTsEUNbTB1Fa0NbSBw/7iM4to
-    cmaLIw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
-    header.i=@linaro.org header.b=b/Z2FoHQ x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=OXKHgauH;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=linaro.org
-      header.i=@linaro.org header.b=b/Z2FoHQ x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=google;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=linaro.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=OXKHgauH;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linaro.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHdNi1kKgeD98qcb29uSExSJkWdC9uYqwk0fJxLAVt+BcfDT71nvCJlpaNxWyy5SawbJKfA5g2t5sxg/4OmFvQO5dCwpxEKhnKoX9vWfJA8oR0Oxa5cQ
-    zCkYgopQeMt8CRYOW/S4O/0HABAfwi7T/arI/xwWDbwpTGiOigezScHY0Dm4GbCFFmlGxzlHqEte48hcD5c7GCtryQaBJo8LXJHYDnpIXKyJIqE6m4MSv4iI
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=1XWaLZrsAAAA:8
-    a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8 a=Aqq4grhJvZhRwofscVwA:9
-    a=AjGcO6oz07-iQ99wixmX:22 a=cvBusfyB2V15izCimMoJ:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeECSjO (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 14:39:14 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41892 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751160AbeECSjL (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 3 May 2018 14:39:11 -0400
-X-Google-Smtp-Source: AB8JxZoPEValrlApAkRFmRUgTIPfhujAMbDYcGDITolgOiiAHq/U4ujHYKfGQfApCAyW9/GSjPpRMg==
+Return-Path: <amit.pundir@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525372755; cv=none;
+        d=google.com; s=arc-20160816;
+        b=pmQ91zp5e1/YJ2nfDP1nCJRBt/Ah6VR3V0zk3QQTJK5mCp6eEBdZDb6wKYHFJBqzLU
+         SqdHGzpEVlqR+xIt5P8FvaYkNbsNoaeZh0AfvnwvQXHL6HSt5cNGInxMn++uu7LM7JYl
+         bN4HCDcm45Lpa/fz6dZ7qOgfIO+GTadqX6XQVg/g9KJ7N5+wVLy0KbmwdqAGzsbQXe3K
+         OQ+gLWSuvx68uTeDqQqoPVyix7y7VGk6/GnX0C4kN8ZAI5wK32dfalogteZyvctm8MVj
+         7YI4YWIlMpSv1kUNeuDgN7zrDA4u9Pgq+euXbugTwShkG9LnzstSf2VfU+FHMo+H17MS
+         j1DA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=9iZpnFi91fGjnnkmlx0FIIj7BaEja2eKczsD9g4Djr4=;
+        b=0V/Xrsv9uSTZ9AuVytN+qrRm102yGxgI8FfBfQ1Yx5j5ngQFhi1q7n5PdlnOXuH7Dx
+         kFiAW+c14jovxcXNu4PgoKUQt6Z2I2Ov3RCbk75+gWvbOChKlz4GlkVVGD4nRv/K4y6q
+         V+8e1dZ8D4YdCyhzt87jZiqX1I/FugOpx6zjgTH0o1kvsa6L9TkWMBdPUD4uL60HBM+M
+         MLR0beOY3Ddi3MZFF+CoZCTrEu5ymYXrQ+3OEn8yiejoaURrrFtkyMVJkbeM445Oi/6w
+         wvvkGkd9NowIow8zxp4q33g4UqJYFJroVn1BOFly5JFd3IXB37Gg2fMyqVYKT5ZLUHUg
+         KXRg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=I7PGfRR4;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=I7PGfRR4;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZo0sYXsps3upkO94KQEClkZtjcFxABvaDipEJJsJPTifAw+9Eeu1rJRNqltgcbARnjcOaKmdw==
 From: Amit Pundir <amit.pundir@linaro.org>
-To: lkml <linux-kernel@vger.kernel.org>, linux-wireless@vger.kernel.org
+To: lkml <linux-kernel@vger.kernel.org>,
+	linux-wireless@vger.kernel.org
 Cc: Suren Baghdasaryan <surenb@google.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        Christophe Ricard <christophe.ricard@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Stable <stable@vger.kernel.org>
-Subject: [PATCH v3 3/4] NFC: fdp: Fix possible buffer overflow in WCS4000 NFC driver
-Date: Fri,  4 May 2018 00:08:55 +0530
-Message-Id: <1525372736-25094-3-git-send-email-amit.pundir@linaro.org>
+	Samuel Ortiz <sameo@linux.intel.com>,
+	Christophe Ricard <christophe.ricard@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	John Stultz <john.stultz@linaro.org>,
+	Dmitry Shmidt <dimitrysh@google.com>,
+	Todd Kjos <tkjos@google.com>,
+	Android Kernel Team <kernel-team@android.com>
+Subject: [PATCH v3 4/4] NFC: fdp: Remove __func__ from dev_dbg()
+Date: Fri,  4 May 2018 00:08:56 +0530
+Message-Id: <1525372736-25094-4-git-send-email-amit.pundir@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525372736-25094-1-git-send-email-amit.pundir@linaro.org>
 References: <1525372736-25094-1-git-send-email-amit.pundir@linaro.org>
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599469262045919417?=
+X-GMAIL-MSGID: =?utf-8?q?1599469262045919417?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Suren Baghdasaryan <surenb@google.com>
+Remove redundant __func__ parameter from dev_dgb() calls and
+delete empty dev_dbg() trace calls, which are redundant if
+function tracer is enabled.
 
-Possible buffer overflow when reading next_read_size bytes into
-tmp buffer after next_read_size was extracted from a previous packet.
-
-cc: Stable <stable@vger.kernel.org>
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
 v3:
-Reset next_read_size to a more readable macro FDP_NCI_I2C_MIN_PAYLOAD
-instead of 5.
+Updated commit message.
 
 v2:
-Remove redundant __func__ from dev_dgb().
+Deleted empty dev_dbg() trace calls, which are redundant if
+function tracer is enabled.
 
- drivers/nfc/fdp/i2c.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/nfc/fdp/fdp.c | 18 +++---------------
+ drivers/nfc/fdp/i2c.c | 17 ++++-------------
+ 2 files changed, 7 insertions(+), 28 deletions(-)
 
+diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
+index d5784a47fc13..f64a6fd65c41 100644
+--- a/drivers/nfc/fdp/fdp.c
++++ b/drivers/nfc/fdp/fdp.c
+@@ -249,8 +249,6 @@ static int fdp_nci_open(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	r = info->phy_ops->enable(info->phy);
+ 
+ 	return r;
+@@ -261,7 +259,6 @@ static int fdp_nci_close(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	return 0;
+ }
+ 
+@@ -270,8 +267,6 @@ static int fdp_nci_send(struct nci_dev *ndev, struct sk_buff *skb)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	if (atomic_dec_and_test(&info->data_pkt_counter))
+ 		info->data_pkt_counter_cb(ndev);
+ 
+@@ -283,7 +278,6 @@ int fdp_nci_recv_frame(struct nci_dev *ndev, struct sk_buff *skb)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	return nci_recv_frame(ndev, skb);
+ }
+ EXPORT_SYMBOL(fdp_nci_recv_frame);
+@@ -498,8 +492,6 @@ static int fdp_nci_setup(struct nci_dev *ndev)
+ 	int r;
+ 	u8 patched = 0;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	r = nci_core_init(ndev);
+ 	if (r)
+ 		goto error;
+@@ -609,7 +601,6 @@ static int fdp_nci_core_reset_ntf_packet(struct nci_dev *ndev,
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	info->setup_reset_ntf = 1;
+ 	wake_up(&info->setup_wq);
+ 
+@@ -622,7 +613,6 @@ static int fdp_nci_prop_patch_ntf_packet(struct nci_dev *ndev,
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	info->setup_patch_ntf = 1;
+ 	info->setup_patch_status = skb->data[0];
+ 	wake_up(&info->setup_wq);
+@@ -637,7 +627,7 @@ static int fdp_nci_prop_patch_rsp_packet(struct nci_dev *ndev,
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 	u8 status = skb->data[0];
+ 
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
++	dev_dbg(dev, "status 0x%x\n", status);
+ 	nci_req_complete(ndev, status);
+ 
+ 	return 0;
+@@ -650,7 +640,7 @@ static int fdp_nci_prop_set_production_data_rsp_packet(struct nci_dev *ndev,
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 	u8 status = skb->data[0];
+ 
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
++	dev_dbg(dev, "status 0x%x\n", status);
+ 	nci_req_complete(ndev, status);
+ 
+ 	return 0;
+@@ -695,7 +685,7 @@ static int fdp_nci_core_get_config_rsp_packet(struct nci_dev *ndev,
+ 	dev_dbg(dev, "OTP version %d\n", info->otp_version);
+ 	dev_dbg(dev, "RAM version %d\n", info->ram_version);
+ 	dev_dbg(dev, "key index %d\n", info->key_index);
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, rsp->status);
++	dev_dbg(dev, "status 0x%x\n", rsp->status);
+ 
+ 	nci_req_complete(ndev, rsp->status);
+ 
+@@ -798,8 +788,6 @@ void fdp_nci_remove(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	nci_unregister_device(ndev);
+ 	nci_free_device(ndev);
+ }
 diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
-index c4da50e07bbc..2c5ed2224c5e 100644
+index 2c5ed2224c5e..bb14d30c568c 100644
 --- a/drivers/nfc/fdp/i2c.c
 +++ b/drivers/nfc/fdp/i2c.c
-@@ -176,6 +176,15 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
- 		/* Packet that contains a length */
- 		if (tmp[0] == 0 && tmp[1] == 0) {
- 			phy->next_read_size = (tmp[2] << 8) + tmp[3] + 3;
-+			/*
-+			 * Ensure next_read_size does not exceed sizeof(tmp)
-+			 * for reading that many bytes during next iteration
-+			 */
-+			if (phy->next_read_size > FDP_NCI_I2C_MAX_PAYLOAD) {
-+				dev_dbg(&client->dev, "corrupted packet\n");
-+				phy->next_read_size = FDP_NCI_I2C_MIN_PAYLOAD;
-+				goto flush;
-+			}
- 		} else {
- 			phy->next_read_size = FDP_NCI_I2C_MIN_PAYLOAD;
+@@ -57,7 +57,6 @@ static int fdp_nci_i2c_enable(void *phy_id)
+ {
+ 	struct fdp_i2c_phy *phy = phy_id;
+ 
+-	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
+ 	fdp_nci_i2c_reset(phy);
+ 
+ 	return 0;
+@@ -67,7 +66,6 @@ static void fdp_nci_i2c_disable(void *phy_id)
+ {
+ 	struct fdp_i2c_phy *phy = phy_id;
+ 
+-	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
+ 	fdp_nci_i2c_reset(phy);
+ }
+ 
+@@ -113,8 +111,8 @@ static int fdp_nci_i2c_write(void *phy_id, struct sk_buff *skb)
+ 	}
+ 
+ 	if (r < 0 || r != skb->len)
+-		dev_dbg(&client->dev, "%s: error err=%d len=%d\n",
+-			__func__, r, skb->len);
++		dev_dbg(&client->dev, "error err=%d len=%d\n",
++			r, skb->len);
+ 
+ 	if (r >= 0) {
+ 		if (r != skb->len) {
+@@ -152,8 +150,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
+ 
+ 		r = i2c_master_recv(client, tmp, len);
+ 		if (r != len) {
+-			dev_dbg(&client->dev, "%s: i2c recv err: %d\n",
+-				__func__, r);
++			dev_dbg(&client->dev, "i2c recv err: %d\n", r);
+ 			goto flush;
+ 		}
+ 
+@@ -167,8 +164,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
+ 		 * and force resynchronization
+ 		 */
+ 		if (lrc) {
+-			dev_dbg(&client->dev, "%s: corrupted packet\n",
+-				__func__);
++			dev_dbg(&client->dev, "corrupted packet\n");
+ 			phy->next_read_size = 5;
+ 			goto flush;
+ 		}
+@@ -224,7 +220,6 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
+ 	}
+ 
+ 	client = phy->i2c_dev;
+-	dev_dbg(&client->dev, "%s\n", __func__);
+ 
+ 	r = fdp_nci_i2c_read(phy, &skb);
+ 
+@@ -305,8 +300,6 @@ static int fdp_nci_i2c_probe(struct i2c_client *client)
+ 	u32 clock_freq;
+ 	int r = 0;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+ 		nfc_err(dev, "No I2C_FUNC_I2C support\n");
+ 		return -ENODEV;
+@@ -368,8 +361,6 @@ static int fdp_nci_i2c_remove(struct i2c_client *client)
+ {
+ 	struct fdp_i2c_phy *phy = i2c_get_clientdata(client);
+ 
+-	dev_dbg(&client->dev, "%s\n", __func__);
+-
+ 	fdp_nci_remove(phy->ndev);
+ 	fdp_nci_i2c_disable(phy);
  
 -- 
 2.7.4
