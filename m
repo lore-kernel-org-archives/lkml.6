@@ -1,114 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeECTin (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 15:38:43 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58345 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751125AbeECTij (ORCPT
+        id S1751301AbeECTsj (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 15:48:39 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:42964 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751178AbeECTsi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 15:38:39 -0400
-Date: Thu, 3 May 2018 21:38:38 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Droid 4: very confusing config around OHCI_OMAP3_HCD
-Message-ID: <20180503193837.GC32572@amd>
-References: <20180503192510.GB32572@amd>
- <20180503192838.GY98604@atomide.com>
+        Thu, 3 May 2018 15:48:38 -0400
+Smtp-Origin-Hostprefix: devbig
+From: Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To: <linux-kernel@vger.kernel.org>
+CC: Song Liu <songliubraving@fb.com>, <kernel-team@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH] perf: fix group with mixed hw and sw events
+Date: Thu, 3 May 2018 12:47:16 -0700
+Message-ID: <20180503194716.162815-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.9.5
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="Izn7cH1Com+I3R9J"
-Content-Disposition: inline
-In-Reply-To: <20180503192838.GY98604@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_08:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When hw and sw events are mixed in the same group, they are all attached
+to the hw perf_event_context. This sometimes requires moving group of
+perf_event to a different context. We found an issue in the moving. Here
+is an example of it.
 
---Izn7cH1Com+I3R9J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   perf stat -e '{faults,ref-cycles,faults}'  -I 1000
 
-On Thu 2018-05-03 12:28:38, Tony Lindgren wrote:
-> * Pavel Machek <pavel@ucw.cz> [180503 19:27]:
-> > Hi!
-> >=20
-> > For power management experiments, I tried
-> >=20
-> > CONFIG_USB_OHCI_HCD=3Dy
-> > CONFIG_USB_OHCI_HCD_OMAP3=3Dm
-> > CONFIG_USB_OHCI_HCD_PLATFORM=3Dy
-> >=20
-> > and could not find resulting .ko.
-> >=20
-> > Help text says:
-> >=20
-> > CONFIG_USB_OHCI_HCD_OMAP3:
-> >=20
-> > This option is deprecated now and the driver was removed, use
-> > USB_OHCI_HCD_PLATFORM instead.
-> >=20
-> > Enables support for the on-chip OHCI controller on
-> > OMAP3 and later chips.
-> >=20
-> > Which may partly explain it. But if the option no longer does
-> > anything, why keep it? Certainly second part is confusing if option is
-> > NOP...
->=20
-> Yeah it's ohci-platform now, I think we decided to keep the old one
-> around to avoid breaking people's .config files for booting rather
-> than silently fail.
+     1.005591180              1,297      faults
+     1.005591180        457,476,576      ref-cycles
+     1.005591180    <not supported>      faults
 
-Ok, what about this? (Should I do the same for the other drivers?)
-Or at least put (DEPRECATED) as other drivers do?
+First, sw event "faults" is attached to the sw context, and become the
+group leader. Then, hw event "ref-cycles" is attached, so both events
+are moved to hw context. Last, another sw "faults" tries to attach,
+but it fails because of mismatch between the new target ctx (from sw
+pmu) and the group_leader's ctx (hw context, same as ref-cycles).
 
-Situation is quite confusing if you already have PLATFORM=3Dy. OMAP=3Dm
-can be selected, but nothing happens.
+The broken condition is:
+   group_leader is sw event;
+   group_leader is on hw context;
+   add a sw event to the group.
 
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 5d958da..67c151a 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -455,7 +455,7 @@ config USB_OHCI_HCD_AT91
-           Atmel chips.
-=20
- config USB_OHCI_HCD_OMAP3
--	tristate "OHCI support for OMAP3 and later chips"
-+	tristate "dummy option for backwards compatibility"
- 	depends on (ARCH_OMAP3 || ARCH_OMAP4 || SOC_OMAP5)
- 	select USB_OHCI_HCD_PLATFORM
- 	default y
-@@ -463,9 +463,6 @@ config USB_OHCI_HCD_OMAP3
- 	  This option is deprecated now and the driver was removed, use
- 	  USB_OHCI_HCD_PLATFORM instead.
-=20
--	  Enables support for the on-chip OHCI controller on
--	  OMAP3 and later chips.
--
- config USB_OHCI_HCD_DAVINCI
- 	tristate "OHCI support for TI DaVinci DA8xx"
- 	depends on ARCH_DAVINCI_DA8XX
+This patch fixes this scenario by checking group_leader's context
+(instead of just event type). If group_leader is on hw context, use
+pmu of this context to look up context for the new event.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Fixes: b04243ef7006 ("perf: Complete software pmu grouping")
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+---
+ include/linux/perf_event.h |  8 ++++++++
+ kernel/events/core.c       | 21 +++++++++++----------
+ 2 files changed, 19 insertions(+), 10 deletions(-)
 
---Izn7cH1Com+I3R9J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrrZT0ACgkQMOfwapXb+vKVFgCgjcD7UqPIJXhHo4DkK9yy0jPS
-Z7YAoKQvccjh+vq1XjV6p5W9TCWsXNn/
-=C7fz
------END PGP SIGNATURE-----
-
---Izn7cH1Com+I3R9J--
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index e71e99e..def866f 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1016,6 +1016,14 @@ static inline int is_software_event(struct perf_event *event)
+ 	return event->event_caps & PERF_EV_CAP_SOFTWARE;
+ }
+ 
++/*
++ * Return 1 for event in sw context, 0 for event in hw context
++ */
++static inline int in_software_context(struct perf_event *event)
++{
++	return event->ctx->pmu->task_ctx_nr == perf_sw_context;
++}
++
+ extern struct static_key perf_swevent_enabled[PERF_COUNT_SW_MAX];
+ 
+ extern void ___perf_sw_event(u32, u64, struct pt_regs *, u64);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 67612ce..ce6aa5f 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -10521,19 +10521,20 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	if (pmu->task_ctx_nr == perf_sw_context)
+ 		event->event_caps |= PERF_EV_CAP_SOFTWARE;
+ 
+-	if (group_leader &&
+-	    (is_software_event(event) != is_software_event(group_leader))) {
+-		if (is_software_event(event)) {
++	if (group_leader) {
++		if (is_software_event(event) &&
++		    !in_software_context(group_leader)) {
+ 			/*
+-			 * If event and group_leader are not both a software
+-			 * event, and event is, then group leader is not.
++			 * If the event is a sw event, but the group_leader
++			 * is on hw context.
+ 			 *
+-			 * Allow the addition of software events to !software
+-			 * groups, this is safe because software events never
+-			 * fail to schedule.
++			 * Allow the addition of software events to hw
++			 * groups, this is safe because software events
++			 * never fail to schedule.
+ 			 */
+-			pmu = group_leader->pmu;
+-		} else if (is_software_event(group_leader) &&
++			pmu = group_leader->ctx->pmu;
++		} else if (!is_software_event(event) &&
++			   is_software_event(group_leader) &&
+ 			   (group_leader->group_caps & PERF_EV_CAP_SOFTWARE)) {
+ 			/*
+ 			 * In case the group is a pure software group, and we
+-- 
+2.9.5
