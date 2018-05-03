@@ -1,96 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751456AbeECLhC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 07:37:02 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:50704 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751145AbeECLg5 (ORCPT
+        id S1751511AbeECLh7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 07:37:59 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54003 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751004AbeECLh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 07:36:57 -0400
-X-Google-Smtp-Source: AB8JxZowQcaQLE4ruHGwLoH5VxAP/8gSImaC8p66B2/Dm1Y2lDEBOghzvSqT3y0RfNbZfs/pyNyX2g==
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH 10/28] venus: vdec: call session_continue in insufficient
- event
-To: Vikash Garodia <vgarodia@codeaurora.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-media-owner@vger.kernel.org
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
- <20180424124436.26955-11-stanimir.varbanov@linaro.org>
- <85963ca3e12f4d71f2bc2db7d601d4b2@codeaurora.org>
-Message-ID: <c349eca0-2227-75f3-111c-9980336896d1@linaro.org>
-Date: Thu, 3 May 2018 14:36:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 3 May 2018 07:37:57 -0400
+X-Google-Smtp-Source: AB8JxZqwXEiadwMYKG5cfsLkaFF0eRzEje6jJxvfhUwO5jv7P/IWUu0XTYBJ2LrR5hYfQoUMyzEwysg0Z2HwIAuu9Z0=
 MIME-Version: 1.0
-In-Reply-To: <85963ca3e12f4d71f2bc2db7d601d4b2@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180503071917.xm2xvgagvzkworay@salmiak>
+References: <20180502203326.9491-1-labbott@redhat.com> <20180502203326.9491-3-labbott@redhat.com>
+ <20180503071917.xm2xvgagvzkworay@salmiak>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date: Thu, 3 May 2018 13:37:56 +0200
+Message-ID: <CAKv+Gu80crWiNEM6aFea=aUpDjv8N4ySSh3yB3noTen0gfpz-w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Laura Abbott <labbott@redhat.com>,
+        Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vikash,
-
-Thanks for the comments!
-
-On  2.05.2018 09:26, Vikash Garodia wrote:
-> Hello Stanimir,
-> 
-> On 2018-04-24 18:14, Stanimir Varbanov wrote:
->> Call session_continue for Venus 4xx version even when the event
->> says that the buffer resources are not sufficient. Leaving a
->> comment with more information about the workaround.
+On 3 May 2018 at 09:19, Mark Rutland <mark.rutland@arm.com> wrote:
+> Hi Laura,
+>
+> On Wed, May 02, 2018 at 01:33:26PM -0700, Laura Abbott wrote:
 >>
->> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> Implementation of stackleak based heavily on the x86 version
+>>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
 >> ---
->>  drivers/media/platform/qcom/venus/vdec.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
+>> Now written in C instead of a bunch of assembly.
+>
+> This looks neat!
+>
+> I have a few minor comments below.
+>
+>> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+>> index bf825f38d206..0ceea613c65b 100644
+>> --- a/arch/arm64/kernel/Makefile
+>> +++ b/arch/arm64/kernel/Makefile
+>> @@ -55,6 +55,9 @@ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+>>  arm64-obj-$(CONFIG_CRASH_DUMP)               += crash_dump.o
+>>  arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)        += sdei.o
 >>
->> diff --git a/drivers/media/platform/qcom/venus/vdec.c
->> b/drivers/media/platform/qcom/venus/vdec.c
->> index c45452634e7e..91c7384ff9c8 100644
->> --- a/drivers/media/platform/qcom/venus/vdec.c
->> +++ b/drivers/media/platform/qcom/venus/vdec.c
->> @@ -873,6 +873,14 @@ static void vdec_event_notify(struct venus_inst
->> *inst, u32 event,
+>> +arm64-obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += erase.o
+>> +KASAN_SANITIZE_erase.o       := n
+>
+> I suspect we want to avoid the full set of instrumentation suspects here, e.g.
+> GKOV, KASAN, UBSAN, and KCOV.
+>
+>> +
+>>  obj-y                                        += $(arm64-obj-y) vdso/ probes/
+>>  obj-m                                        += $(arm64-obj-m)
+>>  head-y                                       := head.o
+>> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+>> index ec2ee720e33e..3144f1ebdc18 100644
+>> --- a/arch/arm64/kernel/entry.S
+>> +++ b/arch/arm64/kernel/entry.S
+>> @@ -401,6 +401,11 @@ tsk      .req    x28             // current thread_info
 >>
->>              dev_dbg(dev, "event not sufficient resources (%ux%u)\n",
->>                  data->width, data->height);
->> +            /*
->> +             * Workaround: Even that the firmware send and event for
->> +             * insufficient buffer resources it is safe to call
->> +             * session_continue because actually the event says that
->> +             * the number of capture buffers is lower.
->> +             */
->> +            if (IS_V4(core))
->> +                hfi_session_continue(inst);
->>              break;
->>          case HFI_EVENT_RELEASE_BUFFER_REFERENCE:
->>              venus_helper_release_buf_ref(inst, data->tag);
-> 
-> Insufficient event from video firmware could be sent either,
-> 1. due to insufficient buffer resources
-> 2. due to lower capture buffers
-> 
-> It cannot be assumed that the event received by the host is due to lower 
-> capture
-> buffers. Incase the buffer resource is insufficient, let say there is a 
-> bitstream
-> resolution switch from 720p to 1080p, capture buffers needs to be 
-> reallocated.
+>>       .text
+>>
+>> +     .macro  ERASE_KSTACK
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +     bl      erase_kstack
+>> +#endif
+>> +     .endm
+>
+> Nit: The rest of our asm macros are lower-case -- can we stick to that here?
+>
+>>  /*
+>>   * Exception vectors.
+>>   */
+>> @@ -906,6 +911,7 @@ ret_to_user:
+>>       cbnz    x2, work_pending
+>>  finish_ret_to_user:
+>>       enable_step_tsk x1, x2
+>> +     ERASE_KSTACK
+>>       kernel_exit 0
+>>  ENDPROC(ret_to_user)
+>
+> I believe we also need this in ret_fast_syscall.
+>
+> [...]
+>
+>> +asmlinkage void erase_kstack(void)
+>> +{
+>> +     unsigned long p = current->thread.lowest_stack;
+>> +     unsigned long boundary = p & ~(THREAD_SIZE - 1);
+>> +     unsigned long poison = 0;
+>> +     const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
+>> +                                                     sizeof(unsigned long);
+>> +
+>> +     /*
+>> +      * Let's search for the poison value in the stack.
+>> +      * Start from the lowest_stack and go to the bottom.
+>> +      */
+>> +     while (p > boundary && poison <= check_depth) {
+>> +             if (*(unsigned long *)p == STACKLEAK_POISON)
+>> +                     poison++;
+>> +             else
+>> +                     poison = 0;
+>> +
+>> +             p -= sizeof(unsigned long);
+>> +     }
+>> +
+>> +     /*
+>> +      * One long int at the bottom of the thread stack is reserved and
+>> +      * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
+>> +      */
+>> +     if (p == boundary)
+>> +             p += sizeof(unsigned long);
+>
+> I wonder if end_of_stack() should be taught about CONFIG_SCHED_STACK_END_CHECK,
+> given that's supposed to return the last *usable* long on the stack, and we
+> don't account for this elsewhere.
+>
+> If we did, then IIUC we could do:
+>
+>         unsigned long boundary = (unsigned long)end_of_stack(current);
+>
+> ... at the start of the function, and not have to worry about this explicitly.
+>
+>> +
+>> +#ifdef CONFIG_STACKLEAK_METRICS
+>> +     current->thread.prev_lowest_stack = p;
+>> +#endif
+>> +
+>> +     /*
+>> +      * So let's write the poison value to the kernel stack.
+>> +      * Start from the address in p and move up till the new boundary.
+>> +      */
+>> +     boundary = current_stack_pointer;
+>
+> I worry a little that the compiler can move the SP during a function's
+> lifetime, but maybe that's only the case when there are VLAs, or something like
+> that?
+>
 
-I agree with you. I will rework this part and call session_continue only 
-for case #2.
+I think the AAPCS permits the compiler to allocate the stack space for
+outgoing variables (i.e., args 9 and beyond or other argument types
+that require passing via the stack) at a smaller scope than the entire
+function, although GCC does appear to allocate it at the beginning
+(based on some quick experiments)
 
-> 
-> The driver should be sending the V4L2_EVENT_SOURCE_CHANGE to client 
-> instead of ignoring
-> the event from firmware.
 
-The v4l2 event is sent always to v4l clients.
-
-regards,
-Stan
+>> +
+>> +     BUG_ON(boundary - p >= THREAD_SIZE);
+>> +
+>> +     while (p < boundary) {
+>> +             *(unsigned long *)p = STACKLEAK_POISON;
+>> +             p += sizeof(unsigned long);
+>> +     }
+>> +
+>> +     /* Reset the lowest_stack value for the next syscall */
+>> +     current->thread.lowest_stack = current_stack_pointer;
+>> +}
+>
+> Once this function returns, its data is left on the stack. Is that not a problem?
+>
+> No strong feelings either way, but it might be worth mentioning in the commit
+> message.
+>
+>> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+>> index f08a2ed9db0d..156fa0a0da19 100644
+>> --- a/arch/arm64/kernel/process.c
+>> +++ b/arch/arm64/kernel/process.c
+>> @@ -364,6 +364,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
+>>       p->thread.cpu_context.pc = (unsigned long)ret_from_fork;
+>>       p->thread.cpu_context.sp = (unsigned long)childregs;
+>>
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +     p->thread.lowest_stack = (unsigned long)task_stack_page(p);
+>
+> Nit: end_of_stack(p) would be slightly better semantically, even though
+> currently equivalent to task_stack_page(p).
+>
+> [...]
+>
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +void __used check_alloca(unsigned long size)
+>> +{
+>> +     unsigned long sp, stack_left;
+>> +
+>> +     sp = current_stack_pointer;
+>> +
+>> +     stack_left = sp & (THREAD_SIZE - 1);
+>> +     BUG_ON(stack_left < 256 || size >= stack_left - 256);
+>> +}
+>
+> Is this arbitrary, or is there something special about 256?
+>
+> Even if this is arbitrary, can we give it some mnemonic?
+>
+>> +EXPORT_SYMBOL(check_alloca);
+>> +#endif
+>> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+>> index a34e9290a699..25dd2a14560d 100644
+>> --- a/drivers/firmware/efi/libstub/Makefile
+>> +++ b/drivers/firmware/efi/libstub/Makefile
+>> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)        += -I$(srctree)/scripts/dtc/libfdt
+>>  KBUILD_CFLAGS                        := $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>>                                  -D__NO_FORTIFY \
+>>                                  $(call cc-option,-ffreestanding) \
+>> -                                $(call cc-option,-fno-stack-protector)
+>> +                                $(call cc-option,-fno-stack-protector) \
+>> +                                $(DISABLE_STACKLEAK_PLUGIN)
+>>
+>>  GCOV_PROFILE                 := n
+>>  KASAN_SANITIZE                       := n
+>
+> I believe we'll also need to do this for the KVM hyp code in arch/arm64/kvm/hyp/.
+>
+> Thanks,
+> Mark.
