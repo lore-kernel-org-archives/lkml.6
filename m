@@ -1,71 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751069AbeECPBe (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 11:01:34 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:42897 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751121AbeECPB3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 11:01:29 -0400
-X-Google-Smtp-Source: AB8JxZp+p/vco1Q3AKbjahT2jdBQxPmeRJLvg0jL6UvZT6Y9vV5RPleLazR0ZyQFsE/W+eWuh8m7HshVQJYXw59+cPk=
+        id S1751456AbeECPCY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 11:02:24 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48068 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751095AbeECPCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 11:02:20 -0400
+Date: Thu, 3 May 2018 17:02:17 +0200
+From: Jan Kara <jack@suse.cz>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+        bart.vanassche@wdc.com, ming.lei@redhat.com, rjw@rjwysocki.net,
+        mguzik@redhat.com, linux-pm@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] fs: fix corner case race on freeze_bdev() when sb
+ disappears
+Message-ID: <20180503150217.ywu2cuxjbsgr47a6@quack2.suse.cz>
+References: <20180420235904.27496-1-mcgrof@kernel.org>
+ <20180420235904.27496-4-mcgrof@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <db8970ea-05f4-e7c0-52fa-070c7a6b8d2e@codeaurora.org>
-References: <cover.1523673467.git.collinsd@codeaurora.org> <39b676d2ba7dac2436196cc5a090c6f151498dc8.1523673467.git.collinsd@codeaurora.org>
- <CAD=FV=UDUKg58xe+3C5QUbFwFkO8d3c_tzxmfPDzdv1KXZ3W9g@mail.gmail.com> <db8970ea-05f4-e7c0-52fa-070c7a6b8d2e@codeaurora.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 3 May 2018 08:01:27 -0700
-X-Google-Sender-Auth: Kljf5i9n4wfK832Ckzx9m-oYOgo
-Message-ID: <CAD=FV=UC4CqOut0GoJ-heqdZ9NTHzzgBpVWy3XAMFax26HoZmg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] regulator: dt-bindings: add QCOM RPMh regulator bindings
-To: David Collins <collinsd@codeaurora.org>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180420235904.27496-4-mcgrof@kernel.org>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri 20-04-18 16:59:04, Luis R. Rodriguez wrote:
+> freeze_bdev() will bail but leave the bd_fsfreeze_count incremented
+> if the get_active_super() does not find the superblock on our
+> super_blocks list to match.
+> 
+> This issue has been present since v2.6.29 during the introduction of the
+> ioctl_fsfreeze() and ioctl_fsthaw() via commit fcccf502540e3 ("filesystem
+> freeze: implement generic freeze feature").
+> 
+> I am not aware of any existing races which have triggered this
+> situation, however, if it does trigger it could mean leaving a
+> superblock with bd_fsfreeze_count always positive.
+> 
+> Fixes: fcccf502540e3 ("filesystem freeze: implement generic freeze feature")
+> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
-On Wed, May 2, 2018 at 5:13 PM, David Collins <collinsd@codeaurora.org> wrote:
-> On 05/02/2018 09:37 AM, Doug Anderson wrote:
->> On Fri, Apr 13, 2018 at 7:50 PM, David Collins <collinsd@codeaurora.org> wrote:
->>> +- vdd_l26-supply
->>> +- vdd_lvs1_lvs2-supply
->>> +- vdd_lvs1_lvs2-supply
->>> +       Usage:      optional (PM8998 only)
->>> +       Value type: <phandle>
->>> +       Definition: phandle of the parent supply regulator of one or more of the
->>> +                   regulators for this PMIC.
->>
->> One small additional nit here is that "vdd_lvs1_lvs2-supply" is listed twice.
->
-> I'll remove the duplicate.
->
->
->> Also on the schematics (and in the PM8998 datasheet) I have this is
->> "VIN_LVS_1_2".  It seems like you should be consistent here and call
->> this "vin-lvs-1-2-supply".
->
-> I was trying to keep the naming consistent within device tree binding
-> documentation for LVS vs LDO and SMPS (e.g. 'vdd' vs 'vin' prefix).  I
-> suppose that I can change this to match the hardware documentation pin
-> name.  I can also change '_' to '-' in the supply names if that is preferred.
+Looks good to me. You can add:
 
-I'd rather it match the docs.  I personally have no idea for why the
-writer of the docs used "vdd" vs. "vin", but even if they had no good
-reason matching the docs makes this searchable.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-As far as the "_" to "-", Rob asked for that earlier in this thread
-and you says "I will change this on the next patch set."  In general
-the desire to convert "_" to "-" makes this less searchable (since the
-docs use "_"), but that's the way device tree guys want it so so c'est
-la vie.  Luckily it's easily to mentally change the "-"s back to "_"s
-when searching...
+								Honza
 
--Doug
+> ---
+>  fs/block_dev.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index b54966679833..7a532aa58c07 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -507,8 +507,10 @@ struct super_block *freeze_bdev(struct block_device *bdev)
+>  	}
+>  
+>  	sb = get_active_super(bdev);
+> -	if (!sb)
+> +	if (!sb) {
+> +		bdev->bd_fsfreeze_count--;
+>  		goto out;
+> +	}
+>  	if (sb->s_op->freeze_super)
+>  		error = sb->s_op->freeze_super(sb);
+>  	else
+> -- 
+> 2.16.3
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
