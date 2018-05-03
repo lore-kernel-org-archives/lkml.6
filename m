@@ -1,40 +1,37 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2941320-1525371485-2-13443023998996446819
+X-Cyrus-Session-Id: sloti22d1t05-2513336-1525351479-2-402790173176601728
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
- in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES unknown, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525371485; b=YDhJ/mVl471/S0rInKKsVh0yKWzrX35oaxfao4bO+PlUumnxJJ
-    Qkr+dh30ntvxX8jcimuD89dguYmJJbqaqXR4CYNP2FJUW4qmoJYPExABFNa1MKM1
-    2RPTErog+NWI2FfOwBN5azDHSNpLIj3lmWtNtPbPBnTfoZZymRmYhb6zdbeWB40t
-    iA0f6rWr/r/5kxkUMyUnoID+FmNTYZQsMT76m7zgx7FRljYAceYO04OXopyrBBzI
-    AY+yTnpRsHSYL+e9kOVNacGXlx8yuca8k2QPXXHeyCVhFhkFKkRlKRDA2ICTRFIA
-    zkphCQssJDo6PsyYBIYwPfZrhPm3Pb0t5feA==
+    1525351479; b=jwddG9cPeCz98U6JSjegRq2O1ZNQZYdhn2yNpAL3HnB9VyzcnA
+    xBnh1LzMNz1x6Fiic1AdKwgX/pbBO7hiPGl3gZ5I3TtCLnFJSFfEO/rKENU21UmY
+    rhcunRkQwmntsFoV7wsTagmLcETFfnHzNnyihS8G7nXihmD5tgGnENGDExE7H0yi
+    4BLm0ehLmWHKi8ab3VSLKWbwLL+eYdOLLUoD6hX6tebePU5VFss4GtEf+5juaX+l
+    h528cfuS/b8kZbR1aoZT3zgG3ZWivqx9ZMIqwx2Nx+Pa4rvOIg3Ctyp2o7JRgwtQ
+    LuKBgyAeT22x01ZNNVQee2OZySj5KZRQxQQQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525371485; bh=wlDX94wnQTPDfd9jJUBzf2VEIhYd3u
-    VnYgRV504KdzA=; b=eyc3JSGiNqNeVKPcaSZaORPUfKmYsPhRktZwMUZnz+YdwM
-    1lNejJeK+fMJWysbHgnr5OWbaTY6Dy12TqMVUqY0ZWL8A6iiuoWs3c4kp8OosNCe
-    XZeCKtX3BXgzYh1dtYaZe8VHpcQOJjGdNxX/MblJHSFIsB6cfrPBX3yxDCGVthsd
-    JI/C8iQwdVhrLkG/JlNl9XJt0wKEqFcAoDajkuCDU7MwnQPrtczPBG1GoT29XJA/
-    IBn8m80ZS4YHZ6koAWouZR+WMFiaEiO4SjokK9pWdAyAOCk5xNwRYqETkGfKD5sH
-    6VgMwKiIL8ryiase7v2Coz6qoGAkQc7n0y+UhOWw==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-    header.i=@messagingengine.com header.b=eEMxDY+y x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525351479; bh=
+    wDEaUunTzNgSFdPrlOxM415G6FfWbflqtXiU+TRX+j8=; b=VcM5u/YuR3IZUXlC
+    jlYRZRO5eOdyCf6XW1mEVGwwf5TPx+Pwv4h2NAI9+urY+aIHqFC7EH4Hg8JtyLCp
+    4xFk5fi4Yabmv0SItMItA3/wr9OPTsOi+pZd8IAjHmAqMGDV2iCwZ9stfOP9Il+J
+    w+IdmsFHSSkLG0TTauy2sUwroM/fRZCFyMYDnZuMSub6LdifWIbL3+jvmhmcR6w9
+    Y/79/3PYSHwdl6FoT7acH9Cw7vMTT0aQbzrWr+oXRJR3NJX7sOd7SaRWU8aXpQ1N
+    o6/cuKD3m5/7Z58cr3HP9VG4/rTBUXFlyfP/xSG5e2hqcSOhlF2I+Ynpcrjey2x7
+    l1GUFQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -43,14 +40,14 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+    header.domain=linux.intel.com header.result=pass
+    header_org.domain=intel.com header_org.result=pass
+    header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=messagingengine.com
-      header.i=@messagingengine.com header.b=eEMxDY+y x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=fm2;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -59,50 +56,114 @@ Authentication-Results: mx3.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kroah.com header.result=pass header_is_org_domain=yes;
+      header.domain=linux.intel.com header.result=pass
+      header_org.domain=intel.com header_org.result=pass
+      header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCwqyCWhsmSX6ApVQkI2zJvtr9oo5dcNLO5C6Srfnemiylb9QOXEq2+USKBWfGrqoTnVksf+gVYrPLD3+KrEbCIUKJ16s7yz3iSuBTVNWGUSbAxkWRu7
-    wMr6OtSTlt8Lrt6rqcnRyTXus0IJUPXH5FRPSp/NE0s00DhQaGT1yVl0ParZJ15Q6/m0QPmXuN5dpncujPx/bJjfN1GoJqrq4QSkTfpqdQTD0cdLjO951QQ8
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=b-MTS-ulqcfWhTLMwDcA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfBpN4KwNki7Da919SE6wCOMuiNMxOAqWBu5DrvG6BZ6gm2nb5PDZk5pnjMQCLKCMtb7lXqrZtKUCyzlH3qoBxYSUvYC5mYkpO2VB9g1RluhLZ5oVmDFi
+    U6843yJk5bAnCc7b5RWUWdgoGNBKXSjFzfv4R4seWEJIvhxgd5wSQLmTflBRSHMbDz4Tvvqyys0RDHaQat52o2pOMntdX3P4GDezSXSTmhcCBLQGow8sW175
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QX4gbG5DAAAA:8
+    a=cm27Pg_UAAAA:8 a=B-4895p5AAAA:8 a=QyXUC8HyAAAA:8 a=yPCof4ZbAAAA:8
+    a=GLfBnjawS6cr2_Z4g3YA:9 a=AbAUZ8qAyYyZVLSsDulk:22 a=xmb-EsYY8bH0VWELuYED:22
+    a=CvvKU93EpHcLr5xCDv7z:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751133AbeECSSD (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 14:18:03 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60007 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751019AbeECSSC (ORCPT
-        <rfc822;stable@vger.kernel.org>); Thu, 3 May 2018 14:18:02 -0400
-X-ME-Sender: <xms:WVLrWjPM4uk53L5mFwrWjVb9YTZKQV2R74080zzeqIgEJI0hqc5AbA>
-Date: Thu, 3 May 2018 11:17:50 -0700
-From: Greg KH <greg@kroah.com>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: stable@vger.kernel.org,
+        id S1751439AbeECMnz (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 08:43:55 -0400
+Received: from mga11.intel.com ([192.55.52.93]:60932 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751075AbeECMnu (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 3 May 2018 08:43:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="52087184"
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: stable@vger.kernel.org
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Sonny Rao <sonnyrao@chromium.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <james.l.morris@oracle.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Marcel Selhorst <tpmdd@selhorst.net>,
         Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:TPM DEVICE DRIVER"
-        <tpmdd-devel@lists.sourceforge.net>
-Subject: Re: [PATCH 0/2] fixes for v4.4
-Message-ID: <20180503181750.GC29321@kroah.com>
-References: <20180503124334.8468-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        tpmdd-devel@lists.sourceforge.net (moderated list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] tpm: do not suspend/resume if power stays on
+Date: Thu,  3 May 2018 15:43:33 +0300
+Message-Id: <20180503124334.8468-2-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180503124334.8468-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <20180503124334.8468-1-jarkko.sakkinen@linux.intel.com>
 Sender: stable-owner@vger.kernel.org
 X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 03:43:32PM +0300, Jarkko Sakkinen wrote:
-> Decided to add Enric's commit because it is also a bug fix instead
-> of modifying Chris commit.
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Now applied, thanks.
+commit b5d0ebc99bf5d0801a5ecbe958caa3d68b8eaee8 upstream
 
-greg k-h
+The suspend/resume behavior of the TPM can be controlled by setting
+"powered-while-suspended" in the DTS. This is useful for the cases
+when hardware does not power-off the TPM.
+
+Signed-off-by: Sonny Rao <sonnyrao@chromium.org>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
+---
+ drivers/char/tpm/tpm-interface.c | 3 +++
+ drivers/char/tpm/tpm.h           | 1 +
+ drivers/char/tpm/tpm_of.c        | 3 +++
+ 3 files changed, 7 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index aaa5fa95dede..247dd2b6504a 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -931,6 +931,9 @@ int tpm_pm_suspend(struct device *dev)
+ 	if (chip == NULL)
+ 		return -ENODEV;
+ 
++	if (chip->flags & TPM_CHIP_FLAG_ALWAYS_POWERED)
++		return 0;
++
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		tpm2_shutdown(chip, TPM2_SU_STATE);
+ 		return 0;
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 772d99b3a8e4..36e1abda00f9 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -168,6 +168,7 @@ struct tpm_vendor_specific {
+ enum tpm_chip_flags {
+ 	TPM_CHIP_FLAG_REGISTERED	= BIT(0),
+ 	TPM_CHIP_FLAG_TPM2		= BIT(1),
++	TPM_CHIP_FLAG_ALWAYS_POWERED	= BIT(5),
+ };
+ 
+ struct tpm_chip {
+diff --git a/drivers/char/tpm/tpm_of.c b/drivers/char/tpm/tpm_of.c
+index 570f30c5c5f4..669f4a046398 100644
+--- a/drivers/char/tpm/tpm_of.c
++++ b/drivers/char/tpm/tpm_of.c
+@@ -37,6 +37,9 @@ int read_log(struct tpm_bios_log *log)
+ 		return -ENODEV;
+ 	}
+ 
++	if (of_property_read_bool(np, "powered-while-suspended"))
++		chip->flags |= TPM_CHIP_FLAG_ALWAYS_POWERED;
++
+ 	sizep = of_get_property(np, "linux,sml-size", NULL);
+ 	if (sizep == NULL) {
+ 		pr_err("%s: ERROR - SML size not found\n", __func__);
+-- 
+2.17.0
