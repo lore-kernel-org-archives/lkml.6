@@ -1,27 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751412AbeECHPS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:15:18 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:50047 "EHLO
+        id S1751533AbeECHP3 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:15:29 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:50060 "EHLO
         relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbeECHPR (ORCPT
+        with ESMTP id S1751301AbeECHPZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:15:17 -0400
-Subject: Re: [PATCH v2 05/10] PCI: Replace pr_*() with dev_*() in
- __of_pci_get_host_bridge_resources()
+        Thu, 3 May 2018 03:15:25 -0400
+Subject: Re: [PATCH v2 06/10] PCI: Introduce
+ devm_of_pci_get_host_bridge_resources()
 To: Jan Kiszka <jan.kiszka@siemens.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
 References: <cover.1525067324.git.jan.kiszka@siemens.com>
- <63f2e316090ea3284b4be62e446b3b28f998ac55.1525067324.git.jan.kiszka@siemens.com>
+ <215a020abbafc599bda18463db6818fcb0d198c7.1525067324.git.jan.kiszka@siemens.com>
 From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <57fa1919-80ea-df19-49a7-9d2d3e100d2e@mentor.com>
-Date: Thu, 3 May 2018 10:15:12 +0300
+Message-ID: <38bb255b-925a-e373-1107-259734a15b9b@mentor.com>
+Date: Thu, 3 May 2018 10:15:20 +0300
 User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
  Icedove/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <63f2e316090ea3284b4be62e446b3b28f998ac55.1525067324.git.jan.kiszka@siemens.com>
+In-Reply-To: <215a020abbafc599bda18463db6818fcb0d198c7.1525067324.git.jan.kiszka@siemens.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [137.202.0.87]
@@ -34,9 +34,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 04/30/2018 08:48 AM, Jan Kiszka wrote:
 > From: Jan Kiszka <jan.kiszka@siemens.com>
 > 
-> Now that we have a device reference, make use of it for printing. And as
-> long as dev can still be NULL, we will still get some reasonable output
-> nevertheless.
+> of_pci_get_host_bridge_resources() allocates the resource structures it
+> fills dynamically, but none of its callers care to release them so far.
+> Rather than requiring everyone to do this explicitly, introduce a
+> managed version of that service. This differs API-wise only in taking a
+> reference to the associated device, rather than to the device tree node.
+> 
+> As of_pci_get_host_bridge_resources() is an exported interface, we
+> cannot simply drop it at this point. After converting all in-tree users
+> to the new API, we will phase out the unmanaged one.
 > 
 > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 
