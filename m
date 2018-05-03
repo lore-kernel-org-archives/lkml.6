@@ -1,154 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751321AbeECVfn (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 17:35:43 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44924 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751074AbeECVfl (ORCPT
+        id S1751286AbeECVjI convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 17:39:08 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:46412 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751139AbeECVjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 17:35:41 -0400
-X-Google-Smtp-Source: AB8JxZpvWssQLEGNXR41WrHknOOYvNcl350q67qXCyz0KM/eFjmQSyn68ejPrhNTzl7+Q4ZxgJ/WPA==
-Date: Thu, 3 May 2018 14:35:39 -0700
-From: Matthias Kaehlcke <mka@chromium.org>
-To: Lina Iyer <ilina@codeaurora.org>
-Cc: andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
-        dianders@chromium.org
-Subject: Re: [PATCH v7 05/10] drivers: qcom: rpmh-rsc: write sleep/wake
- requests to TCS
-Message-ID: <20180503213539.GA19594@google.com>
-References: <20180502193749.31004-1-ilina@codeaurora.org>
- <20180502193749.31004-6-ilina@codeaurora.org>
+        Thu, 3 May 2018 17:39:06 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Kees Cook <keescook@chromium.org>, David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
+        <87r2mso5up.fsf@xmission.com>
+        <1525383075.3539.67.camel@linux.vnet.ibm.com>
+Date: Thu, 03 May 2018 16:38:57 -0500
+In-Reply-To: <1525383075.3539.67.camel@linux.vnet.ibm.com> (Mimi Zohar's
+        message of "Thu, 03 May 2018 17:31:15 -0400")
+Message-ID: <87d0yco1vy.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180502193749.31004-6-ilina@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1fELwO-0004TR-Co;;;mid=<87d0yco1vy.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1++UOxjXLvcp8fRHH8jwfJ5jZXTJVAA6Co=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  1.5 XMNoVowels Alpha-numberic number with no vowels
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4978]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
+        *  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Mimi Zohar <zohar@linux.vnet.ibm.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 237 ms - load_scoreonly_sql: 0.03 (0.0%),
+        signal_user_changed: 2.4 (1.0%), b_tie_ro: 1.70 (0.7%), parse: 0.84 (0.4%),
+        extract_message_metadata: 3.3 (1.4%), get_uri_detail_list: 1.59 (0.7%),
+        tests_pri_-1000: 3.6 (1.5%), tests_pri_-950: 1.19 (0.5%), tests_pri_-900:
+        0.99 (0.4%), tests_pri_-400: 23 (9.8%), check_bayes: 22 (9.4%), b_tokenize: 7
+        (2.9%), b_tok_get_all: 7 (3.1%), b_comp_prob: 2.6 (1.1%), b_tok_touch_all:
+        3.2 (1.3%), b_finish: 0.66 (0.3%), tests_pri_0: 190 (80.0%),
+        check_dkim_signature: 0.71 (0.3%), check_dkim_adsp: 2.4 (1.0%),
+        tests_pri_500: 4.6 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 0/3] kexec: limit kexec_load syscall
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lina,
+Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-On Wed, May 02, 2018 at 01:37:44PM -0600, Lina Iyer wrote:
-> Sleep and wake requests are sent when the application processor
-> subsystem of the SoC is entering deep sleep states like in suspend.
-> These requests help lower the system power requirements when the
-> resources are not in use.
-> 
-> Sleep and wake requests are written to the TCS slots but are not
-> triggered at the time of writing. The TCS are triggered by the firmware
-> after the last of the CPUs has executed its WFI. Since these requests
-> may come in different batches of requests, it is the job of this
-> controller driver to find and arrange the requests into the available
-> TCSes.
-> 
-> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
-> Reviewed-by: Evan Green <evgreen@chromium.org>
-> 
-> ---
-> 
-> Changes in v7:
-> 	- Bug fix in find_match()
-> ---
->  drivers/soc/qcom/rpmh-internal.h |   8 +++
->  drivers/soc/qcom/rpmh-rsc.c      | 118 +++++++++++++++++++++++++++++++
->  2 files changed, 126 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
-> index d9a21726e568..6e19fe458c31 100644
-> --- a/drivers/soc/qcom/rpmh-internal.h
-> +++ b/drivers/soc/qcom/rpmh-internal.h
-> @@ -14,6 +14,7 @@
->  #define MAX_CMDS_PER_TCS		16
->  #define MAX_TCS_PER_TYPE		3
->  #define MAX_TCS_NR			(MAX_TCS_PER_TYPE * TCS_TYPE_NR)
-> +#define MAX_TCS_SLOTS			(MAX_CMDS_PER_TCS * MAX_TCS_PER_TYPE)
->  #define RPMH_MAX_CTRLR			2
->  
->  struct rsc_drv;
-> @@ -30,6 +31,8 @@ struct rsc_drv;
->   * @ncpt:      number of commands in each TCS
->   * @lock:      lock for synchronizing this TCS writes
->   * @req:       requests that are sent from the TCS
-> + * @cmd_cache: flattened cache of cmds in sleep/wake TCS
-> + * @slots:     indicates which of @cmd_addr are occupied
->   */
->  struct tcs_group {
->  	struct rsc_drv *drv;
-> @@ -40,6 +43,8 @@ struct tcs_group {
->  	int ncpt;
->  	spinlock_t lock;
->  	const struct tcs_request *req[MAX_TCS_PER_TYPE];
-> +	u32 *cmd_cache;
-> +	DECLARE_BITMAP(slots, MAX_TCS_SLOTS);
->  };
->  
->  /**
-> @@ -69,6 +74,9 @@ struct rsc_drv {
->  extern struct list_head rsc_drv_list;
->  
->  int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
-> +int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
-> +			     const struct tcs_request *msg);
-> +int rpmh_rsc_invalidate(struct rsc_drv *drv);
->  
->  void rpmh_tx_done(const struct tcs_request *msg, int r);
->  
-> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-> index 33270b1d5991..4e2144a14c31 100644
-> --- a/drivers/soc/qcom/rpmh-rsc.c
-> +++ b/drivers/soc/qcom/rpmh-rsc.c
-> @@ -113,6 +113,12 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
->  	case RPMH_ACTIVE_ONLY_STATE:
->  		type = ACTIVE_TCS;
->  		break;
-> +	case RPMH_WAKE_ONLY_STATE:
-> +		type = WAKE_TCS;
-> +		break;
-> +	case RPMH_SLEEP_STATE:
-> +		type = SLEEP_TCS;
-> +		break;
->  	default:
->  		return ERR_PTR(-EINVAL);
->  	}
-> @@ -353,6 +359,105 @@ int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg)
->  }
->  EXPORT_SYMBOL(rpmh_rsc_send_data);
->  
-> +static int find_match(const struct tcs_group *tcs, const struct tcs_cmd *cmd,
-> +		      int len)
-> +{
-> +	int i, j;
-> +
-> +	/* Check for already cached commands */
-> +	for_each_set_bit(i, tcs->slots, MAX_TCS_SLOTS) {
-> +		if (tcs->cmd_cache[i] != cmd[0].addr)
-> +			continue;
-> +		for (j = 0; j < len; j++) {
-> +			if (tcs->cmd_cache[i + j] != cmd[j].addr) {
+> [Cc'ing Kees and kernel-hardening]
+>
+> On Thu, 2018-05-03 at 15:13 -0500, Eric W. Biederman wrote:
+>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
+>> 
+>> > In environments that require the kexec kernel image to be signed, prevent
+>> > using the kexec_load syscall.  In order for LSMs and IMA to differentiate
+>> > between kexec_load and kexec_file_load syscalls, this patch set adds a
+>> > call to security_kernel_read_file() in kexec_load_check().
+>> 
+>> Having thought about it some more this justification for these changes
+>> does not work.  The functionality of kexec_load is already root-only.
+>> So in environments that require the kernel image to be signed just don't
+>> use kexec_load.  Possibly even compile kexec_load out to save space
+>> because you will never need it.  You don't need a new security hook to
+>> do any of that.  Userspace is a very fine mechanism for being the
+>> instrument of policy.
+>
+> True, for those building their own kernel, they can disable the old
+> syscalls.  The concern is not for those building their own kernels,
+> but for those using stock kernels.  
+>
+> By adding an LSM hook here in the kexec_load syscall, as opposed to an
+> IMA specific hook, other LSMs can piggy back on top of it.  Currently,
+> both load_pin and SELinux are gating the kernel module syscalls based
+> on security_kernel_read_file.
+>
+> If there was a similar option for the kernel image, I'm pretty sure
+> other LSMs would use it.
+>
+> From an IMA perspective, there needs to be some method for only
+> allowing signed code to be loaded, executed, etc. - kernel modules,
+> kernel image/initramfs, firmware, policies.
 
-As mentioned in the review of v6, the code could read memory beyond
-tcs->cmd_cache if 'i + len > ARRAY_SIZE(tcs->cmd_cache)'
+What is the IMA perspective.  Why can't IMA trust appropriately
+authorized userspace?
 
-> +				WARN(1, "Message does not match previous sequence.\n");
-> +				return -EINVAL;
-> +			}
-> +		}
-> +		return i;
-> +	}
-> +
-> +	return -ENODATA;
-> +}
-> +
-> +static int find_slots(struct tcs_group *tcs, const struct tcs_request *msg,
-> +		      int *tcs_id, int *cmd_id)
+>> If you don't trust userspace that needs to be spelled out very clearly.
+>> You need to talk about what your threat models are.
+>> 
+>> If the only justification is so that that we can't boot windows if
+>> someone hacks into userspace it has my nack because that is another kind
+>> of complete non-sense.
+>
+> The usecase is the ability to gate the kexec_load usage in stock
+> kernels.
 
-The change from m/n => tcs_id/cmd_id in v7 greatly improves
-readability, thanks!
+But kexec_load is already gated.  It requires CAP_SYS_BOOT.
 
-Matthias
-
-PS: Please remember to include reviewers of earlier revisions to cc:
+>> Given that you are not trusting userspace this changeset also probably
+>> needs to have the kernel-hardening list cc'd.  Because the only possible
+>> justification I can imagine for something like this is kernel-hardening.
+>
+> Sure, Cc'ing linux-hardening and Kees.
+>
+> Mimi
