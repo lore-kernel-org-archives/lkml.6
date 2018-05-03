@@ -1,41 +1,44 @@
 Return-Path: <ksummit-discuss-bounces@lists.linuxfoundation.org>
-X-Cyrus-Session-Id: sloti22d1t05-2980787-1525373924-2-8921607881468733718
+X-Cyrus-Session-Id: sloti22d1t05-2626299-1525357996-2-10973595345128872047
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001, SPF_PASS -0.001,
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.169.12', Host='mail.linuxfoundation.org', Country='US',
-  FromHeader='edu', MailFrom='org'
+  FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: ksummit-discuss-bounces@lists.linuxfoundation.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525373923; b=LT43L7oU9qJ7SqM4TJS4XSEqbvfFyuhgM0SiYjhQ4X3FrYadlY
-    Wswn1djbaBrhaDLBvkrDhcFGm2H+dBk8XaSArrtqq6UtkwS8FEZ/HC0Yy7I5wobl
-    9vqzPEz0ZhiNq+wgrdt8qB1lWrgGxC3hNEeybiXfmWbodjf1f9ZmO+u4Cn/KUKjE
-    2fmG7ChDl4gOoPtY79Chg/zP38Boyz6cfU0TYzzOkViD1/lC9+e4sJQlvjtKH+z8
-    VSO/79nyHkq1sMXpvKZ2q6ianGF3F19jb9EgzgBQrKRbVzP69VAmW8rozOz/aaY1
-    Lqc1mzOOnAIQdFh4zGrY0FWsjZHF+/w8JEnQ==
+    1525357996; b=kjn+86I76UW/5vNpCJnpuKpYH+/LSh0AZY2d5tmT6Jq2wqC+BV
+    +YClwZXrMFqEXjsqexN9uZenBe9c6kTBm0PtTzrfnYkr97TOVMi2RP+1e/brYPWo
+    oo17/oUNkehx9cx4GzgeCjNbdqI0InB8c9s4iUFh++3FupyoXPZ3JhIlM/DKiP3H
+    mr78YgrlDTSPKie40v5RGldeiaU2h22AYfalGuPIx1mgcEY+LR+wslVUL/bycFjT
+    fbGu3mwYmBbjDWbW/eSZcpkxmXku854AfvKyTAnh9tO49e6Za3uD3U5c507d9FlF
+    8o2uGmA0NHlX/ANWZ//DpeYj1vSTjo1U0n5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:message-id:references
-    :mime-version:in-reply-to:cc:subject:list-id:list-unsubscribe
+    messagingengine.com; h=message-id:from:to:date:in-reply-to
+    :references:mime-version:cc:subject:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525373923; bh=WdOHf
-    jOWUU2mmvWYuYr0G2tezb82vl9plTfvnCvnAcQ=; b=GgHuFSc1pHa8KN/Zm0Eah
-    ppQLSbwE+gC8pY+vEuLHrtKCyMqvsqHEFCAPGbe4dCyhzWWW1H183rPDCoDe9kYI
-    BNUZWMUlY93/3sQSibmP+duxzDWq6loCk07SiOVN09tjBlvmkginK6AzGTwglNib
-    t0QjNYRbohU15ODDlP1lAkeDWop3u3+CK4htTeLYI/ku193lcxiPdfU+DE2Kaol2
-    qDWseObok97CoOE3KehnipJcGEzAWG1oQ0KGmkhis7N3UUfXyUmF6p9HwuSEM0Ww
-    b4NnCAp7Cd4wlFpVZgTIqmgy4sRJp7f142MIVmG0nlpJpO7baV3vs+TWQ2bAjaKU
-    Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1525357996; bh=1t+7A
+    46EHWfT+0iuc6JtpxrIpEuYh6r+mpi/VYNReGE=; b=V/A/5TbH3WvOsUY0w6syp
+    +ZPr1jic35SdS84RzoyvHtJZ7YpyKlvXBvSD7WEYPRFPK0GR9fk2NMJILXyQ0d0V
+    jizF3xnv6tdX1374HqDJXbDhcEhURBZya0Ny5p05kTBowXCZQ/OO05GpePjYpd2z
+    z58gLTU8TnyZX3Ae65QRgDtUQPIicN0G3MsJIrhYwRD59hOYcQzFbrQvlKZIQcq9
+    M8x2BueYCeMi1UrtVrxkRC3N7+RNcOCfzrSfnHg37mtsHliokjCbm3r1OtPQvGx9
+    Lfgjt5T9zpqwTamGEeMNfoYthrp9UM51VfoDtr3cUuJSWQ6YDpwXzmiLWOr5xgFX
+    w==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=thunk.org header.i=@thunk.org header.b=D+Nxoctb x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=ef5046eb;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mit.edu;
+    header.d=hansenpartnership.com header.i=@hansenpartnership.com
+    header.b=UhAWc7Ag x-bits=1024 x-keytype=rsa x-algorithm=sha256
+    x-selector=20151216;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+    header.from=hansenpartnership.com;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
     spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
     smtp.helo=mail.linuxfoundation.org;
@@ -45,17 +48,19 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
     smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-    smtp_is_org_domain=no header.domain=mit.edu header.result=pass
-    header_is_org_domain=yes;
+    smtp_is_org_domain=no header.domain=hansenpartnership.com
+    header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=thunk.org header.i=@thunk.org header.b=D+Nxoctb x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=ef5046eb;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mit.edu;
+      header.d=hansenpartnership.com header.i=@hansenpartnership.com
+      header.b=UhAWc7Ag x-bits=1024 x-keytype=rsa x-algorithm=sha256
+      x-selector=20151216;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+      header.from=hansenpartnership.com;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
     spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
       smtp.helo=mail.linuxfoundation.org;
@@ -65,46 +70,36 @@ Authentication-Results: mx3.messagingengine.com;
       x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
       smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-      smtp_is_org_domain=no header.domain=mit.edu header.result=pass
-      header_is_org_domain=yes;
+      smtp_is_org_domain=no header.domain=hansenpartnership.com
+      header.result=pass header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJfNv2OnalyQc0Rr4/OahWV5EYtJmP6ytHjs8VDvs/eNd4V2sDKwL6Cz0rysRliFAExJm9ki2tAHY8mo3Pw+yPtmS9Unial8R5pqwwwj7Z5HWkwDbZx5
-    pEAqZLpU4Y1GPk7jpzCiIuU3PJNna6MQv/QMS0tEbNUhGP7pOUMS8gud+tGM/RFIFPHXM1t8qw0vRfFIOh3Af/QF3ucSmDt0V2BRObgU7q04P4jXGBmORP+P
-    JdhEaKGkutVlncSfcGiz0Q==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
-    a=5MPDoNpceV4HFXFrvkM3CQ==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=ag1SF4gXAAAA:8
-    a=5-1Uoe_gF7J5TNT_fdAA:9 a=CjuIK1q_8ugA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 cc=dsc
+X-CM-Envelope: MS4wfKY/e30z3u9uLPrCAS/x7UH67a1y7iU2MdIawmBIniJeAQF3N2Kbk7zNMh36qdidRr023QMzJ9A7BRlorHtF9Q6uAYMF8VbsXKDHAF+sSATDgx5IFNiS
+    1BQzelhlNiSYEtoOzuFx1rh1stPC16tKo7P2k3KvHBUdTdiVIppPad/vpL3Xy8SBSv+HcKv3mBnMZTK/840WnCzezNtxz6ceDcU+G9JS+qdFmgGJVpOEtYvd
+    Ts2lu9wtiGYIJvfDbihW2w==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
+    a=5MPDoNpceV4HFXFrvkM3CQ==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=ag1SF4gXAAAA:8 a=H9lRN1t6z1KyuoJBbxcA:9
+    a=CjuIK1q_8ugA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: ksummit-discuss@mail.linuxfoundation.org
-Date: Thu, 3 May 2018 14:58:28 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Jani Nikula <jani.nikula@intel.com>
-Message-ID: <20180503185828.GG29205@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jani Nikula <jani.nikula@intel.com>,
-	Sasha Levin <Alexander.Levin@microsoft.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"w@1wt.eu" <w@1wt.eu>,
-	"ksummit-discuss@lists.linuxfoundation.org"
-	<ksummit-discuss@lists.linuxfoundation.org>
-References: <20180501163818.GD1468@sasha-vm> <20180501194450.GD10479@thunk.org>
-	<20180501200019.GA7397@sasha-vm> <20180501205448.GE10479@thunk.org>
-	<877eol808s.fsf@intel.com>
-MIME-Version: 1.0
-Content-Disposition: inline
+Message-ID: <1525357984.3225.12.camel@HansenPartnership.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jani Nikula <jani.nikula@intel.com>, "Theodore Y. Ts'o" <tytso@mit.edu>,
+	Sasha Levin <Alexander.Levin@microsoft.com>
+Date: Thu, 03 May 2018 07:33:04 -0700
 In-Reply-To: <877eol808s.fsf@intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
-X-Remote-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,RCVD_IN_DNSWL_NONE autolearn=ham version=3.3.1
+References: <20180501163818.GD1468@sasha-vm>
+	<20180501194450.GD10479@thunk.org> <20180501200019.GA7397@sasha-vm>
+	<20180501205448.GE10479@thunk.org> <877eol808s.fsf@intel.com>
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+X-Remote-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID, DKIM_VALID_AU,
+	RCVD_IN_DNSWL_NONE autolearn=ham version=3.3.1
 X-Remote-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
 	smtp1.linux-foundation.org
 Cc: Greg KH <gregkh@linuxfoundation.org>,
@@ -129,31 +124,29 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 02:08:51PM +0300, Jani Nikula wrote:
+On Thu, 2018-05-03 at 14:08 +0300, Jani Nikula wrote:
 > On Tue, 01 May 2018, "Theodore Y. Ts'o" <tytso@mit.edu> wrote:
-> > Post -rc3 or -rc4, in my opinion bug fixes should wait until the next
+> > Post -rc3 or -rc4, in my opinion bug fixes should wait until the
+> > next
 > > merge window before they get merged at all.
 > 
 > What are -rc5 and later for then if not bug fixes? Baffled.
 
-Regression fixes?
+They're definitely for bug fixes, but there's a spectrum: obvious bug
+fixes with no side effects are easy to justify.  More complex bug fixes
+run the risk of having side effects which introduce other bugs, so
+could potentially destabilize the -rc process.  In SCSI we tend to look
+at what the user visible effects of the bug are in the post -rc5 region
+and if they're slight or wouldn't be visible to most users, we'll hold
+them over.  If the fix looks complex and we're not sure we caught the
+ramifications, we often add it to the merge window tree with a cc to
+stable and a note saying to wait X weeks before actually adding to the
+stable tree just to make sure no side effects show up with wider
+testing.  So, as with most things, it's a judgment call for the
+maintainer.
 
-Note that if people stopped introducing regressions to the kernel, we
-might actually be able to release the final version after -rc6 or even
-earlier.
+James
 
-There's nothing which says that we MUST have -rc7, -rc8, -rc9
-releases.  If we were actually disciplined in our testing and in what
-we push into Linus's tree, we might actually be able to go to a
-two-month release cycle, or perhaps even slightly shorter.
-
-But if people insist on trying to fix bugs, and those bugs fixes
-introduce regressions, then we end up with a longer release cycle,
-which causes people to want to stuck more bug fixes, or worse, even
-some feature commits late into the development cycle, and it becomes a
-vicious cycle with releases taking longer and longer.
-
-	  	  	    	    	 - Ted
 _______________________________________________
 Ksummit-discuss mailing list
 Ksummit-discuss@lists.linuxfoundation.org
