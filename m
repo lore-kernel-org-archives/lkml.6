@@ -1,121 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeECSoH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 14:44:07 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:34949 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbeECSoD (ORCPT
+        id S1751593AbeECSop (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:44:45 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:51112 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbeECSon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:44:03 -0400
-X-Google-Smtp-Source: AB8JxZpXSWwjxUbAsEPv4AZXUvuCyMTq7e/YNr+1HqKm0pmsqecuHQG/PfP4K2KnwXlHxUVVXVn4+Qr4mgkaVk8OHhtRWg5eoKS6
-MIME-Version: 1.0
-Date: Thu, 03 May 2018 11:44:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000059f907056b519603@google.com>
-Subject: KMSAN: uninit-value in strcmp
-From: syzbot <syzbot+df0257c92ffd4fcc58cd@syzkaller.appspotmail.com>
-To: davem@davemloft.net, jon.maloy@ericsson.com,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
-        ying.xue@windriver.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Thu, 3 May 2018 14:44:43 -0400
+Date: Thu, 03 May 2018 14:44:40 -0400 (EDT)
+Message-Id: <20180503.144440.629738993491549851.davem@davemloft.net>
+To: colin.king@canonical.com
+Cc: saeedm@mellanox.com, matanb@mellanox.com, leon@kernel.org,
+        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5: fix spelling mistake: "modfiy" -> "modify"
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180503133503.14508-1-colin.king@canonical.com>
+References: <20180503133503.14508-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+From: Colin King <colin.king@canonical.com>
+Date: Thu,  3 May 2018 14:35:03 +0100
 
-syzbot found the following crash on:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Trivial fix to spelling mistake in netdev_warn warning message
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem pages
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=10051497800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48f9de3384bcd0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=df0257c92ffd4fcc58cd
-compiler:       clang version 7.0.0 (trunk 329391)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11275657800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c3d5e7800000
+Saeed, please send this to me in your next pull request.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+df0257c92ffd4fcc58cd@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KMSAN: uninit-value in strcmp+0xf7/0x160 lib/string.c:329
-CPU: 1 PID: 4527 Comm: syz-executor655 Not tainted 4.16.0+ #87
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
-  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
-  strcmp+0xf7/0x160 lib/string.c:329
-  tipc_nl_node_get_link+0x220/0x6f0 net/tipc/node.c:1881
-  genl_family_rcv_msg net/netlink/genetlink.c:599 [inline]
-  genl_rcv_msg+0x1686/0x1810 net/netlink/genetlink.c:624
-  netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2447
-  genl_rcv+0x63/0x80 net/netlink/genetlink.c:635
-  netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
-  netlink_unicast+0x166b/0x1740 net/netlink/af_netlink.c:1337
-  netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
-  __sys_sendmsg net/socket.c:2080 [inline]
-  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
-  SyS_sendmsg+0x54/0x80 net/socket.c:2087
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x445589
-RSP: 002b:00007fb7ee66cdb8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445589
-RDX: 0000000000000000 RSI: 0000000020023000 RDI: 0000000000000003
-RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fffa2bf3f3f R14: 00007fb7ee66d9c0 R15: 0000000000000001
-
-Uninit was created at:
-  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
-  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
-  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
-  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
-  slab_post_alloc_hook mm/slab.h:445 [inline]
-  slab_alloc_node mm/slub.c:2737 [inline]
-  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
-  __kmalloc_reserve net/core/skbuff.c:138 [inline]
-  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
-  alloc_skb include/linux/skbuff.h:984 [inline]
-  netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
-  netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
-  sock_sendmsg_nosec net/socket.c:630 [inline]
-  sock_sendmsg net/socket.c:640 [inline]
-  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
-  __sys_sendmsg net/socket.c:2080 [inline]
-  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
-  SyS_sendmsg+0x54/0x80 net/socket.c:2087
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+Thanks.
