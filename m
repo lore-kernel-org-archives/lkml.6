@@ -1,97 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751575AbeECOQz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:16:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42576 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751512AbeECOQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:16:45 -0400
-Date: Thu, 3 May 2018 15:16:36 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
- entry
-Message-ID: <20180503141636.GA23270@e107981-ln.cambridge.arm.com>
-References: <cover.1524577064.git.gustavo.pimentel@synopsys.com>
- <c6cfd167838ae8e226dee0820983efe918fa4e1f.1524577064.git.gustavo.pimentel@synopsys.com>
- <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
- <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
- <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
- <5d625d04-38fe-7d5a-67fc-5ea92039474c@ti.com>
- <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
- <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
- <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
- <cf2772d5-26c0-b0e3-1e5b-ace91c1ea105@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cf2772d5-26c0-b0e3-1e5b-ace91c1ea105@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751710AbeECOR2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:17:28 -0400
+Received: from mout.gmx.net ([212.227.17.21]:44123 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751236AbeECORY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:17:24 -0400
+Message-ID: <1525357015.5577.2.camel@gmx.de>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+From: Mike Galbraith <efault@gmx.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Date: Thu, 03 May 2018 16:16:55 +0200
+In-Reply-To: <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+References: <20180417142119.GA4511@codeblueprint.co.uk>
+         <20180420095005.GH4064@hirez.programming.kicks-ass.net>
+         <20180424133325.GA3179@codeblueprint.co.uk>
+         <1525349542.9956.2.camel@gmx.de>
+         <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
+         <1525351221.9956.4.camel@gmx.de>
+         <20180503124943.GB12217@hirez.programming.kicks-ass.net>
+         <1525354359.5576.1.camel@gmx.de>
+         <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:P1S5Al/8+5dbjTcBD70nCYfqNghpWZZF1hPeLGsdGl22TxYDQCu
+ Nio4Z8GbJFHxLozKSrgUg/dt1KL9hNxf09bKV+sRX+ve4mh2RlJVNKFLVhcL5VP/Vx5LO7c
+ rE4as59TGkVHcqq35AIaLdyzh+yCdl0oLNbNhghUcSZbblt7mp6PlC8nfEW8jDLVTd961MI
+ ay0asyyWKhKU+EiX25Jlg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:8bST8YTjpvg=:Ac7uJarTWTdxo8wLuHazPt
+ iCA9zNepswJykuzkbH1s3JE1TsLjLN7WazYZRqAjgmZT7YQQlh4v8xbBNoSs1o3NnuBdUf/9K
+ su9OoQGVgC0uUGF1n7VWzzNY7xiN/lnHkeOuqcV9m/Or34bCQVg9Gz7JpOY3oDIy1/ifHCRfl
+ /9jpD9C/si6cvm7envBcAzvvrZgYKcKCniY6z575lI28cIQG2bzoT1SZidnATKFe17JuA+Jv1
+ GSfTbkDhuRI2XCjVtC4Qp9INFKi0VEI6qEjDYuVejBtjMysERBf3XeBhfQpWMO4DW7Z1YTmSS
+ bdIBLRK4WGQ2v+UcvmGlGMEfJ/dCuro/TboV+FPeO6pBgruqWQrLUZBeK/jlKCPF44duQemUE
+ Qr7S/9QFEbOj2M0zQ+jFMLSfR3j1DVQX7Awo2AjYk2D3dR1urMfyvBzDACaM9g87ePsa1HcB9
+ TiIdiuDM03TZwhGku/7RJTc9q6l+mPIW68/IW8bec82ubys8qQQ4Afnsiyg77UJXAK7QnOsea
+ LIYv/Z+0bD+5ygEsZ0RYwMwCWsfBTswJBn1M/BdLLLUqLGn34gAb5UUiZUU02KZpTOl+hkOcI
+ Rw55YcyKxaJOFmUO4aHVPbsk8EGwqC+atY7cjQ6useNj2VGFyG/WEATRWQ8Fwdwl5k+aD97CN
+ gi5Lf4Ym4Za5mJXXRrlE9ZuOcT7qMyTjHebM/at4LGT3fQiigFleaZ4KlKcd8WBdnfjH5T74N
+ yBBktRVs4RWfS6JNOXUfaTz/CVM/9HsLNUf5hZPo0DdVj9wWUy/p6e8RVSksWAd0epv048mhV
+ O95f7GY
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 12:03:15PM +0530, Kishon Vijay Abraham I wrote:
-
-[...]
-
-> >> Since the linkup notifier and BAR index (where auxiliary registers are
-> >> located) may be configurable and is something platform dependent,
-> >> perhaps the configuration of this variables should be done by module
-> >> parameter and not by configfs, leaving this configuration
-> >> responsibility in charge of each platform.
-> > 
-> > They are platform dependent because they depend on the EP controller.
-> > That's why I said that those are EP controller parameters. I do not
-> > think they are module parameters either - they should be part of HW
-> > description in firmware.
+On Thu, 2018-05-03 at 15:56 +0200, Peter Zijlstra wrote:
+> On Thu, May 03, 2018 at 03:32:39PM +0200, Mike Galbraith wrote:
 > 
-> The problem is because pci-epf-test cannot be described in HW. pci-epf-test is
-> also not automatically bound to the EP controller but is bound by the user like
-> below
-> ln -s functions/pci_epf_test/func1 controllers/51000000.pcie_ep/
+> > Dang.  With $subject fix applied as well..
 > 
-> So given that user anyways has to bind the epf device to the controller, based
-> on the platform the user can use a different configfs entry like below
-> ln -s functions/pci_epf_test_dw/func1 controllers/51000000.pcie_ep/ or
-> ln -s functions/pci_epf_test_k2g/func1 controllers/21800000.pcie-ep/
-> 
-> If the epf can be described in dt, then something like below can be done
-> pcie1_ep: pcie_ep@51000000 {
-> 	compatible = "ti,dra7-pcie-ep";
-> 	interrupts = <0 232 0x4>;
-> 	num-lanes = <1>;
-> 	num-ib-windows = <4>;
-> 	num-ob-windows = <16>;
-> 	phys = <&pcie1_phy>;
-> 	phy-names = "pcie-phy0";
-> 	pci_epf_test: pci_epf_test@0 {
-> 		name = "pci_epf_test_dw";
-> 		<other properties>;
-> 	}
-> };
-> 
-> With this pci-dra7xx.c driver should create pci_epf_device using
-> pci_epf_create("pci_epf_test_dw");
-> 
-> Then the driver_data corresponding to "pci_epf_test_dw" will select linkup
-> notifier or BAR index etc.
+> That's a NO then... :-(
 
-Those two properties are properties of the EP controller (it is not 100%
-clear to me how the test BAR register is defined), is this correct ?
-
-If yes, given that those properties are not useful before an EPF is
-bound to an EPC, can't they be retrieved at bind time from the EPC
-controller data (that we can add through DT bindings) ?
-
-Thanks,
-Lorenzo
+Could say who cares about oddball offline wakeup stat. <cringe>
