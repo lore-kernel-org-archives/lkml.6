@@ -1,203 +1,362 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752064AbeECDUD (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 23:20:03 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37173 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751956AbeECDUB (ORCPT
+        id S1752104AbeECDVQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 23:21:16 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:38810 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751956AbeECDVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 23:20:01 -0400
-X-Google-Smtp-Source: AB8JxZrRS9juYOA5pdsTL/Sva184ftpN1PUZjHfEyUS3AkQqDW9/4fBhLuuqUrPBGuLSwb/ZcqS56A==
-Subject: Re: [PATCH] KVM: arm/arm64: fix unaligned hva start and end in
- handle_hva_to_gpa
-From: Jia He <hejianet@gmail.com>
-To: Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc: linux-kernel@vger.kernel.org, Jia He <jia.he@hxt-semitech.com>,
-        li.zhang@hxt-semitech.com, Suzuki Poulose <Suzuki.Poulose@arm.com>
-References: <1525244911-5519-1-git-send-email-hejianet@gmail.com>
- <04e6109f-cbbd-24b0-03bb-9247b930d42c@arm.com>
- <85e04362-05dd-c697-e9c4-ad5824e63819@gmail.com>
-Message-ID: <36c8a905-c4b8-8956-1d9f-1bbd6a801a01@gmail.com>
-Date: Thu, 3 May 2018 11:19:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 2 May 2018 23:21:13 -0400
+X-Google-Smtp-Source: AB8JxZo0XakzQzxzMcovlduTR0oHsPnRwBC1CcTW85WREHFKNZqWPGZrfQ5bX0owzJXNfR+d2fKkPCZ+dQ0sKrkhcgs=
 MIME-Version: 1.0
-In-Reply-To: <85e04362-05dd-c697-e9c4-ad5824e63819@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <17463682-dc08-358d-8b44-02821352604c@intel.com>
+References: <20180419054047.xxiljmzaf2u7odc6@wfg-t540p.sh.intel.com> <17463682-dc08-358d-8b44-02821352604c@intel.com>
+From: Huaitong Han <oenhan@gmail.com>
+Date: Thu, 3 May 2018 11:20:51 +0800
+Message-ID: <CAAuJbeKT1eBxT4Y8FgQBrQcFDU_3R8ad=s_8zsyj+GPiZT7VhQ@mail.gmail.com>
+Subject: Re: BUG: Bad page map in process python2 pte:10000000000 pmd:17e8be067
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Fengguang Wu <fengguang.wu@intel.com>, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Huang Ying <ying.huang@intel.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Dave
+
+I have met the same issue now but in 3.10.0-514.16.1.el7.x86_64, the
+issue also accurred in last November.
+
+I read 3.10.0-514.16.1.el7.x86_64,  the bit9~13 is the swap type,
+because  the swap has been swapoff on my machine,
+for the "Bad swap file entry" error, the bit9~13 should be zero, but
+"Unused swap file entry" error is exist although the
+bit9~13 is zero.
+
+The lower 12 bits of pte is zero, and all abnormal ptes are serial in
+a mmu page, so I guess the mmu page has been overwritten by someone.
 
 
-On 5/3/2018 10:02 AM, Jia He Wrote:
-> Hi Marc
->
-> Thanks for the review
->
->
-> On 5/2/2018 10:26 PM, Marc Zyngier Wrote:
->> [+ Suzuki]
->>
->> On 02/05/18 08:08, Jia He wrote:
->>> From: Jia He <jia.he@hxt-semitech.com>
->>>
->>> In our armv8a server (QDF2400), I noticed a WARN_ON as follows:
->>>
->>> [  800.202850] WARNING: CPU: 33 PID: 255 at arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1670 kvm_age_hva_handler+0xcc/0xd4
->> Which kernel version is that? I don't have a WARN_ON() at this line in
->> 4.17. Do you have a reproducer?
-> My running kernel version is v4.14-15, but I can reproduced it in 4.17 (start 20
-> guests and run memhog in the host)
-> In 4.17, the warn_on is at
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/virt/kvm/arm/mmu.c#n1826
->>> [  800.213535] Modules linked in: vhost_net vhost tap xt_CHECKSUM ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm vfat fat iw_cm mlx5_ib ib_core dm_mirror dm_region_hash dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
->>> [  800.284115]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
->>> [  800.300382] CPU: 33 PID: 255 Comm: khugepaged Tainted: G        W       4.14.36+ #6
->>> [  800.308030] Hardware name: <snip for confidential issues>
->> Well, that's QDF2400, right? ;-)
-> yes, exactly :)
->>> [  800.318717] task: ffff8017c949c000 task.stack: ffff8017c9498000
->>> [  800.324629] PC is at kvm_age_hva_handler+0xcc/0xd4
->>> [  800.329412] LR is at handle_hva_to_gpa+0xec/0x15c
->>> [  800.334109] pc : [<ffff0000080b4f2c>] lr : [<ffff0000080b4838>] pstate: 20400145
->>> [  800.341496] sp : ffff8017c949b260
->>> [  800.344804] x29: ffff8017c949b260 x28: ffff801663e25008
->>> [  800.350110] x27: 0000000000020000 x26: 00000001fb1a0000
->>> [  800.355416] x25: 0000ffff605b0200 x24: 0000ffff605a0200
->>> [  800.360722] x23: 0000000000000000 x22: 000000000000ffff
->>> [  800.366028] x21: 00000001fb1a0000 x20: ffff8017c085a000
->>> [  800.371334] x19: ffff801663e20008 x18: 0000000000000000
->>> [  800.376641] x17: 0000000000000000 x16: 0000000000000000
->>> [  800.381947] x15: 0000000000000000 x14: 3d646e655f617668
->>> [  800.387254] x13: 2c30303230623530 x12: 36666666663d646e
->>> [  800.392560] x11: 652c303032306135 x10: 3036666666663d74
->>> [  800.397867] x9 : 0000000000003796 x8 : 655f6e66672c3030
->>> [  800.403173] x7 : ffff00000859434c x6 : ffff8017f9c30cb8
->>> [  800.408479] x5 : ffff8017f9c30cb8 x4 : ffff0000080b4e60
->>> [  800.413786] x3 : 0000000000000000 x2 : 0000000000020000
->>> [  800.419092] x1 : 00000001fb1a0000 x0 : 0000000020000000
->>> [  800.424398] Call trace:
->>> [  800.426838] Exception stack(0xffff8017c949b120 to 0xffff8017c949b260)
->>> [  800.433272] b120: 0000000020000000 00000001fb1a0000 0000000000020000 0000000000000000
->>> [  800.441095] b140: ffff0000080b4e60 ffff8017f9c30cb8 ffff8017f9c30cb8 ffff00000859434c
->>> [  800.448918] b160: 655f6e66672c3030 0000000000003796 3036666666663d74 652c303032306135
->>> [  800.456740] b180: 36666666663d646e 2c30303230623530 3d646e655f617668 0000000000000000
->>> [  800.464563] b1a0: 0000000000000000 0000000000000000 0000000000000000 ffff801663e20008
->>> [  800.472385] b1c0: ffff8017c085a000 00000001fb1a0000 000000000000ffff 0000000000000000
->>> [  800.480208] b1e0: 0000ffff605a0200 0000ffff605b0200 00000001fb1a0000 0000000000020000
->>> [  800.488030] b200: ffff801663e25008 ffff8017c949b260 ffff0000080b4838 ffff8017c949b260
->>> [  800.495853] b220: ffff0000080b4f2c 0000000020400145 0000000000000001 ffff8017c949b2a0
->>> [  800.503676] b240: ffffffffffffffff ffff8017c949b260 ffff8017c949b260 ffff0000080b4f2c
->>> [  800.511498] [<ffff0000080b4f2c>] kvm_age_hva_handler+0xcc/0xd4
->>> [  800.517324] [<ffff0000080b4838>] handle_hva_to_gpa+0xec/0x15c
->>> [  800.523063] [<ffff0000080b6c5c>] kvm_age_hva+0x5c/0xcc
->>> [  800.528194] [<ffff0000080a7c3c>] kvm_mmu_notifier_clear_flush_young+0x54/0x90
->>> [  800.535324] [<ffff00000827a0e8>] __mmu_notifier_clear_flush_young+0x6c/0xa8
->>> [  800.542279] [<ffff00000825a644>] page_referenced_one+0x1e0/0x1fc
->>> [  800.548279] [<ffff00000827e8f8>] rmap_walk_ksm+0x124/0x1a0
->>> [  800.553759] [<ffff00000825c974>] rmap_walk+0x94/0x98
->>> [  800.558717] [<ffff00000825ca98>] page_referenced+0x120/0x180
->>> [  800.564369] [<ffff000008228c58>] shrink_active_list+0x218/0x4a4
->>> [  800.570281] [<ffff000008229470>] shrink_node_memcg+0x58c/0x6fc
->>> [  800.576107] [<ffff0000082296c4>] shrink_node+0xe4/0x328
->>> [  800.581325] [<ffff000008229c9c>] do_try_to_free_pages+0xe4/0x3b8
->>> [  800.587324] [<ffff00000822a094>] try_to_free_pages+0x124/0x234
->>> [  800.593150] [<ffff000008216aa0>] __alloc_pages_nodemask+0x564/0xf7c
->>> [  800.599412] [<ffff000008292814>] khugepaged_alloc_page+0x38/0xb8
->>> [  800.605411] [<ffff0000082933bc>] collapse_huge_page+0x74/0xd70
->>> [  800.611238] [<ffff00000829470c>] khugepaged_scan_mm_slot+0x654/0xa98
->>> [  800.617585] [<ffff000008294e0c>] khugepaged+0x2bc/0x49c
->>> [  800.622803] [<ffff0000080ffb70>] kthread+0x124/0x150
->>> [  800.627762] [<ffff0000080849f0>] ret_from_fork+0x10/0x1c
->>> [  800.633066] ---[ end trace 944c130b5252fb01 ]---
->>> -------------------------------------------------------------------------
->>>
->>> The root cause might be: we can't guarantee that the parameter start and end
->>> in handle_hva_to_gpa is PAGE_SIZE aligned, let alone hva_start and hva_end.
->> So why not aligning them the first place?
-> at the first place of handle_hva_to_gpa()?
-> but boundary check is needed in each loop of kvm_for_each_memslot. Am I missing
-> anything here?
->>> This bug is introduced by commit 056aad67f836 ("kvm: arm/arm64: Rework gpa
->>> callback handlers")
->>>
->>> It fixes the bug by use pfn size converted.
->>>
->>> Fixes: 056aad67f836 ("kvm: arm/arm64: Rework gpa callback handlers")
->>>
->>> Signed-off-by: jia.he@hxt-semitech.com
->>> Signed-off-by: li.zhang@hxt-semitech.com
->>> ---
->>>    virt/kvm/arm/mmu.c | 10 ++++++----
->>>    1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->>> index 7f6a944..9dd7ae4 100644
->>> --- a/virt/kvm/arm/mmu.c
->>> +++ b/virt/kvm/arm/mmu.c
->>> @@ -1744,7 +1744,7 @@ static int handle_hva_to_gpa(struct kvm *kvm,
->>>    	/* we only care about the pages that the guest sees */
->>>    	kvm_for_each_memslot(memslot, slots) {
->>>    		unsigned long hva_start, hva_end;
->>> -		gfn_t gpa;
->>> +		gpa_t gpa, gpa_end;
->>>    
->>>    		hva_start = max(start, memslot->userspace_addr);
->>>    		hva_end = min(end, memslot->userspace_addr +
->>> @@ -1753,7 +1753,9 @@ static int handle_hva_to_gpa(struct kvm *kvm,
->>>    			continue;
->>>    
->>>    		gpa = hva_to_gfn_memslot(hva_start, memslot) << PAGE_SHIFT;
->>> -		ret |= handler(kvm, gpa, (u64)(hva_end - hva_start), data);
->>> +		gpa_end = hva_to_gfn_memslot(hva_end + PAGE_SIZE - 1, memslot)
->>> +							 << PAGE_SHIFT;
->>> +		ret |= handler(kvm, gpa, (u64)(gpa_end - gpa), data);
->> But we're looking for the mapping in the same memslot, so the distance
->> between hva and hva_end is the same as the one between gpa and gpa_end
->> if you didn't align it.
-> maybe not, sometimes hva_end-hva != gpa_end-gpa
-> start=fffdc37f0200,hva_start=fffdc37f0200,end=fffdc3800200,hva_end=fffdc3800000,gpa=3ff0000,gfn_end=4000000
->
-> but sometimes it is:
-> start=ffff60590200,hva_start=ffff60590200,end=ffff605a0200,hva_end=ffff605a0200,gpa=1fb190000,gfn_end=1fb1b0000
-sorry , disordered above 2 cases for mistake (-_-)!
-> IMO, the unalignment is caused by the ksm stable page flag STABLE_FLAG. I will
-> propose another ksm patch to fix it。
-> But from handle_hva_to_gpa's point of view, arm kvm needs to void the followup
-> exception, just like what powerpc andx86 have done.
->
->> So why not align both start and end and skip the double lookup?
->>
->>>    	}
->>>    
->>>    	return ret;
->>> @@ -1823,7 +1825,7 @@ static int kvm_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
->>>    	pmd_t *pmd;
->>>    	pte_t *pte;
->>>    
->>> -	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
->>> +	WARN_ON((size & ~PAGE_MASK) != 0);
->>>    	pmd = stage2_get_pmd(kvm, NULL, gpa);
->>>    	if (!pmd || pmd_none(*pmd))	/* Nothing there */
->>>    		return 0;
->>> @@ -1843,7 +1845,7 @@ static int kvm_test_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *
->>>    	pmd_t *pmd;
->>>    	pte_t *pte;
->>>    
->>> -	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
->>> +	WARN_ON((size & ~PAGE_MASK) != 0);
->>>    	pmd = stage2_get_pmd(kvm, NULL, gpa);
->>>    	if (!pmd || pmd_none(*pmd))	/* Nothing there */
->>>    		return 0;
->>>
->> I'll let Suzuki comment on this, but I'm a bit suspicious of this patch.
-> sure, more comments, more clear for the issue.
->
+The message details:
 
--- 
-Cheers,
-Jia
+kernel: swap_free: Bad swap file entry 1000000000103256
+kernel: BUG: Bad page map in process in:imjournal  pte:8192b1000 pmd:3ff9324067
+kernel: addr:00007f920adc5000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3f8
+kernel: vma->vm_ops->fault: shmem_fault+0x0/0x1d0
+kernel: vma->vm_file->f_op->mmap: shmem_mmap+0x0/0x30
+kernel: CPU: 5 PID: 9166 Comm: in:imjournal Tainted: G        W  OE
+K------------   3.10.0-514.16.1.el7.x86_64 #1
+kernel: Hardware name: HP ProLiant DL380 Gen9/ProLiant DL380 Gen9,
+BIOS P89 04/25/2017
+kernel: 00007f920adc5000 0000000023409e11 ffff881fc769fc78 ffffffff81686ac3
+kernel: ffff881fc769fcc0 ffffffff811acacf 00000008192b1000 00000000000003f8
+kernel: ffff883ff9324e28 00000008192b1000 00007f920ae00000 00007f920adc5000
+kernel: Call Trace:
+kernel: [<ffffffff81686ac3>] dump_stack+0x19/0x1b
+kernel: [<ffffffff811acacf>] print_bad_pte+0x1af/0x250
+kernel: [<ffffffff811aea7b>] unmap_page_range+0x62b/0x8a0
+kernel: [<ffffffff811aed71>] unmap_single_vma+0x81/0xf0
+kernel: [<ffffffff811afc49>] unmap_vmas+0x49/0x90
+kernel: [<ffffffff811b488e>] unmap_region+0xbe/0x140
+kernel: [<ffffffff811b6c75>] do_munmap+0x245/0x420
+kernel: [<ffffffff811b6e91>] vm_munmap+0x41/0x60
+kernel: [<ffffffff811b7e22>] SyS_munmap+0x22/0x30
+kernel: [<ffffffff81697189>] system_call_fastpath+0x16/0x1b
+kernel: Disabling lock debugging due to kernel taint
+kernel: swap_free: Bad swap file entry 3000000000006986
+kernel: BUG: Bad page map in process in:imjournal  pte:34c33000 pmd:3ff9324067
+kernel: addr:00007f920adc6000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3f9
+kernel: vma->vm_ops->fault: shmem_fault+0x0/0x1d0
+kernel: vma->vm_file->f_op->mmap: shmem_mmap+0x0/0x30
+
+ $ cat messages | grep  swap_free
+ kernel: swap_free: Bad swap file entry 1000000000103256
+ kernel: swap_free: Bad swap file entry 3000000000006986
+ kernel: swap_free: Bad swap file entry 2000000000006986
+ kernel: swap_free: Unused swap file entry 00102e07
+ kernel: swap_free: Bad swap file entry 1000000000102e00
+ kernel: swap_free: Bad swap file entry 2000000000107fd0
+ kernel: swap_free: Bad swap file entry 2000000000006a88
+ kernel: swap_free: Bad swap file entry 3000000000103e67
+ kernel: swap_free: Bad swap file entry 300000000010324c
+ kernel: swap_free: Bad swap file entry 3000000000102e00
+ kernel: swap_free: Unused swap file entry 00102a56
+ kernel: swap_free: Unused swap file entry 00102ef5
+ kernel: swap_free: Bad swap file entry 3000000000102ef5
+ kernel: swap_free: Bad swap file entry 1000000000102a4f
+ kernel: swap_free: Bad swap file entry 3000000000103262
+ kernel: swap_free: Bad swap file entry 10000000001031c4
+ kernel: swap_free: Unused swap file entry 00006981
+ kernel: swap_free: Unused swap file entry 00006a88
+ kernel: swap_free: Bad swap file entry 3000000000102e00
+ kernel: swap_free: Bad swap file entry 3000000000102e08
+ kernel: swap_free: Unused swap file entry 000069d3
+ kernel: swap_free: Bad swap file entry 300000000010313a
+ kernel: swap_free: Unused swap file entry 0000699d
+ kernel: swap_free: Unused swap file entry 00006998
+ kernel: swap_free: Bad swap file entry 3000000000102e07
+ kernel: swap_free: Bad swap file entry 3000000000102e09
+ kernel: swap_free: Bad swap file entry 1000000000103174
+ kernel: swap_free: Bad swap file entry 2000000000102e76
+ kernel: swap_free: Bad swap file entry 1000000000102651
+ kernel: swap_free: Bad swap file entry 3000000000102efa
+ kernel: swap_free: Bad swap file entry 3000000000102d40
+ kernel: swap_free: Bad swap file entry 3000000000101cf5
+ kernel: swap_free: Bad swap file entry 10000000000069b5
+ kernel: swap_free: Bad swap file entry 100000000010264e
+ kernel: swap_free: Unused swap file entry 000069e8
+ kernel: swap_free: Bad swap file entry 20000000000069e8
+ kernel: swap_free: Bad swap file entry 20000000001021d2
+ kernel: swap_free: Unused swap file entry 0002e892
+ kernel: swap_free: Bad swap file entry 2000000000102a48
+ kernel: swap_free: Bad swap file entry 3000000000102dde
+ kernel: swap_free: Unused swap file entry 001027f2
+ kernel: swap_free: Bad swap file entry 200000000000ddf5
+ kernel: swap_free: Bad swap file entry 10000000000fd7e1
+ kernel: swap_free: Bad swap file entry 1000000000003215
+ kernel: swap_free: Bad swap file entry 10000000000f3555
+ kernel: swap_free: Bad swap file entry 20000000000f3555
+ kernel: swap_free: Bad swap file entry 20000000000fd494
+ kernel: swap_free: Bad swap file entry 30000000000fd494
+ kernel: swap_free: Bad swap file entry 10000000001027ec
+ kernel: swap_free: Bad swap file entry 1000000000103172
+ kernel: swap_free: Unused swap file entry 001039b2
+ kernel: swap_free: Unused swap file entry 001014da
+ kernel: swap_free: Bad swap file entry 20000000000fd8ea
+ kernel: swap_free: Bad swap file entry 100000000010036e
+ kernel: swap_free: Bad swap file entry 200000000010036e
+ kernel: swap_free: Bad swap file entry 30000000000f6ced
+ kernel: swap_free: Bad swap file entry 3000000000006a8f
+ kernel: swap_free: Bad swap file entry 2000000000102e2a
+ kernel: swap_free: Bad swap file entry 1000000000107bc5
+
+$ cat messages | grep  pmd
+ kernel: BUG: Bad page map in process in:imjournal  pte:8192b1000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34c33000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34c32000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:81703c000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:817001000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:83fe82000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:35442000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:81f33b000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:819263000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:817007000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:8152b0000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:8177a8000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:8177ab000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:815279000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:819317000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:818e25000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34c0c000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:35440000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:817003000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:817047000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34e98000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:8189d3000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34cec000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34cc0000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:81703f000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:81704b000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:818ba5000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:8173b6000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:81328d000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:8177d3000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:816a03000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:80e7af000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34da9000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:813271000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34f40000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:34f42000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:810e92000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:174494000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:815242000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:816ef7000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:813f90000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:6efae000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:7ebf0d000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:190ad000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:79aaa9000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:79aaaa000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:7ea4a6000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:7ea4a7000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:813f61000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:818b91000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:81cd94000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:80a6d4000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:7ec752000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:801b75000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:801b76000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:7b676f000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:3547b000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:817152000 pmd:3ff9324067
+ kernel: BUG: Bad page map in process in:imjournal  pte:83de29000 pmd:3ff9324067
+
+ $ cat messages | grep  addr
+ kernel: addr:00007f920adc5000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3f8
+ kernel: addr:00007f920adc6000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3f9
+ kernel: addr:00007f920adc7000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3fa
+ kernel: addr:00007f920adc8000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3fb
+ kernel: addr:00007f920adc9000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3fc
+ kernel: addr:00007f920adca000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3fd
+ kernel: addr:00007f920adcb000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3fe
+ kernel: addr:00007f920adcc000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:3ff
+ kernel: addr:00007f920adcd000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:400
+ kernel: addr:00007f920adce000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:401
+ kernel: addr:00007f920adcf000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:402
+ kernel: addr:00007f920add0000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:403
+ kernel: addr:00007f920add1000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:404
+ kernel: addr:00007f920add2000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:405
+ kernel: addr:00007f920add3000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:406
+ kernel: addr:00007f920add4000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:407
+ kernel: addr:00007f920add5000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:408
+ kernel: addr:00007f920add6000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:409
+ kernel: addr:00007f920add7000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:40a
+ kernel: addr:00007f920add8000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:40b
+ kernel: addr:00007f920add9000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:40c
+ kernel: addr:00007f920adda000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:40d
+ kernel: addr:00007f920addb000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:40e
+ kernel: addr:00007f920addc000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:40f
+ kernel: addr:00007f920addd000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:410
+ kernel: addr:00007f920adde000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:411
+ kernel: addr:00007f920addf000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:412
+ kernel: addr:00007f920ade0000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:413
+ kernel: addr:00007f920ade1000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:414
+ kernel: addr:00007f920ade2000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:415
+ kernel: addr:00007f920ade3000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:416
+ kernel: addr:00007f920ade4000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:417
+ kernel: addr:00007f920ade5000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:418
+ kernel: addr:00007f920ade6000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:419
+ kernel: addr:00007f920ade7000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:41a
+ kernel: addr:00007f920ade8000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:41b
+ kernel: addr:00007f920ade9000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:41c
+ kernel: addr:00007f920adea000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:41d
+ kernel: addr:00007f920adeb000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:41e
+ kernel: addr:00007f920adec000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:41f
+ kernel: addr:00007f920aded000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:420
+ kernel: addr:00007f920adee000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:421
+ kernel: addr:00007f920adef000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:422
+ kernel: addr:00007f920adf0000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:423
+ kernel: addr:00007f920adf1000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:424
+ kernel: addr:00007f920adf2000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:425
+ kernel: addr:00007f920adf3000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:426
+ kernel: addr:00007f920adf4000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:427
+ kernel: addr:00007f920adf5000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:428
+ kernel: addr:00007f920adf6000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:429
+ kernel: addr:00007f920adf7000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:42a
+ kernel: addr:00007f920adf8000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:42b
+ kernel: addr:00007f920adf9000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:42c
+ kernel: addr:00007f920adfa000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:42d
+ kernel: addr:00007f920adfb000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:42e
+ kernel: addr:00007f920adfc000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:42f
+ kernel: addr:00007f920adfd000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:430
+ kernel: addr:00007f920adfe000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:431
+ kernel: addr:00007f920adff000 vm_flags:080000d1 anon_vma:
+(null) mapping:ffff883fe5284960 index:432
+
+
+Thanks.
+
+Huaitong Han
+
+
+2018-04-20 2:53 GMT+08:00 Dave Hansen <dave.hansen@intel.com>:
+> On 04/18/2018 10:40 PM, Fengguang Wu wrote:
+>> [  716.494065] PASS concurrent_autogo_5ghz_ht40 4.803608 2018-03-23 09:57:21.586794
+>> [  716.494069]
+>> [  716.496923] passed all 1 test case(s)
+>> [  716.496926]
+>> [  716.511702] swap_info_get: Bad swap file entry 04000000
+>> [  716.512731] BUG: Bad page map in process python2  pte:100_0000_0000 pmd:17e8be067
+>> [  716.513844] addr:00000000860ba23b vm_flags:00000070 anon_vma:          (null) mapping:000000004c76fece index:1e2
+>> [  716.515160] file:libpcre.so.3.13.3 fault:filemap_fault mmap:generic_file_mmap readpage:simple_readpage
+>> [  716.516418] CPU: 2 PID: 8907 Comm: python2 Not tainted 4.16.0-rc5 #1
+>> [  716.517533] Hardware name:  /DH67GD, BIOS BLH6710H.86A.0132.2011.1007.1505 10/07/2011
+>
+> Did you say that you have a few more examples of this?
+>
+> I would be really interested if it's always python or always the same
+> shared library, or always file-backed memory, always the same bit,
+> etc...  From the vm_flags, I'd guess that this is the "rw-p" part of the
+> file mapping.
+>
+> The bit that gets set is really weird.  It's bit 40.  I could definitely
+> see scenarios where we might set the dirty bit, or even NX for that
+> matter, or some *bit* that we mess with in software.  It's not even
+> close to the boundary where it could represent a swapoffset=1 or swapfile=1.
+>
+> It's also unlikely to be _PAGE_PSE having gone missing from the PMD
+> since it's in the middle of a file-backed mapping and the PMD is
+> obviously pointing to a 4k page.
+>
+> If I had to put money on it, I'd guess it's a hardware bit flip, or less
+> likely, a rogue software bit flip.  But, more examples will hopefully
+> shed some more light.
+>
