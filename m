@@ -1,122 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751792AbeECQDZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:03:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60514 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751505AbeECQDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:03:19 -0400
-Date: Thu, 3 May 2018 18:03:17 +0200
-From: Jan Kara <jack@suse.cz>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: syzbot <syzbot+9873874c735f2892e7e9@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        Tejun Heo <tj@kernel.org>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@fb.com>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: general protection fault in wb_workfn
-Message-ID: <20180503160317.xsbgbp4jqd46zcil@quack2.suse.cz>
-References: <000000000000e563d7056a35bbb3@google.com>
- <00db9c75-e498-5324-622b-685e6888601e@I-love.SAKURA.ne.jp>
+        id S1751799AbeECQEi (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:04:38 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35491 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751621AbeECQEg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 12:04:36 -0400
+X-Google-Smtp-Source: AB8JxZoPf41I0E2+jNOuFlKTBH5+AEMs6vrxUOxsejoT+V22WHrS9yYOyto1DbOVEdp6M/Q5dlnip48amr1oXOowaIg=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <00db9c75-e498-5324-622b-685e6888601e@I-love.SAKURA.ne.jp>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-20-mszeredi@redhat.com>
+ <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
+Date: Thu, 3 May 2018 18:04:35 +0200
+Message-ID: <CAOssrKd+EjBYWMmGxVSCKQmFWhBf99eic4XLJ0YhZu3r0Kad5g@mail.gmail.com>
+Subject: Re: [RFC PATCH 19/35] ovl: readd reflink/copyfile/dedup support
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23-04-18 19:09:51, Tetsuo Handa wrote:
-> On 2018/04/20 1:05, syzbot wrote:
-> > kasan: CONFIG_KASAN_INLINE enabled
-> > kasan: GPF could be caused by NULL-ptr deref or user memory access
-> > general protection fault: 0000 [#1] SMP KASAN
-> > Dumping ftrace buffer:
-> >    (ftrace buffer empty)
-> > Modules linked in:
-> > CPU: 0 PID: 28 Comm: kworker/u4:2 Not tainted 4.16.0-rc7+ #368
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Workqueue: writeback wb_workfn
-> > RIP: 0010:dev_name include/linux/device.h:981 [inline]
-> > RIP: 0010:wb_workfn+0x1a2/0x16b0 fs/fs-writeback.c:1936
-> > RSP: 0018:ffff8801d951f038 EFLAGS: 00010206
-> > RAX: dffffc0000000000 RBX: 0000000000000000 RCX: ffffffff81bf6ea5
-> > RDX: 000000000000000a RSI: ffffffff87b44840 RDI: 0000000000000050
-> > RBP: ffff8801d951f558 R08: 1ffff1003b2a3def R09: 0000000000000004
-> > R10: ffff8801d951f438 R11: 0000000000000004 R12: 0000000000000100
-> > R13: ffff8801baee0dc0 R14: ffff8801d951f530 R15: ffff8801baee10d8
-> > FS:  0000000000000000(0000) GS:ffff8801db200000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000000000047ff80 CR3: 0000000007a22006 CR4: 00000000001626f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
-> >  process_scheduled_works kernel/workqueue.c:2173 [inline]
-> >  worker_thread+0xa4b/0x1990 kernel/workqueue.c:2252
-> >  kthread+0x33c/0x400 kernel/kthread.c:238
-> >  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-> 
-> This report says that wb->bdi->dev == NULL
-> 
->   static inline const char *dev_name(const struct device *dev)
->   {
->     /* Use the init name until the kobject becomes available */
->     if (dev->init_name)
->       return dev->init_name;
->   
->     return kobject_name(&dev->kobj);
->   }
-> 
->   void wb_workfn(struct work_struct *work)
->   {
->   (...snipped...)
->      set_worker_desc("flush-%s", dev_name(wb->bdi->dev));
->   (...snipped...)
->   }
-> 
-> immediately after ioctl(LOOP_CTL_REMOVE) was requested. It is plausible
-> because ioctl(LOOP_CTL_REMOVE) sets bdi->dev to NULL after returning from
-> wb_shutdown().
-> 
-> loop_control_ioctl(LOOP_CTL_REMOVE) {
->   loop_remove(lo) {
->     del_gendisk(lo->lo_disk) {
->       bdi_unregister(disk->queue->backing_dev_info) {
->         bdi_remove_from_list(bdi);
->         wb_shutdown(&bdi->wb);
->         cgwb_bdi_unregister(bdi);
->         if (bdi->dev) {
->           bdi_debug_unregister(bdi);
->           device_unregister(bdi->dev);
->           bdi->dev = NULL;
->         }
->       }
->     }
->   }
-> }
-> 
-> For some reason wb_shutdown() is not waiting for wb_workfn() to complete
-> ( or something queues again after WB_registered bit was cleared ) ?
-> 
-> Anyway, I think that this is block layer problem rather than fs layer
-> problem.
+On Tue, Apr 17, 2018 at 10:31 PM, Amir Goldstein <amir73il@gmail.com> wrote:
+> On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+>> Since set of arguments are so similar, handle in a common helper.
+>>
+>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>> ---
+>>  fs/overlayfs/file.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 79 insertions(+)
+>>
+>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>> index 9670e160967e..39b1b73334ad 100644
+>> --- a/fs/overlayfs/file.c
+>> +++ b/fs/overlayfs/file.c
+>> @@ -352,6 +352,81 @@ long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+>>         return ret;
+>>  }
+>>
+>> +enum ovl_copyop {
+>> +       OVL_COPY,
+>> +       OVL_CLONE,
+>> +       OVL_DEDUPE,
+>> +};
+>> +
+>> +static ssize_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+>> +                           struct file *file_out, loff_t pos_out,
+>> +                           u64 len, unsigned int flags, enum ovl_copyop op)
+>> +{
+>> +       struct inode *inode_out = file_inode(file_out);
+>> +       struct fd real_in, real_out;
+>> +       const struct cred *old_cred;
+>> +       int ret;
+>> +
+>> +       ret = ovl_real_file(file_out, &real_out);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = ovl_real_file(file_in, &real_in);
+>> +       if (ret) {
+>> +               fdput(real_out);
+>> +               return ret;
+>> +       }
+>> +
+>> +       old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
+>> +       switch (op) {
+>> +       case OVL_COPY:
+>> +               ret = vfs_copy_file_range(real_in.file, pos_in,
+>> +                                         real_out.file, pos_out, len, flags);
+>
+> Problem:
+> vfs_copy_file_range(ovl_lower_file, ovl_upper_file) on non samefs
+> will get -EXDEV from  ovl_copy_file_range(), so will not fall back
+> to do_splice_direct().
 
-Thanks for the analysis. I think I can see where is the problem -
-wb_workfn() can requeue the work while wb_shutdown() is running I'll send a
-patch shortly.
+This is not a regression, right?
 
-> By the way, I got a newbie question regarding commit 5318ce7d46866e1d ("bdi:
-> Shutdown writeback on all cgwbs in cgwb_bdi_destroy()"). It uses clear_bit()
-> to clear WB_shutting_down bit so that threads waiting at wait_on_bit() will
-> wake up. But clear_bit() itself does not wake up threads, does it? Who wakes
-> them up (e.g. by calling wake_up_bit()) after clear_bit() was called?
+> We may be better off checking in_sb != out_sb and returning
+> -EOPNOTSUPP? not sure.
 
-Yeah, that's a bug. Thanks for fixing it.
+I think we should fix vfs_copy_file_range() to fall back to copying if
+not on the same fs.   Not sure why it doesn't do that now.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+>
+>> +               break;
+>> +
+>> +       case OVL_CLONE:
+>> +               ret = vfs_clone_file_range(real_in.file, pos_in,
+>> +                                          real_out.file, pos_out, len);
+>> +               break;
+>> +
+>> +       case OVL_DEDUPE:
+>> +               ret = vfs_dedupe_file_range_one(real_in.file, pos_in, len,
+>> +                                               real_out.file, pos_out);
+>
+> Problem:
+> real_out can be a readonly fd (for is_admin), so we will be deduping
+> the lower file.
+
+Ugh...
+
+> I guess this problem is mitigated in current code by may_write_real().
+>
+> How can we deal with that sort of "write leak" without patching
+>  mnt_want_write_file()?
+
+We need to check before calling dedupe on real files that both are on upper.
+
+My problem is what error code to return.  Neither EXDEV nor EINVAL
+descibe the error adequately.  It should be "We could dedupe if we
+really wanted to, but it makes no sense to do so"...  So now it
+returns -EBADE, which means "data was different", but at least that
+one should at least be expected by callers.
+
+Thanks,
+Miklos
