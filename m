@@ -1,98 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752006AbeECCkz (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 22:40:55 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39616 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751969AbeECCkw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 22:40:52 -0400
-X-Google-Smtp-Source: AB8JxZr9KAtqkxhKqXONUsKQ0YC1N1hhllj/61VR17kTpz4WufPEI4xBwpRjZnp8Hvs5+VMF/5jeBlSvvBiMIReRW+8=
+        id S1752047AbeECCoQ (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 22:44:16 -0400
+Received: from mga01.intel.com ([192.55.52.88]:38663 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751940AbeECCoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 22:44:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
+   d="scan'208";a="38019966"
+Subject: Re: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in irq
+ handler
+To: Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        joro@8bytes.org, "Raj, Ashok" <ashok.raj@intel.com>
+References: <20180331003312.6390-1-dima@arista.com>
+ <20180331003312.6390-2-dima@arista.com> <5AE95BFF.5040306@linux.intel.com>
+ <1525264687.14025.20.camel@arista.com> <5AEA4E84.6050609@linux.intel.com>
+ <1525308755.14025.25.camel@arista.com> <5AEA66BC.5050202@linux.intel.com>
+ <1525312776.14025.29.camel@arista.com> <5AEA70FD.1010209@linux.intel.com>
+ <1525314890.14025.38.camel@arista.com>
+Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        iommu@lists.linux-foundation.org
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5AEA777C.1060901@linux.intel.com>
+Date: Thu, 3 May 2018 10:44:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <09b12fe1-3023-5e16-7c80-e73a8c3634fd@web.de>
-References: <20180502060224.44903-1-chiu@endlessm.com> <09b12fe1-3023-5e16-7c80-e73a8c3634fd@web.de>
-From: Chris Chiu <chiu@endlessm.com>
-Date: Thu, 3 May 2018 10:40:51 +0800
-Message-ID: <CAB4CAwcrrvPu+matVOsKEwFF2Jykyjc68z0sDUwouPzkg4sO4g@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: asus-wmi: Add keyboard backlight toggle support
-To: "Puma D." <puma.d@web.de>
-Cc: Corentin Chary <corentin.chary@gmail.com>, dvhart@infradead.org,
-        Andy Shevchenko <andy@infradead.org>,
-        acpi4asus-user@lists.sourceforge.net,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525314890.14025.38.camel@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 10:29 PM, Puma D. <puma.d@web.de> wrote:
-> On 02.05.2018 08:02, Chris Chiu wrote:
->>
->> Some Asus laptops like UX550GE has hotkey (Fn+F7) for keyboard
->> backlight toggle. In this UX550GE, the hotkey incremet the level
->> of brightness for each keypress from 1 to 3, and then switch it
->> off when the brightness has been the max. This commit interprets
->> the code 0xc7 generated from hotkey to KEY_KBDILLUMUP to increment
->> the brightness, then pass KEY_KBDILLUMTOGGLE to user space after
->> the brightness max been reached for switching the led off.
->>
->> https://phabricator.endlessm.com/T21390
->>
->> Signed-off-by: Chris Chiu <chiu@endlessm.com>
->> ---
->>   drivers/platform/x86/asus-nb-wmi.c | 1 +
->>   drivers/platform/x86/asus-wmi.c    | 8 ++++++++
->>   2 files changed, 9 insertions(+)
->>
->> diff --git a/drivers/platform/x86/asus-nb-wmi.c
->> b/drivers/platform/x86/asus-nb-wmi.c
->> index 136ff2b..14c502e 100644
->> --- a/drivers/platform/x86/asus-nb-wmi.c
->> +++ b/drivers/platform/x86/asus-nb-wmi.c
->> @@ -496,6 +496,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
->>         { KE_KEY, 0xC4, { KEY_KBDILLUMUP } },
->>         { KE_KEY, 0xC5, { KEY_KBDILLUMDOWN } },
->>         { KE_IGNORE, 0xC6, },  /* Ambient Light Sensor notification */
->> +       { KE_KEY, 0xC7, { KEY_KBDILLUMTOGGLE } },
->>         { KE_END, 0},
->>   };
->>   diff --git a/drivers/platform/x86/asus-wmi.c
->> b/drivers/platform/x86/asus-wmi.c
->> index 1f6e68f..b64ff90 100644
->> --- a/drivers/platform/x86/asus-wmi.c
->> +++ b/drivers/platform/x86/asus-wmi.c
->> @@ -67,6 +67,7 @@ MODULE_LICENSE("GPL");
->>   #define NOTIFY_BRNDOWN_MAX            0x2e
->>   #define NOTIFY_KBD_BRTUP              0xc4
->>   #define NOTIFY_KBD_BRTDWN             0xc5
->> +#define NOTIFY_KBD_BRTTOGGLE           0xc7
->>     /* WMI Methods */
->>   #define ASUS_WMI_METHODID_SPEC                0x43455053 /* BIOS
->> SPECification */
->> @@ -1745,6 +1746,13 @@ static void asus_wmi_notify(u32 value, void
->> *context)
->>                 }
->>         }
->>   +     if (code == NOTIFY_KBD_BRTTOGGLE) {
->> +               if (asus->kbd_led_wk < asus->kbd_led.max_brightness)
->> +                       code = NOTIFY_KBD_BRTUP;
->> +               else
->> +                       code = NOTIFY_KBD_BRTTOGGLE;
->> +       }
->
-> Did you intend the else branch to be a noop?
->
+Hi,
 
-Thanks for pointing out. The 'else' does want to do nothing special but
-`Brightness Toggle` as the original code. I'll modify that and submit again.
+On 05/03/2018 10:34 AM, Dmitry Safonov wrote:
+> On Thu, 2018-05-03 at 10:16 +0800, Lu Baolu wrote:
+>> Hi,
+>>
+>> On 05/03/2018 09:59 AM, Dmitry Safonov wrote:
+>>> On Thu, 2018-05-03 at 09:32 +0800, Lu Baolu wrote:
+>>>> Hi,
+>>>>
+>>>> On 05/03/2018 08:52 AM, Dmitry Safonov wrote:
+>>>>> AFAICS, we're doing fault-clearing in a loop inside irq
+>>>>> handler.
+>>>>> That means that while we're clearing if a fault raises, it'll
+>>>>> make
+>>>>> an irq level triggered (or on edge) on lapic. So, whenever we
+>>>>> return
+>>>>> from the irq handler, irq will raise again.
+>>>>>
+>>>> Uhm, double checked with the spec. Interrupts should be generated
+>>>> since we always clear the fault overflow bit.
+>>>>
+>>>> Anyway, we can't clear faults in a limited loop, as the spec says
+>>>> in
+>>>> 7.3.1:
+>>> Mind to elaborate?
+>>> ITOW, I do not see a contradiction. We're still clearing faults in
+>>> FIFO
+>>> fashion. There is no limitation to do some spare work in between
+>>> clearings (return from interrupt, then fault again and continue).
+>> Hardware maintains an internal index to reference the fault recording
+>> register in which the next fault can be recorded. When a fault comes,
+>> hardware will check the Fault bit (bit 31 of the 4th 32-bit register
+>> recording
+>> register) referenced by the internal index. If this bit is set,
+>> hardware will
+>> not record the fault.
+>>
+>> Since we now don't clear the F bit until a register entry which has
+>> the F bit
+>> cleared, we might exit the fault handling with some register entries
+>> still
+>> have the F bit set.
+>>
+>>   F
+>>> 0 |  xxxxxxxxxxxxx|
+>>> 0 |  xxxxxxxxxxxxx|
+>>> 0 |  xxxxxxxxxxxxx|  <--- Fault record index in fault status
+>>> register
+>>> 0 |  xxxxxxxxxxxxx|
+>>> 1 |  xxxxxxxxxxxxx|  <--- hardware maintained index
+>>> 1 |  xxxxxxxxxxxxx|
+>>> 1 |  xxxxxxxxxxxxx|
+>>> 0 |  xxxxxxxxxxxxx|
+>>> 0 |  xxxxxxxxxxxxx|
+>>> 0 |  xxxxxxxxxxxxx|
+>>> 0 |  xxxxxxxxxxxxx|
+>> Take an example as above, hardware could only record 2 more faults
+>> with
+>> others all dropped.
+> Ugh, yeah, I got what you're saying.. Thanks for explanations.
+> So, we shouldn't mark faults as cleared until we've actually processed
+> them here:
+> :        writel(DMA_FSTS_PFO | DMA_FSTS_PPF | DMA_FSTS_PRO,
+> :               iommu->reg + DMAR_FSTS_REG);
+>
+> As Joerg mentioned, we do care about latency here, so this fault work
+> can't be moved entirely into workqueue.. but we might limit loop and
+> check if we've hit the limit - to proceed servicing faults in a wq,
+> as in that case we should care about being too long in irq-disabled
+> section more than about latencies.
+> Does that makes any sense, what do you think?
+>
+> I can possibly re-write 2/2 with idea above..
 
->
->> +
->>         if (is_display_toggle(code) &&
->>             asus->driver->quirks->no_display_toggle)
->>                 goto exit;
->
->
->
+Very appreciated. I am open to the idea. :-)
+
+Best regards,
+Lu Baolu
