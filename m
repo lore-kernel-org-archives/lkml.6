@@ -1,91 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751301AbeECSnz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 14:43:55 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:54842 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751174AbeECSnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:43:47 -0400
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <b8acf835-df94-9967-2327-8f0e39d88511@amd.com>
- <805645c1-ea40-2e57-88eb-5dd34e579b2e@deltatee.com>
- <3e4e0126-f444-8d88-6793-b5eb97c61f76@amd.com>
- <ce2e5351-f32a-bd80-1c77-b7fc38842175@deltatee.com>
- <38d866cf-f7b4-7118-d737-5a5dcd9f3784@amd.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <2d59aa02-f2fa-bd88-1b6c-923117a6ad28@deltatee.com>
-Date: Thu, 3 May 2018 12:43:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751563AbeECSoH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:44:07 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:34949 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeECSoD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 14:44:03 -0400
+X-Google-Smtp-Source: AB8JxZpXSWwjxUbAsEPv4AZXUvuCyMTq7e/YNr+1HqKm0pmsqecuHQG/PfP4K2KnwXlHxUVVXVn4+Qr4mgkaVk8OHhtRWg5eoKS6
 MIME-Version: 1.0
-In-Reply-To: <38d866cf-f7b4-7118-d737-5a5dcd9f3784@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Date: Thu, 03 May 2018 11:44:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000059f907056b519603@google.com>
+Subject: KMSAN: uninit-value in strcmp
+From: syzbot <syzbot+df0257c92ffd4fcc58cd@syzkaller.appspotmail.com>
+To: davem@davemloft.net, jon.maloy@ericsson.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, tipc-discussion@lists.sourceforge.net,
+        ying.xue@windriver.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem pages
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=10051497800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=48f9de3384bcd0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=df0257c92ffd4fcc58cd
+compiler:       clang version 7.0.0 (trunk 329391)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=11275657800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c3d5e7800000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+df0257c92ffd4fcc58cd@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KMSAN: uninit-value in strcmp+0xf7/0x160 lib/string.c:329
+CPU: 1 PID: 4527 Comm: syz-executor655 Not tainted 4.16.0+ #87
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  strcmp+0xf7/0x160 lib/string.c:329
+  tipc_nl_node_get_link+0x220/0x6f0 net/tipc/node.c:1881
+  genl_family_rcv_msg net/netlink/genetlink.c:599 [inline]
+  genl_rcv_msg+0x1686/0x1810 net/netlink/genetlink.c:624
+  netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2447
+  genl_rcv+0x63/0x80 net/netlink/genetlink.c:635
+  netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
+  netlink_unicast+0x166b/0x1740 net/netlink/af_netlink.c:1337
+  netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmsg net/socket.c:2080 [inline]
+  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+  SyS_sendmsg+0x54/0x80 net/socket.c:2087
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x445589
+RSP: 002b:00007fb7ee66cdb8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 0000000000445589
+RDX: 0000000000000000 RSI: 0000000020023000 RDI: 0000000000000003
+RBP: 00000000006dac20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fffa2bf3f3f R14: 00007fb7ee66d9c0 R15: 0000000000000001
+
+Uninit was created at:
+  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+  kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+  kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+  kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+  slab_post_alloc_hook mm/slab.h:445 [inline]
+  slab_alloc_node mm/slub.c:2737 [inline]
+  __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+  __kmalloc_reserve net/core/skbuff.c:138 [inline]
+  __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+  alloc_skb include/linux/skbuff.h:984 [inline]
+  netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
+  netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
+  sock_sendmsg_nosec net/socket.c:630 [inline]
+  sock_sendmsg net/socket.c:640 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+  __sys_sendmsg net/socket.c:2080 [inline]
+  SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+  SyS_sendmsg+0x54/0x80 net/socket.c:2087
+  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+==================================================================
 
 
-On 03/05/18 11:29 AM, Christian König wrote:
-> Ok, that is the point where I'm stuck. Why do we need that in one 
-> function call in the PCIe subsystem?
-> 
-> The problem at least with GPUs is that we seriously don't have that 
-> information here, cause the PCI subsystem might not be aware of all the 
-> interconnections.
-> 
-> For example it isn't uncommon to put multiple GPUs on one board. To the 
-> PCI subsystem that looks like separate devices, but in reality all GPUs 
-> are interconnected and can access each others memory directly without 
-> going over the PCIe bus.
-> 
-> I seriously don't want to model that in the PCI subsystem, but rather 
-> the driver. That's why it feels like a mistake to me to push all that 
-> into the PCI function.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Huh? I'm lost. If you have a bunch of PCI devices you can send them as a
-list to this API, if you want. If the driver is _sure_ they are all the
-same, you only have to send one. In your terminology, you'd just have to
-call the interface with:
-
-pci_p2pdma_distance(target, [initiator, target])
-
-> Why can't we model that as two separate transactions?
-
-You could, but this is more convenient for users of the API that need to
-deal with multiple devices (and manage devices that may be added or
-removed at any time).
-
-> Yeah, same for me. If Bjorn is ok with that specialized NVM functions 
-> that I'm fine with that as well.
-> 
-> I think it would just be more convenient when we can come up with 
-> functions which can handle all use cases, cause there still seems to be 
-> a lot of similarities.
-
-The way it's implemented is more general and can handle all use cases.
-You are arguing for a function that can handle your case (albeit with a
-bit more fuss) but can't handle mine and is therefore less general.
-Calling my interface specialized is wrong.
-
-Logan
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
