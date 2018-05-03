@@ -1,90 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751220AbeECJZE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:25:04 -0400
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:35827 "EHLO
-        mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750945AbeECJZC (ORCPT
+        id S1751456AbeECJZ2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:25:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:49055 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750969AbeECJZ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:25:02 -0400
-X-Google-Smtp-Source: AB8JxZrMfMlHEHNutKVnIX13OaSE773F5wIBRzGUlRA6Ykl9tf8FajH8bAxpw/rlIonZofHHTcHWXQ==
-Date: Thu, 3 May 2018 11:24:59 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Satendra Singh Thakur <satendra.t@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>,
-        Madhur Verma <madhur.verma@samsung.com>
-Subject: Re: [PATCH] drm/atomic: Handling the case when setting old crtc for
- plane
-Message-ID: <20180503092458.GH12521@phenom.ffwll.local>
-Mail-Followup-To: Satendra Singh Thakur <satendra.t@samsung.com>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>,
-        Madhur Verma <madhur.verma@samsung.com>
-References: <CGME20180503055008epcas5p2e98aff943c031a90a14df1a85e359d6c@epcas5p2.samsung.com>
- <1525326572-25854-1-git-send-email-satendra.t@samsung.com>
+        Thu, 3 May 2018 05:25:26 -0400
+Date: Thu, 3 May 2018 02:24:55 -0700
+From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Message-ID: <tip-0b26351b910fb8fe6a056f8a1bbccabe50c0e19f@git.kernel.org>
+Cc: mingo@kernel.org, mhocko@suse.com, umgwanakikbuti@gmail.com,
+        hpa@zytor.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        matt@codeblueprint.co.uk
+Reply-To: tglx@linutronix.de, matt@codeblueprint.co.uk, peterz@infradead.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        umgwanakikbuti@gmail.com, hpa@zytor.com, mhocko@suse.com,
+        mingo@kernel.org
+In-Reply-To: <20180420095005.GH4064@hirez.programming.kicks-ass.net>
+References: <20180420095005.GH4064@hirez.programming.kicks-ass.net>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/urgent] stop_machine, sched: Fix migrate_swap() vs.
+ active_balance() deadlock
+Git-Commit-ID: 0b26351b910fb8fe6a056f8a1bbccabe50c0e19f
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <1525326572-25854-1-git-send-email-satendra.t@samsung.com>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
-User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 11:19:32AM +0530, Satendra Singh Thakur wrote:
-> In the func drm_atomic_set_crtc_for_plane, with the current code,
-> if crtc of the plane_state and crtc passed as argument to the func
-> are same, entire func will executed in vein.
-> It will get state of crtc and clear and set the bits in plane_mask.
-> All these steps are not required for same old crtc.
-> Ideally, we should do nothing in this case, this patch handles the same,
-> and causes the program to return without doing anything in such scenario.
-> 
-> Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-> Cc: Madhur Verma <madhur.verma@samsung.com>
-> Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
-> ---
->  drivers/gpu/drm/drm_atomic.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 7d25c42..5bd3365 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -1421,7 +1421,9 @@ drm_atomic_set_crtc_for_plane(struct drm_plane_state *plane_state,
->  {
->  	struct drm_plane *plane = plane_state->plane;
->  	struct drm_crtc_state *crtc_state;
-> -
-> +	/* Nothing to do for same crtc*/
-> +	if (plane_state->crtc == crtc)
-> +		return 0;
+Commit-ID:  0b26351b910fb8fe6a056f8a1bbccabe50c0e19f
+Gitweb:     https://git.kernel.org/tip/0b26351b910fb8fe6a056f8a1bbccabe50c0e19f
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Fri, 20 Apr 2018 11:50:05 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 3 May 2018 07:38:03 +0200
 
-I didn't do this (both here and in the set_crtc_for_connector functions)
-because the overhead is probably way down in the noise compared to the
-overall atomic commit machinery. Do you really see this as a hotpath?
--Daniel
+stop_machine, sched: Fix migrate_swap() vs. active_balance() deadlock
 
->  	if (plane_state->crtc) {
->  		crtc_state = drm_atomic_get_crtc_state(plane_state->state,
->  						       plane_state->crtc);
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Matt reported the following deadlock:
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+CPU0					CPU1
+
+schedule(.prev=migrate/0)		<fault>
+  pick_next_task()			  ...
+    idle_balance()			    migrate_swap()
+      active_balance()			      stop_two_cpus()
+						spin_lock(stopper0->lock)
+						spin_lock(stopper1->lock)
+						ttwu(migrate/0)
+						  smp_cond_load_acquire() -- waits for schedule()
+        stop_one_cpu(1)
+	  spin_lock(stopper1->lock) -- waits for stopper lock
+
+Fix this deadlock by taking the wakeups out from under stopper->lock.
+This allows the active_balance() to queue the stop work and finish the
+context switch, which in turn allows the wakeup from migrate_swap() to
+observe the context and complete the wakeup.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reported-by: Matt Fleming <matt@codeblueprint.co.uk>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mike Galbraith <umgwanakikbuti@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20180420095005.GH4064@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/stop_machine.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index b7591261652d..64c0291b579c 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -21,6 +21,7 @@
+ #include <linux/smpboot.h>
+ #include <linux/atomic.h>
+ #include <linux/nmi.h>
++#include <linux/sched/wake_q.h>
+ 
+ /*
+  * Structure to determine completion condition and record errors.  May
+@@ -65,27 +66,31 @@ static void cpu_stop_signal_done(struct cpu_stop_done *done)
+ }
+ 
+ static void __cpu_stop_queue_work(struct cpu_stopper *stopper,
+-					struct cpu_stop_work *work)
++					struct cpu_stop_work *work,
++					struct wake_q_head *wakeq)
+ {
+ 	list_add_tail(&work->list, &stopper->works);
+-	wake_up_process(stopper->thread);
++	wake_q_add(wakeq, stopper->thread);
+ }
+ 
+ /* queue @work to @stopper.  if offline, @work is completed immediately */
+ static bool cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
+ {
+ 	struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
++	DEFINE_WAKE_Q(wakeq);
+ 	unsigned long flags;
+ 	bool enabled;
+ 
+ 	spin_lock_irqsave(&stopper->lock, flags);
+ 	enabled = stopper->enabled;
+ 	if (enabled)
+-		__cpu_stop_queue_work(stopper, work);
++		__cpu_stop_queue_work(stopper, work, &wakeq);
+ 	else if (work->done)
+ 		cpu_stop_signal_done(work->done);
+ 	spin_unlock_irqrestore(&stopper->lock, flags);
+ 
++	wake_up_q(&wakeq);
++
+ 	return enabled;
+ }
+ 
+@@ -229,6 +234,7 @@ static int cpu_stop_queue_two_works(int cpu1, struct cpu_stop_work *work1,
+ {
+ 	struct cpu_stopper *stopper1 = per_cpu_ptr(&cpu_stopper, cpu1);
+ 	struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
++	DEFINE_WAKE_Q(wakeq);
+ 	int err;
+ retry:
+ 	spin_lock_irq(&stopper1->lock);
+@@ -252,8 +258,8 @@ retry:
+ 			goto unlock;
+ 
+ 	err = 0;
+-	__cpu_stop_queue_work(stopper1, work1);
+-	__cpu_stop_queue_work(stopper2, work2);
++	__cpu_stop_queue_work(stopper1, work1, &wakeq);
++	__cpu_stop_queue_work(stopper2, work2, &wakeq);
+ unlock:
+ 	spin_unlock(&stopper2->lock);
+ 	spin_unlock_irq(&stopper1->lock);
+@@ -263,6 +269,9 @@ unlock:
+ 			cpu_relax();
+ 		goto retry;
+ 	}
++
++	wake_up_q(&wakeq);
++
+ 	return err;
+ }
+ /**
