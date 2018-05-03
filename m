@@ -1,91 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751940AbeECMuZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:50:25 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48528 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751075AbeECMuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:50:22 -0400
-Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
- virtualization mode
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
-        peterz@infradead.org, chao.p.peng@linux.intel.com
+        id S1751962AbeECMu5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:50:57 -0400
+Received: from mga18.intel.com ([134.134.136.126]:63445 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751185AbeECMuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:50:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="38382265"
+From: "Kang, Luwei" <luwei.kang@intel.com>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
+Subject: RE: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function to
+ get capability of Intel PT
+Thread-Topic: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function
+ to get capability of Intel PT
+Thread-Index: AQHT4sefaepgQr78WUqju+HNtlv5nqQdTXEAgACIG+D//47xgIAAiXYQ//98F4CAAIcTsA==
+Date: Thu, 3 May 2018 12:50:48 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E167F6E0B4@SHSMSX101.ccr.corp.intel.com>
 References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
- <20180503113223.x2ykby6wglppgdwf@um.fi.intel.com>
- <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
- <20180503120215.dev7ti43zk7yoovn@um.fi.intel.com>
- <221c297b-1270-371b-70a3-4cff4bed7a7e@redhat.com>
- <20180503124847.tcrizs2sxy3j6mu2@um.fi.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <26505f7a-9e6b-efb9-e5f9-8aae3756be49@redhat.com>
-Date: Thu, 3 May 2018 14:50:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180503124847.tcrizs2sxy3j6mu2@um.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
+ <1525349323-9938-6-git-send-email-luwei.kang@intel.com>
+ <20180503105032.h73n5lcrwkdbahgm@um.fi.intel.com>
+ <82D7661F83C1A047AF7DC287873BF1E167F6DDCE@SHSMSX101.ccr.corp.intel.com>
+ <20180503121301.nlbm4cotbv26tc7l@um.fi.intel.com>
+ <82D7661F83C1A047AF7DC287873BF1E167F6DFFA@SHSMSX101.ccr.corp.intel.com>
+ <349c6c61-6b6a-31b8-c8c5-24aed5716929@redhat.com>
+In-Reply-To: <349c6c61-6b6a-31b8-c8c5-24aed5716929@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmQ3ZjQzM2UtMDYyYi00MGVjLWIxOWItNTYzYTdiMGI3ZjdmIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJQVXBCVWxSQ0VCWDFhazRIVWpOVHZnMUlyR3p3b0MrWG9LdFVEYno4SVVjMkFyMld2RzRxeGJhZWZMU2tmMmpVIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w43Cp2L9019188
 
-On 03/05/2018 14:48, Alexander Shishkin wrote:
->> Guest tracing can only be enabled at boot time, because the guest's
->> CPUID changes depending on whether it's enabled.  And likewise if perf
->> record can do system-wide tracing at any time during the guest's
->> execution, we need to know it at boot time in order to set the guest CPUID.
->
-> CPUID is immaterial here; the real trick is to disallow the use of PT at
-> runtime when the host suddenly decides to trace the guest, in such a way
-> that the guest user is informed that their trace is incomplete due to the
-> host activity.
+> >> Can you elaborate on this, what information do we need besides
+> >> MSR_IA32_VMX_MISC[14]?
+> >
+> > Enable Intel PT in guest depend on SECONDARY_EXEC_PT_USE_GPA, EPT,
+> > MSR_IA32_VMX_MISC[14] and the capability of " PT_CAP_topa_output" on
+> > hardware. PT driver will return " -ENODEV" if hardware not support
+> > "PT_CAP_topa_output".
+> 
+> I actually don't understand why PT_CAP_topa_output matters for the purpose of enabling PT in the guest.  However you still need
+> __pt_cap_get() in the CPUID checks.
 
-How do you do that?  And you still need the module parameter to decide
-whether the host is _allowed_ to cause incomplete traces in the guest.
+Hi Paolo,
+I think we should expose Intel Processor Trace to guest that can be detected and initialized. But without "PT_CAP_topa_output" Intel PT can't work in Linux.  So I add this feature as precondition. 
+About why need this check in driver I think Alexander may know the reason.
 
-Paolo
+Thanks,
+Luwei Kang
 
-> Side note: the "system-wide tracing" is a misnomer here, all that matters
-> is that there's a perf event on the host that wants to trace the guest, it
-> can very well be a per-task event.
+> 
+> Paolo
