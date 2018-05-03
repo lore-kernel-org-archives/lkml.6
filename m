@@ -1,143 +1,126 @@
-Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1627020-1525310456-2-13114195204100316487
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1509659-1525306029-2-6312676819182240102
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES enda, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-usb-owner@vger.kernel.org
+X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525310456; b=Vz6LyVhaile40BkDJzgAW/t1TvNYU7H4Fix/+xMa2lpEMcJoA1
-    0c/cfsf5HoXylRvGs2VIzj2QSjLYUvCfN0ycCELTctesmoAv26EeUEzhIOUAdDlO
-    dv+gZ0TEVb4I2Q20QQJE/rzxrqZvekwhBc/jLfmnMZaNuW/vLF9lE5eJi/iZjgXy
-    kPrEtY/nPW3CvTWg0Fb+iaSyQtBNyb3kujI0k9IEtul7DFbaII7oFCwBxLhpC1np
-    cVmVRpH1oddD6ZpNGbqsOWUQ6zhOOZFqgwSGc0mOTmIoKEPn34sKLiYm4/n76h7j
-    OFehyg90DKTv9xRm7KZp4bqxqiEi6UTuW/FA==
+    1525306028; b=I1WXoobW1mwhRbpxIyii49Sfresvu+CK7Go3/DuwlujIpv038l
+    28iofw/nwag3hH7dfqQ9FgRtllVBrHfhUU4wGm2HWpH26uliozQJpPh3Jr0EQZXT
+    pxWtoWnoFcGJxn0j5xBRI1zuCcmyHHHfy4sN5L2fPqXP/LxZPemzgCjXpMt2j+Cy
+    3knpvF2UxoLxvDmxMYkYYc1WXXzgBInv/0haX1k+Q3qI9Crc8qj2ZTGWYr4JDYEn
+    6NA9sW7caa79KyCxnRVytkCeKvQ+B7raonZoz3EqYnIrnspmHXSykOyzRUlOedT7
+    QJjwyzDW4jcBbTf9CvgIZ/5G+3aBimJ4/1Vg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1525310456; bh=wsJXrZo/FF
-    uQDYspMTPEhc2TRvo5/3pmqyijgybohDg=; b=GqJH7u0ROMRrur4eJsbo02dOUy
-    lYmPb3z6GJKqGTLXiZJ7GjK9PJLOMFtIdAeYpmfvhjM78dBXG0wFU3pXgHjj9YPk
-    o0Bu08TyMPtd1mVX2uKiYR7DhpyKHFz+/Eb5fwnAJtegFmDWEa4jLVKUjfwAXmhH
-    VMieDg56fr1X6i26XhcwdAV6m1+QXGfIfrwFWdvOtd+snEV1N5JOFOlPZtyX8CUO
-    xKqrRyi1RzFh746B/w1uY3/LQX1z5L9tSmsA7BeVteevA10Vh7HlLu3ls18om7lK
-    mvmBS1ztE1zY6rY+leQ/CTm5k8DH3pRYisMwo7zbVD2fbGMk5oKp2uqlByGA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525306028; bh=lgrhnNE86gQ6sMYXn+4YR9kgOMo8pK
+    aYL4yoHZIzgC4=; b=ABUoNhDh97a0nTX/sESxKFwMs7lN4G0uAGH4N76oSLgejS
+    pjmohJnDLauH316tNNJwYK9Pd79irRgrGXX9BzXKU/SN9p6z1qBpJn8DHY7xsM++
+    QgyBGYK1/+vMaUVtXtV6jc8Kwqm3jR9vScTlJzPC5LwxcolvZQKXq7ESjQ0R9Z0r
+    GzqUUFyMe5AldoWaO4EOSBaxWPNJ0c2L4VJgKez4dMdDNH1S80Bwylej/nBsJsKL
+    6xRAIBY7ox8NfYoICyJuYBH7NUg9LOlMBedJq7LiQ5MS2HPa3H8qrMOUZXuD6Vc1
+    X+2KWrBgBQ0ACRXOtJAKZ8SJCju3wXne2PXfRNag==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+    header.i=@google.com header.b=djr0hvTe x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=ls/rFwgt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=mediatek.com header.result=pass
-    header_is_org_domain=yes;
+    header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=google.com
+      header.i=@google.com header.b=djr0hvTe x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=reject,has-list-id=yes,d=none) header.from=google.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=ls/rFwgt;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=mediatek.com header.result=pass
-      header_is_org_domain=yes;
+      header.domain=google.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHWXCqlKgLN+i+ToYQjkYxm6MHSDQj6TyQhBxckksV4PU9lI+sqnGZSnGlun0b1rXZ2bN+2b9s0FC7jPgWsdJKa0tlF5rvMOSE+h3y6TijK8Glo0E3Zw
-    ne8ZjyWD5sISH8WkYWLTWioaUuBU0RVPR1YlNu2O6KVKZajdZYsWEU5ack8wkDOEhRUX7iFKGM37T5HbHOXvih0zxxKdAZ8Os/i3mOYUmtlLlY76D4ly3PGz
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=mpaa-ttXAAAA:8 a=VwQbUJbxAAAA:8 a=PNFaEUcPfEwZay8HG_QA:9
-    a=HhdxdLxw8hOt3Hbo:21 a=KgIvFG0-mimGVMqC:21 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfEhO00Gn5wpwqwnLrn13fZH5d42wkzZJiEFzHJV1MwiWl06JcHlutVp71jywbovTbWPYqSe+vnjPBYO1hG3m371JFwvoyYRGkMAfflKOWq3tWp/lWAuY
+    Mzsk3AvgA5XfwZkUKqt/6hCsNTI5Y+llHRtidImOaj2BlINH9gIcPZCfgTg85jcepDMaadKt8M3jozyW37ct9cd9ByL4Ld3KVS8oA/4h1rYeez/WK+m+v7Dv
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=LpQP-O61AAAA:8 a=1XWaLZrsAAAA:8 a=VwQbUJbxAAAA:8 a=BIApdS2Zcw547OSZKX0A:9
+    a=pioyyrs4ZptJ924tMmac:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751936AbeECBUo (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 2 May 2018 21:20:44 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40875 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751745AbeECBUn (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 2 May 2018 21:20:43 -0400
-X-UUID: 8c6d21dbf12049d89ad47965423f6149-20180503
-Message-ID: <1525310436.25162.28.camel@mhfsdcap03>
-Subject: Re: [PATCH 1/2] dt-bindings: add MediaTek XS-PHY binding
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-To: Rob Herring <robh@kernel.org>
-CC: Kishon Vijay Abraham I <kishon@ti.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>
-Date: Thu, 3 May 2018 09:20:36 +0800
-In-Reply-To: <CAL_Jsq+_Bq_Cm7RT0aTstLcRvdpx62U-7CXUA5hJnO-UqW6E4w@mail.gmail.com>
-References: <1524642329-12255-1-git-send-email-chunfeng.yun@mediatek.com>
-         <1524642329-12255-2-git-send-email-chunfeng.yun@mediatek.com>
-         <20180501142459.GA10534@rob-hp-laptop>
-         <1525244660.25162.12.camel@mhfsdcap03>
-         <CAL_Jsq+_Bq_Cm7RT0aTstLcRvdpx62U-7CXUA5hJnO-UqW6E4w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
-Sender: linux-usb-owner@vger.kernel.org
-X-Mailing-List: linux-usb@vger.kernel.org
+        id S1751841AbeECAHH (ORCPT <rfc822;greg@kroah.com>);
+        Wed, 2 May 2018 20:07:07 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37693 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751803AbeECAHG (ORCPT
+        <rfc822;stable@vger.kernel.org>); Wed, 2 May 2018 20:07:06 -0400
+X-Google-Smtp-Source: AB8JxZrMJTfMM7v7WkXVu0I8glEpCdkTvwIU/YfNs2gR6gurcLWn3gnkG5LFYnr5jwEbfDzM2dnO0Q==
+From: Daniel Rosenberg <drosen@google.com>
+To: Sumit Semwal <sumit.semwal@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, dri-devel@lists.freedesktop.org,
+        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>,
+        Divya Ponnusamy <pdivya@codeaurora.org>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH] drivers: dma-buf: Change %p to %pK in debug messages
+Date: Wed,  2 May 2018 17:03:00 -0700
+Message-Id: <20180503000300.90083-1-drosen@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, 2018-05-02 at 07:41 -0500, Rob Herring wrote:
-> On Wed, May 2, 2018 at 2:04 AM, Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
-> > Hi Rob,
-> > On Tue, 2018-05-01 at 09:24 -0500, Rob Herring wrote:
-> >> On Wed, Apr 25, 2018 at 03:45:28PM +0800, Chunfeng Yun wrote:
-> >> > Add a DT binding documentation of XS-PHY for MediaTek SoCs
-> >> > with USB3.1 GEN2 controller
-> 
-> [...]
-> 
-> >> > +   reg = <0 0x11c43000 0 0x0200>;
-> >> > +   mediatek,src-ref-clk-mhz = <26>;
-> >> > +   mediatek,src-coef = <17>;
-> >> > +   #address-cells = <2>;
-> >> > +   #size-cells = <2>;
-> >>
-> >> Really need 64-bit sizes?
-> > Just an example, 32-bit is also ok, but it's better to use the same
-> > value as the root node
-> 
-> Why is it better?
-> 
-> It is unnecessary bloat and it is better to limit the range of child
-> nodes using ranges.
-I agree with you.
-And here the parent and child address space is identical, and no address
-translate is required, so use the same value as the root node, if the
-root node uses 64-bit sizes, we will use 64-bit sizes as well,  if it
-uses 32-bit sizes, we use 32-bit sizes too, in order to keep consistent.
-> 
-> Rob
+The format specifier %p can leak kernel addresses
+while not valuing the kptr_restrict system settings.
+Use %pK instead of %p, which also evaluates whether
+kptr_restrict is set.
 
+Signed-off-by: Divya Ponnusamy <pdivya@codeaurora.org>
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Cc: stable <stable@vger.kernel.org>
+---
+ drivers/dma-buf/sync_debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/dma-buf/sync_debug.c b/drivers/dma-buf/sync_debug.c
+index c4c8ecb24aa9..d8d340542a79 100644
+--- a/drivers/dma-buf/sync_debug.c
++++ b/drivers/dma-buf/sync_debug.c
+@@ -133,7 +133,7 @@ static void sync_print_sync_file(struct seq_file *s,
+ 	char buf[128];
+ 	int i;
+ 
+-	seq_printf(s, "[%p] %s: %s\n", sync_file,
++	seq_printf(s, "[%pK] %s: %s\n", sync_file,
+ 		   sync_file_get_name(sync_file, buf, sizeof(buf)),
+ 		   sync_status_str(dma_fence_get_status(sync_file->fence)));
+ 
+-- 
+2.17.0.441.gb46fe60e1d-goog
