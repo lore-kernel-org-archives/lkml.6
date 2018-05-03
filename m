@@ -1,141 +1,78 @@
-Return-Path: <srinivas.kandagatla@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525176633; cv=none;
+Return-Path: <bgoswami@codeaurora.org>
+X-Google-Smtp-Source: AB8JxZotaH+ORwvDI/OT9z0SDs1q25ePdynJkucQZi26SQnm2N0iRZAT+aQGyZT+anSXzusOWsbT
+ARC-Seal: i=1; a=rsa-sha256; t=1525391772; cv=none;
         d=google.com; s=arc-20160816;
-        b=lZHfDjixbB0r0y2w5xXl7JIQUwk7bshUfj40c9siCFbQIEPUOiOYqaoC4JhO7x7i7z
-         LWQ2ueZihJ7vEDpr9CgIaT5wsuFgm9Bga7N5a9/zt6bfvcP6SpjT/DipHkbRgSKeckrS
-         UYnWEMChO4vx8lEw1dgsqLbC+t63pmdqFoFFOy3oPXP/9q/+53cALi3PkpHj3wZ9EWCJ
-         tNvB/qfL8ASqNrE2Wzye7j4gm0SKEPD7JVjWTW476MolflVCFWJ79/1H61lm9HbvQdJa
-         yIoTadbP9r0aKb6PupQjV0KhUpTAgZbRyFrWb20RVCVCLADQQJ96qo8wt4P1ccc7vfdI
-         iVKg==
+        b=ax+E5XiYmJC8tcqfBwxumOoNHikvghJH5I5RfzeXyRrX/mL/jzO4gdG9CNxQ2qdhYO
+         YMz+zikBUvXGEehv/En0ksWkSGk6lMd5NySfd5GLkGK50ey+UT7889tyZzZvs5/pYm29
+         O2DSBAKcHuYkKQWz3L3S+/JCDjpfGtZOHYQPycfPBlXBBAybf07dT8534c8fvygG/Hd/
+         LsJUYEhcLm5aq6Qkq8PLxABgiPV1/40SO6naJFB1e0Ama8RYWuevkhwGA7EsQSOdvose
+         WMNw2Rb/K33AYm2kFB7R60Lb/5fMjt666IvdWw1Y7JNyWxSxrB8PsFRkG1CZho0ta221
+         lxWQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=R54vii1uQDSlVGkRjKg27a5xPMqIUQwaxaadpb+1MA4=;
-        b=Qa8AXla4KRq4YwjVNF0vuA3cbfFdg01YFa6igFmWn3FNsN+xsAAcCFc+TD3fIs0DY2
-         ZbKvcOyZ2ZLDBfmPjT/BozMOgWadPDNpjnj+4uni7tfG+xvPjZv8yGz7dj6NzReN6X/S
-         RSKRWAIQQ63wibEDsyRUNFVymskWATWgy1UB8XmW+L4txvvAWy2Op0YKfoISOmpqxdJe
-         aW/6NI6nArLC2LzEb4avl0LofS9FanAMMZX74fI6qMzB61ChsZnyf3GTBgyRfaOw8bCB
-         rjjVhfKeznlA62Zd8UgcgzRiVkGPYR15XBqwsk7wYl1NjzBjFTkaxsUsKbwNNdgb5UwX
-         xg5Q==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :dmarc-filter:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=95VngU6AEPg+OEfr0VokOgC53Rzu1NKnMMoaA5BVd6g=;
+        b=KPLcdwTO+CERBtkeQmHSkYAzwySR/zjVc/7AsrGDjiDF2uumRA+uZtTYMEQUS6MB1M
+         Cffl+EXOv7Auuvcz28wnGx2iU2hbu6Xwc0jXJHH1JH54L7UH5NQ/zieoFW8F3LS8zKM/
+         ty5ONYoixhxhI7Er1FoxFBz+oldO+462AXrsE3fHB9PTEEc6EDpLK42g144+xJE4SCQG
+         bzjhOUhWKkHpS+xLAbgZ0kxGI4q3yGdefb6HPIwcrqUs5myRumz89Nn6PQfjTyBOnYRS
+         rQr8ItcBZhKTWsQZSJMPyxeYxyXpUYGmK/6jj7JL1EzNxtnEFn7mO1CvMC37ZBwVYYjo
+         pwbQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=PjkbwFXu;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nb8NH7sA;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nrt9u+Av;
+       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=PjkbwFXu;
-       spf=pass (google.com: domain of srinivas.kandagatla@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=srinivas.kandagatla@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZo+7i9vvEfQsb17SCbdi1oe+YlIt3D6hv4/GZKocMlgBwr7DjGxNMyM3SoWiPVrpIMMw9kUXg==
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To: andy.gross@linaro.org,
-	broonie@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	robh+dt@kernel.org,
-	bgoswami@codeaurora.org
-Cc: gregkh@linuxfoundation.org,
-	david.brown@linaro.org,
-	mark.rutland@arm.com,
-	lgirdwood@gmail.com,
-	plai@codeaurora.org,
-	tiwai@suse.com,
-	perex@perex.cz,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	rohkumar@qti.qualcomm.com,
-	spatakok@qti.qualcomm.com,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v7 06/24] ASoC: qdsp6: dt-bindings: Add q6asm dt bindings
-Date: Tue,  1 May 2018 13:08:02 +0100
-Message-Id: <20180501120820.11016-7-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nb8NH7sA;
+       dkim=pass header.i=@codeaurora.org header.s=default header.b=nrt9u+Av;
+       spf=pass (google.com: domain of bgoswami@codeaurora.org designates 198.145.29.96 as permitted sender) smtp.mailfrom=bgoswami@codeaurora.org
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8407602B7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgoswami@codeaurora.org
+Subject: Re: [PATCH v7 06/24] ASoC: qdsp6: dt-bindings: Add q6asm dt bindings
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ andy.gross@linaro.org, broonie@kernel.org, linux-arm-msm@vger.kernel.org,
+ alsa-devel@alsa-project.org, robh+dt@kernel.org
+Cc: gregkh@linuxfoundation.org, david.brown@linaro.org, mark.rutland@arm.com,
+ lgirdwood@gmail.com, plai@codeaurora.org, tiwai@suse.com, perex@perex.cz,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, rohkumar@qti.qualcomm.com,
+ spatakok@qti.qualcomm.com
 References: <20180501120820.11016-1-srinivas.kandagatla@linaro.org>
+ <20180501120820.11016-7-srinivas.kandagatla@linaro.org>
+From: Banajit Goswami <bgoswami@codeaurora.org>
+Message-ID: <55933898-0472-ab5b-b7bb-56aea7ffc9c8@codeaurora.org>
+Date: Thu, 3 May 2018 16:56:09 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180501120820.11016-7-srinivas.kandagatla@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599263613605397312?=
-X-GMAIL-MSGID: =?utf-8?q?1599263613605397312?=
+X-GMAIL-MSGID: =?utf-8?q?1599489203873807032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch add DT bindings for ASM (Audio Stream Manager) DSP module.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/sound/qcom,q6asm.txt       | 33 ++++++++++++++++++++++
- include/dt-bindings/sound/qcom,q6asm.h             | 22 +++++++++++++++
- 2 files changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6asm.txt
- create mode 100644 include/dt-bindings/sound/qcom,q6asm.h
+On 5/1/2018 5:08 AM, Srinivas Kandagatla wrote:
+> This patch add DT bindings for ASM (Audio Stream Manager) DSP module.
+>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Reviewed-and-tested-by: Rohit kumar <rohitkr@codeaurora.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>   .../devicetree/bindings/sound/qcom,q6asm.txt       | 33 ++++++++++++++++++++++
+>   include/dt-bindings/sound/qcom,q6asm.h             | 22 +++++++++++++++
+>   2 files changed, 55 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/sound/qcom,q6asm.txt
+>   create mode 100644 include/dt-bindings/sound/qcom,q6asm.h
+Reviewed-by: Banajit Goswami <bgoswami@codeaurora.org>
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,q6asm.txt b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
-new file mode 100644
-index 000000000000..2178eb91146f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qcom,q6asm.txt
-@@ -0,0 +1,33 @@
-+Qualcomm Audio Stream Manager (Q6ASM) binding
-+
-+Q6ASM is one of the APR audio service on Q6DSP.
-+Please refer to qcom,apr.txt for details of the common apr service bindings
-+used by the apr service device.
-+
-+- but must contain the following property:
-+
-+- compatible:
-+	Usage: required
-+	Value type: <stringlist>
-+	Definition: must be "qcom,q6asm-v<MAJOR-NUMBER>.<MINOR-NUMBER>".
-+		    Or "qcom,q6asm" where the version number can be queried
-+		    from DSP.
-+		    example "qcom,q6asm-v2.0"
-+
-+= ASM DAIs (Digial Audio Interface)
-+"dais" subnode of the ASM node represents dai specific configuration
-+
-+- #sound-dai-cells
-+	Usage: required
-+	Value type: <u32>
-+	Definition: Must be 1
-+
-+= EXAMPLE
-+
-+q6asm@7 {
-+	compatible = "qcom,q6asm";
-+	reg = <APR_SVC_ASM>;
-+	q6asmdai: dais {
-+		#sound-dai-cells = <1>;
-+	};
-+};
-diff --git a/include/dt-bindings/sound/qcom,q6asm.h b/include/dt-bindings/sound/qcom,q6asm.h
-new file mode 100644
-index 000000000000..1eb77d87c2e8
---- /dev/null
-+++ b/include/dt-bindings/sound/qcom,q6asm.h
-@@ -0,0 +1,22 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __DT_BINDINGS_Q6_ASM_H__
-+#define __DT_BINDINGS_Q6_ASM_H__
-+
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA1	0
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA2	1
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA3	2
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA4	3
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA5	4
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA6	5
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA7	6
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA8	7
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA9	8
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA10	9
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA11	10
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA12	11
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA13	12
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA14	13
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA15	14
-+#define	MSM_FRONTEND_DAI_MULTIMEDIA16	15
-+
-+#endif /* __DT_BINDINGS_Q6_ASM_H__ */
 -- 
-2.16.2
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
