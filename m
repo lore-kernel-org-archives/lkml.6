@@ -1,98 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751411AbeECMF4 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:05:56 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52706 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750999AbeECMFw (ORCPT
+        id S1751562AbeECMG7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:06:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49912 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750999AbeECMG6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:05:52 -0400
-X-Google-Smtp-Source: AB8JxZpzmCl/Z/RINm+dPXuBqriYhwYM+CfT4jSXeyuzieI2l2RVdUUm5y3fZwKTmEXG24XD6j5ICCN5EIBHUTatpU8=
+        Thu, 3 May 2018 08:06:58 -0400
+Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ event
+To: Cornelia Huck <cohuck@redhat.com>
+Cc: pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180425104138.1337aff5.cohuck@redhat.com>
+ <24f638e4-2f7e-00e1-1efb-ff3fe524bca0@linux.vnet.ibm.com>
+ <20180430173028.0dca976c.cohuck@redhat.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 3 May 2018 14:06:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180502061724.25833-1-jlee@suse.com>
-References: <20180502061724.25833-1-jlee@suse.com>
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date: Thu, 3 May 2018 14:05:51 +0200
-Message-ID: <CAKv+Gu_1vNmNy6vYEdSRW6r97DSxj_t=1LmWFE-nsv7oA=1ApQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
- memory map
-To: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>
-Cc: linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Lee, Chun-Yi" <jlee@suse.com>, Takashi Iwai <tiwai@suse.de>,
-        Vivek Goyal <vgoyal@redhat.com>, Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180430173028.0dca976c.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18050312-0020-0000-0000-0000041889E1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050312-0021-0000-0000-000042ADAB85
+Message-Id: <3c5a0677-4ed2-9bde-e6d8-d02ab69e0c2c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030110
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 May 2018 at 08:17, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
-> When using kdump, SOMETIMES the "size not consistent" warning message
-> shows up when the crash kernel boots with early_ioremap_debug parameter:
+On 30/04/2018 17:30, Cornelia Huck wrote:
+> On Wed, 25 Apr 2018 15:52:19 +0200
+> Pierre Morel <pmorel@linux.vnet.ibm.com> wrote:
 >
-> WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
-> early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
->
-> The root cause is that the unmapping size of memory map doesn't
-> match with the original size when mapping:
->
-> in __efi_memmap_init()
->         map.map = early_memremap(phys_map, data->size);
->
-> in efi_memmap_unmap()
->         size = efi.memmap.desc_size * efi.memmap.nr_map;
->         early_memunmap(efi.memmap.map, size);
->
-> But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
-> of size was discarded when calculating the nr_map:
->         map.nr_map = data->size / data->desc_size;
->
-> When the original size of memory map region does not equal to the
-> result of multiplication. The "size not consistent" warning
-> will be triggered.
->
-> This issue sometimes was hit by kdump because kexec set the efi map
-> size to align with 16 when loading crash kernel image:
->
-> in bzImage64_load()
->         efi_map_sz = efi_get_runtime_map_size();
->         efi_map_sz = ALIGN(efi_map_sz, 16);
->
-> Dave Young's a841aa83d patch fixed kexec issue. On UEFI side, this
-> patch changes the logic in the unmapping function. Using the end
-> address of map to calcuate original size.
->
+>> On 25/04/2018 10:41, Cornelia Huck wrote:
+>>> On Thu, 19 Apr 2018 16:48:07 +0200
+>>> Pierre Morel<pmorel@linux.vnet.ibm.com>  wrote:
+>>>> diff --git a/drivers/s390/cio/vfio_ccw_private.h b/drivers/s390/cio/vfio_ccw_private.h
+>>>> index 3284e64..93aab87 100644
+>>>> --- a/drivers/s390/cio/vfio_ccw_private.h
+>>>> +++ b/drivers/s390/cio/vfio_ccw_private.h
+>>>> @@ -76,7 +76,7 @@ enum vfio_ccw_state {
+>>>>     */
+>>>>    enum vfio_ccw_event {
+>>>>    	VFIO_CCW_EVENT_NOT_OPER,
+>>>> -	VFIO_CCW_EVENT_IO_REQ,
+>>>> +	VFIO_CCW_EVENT_SSCH_REQ,
+>>>>    	VFIO_CCW_EVENT_INTERRUPT,
+>>>>    	VFIO_CCW_EVENT_SCH_EVENT,
+>>>>    	/* last element! */
+>>> I don't think we should separate the ssch handling. The major
+>>> difference to halt/clear is that it needs channel program translation.
+>>> Everything else (issuing the instruction and processing the interrupt)
+>>> are basically the same. If we just throw everything at the hardware
+>>> and let the host's channel subsystem figure it out, we already should
+>>> be fine with regard to most of the races.
+>> We must test at a moment or another the kind of request we do,
+>> cancel, halt and clear only need the subchannel id in register 1 and as
+>> you said are much more direct to implement.
+>>
+>> If we do not separate them here, we need a switch in the "do_io_request"
+>> function.
+>> Is it what you mean?
+> Yes. Most of the handling should be the same for any function.
 
-Why do we still need this patch? I.e., in which circumstances will
-efi_memory_map_data::size assume a value that is rounded up or
-otherwise incorrect?
+I really don't know, the 4 functions are quite different.
 
-> Thank Randy Wright for his report and testing. And also thank
-> Takashi Iwai for his help to trace issue.
->
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Takashi Iwai <tiwai@suse.de>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Tested-by: Randy Wright <rwright@hpe.com>
-> Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> ---
->  drivers/firmware/efi/memmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-> index 5fc7052..1f592d8 100644
-> --- a/drivers/firmware/efi/memmap.c
-> +++ b/drivers/firmware/efi/memmap.c
-> @@ -121,7 +121,7 @@ void __init efi_memmap_unmap(void)
->         if (!efi.memmap.late) {
->                 unsigned long size;
->
-> -               size = efi.memmap.desc_size * efi.memmap.nr_map;
-> +               size = efi.memmap.map_end - efi.memmap.map;
->                 early_memunmap(efi.memmap.map, size);
->         } else {
->                 memunmap(efi.memmap.map);
-> --
-> 2.10.2
->
+- SSCH uses an ORB, and has a quite long kernel execution time for VFIO
+- there is a race between SSCH and the others instructions
+- XSCH makes subchannel no longer start pending, also reset the busy 
+indications
+- CSCH cancels both SSCH and HSCH instruction, and perform path management
+- HSCH has different busy (entry) conditions
+
+But since they are not implemented today, I can keep the old name.
+
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
