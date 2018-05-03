@@ -1,29 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeECMaY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:30:24 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54522 "EHLO mx1.redhat.com"
+        id S1752017AbeECMae (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:30:34 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36930 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751713AbeECMaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:30:20 -0400
-Subject: Re: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function to
- get capability of Intel PT
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        "Kang, Luwei" <luwei.kang@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
+        id S1751195AbeECMa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:30:29 -0400
+Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
+ virtualization mode
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
+        peterz@infradead.org, chao.p.peng@linux.intel.com
 References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-6-git-send-email-luwei.kang@intel.com>
- <20180503105032.h73n5lcrwkdbahgm@um.fi.intel.com>
- <82D7661F83C1A047AF7DC287873BF1E167F6DDCE@SHSMSX101.ccr.corp.intel.com>
- <20180503121301.nlbm4cotbv26tc7l@um.fi.intel.com>
+ <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
+ <20180503113223.x2ykby6wglppgdwf@um.fi.intel.com>
+ <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
+ <20180503120215.dev7ti43zk7yoovn@um.fi.intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -61,12 +55,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <7fd90c5d-ed6c-6156-1317-7a6767c99631@redhat.com>
-Date: Thu, 3 May 2018 14:30:15 +0200
+Message-ID: <221c297b-1270-371b-70a3-4cff4bed7a7e@redhat.com>
+Date: Thu, 3 May 2018 14:30:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180503121301.nlbm4cotbv26tc7l@um.fi.intel.com>
+In-Reply-To: <20180503120215.dev7ti43zk7yoovn@um.fi.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -74,19 +68,15 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 14:13, Alexander Shishkin wrote:
->>>> New function __pt_cap_get() will be invoked in KVM to check if a
->>>> specific capability is availiable in KVM guest.
->>>> Another function pt_cap_get() can only check the hardware capabilities
->>>> but this may different with KVM guest because some features may not be
->>>> exposed to guest.
->>> Do we really need both in KVM?
->> Yes, KVM need get host capability to estimate if can expose this feature
->> to guest
-> Can you elaborate on this, what information do we need besides
-> MSR_IA32_VMX_MISC[14]?
+On 03/05/2018 14:02, Alexander Shishkin wrote:
+> I don't see why. System-wide tracing takes place while perf record is
+> running. When it's done, it's done and we can un-disable the guest
+> tracing, without requiring the user to kill all their VMs and reload
+> modules.
 
-It needs all the CPUID data, and it's nice to query it in a more
-manageable form than with bit shifts.
+Guest tracing can only be enabled at boot time, because the guest's
+CPUID changes depending on whether it's enabled.  And likewise if perf
+record can do system-wide tracing at any time during the guest's
+execution, we need to know it at boot time in order to set the guest CPUID.
 
 Paolo
