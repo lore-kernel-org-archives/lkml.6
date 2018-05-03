@@ -1,97 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeECBP6 (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 21:15:58 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:44718 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751895AbeECBPx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 21:15:53 -0400
-X-Google-Smtp-Source: AB8JxZoI2/GgWqliH5RA9PqXP7Gclfy1sa634Pp3hCUxs2mnbqLuTsl9Y9YiZ2NdRo98H81TJnzu9A==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-sctp@vger.kernel.org (open list:SCTP PROTOCOL),
-        netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] sctp: fix a potential missing-check bug
-Date: Wed,  2 May 2018 20:15:45 -0500
-Message-Id: <1525310145-28102-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        id S1751900AbeECBUB (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 21:20:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43444 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751745AbeECBT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 21:19:59 -0400
+Date: Wed, 2 May 2018 21:19:56 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: changbin.du@intel.com, yamada.masahiro@socionext.com,
+        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
+        rdunlap@infradead.org, x86@kernel.org, lgirdwood@gmail.com,
+        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] kernel hacking: new config DEBUG_EXPERIENCE to
+ apply GCC -Og optimization
+Message-ID: <20180502211956.6c9e8d7b@vmware.local.home>
+In-Reply-To: <20180502134558.1f388e097dcde6f589635404@linux-foundation.org>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+        <1525268700-10631-5-git-send-email-changbin.du@intel.com>
+        <20180502101707.206984e9@gandalf.local.home>
+        <20180502134558.1f388e097dcde6f589635404@linux-foundation.org>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In sctp_setsockopt_maxseg(), the integer 'val' is compared against min_len
-and max_len to check whether it is in the appropriate range. If it is not,
-an error code -EINVAL will be returned. This is enforced by a security
-check. But, this check is only executed when 'val' is not 0. In fact, if
-'val' is 0, it will be assigned with a new value (if the return value of
-the function sctp_id2assoc() is not 0) in the following execution. However,
-this new value of 'val' is not checked before it is used to assigned to
-asoc->user_frag. That means it is possible that the new value of 'val'
-could be out of the expected range. This can cause security issues
-such as buffer overflows, e.g., the new value of 'val' is used as an index
-to access a buffer.
+On Wed, 2 May 2018 13:45:58 -0700
+Andrew Morton <akpm@linux-foundation.org> wrote:
 
-This patch inserts a check for the new value of 'val' to see if it is in
-the expected range. If it is not, an error code -EINVAL will be returned.
+> On Wed, 2 May 2018 10:17:07 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+> > > Comparison of vmlinux size: a bit smaller.
+> > > 
+> > >     w/o CONFIG_DEBUG_EXPERIENCE  
+> > 
+> > I hate the config name.
+> > 
+> > I probably can't come up with better ones but let's try:
+> > 
+> >  CONFIG_DEBUG_OPTIMIZE ?
+> >  CONFIG_OPTIMIZE_DEBUG ?
+> > 
+> > But "EXPERIENCE" sounds like I'm on some DEBUG LSD.  
+> 
+> Metoo, but the gcc people decided on "-Og: Optimize debugging
+> experience ..." and I think there are benefits if the kernel is to
+> align the naming with that.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- net/sctp/socket.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+I still see that as "Optimize debugging" and "experience" is just the
+platform of what was done.
 
-diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-index 80835ac..03e1cc3 100644
---- a/net/sctp/socket.c
-+++ b/net/sctp/socket.c
-@@ -3212,6 +3212,7 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
- 	struct sctp_af *af = sp->pf->af;
- 	struct sctp_assoc_value params;
- 	struct sctp_association *asoc;
-+	int min_len, max_len;
- 	int val;
- 
- 	if (optlen == sizeof(int)) {
-@@ -3231,19 +3232,15 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
- 		return -EINVAL;
- 	}
- 
--	if (val) {
--		int min_len, max_len;
-+	min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
-+	min_len -= af->ip_options_len(sk);
-+	min_len -= sizeof(struct sctphdr) +
-+		   sizeof(struct sctp_data_chunk);
- 
--		min_len = SCTP_DEFAULT_MINSEGMENT - af->net_header_len;
--		min_len -= af->ip_options_len(sk);
--		min_len -= sizeof(struct sctphdr) +
--			   sizeof(struct sctp_data_chunk);
-+	max_len = SCTP_MAX_CHUNK_LEN - sizeof(struct sctp_data_chunk);
- 
--		max_len = SCTP_MAX_CHUNK_LEN - sizeof(struct sctp_data_chunk);
--
--		if (val < min_len || val > max_len)
--			return -EINVAL;
--	}
-+	if (val && (val < min_len || val > max_len))
-+		return -EINVAL;
- 
- 	asoc = sctp_id2assoc(sk, params.assoc_id);
- 	if (asoc) {
-@@ -3253,6 +3250,9 @@ static int sctp_setsockopt_maxseg(struct sock *sk, char __user *optval, unsigned
- 			val -= sizeof(struct sctphdr) +
- 			       sctp_datachk_len(&asoc->stream);
- 		}
-+		/* Check the new val to make sure it is in the range. */
-+		if (val < min_len || val > max_len)
-+			return -EINVAL;
- 		asoc->user_frag = val;
- 		asoc->frag_point = sctp_frag_point(asoc, asoc->pathmtu);
- 	} else {
--- 
-2.7.4
+With that gcc comment, I still think CONFIG_OPTIMIZE_DEBUG is more
+inline with what it is and understandable than
+CONFIG_DEBUG_EXPERIENCE. The "OPTIMIZE" is the key word there.
+
+-- Steve
