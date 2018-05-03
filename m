@@ -1,82 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752062AbeECGT2 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 02:19:28 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36681 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750923AbeECGT0 (ORCPT
+        id S1752031AbeECGWH (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:22:07 -0400
+Received: from regular1.263xmail.com ([211.150.99.136]:49417 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeECGWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 02:19:26 -0400
-Date: Thu, 3 May 2018 08:19:25 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: "Theodore Y. Ts'o" <tytso@mit.edu>, Laura Abbott <labbott@redhat.com>,
-        Justin Forbes <jmforbes@linuxtx.org>, Jeremy Cline <jeremy@jcline.org>,
-        Sultan Alsawaf <sultanxda@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
-Subject: Re: Linux messages full of `random: get_random_u32 called from`
-Message-ID: <20180503061924.GA6999@amd>
-References: <20180429220519.GQ5965@thunk.org>
- <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
- <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
- <20180501125518.GI20585@thunk.org>
- <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
- <20180502000250.GI10479@thunk.org>
- <CAFxkdAp83uWnju0KZKd2edveuzmiDW_sqMORC7uoR+pwgQECNw@mail.gmail.com>
- <20180502162653.GB3461@thunk.org>
- <3851ac8b-357d-3c82-2195-936e3c459212@redhat.com>
- <20180502222522.GA15457@thunk.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
-Content-Disposition: inline
-In-Reply-To: <20180502222522.GA15457@thunk.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 3 May 2018 02:22:03 -0400
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 103.29.142.67
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-UNIQUE-TAG: <ef9276b7f8948865e48bf070a58a906a>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From: Jeffy Chen <jeffy.chen@rock-chips.com>
+To: linux-kernel@vger.kernel.org
+Cc: briannorris@google.com, heiko@sntech.de,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        linux-rockchip@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] pinctrl: rockchip: Disable interrupt when changing it's capability
+Date: Thu,  3 May 2018 14:13:57 +0800
+Message-Id: <20180503061357.5697-1-jeffy.chen@rock-chips.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We saw spurious irq when changing irq's trigger type, for example
+setting gpio-keys's wakeup irq trigger type.
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And according to the TRM:
+"Programming the GPIO registers for interrupt capability, edge-sensitive
+or level-sensitive interrupts, and interrupt polarity should be
+completed prior to enabling the interrupts on Port A in order to prevent
+spurious glitches on the interrupt lines to the interrupt controller."
 
-On Wed 2018-05-02 18:25:22, Theodore Y. Ts'o wrote:
-> On Wed, May 02, 2018 at 10:49:34AM -0700, Laura Abbott wrote:
-> >=20
-> > It is a Fedora patch we're carrying
-> > https://src.fedoraproject.org/rpms/libgcrypt/blob/master/f/libgcrypt-1.=
-6.2-fips-ctor.patch#_23
-> > so yes, it is a Fedora specific use case.
-> > From talking to the libgcrypt team, this is a FIPS mode requirement
-> > to run power on self test at the library constructor and the self
-> > test of libgrcypt ends up requiring a fully seeded RNG. Citation
-> > is in section 9.10 of
-> > https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validati=
-on-Program/documents/fips140-2/FIPS1402IG.pdf
->=20
-> Forgive me if this is a stupid question, but does Fedora need FIPS
-> compliance?  Or is this something which is only required for RHEL?
+Reported-by: Brian Norris <computersforpeace@gmail.com>
+Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
+---
 
-If RHEL needs it, Fedora needs it, too -- as Fedora is a beta test for
-RHEL.
+ drivers/pinctrl/pinctrl-rockchip.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrqqewACgkQMOfwapXb+vJ2uQCgpfcVgw1AoDGqcuNDOaXsEUiS
-YZ4AnjWKisjQ9fOeb4oYpt5v8SDBjJWn
-=DLvf
------END PGP SIGNATURE-----
-
---4Ckj6UjgE2iN1+kY--
+diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
+index 3924779f55785..7ff45ec8330d1 100644
+--- a/drivers/pinctrl/pinctrl-rockchip.c
++++ b/drivers/pinctrl/pinctrl-rockchip.c
+@@ -2727,9 +2727,19 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
+ 		return -EINVAL;
+ 	}
+ 
++	/**
++	 * According to the TRM, we should keep irq disabled during programming
++	 * interrupt capability to prevent spurious glitches on the interrupt
++	 * lines to the interrupt controller.
++	 */
++	data = readl(bank->reg_base + GPIO_INTEN);
++	writel_relaxed(data & ~mask, gc->reg_base + GPIO_INTEN);
++
+ 	writel_relaxed(level, gc->reg_base + GPIO_INTTYPE_LEVEL);
+ 	writel_relaxed(polarity, gc->reg_base + GPIO_INT_POLARITY);
+ 
++	writel_relaxed(data, gc->reg_base + GPIO_INTEN);
++
+ 	irq_gc_unlock(gc);
+ 	raw_spin_unlock_irqrestore(&bank->slock, flags);
+ 	clk_disable(bank->clk);
+-- 
+2.11.0
