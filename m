@@ -1,147 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeECRRg (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 13:17:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59988 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750947AbeECRRe (ORCPT
+        id S1751382AbeECRUE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 13:20:04 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:42581 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbeECRUD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 13:17:34 -0400
-Date: Thu, 3 May 2018 10:18:50 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1525349542.9956.2.camel@gmx.de>
- <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
- <1525351221.9956.4.camel@gmx.de>
- <20180503124943.GB12217@hirez.programming.kicks-ass.net>
- <1525354359.5576.1.camel@gmx.de>
- <20180503135617.GC12217@hirez.programming.kicks-ass.net>
- <1525357015.5577.2.camel@gmx.de>
- <20180503144450.GD12217@hirez.programming.kicks-ass.net>
- <20180503161231.GI26088@linux.vnet.ibm.com>
- <20180503164508.GG12217@hirez.programming.kicks-ass.net>
+        Thu, 3 May 2018 13:20:03 -0400
+X-Google-Smtp-Source: AB8JxZqxnmOB24GS3+Y7jpOZR7ol+tNlWeIeid5qvpRFDYMi6ZIaKLBtDyc8LgGwqJSocohgFxPZbg==
+Date: Thu, 3 May 2018 10:19:53 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Hugh Dickins <hughd@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/boot/compressed: Exclude 'top_pgtable' from
+ relocation
+In-Reply-To: <20180503105205.qmosbbbbp5jssehj@black.fi.intel.com>
+Message-ID: <alpine.LSU.2.11.1805031017420.1259@eggly.anvils>
+References: <20180502160816.35986-1-kirill.shutemov@linux.intel.com> <alpine.LSU.2.11.1805022001080.3096@eggly.anvils> <20180503083849.j42uzp6jjpauk475@kshutemo-mobl1> <20180503105205.qmosbbbbp5jssehj@black.fi.intel.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503164508.GG12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18050317-0036-0000-0000-000002EED514
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008963; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01026980; UDB=6.00524556; IPR=6.00806113;
- MB=3.00020910; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-03 17:17:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050317-0037-0000-0000-000044342BE1
-Message-Id: <20180503171850.GL26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805030149
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 06:45:08PM +0200, Peter Zijlstra wrote:
-> On Thu, May 03, 2018 at 09:12:31AM -0700, Paul E. McKenney wrote:
-> > On Thu, May 03, 2018 at 04:44:50PM +0200, Peter Zijlstra wrote:
-> > > On Thu, May 03, 2018 at 04:16:55PM +0200, Mike Galbraith wrote:
-> > > > On Thu, 2018-05-03 at 15:56 +0200, Peter Zijlstra wrote:
-> > > > > On Thu, May 03, 2018 at 03:32:39PM +0200, Mike Galbraith wrote:
-> > > > > 
-> > > > > > Dang.  With $subject fix applied as well..
-> > > > > 
-> > > > > That's a NO then... :-(
-> > > > 
-> > > > Could say who cares about oddball offline wakeup stat. <cringe>
-> > > 
-> > > Yeah, nobody.. but I don't want to have to change the wakeup code to
-> > > deal with this if at all possible. That'd just add conditions that are
-> > > 'always' false, except in this exceedingly rare circumstance.
-> > > 
-> > > So ideally we manage to tell RCU that it needs to pay attention while
-> > > we're doing this here thing, which is what I thought RCU_NONIDLE() was
-> > > about.
-> > 
-> > One straightforward approach would be to provide a arch-specific
-> > Kconfig option that tells notify_cpu_starting() not to bother invoking
-> > rcu_cpu_starting().  Then x86 selects this Kconfig option and invokes
-> > rcu_cpu_starting() itself early enough to avoid splats.
-> > 
-> > See the (untested, probably does not even build) patch below.
-> > 
-> > I have no idea where to insert either the "select" or the call to
-> > rcu_cpu_starting(), so I left those out.  I know that putting the
-> > call too early will cause trouble, but I have no idea what constitutes
-> > "too early".  :-/
+On Thu, 3 May 2018, Kirill A. Shutemov wrote:
+
+> On Thu, May 03, 2018 at 08:38:49AM +0000, Kirill A. Shutemov wrote:
+> > The patch is bogus and I still don't understand what is going on.
 > 
-> Something like so perhaps? Mike, can you play around with that? Could
-> burn your granny and eat your cookies.
+> I think I found the issue. Could you check the patch below:
+
+Sorry, no good on either machine, immediate reboot as before.
+I'm gathering the info you asked, will send privately in an hour or so.
+
+Hugh
+
 > 
-> 
-> diff --git a/arch/x86/kernel/cpu/mtrr/main.c b/arch/x86/kernel/cpu/mtrr/main.c
-> index 7468de429087..07360523c3ce 100644
-> --- a/arch/x86/kernel/cpu/mtrr/main.c
-> +++ b/arch/x86/kernel/cpu/mtrr/main.c
-> @@ -793,6 +793,9 @@ void mtrr_ap_init(void)
-> 
->  	if (!use_intel() || mtrr_aps_delayed_init)
->  		return;
-> +
-> +	rcu_cpu_starting(smp_processor_id());
-> +
+> diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+> index fca012baba19..86169ae1c536 100644
+> --- a/arch/x86/boot/compressed/head_64.S
+> +++ b/arch/x86/boot/compressed/head_64.S
+> @@ -370,10 +370,13 @@ trampoline_return:
 >  	/*
->  	 * Ideally we should hold mtrr_mutex here to avoid mtrr entries
->  	 * changed, but this routine will be called in cpu boot time,
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 2a734692a581..4dab46950fdb 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -3775,6 +3775,8 @@ int rcutree_dead_cpu(unsigned int cpu)
->  	return 0;
->  }
-> 
-> +static DEFINE_PER_CPU(int, rcu_cpu_started);
+>  	 * cleanup_trampoline() would restore trampoline memory.
+>  	 *
+> +	 * RDI is address of the page table to use (if required).
+> +	 *
+>  	 * RSI holds real mode data and needs to be preserved across
+>  	 * this function call.
+>  	 */
+>  	pushq	%rsi
+> +	leaq	top_pgtable(%rbx), %rdi
+>  	call	cleanup_trampoline
+>  	popq	%rsi
+>  
+> @@ -647,5 +650,14 @@ boot_stack_end:
+>   */
+>  	.section ".pgtable","a",@nobits
+>  	.balign 4096
+> +	.global pgtable
+>  pgtable:
+>  	.fill BOOT_PGT_SIZE, 1, 0
 > +
+> +/*
+> + * The page table is going to be used instead of page table in the trampoline
+> + * memory.
+> + */
+> +	.global top_pgtable
+> +top_pgtable:
+> +	.fill PAGE_SIZE, 1, 0
+> diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+> index 32af1cbcd903..a362fa0b849c 100644
+> --- a/arch/x86/boot/compressed/pgtable_64.c
+> +++ b/arch/x86/boot/compressed/pgtable_64.c
+> @@ -22,14 +22,6 @@ struct paging_config {
+>  /* Buffer to preserve trampoline memory */
+>  static char trampoline_save[TRAMPOLINE_32BIT_SIZE];
+>  
+> -/*
+> - * The page table is going to be used instead of page table in the trampoline
+> - * memory.
+> - *
+> - * It must not be in BSS as BSS is cleared after cleanup_trampoline().
+> - */
+> -static char top_pgtable[PAGE_SIZE] __aligned(PAGE_SIZE) __section(.data);
+> -
 >  /*
->   * Mark the specified CPU as being online so that subsequent grace periods
->   * (both expedited and normal) will wait on it.  Note that this means that
-> @@ -3796,6 +3798,11 @@ void rcu_cpu_starting(unsigned int cpu)
->  	struct rcu_node *rnp;
->  	struct rcu_state *rsp;
-> 
-> +	if (per_cpu(rcu_cpu_started, cpu))
-
-I would log a non-splat dmesg the first time this happened, just for my
-future sanity, but otherwise looks fine.  I am a bit concerned about
-calls to rcu_cpu_starting() getting sprinkled all through the code.
-Or am I being excessively paranoid?
-
-							Thanx, Paul
-
-> +		return;
-> +
-> +	per_cpu(rcu_cpu_started, cpu) = 1;
-> +
->  	for_each_rcu_flavor(rsp) {
->  		rdp = per_cpu_ptr(rsp->rda, cpu);
->  		rnp = rdp->mynode;
-> @@ -3852,6 +3859,8 @@ void rcu_report_dead(unsigned int cpu)
->  	preempt_enable();
->  	for_each_rcu_flavor(rsp)
->  		rcu_cleanup_dying_idle_cpu(cpu, rsp);
-> +
-> +	per_cpu(rcu_cpu_started, cpu) = 0;
+>   * Trampoline address will be printed by extract_kernel() for debugging
+>   * purposes.
+> @@ -134,7 +126,7 @@ struct paging_config paging_prepare(void)
+>  	return paging_config;
 >  }
-> 
->  /* Migrate the dead CPU's callbacks to the current CPU. */
+>  
+> -void cleanup_trampoline(void)
+> +void cleanup_trampoline(void *pgtable)
+>  {
+>  	void *trampoline_pgtable;
+>  
+> @@ -145,8 +137,8 @@ void cleanup_trampoline(void)
+>  	 * if it's there.
+>  	 */
+>  	if ((void *)__native_read_cr3() == trampoline_pgtable) {
+> -		memcpy(top_pgtable, trampoline_pgtable, PAGE_SIZE);
+> -		native_write_cr3((unsigned long)top_pgtable);
+> +		memcpy(pgtable, trampoline_pgtable, PAGE_SIZE);
+> +		native_write_cr3((unsigned long)pgtable);
+>  	}
+>  
+>  	/* Restore trampoline memory */
+> -- 
+>  Kirill A. Shutemov
 > 
