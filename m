@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752130AbeECEgp (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 00:36:45 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44768 "EHLO
+        id S1752151AbeECEg7 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 00:36:59 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44758 "EHLO
         mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751940AbeECEgK (ORCPT
+        by vger.kernel.org with ESMTP id S1751881AbeECEgJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 00:36:10 -0400
+        Thu, 3 May 2018 00:36:09 -0400
 Smtp-Origin-Hostprefix: devbig
 From: Alexei Starovoitov <ast@kernel.org>
 Smtp-Origin-Hostname: devbig500.prn1.facebook.com
@@ -16,9 +16,9 @@ CC: <daniel@iogearbox.net>, <torvalds@linux-foundation.org>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <kernel-team@fb.com>
 Smtp-Origin-Cluster: prn1c29
-Subject: [PATCH RFC v2 net-next 3/4] bpfilter: add iptable get/set parsing
-Date: Wed, 2 May 2018 21:36:03 -0700
-Message-ID: <20180503043604.1604587-4-ast@kernel.org>
+Subject: [PATCH v2 net-next 1/4] umh: introduce fork_usermode_blob() helper
+Date: Wed, 2 May 2018 21:36:01 -0700
+Message-ID: <20180503043604.1604587-2-ast@kernel.org>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180503043604.1604587-1-ast@kernel.org>
 References: <20180503043604.1604587-1-ast@kernel.org>
@@ -33,865 +33,398 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "David S. Miller" <davem@davemloft.net>
+Introduce helper:
+int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
+struct umh_info {
+       struct file *pipe_to_umh;
+       struct file *pipe_from_umh;
+       pid_t pid;
+};
 
-parse iptable binary blobs into bpfilter internal data structures
-bpfilter.ko only passing the [gs]etsockopt commands from kernel to umh
-All parsing is done inside umh
+that GPLed kernel modules (signed or unsigned) can use it to execute part
+of its own data as swappable user mode process.
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The kernel will do:
+- mount "tmpfs"
+- allocate a unique file in tmpfs
+- populate that file with [data, data + len] bytes
+- user-mode-helper code will do_execve that file and, before the process
+  starts, the kernel will create two unix pipes for bidirectional
+  communication between kernel module and umh
+- close tmpfs file, effectively deleting it
+- the fork_usermode_blob will return zero on success and populate
+  'struct umh_info' with two unix pipes and the pid of the user process
+
+As the first step in the development of the bpfilter project
+the fork_usermode_blob() helper is introduced to allow user mode code
+to be invoked from a kernel module. The idea is that user mode code plus
+normal kernel module code are built as part of the kernel build
+and installed as traditional kernel module into distro specified location,
+such that from a distribution point of view, there is
+no difference between regular kernel modules and kernel modules + umh code.
+Such modules can be signed, modprobed, rmmod, etc. The use of this new helper
+by a kernel module doesn't make it any special from kernel and user space
+tooling point of view.
+
+Such approach enables kernel to delegate functionality traditionally done
+by the kernel modules into the user space processes (either root or !root) and
+reduces security attack surface of the new code. The buggy umh code would crash
+the user process, but not the kernel. Another advantage is that umh code
+of the kernel module can be debugged and tested out of user space
+(e.g. opening the possibility to run clang sanitizers, fuzzers or
+user space test suites on the umh code).
+In case of the bpfilter project such architecture allows complex control plane
+to be done in the user space while bpf based data plane stays in the kernel.
+
+Since umh can crash, can be oom-ed by the kernel, killed by the admin,
+the kernel module that uses them (like bpfilter) needs to manage life
+time of umh on its own via two unix pipes and the pid of umh.
+
+The exit code of such kernel module should kill the umh it started,
+so that rmmod of the kernel module will cleanup the corresponding umh.
+Just like if the kernel module does kmalloc() it should kfree() it in the exit code.
+
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 ---
- include/uapi/linux/bpfilter.h | 179 ++++++++++++++++++++++++++++++++++++++++++
- net/bpfilter/Makefile         |   2 +-
- net/bpfilter/bpfilter_mod.h   |  96 ++++++++++++++++++++++
- net/bpfilter/ctor.c           |  80 +++++++++++++++++++
- net/bpfilter/init.c           |  33 ++++++++
- net/bpfilter/main.c           |  51 ++++++++++++
- net/bpfilter/sockopt.c        | 153 ++++++++++++++++++++++++++++++++++++
- net/bpfilter/tables.c         |  70 +++++++++++++++++
- net/bpfilter/targets.c        |  51 ++++++++++++
- net/bpfilter/tgts.c           |  25 ++++++
- 10 files changed, 739 insertions(+), 1 deletion(-)
- create mode 100644 net/bpfilter/bpfilter_mod.h
- create mode 100644 net/bpfilter/ctor.c
- create mode 100644 net/bpfilter/init.c
- create mode 100644 net/bpfilter/sockopt.c
- create mode 100644 net/bpfilter/tables.c
- create mode 100644 net/bpfilter/targets.c
- create mode 100644 net/bpfilter/tgts.c
+ fs/exec.c               |  38 ++++++++---
+ include/linux/binfmts.h |   1 +
+ include/linux/umh.h     |  12 ++++
+ kernel/umh.c            | 176 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 215 insertions(+), 12 deletions(-)
 
-diff --git a/include/uapi/linux/bpfilter.h b/include/uapi/linux/bpfilter.h
-index 2ec3cc99ea4c..38d54e9947a1 100644
---- a/include/uapi/linux/bpfilter.h
-+++ b/include/uapi/linux/bpfilter.h
-@@ -18,4 +18,183 @@ enum {
- 	BPFILTER_IPT_GET_MAX,
- };
- 
-+enum {
-+	BPFILTER_XT_TABLE_MAXNAMELEN = 32,
-+};
-+
-+enum {
-+	BPFILTER_NF_DROP = 0,
-+	BPFILTER_NF_ACCEPT = 1,
-+	BPFILTER_NF_STOLEN = 2,
-+	BPFILTER_NF_QUEUE = 3,
-+	BPFILTER_NF_REPEAT = 4,
-+	BPFILTER_NF_STOP = 5,
-+	BPFILTER_NF_MAX_VERDICT = BPFILTER_NF_STOP,
-+};
-+
-+enum {
-+	BPFILTER_INET_HOOK_PRE_ROUTING	= 0,
-+	BPFILTER_INET_HOOK_LOCAL_IN	= 1,
-+	BPFILTER_INET_HOOK_FORWARD	= 2,
-+	BPFILTER_INET_HOOK_LOCAL_OUT	= 3,
-+	BPFILTER_INET_HOOK_POST_ROUTING	= 4,
-+	BPFILTER_INET_HOOK_MAX,
-+};
-+
-+enum {
-+	BPFILTER_PROTO_UNSPEC	= 0,
-+	BPFILTER_PROTO_INET	= 1,
-+	BPFILTER_PROTO_IPV4	= 2,
-+	BPFILTER_PROTO_ARP	= 3,
-+	BPFILTER_PROTO_NETDEV	= 5,
-+	BPFILTER_PROTO_BRIDGE	= 7,
-+	BPFILTER_PROTO_IPV6	= 10,
-+	BPFILTER_PROTO_DECNET	= 12,
-+	BPFILTER_PROTO_NUMPROTO,
-+};
-+
-+#ifndef INT_MAX
-+#define INT_MAX		((int)(~0U>>1))
-+#endif
-+#ifndef INT_MIN
-+#define INT_MIN         (-INT_MAX - 1)
-+#endif
-+
-+enum {
-+	BPFILTER_IP_PRI_FIRST			= INT_MIN,
-+	BPFILTER_IP_PRI_CONNTRACK_DEFRAG	= -400,
-+	BPFILTER_IP_PRI_RAW			= -300,
-+	BPFILTER_IP_PRI_SELINUX_FIRST		= -225,
-+	BPFILTER_IP_PRI_CONNTRACK		= -200,
-+	BPFILTER_IP_PRI_MANGLE			= -150,
-+	BPFILTER_IP_PRI_NAT_DST			= -100,
-+	BPFILTER_IP_PRI_FILTER			= 0,
-+	BPFILTER_IP_PRI_SECURITY		= 50,
-+	BPFILTER_IP_PRI_NAT_SRC			= 100,
-+	BPFILTER_IP_PRI_SELINUX_LAST		= 225,
-+	BPFILTER_IP_PRI_CONNTRACK_HELPER	= 300,
-+	BPFILTER_IP_PRI_CONNTRACK_CONFIRM	= INT_MAX,
-+	BPFILTER_IP_PRI_LAST			= INT_MAX,
-+};
-+
-+#define BPFILTER_FUNCTION_MAXNAMELEN	30
-+#define BPFILTER_EXTENSION_MAXNAMELEN	29
-+#define BPFILTER_TABLE_MAXNAMELEN	32
-+
-+struct bpfilter_match;
-+struct bpfilter_entry_match {
-+	union {
-+		struct {
-+			__u16		match_size;
-+			char		name[BPFILTER_EXTENSION_MAXNAMELEN];
-+			__u8		revision;
-+		} user;
-+		struct {
-+			__u16			match_size;
-+			struct bpfilter_match	*match;
-+		} kernel;
-+		__u16		match_size;
-+	} u;
-+	unsigned char	data[0];
-+};
-+
-+struct bpfilter_target;
-+struct bpfilter_entry_target {
-+	union {
-+		struct {
-+			__u16		target_size;
-+			char		name[BPFILTER_EXTENSION_MAXNAMELEN];
-+			__u8		revision;
-+		} user;
-+		struct {
-+			__u16			target_size;
-+			struct bpfilter_target	*target;
-+		} kernel;
-+		__u16		target_size;
-+	} u;
-+	unsigned char	data[0];
-+};
-+
-+struct bpfilter_standard_target {
-+	struct bpfilter_entry_target	target;
-+	int				verdict;
-+};
-+
-+struct bpfilter_error_target {
-+	struct bpfilter_entry_target	target;
-+	char				error_name[BPFILTER_FUNCTION_MAXNAMELEN];
-+};
-+
-+#define __ALIGN_KERNEL(x, a)            __ALIGN_KERNEL_MASK(x, (typeof(x))(a) - 1)
-+#define __ALIGN_KERNEL_MASK(x, mask)    (((x) + (mask)) & ~(mask))
-+
-+#define BPFILTER_ALIGN(__X)	\
-+	__ALIGN_KERNEL(__X, __alignof__(__u64))
-+
-+#define BPFILTER_TARGET_INIT(__name, __size)			\
-+{								\
-+	.target.u.user = {					\
-+		.target_size	= BPFILTER_ALIGN(__size),	\
-+		.name		= (__name),			\
-+	},							\
-+}
-+#define BPFILTER_STANDARD_TARGET	""
-+#define BPFILTER_ERROR_TARGET		"ERROR"
-+
-+struct bpfilter_xt_counters {
-+	__u64	packet_cnt;
-+	__u64	byte_cnt;
-+};
-+
-+struct bpfilter_ipt_ip {
-+	__u32	src;
-+	__u32	dst;
-+	__u32	src_mask;
-+	__u32	dst_mask;
-+	char	in_iface[IFNAMSIZ];
-+	char	out_iface[IFNAMSIZ];
-+	__u8	in_iface_mask[IFNAMSIZ];
-+	__u8	out_iface_mask[IFNAMSIZ];
-+	__u16	protocol;
-+	__u8	flags;
-+	__u8	inv_flags;
-+};
-+
-+struct bpfilter_ipt_entry {
-+	struct bpfilter_ipt_ip		ip;
-+	__u32				bfcache;
-+	__u16				target_offset;
-+	__u16				next_offset;
-+	__u32				camefrom;
-+	struct bpfilter_xt_counters	cntrs;
-+	__u8				elems[0];
-+};
-+
-+struct bpfilter_ipt_get_info {
-+	char				name[BPFILTER_XT_TABLE_MAXNAMELEN];
-+	__u32				valid_hooks;
-+	__u32				hook_entry[BPFILTER_INET_HOOK_MAX];
-+	__u32				underflow[BPFILTER_INET_HOOK_MAX];
-+	__u32				num_entries;
-+	__u32				size;
-+};
-+
-+struct bpfilter_ipt_get_entries {
-+	char				name[BPFILTER_XT_TABLE_MAXNAMELEN];
-+	__u32				size;
-+	struct bpfilter_ipt_entry	entries[0];
-+};
-+
-+struct bpfilter_ipt_replace {
-+	char				name[BPFILTER_XT_TABLE_MAXNAMELEN];
-+	__u32				valid_hooks;
-+	__u32				num_entries;
-+	__u32				size;
-+	__u32				hook_entry[BPFILTER_INET_HOOK_MAX];
-+	__u32				underflow[BPFILTER_INET_HOOK_MAX];
-+	__u32				num_counters;
-+	struct bpfilter_xt_counters	*cntrs;
-+	struct bpfilter_ipt_entry	entries[0];
-+};
-+
- #endif /* _UAPI_LINUX_BPFILTER_H */
-diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
-index 897eedae523e..bec6181de995 100644
---- a/net/bpfilter/Makefile
-+++ b/net/bpfilter/Makefile
-@@ -4,7 +4,7 @@
- #
- 
- hostprogs-y := bpfilter_umh
--bpfilter_umh-objs := main.o
-+bpfilter_umh-objs := main.o tgts.o targets.o tables.o init.o ctor.o sockopt.o
- HOSTCFLAGS += -I. -Itools/include/
- 
- # a bit of elf magic to convert bpfilter_umh binary into a binary blob
-diff --git a/net/bpfilter/bpfilter_mod.h b/net/bpfilter/bpfilter_mod.h
-new file mode 100644
-index 000000000000..f0de41b20793
---- /dev/null
-+++ b/net/bpfilter/bpfilter_mod.h
-@@ -0,0 +1,96 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_BPFILTER_INTERNAL_H
-+#define _LINUX_BPFILTER_INTERNAL_H
-+
-+#include "include/uapi/linux/bpfilter.h"
-+#include <linux/list.h>
-+
-+struct bpfilter_table {
-+	struct hlist_node	hash;
-+	u32			valid_hooks;
-+	struct			bpfilter_table_info *info;
-+	int			hold;
-+	u8			family;
-+	int			priority;
-+	const char		name[BPFILTER_XT_TABLE_MAXNAMELEN];
-+};
-+
-+struct bpfilter_table_info {
-+	unsigned int		size;
-+	u32			num_entries;
-+	unsigned int		initial_entries;
-+	unsigned int		hook_entry[BPFILTER_INET_HOOK_MAX];
-+	unsigned int		underflow[BPFILTER_INET_HOOK_MAX];
-+	unsigned int		stacksize;
-+	void			***jumpstack;
-+	unsigned char		entries[0] __aligned(8);
-+};
-+
-+struct bpfilter_table *bpfilter_table_get_by_name(const char *name, int name_len);
-+void bpfilter_table_put(struct bpfilter_table *tbl);
-+int bpfilter_table_add(struct bpfilter_table *tbl);
-+
-+struct bpfilter_ipt_standard {
-+	struct bpfilter_ipt_entry	entry;
-+	struct bpfilter_standard_target	target;
-+};
-+
-+struct bpfilter_ipt_error {
-+	struct bpfilter_ipt_entry	entry;
-+	struct bpfilter_error_target	target;
-+};
-+
-+#define BPFILTER_IPT_ENTRY_INIT(__sz) 				\
-+{								\
-+	.target_offset = sizeof(struct bpfilter_ipt_entry),	\
-+	.next_offset = (__sz),					\
-+}
-+
-+#define BPFILTER_IPT_STANDARD_INIT(__verdict) 					\
-+{										\
-+	.entry = BPFILTER_IPT_ENTRY_INIT(sizeof(struct bpfilter_ipt_standard)),	\
-+	.target = BPFILTER_TARGET_INIT(BPFILTER_STANDARD_TARGET,		\
-+				       sizeof(struct bpfilter_standard_target)),\
-+	.target.verdict = -(__verdict) - 1,					\
-+}
-+
-+#define BPFILTER_IPT_ERROR_INIT							\
-+{										\
-+	.entry = BPFILTER_IPT_ENTRY_INIT(sizeof(struct bpfilter_ipt_error)),	\
-+	.target = BPFILTER_TARGET_INIT(BPFILTER_ERROR_TARGET,			\
-+				       sizeof(struct bpfilter_error_target)),	\
-+	.target.error_name = "ERROR",						\
-+}
-+
-+struct bpfilter_target {
-+	struct list_head	all_target_list;
-+	const char		name[BPFILTER_EXTENSION_MAXNAMELEN];
-+	unsigned int		size;
-+	int			hold;
-+	u16			family;
-+	u8			rev;
-+};
-+
-+struct bpfilter_target *bpfilter_target_get_by_name(const char *name);
-+void bpfilter_target_put(struct bpfilter_target *tgt);
-+int bpfilter_target_add(struct bpfilter_target *tgt);
-+
-+struct bpfilter_table_info *bpfilter_ipv4_table_ctor(struct bpfilter_table *tbl);
-+int bpfilter_ipv4_register_targets(void);
-+void bpfilter_tables_init(void);
-+int bpfilter_get_info(void *addr, int len);
-+int bpfilter_get_entries(void *cmd, int len);
-+int bpfilter_ipv4_init(void);
-+
-+int copy_from_user(void *dst, void *addr, int len);
-+int copy_to_user(void *addr, const void *src, int len);
-+#define put_user(x, ptr) \
-+({ \
-+	__typeof__(*(ptr)) __x = (x); \
-+	copy_to_user(ptr, &__x, sizeof(*(ptr))); \
-+})
-+extern int pid;
-+extern int debug_fd;
-+#define ENOTSUPP        524
-+
-+#endif
-diff --git a/net/bpfilter/ctor.c b/net/bpfilter/ctor.c
-new file mode 100644
-index 000000000000..efb7feef3c42
---- /dev/null
-+++ b/net/bpfilter/ctor.c
-@@ -0,0 +1,80 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <sys/socket.h>
-+#include <linux/bitops.h>
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include "bpfilter_mod.h"
-+
-+unsigned int __sw_hweight32(unsigned int w)
-+{
-+	w -= (w >> 1) & 0x55555555;
-+	w =  (w & 0x33333333) + ((w >> 2) & 0x33333333);
-+	w =  (w + (w >> 4)) & 0x0f0f0f0f;
-+	return (w * 0x01010101) >> 24;
-+}
-+
-+struct bpfilter_table_info *bpfilter_ipv4_table_ctor(struct bpfilter_table *tbl)
-+{
-+	unsigned int num_hooks = hweight32(tbl->valid_hooks);
-+	struct bpfilter_ipt_standard *tgts;
-+	struct bpfilter_table_info *info;
-+	struct bpfilter_ipt_error *term;
-+	unsigned int mask, offset, h, i;
-+	unsigned int size, alloc_size;
-+
-+	size  = sizeof(struct bpfilter_ipt_standard) * num_hooks;
-+	size += sizeof(struct bpfilter_ipt_error);
-+
-+	alloc_size = size + sizeof(struct bpfilter_table_info);
-+
-+	info = malloc(alloc_size);
-+	if (!info)
-+		return NULL;
-+
-+	info->num_entries = num_hooks + 1;
-+	info->size = size;
-+
-+	tgts = (struct bpfilter_ipt_standard *) (info + 1);
-+	term = (struct bpfilter_ipt_error *) (tgts + num_hooks);
-+
-+	mask = tbl->valid_hooks;
-+	offset = 0;
-+	h = 0;
-+	i = 0;
-+	dprintf(debug_fd, "mask %x num_hooks %d\n", mask, num_hooks);
-+	while (mask) {
-+		struct bpfilter_ipt_standard *t;
-+
-+		if (!(mask & 1))
-+			goto next;
-+
-+		info->hook_entry[h] = offset;
-+		info->underflow[h] = offset;
-+		t = &tgts[i++];
-+		*t = (struct bpfilter_ipt_standard)
-+			BPFILTER_IPT_STANDARD_INIT(BPFILTER_NF_ACCEPT);
-+		t->target.target.u.kernel.target =
-+			bpfilter_target_get_by_name(t->target.target.u.user.name);
-+		dprintf(debug_fd, "user.name %s\n", t->target.target.u.user.name);
-+		if (!t->target.target.u.kernel.target)
-+			goto out_fail;
-+
-+		offset += sizeof(struct bpfilter_ipt_standard);
-+	next:
-+		mask >>= 1;
-+		h++;
-+	}
-+	*term = (struct bpfilter_ipt_error) BPFILTER_IPT_ERROR_INIT;
-+	term->target.target.u.kernel.target =
-+		bpfilter_target_get_by_name(term->target.target.u.user.name);
-+	dprintf(debug_fd, "user.name %s\n", term->target.target.u.user.name);
-+	if (!term->target.target.u.kernel.target)
-+		goto out_fail;
-+
-+	dprintf(debug_fd, "info %p\n", info);
-+	return info;
-+
-+out_fail:
-+	free(info);
-+	return NULL;
-+}
-diff --git a/net/bpfilter/init.c b/net/bpfilter/init.c
-new file mode 100644
-index 000000000000..699f3f623189
---- /dev/null
-+++ b/net/bpfilter/init.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <sys/socket.h>
-+#include <errno.h>
-+#include "bpfilter_mod.h"
-+
-+static struct bpfilter_table filter_table_ipv4 = {
-+	.name		= "filter",
-+	.valid_hooks	= ((1<<BPFILTER_INET_HOOK_LOCAL_IN) |
-+			   (1<<BPFILTER_INET_HOOK_FORWARD) |
-+			   (1<<BPFILTER_INET_HOOK_LOCAL_OUT)),
-+	.family		= BPFILTER_PROTO_IPV4,
-+	.priority	= BPFILTER_IP_PRI_FILTER,
-+};
-+
-+int bpfilter_ipv4_init(void)
-+{
-+	struct bpfilter_table *t = &filter_table_ipv4;
-+	struct bpfilter_table_info *info;
-+	int err;
-+
-+	err = bpfilter_ipv4_register_targets();
-+	if (err)
-+		return err;
-+
-+	info = bpfilter_ipv4_table_ctor(t);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	t->info = info;
-+
-+	return bpfilter_table_add(&filter_table_ipv4);
-+}
-+
-diff --git a/net/bpfilter/main.c b/net/bpfilter/main.c
-index 81bbc1684896..e0273ca201ad 100644
---- a/net/bpfilter/main.c
-+++ b/net/bpfilter/main.c
-@@ -8,13 +8,52 @@
- #include <unistd.h>
- #include "include/uapi/linux/bpf.h"
- #include <asm/unistd.h>
-+#include "bpfilter_mod.h"
- #include "msgfmt.h"
- 
-+extern long int syscall (long int __sysno, ...);
-+
-+static inline int sys_bpf(enum bpf_cmd cmd, union bpf_attr *attr,
-+			  unsigned int size)
-+{
-+	return syscall(321, cmd, attr, size);
-+}
-+
-+int pid;
- int debug_fd;
- 
-+int copy_from_user(void *dst, void *addr, int len)
-+{
-+	struct iovec local;
-+	struct iovec remote;
-+
-+	local.iov_base = dst;
-+	local.iov_len = len;
-+	remote.iov_base = addr;
-+	remote.iov_len = len;
-+	return process_vm_readv(pid, &local, 1, &remote, 1, 0) != len;
-+}
-+
-+int copy_to_user(void *addr, const void *src, int len)
-+{
-+	struct iovec local;
-+	struct iovec remote;
-+
-+	local.iov_base = (void *) src;
-+	local.iov_len = len;
-+	remote.iov_base = addr;
-+	remote.iov_len = len;
-+	return process_vm_writev(pid, &local, 1, &remote, 1, 0) != len;
-+}
-+
- static int handle_get_cmd(struct mbox_request *cmd)
+diff --git a/fs/exec.c b/fs/exec.c
+index 183059c427b9..30a36c2a39bf 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1706,14 +1706,13 @@ static int exec_binprm(struct linux_binprm *bprm)
+ /*
+  * sys_execve() executes a new program.
+  */
+-static int do_execveat_common(int fd, struct filename *filename,
+-			      struct user_arg_ptr argv,
+-			      struct user_arg_ptr envp,
+-			      int flags)
++static int __do_execve_file(int fd, struct filename *filename,
++			    struct user_arg_ptr argv,
++			    struct user_arg_ptr envp,
++			    int flags, struct file *file)
  {
-+	pid = cmd->pid;
- 	switch (cmd->cmd) {
-+	case BPFILTER_IPT_SO_GET_INFO:
-+		return bpfilter_get_info((void *)(long)cmd->addr, cmd->len);
-+	case BPFILTER_IPT_SO_GET_ENTRIES:
-+		return bpfilter_get_entries((void *)(long)cmd->addr, cmd->len);
- 	case 0:
- 		return 0;
- 	default:
-@@ -25,11 +64,23 @@ static int handle_get_cmd(struct mbox_request *cmd)
+ 	char *pathbuf = NULL;
+ 	struct linux_binprm *bprm;
+-	struct file *file;
+ 	struct files_struct *displaced;
+ 	int retval;
  
- static int handle_set_cmd(struct mbox_request *cmd)
- {
-+	pid = cmd->pid;
-+	switch (cmd->cmd) {
-+	case BPFILTER_IPT_SO_SET_REPLACE:
-+		return bpfilter_set_replace((void *)(long)cmd->addr, cmd->len);
-+	case BPFILTER_IPT_SO_SET_ADD_COUNTERS:
-+		return bpfilter_set_add_counters((void *)(long)cmd->addr, cmd->len);
-+	default:
-+		break;
-+	}
- 	return -ENOPROTOOPT;
+@@ -1752,7 +1751,8 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	check_unsafe_exec(bprm);
+ 	current->in_execve = 1;
+ 
+-	file = do_open_execat(fd, filename, flags);
++	if (!file)
++		file = do_open_execat(fd, filename, flags);
+ 	retval = PTR_ERR(file);
+ 	if (IS_ERR(file))
+ 		goto out_unmark;
+@@ -1760,7 +1760,9 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	sched_exec();
+ 
+ 	bprm->file = file;
+-	if (fd == AT_FDCWD || filename->name[0] == '/') {
++	if (!filename) {
++		bprm->filename = "none";
++	} else if (fd == AT_FDCWD || filename->name[0] == '/') {
+ 		bprm->filename = filename->name;
+ 	} else {
+ 		if (filename->name[0] == '\0')
+@@ -1826,7 +1828,8 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	task_numa_free(current);
+ 	free_bprm(bprm);
+ 	kfree(pathbuf);
+-	putname(filename);
++	if (filename)
++		putname(filename);
+ 	if (displaced)
+ 		put_files_struct(displaced);
+ 	return retval;
+@@ -1849,10 +1852,27 @@ static int do_execveat_common(int fd, struct filename *filename,
+ 	if (displaced)
+ 		reset_files_struct(displaced);
+ out_ret:
+-	putname(filename);
++	if (filename)
++		putname(filename);
+ 	return retval;
  }
  
- static void loop(void)
- {
-+	bpfilter_tables_init();
-+	bpfilter_ipv4_init();
-+
- 	while (1) {
- 		struct mbox_request req;
- 		struct mbox_reply reply;
-diff --git a/net/bpfilter/sockopt.c b/net/bpfilter/sockopt.c
-new file mode 100644
-index 000000000000..43687daf51a3
---- /dev/null
-+++ b/net/bpfilter/sockopt.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <sys/socket.h>
-+#include <errno.h>
-+#include <string.h>
-+#include <stdio.h>
-+#include "bpfilter_mod.h"
-+
-+static int fetch_name(void *addr, int len, char *name, int name_len)
++static int do_execveat_common(int fd, struct filename *filename,
++			      struct user_arg_ptr argv,
++			      struct user_arg_ptr envp,
++			      int flags)
 +{
-+	if (copy_from_user(name, addr, name_len))
-+		return -EFAULT;
++	return __do_execve_file(fd, filename, argv, envp, flags, NULL);
++}
 +
-+	name[BPFILTER_XT_TABLE_MAXNAMELEN-1] = '\0';
++int do_execve_file(struct file *file, void *__argv, void *__envp)
++{
++	struct user_arg_ptr argv = { .ptr.native = __argv };
++	struct user_arg_ptr envp = { .ptr.native = __envp };
++
++	return __do_execve_file(AT_FDCWD, NULL, argv, envp, 0, file);
++}
++
+ int do_execve(struct filename *filename,
+ 	const char __user *const __user *__argv,
+ 	const char __user *const __user *__envp)
+diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+index 4955e0863b83..c05f24fac4f6 100644
+--- a/include/linux/binfmts.h
++++ b/include/linux/binfmts.h
+@@ -150,5 +150,6 @@ extern int do_execveat(int, struct filename *,
+ 		       const char __user * const __user *,
+ 		       const char __user * const __user *,
+ 		       int);
++int do_execve_file(struct file *file, void *__argv, void *__envp);
+ 
+ #endif /* _LINUX_BINFMTS_H */
+diff --git a/include/linux/umh.h b/include/linux/umh.h
+index 244aff638220..5c812acbb80a 100644
+--- a/include/linux/umh.h
++++ b/include/linux/umh.h
+@@ -22,8 +22,10 @@ struct subprocess_info {
+ 	const char *path;
+ 	char **argv;
+ 	char **envp;
++	struct file *file;
+ 	int wait;
+ 	int retval;
++	pid_t pid;
+ 	int (*init)(struct subprocess_info *info, struct cred *new);
+ 	void (*cleanup)(struct subprocess_info *info);
+ 	void *data;
+@@ -38,6 +40,16 @@ call_usermodehelper_setup(const char *path, char **argv, char **envp,
+ 			  int (*init)(struct subprocess_info *info, struct cred *new),
+ 			  void (*cleanup)(struct subprocess_info *), void *data);
+ 
++struct subprocess_info *call_usermodehelper_setup_file(struct file *file,
++			  int (*init)(struct subprocess_info *info, struct cred *new),
++			  void (*cleanup)(struct subprocess_info *), void *data);
++struct umh_info {
++	struct file *pipe_to_umh;
++	struct file *pipe_from_umh;
++	pid_t pid;
++};
++int fork_usermode_blob(void *data, size_t len, struct umh_info *info);
++
+ extern int
+ call_usermodehelper_exec(struct subprocess_info *info, int wait);
+ 
+diff --git a/kernel/umh.c b/kernel/umh.c
+index f76b3ff876cf..c3f418d7d51a 100644
+--- a/kernel/umh.c
++++ b/kernel/umh.c
+@@ -25,6 +25,8 @@
+ #include <linux/ptrace.h>
+ #include <linux/async.h>
+ #include <linux/uaccess.h>
++#include <linux/shmem_fs.h>
++#include <linux/pipe_fs_i.h>
+ 
+ #include <trace/events/module.h>
+ 
+@@ -97,9 +99,13 @@ static int call_usermodehelper_exec_async(void *data)
+ 
+ 	commit_creds(new);
+ 
+-	retval = do_execve(getname_kernel(sub_info->path),
+-			   (const char __user *const __user *)sub_info->argv,
+-			   (const char __user *const __user *)sub_info->envp);
++	if (sub_info->file)
++		retval = do_execve_file(sub_info->file,
++					sub_info->argv, sub_info->envp);
++	else
++		retval = do_execve(getname_kernel(sub_info->path),
++				   (const char __user *const __user *)sub_info->argv,
++				   (const char __user *const __user *)sub_info->envp);
+ out:
+ 	sub_info->retval = retval;
+ 	/*
+@@ -185,6 +191,8 @@ static void call_usermodehelper_exec_work(struct work_struct *work)
+ 		if (pid < 0) {
+ 			sub_info->retval = pid;
+ 			umh_complete(sub_info);
++		} else {
++			sub_info->pid = pid;
+ 		}
+ 	}
+ }
+@@ -393,6 +401,168 @@ struct subprocess_info *call_usermodehelper_setup(const char *path, char **argv,
+ }
+ EXPORT_SYMBOL(call_usermodehelper_setup);
+ 
++struct subprocess_info *call_usermodehelper_setup_file(struct file *file,
++		int (*init)(struct subprocess_info *info, struct cred *new),
++		void (*cleanup)(struct subprocess_info *info), void *data)
++{
++	struct subprocess_info *sub_info;
++
++	sub_info = kzalloc(sizeof(struct subprocess_info), GFP_KERNEL);
++	if (!sub_info)
++		return NULL;
++
++	INIT_WORK(&sub_info->work, call_usermodehelper_exec_work);
++	sub_info->path = "none";
++	sub_info->file = file;
++	sub_info->init = init;
++	sub_info->cleanup = cleanup;
++	sub_info->data = data;
++	return sub_info;
++}
++
++static struct vfsmount *umh_fs;
++
++static int init_tmpfs(void)
++{
++	struct file_system_type *type;
++
++	if (umh_fs)
++		return 0;
++	type = get_fs_type("tmpfs");
++	if (!type)
++		return -ENODEV;
++	umh_fs = kern_mount(type);
++	if (IS_ERR(umh_fs)) {
++		int err = PTR_ERR(umh_fs);
++
++		put_filesystem(type);
++		umh_fs = NULL;
++		return err;
++	}
 +	return 0;
 +}
 +
-+int bpfilter_get_info(void *addr, int len)
++static int alloc_tmpfs_file(size_t size, struct file **filp)
 +{
-+	char name[BPFILTER_XT_TABLE_MAXNAMELEN];
-+	struct bpfilter_ipt_get_info resp;
-+	struct bpfilter_table_info *info;
-+	struct bpfilter_table *tbl;
++	struct file *file;
 +	int err;
 +
-+	if (len != sizeof(struct bpfilter_ipt_get_info))
-+		return -EINVAL;
-+
-+	err = fetch_name(addr, len, name, sizeof(name));
++	err = init_tmpfs();
 +	if (err)
 +		return err;
++	file = shmem_file_setup_with_mnt(umh_fs, "umh", size, VM_NORESERVE);
++	if (IS_ERR(file))
++		return PTR_ERR(file);
++	*filp = file;
++	return 0;
++}
 +
-+	tbl = bpfilter_table_get_by_name(name, strlen(name));
-+	if (!tbl)
-+		return -ENOENT;
++static int populate_file(struct file *file, const void *data, size_t size)
++{
++	size_t offset = 0;
++	int err;
 +
-+	info = tbl->info;
-+	if (!info) {
-+		err = -ENOENT;
-+		goto out_put;
-+	}
++	do {
++		unsigned int len = min_t(typeof(size), size, PAGE_SIZE);
++		struct page *page;
++		void *pgdata, *vaddr;
 +
-+	memset(&resp, 0, sizeof(resp));
-+	memcpy(resp.name, name, sizeof(resp.name));
-+	resp.valid_hooks = tbl->valid_hooks;
-+	memcpy(&resp.hook_entry, info->hook_entry, sizeof(resp.hook_entry));
-+	memcpy(&resp.underflow, info->underflow, sizeof(resp.underflow));
-+	resp.num_entries = info->num_entries;
-+	resp.size = info->size;
++		err = pagecache_write_begin(file, file->f_mapping, offset, len,
++					    0, &page, &pgdata);
++		if (err < 0)
++			goto fail;
 +
-+	err = 0;
-+	if (copy_to_user(addr, &resp, len))
-+		err = -EFAULT;
-+out_put:
-+	bpfilter_table_put(tbl);
++		vaddr = kmap(page);
++		memcpy(vaddr, data, len);
++		kunmap(page);
++
++		err = pagecache_write_end(file, file->f_mapping, offset, len,
++					  len, page, pgdata);
++		if (err < 0)
++			goto fail;
++
++		size -= len;
++		data += len;
++		offset += len;
++	} while (size);
++	return 0;
++fail:
 +	return err;
 +}
 +
-+static int copy_target(struct bpfilter_standard_target *ut,
-+		       struct bpfilter_standard_target *kt)
++static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
 +{
-+	struct bpfilter_target *tgt;
-+	int sz;
-+
-+
-+	if (put_user(kt->target.u.target_size,
-+		     &ut->target.u.target_size))
-+		return -EFAULT;
-+
-+	tgt = kt->target.u.kernel.target;
-+	if (copy_to_user(ut->target.u.user.name, tgt->name, strlen(tgt->name)))
-+		return -EFAULT;
-+
-+	if (put_user(tgt->rev, &ut->target.u.user.revision))
-+		return -EFAULT;
-+
-+	sz = tgt->size;
-+	if (copy_to_user(ut->target.data, kt->target.data, sz))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int do_get_entries(void *up,
-+			  struct bpfilter_table *tbl,
-+			  struct bpfilter_table_info *info)
-+{
-+	unsigned int total_size = info->size;
-+	const struct bpfilter_ipt_entry *ent;
-+	unsigned int off;
-+	void *base;
-+
-+	base = info->entries;
-+
-+	for (off = 0; off < total_size; off += ent->next_offset) {
-+		struct bpfilter_xt_counters *cntrs;
-+		struct bpfilter_standard_target *tgt;
-+
-+		ent = base + off;
-+		if (copy_to_user(up + off, ent, sizeof(*ent)))
-+			return -EFAULT;
-+
-+		/* XXX Just clear counters for now. XXX */
-+		cntrs = up + off + offsetof(struct bpfilter_ipt_entry, cntrs);
-+		if (put_user(0, &cntrs->packet_cnt) ||
-+		    put_user(0, &cntrs->byte_cnt))
-+			return -EINVAL;
-+
-+		tgt = (void *) ent + ent->target_offset;
-+		dprintf(debug_fd, "target.verdict %d\n", tgt->verdict);
-+		if (copy_target(up + off + ent->target_offset, tgt))
-+			return -EFAULT;
-+	}
-+	return 0;
-+}
-+
-+int bpfilter_get_entries(void *cmd, int len)
-+{
-+	struct bpfilter_ipt_get_entries *uptr = cmd;
-+	struct bpfilter_ipt_get_entries req;
-+	struct bpfilter_table_info *info;
-+	struct bpfilter_table *tbl;
++	struct umh_info *umh_info = info->data;
++	struct file *from_umh[2];
++	struct file *to_umh[2];
 +	int err;
 +
-+	if (len < sizeof(struct bpfilter_ipt_get_entries))
-+		return -EINVAL;
-+
-+	if (copy_from_user(&req, cmd, sizeof(req)))
-+		return -EFAULT;
-+
-+	tbl = bpfilter_table_get_by_name(req.name, strlen(req.name));
-+	if (!tbl)
-+		return -ENOENT;
-+
-+	info = tbl->info;
-+	if (!info) {
-+		err = -ENOENT;
-+		goto out_put;
-+	}
-+
-+	if (info->size != req.size) {
-+		err = -EINVAL;
-+		goto out_put;
-+	}
-+
-+	err = do_get_entries(uptr->entries, tbl, info);
-+	dprintf(debug_fd, "do_get_entries %d req.size %d\n", err, req.size);
-+
-+out_put:
-+	bpfilter_table_put(tbl);
-+
-+	return err;
-+}
-+
-diff --git a/net/bpfilter/tables.c b/net/bpfilter/tables.c
-new file mode 100644
-index 000000000000..9a96599be634
---- /dev/null
-+++ b/net/bpfilter/tables.c
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <sys/socket.h>
-+#include <errno.h>
-+#include <string.h>
-+#include <linux/hashtable.h>
-+#include "bpfilter_mod.h"
-+
-+static unsigned int full_name_hash(const void *salt, const char *name, unsigned int len)
-+{
-+	unsigned int hash = 0;
-+	int i;
-+
-+	for (i = 0; i < len; i++)
-+		hash ^= *(name + i);
-+	return hash;
-+}
-+
-+DEFINE_HASHTABLE(bpfilter_tables, 4);
-+//DEFINE_MUTEX(bpfilter_table_mutex);
-+
-+struct bpfilter_table *bpfilter_table_get_by_name(const char *name, int name_len)
-+{
-+	unsigned int hval = full_name_hash(NULL, name, name_len);
-+	struct bpfilter_table *tbl;
-+
-+//	mutex_lock(&bpfilter_table_mutex);
-+	hash_for_each_possible(bpfilter_tables, tbl, hash, hval) {
-+		if (!strcmp(name, tbl->name)) {
-+			tbl->hold++;
-+			goto out;
-+		}
-+	}
-+	tbl = NULL;
-+out:
-+//	mutex_unlock(&bpfilter_table_mutex);
-+	return tbl;
-+}
-+
-+void bpfilter_table_put(struct bpfilter_table *tbl)
-+{
-+//	mutex_lock(&bpfilter_table_mutex);
-+	tbl->hold--;
-+//	mutex_unlock(&bpfilter_table_mutex);
-+}
-+
-+int bpfilter_table_add(struct bpfilter_table *tbl)
-+{
-+	unsigned int hval = full_name_hash(NULL, tbl->name, strlen(tbl->name));
-+	struct bpfilter_table *srch;
-+
-+//	mutex_lock(&bpfilter_table_mutex);
-+	hash_for_each_possible(bpfilter_tables, srch, hash, hval) {
-+		if (!strcmp(srch->name, tbl->name))
-+			goto exists;
-+	}
-+	hash_add(bpfilter_tables, &tbl->hash, hval);
-+//	mutex_unlock(&bpfilter_table_mutex);
-+
-+	return 0;
-+
-+exists:
-+//	mutex_unlock(&bpfilter_table_mutex);
-+	return -EEXIST;
-+}
-+
-+void bpfilter_tables_init(void)
-+{
-+	hash_init(bpfilter_tables);
-+}
-+
-diff --git a/net/bpfilter/targets.c b/net/bpfilter/targets.c
-new file mode 100644
-index 000000000000..4086ac82eaf5
---- /dev/null
-+++ b/net/bpfilter/targets.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <sys/socket.h>
-+#include <errno.h>
-+#include <string.h>
-+#include "bpfilter_mod.h"
-+
-+//DEFINE_MUTEX(bpfilter_target_mutex);
-+static LIST_HEAD(bpfilter_targets);
-+
-+struct bpfilter_target *bpfilter_target_get_by_name(const char *name)
-+{
-+	struct bpfilter_target *tgt;
-+
-+//	mutex_lock(&bpfilter_target_mutex);
-+	list_for_each_entry(tgt, &bpfilter_targets, all_target_list) {
-+		if (!strcmp(tgt->name, name)) {
-+			tgt->hold++;
-+			goto out;
-+		}
-+	}
-+	tgt = NULL;
-+out:
-+//	mutex_unlock(&bpfilter_target_mutex);
-+	return tgt;
-+}
-+
-+void bpfilter_target_put(struct bpfilter_target *tgt)
-+{
-+//	mutex_lock(&bpfilter_target_mutex);
-+	tgt->hold--;
-+//	mutex_unlock(&bpfilter_target_mutex);
-+}
-+
-+int bpfilter_target_add(struct bpfilter_target *tgt)
-+{
-+	struct bpfilter_target *srch;
-+
-+//	mutex_lock(&bpfilter_target_mutex);
-+	list_for_each_entry(srch, &bpfilter_targets, all_target_list) {
-+		if (!strcmp(srch->name, tgt->name))
-+			goto exists;
-+	}
-+	list_add_tail(&tgt->all_target_list, &bpfilter_targets);
-+//	mutex_unlock(&bpfilter_target_mutex);
-+	return 0;
-+
-+exists:
-+//	mutex_unlock(&bpfilter_target_mutex);
-+	return -EEXIST;
-+}
-+
-diff --git a/net/bpfilter/tgts.c b/net/bpfilter/tgts.c
-new file mode 100644
-index 000000000000..eac5e8ac0b4b
---- /dev/null
-+++ b/net/bpfilter/tgts.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <sys/socket.h>
-+#include "bpfilter_mod.h"
-+
-+struct bpfilter_target std_tgt = {
-+	.name = BPFILTER_STANDARD_TARGET,
-+	.family = BPFILTER_PROTO_IPV4,
-+	.size = sizeof(int),
-+};
-+
-+struct bpfilter_target err_tgt = {
-+	.name = BPFILTER_ERROR_TARGET,
-+	.family = BPFILTER_PROTO_IPV4,
-+	.size = BPFILTER_FUNCTION_MAXNAMELEN,
-+};
-+
-+int bpfilter_ipv4_register_targets(void)
-+{
-+	int err = bpfilter_target_add(&std_tgt);
-+
++	/* create pipe to send data to umh */
++	err = create_pipe_files(to_umh, 0);
 +	if (err)
 +		return err;
-+	return bpfilter_target_add(&err_tgt);
++	err = replace_fd(0, to_umh[0], 0);
++	fput(to_umh[0]);
++	if (err < 0) {
++		fput(to_umh[1]);
++		return err;
++	}
++
++	/* create pipe to receive data from umh */
++	err = create_pipe_files(from_umh, 0);
++	if (err) {
++		fput(to_umh[1]);
++		replace_fd(0, NULL, 0);
++		return err;
++	}
++	err = replace_fd(1, from_umh[1], 0);
++	fput(from_umh[1]);
++	if (err < 0) {
++		fput(to_umh[1]);
++		replace_fd(0, NULL, 0);
++		fput(from_umh[0]);
++		return err;
++	}
++
++	umh_info->pipe_to_umh = to_umh[1];
++	umh_info->pipe_from_umh = from_umh[0];
++	return 0;
 +}
 +
++static void umh_save_pid(struct subprocess_info *info)
++{
++	struct umh_info *umh_info = info->data;
++
++	umh_info->pid = info->pid;
++}
++
++int fork_usermode_blob(void *data, size_t len, struct umh_info *info)
++{
++	struct subprocess_info *sub_info;
++	struct file *file = NULL;
++	int err;
++
++	err = alloc_tmpfs_file(len, &file);
++	if (err)
++		return err;
++
++	err = populate_file(file, data, len);
++	if (err)
++		goto out;
++
++	err = -ENOMEM;
++	sub_info = call_usermodehelper_setup_file(file, umh_pipe_setup,
++						  umh_save_pid, info);
++	if (!sub_info)
++		goto out;
++
++	err = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
++out:
++	fput(file);
++	return err;
++}
++EXPORT_SYMBOL_GPL(fork_usermode_blob);
++
+ /**
+  * call_usermodehelper_exec - start a usermode application
+  * @sub_info: information about the subprocessa
 -- 
 2.9.5
