@@ -1,37 +1,39 @@
-Return-Path: <w@1wt.eu>
-X-Google-Smtp-Source: AB8JxZrttqdNwrOM9tDpZs16CQq9HETDxeMffSmH8vV8bTUmbaxUSArd17OaNEe21QGIzdfHswVl
-ARC-Seal: i=1; a=rsa-sha256; t=1525374234; cv=none;
+Return-Path: <linux@roeck-us.net>
+X-Google-Smtp-Source: AB8JxZr5toJtdzXcV+hli5Z3iwSPKVpOsrpS/ZV+9anT67GWMyZQ7LId3KDjNWsWp8wxHvyw8z+V
+ARC-Seal: i=1; a=rsa-sha256; t=1525373170; cv=none;
         d=google.com; s=arc-20160816;
-        b=QaZhO0wJXs5gcJ1s/hkIIwgseLTZ5c2Pycey7vLz7P7S/XxPAXQHHD+ZUBRk/UI601
-         S/SA1M7+uR5TaEDQozxn06FLa9BsPXQaZDnU4+67ymmAxAsEO4AC2y1XlpIxdHTBBUPl
-         4qFBRD7vfP4GQ3FSBEa1H/MRf8BDWhNv0AHN1WA98OkEejIpvU/AkgO4gMsFoZUsBnbu
-         tyfg8DWRPtQsB8hpupmSPFhgzglKjp4Gj3SWKGWPLMgACTi4bNzpXqWrSliInIr/XNfx
-         1oTxeiubxrXkOa8QHcTOEfV9xyAT8NxU8bVPAhEK7Nll9LVQOSisLWUfG2pBQvKe5u28
-         RNuA==
+        b=rCeucMr6pWXnY6nEVK1h8RZ7NWKioVIR+r8HqsK/VAOY/cUq1nfS+L+zCl7MqixVl0
+         O39GBOvX2dd5Dcf7qwfXaw4sxMS0q7d8OcQQlQx9NbBfmbEBQYgEyF9UJjjHiYo4OKpo
+         nDM4H6/LjERJgyFZHoxchvsExfxU3az7K5mWTb7qTZQWdjNUCmeJasRYOTRcy1UFX+VF
+         /EdScrpDzyyveBKsMNaXm/mzG07khOsYOvmIF+GgX1T+DQObbOOsiSIhqBllQKAt5rXM
+         JJW3aRvmgLfLRsv1BGVe6/WwLHqm5J+1FHHPvnWEhUBW+ZjG6AFXHZNxx6PAbNKDolhX
+         wJKQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=XqKKPHeMDck1GZTkGJSeLbS2hnGJWdncqgqhIKAjEgQ=;
-        b=g1NXHT9jE++x2N4HNUBz/QYnHBuXGRIu50TnF8NSAY7L+c3q2ECbEVI2ACGabdb2JA
-         EzWSMhpjSTgpzpGjMmSHW4XM4xz7z1gV5elVKKFwLaJwQYYEfvUDJhoL9BkXD21fowp4
-         K0f9XXkiHlELuUS2PyhlpQbeKYDH7+aciMw/gllXFVp72K8oRKwkbVS6RkW+zm+olM1q
-         PD8ccESlKZxQTE8RZoJzNPdTO7urYMSwqEODeA0xSlm+hKwPsDp1I3/GXuDSmW0hdLr8
-         M0Qds7krjajRzWDl9xJZzqaWAqhou7PmCRXPXz5bSCpVRS5kLvjmkD+7USyezcH1Yhr1
-         8bQA==
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=S3bYbTC/wSkTgKAnR/9UP7kYhXFCwOQVAZT7zJqjOsg=;
+        b=kZNmUvWTZb4FYBMIaMYSW9hyaD0JYn+qR5lmiTBam6MCmNMWoHPDlPD8/dirTk57z2
+         LBU+ua2PWEorWA9AmrjVN1ZZPup33w4DUkUtJGf6Sb6FfdmyV5RxHVPe4E8xCoVeofPY
+         Sf+BOjVQ2RC1FMsBOCmonzJAR+s4F8GvAkb82cA4ng0ZGb1ToRpEuWNj5qIUlBQwtqFe
+         zo0D9F7lLADGD8Hm+fnxR+J1S/ArlzCZnnfR4pDDTKz5hao+CI72OSCcLTQZOZpCzmqx
+         3/2lYc5Oj/ampjO+yTEQSwB+DqwoiQa82UTmugE2EX0tj0ezla01fNXtGmH9g6Jk8ySU
+         sTvw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of w@1wt.eu designates 62.212.114.60 as permitted sender) smtp.mailfrom=w@1wt.eu
+       dkim=pass header.i=@roeck-us.net header.s=default header.b=OwfePpg5;
+       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of w@1wt.eu designates 62.212.114.60 as permitted sender) smtp.mailfrom=w@1wt.eu
-Date: Thu, 3 May 2018 21:03:52 +0200
-From: Willy Tarreau <w@1wt.eu>
+       dkim=pass header.i=@roeck-us.net header.s=default header.b=OwfePpg5;
+       spf=pass (google.com: domain of linux@roeck-us.net designates 208.91.199.152 as permitted sender) smtp.mailfrom=linux@roeck-us.net
+Date: Thu, 3 May 2018 11:46:07 -0700
+From: Guenter Roeck <linux@roeck-us.net>
 To: Sasha Levin <Alexander.Levin@microsoft.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ksummit-discuss@lists.linuxfoundation.org" <ksummit-discuss@lists.linuxfoundation.org>
+Cc: Willy Tarreau <w@1wt.eu>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"ksummit-discuss@lists.linuxfoundation.org" <ksummit-discuss@lists.linuxfoundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>
 Subject: Re: [Ksummit-discuss] bug-introducing patches
-Message-ID: <20180503190352.GB23467@1wt.eu>
+Message-ID: <20180503184607.GA21155@roeck-us.net>
 References: <20180503000620.GA29205@thunk.org>
  <20180503144612.GJ18390@sasha-vm>
  <20180503145205.GD23311@1wt.eu>
@@ -46,52 +48,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180503181234.GT18390@sasha-vm>
-User-Agent: Mutt/1.6.1 (2016-04-27)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - linuxfoundation.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599280464106480109?=
-X-GMAIL-MSGID: =?utf-8?q?1599470813279158987?=
+X-GMAIL-MSGID: =?utf-8?q?1599469697445666959?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 06:12:36PM +0000, Sasha Levin wrote:
-> I'm also not trying to argue whether 7% is high or low, only that it's 3
-> times as many bugs per line of code than what we get from the merge
-> window.
-
-Yes but seen differently that's 14 times less bugs than the ones properly
-fixed by applying the process which produces these 7%. We can discuss
-about ways to improve it, but please consider that it must not reduce
-the number of correct fixes represented by the 93% remaining ones.
-
-> Isn't the merge window supposed to be the "risky" part?
-
-"risky" might not be the correct term. Each single line of code comes
-with a risk. I'd say the "most risky" part. As I said, what I agree with
-the fact that early fixes just before a release have more chances of
-affecting users, which in my opinion is the real problem. Education can
-help here.
-
+On Thu, May 03, 2018 at 06:12:36PM +0000, Sasha Levin via Ksummit-discuss wrote:
+> 
 > For example, how about extending the release cycle until the amount of
 > fixes for regressions introduced in the current merge window drops under
 > a certain thershold? (so go to -rc20 if we need to).
+> 
+Reminds me of what happened at a previous employer. We had a hard rule that
+a product shall not be released unless it has no more than 2 severe or
+critical bugs. Solution: Stop testing 2-3 weeks ahead of the scheduled
+release day.
 
-Never works. And Linus already explained it : you cannot stop the development
-process. While you're waiting, development continues, and the next merge
-window gets twice the number of commits, which causes more than twice the
-amount of problems. I've also experienced it in haproxy many years ago. I
-made the mistake of saying "I'm finishing this, only 6 months, and I release
-1.5". Result: bugs coming in parallel to development stalling progress
-forever and it took 4.5 years to release it, or 9 times the expected amount
-of time. Now we release approximately on time, missing features go in the
-next release, easily testable fixes are merged, complex ones are postponed
-for the stable releases with a note in the announce saying "don't play with
-this yet, it's broken". We do ship with bugs, we're open about it and we
-address them later. Overall this transparency is much appreciated. And we
-also do regressions by the way.
+Here: We don't want to see -rc20. Solution: Stop applying bug fixes
+at -rcX.
 
-Maybe in the end the only thing we're missing is a "known bugs" section in
-release announcements, so that those with pending fixes are encouraged to
-send a line or two to Linus for inclusion there, having more time to work
-on their fixes.
-
-Willy
+Guenter
