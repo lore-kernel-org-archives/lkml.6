@@ -1,40 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751532AbeECPrj convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 11:47:39 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:64973 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750954AbeECPrh (ORCPT
+        id S1751261AbeECPsT (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 11:48:19 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:44799 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751269AbeECPsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 11:47:37 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To: Colin King <colin.king@canonical.com>,
-        "Jani Nikula" <jani.nikula@linux.intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        "David Airlie" <airlied@linux.ie>, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-From: Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20180503154510.708-1-colin.king@canonical.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180503154510.708-1-colin.king@canonical.com>
-Message-ID: <152536244856.16610.9318958798116521651@mail.alporthouse.com>
-User-Agent: alot/0.3.6
-Subject: Re: [PATCH] drm/i915/selftests: fix spelling mistake: "parmaters" ->
- "parameters"
-Date: Thu, 03 May 2018 16:47:28 +0100
+        Thu, 3 May 2018 11:48:13 -0400
+From: Liming Sun <lsun@mellanox.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc: Liming Sun <lsun@mellanox.com>, linux-mmc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 2/3] dt-bindings: mmc: Add binding for BlueField SoC
+Date: Thu,  3 May 2018 11:45:15 -0400
+Message-Id: <1525362316-40240-2-git-send-email-lsun@mellanox.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1525362316-40240-1-git-send-email-lsun@mellanox.com>
+References: <1525362316-40240-1-git-send-email-lsun@mellanox.com>
+In-Reply-To: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
+References: <026fa942828c54fda5bad225981e56abc808b949.1524497286.git.lsun@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Colin King (2018-05-03 16:45:10)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in pr_err error message
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+This commit adds "mellanox,bluefield-dw-mshc" for dwmmc driver
+extension on Mellanox BlueField SoC platform.
+
+Signed-off-by: Liming Sun <lsun@mellanox.com>
+Reviewed-by: David Woods <dwoods@mellanox.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/mmc/bluefield-dw-mshc.txt  | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+
+diff --git a/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+new file mode 100644
+index 0000000..b0f0999
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mmc/bluefield-dw-mshc.txt
+@@ -0,0 +1,29 @@
++* Mellanox Bluefield SoC specific extensions to the Synopsys Designware
++  Mobile Storage Host Controller
++
++Read synopsys-dw-mshc.txt for more details
++
++The Synopsys designware mobile storage host controller is used to interface
++a SoC with storage medium such as eMMC or SD/MMC cards. This file documents
++differences between the core Synopsys dw mshc controller properties described
++by synopsys-dw-mshc.txt and the properties used by the Mellanox Bluefield SoC
++specific extensions to the Synopsys Designware Mobile Storage Host Controller.
++
++Required Properties:
++
++* compatible: should be one of the following.
++  - "mellanox,bluefield-dw-mshc": for controllers with Mellanox Bluefield SoC
++    specific extensions.
++
++Example:
++
++	/* Mellanox Bluefield SoC MMC */
++	mmc@6008000 {
++		compatible = "mellanox,bluefield-dw-mshc";
++		reg = <0x6008000 0x400>;
++		interrupts = <32>;
++		fifo-depth = <0x100>;
++		clock-frequency = <24000000>;
++		bus-width = <8>;
++		cap-mmc-highspeed;
++	};
+-- 
+1.8.3.1
