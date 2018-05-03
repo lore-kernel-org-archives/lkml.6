@@ -1,37 +1,40 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2931836-1525370637-2-9965842551074438142
+X-Cyrus-Session-Id: sloti22d1t05-3209358-1525387076-2-20738424123728397
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='US-ASCII'
+X-Spam-charsets: plain='windows-1252'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525370636; b=RFHEqqmignEamtEYLRCAiZIhswTq1Dbm6TIfYwg4XiEIpBZz/S
-    zIs9/xgfPLs94DPLSoDCaoSPITEF5+K+7i2tlVgU7XIqBDioadmvU6c/yunFCfgO
-    txdOa7nK9pCZ6ZHduTtYYUWPbRaOoenzdV0nGSbYS4Rlna+s//fr/4gyHN1VCPZv
-    ugjeshumJJ59egECwTG85BU8XZmNFej+9T+7Y6l55nMcoq+m8d06CV+8N+5VYJ0z
-    z2pQjv8XkfmPq19/v8RtH3pTEAqNvZetFB1gTJjobFE9ep952W+IchH7PFfRf+vO
-    laD5zUUA6qEA+Upbi1n6BakRUgZYdbkXP3fg==
+    1525387075; b=b0fJzupBo5w9G+3p8PUx4+4ktJMKXarITO2TAtycRfDVpSznOm
+    TvDCZl2YorQlYrJIwwaBhlkgj7eStskQxkkFSZFpHPnXhmGb+Ab83OeiZCBSQa5S
+    b9eUlrume5X7CgCq0i+//H3Jei2EqYwasoiU0WMtl/anr+xGaRhIsNxGaqEQOgGT
+    srzKEBJh19+FZVKUdvN/+/C/AMlyJfRk9Q94oH1q4GwmepuiPV++Ps6LpUG4hAS1
+    Lpzkh5QR70CqFd+YgPW/xgQFzDEMZwXTM7aYjiim0XZAVegijwjLV2UeCaZDDzZY
+    WP4qdEJBgMMzC6Ym2NQSu9DiFC1ACjJdBtcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:in-reply-to
-    :message-id:references:mime-version:content-type:sender:list-id;
-    s=fm2; t=1525370636; bh=gpzhFJC4j+JFGEOZTMuA4BO37Cf5hivHr6zJ8LE
-    e4cU=; b=l41+I3W97EvAkadfuIodpae3FHhkHBHpHj1cOTAD97aDCdPdBEEHPAt
-    8+2HY8Sxg6HOIiiL+TNN+GLNsX4R9qgLwRHNkji6vtO7KYiv6B8JOujdZr6nivgn
-    F915ukTlelXnzkeEPWTkD6xSLq+EuxnNX5oGk3W15t1dyb/d6+BNNRvZFeqyzFcw
-    Tsp1j26DmrHmmTJD6vHc5NF/Q4eYIfgf2U2tCgko2d8oWJRP1Uf4Vrus5pLxQVFT
-    fMqBifSbMPp+N0OU8SwVCXJzNKXLN536CgjHIePMk/ZXDN2Nchsp8Ju6pp1+cWxl
-    NHEKOHn7hYHtxT/B88ig4MYbBqFUE2A==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
+    messagingengine.com; h=reply-to:subject:references:to:cc:from
+    :message-id:date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525387075;
+    bh=1E2kX+Y/Cs4tp1W1Im9DkTWPkx6FXCoa5pMlwKl62dM=; b=VNJOJMvAK/do
+    qgLE/jAniNX/nGtLWjRV1fi9WKosnv7T7TQJj6LpkH4eJj0FkcaNc3NHzNpJJi8l
+    B4wOaDcF4nRkyUHu712O/v0qeG3O+MN2/wJ6AA2pj2HZpQXXGRGlKc73LDDMhSw/
+    6tUHAMJAEu7IOyE3HhrH1Dpmy9UZIHo4aFM/zCdCBhcxfM1tSQK/gR+p9DGr7f9K
+    FJckjrSUwU2nNCnl3xihWnJt0IEt2IdJ+k9pRH+i2kp1PH+jyBvp+jAie0O/Sh6P
+    eSZH76x88r2jT0Pp+Mi5R/k1DEXjJwE64X0Oth5z//awhSnyWR8fle30E/2VLiRU
+    pYS+AI5Sbw==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+    header.d=oracle.com header.i=@oracle.com header.b=NRBS5U1j x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -40,12 +43,14 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.com header.result=pass header_is_org_domain=yes;
+    header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.com;
+    dkim=fail (body has been altered, 2048-bit rsa key sha256)
+      header.d=oracle.com header.i=@oracle.com header.b=NRBS5U1j x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -54,67 +59,75 @@ Authentication-Results: mx6.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.com header.result=pass header_is_org_domain=yes;
+      header.domain=oracle.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJ/YvNxjojpJakCqvmO/pmfeaBeqaDWiIDH1OZiXeha92wj2FMbk47mjO1EeTS844uw0AeVSJuMwsZImTMirPOugS+85A7oUWHNKmM6Pc+5NEcgtT1Jw
-    iwPFk6HyDulJYLBIWA8cH7B95tElZKZXNtc9UjaysQUajU2WiV0TZVdGdoE7PKyBKV8krhx1AQI0mx4msG1T+lcvFMcrXs6Ko7giWEYA/pCP+0kLnxz5Wvjq
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=khwyK8DuSVkA:10
-    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=DQmsFx0OO9BfC7CClZQA:9
-    a=69fdB_sVe-1yFxps:21 a=z1IX_iUsNbQi6Y5J:21 a=CjuIK1q_8ugA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfBSJwp+uv33Hj3jjY+mYsG7aht9nO6MJzwwkGOdxgOWpBxXto9UFolO8aBK/WWHCbroKRIk4jFYJHLxSAasJhwFA5wqKfkJERD92FrhZFJJ3hZpvFuVm
+    RkQTk2RA63bdGUS7GFzwLLcwISBPspEBX5tE4DaTFCHTYosql0zj40w2lmxtRJkAIFQDT26VeyK7wI1Lqcps6dxXp8SP+O9ulDLq1pSvpZcdrNfBW4g8FgZ0
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=N659UExz7-8A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=QHC2kOqy_hB1d3D8XDEA:9 a=d7o8OXacX9z-gkP0:21
+    a=iOJPyZaFPLUKR1n6:21 a=pILNOxqGKmIA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751075AbeECSDy (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 14:03:54 -0400
-Received: from resqmta-ch2-01v.sys.comcast.net ([69.252.207.33]:44558 "EHLO
-        resqmta-ch2-01v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750947AbeECSDx (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 3 May 2018 14:03:53 -0400
-Date: Thu, 3 May 2018 13:03:51 -0500 (CDT)
-From: Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        id S1750970AbeECWhx (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 18:37:53 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:45826 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750911AbeECWhw (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Thu, 3 May 2018 18:37:52 -0400
+Reply-To: prakash.sangappa@oracle.com
+Subject: Re: [RFC PATCH] Add /proc/<pid>/numa_vamaps for numa node information
+References: <1525240686-13335-1-git-send-email-prakash.sangappa@oracle.com>
+ <alpine.DEB.2.21.1805031259210.7831@nuc-kabylake>
+To: Christopher Lameter <cl@linux.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-api@vger.kernel.org, akpm@linux-foundation.org,
         mhocko@suse.com, kirill.shutemov@linux.intel.com,
         n-horiguchi@ah.jp.nec.com, drepper@gmail.com, rientjes@google.com
-Subject: Re: [RFC PATCH] Add /proc/<pid>/numa_vamaps for numa node
- information
-In-Reply-To: <1525240686-13335-1-git-send-email-prakash.sangappa@oracle.com>
-Message-ID: <alpine.DEB.2.21.1805031259210.7831@nuc-kabylake>
-References: <1525240686-13335-1-git-send-email-prakash.sangappa@oracle.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+From: "prakash.sangappa" <prakash.sangappa@oracle.com>
+Message-ID: <c80ee329-084b-367f-1937-3175c178e978@oracle.com>
+Date: Thu, 3 May 2018 15:39:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-CMAE-Envelope: MS4wfMQj+j9pzr/a7KIxG+yDgC92sSsHCTYpwzj66p0zHTyYdShZRcLsAvnw3/9fRBtz2AYp/kGUC+hKSi7Bon3s8a1C8QIHqhZPQqRZHA0Sj7kLgl4K/Geq
- QkmBUkzKlCbld9fyyPNF0y+nUc1+xdpeUtNW/JNZmpsE2ucvrB2EKAo5rjp9X0OJ1Lbo4UN/R3mAm6F5kLEQFflkVbAcSJ14jf+SYwdHBxhi5n4UXIZ5M+sh
- Z88FO7lwsrl2GAzHUUA0CF9HUiAQMUIEY9jnibAINJ6T6SGi/3QJ87yfOY0aqHAQJlBocESt3FFm5g480XV7EmAcJav9gjJl9hvzSSTUBYLWgh0OeNvXmfiF
- j8SLzCZTurn4kEUpj7ixFtY42inUe23puiv5aj+HOQshCFg5+TjUSB7aRHtOT/IknYwRhi4yODiIrmiim+/B4V+1WHpogzrmbj/G10DWOMAtUvt5ta0zAmCL
- beUqbwos0tcPx+FU
+In-Reply-To: <alpine.DEB.2.21.1805031259210.7831@nuc-kabylake>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8882 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805030196
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 1 May 2018, Prakash Sangappa wrote:
 
-> For analysis purpose it is useful to have numa node information
-> corresponding mapped address ranges of the process. Currently
-> /proc/<pid>/numa_maps provides list of numa nodes from where pages are
-> allocated per VMA of the process. This is not useful if an user needs to
-> determine which numa node the mapped pages are allocated from for a
-> particular address range. It would have helped if the numa node information
-> presented in /proc/<pid>/numa_maps was broken down by VA ranges showing the
-> exact numa node from where the pages have been allocated.
 
-Cant you write a small script that scans the information in numa_maps and
-then displays the total pages per NUMA node and then a list of which
-ranges have how many pages on a particular node?
+On 05/03/2018 11:03 AM, Christopher Lameter wrote:
+> On Tue, 1 May 2018, Prakash Sangappa wrote:
+>
+>> For analysis purpose it is useful to have numa node information
+>> corresponding mapped address ranges of the process. Currently
+>> /proc/<pid>/numa_maps provides list of numa nodes from where pages are
+>> allocated per VMA of the process. This is not useful if an user needs to
+>> determine which numa node the mapped pages are allocated from for a
+>> particular address range. It would have helped if the numa node information
+>> presented in /proc/<pid>/numa_maps was broken down by VA ranges showing the
+>> exact numa node from where the pages have been allocated.
+> Cant you write a small script that scans the information in numa_maps and
+> then displays the total pages per NUMA node and then a list of which
+> ranges have how many pages on a particular node?
 
-> reading this file will not be restricted(i.e requiring CAP_SYS_ADMIN).
+Don't think we can determine which numa node a given user process
+address range has pages from, based on the existing 'numa_maps' file.
 
-So a prime motivator here is security restricted access to numa_maps?
+>> reading this file will not be restricted(i.e requiring CAP_SYS_ADMIN).
+> So a prime motivator here is security restricted access to numa_maps?
+No it is the opposite. A regular user should be able to determine
+numa node information.
