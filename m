@@ -1,32 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752377AbeECFJf (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 01:09:35 -0400
-Received: from mga14.intel.com ([192.55.52.115]:3725 "EHLO mga14.intel.com"
+        id S1752413AbeECFKJ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 01:10:09 -0400
+Received: from mga02.intel.com ([134.134.136.20]:28200 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752352AbeECFJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 01:09:30 -0400
+        id S1752272AbeECFJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 01:09:15 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="38295241"
-Subject: [PATCH v2 9/9] x86, nfit_test: unit test for memcpy_mcsafe()
+   d="scan'208";a="46387626"
+Subject: [PATCH v2 6/9] dax: introduce a ->copy_to_iter dax operation
 From: Dan Williams <dan.j.williams@intel.com>
 To: linux-nvdimm@lists.01.org
-Cc: x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tony Luck <tony.luck@intel.com>, hch@lst.de,
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
         linux-kernel@vger.kernel.org, tony.luck@intel.com,
         linux-fsdevel@vger.kernel.org
-Date: Wed, 02 May 2018 21:59:33 -0700
-Message-ID: <152532357367.17218.12583776735022853270.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date: Wed, 02 May 2018 21:59:18 -0700
+Message-ID: <152532355794.17218.14245493414576545182.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <152532351517.17218.3583455156840230837.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <152532351517.17218.3583455156840230837.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -37,227 +30,307 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given the fact that the ACPI "EINJ" (error injection) facility is not
-universally available, implement software infrastructure to validate the
-memcpy_mcsafe() exception handling implementation.
+Similar to the ->copy_from_iter() operation, a platform may want to
+deploy an architecture or device specific routine for handling reads
+from a dax_device like /dev/pmemX. On x86 this routine will point to a
+machine check safe version of copy_to_iter(). For now, add the plumbing
+to device-mapper and the dax core.
 
-For each potential read exception point in memcpy_mcsafe(), inject a
-emulated exception point at the address identified by 'mcsafe_inject'
-variable. With this infrastructure implement a test to validate that the
-'bytes remaining' calculation is correct for a range of various source
-buffer alignments.
-
-This code is compiled out by default. The CONFIG_MCSAFE_DEBUG
-configuration symbol needs to be manually enabled by editing
-Kconfig.debug. I.e. this functionality can not be accidentally enabled
-by a user / distro, it's only for development.
-
-Cc: <x86@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Reported-by: Tony Luck <tony.luck@intel.com>
+Cc: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Mike Snitzer <snitzer@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- arch/x86/Kconfig.debug              |    3 ++
- arch/x86/include/asm/mcsafe_debug.h |   50 +++++++++++++++++++++++++++++++++++
- arch/x86/lib/memcpy_64.S            |    7 +++++
- tools/testing/nvdimm/test/nfit.c    |   48 ++++++++++++++++++++++++++++++++++
- 4 files changed, 108 insertions(+)
- create mode 100644 arch/x86/include/asm/mcsafe_debug.h
+ drivers/dax/super.c           |   10 ++++++++++
+ drivers/md/dm-linear.c        |   16 ++++++++++++++++
+ drivers/md/dm-log-writes.c    |   15 +++++++++++++++
+ drivers/md/dm-stripe.c        |   21 +++++++++++++++++++++
+ drivers/md/dm.c               |   25 +++++++++++++++++++++++++
+ drivers/nvdimm/pmem.c         |    7 +++++++
+ drivers/s390/block/dcssblk.c  |    7 +++++++
+ fs/dax.c                      |    3 ++-
+ include/linux/dax.h           |    5 +++++
+ include/linux/device-mapper.h |    5 +++--
+ 10 files changed, 111 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/Kconfig.debug b/arch/x86/Kconfig.debug
-index 192e4d2f9efc..8bdec78a405f 100644
---- a/arch/x86/Kconfig.debug
-+++ b/arch/x86/Kconfig.debug
-@@ -72,6 +72,9 @@ config EARLY_PRINTK_USB_XDBC
- 	  You should normally say N here, unless you want to debug early
- 	  crashes or need a very simple printk logging facility.
+diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+index 2b2332b605e4..31b839113399 100644
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -282,6 +282,16 @@ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ }
+ EXPORT_SYMBOL_GPL(dax_copy_from_iter);
  
-+config MCSAFE_DEBUG
-+	def_bool n
-+
- config X86_PTDUMP_CORE
- 	def_bool n
- 
-diff --git a/arch/x86/include/asm/mcsafe_debug.h b/arch/x86/include/asm/mcsafe_debug.h
-new file mode 100644
-index 000000000000..0f85d24b46c5
---- /dev/null
-+++ b/arch/x86/include/asm/mcsafe_debug.h
-@@ -0,0 +1,50 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _MCSAFE_DEBUG_H_
-+#define _MCSAFE_DEBUG_H_
-+
-+#ifndef __ASSEMBLY__
-+#ifdef CONFIG_MCSAFE_DEBUG
-+extern unsigned long mcsafe_inject;
-+
-+static inline void set_mcsafe_inject(void *addr)
++size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
++		size_t bytes, struct iov_iter *i)
 +{
-+	if (addr)
-+		mcsafe_inject = (unsigned long) addr;
-+	else
-+		mcsafe_inject = ~0UL;
++	if (!dax_alive(dax_dev))
++		return 0;
++
++	return dax_dev->ops->copy_to_iter(dax_dev, pgoff, addr, bytes, i);
 +}
-+#else /* CONFIG_MCSAFE_DEBUG */
-+static inline void set_mcsafe_inject(void *addr)
++EXPORT_SYMBOL_GPL(dax_copy_to_iter);
++
+ #ifdef CONFIG_ARCH_HAS_PMEM_API
+ void arch_wb_cache_pmem(void *addr, size_t size);
+ void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
+diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+index 775c06d953b7..d10964d41fd7 100644
+--- a/drivers/md/dm-linear.c
++++ b/drivers/md/dm-linear.c
+@@ -185,9 +185,24 @@ static size_t linear_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
+ 	return dax_copy_from_iter(dax_dev, pgoff, addr, bytes, i);
+ }
+ 
++static size_t linear_dax_copy_to_iter(struct dm_target *ti, pgoff_t pgoff,
++		void *addr, size_t bytes, struct iov_iter *i)
 +{
++	struct linear_c *lc = ti->private;
++	struct block_device *bdev = lc->dev->bdev;
++	struct dax_device *dax_dev = lc->dev->dax_dev;
++	sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
++
++	dev_sector = linear_map_sector(ti, sector);
++	if (bdev_dax_pgoff(bdev, dev_sector, ALIGN(bytes, PAGE_SIZE), &pgoff))
++		return 0;
++	return dax_copy_to_iter(dax_dev, pgoff, addr, bytes, i);
 +}
-+#endif /* CONFIG_MCSAFE_DEBUG */
 +
-+#else /* __ASSEMBLY__ */
-+#include <asm/export.h>
-+
-+#ifdef CONFIG_MCSAFE_DEBUG
-+.macro MCSAFE_DEBUG_CTL
-+	.pushsection .data
-+	.align 8
-+	.globl mcsafe_inject
-+	mcsafe_inject:
-+		.quad 0
-+	EXPORT_SYMBOL_GPL(mcsafe_inject)
-+	.popsection
-+.endm
-+
-+.macro MCSAFE_DEBUG offset reg count target
-+	leaq \offset(\reg), %r9
-+	addq \count, %r9
-+	cmp mcsafe_inject, %r9
-+	jg \target
-+.endm
-+#else
-+.macro MCSAFE_DEBUG_CTL
-+.endm
-+
-+.macro MCSAFE_DEBUG offset reg count target
-+.endm
-+#endif /* CONFIG_MCSAFE_DEBUG */
-+#endif /* __ASSEMBLY__ */
-+#endif /* _MCSAFE_DEBUG_H_ */
-diff --git a/arch/x86/lib/memcpy_64.S b/arch/x86/lib/memcpy_64.S
-index c3b527a9f95d..e5f489b2c6ea 100644
---- a/arch/x86/lib/memcpy_64.S
-+++ b/arch/x86/lib/memcpy_64.S
-@@ -3,6 +3,7 @@
- #include <linux/linkage.h>
- #include <asm/errno.h>
- #include <asm/cpufeatures.h>
-+#include <asm/mcsafe_debug.h>
- #include <asm/alternative-asm.h>
- #include <asm/export.h>
+ #else
+ #define linear_dax_direct_access NULL
+ #define linear_dax_copy_from_iter NULL
++#define linear_dax_copy_to_iter NULL
+ #endif
  
-@@ -183,6 +184,9 @@ ENTRY(memcpy_orig)
- ENDPROC(memcpy_orig)
- 
- #ifndef CONFIG_UML
-+
-+MCSAFE_DEBUG_CTL
-+
- /*
-  * __memcpy_mcsafe - memory copy with machine check exception handling
-  * Note that we only catch machine checks when reading the source addresses.
-@@ -205,6 +209,7 @@ ENTRY(__memcpy_mcsafe)
- 	negl %ecx
- 	subl %ecx, %edx
- .L_read_leading_bytes:
-+	MCSAFE_DEBUG 0 %rsi $1 .E_leading_bytes
- 	movb (%rsi), %al
- .L_write_leading_bytes:
- 	movb %al, (%rdi)
-@@ -220,6 +225,7 @@ ENTRY(__memcpy_mcsafe)
- 	jz .L_no_whole_words
- 
- .L_read_words:
-+	MCSAFE_DEBUG 0 %rsi $8 .E_read_words
- 	movq (%rsi), %r8
- .L_write_words:
- 	movq %r8, (%rdi)
-@@ -236,6 +242,7 @@ ENTRY(__memcpy_mcsafe)
- 	/* Copy trailing bytes */
- 	movl %edx, %ecx
- .L_read_trailing_bytes:
-+	MCSAFE_DEBUG 0 %rsi $1 .E_trailing_bytes
- 	movb (%rsi), %al
- .L_write_trailing_bytes:
- 	movb %al, (%rdi)
-diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
-index 4ea385be528f..db04ff658971 100644
---- a/tools/testing/nvdimm/test/nfit.c
-+++ b/tools/testing/nvdimm/test/nfit.c
-@@ -29,6 +29,8 @@
- #include "nfit_test.h"
- #include "../watermark.h"
- 
-+#include <asm/mcsafe_debug.h>
-+
- /*
-  * Generate an NFIT table to describe the following topology:
-  *
-@@ -2681,6 +2683,51 @@ static struct platform_driver nfit_test_driver = {
- 	.id_table = nfit_test_id,
+ static struct target_type linear_target = {
+@@ -204,6 +219,7 @@ static struct target_type linear_target = {
+ 	.iterate_devices = linear_iterate_devices,
+ 	.direct_access = linear_dax_direct_access,
+ 	.dax_copy_from_iter = linear_dax_copy_from_iter,
++	.dax_copy_to_iter = linear_dax_copy_to_iter,
  };
  
-+static char mcsafe_buf[PAGE_SIZE] __attribute__((__aligned__(PAGE_SIZE)));
+ int __init dm_linear_init(void)
+diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
+index c90c7c08a77f..9ea2b0291f20 100644
+--- a/drivers/md/dm-log-writes.c
++++ b/drivers/md/dm-log-writes.c
+@@ -962,9 +962,23 @@ static size_t log_writes_dax_copy_from_iter(struct dm_target *ti,
+ dax_copy:
+ 	return dax_copy_from_iter(lc->dev->dax_dev, pgoff, addr, bytes, i);
+ }
 +
-+void mcsafe_test(void)
++static size_t log_writes_dax_copy_to_iter(struct dm_target *ti,
++					  pgoff_t pgoff, void *addr, size_t bytes,
++					  struct iov_iter *i)
 +{
-+	bool do_inject = false;
-+	int i;
++	struct log_writes_c *lc = ti->private;
++	sector_t sector = pgoff * PAGE_SECTORS;
 +
-+	if (IS_ENABLED(CONFIG_MCSAFE_DEBUG)) {
-+		pr_info("%s: run...\n", __func__);
-+	} else {
-+		pr_info("%s: disabled, skip.\n", __func__);
-+		return;
-+	}
-+
-+retry:
-+	for (i = 0; i < 512; i++) {
-+		unsigned long expect, rem;
-+		void *src, *dst;
-+
-+		if (do_inject) {
-+			set_mcsafe_inject(&mcsafe_buf[1024]);
-+			expect = 512 - i;
-+		} else {
-+			set_mcsafe_inject(NULL);
-+			expect = 0;
-+		}
-+
-+		dst = &mcsafe_buf[2048];
-+		src = &mcsafe_buf[1024 - i];
-+		rem = __memcpy_mcsafe(dst, src, 512);
-+		if (rem == expect)
-+			continue;
-+		pr_info("%s: copy(%#lx, %#lx, %d) offset: %d got: %ld expect: %ld\n",
-+				__func__, ((unsigned long) dst) & ~PAGE_MASK,
-+				((unsigned long ) src) & ~PAGE_MASK,
-+				512, i, rem, expect);
-+	}
-+
-+	if (!do_inject) {
-+		do_inject = true;
-+		goto retry;
-+	}
-+	set_mcsafe_inject(NULL);
++	if (bdev_dax_pgoff(lc->dev->bdev, sector, ALIGN(bytes, PAGE_SIZE), &pgoff))
++		return 0;
++	return dax_copy_to_iter(lc->dev->dax_dev, pgoff, addr, bytes, i);
 +}
 +
- static __init int nfit_test_init(void)
- {
- 	int rc, i;
-@@ -2689,6 +2736,7 @@ static __init int nfit_test_init(void)
- 	libnvdimm_test();
- 	acpi_nfit_test();
- 	device_dax_test();
-+	mcsafe_test();
+ #else
+ #define log_writes_dax_direct_access NULL
+ #define log_writes_dax_copy_from_iter NULL
++#define log_writes_dax_copy_to_iter NULL
+ #endif
  
- 	nfit_test_setup(nfit_test_lookup, nfit_test_evaluate_dsm);
+ static struct target_type log_writes_target = {
+@@ -982,6 +996,7 @@ static struct target_type log_writes_target = {
+ 	.io_hints = log_writes_io_hints,
+ 	.direct_access = log_writes_dax_direct_access,
+ 	.dax_copy_from_iter = log_writes_dax_copy_from_iter,
++	.dax_copy_to_iter = log_writes_dax_copy_to_iter,
+ };
  
+ static int __init dm_log_writes_init(void)
+diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+index fe7fb9b1aec3..8547d7594338 100644
+--- a/drivers/md/dm-stripe.c
++++ b/drivers/md/dm-stripe.c
+@@ -354,9 +354,29 @@ static size_t stripe_dax_copy_from_iter(struct dm_target *ti, pgoff_t pgoff,
+ 	return dax_copy_from_iter(dax_dev, pgoff, addr, bytes, i);
+ }
+ 
++static size_t stripe_dax_copy_to_iter(struct dm_target *ti, pgoff_t pgoff,
++		void *addr, size_t bytes, struct iov_iter *i)
++{
++	sector_t dev_sector, sector = pgoff * PAGE_SECTORS;
++	struct stripe_c *sc = ti->private;
++	struct dax_device *dax_dev;
++	struct block_device *bdev;
++	uint32_t stripe;
++
++	stripe_map_sector(sc, sector, &stripe, &dev_sector);
++	dev_sector += sc->stripe[stripe].physical_start;
++	dax_dev = sc->stripe[stripe].dev->dax_dev;
++	bdev = sc->stripe[stripe].dev->bdev;
++
++	if (bdev_dax_pgoff(bdev, dev_sector, ALIGN(bytes, PAGE_SIZE), &pgoff))
++		return 0;
++	return dax_copy_to_iter(dax_dev, pgoff, addr, bytes, i);
++}
++
+ #else
+ #define stripe_dax_direct_access NULL
+ #define stripe_dax_copy_from_iter NULL
++#define stripe_dax_copy_to_iter NULL
+ #endif
+ 
+ /*
+@@ -478,6 +498,7 @@ static struct target_type stripe_target = {
+ 	.io_hints = stripe_io_hints,
+ 	.direct_access = stripe_dax_direct_access,
+ 	.dax_copy_from_iter = stripe_dax_copy_from_iter,
++	.dax_copy_to_iter = stripe_dax_copy_to_iter,
+ };
+ 
+ int __init dm_stripe_init(void)
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 4ea404dbcf0b..cd942905dd1e 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1088,6 +1088,30 @@ static size_t dm_dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	return ret;
+ }
+ 
++static size_t dm_dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
++		void *addr, size_t bytes, struct iov_iter *i)
++{
++	struct mapped_device *md = dax_get_private(dax_dev);
++	sector_t sector = pgoff * PAGE_SECTORS;
++	struct dm_target *ti;
++	long ret = 0;
++	int srcu_idx;
++
++	ti = dm_dax_get_live_target(md, sector, &srcu_idx);
++
++	if (!ti)
++		goto out;
++	if (!ti->type->dax_copy_to_iter) {
++		ret = copy_to_iter(addr, bytes, i);
++		goto out;
++	}
++	ret = ti->type->dax_copy_to_iter(ti, pgoff, addr, bytes, i);
++ out:
++	dm_put_live_table(md, srcu_idx);
++
++	return ret;
++}
++
+ /*
+  * A target may call dm_accept_partial_bio only from the map routine.  It is
+  * allowed for all bio types except REQ_PREFLUSH and REQ_OP_ZONE_RESET.
+@@ -3133,6 +3157,7 @@ static const struct block_device_operations dm_blk_dops = {
+ static const struct dax_operations dm_dax_ops = {
+ 	.direct_access = dm_dax_direct_access,
+ 	.copy_from_iter = dm_dax_copy_from_iter,
++	.copy_to_iter = dm_dax_copy_to_iter,
+ };
+ 
+ /*
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index e023d6aa22b5..1b8ab48365de 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -264,9 +264,16 @@ static size_t pmem_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 	return copy_from_iter_flushcache(addr, bytes, i);
+ }
+ 
++static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
++		void *addr, size_t bytes, struct iov_iter *i)
++{
++	return copy_to_iter(addr, bytes, i);
++}
++
+ static const struct dax_operations pmem_dax_ops = {
+ 	.direct_access = pmem_dax_direct_access,
+ 	.copy_from_iter = pmem_copy_from_iter,
++	.copy_to_iter = pmem_copy_to_iter,
+ };
+ 
+ static const struct attribute_group *pmem_attribute_groups[] = {
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index 0a312e450207..29024492b8ed 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -51,9 +51,16 @@ static size_t dcssblk_dax_copy_from_iter(struct dax_device *dax_dev,
+ 	return copy_from_iter(addr, bytes, i);
+ }
+ 
++static size_t dcssblk_dax_copy_to_iter(struct dax_device *dax_dev,
++		pgoff_t pgoff, void *addr, size_t bytes, struct iov_iter *i)
++{
++	return copy_to_iter(addr, bytes, i);
++}
++
+ static const struct dax_operations dcssblk_dax_ops = {
+ 	.direct_access = dcssblk_dax_direct_access,
+ 	.copy_from_iter = dcssblk_dax_copy_from_iter,
++	.copy_to_iter = dcssblk_dax_copy_to_iter,
+ };
+ 
+ struct dcssblk_dev_info {
+diff --git a/fs/dax.c b/fs/dax.c
+index aaec72ded1b6..a64afdf7ec0d 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1057,7 +1057,8 @@ dax_iomap_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 			map_len = dax_copy_from_iter(dax_dev, pgoff, kaddr,
+ 					map_len, iter);
+ 		else
+-			map_len = copy_to_iter(kaddr, map_len, iter);
++			map_len = dax_copy_to_iter(dax_dev, pgoff, kaddr,
++					map_len, iter);
+ 		if (map_len <= 0) {
+ 			ret = map_len ? map_len : -EFAULT;
+ 			break;
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index f9eb22ad341e..a43b396fb336 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -20,6 +20,9 @@ struct dax_operations {
+ 	/* copy_from_iter: required operation for fs-dax direct-i/o */
+ 	size_t (*copy_from_iter)(struct dax_device *, pgoff_t, void *, size_t,
+ 			struct iov_iter *);
++	/* copy_to_iter: required operation for fs-dax direct-i/o */
++	size_t (*copy_to_iter)(struct dax_device *, pgoff_t, void *, size_t,
++			struct iov_iter *);
+ };
+ 
+ extern struct attribute_group dax_attribute_group;
+@@ -118,6 +121,8 @@ long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+ 		void **kaddr, pfn_t *pfn);
+ size_t dax_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
+ 		size_t bytes, struct iov_iter *i);
++size_t dax_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff, void *addr,
++		size_t bytes, struct iov_iter *i);
+ void dax_flush(struct dax_device *dax_dev, void *addr, size_t size);
+ 
+ ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index 31fef7c34185..6fb0808e87c8 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -133,7 +133,7 @@ typedef int (*dm_busy_fn) (struct dm_target *ti);
+  */
+ typedef long (*dm_dax_direct_access_fn) (struct dm_target *ti, pgoff_t pgoff,
+ 		long nr_pages, void **kaddr, pfn_t *pfn);
+-typedef size_t (*dm_dax_copy_from_iter_fn)(struct dm_target *ti, pgoff_t pgoff,
++typedef size_t (*dm_dax_copy_iter_fn)(struct dm_target *ti, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i);
+ #define PAGE_SECTORS (PAGE_SIZE / 512)
+ 
+@@ -184,7 +184,8 @@ struct target_type {
+ 	dm_iterate_devices_fn iterate_devices;
+ 	dm_io_hints_fn io_hints;
+ 	dm_dax_direct_access_fn direct_access;
+-	dm_dax_copy_from_iter_fn dax_copy_from_iter;
++	dm_dax_copy_iter_fn dax_copy_from_iter;
++	dm_dax_copy_iter_fn dax_copy_to_iter;
+ 
+ 	/* For internal device-mapper use. */
+ 	struct list_head list;
