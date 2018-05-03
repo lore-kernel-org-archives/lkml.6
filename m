@@ -1,57 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751525AbeECOnB (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 10:43:01 -0400
-Received: from mga17.intel.com ([192.55.52.151]:5588 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751236AbeECOm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 10:42:58 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="51238648"
-Subject: Re: BUG: Bad page map in process python2 pte:10000000000
- pmd:17e8be067
-To: Huaitong Han <oenhan@gmail.com>
-References: <20180419054047.xxiljmzaf2u7odc6@wfg-t540p.sh.intel.com>
- <17463682-dc08-358d-8b44-02821352604c@intel.com>
- <CAAuJbeKT1eBxT4Y8FgQBrQcFDU_3R8ad=s_8zsyj+GPiZT7VhQ@mail.gmail.com>
-Cc: Fengguang Wu <fengguang.wu@intel.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1751279AbeECOpF (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 10:45:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43614 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750954AbeECOpE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 10:45:04 -0400
+Date: Thu, 3 May 2018 16:44:50 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mike Galbraith <efault@gmx.de>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
         Michal Hocko <mhocko@suse.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Huang Ying <ying.huang@intel.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>,
-        Minchan Kim <minchan@kernel.org>, Hugh Dickins <hughd@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Message-ID: <7d386ba4-85ba-85dd-4f81-4cc984b149dd@intel.com>
-Date: Thu, 3 May 2018 07:42:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Paul McKenney <paulmck@linux.vnet.ibm.com>
+Subject: Re: cpu stopper threads and load balancing leads to deadlock
+Message-ID: <20180503144450.GD12217@hirez.programming.kicks-ass.net>
+References: <20180417142119.GA4511@codeblueprint.co.uk>
+ <20180420095005.GH4064@hirez.programming.kicks-ass.net>
+ <20180424133325.GA3179@codeblueprint.co.uk>
+ <1525349542.9956.2.camel@gmx.de>
+ <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
+ <1525351221.9956.4.camel@gmx.de>
+ <20180503124943.GB12217@hirez.programming.kicks-ass.net>
+ <1525354359.5576.1.camel@gmx.de>
+ <20180503135617.GC12217@hirez.programming.kicks-ass.net>
+ <1525357015.5577.2.camel@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <CAAuJbeKT1eBxT4Y8FgQBrQcFDU_3R8ad=s_8zsyj+GPiZT7VhQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525357015.5577.2.camel@gmx.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 08:20 PM, Huaitong Han wrote:
+On Thu, May 03, 2018 at 04:16:55PM +0200, Mike Galbraith wrote:
+> On Thu, 2018-05-03 at 15:56 +0200, Peter Zijlstra wrote:
+> > On Thu, May 03, 2018 at 03:32:39PM +0200, Mike Galbraith wrote:
+> > 
+> > > Dang.  With $subject fix applied as well..
+> > 
+> > That's a NO then... :-(
 > 
-> kernel: swap_free: Bad swap file entry 1000000000103256
-> kernel: BUG: Bad page map in process in:imjournal  pte:8192b1000 pmd:3ff9324067
-> kernel: addr:00007f920adc5000 vm_flags:080000d1 anon_vma:
-> (null) mapping:ffff883fe5284960 index:3f8
-> kernel: vma->vm_ops->fault: shmem_fault+0x0/0x1d0
-> kernel: vma->vm_file->f_op->mmap: shmem_mmap+0x0/0x30
-> kernel: CPU: 5 PID: 9166 Comm: in:imjournal Tainted: G        W  OE
-> K------------   3.10.0-514.16.1.el7.x86_64 #1
+> Could say who cares about oddball offline wakeup stat. <cringe>
 
-This looks like an entirely different signature.  There are lots of bits
-set in the bad swap entry instead of a single one.  It's also a vintage
-RHEL kernel, not mainline.
+Yeah, nobody.. but I don't want to have to change the wakeup code to
+deal with this if at all possible. That'd just add conditions that are
+'always' false, except in this exceedingly rare circumstance.
+
+So ideally we manage to tell RCU that it needs to pay attention while
+we're doing this here thing, which is what I thought RCU_NONIDLE() was
+about.
