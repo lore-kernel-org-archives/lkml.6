@@ -1,148 +1,236 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2298957-1525339093-5-2121898723303587252
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
-X-Attached: signature.asc
-X-Resolved-to: linux@kroah.com
-X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525339093; b=M4AWOOgdnvRifFptFg6CPYYZPk6RlL9YF50pvYSIhDHMtFnQVm
-    822CfHOASPRD0mm/3E8VXP5ob0ioxkKTf9J+sK3LX1Sab8o9WI3M3AA/IWMZLOxm
-    9pOZgIWHXFRmai9m/F5qwEhKt0jK9Ymu+ign1eWdR28RzsL7kILbOhzfAir2gUcY
-    ov0hSuVYEhuCrRQWcAQM2Y2Iogrp6xHIOsEOJCZyvTrVpVnYvno0zuuvdiNKM8mn
-    dFHu6p9SUuMaA77j/M9rfD5ylX2bc8EFdEFMMZDHTu0kXxlFXIWyiFG7GNXXNwpE
-    F8fJc3zuPwj5w8wUH/XrHsrC1bOtWi2SDtwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:in-reply-to:sender
-    :list-id; s=fm2; t=1525339093; bh=a+E+uLoOV30yoFfxqN2db8bCrcJmj7
-    YvwL1DHyplt+E=; b=i2GjpZk2W3YTDwNmsJH5Pq/ECZzmT3kSQrm5CVNdqjo8LM
-    SNhbLB0lhnlzAC8DZq+XxSDbYBsYhfQOuzqclyY7xVXdayAAKFuygooDBVX6vIXX
-    mZEkOr81/ylvPQu2ng/25wrtktwXTDqWQqoeQYJA9C0Ls39UQLBXNU0ly04220+o
-    Ws3nkwCKeVUhFhDu/yRH5rGojzeDKMiOj97hPkJRxXZTSpAcYy7zVFnipwrqjhhv
-    wYia1saogX9Sfx0JynEUTidMkCgPRVjLRb+0diVhgzUCaPkjhzI3vBfJTYIsMc4M
-    CPRF+Mu0t1ifUwCcCiz1upGmpql/cHJFrGZB0Cyw==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ucw.cz;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=ucw.cz header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-51 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPclMrVfnyEmFD8nu4guWqj6a+TGNOv2oeWBUlm1Jm+TQijDSg/MuMAQeq7MwNbGGNiFbwN7NF76TyiluZiehCcOVLvIv+0jN05RZVb3pyStucO0SsFn
-    cwaQLqasPSw3TnZsIChtCbKn49O5xZVxwHnw0ro/XySbBubTVzqcIJ2wLE+VPiPJiXXYH86aAZaDyEykG2l+3axmst45NHSF3ymVzpqC2XQvYRSgTGeRBeF6
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=M8rcC2nyAAAA:8
-    a=RXnXJx7MAAAA:8 a=kJN-5EVp-gxxPv1zTmsA:9 a=QEXdDO2ut3YA:10 a=0dxXHNIcbWwA:10
-    a=gA6IeH5FQcgA:10 a=NWVoK91CQyQA:10 a=F8o1otVkKab_vsnVrbwA:9 a=ONNS8QRKHyMA:10
-    a=K9tzwgKBnWaK51F8Cre1:22 a=U_UV0sFCMgXoaKVbI-EZ:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750969AbeECJSI (ORCPT <rfc822;linux@kroah.com>);
-        Thu, 3 May 2018 05:18:08 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41573 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750930AbeECJSH (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 May 2018 05:18:07 -0400
-Date: Thu, 3 May 2018 11:18:06 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Martin Steigerwald <martin@lichtvoll.de>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Moving unmaintained filesystems to staging
-Message-ID: <20180503091806.GA32180@amd>
-References: <20180425154602.GA8546@bombadil.infradead.org>
- <20180426061108.GB4977@amd>
- <4153280.6zxFApgOmi@merkaba>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
-Content-Disposition: inline
-In-Reply-To: <4153280.6zxFApgOmi@merkaba>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+Return-Path: <amit.pundir@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525326985; cv=none;
+        d=google.com; s=arc-20160816;
+        b=GcVeKnDAHOAbdcm02IL/eR1DNx3+YD4S4xC7PKpf7Ob/7UhW27SPcxFLa0F6w0QnO2
+         EEm4HbbTjI+HjOPcWGUa4TcVir4Rx+riB1LPC4JXFyq96WdBRfNg+PTVIbTfThKIlDIm
+         eovzqcKFThszqXi0E+FzAkW90TVKAZ7q4VGo87nog2Ur2TiVjwgFL7UyPzo7/U1cZKgU
+         ecc/UhiOj9to+g5B3rVoj3qZ5/1Zwg6bw60ebYbPfJQ+TxBnR/QcoELN1Vn9xcHp4ZDn
+         6JLF3/PKl8smoU0tnX2zjO3xyfsCkjm+1ZjNxj0AaP9LPAgjqPbo/eAlqtYkALTpXdwC
+         DhvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=4FhPgOtFbhiexgn4BT+gCIUjkqiM1Ja0BNHe0H45OXY=;
+        b=pu2Gypw4C1j7MBjjIKb0n+e3a2SNRF6roTrHLRAeYkobbhspgU9gpRZzi/EsEzeB4S
+         8NFaYzBR7Z7mO7vJ22+Z90gJZ8uHmLekuzbZB6SmVaz5zLM7iF500T0aO12hRSzkoGBV
+         icUVCPKZsjncr13iLJU6q98CM6bxXJpm1TyPRdlIgYANcGGzi0UcXUdRUvuDLGb+6Xm3
+         3Xx6QHWkKJTFCH6sMGJK4C8eHrrDzZn3GWPNHH0ZzGjsCWp0EaZ9EuFEqbOuaElV48yx
+         ukdmpLeTdPwnXuYeRY2Jw+lL68X+7v4FPR92FR5YFH+qgbgf/9vWJjFm+3AcxEfuquYv
+         Efgg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=UoUZngCZ;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=UoUZngCZ;
+       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZrnAllM83JgPGRzwPe8n02DSOc21yu7lgNecSLkT5KdFg4bznxLcAkh0vcuzcOHVkzLPYDqYA==
+From: Amit Pundir <amit.pundir@linaro.org>
+To: lkml <linux-kernel@vger.kernel.org>,
+	linux-wireless@vger.kernel.org
+Cc: Samuel Ortiz <sameo@linux.intel.com>,
+	Christophe Ricard <christophe.ricard@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	John Stultz <john.stultz@linaro.org>
+Subject: [PATCH v2] NFC: fdp: Remove __func__ from dev_dbg()
+Date: Thu,  3 May 2018 11:26:19 +0530
+Message-Id: <1525326979-16897-1-git-send-email-amit.pundir@linaro.org>
+X-Mailer: git-send-email 2.7.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599421268320906778?=
+X-GMAIL-MSGID: =?utf-8?q?1599421268320906778?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Remove redundant __func__ parameter from dev_dgb() calls.
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+v2:
+Deleted empty dev_dbg() trace calls, which are redundant if
+function tracer is enabled.
 
-On Thu 2018-04-26 12:36:50, Martin Steigerwald wrote:
-> Pavel Machek - 26.04.18, 08:11:
-> > On Wed 2018-04-25 08:46:02, Matthew Wilcox wrote:
-> > > Recently ncpfs got moved to staging.  Also recently, we had some
-> > > fuzzer developers report bugs in hfs, which they deem a security
-> > > hole because Ubuntu attempts to automount an inserted USB device as
-> > > hfs.
-> >=20
-> > We promise "no-regressions" for code in main repository, no such
-> > promise for staging. We have quite a lot of code without maintainer.
-> >=20
-> > Moving code to staging means it will get broken -- staging was not
-> > designed for this. I believe moving anything there is bad idea.
-> >=20
-> > Staging is for ugly code, not for code that needs new maintainter.
->=20
-> Good point.
->=20
-> Moving things in and out to some "unmaintained" directory=E2=80=A6 I am n=
-ot sure=20
-> about that either. I tend to think that moving code around does not=20
-> solve the underlying issue.
->=20
-> Which, according to what I got from Matthew, was that distributors=20
-> enable just about every filesystem they can enable which lead to hfs=20
-> being used for automounting an USB stick formatted with it.
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+---
+ drivers/nfc/fdp/fdp.c | 18 +++---------------
+ drivers/nfc/fdp/i2c.c | 17 ++++-------------
+ 2 files changed, 7 insertions(+), 28 deletions(-)
 
-If distro's are shipping it, they are also willing to fix it. So
-=2E.. no need to drop the code just yet.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrq084ACgkQMOfwapXb+vI0RgCdGQM/1OfUo5SKsCqPuq/o6IBY
-t2IAn3HRqsyXUzYaoKFuv2PdBBIFhbGH
-=dgPV
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+diff --git a/drivers/nfc/fdp/fdp.c b/drivers/nfc/fdp/fdp.c
+index d5784a4..f64a6fd 100644
+--- a/drivers/nfc/fdp/fdp.c
++++ b/drivers/nfc/fdp/fdp.c
+@@ -249,8 +249,6 @@ static int fdp_nci_open(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	r = info->phy_ops->enable(info->phy);
+ 
+ 	return r;
+@@ -261,7 +259,6 @@ static int fdp_nci_close(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	return 0;
+ }
+ 
+@@ -270,8 +267,6 @@ static int fdp_nci_send(struct nci_dev *ndev, struct sk_buff *skb)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	if (atomic_dec_and_test(&info->data_pkt_counter))
+ 		info->data_pkt_counter_cb(ndev);
+ 
+@@ -283,7 +278,6 @@ int fdp_nci_recv_frame(struct nci_dev *ndev, struct sk_buff *skb)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	return nci_recv_frame(ndev, skb);
+ }
+ EXPORT_SYMBOL(fdp_nci_recv_frame);
+@@ -498,8 +492,6 @@ static int fdp_nci_setup(struct nci_dev *ndev)
+ 	int r;
+ 	u8 patched = 0;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	r = nci_core_init(ndev);
+ 	if (r)
+ 		goto error;
+@@ -609,7 +601,6 @@ static int fdp_nci_core_reset_ntf_packet(struct nci_dev *ndev,
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	info->setup_reset_ntf = 1;
+ 	wake_up(&info->setup_wq);
+ 
+@@ -622,7 +613,6 @@ static int fdp_nci_prop_patch_ntf_packet(struct nci_dev *ndev,
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+ 	info->setup_patch_ntf = 1;
+ 	info->setup_patch_status = skb->data[0];
+ 	wake_up(&info->setup_wq);
+@@ -637,7 +627,7 @@ static int fdp_nci_prop_patch_rsp_packet(struct nci_dev *ndev,
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 	u8 status = skb->data[0];
+ 
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
++	dev_dbg(dev, "status 0x%x\n", status);
+ 	nci_req_complete(ndev, status);
+ 
+ 	return 0;
+@@ -650,7 +640,7 @@ static int fdp_nci_prop_set_production_data_rsp_packet(struct nci_dev *ndev,
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 	u8 status = skb->data[0];
+ 
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, status);
++	dev_dbg(dev, "status 0x%x\n", status);
+ 	nci_req_complete(ndev, status);
+ 
+ 	return 0;
+@@ -695,7 +685,7 @@ static int fdp_nci_core_get_config_rsp_packet(struct nci_dev *ndev,
+ 	dev_dbg(dev, "OTP version %d\n", info->otp_version);
+ 	dev_dbg(dev, "RAM version %d\n", info->ram_version);
+ 	dev_dbg(dev, "key index %d\n", info->key_index);
+-	dev_dbg(dev, "%s: status 0x%x\n", __func__, rsp->status);
++	dev_dbg(dev, "status 0x%x\n", rsp->status);
+ 
+ 	nci_req_complete(ndev, rsp->status);
+ 
+@@ -798,8 +788,6 @@ void fdp_nci_remove(struct nci_dev *ndev)
+ 	struct fdp_nci_info *info = nci_get_drvdata(ndev);
+ 	struct device *dev = &info->phy->i2c_dev->dev;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	nci_unregister_device(ndev);
+ 	nci_free_device(ndev);
+ }
+diff --git a/drivers/nfc/fdp/i2c.c b/drivers/nfc/fdp/i2c.c
+index c4da50e..f355ab2 100644
+--- a/drivers/nfc/fdp/i2c.c
++++ b/drivers/nfc/fdp/i2c.c
+@@ -57,7 +57,6 @@ static int fdp_nci_i2c_enable(void *phy_id)
+ {
+ 	struct fdp_i2c_phy *phy = phy_id;
+ 
+-	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
+ 	fdp_nci_i2c_reset(phy);
+ 
+ 	return 0;
+@@ -67,7 +66,6 @@ static void fdp_nci_i2c_disable(void *phy_id)
+ {
+ 	struct fdp_i2c_phy *phy = phy_id;
+ 
+-	dev_dbg(&phy->i2c_dev->dev, "%s\n", __func__);
+ 	fdp_nci_i2c_reset(phy);
+ }
+ 
+@@ -113,8 +111,8 @@ static int fdp_nci_i2c_write(void *phy_id, struct sk_buff *skb)
+ 	}
+ 
+ 	if (r < 0 || r != skb->len)
+-		dev_dbg(&client->dev, "%s: error err=%d len=%d\n",
+-			__func__, r, skb->len);
++		dev_dbg(&client->dev, "error err=%d len=%d\n",
++			r, skb->len);
+ 
+ 	if (r >= 0) {
+ 		if (r != skb->len) {
+@@ -152,8 +150,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
+ 
+ 		r = i2c_master_recv(client, tmp, len);
+ 		if (r != len) {
+-			dev_dbg(&client->dev, "%s: i2c recv err: %d\n",
+-				__func__, r);
++			dev_dbg(&client->dev, "i2c recv err: %d\n", r);
+ 			goto flush;
+ 		}
+ 
+@@ -167,8 +164,7 @@ static int fdp_nci_i2c_read(struct fdp_i2c_phy *phy, struct sk_buff **skb)
+ 		 * and force resynchronization
+ 		 */
+ 		if (lrc) {
+-			dev_dbg(&client->dev, "%s: corrupted packet\n",
+-				__func__);
++			dev_dbg(&client->dev, "corrupted packet\n");
+ 			phy->next_read_size = 5;
+ 			goto flush;
+ 		}
+@@ -215,7 +211,6 @@ static irqreturn_t fdp_nci_i2c_irq_thread_fn(int irq, void *phy_id)
+ 	}
+ 
+ 	client = phy->i2c_dev;
+-	dev_dbg(&client->dev, "%s\n", __func__);
+ 
+ 	r = fdp_nci_i2c_read(phy, &skb);
+ 
+@@ -296,8 +291,6 @@ static int fdp_nci_i2c_probe(struct i2c_client *client)
+ 	u32 clock_freq;
+ 	int r = 0;
+ 
+-	dev_dbg(dev, "%s\n", __func__);
+-
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+ 		nfc_err(dev, "No I2C_FUNC_I2C support\n");
+ 		return -ENODEV;
+@@ -359,8 +352,6 @@ static int fdp_nci_i2c_remove(struct i2c_client *client)
+ {
+ 	struct fdp_i2c_phy *phy = i2c_get_clientdata(client);
+ 
+-	dev_dbg(&client->dev, "%s\n", __func__);
+-
+ 	fdp_nci_remove(phy->ndev);
+ 	fdp_nci_i2c_disable(phy);
+ 
+-- 
+2.7.4
