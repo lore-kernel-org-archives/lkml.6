@@ -1,138 +1,211 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751412AbeECTtC (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 15:49:02 -0400
-Received: from mail-yw0-f181.google.com ([209.85.161.181]:44491 "EHLO
-        mail-yw0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751178AbeECTs7 (ORCPT
+        id S1751394AbeECTuS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 15:50:18 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:41568 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751115AbeECTuR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 15:48:59 -0400
-X-Google-Smtp-Source: AB8JxZrQUYqgnbAn9l+5dhud4EMfE6b6zxJcOmKNGXfT6xXWhhg/ejzCS+KrK49KsKhp7GaVTT65/elJu/u0upzpjQs=
+        Thu, 3 May 2018 15:50:17 -0400
+X-Google-Smtp-Source: AB8JxZpz59sNKVu7H3T41X19oDYcTdlAZ5reom/kJ1w/1yug0OnIRjVjHvr89bshrwSYSsXENiYH1Q==
+Date: Thu, 3 May 2018 13:50:13 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
+        frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com
+Subject: Re: [PATCH v2 07/27] coresight: tmc: Hide trace buffer handling for
+ file read
+Message-ID: <20180503195013.GC11425@xps15>
+References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
+ <1525165857-11096-8-git-send-email-suzuki.poulose@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <CAOssrKd+EjBYWMmGxVSCKQmFWhBf99eic4XLJ0YhZu3r0Kad5g@mail.gmail.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com> <20180412150826.20988-20-mszeredi@redhat.com>
- <CAOQ4uxjKJHnM_ad9TnyQ8i0fUjEqCEG8ocPAs_L0oSraKhSEPA@mail.gmail.com> <CAOssrKd+EjBYWMmGxVSCKQmFWhBf99eic4XLJ0YhZu3r0Kad5g@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 3 May 2018 22:48:58 +0300
-Message-ID: <CAOQ4uxjkf4Sv4c56HLTxuSov4eFqskhyv9V1Q_OAz4pp1GqpHA@mail.gmail.com>
-Subject: Re: [RFC PATCH 19/35] ovl: readd reflink/copyfile/dedup support
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525165857-11096-8-git-send-email-suzuki.poulose@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 7:04 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> On Tue, Apr 17, 2018 at 10:31 PM, Amir Goldstein <amir73il@gmail.com> wrote:
->> On Thu, Apr 12, 2018 at 6:08 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
->>> Since set of arguments are so similar, handle in a common helper.
->>>
->>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->>> ---
->>>  fs/overlayfs/file.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 79 insertions(+)
->>>
->>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
->>> index 9670e160967e..39b1b73334ad 100644
->>> --- a/fs/overlayfs/file.c
->>> +++ b/fs/overlayfs/file.c
->>> @@ -352,6 +352,81 @@ long ovl_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
->>>         return ret;
->>>  }
->>>
->>> +enum ovl_copyop {
->>> +       OVL_COPY,
->>> +       OVL_CLONE,
->>> +       OVL_DEDUPE,
->>> +};
->>> +
->>> +static ssize_t ovl_copyfile(struct file *file_in, loff_t pos_in,
->>> +                           struct file *file_out, loff_t pos_out,
->>> +                           u64 len, unsigned int flags, enum ovl_copyop op)
->>> +{
->>> +       struct inode *inode_out = file_inode(file_out);
->>> +       struct fd real_in, real_out;
->>> +       const struct cred *old_cred;
->>> +       int ret;
->>> +
->>> +       ret = ovl_real_file(file_out, &real_out);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       ret = ovl_real_file(file_in, &real_in);
->>> +       if (ret) {
->>> +               fdput(real_out);
->>> +               return ret;
->>> +       }
->>> +
->>> +       old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
->>> +       switch (op) {
->>> +       case OVL_COPY:
->>> +               ret = vfs_copy_file_range(real_in.file, pos_in,
->>> +                                         real_out.file, pos_out, len, flags);
->>
->> Problem:
->> vfs_copy_file_range(ovl_lower_file, ovl_upper_file) on non samefs
->> will get -EXDEV from  ovl_copy_file_range(), so will not fall back
->> to do_splice_direct().
->
-> This is not a regression, right?
+On Tue, May 01, 2018 at 10:10:37AM +0100, Suzuki K Poulose wrote:
+> At the moment we adjust the buffer pointers for reading the trace
+> data via misc device in the common code for ETF/ETB and ETR. Since
+> we are going to change how we manage the buffer for ETR, let us
+> move the buffer manipulation to the respective driver files, hiding
+> it from the common code. We do so by adding type specific helpers
+> for finding the length of data and the pointer to the buffer,
+> for a given length at a file position.
+> 
+> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> ---
+>  drivers/hwtracing/coresight/coresight-tmc-etf.c | 18 +++++++++++
+>  drivers/hwtracing/coresight/coresight-tmc-etr.c | 34 ++++++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-tmc.c     | 41 ++++++++++++++-----------
+>  drivers/hwtracing/coresight/coresight-tmc.h     |  4 +++
+>  4 files changed, 79 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> index e2513b7..2113e93 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+> @@ -120,6 +120,24 @@ static void tmc_etf_disable_hw(struct tmc_drvdata *drvdata)
+>  	CS_LOCK(drvdata->base);
+>  }
+>  
+> +/*
+> + * Return the available trace data in the buffer from @pos, with
+> + * a maximum limit of @len, updating the @bufpp on where to
+> + * find it.
+> + */
+> +ssize_t tmc_etb_get_sysfs_trace(struct tmc_drvdata *drvdata,
+> +				  loff_t pos, size_t len, char **bufpp)
+> +{
+> +	ssize_t actual = len;
+> +
+> +	/* Adjust the len to available size @pos */
+> +	if (pos + actual > drvdata->len)
+> +		actual = drvdata->len - pos;
+> +	if (actual > 0)
+> +		*bufpp = drvdata->buf + pos;
+> +	return actual;
+> +}
+> +
+>  static int tmc_enable_etf_sink_sysfs(struct coresight_device *csdev)
+>  {
+>  	int ret = 0;
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index bff46f2..53a17a8 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -92,6 +92,40 @@ static void tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
+>  	CS_LOCK(drvdata->base);
+>  }
+>  
+> +/*
+> + * Return the available trace data in the buffer @pos, with a maximum
+> + * limit of @len, also updating the @bufpp on where to find it.
+> + */
+> +ssize_t tmc_etr_get_sysfs_trace(struct tmc_drvdata *drvdata,
+> +			    loff_t pos, size_t len, char **bufpp)
+> +{
+> +	ssize_t actual = len;
+> +	char *bufp = drvdata->buf + pos;
+> +	char *bufend = (char *)(drvdata->vaddr + drvdata->size);
+> +
+> +	/* Adjust the len to available size @pos */
+> +	if (pos + actual > drvdata->len)
+> +		actual = drvdata->len - pos;
+> +
+> +	if (actual <= 0)
+> +		return actual;
+> +
+> +	/*
+> +	 * Since we use a circular buffer, with trace data starting
+> +	 * @drvdata->buf, possibly anywhere in the buffer @drvdata->vaddr,
+> +	 * wrap the current @pos to within the buffer.
+> +	 */
+> +	if (bufp >= bufend)
+> +		bufp -= drvdata->size;
+> +	/*
+> +	 * For simplicity, avoid copying over a wrapped around buffer.
+> +	 */
+> +	if ((bufp + actual) > bufend)
+> +		actual = bufend - bufp;
+> +	*bufpp = bufp;
+> +	return actual;
+> +}
+> +
+>  static void tmc_etr_dump_hw(struct tmc_drvdata *drvdata)
+>  {
+>  	const u32 *barrier;
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.c b/drivers/hwtracing/coresight/coresight-tmc.c
+> index 0ea04f5..7a4e84f 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.c
+> @@ -131,35 +131,40 @@ static int tmc_open(struct inode *inode, struct file *file)
+>  	return 0;
+>  }
+>  
+> +static inline ssize_t tmc_get_sysfs_trace(struct tmc_drvdata *drvdata,
+> +					loff_t pos, size_t len, char **bufpp)
+> +{
+> +	switch (drvdata->config_type) {
+> +	case TMC_CONFIG_TYPE_ETB:
+> +	case TMC_CONFIG_TYPE_ETF:
+> +		return tmc_etb_get_sysfs_trace(drvdata, pos, len, bufpp);
+> +	case TMC_CONFIG_TYPE_ETR:
+> +		return tmc_etr_get_sysfs_trace(drvdata, pos, len, bufpp);
+> +	}
+> +
+> +	return  -EINVAL;
 
-Right.
+Extra space betwen return and -EINVAL.
 
->
->> We may be better off checking in_sb != out_sb and returning
->> -EOPNOTSUPP? not sure.
->
-> I think we should fix vfs_copy_file_range() to fall back to copying if
-> not on the same fs.   Not sure why it doesn't do that now.
->
-
-There seems to be a posting to fix that as we speak...
-
-I seem to recall some flames from hch about a similar change
-that NFS folks where trying to push for. Let's see how this one goes.
-
-
->>
->>
->>> +               break;
->>> +
->>> +       case OVL_CLONE:
->>> +               ret = vfs_clone_file_range(real_in.file, pos_in,
->>> +                                          real_out.file, pos_out, len);
->>> +               break;
->>> +
->>> +       case OVL_DEDUPE:
->>> +               ret = vfs_dedupe_file_range_one(real_in.file, pos_in, len,
->>> +                                               real_out.file, pos_out);
->>
->> Problem:
->> real_out can be a readonly fd (for is_admin), so we will be deduping
->> the lower file.
->
-> Ugh...
->
->> I guess this problem is mitigated in current code by may_write_real().
->>
->> How can we deal with that sort of "write leak" without patching
->>  mnt_want_write_file()?
->
-> We need to check before calling dedupe on real files that both are on upper.
->
-> My problem is what error code to return.  Neither EXDEV nor EINVAL
-> descibe the error adequately.  It should be "We could dedupe if we
-> really wanted to, but it makes no sense to do so"...  So now it
-> returns -EBADE, which means "data was different", but at least that
-> one should at least be expected by callers.
->
-
-EPERM  dest_fd is immutable
-
-Which exactly what may_write_real() returns today.
-
-Thanks,
-Amir.
+> +}
+> +
+>  static ssize_t tmc_read(struct file *file, char __user *data, size_t len,
+>  			loff_t *ppos)
+>  {
+> +	char *bufp;
+> +	ssize_t actual;
+>  	struct tmc_drvdata *drvdata = container_of(file->private_data,
+>  						   struct tmc_drvdata, miscdev);
+> -	char *bufp = drvdata->buf + *ppos;
+> +	actual = tmc_get_sysfs_trace(drvdata, *ppos, len, &bufp);
+> +	if (actual <= 0)
+> +		return 0;
+>  
+> -	if (*ppos + len > drvdata->len)
+> -		len = drvdata->len - *ppos;
+> -
+> -	if (drvdata->config_type == TMC_CONFIG_TYPE_ETR) {
+> -		if (bufp == (char *)(drvdata->vaddr + drvdata->size))
+> -			bufp = drvdata->vaddr;
+> -		else if (bufp > (char *)(drvdata->vaddr + drvdata->size))
+> -			bufp -= drvdata->size;
+> -		if ((bufp + len) > (char *)(drvdata->vaddr + drvdata->size))
+> -			len = (char *)(drvdata->vaddr + drvdata->size) - bufp;
+> -	}
+> -
+> -	if (copy_to_user(data, bufp, len)) {
+> +	if (copy_to_user(data, bufp, actual)) {
+>  		dev_dbg(drvdata->dev, "%s: copy_to_user failed\n", __func__);
+>  		return -EFAULT;
+>  	}
+>  
+> -	*ppos += len;
+> +	*ppos += actual;
+> +	dev_dbg(drvdata->dev, "%zu bytes copied\n", actual);
+>  
+> -	dev_dbg(drvdata->dev, "%s: %zu bytes copied, %d bytes left\n",
+> -		__func__, len, (int)(drvdata->len - *ppos));
+> -	return len;
+> +	return actual;
+>  }
+>  
+>  static int tmc_release(struct inode *inode, struct file *file)
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index cdff853..9cbc4d5 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -184,10 +184,14 @@ int tmc_read_unprepare_etb(struct tmc_drvdata *drvdata);
+>  extern const struct coresight_ops tmc_etb_cs_ops;
+>  extern const struct coresight_ops tmc_etf_cs_ops;
+>  
+> +ssize_t tmc_etb_get_sysfs_trace(struct tmc_drvdata *drvdata,
+> +				loff_t pos, size_t len, char **bufpp);
+>  /* ETR functions */
+>  int tmc_read_prepare_etr(struct tmc_drvdata *drvdata);
+>  int tmc_read_unprepare_etr(struct tmc_drvdata *drvdata);
+>  extern const struct coresight_ops tmc_etr_cs_ops;
+> +ssize_t tmc_etr_get_sysfs_trace(struct tmc_drvdata *drvdata,
+> +				loff_t pos, size_t len, char **bufpp);
+>  
+>  
+>  #define TMC_REG_PAIR(name, lo_off, hi_off)				\
+> -- 
+> 2.7.4
+> 
