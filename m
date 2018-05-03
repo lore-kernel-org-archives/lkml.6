@@ -1,146 +1,206 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751382AbeECVnO (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 17:43:14 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34997 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751195AbeECVnM (ORCPT
+        id S1751476AbeECVnY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 17:43:24 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:55822 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeECVnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 17:43:12 -0400
-X-Google-Smtp-Source: AB8JxZqMMyTyfwXjva8QwzZ/62EV2FynelGoF+27ZvcYTFKi3O6wTrZb+2nndqwzbff39sghyzrueQ==
+        Thu, 3 May 2018 17:43:19 -0400
+X-Google-Smtp-Source: AB8JxZocjwZTqIOf/lYWYEW+MiJiYPzuS7qiAr0+RHIP6UoITHuWxKRVm3rV4rWb7ZhhteHA2OjRIA==
 From: Connor McAdams <conmanx360@gmail.com>
 Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
         <jeremy.lefaure@lse.epita.fr>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] R3Di and SBZ quirk entires + alt firmware loading
-Date: Thu,  3 May 2018 17:42:42 -0400
-Message-Id: <1525383771-11105-1-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH 4/9] Add extra exit functions for R3Di and SBZ
+Date: Thu,  3 May 2018 17:42:45 -0400
+Message-Id: <1525383771-11105-4-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525383771-11105-1-git-send-email-conmanx360@gmail.com>
+References: <1525383771-11105-1-git-send-email-conmanx360@gmail.com>
 To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds PCI quirk ID's for the Sound Blaster Z and Recon3Di.
-Only the currently tested ID's have been added.
+This patch adds extra functions for shutdown on the Sound Blaster Z and
+Recon3Di. The Recon3Di only has one specific functions, which sets the
+GPIO data pins to 0 to prevent a popping noise.
 
-This patch also adds the ability to load alternative firmwares for each
-card, the firmwares can be obtained from within the Windows driver.
-The Recon3Di uses "ctefx-r3di.bin" and the Sound Blaster Z uses
-"ctefx-sbz.bin". If the alternative firmware for the given quirk is not
-found, the original ctefx.bin will be used. This has been confirmed to
-work for both the R3Di and the SBZ.
+The Sound Blaster Z exit sequence was taken from Windows. Without this
+exit function, the card will not reload properly unless the PC has been
+shutdown to clear the onboard memory. There are commented out functions
+currently in the sbz_exit_chip function that are added in a later patch.
 
-This patch also makes the character array *dirstr a const.
+Also, a reboot notify function has been added, to make sure these
+functions are ran before a reboot. This helps when using the card
+through VFIO in a virtual machine, to make sure the card reloads the DSP
+properly.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 55 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 51 insertions(+), 4 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 136 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 136 insertions(+)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 768ea86..9a0286e 100644
+index 2f7f964..23a8e79 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -72,12 +72,16 @@
- #define SCP_GET    1
- 
- #define EFX_FILE   "ctefx.bin"
-+#define SBZ_EFX_FILE   "ctefx-sbz.bin"
-+#define R3DI_EFX_FILE  "ctefx-r3di.bin"
- 
- #ifdef CONFIG_SND_HDA_CODEC_CA0132_DSP
- MODULE_FIRMWARE(EFX_FILE);
-+MODULE_FIRMWARE(SBZ_EFX_FILE);
-+MODULE_FIRMWARE(R3DI_EFX_FILE);
+@@ -4639,6 +4639,130 @@ static void ca0132_init_chip(struct hda_codec *codec)
  #endif
+ }
  
--static char *dirstr[2] = { "Playback", "Capture" };
-+static const char *dirstr[2] = { "Playback", "Capture" };
- 
- enum {
- 	SPEAKER_OUT,
-@@ -734,6 +738,7 @@ struct ca0132_spec {
- 	unsigned int scp_resp_header;
- 	unsigned int scp_resp_data[4];
- 	unsigned int scp_resp_count;
-+	bool alt_firmware_present;
- 
- 	/* mixer and effects related */
- 	unsigned char dmic_ctl;
-@@ -762,6 +767,8 @@ struct ca0132_spec {
- enum {
- 	QUIRK_NONE,
- 	QUIRK_ALIENWARE,
-+	QUIRK_SBZ,
-+	QUIRK_R3DI,
- };
- 
- static const struct hda_pintbl alienware_pincfgs[] = {
-@@ -782,6 +789,10 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
- 	SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
- 	SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
- 	SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
-+	SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
-+	SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
-+	SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
-+	SND_PCI_QUIRK(0x1458, 0xA036, "Recon3Di", QUIRK_R3DI),
- 	{}
- };
- 
-@@ -4370,11 +4381,47 @@ static void ca0132_set_dsp_msr(struct hda_codec *codec, bool is96k)
- static bool ca0132_download_dsp_images(struct hda_codec *codec)
- {
- 	bool dsp_loaded = false;
++/*
++ * Recon3Di exit specific commands.
++ */
++/* prevents popping noise on shutdown */
++static void r3di_gpio_shutdown(struct hda_codec *codec)
++{
++	snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA, 0x00);
++}
++
++/*
++ * Sound Blaster Z exit specific commands.
++ */
++static void sbz_region2_exit(struct hda_codec *codec)
++{
 +	struct ca0132_spec *spec = codec->spec;
- 	const struct dsp_image_seg *dsp_os_image;
- 	const struct firmware *fw_entry;
--
--	if (request_firmware(&fw_entry, EFX_FILE, codec->card->dev) != 0)
--		return false;
++	unsigned int i;
++
++	for (i = 0; i < 4; i++)
++		writeb(0x0, spec->mem_base + 0x100);
++	for (i = 0; i < 8; i++)
++		writeb(0xb3, spec->mem_base + 0x304);
 +	/*
-+	 * Alternate firmwares for different variants. The Recon3Di apparently
-+	 * can use the default firmware, but I'll leave the option in case
-+	 * it needs it again.
++	 * I believe these are GPIO, with the right most hex digit being the
++	 * gpio pin, and the second digit being on or off. We see this more in
++	 * the input/output select functions.
 +	 */
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		if (request_firmware(&fw_entry, SBZ_EFX_FILE,
-+					codec->card->dev) != 0) {
-+			codec_dbg(codec, "SBZ alt firmware not detected. ");
-+			spec->alt_firmware_present = false;
-+		} else {
-+			codec_dbg(codec, "Sound Blaster Z firmware selected.");
-+			spec->alt_firmware_present = true;
-+		}
++	writew(0x0000, spec->mem_base + 0x320);
++	writew(0x0001, spec->mem_base + 0x320);
++	writew(0x0104, spec->mem_base + 0x320);
++	writew(0x0005, spec->mem_base + 0x320);
++	writew(0x0007, spec->mem_base + 0x320);
++}
++
++static void sbz_set_pin_ctl_default(struct hda_codec *codec)
++{
++	hda_nid_t pins[5] = {0x0B, 0x0C, 0x0E, 0x12, 0x13};
++	unsigned int i;
++
++	snd_hda_codec_write(codec, 0x11, 0,
++			AC_VERB_SET_PIN_WIDGET_CONTROL, 0x40);
++
++	for (i = 0; i < 5; i++) {
++		snd_hda_codec_write(codec, pins[i], 0,
++				AC_VERB_SET_PIN_WIDGET_CONTROL, 0x00);
++	}
++}
++
++static void sbz_clear_unsolicited(struct hda_codec *codec)
++{
++	hda_nid_t pins[7] = {0x0B, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13};
++	unsigned int i;
++
++	for (i = 0; i < 7; i++) {
++		snd_hda_codec_write(codec, pins[i], 0,
++				AC_VERB_SET_UNSOLICITED_ENABLE, 0x00);
++	}
++}
++
++/* On shutdown, sends commands in sets of three */
++static void sbz_gpio_shutdown_commands(struct hda_codec *codec, int dir,
++							int mask, int data)
++{
++	if (dir >= 0)
++		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DIRECTION,
++									dir);
++	if (mask >= 0)
++		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_MASK, mask);
++
++	if (data >= 0)
++		snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA, data);
++}
++
++static void sbz_exit_chip(struct hda_codec *codec)
++{
++	/* added in later patch. */
++//	chipio_set_stream_control(codec, 0x03, 0);
++//	chipio_set_stream_control(codec, 0x04, 0);
++
++	/* Mess with GPIO */
++	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, -1);
++	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x05);
++	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x01);
++
++//	chipio_set_stream_control(codec, 0x14, 0);
++//	chipio_set_stream_control(codec, 0x0C, 0);
++
++	chipio_set_conn_rate(codec, 0x41, SR_192_000);
++	chipio_set_conn_rate(codec, 0x91, SR_192_000);
++
++	chipio_write(codec, 0x18a020, 0x00000083);
++
++	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x03);
++	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x07);
++	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x06);
++
++//	chipio_set_stream_control(codec, 0x0C, 0);
++
++	chipio_set_control_param(codec, 0x0D, 0x24);
++
++	sbz_clear_unsolicited(codec);
++	sbz_set_pin_ctl_default(codec);
++
++	snd_hda_codec_write(codec, 0x0B, 0,
++		AC_VERB_SET_EAPD_BTLENABLE, 0x00);
++
++	if (dspload_is_loaded(codec))
++		dsp_reset(codec);
++
++	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
++		VENDOR_CHIPIO_CT_EXTENSIONS_ENABLE, 0x00);
++
++	sbz_region2_exit(codec);
++}
++
+ static void ca0132_exit_chip(struct hda_codec *codec)
+ {
+ 	/* put any chip cleanup stuffs here. */
+@@ -4701,7 +4825,12 @@ static void ca0132_free(struct hda_codec *codec)
+ 	snd_hda_power_up(codec);
+ 	switch (spec->quirk) {
+ 	case QUIRK_SBZ:
++		sbz_exit_chip(codec);
++		/* unmap BAR region 2. */
+ 		iounmap(spec->mem_base);
 +		break;
 +	case QUIRK_R3DI:
-+		if (request_firmware(&fw_entry, R3DI_EFX_FILE,
-+					codec->card->dev) != 0) {
-+			codec_dbg(codec, "Recon3Di alt firmware not detected.");
-+			spec->alt_firmware_present = false;
-+		} else {
-+			codec_dbg(codec, "Recon3Di firmware selected.");
-+			spec->alt_firmware_present = true;
-+		}
-+		break;
-+	default:
-+		spec->alt_firmware_present = false;
-+		break;
-+	}
-+	/* Use default ctefx.bin if no alt firmware is detected, or if none
-+	 * exists for your particular codec.
-+	 */
-+	if (spec->alt_firmware_present == false) {
-+		codec_dbg(codec, "Default firmware selected.");
-+		if (request_firmware(&fw_entry, EFX_FILE,
-+					codec->card->dev) != 0)
-+			return false;
-+	}
++		r3di_gpio_shutdown(codec);
+ 		snd_hda_sequence_write(codec, spec->base_exit_verbs);
+ 		ca0132_exit_chip(codec);
+ 		break;
+@@ -4715,12 +4844,19 @@ static void ca0132_free(struct hda_codec *codec)
+ 	kfree(codec->spec);
+ }
  
- 	dsp_os_image = (struct dsp_image_seg *)(fw_entry->data);
- 	if (dspload_image(codec, dsp_os_image, 0, 0, true, 0)) {
++static void ca0132_reboot_notify(struct hda_codec *codec)
++{
++	codec->patch_ops.free(codec);
++	return;
++}
++
+ static const struct hda_codec_ops ca0132_patch_ops = {
+ 	.build_controls = ca0132_build_controls,
+ 	.build_pcms = ca0132_build_pcms,
+ 	.init = ca0132_init,
+ 	.free = ca0132_free,
+ 	.unsol_event = snd_hda_jack_unsol_event,
++	.reboot_notify = ca0132_reboot_notify,
+ };
+ 
+ static void ca0132_config(struct hda_codec *codec)
 -- 
 2.7.4
