@@ -1,64 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751069AbeECIvr (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:51:47 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37840 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750947AbeECIvn (ORCPT
+        id S1751178AbeECIwz convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:52:55 -0400
+Received: from smtp-out12.electric.net ([89.104.206.35]:58396 "EHLO
+        smtp-out12.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751065AbeECIwu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:51:43 -0400
-X-Google-Smtp-Source: AB8JxZp5wxDp8xXs8Kvg6rju3+IBFJm1Es1u91naici7bvXITT6CzWaB8HwRyE1upOev6Hj39VIeNFvxknw80pgyk6s=
+        Thu, 3 May 2018 04:52:50 -0400
+From: =?iso-8859-1?Q?Bj=F8rn_Damstedt_Rasmussen?= <bjra@terma.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: SWIOTLB buffer runs full
+Thread-Topic: SWIOTLB buffer runs full
+Thread-Index: AdPivBr4uiBu7YalQHS4xag4G7VuFw==
+Date: Thu, 3 May 2018 08:52:46 +0000
+Message-ID: <5BD0C36065EAAD4BA6A60ACFBB09F30AE5B7B72F@Exch03.terma.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.20.5.171]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20180502145551.GL98604@atomide.com>
-References: <20180427114723.2687-1-kishon@ti.com> <CAPDyKFqb=Dyi=UMZBLKcrBbmaWbGEjf-Vp5vQ0b7_F__+YnXHQ@mail.gmail.com>
- <20180502145551.GL98604@atomide.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 3 May 2018 10:51:42 +0200
-Message-ID: <CAPDyKFr4=p5Q1oEDVQct+8GeDm-rbQCLyE8+3RqGBkWLvDTKdA@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] mmc: sdhci-omap: Add UHS/HS200 mode support
-To: Tony Lindgren <tony@atomide.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Authenticated: smtp.out@terma.com
+X-Outbound-IP: 193.163.1.101
+X-Env-From: bjra@terma.com
+X-Proto: esmtpsa
+X-Revdns: r2d2.lystrup.terma.com
+X-HELO: EXCH01.terma.com
+X-TLS: TLSv1:ECDHE-RSA-AES256-SHA:256
+X-Authenticated_ID: smtp.out@terma.com
+X-PolicySMART: 6001202
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2 May 2018 at 16:55, Tony Lindgren <tony@atomide.com> wrote:
-> * Ulf Hansson <ulf.hansson@linaro.org> [180502 13:17]:
->> On 27 April 2018 at 13:47, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->> > Add UHS/HS200 mode support in sdhci-omap. The programming sequence
->> > for voltage switching, tuning is followed from AM572x TRM
->> > http://www.ti.com/lit/ug/spruhz6j/spruhz6j.pdf
->> > (Similar to all AM57x/DRA7x SoCs). The patch series also implements
->> > workaround for errata published in
->> > http://www.ti.com/lit/er/sprz429l/sprz429l.pdf
->> >
->> > patches are created on top of
->> > git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git next
->> >
->> > The patches along with dt has also been pushed to
->> > https://github.com/kishon/linux-wip.git sdhci_uhs_v5
->>
->> Thanks, applied for next!
->
-> OK. Ulf, can I use some commit id from your next as a base for
-> the related dts changes?
->
+After a long and bloody battle I managed to port Xilinx's Temac ethernet driver (drivers/net/ethernet/xilinx/ll_temac_main.c) to Intel x86_64 platform.
 
-No, I am re-basing my next branch from time to time so it's not a good idea.
+The Temac driver tries to allocate up to 512 DMA buffers of 9018 bytes using dma_map_single() during high load. But when there's high load I start getting this message:
+	xilinx_temac xilinx_temac.0: swiotlb buffer is full (sz: 9018 bytes)
 
-Instead I have shared an immutable branch for your to pull/merge:
-git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git sdhci_omap
 
-I also signed the top commit on this branch: sdhci-omap-v4.17-rc3
+When the SWIOTLB buffer reports full then performance drops significantly and the kernel log is being blasted with the above message.
 
-The branch is based on 4.17-rc3.
+If I reduce the DMA buffer size to 2000 bytes then I don't get the above error, so I guess the problem is because there's only very few DMA buffers greater than 2K bytes. I tried appending swiotlb=131072 to kernel parameter (i.e. 256MB, default is 64MB) but the SWIOTLB buffer is still being depleted.
 
-Kind regards
-Uffe
+So my question is how do I increase the amount of DMA buffers that can hold 9018 bytes? Is it a soft or hardware setting? I run Linux kernel v4.4.97 on Intel(R) Core(TM) i7-2610UE CPU @ 1.50GHz (family: 0x6, model: 0x2a, stepping: 0x7).
+
+Bjørn Damstedt Rasmussen
