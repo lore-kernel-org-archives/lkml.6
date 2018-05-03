@@ -1,94 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751950AbeECBdK (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 21:33:10 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39726 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751778AbeECBdH (ORCPT
+        id S1751932AbeECBhb (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 21:37:31 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:53652 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751837AbeECBh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 21:33:07 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Colin Ian King <colin.king@canonical.com>
-Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val" to the asoc tree
-In-Reply-To: <20180502142945.31637-1-colin.king@canonical.com>
-Message-Id: <20180503013246.84A6744007A@finisterre.ee.mobilebroadband>
-Date: Thu,  3 May 2018 02:32:46 +0100 (BST)
+        Wed, 2 May 2018 21:37:29 -0400
+Date: Wed, 2 May 2018 21:37:08 -0400
+From: Rich Felker <dalias@libc.org>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Rob Landley <rob@landley.net>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
+ device tree
+Message-ID: <20180503013708.GC1392@brightrain.aerifal.cx>
+References: <1467564402-2649-1-git-send-email-ysato@users.sourceforge.jp>
+ <c1ec211d-cbe2-1139-edb0-8baa0e7364e8@physik.fu-berlin.de>
+ <8c75b447-fc14-871e-1a04-733132527b65@landley.net>
+ <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
+ <20171117191706.GF1627@brightrain.aerifal.cx>
+ <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
+ <20180105212857.GR1627@brightrain.aerifal.cx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180105212857.GR1627@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Fri, Jan 05, 2018 at 04:28:57PM -0500, Rich Felker wrote:
+> On Fri, Nov 17, 2017 at 08:54:47PM +0100, John Paul Adrian Glaubitz wrote:
+> > On 11/17/2017 08:17 PM, Rich Felker wrote:
+> > > There were significant problems that I don't think were ever
+> > > addressed, including incompatible changes in how boot command line was
+> > > handled and possibly ambiguity about what a physical address means
+> > > (zero based vs based in the zone SH3/4 excludes from MMU mapping) in
+> > > the contract for how the bootloader passes a DTB pointer in to the
+> > > kernel, or something similar.
+> > 
+> > I see, thanks for the heads-up.
+> > 
+> > > This is a large part of why I want to get to the point where I can
+> > > build and boot a kernel on the LANDISK -- not being able to test any
+> > > of this is a blocker for moving everything to device tree.
+> > 
+> > I can actually help you with that. I know what to do to get the kernel
+> > to boot on the LANDISK device. I've got everything working except
+> > being unable to detect the IDE controller. The attached config builds
+> > a kernel which boots with the attached output.
+> > 
+> > Furthermore, in order to install the kernel, you need to use the
+> > cross-LILO version from [1] which allows to install the bootloader
+> > on an x86 machine into the SuperH LANDISK image.
+> > 
+> > Instructions can be found in [2]. A base filesystem can be found in [3].
+> > 
+> > And I could also send you an USL-5P which is also a LANDISK device,
+> > just in a different form-factor.
+> > 
+> > Adrian
+> > 
+> > > [1]http://iohack.osdn.jp/kogiidena/debian26/base/landisk-tools-20070612.tgz
+> > > [2] https://www.with.de/fw/pub/Computing/PlextorPX-EH/LANDISKdebian.pdf
+> > > [3] http://iohack.osdn.jp/kogiidena/debian26/base/
+> 
+> I'm trying to reproduce this but can't find any documentation for
+> cross-LILO in [2], much less any code except possibly the binary
+> "lilo.x86" in [1]. Googling cross-lilo isn't finding anything
+> meaningful except this thread. Is there anywhere to find source and
+> information on what it's doing, or is this going to be something I
+> have to reverse-engineer?
 
-   ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
+Progress on all this! I've got my LANDISK working again, but with the
+disk image Sato-san provided me, which is using (a patched?) U-Boot
+and a kernel based on this patch series. I don't know how to recreate
+the U-Boot setup from scratch, but I might be able to figure out how
+to replace the kernel image it's using. It's possible I may be able to
+get lilo working too -- I tried building it but I'm still not sure how
+to use it, and in any case I need to image the existing system before
+I clobber it since I'm not sure I have the original image.
 
-has been applied to the asoc tree at
+On a better note, I've reviewed this patch series in more depth and
+understand it pretty well now, and have classified the patches as
+follows:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+01-04 -- about P1 vs absolute interpretation of "physical addresses",
+and can be completely dropped if we just use the latter. The former
+does not work with full-32-bit address space.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+05 -- change in command line interpretation. Something like this might
+be desired at some point, if we make it non-conflicting with current
+use, but it's independent and not needed.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+06-09 -- extending arch/sh device tree support with functionality
+needed to get traditional sh systems using it. These look roughly ok,
+but might need minor cleanup. Just applying these and linking in a
+minimal DTB, I should be able to get a non-board-specific kernel that
+boots and shows console messages until it gets stuck with no interrupt
+controller or devices. This is the milestone I'm looking to get to
+first.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+10 -- LANDISK board-specific init stuff, moved into of-generic.c. This
+is not where it belongs, but I don't know where it should be, or if we
+can get it to book without this. If not, it can be applied as a hack
+for testing.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+11-13,19 -- new style device tree drivers for clock, pci bus, and irq
+controller. They'll have to go through subsystem maintainers unless we
+want to move them into arch/sh/drivers. Without these the system is
+not going to be usable to the point of reaching userspace.
 
-Thanks,
-Mark
+14,20 -- device trees. The evt2irq/irq2evt macros probably don't make
+sense and should be either irqdomain mappings or just removed. But
+these can be used out-of-tree anyway to make a DTB while testing.
 
->From de5afce2a22ef7f92e9e8583a3bdbc10e448cddf Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 2 May 2018 15:29:45 +0100
-Subject: [PATCH] ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
+15-17 -- might also be needed for PCI to work. Not sure about them.
 
-Currently, the check that ret_val is not -ENOENT is always true and
-the quirk bit BYT_RY5651_MCLK_EN is never being cleared because ret_val
-is always zero at this point from a previous assignment earlier on.
-I believe that ret_val should actually be assigned to the return from
-devm_clk_get() as this can return -ENOENT (from a deeper call to
-clk_get_sys) and that was the original intention to check this.
-
-Detected by CoverityScan, CID#1460228 ("Logically dead code")
-
-Fixes: 02c0a3b3047f ("ASoC: Intel: bytcr_rt5651: add MCLK, quirks and cleanups")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/intel/boards/bytcr_rt5651.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
-index 1b1997f1d60c..bf59c7caf1d9 100644
---- a/sound/soc/intel/boards/bytcr_rt5651.c
-+++ b/sound/soc/intel/boards/bytcr_rt5651.c
-@@ -856,9 +856,10 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
- 	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
- 		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
- 		if (IS_ERR(priv->mclk)) {
-+			ret_val = PTR_ERR(priv->mclk);
- 			dev_err(&pdev->dev,
--				"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
--				PTR_ERR(priv->mclk));
-+				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
-+				ret_val);
- 			/*
- 			 * Fall back to bit clock usage for -ENOENT (clock not
- 			 * available likely due to missing dependencies), bail
--- 
-2.17.0
+Rich
