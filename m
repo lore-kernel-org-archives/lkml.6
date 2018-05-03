@@ -1,105 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751025AbeECHSb (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:18:31 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:50345 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750703AbeECHSa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:18:30 -0400
-Subject: Re: [PATCH v2 07/10] PCI: Convert of_pci_get_host_bridge_resources()
- users to devm variant
-To: Jan Kiszka <jan.kiszka@siemens.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
- <ed3e6df4feca5febefa14716d62aaddd5b4a39d1.1525067324.git.jan.kiszka@siemens.com>
-CC: Jingoo Han <jingoohan1@gmail.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-From: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Message-ID: <dbfa80fb-5fe8-3ccd-6886-4604ef9e058b@mentor.com>
-Date: Thu, 3 May 2018 10:18:24 +0300
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:45.0) Gecko/20100101
- Icedove/45.2.0
+        id S1751246AbeECHTZ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:19:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59378 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751019AbeECHTY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 03:19:24 -0400
+Subject: Re: [RFC V3 PATCH 1/8] vhost: move get_rx_bufs to vhost.c
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jfreimann@redhat.com, wexu@redhat.com
+References: <1524461700-5469-1-git-send-email-jasowang@redhat.com>
+ <1524461700-5469-2-git-send-email-jasowang@redhat.com>
+ <20180502080518.h52wme46fnqpyfpf@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <19846c31-45b2-6809-6e7b-6b738cd7d2ca@redhat.com>
+Date: Thu, 3 May 2018 15:19:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <ed3e6df4feca5febefa14716d62aaddd5b4a39d1.1525067324.git.jan.kiszka@siemens.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [137.202.0.87]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4)
+In-Reply-To: <20180502080518.h52wme46fnqpyfpf@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jan,
 
-On 04/30/2018 08:48 AM, Jan Kiszka wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> Straightforward for all of them, no more leaks afterwards.
-> 
-> CC: Jingoo Han <jingoohan1@gmail.com>
-> CC: Joao Pinto <Joao.Pinto@synopsys.com>
-> CC: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Acked-by: Jingoo Han <jingoo1han@gmail.com>
 
-[snip]
+On 2018年05月02日 16:05, Tiwei Bie wrote:
+> On Mon, Apr 23, 2018 at 01:34:53PM +0800, Jason Wang wrote:
+>> Move get_rx_bufs() to vhost.c and rename it to
+>> vhost_get_rx_bufs(). This helps to hide vring internal layout from
+> A small typo. Based on the code change in this patch, it
+> seems that this function is renamed to vhost_get_bufs().
+>
+> Thanks
+>
 
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-> index 6ab28f29ac6a..6eb36c924983 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -1067,12 +1067,11 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
->  {
->  	int err;
->  	struct device *dev = pci->dev;
-> -	struct device_node *np = dev->of_node;
->  	resource_size_t iobase;
->  	struct resource_entry *win, *tmp;
->  
-> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, &pci->resources,
-> -					       &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
-> +						    &pci->resources, &iobase);
->  	if (err)
->  		return err;
->  
+Right, let me fix it in the next version.
 
-this one snippet is obsoleted by https://patchwork.ozlabs.org/patch/904326/
-
-If 08/10 remains a deprecation, then it is sufficient to exclude the R-Car change,
-otherwise I hope maintainers can deal with the proper ordering.
-
-For PCI OF change:
-
-> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-> index f16b343d3b85..5a88d46a41b7 100644
-> --- a/drivers/pci/of.c
-> +++ b/drivers/pci/of.c
-> @@ -645,12 +645,12 @@ int pci_parse_request_of_pci_ranges(struct device *dev,
->  				    struct resource **bus_range)
->  {
->  	int err, res_valid = 0;
-> -	struct device_node *np = dev->of_node;
->  	resource_size_t iobase;
->  	struct resource_entry *win, *tmp;
->  
->  	INIT_LIST_HEAD(resources);
-> -	err = of_pci_get_host_bridge_resources(np, 0, 0xff, resources, &iobase);
-> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff, resources,
-> +						    &iobase);
->  	if (err)
->  		return err;
->  
-> 
-
-Reviewed-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-Tested-by: Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-
---
-With best wishes,
-Vladimir
+Thanks
