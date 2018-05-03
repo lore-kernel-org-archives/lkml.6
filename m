@@ -1,124 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751355AbeECVMv (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 17:12:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40574 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751133AbeECVMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 17:12:49 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Tyler Hicks <tyhicks@canonical.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>, Will Drewry <wad@chromium.org>,
-        Eric Paris <eparis@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-audit@redhat.com, linux-security-module@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] seccomp: Audit attempts to modify the actions_logged sysctl
-Date: Thu, 03 May 2018 17:12:45 -0400
-Message-ID: <2397134.HQDQRr6h1X@x2>
-Organization: Red Hat
-In-Reply-To: <d8e1c48b-70d0-13a7-e563-755a8760b25f@canonical.com>
-References: <1525276400-7161-1-git-send-email-tyhicks@canonical.com> <CAHC9VhSq=56twBxnzZ8T=APGvtZV39FrHFVqmDMiKOK=WeWJRA@mail.gmail.com> <d8e1c48b-70d0-13a7-e563-755a8760b25f@canonical.com>
+        id S1751307AbeECVPs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 17:15:48 -0400
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:38836 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750911AbeECVPr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 17:15:47 -0400
+X-Google-Smtp-Source: AB8JxZrY1tRtVZKOoK1xHp1rm1bbVCSEpUc8utHVcVAh9kkvLZjLOMnUwUAGoEbbRRKXM128RQSgvQ==
+Subject: Re: led: hw-trigger, global brightness and multi-colored leds
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>,
+        Pavel Machek <pavel@ucw.cz>
+Cc: linux-kernel@vger.kernel.org, Tomas Hlavacek <tomas.hlavacek@nic.cz>
+References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
+ <20180502212105.GA9869@amd>
+ <69651d45-7566-95ad-2a83-53dd76e5680e@kleine-koenig.org>
+From: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <4b8da1c0-60a6-e19c-379d-9649036c9ba4@gmail.com>
+Date: Thu, 3 May 2018 23:14:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <69651d45-7566-95ad-2a83-53dd76e5680e@kleine-koenig.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, May 3, 2018 4:51:36 PM EDT Tyler Hicks wrote:
-> On 05/03/2018 03:48 PM, Paul Moore wrote:
-> > On Thu, May 3, 2018 at 4:42 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> >> On Thursday, May 3, 2018 4:18:26 PM EDT Paul Moore wrote:
-> >>> On Wed, May 2, 2018 at 2:18 PM, Steve Grubb <sgrubb@redhat.com> wrote:
-> >>>> On Wednesday, May 2, 2018 11:53:19 AM EDT Tyler Hicks wrote:
-> >>>>> The decision to log a seccomp action will always be subject to the
-> >>>>> value of the kernel.seccomp.actions_logged sysctl, even for processes
-> >>>>> that are being inspected via the audit subsystem, in an upcoming
-> >>>>> patch.
-> >>>>> Therefore, we need to emit an audit record on attempts at writing to
-> >>>>> the
-> >>>>> actions_logged sysctl when auditing is enabled.
-> >>>>> 
-> >>>>> This patch updates the write handler for the actions_logged sysctl to
-> >>>>> emit an audit record on attempts to write to the sysctl. Successful
-> >>>>> writes to the sysctl will result in a record that includes a
-> >>>>> normalized
-> >>>>> list of logged actions in the "actions" field and a "res" field equal
-> >>>>> to
-> >>>>> 0. Unsuccessful writes to the sysctl will result in a record that
-> >>>>> doesn't include the "actions" field and has a "res" field equal to 1.
-> >>>>> 
-> >>>>> Not all unsuccessful writes to the sysctl are audited. For example,
-> >>>>> an
-> >>>>> audit record will not be emitted if an unprivileged process attempts
-> >>>>> to
-> >>>>> open the sysctl file for reading since that access control check is
-> >>>>> not
-> >>>>> part of the sysctl's write handler.
-> >>>>> 
-> >>>>> Below are some example audit records when writing various strings to
-> >>>>> the
-> >>>>> actions_logged sysctl.
-> >>>>> 
-> >>>>> Writing "not-a-real-action", when the kernel.seccomp.actions_logged
-> >>>>> sysctl previously was "kill_process kill_thread trap errno trace
-> >>>>> log",
-> >>>>> 
-> >>>>> emits this audit record:
-> >>>>>  type=CONFIG_CHANGE msg=audit(1525275273.537:130): op=seccomp-logging
-> >>>>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=0
-> >>>>> 
-> >>>>> If you then write "kill_process kill_thread errno trace log", this
-> >>>>> audit
-> >>>>> 
-> >>>>> record is emitted:
-> >>>>>  type=CONFIG_CHANGE msg=audit(1525275310.208:136): op=seccomp-logging
-> >>>>>  actions=kill_process,kill_thread,errno,trace,log
-> >>>>>  old-actions=kill_process,kill_thread,trap,errno,trace,log res=1
-> >>>>> 
-> >>>>> If you then write the string "log log errno trace kill_process
-> >>>>> kill_thread", which is unordered and contains the log action twice,
-> >>>>> 
-> >>>>> it results in the same actions value as the previous record:
-> >>>>>  type=CONFIG_CHANGE msg=audit(1525275325.613:142): op=seccomp-logging
-> >>>>>  actions=kill_process,kill_thread,errno,trace,log
-> >>>>>  old-actions=kill_process,kill_thread,errno,trace,log res=1
-> >>>>> 
-> >>>>> No audit records are generated when reading the actions_logged
-> >>>>> sysctl.
-> >>>> 
-> >>>> ACK for the format of the records.
-> >>> 
-> >>> I just wanted to clarify the record format with you Steve ... the
-> >>> "actions" and "old-actions" fields may not be included in the record
-> >>> in cases where there is an error building the action value string, are
-> >>> you okay with that or would you prefer the fields to always be
-> >>> included but with a "?" for the value?
-> >> 
-> >> A ? would be more in line with how other things are handled.
-> > 
-> > That's what I thought.
-> > 
-> > Would you mind putting together a v3 Tyler? :)
+Hi Uwe and Pavel,
+
+On 05/03/2018 08:49 PM, Uwe Kleine-König wrote:
+> Hello Pavel,
 > 
-> To be clear, "?" is only to be used when the call to
-> seccomp_names_from_actions_logged() fails, right?
+> On 05/02/2018 11:21 PM, Pavel Machek wrote:
+>>> on the Turris Omnia[1] the LEDs are controllable via an i2c device. Each
+>>> LED can be either in "manual mode" or in a mode I'd call "native mode"
+>>> which is the default. In this native mode the LED being on or off
+>>> depends on an input line that is controlled by another hardware. So a
+>>> LED signals for example activity on the WAN ethernet port without any
+>>> software intervention, but can be used as a normal LED, too, when in
+>>> "manual mode" where it can be switched on and off by a register
+>>> write.
+>>
+>> "Native mode" is quite common. We have it for example on Nokia N900
+>> here (charger has hw option to automatically control the LED).
+> 
+> git grep -i n900 -- drivers/leds doesn't yield any output. Do I miss
+> anything?
+> 
+>> I believe reasonable solution would be to have "hardware" trigger, and
+>> have it selected by default. When active, LED would be controlled by
+>> hardware.
 
-Yes and that is a question mark with no quotes in the audit record.
+The question is whether there is a way for a driver to tell whether
+the device is in the manual or in the native mode. If yes,
+then we could just return -EBUSY on any attempt of brightness setting
+when in the native mode.
 
-> If the sysctl write fails for some other reason, such as when an invalid
-> action name is specified, can you confirm that you still want *no*
-> "actions" field, 
+Also, if it is possible to detect brightness changes originating
+from hardware, then we have an optional brightness_hw_changed sysfs
+file supporting POLLPRI events
+(compare drivers/platform/x86/thinkpad_acpi.c).
 
-Its best that fields do not disappear. In the case of invalid input, you can 
-just leave the new value as ? so that nothing malicious can be injected into 
-the logs
+If we can't tell whether the LED is in native or manual mode,
+but it is possible to read the current brightness from a register, then
+implementing brightness_get op will allow to detect it indirectly (to
+some extent since we cannot guarantee that brightness is not changed
+by another process).
 
-> the "old-actions" field to be the value prior to attempting the update to
-> the sysctl, and res to be 0?
+In each case I'd rather not use trigger mechanism here, which is
+defined as __kernel__ based source of LED events.
 
-Yes
+> There is no prior art for that available as source code, right?
+> 
+>>> Another feature of the LED device is that there is a global brightness
+>>> register that influences all LED's brightness (if on) independent of the
+>>> operating mode.
+>>
+>> We can't describe that easily.
+> 
+> Given that I can give an RGB value (i.e. 3x 8 bit) for the LED, I can
+> change brightness per LED. Have to play around a bit.
+> 
+>>> Further the color of each LED can be set to an RGB triplet.
+>>
+>> We normally handle RGB LED as three independend LEDs, like
+>> notify::red, notify::green, notify::blue. Again, example is Nokia N900
+>> or Motorola Droid 4.
+> 
+> I cannot find source code for LEDs on the Droid 4 either.
+> 
+> An ugly property here is that the hardware trigger only operates on all
+> three colors at once. Hmm, will think a bit about the way to go.
+> 
+> Best regards and thanks for your input,
+> Uwe
+> 
 
--Steve
+-- 
+Best regards,
+Jacek Anaszewski
