@@ -1,133 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeEDCfN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 22:35:13 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49926 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751239AbeEDCfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 22:35:11 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Linux IOMMU Mailing List <iommu@lists.linux-foundation.org>,
+        id S1751308AbeEDCl1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 22:41:27 -0400
+Received: from mga11.intel.com ([192.55.52.93]:18418 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751214AbeEDCl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 22:41:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
+   d="scan'208";a="221513521"
+From: kan.liang@intel.com
+To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
         linux-kernel@vger.kernel.org
-Cc: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jintack Lim <jintack@cs.columbia.edu>,
-        Alexander Witte <alexander.witte@baicanada.com>, peterx@redhat.com
-Subject: [PATCH v3 2/2] iommu/vt-d: Fix iotlb psi missing for mappings
-Date: Fri,  4 May 2018 10:34:53 +0800
-Message-Id: <20180504023453.25682-3-peterx@redhat.com>
-In-Reply-To: <20180504023453.25682-1-peterx@redhat.com>
-References: <20180504023453.25682-1-peterx@redhat.com>
+Cc: acme@kernel.org, eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@intel.com>
+Subject: [RESEND PATCH V7 1/8] perf/x86/intel/uncore: Customized event_read() for client IMC uncore
+Date: Thu,  3 May 2018 11:25:06 -0700
+Message-Id: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When caching mode is enabled for IOMMU, we should send explicit IOTLB
-PSIs even for newly created mappings.  However these events are missing
-for all intel_iommu_map() callers, e.g., iommu_map().  One direct user
-is the vfio-pci driver.
+From: Kan Liang <kan.liang@intel.com>
 
-To make sure we'll send the PSIs always when necessary, this patch
-firstly introduced domain_mapping() helper for page mappings, then fixed
-the problem by generalizing the explicit map IOTLB PSI logic into that
-new helper. With that, we let iommu_domain_identity_map() to use the
-simplified version to avoid sending the notifications, while for all the
-rest of cases we send the notifications always.
+There are two free-running counters for client IMC uncore. The
+customized event_init() function hard codes their index to
+'UNCORE_PMC_IDX_FIXED' and 'UNCORE_PMC_IDX_FIXED + 1'.
+To support the index 'UNCORE_PMC_IDX_FIXED + 1', the generic
+uncore_perf_event_update is obscurely hacked.
+The code quality issue will bring problems when a new counter index is
+introduced into the generic code, for example, a new index for
+free-running counter.
 
-For VM case, we send the PSIs to all the backend IOMMUs for the domain.
+Introducing a customized event_read() function for client IMC uncore.
+The customized function is copied from previous generic
+uncore_pmu_event_read().
+The index 'UNCORE_PMC_IDX_FIXED + 1' will be isolated for client IMC
+uncore only.
 
-This patch allows the nested device assignment to work with QEMU (assign
-device firstly to L1 guest, then assign it again to L2 guest).
-
-Signed-off-by: Peter Xu <peterx@redhat.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Kan Liang <kan.liang@intel.com>
 ---
- drivers/iommu/intel-iommu.c | 43 +++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 13190a54aba2..601d3789211f 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -2352,18 +2352,47 @@ static int __domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
- 	return 0;
+Changes since V6
+- Refine changelog
+
+ arch/x86/events/intel/uncore_snb.c | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index aee5e84..df53521 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -450,6 +450,35 @@ static void snb_uncore_imc_event_start(struct perf_event *event, int flags)
+ 		uncore_pmu_start_hrtimer(box);
  }
  
-+static int domain_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
-+                         struct scatterlist *sg, unsigned long phys_pfn,
-+                         unsigned long nr_pages, int prot)
++static void snb_uncore_imc_event_read(struct perf_event *event)
 +{
-+       int ret;
-+       struct intel_iommu *iommu;
++	struct intel_uncore_box *box = uncore_event_to_box(event);
++	u64 prev_count, new_count, delta;
++	int shift;
 +
-+       /* Do the real mapping first */
-+       ret = __domain_mapping(domain, iov_pfn, sg, phys_pfn, nr_pages, prot);
-+       if (ret)
-+               return ret;
++	/*
++	 * There are two free running counters in IMC.
++	 * The index for the second one is hardcoded to
++	 * UNCORE_PMC_IDX_FIXED + 1.
++	 */
++	if (event->hw.idx >= UNCORE_PMC_IDX_FIXED)
++		shift = 64 - uncore_fixed_ctr_bits(box);
++	else
++		shift = 64 - uncore_perf_ctr_bits(box);
 +
-+       /* Notify about the new mapping */
-+       if (domain_type_is_vm(domain)) {
-+	       /* VM typed domains can have more than one IOMMUs */
-+	       int iommu_id;
-+	       for_each_domain_iommu(iommu_id, domain) {
-+		       iommu = g_iommus[iommu_id];
-+		       __mapping_notify_one(iommu, domain, iov_pfn, nr_pages);
-+	       }
-+       } else {
-+	       /* General domains only have one IOMMU */
-+	       iommu = domain_get_iommu(domain);
-+	       __mapping_notify_one(iommu, domain, iov_pfn, nr_pages);
-+       }
++	/* the hrtimer might modify the previous event value */
++again:
++	prev_count = local64_read(&event->hw.prev_count);
++	new_count = uncore_read_counter(box, event);
++	if (local64_xchg(&event->hw.prev_count, new_count) != prev_count)
++		goto again;
 +
-+       return 0;
++	delta = (new_count << shift) - (prev_count << shift);
++	delta >>= shift;
++
++	local64_add(delta, &event->count);
 +}
 +
- static inline int domain_sg_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
- 				    struct scatterlist *sg, unsigned long nr_pages,
- 				    int prot)
+ static void snb_uncore_imc_event_stop(struct perf_event *event, int flags)
  {
--	return __domain_mapping(domain, iov_pfn, sg, 0, nr_pages, prot);
-+	return domain_mapping(domain, iov_pfn, sg, 0, nr_pages, prot);
- }
- 
- static inline int domain_pfn_mapping(struct dmar_domain *domain, unsigned long iov_pfn,
- 				     unsigned long phys_pfn, unsigned long nr_pages,
- 				     int prot)
- {
--	return __domain_mapping(domain, iov_pfn, NULL, phys_pfn, nr_pages, prot);
-+	return domain_mapping(domain, iov_pfn, NULL, phys_pfn, nr_pages, prot);
- }
- 
- static void domain_context_clear_one(struct intel_iommu *iommu, u8 bus, u8 devfn)
-@@ -2668,9 +2697,9 @@ static int iommu_domain_identity_map(struct dmar_domain *domain,
- 	 */
- 	dma_pte_clear_range(domain, first_vpfn, last_vpfn);
- 
--	return domain_pfn_mapping(domain, first_vpfn, first_vpfn,
--				  last_vpfn - first_vpfn + 1,
--				  DMA_PTE_READ|DMA_PTE_WRITE);
-+	return __domain_mapping(domain, first_vpfn, NULL,
-+				first_vpfn, last_vpfn - first_vpfn + 1,
-+				DMA_PTE_READ|DMA_PTE_WRITE);
- }
- 
- static int domain_prepare_identity_map(struct device *dev,
-@@ -3637,8 +3666,6 @@ static dma_addr_t __intel_map_single(struct device *dev, phys_addr_t paddr,
- 	if (ret)
- 		goto error;
- 
--	__mapping_notify_one(iommu, domain, mm_to_dma_pfn(iova_pfn), size);
--
- 	start_paddr = (phys_addr_t)iova_pfn << PAGE_SHIFT;
- 	start_paddr += paddr & ~PAGE_MASK;
- 	return start_paddr;
-@@ -3825,8 +3852,6 @@ static int intel_map_sg(struct device *dev, struct scatterlist *sglist, int nele
- 		return 0;
+ 	struct intel_uncore_box *box = uncore_event_to_box(event);
+@@ -472,7 +501,7 @@ static void snb_uncore_imc_event_stop(struct perf_event *event, int flags)
+ 		 * Drain the remaining delta count out of a event
+ 		 * that we are disabling:
+ 		 */
+-		uncore_perf_event_update(box, event);
++		snb_uncore_imc_event_read(event);
+ 		hwc->state |= PERF_HES_UPTODATE;
  	}
- 
--	__mapping_notify_one(iommu, domain, start_vpfn, size);
--
- 	return nelems;
  }
+@@ -534,7 +563,7 @@ static struct pmu snb_uncore_imc_pmu = {
+ 	.del		= snb_uncore_imc_event_del,
+ 	.start		= snb_uncore_imc_event_start,
+ 	.stop		= snb_uncore_imc_event_stop,
+-	.read		= uncore_pmu_event_read,
++	.read		= snb_uncore_imc_event_read,
+ };
  
+ static struct intel_uncore_ops snb_uncore_imc_ops = {
 -- 
-2.17.0
+2.7.4
