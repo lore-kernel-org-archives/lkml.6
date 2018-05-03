@@ -1,74 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752072AbeECMaj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:30:39 -0400
-Received: from mout.perfora.net ([74.208.4.197]:47811 "EHLO mout.perfora.net"
+        id S1752099AbeECMav convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:30:51 -0400
+Received: from mga12.intel.com ([192.55.52.136]:23848 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751996AbeECMae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:30:34 -0400
-Message-ID: <1525350612.5836.6.camel@ziswiler.com>
-Subject: Re: [PATCH v1 1/4] clk: tegra20: Add DEV1/DEV2 OSC dividers
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 03 May 2018 14:30:12 +0200
-In-Reply-To: <440e71db-cd0b-c4d8-eb24-ac8ebec9ae75@gmail.com>
-References: <20180426235818.10018-1-digetx@gmail.com>
-         <20180426235818.10018-2-digetx@gmail.com>
-         <1524832404.6979.9.camel@ziswiler.com>
-         <a8fc30b9-42ce-b29a-abc6-2867ebf4a9ac@gmail.com>
-         <1524834018.6979.13.camel@ziswiler.com>
-         <7c4e96ea-8bcf-1643-1b0f-29dc85b62b7b@gmail.com>
-         <440e71db-cd0b-c4d8-eb24-ac8ebec9ae75@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:UCaXvmFuAuBy8TUq/HgtPgPcnerZu38YOOTwE5INVhNqeOkgacl
- Opgndmt1NtgM4IpVRAXy1jftx9SPscKTu4iHMtQpjPjH76DEbPWqO4t7UM9lfCZvju8JUgc
- mpEq/cMWChHvjH9jd9BYNd2o21L1eTjrYzLjLWRoVNNp1QWzVDftUzG3dBx0lTrW0FBT3N9
- 3H3lhKV8YdqZ0oYVNtocQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:8ytznv0eQxs=:DEWXrFFgdPmcCA2iJm6IQF
- UxUNkpAHSPkHkNG/7l9v49tYFVyYLmwbmHYO7kRM6ZwT4N4mpcDQJvY2XiHqZs6WZjB1aNflq
- tlTzFXrsFA+uTBnvyYQAnP7fTeeyLNDvvmi4bLGVsXMUB6ZfUx0GvMtujmzLuvrXwT7vJ/9BB
- X4yIeQABuITjxcX1VdyRVPu+4SexcJQiOiR35KPQhHBeZzF52OJrqM3aUrkWB8Q9m6flJlICc
- K7Xd2a5FeLqYkMYadzVdkH1Vpg0AuiAwd4ZCinUV3QiRbXLijFc0FR53nGQXLOz6sdad/7y97
- ZvxQ6Wf//dEuKhj6J+Flr0ENSc27iQXoxzLzSJahIk6HhncGR92Y2LhBpqguesuQQ0yor+qcl
- 9VV39Bjm77q6+ZnWhTvAy3Zlo+hmn/8fBmsMY1zoO+Y2Z9ahepytT05XZqwz5yYWOQ43pPwHb
- +zL11LDm1xquulf5Z6xrSUJI5b9RThp1uJZFDqGX6CAjJz/B4N/neHN/kpZHgvOlnwV9B6xiG
- EWitYlthNgurNkYW5LkbnNoLEZ/HJrbphI7SqPJCgQBmvZNPBc6+1Vbm3tpyawelMj0dQ+WQZ
- GO+UpnlSlPm6WDQwvm1gHscawoAQXBraX2D5/CwQ9YLUT1FkOH+991yIl33cjjncOm0EhTypD
- vHI2IjhxA9auRAsFwTGogyQufGU2/olicbt42E1iALXpbjhDsEjMJ8NbA7QNCIKoIraeJL7RD
- YXUBot9zPGFX0JYZ
+        id S1751453AbeECMas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:30:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="38378396"
+From: "Kang, Luwei" <luwei.kang@intel.com>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
+Subject: RE: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function to
+ get capability of Intel PT
+Thread-Topic: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function
+ to get capability of Intel PT
+Thread-Index: AQHT4sefaepgQr78WUqju+HNtlv5nqQdTXEAgACIG+D//47xgIAAiXYQ
+Date: Thu, 3 May 2018 12:30:44 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E167F6DFFA@SHSMSX101.ccr.corp.intel.com>
+References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
+ <1525349323-9938-6-git-send-email-luwei.kang@intel.com>
+ <20180503105032.h73n5lcrwkdbahgm@um.fi.intel.com>
+ <82D7661F83C1A047AF7DC287873BF1E167F6DDCE@SHSMSX101.ccr.corp.intel.com>
+ <20180503121301.nlbm4cotbv26tc7l@um.fi.intel.com>
+In-Reply-To: <20180503121301.nlbm4cotbv26tc7l@um.fi.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTcwOTI5ZmUtODgwZC00ZjhkLWFkMzItMTAyNDJhNDNjNDdiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJyUVZjdWVQcmNyeXBJZUhZY1BSTzVXSk0zdU5EN0lzMzVPeStuOWg0Nld0bTM4XC9kZ3lkWmw5b2RYRWc3TmpZcCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-03 at 15:02 +0300, Dmitry Osipenko wrote:
-> ...
-> > Marcel, you previously mentioned that reverting of your DT patch
-> > works for the
-> > Colibri now. Does that reverting also work for the 4.17 kernel? If
-> > yes, I may
-> > add stable tag to the revert-patch to get back paz00 working with
-> > 4.17. If it's
-> > not working, we should figure out why pll_p_out4 is getting
-> > disabled as it
-> > should be a distinct issue.
+> > > > New function __pt_cap_get() will be invoked in KVM to check if a
+> > > > specific capability is availiable in KVM guest.
+> > > > Another function pt_cap_get() can only check the hardware
+> > > > capabilities but this may different with KVM guest because some
+> > > > features may not be exposed to guest.
+> > >
+> > > Do we really need both in KVM?
+> >
+> > Yes, KVM need get host capability to estimate if can expose this
+> > feature to guest
 > 
-> Oh, I just found that Thierry already asked to get this patches
-> included into
-> 4.17. Anyway would be nice to know if a sole DT revert works with
-> 4.17 for you.
+> Can you elaborate on this, what information do we need besides MSR_IA32_VMX_MISC[14]?
 
-Yes, 4.17.0-rc3 with just 4c9a27a6c66d4427f3cba4019d4ba738fe99fa87
-reverted works fine as well.
+Enable Intel PT in guest depend on SECONDARY_EXEC_PT_USE_GPA, EPT, MSR_IA32_VMX_MISC[14] and the capability of " PT_CAP_topa_output" on hardware. PT driver will return " -ENODEV" if hardware not support "PT_CAP_topa_output".
+
+Thanks,
+Luwei Kang
+
+> 
+> Thanks,
+> --
+> Alex
