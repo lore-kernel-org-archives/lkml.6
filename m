@@ -1,266 +1,206 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752285AbeECKRP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:17:15 -0400
-Received: from mga03.intel.com ([134.134.136.65]:44397 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751726AbeECKPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:15:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="38109790"
-From: Luwei Kang <luwei.kang@intel.com>
-To: kvm@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, peterz@infradead.org, chao.p.peng@linux.intel.com,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace virtualization mode
-Date: Thu,  3 May 2018 20:08:36 +0800
-Message-Id: <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
-References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
+        id S1752264AbeECKRL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:17:11 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:33566 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751765AbeECKRC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:17:02 -0400
+X-Google-Smtp-Source: AB8JxZrr0Sed9Mc1e0eHoorszlUE/VkpAgI0QHNkrVOGtN6j/J9NKq7Eauw2kDDdY/dLHz1dLRcGopDi64u1tZv/I3qpOA5Gw2aa
+MIME-Version: 1.0
+Date: Thu, 03 May 2018 03:17:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000283c37056b4a81a5@google.com>
+Subject: INFO: task hung in __sb_start_write
+From: syzbot <syzbot+7b2866454055e43c21e5@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+Hello,
 
-Intel PT virtualization can be work in one of 3 possible modes:
-a. system-wide: trace both host/guest and output to host buffer;
-b. host-only: only trace host and output to host buffer;
-c. host-guest: trace host/guest simultaneous and output to their
-   respective buffer.
+syzbot found the following crash on:
 
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+HEAD commit:    06dd3dfeea60 Merge tag 'char-misc-4.17-rc1' of  
+git://git.k...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12911087800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=301513bac2f9fd9
+dashboard link: https://syzkaller.appspot.com/bug?extid=7b2866454055e43c21e5
+compiler:       gcc (GCC) 8.0.1 20180301 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7b2866454055e43c21e5@syzkaller.appspotmail.com
+
+kworker/dying (22) used greatest stack depth: 8440 bytes left
+INFO: task syz-executor1:4457 blocked for more than 120 seconds.
+       Not tainted 4.16.0+ #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor1   D21448  4457   4449 0x00000000
+Call Trace:
+  context_switch kernel/sched/core.c:2848 [inline]
+  __schedule+0x807/0x1e40 kernel/sched/core.c:3490
+  schedule+0xef/0x430 kernel/sched/core.c:3549
+  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:269 [inline]
+  rwsem_down_read_failed+0x400/0x6e0 kernel/locking/rwsem-xadd.c:286
+  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
+  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
+  __percpu_down_read+0x15d/0x200 kernel/locking/percpu-rwsem.c:85
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:49 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  __sb_start_write+0x2d7/0x300 fs/super.c:1340
+  sb_start_write include/linux/fs.h:1548 [inline]
+  mnt_want_write+0x3f/0xc0 fs/namespace.c:386
+  do_unlinkat+0x2a3/0xa10 fs/namei.c:4027
+  SYSC_unlink fs/namei.c:4092 [inline]
+  SyS_unlink+0x26/0x30 fs/namei.c:4090
+  do_syscall_64+0x29e/0x9d0 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x42/0xb7
+RIP: 0033:0x455027
+RSP: 002b:00007ffe9645abc8 EFLAGS: 00000202 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000455027
+RDX: 0000000001272983 RSI: 00007ffe9645ac60 RDI: 00007ffe9645ac60
+RBP: 00007ffe9645c970 R08: 0000000000000000 R09: 0000000000000010
+R10: 000000000000000a R11: 0000000000000202 R12: 0000000001272940
+R13: 0000000000000000 R14: 000000000000041b R15: 000000000003297e
+
+Showing all locks held in the system:
+2 locks held by khungtaskd/878:
+  #0: 00000000e417309b (rcu_read_lock){....}, at:  
+check_hung_uninterruptible_tasks kernel/hung_task.c:175 [inline]
+  #0: 00000000e417309b (rcu_read_lock){....}, at: watchdog+0x1ff/0xf60  
+kernel/hung_task.c:249
+  #1: 00000000a42a84b8 (tasklist_lock){.+.+}, at:  
+debug_show_all_locks+0xde/0x34a kernel/locking/lockdep.c:4470
+2 locks held by rs:main Q:Reg/4288:
+  #0: 00000000658bb541 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1a9/0x1e0  
+fs/file.c:766
+  #1: 0000000052aff78e (sb_writers#4){++++}, at: file_start_write  
+include/linux/fs.h:2709 [inline]
+  #1: 0000000052aff78e (sb_writers#4){++++}, at: vfs_write+0x452/0x560  
+fs/read_write.c:548
+2 locks held by getty/4381:
+  #0: 00000000990269ba (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000009f1d2051 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4382:
+  #0: 00000000ecd434e6 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 0000000034d736c1 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4383:
+  #0: 0000000013764982 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 00000000202a6e1f (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4384:
+  #0: 00000000ba3d2e6d (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 00000000e3323037 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4385:
+  #0: 00000000a3add0e7 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 0000000081f7b524 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4386:
+  #0: 00000000a73f06ea (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000002de50dc3 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+2 locks held by getty/4387:
+  #0: 0000000087cccc64 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x37/0x40 drivers/tty/tty_ldsem.c:365
+  #1: 000000000a3822a6 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x321/0x1cc0 drivers/tty/n_tty.c:2131
+1 lock held by syz-executor1/4457:
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1548 [inline]
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor7/4459:
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1548 [inline]
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor5/4460:
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1548 [inline]
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor3/4462:
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1548 [inline]
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+2 locks held by syz-executor6/14836:
+  #0: 00000000f86d1ee3 (&mm->mmap_sem){++++}, at:  
+__do_page_fault+0x381/0xe40 arch/x86/mm/fault.c:1328
+  #1: 0000000002ee4fbd (sb_pagefaults){++++}, at: sb_start_pagefault  
+include/linux/fs.h:1577 [inline]
+  #1: 0000000002ee4fbd (sb_pagefaults){++++}, at:  
+ext4_page_mkwrite+0x1c8/0x1420 fs/ext4/inode.c:6074
+1 lock held by syz-executor0/14842:
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1548 [inline]
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor4/14843:
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1548 [inline]
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+1 lock held by syz-executor2/14849:
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: sb_start_write  
+include/linux/fs.h:1548 [inline]
+  #0: 0000000052aff78e (sb_writers#4){++++}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:386
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 878 Comm: khungtaskd Not tainted 4.16.0+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:17 [inline]
+  dump_stack+0x1b9/0x29f lib/dump_stack.c:53
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:138 [inline]
+  check_hung_task kernel/hung_task.c:132 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:190 [inline]
+  watchdog+0xc10/0xf60 kernel/hung_task.c:249
+  kthread+0x345/0x410 kernel/kthread.c:238
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:411
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0x6/0x10  
+arch/x86/include/asm/irqflags.h:54
+
+
 ---
- arch/x86/include/asm/intel_pt.h  |  6 ++++
- arch/x86/include/asm/msr-index.h |  1 +
- arch/x86/include/asm/vmx.h       |  8 +++++
- arch/x86/kvm/vmx.c               | 68 +++++++++++++++++++++++++++++++++++++---
- 4 files changed, 79 insertions(+), 4 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
-index 3a4f524..43ad260 100644
---- a/arch/x86/include/asm/intel_pt.h
-+++ b/arch/x86/include/asm/intel_pt.h
-@@ -5,6 +5,12 @@
- #define PT_CPUID_LEAVES		2
- #define PT_CPUID_REGS_NUM	4 /* number of regsters (eax, ebx, ecx, edx) */
- 
-+enum pt_mode {
-+	PT_MODE_SYSTEM = 0,
-+	PT_MODE_HOST,
-+	PT_MODE_HOST_GUEST,
-+};
-+
- enum pt_capabilities {
- 	PT_CAP_max_subleaf = 0,
- 	PT_CAP_cr3_filtering,
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index cc9e681..c813507 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -790,6 +790,7 @@
- #define VMX_BASIC_INOUT		0x0040000000000000LLU
- 
- /* MSR_IA32_VMX_MISC bits */
-+#define MSR_IA32_VMX_MISC_INTEL_PT                 (1ULL << 14)
- #define MSR_IA32_VMX_MISC_VMWRITE_SHADOW_RO_FIELDS (1ULL << 29)
- #define MSR_IA32_VMX_MISC_PREEMPTION_TIMER_SCALE   0x1F
- /* AMD-V MSRs */
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index 8b67807..9e828d4 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -76,7 +76,9 @@
- #define SECONDARY_EXEC_SHADOW_VMCS              0x00004000
- #define SECONDARY_EXEC_RDSEED_EXITING		0x00010000
- #define SECONDARY_EXEC_ENABLE_PML               0x00020000
-+#define SECONDARY_EXEC_PT_CONCEAL_VMX		0x00080000
- #define SECONDARY_EXEC_XSAVES			0x00100000
-+#define SECONDARY_EXEC_PT_USE_GPA		0x01000000
- #define SECONDARY_EXEC_TSC_SCALING              0x02000000
- 
- #define PIN_BASED_EXT_INTR_MASK                 0x00000001
-@@ -97,6 +99,8 @@
- #define VM_EXIT_LOAD_IA32_EFER                  0x00200000
- #define VM_EXIT_SAVE_VMX_PREEMPTION_TIMER       0x00400000
- #define VM_EXIT_CLEAR_BNDCFGS                   0x00800000
-+#define VM_EXIT_PT_CONCEAL_PIP			0x01000000
-+#define VM_EXIT_CLEAR_IA32_RTIT_CTL		0x02000000
- 
- #define VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR	0x00036dff
- 
-@@ -108,6 +112,8 @@
- #define VM_ENTRY_LOAD_IA32_PAT			0x00004000
- #define VM_ENTRY_LOAD_IA32_EFER                 0x00008000
- #define VM_ENTRY_LOAD_BNDCFGS                   0x00010000
-+#define VM_ENTRY_PT_CONCEAL_PIP			0x00020000
-+#define VM_ENTRY_LOAD_IA32_RTIT_CTL		0x00040000
- 
- #define VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR	0x000011ff
- 
-@@ -234,6 +240,8 @@ enum vmcs_field {
- 	GUEST_PDPTR3_HIGH               = 0x00002811,
- 	GUEST_BNDCFGS                   = 0x00002812,
- 	GUEST_BNDCFGS_HIGH              = 0x00002813,
-+	GUEST_IA32_RTIT_CTL		= 0x00002814,
-+	GUEST_IA32_RTIT_CTL_HIGH	= 0x00002815,
- 	HOST_IA32_PAT			= 0x00002c00,
- 	HOST_IA32_PAT_HIGH		= 0x00002c01,
- 	HOST_IA32_EFER			= 0x00002c02,
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 5b49ad4..8680cd5 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -54,6 +54,7 @@
- #include <asm/microcode.h>
- #include <asm/nospec-branch.h>
- #include <asm/mshyperv.h>
-+#include <asm/intel_pt.h>
- 
- #include "trace.h"
- #include "pmu.h"
-@@ -187,6 +188,10 @@
- static unsigned int ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
- module_param(ple_window_max, uint, 0444);
- 
-+/* Default is SYSTEM mode. */
-+static int __read_mostly pt_mode = PT_MODE_SYSTEM;
-+module_param(pt_mode, int, S_IRUGO);
-+
- extern const ulong vmx_return;
- 
- struct kvm_vmx {
-@@ -1488,6 +1493,19 @@ static inline bool cpu_has_vmx_vmfunc(void)
- 		SECONDARY_EXEC_ENABLE_VMFUNC;
- }
- 
-+static inline bool cpu_has_vmx_intel_pt(void)
-+{
-+	u64 vmx_msr;
-+
-+	rdmsrl(MSR_IA32_VMX_MISC, vmx_msr);
-+	return vmx_msr & MSR_IA32_VMX_MISC_INTEL_PT;
-+}
-+
-+static inline bool cpu_has_vmx_pt_use_gpa(void)
-+{
-+	return vmcs_config.cpu_based_2nd_exec_ctrl & SECONDARY_EXEC_PT_USE_GPA;
-+}
-+
- static inline bool report_flexpriority(void)
- {
- 	return flexpriority_enabled;
-@@ -4002,6 +4020,8 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
- 			SECONDARY_EXEC_RDRAND_EXITING |
- 			SECONDARY_EXEC_ENABLE_PML |
- 			SECONDARY_EXEC_TSC_SCALING |
-+			SECONDARY_EXEC_PT_USE_GPA |
-+			SECONDARY_EXEC_PT_CONCEAL_VMX |
- 			SECONDARY_EXEC_ENABLE_VMFUNC;
- 		if (adjust_vmx_controls(min2, opt2,
- 					MSR_IA32_VMX_PROCBASED_CTLS2,
-@@ -4046,7 +4066,8 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
- 	min |= VM_EXIT_HOST_ADDR_SPACE_SIZE;
- #endif
- 	opt = VM_EXIT_SAVE_IA32_PAT | VM_EXIT_LOAD_IA32_PAT |
--		VM_EXIT_CLEAR_BNDCFGS;
-+		VM_EXIT_CLEAR_BNDCFGS | VM_EXIT_PT_CONCEAL_PIP |
-+		VM_EXIT_CLEAR_IA32_RTIT_CTL;
- 	if (adjust_vmx_controls(min, opt, MSR_IA32_VMX_EXIT_CTLS,
- 				&_vmexit_control) < 0)
- 		return -EIO;
-@@ -4065,11 +4086,20 @@ static __init int setup_vmcs_config(struct vmcs_config *vmcs_conf)
- 		_pin_based_exec_control &= ~PIN_BASED_POSTED_INTR;
- 
- 	min = VM_ENTRY_LOAD_DEBUG_CONTROLS;
--	opt = VM_ENTRY_LOAD_IA32_PAT | VM_ENTRY_LOAD_BNDCFGS;
-+	opt = VM_ENTRY_LOAD_IA32_PAT | VM_ENTRY_LOAD_BNDCFGS |
-+		VM_ENTRY_PT_CONCEAL_PIP | VM_ENTRY_LOAD_IA32_RTIT_CTL;
- 	if (adjust_vmx_controls(min, opt, MSR_IA32_VMX_ENTRY_CTLS,
- 				&_vmentry_control) < 0)
- 		return -EIO;
- 
-+	if (!(_cpu_based_2nd_exec_control & SECONDARY_EXEC_PT_USE_GPA) ||
-+		!(_vmexit_control & VM_EXIT_CLEAR_IA32_RTIT_CTL) ||
-+		!(_vmentry_control & VM_ENTRY_LOAD_IA32_RTIT_CTL)) {
-+		_cpu_based_2nd_exec_control &= ~SECONDARY_EXEC_PT_USE_GPA;
-+		_vmexit_control &= ~VM_EXIT_CLEAR_IA32_RTIT_CTL;
-+		_vmentry_control &= ~VM_ENTRY_LOAD_IA32_RTIT_CTL;
-+	}
-+
- 	rdmsr(MSR_IA32_VMX_BASIC, vmx_msr_low, vmx_msr_high);
- 
- 	/* IA-32 SDM Vol 3B: VMCS size is never greater than 4kB. */
-@@ -5780,6 +5810,28 @@ static u32 vmx_exec_control(struct vcpu_vmx *vmx)
- 	return exec_control;
- }
- 
-+static u32 vmx_vmexit_control(struct vcpu_vmx *vmx)
-+{
-+	u32 vmexit_control = vmcs_config.vmexit_ctrl;
-+
-+	if (pt_mode == PT_MODE_SYSTEM)
-+		vmexit_control &= ~(VM_EXIT_CLEAR_IA32_RTIT_CTL |
-+				    VM_EXIT_PT_CONCEAL_PIP);
-+
-+	return vmexit_control;
-+}
-+
-+static u32 vmx_vmentry_control(struct vcpu_vmx *vmx)
-+{
-+	u32 vmentry_control = vmcs_config.vmentry_ctrl;
-+
-+	if (pt_mode == PT_MODE_SYSTEM)
-+		vmentry_control &= ~(VM_ENTRY_PT_CONCEAL_PIP |
-+				     VM_ENTRY_LOAD_IA32_RTIT_CTL);
-+
-+	return vmentry_control;
-+}
-+
- static bool vmx_rdrand_supported(void)
- {
- 	return vmcs_config.cpu_based_2nd_exec_ctrl &
-@@ -5916,6 +5968,10 @@ static void vmx_compute_secondary_exec_control(struct vcpu_vmx *vmx)
- 		}
- 	}
- 
-+	if (pt_mode == PT_MODE_SYSTEM)
-+		exec_control &= ~(SECONDARY_EXEC_PT_USE_GPA |
-+				  SECONDARY_EXEC_PT_CONCEAL_VMX);
-+
- 	vmx->secondary_exec_control = exec_control;
- }
- 
-@@ -6026,10 +6082,10 @@ static void vmx_vcpu_setup(struct vcpu_vmx *vmx)
- 	if (boot_cpu_has(X86_FEATURE_ARCH_CAPABILITIES))
- 		rdmsrl(MSR_IA32_ARCH_CAPABILITIES, vmx->arch_capabilities);
- 
--	vm_exit_controls_init(vmx, vmcs_config.vmexit_ctrl);
-+	vm_exit_controls_init(vmx, vmx_vmexit_control(vmx));
- 
- 	/* 22.2.1, 20.8.1 */
--	vm_entry_controls_init(vmx, vmcs_config.vmentry_ctrl);
-+	vm_entry_controls_init(vmx, vmx_vmentry_control(vmx));
- 
- 	vmx->vcpu.arch.cr0_guest_owned_bits = X86_CR0_TS;
- 	vmcs_writel(CR0_GUEST_HOST_MASK, ~X86_CR0_TS);
-@@ -7350,6 +7406,10 @@ static __init int hardware_setup(void)
- 
- 	kvm_mce_cap_supported |= MCG_LMCE_P;
- 
-+	if (!enable_ept || !pt_cap_get(PT_CAP_topa_output) ||
-+		!cpu_has_vmx_intel_pt() || !cpu_has_vmx_pt_use_gpa())
-+		pt_mode = PT_MODE_SYSTEM;
-+
- 	return alloc_kvm_area();
- 
- out:
--- 
-1.8.3.1
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
