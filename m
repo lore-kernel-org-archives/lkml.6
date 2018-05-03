@@ -1,102 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751946AbeECMfz (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:35:55 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54192 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751272AbeECMft (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:35:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BA0456028D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v1 1/2] dt-bindings: clock: Introduce QCOM Video clock controller bindings
-Date: Thu,  3 May 2018 18:05:24 +0530
-Message-Id: <1525350925-16006-2-git-send-email-anischal@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
-References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+        id S1752068AbeECMge (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:36:34 -0400
+Received: from gloria.sntech.de ([95.129.55.99]:43640 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751439AbeECMga (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:36:30 -0400
+From: Heiko Stuebner <heiko@sntech.de>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Emil Renner Berthing <kernel@esmil.dk>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: use canonical compatible for touchpad/touchscreen
+Date: Thu, 03 May 2018 14:36:13 +0200
+Message-ID: <3507285.Efm3MEd05V@phil>
+In-Reply-To: <20180501224628.GA150745@dtor-ws>
+References: <20180501224628.GA150745@dtor-ws>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree bindings for video clock controller for Qualcomm
-Technology Inc's SoCs.
+Am Mittwoch, 2. Mai 2018, 00:46:28 CEST schrieb Dmitry Torokhov:
+> "atmel,atmel_mxt_tp" and "atmel,atmel_mxt_ts" are ChromeOS inventions,
+> let's replace them with canonical compatible string "atmel,maxtouch".
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Signed-off-by: Amit Nischal <anischal@codeaurora.org>
----
- .../devicetree/bindings/clock/qcom,videocc.txt     | 18 ++++++++++++++++
- include/dt-bindings/clock/qcom,videocc-sdm845.h    | 25 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
- create mode 100644 include/dt-bindings/clock/qcom,videocc-sdm845.h
+I've amended the patch subject with a "on gru-kevin" and applied
+it for 4.18 with Brian's Reviewed-by
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.txt b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
-new file mode 100644
-index 0000000..600eda2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,videocc.txt
-@@ -0,0 +1,18 @@
-+Qualcomm Video Clock & Reset Controller Binding
-+-----------------------------------------------
-+
-+Required properties :
-+- compatible : shall contain "qcom,sdm845-videocc"
-+- reg : shall contain base register location and length
-+- #clock-cells : from common clock binding, shall contain 1.
-+- #reset-cells : from common reset binding, shall contain 1.
-+- #power-domain-cells : from generic power domain binding, shall contain 1.
-+
-+Example:
-+	videocc: clock-controller@ab00000 {
-+		compatible = "qcom,sdm845-videocc";
-+		reg = <0xab00000 0x10000>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		#power-domain-cells = <1>;
-+	};
-diff --git a/include/dt-bindings/clock/qcom,videocc-sdm845.h b/include/dt-bindings/clock/qcom,videocc-sdm845.h
-new file mode 100644
-index 0000000..48f6a9e
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,videocc-sdm845.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-+
-+#ifndef _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
-+#define _DT_BINDINGS_CLK_MSM_VIDEO_CC_SDM845_H
-+
-+#define VIDEO_CC_APB_CLK			0
-+#define VIDEO_CC_AT_CLK				1
-+#define VIDEO_CC_QDSS_TRIG_CLK			2
-+#define VIDEO_CC_QDSS_TSCTR_DIV8_CLK		3
-+#define VIDEO_CC_VCODEC0_AXI_CLK		4
-+#define VIDEO_CC_VCODEC0_CORE_CLK		5
-+#define VIDEO_CC_VCODEC1_AXI_CLK		6
-+#define VIDEO_CC_VCODEC1_CORE_CLK		7
-+#define VIDEO_CC_VENUS_AHB_CLK			8
-+#define VIDEO_CC_VENUS_CLK_SRC			9
-+#define VIDEO_CC_VENUS_CTL_AXI_CLK		10
-+#define VIDEO_CC_VENUS_CTL_CORE_CLK		11
-+#define VIDEO_PLL0				12
-+
-+#define VENUS_GDSC				0
-+#define VCODEC0_GDSC				1
-+#define VCODEC1_GDSC				2
-+
-+#endif
---
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+
+Thanks
+Heiko
