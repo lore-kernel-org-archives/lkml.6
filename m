@@ -1,68 +1,96 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeECSXJ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 14:23:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40550 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751095AbeECSXI (ORCPT
+        id S1751240AbeECS0B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:26:01 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:39397 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751095AbeECSZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:23:08 -0400
-Date: Thu, 3 May 2018 11:24:25 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1525351221.9956.4.camel@gmx.de>
- <20180503124943.GB12217@hirez.programming.kicks-ass.net>
- <1525354359.5576.1.camel@gmx.de>
- <20180503135617.GC12217@hirez.programming.kicks-ass.net>
- <1525357015.5577.2.camel@gmx.de>
- <20180503144450.GD12217@hirez.programming.kicks-ass.net>
- <20180503161231.GI26088@linux.vnet.ibm.com>
- <20180503164508.GG12217@hirez.programming.kicks-ass.net>
- <20180503171850.GL26088@linux.vnet.ibm.com>
- <20180503175456.GI12217@hirez.programming.kicks-ass.net>
+        Thu, 3 May 2018 14:25:58 -0400
+Subject: Re: [PATCH 1/2] ARM: dts: am335x: Replace numeric pinmux address with
+ macro defines
+To: Tony Lindgren <tony@atomide.com>
+CC: Christina Quast <cquast@baylibre.com>, <linux-omap@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <narmstrong@baylibre.com>,
+        Oleg Kokorin <ole2mail@mail.com>
+References: <20180430112006.20861-1-cquast@baylibre.com>
+ <20180430112006.20861-2-cquast@baylibre.com>
+ <20180430173146.GG5671@atomide.com>
+ <234521ee-3d8e-b413-65dd-5eefd44486d8@ti.com>
+ <20180503161916.GS98604@atomide.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <fb4c48e1-f3fb-9e37-e945-15af1800ae3c@ti.com>
+Date: Thu, 3 May 2018 13:25:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503175456.GI12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18050318-0048-0000-0000-00000267B194
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008963; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01027002; UDB=6.00524569; IPR=6.00806135;
- MB=3.00020910; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-03 18:23:05
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050318-0049-0000-0000-000044FE3296
-Message-Id: <20180503182425.GM26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805030157
+In-Reply-To: <20180503161916.GS98604@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 07:54:56PM +0200, Peter Zijlstra wrote:
-> On Thu, May 03, 2018 at 10:18:50AM -0700, Paul E. McKenney wrote:
-> > > +	if (per_cpu(rcu_cpu_started, cpu))
-> > 
-> > I would log a non-splat dmesg the first time this happened, just for my
-> > future sanity, but otherwise looks fine.  I am a bit concerned about
-> > calls to rcu_cpu_starting() getting sprinkled all through the code.
-> > Or am I being excessively paranoid?
+
+
+On 05/03/2018 11:19 AM, Tony Lindgren wrote:
+> * Grygorii Strashko <grygorii.strashko@ti.com> [180503 15:54]:
+>>
+>>
+>> On 04/30/2018 12:31 PM, Tony Lindgren wrote:
+>>> Hi,
+>>>
+>>> * Christina Quast <cquast@baylibre.com> [180430 11:23]:
+>>>> The values are extraced from the "AM335x SitaraTM Processors Technical
+>>>> Reference Manual", Section 9.3.1 CONTROL_MODULE Registers, based on the
+>>>> file autogenerated by TI PinMux.
+>>>
+>>> This certainly makes things easier to mux :)
+>>>
+>>> Have you verified that the registers are the same across all am335x
+>>> models and different revisions?
+>>>
+>>> It used to be that different SoC revisions could have different
+>>> amount of registers and also different options in some cases.
+>>>
+>>>> +#define AM335X_CONTROL_REVISION			0x0
+>>>> +#define AM335X_CONTROL_HWINFO			0x4
+>>>> +#define AM335X_CONTROL_SYSCONFIG		0x10
+>>>> +#define AM335X_CONTROL_STATUS			0x40
+>>>
+>>> You should only list the padconf mux registers here, no need to
+>>> list any of the controller registers.
+>>>
+>>
+>> To be honest, I do think it's right thing to do - DT by itself is
+>> documentation and previously DT maintainers were not very happy regarding
+>> introducing more defines instead of const.
 > 
-> Don't think so, but lets first see if this at all works. If not we'll
-> need to figure out something else anyway.
+> Sounds like you mean "I don't think" above instead of "I do think"?
+> Care to clarify..
 
-Works for me!
+i don't.. sry
 
-							Thanx, Paul
+> 
+>> Adding such defines will introduce big headers in Linux common or
+>> platform folders again which we've just got rid of.
+>>
+>> If smth is unclear - comments can be used in DT.
+>>
+>> Just my 5c.
+> 
+> The problem earlier was that we had just too many variants as
+> the padconf registers got changed even between SoC revisions.
+> Not always and not for many registers but still. The padconf
+> register range seems to stay the same for a SoC though.
+> 
+> I do see value at being able to mux the registers easier though.
+
+
+
+-- 
+regards,
+-grygorii
