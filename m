@@ -1,39 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeECTui (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 15:50:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37872 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751115AbeECTuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 15:50:37 -0400
-From: William Cohen <wcohen@redhat.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, William Cohen <wcohen@redhat.com>
-Subject: [PATCH] Remove duplicated entry for westmereep-dp in mapfile.csv
-Date: Thu,  3 May 2018 15:50:32 -0400
-Message-Id: <20180503195032.28871-1-wcohen@redhat.com>
+        id S1751192AbeECUAL (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 16:00:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750822AbeECUAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 16:00:10 -0400
+Subject: [PATCH v6 0/5] PCI: Improve PCIe link status reporting
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ariel Elior <ariel.elior@cavium.com>
+Cc: linux-pci@vger.kernel.org, everest-linux-l2@cavium.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tal Gilboa <talgi@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Jakub Kicinski <kubakici@wp.pl>
+Date: Thu, 03 May 2018 15:00:07 -0500
+Message-ID: <152537719056.62474.2571390812509425478.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: StGit/0.18
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: William Cohen <wcohen@redhat.com>
----
- tools/perf/pmu-events/arch/x86/mapfile.csv | 1 -
- 1 file changed, 1 deletion(-)
+This is based on Tal's recent work to unify the approach for reporting PCIe
+link speed/width and whether the device is being limited by a slower
+upstream link.
 
-diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv b/tools/perf/pmu-events/arch/x86/mapfile.csv
-index 93656f2fd53a..7e3cce3bcf3b 100644
---- a/tools/perf/pmu-events/arch/x86/mapfile.csv
-+++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
-@@ -29,7 +29,6 @@ GenuineIntel-6-4D,v13,silvermont,core
- GenuineIntel-6-4C,v13,silvermont,core
- GenuineIntel-6-2A,v15,sandybridge,core
- GenuineIntel-6-2C,v2,westmereep-dp,core
--GenuineIntel-6-2C,v2,westmereep-dp,core
- GenuineIntel-6-25,v2,westmereep-sp,core
- GenuineIntel-6-2F,v2,westmereex,core
- GenuineIntel-6-55,v1,skylakex,core
--- 
-2.14.3
+The new pcie_print_link_status() interface appeared in v4.17-rc1; see
+9e506a7b5147 ("PCI: Add pcie_print_link_status() to log link speed and
+whether it's limited").
+
+That's a good way to replace use of pcie_get_minimum_link(), which gives
+misleading results when a path contains both a fast, narrow link and a
+slow, wide link: it reports the equivalent of a slow, narrow link.
+
+This series removes the remaining uses of pcie_get_minimum_link() and then
+removes the interface itself.  I'd like to merge them all through the PCI
+tree to make the removal easy.
+
+This does change the dmesg reporting of link speeds, and in the ixgbe case,
+it changes the reporting from KERN_WARN level to KERN_INFO.  If that's an
+issue, let's talk about it.  I'm hoping the reduce code size, improved
+functionality, and consistency across drivers is enough to make this
+worthwhile.
+
+---
+
+Bjorn Helgaas (5):
+      bnx2x: Report PCIe link properties with pcie_print_link_status()
+      bnxt_en: Report PCIe link properties with pcie_print_link_status()
+      cxgb4: Report PCIe link properties with pcie_print_link_status()
+      ixgbe: Report PCIe link properties with pcie_print_link_status()
+      PCI: Remove unused pcie_get_minimum_link()
+
+
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |   23 ++-----
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c        |   19 ------
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c  |   75 ----------------------
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c    |   47 --------------
+ drivers/pci/pci.c                                |   43 -------------
+ include/linux/pci.h                              |    2 -
+ 6 files changed, 9 insertions(+), 200 deletions(-)
