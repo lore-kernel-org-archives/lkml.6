@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751441AbeECTYj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 15:24:39 -0400
+        id S1751618AbeECTYn (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 15:24:43 -0400
 Received: from mga02.intel.com ([134.134.136.20]:8165 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751054AbeECTYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751140AbeECTYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 May 2018 15:24:35 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,359,1520924400";
-   d="scan'208";a="225573182"
+   d="scan'208";a="225573187"
 From: Ross Zwisler <ross.zwisler@linux.intel.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
         linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
@@ -19,45 +19,64 @@ Cc: Ross Zwisler <ross.zwisler@linux.intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
         linux-nvdimm@lists.01.org
-Subject: [PATCH 0/5] fix radix tree multi-order iteration race
-Date: Thu,  3 May 2018 13:24:25 -0600
-Message-Id: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+Subject: [PATCH 1/5] radix tree test suite: fix mapshift build target
+Date: Thu,  3 May 2018 13:24:26 -0600
+Message-Id: <20180503192430.7582-2-ross.zwisler@linux.intel.com>
 X-Mailer: git-send-email 2.14.3
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
+References: <20180503192430.7582-1-ross.zwisler@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following series gets the radix tree test suite compiling again in
-the current linux/master, adds a unit test which exposes a race in the
-radix tree multi-order iteration code, and then fixes that race.
+The following commit
 
-This race was initially hit on a v4.15 based kernel and results in a GP
-fault.  I've described the race in detail in patches 4 and 5.
+  commit c6ce3e2fe3da ("radix tree test suite: Add config option for map
+  shift")
 
-The fix is simple and necessary, and I think it should be merged for
-v4.17.
+Introduced a phony makefile target called 'mapshift' that ends up
+generating the file generated/map-shift.h.  This phony target was then
+added as a dependency of the top level 'targets' build target, which is
+what is run when you go to tools/testing/radix-tree and just type 'make'.
 
-This tree has gotten positive build confirmation from the 0-day bot,
-passes the updated radix tree test suite, xfstests, and the original
-test that was hitting the race with the v4.15 based kernel.
+Unfortunately, this phony target doesn't actually work as a dependency, so
+you end up getting:
 
-Ross Zwisler (5):
-  radix tree test suite: fix mapshift build target
-  radix tree test suite: fix compilation issue
-  radix tree test suite: add item_delete_rcu()
-  radix tree test suite: multi-order iteration race
-  radix tree: fix multi-order iteration race
+$ make
+make: *** No rule to make target 'generated/map-shift.h', needed by 'main.o'.  Stop.
+make: *** Waiting for unfinished jobs....
 
- lib/radix-tree.c                      |  6 ++--
- tools/include/linux/spinlock.h        |  3 +-
- tools/testing/radix-tree/Makefile     |  6 ++--
- tools/testing/radix-tree/multiorder.c | 63 +++++++++++++++++++++++++++++++++++
- tools/testing/radix-tree/test.c       | 19 +++++++++++
- tools/testing/radix-tree/test.h       |  3 ++
- 6 files changed, 91 insertions(+), 9 deletions(-)
+Fix this by making the file generated/map-shift.h our real makefile target,
+and add this a dependency of the top level build target.
 
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+---
+ tools/testing/radix-tree/Makefile | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/radix-tree/Makefile b/tools/testing/radix-tree/Makefile
+index fa7ee369b3c9..db66f8a0d4be 100644
+--- a/tools/testing/radix-tree/Makefile
++++ b/tools/testing/radix-tree/Makefile
+@@ -17,7 +17,7 @@ ifeq ($(BUILD), 32)
+ 	LDFLAGS += -m32
+ endif
+ 
+-targets: mapshift $(TARGETS)
++targets: generated/map-shift.h $(TARGETS)
+ 
+ main:	$(OFILES)
+ 
+@@ -42,9 +42,7 @@ radix-tree.c: ../../../lib/radix-tree.c
+ idr.c: ../../../lib/idr.c
+ 	sed -e 's/^static //' -e 's/__always_inline //' -e 's/inline //' < $< > $@
+ 
+-.PHONY: mapshift
+-
+-mapshift:
++generated/map-shift.h:
+ 	@if ! grep -qws $(SHIFT) generated/map-shift.h; then		\
+ 		echo "#define RADIX_TREE_MAP_SHIFT $(SHIFT)" >		\
+ 				generated/map-shift.h;			\
 -- 
 2.14.3
