@@ -1,185 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751611AbeECKo3 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:44:29 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751079AbeECKoZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:44:25 -0400
-Date: Thu, 3 May 2018 12:44:15 +0200
-From: Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
-To: Jia He <hejianet@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, jia.he@hxt-semitech.com
-Subject: Re: [PATCH] mm/ksm: ignore STABLE_FLAG of rmap_item->address in
- rmap_walk_ksm
-In-Reply-To: <1525336488-25447-1-git-send-email-hejianet@gmail.com>
-References: <1525336488-25447-1-git-send-email-hejianet@gmail.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1751676AbeECKun (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:50:43 -0400
+Received: from mga14.intel.com ([192.55.52.115]:38907 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750969AbeECKuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:50:39 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="38359660"
+Date: Thu, 3 May 2018 13:50:32 +0300
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Luwei Kang <luwei.kang@intel.com>
+Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-kernel@vger.kernel.org, joro@8bytes.org, peterz@infradead.org,
+        chao.p.peng@linux.intel.com
+Subject: Re: [PATCH v7 05/13] perf/x86/intel/pt: Introduce a new function to
+ get capability of Intel PT
+Message-ID: <20180503105032.h73n5lcrwkdbahgm@um.fi.intel.com>
+References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
+ <1525349323-9938-6-git-send-email-luwei.kang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18050310-0040-0000-0000-0000045482EE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050310-0041-0000-0000-000020F8A89E
-Message-Id: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805030101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525349323-9938-6-git-send-email-luwei.kang@intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu,  3 May 2018 16:34:48 +0800
-Jia He <hejianet@gmail.com> wrote:
+On Thu, May 03, 2018 at 08:08:35PM +0800, Luwei Kang wrote:
+> New function __pt_cap_get() will be invoked in KVM to check
+> if a specific capability is availiable in KVM guest.
+> Another function pt_cap_get() can only check the hardware
+> capabilities but this may different with KVM guest because
+> some features may not be exposed to guest.
 
-> In our armv8a server(QDF2400), I noticed a WARN_ON caused by PAGE_SIZE
-> unaligned for rmap_item->address.
-> 
-> --------------------------begin--------------------------------------
-> [  410.853828] WARNING: CPU: 4 PID: 4641 at
-> arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1826
-> kvm_age_hva_handler+0xc0/0xc8
-> [  410.864518] Modules linked in: vhost_net vhost tap xt_CHECKSUM
-> ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT
-> nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set
-> nfnetlink ebtable_nat ebtable_broute bridge stp llc ip6table_nat
-> nf_conntrack_ipv6 nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle
-> ip6table_security ip6table_raw iptable_nat nf_conntrack_ipv4
-> nf_defrag_ipv4 nf_nat_ipv4 nf_nat nf_conntrack iptable_mangle
-> iptable_security iptable_raw ebtable_filter ebtables ip6table_filter
-> ip6_tables iptable_filter rpcrdma ib_isert iscsi_target_mod ib_iser
-> libiscsi scsi_transport_iscsi ib_srpt target_core_mod ib_srp
-> scsi_transport_srp ib_ipoib rdma_ucm ib_ucm ib_umad rdma_cm ib_cm
-> iw_cm mlx5_ib vfat fat ib_uverbs dm_mirror dm_region_hash ib_core
-> dm_log dm_mod crc32_ce ipmi_ssif sg nfsd [  410.935101]  auth_rpcgss
-> nfs_acl lockd grace sunrpc ip_tables xfs libcrc32c mlx5_core ixgbe
-> mlxfw devlink mdio ahci_platform libahci_platform qcom_emac libahci
-> hdma hdma_mgmt i2c_qup [  410.951369] CPU: 4 PID: 4641 Comm: memhog
-> Tainted: G        W 4.17.0-rc3+ #8
-> [  410.959104] Hardware name: <snip for confidential issues>
-> [  410.969791] pstate: 80400005 (Nzcv daif +PAN -UAO)
-> [  410.974575] pc : kvm_age_hva_handler+0xc0/0xc8
-> [  410.979012] lr : handle_hva_to_gpa+0xa8/0xe0
-> [  410.983274] sp : ffff801761553290
-> [  410.986581] x29: ffff801761553290 x28: 0000000000000000
-> [  410.991888] x27: 0000000000000002 x26: 0000000000000000
-> [  410.997195] x25: ffff801765430058 x24: ffff0000080b5608
-> [  411.002501] x23: 0000000000000000 x22: ffff8017ccb84000
-> [  411.007807] x21: 0000000003ff0000 x20: ffff8017ccb84000
-> [  411.013113] x19: 000000000000fe00 x18: ffff000008fb3c08
-> [  411.018419] x17: 0000000000000000 x16: 0060001645820bd3
-> [  411.023725] x15: ffff80176aacbc08 x14: 0000000000000000
-> [  411.029031] x13: 0000000000000040 x12: 0000000000000228
-> [  411.034337] x11: 0000000000000000 x10: 0000000000000000
-> [  411.039643] x9 : 0000000000000010 x8 : 0000000000000004
-> [  411.044949] x7 : 0000000000000000 x6 : 00008017f0770000
-> [  411.050255] x5 : 0000fffda59f0200 x4 : 0000000000000000
-> [  411.055561] x3 : 0000000000000000 x2 : 000000000000fe00
-> [  411.060867] x1 : 0000000003ff0000 x0 : 0000000020000000
-> [  411.066173] Call trace:
-> [  411.068614]  kvm_age_hva_handler+0xc0/0xc8
-> [  411.072703]  handle_hva_to_gpa+0xa8/0xe0
-> [  411.076619]  kvm_age_hva+0x4c/0xe8
-> [  411.080014]  kvm_mmu_notifier_clear_flush_young+0x54/0x98
-> [  411.085408]  __mmu_notifier_clear_flush_young+0x6c/0xa0
-> [  411.090627]  page_referenced_one+0x154/0x1d8
-> [  411.094890]  rmap_walk_ksm+0x12c/0x1d0
-> [  411.098632]  rmap_walk+0x94/0xa0
-> [  411.101854]  page_referenced+0x194/0x1b0
-> [  411.105770]  shrink_page_list+0x674/0xc28
-> [  411.109772]  shrink_inactive_list+0x26c/0x5b8
-> [  411.114122]  shrink_node_memcg+0x35c/0x620
-> [  411.118211]  shrink_node+0x100/0x430
-> [  411.121778]  do_try_to_free_pages+0xe0/0x3a8
-> [  411.126041]  try_to_free_pages+0xe4/0x230
-> [  411.130045]  __alloc_pages_nodemask+0x564/0xdc0
-> [  411.134569]  alloc_pages_vma+0x90/0x228
-> [  411.138398]  do_anonymous_page+0xc8/0x4d0
-> [  411.142400]  __handle_mm_fault+0x4a0/0x508
-> [  411.146489]  handle_mm_fault+0xf8/0x1b0
-> [  411.150321]  do_page_fault+0x218/0x4b8
-> [  411.154064]  do_translation_fault+0x90/0xa0
-> [  411.158239]  do_mem_abort+0x68/0xf0
-> [  411.161721]  el0_da+0x24/0x28
-> ---------------------------end---------------------------------------
-> 
-> In rmap_walk_ksm, the rmap_item->address might still have the
-> STABLE_FLAG, then the start and end in handle_hva_to_gpa might not be
-> PAGE_SIZE aligned. Thus it causes exceptions in handle_hva_to_gpa on
-> arm64.
-> 
-> This patch fixes it by ignoring the low bits of rmap_item->address
-> when doing rmap_walk_ksm.
-> 
-> Signed-off-by: jia.he@hxt-semitech.com
-> ---
->  mm/ksm.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index e3cbf9a..3f0d980 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -199,6 +199,8 @@ struct rmap_item {
->  #define SEQNR_MASK	0x0ff	/* low bits of unstable tree
-> seqnr */ #define UNSTABLE_FLAG	0x100	/* is a node of
-> the unstable tree */ #define STABLE_FLAG	0x200	/* is
-> listed from the stable tree */ +#define KSM_FLAG_MASK
-> (SEQNR_MASK|UNSTABLE_FLAG|STABLE_FLAG)
-> +				/* to mask all the flags */
-> 
->  /* The stable and unstable tree heads */
->  static struct rb_root one_stable_tree[1] = { RB_ROOT };
-> @@ -2570,10 +2572,13 @@ void rmap_walk_ksm(struct page *page, struct
-> rmap_walk_control *rwc) anon_vma_lock_read(anon_vma);
->  		anon_vma_interval_tree_foreach(vmac,
-> &anon_vma->rb_root, 0, ULONG_MAX) {
-> +			unsigned long addr;
-> +
->  			cond_resched();
->  			vma = vmac->vma;
-> -			if (rmap_item->address < vma->vm_start ||
-> -			    rmap_item->address >= vma->vm_end)
-> +
-> +			addr = rmap_item->address;
+Do we really need both in KVM?
 
-why not just: addr = rmap_item->address & ~KSM_FLAG_MASK;
+> diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
+> index 2de4db0..3a4f524 100644
+> --- a/arch/x86/include/asm/intel_pt.h
+> +++ b/arch/x86/include/asm/intel_pt.h
+> @@ -27,9 +27,11 @@ enum pt_capabilities {
+>  #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
+>  void cpu_emergency_stop_pt(void);
+>  extern u32 pt_cap_get(enum pt_capabilities cap);
+> +extern u32 __pt_cap_get(u32 *caps, enum pt_capabilities cap);
 
-> +			if (addr < vma->vm_start || addr >=
-> vma->vm_end) continue;
->  			/*
->  			 * Initially we examine only the vma which
-> covers this @@ -2587,8 +2592,10 @@ void rmap_walk_ksm(struct page
-> *page, struct rmap_walk_control *rwc) if (rwc->invalid_vma &&
-> rwc->invalid_vma(vma, rwc->arg)) continue;
-> 
-> -			if (!rwc->rmap_one(page, vma,
-> -					rmap_item->address,
-> rwc->arg)) {
-> +			if (addr & STABLE_FLAG)
-> +				addr &= ~KSM_FLAG_MASK;
-
-then you would not need the IF above, and it would be more readable.
-
-> +
-> +			if (!rwc->rmap_one(page, vma, addr,
-> rwc->arg)) { anon_vma_unlock_read(anon_vma);
->  				return;
->  			}
-
-
-best regards,
-
-Claudio Imbrenda
+I'd call it something like pt_cap_decode().
