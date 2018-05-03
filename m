@@ -1,132 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751393AbeECSvd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 14:51:33 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:36650 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751141AbeECSvc (ORCPT
+        id S1751355AbeECSw6 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:52:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:59096 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751195AbeECSwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:51:32 -0400
-X-Google-Smtp-Source: AB8JxZp2qIfkCZeg43KSOl45CYb2NBlbjak/rugrr/f+24ksdCoo9ecJDlRjXBReF3X+1IloIG2B8Mcrcgv7fyzHYVA=
+        Thu, 3 May 2018 14:52:54 -0400
+Subject: Re: [PATCH 0/3] K2G: mmc: Update mmc dt node to use sdhci-omap
+To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+References: <20180425132746.13911-1-kishon@ti.com>
+ <fc5f3498-62fd-15d3-90df-206c51649cb4@oracle.com>
+ <0481f6f0-539e-4809-63cd-1134367a7b78@ti.com>
+From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <de0bd46a-21d4-14de-9695-9b0f3996dacb@oracle.com>
+Date: Thu, 3 May 2018 11:52:34 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180502132051.28861-1-mpe@ellerman.id.au>
-References: <20180502132051.28861-1-mpe@ellerman.id.au>
-From: Mathieu Malaterre <malat@debian.org>
-Date: Thu, 3 May 2018 20:51:10 +0200
-X-Google-Sender-Auth: V_sXQXLKaWqCmTW_tvy4reAm4Ww
-Message-ID: <CA+7wUswY3wCj7ZGuRhuZOmciDBsgpzFXMJZeZTo=iMxbb1cJrA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] powerpc/syscalls: Switch trivial cases to SYSCALL_DEFINE
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linuxppc-dev@ozlabs.org, Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <0481f6f0-539e-4809-63cd-1134367a7b78@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8882 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=20 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=879
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805030160
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 3:20 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
-
-Maybe add:
-
-Link: https://github.com/linuxppc/linux/issues/131
-
-For the series: compile, build without error (W=1), and works on my system.
-
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  arch/powerpc/kernel/pci_32.c               | 6 +++---
->  arch/powerpc/kernel/pci_64.c               | 4 ++--
->  arch/powerpc/mm/subpage-prot.c             | 4 +++-
->  arch/powerpc/platforms/cell/spu_syscalls.c | 3 ++-
->  4 files changed, 10 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/powerpc/kernel/pci_32.c b/arch/powerpc/kernel/pci_32.c
-> index 85ad2f78b889..af36e46c3ed6 100644
-> --- a/arch/powerpc/kernel/pci_32.c
-> +++ b/arch/powerpc/kernel/pci_32.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of.h>
->  #include <linux/slab.h>
->  #include <linux/export.h>
-> +#include <linux/syscalls.h>
->
->  #include <asm/processor.h>
->  #include <asm/io.h>
-> @@ -283,7 +284,8 @@ pci_bus_to_hose(int bus)
->   * Note that the returned IO or memory base is a physical address
->   */
->
-> -long sys_pciconfig_iobase(long which, unsigned long bus, unsigned long devfn)
-> +SYSCALL_DEFINE3(pciconfig_iobase, long, which,
-> +               unsigned long, bus, unsigned long, devfn)
->  {
->         struct pci_controller* hose;
->         long result = -EOPNOTSUPP;
-> @@ -307,5 +309,3 @@ long sys_pciconfig_iobase(long which, unsigned long bus, unsigned long devfn)
->
->         return result;
->  }
-> -
-> -
-> diff --git a/arch/powerpc/kernel/pci_64.c b/arch/powerpc/kernel/pci_64.c
-> index 15ce0306b092..dff28f903512 100644
-> --- a/arch/powerpc/kernel/pci_64.c
-> +++ b/arch/powerpc/kernel/pci_64.c
-> @@ -203,8 +203,8 @@ void pcibios_setup_phb_io_space(struct pci_controller *hose)
->  #define IOBASE_ISA_IO          3
->  #define IOBASE_ISA_MEM         4
->
-> -long sys_pciconfig_iobase(long which, unsigned long in_bus,
-> -                         unsigned long in_devfn)
-> +SYSCALL_DEFINE3(pciconfig_iobase, long, which, unsigned long, in_bus,
-> +                         unsigned long, in_devfn)
->  {
->         struct pci_controller* hose;
->         struct pci_bus *tmp_bus, *bus = NULL;
-> diff --git a/arch/powerpc/mm/subpage-prot.c b/arch/powerpc/mm/subpage-prot.c
-> index f14a07c2fb90..9d16ee251fc0 100644
-> --- a/arch/powerpc/mm/subpage-prot.c
-> +++ b/arch/powerpc/mm/subpage-prot.c
-> @@ -13,6 +13,7 @@
->  #include <linux/types.h>
->  #include <linux/mm.h>
->  #include <linux/hugetlb.h>
-> +#include <linux/syscalls.h>
->
->  #include <asm/pgtable.h>
->  #include <linux/uaccess.h>
-> @@ -185,7 +186,8 @@ static void subpage_mark_vma_nohuge(struct mm_struct *mm, unsigned long addr,
->   * in a 2-bit field won't allow writes to a page that is otherwise
->   * write-protected.
->   */
-> -long sys_subpage_prot(unsigned long addr, unsigned long len, u32 __user *map)
-> +SYSCALL_DEFINE3(subpage_prot, unsigned long, addr,
-> +               unsigned long, len, u32 __user *, map)
->  {
->         struct mm_struct *mm = current->mm;
->         struct subpage_prot_table *spt = &mm->context.spt;
-> diff --git a/arch/powerpc/platforms/cell/spu_syscalls.c b/arch/powerpc/platforms/cell/spu_syscalls.c
-> index 5e6e0bad6db6..263413a34823 100644
-> --- a/arch/powerpc/platforms/cell/spu_syscalls.c
-> +++ b/arch/powerpc/platforms/cell/spu_syscalls.c
-> @@ -26,6 +26,7 @@
->  #include <linux/syscalls.h>
->  #include <linux/rcupdate.h>
->  #include <linux/binfmts.h>
-> +#include <linux/syscalls.h>
->
->  #include <asm/spu.h>
->
-> @@ -90,7 +91,7 @@ SYSCALL_DEFINE4(spu_create, const char __user *, name, unsigned int, flags,
->         return ret;
->  }
->
-> -asmlinkage long sys_spu_run(int fd, __u32 __user *unpc, __u32 __user *ustatus)
-> +SYSCALL_DEFINE3(spu_run,int, fd, __u32 __user *, unpc, __u32 __user *, ustatus)
->  {
->         long ret;
->         struct fd arg;
-> --
-> 2.14.1
->
+On 5/3/18 4:57 AM, Kishon Vijay Abraham I wrote:
+> Hi Santosh,
+> 
+> On Wednesday 25 April 2018 11:10 PM, Santosh Shilimkar wrote:
+>> On 4/25/2018 6:27 AM, Kishon Vijay Abraham I wrote:
+>>> Update mmc dt node to use sdhci-omap binding instead of omap_hsmmc
+>>> binding.
+>>>
+>>> I've also updated keystone_defconfig to enable CONFIG_MMC_SDHCI_OMAP.
+>>> Everyone who use a custom .config should also enable
+>>> CONFIG_MMC_SDHCI_OMAP for MMC to work.
+>>>
+>>> This series should be merged only after [1]
+>>> [1] -> https://marc.info/?l=linux-kernel&m=152465820531802&w=2
+>>>
+>> Keep me posted once the dependency gets merged.
+> 
+> Ulf has merged the sdhci part and has shared an immutable branch
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git sdhci_omap
+> with his signed tag sdhci-omap-v4.17-rc3.
+> 
+> Can you use it as a base for merging this series?
+> 
+How about I apply only DTS patches and exlude config file update ?
+You can send the config patch after the merge window. Are the DTS
+changes also going to break anything without basing of this sdhci
+branch ?
