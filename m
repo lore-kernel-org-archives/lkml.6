@@ -1,70 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751495AbeECH0N (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:26:13 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:44571 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751380AbeECH0A (ORCPT
+        id S1751246AbeECH1g (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:27:36 -0400
+Received: from lelnx194.ext.ti.com ([198.47.27.80]:51356 "EHLO
+        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750942AbeECH1b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:26:00 -0400
-X-Google-Smtp-Source: AB8JxZpiCKXBMTCbAvq7X6ZBfvMA22Vm3SKfKlGLEaUoUma/1VxTIK87IDvS1+7t2C68seC8J7egeHCXn/MGrECSIOs=
+        Thu, 3 May 2018 03:27:31 -0400
+From: Faiz Abbas <faiz_abbas@ti.com>
+To: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <mark.rutland@arm.com>, <robh+dt@kernel.org>, <ssantosh@kernel.org>,
+        <faiz_abbas@ti.com>
+Subject: [PATCH v2] ARM: dts: k2g-evm: Add DCAN dt nodes
+Date: Thu, 3 May 2018 12:58:45 +0530
+Message-ID: <20180503072845.5576-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-In-Reply-To: <S1752057AbeECEYP/20180503042418Z+1168@vger.kernel.org>
-References: <S1752057AbeECEYP/20180503042418Z+1168@vger.kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 3 May 2018 09:25:59 +0200
-X-Google-Sender-Auth: gFxoiVjfBst33hrsOC-YEfScMIA
-Message-ID: <CAMuHMdXyafqbhyXBeRmF7hCMbz=oU6K5qfq-FCu4FqUk3GOKpA@mail.gmail.com>
-Subject: Re: [PATCH net] macsonic: Set platform device coherent_dma_mask
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: "David S. Miller" <davem@davemloft.net>,
-        linux-m68k <linux-m68k@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+The 66AK2G evm has support for dcan.
+Add nodes and pinmuxes for dcan0 and dcan1.
 
-On Thu, May 3, 2018 at 6:24 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
-> Set the device's coherent_dma_mask to avoid a WARNING splat.
-> Please see commit 205e1b7f51e4 ("dma-mapping: warn when there is
-> no coherent_dma_mask").
->
-> Cc: linux-m68k@lists.linux-m68k.org
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+Changes since v1: 
+Description updated.
 
-Thanks for your patch!
+ arch/arm/boot/dts/keystone-k2g-evm.dts | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-> --- a/drivers/net/ethernet/natsemi/macsonic.c
-> +++ b/drivers/net/ethernet/natsemi/macsonic.c
-> @@ -523,6 +523,10 @@ static int mac_sonic_platform_probe(struct platform_device *pdev)
->         struct sonic_local *lp;
->         int err;
->
-> +       err = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-> +       if (err)
-> +               return err;
-> +
->         dev = alloc_etherdev(sizeof(struct sonic_local));
->         if (!dev)
->                 return -ENOMEM;
-
-Shouldn't this be handled in the platform code that instantiates the device,
-i.e. in arch/m68k/mac/config.c:mac_platform_init()?
-
-Cfr. commit f61e64310b75733d ("m68k: set dma and coherent masks for platform
-FEC ethernets").
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/keystone-k2g-evm.dts b/arch/arm/boot/dts/keystone-k2g-evm.dts
+index 6a4657799b99..154fdd7a7022 100644
+--- a/arch/arm/boot/dts/keystone-k2g-evm.dts
++++ b/arch/arm/boot/dts/keystone-k2g-evm.dts
+@@ -114,6 +114,20 @@
+ 			K2G_CORE_IOPAD(0x11f0) (BUFFER_CLASS_B | PIN_PULLDOWN | MUX_MODE0)      /* uart2_txd.uart2_txd */
+ 		>;
+ 	};
++
++	dcan0_pins: pinmux_dcan0_pins {
++		pinctrl-single,pins = <
++			K2G_CORE_IOPAD(0x11fc) (BUFFER_CLASS_B | PULL_DISABLE  | MUX_MODE0)	/* dcan0tx.dcan0tx */
++			K2G_CORE_IOPAD(0x1200) (BUFFER_CLASS_B | PIN_PULLDOWN  | MUX_MODE0)	/* dcan0rx.dcan0rx */
++		>;
++	};
++
++	dcan1_pins: pinmux_dcan1_pins {
++		pinctrl-single,pins = <
++			K2G_CORE_IOPAD(0x1224) (BUFFER_CLASS_B | PULL_DISABLE  | MUX_MODE1)	/* qspicsn2.dcan1tx */
++			K2G_CORE_IOPAD(0x1228) (BUFFER_CLASS_B | PIN_PULLDOWN  | MUX_MODE1)	/* qspicsn3.dcan1rx */
++		>;
++	};
+ };
+ 
+ &uart0 {
+@@ -268,3 +282,15 @@
+ 	pinctrl-0 = <&uart2_pins>;
+ 	status = "okay";
+ };
++
++&dcan0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&dcan0_pins>;
++	status = "okay";
++};
++
++&dcan1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&dcan1_pins>;
++	status = "okay";
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.17.0
