@@ -1,116 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751174AbeECI3f (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 04:29:35 -0400
-Received: from mga01.intel.com ([192.55.52.88]:51862 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750849AbeECI3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 04:29:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,357,1520924400";
-   d="scan'208";a="51161583"
-Date: Thu, 3 May 2018 16:30:15 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: mst@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
-Message-ID: <20180503083015.kb7po26ga46g66tc@debian>
-References: <20180503025955.28816-1-tiwei.bie@intel.com>
- <ab66939d-47fb-5f43-3938-0c156ffc6918@redhat.com>
+        id S1751286AbeECIbN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 04:31:13 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43985 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750849AbeECIbH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 04:31:07 -0400
+X-Google-Smtp-Source: AB8JxZrQ1MLYE/1aqSsMpHvR6HY2Fdi3KBrumIN01pSF1WHIzDALSsZXZLxxeRjkUpc3JlHCkZzjFrE/KcWnHSNDB+M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ab66939d-47fb-5f43-3938-0c156ffc6918@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAPDyKFrUmNyMQ9Aqgwg-Ncf08fYgAqaY_MckvxqsrUq7mr-LQg@mail.gmail.com>
+References: <1524732790-2234-1-git-send-email-ulf.hansson@linaro.org> <CAPDyKFrUmNyMQ9Aqgwg-Ncf08fYgAqaY_MckvxqsrUq7mr-LQg@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 3 May 2018 10:31:06 +0200
+X-Google-Sender-Auth: 0EdrzPKR-DxuhPC7Orz44vC5qeU
+Message-ID: <CAJZ5v0gze0Purjaq0U3gqcCBfjW3pHBUMY8LdaYuY9ZfP2xTVQ@mail.gmail.com>
+Subject: Re: [PATCH 00/11] PM / Domains: Fixup error paths with dev_pm_domain_attach()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Mark Brown <broonie@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@armlinux.org.uk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 03:30:03PM +0800, Jason Wang wrote:
-> On 2018年05月03日 10:59, Tiwei Bie wrote:
-> > This patch introduces the support for VIRTIO_F_IO_BARRIER.
-> > When this feature is negotiated, driver will use the barriers
-> > suitable for hardware devices.
-> > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> > ---
-> >   drivers/virtio/virtio_ring.c       | 5 +++++
-> >   include/uapi/linux/virtio_config.h | 8 +++++++-
-> >   2 files changed, 12 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 21d464a29cf8..edb565643bf4 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
-> >   		!context;
-> >   	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-> > +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
-> > +		vq->weak_barriers = false;
-> > +
-> >   	/* No callback?  Tell other side not to bother us. */
-> >   	if (!callback) {
-> >   		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
-> > @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
-> >   			break;
-> >   		case VIRTIO_F_IOMMU_PLATFORM:
-> >   			break;
-> > +		case VIRTIO_F_IO_BARRIER:
-> > +			break;
-> >   		default:
-> >   			/* We don't understand this bit. */
-> >   			__virtio_clear_bit(vdev, i);
-> > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > index 308e2096291f..6ca8d24bf468 100644
-> > --- a/include/uapi/linux/virtio_config.h
-> > +++ b/include/uapi/linux/virtio_config.h
-> > @@ -49,7 +49,7 @@
-> >    * transport being used (eg. virtio_ring), the rest are per-device feature
-> >    * bits. */
-> >   #define VIRTIO_TRANSPORT_F_START	28
-> > -#define VIRTIO_TRANSPORT_F_END		34
-> > +#define VIRTIO_TRANSPORT_F_END		38
-> >   #ifndef VIRTIO_CONFIG_NO_LEGACY
-> >   /* Do we get callbacks when the ring is completely used, even if we've
-> > @@ -71,4 +71,10 @@
-> >    * this is for compatibility with legacy systems.
-> >    */
-> >   #define VIRTIO_F_IOMMU_PLATFORM		33
-> > +
-> > +/*
-> > + * If clear - driver may use barriers suitable for CPU cores.
-> > + * If set - driver must use barriers suitable for hardware devices.
-> > + */
-> > +#define VIRTIO_F_IO_BARRIER		37
-> >   #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> 
-> Hi:
-> 
-> I believe this depends on Michael's patch of
-> 
-> "[PATCH] virtio_ring: switch to dma_XX barriers for rpmsg"
-> 
-> ?
-> 
-> Thanks
+On Wed, May 2, 2018 at 2:31 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 26 April 2018 at 10:52, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> While I was on working adding support for multiple PM domains to genpd, I
+>> stumbled over several problems in the error path related to
+>> dev_pm_domain_attach(). Hence, I decided to fix these problems first, which is
+>> what this series intends to address.
+>>
+>> There first patch is material for stable, as it fixes a real bug in genpd,
+>> while the rest may be considered as improvement of the error paths when devices
+>> fails to be attached to their PM domains.
+>>
+>> I am seeking acks from subsystem maintainers and suggest with funnel the hole
+>> series through Rafael's linux-pm tree, unless there are objections to that of
+>> course.
+>>
+>> Ulf Hansson (11):
+>>   PM / Domains: Fix error path during attach in genpd
+>>   PM / Domains: Drop comment in genpd about legacy Samsung DT binding
+>>   PM / Domains: Drop redundant code in genpd while attaching devices
+>>   PM / Domains: Check for existing PM domain in dev_pm_domain_attach()
+>>   PM / Domains: Allow a better error handling of dev_pm_domain_attach()
+>>   amba: Respect all error codes from dev_pm_domain_attach()
+>>   driver core: Respect all error codes from dev_pm_domain_attach()
+>>   i2c: Respect all error codes from dev_pm_domain_attach()
+>>   mmc: sdio: Respect all error codes from dev_pm_domain_attach()
+>>   soundwire: Respect all error codes from dev_pm_domain_attach()
+>>   spi: Respect all error codes from dev_pm_domain_attach()
+>>
+>>  drivers/acpi/device_pm.c     |  9 +++------
+>>  drivers/amba/bus.c           |  4 ++--
+>>  drivers/base/platform.c      | 17 ++++++++---------
+>>  drivers/base/power/common.c  | 10 +++++++---
+>>  drivers/base/power/domain.c  | 45 +++++++++++++++-----------------------------
+>>  drivers/i2c/i2c-core-base.c  |  2 +-
+>>  drivers/mmc/core/sdio_bus.c  |  2 +-
+>>  drivers/soundwire/bus_type.c | 15 +++++++--------
+>>  drivers/spi/spi.c            | 11 ++++++-----
+>>  include/linux/acpi.h         |  2 +-
+>>  include/linux/pm_domain.h    |  2 +-
+>>  11 files changed, 52 insertions(+), 67 deletions(-)
+>
+> Rafael,
+>
+> I understand if you are busy so this is not a ping. :-)
+>
+> However, perhaps I can simplify by sending you a PR with these!?
 
-We already have below commit and some other related commits
-in the tree:
+Yes, please.
 
-7b21e34fd1c2 ("virtio: harsher barriers for rpmsg.")
-
-They should have already guaranteed that virtio_Xmb() will
-be OK for hardware devices when vq->weak_barriers is false.
-If my understanding is correct, the barriers used in this
-case are overkill. So Michael's patch is to make the barriers
-weaker (or better).
-
-Best regards,
-Tiwei Bie
+I'm going to have a look at the patches anyway, but I'm not expecting
+to see anything objectionable in them honestly. :-)
