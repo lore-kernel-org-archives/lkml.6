@@ -1,136 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751253AbeECM5p (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:57:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38218 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751132AbeECM5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:57:41 -0400
-Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: mst@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-References: <20180503025955.28816-1-tiwei.bie@intel.com>
- <ab66939d-47fb-5f43-3938-0c156ffc6918@redhat.com>
- <20180503083015.kb7po26ga46g66tc@debian>
- <1292c46c-34ad-ea21-1f05-164044a5f35a@redhat.com>
- <20180503095823.zpxskdts7etpwl6x@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <efe1b3b9-3601-d861-aff5-80d10c9f0cdb@redhat.com>
-Date: Thu, 3 May 2018 20:57:33 +0800
+        id S1751261AbeECM7I (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:59:08 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:20107 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750781AbeECM7F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:59:05 -0400
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="13747120"
+Subject: Re: [RFC PATCH 3/5] net: macb: Add pm runtime support
+To: Harini Katakam <harinik@xilinx.com>
+CC: Nicolas Ferre <nicolas.ferre@atmel.com>,
+        David Miller <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <michals@xilinx.com>,
+        <appanad@xilinx.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+References: <1521726700-22634-1-git-send-email-harinikatakamlinux@gmail.com>
+ <1521726700-22634-4-git-send-email-harinikatakamlinux@gmail.com>
+ <48b8ea24-52be-c314-f674-1a6cae4d95f4@microchip.com>
+ <CAFcVECKWz6bGZpg7UF=4hObUjca12Oq5NbE0SBL+v=1grJP8YA@mail.gmail.com>
+From: Claudiu Beznea <Claudiu.Beznea@microchip.com>
+Message-ID: <87bd6e9f-be18-b267-a01d-c4efc2adc55d@microchip.com>
+Date: Thu, 3 May 2018 15:59:01 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180503095823.zpxskdts7etpwl6x@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFcVECKWz6bGZpg7UF=4hObUjca12Oq5NbE0SBL+v=1grJP8YA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2018年05月03日 17:58, Tiwei Bie wrote:
-> On Thu, May 03, 2018 at 05:09:44PM +0800, Jason Wang wrote:
->> On 2018年05月03日 16:30, Tiwei Bie wrote:
->>> On Thu, May 03, 2018 at 03:30:03PM +0800, Jason Wang wrote:
->>>> On 2018年05月03日 10:59, Tiwei Bie wrote:
->>>>> This patch introduces the support for VIRTIO_F_IO_BARRIER.
->>>>> When this feature is negotiated, driver will use the barriers
->>>>> suitable for hardware devices.
->>>>>
->>>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
->>>>> ---
->>>>>     drivers/virtio/virtio_ring.c       | 5 +++++
->>>>>     include/uapi/linux/virtio_config.h | 8 +++++++-
->>>>>     2 files changed, 12 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
->>>>> index 21d464a29cf8..edb565643bf4 100644
->>>>> --- a/drivers/virtio/virtio_ring.c
->>>>> +++ b/drivers/virtio/virtio_ring.c
->>>>> @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
->>>>>     		!context;
->>>>>     	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
->>>>> +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
->>>>> +		vq->weak_barriers = false;
->>>>> +
->>>>>     	/* No callback?  Tell other side not to bother us. */
->>>>>     	if (!callback) {
->>>>>     		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
->>>>> @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
->>>>>     			break;
->>>>>     		case VIRTIO_F_IOMMU_PLATFORM:
->>>>>     			break;
->>>>> +		case VIRTIO_F_IO_BARRIER:
->>>>> +			break;
->>>>>     		default:
->>>>>     			/* We don't understand this bit. */
->>>>>     			__virtio_clear_bit(vdev, i);
->>>>> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
->>>>> index 308e2096291f..6ca8d24bf468 100644
->>>>> --- a/include/uapi/linux/virtio_config.h
->>>>> +++ b/include/uapi/linux/virtio_config.h
->>>>> @@ -49,7 +49,7 @@
->>>>>      * transport being used (eg. virtio_ring), the rest are per-device feature
->>>>>      * bits. */
->>>>>     #define VIRTIO_TRANSPORT_F_START	28
->>>>> -#define VIRTIO_TRANSPORT_F_END		34
->>>>> +#define VIRTIO_TRANSPORT_F_END		38
->>>>>     #ifndef VIRTIO_CONFIG_NO_LEGACY
->>>>>     /* Do we get callbacks when the ring is completely used, even if we've
->>>>> @@ -71,4 +71,10 @@
->>>>>      * this is for compatibility with legacy systems.
->>>>>      */
->>>>>     #define VIRTIO_F_IOMMU_PLATFORM		33
->>>>> +
->>>>> +/*
->>>>> + * If clear - driver may use barriers suitable for CPU cores.
->>>>> + * If set - driver must use barriers suitable for hardware devices.
->>>>> + */
->>>>> +#define VIRTIO_F_IO_BARRIER		37
->>>>>     #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
->>>> Hi:
->>>>
->>>> I believe this depends on Michael's patch of
->>>>
->>>> "[PATCH] virtio_ring: switch to dma_XX barriers for rpmsg"
->>>>
->>>> ?
->>>>
->>>> Thanks
->>> We already have below commit and some other related commits
->>> in the tree:
+On 03.05.2018 14:13, Harini Katakam wrote:
+> Hi Claudiu,
+> 
+> On Thu, May 3, 2018 at 3:39 PM, Claudiu Beznea
+> <Claudiu.Beznea@microchip.com> wrote:
+>>
+>>
+>> On 22.03.2018 15:51, harinikatakamlinux@gmail.com wrote:
+>>> From: Harini Katakam <harinik@xilinx.com>
+> <snip>
+>> I would use a "goto" instruction, e.g.:
+>>                 value = -ETIMEDOUT;
+>>                 goto out;
+>>
+> 
+> Will do
+> 
+>>
+>> Below, in macb_open() you have a return err; case:
+>>         err = macb_alloc_consistent(bp);
+>>         if (err) {
+>>                 netdev_err(dev, "Unable to allocate DMA memory (error %d)\n",
+>>                            err);
+>>                 return err;
+>>         }
+>>
+>> You have to undo pm_runtime_get_sync() with pm_runtime_put_sync() or something
+>> similar to decrement dev->power.usage_count.
+> 
+> Will do
+> 
+> <snip>
+>>> @@ -4104,11 +4145,16 @@ static int macb_remove(struct platform_device *pdev)
+>>>               mdiobus_free(bp->mii_bus);
 >>>
->>> 7b21e34fd1c2 ("virtio: harsher barriers for rpmsg.")
->>>
->>> They should have already guaranteed that virtio_Xmb() will
->>> be OK for hardware devices when vq->weak_barriers is false.
->>> If my understanding is correct, the barriers used in this
->>> case are overkill. So Michael's patch is to make the barriers
->>> weaker (or better).
->>>
->>> Best regards,
->>> Tiwei Bie
->> Well, I think we need dma barriers for some platforms according to previous
->> discussion? Without Michael's patch, we won't use any dma barriers in fact
->> for virtio.
-> You are right. Thanks! Are you suggesting to add a
-> reference to Michael's patch in this patch to make
-> sure that it won't be applied before that patch?
+>>>               unregister_netdev(dev);
+>>> -             clk_disable_unprepare(bp->tx_clk);
+>>> -             clk_disable_unprepare(bp->hclk);
+>>> -             clk_disable_unprepare(bp->pclk);
+>>> -             clk_disable_unprepare(bp->rx_clk);
+>>> -             clk_disable_unprepare(bp->tsu_clk);
+>>> +             pm_runtime_disable(&pdev->dev);
+>>> +             pm_runtime_dont_use_autosuspend(&pdev->dev);
+>>> +             if (!pm_runtime_suspended(&pdev->dev)) {
+>>> +                     clk_disable_unprepare(bp->tx_clk);
+>>> +                     clk_disable_unprepare(bp->hclk);
+>>> +                     clk_disable_unprepare(bp->pclk);
+>>> +                     clk_disable_unprepare(bp->rx_clk);
+>>> +                     clk_disable_unprepare(bp->tsu_clk);
+>>> +                     pm_runtime_set_suspended(&pdev->dev);
+>>
+>> This is driver remove function. Shouldn't clocks be removed?
+> 
+> clk_disable_unprepare IS being done here.
+> The check for !pm_runtime_suspended is just to make sure the
+> clocks are not already removed (in runtime_suspend).
 
-Yes, better to have some notes, or maybe just squash that patch into 
-this series.
+Could this happen? Looking over code, starting with 
+platform_driver_unregister() it looks to me that the runtime resume
+is called just before driver remove is called.
 
-Let's wait for Michael's reply to see.
+platform_driver_unregister() ->
+driver_unregister() ->
+bus_remove_driver() ->
+driver_detach() ->
+device_release_driver_internal() ->
+__device_release_driver()
+{
+	// ...
+        pm_runtime_get_sync(dev);		// runtime resume                                       
+        pm_runtime_clean_up_links(dev);                                 
+ 
+	// ...
 
-Thanks
+	pm_runtime_put_sync(dev);                                       
+                                                                                
+        if (dev->bus && dev->bus->remove)                               
+        	dev->bus->remove(dev);                                  
+        else if (drv->remove)                                           
+                drv->remove(dev);                                       
 
->
-> Best regards,
-> Tiwei Bie
->
->> Thanks
+	// ...
+}
+
+Thank you,
+Claudiu
+
+> 
+> Regards,
+> Harini
+> 
