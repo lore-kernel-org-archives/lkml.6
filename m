@@ -1,54 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751128AbeECHyd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 03:54:33 -0400
-Received: from thoth.sbs.de ([192.35.17.2]:57753 "EHLO thoth.sbs.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750773AbeECHyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 03:54:32 -0400
-Subject: Re: [PATCH v2 08/10] PCI: Deprecate
- of_pci_get_host_bridge_resources()
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <cover.1525067324.git.jan.kiszka@siemens.com>
- <aca0d89cd8c1551a83b87ffab29fcd6e1d59a61c.1525067324.git.jan.kiszka@siemens.com>
- <20180502123923.GA10783@infradead.org>
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Message-ID: <b13dd4b5-61c4-3acb-c194-3e448cb8b3d2@siemens.com>
-Date: Thu, 3 May 2018 09:53:58 +0200
-User-Agent: Mozilla/5.0 (X11; U; Linux i686 (x86_64); de; rv:1.8.1.12)
- Gecko/20080226 SUSE/2.0.0.12-1.1 Thunderbird/2.0.0.12 Mnenhy/0.7.5.666
+        id S1751025AbeECH7G (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 03:59:06 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39508 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750781AbeECH7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 03:59:04 -0400
+Subject: Re: [PATCH] f2fs: fix the way to wake up issue_flush thread
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1525333543-106702-1-git-send-email-yunlong.song@huawei.com>
+From: Yunlong Song <yunlong.song@huawei.com>
+Message-ID: <8ecda55f-1975-2797-41e4-eb72b492dcc3@huawei.com>
+Date: Thu, 3 May 2018 15:57:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180502123923.GA10783@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1525333543-106702-1-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.111.220.140]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-02 14:39, Christoph Hellwig wrote:
-> On Mon, Apr 30, 2018 at 07:48:42AM +0200, Jan Kiszka wrote:
->> From: Jan Kiszka <jan.kiszka@siemens.com>
->>
->> There are no in-tree users remaining, all are converted to the managed
->> variant. And it is unlikely that any out-of-tree user got the resource
->> management right as well. So deprecate the interface and push users to
->> the managed version instead.
->>
->> To avoid raising a warning when exporting a deprecated symbol, wrap the
->> API with an inline and export an internal name.
-> 
-> Don't deprecated it, just remove it.
-> 
+Please avoid this patch, I make a mistake.
 
-I see a clear favorite now: consider this patch obsolete. I'll send a
-separate removal patch, or a v3 of this series when otherwise needed.
-
-Jan
+On 2018/5/3 15:45, Yunlong Song wrote:
+> Commit 6f890df0 ("f2fs: fix out-of-order execution in f2fs_issue_flush")
+> uses waitqueue_active to wake up issue_flush thread, but there is no
+> wait entry to wake in this queue, so change it back to use the original
+> fcc->dispatch_list to wake up issue_flush thread.
+>
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>   fs/f2fs/segment.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 503a98a..5aa5ee4e 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -612,7 +612,7 @@ int f2fs_issue_flush(struct f2fs_sb_info *sbi, nid_t ino)
+>   	/* update issue_list before we wake up issue_flush thread */
+>   	smp_mb();
+>   
+> -	if (waitqueue_active(&fcc->flush_wait_queue))
+> +	if (!fcc->dispatch_list)
+>   		wake_up(&fcc->flush_wait_queue);
+>   
+>   	if (fcc->f2fs_issue_flush) {
 
 -- 
-Siemens AG, Corporate Technology, CT RDA IOT SES-DE
-Corporate Competence Center Embedded Linux
+Thanks,
+Yunlong Song
