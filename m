@@ -1,117 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeECBcs (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 21:32:48 -0400
-Received: from mga17.intel.com ([192.55.52.151]:54812 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751778AbeECBcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 21:32:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="51947601"
-Subject: Re: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in irq
- handler
-To: Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, "Raj, Ashok" <ashok.raj@intel.com>
-References: <20180331003312.6390-1-dima@arista.com>
- <20180331003312.6390-2-dima@arista.com> <5AE95BFF.5040306@linux.intel.com>
- <1525264687.14025.20.camel@arista.com> <5AEA4E84.6050609@linux.intel.com>
- <1525308755.14025.25.camel@arista.com>
-Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        iommu@lists.linux-foundation.org
-From: Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5AEA66BC.5050202@linux.intel.com>
-Date: Thu, 3 May 2018 09:32:44 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <1525308755.14025.25.camel@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        id S1751950AbeECBdK (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 21:33:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39726 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751778AbeECBdH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 21:33:07 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Colin Ian King <colin.king@canonical.com>
+Cc: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val" to the asoc tree
+In-Reply-To: <20180502142945.31637-1-colin.king@canonical.com>
+Message-Id: <20180503013246.84A6744007A@finisterre.ee.mobilebroadband>
+Date: Thu,  3 May 2018 02:32:46 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The patch
 
-On 05/03/2018 08:52 AM, Dmitry Safonov wrote:
-> On Thu, 2018-05-03 at 07:49 +0800, Lu Baolu wrote:
->> Hi,
->>
->> On 05/02/2018 08:38 PM, Dmitry Safonov wrote:
->>> Hi Lu,
->>>
->>> On Wed, 2018-05-02 at 14:34 +0800, Lu Baolu wrote:
->>>> Hi,
->>>>
->>>> On 03/31/2018 08:33 AM, Dmitry Safonov wrote:
->>>>> Theoretically, on some machines faults might be generated
->>>>> faster
->>>>> than
->>>>> they're cleared by CPU.
->>>> Is this a real case?
->>> No. 1/2 is a real case and this one was discussed on v3:
->>> lkml.kernel.org/r/<20180215191729.15777-1-dima@arista.com>
->>>
->>> It's not possible on my hw as far as I tried, but the discussion
->>> result
->>> was to fix this theoretical issue too.
->> If faults are generated faster than CPU can clear them, the PCIe
->> device should be in a very very bad state. How about disabling
->> the PCIe device and ask the administrator to replace it? Anyway,
->> I don't think that's goal of this patch series. :-)
-> Uhm, yeah, my point is not about the number of faults, but about
-> physical ability of iommu to generate faults faster than cpu processes
-> them. I might be wrong that it's not possible (like low cpu freq?)
->
-> But the number of interrupts might be high. It's like you've many
-> mappings on iommu and PCIe device went off. It could be just a link
-> flap. I think it makes sense not lockup on such occasions.
->
->>>>>  Let's limit the cleaning-loop by number of hw
->>>>> fault registers.
->>>> Will this cause the fault recording registers full of faults,
->>>> hence
->>>> new faults will be dropped without logging?
->>> If faults come faster then they're being cleared - some of them
->>> will be
->>> dropped without logging. Not sure if it's worth to report all
->>> faults in
->>> such theoretical(!) situation.
->>> If amount of reported faults for such situation is not enough and
->>> it's
->>> worth to keep all the faults, then probably we should introduce a
->>> workqueue here (which I did in v1, but it was rejected by the
->>> reason
->>> that it will introduce some latency in fault reporting).
->>>
->>>> And even worse, new faults will not generate interrupts?
->>> They will, we clear page fault overflow outside of the loop, so any
->>> new
->>> fault will raise interrupt, iiuc.
->>>
->> I am afraid that they might not generate interrupts any more.
->>
->> Say, the fault registers are full of events that are not cleared,
->> then a new fault comes. There is no room for this event and
->> hence the hardware might drop it silently.
-> AFAICS, we're doing fault-clearing in a loop inside irq handler.
-> That means that while we're clearing if a fault raises, it'll make
-> an irq level triggered (or on edge) on lapic. So, whenever we return
-> from the irq handler, irq will raise again.
->
+   ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
 
-Uhm, double checked with the spec. Interrupts should be generated
-since we always clear the fault overflow bit.
+has been applied to the asoc tree at
 
-Anyway, we can't clear faults in a limited loop, as the spec says in 7.3.1:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Software is expected to process the non-recoverable faults reported through the Fault Recording
-Registers in a circular FIFO fashion starting from the Fault Recording Register referenced by the Fault
-Recording Index (FRI) field, until it finds a Fault Recording Register with no faults (F field Clear).
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Best regards,
-Lu Baolu
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From de5afce2a22ef7f92e9e8583a3bdbc10e448cddf Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 2 May 2018 15:29:45 +0100
+Subject: [PATCH] ASoC: Intel: bytcr_rt565: fix missing assignment to ret_val
+
+Currently, the check that ret_val is not -ENOENT is always true and
+the quirk bit BYT_RY5651_MCLK_EN is never being cleared because ret_val
+is always zero at this point from a previous assignment earlier on.
+I believe that ret_val should actually be assigned to the return from
+devm_clk_get() as this can return -ENOENT (from a deeper call to
+clk_get_sys) and that was the original intention to check this.
+
+Detected by CoverityScan, CID#1460228 ("Logically dead code")
+
+Fixes: 02c0a3b3047f ("ASoC: Intel: bytcr_rt5651: add MCLK, quirks and cleanups")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/intel/boards/bytcr_rt5651.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/intel/boards/bytcr_rt5651.c b/sound/soc/intel/boards/bytcr_rt5651.c
+index 1b1997f1d60c..bf59c7caf1d9 100644
+--- a/sound/soc/intel/boards/bytcr_rt5651.c
++++ b/sound/soc/intel/boards/bytcr_rt5651.c
+@@ -856,9 +856,10 @@ static int snd_byt_rt5651_mc_probe(struct platform_device *pdev)
+ 	if (byt_rt5651_quirk & BYT_RT5651_MCLK_EN) {
+ 		priv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+ 		if (IS_ERR(priv->mclk)) {
++			ret_val = PTR_ERR(priv->mclk);
+ 			dev_err(&pdev->dev,
+-				"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
+-				PTR_ERR(priv->mclk));
++				"Failed to get MCLK from pmc_plt_clk_3: %d\n",
++				ret_val);
+ 			/*
+ 			 * Fall back to bit clock usage for -ENOENT (clock not
+ 			 * available likely due to missing dependencies), bail
+-- 
+2.17.0
