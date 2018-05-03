@@ -1,41 +1,43 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZofk1Ad1pWPQoKOpMpiSAAC4scSpS7wMC9lQ1mjuSCOQmE+N5im4sJM7JD3f0Vy/nsyZrYS
-ARC-Seal: i=1; a=rsa-sha256; t=1525395226; cv=none;
+X-Google-Smtp-Source: AB8JxZrGsaX3PGvPwuEn99iyz2y1+wNbKgDvbibB2+9y09AUrE/9Zw/GrjCYUGI4h/qbID9PXSdM
+ARC-Seal: i=1; a=rsa-sha256; t=1525390014; cv=none;
         d=google.com; s=arc-20160816;
-        b=kuyaHxFJfXQq/Ddse63VetjjJeaiHsf37eDPCTcOIKYLZtqe2I+mMJVqtwHl0gEaCo
-         36/3EZfQKgfgzVgCGoKMfM3Z861Q7qvrNbPeSQ/AnzUV7khTuvgX+EU/AC4QkxZ1YNW1
-         2xA+rP/gmHn7IJ4hHyOc7A9Vs4krk2skOioW636onT70qu6HXt0c4oHVpp0ogZQklqwF
-         +a1t05XTD+RVFXZ+DcOCATMlOG9+LeaLFWf2kODVi7xWDwpDxPrLDuSwj0OF8MdgXRmA
-         68lM+f0Y+IXPZ2ObG24vIJAx07EtWZ+63cf9dShDYi0E9K6p16bw9YHQdYqWUK9awknF
-         PIKQ==
+        b=c5VSjhsif6KWAsKW6+7B4yPBU6fKZpYOmfNBkF7o2eRobFCU6yG0uqO9iBn0xfK2lr
+         sLaKuA5vhI/CNzQUuzrB+9Z/Us9VBB6mj/ZTt+WXel7Bf1eNYX2eR4f0iPVlCE0q7Nfe
+         Bi9B3dTWQ1UDsTpFaBnMNBerFGhS5U6+gOVCKKwbBmhnl59ohYY7p57hDrZoJkYuhAET
+         nm/trgtz81mR1ql7VYsvz4CbV6jL81V5cH77FdJpqrCRRLageJxg+pwyY3WchFPl+ofA
+         hsU6IG+6kx52SdaHFICGX4Ruq9MF1kdbbN2CtBfNMeWhCwyNJlDRPPRrpQD2zRgLGvBD
+         HILQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:message-id:references:in-reply-to:subject:cc:date:to
          :from:arc-authentication-results;
-        bh=rpXgPUjm9QuBePUuYPsOh0va7n6tfbCWoZ0l913XCzg=;
-        b=gk4bH465tgNv0YCMvnzK5VjFMRNknewgiNE60aikGrKwkrLRgZB5y8e5n5ItMNMfm8
-         ni6lo6WzuwkIAgUWDO/61ATHb4X5GJw/Ygt+7UMvbSPjZJ7wNsew/VjDOMkcVEMmnUgf
-         WUIhkGbq1hvYdc6HxNPly+yc+eMIoIRQ7DuD6HrdLeLMq09ix64QsPfMg447Xt5uoQIh
-         GS9VLaAwtTBPIBuqWcx6ht1qvckGt9ELWw5JlZRCndBCILML34uzqnD68h3TCOMQEzcC
-         OInIs0r4+oy2cOriVibld5JfzRd3wARDwoAuNK49JSiTBpkebvl80EejKFFi91atf686
-         VFog==
+        bh=8dTrA0nYBiFyOWYZH1l/nkcZK36dSAHhQuUEHKz1ucw=;
+        b=hDffK8XrQoWxhlwisyBFoDx9jY2ZxZE+oJ5c9Kvx8EbfyXIP6/dfrXPvnCPfIy4rLz
+         4ZLdyslrtEHYu7v7uw6UoXYfn9BVxe96y7LQOASy6sk/LG3BfV8DzkpJJs4bDHKOuw0I
+         IxVaSb3oYpdgXQD42LRA0KKyTd4HPAL8z2RNB9t9gFTUMvc6HJHTlkr9rVB3JVfdz0wE
+         2lsjVSG7jELkfSzRPpr4bNHuyxKFKudxKW91K/V15b9EHUQCGaWwH/LMarQAkte6rd7m
+         yXo+j6rIfwHdUEzhw/xKSMwA6GLWBCLO8XCY7wjArv97cgOJlTjt3C27qKHzl6enz/JZ
+         9rvw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 From: NeilBrown <neilb@suse.com>
-To: "Dilger\, Andreas" <andreas.dilger@intel.com>, David Laight <David.Laight@ACULAB.COM>
-Date: Fri, 04 May 2018 10:53:36 +1000
-Cc: James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel\@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, "Drokin\, Oleg" <oleg.drokin@intel.com>, "Siyao\, Lai" <lai.siyao@intel.com>, Jinshan Xiong <jinshan.xiong@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lustre Development List <lustre-devel@lists.lustre.org>, Li Xi <lixi@ddn.com>, Gu Zheng <gzheng@ddn.com>
-Subject: Re: [PATCH 1/4] staging: lustre: obdclass: change spinlock of key to rwlock
-In-Reply-To: <55458B75-4105-4F4F-BB50-3D506611AB24@intel.com>
-References: <1525285308-15347-1-git-send-email-jsimmons@infradead.org> <1525285308-15347-2-git-send-email-jsimmons@infradead.org> <a3594bd7c393418c8fda5150a075ff1a@AcuMS.aculab.com> <55458B75-4105-4F4F-BB50-3D506611AB24@intel.com>
-Message-ID: <87a7tgfdgv.fsf@notabene.neil.brown.name>
+To: David Laight <David.Laight@ACULAB.COM>, 'James Simmons' <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "devel\@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, Andreas Dilger <andreas.dilger@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, Lai Siyao <lai.siyao@intel.com>, Jinshan Xiong <jinshan.xiong@intel.com>
+Date: Fri, 04 May 2018 09:26:36 +1000
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Lustre
+ Development List" <lustre-devel@lists.lustre.org>, Li Xi <lixi@ddn.com>, "Gu
+ Zheng" <gzheng@ddn.com>
+Subject: RE: [PATCH 1/4] staging: lustre: obdclass: change spinlock of key to rwlock
+In-Reply-To: <a3594bd7c393418c8fda5150a075ff1a@AcuMS.aculab.com>
+References: <1525285308-15347-1-git-send-email-jsimmons@infradead.org> <1525285308-15347-2-git-send-email-jsimmons@infradead.org> <a3594bd7c393418c8fda5150a075ff1a@AcuMS.aculab.com>
+Message-ID: <87po2cfhhv.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: multipart/signed; boundary="=-=-=";
 	micalg=pgp-sha256; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599377573675786314?=
-X-GMAIL-MSGID: =?utf-8?q?1599492825243589305?=
+X-GMAIL-MSGID: =?utf-8?q?1599487359677424866?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -43,79 +45,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 04 2018, Dilger, Andreas wrote:
+On Thu, May 03 2018, David Laight wrote:
 
-> On May 3, 2018, at 07:50, David Laight <David.Laight@ACULAB.COM> wrote:
+> From: James Simmons
+>> Sent: 02 May 2018 19:22
+>> From: Li Xi <lixi@ddn.com>
 >>=20
->> From: James Simmons
->>> Sent: 02 May 2018 19:22
->>> From: Li Xi <lixi@ddn.com>
->>>=20
->>> Most of the time, keys are never changed. So rwlock might be
->>> better for the concurrency of key read.
->>=20
->> OTOH unless there is contention on the spin lock during reads the
->> additional cost of a rwlock (probably double that of a spinlock)
->> will hurt performance.
->>=20
->> ...
->>> -	spin_lock(&lu_keys_guard);
->>> +	read_lock(&lu_keys_guard);
->>> 	atomic_inc(&lu_key_initing_cnt);
->>> -	spin_unlock(&lu_keys_guard);
->>> +	read_unlock(&lu_keys_guard);
->>=20
->> WTF, seems unlikely that you need to hold any kind of lock
->> over an atomic_inc().
->>=20
->> If this is just ensuring that no code holds the lock then
->> it would need to request the write_lock().
->> (and would need a comment)
+>> Most of the time, keys are never changed. So rwlock might be
+>> better for the concurrency of key read.
 >
-> There was a fair amount of benchmarking done for this that shows the
-> performance is significantly improved with the patch, which can be
-> seen in the ticket that was referenced in the original commit comment:
->
-> https://jira.hpdd.intel.com/browse/LU-6800?focusedCommentId=3D121776#comm=
-ent-121776
+> OTOH unless there is contention on the spin lock during reads the
+> additional cost of a rwlock (probably double that of a spinlock)
+> will hurt performance.
 
-That does surprise me.  The only places where the lock is held for read
-are very short - clearing a few fields or incrementing a value.
-But numbers don't lie.
-I wonder if the next patch would have had just as big an effect. Taking
-and dropping the lock 40 times is not likely to be good for performance.
+That's roughly what I was going to say - rwlocks are rarely a win.
+I think the second patch which caused the lock to be taken less often
+would have a bigger impact that the switch to rwlocks.
+
+However I suspect a better approach would be to investigate some sort of
+lockless solution.
+I think the use of the spinlock in lu_context_key_register() could be
+replaced with a careful cmp_xchg().  I'm less sure about
+lu_context_key_degister(), but it might be possible.
+
+>
+> ...
+>> -	spin_lock(&lu_keys_guard);
+>> +	read_lock(&lu_keys_guard);
+>>  	atomic_inc(&lu_key_initing_cnt);
+>> -	spin_unlock(&lu_keys_guard);
+>> +	read_unlock(&lu_keys_guard);
+>
+> WTF, seems unlikely that you need to hold any kind of lock
+> over an atomic_inc().
+>
+> If this is just ensuring that no code holds the lock then
+> it would need to request the write_lock().
+> (and would need a comment)
+
+There is a comment - that patch showed the last 2 lines of it.
+This is for synchronization with lu_context_key_quiesce().
+That spins(!! calling schedule, but still... not good) until
+the lu_key_initing_cnt is zero while it holds the write lock.
+Then it is sure that the code protected by this counter isn't
+running.
+I'm sure this can be improved!  I would need to study it carefully to
+see how.
+
+Note that I don't object to these patches going in - if they provide a
+measurable improvement which seems likely, then in they go.  But I
+hope the code won't stay like this long term.
 
 Thanks,
 NeilBrown
-
-
->
-> That said, it might be good to include this information into the
-> commit comment itself.
->
-> Cheers, Andreas
-> --
-> Andreas Dilger
-> Lustre Principal Architect
-> Intel Corporation
 
 --=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrrrxAACgkQOeye3VZi
-gbm6HQ//dCdH9MwD3kUjEKaLymrwQR/nuNHP4IEppOJAlmi0vbOHR1GNcMWsLDeU
-AaYtGyi7e+7sxpo7OihX7+VGKVK3XrVnVoFzrJ3X9Hd5EFfx6ikGKqlQ08FpIskX
-8juWuCAvqx92SRbqN7+jX0KtYqeH5A+E8UP//t/eks771+Q3Z+kZEmKW4s98WjOS
-ABruCPT2Rf7y7dc4rReECjX07ODSYktYEY0TPkQQUGjn8GiTpX2h7ZX3bd+Bisec
-gXUNtk+jMaQThIUmuE1KP6eXjIv/w2d9fADLadh/qk10nV5gkkHGXjodvvIx69es
-5YrEwn4azzYEEWNkDPX9otRJIvLrnvrPg46g/15RjIT9n3si8Hn8D6ld154/AaxH
-5w9aQwVS2Q5tR5eAUfTxfJI5KMEI42tBEEQd9RZxRqlrfpbgwNKk2B5cZ6sQpHjg
-pVqhaMgXmJ9+5ApbHOQigtF3GCe0AmzSngklGNwBr6ZEhlY8Z4hCtPLlFFdnI+LE
-TTE+i9ixFj0G1dF0TZ/rt0laQNCflobgUA9SCc1I6C+nazaX8kpdS2VjxvpWrVM+
-JkJihlmu/Eltce0xToTcXgqoAnrobYQ17/Hs5A1c0/xVO+q14/MlUMWc9YnI2Kp2
-86fO/glP3vMiN/PZVPzfTYKGlUbInGOBieXKC2KBScMyKfm8/vc=
-=zv+U
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrrmqwACgkQOeye3VZi
+gbmdGxAAgBcMxEEM49WNOVfIDnNije4MPuD0Qo2e32hwQFXE2EvBDFWro1zoDKCE
+QdsUFeOurwjS9frS7wjy9QiJEVP22S5ePskSiOEf0bjJ3pq0mLn+J0PT+vi/vtlP
+Z+LmwS80/uQqnxf9bfHd4dExoQiSQMbU52U93Pm3ByKt86XVaktM9ACFtTbfqeVb
+LpxMexL7X/moYXHjB3aeohVKsfLLxPQ5eVh0O8LTogugN8zbOPbYDxUKJ21Dsk/O
+8ja1vwuvfntMePMZX0tW2LOcUVu/GX5lZmSKn7FmHnVtNKlL2BeUx/XHGsWXZe24
++jPUZZxFlYEiZJjwW9ucIQVQzWCHlB/9iHE85y6fLyrB12QjY9qboJCnUv+MSGik
+r5l9HLQ+3WUaR9F1YMK2sY7I/YwHop5ayXQuqba5Hbw8NSB1nr7vW0ccBNQTB3pY
+RBfqHovEeCRqIKs5uFJadLq5E/8hEo43EqD0TGmY6N4WwBXvO50T1eEw2bKqAq62
+zdW7Rlr+Cad533tASCWvsc5DDGC7ZzISnZtxUUXdyM6fOMpcOGtX9McaqgUP8mZG
+HIYrt0Ms6qOmCq/O4wzX6Zjf1G4GzcjrGWvYYeTB3lCMdoeEHChSsi7giAcrVD3G
+c7xoUOq8RwSViCc4SBW18T9yjQ+TjlpRRyiWWPOBrFhS8ZC3rDo=
+=9e77
 -----END PGP SIGNATURE-----
 --=-=-=--
