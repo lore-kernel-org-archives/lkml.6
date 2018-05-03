@@ -1,99 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751354AbeECQAh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:00:37 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:53836 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751075AbeECQAe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:00:34 -0400
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
-Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <b8acf835-df94-9967-2327-8f0e39d88511@amd.com>
- <805645c1-ea40-2e57-88eb-5dd34e579b2e@deltatee.com>
- <3e4e0126-f444-8d88-6793-b5eb97c61f76@amd.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <ce2e5351-f32a-bd80-1c77-b7fc38842175@deltatee.com>
-Date: Thu, 3 May 2018 09:59:54 -0600
+        id S1751630AbeECQCE (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:02:04 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56810 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751141AbeECQCA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 12:02:00 -0400
+Subject: Re: [PATCH v4 08/15] KVM: s390: interfaces to (de)configure guest's
+ AP matrix
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-9-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <99f4752a-1358-61e4-bf9e-5672b2d4036f@linux.vnet.ibm.com>
+ <0f47c442-47b8-ee57-d014-5200c59125d7@linux.vnet.ibm.com>
+ <54e4c3ef-0750-981b-7b0e-6b18d1a77c3c@linux.vnet.ibm.com>
+ <7a733e41-3956-6828-9efa-899c9a954c20@linux.vnet.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Thu, 3 May 2018 18:01:49 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <3e4e0126-f444-8d88-6793-b5eb97c61f76@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <7a733e41-3956-6828-9efa-899c9a954c20@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18050316-0020-0000-0000-00000418A114
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050316-0021-0000-0000-000042ADC3E5
+Message-Id: <829b70c7-1648-f1c3-f656-3dca56bb3d8e@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805030140
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 03/05/2018 16:41, Tony Krowiak wrote:
+> On 05/02/2018 10:57 AM, Pierre Morel wrote:
+>> On 25/04/2018 18:21, Tony Krowiak wrote:
+>>> On 04/23/2018 09:46 AM, Pierre Morel wrote:
+>>>> On 15/04/2018 23:22, Tony Krowiak wrote:
+>>>>> Provides interfaces to assign AP adapters, usage domains
+>>>>> and control domains to a KVM guest.
+...
+> The kvm_ap_configure_matrix(kvm, matrix) interface configures the APM, 
+> AQM and ADM in the
+> guest's CRYCB which implies AP instructions are being interpreted. 
+> There is nothing in SIE
+> precluding the sharing of AP queues between guests using SIE to 
+> interpret AP instructions,
+> it is my opinion - along with several others - that this is not 
+> advisable given the
+> results are not predictable, not to mention the security concerns. If 
+> the protocol to access
+> queues changes, then we create a different interface. The other option 
+> is to include a flag
+> on the kvm_ap_configure_matrix(kvm, matrix) interface to indicate 
+> whether sharing is
+> allowed. I don't like this, because we have no way of knowing if the 
+> caller has taken the
+> proper care to ensure the VM sharing the queue should be allowed 
+> access. Besides, when
+> queue sharing is implemented, it is my opinion that we will intercept 
+> the AP instructions
+> and the matrix will not be configured in the CRYCB. I stick by my 
+> response above.
 
+I mean, validating the queue sharing is a mater of the VFIO driver.
+This code is not needed if the VFIO driver is not used.
+But it is not very important.
 
-On 03/05/18 03:05 AM, Christian König wrote:
-> Ok, I'm still missing the big picture here. First question is what is 
-> the P2PDMA provider?
+>
+>>
+>>>>> +static int kvm_ap_matrix_apm_create(struct kvm_ap_matrix *ap_matrix,
+>>>>> +                    struct ap_config_info *config)
+>>>>> +{
+>>>>> +    int apm_max = (config && config->apxa) ? config->Na + 1 : 16;
+>>>>
+>>>> At this moment you already know the format of the crycb.
+>>>
+>>> How?
+>>
+>> you calculated this in kvm_ap_build_crycbd() which is called from 
+>> kvm_s390_crypto_init()
+>> itself called from kvm_arch_init_vm().
+>> It is when starting the VM.
+>
+> This structure is used by the vfio_ap driver to store the mediated 
+> matrix device's matrix
+> configuration as well as to configure the CRYCB. The mediated device's 
+> matrix is
+> configured before the guest is started ... it is the means for 
+> configuring the guest's
+> matrix after all. The bottom line is, this function will be called 
+> long before the
+> kvm_ap_build_crycbd() function is called.
 
-Well there's some pretty good documentation in the patchset for this,
-but in short, a provider is a device that provides some kind of P2P
-resource (ie. BAR memory, or perhaps a doorbell register -- only memory
-is supported at this time).
+you are right, I was thinking about open, should have take more attention.
+Sorry.
 
-> Second question is how to you want to handle things when device are not 
-> behind the same root port (which is perfectly possible in the cases I 
-> deal with)?
+Pierre
 
-I think we need to implement a whitelist. If both root ports are in the
-white list and are on the same bus then we return a larger distance
-instead of -1.
-
-> Third question why multiple clients? That feels a bit like you are 
-> pushing something special to your use case into the common PCI 
-> subsystem. Something which usually isn't a good idea.
-
-No, I think this will be pretty standard. In the simple general case you
-are going to have one provider and at least two clients (one which
-writes the memory and one which reads it). However, one client is
-likely, but not necessarily, the same as the provider.
-
-In the NVMeof case, we might have N clients: 1 RDMA device and N-1 block
-devices. The code doesn't care which device provides the memory as it
-could be the RDMA device or one/all of the block devices (or, in theory,
-a completely separate device with P2P-able memory). However, it does
-require that all devices involved are accessible per
-pci_p2pdma_distance() or it won't use P2P transactions.
-
-I could also imagine other use cases: ie. an RDMA NIC sends data to a
-GPU for processing and then sends the data to an NVMe device for storage
-(or vice-versa). In this case we have 3 clients and one provider.
-
-> As far as I can see we need a function which return the distance between 
-> a initiator and target device. This function then returns -1 if the 
-> transaction can't be made and a positive value otherwise.
-
-If you need to make a simpler convenience function for your use case I'm
-not against it.
-
-> We also need to give the direction of the transaction and have a 
-> whitelist root complex PCI-IDs which can handle P2P transactions from 
-> different ports for a certain DMA direction.
-
-Yes. In the NVMeof case we need all devices to be able to DMA in both
-directions so we did not need the DMA direction. But I can see this
-being useful once we add the whitelist.
-
-Logan
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
