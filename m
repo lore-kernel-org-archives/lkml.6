@@ -1,86 +1,68 @@
-Return-Path: <me@tobin.cc>
-X-Google-Smtp-Source: AB8JxZpZpYpitvGswMkv5jSXEETNTQcuG0WF8f4ewiUJ8ExixbnHYQ2jQWZgbBDzMhBkQKob9g50
-ARC-Seal: i=1; a=rsa-sha256; t=1525388897; cv=none;
+Return-Path: <pavel@ucw.cz>
+X-Google-Smtp-Source: AB8JxZrH6w+7knov/96GjfepH5YdAO5ANaKLpMjU7HMvxAqyCpFOq6KBV1fFMtqp0iY97AYhLXIm
+ARC-Seal: i=1; a=rsa-sha256; t=1525375271; cv=none;
         d=google.com; s=arc-20160816;
-        b=GLDYSXFqfUr/u1ke3rvuTLDX5jHp34oldmca8yHL7z5D/bbOmAMIYCuO+DtRfEb2JY
-         LwLuKcl74LiNyBN66bC97EfjgV/tuYGBrRiST18dSkWJVvUT/96HiWs54RsAmzaufhMm
-         3gtAgilCNtRqZuSJeDq3TC9Bjz6JkWXAc7aCN+qKwA0qx/SoPqqBzpPnzS+J77rRl3x1
-         xj0GuB6maQKop6KFqoEBNKZ0P6U+NTi8bre7JNT/ItwPH/wUqA0mI4C//a2px+26fh6O
-         rm2BmWnYmNx1QZXbX7H3RhS/TgJVtYPBuhe5ZYQfC8LiPOfqX6DXpWquiv/12CaqvsOo
-         5HAg==
+        b=gKPs3532h3Dq2JLq4hndmw8lsMV0H0etIkqQ+CBeN6eP1qF4v+wrHjdgnnamifXlD4
+         Qc3/pOfSEUuAVgawLxXNc74i4uzANjfyZBJaNyw+7He7OgGLBEkz0XqeqNjEAQEdXSjL
+         tohVivQyO+qiWzEdzMWDBRe49Fe6Dx0Ee75fpvJPzeWz2T3ki8UgW5CcnIomiwh+kvGo
+         jL0k7ra1qrr5ZvAaZ0ATq9Ft2GuNZ1xIwYN2BRRgCAq35KMJccHnpR/72TL6IU3yZ4Jk
+         oZLxpPtfrGWaIDlb2RqV6j/JadHLbP9HaekSz55VJBCpaWg4Wle1YXPzD3ZYOc2lqDe8
+         y0AQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:dkim-signature:arc-authentication-results;
-        bh=ggDfkzu+suD8nCQpszt/+6rXoR/bTJTIfstsJWVoaQo=;
-        b=WIx+TETCoI/RrtBkH/V++BeMk/QflyztAVqeceRlo1MaYaylSdlpiXW9VBLirqwcpv
-         VWIRMLIMdM4DGsL9l/KfI0hhXGSrJ3nUKa00bU5Sne9uC6bq7dYhRE1PRday2svSU5+I
-         Pl6c+IrMdTfBibmzUb7q6D++zLGXDvasfGnx2uIXQTfqS5JxTTfwDEy7S90bd04xzu5S
-         AEJrwMPfPNhOdE2e459j+m8SeUxhHN3zmZUu8q/5/CLnV5I0f0BT+PffKoeig/HbI5gN
-         zvVA+XMGR4+w44xVNWs18FXkMIxIlvarE8c0SUb9HJFNEy4T1Htl7nC0X+m2MLeuhdAf
-         scZQ==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=2e4Ccfi+Yqhm6xPJk6B4ZXad66imChch6kK4sNZJeJQ=;
+        b=UzKUTIxWAXYzqz9wfXPSVcznXC1fgS8Dmd9D2JSaBAPJAacI/qC0wBz9KlZgMOmYs6
+         AT+AF3lk3ubqPvsaxEgRLn+n0WmHgVjGxL8KEX00zHQx9E3er4bcJCDfodniOH6Iwe7W
+         YFLB7Uwv/qP7mPLrg4tyKDsdDpWn9GcsBhQYsDxG+H7+vk9cmW20cqGFL98zI+TqWElc
+         8U9Lpp5ZJIfG5ekIhGSmfMibCPl9WfObe2dR0/1vAUJKkT23VaMIokp+4by/KFXPKXQh
+         rrlpAplK9xzTNTOGT2CofI+Ix6XEykaf6oAZYT9ZeovZlwDqzjGO5qd3jODpEbYFLvs9
+         gnAw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=p4QiHD5k;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ko5Pz0Bi;
-       spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@tobin.cc header.s=fm3 header.b=p4QiHD5k;
-       dkim=pass header.i=@messagingengine.com header.s=fm2 header.b=ko5Pz0Bi;
-       spf=neutral (google.com: 66.111.4.25 is neither permitted nor denied by best guess record for domain of me@tobin.cc) smtp.mailfrom=me@tobin.cc
-X-ME-Sender: <xms:YJbrWrlgiutaVOHjk16XtQWwkuO74b6QBxn6mo5pseNsUdJ9HxSmPQ>
-From: "Tobin C. Harding" <me@tobin.cc>
-To: linux-kernel@vger.kernel.org
-Cc: "Tobin C. Harding" <me@tobin.cc>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Kees Cook <keescook@chromium.org>,
-	Anna-Maria Gleixner <anna-maria@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v3 1/4] random: Fix whitespace pre random-bytes work
-Date: Fri,  4 May 2018 09:07:38 +1000
-Message-Id: <1525388861-27018-2-git-send-email-me@tobin.cc>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525388861-27018-1-git-send-email-me@tobin.cc>
-References: <1525388861-27018-1-git-send-email-me@tobin.cc>
+       spf=neutral (google.com: 195.113.26.193 is neither permitted nor denied by best guess record for domain of pavel@ucw.cz) smtp.mailfrom=pavel@ucw.cz
+Date: Thu, 3 May 2018 21:21:10 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Sujeev Dias <sdias@codeaurora.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, Tony Truong <truong@codeaurora.org>
+Subject: Re: [PATCH v1 1/4] mhi_bus: core: Add support for MHI host interface
+Message-ID: <20180503192110.bjd46afhe2ein3qm@devuan>
+References: <1524795811-21399-1-git-send-email-sdias@codeaurora.org>
+ <1524795811-21399-2-git-send-email-sdias@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524795811-21399-2-git-send-email-sdias@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599486188377948666?=
-X-GMAIL-MSGID: =?utf-8?q?1599486188377948666?=
+X-GMAIL-THRID: =?utf-8?q?1598864306474861315?=
+X-GMAIL-MSGID: =?utf-8?q?1599471900768346893?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-There are a couple of whitespace issues around the function
-get_random_bytes_arch().  In preparation for patching this function
-let's clean them up.
+Hi!
 
-Signed-off-by: Tobin C. Harding <me@tobin.cc>
-Acked-by: Theodore Ts'o <tytso@mit.edu>
----
- drivers/char/random.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> MHI Host Interface is a communication protocol to be used by the host
+> to control and communcate with modem over a high speed peripheral bus.
+> This module will allow host to communicate with external devices that
+> support MHI protocol.
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index cd888d4ee605..031d18b31e0f 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1737,7 +1737,7 @@ void get_random_bytes_arch(void *buf, int nbytes)
- 
- 		if (!arch_get_random_long(&v))
- 			break;
--		
-+
- 		memcpy(p, &v, chunk);
- 		p += chunk;
- 		nbytes -= chunk;
-@@ -1748,7 +1748,6 @@ void get_random_bytes_arch(void *buf, int nbytes)
- }
- EXPORT_SYMBOL(get_random_bytes_arch);
- 
--
- /*
-  * init_std_data - initialize pool with system data
-  *
+I have Motorola Droid 4 cellphone here, with Qualcomm GSM modem. But
+it talks over serial line and USB. I guess MHI is not applicable to my
+hardware?
+
+> +MHI Devices
+> +-----------
+> +Logical device that bind to maximum of two physical MHI channels. Once MHI is in
+> +powered on state, each supported channel by controller will be allocated as a
+> +mhi_device.
+
+What kind of protocol is running over MHI? I guess its not AT
+commands. QMI? Or something entirely different?
+									Pavel
 -- 
-2.7.4
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
