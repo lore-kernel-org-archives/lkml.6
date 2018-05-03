@@ -1,232 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751133AbeECM4d (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 08:56:33 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:40532 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750781AbeECM4a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:56:30 -0400
-Date: Thu, 3 May 2018 15:56:27 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of
- omap3isp_stat_data
-Message-ID: <20180503125627.6elsr4iiknnv227c@valkosipuli.retiisi.org.uk>
-References: <20180425213044.1535393-1-arnd@arndb.de>
+        id S1751253AbeECM5p (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:57:45 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38218 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751132AbeECM5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 08:57:41 -0400
+Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: mst@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com
+References: <20180503025955.28816-1-tiwei.bie@intel.com>
+ <ab66939d-47fb-5f43-3938-0c156ffc6918@redhat.com>
+ <20180503083015.kb7po26ga46g66tc@debian>
+ <1292c46c-34ad-ea21-1f05-164044a5f35a@redhat.com>
+ <20180503095823.zpxskdts7etpwl6x@debian>
+From: Jason Wang <jasowang@redhat.com>
+Message-ID: <efe1b3b9-3601-d861-aff5-80d10c9f0cdb@redhat.com>
+Date: Thu, 3 May 2018 20:57:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180425213044.1535393-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180503095823.zpxskdts7etpwl6x@debian>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
 
-Thanks for the patch and apologies for the delays.
 
-On Wed, Apr 25, 2018 at 11:30:10PM +0200, Arnd Bergmann wrote:
-> C libraries with 64-bit time_t use an incompatible format for
-> struct omap3isp_stat_data. This changes the kernel code to
-> support either version, by moving over the normal handling
-> to the 64-bit variant, and adding compatiblity code to handle
-> the old binary format with the existing ioctl command code.
-> 
-> Fortunately, the command code includes the size of the structure,
-> so the difference gets handled automatically. In the process of
-> eliminating the references to 'struct timeval' from the kernel,
-> I also change the way the timestamp is generated internally,
-> basically by open-coding the v4l2_get_timestamp() call.
-> 
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Sakari Ailus <sakari.ailus@iki.fi>
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I submitted this one in November and asked again in January,
-> still waiting for a review so it can be applied.
-> ---
->  drivers/media/platform/omap3isp/isph3a_aewb.c |  2 ++
->  drivers/media/platform/omap3isp/isph3a_af.c   |  2 ++
->  drivers/media/platform/omap3isp/isphist.c     |  2 ++
->  drivers/media/platform/omap3isp/ispstat.c     | 21 +++++++++++++++++++--
->  drivers/media/platform/omap3isp/ispstat.h     |  4 +++-
->  include/uapi/linux/omap3isp.h                 | 22 ++++++++++++++++++++++
->  6 files changed, 50 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/omap3isp/isph3a_aewb.c b/drivers/media/platform/omap3isp/isph3a_aewb.c
-> index d44626f20ac6..3c82dea4d375 100644
-> --- a/drivers/media/platform/omap3isp/isph3a_aewb.c
-> +++ b/drivers/media/platform/omap3isp/isph3a_aewb.c
-> @@ -250,6 +250,8 @@ static long h3a_aewb_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
->  		return omap3isp_stat_config(stat, arg);
->  	case VIDIOC_OMAP3ISP_STAT_REQ:
->  		return omap3isp_stat_request_statistics(stat, arg);
-> +	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
-> +		return omap3isp_stat_request_statistics_time32(stat, arg);
->  	case VIDIOC_OMAP3ISP_STAT_EN: {
->  		unsigned long *en = arg;
->  		return omap3isp_stat_enable(stat, !!*en);
-> diff --git a/drivers/media/platform/omap3isp/isph3a_af.c b/drivers/media/platform/omap3isp/isph3a_af.c
-> index 99bd6cc21d86..4da25c84f0c6 100644
-> --- a/drivers/media/platform/omap3isp/isph3a_af.c
-> +++ b/drivers/media/platform/omap3isp/isph3a_af.c
-> @@ -314,6 +314,8 @@ static long h3a_af_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
->  		return omap3isp_stat_config(stat, arg);
->  	case VIDIOC_OMAP3ISP_STAT_REQ:
->  		return omap3isp_stat_request_statistics(stat, arg);
-> +	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
-> +		return omap3isp_stat_request_statistics_time32(stat, arg);
->  	case VIDIOC_OMAP3ISP_STAT_EN: {
->  		int *en = arg;
->  		return omap3isp_stat_enable(stat, !!*en);
-> diff --git a/drivers/media/platform/omap3isp/isphist.c b/drivers/media/platform/omap3isp/isphist.c
-> index a4ed5d140d48..d4be3d0e06f9 100644
-> --- a/drivers/media/platform/omap3isp/isphist.c
-> +++ b/drivers/media/platform/omap3isp/isphist.c
-> @@ -435,6 +435,8 @@ static long hist_ioctl(struct v4l2_subdev *sd, unsigned int cmd, void *arg)
->  		return omap3isp_stat_config(stat, arg);
->  	case VIDIOC_OMAP3ISP_STAT_REQ:
->  		return omap3isp_stat_request_statistics(stat, arg);
-> +	case VIDIOC_OMAP3ISP_STAT_REQ_TIME32:
-> +		return omap3isp_stat_request_statistics_time32(stat, arg);
->  	case VIDIOC_OMAP3ISP_STAT_EN: {
->  		int *en = arg;
->  		return omap3isp_stat_enable(stat, !!*en);
-> diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
-> index 47cbc7e3d825..5967dfd0a9f7 100644
-> --- a/drivers/media/platform/omap3isp/ispstat.c
-> +++ b/drivers/media/platform/omap3isp/ispstat.c
-> @@ -18,6 +18,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
-> +#include <linux/timekeeping.h>
->  
->  #include "isp.h"
->  
-> @@ -237,7 +238,7 @@ static int isp_stat_buf_queue(struct ispstat *stat)
->  	if (!stat->active_buf)
->  		return STAT_NO_BUF;
->  
-> -	v4l2_get_timestamp(&stat->active_buf->ts);
-> +	ktime_get_ts64(&stat->active_buf->ts);
->  
->  	stat->active_buf->buf_size = stat->buf_size;
->  	if (isp_stat_buf_check_magic(stat, stat->active_buf)) {
-> @@ -500,7 +501,8 @@ int omap3isp_stat_request_statistics(struct ispstat *stat,
->  		return PTR_ERR(buf);
->  	}
->  
-> -	data->ts = buf->ts;
-> +	data->ts.tv_sec = buf->ts.tv_sec;
-> +	data->ts.tv_usec = buf->ts.tv_nsec / NSEC_PER_USEC;
->  	data->config_counter = buf->config_counter;
->  	data->frame_number = buf->frame_number;
->  	data->buf_size = buf->buf_size;
-> @@ -512,6 +514,21 @@ int omap3isp_stat_request_statistics(struct ispstat *stat,
->  	return 0;
->  }
->  
-> +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
-> +					struct omap3isp_stat_data_time32 *data)
-> +{
-> +	struct omap3isp_stat_data data64;
-> +	int ret;
-> +
-> +	ret = omap3isp_stat_request_statistics(stat, &data64);
-> +
-> +	data->ts.tv_sec = data64.ts.tv_sec;
-> +	data->ts.tv_usec = data64.ts.tv_usec;
-> +	memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
-> +
-> +	return ret;
-> +}
-> +
->  /*
->   * omap3isp_stat_config - Receives new statistic engine configuration.
->   * @new_conf: Pointer to config structure.
-> diff --git a/drivers/media/platform/omap3isp/ispstat.h b/drivers/media/platform/omap3isp/ispstat.h
-> index 6d9b0244f320..923b38cfc682 100644
-> --- a/drivers/media/platform/omap3isp/ispstat.h
-> +++ b/drivers/media/platform/omap3isp/ispstat.h
-> @@ -39,7 +39,7 @@ struct ispstat_buffer {
->  	struct sg_table sgt;
->  	void *virt_addr;
->  	dma_addr_t dma_addr;
-> -	struct timeval ts;
-> +	struct timespec64 ts;
->  	u32 buf_size;
->  	u32 frame_number;
->  	u16 config_counter;
-> @@ -130,6 +130,8 @@ struct ispstat_generic_config {
->  int omap3isp_stat_config(struct ispstat *stat, void *new_conf);
->  int omap3isp_stat_request_statistics(struct ispstat *stat,
->  				     struct omap3isp_stat_data *data);
-> +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
-> +				     struct omap3isp_stat_data_time32 *data);
->  int omap3isp_stat_init(struct ispstat *stat, const char *name,
->  		       const struct v4l2_subdev_ops *sd_ops);
->  void omap3isp_stat_cleanup(struct ispstat *stat);
-> diff --git a/include/uapi/linux/omap3isp.h b/include/uapi/linux/omap3isp.h
-> index 1a920145db04..87b55755f4ff 100644
-> --- a/include/uapi/linux/omap3isp.h
-> +++ b/include/uapi/linux/omap3isp.h
-> @@ -55,6 +55,8 @@
->  	_IOWR('V', BASE_VIDIOC_PRIVATE + 5, struct omap3isp_h3a_af_config)
->  #define VIDIOC_OMAP3ISP_STAT_REQ \
->  	_IOWR('V', BASE_VIDIOC_PRIVATE + 6, struct omap3isp_stat_data)
-> +#define VIDIOC_OMAP3ISP_STAT_REQ_TIME32 \
-> +	_IOWR('V', BASE_VIDIOC_PRIVATE + 6, struct omap3isp_stat_data_time32)
->  #define VIDIOC_OMAP3ISP_STAT_EN \
->  	_IOWR('V', BASE_VIDIOC_PRIVATE + 7, unsigned long)
->  
-> @@ -165,7 +167,14 @@ struct omap3isp_h3a_aewb_config {
->   * @config_counter: Number of the configuration associated with the data.
->   */
->  struct omap3isp_stat_data {
-> +#ifdef __KERNEL__
-> +	struct {
-> +		__s64	tv_sec;
-> +		__s64	tv_usec;
+On 2018年05月03日 17:58, Tiwei Bie wrote:
+> On Thu, May 03, 2018 at 05:09:44PM +0800, Jason Wang wrote:
+>> On 2018年05月03日 16:30, Tiwei Bie wrote:
+>>> On Thu, May 03, 2018 at 03:30:03PM +0800, Jason Wang wrote:
+>>>> On 2018年05月03日 10:59, Tiwei Bie wrote:
+>>>>> This patch introduces the support for VIRTIO_F_IO_BARRIER.
+>>>>> When this feature is negotiated, driver will use the barriers
+>>>>> suitable for hardware devices.
+>>>>>
+>>>>> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+>>>>> ---
+>>>>>     drivers/virtio/virtio_ring.c       | 5 +++++
+>>>>>     include/uapi/linux/virtio_config.h | 8 +++++++-
+>>>>>     2 files changed, 12 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+>>>>> index 21d464a29cf8..edb565643bf4 100644
+>>>>> --- a/drivers/virtio/virtio_ring.c
+>>>>> +++ b/drivers/virtio/virtio_ring.c
+>>>>> @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>>>>>     		!context;
+>>>>>     	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+>>>>> +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
+>>>>> +		vq->weak_barriers = false;
+>>>>> +
+>>>>>     	/* No callback?  Tell other side not to bother us. */
+>>>>>     	if (!callback) {
+>>>>>     		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+>>>>> @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
+>>>>>     			break;
+>>>>>     		case VIRTIO_F_IOMMU_PLATFORM:
+>>>>>     			break;
+>>>>> +		case VIRTIO_F_IO_BARRIER:
+>>>>> +			break;
+>>>>>     		default:
+>>>>>     			/* We don't understand this bit. */
+>>>>>     			__virtio_clear_bit(vdev, i);
+>>>>> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+>>>>> index 308e2096291f..6ca8d24bf468 100644
+>>>>> --- a/include/uapi/linux/virtio_config.h
+>>>>> +++ b/include/uapi/linux/virtio_config.h
+>>>>> @@ -49,7 +49,7 @@
+>>>>>      * transport being used (eg. virtio_ring), the rest are per-device feature
+>>>>>      * bits. */
+>>>>>     #define VIRTIO_TRANSPORT_F_START	28
+>>>>> -#define VIRTIO_TRANSPORT_F_END		34
+>>>>> +#define VIRTIO_TRANSPORT_F_END		38
+>>>>>     #ifndef VIRTIO_CONFIG_NO_LEGACY
+>>>>>     /* Do we get callbacks when the ring is completely used, even if we've
+>>>>> @@ -71,4 +71,10 @@
+>>>>>      * this is for compatibility with legacy systems.
+>>>>>      */
+>>>>>     #define VIRTIO_F_IOMMU_PLATFORM		33
+>>>>> +
+>>>>> +/*
+>>>>> + * If clear - driver may use barriers suitable for CPU cores.
+>>>>> + * If set - driver must use barriers suitable for hardware devices.
+>>>>> + */
+>>>>> +#define VIRTIO_F_IO_BARRIER		37
+>>>>>     #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+>>>> Hi:
+>>>>
+>>>> I believe this depends on Michael's patch of
+>>>>
+>>>> "[PATCH] virtio_ring: switch to dma_XX barriers for rpmsg"
+>>>>
+>>>> ?
+>>>>
+>>>> Thanks
+>>> We already have below commit and some other related commits
+>>> in the tree:
+>>>
+>>> 7b21e34fd1c2 ("virtio: harsher barriers for rpmsg.")
+>>>
+>>> They should have already guaranteed that virtio_Xmb() will
+>>> be OK for hardware devices when vq->weak_barriers is false.
+>>> If my understanding is correct, the barriers used in this
+>>> case are overkill. So Michael's patch is to make the barriers
+>>> weaker (or better).
+>>>
+>>> Best regards,
+>>> Tiwei Bie
+>> Well, I think we need dma barriers for some platforms according to previous
+>> discussion? Without Michael's patch, we won't use any dma barriers in fact
+>> for virtio.
+> You are right. Thanks! Are you suggesting to add a
+> reference to Michael's patch in this patch to make
+> sure that it won't be applied before that patch?
 
-Any particular reason for __s64 here instead of e.g. long or __s32? Kernel
-appears to use long in the timespec64 definition.
+Yes, better to have some notes, or maybe just squash that patch into 
+this series.
 
-> +	} ts;
-> +#else
->  	struct timeval ts;
-> +#endif
->  	void __user *buf;
->  	__u32 buf_size;
->  	__u16 frame_number;
-> @@ -173,6 +182,19 @@ struct omap3isp_stat_data {
->  	__u16 config_counter;
->  };
->  
-> +#ifdef __KERNEL__
-> +struct omap3isp_stat_data_time32 {
-> +	struct {
-> +		__s32	tv_sec;
-> +		__s32	tv_usec;
-> +	} ts;
-> +	__u32 buf;
-> +	__u32 buf_size;
-> +	__u16 frame_number;
-> +	__u16 cur_frame;
-> +	__u16 config_counter;
-> +};
-> +#endif
->  
->  /* Histogram related structs */
->  
+Let's wait for Michael's reply to see.
 
--- 
-Kind regards,
+Thanks
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+>
+> Best regards,
+> Tiwei Bie
+>
+>> Thanks
