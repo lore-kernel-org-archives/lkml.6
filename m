@@ -1,56 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752038AbeECGRH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 02:17:07 -0400
-Received: from mga05.intel.com ([192.55.52.43]:59498 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750923AbeECGRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 02:17:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="36495440"
-Subject: Re: [RFC] perf record: dead code perf_event__synthesize_id_index()
-To: Jiri Olsa <jolsa@redhat.com>, Stephane Eranian <eranian@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, mingo@elte.hu,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Shishkin, Alexander" <alexander.shishkin@intel.com>
-References: <CABPqkBTm+9Wsa21GVXpogWUDNkpRF4eyZOPGa8QJCvdV2Lz2rA@mail.gmail.com>
- <20180502165737.GF11539@krava>
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <cd10fb5e-90bc-f190-6553-7b29cd618ef5@intel.com>
-Date: Thu, 3 May 2018 09:15:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752062AbeECGT2 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 02:19:28 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36681 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750923AbeECGT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 02:19:26 -0400
+Date: Thu, 3 May 2018 08:19:25 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: "Theodore Y. Ts'o" <tytso@mit.edu>, Laura Abbott <labbott@redhat.com>,
+        Justin Forbes <jmforbes@linuxtx.org>, Jeremy Cline <jeremy@jcline.org>,
+        Sultan Alsawaf <sultanxda@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+Subject: Re: Linux messages full of `random: get_random_u32 called from`
+Message-ID: <20180503061924.GA6999@amd>
+References: <20180429220519.GQ5965@thunk.org>
+ <01000163186628e6-3fe4abfc-eaaf-470c-90c8-2d8ad91db8f1-000000@email.amazonses.com>
+ <CAFxkdAogN0S9vgQhKoO+Zpp07bXveDQYPLvwjULoTRv3Or83qQ@mail.gmail.com>
+ <20180501125518.GI20585@thunk.org>
+ <CAFxkdArLwrG8x6fNtLUfHedKrH_0d97V6UEzOCBgK8Shkir9pQ@mail.gmail.com>
+ <20180502000250.GI10479@thunk.org>
+ <CAFxkdAp83uWnju0KZKd2edveuzmiDW_sqMORC7uoR+pwgQECNw@mail.gmail.com>
+ <20180502162653.GB3461@thunk.org>
+ <3851ac8b-357d-3c82-2195-936e3c459212@redhat.com>
+ <20180502222522.GA15457@thunk.org>
 MIME-Version: 1.0
-In-Reply-To: <20180502165737.GF11539@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Disposition: inline
+In-Reply-To: <20180502222522.GA15457@thunk.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/05/18 19:57, Jiri Olsa wrote:
-> On Wed, May 02, 2018 at 04:38:33PM +0000, Stephane Eranian wrote:
->> Hi,
->>
->> It looks like perf_event__synthesize_id_index() is dead code in the current
->> tip
->> tree. I don't see any invocation of the function anywhere in perf.I
->> understand why
->> you'd want to keep the rest of the code related to  PERF_RECORD_ID_INDEX
->> because some perf.data file may have this user-level record type. But the
->> synthesize code is not needed anymore, in my opinion.
->>
->> Shouldn't we remove this code?
-> 
-> looks like there never was any user of it, probably some
-> preparation for follow up that haven't happened yet.. Adrian?
 
-Yes it is for AUX area sampling support, which we have patches for.  Just
-waiting on Alex to get the kernel side accepted.
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed 2018-05-02 18:25:22, Theodore Y. Ts'o wrote:
+> On Wed, May 02, 2018 at 10:49:34AM -0700, Laura Abbott wrote:
+> >=20
+> > It is a Fedora patch we're carrying
+> > https://src.fedoraproject.org/rpms/libgcrypt/blob/master/f/libgcrypt-1.=
+6.2-fips-ctor.patch#_23
+> > so yes, it is a Fedora specific use case.
+> > From talking to the libgcrypt team, this is a FIPS mode requirement
+> > to run power on self test at the library constructor and the self
+> > test of libgrcypt ends up requiring a fully seeded RNG. Citation
+> > is in section 9.10 of
+> > https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Module-Validati=
+on-Program/documents/fips140-2/FIPS1402IG.pdf
+>=20
+> Forgive me if this is a stupid question, but does Fedora need FIPS
+> compliance?  Or is this something which is only required for RHEL?
+
+If RHEL needs it, Fedora needs it, too -- as Fedora is a beta test for
+RHEL.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrqqewACgkQMOfwapXb+vJ2uQCgpfcVgw1AoDGqcuNDOaXsEUiS
+YZ4AnjWKisjQ9fOeb4oYpt5v8SDBjJWn
+=DLvf
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
