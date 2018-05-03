@@ -1,153 +1,212 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3120198-1525382437-2-7366851852777192679
+X-Cyrus-Session-Id: sloti22d1t05-2980787-1525372588-2-15363854087738919667
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='dk',
-  MailFrom='org'
-X-Spam-charsets: plain='utf-8'
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525382436; b=QRfv6M+rMsvGbz3PbWFA90BmJ9fVBHnLUw8syh5a1bqRO/l/lm
-    A1+ytXx1PQn+rtDFbq/lxkNPTD9KjyQUSRFW35/N4+2vW+M61vfs5k3yBHeef9Y9
-    EUuYcuhZhukA6wsivf7wRgyXlZsTrXSHc1VQjiQ32ukJ2AFFnyR6yM/ez9kc1VOC
-    sGBAWWP/ZKfUMzBwfHVrJMZj0owHObbKMsSaU3z61Txge2B+xJ9Vg6XMa0tujEli
-    7v/8xYphMS6rQ5aTDOvZ5ErvAeY9k9m3lmsM6IKpsilR+MrABZPe478LIi15JrZb
-    UZBoRrjROQa1zspIgG+Mb5FoP+K1r4cIHlQA==
+    1525372587; b=Q5NVk1C61IpFIn4v1ezcYO4Eln5NNu408sQjipmWwMpdp3lLSD
+    daqN4Z+4MkupsEELx/NTu7YyP1t7nemv8H5Hb+sLIo0ogj8ngho0D8uzvw/Va+Bt
+    3HC75P0EzCBzLecTztZ8LEYJPFo0GyDpysUob9upvuged54EgAkOh3DABKDH0Vhu
+    l8ICiXjkqybzAIKxcLKTd7sGBI/LeRimteafXenERs45xLryfF4Yb7ue9EsBeivL
+    1jSadg8C/YFSf3vg6rv5oxObU1ZS8wmpj93CuiQ0ovmgT8JRxfup2vS8+rzAV5vo
+    kOMk6lB+uz5sEBnXQXbmj9I0ysYJVa9TbiNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525382436;
-    bh=QlJ51uL6hd7z1CgInW6ZJ4dX9QGSPr6Uu79ut9rDOss=; b=mONp0xXzOnw2
-    SE+2wvlhRt9Wwckun9h0KgjgPi8hvjyHG1GvFwtO9JDxLfeqJDzOabDULr6dXtXW
-    XklZo99H3VpEIocX/52/4jxkWLySTvCitHSYY1pbxp0gRBmdCdY2byhqyWiaUZq3
-    jUC+wSU/91T/Dzi6zXem3YvZCZlqYDqjPbEX9gTpalOicFPJYxJXBhWT+U+Ftz7U
-    WfwJxglHYkeif3TDCepBmhJWrOld9VbCqicGLjdroyXSrzBMI+E0XRlS2us4REQc
-    RnowWmQsBKtLrAWmADSkI9iDS+89JPdBzcueIV+mPvgJQIuVdZ93MkqFjBt7XI9O
-    ooSdUsZZ2A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=kernel-dk.20150623.gappssmtp.com
-    header.i=@kernel-dk.20150623.gappssmtp.com header.b=ev4ALAU2
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.dk;
+    messagingengine.com; h=from:to:cc:subject:references:date
+    :in-reply-to:message-id:mime-version:content-type:sender
+    :list-id; s=fm2; t=1525372587; bh=GngF6QEzDTQEPOBl500Ddmsw2AsqhA
+    ISdoqVCGeoBZg=; b=YAwVEhQDyGwi1ew1k53tdahNPx5fIb74vAQLPNarHN5wrA
+    df4L0vxdAhKd+IdRGMs4tCfVtf568nyg5lFJwkF/DOyzVpo3Gujis7hODShUVeID
+    l/Aub3KBDs3LPQI46Qx4JZwBmbOcNNu3UxEQfc4zDFj/JyUlp9E1MnfJs7V8iVcU
+    J4t1a9kdybVFSf1eQQBBq/1VYMyN2ca/QWF/QGjIh1rj8nGr+vKVuFzzn6YeYN/e
+    /JyhRynkBe04v7gB+hCu9qjMpbjWQDBJiPsZmPyctS7nP4foW/B0mt/pZrq5yelf
+    F0svXu0yYM0aiK5Sp0TgqRiYmoQ/pS+AOgn6+RnQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=sJlf1986;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.dk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=kernel-dk.20150623.gappssmtp.com
-      header.i=@kernel-dk.20150623.gappssmtp.com header.b=ev4ALAU2
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kernel.dk;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=sJlf1986;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.dk header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHcjdLmNbVEkQYfugej/7EBhu6MSmY2IqySSyXwmvSj7d5dVRs1QmQp2n9EBPh00J7c5KddlzoX8Z++mM7N9k0qET+3dPYItm2CN1Q63qWyI1Pkxs3QM
-    p3YToLqU61tmk/9NgckD0uISLeYARvguglQDGUWEw1zp8qY/wPJWhty0p4LINJPA00RH8VZ3V84yp8mWaFuegM94hAQYE1BDHnIzYOjxkhrg2kjjwObD+WF8
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=JF9118EUAAAA:8 a=VwQbUJbxAAAA:8 a=u3PRsLWrV3ZNU7Yh6ywA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=xVlTc564ipvMDusKsbsT:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfC84qF8WCMdCmgwVc5V0lwYr0VcTdl2g/CFm/WHWI7YrPO4HGvwycypEdHjeluPxc17jAF5hcje+SIJ0uEc0w/lm0eHloCmse8Wf2nT45EjrlX0pRIyr
+    mJ+54LgT8E0mOooHko+D3QHoInUWQWSDkYLhiA+uSPPY1J81WVPIITRzhu69akc9Id9/86Y4yABI1u+X3xDkuTCdvLMETRwHPt8akwoRnu8fQq9IAeXieUAq
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JF9118EUAAAA:8
+    a=D19gQVrFAAAA:8 a=VwQbUJbxAAAA:8 a=-fskoiAwk-1lv5KNdMcA:9 a=sHJpmtqPaPkA:10
+    a=x8gzFH9gYPwA:10 a=xVlTc564ipvMDusKsbsT:22 a=W4TVW4IDbPiebHqcZpNg:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751271AbeECVUc (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 17:20:32 -0400
-Received: from mail-pg0-f43.google.com ([74.125.83.43]:38803 "EHLO
-        mail-pg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751261AbeECVUa (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Thu, 3 May 2018 17:20:30 -0400
-X-Google-Smtp-Source: AB8JxZo/sZ/VdXQKFlcEDCOqouyGijqCKgTSwauBN/eOThn7cxiSmx428G16jBVSDrvUcI0huHWddA==
+        id S1751178AbeECSgS (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 14:36:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45316 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750969AbeECSgR (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Thu, 3 May 2018 14:36:17 -0400
+From: Jeff Moyer <jmoyer@redhat.com>
+To: adam.manzanares@wdc.com
+Cc: viro@zeniv.linux.org.uk, bcrl@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-api@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v2] fs: Add aio iopriority support for block_dev
-To: Adam Manzanares <Adam.Manzanares@wdc.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "bcrl@kvack.org" <bcrl@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <20180503182114.2797-1-adam.manzanares@wdc.com>
- <20180503183353.GC1562@bombadil.infradead.org>
- <47e0a519-37b4-f5e7-0616-8659d11c2b69@wdc.com>
- <18300bdb-a12f-0b6c-1317-6db3e4391d57@kernel.dk>
- <e81c74fd-a4a2-80e0-476c-6ff35f158abf@wdc.com>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <9e3ba3eb-9c41-3b5d-dc12-f9ef573ab53f@kernel.dk>
-Date: Thu, 3 May 2018 15:20:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+X-PCLoadLetter: What the f**k does that mean?
+Date: Thu, 03 May 2018 14:36:15 -0400
+In-Reply-To: <20180503182114.2797-1-adam.manzanares@wdc.com> (adam
+        manzanares's message of "Thu, 3 May 2018 11:21:14 -0700")
+Message-ID: <x49po2cr3hc.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <e81c74fd-a4a2-80e0-476c-6ff35f158abf@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 5/3/18 2:58 PM, Adam Manzanares wrote:
-> 
-> 
-> On 5/3/18 1:24 PM, Jens Axboe wrote:
->> On 5/3/18 2:15 PM, Adam Manzanares wrote:
->>>
->>>
->>> On 5/3/18 11:33 AM, Matthew Wilcox wrote:
->>>> On Thu, May 03, 2018 at 11:21:14AM -0700, adam.manzanares@wdc.com wrote:
->>>>> If we want to avoid bloating struct kiocb, I suggest we turn the private field
->>>>> into a union of the private and ki_ioprio field. It seems like the users of
->>>>> the private field all use it at a point where we can yank the priority from
->>>>> the kiocb before the private field is used. Comments and suggestions welcome.
->>>>
->>>> Or we could just make ki_hint a u8 or u16 ... seems unlikely we'll need
->>>> 32 bits of ki_hint.  (currently defined values are 1-5)
->>>
->>> I like the approach of using a u16 for the ki_hint. I'll update and
->>> resubmit.
->>
->> It's intended to be a mask. If you do shrink it for now, then we need some
->> guard code to ensure it can always carry what it needs to.
->>
-> 
-> Got it, I'll add the guard to rw_hint_valid along with a comment about 
-> being limited by the size of ki_hint in case we get to a situation where 
-> 16 bits is not enough.
+Hi, Adam,
 
-Other way around - the API should not be limited by the fact that some
-smaller type was chosen for an internal structure. Hence the guard/check
-should not be in rw_hint_valid, but rather around where you assign
-ki_hint. If/when we do extend the read/write hints, then we'll
-potentially need to bump ki_hint to accommodate it.
+adam.manzanares@wdc.com writes:
 
--- 
-Jens Axboe
+> From: Adam Manzanares <adam.manzanares@wdc.com>
+>
+> This is the per-I/O equivalent of the ioprio_set system call.
+>
+> When IOCB_FLAG_IOPRIO is set on the iocb aio_flags field, then we set the
+> newly added kiocb ki_ioprio field to the value in the iocb aio_reqprio field.
+>
+> When a bio is created for an aio request by the block dev we set the priority
+> value of the bio to the user supplied value.
+>
+> See the following link for performance implications on a SATA HDD:
+> https://lkml.org/lkml/2016/12/6/495
+>
+> Given that WRR support for NVME devices has patches floating around and it was
+> discussed at LSFMM, we may soon have a lower latency storage device that can 
+> make use of iopriorities. A per command iopriority interface seems timely 
+> given these developments. 
+>
+> If we want to avoid bloating struct kiocb, I suggest we turn the private field 
+> into a union of the private and ki_ioprio field. It seems like the users of 
+> the private field all use it at a point where we can yank the priority from 
+> the kiocb before the private field is used. Comments and suggestions welcome.
 
+The ioprio_set system call requires CAP_SYS_ADMIN for setting
+IOPRIO_CLASS_RT.  I think we need similar checks here.
+
+-Jeff
+
+>
+> v2: merge patches
+>     use IOCB_FLAG_IOPRIO
+>     validate intended use with IOCB_IOPRIO
+>     add linux-api and linux-block to cc
+>
+> Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
+> ---
+>  fs/aio.c                     | 10 ++++++++++
+>  fs/block_dev.c               |  2 ++
+>  include/linux/fs.h           |  2 ++
+>  include/uapi/linux/aio_abi.h |  1 +
+>  4 files changed, 15 insertions(+)
+>
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 88d7927ffbc6..f36636d8ff2c 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1597,6 +1597,16 @@ static int io_submit_one(struct kioctx *ctx, struct iocb __user *user_iocb,
+>  		req->common.ki_flags |= IOCB_EVENTFD;
+>  	}
+>  
+> +	if (iocb->aio_flags & IOCB_FLAG_IOPRIO) {
+> +		/*
+> +		 * If the IOCB_FLAG_IOPRIO flag of aio_flags is set, then
+> +		 * aio_reqprio is interpreted as an I/O scheduling
+> +		 * class and priority.
+> +		 */
+> +		req->common.ki_ioprio = iocb->aio_reqprio;
+> +		req->common.ki_flags |= IOCB_IOPRIO;
+> +	}
+> +
+>  	ret = kiocb_set_rw_flags(&req->common, iocb->aio_rw_flags);
+>  	if (unlikely(ret)) {
+>  		pr_debug("EINVAL: aio_rw_flags\n");
+> diff --git a/fs/block_dev.c b/fs/block_dev.c
+> index 7ec920e27065..970bef79caa6 100644
+> --- a/fs/block_dev.c
+> +++ b/fs/block_dev.c
+> @@ -355,6 +355,8 @@ __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter, int nr_pages)
+>  		bio->bi_write_hint = iocb->ki_hint;
+>  		bio->bi_private = dio;
+>  		bio->bi_end_io = blkdev_bio_end_io;
+> +		if (iocb->ki_flags & IOCB_IOPRIO)
+> +			bio->bi_ioprio = iocb->ki_ioprio;
+>  
+>  		ret = bio_iov_iter_get_pages(bio, iter);
+>  		if (unlikely(ret)) {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 760d8da1b6c7..ab63ce720305 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -292,6 +292,7 @@ enum rw_hint {
+>  #define IOCB_SYNC		(1 << 5)
+>  #define IOCB_WRITE		(1 << 6)
+>  #define IOCB_NOWAIT		(1 << 7)
+> +#define IOCB_IOPRIO		(1 << 8)
+>  
+>  struct kiocb {
+>  	struct file		*ki_filp;
+> @@ -300,6 +301,7 @@ struct kiocb {
+>  	void			*private;
+>  	int			ki_flags;
+>  	enum rw_hint		ki_hint;
+> +	u16			ki_ioprio; /* See linux/ioprio.h */
+>  } __randomize_layout;
+>  
+>  static inline bool is_sync_kiocb(struct kiocb *kiocb)
+> diff --git a/include/uapi/linux/aio_abi.h b/include/uapi/linux/aio_abi.h
+> index a04adbc70ddf..d4593a6062ef 100644
+> --- a/include/uapi/linux/aio_abi.h
+> +++ b/include/uapi/linux/aio_abi.h
+> @@ -54,6 +54,7 @@ enum {
+>   *                   is valid.
+>   */
+>  #define IOCB_FLAG_RESFD		(1 << 0)
+> +#define IOCB_FLAG_IOPRIO	(1 << 1)
+>  
+>  /* read() from /dev/aio returns these structures. */
+>  struct io_event {
