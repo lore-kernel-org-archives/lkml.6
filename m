@@ -1,47 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751301AbeECRzN (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 13:55:13 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45734 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750947AbeECRzL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 13:55:11 -0400
-Date: Thu, 3 May 2018 19:54:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Mike Galbraith <efault@gmx.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: cpu stopper threads and load balancing leads to deadlock
-Message-ID: <20180503175456.GI12217@hirez.programming.kicks-ass.net>
-References: <20180503122808.GZ12217@hirez.programming.kicks-ass.net>
- <1525351221.9956.4.camel@gmx.de>
- <20180503124943.GB12217@hirez.programming.kicks-ass.net>
- <1525354359.5576.1.camel@gmx.de>
- <20180503135617.GC12217@hirez.programming.kicks-ass.net>
- <1525357015.5577.2.camel@gmx.de>
- <20180503144450.GD12217@hirez.programming.kicks-ass.net>
- <20180503161231.GI26088@linux.vnet.ibm.com>
- <20180503164508.GG12217@hirez.programming.kicks-ass.net>
- <20180503171850.GL26088@linux.vnet.ibm.com>
+        id S1751236AbeECR5Z (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 13:57:25 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36660 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750947AbeECR5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 13:57:21 -0400
+Date: Thu, 3 May 2018 20:57:20 +0300
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Tiwei Bie <tiwei.bie@intel.com>
+Cc: jasowang@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com
+Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
+Message-ID: <20180503203108-mutt-send-email-mst@kernel.org>
+References: <20180503025955.28816-1-tiwei.bie@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180503171850.GL26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180503025955.28816-1-tiwei.bie@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 10:18:50AM -0700, Paul E. McKenney wrote:
-> > +	if (per_cpu(rcu_cpu_started, cpu))
+On Thu, May 03, 2018 at 10:59:55AM +0800, Tiwei Bie wrote:
+> This patch introduces the support for VIRTIO_F_IO_BARRIER.
+> When this feature is negotiated, driver will use the barriers
+> suitable for hardware devices.
 > 
-> I would log a non-splat dmesg the first time this happened, just for my
-> future sanity, but otherwise looks fine.  I am a bit concerned about
-> calls to rcu_cpu_starting() getting sprinkled all through the code.
-> Or am I being excessively paranoid?
+> Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
 
-Don't think so, but lets first see if this at all works. If not we'll
-need to figure out something else anyway.
+Thanks!
+
+> ---
+>  drivers/virtio/virtio_ring.c       | 5 +++++
+>  include/uapi/linux/virtio_config.h | 8 +++++++-
+>  2 files changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index 21d464a29cf8..edb565643bf4 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
+>  		!context;
+>  	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
+>  
+> +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
+> +		vq->weak_barriers = false;
+> +
+>  	/* No callback?  Tell other side not to bother us. */
+>  	if (!callback) {
+>  		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
+
+One issue worth looking at is that at least on Intel strong barriers are
+actually typically overkill.  We should probably switch weak_barriers ==
+false case over to dma barriers.
+
+> @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
+>  			break;
+>  		case VIRTIO_F_IOMMU_PLATFORM:
+>  			break;
+> +		case VIRTIO_F_IO_BARRIER:
+> +			break;
+>  		default:
+>  			/* We don't understand this bit. */
+>  			__virtio_clear_bit(vdev, i);
+> diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
+> index 308e2096291f..6ca8d24bf468 100644
+> --- a/include/uapi/linux/virtio_config.h
+> +++ b/include/uapi/linux/virtio_config.h
+
+Any virtio UAPI changes must be CC'd to one of the virtio TC mailing lists
+(subscriber-only, sorry about that).
+
+> @@ -49,7 +49,7 @@
+>   * transport being used (eg. virtio_ring), the rest are per-device feature
+>   * bits. */
+>  #define VIRTIO_TRANSPORT_F_START	28
+> -#define VIRTIO_TRANSPORT_F_END		34
+> +#define VIRTIO_TRANSPORT_F_END		38
+>  
+>  #ifndef VIRTIO_CONFIG_NO_LEGACY
+>  /* Do we get callbacks when the ring is completely used, even if we've
+> @@ -71,4 +71,10 @@
+>   * this is for compatibility with legacy systems.
+>   */
+>  #define VIRTIO_F_IOMMU_PLATFORM		33
+> +
+> +/*
+> + * If clear - driver may use barriers suitable for CPU cores.
+> + * If set - driver must use barriers suitable for hardware devices.
+> + */
+> +#define VIRTIO_F_IO_BARRIER		37
+>  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
+
+Why 37? I'd use 34 I think.
+
+> -- 
+> 2.11.0
