@@ -1,85 +1,112 @@
-Return-Path: <amit.pundir@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525283299; cv=none;
-        d=google.com; s=arc-20160816;
-        b=zCl3LaoZSOxCel6l5JS5XMj+N0eOd++yoNBIV7lZxJcWQKaY9jlmuvo/yQ+iNwAhjT
-         bFInURtyNYxDj6yLDftnXahEQ7baZVfbR1SFxmag3bDy2zYf9YBLKDs/bFJM/w0QdMJW
-         K/HoDm/tNx2GsmWduwVfJucCfqyJqzU15FhKxf2lJmNh7HqXV3lWFI0PDPQaMgTHnob9
-         LDybfm1+g3PSUNx4wCXLOdrsMvkfNn3jxPGl/z2feamMpZOCkWyq0kjgWRBFD0IaV7fS
-         GNWAQ/8KXsomAOMgpScjyIL112piIhtjdYy+5Q/plb4wKKeSnDSbHKdSKl6UogblqNIE
-         w55A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=4fymCIn5kQ1t0qy2gJd1+DqIl18DKdeO5ToUU0ZKRTg=;
-        b=PI82NUIoF2ZmUT2i/Wz1rBZbmhZuj+TNaaHfyPgo5pazOLautPZfil0UT5TCOR+Dg/
-         tvOGCRkFnCRuRAqhT5zGKhgyexaKwLR+rJgUjCOvHwnrU4a75rLHULOniwJ9ZDyhTrZR
-         WwNZbTguP1s86L12h8Q1oWB/B6NUIvTiVLcHzWvjmHl3Fzmg1t5ldS+5KpqWgamcH6Kk
-         QbmcxNkAxHM+bE7XERbtyWNKEU73HoSrY23Uhfey5Z08i0IyG+8WGqK69uUwrvg5Q7hs
-         1mh/ThaDJxdpza7OKApNGtXdlnCCf/Z7wBnOHTmt/+GyBl9sx9weKiXaSJwF49ANNZjb
-         Mysg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=adzPT/Fw;
-       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=adzPT/Fw;
-       spf=pass (google.com: domain of amit.pundir@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=amit.pundir@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqECjJoxkgfcz+tLfYSPTkFwC28TJUJiXW/dCJELcoo9aMyHXsJ6xuxKpZA+zbTEXKhPaeGLA==
-From: Amit Pundir <amit.pundir@linaro.org>
-To: lkml <linux-kernel@vger.kernel.org>,
-	linux-wireless@vger.kernel.org
-Cc: Suren Baghdasaryan <surenb@google.com>,
-	Samuel Ortiz <sameo@linux.intel.com>,
-	Christophe Ricard <christophe.ricard@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	John Stultz <john.stultz@linaro.org>,
-	Dmitry Shmidt <dimitrysh@google.com>,
-	Todd Kjos <tkjos@google.com>,
-	Android Kernel Team <kernel-team@android.com>
-Subject: [PATCH v2 1/3] NFC: st21nfca: Fix out of bounds kernel access when handling ATR_REQ
-Date: Wed,  2 May 2018 23:18:06 +0530
-Message-Id: <1525283288-7027-2-git-send-email-amit.pundir@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525283288-7027-1-git-send-email-amit.pundir@linaro.org>
-References: <1525283288-7027-1-git-send-email-amit.pundir@linaro.org>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2505978-1525351428-2-17222458171103597299
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525351427; b=YsbbmxT2li/fpA6H1txR2s95cIkcEkUiUey2Ub9sSo95PtcFb1
+    vZU4kiytsnWSFjqWMNxuj5L23OcDvtX1X087k2d3NYE4EvHHm1FxwRDhWcrPQPTx
+    QPxKGVNeKU6tAXW1Ub41qWXdrOyzJ5Itn16C2Nux90juk7AUKO8DIVOGco04jiZ+
+    Mannmun59sUBh9Vx4hnzSfNfKru86PseAdpUa64EbpDnqlWuFEnfDDqrsVB4jqGT
+    AU/nYImw27aPejMkKTh8JIZSBwiGGZJgOWblxoerowpNMe8ON9wovX8aC2gW5BIs
+    kdsx62wOOyoNpVgnKAQbqWIrwzp8r4ALw8Zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525351427; bh=1NrDXXP5T2Wv/vLQKqBx82j86OUFi1
+    r7e736f3t4v2E=; b=WSMQcSh0q3YWdYneCeMJW+iHUeG0AW5EgSGTnFDEiBbJRs
+    +LK+hmt9YYnrNuIX8Jmeh3iC1i+RytcXTSWPMBRAb+refQ39TYYD3qYI+YkZnWkO
+    AHS0ya/t8GLvTesz3ZrZSDtJpqgwH0Hi58vKgiDkGwc1DoCzOA5p+z/Ci359KONG
+    qmajNRxN2ws/YrQYpsRZKHwBTK6Oehjzfg9gYT9F6dD47LJyIg5h8yNro0KlcFM3
+    ukZPgOXZLoixvKr5G0NlmXqk3x5fc6jo/vozMWG5/J12ivZFI2wdkbixief9q2sT
+    b77IQWNEZq+dPn8utOOBwDEpkhHnjibdZ1kbn2Ww==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=linux.intel.com header.result=pass
+    header_org.domain=intel.com header_org.result=pass
+    header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx3.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=linux.intel.com header.result=pass
+      header_org.domain=intel.com header_org.result=pass
+      header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfACgXg7RCYILzjAudNOtJ2Og6uPFIwoBaleuEynyy8s+U0StwcoC2ySC3OOjOO2ChDa+FEz7czjRVNQ+2DjTOq/8zjY3CZ1D5RsNoUfcccmq3osChhBU
+    AAIzce99S6ewhfrE0ivwwXOs6u7svvcc3RpoTxgjpG8Rg0LW1MCQ017wmlQYcYTzmlr6eBQz7eVmozHsSnHuwhq2i22Zb8mU+bjhJOeh7w3hsl0Sqe3rLhT9
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=xI3QqhJHLw-kyKY4pjkA:9
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751111AbeECMnp (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 08:43:45 -0400
+Received: from mga17.intel.com ([192.55.52.151]:64789 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750999AbeECMno (ORCPT <rfc822;stable@vger.kernel.org>);
+        Thu, 3 May 2018 08:43:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="42771594"
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To: stable@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgunthorpe@obsidianresearch.com>,
+        linux-kernel@vger.kernel.org (open list),
+        tpmdd-devel@lists.sourceforge.net (moderated list:TPM DEVICE DRIVER)
+Subject: [PATCH 0/2] fixes for v4.4
+Date: Thu,  3 May 2018 15:43:32 +0300
+Message-Id: <20180503124334.8468-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.17.0
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599375461113955842?=
-X-GMAIL-MSGID: =?utf-8?q?1599375461113955842?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Suren Baghdasaryan <surenb@google.com>
+Decided to add Enric's commit because it is also a bug fix instead
+of modifying Chris commit.
 
-Out of bounds kernel accesses in st21nfca's NFC HCI layer
-might happen when handling ATR_REQ events if user-specified
-atr_req->length is bigger than the buffer size. In
-that case memcpy() inside st21nfca_tm_send_atr_res() will
-read extra bytes resulting in OOB read from the kernel heap.
+Chris Chiu (1):
+  tpm: self test failure should not cause suspend to fail
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
----
-v2:
-Resend. No changes.
+Enric Balletbo i Serra (1):
+  tpm: do not suspend/resume if power stays on
 
- drivers/nfc/st21nfca/dep.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/char/tpm/tpm-interface.c | 7 +++++++
+ drivers/char/tpm/tpm.h           | 1 +
+ drivers/char/tpm/tpm_of.c        | 3 +++
+ 3 files changed, 11 insertions(+)
 
-diff --git a/drivers/nfc/st21nfca/dep.c b/drivers/nfc/st21nfca/dep.c
-index fd08be2..3420c51 100644
---- a/drivers/nfc/st21nfca/dep.c
-+++ b/drivers/nfc/st21nfca/dep.c
-@@ -217,7 +217,8 @@ static int st21nfca_tm_recv_atr_req(struct nfc_hci_dev *hdev,
- 
- 	atr_req = (struct st21nfca_atr_req *)skb->data;
- 
--	if (atr_req->length < sizeof(struct st21nfca_atr_req)) {
-+	if (atr_req->length < sizeof(struct st21nfca_atr_req) ||
-+	    atr_req->length > skb->len) {
- 		r = -EPROTO;
- 		goto exit;
- 	}
 -- 
-2.7.4
+2.17.0
