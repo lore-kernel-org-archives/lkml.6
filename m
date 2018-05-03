@@ -1,74 +1,236 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751374AbeECWw5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 18:52:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751111AbeECWw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 18:52:56 -0400
-Date: Thu, 3 May 2018 17:52:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sinan Kaya <okaya@codeaurora.org>
-Cc: Joerg Roedel <joro@8bytes.org>, Gil Kupfer <gilkup@gmail.com>,
-        dwmw2@infradead.org, bhelgaas@google.com,
-        iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
-        Gil Kupfer <gilkup@cs.technion.ac.il>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [RFC/RFT] Add noats flag to boot parameters
-Message-ID: <20180503225254.GC15790@bhelgaas-glaptop.roam.corp.google.com>
-References: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
- <20180503133459.waawna3ebtu3udn6@8bytes.org>
- <359d736a-a7ac-f0e4-f4db-dc7bb506481c@codeaurora.org>
- <20180503135920.o2rdh3exai7qmkvu@8bytes.org>
- <5cf699f1-90c1-5ad8-07fe-a65042395d05@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cf699f1-90c1-5ad8-07fe-a65042395d05@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751324AbeECWyr (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 18:54:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:39448 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751108AbeECWyp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 18:54:45 -0400
+Date: Thu, 03 May 2018 15:54:43 -0700
+From: akpm@linux-foundation.org
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        mm-commits@vger.kernel.org
+Subject: mmotm 2018-05-03-15-54 uploaded
+Message-ID: <20180503225443.HrMI9%akpm@linux-foundation.org>
+User-Agent: s-nail v14.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 10:23:02AM -0400, Sinan Kaya wrote:
-> +Bjorn,
-> 
-> On 5/3/2018 9:59 AM, Joerg Roedel wrote:
-> > On Thu, May 03, 2018 at 09:46:34AM -0400, Sinan Kaya wrote:
-> >> I also like the idea in general.
-> >> Minor nit..
-> >>
-> >> Shouldn't this be an iommu parameter rather than a PCI kernel command line parameter?
-> >> We now have an iommu.passthrough argument that prevents page translation.
-> >>
-> >> Doesn't this fit into the same category especially when it is the IOMMU drivers that
-> >> call ATS functions for enablement not the PCI drivers.
-> > 
-> > ATS is a bit of a grey area between PCI and IOMMU, but since ATS is
-> > PCI-specific and the code to enable/disable it is in PCI as well, I
-> > think the parameter makes sense for PCI too.
-> 
-> OK. Bjorn was interested in having a command line driven feature enables
-> in driver/pci directory with bitmasks for each optional PCI spec
-> capability rather than noXYZ feature.
+The mm-of-the-moment snapshot 2018-05-03-15-54 has been uploaded to
 
-It's true that I try to avoid adding *any* kernel parameters as much
-as possible because they're usually not practical for end-users.
+   http://www.ozlabs.org/~akpm/mmotm/
 
-I think it's unreasonable to expect users to use "pci=" parameters
-based on what specific hardware they have.  That's too hard to
-discover and too hard to use.  I did wonder about a "pci=safe"
-parameter that would disable potentially risky features just as a
-debugging feature [1].
+mmotm-readme.txt says
 
-This ATS case is a security question and the parameter is not
-something that would have to be used to get certain hardware to work,
-so I think it's probably reasonable to add.  I would maybe expand the
-documentation so it includes the reason somebody might want it, i.e.,
-to defend against malicious PCIe devices.
+README for mm-of-the-moment:
 
-A parameter using bitmasks could be conceivable for developers but
-sounds too unwieldy for end-users.
+http://www.ozlabs.org/~akpm/mmotm/
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=196197#c53
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.17-rc3:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* maintainers-update-email-address-in-maintainers-entries.patch
+* kasan-prohibit-kasanstructleak-combination.patch
+* lib-avoid-soft-lockup-in-test_find_first_bit.patch
+* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
+* ocfs2-submit-another-bio-if-current-bio-is-full.patch
+* init-fix-false-positives-in-wx-checking.patch
+* z3fold-fix-reclaim-lock-ups.patch
+* z3fold-fix-reclaim-lock-ups-checkpatch-fixes.patch
+* mm-sections-are-not-offlined-during-memory-hotremove.patch
+* mm-access-to-uninitialized-struct-page.patch
+* mm-dont-show-nr_indirectly_reclaimable-in-proc-vmstat.patch
+* proc-kcore-dont-bounds-check-against-address-0.patch
+* mm-migrate-fix-double-call-of-radix_tree_replace_slot.patch
+* mm-oom-fix-concurrent-munlock-and-oom-reaper-unmap.patch
+* ocfs2-take-inode-cluster-lock-before-moving-reflinked-inode-from-orphan-dir.patch
+* scripts-faddr2line-fix-error-when-addr2line-output-contains-discriminator.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* ocfs2-clean-up-redundant-function-declarations.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* ocfs2-dont-put-and-assign-null-to-bh-allocated-outside.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files-fix.patch
+  mm.patch
+* slab-__gfp_zero-is-incompatible-with-a-constructor.patch
+* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct.patch
+* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct-fix.patch
+* mm-memcontrol-move-swap-charge-handling-into-get_swap_page.patch
+* mm-memcontrol-implement-memoryswapevents.patch
+* zram-correct-flag-name-of-zram_access.patch
+* zram-mark-incompressible-page-as-zram_huge.patch
+* zram-record-accessed-second.patch
+* zram-introduce-zram-memory-tracking.patch
+* zram-introduce-zram-memory-tracking-fix.patch
+* zram-introduce-zram-memory-tracking-update.patch
+* zram-introduce-zram-memory-tracking-update-fix.patch
+* zram-introduce-zram-memory-tracking-update-fix-fix.patch
+* mm-shmem-add-__rcu-annotations-and-properly-deref-radix-entry.patch
+* mm-shmem-update-file-sealing-comments-and-file-checking.patch
+* mm-restructure-memfd-code.patch
+* mm-page_alloc-remove-realsize-in-free_area_init_core.patch
+* mm-introduce-arch_has_pte_special.patch
+* mm-remove-odd-have_pte_special.patch
+* mm-check-for-sigkill-inside-dup_mmap-loop.patch
+* mm-check-for-sigkill-inside-dup_mmap-loop-fix.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
+* mm-memblock-introduce-phys_addr_max.patch
+* mm-rename-page_counters-count-limit-into-usage-max.patch
+* mm-memorylow-hierarchical-behavior.patch
+* mm-treat-memorylow-value-inclusive.patch
+* mm-docs-describe-memorylow-refinements.patch
+* prctl-deprecate-non-pr_set_mm_map-operations.patch
+* prctl-deprecate-non-pr_set_mm_map-operations-fix.patch
+* mm-gup-prevent-pmd-checking-race-in-follow_pmd_mask.patch
+* mm-sparse-check-__highest_present_section_nr-only-for-a-present-section.patch
+* mm-sparse-pass-the-__highest_present_section_nr-1-to-alloc_func.patch
+* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice.patch
+* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice-v3.patch
+* mm-vmalloc-avoid-racy-handling-of-debugobjects-in-vunmap.patch
+* mm-vmalloc-pass-proper-vm_start-into-debugobjects.patch
+* mm-vmalloc-pass-proper-vm_start-into-debugobjects-fix.patch
+* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on.patch
+* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on-fix.patch
+* lockdep-fix-fs_reclaim-annotation.patch
+* mm-ksm-remove-unused-page_referenced_ksm-declaration.patch
+* mm-ksm-move-page_stable_node-from-ksmh-to-ksmc.patch
+* tmpfs-allow-decoding-a-file-handle-of-an-unlinked-file.patch
+* memcg-writeback-use-memcg-cgwb_list-directly.patch
+* memcg-replace-mm-owner-with-mm-memcg.patch
+* mm-memcontrolc-add-mem_cgroup_from_task-as-a-local-helper.patch
+* memcg-mark-memcg1_events-static-const.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* mm-oom-cgroup-aware-oom-killer-fix-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* mm-kasan-dont-vfree-nonexistent-vm_area.patch
+* proc-more-unsigned-int-in-proc-cmdline.patch
+* proc-somewhat-simpler-code-for-proc-cmdline.patch
+* proc-simpler-iterations-for-proc-cmdline.patch
+* proc-simpler-iterations-for-proc-cmdline-fix.patch
+* proc-deduplicate-proc-cmdline-implementation.patch
+* proc-smaller-rcu-section-in-getattr.patch
+* proc-use-unsigned-int-in-proc_fill_cache.patch
+* proc-skip-branch-in-proc-lookup.patch
+* proc-use-unsigned-int-for-sigqueue-length.patch
+* proc-use-unsigned-int-for-proc-stack.patch
+* locking-hung_task-show-all-hung-tasks-before-panic.patch
+* lib-micro-optimization-for-__bitmap_complement.patch
+* ida-remove-simple_ida_lock.patch
+* ida-remove-simple_ida_lock-fix.patch
+* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
+* coredump-fix-spam-with-zero-vma-process.patch
+* seq_file-delete-small-value-optimization.patch
+* exofs-avoid-vla-in-structures.patch
+* exofs-avoid-vla-in-structures-v2.patch
+* fault-injection-reorder-config-entries.patch
+* ipc-sem-mitigate-semnum-index-against-spectre-v1.patch
+* revert-ipc-shm-fix-shmat-mmap-nil-page-protection.patch
+* ipc-shm-fix-shmat-nil-address-after-round-down-when-remapping.patch
+  linux-next.patch
+* mm-use-octal-not-symbolic-permissions.patch
+* treewide-use-phys_addr_max-to-avoid-type-casting-ullong_max.patch
+* resource-add-walk_system_ram_res_rev.patch
+* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
