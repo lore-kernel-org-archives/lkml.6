@@ -1,109 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751360AbeECJG5 (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 05:06:57 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38927 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750954AbeECJGx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 05:06:53 -0400
-X-Google-Smtp-Source: AB8JxZre6FAo9WxBIk7jwBCxb/qJsGA2tgds8pmqGp2J1qE4YY/eqwf5s9gBMqf6K5/3H/V/eoRvMw==
-Date: Thu, 3 May 2018 11:06:48 +0200
-From: Daniel Vetter <daniel@ffwll.ch>
-To: Peter Rosin <peda@axentia.se>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
-        Vincent Abriou <vincent.abriou@st.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
- added
-Message-ID: <20180503090648.GG12521@phenom.ffwll.local>
-Mail-Followup-To: Peter Rosin <peda@axentia.se>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
-        Vincent Abriou <vincent.abriou@st.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20180502074025.12421-1-peda@axentia.se>
- <20180502074025.12421-2-peda@axentia.se>
+        id S1751377AbeECJJS (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 05:09:18 -0400
+Received: from guitar.tcltek.co.il ([192.115.133.116]:59780 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751132AbeECJJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 05:09:15 -0400
+Date: Thu, 3 May 2018 12:09:09 +0300
+From: Baruch Siach <baruch@tkos.co.il>
+To: Jacob Chen <jacob-chen@iotwrt.com>
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mchehab@kernel.org,
+        linux-media@vger.kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, tfiga@chromium.org, zhengsq@rock-chips.com,
+        laurent.pinchart@ideasonboard.com, zyc@rock-chips.com,
+        eddie.cai.linux@gmail.com, jeffy.chen@rock-chips.com,
+        devicetree@vger.kernel.org, heiko@sntech.de,
+        Jacob Chen <jacob2.chen@rock-chips.com>,
+        Jacob Chen <cc@rock-chips.com>,
+        Allon Huang <allon.huang@rock-chips.com>
+Subject: Re: [PATCH v6 05/17] media: rkisp1: add Rockchip ISP1 subdev driver
+Message-ID: <20180503090909.o3dyhukzs2y7em5z@tarshish>
+References: <20180308094807.9443-1-jacob-chen@iotwrt.com>
+ <20180308094807.9443-6-jacob-chen@iotwrt.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180502074025.12421-2-peda@axentia.se>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180308094807.9443-6-jacob-chen@iotwrt.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 02, 2018 at 09:40:23AM +0200, Peter Rosin wrote:
-> The more natural approach would perhaps be to add an drm_bridge_add,
-> but there are several other bridges that never call drm_bridge_add.
-> Just removing the drm_bridge_remove is the easier fix.
-> 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+Hi Jacob,
 
-This mess is much bigger. There's 2 pairs of bridge functions:
+On Thu, Mar 08, 2018 at 05:47:55PM +0800, Jacob Chen wrote:
+> +static int rkisp1_isp_sd_s_power(struct v4l2_subdev *sd, int on)
+> +{
+> +	struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
+> +	int ret;
+> +
+> +	v4l2_dbg(1, rkisp1_debug, &isp_dev->v4l2_dev, "s_power: %d\n", on);
+> +
+> +	if (on) {
+> +		ret = pm_runtime_get_sync(isp_dev->dev);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		rkisp1_config_clk(isp_dev);
+> +	} else {
+> +		ret = pm_runtime_put(isp_dev->dev);
 
-- drm_bridge_attach/detach. Those are meant to be called by the overall
-  drm driver to connect/disconnect a drm_bridge.
+I commented this line out to make more than one STREAMON work. Otherwise, the 
+second STREAMON hangs. I guess the bug is not this driver. Probably something 
+in drivers/soc/rockchip/pm_domains.c. Just noting that in case you or someone 
+on Cc would like to investigate it further.
 
-- drm_bridge_add/remove. These are supposed to be called by the bridge
-  driver itself to register/unregister itself. Maybe we should rename
-  them, since the same issue happens with drm_panel, with the same
-  confusion.
+I tested v4.16-rc4 on the Tinkerboard.
 
-I thought someone was working on a cleanup series to fix this mess, but I
-didn't find anything.
--Daniel
+baruch
 
-> ---
->  drivers/gpu/drm/sti/sti_hda.c  | 1 -
->  drivers/gpu/drm/sti/sti_hdmi.c | 1 -
->  2 files changed, 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-> index 67bbdb49fffc..199db13f565c 100644
-> --- a/drivers/gpu/drm/sti/sti_hda.c
-> +++ b/drivers/gpu/drm/sti/sti_hda.c
-> @@ -721,7 +721,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
->  	return 0;
->  
->  err_sysfs:
-> -	drm_bridge_remove(bridge);
->  	return -EINVAL;
->  }
->  
-> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-> index 58f431102512..932724784942 100644
-> --- a/drivers/gpu/drm/sti/sti_hdmi.c
-> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
-> @@ -1315,7 +1315,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
->  	return 0;
->  
->  err_sysfs:
-> -	drm_bridge_remove(bridge);
->  	hdmi->drm_connector = NULL;
->  	return -EINVAL;
->  }
-> -- 
-> 2.11.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.52.368.4656, http://www.tkos.co.il -
