@@ -1,120 +1,288 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751630AbeECQCE (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:02:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56810 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751141AbeECQCA (ORCPT
+        id S1751759AbeECQDN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:03:13 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:34228 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751261AbeECQDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:02:00 -0400
-Subject: Re: [PATCH v4 08/15] KVM: s390: interfaces to (de)configure guest's
- AP matrix
-To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1523827345-11600-9-git-send-email-akrowiak@linux.vnet.ibm.com>
- <99f4752a-1358-61e4-bf9e-5672b2d4036f@linux.vnet.ibm.com>
- <0f47c442-47b8-ee57-d014-5200c59125d7@linux.vnet.ibm.com>
- <54e4c3ef-0750-981b-7b0e-6b18d1a77c3c@linux.vnet.ibm.com>
- <7a733e41-3956-6828-9efa-899c9a954c20@linux.vnet.ibm.com>
-From: Pierre Morel <pmorel@linux.vnet.ibm.com>
-Date: Thu, 3 May 2018 18:01:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Thu, 3 May 2018 12:03:10 -0400
+Date: Thu, 3 May 2018 18:03:07 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v4.14.39-rt29
+Message-ID: <20180503160307.t6vt2guu6bjck7zm@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <7a733e41-3956-6828-9efa-899c9a954c20@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18050316-0020-0000-0000-00000418A114
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050316-0021-0000-0000-000042ADC3E5
-Message-Id: <829b70c7-1648-f1c3-f656-3dca56bb3d8e@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805030140
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 16:41, Tony Krowiak wrote:
-> On 05/02/2018 10:57 AM, Pierre Morel wrote:
->> On 25/04/2018 18:21, Tony Krowiak wrote:
->>> On 04/23/2018 09:46 AM, Pierre Morel wrote:
->>>> On 15/04/2018 23:22, Tony Krowiak wrote:
->>>>> Provides interfaces to assign AP adapters, usage domains
->>>>> and control domains to a KVM guest.
-...
-> The kvm_ap_configure_matrix(kvm, matrix) interface configures the APM, 
-> AQM and ADM in the
-> guest's CRYCB which implies AP instructions are being interpreted. 
-> There is nothing in SIE
-> precluding the sharing of AP queues between guests using SIE to 
-> interpret AP instructions,
-> it is my opinion - along with several others - that this is not 
-> advisable given the
-> results are not predictable, not to mention the security concerns. If 
-> the protocol to access
-> queues changes, then we create a different interface. The other option 
-> is to include a flag
-> on the kvm_ap_configure_matrix(kvm, matrix) interface to indicate 
-> whether sharing is
-> allowed. I don't like this, because we have no way of knowing if the 
-> caller has taken the
-> proper care to ensure the VM sharing the queue should be allowed 
-> access. Besides, when
-> queue sharing is implemented, it is my opinion that we will intercept 
-> the AP instructions
-> and the matrix will not be configured in the CRYCB. I stick by my 
-> response above.
+Dear RT folks!
 
-I mean, validating the queue sharing is a mater of the VFIO driver.
-This code is not needed if the VFIO driver is not used.
-But it is not very important.
+I'm pleased to announce the v4.14.39-rt29 patch set. 
 
->
->>
->>>>> +static int kvm_ap_matrix_apm_create(struct kvm_ap_matrix *ap_matrix,
->>>>> +                    struct ap_config_info *config)
->>>>> +{
->>>>> +    int apm_max = (config && config->apxa) ? config->Na + 1 : 16;
->>>>
->>>> At this moment you already know the format of the crycb.
->>>
->>> How?
->>
->> you calculated this in kvm_ap_build_crycbd() which is called from 
->> kvm_s390_crypto_init()
->> itself called from kvm_arch_init_vm().
->> It is when starting the VM.
->
-> This structure is used by the vfio_ap driver to store the mediated 
-> matrix device's matrix
-> configuration as well as to configure the CRYCB. The mediated device's 
-> matrix is
-> configured before the guest is started ... it is the means for 
-> configuring the guest's
-> matrix after all. The bottom line is, this function will be called 
-> long before the
-> kvm_ap_build_crycbd() function is called.
+Changes since v4.14.39-rt28:
 
-you are right, I was thinking about open, should have take more attention.
-Sorry.
+  - Applied a commit from upstream to avoid a compiler warning. Reported
+    by Mike Galbraith. 
 
-Pierre
+  - Annotate sleeping lock context in order to better avoid the RCU
+    warning if we schedule() within a RCU read section. Another case
+    reported by Grygorii Strashko.
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+Known issues
+     - A warning triggered in "rcu_note_context_switch" originated from
+       SyS_timer_gettime(). The issue was always there, it is now
+       visible. Reported by Grygorii Strashko and Daniel Wagner.
+
+The delta patch against v4.14.39-rt28 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/incr/patch-4.14.39-rt28-rt29.patch.xz
+
+You can get this release via the git tree at:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.14.39-rt29
+
+The RT patch against v4.14.39 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/older/patch-4.14.39-rt29.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/older/patches-4.14.39-rt29.tar.xz
+
+Sebastian
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index e305a8f8cd7d..0322503084a5 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -600,6 +600,9 @@ struct task_struct {
+ 	int				migrate_disable_atomic;
+ # endif
+ #endif
++#ifdef CONFIG_PREEMPT_RT_FULL
++	int				sleeping_lock;
++#endif
+ 
+ #ifdef CONFIG_PREEMPT_RCU
+ 	int				rcu_read_lock_nesting;
+@@ -1757,6 +1760,23 @@ static __always_inline bool need_resched(void)
+ 	return unlikely(tif_need_resched());
+ }
+ 
++#ifdef CONFIG_PREEMPT_RT_FULL
++static inline void sleeping_lock_inc(void)
++{
++	current->sleeping_lock++;
++}
++
++static inline void sleeping_lock_dec(void)
++{
++	current->sleeping_lock--;
++}
++
++#else
++
++static inline void sleeping_lock_inc(void) { }
++static inline void sleeping_lock_dec(void) { }
++#endif
++
+ /*
+  * Wrappers for p->thread_info->cpu access. No-op on UP.
+  */
+diff --git a/include/linux/string.h b/include/linux/string.h
+index cfd83eb2f926..96115bf561b4 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -28,7 +28,7 @@ extern char * strncpy(char *,const char *, __kernel_size_t);
+ size_t strlcpy(char *, const char *, size_t);
+ #endif
+ #ifndef __HAVE_ARCH_STRSCPY
+-ssize_t __must_check strscpy(char *, const char *, size_t);
++ssize_t strscpy(char *, const char *, size_t);
+ #endif
+ #ifndef __HAVE_ARCH_STRCAT
+ extern char * strcat(char *, const char *);
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 0cb716ba3be0..bac3fb580af6 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1141,6 +1141,7 @@ void __sched rt_spin_lock_slowunlock(struct rt_mutex *lock)
+ 
+ void __lockfunc rt_spin_lock(spinlock_t *lock)
+ {
++	sleeping_lock_inc();
+ 	migrate_disable();
+ 	spin_acquire(&lock->dep_map, 0, 0, _RET_IP_);
+ 	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
+@@ -1155,6 +1156,7 @@ void __lockfunc __rt_spin_lock(struct rt_mutex *lock)
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
+ void __lockfunc rt_spin_lock_nested(spinlock_t *lock, int subclass)
+ {
++	sleeping_lock_inc();
+ 	migrate_disable();
+ 	spin_acquire(&lock->dep_map, subclass, 0, _RET_IP_);
+ 	rt_spin_lock_fastlock(&lock->lock, rt_spin_lock_slowlock);
+@@ -1168,6 +1170,7 @@ void __lockfunc rt_spin_unlock(spinlock_t *lock)
+ 	spin_release(&lock->dep_map, 1, _RET_IP_);
+ 	rt_spin_lock_fastunlock(&lock->lock, rt_spin_lock_slowunlock);
+ 	migrate_enable();
++	sleeping_lock_dec();
+ }
+ EXPORT_SYMBOL(rt_spin_unlock);
+ 
+@@ -1193,12 +1196,15 @@ int __lockfunc rt_spin_trylock(spinlock_t *lock)
+ {
+ 	int ret;
+ 
++	sleeping_lock_inc();
+ 	migrate_disable();
+ 	ret = __rt_mutex_trylock(&lock->lock);
+-	if (ret)
++	if (ret) {
+ 		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
+-	else
++	} else {
+ 		migrate_enable();
++		sleeping_lock_dec();
++	}
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rt_spin_trylock);
+@@ -1210,6 +1216,7 @@ int __lockfunc rt_spin_trylock_bh(spinlock_t *lock)
+ 	local_bh_disable();
+ 	ret = __rt_mutex_trylock(&lock->lock);
+ 	if (ret) {
++		sleeping_lock_inc();
+ 		migrate_disable();
+ 		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
+ 	} else
+@@ -1225,6 +1232,7 @@ int __lockfunc rt_spin_trylock_irqsave(spinlock_t *lock, unsigned long *flags)
+ 	*flags = 0;
+ 	ret = __rt_mutex_trylock(&lock->lock);
+ 	if (ret) {
++		sleeping_lock_inc();
+ 		migrate_disable();
+ 		spin_acquire(&lock->dep_map, 0, 1, _RET_IP_);
+ 	}
+diff --git a/kernel/locking/rwlock-rt.c b/kernel/locking/rwlock-rt.c
+index aebb7ce25bc6..f2e155b2c4a8 100644
+--- a/kernel/locking/rwlock-rt.c
++++ b/kernel/locking/rwlock-rt.c
+@@ -305,12 +305,15 @@ int __lockfunc rt_read_trylock(rwlock_t *rwlock)
+ {
+ 	int ret;
+ 
++	sleeping_lock_inc();
+ 	migrate_disable();
+ 	ret = do_read_rt_trylock(rwlock);
+-	if (ret)
++	if (ret) {
+ 		rwlock_acquire_read(&rwlock->dep_map, 0, 1, _RET_IP_);
+-	else
++	} else {
+ 		migrate_enable();
++		sleeping_lock_dec();
++	}
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rt_read_trylock);
+@@ -319,18 +322,22 @@ int __lockfunc rt_write_trylock(rwlock_t *rwlock)
+ {
+ 	int ret;
+ 
++	sleeping_lock_inc();
+ 	migrate_disable();
+ 	ret = do_write_rt_trylock(rwlock);
+-	if (ret)
++	if (ret) {
+ 		rwlock_acquire(&rwlock->dep_map, 0, 1, _RET_IP_);
+-	else
++	} else {
+ 		migrate_enable();
++		sleeping_lock_dec();
++	}
+ 	return ret;
+ }
+ EXPORT_SYMBOL(rt_write_trylock);
+ 
+ void __lockfunc rt_read_lock(rwlock_t *rwlock)
+ {
++	sleeping_lock_inc();
+ 	migrate_disable();
+ 	rwlock_acquire_read(&rwlock->dep_map, 0, 0, _RET_IP_);
+ 	do_read_rt_lock(rwlock);
+@@ -339,6 +346,7 @@ EXPORT_SYMBOL(rt_read_lock);
+ 
+ void __lockfunc rt_write_lock(rwlock_t *rwlock)
+ {
++	sleeping_lock_inc();
+ 	migrate_disable();
+ 	rwlock_acquire(&rwlock->dep_map, 0, 0, _RET_IP_);
+ 	do_write_rt_lock(rwlock);
+@@ -350,6 +358,7 @@ void __lockfunc rt_read_unlock(rwlock_t *rwlock)
+ 	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
+ 	do_read_rt_unlock(rwlock);
+ 	migrate_enable();
++	sleeping_lock_dec();
+ }
+ EXPORT_SYMBOL(rt_read_unlock);
+ 
+@@ -358,6 +367,7 @@ void __lockfunc rt_write_unlock(rwlock_t *rwlock)
+ 	rwlock_release(&rwlock->dep_map, 1, _RET_IP_);
+ 	do_write_rt_unlock(rwlock);
+ 	migrate_enable();
++	sleeping_lock_dec();
+ }
+ EXPORT_SYMBOL(rt_write_unlock);
+ 
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index 3315ebad932f..c6098f60e641 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -301,13 +301,13 @@ static void rcu_preempt_note_context_switch(bool preempt)
+ 	struct task_struct *t = current;
+ 	struct rcu_data *rdp;
+ 	struct rcu_node *rnp;
+-	int mg_counter = 0;
++	int sleeping_l = 0;
+ 
+ 	RCU_LOCKDEP_WARN(!irqs_disabled(), "rcu_preempt_note_context_switch() invoked with interrupts enabled!!!\n");
+-#if defined(CONFIG_PREEMPT_RT_BASE)
+-	mg_counter = t->migrate_disable;
++#if defined(CONFIG_PREEMPT_RT_FULL)
++	sleeping_l = t->sleeping_lock;
+ #endif
+-	WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0 && !mg_counter);
++	WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0 && !sleeping_l);
+ 	if (t->rcu_read_lock_nesting > 0 &&
+ 	    !t->rcu_read_unlock_special.b.blocked) {
+ 
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index ce2c2d04cbaa..b59e009087a9 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1870,7 +1870,9 @@ void cpu_chill(void)
+ 	chill_time = ktime_set(0, NSEC_PER_MSEC);
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	current->flags |= PF_NOFREEZE;
++	sleeping_lock_inc();
+ 	schedule_hrtimeout(&chill_time, HRTIMER_MODE_REL_HARD);
++	sleeping_lock_dec();
+ 	if (!freeze_flag)
+ 		current->flags &= ~PF_NOFREEZE;
+ }
+diff --git a/localversion-rt b/localversion-rt
+index 5a64c9c2ab61..90290c642ed5 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt28
++-rt29
