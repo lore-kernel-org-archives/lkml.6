@@ -1,48 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751399AbeECNfF (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 09:35:05 -0400
-Received: from 8bytes.org ([81.169.241.247]:54712 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbeECNfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 09:35:02 -0400
-Date: Thu, 3 May 2018 15:35:00 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Gil Kupfer <gilkup@gmail.com>
-Cc: dwmw2@infradead.org, bhelgaas@google.com,
-        iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
-        Gil Kupfer <gilkup@cs.technion.ac.il>
-Subject: Re: [RFC/RFT] Add noats flag to boot parameters
-Message-ID: <20180503133459.waawna3ebtu3udn6@8bytes.org>
-References: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
+        id S1751495AbeECNfP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 09:35:15 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43068 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750947AbeECNfJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 09:35:09 -0400
+From: Colin King <colin.king@canonical.com>
+To: Saeed Mahameed <saeedm@mellanox.com>,
+        Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leon@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] net/mlx5: fix spelling mistake: "modfiy" -> "modify"
+Date: Thu,  3 May 2018 14:35:03 +0100
+Message-Id: <20180503133503.14508-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Apr 29, 2018 at 09:16:48PM +0300, Gil Kupfer wrote:
-> This patch adds noats option to the pci boot parameter.
-> When noats is selected, all ATS related functions fail immediately and
-> the IOMMU is configured to not use device-iotlb.
-> 
-> Any function that checks for ATS capabilities directly against the
-> devices should also check this flag. (Currently, such functions exist
-> only in IOMMU drivers, and they are covered by this patch.)
-> 
-> The motivation behind this patch is the existence of malicious devices.
-> Lots of research has been done about how to utilitize the IOMMU as a
-> protection from such devices. When ATS is supported, any I/O device can
-> access any physical access by faking device-IOTLB entries.
-> Adding the ability to ignore these entries lets sysadmins enhance system
-> security.
-> 
-> Signed-off-by: Gil Kupfer <gilkup@cs.technion.ac.il>
+From: Colin Ian King <colin.king@canonical.com>
 
-This has also been on my list, thanks for doing that.
+Trivial fix to spelling mistake in netdev_warn warning message
 
-Acked-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
+index 610d485c4b03..f64b5e78519b 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
+@@ -565,7 +565,7 @@ static void arfs_modify_rule_rq(struct mlx5e_priv *priv,
+ 	err =  mlx5_modify_rule_destination(rule, &dst, NULL);
+ 	if (err)
+ 		netdev_warn(priv->netdev,
+-			    "Failed to modfiy aRFS rule destination to rq=%d\n", rxq);
++			    "Failed to modify aRFS rule destination to rq=%d\n", rxq);
+ }
+ 
+ static void arfs_handle_work(struct work_struct *work)
+-- 
+2.17.0
