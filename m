@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751311AbeECLPX (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 07:15:23 -0400
-Received: from alexa-out-tai-02.qualcomm.com ([103.229.16.227]:53487 "EHLO
-        alexa-out-tai-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751492AbeECLOT (ORCPT
+        id S1751948AbeECLPs (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 07:15:48 -0400
+Received: from alexa-out-tai-01.qualcomm.com ([103.229.16.226]:12748 "EHLO
+        alexa-out-tai-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751128AbeECLOR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 07:14:19 -0400
+        Thu, 3 May 2018 07:14:17 -0400
 X-IronPort-AV: E=Sophos;i="5.49,358,1520870400";
-   d="scan'208";a="447820"
-X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="7258976"
+   d="scan'208";a="443714"
+X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="7390445"
 From: Asutosh Das <asutoshd@codeaurora.org>
 To: subhashj@codeaurora.org, cang@codeaurora.org,
         vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
         vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
         martin.petersen@oracle.com, asutoshd@codeaurora.org,
         linux-mmc@vger.kernel.org
-Cc: linux-scsi@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+Cc: linux-scsi@vger.kernel.org, Yaniv Gardi <ygardi@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 06/10] scsi: ufs: add reference counting for scsi block requests
-Date: Thu,  3 May 2018 16:37:18 +0530
-Message-Id: <3d524952ffe2c0a14c92f5e322aed5d2c24c2832.1525343531.git.asutoshd@codeaurora.org>
+Subject: [PATCH v2 01/10] scsi: ufs: Allowing power mode change
+Date: Thu,  3 May 2018 16:37:13 +0530
+Message-Id: <75e5ea5901004ef95b37aed719686214910f6541.1525343531.git.asutoshd@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1525341340.git.asutoshd@codeaurora.org>
 References: <cover.1525341340.git.asutoshd@codeaurora.org>
@@ -30,143 +31,61 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Subhash Jadavani <subhashj@codeaurora.org>
+From: Yaniv Gardi <ygardi@codeaurora.org>
 
-Currently we call the scsi_block_requests()/scsi_unblock_requests()
-whenever we want to block/unblock scsi requests but as there is no
-reference counting, nesting of these calls could leave us in undesired
-state sometime. Consider following call flow sequence:
-1. func1() calls scsi_block_requests() but calls func2() before
-   calling scsi_unblock_requests()
-2. func2() calls scsi_block_requests()
-3. func2() calls scsi_unblock_requests()
-4. func1() calls scsi_unblock_requests()
+Due to M-PHY issues, moving from HS to any other mode or gear or
+even Hibern8 may cause some un-predicted behavior
+of the device.
+This patch adds provides a quirk to address that.
 
-As there is no reference counting, we will have scsi requests unblocked
-after #3 instead of it to be unblocked only after #4. Though we may not
-have failures seen with this, we might run into some failures in future.
-Better solution would be to fix this by adding reference counting.
-
+Signed-off-by: Yaniv Gardi <ygardi@codeaurora.org>
 Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
 Signed-off-by: Can Guo <cang@codeaurora.org>
 Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 ---
- drivers/scsi/ufs/ufshcd.c | 28 ++++++++++++++++++++--------
- drivers/scsi/ufs/ufshcd.h |  2 ++
- 2 files changed, 22 insertions(+), 8 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 8 +++++++-
+ drivers/scsi/ufs/ufshcd.h | 7 +++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index dfeb194..c35a076 100644
+index 5bc9dc1..f3083fe 100644
 --- a/drivers/scsi/ufs/ufshcd.c
 +++ b/drivers/scsi/ufs/ufshcd.c
-@@ -264,6 +264,18 @@ static inline void ufshcd_disable_irq(struct ufs_hba *hba)
- 	}
- }
+@@ -4162,9 +4162,15 @@ static int ufshcd_link_startup(struct ufs_hba *hba)
+ 			goto out;
+ 	} while (ret && retries--);
  
-+static void ufshcd_scsi_unblock_requests(struct ufs_hba *hba)
-+{
-+	if (atomic_dec_and_test(&hba->scsi_block_reqs_cnt))
-+		scsi_unblock_requests(hba->host);
-+}
+-	if (ret)
++	if (ret) {
+ 		/* failed to get the link up... retire */
+ 		goto out;
++	}
 +
-+static void ufshcd_scsi_block_requests(struct ufs_hba *hba)
-+{
-+	if (atomic_inc_return(&hba->scsi_block_reqs_cnt) == 1)
-+		scsi_block_requests(hba->host);
-+}
-+
- /* replace non-printable or non-ASCII characters with spaces */
- static inline void ufshcd_remove_non_printable(char *val)
- {
-@@ -1077,12 +1089,12 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba)
- 	 * make sure that there are no outstanding requests when
- 	 * clock scaling is in progress
- 	 */
--	scsi_block_requests(hba->host);
-+	ufshcd_scsi_block_requests(hba);
- 	down_write(&hba->clk_scaling_lock);
- 	if (ufshcd_wait_for_doorbell_clr(hba, DOORBELL_CLR_TOUT_US)) {
- 		ret = -EBUSY;
- 		up_write(&hba->clk_scaling_lock);
--		scsi_unblock_requests(hba->host);
-+		ufshcd_scsi_unblock_requests(hba);
- 	}
++	if (hba->quirks & UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE) {
++		ufshcd_dme_set(hba, UIC_ARG_MIB(TX_LCC_ENABLE), 0);
++		ufshcd_dme_set(hba, UIC_ARG_MIB(TX_LCC_ENABLE), 1);
++	}
  
- 	return ret;
-@@ -1091,7 +1103,7 @@ static int ufshcd_clock_scaling_prepare(struct ufs_hba *hba)
- static void ufshcd_clock_scaling_unprepare(struct ufs_hba *hba)
- {
- 	up_write(&hba->clk_scaling_lock);
--	scsi_unblock_requests(hba->host);
-+	ufshcd_scsi_unblock_requests(hba);
- }
- 
- /**
-@@ -1411,7 +1423,7 @@ static void ufshcd_ungate_work(struct work_struct *work)
- 		hba->clk_gating.is_suspended = false;
- 	}
- unblock_reqs:
--	scsi_unblock_requests(hba->host);
-+	ufshcd_scsi_unblock_requests(hba);
- }
- 
- /**
-@@ -1467,7 +1479,7 @@ int ufshcd_hold(struct ufs_hba *hba, bool async)
- 		 * work and to enable clocks.
- 		 */
- 	case CLKS_OFF:
--		scsi_block_requests(hba->host);
-+		ufshcd_scsi_block_requests(hba);
- 		hba->clk_gating.state = REQ_CLKS_ON;
- 		trace_ufshcd_clk_gating(dev_name(hba->dev),
- 					hba->clk_gating.state);
-@@ -5192,7 +5204,7 @@ static void ufshcd_err_handler(struct work_struct *work)
- 
- out:
- 	spin_unlock_irqrestore(hba->host->host_lock, flags);
--	scsi_unblock_requests(hba->host);
-+	ufshcd_scsi_unblock_requests(hba);
- 	ufshcd_release(hba);
- 	pm_runtime_put_sync(hba->dev);
- }
-@@ -5294,7 +5306,7 @@ static void ufshcd_check_errors(struct ufs_hba *hba)
- 		/* handle fatal errors only when link is functional */
- 		if (hba->ufshcd_state == UFSHCD_STATE_OPERATIONAL) {
- 			/* block commands from scsi mid-layer */
--			scsi_block_requests(hba->host);
-+			ufshcd_scsi_block_requests(hba);
- 
- 			hba->ufshcd_state = UFSHCD_STATE_EH_SCHEDULED;
- 
-@@ -8017,7 +8029,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	/* Hold auto suspend until async scan completes */
- 	pm_runtime_get_sync(dev);
--
-+	atomic_set(&hba->scsi_block_reqs_cnt, 0);
- 	/*
- 	 * We are assuming that device wasn't put in sleep/power-down
- 	 * state exclusively during the boot stage before kernel.
+ 	if (link_startup_again) {
+ 		link_startup_again = false;
 diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 0417c42..76c31d5 100644
+index cbe46f6..bb4ecfb 100644
 --- a/drivers/scsi/ufs/ufshcd.h
 +++ b/drivers/scsi/ufs/ufshcd.h
-@@ -498,6 +498,7 @@ struct ufs_stats {
-  * @urgent_bkops_lvl: keeps track of urgent bkops level for device
-  * @is_urgent_bkops_lvl_checked: keeps track if the urgent bkops level for
-  *  device is known or not.
-+ * @scsi_block_reqs_cnt: reference counting for scsi block requests
-  */
- struct ufs_hba {
- 	void __iomem *mmio_base;
-@@ -698,6 +699,7 @@ struct ufs_hba {
+@@ -591,6 +591,13 @@ struct ufs_hba {
+ 	 */
+ 	#define UFSHCD_QUIRK_PRDT_BYTE_GRAN			UFS_BIT(7)
  
- 	struct rw_semaphore clk_scaling_lock;
- 	struct ufs_desc_size desc_size;
-+	atomic_t scsi_block_reqs_cnt;
- };
++	/*
++	 * Needs to be enabled if moving from HS to any other gear/mode or even
++	 * hibern8 causes unpredicted behavior of device.
++	 * If this quirk is enabled, standard UFS driver will disable/enable
++	 * TX_LCC.
++	 */
++	#define UFSHCD_QUIRK_BROKEN_PWR_MODE_CHANGE		UFS_BIT(8)
+ 	unsigned int quirks;	/* Deviations from standard UFSHCI spec. */
  
- /* Returns true if clocks can be gated. Otherwise false */
+ 	/* Device deviations from standard UFS device spec. */
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc. 
 Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
