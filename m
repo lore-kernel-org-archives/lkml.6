@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751934AbeECKPS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:15:18 -0400
-Received: from mga03.intel.com ([134.134.136.65]:44397 "EHLO mga03.intel.com"
+        id S1752176AbeECKP1 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:15:27 -0400
+Received: from mga03.intel.com ([134.134.136.65]:44414 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751832AbeECKPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:15:10 -0400
+        id S1751943AbeECKPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 06:15:17 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
-   d="scan'208";a="38109838"
+   d="scan'208";a="38109871"
 From: Luwei Kang <luwei.kang@intel.com>
 To: kvm@vger.kernel.org
 Cc: tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, peterz@infradead.org, chao.p.peng@linux.intel.com,
         Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v7 08/13] KVM: x86: Add Intel processor trace context for each vcpu
-Date: Thu,  3 May 2018 20:08:38 +0800
-Message-Id: <1525349323-9938-9-git-send-email-luwei.kang@intel.com>
+Subject: [PATCH v7 10/13] KVM: x86: Introduce a function to initialize the PT configuration
+Date: Thu,  3 May 2018 20:08:40 +0800
+Message-Id: <1525349323-9938-11-git-send-email-luwei.kang@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
 References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
@@ -27,54 +27,101 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Peng <chao.p.peng@linux.intel.com>
+Initialize the Intel PT configuration when cpuid update.
+Include cpuid inforamtion, rtit_ctl bit mask and the number of
+address ranges.
 
-Add a data structure to save Intel Processor Trace context.
-It mainly include the value of Intel PT host/guest MSRs
-and guest CPUID information.
-
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 ---
- arch/x86/kvm/vmx.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/x86/kvm/vmx.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
 diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 27cf417..9a5c26d 100644
+index a08c61b..3ed02a8 100644
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -597,6 +597,23 @@ static inline int pi_test_sn(struct pi_desc *pi_desc)
- 			(unsigned long *)&pi_desc->control);
+@@ -10371,6 +10371,71 @@ static void nested_vmx_cr_fixed1_bits_update(struct kvm_vcpu *vcpu)
+ #undef cr4_fixed1_update
  }
  
-+struct pt_ctx {
-+	u64 ctl;
-+	u64 status;
-+	u64 output_base;
-+	u64 output_mask;
-+	u64 cr3_match;
-+	u64 addrs[MSR_IA32_RTIT_ADDR_COUNT];
-+};
++static void update_intel_pt_cfg(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct kvm_cpuid_entry2 *best = NULL;
++	int i;
 +
-+struct pt_desc {
-+	u64 ctl_bitmask;
-+	u32 range_cnt;
-+	u32 caps[PT_CPUID_REGS_NUM * PT_CPUID_LEAVES];
-+	struct pt_ctx host;
-+	struct pt_ctx guest;
-+};
++	for (i = 0; i < PT_CPUID_LEAVES; i++) {
++		best = kvm_find_cpuid_entry(vcpu, 0x14, i);
++		if (!best)
++			return;
++		vmx->pt_desc.caps[CPUID_EAX + i*PT_CPUID_REGS_NUM] = best->eax;
++		vmx->pt_desc.caps[CPUID_EBX + i*PT_CPUID_REGS_NUM] = best->ebx;
++		vmx->pt_desc.caps[CPUID_ECX + i*PT_CPUID_REGS_NUM] = best->ecx;
++		vmx->pt_desc.caps[CPUID_EDX + i*PT_CPUID_REGS_NUM] = best->edx;
++	}
 +
- struct vcpu_vmx {
- 	struct kvm_vcpu       vcpu;
- 	unsigned long         host_rsp;
-@@ -693,6 +710,8 @@ struct vcpu_vmx {
- 	 */
- 	u64 msr_ia32_feature_control;
- 	u64 msr_ia32_feature_control_valid_bits;
++	/* Get the number of configurable Address Ranges for filtering */
++	vmx->pt_desc.range_cnt = __pt_cap_get(vmx->pt_desc.caps,
++						PT_CAP_num_address_ranges);
 +
-+	struct pt_desc pt_desc;
- };
++	/* Clear the no dependency bits */
++	vmx->pt_desc.ctl_bitmask = ~(RTIT_CTL_TRACEEN | RTIT_CTL_OS |
++			RTIT_CTL_USR | RTIT_CTL_TSC_EN | RTIT_CTL_DISRETC);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[0]=1 CR3Filter can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_cr3_filtering))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_CR3EN;
++
++	/*
++	 * If CPUID.(EAX=14H,ECX=0):EBX[1]=1 CYCEn, CycThresh and
++	 * PSBFreq can be set
++	 */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_psb_cyc))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_CYCLEACC |
++			RTIT_CTL_CYC_THRESH | RTIT_CTL_PSB_FREQ);
++
++	/*
++	 * If CPUID.(EAX=14H,ECX=0):EBX[3]=1 MTCEn BranchEn and
++	 * MTCFreq can be set
++	 */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_mtc))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_MTC_EN |
++			RTIT_CTL_BRANCH_EN | RTIT_CTL_MTC_RANGE);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[4]=1 FUPonPTW and PTWEn can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_ptwrite))
++		vmx->pt_desc.ctl_bitmask &= ~(RTIT_CTL_FUP_ON_PTW |
++						RTIT_CTL_PTW_EN);
++
++	/* If CPUID.(EAX=14H,ECX=0):EBX[5]=1 PwrEvEn can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_power_event_trace))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_PWR_EVT_EN;
++
++	/* If CPUID.(EAX=14H,ECX=0):ECX[0]=1 ToPA can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_topa_output))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_TOPA;
++	/* If CPUID.(EAX=14H,ECX=0):ECX[3]=1 FabircEn can be set */
++	if (__pt_cap_get(vmx->pt_desc.caps, PT_CAP_output_subsys))
++		vmx->pt_desc.ctl_bitmask &= ~RTIT_CTL_FABRIC_EN;
++
++	/* unmask address range configure area */
++	for (i = 0; i < vmx->pt_desc.range_cnt; i++)
++		vmx->pt_desc.ctl_bitmask &= ~(0xf << (32 + i*4));
++}
++
+ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
+ {
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+@@ -10389,6 +10454,10 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
  
- enum segment_cache_field {
+ 	if (nested_vmx_allowed(vcpu))
+ 		nested_vmx_cr_fixed1_bits_update(vcpu);
++
++	if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
++		guest_cpuid_has(vcpu, X86_FEATURE_INTEL_PT))
++		update_intel_pt_cfg(vcpu);
+ }
+ 
+ static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
 -- 
 1.8.3.1
