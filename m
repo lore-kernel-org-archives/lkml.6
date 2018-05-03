@@ -1,66 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751269AbeECWsQ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 18:48:16 -0400
-Received: from mail-ot0-f179.google.com ([74.125.82.179]:41362 "EHLO
-        mail-ot0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751108AbeECWsP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 18:48:15 -0400
-X-Google-Smtp-Source: AB8JxZqY8JMuV35SRfqgyeF/Zn5NOGDh7+QLEJXF4qj1uIOsXBJ694Tmi+wccbkRjW8sBn1WWKzFeHFCmZBIP3p6CVk=
+        id S1751374AbeECWw5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 18:52:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45450 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751111AbeECWw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 18:52:56 -0400
+Date: Thu, 3 May 2018 17:52:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sinan Kaya <okaya@codeaurora.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Gil Kupfer <gilkup@gmail.com>,
+        dwmw2@infradead.org, bhelgaas@google.com,
+        iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nadav.amit@gmail.com,
+        Gil Kupfer <gilkup@cs.technion.ac.il>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [RFC/RFT] Add noats flag to boot parameters
+Message-ID: <20180503225254.GC15790@bhelgaas-glaptop.roam.corp.google.com>
+References: <1525025808-2365-1-git-send-email-gilkup@cs.technion.ac.il>
+ <20180503133459.waawna3ebtu3udn6@8bytes.org>
+ <359d736a-a7ac-f0e4-f4db-dc7bb506481c@codeaurora.org>
+ <20180503135920.o2rdh3exai7qmkvu@8bytes.org>
+ <5cf699f1-90c1-5ad8-07fe-a65042395d05@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
- <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
- <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com> <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Fri, 4 May 2018 00:48:14 +0200
-Message-ID: <CAFkk2KTPiNCWNLncz2KZB66W68YS2H348=bQsgsdqKT1fLRjMw@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5cf699f1-90c1-5ad8-07fe-a65042395d05@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 10:28 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> Hi,
->
-> (with new kconfiglib.py and menuconfig.py)
->
-> Thanks for the fixes.
->
-> If I use "LC_CTYPE=C.UTF-8" then I get the down arrows in the bottom colored
-> bar.  Without that, I get an upside-down T (that is 193, 0xc1, line drawing
-> character in the IBM extended character set).
->
-> Hm. With LC_CTYPE=C.UTF-8, the upper colored bar prints up arrows.
-> Without that, it prints ^^^^^^^^^^^^^^.
-> That's nice that it can do either.
+On Thu, May 03, 2018 at 10:23:02AM -0400, Sinan Kaya wrote:
+> +Bjorn,
+> 
+> On 5/3/2018 9:59 AM, Joerg Roedel wrote:
+> > On Thu, May 03, 2018 at 09:46:34AM -0400, Sinan Kaya wrote:
+> >> I also like the idea in general.
+> >> Minor nit..
+> >>
+> >> Shouldn't this be an iommu parameter rather than a PCI kernel command line parameter?
+> >> We now have an iommu.passthrough argument that prevents page translation.
+> >>
+> >> Doesn't this fit into the same category especially when it is the IOMMU drivers that
+> >> call ATS functions for enablement not the PCI drivers.
+> > 
+> > ATS is a bit of a grey area between PCI and IOMMU, but since ATS is
+> > PCI-specific and the code to enable/disable it is in PCI as well, I
+> > think the parameter makes sense for PCI too.
+> 
+> OK. Bjorn was interested in having a command line driven feature enables
+> in driver/pci directory with bitmasks for each optional PCI spec
+> capability rather than noXYZ feature.
 
-The arrows use ACS_U/DARROW from the alternate character set. You get
-nice Unicode arrows for those with ncurses/PDCurses, plus "fallbacks"
-(strictly speaking the Unicode arrows are fallbacks too).
+It's true that I try to avoid adding *any* kernel parameters as much
+as possible because they're usually not practical for end-users.
 
-Unicode text entry is still broken with LC_CTYPE=C, because ncurses
-respects it. Having the menuconfig just force C.UTF-8 if it's
-available might fix a bunch of problems in practice, even if it feels
-a bit iffy to force settings.
+I think it's unreasonable to expect users to use "pci=" parameters
+based on what specific hardware they have.  That's too hard to
+discover and too hard to use.  I did wonder about a "pci=safe"
+parameter that would disable potentially risky features just as a
+debugging feature [1].
 
-Python 3.7 will improve things at least. It converts LC_CTYPE=C into
-LC_CTYPE=<some available UTF-8 locale>.
+This ATS case is a security question and the parameter is not
+something that would have to be used to get certain hardware to work,
+so I think it's probably reasonable to add.  I would maybe expand the
+documentation so it includes the reason somebody might want it, i.e.,
+to defend against malicious PCIe devices.
 
-Cleanest would be if all environments sanely defaulted to UTF-8, but
-that's not how it is in practice, unfortunately. :)
+A parameter using bitmasks could be conceivable for developers but
+sounds too unwieldy for end-users.
 
->
-> Being a vim user, I do like the optional navigation keys.
->
-> --
-> ~Randy
-
-Cheers,
-Ulf
+[1] https://bugzilla.kernel.org/show_bug.cgi?id=196197#c53
