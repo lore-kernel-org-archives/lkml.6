@@ -1,108 +1,60 @@
-Return-Path: <rjwysocki@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525336904; cv=none;
+Return-Path: <morten.rasmussen@arm.com>
+X-Google-Smtp-Source: AB8JxZp9KOsLjzzF8B/oekiE7VRpiZR1J9qOjoMNBHtJF+9uGZvLe2Vkca58PaAAJn85G948ZZtm
+ARC-Seal: i=1; a=rsa-sha256; t=1525360458; cv=none;
         d=google.com; s=arc-20160816;
-        b=eEaoJDUbjUPy+QC8A9N+RtTJCMpyLz98iKRpYQgpYlGp+SVw7Rky82VQov8az+jMKo
-         7Kh3fgB3WSNlXdzZ1eYoexl7aeWPocaRNQdErpIQIrD748nO1L22TaRDsF7mQUcg3gTf
-         Lz45T4OHIB4yUb/1d1H9alTGAU8zSFhR6lhOBmuqb13ARHxDk9tfth8zVU0MIlNKb6gs
-         eaIEg0ECVeLt7ZHUWziEGBDzQWOi+3rWpFVjGOWRqSiBi0fBew1fCE8AvfkjBHHQu2YF
-         8qodw3NcWvvRcN+TYi/8ZyRWdizm4d9KTsJ1jmpIBv/1XeGhWCZyZlwD16xRugbx7+gH
-         vzug==
+        b=PD4CXNhiuEuWxXRM8l8ORZQCkOUhVI4E1mCTB1RuXpwDvrqbZYE6dYmsLnRlgCJsq+
+         mFe4q3PvVXpw19taZyxn+Mj2IB66nK+N2RqLrhqTcrmFdtzsZvzHOV5WGC5zXHD/qsdY
+         c7xYo74I51EDu1Wjo9+cc6cc5gGtP3XAaJ6EoB8gN3a41Bt9Zd6gNYdMKi9/XZgPe++3
+         fYq9G5fJaxfvRgCFEMSr+hDI5dXlRbz3AUATsOOYi8Yox0BKsvlpGPPZpRDTLEXpVsRJ
+         JmyW0KQmTPFJ+0AaWdyvOczVLnK6Rthdi9/ZrhLd+bWsBsvjhH+9GfWagGe2q7SBEzru
+         B3lQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=a910oCrvk/1P+yfZ1kqOsXUrxfQE+hXR7cfc825rAyo=;
-        b=JIvkmODPMCHqcwo1y1b1VFintifGxljWv+n0FpYLF6l84W4NDWRfoIKzKHVV8Zm3EO
-         HfflSUBUeDXUj7PdJ9QwKdbkL16Q4u1M/Mco5f1FwyF5s/R4x0oLwTFhJiNU4nYnnYB4
-         wfvyYwceVu6Y3hO7buSW999FKDnQXx91J57iIfdidRSjuaOQ7jRa2xJxdwwX0MMji3DZ
-         YVK/lufm5kSDk1JD3+lpcUq2r7AA2iYJPrLxHkjYc41sh43Xlcewr0QdUJholXg9pnhL
-         Z0aKwbMXj+Hc+W6+t8WgWq2j0W2eit12xBS/nK1F8EQ8mk9yFwAAJZcExz9hb78pyoRH
-         QjHA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=kjWjEyhhJx4Zi7SjhkBN6OSmuaZaHU2nvDSMHRT6E64=;
+        b=pexSq34BUV8xzmSB4ispNSHZZ0TvvEmAetyU1HWRRJj+klShvYvxsNlzV/ANluWITP
+         kGTnS82nX9mzPYB1tC2SO8aqwLGaONPEgy7OsegPI80BksiHIypBvCK88lWWzZaMuTFj
+         Ak5Mg5qBNzt9DwHCqMZL0JrVttIDZjONrguz6+Fv9+Ia3OaedD/rseqBjRlP18Pl/CmP
+         gw4LUjuN7V1w1bs++s82pRbZtbMMXYgCSPongvFW2wjHaR8rOqhBkMEl/NZz9Lzh2eKv
+         2R/qUys/RPPWWv8cah+lCdRTHaS+Fvwm6VT+wWsckcVy0Yj4R60l+kua+NgrUvYNyRih
+         rzdA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ncnDeoaH;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
+       spf=pass (google.com: domain of morten.rasmussen@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=morten.rasmussen@arm.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=ncnDeoaH;
-       spf=pass (google.com: domain of rjwysocki@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=rjwysocki@gmail.com
-X-Google-Smtp-Source: AB8JxZptAErWNbGscH3WoCZgC3L1AwVhP2+cpSA4UOsL6WE00i+exRX3IKR4fLpFHYMaQ8PI5Dl8TZF++rDEbFaGF+o=
-MIME-Version: 1.0
-Sender: rjwysocki@gmail.com
-In-Reply-To: <5078f4ac-74e7-aad3-1e0d-4de5da31d3c4@arm.com>
-References: <20180425233121.13270-1-jeremy.linton@arm.com> <20180425233121.13270-12-jeremy.linton@arm.com>
- <ab8357f0-61d5-2996-46ca-5bc5d3e097cf@arm.com> <CAJZ5v0jwtSkw1x+MQVYo60YDeW0+jxLy2d4spQOu+i=pY7fjyQ@mail.gmail.com>
- <5078f4ac-74e7-aad3-1e0d-4de5da31d3c4@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 3 May 2018 10:41:43 +0200
-X-Google-Sender-Auth: 8UZflTPXP8pmfYvFXDJE5Ffun4M
-Message-ID: <CAJZ5v0iiWd0eET0iuj4RZuaQ4T12W-H775SEd0CFG5hK9+q9WA@mail.gmail.com>
-Subject: Re: [PATCH v8 11/13] arm64: topology: enable ACPI/PPTT based CPU topology
+       spf=pass (google.com: domain of morten.rasmussen@arm.com designates 217.140.101.70 as permitted sender) smtp.mailfrom=morten.rasmussen@arm.com
+Date: Thu, 3 May 2018 16:14:12 +0100
+From: Morten Rasmussen <morten.rasmussen@arm.com>
 To: Jeremy Linton <jeremy.linton@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>, Will Deacon <Will.Deacon@arm.com>,
-	Catalin Marinas <Catalin.Marinas@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mark Rutland <Mark.Rutland@arm.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-riscv@lists.infradead.org,
-	wangxiongfeng2@huawei.com, vkilari@codeaurora.org, Al Stone <ahs3@redhat.com>,
-	Dietmar Eggemann <Dietmar.Eggemann@arm.com>, Morten Rasmussen <Morten.Rasmussen@arm.com>, palmer@sifive.com,
-	Len Brown <lenb@kernel.org>, John Garry <john.garry@huawei.com>, austinwc@codeaurora.org,
-	tnowicki@caviumnetworks.com, jhugo@qti.qualcomm.com, timur@qti.qualcomm.com,
-	Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc: linux-acpi@vger.kernel.org, Sudeep.Holla@arm.com,
+	linux-arm-kernel@lists.infradead.org, Lorenzo.Pieralisi@arm.com,
+	hanjun.guo@linaro.org, rjw@rjwysocki.net, Will.Deacon@arm.com,
+	Catalin.Marinas@arm.com, gregkh@linuxfoundation.org,
+	Mark.Rutland@arm.com, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, wangxiongfeng2@huawei.com,
+	vkilari@codeaurora.org, ahs3@redhat.com, Dietmar.Eggemann@arm.com,
+	palmer@sifive.com, lenb@kernel.org, john.garry@huawei.com,
+	austinwc@codeaurora.org, tnowicki@caviumnetworks.com,
+	jhugo@qti.qualcomm.com, timur@qti.qualcomm.com,
+	ard.biesheuvel@linaro.org
+Subject: Re: [PATCH v8 10/13] arm64: topology: rename cluster_id
+Message-ID: <20180503151412.GC28409@work-enc>
+References: <20180425233121.13270-1-jeremy.linton@arm.com>
+ <20180425233121.13270-11-jeremy.linton@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180425233121.13270-11-jeremy.linton@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598766328036390506?=
-X-GMAIL-MSGID: =?utf-8?q?1599431669424003652?=
+X-GMAIL-THRID: =?utf-8?q?1598766326590040185?=
+X-GMAIL-MSGID: =?utf-8?q?1599456368231650171?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 3, 2018 at 12:35 AM, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> Hi,
->
->
-> On 05/02/2018 03:24 AM, Rafael J. Wysocki wrote:
->>
->> On Tue, May 1, 2018 at 4:46 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->>>
->>>
->>>
->>> On 26/04/18 00:31, Jeremy Linton wrote:
->>>>
->>>> Propagate the topology information from the PPTT tree to the
->>>> cpu_topology array. We can get the thread id and core_id by assuming
->>>> certain levels of the PPTT tree correspond to those concepts.
->>>> The package_id is flagged in the tree and can be found by calling
->>>> find_acpi_cpu_topology_package() which terminates
->>>> its search when it finds an ACPI node flagged as the physical
->>>> package. If the tree doesn't contain enough levels to represent
->>>> all of the requested levels then the root node will be returned
->>>> for all subsequent levels.
->>>>
->>>
->>> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->>>
->>> [..]
->>>
->>>> @@ -304,6 +345,8 @@ void __init init_cpu_topology(void)
->>>>         * Discard anything that was parsed if we hit an error so we
->>>>         * don't use partial information.
->>>>         */
->>>> -     if (of_have_populated_dt() && parse_dt_topology())
->>>> +     if ((!acpi_disabled) && parse_acpi_topology())
->>>
->>>
->>> [nit] not sure if extra () is need above,
->>
->>
->> No, it isn't.
->>
->>> but I am fine either way.
->>
->>
->> The redundant parens need to go away, really.
->>
->
-> Yah, I missed this one, is there a linter everyone is using that finds
-> these?
+On Wed, Apr 25, 2018 at 06:31:18PM -0500, Jeremy Linton wrote:
+> Lets match the name of the arm64 topology field
+> to the kernel macro that uses it.
+> 
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
 
-I'm not actually sure.  At least I can't recall any right away.
+Acked-by: Morten Rasmussen <morten.rasmussen@arm.com>
