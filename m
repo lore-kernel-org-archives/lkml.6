@@ -1,287 +1,360 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751931AbeECEBS (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 00:01:18 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:11979 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751674AbeECEBR (ORCPT
+        id S1751553AbeECEM5 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 00:12:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48314 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750704AbeECEMy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 00:01:17 -0400
-X-UUID: 6174f19ed85343a89abb5cddad8e4a6f-20180503
-Message-ID: <1525320067.14792.95.camel@mtkswgap22>
-Subject: Re: [PATCH V4 5/8] soc: mediatek: pwrap: add pwrap for mt6797 SoCs
-From: Sean Wang <sean.wang@mediatek.com>
-To: <argus.lin@mediatek.com>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chenglin Xu <chenglin.xu@mediatek.com>, <wsd_upstream@mediatek.com>,
-        <henryc.chen@mediatek.com>, <flora.fu@mediatek.com>,
-        Chen Zhong <chen.zhong@mediatek.com>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        "shailendra . v" <shailendra.v@samsung.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date: Thu, 3 May 2018 12:01:07 +0800
-In-Reply-To: <20180502092112.3991-6-argus.lin@mediatek.com>
-References: <20180502092112.3991-1-argus.lin@mediatek.com>
-         <20180502092112.3991-6-argus.lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
+        Thu, 3 May 2018 00:12:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 968E660AD4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH] clk: qcom: Add support for RCG to register for DFS
+Date: Thu,  3 May 2018 09:42:32 +0530
+Message-Id: <1525320752-15091-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Argus
+In the cases where a RCG requires a Dynamic Frequency switch support
+requires to register which would at runtime read the clock perf level
+registers to identify the frequencies supported and update the frequency
+table accordingly.
 
-On Wed, 2018-05-02 at 17:21 +0800, argus.lin@mediatek.com wrote:
-> From: Argus Lin <argus.lin@mediatek.com>
-> 
-> mt6797 is a highly integrated SoCs, it uses mt6351 for power
-> management. We need to add pwrap support to access mt6351.
-> Pwrap of mt6797 support new feature include starvation and channel
-> request exception interrupt, dynamic starvation priority
-> adjustment mechanism.
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h  |   7 +-
+ drivers/clk/qcom/clk-rcg2.c | 172 ++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/qcom/common.c   |  23 +++++-
+ drivers/clk/qcom/common.h   |  14 +++-
+ 4 files changed, 213 insertions(+), 3 deletions(-)
 
-suggest line wrapping closely at 75 columns
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index 2a7489a..06de69f 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -144,6 +144,7 @@ struct clk_dyn_rcg {
+  * @cmd_rcgr: corresponds to *_CMD_RCGR
+  * @mnd_width: number of bits in m/n/d values
+  * @hid_width: number of bits in half integer divider
++ * @flags: additional flag parameters for the RCG
+  * @parent_map: map from software's parent index to hardware's src_sel field
+  * @freq_tbl: frequency table
+  * @clkr: regmap clock handle
+@@ -153,6 +154,8 @@ struct clk_rcg2 {
+ 	u32			cmd_rcgr;
+ 	u8			mnd_width;
+ 	u8			hid_width;
++	u8			flags;
++#define DFS_ENABLE_RCG		BIT(0)
+ 	const struct parent_map	*parent_map;
+ 	const struct freq_tbl	*freq_tbl;
+ 	struct clk_regmap	clkr;
+@@ -168,4 +171,6 @@ struct clk_rcg2 {
+ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
 
-> 
-> Signed-off-by: Argus Lin <argus.lin@mediatek.com>
-> ---
->  drivers/soc/mediatek/mtk-pmic-wrap.c | 110 ++++++++++++++++++++++++++++++++---
->  1 file changed, 102 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-pmic-wrap.c b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> index a6366f147b79..0d4a2dae6912 100644
-> --- a/drivers/soc/mediatek/mtk-pmic-wrap.c
-> +++ b/drivers/soc/mediatek/mtk-pmic-wrap.c
-> @@ -284,6 +284,12 @@ enum pwrap_regs {
->  	PWRAP_DVFS_WDATA7,
->  	PWRAP_SPMINF_STA,
->  	PWRAP_CIPHER_EN,
-> +
-> +	/* MT6797 series regs */
-> +	PWRAP_INT1_EN,
-> +	PWRAP_INT1_FLG_RAW,
-> +	PWRAP_INT1_FLG,
-> +	PWRAP_INT1_CLR,
->  };
->  
->  static int mt2701_regs[] = {
-> @@ -372,6 +378,43 @@ static int mt2701_regs[] = {
->  	[PWRAP_ADC_RDATA_ADDR2] =	0x154,
->  };
->  
-> +static int mt6797_regs[] = {
-> +	[PWRAP_MUX_SEL] =		0x0,
-> +	[PWRAP_WRAP_EN] =		0x4,
-> +	[PWRAP_DIO_EN] =		0x8,
-> +	[PWRAP_SIDLY] =			0xC,
-> +	[PWRAP_RDDMY] =			0x10,
-> +	[PWRAP_CSHEXT_WRITE] =		0x18,
-> +	[PWRAP_CSHEXT_READ] =		0x1C,
-> +	[PWRAP_CSLEXT_START] =		0x20,
-> +	[PWRAP_CSLEXT_END] =		0x24,
-> +	[PWRAP_STAUPD_PRD] =		0x28,
-> +	[PWRAP_HARB_HPRIO] =		0x50,
-> +	[PWRAP_HIPRIO_ARB_EN] =		0x54,
-> +	[PWRAP_MAN_EN] =		0x60,
-> +	[PWRAP_MAN_CMD] =		0x64,
-> +	[PWRAP_WACS0_EN] =		0x70,
-> +	[PWRAP_WACS1_EN] =		0x84,
-> +	[PWRAP_WACS2_EN] =		0x98,
-> +	[PWRAP_INIT_DONE2] =		0x9C,
-> +	[PWRAP_WACS2_CMD] =		0xA0,
-> +	[PWRAP_WACS2_RDATA] =		0xA4,
-> +	[PWRAP_WACS2_VLDCLR] =		0xA8,
-> +	[PWRAP_INT_EN] =		0xC0,
-> +	[PWRAP_INT_FLG_RAW] =		0xC4,
-> +	[PWRAP_INT_FLG] =		0xC8,
-> +	[PWRAP_INT_CLR] =		0xCC,
-> +	[PWRAP_INT1_EN] =		0xD0,
-> +	[PWRAP_INT1_FLG_RAW] =		0xD4,
-> +	[PWRAP_INT1_FLG] =		0xD8,
-> +	[PWRAP_INT1_CLR] =		0xDC,
-> +	[PWRAP_TIMER_EN] =		0xF4,
-> +	[PWRAP_WDT_UNIT] =		0xFC,
-> +	[PWRAP_WDT_SRC_EN] =		0x100,
-> +	[PWRAP_DCM_EN] =		0x1CC,
-> +	[PWRAP_DCM_DBC_PRD] =		0x1D4,
-> +};
-> +
++extern int clk_rcg2_get_dfs_clock_rate(struct clk_rcg2 *clk,
++						struct device *dev);
+ #endif
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index e63db10..7c35bca 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -18,6 +18,7 @@
+ #include <linux/export.h>
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
++#include <linux/device.h>
+ #include <linux/regmap.h>
+ #include <linux/math64.h>
 
-trim unused registers if any
+@@ -48,6 +49,14 @@
+ #define N_REG			0xc
+ #define D_REG			0x10
 
->  static int mt7622_regs[] = {
->  	[PWRAP_MUX_SEL] =		0x0,
->  	[PWRAP_WRAP_EN] =		0x4,
-> @@ -647,6 +690,7 @@ enum pmic_type {
->  
->  enum pwrap_type {
->  	PWRAP_MT2701,
-> +	PWRAP_MT6797,
->  	PWRAP_MT7622,
->  	PWRAP_MT8135,
->  	PWRAP_MT8173,
-> @@ -1006,6 +1050,12 @@ static void pwrap_init_chip_select_ext(struct pmic_wrapper *wrp, u8 hext_write,
->  static int pwrap_common_init_reg_clock(struct pmic_wrapper *wrp)
->  {
->  	switch (wrp->master->type) {
-> +	case PWRAP_MT6797:
-> +		pwrap_writel(wrp, 0x8, PWRAP_RDDMY);
-> +		pwrap_write(wrp, wrp->slave->dew_regs[PWRAP_DEW_RDDMY_NO],
-> +			    0x8);
-> +		pwrap_init_chip_select_ext(wrp, 0x88, 0x55, 3, 0);
-> +		break;
++/* Dynamic Frequency Scaling */
++#define MAX_PERF_LEVEL		16
++#define SE_CMD_DFSR_OFFSET	0x14
++#define SE_CMD_DFS_EN		BIT(0)
++#define SE_PERF_DFSR(level)	(0x1c + 0x4 * (level))
++#define SE_PERF_M_DFSR(level)	(0x5c + 0x4 * (level))
++#define SE_PERF_N_DFSR(level)	(0x9c + 0x4 * (level))
++
+ enum freq_policy {
+ 	FLOOR,
+ 	CEIL,
+@@ -122,6 +131,10 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
+ 	int ret;
+ 	u32 cfg = rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
 
-the setup for timing is much similar to mt2701 + mt6323
++	/* In DFS mode skip updating the RCG CFG */
++	if (rcg->flags & DFS_ENABLE_RCG)
++		return 0;
++
+ 	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
+ 				 CFG_SRC_SEL_MASK, cfg);
+ 	if (ret)
+@@ -296,6 +309,9 @@ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	const struct freq_tbl *f;
 
-so we can merge the both logic into one, and then hope to eliminate specific pwrap_mt2701_init_reg_clock totally
++	if (rcg->flags & DFS_ENABLE_RCG)
++		return -EPERM;
++
+ 	switch (policy) {
+ 	case FLOOR:
+ 		f = qcom_find_freq_floor(rcg->freq_tbl, rate);
+@@ -790,3 +806,159 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	.determine_rate = clk_gfx3d_determine_rate,
+ };
+ EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
++
++/* Common APIs to be used for DFS based RCGR */
++static u8 clk_parent_index_pre_div_and_mode(struct clk_hw *hw, u32 offset,
++		u32 *mode, u32 *pre_div)
++{
++	struct clk_rcg2 *rcg;
++	int num_parents;
++	u32 cfg, mask;
++	int i, ret;
++
++	if (!hw)
++		return -EINVAL;
++
++	num_parents = clk_hw_get_num_parents(hw);
++
++	rcg = to_clk_rcg2(hw);
++
++	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cfg);
++	if (ret)
++		goto err;
++
++	mask = BIT(rcg->hid_width) - 1;
++	*pre_div = cfg & mask ? (cfg & mask) : 1;
++
++	*mode = cfg & CFG_MODE_MASK;
++	*mode >>= CFG_MODE_SHIFT;
++
++	cfg &= CFG_SRC_SEL_MASK;
++	cfg >>= CFG_SRC_SEL_SHIFT;
++
++	for (i = 0; i < num_parents; i++)
++		if (cfg == rcg->parent_map[i].cfg)
++			return i;
++err:
++	return 0;
++}
++
++static int calculate_m_and_n(struct clk_hw *hw, u32 m_offset, u32 n_offset,
++		u32 mode, u32 *m, u32 *n)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	u32 val, mask;
++	int ret = 0;
++
++	if (!hw)
++		return -EINVAL;
++
++	*m = *n = 0;
++
++	if (mode) {
++		/* Calculate M & N values */
++		mask = BIT(rcg->mnd_width) - 1;
++		ret =  regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + m_offset,
++					&val);
++		if (ret) {
++			pr_err("Failed to read M offset register\n");
++			goto err;
++		}
++
++		val &= mask;
++		*m  = val;
++
++		ret =  regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + n_offset,
++					&val);
++		if (ret) {
++			pr_err("Failed to read N offset register\n");
++			goto err;
++		}
++
++		/* val ~(N-M) */
++		val = ~val;
++		val &= mask;
++		val += *m;
++		*n = val;
++	}
++err:
++	return ret;
++}
++
++int clk_rcg2_get_dfs_clock_rate(struct clk_rcg2 *clk, struct device *dev)
++{
++	int i, j, index, ret = 0;
++	unsigned long calc_freq, prate;
++	u32 val, pre_div = 0, mode = 0, m = 0, n = 0;
++	struct freq_tbl *dfs_freq_tbl;
++	struct clk_hw *phw;
++
++	if (!clk)
++		return -EINVAL;
++
++	/* Check for DFS_EN */
++	ret = regmap_read(clk->clkr.regmap, clk->cmd_rcgr + SE_CMD_DFSR_OFFSET,
++						&val);
++	if (ret) {
++		dev_err(dev, "Failed to read DFS enable register\n");
++		return -EINVAL;
++	}
++
++	if (!(val & SE_CMD_DFS_EN))
++		return ret;
++
++	dfs_freq_tbl = devm_kzalloc(dev, MAX_PERF_LEVEL *
++				sizeof(struct freq_tbl), GFP_KERNEL);
++	if (!dfs_freq_tbl)
++		return -ENOMEM;
++
++	/* Populate the Perf Level */
++	for (i = 0; i < MAX_PERF_LEVEL; i++) {
++		/* Get parent index and mode */
++		index = clk_parent_index_pre_div_and_mode(&clk->clkr.hw,
++							SE_PERF_DFSR(i), &mode,
++							&pre_div);
++		if (index < 0) {
++			pr_err("Failed to get parent index & mode %d\n", index);
++			return index;
++		}
++
++		/* clock pre_div */
++		dfs_freq_tbl[i].pre_div = pre_div;
++
++		/* Fill the parent src */
++		dfs_freq_tbl[i].src = clk->parent_map[index].src;
++
++		/* Get the parent clock and parent rate */
++		phw = clk_hw_get_parent_by_index(&clk->clkr.hw, index);
++		prate = clk_hw_get_rate(phw);
++
++		ret = calculate_m_and_n(&clk->clkr.hw, SE_PERF_M_DFSR(i),
++					SE_PERF_N_DFSR(i), mode, &m, &n);
++		if (ret)
++			goto err;
++
++		dfs_freq_tbl[i].m = m;
++		dfs_freq_tbl[i].n = n;
++
++		/* calculate the final frequency */
++		calc_freq = calc_rate(prate, dfs_freq_tbl[i].m,
++						dfs_freq_tbl[i].n, mode,
++						dfs_freq_tbl[i].pre_div);
++
++		/* Check for duplicate frequencies */
++		for (j = 0; j  < i; j++) {
++			if (dfs_freq_tbl[j].freq == calc_freq)
++				goto done;
++		}
++
++		dfs_freq_tbl[i].freq = calc_freq;
++	}
++done:
++	j = i;
++
++	clk->flags |= DFS_ENABLE_RCG;
++	clk->freq_tbl = dfs_freq_tbl;
++err:
++	return ret;
++}
+diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+index b8064a3..b27699b 100644
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2013-2014, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2013-2014, 2018, The Linux Foundation. All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -288,4 +288,25 @@ int qcom_cc_probe(struct platform_device *pdev, const struct qcom_cc_desc *desc)
+ }
+ EXPORT_SYMBOL_GPL(qcom_cc_probe);
 
->  	case PWRAP_MT8173:
->  		pwrap_init_chip_select_ext(wrp, 0, 4, 2, 2);
->  		break;
-> @@ -1076,11 +1126,14 @@ static int pwrap_init_cipher(struct pmic_wrapper *wrp)
->  		break;
->  	case PWRAP_MT2701:
->  	case PWRAP_MT8173:
-> +	case PWRAP_MT6797:
++int qcom_cc_register_rcg_dfs(struct platform_device *pdev,
++			 const struct qcom_cc_dfs_desc *desc)
++{
++	struct clk_dfs *clks = desc->clks;
++	size_t num_clks = desc->num_clks;
++	int i, ret = 0;
++
++	for (i = 0; i < num_clks; i++) {
++		ret = clk_rcg2_get_dfs_clock_rate(clks[i].rcg, &pdev->dev);
++		if (ret) {
++			dev_err(&pdev->dev,
++				"Failed calculating DFS frequencies for %s\n",
++				clk_hw_get_name(&(clks[i].rcg)->clkr.hw));
++			break;
++		}
++	}
++
++	return ret;
++}
++EXPORT_SYMBOL(qcom_cc_register_rcg_dfs);
++
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
+index 00196ee..6627aec 100644
+--- a/drivers/clk/qcom/common.h
++++ b/drivers/clk/qcom/common.h
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2014, 2018, The Linux Foundation. All rights reserved.
+  *
+  * This software is licensed under the terms of the GNU General Public
+  * License version 2, as published by the Free Software Foundation, and
+@@ -48,6 +48,15 @@ struct parent_map {
+ 	u8 cfg;
+ };
 
-need to be listed in alphabetical order
++struct clk_dfs {
++	struct clk_rcg2 *rcg;
++};
++
++struct qcom_cc_dfs_desc {
++	struct clk_dfs *clks;
++	size_t num_clks;
++};
++
+ extern const struct freq_tbl *qcom_find_freq(const struct freq_tbl *f,
+ 					     unsigned long rate);
+ extern const struct freq_tbl *qcom_find_freq_floor(const struct freq_tbl *f,
+@@ -69,4 +78,7 @@ extern int qcom_cc_really_probe(struct platform_device *pdev,
+ extern int qcom_cc_probe(struct platform_device *pdev,
+ 			 const struct qcom_cc_desc *desc);
 
->  		pwrap_writel(wrp, 1, PWRAP_CIPHER_EN);
->  		break;
->  	case PWRAP_MT7622:
->  		pwrap_writel(wrp, 0, PWRAP_CIPHER_EN);
->  		break;
-> +	default:
-> +		break;
->  	}
->  
->  	/* Config cipher mode @PMIC */
-> @@ -1325,6 +1378,15 @@ static irqreturn_t pwrap_interrupt(int irqno, void *dev_id)
->  
->  	pwrap_writel(wrp, 0xffffffff, PWRAP_INT_CLR);
->  
-> +	/* If we support INT1 interrupt, we also need to clear it */
-> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_INT1_EN)) {
-> +		rdata = pwrap_readl(wrp, PWRAP_INT1_FLG);
-> +
-> +		dev_err(wrp->dev, "unexpected interrupt int1=0x%x\n", rdata);
-> +
-> +		pwrap_writel(wrp, rdata, PWRAP_INT1_CLR);
-> +	}
-> +
-
-it seems no required to add PWRAP_CAP_INT1_EN:
-
-the CAP is not to take any action for any INTs raised, instead, it can be disabled at initial.
-
->  	return IRQ_HANDLED;
->  }
->  
-> @@ -1446,6 +1508,19 @@ static const struct pmic_wrapper_type pwrap_mt8173 = {
->  	.init_soc_specific = pwrap_mt8173_init_soc_specific,
->  };
->  
-> +static const struct pmic_wrapper_type pwrap_mt6797 = {
-> +	.regs = mt6797_regs,
-> +	.type = PWRAP_MT6797,
-> +	.arb_en_all = 0x01fff,
-> +	.int_en_all = 0xffffffc6,
-> +	.int1_en_all = 0x0001ffff,
-> +	.spi_w = PWRAP_MAN_CMD_SPI_WRITE,
-> +	.wdt_src = PWRAP_WDT_SRC_MASK_ALL,
-> +	.caps = PWRAP_CAP_DCM | PWRAP_CAP_INT1_EN,
-> +	.init_reg_clock = pwrap_common_init_reg_clock,
-> +	.init_soc_specific = NULL,
-> +};
-> +
->  static const struct of_device_id of_pwrap_match_tbl[] = {
->  	{
->  		.compatible = "mediatek,mt2701-pwrap",
-> @@ -1460,6 +1535,9 @@ static const struct of_device_id of_pwrap_match_tbl[] = {
->  		.compatible = "mediatek,mt8173-pwrap",
->  		.data = &pwrap_mt8173,
->  	}, {
-> +		.compatible = "mediatek,mt6797-pwrap",
-> +		.data = &pwrap_mt6797,
-
-each entry needs to be sorted in alphabetical order
-
-> +	}, {
->  		/* sentinel */
->  	}
->  };
-> @@ -1503,11 +1581,13 @@ static int pwrap_probe(struct platform_device *pdev)
->  	if (IS_ERR(wrp->base))
->  		return PTR_ERR(wrp->base);
->  
-> -	wrp->rstc = devm_reset_control_get(wrp->dev, "pwrap");
-> -	if (IS_ERR(wrp->rstc)) {
-> -		ret = PTR_ERR(wrp->rstc);
-> -		dev_dbg(wrp->dev, "cannot get pwrap reset: %d\n", ret);
-> -		return ret;
-> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_RESET)) {
-> +		wrp->rstc = devm_reset_control_get(wrp->dev, "pwrap");
-
-there should be a reset bit present for pwrap on infrasys.
-
-the specific condition can be dropped when the reset cell is exported from infrasys and then the device has a reference to it.
-
-> +		if (IS_ERR(wrp->rstc)) {
-> +			ret = PTR_ERR(wrp->rstc);
-> +			dev_dbg(wrp->dev, "cannot get pwrap reset: %d\n", ret);
-> +			return ret;
-> +		}
->  	}
->  
->  	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_BRIDGE)) {
-> @@ -1549,9 +1629,17 @@ static int pwrap_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_out1;
->  
-> -	/* Enable internal dynamic clock */
-> -	pwrap_writel(wrp, 1, PWRAP_DCM_EN);
-> -	pwrap_writel(wrp, 0, PWRAP_DCM_DBC_PRD);
-> +	/*
-> +	 * add dcm capability check
-> +	 */
-> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_DCM)) {
-
-the specific condition can be dropped since so far all devices the driver can support are owning PWRAP_CAP_DCM
-
-> +		if (wrp->master->type == PWRAP_MT6797)
-> +			pwrap_writel(wrp, 3, PWRAP_DCM_EN);
-
-the setup for MT6797 can be moved into .init_soc_specific callback ?
-
-> +		else
-> +			pwrap_writel(wrp, 1, PWRAP_DCM_EN);
-> +
-> +		pwrap_writel(wrp, 0, PWRAP_DCM_DBC_PRD);
-> +	}
->  
->  	/*
->  	 * The PMIC could already be initialized by the bootloader.
-> @@ -1580,6 +1668,12 @@ static int pwrap_probe(struct platform_device *pdev)
->  	pwrap_writel(wrp, wrp->master->wdt_src, PWRAP_WDT_SRC_EN);
->  	pwrap_writel(wrp, 0x1, PWRAP_TIMER_EN);
->  	pwrap_writel(wrp, wrp->master->int_en_all, PWRAP_INT_EN);
-> +	/*
-> +	 * We add INT1 interrupt to handle starvation and request exception
-> +	 * If we support it, we should enable them here.
-> +	 */
-> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_INT1_EN))
-> +		pwrap_writel(wrp, wrp->master->int1_en_all, PWRAP_INT1_EN);
->  
-
-if there is no explicitly enabling on INT1, then ISR handling for INT1 is also unnecessary
-
->  	irq = platform_get_irq(pdev, 0);
->  	ret = devm_request_irq(wrp->dev, irq, pwrap_interrupt,
++extern int qcom_cc_register_rcg_dfs(struct platform_device *pdev,
++			 const struct qcom_cc_dfs_desc *desc);
++
+ #endif
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
