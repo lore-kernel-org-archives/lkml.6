@@ -1,189 +1,87 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2438926-1525347320-2-8061566374219832670
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525347320; b=I9P0plrJ7Ok8UoYLdnS6kHicHSw2F2M1adFURR7AILSzV4BYfK
-    suwB3wdWI2tahsT2ZDQsJjGFRc+uyuhODh3P1MQElCwxFhAZkPymTDKXLQF78xW/
-    PNO0ekpw3zZ4sRgh9Q+oTuRay8BUoGwwbFcZdSqQFptz+qHM+At4KO36LnUgHGEj
-    zyJPPcIJxjqtBX1Ydb17GlN1YzPIzt0S0rUoXugfCUftv0DHPwEn4Ba29WkGSzF1
-    LsYlm0marviN9M1567ryjIhpK7Vm4yVgg97Ptz2VjH9ghQsFzljmkzlvYTAVqzSH
-    xkYEZbACug0hcKQuySOn2VZohVZQPDeclzkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525347320; bh=cauL+
-    Bvc8e4idZOuQYl+OK8UKxUUVslHBXZ5grEzhbo=; b=WuEBu+1jMrVr9jYR3EjiW
-    MQiWk9kR9B3RPhfogo320dZfht0/1T4SOLf3dIKtC3+F59OMKWXoJ/o4xJIRlumI
-    0NcwQ3nrIXHaK1f9HcPAa2Lv/hl6Usaq21rPqcW1MoylneQnLSO70M3lsWFSF76c
-    P6FGLtscOYqAu7DkZq/j+Gs1DwhsePqGk+doRnpFxVp2NVOsRhQl6AV4BO3A6bzf
-    eeOd+nMgFiZ71EETJGI2/nP85BCtoVW+RNV1L/Tbt3QJiqO6bwGjkqFI+8D/7R+z
-    O1LJyOQTnBUKNIQuSzCT/N2oMxGqO+6pPqub6b01T6WqxuC6OsGBL/hEUuuCQCDt
-    w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=arm.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=arm.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfBjcDBBc4q+onIATKITDQ+i3PLc/Vlo1hSduWfu9aIJrOBwGcq9PILg0Zwmq+oftjWz3fflMdDoaW4KiiG/C6f9ccPtxfRmRPH2jAtLHM6L5YWHpCkg+
-    duVW/l+AcCliPRVcmpgboXWRcxht8hluWTYFtigxFh61741UwtybBqPBNzFSqY2kR2QobTWL02CTOEurPij8dTAgg/IW9KP7zWrflmoVirztXfaHyrmy/eJF
-    oHsrU01XN615Yigi/4tqeA==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yMhMjlubAAAA:8 a=VwQbUJbxAAAA:8
-    a=1XWaLZrsAAAA:8 a=DDOyTI_5AAAA:8 a=L9Nf0ijdpkS5pM-7eU8A:9
-    a=0hAXxL274weQpw2Z:21 a=o-VsRqjNjq8-d2aR:21 a=CjuIK1q_8ugA:10
-    a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 3 May 2018 12:35:04 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Sridhar Pitchai <Sridhar.Pitchai@microsoft.com>
-Subject: Re: [PATCH v8] PCI: hv: Make sure the bus domain is really unique
-Message-ID: <20180503113504.GA21781@e107981-ln.cambridge.arm.com>
-References: <6E619990-8EFD-4688-8C01-8D9C480B04AF@microsoft.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <6E619990-8EFD-4688-8C01-8D9C480B04AF@microsoft.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- Haiyang Zhang <haiyangz@microsoft.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Bjorn Helgaas <helgaas@kernel.org>,
- "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+Return-Path: <luwei.kang@intel.com>
+X-Google-Smtp-Source: AB8JxZrCb3zu0oF8+8bwlYwgkFQaQMHYC1swkoKn9XCfJKi2llkf5RlJh8QRYKbmTPS3aL/+EtM6
+ARC-Seal: i=1; a=rsa-sha256; t=1525346351; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ywF378Usr3PFGeJoLB9tmJWDEYNTJDgd9mH2FvZJmyPYpSuYhofqbxrC3TmEpfWcb9
+         gIxjY8vUHdhMeE4XiH5dWtYrgpCDvzR152+VzP0b8ezaFGwh0EObVneoMQQ3UEfGUxeW
+         81keElE5a7Q2NycrHo59fPY3Du/ncN5JWG8OXvEF5ZWWMJDVo7bEktCo9jM2JMTjtGVn
+         b3u1/JpsMPCU37tMgNMPIsG45+9TGq6rRmeLaLN+YWce5dwoJS/x9mjG1iQQnBpCA5RD
+         N0XbeW0cez5lp0uioj0EAVd6Qo+1gBdLB0BqdcnYf3Yg1CBiogoctElFMdqTge/bFuPQ
+         KGUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-transfer-encoding:dlp-reaction:dlp-version
+         :dlp-product:content-language:accept-language:in-reply-to:references
+         :message-id:date:thread-index:thread-topic:subject:cc:to:from
+         :arc-authentication-results;
+        bh=Hs4hygdGd6huTyqpmOzzkgaJzFdeO01u4qQVZk7dGAU=;
+        b=Wne2TVti2RCNEENPmaPf+GBTX3+EXWhVK4qpdjPB4b4ZSmLYtiULh6Bvb1FsjxKC5a
+         bj7mnId9IDaZVQvUjTE+400WbBhgC8NPw6nzfuITo7gNtyTRoy1DqIohrkfcGbxqFJLM
+         32KO8HR8/dTMflyz/nH+f4bNjB+PMPh0o5zMZduOfJPhj05bBcvX6HGTzy4QaWwEUjjB
+         wzEP46qnSeiiNx0/PDqvDTPYBiqgpnreOT3QUbl2ynhUrBhPnU+X1yEO11JoIl/xXHlB
+         FYv4m/sHwAXbILMtpruXBYu4gFpdCD/iR3IB6HBD/fNgfRN4Yel/iJaD15XXuzFgkVCN
+         lyEA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of luwei.kang@intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=luwei.kang@intel.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of luwei.kang@intel.com designates 192.55.52.120 as permitted sender) smtp.mailfrom=luwei.kang@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,358,1520924400";
+   d="scan'208";a="37143424"
+From: "Kang, Luwei" <luwei.kang@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "chao.p.peng@linux.intel.com"
+	<chao.p.peng@linux.intel.com>, "thomas.lendacky@amd.com"
+	<thomas.lendacky@amd.com>, "bp@suse.de" <bp@suse.de>, "brijesh.singh@amd.com"
+	<brijesh.singh@amd.com>, "Liang, Kan" <kan.liang@intel.com>,
+	"Janakarajan.Natarajan@amd.com" <Janakarajan.Natarajan@amd.com>,
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "alexander.shishkin@linux.intel.com"
+	<alexander.shishkin@linux.intel.com>, "mathieu.poirier@linaro.org"
+	<mathieu.poirier@linaro.org>, "kstewart@linuxfoundation.org"
+	<kstewart@linuxfoundation.org>, "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>
+Subject: RE: [PATCH v7 00/13] Intel Processor Trace virtualization enabling
+Thread-Topic: [PATCH v7 00/13] Intel Processor Trace virtualization enabling
+Thread-Index: AQHT4sgnBSK0KgL8jE+IQCs8ULXuEKQdy0Fg//9+owCAAIgX0A==
+Date: Thu, 3 May 2018 11:19:08 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E167F6DE1A@SHSMSX101.ccr.corp.intel.com>
+References: <1525349608-10352-1-git-send-email-luwei.kang@intel.com>
+ <82D7661F83C1A047AF7DC287873BF1E167F6DD2C@SHSMSX101.ccr.corp.intel.com>
+ <20180503103750.GY12217@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180503103750.GY12217@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGVlZTg5MjEtYTFjOS00NjhhLWI1NjQtOWNlZGU5NTZhYTlkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjIuNS4xOCIsIlRydXN0ZWRMYWJlbEhhc2giOiJQcUpyYnNrOUpONnpBSzQ0bjVrc2h2dXhCMjM5S3IrYklZQytDSFBvY3dEUmFrT3M2bHpBZnFhTVFDUTRJWjZyIn0=
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
+X-GMAIL-THRID: =?utf-8?q?1599441576370953108?=
+X-GMAIL-MSGID: =?utf-8?q?1599441576370953108?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 01, 2018 at 05:56:32PM +0000, Sridhar Pitchai wrote:
-> When Linux runs as a guest VM in Hyper-V and Hyper-V adds the virtual PCI
-> bus to the guest, Hyper-V always provides unique PCI domain.
-> 
-> commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI domain")
-> overrode unique domain with the serial number of the first device added to
-> the virtual PCI bus.
-> 
-> The reason for that patch was to have a consistent and short name for the
-> device, but Hyper-V doesn't provide unique serial numbers. Using non-unique
-> serial numbers as domain IDs leads to duplicate device addresses, which
-> causes PCI bus registration to fail.
-> 
-> commit 0c195567a8f6 ("netvsc: transparent VF management") avoids the need
-> for commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI
-> domain").  When scripts were used to configure VF devices, the name of
-> the VF needed to be consistent and short, but with commit 0c195567a8f6
-> ("netvsc: transparent VF management") all the setup is done in the kernel,
-> and we do not need to maintain consistent name.
-> 
-> Revert commit 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI
-> domain") so we can reliably support multiple devices being assigned to
-> a guest.
-> 
-> This revert should only be backported to kernels that contain commit
-> 0c195567a8f6 ("netvsc: transparent VF management").
+> On Thu, May 03, 2018 at 10:23:12AM +0000, Kang, Luwei wrote:
+> > Send this patch set twice because path 2 send fail in the first time.
+>=20
+> Then just resend patch 2; also I have two copies of patch 2, so clearly i=
+t _did_ send.
 
-I removed this last paragraph, the information is in the stable tag
-below.
+Cc all the maintainers and contributors.
 
-> Fixes: 4a9b0933bdfc ("PCI: hv: Use device serial number as PCI domain")
-> Signed-off-by: Sridhar Pitchai <sridhar.pitchai@microsoft.com>
-> Cc: stable@vger.kernel.org # v4.14+
-> Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> ---
-> Changes in v8:
-> * fix the commit comment. [Lorenzo Pieralisi, Bjorn Helgaas]
-> ---
->  drivers/pci/host/pci-hyperv.c | 11 -----------
->  1 file changed, 11 deletions(-)
-
-Applied to pci/hv for v4.18, thanks.
-
-Lorenzo
-
-> diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-> index 2faf38eab785..ac67e56e451a 100644
-> --- a/drivers/pci/host/pci-hyperv.c
-> +++ b/drivers/pci/host/pci-hyperv.c
-> @@ -1518,17 +1518,6 @@ static struct hv_pci_dev *new_pcichild_device(struct hv_pcibus_device *hbus,
->  	get_pcichild(hpdev, hv_pcidev_ref_childlist);
->  	spin_lock_irqsave(&hbus->device_list_lock, flags);
->  
-> -	/*
-> -	 * When a device is being added to the bus, we set the PCI domain
-> -	 * number to be the device serial number, which is non-zero and
-> -	 * unique on the same VM.  The serial numbers start with 1, and
-> -	 * increase by 1 for each device.  So device names including this
-> -	 * can have shorter names than based on the bus instance UUID.
-> -	 * Only the first device serial number is used for domain, so the
-> -	 * domain number will not change after the first device is added.
-> -	 */
-> -	if (list_empty(&hbus->children))
-> -		hbus->sysdata.domain = desc->ser;
->  	list_add_tail(&hpdev->list_entry, &hbus->children);
->  	spin_unlock_irqrestore(&hbus->device_list_lock, flags);
->  	return hpdev;
-> -- 
-> 2.14.1
-> 
-> 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Thanks,
+Luwei Kang.
