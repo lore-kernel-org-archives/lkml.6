@@ -1,64 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeECB1t (ORCPT <rfc822;w@1wt.eu>);
-        Wed, 2 May 2018 21:27:49 -0400
-Received: from mta-p4.oit.umn.edu ([134.84.196.204]:47574 "EHLO
-        mta-p4.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751745AbeECB1r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 2 May 2018 21:27:47 -0400
-X-Google-Smtp-Source: AB8JxZplYUvsNKIfcAWKFScaq10hbUUjUPRDP7i1qZomUQ2OwuQ6wzEsVx/vHcCcQEOHLuhc0voO+9v8WCSS9VIFMrA=
+        id S1751900AbeECBcs (ORCPT <rfc822;w@1wt.eu>);
+        Wed, 2 May 2018 21:32:48 -0400
+Received: from mga17.intel.com ([192.55.52.151]:54812 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751778AbeECBcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 2 May 2018 21:32:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
+   d="scan'208";a="51947601"
+Subject: Re: [PATCHv4 2/2] iommu/vt-d: Limit number of faults to clear in irq
+ handler
+To: Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        joro@8bytes.org, "Raj, Ashok" <ashok.raj@intel.com>
+References: <20180331003312.6390-1-dima@arista.com>
+ <20180331003312.6390-2-dima@arista.com> <5AE95BFF.5040306@linux.intel.com>
+ <1525264687.14025.20.camel@arista.com> <5AEA4E84.6050609@linux.intel.com>
+ <1525308755.14025.25.camel@arista.com>
+Cc: 0x7f454c46@gmail.com, Alex Williamson <alex.williamson@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        iommu@lists.linux-foundation.org
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5AEA66BC.5050202@linux.intel.com>
+Date: Thu, 3 May 2018 09:32:44 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <20180503012402.GK5105@localhost.localdomain>
-References: <1525310145-28102-1-git-send-email-wang6495@umn.edu> <20180503012402.GK5105@localhost.localdomain>
-From: Wenwen Wang <wang6495@umn.edu>
-Date: Wed, 2 May 2018 20:27:05 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7f+dfDUZR7tHvmSQgTcNDmGjvCn9ZK9eevKGF+bNd2Aqg@mail.gmail.com>
-Message-ID: <CAAa=b7f+dfDUZR7tHvmSQgTcNDmGjvCn9ZK9eevKGF+bNd2Aqg@mail.gmail.com>
-Subject: Re: [PATCH] sctp: fix a potential missing-check bug
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc: Kangjie Lu <kjlu@umn.edu>, Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wang6495@umn.edu>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525308755.14025.25.camel@arista.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 2, 2018 at 8:24 PM, Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
-> On Wed, May 02, 2018 at 08:15:45PM -0500, Wenwen Wang wrote:
->> In sctp_setsockopt_maxseg(), the integer 'val' is compared against min_len
->> and max_len to check whether it is in the appropriate range. If it is not,
->> an error code -EINVAL will be returned. This is enforced by a security
->> check. But, this check is only executed when 'val' is not 0. In fact, if
->> 'val' is 0, it will be assigned with a new value (if the return value of
->> the function sctp_id2assoc() is not 0) in the following execution. However,
->> this new value of 'val' is not checked before it is used to assigned to
->> asoc->user_frag. That means it is possible that the new value of 'val'
->> could be out of the expected range. This can cause security issues
->> such as buffer overflows, e.g., the new value of 'val' is used as an index
->> to access a buffer.
->>
->> This patch inserts a check for the new value of 'val' to see if it is in
->> the expected range. If it is not, an error code -EINVAL will be returned.
->>
->> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
->> ---
->>  net/sctp/socket.c | 22 +++++++++++-----------
->>  1 file changed, 11 insertions(+), 11 deletions(-)
->
-> ?
-> This patch is the same as previous one. git send-email <old file>
-> maybe?
->
->   Marcelo
+Hi,
 
-Thanks for your suggestion, Marcelo. I can send the old file. But, I
-have added a line of comment in this patch.
+On 05/03/2018 08:52 AM, Dmitry Safonov wrote:
+> On Thu, 2018-05-03 at 07:49 +0800, Lu Baolu wrote:
+>> Hi,
+>>
+>> On 05/02/2018 08:38 PM, Dmitry Safonov wrote:
+>>> Hi Lu,
+>>>
+>>> On Wed, 2018-05-02 at 14:34 +0800, Lu Baolu wrote:
+>>>> Hi,
+>>>>
+>>>> On 03/31/2018 08:33 AM, Dmitry Safonov wrote:
+>>>>> Theoretically, on some machines faults might be generated
+>>>>> faster
+>>>>> than
+>>>>> they're cleared by CPU.
+>>>> Is this a real case?
+>>> No. 1/2 is a real case and this one was discussed on v3:
+>>> lkml.kernel.org/r/<20180215191729.15777-1-dima@arista.com>
+>>>
+>>> It's not possible on my hw as far as I tried, but the discussion
+>>> result
+>>> was to fix this theoretical issue too.
+>> If faults are generated faster than CPU can clear them, the PCIe
+>> device should be in a very very bad state. How about disabling
+>> the PCIe device and ask the administrator to replace it? Anyway,
+>> I don't think that's goal of this patch series. :-)
+> Uhm, yeah, my point is not about the number of faults, but about
+> physical ability of iommu to generate faults faster than cpu processes
+> them. I might be wrong that it's not possible (like low cpu freq?)
+>
+> But the number of interrupts might be high. It's like you've many
+> mappings on iommu and PCIe device went off. It could be just a link
+> flap. I think it makes sense not lockup on such occasions.
+>
+>>>>>  Let's limit the cleaning-loop by number of hw
+>>>>> fault registers.
+>>>> Will this cause the fault recording registers full of faults,
+>>>> hence
+>>>> new faults will be dropped without logging?
+>>> If faults come faster then they're being cleared - some of them
+>>> will be
+>>> dropped without logging. Not sure if it's worth to report all
+>>> faults in
+>>> such theoretical(!) situation.
+>>> If amount of reported faults for such situation is not enough and
+>>> it's
+>>> worth to keep all the faults, then probably we should introduce a
+>>> workqueue here (which I did in v1, but it was rejected by the
+>>> reason
+>>> that it will introduce some latency in fault reporting).
+>>>
+>>>> And even worse, new faults will not generate interrupts?
+>>> They will, we clear page fault overflow outside of the loop, so any
+>>> new
+>>> fault will raise interrupt, iiuc.
+>>>
+>> I am afraid that they might not generate interrupts any more.
+>>
+>> Say, the fault registers are full of events that are not cleared,
+>> then a new fault comes. There is no room for this event and
+>> hence the hardware might drop it silently.
+> AFAICS, we're doing fault-clearing in a loop inside irq handler.
+> That means that while we're clearing if a fault raises, it'll make
+> an irq level triggered (or on edge) on lapic. So, whenever we return
+> from the irq handler, irq will raise again.
+>
 
-Wenwen
+Uhm, double checked with the spec. Interrupts should be generated
+since we always clear the fault overflow bit.
+
+Anyway, we can't clear faults in a limited loop, as the spec says in 7.3.1:
+
+Software is expected to process the non-recoverable faults reported through the Fault Recording
+Registers in a circular FIFO fashion starting from the Fault Recording Register referenced by the Fault
+Recording Index (FRI) field, until it finds a Fault Recording Register with no faults (F field Clear).
+
+Best regards,
+Lu Baolu
