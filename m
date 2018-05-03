@@ -1,164 +1,128 @@
-Return-Path: <ukl@pengutronix.de>
-X-Google-Smtp-Source: AB8JxZrucpTiLkrYRZzGZwHtLwjjpVkdWR+0zDuu2awcvoH+pkMdafa7xC4nsrTVc/+zaqphfc3d
-ARC-Seal: i=1; a=rsa-sha256; t=1525341905; cv=none;
-        d=google.com; s=arc-20160816;
-        b=oIthdpCkGcIX/bALq6Ysqhfp8DRhu1UtllY1sL0Z8/6LhpNOfJ1UrZUBxfJXhoXpVD
-         IaEwoPsMc2BNiyxDewcG5aV1FujgkDI6ZBS8eXno9t8mb1bJd/4W2WHRM1hih/CAY5kH
-         gQ2JK3hOjmpq2QzlhPAgquBieIgBjmTubBPxM1Ywfej+PATiL1r8vxeBGVTp8FhbH07a
-         TfYCFtqf033GesxdA4Kup9uZS39uzaJTrNC1qAMojr7Vao2LrgXZibK+SuZo+WW4tUNf
-         PEPDP37jtJk4tWXmoeNq0QKGh2aw3KVY4KvTk2ezIVe1431jQclm7uubFYB3Aog/aKWf
-         aiIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:arc-authentication-results;
-        bh=MYyiGGeTdzLk7yw+aNwDfDV8+kdtI7RDXbFeoBKlDSE=;
-        b=rC+MgCv9OeCEQssf57bDdcYKtFohsXu4VvrrzEWl6ZOfmeI846h69ZNJML/sjjvo+B
-         +89xr+5RuLuR8E1uXaIoPgSWAlBEVkLHKeB2vADn0pWVBtmp26INJVY1RMQCDvL+l4GB
-         QCwXh1Wae8WpN6RN1M62AdoNPDrsZgXjN9/j/gNBf4lCxKk8aZusR/lBWJtmvJuv/nsI
-         DeZ4s4xcItsCrTV0PqqP/9v9rRyDGHKno6XUEx5bBfpzsftcG21HNRyMoxwhnKtDcMfx
-         tjj1ljdLR5RxIbEYPGm3Pd3Z7ygA9XvshxaN3lHkhn06TGs5vuK1VseJjLCP/IejyhYD
-         HwdQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of ukl@pengutronix.de designates 2001:67c:670:201:290:27ff:fe1d:cc33 as permitted sender) smtp.mailfrom=ukl@pengutronix.de
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of ukl@pengutronix.de designates 2001:67c:670:201:290:27ff:fe1d:cc33 as permitted sender) smtp.mailfrom=ukl@pengutronix.de
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To: linux-serial@vger.kernel.org
-Cc: kernel@pengutronix.de,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: [PATCH] tty: implement a rx led trigger
-Date: Thu,  3 May 2018 12:04:48 +0200
-Message-Id: <20180503100448.1350-1-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.17.0
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2505978-1525350805-2-7274203604236824536
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES daen, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: to='UTF-8', plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525350804; b=LGU1kQm/vTNbexjSofwV8EGO66dZmgXT72xN8u4b4U8OV6ZPMi
+    49pL6lBMOkwbpSO/HeUfsqBZoRWcvoGsiwUj3NWk4PBSOwDbJ+Vr77PEriUy6o6a
+    kAUU3851DFBcheb0zg0DPEGbMTS+hY2OSdpsbCJF1vuNJC97ymzPgOa59dlEdcQs
+    cSWxSBJYI8HPzMxKlONmk402pAQSKmMXgIuXT1TJ6JOeC7h4d7DiE2T1ZkZE6OTA
+    XNGOl/df2Wd5YuWMJUfnZurGPPzVBD6MIc8F0h343FVdPe9f/DXwwNk4HJtCizGf
+    yTMpG8ve5lP9GHRvtlx2sfsogkJ+yv9fGYww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525350804;
+    bh=pUjpxdYLAnjpDLKhK/PC0cBQSj29Uqo0JSzQTOth+5c=; b=b2dsZC4ZOdfT
+    gL6LlNuZG/HJNnMUpmmadGcYEqiGFCBpa2vg8xbHUN2AXPi/TLET/ZoRDxBNXclN
+    U3hHoE2D63Sq33Aol6cgQ12q/eI9MR+05jZjOF2zvHaHjCd3JKVYQb9x4daezLxt
+    1g9buHUgC4GihXCva1MAK2Xwl4zfuju0E+a1llVc3xeh78CC9MC2jCofpXZHVw/A
+    1W/Avsi1h9qe0jJvBPdw7NllEkCGkLKnk+5Wi4+FyFDHwVdiaTunEGvxQsQCuPT6
+    U+rPt6xZLfgrVxRTlfTib3Fe3uAgUPhgQWCQjHMuuQellmohugSVipSgOA7YYcid
+    MAhmGpAAIA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=arm.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=arm.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAi2BHDH+u2Wh8dIsopd1Z48iPKU7aOxCi9/b7hNb64/glwZcD8dUBOqYOg0bM3otJJv2G6mMONwEfR9mcyEUDdgJW07bjC4vCtaEzIkU3y+pZnBuTcc
+    IDrqEYCZqzGY+gYDGs+mn90xTowibUq34fmmD1KLrPiYHhE8jz+C0dBv/o6T178bbc0zC7bE8/ENx2IgDcUYrFCXmi5rW/pIumj1dq61p85R7QOfS6bUnDEA
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=HuG4dGyOer_NdDDEMvYA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751781AbeECMdO (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 08:33:14 -0400
+Received: from foss.arm.com ([217.140.101.70]:40864 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751532AbeECMdN (ORCPT <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 3 May 2018 08:33:13 -0400
+Subject: Re: [PATCH] tty: implement a rx led trigger
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        linux-serial@vger.kernel.org
+Cc: One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org
+References: <20180503100448.1350-1-u.kleine-koenig@pengutronix.de>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <0c1bb915-bd92-4433-61ec-78fdba453396@arm.com>
+Date: Thu, 3 May 2018 13:33:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180503100448.1350-1-u.kleine-koenig@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: gregkh@linuxfoundation.org
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599436913798772269?=
-X-GMAIL-MSGID: =?utf-8?q?1599436913798772269?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The trigger fires when data is pushed to the ldisc. This is a bit later
-than the actual receiving of data but has the nice benefit that it
-doesn't need adaption for each driver and isn't in the hot path.
+On 03/05/18 11:04, Uwe Kleine-König wrote:
+[...]
+> @@ -157,6 +158,18 @@ struct device *tty_port_register_device_attr_serdev(struct tty_port *port,
+>   
+>   	tty_port_link_device(port, driver, index);
+>   
+> +	port->led_trigger_rx_name = kasprintf(GFP_KERNEL, "%s%d-rx",
+> +					      driver->name, index);
+> +	if (!port->led_trigger_rx_name) {
+> +		pr_err("Failed to allocate trigger name for %s%d\n",
+> +		       driver->name, index);
+> +		goto skip_trigger;
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Hello,
+Hmm, isn't that a rather awkward way to spell "else"? ;)
 
-this is actually v2 of the series "serial: Add LED trigger support" that
-Sascha sent in November 2016.
+Robin.
 
-For now this is only the RX part however that I'd like to use as a base
-to get feedback. Once we got to an acceptable change the TX part should
-be easy (once the right place to place the trigger is clear).
-
-Other than that the trigger moved from a dedicated function in
-serial_core that each driver is supposed to call on reception of data to
-flush_to_ldisc().
-
-Best regards
-Uwe
-
- drivers/tty/tty_buffer.c |  4 ++++
- drivers/tty/tty_port.c   | 16 ++++++++++++++++
- include/linux/tty.h      |  3 +++
- 3 files changed, 23 insertions(+)
-
-diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
-index c996b6859c5e..4d364b77b1a7 100644
---- a/drivers/tty/tty_buffer.c
-+++ b/drivers/tty/tty_buffer.c
-@@ -17,6 +17,7 @@
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/ratelimit.h>
-+#include <linux/leds.h>
- 
- 
- #define MIN_TTYB_SIZE	256
-@@ -499,6 +500,7 @@ static void flush_to_ldisc(struct work_struct *work)
- 		struct tty_buffer *head = buf->head;
- 		struct tty_buffer *next;
- 		int count;
-+		unsigned long delay = 50 /* ms */;
- 
- 		/* Ldisc or user is trying to gain exclusive access */
- 		if (atomic_read(&buf->priority))
-@@ -521,6 +523,8 @@ static void flush_to_ldisc(struct work_struct *work)
- 			continue;
- 		}
- 
-+		led_trigger_blink_oneshot(port->led_trigger_rx, &delay, &delay, 0);
-+
- 		count = receive_buf(port, head, count);
- 		if (!count)
- 			break;
-diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
-index 25d736880013..51b78a585417 100644
---- a/drivers/tty/tty_port.c
-+++ b/drivers/tty/tty_port.c
-@@ -16,6 +16,7 @@
- #include <linux/wait.h>
- #include <linux/bitops.h>
- #include <linux/delay.h>
-+#include <linux/leds.h>
- #include <linux/module.h>
- #include <linux/serdev.h>
- 
-@@ -157,6 +158,18 @@ struct device *tty_port_register_device_attr_serdev(struct tty_port *port,
- 
- 	tty_port_link_device(port, driver, index);
- 
-+	port->led_trigger_rx_name = kasprintf(GFP_KERNEL, "%s%d-rx",
-+					      driver->name, index);
-+	if (!port->led_trigger_rx_name) {
-+		pr_err("Failed to allocate trigger name for %s%d\n",
-+		       driver->name, index);
-+		goto skip_trigger;
-+	}
-+
-+	led_trigger_register_simple(port->led_trigger_rx_name,
-+				    &port->led_trigger_rx);
-+
-+skip_trigger:
- 	dev = serdev_tty_port_register(port, device, driver, index);
- 	if (PTR_ERR(dev) != -ENODEV) {
- 		/* Skip creating cdev if we registered a serdev device */
-@@ -206,6 +219,9 @@ void tty_port_unregister_device(struct tty_port *port,
- 	if (ret == 0)
- 		return;
- 
-+	led_trigger_unregister_simple(port->led_trigger_rx);
-+	kfree(port->led_trigger_rx_name);
-+
- 	tty_unregister_device(driver, index);
- }
- EXPORT_SYMBOL_GPL(tty_port_unregister_device);
-diff --git a/include/linux/tty.h b/include/linux/tty.h
-index 1dd587ba6d88..7e36ee1d2056 100644
---- a/include/linux/tty.h
-+++ b/include/linux/tty.h
-@@ -249,6 +249,9 @@ struct tty_port {
- 						   set to size of fifo */
- 	struct kref		kref;		/* Ref counter */
- 	void 			*client_data;
-+
-+	struct led_trigger	*led_trigger_rx;
-+	char			*led_trigger_rx_name;
- };
- 
- /* tty_port::iflags bits -- use atomic bit ops */
--- 
-2.17.0
+> +	}
+> +
+> +	led_trigger_register_simple(port->led_trigger_rx_name,
+> +				    &port->led_trigger_rx);
+> +
+> +skip_trigger:
+>   	dev = serdev_tty_port_register(port, device, driver, index);
+>   	if (PTR_ERR(dev) != -ENODEV) {
+>   		/* Skip creating cdev if we registered a serdev device */
