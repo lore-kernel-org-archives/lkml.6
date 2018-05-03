@@ -1,39 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeECKiD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 06:38:03 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41498 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbeECKiC (ORCPT
+        id S1751592AbeECKjf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 06:39:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42750 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750948AbeECKjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 06:38:02 -0400
-Date: Thu, 3 May 2018 12:37:50 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Kang, Luwei" <luwei.kang@intel.com>
-Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
-Subject: Re: [PATCH v7 00/13] Intel Processor Trace virtualization enabling
-Message-ID: <20180503103750.GY12217@hirez.programming.kicks-ass.net>
-References: <1525349608-10352-1-git-send-email-luwei.kang@intel.com>
- <82D7661F83C1A047AF7DC287873BF1E167F6DD2C@SHSMSX101.ccr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <82D7661F83C1A047AF7DC287873BF1E167F6DD2C@SHSMSX101.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Thu, 3 May 2018 06:39:32 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 694F160310
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: [v7 0/2] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Thu,  3 May 2018 16:09:15 +0530
+Message-Id: <1525343956-10089-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 10:23:12AM +0000, Kang, Luwei wrote:
-> Send this patch set twice because path 2 send fail in the first time.
+ [v7]
+  * Addressed comments from Stephen
+	- Keep only xo_board as clock parent.
+	- Associate divs from SoC specific clock listing to calculate
+	   the clock rate.
+	- Add back the recalc_rate clock ops to return the clock rate
+	   based on the parent rate and div associated with clock.
+	- void cast kept to avoid compiler warnings.
 
-Then just resend patch 2; also I have two copies of patch 2, so clearly
-it _did_ send.
+ [v6]
+   * Addressed comments from Rob
+   * Addressed comments from Stephen
+
+ [v5]
+   * Addressed comments from Stephen
+   * Introduced a new DT property to take clock divs
+
+ [v4]
+  * Addressed comments from Stephen
+
+ [v3]
+  * Addressed documentation & code review comments from Bjorn
+  * Addressed bindings comments from Rob
+  * Updated the patch series order for bindings
+
+ [v2]
+  * Addressed comments from Stephen
+  * Addressed comments from Evan
+
+This patch series adds a driver and device tree documentation binding
+for the clock control via Resource Power Manager-hardened (RPMh) on some
+Qualcomm Technologies, Inc, SoCs such as SDM845. The clock RPMh driver
+would send requests for the RPMh managed clock resources.
+
+The RPMh clock driver depends upon the RPMh driver [1] and command DB
+driver [2] which are both still undergoing review.
+
+Thanks,
+Taniya
+
+[1]: https://lkml.org/lkml/2018/3/9/979
+[2]: https://lkml.org/lkml/2018/3/14/787
+
+Taniya Das (1):
+  clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 368 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 378 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
