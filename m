@@ -1,126 +1,131 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2626299-1525358332-2-1543811105589083029
+X-Cyrus-Session-Id: sloti22d1t05-2941320-1525372463-2-11710737476210381596
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: yes ("Address greg@kroah.com in From header is in addressbook");
+ in-addressbook; shared/fdfaecbe-d8f0-4518-a17e-0d89bf6dc529 ("Greg")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
-  HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525358332; b=dNNw5040Bbun6dUTtV7fzQ0uO4ktEKFjkioWjEqixkv3RoJZiv
-    LO6EZcnLXA+Nhl/vEEmkG3L0DWfKAIBKh+Kqle0Uidwtz/k6R3UNHg9RmF/reuoh
-    65DO5UMhm3alzgTdIT+osLNaSOqdurSBuNdTBLBUKhm8xoODbNO06RU3V2Rglfl6
-    810wWoIlqu8mjSyUCb1snh6I461hGPnxl1xqKvCwyOm0D+9L9jdqfR+xxi7e5H/N
-    AOdjsZFvEiVG2AgO/UmJQAzm5v9km6nFGKbU+4jlV/ICNoYsGXHOM1VuseeTh2FQ
-    Yk6pgUvN0ZbSC8bUAQvOdUCKSQ++EnKJDBcA==
+    1525372462; b=lrSh2kJWCDyghn5x3HQz+FeRBCVULv78UCPOV2HPVLnHzx3eLD
+    D7Fpg+t137GzDjCpvCkgxN0N+Wi3pNveg47dH1Mj7+ZnopKdnLDlO7WX5BEXLx25
+    BIfkWfTTbWc0LbvXKllfpcO4lhGLSUtZbharebUecGOwqqZZRhi3+7TJB9kMmRHx
+    TYNECYiOxUtCJyy2hhZboKPlV8mEDY+GxWgzuE1OC+2YLGR+GMJAHyz5ecmpPIfQ
+    JxjqEuMEu2UpzSuY+XaKPDY+wINX4Y1X4IfAhIds7imm2OBjgXhIkhanjakBiEyO
+    7XfO1kETXLiaGQ/eu8FaQTlmoFDsHK4wJcUw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:from:date:message-id:subject
-    :to:content-type:content-transfer-encoding:sender:list-id; s=
-    fm2; t=1525358332; bh=7NrS0WQiJJKIaPwAmlfAEyiSijfs3TW1YkwCUsc+VO
-    M=; b=nArD0+dFJ9tq6UtGxkqc7YuZg7F3i84T+Sg/9C6Z/CGcdlj5EQoCK2/ROT
-    gW63iUGC+ijHEbPsLBN0idIpsDRgYJ9NGwLwyeY2jmvt9I5aegWSHxpZ/2btxbb5
-    C5d4kbr/zOpBqNJnoxuUwzBdnSvHgHsiwqaF45Ycf7KUEZYnHN6jVST/AtpWuP2m
-    NdtfItaDOjvlLtpB2YYsJZTuZoZW9Gcw6oJPfOTwu2V8A09ChwKyu5LbXId1wzQY
-    mmGLHgjuKcSW29GTWj7rSwiNjWttYJFw8nPq9A7u+T+fJ4gvPZ2C3dbun2gxiTcF
-    9uwrfIS3+lQMInQB6giZK/e7AD6Q==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:content-transfer-encoding
+    :in-reply-to:sender:list-id; s=fm2; t=1525372462; bh=CeM+ZgfRwla
+    dOC0+Wv+D2hwWQCtE5pA4cdf6YAZ3aRg=; b=hOfOi8U6sJbWbAl1Unv+Yl2xlID
+    +u+lD5nEdVut0ig1FN5n/9J0XTb46Q4/BOvOpzKIYxZG1/g2Q4E099BuOo4G8x1D
+    kMu+uWvxElRvrtoHgRBP928BpD6l0voXMHlQrvqlJVV9uFNs726CG1VOfu484K3U
+    WYYJwZ3wtW6IzoRmN3z3Zm0uhcgDlb17lZjGGrAwtoVN6vjyNoe4OWy0IPpDuffO
+    Cl7zQgCbuTg0WJTu31X6FTSV1s/ar7cHaDgfzvpeqY8QwNNIrqSWY3oFQIYGASOl
+    fOHpNc9hWyT6k2HHXtz4T/rmoAvvsY5m1/dzNrOpPtKV9iLKpJIiufqUDPA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=sjbxc84Z x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    header.d=messagingengine.com header.i=@messagingengine.com
+    header.b=afpVS/fY x-bits=2048 x-keytype=rsa x-algorithm=sha256
+    x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=XbrawN0N;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    header.domain=kroah.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=sjbxc84Z x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+      header.d=messagingengine.com header.i=@messagingengine.com
+      header.b=afpVS/fY x-bits=2048 x-keytype=rsa x-algorithm=sha256
+      x-selector=fm2;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kroah.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=XbrawN0N;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+      header.domain=kroah.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfM/jmdcIlaaRkdIxTHWQPlkq7XkjKDE376+I8v8iF26DwRZX0fE4dhJn3mxUCW3qa9RKkGabsrFxYioy1atQXOkvxwYb+5z4bAPZZ59BwQGIgp5sn88F
-    y6IpfuWXz0LdmKo403bvza2PyNGpgGC2Qg7HGl0Q0FE2zQ0IzQcC/s2QygSA20S4jzGhtRuqlQwUPQy3M2MQs/gBjIJMOsnxApJBEXUhy7BaGzM7WH9MUK2D
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
-    a=a7Dl5lcatpwA:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=2IW-HXrCvLMUAcbykhUA:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfHey4p1Vsm0tG7QnId7KzpAwn1zvSrfs9k2UBnPh/VkFl6s1ouci43wcHNa4bjs2F5uTEPEyAavYKqA2/BiweWk3egaaJ5lJNjb2wkO3AZ9FN3oTL8IJ
+    itsNvOb9z1foXTuEaQ0OfKvpsfKmOaJoWP9rKcPGpVJDto1mXb9NPrERgFgcdWFQoOTIOgtc3w+DNlgEpPAWP4+ILIoNXbXnsQidyDkG+w8pfIIZrPM/yR5L
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=8fekarIL2sqjZ2Qsc3IA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751079AbeECOiu (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 10:38:50 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:39795 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751027AbeECOiu (ORCPT
+        id S1751272AbeECSeV (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 14:34:21 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51519 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750969AbeECSeU (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 3 May 2018 10:38:50 -0400
-X-Google-Smtp-Source: AB8JxZrvEraRvY9d0koJT3XpuQwhDBeo5IfSNeslwSa3H0WEfOL+yeYF+3yzYU3u3JBQ5rbaEoiC7Gg1npt+LopFjRk=
-MIME-Version: 1.0
-From: Muni Sekhar <munisekharrms@gmail.com>
-Date: Thu, 3 May 2018 20:08:48 +0530
-Message-ID: <CAHhAz+iPbNjeHH72Omi7VCUVL_cOUnQjrqbyJKQstUSL6J1hCw@mail.gmail.com>
-Subject: serial: start_tx & buffer handling
-To: linux-serial <linux-serial@vger.kernel.org>,
+        Thu, 3 May 2018 14:34:20 -0400
+X-ME-Sender: <xms:LFbrWl2qukVygU_pIlMl_aDv4Lv15Vd7NZ7MJdq1Tzi90T_axAbx3Q>
+Date: Thu, 3 May 2018 11:34:08 -0700
+From: Greg KH <greg@kroah.com>
+To: Muni Sekhar <munisekharrms@gmail.com>
+Cc: linux-serial <linux-serial@vger.kernel.org>,
         linux-kernel@vger.kernel.org,
         kernelnewbies <kernelnewbies@kernelnewbies.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: serial: start_tx & buffer handling
+Message-ID: <20180503183408.GA12152@kroah.com>
+References: <CAHhAz+iPbNjeHH72Omi7VCUVL_cOUnQjrqbyJKQstUSL6J1hCw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHhAz+iPbNjeHH72Omi7VCUVL_cOUnQjrqbyJKQstUSL6J1hCw@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-serial-owner@vger.kernel.org
 X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi All,
+On Thu, May 03, 2018 at 08:08:48PM +0530, Muni Sekhar wrote:
+> Hi All,
+> 
+> I’m trying to understand how user mode buffer is written to low level
+> serial hardware registers.
+> 
+> For this I read the kernel code and I came to know that from user mode
+> write() API lands into kernel’s tty_write() ("drivers/tty/tty_io.c")
+> and then it calls a uart_write() ("drivers/tty/serial/serial_core.c").
+> 
+> In uart_write(), the buffer is copied to circ_buf and then it calls
+> low level serial hardware driver’s start_tx() (struct uart_ops
+> .start_tx). But here I could not find how the buffer kept in circ_buf
+> is copied to serial port’s TX_FIFO registers?
+> 
+> Can someone take a moment to explain me on this?
 
-I=E2=80=99m trying to understand how user mode buffer is written to low lev=
-el
-serial hardware registers.
+It all depends on which specific UART driver you are looking at, they
+all do it a bit different depending on the hardware.
 
-For this I read the kernel code and I came to know that from user mode
-write() API lands into kernel=E2=80=99s tty_write() ("drivers/tty/tty_io.c"=
-)
-and then it calls a uart_write() ("drivers/tty/serial/serial_core.c").
+Which one are you looking at?  Look at what the start_tx callback does
+for that specific driver, that should give you a hint as to how data
+starts flowing.  Usually an interrupt is enabled that is used to flush
+the buffer out to the hardware.
 
-In uart_write(), the buffer is copied to circ_buf and then it calls
-low level serial hardware driver=E2=80=99s start_tx() (struct uart_ops
-.start_tx). But here I could not find how the buffer kept in circ_buf
-is copied to serial port=E2=80=99s TX_FIFO registers?
+thanks,
 
-
-
-Can someone take a moment to explain me on this?
-
-
-
---=20
-Thanks,
-Sekhar
+greg k-h
