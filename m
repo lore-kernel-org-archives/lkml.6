@@ -1,51 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751928AbeECMq1 (ORCPT <rfc822;w@1wt.eu>);
+        id S1751989AbeECMqc (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 08:46:32 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52837 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751811AbeECMq1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 May 2018 08:46:27 -0400
-Received: from 8bytes.org ([81.169.241.247]:54180 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751354AbeECMq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 08:46:26 -0400
-Date: Thu, 3 May 2018 14:46:24 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Robin Murphy <robin.murphy@arm.com>, Tomasz Figa <tfiga@chromium.org>,
-        Simon Xue <xxm@rock-chips.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu: rockchip: fix building without CONFIG_OF
-Message-ID: <20180503124623.wjnv6smvhpblpr76@8bytes.org>
-References: <20180404102401.3634085-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404102401.3634085-1-arnd@arndb.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-Google-Smtp-Source: AB8JxZq1AftPYmxrHovOsuowxdY72d9T+v1HF7iTZ/LlmsnBrhxnqYB9hLoM9pHtd02lxiXhDrl3EA==
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: ge: Fix build warning
+Date: Thu,  3 May 2018 14:46:24 +0200
+Message-Id: <20180503124624.14461-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 04, 2018 at 12:23:53PM +0200, Arnd Bergmann wrote:
-> We get a build error when compiling the iommu driver without CONFIG_OF:
-> 
-> drivers/iommu/rockchip-iommu.c: In function 'rk_iommu_of_xlate':
-> drivers/iommu/rockchip-iommu.c:1101:2: error: implicit declaration of function 'of_dev_put'; did you mean 'of_node_put'? [-Werror=implicit-function-declaration]
-> 
-> This replaces the of_dev_put() with the equivalent platform_device_put(),
-> and adds an error check for of_find_device_by_node() returning NULL,
-> which seems to be appropriate here given that we pass the device into
-> platform_get_drvdata() next, and that of_find_device_by_node() might
-> theoretically return a NULL pointer.
-> 
-> Fixes: 5fd577c3eac3 ("iommu/rockchip: Use OF_IOMMU to attach devices automatically")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> This warning appears to only have been introduced in linux-next after
-> the merge window opened.
-> ---
->  drivers/iommu/rockchip-iommu.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+From: Thierry Reding <treding@nvidia.com>
 
-Changed patch according to Robins comments and applied it, thanks.
+Casting a pointer to u16 can produce a compiler warning such as this:
+
+    drivers/gpio/gpio-ge.c: In function 'gef_gpio_probe':
+    drivers/gpio/gpio-ge.c:83:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+        gc->ngpio = (u16)of_device_get_match_data(&pdev->dev);
+                    ^
+
+Cast the pointer through a uintptr_t to avoid the warning.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpio/gpio-ge.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpio/gpio-ge.c b/drivers/gpio/gpio-ge.c
+index 4c43562434cf..636952769bc8 100644
+--- a/drivers/gpio/gpio-ge.c
++++ b/drivers/gpio/gpio-ge.c
+@@ -80,7 +80,7 @@ static int __init gef_gpio_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	gc->base = -1;
+-	gc->ngpio = (u16)of_device_get_match_data(&pdev->dev);
++	gc->ngpio = (u16)(uintptr_t)of_device_get_match_data(&pdev->dev);
+ 	gc->of_gpio_n_cells = 2;
+ 	gc->of_node = pdev->dev.of_node;
+ 
+-- 
+2.17.0
