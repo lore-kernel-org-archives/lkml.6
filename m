@@ -1,57 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751464AbeECSnm (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 14:43:42 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:36047 "EHLO hermes.aosc.io"
+        id S1751301AbeECSnz (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 14:43:55 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54842 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751174AbeECSni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:43:38 -0400
-From: Icenowy Zheng <icenowy@aosc.io>
-To: Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 7/7] arm64: allwinner: h6: add PCF8563 RTC on Pine H64 board
-Date: Fri,  4 May 2018 02:38:47 +0800
-Message-Id: <20180503183847.11046-8-icenowy@aosc.io>
-In-Reply-To: <20180503183847.11046-1-icenowy@aosc.io>
-References: <20180503183847.11046-1-icenowy@aosc.io>
+        id S1751174AbeECSnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 14:43:47 -0400
+To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org
+Cc: Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <b8acf835-df94-9967-2327-8f0e39d88511@amd.com>
+ <805645c1-ea40-2e57-88eb-5dd34e579b2e@deltatee.com>
+ <3e4e0126-f444-8d88-6793-b5eb97c61f76@amd.com>
+ <ce2e5351-f32a-bd80-1c77-b7fc38842175@deltatee.com>
+ <38d866cf-f7b4-7118-d737-5a5dcd9f3784@amd.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <2d59aa02-f2fa-bd88-1b6c-923117a6ad28@deltatee.com>
+Date: Thu, 3 May 2018 12:43:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <38d866cf-f7b4-7118-d737-5a5dcd9f3784@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, christian.koenig@amd.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pine H64 board has a PCF8563 dedicated RTC connected to its R_I2C bus.
 
-Enable the R_I2C bus and add the RTC to the device tree.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+On 03/05/18 11:29 AM, Christian König wrote:
+> Ok, that is the point where I'm stuck. Why do we need that in one 
+> function call in the PCIe subsystem?
+> 
+> The problem at least with GPUs is that we seriously don't have that 
+> information here, cause the PCI subsystem might not be aware of all the 
+> interconnections.
+> 
+> For example it isn't uncommon to put multiple GPUs on one board. To the 
+> PCI subsystem that looks like separate devices, but in reality all GPUs 
+> are interconnected and can access each others memory directly without 
+> going over the PCIe bus.
+> 
+> I seriously don't want to model that in the PCI subsystem, but rather 
+> the driver. That's why it feels like a mistake to me to push all that 
+> into the PCI function.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-index d36de5eb81f3..b6f2d6b2ecae 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -22,6 +22,16 @@
- 	};
- };
- 
-+&r_i2c {
-+	status = "okay";
-+
-+	pcf8563: rtc@51 {
-+		compatible = "nxp,pcf8563";
-+		reg = <0x51>;
-+		#clock-cells = <0>;
-+	};
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_ph_pins>;
--- 
-2.15.1
+Huh? I'm lost. If you have a bunch of PCI devices you can send them as a
+list to this API, if you want. If the driver is _sure_ they are all the
+same, you only have to send one. In your terminology, you'd just have to
+call the interface with:
+
+pci_p2pdma_distance(target, [initiator, target])
+
+> Why can't we model that as two separate transactions?
+
+You could, but this is more convenient for users of the API that need to
+deal with multiple devices (and manage devices that may be added or
+removed at any time).
+
+> Yeah, same for me. If Bjorn is ok with that specialized NVM functions 
+> that I'm fine with that as well.
+> 
+> I think it would just be more convenient when we can come up with 
+> functions which can handle all use cases, cause there still seems to be 
+> a lot of similarities.
+
+The way it's implemented is more general and can handle all use cases.
+You are arguing for a function that can handle your case (albeit with a
+bit more fuss) but can't handle mine and is therefore less general.
+Calling my interface specialized is wrong.
+
+Logan
