@@ -1,58 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeECTdZ (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 15:33:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35638 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751178AbeECTdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 15:33:22 -0400
-Date: Thu, 3 May 2018 21:33:19 +0200
-From: Michal Hocko <mhocko@kernel.org>
-To: Greg Thelen <gthelen@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] memcg: mark memcg1_events static const
-Message-ID: <20180503193319.GK4535@dhcp22.suse.cz>
-References: <20180503192940.94971-1-gthelen@google.com>
+        id S1751326AbeECTin (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 15:38:43 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58345 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751125AbeECTij (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 15:38:39 -0400
+Date: Thu, 3 May 2018 21:38:38 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: Droid 4: very confusing config around OHCI_OMAP3_HCD
+Message-ID: <20180503193837.GC32572@amd>
+References: <20180503192510.GB32572@amd>
+ <20180503192838.GY98604@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Izn7cH1Com+I3R9J"
 Content-Disposition: inline
-In-Reply-To: <20180503192940.94971-1-gthelen@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180503192838.GY98604@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 03-05-18 12:29:40, Greg Thelen wrote:
-> Mark memcg1_events static: it's only used by memcontrol.c.
-> And mark it const: it's not modified.
-> 
-> Signed-off-by: Greg Thelen <gthelen@google.com>
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+--Izn7cH1Com+I3R9J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  mm/memcontrol.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 2bd3df3d101a..c9c7e5ea0e2f 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3083,7 +3083,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
->  #endif /* CONFIG_NUMA */
->  
->  /* Universal VM events cgroup1 shows, original sort order */
-> -unsigned int memcg1_events[] = {
-> +static const unsigned int memcg1_events[] = {
->  	PGPGIN,
->  	PGPGOUT,
->  	PGFAULT,
-> -- 
-> 2.17.0.441.gb46fe60e1d-goog
+On Thu 2018-05-03 12:28:38, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [180503 19:27]:
+> > Hi!
+> >=20
+> > For power management experiments, I tried
+> >=20
+> > CONFIG_USB_OHCI_HCD=3Dy
+> > CONFIG_USB_OHCI_HCD_OMAP3=3Dm
+> > CONFIG_USB_OHCI_HCD_PLATFORM=3Dy
+> >=20
+> > and could not find resulting .ko.
+> >=20
+> > Help text says:
+> >=20
+> > CONFIG_USB_OHCI_HCD_OMAP3:
+> >=20
+> > This option is deprecated now and the driver was removed, use
+> > USB_OHCI_HCD_PLATFORM instead.
+> >=20
+> > Enables support for the on-chip OHCI controller on
+> > OMAP3 and later chips.
+> >=20
+> > Which may partly explain it. But if the option no longer does
+> > anything, why keep it? Certainly second part is confusing if option is
+> > NOP...
+>=20
+> Yeah it's ohci-platform now, I think we decided to keep the old one
+> around to avoid breaking people's .config files for booting rather
+> than silently fail.
 
--- 
-Michal Hocko
-SUSE Labs
+Ok, what about this? (Should I do the same for the other drivers?)
+Or at least put (DEPRECATED) as other drivers do?
+
+Situation is quite confusing if you already have PLATFORM=3Dy. OMAP=3Dm
+can be selected, but nothing happens.
+
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 5d958da..67c151a 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -455,7 +455,7 @@ config USB_OHCI_HCD_AT91
+           Atmel chips.
+=20
+ config USB_OHCI_HCD_OMAP3
+-	tristate "OHCI support for OMAP3 and later chips"
++	tristate "dummy option for backwards compatibility"
+ 	depends on (ARCH_OMAP3 || ARCH_OMAP4 || SOC_OMAP5)
+ 	select USB_OHCI_HCD_PLATFORM
+ 	default y
+@@ -463,9 +463,6 @@ config USB_OHCI_HCD_OMAP3
+ 	  This option is deprecated now and the driver was removed, use
+ 	  USB_OHCI_HCD_PLATFORM instead.
+=20
+-	  Enables support for the on-chip OHCI controller on
+-	  OMAP3 and later chips.
+-
+ config USB_OHCI_HCD_DAVINCI
+ 	tristate "OHCI support for TI DaVinci DA8xx"
+ 	depends on ARCH_DAVINCI_DA8XX
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Izn7cH1Com+I3R9J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrrZT0ACgkQMOfwapXb+vKVFgCgjcD7UqPIJXhHo4DkK9yy0jPS
+Z7YAoKQvccjh+vq1XjV6p5W9TCWsXNn/
+=C7fz
+-----END PGP SIGNATURE-----
+
+--Izn7cH1Com+I3R9J--
