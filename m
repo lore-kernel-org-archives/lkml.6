@@ -1,29 +1,30 @@
 Return-Path: <poza@qualcomm.com>
-X-Google-Smtp-Source: AB8JxZqtaPB0VrkNs3Grq8Q79N4ZWXQ/lbWd33a0zVVSN9N80LzmOAIesHycBbogdT5wc5bj3nV4
+X-Google-Smtp-Source: AB8JxZo6GMY3VKJeUvgSWtM7CPTHW7fA4KiYKIQ2qATKGg5KVkO7UZ1bLXCK+zKPD8whNezFgIs+
 ARC-Seal: i=1; a=rsa-sha256; t=1525323845; cv=none;
         d=google.com; s=arc-20160816;
-        b=Uo+OeAWn6E03/6TgYczWATy+hM5vyOrgMAHE8qHyjU3bdd4q1fNv/yUyPTPcDsvK8e
-         rgvtTjQ9XYAsVMbyrJWFufeMj/tkFc3MCyxVHvHVb4T/2dVbXinT6+DtDZzFYTUe+Eaj
-         gJDyw8UVLz1atlZE7RLRDUfh2hHZIDW9PRYwfUWfWPLXONKs5gS/mxbW9H8onP4f7lqw
-         RFpLb9OUwoOJmFk686SQBBWtodIoIuc8YptgSj0gJ4RXU7fibYwSccaVHv3co6vJY8p4
-         OkpjDJteTvPF39+UEA5HJ3RNHgu+RycJ1fFJJIcfFIT3uU6bQ/feWU0MHgv41stdVSAh
-         Z4NA==
+        b=AuHhcfWnFQu8pOktlFRO19znPpKwIj7pyt6P8ro3A9hM6x/lhgTD+14Z7LtTCcLwVO
+         UIGl+0tgmD47+CTf2Uz6ucWenjDPc+egvtQ6NR3gRjI5762JJLdfd3CH5EYFL1ZWtOf7
+         cntMbRKCZTq8khGQIfNPz9euuHFTe9QEM9+FNXj0Cuev9ey0iHDTwiBArklBcThYkD+O
+         jS+RMZXMk7X8Dtf5ZooBMVDNwgfDrlECojRyrWyOenAJpFgDJ73mMRQg77w5EOLGwjs3
+         lBaNeFdJCLuE64SUrJJXrVSTt+VeCskuJXffGqT0gUU0v8w5iIz4VomQkLpVPHbIvh6g
+         g2cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=IsqNRNJtqlshF2exJ90SnQ9Ep3dpEkHx8AASTBoZVwQ=;
-        b=Yo3Vzfk6emXx6JelCxlbB2Y98eOYBwY1zvk1MrBENKwK/WU6q8NiUNkXFM+SxW+tvP
-         E7FSqCPYBBDExFHXdIKpxRQhiXfKS0gQzptktdBxiYFuZeAlVWMmxmV4o+OCAIcoF6ck
-         j8BOsRyJSthU5hlbyNAjTITqBn/eSgSgRQf+Gpz0zzEn+/EdhAwKp0ygAa9GvAAwLCR2
-         o2dYZus5Xvjj49eeFXA+6Pevh86ASOWzxm37mt5EciaUDhI4+2/PnIrGwnYXLKxEoJxA
-         0R4Qjvz5MjbxgRYi/oi5oDREQh4Fz6y/oKumaNoPWFwIN+AG6JvAafUfBT0sHGkafWjw
-         RSvA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=YqO6tgBNDHXyqzWK17SXVdRiL5Q1QiHaJboGaSlap7k=;
+        b=jJ0quZBhu/GjmOVEB/fBQ1jIST8w0ynVtD2GgJvKcF12FH6NrKKaRXvO6p0rqRm0U7
+         dBq7g6OmxFZVdoGOzeOquh8eovg3ku381PYdOSCtt/9JwrS3qZ7tr5WCHHldL2PiQRNw
+         lGWp4+/q4Mx73N9bEtqZb3yNusXX8qUeU/+IntWQH0t381n+b1aND+TLXejuDtBVZEAv
+         4wSDBQfiwCundvuMOFqN+DR6WmDC4sMBv1EI1/T5NSNV1iPwYulgRVDWI6xdaJNy6zyE
+         d81sthtVClS7T2xEKpHiHLEe7Xmp9A0j1/DZvg07o/PruI97EvLn3Tw8E6iYktLCQ6N5
+         AErg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of poza@qualcomm.com designates 65.197.215.72 as permitted sender) smtp.mailfrom=poza@qualcomm.com
+       spf=pass (google.com: domain of poza@qualcomm.com designates 129.46.98.28 as permitted sender) smtp.mailfrom=poza@qualcomm.com
 X-IronPort-AV: E=Sophos;i="5.49,356,1520924400";
-   d="scan'208";a="126361290"
-X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="182707647"
+   d="scan'208";a="17319045"
+X-IronPort-AV: E=McAfee;i="5900,7806,8881"; a="182707666"
 From: Oza Pawandeep <poza@codeaurora.org>
 To: Bjorn Helgaas <bhelgaas@google.com>,
 	Philippe Ombredanne <pombredanne@nexb.com>,
@@ -38,137 +39,158 @@ To: Bjorn Helgaas <bhelgaas@google.com>,
 	Sinan Kaya <okaya@codeaurora.org>,
 	Timur Tabi <timur@codeaurora.org>
 Cc: Oza Pawandeep <poza@codeaurora.org>
-Subject: [PATCH v15 0/9] Address error and recovery for AER and DPC
-Date: Thu,  3 May 2018 01:03:49 -0400
-Message-Id: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
+Subject: [PATCH v15 8/9] PCI/DPC: Unify and plumb error handling into DPC
+Date: Thu,  3 May 2018 01:03:57 -0400
+Message-Id: <1525323838-1735-9-git-send-email-poza@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
+References: <1525323838-1735-1-git-send-email-poza@codeaurora.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599417976450884015?=
-X-GMAIL-MSGID: =?utf-8?q?1599417976450884015?=
+X-GMAIL-THRID: =?utf-8?q?1599417976795916736?=
+X-GMAIL-MSGID: =?utf-8?q?1599417976795916736?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch set brings in error handling support for DPC
+Current DPC driver does not do recovery, e.g. calling end-point's driver's
+callbacks, which sanitize the sw.
 
-The current implementation of AER and error message broadcasting to the
-EP driver is tightly coupled and limited to AER service driver.
-It is important to factor out broadcasting and other link handling
-callbacks. So that not only when AER gets triggered, but also when DPC get
-triggered (for e.g. ERR_FATAL), callbacks are handled appropriately.
+DPC driver implements link_reset callback, and calls pci_do_recovery().
 
-The goal of the patch-set is:
-DPC should handle the error handling and recovery similar to AER, because 
-finally both are attempting recovery in some or the other way,
-and for that error handling and recovery framework has to be loosely
-coupled.
+Signed-off-by: Oza Pawandeep <poza@codeaurora.org>
 
-It achieves uniformity and transparency to the error handling agents such
-as AER, DPC, with respect to recovery and error handling.
-
-So, this patch-set tries to unify lot of things between error agents and
-make them behave in a well defined way. (be it error (FATAL, NON_FATAL)
-handling or recovery).
-
-The FATAL error handling is handled with remove/reset_link/re-enumerate
-sequence while the NON_FATAL follows the default path.
-Documentation/PCI/pci-error-recovery.txt talks more on that.
-
-Changes since v14:
-    Bjorn's comments addressed
-    > simplified the patch set, and moved AER_FATAL handling in the beginning.
-    > rebase the code to 4.17-rc1.
-Changes since v13:
-    Bjorn's comments addressed
-    > handke FATAL errors with remove devices followed by re-enumeration.
-    > changes in AER and DPC along with required Documentation.
-Changes since v12:
-    Bjorn's and Keith's Comments addressed.
-    > Made DPC and AER error handling identical <aligned err.c>
-    > hanldled cases for hotplug enabled system differently.
-Changes since v11:
-    Bjorn's comments addressed.
-    > rename pcie-err.c to err.c
-    > removed EXPORT_SYMBOL
-    > made generic find_serivce function in port driver.
-    > removed mutex patch as no need to have mutex in pcie_do_recovery
-    > brough in DPC_FATAL in aer.h
-    > so now all the error codes (AER and DPC) are unified in aer.h
-Changes since v10:
-    Christoph Hellwig's, David Laight's and Randy Dunlap's
-    comments addressed.
-        > renamed pci_do_recovery to pcie_do_recovery
-        > removed inner braces in conditional statements.
-        > restrctured the code in pci_wait_for_link
-        > EXPORT_SYMBOL_GPL
-Changes since v9:
-    Sinan's comments addressed.
-        > bool active = true; unnecessary variable removed.
-Changes since v8:
-    Fixed Kbuild errors.
-Changes since v7:
-    Rebased the code on pci master
-        > https://kernel.googlesource.com/pub/scm/linux/kernel/git/helgaas/pci
-Changes since v6:
-    Sinan's and Stefan's comments implemented.
-        > reordered patch 6 and 7
-        > cleaned up
-Changes since v5:
-    Sinan's and Keith's comments incorporated.
-        > made separate patch for mutex
-        > unified error repotting codes into driver/pci/pci.h
-        > got rid of wait link active/inactive and
-          made generic function in driver/pci/pci.c
-Changes since v4:
-    Bjorn's comments incorporated.
-        > Renamed only do_recovery.
-        > moved the things more locally to drivers/pci/pci.h
-Changes since v3:
-    Bjorn's comments incorporated.
-        > Made separate patch renaming generic pci_err.c
-        > Introduce pci_err.h to contain all the error types and recovery
-        > removed all the dependencies on pci.h
-Changes since v2:
-    Based on feedback from Keith:
-    "
-    When DPC is triggered due to receipt of an uncorrectable error Message,
-    the Requester ID from the Message is recorded in the DPC Error
-    Source ID register and that Message is discarded and not forwarded Upstream.
-    "
-    Removed the patch where AER checks if DPC service is active
-Changes since v1:
-    Kbuild errors fixed:
-        > pci_find_dpc_dev made static
-        > ras_event.h updated
-        > pci_find_aer_service call with CONFIG check
-        > pci_find_dpc_service call with CONFIG check
-
-Oza Pawandeep (9):
-  PCI: Unify wait for link active into generic PCI
-  pci-error-recovery: Add AER_FATAL handling
-  PCI/AER: Handle ERRR_FATAL with removal and re-enumeration of devices
-  PCI/AER: Rename error recovery to generic PCI naming
-  PCI/AER: Factor out error reporting from AER
-  PCI/PORTDRV: Implement generic find service
-  PCI/PORTDRV: Implement generic find device
-  PCI/DPC: Unify and plumb error handling into DPC
-  PCI/DPC: Disable ERR_NONFATAL and enable ERR_FATAL for DPC
-
- Documentation/PCI/pci-error-recovery.txt |  35 ++-
- drivers/pci/hotplug/pciehp_hpc.c         |  20 +-
- drivers/pci/pci.c                        |  29 +++
- drivers/pci/pci.h                        |   4 +
- drivers/pci/pcie/Makefile                |   2 +-
- drivers/pci/pcie/aer/aerdrv.c            |   2 +
- drivers/pci/pcie/aer/aerdrv.h            |  30 ---
- drivers/pci/pcie/aer/aerdrv_core.c       | 317 +-------------------------
- drivers/pci/pcie/dpc.c                   |  58 +++--
- drivers/pci/pcie/err.c                   | 374 +++++++++++++++++++++++++++++++
- drivers/pci/pcie/portdrv.h               |   4 +
- drivers/pci/pcie/portdrv_core.c          |  67 ++++++
- include/linux/aer.h                      |   1 +
- include/uapi/linux/pci_regs.h            |   1 +
- 14 files changed, 540 insertions(+), 404 deletions(-)
- create mode 100644 drivers/pci/pcie/err.c
-
+diff --git a/drivers/pci/pcie/dpc.c b/drivers/pci/pcie/dpc.c
+index 80ec384..aed7c9f 100644
+--- a/drivers/pci/pcie/dpc.c
++++ b/drivers/pci/pcie/dpc.c
+@@ -73,29 +73,21 @@ static void dpc_wait_link_inactive(struct dpc_dev *dpc)
+ 	pcie_wait_for_link(pdev, false);
+ }
+ 
+-static void dpc_work(struct work_struct *work)
++static pci_ers_result_t dpc_reset_link(struct pci_dev *pdev)
+ {
+-	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
+-	struct pci_dev *dev, *temp, *pdev = dpc->dev->port;
+-	struct pci_bus *parent = pdev->subordinate;
+-	u16 cap = dpc->cap_pos, ctl;
+-
+-	pci_lock_rescan_remove();
+-	list_for_each_entry_safe_reverse(dev, temp, &parent->devices,
+-					 bus_list) {
+-		pci_dev_get(dev);
+-		pci_dev_set_disconnected(dev, NULL);
+-		if (pci_has_subordinate(dev))
+-			pci_walk_bus(dev->subordinate,
+-				     pci_dev_set_disconnected, NULL);
+-		pci_stop_and_remove_bus_device(dev);
+-		pci_dev_put(dev);
+-	}
+-	pci_unlock_rescan_remove();
++	struct dpc_dev *dpc;
++	struct pcie_device *pciedev;
++	struct device *devdpc;
++	u16 cap, ctl;
++
++	devdpc = pcie_port_find_device(pdev, PCIE_PORT_SERVICE_DPC);
++	pciedev = to_pcie_device(devdpc);
++	dpc = get_service_data(pciedev);
++	cap = dpc->cap_pos;
+ 
+ 	dpc_wait_link_inactive(dpc);
+ 	if (dpc->rp_extensions && dpc_wait_rp_inactive(dpc))
+-		return;
++		return PCI_ERS_RESULT_DISCONNECT;
+ 	if (dpc->rp_extensions && dpc->rp_pio_status) {
+ 		pci_write_config_dword(pdev, cap + PCI_EXP_DPC_RP_PIO_STATUS,
+ 				       dpc->rp_pio_status);
+@@ -108,6 +100,17 @@ static void dpc_work(struct work_struct *work)
+ 	pci_read_config_word(pdev, cap + PCI_EXP_DPC_CTL, &ctl);
+ 	pci_write_config_word(pdev, cap + PCI_EXP_DPC_CTL,
+ 			      ctl | PCI_EXP_DPC_CTL_INT_EN);
++
++	return PCI_ERS_RESULT_RECOVERED;
++}
++
++static void dpc_work(struct work_struct *work)
++{
++	struct dpc_dev *dpc = container_of(work, struct dpc_dev, work);
++	struct pci_dev *pdev = dpc->dev->port;
++
++	/* From DPC point of view error is always FATAL. */
++	pcie_do_recovery(pdev, DPC_FATAL);
+ }
+ 
+ static void dpc_process_rp_pio_error(struct dpc_dev *dpc)
+@@ -288,6 +291,7 @@ static struct pcie_port_service_driver dpcdriver = {
+ 	.service	= PCIE_PORT_SERVICE_DPC,
+ 	.probe		= dpc_probe,
+ 	.remove		= dpc_remove,
++	.reset_link	= dpc_reset_link,
+ };
+ 
+ static int __init dpc_service_init(void)
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+index 877785d..526aba8 100644
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -181,11 +181,12 @@ static pci_ers_result_t default_reset_link(struct pci_dev *dev)
+ 	return PCI_ERS_RESULT_RECOVERED;
+ }
+ 
+-static pci_ers_result_t reset_link(struct pci_dev *dev)
++static pci_ers_result_t reset_link(struct pci_dev *dev, int severity)
+ {
+ 	struct pci_dev *udev;
+ 	pci_ers_result_t status;
+ 	struct pcie_port_service_driver *driver;
++	u32 service;
+ 
+ 	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+ 		/* Reset this port for all subordinates */
+@@ -196,7 +197,12 @@ static pci_ers_result_t reset_link(struct pci_dev *dev)
+ 	}
+ 
+ 	/* Use the aer driver of the component firstly */
+-	driver = pcie_port_find_service(udev, PCIE_PORT_SERVICE_AER);
++	if (severity == DPC_FATAL)
++		service = PCIE_PORT_SERVICE_DPC;
++	else
++		service = PCIE_PORT_SERVICE_AER;
++
++	driver = pcie_port_find_service(udev, service);
+ 
+ 	if (driver && driver->reset_link) {
+ 		status = driver->reset_link(udev);
+@@ -302,7 +308,7 @@ static pci_ers_result_t do_fatal_recovery(struct pci_dev *dev, int severity)
+ 		pci_dev_put(pdev);
+ 	}
+ 
+-	result = reset_link(udev);
++	result = reset_link(udev, severity);
+ 	if (result == PCI_ERS_RESULT_RECOVERED)
+ 		if (pcie_wait_for_link(udev, true))
+ 			pci_rescan_bus(udev->bus);
+@@ -326,7 +332,8 @@ void pcie_do_recovery(struct pci_dev *dev, int severity)
+ 	pci_ers_result_t status;
+ 	enum pci_channel_state state;
+ 
+-	if (severity == AER_FATAL) {
++	if ((severity == AER_FATAL) ||
++	   (severity == DPC_FATAL)) {
+ 		status = do_fatal_recovery(dev, severity);
+ 		if (status != PCI_ERS_RESULT_RECOVERED)
+ 			goto failed;
+diff --git a/include/linux/aer.h b/include/linux/aer.h
+index 8f87bbe..0c506fe 100644
+--- a/include/linux/aer.h
++++ b/include/linux/aer.h
+@@ -14,6 +14,7 @@
+ #define AER_NONFATAL			0
+ #define AER_FATAL			1
+ #define AER_CORRECTABLE			2
++#define DPC_FATAL			4
+ 
+ struct pci_dev;
+ 
 -- 
 2.7.4
