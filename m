@@ -1,71 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751573AbeECQ3h (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 12:29:37 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:34530 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751174AbeECQ3g (ORCPT
+        id S1751652AbeECQaf (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 12:30:35 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38804 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751316AbeECQab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 12:29:36 -0400
-Date: Thu, 3 May 2018 18:29:34 +0200
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v4.16.7-rt1
-Message-ID: <20180503162934.b2ly6jz4a5tydaag@linutronix.de>
+        Thu, 3 May 2018 12:30:31 -0400
+X-Google-Smtp-Source: AB8JxZqFkOwv31Uyv4D53R1DMwzTdl/N3MK4LGFHwWQF+UsGitWpqABzVSc1KJ3XXFP3ssUs85VySw==
+Date: Thu, 3 May 2018 18:30:27 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm: exynos/s3c: dts: Remove leading 0x and 0s from
+ bindings notation
+Message-ID: <20180503163027.lthixenaguphn4du@kozik-lap>
+References: <20171215124630.30082-1-malat@debian.org>
+ <20180502201153.7459-1-malat@debian.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180502201153.7459-1-malat@debian.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear RT folks!
+On Wed, May 02, 2018 at 10:11:52PM +0200, Mathieu Malaterre wrote:
+> Improve the DTS files by removing all the leading "0x" and zeros to fix the
+> following dtc warnings:
+> 
+> Warning (unit_address_format): Node /XXX unit name should not have leading "0x"
+> 
+> and
+> 
+> Warning (unit_address_format): Node /XXX unit name should not have leading 0s
+> 
+> Converted using the following command:
+> 
+> find . -type f \( -iname *.dts -o -iname *.dtsi \) -exec sed  -i -e "s/@\([0-9a-fA-FxX\.;:#]\+\)\s*{/@\L\1 {/g" -e "s/@0x\(.*\) {/@\1 {/g" -e "s/@0\+\(.*\) {/@0\1 {/g" {} +
+> 
+> For simplicity, two sed expressions were used to solve each warnings separately.
+> 
+> To make the regex expression more robust a few other issues were resolved,
+> namely setting unit-address to lower case, and adding a whitespace before the
+> the opening curly brace:
+> 
+> https://elinux.org/Device_Tree_Linux#Linux_conventions
+> 
+> This will solve as a side effect warning:
+> 
+> Warning (simple_bus_reg): Node /XXX@<UPPER> simple-bus unit address format error, expected "<lower>"
+> 
+> This is a follow up to commit 4c9847b7375a ("dt-bindings: Remove leading 0x from bindings notation")
+> 
+> Reported-by: David Daney <ddaney@caviumnetworks.com>
+> Suggested-by: Rob Herring <robh@kernel.org>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+> v2: intermediate patch contained unrelated changes. restrict to S3 and Exynos*
+> 
+>  arch/arm/boot/dts/exynos5420.dtsi | 36 ++++++++++++++++++------------------
+>  arch/arm/boot/dts/s3c2416.dtsi    |  8 ++++----
+>  2 files changed, 22 insertions(+), 22 deletions(-)
+> 
 
-I'm pleased to announce the v4.16.7-rt1 patch set. 
+Thanks, applied.
 
-Changes since v4.14.39-rt28:
-
-  - Rebase to v4.16
-
-  - The queue went through a big cleanup and reordering, so the patches
-    which belong together are not scattered all over the place.
-
-    The sections at the front of the series are patches which are either
-    upstream already (4.17), queued in a maintainer tree for 4.18, posted
-    and under discussion or just ready to be posted.
-
-  - A large section covers the recent rework of the *_nort/*_rt()
-    wrappers. Instead of trying to argue them upstream they have been made
-    obsolete by refactoring the code in which they have been used. There
-    are a few hard to solve leftovers, but non of them should survive.
-
-  - The cpu_chill() related try-lock-loop in dcache has been replaced
-    with a rework avoiding the loop. The rework was joint work by Al
-    Viro and John Ogness.
-
-    There are still a few cpu_chill() instances which are going to be
-    tackled in the next weeks.
-
-  - The AT91 timer patches have been mostly replaced with the "TCB timer
-    driver" patches by Alexandre Belloni.
-
-  - The latest version of the latency tracer patches which is aimed for 4.18
-    has been incorporated.
-
-You can get this release via the git tree at:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.16.7-rt1
-
-The RT patch against v4.16.7 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.16/older/patch-4.16.7-rt1.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.16/older/patches-4.16.7-rt1.tar.xz
-
-Sebastian
+Best regards,
+Krzysztof
