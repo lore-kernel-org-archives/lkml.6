@@ -1,73 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751132AbeECPaK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 11:30:10 -0400
-Received: from mga17.intel.com ([192.55.52.151]:8193 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750954AbeECPaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 11:30:09 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,359,1520924400";
-   d="scan'208";a="42814580"
-Date: Thu, 3 May 2018 09:31:42 -0600
-From: Keith Busch <keith.busch@linux.intel.com>
-To: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH] nvmet: switch loopback target state to connecting when
- resetting
-Message-ID: <20180503153142.GN5938@localhost.localdomain>
-References: <20180503150035.13918-1-jthumshirn@suse.de>
+        id S1751307AbeECPdV (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 11:33:21 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:34646 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751075AbeECPdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 11:33:18 -0400
+X-Google-Smtp-Source: AB8JxZp9iUxtKBSiMa3+u0/VTU3mSuCXSX3q06JbSse0dGt6jAoVHuK44SjX078RxvtXk9rm56LoeA==
+Date: Thu, 3 May 2018 09:33:10 -0600
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lidong Chen <jemmy858585@gmail.com>
+Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
+        leon@kernel.org, artemyko@mellanox.com, dan.j.williams@intel.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
+        Lidong Chen <lidongchen@tencent.com>
+Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
+Message-ID: <20180503153310.GA9738@ziepe.ca>
+References: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180503150035.13918-1-jthumshirn@suse.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 05:00:35PM +0200, Johannes Thumshirn wrote:
-> After commit bb06ec31452f ("nvme: expand nvmf_check_if_ready checks")
-> resetting of the loopback nvme target failed as we forgot to switch
-> it's state to NVME_CTRL_CONNECTING before we reconnect the admin
-> queues. Therefore the checks in nvmf_check_if_ready() choose to go to
-> the reject_io case and thus we couldn't sent out an identify
-> controller command to reconnect.
+On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
+> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+> exited, get_pid_task will return NULL, ib_umem_release does not decrease
+> mm->pinned_vm. This patch fixes it by use tgid.
 > 
-> Change the controller state to NVME_CTRL_CONNECTING after tearing down
-> the old connection and before re-establishing the connection.
-> 
-> Fixes: bb06ec31452f ("nvme: expand nvmf_check_if_ready checks")
-> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
 > ---
->  drivers/nvme/target/loop.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/nvme/target/loop.c b/drivers/nvme/target/loop.c
-> index 31fdfba556a8..27a8561c0cb9 100644
-> --- a/drivers/nvme/target/loop.c
-> +++ b/drivers/nvme/target/loop.c
-> @@ -469,6 +469,12 @@ static void nvme_loop_reset_ctrl_work(struct work_struct *work)
->  	nvme_stop_ctrl(&ctrl->ctrl);
->  	nvme_loop_shutdown_ctrl(ctrl);
->  
-> +	if (!nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_CONNECTING)) {
-> +		/* state change failure should never happen */
-> +		WARN_ON_ONCE(1);
-> +		return;
-> +	}
-> +
->  	ret = nvme_loop_configure_admin_queue(ctrl);
->  	if (ret)
->  		goto out_disable;
-> -- 
-> 2.16.3
+>  drivers/infiniband/core/umem.c | 12 ++++++------
+>  include/rdma/ib_umem.h         |  2 +-
+>  2 files changed, 7 insertions(+), 7 deletions(-)
 
-Thanks, applied to the 4.17 nvme branch.
+Why are we even using a struct pid for this? Does anyone know?
+
+I'm surprised that struct task isn't held in the struct ib_umem..
+
+Is group_leader really OK and always guarenteed to return the same
+struct mm?? For some reason I have this recollection that the leader
+can change under some situation..
+
+> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+> index 9a4e899..8813ba5 100644
+> --- a/drivers/infiniband/core/umem.c
+> +++ b/drivers/infiniband/core/umem.c
+> @@ -119,7 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>  	umem->length     = size;
+>  	umem->address    = addr;
+>  	umem->page_shift = PAGE_SHIFT;
+> -	umem->pid	 = get_task_pid(current, PIDTYPE_PID);
+> +	umem->tgid	 = get_task_pid(current->group_leader, PIDTYPE_PID);
+>  	/*
+>  	 * We ask for writable memory if any of the following
+>  	 * access flags are set.  "Local write" and "remote write"
+> @@ -132,7 +132,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>  		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
+>  
+>  	if (access & IB_ACCESS_ON_DEMAND) {
+> -		put_pid(umem->pid);
+> +		put_pid(umem->tgid);
+>  		ret = ib_umem_odp_get(context, umem, access);
+>  		if (ret) {
+>  			kfree(umem);
+> @@ -148,7 +148,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>  
+>  	page_list = (struct page **) __get_free_page(GFP_KERNEL);
+>  	if (!page_list) {
+> -		put_pid(umem->pid);
+> +		put_pid(umem->tgid);
+>  		kfree(umem);
+>  		return ERR_PTR(-ENOMEM);
+>  	}
+> @@ -231,7 +231,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>  	if (ret < 0) {
+>  		if (need_release)
+>  			__ib_umem_release(context->device, umem, 0);
+> -		put_pid(umem->pid);
+> +		put_pid(umem->tgid);
+>  		kfree(umem);
+>  	} else
+>  		current->mm->pinned_vm = locked;
+> @@ -274,8 +274,8 @@ void ib_umem_release(struct ib_umem *umem)
+>  
+>  	__ib_umem_release(umem->context->device, umem, 1);
+>  
+> -	task = get_pid_task(umem->pid, PIDTYPE_PID);
+> -	put_pid(umem->pid);
+> +	task = get_pid_task(umem->tgid, PIDTYPE_PID);
+> +	put_pid(umem->tgid);
+>  	if (!task)
+>  		goto out;
+>  	mm = get_task_mm(task);
+> diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
+> index 23159dd..2398849 100644
+> --- a/include/rdma/ib_umem.h
+> +++ b/include/rdma/ib_umem.h
+> @@ -48,7 +48,7 @@ struct ib_umem {
+>  	int                     writable;
+>  	int                     hugetlb;
+>  	struct work_struct	work;
+> -	struct pid             *pid;
+> +	struct pid             *tgid;
+>  	struct mm_struct       *mm;
+>  	unsigned long		diff;
+>  	struct ib_umem_odp     *odp_data;
+> -- 
+> 1.8.3.1
+> 
