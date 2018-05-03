@@ -1,76 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751447AbeECPNx (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 11:13:53 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7648 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751132AbeECPNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 11:13:47 -0400
-From: John Garry <john.garry@huawei.com>
-To: <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
-        <andriy.shevchenko@linux.intel.com>, <lee.jones@linaro.org>
-CC: <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
-        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
-        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH 0/2] HISI LPC ACPI UART support
-Date: Thu, 3 May 2018 23:08:37 +0800
-Message-ID: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+        id S1751268AbeECPSo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 11:18:44 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:32950 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751088AbeECPSm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 11:18:42 -0400
+X-Google-Smtp-Source: AB8JxZruLGpwlTHLzkosggcV+Ar8l/IashJMWCcaG/W/3VgMfI0ckr5x3YP/FfYXQkMNCTtFp58zhw==
+From: Leo Yan <leo.yan@linaro.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        coresight@lists.linaro.org
+Cc: Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH 1/2] perf cs-etm: Support unknown_thread in cs_etm_auxtrace
+Date: Thu,  3 May 2018 23:18:22 +0800
+Message-Id: <1525360703-26159-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset adds ACPI FW support for the UART on
-the LPC bus on the Huawei D03 development board.
+CoreSight doesn't allocate thread structure for unknown_thread in etm
+auxtrace, so unknown_thread is NULL pointer.  If the perf data doesn't
+contain valid tid and then cs_etm__mem_access() uses unknown_thread
+instead as thread handler, this results in segmentation fault when
+thread__find_addr_map() accesses thread handler.
 
-The UART is 8250-compatible, and has the following
-profile:
-- IO space iotype
-- no interrupt, so polling mode required
-- 16550 type
+This commit creates new thread data which is used by unknown_thread, so
+CoreSight tracing can roll back to use unknown_thread if perf data
+doesn't include valid thread info.  This commit also releases thread
+data for initialization failure case and for normal auxtrace free flow.
 
-Currently an mfd-cell (platform device) is created per
-device on the bus for using ACPI  firmware. As such,
-we need require a platform driver for these devices.
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ tools/perf/util/cs-etm.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
 
-Currently no platform driver exists for the UART. Indeed,
-for PNP-compatible devices - like this UART - it would be
-better to create a PNP device so that we may use the
-existing PNP driver. Thus, we should use the 8250 PNP
-driver.
-
-However this host driver does not support PNP devices.
-An RFC was sent for PNP support in [1]. However it was
-deemed impractical to follow this path.
-
-As a solution, we use the 8250 generic isa driver. For
-this, we need to set the UART platform device name to
-match the 8250 isa driver, so we require special setup 
-for this. To support this, we introduce static MFD cells,
-and support special setup handling for each device.
-For the UART, this means passing the 8250 serial config
-in the MFD cell platform data.
-
-1. https://lkml.org/lkml/2018/4/20/278
-
-Differences:
-RFC -> v1:
-https://lkml.org/lkml/2018/4/20/278
-- drop PNP support
-- use static MFD cells
-- add 8250 setup
-
-John Garry (2):
-  HISI LPC: Reference static MFD cells for ACPI support
-  HISI LPC: Add ACPI UART support
-
- drivers/bus/hisi_lpc.c | 130 +++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 93 insertions(+), 37 deletions(-)
-
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 6533b1a..417302c 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
+ 	for (i = 0; i < aux->num_cpu; i++)
+ 		zfree(&aux->metadata[i]);
+ 
++	thread__zput(aux->unknown_thread);
+ 	zfree(&aux->metadata);
+ 	zfree(&aux);
+ }
+@@ -266,6 +267,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
+ 	if (!thread) {
+ 		if (cpumode != PERF_RECORD_MISC_KERNEL)
+ 			return -EINVAL;
++
+ 		thread = etmq->etm->unknown_thread;
+ 	}
+ 
+@@ -1355,6 +1357,23 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 	etm->auxtrace.free = cs_etm__free;
+ 	session->auxtrace = &etm->auxtrace;
+ 
++	etm->unknown_thread = thread__new(999999999, 999999999);
++	if (!etm->unknown_thread)
++		goto err_free_queues;
++
++	/*
++	 * Initialize list node so that at thread__zput() we can avoid
++	 * segmentation fault at list_del_init().
++	 */
++	INIT_LIST_HEAD(&etm->unknown_thread->node);
++
++	err = thread__set_comm(etm->unknown_thread, "unknown", 0);
++	if (err)
++		goto err_delete_thread;
++
++	if (thread__init_map_groups(etm->unknown_thread, etm->machine))
++		goto err_delete_thread;
++
+ 	if (dump_trace) {
+ 		cs_etm__print_auxtrace_info(auxtrace_info->priv, num_cpu);
+ 		return 0;
+@@ -1369,16 +1388,18 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+ 
+ 	err = cs_etm__synth_events(etm, session);
+ 	if (err)
+-		goto err_free_queues;
++		goto err_delete_thread;
+ 
+ 	err = auxtrace_queues__process_index(&etm->queues, session);
+ 	if (err)
+-		goto err_free_queues;
++		goto err_delete_thread;
+ 
+ 	etm->data_queued = etm->queues.populated;
+ 
+ 	return 0;
+ 
++err_delete_thread:
++	thread__zput(etm->unknown_thread);
+ err_free_queues:
+ 	auxtrace_queues__free(&etm->queues);
+ 	session->auxtrace = NULL;
 -- 
-1.9.1
+2.7.4
