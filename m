@@ -1,120 +1,290 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751611AbeECTAU (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 15:00:20 -0400
-Received: from antares.kleine-koenig.org ([94.130.110.236]:33028 "EHLO
-        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751417AbeECS7A (ORCPT
+        id S1751411AbeECTAv (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 15:00:51 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:36611 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751302AbeECTAa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 14:59:00 -0400
-Subject: Re: led: hw-trigger, global brightness and multi-colored leds
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-kernel@vger.kernel.org, Tomas Hlavacek <tomas.hlavacek@nic.cz>
-References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
- <20180502212105.GA9869@amd>
-From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-Message-ID: <69651d45-7566-95ad-2a83-53dd76e5680e@kleine-koenig.org>
-Date: Thu, 3 May 2018 20:49:54 +0200
+        Thu, 3 May 2018 15:00:30 -0400
+X-Google-Smtp-Source: AB8JxZq8PxmPHefSc3/zo0u0PwjEyP9kiHgkaBo9iZ5PFx/pNLFq0s+/dxLLA7X+VbCqkwEFbabnag==
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180502203326.9491-1-labbott@redhat.com>
+ <20180502203326.9491-3-labbott@redhat.com>
+ <20180503071917.xm2xvgagvzkworay@salmiak>
+From: Laura Abbott <labbott@redhat.com>
+Message-ID: <a8ce3e4d-f0f3-1321-92af-9aed0097d205@redhat.com>
+Date: Thu, 3 May 2018 12:00:26 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180502212105.GA9869@amd>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="Zp70xxEw6kIWCp715fzKSOcN8YPO9KsQL"
+In-Reply-To: <20180503071917.xm2xvgagvzkworay@salmiak>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Zp70xxEw6kIWCp715fzKSOcN8YPO9KsQL
-Content-Type: multipart/mixed; boundary="7A7rD1OAfPetVSHf2uiO53fZGsGZHC1Nt";
- protected-headers="v1"
-From: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- linux-kernel@vger.kernel.org, Tomas Hlavacek <tomas.hlavacek@nic.cz>
-Message-ID: <69651d45-7566-95ad-2a83-53dd76e5680e@kleine-koenig.org>
-Subject: Re: led: hw-trigger, global brightness and multi-colored leds
-References: <20180502151108.GA25970@taurus.defre.kleine-koenig.org>
- <20180502212105.GA9869@amd>
-In-Reply-To: <20180502212105.GA9869@amd>
+On 05/03/2018 12:19 AM, Mark Rutland wrote:
+> Hi Laura,
+> 
+> On Wed, May 02, 2018 at 01:33:26PM -0700, Laura Abbott wrote:
+>>
+>> Implementation of stackleak based heavily on the x86 version
+>>
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> ---
+>> Now written in C instead of a bunch of assembly.
+> 
+> This looks neat!
+> 
+> I have a few minor comments below.
+> 
+>> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+>> index bf825f38d206..0ceea613c65b 100644
+>> --- a/arch/arm64/kernel/Makefile
+>> +++ b/arch/arm64/kernel/Makefile
+>> @@ -55,6 +55,9 @@ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+>>   arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
+>>   arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
+>>   
+>> +arm64-obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += erase.o
+>> +KASAN_SANITIZE_erase.o	:= n
+> 
+> I suspect we want to avoid the full set of instrumentation suspects here, e.g.
+> GKOV, KASAN, UBSAN, and KCOV.
+> 
+>> +
+>>   obj-y					+= $(arm64-obj-y) vdso/ probes/
+>>   obj-m					+= $(arm64-obj-m)
+>>   head-y					:= head.o
+>> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+>> index ec2ee720e33e..3144f1ebdc18 100644
+>> --- a/arch/arm64/kernel/entry.S
+>> +++ b/arch/arm64/kernel/entry.S
+>> @@ -401,6 +401,11 @@ tsk	.req	x28		// current thread_info
+>>   
+>>   	.text
+>>   
+>> +	.macro	ERASE_KSTACK
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +	bl	erase_kstack
+>> +#endif
+>> +	.endm
+> 
+> Nit: The rest of our asm macros are lower-case -- can we stick to that here?
+> 
+>>   /*
+>>    * Exception vectors.
+>>    */
+>> @@ -906,6 +911,7 @@ ret_to_user:
+>>   	cbnz	x2, work_pending
+>>   finish_ret_to_user:
+>>   	enable_step_tsk x1, x2
+>> +	ERASE_KSTACK
+>>   	kernel_exit 0
+>>   ENDPROC(ret_to_user)
+> 
+> I believe we also need this in ret_fast_syscall.
+> 
+> [...]
+> 
 
---7A7rD1OAfPetVSHf2uiO53fZGsGZHC1Nt
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Yeah I had this in previous versions but I managed to out think
+myself. I'll add it in with a comment to avoid confusion.
 
-Hello Pavel,
+>> +asmlinkage void erase_kstack(void)
+>> +{
+>> +	unsigned long p = current->thread.lowest_stack;
+>> +	unsigned long boundary = p & ~(THREAD_SIZE - 1);
+>> +	unsigned long poison = 0;
+>> +	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
+>> +							sizeof(unsigned long);
+>> +
+>> +	/*
+>> +	 * Let's search for the poison value in the stack.
+>> +	 * Start from the lowest_stack and go to the bottom.
+>> +	 */
+>> +	while (p > boundary && poison <= check_depth) {
+>> +		if (*(unsigned long *)p == STACKLEAK_POISON)
+>> +			poison++;
+>> +		else
+>> +			poison = 0;
+>> +
+>> +		p -= sizeof(unsigned long);
+>> +	}
+>> +
+>> +	/*
+>> +	 * One long int at the bottom of the thread stack is reserved and
+>> +	 * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
+>> +	 */
+>> +	if (p == boundary)
+>> +		p += sizeof(unsigned long);
+> 
+> I wonder if end_of_stack() should be taught about CONFIG_SCHED_STACK_END_CHECK,
+> given that's supposed to return the last *usable* long on the stack, and we
+> don't account for this elsewhere.
+> 
+> If we did, then IIUC we could do:
+> 
+> 	unsigned long boundary = (unsigned long)end_of_stack(current);
+> 
+> ... at the start of the function, and not have to worry about this explicitly.
+> 
+>> +
+>> +#ifdef CONFIG_STACKLEAK_METRICS
+>> +	current->thread.prev_lowest_stack = p;
+>> +#endif
+>> +
+>> +	/*
+>> +	 * So let's write the poison value to the kernel stack.
+>> +	 * Start from the address in p and move up till the new boundary.
+>> +	 */
+>> +	boundary = current_stack_pointer;
+> 
+> I worry a little that the compiler can move the SP during a function's
+> lifetime, but maybe that's only the case when there are VLAs, or something like
+> that?
+> 
 
-On 05/02/2018 11:21 PM, Pavel Machek wrote:
->> on the Turris Omnia[1] the LEDs are controllable via an i2c device. Ea=
-ch
->> LED can be either in "manual mode" or in a mode I'd call "native mode"=
+I think that's true and a risk we take writing this in C. Here's
+the disassembly on gcc-7.3.1:
 
->> which is the default. In this native mode the LED being on or off
->> depends on an input line that is controlled by another hardware. So a
->> LED signals for example activity on the WAN ethernet port without any
->> software intervention, but can be used as a normal LED, too, when in
->> "manual mode" where it can be switched on and off by a register
->> write.
->=20
-> "Native mode" is quite common. We have it for example on Nokia N900
-> here (charger has hw option to automatically control the LED).
+ffff00000809d4d8 <erase_kstack>:
+ffff00000809d4d8:       a9bf7bfd        stp     x29, x30, [sp, #-16]!
+ffff00000809d4dc:       d5384100        mrs     x0, sp_el0
+ffff00000809d4e0:       910003fd        mov     x29, sp
+ffff00000809d4e4:       f946e400        ldr     x0, [x0, #3528]
+ffff00000809d4e8:       9272c404        and     x4, x0, #0xffffffffffffc000
+ffff00000809d4ec:       eb04001f        cmp     x0, x4
+ffff00000809d4f0:       540002c9        b.ls    ffff00000809d548 <erase_kstack+0x70>  // b.plast
+ffff00000809d4f4:       d2800003        mov     x3, #0x0                        // #0
+ffff00000809d4f8:       9297ddc5        mov     x5, #0xffffffffffff4111         // #-48879
+ffff00000809d4fc:       14000008        b       ffff00000809d51c <erase_kstack+0x44>
+ffff00000809d500:       d1002000        sub     x0, x0, #0x8
+ffff00000809d504:       52800022        mov     w2, #0x1                        // #1
+ffff00000809d508:       eb00009f        cmp     x4, x0
+ffff00000809d50c:       d2800003        mov     x3, #0x0                        // #0
+ffff00000809d510:       1a9f27e1        cset    w1, cc  // cc = lo, ul, last
+ffff00000809d514:       6a01005f        tst     w2, w1
+ffff00000809d518:       54000180        b.eq    ffff00000809d548 <erase_kstack+0x70>  // b.none
+ffff00000809d51c:       f9400001        ldr     x1, [x0]
+ffff00000809d520:       eb05003f        cmp     x1, x5
+ffff00000809d524:       54fffee1        b.ne    ffff00000809d500 <erase_kstack+0x28>  // b.any
+ffff00000809d528:       91000463        add     x3, x3, #0x1
+ffff00000809d52c:       d1002000        sub     x0, x0, #0x8
+ffff00000809d530:       f100407f        cmp     x3, #0x10
+ffff00000809d534:       1a9f87e2        cset    w2, ls  // ls = plast
+ffff00000809d538:       eb00009f        cmp     x4, x0
+ffff00000809d53c:       1a9f27e1        cset    w1, cc  // cc = lo, ul, last
+ffff00000809d540:       6a01005f        tst     w2, w1
+ffff00000809d544:       54fffec1        b.ne    ffff00000809d51c <erase_kstack+0x44>  // b.any
+ffff00000809d548:       eb00009f        cmp     x4, x0
+ffff00000809d54c:       91002001        add     x1, x0, #0x8
+ffff00000809d550:       9a800020        csel    x0, x1, x0, eq  // eq = none
+ffff00000809d554:       910003e1        mov     x1, sp
+ffff00000809d558:       d5384102        mrs     x2, sp_el0
+ffff00000809d55c:       f906e840        str     x0, [x2, #3536]
+ffff00000809d560:       cb000023        sub     x3, x1, x0
+ffff00000809d564:       d287ffe2        mov     x2, #0x3fff                     // #16383
+ffff00000809d568:       eb02007f        cmp     x3, x2
+ffff00000809d56c:       540001a8        b.hi    ffff00000809d5a0 <erase_kstack+0xc8>  // b.pmore
+ffff00000809d570:       9297ddc2        mov     x2, #0xffffffffffff4111         // #-48879
+ffff00000809d574:       eb01001f        cmp     x0, x1
+ffff00000809d578:       54000082        b.cs    ffff00000809d588 <erase_kstack+0xb0>  // b.hs, b.nlast
+ffff00000809d57c:       f8008402        str     x2, [x0], #8
+ffff00000809d580:       eb00003f        cmp     x1, x0
+ffff00000809d584:       54ffffc8        b.hi    ffff00000809d57c <erase_kstack+0xa4>  // b.pmore
+ffff00000809d588:       910003e1        mov     x1, sp
+ffff00000809d58c:       d5384100        mrs     x0, sp_el0
+ffff00000809d590:       f906e401        str     x1, [x0, #3528]
+ffff00000809d594:       a8c17bfd        ldp     x29, x30, [sp], #16
+ffff00000809d598:       d65f03c0        ret
+ffff00000809d59c:       d503201f        nop
+ffff00000809d5a0:       d4210000        brk     #0x800
+ffff00000809d5a4:       00000000        .inst   0x00000000 ; undefined
 
-git grep -i n900 -- drivers/leds doesn't yield any output. Do I miss
-anything?
+It looks to be okay although admittedly that's subject to compiler
+whims. It might be safer to save the stack pointer almost as soon as
+we get into the function and use that?
 
-> I believe reasonable solution would be to have "hardware" trigger, and
-> have it selected by default. When active, LED would be controlled by
-> hardware.
+>> +
+>> +	BUG_ON(boundary - p >= THREAD_SIZE);
+>> +
+>> +	while (p < boundary) {
+>> +		*(unsigned long *)p = STACKLEAK_POISON;
+>> +		p += sizeof(unsigned long);
+>> +	}
+>> +
+>> +	/* Reset the lowest_stack value for the next syscall */
+>> +	current->thread.lowest_stack = current_stack_pointer;
+>> +}
+> 
+> Once this function returns, its data is left on the stack. Is that not a problem?
+> 
+> No strong feelings either way, but it might be worth mentioning in the commit
+> message.
+> 
+>> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+>> index f08a2ed9db0d..156fa0a0da19 100644
+>> --- a/arch/arm64/kernel/process.c
+>> +++ b/arch/arm64/kernel/process.c
+>> @@ -364,6 +364,9 @@ int copy_thread(unsigned long clone_flags, unsigned long stack_start,
+>>   	p->thread.cpu_context.pc = (unsigned long)ret_from_fork;
+>>   	p->thread.cpu_context.sp = (unsigned long)childregs;
+>>   
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +	p->thread.lowest_stack = (unsigned long)task_stack_page(p);
+> 
+> Nit: end_of_stack(p) would be slightly better semantically, even though
+> currently equivalent to task_stack_page(p).
+> 
+> [...]
+> 
+>> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+>> +void __used check_alloca(unsigned long size)
+>> +{
+>> +	unsigned long sp, stack_left;
+>> +
+>> +	sp = current_stack_pointer;
+>> +
+>> +	stack_left = sp & (THREAD_SIZE - 1);
+>> +	BUG_ON(stack_left < 256 || size >= stack_left - 256);
+>> +}
+> 
+> Is this arbitrary, or is there something special about 256?
+> 
+> Even if this is arbitrary, can we give it some mnemonic?
+> 
+>> +EXPORT_SYMBOL(check_alloca);
+>> +#endif
+>> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+>> index a34e9290a699..25dd2a14560d 100644
+>> --- a/drivers/firmware/efi/libstub/Makefile
+>> +++ b/drivers/firmware/efi/libstub/Makefile
+>> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
+>>   KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
+>>   				   -D__NO_FORTIFY \
+>>   				   $(call cc-option,-ffreestanding) \
+>> -				   $(call cc-option,-fno-stack-protector)
+>> +				   $(call cc-option,-fno-stack-protector) \
+>> +				   $(DISABLE_STACKLEAK_PLUGIN)
+>>   
+>>   GCOV_PROFILE			:= n
+>>   KASAN_SANITIZE			:= n
+> 
+> I believe we'll also need to do this for the KVM hyp code in arch/arm64/kvm/hyp/.
+> 
+> Thanks,
+> Mark.
+> 
 
-There is no prior art for that available as source code, right?
-
->> Another feature of the LED device is that there is a global brightness=
-
->> register that influences all LED's brightness (if on) independent of t=
-he
->> operating mode.
->=20
-> We can't describe that easily.
-
-Given that I can give an RGB value (i.e. 3x 8 bit) for the LED, I can
-change brightness per LED. Have to play around a bit.
-
->> Further the color of each LED can be set to an RGB triplet.
->=20
-> We normally handle RGB LED as three independend LEDs, like
-> notify::red, notify::green, notify::blue. Again, example is Nokia N900
-> or Motorola Droid 4.
-
-I cannot find source code for LEDs on the Droid 4 either.
-
-An ugly property here is that the hardware trigger only operates on all
-three colors at once. Hmm, will think a bit about the way to go.
-
-Best regards and thanks for your input,
-Uwe
-
-
---7A7rD1OAfPetVSHf2uiO53fZGsGZHC1Nt--
-
---Zp70xxEw6kIWCp715fzKSOcN8YPO9KsQL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAlrrWdIACgkQwfwUeK3K
-7AnzGgf/X/nbwuHt9FIUt7XDboeADP0kGEZcvr7y5m68VVN2rWAf83YzN0J/B6jw
-d2iNP4NEL1QSWlZmQEkSjTwdS7EyjbdBjb342Jbs6qxviAexaiGAA8bJKdcL2zAo
-3DkHQlPV4WBw9R7z/3LfT7VS3FlQZabd5qDZKb1JLqcB4jCwscRnW1N8+yu9sTse
-hfaIhpVSnsIhkhFNIJfzE8BcqLJOSwzNW57GLBW6t4BNscv/rkVXLcsEg68W+H3n
-3Fi2ZEfKmPMukX7aDutpmhGUpsskr6bQifqh7cphK+22Z7G19ApBp+fjkjFBT0ZP
-tkeAJob6OdknH8hUV29cFwa67bVgBA==
-=Gnu0
------END PGP SIGNATURE-----
-
---Zp70xxEw6kIWCp715fzKSOcN8YPO9KsQL--
+Thanks,
+Laura
