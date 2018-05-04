@@ -1,50 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751900AbeEDRwP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:52:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751558AbeEDRwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:52:13 -0400
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: avoid fsync() failure caused by EAGAIN in writepage()
-Date: Fri,  4 May 2018 10:52:10 -0700
-Message-Id: <20180504175210.26903-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
+        id S1751925AbeEDRwd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:52:33 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42374 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751814AbeEDRwI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:52:08 -0400
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [RFC PATCH 1/2] lockdep: Add a assert_in_softirq()
+Date: Fri,  4 May 2018 19:51:43 +0200
+Message-Id: <20180504175144.12179-2-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180504175144.12179-1-bigeasy@linutronix.de>
+References: <20180504175144.12179-1-bigeasy@linutronix.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pageout() in MM traslates EAGAIN, so calls handle_write_error()
- -> mapping_set_error() -> set_bit(AS_EIO, ...).
- file_write_and_wait_range() will see EIO error, which is critical
- to return value of fsync() followed by atomic_write failure to user.
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Instead of directly warn on wrong context, check if softirq context is
+set. This check could be a nop on RT.
+
+Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- fs/f2fs/data.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/lockdep.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 5477fc09c3cd..ac8720fa5868 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1904,7 +1904,13 @@ static int __write_data_page(struct page *page, bool *submitted,
- 
- redirty_out:
- 	redirty_page_for_writepage(wbc, page);
--	if (!err)
-+	/*
-+	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
-+	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
-+	 * file_write_and_wait_range() will see EIO error, which is critical
-+	 * to return value of fsync() followed by atomic_write failure to user.
-+	 */
-+	if (!err || wbc->for_reclaim)
- 		return AOP_WRITEPAGE_ACTIVATE;
- 	unlock_page(page);
- 	return err;
--- 
-2.17.0.484.g0c8726318c-goog
+diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
+index 6fc77d4dbdcd..59363c3047c6 100644
+--- a/include/linux/lockdep.h
++++ b/include/linux/lockdep.h
+@@ -608,11 +608,17 @@ do {									\
+ 			  "IRQs not disabled as expected\n");		\
+ 	} while (0)
+=20
++#define lockdep_assert_in_softirq()	do {				\
++		WARN_ONCE(debug_locks && !current->lockdep_recursion &&	\
++			  !current->softirq_context,			\
++			  "Not in softirq context as expected\n");	\
++	} while (0)
+ #else
+ # define might_lock(lock) do { } while (0)
+ # define might_lock_read(lock) do { } while (0)
+ # define lockdep_assert_irqs_enabled() do { } while (0)
+ # define lockdep_assert_irqs_disabled() do { } while (0)
++# define lockdep_assert_in_softirq() do { } while (0)
+ #endif
+=20
+ #ifdef CONFIG_LOCKDEP
+--=20
+2.17.0
