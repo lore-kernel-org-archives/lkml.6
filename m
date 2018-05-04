@@ -1,70 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751374AbeEDHsk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:48:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751001AbeEDHsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:48:39 -0400
-Date: Fri, 4 May 2018 15:48:22 +0800
-From: Shawn Guo <shawnguo@kernel.org>
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux@armlinux.org.uk,
-        devicetree@vger.kernel.org, Linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 2/6] ARM: dts: imx6sx-sabreauto: add max7322 IO
- expander support
-Message-ID: <20180504074821.GX3443@dragon>
-References: <1524725898-27974-1-git-send-email-Anson.Huang@nxp.com>
- <1524725898-27974-2-git-send-email-Anson.Huang@nxp.com>
+        id S1751339AbeEDHtm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:49:42 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:35211 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750733AbeEDHtl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 03:49:41 -0400
+X-Google-Smtp-Source: AB8JxZqrivJXBM4lXCXKk2elTrHSNW6IeBLDrfmflVRcVTg6+nNGLOcdkEj8VNHWPCFsQjnbeu18n0AOHmbgxw6xAnU=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524725898-27974-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1524828105-26585-4-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20180427112241epcas1p423b20f397d034a444ec018f39241d82b@epcas1p4.samsung.com>
+ <1524828105-26585-1-git-send-email-b.zolnierkie@samsung.com> <1524828105-26585-4-git-send-email-b.zolnierkie@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 4 May 2018 09:49:39 +0200
+X-Google-Sender-Auth: IIgQurLoFzqFiv_gqMBk9ejWgEc
+Message-ID: <CAMuHMdUEHosD=RyvQrBEjci1=DBH+2x9r9baX1d=0mx-sCc0qQ@mail.gmail.com>
+Subject: Re: [PATCH 3/3] video: fbdev: remove unused sh_mobile_meram driver
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 02:58:14PM +0800, Anson Huang wrote:
-> Add MAX7322 IO expander support.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> no changes since V4.
->  arch/arm/boot/dts/imx6sx-sabreauto.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> index 2caca934..d59084f 100644
-> --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> @@ -163,6 +163,13 @@
->  	pinctrl-0 = <&pinctrl_i2c2_1>;
->  	status = "okay";
->  
-> +	max7322: gpio@68 {
-> +		compatible = "maxim,max7322";
-> +		reg = <0x68>;
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +	};
-> +
+On Fri, Apr 27, 2018 at 1:21 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Since commit a521422ea4ae  ("ARM: shmobile: mackerel: Remove Legacy C
+> board code") MERAM functionality is unused. Remove it.
+>
+> Cc: Simon Horman <horms+renesas@verge.net.au>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-For child nodes having unit-address ('reg' property), sort them in order
-of unit-address.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Shawn
+Gr{oetje,eeting}s,
 
->  	pmic: pfuze100@08 {
->  		compatible = "fsl,pfuze100";
->  		reg = <0x08>;
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
