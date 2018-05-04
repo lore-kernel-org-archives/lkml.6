@@ -1,87 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751477AbeEDMph (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:45:37 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54245 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751291AbeEDMpe (ORCPT
+        id S1751417AbeEDMpf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:45:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45120 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751294AbeEDMpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 May 2018 08:45:34 -0400
-Message-ID: <1525437928.3373.16.camel@pengutronix.de>
-Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Alex Deucher <alexdeucher@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK"
-        <linaro-mm-sig@lists.linaro.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "open list:DMA BUFFER SHARING FRAMEWORK"
-        <linux-media@vger.kernel.org>
-Date: Fri, 04 May 2018 14:45:28 +0200
-In-Reply-To: <CADnq5_O5t8aSJE6SFzyjw-6Pmba7B2aYMztVMOOQCF3drBHR5Q@mail.gmail.com>
-References: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
-         <20180420101755.GA11400@infradead.org>
-         <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
-         <20180420124625.GA31078@infradead.org>
-         <20180420152111.GR31310@phenom.ffwll.local>
-         <20180424184847.GA3247@infradead.org>
-         <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
-         <20180425054855.GA17038@infradead.org>
-         <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
-         <CADnq5_P3bT0TStSXpKh11ydifv=KwKtRj-7tDS=GQXey+8tBPw@mail.gmail.com>
-         <20180425064118.GA28100@infradead.org>
-         <CADnq5_O5t8aSJE6SFzyjw-6Pmba7B2aYMztVMOOQCF3drBHR5Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Date: Fri, 4 May 2018 09:45:26 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        Anders Roxell <anders.roxell@linaro.org>, tomi.valkeinen@ti.com,
+        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: omap2: Kconfig: make FB_OMAP2_DSS_INIT depend
+ on OF
+Message-ID: <20180504094526.03484b2d@vento.lan>
+In-Reply-To: <1544113.qp318iEQvZ@amdc3058>
+References: <20180420112551.27027-1-anders.roxell@linaro.org>
+        <44871995.YYHkG5ofpC@amdc3058>
+        <20180504075906.02ecf32e@vento.lan>
+        <CGME20180504110518eucas1p1f79dec0a8def38083f82885c9c47bd5d@eucas1p1.samsung.com>
+        <1544113.qp318iEQvZ@amdc3058>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w44Cjr6N027066
 
-Am Mittwoch, den 25.04.2018, 13:44 -0400 schrieb Alex Deucher:
-> On Wed, Apr 25, 2018 at 2:41 AM, Christoph Hellwig <hch@infradead.org
-> > wrote:
-> > On Wed, Apr 25, 2018 at 02:24:36AM -0400, Alex Deucher wrote:
-> > > > It has a non-coherent transaction mode (which the chipset can opt to
-> > > > not implement and still flush), to make sure the AGP horror show
-> > > > doesn't happen again and GPU folks are happy with PCIe. That's at
-> > > > least my understanding from digging around in amd the last time we had
-> > > > coherency issues between intel and amd gpus. GPUs have some bits
-> > > > somewhere (in the pagetables, or in the buffer object description
-> > > > table created by userspace) to control that stuff.
+Em Fri, 04 May 2018 13:05:17 +0200
+Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> escreveu:
+
+> On Friday, May 04, 2018 07:59:06 AM Mauro Carvalho Chehab wrote:
+> > Em Fri, 04 May 2018 12:48:46 +0200
+> > Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> escreveu:
+> >   
+> > > On Thursday, May 03, 2018 08:48:56 AM Randy Dunlap wrote:  
+> > > > On 04/20/2018 04:25 AM, Anders Roxell wrote:    
+> > > > > Commit 7378f1149884 ("media: omap2: omapfb: allow building it with
+> > > > > COMPILE_TEST") broke compilation without CONFIG_OF selected.
+> > > > >   CC      drivers/video/fbdev/core/fbmem.o
+> > > > > drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c: In function ‘omapdss_update_prop’:
+> > > > > drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c:68:2: error: implicit declaration of function ‘of_update_property’; did you mean ‘of_get_property’? [-Werror=implicit-function-declaration]
+> > > > >   of_update_property(node, prop);
+> > > > >   ^~~~~~~~~~~~~~~~~~
+> > > > >   of_get_property
+> > > > > cc1: some warnings being treated as errors
+> > > > > scripts/Makefile.build:312: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o' failed
+> > > > > make[7]: *** [drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o] Error 1
+> > > > > scripts/Makefile.build:559: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss' failed
+> > > > > make[6]: *** [drivers/video/fbdev/omap2/omapfb/dss] Error 2
+> > > > > make[6]: *** Waiting for unfinished jobs....
+> > > > > 
+> > > > > Add OF dependency in order to make all configurations work again.
+> > > > > 
+> > > > > of_update_property() has no inline stub, and that that could be added as
+> > > > > an alternative.
+> > > > > 
+> > > > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > > > > ---
+> > > > >  drivers/video/fbdev/omap2/Kconfig | 2 +-
+> > > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/drivers/video/fbdev/omap2/Kconfig b/drivers/video/fbdev/omap2/Kconfig
+> > > > > index 82008699d253..4de381f2452e 100644
+> > > > > --- a/drivers/video/fbdev/omap2/Kconfig
+> > > > > +++ b/drivers/video/fbdev/omap2/Kconfig
+> > > > > @@ -1,4 +1,4 @@
+> > > > > -if ARCH_OMAP2PLUS || COMPILE_TEST
+> > > > > +if OF && (ARCH_OMAP2PLUS || COMPILE_TEST)
+> > > > >  
+> > > > >  source "drivers/video/fbdev/omap2/omapfb/Kconfig"
+> > > > >  
+> > > > >     
+> > > > 
+> > > > Hi,
+> > > > 
+> > > > This patch certainly fixes the build errors that I have been seeing in
+> > > > linux-next for several days now, so:
+> > > > 
+> > > > Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> > > > Tested-by: Randy Dunlap <rdunlap@infradead.org>    
 > > > 
-> > > Right.  We have a bit in the GPU page table entries that determines
-> > > whether we snoop the CPU's cache or not.
+> > > Thanks.
+> > > 
+> > > Since there has been no follow up from Mauro on this ([1]) I guess
+> > > that the best thing I can do is simply merging both patches to fbdev
+> > > tree..
+
+When you're saying about "both" patches, you're referring to the
+original one plus this fix, right?
+
+> > > 
+> > > [1] https://www.spinics.net/lists/linux-media/msg132583.html  
 > > 
-> > I can see how that works with the GPU on the same SOC or SOC set as the
-> > CPU.  But how is that going to work for a GPU that is a plain old PCIe
-> > card?  The cache snooping in that case is happening in the PCIe root
-> > complex.
+> > Sorry, it seems I missed it. If you didn't merge them yet, I'll
+> > merge it on my tree today, if you think it would be best to have
+> > it together with the patch that enabled FB_OMAP builds with
+> > COMPILE_TEST.  
+
+I know why I missed... I was not c/c at the original patch. Well,
+I received it at my LKML inbox, but nobody reads all LKML emails
+those days.
+
 > 
-> I'm not a pci expert, but as far as I know, the device sends either a
-> snooped or non-snooped transaction on the bus.  I think the
-> transaction descriptor supports a no snoop attribute.  Our GPUs have
-> supported this feature for probably 20 years if not more, going back
-> to PCI.  Using non-snooped transactions have lower latency and faster
-> throughput compared to snooped transactions.
+> This would be best indeed, you can add my ACK:
+> 
+> Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-PCI-X (as in the thing which as all the rage before PCIe) added a
-attribute phase to each transaction where the requestor can enable
-relaxed ordering and/or no-snoop on a transaction basis. As those are
-strictly performance optimizations the root-complex isn't required to
-honor those attributes, but implementations that care about performance
- usually will.
+Committed.
 
-Regards,
-Lucas
+> 
+> > If you prefer, instead, feel free to merge via your tree, as this is
+> > FB stuff anyway.
+> > 
+> > If you need/want:
+> > 
+> > Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>  
+> 
+> BTW Could you please also comment on / ACK my patch in this thread:
+> 
+> https://www.spinics.net/lists/linux-media/msg132733.html
+
+Sure I will look on it in a few. I'm not rushing with that 7
+patch series, as the most important thing for my workflow is to build
+all media drivers on i386/x86_64. Building on other archs is just a
+plus, as I intend some day to also incrementally do test building on arm
+as I receive/merge patches, but I don't do it yet.
+
+Thanks,
+Mauro
