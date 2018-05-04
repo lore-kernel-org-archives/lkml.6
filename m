@@ -1,221 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751839AbeEDRR0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:17:26 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42581 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751771AbeEDRRX (ORCPT
+        id S1751856AbeEDRRc convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:17:32 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:41814 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751563AbeEDRRa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:17:23 -0400
-X-Google-Smtp-Source: AB8JxZruNBO6XeVG6fwWcLTgOICmSU7K7teieFcO1n8qnq0hs6YueVUozvw6E+lhqT/haI66iO60Ig==
-From: Paolo Valente <paolo.valente@linaro.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or merge
-Date: Fri,  4 May 2018 19:17:01 +0200
-Message-Id: <20180504171701.6876-1-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
+        Fri, 4 May 2018 13:17:30 -0400
+From: ebiederm@xmission.com (Eric W. Biederman)
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+References: <20180504144014.5378-1-bigeasy@linutronix.de>
+        <87fu37e4rn.fsf@xmission.com>
+        <20180504170459.624e7vkro5fn2bgw@linutronix.de>
+Date: Fri, 04 May 2018 12:17:20 -0500
+In-Reply-To: <20180504170459.624e7vkro5fn2bgw@linutronix.de> (Sebastian
+        Andrzej Siewior's message of "Fri, 4 May 2018 19:04:59 +0200")
+Message-ID: <876043e3xb.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1fEeKl-0000Tk-Ls;;;mid=<876043e3xb.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+Hjuk68r2ezMLUBkfqV18GwM640o37nGQ=
+X-SA-Exim-Connect-IP: 97.119.174.25
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  0.7 XMSubLong Long Subject
+        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4808]
+        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+        *      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 137 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 2.4 (1.8%), b_tie_ro: 1.67 (1.2%), parse: 0.74 (0.5%),
+        extract_message_metadata: 9 (6.5%), get_uri_detail_list: 0.78 (0.6%),
+        tests_pri_-1000: 5 (3.9%), tests_pri_-950: 1.08 (0.8%), tests_pri_-900: 0.91
+        (0.7%), tests_pri_-400: 17 (12.2%), check_bayes: 16 (11.5%), b_tokenize: 4.3
+        (3.1%), b_tok_get_all: 4.9 (3.6%), b_comp_prob: 1.38 (1.0%), b_tok_touch_all:
+        3.7 (2.7%), b_finish: 0.52 (0.4%), tests_pri_0: 95 (69.3%),
+        check_dkim_signature: 0.43 (0.3%), check_dkim_adsp: 3.7 (2.7%),
+        tests_pri_500: 3.4 (2.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] kernel/signal: Remove no longer required irqsave/restore
+X-Spam-Flag: No
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When invoked for an I/O request rq, the prepare_request hook of bfq
-increments reference counters in the destination bfq_queue for rq. In
-this respect, after this hook has been invoked, rq may still be
-transformed into a request with no icq attached, i.e., for bfq, a
-request not associated with any bfq_queue. No further hook is invoked
-to signal this tranformation to bfq (in general, to the destination
-elevator for rq). This leads bfq into an inconsistent state, because
-bfq has no chance to correctly lower these counters back. This
-inconsistency may in its turn cause incorrect scheduling and hangs. It
-certainly causes memory leaks, by making it impossible for bfq to free
-the involved bfq_queue.
+Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
 
-On the bright side, no transformation can still happen for rq after rq
-has been inserted into bfq, or merged with another, already inserted,
-request. Exploiting this fact, this commit addresses the above issue
-by delaying the preparation of an I/O request to when the request is
-inserted or merged.
+> On 2018-05-04 11:59:08 [-0500], Eric W. Biederman wrote:
+>> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+>> > From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+> …
+>> > This long-term fix has been made in commit 4abf91047cf ("rtmutex: Make >
+>> > wait_lock irq safe") for different reason.
+>> 
+>> Which tree has this change been made in?  I am not finding the commit
+>> you mention above in Linus's tree.
+>
+> I'm sorry, it should have been commit b4abf91047cf ("rtmutex: Make
+> wait_lock irq safe").
 
-This change also gives a performance bonus: a lock-contention point
-gets removed. To prepare a request, bfq needs to hold its scheduler
-lock. After postponing request preparation to insertion or merging, no
-lock needs to be grabbed any longer in the prepare_request hook, while
-the lock already taken to perform insertion or merging is used to
-preparare the request as well.
+Can you fix that in your patch description and can you also up the
+description of rcu_read_unlock?
 
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
----
- block/bfq-iosched.c | 86 +++++++++++++++++++++++++++++++++++------------------
- 1 file changed, 57 insertions(+), 29 deletions(-)
+If we don't need to jump through hoops it looks very reasonable to
+remove this unnecessary logic.  But we should fix the description
+in rcu_read_unlock that still says we need these hoops.
 
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 771ae9730ac6..ea02162df6c7 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -1858,6 +1858,8 @@ static int bfq_request_merge(struct request_queue *q, struct request **req,
- 	return ELEVATOR_NO_MERGE;
- }
- 
-+static struct bfq_queue *bfq_init_rq(struct request *rq);
-+
- static void bfq_request_merged(struct request_queue *q, struct request *req,
- 			       enum elv_merge type)
- {
-@@ -1866,7 +1868,7 @@ static void bfq_request_merged(struct request_queue *q, struct request *req,
- 	    blk_rq_pos(req) <
- 	    blk_rq_pos(container_of(rb_prev(&req->rb_node),
- 				    struct request, rb_node))) {
--		struct bfq_queue *bfqq = RQ_BFQQ(req);
-+		struct bfq_queue *bfqq = bfq_init_rq(req);
- 		struct bfq_data *bfqd = bfqq->bfqd;
- 		struct request *prev, *next_rq;
- 
-@@ -1894,7 +1896,8 @@ static void bfq_request_merged(struct request_queue *q, struct request *req,
- static void bfq_requests_merged(struct request_queue *q, struct request *rq,
- 				struct request *next)
- {
--	struct bfq_queue *bfqq = RQ_BFQQ(rq), *next_bfqq = RQ_BFQQ(next);
-+	struct bfq_queue *bfqq = bfq_init_rq(rq),
-+		*next_bfqq = bfq_init_rq(next);
- 
- 	if (!RB_EMPTY_NODE(&rq->rb_node))
- 		goto end;
-@@ -4540,14 +4543,12 @@ static inline void bfq_update_insert_stats(struct request_queue *q,
- 					   unsigned int cmd_flags) {}
- #endif
- 
--static void bfq_prepare_request(struct request *rq, struct bio *bio);
--
- static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
- 			       bool at_head)
- {
- 	struct request_queue *q = hctx->queue;
- 	struct bfq_data *bfqd = q->elevator->elevator_data;
--	struct bfq_queue *bfqq = RQ_BFQQ(rq);
-+	struct bfq_queue *bfqq;
- 	bool idle_timer_disabled = false;
- 	unsigned int cmd_flags;
- 
-@@ -4562,24 +4563,13 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
- 	blk_mq_sched_request_inserted(rq);
- 
- 	spin_lock_irq(&bfqd->lock);
-+	bfqq = bfq_init_rq(rq);
- 	if (at_head || blk_rq_is_passthrough(rq)) {
- 		if (at_head)
- 			list_add(&rq->queuelist, &bfqd->dispatch);
- 		else
- 			list_add_tail(&rq->queuelist, &bfqd->dispatch);
--	} else {
--		if (WARN_ON_ONCE(!bfqq)) {
--			/*
--			 * This should never happen. Most likely rq is
--			 * a requeued regular request, being
--			 * re-inserted without being first
--			 * re-prepared. Do a prepare, to avoid
--			 * failure.
--			 */
--			bfq_prepare_request(rq, rq->bio);
--			bfqq = RQ_BFQQ(rq);
--		}
--
-+	} else { /* bfqq is assumed to be non null here */
- 		idle_timer_disabled = __bfq_insert_request(bfqd, rq);
- 		/*
- 		 * Update bfqq, because, if a queue merge has occurred
-@@ -4922,11 +4912,48 @@ static struct bfq_queue *bfq_get_bfqq_handle_split(struct bfq_data *bfqd,
- }
- 
- /*
-- * Allocate bfq data structures associated with this request.
-+ * Only reset private fields. The actual request preparation will be
-+ * performed by bfq_init_rq, when rq is either inserted or merged. See
-+ * comments on bfq_init_rq for the reason behind this delayed
-+ * preparation.
-  */
- static void bfq_prepare_request(struct request *rq, struct bio *bio)
-+{
-+	/*
-+	 * Regardless of whether we have an icq attached, we have to
-+	 * clear the scheduler pointers, as they might point to
-+	 * previously allocated bic/bfqq structs.
-+	 */
-+	rq->elv.priv[0] = rq->elv.priv[1] = NULL;
-+}
-+
-+/*
-+ * If needed, init rq, allocate bfq data structures associated with
-+ * rq, and increment reference counters in the destination bfq_queue
-+ * for rq. Return the destination bfq_queue for rq, or NULL is rq is
-+ * not associated with any bfq_queue.
-+ *
-+ * This function is invoked by the functions that perform rq insertion
-+ * or merging. One may have expected the above preparation operations
-+ * to be performed in bfq_prepare_request, and not delayed to when rq
-+ * is inserted or merged. The rationale behind this delayed
-+ * preparation is that, after the prepare_request hook is invoked for
-+ * rq, rq may still be transformed into a request with no icq, i.e., a
-+ * request not associated with any queue. No bfq hook is invoked to
-+ * signal this tranformation. As a consequence, should these
-+ * preparation operations be performed when the prepare_request hook
-+ * is invoked, and should rq be transformed one moment later, bfq
-+ * would end up in an inconsistent state, because it would have
-+ * incremented some queue counters for an rq destined to
-+ * transformation, without any chance to correctly lower these
-+ * counters back. In contrast, no transformation can still happen for
-+ * rq after rq has been inserted or merged. So, it is safe to execute
-+ * these preparation operations when rq is finally inserted or merged.
-+ */
-+static struct bfq_queue *bfq_init_rq(struct request *rq)
- {
- 	struct request_queue *q = rq->q;
-+	struct bio *bio = rq->bio;
- 	struct bfq_data *bfqd = q->elevator->elevator_data;
- 	struct bfq_io_cq *bic;
- 	const int is_sync = rq_is_sync(rq);
-@@ -4934,20 +4961,21 @@ static void bfq_prepare_request(struct request *rq, struct bio *bio)
- 	bool new_queue = false;
- 	bool bfqq_already_existing = false, split = false;
- 
-+	if (unlikely(!rq->elv.icq))
-+		return NULL;
-+
- 	/*
--	 * Even if we don't have an icq attached, we should still clear
--	 * the scheduler pointers, as they might point to previously
--	 * allocated bic/bfqq structs.
-+	 * Assuming that elv.priv[1] is set only if everything is set
-+	 * for this rq. This holds true, because this function is
-+	 * invoked only for insertion or merging, and, after such
-+	 * events, a request cannot be manipulated any longer before
-+	 * being removed from bfq.
- 	 */
--	if (!rq->elv.icq) {
--		rq->elv.priv[0] = rq->elv.priv[1] = NULL;
--		return;
--	}
-+	if (rq->elv.priv[1])
-+		return rq->elv.priv[1];
- 
- 	bic = icq_to_bic(rq->elv.icq);
- 
--	spin_lock_irq(&bfqd->lock);
--
- 	bfq_check_ioprio_change(bic, bio);
- 
- 	bfq_bic_update_cgroup(bic, bio);
-@@ -5006,7 +5034,7 @@ static void bfq_prepare_request(struct request *rq, struct bio *bio)
- 	if (unlikely(bfq_bfqq_just_created(bfqq)))
- 		bfq_handle_burst(bfqd, bfqq);
- 
--	spin_unlock_irq(&bfqd->lock);
-+	return bfqq;
- }
- 
- static void bfq_idle_slice_timer_body(struct bfq_queue *bfqq)
--- 
-2.16.1
+Eric
