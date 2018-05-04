@@ -1,123 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751759AbeEDV7M (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:59:12 -0400
-Received: from smtp41.i.mail.ru ([94.100.177.101]:40256 "EHLO smtp41.i.mail.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751611AbeEDV7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:59:11 -0400
-Subject: Re: [PATCH 7/7] ARM: dts: sun7i: Add dts file for the A20-linova1-7
- HMI
-To: Giulio Benetti <giulio.benetti@micronovasrl.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, devicetree@vger.kernel.org,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
- <1521662593-25468-7-git-send-email-giulio.benetti@micronovasrl.com>
- <20180322180508.my64gobhh5rc2x2m@flea>
- <8ef3b259-03b4-6987-286e-36ff627a8b76@micronovasrl.com>
- <20180424084137.7xfwji2gcibxavvt@flea>
- <03a02abb-e95c-b4ec-748f-907c0af67969@micronovasrl.com>
- <20180425184016.xktppxw7egddr7li@flea>
- <42feccc9-1d09-9ff2-3ccc-1dea63bacfb6@micronovasrl.com>
- <839d2560-0250-9b3a-8019-4e83d9e931e2@micronovasrl.com>
- <20180504080652.dniwaqqhbeuknp7y@flea>
- <afc78821-2d08-3f4f-d008-5b2d216e96c0@micronovasrl.com>
-From: Sergey Suloev <ssuloev@orpaltech.com>
-Message-ID: <644bcd2f-3479-3f3c-3aef-9db3d565c133@orpaltech.com>
-Date: Sat, 5 May 2018 00:59:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <afc78821-2d08-3f4f-d008-5b2d216e96c0@micronovasrl.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-Authentication-Results: smtp41.i.mail.ru; auth=pass smtp.auth=ssuloev@orpaltech.com smtp.mailfrom=ssuloev@orpaltech.com
-X-7FA49CB5: 0D63561A33F958A56573C4F049493D76E5612043B11318BEEE928EAF31F0B597725E5C173C3A84C39B8A9203B41872914D79FA29767958C080CB4917E5AABA03C4224003CC836476C0CAF46E325F83A50BF2EBBBDD9D6B0F9A3D58A9A349F5073B503F486389A921A5CC5B56E945C8DA
-X-Mailru-Sender: C5364AD02485212F3ACDC11E67D84917ADBECDE50454D9FA405676EBE7B368AD069BFC61DABEEB110841D3AAAB1726C63DDE9B364B0DF289264D2CD8C2503E8C22A194DADEED8EEDCA01A23BA9CD1BE7ED14614B50AE0675
-X-Mras: OK
+        id S1751611AbeEDWAK (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 18:00:10 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:46189 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751781AbeEDWAH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 18:00:07 -0400
+X-Google-Smtp-Source: AB8JxZrFnkGHBunJCYs/d/ZOQ3Qw++NawA3Gj9rYk5fpT13UI6mbTzqHtqH0yBBZzvm/x+XcsPrTpQ==
+From: Ram Pai <linuxram@us.ibm.com>
+To: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org
+Cc: linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dave.hansen@intel.com, benh@kernel.crashing.org, paulus@samba.org,
+        khandual@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
+        bauerman@linux.vnet.ibm.com, ebiederm@xmission.com,
+        linuxram@us.ibm.com, corbet@lwn.net, arnd@arndb.de
+Subject: [PATCH v13 1/3] mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS is enabled
+Date: Fri,  4 May 2018 14:59:41 -0700
+Message-Id: <1525471183-21277-2-git-send-email-linuxram@us.ibm.com>
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1525471183-21277-1-git-send-email-linuxram@us.ibm.com>
+References: <1525471183-21277-1-git-send-email-linuxram@us.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Giulio,
+VM_PKEY_BITx are defined only if CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+is enabled. Powerpc also needs these bits. Hence lets define the
+VM_PKEY_BITx bits for any architecture that enables
+CONFIG_ARCH_HAS_PKEYS.
 
-On 05/05/2018 12:52 AM, Giulio Benetti wrote:
-> Hi Maxime!
->
-> Il 04/05/2018 10:06, Maxime Ripard ha scritto:
->> Hi,
->>
->> On Wed, May 02, 2018 at 06:41:34PM +0200, Giulio Benetti wrote:
->>>>> You don't have to handcode the fragments anymore with the new syntax,
->>>>> and U-Boot makes it really trivial to use if you use the FIT image
->>>>> format to have multiple overlays bundled in the same image. You can
->>>>> choose to apply them dynamically, for example based on an EEPROM or
->>>>> some other metric to see which combination you have.
->>>>
->>>> Ah, this is interesting. I'm going to experiment with that.
->>>>
->>>
->>> I'm struggling against this, I don't really know how to proceed,
->>> except keeping monolithic dts files including other dtsi files.
->>>
->>> About dt-overlays I've tried to look around lot of time,
->>> but the only thing I've found is this:
->>> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/arch/arm/boot/dts?h=topic/renesas-overlays 
->>>
->>>
->>> where they use .dtso tagging them as "/plugin/;"
->>> and compile all .dtso found in dts folder.
->>> Then they obtain .dtbo files that should be the dt-overlays we have 
->>> spoken
->>> about right?
->>
->> Yes. You don't have to do that though, you can just rely on dtc to
->> compile them, outside of the linux build system.
->>
->>> What I can't understand is if there's a real standard at this time to
->>> follow, because on renesas-driver they use their way to handle all 
->>> .dtso
->>> files, but on mainline there seems to be nothing about that.
->>
->> I'm not sure what you mean here. It's just fragments of device tree,
->> that have to be compiled using dtc, that's it. You can use the Linux
->> build system infrastructure to do that, or you can build your own
->> simpler one. That's really up to you. See for example
->> https://github.com/NextThingCo/CHIP-dt-overlays/blob/master/Makefile
->>
->> (even though the overlays themselves use the legacy syntax and
->> shouldn't really be used an examples)
->
-> Everything works now!
-> Thank you very much!
-> I've setted up a Repo on Github to give an example on how make it work 
-> with no pain:
-> https://github.com/micronovasrl/linova-dtoverlays
->
-> At the moment it's a mess all around, but it's working and give an 
-> idea on how to make it work. Though I'm going to clean it up well as a 
-> base for linova dtoverlays.
->
-> Ah, btw, can you confirm me that base dts file must be compiled 
-> outside kernel with:
-> dtc -@ ....
-> Otherwise as in-tree dts with make dtbs "-@" argument is not passed.
-> Right?
->
-> Thank you a lot for your help and time again!
->
-> Best regards!
->
-I'd highly recommend you to look at Armbian overlay support: it is easy 
-and elegant.
+cc: Michael Ellermen <mpe@ellerman.id.au>
+cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+cc: Andrew Morton <akpm@linux-foundation.org>
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+---
+ arch/powerpc/include/asm/pkeys.h |    2 ++
+ fs/proc/task_mmu.c               |    4 ++--
+ include/linux/mm.h               |    9 +++++----
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-https://github.com/armbian/build/blob/master/patch/kernel/sunxi-next/add-overlay-compilation-support.patch
-
-https://github.com/armbian/build/blob/master/patch/kernel/sunxi-next/add-sunxi-overlays.patch
-
-
-Sergey
+diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
+index 3a9b82b..425b181 100644
+--- a/arch/powerpc/include/asm/pkeys.h
++++ b/arch/powerpc/include/asm/pkeys.h
+@@ -26,6 +26,8 @@
+ # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+ # define VM_PKEY_BIT4	VM_HIGH_ARCH_4
++#elif !defined(VM_PKEY_BIT4)
++# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
+ #endif
+ 
+ #define ARCH_VM_PKEY_FLAGS (VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 | \
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 65ae546..0c9e392 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -673,13 +673,13 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ 		[ilog2(VM_MERGEABLE)]	= "mg",
+ 		[ilog2(VM_UFFD_MISSING)]= "um",
+ 		[ilog2(VM_UFFD_WP)]	= "uw",
+-#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ 		/* These come out via ProtectionKey: */
+ 		[ilog2(VM_PKEY_BIT0)]	= "",
+ 		[ilog2(VM_PKEY_BIT1)]	= "",
+ 		[ilog2(VM_PKEY_BIT2)]	= "",
+ 		[ilog2(VM_PKEY_BIT3)]	= "",
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
+ 	};
+ 	size_t i;
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ac1f06..c6a6f24 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -228,15 +228,16 @@ extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+ 
+-#if defined(CONFIG_X86)
+-# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+-#if defined (CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
+ # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
+ # define VM_PKEY_BIT1	VM_HIGH_ARCH_1
+ # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
++
++#if defined(CONFIG_X86)
++# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+ #elif defined(CONFIG_PPC)
+ # define VM_SAO		VM_ARCH_1	/* Strong Access Ordering (powerpc) */
+ #elif defined(CONFIG_PARISC)
+-- 
+1.7.1
