@@ -1,35 +1,859 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeEDJTI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 05:19:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38031 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751189AbeEDJTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 05:19:07 -0400
-Date: Fri, 4 May 2018 11:19:06 +0200
-From: Johannes Thumshirn <jthumshirn@suse.de>
-To: Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH] nvme-rdma: clear NVME_RDMA_Q_LIVE before free the queue
-Message-ID: <20180504091906.2yfowtcbmwyaoekl@linux-x5ow.site>
-References: <1525420958-9537-1-git-send-email-jianchao.w.wang@oracle.com>
+        id S1751829AbeEDJTZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 05:19:25 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55518 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751060AbeEDJTW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 05:19:22 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1525420958-9537-1-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Fri, 04 May 2018 11:19:18 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Lucas Stach <dev@lynxeye.de>
+Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
+ (plus such board on Iris)
+In-Reply-To: <1525360112-9893-1-git-send-email-krzk@kernel.org>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
+Message-ID: <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         MID_RHS_MATCH_FROM(0.00)[];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         ARC_NA(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         RCPT_COUNT_SEVEN(0.00)[10];
+         TO_DN_SOME(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
+> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+> (with 1024 MB NAND) flavors.  Add support for the 256 MB version on Iris
+> evaluation board.
+
+To we really need to specify memory size these days? I think all common
+boot loaders fill the memory node anyway.
+
+arch/arm/boot/dts/imx6qdl-apalis.dtsi:
+	/* Will be filled by the bootloader */
+	memory@10000000 {
+		reg = <0x10000000 0>;
+	};
+
+
+I think we should just rename tegra20-colibri-512.dtsi =>
+tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-iris.dts to
+avoid confusion and add such an empty node.
+
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>    my bootloader uses mem= argument).
+
+What boot loader are you using? You even can omit mem= if your boot
+loader fills the memory node properly.
+
+--
+Stefan
+
+> ---
+>  Documentation/devicetree/bindings/arm/tegra.txt    |   1 +
+>  arch/arm/boot/dts/Makefile                         |   1 +
+>  arch/arm/boot/dts/tegra20-colibri-256.dtsi         |  11 +
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi         | 531 +--------------------
+>  ...gra20-colibri-512.dtsi => tegra20-colibri.dtsi} |   4 -
+>  arch/arm/boot/dts/tegra20-iris-256.dts             |  10 +
+>  arch/arm/boot/dts/tegra20-iris-512.dts             |  98 +---
+>  ...gra20-iris-512.dts => tegra20-iris-common.dtsi} |  11 +-
+>  8 files changed, 31 insertions(+), 636 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/tegra20-colibri-256.dtsi
+>  copy arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi} (99%)
+>  create mode 100644 arch/arm/boot/dts/tegra20-iris-256.dts
+>  copy arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris-common.dtsi} (85%)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt
+> b/Documentation/devicetree/bindings/arm/tegra.txt
+> index 32f62bb7006d..d304574ae441 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+> @@ -49,6 +49,7 @@ board-specific compatible values:
+>    toradex,apalis_t30-eval
+>    toradex,apalis-tk1
+>    toradex,apalis-tk1-eval
+> +  toradex,colibri_t20-256
+>    toradex,colibri_t20-512
+>    toradex,colibri_t30
+>    toradex,colibri_t30-eval-v3
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index da7d08c3ae98..d63214c6967c 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -1031,6 +1031,7 @@ dtb-$(CONFIG_ARCH_TANGO) += \
+>  	tango4-vantage-1172.dtb
+>  dtb-$(CONFIG_ARCH_TEGRA_2x_SOC) += \
+>  	tegra20-harmony.dtb \
+> +	tegra20-iris-256.dtb \
+>  	tegra20-iris-512.dtb \
+>  	tegra20-medcom-wide.dtb \
+>  	tegra20-paz00.dtb \
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-256.dtsi
+> b/arch/arm/boot/dts/tegra20-colibri-256.dtsi
+> new file mode 100644
+> index 000000000000..9c4b0975628f
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/tegra20-colibri-256.dtsi
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "tegra20-colibri.dtsi"
+> +
+> +/ {
+> +	model = "Toradex Colibri T20 256MB";
+> +	compatible = "toradex,colibri_t20-256", "nvidia,tegra20";
+> +
+> +	memory {
+> +		reg = <0x00000000 0x10000000>;
+> +	};
+> +};
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> index 5c202b3e3bb1..2011382c9c3d 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> @@ -1,540 +1,11 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> -#include "tegra20.dtsi"
+> +#include "tegra20-colibri.dtsi"
+>  
+>  / {
+>  	model = "Toradex Colibri T20 512MB";
+>  	compatible = "toradex,colibri_t20-512", "nvidia,tegra20";
+>  
+> -	aliases {
+> -		rtc0 = "/i2c@7000d000/tps6586x@34";
+> -		rtc1 = "/rtc@7000e000";
+> -	};
+> -
+>  	memory {
+>  		reg = <0x00000000 0x20000000>;
+>  	};
+> -
+> -	host1x@50000000 {
+> -		hdmi@54280000 {
+> -			vdd-supply = <&hdmi_vdd_reg>;
+> -			pll-supply = <&hdmi_pll_reg>;
+> -
+> -			nvidia,ddc-i2c-bus = <&i2c_ddc>;
+> -			nvidia,hpd-gpio = <&gpio TEGRA_GPIO(N, 7)
+> -				GPIO_ACTIVE_HIGH>;
+> -		};
+> -	};
+> -
+> -	pinmux@70000014 {
+> -		pinctrl-names = "default";
+> -		pinctrl-0 = <&state_default>;
+> -
+> -		state_default: pinmux {
+> -			audio_refclk {
+> -				nvidia,pins = "cdev1";
+> -				nvidia,function = "plla_out";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			crt {
+> -				nvidia,pins = "crtp";
+> -				nvidia,function = "crt";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			dap3 {
+> -				nvidia,pins = "dap3";
+> -				nvidia,function = "dap3";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			displaya {
+> -				nvidia,pins = "ld0", "ld1", "ld2", "ld3",
+> -					"ld4", "ld5", "ld6", "ld7", "ld8",
+> -					"ld9", "ld10", "ld11", "ld12", "ld13",
+> -					"ld14", "ld15", "ld16", "ld17",
+> -					"lhs", "lpw0", "lpw2", "lsc0",
+> -					"lsc1", "lsck", "lsda", "lspi", "lvs";
+> -				nvidia,function = "displaya";
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			gpio_dte {
+> -				nvidia,pins = "dte";
+> -				nvidia,function = "rsvd1";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			gpio_gmi {
+> -				nvidia,pins = "ata", "atc", "atd", "ate",
+> -					"dap1", "dap2", "dap4", "gpu", "irrx",
+> -					"irtx", "spia", "spib", "spic";
+> -				nvidia,function = "gmi";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			gpio_pta {
+> -				nvidia,pins = "pta";
+> -				nvidia,function = "rsvd4";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			gpio_uac {
+> -				nvidia,pins = "uac";
+> -				nvidia,function = "rsvd2";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			hdint {
+> -				nvidia,pins = "hdint";
+> -				nvidia,function = "hdmi";
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			i2c1 {
+> -				nvidia,pins = "rm";
+> -				nvidia,function = "i2c1";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			i2c3 {
+> -				nvidia,pins = "dtf";
+> -				nvidia,function = "i2c3";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			i2cddc {
+> -				nvidia,pins = "ddc";
+> -				nvidia,function = "i2c2";
+> -				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			i2cp {
+> -				nvidia,pins = "i2cp";
+> -				nvidia,function = "i2cp";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			irda {
+> -				nvidia,pins = "uad";
+> -				nvidia,function = "irda";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			nand {
+> -				nvidia,pins = "kbca", "kbcc", "kbcd",
+> -					"kbce", "kbcf";
+> -				nvidia,function = "nand";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			owc {
+> -				nvidia,pins = "owc";
+> -				nvidia,function = "owr";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			pmc {
+> -				nvidia,pins = "pmc";
+> -				nvidia,function = "pwr_on";
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			pwm {
+> -				nvidia,pins = "sdb", "sdc", "sdd";
+> -				nvidia,function = "pwm";
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			sdio4 {
+> -				nvidia,pins = "atb", "gma", "gme";
+> -				nvidia,function = "sdio4";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			spi1 {
+> -				nvidia,pins = "spid", "spie", "spif";
+> -				nvidia,function = "spi1";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			spi4 {
+> -				nvidia,pins = "slxa", "slxc", "slxd", "slxk";
+> -				nvidia,function = "spi4";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			uarta {
+> -				nvidia,pins = "sdio1";
+> -				nvidia,function = "uarta";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			uartd {
+> -				nvidia,pins = "gmc";
+> -				nvidia,function = "uartd";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			ulpi {
+> -				nvidia,pins = "uaa", "uab", "uda";
+> -				nvidia,function = "ulpi";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			ulpi_refclk {
+> -				nvidia,pins = "cdev2";
+> -				nvidia,function = "pllp_out4";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			usb_gpio {
+> -				nvidia,pins = "spig", "spih";
+> -				nvidia,function = "spi2_alt";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -			vi {
+> -				nvidia,pins = "dta", "dtb", "dtc", "dtd";
+> -				nvidia,function = "vi";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -			vi_sc {
+> -				nvidia,pins = "csus";
+> -				nvidia,function = "vi_sensor_clk";
+> -				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+> -				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+> -			};
+> -		};
+> -	};
+> -
+> -	ac97: ac97@70002000 {
+> -		status = "okay";
+> -		nvidia,codec-reset-gpio = <&gpio TEGRA_GPIO(V, 0)
+> -			GPIO_ACTIVE_HIGH>;
+> -		nvidia,codec-sync-gpio = <&gpio TEGRA_GPIO(P, 0)
+> -			GPIO_ACTIVE_HIGH>;
+> -	};
+> -
+> -	/*
+> -	 * GEN1_I2C: I2C_SDA/SCL on SODIMM pin 194/196 (e.g. RTC on carrier
+> -	 * board)
+> -	 */
+> -	i2c@7000c000 {
+> -		clock-frequency = <400000>;
+> -	};
+> -
+> -	/* DDC_SCL/SDA on X3 pin 15/16 (e.g. display EDID) */
+> -	i2c_ddc: i2c@7000c400 {
+> -		clock-frequency = <10000>;
+> -	};
+> -
+> -	/* GEN2_I2C: unused */
+> -
+> -	/* CAM/GEN3_I2C: used as EXT_IO1/2 GPIOs on SODIMM pin 133/127 */
+> -
+> -	/* PWR_I2C: power I2C to PMIC and temperature sensor (On-module) */
+> -	i2c@7000d000 {
+> -		status = "okay";
+> -		clock-frequency = <100000>;
+> -
+> -		pmic: tps6586x@34 {
+> -			compatible = "ti,tps6586x";
+> -			reg = <0x34>;
+> -			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+> -
+> -			ti,system-power-controller;
+> -
+> -			#gpio-cells = <2>;
+> -			gpio-controller;
+> -
+> -			sys-supply = <&vdd_3v3_reg>;
+> -			vin-sm0-supply = <&sys_reg>;
+> -			vin-sm1-supply = <&sys_reg>;
+> -			vin-sm2-supply = <&sys_reg>;
+> -			vinldo01-supply = <&sm2_reg>;
+> -			vinldo23-supply = <&vdd_3v3_reg>;
+> -			vinldo4-supply = <&vdd_3v3_reg>;
+> -			vinldo678-supply = <&vdd_3v3_reg>;
+> -			vinldo9-supply = <&vdd_3v3_reg>;
+> -
+> -			regulators {
+> -				#address-cells = <1>;
+> -				#size-cells = <0>;
+> -
+> -				sys_reg: regulator@0 {
+> -					reg = <0>;
+> -					regulator-compatible = "sys";
+> -					regulator-name = "vdd_sys";
+> -					regulator-always-on;
+> -				};
+> -
+> -				regulator@1 {
+> -					reg = <1>;
+> -					regulator-compatible = "sm0";
+> -					regulator-name = "vdd_sm0,vdd_core";
+> -					regulator-min-microvolt = <1200000>;
+> -					regulator-max-microvolt = <1200000>;
+> -					regulator-always-on;
+> -				};
+> -
+> -				regulator@2 {
+> -					reg = <2>;
+> -					regulator-compatible = "sm1";
+> -					regulator-name = "vdd_sm1,vdd_cpu";
+> -					regulator-min-microvolt = <1000000>;
+> -					regulator-max-microvolt = <1000000>;
+> -					regulator-always-on;
+> -				};
+> -
+> -				sm2_reg: regulator@3 {
+> -					reg = <3>;
+> -					regulator-compatible = "sm2";
+> -					regulator-name = "vdd_sm2,vin_ldo*";
+> -					regulator-min-microvolt = <1800000>;
+> -					regulator-max-microvolt = <1800000>;
+> -					regulator-always-on;
+> -				};
+> -
+> -				/* LDO0 is not connected to anything */
+> -
+> -				regulator@5 {
+> -					reg = <5>;
+> -					regulator-compatible = "ldo1";
+> -					regulator-name = "vdd_ldo1,avdd_pll*";
+> -					regulator-min-microvolt = <1100000>;
+> -					regulator-max-microvolt = <1100000>;
+> -					regulator-always-on;
+> -				};
+> -
+> -				regulator@6 {
+> -					reg = <6>;
+> -					regulator-compatible = "ldo2";
+> -					regulator-name = "vdd_ldo2,vdd_rtc";
+> -					regulator-min-microvolt = <1200000>;
+> -					regulator-max-microvolt = <1200000>;
+> -				};
+> -
+> -				/* LDO3 is not connected to anything */
+> -
+> -				regulator@8 {
+> -					reg = <8>;
+> -					regulator-compatible = "ldo4";
+> -					regulator-name = "vdd_ldo4,avdd_osc,vddio_sys";
+> -					regulator-min-microvolt = <1800000>;
+> -					regulator-max-microvolt = <1800000>;
+> -					regulator-always-on;
+> -				};
+> -
+> -				ldo5_reg: regulator@9 {
+> -					reg = <9>;
+> -					regulator-compatible = "ldo5";
+> -					regulator-name = "vdd_ldo5,vdd_fuse";
+> -					regulator-min-microvolt = <3300000>;
+> -					regulator-max-microvolt = <3300000>;
+> -					regulator-always-on;
+> -				};
+> -
+> -				regulator@10 {
+> -					reg = <10>;
+> -					regulator-compatible = "ldo6";
+> -					regulator-name = "vdd_ldo6,avdd_vdac,vddio_vi,vddio_cam";
+> -					regulator-min-microvolt = <2850000>;
+> -					regulator-max-microvolt = <2850000>;
+> -				};
+> -
+> -				hdmi_vdd_reg: regulator@11 {
+> -					reg = <11>;
+> -					regulator-compatible = "ldo7";
+> -					regulator-name = "vdd_ldo7,avdd_hdmi";
+> -					regulator-min-microvolt = <3300000>;
+> -					regulator-max-microvolt = <3300000>;
+> -				};
+> -
+> -				hdmi_pll_reg: regulator@12 {
+> -					reg = <12>;
+> -					regulator-compatible = "ldo8";
+> -					regulator-name = "vdd_ldo8,avdd_hdmi_pll";
+> -					regulator-min-microvolt = <1800000>;
+> -					regulator-max-microvolt = <1800000>;
+> -				};
+> -
+> -				regulator@13 {
+> -					reg = <13>;
+> -					regulator-compatible = "ldo9";
+> -					regulator-name = "vdd_ldo9,avdd_2v85,vdd_ddr_rx";
+> -					regulator-min-microvolt = <2850000>;
+> -					regulator-max-microvolt = <2850000>;
+> -					regulator-always-on;
+> -				};
+> -
+> -				regulator@14 {
+> -					reg = <14>;
+> -					regulator-compatible = "ldo_rtc";
+> -					regulator-name = "vdd_rtc_out,vdd_cell";
+> -					regulator-min-microvolt = <3300000>;
+> -					regulator-max-microvolt = <3300000>;
+> -					regulator-always-on;
+> -				};
+> -			};
+> -		};
+> -
+> -		temperature-sensor@4c {
+> -			compatible = "national,lm95245";
+> -			reg = <0x4c>;
+> -		};
+> -	};
+> -
+> -	pmc@7000e400 {
+> -		nvidia,suspend-mode = <1>;
+> -		nvidia,cpu-pwr-good-time = <5000>;
+> -		nvidia,cpu-pwr-off-time = <5000>;
+> -		nvidia,core-pwr-good-time = <3845 3845>;
+> -		nvidia,core-pwr-off-time = <3875>;
+> -		nvidia,sys-clock-req-active-high;
+> -	};
+> -
+> -	memory-controller@7000f400 {
+> -		emc-table@83250 {
+> -			reg = <83250>;
+> -			compatible = "nvidia,tegra20-emc-table";
+> -			clock-frequency = <83250>;
+> -			nvidia,emc-registers =   <0x00000005 0x00000011
+> -				0x00000004 0x00000002 0x00000004 0x00000004
+> -				0x00000001 0x0000000a 0x00000002 0x00000002
+> -				0x00000001 0x00000001 0x00000003 0x00000004
+> -				0x00000003 0x00000009 0x0000000c 0x0000025f
+> -				0x00000000 0x00000003 0x00000003 0x00000002
+> -				0x00000002 0x00000001 0x00000008 0x000000c8
+> -				0x00000003 0x00000005 0x00000003 0x0000000c
+> -				0x00000002 0x00000000 0x00000000 0x00000002
+> -				0x00000000 0x00000000 0x00000083 0x00520006
+> -				0x00000010 0x00000008 0x00000000 0x00000000
+> -				0x00000000 0x00000000 0x00000000 0x00000000>;
+> -		};
+> -		emc-table@133200 {
+> -			reg = <133200>;
+> -			compatible = "nvidia,tegra20-emc-table";
+> -			clock-frequency = <133200>;
+> -			nvidia,emc-registers =   <0x00000008 0x00000019
+> -				0x00000006 0x00000002 0x00000004 0x00000004
+> -				0x00000001 0x0000000a 0x00000002 0x00000002
+> -				0x00000002 0x00000001 0x00000003 0x00000004
+> -				0x00000003 0x00000009 0x0000000c 0x0000039f
+> -				0x00000000 0x00000003 0x00000003 0x00000002
+> -				0x00000002 0x00000001 0x00000008 0x000000c8
+> -				0x00000003 0x00000007 0x00000003 0x0000000c
+> -				0x00000002 0x00000000 0x00000000 0x00000002
+> -				0x00000000 0x00000000 0x00000083 0x00510006
+> -				0x00000010 0x00000008 0x00000000 0x00000000
+> -				0x00000000 0x00000000 0x00000000 0x00000000>;
+> -		};
+> -		emc-table@166500 {
+> -			reg = <166500>;
+> -			compatible = "nvidia,tegra20-emc-table";
+> -			clock-frequency = <166500>;
+> -			nvidia,emc-registers =   <0x0000000a 0x00000021
+> -				0x00000008 0x00000003 0x00000004 0x00000004
+> -				0x00000002 0x0000000a 0x00000003 0x00000003
+> -				0x00000002 0x00000001 0x00000003 0x00000004
+> -				0x00000003 0x00000009 0x0000000c 0x000004df
+> -				0x00000000 0x00000003 0x00000003 0x00000003
+> -				0x00000003 0x00000001 0x00000009 0x000000c8
+> -				0x00000003 0x00000009 0x00000004 0x0000000c
+> -				0x00000002 0x00000000 0x00000000 0x00000002
+> -				0x00000000 0x00000000 0x00000083 0x004f0006
+> -				0x00000010 0x00000008 0x00000000 0x00000000
+> -				0x00000000 0x00000000 0x00000000 0x00000000>;
+> -		};
+> -		emc-table@333000 {
+> -			reg = <333000>;
+> -			compatible = "nvidia,tegra20-emc-table";
+> -			clock-frequency = <333000>;
+> -			nvidia,emc-registers =   <0x00000014 0x00000041
+> -				0x0000000f 0x00000005 0x00000004 0x00000005
+> -				0x00000003 0x0000000a 0x00000005 0x00000005
+> -				0x00000004 0x00000001 0x00000003 0x00000004
+> -				0x00000003 0x00000009 0x0000000c 0x000009ff
+> -				0x00000000 0x00000003 0x00000003 0x00000005
+> -				0x00000005 0x00000001 0x0000000e 0x000000c8
+> -				0x00000003 0x00000011 0x00000006 0x0000000c
+> -				0x00000002 0x00000000 0x00000000 0x00000002
+> -				0x00000000 0x00000000 0x00000083 0x00380006
+> -				0x00000010 0x00000008 0x00000000 0x00000000
+> -				0x00000000 0x00000000 0x00000000 0x00000000>;
+> -		};
+> -	};
+> -
+> -	usb@c5004000 {
+> -		status = "okay";
+> -		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+> -			GPIO_ACTIVE_LOW>;
+> -	};
+> -
+> -	usb-phy@c5004000 {
+> -		status = "okay";
+> -		nvidia,phy-reset-gpio = <&gpio TEGRA_GPIO(V, 1)
+> -			GPIO_ACTIVE_LOW>;
+> -	};
+> -
+> -	sdhci@c8000600 {
+> -		cd-gpios = <&gpio TEGRA_GPIO(C, 7) GPIO_ACTIVE_LOW>;
+> -	};
+> -
+> -	clocks {
+> -		compatible = "simple-bus";
+> -		#address-cells = <1>;
+> -		#size-cells = <0>;
+> -
+> -		clk32k_in: clock@0 {
+> -			compatible = "fixed-clock";
+> -			reg = <0>;
+> -			#clock-cells = <0>;
+> -			clock-frequency = <32768>;
+> -		};
+> -	};
+> -
+> -	regulators {
+> -		compatible = "simple-bus";
+> -		#address-cells = <1>;
+> -		#size-cells = <0>;
+> -
+> -		vdd_3v3_reg: regulator@100 {
+> -			compatible = "regulator-fixed";
+> -			reg = <100>;
+> -			regulator-name = "vdd_3v3";
+> -			regulator-min-microvolt = <3300000>;
+> -			regulator-max-microvolt = <3300000>;
+> -			regulator-always-on;
+> -		};
+> -
+> -		regulator@101 {
+> -			compatible = "regulator-fixed";
+> -			reg = <101>;
+> -			regulator-name = "internal_usb";
+> -			regulator-min-microvolt = <5000000>;
+> -			regulator-max-microvolt = <5000000>;
+> -			enable-active-high;
+> -			regulator-boot-on;
+> -			regulator-always-on;
+> -			gpio = <&gpio TEGRA_GPIO(BB, 1) GPIO_ACTIVE_HIGH>;
+> -		};
+> -	};
+> -
+> -	sound {
+> -		compatible = "nvidia,tegra-audio-wm9712-colibri_t20",
+> -			         "nvidia,tegra-audio-wm9712";
+> -		nvidia,model = "Colibri T20 AC97 Audio";
+> -
+> -		nvidia,audio-routing =
+> -			"Headphone", "HPOUTL",
+> -			"Headphone", "HPOUTR",
+> -			"LineIn", "LINEINL",
+> -			"LineIn", "LINEINR",
+> -			"Mic", "MIC1";
+> -
+> -		nvidia,ac97-controller = <&ac97>;
+> -
+> -		clocks = <&tegra_car TEGRA20_CLK_PLL_A>,
+> -			 <&tegra_car TEGRA20_CLK_PLL_A_OUT0>,
+> -			 <&tegra_car TEGRA20_CLK_CDEV1>;
+> -		clock-names = "pll_a", "pll_a_out0", "mclk";
+> -	};
+>  };
+> diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> b/arch/arm/boot/dts/tegra20-colibri.dtsi
+> similarity index 99%
+> copy from arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> copy to arch/arm/boot/dts/tegra20-colibri.dtsi
+> index 5c202b3e3bb1..a567ea6d442f 100644
+> --- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+> +++ b/arch/arm/boot/dts/tegra20-colibri.dtsi
+> @@ -10,10 +10,6 @@
+>  		rtc1 = "/rtc@7000e000";
+>  	};
+>  
+> -	memory {
+> -		reg = <0x00000000 0x20000000>;
+> -	};
+> -
+>  	host1x@50000000 {
+>  		hdmi@54280000 {
+>  			vdd-supply = <&hdmi_vdd_reg>;
+> diff --git a/arch/arm/boot/dts/tegra20-iris-256.dts
+> b/arch/arm/boot/dts/tegra20-iris-256.dts
+> new file mode 100644
+> index 000000000000..f2df58c81493
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/tegra20-iris-256.dts
+> @@ -0,0 +1,10 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/dts-v1/;
+> +
+> +#include "tegra20-colibri-256.dtsi"
+> +#include "tegra20-iris-common.dtsi"
+> +
+> +/ {
+> +	model = "Toradex Colibri T20 256MB on Iris";
+> +	compatible = "toradex,iris", "toradex,colibri_t20-256", "nvidia,tegra20";
+> +};
+> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
+> b/arch/arm/boot/dts/tegra20-iris-512.dts
+> index 40126388946d..6841e5af6f26 100644
+> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
+> +++ b/arch/arm/boot/dts/tegra20-iris-512.dts
+> @@ -2,105 +2,9 @@
+>  /dts-v1/;
+>  
+>  #include "tegra20-colibri-512.dtsi"
+> +#include "tegra20-iris-common.dtsi"
+>  
+>  / {
+>  	model = "Toradex Colibri T20 512MB on Iris";
+>  	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
+> -
+> -	aliases {
+> -		serial0 = &uarta;
+> -		serial1 = &uartd;
+> -	};
+> -
+> -	chosen {
+> -		stdout-path = "serial0:115200n8";
+> -	};
+> -
+> -	host1x@50000000 {
+> -		hdmi@54280000 {
+> -			status = "okay";
+> -		};
+> -	};
+> -
+> -	pinmux@70000014 {
+> -		state_default: pinmux {
+> -			hdint {
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -
+> -			i2cddc {
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -
+> -			sdio4 {
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -
+> -			uarta {
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -
+> -			uartd {
+> -				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+> -			};
+> -		};
+> -	};
+> -
+> -	serial@70006000 {
+> -		status = "okay";
+> -	};
+> -
+> -	serial@70006300 {
+> -		status = "okay";
+> -	};
+> -
+> -	i2c_ddc: i2c@7000c400 {
+> -		status = "okay";
+> -	};
+> -
+> -	usb@c5000000 {
+> -		status = "okay";
+> -	};
+> -
+> -	usb-phy@c5000000 {
+> -		status = "okay";
+> -	};
+> -
+> -	usb@c5008000 {
+> -		status = "okay";
+> -	};
+> -
+> -	usb-phy@c5008000 {
+> -		status = "okay";
+> -	};
+> -
+> -	sdhci@c8000600 {
+> -		status = "okay";
+> -		bus-width = <4>;
+> -		vmmc-supply = <&vcc_sd_reg>;
+> -		vqmmc-supply = <&vcc_sd_reg>;
+> -	};
+> -
+> -	regulators {
+> -		regulator@0 {
+> -			compatible = "regulator-fixed";
+> -			reg = <0>;
+> -			regulator-name = "usb_host_vbus";
+> -			regulator-min-microvolt = <5000000>;
+> -			regulator-max-microvolt = <5000000>;
+> -			regulator-boot-on;
+> -			regulator-always-on;
+> -			gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
+> -		};
+> -
+> -		vcc_sd_reg: regulator@1 {
+> -			compatible = "regulator-fixed";
+> -			reg = <1>;
+> -			regulator-name = "vcc_sd";
+> -			regulator-min-microvolt = <3300000>;
+> -			regulator-max-microvolt = <3300000>;
+> -			regulator-boot-on;
+> -			regulator-always-on;
+> -		};
+> -	};
+>  };
+> diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts
+> b/arch/arm/boot/dts/tegra20-iris-common.dtsi
+> similarity index 85%
+> copy from arch/arm/boot/dts/tegra20-iris-512.dts
+> copy to arch/arm/boot/dts/tegra20-iris-common.dtsi
+> index 40126388946d..bbc6ab22526e 100644
+> --- a/arch/arm/boot/dts/tegra20-iris-512.dts
+> +++ b/arch/arm/boot/dts/tegra20-iris-common.dtsi
+> @@ -1,11 +1,12 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> -/dts-v1/;
+> -
+> -#include "tegra20-colibri-512.dtsi"
+> +//
+> +// This DTSI does not include specific Colibri DTSI but just configures
+> +// common Iris properties. This DTSI shall be included after including
+> +// specific Colibri DTSI.
+>  
+>  / {
+> -	model = "Toradex Colibri T20 512MB on Iris";
+> -	compatible = "toradex,iris", "toradex,colibri_t20-512", "nvidia,tegra20";
+> +	model = "Toradex Colibri T20 256MB/512MB on Iris";
+> +	compatible = "toradex,iris", "nvidia,tegra20";
+>  
+>  	aliases {
+>  		serial0 = &uarta;
