@@ -1,79 +1,416 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeEDKDo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:03:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751847AbeEDKDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:03:39 -0400
-X-Google-Smtp-Source: AB8JxZogyuvWRc+vtZs4S+sFkHcvvht8HlgwNxtYwTDXwo2wMExMGEI8a1BzIPR6xjnepEJ95hkWPlqYncnHQ5g/ZrE=
-MIME-Version: 1.0
-In-Reply-To: <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
-References: <1525360112-9893-1-git-send-email-krzk@kernel.org> <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 4 May 2018 12:03:36 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
-Message-ID: <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
- (plus such board on Iris)
-To: Stefan Agner <stefan@agner.ch>
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Lucas Stach <dev@lynxeye.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751986AbeEDKEA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:04:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39482 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751847AbeEDKD6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 06:03:58 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 14CBD6019F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From: Taniya Das <tdas@codeaurora.org>
+To: Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
+Date: Fri,  4 May 2018 15:32:38 +0530
+Message-Id: <1525428158-29147-2-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
+References: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 11:19 AM, Stefan Agner <stefan@agner.ch> wrote:
-> On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
->> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
->> (with 1024 MB NAND) flavors.  Add support for the 256 MB version on Iris
->> evaluation board.
->
-> To we really need to specify memory size these days? I think all common
-> boot loaders fill the memory node anyway.
->
-> arch/arm/boot/dts/imx6qdl-apalis.dtsi:
->         /* Will be filled by the bootloader */
->         memory@10000000 {
->                 reg = <0x10000000 0>;
->         };
->
->
-> I think we should just rename tegra20-colibri-512.dtsi =>
-> tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-iris.dts to
-> avoid confusion and add such an empty node.
+Add the RPMh clock driver to control the RPMh managed clock resources on
+some of the Qualcomm Technologies, Inc. SoCs.
 
-Having memory node is requirement of DeviceTree specification (at
-least one cpu and memory node). Of course if bootloader fills it, then
-we could assume that specification is satisfied... but what if some
-bootloader skips it? This creates quite specific dependency between
-kernel's DTS and bootloader.
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig    |   9 ++
+ drivers/clk/qcom/Makefile   |   1 +
+ drivers/clk/qcom/clk-rpmh.c | 334 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 344 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-rpmh.c
 
-One safe solution would be to specify 256 MB memory node for both
-boards and assume that bootloader will bump it to 512 MB for specific
-module.
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index e42e1af..627e6e1 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -59,6 +59,15 @@ config QCOM_CLK_SMD_RPM
+ 	  Say Y if you want to support the clocks exposed by the RPM on
+ 	  platforms such as apq8016, apq8084, msm8974 etc.
 
->> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->>
->> ---
->>
->> Changes since v1:
->> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
->>    my bootloader uses mem= argument).
->
-> What boot loader are you using? You even can omit mem= if your boot
-> loader fills the memory node properly.
-
-I use the one provided by vendor - Toradex. By default it passes both
-mem= and few other mem-like arguments (for FB and video processor) to
-command line. I believe it does not adjust the DTB itself because
-Toradex prepared this bootloader for... 3.1 kernel without DTB. 7
-years old kernel. :)
-
-Best regards,
-Krzysztof
++config QCOM_CLK_RPMH
++	tristate "RPMh Clock Driver"
++	depends on COMMON_CLK_QCOM && QCOM_RPMH
++	help
++	 RPMh manages shared resources on some Qualcomm Technologies, Inc.
++	 SoCs. It accepts requests from other hardware subsystems via RSC.
++	 Say Y if you want to support the clocks exposed by RPMh on
++	 platforms such as SDM845.
++
+ config APQ_GCC_8084
+ 	tristate "APQ8084 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 7c09ab1..246a721 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -37,5 +37,6 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
++obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SPMI_PMIC_CLKDIV) += clk-spmi-pmic-div.o
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+new file mode 100644
+index 0000000..944fe04
+--- /dev/null
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -0,0 +1,334 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <soc/qcom/cmd-db.h>
++#include <soc/qcom/rpmh.h>
++
++#include <dt-bindings/clock/qcom,rpmh.h>
++
++#define CLK_RPMH_ARC_EN_OFFSET		0
++#define CLK_RPMH_VRM_EN_OFFSET		4
++
++/**
++ * struct clk_rpmh - individual rpmh clock data structure
++ * @hw:			handle between common and hardware-specific interfaces
++ * @res_name:		resource name for the rpmh clock
++ * @div:		clock divider to compute the clock rate
++ * @res_addr:		base address of the rpmh resource within the RPMh
++ * @res_on_val:		rpmh clock enable value
++ * @state:		rpmh clock requested state
++ * @aggr_state:		rpmh clock aggregated state
++ * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
++ * @valid_state_mask:	mask to determine the state of the rpmh clock
++ * @dev:		device to which it is attached
++ * @peer:		pointer to the clock rpmh sibling
++ */
++struct clk_rpmh {
++	struct clk_hw hw;
++	const char *res_name;
++	u8 div;
++	u32 res_addr;
++	u32 res_on_val;
++	u32 state;
++	u32 aggr_state;
++	u32 last_sent_aggr_state;
++	u32 valid_state_mask;
++	struct device *dev;
++	struct clk_rpmh *peer;
++};
++
++struct clk_rpmh_desc {
++	struct clk_hw **clks;
++	size_t num_clks;
++};
++
++static DEFINE_MUTEX(rpmh_clk_lock);
++
++#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  _res_en_offset, _res_on, _div)		\
++	static struct clk_rpmh _platform##_##_name_active;		\
++	static struct clk_rpmh _platform##_##_name = {			\
++		.res_name = _res_name,					\
++		.res_addr = _res_en_offset,				\
++		.res_on_val = _res_on,					\
++		.div = _div,						\
++		.peer = &_platform##_##_name_active,			\
++		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
++				      BIT(RPMH_ACTIVE_ONLY_STATE) |	\
++				      BIT(RPMH_SLEEP_STATE)),		\
++		.hw.init = &(struct clk_init_data){			\
++			.ops = &clk_rpmh_ops,				\
++			.name = #_name,					\
++			.parent_names = (const char *[]){ "xo_board" },	\
++			.num_parents = 1,				\
++		},							\
++	};								\
++	static struct clk_rpmh _platform##_##_name_active = {		\
++		.res_name = _res_name,					\
++		.res_addr = _res_en_offset,				\
++		.res_on_val = _res_on,					\
++		.div = _div,						\
++		.peer = &_platform##_##_name,				\
++		.valid_state_mask = (BIT(RPMH_WAKE_ONLY_STATE) |	\
++					BIT(RPMH_ACTIVE_ONLY_STATE)),	\
++		.hw.init = &(struct clk_init_data){			\
++			.ops = &clk_rpmh_ops,				\
++			.name = #_name_active,				\
++			.parent_names = (const char *[]){ "xo_board" },	\
++			.num_parents = 1,				\
++		},							\
++	}
++
++#define DEFINE_CLK_RPMH_ARC(_platform, _name, _name_active, _res_name,	\
++			    _res_on, _div)				\
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  CLK_RPMH_ARC_EN_OFFSET, _res_on, _div)
++
++#define DEFINE_CLK_RPMH_VRM(_platform, _name, _name_active, _res_name,	\
++				_div)					\
++	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
++			  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
++
++static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
++{
++	return container_of(_hw, struct clk_rpmh, hw);
++}
++
++static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
++{
++	return (c->last_sent_aggr_state & BIT(state))
++		!= (c->aggr_state & BIT(state));
++}
++
++static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
++{
++	struct tcs_cmd cmd = { 0 };
++	u32 cmd_state, on_val;
++	enum rpmh_state state = RPMH_SLEEP_STATE;
++	int ret;
++
++	cmd.addr = c->res_addr;
++	cmd_state = c->aggr_state;
++	on_val = c->res_on_val;
++
++	for (; state <= RPMH_ACTIVE_ONLY_STATE; state++) {
++		if (has_state_changed(c, state)) {
++			if (cmd_state & BIT(state))
++				cmd.data = on_val;
++
++			ret = rpmh_write_async(c->dev, state, &cmd, 1);
++			if (ret) {
++				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
++					!state ? "sleep" :
++					state == RPMH_WAKE_ONLY_STATE	?
++					"wake" : "active", c->res_name, ret);
++				return ret;
++			}
++		}
++	}
++
++	c->last_sent_aggr_state = c->aggr_state;
++	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
++
++	return 0;
++}
++
++/*
++ * Update state and aggregate state values based on enable value.
++ */
++static int clk_rpmh_aggregate_state_send_command(struct clk_rpmh *c,
++						bool enable)
++{
++	int ret;
++
++	/* Nothing required to be done if already off or on */
++	if (enable == c->state)
++		return 0;
++
++	c->state = enable ? c->valid_state_mask : 0;
++	c->aggr_state = c->state | c->peer->state;
++	c->peer->aggr_state = c->aggr_state;
++
++	ret = clk_rpmh_send_aggregate_command(c);
++	if (!ret)
++		return 0;
++	if (ret && enable)
++		c->state = 0;
++	else if (ret)
++		c->state = c->valid_state_mask;
++
++	WARN(1, "clk: %s failed to %s\n", c->res_name,
++				enable ? "enable" : "disable");
++	return ret;
++}
++
++static int clk_rpmh_prepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++	int ret = 0;
++
++	mutex_lock(&rpmh_clk_lock);
++	ret = clk_rpmh_aggregate_state_send_command(c, true);
++	mutex_unlock(&rpmh_clk_lock);
++
++	return ret;
++};
++
++static void clk_rpmh_unprepare(struct clk_hw *hw)
++{
++	struct clk_rpmh *c = to_clk_rpmh(hw);
++
++	mutex_lock(&rpmh_clk_lock);
++	clk_rpmh_aggregate_state_send_command(c, false);
++	mutex_unlock(&rpmh_clk_lock);
++};
++
++static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
++					unsigned long prate)
++{
++	struct clk_rpmh *r = to_clk_rpmh(hw);
++	unsigned long rate = prate;
++
++	/*
++	 * RPMh clocks have a fixed rate. Return static rate.
++	 */
++	do_div(rate, r->div);
++	return rate;
++}
++
++static const struct clk_ops clk_rpmh_ops = {
++	.prepare	= clk_rpmh_prepare,
++	.unprepare	= clk_rpmh_unprepare,
++	.recalc_rate	= clk_rpmh_recalc_rate,
++};
++
++/* Resource name must match resource id present in cmd-db. */
++DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
++DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
++DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
++
++static struct clk_hw *sdm845_rpmh_clocks[] = {
++	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
++	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
++	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
++	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
++	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
++	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
++	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
++	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
++	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
++	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
++	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
++	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
++};
++
++static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
++	.clks = sdm845_rpmh_clocks,
++	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
++};
++
++static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
++					     void *data)
++{
++	struct clk_hw *hw_clks = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx < 0) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return &hw_clks[idx];
++}
++
++static int clk_rpmh_probe(struct platform_device *pdev)
++{
++	struct clk_hw **hw_clks;
++	struct clk_rpmh *rpmh_clk;
++	const struct clk_rpmh_desc *desc;
++	int ret, i;
++
++	ret = cmd_db_ready();
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "Command DB not available (%d)\n",
++									ret);
++		return ret;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	hw_clks = desc->clks;
++
++	for (i = 0; i < desc->num_clks; i++) {
++		u32 res_addr;
++
++		rpmh_clk = to_clk_rpmh(hw_clks[i]);
++		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
++		if (!res_addr) {
++			dev_err(&pdev->dev, "missing RPMh resource address for %s\n",
++					rpmh_clk->res_name);
++			return -ENODEV;
++		}
++		rpmh_clk->res_addr += res_addr;
++		rpmh_clk->dev = &pdev->dev;
++
++		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to register %s\n",
++					hw_clks[i]->init->name);
++			return ret;
++		}
++	}
++
++	ret = devm_of_clk_add_hw_provider(&pdev->dev, of_clk_rpmh_hw_get,
++				      desc->clks);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to add clock provider\n");
++		return ret;
++	}
++
++	dev_dbg(&pdev->dev, "Registered RPMh clocks\n");
++
++	return 0;
++}
++
++static const struct of_device_id clk_rpmh_match_table[] = {
++	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
++
++static struct platform_driver clk_rpmh_driver = {
++	.probe		= clk_rpmh_probe,
++	.driver		= {
++		.name	= "clk-rpmh",
++		.of_match_table = clk_rpmh_match_table,
++	},
++};
++
++static int __init clk_rpmh_init(void)
++{
++	return platform_driver_register(&clk_rpmh_driver);
++}
++subsys_initcall(clk_rpmh_init);
++
++static void __exit clk_rpmh_exit(void)
++{
++	platform_driver_unregister(&clk_rpmh_driver);
++}
++module_exit(clk_rpmh_exit);
++
++MODULE_DESCRIPTION("QCOM RPMh Clock Driver");
++MODULE_LICENSE("GPL v2");
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
