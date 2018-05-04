@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751646AbeEDNxR (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 09:53:17 -0400
-Received: from mail-eopbgr20093.outbound.protection.outlook.com ([40.107.2.93]:22400
+        id S1751709AbeEDNxX (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 09:53:23 -0400
+Received: from mail-eopbgr20090.outbound.protection.outlook.com ([40.107.2.90]:48365
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751568AbeEDNxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 09:53:09 -0400
+        id S1751652AbeEDNxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 09:53:19 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
 From: Peter Rosin <peda@axentia.se>
@@ -16,9 +16,9 @@ Cc: Peter Rosin <peda@axentia.se>, Archit Taneja <architt@codeaurora.org>,
         Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
         David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
         Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2 11/26] drm/bridge: ps8622: provide an owner .odev device
-Date: Fri,  4 May 2018 15:51:57 +0200
-Message-Id: <20180504135212.26977-12-peda@axentia.se>
+Subject: [PATCH v2 14/26] drm/bridge: sii8620: provide an owner .odev device
+Date: Fri,  4 May 2018 15:52:00 +0200
+Message-Id: <20180504135212.26977-15-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180504135212.26977-1-peda@axentia.se>
 References: <20180504135212.26977-1-peda@axentia.se>
@@ -30,47 +30,47 @@ X-ClientProxiedBy: DB6PR0202CA0039.eurprd02.prod.outlook.com
  (2603:10a6:200:8c::19)
 X-MS-PublicTrafficType: Email
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR0202MB2769;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;3:d5uLu91gTrPIcz+VARuMxH8IL3rz9P+kycit6BD70jgUSM7mc6X46tnGIe+CkLpL0ekhc9LDmKzLXBBHNaXDgPT0E5hDwiak7WralroselEm2fYwHYZnQ4eLmoOyhBdu7u4w9Rr/NNauFRs7XRcJLtJ/sk7CWzfEZdvn3FwxnBhbILRl8YJkjgXQWB95zdKOa319Zsc9L8e3icHDwvV+LT6+WlJ/flt0MV9lfdPo7GwQVeUWgVY3ACFPGYqCP6K9;25:lIgSGVoiejmksjnQDa3M1hwElTbMdlUNyWBCS0anLsmSbA2uMtsMJKUvQBfYjwJCakeJxiW00eZZJtYgr8nsxFyf/4ltv28PBrRKPkAP/cOb3MFYerjOlx40kh0D+l/gy9C1XDG5P51KYZIH7v2bFP5LJ2iswP9Rz3nK8nHCo5xQ1sB5BFxROrnZjrfQXw6NwT56fpy0gMLh6PqfvKZfMf2SolXE77b+IRb1k/ACEuyAZKP1iqFTrKdRODY1yNzoC4LwfncVb78uc2TLvCjW+1tkrQuynPXj0mQilJ9AaVQ8TVp97Hh+QXh7GGxwNt6cqv5+ZvoIaNmzpbY9NhEXDQ==;31:7vcKZJTVpBBiYKso0gcLLRw8b9NHAU4tORYA8mTUC4l0qXvMyw9LlfUiBNld6q7uGPHmgcJMfliG/rl5pXhyXi7pwIhZvX4OmRkCrGnEZL62QCOOOSaLGROspTt6dVuguZsbDepH5jX6cHTYGjg9gMU2rWAwExkAFCcq8cR083cjnRohvDRYivKKDoQIw65qp9Ldhra/Kq9bqVNct+RpC87uEpI2nU/+WytjReytdJw=
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;3:AN9vlMtg4khHYX2NRoY33Ml0FCqOh6f8AEkf68ba/PWRYbRu6T7IdMu9ts7aJpIP1BrGpCZs7sb8s0QG0NkVlSC/pgxZmzcmNeWHmKc/gkNZLk7tt1WJMSVtt40LWwClWsBoLGMflv1wFlc01JqYrL0BlHXRlM92/kYsnfjkREKDVDUVq+jqj7dRIQ5wsOVNQ0Y1m04Wh57eojPoZnlXA/YVw2EX3Jl/uOQU7++pifcijoOZw5ANgjgwtm1kOTY4;25:J6EeUXg3HVKKlZAkUKbSO9XjD33iAx+mn+AWojHzAzDaOCVkOixSzDDI2EURKZv4iBoW7o2d8vP8h/da+qwVlf1zdUR1dbInFJD98MgMCW9pps2uknil6aJFMPBpCOMF5wjTHukYgK4e2SWq7RhLvDzsHvKbMGTHLE/+NVKYWV8MJByg2Zm91uPwYVMVhMsnoB0hJ3Y+5iIA4awlIS8dnWIkU9UnfwfV1yj/+aI/twpzgiYYYZp2/+gEpsj6LGYucrYQENMHSFOdQtOCqZeieGGJE427bUcHlytZyiLml48peVkei87WXeqZTRi94NPUtnOlqWzIlz/BXSDBPUCw7w==;31:UZ2QyFc+ad+W0DIDCZSWqqM+HCH4qpBpzsjPX+ZM8fPi/QAMEWV7Ie8NTsXZsScFlBVmEktHqDOKQqWOBD/jbFAKU3vTjwca2FIRLmya5MKWfm9EqWsLEt4GJJQPDvVvsp2hO24QzEDrEGX6VOvky5PrKi4HTGtoFWeuPGbHjNuyqXkHNf20sPqXPwYyGp0jpwxvcF/mcXas6yZXX4QCRlZap9iTzpGfhijzpt2Q/DY=
 X-MS-TrafficTypeDiagnostic: AM4PR0202MB2769:
-X-Microsoft-Antispam-PRVS: <AM4PR0202MB2769C9CF231AB83BB911D365BC860@AM4PR0202MB2769.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <AM4PR0202MB2769EF8A62C8DD06CDCD6B56BC860@AM4PR0202MB2769.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6043046)(6072148)(201708071742011);SRVR:AM4PR0202MB2769;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0202MB2769;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;4:5LA2Bpa9h47ASeYB8ijF/V0SI+At9L+nWc+udRiIf7jVvYI8LYbWXAWhyt/K/f0LA9oFn2FjsVC1lW8dEioD4AoUIxJnTHTD/s+ImlDeaF1rHxl87jWKHJukKw+9TTL8/tkqIJm98zbCLDs35z65uXkWJYQbo4v5aDlX/5HoGu9wPLzaqi7ulAmrQZmbj34e+0dQshFTfkFXDAwtHthjqwbijZt5BmgEQaieIsgaRacTSUrEoY8y2sIKGUdgI4yUt817rNhk+dt8TOCrIqBowg==
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;4:aCjHZtLqestwLE0Bn3zDGpyJDZOw79Fl9D04ZwZ0g/+Q6SEPgDyc6K8ERLAxOUa7K0OEWRhLPZQkXfiZdm84HXME9oMlkJdCgfbpvV/iTQDpDELmx9JvDZoojFm+LHJYiFGWmmYTUZk+iho2KBtdZIqk/JMjv0+K04SmrlJcTCfO5WLyspSNwAefXI1DajpN/13xyz6VIOc6kx6vR735vJ0vOCgFBQMRgjycr7uSnQO9I+Ad5NtRJVyinGZhCyLJk436jkrKX4QvOFzOZ9TILg==
 X-Forefront-PRVS: 06628F7CA4
 X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(39380400002)(376002)(346002)(396003)(199004)(189003)(52116002)(386003)(50466002)(305945005)(6506007)(54906003)(74482002)(316002)(68736007)(5660300001)(16586007)(6666003)(50226002)(7736002)(8936002)(81166006)(8676002)(97736004)(6916009)(1076002)(48376002)(2906002)(2351001)(2361001)(16526019)(81156014)(76176011)(4326008)(86362001)(6486002)(6116002)(3846002)(53936002)(106356001)(478600001)(11346002)(486006)(446003)(36756003)(25786009)(51416003)(476003)(956004)(105586002)(2616005)(66066001)(6512007)(59450400001)(186003)(26005)(47776003)(142923001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2769;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2769;23:sxCnRF/+iesL5UwcEhla+g6qaJfFfags+qV5Utc?=
- =?us-ascii?Q?Pt9ASPZloeV6+JzT82BeOoZl3SgZbQRnsB3q9+sUs1CIrMd7W+pecXZMGF6u?=
- =?us-ascii?Q?7kz9+av8BRfWYaNkgYxrIcDhKJ2EKJS/VlpF4IEWPXUJ67DBNbrsv+qVdKea?=
- =?us-ascii?Q?4GC7UeyhvPqZGemT7nYgDc7CDPeMKB6eANkp9GB2kDHwiuxqs3OLYv0ALwG1?=
- =?us-ascii?Q?0omor1K10KNdZdYfOEBWywGdXG5Y27msRyP14Uq8lhrvEzmiNHPF79jCnggo?=
- =?us-ascii?Q?C2uuzppGgJ2Wjz9UM1n561ZvTvgjiHJJKAoZIJNQXbpxawYuari8pE6i2mRt?=
- =?us-ascii?Q?V9caf+WYZC7iz8olukiAbwEauCZ8F0pY9FLBHusCoY7EjCYAIwz9Ikou6jJb?=
- =?us-ascii?Q?SbNwvFi9+va0H7oSnlQYB9PAb0MJEDl794S3RGGEBhYFjoY4JVqQl69V4G+e?=
- =?us-ascii?Q?pAUwJeKkGN5/S6h3jyoYzI0OKSzuvSWxhH1qBb5hEOA1UXv7nBCikCgL4+pP?=
- =?us-ascii?Q?7pLRb6G9UB5cFU562zMmUSA/2fIihWigfACh4uu9DnFSb0DhYOpbah7j8fwx?=
- =?us-ascii?Q?5bo3EPC61SUbI6ATr+Q2tdXkNK0krbfE6ZJSQatqVFBqbfCZ8UwFWlYN+/TB?=
- =?us-ascii?Q?KVy12nFAcu0H8ZiA+LDvI6BjHb3225kZ42/QRrVZBWFvGs16SrApLWPo+Z9g?=
- =?us-ascii?Q?E6F5A4S8jyThrIqhe1I6lQCoTYgEDh90sEDIKCwTRBdTDHwboWRfykVydLLz?=
- =?us-ascii?Q?CWuh5phBgmOMvguxodnAwU/1aCjhP2B8BAmGnOsQEO2oVlv9sxx4cuReoDmO?=
- =?us-ascii?Q?iepzB1OQDsVaLZHKYks5oyQj6JRIasDgYW5RplW2B0q9/ll3TB58rQAl7Bc5?=
- =?us-ascii?Q?/rF+mjg0cj4ImixJ2tPVYaegkuDJzI8oV0RPNK16yNERiN0fdZZN1/H8zFEf?=
- =?us-ascii?Q?Cv0Iu0EZLU4hsAil7YDx6pvnqzldQmysNxFuc2j8NtPij7eG1VON84AuSPsx?=
- =?us-ascii?Q?zgrOf5dbykHvLQujSKToCRGUBlNhWVcrHdqXCKxUtMwOvnC4LtrliHEH2YUr?=
- =?us-ascii?Q?b4AWJ5t2Ls7X0S6H/cRRyBXyyKKkYiU8ziczOf6qS2HQp9IWPh0amm6y3bYM?=
- =?us-ascii?Q?Nto3RbJ5DAEBMJjmfG6UL64k4ktYb87rmVYtA7SlU8fW2VmylntCdvdPkGk9?=
- =?us-ascii?Q?8oRPYmlEYocr59+IVSGiiUT0Ypzg8Fn3yhN4hGkPiuL62Ui9JcEPTs6RTMQQ?=
- =?us-ascii?Q?G7SVM3UZJYyhWz+Xy4hKywx8x/vayllOYUXKxgacm/F8xhUgdYYqvNFGyV9m?=
- =?us-ascii?Q?mGSY9Aqn7yd3G0CHxv01/eFqIUi0xbOofUb2/vNPuZujT+TcmITUIveVHkVl?=
- =?us-ascii?Q?UjGrv7g=3D=3D?=
-X-Microsoft-Antispam-Message-Info: YhI+RqIMj33D1J+vSwdj1E5wA2r6gqaWgO13ifxgEokDvmjjxtUK8aaMPmtKb0SclwVgi7d5vdGcFuur1APtlQjzRRQPsKfLIM++NCO4KJPaDLwOcPcAE4p6ikNV0s+Yvtb/vUb0E/wLX0EDcZR+G2F3c/XXtyFXDqOW/r2k7VHfj35Al6lJXYeArILvtkVy
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;6:XqZuminiqoFm6f9TdU5KX7BF26MgvVI8HX26grLNwUXIv6V76i6xXVjqkLSnAUmiFt/mL6WVBK/ZuRGh1CpJGW6SBYfC+cXAFUlZr8BAT/yYE1Ck7xYP/E4ATqKFfM8e214iX0+j+7nXg4KLmkf/kUlBcsRXvDZ1hNNfTRxOLcARQZ7n70Drq6maTEeJFiLp2Qy8667iQGC7PMvPyU7tRf1R4Vy0ai6XKvJn5teHjkOnfMpNEet+inmgyGX5x6u4RwSiFYIgNeX+Yehcx+T4Nfn1RAIrnnolXJsZWGO5ps5/jrq2cMR5tiRntrDwkAqG0K8AyQ/Dy4vchNwFXjZSu5mPVeVuJztxDvuOCibfQp/pC8KaJRjxLR81jABLzxOwdGHQPM1qYGNDw/n/Hcl31eHq2qslAatauXmaPH7eMpGOH0M21OYqVDnCasU0ns9VvYcU6oVuc1MCTNu4vnFtwg==;5:y3/OXr1HmdZaillBopNuhBO2rgE+DptJ52Kusttjf1xD7SytWPxso6OlS+eRR/wpcesPEdVtukk7V2JHAtrJhwG4sqIe+2auS6UuSj2pDx+erRu1UZL5FbvcrngCHWeU5NY2/P+HD9Dk7chwQGopaxjbpSXGFKDSkOuLDczmdz4=;24:niA5MUuI8k7p0cWaicRbjrGOcgXj6tAq0Ds0KSs8/u9j8AxdFmObqBruuEfg4CdDe0JdQFmxB4dJm89yrH5ZTleaTdVcdl2TX8C7FBFTIts=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2769;23:GDnLcqSbVqtrUVN1dU/zl43fvAKsWJW9VwCckb1?=
+ =?us-ascii?Q?mz1sUjwAcs7dKyZfiMhLFY0bxC8ZEoDtBuSl15wBkCH0ZpcXRKxMba70S4Zs?=
+ =?us-ascii?Q?OcL87PRH2YS3HzdIy7/g42rF8zSf4LY31B46WNT2qgmLnQG4jWPSeve9Mf+O?=
+ =?us-ascii?Q?21MkVwrP9rzu7hqhJzXGdEuGa/kUAm7XL4G0N91bVPmDVBapGUnTiH5K5MhP?=
+ =?us-ascii?Q?7Pm2rOXPO5rjzFvLk2gBooTMWg92MRXrgaJZlF/0A7/qDts6Ed+7Y0alC3Dz?=
+ =?us-ascii?Q?yMcfoWlbvSHrW/EuDXiRIAiaADn0f4wz3r+nnigQX9L+pTkbDfhUpLfH+t/s?=
+ =?us-ascii?Q?+djj1jvhRSMlmJVJygrNSUEU03y/3d2p1Lr+dqxlFX3MfMQr7s1e+nLHp7o3?=
+ =?us-ascii?Q?7Si3ewJ/Jk88MUu8wNvp/aZBAVoJU9vknt3jImJV5JGN8Hq8se+5EeNLrg0L?=
+ =?us-ascii?Q?6HjA+1DQhWmNSvBu9mCwdXLwkyXCxCqgfN7JfariVqnDEtemYMcGkIVy99Hr?=
+ =?us-ascii?Q?ERvmQSN3v9Dh4Q3vujn8kMmLcVsMFp12cunK2wWlxYOguE2f3xF9oPJqAhwh?=
+ =?us-ascii?Q?eCyEIamixQ8V7pmO7z1nptL/f9gU81gbZJIxrke0qzCycmjHymfSHupk1uTZ?=
+ =?us-ascii?Q?+6voQfOe1SD/gUL2Jnt8qA8LUqk4KU37FJDhujqgIaN3Yks+EcRH9/lMt9gx?=
+ =?us-ascii?Q?gC6meh6631f9xvjhT81/nOAA1Rsz8LWNRlxnQQGv9dP/A8ZmhB8eGHC7Cgjx?=
+ =?us-ascii?Q?BnpyJx74WyXNSf4kCNh21cPCkB02VOGJHDsBE9WZw5c+Q5E8P3UVT1ncbjAj?=
+ =?us-ascii?Q?rDjB5nvTre6Z6lfJFfgZ6In75qtQf/bDr5MyD0S6IxFSg5TyzoJZ/rvtD3+o?=
+ =?us-ascii?Q?b+3IFFja5EB4ci8qT5DeL4t+FzmQ1hAY+yFOuqp6XQE+UrhCR9BAoEJ97Plo?=
+ =?us-ascii?Q?VvNcvAOtQAmsUchYaZBd94zlS8jW88pkbVGvSrdP0+BpCArRO6CjIcayiCPQ?=
+ =?us-ascii?Q?vrYXi3zYBAkmIG4/4gxFFiAi965DnkwsBoHcLRcz4/34WpBs7c2D4qd/yUTn?=
+ =?us-ascii?Q?dCW1Sjelo2in0GZnPEeZoF8iM0JUD4fdVVAmFFTAWR/I0qHELHrY4xhmBVBa?=
+ =?us-ascii?Q?3YnkCn+qxHApSSZTQ+DmAKtHZTd1N9WuAeiSssvK/Yxz0hQhU5TxE2M0j8I9?=
+ =?us-ascii?Q?E449GnaEXquCSoEgpDcA2Ew+AG6SuzitwxkM6wn2GyVyKsFzdEeaZvs0u2FP?=
+ =?us-ascii?Q?pPFlpTpHCJQDHDDsX5ZqT9Z/POYTAf4ELEacDQlFJ+prStiRYhCvh/6ItUzN?=
+ =?us-ascii?Q?qagtAeCpKncAUZe5plUJU0PN61KIFcl0kcG5MGA1REP8aqm369sTPQStO77m?=
+ =?us-ascii?Q?OKG1TjQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: qGyzIYn0Vmttr6Ad0oW71zoJfDNwmw6jkNRlr9qXAoFHZsMo4Nagx2qA+Mya0riRh1APTntDQOryOEj4RGCnMFqqYbK/19LnhSokRZqoUW9weNXeMVExX5M7p9icXTyoRMfzBV8Ng2mpSVYlQ/K8uegjFR+gzKphcqO+9MyWzZ2KxUu1jAMEPbh9xcGY7JtQ
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;6:Rz6O637ZC8cArZJgvCYlOdiOTu/VzkMsT/xr17XgcMls9gtMeGPU/jYvFDkszZPn9t8N40W7SVFpocYMpwznSfX9I6djGn66h8zIm9RumlJZ35NTM8QlhmqiQZPdImEdHu2B6HH9BJFYVRYo2c9IHr7heC+tFwfmXOd8tUzbUitS8CPNPIU4R2GLb52A4/nnHKshjTleltU3mpWuOecqOjVdFkhdhTM8DQ7d8gn9hIGGwEubohsnEYaeimN32wPp6BpkwUFhDWlss6w4C3BSD48DF7E3DaMXTFMEX7rU3fhaYTcTZqGNrClhmJLstaEck+Uwqdru/jmNNQtT5I8mX8omSP+YJGN4v6Lyb6BKXXcCaRso2XUqi0SMxTZdhDg09srd5bg92Grlsw7rUpMiZLrZpjl9AI2uIxCS7t+uyOqj7R+VMDGxs960Oyk+DMwW9NoYj1xKUHKuINr1sXFXOw==;5:4y2Oe32MhxkuLFr5dSU38gEoqH5TN04JlrmDOGuCdtUGSCzEUd4nYYEnSet4AVmFek9DJCWAHP5RP4do0Xgx3gzIPtoPN6ThY3nbt+bT5fHVjB4Rx3YQpJhdHP8KdS7A5/Lh6EG4z5Cumq/dW6mKR7L8UhpTgY8KdSuQOf/zWIk=;24:tstleW8eLeVGPZaZEdkTnkPSO9T3tjAGtz7aVhgCT3iCWbxZqSAZBrS7XmNfQyS+eMqjEfmYQCTAbXPG9pBlgvRn99wZz8VYUzOGyWcMgZ8=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;7:eYEQy5F+AbRI7h60B5NGcUuBmrmXKBprBn+YHZwoEEGMKafYnupiu+ENz3wy2Qnoyt1f2kUSpCnOr+Q8GL0w2ngJRXFbJaP/IYkd18Rm5OoBY8pWkb28ugoiiPJhGeaNQZVBM983/znFaM7/gwiyFPuBVuTUSUEhW4QRdcR94SucfVMp9HEYbF8N5Q5/xWytQvDg15KAjLtKX7N+kQKsSKVGU9YRqti/CNvY5Nn9QhpxEqsLp7aRvGGzDAz9kzsD
-X-MS-Office365-Filtering-Correlation-Id: c472c2cf-5fc7-4a9c-f337-08d5b1c65dcc
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;7:773vZWKMLcxDSczLKfADLa0T+mk2rdbxjr7ZxvxwwaLZb2mlWlCDQFbrucg2fgZpfcBBmlW1XR0KGH/qDPU8uII6AUQ9NQLbjWq2IN4k45HVCC+5U7JwFtaZ+w6rDZ5cYNJZTs59oi7k4zj/kygtvKYdc44DGmb9/2bZNFXObmiq6tun3EklDRr3sJxULFNCjR11jD3EAnBUzRgAs0Osa/EU81obD8EQjGycZSLbKayDZSKZ8IryWUNV6EymGlHo
+X-MS-Office365-Filtering-Correlation-Id: 1878ced4-8f21-47b1-7925-08d5b1c6631f
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2018 13:53:07.1171 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c472c2cf-5fc7-4a9c-f337-08d5b1c65dcc
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2018 13:53:16.0875 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1878ced4-8f21-47b1-7925-08d5b1c6631f
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0202MB2769
@@ -82,22 +82,22 @@ The .of_node member is going away.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/gpu/drm/bridge/parade-ps8622.c | 2 +-
+ drivers/gpu/drm/bridge/sil-sii8620.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/parade-ps8622.c b/drivers/gpu/drm/bridge/parade-ps8622.c
-index 81198f5e9afa..957420a1c924 100644
---- a/drivers/gpu/drm/bridge/parade-ps8622.c
-+++ b/drivers/gpu/drm/bridge/parade-ps8622.c
-@@ -595,8 +595,8 @@ static int ps8622_probe(struct i2c_client *client,
- 		ps8622->bl->props.brightness = PS8622_MAX_BRIGHTNESS;
- 	}
+diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
+index 7ab36042a822..8e35578b0488 100644
+--- a/drivers/gpu/drm/bridge/sil-sii8620.c
++++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+@@ -2387,8 +2387,8 @@ static int sii8620_probe(struct i2c_client *client,
  
-+	ps8622->bridge.odev = dev;
- 	ps8622->bridge.funcs = &ps8622_bridge_funcs;
--	ps8622->bridge.of_node = dev->of_node;
- 	drm_bridge_add(&ps8622->bridge);
+ 	i2c_set_clientdata(client, ctx);
  
- 	i2c_set_clientdata(client, ps8622);
++	ctx->bridge.odev = dev;
+ 	ctx->bridge.funcs = &sii8620_bridge_funcs;
+-	ctx->bridge.of_node = dev->of_node;
+ 	drm_bridge_add(&ctx->bridge);
+ 
+ 	if (!ctx->extcon)
 -- 
 2.11.0
