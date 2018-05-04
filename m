@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeEDRkF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:40:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57404 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751484AbeEDRkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:40:01 -0400
+        id S1752041AbeEDRkI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:40:08 -0400
+Received: from foss.arm.com ([217.140.101.70]:57428 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751484AbeEDRkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:40:06 -0400
 From: Mark Rutland <mark.rutland@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com,
         boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
         mark.rutland@arm.com, mingo@kernel.org, peterz@infradead.org,
         will.deacon@arm.com
-Subject: [PATCH 4/6] arm64: fix assembly constraints for cmpxchg
-Date: Fri,  4 May 2018 18:39:35 +0100
-Message-Id: <20180504173937.25300-5-mark.rutland@arm.com>
+Subject: [PATCH 6/6] arm64: instrument smp_{load_acquire,store_release}
+Date: Fri,  4 May 2018 18:39:37 +0100
+Message-Id: <20180504173937.25300-7-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180504173937.25300-1-mark.rutland@arm.com>
 References: <20180504173937.25300-1-mark.rutland@arm.com>
@@ -22,72 +22,106 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our LL/SC cmpxchg assembly uses "Lr" as the constraint for old, which
-allows either an integer constant suitable for a 64-bit logical
-oepration, or a register.
+Our __smp_store_release() and __smp_load_acquire() macros use inline
+assembly, which is opaque to kasan. This means that kasan can't catch
+erroneous use of these.
 
-However, this assembly is also used for 32-bit cases (where we
-explicitly add a 'w' prefix to the output format), where the set of
-valid immediates differ, and we should use a 'Kr' constraint.
+This patch adds kasan instrumentation to both.
 
-In some cases, this can result in build failures, when GCC selects an
-immediate which is valid for a 64-bit logical operation, but we try to
-assemble a 32-bit logical operation:
-
-[mark@lakrids:~/src/linux]% uselinaro 17.05 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- net/sunrpc/auth_gss/svcauth_gss.o
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CHK     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  CHK     scripts/mod/devicetable-offsets.h
-  CC      net/sunrpc/auth_gss/svcauth_gss.o
-/tmp/ccj04KVh.s: Assembler messages:
-/tmp/ccj04KVh.s:325: Error: immediate out of range at operand 3 -- `eor w2,w1,4294967295'
-scripts/Makefile.build:324: recipe for target 'net/sunrpc/auth_gss/svcauth_gss.o' failed
-make[1]: *** [net/sunrpc/auth_gss/svcauth_gss.o] Error 1
-Makefile:1704: recipe for target 'net/sunrpc/auth_gss/svcauth_gss.o' failed
-make: *** [net/sunrpc/auth_gss/svcauth_gss.o] Error 2
-
-Note that today we largely avoid the specific failure above because GCC
-happens to already have the value in a register, and in most cases uses
-that rather than generating the immediate. The following code added to
-an arbitrary file will cause the same failure:
-
-unsigned int test_cmpxchg(unsigned int *l)
-{
-       return cmpxchg(l, -1, 0);
-}
-
-While it would seem that we could conditionally use the 'K' constraint,
-this seems to be handled erroneously by GCC (at least versions 6.3 and
-7.1), with the same immediates being used, despite not being permitted
-for 32-bit logical operations.
-
-Thus we must avoid the use of an immediate in order to prevent failures
-as above.
+It might be better to turn these into __arch_* variants, as we do for
+the atomics, but this works for the time being.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/atomic_ll_sc.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/barrier.h | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm64/include/asm/atomic_ll_sc.h b/arch/arm64/include/asm/atomic_ll_sc.h
-index f5a2d09afb38..3175f4982682 100644
---- a/arch/arm64/include/asm/atomic_ll_sc.h
-+++ b/arch/arm64/include/asm/atomic_ll_sc.h
-@@ -267,7 +267,7 @@ __LL_SC_PREFIX(__cmpxchg_case_##name(volatile void *ptr,		\
- 	"2:"								\
- 	: [tmp] "=&r" (tmp), [oldval] "=&r" (oldval),			\
- 	  [v] "+Q" (*(unsigned long *)ptr)				\
--	: [old] "Lr" (old), [new] "r" (new)				\
-+	: [old] "r" (old), [new] "r" (new)				\
- 	: cl);								\
- 									\
- 	return oldval;							\
+diff --git a/arch/arm64/include/asm/barrier.h b/arch/arm64/include/asm/barrier.h
+index f11518af96a9..1a9c601619e5 100644
+--- a/arch/arm64/include/asm/barrier.h
++++ b/arch/arm64/include/asm/barrier.h
+@@ -20,6 +20,8 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++#include <linux/kasan-checks.h>
++
+ #define __nops(n)	".rept	" #n "\nnop\n.endr\n"
+ #define nops(n)		asm volatile(__nops(n))
+ 
+@@ -68,31 +70,33 @@ static inline unsigned long array_index_mask_nospec(unsigned long idx,
+ 
+ #define __smp_store_release(p, v)					\
+ do {									\
++	typeof(p) __p = (p);						\
+ 	union { typeof(*p) __val; char __c[1]; } __u =			\
+ 		{ .__val = (__force typeof(*p)) (v) }; 			\
+ 	compiletime_assert_atomic_type(*p);				\
++	kasan_check_write(__p, sizeof(*__p));				\
+ 	switch (sizeof(*p)) {						\
+ 	case 1:								\
+ 		asm volatile ("stlrb %w1, %0"				\
+-				: "=Q" (*p)				\
++				: "=Q" (*__p)				\
+ 				: "r" (*(__u8 *)__u.__c)		\
+ 				: "memory");				\
+ 		break;							\
+ 	case 2:								\
+ 		asm volatile ("stlrh %w1, %0"				\
+-				: "=Q" (*p)				\
++				: "=Q" (*__p)				\
+ 				: "r" (*(__u16 *)__u.__c)		\
+ 				: "memory");				\
+ 		break;							\
+ 	case 4:								\
+ 		asm volatile ("stlr %w1, %0"				\
+-				: "=Q" (*p)				\
++				: "=Q" (*__p)				\
+ 				: "r" (*(__u32 *)__u.__c)		\
+ 				: "memory");				\
+ 		break;							\
+ 	case 8:								\
+ 		asm volatile ("stlr %1, %0"				\
+-				: "=Q" (*p)				\
++				: "=Q" (*__p)				\
+ 				: "r" (*(__u64 *)__u.__c)		\
+ 				: "memory");				\
+ 		break;							\
+@@ -102,27 +106,29 @@ do {									\
+ #define __smp_load_acquire(p)						\
+ ({									\
+ 	union { typeof(*p) __val; char __c[1]; } __u;			\
++	typeof(p) __p = (p);						\
+ 	compiletime_assert_atomic_type(*p);				\
++	kasan_check_read(__p, sizeof(*__p));				\
+ 	switch (sizeof(*p)) {						\
+ 	case 1:								\
+ 		asm volatile ("ldarb %w0, %1"				\
+ 			: "=r" (*(__u8 *)__u.__c)			\
+-			: "Q" (*p) : "memory");				\
++			: "Q" (*__p) : "memory");			\
+ 		break;							\
+ 	case 2:								\
+ 		asm volatile ("ldarh %w0, %1"				\
+ 			: "=r" (*(__u16 *)__u.__c)			\
+-			: "Q" (*p) : "memory");				\
++			: "Q" (*__p) : "memory");			\
+ 		break;							\
+ 	case 4:								\
+ 		asm volatile ("ldar %w0, %1"				\
+ 			: "=r" (*(__u32 *)__u.__c)			\
+-			: "Q" (*p) : "memory");				\
++			: "Q" (*__p) : "memory");			\
+ 		break;							\
+ 	case 8:								\
+ 		asm volatile ("ldar %0, %1"				\
+ 			: "=r" (*(__u64 *)__u.__c)			\
+-			: "Q" (*p) : "memory");				\
++			: "Q" (*__p) : "memory");			\
+ 		break;							\
+ 	}								\
+ 	__u.__val;							\
 -- 
 2.11.0
