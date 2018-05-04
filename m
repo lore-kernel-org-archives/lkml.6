@@ -1,46 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751775AbeEDVML (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:12:11 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50738 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751651AbeEDVMJ (ORCPT
+        id S1751825AbeEDVMs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:12:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55670 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751760AbeEDVMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:12:09 -0400
-X-Google-Smtp-Source: AB8JxZppL2b8dyvZ30YVM4iZ1GcajxIJwuM+7GZ/KpTv6oeSPmAPQRYP8Oq+XBXlgoRR18pMTfBKgg==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Kees Cook <keescook@chromium.org>,
-        Elena Reshetova <elena.reshetova@intel.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [PATCH] Documentation: refcount-vs-atomic: Update reference to LKMM doc.
-Date: Fri,  4 May 2018 23:11:49 +0200
-Message-Id: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 4 May 2018 17:12:47 -0400
+Date: Fri, 4 May 2018 14:12:44 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, x86@kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: Proof-of-concept: better(?) page-table manipulation API
+Message-ID: <20180504211244.GD29829@bombadil.infradead.org>
+References: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LKMM project has moved to 'tools/memory-model/'.
+On Tue, Apr 24, 2018 at 06:43:56PM +0300, Kirill A. Shutemov wrote:
+> +struct pt_ptr {
+> +	unsigned long *ptr;
+> +	int lvl;
+> +};
 
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
----
- Documentation/core-api/refcount-vs-atomic.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On x86, you've got three kinds of paging scheme, referred to in the manual
+as 32-bit, PAE and 4-level.  On 32-bit, you've got 3 levels (Directory,
+Table and Entry), and you can encode those three levels in the bottom
+two bits of the pointer.  With PAE and 4L, pointers are 64-bit aligned,
+so you can encode up to eight levels in the bottom three bits of the
+pointer.
 
-diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
-index 83351c258cdb9..322851bada167 100644
---- a/Documentation/core-api/refcount-vs-atomic.rst
-+++ b/Documentation/core-api/refcount-vs-atomic.rst
-@@ -17,7 +17,7 @@ in order to help maintainers validate their code against the change in
- these memory ordering guarantees.
- 
- The terms used through this document try to follow the formal LKMM defined in
--github.com/aparri/memory-model/blob/master/Documentation/explanation.txt
-+tools/memory-model/Documentation/explanation.txt.
- 
- memory-barriers.txt and atomic_t.txt provide more background to the
- memory ordering in general and for atomic operations specifically.
--- 
-2.7.4
+> +struct pt_val {
+> +	unsigned long val;
+> +	int lvl;
+> +};
+
+I don't think it's possible to shrink this down to a single ulong.
+_Maybe_ it is if you can squirm a single bit free from the !pte_present
+case.
+
+... this is only for x86 4L and maybe 32 paging, right?  It'd need to
+use unsigned long val[2] for PAE.
+
+I'm going to think about this some more.  There's a lot of potential here.
