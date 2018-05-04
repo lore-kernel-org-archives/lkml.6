@@ -1,66 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751382AbeEDKQo (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:16:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45108 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750733AbeEDKQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:16:43 -0400
-Date: Fri, 4 May 2018 12:16:31 +0200
-From: Borislav Petkov <bp@suse.de>
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        robh+dt@kernel.org, dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-        josh@joshtriplett.org, Thomas Gleixner <tglx@linutronix.de>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Wei Yang <richard.weiyang@gmail.com>
-Subject: Re: [PATCH v3 2/3] resource: add walk_system_ram_res_rev()
-Message-ID: <20180504101631.GB9377@pd.tnic>
-References: <20180419001848.3041-1-bhe@redhat.com>
- <20180419001848.3041-3-bhe@redhat.com>
- <20180419100745.GC3896@pd.tnic>
- <20180426085649.GC18395@localhost.localdomain>
- <20180426110905.GH15043@pd.tnic>
- <20180426132204.GF19030@localhost.localdomain>
+        id S1751236AbeEDKWI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:22:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7224 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750820AbeEDKWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 06:22:07 -0400
+Subject: Re: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI support
+To: Lee Jones <lee.jones@linaro.org>
+References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
+ <1525360119-102166-2-git-send-email-john.garry@huawei.com>
+ <1525366486.21176.653.camel@linux.intel.com> <20180504090216.GC3928@dell>
+ <4a15b0b4-5707-d51b-4762-02df8e153bd9@huawei.com>
+ <20180504100359.GD3928@dell>
+CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
+        <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
+        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
+        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <348eecff-1f7a-f1cf-fbd8-a029ea8a8da7@huawei.com>
+Date: Fri, 4 May 2018 11:21:39 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180426132204.GF19030@localhost.localdomain>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <20180504100359.GD3928@dell>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 26, 2018 at 09:22:04PM +0800, Baoquan He wrote:
-> I noticed maintainers merged patches with this Message-ID, could you
-> tell how to get this Message-ID?
+On 04/05/2018 11:03, Lee Jones wrote:
+> On Fri, 04 May 2018, John Garry wrote:
+>
+>> On 04/05/2018 10:02, Lee Jones wrote:
+>>> On Thu, 03 May 2018, Andy Shevchenko wrote:
+>>>
+>>>> On Thu, 2018-05-03 at 23:08 +0800, John Garry wrote:
+>>>>> Currently for ACPI support the driver models the host as
+>>>>> an MFD. For a device connected to the LPC bus, we dynamically
+>>>>> create an MFD cell for that device, configuring the cell
+>>>>> name and ACPI match parameters manually. This makes supporting
+>>>>> named devices and also special setup handling for certain devices
+>>>>> awkward, as we would need to introduce some special ACPI device
+>>>>> handling according to device HID.
+>>>>>
+>>>>> To avoid this, create reference static MFD cells for known
+>>>>> child devices, so when adding an MFD cell we can fix the cell
+>>>>> platform data as required. For this, a setup callback function
+>>>>> is added.
+>>>>>
+>>>>> For now, only the IPMI cell is added.
+>>>>
+>>>>> +static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char
+>>>>> *hid)
+>>>>> +{
+>>>>> +	const struct hisi_lpc_acpi_mfd_cell *cell =
+>>>>> hisi_lpc_acpi_mfd_cells;
+>>>>> +
+>>>>> +	for (; cell && cell->mfd_cell.name; cell++) {
+>>>>> +		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
+>>>>> +		const struct mfd_cell_acpi_match *acpi_match;
+>>>>> +
+>>>>> +		acpi_match = mfd_cell->acpi_match;
+>>>>> +		if (!strcmp(acpi_match->pnpid, hid))
+>>>>> +			return mfd_cell;
+>>>>> +	}
+>>>>> +
+>>>>> +	return NULL;
+>>>>> +}
+>>>>
+>>>> I'm not sure I understand why MFD core can't do it (as seen in lines
+>>>> drivers/mfd/core.c:105 and below).
+>>>
+>>
+>> Hi Lee,
+>>
+>>> You shouldn't be using the MFD API outside of MFD anyway.  Either it
+>>> is an MFD driver, or it isn't.  If it is, please move it. If it's not,
+>>> please don't use the API.
+>>
+>> We're modelling as an MFD, but it's not an MFD in the classic sense. We're
+>> just using the MFD API for convenience (and to avoid code duplication), as
+>> the MFD API does what we require for this driver.
+>
+> I know what you're doing, and it's wrong. ;)
+>
+>>> My current suspicion is that the driver needs splitting and only part
+>>> of it ends up in MFD.
+>>
+>> How would you propose splitting the driver? By adding a lib function
+>> specific for this driver for the ACPI probe?
+>
+> Look at:
+>
+>   drivers/platform/chrome/cros_ec_lpc.c
+>
+> and
+>
+>   drivers/mfd/cros_ec.c
+>
 
-https://en.wikipedia.org/wiki/Message-ID
+Right, I see, something similar to what I suggested.
 
-> This is not a thing that one is top down, the other is bottom up. For
-> us, they might be so different on details of code, for customers, they
-> just think them as a same thing. They may say I just get a new machine,
-> and still do kexec loading, why these top-down, bottom-up things come
-> up.
+I don't really see a point in splitting the driver across drivers/mfd 
+and drivers/bus, and introducing dependencies. This is more especially 
+considering this is a legacy host controller with no potential future 
+developments, and not worth the effort.
 
-So if I read the above correctly, it doesn't matter whether top-down or
-bottom-up.
+If you feel strongly enough about not using the MFD API outside 
+drivers/mfd, then I'll look at other solutions, like using platform 
+device APIs directly.
 
-> And this is not causing code churn. You can see that by replacing
-> pointer operation with list_head, code in kernel/resource.c related to
-> child list iteration is much easier to read,
-
-Now *this* is starting to sound like some reason "why". If it is better
-readability, then say so in the commit message.
-
-It still doesn't justify adding walk_system_ram_res_rev() though.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
--- 
+Cheers,
+John
