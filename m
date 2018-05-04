@@ -1,86 +1,87 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeEDMiw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:38:52 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:39728 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751269AbeEDMdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:33:55 -0400
-Message-Id: <7332568467307f9fc79eeef47507909ddc423c4b.1525435203.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1525435203.git.christophe.leroy@c-s.fr>
-References: <cover.1525435203.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH  02/17] powerpc/nohash: remove _PAGE_BUSY
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  4 May 2018 14:33:54 +0200 (CEST)
+        id S1751477AbeEDMph (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:45:37 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54245 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeEDMpe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:45:34 -0400
+Message-ID: <1525437928.3373.16.camel@pengutronix.de>
+Subject: Re: [Linaro-mm-sig] [PATCH 4/8] dma-buf: add peer2peer flag
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Alex Deucher <alexdeucher@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "moderated list:DMA BUFFER SHARING FRAMEWORK"
+        <linaro-mm-sig@lists.linaro.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "open list:DMA BUFFER SHARING FRAMEWORK"
+        <linux-media@vger.kernel.org>
+Date: Fri, 04 May 2018 14:45:28 +0200
+In-Reply-To: <CADnq5_O5t8aSJE6SFzyjw-6Pmba7B2aYMztVMOOQCF3drBHR5Q@mail.gmail.com>
+References: <3e17afc5-7d6c-5795-07bd-f23e34cf8d4b@gmail.com>
+         <20180420101755.GA11400@infradead.org>
+         <f1100bd6-dd98-55a9-a92f-1cad919f235f@amd.com>
+         <20180420124625.GA31078@infradead.org>
+         <20180420152111.GR31310@phenom.ffwll.local>
+         <20180424184847.GA3247@infradead.org>
+         <CAKMK7uFL68pu+-9LODTgz+GQYvxpnXOGhxfz9zorJ_JKsPVw2g@mail.gmail.com>
+         <20180425054855.GA17038@infradead.org>
+         <CAKMK7uEFitkNQrD6cLX5Txe11XhVO=LC4YKJXH=VNdq+CY=DjQ@mail.gmail.com>
+         <CADnq5_P3bT0TStSXpKh11ydifv=KwKtRj-7tDS=GQXey+8tBPw@mail.gmail.com>
+         <20180425064118.GA28100@infradead.org>
+         <CADnq5_O5t8aSJE6SFzyjw-6Pmba7B2aYMztVMOOQCF3drBHR5Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:fa0f:41ff:fe58:4010
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-_PAGE_BUSY is always 0, remove it
+Am Mittwoch, den 25.04.2018, 13:44 -0400 schrieb Alex Deucher:
+> On Wed, Apr 25, 2018 at 2:41 AM, Christoph Hellwig <hch@infradead.org
+> > wrote:
+> > On Wed, Apr 25, 2018 at 02:24:36AM -0400, Alex Deucher wrote:
+> > > > It has a non-coherent transaction mode (which the chipset can opt to
+> > > > not implement and still flush), to make sure the AGP horror show
+> > > > doesn't happen again and GPU folks are happy with PCIe. That's at
+> > > > least my understanding from digging around in amd the last time we had
+> > > > coherency issues between intel and amd gpus. GPUs have some bits
+> > > > somewhere (in the pagetables, or in the buffer object description
+> > > > table created by userspace) to control that stuff.
+> > > 
+> > > Right.  We have a bit in the GPU page table entries that determines
+> > > whether we snoop the CPU's cache or not.
+> > 
+> > I can see how that works with the GPU on the same SOC or SOC set as the
+> > CPU.  But how is that going to work for a GPU that is a plain old PCIe
+> > card?  The cache snooping in that case is happening in the PCIe root
+> > complex.
+> 
+> I'm not a pci expert, but as far as I know, the device sends either a
+> snooped or non-snooped transaction on the bus.  I think the
+> transaction descriptor supports a no snoop attribute.  Our GPUs have
+> supported this feature for probably 20 years if not more, going back
+> to PCI.  Using non-snooped transactions have lower latency and faster
+> throughput compared to snooped transactions.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/nohash/64/pgtable.h | 10 +++-------
- arch/powerpc/include/asm/nohash/pte-book3e.h |  5 -----
- 2 files changed, 3 insertions(+), 12 deletions(-)
+PCI-X (as in the thing which as all the rage before PCIe) added a
+attribute phase to each transaction where the requestor can enable
+relaxed ordering and/or no-snoop on a transaction basis. As those are
+strictly performance optimizations the root-complex isn't required to
+honor those attributes, but implementations that care about performance
+ usually will.
 
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index 4f6f5a27bfb5..c3559d7a94fb 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -186,14 +186,12 @@ static inline unsigned long pte_update(struct mm_struct *mm,
- 
- 	__asm__ __volatile__(
- 	"1:	ldarx	%0,0,%3		# pte_update\n\
--	andi.	%1,%0,%6\n\
--	bne-	1b \n\
- 	andc	%1,%0,%4 \n\
--	or	%1,%1,%7\n\
-+	or	%1,%1,%6\n\
- 	stdcx.	%1,0,%3 \n\
- 	bne-	1b"
- 	: "=&r" (old), "=&r" (tmp), "=m" (*ptep)
--	: "r" (ptep), "r" (clr), "m" (*ptep), "i" (_PAGE_BUSY), "r" (set)
-+	: "r" (ptep), "r" (clr), "m" (*ptep), "r" (set)
- 	: "cc" );
- #else
- 	unsigned long old = pte_val(*ptep);
-@@ -290,13 +288,11 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
- 
- 	__asm__ __volatile__(
- 	"1:	ldarx	%0,0,%4\n\
--		andi.	%1,%0,%6\n\
--		bne-	1b \n\
- 		or	%0,%3,%0\n\
- 		stdcx.	%0,0,%4\n\
- 		bne-	1b"
- 	:"=&r" (old), "=&r" (tmp), "=m" (*ptep)
--	:"r" (bits), "r" (ptep), "m" (*ptep), "i" (_PAGE_BUSY)
-+	:"r" (bits), "r" (ptep), "m" (*ptep)
- 	:"cc");
- #else
- 	unsigned long old = pte_val(*ptep);
-diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
-index 9ff51b4c0cac..12730b81cd98 100644
---- a/arch/powerpc/include/asm/nohash/pte-book3e.h
-+++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
-@@ -57,13 +57,8 @@
- #define _PAGE_USER		(_PAGE_BAP_UR | _PAGE_BAP_SR) /* Can be read */
- #define _PAGE_PRIVILEGED	(_PAGE_BAP_SR)
- 
--#define _PAGE_BUSY	0
--
- #define _PAGE_SPECIAL	_PAGE_SW0
- 
--/* Flags to be preserved on PTE modifications */
--#define _PAGE_HPTEFLAGS	_PAGE_BUSY
--
- /* Base page size */
- #ifdef CONFIG_PPC_64K_PAGES
- #define _PAGE_PSIZE	_PAGE_PSIZE_64K
--- 
-2.13.3
+Regards,
+Lucas
