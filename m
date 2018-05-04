@@ -1,112 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeEDQVS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 12:21:18 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:40876 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751492AbeEDQVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 12:21:16 -0400
-X-Google-Smtp-Source: AB8JxZoCHUAW/80FEKO6D5SzTeXjMWuz7DpV4BEg+c13jeaR9yAqxEZuALsA21D2gqpAibPy8islsKJ3IKlI9+mAGq8=
+        id S1751710AbeEDQWP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 12:22:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751425AbeEDQWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 12:22:14 -0400
+Date: Fri, 4 May 2018 18:22:09 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
+        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
+        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
+Message-ID: <20180504162209.GB26573@redhat.com>
+References: <87h8nr2sa3.fsf_-_@xmission.com>
+ <20180502084708.GC26305@dhcp22.suse.cz>
+ <20180502132026.GB16060@cmpxchg.org>
+ <87lgd1zww0.fsf_-_@xmission.com>
+ <20180503133338.GA23401@redhat.com>
+ <87y3h0x0qg.fsf@xmission.com>
+ <20180504142056.GA26151@redhat.com>
+ <87r2mrh4is.fsf@xmission.com>
+ <20180504145435.GA26573@redhat.com>
+ <87y3gzfmjt.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATV==PWHd2M63X+SMchRoTqtbnnSFSZM1bQnjCRfRrRKg@mail.gmail.com>
-References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com>
- <1523595999-27433-2-git-send-email-yamada.masahiro@socionext.com> <CAK7LNATV==PWHd2M63X+SMchRoTqtbnnSFSZM1bQnjCRfRrRKg@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 4 May 2018 09:21:14 -0700
-X-Google-Sender-Auth: Uvda8aGFdD2oLY_l0gtjl8Fbrko
-Message-ID: <CAGXu5jLWGzGERGTVppVn1zXP9kNPURryukeU8Cfy-SwfZpyDSg@mail.gmail.com>
-Subject: Re: [PATCH 01/30] gcc-plugins: fix build condition of SANCOV plugin
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y3gzfmjt.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 7:21 AM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Hi Kees,
+On 05/04, Eric W. Biederman wrote:
 >
+> Oleg Nesterov <oleg@redhat.com> writes:
 >
-> 2018-04-13 14:06 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
->> Since commit d677a4d60193 ("Makefile: support flag
->> -fsanitizer-coverage=trace-cmp"), you miss to build the SANCOV
->> plugin under some circumstances.
->>
->>   CONFIG_KCOV=y
->>   CONFIG_KCOV_ENABLE_COMPARISONS=y
->>   Your compiler does not support -fsanitize-coverage=trace-pc
->>   Your compiler does not support -fsanitize-coverage=trace-cmp
->>
->> Under this condition, $(CFLAGS_KCOV) is not empty but contains a
->> space, so the following ifeq-conditional is false.
->>
->>     ifeq ($(CFLAGS_KCOV),)
->>
->> Then, scripts/Makefile.gcc-plugins misses to add sancov_plugin.so to
->> gcc-plugin-y while the SANCOV plugin is necessary as an alternative
->> means.
->>
->> Fixes: d677a4d60193 ("Makefile: support flag -fsanitizer-coverage=trace-cmp")
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
+> > I'd vote for the change in exec_mmap(). This way mm_init_memcg() can just
+> > nullify mm->memcg.
 >
+> There is at least one common path where we need the memory control group
+> properly initialized so memory allocations don't escape the memory
+> control group.
 >
-> I am planning to queue this up to the fixes branch
-> since this is a bug fix.
+> do_execveat_common
+>    copy_strings
+>       get_arg_page
+>          get_user_pages_remote
+>             __get_user_pages_locked
+>                __get_user_pages
+>                   faultin_page
+>                      handle_mm_fault
+>                         count_memcg_event_mm
+>                         __handle_mm_fault
+>                           handle_pte_fault
+>                              do_anonymous_page
+>                                 mem_cgroup_try_charge
 >
-> Do you have any comment on this?
+> I am surprised I can't easily find more.   Apparently in load_elf_binary
+> we call elf_mmap after set_new_exec and install_exec_creds, making
+> a gracefull recovery from elf_mmap failures impossible.
+>
+> In any case we most definitely need the memory control group properly
+> setup before exec_mmap.
 
-Looks fine to me; thanks!
+Confused ...
 
-Acked-by: Kees Cook <keescook@chromium.org>
+new_mm->memcg has no effect until exec_mmap(), why it can't be NULL ?
 
--Kees
+and why do you think mem_cgroup_try_charge() can use the wrong memcg
+in this case?
 
->
->
->
->
->
->> Changes in v3:
->>   - newly added
->>
->> Changes in v2: None
->>
->>  scripts/Makefile.gcc-plugins | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
->> index b2a95af..7f5c862 100644
->> --- a/scripts/Makefile.gcc-plugins
->> +++ b/scripts/Makefile.gcc-plugins
->> @@ -14,7 +14,7 @@ ifdef CONFIG_GCC_PLUGINS
->>    endif
->>
->>    ifdef CONFIG_GCC_PLUGIN_SANCOV
->> -    ifeq ($(CFLAGS_KCOV),)
->> +    ifeq ($(strip $(CFLAGS_KCOV)),)
->>        # It is needed because of the gcc-plugin.sh and gcc version checks.
->>        gcc-plugin-$(CONFIG_GCC_PLUGIN_SANCOV)           += sancov_plugin.so
->>
->> --
->> 2.7.4
->>
->
->
->
-> --
-> Best Regards
-> Masahiro Yamada
-
-
-
--- 
-Kees Cook
-Pixel Security
+Oleg.
