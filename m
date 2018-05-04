@@ -1,141 +1,91 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751344AbeEDLTF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:19:05 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52356 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751172AbeEDLTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:19:04 -0400
-Date: Fri, 4 May 2018 12:18:51 +0100
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
- entry
-Message-ID: <20180504111843.GA5930@e107981-ln.cambridge.arm.com>
-References: <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
- <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
- <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
- <5d625d04-38fe-7d5a-67fc-5ea92039474c@ti.com>
- <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
- <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
- <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
- <cf2772d5-26c0-b0e3-1e5b-ace91c1ea105@ti.com>
- <20180503141636.GA23270@e107981-ln.cambridge.arm.com>
- <aeb80d31-c79e-80a9-5e67-9bf1f277f39a@ti.com>
+        id S1751269AbeEDLVh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:21:37 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35240 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDLVe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 07:21:34 -0400
+X-Google-Smtp-Source: AB8JxZoKXT7aE2KSQ7QxLDL5zC9G9SkAyUT3zmiJLd8RdmJm6NmGzfQbD+69M8goOT19zcWGYhTqhw==
+Subject: Re: [PATCH v2 4/4] ARM: dts: tegra20: Revert "Fix ULPI regression on
+ Tegra20"
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180503225537.20748-1-digetx@gmail.com>
+ <20180503225537.20748-6-digetx@gmail.com> <20180504104051.GL13459@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <5013e8c6-a56a-38ad-2a25-d18bf0a1e014@gmail.com>
+Date: Fri, 4 May 2018 14:21:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aeb80d31-c79e-80a9-5e67-9bf1f277f39a@ti.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180504104051.GL13459@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 11:28:58AM +0530, Kishon Vijay Abraham I wrote:
-> Hi Lorenzo,
+On 04.05.2018 13:40, Thierry Reding wrote:
+> On Fri, May 04, 2018 at 01:55:37AM +0300, Dmitry Osipenko wrote:
+>> Commit 4c9a27a6c66d ("ARM: tegra: Fix ULPI regression on Tegra20") changed
+>> "ulpi-link" clock from CDEV2 to PLL_P_OUT4. Turned out that PLL_P_OUT4 is
+>> the parent of CDEV2 clock and original clock setup of "ulpi-link" was
+>> correct. The reverted patch was fixing USB for one board and broke the
+>> other, now Tegra's clk driver correctly sets parent for the CDEV2 clock
+>> and hence patch could be reverted safely, restoring USB for all of the
+>> boards.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> Reviewed-by: Marcel Ziswiler <marcel@ziswiler.com>
+>> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+>> Tested-by: Marc Dietrich <marvin24@gmx.de>
+>> ---
+>>  arch/arm/boot/dts/tegra20.dtsi | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> On Thursday 03 May 2018 07:46 PM, Lorenzo Pieralisi wrote:
-> > On Thu, May 03, 2018 at 12:03:15PM +0530, Kishon Vijay Abraham I wrote:
-> > 
-> > [...]
-> > 
-> >>>> Since the linkup notifier and BAR index (where auxiliary registers are
-> >>>> located) may be configurable and is something platform dependent,
-> >>>> perhaps the configuration of this variables should be done by module
-> >>>> parameter and not by configfs, leaving this configuration
-> >>>> responsibility in charge of each platform.
-> >>>
-> >>> They are platform dependent because they depend on the EP controller.
-> >>> That's why I said that those are EP controller parameters. I do not
-> >>> think they are module parameters either - they should be part of HW
-> >>> description in firmware.
-> >>
-> >> The problem is because pci-epf-test cannot be described in HW. pci-epf-test is
-> >> also not automatically bound to the EP controller but is bound by the user like
-> >> below
-> >> ln -s functions/pci_epf_test/func1 controllers/51000000.pcie_ep/
-> >>
-> >> So given that user anyways has to bind the epf device to the controller, based
-> >> on the platform the user can use a different configfs entry like below
-> >> ln -s functions/pci_epf_test_dw/func1 controllers/51000000.pcie_ep/ or
-> >> ln -s functions/pci_epf_test_k2g/func1 controllers/21800000.pcie-ep/
-> >>
-> >> If the epf can be described in dt, then something like below can be done
-> >> pcie1_ep: pcie_ep@51000000 {
-> >> 	compatible = "ti,dra7-pcie-ep";
-> >> 	interrupts = <0 232 0x4>;
-> >> 	num-lanes = <1>;
-> >> 	num-ib-windows = <4>;
-> >> 	num-ob-windows = <16>;
-> >> 	phys = <&pcie1_phy>;
-> >> 	phy-names = "pcie-phy0";
-> >> 	pci_epf_test: pci_epf_test@0 {
-> >> 		name = "pci_epf_test_dw";
-> >> 		<other properties>;
-> >> 	}
-> >> };
-> >>
-> >> With this pci-dra7xx.c driver should create pci_epf_device using
-> >> pci_epf_create("pci_epf_test_dw");
-> >>
-> >> Then the driver_data corresponding to "pci_epf_test_dw" will select linkup
-> >> notifier or BAR index etc.
-> > 
-> > Those two properties are properties of the EP controller (it is not 100%
-> > clear to me how the test BAR register is defined), is this correct ?
-> 
-> Right, these properties are specific to a platform. In some of the platforms
-> like K2G (BAR0 is reserved i.e it is used to map PCIe app registers and cannot
-> be used by pci_epf_test. In such cases we should use a BAR other than BAR0).
+> Is it still true that this patch alone fixes the known regression? I'm
+> just asking because the remainder of the series, even though it sounds
+> to be the right thing to do, is fairly big for a fix against v4.17.
 
-I do not think those properties are pci_epf_test specific, that's the
-whole point I am making. Those are EPC controller features.
+Yes, Marcel says that reverting just this patch works for him now.
 
-> > If yes, given that those properties are not useful before an EPF is
-> > bound to an EPC, can't they be retrieved at bind time from the EPC
-> > controller data (that we can add through DT bindings) ?
-> 
-> hmm..
-> 
-> We can have quirk in pci_epc, something like below
-> 
-> struct pci_epc {
-> 	.
-> 	.
-> 	unsigned int quirks;
-> 	.
-> 	.
-> };
-> 
-> #define EPC_QUIRKS_NO_LINKUP_NOTIFIER	BIT(0)
-> #define EPC_QUIRKS_BAR0_RESERVED	BIT(1)
-> #define EPC_QUIRKS_BAR1_RESERVED	BIT(2)
-> #define EPC_QUIRKS_BAR2_RESERVED	BIT(3)
-> #define EPC_QUIRKS_BAR3_RESERVED	BIT(4)
-> #define EPC_QUIRKS_BAR4_RESERVED	BIT(5)
-> #define EPC_QUIRKS_BAR5_RESERVED	BIT(6)
-> 
-> The controller driver can set the appropriate quirks
-> epc->quirks |= EPC_QUIRKS_NO_LINKUP_NOTIFIER | EPC_QUIRKS_BAR0_RESERVED;
-> 
-> Then pci-epf-test driver can checks the quirks to see the supported EPC features.
-> 
-> Does something like above looks okay to you?
+> So if this alone fixes the regression I think it'd be best to queue it
+> up for v4.17 and get the rest of the patches into v4.18.
 
-Well, it is better than the driver_data approach, I would not call them
-quirks but features and for the BARs you should define a mask it does
-not make sense to enumerate them. It is probably a good idea to leave
-room for additional "features" so please choose the bits placement
-wisely.
-
-Thanks,
-Lorenzo
+Sounds good.
