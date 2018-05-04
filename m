@@ -1,133 +1,180 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-856742-1525477989-2-11057684464835456823
+X-Cyrus-Session-Id: sloti22d1t05-364912-1525449945-2-2332061624375773173
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525477988; b=EQMk8A2W5DXElsmDG5Bw2tl71JR4fEwhm2B0tIMBQTLT3d10Vr
-    2Pe6tQWexVn46/bdYvxxqojZLk8aHlSVZaWvblAp3xP9jismYhNw5yHqM5bPhf0o
-    cvOSM4saMbaSMT+GoslnuI5TEYmS/RHEJ6/2OzNW8vhmrsSNszje3ISm6l2UlKNb
-    /t8sst80Asz4E5+hWkOqU8+YQQBapyu6llemjhSM+1Fiq/QeQzoHkLGERNDvjoNc
-    xvqkymCtkaAdJENQIh+YLmi8vNOmbS1aN8S5fKY1ZrBuGq+Ocd+8XoZfJ2tXP4Lj
-    SAFfFDgz/BV+t53TaAHDUjcWYIXLK0JNvSng==
+    1525449945; b=IUbsulTRrK3wEWI80KO+BUFtNBL7LebFkpBuBQw/qIqvRvHBG2
+    nDNMEJe7xyDIDRilsp5ln+bqnP10T+XPD/FykQiQ3zpVIBsZniW3ke6yrXtjX+uQ
+    5til9c4O7A3sc/m/For3e/48/SQ162E9XCaTzPwMB8H0NYKcgCNGUlw9glPp0MMc
+    8bXoav5n6GiMS9esE8TZaxTyXexxmg0zOtwYqOQoIBd+Gji/A9GeNEcF6agAoB3L
+    YzwogQnQNKrqibCGQjVQW20xpHq0/I4MlI8jvh/5/C4h97byyamNLl7vJpC1E5TT
+    tJYffHR/P5AlRFOhaadBhIBT71el4oR4bY5g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1525477988; bh=ikhEBQEZYOec3YIXOUZkwgOJOVNAnF7bU/6voAfwOS
-    c=; b=DfOSTAXicTr3FgySLQRjilmzrahjJLbN9HF/AKsL4CmIIVNgBzVz90v3dq
-    XxEMks7CNL8/OLosrpMhfQPxFLwiRbn3mfcGyy/iZNA2FuaohRImiJxv6NtcZ9By
-    XucA88yEBlsbwH3VyVlCR4sx/M6DNlzrXN/tYrKXYKnZAwvrnHkh3hOtC2tw84Ui
-    fZJx4zjNrWUgC6eyu2RcX9WgephP2pHQ+PmNKt7GqrN5mYl9F81q7cCXom9Vluor
-    OWw8q2U/ewgeTLP2kV1CTxhTB9gnRd0jiluQgHKCUbQMtRuIxra76fT9XjKBl09B
-    ZCmhN84aTaajkNX4DeGEuljCCF4Q==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=PTp3hqGg x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525449945; bh=J3Up0BNsu6VUVTc/Grab42eXv5uOML
+    Th9axUFREpI5w=; b=jxezr2aKzu0PNTsBm3uHmiKukSGKW7yqeCA5M2Z4eSR0JT
+    AXbxtob8Tln1bm0OE2lHRdKzfGwLQk7h7VerIJnAalmwT22AIMsiePDDYKmdSGjL
+    DpxqUD0+ZrJW415Ug6r4dGtV9hPOl4ll+H+yrxZUmfbibmMw9s/xMNYORQ7c2NGY
+    SfKVSTQN5lG7BbwbyL4wJ0XynSdnMqyf6D+bMrltZx31HCAECjv4f5ZPBFcckLse
+    MnyldJLoA6AD0BUBo2o+OQO0TFdxO5Wo1OaUzKHRvuZm1Uc5HOoE4ZsFFryMPY8x
+    9/blgV7X8MfH9OGqSk8fEnmMCu6kSTXgm9IrqSJA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=JYdPz7z+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+    header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=PTp3hqGg x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arndb.de;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=JYdPz7z+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arndb.de header.result=pass header_is_org_domain=yes;
+      header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPkz+H61LoR4LLMt3Hoh7cPHgkIsMoxc4mxW88Pe5llKvWHd1HcgekLWK1qx8VkFBrQBTtT8tluK/m91ORp51pVJ4Gnm0PPn+barajU3IIgLRGmDxXrp
-    LVIUJlvTYptdqjyXZK7iyd1M3FsyuNO14/r3Ac6BIGSX4F7qvqJNgLtVn2q6aNsPLycgkV54Xz47E3AH8cjIcj+E2mAx1HSvrAjwUbM7A9VkfoAQXeF7cGU0
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=eB6aYJjhE4MpiEEyx-gA:9 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfKI/AxYTzw6Ib+LUBqyEenvU4+djbSysK1+swGDRW0DbQc/TCnAjtCGGq8QQGpuQyURK+3Hqi5PgiFAhb7kPYO6jD/EfNUjA1y/95Cv+00VITWP1WeFV
+    HLzCVbQQePXXKUYmiTpxu9VPyxBTGaqKbjUSFpfRgLCECE22Jxu/jGn1xnCG3dwFs1n2u4dLS4OZM07CbLm/YIH/+ZU85XsXBjz1smm+I2SUyEiiOB3eUkWD
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8
+    a=D19gQVrFAAAA:8 a=ooa_4PH5m_2rkRsaLvwA:9 a=GM4LZePky0kA:10 a=I7Fl0iNTEZgA:10
+    a=1CNFftbPRP8L7MoqJWF3:22 a=W4TVW4IDbPiebHqcZpNg:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751769AbeEDXxG (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 4 May 2018 19:53:06 -0400
-Received: from mail-qt0-f195.google.com ([209.85.216.195]:43284 "EHLO
-        mail-qt0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751729AbeEDXxF (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 4 May 2018 19:53:05 -0400
-X-Google-Smtp-Source: AB8JxZpgC/qkEraY/SpJfa2cUge20P9wkx0MGEndY6PmgUKBnh8SUynzW76EhW+Y0pVQAQ8WiRf2Gyfbg+1phZqnZy8=
-MIME-Version: 1.0
-In-Reply-To: <20180504132432.GA30458@jamesdev>
-References: <20180502215107.GA9884@saruman> <CAK8P3a2y2EA1g099DXOHkfevQb=6zuWmVOq9C_wVTQ8zrAMx8w@mail.gmail.com>
- <20180504132432.GA30458@jamesdev>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Fri, 4 May 2018 19:53:04 -0400
-X-Google-Sender-Auth: qYL0jqhWVMIwwebPTbFPvDv-iWQ
-Message-ID: <CAK8P3a1BvG+jHAmQu2j-_Gmmxc4s_KbccUGP0jvPGq6L+vtjdw@mail.gmail.com>
-Subject: Re: Introducing a nanoMIPS port for Linux
-To: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        Marcin Nowakowski <marcin.nowakowski@mips.com>,
-        Matthew Fortune <Matthew.Fortune@mips.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751464AbeEDQFm (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 4 May 2018 12:05:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:55594 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751229AbeEDQFl (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Fri, 4 May 2018 12:05:41 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <cdall@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v5 00/14] KVM: arm64: Optimise FPSIMD context switching
+Date: Fri,  4 May 2018 17:05:21 +0100
+Message-Id: <1525449935-31424-1-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 4, 2018 at 9:24 AM, James Hogan <jhogan@kernel.org> wrote:
-> On Thu, May 03, 2018 at 06:40:07PM -0400, Arnd Bergmann wrote:
->> On Wed, May 2, 2018 at 5:51 PM, James Hogan <jhogan@kernel.org> wrote:
->>
->> While I haven't looked at the individual changes, I wonder whether
->> it would be useful to make this new ABI use 64-bit time_t from
->> the start, using the new system calls that Deepa and I have been
->> posting recently.
->
-> Personally I'm all for squeezing as much API cleanup in as possible
-> before its merged, though obviously there'll be a point when the ABI may
-> need to be frozen, at which point we'll mostly have to accept what we
-> have within reason.
->
->> There are still a few things to be worked out:
->> only the first of four sets of syscall patches is merged so far,
->> and we have a couple of areas that will require further ABI changes
->> (sound, sockets, media and maybe a couple of smaller drivers),
->> so it depends on the overall timing. If you would otherwise merge
->> the patches quickly, then it may be better to just follow the existing
->> 32-bit architectures and add the 64-bit entry points when we do it
->> for everyone.
->
-> I think it'll likely be a couple of cycles before it gets merged anyway.
-> There's still work to do, and limited resources.
+Note: Most of these patches are Arm-specific.  People not Cc'd on the
+whole series can find it in the linux-arm-kernel archive [3].
 
-Ok, let's plan on getting the 64-bit time_t ABIs in place early enough
-then. We will likely have very similar timing for the upcoming rv32
-ABI on arch/riscv.
+This series aims to improve the way FPSIMD context is handled by KVM,
+building on the previous RFC v4 [1].
 
-         Arnd
+Patches 1-2 are picked from a separate RFC series [2] since they
+introduce a helper I wanted to use here.
+
+
+The main changes since RFC v4 are:
+
+ * Rebased to -rc3.
+
+ * Patches 1-2 pulled into series from [2], and other patches modified
+   to use it.
+
+ * Redundant additions by patch 3 that were reverted by other patches
+   are now gone.
+
+ * New patches 12-14 move the call to __hyp_switch_fpsimd() out of asm
+   completely, moving it to the fixup_guest_exit() path instead.  This
+   should significantly cleaner, but does add a bit of overhead to
+   FPSIMD trapping.
+
+   This is presented as an independent change in case people want to
+   benchmark with/without.
+
+
+Other minor changes as noted.
+
+
+Some testing done on Juno and the Arm fast model (arm64), including
+combinations of (non-)SVE and (non-)VHE configurations.
+
+Cheers
+---Dave
+
+[1] [RFC PATCH 0/8] KVM: arm64: Optimise FPSIMD context switching
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-April/572781.html
+
+[2] [RFC PATCH 0/6] Simplify setting thread flags to a particular value
+https://lkml.org/lkml/2018/4/19/225
+
+[3] linux-arm-kernel archive
+http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/thread.html
+
+
+Christoffer Dall (1):
+  KVM: arm/arm64: Introduce kvm_arch_vcpu_run_pid_change
+
+Dave Martin (13):
+  thread_info: Add update_thread_flag() helpers
+  arm64: Use update{,_tsk}_thread_flag()
+  KVM: arm64: Convert lazy FPSIMD context switch trap to C
+  arm64: fpsimd: Generalise context saving for non-task contexts
+  KVM: arm64: Optimise FPSIMD handling to reduce guest/host thrashing
+  arm64/sve: Move read_zcr_features() out of cpufeature.h
+  arm64/sve: Switch sve_pffr() argument from task to thread
+  arm64/sve: Move sve_pffr() to fpsimd.h and make inline
+  KVM: arm64: Save host SVE context as appropriate
+  KVM: arm64: Remove eager host SVE state saving
+  KVM: arm64: Remove redundant *exit_code changes in fpsimd_guest_exit()
+  KVM: arm64: Fold redundant exit code checks out of fixup_guest_exit()
+  KVM: arm64: Invoke FPSIMD context switch trap from C
+
+ arch/arm/include/asm/kvm_host.h     |   9 ++-
+ arch/arm64/Kconfig                  |   7 +++
+ arch/arm64/include/asm/cpufeature.h |  29 ---------
+ arch/arm64/include/asm/fpsimd.h     |  20 ++++++
+ arch/arm64/include/asm/kvm_host.h   |  22 ++++---
+ arch/arm64/include/asm/processor.h  |   2 +
+ arch/arm64/kernel/fpsimd.c          | 120 +++++++++++++++++------------------
+ arch/arm64/kernel/ptrace.c          |   1 +
+ arch/arm64/kvm/Kconfig              |   1 +
+ arch/arm64/kvm/Makefile             |   2 +-
+ arch/arm64/kvm/fpsimd.c             | 105 +++++++++++++++++++++++++++++++
+ arch/arm64/kvm/hyp/entry.S          |  43 -------------
+ arch/arm64/kvm/hyp/hyp-entry.S      |  19 ------
+ arch/arm64/kvm/hyp/switch.c         | 121 +++++++++++++++++++++++++-----------
+ include/linux/kvm_host.h            |   9 +++
+ include/linux/sched.h               |   6 ++
+ include/linux/thread_info.h         |  11 ++++
+ virt/kvm/Kconfig                    |   3 +
+ virt/kvm/arm/arm.c                  |  25 +++++++-
+ virt/kvm/kvm_main.c                 |   7 ++-
+ 20 files changed, 360 insertions(+), 202 deletions(-)
+ create mode 100644 arch/arm64/kvm/fpsimd.c
+
+-- 
+2.1.4
