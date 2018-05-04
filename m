@@ -1,182 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751393AbeEDGrg (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 02:47:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54458 "EHLO
+        id S1751374AbeEDGtG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 02:49:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56578 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750946AbeEDGrb (ORCPT
+        with ESMTP id S1751278AbeEDGtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 02:47:31 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E202B60249
+        Fri, 4 May 2018 02:49:03 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9023360249
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilialin@codeaurora.org
 From: <ilialin@codeaurora.org>
 To: "'Viresh Kumar'" <viresh.kumar@linaro.org>
-Cc: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <mark.rutland@arm.com>, <rjw@rjwysocki.net>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <andy.gross@linaro.org>,
-        <david.brown@linaro.org>, <catalin.marinas@arm.com>,
-        <will.deacon@arm.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+Cc: "'Michael Turquette'" <mturquette@baylibre.com>,
+        "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob Herring'" <robh@kernel.org>,
+        "'Mark Rutland'" <mark.rutland@arm.com>,
+        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        "'Liam Girdwood'" <lgirdwood@gmail.com>,
+        "'Mark Brown'" <broonie@kernel.org>,
+        "'Andy Gross'" <andy.gross@linaro.org>,
+        "'David Brown'" <david.brown@linaro.org>,
+        "'Catalin Marinas'" <catalin.marinas@arm.com>,
+        "'Will Deacon'" <will.deacon@arm.com>,
+        "'Linux Clock List'" <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "'Linux Kernel Mailing List'" <linux-kernel@vger.kernel.org>,
         <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-soc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <rnayak@codeaurora.org>, <amit.kucheria@linaro.org>,
-        <nicolas.dechesne@linaro.org>, <celster@codeaurora.org>,
-        <tfinkel@codeaurora.org>
-References: <1525348355-25471-1-git-send-email-ilialin@codeaurora.org> <1525348355-25471-14-git-send-email-ilialin@codeaurora.org> <20180504061123.lf2ffpami23d3q72@vireshk-i7>
-In-Reply-To: <20180504061123.lf2ffpami23d3q72@vireshk-i7>
-Subject: RE: [PATCH v5 13/14] dt-bindings: cpufreq: Document operating-points-v2-kryo-cpu
-Date: Fri, 4 May 2018 09:46:58 +0300
-Message-ID: <002e01d3e373$b958b8e0$2c0a2aa0$@codeaurora.org>
+        "'open list:ARM/QUALCOMM SUPPORT'" <linux-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "'Nayak, Rajendra'" <rnayak@codeaurora.org>,
+        "'Amit Kucheria'" <amit.kucheria@linaro.org>,
+        "'Nicolas Dechesne'" <nicolas.dechesne@linaro.org>,
+        <celster@codeaurora.org>, <tfinkel@codeaurora.org>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org> <1522358807-10413-9-git-send-email-ilialin@codeaurora.org> <20180402091617.GA3572@vireshk-i7> <CAKohpo=cw+2Leuwa6XjEYh4kVYK093A5eckUmPBDutgqeqpvog@mail.gmail.com>
+In-Reply-To: <CAKohpo=cw+2Leuwa6XjEYh4kVYK093A5eckUmPBDutgqeqpvog@mail.gmail.com>
+Subject: RE: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
+Date: Fri, 4 May 2018 09:48:46 +0300
+Message-ID: <003001d3e373$f94db540$ebe91fc0$@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+        charset="utf-8"
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIw4YufeDUO1xSdYb5xrMmiursktAIR+hE5Al0yT8SjQapsUA==
+Thread-Index: AQLEuuwO8n7diDON4clexiIwmxRQwALUSX3IAc2TstQAp9MWXKITI/gA
 Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w446nBBk031298
 
-bbbb
+Kryo has single clock per cluster. I define here a shared OPP table per cluster.
 
 > -----Original Message-----
 > From: Viresh Kumar <viresh.kumar@linaro.org>
-> Sent: Friday, May 4, 2018 09:11
+> Sent: Friday, May 4, 2018 09:04
 > To: Ilia Lin <ilialin@codeaurora.org>
-> Cc: mturquette@baylibre.com; sboyd@kernel.org; robh@kernel.org;
-> mark.rutland@arm.com; rjw@rjwysocki.net; lgirdwood@gmail.com;
-> broonie@kernel.org; andy.gross@linaro.org; david.brown@linaro.org;
-> catalin.marinas@arm.com; will.deacon@arm.com; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> pm@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
-> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> rnayak@codeaurora.org; amit.kucheria@linaro.org;
-> nicolas.dechesne@linaro.org; celster@codeaurora.org;
+> Cc: Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>; Rob Herring <robh@kernel.org>; Mark Rutland
+> <mark.rutland@arm.com>; Rafael J. Wysocki <rjw@rjwysocki.net>; Liam
+> Girdwood <lgirdwood@gmail.com>; Mark Brown <broonie@kernel.org>;
+> Andy Gross <andy.gross@linaro.org>; David Brown
+> <david.brown@linaro.org>; Catalin Marinas <catalin.marinas@arm.com>; Will
+> Deacon <will.deacon@arm.com>; Linux Clock List <linux-
+> clk@vger.kernel.org>; devicetree@vger.kernel.org; Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org>; linux-pm@vger.kernel.org; linux-arm-
+> msm@vger.kernel.org; open list:ARM/QUALCOMM SUPPORT <linux-
+> soc@vger.kernel.org>; linux-arm-kernel@lists.infradead.org; Nayak,
+> Rajendra <rnayak@codeaurora.org>; Amit Kucheria
+> <amit.kucheria@linaro.org>; Nicolas Dechesne
+> <nicolas.dechesne@linaro.org>; celster@codeaurora.org;
 > tfinkel@codeaurora.org
-> Subject: Re: [PATCH v5 13/14] dt-bindings: cpufreq: Document operating-
-> points-v2-kryo-cpu
+> Subject: Re: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the
+> msm8996
 > 
-> On 03-05-18, 14:52, Ilia Lin wrote:
-> > In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-> > that have KRYO processors, the CPU ferequencies subset and voltage
-> > value of each OPP varies based on the silicon variant in use.
-> > Qualcomm Technologies, Inc. Process Voltage Scaling Tables defines the
-> > voltage and frequency value based on the msm-id in SMEM and speedbin
-> > blown in the efuse combination.
-> > The qcom-cpufreq-kryo driver reads the msm-id and efuse value from the
-> > SoC to provide the OPP framework with required information.
-> > This is used to determine the voltage and frequency value for each OPP
-> > of
-> > operating-points-v2 table when it is parsed by the OPP framework.
+> On 2 April 2018 at 14:46, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> 
+> >> +     cluster0_opp: opp_table0 {
+> >> +             compatible = "operating-points-v2";
+> >> +             opp-shared;
 > >
-> > This change adds documentation.
-> >
-> > Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-> > ---
-> >  .../devicetree/bindings/opp/kryo-cpufreq.txt       | 693
-> +++++++++++++++++++++
-> >  1 file changed, 693 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> > b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> > new file mode 100644
-> > index 0000000..20cef9d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/opp/kryo-cpufreq.txt
-> > @@ -0,0 +1,693 @@
-> > +Qualcomm Technologies, Inc. KRYO CPUFreq and OPP bindings
-> > +===================================
-> > +
-> > +In Certain Qualcomm Technologies, Inc. SoCs like apq8096 and msm8996
-> > +that have KRYO processors, the CPU ferequencies subset and voltage
-> > +value of each OPP varies based on the silicon variant in use.
-> > +Qualcomm Technologies, Inc. Process Voltage Scaling Tables defines
-> > +the voltage and frequency value based on the msm-id in SMEM and
-> > +speedbin blown in the efuse combination.
-> > +The qcom-cpufreq-kryo driver reads the msm-id and efuse value from
-> > +the SoC to provide the OPP framework with required information
-> (existing HW bitmap).
-> > +This is used to determine the voltage and frequency value for each
-> > +OPP of
-> > +operating-points-v2 table when it is parsed by the OPP framework.
-> > +
-> > +Required properties:
-> > +--------------------
-> > +In 'cpus' nodes:
-> > +- operating-points-v2: Phandle to the operating-points-v2 table to use.
-> > +
-> > +In 'operating-points-v2' table:
-> > +- compatible: Should be
-> > +	- 'operating-points-v2-kryo-cpu' for apq8096 and msm8996.
-> > +- nvmem-cells: A phandle pointing to a nvmem-cells node representing
-> the
-> > +		efuse registers that has information about the
-> > +		speedbin that is used to select the right frequency/voltage
-> > +		value pair.
-> > +		Please refer the for nvmem-cells
-> > +		bindings
-> Documentation/devicetree/bindings/nvmem/nvmem.txt
-> > +		and also examples below.
-> > +
-> > +In every OPP node:
-> > +- opp-supported-hw: A single 32 bit bitmap value, representing
-> compatible HW.
-> > +		    Bitmap:
-> > +			0:	MSM8996 V3, speedbin 0
-> > +			1:	MSM8996 V3, speedbin 1
-> > +			2:	MSM8996 V3, speedbin 2
-> > +			3:	unused
-> > +			4:	MSM8996 SG, speedbin 0
-> > +			5:	MSM8996 SG, speedbin 1
-> > +			6:	MSM8996 SG, speedbin 2
-> > +			7-31:	unused
-> > +
-> > +Example 1:
-> > +---------
-> > +
-> > +	cpus {
-> > +		#address-cells = <2>;
-> > +		#size-cells = <0>;
-> > +
-> > +		CPU0: cpu@0 {
-> > +			device_type = "cpu";
-> > +			compatible = "qcom,kryo";
-> > +			reg = <0x0 0x0>;
-> > +			enable-method = "psci";
-> > +			clocks = <&kryocc 0>;
-> > +			cpu-supply = <&pm8994_s11_saw>;
-> > +			operating-points-v2 = <&cluster0_opp>;
-> > +			/* cooling options */
-> > +			cooling-min-level = <0>;
-> > +			cooling-max-level = <15>;
+> > Is Kryo like krait where CPUs do DVFS independently ? If yes, then
+> > opp-shared thing should be dropped.
 > 
-> cooling min/max aren't required anymore, as I told you in the previous
-> version :)
-
-Sure, I removed them in the DT, but forgot in the documentation. Will fix.
-
-> 
-> > +	cluster0_opp: opp_table0 {
-> > +		compatible = "operating-points-v2-kryo-cpu";
-> > +		nvmem-cells = <&speedbin_efuse>;
-> > +		opp-shared;
-> > +
-> > +		opp-307200000 {
-> > +			opp-hz = /bits/ 64 <  307200000 >;
-> 
-> You fixed spacing around frequency values in the dts but not here.
-
-Same as above.
-
-> 
-> > +			opp-microvolt = <905000 905000 1140000>;
-> > +			opp-supported-hw = <0x77>;
-> > +			clock-latency-ns = <200000>;
-> > +		};
-> 
-> --
-> viresh
+> Have you ever replied to this question ? Sorry, but I am not able to find it in
+> my inbox :(
