@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751673AbeEDNyD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 09:54:03 -0400
-Received: from mail-eopbgr20116.outbound.protection.outlook.com ([40.107.2.116]:14176
+        id S1751853AbeEDNxx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 09:53:53 -0400
+Received: from mail-eopbgr20121.outbound.protection.outlook.com ([40.107.2.121]:23401
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751756AbeEDNxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 09:53:55 -0400
+        id S1751756AbeEDNxs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 09:53:48 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peda@axentia.se;
 From: Peter Rosin <peda@axentia.se>
@@ -36,9 +36,9 @@ Cc: Peter Rosin <peda@axentia.se>, Archit Taneja <architt@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
         linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org,
         Jyri Sarha <jsarha@ti.com>, Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v2 26/26] drm/bridge: establish a link between the bridge supplier and consumer
-Date: Fri,  4 May 2018 15:52:12 +0200
-Message-Id: <20180504135212.26977-27-peda@axentia.se>
+Subject: [PATCH v2 24/26] drm/bridge: remove the .of_node member
+Date: Fri,  4 May 2018 15:52:10 +0200
+Message-Id: <20180504135212.26977-25-peda@axentia.se>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180504135212.26977-1-peda@axentia.se>
 References: <20180504135212.26977-1-peda@axentia.se>
@@ -50,48 +50,48 @@ X-ClientProxiedBy: DB6PR0202CA0039.eurprd02.prod.outlook.com
  (2603:10a6:200:8c::19)
 X-MS-PublicTrafficType: Email
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM4PR0202MB2769;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;3:h/EL09aUjDZaZjsfyhhDyMJk/7+F39FKubOM2AtQ+PDGk52dll8gaNXW7/Y/1ywkP7AueTutTtWrUD9+Q3pHwT/ejm2JjMsZL/Ok+8EYSTOyz5ocghqmUbqjs7JGggo/38UxRvxka+I8zDuC8DDO9NdizG0np2czmYJbwU5aYX24dgIWfXqMiheR8Z3xnsRJkErvmbqVLxvjVCN0+QZ/7wnp5E78i5oUZqbhdMgmoB8HLyn0qjPsGW6u2pFAGVJm;25:ieW76aSwOiutPc4IkO7JAXu6icgCwkfNlgWSnV0GRxAQOQ/OdI0X7VBnVLYle+UOyfDr7kY5gbGzveXWdlGakCdunhMeqKrZ6CmCz5nCekgN3ijAp8lstqMNPFYaKR0AgFLZF/BULXLvbpr+5utrzNn2010TfOCYQlCUbSINjsTNUc9sof0cNejd8GaP9uSwH03RvGM+gPbCp9Cs3AWpyt6onj6BMKHQZOr5a/8/3vwhDvmPKgZLHeiZMP1ZPuoXOQeJfMulWwG8xpUTu8ou6oG230eKfjInTYvOdeGGV6fmAWViZ/LxBhTkFkP5SGH5leZKzz/AoxdPwQKaBsIt+Q==;31:ti6GUcWnxq+0NCLe7IEWOSttIw66tV5Ys0UgrWjR2wEVt2U7NObnHbt+ACzUQnqOmyeM1cW5+4eRNVfvzpqmSs9ZbCqWDe/KRHBiqFVcaqtyUIR9sAZQmkBbQFoesU1+1q05YUBMNyzmn1Y3nhyw7Nw/zOMaoR4l+uHc2iEqJhbgX/3MUfWxyqomrOQJRbPbFYNYDbSdyecyyTpIZwpm/EyJMfkcqlztEPQzq375KC4=
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;3:Z+RxfDpnxvYKimkLI6YzNRvisjjGLUcqMUOW0bbMJ5Nh+Ua2BSHO7rgh/tX2HXcLAnMCDBKFjthdxiZvo20e26oIqPt51ZTW6Dgbm+EfgtLeAQ8kqXPyOOOECnjwIAAPgmFIyNWBjGxMoSvxB+T23VQMjpkQE3XkUNw+Sa794/G6h4k4bZhQJOcUiKgU+p6yP9+sCc8cDBnzcqUQF+AQti8dDInR4EdxhYHXL2NrPXGA91LBKby4U0AKlXxEaqqt;25:o4uUwdI8k5pKdTb3LR0+X6J0KkVx2WI2N4Yr/HqGxre+d2ClKKbJ5QB3I0bbduE4Nq49JujjT4TJnB7m477Ni0yhx07s/L7IVfFVf6sEIYsbfsRJaEM30hmCcKVtgMj4B/dKqtUOZOiXBm8MNYUopjyHKuqAYqIEUqN6CbnlT3JP3X4RwGN8aEoDx3jE6j6hJLbasDpmZlD0+uMMMVtZ6NJvrdwM0CfNOKA6lP/0GQGRUNcWhKVEqgAwI0XubjcJmLZKoD8tpe1OlSloJu8PE2ji49TzB9RPtfRYImSd9tjWY9vptagdYbnfKlqZa/a1fKMhYyv/T9eVLIb2mBK/HA==;31:JGhab47+RCn6FvExXxsKIGNsbXLAtf62GYIugmVRYdCcl7dQmda9lVfQK7207aOcwU+NHuejHdB6aCuBg1fRMopFkIEBZo1EIxgpQsGB1AuegIY60pD1ARik+QQ6wycM2duO5XmClF+JXRadwSLxrqnvAaIzRfRAKCa5n4ckGkUARVTEu6WtHyhRXOPqnboqN6WtZ1Wm8/O+pWE/ZDhPdifPE3Y3hOgPdTtLhpUq+p8=
 X-MS-TrafficTypeDiagnostic: AM4PR0202MB2769:
-X-Microsoft-Antispam-PRVS: <AM4PR0202MB2769B5C9F8BD32F3BBC0E270BC860@AM4PR0202MB2769.eurprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <AM4PR0202MB27692D984E78831F08611B75BC860@AM4PR0202MB2769.eurprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(6043046)(6072148)(201708071742011);SRVR:AM4PR0202MB2769;BCL:0;PCL:0;RULEID:;SRVR:AM4PR0202MB2769;
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;4:7h21nB+eEtmQQQ6bXtL6V3+PpY4+UEiS2ja9oGx9+Fs8hw+lrpfNYrJ8cuLwRUGjuDmww8ndEnrmTO7cwOfV0sLXOOyp/3TvPCeP29oeiSFz6htJ+EkuNbJ3bHb3XEWrpCZ4rt8uTCqYYR24rmqC7e+CFB5/Wtb7noFFAmuznLMpR8Pz07TZs6547XoLpRLGJtrtfVVjLwhNJuXRhdarfcAkR+iyAMs6+Lt+Y0xyn/ta8zuiFs6Iw/zY60EunyMofGAsWUWhsGLg7bwEmQUyNg==
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;4:nuYA82ClZDVURvd+GdYOIRjqvkmJQP6Z10xkzCNbcvxVVQTLH6C7frdfgjIuW5T3RuC7paWJh5OmPQMV5yfXQDqVjkNavxAbLy3TuWZXnYEzQpyfqxAGjUvbaUID65UpjFL7jxo3/clgAv3MmZYTKOTWcgbUmAW0tYChTRGsW65zYe290iZXyzVj7SjIkiAxZMIwECx4RZIF3YZKxjxl/xcC6dOAFGXvbYN1VYMMxIGJeKRKdreo65iM1mIubH6Sk+lyZPyUgOIwZl7wtZu5fg==
 X-Forefront-PRVS: 06628F7CA4
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(1496009)(366004)(39840400004)(39380400002)(376002)(346002)(396003)(199004)(189003)(52116002)(386003)(50466002)(305945005)(6506007)(54906003)(74482002)(316002)(68736007)(5660300001)(16586007)(6666003)(50226002)(7736002)(8936002)(81166006)(8676002)(97736004)(6916009)(1076002)(48376002)(2906002)(2351001)(2361001)(16526019)(81156014)(39060400002)(76176011)(4326008)(86362001)(6486002)(6116002)(3846002)(53936002)(5890100001)(106356001)(478600001)(11346002)(575784001)(486006)(446003)(36756003)(25786009)(51416003)(476003)(7406005)(956004)(105586002)(2616005)(7416002)(66066001)(6512007)(186003)(26005)(47776003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2769;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2769;23:zNOFy6FVuiMFFpQNmhZ65YYhQ9jHfYRxEVWMA+s?=
- =?us-ascii?Q?sjtcLAMUJEJV0WLWnVQMh3ZRw3T0D3hPV87eUU/SG241LcmrVZQeWykESpXN?=
- =?us-ascii?Q?/8esDzq6jsYqoy67m3zAlyvii4BqJsq0xxcLiA40jdZugHhiku/ySoyEBm6X?=
- =?us-ascii?Q?TiQziP/t9x6OGG0BxGc4eME/69PIb+82ulZ6NwefqVdS4PHe/ok0C2ir7f+q?=
- =?us-ascii?Q?qXB5mh9lWO338Bmoi1mT1C2JZS0n6UBXvqN/qDuLHbj0BSR9GXw1ucddAkg4?=
- =?us-ascii?Q?OXBfXiUTtDooc0uj3GmGfLdVNMw6ZUGqePjD3evPc4uVAYRmbZTI/MLtqK6/?=
- =?us-ascii?Q?BDJ4ts4wNOR8EKK9tlumARd7apNze/D3wMWlubz4+0Cdi91l81ieW1tJX9df?=
- =?us-ascii?Q?HbwWN74SHKpRoS9RCTxblDi488LCb7hcz6o0mK0DuUIsrPMIH/6mZGVMDkkI?=
- =?us-ascii?Q?5KrnWvx1BdbHrYQ7/GYYdeCu/53C0Mlk9fbUpGUY1HZkA1EOmZgY8DUC2R1A?=
- =?us-ascii?Q?ZeggCjxCVRneWO8dPnb4MUCs9PTn6f4BFzuwilS5jqTSBfKSq36MqEFYWnu2?=
- =?us-ascii?Q?hWmX/3tuTOzLijuf6UULY4/MavsDBLWwK/WkxHA7JxEYlEiWlKPNQzYVdB9Y?=
- =?us-ascii?Q?VoBxOQB6QG0e98tHAkT8Xxc5zoc8X9WRIaiZfPLmGG4jf94DlyV+OGQOtskX?=
- =?us-ascii?Q?2/137N6DfFQUri+PTV/xpMsm9CIC+ETd55OnDEEvYBm+b6Z7xaLA+0kFUifz?=
- =?us-ascii?Q?iLrL5AJnKIuTEyUe3zgYQK47T7406h3hR/yL0f6sxIgJSOVrro07n1KsiNXX?=
- =?us-ascii?Q?dQiB0EseYFO/JnTG4Vr+B4+p3/xVXBxWXDYeflEdB7d9vZEYneLveAE/2Q/X?=
- =?us-ascii?Q?+1X1Gen+lnJj5DXSdx2JkXW0rM7gXVmHGA63vrvuzqqGToeZpfCRC2EpG/cw?=
- =?us-ascii?Q?J0/jHHwlf3gvIJqwHcJs1E1OtlePL/6vaiuF8L2G1fX1LhOiN6joauqZaGqm?=
- =?us-ascii?Q?49sm5urpUwqWFhiURtRr3YCL37eZGtLP/hQwpCANclp2vlMbYBMJVcbBHDQT?=
- =?us-ascii?Q?6aoO9t2P/4/P5JOUUsyZX2ciBHsZDoWJJ1FJadZD3G07GyAFi4pGHq3KD361?=
- =?us-ascii?Q?BpeSAaEOYXIgIpArzXaKtaNiCrhfof7jSnOiWNni2WccZTz42F2FNnVwElrT?=
- =?us-ascii?Q?mgnuihzUoJZS3tNRb0b0t350LeiM6yMPtq9OQ2ytN0BL8ukdjWPZDM9cadtG?=
- =?us-ascii?Q?vJFZiuWmQkvjUphkbYXrpcBsZQ9e/7owqvYI9JaU7kS/JqDw5l2ZMOfK1rxs?=
- =?us-ascii?Q?6vF+Bxv7bdD4iZp2wCFi3hTzXiERo77mZS4Cv4F3DnXc4wDo6aHX5l39Xsbc?=
- =?us-ascii?Q?/pjavvhcTezd56OFQ/yp3jjayQ/SwCvliE4FS6pV/OKUDxykzPEeCWZtxjrp?=
- =?us-ascii?Q?kvp3RbxYmzpCUbb8j42Hgg6m6LITgtd0=3D?=
-X-Microsoft-Antispam-Message-Info: gDeOIpxORQR+hHyJQJvJS/OIa3kKlg26W/Ji4jviX77vX8O6DLCTFvmSIPYo+gnpFTjGxuZHAm/b6nn2z/GKbJXCAxrg680zZGVHztSr864omUdqM+0hMa551KX/ZbC9YCsP7lB23NZtX1ms3wsY+Khd3uEvO0fCFIvqL6U76xaVZ0PKbbT9KaBj1mV6Obio
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;6:8K15U9Vf/uZ0DKjT1vszcnh/Fq+qDWQK3ZJ7SjPeofJrLucNi4I7EUBhSQqlFTP+JE/cZpmF6YvXPnzvgYrjEay/hz/MN9shQZ7TSwv6iXEPrZYilIV257TaCDCAthASMGhrJvwM8gBVsvB/ewtTVvsn7kiQ/el+mQagUYpuv9Xmw0qTyt+1OSCz7191PDdfNs2k3ydEvOrpJsDTek4OzffgvdqxPPDP+9hvavN7bONXL3aFMsoi63zD0BkuhGMPJ9u82N6XaQgka2nTKljrk0+WkXt5s1nUbbDoPjsXD5mft4DiUdiEDbXj8Jhcz6CwnTQ5isjzNgI233GKAsa7qr/VYRYBjmVg07NaIVpq4IQ4qPNhvNM3WcKH+KwAde2KJjYJwC7ohLtBC2ETOIT/uX6RrnrF5Y86XzzDSJfZNmCrRhsXWIv4pb5I2gdnSH8F7MakHGC6VNjH8YqUTyxP2w==;5:dmhyXVAnDG1Jh62aOxuCIaG0PidsZmXiG8ScAwAOqA6Zje2RgxXHAdIUMMrDgFIhykeMdpfvvBlAO5lN9ctKIq9apFXfFG79CIIdpvTIkilCPttTlqYIyMfXLFl7l/DpQc97Gxv4OlZo6qMXyAPLJt14Vqk2jIhEvKQO4gTd/dQ=;24:W/y1XqAqjVDN7S9BPc5dPmIq59nPmkLaD+reUjO0tj/7f7NtnsxIKJLBlqIdRa/PhqogJbPigBC6O6vspsmGWRPUzK2c286akDM+Sp2PCWQ=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(39380400002)(376002)(346002)(396003)(199004)(189003)(52116002)(386003)(50466002)(305945005)(6506007)(54906003)(74482002)(316002)(68736007)(5660300001)(16586007)(6666003)(50226002)(7736002)(8936002)(81166006)(8676002)(97736004)(6916009)(1076002)(48376002)(2906002)(2351001)(2361001)(16526019)(81156014)(39060400002)(76176011)(4326008)(86362001)(6486002)(6116002)(3846002)(53936002)(106356001)(478600001)(11346002)(486006)(446003)(36756003)(25786009)(51416003)(476003)(7406005)(956004)(105586002)(2616005)(7416002)(66066001)(6512007)(59450400001)(186003)(26005)(47776003)(142923001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM4PR0202MB2769;H:orc.pedanet;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM4PR0202MB2769;23:VxUhQO64A40l3X/9a1mkLbEDNW2JusOgdVxEkug?=
+ =?us-ascii?Q?6nT8ZNAtz7cxaTQrEsfHfE7T2AbjQ8h4PuEVp3nwSN1uor+SmyWza4VqdzRw?=
+ =?us-ascii?Q?x65CoD+5v6MBNTdfz4QET3IJiGA4pLTzybYSnJb+lxtQl7znRp2tVgg1gJxT?=
+ =?us-ascii?Q?rn7UT0M2vIy7dD/JlQFLVkvzn6xP7rk9uaLZ5jKIDrcfY4qx/NdBNW9ZC8op?=
+ =?us-ascii?Q?Ic7q4WaRd/w5IRuupxnxASLzrLPGmbh0BydsZDvWrklVqhwAYSLp0FI9u1gE?=
+ =?us-ascii?Q?zWh5ZvGfSnVABjkIwwNkrSv5TIEHKOM/hRQlgPb4MX3YbxG87OxfcBJtYh8w?=
+ =?us-ascii?Q?Macwyhim3AdLOrjbY9nCXcjIIZMXTHuScYwscUyCDdli8t2EMYmQZ3y6URyp?=
+ =?us-ascii?Q?Z5R/mNYYHtJUuAwUGO76Pi2tQnnOyws0FQySFqs4hAy93fNW5k3gPKcMkrjd?=
+ =?us-ascii?Q?17XVfRspcoJlqa6+w20M3lAk1VMgAbXs9KLwWMpay7Pkkk/I3SjT2w8SxRNR?=
+ =?us-ascii?Q?cu+/51GBYU9OXgQgVMuYaJp6QHCnefXBfnQQwYnHttr0Fp/0zkKnowH76F36?=
+ =?us-ascii?Q?YLE86Gn00s8KDQeKOt3Qz8yttQNpWvDrmXXjaVGxJzkq/shKcP+1XvKzEjfd?=
+ =?us-ascii?Q?0Bsl/C5Oc0ShxNcR30P4nMadOV3u5PoSHOlHFaA8ZoeygYS47twpw/C02Tpt?=
+ =?us-ascii?Q?6jhn/14coFQ3lwk9RRv3fyzhWDvLOauP/eqXYHsBriIRd+CWMMKLXtYz87h8?=
+ =?us-ascii?Q?sY3rcB8a+W+RsDRVpQIORYwKCQPOW5IiXfETrP4BzD0K9zscLmDehnmD57Hf?=
+ =?us-ascii?Q?4Is+mX0vyPNDAFONRiDTbZrNcngL+EB/eKfHxMQcqOPtnlOmjNAdlxylexsl?=
+ =?us-ascii?Q?jhldCgpzzf7idk+wGAXkqM3RSb5zT1Hk3o20YfDqb2BNCm6Q7xbwnTq6npoq?=
+ =?us-ascii?Q?wXRG96eLdu6b6N+wyJ9OszZsC/bi09hjXwKzpc/d3xJtUOzlAKNYSD37pjSf?=
+ =?us-ascii?Q?9q+4z04XraZDabGZgf09Kzs3lBIELk41xGhRmQ1VgYutD0in2GHFxLu+VidD?=
+ =?us-ascii?Q?/Jl9nTS+Q9YhuVHcXVlzJozaurba+DCpr6hHnYgPBQbxIk+/0XZo1etLCHYw?=
+ =?us-ascii?Q?gHkwo1L0VSpJPre8guyQ+Rxv1OxvdYCZFYcqkaoPdyuZm0s7OPGABz1s33hb?=
+ =?us-ascii?Q?yPKv/bElVeCz/AGrkvgtOdiLN79Agkikq0WrHC417hPbjVBGSl5rajTItV95?=
+ =?us-ascii?Q?ymRDmRMU7DfkexQ62Ko39LyhpXktqZb5uGi5qhaXLu99xxu1nPeRiiTrNsnh?=
+ =?us-ascii?Q?X/WuUqo/P3SRL8j3i6cD58HfTMiUYTC/VCF9B/0/undvAdvG4lR0DtTMRTG0?=
+ =?us-ascii?Q?q1fj8M1BQ8S04lqCKtDe0fP6MhuaCIyGaz6HcUmF2Rs2aeRJ3asqctShCxlr?=
+ =?us-ascii?Q?fMaMbqo1kIQ=3D=3D?=
+X-Microsoft-Antispam-Message-Info: jwpROSuVEidASsXcTXkPJxx9wVGP7CKN8xn0be2H+IfXhc+6OYDfOzoxqk01095j+AKF/0Hj4D4DS8q8HCVFMXathdMSQ3VwnIPqD6GcoKplMhwv6ix5iJO5jHe8sKhq3YAisYjqBmtCloOlgwpHhEVoI4w+GjPur+lMK6zPTe1Zad7kHI4+yfs9YF9NRIP+
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;6:T3ePstjOKxXsIRixmhgP+hnMU77TrukeglZxEnvELBi68LSja/UP+eT7Wc4fcW0Wc4lvqjevnywZj5dbczfpCdEMSAJISSGKn22tD6/YFElKuRWvTrerc0GPS8Ty4Qzfy+i7Xu2uYsmFulMxydMYJyQStV8gxfhUh9GBLuDo3CdN3kGyqQ/kXIlR8j3fKD6nyJmE46rItfFJR74Ds665XqfyaFUw07YpJHVGBIypD4fXJFa6SZoLh2/it/s3z73QOfXcMzpevJfL3RSO8pdxLqhahEA/xnAf1+uoSJmAosfsfb43drI8eZHEVtAfI85l8DJGhzZ+KHddK71zNKZmyWp0tf4tgc96fys/agVH8uAfth+tHGz+Lkpfz4t5ZwSON6MUhD9G8RVA/ePjWh+oN7SYoO+2fITHBm/IQirY3HEx/4RYM4yWkCNTQawiIzyScxrOhdMY5+Jwf0GfbtaeIQ==;5:Fz1aUKf2vWxB3LJddLJEoogUXNo6EwqFWtTEUzdfRdUmnHs2hPTYCkKXQqapj6zx3lLuNOQm+Tdxi2fe8wQGThef6TmgrIS56B1XGDgugVT5XLb1y4+MKqL0DCPuPbrxiTQhcew26r4Ubf0MnC7AcXlNp2s3xDevmmJr6vDqipQ=;24:zd5LAfRtwXIbrbCksij/m0LPZLPBKTr3BrMCNt3TusO6wgnQc1yZaK8td8YV1BJtEM4FCfMVQ+ho5fo2kkjvkGEZhYuwL8f1NP2HLZ7HZ/o=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;7:kDHV7W8yzNovhypVmgwBwj/i8cg6MUCB1BvzBXXfTANNW0QOr5RPjXaZo7jb70Tdq3kDDwWODcOscGYkLUsWwAqYcO++9sMeuJ7a8wFTSaHrGjN89dtLHvG1q/YIMeZqHcR8x8F1IHehuWzk53ELTMu6ovx/cLJYDx4aXUvV+unNUIaLYGQnsGfUtZto4SLDkolkFC66lLYnUiqoKxeqpFmOD1cNTukdUimILbNtOttcnYf1HmaQLnkX4CPcjCQt
-X-MS-Office365-Filtering-Correlation-Id: 733b0d75-553f-4e6f-6500-08d5b1c67787
+X-Microsoft-Exchange-Diagnostics: 1;AM4PR0202MB2769;7:WzbQm9PUVAdo4vqQNFT48XMQIEuTgxzck07/2XsZTm/K9xvN6zZDCq0jTxtP/Cp0g2zLzl3Neow3a71Le08CkmoAPJ7z+eAsukbv+KmCQMF0Y/5QHrM76ceHhhjQsnXsWCfsSLk2oku/PrKBdGNsgRFHmyCoznRr4z6HgAqdLHioVmx9FfAyORbLZECaMeDbwHhPFlhL5N8moSw2tyomGbPpEScNW5AG7xshQvlTGvn8nl0toRko/6aBMk9qwng2
+X-MS-Office365-Filtering-Correlation-Id: 3840fc27-19ef-4636-8cd0-08d5b1c67325
 X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2018 13:53:48.7057 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 733b0d75-553f-4e6f-6500-08d5b1c67787
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2018 13:53:41.2985 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3840fc27-19ef-4636-8cd0-08d5b1c67325
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0202MB2769
@@ -99,85 +99,63 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the bridge supplier is unbound, this will bring the bridge consumer
-down along with the bridge. Thus, there will no longer linger any
-dangling pointers from the bridge consumer (the drm_device) to some
-non-existent bridge supplier.
+It is unused.
 
 Signed-off-by: Peter Rosin <peda@axentia.se>
 ---
- drivers/gpu/drm/drm_bridge.c | 18 ++++++++++++++++++
- include/drm/drm_bridge.h     |  2 ++
- 2 files changed, 20 insertions(+)
+ drivers/gpu/drm/drm_bridge.c             | 3 +--
+ drivers/gpu/drm/rockchip/rockchip_lvds.c | 2 --
+ include/drm/drm_bridge.h                 | 4 ----
+ 3 files changed, 1 insertion(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 78d186b6831b..0259f0a3ff27 100644
+index 3872f5379998..df084db33494 100644
 --- a/drivers/gpu/drm/drm_bridge.c
 +++ b/drivers/gpu/drm/drm_bridge.c
-@@ -26,6 +26,7 @@
- #include <linux/mutex.h>
+@@ -365,8 +365,7 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
+ 	mutex_lock(&bridge_lock);
  
- #include <drm/drm_bridge.h>
-+#include <drm/drm_device.h>
- #include <drm/drm_encoder.h>
- 
- #include "drm_crtc_internal.h"
-@@ -127,12 +128,25 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	if (bridge->dev)
- 		return -EBUSY;
- 
-+	if (encoder->dev->dev != bridge->odev) {
-+		bridge->link = device_link_add(encoder->dev->dev,
-+					       bridge->odev, 0);
-+		if (!bridge->link) {
-+			dev_err(bridge->odev, "failed to link bridge to %s\n",
-+				dev_name(encoder->dev->dev));
-+			return -EINVAL;
-+		}
-+	}
-+
- 	bridge->dev = encoder->dev;
- 	bridge->encoder = encoder;
- 
- 	if (bridge->funcs->attach) {
- 		ret = bridge->funcs->attach(bridge);
- 		if (ret < 0) {
-+			if (bridge->link)
-+				device_link_del(bridge->link);
-+			bridge->link = NULL;
- 			bridge->dev = NULL;
- 			bridge->encoder = NULL;
- 			return ret;
-@@ -159,6 +173,10 @@ void drm_bridge_detach(struct drm_bridge *bridge)
- 	if (bridge->funcs->detach)
- 		bridge->funcs->detach(bridge);
- 
-+	if (bridge->link)
-+		device_link_del(bridge->link);
-+	bridge->link = NULL;
-+
- 	bridge->dev = NULL;
- }
- 
+ 	list_for_each_entry(bridge, &bridge_list, list) {
+-		if ((bridge->odev && bridge->odev->of_node == np) ||
+-		    bridge->of_node == np) {
++		if (bridge->odev->of_node == np) {
+ 			mutex_unlock(&bridge_lock);
+ 			return bridge;
+ 		}
+diff --git a/drivers/gpu/drm/rockchip/rockchip_lvds.c b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+index 557e0079c98d..e77d4c909582 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_lvds.c
++++ b/drivers/gpu/drm/rockchip/rockchip_lvds.c
+@@ -377,8 +377,6 @@ static int rockchip_lvds_bind(struct device *dev, struct device *master,
+ 	}
+ 	if (lvds->panel)
+ 		remote = lvds->panel->dev->of_node;
+-	else if (lvds->bridge->of_node)
+-		remote = lvds->bridge->of_node;
+ 	else
+ 		remote = lvds->bridge->odev->of_node;
+ 	if (of_property_read_string(dev->of_node, "rockchip,output", &name))
 diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-index b656e505d11e..804189c63a4c 100644
+index 7c17977c3537..b656e505d11e 100644
 --- a/include/drm/drm_bridge.h
 +++ b/include/drm/drm_bridge.h
-@@ -261,6 +261,7 @@ struct drm_bridge_timings {
+@@ -258,7 +258,6 @@ struct drm_bridge_timings {
+  * @dev: DRM device this bridge belongs to
+  * @encoder: encoder to which this bridge is connected
+  * @next: the next bridge in the encoder chain
+- * @of_node: device node pointer to the bridge
   * @list: to keep track of all added bridges
   * @timings: the timing specification for the bridge, if any (may
   * be NULL)
-+ * @link: drm consumer <-> bridge supplier
-  * @funcs: control functions
-  * @driver_private: pointer to the bridge driver's internal context
-  */
-@@ -271,6 +272,7 @@ struct drm_bridge {
+@@ -270,9 +269,6 @@ struct drm_bridge {
+ 	struct drm_device *dev;
+ 	struct drm_encoder *encoder;
  	struct drm_bridge *next;
+-#ifdef CONFIG_OF
+-	struct device_node *of_node;
+-#endif
  	struct list_head list;
  	const struct drm_bridge_timings *timings;
-+	struct device_link *link;
  
- 	const struct drm_bridge_funcs *funcs;
- 	void *driver_private;
 -- 
 2.11.0
