@@ -1,64 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751721AbeEDRW3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:22:29 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:39982 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751425AbeEDRW1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:22:27 -0400
-Subject: Re: [RFC] sched/core: Don't schedule threads on pre-empted vcpus
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: matt@codeblueprint.co.uk, mingo@kernel.org, dhaval.giani@oracle.com,
-        subhra.mazumdar@oracle.com, steven.sistare@oracle.com,
-        linux-kernel@vger.kernel.org
-References: <1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com>
- <20180504094716.GL12217@hirez.programming.kicks-ass.net>
-From: Rohit Jain <rohit.k.jain@oracle.com>
-Message-ID: <19c761ee-0865-cc32-1728-0c3ccaf5814a@oracle.com>
-Date: Fri, 4 May 2018 10:22:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751849AbeEDRXk (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:23:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40563 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751771AbeEDRXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:23:39 -0400
+Date: Fri, 4 May 2018 19:23:37 +0200
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        kishon@ti.com, linux@armlinux.org.uk, gregory.clement@bootlin.com,
+        andrew@lunn.ch, jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v2 02/13] net: phy: sfp: handle non-wired SFP
+ connectors
+Message-ID: <20180504172337.GC13899@kwain>
+References: <20180504135643.23466-1-antoine.tenart@bootlin.com>
+ <20180504135643.23466-3-antoine.tenart@bootlin.com>
+ <e338472c-1f26-e49b-9a2d-7942e6ed4288@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180504094716.GL12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8883 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805040159
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e338472c-1f26-e49b-9a2d-7942e6ed4288@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Hi Florian,
 
+On Fri, May 04, 2018 at 10:04:48AM -0700, Florian Fainelli wrote:
+> On 05/04/2018 06:56 AM, Antoine Tenart wrote:
+> > SFP connectors can be solder on a board without having any of their pins
+> > (LOS, i2c...) wired. In such cases the SFP link state cannot be guessed,
+> > and the overall link status reporting is left to other layers.
+> > 
+> > In order to achieve this, a new SFP_DEV status is added, named UNKNOWN.
+> > This mode is set when it is not possible for the SFP code to get the
+> > link status and as a result the link status is reported to be always UP
+> > from the SFP point of view.
+> 
+> Why represent the SFP in Device Tree then? Why not just declare this is
+> a fixed link which would avoid having to introduce this "unknown" state.
 
-On 05/04/2018 02:47 AM, Peter Zijlstra wrote:
-> On Wed, May 02, 2018 at 01:52:10PM -0700, Rohit Jain wrote:
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 5e10aae..75d1ecf 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -4033,6 +4033,9 @@ int idle_cpu(int cpu)
->>   		return 0;
->>   #endif
->>   
->> +	if (vcpu_is_preempted(cpu))
->> +		return 0;
->> +
->>   	return 1;
->>   }
-> Basically OK with this, but did you consider idle_cpu() usage outside of
-> select_idle_sibling()?
->
-> For instance, I think got_nohz_idle_kick() isn't quite right with this
-> on. Similarly for scheduler_tick(), that wants the actual idle state.
+The other solution would have been to represent this as a fixed-link.
+But such a representation would report the link as being up all the
+time, which is something we wanted to avoid as the GoP in PPv2 can
+report some link status. This is achieved using SFP+phylink+PPv2.
 
-As far as intent is concerned, yes I agree you might be right. I left
-the VM running for a couple of days, didn't see anything weird however.
+And representing the SFP cage in the device tree, although it's a
+"dummy" one, helps describing the hardware.
 
-We could add a check at each of those places or something to that effect
-if this is an issue. Please let me know how you want to proceed.
+Thanks!
+Antoine
+
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
