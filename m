@@ -1,187 +1,136 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeEDJi0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 05:38:26 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:52595 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbeEDJiZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 05:38:25 -0400
-Date: Fri, 4 May 2018 02:37:58 -0700
-From: tip-bot for Rohit Jain <tipbot@zytor.com>
-Message-ID: <tip-247f2f6f3c706b40b5f3886646f3eb53671258bf@git.kernel.org>
-Cc: linux-kernel@vger.kernel.org, rohit.k.jain@oracle.com, hpa@zytor.com,
-        peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-        torvalds@linux-foundation.org
-Reply-To: mingo@kernel.org, torvalds@linux-foundation.org, tglx@linutronix.de,
-        peterz@infradead.org, rohit.k.jain@oracle.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com
-In-Reply-To: <1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com>
-References: <1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com>
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/core: Don't schedule threads on pre-empted
- vCPUs
-Git-Commit-ID: 247f2f6f3c706b40b5f3886646f3eb53671258bf
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1751499AbeEDJi5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 05:38:57 -0400
+Received: from foss.arm.com ([217.140.101.70]:51576 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750709AbeEDJi4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 05:38:56 -0400
+Date: Fri, 4 May 2018 10:38:54 +0100
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Satendra Singh Thakur <satendra.t@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] drm/kms/mode: added a new helper for calculating
+ videomode from crtc's display mode
+Message-ID: <20180504093854.GJ1027@e110455-lin.cambridge.arm.com>
+References: <1525419600-1774-1-git-send-email-satendra.t@samsung.com>
+ <CGME20180504090214epcas5p4e9c362da6cc7b65effcc042fc4f82d2a@epcas5p4.samsung.com>
+ <1525424523-3367-1-git-send-email-satendra.t@samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1525424523-3367-1-git-send-email-satendra.t@samsung.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  247f2f6f3c706b40b5f3886646f3eb53671258bf
-Gitweb:     https://git.kernel.org/tip/247f2f6f3c706b40b5f3886646f3eb53671258bf
-Author:     Rohit Jain <rohit.k.jain@oracle.com>
-AuthorDate: Wed, 2 May 2018 13:52:10 -0700
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Fri, 4 May 2018 10:00:09 +0200
+On Fri, May 04, 2018 at 02:32:03PM +0530, Satendra Singh Thakur wrote:
+> On Thu, May 03, 2018 at 11:36:39 +0100, Liviu Dudau wrote:
+> > On Thu, May 03, 2018 at 11:28:37AM +0530, Satendra Singh Thakur wrote:
+> > > 1.
+> > > -Added a new helper drm_display_mode_crtc_to_videomode
+> > > -This helper calculates mode parameters like
+> > >   horizontal front_porch, back_porch, sync length
+> > >   vertical front_porch, back_porch, sync length
+> > >   using crtc_* fields of struct drm_display_mode
+> > > -It uses following fields of crtc mode
+> > >  horizontal sync start/end, active and total length
+> > >  vertical sync start/end, active and total length
+> > > 2.
+> > > -Most of the driver use user-supplied mode for calculating videomode
+> > > -However, few drivers use HW (crtc) mode for calculating videomode
+> > > -This helper will be useful for such drivers
+> > > 3.
+> > > -Currently following drivers will be using this new helper
+> > > -arm hdlcd
+> > > -atmel hlcdc
+> > > -exynos 5433 decon
+> > > -exynos7 decon
+> > > -exynos fimd
+> > > 4.
+> > > -This patch removes related duplicate code from above mentioned drivers
+> > > 
+> > > Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+> > > Cc: Madhur Verma <madhur.verma@samsung.com>
+> > > Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
+> > > ---
+> > >  drivers/gpu/drm/arm/hdlcd_crtc.c               |  8 +-------
+> > >  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c |  7 +------
+> > >  drivers/gpu/drm/drm_modes.c                    | 20 ++++++++++++++++++++
+> > >  drivers/gpu/drm/exynos/exynos5433_drm_decon.c  | 22 ++++++++++------------
+> > >  drivers/gpu/drm/exynos/exynos7_drm_decon.c     | 23 ++++++++++-------------
+> > >  drivers/gpu/drm/exynos/exynos_drm_fimd.c       | 22 +++++++++-------------
+> > >  include/drm/drm_modes.h                        |  2 ++
+> > >  7 files changed, 53 insertions(+), 51 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/arm/hdlcd_crtc.c b/drivers/gpu/drm/arm/hdlcd_crtc.c
+> > > index cf5cbd6..d20e471 100644
+> > > --- a/drivers/gpu/drm/arm/hdlcd_crtc.c
+> > > +++ b/drivers/gpu/drm/arm/hdlcd_crtc.c
+> > > @@ -130,13 +130,7 @@ static void hdlcd_crtc_mode_set_nofb(struct drm_crtc *crtc)
+> > >  	struct videomode vm;
+> > >  	unsigned int polarities, err;
+> > >  
+> > > -	vm.vfront_porch = m->crtc_vsync_start - m->crtc_vdisplay;
+> > > -	vm.vback_porch = m->crtc_vtotal - m->crtc_vsync_end;
+> > > -	vm.vsync_len = m->crtc_vsync_end - m->crtc_vsync_start;
+> > > -	vm.hfront_porch = m->crtc_hsync_start - m->crtc_hdisplay;
+> > > -	vm.hback_porch = m->crtc_htotal - m->crtc_hsync_end;
+> > > -	vm.hsync_len = m->crtc_hsync_end - m->crtc_hsync_start;
+> > > -
+> > > +	drm_display_mode_crtc_to_videomode(m, &vm);
+> > >  	polarities = HDLCD_POLARITY_DATAEN | HDLCD_POLARITY_DATA;
+> > >  
+> > >  	if (m->flags & DRM_MODE_FLAG_PHSYNC)
+> >
+> > For the HDLCD part:
+> > 
+> > Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+> > 
+> > If you're not sending the final version through drm-misc then let me
+> > know and I can pick up the HDLCD part separately.
+> >
+> > Best regards,
+> > Liviu
+> >
+> >
+> 
+> Hi Mr Liviu,
+> Thanks for accepting the patch.
+> I don't know how to send patch through drm-misc.
+> You may please go ahead and pick HDLCD part separately.
 
-sched/core: Don't schedule threads on pre-empted vCPUs
+Lets wait for the maintainers of other drivers to give their ACKs and
+then we'll sort out the submission. Usually it is just a matter of
+asking for the patch to be pulled from the relevant people. For drm-misc
+there are quite a few people and with enough patches accepted others can
+join too. I'll just put here some names, in no particular order, that
+you can ask for the patch to be pulled.
 
-In paravirt configurations today, spinlocks figure out whether a vCPU is
-running to determine whether or not spinlock should bother spinning. We
-can use the same logic to prioritize CPUs when scheduling threads. If a
-vCPU has been pre-empted, it will incur the extra cost of VMENTER and
-the time it actually spends to be running on the host CPU. If we had
-other vCPUs which were actually running on the host CPU and idle we
-should schedule threads there.
+Gustavo Padovan <gustavo@padovan.org>
+Daniel Stone <daniel@fooishbar.org>
+Eric Anholt <eric@anholt.net>
+Jani Nikula <jani.nikula@intel.com>
+Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Sean Paul <seanpaul@chromium.org>
+Daniel Vetter <daniel.vetter@intel.com>
 
-Performance numbers:
+Best regards,
+Liviu
 
-Note: With patch is referred to as Paravirt in the following and without
-patch is referred to as Base.
+> 
+> Thanks
+> -Satendra
 
-1) When only 1 VM is running:
-
-    a) Hackbench test on KVM 8 vCPUs, 10,000 loops (lower is better):
-
-	+-------+-----------------+----------------+
-	|Number |Paravirt         |Base            |
-	|of     +---------+-------+-------+--------+
-	|Threads|Average  |Std Dev|Average| Std Dev|
-	+-------+---------+-------+-------+--------+
-	|1      |1.817    |0.076  |1.721  | 0.067  |
-	|2      |3.467    |0.120  |3.468  | 0.074  |
-	|4      |6.266    |0.035  |6.314  | 0.068  |
-	|8      |11.437   |0.105  |11.418 | 0.132  |
-	|16     |21.862   |0.167  |22.161 | 0.129  |
-	|25     |33.341   |0.326  |33.692 | 0.147  |
-	+-------+---------+-------+-------+--------+
-
-2) When two VMs are running with same CPU affinities:
-
-    a) tbench test on VM 8 cpus
-
-    Base:
-
-	VM1:
-
-	Throughput 220.59 MB/sec   1 clients  1 procs  max_latency=12.872 ms
-	Throughput 448.716 MB/sec  2 clients  2 procs  max_latency=7.555 ms
-	Throughput 861.009 MB/sec  4 clients  4 procs  max_latency=49.501 ms
-	Throughput 1261.81 MB/sec  7 clients  7 procs  max_latency=76.990 ms
-
-	VM2:
-
-	Throughput 219.937 MB/sec  1 clients  1 procs  max_latency=12.517 ms
-	Throughput 470.99 MB/sec   2 clients  2 procs  max_latency=12.419 ms
-	Throughput 841.299 MB/sec  4 clients  4 procs  max_latency=37.043 ms
-	Throughput 1240.78 MB/sec  7 clients  7 procs  max_latency=77.489 ms
-
-    Paravirt:
-
-	VM1:
-
-	Throughput 222.572 MB/sec  1 clients  1 procs  max_latency=7.057 ms
-	Throughput 485.993 MB/sec  2 clients  2 procs  max_latency=26.049 ms
-	Throughput 947.095 MB/sec  4 clients  4 procs  max_latency=45.338 ms
-	Throughput 1364.26 MB/sec  7 clients  7 procs  max_latency=145.124 ms
-
-	VM2:
-
-	Throughput 224.128 MB/sec  1 clients  1 procs  max_latency=4.564 ms
-	Throughput 501.878 MB/sec  2 clients  2 procs  max_latency=11.061 ms
-	Throughput 965.455 MB/sec  4 clients  4 procs  max_latency=45.370 ms
-	Throughput 1359.08 MB/sec  7 clients  7 procs  max_latency=168.053 ms
-
-    b) Hackbench with 4 fd 1,000,000 loops
-
-	+-------+--------------------------------------+----------------------------------------+
-	|Number |Paravirt                              |Base                                    |
-	|of     +----------+--------+---------+--------+----------+--------+---------+----------+
-	|Threads|Average1  |Std Dev1|Average2 | Std Dev|Average1  |Std Dev1|Average2 | Std Dev 2|
-	+-------+----------+--------+---------+--------+----------+--------+---------+----------+
-	|  1    | 3.748    | 0.620  | 3.576   | 0.432  | 4.006    | 0.395  | 3.446   | 0.787    |
-	+-------+----------+--------+---------+--------+----------+--------+---------+----------+
-
-    Note that this test was run just to show the interference effect
-    over-subscription can have in baseline
-
-    c) schbench results with 2 message groups on 8 vCPU VMs
-
-	+-----------+-------+---------------+--------------+------------+
-	|           |       | Paravirt      | Base         |            |
-	+-----------+-------+-------+-------+-------+------+------------+
-	|           |Threads| VM1   | VM2   |  VM1  | VM2  |%Improvement|
-	+-----------+-------+-------+-------+-------+------+------------+
-	|50.0000th  |    1  | 52    | 53    |  58   | 54   |  +6.25%    |
-	|75.0000th  |    1  | 69    | 61    |  83   | 59   |  +8.45%    |
-	|90.0000th  |    1  | 80    | 80    |  89   | 83   |  +6.98%    |
-	|95.0000th  |    1  | 83    | 83    |  93   | 87   |  +7.78%    |
-	|*99.0000th |    1  | 92    | 94    |  99   | 97   |  +5.10%    |
-	|99.5000th  |    1  | 95    | 100   |  102  | 103  |  +4.88%    |
-	|99.9000th  |    1  | 107   | 123   |  105  | 203  |  +25.32%   |
-	+-----------+-------+-------+-------+-------+------+------------+
-	|50.0000th  |    2  | 56    | 62    |  67   | 59   |  +6.35%    |
-	|75.0000th  |    2  | 69    | 75    |  80   | 71   |  +4.64%    |
-	|90.0000th  |    2  | 80    | 82    |  90   | 81   |  +5.26%    |
-	|95.0000th  |    2  | 85    | 87    |  97   | 91   |  +8.51%    |
-	|*99.0000th |    2  | 98    | 99    |  107  | 109  |  +8.79%    |
-	|99.5000th  |    2  | 107   | 105   |  109  | 116  |  +5.78%    |
-	|99.9000th  |    2  | 9968  | 609   |  875  | 3116 | -165.02%   |
-	+-----------+-------+-------+-------+-------+------+------------+
-	|50.0000th  |    4  | 78    | 77    |  78   | 79   |  +1.27%    |
-	|75.0000th  |    4  | 98    | 106   |  100  | 104  |   0.00%    |
-	|90.0000th  |    4  | 987   | 1001  |  995  | 1015 |  +1.09%    |
-	|95.0000th  |    4  | 4136  | 5368  |  5752 | 5192 |  +13.16%   |
-	|*99.0000th |    4  | 11632 | 11344 |  11024| 10736|  -5.59%    |
-	|99.5000th  |    4  | 12624 | 13040 |  12720| 12144|  -3.22%    |
-	|99.9000th  |    4  | 13168 | 18912 |  14992| 17824|  +2.24%    |
-	+-----------+-------+-------+-------+-------+------+------------+
-
-    Note: Improvement is measured for (VM1+VM2)
-
-Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: dhaval.giani@oracle.com
-Cc: matt@codeblueprint.co.uk
-Cc: steven.sistare@oracle.com
-Cc: subhra.mazumdar@oracle.com
-Link: http://lkml.kernel.org/r/1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index ffde9eebc846..71bdb86e07f9 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4028,6 +4028,9 @@ int idle_cpu(int cpu)
- 		return 0;
- #endif
- 
-+	if (vcpu_is_preempted(cpu))
-+		return 0;
-+
- 	return 1;
- }
- 
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
