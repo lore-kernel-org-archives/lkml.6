@@ -1,292 +1,247 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751623AbeEDCnD (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 22:43:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18423 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751314AbeEDClc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 22:41:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
-   d="scan'208";a="221513539"
-From: kan.liang@intel.com
-To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc: acme@kernel.org, eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@intel.com>
-Subject: [RESEND PATCH V7 4/8] perf/x86/intel/uncore: Add new data structures for free running counters
-Date: Thu,  3 May 2018 11:25:09 -0700
-Message-Id: <1525371913-10597-4-git-send-email-kan.liang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
-References: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
+        id S1751432AbeEDCo1 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 22:44:27 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33805 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751291AbeEDCoZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 22:44:25 -0400
+X-Google-Smtp-Source: AB8JxZr5o1lgtAyOHm67712Vlzrh7+4skRnpwQkKtSNCyroSJ4hDPQA8Udi0zhkfbB2Ahwmw0dbzBA==
+MIME-Version: 1.0
+In-Reply-To: <add8a505-9daa-43d6-eada-b5925d58f1a1@arm.com>
+References: <20180426140728.43155-1-icenowy@aosc.io> <20180426140728.43155-4-icenowy@aosc.io>
+ <03cc2e8c-4a35-3fb4-b408-fd8d4ba3e407@arm.com> <83EDF187-5EB2-4FEB-99BC-9D5B728D3A45@aosc.io>
+ <45956397-a593-e51e-8637-655178c5901c@arm.com> <CDCEAF85-ACD3-4884-8727-3AB1BFF670FE@aosc.io>
+ <c70beee6-3524-a322-9668-45cb27fc365c@arm.com> <CAGb2v6783ERJHPd5ov3Ebf+V5LNm+bL=ypAgetPLigSyW6_niQ@mail.gmail.com>
+ <add8a505-9daa-43d6-eada-b5925d58f1a1@arm.com>
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Fri, 4 May 2018 10:44:02 +0800
+X-Gmail-Original-Message-ID: <CAGb2v651pi+Qh1eCuq9Ea6XfbWyOwDt=-qeu03StVd9Es0feKw@mail.gmail.com>
+Message-ID: <CAGb2v651pi+Qh1eCuq9Ea6XfbWyOwDt=-qeu03StVd9Es0feKw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH 3/3] arm64: allwinner: h6: enable MMC0/2 on
+ Pine H64
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Icenowy Zheng <icenowy@aosc.io>, Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, linux-mmc@vger.kernel.org,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@intel.com>
+On Wed, May 2, 2018 at 7:01 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+> Hi,
+>
+> On 01/05/18 16:52, Chen-Yu Tsai wrote:
+>> On Mon, Apr 30, 2018 at 6:44 PM, Andre Przywara <andre.przywara@arm.com> wrote:
+>>> Hi,
+>>>
+>>> On 30/04/18 10:51, Icenowy Zheng wrote:
+>>>>
+>>>>
+>>>> 于 2018年4月30日 GMT+08:00 下午5:47:35, Andre Przywara <andre.przywara@arm.com> 写到:
+>>>>> Hi Icenowy,
+>>>>>
+>>>>> On 27/04/18 08:12, Icenowy Zheng wrote:
+>>>>>>
+>>>>>>
+>>>>>> 于 2018年4月27日 GMT+08:00 上午12:46:26, Andre Przywara
+>>>>> <andre.przywara@arm.com> 写到:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On 26/04/18 15:07, Icenowy Zheng wrote:
+>>>>>>>> The Pine H64 board have a MicroSD slot connected to MMC0 controller
+>>>>>>> of
+>>>>>>>> the H6 SoC and a eMMC slot connected to MMC2.
+>>>>>>>>
+>>>>>>>> Enable them in the device tree.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>>>>>>>> ---
+>>>>>>>>  .../boot/dts/allwinner/sun50i-h6-pine-h64.dts      | 32
+>>>>>>> ++++++++++++++++++++++
+>>>>>>>>  1 file changed, 32 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>>>>>> b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>>>>>>> index d36de5eb81f3..78b1cd54687c 100644
+>>>>>>>> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>>>>>>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
+>>>>>>>> @@ -20,6 +20,38 @@
+>>>>>>>>   chosen {
+>>>>>>>>           stdout-path = "serial0:115200n8";
+>>>>>>>>   };
+>>>>>>>> +
+>>>>>>>> + reg_vcc3v3: vcc3v3 {
+>>>>>>>> +         compatible = "regulator-fixed";
+>>>>>>>> +         regulator-name = "vcc3v3";
+>>>>>>>> +         regulator-min-microvolt = <3300000>;
+>>>>>>>> +         regulator-max-microvolt = <3300000>;
+>>>>>>>> + };
+>>>>>>>> +
+>>>>>>>> + reg_vcc1v8: vcc1v8 {
+>>>>>>>> +         compatible = "regulator-fixed";
+>>>>>>>> +         regulator-name = "vcc1v8";
+>>>>>>>> +         regulator-min-microvolt = <1800000>;
+>>>>>>>> +         regulator-max-microvolt = <1800000>;
+>>>>>>>> + };
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&mmc0 {
+>>>>>>>> + pinctrl-names = "default";
+>>>>>>>> + pinctrl-0 = <&mmc0_pins>;
+>>>>>>>> + vmmc-supply = <&reg_vcc3v3>;
+>>>>>>>
+>>>>>>> So this is actually CLDO1 on the AXP, correct?
+>>>>>>
+>>>>>> I remember it's coupled between two LDOs, to provide enough power.
+>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>> + cd-gpios = <&pio 5 6 GPIO_ACTIVE_LOW>;
+>>>>>>>> + status = "okay";
+>>>>>>>> +};
+>>>>>>>> +
+>>>>>>>> +&mmc2 {
+>>>>>>>> + pinctrl-names = "default";
+>>>>>>>> + pinctrl-0 = <&mmc2_pins>;
+>>>>>>>> + vmmc-supply = <&reg_vcc3v3>;
+>>>>>>>> + vqmmc-supply = <&reg_vcc1v8>;
+>>>>>>>
+>>>>>>> And this is BLDO2?
+>>>>>>
+>>>>>> Yes.
+>>>>>>
+>>>>>>>
+>>>>>>> I am just asking because I want to avoid running into the same
+>>>>> problem
+>>>>>>> as with the A64 before: that future DTs become incompatible with
+>>>>> older
+>>>>>>> kernels, because we change the power supply to point to the AXP
+>>>>>>> regulators, which this kernel does not support yet.
+>>>>>>
+>>>>>> The answer is just not to keep this compatibility, as it's not
+>>>>>> supported option to update DT without updating kernel.
+>>>>>
+>>>>> Well, I recognise that statement.. ;-) and I understand that it's far
+>>>>> easier to handle it this way. But:
+>>>>> - Which .dtb are we going to write into the SPI flash? An older one,
+>>>>> which covers all kernels, but lacks features? Or a newer one, which
+>>>>> limits the bootable kernels to recent versions?
+>>>>> - Which DT are we going to give to EFI applications?
+>>>>> - Which DT are the BSDs suspected to take? They don't ship their own
+>>>>> DTs
+>>>>> (which is good!).
+>>>>>
+>>>>> So I understand that "shipping the DT with the kernel" is the old
+>>>>> (embedded!) way of doing things, but I really believe we should stop
+>>>>> relying on this and try to come up with backwards compatible DTs, which
+>>>>> live in the firmware and get updated there. Because this is what the
+>>>>> distros seem to expect from ARM64 boards these days.
+>>>>
+>>>> I think in this way we should change the way to submit
+>>>> patches -- let DT binding patch be merged when it's ready,
+>>>> and do not wait for driver.
+>>>
+>>> Yes, I agree. Ideally we would look at the hardware description, create
+>>> a binding just based on that and submit it.
+>>>
+>>> Then the actual DTs and the drivers (for Linux, U-Boot, *BSD,
+>>> you-name-it) could be done independently from each other.
+>>>
+>>> I think we should really aim for that. The only question is whether this
+>>> is really practical, since the documentation is sometimes lacking and we
+>>> may discover missing properties during driver development.
+>>> So when we meanwhile do hand-in-hand development, we should make sure we
+>>> don't break anything in the future.
+>>
+>> We could do that, but for critical regulators it's a bit tricky. Like the
+>> issue with vmmc and vqmmc, where the driver for the regulator is missing,
+>> leading to an unusable system.
+>
+> Yes, that was my original point. We can already anticipate that we will
+> break forward compatibility, so we can try to do something about that
+> now to avoid that, either by staying with fixed regulators, or by adding
+> the PMIC early.
+>
+>>>>>> P.S. I think the DT will update twice on the kernel side, the
+>>>>>> first time keep reg_vcc3v3 (as it's coupled) but use real
+>>>>>> regulator for reg_vcc1v8, the second time use the real
+>>>>>> coupled regulator for reg_vcc3v3.
+>>>>>>
+>>>>>>>
+>>>>>>> It looks like there are more users of those power rails, so we could
+>>>>>>> keep those supplies connected to these fixed regulators here, even
+>>>>> with
+>>>>>>> AXP-805 support in the kernel.
+>>>>>>
+>>>>>> It's not a good choice.
+>>>>>>
+>>>>>>>
+>>>>>>> Or we keep this back until we get proper AXP support in the kernel?
+>>>>> I
+>>>>>>> guess it's quite close to the existing PMICs, so it might be more a
+>>>>>>> copy&paste exercise to support the AXP-805?
+>>>>>>
+>>>>>> It's not a reason to keep it back.
+>>>>>
+>>>>> So I compared the manuals of the AXP806 and the AXP805, the register
+>>>>> interface looks identical to me. I only have a (somewhat) Chinese
+>>>>> version of the AXP806 manual, so couldn't really find the difference
+>>>>> between the two. Do you know more about it? Is it just maybe the
+>>>>> packaging and the electrical properties (like max current supported)?
+>>>>>
+>>>>> If the I2C register interface is really the same, we could just add the
+>>>>> DT nodes for the regulator and be done.
+>>>>
+>>>> They're the same. My following patchset adds AXP805
+>>>> compatible just to use AXP806 code. I have asked Wink
+>>>> and the answer is that they have only preset difference.
+>>>
+>>> Ah, thanks for that, that's good info!
+>>> So in this case we don't even need to add the compatible name to the
+>>> driver, just add it to the binding doc and create (or copy) the DT
+>>> snippets. See last week's discussion ;-)
+>>
+>> We need to add the compatible to the I2C side of the AXP driver.
+>
+> Why? If it's really 100% compatible, we just add it to the binding doc
+> and use compatible = "x-powers,axp805", "x-powers,axp806"; in the DT.
+> That would immediately enable other OSes, for instance.
 
-There are a number of free running counters introduced for uncore, which
-provide highly valuable information to a wide array of customers.
-For example, Skylake Server has IIO free running counters to collect
-Input/Output x BW/Utilization.
+I meant the implementation side, not the DT. The AXP I2C driver only
+binds to the earlier (up to AXP221) PMICs. So just having the device
+tree correctly set up does not guarantee a working system for the
+current release, or the one in -rc.
 
-There is NO event available on the general purpose counters, that is
-exactly the same as the free running counters. The generic uncore code
-needs to be enhanced to support the new counters.
+>> Also the property for "standalone mode".
+>
+> Are you referring to what the manual refers to as "self-work" mode?
+> In this case I don't see why we need a property: this mode is set up on
+> the board side by leaving the MODESET pin floating. And it can be
+> queried by checking bits[7:6] of REG 00, so doesn't need a DT property.
+> If we care about this mode (do we?), we can check for this in the driver.
+>
+> (Curious if you meant something else ...)
 
-In the uncore document, there is no event-code assigned to free running
-counters. Some events need to be defined to indicate the free running
-counters. The events are encoded as event-code + umask-code.
+Yes this is what I was referring to. If you look at the last two registers
+you'll see that self-work mode, along with master mode, require the address
+extension register be programmed before access to any other register can
+happen.
 
-The event-code for all free running counters is 0xff, which is the same
-as the fixed counters.
-- It has not been decided what code will be used for common events on
-  future platforms. 0xff is the only one which will definitely not be
-  used as any common event-code.
-- Cannot re-use current events on the general purpose counters. Because
-  there is NO event available, that is exactly the same as the free
-  running counters.
-- Even in the existing codes, the fixed counters for core, that have the
-  same event-code, may count different things. Hence, it should not
-  surprise the users if the free running counters that share the same
-  event-code also count different things.
-  Umask will be used to distinguish the counters.
+We already have the "x-powers,master-mode" property. The driver will program
+the registers correctly when it sees this property. I'm arguing that we
+should have another "x-powers,self-work-mode", because these two modes are
+not the same: The enable pin works as a power key under self-work mode, while
+it acts as a level triggered enable pi, as the name describes. There are
+some other minor differences described in the datasheet. The device tree,
+being a hardware description, should not conflate the two and leave it up
+to the driver to figure things out.
 
-The umask-code is used to distinguish a fixed counter and a free running
-counter, and different types of free running counters.
-For fixed counters, the umask-code is 0x0X.
-X indicates the index of the fixed counter, which starts from 0.
- - Compatible with the old event encoding.
- - Currently, there is only one fixed counter. There are still 15
-   reserved spaces for extension.
-For free running counters, the umask-code uses the rest of the space.
-It would bare the format of 0xXY.
-X stands for the type of free running counters, which starts from 1.
-Y stands for the index of free running counters of same type, which
-starts from 0.
-- The free running counters do different thing. It can be categorized to
-  several types, according to the MSR location, bit width and
-  definition. E.g. there are three types of IIO free running counters on
-  Skylake server to monitor IO CLOCKS, BANDWIDTH and UTILIZATION  on
-  different ports. It makes it easy to locate the free running counter
-  of a specific type.
-- So far, there are at most 8 counters of each type.  There are still 8
-  reserved spaces for extension.
-
-Introducing a new index to indicate the free running counters. Only one
-index is enough for all free running counters. Because the free running
-countes are always active, and the event and free running counter are
-always 1:1 mapped. It does not need extra index to indicate the assigned
-counter.
-
-Introducing a new data structure to store free running counters related
-information for each type. It includes the number of counters, bit
-width, base address, offset between counters and offset between boxes.
-
-Introducing several inline helpers to check index for fixed counter and
-free running counter, validate free running counter event, and retrieve
-the free running counter information according to box and event.
-
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Kan Liang <kan.liang@intel.com>
----
-
-No changes since V6.
-
- arch/x86/events/intel/uncore.h | 123 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 122 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index 414dc7e..eb02653 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -12,8 +12,13 @@
- 
- #define UNCORE_FIXED_EVENT		0xff
- #define UNCORE_PMC_IDX_MAX_GENERIC	8
-+#define UNCORE_PMC_IDX_MAX_FIXED	1
-+#define UNCORE_PMC_IDX_MAX_FREERUNNING	1
- #define UNCORE_PMC_IDX_FIXED		UNCORE_PMC_IDX_MAX_GENERIC
--#define UNCORE_PMC_IDX_MAX		(UNCORE_PMC_IDX_FIXED + 1)
-+#define UNCORE_PMC_IDX_FREERUNNING	(UNCORE_PMC_IDX_FIXED + \
-+					UNCORE_PMC_IDX_MAX_FIXED)
-+#define UNCORE_PMC_IDX_MAX		(UNCORE_PMC_IDX_FREERUNNING + \
-+					UNCORE_PMC_IDX_MAX_FREERUNNING)
- 
- #define UNCORE_PCI_DEV_FULL_DATA(dev, func, type, idx)	\
- 		((dev << 24) | (func << 16) | (type << 8) | idx)
-@@ -35,6 +40,7 @@ struct intel_uncore_ops;
- struct intel_uncore_pmu;
- struct intel_uncore_box;
- struct uncore_event_desc;
-+struct freerunning_counters;
- 
- struct intel_uncore_type {
- 	const char *name;
-@@ -42,6 +48,7 @@ struct intel_uncore_type {
- 	int num_boxes;
- 	int perf_ctr_bits;
- 	int fixed_ctr_bits;
-+	int num_freerunning_types;
- 	unsigned perf_ctr;
- 	unsigned event_ctl;
- 	unsigned event_mask;
-@@ -59,6 +66,7 @@ struct intel_uncore_type {
- 	struct intel_uncore_pmu *pmus;
- 	struct intel_uncore_ops *ops;
- 	struct uncore_event_desc *event_descs;
-+	struct freerunning_counters *freerunning;
- 	const struct attribute_group *attr_groups[4];
- 	struct pmu *pmu; /* for custom pmu ops */
- };
-@@ -129,6 +137,14 @@ struct uncore_event_desc {
- 	const char *config;
- };
- 
-+struct freerunning_counters {
-+	unsigned int counter_base;
-+	unsigned int counter_offset;
-+	unsigned int box_offset;
-+	unsigned int num_counters;
-+	unsigned int bits;
-+};
-+
- struct pci2phy_map {
- 	struct list_head list;
- 	int segment;
-@@ -157,6 +173,16 @@ static ssize_t __uncore_##_var##_show(struct kobject *kobj,		\
- static struct kobj_attribute format_attr_##_var =			\
- 	__ATTR(_name, 0444, __uncore_##_var##_show, NULL)
- 
-+static inline bool uncore_pmc_fixed(int idx)
-+{
-+	return idx == UNCORE_PMC_IDX_FIXED;
-+}
-+
-+static inline bool uncore_pmc_freerunning(int idx)
-+{
-+	return idx == UNCORE_PMC_IDX_FREERUNNING;
-+}
-+
- static inline unsigned uncore_pci_box_ctl(struct intel_uncore_box *box)
- {
- 	return box->pmu->type->box_ctl;
-@@ -214,6 +240,60 @@ static inline unsigned uncore_msr_fixed_ctr(struct intel_uncore_box *box)
- 	return box->pmu->type->fixed_ctr + uncore_msr_box_offset(box);
- }
- 
-+
-+/*
-+ * In the uncore document, there is no event-code assigned to free running
-+ * counters. Some events need to be defined to indicate the free running
-+ * counters. The events are encoded as event-code + umask-code.
-+ *
-+ * The event-code for all free running counters is 0xff, which is the same as
-+ * the fixed counters.
-+ *
-+ * The umask-code is used to distinguish a fixed counter and a free running
-+ * counter, and different types of free running counters.
-+ * - For fixed counters, the umask-code is 0x0X.
-+ *   X indicates the index of the fixed counter, which starts from 0.
-+ * - For free running counters, the umask-code uses the rest of the space.
-+ *   It would bare the format of 0xXY.
-+ *   X stands for the type of free running counters, which starts from 1.
-+ *   Y stands for the index of free running counters of same type, which
-+ *   starts from 0.
-+ *
-+ * For example, there are three types of IIO free running counters on Skylake
-+ * server, IO CLOCKS counters, BANDWIDTH counters and UTILIZATION counters.
-+ * The event-code for all the free running counters is 0xff.
-+ * 'ioclk' is the first counter of IO CLOCKS. IO CLOCKS is the first type,
-+ * which umask-code starts from 0x10.
-+ * So 'ioclk' is encoded as event=0xff,umask=0x10
-+ * 'bw_in_port2' is the third counter of BANDWIDTH counters. BANDWIDTH is
-+ * the second type, which umask-code starts from 0x20.
-+ * So 'bw_in_port2' is encoded as event=0xff,umask=0x22
-+ */
-+static inline unsigned int uncore_freerunning_idx(u64 config)
-+{
-+	return ((config >> 8) & 0xf);
-+}
-+
-+#define UNCORE_FREERUNNING_UMASK_START		0x10
-+
-+static inline unsigned int uncore_freerunning_type(u64 config)
-+{
-+	return ((((config >> 8) - UNCORE_FREERUNNING_UMASK_START) >> 4) & 0xf);
-+}
-+
-+static inline
-+unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
-+					struct perf_event *event)
-+{
-+	unsigned int type = uncore_freerunning_type(event->attr.config);
-+	unsigned int idx = uncore_freerunning_idx(event->attr.config);
-+	struct intel_uncore_pmu *pmu = box->pmu;
-+
-+	return pmu->type->freerunning[type].counter_base +
-+	       pmu->type->freerunning[type].counter_offset * idx +
-+	       pmu->type->freerunning[type].box_offset * pmu->pmu_idx;
-+}
-+
- static inline
- unsigned uncore_msr_event_ctl(struct intel_uncore_box *box, int idx)
- {
-@@ -276,11 +356,52 @@ static inline int uncore_fixed_ctr_bits(struct intel_uncore_box *box)
- 	return box->pmu->type->fixed_ctr_bits;
- }
- 
-+static inline
-+unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
-+				     struct perf_event *event)
-+{
-+	unsigned int type = uncore_freerunning_type(event->attr.config);
-+
-+	return box->pmu->type->freerunning[type].bits;
-+}
-+
-+static inline int uncore_num_freerunning(struct intel_uncore_box *box,
-+					 struct perf_event *event)
-+{
-+	unsigned int type = uncore_freerunning_type(event->attr.config);
-+
-+	return box->pmu->type->freerunning[type].num_counters;
-+}
-+
-+static inline int uncore_num_freerunning_types(struct intel_uncore_box *box,
-+					       struct perf_event *event)
-+{
-+	return box->pmu->type->num_freerunning_types;
-+}
-+
-+static inline bool check_valid_freerunning_event(struct intel_uncore_box *box,
-+						 struct perf_event *event)
-+{
-+	unsigned int type = uncore_freerunning_type(event->attr.config);
-+	unsigned int idx = uncore_freerunning_idx(event->attr.config);
-+
-+	return (type < uncore_num_freerunning_types(box, event)) &&
-+	       (idx < uncore_num_freerunning(box, event));
-+}
-+
- static inline int uncore_num_counters(struct intel_uncore_box *box)
- {
- 	return box->pmu->type->num_counters;
- }
- 
-+static inline bool is_freerunning_event(struct perf_event *event)
-+{
-+	u64 cfg = event->attr.config;
-+
-+	return ((cfg & UNCORE_FIXED_EVENT) == UNCORE_FIXED_EVENT) &&
-+	       (((cfg >> 8) & 0xff) >= UNCORE_FREERUNNING_UMASK_START);
-+}
-+
- static inline void uncore_disable_box(struct intel_uncore_box *box)
- {
- 	if (box->pmu->type->ops->disable_box)
--- 
-2.7.4
+ChenYu
