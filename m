@@ -1,102 +1,114 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752253AbeEDUKQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:10:16 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35330 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752115AbeEDUKM (ORCPT
+        id S1751934AbeEDUL0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:11:26 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54054 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751751AbeEDUIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:10:12 -0400
-Date: Fri, 4 May 2018 13:11:29 -0700
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: Joel Fernandes <joel.opensrc@gmail.com>
-Cc: Joel Fernandes <joelaf@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: rcu-bh design
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <CAJWu+oqCun1Ae6GqPxnS+eCDi3jadGPp+MO8TjOWgs+AiAh79A@mail.gmail.com>
- <20180504123050.2841f80d@gandalf.local.home>
- <CAJWu+oqXmSC3zUZobQA4=qY_acRvOsq67c6dHXfVzTGqxqdaTA@mail.gmail.com>
- <20180504174330.GS26088@linux.vnet.ibm.com>
- <CAJWu+opXqw6BoKSzoV4xD0QBJ4s3C-KL=QBESZdEZ5RQCQKphw@mail.gmail.com>
- <20180504184951.GU26088@linux.vnet.ibm.com>
- <CAEi0qN=8c6tzNq26x=BBj5u3JoZHXF0DvfwWg=1vjmTU0UC4-w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEi0qN=8c6tzNq26x=BBj5u3JoZHXF0DvfwWg=1vjmTU0UC4-w@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18050420-0008-0000-0000-00000302EEF8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008970; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01027518; UDB=6.00524875; IPR=6.00806651;
- MB=3.00020932; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-04 20:10:09
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050420-0009-0000-0000-000039228C78
-Message-Id: <20180504201129.GX26088@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805040184
+        Fri, 4 May 2018 16:08:06 -0400
+From: Ezequiel Garcia <ezequiel@collabora.com>
+To: linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Ezequiel Garcia <ezequiel@collabora.com>
+Subject: [PATCH v9 07/15] v4l: mark unordered formats
+Date: Fri,  4 May 2018 17:06:04 -0300
+Message-Id: <20180504200612.8763-8-ezequiel@collabora.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180504200612.8763-1-ezequiel@collabora.com>
+References: <20180504200612.8763-1-ezequiel@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 12:57:19PM -0700, Joel Fernandes wrote:
-> On Fri, May 4, 2018 at 11:49 AM, Paul E. McKenney
-> <paulmck@linux.vnet.ibm.com> wrote:
-> > On Fri, May 04, 2018 at 06:34:32PM +0000, Joel Fernandes wrote:
-> >> On Fri, May 4, 2018 at 10:42 AM Paul E. McKenney
-> >> <paulmck@linux.vnet.ibm.com>
-> >> wrote:
-> >> [...]
-> >> > > > > But preemptible RCU *does not* use context-switch as a quiescent
-> >> state.
-> >> > > > It doesn't?
-> >> > >
-> >> > > I thought that's what preemptible rcu is about. You can get preempted
-> >> but
-> >> > > you shouldn't block in a read-section. Is that not true?
-> >>
-> >> > Almost.  All context switches in an RCU-preempt read-side critical section
-> >> > must be subject to priority boosting.  Preemption is one example, because
-> >> > boosting the priority of the preempted task will make it runnable.
-> >> > The priority-inheritance -rt "spinlock" is another example, because
-> >> > boosting the priority of the task holding the lock will eventually make
-> >> > runnable the task acquiring the lock within the RCU-preempt read-side
-> >> > critical section.
-> >>
-> >> Yes I understand priority boosting is needed with preemptible RCU so that
-> >> read-sections are making forward progress. I meant (and correct me if I'm
-> >> wrong) that, as long as a task doesn't sleep in a preemptible RCU
-> >> read-section (rcu-preempt flavor), then bad things wont happen and RCU will
-> >> work correctly.
-> >
-> > The exception is -rt "spinlock" acquisition.  If the "spinlock" is held,
-> > the task acquiring it will block, which is legal within an RCU-preempt
-> > read-side critical section.
-> >
-> > This exception is why I define bad things in terms of lack of
-> > susceptibility to priority boosting instead of sleeping.
-> 
-> Oh, that's a tricky situation. Thanks for letting me know. I guess my
-> view was too idealistic. Makes sense now.
+From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Well, let me put it this way...
+Now that we've introduced the V4L2_FMT_FLAG_UNORDERED flag,
+mark the appropriate formats.
 
-Here is your nice elegant little algorithm:
-https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+---
+ drivers/media/v4l2-core/v4l2-ioctl.c | 55 ++++++++++++++++++++----------------
+ 1 file changed, 30 insertions(+), 25 deletions(-)
 
-Here is your nice elegant little algorithm equipped to survive within
-the Linux kernel:
-https://totatema.files.wordpress.com/2012/06/feeling_grizzly-1600x1200.jpg
-
-Any questions?  ;-)
-
-							Thanx, Paul
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index f48c505550e0..f75ad954a6f2 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1260,20 +1260,6 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 		case V4L2_PIX_FMT_MJPEG:	descr = "Motion-JPEG"; break;
+ 		case V4L2_PIX_FMT_JPEG:		descr = "JFIF JPEG"; break;
+ 		case V4L2_PIX_FMT_DV:		descr = "1394"; break;
+-		case V4L2_PIX_FMT_MPEG:		descr = "MPEG-1/2/4"; break;
+-		case V4L2_PIX_FMT_H264:		descr = "H.264"; break;
+-		case V4L2_PIX_FMT_H264_NO_SC:	descr = "H.264 (No Start Codes)"; break;
+-		case V4L2_PIX_FMT_H264_MVC:	descr = "H.264 MVC"; break;
+-		case V4L2_PIX_FMT_H263:		descr = "H.263"; break;
+-		case V4L2_PIX_FMT_MPEG1:	descr = "MPEG-1 ES"; break;
+-		case V4L2_PIX_FMT_MPEG2:	descr = "MPEG-2 ES"; break;
+-		case V4L2_PIX_FMT_MPEG4:	descr = "MPEG-4 part 2 ES"; break;
+-		case V4L2_PIX_FMT_XVID:		descr = "Xvid"; break;
+-		case V4L2_PIX_FMT_VC1_ANNEX_G:	descr = "VC-1 (SMPTE 412M Annex G)"; break;
+-		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
+-		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
+-		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
+-		case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
+ 		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
+ 		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
+ 		case V4L2_PIX_FMT_SN9C10X:	descr = "GSPCA SN9C10X"; break;
+@@ -1294,17 +1280,36 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr = "S5C73MX interleaved UYVY/JPEG"; break;
+ 		case V4L2_PIX_FMT_MT21C:	descr = "Mediatek Compressed Format"; break;
+ 		default:
+-			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
+-			if (fmt->description[0])
+-				return;
+-			flags = 0;
+-			snprintf(fmt->description, sz, "%c%c%c%c%s",
+-					(char)(fmt->pixelformat & 0x7f),
+-					(char)((fmt->pixelformat >> 8) & 0x7f),
+-					(char)((fmt->pixelformat >> 16) & 0x7f),
+-					(char)((fmt->pixelformat >> 24) & 0x7f),
+-					(fmt->pixelformat & (1 << 31)) ? "-BE" : "");
+-			break;
++			/* Unordered formats */
++			flags = V4L2_FMT_FLAG_UNORDERED;
++			switch (fmt->pixelformat) {
++			case V4L2_PIX_FMT_MPEG:		descr = "MPEG-1/2/4"; break;
++			case V4L2_PIX_FMT_H264:		descr = "H.264"; break;
++			case V4L2_PIX_FMT_H264_NO_SC:	descr = "H.264 (No Start Codes)"; break;
++			case V4L2_PIX_FMT_H264_MVC:	descr = "H.264 MVC"; break;
++			case V4L2_PIX_FMT_H263:		descr = "H.263"; break;
++			case V4L2_PIX_FMT_MPEG1:	descr = "MPEG-1 ES"; break;
++			case V4L2_PIX_FMT_MPEG2:	descr = "MPEG-2 ES"; break;
++			case V4L2_PIX_FMT_MPEG4:	descr = "MPEG-4 part 2 ES"; break;
++			case V4L2_PIX_FMT_XVID:		descr = "Xvid"; break;
++			case V4L2_PIX_FMT_VC1_ANNEX_G:	descr = "VC-1 (SMPTE 412M Annex G)"; break;
++			case V4L2_PIX_FMT_VC1_ANNEX_L:	descr = "VC-1 (SMPTE 412M Annex L)"; break;
++			case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
++			case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
++			case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
++			default:
++				WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
++				if (fmt->description[0])
++					return;
++				flags = 0;
++				snprintf(fmt->description, sz, "%c%c%c%c%s",
++						(char)(fmt->pixelformat & 0x7f),
++						(char)((fmt->pixelformat >> 8) & 0x7f),
++						(char)((fmt->pixelformat >> 16) & 0x7f),
++						(char)((fmt->pixelformat >> 24) & 0x7f),
++						(fmt->pixelformat & (1 << 31)) ? "-BE" : "");
++				break;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.16.3
