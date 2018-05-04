@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3611583-1525407355-2-13486414659358148410
+X-Cyrus-Session-Id: sloti22d1t05-3619796-1525407327-2-12863395707797917829
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,26 +12,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525407355; b=H6IrkTcKDSUxp4L5/A/78iLoYrPhy5eo5+XaWbceAtKU5D16sX
-    zQgo0rE6NsYsrLQAQQGEHfbxeDtzLfTOUv6srJ+ga40YPCYpi9JdPc+YWhy3vABK
-    UCKwV5YPiLki5zWSq3BI2Gxb+IrZyWJrMIAcS4TamS6pOYZW202BOp/8ANI35yKT
-    8hrEnyRsXKfBJNxFIRfqpL0IrYJz6TJOUxePDWjnF2saCIKdx11gn1kP+95vAao9
-    Dpiw8riFFGBOUTc/MPBdQmHqrHRb0RQmhLhAttlBQ1jLCdxg8WzAb1wy2a5FcR5n
-    0Y9IV1yJ4iV6i6o/Jxng2e7OWpNsRtzcCZaA==
+    1525407326; b=mLdPnr1yehC+K0sBkTWTe4kvwf793as+2QXguNtHIOOYfP7Kdt
+    OZxyZ6OC0IYp1NZJRPdD8dmp6UHOkZ2MNTDrFeFUtmCpHLNV/u9Tq0Asc4qtB3Ao
+    9kRAOdCXycL3zb/5XhyD4ZqQvUF2bvtx0dwWdnMSh3Fvhe9KRrG7SASwl1h4kkBT
+    FJ65SUp6qQskhs6uwNiKOx3cg/QWwLf9ABbD43KAt+nfRK/xIrSuyjz/wyVE+Ubr
+    bTPa8vzeD7zsShPv4fM4hwxN5Ztyhl2gHMpoFbLO1LGQymVqfGU83f86TRjGpBUd
+    mOV25esDb7AxTongwCeiCR+kQuFcRIbCd+0w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525407355;
-    bh=4bBbXp0pCCqzZyqFoVCpIHaH6r3DL26JWrSraUTRQOg=; b=jcmbVFCBBlBD
-    yLXiA5oBdXwaB4Dc/+MYDBJCTwlrsgnoNMMwrP6yKap94UK3RYJxMqtcM6NxrnHK
-    9/BShUq+IuVB+Y4czRBnBJpZitl18oJBOrkqNRWzzczYZuV0SYlQX65aipPc1fsx
-    CQ093LGkHX7Xihj86TdVn+G+vCMinVzL5DmhxM8Ewu5FdUqpRBdK1iz79TM1m+Qi
-    x7Bujz+yoSJUUcjjSSCGFejuRMlE1GS+ohXy8P2yY66a/9lNforGxp2mQRDKKKGM
-    OOsRI2AKaIJJ3wcT/+R6BEGYhKl/czj6GU0PLgFMnILwQHLy6IspCh9Q61qL6nzO
-    aDDm+2zHDw==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525407326;
+    bh=tdv6s6eaRcwaGccSBjbi9dF+NA7dQcwkjAbhP0Dj0es=; b=Tp5lEehoE4sq
+    fbGHPRmVR3xJ5vK94yB4KuKH4Ov6YfXvzbKrCVMCOXLJtXxh0Z/jBpfgj9NTZ6Q0
+    gsucFsTe7C1x1qRDrCrEDu9qQmoeuVnGEzkTzY7do91DS8xPFZ7MdGKMh6ty4x9+
+    46SvR5Vl+XBZ2AIB9WwYdpZ1mKb4LOpi6JHuL8OA3961sWR9E4Ql3HfVvhnsu9cA
+    K0zbZ9IDMXwHMX+OrvhxrZq5koESSCzujy3VJ4677K3GfzbttZBrl55jZa7pDZq0
+    J4E/gTsTG6slDxGOLkj6LAJv7QYa6Tvaj5pBKTsNeKqEnqfErWVAkUh/q2mox5oD
+    CQbxa7bPJg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=uBdbMCWf x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=1HEjBZ0e x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -44,10 +44,10 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=uBdbMCWf x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=1HEjBZ0e x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -61,21 +61,21 @@ Authentication-Results: mx1.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHG2Z9X1gtFvSqpg0hX8jN6VAdF4VKoCz0cvuKexd9YfaL9i/LYtz+wFmTIdo652564VQrBIgAe26aptBW3G8jYCfXq3QgofwD2TmY8tG1zkz1y9BGJf
-    3tAgE05vbeVQJ78yuARxb68Zf1F/CcxBlgDgZFLh4V+iAshZOPvpRr2Sfu8EYsaEcE8qmxM6omQwVFuK4/wI4eVM+LZMCzdf77jRCE7YOedSKPfp8Xjvk81I
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfGg81rV1sxgHJkUHYe0G56enudTziJrDPR1fgUGXxtXd6N9dWDEJqIa2V78Y5aEZqJB7rRWKfxSsA9h04oxawnUTI/cDUpb+GGvBzjpJ15+3iVnhV+N7
+    xJVbPTtxtz7DGhSuqjJPNX2ZcYB19gXo6QudydciATdx4Vfr98kmf7cRWT15L2fFKbeYOmdUIWiyxPSXXWR4rqLsEs80Gl/FugzRWeDDSidbPJ81tEK/xt5S
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=ZULaGYWSKZfac68WfhMA:9 a=QEXdDO2ut3YA:10
+    a=VwQbUJbxAAAA:8 a=eHHp_rMNl1P3d2qNW8UA:9 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751236AbeEDEPx (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 4 May 2018 00:15:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42576 "EHLO mail.kernel.org"
+        id S1751272AbeEDEPZ (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 00:15:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751002AbeEDEPx (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 4 May 2018 00:15:53 -0400
+        id S1751002AbeEDEPY (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 4 May 2018 00:15:24 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Russell King <linux@armlinux.org.uk>
 Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
@@ -83,9 +83,9 @@ Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         mhiramat@kernel.org, David Long <dave.long@linaro.org>,
         stable@vger.kernel.org
-Subject: [BUGFIX PATCH v3 2/4] arm: kprobes: Prohibit probing on optimized_callback
-Date: Fri,  4 May 2018 13:15:29 +0900
-Message-Id: <152540732952.29650.11645105922811248579.stgit@devbox>
+Subject: [BUGFIX PATCH v3 1/4] arm: kprobes: Fix to use get_kprobe_ctlblk after irq-disabed
+Date: Fri,  4 May 2018 13:15:01 +0900
+Message-Id: <152540730083.29650.15621737261480060241.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152540727123.29650.13679359124038587629.stgit@devbox>
 References: <152540727123.29650.13679359124038587629.stgit@devbox>
@@ -99,27 +99,47 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Prohibit probing on optimized_callback() because
-it is called from kprobes itself. If we put a kprobes
-on it, that will cause a recursive call loop.
-Mark it NOKPROBE_SYMBOL.
+Since get_kprobe_ctlblk() uses smp_processor_id() to access
+per-cpu variable, it hits smp_processor_id sanity check as below.
+
+[    7.006928] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+[    7.007859] caller is debug_smp_processor_id+0x20/0x24
+[    7.008438] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc1-00192-g4eb17253e4b5 #1
+[    7.008890] Hardware name: Generic DT based system
+[    7.009917] [<c0313f0c>] (unwind_backtrace) from [<c030e6d8>] (show_stack+0x20/0x24)
+[    7.010473] [<c030e6d8>] (show_stack) from [<c0c64694>] (dump_stack+0x84/0x98)
+[    7.010990] [<c0c64694>] (dump_stack) from [<c071ca5c>] (check_preemption_disabled+0x138/0x13c)
+[    7.011592] [<c071ca5c>] (check_preemption_disabled) from [<c071ca80>] (debug_smp_processor_id+0x20/0x24)
+[    7.012214] [<c071ca80>] (debug_smp_processor_id) from [<c03335e0>] (optimized_callback+0x2c/0xe4)
+[    7.013077] [<c03335e0>] (optimized_callback) from [<bf0021b0>] (0xbf0021b0)
+
+To fix this issue, call get_kprobe_ctlblk() right after
+irq-disabled since that disables preemption.
 
 Fixes: 0dc016dbd820 ("ARM: kprobes: enable OPTPROBES for ARM 32")
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: stable@vger.kernel.org
 ---
- arch/arm/probes/kprobes/opt-arm.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/probes/kprobes/opt-arm.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
-index ddc5a82eb10d..b2aa9b32bff2 100644
+index bcdecc25461b..ddc5a82eb10d 100644
 --- a/arch/arm/probes/kprobes/opt-arm.c
 +++ b/arch/arm/probes/kprobes/opt-arm.c
-@@ -192,6 +192,7 @@ optimized_callback(struct optimized_kprobe *op, struct pt_regs *regs)
- 
- 	local_irq_restore(flags);
- }
-+NOKPROBE_SYMBOL(optimized_callback)
- 
- int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *orig)
+@@ -165,13 +165,14 @@ optimized_callback(struct optimized_kprobe *op, struct pt_regs *regs)
  {
+ 	unsigned long flags;
+ 	struct kprobe *p = &op->kp;
+-	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
++	struct kprobe_ctlblk *kcb;
+ 
+ 	/* Save skipped registers */
+ 	regs->ARM_pc = (unsigned long)op->kp.addr;
+ 	regs->ARM_ORIG_r0 = ~0UL;
+ 
+ 	local_irq_save(flags);
++	kcb = get_kprobe_ctlblk();
+ 
+ 	if (kprobe_running()) {
+ 		kprobes_inc_nmissed_count(&op->kp);
