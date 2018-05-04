@@ -1,119 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751236AbeEDKWI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:22:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7224 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750820AbeEDKWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:22:07 -0400
-Subject: Re: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI support
-To: Lee Jones <lee.jones@linaro.org>
-References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
- <1525360119-102166-2-git-send-email-john.garry@huawei.com>
- <1525366486.21176.653.camel@linux.intel.com> <20180504090216.GC3928@dell>
- <4a15b0b4-5707-d51b-4762-02df8e153bd9@huawei.com>
- <20180504100359.GD3928@dell>
-CC: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
-        <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
-        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
-        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <348eecff-1f7a-f1cf-fbd8-a029ea8a8da7@huawei.com>
-Date: Fri, 4 May 2018 11:21:39 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1751277AbeEDKYG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:24:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:44141 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750733AbeEDKYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 06:24:04 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,362,1520924400";
+   d="scan'208";a="221592089"
+Date: Fri, 4 May 2018 13:23:58 +0300
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Luwei Kang <luwei.kang@intel.com>
+Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        hpa@zytor.com, x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        linux-kernel@vger.kernel.org, joro@8bytes.org, peterz@infradead.org,
+        chao.p.peng@linux.intel.com
+Subject: Re: [PATCH v7 13/13] KVM: x86: Disable Intel Processor Trace when
+ VMXON in L1 guest
+Message-ID: <20180504102358.eojiggqrnhxng2ru@um.fi.intel.com>
+References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
+ <1525349323-9938-14-git-send-email-luwei.kang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180504100359.GD3928@dell>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525349323-9938-14-git-send-email-luwei.kang@intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 11:03, Lee Jones wrote:
-> On Fri, 04 May 2018, John Garry wrote:
->
->> On 04/05/2018 10:02, Lee Jones wrote:
->>> On Thu, 03 May 2018, Andy Shevchenko wrote:
->>>
->>>> On Thu, 2018-05-03 at 23:08 +0800, John Garry wrote:
->>>>> Currently for ACPI support the driver models the host as
->>>>> an MFD. For a device connected to the LPC bus, we dynamically
->>>>> create an MFD cell for that device, configuring the cell
->>>>> name and ACPI match parameters manually. This makes supporting
->>>>> named devices and also special setup handling for certain devices
->>>>> awkward, as we would need to introduce some special ACPI device
->>>>> handling according to device HID.
->>>>>
->>>>> To avoid this, create reference static MFD cells for known
->>>>> child devices, so when adding an MFD cell we can fix the cell
->>>>> platform data as required. For this, a setup callback function
->>>>> is added.
->>>>>
->>>>> For now, only the IPMI cell is added.
->>>>
->>>>> +static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char
->>>>> *hid)
->>>>> +{
->>>>> +	const struct hisi_lpc_acpi_mfd_cell *cell =
->>>>> hisi_lpc_acpi_mfd_cells;
->>>>> +
->>>>> +	for (; cell && cell->mfd_cell.name; cell++) {
->>>>> +		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
->>>>> +		const struct mfd_cell_acpi_match *acpi_match;
->>>>> +
->>>>> +		acpi_match = mfd_cell->acpi_match;
->>>>> +		if (!strcmp(acpi_match->pnpid, hid))
->>>>> +			return mfd_cell;
->>>>> +	}
->>>>> +
->>>>> +	return NULL;
->>>>> +}
->>>>
->>>> I'm not sure I understand why MFD core can't do it (as seen in lines
->>>> drivers/mfd/core.c:105 and below).
->>>
->>
->> Hi Lee,
->>
->>> You shouldn't be using the MFD API outside of MFD anyway.  Either it
->>> is an MFD driver, or it isn't.  If it is, please move it. If it's not,
->>> please don't use the API.
->>
->> We're modelling as an MFD, but it's not an MFD in the classic sense. We're
->> just using the MFD API for convenience (and to avoid code duplication), as
->> the MFD API does what we require for this driver.
->
-> I know what you're doing, and it's wrong. ;)
->
->>> My current suspicion is that the driver needs splitting and only part
->>> of it ends up in MFD.
->>
->> How would you propose splitting the driver? By adding a lib function
->> specific for this driver for the ACPI probe?
->
-> Look at:
->
->   drivers/platform/chrome/cros_ec_lpc.c
->
-> and
->
->   drivers/mfd/cros_ec.c
->
+On Thu, May 03, 2018 at 08:08:43PM +0800, Luwei Kang wrote:
+> Currently, Intel Processor Trace do not support tracing in L1 guest
+> VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
 
-Right, I see, something similar to what I suggested.
+I don't understand this patch. You mention VMX_MISC[14] here, but I
+can't see anything related to it in the code.
 
-I don't really see a point in splitting the driver across drivers/mfd 
-and drivers/bus, and introducing dependencies. This is more especially 
-considering this is a legacy host controller with no potential future 
-developments, and not worth the effort.
+Also, the description should probably say "...does not support tracing
+in VMX *if* IA32_VMX_MISC[bit 14] is 0."
 
-If you feel strongly enough about not using the MFD API outside 
-drivers/mfd, then I'll look at other solutions, like using platform 
-device APIs directly.
-
-Cheers,
-John
+> on these type of processors, execution of the VMXON instruction will
+> clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
+> causes a general-protection exception (#GP).
+> 
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> ---
+>  arch/x86/kvm/vmx.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index c125fb1..1e800d0 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -3952,7 +3952,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  		break;
+>  	case MSR_IA32_RTIT_CTL:
+>  		if ((pt_mode != PT_MODE_HOST_GUEST) ||
+> -			vmx_rtit_ctl_check(vcpu, data))
+> +			vmx_rtit_ctl_check(vcpu, data) ||
+> +			vmx->nested.vmxon)
+>  			return 1;
+>  		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
+>  		pt_set_intercept_for_msr(vmx, !(data & RTIT_CTL_TRACEEN));
+> @@ -8029,6 +8030,12 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (pt_mode == PT_MODE_HOST_GUEST) {
+> +		vmx->pt_desc.guest.ctl = 0;
+> +		vmcs_write64(GUEST_IA32_RTIT_CTL, 0);
+> +		pt_set_intercept_for_msr(vmx, 1);
+> +	}
+> +
+>  	nested_vmx_succeed(vcpu);
+>  	return kvm_skip_emulated_instruction(vcpu);
+>  }
+> -- 
+> 1.8.3.1
+> 
