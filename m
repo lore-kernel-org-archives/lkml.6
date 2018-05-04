@@ -1,121 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751737AbeEDBwY (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 21:52:24 -0400
-Received: from mga01.intel.com ([192.55.52.88]:35622 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751336AbeEDBuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 21:50:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
-   d="scan'208";a="37326235"
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>
-Cc: ashok.raj@intel.com, sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
-        kevin.tian@intel.com, yi.l.liu@intel.com, yi.y.sun@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v2 2/9] iommu/vt-d: Decouple idr bond pointer from svm
-Date: Fri,  4 May 2018 09:41:17 +0800
-Message-Id: <1525398084-28815-3-git-send-email-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525398084-28815-1-git-send-email-baolu.lu@linux.intel.com>
-References: <1525398084-28815-1-git-send-email-baolu.lu@linux.intel.com>
+        id S1751314AbeEDB4B (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 21:56:01 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:38045 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751220AbeEDB4A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 21:56:00 -0400
+Subject: Re: [PATCH 1/3] spi: meson-axg: support MAX 80M clock
+To: Mark Brown <broonie@kernel.org>
+References: <20180503213645.20694-1-yixun.lan@amlogic.com>
+ <20180503213645.20694-2-yixun.lan@amlogic.com>
+ <20180503231305.GC13402@sirena.org.uk>
+CC: <yixun.lan@amlogic.com>, Sunny Luo <sunny.luo@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>,
+        <linux-spi@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+From: Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <6cdee2c8-2ca4-2efb-43ac-c233516c0570@amlogic.com>
+Date: Fri, 4 May 2018 09:56:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180503231305.GC13402@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we move the PASID idr out of SVM code and make it serving
-as a global PASID name space, the consumer can specify a ptr
-to bind it with a PASID. We shouldn't assume that each PASID
-will be bond with a ptr of struct intel_svm anymore.
+Hi Mark
 
-This patch cleans up a idr_for_each_entry() usage in the SVM
-code. It's required to replace the SVM-specific idr with the
-global PASID idr.
+On 05/04/18 07:13, Mark Brown wrote:
+> On Thu, May 03, 2018 at 09:36:42PM +0000, Yixun Lan wrote:
+> 
+>>  static const struct of_device_id meson_spicc_of_match[] = {
+>> -	{ .compatible = "amlogic,meson-gx-spicc", },
+>> -	{ .compatible = "amlogic,meson-axg-spicc", },
+>> +	{
+>> +		.compatible	= "amlogic,meson-gx-spicc",
+>> +		.data		= &meson_spicc_gx_data,
+>> +	},
+>> +	{
+>> +		.compatible = "amlogic,meson-axg-spicc",
+>> +		.data		= &meson_spicc_axg_data,
+>> +	},
+>>  	{ /* sentinel */ }
+>>  };
+>>  MODULE_DEVICE_TABLE(of, meson_spicc_of_match);
+> 
+> This is changing the DT bindings but there's no update to the DT binding
+> documentation, please add an update there.
+> 
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Cc: Liu Yi L <yi.l.liu@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
----
- drivers/iommu/intel-svm.c   | 14 ++++++++++----
- include/linux/intel-iommu.h |  1 +
- 2 files changed, 11 insertions(+), 4 deletions(-)
+thanks for your comments, but I actually didn't get what's your point here.
 
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index e8cd984..983af0c 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -298,6 +298,7 @@ static const struct mmu_notifier_ops intel_mmuops = {
- };
- 
- static DEFINE_MUTEX(pasid_mutex);
-+static LIST_HEAD(global_svm_list);
- 
- int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
- {
-@@ -329,13 +330,13 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 
- 	mutex_lock(&pasid_mutex);
- 	if (pasid && !(flags & SVM_FLAG_PRIVATE_PASID)) {
--		int i;
-+		struct intel_svm *t;
- 
--		idr_for_each_entry(&iommu->pasid_idr, svm, i) {
--			if (svm->mm != mm ||
--			    (svm->flags & SVM_FLAG_PRIVATE_PASID))
-+		list_for_each_entry(t, &global_svm_list, list) {
-+			if (t->mm != mm || (t->flags & SVM_FLAG_PRIVATE_PASID))
- 				continue;
- 
-+			svm = t;
- 			if (svm->pasid >= pasid_max) {
- 				dev_warn(dev,
- 					 "Limited PASID width. Cannot use existing PASID %d\n",
-@@ -404,6 +405,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		svm->mm = mm;
- 		svm->flags = flags;
- 		INIT_LIST_HEAD_RCU(&svm->devs);
-+		INIT_LIST_HEAD(&svm->list);
- 		ret = -ENOMEM;
- 		if (mm) {
- 			ret = mmu_notifier_register(&svm->notifier, mm);
-@@ -430,6 +432,8 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
- 		 */
- 		if (cap_caching_mode(iommu->cap))
- 			intel_flush_pasid_dev(svm, sdev, svm->pasid);
-+
-+		list_add_tail(&svm->list, &global_svm_list);
- 	}
- 	list_add_rcu(&sdev->list, &svm->devs);
- 
-@@ -485,6 +489,8 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 					if (svm->mm)
- 						mmu_notifier_unregister(&svm->notifier, svm->mm);
- 
-+					list_del(&svm->list);
-+
- 					/* We mandate that no page faults may be outstanding
- 					 * for the PASID when intel_svm_unbind_mm() is called.
- 					 * If that is not obeyed, subtle errors will happen.
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index ef169d6..795717e 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -486,6 +486,7 @@ struct intel_svm {
- 	int flags;
- 	int pasid;
- 	struct list_head devs;
-+	struct list_head list;
- };
- 
- extern int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sdev);
--- 
-2.7.4
+Here I only introduce the dt compatible data to differentiate the
+old/new controller, the compatible name is not changed, and none of the
+property is introduced.
+
+Yixun
