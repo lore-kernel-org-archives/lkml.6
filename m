@@ -1,106 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751340AbeEDKQi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:16:38 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:52037 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEDKQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:16:36 -0400
-X-Google-Smtp-Source: AB8JxZqeO+s0MeDzZhfJN7FgtVyCT6X3OIHsD+IUxGkuKGfE0L0oMbVD2mKfoUE2AR8XukXqG8fWKg==
+        id S1751382AbeEDKQo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:16:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45108 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750733AbeEDKQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 06:16:43 -0400
 Date: Fri, 4 May 2018 12:16:31 +0200
-From: Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        "Pierre-Loup A. Griffais" <pgriffais@valvesoftware.com>,
-        =?iso-8859-1?Q?Cl=E9ment?= VUCHENER <clement.vuchener@gmail.com>,
-        Cameron Gutman <aicommander@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-input <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v9 0/2] hid-steam driver with user mode client dection
-Message-ID: <20180504101631.GA7496@casa>
-References: <20180416122703.22306-1-rodrigorivascosta@gmail.com>
- <nycvar.YFH.7.76.1805041008100.27054@cbobk.fhfr.pm>
+From: Borislav Petkov <bp@suse.de>
+To: Baoquan He <bhe@redhat.com>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        robh+dt@kernel.org, dan.j.williams@intel.com, nicolas.pitre@linaro.org,
+        josh@joshtriplett.org, Thomas Gleixner <tglx@linutronix.de>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Wei Yang <richard.weiyang@gmail.com>
+Subject: Re: [PATCH v3 2/3] resource: add walk_system_ram_res_rev()
+Message-ID: <20180504101631.GB9377@pd.tnic>
+References: <20180419001848.3041-1-bhe@redhat.com>
+ <20180419001848.3041-3-bhe@redhat.com>
+ <20180419100745.GC3896@pd.tnic>
+ <20180426085649.GC18395@localhost.localdomain>
+ <20180426110905.GH15043@pd.tnic>
+ <20180426132204.GF19030@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <nycvar.YFH.7.76.1805041008100.27054@cbobk.fhfr.pm>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180426132204.GF19030@localhost.localdomain>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 10:12:51AM +0200, Jiri Kosina wrote:
-> On Mon, 16 Apr 2018, Rodrigo Rivas Costa wrote:
-> 
-> > Hello! This is reroll v9 of the Steam Controller driver.
-> > 
-> > @Pierre-Loup, @Cl�ment, could you please check if this driver is acceptable by
-> > Valve? I think this could be the one ;-).
-> > 
-> > I've rolled back the synthetic LPAD diagonals. It happens that the actual
-> > coordinates of the pads are rotated about 15 degrees to the center, but the
-> > marks in the pad are aligned to 0/90 degrees. That, and my poor's man
-> > trigonometry, makes clicking the diagonals quite unreliable.
-> > Sorry for the noise, but now I think that we are better limiting ourselves to
-> > the events emitted by the hardware, as is.
-> > 
-> > Other than that, I've doing some torture testing, with and without the Steam
-> > Client running. I've changed:
-> >  1. The way EPIPE is handled when sending a report: I've noticed that Steam
-> >     Client retries up to 50 times, with little or no delay between them, so I do
-> >     the same.
-> >  2. I've added a fallback in case this driver is unable to get the serial number
-> >     of the controller. Failures on any other report can be ignored safely. But
-> >     failing to get the serial number was preventing the creating of the hidraw
-> >     node (wired controller only), and that could prevent Steam Client from
-> >     working. 
-> >  3. I've received a mail from Valve with a bunch of constants for the
-> >     protocol. Most are related to the setting of new mappings (that we do not
-> >     need) and a few of the rest are deprecated. Anyway, I've renamed the
-> >     constants STEAM_CMD_* to align them with the official names, and added a
-> >     few more that were unknown to me, just for future reference. Still, commands
-> >     used for enabling/disabling lizard mode are the same.
-> 
-> If noone has any objections (last chance to raise them), I'll be queuing 
-> this for 4.18.
+On Thu, Apr 26, 2018 at 09:22:04PM +0800, Baoquan He wrote:
+> I noticed maintainers merged patches with this Message-ID, could you
+> tell how to get this Message-ID?
 
-That would be great, thanks!
+https://en.wikipedia.org/wiki/Message-ID
 
-Now that my distro upgraded to 4.16, without the hid-quirks array, I've been
-testing it a bit more. 
+> This is not a thing that one is top down, the other is bottom up. For
+> us, they might be so different on details of code, for customers, they
+> just think them as a same thing. They may say I just get a new machine,
+> and still do kexec loading, why these top-down, bottom-up things come
+> up.
 
-It works great, but I've noticed that I've missed a couple of lines when
-creating the client hdev.  It doesn't seem to cause any harm, and anyway 'type'
-and 'country' are currently both 0 in my controller; only 'version' is visibly
-different but who uses that?
+So if I read the above correctly, it doesn't matter whether top-down or
+bottom-up.
 
-Anyway, this would be the change, I don't know if it is worth a whole reroll...
+> And this is not causing code churn. You can see that by replacing
+> pointer operation with list_head, code in kernel/resource.c related to
+> child list iteration is much easier to read,
 
-diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index af7ebb618867..cb86cc834201 100644
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -651,6 +651,9 @@ static struct hid_device *steam_create_client_hid(struct hid_device *hdev)
-        client_hdev->bus = hdev->bus;
-        client_hdev->vendor = hdev->vendor;
-        client_hdev->product = hdev->product;
-+       client_hdev->version = hdev->version;
-+       client_hdev->type = hdev->type;
-+       client_hdev->country = hdev->country;
-        strlcpy(client_hdev->name, hdev->name,
-                        sizeof(client_hdev->name));
-        strlcpy(client_hdev->phys, hdev->phys,
+Now *this* is starting to sound like some reason "why". If it is better
+readability, then say so in the commit message.
 
-Best regards,
---
-Rodrigo Rivas Costa
+It still doesn't justify adding walk_system_ram_res_rev() though.
 
-> 
-> Thanks,
-> 
-> -- 
-> Jiri Kosina
-> SUSE Labs
-> 
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
