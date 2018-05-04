@@ -1,196 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751350AbeEDNqq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 09:46:46 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46983 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbeEDNqp (ORCPT
+        id S1751291AbeEDNwf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 09:52:35 -0400
+Received: from mail-lf0-f47.google.com ([209.85.215.47]:32782 "EHLO
+        mail-lf0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDNwd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 09:46:45 -0400
-X-Google-Smtp-Source: AB8JxZo22GgcSsf47a87bDCSoK0OLFjI9Rjx6/3xzL9mPlgU3UUpEg6JHLv3kAjL27q+cyCOL5Txbw==
-From: Doug Smythies <doug.smythies@gmail.com>
-X-Google-Original-From: Doug Smythies <dsmythies@telus.net>
-To: srinivas.pandruvada@linux.intel.com
-Cc: dsmythies@telus.net, rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] tools/power/x86/intel_pstate_tracer: Add optional setting of trace buffer memory allocation
-Date: Fri,  4 May 2018 06:46:22 -0700
-Message-Id: <1525441582-23855-1-git-send-email-dsmythies@telus.net>
-X-Mailer: git-send-email 2.7.4
+        Fri, 4 May 2018 09:52:33 -0400
+X-Google-Smtp-Source: AB8JxZqyBWabnis/OgnFFuAFo385gEuN5CqgbOr8L4NYC/fAdtLz9gyVWJD6sU23MQJLsRApcU9/79r/vpSvEy2iWBI=
+MIME-Version: 1.0
+In-Reply-To: <CAMjeLr96FkAEK5aJMeeLjC0SOx-aQAHF3QFo67eitp4h=YHNvw@mail.gmail.com>
+References: <CAMjeLr96FkAEK5aJMeeLjC0SOx-aQAHF3QFo67eitp4h=YHNvw@mail.gmail.com>
+From: "\\0xDynamite" <dreamingforward@gmail.com>
+Date: Fri, 4 May 2018 13:52:31 +0000
+Message-ID: <CAMjeLr-eCZ5MH5qLxON2HhPZMMJ8c78r2fjx3FLo0VAArtE--Q@mail.gmail.com>
+Subject: Re: SPECTRE, MELTDOWN, boot loaders, and cursors: A shot out of the blue....
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow the user to override the default trace buffer memory allocation
-by adding a command line option to override the default.
+Greetings once again from the future....
 
-The patch also:
+Xen hypervisor was a magical product.  Don't believe in it, it is
+misinforming your tecnnical intuition using the power of the Word.
 
-Adds a SIGINT (i.e. CTRL C exit) handler,
-so that things can be cleaned up before exit.
+Cheers,
 
-Moves the postion of some other cleanup from after to
-before the potential "No valid data to plot" exit.
+your future self
 
-Replaces all quit() calls with sys.exit, because
-quit() is not supposed to be used in scripts.
-
-Signed-off-by: Doug Smythies <dsmythies@telus.net>
----
- .../x86/intel_pstate_tracer/intel_pstate_tracer.py | 54 ++++++++++++++--------
- 1 file changed, 35 insertions(+), 19 deletions(-)
-
-diff --git a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-index 29f50d4..84e2b64 100755
---- a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-+++ b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-@@ -28,6 +28,7 @@ import subprocess
- import os
- import time
- import re
-+import signal
- import sys
- import getopt
- import Gnuplot
-@@ -78,11 +79,12 @@ def print_help():
-     print('    Or')
-     print('      ./intel_pstate_tracer.py [--cpu cpus] ---trace_file <trace_file> --name <test_name>')
-     print('    To generate trace file, parse and plot, use (sudo required):')
--    print('      sudo ./intel_pstate_tracer.py [-c cpus] -i <interval> -n <test_name>')
-+    print('      sudo ./intel_pstate_tracer.py [-c cpus] -i <interval> -n <test_name> -m <kbytes>')
-     print('    Or')
--    print('      sudo ./intel_pstate_tracer.py [--cpu cpus] --interval <interval> --name <test_name>')
-+    print('      sudo ./intel_pstate_tracer.py [--cpu cpus] --interval <interval> --name <test_name> --memory <kbytes>')
-     print('    Optional argument:')
--    print('      cpus:  comma separated list of CPUs')
-+    print('      cpus:   comma separated list of CPUs')
-+    print('      kbytes: Kilo bytes of memory per CPU to allocate to the trace buffer. Default: 10240')
-     print('  Output:')
-     print('    If not already present, creates a "results/test_name" folder in the current working directory with:')
-     print('      cpu.csv - comma seperated values file with trace contents and some additional calculations.')
-@@ -379,7 +381,7 @@ def clear_trace_file():
-         f_handle.close()
-     except:
-         print('IO error clearing trace file ')
--        quit()
-+        sys.exit(2)
- 
- def enable_trace():
-     """ Enable trace """
-@@ -389,7 +391,7 @@ def enable_trace():
-                  , 'w').write("1")
-     except:
-         print('IO error enabling trace ')
--        quit()
-+        sys.exit(2)
- 
- def disable_trace():
-     """ Disable trace """
-@@ -399,17 +401,17 @@ def disable_trace():
-                  , 'w').write("0")
-     except:
-         print('IO error disabling trace ')
--        quit()
-+        sys.exit(2)
- 
- def set_trace_buffer_size():
-     """ Set trace buffer size """
- 
-     try:
--       open('/sys/kernel/debug/tracing/buffer_size_kb'
--                 , 'w').write("10240")
-+       with open('/sys/kernel/debug/tracing/buffer_size_kb', 'w') as fp:
-+          fp.write(memory)
-     except:
--        print('IO error setting trace buffer size ')
--        quit()
-+       print('IO error setting trace buffer size ')
-+       sys.exit(2)
- 
- def free_trace_buffer():
-     """ Free the trace buffer memory """
-@@ -418,8 +420,8 @@ def free_trace_buffer():
-        open('/sys/kernel/debug/tracing/buffer_size_kb'
-                  , 'w').write("1")
-     except:
--        print('IO error setting trace buffer size ')
--        quit()
-+        print('IO error freeing trace buffer ')
-+        sys.exit(2)
- 
- def read_trace_data(filename):
-     """ Read and parse trace data """
-@@ -431,7 +433,7 @@ def read_trace_data(filename):
-         data = open(filename, 'r').read()
-     except:
-         print('Error opening ', filename)
--        quit()
-+        sys.exit(2)
- 
-     for line in data.splitlines():
-         search_obj = \
-@@ -489,10 +491,22 @@ def read_trace_data(filename):
- # Now seperate the main overall csv file into per CPU csv files.
-     split_csv()
- 
-+def signal_handler(signal, frame):
-+    print(' SIGINT: Forcing cleanup before exit.')
-+    if interval:
-+        disable_trace()
-+        clear_trace_file()
-+        # Free the memory
-+        free_trace_buffer()
-+        sys.exit(0)
-+
-+signal.signal(signal.SIGINT, signal_handler)
-+
- interval = ""
- filename = ""
- cpu_list = ""
- testname = ""
-+memory = "10240"
- graph_data_present = False;
- 
- valid1 = False
-@@ -501,7 +515,7 @@ valid2 = False
- cpu_mask = zeros((MAX_CPUS,), dtype=int)
- 
- try:
--    opts, args = getopt.getopt(sys.argv[1:],"ht:i:c:n:",["help","trace_file=","interval=","cpu=","name="])
-+    opts, args = getopt.getopt(sys.argv[1:],"ht:i:c:n:m:",["help","trace_file=","interval=","cpu=","name=","memory="])
- except getopt.GetoptError:
-     print_help()
-     sys.exit(2)
-@@ -521,6 +535,8 @@ for opt, arg in opts:
-     elif opt in ("-n", "--name"):
-         valid2 = True
-         testname = arg
-+    elif opt in ("-m", "--memory"):
-+        memory = arg
- 
- if not (valid1 and valid2):
-     print_help()
-@@ -569,6 +585,11 @@ current_max_cpu = 0
- 
- read_trace_data(filename)
- 
-+clear_trace_file()
-+# Free the memory
-+if interval:
-+    free_trace_buffer()
-+
- if graph_data_present == False:
-     print('No valid data to plot')
-     sys.exit(2)
-@@ -593,9 +614,4 @@ for root, dirs, files in os.walk('.'):
-     for f in files:
-         fix_ownership(f)
- 
--clear_trace_file()
--# Free the memory
--if interval:
--    free_trace_buffer()
--
- os.chdir('../../')
--- 
-2.7.4
+On 3/25/18, \0xDynamite <dreamingforward@gmail.com> wrote:
+> I apogize for what is probably going to be a VERY unusual and perhaps
+> rude email to the kernel list, but I'm taking a wild shot at something
+> in order to fix the Meltdown and Spectre bugs which perhaps were
+> wrongly blamed on Intel and now maybe AMD.  The issue, lads, may be
+> *interdimensional*.
+>
+> Firstly, don't trust the media reports on these issues.  What I've
+> seen sounds partly right, but way off base.
+>
+> Secondly, here's what you need to track down:  the cursor.  Track down
+> the whole process at boot, down to the BIOS, because at least PART of
+> the problem has nothing to do with Intel.  What puts the cursor on the
+> screen and how is it kept track of?  I don't have the IBM technical
+> reference manuals (purple binder) at my disposal anymore, but that's
+> where you should look.
+>
+> It is an I/O confusion somewhere, perhaps a motherboard bug.  I
+> believe that Javascript has excersized the problem due to its
+> contention for resources and its operating at browser (or other)
+> priveleges instead of a virtual machine.
+>
+> Try NOT to complain about Intel.  They have not yet understood this
+> problem, I suspect.
+>
+> Don't ask me how I know this.
+>
+> Marxos
+> the restaurant at the end of the universe.
+>
+> P.S.  Oh, and change the name of GRUB to GRUE
+>
