@@ -1,118 +1,243 @@
-Return-Path: <j.neuschaefer@gmx.net>
-X-Google-Smtp-Source: AB8JxZoggYENUQ5Zo6gzw/G5xC+f5/5SW+RlcHiDdRjKI/SWeQ2id8uGa29uzRCmXYIyRbb6Mvd1
-ARC-Seal: i=1; a=rsa-sha256; t=1525692090; cv=none;
+Return-Path: <baolin.wang@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525417733; cv=none;
         d=google.com; s=arc-20160816;
-        b=emGR8oNQ6wuartntAiwvQwcmbe5sdeQ2P8AfinJdcIW59H9tfkBLaHIyJNqINuSjWT
-         Cvk5ur+1dg6CW1OZn3UbQgRtbYnDcR3j7OFjLAhQVcxIZWu/vtnLXRNdVuy5csfIU6fY
-         6WCWAOsxkhicXEhfpkkCaf/4Q4/F09yJaIEKaRx+3erywtlVa0M6w8PAXPpNLJaJTfkR
-         Zy9ebBz16ZvSinDGO9FHqoqH/Fv3vgla+EU4Hjds78EvzFgswRDV3u0EvZm7YDmE3ejq
-         WJ4hpy5h+/iugKOYKZF0EZqG1YG7iqywf9ZhR+LbgCaEdMMfeFc7zssMJ+vu8Teq1MHC
-         uifw==
+        b=IpgEimo1jggVH34t3G+Sa2M28Kc5GnPc7nUoNFTthlgn8487+x3874kTagaGzQ8x+/
+         3x4KCgXxo9Ri09GK86Vi0OrIqMYchdyd8jfkO0M5zm/JKaF9W+fsFXr1J1AZMpp0zmWP
+         ogFiyM85XokN1TCMYD3qsxjbiLTKeL9PQluOdvc5lLeclP4Kljlg4xKyNC8I/kqRZJxs
+         u3VfuETB7pXEcN4af2U5WbSAGXmsS5T0jGjGl2uTa+YYnoPwVWclOhjdnEhmd6CYuPsA
+         gtqzj9O32BdrmoC3rx0ygW99l826US+831qfK68gtWbYPByykLcPlbHBHEONVtJDbxEt
+         /q/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=2uA+U62eOrXJVbJwNsPt5UBt1dTuqCsqdqEvobynFKI=;
-        b=Z9GZDc0/LVnAc3m54XUAIcgUH5oxILpSnekq/KJaw/tlYzZr327jtu6zG75SaLBUij
-         NyNIQPkm1Ngz/zKNT/bqDHMSvWLGXWjgxrdeRrVwICSkI8IOfKXqDpzPnS2jYWM+xIq3
-         QQ94uhxHOfN8s8hzeWgA00rU3cV309ZkxO67ADQtyrsJrlPFoN1ywvWoI5T7k8AE05/I
-         i+AXD1yjdLGZKIfBRcEK2VJ89OZ1biYBs0dBOqLc9pSuT2MlP0a/nqL+NmpkvUJq08Lx
-         mVHuEBc4r80ONLKX3/8wvN5AjClQiucDwv8YANv22ChLYdqEY9S58ZBZnuY8Xg3ACNzk
-         scAQ==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=3aiI3kiE6HByxIoW7A57wa5Bds4Ky7Z3/xIJUax8Rdk=;
+        b=IxOc3tdtuXk02Izk/4V5VKk6cAUytMK+voZqKIrEhwzruu/wksQ+FWn/QyDnla+ajj
+         eUK4SF54vM3wDs2fo4FGdUcerValZZP9uADnh6p7EOwOcRKIIlDZR2cxrqk2G3KsXgw2
+         08SIBdP2/yYapNglCOsUNIzg0/gtorF4sOR+2dHC8IMXi28Oq8h+450UdMmC/XoDYIyP
+         Id17iE057HQFMTh5KAZxiVrG9BzKTxnbEWZBsNHxYEfSZLQHvfflbAzWG0bKsPrq/ReV
+         qqakAVW5oKpiwKQmsKxqF+aEhQvReIMAnZVBXRYnDh06CVWSST0nTNm4YIsboSFnModd
+         wENg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.22 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+       dkim=pass header.i=@linaro.org header.s=google header.b=GwLK/2F4;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.22 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
-Date: Mon, 7 May 2018 13:15:22 +0200
-From: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To: Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-Cc: linuxppc-dev@lists.ozlabs.org, Joel Stanley <joel@jms.id.au>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Paul Mackerras <paulus@samba.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Benjamin Gilbert <benjamin.gilbert@coreos.com>,
-	"Robin H. Johnson" <robbat2@gentoo.org>,
+       dkim=pass header.i=@linaro.org header.s=google header.b=GwLK/2F4;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZrF1hLVhXKPACndQwm2/aQ85kkTaIP/LYhutjG7PVXYs6Mon5ZKVBxWSRUx6PKeCOBGQvmNVw==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: macro@linux-mips.org,
+	ralf@linux-mips.org,
+	jhogan@kernel.org,
+	chenhc@lemote.com
+Cc: kstewart@linuxfoundation.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	pombredanne@nexb.com,
+	arnd@arndb.de,
+	broonie@kernel.org,
+	paul.burton@mips.com,
+	heiko@sntech.de,
+	daniel.lezcano@linaro.org,
+	viresh.kumar@linaro.org,
+	baolin.wang@linaro.org,
+	linux-mips@linux-mips.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] powerpc: wii_defconfig: Enable GPIO-related options
-Message-ID: <20180507111522.GA32665@latitude>
-References: <20180430134252.17345-1-j.neuschaefer@gmx.net>
- <20180430134252.17345-2-j.neuschaefer@gmx.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
-Content-Disposition: inline
-In-Reply-To: <20180430134252.17345-2-j.neuschaefer@gmx.net>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Provags-ID: V03:K1:rQ1wBDWVYcaQsS3xkarqxlGiMHCxaMKqLl22tYekqY6js4uki1k
- mDCdCLs656gOraQkZHIGgsfS7B1Pz/sGd+fkcTvXVFtRd+dECVDI61czQxyT7ucHgds9vuK
- 20WxnIBYIFYlQxUln44krdK0hX9AedNvHPwpKlX9pMU7m5w7byRtUBYrXfygeHwL7rKN5fe
- gWJ0s3GCXD9HyJ70I3zdg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:Ry2LLs+EsdE=:lCI4hsDEO3wFX5ShqDohFy
- y2FI4QxQbbaMpgHrfR9NhHyNPzexsY9wUe3tvwo3Wqa7DuNte48vCS5CSVuq0QPCIanXEUDGy
- CuZiwf9C4NE1bprGENYEw5xQzebbUz3NyLfE0/3xVQkOsCuuJ+2d/CbK/SPiuYqp3kQeardk9
- UQ4cDpbsyVCn5u4bG1xCTTUZABCyqk1iN45sTwapHrH7d1fAZf+yFLFGhF62MB54QibzJFmaQ
- SHUsuL2WohrVp0418t4zFyQL0bq10RYrzDgx0kgWN3yqL23L8d7xtKjvBsacNFHza1rKTOCNb
- 8BrS3n7WQjLlFaDyOjI2tPeSBcDm8GaDtg1wJO/+XP8JhQBdf+E7jBbr9Zzjmweo8reyBhMlt
- 1R/EJcg9S5+K4VRFAB5cS7l6g14oT+aOf0Pt/KlGNmoBE4MUJ0uHLEeHAznO5L0/wd3ArZXm1
- HGVmGTxXP9BHNS0shm26FGN8kN5vbepZoYwTjs/zu4/1p3IZHR03I+h5o7MKb5HV/voSSLNJP
- YGu0MwgPnFY07/ZloRVD05cFuP4YJa5vCjS5HMnUYeGNG2uipKTK0h3yCnSmeMpQj2oFItUtn
- VPw8EgxDyLuNEPyNXPHXIDJrxPWCYwR4n89Y2lF1eIxZgXUQb3gi1TGIh77rne5jze3HIjcdH
- oY5KTbPGAsIRL0WoWbyPVPqUJ+lqmQSCR7pV4A0Pejk93o+ZuIzBSUlkKhkCDNHVCrBZ/P4r9
- cjXELY/WwCxD0zRL4VBoWnABW8+fRzF3K52fhVDAn2eDCRGVKYGX42ZtWYw=
+Subject: [PATCH v2 1/2] MIPS: Convert read_persistent_clock() to read_persistent_clock64()
+Date: Fri,  4 May 2018 15:07:47 +0800
+Message-Id: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525417306.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599179228553644681?=
-X-GMAIL-MSGID: =?utf-8?q?1599804109437669898?=
+X-GMAIL-THRID: =?utf-8?q?1599516425368341249?=
+X-GMAIL-MSGID: =?utf-8?q?1599516425368341249?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Since struct timespec is not y2038 safe on 32bit machines, this patch
+converts read_persistent_clock() to read_persistent_clock64() using
+struct timespec64, as well as converting mktime() to mktime64().
 
---IS0zKkzwUGydFO0o
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes since v1:
+ - No updates.
+---
+ arch/mips/dec/time.c                   |    4 ++--
+ arch/mips/include/asm/mc146818-time.h  |    4 ++--
+ arch/mips/lasat/ds1603.c               |    2 +-
+ arch/mips/loongson64/common/time.c     |    2 +-
+ arch/mips/mti-malta/malta-time.c       |    2 +-
+ arch/mips/sibyte/swarm/rtc_m41t81.c    |    4 ++--
+ arch/mips/sibyte/swarm/rtc_xicor1241.c |    4 ++--
+ arch/mips/sibyte/swarm/setup.c         |   10 +++++-----
+ 8 files changed, 16 insertions(+), 16 deletions(-)
 
-On Mon, Apr 30, 2018 at 03:42:47PM +0200, Jonathan Neusch=C3=A4fer wrote:
-> Now that there's a GPIO driver for the Wii, let's enable the following
-> drivers:
->=20
-> - the GPIO driver itself
-> - gpio-keys
-> - gpio-poweroff
-> - gpio-leds and a few LED triggers
->=20
-> Signed-off-by: Jonathan Neusch=C3=A4fer <j.neuschaefer@gmx.net>
-> ---
-[...]
-> +CONFIG_LEDS_CLASS=3Dy
-> +CONFIG_LEDS_GPIO=3Dy
-> +CONFIG_LEDS_TRIGGER_HEARTBEAT=3Dy
-> +CONFIG_LEDS_TRIGGER_PANIC=3Dy
-
-Oops, this doesn't work without first enabling CONFIG_NEW_LEDS and
-CONFIG_LEDS_TRIGGERS. I'll send a v2.
-
-
-Jonathan Neusch=C3=A4fer
-
---IS0zKkzwUGydFO0o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAABAgAGBQJa8DVDAAoJEAgwRJqO81/bhdsP/0so8ZngWoGwQUkLG5U4ZX78
-8Cz8CvwiJPOPzuyRTGJkHytdYPG8pqAfC1A6wAnWN9zoqAdPO6FkOe//l7OecBLS
-zq/cE+OAnzaZajG2mPjEgnavjZhjvy/HXhfJCA+LuvzRW87gpsddhX0V9ZMkFtWF
-jSfkS0AsI+rIU9t0lMY68i5LjmqG9OEPcFhPKPpjqwS4Ji+KqZnFh+aYQRhE9l/c
-x+tm9SqHivSgINpT9NkOKhfJIn/GnpsZVZqIbdFTA8PLuKS/CfA5SX9IwEIwn3ch
-sfhJC6E9gq2as5OcQD3EqHLlLYXkfPFDfs2nWh7AuMod/w4KUBtnP7GV5P1JBEuu
-xSeJv4UCvKM1zBvUiZ/4Kz0/2HAKMOJr8v8hueOmiGgjGKYJ3aD1EGtFwQHq5WkG
-3u626YpbbJAK7BbTzbiYPXu4AFxotuCh1ZSSzMezSylBCq5FMCLfWjSrlDPUxuhV
-UqKQohEXM4Fn+x3rGQMYfjWC8JQZWQBlFWbHw3rgcYMHDEDFJ2gJ/YVDozjFINKx
-irv2DVaPSD7GHCpOilceXXiRgDfwTvdEmD8jziUL/gfEBOs/1OBfgR0/PJ9CL8Za
-qhi4JTP3zEStCwk0+k2wXfJb7z4BnuP9KOa10noIlZ78HykIf4t4EEffIWwjRbSU
-ymURcz6hJmEQtybJMz5Z
-=bAkE
------END PGP SIGNATURE-----
-
---IS0zKkzwUGydFO0o--
+diff --git a/arch/mips/dec/time.c b/arch/mips/dec/time.c
+index a2a150e..9e992cf 100644
+--- a/arch/mips/dec/time.c
++++ b/arch/mips/dec/time.c
+@@ -19,7 +19,7 @@
+ #include <asm/dec/ioasic.h>
+ #include <asm/dec/machtype.h>
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	unsigned int year, mon, day, hour, min, sec, real_year;
+ 	unsigned long flags;
+@@ -54,7 +54,7 @@ void read_persistent_clock(struct timespec *ts)
+ 
+ 	year += real_year - 72 + 2000;
+ 
+-	ts->tv_sec = mktime(year, mon, day, hour, min, sec);
++	ts->tv_sec = mktime64(year, mon, day, hour, min, sec);
+ 	ts->tv_nsec = 0;
+ }
+ 
+diff --git a/arch/mips/include/asm/mc146818-time.h b/arch/mips/include/asm/mc146818-time.h
+index 9e1ad26..cbf5cec 100644
+--- a/arch/mips/include/asm/mc146818-time.h
++++ b/arch/mips/include/asm/mc146818-time.h
+@@ -86,7 +86,7 @@ static inline int mc146818_set_rtc_mmss(unsigned long nowtime)
+ 	return retval;
+ }
+ 
+-static inline unsigned long mc146818_get_cmos_time(void)
++static inline time64_t mc146818_get_cmos_time(void)
+ {
+ 	unsigned int year, mon, day, hour, min, sec;
+ 	unsigned long flags;
+@@ -113,7 +113,7 @@ static inline unsigned long mc146818_get_cmos_time(void)
+ 	spin_unlock_irqrestore(&rtc_lock, flags);
+ 	year = mc146818_decode_year(year);
+ 
+-	return mktime(year, mon, day, hour, min, sec);
++	return mktime64(year, mon, day, hour, min, sec);
+ }
+ 
+ #endif /* __ASM_MC146818_TIME_H */
+diff --git a/arch/mips/lasat/ds1603.c b/arch/mips/lasat/ds1603.c
+index 8bd5cf8..d75c887 100644
+--- a/arch/mips/lasat/ds1603.c
++++ b/arch/mips/lasat/ds1603.c
+@@ -136,7 +136,7 @@ static void rtc_end_op(void)
+ 	lasat_ndelay(1000);
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	unsigned long word;
+ 	unsigned long flags;
+diff --git a/arch/mips/loongson64/common/time.c b/arch/mips/loongson64/common/time.c
+index e1a5382a..0ba53c5 100644
+--- a/arch/mips/loongson64/common/time.c
++++ b/arch/mips/loongson64/common/time.c
+@@ -29,7 +29,7 @@ void __init plat_time_init(void)
+ #endif
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	ts->tv_sec = mc146818_get_cmos_time();
+ 	ts->tv_nsec = 0;
+diff --git a/arch/mips/mti-malta/malta-time.c b/arch/mips/mti-malta/malta-time.c
+index 66c8667..d22b7ed 100644
+--- a/arch/mips/mti-malta/malta-time.c
++++ b/arch/mips/mti-malta/malta-time.c
+@@ -134,7 +134,7 @@ static void __init estimate_frequencies(void)
+ 	}
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	ts->tv_sec = mc146818_get_cmos_time();
+ 	ts->tv_nsec = 0;
+diff --git a/arch/mips/sibyte/swarm/rtc_m41t81.c b/arch/mips/sibyte/swarm/rtc_m41t81.c
+index e624664..aa27a22 100644
+--- a/arch/mips/sibyte/swarm/rtc_m41t81.c
++++ b/arch/mips/sibyte/swarm/rtc_m41t81.c
+@@ -188,7 +188,7 @@ int m41t81_set_time(unsigned long t)
+ 	return 0;
+ }
+ 
+-unsigned long m41t81_get_time(void)
++time64_t m41t81_get_time(void)
+ {
+ 	unsigned int year, mon, day, hour, min, sec;
+ 	unsigned long flags;
+@@ -218,7 +218,7 @@ unsigned long m41t81_get_time(void)
+ 
+ 	year += 2000;
+ 
+-	return mktime(year, mon, day, hour, min, sec);
++	return mktime64(year, mon, day, hour, min, sec);
+ }
+ 
+ int m41t81_probe(void)
+diff --git a/arch/mips/sibyte/swarm/rtc_xicor1241.c b/arch/mips/sibyte/swarm/rtc_xicor1241.c
+index 50a82c4..a2121c1 100644
+--- a/arch/mips/sibyte/swarm/rtc_xicor1241.c
++++ b/arch/mips/sibyte/swarm/rtc_xicor1241.c
+@@ -168,7 +168,7 @@ int xicor_set_time(unsigned long t)
+ 	return 0;
+ }
+ 
+-unsigned long xicor_get_time(void)
++time64_t xicor_get_time(void)
+ {
+ 	unsigned int year, mon, day, hour, min, sec, y2k;
+ 	unsigned long flags;
+@@ -201,7 +201,7 @@ unsigned long xicor_get_time(void)
+ 
+ 	year += (y2k * 100);
+ 
+-	return mktime(year, mon, day, hour, min, sec);
++	return mktime64(year, mon, day, hour, min, sec);
+ }
+ 
+ int xicor_probe(void)
+diff --git a/arch/mips/sibyte/swarm/setup.c b/arch/mips/sibyte/swarm/setup.c
+index 494fb0a..7073940 100644
+--- a/arch/mips/sibyte/swarm/setup.c
++++ b/arch/mips/sibyte/swarm/setup.c
+@@ -58,11 +58,11 @@
+ 
+ extern int xicor_probe(void);
+ extern int xicor_set_time(unsigned long);
+-extern unsigned long xicor_get_time(void);
++extern time64_t xicor_get_time(void);
+ 
+ extern int m41t81_probe(void);
+ extern int m41t81_set_time(unsigned long);
+-extern unsigned long m41t81_get_time(void);
++extern time64_t m41t81_get_time(void);
+ 
+ const char *get_system_type(void)
+ {
+@@ -87,9 +87,9 @@ enum swarm_rtc_type {
+ 
+ enum swarm_rtc_type swarm_rtc_type;
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+-	unsigned long sec;
++	time64_t sec;
+ 
+ 	switch (swarm_rtc_type) {
+ 	case RTC_XICOR:
+@@ -102,7 +102,7 @@ void read_persistent_clock(struct timespec *ts)
+ 
+ 	case RTC_NONE:
+ 	default:
+-		sec = mktime(2000, 1, 1, 0, 0, 0);
++		sec = mktime64(2000, 1, 1, 0, 0, 0);
+ 		break;
+ 	}
+ 	ts->tv_sec = sec;
+-- 
+1.7.9.5
