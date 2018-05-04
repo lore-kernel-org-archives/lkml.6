@@ -1,122 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751552AbeEDPX3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 11:23:29 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:43464 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751326AbeEDPX1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 11:23:27 -0400
-X-Google-Smtp-Source: AB8JxZog9si2UzB5EG/6fSzEDkOfC1q3YJN8/U7FkfYcBwVck2YtLmIsJ68LbffBrwrAlVa7xerqI1xJ70LDDaFbrF8=
-MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
-References: <20180412150826.20988-1-mszeredi@redhat.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 4 May 2018 17:23:26 +0200
-Message-ID: <CAJfpegvnq-+wvmtfX65ts+9eRE-ONGcj6AJyRqhqF1Z=h9bOiA@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/35] overlayfs: stack file operations
-To: overlayfs <linux-unionfs@vger.kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>, Vivek Goyal <vgoyal@redhat.com>,
-        "J. R. Okajima" <hooanon05g@gmail.com>,
-        Ritesh Harjani <riteshh@codeaurora.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751598AbeEDPXi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 11:23:38 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36102 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751566AbeEDPXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 11:23:36 -0400
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo@padovan.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] drm/panel: Add Ilitek ILI9881c controller driver
+Date: Fri,  4 May 2018 17:23:29 +0200
+Message-Id: <cover.0c9a2cb0b38deb7304c60c507f45cf50352b752a.1525447375.git-series.maxime.ripard@bootlin.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 12, 2018 at 5:07 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+Hi,
 
-> Git tree is here:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-rorw
+Here is the next version of the patches to add the support for the Ilitek
+ILI9881c panel controller.
 
-Thanks everyone for your review.
+This used to be a part of the larger DSI support series for the Allwinner
+SoCs whose patches have been since merged and are obviously not part of
+this series anymore.
 
-Force pushed new version to the above branch.
+Let me know what you think,
+Maxime
 
-Hopefully no comment was missed (I didn't add more reverts yet, those
-can wait).  I'll do a mailbomb as well next week and start processing
-the metacopy patches.
+Changes from v4:
+  - Updated the copyright notice
+  - Made the init structure const
 
-Thanks,
-Miklos
----
+Changes from v3:
+  - Rebased on top of current drm-misc-next
+  - Switched to SPDX license header
+  - Made the ECC array const
+  - Split the big DSI patch into two, one to add the DSI driver and one to
+    add the TCON bits.
+  - Removed the dithering code
+  - Changed the DT labels to remove the indices
+  - Used sleeps instead of delays in the panel driver
+  - Used the backlight_enable / _disable functions
+  - Added Chen-Yu's Reviewed-by
 
-Miklos Szeredi (38):
-      vfs: dedpue: return s64
-      vfs: dedupe: rationalize args
-      vfs: dedupe: extract helper for a single dedup
-      vfs: add path_open()
-      vfs: optionally don't account file in nr_files
-      vfs: add f_op->pre_mmap()
-      vfs: export vfs_ioctl() to modules
-      vfs: export vfs_dedupe_file_range_one() to modules
-      ovl: copy up times
-      ovl: copy up inode flags
-      Revert "Revert "ovl: get_write_access() in truncate""
-      ovl: copy up file size as well
-      ovl: deal with overlay files in ovl_d_real()
-      ovl: stack file ops
-      ovl: add helper to return real file
-      ovl: add ovl_read_iter()
-      ovl: add ovl_write_iter()
-      ovl: add ovl_fsync()
-      ovl: add ovl_mmap()
-      ovl: add ovl_fallocate()
-      ovl: add lsattr/chattr support
-      ovl: add ovl_fiemap()
-      ovl: add O_DIRECT support
-      ovl: add reflink/copyfile/dedup support
-      vfs: don't open real
-      ovl: copy-up on MAP_SHARED
-      vfs: simplify dentry_open()
-      Revert "ovl: fix may_write_real() for overlayfs directories"
-      Revert "ovl: don't allow writing ioctl on lower layer"
-      vfs: fix freeze protection in mnt_want_write_file() for overlayfs
-      Revert "ovl: fix relatime for directories"
-      Revert "vfs: update ovl inode before relatime check"
-      Revert "vfs: add flags to d_real()"
-      Revert "vfs: do get_write_access() on upper layer of overlayfs"
-      Partially revert "locks: fix file locking on overlayfs"
-      Revert "fsnotify: support overlayfs"
-      vfs: remove open_flags from d_real()
-      ovl: fix documentation of non-standard behavior
+Changes from v2:
+  - Added a ports node under the DSI node
+  - Changed the huarui panel driver to an ili9881c driver
+  - Changed the panel vendor to bananapi
+  - Made the init table static in the panel driver
+  - Dropped the huarui vendor patch for the DT doc.
 
----
- Documentation/filesystems/Locking       |   4 +-
- Documentation/filesystems/overlayfs.txt |  60 ++--
- Documentation/filesystems/vfs.txt       |  19 +-
- fs/btrfs/ctree.h                        |   4 +-
- fs/btrfs/ioctl.c                        |   6 +-
- fs/file_table.c                         |  13 +-
- fs/inode.c                              |  46 +--
- fs/internal.h                           |  17 +-
- fs/ioctl.c                              |   1 +
- fs/locks.c                              |  20 +-
- fs/namei.c                              |   2 +-
- fs/namespace.c                          |  69 +----
- fs/ocfs2/file.c                         |  10 +-
- fs/open.c                               |  74 ++---
- fs/overlayfs/Kconfig                    |  21 ++
- fs/overlayfs/Makefile                   |   4 +-
- fs/overlayfs/dir.c                      |  33 ++-
- fs/overlayfs/file.c                     | 506 ++++++++++++++++++++++++++++++++
- fs/overlayfs/inode.c                    |  63 +++-
- fs/overlayfs/overlayfs.h                |  21 +-
- fs/overlayfs/ovl_entry.h                |   1 +
- fs/overlayfs/super.c                    |  65 ++--
- fs/overlayfs/util.c                     |  11 +-
- fs/read_write.c                         |  91 +++---
- fs/xattr.c                              |   9 +-
- fs/xfs/xfs_file.c                       |   8 +-
- include/linux/dcache.h                  |  15 +-
- include/linux/fs.h                      |  30 +-
- include/linux/fsnotify.h                |  14 +-
- include/uapi/linux/fs.h                 |   1 -
- mm/util.c                               |   5 +
- 31 files changed, 886 insertions(+), 357 deletions(-)
- create mode 100644 fs/overlayfs/file.c
+Changes from v1:
+  - Rebased on 4.16-rc1
+  - Constified a few function arguments and structures
+  - Reworked the DT binding example a bit
+  - Reworked the panel driver to check for DSI return codes, and use DCS
+    helpers when possible
+
+Maxime Ripard (3):
+  dt-bindings: panel: Add the Ilitek ILI9881c panel documentation
+  drm/panel: Add Ilitek ILI9881c panel driver
+  [DO NOT MERGE] arm: dts: sun8i: bpi-m2m: Add DSI display
+
+ Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt |  20 +++-
+ arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts                        |  39 ++++++-
+ drivers/gpu/drm/panel/Kconfig                                       |   9 +-
+ drivers/gpu/drm/panel/Makefile                                      |   1 +-
+ drivers/gpu/drm/panel/panel-ilitek-ili9881c.c                       | 488 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 5 files changed, 557 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
+
+base-commit: a08fc7c8056e75b08285a2ad955228002dcd86bc
+-- 
+git-series 0.9.1
