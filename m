@@ -1,263 +1,172 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751346AbeEDCpd (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 22:45:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56616 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751244AbeEDCpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 22:45:31 -0400
-Date: Thu, 3 May 2018 21:45:27 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Sinan Kaya <okaya@codeaurora.org>
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-Message-ID: <20180504024527.GE15790@bhelgaas-glaptop.roam.corp.google.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
+        id S1751382AbeEDCqN (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 22:46:13 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40537 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751269AbeEDCqM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 22:46:12 -0400
+X-Google-Smtp-Source: AB8JxZogecXP+KElmkCw0OmaGpL05D30yPIQHcvPRn5niA3kUuLqhY9ZhCewhdbXt4mbqjzVNCoxag==
+Subject: Re: [PATCH v8 0/6] optimize memblock_next_valid_pfn and
+ early_pfn_valid on arm and arm64
+To: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Daniel Vacek <neelx@redhat.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <1523431317-30612-1-git-send-email-hejianet@gmail.com>
+From: Jia He <hejianet@gmail.com>
+Message-ID: <05b0fcf2-7670-101e-d4ab-1f656ff6b02f@gmail.com>
+Date: Fri, 4 May 2018 10:45:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1523431317-30612-1-git-send-email-hejianet@gmail.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 10:49:24AM +0200, Paul Menzel wrote:
-> On 04/27/18 21:22, Bjorn Helgaas wrote:
-> > [+cc Lukas, Sinan]
-> 
-> > On Thu, Apr 26, 2018 at 12:17:53PM +0200, Paul Menzel wrote:
-> 
-> > > On the Lenovo X60t, during resume from ACPI suspend and during shutdown, the
-> > > message below is shown in the logs.
-> > > 
-> > >      pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued
-> > > 65284 msec ago)
-> > 
-> > This is an Intel root port:
-> > 
-> >    00:1c.0 PCI bridge: Intel Corporation NM10/ICH7 Family PCI Express Port 1 (rev 02) (prog-if 00 [Normal decode])
-> > 
-> > and probably has the CF118 erratum (see
-> > http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=3461a068661c
-> > for details).  I bet if you changed "msecs" in pcie_wait_cmd() to 30000
-> > you'd see a 30 second delay during shutdown because we write a command to
-> > tell the port not to generate any more hotplug interrupts, and we wait for
-> > that command to complete, but the port never tells us it has completed.
-> > 
-> > Lukas reported a similar issue in
-> > https://lkml.kernel.org/r/20180112104929.GA10599@wunner.de, which we sort
-> > of worked around by assuming that Thunderbolt controllers never support
-> > that "command complete" interrupt (see
-> > http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=493fb50e958c)
-> > 
-> > Sinan mooted the idea of using a "no-wait" path of sending the "don't
-> > generate hotplug interrupts" command.  I think we should work on this
-> > idea a little more.  If we're shutting down the whole system, I can't
-> > believe there's much value in *anything* we do in the pciehp_remove()
-> > path.
-> > 
-> > Maybe we should just get rid of pciehp_remove() (and probably
-> > pcie_port_remove_service() and the other service driver remove methods)
-> > completely.  That dates from when the service drivers could be modules that
-> > could be potentially unloaded, but unloading them hasn't been possible for
-> > years.
-> > 
-> > As far as the resume path, my guess is that in pciehp_resume(), we
-> > write a command to enable interrupts, then it looks like we get a
-> > PCI_EXP_SLTSTA_DLLSC "Link Up" interrupt, and apparently we issue
-> > another command.  Not sure exactly what's going on here.
+Ping
 
-> Thank you for the quick reply and sorry for only being able to test it now.
-> Please find the relevant bits from the ACPI S3 suspend “action” below. The
-> full log is attached.
+Sorry if I am a little bit verbose, but it can speedup the arm64 booting time 
+indeed.
 
-No problem.  I think we need to bite the bullet and just do a quirk
-for the Intel erratum.  I tried to avoid it by waiting for command
-completion lazily, but I think that ended up being unnecessarily
-clever and it didn't even solve the whole problem.
+-- 
+Cheers,
+Jia
 
-Can you try the patch below?  I think it should solve the problem
-you're seeing.
-
-
-commit ec48a1e0b91ce68903c8ea4dce659d4fdf17ad06
-Author: Bjorn Helgaas <bhelgaas@google.com>
-Date:   Thu May 3 18:39:38 2018 -0500
-
-    PCI: pciehp: Add quirk for Intel Command Completed erratum
-    
-    The Intel CF118 erratum means the controller does not set the Command
-    Completed bit unless writes to the Slot Command register change "Control"
-    bits.  Command Completed is never set for writes that only change software
-    notification "Enable" bits.  This results in timeouts like this:
-    
-      pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued 65284 msec ago)
-    
-    When this erratum is present, avoid these timeouts by marking commands
-    "completed" immediately unless they change the "Control" bits.
-    
-    Here's the text of the erratum from the Intel document:
-    
-      CF118        PCIe Slot Status Register Command Completed bit not always
-                   updated on any configuration write to the Slot Control
-                   Register
-    
-      Problem:     For PCIe root ports (devices 0 - 10) supporting hot-plug,
-                   the Slot Status Register (offset AAh) Command Completed
-                   (bit[4]) status is updated under the following condition:
-                   IOH will set Command Completed bit after delivering the new
-                   commands written in the Slot Controller register (offset
-                   A8h) to VPP. The IOH detects new commands written in Slot
-                   Control register by checking the change of value for Power
-                   Controller Control (bit[10]), Power Indicator Control
-                   (bits[9:8]), Attention Indicator Control (bits[7:6]), or
-                   Electromechanical Interlock Control (bit[11]) fields. Any
-                   other configuration writes to the Slot Control register
-                   without changing the values of these fields will not cause
-                   Command Completed bit to be set.
-    
-                   The PCIe Base Specification Revision 2.0 or later describes
-                   the “Slot Control Register” in section 7.8.10, as follows
-                   (Reference section 7.8.10, Slot Control Register, Offset
-                   18h). In hot-plug capable Downstream Ports, a write to the
-                   Slot Control register must cause a hot-plug command to be
-                   generated (see Section 6.7.3.2 for details on hot-plug
-                   commands). A write to the Slot Control register in a
-                   Downstream Port that is not hotplug capable must not cause a
-                   hot-plug command to be executed.
-    
-                   The PCIe Spec intended that every write to the Slot Control
-                   Register is a command and expected a command complete status
-                   to abstract the VPP implementation specific nuances from the
-                   OS software. IOH PCIe Slot Control Register implementation
-                   is not fully conforming to the PCIe Specification in this
-                   respect.
-    
-      Implication: Software checking on the Command Completed status after
-                   writing to the Slot Control register may time out.
-    
-      Workaround:  Software can read the Slot Control register and compare the
-                   existing and new values to determine if it should check the
-                   Command Completed status after writing to the Slot Control
-                   register.
-    
-    Link: http://www.intel.com/content/www/us/en/processors/xeon/xeon-e7-v2-spec-update.html
-    Link: https://lkml.kernel.org/r/8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de
-    Reported-by: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-
-diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
-index c27aab8e25d7..eefffff8e403 100644
---- a/drivers/pci/hotplug/pciehp.h
-+++ b/drivers/pci/hotplug/pciehp.h
-@@ -83,6 +83,7 @@ struct controller {
- 	struct timer_list poll_timer;
- 	unsigned long cmd_started;	/* jiffies */
- 	unsigned int cmd_busy:1;
-+	unsigned int cc_erratum:1;
- 	unsigned int link_active_reporting:1;
- 	unsigned int notification_enabled:1;
- 	unsigned int power_fault_detected:1;
-diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-index 18a42f8f5dc5..aba67d16484a 100644
---- a/drivers/pci/hotplug/pciehp_hpc.c
-+++ b/drivers/pci/hotplug/pciehp_hpc.c
-@@ -10,7 +10,6 @@
-  * All rights reserved.
-  *
-  * Send feedback to <greg@kroah.com>,<kristen.c.accardi@intel.com>
-- *
-  */
- 
- #include <linux/kernel.h>
-@@ -147,25 +146,27 @@ static void pcie_wait_cmd(struct controller *ctrl)
- 	else
- 		rc = pcie_poll_cmd(ctrl, jiffies_to_msecs(timeout));
- 
--	/*
--	 * Controllers with errata like Intel CF118 don't generate
--	 * completion notifications unless the power/indicator/interlock
--	 * control bits are changed.  On such controllers, we'll emit this
--	 * timeout message when we wait for completion of commands that
--	 * don't change those bits, e.g., commands that merely enable
--	 * interrupts.
--	 */
- 	if (!rc)
- 		ctrl_info(ctrl, "Timeout on hotplug command %#06x (issued %u msec ago)\n",
- 			  ctrl->slot_ctrl,
- 			  jiffies_to_msecs(jiffies - ctrl->cmd_started));
- }
- 
-+/*
-+ * The Intel CF118 erratum means the Command Completed bit is only set if a
-+ * Slot Control write changes PCI_EXP_SLTCTL_PCC, PCI_EXP_SLTCTL_PIC,
-+ * PCI_EXP_SLTCTL_AIC, or PCI_EXP_SLTCTL_EIC.
-+ */
-+#define CC_ERRATUM_MASK		(PCI_EXP_SLTCTL_PCC |	\
-+				 PCI_EXP_SLTCTL_PIC |	\
-+				 PCI_EXP_SLTCTL_AIC |	\
-+				 PCI_EXP_SLTCTL_EIC)
-+
- static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
- 			      u16 mask, bool wait)
- {
- 	struct pci_dev *pdev = ctrl_dev(ctrl);
--	u16 slot_ctrl;
-+	u16 slot_ctrl_orig, slot_ctrl;
- 
- 	mutex_lock(&ctrl->ctrl_lock);
- 
-@@ -180,6 +181,7 @@ static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
- 		goto out;
- 	}
- 
-+	slot_ctrl_orig = slot_ctrl;
- 	slot_ctrl &= ~mask;
- 	slot_ctrl |= (cmd & mask);
- 	ctrl->cmd_busy = 1;
-@@ -188,6 +190,10 @@ static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
- 	ctrl->cmd_started = jiffies;
- 	ctrl->slot_ctrl = slot_ctrl;
- 
-+	if (ctrl->cc_erratum &&
-+	    (slot_ctrl_orig & CC_ERRATUM_MASK) == (slot_ctrl & CC_ERRATUM_MASK))
-+		ctrl->cmd_busy = 0;
-+
- 	/*
- 	 * Optionally wait for the hardware to be ready for a new command,
- 	 * indicating completion of the above issued command.
-@@ -840,6 +846,10 @@ struct controller *pcie_init(struct pcie_device *dev)
- 	if (pdev->is_thunderbolt)
- 		slot_cap |= PCI_EXP_SLTCAP_NCCS;
- 
-+	/* Assume all Intel controllers have erratum CF118 */
-+	if (pdev->vendor == PCI_VENDOR_ID_INTEL)
-+		ctrl->cc_erratum = 1;
-+
- 	ctrl->slot_cap = slot_cap;
- 	mutex_init(&ctrl->ctrl_lock);
- 	init_waitqueue_head(&ctrl->queue);
-@@ -861,7 +871,7 @@ struct controller *pcie_init(struct pcie_device *dev)
- 		PCI_EXP_SLTSTA_MRLSC | PCI_EXP_SLTSTA_CC |
- 		PCI_EXP_SLTSTA_DLLSC);
- 
--	ctrl_info(ctrl, "Slot #%d AttnBtn%c PwrCtrl%c MRL%c AttnInd%c PwrInd%c HotPlug%c Surprise%c Interlock%c NoCompl%c LLActRep%c\n",
-+	ctrl_info(ctrl, "Slot #%d AttnBtn%c PwrCtrl%c MRL%c AttnInd%c PwrInd%c HotPlug%c Surprise%c Interlock%c NoCompl%c%s LLActRep%c\n",
- 		(slot_cap & PCI_EXP_SLTCAP_PSN) >> 19,
- 		FLAG(slot_cap, PCI_EXP_SLTCAP_ABP),
- 		FLAG(slot_cap, PCI_EXP_SLTCAP_PCP),
-@@ -872,6 +882,7 @@ struct controller *pcie_init(struct pcie_device *dev)
- 		FLAG(slot_cap, PCI_EXP_SLTCAP_HPS),
- 		FLAG(slot_cap, PCI_EXP_SLTCAP_EIP),
- 		FLAG(slot_cap, PCI_EXP_SLTCAP_NCCS),
-+		ctrl->cc_erratum? " (with CC erratum)" : "",
- 		FLAG(link_cap, PCI_EXP_LNKCAP_DLLLARC));
- 
- 	if (pcie_init_slot(ctrl))
+On 4/11/2018 3:21 PM, Jia He Wrote:
+> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+> where possible") tried to optimize the loop in memmap_init_zone(). But
+> there is still some room for improvement.
+>
+> Patch 1 introduce new config to make codes more generic
+> Patch 2 remain the memblock_next_valid_pfn on arm and arm64
+> Patch 3 optimizes the memblock_next_valid_pfn()
+> Patch 4~6 optimizes the early_pfn_valid()
+>
+> As for the performance improvement, after this set, I can see the time
+> overhead of memmap_init() is reduced from 41313 us to 24389 us in my
+> armv8a server(QDF2400 with 96G memory).
+>
+> Without this patchset:
+> [  117.113677] before memmap_init
+> [  117.118195] after  memmap_init
+>>>> memmap_init takes 4518 us
+> [  117.121446] before memmap_init
+> [  117.154992] after  memmap_init
+>>>> memmap_init takes 33546 us
+> [  117.158241] before memmap_init
+> [  117.161490] after  memmap_init
+>>>> memmap_init takes 3249 us
+>>>> totally takes 41313 us
+> With this patchset:
+> [  123.222962] before memmap_init
+> [  123.226819] after  memmap_init
+>>>> memmap_init takes 3857
+> [  123.230070] before memmap_init
+> [  123.247354] after  memmap_init
+>>>> memmap_init takes 17284
+> [  123.250604] before memmap_init
+> [  123.253852] after  memmap_init
+>>>> memmap_init takes 3248
+>>>> totally takes 24389 us
+> Attached the memblock region information in my server.
+> [   86.956758] Zone ranges:
+> [   86.959452]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
+> [   86.966041]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
+> [   86.972631] Movable zone start for each node
+> [   86.977179] Early memory node ranges
+> [   86.980985]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
+> [   86.987666]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
+> [   86.994348]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
+> [   87.001029]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
+> [   87.007710]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
+> [   87.014392]   node   0: [mem 0x0000000003410000-0x000000000563ffff]
+> [   87.021073]   node   0: [mem 0x0000000005640000-0x000000000567ffff]
+> [   87.027754]   node   0: [mem 0x0000000005680000-0x00000000056dffff]
+> [   87.034435]   node   0: [mem 0x00000000056e0000-0x00000000086fffff]
+> [   87.041117]   node   0: [mem 0x0000000008700000-0x000000000871ffff]
+> [   87.047798]   node   0: [mem 0x0000000008720000-0x000000000894ffff]
+> [   87.054479]   node   0: [mem 0x0000000008950000-0x0000000008baffff]
+> [   87.061161]   node   0: [mem 0x0000000008bb0000-0x0000000008bcffff]
+> [   87.067842]   node   0: [mem 0x0000000008bd0000-0x0000000008c4ffff]
+> [   87.074524]   node   0: [mem 0x0000000008c50000-0x0000000008e2ffff]
+> [   87.081205]   node   0: [mem 0x0000000008e30000-0x0000000008e4ffff]
+> [   87.087886]   node   0: [mem 0x0000000008e50000-0x0000000008fcffff]
+> [   87.094568]   node   0: [mem 0x0000000008fd0000-0x000000000910ffff]
+> [   87.101249]   node   0: [mem 0x0000000009110000-0x00000000092effff]
+> [   87.107930]   node   0: [mem 0x00000000092f0000-0x000000000930ffff]
+> [   87.114612]   node   0: [mem 0x0000000009310000-0x000000000963ffff]
+> [   87.121293]   node   0: [mem 0x0000000009640000-0x000000000e61ffff]
+> [   87.127975]   node   0: [mem 0x000000000e620000-0x000000000e64ffff]
+> [   87.134657]   node   0: [mem 0x000000000e650000-0x000000000fffffff]
+> [   87.141338]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
+> [   87.148019]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
+> [   87.154701]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
+> [   87.161383]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
+> [   87.168064]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
+> [   87.174746]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
+> [   87.181427]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+> [   87.188108]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
+> [   87.194791] Initmem setup node 0 [mem 0x0000000000200000-0x00000017ffffffff]
+>
+> Changelog:
+> V8: - introduce new config and move generic code to early_pfn.h
+>      - optimize memblock_next_valid_pfn as suggested by Matthew Wilcox
+> V7: - fix i386 compilation error. refine the commit description
+> V6: - simplify the codes, move arm/arm64 common codes to one file.
+>      - refine patches as suggested by Danial Vacek and Ard Biesheuvel
+> V5: - further refining as suggested by Danial Vacek. Make codes
+>        arm/arm64 more arch specific
+> V4: - refine patches as suggested by Danial Vacek and Wei Yang
+>      - optimized on arm besides arm64
+> V3: - fix 2 issues reported by kbuild test robot
+> V2: - rebase to mmotm latest
+>      - remain memblock_next_valid_pfn on arm64
+>      - refine memblock_search_pfn_regions and pfn_valid_region
+>
+> Jia He (6):
+>    arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID
+>    mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
+>    arm: arm64: page_alloc: reduce unnecessary binary search in
+>      memblock_next_valid_pfn()
+>    mm/memblock: introduce memblock_search_pfn_regions()
+>    arm: arm64: introduce pfn_valid_region()
+>    mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
+>
+>   arch/arm/Kconfig          |  4 +++
+>   arch/arm/mm/init.c        |  1 +
+>   arch/arm64/Kconfig        |  4 +++
+>   arch/arm64/mm/init.c      |  1 +
+>   include/linux/early_pfn.h | 79 +++++++++++++++++++++++++++++++++++++++++++++++
+>   include/linux/memblock.h  |  2 ++
+>   include/linux/mmzone.h    | 18 ++++++++++-
+>   mm/Kconfig                |  3 ++
+>   mm/memblock.c             |  9 ++++++
+>   mm/page_alloc.c           |  5 ++-
+>   10 files changed, 124 insertions(+), 2 deletions(-)
+>   create mode 100644 include/linux/early_pfn.h
+>
