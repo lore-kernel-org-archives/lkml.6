@@ -1,82 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751262AbeEDMDq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:03:46 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43961 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbeEDMDo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:03:44 -0400
-X-Google-Smtp-Source: AB8JxZrmk0q5P+RXtb2+yCeaU7PzmQRdhlgovqSTF0HWHM5h3tnfysJM1vu89twZ/qB+FxIFEygJVQ==
-Subject: Re: [PATCH v1 0/5] Support IOMMU for 2d/3d on Tegra30/114
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180503234723.4368-1-digetx@gmail.com>
- <20180504105653.GO13459@ulmo>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <94305d59-e778-61b9-f264-8add7853d16c@gmail.com>
-Date: Fri, 4 May 2018 15:03:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180504105653.GO13459@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751344AbeEDMGM (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:06:12 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57515 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751001AbeEDMGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:06:10 -0400
+Message-ID: <fc064c3f1534a6082dc2b4e18454e054b53e5aee.camel@bootlin.com>
+Subject: Re: [PATCH v2 09/10] ARM: dts: sun7i-a20: Add Video Engine and
+ reserved memory nodes
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 04 May 2018 14:04:38 +0200
+In-Reply-To: <20180504091555.idgtzey53lozj2uh@flea>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+         <20180419154536.17846-5-paul.kocialkowski@bootlin.com>
+         <20180420073908.nkcbsdxibnzkqski@flea>
+         <82057e2f734137a3902d9313c228b01ceb345ee7.camel@bootlin.com>
+         <20180504084008.h6p4brari3xrbv6l@flea>
+         <e8cd340605ab4db8ebf2888a4fce645e8bc481d0.camel@bootlin.com>
+         <20180504091555.idgtzey53lozj2uh@flea>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-VN/vLUca0O9ClQU/OSCc"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.05.2018 13:56, Thierry Reding wrote:
-> On Fri, May 04, 2018 at 02:47:18AM +0300, Dmitry Osipenko wrote:
->> Hi,
->>
->> This series enables IOMMU support for 2d/3d HW on Tegra30/114, as a result
->> userspace that uses 2d/3d could work with the active IOMMU.
->>
->> Dmitry Osipenko (5):
->>   drm/tegra: dc: Balance IOMMU group refcounting
->>   drm/tegra: gr2d: Add IOMMU support
->>   drm/tegra: gr3d: Add IOMMU support
->>   ARM: dts: tegra30: Add IOMMU nodes to Host1x and its clients
->>   ARM: dts: tegra114: Add IOMMU nodes to Host1x and its clients
->>
->>  arch/arm/boot/dts/tegra114.dtsi |  5 +++++
->>  arch/arm/boot/dts/tegra30.dtsi  | 14 +++++++++++++
->>  drivers/gpu/drm/tegra/dc.c      | 35 ++++++++++++++++-----------------
->>  drivers/gpu/drm/tegra/dc.h      |  2 +-
->>  drivers/gpu/drm/tegra/drm.h     |  2 +-
->>  drivers/gpu/drm/tegra/gr2d.c    | 31 +++++++++++++++++++++++++++--
->>  drivers/gpu/drm/tegra/gr3d.c    | 27 +++++++++++++++++++++++++
->>  7 files changed, 94 insertions(+), 22 deletions(-)
-> 
-> Overall I think this is great. No need to resend for the two comments on
-> patch 1, I can fix those up when I apply if you have no objections.
 
-No objections from me, thanks.
+--=-VN/vLUca0O9ClQU/OSCc
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, 2018-05-04 at 11:15 +0200, Maxime Ripard wrote:
+> On Fri, May 04, 2018 at 10:47:44AM +0200, Paul Kocialkowski wrote:
+> > > > > > +			reg =3D <0x01c0e000 0x1000>;
+> > > > > > +			memory-region =3D <&ve_memory>;
+> > > > >=20
+> > > > > Since you made the CMA region the default one, you don't need
+> > > > > to
+> > > > > tie
+> > > > > it to that device in particular (and you can drop it being
+> > > > > mandatory
+> > > > > from your binding as well).
+> > > >=20
+> > > > What if another driver (or the system) claims memory from that
+> > > > zone
+> > > > and
+> > > > that the reserved memory ends up not being available for the VPU
+> > > > anymore?
+> > > >=20
+> > > > Acccording to the reserved-memory documentation, the reusable
+> > > > property
+> > > > (that we need for dmabuf) puts a limitation that the device
+> > > > driver
+> > > > owning the region must be able to reclaim it back.
+> > > >=20
+> > > > How does that work out if the CMA region is not tied to a driver
+> > > > in
+> > > > particular?
+> > >=20
+> > > I'm not sure to get what you're saying. You have the property
+> > > linux,cma-default in your reserved region, so the behaviour you
+> > > described is what you explicitly asked for.
+> >=20
+> > My point is that I don't see how the driver can claim back (part of)
+> > the
+> > reserved area if the area is not explicitly attached to it.
+> >=20
+> > Or is that mechanism made in a way that all drivers wishing to use
+> > the
+> > reserved memory area can claim it back from the system, but there is
+> > no
+> > priority (other than first-come first-served) for which drivers
+> > claims
+> > it back in case two want to use the same reserved region (in a
+> > scenario
+> > where there isn't enough memory to allow both drivers)?
+>=20
+> This is indeed what happens. Reusable is to let the system use the
+> reserved memory for things like caches that can easily be dropped when
+> a driver wants to use the memory in that reserved area. Once that
+> memory has been allocated, there's no claiming back, unless that
+> memory segment was freed of course.
+
+Thanks for the clarification. So in our case, perhaps the best fit would
+be to make that area the default CMA pool so that we can be ensured that
+the whole 96 MiB is available for the VPU and that no other consumer of
+CMA will use it?
+
+Cheers,
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-VN/vLUca0O9ClQU/OSCc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsTFYACgkQ3cLmz3+f
+v9FnMwgAmeAIyqwKlBcBjCF30yfm3n3JV88FTCP2y4bo//S2LercCFEdBY+IU5mF
+MfO7Sc++z5fPVVSSZ/eSYYvqscU6mjd7XIyVJI6GDFitk+EnsEwdM8nZ+sHjuqxb
+gB7cBjkblXlKX+xj2hFLtGiNQnipWv4AmKVPf6IBYWqKRJM8l6IMO1zlL/ckHHEE
+OqohpSYmTsPtzzAbYQLgETMpniN/OJyn1puZeHLC18kPTvQRHHs/h8d8qzprvcv1
+x0RvKr2zD5imwmDY9hRWidwzirOLGU6LYbam/8vReVYb7UFW303xALLjMdtGHb0p
+pzSWsNkSk8a8yEwdc5FfY+Pw2eDKWQ==
+=S2C7
+-----END PGP SIGNATURE-----
+
+--=-VN/vLUca0O9ClQU/OSCc--
