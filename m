@@ -1,100 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751808AbeEDVwv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:52:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751622AbeEDVwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:52:50 -0400
-Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
- virtualization mode
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
-        peterz@infradead.org, chao.p.peng@linux.intel.com
-References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
- <20180503113223.x2ykby6wglppgdwf@um.fi.intel.com>
- <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
- <20180503120215.dev7ti43zk7yoovn@um.fi.intel.com>
- <221c297b-1270-371b-70a3-4cff4bed7a7e@redhat.com>
- <20180503124847.tcrizs2sxy3j6mu2@um.fi.intel.com>
- <26505f7a-9e6b-efb9-e5f9-8aae3756be49@redhat.com>
- <20180503133823.tqbraql3b7ltuo6a@um.fi.intel.com>
- <e948d77e-b96e-147a-745d-aad05935b61b@redhat.com>
- <20180504103842.rcbpnkjeoavulii6@um.fi.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0f
- UGFvbG8gQm9uemluaSA8Ym9uemluaUBnbnUub3JnPsLBTQQTAQIAIwUCVEJ7AwIbAwcLCQgH
- AwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEH4VEAzNNmmxNcwOniaZVLsuy1lW/ntYCA0Caz0i
- sHpmecK8aWlvL9wpQCk4GlOX9L1emyYXZPmzIYB0IRqmSzAlZxi+A2qm9XOxs5gJ2xqMEXX5
- FMtUH3kpkWWJeLqe7z0EoQdUI4EG988uv/tdZyqjUn2XJE+K01x7r3MkUSFz/HZKZiCvYuze
- VlS0NTYdUt5jBXualvAwNKfxEkrxeHjxgdFHjYWhjflahY7TNRmuqPM/Lx7wAuyoDjlYNE40
- Z+Kun4/KjMbjgpcF4Nf3PJQR8qXI6p3so2qsSn91tY7DFSJO6v2HwFJkC2jU95wxfNmTEUZc
- znXahYbVOwCDJRuPrE5GKFd/XJU9u5hNtr/uYipHij01WXal2cce1S5mn1/HuM1yo1u8xdHy
- IupCd57EWI948e8BlhpujUCU2tzOb2iYS0kpmJ9/oLVZrOcSZCcCl2P0AaCAsj59z2kwQS9D
- du0WxUs8waso0Qq6tDEHo8yLCOJDzSz4oojTtWe4zsulVnWV+wu70AioemAT8S6JOtlu60C5
- dHgQUD1Tp+ReXpDKXmjbASJx4otvW0qah3o6JaqO79tbDqIvncu3tewwp6c85uZd48JnIOh3
- utBAu684nJakbbvZUGikJfxd887ATQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAem
- Vv9Yfn2PbDIbxXqLff7oyVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CR
- wkMHtOmzQiQ2tSLjKh/cHeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuf
- fAb589AJW50kkQK9VD/9QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v02
- 8TVAaYbIhxvDY0hUQE4r8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQ
- zCYHXAzwnGi8WU9iuE1P0wARAQABwsEzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EO
- oJy0uZggJm7gZKeJ7iUpeX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBT
- uiJ0bfo55SWsUNN+c9hhIX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHn
- plOzCXHvmdlW0i6SrMsBDl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4
- HYv/7ZnASVkR5EERFF3+6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz
- 876SvcOb5SL5SKg9/rCBufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvr
- iy9enJ8kxJwhC0ECbSKFY+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y
- 1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
- /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
- 53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <270eb55a-b033-f2f6-1cbe-76953079da27@redhat.com>
-Date: Fri, 4 May 2018 23:52:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        id S1751846AbeEDVxG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:53:06 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:58020 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751741AbeEDVxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 17:53:03 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.9
+Subject: Re: [PATCH 7/7] ARM: dts: sun7i: Add dts file for the A20-linova1-7
+ HMI
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <1521662593-25468-7-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180322180508.my64gobhh5rc2x2m@flea>
+ <8ef3b259-03b4-6987-286e-36ff627a8b76@micronovasrl.com>
+ <20180424084137.7xfwji2gcibxavvt@flea>
+ <03a02abb-e95c-b4ec-748f-907c0af67969@micronovasrl.com>
+ <20180425184016.xktppxw7egddr7li@flea>
+ <42feccc9-1d09-9ff2-3ccc-1dea63bacfb6@micronovasrl.com>
+ <839d2560-0250-9b3a-8019-4e83d9e931e2@micronovasrl.com>
+ <20180504080652.dniwaqqhbeuknp7y@flea>
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Message-ID: <afc78821-2d08-3f4f-d008-5b2d216e96c0@micronovasrl.com>
+Date: Fri, 4 May 2018 23:52:59 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180504103842.rcbpnkjeoavulii6@um.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180504080652.dniwaqqhbeuknp7y@flea>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: it
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 12:38, Alexander Shishkin wrote:
->>> Or rather a parameter to decide who wins in case both host and guest want
->>> to trace the guest. That's arguably better than having different versions of
->>> PT in the guest depending on a module parameter setting.
->> It's not different versions; it's having PT vs. not having PT at all.  I
->> don't really see it as a big issue.  The nice thing about this series is
->> that the interactions between PT code and KVM code are minimal.
-> Unfortunately, it gets it wrong. Like I just said in another email, if you
-> switch off host's PT, you need to let them know, which this patchset doesn't
-> do. And when it does, it would be the same amount of interaction with PT
-> code as what would be required to get the dynamic guest PT right.
+Hi Maxime!
 
-Two issues:
+Il 04/05/2018 10:06, Maxime Ripard ha scritto:
+> Hi,
+> 
+> On Wed, May 02, 2018 at 06:41:34PM +0200, Giulio Benetti wrote:
+>>>> You don't have to handcode the fragments anymore with the new syntax,
+>>>> and U-Boot makes it really trivial to use if you use the FIT image
+>>>> format to have multiple overlays bundled in the same image. You can
+>>>> choose to apply them dynamically, for example based on an EEPROM or
+>>>> some other metric to see which combination you have.
+>>>
+>>> Ah, this is interesting. I'm going to experiment with that.
+>>>
+>>
+>> I'm struggling against this, I don't really know how to proceed,
+>> except keeping monolithic dts files including other dtsi files.
+>>
+>> About dt-overlays I've tried to look around lot of time,
+>> but the only thing I've found is this:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/tree/arch/arm/boot/dts?h=topic/renesas-overlays
+>>
+>> where they use .dtso tagging them as "/plugin/;"
+>> and compile all .dtso found in dts folder.
+>> Then they obtain .dtbo files that should be the dt-overlays we have spoken
+>> about right?
+> 
+> Yes. You don't have to do that though, you can just rely on dtc to
+> compile them, outside of the linux build system.
+> 
+>> What I can't understand is if there's a real standard at this time to
+>> follow, because on renesas-driver they use their way to handle all .dtso
+>> files, but on mainline there seems to be nothing about that.
+> 
+> I'm not sure what you mean here. It's just fragments of device tree,
+> that have to be compiled using dtc, that's it. You can use the Linux
+> build system infrastructure to do that, or you can build your own
+> simpler one. That's really up to you. See for example
+> https://github.com/NextThingCo/CHIP-dt-overlays/blob/master/Makefile
+> 
+> (even though the overlays themselves use the legacy syntax and
+> shouldn't really be used an examples)
 
-1) Is there a fast (10 clock cycles, better if less) way for KVM to know
-"PT is enabled on the host", or a callback that KVM can register when
-e.g. RTIT_CTL is written?
+Everything works now!
+Thank you very much!
+I've setted up a Repo on Github to give an example on how make it work 
+with no pain:
+https://github.com/micronovasrl/linova-dtoverlays
 
-2) We'd have to write trace records into the guest.  That does not sound
-that easy.  Does it entail parsing the ToPA and all that?
+At the moment it's a mess all around, but it's working and give an idea 
+on how to make it work. Though I'm going to clean it up well as a base 
+for linova dtoverlays.
 
-Thanks,
+Ah, btw, can you confirm me that base dts file must be compiled outside 
+kernel with:
+dtc -@ ....
+Otherwise as in-tree dts with make dtbs "-@" argument is not passed.
+Right?
 
-Paolo
+Thank you a lot for your help and time again!
+
+Best regards!
+
+-- 
+Giulio Benetti
+CTO
+
+MICRONOVA SRL
+Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
+Tel. 049/8931563 - Fax 049/8931346
+Cod.Fiscale - P.IVA 02663420285
+Capitale Sociale € 26.000 i.v.
+Iscritta al Reg. Imprese di Padova N. 02663420285
+Numero R.E.A. 258642
