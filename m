@@ -1,34 +1,34 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-977734-1525484675-2-13539652893539576964
+X-Cyrus-Session-Id: sloti22d1t05-155233-1525440280-2-14909002322276707223
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='utf-8'
+X-Attached: signature.asc
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525484675; b=jlhfCIK1E2kYoxTRwgfAtaQsoR3mpoveQA5P4vOMjMyinxl6sn
-    Vv0QF/0UCH2YXAYLv1K2uvuAJ5Mz32x/2iQWUUQqfD5hi6wbRn3HWcQwE+LuJ7IR
-    u94CcGPzR3JQFxdGXoQAMurQp0tBSQVzxsi+aRwWJUeygBc7PSQl83V661nDJw1z
-    iABTScK7xkHszxpgJHwtI0BPBk7Aw1vVIJIfs4dg4wgPnbvJiKbMW3W61AUrHvLB
-    8SbsEKFM8NUdoPQvhwSOhoSSC9x4xivXsq8pgtZl6ckW8uSE0i3mr2u3tVZHaQFM
-    x7ivrLwcSuvVSwLkVPOJo5FinobEdw0SV+hw==
+    1525440280; b=HDNQRrNRLKhFa2MSF+QJ9Pla1qeMO1fVH9cu2MMI74ZlmlrBdC
+    bvEB3x1OYx2IdBmIwyRxBUf1395rKGgSZttt/TeiludOTFiroO+nRpUZ2m+lBVzJ
+    e1Wc8VFjTsIGH3HXlmMbMMwKAg+Obj8Wfk/XHUZS/3KotBfahRiXIhzNLzWCCdxE
+    ji7241ehLNdSgKfYaSvucj6ExhvTfCWTAACcvomzDlgfFw+09wj5syuUjETpUcA1
+    yYkEc2KTbaMHD9KliPEnXMgcZXJbp7OiGu/XdPhqKXqL1kUOBTZHoaNhoc39mtZ6
+    ipOS6PVDfxKqg/nYbP9UMq42H0+GYSCqnEew==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:in-reply-to:message-id
-    :date:sender:list-id; s=fm2; t=1525484675; bh=aMo6Y+PKYkNSQZOAk1
-    Ln+xYfxw3zqr9vmzwPzx1X7K8=; b=RgoSfJBsoTtJxC38wPSzgHiRk1lQ5TcoN8
-    rYrKO5OscX41tfyT1TFSqqsXQfRgGD7nsui4woAPQlF1RbLjZe0mIkqna+UZylIw
-    DySVKyuST8/DGNUzYtLdVkTLrLlqyzovE6mFh+xmI4BShiaAzsa0e02qrVccA/5k
-    spS5/jHvjX9nfagWec8ZQ+918p8SS/IXG8iyooDEwDYj4T+1GWTQaTlVqEAzh8AN
-    59xCKVZ4oG29xc07LFRjfg5J7EwgIj9awL3FhKA2KrIP9YpKA4n/31Ln/7sppR5O
-    knLE40LCZOnYMDo9gB+eJehJUE5KuS5SFO9X8em5E38DiZK/xm1w==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=sirena.org.uk header.i=@sirena.org.uk header.b=vlaiZ0Yv
-    x-bits=1024 x-keytype=rsa x-algorithm=sha256
-    x-selector=20170815-heliosphere;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525440280; bh=8DaIsRvvib4k3SRAmldQr1mX+KGT9c
+    RTGSSsmbCi/pU=; b=MSiZhZ7RgRVYEALZTlN8WVoa73b0ysLHJAj30OkQLdDnLr
+    B/XR1G7GQidIW0hc+3lozeAcroeVtjV7uB4jCOPxIvV6l0l2JM7DFnQROgH3rEm7
+    noJ16rhhlKFo3WQU9z2gxxmbAhjChiguFtbd4qd8M4bo3jWU5RK3Jdw2VIZ0s6Hh
+    ncvnsSNBIykiVyZ1Gwhy1nZSXzsjy6i/naAa/3wxaF7imOD/xQjHQkkYcFk9nqQs
+    U1BgC/vj4WDzdgWnJAdn9if8gX5z1+iENnydutP4rX5gSzQcrbebovTi7V9zbCNE
+    WKKay6kSzAsmf+3LIScJXu1ArT0fK4Gw2fpS136w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=fOC5RfIQ x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -39,13 +39,12 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=sirena.org.uk header.i=@sirena.org.uk header.b=vlaiZ0Yv
-      x-bits=1024 x-keytype=rsa x-algorithm=sha256
-      x-selector=20170815-heliosphere;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=fOC5RfIQ x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -57,138 +56,105 @@ Authentication-Results: mx5.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD9Dh85Ri6/iIerYVKcTo+N5YIV4XTY9g+wITMDnFDDYmExfvnA8rPnWWwxaHR7Y58ajwduBtafRj/zS4U3yJWnl9u9Xcj/8fei5JEc59XB7KdUZtQGr
-    ZyTc/ZRseoE560GzB2dafC/pjv6z6Nb5AGqkvXZfIr5OLhtLEHtZHuz3D6JOA58vqKdn6xpOwk8HvsTGjY/oayODhPwaElZ8SY24FsnTTX5dYMJDvrvZXWxi
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfIciBJh9YKv2TBkMknSs55Wyciax8ZxQx7Ufxif935HRhv31gs8M3rCI+wpZA0n26PdBzWyvV0jLMWpFzJHgTJ+Am6iEdKI81YVDjJlx5QZ96llhfSWV
+    s3W36d7NglSowPz87tPOnYoeXvqYQNzZg0YzKuU82gl386ABpVZsd75QskzfWM+I61ox6Rlen+5DgVoLmnURDHk4mhLmWNE8ShMau/ze4g0fgdEMWoIeADwZ
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=QyXUC8HyAAAA:8 a=T4Wh53ZaH-sK705GRnMA:9 a=AjGcO6oz07-iQ99wixmX:22
+    a=anJn6clNCpoq59n8QpgA:9 a=QEXdDO2ut3YA:10 a=NqPdRVzkrt-dKUH-aH8A:9
+    a=ONNS8QRKHyMA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751771AbeEEBoe (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 4 May 2018 21:44:34 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36970 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751739AbeEEBod (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 4 May 2018 21:44:33 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Changbin Du <changbin.du@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, yamada.masahiro@socionext.com,
-        michal.lkml@markovi.net, tglx@linutronix.de, mingo@redhat.com,
-        akpm@linux-foundation.org, x86@kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, arnd@arndb.de, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: add dummy function of_find_regulator_by_node" to the regulator tree
-In-Reply-To: <1525179614-14571-3-git-send-email-changbin.du@intel.com>
-Message-Id: <20180505014413.ADEDE44007A@finisterre.ee.mobilebroadband>
-Date: Sat,  5 May 2018 02:44:13 +0100 (BST)
+        id S1750820AbeEDNYi (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 4 May 2018 09:24:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57688 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751114AbeEDNYi (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Fri, 4 May 2018 09:24:38 -0400
+Date: Fri, 4 May 2018 14:24:33 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Ralf Baechle <ralf@linux-mips.org>,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        Marcin Nowakowski <marcin.nowakowski@mips.com>,
+        Matthew Fortune <Matthew.Fortune@mips.com>
+Subject: Re: Introducing a nanoMIPS port for Linux
+Message-ID: <20180504132432.GA30458@jamesdev>
+References: <20180502215107.GA9884@saruman>
+ <CAK8P3a2y2EA1g099DXOHkfevQb=6zuWmVOq9C_wVTQ8zrAMx8w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2y2EA1g099DXOHkfevQb=6zuWmVOq9C_wVTQ8zrAMx8w@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The patch
 
-   regulator: add dummy function of_find_regulator_by_node
+--Kj7319i9nmIyA2yE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been applied to the regulator tree at
+On Thu, May 03, 2018 at 06:40:07PM -0400, Arnd Bergmann wrote:
+> On Wed, May 2, 2018 at 5:51 PM, James Hogan <jhogan@kernel.org> wrote:
+>=20
+> > Due to the binary incompatibility between previous MIPS architecture
+> > generations and nanoMIPS, and the significantly revamped compiler ABI,
+> > where for the first time, a single Linux kernel would not be expected to
+> > handle both old and new ABIs, we have decided to also take the
+> > opportunity to modernise the Linux user ABI for nanoMIPS, making as much
+> > use of generic interfaces as possible and modernising the true
+> > architecture specific parts.
+> >
+> > This is similar to what a whole new kernel architecture would be
+> > expected to adopt, but has been done within the existing MIPS
+> > architecture port to allow reuse of the existing MIPS code, most of
+> > which does not depend on these ABI specifics. Details of the proposed
+> > Linux user ABI changes for nanoMIPS can be found here:
+>=20
+> While I haven't looked at the individual changes, I wonder whether
+> it would be useful to make this new ABI use 64-bit time_t from
+> the start, using the new system calls that Deepa and I have been
+> posting recently.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+Personally I'm all for squeezing as much API cleanup in as possible
+before its merged, though obviously there'll be a point when the ABI may
+need to be frozen, at which point we'll mostly have to accept what we
+have within reason.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+> There are still a few things to be worked out:
+> only the first of four sets of syscall patches is merged so far,
+> and we have a couple of areas that will require further ABI changes
+> (sound, sockets, media and maybe a couple of smaller drivers),
+> so it depends on the overall timing. If you would otherwise merge
+> the patches quickly, then it may be better to just follow the existing
+> 32-bit architectures and add the 64-bit entry points when we do it
+> for everyone.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I think it'll likely be a couple of cycles before it gets merged anyway.
+There's still work to do, and limited resources.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Cheers
+James
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+--Kj7319i9nmIyA2yE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Mark
+-----BEGIN PGP SIGNATURE-----
 
->From 08813e0ec1cb48e53c86a24d88d26b26878e7b6e Mon Sep 17 00:00:00 2001
-From: Changbin Du <changbin.du@intel.com>
-Date: Wed, 2 May 2018 21:44:57 +0800
-Subject: [PATCH] regulator: add dummy function of_find_regulator_by_node
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWuxfDgAKCRA1zuSGKxAj
+8gFKAQDBKIiLApOFjRYGPadIj0pTPL6FcfLozP0XuoIjjwlKdAEAguVMty7TjYS0
++MKImps2UKe+xTw3YLPtnZlk+cVTpQ0=
+=7SKV
+-----END PGP SIGNATURE-----
 
-If device tree is not enabled, of_find_regulator_by_node() should have
-a dummy function since the function call is still there.
-
-This is to fix build error after CONFIG_NO_AUTO_INLINE is introduced.
-If this option is enabled, GCC will not auto-inline functions that are
-not explicitly marked as inline.
-
-In this case (no CONFIG_OF), the copmiler will report error in function
-regulator_dev_lookup().
-
-W/O NO_AUTO_INLINE, function of_get_regulator() is auto-inlined and then
-the call to of_find_regulator_by_node() is optimized out since
-of_get_regulator() always return NULL.
-
-W/ NO_AUTO_INLINE, the return value of of_get_regulator() is a variable
-so the call to of_find_regulator_by_node() cannot be optimized out. So
-we need a stub of_find_regulator_by_node().
-
-static struct regulator_dev *regulator_dev_lookup(struct device *dev,
-						  const char *supply)
-{
-	struct regulator_dev *r = NULL;
-	struct device_node *node;
-	struct regulator_map *map;
-	const char *devname = NULL;
-
-	regulator_supply_alias(&dev, &supply);
-
-	/* first do a dt based lookup */
-	if (dev && dev->of_node) {
-		node = of_get_regulator(dev, supply);
-		if (node) {
-			r = of_find_regulator_by_node(node);
-			if (r)
-				return r;
-	...
-
-Signed-off-by: Changbin Du <changbin.du@intel.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/internal.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
-index abfd56e8c78a..24fde1e08f3a 100644
---- a/drivers/regulator/internal.h
-+++ b/drivers/regulator/internal.h
-@@ -56,14 +56,19 @@ static inline struct regulator_dev *dev_to_rdev(struct device *dev)
- 	return container_of(dev, struct regulator_dev, dev);
- }
- 
--struct regulator_dev *of_find_regulator_by_node(struct device_node *np);
--
- #ifdef CONFIG_OF
-+struct regulator_dev *of_find_regulator_by_node(struct device_node *np);
- struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
- 			         const struct regulator_desc *desc,
- 				 struct regulator_config *config,
- 				 struct device_node **node);
- #else
-+static inline struct regulator_dev *
-+of_find_regulator_by_node(struct device_node *np)
-+{
-+	return NULL;
-+}
-+
- static inline struct regulator_init_data *
- regulator_of_get_init_data(struct device *dev,
- 			   const struct regulator_desc *desc,
--- 
-2.17.0
+--Kj7319i9nmIyA2yE--
