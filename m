@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751329AbeEDFrr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 01:47:47 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:34641 "EHLO
+        id S1751272AbeEDFrq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 01:47:46 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39154 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750866AbeEDFro (ORCPT
+        with ESMTP id S1750709AbeEDFro (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 4 May 2018 01:47:44 -0400
-X-UUID: 4ef40a74ea624111813e087d1d58fb01-20180504
+X-UUID: 080fd3cf35f546638e6d040bf7815422-20180504
 From: <honghui.zhang@mediatek.com>
 To: <lorenzo.pieralisi@arm.com>, <marc.zyngier@arm.com>,
         <bhelgaas@google.com>, <matthias.bgg@gmail.com>,
@@ -20,12 +20,10 @@ CC: <honghui.zhang@mediatek.com>, <hongkun.cao@mediatek.com>,
         <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
         <yt.shen@mediatek.com>, <sean.wang@mediatek.com>,
         <xinping.qian@mediatek.com>
-Subject: [PATCH v7 1/2] PCI: mediatek: Set up vendor ID and class type for MT7622
-Date: Fri, 4 May 2018 13:47:32 +0800
-Message-ID: <1525412853-24367-2-git-send-email-honghui.zhang@mediatek.com>
+Subject: [PATCH v7 0/2] PCI: mediatek: Fixups for the IRQ handle routine and MT7622's class code
+Date: Fri, 4 May 2018 13:47:31 +0800
+Message-ID: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
 X-Mailer: git-send-email 2.6.4
-In-Reply-To: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
-References: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK: N
@@ -35,110 +33,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Honghui Zhang <honghui.zhang@mediatek.com>
 
-MT7622's hardware default value of vendor ID and class type is not correct,
-fix that by setup the correct values before linkup with Endpoint.
+Two fixups for mediatek's host bridge:
+The first patch fixup class type and vendor ID for MT7622.
+The second patch fixup the IRQ handle routine by using irq_chip solution
+to avoid IRQ reentry which may exist for both MT2712 and MT7622.
 
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-Acked-by: Ryder Lee <ryder.lee@mediatek.com>
----
- drivers/pci/host/pcie-mediatek.c | 30 +++++++++++++++++++++++++++---
- include/linux/pci_ids.h          |  2 ++
- 2 files changed, 29 insertions(+), 3 deletions(-)
+Change since v6:
+ - Remove the irq_mask, irq_unmask callback in lower layer irq_chip since we
+   have set the MSI_FLAG_USE_DEF_CHIP_OPS flags.
+ - Add irq_ack callback in irq_chip to handle edge IRQ.
+ - Uing handle_edge_irq to handle the MSI IRQs.
 
-diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
-index a8b20c5..c3dc549 100644
---- a/drivers/pci/host/pcie-mediatek.c
-+++ b/drivers/pci/host/pcie-mediatek.c
-@@ -66,6 +66,10 @@
- 
- /* PCIe V2 per-port registers */
- #define PCIE_MSI_VECTOR		0x0c0
-+
-+#define PCIE_CONF_VEND_ID	0x100
-+#define PCIE_CONF_CLASS_ID	0x106
-+
- #define PCIE_INT_MASK		0x420
- #define INTX_MASK		GENMASK(19, 16)
- #define INTX_SHIFT		16
-@@ -125,12 +129,14 @@ struct mtk_pcie_port;
- 
- /**
-  * struct mtk_pcie_soc - differentiate between host generations
-+ * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-  * @has_msi: whether this host supports MSI interrupts or not
-  * @ops: pointer to configuration access functions
-  * @startup: pointer to controller setting functions
-  * @setup_irq: pointer to initialize IRQ functions
-  */
- struct mtk_pcie_soc {
-+	bool need_fix_class_id;
- 	bool has_msi;
- 	struct pci_ops *ops;
- 	int (*startup)(struct mtk_pcie_port *port);
-@@ -375,6 +381,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- {
- 	struct mtk_pcie *pcie = port->pcie;
- 	struct resource *mem = &pcie->mem;
-+	const struct mtk_pcie_soc *soc = port->pcie->soc;
- 	u32 val;
- 	size_t size;
- 	int err;
-@@ -403,6 +410,15 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
- 	       PCIE_MAC_SRSTB | PCIE_CRSTB;
- 	writel(val, port->base + PCIE_RST_CTRL);
- 
-+	/* Set up vendor ID and class code */
-+	if (soc->need_fix_class_id) {
-+		val = PCI_VENDOR_ID_MEDIATEK;
-+		writew(val, port->base + PCIE_CONF_VEND_ID);
-+
-+		val = PCI_CLASS_BRIDGE_HOST;
-+		writew(val, port->base + PCIE_CONF_CLASS_ID);
-+	}
-+
- 	/* 100ms timeout value should be enough for Gen1/2 training */
- 	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
- 				 !!(val & PCIE_PORT_LINKUP_V2), 20,
-@@ -1142,7 +1158,15 @@ static const struct mtk_pcie_soc mtk_pcie_soc_v1 = {
- 	.startup = mtk_pcie_startup_port,
- };
- 
--static const struct mtk_pcie_soc mtk_pcie_soc_v2 = {
-+static const struct mtk_pcie_soc mtk_pcie_soc_mt2712 = {
-+	.has_msi = true,
-+	.ops = &mtk_pcie_ops_v2,
-+	.startup = mtk_pcie_startup_port_v2,
-+	.setup_irq = mtk_pcie_setup_irq,
-+};
-+
-+static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
-+	.need_fix_class_id = true,
- 	.has_msi = true,
- 	.ops = &mtk_pcie_ops_v2,
- 	.startup = mtk_pcie_startup_port_v2,
-@@ -1152,8 +1176,8 @@ static const struct mtk_pcie_soc mtk_pcie_soc_v2 = {
- static const struct of_device_id mtk_pcie_ids[] = {
- 	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
- 	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
--	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_v2 },
--	{ .compatible = "mediatek,mt7622-pcie", .data = &mtk_pcie_soc_v2 },
-+	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
-+	{ .compatible = "mediatek,mt7622-pcie", .data = &mtk_pcie_soc_mt7622 },
- 	{},
- };
- 
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index a6b3066..9d4fca5 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -2115,6 +2115,8 @@
- 
- #define PCI_VENDOR_ID_MYRICOM		0x14c1
- 
-+#define PCI_VENDOR_ID_MEDIATEK		0x14c3
-+
- #define PCI_VENDOR_ID_TITAN		0x14D2
- #define PCI_DEVICE_ID_TITAN_010L	0x8001
- #define PCI_DEVICE_ID_TITAN_100L	0x8010
+Change since v5:
+ - Make the comments consistend with the code modification in the first patch.
+ - Using writew to performing a 16-bit write.
+ - Using irq_chip solution to fix the IRQ issue.
+
+The v5 patchset could be found in:
+ https://patchwork.kernel.org/patch/10133303
+ https://patchwork.kernel.org/patch/10133305
+
+Change since v4:
+ - Only setup vendor ID for MT7622, igorning the device ID since mediatek's
+   host bridge driver does not cares about the device ID.
+
+Change since v3:
+ - Setup the class type and vendor ID at the beginning of startup instead
+   of in a quirk.
+ - Add mediatek's vendor ID, it could be found in:
+   https://pcisig.com/membership/member-companies?combine=&page=4
+
+Change since v2:
+ - Move the initialize of the iterate before the loop to fix an
+   INTx IRQ issue in the first patch
+
+Change since v1:
+ - Add the second patch.
+ - Make the first patch's commit message more standard.
+
+Honghui Zhang (2):
+  PCI: mediatek: Set up vendor ID and class type for MT7622
+  PCI: mediatek: Using chained IRQ to setup IRQ handle
+
+ drivers/pci/host/pcie-mediatek.c | 234 +++++++++++++++++++++++----------------
+ include/linux/pci_ids.h          |   2 +
+ 2 files changed, 143 insertions(+), 93 deletions(-)
+
 -- 
 2.6.4
