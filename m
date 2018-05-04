@@ -1,454 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751470AbeEDKJq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:09:46 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34961 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751107AbeEDKJl (ORCPT
+        id S1751477AbeEDKKF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:10:05 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:42529 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751240AbeEDKJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:09:41 -0400
-X-Google-Smtp-Source: AB8JxZrZge+TnYyeyboiFv0YP3uSmVJVpC4XDkSH8YOMPRPCaHu1FIngN+XfSxmP2izl2CQ4YGOtrg==
+        Fri, 4 May 2018 06:09:37 -0400
+X-Google-Smtp-Source: AB8JxZoyxo/KJhqbIP5XqugzQ9K3qMRzGRxgBouZrtaw7QxYmJQeZi0cce4RnNdx/LzZqPWH2M2/Jw==
 From: Baolin Wang <baolin.wang@linaro.org>
 To: jacek.anaszewski@gmail.com, pavel@ucw.cz, robh+dt@kernel.org,
         mark.rutland@arm.com
 Cc: xiaotong.lu@spreadtrum.com, baolin.wang@linaro.org, broonie@kernel.org,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] leds: Add Spreadtrum SC27xx breathing light controller driver
-Date: Fri,  4 May 2018 18:08:36 +0800
-Message-Id: <1bf5bc3e007d237477d740f47ed63f05aa71b348.1525427961.git.baolin.wang@linaro.org>
+Subject: [PATCH 1/2] dt-bindings: leds: Add SC27xx breathing light controller documentation
+Date: Fri,  4 May 2018 18:08:35 +0800
+Message-Id: <099f4075ec489e425b5f1e7668a078c05f0d8509.1525427961.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <099f4075ec489e425b5f1e7668a078c05f0d8509.1525427961.git.baolin.wang@linaro.org>
-References: <099f4075ec489e425b5f1e7668a078c05f0d8509.1525427961.git.baolin.wang@linaro.org>
-In-Reply-To: <099f4075ec489e425b5f1e7668a078c05f0d8509.1525427961.git.baolin.wang@linaro.org>
-References: <099f4075ec489e425b5f1e7668a078c05f0d8509.1525427961.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
+This patch adds the binding documentation for Spreadtrum SC27xx series
+breathing light controller, which supports 3 outputs: red LED, green
+LED and blue LED.
 
-This patch adds Spreadtrum SC27xx PMIC series breathing light controller
-driver, which can support 3 LEDs. Each LED can work at normal PWM mode
-and breathing mode.
-
-Signed-off-by: Xiaotong Lu <xiaotong.lu@spreadtrum.com>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/leds/Kconfig            |   11 ++
- drivers/leds/Makefile           |    1 +
- drivers/leds/leds-sc27xx-bltc.c |  369 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 381 insertions(+)
- create mode 100644 drivers/leds/leds-sc27xx-bltc.c
+ .../devicetree/bindings/leds/leds-sc27xx-bltc.txt  |   39 ++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 2c896c0..319449b 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -647,6 +647,17 @@ config LEDS_IS31FL32XX
- 	  LED controllers. They are I2C devices with multiple constant-current
- 	  channels, each with independent 256-level PWM control.
- 
-+config LEDS_SC27XX_BLTC
-+	tristate "LED support for the SC27xx breathing light controller"
-+	depends on LEDS_CLASS && MFD_SC27XX_PMIC
-+	depends on OF
-+	help
-+	  Say Y here to include support for the SC27xx breathing light controller
-+	  LEDs.
-+
-+	  This driver can also be built as a module. If so the module will be
-+	  called leds-sc27xx-bltc.
-+
- comment "LED driver for blink(1) USB RGB LED is under Special HID drivers (HID_THINGM)"
- 
- config LEDS_BLINKM
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 91eca81..ff6917e 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_LEDS_MLXREG)		+= leds-mlxreg.o
- obj-$(CONFIG_LEDS_NIC78BX)		+= leds-nic78bx.o
- obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
- obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
-+obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
- 
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
-diff --git a/drivers/leds/leds-sc27xx-bltc.c b/drivers/leds/leds-sc27xx-bltc.c
+diff --git a/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
 new file mode 100644
-index 0000000..0016a87
+index 0000000..d4e267d
 --- /dev/null
-+++ b/drivers/leds/leds-sc27xx-bltc.c
-@@ -0,0 +1,369 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Spreadtrum Communications Inc.
-+ */
++++ b/Documentation/devicetree/bindings/leds/leds-sc27xx-bltc.txt
+@@ -0,0 +1,39 @@
++LEDs connected to Spreadtrum SC27XX PMIC breathing light controller
 +
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++The SC27xx breathing light controller supports to 3 outputs:
++red LED, green LED and blue LED. Each LED can work at normal
++PWM mode or breath light mode.
 +
-+/* PMIC global control register definition */
-+#define SC27XX_MODULE_EN0	0xc08
-+#define SC27XX_CLK_EN0		0xc18
-+#define SC27XX_RGB_CTRL		0xebc
++Required properties:
++- compatible: should be "sprd,sc27xx-bltc".
++- #address-cells: must be 1.
++- #size-cells: must be 0.
++- reg: specify controller address.
 +
-+#define SC27XX_BLTC_EN		BIT(9)
-+#define SC27XX_RTC_EN		BIT(7)
-+#define SC27XX_RGB_PD		BIT(0)
++LED sub-node properties:
++- reg: number of LED line (could be from 0 to 2).
++- label: (optional) name of LED.
 +
-+/* Breathing light controller register definition */
-+#define SC27XX_LEDS_CTRL	0x00
-+#define SC27XX_LEDS_PRESCALE	0x04
-+#define SC27XX_LEDS_DUTY	0x08
-+#define SC27XX_LEDS_CURVE0	0x0c
-+#define SC27XX_LEDS_CURVE1	0x10
++Examples:
 +
-+#define SC27XX_CTRL_SHIFT	4
-+#define SC27XX_LED_RUN		BIT(0)
-+#define SC27XX_LED_TYPE		BIT(1)
++led-controller@200 {
++	compatible = "sprd,sc27xx-bltc";
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x200>;
 +
-+#define SC27XX_DUTY_SHIFT	8
-+#define SC27XX_DUTY_MASK	GENMASK(15, 0)
-+#define SC27XX_MOD_MASK		GENMASK(7, 0)
++	red@0 {
++		label = "red";
++		reg = <0x0>;
++	};
 +
-+#define SC27XX_CURVE_SHIFT	8
-+#define SC27XX_CURVE_L_MASK	GENMASK(7, 0)
-+#define SC27XX_CURVE_H_MASK	GENMASK(15, 8)
++	green@1 {
++		label = "green";
++		reg = <0x1>;
++	};
 +
-+#define SC27XX_LEDS_OFFSET	0x10
-+#define SC27XX_LEDS_MAX		3
-+
-+/*
-+ * The SC27xx breathing light controller can support 3 outputs: red LED,
-+ * green LED and blue LED. Each LED can support normal PWM mode and breathing
-+ * mode.
-+ *
-+ * In breathing mode, the LED output curve includes raise, high, fall and low 4
-+ * stages, and the duration of each stage is configurable.
-+ */
-+enum sc27xx_led_config {
-+	SC27XX_RAISE_TIME,
-+	SC27XX_FALL_TIME,
-+	SC27XX_HIGH_TIME,
-+	SC27XX_LOW_TIME,
++	blue@2 {
++		label = "blue";
++		reg = <0x2>;
++	};
 +};
-+
-+struct sc27xx_led {
-+	struct led_classdev ldev;
-+	struct sc27xx_led_priv *priv;
-+	enum led_brightness value;
-+	u8 line;
-+	bool breath_mode;
-+	bool active;
-+};
-+
-+struct sc27xx_led_priv {
-+	struct sc27xx_led leds[SC27XX_LEDS_MAX];
-+	struct regmap *regmap;
-+	u32 base;
-+};
-+
-+#define to_sc27xx_led(ldev) \
-+	container_of(ldev, struct sc27xx_led, ldev)
-+
-+static int sc27xx_led_init(struct regmap *regmap)
-+{
-+	int err;
-+
-+	err = regmap_update_bits(regmap, SC27XX_MODULE_EN0, SC27XX_BLTC_EN,
-+				 SC27XX_BLTC_EN);
-+	if (err)
-+		return err;
-+
-+	err = regmap_update_bits(regmap, SC27XX_CLK_EN0, SC27XX_RTC_EN,
-+				 SC27XX_RTC_EN);
-+	if (err)
-+		return err;
-+
-+	return regmap_update_bits(regmap, SC27XX_RGB_CTRL, SC27XX_RGB_PD, 0);
-+}
-+
-+static u32 sc27xx_led_get_offset(struct sc27xx_led *leds)
-+{
-+	return leds->priv->base + SC27XX_LEDS_OFFSET * leds->line;
-+}
-+
-+static int sc27xx_led_enable(struct sc27xx_led *leds)
-+{
-+	u32 base = sc27xx_led_get_offset(leds);
-+	u32 ctrl_base = leds->priv->base + SC27XX_LEDS_CTRL;
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	err = regmap_update_bits(regmap, base + SC27XX_LEDS_DUTY,
-+				 SC27XX_DUTY_MASK,
-+				 (leds->value  << SC27XX_DUTY_SHIFT) |
-+				 SC27XX_MOD_MASK);
-+	if (err)
-+		return err;
-+
-+	if (leds->breath_mode)
-+		return regmap_update_bits(regmap, ctrl_base,
-+					  SC27XX_LED_RUN << ctrl_shift,
-+					  SC27XX_LED_RUN << ctrl_shift);
-+
-+	return regmap_update_bits(regmap, ctrl_base,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift);
-+}
-+
-+static int sc27xx_led_disable(struct sc27xx_led *leds)
-+{
-+	u8 ctrl_shift = SC27XX_CTRL_SHIFT * leds->line;
-+
-+	leds->breath_mode = false;
-+
-+	return regmap_update_bits(leds->priv->regmap,
-+			leds->priv->base + SC27XX_LEDS_CTRL,
-+			(SC27XX_LED_RUN | SC27XX_LED_TYPE) << ctrl_shift, 0);
-+}
-+
-+static int sc27xx_led_set(struct led_classdev *ldev, enum led_brightness value)
-+{
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+
-+	leds->value = value;
-+	if (value == LED_OFF)
-+		return sc27xx_led_disable(leds);
-+
-+	return sc27xx_led_enable(leds);
-+}
-+
-+static int sc27xx_led_config(struct sc27xx_led *leds,
-+			     enum sc27xx_led_config config, u32 val)
-+{
-+	u32 base = sc27xx_led_get_offset(leds);
-+	struct regmap *regmap = leds->priv->regmap;
-+	int err;
-+
-+	switch (config) {
-+	case SC27XX_RAISE_TIME:
-+		err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+					 SC27XX_CURVE_L_MASK, val);
-+		break;
-+	case SC27XX_FALL_TIME:
-+		err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE0,
-+					 SC27XX_CURVE_H_MASK,
-+					 val << SC27XX_CURVE_SHIFT);
-+		break;
-+	case SC27XX_HIGH_TIME:
-+		err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+					 SC27XX_CURVE_L_MASK, val);
-+		break;
-+	case SC27XX_LOW_TIME:
-+		err = regmap_update_bits(regmap, base + SC27XX_LEDS_CURVE1,
-+					 SC27XX_CURVE_H_MASK,
-+					 val << SC27XX_CURVE_SHIFT);
-+		break;
-+	default:
-+		err = -ENOTSUPP;
-+		break;
-+	}
-+
-+	if (!err && !leds->breath_mode)
-+		leds->breath_mode = true;
-+
-+	return err;
-+}
-+
-+static ssize_t raise_time_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t size)
-+{
-+	struct led_classdev *ldev = dev_get_drvdata(dev);
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 val;
-+	int err;
-+
-+	if (kstrtou32(buf, 10, &val))
-+		return -EINVAL;
-+
-+	err = sc27xx_led_config(leds, SC27XX_RAISE_TIME, val);
-+	if (err)
-+		return err;
-+
-+	return size;
-+}
-+
-+static ssize_t fall_time_store(struct device *dev,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t size)
-+{
-+	struct led_classdev *ldev = dev_get_drvdata(dev);
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 val;
-+	int err;
-+
-+	if (kstrtou32(buf, 10, &val))
-+		return -EINVAL;
-+
-+	err = sc27xx_led_config(leds, SC27XX_FALL_TIME, val);
-+	if (err)
-+		return err;
-+
-+	return size;
-+}
-+
-+static ssize_t high_time_store(struct device *dev,
-+			       struct device_attribute *attr,
-+			       const char *buf, size_t size)
-+{
-+	struct led_classdev *ldev = dev_get_drvdata(dev);
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 val;
-+	int err;
-+
-+	if (kstrtou32(buf, 10, &val))
-+		return -EINVAL;
-+
-+	err = sc27xx_led_config(leds, SC27XX_HIGH_TIME, val);
-+	if (err)
-+		return err;
-+
-+	return size;
-+}
-+
-+static ssize_t low_time_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t size)
-+{
-+	struct led_classdev *ldev = dev_get_drvdata(dev);
-+	struct sc27xx_led *leds = to_sc27xx_led(ldev);
-+	u32 val;
-+	int err;
-+
-+	if (kstrtou32(buf, 10, &val))
-+		return -EINVAL;
-+
-+	err = sc27xx_led_config(leds, SC27XX_LOW_TIME, val);
-+	if (err)
-+		return err;
-+
-+	return size;
-+}
-+
-+static DEVICE_ATTR_WO(raise_time);
-+static DEVICE_ATTR_WO(fall_time);
-+static DEVICE_ATTR_WO(high_time);
-+static DEVICE_ATTR_WO(low_time);
-+
-+static struct attribute *sc27xx_led_attrs[] = {
-+	&dev_attr_raise_time.attr,
-+	&dev_attr_fall_time.attr,
-+	&dev_attr_high_time.attr,
-+	&dev_attr_low_time.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(sc27xx_led);
-+
-+static int sc27xx_led_register(struct device *dev, struct sc27xx_led_priv *priv)
-+{
-+	int i, err;
-+
-+	err = sc27xx_led_init(priv->regmap);
-+	if (err)
-+		return err;
-+
-+	for (i = 0; i < SC27XX_LEDS_MAX; i++) {
-+		struct sc27xx_led *led = &priv->leds[i];
-+
-+		if (!led->active)
-+			continue;
-+
-+		led->line = i;
-+		led->priv = priv;
-+		led->ldev.brightness_set_blocking = sc27xx_led_set;
-+		led->ldev.max_brightness = LED_FULL;
-+		led->ldev.groups = sc27xx_led_groups;
-+
-+		err = devm_led_classdev_register(dev, &led->ldev);
-+		if (err)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int sc27xx_led_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node, *child;
-+	struct sc27xx_led_priv *priv;
-+	u32 base, count, reg;
-+	int err;
-+
-+	count = of_get_child_count(np);
-+	if (!count || count > SC27XX_LEDS_MAX)
-+		return -EINVAL;
-+
-+	err = of_property_read_u32(np, "reg", &base);
-+	if (err) {
-+		dev_err(dev, "fail to get reg of property\n");
-+		return err;
-+	}
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->base = base;
-+	priv->regmap = dev_get_regmap(dev->parent, NULL);
-+	if (IS_ERR(priv->regmap)) {
-+		err = PTR_ERR(priv->regmap);
-+		dev_err(dev, "failed to get regmap: %d\n", err);
-+		return err;
-+	}
-+
-+	for_each_child_of_node(np, child) {
-+		err = of_property_read_u32(child, "reg", &reg);
-+		if (err) {
-+			of_node_put(child);
-+			return err;
-+		}
-+
-+		if (reg < 0 || reg >= SC27XX_LEDS_MAX
-+		    || priv->leds[reg].active) {
-+			of_node_put(child);
-+			return -EINVAL;
-+		}
-+
-+		priv->leds[reg].active = true;
-+		priv->leds[reg].ldev.name =
-+			of_get_property(child, "label", NULL) ? : child->name;
-+	}
-+
-+	return sc27xx_led_register(dev, priv);
-+}
-+
-+static const struct of_device_id sc27xx_led_of_match[] = {
-+	{ .compatible = "sprd,sc27xx-bltc", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sc27xx_led_of_match);
-+
-+static struct platform_driver sc27xx_led_driver = {
-+	.driver = {
-+		.name = "sc27xx-bltc",
-+		.of_match_table = sc27xx_led_of_match,
-+	},
-+	.probe = sc27xx_led_probe,
-+};
-+
-+module_platform_driver(sc27xx_led_driver);
-+
-+MODULE_DESCRIPTION("Spreadtrum SC27xx breathing light controller driver");
-+MODULE_AUTHOR("Xiaotong Lu <xiaotong.lu@spreadtrum.com>");
-+MODULE_LICENSE("GPL v2");
 -- 
 1.7.9.5
