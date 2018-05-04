@@ -1,73 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751492AbeEDHSz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:18:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:48835 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751107AbeEDHSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:18:53 -0400
-Date: Fri, 4 May 2018 09:18:41 +0200
-From: "'Antoine Tenart'" <antoine.tenart@bootlin.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "'Antoine Tenart'" <antoine.tenart@bootlin.com>,
-        David Laight <David.Laight@aculab.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "nadavh@marvell.com" <nadavh@marvell.com>,
-        "oferh@marvell.com" <oferh@marvell.com>,
-        "igall@marvell.com" <igall@marvell.com>
-Subject: Re: [PATCH 01/10] crypto: aead - allow to allocate AEAD requests on
- the stack
-Message-ID: <20180504071841.GG3324@kwain>
-References: <20180502095725.31935-1-antoine.tenart@bootlin.com>
- <20180502095725.31935-2-antoine.tenart@bootlin.com>
- <02ad9eb93c494314a85db69886cf787a@AcuMS.aculab.com>
- <20180503122330.GB3324@kwain>
- <20180503230006.oq6vycplwsomfprw@gondor.apana.org.au>
+        id S1751519AbeEDHT4 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:19:56 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43792 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751059AbeEDHTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 03:19:54 -0400
+Subject: Re: [PATCH v4 01/15] s390: zcrypt: externalize AP instructions
+ available function
+To: Tony Krowiak <akrowiak@linux.vnet.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1523827345-11600-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1523827345-11600-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <7e537cfc-5d67-c188-2890-191608cb7b4f@redhat.com>
+Date: Fri, 4 May 2018 09:19:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <1523827345-11600-2-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180503230006.oq6vycplwsomfprw@gondor.apana.org.au>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Herbert,
+On 15.04.2018 23:22, Tony Krowiak wrote:
+> If the AP instructions are not available on the linux host, then
+> AP devices can not be interpreted by the SIE. The AP bus has a
 
-On Fri, May 04, 2018 at 07:00:06AM +0800, Herbert Xu wrote:
-> On Thu, May 03, 2018 at 02:23:30PM +0200, 'Antoine Tenart' wrote:
-> >
-> > I was expecting this question :) The thing is this define looks *a lot*
-> > like the ones defined in other places in the crypto framework, such as
-> > SKCIPHER_REQUEST_ON_STACK and AHASH_REQUEST_ON_STACK. Those haven't been
-> > tackled down so far by the whole VLA removal so the idea was that the
-> > same solution will apply to the 3 of them (and then I'm not really
-> > adding a new one).
+This statement is wrong. The instructions can be interpreted by SIE e.g.
+if there are no devices assigned to a guest. This is e.g. the case for
+!CONFIG_ZCRYPT.
+
+Also, doesn't this directly imply that the other execution control
+should also not be used ("intercept AP instuctions"). This would be bad.
+Just because !CONFIG_ZCRYPT does not imply that you can't emulate AP
+devices for a guest.
+
+Why isn't it sufficient to glue CONFIG_ZCRYPT to vfio-ap? This would
+make more sense in my opinion. You have no "host devices" that you can
+"pass through". But you can still emulate devices or emulate an empty bus.
+
+> function it uses to determine if the AP instructions are
+> available. This patch provides a new function that wraps the
+> AP bus's function to externalize it for use by KVM.
 > 
-> Those constructs only exist for reasons of backwards compatibility.
+> Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+> Reviewed-by: Pierre Morel <pmorel@linux.vnet.ibm.com>
+> Reviewed-by: Harald Freudenberger <freude@linux.vnet.ibm.com>
+> ---
+>  arch/s390/include/asm/ap.h     |    7 +++++++
+>  arch/s390/include/asm/kvm-ap.h |   23 +++++++++++++++++++++++
+>  arch/s390/kvm/Makefile         |    2 +-
+>  arch/s390/kvm/kvm-ap.c         |   21 +++++++++++++++++++++
+>  drivers/s390/crypto/ap_bus.c   |    6 ++++++
+>  5 files changed, 58 insertions(+), 1 deletions(-)
+>  create mode 100644 arch/s390/include/asm/kvm-ap.h
+>  create mode 100644 arch/s390/kvm/kvm-ap.c
 > 
-> There is no such reason for AEAD.  So why do you need this?
+> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
+> index c1bedb4..7773bfd 100644
+> --- a/arch/s390/include/asm/ap.h
+> +++ b/arch/s390/include/asm/ap.h
+> @@ -120,4 +120,11 @@ struct ap_queue_status ap_queue_irq_ctrl(ap_qid_t qid,
+>  					 struct ap_qirq_ctrl qirqctrl,
+>  					 void *ind);
+>  
+> +/**
+> + * ap_instructions_installed() - Tests whether AP instructions are installed
+> + *
+> + * Returns 1 if the AP instructions are installed, otherwise; returns 0
+> + */
+> +int ap_instructions_installed(void);
+> +
+>  #endif /* _ASM_S390_AP_H_ */
+> diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
+> new file mode 100644
+> index 0000000..84412a9
+> --- /dev/null
+> +++ b/arch/s390/include/asm/kvm-ap.h
+> @@ -0,0 +1,23 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Adjunct Processor (AP) configuration management for KVM guests
+> + *
+> + * Copyright IBM Corp. 2018
+> + *
+> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
+> + */
+> +
+> +#ifndef _ASM_KVM_AP
+> +#define _ASM_KVM_AP
+> +
+> +/**
+> + * kvm_ap_instructions_installed()
+> + *
+> + * Tests whether AP instructions are installed on the linux host
+> + *
+> + * Returns 1 if the AP instructions are installed on the host, otherwise;
+> + * returns 0
+> + */
+> +int kvm_ap_instructions_installed(void);
+> +
+> +#endif /* _ASM_KVM_AP */
+> diff --git a/arch/s390/kvm/Makefile b/arch/s390/kvm/Makefile
+> index 05ee90a..1876bfe 100644
+> --- a/arch/s390/kvm/Makefile
+> +++ b/arch/s390/kvm/Makefile
+> @@ -9,6 +9,6 @@ common-objs = $(KVM)/kvm_main.o $(KVM)/eventfd.o  $(KVM)/async_pf.o $(KVM)/irqch
+>  ccflags-y := -Ivirt/kvm -Iarch/s390/kvm
+>  
+>  kvm-objs := $(common-objs) kvm-s390.o intercept.o interrupt.o priv.o sigp.o
+> -kvm-objs += diag.o gaccess.o guestdbg.o vsie.o
+> +kvm-objs += diag.o gaccess.o guestdbg.o vsie.o kvm-ap.o
+>  
+>  obj-$(CONFIG_KVM) += kvm.o
+> diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
+> new file mode 100644
+> index 0000000..1267588
+> --- /dev/null
+> +++ b/arch/s390/kvm/kvm-ap.c
+> @@ -0,0 +1,21 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Adjunct Processor (AP) configuration management for KVM guests
+> + *
+> + * Copyright IBM Corp. 2018
+> + *
+> + * Author(s): Tony Krowiak <akrowia@linux.vnet.ibm.com>
+> + */
+> +#include <linux/kernel.h>
+> +#include <asm/kvm-ap.h>
+> +#include <asm/ap.h>
+> +
+> +int kvm_ap_instructions_installed(void)
+> +{
+> +#ifdef CONFIG_ZCRYPT
+> +	return ap_instructions_installed();
+> +#else
+> +	return 0;
+> +#endif
+> +}
+> +EXPORT_SYMBOL(kvm_ap_instructions_installed);
+> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
+> index 35a0c2b..9d108b6 100644
+> --- a/drivers/s390/crypto/ap_bus.c
+> +++ b/drivers/s390/crypto/ap_bus.c
+> @@ -210,6 +210,12 @@ int ap_query_configuration(struct ap_config_info *info)
+>  }
+>  EXPORT_SYMBOL(ap_query_configuration);
+>  
+> +int ap_instructions_installed(void)
+> +{
+> +	return (ap_instructions_available() == 0);
+> +}
+> +EXPORT_SYMBOL(ap_instructions_installed);
+> +
+>  /**
+>   * ap_init_configuration(): Allocate and query configuration array.
+>   */
+> 
 
-In this driver we need to perform in certain cases an invalidation,
-which is done thanks to invalidation requests. To do this we create
-dummy requests, using SKCIPHER_REQUEST_ON_STACK and
-AHASH_REQUEST_ON_STACK for ciphers and hashes. So when adding the AEAD
-algs support, in patch 8/10, AEAD_REQUEST_ON_STACK is used for the same
-reason.
-
-Should we allocate this in a different way?
-
-Thanks!
-Antoine
 
 -- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+
+Thanks,
+
+David / dhildenb
