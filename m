@@ -1,73 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751854AbeEDSd6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 14:33:58 -0400
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:37127 "EHLO
-        mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751808AbeEDSd5 (ORCPT
+        id S1751853AbeEDSep (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 14:34:45 -0400
+Received: from mail-it0-f48.google.com ([209.85.214.48]:53478 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeEDSeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 14:33:57 -0400
-X-Google-Smtp-Source: AB8JxZqFIjL0uDZh/DRloCaq6yPg1eiGuiEv9h6z27/7v4E3BXCrbo/LiV4mWIc/U+zZoshQaXAHuwBpK3xh85+t4d8=
+        Fri, 4 May 2018 14:34:44 -0400
+X-Google-Smtp-Source: AB8JxZrt4eeDAJXe0a1IELc31tZ5hcSAKPezdG+PDptA3+/gMO45XJVGoGlxdR2UjJ0jbFoygE9jXTDLORSo52OpyXE=
 MIME-Version: 1.0
-In-Reply-To: <23b14717-0f4a-10f2-5118-7cb8445fbdab@oracle.com>
-References: <1523431317-30612-1-git-send-email-hejianet@gmail.com>
- <05b0fcf2-7670-101e-d4ab-1f656ff6b02f@gmail.com> <CACjP9X8bHmrxmd7ZPcfQq6Eq0Mzwmt0saOR3Ph53gp2n-dcKBQ@mail.gmail.com>
- <23b14717-0f4a-10f2-5118-7cb8445fbdab@oracle.com>
-From: Daniel Vacek <neelx@redhat.com>
-Date: Fri, 4 May 2018 20:33:56 +0200
-Message-ID: <CACjP9X950MTY9qZ7OkzEaph3U1BL8Vo9sT4jBZ8HTuhHez9JAw@mail.gmail.com>
-Subject: Re: [PATCH v8 0/6] optimize memblock_next_valid_pfn and
- early_pfn_valid on arm and arm64
-To: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Jia He <hejianet@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Philip Derrin <philip@cog.systems>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
-        Gioh Kim <gi-oh.kim@profitbricks.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
-        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
-        Petr Tesarik <ptesarik@suse.com>,
-        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
+References: <CAJWu+oqCun1Ae6GqPxnS+eCDi3jadGPp+MO8TjOWgs+AiAh79A@mail.gmail.com>
+ <20180504123050.2841f80d@gandalf.local.home> <CAJWu+oqXmSC3zUZobQA4=qY_acRvOsq67c6dHXfVzTGqxqdaTA@mail.gmail.com>
+ <20180504174330.GS26088@linux.vnet.ibm.com>
+In-Reply-To: <20180504174330.GS26088@linux.vnet.ibm.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Fri, 04 May 2018 18:34:32 +0000
+Message-ID: <CAJWu+opXqw6BoKSzoV4xD0QBJ4s3C-KL=QBESZdEZ5RQCQKphw@mail.gmail.com>
+Subject: Re: rcu-bh design
+To: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 6:53 PM, Pavel Tatashin
-<pasha.tatashin@oracle.com> wrote:
->> I'm wondering, ain't simple enabling of config
->> DEFERRED_STRUCT_PAGE_INIT provide even better speed-up? If that is the
->> case then it seems like this series is not needed at all, right?
->> I am not sure why is this config optional. It looks like it could be
->> enabled by default or even unconditionally considering that with
->> commit c9e97a1997fb ("mm: initialize pages on demand during boot") the
->> deferred code is statically disabled after all the pages are
->> initialized.
->
-> Hi Daniel,
->
-> Currently, deferred struct pages are initialized in parallel only on NUMA machines. I would like to make a change to use all the available CPUs even on a single socket systems, but that is not there yet. So, I believe Jia's performance improvements are still relevant.
+On Fri, May 4, 2018 at 10:42 AM Paul E. McKenney
+<paulmck@linux.vnet.ibm.com>
+wrote:
+[...]
+> > > > But preemptible RCU *does not* use context-switch as a quiescent
+state.
+> > > It doesn't?
+> >
+> > I thought that's what preemptible rcu is about. You can get preempted
+but
+> > you shouldn't block in a read-section. Is that not true?
 
-Ahaa, I thought it also works on UP or single node systems. I didn't
-study the code closely. Sorry about the noise. And thank you, Pavel.
-You're right.
+> Almost.  All context switches in an RCU-preempt read-side critical section
+> must be subject to priority boosting.  Preemption is one example, because
+> boosting the priority of the preempted task will make it runnable.
+> The priority-inheritance -rt "spinlock" is another example, because
+> boosting the priority of the task holding the lock will eventually make
+> runnable the task acquiring the lock within the RCU-preempt read-side
+> critical section.
 
---nX
+Yes I understand priority boosting is needed with preemptible RCU so that
+read-sections are making forward progress. I meant (and correct me if I'm
+wrong) that, as long as a task doesn't sleep in a preemptible RCU
+read-section (rcu-preempt flavor), then bad things wont happen and RCU will
+work correctly.
 
-> Thank you,
-> Pavel
+
+> > > > So in that case rcu-bh would make
+> > > > sense only in a configuration where we're not using preemptible-rcu
+at
+> > all
+> > > > and are getting flooded by softirqs. Is that the reason rcu-bh
+needs to
+> > > > exist?
+> >
+> > > Maybe I'm confused by what you are asking.
+> >
+> > Sorry for any confusion. I was going through the below link for
+motivation
+> > of rcu-bh and why it was created:
+> >
+https://www.kernel.org/doc/Documentation/RCU/Design/Requirements/Requirements.html#Bottom-Half%20Flavor
+> >
+> > I was asking why rcu-bh is needed in the kernel, like why can't we just
+use
+> > rcu-preempt. As per above link, the motivation of rcu-bh was to prevent
+> > denial of service during heavy softirq load. I was trying to understand
+> > that usecase. In my mind, such denial of service / out of memory is then
+> > even possible with preemptible rcu which is used in many places in the
+> > kernel, then why not just use rcu-bh for everything? I was just studying
+> > this RCU flavor (and all other RCU flavors) and so this question popped
+up.
+
+> Because RCU-bh is not preemptible.
+
+> And the non-DoS nature of RCU-bh is one challenge in my current quest to
+> fold all three flavors (RCU-bh,  RCU-preempt, and RCU-sched) into one
+> flavor to rule them all.  ;-)
+
+But what prevents DoS'ing of RCU-preempt? That means all RCU-preempt uses
+in the kernel are susceptible to DoS'ing as well?
+
+Isn't the issue the heavy softirq processing itself which can also lead to
+other issues such as scheduling issues (other than the OOM) so probably
+that should be fixed instead of RCU?
+
+thanks,
+
+- Joel
