@@ -1,82 +1,107 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751307AbeEDK46 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:56:58 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:37809 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbeEDK44 (ORCPT
+        id S1751283AbeEDK7R (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:59:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36522 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDK7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:56:56 -0400
-X-Google-Smtp-Source: AB8JxZpdPIY55ze9emY8BKDWTcbnDCC/fjxzJby4illRJw3wLPFA5y6LvnzCtvcVVbvvPmEyF/TPkA==
-Date: Fri, 4 May 2018 12:56:53 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] Support IOMMU for 2d/3d on Tegra30/114
-Message-ID: <20180504105653.GO13459@ulmo>
-References: <20180503234723.4368-1-digetx@gmail.com>
+        Fri, 4 May 2018 06:59:16 -0400
+Date: Fri, 4 May 2018 07:59:06 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+        Anders Roxell <anders.roxell@linaro.org>, tomi.valkeinen@ti.com,
+        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: omap2: Kconfig: make FB_OMAP2_DSS_INIT depend
+ on OF
+Message-ID: <20180504075906.02ecf32e@vento.lan>
+In-Reply-To: <44871995.YYHkG5ofpC@amdc3058>
+References: <20180420112551.27027-1-anders.roxell@linaro.org>
+        <CGME20180503154901epcas2p417fd08a4daaf1520ec4d8ed1312728c8@epcas2p4.samsung.com>
+        <16e74acc-1265-faec-0c36-49681a7760e4@infradead.org>
+        <44871995.YYHkG5ofpC@amdc3058>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qjSZefE6w0iW6XmQ"
-Content-Disposition: inline
-In-Reply-To: <20180503234723.4368-1-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w44AxMYZ023220
+
+Em Fri, 04 May 2018 12:48:46 +0200
+Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> escreveu:
+
+> On Thursday, May 03, 2018 08:48:56 AM Randy Dunlap wrote:
+> > On 04/20/2018 04:25 AM, Anders Roxell wrote:  
+> > > Commit 7378f1149884 ("media: omap2: omapfb: allow building it with
+> > > COMPILE_TEST") broke compilation without CONFIG_OF selected.
+> > >   CC      drivers/video/fbdev/core/fbmem.o
+> > > drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c: In function ‘omapdss_update_prop’:
+> > > drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c:68:2: error: implicit declaration of function ‘of_update_property’; did you mean ‘of_get_property’? [-Werror=implicit-function-declaration]
+> > >   of_update_property(node, prop);
+> > >   ^~~~~~~~~~~~~~~~~~
+> > >   of_get_property
+> > > cc1: some warnings being treated as errors
+> > > scripts/Makefile.build:312: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o' failed
+> > > make[7]: *** [drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o] Error 1
+> > > scripts/Makefile.build:559: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss' failed
+> > > make[6]: *** [drivers/video/fbdev/omap2/omapfb/dss] Error 2
+> > > make[6]: *** Waiting for unfinished jobs....
+> > > 
+> > > Add OF dependency in order to make all configurations work again.
+> > > 
+> > > of_update_property() has no inline stub, and that that could be added as
+> > > an alternative.
+> > > 
+> > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > > ---
+> > >  drivers/video/fbdev/omap2/Kconfig | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/video/fbdev/omap2/Kconfig b/drivers/video/fbdev/omap2/Kconfig
+> > > index 82008699d253..4de381f2452e 100644
+> > > --- a/drivers/video/fbdev/omap2/Kconfig
+> > > +++ b/drivers/video/fbdev/omap2/Kconfig
+> > > @@ -1,4 +1,4 @@
+> > > -if ARCH_OMAP2PLUS || COMPILE_TEST
+> > > +if OF && (ARCH_OMAP2PLUS || COMPILE_TEST)
+> > >  
+> > >  source "drivers/video/fbdev/omap2/omapfb/Kconfig"
+> > >  
+> > >   
+> > 
+> > Hi,
+> > 
+> > This patch certainly fixes the build errors that I have been seeing in
+> > linux-next for several days now, so:
+> > 
+> > Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> > Tested-by: Randy Dunlap <rdunlap@infradead.org>  
+> 
+> Thanks.
+> 
+> Since there has been no follow up from Mauro on this ([1]) I guess
+> that the best thing I can do is simply merging both patches to fbdev
+> tree..
+> 
+> [1] https://www.spinics.net/lists/linux-media/msg132583.html
+
+Sorry, it seems I missed it. If you didn't merge them yet, I'll
+merge it on my tree today, if you think it would be best to have
+it together with the patch that enabled FB_OMAP builds with
+COMPILE_TEST.
+
+If you prefer, instead, feel free to merge via your tree, as this is
+FB stuff anyway.
+
+If you need/want:
+
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
 
---qjSZefE6w0iW6XmQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 04, 2018 at 02:47:18AM +0300, Dmitry Osipenko wrote:
-> Hi,
->=20
-> This series enables IOMMU support for 2d/3d HW on Tegra30/114, as a result
-> userspace that uses 2d/3d could work with the active IOMMU.
->=20
-> Dmitry Osipenko (5):
->   drm/tegra: dc: Balance IOMMU group refcounting
->   drm/tegra: gr2d: Add IOMMU support
->   drm/tegra: gr3d: Add IOMMU support
->   ARM: dts: tegra30: Add IOMMU nodes to Host1x and its clients
->   ARM: dts: tegra114: Add IOMMU nodes to Host1x and its clients
->=20
->  arch/arm/boot/dts/tegra114.dtsi |  5 +++++
->  arch/arm/boot/dts/tegra30.dtsi  | 14 +++++++++++++
->  drivers/gpu/drm/tegra/dc.c      | 35 ++++++++++++++++-----------------
->  drivers/gpu/drm/tegra/dc.h      |  2 +-
->  drivers/gpu/drm/tegra/drm.h     |  2 +-
->  drivers/gpu/drm/tegra/gr2d.c    | 31 +++++++++++++++++++++++++++--
->  drivers/gpu/drm/tegra/gr3d.c    | 27 +++++++++++++++++++++++++
->  7 files changed, 94 insertions(+), 22 deletions(-)
-
-Overall I think this is great. No need to resend for the two comments on
-patch 1, I can fix those up when I apply if you have no objections.
-
-Thierry
-
---qjSZefE6w0iW6XmQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsPHUACgkQ3SOs138+
-s6FISg//WtO73vEpDpvs31Ck5tmeLUp3SGTHniGOlTq7rCtNeUxPDuSkfPOqbodq
-cMWGv70PGCkoZS++9h/bery8LoEc7rw24OWIq6bqKiOZE0YSTX84u14DPeOdZARh
-ihoiA/nKDmj/aYtsutMcCGMAclYxJgthwg1IbFU4fSa6LQo0lcVgEfwXGg1YePaU
-mgib/M8x/q8CilgHrMDjEMz435YvrmfbIi5gyWrmPEsGkyznD+mrxi2Kp0lnqGUo
-+Xj9MOzBWo3+7IhRXpnGvIrcGaq1mLXY3Dp0uMRoO0XKFbGBSx1/PuD0x/3QGnjE
-G9KT5qawzoDTp3siW3P91ZbZz6rWNNPNMoJIz0P0bKVyCMSsgxoOCNF9P50FFWAu
-dvJV4W519Ti2Vh6NyibnRo0MBzkJutudn87n9LTP8mn5zCHpbCbQxHLwjrox5QrX
-OpR57o5jiWsMNMpcNkcs/0nNz6SQq4FyHLh2QnBPZ0589vvach6pK7kVJ8GQBDr5
-3OrHqQLZETfScmWx+lJLzAAeW0I8vyq8FunUT5EZqwKKHsrZIod4Jms0srzB3Snv
-+Iv5QXlf2f+Y7Su2Md7zRKilm0ULt/iX8bLiHroC17VxL/T3wna4CpWpTlIXPTrh
-UlIx70Ta78vo75jijZB2GqyfrMAzA4I0bijj2CVUomTYMSmscX4=
-=tsSs
------END PGP SIGNATURE-----
-
---qjSZefE6w0iW6XmQ--
+Thanks,
+Mauro
