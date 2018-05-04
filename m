@@ -1,24 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751464AbeEDOsG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 10:48:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45302 "EHLO mail.kernel.org"
+        id S1751354AbeEDOu5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 10:50:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbeEDOsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 10:48:05 -0400
-Date: Fri, 4 May 2018 10:48:02 -0400
+        id S1751229AbeEDOu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 10:50:56 -0400
+Date: Fri, 4 May 2018 10:50:52 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
-To: Mike Galbraith <efault@gmx.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Subject: Re: [patch-rt] sched,fair: Fix CFS bandwidth control  lockdep
- DEADLOCK report
-Message-ID: <20180504104802.33e9a52f@gandalf.local.home>
-In-Reply-To: <1525414478.6761.5.camel@gmx.de>
-References: <20180503162934.b2ly6jz4a5tydaag@linutronix.de>
-        <1525414478.6761.5.camel@gmx.de>
+To: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: avagin@virtuozzo.com, Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
+        Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Dennis Zhou <dennisszhou@gmail.com>
+Subject: Re: [v2] mm: access to uninitialized struct page
+Message-ID: <20180504105052.429106ca@gandalf.local.home>
+In-Reply-To: <CAGM2rebLfmWLybzNDPt-HTjZY2brkJ_8Bq37xVG_QDs=G+VuxQ@mail.gmail.com>
+References: <20180426202619.2768-1-pasha.tatashin@oracle.com>
+        <20180504082731.GA2782@outlook.office365.com>
+        <CAGM2rebLfmWLybzNDPt-HTjZY2brkJ_8Bq37xVG_QDs=G+VuxQ@mail.gmail.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -27,57 +32,16 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 04 May 2018 08:14:38 +0200
-Mike Galbraith <efault@gmx.de> wrote:
+On Fri, 04 May 2018 12:47:53 +0000
+Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
 
-> CFS bandwidth control yields the inversion gripe below, moving
-> handling quells it.
+> Hi Andrei,
 > 
-> ========================================================
-> WARNING: possible irq lock inversion dependency detected
-> 4.16.7-rt1-rt #2 Tainted: G            E   
-> --------------------------------------------------------
-> sirq-hrtimer/0/15 just changed the state of lock:
->  (&cfs_b->lock){+...}, at: [<000000009adb5cf7>] sched_cfs_period_timer+0x28/0x140
-> but this lock was taken by another, HARDIRQ-safe lock in the past:
->  (&rq->lock){-...}
-> and interrupts could create inverse lock ordering between them.
-> other info that might help us debug this:
->  Possible interrupt unsafe locking scenario: 
->        CPU0                    CPU1
->        ----                    ----
->   lock(&cfs_b->lock);
->                                local_irq_disable();
->                                lock(&rq->lock);
->                                lock(&cfs_b->lock);
->   <Interrupt>
->     lock(&rq->lock);
-> *** DEADLOCK *** 
-
-
-> Signed-off-by: Mike Galbraith <efault@gmx.de>
-> ---
->  kernel/sched/fair.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Could you please provide me with scripts to reproduce this issue?
 > 
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5007,9 +5007,9 @@ void init_cfs_bandwidth(struct cfs_bandw
->  	cfs_b->period = ns_to_ktime(default_cfs_period());
->  
->  	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
-> -	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
-> +	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED_HARD);
->  	cfs_b->period_timer.function = sched_cfs_period_timer;
-> -	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> +	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+>
 
-Looks good to me.
-
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+And the config that was used. Just saying that the commit doesn't boot
+isn't very useful.
 
 -- Steve
-
->  	cfs_b->slack_timer.function = sched_cfs_slack_timer;
->  }
->  
