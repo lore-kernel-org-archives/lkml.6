@@ -1,130 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751360AbeEDNeN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 09:34:13 -0400
-Received: from mout.perfora.net ([74.208.4.194]:46057 "EHLO mout.perfora.net"
+        id S1751307AbeEDNfg (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 09:35:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60936 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750820AbeEDNeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 09:34:10 -0400
-Message-ID: <1525440829.6296.22.camel@ziswiler.com>
-Subject: Re: [PATCH v2 0/4] Restore ULPI USB on Tegra20
-From: Marcel Ziswiler <marcel@ziswiler.com>
-To: Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marc Dietrich <marvin24@gmx.de>
-Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 04 May 2018 15:33:49 +0200
-In-Reply-To: <20180503225537.20748-1-digetx@gmail.com>
-References: <20180503225537.20748-1-digetx@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:8ZjRokIYTMzRTKxZlwWWpqEc7ep6i1qg5EcQSENZSH/Nh4dfsLA
- g/HMWqkCVADKucjGnkvo2u3kQVkeaRJo7kq5gRfVjQNww3ih7SJwsj0LBtL7LfwbCzVxjPr
- Dvvpi1fcKij8rOZ03ZbI8ud6P90uIeHviMEJ+6x15gl55L4O4BC6LuuEglu+8AIXFguIbbs
- 4uXd3QLs9M7s8wSWXuyBg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:YhTB2MQNxQM=:MvhNzTEKxTeKhxkpYFNDB+
- i1Ua/yxDOBx/DDFEQcJpLi+aYjidxHyhqv5kZWxHtya6PIRkSMV2FnF39oYW2FilGxeTjD50a
- Q0GbemDxq+t7791qcjDcaKwgqIrm8trtIMuZHzMupM9AZNpg2qJ/uPZeFMwESYMYp6ypp5xF+
- vEuNvt3Z34z7kdhNUrWO0M82z3Zmu+6OfZ4nVwSESHB5EHhJvc2yf2S4cSiz8dG/d6dkT/9Zh
- DKkWY0E57gJUTfA7QI/miz3nHzkd1UODrHUeygsqJaa67KblNihdyuqUOuNnTZX98ojlbSbqi
- sOLWahSxpP5vR7uIJ9eQQTtWB2sJ5CS0lahPaqT8fdEwGBLC9CH1pPuQom9ugd0gewJeBuXRF
- EHmH/MLtqqY5ZOBKhTH7sc1wZuyYz0KUK7WR57Hy+Wq8EB5pl1S4jgqPee2OWrLWJQx5IpPya
- eBky600uu8BySC49S/rqhwXvuG0QCU7OhxJr1ocheYIen5bnddNZZ7CFa0oLdp6t1GyhaShQO
- gxkSIlxWaUrJwC5a14jetBDXV+DNsJ+fjxficXPh1ahg3s0C0HZTZhmgXnP3m5+IpcPMmKyOb
- j8fV9VXcZe151oxpV+AfbUvfUqFSC9YJOBR5nD3cEVIVzJLrFl8ygwJcZZ+vgvpS9X3PuuVi0
- OeI/lDrN8hE2mLb7XDhy7aRvx6Go0LsZFlIOFpCLySZB694yZccLbtmH0WBvmXOJ5GqS//31v
- 0LNMlyEJfiFPnRBe
+        id S1750820AbeEDNff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 09:35:35 -0400
+Date: Fri, 4 May 2018 15:35:33 +0200
+From: Michal Hocko <mhocko@kernel.org>
+To: Huaisheng Ye <yehs1@lenovo.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, pasha.tatashin@oracle.com,
+        alexander.levin@verizon.com, hannes@cmpxchg.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, colyli@suse.de, chengnt@lenovo.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] include/linux/gfp.h: use unsigned int in gfp_zone
+Message-ID: <20180504133533.GR4535@dhcp22.suse.cz>
+References: <1525416729-108201-1-git-send-email-yehs1@lenovo.com>
+ <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry
-
-On Fri, 2018-05-04 at 01:55 +0300, Dmitry Osipenko wrote:
-> Hello,
+On Fri 04-05-18 14:52:08, Huaisheng Ye wrote:
+> Suggest using unsigned int instead of int for bit within gfp_zone.
 > 
-> This series of patches fixes ULPI USB on Tegra20. The original
-> problem
-> was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
-> incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
-> that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
-> with the USB for the devices that have CDEV2 being enabled by
-> bootloader.
-> The patch got into the kernel and later Marc Dietrich found that USB
-> stopped working on the "paz00" Tegra20 board. After a bit of
-> discussion
-> was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and
-> clock
-> driver was setting CDEV2's parent incorrectly. The parent clock is
-> actually
-> determined by the pinmuxing config of CDEV2 pingroup. This patchset
-> fixes
-> the parent of CDEV2 clock by making Tegra's pinctrl driver a clock
-> provider,
-> providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
-> suggestion), and then setting these clock muxes as parents for the
-> CDEV1/2
-> clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted
-> since CDEV2
-> (aka MCLK2) is the actual clock source for "ulpi-link".
+> Within function gfp_zone, the value of local variable bit comes from
+> formal parameter flags, which's type is gfp_t. Local variable bit
+> indicates the number of bits in the right shift for GFP_ZONE_TABLE
+> with GFP_ZONES_SHIFT. So, variable bit shall always be unsigned
+> integer, it doesn't make sense that forcing it to be a signed integer.
 > 
-> Changelog:
+> Current GFP_ZONEMASK is just valid as low four bits, the largest
+> value of bit shall be less or equal 0x0F. But in the future, as the
+> mask expands to higher bits, there will be a risk of confusion.
+
+I am highly skeptical we will ever grow the number of zones enough
+that signed vs. unsigned would matter. So I guess this all boils down to
+aesthetic. I do not care either way. The generated code seems the be the
+same.
+
+> Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+> ---
+>  include/linux/gfp.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> v2:
-> 	- Added new patch "Add quirk for getting CDEV1/2 clocks",
-> assuring
-> 	  that clk user won't get CDEV1/2 clocks until parent clk muxes
-> 	  are available, i.e. resolves potential issue with CDEV-user
-> driver
-> 	  vs pinctrl driver probe order.
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index 1a4582b..21551fc 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -401,7 +401,7 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+>  static inline enum zone_type gfp_zone(gfp_t flags)
+>  {
+>  	enum zone_type z;
+> -	int bit = (__force int) (flags & GFP_ZONEMASK);
+> +	unsigned int bit = (__force unsigned int) (flags & GFP_ZONEMASK);
+>  
+>  	z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+>  					 ((1 << GFP_ZONES_SHIFT) - 1);
+> -- 
+> 1.8.3.1
 > 
-> 	- Factored out "pinctrl" patch from the patchset as was
-> requested by
-> 	  Linus Walleij.
-> 
-> 	- Addressed v1 review comments: fixed swapped DEV1/2 clk div
-> bits,
-> 	  made DEV1/2 divs read-only, etc minor changes.
-> 
-> Dmitry Osipenko (4):
->   clk: tegra20: Add DEV1/DEV2 OSC dividers
->   clk: tegra20: Correct parents of CDEV1/2 clocks
->   clk: tegra: Add quirk for getting CDEV1/2 clocks
->   ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
-> 
->  arch/arm/boot/dts/tegra20.dtsi  |  2 +-
->  drivers/clk/tegra/clk-tegra20.c | 20 +++++++++++++++----
->  drivers/clk/tegra/clk.c         | 34
-> ++++++++++++++++++++++++++++++++-
->  3 files changed, 50 insertions(+), 6 deletions(-)
 
-Beautiful (;-p).
-
-root@colibri-t20:~# cat /sys/kernel/debug/clk/clk_summary | grep -E
-'pll_p_out4|cdev2'
-          pll_p_out4_div              1        1        0    24000000  
-        0 0  
-             pll_p_out4               2        2        0    24000000  
-        0 0  
-                cdev2_mux             1        1        0    24000000  
-        0 0  
-                   cdev2              1        1        0    24000000  
-        0 0  
-
-You may add my reviewed and tested bys to the remaining patches as
-well.
-
-Thanks!
-
-Cheers
-
-Marcel
+-- 
+Michal Hocko
+SUSE Labs
