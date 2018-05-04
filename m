@@ -1,59 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751314AbeEDMKF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:10:05 -0400
-Received: from mga18.intel.com ([134.134.136.126]:47895 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750880AbeEDMKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:10:04 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,362,1520924400";
-   d="scan'208";a="196710737"
-Date: Fri, 4 May 2018 15:09:59 +0300
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Markus Metzger <markus.t.metzger@intel.com>
-Subject: Re: [PATCH v2] perf: Suppress AUX/OVERWRITE records
-Message-ID: <20180504120959.z6cik4zv6ragblxd@um.fi.intel.com>
-References: <20180403173207.GA8921@arm.com>
- <20180404145323.28651-1-alexander.shishkin@linux.intel.com>
+        id S1751308AbeEDMM1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:12:27 -0400
+Received: from mail-oi0-f47.google.com ([209.85.218.47]:42310 "EHLO
+        mail-oi0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751060AbeEDMM0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:12:26 -0400
+X-Google-Smtp-Source: AB8JxZpc2IW3wpcNKvEmKHOWMrYaAuFDLZtzospfs9XQQgrKpA0M4tsTUHOD3alEZW+7KvvMGoGdP232kmk3P5AU0Q0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180404145323.28651-1-alexander.shishkin@linux.intel.com>
-User-Agent: NeoMutt/20171215
+From: Muni Sekhar <munisekharrms@gmail.com>
+Date: Fri, 4 May 2018 17:42:24 +0530
+Message-ID: <CAHhAz+hYg+119sRamqn0Pk0qV+vruEXgc2dh=RLTAabVtMfAxg@mail.gmail.com>
+Subject: wireless: need help to learn WiFi kernel stack
+To: linux-wireless@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w44CCVAc026846
 
-On Wed, Apr 04, 2018 at 05:53:23PM +0300, Alexander Shishkin wrote:
-> It has been pointed out to me many times that it is useful to be able
-> to switch off AUX records to save the bandwidth for records that actually
-> matter, for example, in AUX overwrite mode.
-> 
-> The usefulness of PERF_RECORD_AUX is in some of its flags, like the
-> TRUNCATED flag that tells the decoder where exactly gaps in the trace are.
-> The OVERWRITE flag, on the other hand will be set on every single record
-> in overwrite mode. However, a PERF_RECORD_AUX[flags=OVERWRITE] is
-> generated on every target task's sched_out, which over time adds up to
-> a lot of useless information.
-> 
-> If any folks out there have userspace that depends on a constant stream of
-> OVERWRITE records for a good reason, they'll have to let us know.
-> 
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Markus Metzger <markus.t.metzger@intel.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
+ [ Please keep me in CC as I'm not subscribed to the list]
 
-This one seems to be slipping through the cracks.
+Hi All,
 
-Cheers,
---
-Alex
+
+
+I’m planning to learn the Linux WiFi kernel stack.
+
+I’d like to know what happens in the background in the kernel when I
+connect to WiFi.
+
+How does a packet travels all the way from my application to kernel to
+air and back.
+
+
+
+Right now I don’t have any WiFi dongle, can someone suggest any proven
+WiFi dongle which can be used to test with Linux kernel.
+
+
+
+-- 
+Thanks,
+Sekhar
