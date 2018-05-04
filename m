@@ -1,200 +1,274 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751839AbeEDIYK (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:24:10 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:56822 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751339AbeEDIYI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:24:08 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180504082406epoutp022e7cfe38abaadf8a3c7d06a0663151e9~rY3OChZ6k1545915459epoutp02r
-X-AuditID: b6c32a4a-a61ff700000010d4-ef-5aec18a5c828
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc: madhur.verma@samsung.com, sst2005@gmail.com,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>
-Subject: [PATCH v1 09/13] drm/kms/mode/sun4i-tv: using helper func
- drm_display_mode_from_videomode for calculating timing parameters
-Date: Fri,  4 May 2018 13:53:25 +0530
-Message-Id: <1525422205-2915-1-git-send-email-satendra.t@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <20180503110216.63bg3kw7cwppqbzx@flea>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSWUwTQRh2dtvtglbXqjhUxWaDCYfUtrawGOoR0Kw30SchBjdl0hJpi93W
-        C7wiFkVbvDWIIPG+FVAr4pHWIx6BB1E0RiWKooAS5fIgwS0L8e37v2O+mT9D4ooiQklm2ZzI
-        YeOyaSJUcj0QHRV3Eralae4UTWA8tY8xpr6rnWBa6tpwpuLjSynzvLqEYAIHThBM49e7gLlY
-        t03CnH7agDO//XXYzFC29EIue+XDeSl7s/itjL3R3Shl3+98hLGVJzax3qpzgO2oiEgl01CS
-        BXGZyKFCNpM9M8tmNtLzl2YkZxjiNdo4bSKTQKtsnBUZ6ZQFqXFzsrKFK9Kq1Vy2S6BSOZ6n
-        p0xPcthdTqSy2HmnkU7XanVqrSZBrdPp1HrD8mk6g2BZgSzfnnRKcraMX1vjeYNvBmVhhSCE
-        hJQeej6UgCBWULcA9HnDC0GogH8C2PzrgUwUugGsL80bDJQ2N0lF/jaAZQ0jxEAXgGcKfJKg
-        QAim5pLD0qAwmmoAsCpQJAkOOFUE4JeWff3KKMoN4O58d/9ZEmoS3HO8rz8up2bD7rbPmNgX
-        AV/X7sALAUmGUFPhix4umIXUMwJ6e08PeFJgZetlmYhHwZZHVQNYCTu+3ybEwFYAGy+Vy8Rh
-        F4DbdzwccM2A+fvvSYINOBUNL1dPEWkjrCx/SQQxTg2Hnr9NWNACKTnc7laIlkh49ksAH+zq
-        PVYoFS0s7PSMFOlZsOZ+mUxckfDemoNPsd1gYvH/smMAnAPhKIe3mhFvyNHZ0Bo1z1l5l82s
-        NtmtFaD/M8bM84FTtQv8gCIBPUzuM7amKaTcan6d1Q8gidOj5cV+gZJncuvWI4c9w+HKRrwf
-        GITF7sGVY0x24WvbnBlafaJGHx+foNVoEvX0WPnrx+/SFJSZc6KVCOUgx2AOI0OUm8GqqPSN
-        V5KivePrl73/E3ekwYWNxSJM7lu/UdhVxd6hpemTve0b3hiT513bNCa3p8P6KWXLQe7QyLsF
-        fVETlgTcLXOV0mTgWvmq2hymygy/MfVq7J/Wn7nG8CGLllVQPybXpTYnZi1eEmvXjLPELIx3
-        pXgik0xHY3f56tfnXWh3NUXREt7CaWNwB8/9AzjbgAqiAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrELMWRmVeSWpSXmKPExsWy7bCSvO4SiTdRBo9+mFj0njvJZHHl63s2
-        i1fn3zBbbHp8jdXi8q45bBaHpy5hs3jwcj+jxdrzrSwWy09fZ7b4eeg8kwOXx7w11R4bHq1m
-        9dg56y67x/ZvD1g97ncfZ/LYvKTeo2/LKkaPz5vkAjiiuGxSUnMyy1KL9O0SuDLenvrCUtAo
-        U7Gn9zZzA+N8sS5GTg4JAROJec+fsHYxcnEICexmlJhx6jgrREJKYtmbbWwQtrDEyn/P2SGK
-        PgMVnXvBDpJgA+p+PmcGWLeIwG1GieUv14JVMQtMZpRomfgMzBEWaGGUONN5gxmkhUVAVWLi
-        4v8sIDavgKvEtzfPmCB2yEncPNcJVMPBwSlgLHH1eyJIWEjASOL29UlMExj5FjAyrGKUTC0o
-        zk3PLTYsMMxLLdcrTswtLs1L10vOz93ECA5ZLc0djJeXxB9iFOBgVOLhFXB4HSXEmlhWXJl7
-        iFGCg1lJhHfWIaAQb0piZVVqUX58UWlOavEhRmkOFiVx3qd5xyKFBNITS1KzU1MLUotgskwc
-        nFINjBoOW186nrwbfnz9jWSV2IOn3FeYXw/T61l/80we28GzM/eqHPx9a2HtknUHL9x0mPyr
-        wYg5zibm/c332uHxriH739n+UnTfGXJq+69CsyyGCyuFuZ8nrORU3btIPmLFlI+rvWq3piqL
-        1DGm2t+rt1K9VNeguoZLpH6Xxrpyy3X3n5x9yhlvf0WJpTgj0VCLuag4EQA+ii+mVQIAAA==
-X-CMS-MailID: 20180504082405epcas5p212d6a9fbb2a0baac4166cb5b68616055
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180504082405epcas5p212d6a9fbb2a0baac4166cb5b68616055
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180504082405epcas5p212d6a9fbb2a0baac4166cb5b68616055
-X-RootMTR: 20180504082405epcas5p212d6a9fbb2a0baac4166cb5b68616055
-References: <20180503110216.63bg3kw7cwppqbzx@flea>
-        <CGME20180504082405epcas5p212d6a9fbb2a0baac4166cb5b68616055@epcas5p2.samsung.com>
+        id S1751919AbeEDIY1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:24:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51808 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751853AbeEDIYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 04:24:23 -0400
+Message-ID: <5534cc4b748d7b3b1ce621ea43ce44aabea09d56.camel@bootlin.com>
+Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
+ format and header metadata
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 04 May 2018 10:22:51 +0200
+In-Reply-To: <4e6c4cb7-01b2-3278-4f12-c0ce8cd82ecc@xs4all.nl>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+         <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
+         <4e6c4cb7-01b2-3278-4f12-c0ce8cd82ecc@xs4all.nl>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Q6WlS8F+GrOUSO6T6zi9"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid duplicate logic for horizonal/vertical sync_start/end
-helper func drm_display_mode_from_videomode is used
 
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Acked-by: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
----
+--=-Q6WlS8F+GrOUSO6T6zi9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
- v1: Added acked-by fields
+Hi,
 
- drivers/gpu/drm/sun4i/sun4i_tv.c | 67 +++++++++++++++-------------------------
- 1 file changed, 25 insertions(+), 42 deletions(-)
+On Fri, 2018-04-20 at 15:57 +0200, Hans Verkuil wrote:
+> On 04/19/18 17:45, Paul Kocialkowski wrote:
+> > Stateless video decoding engines require both the MPEG slices and
+> > associated metadata from the video stream in order to decode frames.
+> >=20
+> > This introduces definitions for a new pixel format, describing
+> > buffers
+> > with MPEG2 slice data, as well as a control structure for passing
+> > the
+> > frame header (metadata) to drivers.
+> >=20
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
+> > ---
+> >  drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
+> >  drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
+> >  include/uapi/linux/v4l2-controls.h   | 26
+> > ++++++++++++++++++++++++++
+> >  include/uapi/linux/videodev2.h       |  3 +++
+> >  4 files changed, 40 insertions(+)
+> >=20
+> > diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > index ba05a8b9a095..fcdc12b9a9e0 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > @@ -761,6 +761,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+> >  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:	=09
+> > return "Vertical MV Search Range";
+> >  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:	=09
+> > return "Repeat Sequence Header";
+> >  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		re
+> > turn "Force Key Frame";
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		re
+> > turn "MPEG2 Frame Header";
+> > =20
+> >  	/* VPX controls */
+> >  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:	=09
+> > return "VPX Number of Partitions";
+> > @@ -1152,6 +1153,9 @@ void v4l2_ctrl_fill(u32 id, const char **name,
+> > enum v4l2_ctrl_type *type,
+> >  	case V4L2_CID_RDS_TX_ALT_FREQS:
+> >  		*type =3D V4L2_CTRL_TYPE_U32;
+> >  		break;
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
+> > +		*type =3D V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
+> > +		break;
+> >  	default:
+> >  		*type =3D V4L2_CTRL_TYPE_INTEGER;
+> >  		break;
+> > @@ -1472,6 +1476,9 @@ static int std_validate(const struct v4l2_ctrl
+> > *ctrl, u32 idx,
+> >  			return -ERANGE;
+> >  		return 0;
+> > =20
+> > +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> > +		return 0;
+> > +
+> >  	default:
+> >  		return -EINVAL;
+> >  	}
+> > @@ -2046,6 +2053,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct
+> > v4l2_ctrl_handler *hdl,
+> >  	case V4L2_CTRL_TYPE_U32:
+> >  		elem_size =3D sizeof(u32);
+> >  		break;
+> > +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> > +		elem_size =3D sizeof(struct
+> > v4l2_ctrl_mpeg2_frame_hdr);
+> > +		break;
+> >  	default:
+> >  		if (type < V4L2_CTRL_COMPOUND_TYPES)
+> >  			elem_size =3D sizeof(s32);
+> > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > index 468c3c65362d..8070203da5d2 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > @@ -1273,6 +1273,7 @@ static void v4l_fill_fmtdesc(struct
+> > v4l2_fmtdesc *fmt)
+> >  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr =3D "VC-1=20
+> > (SMPTE 412M Annex L)"; break;
+> >  		case V4L2_PIX_FMT_VP8:		descr =3D
+> > "VP8"; break;
+> >  		case V4L2_PIX_FMT_VP9:		descr =3D
+> > "VP9"; break;
+> > +		case V4L2_PIX_FMT_MPEG2_FRAME:	descr =3D
+> > "MPEG2 Frame"; break;
+> >  		case V4L2_PIX_FMT_CPIA1:	descr =3D "GSPCA CPiA
+> > YUV"; break;
+> >  		case V4L2_PIX_FMT_WNVA:		descr =3D
+> > "WNVA"; break;
+> >  		case V4L2_PIX_FMT_SN9C10X:	descr =3D "GSPCA
+> > SN9C10X"; break;
+> > diff --git a/include/uapi/linux/v4l2-controls.h
+> > b/include/uapi/linux/v4l2-controls.h
+> > index cbbb750d87d1..8431b2a540c7 100644
+> > --- a/include/uapi/linux/v4l2-controls.h
+> > +++ b/include/uapi/linux/v4l2-controls.h
+> > @@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
+> >  };
+> >  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPE
+> > G_BASE+407)
+> > =20
+> > +#define
+> > V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
+> > +
+> >  /*  Control IDs for VP8 streams
+> >   *  Although VP8 is not part of MPEG we add these controls to the
+> > MPEG class
+> >   *  as that class is already handling other video compression
+> > standards
+> > @@ -985,4 +987,28 @@ enum v4l2_detect_md_mode {
+> >  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_C
+> > LASS_BASE + 3)
+> >  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DET
+> > ECT_CLASS_BASE + 4)
+> > =20
+> > +struct v4l2_ctrl_mpeg2_frame_hdr {
+> > +	__u32 slice_len;
+> > +	__u32 slice_pos;
+> > +	enum { MPEG1, MPEG2 } type;
+> > +
+> > +	__u16 width;
+> > +	__u16 height;
+> > +
+> > +	enum { PCT_I =3D 1, PCT_P, PCT_B, PCT_D }
+> > picture_coding_type;
+>=20
+> As someone else already mentioned (I believe): avoid enums. Use __u16
+> instead.
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_tv.c b/drivers/gpu/drm/sun4i/sun4i_tv.c
-index b070d52..7ffa930 100644
---- a/drivers/gpu/drm/sun4i/sun4i_tv.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tv.c
-@@ -21,6 +21,7 @@
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_of.h>
- #include <drm/drm_panel.h>
-+#include <video/videomode.h>
- 
- #include "sun4i_crtc.h"
- #include "sun4i_drv.h"
-@@ -147,16 +148,7 @@ struct tv_mode {
- 	u16		front_porch;
- 	u16		line_number;
- 	u16		vblank_level;
--
--	u32		hdisplay;
--	u16		hfront_porch;
--	u16		hsync_len;
--	u16		hback_porch;
--
--	u32		vdisplay;
--	u16		vfront_porch;
--	u16		vsync_len;
--	u16		vback_porch;
-+	struct videomode vm;
- 
- 	bool		yc_en;
- 	bool		dac3_en;
-@@ -223,16 +215,16 @@ static const struct tv_mode tv_modes[] = {
- 		.back_porch	= 118,
- 		.front_porch	= 32,
- 		.line_number	= 525,
--
--		.hdisplay	= 720,
--		.hfront_porch	= 18,
--		.hsync_len	= 2,
--		.hback_porch	= 118,
--
--		.vdisplay	= 480,
--		.vfront_porch	= 26,
--		.vsync_len	= 2,
--		.vback_porch	= 17,
-+		.vm = {
-+			.hactive	= 720,
-+			.hfront_porch	= 18,
-+			.hsync_len	= 2,
-+			.hback_porch	= 118,
-+			.vactive	= 480,
-+			.vfront_porch	= 26,
-+			.vsync_len	= 2,
-+			.vback_porch	= 17,
-+		},
- 
- 		.vblank_level	= 240,
- 
-@@ -249,16 +241,16 @@ static const struct tv_mode tv_modes[] = {
- 		.back_porch	= 138,
- 		.front_porch	= 24,
- 		.line_number	= 625,
--
--		.hdisplay	= 720,
--		.hfront_porch	= 3,
--		.hsync_len	= 2,
--		.hback_porch	= 139,
--
--		.vdisplay	= 576,
--		.vfront_porch	= 28,
--		.vsync_len	= 2,
--		.vback_porch	= 19,
-+		.vm = {
-+			.hactive	= 720,
-+			.hfront_porch	= 3,
-+			.hsync_len	= 2,
-+			.hback_porch	= 139,
-+			.vactive	= 576,
-+			.vfront_porch	= 28,
-+			.vsync_len	= 2,
-+			.vback_porch	= 19,
-+		},
- 
- 		.vblank_level	= 252,
- 
-@@ -311,9 +303,9 @@ static const struct tv_mode *sun4i_tv_find_tv_by_mode(const struct drm_display_m
- 
- 		DRM_DEBUG_DRIVER("Comparing mode %s vs %s (X: %d vs %d)",
- 				 mode->name, tv_mode->name,
--				 mode->vdisplay, tv_mode->vdisplay);
-+				 mode->vdisplay, tv_mode->vm.vactive);
- 
--		if (mode->vdisplay == tv_mode->vdisplay)
-+		if (mode->vdisplay == tv_mode->vm.vactive)
- 			return tv_mode;
- 	}
- 
-@@ -325,19 +317,10 @@ static void sun4i_tv_mode_to_drm_mode(const struct tv_mode *tv_mode,
- {
- 	DRM_DEBUG_DRIVER("Creating mode %s\n", mode->name);
- 
-+	drm_display_mode_from_videomode(&tv_mode->vm, mode);
- 	mode->type = DRM_MODE_TYPE_DRIVER;
- 	mode->clock = 13500;
- 	mode->flags = DRM_MODE_FLAG_INTERLACE;
--
--	mode->hdisplay = tv_mode->hdisplay;
--	mode->hsync_start = mode->hdisplay + tv_mode->hfront_porch;
--	mode->hsync_end = mode->hsync_start + tv_mode->hsync_len;
--	mode->htotal = mode->hsync_end  + tv_mode->hback_porch;
--
--	mode->vdisplay = tv_mode->vdisplay;
--	mode->vsync_start = mode->vdisplay + tv_mode->vfront_porch;
--	mode->vsync_end = mode->vsync_start + tv_mode->vsync_len;
--	mode->vtotal = mode->vsync_end  + tv_mode->vback_porch;
- }
- 
- static void sun4i_tv_disable(struct drm_encoder *encoder)
--- 
-2.7.4
+Indeed. I have taken a note of that.
+
+> > +	__u8 f_code[2][2];
+> > +
+> > +	__u8 intra_dc_precision;
+> > +	__u8 picture_structure;
+> > +	__u8 top_field_first;
+> > +	__u8 frame_pred_frame_dct;
+> > +	__u8 concealment_motion_vectors;
+> > +	__u8 q_scale_type;
+> > +	__u8 intra_vlc_format;
+> > +	__u8 alternate_scan;
+> > +
+> > +	__u8 backward_ref_index;
+> > +	__u8 forward_ref_index;
+> > +};
+>=20
+> Please test that the layout and size of this structure is identical
+> for 32 and 64 bit
+> architectures, both on Intel and ARM.
+>=20
+> It looks good, but it doesn't hurt to check.
+
+Right, I'll keep that in mind and make sure this is the case.
+
+Cheers and thanks for the review!
+
+Paul
+
+> Regards,
+>=20
+> 	Hans
+>=20
+> > +
+> >  #endif
+> > diff --git a/include/uapi/linux/videodev2.h
+> > b/include/uapi/linux/videodev2.h
+> > index 31b5728b56e9..4b8336f7bcf0 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -635,6 +635,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /*
+> > SMPTE 421M Annex L compliant stream */
+> >  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /*
+> > VP8 */
+> >  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /*
+> > VP9 */
+> > +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /*
+> > MPEG2 frame */
+> > =20
+> >  /*  Vendor-specific formats   */
+> >  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /*
+> > cpia1 YUV */
+> > @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
+> >  		__u8 __user *p_u8;
+> >  		__u16 __user *p_u16;
+> >  		__u32 __user *p_u32;
+> > +		struct v4l2_ctrl_mpeg2_frame_hdr __user
+> > *p_mpeg2_frame_hdr;
+> >  		void __user *ptr;
+> >  	};
+> >  } __attribute__ ((packed));
+> > @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
+> >  	V4L2_CTRL_TYPE_U8	     =3D 0x0100,
+> >  	V4L2_CTRL_TYPE_U16	     =3D 0x0101,
+> >  	V4L2_CTRL_TYPE_U32	     =3D 0x0102,
+> > +	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR =3D 0x0109,
+> >  };
+> > =20
+> >  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
+> >=20
+>=20
+>=20
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-Q6WlS8F+GrOUSO6T6zi9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsGFsACgkQ3cLmz3+f
+v9Hkcgf+NYDKirJ1v9j9/Fpq5Lfj4OZipyPY1gZBTpxcWbToBlxlUmrFxoENBRfi
+Yf/kJA61LakOnoISWKfv5clnt9fwjYeltQt+U/+XipIoxrg0cWsQjRJlRYBpOwea
+mFsQBkB/fzbKiX7BH5AWkiv0EhqypcvJ+T1+tBwy5cs6BkxqLShJeYS/TSQmuucZ
+MaqzIDTevvZmJPsy5yEumvl3duAt4r383+4G/G49g3C0DmEA1kQODY7fIloHLh0J
+f0VV+ml9uQEhiPVu4rxH/LqjUbdUWHqbIQomsxEX9xOOVcrD9gY2t5PAAaiIYeFS
+4g8bzi7pUwBsmx8Bp5SrBEeeVFBBEg==
+=r4Il
+-----END PGP SIGNATURE-----
+
+--=-Q6WlS8F+GrOUSO6T6zi9--
