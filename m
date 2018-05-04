@@ -1,75 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751794AbeEDW3D (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 18:29:03 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:33918 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751747AbeEDW3B (ORCPT
+        id S1751805AbeEDWoe (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 18:44:34 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:33867 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751651AbeEDWoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 18:29:01 -0400
-X-Google-Smtp-Source: AB8JxZqrDJ0VA2knGXBQQnvkZvCF+97qcmepDYCBr7VgKr4Zq7yTjsns6hgUv3pI3sd0xtgc728xxQ==
-Date: Fri, 4 May 2018 15:28:57 -0700
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: daniel@iogearbox.net, oss-drivers@netronome.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH bpf-next 09/10] tools: bpftool: add simple perf event
- output reader
-Message-ID: <20180504152857.071870b2@cakuba.netronome.com>
-In-Reply-To: <20180504212501.hn2rnv7t3ik563mg@ast-mbp>
-References: <20180504013717.29317-1-jakub.kicinski@netronome.com>
-        <20180504013717.29317-10-jakub.kicinski@netronome.com>
-        <20180504212501.hn2rnv7t3ik563mg@ast-mbp>
-Organization: Netronome Systems, Ltd.
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 4 May 2018 18:44:32 -0400
+X-Google-Smtp-Source: AB8JxZpk4yhSTzwWWwP1EZJhpfkRg6ztqA2f1Emo1iqlf74cHzL0kmKLC2TOci25ikyVF2FmuObO9Q==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>, linux-scsi@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH v2 0/2] Fix UFS and devfreq interaction
+Date: Fri,  4 May 2018 15:44:25 -0700
+Message-Id: <20180504224427.32606-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CC perf folks
+With the introduction of f1d981eaecf8 ("PM / devfreq: Use the available min/max
+frequency") the UFS host controller driver (UFSHCD) stopped probing for
+platforms that supports frequency scaling, e.g. all modern Qualcomm platforms.
 
-On Fri, 4 May 2018 14:25:03 -0700, Alexei Starovoitov wrote:
-> > +static void
-> > +perf_event_read(struct event_ring_info *ring, void **buf, size_t *buf_len)
-> > +{
-> > +	volatile struct perf_event_mmap_page *header = ring->mem;
-> > +	__u64 buffer_size = MMAP_PAGE_CNT * get_page_size();
-> > +	__u64 data_tail = header->data_tail;
-> > +	__u64 data_head = header->data_head;
-> > +	void *base, *begin, *end;
-> > +
-> > +	asm volatile("" ::: "memory"); /* in real code it should be smp_rmb() */
-> > +	if (data_head == data_tail)
-> > +		return;  
-> 
-> this function was copied several times into different places.
-> I think it's time to put into common lib. Like libbpf.
+The cause of this was UFSHCD's reliance of not registering any frequencies and
+then being called by devfreq to switch between the frequencies 0 and UINT_MAX.
 
-Agreed, I think libbpf would work, although there is nothing BPF
-specific in this loop AFAICT now.
+The devfreq code implies that the client is able to pass the frequency table,
+instead of relying on opp tables, but as concluded after v1 this is not
+compliant with devfreq cooling, which will enable and disable opp entries in
+order to limit the valid frequencies. So instead the UFSHCD driver is modified
+to read the freq-table and register the first clock's two rates as the two
+available opp levels.
 
-> Would be great if you can do it in the follow up.
 
-Looking into it now, I found these:
+This follows the first patch which facilitates the implementation of this in a
+clean fashion, and removes the kernel panic which previously happened when
+devfreq initialization failed.
 
-$ git grep 'data_head == data_tail'
-tools/bpf/bpftool/map_perf_ring.c:      if (data_head == data_tail)
-tools/testing/selftests/bpf/trace_helpers.c:    if (data_head == data_tail)
 
-Are there any other copies I should try to cater to?  I have change a few
-things compared to the selftest, I guess others may have modified their
-copy too.  Just trying to make sure what we put in libbpf would cater
-to most possible use cases.
+With this UFS is once again functional on the db820c, and is needed to get UFS
+working on SDM845 (both tested).
 
-Should I also move bpf_perf_event_open()/test_bpf_perf_event() to libbpf?
+Bjorn Andersson (2):
+  scsi: ufs: Extract devfreq registration
+  scsi: ufs: Use freq table with devfreq
 
-> for the set:
-> Acked-by: Alexei Starovoitov <ast@kernel.org>
+ drivers/scsi/ufs/ufshcd.c | 76 +++++++++++++++++++++++++++++++--------
+ 1 file changed, 61 insertions(+), 15 deletions(-)
 
-Thanks!
+-- 
+2.17.0
