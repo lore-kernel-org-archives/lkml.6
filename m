@@ -1,81 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751533AbeEDM3R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:29:17 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:47073 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751287AbeEDM3P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:29:15 -0400
-X-Google-Smtp-Source: AB8JxZpYg8XoOALDO4zvNpfHjfD3+fEx5xk6v36xKeFjqbFse1XZTHZHTXbEnsCwwRVOtO+dhbe38mwzN6TIPb80aJc=
+        id S1751461AbeEDMaT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:30:19 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7653 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751272AbeEDMaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:30:18 -0400
+Subject: Re: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI support
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
+        <lee.jones@linaro.org>
+References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
+ <1525360119-102166-2-git-send-email-john.garry@huawei.com>
+ <1525366486.21176.653.camel@linux.intel.com>
+CC: <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
+        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
+        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>
+From: John Garry <john.garry@huawei.com>
+Message-ID: <8c2627fa-a350-9a39-6a54-c789b6a3546a@huawei.com>
+Date: Fri, 4 May 2018 13:29:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-In-Reply-To: <1524790503-3267-1-git-send-email-wanpengli@tencent.com>
-References: <1524790503-3267-1-git-send-email-wanpengli@tencent.com>
-From: Wanpeng Li <kernellwp@gmail.com>
-Date: Fri, 4 May 2018 20:29:14 +0800
-Message-ID: <CANRm+CzRzejkFLoB+MMW5v_B1tytHEf7eGZHnye0H+=PLvHMqA@mail.gmail.com>
-Subject: Re: [PATCH v3] KVM: Extend MAX_IRQ_ROUTES to 4096 for all archs
-To: LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tonny Lu <tonnylu@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525366486.21176.653.camel@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w44CTNhX026922
 
-ping,
-2018-04-27 8:55 GMT+08:00 Wanpeng Li <kernellwp@gmail.com>:
-> From: Wanpeng Li <wanpengli@tencent.com>
+On 03/05/2018 17:54, Andy Shevchenko wrote:
+> On Thu, 2018-05-03 at 23:08 +0800, John Garry wrote:
+>> Currently for ACPI support the driver models the host as
+>> an MFD. For a device connected to the LPC bus, we dynamically
+>> create an MFD cell for that device, configuring the cell
+>> name and ACPI match parameters manually. This makes supporting
+>> named devices and also special setup handling for certain devices
+>> awkward, as we would need to introduce some special ACPI device
+>> handling according to device HID.
+>>
+>> To avoid this, create reference static MFD cells for known
+>> child devices, so when adding an MFD cell we can fix the cell
+>> platform data as required. For this, a setup callback function
+>> is added.
+
+Hi Andy,
+
+>>
+>> For now, only the IPMI cell is added.
 >
-> Our virtual machines make use of device assignment by configuring
-> 12 NVMe disks for high I/O performance. Each NVMe device has 129
-> MSI-X Table entries:
-> Capabilities: [50] MSI-X: Enable+ Count=129 Masked-Vector table: BAR=0 offset=00002000
-> The windows virtual machines fail to boot since they will map the number of
-> MSI-table entries that the NVMe hardware reported to the bus to msi routing
-> table, this will exceed the 1024. This patch extends MAX_IRQ_ROUTES to 4096
-> for all archs, in the future this might be extended again if needed.
+>> +static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char
+>> *hid)
+>> +{
+>> +	const struct hisi_lpc_acpi_mfd_cell *cell =
+>> hisi_lpc_acpi_mfd_cells;
+>> +
+>> +	for (; cell && cell->mfd_cell.name; cell++) {
+>> +		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
+>> +		const struct mfd_cell_acpi_match *acpi_match;
+>> +
+>> +		acpi_match = mfd_cell->acpi_match;
+>> +		if (!strcmp(acpi_match->pnpid, hid))
+>> +			return mfd_cell;
+>> +	}
+>> +
+>> +	return NULL;
+>> +}
 >
-> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Cornelia Huck <cohuck@redhat.com>
-> Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> Signed-off-by: Tonny Lu <tonnylu@tencent.com>
-> ---
-> v2 -> v3:
->  * update comments in the code
-> v1 -> v2:
->  * extend MAX_IRQ_ROUTES to 4096 for all archs
+> I'm not sure I understand why MFD core can't do it (as seen in lines
+> drivers/mfd/core.c:105 and below).
 >
->  include/linux/kvm_host.h | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
+
+Right, I think MFD core does the same.
+
+>> +	/* allocate the mfd cells, one per child */
+>> +	size = sizeof(*mfd_cells);
+>>  	mfd_cells = devm_kcalloc(hostdev, cell_num, size,
+>> GFP_KERNEL);
+>>  	if (!mfd_cells)
+>>  		return -ENOMEM;
 >
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 6930c63..6d6e79c 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1045,13 +1045,7 @@ static inline int mmu_notifier_retry(struct kvm *kvm, unsigned long mmu_seq)
+> And since you have structures already, I'm not sure why you need another
+> allocation for them. Only what you would need is to apply resources and
+> call devm_mfd_add_devices() per each found device.
+
+I was creating a copy as the originals are in the hisi_lpc_acpi_mfd_cell 
+struct type, while we would require an array of mfd_cells.
+
 >
->  #ifdef CONFIG_HAVE_KVM_IRQ_ROUTING
+>> +		cell = container_of(mfd_cell_ref, typeof(*cell),
+>> mfd_cell);
 >
-> -#ifdef CONFIG_S390
-> -#define KVM_MAX_IRQ_ROUTES 4096 //FIXME: we can have more than that...
-> -#elif defined(CONFIG_ARM64)
-> -#define KVM_MAX_IRQ_ROUTES 4096
-> -#else
-> -#define KVM_MAX_IRQ_ROUTES 1024
-> -#endif
-> +#define KVM_MAX_IRQ_ROUTES 4096 /* might need extension/rework in the future */
+> Why we can't iterate over inherited type of objects directly?
 >
->  bool kvm_arch_can_set_irq_routing(struct kvm *kvm);
->  int kvm_set_irq_routing(struct kvm *kvm,
-> --
-> 2.7.4
->
+
+We could do.
+
+Thanks,
+John
