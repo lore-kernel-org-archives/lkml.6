@@ -1,61 +1,61 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3667791-1525410055-2-6650221610712775650
+X-Cyrus-Session-Id: sloti22d1t05-3658149-1525410101-2-13727347041189925472
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
   FromHeader='name', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525410055; b=QzlZsWyoXmHn5DK92aTAMYzucGEVmR20TzbhCfTV/o0BgsVQbG
-    ShIY89kgsldo3eVNPyNF7RhNllxZdQkbf5IzKCXdQ0usdgfprRkyj6zxd5rxBp8l
-    TWIFHD98EbL48dXZ9A4sYSl+alxmwdLqcvhprgisrT3qx9Ale+a2iQ4yr71TxuLR
-    SoSz+yooZI26mTkSbN2aNgI9rY5q87F6hhdkOKJnsofAg3DgTGArWgIa65ZEeZLs
-    jkuMtxy/OflHuZI+ZpovMxLqUcqXezlFLootrO4+sdN/OnMJzU15pJ8i8dboxNOW
-    eI07743YcsuisYe0/WxolPDZ2FIqoJ/zL9VQ==
+    1525410100; b=SuoUMxx/9E3aU5BKFqD7LBfEGMg8ULCfpVSnq6+FS4AthozZsU
+    kUgW0lnCeIOy7XKJsiljpa4cyi5fRp6ibS5OsJOIpGMYf89bhv4iOmFPyrJgw5Kk
+    gp5RqevG/SCp98EVJGYdPo0XtDf60NUMDB0m6pVdo9CXrk2oWUbWs1GfPj0TJxOC
+    ckmofQErnBEpM3t4ZakjoonVlShtg0hEXBvD5N+JJ3T4NMxSSGwimz3OVFAqMd4V
+    AJxCIF0CNdZuCI2DpiO/VedH+PqKM8quetAHLxsNXhHrbUsHmumQ7uXMH4q5fdS8
+    cA6+lG8Vhc7etUyWf+bP9jeXJ5YZajhSFL2Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:date:subject:message-id
-    :mime-version:list-id:list-unsubscribe:list-archive:list-post
-    :list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525410055; bh=mPpkN
-    b/wEAdflRJdKd9Mn4JC/pYIUdeHemTzpVm5maQ=; b=XAWxDOIbmxXvQAIDziu4h
-    kBJVqrj951vDnNlQ4CvqKK1bkPLKYPWAxjOCA0KuKzWfnyz9miBPmVMFDnlO9RV+
-    AYXr8mabMD2TVhtN7qM3n9SuvHcs94emKAwzILgLRtODL/oZwXvlZq5TkXR6uV22
-    SedsPJTU09Ljr6Jr8OAjrWNzZQtOSKB+UkGcOZPO2rNC52/CvmtvxDnEaJ4nUgKG
-    s9VcLbdu4R8z6z861JJIHiZVABSyayM3xXBftD9/+lXYDSJ1HIupVp1FjvD2gCfJ
-    wt6+K3GcmWFQUSd7nFcfVEMe2+WCx9C5NiKXVbitdyiQwpWczxLKD8yEp8/UWyjt
-    A==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525410100; bh=egvGr
+    Pf6RQ6F3lkIyUfzbMvyzOCo7c1CfoUuCuHQosI=; b=QpjpfugYVlx1nDq1O4Y2m
+    GD6gFrfb65gLFgG8dcBjK8ciaXaQxg9YJ8bWH/AtciqKbBJ3vPW1IxZFhV+jQlcb
+    jjB/MicyJw2NFY/J8RbFdy7miPEuyEgG2wqCw5Zb2SH7kH/wDVTEHPMIuktdKC8v
+    a4xFiuqPdC0dEY758bwoe6+GNPPQO8+uruU1ceL2efw74y+IQnsjXHwR5MrN4zSW
+    j+hiRQzgF06x31oaX9pCX6p9SPyi3E/YIfmw8/VgzNynln8vnUL7/h3WzTQIOZMO
+    aSD9yhsH8jLJUDJc7bsZsSlK3jqBH7BxyDeakyjoLpPpR/fQi9EugtXU2+maV/sa
+    g==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
+    smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=brown.name header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
+      smtp.helo=fraxinus.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=brown.name header.result=pass
       header_is_org_domain=yes;
@@ -63,22 +63,24 @@ Authentication-Results: mx2.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEowGw7+Bo2F+r4oi8n1BXbeVX4vLSemj7xh6UUSXdrWgMPDp3fmZ2QwwUF/wWbOzORA6RYGyMbRh8hGV+Tt7PaN3AQtD8YqCYmwjIq3RlsAo0bC+9HV
-    4Ou/t5oY78hOOEUQhvGpBhSuQmF5GOgOk0RWZd9vXI1XT9QVxAhGt5cQUj/r2Qjyi2TI4zfyWvDlUJryuiurKWVl7LHkFZApu6B4Korfzt+H0MqDtdlFH6XR
-    YXoe7vo7QT7kuPugHpktaQ==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
+X-CM-Envelope: MS4wfBQnKjEGyW3iypRbT47rN8I2dNhAkvNYEGVDk/q8OH2knvZfPBohCYvzKrEtYUnwYgYim07/uQdBhWKCnBwLZvEVH+/bCXD6AIcVmtD1o8eDi2CRXZTD
+    cXtx0T1M5E3aGaTEMH4P17vAeYQJcYI0D4rpDhzsgK5Kau+nMIl7o2w00sTzT5shq4Rv7UV6r1EejrgrWlQWJQpM6RCmXDDsY/jo1DTdSPFrPUvaA6kzrKvZ
+    R/pv7swo4xz7B1MDuitlNA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
     a=VUJBJC2UJ8kA:10 a=qEKT6kP3PEYA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=AZKa23BuJWmuy-52xWQA:9 a=CjuIK1q_8ugA:10
+    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=toaIDTyABDVEnC2DrgYA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: NeilBrown <neil@brown.name>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 04 May 2018 14:58:35 +1000
-Subject: [PATCH 0/8] staging: various mt7621 fixes
-Message-ID: <152540982998.12190.15220622955317261586.stgit@noble>
+Date: Fri, 04 May 2018 14:58:36 +1000
+Subject: [PATCH 8/8] staging: mt7621-dts: update nor-flash info for gnubee1
+Message-ID: <152540991638.12190.9801236161993726987.stgit@noble>
+In-Reply-To: <152540982998.12190.15220622955317261586.stgit@noble>
+References: <152540982998.12190.15220622955317261586.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
@@ -100,34 +102,37 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Highlights here are a bugfix for the ethernet driver,
-and proper handling of irq assignments in the PCI driver.
+The GNUBEE has 32MB flash, so set partitions accordingly.
+Also remove "m25p,chunked-io" which isn't documented or
+used anywhere (outside of freewrt).
 
-We also make the full 32M of the gnubee flash available and start
-cleaning up the mt7621-pci code.
-
+Signed-off-by: NeilBrown <neil@brown.name>
 ---
+ drivers/staging/mt7621-dts/gbpc1.dts |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-NeilBrown (8):
-      staging: mt7621-eth: Lock is never unlocked.
-      staging: mt7621-spi: remove unused lock.
-      staging: mt7621-pci: improve interrupt mapping
-      staging: mt7621-pci: white-space cleanups.
-      staging: mt7621-pci: remove conditional compilation.
-      staging: mt7621-pci: remove unnecessary resource details.
-      staging: mt7621-pci: remove some dead code.
-      staging: mt7621-dts: update nor-flash info for gnubee1
+diff --git a/drivers/staging/mt7621-dts/gbpc1.dts b/drivers/staging/mt7621-dts/gbpc1.dts
+index 515c7cbdd15e..6b13d85d9d34 100644
+--- a/drivers/staging/mt7621-dts/gbpc1.dts
++++ b/drivers/staging/mt7621-dts/gbpc1.dts
+@@ -75,7 +75,6 @@
+ 		compatible = "jedec,spi-nor";
+ 		reg = <0>;
+ 		spi-max-frequency = <10000000>;
+-		m25p,chunked-io = <32>;
+ 
+ 		partition@0 {
+ 			label = "u-boot";
+@@ -97,7 +96,7 @@
+ 
+ 		partition@50000 {
+ 			label = "firmware";
+-			reg = <0x50000 0xFB0000>;
++			reg = <0x50000 0x1FB0000>;
+ 		};
+ 
+ 	};
 
-
- drivers/staging/mt7621-dts/gbpc1.dts    |    3 
- drivers/staging/mt7621-dts/mt7621.dtsi  |    9 -
- drivers/staging/mt7621-eth/mdio.c       |    1 
- drivers/staging/mt7621-pci/pci-mt7621.c |  482 +++++++++++--------------------
- drivers/staging/mt7621-spi/spi-mt7621.c |    3 
- 5 files changed, 175 insertions(+), 323 deletions(-)
-
---
-Signature
 
 _______________________________________________
 devel mailing list
