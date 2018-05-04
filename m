@@ -1,110 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751733AbeEDUUr (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:20:47 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60599 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751544AbeEDUUq (ORCPT
+        id S1751729AbeEDUdc (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:33:32 -0400
+Received: from mail-io0-f182.google.com ([209.85.223.182]:44773 "EHLO
+        mail-io0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751651AbeEDUdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:20:46 -0400
-Date: Fri, 4 May 2018 22:20:44 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Tony Lindgren <tony@atomide.com>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Motorola Droid 4 progress, power consumption
-Message-ID: <20180504202044.GC22519@amd>
-References: <20180501183148.GA26996@amd>
- <20180502144158.GJ98604@atomide.com>
- <20180503090611.GA14451@amd>
- <20180503142240.GQ98604@atomide.com>
+        Fri, 4 May 2018 16:33:31 -0400
+X-Google-Smtp-Source: AB8JxZq7ibINtsxDz7dqAhpVMKsuaHxDsmZA4ffG5KrdsfcjidAgnH8OsoyN5xvOHOnN0YvQSFcCmrIMJv3Lq0vDq4M=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
-Content-Disposition: inline
-In-Reply-To: <20180503142240.GQ98604@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <CAJWu+oqCun1Ae6GqPxnS+eCDi3jadGPp+MO8TjOWgs+AiAh79A@mail.gmail.com>
+ <20180504123050.2841f80d@gandalf.local.home> <CAJWu+oqXmSC3zUZobQA4=qY_acRvOsq67c6dHXfVzTGqxqdaTA@mail.gmail.com>
+ <20180504174330.GS26088@linux.vnet.ibm.com> <CAJWu+opXqw6BoKSzoV4xD0QBJ4s3C-KL=QBESZdEZ5RQCQKphw@mail.gmail.com>
+ <20180504184951.GU26088@linux.vnet.ibm.com> <CAEi0qN=8c6tzNq26x=BBj5u3JoZHXF0DvfwWg=1vjmTU0UC4-w@mail.gmail.com>
+ <20180504201129.GX26088@linux.vnet.ibm.com>
+In-Reply-To: <20180504201129.GX26088@linux.vnet.ibm.com>
+From: Joel Fernandes <joelaf@google.com>
+Date: Fri, 04 May 2018 20:33:19 +0000
+Message-ID: <CAJWu+oo+KQh4NmTf4bu_paH8k_PKuzuXRXrbi3dX8bQYKJwwAQ@mail.gmail.com>
+Subject: Re: rcu-bh design
+To: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: "Joel Fernandes (Google)" <joel.opensrc@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, May 4, 2018 at 1:10 PM Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+wrote:
+[...]
+> > >> > Almost.  All context switches in an RCU-preempt read-side critical
+section
+> > >> > must be subject to priority boosting.  Preemption is one example,
+because
+> > >> > boosting the priority of the preempted task will make it runnable.
+> > >> > The priority-inheritance -rt "spinlock" is another example, because
+> > >> > boosting the priority of the task holding the lock will eventually
+make
+> > >> > runnable the task acquiring the lock within the RCU-preempt
+read-side
+> > >> > critical section.
+> > >>
+> > >> Yes I understand priority boosting is needed with preemptible RCU so
+that
+> > >> read-sections are making forward progress. I meant (and correct me
+if I'm
+> > >> wrong) that, as long as a task doesn't sleep in a preemptible RCU
+> > >> read-section (rcu-preempt flavor), then bad things wont happen and
+RCU will
+> > >> work correctly.
+> > >
+> > > The exception is -rt "spinlock" acquisition.  If the "spinlock" is
+held,
+> > > the task acquiring it will block, which is legal within an RCU-preempt
+> > > read-side critical section.
+> > >
+> > > This exception is why I define bad things in terms of lack of
+> > > susceptibility to priority boosting instead of sleeping.
+> >
+> > Oh, that's a tricky situation. Thanks for letting me know. I guess my
+> > view was too idealistic. Makes sense now.
 
---L6iaP+gRLNZHKoI4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Well, let me put it this way...
 
-Hi!
+> Here is your nice elegant little algorithm:
+> https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg
 
-> > user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-> > current_avg
-> > Thu May  3 09:33:07 CEST 2018
-> > -56000
-> > -72308
-> > user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-> > current_avg
-> > Thu May  3 09:33:08 CEST 2018
-> > -37000
-> > -211362
->=20
-> I recall it just being calculated based on the time between
-> the reads. Hard to say what it does, -ENODOCS.. Maybe the mc13783
-> PMIC docs have something similar.
+> Here is your nice elegant little algorithm equipped to survive within
+> the Linux kernel:
+> https://totatema.files.wordpress.com/2012/06/feeling_grizzly-1600x1200.jpg
 
-Hmm. current_avg is world readable; if it does changes to the
-hardware, that's somehow bad.
 
-But I guess I can sample charge_counter every minute or so and get
-what I need?
+A picture speaks a 1000 words! :-D
 
-> > > Hmm oh and the POWER_SUPPLY_CHARGE_COUNTER value should be monitored
-> > > by your libbattery and it's low value and high value should be saved
-> > > to a file. Low should be saved when we get the battery low interrupt
-> > > and battery state changes to POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL.
-> > > High value should be saved on POWER_SUPPLY_CAPACITY_LEVEL_FULL.
-> > >=20
-> > > Then when you know the high value and low value, you can calculate
-> > > the remaining capacity based on the current value and
-> > > POWER_SUPPLY_POWER_AVG.
-> >=20
-> > I'll look into that... but probably will do experiments with python,
-> > first.
->=20
-> Sure. The reason why I think we should not do it in the kernel in
-> addition to the earlier reasoning is that we don't have a place
-> to store the min and max values across reboot. I think there's
-> some flash on the battery over 1w bus, but it probably just
-> contains battery serial number or something and is not intended
-> for writing much to it. I guess the min and max values should be
-> really keyd based on this battery id in case the battery gets
-> changed.
+> Any questions?  ;-)
 
-I agree this should not be done in kernel as it requires persistent
-storage.
+Yes just one more ;-). I am trying to write a 'probetorture' test inspired
+by RCU torture that whacks the tracepoints in various scenarios. One of the
+things I want to do is verify the RCU callbacks are queued and secondly,
+they are executed. Just to verify that the garbage collect was done and
+we're not leaking the function probe table (not that I don't have
+confidence in the chained callback technique which you mentioned, but it
+would be nice to assure this mechanism is working for tracepoints).
 
-Battery is not user-replacable (and this will recalibrate itself on
-charge/discharge cycle) so.. I don't think keying is strictly
-neccessary for D4.
+Is there a way to detect this given a reference to srcu_struct? Mathieu and
+we were chatting about srcu_barrier which is cool but that just tells me
+that if there was a callback queued, it would have executed after the
+readers were done. But not whether something was queued.
 
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+thanks,
 
---L6iaP+gRLNZHKoI4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrswJwACgkQMOfwapXb+vIH7QCgpxYlXpWTAwSJ80cbWykIGDz8
-tBEAnR0kn4Hui9uXJbjI4Pfmqhiq4NHp
-=epNT
------END PGP SIGNATURE-----
-
---L6iaP+gRLNZHKoI4--
+- Joel
+PS: I remember Paul, you mentioned you are testing this chained callback
+case in rcutorture, so if the answer is "go read rcutorture", that's
+totally Ok I could just do that ;-)
