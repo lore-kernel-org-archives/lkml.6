@@ -1,38 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751602AbeEDHlM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:41:12 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42932 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751199AbeEDHlI (ORCPT
+        id S1751239AbeEDHnA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:43:00 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20846 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750707AbeEDHm7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:41:08 -0400
-Subject: Re: [PATCH 3/4] dt-bindings: rtc: update stm32-rtc documentation for
- st,syscfg property
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        Rob Herring <robh@kernel.org>
-CC: Amelie Delaunay <amelie.delaunay@st.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Fri, 4 May 2018 03:42:59 -0400
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable STM32 analog & timer
+ drivers
+To: Arnd Bergmann <arnd@arndb.de>
+CC: Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
- <1524144103-21432-4-git-send-email-amelie.delaunay@st.com>
- <20180427025803.mn32y5xle2p6knn6@rob-hp-laptop>
- <20180503205351.GE10960@piout.net>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1525274696-11968-1-git-send-email-fabrice.gasnier@st.com>
+ <cc934eb9-f9e4-3c52-7f38-413a1b63fce2@st.com>
+ <CAK8P3a0maxno4S-dXoT1O5zp3NgHP2LWuGhtVoqFMMEv-tm07Q@mail.gmail.com>
 From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <a2cbe252-c957-103d-aae1-4a8fce9116fa@st.com>
-Date: Fri, 4 May 2018 09:40:16 +0200
+Message-ID: <84f8b1bf-d6df-ca0e-cb3f-e5b7f7ded14b@st.com>
+Date: Fri, 4 May 2018 09:42:03 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180503205351.GE10960@piout.net>
+In-Reply-To: <CAK8P3a0maxno4S-dXoT1O5zp3NgHP2LWuGhtVoqFMMEv-tm07Q@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE2.st.com
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE2.st.com
  (10.75.127.8)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_02:,,
  signatures=0
@@ -40,53 +37,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
 
-On 05/03/2018 10:53 PM, Alexandre Belloni wrote:
-> Amelie,
-> 
-> On 26/04/2018 21:58:03-0500, Rob Herring wrote:
->> On Thu, Apr 19, 2018 at 03:21:42PM +0200, Amelie Delaunay wrote:
->>> RTC driver should not be aware of the PWR registers offset and bits
->>> position. Furthermore, we can imagine that Disable Backup Protection (DBP)
->>> relative register and bit mask could change depending on the SoC. So this
->>> patch moves st,syscfg property from single pwrcfg phandle to pwrcfg
->>> phandle/offset/mask triplet.
+
+On 05/04/2018 12:12 AM, Arnd Bergmann wrote:
+> On Thu, May 3, 2018 at 10:05 AM, Alexandre Torgue
+> <alexandre.torgue@st.com> wrote:
+>> Hi Fabrice,
+>>
+>> On 05/02/2018 05:24 PM, Fabrice Gasnier wrote:
 >>>
->>> Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
+>>> This enables drivers for STM32 timer, low power timer and analog hardware
+>>> that can be used on STM32MP1 SoC:
+>>> - Timer & LP Timer MFD core, PWM, trigger & encoder drivers
+>>> - IIO ADC/DAC/DFSDM
+>>> - vrefbuf regu driver (voltage reference buffer).
+>>>
+>>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
 >>> ---
->>>   Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt | 10 ++++++----
->>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>>    arch/arm/configs/multi_v7_defconfig | 10 ++++++++++
+>>>    1 file changed, 10 insertions(+)
 >>>
->>> diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
->>> index a66692a..00f8b5d 100644
->>> --- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
->>> +++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
->>> @@ -14,8 +14,10 @@ Required properties:
->>>       It is required only on stm32h7.
->>>   - interrupt-parent: phandle for the interrupt controller.
->>>   - interrupts: rtc alarm interrupt.
->>> -- st,syscfg: phandle for pwrcfg, mandatory to disable/enable backup domain
->>> -  (RTC registers) write protection.
->>> +- st,syscfg: phandle/offset/mask triplet. The phandle to pwrcfg used to
->>> +  access control register at offset, and change the dbp (Disable Backup
->>> +  Protection) bit represented by the mask, mandatory to disable/enable backup
->>> +  domain (RTC registers) write protection.
 >>
->> It's fine to add this, but you are breaking compatibility in the driver
->> with existing DTBs by requiring these new fields.
+>> Applied on stm32-next.
 >>
+>> Arnd,
+>> Do you agree if I take multi_v7_defconfig related patches in my stm32 pull
+>> requests ?
 > 
-> I'm fine with that change but I would like confirmation that this has
-> been well thought. Maybe Maxime or Alexandre could give their ack.
-> 
+> Yes, just make sure that all drivers that can reasonably be loadable
+> modules are configured that way rather than as built-in, so a defconfig
+> build doesn't become too big.
 
-It's a good thing to remove PWR registers information from RTC driver. 
-My only concern was the compatibility with old DT but we can accept it. 
-Indeed, Kernel will continue to boot fine, only RTC will not probe if we 
-use old DT.
-
-Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Ok. You're right, this drivers could be configured as module. We just 
+need to verify impact before send it.
 
 Regards
 alex
+
+> 
+>         Arnd
+> 
