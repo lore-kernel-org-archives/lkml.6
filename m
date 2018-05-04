@@ -1,112 +1,104 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751416AbeEDOJT (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 10:09:19 -0400
-Received: from gateway31.websitewelcome.com ([192.185.144.91]:47533 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751262AbeEDOJS (ORCPT
+        id S1751436AbeEDOKZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 10:10:25 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:41988 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751189AbeEDOKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 10:09:18 -0400
-X-Authority-Reason: nr=8
-Date: Fri, 4 May 2018 09:09:14 -0500
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To: John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] apparmor: secid: fix error return value in error handling
- path
-Message-ID: <20180504140914.GA16787@embeddedor.com>
+        Fri, 4 May 2018 10:10:22 -0400
+X-Google-Smtp-Source: AB8JxZq2vlrYb95Ar17hrs1Cr61PGOai70uaAwsdzX1F790GGGH20SEuigFeI8RH+MqjhRFuu93WIrRex1FfpYyM6rw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.172.56.86
-X-Source-L: No
-X-Exim-ID: 1fEbOe-0013Fy-RZ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.172.56.86]:49240
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <CA+XxOSETX-3P9vNfOTgHK8cu=65oXpZpuznHE1ThD_nb2QYseA@mail.gmail.com>
+References: <CAHhAz+iPbNjeHH72Omi7VCUVL_cOUnQjrqbyJKQstUSL6J1hCw@mail.gmail.com>
+ <20180503183408.GA12152@kroah.com> <CAHhAz+iub6boqtK7UgFuKW=4t9DYPrnPX6nDu8R4T2J4=v=-DA@mail.gmail.com>
+ <CA+XxOSG8UozW9uzmdrtmAOEYsgwxPVEUB8B=3HNnsrnZMuGF2w@mail.gmail.com> <CA+XxOSETX-3P9vNfOTgHK8cu=65oXpZpuznHE1ThD_nb2QYseA@mail.gmail.com>
+From: Muni Sekhar <munisekharrms@gmail.com>
+Date: Fri, 4 May 2018 19:40:20 +0530
+Message-ID: <CAHhAz+h9raK0qpuB2JEYY2TmNamt3oG3N0iUF-jjNUVboiaXdw@mail.gmail.com>
+Subject: Re: serial: start_tx & buffer handling
+To: =?UTF-8?Q?lo=C3=AFc_tourlonias?= <loic.tourlonias@gmail.com>
+Cc: Greg KH <greg@kroah.com>, linux-kernel@vger.kernel.org,
+        linux-serial <linux-serial@vger.kernel.org>,
+        kernelnewbies <kernelnewbies@kernelnewbies.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w44EAW8s002088
 
-Currently, function apparmor_secid_to_secctx returns always zero,
-no matter if the value returned by aa_label_asxprint is negative
-(which implies that an error has occurred).
+On Fri, May 4, 2018 at 5:44 PM, loïc tourlonias
+<loic.tourlonias@gmail.com> wrote:
+>  Hi
+>
+>  On Fri, May 4, 2018 at 6:31 AM, Muni Sekhar <munisekharrms@gmail.com> wrote:
+>>>
+>>> On Fri, May 4, 2018 at 12:04 AM, Greg KH <greg@kroah.com> wrote:
+>>> > On Thu, May 03, 2018 at 08:08:48PM +0530, Muni Sekhar wrote:
+>>> >> Hi All,
+>>> >>
+>>> >> I’m trying to understand how user mode buffer is written to low level
+>>> >> serial hardware registers.
+>>> >>
+>>> >> For this I read the kernel code and I came to know that from user mode
+>>> >> write() API lands into kernel’s tty_write() ("drivers/tty/tty_io.c")
+>>> >> and then it calls a uart_write() ("drivers/tty/serial/serial_core.c").
+>>> >>
+>>> >> In uart_write(), the buffer is copied to circ_buf and then it calls
+>>> >> low level serial hardware driver’s start_tx() (struct uart_ops
+>>> >> .start_tx). But here I could not find how the buffer kept in circ_buf
+>>> >> is copied to serial port’s TX_FIFO registers?
+>>> >>
+>>> >> Can someone take a moment to explain me on this?
+>>> >
+>>> > It all depends on which specific UART driver you are looking at, they
+>>> > all do it a bit different depending on the hardware.
+>>> >
+>>> > Which one are you looking at?  Look at what the start_tx callback does
+>>> > for that specific driver, that should give you a hint as to how data
+>>> > starts flowing.  Usually an interrupt is enabled that is used to flush
+>>> > the buffer out to the hardware.
+>>> >
+>>>
+>>> I’m looking for any existing sample code which does DMA transfers of
+>>> UART transmitted data. I looked at the bcm63xx_uart.c, it looks it
+>>> does not handle DMA transfers. Even copying the Tx buffer (from
+>>> circ_buf) to UART_FIFO_REG happening in ISR.
+>
+>
+>  You can have a look at atmel_serial kernel module (built for ARM).
+>  https://elixir.bootlin.com/linux/latest/source/drivers/tty/serial/atmel_serial.c
+>
+>  The dma buffer is linked to uart circular buffer in prepare_tx() function
+>  called from uart_startup(). It's released in release_tx() function called
+>  from uart_shutdown(). DMA buffer is managed in schedule_tx() function called
+>  from a tasklet triggered by the ISR.
+Thanks a lot for this information.
+>
+>  HTH
+>
+>>>
+>>>
+>>> > thanks,
+>>> >
+>>> > greg k-h
+>>>
+>>>
+>>>
+>>> --
+>>> Thanks,
+>>> Sekhar
+>>>
+>>> _______________________________________________
+>>> Kernelnewbies mailing list
+>>> Kernelnewbies@kernelnewbies.org
+>>> https://lists.kernelnewbies.org/mailman/listinfo/kernelnewbies
+>>
+>>
 
-Notice that *seclen* is of type u32 (32 bits, unsigned), and a
-less-than-zero comparison of an unsigned value is never true.
 
-Fix this by temporarily storing the value returned by aa_label_asxprint
-into a variable of type int (signed) for its further evaluation.
 
-Addresses-Coverity-ID: 1468514 ("Unsigned compared against 0")
-Fixes: c092921219d2 ("apparmor: add support for mapping secids and using
-secctxes")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes is v2:
- - Update changelog.
- - Fix misaligned lines.
-
- security/apparmor/secid.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
-
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 5029248..efaa0d9 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- {
- 	/* TODO: cache secctx and ref count so we don't have to recreate */
- 	struct aa_label *label = aa_secid_to_label(secid);
-+	int seclen_tmp;
- 
- 	AA_BUG(!secdata);
- 	AA_BUG(!seclen);
-@@ -150,17 +151,21 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
- 		return -EINVAL;
- 
- 	if (secdata)
--		*seclen = aa_label_asxprint(secdata, root_ns, label,
--					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--					    FLAG_HIDDEN_UNCONFINED |
--					    FLAG_ABS_ROOT, GFP_ATOMIC);
-+		seclen_tmp = aa_label_asxprint(secdata, root_ns, label,
-+					       FLAG_SHOW_MODE |
-+					       FLAG_VIEW_SUBNS |
-+					       FLAG_HIDDEN_UNCONFINED |
-+					       FLAG_ABS_ROOT, GFP_ATOMIC);
- 	else
--		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
--					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
--					    FLAG_HIDDEN_UNCONFINED |
--					    FLAG_ABS_ROOT);
--	if (*seclen < 0)
-+		seclen_tmp = aa_label_snxprint(NULL, 0, root_ns, label,
-+					       FLAG_SHOW_MODE |
-+					       FLAG_VIEW_SUBNS |
-+					       FLAG_HIDDEN_UNCONFINED |
-+					       FLAG_ABS_ROOT);
-+	if (seclen_tmp < 0)
- 		return -ENOMEM;
-+	else
-+		*seclen = seclen_tmp;
- 
- 	return 0;
- }
 -- 
-2.7.4
+Thanks,
+Sekhar
