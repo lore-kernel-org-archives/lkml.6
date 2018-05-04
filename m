@@ -1,89 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751382AbeEDMcP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:32:15 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38832 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeEDMcN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:32:13 -0400
-X-Google-Smtp-Source: AB8JxZrEkkUpb73AKcojYry29PSyVn65ndajpolPriE2GnFSrOXmfGfXhGDgPbTQJ/HhukBU67XLoQ==
-Subject: Re: [PATCH v1 2/3] drm/tegra: plane: Implement zPos plane property
- for older Tegra's
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180504000844.18661-1-digetx@gmail.com>
- <20180504000844.18661-3-digetx@gmail.com> <20180504121530.GS13459@ulmo>
-From: Dmitry Osipenko <digetx@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
- xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
- KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
- p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
- O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
- z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
- AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
- 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
- gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
- nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
- uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
- a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
- HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
- UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
- YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
- +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
- 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
- qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
- ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
- CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
- lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
- DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
- 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
- c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <1a0c4c45-d4b1-3f3c-f804-deaa8458b652@gmail.com>
-Date: Fri, 4 May 2018 15:32:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180504121530.GS13459@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751419AbeEDMdx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:33:53 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:41870 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751269AbeEDMdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:33:52 -0400
+Message-Id: <cover.1525435203.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH  00/17] Implement use of HW assistance on TLB table walk on 8xx
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Fri,  4 May 2018 14:33:50 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.05.2018 15:15, Thierry Reding wrote:
-> On Fri, May 04, 2018 at 03:08:43AM +0300, Dmitry Osipenko wrote:
->> Older Tegra's do not support planes z position handling in hardware,
->> but HW provides knobs for zPos implementation in software.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/gpu/drm/tegra/dc.c    | 134 ++++++++++++++++-------
->>  drivers/gpu/drm/tegra/plane.c | 193 ++++++++++++++++++++++++----------
->>  drivers/gpu/drm/tegra/plane.h |  13 ++-
->>  3 files changed, 244 insertions(+), 96 deletions(-)
-> 
-> This is obviously a lot to review, but it looks pretty good. On minor
-> comment below.
-> 
->> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
->> index 2e81142281c3..ba5481cd470d 100644
->> --- a/drivers/gpu/drm/tegra/dc.c
->> +++ b/drivers/gpu/drm/tegra/dc.c
->> @@ -162,29 +162,90 @@ static void tegra_plane_setup_blending_legacy(struct tegra_plane *plane)
-> [...]
->> +		case 1:
->> +			/*
->> +			 * When both middle and topmost windows have an alpha,
->> +			 * these windows a mixed together and then the result
->> +			 * is blended over the bottom window.
->> +			 */
->> +			if ((state->blending[0].alpha &&
->> +			     state->blending[0].top))
-> 
-> There seems to be one pair of parentheses too much here.
+The purpose of this serie is to implement hardware assistance for TLB table walk
+on the 8xx.
 
-Good catch ;)
+First part is to make L1 entries and L2 entries independant.
+For that, we need to alter ioremap functions in order to handle GUARD attribute
+at the PGD/PMD level.
+
+Last part is to try and reuse PTE fragment implemented on PPC64 in order to
+not waste 16k Pages for page tables as only 4k are used. For the time being,
+it doesn't work, but I include it in the serie anyway in order to get feedback.
+
+Tested successfully on 8xx up to the one before the last.
+
+Didn't have time to do compilation test on other configs, I send it anyway
+before leaving for one week vacation in order to get feedback.
+
+Christophe Leroy (17):
+  powerpc/nohash: remove hash related code from nohash headers.
+  powerpc/nohash: remove _PAGE_BUSY
+  powerpc/nohash: use IS_ENABLED() to simplify __set_pte_at()
+  Revert "powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for
+    CONFIG_SWAP"
+  powerpc: move io mapping functions into ioremap.c
+  powerpc: common ioremap functions.
+  powerpc: make ioremap_bot common to PPC32 and PPC64
+  powerpc: make __iounmap() common to PPC32 and PPC64
+  powerpc: make __ioremap_caller() common to PPC32 and PPC64
+  powerpc: use _ALIGN macro
+  powerpc/nohash32: set GUARDED attribute in the PMD directly
+  powerpc/8xx: Remove PTE_ATOMIC_UPDATES
+  powerpc/mm: Use hardware assistance in TLB handlers on the 8xx
+  powerpc/8xx: reunify TLB handler routines
+  powerpc/8xx: Free up SPRN_SPRG_SCRATCH2
+  powerpc/mm: Make pte_fragment_alloc() common to PPC32 and PPC64
+  powerpc/mm: Use pte_fragment_alloc() on 8xx (Not Working yet)
+
+ arch/powerpc/include/asm/book3s/32/pgtable.h |  16 +-
+ arch/powerpc/include/asm/book3s/64/pgtable.h |   2 +
+ arch/powerpc/include/asm/hugetlb.h           |   4 +-
+ arch/powerpc/include/asm/machdep.h           |   2 +-
+ arch/powerpc/include/asm/mmu-8xx.h           |  38 +--
+ arch/powerpc/include/asm/mmu_context.h       |  28 +++
+ arch/powerpc/include/asm/nohash/32/pgalloc.h |  39 ++-
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  88 +++----
+ arch/powerpc/include/asm/nohash/32/pte-8xx.h |   6 +-
+ arch/powerpc/include/asm/nohash/64/pgtable.h |  26 +-
+ arch/powerpc/include/asm/nohash/pgtable.h    |  61 ++---
+ arch/powerpc/include/asm/nohash/pte-book3e.h |   6 -
+ arch/powerpc/include/asm/pgtable-types.h     |   4 +
+ arch/powerpc/kernel/head_8xx.S               | 350 ++++++++++-----------------
+ arch/powerpc/mm/8xx_mmu.c                    |  12 +-
+ arch/powerpc/mm/Makefile                     |   2 +-
+ arch/powerpc/mm/dma-noncoherent.c            |   2 +-
+ arch/powerpc/mm/dump_linuxpagetables.c       |  32 ++-
+ arch/powerpc/mm/hugetlbpage.c                |  12 +
+ arch/powerpc/mm/init_32.c                    |   6 +-
+ arch/powerpc/mm/ioremap.c                    | 250 +++++++++++++++++++
+ arch/powerpc/mm/mem.c                        |  16 +-
+ arch/powerpc/mm/mmu_context_book3s64.c       |  28 ---
+ arch/powerpc/mm/mmu_context_nohash.c         |   4 +
+ arch/powerpc/mm/pgtable.c                    |  75 ++++++
+ arch/powerpc/mm/pgtable_32.c                 | 167 +++----------
+ arch/powerpc/mm/pgtable_64.c                 | 244 -------------------
+ arch/powerpc/platforms/Kconfig.cputype       |   9 +
+ 28 files changed, 730 insertions(+), 799 deletions(-)
+ create mode 100644 arch/powerpc/mm/ioremap.c
+
+-- 
+2.13.3
