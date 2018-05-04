@@ -1,77 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeEDRTd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:19:33 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40351 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751690AbeEDRTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:19:30 -0400
-Date: Fri, 4 May 2018 19:19:27 +0200
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        kishon@ti.com, linux@armlinux.org.uk, gregory.clement@bootlin.com,
-        andrew@lunn.ch, jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v2 01/13] net: phy: sfp: make the i2c-bus
- property really optional
-Message-ID: <20180504171927.GB13899@kwain>
-References: <20180504135643.23466-1-antoine.tenart@bootlin.com>
- <20180504135643.23466-2-antoine.tenart@bootlin.com>
- <fd91699d-c290-8821-b4a6-0789071cfba1@gmail.com>
+        id S1751721AbeEDRW3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:22:29 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:39982 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751425AbeEDRW1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:22:27 -0400
+Subject: Re: [RFC] sched/core: Don't schedule threads on pre-empted vcpus
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: matt@codeblueprint.co.uk, mingo@kernel.org, dhaval.giani@oracle.com,
+        subhra.mazumdar@oracle.com, steven.sistare@oracle.com,
+        linux-kernel@vger.kernel.org
+References: <1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com>
+ <20180504094716.GL12217@hirez.programming.kicks-ass.net>
+From: Rohit Jain <rohit.k.jain@oracle.com>
+Message-ID: <19c761ee-0865-cc32-1728-0c3ccaf5814a@oracle.com>
+Date: Fri, 4 May 2018 10:22:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fd91699d-c290-8821-b4a6-0789071cfba1@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180504094716.GL12217@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8883 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805040159
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+Hi Peter,
 
-On Fri, May 04, 2018 at 10:03:16AM -0700, Florian Fainelli wrote:
-> On 05/04/2018 06:56 AM, Antoine Tenart wrote:
-> >  
-> >  static int sfp_read(struct sfp *sfp, bool a2, u8 addr, void *buf, size_t len)
-> >  {
-> > +	if (!sfp->read)
-> > +		return -EOPNOTSUPP;
-> 
-> -ENODEV would be closer to the intended meaning IMHO, those this could
-> be argue that this is yet another color to paint the bikeshed with.
 
-I thought about -ENODEV as well, but ended up choosing -EOPNOTSUPP for
-some reason. But I'm really fine with both solutions, it really depends
-on if we want to return a callback isn't available from a s/w point of
-view (-EOPNOTSUPP) or a h/w point of view (-ENODEV).
+On 05/04/2018 02:47 AM, Peter Zijlstra wrote:
+> On Wed, May 02, 2018 at 01:52:10PM -0700, Rohit Jain wrote:
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index 5e10aae..75d1ecf 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -4033,6 +4033,9 @@ int idle_cpu(int cpu)
+>>   		return 0;
+>>   #endif
+>>   
+>> +	if (vcpu_is_preempted(cpu))
+>> +		return 0;
+>> +
+>>   	return 1;
+>>   }
+> Basically OK with this, but did you consider idle_cpu() usage outside of
+> select_idle_sibling()?
+>
+> For instance, I think got_nohz_idle_kick() isn't quite right with this
+> on. Similarly for scheduler_tick(), that wants the actual idle state.
 
-> >  	ret = sfp_read(sfp, false, 0, &id, sizeof(id));
-> > +	if (ret == -EOPNOTSUPP)
-> > +		return ret;
-> 
-> Can you find a way such that only sfp_sm_mod_probe() needs to check
-> whether the sfp read/write operations returned failure and then we just
-> make sure the SFP state machine does not make any more progress? Having
-> to check the sfp_read()/sfp_write() operations all over the place sounds
-> error prone and won't scale in the future.
+As far as intent is concerned, yes I agree you might be right. I left
+the VM running for a couple of days, didn't see anything weird however.
 
-I tried doing this in this way (only having logic in the probe
-function), but that wasn't as simple as this solution and it seemed
-quite invasive as these read/write calls can be called from a few
-functions but many code paths (as it's a state machine). So I choose the
-easiest solution to maintain in the long run, as each future state
-machine update could impact this.
-
-Thanks!
-Antoine
-
--- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+We could add a check at each of those places or something to that effect
+if this is an issue. Please let me know how you want to proceed.
