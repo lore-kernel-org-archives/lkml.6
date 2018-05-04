@@ -1,132 +1,184 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751344AbeEDMGM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:06:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57515 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751001AbeEDMGK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:06:10 -0400
-Message-ID: <fc064c3f1534a6082dc2b4e18454e054b53e5aee.camel@bootlin.com>
-Subject: Re: [PATCH v2 09/10] ARM: dts: sun7i-a20: Add Video Engine and
- reserved memory nodes
-From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>
-Date: Fri, 04 May 2018 14:04:38 +0200
-In-Reply-To: <20180504091555.idgtzey53lozj2uh@flea>
-References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
-         <20180419154536.17846-5-paul.kocialkowski@bootlin.com>
-         <20180420073908.nkcbsdxibnzkqski@flea>
-         <82057e2f734137a3902d9313c228b01ceb345ee7.camel@bootlin.com>
-         <20180504084008.h6p4brari3xrbv6l@flea>
-         <e8cd340605ab4db8ebf2888a4fce645e8bc481d0.camel@bootlin.com>
-         <20180504091555.idgtzey53lozj2uh@flea>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-VN/vLUca0O9ClQU/OSCc"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S1751278AbeEDMJQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:09:16 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:39644 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDMJO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:09:14 -0400
+X-Google-Smtp-Source: AB8JxZoNP5LO/faET4XPkFqVK16iAM8FYn4nD356KHTXo0D6dP62YspM3QW2lkd42hwwDmNZZmv0Pw==
+Date: Fri, 4 May 2018 14:09:10 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] drm/tegra: dc: Enable plane scaling filters
+Message-ID: <20180504120910.GQ13459@ulmo>
+References: <20180504000844.18661-1-digetx@gmail.com>
+ <20180504000844.18661-2-digetx@gmail.com>
+ <20180504111004.GP13459@ulmo>
+ <85841227-e008-b129-f1e0-689837877e61@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="E50aLcSU4JxQSj/B"
+Content-Disposition: inline
+In-Reply-To: <85841227-e008-b129-f1e0-689837877e61@gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-VN/vLUca0O9ClQU/OSCc
-Content-Type: text/plain; charset="UTF-8"
+--E50aLcSU4JxQSj/B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, 2018-05-04 at 11:15 +0200, Maxime Ripard wrote:
-> On Fri, May 04, 2018 at 10:47:44AM +0200, Paul Kocialkowski wrote:
-> > > > > > +			reg =3D <0x01c0e000 0x1000>;
-> > > > > > +			memory-region =3D <&ve_memory>;
-> > > > >=20
-> > > > > Since you made the CMA region the default one, you don't need
-> > > > > to
-> > > > > tie
-> > > > > it to that device in particular (and you can drop it being
-> > > > > mandatory
-> > > > > from your binding as well).
-> > > >=20
-> > > > What if another driver (or the system) claims memory from that
-> > > > zone
-> > > > and
-> > > > that the reserved memory ends up not being available for the VPU
-> > > > anymore?
-> > > >=20
-> > > > Acccording to the reserved-memory documentation, the reusable
-> > > > property
-> > > > (that we need for dmabuf) puts a limitation that the device
-> > > > driver
-> > > > owning the region must be able to reclaim it back.
-> > > >=20
-> > > > How does that work out if the CMA region is not tied to a driver
-> > > > in
-> > > > particular?
-> > >=20
-> > > I'm not sure to get what you're saying. You have the property
-> > > linux,cma-default in your reserved region, so the behaviour you
-> > > described is what you explicitly asked for.
+On Fri, May 04, 2018 at 02:55:01PM +0300, Dmitry Osipenko wrote:
+> On 04.05.2018 14:10, Thierry Reding wrote:
+> > On Fri, May 04, 2018 at 03:08:42AM +0300, Dmitry Osipenko wrote:
+> >> Currently resized plane produces a "pixelated" image which doesn't look
+> >> nice, especially in a case of a video overlay. Enable scaling filters =
+that
+> >> significantly improve image quality of a scaled overlay.
+> >>
+> >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> >> ---
+> >>  drivers/gpu/drm/tegra/dc.c | 51 ++++++++++++++++++++++++++++++++++++++
+> >>  drivers/gpu/drm/tegra/dc.h |  7 ++++++
+> >>  2 files changed, 58 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> >> index 9f83a65b5ea9..2e81142281c3 100644
+> >> --- a/drivers/gpu/drm/tegra/dc.c
+> >> +++ b/drivers/gpu/drm/tegra/dc.c
+> >> @@ -361,6 +361,47 @@ static void tegra_dc_setup_window(struct tegra_pl=
+ane *plane,
+> >>  	if (window->bottom_up)
+> >>  		value |=3D V_DIRECTION;
+> >> =20
+> >> +	if (!(dc->soc->has_win_a_without_filter && plane->index =3D=3D 0) &&
+> >> +	    !(window->src.w =3D=3D window->dst.w)) {
 > >=20
-> > My point is that I don't see how the driver can claim back (part of)
-> > the
-> > reserved area if the area is not explicitly attached to it.
-> >=20
-> > Or is that mechanism made in a way that all drivers wishing to use
-> > the
-> > reserved memory area can claim it back from the system, but there is
-> > no
-> > priority (other than first-come first-served) for which drivers
-> > claims
-> > it back in case two want to use the same reserved region (in a
-> > scenario
-> > where there isn't enough memory to allow both drivers)?
+> > I don't know about you, but I get dizzy trying to parse the above. How
+> > about we move this into helpers:
 >=20
-> This is indeed what happens. Reusable is to let the system use the
-> reserved memory for things like caches that can easily be dropped when
-> a driver wants to use the memory in that reserved area. Once that
-> memory has been allocated, there's no claiming back, unless that
-> memory segment was freed of course.
+> +1
+>=20
+> > 	static bool tegra_plane_has_horizontal_filter(struct tegra_plane *plan=
+e)
+> > 	{
+> > 		struct tegra_dc *dc =3D plane->dc;
+> >=20
+> > 		/* this function should never be called on inactive planes */
+> > 		if (WARN_ON(!dc))
+> > 			return false;
+> >=20
+> > 		if (plane->index =3D=3D 0 && dc->soc->has_win_a_without_filter)
+> > 			return false;
+> >=20
+> > 		return true;
+> > 	}
+> >=20
+> > Then the above becomes:
+> >=20
+> > 	bool scale_x =3D window->dst.w !=3D window->src.w;
+> >=20
+> > 	if (scale_x && tegra_plane_has_horizontal_filter(plane)) {
+> >=20
+> >> +		/*
+> >> +		 * Enable horizontal 6-tap filter and set filtering
+> >> +		 * coefficients to the default values defined in TRM.
+> >> +		 */
+> >> +		tegra_plane_writel(plane, 0x00008000, DC_WIN_H_FILTER_P(0));
+> >> +		tegra_plane_writel(plane, 0x3e087ce1, DC_WIN_H_FILTER_P(1));
+> >> +		tegra_plane_writel(plane, 0x3b117ac1, DC_WIN_H_FILTER_P(2));
+> >> +		tegra_plane_writel(plane, 0x591b73aa, DC_WIN_H_FILTER_P(3));
+> >> +		tegra_plane_writel(plane, 0x57256d9a, DC_WIN_H_FILTER_P(4));
+> >> +		tegra_plane_writel(plane, 0x552f668b, DC_WIN_H_FILTER_P(5));
+> >> +		tegra_plane_writel(plane, 0x73385e8b, DC_WIN_H_FILTER_P(6));
+> >> +		tegra_plane_writel(plane, 0x72435583, DC_WIN_H_FILTER_P(7));
+> >> +		tegra_plane_writel(plane, 0x714c4c8b, DC_WIN_H_FILTER_P(8));
+> >> +		tegra_plane_writel(plane, 0x70554393, DC_WIN_H_FILTER_P(9));
+> >> +		tegra_plane_writel(plane, 0x715e389b, DC_WIN_H_FILTER_P(10));
+> >> +		tegra_plane_writel(plane, 0x71662faa, DC_WIN_H_FILTER_P(11));
+> >> +		tegra_plane_writel(plane, 0x536d25ba, DC_WIN_H_FILTER_P(12));
+> >> +		tegra_plane_writel(plane, 0x55731bca, DC_WIN_H_FILTER_P(13));
+> >> +		tegra_plane_writel(plane, 0x387a11d9, DC_WIN_H_FILTER_P(14));
+> >> +		tegra_plane_writel(plane, 0x3c7c08f1, DC_WIN_H_FILTER_P(15));
+> >> +
+> >> +		value |=3D H_FILTER;
+> >> +	}
+> >> +
+> >> +	if (!(dc->soc->has_win_a_without_filter && plane->index =3D=3D 0) &&
+> >> +	    !(dc->soc->has_win_c_without_vert_filter && plane->index =3D=3D =
+2) &&
+> >> +	    !(window->src.h =3D=3D window->dst.h)) {
+> >=20
+> > 	static bool tegra_plane_has_vertical_filter(struct tegra_plane *plane)
+> > 	{
+> > 		struct tegra_dc *dc =3D plane->dc;
+> >=20
+> > 		/* this function should never be called on inactive planes */
+> > 		if (WARN_ON(!dc))
+> > 			return false;
+> >=20
+> > 		if (plane->index =3D=3D 0 && dc->soc->has_win_a_without_filter)
+> > 			return false;
+> >=20
+> > 		if (plane->index =3D=3D 2 && dc->soc->has_win_c_without_vert_filter)
+> > 			return false;
+> >=20
+> > 		return true;
+> > 	}
+> >=20
+> > And the above becomes:
+> >=20
+> > 	bool scale_y =3D window->dst.h !=3D window->src.h;
+> >=20
+> > 	if (scale_y && tegra_plane_has_vertical_filter(plane)) {
+>=20
+> I'll adjust this patch, thanks.
+>=20
+> Maybe it also worth to factor filtering out into a custom DRM property? F=
+or
+> example in a case of libvdpau-tegra we perform the exact same filtering on
+> blitting YUV to RGB surface (shown as overlay) by GR2D for displaying vid=
+eo
+> players interface on top of video, this results in a double filtering tha=
+t has
+> no visual effect and probably wastes memory bandwidth a tad.
+>=20
+> Though I'm not very keen anymore on trying to add custom plane properties=
+ after
+> being previously NAK'ed. We can wrap filtering into a property later if w=
+ill be
+> desired, should be good to just have it enabled by default for now.
 
-Thanks for the clarification. So in our case, perhaps the best fit would
-be to make that area the default CMA pool so that we can be ensured that
-the whole 96 MiB is available for the VPU and that no other consumer of
-CMA will use it?
+Agreed. Let's keep this enabled by default and then address the corner
+cases separately.
 
-Cheers,
+Thierry
 
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-VN/vLUca0O9ClQU/OSCc
+--E50aLcSU4JxQSj/B
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsTFYACgkQ3cLmz3+f
-v9FnMwgAmeAIyqwKlBcBjCF30yfm3n3JV88FTCP2y4bo//S2LercCFEdBY+IU5mF
-MfO7Sc++z5fPVVSSZ/eSYYvqscU6mjd7XIyVJI6GDFitk+EnsEwdM8nZ+sHjuqxb
-gB7cBjkblXlKX+xj2hFLtGiNQnipWv4AmKVPf6IBYWqKRJM8l6IMO1zlL/ckHHEE
-OqohpSYmTsPtzzAbYQLgETMpniN/OJyn1puZeHLC18kPTvQRHHs/h8d8qzprvcv1
-x0RvKr2zD5imwmDY9hRWidwzirOLGU6LYbam/8vReVYb7UFW303xALLjMdtGHb0p
-pzSWsNkSk8a8yEwdc5FfY+Pw2eDKWQ==
-=S2C7
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrsTWMACgkQ3SOs138+
+s6FgeA//RMGyP2dbejTxHLeMnc+cDh75rpM87KEYmPB5/SgzfhDYvW1eGaSlAqSp
+xU8ugTGnAiaE+qY+ECjYuNKcBLqsS9JlyrwmiTwPEYHu0gmIQY2v60bQNqYzcSFJ
+AxPQNX8vtSj2XylCFmj3TEEJdjfx5hD25pMRLBbP3oKmbnQL+/gHpX6o4z3/ZUpV
++26Ru7g8H7GTKyYN91jMw5fa6Q6bxbDd7AF9IEzj+RcQL9Sb8FgxsefseFwSczTZ
+ZnCYHeS18cfhOSCbmUGkab9GU1V4HGgxFGSL2mAjo0oTUVxrpQsH+vX9HLzXO5HE
+82Ak8PWhPot7BIjs4I8th/V8DJUpw2MJT85kH4J3idSETZC8+EzWCFoL3VhXGFxx
+RDxNFJqw+CjKIE4D8PNnRcdFEf0JhmqwiqW0wnHLwZWdD4W8A2qzyWjMc2SzpWi2
+ejJsA2RY33+WYxynjqAxDoHlP7nchVaS+DuI2DLFvXxMAv+3z983YAEsr4NHLii8
+MFA6ZFWaITacIS72hVyCYGPxM1Ne/oGFgmqqVggmx5r4sRIeQ5REt8AUK9xA3h75
+h71d/do414AnOYSGjEpYeX+rRsZw6oydeYpQpKAjmIfFUFBchS7vXuiUM6iSakMP
++Ri+XgRKEJPEYGxHmY4slqPi++gg2wxwya9/dcocWyx/ZysSAWs=
+=s909
 -----END PGP SIGNATURE-----
 
---=-VN/vLUca0O9ClQU/OSCc--
+--E50aLcSU4JxQSj/B--
