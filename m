@@ -1,126 +1,179 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751013AbeEDE1q (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 00:27:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:41354 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEDE1o (ORCPT
+        id S1751146AbeEDEaQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 00:30:16 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:36093 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeEDEaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 00:27:44 -0400
-Subject: Re: [PATCH] memcg, hugetlb: pages allocated for hugetlb's overcommit
- will be charged to memcg
-To: TSUKADA Koutaro <tsukada@ascade.co.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        =?UTF-8?Q?Marc-Andr=c3=a9_Lureau?= <marcandre.lureau@redhat.com>,
-        Punit Agrawal <punit.agrawal@arm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, cgroups@vger.kernel.org
-References: <ecb737e9-ccec-2d7e-45d9-91884a669b58@ascade.co.jp>
- <dc21a4ac-b57f-59a8-f97a-90a59d5a59cd@oracle.com>
- <c9019050-7c89-86c3-93fc-9beb64e43ed3@ascade.co.jp>
- <249d53f4-225d-8a11-d557-b915fa4fa9cb@oracle.com>
- <a696eccd-24f3-9368-5baa-afbd3628468a@ascade.co.jp>
-From: Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <fae2dde5-00b0-f12c-66ff-8b69351805a9@oracle.com>
-Date: Thu, 3 May 2018 21:26:39 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 4 May 2018 00:30:15 -0400
+X-Google-Smtp-Source: AB8JxZpRBp3/CpSBvZCMmYRFkYn7LevETPajkbK6xDvXzrFNIrQw3htmQHiE61aE3FLz9ryEVDjezbBa0SVwPhIu5EI=
 MIME-Version: 1.0
-In-Reply-To: <a696eccd-24f3-9368-5baa-afbd3628468a@ascade.co.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8882 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805040038
+In-Reply-To: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
+References: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
+From: Connor McAdams <conmanx360@gmail.com>
+Date: Fri, 4 May 2018 00:30:14 -0400
+Message-ID: <CAM8Agx0s1Rg5bGCXP5gQftcfsqbQoCvZtNyg4fmUpNaJsix=-A@mail.gmail.com>
+Subject: Re: [PATCH 1/9] R3Di and SBZ quirk entires + alt firmware loading
+To: Connor McAdams <conmanx360@gmail.com>
+Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        =?UTF-8?B?SsOpcsOpbXkgTGVmYXVyZQ==?= <jeremy.lefaure@lse.epita.fr>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/2018 05:09 PM, TSUKADA Koutaro wrote:
-> On 2018/05/03 11:33, Mike Kravetz wrote:
->> On 05/01/2018 11:54 PM, TSUKADA Koutaro wrote:
->>> On 2018/05/02 13:41, Mike Kravetz wrote:
->>>> What is the reason for not charging pages at allocation/reserve time?  I am
->>>> not an expert in memcg accounting, but I would think the pages should be
->>>> charged at allocation time.  Otherwise, a task could allocate a large number
->>>> of (reserved) pages that are not charged to a memcg.  memcg charges in other
->>>> code paths seem to happen at huge page allocation time.
->>>
->>> If we charge to memcg at page allocation time, the new page is not yet
->>> registered in rmap, so it will be accounted as 'cache' inside the memcg. Then,
->>> after being registered in rmap, memcg will account as 'RSS' if the task moves
->>> cgroup, so I am worried about the possibility of inconsistency in statistics
->>> (memory.stat).
->>>
->>> As you said, in this patch, there may be a problem that a memory leak occurs
->>> due to unused pages after being reserved.
->>>
->>>>> This patch targets RHELSA(kernel-alt-4.11.0-45.6.1.el7a.src.rpm).
->>>>
->>>> It would be very helpful to rebase this patch on a recent mainline kernel.
->>>> The code to allocate surplus huge pages has been significantly changed in
->>>> recent kernels.
->>>>
->>>> I have no doubt that this is a real issue and we are not correctly charging
->>>> surplus to a memcg.  But your patch will be hard to evaluate when based on
->>>> an older distro kernel.
->>> I apologize for the patch of the old kernel. The patch was rewritten
->>> for 4.17-rc2(6d08b06).
->>
->> Thank you very much for rebasing the patch.
->>
->> I did not look closely at your patch until now.  My first thought was that
->> you  were changing/expanding the existing accounting.  However, it appears
->> that you want to account for hugetlb surplus pages in the memory cgroup.
->> Is there any reason why the hugetlb cgroup resource controller does not meet
->> your needs?  It a quick look at the code, it does appear to handle surplus
->> pages correctly.
-> 
-> Yes, basically it is exactly what you are talking about, but my usage is
-> somewhat special. I would like users who submit jobs on the HPC cluster to use
-> the hugetlb page. When submitting a job, the user specifies a memory resource
-> (for example, sbatch --mem in slurm).
-> 
-> If the user specifies 10GB, we assume that the system administrator has set the
-> limit of 10GB for memory cgroup and hugetlb cgroup respectively, and does not
-> create a hugetlb pool and sets it so that can overcommit. Then, users can use
-> 10GB normal pages and more 10GB hugetlb page by overcommitting, which means
-> user can use 20GB totaly. However, the administrator should restrict the normal
-> page and hugetlb page to 10GB in total.
-> 
-> Since it is difficult to estimate the ratio used by user of normal pages and
-> hugetlb pages, setting limits of 2 GB to memory cgroup and 8 GB to hugetlb
-> cgroup is not very good idea.
-> 
-> In such a case, with my patch, I thought that the administrator can manage the
-> resources just by setting 10GB for the limit of memory cgoup(No limit is set
-> for hugetlb cgroup).
+Sorry for sending these twice, I made a formatting mistake in the
+first series, and they would not apply properly. Hopefully these do
+not show up as spam because of this.
 
-Thank you for the explanation of your use case.  I now understand what
-you were trying to accomplish with your patch.
+I went through and fixed them all individually and re-committed them,
+but kept the same commit messages. I still have a lot to learn.
 
-Your use case reminds me of the session at LSFMM titled "swap accounting".
-https://lwn.net/Articles/753162/
+Thanks,
+Connor
 
-I hope someone with more cgroup expertise (Johannes? Aneesh?) can provide
-comments.  My experience in that area is limited.
-
-One question that comes to mind is "Why would the user/application writer
-use hugetlbfs overcommit instead of THP?".  For hugetlbfs overcommit, they
-need to be prepared for huge page allocations to fail.  So, in some cases
-they may not be able to use any hugetlbfs pages.  This is not much different
-than THP.  However, in the THP case huge page allocation failures and fall
-back to base pages is transparent to the user.  With THP, the normal memory
-cgroup controller should work well.
--- 
-Mike Kravetz
+On Fri, May 4, 2018 at 12:19 AM, Connor McAdams <conmanx360@gmail.com> wrote:
+> This patch adds PCI quirk ID's for the Sound Blaster Z and Recon3Di.
+> Only the currently tested ID's have been added.
+>
+> This patch also adds the ability to load alternative firmwares for each
+> card, the firmwares can be obtained from within the Windows driver.
+> The Recon3Di uses "ctefx-r3di.bin" and the Sound Blaster Z uses
+> "ctefx-sbz.bin". If the alternative firmware for the given quirk is not
+> found, the original ctefx.bin will be used. This has been confirmed to
+> work for both the R3Di and the SBZ.
+>
+> This patch also makes the character array *dirstr a const.
+>
+> Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+> ---
+>  sound/pci/hda/patch_ca0132.c | 61 +++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 55 insertions(+), 6 deletions(-)
+>
+> diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+> index 768ea86..8346100 100644
+> --- a/sound/pci/hda/patch_ca0132.c
+> +++ b/sound/pci/hda/patch_ca0132.c
+> @@ -72,12 +72,16 @@
+>  #define SCP_GET    1
+>
+>  #define EFX_FILE   "ctefx.bin"
+> +#define SBZ_EFX_FILE   "ctefx-sbz.bin"
+> +#define R3DI_EFX_FILE  "ctefx-r3di.bin"
+>
+>  #ifdef CONFIG_SND_HDA_CODEC_CA0132_DSP
+>  MODULE_FIRMWARE(EFX_FILE);
+> +MODULE_FIRMWARE(SBZ_EFX_FILE);
+> +MODULE_FIRMWARE(R3DI_EFX_FILE);
+>  #endif
+>
+> -static char *dirstr[2] = { "Playback", "Capture" };
+> +static const char *dirstr[2] = { "Playback", "Capture" };
+>
+>  enum {
+>         SPEAKER_OUT,
+> @@ -734,6 +738,7 @@ struct ca0132_spec {
+>         unsigned int scp_resp_header;
+>         unsigned int scp_resp_data[4];
+>         unsigned int scp_resp_count;
+> +       bool alt_firmware_present;
+>
+>         /* mixer and effects related */
+>         unsigned char dmic_ctl;
+> @@ -762,6 +767,8 @@ struct ca0132_spec {
+>  enum {
+>         QUIRK_NONE,
+>         QUIRK_ALIENWARE,
+> +       QUIRK_SBZ,
+> +       QUIRK_R3DI,
+>  };
+>
+>  static const struct hda_pintbl alienware_pincfgs[] = {
+> @@ -782,6 +789,10 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
+>         SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
+>         SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
+>         SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
+> +       SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
+> +       SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
+> +       SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
+> +       SND_PCI_QUIRK(0x1458, 0xA036, "Recon3Di", QUIRK_R3DI),
+>         {}
+>  };
+>
+> @@ -3207,7 +3218,7 @@ static int ca0132_select_out(struct hda_codec *codec)
+>                                     pin_ctl & ~PIN_HP);
+>                 /* enable speaker node */
+>                 pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
+> -                                            AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
+> +                               AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
+>                 snd_hda_set_pin_ctl(codec, spec->out_pins[0],
+>                                     pin_ctl | PIN_OUT);
+>         } else {
+> @@ -4370,11 +4381,49 @@ static void ca0132_set_dsp_msr(struct hda_codec *codec, bool is96k)
+>  static bool ca0132_download_dsp_images(struct hda_codec *codec)
+>  {
+>         bool dsp_loaded = false;
+> +       struct ca0132_spec *spec = codec->spec;
+>         const struct dsp_image_seg *dsp_os_image;
+>         const struct firmware *fw_entry;
+> -
+> -       if (request_firmware(&fw_entry, EFX_FILE, codec->card->dev) != 0)
+> -               return false;
+> +       /*
+> +        * Alternate firmwares for different variants. The Recon3Di apparently
+> +        * can use the default firmware, but I'll leave the option in case
+> +        * it needs it again.
+> +        */
+> +       switch (spec->quirk) {
+> +       case QUIRK_SBZ:
+> +               if (request_firmware(&fw_entry, SBZ_EFX_FILE,
+> +                                       codec->card->dev) != 0) {
+> +                       codec_dbg(codec, "SBZ alt firmware not detected. ");
+> +                       spec->alt_firmware_present = false;
+> +               } else {
+> +                       codec_dbg(codec, "Sound Blaster Z firmware selected.");
+> +                       spec->alt_firmware_present = true;
+> +               }
+> +               break;
+> +       case QUIRK_R3DI:
+> +               if (request_firmware(&fw_entry, R3DI_EFX_FILE,
+> +                                       codec->card->dev) != 0) {
+> +                       codec_dbg(codec, "Recon3Di alt firmware not detected.");
+> +                       spec->alt_firmware_present = false;
+> +               } else {
+> +                       codec_dbg(codec, "Recon3Di firmware selected.");
+> +                       spec->alt_firmware_present = true;
+> +               }
+> +               break;
+> +       default:
+> +               spec->alt_firmware_present = false;
+> +               break;
+> +       }
+> +       /*
+> +        * Use default ctefx.bin if no alt firmware is detected, or if none
+> +        * exists for your particular codec.
+> +        */
+> +       if (!spec->alt_firmware_present) {
+> +               codec_dbg(codec, "Default firmware selected.");
+> +               if (request_firmware(&fw_entry, EFX_FILE,
+> +                                       codec->card->dev) != 0)
+> +                       return false;
+> +       }
+>
+>         dsp_os_image = (struct dsp_image_seg *)(fw_entry->data);
+>         if (dspload_image(codec, dsp_os_image, 0, 0, true, 0)) {
+> @@ -4476,7 +4525,7 @@ static struct hda_verb ca0132_base_exit_verbs[] = {
+>         {}
+>  };
+>
+> -/* Other verbs tables.  Sends after DSP download. */
+> +/* Other verbs tables. Sends after DSP download. */
+>  static struct hda_verb ca0132_init_verbs0[] = {
+>         /* chip init verbs */
+>         {0x15, 0x70D, 0xF0},
+> --
+> 2.7.4
+>
