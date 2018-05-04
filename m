@@ -1,66 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751412AbeEDPD6 convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 11:03:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40962 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751196AbeEDPD5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 11:03:57 -0400
-Date: Fri, 04 May 2018 20:33:48 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/6] powerpc/syscalls: Switch trivial cases to
- SYSCALL_DEFINE
-To: linuxppc-dev@ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
-References: <20180502132051.28861-1-mpe@ellerman.id.au>
-In-Reply-To: <20180502132051.28861-1-mpe@ellerman.id.au>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        id S1751377AbeEDPGj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 11:06:39 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:35181 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751059AbeEDPGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 11:06:37 -0400
+Date: Fri, 4 May 2018 17:06:35 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Icenowy Zheng <icenowy@aosc.io>
+Cc: Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for H6 R_PIO pin
+ controller
+Message-ID: <20180504150635.cmtypedk55oxyg2n@flea>
+References: <20180503183847.11046-1-icenowy@aosc.io>
+ <20180503183847.11046-4-icenowy@aosc.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18050415-0008-0000-0000-000004F308D2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050415-0009-0000-0000-00001E87368A
-Message-Id: <1525446080.ih4a1c8i42.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805040139
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="saqtoq4pvu6fszm2"
+Content-Disposition: inline
+In-Reply-To: <20180503183847.11046-4-icenowy@aosc.io>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michael Ellerman wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  arch/powerpc/kernel/pci_32.c               | 6 +++---
->  arch/powerpc/kernel/pci_64.c               | 4 ++--
->  arch/powerpc/mm/subpage-prot.c             | 4 +++-
->  arch/powerpc/platforms/cell/spu_syscalls.c | 3 ++-
->  4 files changed, 10 insertions(+), 7 deletions(-)
-> 
 
-I suppose we can also do this for switch_endian?
+--saqtoq4pvu6fszm2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/powerpc/kernel/syscalls.c b/arch/powerpc/kernel/syscalls.c
-index 466216506eb2..290265f2700c 100644
---- a/arch/powerpc/kernel/syscalls.c
-+++ b/arch/powerpc/kernel/syscalls.c
-@@ -123,7 +123,7 @@ long ppc_fadvise64_64(int fd, int advice, u32 offset_high, u32 offset_low,
- 				 (u64)len_high << 32 | len_low, advice);
- }
- 
--long sys_switch_endian(void)
-+SYSCALL_DEFINE0(switch_endian)
- {
- 	struct thread_info *ti;
+On Fri, May 04, 2018 at 02:38:43AM +0800, Icenowy Zheng wrote:
+> Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
+> which controls the PL and PM pin banks.
+>=20
+> Add support for it.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-- Naveen
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--saqtoq4pvu6fszm2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrsdvoACgkQ0rTAlCFN
+r3QF9A//dypcxtWiVRia46qEZzZVvWdsP0XWZlTE6UJH0jOL3liy/56hLTyW9gyu
+3sv/o9sNmp+tx92feTHTt3OBv3xezUyfUeOux0vmydPS792md7KCOfnZV2eIHGqN
+aMUCZ/6Cr3w4BjC8lvqHFdli9gVJa0a8t5gN1jFkRfFd0y6qss7U/BGv/t1WZHY7
+5Zrk9wGO3FRc4+k7ftfhsmSeBn9h6NxA/pKIWgniyJ5mbw4HCTlQJLYda3FMEnK1
+S4KNMbmgEBuU9AQDRXGGIa59sV6oNSUoSJk6go8keZ+lMFI+Q8ALgAYSu27Turu1
+uY7eSa6ZAcU1Ul8cjN/+npqTzLSooo7gZrBRGO/q3TJryzvglZtQo7pNZbWeXqEZ
+rcfulzJFx7SkYjy/IpeOleIfbV/ScjuqZh42YG+M1TFXVXPZkSdrMN88w/6o1v9a
+OYduzxF3dDHHnTAjIbK+HbAZmZdCUUnmz8pnw/PSoR7x6FSHE2aOB3gyBO1IztBF
+pIpJQAUdJ9yZVLf6SZaSBy/CBF4TARh0wWU45ewX2Jr5zyDVp51UgRlKXI1EqU3v
+8gxLc9KFn4mC5ulRYwyLxUvZj+DYGE06LB4GmTkrs0AkCm8NDqECfRCIBZurdlqp
+G9NkYFWf01P53a2BxJf+V0Ri1QM4DTSjBpdldSrBTjcgY78qUqg=
+=kJur
+-----END PGP SIGNATURE-----
+
+--saqtoq4pvu6fszm2--
