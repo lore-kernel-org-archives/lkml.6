@@ -1,88 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751820AbeEDVtE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:49:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38936 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751741AbeEDVtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:49:02 -0400
-Subject: Re: [PATCH v7 13/13] KVM: x86: Disable Intel Processor Trace when
- VMXON in L1 guest
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Luwei Kang <luwei.kang@intel.com>
-Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org, joro@8bytes.org, peterz@infradead.org,
-        chao.p.peng@linux.intel.com
-References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-14-git-send-email-luwei.kang@intel.com>
- <20180504102358.eojiggqrnhxng2ru@um.fi.intel.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <42da55ab-aefb-aa3c-bfed-d6f0457db798@redhat.com>
-Date: Fri, 4 May 2018 23:49:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751841AbeEDVtl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:49:41 -0400
+Received: from mga01.intel.com ([192.55.52.88]:14009 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751651AbeEDVtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 17:49:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,363,1520924400";
+   d="scan'208";a="38525640"
+Date: Sat, 5 May 2018 00:49:36 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>, x86@kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: Proof-of-concept: better(?) page-table manipulation API
+Message-ID: <20180504214936.v62knybljdvcnifq@black.fi.intel.com>
+References: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com>
+ <20180504211244.GD29829@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20180504102358.eojiggqrnhxng2ru@um.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504211244.GD29829@bombadil.infradead.org>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 12:23, Alexander Shishkin wrote:
->> Currently, Intel Processor Trace do not support tracing in L1 guest
->> VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
-> I don't understand this patch. You mention VMX_MISC[14] here, but I
-> can't see anything related to it in the code.
+On Fri, May 04, 2018 at 09:12:44PM +0000, Matthew Wilcox wrote:
+> On Tue, Apr 24, 2018 at 06:43:56PM +0300, Kirill A. Shutemov wrote:
+> > +struct pt_ptr {
+> > +	unsigned long *ptr;
+> > +	int lvl;
+> > +};
+> 
+> On x86, you've got three kinds of paging scheme, referred to in the manual
+> as 32-bit, PAE and 4-level.
 
-This is talking about the _guest_'s view of IA32_VMX_MISC.  The code
-does nothing to set it, so the patch does what the commit message says
-below:
+You forgot 5-level :)
 
->> on these type of processors, execution of the VMXON instruction will
->> clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
->> causes a general-protection exception (#GP).
->>
->> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+(although it's not in the manual yet, so fair enough)
 
-Thanks,
+> On 32-bit, you've got 3 levels (Directory, Table and Entry), and you can
+> encode those three levels in the bottom two bits of the pointer.  With
+> PAE and 4L, pointers are 64-bit aligned, so you can encode up to eight
+> levels in the bottom three bits of the pointer.
 
-Paolo
+I didn't thought about this. Thank you.
+
+> > +struct pt_val {
+> > +	unsigned long val;
+> > +	int lvl;
+> > +};
+> 
+> I don't think it's possible to shrink this down to a single ulong.
+> _Maybe_ it is if you can squirm a single bit free from the !pte_present
+> case.
+
+I don't think it worth it. It gets tricky quickly.
+
+> ... this is only for x86 4L and maybe 32 paging, right?  It'd need to
+> use unsigned long val[2] for PAE.
+
+I didn't look at 32-bit at all. But 4L and 5L [kinda] work.
+
+> I'm going to think about this some more.  There's a lot of potential here.
+
+Thanks for the input.
+
+-- 
+ Kirill A. Shutemov
