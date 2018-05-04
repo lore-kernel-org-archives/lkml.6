@@ -1,138 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751760AbeEDGFI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 02:05:08 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:34539 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751355AbeEDGBE (ORCPT
+        id S1751907AbeEDGFU (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 02:05:20 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:46947 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeEDGFT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 02:01:04 -0400
-X-Google-Smtp-Source: AB8JxZqC4rDsaftbkXY9P/YuYf8lueHuMC18YsIdM/PIpI+A3ZN1/HjAZHSz2T8qnxRNjkHx3eTGPA==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Daniel Kiper <daniel.kiper@oracle.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Fri, 4 May 2018 02:05:19 -0400
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: neidhard.kim@lge.com
+X-Original-SENDERIP: 10.178.31.61
+X-Original-MAILFROM: neidhard.kim@lge.com
+From: Jongsung Kim <neidhard.kim@lge.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/17] x86/xen/efi: Initialize UEFI secure boot state during dom0 boot
-Date: Fri,  4 May 2018 07:59:47 +0200
-Message-Id: <20180504060003.19618-2-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
-References: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
+Cc: Chanho Min <chanho.min@lge.com>, Jongsung Kim <neidhard.kim@lge.com>
+Subject: [PATCH v3] watchdog: sp805: add restart handler
+Date: Fri,  4 May 2018 15:05:03 +0900
+Message-Id: <1525413903-7066-1-git-send-email-neidhard.kim@lge.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cf2f151a-06d7-368e-7ae5-68e992dfc3ea@roeck-us.net>
+References: <cf2f151a-06d7-368e-7ae5-68e992dfc3ea@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Kiper <daniel.kiper@oracle.com>
+Add restart handler for SP805 watchdog so that the driver can be
+used to reboot the system.
 
-Initialize UEFI secure boot state during dom0 boot. Otherwise the kernel
-may not even know that it runs on secure boot enabled platform.
-
-Note that part of drivers/firmware/efi/libstub/secureboot.c is duplicated
-by this patch, only in this case, it runs in the context of the kernel
-proper rather than UEFI boot context. The reason for the duplication is
-that maintaining the original code to run correctly on ARM/arm64 as well
-as on all the quirky x86 firmware we support is enough of a burden as it
-is, and adding the x86/Xen execution context to that mix just so we can
-reuse a single routine just isn't worth it.
-
-Signed-off-by: Daniel Kiper <daniel.kiper@oracle.com>
-[ardb: explain rationale for code duplication]
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jongsung Kim <neidhard.kim@lge.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 ---
- arch/x86/xen/efi.c                        | 57 +++++++++++++++++++++++
- drivers/firmware/efi/libstub/secureboot.c |  3 ++
- 2 files changed, 60 insertions(+)
+ drivers/watchdog/sp805_wdt.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
-index a18703be9ead..1804b27f9632 100644
---- a/arch/x86/xen/efi.c
-+++ b/arch/x86/xen/efi.c
-@@ -115,6 +115,61 @@ static efi_system_table_t __init *xen_efi_probe(void)
- 	return &efi_systab_xen;
+diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+index 03805bc..9849db0 100644
+--- a/drivers/watchdog/sp805_wdt.c
++++ b/drivers/watchdog/sp805_wdt.c
+@@ -121,6 +121,18 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
+ 	return div_u64(load, rate);
  }
  
-+/*
-+ * Determine whether we're in secure boot mode.
-+ *
-+ * Please keep the logic in sync with
-+ * drivers/firmware/efi/libstub/secureboot.c:efi_get_secureboot().
-+ */
-+static enum efi_secureboot_mode xen_efi_get_secureboot(void)
++static int
++wdt_restart(struct watchdog_device *wdd, unsigned long mode, void *cmd)
 +{
-+	static efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
-+	static efi_guid_t shim_guid = EFI_SHIM_LOCK_GUID;
-+	efi_status_t status;
-+	u8 moksbstate, secboot, setupmode;
-+	unsigned long size;
++	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
 +
-+	size = sizeof(secboot);
-+	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
-+				  NULL, &size, &secboot);
++	writel_relaxed(0, wdt->base + WDTCONTROL);
++	writel_relaxed(0, wdt->base + WDTLOAD);
++	writel_relaxed(INT_ENABLE | RESET_ENABLE, wdt->base + WDTCONTROL);
 +
-+	if (status == EFI_NOT_FOUND)
-+		return efi_secureboot_mode_disabled;
-+
-+	if (status != EFI_SUCCESS)
-+		goto out_efi_err;
-+
-+	size = sizeof(setupmode);
-+	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
-+				  NULL, &size, &setupmode);
-+
-+	if (status != EFI_SUCCESS)
-+		goto out_efi_err;
-+
-+	if (secboot == 0 || setupmode == 1)
-+		return efi_secureboot_mode_disabled;
-+
-+	/* See if a user has put the shim into insecure mode. */
-+	size = sizeof(moksbstate);
-+	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
-+				  NULL, &size, &moksbstate);
-+
-+	/* If it fails, we don't care why. Default to secure. */
-+	if (status != EFI_SUCCESS)
-+		goto secure_boot_enabled;
-+
-+	if (moksbstate == 1)
-+		return efi_secureboot_mode_disabled;
-+
-+ secure_boot_enabled:
-+	pr_info("UEFI Secure Boot is enabled.\n");
-+	return efi_secureboot_mode_enabled;
-+
-+ out_efi_err:
-+	pr_err("Could not determine UEFI Secure Boot status.\n");
-+	return efi_secureboot_mode_unknown;
++	return 0;
 +}
 +
- void __init xen_efi_init(void)
+ static int wdt_config(struct watchdog_device *wdd, bool ping)
  {
- 	efi_system_table_t *efi_systab_xen;
-@@ -129,6 +184,8 @@ void __init xen_efi_init(void)
- 	boot_params.efi_info.efi_systab = (__u32)__pa(efi_systab_xen);
- 	boot_params.efi_info.efi_systab_hi = (__u32)(__pa(efi_systab_xen) >> 32);
+ 	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+@@ -197,6 +209,7 @@ static const struct watchdog_ops wdt_ops = {
+ 	.ping		= wdt_ping,
+ 	.set_timeout	= wdt_setload,
+ 	.get_timeleft	= wdt_timeleft,
++	.restart	= wdt_restart,
+ };
  
-+	boot_params.secure_boot = xen_efi_get_secureboot();
-+
- 	set_bit(EFI_BOOT, &efi.flags);
- 	set_bit(EFI_PARAVIRT, &efi.flags);
- 	set_bit(EFI_64BIT, &efi.flags);
-diff --git a/drivers/firmware/efi/libstub/secureboot.c b/drivers/firmware/efi/libstub/secureboot.c
-index 8f07eb414c00..72d9dfbebf08 100644
---- a/drivers/firmware/efi/libstub/secureboot.c
-+++ b/drivers/firmware/efi/libstub/secureboot.c
-@@ -30,6 +30,9 @@ static const efi_char16_t shim_MokSBState_name[] = L"MokSBState";
+ static int
+@@ -230,6 +243,7 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
+ 	spin_lock_init(&wdt->lock);
+ 	watchdog_set_nowayout(&wdt->wdd, nowayout);
+ 	watchdog_set_drvdata(&wdt->wdd, wdt);
++	watchdog_set_restart_priority(&wdt->wdd, 128);
+ 	wdt_setload(&wdt->wdd, DEFAULT_TIMEOUT);
  
- /*
-  * Determine whether we're in secure boot mode.
-+ *
-+ * Please keep the logic in sync with
-+ * arch/x86/xen/efi.c:xen_efi_get_secureboot().
-  */
- enum efi_secureboot_mode efi_get_secureboot(efi_system_table_t *sys_table_arg)
- {
+ 	ret = watchdog_register_device(&wdt->wdd);
 -- 
-2.17.0
+2.7.4
