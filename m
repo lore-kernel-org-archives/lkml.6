@@ -1,175 +1,165 @@
-Return-Path: <daniel@zonque.org>
-X-Google-Smtp-Source: AB8JxZqHLZ8IwJlzedWHvoWdhH/E3+oseiBzgY26iMiIeYuXNuGBTngA7Pzx8aWQJJwAEgPKc1RY
-ARC-Seal: i=1; a=rsa-sha256; t=1527112494; cv=none;
+Return-Path: <mchehab+samsung@kernel.org>
+X-Google-Smtp-Source: AB8JxZoWQ19uJKGlJ/JEO7liWanYWq4oPtnszWustsaDE40AcUZzPlBp6wCxS5cAXxdFkfUdBSpt
+ARC-Seal: i=1; a=rsa-sha256; t=1525462215; cv=none;
         d=google.com; s=arc-20160816;
-        b=xNt+vrXkfTmOQ/tSaAthD52OPtvr1bigOtdZFiGrpDdunhOg8aLGcjuF/pxgu5q+Rt
-         ImBoO/JqGHCNyA+kU6stwuDtIQ6nX/JmTkK6mR4mwRHAX7U6AhP/tqxrnFrFcFoMX3Yo
-         keEgfnDrnFnP6Onz89goDYvemtLfcSuZsg4xnCyg/Sguk2TeIGJhh/9qiBzkyay+x8Eo
-         PcJs/A8wYCvmzP0FyFAC2BZV5y0lEa8LhRAC9K60Imllv7YP3usNUvz9B+oGEzJvkeaj
-         yxCzLZ+Acz5hz0i3YI1j8ygTraGmXYUmxG9JulU/PQTDbwYmfh64on+PtQQ/Bd3PYENc
-         pfVw==
+        b=QkK7WzFOM7wbYDLcI/KkEodmxFEmrUPDg34HJyZTGRvYv5HM0tEUIOHzKh2xsqL/Dn
+         42nL6nXL9omDvAUp5DrwOXrpkOfloh6caRDB8Cqi7tE9Nm1tNVv+toPxcO6g9+It9Gdv
+         sYtCH6qtNINSNFChx3nWxyVlTQix+OQM4WSFYmEaV772U3+j7ReIVpGDhe729xdXIwgd
+         aL20dam15Wvar7f4FcZf5K8CuioTM92UBu3AjilxOUiP5Gtz4F/9AIhNEAQRPGYp31Qi
+         38idCkVFAzbu36BTTkQNIAcnMMWkpjbJm3LJIew6ZTjiUblKWmUql+j0xcZffyDjsxdp
+         hOOA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-language:in-reply-to:mime-version:user-agent:date
-         :message-id:references:cc:to:from:subject:arc-authentication-results;
-        bh=HFAQpdvylQVgof1fDZSB2UtpSAoqMBk3WrKpvC6u9hs=;
-        b=EDZOID7IxJxiT4K06xw+JUaIyXZXJ/zosCVGF2q+leyqcyWXJDXZmWlqsQ80ptRGhe
-         iVXgZZ3qjWbsX+tZCDgzWx22SE9j/CbCHPcKONs77gf/LNMTYCqigRyxJmge7tLLY5Iv
-         OACJJx/SO7fvNFbzn/x6L0BV9irhrdc98EI/otRfotTL5d/sQ6xKdR4HwWPts3deFRz+
-         Shidy0CO0/YXSDZv/k3nKUJY4wn1hjpsOPKqPT1D4tC/EwOwhE4I+ffJLTbl6VXspOQc
-         MTBnAeMv9H7uvLE/MdPP+k3ZyjUV9+DgTC3/00wgMZrZk1+dY0WhHHGi7yn8ccTwZrDE
-         HNjw==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=ASiNS8+ski53a9iizi+xH5C9sJSnIzN1aiV6HlPnJnA=;
+        b=XSgnslH90A3Ho8LAeZsffo044GsRb7rl6GdB1Z5xvnUaY/6QO3LBhOi8Jf5LOWxQoa
+         QB3wxuUznYfXvL1o+4J8XoyvebVkPTymkuaQnwQerKwcC0bRs3jSH6lANmlAuqsvZ4fq
+         zVczxDBNo7sCC7qC1dBQk9zI+1KWKddoKpDYWQY+wFFkA+AWgauLMvEMtCeeCd9E5UyN
+         ARnDF9V5j2G6mHvxS/+zuPNVubrbckQ47LxiMD19FRQYBC2ObBjogmOqFfZ8LnaYPvm/
+         aJ0USyHe9sBDcIvs1wxbqQDgGzkis4GkhPN6z4wI1Pjwm8HZK2/ctZ4z/Fmok8fzcboQ
+         D7jw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of daniel@zonque.org designates 46.23.86.59 as permitted sender) smtp.mailfrom=daniel@zonque.org
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=tw5zRaWq;
+       spf=softfail (google.com: domain of transitioning mchehab+samsung@kernel.org does not designate 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=mchehab+samsung@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of daniel@zonque.org designates 46.23.86.59 as permitted sender) smtp.mailfrom=daniel@zonque.org
-Subject: Re: [PATCH 05/15] mtd: nand: pxa3xx: remove the dmaengine compat need
-From: Daniel Mack <daniel@zonque.org>
-To: Robert Jarzmik <robert.jarzmik@free.fr>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- Tejun Heo <tj@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Ezequiel Garcia <ezequiel.garcia@free-electrons.com>,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- David Woodhouse <dwmw2@infradead.org>,
- Brian Norris <computersforpeace@gmail.com>,
- Marek Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>,
- Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
- Nicolas Pitre <nico@fluxnic.net>, Samuel Ortiz <samuel@sortiz.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+       dkim=pass header.i=@infradead.org header.s=bombadil.20170209 header.b=tw5zRaWq;
+       spf=softfail (google.com: domain of transitioning mchehab+samsung@kernel.org does not designate 2607:7c80:54:e::133 as permitted sender) smtp.mailfrom=mchehab+samsung@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Fri, 4 May 2018 16:29:32 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack
+ <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Bartlomiej
+ Zolnierkiewicz <b.zolnierkie@samsung.com>, Tejun Heo <tj@kernel.org>, Vinod
+ Koul <vinod.koul@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Ezequiel Garcia
+ <ezequiel.garcia@free-electrons.com>, Boris Brezillon
+ <boris.brezillon@free-electrons.com>, David Woodhouse
+ <dwmw2@infradead.org>, Brian Norris <computersforpeace@gmail.com>, Marek
+ Vasut <marek.vasut@gmail.com>, Richard Weinberger <richard@nod.at>, Cyrille
+ Pitchen <cyrille.pitchen@wedev4u.fr>, Nicolas Pitre <nico@fluxnic.net>,
+ Samuel Ortiz <samuel@sortiz.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Takashi
+ Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Petr Cvek
+ <petr.cvek@tul.cz>, Sakari Ailus <sakari.ailus@iki.fi>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Pravin Shedge
+ <pravin.shedge4linux@gmail.com>, Flavio Ceolin <flavio.ceolin@intel.com>,
+ Robert Jarzmik <robert.jarzmik@renault.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
  linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
  linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
- devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
- Robert Jarzmik <robert.jarzmik@renault.com>
+ devel@driverdev.osuosl.org, alsa-devel@alsa-project.org, Niklas
+ =?UTF-8?B?U8O2ZGVybHVuZA==?=        
+ <niklas.soderlund+renesas@ragnatech.se>
+Subject: Re: [PATCH 04/15] media: pxa_camera: remove the dmaengine compat
+ need
+Message-ID: <20180504162932.52a020cc@vento.lan>
+In-Reply-To: <89f3e97c-08a4-33b6-8fd3-0c1b4dea2065@xs4all.nl>
 References: <20180402142656.26815-1-robert.jarzmik@free.fr>
- <20180402142656.26815-6-robert.jarzmik@free.fr>
- <a09d80dc-e8fd-1e9a-1878-8875ddc83134@zonque.org>
-Message-ID: <5f614736-31b6-6561-69c1-177595fbb210@zonque.org>
-Date: Wed, 23 May 2018 23:54:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+	<20180402142656.26815-5-robert.jarzmik@free.fr>
+	<89f3e97c-08a4-33b6-8fd3-0c1b4dea2065@xs4all.nl>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <a09d80dc-e8fd-1e9a-1878-8875ddc83134@zonque.org>
-Content-Type: multipart/mixed;
- boundary="------------05E9BD108AABC677CA24E234"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1596644931360963410?=
-X-GMAIL-MSGID: =?utf-8?q?1601293511081261100?=
+X-GMAIL-THRID: =?utf-8?q?1596644928520099498?=
+X-GMAIL-MSGID: =?utf-8?q?1599563068746834222?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is a multi-part message in MIME format.
---------------05E9BD108AABC677CA24E234
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Em Sun, 22 Apr 2018 13:06:12 +0200
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
 
-Hi Robert,
+> On 04/02/2018 04:26 PM, Robert Jarzmik wrote:
+> > From: Robert Jarzmik <robert.jarzmik@renault.com>
+> > 
+> > As the pxa architecture switched towards the dmaengine slave map, the
+> > old compatibility mechanism to acquire the dma requestor line number and
+> > priority are not needed anymore.
+> > 
+> > This patch simplifies the dma resource acquisition, using the more
+> > generic function dma_request_slave_channel().
+> > 
+> > Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>  
+> 
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-Please refer to the attached patch instead of the one I sent earlier. I 
-missed to also remove the platform_get_resource(IORESOURCE_DMA) call.
+I'm assuming that you'll be applying it together with other PXA patches.
+So:
+
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+Regards,
+Mauro
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > ---
+> >  drivers/media/platform/pxa_camera.c | 22 +++-------------------
+> >  1 file changed, 3 insertions(+), 19 deletions(-)
+> > 
+> > diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
+> > index c71a00736541..4c82d1880753 100644
+> > --- a/drivers/media/platform/pxa_camera.c
+> > +++ b/drivers/media/platform/pxa_camera.c
+> > @@ -2357,8 +2357,6 @@ static int pxa_camera_probe(struct platform_device *pdev)
+> >  		.src_maxburst = 8,
+> >  		.direction = DMA_DEV_TO_MEM,
+> >  	};
+> > -	dma_cap_mask_t mask;
+> > -	struct pxad_param params;
+> >  	char clk_name[V4L2_CLK_NAME_SIZE];
+> >  	int irq;
+> >  	int err = 0, i;
+> > @@ -2432,34 +2430,20 @@ static int pxa_camera_probe(struct platform_device *pdev)
+> >  	pcdev->base = base;
+> >  
+> >  	/* request dma */
+> > -	dma_cap_zero(mask);
+> > -	dma_cap_set(DMA_SLAVE, mask);
+> > -	dma_cap_set(DMA_PRIVATE, mask);
+> > -
+> > -	params.prio = 0;
+> > -	params.drcmr = 68;
+> > -	pcdev->dma_chans[0] =
+> > -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+> > -						 &params, &pdev->dev, "CI_Y");
+> > +	pcdev->dma_chans[0] = dma_request_slave_channel(&pdev->dev, "CI_Y");
+> >  	if (!pcdev->dma_chans[0]) {
+> >  		dev_err(&pdev->dev, "Can't request DMA for Y\n");
+> >  		return -ENODEV;
+> >  	}
+> >  
+> > -	params.drcmr = 69;
+> > -	pcdev->dma_chans[1] =
+> > -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+> > -						 &params, &pdev->dev, "CI_U");
+> > +	pcdev->dma_chans[1] = dma_request_slave_channel(&pdev->dev, "CI_U");
+> >  	if (!pcdev->dma_chans[1]) {
+> >  		dev_err(&pdev->dev, "Can't request DMA for Y\n");
+> >  		err = -ENODEV;
+> >  		goto exit_free_dma_y;
+> >  	}
+> >  
+> > -	params.drcmr = 70;
+> > -	pcdev->dma_chans[2] =
+> > -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+> > -						 &params, &pdev->dev, "CI_V");
+> > +	pcdev->dma_chans[2] = dma_request_slave_channel(&pdev->dev, "CI_V");
+> >  	if (!pcdev->dma_chans[2]) {
+> >  		dev_err(&pdev->dev, "Can't request DMA for V\n");
+> >  		err = -ENODEV;
+> >   
+> 
+
 
 
 Thanks,
-Daniel
-
-
-On Friday, May 18, 2018 11:31 PM, Daniel Mack wrote:
-> Hi Robert,
-> 
-> Thanks for this series.
-> 
-> On Monday, April 02, 2018 04:26 PM, Robert Jarzmik wrote:
->> From: Robert Jarzmik <robert.jarzmik@renault.com>
->>
->> As the pxa architecture switched towards the dmaengine slave map, the
->> old compatibility mechanism to acquire the dma requestor line number and
->> priority are not needed anymore.
->>
->> This patch simplifies the dma resource acquisition, using the more
->> generic function dma_request_slave_channel().
->>
->> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
->> ---
->>    drivers/mtd/nand/pxa3xx_nand.c | 10 +---------
-> 
-> This driver was replaced by drivers/mtd/nand/raw/marvell_nand.c
-> recently, so this patch can be dropped. I attached a version for the new
-> driver which you can pick instead.
-> 
-> 
-> Thanks,
-> Daniel
-> 
-
-
---------------05E9BD108AABC677CA24E234
-Content-Type: text/x-patch;
- name="0001-mtd-rawnand-marvell-remove-dmaengine-compat-code.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-mtd-rawnand-marvell-remove-dmaengine-compat-code.patch"
-
->From 72a306157dedb21f8c3289f0f7a288fc4542bd96 Mon Sep 17 00:00:00 2001
-From: Daniel Mack <daniel@zonque.org>
-Date: Sat, 12 May 2018 21:50:13 +0200
-Subject: [PATCH] mtd: rawnand: marvell: remove dmaengine compat code
-
-As the pxa architecture switched towards the dmaengine slave map, the
-old compatibility mechanism to acquire the dma requestor line number and
-priority are not needed anymore.
-
-This patch simplifies the dma resource acquisition, using the more
-generic function dma_request_slave_channel().
-
-Signed-off-by: Daniel Mack <daniel@zonque.org>
----
- drivers/mtd/nand/raw/marvell_nand.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
-index ebb1d141b900..319fea77daf1 100644
---- a/drivers/mtd/nand/raw/marvell_nand.c
-+++ b/drivers/mtd/nand/raw/marvell_nand.c
-@@ -2612,8 +2612,6 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
- 						    dev);
- 	struct dma_slave_config config = {};
- 	struct resource *r;
--	dma_cap_mask_t mask;
--	struct pxad_param param;
- 	int ret;
- 
- 	if (!IS_ENABLED(CONFIG_PXA_DMA)) {
-@@ -2626,20 +2624,7 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
- 	if (ret)
- 		return ret;
- 
--	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
--	if (!r) {
--		dev_err(nfc->dev, "No resource defined for data DMA\n");
--		return -ENXIO;
--	}
--
--	param.drcmr = r->start;
--	param.prio = PXAD_PRIO_LOWEST;
--	dma_cap_zero(mask);
--	dma_cap_set(DMA_SLAVE, mask);
--	nfc->dma_chan =
--		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param, nfc->dev,
--						 "data");
-+	nfc->dma_chan = dma_request_slave_channel(nfc->dev, "data");
- 	if (!nfc->dma_chan) {
- 		dev_err(nfc->dev,
- 			"Unable to request data DMA channel\n");
--- 
-2.14.3
-
-
---------------05E9BD108AABC677CA24E234--
+Mauro
