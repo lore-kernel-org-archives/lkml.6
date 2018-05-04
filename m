@@ -1,42 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751800AbeEDQbI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 12:31:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751771AbeEDQbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 12:31:05 -0400
-Content-Type: text/plain; charset="utf-8"
+        id S1751507AbeEDQif (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 12:38:35 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60478 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeEDQid (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 12:38:33 -0400
+Date: Fri, 4 May 2018 18:38:26 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
+Subject: Re: Introduce atomic_dec_and_lock_irqsave()
+Message-ID: <20180504163826.GR12217@hirez.programming.kicks-ass.net>
+References: <20180504154533.8833-1-bigeasy@linutronix.de>
+ <20180504155446.GP12217@hirez.programming.kicks-ass.net>
+ <20180504160726.ikotgmd5fbix7b6b@linutronix.de>
+ <20180504162102.GQ12217@hirez.programming.kicks-ass.net>
+ <20180504162640.GH30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-To: Amit Nischal <anischal@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Amit Nischal <anischal@codeaurora.org>
-References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
-Message-ID: <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
-Date: Fri, 04 May 2018 09:31:04 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504162640.GH30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w44GVCtj009956
 
-Quoting Amit Nischal (2018-05-03 05:35:23)
-> Changes in v1:
->    https://lkml.org/lkml/2018/4/24/545
-> Addressed below review comments given by Rob
-> - Change the compatible property as per '<vendor>,<soc>-<block>' format.
-> - Add header definitions for resets and power-domain cells.
+On Fri, May 04, 2018 at 05:26:40PM +0100, Al Viro wrote:
+> On Fri, May 04, 2018 at 06:21:02PM +0200, Peter Zijlstra wrote:
+> > On Fri, May 04, 2018 at 06:07:26PM +0200, Sebastian Andrzej Siewior wrote:
+> > 
+> > > do you intend to kill refcount_dec_and_lock() in the longterm?
+> > 
+> > You meant to say atomic_dec_and_lock() ? Dunno if we ever get there, but
+> > typically dec_and_lock is fairly refcounty, but I suppose it is possible
+> > to have !refcount users, in which case we're eternally stuck with it.
+> 
+> Yes, there are - consider e.g.
+> 
+> void iput(struct inode *inode)
+> { 
+>         if (!inode)
+>                 return;
+>         BUG_ON(inode->i_state & I_CLEAR);
+> retry:
+>         if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+> 
+> inode->i_count sure as hell isn't refcount_t fodder...
 
-You didn't add any reset definitions though?
+Yeah, I should've remembered, I tried to convert that once ;-) i_count is
+a usage count, not a refcount.
