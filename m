@@ -1,142 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751585AbeEDPfk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 11:35:40 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:38394 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751538AbeEDPfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 11:35:37 -0400
-X-Google-Smtp-Source: AB8JxZp64e88XvUjMzSHjfHDEw1Oa2k6NU8R3eyVkA39a3aoyKyEp453h+lw0NrGB8hgIz0tJp2Lb3c9vEK7T6uoQ2U=
+        id S1751644AbeEDPfy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 11:35:54 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48894 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751544AbeEDPfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 11:35:38 -0400
+Date: Fri, 4 May 2018 12:35:34 -0300
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Markus Metzger <markus.t.metzger@intel.com>
+Subject: Re: [PATCH v2] perf: Suppress AUX/OVERWRITE records
+Message-ID: <20180504153534.GB2700@redhat.com>
+References: <20180403173207.GA8921@arm.com>
+ <20180404145323.28651-1-alexander.shishkin@linux.intel.com>
+ <20180504120959.z6cik4zv6ragblxd@um.fi.intel.com>
 MIME-Version: 1.0
-References: <20180214182618.14627-1-willy@infradead.org> <20180214182618.14627-3-willy@infradead.org>
- <CA+55aFzLgES5qTAt2szDKcRtoUP5X--UPCoYX-38ea67cRFHxQ@mail.gmail.com> <20180504131441.GA24691@bombadil.infradead.org>
-In-Reply-To: <20180504131441.GA24691@bombadil.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 04 May 2018 15:35:26 +0000
-Message-ID: <CA+55aFy8DSRoUvtiuu5w+XGOK6tYvtJGBH-i8i-y7aiUD2EGLA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-mm <linux-mm@kvack.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504120959.z6cik4zv6ragblxd@um.fi.intel.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 3:14 AM Matthew Wilcox <willy@infradead.org> wrote:
+Em Fri, May 04, 2018 at 03:09:59PM +0300, Alexander Shishkin escreveu:
+> On Wed, Apr 04, 2018 at 05:53:23PM +0300, Alexander Shishkin wrote:
+> > It has been pointed out to me many times that it is useful to be able
+> > to switch off AUX records to save the bandwidth for records that actually
+> > matter, for example, in AUX overwrite mode.
+> > 
+> > The usefulness of PERF_RECORD_AUX is in some of its flags, like the
+> > TRUNCATED flag that tells the decoder where exactly gaps in the trace are.
+> > The OVERWRITE flag, on the other hand will be set on every single record
+> > in overwrite mode. However, a PERF_RECORD_AUX[flags=OVERWRITE] is
+> > generated on every target task's sched_out, which over time adds up to
+> > a lot of useless information.
+> > 
+> > If any folks out there have userspace that depends on a constant stream of
+> > OVERWRITE records for a good reason, they'll have to let us know.
+> > 
+> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Cc: Markus Metzger <markus.t.metzger@intel.com>
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> 
+> This one seems to be slipping through the cracks.
 
-> > In fact, the conversion I saw was buggy. You can *not* convert a
-GFP_ATOMIC
-> > user of kmalloc() to use kvmalloc.
+So, did you got Acked-by  or tested-by from anyone?
 
-> Not sure which conversion you're referring to; not one of mine, I hope?
 
-I was thinking of the coccinelle patch in this thread, but just realized
-that that actually only did it for GFP_KERNEL, so I guess it would work,
-apart from the "oops, now it doesn't enforce the kmalloc limits any more"
-issue.
-
-> >   - that divide is really really expensive on many architectures.
-
-> 'c' and 'size' are _supposed_ to be constant and get evaluated at
-> compile-time.  ie you should get something like this on x86:
-
-I guess that willalways  be true of the 'kvzalloc_struct() version that
-will always use a sizeof(). I was more thinking of any bare kvalloc_ab_c()
-cases, but maybe we'd discourage that to ever be used as such?
-
-Because we definitely have things like that, ie a quick grep finds
-
-    f = kmalloc (sizeof (*f) + size*num, GFP_KERNEL);
-
-where 'size' is not obviously a constant. There may be others, but I didn't
-really try to grep any further.
-
-Maybe they aren't common, and maybe the occasional divide doesn't matter,
-but particularly if we use scripting to then catch and convert users, I
-really hate the idea of "let's introduce something that is potentially much
-more expensive than it needs to be".
-
-(And the automated coccinelle scripting it's also something where we must
-very much avoid then subtly lifting allocation size limits)
-
-> > Something like
-> >
-> >       if (size > PAGE_SIZE)
-> >            return NULL;
-> >       if (elem > 65535)
-> >            return NULL;
-> >       if (offset > PAGE_SIZE)
-> >            return NULL;
-> >       return kzalloc(size*elem+offset);
-> >
-> > and now you (a) guarantee it can't overflow and (b) don't make people
-use
-> > crazy vmalloc() allocations when they damn well shouldn't.
-
-> I find your faith in the size of structs in the kernel touching ;-)
-
-I *really* hope some of those examples of yours aren't allocated with
-kmalloc using this pattern..
-
-But yes, I may be naive on the sizes.
-
-> We really have two reasons for using vmalloc -- one is "fragmentation
-> currently makes it impossible to allocate enough contiguous memory
-> to satisfy your needs" and the other is "this request is for too much
-> memory to satisfy through the buddy allocator".  kvmalloc is normally
-> (not always; see file descriptor example above) for the first kind of
-> problem, but I wonder if kvmalloc() shouldn't have the same limit as
-> kmalloc (2048 pages), then add a kvmalloc_large() which will not impose
-> that limit check.
-
-That would definitely solve at least one worry.
-
-We do potentially have users which use kmalloc optimistically and do not
-want to fall back to vmalloc (they'll fall back to smaller allocations
-entirely), but I guess if fwe make sure to not convert any
-__GFP_NOWARN/NORETRY users, that should all be ok.
-
-But honestly, I'd rather see just kmalloc users stay as kmalloc users.
-
-If instread of "kzvmalloc_ab_c()" you introduce the "struct size
-calculation" part as a "saturating non-overflow calculation", then it
-should be fairly easy to just do
-
-   #define kzalloc_struct(p, member, n, gfp) \
-      kzalloc(struct_size(p, member, n, gfp)
-
-and you basically *know* that the only thing you changed was purely the
-overflow semantics.
-
-That also would take care of my diide worry, because now there  wouldn't be
-any ab_c() calculations that might take a non-constant size. The
-"struct_size()" thing would always do the sizeof.
-
-So you'd have something like
-
-   /* 'b' and 'c' are always constants */
-   static inline sizeof_t __ab_c_saturating(size_t a, size_t b, size_t c)
-   {
-     if (b && n > (SIZE_MAX -c) / size)
-         return SIZE_MAX;
-     return a*b+c;
-   }
-   #define struct_size(p, member, n) \
-       __ab_c_saturating(n, \
-             sizeof(*(p)->member) + __must_be_array((p)->member), \
-             offsetof(typeof(*(p)), member))
-
-and then that kzalloc_struct() wrapper define above should just work.
-
-The above is entirely untested, but it *looks* sane, and avoids all
-semantic changes outside of the overflow protection. And nobody would use
-that __ab_c_saturating() by mistake, I hope.
-
-No?
-
-               Linus
+- Arnaldo
