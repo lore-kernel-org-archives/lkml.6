@@ -1,116 +1,219 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeEDAkh (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 20:40:37 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:40661 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750965AbeEDAkg (ORCPT
+        id S1751360AbeEDAlp (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 20:41:45 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:35938 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750965AbeEDAlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 20:40:36 -0400
-X-Google-Smtp-Source: AB8JxZosub9KQvU3gJSqzKiHV5PyVStRDjvpAnrSjV+VDYAuPmdEUQBZ8GmGGze8F5jFByq1hV9+Zw4kZEK1GD3lUY8=
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jJ9Uw9pDOYfBH8iXTVqiQXgNrEqzpk7a5mOCrH0G3CoyA@mail.gmail.com>
-References: <CAGXu5jL9hqQGe672CmvFwqNbtTr=qu7WRwHuS4Vy7o5sX_UTgg@mail.gmail.com>
- <alpine.DEB.2.20.1803072212160.2814@hadrien> <20180308025812.GA9082@bombadil.infradead.org>
- <alpine.DEB.2.20.1803080722300.3754@hadrien> <20180308230512.GD29073@bombadil.infradead.org>
- <alpine.DEB.2.20.1803131818550.3117@hadrien> <20180313183220.GA21538@bombadil.infradead.org>
- <CAGXu5jKLaY2vzeFNaEhZOXbMgDXp4nF4=BnGCFfHFRwL6LXNHA@mail.gmail.com>
- <20180429203023.GA11891@bombadil.infradead.org> <CAGXu5j+N9tt4rxaUMxoZnE-ziqU_yu-jkt-cBZ=R8wmYq6XBTg@mail.gmail.com>
- <20180430201607.GA7041@bombadil.infradead.org> <4ad99a55-9c93-5ea1-5954-3cb6e5ba7df9@rasmusvillemoes.dk>
- <CAGXu5j+tYhQOfVMkZdPzW5CX103LHpm8SYSN51VFLufn0Z0y6Q@mail.gmail.com>
- <4e25ff5b-f8fc-7012-83c2-b56e6928e8bc@rasmusvillemoes.dk> <CAGXu5jJ9Uw9pDOYfBH8iXTVqiQXgNrEqzpk7a5mOCrH0G3CoyA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Thu, 3 May 2018 17:40:34 -0700
-X-Google-Sender-Auth: l6jFswksGn4nB7Rxa36nH4FVUbo
-Message-ID: <CAGXu5jJ1dA4MA-MuzGXdF+sGMZN17BMf-WOod=hFgqt=e7zaKA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Daniel Vetter <daniel.vetter@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        cocci@systeme.lip6.fr, Himanshu Jha <himanshujha199640@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 3 May 2018 20:41:42 -0400
+X-Google-Smtp-Source: AB8JxZpjixSi9HUB7K35o3p68qE/FwttfhIKe8IKiUM6y9mCKi03F3TlKYdcr+Vc90Me0T1dyb3jyA==
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: linux-input@vger.kernel.org, Benson Leung <bleung@chromium.org>
+Cc: Nick Dyer <nick@shmanahar.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] Input: atmel_mxt_ts - require device properties present when probing
+Date: Thu,  3 May 2018 17:41:35 -0700
+Message-Id: <20180504004135.67554-2-dmitry.torokhov@gmail.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180504004135.67554-1-dmitry.torokhov@gmail.com>
+References: <20180504004135.67554-1-dmitry.torokhov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 5:36 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, May 3, 2018 at 4:00 PM, Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
->> On 2018-05-01 19:00, Kees Cook wrote:
->>> On Mon, Apr 30, 2018 at 2:29 PM, Rasmus Villemoes
->>> <linux@rasmusvillemoes.dk> wrote:
->>>>
->>>> gcc 5.1+ (I think) have the __builtin_OP_overflow checks that should
->>>> generate reasonable code. Too bad there's no completely generic
->>>> check_all_ops_in_this_expression(a+b*c+d/e, or_jump_here). Though it's
->>>> hard to define what they should be checked against - probably would
->>>> require all subexpressions (including the variables themselves) to have
->>>> the same type.
->>>>
->>>> plug: https://lkml.org/lkml/2015/7/19/358
->>>
->>> That's a very nice series. Why did it never get taken?
->>
->> Well, nobody seemed particularly interested, and then
->> https://lkml.org/lkml/2015/10/28/215 happened... but he did later seem
->> to admit that it could be useful for the multiplication checking, and
->> that "the gcc interface for multiplication overflow is fine".
->
-> Oh, excellent. Thank you for that pointer! That conversation covered a
-> lot of ground. I need to think a little more about how to apply the
-> thoughts there with the kmalloc() needs and the GPU driver needs...
->
->> I still think even for unsigned types overflow checking can be subtle. E.g.
->>
->> u32 somevar;
->>
->> if (somevar + sizeof(foo) < somevar)
->>   return -EOVERFLOW;
->> somevar += sizeof(this);
->>
->> is broken, because the LHS is promoted to unsigned long/size_t, then so
->> is the RHS for the comparison, and the comparison is thus always false
->> (on 64bit). It gets worse if the two types are more "opaque", and in any
->> case it's not always easy to verify at a glance that the types are the
->> same, or at least that the expression of the widest type is on the RHS.
->
-> That's an excellent example, yes. (And likely worth including in the
-> commit log somewhere.)
->
->>
->>> It seems to do the right things quite correctly.
->>
->> Yes, I wouldn't suggest it without the test module verifying corner
->> cases, and checking it has the same semantics whether used with old or
->> new gcc.
->>
->> Would you shepherd it through if I updated the patches and resent?
->
-> Yes, though we may need reworking if we actually want to do the
-> try/catch style (since that was talked about with GPU stuff too...)
->
-> Either way, yes, a refresh would be lovely! :)
+The driver needs help determining whether it is dealing with a touchscreen
+or a touchpad, and with button mapping. Previously we supported passing
+this data via device properties, and also had DMI lists for Chromebooks
+that specified Atmel devices in ACPI, but did not provide enough data
+there. Now that chromeos_laptop driver is adjusted to supply necessary
+device properties even for ACPI devices, we can drop the DMI tables and
+refuse to probe if device properties are not attached to the device.
 
-Whatever the case, I think we need to clean up all the kmalloc() math
-anyway. As mentioned earlier, there are a handful of more complex
-cases, but the vast majority are just A * B. I've put up a series here
-now, and I'll send it out soon. I want to think more about 3-factor
-products, addition, etc:
+We use presence of "compatible" property to determine if device properties
+are attached to the device or not and rely on chromeos_laptop to re-probe
+the device after attaching missing device properties to it.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/kmalloc/2-factor-products
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 152 ++---------------------
+ 1 file changed, 12 insertions(+), 140 deletions(-)
 
-The commit logs need more details (i.e. about making constants the
-second argument for optimal compiler results, etc), but there's a
-Coccinelle-generated first pass.
-
--Kees
-
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 09194721aed2d..4ac49c6c00060 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -2999,142 +2999,6 @@ static int mxt_parse_device_properties(struct mxt_data *data)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_ACPI
+-
+-struct mxt_acpi_platform_data {
+-	const char *hid;
+-	const struct property_entry *props;
+-};
+-
+-static unsigned int samus_touchpad_buttons[] = {
+-	KEY_RESERVED,
+-	KEY_RESERVED,
+-	KEY_RESERVED,
+-	BTN_LEFT
+-};
+-
+-static const struct property_entry samus_touchpad_props[] = {
+-	PROPERTY_ENTRY_U32_ARRAY("linux,gpio-keymap", samus_touchpad_buttons),
+-	{ }
+-};
+-
+-static struct mxt_acpi_platform_data samus_platform_data[] = {
+-	{
+-		/* Touchpad */
+-		.hid	= "ATML0000",
+-		.props	= samus_touchpad_props,
+-	},
+-	{
+-		/* Touchscreen */
+-		.hid	= "ATML0001",
+-	},
+-	{ }
+-};
+-
+-static unsigned int chromebook_tp_buttons[] = {
+-	KEY_RESERVED,
+-	KEY_RESERVED,
+-	KEY_RESERVED,
+-	KEY_RESERVED,
+-	KEY_RESERVED,
+-	BTN_LEFT
+-};
+-
+-static const struct property_entry chromebook_tp_props[] = {
+-	PROPERTY_ENTRY_U32_ARRAY("linux,gpio-keymap", chromebook_tp_buttons),
+-	{ }
+-};
+-
+-static struct mxt_acpi_platform_data chromebook_platform_data[] = {
+-	{
+-		/* Touchpad */
+-		.hid	= "ATML0000",
+-		.props	= chromebook_tp_props,
+-	},
+-	{
+-		/* Touchscreen */
+-		.hid	= "ATML0001",
+-	},
+-	{ }
+-};
+-
+-static const struct dmi_system_id mxt_dmi_table[] = {
+-	{
+-		/* 2015 Google Pixel */
+-		.ident = "Chromebook Pixel 2",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "Samus"),
+-		},
+-		.driver_data = samus_platform_data,
+-	},
+-	{
+-		/* Samsung Chromebook Pro */
+-		.ident = "Samsung Chromebook Pro",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "Google"),
+-			DMI_MATCH(DMI_PRODUCT_NAME, "Caroline"),
+-		},
+-		.driver_data = samus_platform_data,
+-	},
+-	{
+-		/* Other Google Chromebooks */
+-		.ident = "Chromebook",
+-		.matches = {
+-			DMI_MATCH(DMI_SYS_VENDOR, "GOOGLE"),
+-		},
+-		.driver_data = chromebook_platform_data,
+-	},
+-	{ }
+-};
+-
+-static int mxt_prepare_acpi_properties(struct i2c_client *client)
+-{
+-	struct acpi_device *adev;
+-	const struct dmi_system_id *system_id;
+-	const struct mxt_acpi_platform_data *acpi_pdata;
+-
+-	adev = ACPI_COMPANION(&client->dev);
+-	if (!adev)
+-		return -ENOENT;
+-
+-	system_id = dmi_first_match(mxt_dmi_table);
+-	if (!system_id)
+-		return -ENOENT;
+-
+-	acpi_pdata = system_id->driver_data;
+-	if (!acpi_pdata)
+-		return -ENOENT;
+-
+-	while (acpi_pdata->hid) {
+-		if (!strcmp(acpi_device_hid(adev), acpi_pdata->hid)) {
+-			/*
+-			 * Remove previously installed properties if we
+-			 * are probing this device not for the very first
+-			 * time.
+-			 */
+-			device_remove_properties(&client->dev);
+-
+-			/*
+-			 * Now install the platform-specific properties
+-			 * that are missing from ACPI.
+-			 */
+-			device_add_properties(&client->dev, acpi_pdata->props);
+-			break;
+-		}
+-
+-		acpi_pdata++;
+-	}
+-
+-	return 0;
+-}
+-#else
+-static int mxt_prepare_acpi_properties(struct i2c_client *client)
+-{
+-	return -ENOENT;
+-}
+-#endif
+-
+ static const struct dmi_system_id chromebook_T9_suspend_dmi[] = {
+ 	{
+ 		.matches = {
+@@ -3155,6 +3019,18 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	struct mxt_data *data;
+ 	int error;
+ 
++	/*
++	 * Ignore devices that do not have device properties attached to
++	 * them, as we need help determining whether we are dealing with
++	 * touch screen or touchpad.
++	 *
++	 * So far on x86 the only users of Atmel touch controllers are
++	 * Chromebooks, and chromeos_laptop driver will ensure that
++	 * necessary properties are provided (if firmware does not do that).
++	 */
++	if (!device_property_present(&client->dev, "compatible"))
++		return -ENXIO;
++
+ 	/*
+ 	 * Ignore ACPI devices representing bootloader mode.
+ 	 *
+@@ -3186,10 +3062,6 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	data->suspend_mode = dmi_check_system(chromebook_T9_suspend_dmi) ?
+ 		MXT_SUSPEND_T9_CTRL : MXT_SUSPEND_DEEP_SLEEP;
+ 
+-	error = mxt_prepare_acpi_properties(client);
+-	if (error && error != -ENOENT)
+-		return error;
+-
+ 	error = mxt_parse_device_properties(data);
+ 	if (error)
+ 		return error;
 -- 
-Kees Cook
-Pixel Security
+2.17.0.441.gb46fe60e1d-goog
