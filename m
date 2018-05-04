@@ -1,128 +1,175 @@
-Return-Path: <jhovold@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525683962; cv=none;
+Return-Path: <sebastian.reichel@collabora.co.uk>
+X-Google-Smtp-Source: AB8JxZqyH9HlR2p555Bs2LQ2UeGuNbFaSJKaJ/f4VjMJgxQZnQC5mL2WW1nzTzOd3WvgKwzZkSxP
+ARC-Seal: i=1; a=rsa-sha256; t=1525440465; cv=none;
         d=google.com; s=arc-20160816;
-        b=L57c2f/tovUrCM9zf/5CRRuSWlu5Iw9AG2xi4OpjKZjK2ynPPvqo5fFcgd66yOV39W
-         kAERUWqR4JO263YiZe8zYgkFFPDkqQ5LLHs2j1gdopz1wgTrHQJyGP8cBWNis2s0awcj
-         uzzMmOm5cxwC+D8KNvxgGXiATnPLjqLuIN5joJT2hMUXOqXq7dFAuIN00041l4tT1Zy1
-         7JjqiuJfsxl8OdxpBO4EPeR4jRNlD2mrUT1XkT9ql6oXl8J20fgdeQw8ahO3q8unfYP0
-         wCJ5Vclm87qopHYQtfMhnO/5dEmso9SgtfpP9D65lFsHrefBoacYXuFV53bljjt1xtCv
-         QRYw==
+        b=ECYB3bdPlU4f1bi5vzu22/ovHxmRcZ/EiT6wUATJ2yA56ZQSsJZ/uCNARy+UfTq+nN
+         irSckNyu1fwoHaWTHDtiLiZz2H6VV7Ho1LY/FT+hhtOvK8qOG0gxZmS+Q1UGfwxNCZZ0
+         sZ/v0UgDqboTp1CYEAPxCP+ShG+tDOKqS3envFZRjsvBg29TUl3hLiFUpJZ4GWny/+uI
+         wKRzxXEnSz0IOupaRPvXbGgWjSV8HiAaL0qFTHysm1FaqxQTTJh7am7iuvnWwHs1KJLu
+         9FdISWe8r4B9GunGLbd43H4N7tRH6dVIif9ZVf6RcPwwfrmp+jYe4fsfeDioUHx0hti7
+         yaLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=IPce/gs12OpBxT8yk+7c3ZU1c7Xi0hLOJJNt6SEOlOk=;
-        b=g2sa+dYZgS5uCSek84Ix7tAkPR0J9lcKaoJZyIgyslYG2wOOmYXiMyQykve8Q8v+HX
-         uQfs62Bpa6/X6tY145T9vIQp91uQDr3lxGjg/H2sdSe0LBzKzNsGzdMITBSz9A6hBofM
-         jlVI/QiEDBYJMWbn544uOFv12lQmqZ4A0vJ6ZJT54L74v6h4KzZ7gowlnJck50RfJnbx
-         aMF7+p4Fog1LwfOitXOuZJyGWpPzvTudd07UhcrJsqYrVqjJ/hOeAHGbfb8Gq7LkVTsT
-         9RjH26QaTWc43lNH60hnu3VOaFfBV94K0KtE/ay0G7oCp4PSGEo7N88+acOF4iy8ZQQl
-         tcRg==
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=mrM/xJIN2da9c9jDkvzoG02hPI4giPjQjDYJ0pDtHH8=;
+        b=QP3Gb5KKOv9FEzsWaVjVPJ0vVbr3D/VpOMEh6FhDdxbMaQ6EFfN5cgkPHp7K3gsNEO
+         erkTEkIR+N70e8yJPYHmp+LG1ze2r4XBctm1+hHXBbqItNFcD/FlFz2DoD8RqIgDVS+C
+         Qa2jq5DkAiTHrD5K8obXi+e/JSg8ZXqySd14ohl+/pvZgtZ7vm945yTv4EofJ7LgQY+V
+         gjB+vnZEzlu7008dCRww0h1MYwDnSJ9qJRaE3TAFMT+amKUjWBL4Yp5q3JIZlih5+2OM
+         ulTpCCYgzrDYYtX66hdWOGLO78d8nBhqFOckoy/glAiAE1izX9A1AagCc2hZH5ScVPAS
+         tEVw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JinwYXWW;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 46.235.227.227 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=JinwYXWW;
-       spf=pass (google.com: domain of jhovold@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jhovold@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Google-Smtp-Source: AB8JxZrqrv1w/UQfynpoGU29gsRMQnHEqvQ/xQvgUzXsU1OwLejBHIo1cjc4T/REOiOUceQ7DSAX3w==
-Sender: Johan Hovold <jhovold@gmail.com>
-Date: Mon, 7 May 2018 11:06:00 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 46.235.227.227 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
+Date: Fri, 4 May 2018 15:27:41 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+To: Johan Hovold <johan@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Andreas Kemnade <andreas@kemnade.info>,
 	Arnd Bergmann <arnd@arndb.de>,
 	"H . Nikolaus Schaller" <hns@goldelico.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/7] dt-bindings: gnss: add u-blox binding
-Message-ID: <20180507090600.GP2285@localhost>
+Subject: Re: [PATCH 0/7] gnss: add new GNSS subsystem
+Message-ID: <20180504132741.brn5jqv5ufjhp7ky@earth.universe>
 References: <20180424163458.11947-1-johan@kernel.org>
- <20180424163458.11947-5-johan@kernel.org>
- <CAL_Jsq+mCp=geT8t_j+0fuTxAB7C9RYn6pESRpLc2GH273fM1Q@mail.gmail.com>
- <20180426091018.GU4615@localhost>
- <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com>
- <20180502081637.GE2285@localhost>
- <CAL_JsqLMtqS3X_2WiPQVoNovQAVTuXGH+XbN30DA5_moca3Kpw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="smpsuold57ovmvb7"
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqLMtqS3X_2WiPQVoNovQAVTuXGH+XbN30DA5_moca3Kpw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180424163458.11947-1-johan@kernel.org>
+User-Agent: NeoMutt/20180323
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598647064088300079?=
-X-GMAIL-MSGID: =?utf-8?q?1599795586858915817?=
+X-GMAIL-THRID: =?utf-8?q?1598647061282688193?=
+X-GMAIL-MSGID: =?utf-8?q?1599540260649175959?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 02, 2018 at 08:16:11AM -0500, Rob Herring wrote:
-> On Wed, May 2, 2018 at 3:16 AM, Johan Hovold <johan@kernel.org> wrote:
-> > On Tue, May 01, 2018 at 09:05:42AM -0500, Rob Herring wrote:
-> >> On Thu, Apr 26, 2018 at 4:10 AM, Johan Hovold <johan@kernel.org> wrote:
-> >> > On Wed, Apr 25, 2018 at 01:16:58PM -0500, Rob Herring wrote:
-> >> >> On Tue, Apr 24, 2018 at 11:34 AM, Johan Hovold <johan@kernel.org> wrote:
-> >> >> > Add binding for u-blox GNSS receivers.
 
-> >> >> > +Required Properties:
-> >> >> > +
-> >> >> > +- compatible   : Must be one of
-> >> >> > +
-> >> >> > +                       "u-blox,neo-8"
-> >> >> > +                       "u-blox,neo-m8"
-> >> >> > +
-> >> >> > +- vcc-supply   : Main voltage regulator (VCC)
-> >> >>
-> >> >> What about V_BCKP?
+--smpsuold57ovmvb7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > ...my point was that in case there's no backup battery, you don't want
-> > to enable vcc (via v_bckp) at probe (and instead have the device cold
-> > boot whenever it's used).
-> 
-> Wouldn't that result in very long acquisition times? I guess I was
-> thinking Vcc would be always on when running and V_bckp was just for
-> suspend.
+Hi Johan,
 
-Yes, the acquisition times would certainly be longer, but for a GNSS
-receiver which is rarely used that might still be preferred. And since
-I'm using runtime pm to manage the supply, this policy decision can be
-deferred to user space and controlled through the power/control
-attribute.
+On Tue, Apr 24, 2018 at 06:34:51PM +0200, Johan Hovold wrote:
+> This series adds a new subsystem for GNSS receivers (e.g. GPS
+> receivers).
+>=20
+> While GNSS receivers are typically accessed using a UART interface they
+> often also support other I/O interfaces such as I2C, SPI and USB, while
+> yet other devices use iomem or even some form of remote-processor
+> messaging (rpmsg).
+>    =20
+> The new GNSS subsystem abstracts the underlying interface and provides a
+> new "gnss" class type, which exposes a character-device interface (e.g.
+> /dev/gnss0) to user space. This allows GNSS receivers to have a
+> representation in the Linux device model, something which is important
+> not least for power management purposes and which also allows for easy
+> detection and (eventually) identification of GNSS devices.
+>=20
+> Note that the character-device interface provides raw access to whatever
+> protocol the receiver is (currently) using, such as NMEA 0183, UBX or
+> SiRF Binary. These protocols are expected to be continued to be handled
+> by user space for the time being, even if some hybrid solutions are also
+> conceivable (e.g. to have kernel drivers issue management commands).
+>
+> This will still allow for better platform integration by allowing GNSS
+> devices and their resources (e.g. regulators and enable-gpios) to be
+> described by firmware and managed by kernel drivers rather than
+> platform-specific scripts and services.
+>    =20
+> While the current interface is kept minimal, it could be extended using
+> IOCTLs, sysfs or uevents as needs and proper abstraction levels are
+> identified and determined (e.g. for device and feature identification).
+>=20
+> Another possible extension is to add generic 1PPS support.
+>=20
+> I decided to go with a custom character-device interface rather than
+> pretend that these abstract GNSS devices are still TTY devices (e.g.
+> /dev/ttyGNSS0). Obviously, modifying line settings or reading modem
+> control signals does not make any sense for a device using, say, a
+> USB (not USB-serial) or iomem interface. This also means, however, that
+> user space would no longer be able to set the line speed to match a new
+> port configuration that can be set using the various GNSS protocols when
+> the underlying interface is indeed a UART; instead this would need to be
+> taken care of by the driver.
+>=20
+> Also note that writes are always synchronous instead of requiring user
+> space to call tcdrain() after every command.
+>=20
+> This all seems to work well-enough (e.g. with gpsd), but please let me
+> know if I've overlooked something which would indeed require a TTY
+> interface instead.
+>=20
+> As proof-of-concept I have implemented drivers for receivers based on
+> two common GNSS chipsets (SiRFstar and u-blox), but due to lack of
+> hardware these have so far only been tested using mockup devices and a
+> USB-serial-based GPS device (using out-of-tree code). [ Let me know if
+> you've got any evalutation kits to spare. ]
+>=20
+> Finally, note that documentation (including kerneldoc) remains to be
+> written, but hopefully this will not hinder review given that the
+> current interfaces are fairly self-describing.
 
-> > Hence, the driver would need to check if the v_bckp-supply is identical
-> > to vcc and not enable the former at probe in that case (i.e. similar to
-> > if no v_bckp had been specified and we considered it optional).
-> 
-> I guess if that's the intended operation, then making it optional is fine.
+Great work. I like your design decisions. I have quite a few devices
+with have non-serial based GPS peripherals using binary protocols (*).
+As far as I can see it should be possible to add support for those.
 
-Ok.
+I have one concern, though. While providing raw data by
+default is fine generally, it is a problem with device
+auto-discovery. I think there should be some IOCTL from
+the start, that can be used to inform userspace about
+the raw protocol being used (i.e. "NMEA"). I fear, that
+userspace may start to just assume raw =3D NMEA without
+having this (especially since all initial drivers provide
+NMEA).
 
-> >> > Take a look at the sirf binding; vendors use different names for their
-> >> > timepulse pins and in that case I added the actual pin names (1PPS, TM)
-> >> > in parenthesis after the description.
-> >> >
-> >> > Note that I mentioned "timepulse-gpios" in the generic binding with the
-> >> > intent of trying to enforce a generic name for pins with such a
-> >> > function (similarly for "enable-gpios", which I guess is already
-> >> > established).
-> >>
-> >> Yes, I think that's good.
-> >>
-> >> Though with the enable-gpios I was debating the name for sirfstar a
-> >> bit because it isn't the normal drive it active to enable, but rather
-> >> a pulse to enable or disable.
-> >
-> > I had some concerns along those lines as well, and if you agree I'll
-> > change the property name to on_off-gpios (or onoff-gpios) which matches
-> > the vendor data sheets for this pin, and which I think would be better.
-> 
-> Okay, just add a vendor prefix. And note that using '_' is discouraged.
+(*) I have those in mind:
 
-Ok, I'll name it "sirf,onoff-gpios".
+Nokia N900: The phone has GPS integrated into the modem and uses
+ISI encapsulated data. The protocol has been reverse engineered
+and it should be possible to write a kernel driver for handling
+the GPS packets and dumping the raw data to /dev/gnss0. I don't
+think this is particularly useful without a non-raw interface,
+though. It would still require a custom userspace implementation.
 
-Thanks,
-Johan
+Nokia N950/N9: Those phones have an I2C connected BCM4751, which
+uses (proprietary, non-reverse-engineered) MEIF binary protocol.
+Nokia's kernel had a driver, which provides a similar userspace
+interface (char device with raw data from chip).
+
+Droid 4: GPS is similar to N900, but different protocol and QMI
+encapsulated. This one also has known protocol with userspace
+implementation. I did not yet have a detailed look, if its possible
+to (un)wrap this in the kernel.
+
+-- Sebastian
+
+--smpsuold57ovmvb7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrsX8oACgkQ2O7X88g7
++prCNw//YWja9CZJXLW6bo7ByVpordi+pb9a0N0aftm11G2BqL9jQBSgzjeFktqb
+1k8b6qlT4Qb+ScYd/Nqv3l4Z1nEbqN3O26LeLeiTPQtQbApdFS/E7JEuzktRNTTg
+Nl/QaBHB5TIVZ8VxeaxcjazhzmknsrRl8xQK1WfXZNDry7w7M00V7/F347IVAFl1
+l28ryF4HkdVZyeerfmzYX1Oa741ybc+kmI1F75vvqJNtgptCeIsC9VMDvTJv8zqH
+jM+tEBINsEFiB1ZmYXAtgDc0Idbirqq6fPbr+qKNCky3HqXGxMoRQw27B9e/aju+
+uzMC2vToFp6CanDtsJbKFKXZ56GI9g18SuOF9yi/OJzt+O77DzmumFvuUEnBP/U7
+5aWZ7GEd/4p83Jgx4IcpgQA9kObvafjdHx7qGwrKm+Dua7mPx/GA20QkRYRnkl+W
+H2KltC1FmNrVDUAOKa5MhiT1nedk2JtbpM3s1GNR408iPdDCmsnmb3wsVE8FnYqm
+cJBwSu26zuoCD6CAzSOcH42ds1tF8SRGrROqA8z9e7gIagtBgcFsC2IM/jkNr1Jb
+xex4+A5h+ACct2oCRAuZjo7hQ1dQqRvoPV+V+lq+FRJ/yFyH4LlGYdw2dJeZaQFN
+lN8CzgP6SszwEIeoJu3lgHOJLSjhN8DCnXmP6JWE3l98T/t4nIo=
+=Pd53
+-----END PGP SIGNATURE-----
+
+--smpsuold57ovmvb7--
