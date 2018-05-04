@@ -1,288 +1,248 @@
-Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZqn+l+t1a8/n3tVcf8u882fRyeEmYC9t8kCkgcxP4b2njToQonQX4nUMSf8sqtVXNS8pLVB
-ARC-Seal: i=1; a=rsa-sha256; t=1525803172; cv=none;
+Return-Path: <ruslan.bilovol@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525395453; cv=none;
         d=google.com; s=arc-20160816;
-        b=mh9jmouVusJ2Ts1b4O3so1Bvz37IVHeYmR33aCKCVZPSUUMjYB2Q5Y2rhfX7wsVvlf
-         jg6A6oXb59WFXETcDkISegIJoWrYSGr+IuPkmf2HpDTczuw2q5w3DaAJRTz5wU/wgxvW
-         Og7+QKCQHZ91VQMxVKiMeRbM2IIyG9/8m30M7iv86OcJZR/jsJiLw8sp7IDcgK4Oc/H7
-         5kfjmvtZrJVFohz1tauUvaCX3bILcjCHOkDesKkbn8QWqI+Qy/Kkoh0gjnqQDwBfsK36
-         9MsmhPkIAwX7PQ+HKWdsNP6QdMkqa203e/plPmfY8zCyMjIzqJrav32XmLIF3s9PQoY6
-         kcVQ==
+        b=f0U79blMneSlrO8503iynzsfhR++GtRpnADVzOP/paolEVWgK81OFMDtNgkuxFAET0
+         cb2uI0sKzV0nIjuvi5KdRF4bUdStV4iCcv+Biq5G92v1FDFwDK/Y9aX0A5tMUYS+OUPA
+         r4+JGTvY5Fbz9FiY395K8P7aQUUXfAOWJXmmDv576R6gm4mB701L3c3uiEqAD72AjtaR
+         FqcNZMQufT/i2F4X/Oren1ZD0SVQURXaSFs0fT15mdT4iOoxeyVxyC4zu5eCCj4EQj7r
+         xFmff7gVi5bjUMlCKA25RI/mXzDUdPnxCkDbPnu4rrDG0kOwd5cboTSpGvo07cxVJuhH
+         NeNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=NF6jNOK49ePa7XV1+bVhi4uJZJ0LK8mKbAkKkMtgBrM=;
-        b=zR3Qmcp+4Si5KSFyn7gqLk+jfq2epk2L7iwEKxDB1xH7vJ9l/dK1CwZ9R4KBX82g5L
-         foMm1N5H5TDZGuwDfmCwr2TiCxvbqD9vN0l91W3IFAXAU+9yAnHb7aJmkUs3hSHFO2ZR
-         X+SCMEkpciEaDFeP8X3tZ2B0/hNhm3C8KMT9JBgESaBwgxTppd1Qpno4ncQ/B5L27HpI
-         eELE+j7FVArSa76ovL7jHEzfOi4SaHNTErUh4yQ/y7O67jKsTquM+TGxuoaweeblsqo1
-         x6Sq/fzzes7hkZPC8VqCD+l4CNvMemGrQLGYa8q/2uvOeDXvf5SsMCgwtEjlr6jZ4yKf
-         SNQQ==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=R5sPrsRm/TGTYd4TGzlwzsEnYN3fD56LugTxk6Lm77E=;
+        b=tYMVkvLSy6OSwBEMs3KMH30iH6xWApG9m4vsWRqX/Gzu4NJS8cbydzht1gg5eWFMVz
+         M8TyuAOctIgCezE1Egc7siUUH3Adsco/bSd4rXC8EOUHufOEnGyrx0PTbxZTHYPRb1PD
+         HtPUL+7nc5eGbJYHBsWJ0rPacq41+OD04C6Qjt1gWGF28oeR9wW+z7CkL2Gm37WO9d39
+         GbA12YacB3T7qJ/mqiExYyBXKsxsz/lV3P9C78Aj+R9e4OjiHAk03WjGz3EnG5FQDp64
+         caSM5JkZfJez+T4Jo+N/BF4LCLvfT4ZgV79SfBt5tA64F89cXXdcl4CZHamjle/9UgxY
+         +mYg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=BefW/h0m;
-       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p4ybVrxu;
+       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=BefW/h0m;
-       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	keescook@chromium.org,
-	josh@joshtriplett.org,
-	maco@android.com,
-	andy.gross@linaro.org,
-	david.brown@linaro.org,
-	bjorn.andersson@linaro.org,
-	teg@jklm.no,
-	wagi@monom.org,
-	hdegoede@redhat.com,
-	andresx7@gmail.com,
-	zohar@linux.vnet.ibm.com,
-	kubakici@wp.pl,
-	shuah@kernel.org,
-	mfuzzey@parkeon.com,
-	dhowells@redhat.com,
-	pali.rohar@gmail.com,
-	tiwai@suse.de,
-	kvalo@codeaurora.org,
-	arend.vanspriel@broadcom.com,
-	zajec5@gmail.com,
-	nbroeking@me.com,
-	markivx@codeaurora.org,
-	broonie@kernel.org,
-	dmitry.torokhov@gmail.com,
-	dwmw2@infradead.org,
-	torvalds@linux-foundation.org,
-	Abhay_Salunke@dell.com,
-	jewalt@lgsinnovations.com,
-	oneukum@suse.com,
-	cantabile.desu@gmail.com,
-	ast@fb.com,
-	hare@suse.com,
-	jejb@linux.vnet.ibm.com,
-	martin.petersen@oracle.com,
-	khc@pm.waw.pl,
-	davem@davemloft.net,
-	arve@android.com,
-	tkjos@android.com,
-	corbet@lwn.net,
-	mchehab+samsung@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	netdev@vger.kernel.org,
-	"Luis R . Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v6 01/13] firmware: wrap FW_OPT_* into an enum
-Date: Tue,  8 May 2018 11:12:35 -0700
-Message-Id: <20180508181247.19431-2-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180508181247.19431-1-mcgrof@kernel.org>
-References: <20180508181247.19431-1-mcgrof@kernel.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=p4ybVrxu;
+       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZpN2JVLCorqCG8R9olX9cpLSNrGAX7x7Z69cbYwQoVdDKDESj1aYpxu2ieBcw8APapZRZVw9MjnUkScH6SXFRg=
+MIME-Version: 1.0
+In-Reply-To: <20180427170649.27334-1-jorge.sanjuan@codethink.co.uk>
+References: <20180424172445.31928-2-jorge.sanjuan@codethink.co.uk> <20180427170649.27334-1-jorge.sanjuan@codethink.co.uk>
+From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+Date: Fri, 4 May 2018 03:57:32 +0300
+Message-ID: <CAB=otbRKf57D52VRZgE=4XCLYaT9xE7eNsyLrBqmaghgB7LCfQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] ALSA: usb-audio: UAC3. Add support for mixer unit.
+To: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Cc: Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599920587366661292?=
-X-GMAIL-MSGID: =?utf-8?q?1599920587366661292?=
+X-GMAIL-THRID: =?utf-8?q?1598285487518505397?=
+X-GMAIL-MSGID: =?utf-8?q?1599493062849738455?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Andres Rodriguez <andresx7@gmail.com>
+On Fri, Apr 27, 2018 at 8:06 PM, Jorge Sanjuan
+<jorge.sanjuan@codethink.co.uk> wrote:
+> This adds support for the MIXER UNIT in UAC3. All the information
+> is obtained from the (HIGH CAPABILITY) Cluster's header. We don't
+> read the rest of the logical cluster to obtain the channel config
+> as that wont make any difference in the current mixer behaviour.
+>
+> The name of the mixer unit is not yet requested as there is not
+> support for the UAC3 Class Specific String requests.
+>
+> Tested in an UAC3 device working as a HEADSET with a basic mixer
+> unit (same as the one in the BADD spec) with no controls.
 
-This should let us associate enum kdoc to these values.
-While at it, kdocify the fw_opt.
+So, after deeper looking into the code and after testing this patch,
+in your usecase (mixer with no controls) you'll never execute
+build_mixer_unit_ctl(), correct? So did you try to just fix issues with
+incorrect parsing of mixer unit descriptor?
 
-Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
-Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
-[mcgrof: coding style fixes, merge kdoc with enum move]
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- drivers/base/firmware_loader/fallback.c | 12 ++++----
- drivers/base/firmware_loader/fallback.h |  6 ++--
- drivers/base/firmware_loader/firmware.h | 37 +++++++++++++++++++------
- drivers/base/firmware_loader/main.c     |  6 ++--
- 4 files changed, 42 insertions(+), 19 deletions(-)
+>
+> Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+> ---
+>  include/uapi/linux/usb/audio.h | 19 +++++++--
+>  sound/usb/mixer.c              | 88 ++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 97 insertions(+), 10 deletions(-)
+>
+> diff --git a/include/uapi/linux/usb/audio.h b/include/uapi/linux/usb/audio.h
+> index 3a78e7145689..13d98e6e0db1 100644
+> --- a/include/uapi/linux/usb/audio.h
+> +++ b/include/uapi/linux/usb/audio.h
+> @@ -285,9 +285,22 @@ static inline __u8 uac_mixer_unit_iChannelNames(struct uac_mixer_unit_descriptor
+>  static inline __u8 *uac_mixer_unit_bmControls(struct uac_mixer_unit_descriptor *desc,
+>                                               int protocol)
+>  {
+> -       return (protocol == UAC_VERSION_1) ?
+> -               &desc->baSourceID[desc->bNrInPins + 4] :
+> -               &desc->baSourceID[desc->bNrInPins + 6];
+> +       switch (protocol) {
+> +       case UAC_VERSION_1:
+> +               return &desc->baSourceID[desc->bNrInPins + 4];
+> +       case UAC_VERSION_2:
+> +               return &desc->baSourceID[desc->bNrInPins + 6];
+> +       case UAC_VERSION_3:
+> +               return &desc->baSourceID[desc->bNrInPins + 2];
+> +       default:
+> +               return NULL;
+> +       }
+> +}
+> +
+> +static inline __u16 uac3_mixer_unit_wClusterDescrID(struct uac_mixer_unit_descriptor *desc)
+> +{
+> +       return (desc->baSourceID[desc->bNrInPins + 1] << 8) |
+> +               desc->baSourceID[desc->bNrInPins];
+>  }
+>
+>  static inline __u8 uac_mixer_unit_iMixer(struct uac_mixer_unit_descriptor *desc)
+> diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+> index 301ad61ed426..3503f4840ec3 100644
+> --- a/sound/usb/mixer.c
+> +++ b/sound/usb/mixer.c
+> @@ -719,6 +719,66 @@ static int get_term_name(struct mixer_build *state, struct usb_audio_term *iterm
+>  }
+>
+>  /*
+> + * Get logical cluster information for UAC3 devices.
+> + */
+> +static int get_cluster_channels_v3(struct mixer_build *state, unsigned int cluster_id)
+> +{
+> +       struct uac3_cluster_header_descriptor c_header;
+> +       int err;
+> +
+> +       err = snd_usb_ctl_msg(state->chip->dev,
+> +                       usb_rcvctrlpipe(state->chip->dev, 0),
+> +                       UAC3_CS_REQ_HIGH_CAPABILITY_DESCRIPTOR,
+> +                       USB_RECIP_INTERFACE | USB_TYPE_CLASS | USB_DIR_IN,
+> +                       cluster_id,
+> +                       snd_usb_ctrl_intf(state->chip),
+> +                       &c_header, sizeof(c_header));
+> +       if (err < 0)
+> +               goto error;
+> +       if (err != sizeof(c_header)) {
+> +               err = -EIO;
+> +               goto error;
+> +       }
+> +
+> +       return c_header.bNrChannels;
+> +
+> +error:
+> +       usb_audio_err(state->chip, "cannot request logical cluster ID: %d (err: %d)\n", cluster_id, err);
+> +       return err;
+> +}
+> +
+> +/*
+> + * Get number of channels for a Mixer Unit.
+> + */
+> +static int uac_mixer_unit_get_channels(struct mixer_build *state,
+> +                                      struct uac_mixer_unit_descriptor *desc)
+> +{
+> +       int mu_channels;
+> +
+> +       if (desc->bLength < 11)
+> +               return -EINVAL;
+> +       if (!desc->bNrInPins)
+> +               return -EINVAL;
+> +
+> +       switch (state->mixer->protocol) {
+> +       case UAC_VERSION_1:
+> +       case UAC_VERSION_2:
+> +       default:
+> +               mu_channels = uac_mixer_unit_bNrChannels(desc);
+> +               break;
+> +       case UAC_VERSION_3:
+> +               mu_channels = get_cluster_channels_v3(state,
+> +                               uac3_mixer_unit_wClusterDescrID(desc));
+> +               break;
+> +       }
+> +
+> +       if (!mu_channels)
+> +               return -EINVAL;
+> +
+> +       return mu_channels;
+> +}
+> +
+> +/*
+>   * parse the source unit recursively until it reaches to a terminal
+>   * or a branched unit.
+>   */
+> @@ -865,6 +925,18 @@ static int check_input_term(struct mixer_build *state, int id,
+>                                 term->name = le16_to_cpu(d->wClockSourceStr);
+>                                 return 0;
+>                         }
+> +                       case UAC3_MIXER_UNIT: {
+> +                               struct uac_mixer_unit_descriptor *d = p1;
+> +
+> +                               err = uac_mixer_unit_get_channels(state, d);
+> +                               if (err < 0)
+> +                                       return err;
+> +
+> +                               term->channels = err;
+> +                               term->type = d->bDescriptorSubtype << 16; /* virtual type */
+> +
+> +                               return 0;
+> +                       }
+>                         default:
+>                                 return -ENODEV;
+>                         }
+> @@ -1797,11 +1869,10 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
+>   */
+>  static void build_mixer_unit_ctl(struct mixer_build *state,
+>                                  struct uac_mixer_unit_descriptor *desc,
+> -                                int in_pin, int in_ch, int unitid,
+> -                                struct usb_audio_term *iterm)
+> +                                int in_pin, int in_ch, int num_outs,
+> +                                int unitid, struct usb_audio_term *iterm)
+>  {
+>         struct usb_mixer_elem_info *cval;
+> -       unsigned int num_outs = uac_mixer_unit_bNrChannels(desc);
+>         unsigned int i, len;
+>         struct snd_kcontrol *kctl;
+>         const struct usbmix_name_map *map;
+> @@ -1878,14 +1949,17 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
+>         int input_pins, num_ins, num_outs;
+>         int pin, ich, err;
+>
+> -       if (desc->bLength < 11 || !(input_pins = desc->bNrInPins) ||
+> -           !(num_outs = uac_mixer_unit_bNrChannels(desc))) {
+> +       err = uac_mixer_unit_get_channels(state, desc);
+> +       if (err < 0) {
+>                 usb_audio_err(state->chip,
+>                               "invalid MIXER UNIT descriptor %d\n",
+>                               unitid);
+> -               return -EINVAL;
+> +               return err;
+>         }
+>
+> +       num_outs = err;
+> +       input_pins = desc->bNrInPins;
+> +
+>         num_ins = 0;
+>         ich = 0;
+>         for (pin = 0; pin < input_pins; pin++) {
+> @@ -1912,7 +1986,7 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
+>                                 }
+>                         }
+>                         if (ich_has_controls)
+> -                               build_mixer_unit_ctl(state, desc, pin, ich,
+> +                               build_mixer_unit_ctl(state, desc, pin, ich, num_outs,
+>                                                      unitid, &iterm);
 
-diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 358354148dec..b57a7b3b4122 100644
---- a/drivers/base/firmware_loader/fallback.c
-+++ b/drivers/base/firmware_loader/fallback.c
-@@ -512,7 +512,7 @@ static const struct attribute_group *fw_dev_attr_groups[] = {
- 
- static struct fw_sysfs *
- fw_create_instance(struct firmware *firmware, const char *fw_name,
--		   struct device *device, unsigned int opt_flags)
-+		   struct device *device, enum fw_opt opt_flags)
- {
- 	struct fw_sysfs *fw_sysfs;
- 	struct device *f_dev;
-@@ -545,7 +545,7 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
-  * In charge of constructing a sysfs fallback interface for firmware loading.
-  **/
- static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
--				  unsigned int opt_flags, long timeout)
-+				  enum fw_opt opt_flags, long timeout)
- {
- 	int retval = 0;
- 	struct device *f_dev = &fw_sysfs->dev;
-@@ -599,7 +599,7 @@ static int fw_load_sysfs_fallback(struct fw_sysfs *fw_sysfs,
- 
- static int fw_load_from_user_helper(struct firmware *firmware,
- 				    const char *name, struct device *device,
--				    unsigned int opt_flags)
-+				    enum fw_opt opt_flags)
- {
- 	struct fw_sysfs *fw_sysfs;
- 	long timeout;
-@@ -640,7 +640,7 @@ static int fw_load_from_user_helper(struct firmware *firmware,
- 	return ret;
- }
- 
--static bool fw_force_sysfs_fallback(unsigned int opt_flags)
-+static bool fw_force_sysfs_fallback(enum fw_opt opt_flags)
- {
- 	if (fw_fallback_config.force_sysfs_fallback)
- 		return true;
-@@ -649,7 +649,7 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
- 	return true;
- }
- 
--static bool fw_run_sysfs_fallback(unsigned int opt_flags)
-+static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
- {
- 	if (fw_fallback_config.ignore_sysfs_fallback) {
- 		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
-@@ -664,7 +664,7 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
- 
- int fw_sysfs_fallback(struct firmware *fw, const char *name,
- 		      struct device *device,
--		      unsigned int opt_flags,
-+		      enum fw_opt opt_flags,
- 		      int ret)
- {
- 	if (!fw_run_sysfs_fallback(opt_flags))
-diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
-index f8255670a663..a3b73a09db6c 100644
---- a/drivers/base/firmware_loader/fallback.h
-+++ b/drivers/base/firmware_loader/fallback.h
-@@ -5,6 +5,8 @@
- #include <linux/firmware.h>
- #include <linux/device.h>
- 
-+#include "firmware.h"
-+
- /**
-  * struct firmware_fallback_config - firmware fallback configuration settings
-  *
-@@ -31,7 +33,7 @@ struct firmware_fallback_config {
- #ifdef CONFIG_FW_LOADER_USER_HELPER
- int fw_sysfs_fallback(struct firmware *fw, const char *name,
- 		      struct device *device,
--		      unsigned int opt_flags,
-+		      enum fw_opt opt_flags,
- 		      int ret);
- void kill_pending_fw_fallback_reqs(bool only_kill_custom);
- 
-@@ -43,7 +45,7 @@ void unregister_sysfs_loader(void);
- #else /* CONFIG_FW_LOADER_USER_HELPER */
- static inline int fw_sysfs_fallback(struct firmware *fw, const char *name,
- 				    struct device *device,
--				    unsigned int opt_flags,
-+				    enum fw_opt opt_flags,
- 				    int ret)
- {
- 	/* Keep carrying over the same error */
-diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-index 64acbb1a392c..4f433b447367 100644
---- a/drivers/base/firmware_loader/firmware.h
-+++ b/drivers/base/firmware_loader/firmware.h
-@@ -2,6 +2,7 @@
- #ifndef __FIRMWARE_LOADER_H
- #define __FIRMWARE_LOADER_H
- 
-+#include <linux/bitops.h>
- #include <linux/firmware.h>
- #include <linux/types.h>
- #include <linux/kref.h>
-@@ -10,13 +11,33 @@
- 
- #include <generated/utsrelease.h>
- 
--/* firmware behavior options */
--#define FW_OPT_UEVENT			(1U << 0)
--#define FW_OPT_NOWAIT			(1U << 1)
--#define FW_OPT_USERHELPER		(1U << 2)
--#define FW_OPT_NO_WARN			(1U << 3)
--#define FW_OPT_NOCACHE			(1U << 4)
--#define FW_OPT_NOFALLBACK		(1U << 5)
-+/**
-+ * enum fw_opt - options to control firmware loading behaviour
-+ *
-+ * @FW_OPT_UEVENT: Enables the fallback mechanism to send a kobject uevent
-+ *	when the firmware is not found. Userspace is in charge to load the
-+ *	firmware using the sysfs loading facility.
-+ * @FW_OPT_NOWAIT: Used to describe the firmware request is asynchronous.
-+ * @FW_OPT_USERHELPER: Enable the fallback mechanism, in case the direct
-+ *	filesystem lookup fails at finding the firmware.  For details refer to
-+ *	fw_sysfs_fallback().
-+ * @FW_OPT_NO_WARN: Quiet, avoid printing warning messages.
-+ * @FW_OPT_NOCACHE: Disables firmware caching. Firmware caching is used to
-+ *	cache the firmware upon suspend, so that upon resume races against the
-+ *	firmware file lookup on storage is avoided. Used for calls where the
-+ *	file may be too big, or where the driver takes charge of its own
-+ *	firmware caching mechanism.
-+ * @FW_OPT_NOFALLBACK: Disable the fallback mechanism. Takes precedence over
-+ *	&FW_OPT_UEVENT and &FW_OPT_USERHELPER.
-+ */
-+enum fw_opt {
-+	FW_OPT_UEVENT =         BIT(0),
-+	FW_OPT_NOWAIT =         BIT(1),
-+	FW_OPT_USERHELPER =     BIT(2),
-+	FW_OPT_NO_WARN =        BIT(3),
-+	FW_OPT_NOCACHE =        BIT(4),
-+	FW_OPT_NOFALLBACK =     BIT(5),
-+};
- 
- enum fw_status {
- 	FW_STATUS_UNKNOWN,
-@@ -110,6 +131,6 @@ static inline void fw_state_done(struct fw_priv *fw_priv)
- }
- 
- int assign_fw(struct firmware *fw, struct device *device,
--	      unsigned int opt_flags);
-+	      enum fw_opt opt_flags);
- 
- #endif /* __FIRMWARE_LOADER_H */
-diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index eb34089e4299..9919f0e6a7cc 100644
---- a/drivers/base/firmware_loader/main.c
-+++ b/drivers/base/firmware_loader/main.c
-@@ -443,7 +443,7 @@ static int fw_add_devm_name(struct device *dev, const char *name)
- #endif
- 
- int assign_fw(struct firmware *fw, struct device *device,
--	      unsigned int opt_flags)
-+	      enum fw_opt opt_flags)
- {
- 	struct fw_priv *fw_priv = fw->priv;
- 	int ret;
-@@ -558,7 +558,7 @@ static void fw_abort_batch_reqs(struct firmware *fw)
- static int
- _request_firmware(const struct firmware **firmware_p, const char *name,
- 		  struct device *device, void *buf, size_t size,
--		  unsigned int opt_flags)
-+		  enum fw_opt opt_flags)
- {
- 	struct firmware *fw = NULL;
- 	int ret;
-@@ -734,7 +734,7 @@ struct firmware_work {
- 	struct device *device;
- 	void *context;
- 	void (*cont)(const struct firmware *fw, void *context);
--	unsigned int opt_flags;
-+	enum fw_opt opt_flags;
- };
- 
- static void request_firmware_work_func(struct work_struct *work)
--- 
-2.17.0
+So with current sources we will never reach this place. In your
+usecase (mixer with no
+controls) it obviously won't go inside.
+However, I created a mixer with controls but still
+build_mixer_unit_ctl() isn't executed.
+This is because UAC3 input terminal parsing always returns 0 channels, this is
+what still needs to be implemented (see comment "REVISIT: UAC3 IT doesn't
+have channels/cfg" in check_input_term)
+
+Beside of that, other part of this patch seems to work as expected, at least
+uac_mixer_unit_get_channels() gives correct results - I checked it for
+two-channels config, that is different comparing to BADD.
+
+Thanks,
+Ruslan
