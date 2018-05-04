@@ -1,125 +1,132 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AB8JxZrjqp2nP+FTG5ZH1Zalh7pteJy81dfs0bZeNnOTVg/4ITEkuxPyMedtgJMIDJMYdgefd7O8
-ARC-Seal: i=1; a=rsa-sha256; t=1526178462; cv=none;
-        d=google.com; s=arc-20160816;
-        b=DtdhAt3Oua1jE8ASfZmaaCwCgX0zLEK4xcahmgRI2XDZ3pq62fjXtVRiRFW/UIW9mQ
-         WODHpH7/odcJSyjhd1ZIv0UcYRhWVAWDEegEBG5LatR53DMSbU0yeQqqV3AI1jV5VpSJ
-         07TKlLIbOBBYDs28losdr/aQWPgFUM82dYmv+5m1DDNSmoE/BLKq0FT8mWNR/pliutAN
-         +nrq/2LoNpRfUI3rKvbHsCRqcGy7dN41yYjSEpoSxFrkIvWpU0ocjgqdyad2ecyqd+zv
-         AvrjDqUEVVCP1L0z/4jWzeZXaQX9KcZlEDLhzFS3ZbRnQ5zxtGWzkerI7XuiU/bqPaPl
-         pz4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=vXXBz2gsuT9hWGYv2PO0qD90LgduhLaMv7O5zOToJPA=;
-        b=PGoWlQUM8+rM+83ACP8mSqJsWQ5SKPK2fyeqY/zfMV5nQwdcGokfTYuPXnuIL1BM3S
-         CXX7ZMJ8TTgHtfMX4kkkwjXGrYIyJXCAruAip5JsphoSgVNu3wiF2tJt1q1nIrhCUjLq
-         aSuKwHTwOpuMNWeKznMYbsIG4xgKSUIUBqw4Wcgasxh0Cib7ecL8VGvTi7imjyCTCIRT
-         NWds/zTNJ44sengx/OQxp0i/tfiRxuKtOusg1W1aqZVAQk3EGyugO5y0VfvCuH/jzsbs
-         8gryKCWWW98SSlhh6Bi3tk+PVtMphTKX9SeQpy786unuEeBtUAMjz1oimZesr3zN3Htl
-         ODzQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=NFyorH7r;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=NFyorH7r;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Sun, 13 May 2018 11:27:26 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	"Rafael J . Wysocki" <rjw@rjwysocki.net>,
-	Len Brown <len.brown@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Marek Vasut <marek.vasut+renesas@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH/RFC 0/2] regulator: bd9571mwv: Add support for toggle
- power switches
-Message-ID: <20180513022726.GI949@sirena.org.uk>
-References: <1521026785-26456-1-git-send-email-geert+renesas@glider.be>
- <CAMuHMdXyWs1v_D4EUd-H75Q3cpQv6yD2V_MptjJP7FjYhu5c3g@mail.gmail.com>
- <20180418140041.GD10061@sirena.org.uk>
- <20180419201356.GC25034@amd>
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3619796-1525407300-3-236362532932342014
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5, LANGUAGES en,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525407300; b=ZJuIwbWSR0CQjDHZE1GGhvCcYU/e4S+xpX7fwFAgF7s028OIQA
+    fsvpqD1s99fKHHKgB+y7qXq/7R1NeFlIJd7u2c4l38wHBRhEQ57f/J8l05SOVita
+    4E9UYd+MWzk6iP9GHJW5cqaG8C4odP6eCIwR1+7v19kHbkI0tSFHxCW9bJUy0J/8
+    Bk70E1RW3ohxnE8tLtkkwTeVUq3oUkDz/PWxnXTiPJABlWZ2RaU6qsdLW1ey/D3j
+    hu4mKD83KRqNReHHfzGOSc9lVOY8UmFLfS+z5qyMd6nALo3F2ey5pyZXKQU628Kn
+    8kL9jGq5yAOws+HzOlFxXTllLF2V8BnlzjRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1525407300; bh=JM8orJ32XmuvAuS0B2KEWhCuKSjiZL
+    53P9lbgcC0wXE=; b=gOpWynrdo+yg+63pm0lEu7dKNHlBRwsWUZDSyhLyBO20r7
+    pGobtyu4Zp6lJSKxOLhwA/5cr22S2Di4ew68B/0Z1VfodduonOY0ehkinHfJwbUP
+    loxG7rzdDwvICl6HLEbql67miu2OvHxiNwvNObei7jWezK3NPxPjloSqmJYNpXEh
+    NsXs6prOJEc9P4B1cYkmIjAEzORlJQw2fWRd+BzbfWC3KmzHP2hqimglwDMP/Msf
+    ldqIOhiugGUqQkZWaz+qYpjOVptVDDyFqbfIAKsFRS952pwsnSm56hKyOWyBLQGr
+    6wjEs5gSLzGo/Qjgw3t2K9+BCDIaQRRkWX/pVrww==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+    header.i=@kernel.org header.b=VLLiWuP3 x-bits=1024 x-keytype=rsa
+    x-algorithm=sha256 x-selector=default;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
+      header.i=@kernel.org header.b=VLLiWuP3 x-bits=1024 x-keytype=rsa
+      x-algorithm=sha256 x-selector=default;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfK7eA0aYLkoa28BQZIFgMRNpkbEi6Y2QHtU5AY2Qsw3yIcpN8JBcvXv54bPuTuYGHYb0nG4w1KLmrbrhmPfURmSXkRVC0OxG4b6XUn/s3Nyvv3DNqOZn
+    u6aH7j+dBPuvxIY5j/vY5s0oc8cyBGDRNr3cdNK1S2w9iC+oZPJ5g9qPjeSqAMz1rqWoM+IQnXNd0tb4o+9rTsci5wW4ZeSHJjuEQnV66lY3ybI7YorRP/3L
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=b97_WyIe7AKiTRb-nbkA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750753AbeEDEO4 (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 00:14:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750707AbeEDEO4 (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 4 May 2018 00:14:56 -0400
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Russell King <linux@armlinux.org.uk>
+Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
+        Jon Medhurst <tixy@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mhiramat@kernel.org, David Long <dave.long@linaro.org>,
+        stable@vger.kernel.org
+Subject: [BUGFIX PATCH v3 0/4] arm: kprobes: Fix to prohibit probing on unsafe functions
+Date: Fri,  4 May 2018 13:14:31 +0900
+Message-Id: <152540727123.29650.13679359124038587629.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2xeD/fx0+7k8I/QN"
-Content-Disposition: inline
-In-Reply-To: <20180419201356.GC25034@amd>
-X-Cookie: Falling rock.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1594912189945282587?=
-X-GMAIL-MSGID: =?utf-8?q?1600314108082321094?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi,
 
---2xeD/fx0+7k8I/QN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is the 3rd version of bugfix series for kprobes on arm.
+This series fixes 4 different issues which I found.
 
-On Thu, Apr 19, 2018 at 10:13:56PM +0200, Pavel Machek wrote:
-> On Wed 2018-04-18 15:00:41, Mark Brown wrote:
+ - Fix to use smp_processor_id() after disabling preemption.
+ - Prohibit probing on optimized_callback() for avoiding
+   recursive probe.
+ - Prohibit kprobes on do_undefinstr() by same reason.
+ - Prohibit kprobes on get_user() by same reason.
 
-> > Please don't send content free pings and please allow a reasonable time
-> > for review.  People get busy, go on holiday, attend conferences and so=
-=20
+>From v2, I included another 2 bugfixes (1/4 and 2/4)
+which are not merged yet, and added "Cc: stable@vger.kernel.org",
+since there are obvious bugs.
 
-> If I follow the logs right, there was one month before ping. That
-> seems pretty reasonable time.
+Thanks,
 
-Right, but the content free bit still applies (as does the bit about
-resending which is the main actionable bit for people).  The two go hand
-in hand so often that I just wrote the one thing for both.
+---
 
-> > Sending content free pings adds to the mail volume (if they are seen at
-> > all) which is often the problem and since they can't be reviewed
+Masami Hiramatsu (4):
+      arm: kprobes: Fix to use get_kprobe_ctlblk after irq-disabed
+      arm: kprobes: Prohibit probing on optimized_callback
+      arm: kprobes: Prohibit kprobes on do_undefinstr
+      arm: kprobes: Prohibit kprobes on get_user functions
 
-> Yep, and sending content free complains about pings also adds to the
-> main volume :-(.
 
-They're not content free.  They're telling people that if it looks like
-their patch has fallen through the cracks then they need to resend their
-patch and why, without that people (especially newer contributors) might
-not be clear about what to do.
+ arch/arm/include/asm/assembler.h  |   10 ++++++++++
+ arch/arm/kernel/traps.c           |    5 ++++-
+ arch/arm/lib/getuser.S            |   10 ++++++++++
+ arch/arm/probes/kprobes/opt-arm.c |    4 +++-
+ 4 files changed, 27 insertions(+), 2 deletions(-)
 
-> Anyway, last time I sent you a patch... you _had_ time to complain
-> that I'm pinging too often, but you apparently did not have time to
-> look at the patch. That patch would have been in time for v4.16-rc1
-> IIRC.
-
-If that's the tlv320dac33 patch you sent a followup in the middle of the
-thread with what you said was a current version or something but never
-actually sent that version as a regular patch submission.  You'd also
-managed to not have the ASoC on the front of the patch which pushes it
-to the bottom of the review queue, it won't turn up when I look in in my
-inbox for ASoC patches.
-
-Now, I for whatever reason didn't explicitly tell you I was expecting a
-resend so you didn't explicitly know that this was what was going on
-which is a good example of why letting people know what's going on is a
-good idea.
-
---2xeD/fx0+7k8I/QN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlr3oo0ACgkQJNaLcl1U
-h9CS8wf6ApsNWMYuWBEkqkstpUS9gBhwblIChDzGTN9pCR+q3NecEWlBqFCQpk7q
-LtjULLle6h9CJAh2+ECSLHkaLAVT5Gh1aTU6YcvGabU37dqUUMdLx7cCFetfSWX9
-XmRedqvm6O1KsSrr4zCg9jUNZakjRg1A7mw1+nvsQKHlxuecx5514I8L8n5A2Is9
-M8UDI+TtaDJMZzmQWoK8/2Z5lkI1krrDXAH5zLhpEmJaV7vwNI9kCFmP/E9Sxswg
-99nh4mdin2w5j0akKNCariNLv3FmaVAVbEMtp+cv8NnyaMvAgkjpfZMtRF1wB6T/
-A8DkJ+qqVEebHes1voGfo1JxwePDdg==
-=f9+n
------END PGP SIGNATURE-----
-
---2xeD/fx0+7k8I/QN--
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
