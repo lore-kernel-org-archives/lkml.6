@@ -1,51 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751591AbeEDQ0r (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 12:26:47 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:59016 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751423AbeEDQ0q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 12:26:46 -0400
-Date: Fri, 4 May 2018 17:26:40 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>, linux-mm@kvack.org,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org
-Subject: Re: Introduce atomic_dec_and_lock_irqsave()
-Message-ID: <20180504162640.GH30522@ZenIV.linux.org.uk>
-References: <20180504154533.8833-1-bigeasy@linutronix.de>
- <20180504155446.GP12217@hirez.programming.kicks-ass.net>
- <20180504160726.ikotgmd5fbix7b6b@linutronix.de>
- <20180504162102.GQ12217@hirez.programming.kicks-ass.net>
+        id S1751664AbeEDQ3k (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 12:29:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56462 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751454AbeEDQ3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 12:29:39 -0400
+Date: Fri, 4 May 2018 17:29:32 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, kishon@ti.com
+Cc: bhelgaas@google.com, nsekhar@ti.com, john@metanate.com,
+        shawn.lin@rock-chips.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pci: endpoint: Replace mdelay with usleep_range in
+ pci_epf_test_write
+Message-ID: <20180504162932.GA16953@e107981-ln.cambridge.arm.com>
+References: <1523365446-31563-1-git-send-email-baijiaju1990@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180504162102.GQ12217@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1523365446-31563-1-git-send-email-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 06:21:02PM +0200, Peter Zijlstra wrote:
-> On Fri, May 04, 2018 at 06:07:26PM +0200, Sebastian Andrzej Siewior wrote:
+On Tue, Apr 10, 2018 at 09:04:06PM +0800, Jia-Ju Bai wrote:
+> pci_epf_test_write() is never called in atomic context.
 > 
-> > do you intend to kill refcount_dec_and_lock() in the longterm?
+> The call chain ending up at pci_epf_test_write() is:
+> [1] pci_epf_test_write() <- pci_epf_test_cmd_handler()
 > 
-> You meant to say atomic_dec_and_lock() ? Dunno if we ever get there, but
-> typically dec_and_lock is fairly refcounty, but I suppose it is possible
-> to have !refcount users, in which case we're eternally stuck with it.
+> pci_epf_test_cmd_handler() is set as a parameter of INIT_DELAYED_WORK() 
+> in pci_epf_test_probe().
+> This function is not called in atomic context.
+> 
+> Despite never getting called from atomic context, pci_epf_test_write()
+> calls mdelay() to busily wait.
+> This is not necessary and can be replaced with usleep_range() to
+> avoid busy waiting.
+> 
+> This is found by a static analysis tool named DCNS written by myself.
+> And I also manually check it.
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/pci/endpoint/functions/pci-epf-test.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, there are - consider e.g.
+I'd request Kishon's ACK on this.
 
-void iput(struct inode *inode)
-{ 
-        if (!inode)
-                return;
-        BUG_ON(inode->i_state & I_CLEAR);
-retry:
-        if (atomic_dec_and_lock(&inode->i_count, &inode->i_lock)) {
+Thanks,
+Lorenzo
 
-inode->i_count sure as hell isn't refcount_t fodder...
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index f9308c2..2f0642e 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -237,7 +237,7 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
+>  	 * wait 1ms inorder for the write to complete. Without this delay L3
+>  	 * error in observed in the host system.
+>  	 */
+> -	mdelay(1);
+> +	usleep_range(1000, 2000);
+>  
+>  	kfree(buf);
+>  
+> -- 
+> 1.9.1
+> 
