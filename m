@@ -1,177 +1,281 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeEDIiC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:38:02 -0400
-Received: from mail-bl2nam02on0075.outbound.protection.outlook.com ([104.47.38.75]:58272
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751508AbeEDIh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:37:56 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com;
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: djkurtz@chromium.org, akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        linux-acpi@vger.kernel.org (open list:ACPI),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/2] ACPI: APD: Add AMD misc clock handler support
-Date: Fri,  4 May 2018 16:34:44 +0800
-Message-Id: <1525422930-27826-2-git-send-email-akshu.agrawal@amd.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525422930-27826-1-git-send-email-akshu.agrawal@amd.com>
-References: <1525422930-27826-1-git-send-email-akshu.agrawal@amd.com>
+        id S1751892AbeEDIjW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:39:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:34491 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751411AbeEDIjU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 04:39:20 -0400
+X-Google-Smtp-Source: AB8JxZpBqFjToV0cRW2CMI5kro/Tg/vp2ixpk2p6p4ejcI8+PuVR0/jgpklF0Cs8iQukTJAvBb6opHOyUrtk1Zx5+ks=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: MA1PR0101CA0032.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:22::18) To DM5PR12MB2359.namprd12.prod.outlook.com
- (2603:10b6:4:b4::12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB2359;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;3:Hyx5K0U3w2Bfjolr+LNLa7QECe/q4a/GcF494vu9pI1QHsMQNneRvFbscrMdl1NZY1HA2OuY1O3dphCxE82io/Lscb9ImnI63JM50Xl5SJITQTxe0oyS7/7pnfxEJWXxC94Xk58gEr5DJIFd9xoRmWkLhYjg8FPEfknWxD2sGtP4q6ZITcwLklq4f0kIOCj4CGrU45YCJ+8fy+LovbcZhX3EG/ngG7DFzFmE+ibHt45jyjUzVve/AVxdPzbPbSEu;25:AP/9/XO+/GFXNUjNYUZPPnDML0JuStyiRQpFqvHUVFj254kpMIncF2tjiEHDiRhEzTtbk3GqzK+iwrBny/FAZxW0T4c99Tlf0eIIzYMfhMwMEBtcAs8DY5n8b6IWFtlZ0UDkWZ5eT6GdoZrJJYj5Gob18OcHUV3h8tll/iDF68F5vSjCXnPT+FnqKtL67n6qpqzkSrjZtn6TlDPrEW3EUxbS/HfbB186v1wEfmiyRT6S2cHDslpiq8kZbDl3taC/ChgEJwu3zDaKQM+KafBkjnGmbO8YX/6FrRMBRZPH1LhjpgB++3uYvPvhx17Wc9Fl3oDa76gLE+lEjdOXUJTlmA==;31:NH4Ra4EsuuY7hH7br2lzLa2Nn4SKn6i+YDWQfRaHcKjVitmsvHuRoIi1MBayc7hMmnWrZ4XDo+gHgfK6cONHyynC6ASF6uvrVS3Y8BwBDoDIPImsr7CLm9vQPnJCI/IyVXxg8sVOaOftfOSQ7l3YoV15A8WjaV0oE+Uqb6tv2Ks92QB5BT9gIYhi8D3F3E+kyJIubMW0xgmqaE1VDsp5TyhGwtTgPStChmFOmIAw4ts=
-X-MS-TrafficTypeDiagnostic: DM5PR12MB2359:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;20:tQJzYiaTqO0lU1qtQkWQ3Yuf5ZlujjKqZ5Qj0goXJeMdRKnmIDW0FRTAvs1XtQ7PW3NHiO2oPsoGQvoExvxev9ZIP05f903W7XXnG4CLbcsECUt31PsdGoDJTEN+7b2NhZLtWv33BIvEe4bb1LABphczcZQFYxWRC9JeJxqMIHnTSd9Ps+VUy/2QMoFKb5AX80MG2Pv6l0aJxwePJsFKPaCNP+AkbXCabg8HXCCSSEiWpnLDUJCaABD/h77EPzylPJdCDvuWdpDjZA55FJfASxpQvwDHHT/xH+9vhQOIejROrhay+WkPy1silwvEGDVAsYIGmit8nyRu1QcpV/mEj2oE2rDsAg79DP1+gxqvn41ql4INEZGHFGCHVgK34/3aX8Z1SMhHPTLRJB1CwDJsTR783lqLnomaiwaq2pKrdeNr1ZedzrFbkA69WUsvYh02TFIWldYb4lfR9ndwz3kusg6XuaJCpLPwnygTobixAXn42f3iIQfsAdtsmtkthbEA;4:OLQ7gYL6Sft8CJGlAXUpb7wDFNHtrBSGt+f3eml/kILH9vmDT8zOEMZJ3x6PpWwxu5tVNfFRx5nFqU6ZAmDbxPx9bdHlvlvoP6kGo1hgqczfvJ/5D+lCuy2HEh9vl6KzJSn3vcG4v2RCe9c2MySPWYhy7Jq6EZng9qKp2Hv5GaeKID7X5tFZoKBrqDtJ7mzROQBzTuoJ1LBhMYLuPQxt7xgyk5eVol0KreaBmpC2ixxRK4wcDn0TNH6DNcyhvGBiVc63zm4HlCwc0YBCI57fnPMoIGE7hOAF56VbiFAhNnNG4+7ZYqBte8S7EK/nl0snlt2tWbjvB+WWOMudNLZsYQ==
-X-Microsoft-Antispam-PRVS: <DM5PR12MB2359D00B2580A9EC1C724905F8860@DM5PR12MB2359.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110)(21532816269658);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231254)(944501410)(52105095)(6055026)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM5PR12MB2359;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB2359;
-X-Forefront-PRVS: 06628F7CA4
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(346002)(39380400002)(396003)(366004)(39860400002)(376002)(189003)(199004)(305945005)(5660300001)(109986005)(7736002)(97736004)(4326008)(36756003)(106356001)(53416004)(105586002)(50226002)(81166006)(8676002)(81156014)(575784001)(66066001)(54906003)(16526019)(50466002)(478600001)(1671002)(316002)(69596002)(86362001)(186003)(26005)(47776003)(16586007)(25786009)(48376002)(446003)(6506007)(52116002)(11346002)(76176011)(2906002)(44832011)(59450400001)(68736007)(72206003)(2616005)(476003)(386003)(956004)(51416003)(6116002)(486006)(53936002)(8936002)(3846002)(6666003)(6512007)(6486002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2359;H:akshu-HP-EliteBook-745-G2.mshome.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR12MB2359;23:F2OUUufFp8F11+6ou4NOmcgLs4AtO9eesphH8Uc9p?=
- =?us-ascii?Q?t4o9J4h59BvGB22PRXYq/QiiROJjFhpqTrPYN/Gcggftx56FwTxiXLsMVQkM?=
- =?us-ascii?Q?1uqUAXwT2DRPrOCpZFm4XjfXRxClPiVitR6k9w2xorUrqEBjNCmbBVMuMnxK?=
- =?us-ascii?Q?U4ccU/kwndBa5Wio3QM4A/PBE+ZysdQUVvqcyZmjsR/lOGl+J7Lku1fMtxip?=
- =?us-ascii?Q?788JJ9m1OdBJsky3009WPD9OtNUT1RhDhx1KEhsj0OlmKnUX9dMFluO3h3YM?=
- =?us-ascii?Q?DNS7WUtLMZZaHr6Lgn/mm+WopcPMDpeyT7iwTgsoa+dqHZGF2+bQazABoe2Q?=
- =?us-ascii?Q?DfS1xSTemTE6gXgRNalSccerC4ypzdaCMTVVu4S5whMcXdrZickW+GzwpKx5?=
- =?us-ascii?Q?06t9gahnUEbkHIp6c9q5zFdEwRr7iimjZSdxaSSSf4IOFIKeO+H9Xt5MHQDV?=
- =?us-ascii?Q?igzkJUIUDrcNrEVjpUifaGgNgQYC/zsB6km1SGAGXd82osa8hzSCKTX1wy4k?=
- =?us-ascii?Q?RxRuM4alCMSLLlnEbeThgDhPBUqJrmBRTnGOaTQfjWfpC7BVuzeUKBFRGKA+?=
- =?us-ascii?Q?fwXaNjowPKOeTaGz8xrBAwVqzmMND5UyBfUxH4gXUnL4JEUKR6SRp5PBYEAS?=
- =?us-ascii?Q?ldFiuusg3VxaXbHQAMypnYlT7pT8su6pq6zfvPt8Q8sYdpejEecublQep04D?=
- =?us-ascii?Q?pN9O7UihDj++ni+f+haFxp6meSuDecBHMgLjZ5HX0m+cuFYh0fsSuFNYaSkT?=
- =?us-ascii?Q?sVuLUX/pgPAOMT/dDiXfyXF9tgBh4UVN9taREHJNG/6El9DeltK+MnQvzJGC?=
- =?us-ascii?Q?lDCivR7XKuiu6jcvAoz0hOttCdoxJbhRYfUWHvHhnmnWyjxA/pj2inovWiHr?=
- =?us-ascii?Q?0TX6AvxzQjvdcW939NAyHRATLITORErgb/kEypIQ/N9kIqsWLJxXOQTR4aw3?=
- =?us-ascii?Q?2M8TXS7yoIQ27MU9QIVOZN0/1K+gtTROOWVJXrBgWxDpYbrsBuNtG64zFluO?=
- =?us-ascii?Q?ri+vjZ1IGPvk2ppCQDE3poxyeVBWj2MqrVYuaxjCvYMLHkA3lV4NXAB2jjs0?=
- =?us-ascii?Q?ZcdrqCc+a3Z3JjTve0YZehPh8V95BDSuVpCRcyDjZkSzdqhnyBHmfrO3jeZw?=
- =?us-ascii?Q?uGgctgC7bjrw7RQBqZ7aJY5L89H26KVXNFFTZjlq+obESt9DA+pY6MCz4kLd?=
- =?us-ascii?Q?lbNpI3z/6A0fMw4UQNZqZt0SDfvDv2QaMFANEjBhtTPwy5nNMHAKdSHnRiOT?=
- =?us-ascii?Q?G/jj1A9CpE42dn+MYjDq9D0Tjr//vXczn2IhtMEcOoaY4mwEhUyqozFPGcxb?=
- =?us-ascii?Q?4CHrTFO6kaRh1pdF0a8zkUwaVcJRlVqYNfz+J3ZVHk1PwqY7FXyQLTu4CfUZ?=
- =?us-ascii?Q?V8g6/JNnW1yvd2CkX4q6YEevLc=3D?=
-X-Microsoft-Antispam-Message-Info: 7tUjrfjArnJVKSEZePsZsmLboQQu0uSr6aqOM6pdnA3EJW3nLtZFEF1Eq1IHN8Xx4IwWii3J9rNWEBoYv+SNuJ+0EcxwKa18zMbHWCKALOKjMQE9S65df2neJCtPDF14qv4W9Pzb59kVti8C7GTZQH3cht8tCFLn7VIQVGFk+BA9Q2TUCBi8JXri2iXl8Zzs
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;6:0d5q3Cbe7/lUCJYL6uvPPnoSp/fGERO0oZ9MN63VN4LM5rMmp5sQNnmK5U/0oeYAB7JfjCwhd9gLP3Va25r9B3AMmpt1IuL5Ei9tmvU4qFnOFVUY6EWZJAcGJBo5jmtGYFj7o27h3OSY8WmUTdKry1i2ZogoJBPILRJf0Q09gmEYmrrE6AzrVFBJ8gwWQwuoyUol5yXsq1W/ZZ9ex5pnqMu6u8K/YJMyG3Pk/Km8N/sSYm82UQBotUKG46uWVyMyBvAe79SEHJv4fWHNV+H4mlwkjsGDRZdkebqhgbLakPhdN1cnlYuJkRCk7yHKuyg6dDVQ2iab3LYOu0X/n9OVABPl6RL+BxZKbT3u60mGW6uCoMdYmDuLNwCDT2hDjiELooBy92L8Fbw7sGE2OxuFPZGYeySMTKGj/Njbq1GLRpKxBF+YOK6CzoOvjAKEAH7c5h7jxLa8Q9VYfLDwZKSS4Q==;5:4F4GK+I94O1At0aYr9BCLpd75BOAsQZOrnZdI6zwNFxgXvkynyvlnK4vcNxLq+HgAQ85o9Su0eOO4xU9qhTb+bcVGLH9E2EDM9HKIgxbxJIhvmYqhHT6HUHvdvdrUcc4xKKSFAVwuE/WsXQc+NirwmNP6FXC2frhIKyb0fuDrEw=;24:bhG6dqZxoJ+93DER4D+5OINa0qfbcHKo78LRb15x6oXGVvgG8MGGuvXnKJKT0er6rq754FWqG7bs65uZGfTzi6jdUE44M25+whK5qPUCJfo=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR12MB2359;7:CLacTsLKnRNZeTTGbHBdumrG9xtR/gB1NVRYpabvj5N2quF5PwwWLDLVRXOD1jXmDT6vFKH/s44mMIpytfRdnngMJAHGXi7kHFb+YMdu6I8kSF98tnNeTuuQomdwXzx2oENZECtIrP2BNZfFTQZ+/fQ8gjopKMraCZHrZky/31/Kd4u8AIET6bE5m0PHDPRob6qXErJ7iLVOeRQxuG7hefdK5CORxpZ3cna1DR88NoOPOWG1OQK3P+J102WiaM01;20:kD9mNgG/XlFtuT73zfvsrmG8Y05pxqzQFIvDaoCzB2ws0YHqNQbMLys2t9wG4TXXlOz+ItgqjVawPPRakaBCpgsgxedl+/yP1tI2Jm0rWAht9Xn7L9aF11zsfrrup6o8/Zirptuk4W+sNyMqgrK8pHcgmPkVfH4VvJtnQFwRLyFxWK5i6QiI0Hj/5mVtXDDPUMUwJa6ZZJ/ypVZkUl1WBarIuLxTUpJ36pcFyy5Li9d/FZegEn4Iy89rQiY8+7In
-X-MS-Office365-Filtering-Correlation-Id: f6372343-8816-4006-a4a9-08d5b19a5423
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2018 08:37:51.4525 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6372343-8816-4006-a4a9-08d5b19a5423
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2359
-To: unlisted-recipients:; (no To-header on input)
+In-Reply-To: <CAJX1YtYhbutYFC-cT+dRoRvjqkOY_qSWtU_tSUZ99Q9-yGUF_g@mail.gmail.com>
+References: <20180502110811.10886-1-gi-oh.kim@profitbricks.com> <CAJX1YtYhbutYFC-cT+dRoRvjqkOY_qSWtU_tSUZ99Q9-yGUF_g@mail.gmail.com>
+From: Gi-Oh Kim <gi-oh.kim@profitbricks.com>
+Date: Fri, 4 May 2018 10:38:38 +0200
+Message-ID: <CAJX1YtYc=TANNCUr+Sj3_zjR55ed9VYx9KAi9iEpg2M5=YZ3gw@mail.gmail.com>
+Subject: Re: [PATCH] md/raid1: add error handling of read error from FailFast device
+To: shli@kernel.org, NeilBrown <neilb@suse.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gioh Kim <gi-oh.kim@profitbricks.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w448dQ7H012490
 
-AMD SoC exposes clock for general purpose use. The clock registration
-is done in clk-st driver. The MMIO mapping are passed on to the
-clock driver for accessing the registers.
-The misc clock handler will create MMIO mappings to access the
-clock registers and enable the clock driver to expose the clock
-for use of drivers which will connect to it.
+On Wed, May 2, 2018 at 2:11 PM, Gi-Oh Kim <gi-oh.kim@profitbricks.com> wrote:
+> On Wed, May 2, 2018 at 1:08 PM, Gioh Kim <gi-oh.kim@profitbricks.com> wrote:
+>> Current handle_read_error() function calls fix_read_error()
+>> only if md device is RW and rdev does not include FailFast flag.
+>> It does not handle a read error from a RW device including
+>> FailFast flag.
+>>
+>> I am not sure it is intended. But I found that write IO error
+>> sets rdev faulty. The md module should handle the read IO error and
+>> write IO error equally. So I think read IO error should set rdev faulty.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
-v2: Submitted with dependent patch, removed unneeded kfree for devm_kzalloc
- drivers/acpi/acpi_apd.c | 50 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Hi Mr. Neil Brown.
 
-diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
-index d553b00..88b8a3e 100644
---- a/drivers/acpi/acpi_apd.c
-+++ b/drivers/acpi/acpi_apd.c
-@@ -11,6 +11,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/platform_data/clk-st.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/clkdev.h>
-@@ -72,6 +73,50 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
- }
- 
- #ifdef CONFIG_X86_AMD_PLATFORM_DEVICE
-+
-+static int misc_check_res(struct acpi_resource *ares, void *data)
-+{
-+	struct resource res;
-+
-+	return !acpi_dev_resource_memory(ares, &res);
-+}
-+
-+static int st_misc_setup(struct apd_private_data *pdata)
-+{
-+	struct acpi_device *adev = pdata->adev;
-+	struct platform_device *clkdev;
-+	struct st_clk_data *clk_data;
-+	struct resource_entry *rentry;
-+	struct list_head resource_list;
-+	int ret;
-+
-+	clk_data = devm_kzalloc(&adev->dev, sizeof(*clk_data), GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	INIT_LIST_HEAD(&resource_list);
-+	ret = acpi_dev_get_resources(adev, &resource_list, misc_check_res,
-+				     NULL);
-+	if (ret < 0)
-+		return -ENOMEM;
-+
-+	list_for_each_entry(rentry, &resource_list, node) {
-+		clk_data->base = ioremap(rentry->res->start,
-+					 resource_size(rentry->res));
-+		break;
-+	}
-+
-+	acpi_dev_free_resource_list(&resource_list);
-+
-+	clkdev = platform_device_register_data(&adev->dev, "clk-st",
-+					       PLATFORM_DEVID_NONE, clk_data,
-+					       sizeof(*clk_data));
-+	if (IS_ERR(clkdev))
-+		return PTR_ERR(clkdev);
-+
-+	return 0;
-+}
-+
- static const struct apd_device_desc cz_i2c_desc = {
- 	.setup = acpi_apd_setup,
- 	.fixed_clk_rate = 133000000,
-@@ -94,6 +139,10 @@ static int acpi_apd_setup(struct apd_private_data *pdata)
- 	.fixed_clk_rate = 48000000,
- 	.properties = uart_properties,
- };
-+
-+static const struct apd_device_desc st_misc_desc = {
-+	.setup = st_misc_setup,
-+};
- #endif
- 
- #ifdef CONFIG_ARM64
-@@ -179,6 +228,7 @@ static int acpi_apd_create_device(struct acpi_device *adev,
- 	{ "AMD0020", APD_ADDR(cz_uart_desc) },
- 	{ "AMDI0020", APD_ADDR(cz_uart_desc) },
- 	{ "AMD0030", },
-+	{ "AMD0040", APD_ADDR(st_misc_desc)},
- #endif
- #ifdef CONFIG_ARM64
- 	{ "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
+Could you please inform me if it is a bug or feature that md module
+does not set device faulty after read IO error?
+My company product uses failfast flag to create md devices for a
+virtual machine.
+Even if storage get failed and the virtual machine fails to read data,
+I cannot check which md device is faulty with mdadm tool.
+If it is intended, I need to disable failfast flag.
+
+Thank you in advance.
+
+>>
+>> Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
+>> ---
+>>  drivers/md/raid1.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index e9e3308cb0a7..4445179aa4c8 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -2474,6 +2474,8 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
+>>                 fix_read_error(conf, r1_bio->read_disk,
+>>                                r1_bio->sector, r1_bio->sectors);
+>>                 unfreeze_array(conf);
+>> +       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
+>> +               md_error(mddev, rdev);
+>>         } else {
+>>                 r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
+>>         }
+>> --
+>> 2.14.1
+>>
+>
+> I think it would be helpful to show how I tested it.
+>
+> As following I used Ubuntu 17.10 and mdadm v4.0.
+> # cat /etc/lsb-release
+> DISTRIB_ID=Ubuntu
+> DISTRIB_RELEASE=17.10
+> DISTRIB_CODENAME=artful
+> DISTRIB_DESCRIPTION="Ubuntu 17.10"
+> # uname -a
+> Linux ws00837 4.13.0-16-generic #19-Ubuntu SMP Wed Oct 11 18:35:14 UTC
+> 2017 x86_64 x86_64 x86_64 GNU/Linux
+> # mdadm --version
+> mdadm - v4.0 - 2017-01-09
+>
+> Following is how I generated the read IO error and checked md device.
+> After read IO, no device was set as faulty
+>
+> # modprobe scsi_debug num_parts=2
+> # man mdadm
+> # mdadm -C /dev/md111 --failfast -l 1 -n 2 /dev/sdc1 /dev/sdc2
+> mdadm: Note: this array has metadata at the start and
+>     may not be suitable as a boot device.  If you plan to
+>     store '/boot' on this device please ensure that
+>     your boot-loader understands md/v1.x metadata, or use
+>     --metadata=0.90
+> mdadm: largest drive (/dev/sdc2) exceeds size (3904K) by more than 1%
+> Continue creating array? y
+> mdadm: Defaulting to version 1.2 metadata
+> mdadm: array /dev/md111 started.
+> # mdadm -D /dev/md111
+> /dev/md111:
+>         Version : 1.2
+>   Creation Time : Wed May  2 10:55:35 2018
+>      Raid Level : raid1
+>      Array Size : 3904
+>   Used Dev Size : 3904
+>    Raid Devices : 2
+>   Total Devices : 2
+>     Persistence : Superblock is persistent
+>
+>     Update Time : Wed May  2 10:55:36 2018
+>           State : clean
+>  Active Devices : 2
+> Working Devices : 2
+>  Failed Devices : 0
+>   Spare Devices : 0
+>
+>            Name : ws00837:111  (local to host ws00837)
+>            UUID : 9f214193:03cf7c97:3208da22:d6ab8a13
+>          Events : 17
+>
+>     Number   Major   Minor   RaidDevice State
+>        0       8       33        0      active sync failfast   /dev/sdc1
+>        1       8       34        1      active sync failfast   /dev/sdc2
+> # cat /proc/mdstat
+> Personalities : [raid1]
+> md111 : active raid1 sdc2[1] sdc1[0]
+>       3904 blocks super 1.2 [2/2] [UU]
+>
+> unused devices: <none>
+> # echo -1 > /sys/module/scsi_debug/parameters/every_nth && echo 4 >
+> /sys/module/scsi_debug/parameters/opts
+> # dd if=/dev/md111 of=/dev/null bs=4K count=1 iflag=direct &
+> [1] 6322
+> # dd: error reading '/dev/md111': Input/output error
+> 0+0 records in
+> 0+0 records out
+> 0 bytes copied, 124,376 s, 0,0 kB/s
+>
+> [1]+  Exit 1                  dd if=/dev/md111 of=/dev/null bs=4K
+> count=1 iflag=direct
+> # mdadm -D /dev/md111/dev/md111:
+>         Version : 1.2
+>   Creation Time : Wed May  2 10:55:35 2018
+>      Raid Level : raid1
+>      Array Size : 3904
+>   Used Dev Size : 3904
+>    Raid Devices : 2
+>   Total Devices : 2
+>     Persistence : Superblock is persistent
+>
+>     Update Time : Wed May  2 10:55:36 2018
+>           State : clean
+>  Active Devices : 2
+> Working Devices : 2
+>  Failed Devices : 0
+>   Spare Devices : 0
+>
+>     Number   Major   Minor   RaidDevice State
+>        0       8       33        0      active sync failfast   /dev/sdc1
+>        1       8       34        1      active sync failfast   /dev/sdc2
+>
+>
+> Following is how I generated the write IO error and checked md device.
+> After write IO error, one device was set as faulty.
+>
+> gohkim@ws00837:~$ sudo modprobe scsi_debug num_parts=2
+> gohkim@ws00837:~$ sudo mdadm -C /dev/md111 --failfast -l 1 -n 2
+> /dev/sdc1 /dev/sdc2
+> mdadm: Note: this array has metadata at the start and
+>     may not be suitable as a boot device.  If you plan to
+>     store '/boot' on this device please ensure that
+>     your boot-loader understands md/v1.x metadata, or use
+>     --metadata=0.90
+> mdadm: largest drive (/dev/sdc2) exceeds size (3904K) by more than 1%
+> Continue creating array? y
+> mdadm: Defaulting to version 1.2 metadata
+> mdadm: array /dev/md111 started.
+> gohkim@ws00837:~$ sudo mdadm -D /dev/md111
+> /dev/md111:
+>         Version : 1.2
+>   Creation Time : Wed May  2 14:03:30 2018
+>      Raid Level : raid1
+>      Array Size : 3904
+>   Used Dev Size : 3904
+>    Raid Devices : 2
+>   Total Devices : 2
+>     Persistence : Superblock is persistent
+>
+>     Update Time : Wed May  2 14:03:31 2018
+>           State : clean
+>  Active Devices : 2
+> Working Devices : 2
+>  Failed Devices : 0
+>   Spare Devices : 0
+>
+>            Name : ws00837:111  (local to host ws00837)
+>            UUID : ba51fe65:c517a25a:a381ccc5:3617322b
+>          Events : 17
+>
+>     Number   Major   Minor   RaidDevice State
+>        0       8       33        0      active sync failfast   /dev/sdc1
+>        1       8       34        1      active sync failfast   /dev/sdc2
+> gohkim@ws00837:~$ echo -1 | sudo tee /sys/module/scsi_debug/parameters/every_nth
+> -1
+> gohkim@ws00837:~$ echo 4 | sudo tee /sys/module/scsi_debug/parameters/opts
+> 4
+> gohkim@ws00837:~$ sudo dd if=/dev/zero of=/dev/md111 bs=4K count=1
+> oflag=direct &
+> [1] 13081
+> gohkim@ws00837:~$ dd: error writing '/dev/md111': Input/output error
+> 1+0 records in
+> 0+0 records out
+> 0 bytes copied, 184,523 s, 0,0 kB/s
+>
+> [1]+  Exit 1                  sudo dd if=/dev/zero of=/dev/md111 bs=4K
+> count=1 oflag=direct
+> gohkim@ws00837:~$ sudo mdadm -D /dev/md111
+> /dev/md111:
+>         Version : 1.2
+>   Creation Time : Wed May  2 14:03:30 2018
+>      Raid Level : raid1
+>      Array Size : 3904
+>   Used Dev Size : 3904
+>    Raid Devices : 2
+>   Total Devices : 2
+>     Persistence : Superblock is persistent
+>
+>     Update Time : Wed May  2 14:07:47 2018
+>           State : clean, degraded
+>  Active Devices : 1
+> Working Devices : 1
+>  Failed Devices : 1
+>   Spare Devices : 0
+>
+>     Number   Major   Minor   RaidDevice State
+>        0       8       33        0      active sync failfast   /dev/sdc1
+>        -       0        0        1      removed
+>
+>        1       8       34        -      faulty failfast   /dev/sdc2
+>
+>
+>
+> --
+> GIOH KIM
+> Linux Kernel Entwickler
+>
+> ProfitBricks GmbH
+> Greifswalder Str. 207
+> D - 10405 Berlin
+>
+> Tel:       +49 176 2697 8962
+> Fax:      +49 30 577 008 299
+> Email:    gi-oh.kim@profitbricks.com
+> URL:      https://www.profitbricks.de
+>
+> Sitz der Gesellschaft: Berlin
+> Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+> Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
+
+
+
 -- 
-1.9.1
+GIOH KIM
+Linux Kernel Entwickler
+
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
+
+Tel:       +49 176 2697 8962
+Fax:      +49 30 577 008 299
+Email:    gi-oh.kim@profitbricks.com
+URL:      https://www.profitbricks.de
+
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
