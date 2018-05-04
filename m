@@ -1,76 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751809AbeEDXsu (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 19:48:50 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43203 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751684AbeEDXst (ORCPT
+        id S1751805AbeEDX5e (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 19:57:34 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36632 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751684AbeEDX5c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 19:48:49 -0400
-X-Google-Smtp-Source: AB8JxZrQp5aRpz2NPCFyvAGq7WZOeSEEC3b9AgzhtqTluQyTOB6hzm1py+hzqmgA3YOuNvRY/76ym3yNAe+IDuqlo1s=
+        Fri, 4 May 2018 19:57:32 -0400
+X-Google-Smtp-Source: AB8JxZrMTSCPPhFAKQ7u7l4Vi8Vy4M6737Jc+GOuA8BMuS8nXQ26y6f8pUPaInazjLdIefssCYfnJA==
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] pinctrl: qcom: fix wrong pull status display for no_keeper SoC
+Date: Fri,  4 May 2018 16:57:28 -0700
+Message-Id: <20180504235728.805-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Sat, 5 May 2018 09:48:47 +1000
-Message-ID: <CAPM=9tx6rL9hnWn-kq0KdmE=1Sbz57k6-WBGURYEhp=trdFsLw@mail.gmail.com>
-Subject: [git pull] drm fixes for 4.17-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Clément Péron <peron.clem@gmail.com>
 
-This seems eerily quiet, so I expect it will explode next week or something.
+DebugFS strings about pin pull status for no_keeper SoC are wrong
 
-One i915 moduel firmware, two vmwgfx fixes, one vc4 fix and one bridge leak fix.
+Fix this by adding a different string array for no_keeper SoC
 
-Dave.
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
 
-The following changes since commit 6da6c0db5316275015e8cc2959f12a17584aeb64:
+Hi Linus,
 
-  Linux v4.17-rc3 (2018-04-29 14:17:42 -0700)
+Forwarding this patch which was posted to linux-arm-msm@ only. LGTM, please apply.
 
-are available in the Git repository at:
+@Clémen, please use ./scripts/get_maintaine.pl to find appropriate recipients
+for future patches.
 
-  git://people.freedesktop.org/~airlied/linux tags/drm-fixes-for-v4.17-rc4
+Regards,
+Bjorn
 
-for you to fetch changes up to a02cbe2e34c576cdc5e7846a3cd55245ab81db47:
+ drivers/pinctrl/qcom/pinctrl-msm.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-  Merge branch 'vmwgfx-fixes-4.17' of
-git://people.freedesktop.org/~thomash/linux into drm-fixes (2018-05-04
-10:03:27 +1000)
-
-----------------------------------------------------------------
-vmwgfx, i915, vc4, vga dac fixes
-
-----------------------------------------------------------------
-Boris Brezillon (1):
-      drm/vc4: Make sure vc4_bo_{inc,dec}_usecnt() calls are balanced
-
-Dave Airlie (3):
-      Merge tag 'drm-intel-fixes-2018-05-02' of
-git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
-      Merge tag 'drm-misc-fixes-2018-05-02' of
-git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
-      Merge branch 'vmwgfx-fixes-4.17' of
-git://people.freedesktop.org/~thomash/linux into drm-fixes
-
-Ian W MORRISON (1):
-      drm/i915/glk: Add MODULE_FIRMWARE for Geminilake
-
-Sean Paul (1):
-      drm/bridge: vga-dac: Fix edid memory leak
-
-Thomas Hellstrom (2):
-      drm/vmwgfx: Clean up fbdev modeset locking
-      drm/vmwgfx: Fix a buffer object leak
-
- drivers/gpu/drm/bridge/dumb-vga-dac.c |  4 ++-
- drivers/gpu/drm/i915/intel_csr.c      |  1 +
- drivers/gpu/drm/vc4/vc4_crtc.c        | 46 ++++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/vmwgfx/vmwgfx_fb.c    | 31 ++++++++---------------
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c   | 14 ++++++++---
- 5 files changed, 70 insertions(+), 26 deletions(-)
+diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+index fa4e94fedb8c..c3c77b86eff7 100644
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -504,13 +504,19 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+ 	int pull;
+ 	u32 ctl_reg;
+ 
+-	static const char * const pulls[] = {
++	static const char * const pulls_keeper[] = {
+ 		"no pull",
+ 		"pull down",
+ 		"keeper",
+ 		"pull up"
+ 	};
+ 
++	static const char * const pulls_no_keeper[] = {
++		"no pull",
++		"pull down",
++		"pull up",
++	};
++
+ 	if (!gpiochip_line_is_valid(chip, offset))
+ 		return;
+ 
+@@ -524,7 +530,10 @@ static void msm_gpio_dbg_show_one(struct seq_file *s,
+ 
+ 	seq_printf(s, " %-8s: %-3s %d", g->name, is_out ? "out" : "in", func);
+ 	seq_printf(s, " %dmA", msm_regval_to_drive(drive));
+-	seq_printf(s, " %s", pulls[pull]);
++	if (pctrl->soc->pull_no_keeper)
++		seq_printf(s, " %s", pulls_no_keeper[pull]);
++	else
++		seq_printf(s, " %s", pulls_keeper[pull]);
+ 	seq_puts(s, "\n");
+ }
+ 
+-- 
+2.17.0
