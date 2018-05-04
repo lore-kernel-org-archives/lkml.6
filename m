@@ -1,70 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752200AbeEDUJz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:09:55 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:54138 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752068AbeEDUIa (ORCPT
+        id S1752236AbeEDUKJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:10:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:35086 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752081AbeEDUKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:08:30 -0400
-From: Ezequiel Garcia <ezequiel@collabora.com>
-To: linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v9 13/15] v4l: introduce the fences capability
-Date: Fri,  4 May 2018 17:06:10 -0300
-Message-Id: <20180504200612.8763-14-ezequiel@collabora.com>
-X-Mailer: git-send-email 2.16.3
-In-Reply-To: <20180504200612.8763-1-ezequiel@collabora.com>
-References: <20180504200612.8763-1-ezequiel@collabora.com>
+        Fri, 4 May 2018 16:10:06 -0400
+Date: Fri, 4 May 2018 22:09:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [RFC PATCH 2/2] net: mac808211: mac802154: use
+ lockdep_assert_in_softirq() instead own warning
+Message-ID: <20180504200953.GW12217@hirez.programming.kicks-ass.net>
+References: <20180504175144.12179-1-bigeasy@linutronix.de>
+ <20180504175144.12179-3-bigeasy@linutronix.de>
+ <20180504183249.GU12217@hirez.programming.kicks-ass.net>
+ <20180504184538.gavk7e2vtm73e32w@linutronix.de>
+ <20180504185132.GV12217@hirez.programming.kicks-ass.net>
+ <20180504190735.izmzibhb66gjb5wr@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504190735.izmzibhb66gjb5wr@linutronix.de>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.com>
+On Fri, May 04, 2018 at 09:07:35PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2018-05-04 20:51:32 [+0200], Peter Zijlstra wrote:
 
-Drivers capable of using fences (vb2 drivers) should report the
-V4L2_CAP_FENCES to userspace, so add this flag to the uapi.
+> > softirqs disabled, ack that is exactly what it checks.
+> > 
+> > But afaict the assertion you introduced tests that we are _in_ softirq
+> > context, which is not the same.
+> 
+> indeed, now it clicked. Given what I wrote in the cover letter would you
+> be in favour of (a proper) lockdep_assert_BH_disabled() or the cheaper
+> local_bh_enable() (assuming the network folks don't mind the cheaper
+> version)?
 
-v2: minor doc/english fix (Hans Verkuil)
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
----
- Documentation/media/uapi/v4l/vidioc-querycap.rst | 3 +++
- include/uapi/linux/videodev2.h                   | 1 +
- 2 files changed, 4 insertions(+)
-
-diff --git a/Documentation/media/uapi/v4l/vidioc-querycap.rst b/Documentation/media/uapi/v4l/vidioc-querycap.rst
-index 66fb1b3d6e6e..df3ad57f07a3 100644
---- a/Documentation/media/uapi/v4l/vidioc-querycap.rst
-+++ b/Documentation/media/uapi/v4l/vidioc-querycap.rst
-@@ -254,6 +254,9 @@ specification the ioctl returns an ``EINVAL`` error code.
-     * - ``V4L2_CAP_TOUCH``
-       - 0x10000000
-       - This is a touch device.
-+    * - ``V4L2_CAP_FENCES``
-+      - 0x20000000
-+      - The device supports explicit synchronization.
-     * - ``V4L2_CAP_DEVICE_CAPS``
-       - 0x80000000
-       - The driver fills the ``device_caps`` field. This capability can
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 1f18dc68ecab..cab35fca7c7f 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -460,6 +460,7 @@ struct v4l2_capability {
- #define V4L2_CAP_STREAMING              0x04000000  /* streaming I/O ioctls */
- 
- #define V4L2_CAP_TOUCH                  0x10000000  /* Is a touch device */
-+#define V4L2_CAP_FENCES                 0x20000000  /* Supports explicit synchronization */
- 
- #define V4L2_CAP_DEVICE_CAPS            0x80000000  /* sets device capabilities field */
- 
--- 
-2.16.3
+Depends a bit on what the code wants I suppose. If the code is in fact
+fine with the stronger in-softirq assertion, that'd be best. Otherwise I
+don't object to a lockdep_assert_bh_disabled() to accompany the
+lockdep_assert_irq_disabled() we already have either.
