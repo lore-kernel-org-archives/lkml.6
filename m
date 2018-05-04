@@ -1,126 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751629AbeEDQDv (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 12:03:51 -0400
-Received: from mail-vk0-f54.google.com ([209.85.213.54]:42639 "EHLO
-        mail-vk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751419AbeEDQDt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 12:03:49 -0400
-X-Google-Smtp-Source: AB8JxZpyg7/VxFAU+zmtGB2liTwkOcFCEPkA1URC9W/jtRi8XX3TaZwtsWrhnUramfNGHq0MjPTl4pWCpj/0fCXuVGA=
-MIME-Version: 1.0
-In-Reply-To: <CA+55aFy8DSRoUvtiuu5w+XGOK6tYvtJGBH-i8i-y7aiUD2EGLA@mail.gmail.com>
-References: <20180214182618.14627-1-willy@infradead.org> <20180214182618.14627-3-willy@infradead.org>
- <CA+55aFzLgES5qTAt2szDKcRtoUP5X--UPCoYX-38ea67cRFHxQ@mail.gmail.com>
- <20180504131441.GA24691@bombadil.infradead.org> <CA+55aFy8DSRoUvtiuu5w+XGOK6tYvtJGBH-i8i-y7aiUD2EGLA@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 4 May 2018 09:03:46 -0700
-X-Google-Sender-Auth: xWZpey8uP6ICyCD3t5d8nDKFcto
-Message-ID: <CAGXu5j+0yTG0kJagiO8pAaMO9SuQWeGuCD01qVEu2vquM2=2fQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751774AbeEDQFr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 12:05:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55618 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751229AbeEDQFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 12:05:43 -0400
+From: Dave Martin <Dave.Martin@arm.com>
+To: kvmarm@lists.cs.columbia.edu
+Cc: linux-arm-kernel@lists.infradead.org,
+        Christoffer Dall <cdall@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v5 01/14] thread_info: Add update_thread_flag() helpers
+Date: Fri,  4 May 2018 17:05:22 +0100
+Message-Id: <1525449935-31424-2-git-send-email-Dave.Martin@arm.com>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1525449935-31424-1-git-send-email-Dave.Martin@arm.com>
+References: <1525449935-31424-1-git-send-email-Dave.Martin@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 8:35 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Fri, May 4, 2018 at 3:14 AM Matthew Wilcox <willy@infradead.org> wrote:
->
->> > In fact, the conversion I saw was buggy. You can *not* convert a
-> GFP_ATOMIC
->> > user of kmalloc() to use kvmalloc.
->
->> Not sure which conversion you're referring to; not one of mine, I hope?
->
-> I was thinking of the coccinelle patch in this thread, but just realized
-> that that actually only did it for GFP_KERNEL, so I guess it would work,
-> apart from the "oops, now it doesn't enforce the kmalloc limits any more"
-> issue.
+There are a number of bits of code sprinkled around the kernel to
+set a thread flag if a certain condition is true, and clear it
+otherwise.
 
-Just to be clear: the Coccinelle scripts I'm building aren't doing a
-kmalloc -> kvmalloc conversion. I'm just removing all the 2-factor
-multiplication and replacing it with the appropriate calls to the
-allocator family's *calloc or *alloc_array(). This will get us to the
-place where we can do all the sanity-checking in the allocator
-functions (whatever that checking ends up being). As it turns out,
-though, we have kind of a lot of allocator families. Some are
-wrappers, like devm_*alloc(), etc.
+To help make those call sites terser and less cumbersome, this
+patch adds a new family of thread flag manipulators
 
-All that said, the overwhelming majority of *alloc() multiplications
-are just "count * sizeof()". It really feels like everything should
-just be using a new *alloc_struct() which can do the type checking,
-etc, etc, but we can get there. The remaining "count * size" are a
-minority and could be dealt with some other way.
+	update*_thread_flag([...,] flag, cond)
 
->> >   - that divide is really really expensive on many architectures.
->
->> 'c' and 'size' are _supposed_ to be constant and get evaluated at
->> compile-time.  ie you should get something like this on x86:
->
-> I guess that willalways  be true of the 'kvzalloc_struct() version that
-> will always use a sizeof(). I was more thinking of any bare kvalloc_ab_c()
-> cases, but maybe we'd discourage that to ever be used as such?
+which do the equivalent of:
 
-Yeah, bare *alloc_ab_c() is not great. Perhaps a leading "__" can hint to that?
+	if (cond)
+		set*_thread_flag([...,] flag);
+	else
+		clear*_thread_flag([...,] flag);
 
-> Because we definitely have things like that, ie a quick grep finds
->
->     f = kmalloc (sizeof (*f) + size*num, GFP_KERNEL);
->
-> where 'size' is not obviously a constant. There may be others, but I didn't
-> really try to grep any further.
->
-> Maybe they aren't common, and maybe the occasional divide doesn't matter,
-> but particularly if we use scripting to then catch and convert users, I
-> really hate the idea of "let's introduce something that is potentially much
-> more expensive than it needs to be".
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+---
+ include/linux/sched.h       |  6 ++++++
+ include/linux/thread_info.h | 11 +++++++++++
+ 2 files changed, 17 insertions(+)
 
-Yup: I'm not after that either. I just want to be able to get at the
-multiplication factors before they're multiplied. :)
-
-> (And the automated coccinelle scripting it's also something where we must
-> very much avoid then subtly lifting allocation size limits)
-
-Agreed. I think most cases are already getting lifted to size_t due to
-the sizeof(). It's the "two variables" cases I want to double-check.
-Another completely insane idea would be to have a macro that did type
-size checking and would DTRT, but with all the alloc families, it
-looks nasty. This is all RFC stage, as far as I'm concerned.
-
-Fun example: devm_kzalloc(dev, sizeof(...) * num, gfp...)
-
-$ git grep 'devm_kzalloc([^,]*, *sizeof([^,]*,' | egrep '\* *sizeof|\)
-*\*' | wc -l
-88
-
-some are constants:
-drivers/video/fbdev/au1100fb.c:         devm_kzalloc(&dev->dev,
-sizeof(u32) * 16, GFP_KERNEL);
-
-but many aren't:
-sound/soc/generic/audio-graph-card.c:   dai_link  = devm_kzalloc(dev,
-sizeof(*dai_link)  * num, GFP_KERNEL);
-
-While type-checking on the non-sizeof factor would let us know if it
-was safe, so would the division, and most of those could happen at
-compile time. It's the size_t variables that we want to catch.
-
-So, mainly I'm just trying to get the arguments reordered (for a
-compile-time division) into the correct helpers so the existing logic
-can do the right thing, and only for 2-factor products. After that,
-then I'm hoping to tackle the multi-factor products, of which the
-*alloc_struct() helper seems to cover the vast majority of the
-remaining cases.
-
--Kees
-
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index b3d697f..c2c3051 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1578,6 +1578,12 @@ static inline void clear_tsk_thread_flag(struct task_struct *tsk, int flag)
+ 	clear_ti_thread_flag(task_thread_info(tsk), flag);
+ }
+ 
++static inline void update_tsk_thread_flag(struct task_struct *tsk, int flag,
++					  bool value)
++{
++	update_ti_thread_flag(task_thread_info(tsk), flag, value);
++}
++
+ static inline int test_and_set_tsk_thread_flag(struct task_struct *tsk, int flag)
+ {
+ 	return test_and_set_ti_thread_flag(task_thread_info(tsk), flag);
+diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+index cf2862b..8d8821b 100644
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -60,6 +60,15 @@ static inline void clear_ti_thread_flag(struct thread_info *ti, int flag)
+ 	clear_bit(flag, (unsigned long *)&ti->flags);
+ }
+ 
++static inline void update_ti_thread_flag(struct thread_info *ti, int flag,
++					 bool value)
++{
++	if (value)
++		set_ti_thread_flag(ti, flag);
++	else
++		clear_ti_thread_flag(ti, flag);
++}
++
+ static inline int test_and_set_ti_thread_flag(struct thread_info *ti, int flag)
+ {
+ 	return test_and_set_bit(flag, (unsigned long *)&ti->flags);
+@@ -79,6 +88,8 @@ static inline int test_ti_thread_flag(struct thread_info *ti, int flag)
+ 	set_ti_thread_flag(current_thread_info(), flag)
+ #define clear_thread_flag(flag) \
+ 	clear_ti_thread_flag(current_thread_info(), flag)
++#define update_thread_flag(flag, value) \
++	update_ti_thread_flag(current_thread_info(), flag, value)
+ #define test_and_set_thread_flag(flag) \
+ 	test_and_set_ti_thread_flag(current_thread_info(), flag)
+ #define test_and_clear_thread_flag(flag) \
 -- 
-Kees Cook
-Pixel Security
+2.1.4
