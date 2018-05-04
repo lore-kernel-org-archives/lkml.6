@@ -1,133 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751401AbeEDBOK (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 21:14:10 -0400
-Received: from mga07.intel.com ([134.134.136.100]:24194 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751190AbeEDBOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 21:14:08 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
-   d="scan'208";a="39140612"
-Date: Fri, 4 May 2018 09:14:51 +0800
-From: Tiwei Bie <tiwei.bie@intel.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: jasowang@redhat.com, pbonzini@redhat.com, stefanha@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dan.daly@intel.com,
-        cunming.liang@intel.com, zhihong.wang@intel.com
-Subject: Re: [RFC] virtio: support VIRTIO_F_IO_BARRIER
-Message-ID: <20180504011451.qf4po3s76adxxulf@debian>
-References: <20180503025955.28816-1-tiwei.bie@intel.com>
- <20180503203108-mutt-send-email-mst@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180503203108-mutt-send-email-mst@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1751411AbeEDBUP (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 21:20:15 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33758 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751314AbeEDBUN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 21:20:13 -0400
+X-Google-Smtp-Source: AB8JxZrMY6kVVxVTqgi1rJ1gzxE3/LihB8PNPFk5ODVa7NcqWVfbuOnDL2h1TXyb8PRtYiELpuad/g==
+From: Dmitry Safonov <dima@arista.com>
+To: linux-kernel@vger.kernel.org
+Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Masahide NAKAMURA <nakam@linux-ipv6.org>,
+        YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Subject: [PATCHv2] net/xfrm: Revert "[XFRM]: Do not add a state whose SPI is zero to the SPI hash."
+Date: Fri,  4 May 2018 02:20:09 +0100
+Message-Id: <20180504012009.643-1-dima@arista.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 08:57:20PM +0300, Michael S. Tsirkin wrote:
-> On Thu, May 03, 2018 at 10:59:55AM +0800, Tiwei Bie wrote:
-> > This patch introduces the support for VIRTIO_F_IO_BARRIER.
-> > When this feature is negotiated, driver will use the barriers
-> > suitable for hardware devices.
-> > 
-> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
-> 
-> Thanks!
-> 
-> > ---
-> >  drivers/virtio/virtio_ring.c       | 5 +++++
-> >  include/uapi/linux/virtio_config.h | 8 +++++++-
-> >  2 files changed, 12 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> > index 21d464a29cf8..edb565643bf4 100644
-> > --- a/drivers/virtio/virtio_ring.c
-> > +++ b/drivers/virtio/virtio_ring.c
-> > @@ -996,6 +996,9 @@ struct virtqueue *__vring_new_virtqueue(unsigned int index,
-> >  		!context;
-> >  	vq->event = virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-> >  
-> > +	if (virtio_has_feature(vdev, VIRTIO_F_IO_BARRIER))
-> > +		vq->weak_barriers = false;
-> > +
-> >  	/* No callback?  Tell other side not to bother us. */
-> >  	if (!callback) {
-> >  		vq->avail_flags_shadow |= VRING_AVAIL_F_NO_INTERRUPT;
-> 
-> One issue worth looking at is that at least on Intel strong barriers are
-> actually typically overkill.  We should probably switch weak_barriers ==
-> false case over to dma barriers.
+This reverts commit 7b4dc3600e48 ("[XFRM]: Do not add a state whose SPI
+is zero to the SPI hash.").
 
-Jason suggested me to add a reference or some notes in this
-patch about your patch:
+Zero SPI is legal and defined for IPcomp.
+We shouldn't omit adding the state to SPI hash because it'll not be
+possible to delete or lookup for it afterward:
+__xfrm_state_insert() obviously doesn't add hash for zero
+SPI in xfrm.state_byspi, and xfrm_user_state_lookup() will fail as
+xfrm_state_lookup() does lookups by hash.
 
-"[PATCH] virtio_ring: switch to dma_XX barriers for rpmsg"
+It also isn't possible to workaround from userspace as
+xfrm_id_proto_match() will be always true for ah/esp/comp protos.
 
-> 
-> > @@ -1164,6 +1167,8 @@ void vring_transport_features(struct virtio_device *vdev)
-> >  			break;
-> >  		case VIRTIO_F_IOMMU_PLATFORM:
-> >  			break;
-> > +		case VIRTIO_F_IO_BARRIER:
-> > +			break;
-> >  		default:
-> >  			/* We don't understand this bit. */
-> >  			__virtio_clear_bit(vdev, i);
-> > diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-> > index 308e2096291f..6ca8d24bf468 100644
-> > --- a/include/uapi/linux/virtio_config.h
-> > +++ b/include/uapi/linux/virtio_config.h
-> 
-> Any virtio UAPI changes must be CC'd to one of the virtio TC mailing lists
-> (subscriber-only, sorry about that).
+v1 link: https://lkml.kernel.org/r/<20180502020220.2027-1-dima@arista.com>
 
-Got it! I'll send a new version and Cc virtio-dev.
+Cc: Masahide NAKAMURA <nakam@linux-ipv6.org>
+Cc: YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ net/xfrm/xfrm_state.c | 39 +++++++++++++++------------------------
+ 1 file changed, 15 insertions(+), 24 deletions(-)
 
-> 
-> > @@ -49,7 +49,7 @@
-> >   * transport being used (eg. virtio_ring), the rest are per-device feature
-> >   * bits. */
-> >  #define VIRTIO_TRANSPORT_F_START	28
-> > -#define VIRTIO_TRANSPORT_F_END		34
-> > +#define VIRTIO_TRANSPORT_F_END		38
-> >  
-> >  #ifndef VIRTIO_CONFIG_NO_LEGACY
-> >  /* Do we get callbacks when the ring is completely used, even if we've
-> > @@ -71,4 +71,10 @@
-> >   * this is for compatibility with legacy systems.
-> >   */
-> >  #define VIRTIO_F_IOMMU_PLATFORM		33
-> > +
-> > +/*
-> > + * If clear - driver may use barriers suitable for CPU cores.
-> > + * If set - driver must use barriers suitable for hardware devices.
-> > + */
-> > +#define VIRTIO_F_IO_BARRIER		37
-> >  #endif /* _UAPI_LINUX_VIRTIO_CONFIG_H */
-> 
-> Why 37? I'd use 34 I think.
-
-In the latest virtio spec draft, 34 and 35 have been taken
-by VIRTIO_F_RING_PACKED and VIRTIO_F_IN_ORDER. And 36 had
-been taken by VIRTIO_F_NOTIFICATION_DATA previously when I
-sent below proposal:
-
-https://lists.oasis-open.org/archives/virtio-dev/201804/msg00310.html
-
-But I just noticed that NOTIFICATION_DATA has been reverted
-from the repo, which means 36 is the next available bit. So
-I'll use it. Thanks for the reminder!
-
-Best regards,
-Tiwei Bie
-
-> 
-> > -- 
-> > 2.11.0
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index f9d2f2233f09..03afe5423448 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -97,12 +97,9 @@ static void xfrm_hash_transfer(struct hlist_head *list,
+ 				    nhashmask);
+ 		hlist_add_head_rcu(&x->bysrc, nsrctable + h);
+ 
+-		if (x->id.spi) {
+-			h = __xfrm_spi_hash(&x->id.daddr, x->id.spi,
+-					    x->id.proto, x->props.family,
+-					    nhashmask);
+-			hlist_add_head_rcu(&x->byspi, nspitable + h);
+-		}
++		h = __xfrm_spi_hash(&x->id.daddr, x->id.spi, x->id.proto,
++				    x->props.family, nhashmask);
++		hlist_add_head_rcu(&x->byspi, nspitable + h);
+ 	}
+ }
+ 
+@@ -613,8 +610,7 @@ int __xfrm_state_delete(struct xfrm_state *x)
+ 		list_del(&x->km.all);
+ 		hlist_del_rcu(&x->bydst);
+ 		hlist_del_rcu(&x->bysrc);
+-		if (x->id.spi)
+-			hlist_del_rcu(&x->byspi);
++		hlist_del_rcu(&x->byspi);
+ 		net->xfrm.state_num--;
+ 		spin_unlock(&net->xfrm.xfrm_state_lock);
+ 
+@@ -958,7 +954,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
+ 		    xfrm_state_addr_check(x, daddr, saddr, encap_family) &&
+ 		    tmpl->mode == x->props.mode &&
+ 		    tmpl->id.proto == x->id.proto &&
+-		    (tmpl->id.spi == x->id.spi || !tmpl->id.spi))
++		    tmpl->id.spi == x->id.spi)
+ 			xfrm_state_look_at(pol, x, fl, encap_family,
+ 					   &best, &acquire_in_progress, &error);
+ 	}
+@@ -974,7 +970,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
+ 		    xfrm_addr_equal(&x->id.daddr, daddr, encap_family) &&
+ 		    tmpl->mode == x->props.mode &&
+ 		    tmpl->id.proto == x->id.proto &&
+-		    (tmpl->id.spi == x->id.spi || !tmpl->id.spi))
++		    tmpl->id.spi == x->id.spi)
+ 			xfrm_state_look_at(pol, x, fl, encap_family,
+ 					   &best, &acquire_in_progress, &error);
+ 	}
+@@ -982,8 +978,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
+ found:
+ 	x = best;
+ 	if (!x && !error && !acquire_in_progress) {
+-		if (tmpl->id.spi &&
+-		    (x0 = __xfrm_state_lookup(net, mark, daddr, tmpl->id.spi,
++		if ((x0 = __xfrm_state_lookup(net, mark, daddr, tmpl->id.spi,
+ 					      tmpl->id.proto, encap_family)) != NULL) {
+ 			to_put = x0;
+ 			error = -EEXIST;
+@@ -1025,10 +1020,8 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
+ 			hlist_add_head_rcu(&x->bydst, net->xfrm.state_bydst + h);
+ 			h = xfrm_src_hash(net, daddr, saddr, encap_family);
+ 			hlist_add_head_rcu(&x->bysrc, net->xfrm.state_bysrc + h);
+-			if (x->id.spi) {
+-				h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, encap_family);
+-				hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
+-			}
++			h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, encap_family);
++			hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
+ 			x->lft.hard_add_expires_seconds = net->xfrm.sysctl_acq_expires;
+ 			tasklet_hrtimer_start(&x->mtimer, ktime_set(net->xfrm.sysctl_acq_expires, 0), HRTIMER_MODE_REL);
+ 			net->xfrm.state_num++;
+@@ -1134,7 +1127,7 @@ static void __xfrm_state_insert(struct xfrm_state *x)
+ 	h = xfrm_src_hash(net, &x->id.daddr, &x->props.saddr, x->props.family);
+ 	hlist_add_head_rcu(&x->bysrc, net->xfrm.state_bysrc + h);
+ 
+-	if (x->id.spi) {
++	if (xfrm_id_proto_match(x->id.proto, IPSEC_PROTO_ANY)) {
+ 		h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto,
+ 				  x->props.family);
+ 
+@@ -1787,14 +1780,12 @@ int xfrm_alloc_spi(struct xfrm_state *x, u32 low, u32 high)
+ 			xfrm_state_put(x0);
+ 		}
+ 	}
+-	if (x->id.spi) {
+-		spin_lock_bh(&net->xfrm.xfrm_state_lock);
+-		h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, x->props.family);
+-		hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
+-		spin_unlock_bh(&net->xfrm.xfrm_state_lock);
++	spin_lock_bh(&net->xfrm.xfrm_state_lock);
++	h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, x->props.family);
++	hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
++	spin_unlock_bh(&net->xfrm.xfrm_state_lock);
+ 
+-		err = 0;
+-	}
++	err = 0;
+ 
+ unlock:
+ 	spin_unlock_bh(&x->lock);
+-- 
+2.13.6
