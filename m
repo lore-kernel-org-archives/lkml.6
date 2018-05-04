@@ -1,113 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751278AbeEDLSF (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:18:05 -0400
-Received: from ozlabs.org ([203.11.71.1]:47589 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750820AbeEDLSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:18:04 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: kbuild test robot <lkp@intel.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Cc: kbuild-all@01.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 1/3] powerpc/nohash: remove hash related code from nohash headers.
-In-Reply-To: <201804270438.utPklxgP%fengguang.wu@intel.com>
-References: <02633d43f29e1ba01865cd334216dc8efb8b4b11.1524587425.git.christophe.leroy@c-s.fr> <201804270438.utPklxgP%fengguang.wu@intel.com>
-Date: Fri, 04 May 2018 21:17:58 +1000
-Message-ID: <878t8z8yah.fsf@concordia.ellerman.id.au>
+        id S1751344AbeEDLTF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:19:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52356 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751172AbeEDLTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 07:19:04 -0400
+Date: Fri, 4 May 2018 12:18:51 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v7 3/9] PCI: endpoint: functions/pci-epf-test: Add second
+ entry
+Message-ID: <20180504111843.GA5930@e107981-ln.cambridge.arm.com>
+References: <20180426165605.GA6370@e107981-ln.cambridge.arm.com>
+ <b65caf2e-b002-f591-6215-ff2241b2dfb8@ti.com>
+ <20180501115417.GD19391@e107981-ln.cambridge.arm.com>
+ <5d625d04-38fe-7d5a-67fc-5ea92039474c@ti.com>
+ <20180501142607.GA21911@e107981-ln.cambridge.arm.com>
+ <bfaebf3c-2175-f4b2-89c5-336ff9396ed0@synopsys.com>
+ <20180502165144.GB4871@e107981-ln.cambridge.arm.com>
+ <cf2772d5-26c0-b0e3-1e5b-ace91c1ea105@ti.com>
+ <20180503141636.GA23270@e107981-ln.cambridge.arm.com>
+ <aeb80d31-c79e-80a9-5e67-9bf1f277f39a@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aeb80d31-c79e-80a9-5e67-9bf1f277f39a@ti.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kbuild test robot <lkp@intel.com> writes:
+On Fri, May 04, 2018 at 11:28:58AM +0530, Kishon Vijay Abraham I wrote:
+> Hi Lorenzo,
+> 
+> On Thursday 03 May 2018 07:46 PM, Lorenzo Pieralisi wrote:
+> > On Thu, May 03, 2018 at 12:03:15PM +0530, Kishon Vijay Abraham I wrote:
+> > 
+> > [...]
+> > 
+> >>>> Since the linkup notifier and BAR index (where auxiliary registers are
+> >>>> located) may be configurable and is something platform dependent,
+> >>>> perhaps the configuration of this variables should be done by module
+> >>>> parameter and not by configfs, leaving this configuration
+> >>>> responsibility in charge of each platform.
+> >>>
+> >>> They are platform dependent because they depend on the EP controller.
+> >>> That's why I said that those are EP controller parameters. I do not
+> >>> think they are module parameters either - they should be part of HW
+> >>> description in firmware.
+> >>
+> >> The problem is because pci-epf-test cannot be described in HW. pci-epf-test is
+> >> also not automatically bound to the EP controller but is bound by the user like
+> >> below
+> >> ln -s functions/pci_epf_test/func1 controllers/51000000.pcie_ep/
+> >>
+> >> So given that user anyways has to bind the epf device to the controller, based
+> >> on the platform the user can use a different configfs entry like below
+> >> ln -s functions/pci_epf_test_dw/func1 controllers/51000000.pcie_ep/ or
+> >> ln -s functions/pci_epf_test_k2g/func1 controllers/21800000.pcie-ep/
+> >>
+> >> If the epf can be described in dt, then something like below can be done
+> >> pcie1_ep: pcie_ep@51000000 {
+> >> 	compatible = "ti,dra7-pcie-ep";
+> >> 	interrupts = <0 232 0x4>;
+> >> 	num-lanes = <1>;
+> >> 	num-ib-windows = <4>;
+> >> 	num-ob-windows = <16>;
+> >> 	phys = <&pcie1_phy>;
+> >> 	phy-names = "pcie-phy0";
+> >> 	pci_epf_test: pci_epf_test@0 {
+> >> 		name = "pci_epf_test_dw";
+> >> 		<other properties>;
+> >> 	}
+> >> };
+> >>
+> >> With this pci-dra7xx.c driver should create pci_epf_device using
+> >> pci_epf_create("pci_epf_test_dw");
+> >>
+> >> Then the driver_data corresponding to "pci_epf_test_dw" will select linkup
+> >> notifier or BAR index etc.
+> > 
+> > Those two properties are properties of the EP controller (it is not 100%
+> > clear to me how the test BAR register is defined), is this correct ?
+> 
+> Right, these properties are specific to a platform. In some of the platforms
+> like K2G (BAR0 is reserved i.e it is used to map PCIe app registers and cannot
+> be used by pci_epf_test. In such cases we should use a BAR other than BAR0).
 
-> Hi Christophe,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on powerpc/next]
-> [also build test ERROR on v4.17-rc2 next-20180426]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Christophe-Leroy/powerpc-nohash-remove-hash-related-code-from-nohash-headers/20180425-182026
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-> config: powerpc-ppc64e_defconfig (attached as .config)
-> compiler: powerpc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=powerpc 
->
-> All errors (new ones prefixed by >>):
->
->    In file included from arch/powerpc/include/asm/nohash/pgtable.h:6:0,
->                     from arch/powerpc/include/asm/pgtable.h:19,
->                     from include/linux/memremap.h:8,
->                     from include/linux/mm.h:27,
->                     from include/linux/mman.h:5,
->                     from arch/powerpc/kernel/asm-offsets.c:22:
->    arch/powerpc/include/asm/nohash/64/pgtable.h: In function '__ptep_test_and_clear_young':
->>> arch/powerpc/include/asm/nohash/64/pgtable.h:214:6: error: implicit declaration of function 'pte_young'; did you mean 'pte_pud'? [-Werror=implicit-function-declaration]
->      if (pte_young(*ptep))
->          ^~~~~~~~~
->          pte_pud
+I do not think those properties are pci_epf_test specific, that's the
+whole point I am making. Those are EPC controller features.
 
-Urk.
+> > If yes, given that those properties are not useful before an EPF is
+> > bound to an EPC, can't they be retrieved at bind time from the EPC
+> > controller data (that we can add through DT bindings) ?
+> 
+> hmm..
+> 
+> We can have quirk in pci_epc, something like below
+> 
+> struct pci_epc {
+> 	.
+> 	.
+> 	unsigned int quirks;
+> 	.
+> 	.
+> };
+> 
+> #define EPC_QUIRKS_NO_LINKUP_NOTIFIER	BIT(0)
+> #define EPC_QUIRKS_BAR0_RESERVED	BIT(1)
+> #define EPC_QUIRKS_BAR1_RESERVED	BIT(2)
+> #define EPC_QUIRKS_BAR2_RESERVED	BIT(3)
+> #define EPC_QUIRKS_BAR3_RESERVED	BIT(4)
+> #define EPC_QUIRKS_BAR4_RESERVED	BIT(5)
+> #define EPC_QUIRKS_BAR5_RESERVED	BIT(6)
+> 
+> The controller driver can set the appropriate quirks
+> epc->quirks |= EPC_QUIRKS_NO_LINKUP_NOTIFIER | EPC_QUIRKS_BAR0_RESERVED;
+> 
+> Then pci-epf-test driver can checks the quirks to see the supported EPC features.
+> 
+> Does something like above looks okay to you?
 
-There's a circular dependency here.
+Well, it is better than the driver_data approach, I would not call them
+quirks but features and for the BARs you should define a mask it does
+not make sense to enumerate them. It is probably a good idea to leave
+room for additional "features" so please choose the bits placement
+wisely.
 
-I fixed it with the patch below, which seems to be the least worst
-solution. Possibly we can clean things up further in future.
-
-cheers
-
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 140f8e74b478..987a658b18e1 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -267,6 +267,11 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
- 	pte_update(ptep, clr, set);
- }
- 
-+static inline int pte_young(pte_t pte)
-+{
-+	return pte_val(pte) & _PAGE_ACCESSED;
-+}
-+
- #define __HAVE_ARCH_PTE_SAME
- #define pte_same(A,B)	((pte_val(A) ^ pte_val(B)) == 0)
- 
-diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-index e8de7cb4d3fb..6ac8381f4c7a 100644
---- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-@@ -204,6 +204,11 @@ static inline unsigned long pte_update(struct mm_struct *mm,
- 	return old;
- }
- 
-+static inline int pte_young(pte_t pte)
-+{
-+	return pte_val(pte) & _PAGE_ACCESSED;
-+}
-+
- static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
- 					      unsigned long addr, pte_t *ptep)
- {
-diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-index 077472640b35..2160be2e4339 100644
---- a/arch/powerpc/include/asm/nohash/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/pgtable.h
-@@ -17,7 +17,6 @@ static inline int pte_write(pte_t pte)
- }
- static inline int pte_read(pte_t pte)		{ return 1; }
- static inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & _PAGE_DIRTY; }
--static inline int pte_young(pte_t pte)		{ return pte_val(pte) & _PAGE_ACCESSED; }
- static inline int pte_special(pte_t pte)	{ return pte_val(pte) & _PAGE_SPECIAL; }
- static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
- static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
+Thanks,
+Lorenzo
