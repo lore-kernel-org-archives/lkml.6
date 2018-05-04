@@ -1,31 +1,33 @@
 Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3148351-1525383416-2-1445068911989821619
+X-Cyrus-Session-Id: sloti22d1t05-3422286-1525396828-2-6485711735361187296
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525383415; b=MGDnOLG7lPWtGX2+EdtFZlV+1kGCins5hZYukAdODsxok2c0GE
-    32S3vSWM7QLPJxJ+4+xmbRajfdGAu0uu0/9KguZYsyoxba+5EJnQkIswArw2gdXp
-    DHXZbY5r87w/OxJLD6QJitsvi+5oW4mvjKO3oeRaAWbertCNU4J/rs/UFJzioxnD
-    Usgwpbi7crclmmU8bUutFbN+mfy8heg0CmzKfUlr/rWaYWH35yQKzNFlMNLBpuKm
-    np3lbQpCl54gqVG0VhkB3Grpq1N/BWmcxtiU1lcO3SuSk/p3ahP+kff6fn5Sw0Cy
-    LPaZtxH4DCSrAM+5aTsAc1Q6Snh5rQC1E9Mg==
+    1525396828; b=E45KxuTqtiBt/6bYNhkbYhukmQj9jvt5PYSub8jcW34xQu0O0g
+    2ZxWyBB1l7BI7uYOviVjb5RxavBXp3gzFIdedCi7Hk9RBwiOY6frUFk/ajOEnaot
+    cM5IHVnztX6Y4v9pWI3W2NXKHJmrWZQVcGxYqjyrgR5P2mwA6YkJvpD05HlxRNxi
+    LK34m72BcdLI1GwRI5TjntIxE00Ha+2S1IVn1GJ4MwPiZretnrmnBcFu4edBRvZ4
+    bU+T2reAR4GML1K2e0J8ZJM4zGNcOHoq5VP2qHOiWGmp/R1mdpBsLawavhWVBuvP
+    /B5jC6vJmINgjTXrxg0ExWGoAmMaS4RvhH5Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:references:date:in-reply-to
-    :message-id:mime-version:content-type:content-transfer-encoding
-    :subject:sender:list-id; s=fm2; t=1525383415; bh=UEqdUCpxtuGDUT+
-    hLKgy1lkxQI698FfNTid7GtqXWLg=; b=nqFhFX/HB+Z3M/RE1/PubZc1917akyS
-    EVD0KYS8QxM8V8XHM1FSzgNpjloGlrez0qcwTY+i/qENIu5uS1F5aOayBansyLcG
-    yzvWnkCpxzYjL1n3ffgpTFNjt2jRWStbOu1/mZdprC9ngZDuBHSG0nVTFSoC/PTl
-    TNnFY6eSeQt7poPz+IeID9ItLComBnEr6JViEc08jOxJ4qU0tbWhl2nZpqfsoUGx
-    c7UjiTDcIcKpAWss/plCgZKAkm/bJ131CzqIaekABSHYq7OUHERTlhGNleqFqqFg
-    2w2dz/kxJVN6r+/mnNK0PxDACUAk9HFbAZvG2XGRtHnJshyekNgTsCw==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=content-type:mime-version:subject:from
+    :in-reply-to:date:cc:content-transfer-encoding:references:to
+    :message-id:sender:list-id; s=fm2; t=1525396828; bh=Ak/qcxhwE14e
+    5zJvAdQZDlU5CGtdWmvYInjfg3Z13CU=; b=jHJPjFBDafDSV0zMeaeYlXHq4rFL
+    9vDqPqXlncck0qJpsssstvreOnk9nY+7AeX+tIk8YFR0Fy7Etd1RKG2OSPVlTCV1
+    sZVW9PMpfuknwnSRL11xyLyiS2vssKMWrZv3lxMKSi/FRLJDmGDPlzOa0hIPnEXI
+    K7gaY8HSmih98YtP4/KbrjWkClV7jzxwcuLsEkidgK3c8gTmk8j72QkJkX57v6Ez
+    C/5rBEXn6J7VvR/+cPOqtVWeSfjXKqWF0bNrCgYAgm3cVetBMLlJnvCZZYxNz5Ji
+    t43XDq9CbaC8UAT2A18vrTD+QwSQc5iQ8Q2oFA94GKsMMVGbbvSiY5BpPw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+    header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -34,13 +36,15 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=xmission.com header.result=pass
-    header_is_org_domain=yes;
+    header.domain=linux.vnet.ibm.com header.result=pass
+    header_org.domain=ibm.com header_org.result=pass
+    header_is_org_domain=no;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=xmission.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none)
+      header.from=linux.vnet.ibm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -49,161 +53,133 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=xmission.com header.result=pass
-      header_is_org_domain=yes;
+      header.domain=linux.vnet.ibm.com header.result=pass
+      header_org.domain=ibm.com header_org.result=pass
+      header_is_org_domain=no;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJipRG+ehOZ4hjnDd6zPdSvoXSIT/k/I6sa8l3Comms/TUPPX0eVsG/pJ6GsWHvV3ULBQPiXsqn1vOFDqAqwiCUYBaogXHA3+tFFnLGXNEqEBNwX95Db
-    opmG6BO/kpnoubKBUj7Uj63cTAvPXDQGii2Ikt7oFHOdPSR/iaQxazNISKm8rwIswnGui4V2CCoUW5VTncvuoXndnCIQLD2zLXyk1sG5PpH+eZCY9Oj5NA+w
-    cVCKsHXsbpI8TqfYidW4jg==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=vpqfxihKAAAA:8 a=VwQbUJbxAAAA:8 a=vt4SjZg1rlAb8qBVY98A:9
-    a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10 a=AULIiLoY-XQsE5F6gcqX:22
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfKi8GOTF3qKYKaB7qfmP1pXDzvYmlqWSSZ1Vl4vGMKdtvTu15cFgPY6tOhdvkw8sTSRsyeHFZOWTf8Wwz8UU5wJ1el5/aqef8mMa9BlD2OmRUlZjepC5
+    svtBF/BYDOsTWTJa/+OkD1SE7BpXsiS1a6/iU6rL8L7qzF1HwDm67UPVMI9o5y2CfhaKujJXEsn0bAOSl6wKatbzjqt38SG5vpJdMGls3vnXsOqId2IMVXlL
+    dbBDjReY0PumUyuHiTNZzQ==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=jlY5g9R6hR36p1gyXV8A:9
+    a=VFAflaYM64q-Nwar:21 a=wyxssFzoII3yipSt:21 a=CjuIK1q_8ugA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751195AbeECVgw convert rfc822-to-8bit (ORCPT
-        <rfc822;linux@kroah.com>); Thu, 3 May 2018 17:36:52 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:47868 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751074AbeECVgv (ORCPT
+        id S1751432AbeEDBUY convert rfc822-to-8bit (ORCPT
+        <rfc822;linux@kroah.com>); Thu, 3 May 2018 21:20:24 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46322 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751420AbeEDBUW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 May 2018 17:36:51 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>,
+        Thu, 3 May 2018 21:20:22 -0400
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH v6 0/4] Certificate insertion support for x86 bzImages
+From: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>
+In-Reply-To: <1525383720.3539.76.camel@linux.vnet.ibm.com>
+Date: Thu, 3 May 2018 21:20:16 -0400
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>,
         David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1523572911-16363-1-git-send-email-zohar@linux.vnet.ibm.com>
-        <1523572911-16363-3-git-send-email-zohar@linux.vnet.ibm.com>
-        <87h8nqglpx.fsf@xmission.com>
-        <1525275904.5669.308.camel@linux.vnet.ibm.com>
-        <87h8nospo5.fsf@xmission.com>
-        <6203b1e4-70c3-6d0e-60e0-56c6e8f72ec9@schaufler-ca.com>
-        <87y3h0pu72.fsf@xmission.com>
-        <1525381619.3539.45.camel@linux.vnet.ibm.com>
-Date: Thu, 03 May 2018 16:36:40 -0500
-In-Reply-To: <1525381619.3539.45.camel@linux.vnet.ibm.com> (Mimi Zohar's
-        message of "Thu, 03 May 2018 17:06:59 -0400")
-Message-ID: <87lgd0o1zr.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+        David Woodhouse <dwmw2@infradead.org>,
+        Keyrings <keyrings@vger.kernel.org>,
+        Linux Integrity <linux-integrity@vger.kernel.org>,
+        Linux Security <linux-security-module@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        George Wilson <gcwilson@us.ibm.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Patrick Callaghan <patrickc@us.ibm.com>
 Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1fELuB-0008I7-TV;;;mid=<87lgd0o1zr.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19CCsA61K5b02R6zf4APxrEyy4Aqhm93tA=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  1.5 XMNoVowels Alpha-numberic number with no vowels
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  1.0 T_XMDrugObfuBody_08 obfuscated drug references
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-        *  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Mimi Zohar <zohar@linux.vnet.ibm.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 303 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 3.7 (1.2%), b_tie_ro: 3.0 (1.0%), parse: 0.82 (0.3%),
-        extract_message_metadata: 11 (3.7%), get_uri_detail_list: 2.2 (0.7%),
-        tests_pri_-1000: 4.8 (1.6%), tests_pri_-950: 1.17 (0.4%), tests_pri_-900:
-        0.97 (0.3%), tests_pri_-400: 36 (11.9%), check_bayes: 35 (11.5%), b_tokenize:
-        15 (4.8%), b_tok_get_all: 9 (2.9%), b_comp_prob: 4.1 (1.4%), b_tok_touch_all:
-        4.9 (1.6%), b_finish: 0.66 (0.2%), tests_pri_0: 238 (78.4%),
-        check_dkim_signature: 0.65 (0.2%), check_dkim_adsp: 2.8 (0.9%),
-        tests_pri_500: 4.1 (1.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 2/3] kexec: call LSM hook for kexec_load syscall
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+References: <20180502230811.2751-1-mkayaalp@linux.vnet.ibm.com>
+ <alpine.LRH.2.21.1805040311050.12843@namei.org>
+ <1525383720.3539.76.camel@linux.vnet.ibm.com>
+To: James Morris <jmorris@namei.org>
+X-Mailer: Apple Mail (2.3445.6.18)
+X-TM-AS-GCONF: 00
+x-cbid: 18050401-0008-0000-0000-00000302904A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008965; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01027141; UDB=6.00524651; IPR=6.00806274;
+ MB=3.00020917; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-04 01:20:20
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050401-0009-0000-0000-000039203FCF
+Message-Id: <04EE0041-8DF1-4FF3-9C59-64ECF0182CC5@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-03_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805040011
 Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
 
-> On Thu, 2018-05-03 at 11:42 -0500, Eric W. Biederman wrote:
->> Casey Schaufler <casey@schaufler-ca.com> writes:
+> On May 3, 2018, at 5:42 PM, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> 
+> On Fri, 2018-05-04 at 03:11 +1000, James Morris wrote:
+>> On Wed, 2 May 2018, Mehmet Kayaalp wrote:
 >> 
->> > On 5/3/2018 8:51 AM, Eric W. Biederman wrote:
->> >> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
->> >>
->> >>> On Wed, 2018-05-02 at 09:45 -0500, Eric W. Biederman wrote:
->> >>>> Mimi Zohar <zohar@linux.vnet.ibm.com> writes:
->> >>>>
->> >>>>> Allow LSMs and IMA to differentiate between the kexec_load and
->> >>>>> kexec_file_load syscalls by adding an "unnecessary" call to
->> >>>>> security_kernel_read_file() in kexec_load.  This would be similar to the
->> >>>>> existing init_module syscall calling security_kernel_read_file().
->> >>>> Given the reasonable desire to load a policy that ensures everything
->> >>>> has a signature I don't have fundamental objections.
->> >>>>
->> >>>> security_kernel_read_file as a hook seems an odd choice.  At the very
->> >>>> least it has a bad name because there is no file reading going on here.
->> >>>>
->> >>>> I am concerned that I don't see CONFIG_KEXEC_VERIFY_SIG being tested
->> >>>> anywhere.  Which means I could have a kernel compiled without that and I
->> >>>> would be allowed to use kexec_file_load without signature checking.
->> >>>> While kexec_load would be denied.
->> >>>>
->> >>>> Am I missing something here?
->> >>> The kexec_file_load() calls kernel_read_file_from_fd(), which in turn
->> >>> calls security_kernel_read_file().  So kexec_file_load and kexec_load
->> >>> syscall would be using the same method for enforcing signature
->> >>> verification.
->> >> Having looked at your patches and the kernel a little more I think
->> >> this should be a separate security hook that does not take a file
->> >> parameter.
->> >>
->> >> Right now every other security module assumes !file is init_module.
->> >> So I think this change has the potential to confuse other security
->> >> modules, with the result of unintended policy being applied.
->> >>
->> >> So just for good security module hygeine I think this needs a dedicated
->> >> kexec_load security hook.
->> >
->> > I would rather see the existing modules updated than a new
->> > hook added. Too many hooks spoil the broth. Two hooks with
->> > trivial differences just add to the clutter and make it harder
->> > for non-lsm developers to figure out what to use in their
->> > code.
+>>> These patches add support for modifying the reserved space for extra
+>>> certificates in a compressed bzImage in x86. This allows separating the
+>>> system keyring certificate from the kernel build process. After the kernel
+>>> image is distributed, the insert-sys-cert script can be used to insert the
+>>> certificate for x86.
 >> 
->> These are not non-trivial differences.  There is absolutely nothing
->> file related about kexec_load.  Nor for init_module for that matter.
->> 
->> If something is called security_kernel_read_file I think it is wholly
->> appropriate for code that processes such a hook to assume file is
->> non-NULL.
->> 
->> When you have to dance a jig (which is what I see the security modules
->> doing) to figure out who is calling a lsm hook for what purpose I think
->> it is a maintenance problem waiting to happen and that the hook is badly
->> designed.
->> 
->> At this point I don't care what the lsm's do with the hooks but the
->> hooks need to make sense for people outside of the lsm's and something
->> about reading a file in a syscall that doesn't read files is complete
->> and utter nonsense.
->
-> Sure, we can define a wrapper around the security_kernel_read_file()
-> hook, calling it security_non-fd_syscall() or even
-> security_old_syscall().
+>> Can you provide more explanation of how this is useful and who would use 
+>> it?
+> 
+> I'm involved in a number projects that rely on a kernel build group to
+> actually build kernels for their systems.  Reserving memory for
+> additional public keys, allows product groups to insert public keys
+> post build.  Initially the product groups might insert development
+> keys, but eventually they would insert the product's public key.
+> 
+> Mimi
 
-I really don't see why you want to use the same hook.
+With CONFIG_SYSTEM_TRUSTED_KEYRING, we have a system keyring populated
+with keys that we trust. Initial keys are compiled-in:
+-The module signing key, as specified by CONFIG_MODULE_SIG_KEY,
+-Additional keys, as specified by CONFIG_SYSTEM_TRUSTED_KEYS.
 
-I just read through the code of all three users.  None of them.
-Especially IMA shares any significant code between the !file case and
-the file case.
+In userspace, we can add more keys to the system keyring, only if they can be
+verified by keys already in the keyring.
 
-Eric
+In kernel or modules, we can bypass this restriction by using the
+KEY_ALLOC_BYPASS_RESTRICTION flag. As far as I can tell, only the compiled-in
+keys are loaded this way in the upstream kernel.
+
+Other asymmetric keyrings can specify the same restriction using the
+"builtin_trusted" option. Currently, CONFIG_INTEGRITY_TRUSTED_KEYRING creates
+".ima" and ".evm" keyrings with this restriction. As a result, in order to
+add a key to an integrity keyring, either that key needs to be compiled-in,
+or it must be signed with a key that is in the system keyring, which again
+needs to be compiled-in.
+
+If a user is not compiling their own kernel, and has no access to the module
+signing key (or any other compiled-in key), then how can they add their own
+keys to the integrity keyrings?
+
+This patchset allows the user to take the kernel from a distro, insert their 
+own key, sign the resulting image as required for their secure boot method,  
+and when booted, the system keyring will include their key, which can be used 
+to control the integrity keys.
+
+An alternative way is to allow the "secondary" trusted keyring to verify the 
+IMA keys with CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY, but 
+it is the same problem. Some distros carry patches that populate the 
+secondary keyring with UEFI keys during kernel initialization, which would 
+mean having access to a UEFI key (which is also needed with this patchset, 
+for signing the resulting image), would be enough to add integrity keys. But 
+that is much more permissive, since ANY key that goes into the secondary 
+keyring, coming from UEFI, could then be used to control the integrity keys. 
+
+Mehmet
 
