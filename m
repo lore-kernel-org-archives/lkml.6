@@ -1,186 +1,126 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751570AbeEDCmX (ORCPT <rfc822;w@1wt.eu>);
+        id S1751539AbeEDCmX (ORCPT <rfc822;w@1wt.eu>);
         Thu, 3 May 2018 22:42:23 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18423 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751355AbeEDCle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-it0-f67.google.com ([209.85.214.67]:35443 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751361AbeEDCle (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 3 May 2018 22:41:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
-   d="scan'208";a="221513542"
-From: kan.liang@intel.com
-To: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc: acme@kernel.org, eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@intel.com>
-Subject: [RESEND PATCH V7 5/8] perf/x86/intel/uncore: Add infrastructure for free running counter
-Date: Thu,  3 May 2018 11:25:10 -0700
-Message-Id: <1525371913-10597-5-git-send-email-kan.liang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
-References: <1525371913-10597-1-git-send-email-kan.liang@intel.com>
+X-Google-Smtp-Source: AB8JxZpzk6Q3cslPUKozzaQFthTqQAHrgTB5demkYqpbVT5Yo6iE6axBaUNKWS+v8J8hwVtH1Jiz1YNhjwsJHKUJSe0=
+MIME-Version: 1.0
+In-Reply-To: <20180503153310.GA9738@ziepe.ca>
+References: <1525356274-736-1-git-send-email-lidongchen@tencent.com> <20180503153310.GA9738@ziepe.ca>
+From: 858585 jemmy <jemmy858585@gmail.com>
+Date: Fri, 4 May 2018 10:41:33 +0800
+Message-ID: <CAOGPPbe_kDROfPampoiGW=v-AsYeBQjQ01wwfuMKPkSk-yqHoA@mail.gmail.com>
+Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
+        leon@kernel.org, artemyko@mellanox.com, dan.j.williams@intel.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adido@mellanox.com, Gal Shachaf <galsha@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Lidong Chen <lidongchen@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@intel.com>
+On Thu, May 3, 2018 at 11:33 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
+>> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+>> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+>> exited, get_pid_task will return NULL, ib_umem_release does not decrease
+>> mm->pinned_vm. This patch fixes it by use tgid.
+>>
+>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+>> ---
+>>  drivers/infiniband/core/umem.c | 12 ++++++------
+>>  include/rdma/ib_umem.h         |  2 +-
+>>  2 files changed, 7 insertions(+), 7 deletions(-)
+>
+> Why are we even using a struct pid for this? Does anyone know?
+>
+> I'm surprised that struct task isn't held in the struct ib_umem..
+>
+> Is group_leader really OK and always guarenteed to return the same
+> struct mm?? For some reason I have this recollection that the leader
+> can change under some situation..
 
-There are a number of free running counters introduced for uncore, which
-provide highly valuable information to a wide array of customers.
-However, the generic uncore code doesn't support them yet.
+I read kernel code, it seems that the userspace thread can guarantee
+to return the same struct mm.
+in the copy_process function, it checks the CLONE_THREAD,
+CLONE_SIGHAND, CLONE_VM must use
+at the same time.
+And I do not find any other part code change the mm and group_leader
+for userspace thread.
 
-The free running counters will be specially handled based on their
-unique attributes
- - They are read-only. They cannot be enable/disable.
- - The event and the counter are always 1:1 mapped. It doesn't need to
-   be assigned nor tracked by event_list.
- - They are always active. It doesn't need to check the availability.
- - They have different bit width.
-
-Also, using inline helpers to replace the check for fixed counter and
-free running counter.
-
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Kan Liang <kan.liang@intel.com>
----
-
-No changes since V6.
-
- arch/x86/events/intel/uncore.c | 68 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 64 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 3b0f93e..0a6f697 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -203,7 +203,7 @@ static void uncore_assign_hw_event(struct intel_uncore_box *box,
- 	hwc->idx = idx;
- 	hwc->last_tag = ++box->tags[idx];
- 
--	if (hwc->idx == UNCORE_PMC_IDX_FIXED) {
-+	if (uncore_pmc_fixed(hwc->idx)) {
- 		hwc->event_base = uncore_fixed_ctr(box);
- 		hwc->config_base = uncore_fixed_ctl(box);
- 		return;
-@@ -218,7 +218,9 @@ void uncore_perf_event_update(struct intel_uncore_box *box, struct perf_event *e
- 	u64 prev_count, new_count, delta;
- 	int shift;
- 
--	if (event->hw.idx == UNCORE_PMC_IDX_FIXED)
-+	if (uncore_pmc_freerunning(event->hw.idx))
-+		shift = 64 - uncore_freerunning_bits(box, event);
-+	else if (uncore_pmc_fixed(event->hw.idx))
- 		shift = 64 - uncore_fixed_ctr_bits(box);
- 	else
- 		shift = 64 - uncore_perf_ctr_bits(box);
-@@ -454,10 +456,25 @@ static void uncore_pmu_event_start(struct perf_event *event, int flags)
- 	struct intel_uncore_box *box = uncore_event_to_box(event);
- 	int idx = event->hw.idx;
- 
--	if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
-+	if (WARN_ON_ONCE(idx == -1 || idx >= UNCORE_PMC_IDX_MAX))
- 		return;
- 
--	if (WARN_ON_ONCE(idx == -1 || idx >= UNCORE_PMC_IDX_MAX))
-+	/*
-+	 * Free running counter is read-only and always active.
-+	 * Use the current counter value as start point.
-+	 * There is no overflow interrupt for free running counter.
-+	 * Use hrtimer to periodically poll the counter to avoid overflow.
-+	 */
-+	if (uncore_pmc_freerunning(event->hw.idx)) {
-+		list_add_tail(&event->active_entry, &box->active_list);
-+		local64_set(&event->hw.prev_count,
-+			    uncore_read_counter(box, event));
-+		if (box->n_active++ == 0)
-+			uncore_pmu_start_hrtimer(box);
-+		return;
-+	}
-+
-+	if (WARN_ON_ONCE(!(event->hw.state & PERF_HES_STOPPED)))
- 		return;
- 
- 	event->hw.state = 0;
-@@ -479,6 +496,15 @@ static void uncore_pmu_event_stop(struct perf_event *event, int flags)
- 	struct intel_uncore_box *box = uncore_event_to_box(event);
- 	struct hw_perf_event *hwc = &event->hw;
- 
-+	/* Cannot disable free running counter which is read-only */
-+	if (uncore_pmc_freerunning(hwc->idx)) {
-+		list_del(&event->active_entry);
-+		if (--box->n_active == 0)
-+			uncore_pmu_cancel_hrtimer(box);
-+		uncore_perf_event_update(box, event);
-+		return;
-+	}
-+
- 	if (__test_and_clear_bit(hwc->idx, box->active_mask)) {
- 		uncore_disable_event(box, event);
- 		box->n_active--;
-@@ -512,6 +538,17 @@ static int uncore_pmu_event_add(struct perf_event *event, int flags)
- 	if (!box)
- 		return -ENODEV;
- 
-+	/*
-+	 * The free funning counter is assigned in event_init().
-+	 * The free running counter event and free running counter
-+	 * are 1:1 mapped. It doesn't need to be tracked in event_list.
-+	 */
-+	if (uncore_pmc_freerunning(hwc->idx)) {
-+		if (flags & PERF_EF_START)
-+			uncore_pmu_event_start(event, 0);
-+		return 0;
-+	}
-+
- 	ret = n = uncore_collect_events(box, event, false);
- 	if (ret < 0)
- 		return ret;
-@@ -570,6 +607,14 @@ static void uncore_pmu_event_del(struct perf_event *event, int flags)
- 
- 	uncore_pmu_event_stop(event, PERF_EF_UPDATE);
- 
-+	/*
-+	 * The event for free running counter is not tracked by event_list.
-+	 * It doesn't need to force event->hw.idx = -1 to reassign the counter.
-+	 * Because the event and the free running counter are 1:1 mapped.
-+	 */
-+	if (uncore_pmc_freerunning(event->hw.idx))
-+		return;
-+
- 	for (i = 0; i < box->n_events; i++) {
- 		if (event == box->event_list[i]) {
- 			uncore_put_event_constraint(box, event);
-@@ -603,6 +648,10 @@ static int uncore_validate_group(struct intel_uncore_pmu *pmu,
- 	struct intel_uncore_box *fake_box;
- 	int ret = -EINVAL, n;
- 
-+	/* The free running counter is always active. */
-+	if (uncore_pmc_freerunning(event->hw.idx))
-+		return 0;
-+
- 	fake_box = uncore_alloc_box(pmu->type, NUMA_NO_NODE);
- 	if (!fake_box)
- 		return -ENOMEM;
-@@ -690,6 +739,17 @@ static int uncore_pmu_event_init(struct perf_event *event)
- 
- 		/* fixed counters have event field hardcoded to zero */
- 		hwc->config = 0ULL;
-+	} else if (is_freerunning_event(event)) {
-+		if (!check_valid_freerunning_event(box, event))
-+			return -EINVAL;
-+		event->hw.idx = UNCORE_PMC_IDX_FREERUNNING;
-+		/*
-+		 * The free running counter event and free running counter
-+		 * are always 1:1 mapped.
-+		 * The free running counter is always active.
-+		 * Assign the free running counter here.
-+		 */
-+		event->hw.event_base = uncore_freerunning_counter(box, event);
- 	} else {
- 		hwc->config = event->attr.config &
- 			      (pmu->type->event_mask | ((u64)pmu->type->event_mask_ext << 32));
--- 
-2.7.4
+>
+>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+>> index 9a4e899..8813ba5 100644
+>> --- a/drivers/infiniband/core/umem.c
+>> +++ b/drivers/infiniband/core/umem.c
+>> @@ -119,7 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>       umem->length     = size;
+>>       umem->address    = addr;
+>>       umem->page_shift = PAGE_SHIFT;
+>> -     umem->pid        = get_task_pid(current, PIDTYPE_PID);
+>> +     umem->tgid       = get_task_pid(current->group_leader, PIDTYPE_PID);
+>>       /*
+>>        * We ask for writable memory if any of the following
+>>        * access flags are set.  "Local write" and "remote write"
+>> @@ -132,7 +132,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>                IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
+>>
+>>       if (access & IB_ACCESS_ON_DEMAND) {
+>> -             put_pid(umem->pid);
+>> +             put_pid(umem->tgid);
+>>               ret = ib_umem_odp_get(context, umem, access);
+>>               if (ret) {
+>>                       kfree(umem);
+>> @@ -148,7 +148,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>
+>>       page_list = (struct page **) __get_free_page(GFP_KERNEL);
+>>       if (!page_list) {
+>> -             put_pid(umem->pid);
+>> +             put_pid(umem->tgid);
+>>               kfree(umem);
+>>               return ERR_PTR(-ENOMEM);
+>>       }
+>> @@ -231,7 +231,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>       if (ret < 0) {
+>>               if (need_release)
+>>                       __ib_umem_release(context->device, umem, 0);
+>> -             put_pid(umem->pid);
+>> +             put_pid(umem->tgid);
+>>               kfree(umem);
+>>       } else
+>>               current->mm->pinned_vm = locked;
+>> @@ -274,8 +274,8 @@ void ib_umem_release(struct ib_umem *umem)
+>>
+>>       __ib_umem_release(umem->context->device, umem, 1);
+>>
+>> -     task = get_pid_task(umem->pid, PIDTYPE_PID);
+>> -     put_pid(umem->pid);
+>> +     task = get_pid_task(umem->tgid, PIDTYPE_PID);
+>> +     put_pid(umem->tgid);
+>>       if (!task)
+>>               goto out;
+>>       mm = get_task_mm(task);
+>> diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
+>> index 23159dd..2398849 100644
+>> --- a/include/rdma/ib_umem.h
+>> +++ b/include/rdma/ib_umem.h
+>> @@ -48,7 +48,7 @@ struct ib_umem {
+>>       int                     writable;
+>>       int                     hugetlb;
+>>       struct work_struct      work;
+>> -     struct pid             *pid;
+>> +     struct pid             *tgid;
+>>       struct mm_struct       *mm;
+>>       unsigned long           diff;
+>>       struct ib_umem_odp     *odp_data;
+>> --
+>> 1.8.3.1
+>>
