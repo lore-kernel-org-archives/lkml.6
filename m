@@ -1,220 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751469AbeEDMsd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:48:33 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:49540 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751269AbeEDMsc (ORCPT
+        id S1751278AbeEDM4b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:56:31 -0400
+Received: from eddie.linux-mips.org ([148.251.95.138]:42836 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751001AbeEDM4a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:48:32 -0400
-X-Google-Smtp-Source: AB8JxZrB/Cn2V0UXzoqRTb+iPazEPXC1gVsleclK6gUw3TwKWe6x+LoIXYHQBAlFpwTAui9qftPgIIldAnVRDsgnB44=
+        Fri, 4 May 2018 08:56:30 -0400
+Date: Fri, 4 May 2018 14:56:01 +0200
+From: Ralf Baechle <ralf@linux-mips.org>
+To: Robert Richter <rric@kernel.org>
+Cc: Matt Redfearn <matt.redfearn@mips.com>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Huacai Chen <chenhc@lemote.com>, linux-kernel@vger.kernel.org,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, oprofile-list@lists.sf.net
+Subject: Re: [RFC PATCH] MIPS: Oprofile: Drop support
+Message-ID: <20180504125601.GA30595@linux-mips.org>
+References: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
+ <20180424130511.GB28813@saruman>
+ <5e464a40-4e4d-dde4-b5b5-ceb637dc5f38@mips.com>
+ <20180504093002.GC4493@rric.localdomain>
+ <dd951d1e-206d-78dd-49ae-3a16cad9ebcc@mips.com>
+ <20180504102600.GD4493@rric.localdomain>
+ <294858af-9164-f0c3-62d3-d6b643e89e09@mips.com>
+ <20180504122750.GE4493@rric.localdomain>
 MIME-Version: 1.0
-References: <20180426202619.2768-1-pasha.tatashin@oracle.com> <20180504082731.GA2782@outlook.office365.com>
-In-Reply-To: <20180504082731.GA2782@outlook.office365.com>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Fri, 04 May 2018 12:47:53 +0000
-X-Gmail-Original-Message-ID: <CAGM2rebLfmWLybzNDPt-HTjZY2brkJ_8Bq37xVG_QDs=G+VuxQ@mail.gmail.com>
-Message-ID: <CAGM2rebLfmWLybzNDPt-HTjZY2brkJ_8Bq37xVG_QDs=G+VuxQ@mail.gmail.com>
-Subject: Re: [v2] mm: access to uninitialized struct page
-To: avagin@virtuozzo.com
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Dennis Zhou <dennisszhou@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8882 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=11 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805040118
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504122750.GE4493@rric.localdomain>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrei,
+On Fri, May 04, 2018 at 02:27:51PM +0200, Robert Richter wrote:
 
-Could you please provide me with scripts to reproduce this issue?
+> On 04.05.18 12:03:12, Matt Redfearn wrote:
+> > >As said, oprofile version 0.9.x is still available for cpus that do
+> > >not support perf. What is the breakage?
+> > 
+> > The breakage I originally set out to fix was the MT support in perf.
+> > https://www.linux-mips.org/archives/linux-mips/2018-04/msg00259.html
+> > 
+> > Since the perf code shares so much copied code from oprofile, those same
+> > issues exist in oprofile and ought to be addressed. But as newer oprofile
+> > userspace does not use the (MIPS) kernel oprofile code, then we could,
+> > perhaps, just remove it (as per the RFC). That would break legacy tools
+> > (0.9.x) though...
+> 
+> Those support perf:
+> 
+>  (CPU_MIPS32 || CPU_MIPS64 || CPU_R10000 || CPU_SB1 || CPU_CAVIUM_OCTEON || CPU_XLP || CPU_LOONGSON3)
+> 
+> Here is the total list of CPU_*:
+> 
+>  $ git grep -h config.CPU_ arch/mips/ | sort -u | wc -l
+>  79
+> 
+> The comparisation might not be accurate, but at least gives a hint
+> that there are many cpus not supporting perf. You would drop profiling
+> support at al to them.
 
-Thank you,
-Pavel
-On Fri, May 4, 2018 at 4:27 AM Andrei Vagin <avagin@virtuozzo.com> wrote:
+The grep results are a bit missleading.  We have many symbols such as
+CPU_MIPS32_R1 which describe a particular architecture revision supported
+by a CPU.  Others CPU_* symbols are describing particular features or
+options so in reality there are far fewer CPU to be supported.  Also
+many of the older processors or embedded cores don't have performance
+counters at all; for yet other cores presence, number and a few other
+details can be configured when synthesizing the RTL so relying on the
+CONFIG_* alone won't help.
 
-> Hello,
+> If it is too hard to also fix the oprofile code (code duplication
+> seems the main issue here), then it would be also ok to blacklist
+> newer cpus to enable oprofile kernel code (where it is broken).
 
-> We have a robot which runs criu tests on linux-next kernels.
-
-> All tests passed on 4.17.0-rc3-next-20180502.
-
-> But the 4.17.0-rc3-next-20180504 kernel didn't boot.
-
-> git bisect points on this patch.
-
-> On Thu, Apr 26, 2018 at 04:26:19PM -0400, Pavel Tatashin wrote:
-> > The following two bugs were reported by Fengguang Wu:
-> >
-> > kernel reboot-without-warning in early-boot stage, last printk:
-> > early console in setup code
-> >
-> >
-http://lkml.kernel.org/r/20180418135300.inazvpxjxowogyge@wfg-t540p.sh.intel.com
-
-> The problem looks similar with this one.
-
-> [    5.596975] devtmpfs: mounted
-> [    5.855754] Freeing unused kernel memory: 1704K
-> [    5.858162] Write protecting the kernel read-only data: 18432k
-> [    5.860772] Freeing unused kernel memory: 2012K
-> [    5.861838] Freeing unused kernel memory: 160K
-> [    5.862572] rodata_test: all tests were successful
-> [    5.866857] random: fast init done
-> early console in setup code
-> [    0.000000] Linux version 4.17.0-rc3-00023-g7c4cc2d022a1
-> (avagin@laptop) (gcc version 8.0.1 20180324 (Red Hat 8.0.1-0.20) (GCC))
-> #13 SMP Fri May 4 01:10:51 PDT 2018
-> [    0.000000] Command line: root=/dev/vda2 ro debug
-> console=ttyS0,115200 LANG=en_US.UTF-8 slub_debug=FZP raid=noautodetect
-> selinux=0 earlyprintk=serial,ttyS0,115200
-> [    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating
-> point registers'
-> [    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
-> [    0.000000] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
-> [    0.000000] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds
-> registers'
-
-> $ git describe HEAD
-> v4.17-rc3-23-g7c4cc2d022a1
-
-> [avagin@laptop linux-next]$ git log --pretty=oneline  | head -n 1
-> 7c4cc2d022a1fd56eb2ee555533b8666bc780f1e mm: access to uninitialized
-struct page
-
-
-> >
-> > And, also:
-> > [per_cpu_ptr_to_phys] PANIC: early exception 0x0d
-> > IP 10:ffffffffa892f15f error 0 cr2 0xffff88001fbff000
-> >
-> >
-http://lkml.kernel.org/r/20180419013128.iurzouiqxvcnpbvz@wfg-t540p.sh.intel.com
-> >
-> > Both of the problems are due to accessing uninitialized struct page from
-> > trap_init(). We must first do mm_init() in order to initialize allocated
-> > struct pages, and than we can access fields of any struct page that
-belongs
-> > to memory that's been allocated.
-> >
-> > Below is explanation of the root cause.
-> >
-> > The issue arises in this stack:
-> >
-> > start_kernel()
-> >  trap_init()
-> >   setup_cpu_entry_areas()
-> >    setup_cpu_entry_area(cpu)
-> >     get_cpu_gdt_paddr(cpu)
-> >      per_cpu_ptr_to_phys(addr)
-> >       pcpu_addr_to_page(addr)
-> >        virt_to_page(addr)
-> >         pfn_to_page(__pa(addr) >> PAGE_SHIFT)
-> > The returned "struct page" is sometimes uninitialized, and thus
-> > failing later when used. It turns out sometimes is because it depends
-> > on KASLR.
-> >
-> > When boot is failing we have this when  pfn_to_page() is called:
-> > kasrl: 0x000000000d600000
-> >  addr: ffffffff83e0d000
-> >     pa: 1040d000
-> >    pfn: 1040d
-> > page: ffff88001f113340
-> > page->flags ffffffffffffffff <- Uninitialized!
-> >
-> > When boot is successful:
-> > kaslr: 0x000000000a800000
-> >  addr: ffffffff83e0d000
-> >      pa: d60d000
-> >     pfn: d60d
-> >  page: ffff88001f05b340
-> > page->flags 280000000000 <- Initialized!
-> >
-> > Here are physical addresses that BIOS provided to us:
-> > e820: BIOS-provided physical RAM map:
-> > BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
-> > BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
-> > BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
-> > BIOS-e820: [mem 0x0000000000100000-0x000000001ffdffff] usable
-> > BIOS-e820: [mem 0x000000001ffe0000-0x000000001fffffff] reserved
-> > BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
-> > BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
-> >
-> > In both cases, working and non-working the real physical address is
-> > the same:
-> >
-> > pa - kasrl = 0x2E0D000
-> >
-> > The only thing that is different is PFN.
-> >
-> > We initialize struct pages in four places:
-> >
-> > 1. Early in boot a small set of struct pages is initialized to fill
-> > the first section, and lower zones.
-> > 2. During mm_init() we initialize "struct pages" for all the memory
-> > that is allocated, i.e reserved in memblock.
-> > 3. Using on-demand logic when pages are allocated after mm_init call
-> > 4. After smp_init() when the rest free deferred pages are initialized.
-> >
-> > The above path happens before deferred memory is initialized, and thus
-> > it must be covered either by 1, 2 or 3.
-> >
-> > So, lets check what PFNs are initialized after (1).
-> >
-> > memmap_init_zone() is called for pfn ranges:
-> > 1 - 1000, and 1000 - 1ffe0, but it quits after reaching pfn 0x10000,
-> > as it leaves the rest to be initialized as deferred pages.
-> >
-> > In the working scenario pfn ended up being below 1000, but in the
-> > failing scenario it is above. Hence, we must initialize this page in
-> > (2). But trap_init() is called before mm_init().
-> >
-> > The bug was introduced by "mm: initialize pages on demand during boot"
-> > because we lowered amount of pages that is initialized in the step
-> > (1). But, it still could happen, because the number of initialized
-> > pages was a guessing.
-> >
-> > The current fix moves trap_init() to be called after mm_init, but as
-> > alternative, we could increase pgdat->static_init_pgcnt:
-> > In free_area_init_node we can increase:
-> >        pgdat->static_init_pgcnt = min_t(unsigned long,
-PAGES_PER_SECTION,
-> >                                         pgdat->node_spanned_pages);
-> > Instead of one PAGES_PER_SECTION, set several, so the text is
-> > covered for all KASLR offsets. But, this would still be guessing.
-> > Therefore, I prefer the current fix.
-> >
-> > Fixes: c9e97a1997fb ("mm: initialize pages on demand during boot")
-> >
-> > Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-> > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > ---
-> >  init/main.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/init/main.c b/init/main.c
-> > index b795aa341a3a..870f75581cea 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -585,8 +585,8 @@ asmlinkage __visible void __init start_kernel(void)
-> >       setup_log_buf(0);
-> >       vfs_caches_init_early();
-> >       sort_main_extable();
-> > -     trap_init();
-> >       mm_init();
-> > +     trap_init();
-> >
-> >       ftrace_init();
-> >
+  Ralf
