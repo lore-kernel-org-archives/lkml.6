@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751812AbeEDUHk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:07:40 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53954 "EHLO
+        id S1751907AbeEDUHz (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:07:55 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:53982 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751756AbeEDUHj (ORCPT
+        with ESMTP id S1751756AbeEDUHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:07:39 -0400
+        Fri, 4 May 2018 16:07:47 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,90 +17,52 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v9 00/15] V4L2 Explicit Synchronization
-Date: Fri,  4 May 2018 17:05:57 -0300
-Message-Id: <20180504200612.8763-1-ezequiel@collabora.com>
+Subject: [PATCH v9 02/15] hackrf: group device capabilities
+Date: Fri,  4 May 2018 17:05:59 -0300
+Message-Id: <20180504200612.8763-3-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180504200612.8763-1-ezequiel@collabora.com>
+References: <20180504200612.8763-1-ezequiel@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Gustavo has asked to me to take care of the final
-issues with this series.
+Instead of putting V4L2_CAP_STREAMING and V4L2_CAP_READWRITE
+everywhere, set device_caps earlier with these values.
 
-I'm working on adding some fences tests to v4l2-compliance,
-which I'll be posting shortly.
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+---
+ drivers/media/usb/hackrf/hackrf.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-So, here's a new version of the "video4linux meet fences"
-series. This new round hopefully addresses all the feedback
-received in v8.
-
-There are some additional changes:
-
- * Removed the vb2_ops_is_unordered callback,
-   and instead use a simpler unordered bitfield.
-   After inspecting the code, I really saw no reason
-   for having a callback. Please correct me if I missed
-   anything.
-
- * Reworked the out-fence setup in vb2_core_qbuf,
-   which results in getting rid of the sync_file
-   state. After inspecting the code, it became apparent
-   that the sync_file wasn't meant to be part of the
-   buffer state. The resulting code is simpler.
-
- * Avoid returning fence file descriptors anywhere
-   but in the QBUF result. Also, fixed the documentation
-   to be clear about this.
-
-Worth mentioning, I've decided to drop the is-signaled
-flag suggested by Hans. It'll be easier to review and
-merge if we keep this simple. We can always add stuff
-later.
-
-Gustavo Padovan (15):
-  xilinx: regroup caps on querycap
-  hackrf: group device capabilities
-  omap3isp: group device capabilities
-  vb2: move vb2_ops functions to videobuf2-core.[ch]
-  vb2: add unordered vb2_queue property for drivers
-  v4l: add unordered flag to format description ioctl
-  v4l: mark unordered formats
-  cobalt: set queue as unordered
-  vb2: mark codec drivers as unordered
-  vb2: add explicit fence user API
-  vb2: add in-fence support to QBUF
-  vb2: add out-fence support to QBUF
-  v4l: introduce the fences capability
-  v4l: Add V4L2_CAP_FENCES to drivers
-  v4l: Document explicit synchronization behavior
-
- Documentation/media/uapi/v4l/buffer.rst            |  45 +++-
- Documentation/media/uapi/v4l/vidioc-enum-fmt.rst   |   7 +
- Documentation/media/uapi/v4l/vidioc-qbuf.rst       |  54 +++-
- Documentation/media/uapi/v4l/vidioc-querybuf.rst   |  12 +-
- Documentation/media/uapi/v4l/vidioc-querycap.rst   |   3 +
- drivers/media/common/videobuf2/videobuf2-core.c    | 298 +++++++++++++++++++--
- drivers/media/common/videobuf2/videobuf2-v4l2.c    |  66 +++--
- drivers/media/dvb-core/dvb_vb2.c                   |   2 +-
- drivers/media/pci/cobalt/cobalt-v4l2.c             |   1 +
- drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c |   2 +
- drivers/media/platform/mtk-vcodec/mtk_vcodec_enc.c |   1 +
- drivers/media/platform/omap3isp/ispvideo.c         |  10 +-
- drivers/media/platform/qcom/venus/venc.c           |   2 +
- drivers/media/platform/s5p-mfc/s5p_mfc.c           |   2 +
- drivers/media/platform/xilinx/xilinx-dma.c         |  10 +-
- drivers/media/usb/hackrf/hackrf.c                  |  11 +-
- drivers/media/v4l2-core/Kconfig                    |  33 +++
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |   4 +-
- drivers/media/v4l2-core/v4l2-ioctl.c               |  63 +++--
- include/media/v4l2-fh.h                            |   2 -
- include/media/videobuf2-core.h                     |  49 +++-
- include/media/videobuf2-v4l2.h                     |  18 --
- include/uapi/linux/videodev2.h                     |  10 +-
- 23 files changed, 590 insertions(+), 115 deletions(-)
-
+diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
+index 7eb53517a82f..6d692fb3e8dd 100644
+--- a/drivers/media/usb/hackrf/hackrf.c
++++ b/drivers/media/usb/hackrf/hackrf.c
+@@ -909,18 +909,15 @@ static int hackrf_querycap(struct file *file, void *fh,
+ 
+ 	dev_dbg(&intf->dev, "\n");
+ 
++	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
+ 	if (vdev->vfl_dir == VFL_DIR_RX)
+-		cap->device_caps = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
+-				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
+-
++		cap->device_caps |= V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER;
+ 	else
+-		cap->device_caps = V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
+-				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
++		cap->device_caps |= V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR;
+ 
+ 	cap->capabilities = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
+ 			    V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
+-			    V4L2_CAP_STREAMING | V4L2_CAP_READWRITE |
+-			    V4L2_CAP_DEVICE_CAPS;
++			    V4L2_CAP_DEVICE_CAPS | cap->device_caps;
+ 	strlcpy(cap->driver, KBUILD_MODNAME, sizeof(cap->driver));
+ 	strlcpy(cap->card, dev->rx_vdev.name, sizeof(cap->card));
+ 	usb_make_path(dev->udev, cap->bus_info, sizeof(cap->bus_info));
 -- 
 2.16.3
