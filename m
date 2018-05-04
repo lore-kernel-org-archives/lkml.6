@@ -1,120 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751419AbeEDLQW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:16:22 -0400
-Received: from foss.arm.com ([217.140.101.70]:52324 "EHLO foss.arm.com"
+        id S1751278AbeEDLSF (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:18:05 -0400
+Received: from ozlabs.org ([203.11.71.1]:47589 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750866AbeEDLQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:16:21 -0400
-Date: Fri, 4 May 2018 12:16:17 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Laura Abbott <labbott@redhat.com>
-Cc: Alexander Popov <alex.popov@linux.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: Clear the stack
-Message-ID: <20180504111616.znz5sphyqb6v57nx@lakrids.cambridge.arm.com>
-References: <20180502203326.9491-1-labbott@redhat.com>
- <20180502203326.9491-3-labbott@redhat.com>
- <20180503071917.xm2xvgagvzkworay@salmiak>
- <a8ce3e4d-f0f3-1321-92af-9aed0097d205@redhat.com>
+        id S1750820AbeEDLSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 07:18:04 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: kbuild test robot <lkp@intel.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>
+Cc: kbuild-all@01.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/3] powerpc/nohash: remove hash related code from nohash headers.
+In-Reply-To: <201804270438.utPklxgP%fengguang.wu@intel.com>
+References: <02633d43f29e1ba01865cd334216dc8efb8b4b11.1524587425.git.christophe.leroy@c-s.fr> <201804270438.utPklxgP%fengguang.wu@intel.com>
+Date: Fri, 04 May 2018 21:17:58 +1000
+Message-ID: <878t8z8yah.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8ce3e4d-f0f3-1321-92af-9aed0097d205@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 12:00:26PM -0700, Laura Abbott wrote:
-> On 05/03/2018 12:19 AM, Mark Rutland wrote:
-> > On Wed, May 02, 2018 at 01:33:26PM -0700, Laura Abbott wrote:
+kbuild test robot <lkp@intel.com> writes:
 
-> > > +asmlinkage void erase_kstack(void)
-> > > +{
+> Hi Christophe,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on powerpc/next]
+> [also build test ERROR on v4.17-rc2 next-20180426]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Christophe-Leroy/powerpc-nohash-remove-hash-related-code-from-nohash-headers/20180425-182026
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
+> config: powerpc-ppc64e_defconfig (attached as .config)
+> compiler: powerpc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=powerpc 
+>
+> All errors (new ones prefixed by >>):
+>
+>    In file included from arch/powerpc/include/asm/nohash/pgtable.h:6:0,
+>                     from arch/powerpc/include/asm/pgtable.h:19,
+>                     from include/linux/memremap.h:8,
+>                     from include/linux/mm.h:27,
+>                     from include/linux/mman.h:5,
+>                     from arch/powerpc/kernel/asm-offsets.c:22:
+>    arch/powerpc/include/asm/nohash/64/pgtable.h: In function '__ptep_test_and_clear_young':
+>>> arch/powerpc/include/asm/nohash/64/pgtable.h:214:6: error: implicit declaration of function 'pte_young'; did you mean 'pte_pud'? [-Werror=implicit-function-declaration]
+>      if (pte_young(*ptep))
+>          ^~~~~~~~~
+>          pte_pud
 
-> > > +
-> > > +	/*
-> > > +	 * So let's write the poison value to the kernel stack.
-> > > +	 * Start from the address in p and move up till the new boundary.
-> > > +	 */
-> > > +	boundary = current_stack_pointer;
-> > 
-> > I worry a little that the compiler can move the SP during a function's
-> > lifetime, but maybe that's only the case when there are VLAs, or something like
-> > that?
-> 
-> I think that's true and a risk we take writing this in C. Here's
-> the disassembly on gcc-7.3.1:
-> 
-> ffff00000809d4d8 <erase_kstack>:
-> ffff00000809d4d8:       a9bf7bfd        stp     x29, x30, [sp, #-16]!
-> ffff00000809d4dc:       d5384100        mrs     x0, sp_el0
-> ffff00000809d4e0:       910003fd        mov     x29, sp
-> ffff00000809d4e4:       f946e400        ldr     x0, [x0, #3528]
-> ffff00000809d4e8:       9272c404        and     x4, x0, #0xffffffffffffc000
-> ffff00000809d4ec:       eb04001f        cmp     x0, x4
-> ffff00000809d4f0:       540002c9        b.ls    ffff00000809d548 <erase_kstack+0x70>  // b.plast
-> ffff00000809d4f4:       d2800003        mov     x3, #0x0                        // #0
-> ffff00000809d4f8:       9297ddc5        mov     x5, #0xffffffffffff4111         // #-48879
-> ffff00000809d4fc:       14000008        b       ffff00000809d51c <erase_kstack+0x44>
-> ffff00000809d500:       d1002000        sub     x0, x0, #0x8
-> ffff00000809d504:       52800022        mov     w2, #0x1                        // #1
-> ffff00000809d508:       eb00009f        cmp     x4, x0
-> ffff00000809d50c:       d2800003        mov     x3, #0x0                        // #0
-> ffff00000809d510:       1a9f27e1        cset    w1, cc  // cc = lo, ul, last
-> ffff00000809d514:       6a01005f        tst     w2, w1
-> ffff00000809d518:       54000180        b.eq    ffff00000809d548 <erase_kstack+0x70>  // b.none
-> ffff00000809d51c:       f9400001        ldr     x1, [x0]
-> ffff00000809d520:       eb05003f        cmp     x1, x5
-> ffff00000809d524:       54fffee1        b.ne    ffff00000809d500 <erase_kstack+0x28>  // b.any
-> ffff00000809d528:       91000463        add     x3, x3, #0x1
-> ffff00000809d52c:       d1002000        sub     x0, x0, #0x8
-> ffff00000809d530:       f100407f        cmp     x3, #0x10
-> ffff00000809d534:       1a9f87e2        cset    w2, ls  // ls = plast
-> ffff00000809d538:       eb00009f        cmp     x4, x0
-> ffff00000809d53c:       1a9f27e1        cset    w1, cc  // cc = lo, ul, last
-> ffff00000809d540:       6a01005f        tst     w2, w1
-> ffff00000809d544:       54fffec1        b.ne    ffff00000809d51c <erase_kstack+0x44>  // b.any
-> ffff00000809d548:       eb00009f        cmp     x4, x0
-> ffff00000809d54c:       91002001        add     x1, x0, #0x8
-> ffff00000809d550:       9a800020        csel    x0, x1, x0, eq  // eq = none
-> ffff00000809d554:       910003e1        mov     x1, sp
-> ffff00000809d558:       d5384102        mrs     x2, sp_el0
-> ffff00000809d55c:       f906e840        str     x0, [x2, #3536]
-> ffff00000809d560:       cb000023        sub     x3, x1, x0
-> ffff00000809d564:       d287ffe2        mov     x2, #0x3fff                     // #16383
-> ffff00000809d568:       eb02007f        cmp     x3, x2
-> ffff00000809d56c:       540001a8        b.hi    ffff00000809d5a0 <erase_kstack+0xc8>  // b.pmore
-> ffff00000809d570:       9297ddc2        mov     x2, #0xffffffffffff4111         // #-48879
-> ffff00000809d574:       eb01001f        cmp     x0, x1
-> ffff00000809d578:       54000082        b.cs    ffff00000809d588 <erase_kstack+0xb0>  // b.hs, b.nlast
-> ffff00000809d57c:       f8008402        str     x2, [x0], #8
-> ffff00000809d580:       eb00003f        cmp     x1, x0
-> ffff00000809d584:       54ffffc8        b.hi    ffff00000809d57c <erase_kstack+0xa4>  // b.pmore
-> ffff00000809d588:       910003e1        mov     x1, sp
-> ffff00000809d58c:       d5384100        mrs     x0, sp_el0
-> ffff00000809d590:       f906e401        str     x1, [x0, #3528]
-> ffff00000809d594:       a8c17bfd        ldp     x29, x30, [sp], #16
-> ffff00000809d598:       d65f03c0        ret
-> ffff00000809d59c:       d503201f        nop
-> ffff00000809d5a0:       d4210000        brk     #0x800
-> ffff00000809d5a4:       00000000        .inst   0x00000000 ; undefined
-> 
-> It looks to be okay although admittedly that's subject to compiler
-> whims. It might be safer to save the stack pointer almost as soon as
-> we get into the function and use that?
+Urk.
 
-I think that's still potentially a problem. If the compiler expands the
-stack frame after we've taken a snaphot of the stack pointer, we might
-end up erasing portions of the active stackframe.
+There's a circular dependency here.
 
-Maybe we should just document we rely on the compiler not doing that,
-and if we end up seeing it in practice we rewrite this in asm? I can't
-think of a simple way we can auto-detect if this happens. :/
+I fixed it with the patch below, which seems to be the least worst
+solution. Possibly we can clean things up further in future.
 
-Thanks,
-Mark.
+cheers
+
+diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
+index 140f8e74b478..987a658b18e1 100644
+--- a/arch/powerpc/include/asm/nohash/32/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
+@@ -267,6 +267,11 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
+ 	pte_update(ptep, clr, set);
+ }
+ 
++static inline int pte_young(pte_t pte)
++{
++	return pte_val(pte) & _PAGE_ACCESSED;
++}
++
+ #define __HAVE_ARCH_PTE_SAME
+ #define pte_same(A,B)	((pte_val(A) ^ pte_val(B)) == 0)
+ 
+diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
+index e8de7cb4d3fb..6ac8381f4c7a 100644
+--- a/arch/powerpc/include/asm/nohash/64/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
+@@ -204,6 +204,11 @@ static inline unsigned long pte_update(struct mm_struct *mm,
+ 	return old;
+ }
+ 
++static inline int pte_young(pte_t pte)
++{
++	return pte_val(pte) & _PAGE_ACCESSED;
++}
++
+ static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
+ 					      unsigned long addr, pte_t *ptep)
+ {
+diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
+index 077472640b35..2160be2e4339 100644
+--- a/arch/powerpc/include/asm/nohash/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/pgtable.h
+@@ -17,7 +17,6 @@ static inline int pte_write(pte_t pte)
+ }
+ static inline int pte_read(pte_t pte)		{ return 1; }
+ static inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & _PAGE_DIRTY; }
+-static inline int pte_young(pte_t pte)		{ return pte_val(pte) & _PAGE_ACCESSED; }
+ static inline int pte_special(pte_t pte)	{ return pte_val(pte) & _PAGE_SPECIAL; }
+ static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
+ static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
