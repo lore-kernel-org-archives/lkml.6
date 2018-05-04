@@ -1,69 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751519AbeEDPW0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 11:22:26 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:43087 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751278AbeEDPWZ (ORCPT
+        id S1751552AbeEDPX3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 11:23:29 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:43464 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751326AbeEDPX1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 11:22:25 -0400
-X-Google-Smtp-Source: AB8JxZqLYJimrUQh4gBARxxZ7OFuiOyhklWvcYJZfdvzG+0wHWykpWx81gR3E+oyaglXRMpmet4lyg==
-Date: Fri, 4 May 2018 17:22:21 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/5] ARM: dts: tegra114: Add IOMMU nodes to Host1x and
- its clients
-Message-ID: <20180504152221.GF31229@ulmo>
-References: <20180503234723.4368-1-digetx@gmail.com>
- <20180503234723.4368-6-digetx@gmail.com>
+        Fri, 4 May 2018 11:23:27 -0400
+X-Google-Smtp-Source: AB8JxZog9si2UzB5EG/6fSzEDkOfC1q3YJN8/U7FkfYcBwVck2YtLmIsJ68LbffBrwrAlVa7xerqI1xJ70LDDaFbrF8=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2FkSFaIQeDFoAt0B"
-Content-Disposition: inline
-In-Reply-To: <20180503234723.4368-6-digetx@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Originating-IP: [176.63.54.97]
+In-Reply-To: <20180412150826.20988-1-mszeredi@redhat.com>
+References: <20180412150826.20988-1-mszeredi@redhat.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 4 May 2018 17:23:26 +0200
+Message-ID: <CAJfpegvnq-+wvmtfX65ts+9eRE-ONGcj6AJyRqhqF1Z=h9bOiA@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/35] overlayfs: stack file operations
+To: overlayfs <linux-unionfs@vger.kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>, Vivek Goyal <vgoyal@redhat.com>,
+        "J. R. Okajima" <hooanon05g@gmail.com>,
+        Ritesh Harjani <riteshh@codeaurora.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Apr 12, 2018 at 5:07 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
 
---2FkSFaIQeDFoAt0B
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Git tree is here:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git overlayfs-rorw
 
-On Fri, May 04, 2018 at 02:47:23AM +0300, Dmitry Osipenko wrote:
-> Enable IOMMU support for Host1x and its clients.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/boot/dts/tegra114.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
+Thanks everyone for your review.
 
-Applied, thanks.
+Force pushed new version to the above branch.
 
-Thierry
+Hopefully no comment was missed (I didn't add more reverts yet, those
+can wait).  I'll do a mailbomb as well next week and start processing
+the metacopy patches.
 
---2FkSFaIQeDFoAt0B
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Miklos
+---
 
------BEGIN PGP SIGNATURE-----
+Miklos Szeredi (38):
+      vfs: dedpue: return s64
+      vfs: dedupe: rationalize args
+      vfs: dedupe: extract helper for a single dedup
+      vfs: add path_open()
+      vfs: optionally don't account file in nr_files
+      vfs: add f_op->pre_mmap()
+      vfs: export vfs_ioctl() to modules
+      vfs: export vfs_dedupe_file_range_one() to modules
+      ovl: copy up times
+      ovl: copy up inode flags
+      Revert "Revert "ovl: get_write_access() in truncate""
+      ovl: copy up file size as well
+      ovl: deal with overlay files in ovl_d_real()
+      ovl: stack file ops
+      ovl: add helper to return real file
+      ovl: add ovl_read_iter()
+      ovl: add ovl_write_iter()
+      ovl: add ovl_fsync()
+      ovl: add ovl_mmap()
+      ovl: add ovl_fallocate()
+      ovl: add lsattr/chattr support
+      ovl: add ovl_fiemap()
+      ovl: add O_DIRECT support
+      ovl: add reflink/copyfile/dedup support
+      vfs: don't open real
+      ovl: copy-up on MAP_SHARED
+      vfs: simplify dentry_open()
+      Revert "ovl: fix may_write_real() for overlayfs directories"
+      Revert "ovl: don't allow writing ioctl on lower layer"
+      vfs: fix freeze protection in mnt_want_write_file() for overlayfs
+      Revert "ovl: fix relatime for directories"
+      Revert "vfs: update ovl inode before relatime check"
+      Revert "vfs: add flags to d_real()"
+      Revert "vfs: do get_write_access() on upper layer of overlayfs"
+      Partially revert "locks: fix file locking on overlayfs"
+      Revert "fsnotify: support overlayfs"
+      vfs: remove open_flags from d_real()
+      ovl: fix documentation of non-standard behavior
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlrseq0ACgkQ3SOs138+
-s6ERHxAAjEuuW6tj1OiPGhaOm8J4BSL1VuBzboZvkqMeV3FtUzmbg6TKGKlOKYU6
-AzkGF/R25rodshg418EH7RU3WRPdy1YitRzZBDJtyeFEDfackwgs21vucV6w2iLZ
-T+qcwN8VGGkpdhieab2RRLXxWCMMrTsTWIXgzwP7Jy0QlC5mlasuLhvqOk8PpA0s
-YjEH0LWsbMy02To0f1NWWLbvr+JvD5xO65kES/nkJL8jMM7e9rs9SyYaDhGpteld
-FW9WcktWjrYFCduQ3bXbVxt146up6ON+bp9xZwIxhZtYzn0U/PHWGW653Ql1SO2w
-FqIsPscEKblIx6zB/xkdqdM8+Y9qcYkGMv7AOm3TIHeLVYhI7uFIe/nK/EW+ZgYb
-EGOrGLiKvoVEQkNjhCsvuFQ9YRS5Dr204H/UrLkLArlool34jV+bu/8EXudIlviU
-ta3oJt1fwX4tFJJzt3RFqOvx6gNLu2U1KR7uBzph7yHSznZZuE7GMGVRomJ/f6A5
-zt5hUeXUehxgESXy87ZxUZEnVSDLiDvSjurPtb5/mKZCosKE67lh4KG2OYxHM/c2
-4R9G64GNW9Ub3DbFd2zRFaVrchwogwuj+5gx3+EPrtNANfVGRXPO2HLb47UWEs9n
-c+E1vdreCarECYps9Lrp60yt+WFDzX9T13EvUJ+2Oq4MyNCuwp4=
-=rDke
------END PGP SIGNATURE-----
-
---2FkSFaIQeDFoAt0B--
+---
+ Documentation/filesystems/Locking       |   4 +-
+ Documentation/filesystems/overlayfs.txt |  60 ++--
+ Documentation/filesystems/vfs.txt       |  19 +-
+ fs/btrfs/ctree.h                        |   4 +-
+ fs/btrfs/ioctl.c                        |   6 +-
+ fs/file_table.c                         |  13 +-
+ fs/inode.c                              |  46 +--
+ fs/internal.h                           |  17 +-
+ fs/ioctl.c                              |   1 +
+ fs/locks.c                              |  20 +-
+ fs/namei.c                              |   2 +-
+ fs/namespace.c                          |  69 +----
+ fs/ocfs2/file.c                         |  10 +-
+ fs/open.c                               |  74 ++---
+ fs/overlayfs/Kconfig                    |  21 ++
+ fs/overlayfs/Makefile                   |   4 +-
+ fs/overlayfs/dir.c                      |  33 ++-
+ fs/overlayfs/file.c                     | 506 ++++++++++++++++++++++++++++++++
+ fs/overlayfs/inode.c                    |  63 +++-
+ fs/overlayfs/overlayfs.h                |  21 +-
+ fs/overlayfs/ovl_entry.h                |   1 +
+ fs/overlayfs/super.c                    |  65 ++--
+ fs/overlayfs/util.c                     |  11 +-
+ fs/read_write.c                         |  91 +++---
+ fs/xattr.c                              |   9 +-
+ fs/xfs/xfs_file.c                       |   8 +-
+ include/linux/dcache.h                  |  15 +-
+ include/linux/fs.h                      |  30 +-
+ include/linux/fsnotify.h                |  14 +-
+ include/uapi/linux/fs.h                 |   1 -
+ mm/util.c                               |   5 +
+ 31 files changed, 886 insertions(+), 357 deletions(-)
+ create mode 100644 fs/overlayfs/file.c
