@@ -1,55 +1,74 @@
-Return-Path: <mpe@ellerman.id.au>
-X-Google-Smtp-Source: AB8JxZrPC4vxRhZk/a8EX4ICllXapQ+i5mb85OLdyIyA/PU3Z+h5AekwzbE6qy6yLpfCV0LkNBeT
-ARC-Seal: i=1; a=rsa-sha256; t=1525411009; cv=none;
+Return-Path: <npiggin@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525412257; cv=none;
         d=google.com; s=arc-20160816;
-        b=Ka7mqcnI+v6GzKtOkGVl4gRYMlYj0wG4pKGuuwheqxUWW1hVbWwRZtUncZWuC1jESG
-         dC1iNXvIpyB1S8aaXAfrdbOJKSXFWRtSkJfMWyWxi2s6YzGSzsgks+q+lamOiOD3mgyT
-         4O3nSIbiz/4qicIbesztjlCdAG9EmkTIQb1Ubs5sKxI0oy8hQl9q7WfPpMsr5Ge/OuST
-         +LMVGb2iHNqEezVfvOzpumg4bZ7srY6h3uFf349QNeqUyeK7RFZXCSomJqHwd1NOCFd8
-         d9PEwk3eula644JC6UANnEKiYwjj9JUKTmpztucv7mRBYAwcwUMLN0MyvZ35/PMh38hd
-         i8aw==
+        b=zdz3UiZog9InwvddNNbfYv4bBnWipPmYscykt0mmuk/L/m6XjO3wglCDZAdvIhPKv3
+         k4qX/7/T30MBfVzzOpGYaS8CQG3jrUpOWzirR0L8NK2TFVpMK2v415G59O7GzQFVcwll
+         V3fXZEar6sm3ekiasmDiOPgmKr9vRGAXbzAe6d/ZPmk7d97ZaL5vTwHBM8p1fC1sIi+v
+         fdvWfHiz54Z0Lk+yu19wioXls6Hgr27F2ZzZEoQB5JR7HGkb0VAkBUtW7FQ2p7uc+T3s
+         1jOP3FJ8OcehBxSygTiz1dMp6v6A7kYfpFgn7m+m1sunSSMLL4aNSngycpnPXYvZBAJJ
+         zn/A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:arc-authentication-results;
-        bh=y1VmhAjGWJE4X/8MyTt1HOKuHBNHNBtzJmn4AgyDf7w=;
-        b=OM7/Al9URMdToL3fxXAlCT2YxibnKnZwtM5ayvfM6Zp7eBFHlWLpQmloZzlgJTjB4A
-         XKY18tdCmheD/7IUNCIINa2akSeAEJ/woNkNPLTEI1VuG8QHxfiS/dqTD5Q9MUez/X6v
-         RuHuynaqdZkHgVRihlFLEFvhA4sujq/OtESsqURPxurTF4NGe+UBmpqGZ3K2O0wlYm7d
-         vNQ2nqdpSIJ9AOSycMUdMxcPfbSOOuilTU3IUJ0ZvzPNb8xukEbsMn76QvUvDzqimyG2
-         DPaME5g4OfvaFSu4e4jh+vOevt3fWKzk2yp8C4q2AJV61Q2p3/TC3PccXeG59G15I8nx
-         UQHQ==
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=KCPkqm2Mdsd77N3GjnKSznS5oHUrZjxEW97OPi0Jmx0=;
+        b=XAdMo+KL5ZTQH1Ewe3fVWz5HZai7MCFLSPHV70Bxw/6DN2XJWfRluQs3HNoJQvIbM8
+         GbJj0IUcqvIYgi6SQjPSw4hcKAXsBcb3fUUuF0lhBpxNrK7SfhKc1NOqSIrjVqxL8g7e
+         C3rDYolopuwtHWdRVWvU/zedHaWKP/lfynmZYdUoH8L1DeYeZtr6lIt7ylZ51ZNYGyiM
+         Jhi4iWrfjlO2cqRpaLSUmRD36+thQGZ/IB1D6dodXN66yNWI0/YrumPJxB2cGpeuozKs
+         lqLOsNGNoqaSCilt2WSViDh6S7mqsBeo9gIC4A6+IKFdCtGSj/BVRV70MQhwPdB7Yi2y
+         TwFQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 2401:3900:2:1::2 is neither permitted nor denied by best guess record for domain of mpe@ellerman.id.au) smtp.mailfrom=mpe@ellerman.id.au
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c5MX41Ke;
+       spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 2401:3900:2:1::2 is neither permitted nor denied by best guess record for domain of mpe@ellerman.id.au) smtp.mailfrom=mpe@ellerman.id.au
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Nicholas Piggin <npiggin@gmail.com>, linuxppc-dev@lists.ozlabs.org
-Cc: Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 04/15] powerpc/powernv: opal-kmsg use flush fallback from console code
-In-Reply-To: <20180430145558.4308-5-npiggin@gmail.com>
-References: <20180430145558.4308-1-npiggin@gmail.com> <20180430145558.4308-5-npiggin@gmail.com>
-Date: Fri, 04 May 2018 15:16:37 +1000
-Message-ID: <87muxg80ga.fsf@concordia.ellerman.id.au>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c5MX41Ke;
+       spf=pass (google.com: domain of npiggin@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=npiggin@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZrd7jcW7OFkZPhewPQajnaJ0BgyDnBJrZY2nuvYV4r5ha0tcBGsMcAQOV5TVHvlZNdQDjQARA==
+Date: Fri, 4 May 2018 15:37:17 +1000
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, Jiri Slaby <jslaby@suse.com>,
+ linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 04/15] powerpc/powernv: opal-kmsg use flush fallback
+ from console code
+Message-ID: <20180504153717.4806d9c4@roar.ozlabs.ibm.com>
+In-Reply-To: <87muxg80ga.fsf@concordia.ellerman.id.au>
+References: <20180430145558.4308-1-npiggin@gmail.com>
+	<20180430145558.4308-5-npiggin@gmail.com>
+	<87muxg80ga.fsf@concordia.ellerman.id.au>
+Organization: IBM
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599183451122520462?=
-X-GMAIL-MSGID: =?utf-8?q?1599509374612792752?=
+X-GMAIL-MSGID: =?utf-8?q?1599510682711498930?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Nicholas Piggin <npiggin@gmail.com> writes:
+On Fri, 04 May 2018 15:16:37 +1000
+Michael Ellerman <mpe@ellerman.id.au> wrote:
 
-> Use the more refined and tested event polling loop from opal_put_chars
-> as the fallback console flush in the opal-kmsg path. This loop is used
-> by the console driver today, whereas the opal-kmsg fallback is not
-> likely to have been used for years.
->
-> Use WARN_ONCE rather than a printk when the fallback is invoked to
-> prepare for moving the console flush into a common function.
+> Nicholas Piggin <npiggin@gmail.com> writes:
+> 
+> > Use the more refined and tested event polling loop from opal_put_chars
+> > as the fallback console flush in the opal-kmsg path. This loop is used
+> > by the console driver today, whereas the opal-kmsg fallback is not
+> > likely to have been used for years.
+> >
+> > Use WARN_ONCE rather than a printk when the fallback is invoked to
+> > prepare for moving the console flush into a common function.  
+> 
+> Do we want to add a WARN in that path? If we're panicking things might
+> get worse if we WARN (which takes a trap).
 
-Do we want to add a WARN in that path? If we're panicking things might
-get worse if we WARN (which takes a trap).
+True, probably a good idea not to... oh there's a printk_once so
+that'll work nicely.
 
-cheers
+Thanks,
+Nick
