@@ -1,68 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeEDVhJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:37:09 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:37149 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751582AbeEDVhI (ORCPT
+        id S1751835AbeEDVjy (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:39:54 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42875 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751765AbeEDVjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:37:08 -0400
-X-Google-Smtp-Source: AB8JxZqm3eKDRpEDM3/qQ2BpPsh5OopT4QBs3mB7iIfgimeVwjcoCGQI7ib3ccZHT7fnIh6uQ8HrsA==
-Date: Fri, 4 May 2018 23:37:00 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        Elena Reshetova <elena.reshetova@intel.com>, linux-doc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Documentation: refcount-vs-atomic: Update reference to
- LKMM doc.
-Message-ID: <20180504213700.GA5628@andrea>
-References: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
- <CAGXu5jKHb8-P-Y2ecnH9sd6vWhY9cWPfow1Lx_gzRMbHWusRXg@mail.gmail.com>
+        Fri, 4 May 2018 17:39:52 -0400
+X-Google-Smtp-Source: AB8JxZqyyTSS+X0bM2YbRpYO6D923bl4bgkZVsJ+5pi3v4DS3bMMTpiCWC+RrdQgnL5cMl2b+ilvAw==
+Date: Fri, 4 May 2018 14:39:50 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Lina Iyer <ilina@codeaurora.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org, evgreen@chromium.org,
+        dianders@chromium.org
+Subject: Re: [PATCH v7 07/10] drivers: qcom: rpmh: cache sleep/wake state
+ requests
+Message-ID: <20180504213950.GD19594@google.com>
+References: <20180502193749.31004-1-ilina@codeaurora.org>
+ <20180502193749.31004-8-ilina@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jKHb8-P-Y2ecnH9sd6vWhY9cWPfow1Lx_gzRMbHWusRXg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180502193749.31004-8-ilina@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 02:13:59PM -0700, Kees Cook wrote:
-> On Fri, May 4, 2018 at 2:11 PM, Andrea Parri
-> <andrea.parri@amarulasolutions.com> wrote:
-> > The LKMM project has moved to 'tools/memory-model/'.
-> >
-> > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > ---
-> >  Documentation/core-api/refcount-vs-atomic.rst | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
-> > index 83351c258cdb9..322851bada167 100644
-> > --- a/Documentation/core-api/refcount-vs-atomic.rst
-> > +++ b/Documentation/core-api/refcount-vs-atomic.rst
-> > @@ -17,7 +17,7 @@ in order to help maintainers validate their code against the change in
-> >  these memory ordering guarantees.
-> >
-> >  The terms used through this document try to follow the formal LKMM defined in
-> > -github.com/aparri/memory-model/blob/master/Documentation/explanation.txt
-> > +tools/memory-model/Documentation/explanation.txt.
-> >
-> >  memory-barriers.txt and atomic_t.txt provide more background to the
-> >  memory ordering in general and for atomic operations specifically.
+On Wed, May 02, 2018 at 01:37:46PM -0600, Lina Iyer wrote:
+> Active state requests are sent immediately to the RSC controller, while
+> sleep and wake state requests are cached in this driver to avoid taxing
+> the RSC controller repeatedly. The cached values will be sent to the
+> controller when the rpmh_flush() is called.
 > 
-> Will this get linkified by rst ?
-
-I believe not, but I'm not too familiar with rst...  FWIW, I'm seeing that
-the above memory-barriers.txt, atomic_t.txt are not linkified.
-
-  Andrea
-
-
+> Generally, flushing is a system PM activity and may be called from the
+> system PM drivers when the system is entering suspend or deeper sleep
+> modes during cpuidle.
 > 
-> -Kees
+> Also allow invalidating the cached requests, so they may be re-populated
+> again.
 > 
-> -- 
-> Kees Cook
-> Pixel Security
+> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+> Reviewed-by: Evan Green <evgreen@chromium.org>
+
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
