@@ -1,160 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751906AbeEDKDU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:03:20 -0400
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:14388 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751847AbeEDKDS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:03:18 -0400
-Subject: Re: [PATCH v9 07/27] ARM: davinci: dm355: add new clock init using
- common clock framework
-To: David Lechner <david@lechnology.com>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Adam Ford <aford173@gmail.com>, <linux-kernel@vger.kernel.org>
-References: <20180427001745.4116-1-david@lechnology.com>
- <20180427001745.4116-8-david@lechnology.com>
- <d9633747-0c50-2934-d3b2-ba745f021077@ti.com>
- <18b7b217-7ccb-d2dd-8f2c-ba3ba0e5d893@lechnology.com>
-From: Sekhar Nori <nsekhar@ti.com>
-Message-ID: <093052da-08b8-fe68-d319-254ae1da4d0d@ti.com>
-Date: Fri, 4 May 2018 15:31:53 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751959AbeEDKDo (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:03:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751847AbeEDKDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 06:03:39 -0400
+X-Google-Smtp-Source: AB8JxZogyuvWRc+vtZs4S+sFkHcvvht8HlgwNxtYwTDXwo2wMExMGEI8a1BzIPR6xjnepEJ95hkWPlqYncnHQ5g/ZrE=
 MIME-Version: 1.0
-In-Reply-To: <18b7b217-7ccb-d2dd-8f2c-ba3ba0e5d893@lechnology.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org> <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Fri, 4 May 2018 12:03:36 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
+Message-ID: <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
+ (plus such board on Iris)
+To: Stefan Agner <stefan@agner.ch>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Lucas Stach <dev@lynxeye.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday 03 May 2018 09:14 PM, David Lechner wrote:
-> On 05/03/2018 10:34 AM, Sekhar Nori wrote:
->> On Friday 27 April 2018 05:47 AM, David Lechner wrote:
->>> This adds the new board-specific clock init in mach-davinci/dm355.c
->>> using the new common clock framework drivers.
->>>
->>> The #ifdefs are needed to prevent compile errors until the entire
->>> ARCH_DAVINCI is converted.
->>>
->>> Also clean up the #includes since we are adding some here.
->>>
->>> Signed-off-by: David Lechner <david@lechnology.com>
+On Fri, May 4, 2018 at 11:19 AM, Stefan Agner <stefan@agner.ch> wrote:
+> On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
+>> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+>> (with 1024 MB NAND) flavors.  Add support for the 256 MB version on Iris
+>> evaluation board.
+>
+> To we really need to specify memory size these days? I think all common
+> boot loaders fill the memory node anyway.
+>
+> arch/arm/boot/dts/imx6qdl-apalis.dtsi:
+>         /* Will be filled by the bootloader */
+>         memory@10000000 {
+>                 reg = <0x10000000 0>;
+>         };
+>
+>
+> I think we should just rename tegra20-colibri-512.dtsi =>
+> tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-iris.dts to
+> avoid confusion and add such an empty node.
+
+Having memory node is requirement of DeviceTree specification (at
+least one cpu and memory node). Of course if bootloader fills it, then
+we could assume that specification is satisfied... but what if some
+bootloader skips it? This creates quite specific dependency between
+kernel's DTS and bootloader.
+
+One safe solution would be to specify 256 MB memory node for both
+boards and assume that bootloader will bump it to 512 MB for specific
+module.
+
+>> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 >>
->> I am having trouble booting DM355 EVM with the series applied.
->> Still to debug what is going wrong.
-> 
-> Can you dump the PLL registers using /sys/kernel/debug/clk/... ?
+>> ---
+>>
+>> Changes since v1:
+>> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>>    my bootloader uses mem= argument).
+>
+> What boot loader are you using? You even can omit mem= if your boot
+> loader fills the memory node properly.
 
-I was able to get to ramdisk shell if I set clk_ignore_unused. Here is 
-the dump:
+I use the one provided by vendor - Toradex. By default it passes both
+mem= and few other mem-like arguments (for FB and video processor) to
+command line. I believe it does not adjust the DTB itself because
+Toradex prepared this bootloader for... 3.1 kernel without DTB. 7
+years old kernel. :)
 
-root@dm355-evm:/sys/kernel/debug# cat clk/clk_summary 
-                                 enable  prepare  protect                               
-   clock                          count    count    count        rate   accuracy   phase
-----------------------------------------------------------------------------------------
- ref_clk                              1        1        0    24000000          0 0  
-    oscin                             3        3        0    24000000          0 0  
-       pll2_sysclkbp                  0        0        0     3000000          0 0  
-       pll2_prediv                    2        2        0     3000000          0 0  
-          pll2_pllout                 1        1        0   342000000          0 0  
-             pll2_postdiv             1        1        0   342000000          0 0  
-                pll2_pllen            0        0        0   342000000          0 0  
-       pll1_sysclkbp                  0        0        0     8000000          0 0  
-       pll1_auxclk                    4        5        0    24000000          0 0  
-          timer2                      1        4        0    24000000          0 0  
-          timer1                      0        0        0    24000000          0 0  
-          timer0                      2        2        0    24000000          0 0  
-          pwm2                        0        0        0    24000000          0 0  
-          pwm1                        0        0        0    24000000          0 0  
-          pwm0                        0        0        0    24000000          0 0  
-          uart1                       1        4        0    24000000          0 0  
-          uart0                       1        4        0    24000000          0 0  
-          i2c                         0        3        0    24000000          0 0  
-          rto                         0        0        0    24000000          0 0  
-          pwm3                        0        0        0    24000000          0 0  
-          timer3                      0        0        0    24000000          0 0  
-       pll1_prediv                    2        2        0     3000000          0 0  
-          pll1_pllout                 1        1        0   432000000          0 0  
-             pll1_postdiv             1        1        0   432000000          0 0  
-                pll1_pllen            0        0        0   432000000          0 0  
- pll2_sysclk2                         1        1        0           0          0 0  
- pll2_sysclk1                         0        0        0           0          0 0  
- pll1_sysclk4                         1        3        0           0          0 0  
-    vpss_slave                        0        1        0           0          0 0  
-    vpss_master                       0        1        0           0          0 0  
- pll1_sysclk3                         1        1        0           0          0 0  
-    vpss_dac                          0        0        0           0          0 0  
- pll1_sysclk2                         4        5        0           0          0 0  
-    gpio                              1        1        0           0          0 0  
-    spi0                              0        3        0           0          0 0  
-    uart2                             1        4        0           0          0 0  
-    asp0                              0        0        0           0          0 0  
-    mmcsd0                            0        0        0           0          0 0  
-    aemif                             1        1        0           0          0 0  
-    spi2                              0        0        0           0          0 0  
-    usb                               0        0        0           0          0 0  
-    asp1                              0        0        0           0          0 0  
-    mmcsd1                            0        0        0           0          0 0  
-    spi1                              0        0        0           0          0 0  
- pll1_sysclk1                         2        2        0           0          0 0  
-    mjcp                              0        0        0           0          0 0  
-    arm                               1        1        0           0          0 0  
-
-and the dump with current master:
-
-root@dm355-evm:/sys/kernel/debug# cat davinci_clocks 
-ref_clk           users= 7      24000000 Hz
-  pll1            users= 7 pll 432000000 Hz
-    pll1_sysclk1  users= 1 pll 216000000 Hz
-      arm_clk     users= 1 psc 216000000 Hz
-      mjcp        users= 0 psc 216000000 Hz
-    pll1_sysclk2  users= 3 pll 108000000 Hz
-      uart2       users= 1 psc 108000000 Hz
-      asp0        users= 0 psc 108000000 Hz
-      asp1        users= 0 psc 108000000 Hz
-      mmcsd0      users= 0 psc 108000000 Hz
-      mmcsd1      users= 0 psc 108000000 Hz
-      spi0        users= 0 psc 108000000 Hz
-      spi1        users= 0 psc 108000000 Hz
-      spi2        users= 0 psc 108000000 Hz
-      gpio        users= 1 psc 108000000 Hz
-      aemif       users= 1 psc 108000000 Hz
-      usb         users= 0 psc 108000000 Hz
-    pll1_sysclk3  users= 0 pll  27000000 Hz
-      vpss_dac    users= 0 psc  27000000 Hz
-    pll1_sysclk4  users= 0 pll 108000000 Hz
-      vpss_master users= 0 psc 108000000 Hz
-      vpss_slave  users= 0 psc 108000000 Hz
-    pll1_aux_clk  users= 3 pll  24000000 Hz
-      clkout1     users= 0      24000000 Hz
-      uart0       users= 1 psc  24000000 Hz
-      uart1       users= 1 psc  24000000 Hz
-      i2c         users= 0 psc  24000000 Hz
-      pwm0        users= 0 psc  24000000 Hz
-      pwm1        users= 0 psc  24000000 Hz
-      pwm2        users= 0 psc  24000000 Hz
-      pwm3        users= 0 psc  24000000 Hz
-      timer0      users= 1 psc  24000000 Hz
-      timer1      users= 0 psc  24000000 Hz
-      timer2      users= 1 psc  24000000 Hz
-      timer3      users= 0 psc  24000000 Hz
-      rto         users= 0 psc  24000000 Hz
-    pll1_sysclkbp users= 0 pll   8000000 Hz
-      clkout2     users= 0       8000000 Hz
-  pll2            users= 0 pll 342000000 Hz
-    pll2_sysclk1  users= 0 pll 342000000 Hz
-    pll2_sysclkbp users= 0 pll   3000000 Hz
-      clkout3     users= 0       3000000 Hz
-
-I didn't have time today to analyze these myself. Hope it helps.
-
-Thanks,
-Sekhar
+Best regards,
+Krzysztof
