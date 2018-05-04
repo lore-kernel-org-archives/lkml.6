@@ -1,51 +1,196 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751294AbeEDNqX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 09:46:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751114AbeEDNqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 09:46:22 -0400
-Date: Fri, 4 May 2018 10:45:34 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: William Cohen <wcohen@redhat.com>
-Cc: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org
-Subject: Re: [PATCH] Remove duplicated entry for westmereep-dp in mapfile.csv
-Message-ID: <20180504134534.GA11458@kernel.org>
-References: <20180503195032.28871-1-wcohen@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503195032.28871-1-wcohen@redhat.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1751350AbeEDNqq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 09:46:46 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:46983 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751114AbeEDNqp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 09:46:45 -0400
+X-Google-Smtp-Source: AB8JxZo22GgcSsf47a87bDCSoK0OLFjI9Rjx6/3xzL9mPlgU3UUpEg6JHLv3kAjL27q+cyCOL5Txbw==
+From: Doug Smythies <doug.smythies@gmail.com>
+X-Google-Original-From: Doug Smythies <dsmythies@telus.net>
+To: srinivas.pandruvada@linux.intel.com
+Cc: dsmythies@telus.net, rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH] tools/power/x86/intel_pstate_tracer: Add optional setting of trace buffer memory allocation
+Date: Fri,  4 May 2018 06:46:22 -0700
+Message-Id: <1525441582-23855-1-git-send-email-dsmythies@telus.net>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, May 03, 2018 at 03:50:32PM -0400, William Cohen escreveu:
-> Signed-off-by: William Cohen <wcohen@redhat.com>
-> ---
->  tools/perf/pmu-events/arch/x86/mapfile.csv | 1 -
->  1 file changed, 1 deletion(-)
+Allow the user to override the default trace buffer memory allocation
+by adding a command line option to override the default.
 
-Thanks, applied.
+The patch also:
 
-- Arnaldo
+Adds a SIGINT (i.e. CTRL C exit) handler,
+so that things can be cleaned up before exit.
+
+Moves the postion of some other cleanup from after to
+before the potential "No valid data to plot" exit.
+
+Replaces all quit() calls with sys.exit, because
+quit() is not supposed to be used in scripts.
+
+Signed-off-by: Doug Smythies <dsmythies@telus.net>
+---
+ .../x86/intel_pstate_tracer/intel_pstate_tracer.py | 54 ++++++++++++++--------
+ 1 file changed, 35 insertions(+), 19 deletions(-)
+
+diff --git a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
+index 29f50d4..84e2b64 100755
+--- a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
++++ b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
+@@ -28,6 +28,7 @@ import subprocess
+ import os
+ import time
+ import re
++import signal
+ import sys
+ import getopt
+ import Gnuplot
+@@ -78,11 +79,12 @@ def print_help():
+     print('    Or')
+     print('      ./intel_pstate_tracer.py [--cpu cpus] ---trace_file <trace_file> --name <test_name>')
+     print('    To generate trace file, parse and plot, use (sudo required):')
+-    print('      sudo ./intel_pstate_tracer.py [-c cpus] -i <interval> -n <test_name>')
++    print('      sudo ./intel_pstate_tracer.py [-c cpus] -i <interval> -n <test_name> -m <kbytes>')
+     print('    Or')
+-    print('      sudo ./intel_pstate_tracer.py [--cpu cpus] --interval <interval> --name <test_name>')
++    print('      sudo ./intel_pstate_tracer.py [--cpu cpus] --interval <interval> --name <test_name> --memory <kbytes>')
+     print('    Optional argument:')
+-    print('      cpus:  comma separated list of CPUs')
++    print('      cpus:   comma separated list of CPUs')
++    print('      kbytes: Kilo bytes of memory per CPU to allocate to the trace buffer. Default: 10240')
+     print('  Output:')
+     print('    If not already present, creates a "results/test_name" folder in the current working directory with:')
+     print('      cpu.csv - comma seperated values file with trace contents and some additional calculations.')
+@@ -379,7 +381,7 @@ def clear_trace_file():
+         f_handle.close()
+     except:
+         print('IO error clearing trace file ')
+-        quit()
++        sys.exit(2)
  
-> diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv b/tools/perf/pmu-events/arch/x86/mapfile.csv
-> index 93656f2fd53a..7e3cce3bcf3b 100644
-> --- a/tools/perf/pmu-events/arch/x86/mapfile.csv
-> +++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
-> @@ -29,7 +29,6 @@ GenuineIntel-6-4D,v13,silvermont,core
->  GenuineIntel-6-4C,v13,silvermont,core
->  GenuineIntel-6-2A,v15,sandybridge,core
->  GenuineIntel-6-2C,v2,westmereep-dp,core
-> -GenuineIntel-6-2C,v2,westmereep-dp,core
->  GenuineIntel-6-25,v2,westmereep-sp,core
->  GenuineIntel-6-2F,v2,westmereex,core
->  GenuineIntel-6-55,v1,skylakex,core
-> -- 
-> 2.14.3
+ def enable_trace():
+     """ Enable trace """
+@@ -389,7 +391,7 @@ def enable_trace():
+                  , 'w').write("1")
+     except:
+         print('IO error enabling trace ')
+-        quit()
++        sys.exit(2)
+ 
+ def disable_trace():
+     """ Disable trace """
+@@ -399,17 +401,17 @@ def disable_trace():
+                  , 'w').write("0")
+     except:
+         print('IO error disabling trace ')
+-        quit()
++        sys.exit(2)
+ 
+ def set_trace_buffer_size():
+     """ Set trace buffer size """
+ 
+     try:
+-       open('/sys/kernel/debug/tracing/buffer_size_kb'
+-                 , 'w').write("10240")
++       with open('/sys/kernel/debug/tracing/buffer_size_kb', 'w') as fp:
++          fp.write(memory)
+     except:
+-        print('IO error setting trace buffer size ')
+-        quit()
++       print('IO error setting trace buffer size ')
++       sys.exit(2)
+ 
+ def free_trace_buffer():
+     """ Free the trace buffer memory """
+@@ -418,8 +420,8 @@ def free_trace_buffer():
+        open('/sys/kernel/debug/tracing/buffer_size_kb'
+                  , 'w').write("1")
+     except:
+-        print('IO error setting trace buffer size ')
+-        quit()
++        print('IO error freeing trace buffer ')
++        sys.exit(2)
+ 
+ def read_trace_data(filename):
+     """ Read and parse trace data """
+@@ -431,7 +433,7 @@ def read_trace_data(filename):
+         data = open(filename, 'r').read()
+     except:
+         print('Error opening ', filename)
+-        quit()
++        sys.exit(2)
+ 
+     for line in data.splitlines():
+         search_obj = \
+@@ -489,10 +491,22 @@ def read_trace_data(filename):
+ # Now seperate the main overall csv file into per CPU csv files.
+     split_csv()
+ 
++def signal_handler(signal, frame):
++    print(' SIGINT: Forcing cleanup before exit.')
++    if interval:
++        disable_trace()
++        clear_trace_file()
++        # Free the memory
++        free_trace_buffer()
++        sys.exit(0)
++
++signal.signal(signal.SIGINT, signal_handler)
++
+ interval = ""
+ filename = ""
+ cpu_list = ""
+ testname = ""
++memory = "10240"
+ graph_data_present = False;
+ 
+ valid1 = False
+@@ -501,7 +515,7 @@ valid2 = False
+ cpu_mask = zeros((MAX_CPUS,), dtype=int)
+ 
+ try:
+-    opts, args = getopt.getopt(sys.argv[1:],"ht:i:c:n:",["help","trace_file=","interval=","cpu=","name="])
++    opts, args = getopt.getopt(sys.argv[1:],"ht:i:c:n:m:",["help","trace_file=","interval=","cpu=","name=","memory="])
+ except getopt.GetoptError:
+     print_help()
+     sys.exit(2)
+@@ -521,6 +535,8 @@ for opt, arg in opts:
+     elif opt in ("-n", "--name"):
+         valid2 = True
+         testname = arg
++    elif opt in ("-m", "--memory"):
++        memory = arg
+ 
+ if not (valid1 and valid2):
+     print_help()
+@@ -569,6 +585,11 @@ current_max_cpu = 0
+ 
+ read_trace_data(filename)
+ 
++clear_trace_file()
++# Free the memory
++if interval:
++    free_trace_buffer()
++
+ if graph_data_present == False:
+     print('No valid data to plot')
+     sys.exit(2)
+@@ -593,9 +614,4 @@ for root, dirs, files in os.walk('.'):
+     for f in files:
+         fix_ownership(f)
+ 
+-clear_trace_file()
+-# Free the memory
+-if interval:
+-    free_trace_buffer()
+-
+ os.chdir('../../')
+-- 
+2.7.4
