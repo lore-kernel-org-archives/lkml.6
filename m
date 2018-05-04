@@ -1,58 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeEDVOD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:14:03 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:45445 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751781AbeEDVOB (ORCPT
+        id S1751795AbeEDVSH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:18:07 -0400
+Received: from rcdn-iport-9.cisco.com ([173.37.86.80]:10841 "EHLO
+        rcdn-iport-9.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751684AbeEDVSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:14:01 -0400
-X-Google-Smtp-Source: AB8JxZqQX9HFcwXff8EyM4PwBJPoggHflff7iWVR6HRTfRQj9Imcg4s0qrJmmIPbVl9EjqCU+AMBahlPpYWujxyc7EA=
-MIME-Version: 1.0
-In-Reply-To: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Fri, 4 May 2018 14:13:59 -0700
-X-Google-Sender-Auth: EquFrQ8Dmr3BjaoqOrK2TghzyfY
-Message-ID: <CAGXu5jKHb8-P-Y2ecnH9sd6vWhY9cWPfow1Lx_gzRMbHWusRXg@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: refcount-vs-atomic: Update reference to
- LKMM doc.
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        Elena Reshetova <elena.reshetova@intel.com>, linux-doc@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 4 May 2018 17:18:06 -0400
+X-IronPort-AV: E=Sophos;i="5.49,363,1520899200";
+   d="scan'208";a="383143664"
+From: Chintan Shah <chintsha@cisco.com>
+To: davem@davemloft.net, kuznet@ms2.inr.ac.ru, jmorris@namei.org,
+        yoshfuji@linux-ipv6.org, kaber@trash.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: chintsha@cisco.com, kamensky@cisco.com, takondra@cisco.com,
+        xe-linux-external@cisco.com, enkechen@cisco.com
+Subject: [PATCH] net: disable UDP punt on sockets in RCV_SHUTDWON
+Date: Fri,  4 May 2018 21:08:37 +0000
+Message-Id: <1525468117-61242-1-git-send-email-chintsha@cisco.com>
+X-Mailer: git-send-email 2.5.0
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Authenticated-User: chintsha@cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 2:11 PM, Andrea Parri
-<andrea.parri@amarulasolutions.com> wrote:
-> The LKMM project has moved to 'tools/memory-model/'.
->
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> ---
->  Documentation/core-api/refcount-vs-atomic.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
-> index 83351c258cdb9..322851bada167 100644
-> --- a/Documentation/core-api/refcount-vs-atomic.rst
-> +++ b/Documentation/core-api/refcount-vs-atomic.rst
-> @@ -17,7 +17,7 @@ in order to help maintainers validate their code against the change in
->  these memory ordering guarantees.
->
->  The terms used through this document try to follow the formal LKMM defined in
-> -github.com/aparri/memory-model/blob/master/Documentation/explanation.txt
-> +tools/memory-model/Documentation/explanation.txt.
->
->  memory-barriers.txt and atomic_t.txt provide more background to the
->  memory ordering in general and for atomic operations specifically.
+A UDP application which opens multiple sockets with same local
+address/port combination (using SO_REUSEPORT/SO_REUSEADDR socket options);
+and issues connect to a remote socket (using one of these local socket).
+Now if the same socket, which issued connect, issues shutdown (SHUT_RD);
+packets would still be queued to this socket (if sent from same remote
+client, which the local socket connected to), and not delivered to the
+other socket in the normal state.
 
-Will this get linkified by rst ?
+In UDP socket lookup, socket's state (if it has issued SHUTDOWN on
+read or not), is not taken into account. When application calls, SHUTDOWN
+(SHUT_RD), UDP socket's state is changed (sk_shutdown is set to
+RCV_SHUTDOWN).
 
--Kees
+UDP socket lookup is performed with help of compute_score
+function. The function checks socket's attributes against incoming packets
+headers; and based on match/mismatch it returns score. We can check for
+the socket's state (sk->sk_shutdown) here, in same compute_score function,
+and return values accordingly.
 
+Signed-off-by: Chintan Shah <chintsha@cisco.com>
+CC: xe-linux-external@cisco.com
+---
+ net/ipv4/udp.c | 6 ++++++
+ net/ipv6/udp.c | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index 0dfcd73..a5fe6d7 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -402,6 +402,9 @@ static inline int compute_score(struct sock *sk, struct net *net,
+ #endif
+ #endif
+ 
++	if (sk->sk_shutdown & RCV_SHUTDOWN)
++		return -1;
++
+ 	if (!net_eq(sock_net(sk), net) ||
+ 	    udp_sk(sk)->udp_port_hash != hnum ||
+ 	    ipv6_only_sock(sk))
+@@ -483,6 +486,9 @@ static inline int compute_score2(struct sock *sk, struct net *net,
+ #endif
+ #endif
+ 
++	if (sk->sk_shutdown & RCV_SHUTDOWN)
++		return -1;
++
+ 	if (!net_eq(sock_net(sk), net) ||
+ 	    ipv6_only_sock(sk))
+ 		return -1;
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index d956cbb..2254b07 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -170,6 +170,9 @@ static inline int compute_score(struct sock *sk, struct net *net,
+ #endif
+ #endif
+ 
++	if (sk->sk_shutdown & RCV_SHUTDOWN)
++		return -1;
++
+ 	if (!net_eq(sock_net(sk), net) ||
+ 	    udp_sk(sk)->udp_port_hash != hnum ||
+ 	    sk->sk_family != PF_INET6)
+@@ -251,6 +254,9 @@ static inline int compute_score2(struct sock *sk, struct net *net,
+ #endif
+ #endif
+ 
++	if (sk->sk_shutdown & RCV_SHUTDOWN)
++		return -1;
++
+ 	if (!net_eq(sock_net(sk), net) ||
+ 	    udp_sk(sk)->udp_port_hash != hnum ||
+ 	    sk->sk_family != PF_INET6)
 -- 
-Kees Cook
-Pixel Security
+2.5.0
