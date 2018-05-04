@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751980AbeEDPtA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 11:49:00 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41275 "EHLO
+        id S1751960AbeEDPs7 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 11:48:59 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41277 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751533AbeEDPp4 (ORCPT
+        with ESMTP id S1751539AbeEDPp5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 11:45:56 -0400
+        Fri, 4 May 2018 11:45:57 -0400
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To: linux-kernel@vger.kernel.org
 Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
@@ -14,9 +14,9 @@ Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
         Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
         Anna-Maria Gleixner <anna-maria@linutronix.de>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 2/5] mm/backing-dev: Use irqsave variant of atomic_dec_and_lock()
-Date: Fri,  4 May 2018 17:45:30 +0200
-Message-Id: <20180504154533.8833-3-bigeasy@linutronix.de>
+Subject: [PATCH 3/5] kernel/user: Use irqsave variant of atomic_dec_and_lock()
+Date: Fri,  4 May 2018 17:45:31 +0200
+Message-Id: <20180504154533.8833-4-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180504154533.8833-1-bigeasy@linutronix.de>
 References: <20180504154533.8833-1-bigeasy@linutronix.de>
@@ -35,26 +35,25 @@ local_irq_save/restore is no longer required.
 Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- mm/backing-dev.c | 5 +----
+ kernel/user.c | 5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 023190c69dce..c28418914591 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -484,11 +484,8 @@ void wb_congested_put(struct bdi_writeback_congested *=
-congested)
- {
- 	unsigned long flags;
+diff --git a/kernel/user.c b/kernel/user.c
+index 36288d840675..8959ad11d766 100644
+--- a/kernel/user.c
++++ b/kernel/user.c
+@@ -169,11 +169,8 @@ void free_uid(struct user_struct *up)
+ 	if (!up)
+ 		return;
 =20
 -	local_irq_save(flags);
--	if (!atomic_dec_and_lock(&congested->refcnt, &cgwb_lock)) {
+-	if (atomic_dec_and_lock(&up->__count, &uidhash_lock))
++	if (atomic_dec_and_lock_irqsave(&up->__count, &uidhash_lock, flags))
+ 		free_user(up, flags);
+-	else
 -		local_irq_restore(flags);
-+	if (!atomic_dec_and_lock_irqsave(&congested->refcnt, &cgwb_lock, flags))
- 		return;
--	}
+ }
 =20
- 	/* bdi might already have been destroyed leaving @congested unlinked */
- 	if (congested->__bdi) {
+ struct user_struct *alloc_uid(kuid_t uid)
 --=20
 2.17.0
