@@ -1,196 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751394AbeEDLQD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:16:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39325 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751106AbeEDLQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:16:02 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-edac@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] x86: Convert mce timer to hrtimer
-Date: Fri,  4 May 2018 13:14:58 +0200
-Message-Id: <20180504111459.24825-1-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.17.0
+        id S1751419AbeEDLQW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:16:22 -0400
+Received: from foss.arm.com ([217.140.101.70]:52324 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750866AbeEDLQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 07:16:21 -0400
+Date: Fri, 4 May 2018 12:16:17 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Laura Abbott <labbott@redhat.com>
+Cc: Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: Clear the stack
+Message-ID: <20180504111616.znz5sphyqb6v57nx@lakrids.cambridge.arm.com>
+References: <20180502203326.9491-1-labbott@redhat.com>
+ <20180502203326.9491-3-labbott@redhat.com>
+ <20180503071917.xm2xvgagvzkworay@salmiak>
+ <a8ce3e4d-f0f3-1321-92af-9aed0097d205@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8ce3e4d-f0f3-1321-92af-9aed0097d205@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Gleixner <tglx@linutronix.de>
+On Thu, May 03, 2018 at 12:00:26PM -0700, Laura Abbott wrote:
+> On 05/03/2018 12:19 AM, Mark Rutland wrote:
+> > On Wed, May 02, 2018 at 01:33:26PM -0700, Laura Abbott wrote:
 
-mce_timer is started in atomic contexts of cpu bringup. This results
-in might_sleep() warnings on RT. Convert mce_timer to a hrtimer to
-avoid this.
+> > > +asmlinkage void erase_kstack(void)
+> > > +{
 
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: linux-edac@vger.kernel.org (open list:X86 MCE INFRASTRUCTURE)
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-fold in:
-|From: Mike Galbraith <bitbucket@online.de>
-|Date: Wed, 29 May 2013 13:52:13 +0200
-|Subject: [PATCH] x86/mce: fix mce timer interval
-|
-|Seems mce timer fire at the wrong frequency in -rt kernels since roughly
-|forever due to 32 bit overflow.  3.8-rt is also missing a multiplier.
-|
-|Add missing us -> ns conversion and 32 bit overflow prevention.
-|
-|Signed-off-by: Mike Galbraith <bitbucket@online.de>
-|[bigeasy: use ULL instead of u64 cast]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- arch/x86/kernel/cpu/mcheck/mce.c |   52 +++++++++++++++++++---------------=
------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+> > > +
+> > > +	/*
+> > > +	 * So let's write the poison value to the kernel stack.
+> > > +	 * Start from the address in p and move up till the new boundary.
+> > > +	 */
+> > > +	boundary = current_stack_pointer;
+> > 
+> > I worry a little that the compiler can move the SP during a function's
+> > lifetime, but maybe that's only the case when there are VLAs, or something like
+> > that?
+> 
+> I think that's true and a risk we take writing this in C. Here's
+> the disassembly on gcc-7.3.1:
+> 
+> ffff00000809d4d8 <erase_kstack>:
+> ffff00000809d4d8:       a9bf7bfd        stp     x29, x30, [sp, #-16]!
+> ffff00000809d4dc:       d5384100        mrs     x0, sp_el0
+> ffff00000809d4e0:       910003fd        mov     x29, sp
+> ffff00000809d4e4:       f946e400        ldr     x0, [x0, #3528]
+> ffff00000809d4e8:       9272c404        and     x4, x0, #0xffffffffffffc000
+> ffff00000809d4ec:       eb04001f        cmp     x0, x4
+> ffff00000809d4f0:       540002c9        b.ls    ffff00000809d548 <erase_kstack+0x70>  // b.plast
+> ffff00000809d4f4:       d2800003        mov     x3, #0x0                        // #0
+> ffff00000809d4f8:       9297ddc5        mov     x5, #0xffffffffffff4111         // #-48879
+> ffff00000809d4fc:       14000008        b       ffff00000809d51c <erase_kstack+0x44>
+> ffff00000809d500:       d1002000        sub     x0, x0, #0x8
+> ffff00000809d504:       52800022        mov     w2, #0x1                        // #1
+> ffff00000809d508:       eb00009f        cmp     x4, x0
+> ffff00000809d50c:       d2800003        mov     x3, #0x0                        // #0
+> ffff00000809d510:       1a9f27e1        cset    w1, cc  // cc = lo, ul, last
+> ffff00000809d514:       6a01005f        tst     w2, w1
+> ffff00000809d518:       54000180        b.eq    ffff00000809d548 <erase_kstack+0x70>  // b.none
+> ffff00000809d51c:       f9400001        ldr     x1, [x0]
+> ffff00000809d520:       eb05003f        cmp     x1, x5
+> ffff00000809d524:       54fffee1        b.ne    ffff00000809d500 <erase_kstack+0x28>  // b.any
+> ffff00000809d528:       91000463        add     x3, x3, #0x1
+> ffff00000809d52c:       d1002000        sub     x0, x0, #0x8
+> ffff00000809d530:       f100407f        cmp     x3, #0x10
+> ffff00000809d534:       1a9f87e2        cset    w2, ls  // ls = plast
+> ffff00000809d538:       eb00009f        cmp     x4, x0
+> ffff00000809d53c:       1a9f27e1        cset    w1, cc  // cc = lo, ul, last
+> ffff00000809d540:       6a01005f        tst     w2, w1
+> ffff00000809d544:       54fffec1        b.ne    ffff00000809d51c <erase_kstack+0x44>  // b.any
+> ffff00000809d548:       eb00009f        cmp     x4, x0
+> ffff00000809d54c:       91002001        add     x1, x0, #0x8
+> ffff00000809d550:       9a800020        csel    x0, x1, x0, eq  // eq = none
+> ffff00000809d554:       910003e1        mov     x1, sp
+> ffff00000809d558:       d5384102        mrs     x2, sp_el0
+> ffff00000809d55c:       f906e840        str     x0, [x2, #3536]
+> ffff00000809d560:       cb000023        sub     x3, x1, x0
+> ffff00000809d564:       d287ffe2        mov     x2, #0x3fff                     // #16383
+> ffff00000809d568:       eb02007f        cmp     x3, x2
+> ffff00000809d56c:       540001a8        b.hi    ffff00000809d5a0 <erase_kstack+0xc8>  // b.pmore
+> ffff00000809d570:       9297ddc2        mov     x2, #0xffffffffffff4111         // #-48879
+> ffff00000809d574:       eb01001f        cmp     x0, x1
+> ffff00000809d578:       54000082        b.cs    ffff00000809d588 <erase_kstack+0xb0>  // b.hs, b.nlast
+> ffff00000809d57c:       f8008402        str     x2, [x0], #8
+> ffff00000809d580:       eb00003f        cmp     x1, x0
+> ffff00000809d584:       54ffffc8        b.hi    ffff00000809d57c <erase_kstack+0xa4>  // b.pmore
+> ffff00000809d588:       910003e1        mov     x1, sp
+> ffff00000809d58c:       d5384100        mrs     x0, sp_el0
+> ffff00000809d590:       f906e401        str     x1, [x0, #3528]
+> ffff00000809d594:       a8c17bfd        ldp     x29, x30, [sp], #16
+> ffff00000809d598:       d65f03c0        ret
+> ffff00000809d59c:       d503201f        nop
+> ffff00000809d5a0:       d4210000        brk     #0x800
+> ffff00000809d5a4:       00000000        .inst   0x00000000 ; undefined
+> 
+> It looks to be okay although admittedly that's subject to compiler
+> whims. It might be safer to save the stack pointer almost as soon as
+> we get into the function and use that?
 
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -41,6 +41,7 @@
- #include <linux/debugfs.h>
- #include <linux/irq_work.h>
- #include <linux/export.h>
-+#include <linux/jiffies.h>
- #include <linux/jump_label.h>
-=20
- #include <asm/intel-family.h>
-@@ -1358,7 +1359,7 @@ int memory_failure(unsigned long pfn, in
- static unsigned long check_interval =3D INITIAL_CHECK_INTERVAL;
-=20
- static DEFINE_PER_CPU(unsigned long, mce_next_interval); /* in jiffies */
--static DEFINE_PER_CPU(struct timer_list, mce_timer);
-+static DEFINE_PER_CPU(struct hrtimer, mce_timer);
-=20
- static unsigned long mce_adjust_timer_default(unsigned long interval)
- {
-@@ -1367,26 +1368,18 @@ static unsigned long mce_adjust_timer_de
-=20
- static unsigned long (*mce_adjust_timer)(unsigned long interval) =3D mce_a=
-djust_timer_default;
-=20
--static void __start_timer(struct timer_list *t, unsigned long interval)
-+static void __start_timer(struct hrtimer *t, unsigned long iv)
- {
--	unsigned long when =3D jiffies + interval;
--	unsigned long flags;
--
--	local_irq_save(flags);
--
--	if (!timer_pending(t) || time_before(when, t->expires))
--		mod_timer(t, round_jiffies(when));
--
--	local_irq_restore(flags);
-+	if (!iv)
-+		return;
-+	hrtimer_start_range_ns(t, ns_to_ktime(jiffies_to_usecs(iv) * 1000ULL),
-+			       0, HRTIMER_MODE_REL_PINNED);
- }
-=20
--static void mce_timer_fn(struct timer_list *t)
-+static enum hrtimer_restart mce_timer_fn(struct hrtimer *timer)
- {
--	struct timer_list *cpu_t =3D this_cpu_ptr(&mce_timer);
- 	unsigned long iv;
-=20
--	WARN_ON(cpu_t !=3D t);
--
- 	iv =3D __this_cpu_read(mce_next_interval);
-=20
- 	if (mce_available(this_cpu_ptr(&cpu_info))) {
-@@ -1409,7 +1402,11 @@ static void mce_timer_fn(struct timer_li
-=20
- done:
- 	__this_cpu_write(mce_next_interval, iv);
--	__start_timer(t, iv);
-+	if (!iv)
-+		return HRTIMER_NORESTART;
-+
-+	hrtimer_forward_now(timer, ns_to_ktime(jiffies_to_nsecs(iv)));
-+	return HRTIMER_RESTART;
- }
-=20
- /*
-@@ -1417,7 +1414,7 @@ static void mce_timer_fn(struct timer_li
-  */
- void mce_timer_kick(unsigned long interval)
- {
--	struct timer_list *t =3D this_cpu_ptr(&mce_timer);
-+	struct hrtimer *t =3D this_cpu_ptr(&mce_timer);
- 	unsigned long iv =3D __this_cpu_read(mce_next_interval);
-=20
- 	__start_timer(t, interval);
-@@ -1432,7 +1429,7 @@ static void mce_timer_delete_all(void)
- 	int cpu;
-=20
- 	for_each_online_cpu(cpu)
--		del_timer_sync(&per_cpu(mce_timer, cpu));
-+		hrtimer_cancel(&per_cpu(mce_timer, cpu));
- }
-=20
- /*
-@@ -1761,7 +1758,7 @@ static void __mcheck_cpu_clear_vendor(st
- 	}
- }
-=20
--static void mce_start_timer(struct timer_list *t)
-+static void mce_start_timer(struct hrtimer *t)
- {
- 	unsigned long iv =3D check_interval * HZ;
-=20
-@@ -1774,16 +1771,19 @@ static void mce_start_timer(struct timer
-=20
- static void __mcheck_cpu_setup_timer(void)
- {
--	struct timer_list *t =3D this_cpu_ptr(&mce_timer);
-+	struct hrtimer *t =3D this_cpu_ptr(&mce_timer);
-=20
--	timer_setup(t, mce_timer_fn, TIMER_PINNED);
-+	hrtimer_init(t, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	t->function =3D mce_timer_fn;
- }
-=20
- static void __mcheck_cpu_init_timer(void)
- {
--	struct timer_list *t =3D this_cpu_ptr(&mce_timer);
-+	struct hrtimer *t =3D this_cpu_ptr(&mce_timer);
-+
-+	hrtimer_init(t, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	t->function =3D mce_timer_fn;
-=20
--	timer_setup(t, mce_timer_fn, TIMER_PINNED);
- 	mce_start_timer(t);
- }
-=20
-@@ -2285,7 +2285,7 @@ static int mce_cpu_dead(unsigned int cpu
-=20
- static int mce_cpu_online(unsigned int cpu)
- {
--	struct timer_list *t =3D this_cpu_ptr(&mce_timer);
-+	struct hrtimer *t =3D this_cpu_ptr(&mce_timer);
- 	int ret;
-=20
- 	mce_device_create(cpu);
-@@ -2302,10 +2302,10 @@ static int mce_cpu_online(unsigned int c
-=20
- static int mce_cpu_pre_down(unsigned int cpu)
- {
--	struct timer_list *t =3D this_cpu_ptr(&mce_timer);
-+	struct hrtimer *t =3D this_cpu_ptr(&mce_timer);
-=20
- 	mce_disable_cpu();
--	del_timer_sync(t);
-+	hrtimer_cancel(t);
- 	mce_threshold_remove_device(cpu);
- 	mce_device_remove(cpu);
- 	return 0;
+I think that's still potentially a problem. If the compiler expands the
+stack frame after we've taken a snaphot of the stack pointer, we might
+end up erasing portions of the active stackframe.
+
+Maybe we should just document we rely on the compiler not doing that,
+and if we end up seeing it in practice we rewrite this in asm? I can't
+think of a simple way we can auto-detect if this happens. :/
+
+Thanks,
+Mark.
