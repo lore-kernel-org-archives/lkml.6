@@ -1,66 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751849AbeEDRXk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:23:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40563 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751771AbeEDRXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:23:39 -0400
-Date: Fri, 4 May 2018 19:23:37 +0200
-From: Antoine Tenart <antoine.tenart@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        kishon@ti.com, linux@armlinux.org.uk, gregory.clement@bootlin.com,
-        andrew@lunn.ch, jason@lakedaemon.net, sebastian.hesselbarth@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v2 02/13] net: phy: sfp: handle non-wired SFP
- connectors
-Message-ID: <20180504172337.GC13899@kwain>
-References: <20180504135643.23466-1-antoine.tenart@bootlin.com>
- <20180504135643.23466-3-antoine.tenart@bootlin.com>
- <e338472c-1f26-e49b-9a2d-7942e6ed4288@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e338472c-1f26-e49b-9a2d-7942e6ed4288@gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1751747AbeEDRZj (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:25:39 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:34704 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751644AbeEDRZi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:25:38 -0400
+X-Google-Smtp-Source: AB8JxZrLgQD7c4HCUSW73yTrQ4GaiW8QaHIC7ugE7sWB7hShe+iid99KBPMQnUS9PbmSTrSnSbd6Jg==
+From: Moritz Fischer <mdf@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: netdev@vger.kernel.org, davem@davemloft.net, alex.williams@ni.com,
+        Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH 1/2] net: nixge: Fix error path for obtaining mac address
+Date: Fri,  4 May 2018 10:18:33 -0700
+Message-Id: <20180504171834.9365-1-mdf@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+Fix issue where nixge_get_nvmem_address() returns a non-NULL
+return value on a failed nvmem_cell_get() that causes an invalid
+access when error value encoded in pointer is dereferenced.
 
-On Fri, May 04, 2018 at 10:04:48AM -0700, Florian Fainelli wrote:
-> On 05/04/2018 06:56 AM, Antoine Tenart wrote:
-> > SFP connectors can be solder on a board without having any of their pins
-> > (LOS, i2c...) wired. In such cases the SFP link state cannot be guessed,
-> > and the overall link status reporting is left to other layers.
-> > 
-> > In order to achieve this, a new SFP_DEV status is added, named UNKNOWN.
-> > This mode is set when it is not possible for the SFP code to get the
-> > link status and as a result the link status is reported to be always UP
-> > from the SFP point of view.
-> 
-> Why represent the SFP in Device Tree then? Why not just declare this is
-> a fixed link which would avoid having to introduce this "unknown" state.
+Furthermore ensure that buffer allocated by nvmem_cell_read()
+actually gets kfreed() if the function succeeds.
 
-The other solution would have been to represent this as a fixed-link.
-But such a representation would report the link as being up all the
-time, which is something we wanted to avoid as the GoP in PPv2 can
-report some link status. This is achieved using SFP+phylink+PPv2.
+Fixes commit 492caffa8a1a ("net: ethernet: nixge: Add support for
+National Instruments XGE netdev")
+Reported-by: Alex Williams <alex.williams@ni.com>
+Signed-off-by: Moritz Fischer <mdf@kernel.org>
+---
+ drivers/net/ethernet/ni/nixge.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-And representing the SFP cage in the device tree, although it's a
-"dummy" one, helps describing the hardware.
-
-Thanks!
-Antoine
-
+diff --git a/drivers/net/ethernet/ni/nixge.c b/drivers/net/ethernet/ni/nixge.c
+index 27364b7572fc..c41fea9253e3 100644
+--- a/drivers/net/ethernet/ni/nixge.c
++++ b/drivers/net/ethernet/ni/nixge.c
+@@ -1170,7 +1170,7 @@ static void *nixge_get_nvmem_address(struct device *dev)
+ 
+ 	cell = nvmem_cell_get(dev, "address");
+ 	if (IS_ERR(cell))
+-		return cell;
++		return NULL;
+ 
+ 	mac = nvmem_cell_read(cell, &cell_size);
+ 	nvmem_cell_put(cell);
+@@ -1202,10 +1202,12 @@ static int nixge_probe(struct platform_device *pdev)
+ 	ndev->max_mtu = NIXGE_JUMBO_MTU;
+ 
+ 	mac_addr = nixge_get_nvmem_address(&pdev->dev);
+-	if (mac_addr && is_valid_ether_addr(mac_addr))
++	if (mac_addr && is_valid_ether_addr(mac_addr)) {
+ 		ether_addr_copy(ndev->dev_addr, mac_addr);
+-	else
++		kfree(mac_addr);
++	} else {
+ 		eth_hw_addr_random(ndev);
++	}
+ 
+ 	priv = netdev_priv(ndev);
+ 	priv->ndev = ndev;
 -- 
-Antoine Ténart, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.0
