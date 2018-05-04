@@ -1,55 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752236AbeEDUKJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:10:09 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35086 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752081AbeEDUKG (ORCPT
+        id S1752253AbeEDUKQ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:10:16 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35330 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752115AbeEDUKM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:10:06 -0400
-Date: Fri, 4 May 2018 22:09:53 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: Re: [RFC PATCH 2/2] net: mac808211: mac802154: use
- lockdep_assert_in_softirq() instead own warning
-Message-ID: <20180504200953.GW12217@hirez.programming.kicks-ass.net>
-References: <20180504175144.12179-1-bigeasy@linutronix.de>
- <20180504175144.12179-3-bigeasy@linutronix.de>
- <20180504183249.GU12217@hirez.programming.kicks-ass.net>
- <20180504184538.gavk7e2vtm73e32w@linutronix.de>
- <20180504185132.GV12217@hirez.programming.kicks-ass.net>
- <20180504190735.izmzibhb66gjb5wr@linutronix.de>
+        Fri, 4 May 2018 16:10:12 -0400
+Date: Fri, 4 May 2018 13:11:29 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Joel Fernandes <joel.opensrc@gmail.com>
+Cc: Joel Fernandes <joelaf@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: rcu-bh design
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <CAJWu+oqCun1Ae6GqPxnS+eCDi3jadGPp+MO8TjOWgs+AiAh79A@mail.gmail.com>
+ <20180504123050.2841f80d@gandalf.local.home>
+ <CAJWu+oqXmSC3zUZobQA4=qY_acRvOsq67c6dHXfVzTGqxqdaTA@mail.gmail.com>
+ <20180504174330.GS26088@linux.vnet.ibm.com>
+ <CAJWu+opXqw6BoKSzoV4xD0QBJ4s3C-KL=QBESZdEZ5RQCQKphw@mail.gmail.com>
+ <20180504184951.GU26088@linux.vnet.ibm.com>
+ <CAEi0qN=8c6tzNq26x=BBj5u3JoZHXF0DvfwWg=1vjmTU0UC4-w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180504190735.izmzibhb66gjb5wr@linutronix.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <CAEi0qN=8c6tzNq26x=BBj5u3JoZHXF0DvfwWg=1vjmTU0UC4-w@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18050420-0008-0000-0000-00000302EEF8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008970; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01027518; UDB=6.00524875; IPR=6.00806651;
+ MB=3.00020932; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-04 20:10:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050420-0009-0000-0000-000039228C78
+Message-Id: <20180504201129.GX26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805040184
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 09:07:35PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2018-05-04 20:51:32 [+0200], Peter Zijlstra wrote:
-
-> > softirqs disabled, ack that is exactly what it checks.
-> > 
-> > But afaict the assertion you introduced tests that we are _in_ softirq
-> > context, which is not the same.
+On Fri, May 04, 2018 at 12:57:19PM -0700, Joel Fernandes wrote:
+> On Fri, May 4, 2018 at 11:49 AM, Paul E. McKenney
+> <paulmck@linux.vnet.ibm.com> wrote:
+> > On Fri, May 04, 2018 at 06:34:32PM +0000, Joel Fernandes wrote:
+> >> On Fri, May 4, 2018 at 10:42 AM Paul E. McKenney
+> >> <paulmck@linux.vnet.ibm.com>
+> >> wrote:
+> >> [...]
+> >> > > > > But preemptible RCU *does not* use context-switch as a quiescent
+> >> state.
+> >> > > > It doesn't?
+> >> > >
+> >> > > I thought that's what preemptible rcu is about. You can get preempted
+> >> but
+> >> > > you shouldn't block in a read-section. Is that not true?
+> >>
+> >> > Almost.  All context switches in an RCU-preempt read-side critical section
+> >> > must be subject to priority boosting.  Preemption is one example, because
+> >> > boosting the priority of the preempted task will make it runnable.
+> >> > The priority-inheritance -rt "spinlock" is another example, because
+> >> > boosting the priority of the task holding the lock will eventually make
+> >> > runnable the task acquiring the lock within the RCU-preempt read-side
+> >> > critical section.
+> >>
+> >> Yes I understand priority boosting is needed with preemptible RCU so that
+> >> read-sections are making forward progress. I meant (and correct me if I'm
+> >> wrong) that, as long as a task doesn't sleep in a preemptible RCU
+> >> read-section (rcu-preempt flavor), then bad things wont happen and RCU will
+> >> work correctly.
+> >
+> > The exception is -rt "spinlock" acquisition.  If the "spinlock" is held,
+> > the task acquiring it will block, which is legal within an RCU-preempt
+> > read-side critical section.
+> >
+> > This exception is why I define bad things in terms of lack of
+> > susceptibility to priority boosting instead of sleeping.
 > 
-> indeed, now it clicked. Given what I wrote in the cover letter would you
-> be in favour of (a proper) lockdep_assert_BH_disabled() or the cheaper
-> local_bh_enable() (assuming the network folks don't mind the cheaper
-> version)?
+> Oh, that's a tricky situation. Thanks for letting me know. I guess my
+> view was too idealistic. Makes sense now.
 
-Depends a bit on what the code wants I suppose. If the code is in fact
-fine with the stronger in-softirq assertion, that'd be best. Otherwise I
-don't object to a lockdep_assert_bh_disabled() to accompany the
-lockdep_assert_irq_disabled() we already have either.
+Well, let me put it this way...
+
+Here is your nice elegant little algorithm:
+https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg
+
+Here is your nice elegant little algorithm equipped to survive within
+the Linux kernel:
+https://totatema.files.wordpress.com/2012/06/feeling_grizzly-1600x1200.jpg
+
+Any questions?  ;-)
+
+							Thanx, Paul
