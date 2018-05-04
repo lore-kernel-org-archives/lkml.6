@@ -1,5 +1,5 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-306461-1525448888-2-11835857431447261625
+X-Cyrus-Session-Id: sloti22d1t05-306461-1525448874-2-7125643042122070051
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,22 +13,22 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525448888; b=hYy3+7gzMM8+cws1NOcyPP7hCerOY+wUMddwvRKnRGlXMFNvH+
-    rf8e/MEXI2oWmlmdk3ZlJDcjufB/CqB13LMBrunudKKXNLHBgWIsuWc0oGkveoPq
-    G52e7TQaMR0CG+h0w6Yhk98vkcV8jRW1z0P0WKR+im4fTma5dOr0NrUsvgQZQLxK
-    oDH3mIDClha7qzD25c5uovdO+kb0xyIbH5K/sVph4XVdCi/rQXb7ksxV87un/kGD
-    nZMEfn9MjsBQhdm3dvt55EaQPLKTrBf6uJV6dzFc0eDP5J98UtoRiVgRdGu47MgX
-    g3X5VT+0gWTagESED7B0Rm9hJkfLrEY17wkQ==
+    1525448874; b=E4GcQnlO4sDOmhVlN8TZON+F3eKvdJC7lXtTLXfIo5WQp+Zy6z
+    d9cNGgTj262R/43gVU8ttW22nBuRgnVhixPRN6TKRnbjRRNEn5e6Pdc2evRQW5OF
+    3SYENlcuGXg98aMyeXjoze+SDvOknXxOxWfbZdOaHkZEdvQ97Vu3DjZ0e1TkX7xV
+    5Mj/58X6JwIcCF0R6sf218oZ+9edY9pSuTYfgEamg5YWlulwJXECdI24UAc911/6
+    Qthem8UMCXjoS68agICyS7DMg1HtQ+WLtcczdDVdo1D4ZVxhcJS2h8we+HnMpmM/
+    iHy/CNrGT83IR2vTPlfnc+4mCrivfyqTvOwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525448888; bh=Xo1k765mCElrnuEdZn6zfMKjDcmLH6
-    xlDC/ZpCyRpDA=; b=CT06/qKv6Ojx1zr0A/H8qw89GyvEABhUH1KmyS7DWokriq
-    PIKUrqGuG205R3rkiAUnKzN2FRZ1V6APp6di2NrY1b8x6EMD8DiCRsTETRPzJhd/
-    I6PiMLd3ji4c3PG4V7wI11sK+Ul+vKEhXeNZ7tgIApsIfSArp18iAT/z9ylW6ALG
-    FzHiw28AZhfr5auR4zZzGypoU8fIlzSbEhNRj/bu7YPwEp1JHqrfeCy9N010z+vw
-    lZvvoEUsDPzl7Ndm8qAgt/OgZb+DkfGlgKJGwBlDJSXctUqIuKgqqE8WhM6zkh+y
-    QGjxgogMRZTPg+4l2vVjbrlBoZseHO7m8EYkduuQ==
+    :list-id; s=fm2; t=1525448874; bh=xE01HSMiXcmKCWSQkSB7Sl/sNh8L12
+    GFx61dkTMaqVg=; b=ncag/Mtq7/X3eiEvubzK6U08VYETHgZyBE2z+Uqnl8C1A2
+    zGcGAiRQQrsR3bCIut5i4PoYV72R1A5eq77XMTn4/KcCHQhkza3LsyU+PMWLk0hH
+    eLVSA0G5MOl+Q3uPo29G8TsfjzDJZzHEZK7hK6+OcGY7Z/bdtJ4vwq2CoIG2rGsY
+    rVhU/ZLG/vnwqbCmpbqeUOy4qm+X0frAL4InC9xP+FBWhNPzFysEacfV6Zuk3Dy3
+    MMQL5uUsk6AOhWEB4kkkjgdM4NteM9W1Bnvzy81adJ/lfFCH3WOf70DK0A2BAFvU
+    X2bkFlq5FWBCfMP8L9hHcZxb4uolIjDzyjHjeNNQ==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
@@ -59,24 +59,24 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfObn/AveYryBtI8cWYnBlNg6Lk9UXi+Z7ZQ6vZqPCbHAXajqpIzTooge4H+cCCo8EJjtpZoUWHA6+FAf+HswYbxnWyR8+oFwndXnsyNnMw5vm0Jl9jhl
-    r5A5Raa8xkH5Hqrk8LU2RjKlVH7khzcwQnGHUxhf0hHcwwh738znX5TvsydIxcG0zdn6x+aWgLogxV6yn1jDNlwwm3AAHryoDB8s4LFi+vmsJX9+cqNeEqus
+X-CM-Envelope: MS4wfCbJklnePTgTKrovacwLzZ9uJJ6K7jOaMtQAiG4coMcUvHM4CgygcCwebDNY/sRyGQNVlhUZpW020pmpBYVuI+2vlpCpu2YQqAO5RNyw6zQXWZJ+byJv
+    FKURnHovR8TQ5b/R1/SO+OfkAFfvPxA6pj/+V2w+6lBI+gVkeUTbGI6B9LHXHqhIf2Wom/ZoOIbmlfXCvJmAU28i/WaAj0/016tOB/ZnoCOIFTS8X6nymM9o
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=XYAwZIGsAAAA:8
-    a=VwQbUJbxAAAA:8 a=WEKalfPYb8qsuMOUQUgA:9 a=x8gzFH9gYPwA:10
+    a=VwQbUJbxAAAA:8 a=lgtFolcE7YT6ZknlNU4A:9 a=x8gzFH9gYPwA:10
     a=E8ToXWR_bxluHZ7gmE-Z:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751733AbeEDPqS (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 4 May 2018 11:46:18 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:21501 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751721AbeEDPqP (ORCPT
+        id S1751807AbeEDPqa (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 11:46:30 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:51559 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751729AbeEDPqZ (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Fri, 4 May 2018 11:46:15 -0400
+        Fri, 4 May 2018 11:46:25 -0400
 X-IronPort-AV: E=Sophos;i="5.49,363,1520924400";
-   d="scan'208";a="14509183"
+   d="scan'208";a="13799023"
 From: Radu Pirea <radu.pirea@microchip.com>
 To: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -85,9 +85,9 @@ CC: <lee.jones@linaro.org>, <broonie@kernel.org>,
         <alexandre.belloni@bootlin.com>, <nicolas.ferre@microchip.com>,
         <jslaby@suse.com>, <gregkh@linuxfoundation.org>,
         <richard.genoud@gmail.com>, Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v2 1/6] MAINTAINERS: add at91 usart mfd driver
-Date: Fri, 4 May 2018 18:47:09 +0300
-Message-ID: <20180504154714.5109-2-radu.pirea@microchip.com>
+Subject: [PATCH v2 3/6] MAINTAINERS: add at91 usart spi driver
+Date: Fri, 4 May 2018 18:47:11 +0300
+Message-ID: <20180504154714.5109-4-radu.pirea@microchip.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180504154714.5109-1-radu.pirea@microchip.com>
 References: <20180504154714.5109-1-radu.pirea@microchip.com>
@@ -107,19 +107,19 @@ Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
  1 file changed, 7 insertions(+)
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e2a2fddbd19..ca06c6f58299 100644
+index ca06c6f58299..9243b9007966 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -9192,6 +9192,13 @@ S:	Supported
- F:	drivers/mtd/nand/raw/atmel/*
- F:	Documentation/devicetree/bindings/mtd/atmel-nand.txt
+@@ -9199,6 +9199,13 @@ S:	Supported
+ F:	drivers/mfd/at91-usart.c
+ F:	include/dt-bindings/mfd/at91-usart.h
  
-+MICROCHIP AT91 USART MFD DRIVER
++MICROCHIP AT91 USART SPI DRIVER
 +M:	Radu Pirea <radu.pirea@microchip.com>
-+L:	linux-kernel@vger.kernel.org
++L:	linux-spi@vger.kernel.org
 +S:	Supported
-+F:	drivers/mfd/at91-usart.c
-+F:	include/dt-bindings/mfd/at91-usart.h
++F:	drivers/spi/spi-at91-usart.c
++F:	Documentation/devicetree/bindings/spi/microchip,at91-usart-spi.txt
 +
  MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER
  M:	Woojung Huh <Woojung.Huh@microchip.com>
