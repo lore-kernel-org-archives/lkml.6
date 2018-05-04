@@ -1,157 +1,121 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1474721-1526333729-2-14534414828757365960
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: cc='UTF-8', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526333729; b=LqORRfRTRKs4XHHcaS1L1pG9RHOqia9M9DK11ppu7Dnflvgwg4
-    0pLvKcwhcyytMPUq0XY5T/3VFg1smVLmQkG4d1YRpVH7z/t5HtibAA3gN5ET8k1E
-    Nw6nQsaM6Mp12tdd0xCtsu6iMVIYgqNyvGmcATt+JhNnxY7flFLTtHcN3XnnnY1F
-    lHIIZZ2SlLIlB29wm73N3XUAVnnkMj0d0ELueFsm6hjiwx8so//DlnETL3VEyd1U
-    DoD1t3VocSUjtgJAX/vEYqL8tBu04M7oXg/cxFWUynZfRS4VtkGu2uQ46BN5AyxQ
-    ID/BgwQGqvqMVCLjs05Ts7ivZkSyDn5wQFnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526333729; bh=nqbzD
-    1aNdAhofjUCnG7ohd8qcdrSQo8Ean60uqhjads=; b=EvubKZ6d/DaSnIYZQhi2f
-    BAjfz2NXQFOSycx8PEzMVddsPJZ/Qr0QUnIr+h7uF8IxlBTEunzD3SILBvFjc7f4
-    DJ5NQrT/LOiHtytjhm6dzFb0UcK9oudFtzayPruAHsNWDa7RK4vYZhY7KWuYQ0fQ
-    7ZQUMUJ8qrLgIhcZvf7R5fMwNz8fLQnQZcokHYEctGYkZxpXGpKkkW4p1oMyJMos
-    JmxMQXaamW7/mrZ6HA1foOgxtrnFKhCuBGL3nyelI0Mm6gSXLS7C1ZCX21vlEY95
-    idTY9EDQRGvOiIir/EjHE0+eJiLqt50pMg9dYdqq/TRmEKfzudy2hkhEPrubImLv
-    w==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=J4BkS+0I;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=J4BkS+0I;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMUBrN6DeGeq5bawag51eu7BP1NHvilY1kPZSSs6bu3tUcK5lQ9ozZKyKGSLBcYqXkBGazlotVNlPOB1n2NWdZ5aZKDPoYrWCroN/EY0AVl1IWQeoC9v
-    TL6YoPGBVPbLXYpIFeqSdH+KZlJFrEkHVtm8znLgQRDiXwdmehgi1HavLwTfVJOXAV8CJyPc3Tqh1RoML68eDrvfYVC+Zsxqz22JCChiEZoOYTJhXYOqba+r
-    w/FA5hgGmUNCzjnDuMR8nA==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10
-    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=hSkVLCK3AAAA:8
-    a=4RBUngkUAAAA:8 a=20KFwNOVAAAA:8 a=DDOyTI_5AAAA:8 a=kisfkIdBKPTy4GAyi1cA:9
-    a=CjuIK1q_8ugA:10 a=cQPPKAXgyycSBL8etih5:22 a=_sbA2Q-Kp09kWB8D3iXc:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZr0NHv1oVwhG0Z1QZojr9kCbxU4jlTKf9Qnsv43SP9/f0QQyacrsMr2zyiSrkQkBMYQiyM3bA==
-From: Laura Abbott <labbott@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>,
- Sumit Semwal <sumit.semwal@linaro.org>
-Subject: [PATCH] staging: android: ion: Switch to pr_warn_once in
- ion_buffer_destroy
-Date: Mon, 14 May 2018 14:35:09 -0700
-Message-Id: <20180514213509.25171-1-labbott@redhat.com>
-X-Mailer: git-send-email 2.17.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
- LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Martijn Coenen <maco@android.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <maco@android.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525463851; cv=none;
+        d=google.com; s=arc-20160816;
+        b=oDGGCjQ3PAPbP0r8AFJRdIN42B/1EdvOK8+vZ9WuuAqEyxIxAAMD/mAKQIcaFLILzD
+         sWMwOuaYBk7DesUExhw0ec8XQiryk8uEK7lHdCjS20g3hu0Wf2WUp0ET8DoorKu8mF1L
+         9sQgSDRY8PaFNnSkVzox/vP/snNFxmWf4Q6Ds55JesCs14Hut1tLstuwruizZ2VDOaWL
+         Q2c/b4Gevo/yqqUh2+mHR1UR6NT3963p1TV1XRdEtpyXgr+5UVGa83j6aAmwvLyyixcA
+         QGSTq0QRDLiiJPln3ErpOVH3SwBi5bcmX0e2fx/xFhcUyvd/E/K1tRsS1fGQKbJd/LyP
+         M1Mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=z9Fvghihfq4GmuVJJV3nnfq8fxha6avI8CazqMm2rXc=;
+        b=qaUsLNgEGydgm3WU7BCYerVEd+QFtUFY3mz30EhvpQ1TPJ6FbX628JWxA7e+C4+Rnb
+         HUmvJVrV/hDwqMVU2jw5z4m9puXVqycMwEUlrFRcZ2eJRWmoBs/WtQ3Wd59L727LruZO
+         tnLoLIHHkgUmlCHua8Q2gp6RuhDBr+Itgk/kMwxrAcxwV5k3TE7dhoUJlVLuAyiDGrVJ
+         tNA4t5MTASN60JlIFo00nVuYNuxiCGwMxDSKQ1FiPsXixkVMIdtpjNo6IUjSvMox012r
+         8ixSkyaBrznHxo7ht3kXllD/Pde2KhjqdEK2tJ1KglzBoUcS0wzny0q+HUNAJrlpywGJ
+         nYpg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@android.com header.s=20161025 header.b=s/x7tR9X;
+       spf=pass (google.com: domain of maco@android.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=maco@android.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=android.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@android.com header.s=20161025 header.b=s/x7tR9X;
+       spf=pass (google.com: domain of maco@android.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=maco@android.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=android.com
+X-Google-Smtp-Source: AB8JxZqethqwcYjTOtGR1uiofMJ5y7nFHCTkz7JVf8NRLzBwhgERXcTCFL2FAzhUOqYd27hJm8MtNw==
+From: Martijn Coenen <maco@android.com>
+To: john.stultz@linaro.org,
+	tkjos@google.com,
+	arve@android.com,
+	amit.pundir@linaro.org,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	devel@driverdev.osuosl.org,
+	maco@google.com,
+	Martijn Coenen <maco@android.com>
+Subject: [PATCH] ANDROID: binder: remove 32-bit binder interface.
+Date: Fri,  4 May 2018 12:57:28 -0700
+Message-Id: <20180504195728.72932-1-maco@android.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599564783998052037?=
+X-GMAIL-MSGID: =?utf-8?q?1599564783998052037?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Syzbot reported yet another warning with Ion:
+New devices launching with Android P need to use the 64-bit
+binder interface, even on 32-bit SoCs [0].
 
-WARNING: CPU: 0 PID: 1467 at drivers/staging/android/ion/ion.c:122
-ion_buffer_destroy+0xd4/0x190 drivers/staging/android/ion/ion.c:122
-Kernel panic - not syncing: panic_on_warn set ...
+This change removes the Kconfig option to select the 32-bit
+binder interface. We don't think this will affect existing
+userspace for the following reasons:
+1) The latest Android common tree is 4.14, so we don't
+   believe any Android devices are on kernels >4.14.
+2) Android devices launch on an LTS release and stick with
+   it, so we wouldn't expect devices running on <= 4.14 now
+   to upgrade to 4.17 or later. But even if they did, they'd
+   rebuild the world (kernel + userspace) anyway.
+3) Other userspaces like 'anbox' are already using the
+   64-bit interface.
 
-This is catching that a buffer was freed with an existing kernel mapping
-still present. This can be easily be triggered from userspace by calling
-DMA_BUF_SYNC_START without calling DMA_BUF_SYNC_END. Switch to a single
-pr_warn_once to indicate the error without being disruptive.
+Note that this change doesn't remove the 32-bit UAPI
+itself; the reason for that is that Android userspace
+always uses the latest UAPI headers from upstream, and
+userspace retains 32-bit support for devices that are
+upgrading. This will be removed as well in 2-3 years,
+at which point we can remove the code from the UAPI
+as well.
 
-Reported-by: syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Cc: stable <stable@vger.kernel.org>
+[0]: https://android-review.googlesource.com/c/platform/build/+/595193
+
+Signed-off-by: Martijn Coenen <maco@android.com>
 ---
- drivers/staging/android/ion/ion.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/android/Kconfig  | 13 -------------
+ drivers/android/binder.c |  4 ----
+ 2 files changed, 17 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index e74db7902549..a68329411b29 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -114,8 +114,11 @@ static struct ion_buffer *ion_buffer_create(struct ion_heap *heap,
+diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
+index 7dce3795b887..432e9ad77070 100644
+--- a/drivers/android/Kconfig
++++ b/drivers/android/Kconfig
+@@ -32,19 +32,6 @@ config ANDROID_BINDER_DEVICES
+ 	  created. Each binder device has its own context manager, and is
+ 	  therefore logically separated from the other devices.
  
- void ion_buffer_destroy(struct ion_buffer *buffer)
- {
--	if (WARN_ON(buffer->kmap_cnt > 0))
-+	if (buffer->kmap_cnt > 0) {
-+		pr_warn_once("%s: buffer still mapped in the kernel\n",
-+			     __func__);
- 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
-+	}
- 	buffer->heap->ops->free(buffer);
- 	kfree(buffer);
- }
+-config ANDROID_BINDER_IPC_32BIT
+-	bool "Use old (Android 4.4 and earlier) 32-bit binder API"
+-	depends on !64BIT && ANDROID_BINDER_IPC
+-	default y
+-	---help---
+-	  The Binder API has been changed to support both 32 and 64bit
+-	  applications in a mixed environment.
+-
+-	  Enable this to support an old 32-bit Android user-space (v4.4 and
+-	  earlier).
+-
+-	  Note that enabling this will break newer Android user-space.
+-
+ config ANDROID_BINDER_IPC_SELFTEST
+ 	bool "Android Binder IPC Driver Selftest"
+ 	depends on ANDROID_BINDER_IPC
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index e578eee31589..2ee9fb02dfb8 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -72,10 +72,6 @@
+ #include <linux/security.h>
+ #include <linux/spinlock.h>
+ 
+-#ifdef CONFIG_ANDROID_BINDER_IPC_32BIT
+-#define BINDER_IPC_32BIT 1
+-#endif
+-
+ #include <uapi/linux/android/binder.h>
+ #include "binder_alloc.h"
+ #include "binder_trace.h"
 -- 
-2.17.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.17.0.441.gb46fe60e1d-goog
