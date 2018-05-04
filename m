@@ -1,195 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751294AbeEDLJN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:09:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:52242 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750820AbeEDLJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:09:12 -0400
-Date: Fri, 4 May 2018 12:09:08 +0100
-From: Mark Rutland <mark.rutland@arm.com>
-To: Alexander Popov <alex.popov@linux.com>
-Cc: Laura Abbott <labbott@redhat.com>, Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: Clear the stack
-Message-ID: <20180504110907.c2dw33kjmyybso6t@lakrids.cambridge.arm.com>
-References: <20180502203326.9491-1-labbott@redhat.com>
- <20180502203326.9491-3-labbott@redhat.com>
- <20180503071917.xm2xvgagvzkworay@salmiak>
- <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
+        id S1751369AbeEDLKC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:10:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48998 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDLKA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 07:10:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd6ad26c-1d2c-88f3-8f01-e68d2b31d6ea@linux.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date: Fri, 04 May 2018 16:39:59 +0530
+From: Vikash Garodia <vgarodia@codeaurora.org>
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-media-owner@vger.kernel.org
+Subject: Re: [PATCH 10/28] venus: vdec: call session_continue in insufficient
+ event
+In-Reply-To: <c349eca0-2227-75f3-111c-9980336896d1@linaro.org>
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+ <20180424124436.26955-11-stanimir.varbanov@linaro.org>
+ <85963ca3e12f4d71f2bc2db7d601d4b2@codeaurora.org>
+ <c349eca0-2227-75f3-111c-9980336896d1@linaro.org>
+Message-ID: <5cfb0fc9e54763712799e9adf5770dac@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 08:33:38PM +0300, Alexander Popov wrote:
-> Hello Mark and Laura,
+Hi Stanimir,
+
+On 2018-05-03 17:06, Stanimir Varbanov wrote:
+> Hi Vikash,
 > 
-> Let me join the discussion. Mark, thanks for your feedback!
+> Thanks for the comments!
 > 
-> On 03.05.2018 10:19, Mark Rutland wrote:
-> > Hi Laura,
-> > 
-> > On Wed, May 02, 2018 at 01:33:26PM -0700, Laura Abbott wrote:
-> >>
-> >> Implementation of stackleak based heavily on the x86 version
-> >>
-> >> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> >> ---
-> >> Now written in C instead of a bunch of assembly.
-> > 
-> > This looks neat!
-> > 
-> > I have a few minor comments below.
-> > 
-> >> diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-> >> index bf825f38d206..0ceea613c65b 100644
-> >> --- a/arch/arm64/kernel/Makefile
-> >> +++ b/arch/arm64/kernel/Makefile
-> >> @@ -55,6 +55,9 @@ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
-> >>  arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
-> >>  arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
-> >>  
-> >> +arm64-obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += erase.o
-> >> +KASAN_SANITIZE_erase.o	:= n
-> > 
-> > I suspect we want to avoid the full set of instrumentation suspects here, e.g.
-> > GKOV, KASAN, UBSAN, and KCOV.
+> On  2.05.2018 09:26, Vikash Garodia wrote:
+>> Hello Stanimir,
+>> 
+>> On 2018-04-24 18:14, Stanimir Varbanov wrote:
+>>> Call session_continue for Venus 4xx version even when the event
+>>> says that the buffer resources are not sufficient. Leaving a
+>>> comment with more information about the workaround.
+>>> 
+>>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>>> ---
+>>>  drivers/media/platform/qcom/venus/vdec.c | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>> 
+>>> diff --git a/drivers/media/platform/qcom/venus/vdec.c
+>>> b/drivers/media/platform/qcom/venus/vdec.c
+>>> index c45452634e7e..91c7384ff9c8 100644
+>>> --- a/drivers/media/platform/qcom/venus/vdec.c
+>>> +++ b/drivers/media/platform/qcom/venus/vdec.c
+>>> @@ -873,6 +873,14 @@ static void vdec_event_notify(struct venus_inst
+>>> *inst, u32 event,
+>>> 
+>>>              dev_dbg(dev, "event not sufficient resources (%ux%u)\n",
+>>>                  data->width, data->height);
+>>> +            /*
+>>> +             * Workaround: Even that the firmware send and event for
+>>> +             * insufficient buffer resources it is safe to call
+>>> +             * session_continue because actually the event says that
+>>> +             * the number of capture buffers is lower.
+>>> +             */
+>>> +            if (IS_V4(core))
+>>> +                hfi_session_continue(inst);
+>>>              break;
+>>>          case HFI_EVENT_RELEASE_BUFFER_REFERENCE:
+>>>              venus_helper_release_buf_ref(inst, data->tag);
+>> 
+>> Insufficient event from video firmware could be sent either,
+>> 1. due to insufficient buffer resources
+>> 2. due to lower capture buffers
+>> 
+>> It cannot be assumed that the event received by the host is due to 
+>> lower capture
+>> buffers. Incase the buffer resource is insufficient, let say there is 
+>> a bitstream
+>> resolution switch from 720p to 1080p, capture buffers needs to be 
+>> reallocated.
 > 
-> I've disabled KASAN instrumentation for that file on x86 because erase_kstack()
-> intentionally writes to the stack and causes KASAN false positive reports.
+> I agree with you. I will rework this part and call session_continue
+> only for case #2.
+
+Even if the capture buffers are lower, driver should consider 
+reallocation of capture
+buffers with required higher count. Without this, it may happen that for 
+a given video
+frame, the decoded output will not be generated. The fact that the DPB 
+buffer count is
+same as capture buffers, will be lower than required. Hence the frame 
+which needs YUV
+reference beyond the DPB count, will get stuck as it cannot be decoded 
+due to unavailability
+of sufficient DPB buffers.
+Say for ex. 10 DPB and capture buffers are allocated. For a given 
+bitstream, firmware requested
+the count to be 15. Frame 1 to 10 gets decoded and stored in DPB as 
+references for future frame
+decoding. Now when the 11th frame is queued to firmware, it can be 
+decode but cannot be stored
+as reference to decode future (12th) frame. Hence 11 frame will get 
+stuck and will not be given
+back to host driver.
+
+>> 
+>> The driver should be sending the V4L2_EVENT_SOURCE_CHANGE to client 
+>> instead of ignoring
+>> the event from firmware.
 > 
-> But I didn't see any conflicts with other types of instrumentation that you
-> mentioned.
-
-The rationale is that any of these can result in implicit calls to C
-functions at arbitrary points during erase_kstack(). That could
-interfere with the search for poison, and/or leave data on the stack
-which is not erased.
-
-They won't result in hard failures, as KASAN would, but we should
-probably avoid them regardless.
-
-[...]
-
-> >> +asmlinkage void erase_kstack(void)
-> >> +{
-> >> +	unsigned long p = current->thread.lowest_stack;
-> >> +	unsigned long boundary = p & ~(THREAD_SIZE - 1);
-> >> +	unsigned long poison = 0;
-> >> +	const unsigned long check_depth = STACKLEAK_POISON_CHECK_DEPTH /
-> >> +							sizeof(unsigned long);
-> >> +
-> >> +	/*
-> >> +	 * Let's search for the poison value in the stack.
-> >> +	 * Start from the lowest_stack and go to the bottom.
-> >> +	 */
-> >> +	while (p > boundary && poison <= check_depth) {
-> >> +		if (*(unsigned long *)p == STACKLEAK_POISON)
-> >> +			poison++;
-> >> +		else
-> >> +			poison = 0;
-> >> +
-> >> +		p -= sizeof(unsigned long);
-> >> +	}
-> >> +
-> >> +	/*
-> >> +	 * One long int at the bottom of the thread stack is reserved and
-> >> +	 * should not be poisoned (see CONFIG_SCHED_STACK_END_CHECK).
-> >> +	 */
-> >> +	if (p == boundary)
-> >> +		p += sizeof(unsigned long);
-> > 
-> > I wonder if end_of_stack() should be taught about CONFIG_SCHED_STACK_END_CHECK,
-> > given that's supposed to return the last *usable* long on the stack, and we
-> > don't account for this elsewhere.
+> The v4l2 event is sent always to v4l clients.
 > 
-> I would be afraid to change the meaning of end_of_stack()... Currently it
-> considers that magic long as usable (include/linux/sched/task_stack.h):
-> 
-> #define task_stack_end_corrupted(task) \
-> 		(*(end_of_stack(task)) != STACK_END_MAGIC)
-> 
-> 
-> > If we did, then IIUC we could do:
-> > 
-> > 	unsigned long boundary = (unsigned long)end_of_stack(current);
-> > 
-> > ... at the start of the function, and not have to worry about this explicitly.
-> 
-> I should mention that erase_kstack() can be called from x86 trampoline stack.
-> That's why the boundary is calculated from the lowest_stack.
-
-Ok. Under what circumstances does that happen?
-
-It seems a little scary that curent::thread::lowest_stack might not be
-on current's task stack. Is that reset when transitioning to/from the
-trampoile stack?
-
-[...]
-
-> >> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
-> >> +void __used check_alloca(unsigned long size)
-> >> +{
-> >> +	unsigned long sp, stack_left;
-> >> +
-> >> +	sp = current_stack_pointer;
-> >> +
-> >> +	stack_left = sp & (THREAD_SIZE - 1);
-> >> +	BUG_ON(stack_left < 256 || size >= stack_left - 256);
-> >> +}
-> > 
-> > Is this arbitrary, or is there something special about 256?
-> > 
-> > Even if this is arbitrary, can we give it some mnemonic?
-> 
-> It's just a reasonable number. We can introduce a macro for it.
-
-I'm just not sure I see the point in the offset, given things like
-VMAP_STACK exist. BUG_ON() handling will likely require *more* than 256
-bytes of stack, so it seems superfluous, as we'd be relying on stack
-overflow detection at that point.
-
-I can see that we should take the CONFIG_SCHED_STACK_END_CHECK offset
-into account, though.
-
-> >> +EXPORT_SYMBOL(check_alloca);
-> >> +#endif
-> >> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-> >> index a34e9290a699..25dd2a14560d 100644
-> >> --- a/drivers/firmware/efi/libstub/Makefile
-> >> +++ b/drivers/firmware/efi/libstub/Makefile
-> >> @@ -20,7 +20,8 @@ cflags-$(CONFIG_EFI_ARMSTUB)	+= -I$(srctree)/scripts/dtc/libfdt
-> >>  KBUILD_CFLAGS			:= $(cflags-y) -DDISABLE_BRANCH_PROFILING \
-> >>  				   -D__NO_FORTIFY \
-> >>  				   $(call cc-option,-ffreestanding) \
-> >> -				   $(call cc-option,-fno-stack-protector)
-> >> +				   $(call cc-option,-fno-stack-protector) \
-> >> +				   $(DISABLE_STACKLEAK_PLUGIN)
-> >>  
-> >>  GCOV_PROFILE			:= n
-> >>  KASAN_SANITIZE			:= n
-> > 
-> > I believe we'll also need to do this for the KVM hyp code in arch/arm64/kvm/hyp/.
-> 
-> Could you please give more details on that? Why STACKLEAK breaks it?
-
-In the hyp/EL2 exception level, we only map the hyp text, and not the
-rest of the kernel. So erase_kstack and check_alloca won't be mapped,
-and attempt to branch to them will fault.
-
-Even if it were mapped, things like BUG_ON(), get_current(), etc do not
-work at hyp.
-
-Additionally, the hyp code is mapped as a different virtual address from
-the rest of the kernel, so if any of the STACKLEAK code happens to use
-an absolute address, this will not work correctly.
-
-Thanks,
-Mark.
+> regards,
+> Stan
