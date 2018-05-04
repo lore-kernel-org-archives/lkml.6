@@ -1,140 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751562AbeEDOV5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 10:21:57 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51106 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751240AbeEDOV4 (ORCPT
+        id S1751590AbeEDOWm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 10:22:42 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:34925 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeEDOWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 10:21:56 -0400
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: Re: [PATCH v3 6/9] trace_uprobe: Support SDT markers having reference
- count (semaphore)
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, oleg@redhat.com,
-        peterz@infradead.org, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
-        corbet@lwn.net, dan.j.williams@intel.com, jolsa@redhat.com,
-        kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com
-References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
- <20180417043244.7501-7-ravi.bangoria@linux.vnet.ibm.com>
- <20180504134816.8633a157dd036489d9b0f1db@kernel.org>
-Date: Fri, 4 May 2018 19:51:32 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 4 May 2018 10:22:40 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w44EMWCk016220
+X-Nifty-SrcIP: [209.85.213.51]
+X-Google-Smtp-Source: AB8JxZqioFev/NWrt0LsE3BcEVF2XQA3qFzX20qccKgEvGiV5iOsYpR8VLfTEXEUnj2aFZy/0FI+VX7Hn/O2jcyTTjU=
 MIME-Version: 1.0
-In-Reply-To: <20180504134816.8633a157dd036489d9b0f1db@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18050414-0008-0000-0000-000004F30556
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050414-0009-0000-0000-00001E8732E2
-Message-Id: <206e4a16-ae21-7da3-f752-853dc2f51947@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805040132
+In-Reply-To: <1523595999-27433-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1523595999-27433-1-git-send-email-yamada.masahiro@socionext.com> <1523595999-27433-2-git-send-email-yamada.masahiro@socionext.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Fri, 4 May 2018 23:21:51 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATV==PWHd2M63X+SMchRoTqtbnnSFSZM1bQnjCRfRrRKg@mail.gmail.com>
+Message-ID: <CAK7LNATV==PWHd2M63X+SMchRoTqtbnnSFSZM1bQnjCRfRrRKg@mail.gmail.com>
+Subject: Re: [PATCH 01/30] gcc-plugins: fix build condition of SANCOV plugin
+To: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Ulf Magnusson <ulfalizer@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>, Emese Revfy <re.emese@gmail.com>,
+        X86 ML <x86@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
+Hi Kees,
 
-On 05/04/2018 10:18 AM, Masami Hiramatsu wrote:
->> +void uprobe_down_write_dup_mmap(void)
->> +{
->> +	percpu_down_write(&dup_mmap_sem);
->> +}
->> +
->> +void uprobe_up_write_dup_mmap(void)
->> +{
->> +	percpu_up_write(&dup_mmap_sem);
->> +}
->> +
-> I'm not sure why these hunks are not done in previous patch.
-> If you separate "uprobe_map_info" export patch, this also
-> should be separated. (Or both merged into this patch)
 
-Sure, I'll add separate patch for dup_mmap_sem.
-
->> +/*
->> + * Reference counter gate the invocation of probe. If present,
->> + * by default reference counter is 0. One needs to increment
->> + * it before tracing the probe and decrement it when done.
->> + */
->> +static int
->> +sdt_update_ref_ctr(struct mm_struct *mm, unsigned long vaddr, short d)
->> +{
->> +	void *kaddr;
->> +	struct page *page;
->> +	struct vm_area_struct *vma;
->> +	int ret = 0;
->> +	unsigned short *ptr;
->> +
->> +	if (vaddr == 0)
->> +		return -EINVAL;
->> +
->> +	ret = get_user_pages_remote(NULL, mm, vaddr, 1,
->> +		FOLL_FORCE | FOLL_WRITE, &page, &vma, NULL);
->> +	if (ret <= 0)
->> +		return ret;
-> Hmm, get_user_pages_remote() said
+2018-04-13 14:06 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> Since commit d677a4d60193 ("Makefile: support flag
+> -fsanitizer-coverage=trace-cmp"), you miss to build the SANCOV
+> plugin under some circumstances.
 >
-> ===
-> If nr_pages is 0 or negative, returns 0. If no pages were pinned, returns -errno.
-> ===
+>   CONFIG_KCOV=y
+>   CONFIG_KCOV_ENABLE_COMPARISONS=y
+>   Your compiler does not support -fsanitize-coverage=trace-pc
+>   Your compiler does not support -fsanitize-coverage=trace-cmp
 >
-> And you've passed 1 for nr_pages, so it must be 1 or -errno.
+> Under this condition, $(CFLAGS_KCOV) is not empty but contains a
+> space, so the following ifeq-conditional is false.
 >
->> +
->> +	kaddr = kmap_atomic(page);
->> +	ptr = kaddr + (vaddr & ~PAGE_MASK);
->> +	*ptr += d;
->> +	kunmap_atomic(kaddr);
->> +
->> +	put_page(page);
->> +	return 0;
-> And obviously 0 means "success" for sdt_update_ref_ctr().
-> I think if get_user_pages_remote returns 0, this should
-> return -EBUSY (*) or something else.
+>     ifeq ($(CFLAGS_KCOV),)
 >
-> * It seems that if faultin_page() in __get_user_pages()
-> returns -EBUSY, get_user_pages_remote() can return 0.
+> Then, scripts/Makefile.gcc-plugins misses to add sancov_plugin.so to
+> gcc-plugin-y while the SANCOV plugin is necessary as an alternative
+> means.
+>
+> Fixes: d677a4d60193 ("Makefile: support flag -fsanitizer-coverage=trace-cmp")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Ah good catch :). Will change it.
 
->> +}
->> +
->> +static void sdt_increment_ref_ctr(struct trace_uprobe *tu)
->> +{
->> +	struct uprobe_map_info *info;
->> +
->> +	uprobe_down_write_dup_mmap();
->> +	info = uprobe_build_map_info(tu->inode->i_mapping,
->> +				tu->ref_ctr_offset, false);
->> +	if (IS_ERR(info))
->> +		goto out;
->> +
->> +	while (info) {
->> +		down_write(&info->mm->mmap_sem);
->> +
->> +		if (sdt_find_vma(tu, info->mm, info->vaddr))
->> +			sdt_update_ref_ctr(info->mm, info->vaddr, 1);
-> Don't you have to handle the error to map pages here?
+I am planning to queue this up to the fixes branch
+since this is a bug fix.
 
-Correct.. I think, I've to feedback error code to probe_event_{enable|disable}
-and handler failure there.
+Do you have any comment on this?
 
-Thanks for the review,
-Ravi
+
+
+
+
+> Changes in v3:
+>   - newly added
+>
+> Changes in v2: None
+>
+>  scripts/Makefile.gcc-plugins | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+> index b2a95af..7f5c862 100644
+> --- a/scripts/Makefile.gcc-plugins
+> +++ b/scripts/Makefile.gcc-plugins
+> @@ -14,7 +14,7 @@ ifdef CONFIG_GCC_PLUGINS
+>    endif
+>
+>    ifdef CONFIG_GCC_PLUGIN_SANCOV
+> -    ifeq ($(CFLAGS_KCOV),)
+> +    ifeq ($(strip $(CFLAGS_KCOV)),)
+>        # It is needed because of the gcc-plugin.sh and gcc version checks.
+>        gcc-plugin-$(CONFIG_GCC_PLUGIN_SANCOV)           += sancov_plugin.so
+>
+> --
+> 2.7.4
+>
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
