@@ -1,87 +1,66 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3018566-1525795852-2-12477696151196052013
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525795851; b=WphZ1jAZMOkbUsN9r3KfkUoOcwCqenfJ4YisNNtjBQpQ6uX0z3
-    K4MElcySrPjg+JIc+mmqEiub54CTzC2QA2Gvq0KmEtRtKm53jQQ+L7K+WB9LT/x4
-    E4RvfTOeF1Enn6N3wy/rBR8CyqgVBa5HEVlsqfZwRt8hsH1b4GptbNiennKlzFz2
-    Vv8Kifn32zS4k20CMj2uk3dpliIeSEUIpkhdGfCIWOWgJ5aakSsJfgAb9v8uht1G
-    bzIUw7mJyUQ4cPkl2+lOnMq+NG9OMAfk/hqLAaQyBiaRwek1m5YjMbkWfdfFUQ+6
-    +CLO+Vk2dBi4y5BSfpaP+ptUvZgKK59SblIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525795851; bh=Yd11Y
-    sAn+xyFgLHuV57BfNT5+qvTZ7I2RecaLcYs7fk=; b=WJX6nfj+p+O2BPugbLqJC
-    RDO4Qu71TV/KL1zRkzqN7vnI5cz2IraWtFOBUVsYnoQr+qxCCQDvtRd8y3D7aR6K
-    ZKqz6rlu3ThGk7cCPJ4X3I9pOD0OUCyVqIdJrjvbMBmi4pr9nSgHmz6VFBMNmXbs
-    BuBtWuE3D4hShzQa4ZdJbUeGjxit/OJ92FzMyzT0PSoladl4c8SK5uoFAwIIEUXB
-    na2gSj6sfDT1Qwp+AYB8V44AqKsU48yQFpJwqbG491NEZUYpGXCXBee++8Ek86Qy
-    +8H7UFrQN4sIWDfX5ZxN53OjhUxdN2P4P5nYKK4dCHyXIQcjxl/+3uNNnCclNB4A
-    Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=kernel.org header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-85 state=0
-Authentication-Results: mx5.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=kernel.org header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-85 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfC4YMNOrokb0BGnKjoosxH5IG9zRecI78/fzEazCUzFASb4Fa2EjRDTiVMJPikPmYy5PvL51okkKd1sw0mVtP+uxf1Q5H8WyLdLLsoKJYsFbjTOStGzG
-    wAvDMFFdiKlD+tzZ+jpYyM0ZhVwL9bzhbyTti4mZr151HxiMmfuSHIZwtTdZAfZ3cy9A9eQUdKL63kXr216hfq3+URHFGTFfU8/7efqrMe5TSPPMfZ5NAAJh
-    NJK8RJg6ER2uE0jZLJqPpw==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=VwQbUJbxAAAA:8 a=DDOyTI_5AAAA:8
-    a=kpvyO64mCYQ25S6vECcA:9 a=ehwtOV2CpkiSd9Cj:21 a=aSRPJVVujFewrgcl:21
-    a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Tue, 8 May 2018 16:10:37 +0000
+Return-Path: <lurodriguez@suse.de>
+X-Google-Smtp-Source: AB8JxZoSvYD4EpnGGbmc90nwG1zmsJoZ46HP93KkzNgqTEJ/ic/BwT6mF3OZfnGGpfe01sbJqFT/
+ARC-Seal: i=1; a=rsa-sha256; t=1525393305; cv=none;
+        d=google.com; s=arc-20160816;
+        b=0ztgDgbq5URfgtFq04FJJsEMk6nOQM/OJYHQrFwmrXKplpgyd2hF4OxCnvimXHSTXf
+         yeO8x+cf9flX0M9cdXJjyloGvWS5R9SCCEnuuvCLk5GMdtnNCM7lLN5OE5TF6hgP75/8
+         /7mHv1a0wjeWHqM0Wt79T/rZGEzEMcZQpJCjwiwOlsQ72EyupDBzla7D5LYmV5etNgXO
+         koiQFgCWfch32BjBDm/x6zV9AEzja0pX+8AF8EQtNp8h8GGves8LINn11uFy3PSMFwT5
+         fQ6kcc9J2GYqwpk6vsELfgLLiF9uNBv69pYDgNj9JEgWFOp+/W/LAuOardnaM6xDQk4r
+         zgMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:arc-authentication-results;
+        bh=LNg4SA4R4cK9NlEha7DSy8zTyzC24NfRnzqKR/goGZo=;
+        b=Rulc5JM18J/kc/ZB0zZhW7bQLm4PbgnKt4me+rF1b7iZcfFWYOUF90gEOo1cx+IyrP
+         bZp5UYJGLdZjAyzHAKh8SD7nYpWqOc+bwXpUew4ilV8KMkuxduGpPP6TjV+SKViDani2
+         D7/KNb4CsQ72P48T5k9wtKCWsSwdtOuzS5RyelLQWb7AMSa+O5f7oZ2xjNfPm7Cz/Zy1
+         CHrJbFLmyznSRWBXPMfwaO6GQpFd80aU9P2krGuXZfzUlPv7/A/IZ93raF5rk4w2HMgH
+         /WGOwkeXpZRAKf3tLuA8Np9aEhdzMSZLinzv5rz6iFtgxb2U7FrYsEVrdubo5admJIla
+         NhkA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Fri, 4 May 2018 00:21:42 +0000
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
 To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, Stephen Boyd <sboyd@kernel.org>,
+	Vikram Mulukutla <markivx@codeaurora.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Martijn Coenen <maco@android.com>, Todd Kjos <tkjos@android.com>,
+	Andy Gross <andy.gross@linaro.org>,
+	David Brown <david.brown@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-security-module@vger.kernel.org,
+	Chris Wright <chrisw@sous-sol.org>,
+	David Howells <dhowells@redhat.com>,
+	Alan Cox <alan@linux.intel.com>, Kees Cook <keescook@chromium.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Andres Rodriguez <andresx7@gmail.com>,
+	Darren Hart <dvhart@infradead.org>,
+	Andy Shevchenko <andy@infradead.org>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Jones <pjones@redhat.com>, Dave Olsthoorn <dave@bewaar.me>,
+	Will Deacon <will.deacon@arm.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Matt Fleming <matt@codeblueprint.co.uk>,
+	Josh Triplett <josh@joshtriplett.org>, dmitry.torokhov@gmail.com,
+	mfuzzey@parkeon.com, Kalle Valo <kvalo@codeaurora.org>,
+	Arend Van Spriel <arend.vanspriel@broadcom.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, nbroeking@me.com,
+	bjorn.andersson@linaro.org, Torsten Duwe <duwe@suse.de>,
+	x86@kernel.org, linux-efi <linux-efi@vger.kernel.org>,
+	devel@driverdev.osuosl.org, linux-arm-msm@vger.kernel.org
 Subject: Re: [PATCH v3 2/5] efi: Add embedded peripheral firmware support
-Message-ID: <20180508161037.GE27853@wotan.suse.de>
+Message-ID: <20180504002142.GT27853@wotan.suse.de>
 References: <20180408174014.21908-1-hdegoede@redhat.com>
  <20180408174014.21908-3-hdegoede@redhat.com>
  <20180423211143.GZ14440@wotan.suse.de>
@@ -90,114 +69,112 @@ References: <20180408174014.21908-1-hdegoede@redhat.com>
  <20180424234219.GX14440@wotan.suse.de>
  <1524632409.3371.48.camel@linux.vnet.ibm.com>
  <20180425175557.GY14440@wotan.suse.de>
- <CAB0TPYGnCu+anWHBGvkaigxD--8uHQaQJ2c62kegJ7mTqvkmnA@mail.gmail.com>
- <20180508153805.GC27853@wotan.suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180508153805.GC27853@wotan.suse.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180425175557.GY14440@wotan.suse.de>
 User-Agent: Mutt/1.6.0 (2016-04-01)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: dmitry.torokhov@gmail.com, Matt Fleming <matt@codeblueprint.co.uk>,
- Will Deacon <will.deacon@arm.com>,
- Bjorn Andersson <bjorn.andersson@linaro.org>,
- David Howells <dhowells@redhat.com>, David Brown <david.brown@linaro.org>,
- Peter Jones <pjones@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>, nbroeking@me.com,
- x86@kernel.org, Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
- Ingo Molnar <mingo@redhat.com>, Andy Gross <andy.gross@linaro.org>,
- Darren Hart <dvhart@infradead.org>, Mimi Zohar <zohar@linux.vnet.ibm.com>,
- Arend Van Spriel <arend.vanspriel@broadcom.com>, Todd Kjos <tkjos@android.com>,
- Kees Cook <keescook@chromium.org>, linux-efi <linux-efi@vger.kernel.org>,
- linux-arm-msm@vger.kernel.org, Torsten Duwe <duwe@suse.de>,
- Josh Triplett <josh@joshtriplett.org>, Chris Wright <chrisw@sous-sol.org>,
- Hans de Goede <hdegoede@redhat.com>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, platform-driver-x86@vger.kernel.org,
- Martijn Coenen <maco@android.com>, Kalle Valo <kvalo@codeaurora.org>,
- Alan Cox <alan@linux.intel.com>, mfuzzey@parkeon.com,
- Ard Biesheuvel <ard.biesheuvel@linaro.org>, Stephen Boyd <sboyd@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Vikram Mulukutla <markivx@codeaurora.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-security-module@vger.kernel.org, Dave Olsthoorn <dave@bewaar.me>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andy Shevchenko <andy@infradead.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1597199782052351527?=
+X-GMAIL-MSGID: =?utf-8?q?1599490810483962098?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 08, 2018 at 03:38:05PM +0000, Luis R. Rodriguez wrote:
-> On Fri, May 04, 2018 at 12:44:37PM -0700, Martijn Coenen wrote:
-> > On Wed, Apr 25, 2018 at 10:55 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> > > Android became the primary user of CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
-> > >
-> > > It would be good for us to hear from Android folks if their current use of
-> > > request_firmware_into_buf() is designed in practice to *never* use the direct
-> > > filesystem firmware loading interface, and always rely instead on the
-> > > fallback mechanism.
+Android folks, poke below. otherwise we'll have no option but to seriously
+consider Mimi's patch to prevent these calls when IMA appraisal is enforced:
+
+http://lkml.kernel.org/r/1525182503-13849-7-git-send-email-zohar@linux.vnet.ibm.com
+
+Please read below....
+
+On Wed, Apr 25, 2018 at 05:55:57PM +0000, Luis R. Rodriguez wrote:
+> On Wed, Apr 25, 2018 at 01:00:09AM -0400, Mimi Zohar wrote:
+> > On Tue, 2018-04-24 at 23:42 +0000, Luis R. Rodriguez wrote:
+> > > On Tue, Apr 24, 2018 at 12:07:01PM -0400, Mimi Zohar wrote:
+> > > > On Tue, 2018-04-24 at 17:09 +0200, Hans de Goede wrote:
+> > > If its of any help --
+> > > 
+> > > drivers/soc/qcom/mdt_loader.c is the only driver currently using
+> > > request_firmware_into_buf() however I'll note qcom_mdt_load() is used in many
+> > > other drivers so they are wrappers around request_firmware_into_buf():
+> > > 
+> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:   * adreno_request_fw() handles this, but qcom_mdt_load() does
+> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, fwname, GPU_PAS_ID,
+> > > drivers/gpu/drm/msm/adreno/a5xx_gpu.c:          ret = qcom_mdt_load(dev, fw, newname, GPU_PAS_ID,
+> > > drivers/media/platform/qcom/venus/firmware.c:   ret = qcom_mdt_load(dev, mdt, fwname, VENUS_PAS_ID, mem_va, mem_phys,
+> > > drivers/remoteproc/qcom_adsp_pil.c:     return qcom_mdt_load(adsp->dev, fw, rproc->firmware, adsp->pas_id,
+> > > drivers/remoteproc/qcom_wcnss.c:        return qcom_mdt_load(wcnss->dev, fw, rproc->firmware, WCNSS_PAS_ID,
+> > > 
+> > > > > As such the current IMA code (from v4.17-rc2) actually does
+> > > > > not handle READING_FIRMWARE_PREALLOC_BUFFER at all, 
+> > > > 
+> > > > Right, it doesn't yet address READING_FIRMWARE_PREALLOC_BUFFER, but
+> > > > should.
+> > > > 
+> > > > Depending on whether the device requesting the firmware has access to
+> > > > the DMA memory, before the signature verification, 
+> > > 
+> > > It would seem from the original patch review about READING_FIRMWARE_PREALLOC_BUFFER
+> > > that this is not a DMA buffer.
+
+To be very clear I believe Stephen implied this was not DMA buffer. Mimi
+asked for READING_FIRMWARE_DMA if it was:
+
+https://patchwork.kernel.org/patch/9074611/
+
+> > The call sequence:
+> > qcom_mdt_load() -> qcom_scm_pas_init_image() -> dma_alloc_coherent()
 > > 
-> > It's hard to answer this question for Android in general. As far as I
-> > can tell the reasons we use CONFIG_FW_LOADER_USER_HELPER(_FALLBACK)
-> > are:
-> > 1) We have multiple different paths on our devices where firmware can
-> > be located, and the direct loader only supports one custom path
+> > If dma_alloc_coherent() isn't allocating a DMA buffer, then the
+> > function name is misleading/confusing.
+> 
+> Hah, by *definition* the device *and* processor has immediate access
+> to data written *immediately* when dma_alloc_coherent() is used. From
+> Documentation/DMA-API.txt:
+> 
+> -----------------------------------------------------------------------
+> Part Ia - Using large DMA-coherent buffers                                      
+> ------------------------------------------                                      
+>                                                                                 
+> ::                                                                              
+>                                                                                 
+>         void *                                                                  
+>         dma_alloc_coherent(struct device *dev, size_t size,                     
+>                            dma_addr_t *dma_handle, gfp_t flag)                  
+>                                                                                 
+> Consistent memory is memory for which a write by either the device or           
+> the processor can immediately be read by the processor or device                
+> without having to worry about caching effects.  (You may however need           
+> to make sure to flush the processor's write buffers before telling              
+> devices to read that memory.)  
+> ------------------------------------------------------------------------
+> 
+> Is ptr below
+> 
+> 	ret = request_firmware_into_buf(&seg_fw, fw_name, dev,  
+> 					ptr, phdr->p_filesz); 
+> 
+> Also part of the DMA buffer allocated earlier via:
+> 
+>         ret = qcom_scm_pas_init_image(pas_id, fw->data, fw->size);              
+> 
+> Android folks?
 
-FWIW I'd love to consider patches to address this, if this is something
-you may find a need for in the future to *avoid* the fallback, however
-would like a clean solution.
+Android folks?
 
-> > 2) Most of those paths are not mounted by the time the corresponding
-> > drivers are loaded, because pretty much all Android kernels today are
-> > built without module support, and therefore drivers are loaded well
-> > before the firmware partition is mounted
-
-I've given this some more thought and you can address this with initramfs,
-this is how other Linux distributions are addressing this. One way to
-address this automatically is to scrape the drivers built-in or needed early on
-boot in initamfs and if the driver has a MODULE_FIRMWARE() its respective
-firmware is added to initramfs as well.
-
-If you *don't* use initramfs, then yes you can obviously run into issues
-where your firmware may not be accessible if the driver is somehow loaded
-early.
-
-> > 3) I think we use _FALLBACK because doing this with uevents is just
-> > the easiest thing to do; our init code has a firmware helper that
-> > deals with this and searches the paths that we care about
+> > > The device driver should have access to the buffer pointer with write given
+> > > that with request_firmware_into_buf() the driver is giving full write access to
+> > > the memory pointer so that the firmware API can stuff the firmware it finds
+> > > there.
+> > > 
+> > > Firmware signature verification would be up to the device hardware to do upon
+> > > load *after* request_firmware_into_buf().
 > > 
-> > 2) will change at some point, because Android is moving towards a
-> > model where device-specific peripheral drivers will be loaded as
-> > modules, and since those modules would likely come from the same
-> > partition as the firmware, it's possible that the direct load would
-> > succeed (depending on whether the custom path is configured there or
-> > not). But I don't think we can rely on the direct loader even in those
-> > cases, unless we could configure it with multiple custom paths.
-
-Using initramfs will help, but because of the custom path needs -- you're
-right, we don't have anything for that yet, its also a bit unclear if
-something nice and clean can be drawn up for it. So perhaps dealing with
-the fallback mechanism is the way to go for this for sure, since we already
-have support for it.
-
-Just keep in mind that the fallback mechanism costs you about ~13436 bytes.
-
-So, if someone comes up with a clean interface for custom paths I'd love
-to consider it to avoid those 13436 bytes.
+> > We're discussing the kernel's signature verification, not the device
+> > hardware's signature verification.  Can the device driver access the
+> > buffer, before IMA-appraisal has verified the firmware's signature?
+> 
+> It will depend on the above question.
 
   Luis
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
