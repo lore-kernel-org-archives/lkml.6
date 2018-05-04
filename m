@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751552AbeEDIEj (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:04:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50488 "EHLO mail.bootlin.com"
+        id S1751598AbeEDIFl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:05:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50556 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750709AbeEDIEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:04:36 -0400
-Message-ID: <ddab13eb3dbc179d4a366248b5f510f147b02556.camel@bootlin.com>
-Subject: Re: [PATCH v2 02/10] media-request: Add a request complete
- operation to allow m2m scheduling
+        id S1751114AbeEDIFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 04:05:38 -0400
+Message-ID: <dd921da015112f2300a784caf2c21a88f63f1919.camel@bootlin.com>
+Subject: Re: [PATCH v2 03/10] videobuf2-core: Add helper to get buffer
+ private data from media request
 From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -24,13 +24,13 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
         Alexandre Courbot <acourbot@chromium.org>,
         Tomasz Figa <tfiga@chromium.org>
-Date: Fri, 04 May 2018 10:03:05 +0200
-In-Reply-To: <20180419154124.17512-3-paul.kocialkowski@bootlin.com>
+Date: Fri, 04 May 2018 10:03:29 +0200
+In-Reply-To: <20180419154124.17512-4-paul.kocialkowski@bootlin.com>
 References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
-         <20180419154124.17512-3-paul.kocialkowski@bootlin.com>
+         <20180419154124.17512-4-paul.kocialkowski@bootlin.com>
 Organization: Bootlin
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-7ElAg6Ux7kGsIjD5tVrd"
+        protocol="application/pgp-signature"; boundary="=-OkMVK6E3uX4i+oLxbLBv"
 X-Mailer: Evolution 3.28.1 
 Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -38,102 +38,96 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-7ElAg6Ux7kGsIjD5tVrd
+--=-OkMVK6E3uX4i+oLxbLBv
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
 On Thu, 2018-04-19 at 17:41 +0200, Paul Kocialkowski wrote:
-> When using the request API in the context of a m2m driver, the
-> operations that come with a m2m run scheduling call in their
-> (m2m-specific) ioctl handler are delayed until the request is queued
-> (for instance, this includes queuing buffers and streamon).
+> When calling media operation driver callbacks related to media
+> requests,
+> only a pointer to the request itself is provided, which is
+> insufficient
+> to retrieve the driver's context. Since the driver context is usually
+> set as vb2 queue private data and given that the core can determine
+> which objects attached to the request are buffers, it is possible to
+> extract the associated private data for the first buffer found.
 >=20
-> Thus, the m2m run scheduling calls are not called in due time since
-> the
-> request AP's internal plumbing will (rightfully) use the relevant core
-> functions directly instead of the ioctl handler.
->=20
-> This ends up in a situation where nothing happens if there is no
-> run-scheduling ioctl called after queuing the request.
->=20
-> In order to circumvent the issue, a new media operation is introduced,
-> called at the time of handling the media request queue ioctl. It gives
-> m2m drivers a chance to schedule a m2m device run at that time.
->=20
-> The existing req_queue operation cannot be used for this purpose,
-> since
-> it is called with the request queue mutex held, that is eventually
-> needed
-> in the device_run call to apply relevant controls.
+> This is required in order to access the current m2m context from m2m
+> drivers' private data in the context of media request operation
+> callbacks. More specifically, this allows scheduling m2m device runs
+> from the newly-introduced request complete operation.
 
-This patch will be dropped since it's no longer useful with the latest
-version of the request API.
+This patch too will be dropped since it's no longer useful with the
+latest version of the request API.
 
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 > ---
->  drivers/media/media-request.c | 3 +++
->  include/media/media-device.h  | 2 ++
->  2 files changed, 5 insertions(+)
+>  drivers/media/common/videobuf2/videobuf2-core.c | 15 +++++++++++++++
+>  include/media/videobuf2-core.h                  |  1 +
+>  2 files changed, 16 insertions(+)
 >=20
-> diff --git a/drivers/media/media-request.c b/drivers/media/media-
-> request.c
-> index 415f7e31019d..28ac5ccfe6a2 100644
-> --- a/drivers/media/media-request.c
-> +++ b/drivers/media/media-request.c
-> @@ -157,6 +157,9 @@ static long media_request_ioctl_queue(struct
+> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c
+> b/drivers/media/common/videobuf2/videobuf2-core.c
+> index 13c9d9e243dd..6fa46bfc620f 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-core.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
+> @@ -1351,6 +1351,21 @@ bool vb2_core_request_has_buffers(struct
 > media_request *req)
->  		media_request_get(req);
->  	}
-> =20
-> +	if (mdev->ops->req_complete)
-> +		mdev->ops->req_complete(req);
-> +
->  	return ret;
 >  }
+>  EXPORT_SYMBOL_GPL(vb2_core_request_has_buffers);
 > =20
-> diff --git a/include/media/media-device.h b/include/media/media-
-> device.h
-> index 07e323c57202..c7dcf2079cc9 100644
-> --- a/include/media/media-device.h
-> +++ b/include/media/media-device.h
-> @@ -55,6 +55,7 @@ struct media_entity_notify {
->   * @req_alloc: Allocate a request
->   * @req_free: Free a request
->   * @req_queue: Queue a request
-> + * @req_complete: Complete a request
->   */
->  struct media_device_ops {
->  	int (*link_notify)(struct media_link *link, u32 flags,
-> @@ -62,6 +63,7 @@ struct media_device_ops {
->  	struct media_request *(*req_alloc)(struct media_device
-> *mdev);
->  	void (*req_free)(struct media_request *req);
->  	int (*req_queue)(struct media_request *req);
-> +	void (*req_complete)(struct media_request *req);
->  };
+> +void *vb2_core_request_find_buffer_priv(struct media_request *req)
+> +{
+> +	struct media_request_object *obj;
+> +	struct vb2_buffer *vb;
+> +
+> +	obj =3D media_request_object_find(req, &vb2_core_req_ops,
+> NULL);
+> +	if (!obj)
+> +		return NULL;
+> +
+> +	vb =3D container_of(obj, struct vb2_buffer, req_obj);
+> +
+> +	return vb2_get_drv_priv(vb->vb2_queue);
+> +}
+> +EXPORT_SYMBOL_GPL(vb2_core_request_find_buffer_priv);
+> +
+>  int vb2_core_prepare_buf(struct vb2_queue *q, unsigned int index,
+> void *pb,
+>  			 struct media_request *req)
+>  {
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-
+> core.h
+> index 032bd1bec555..65c0cf6afb55 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -1153,4 +1153,5 @@ int vb2_verify_memory_type(struct vb2_queue *q,
+>  		enum vb2_memory memory, unsigned int type);
 > =20
->  /**
+>  bool vb2_core_request_has_buffers(struct media_request *req);
+> +void *vb2_core_request_find_buffer_priv(struct media_request *req);
+>  #endif /* _MEDIA_VIDEOBUF2_CORE_H */
 --=20
 Paul Kocialkowski, Bootlin (formerly Free Electrons)
 Embedded Linux and kernel engineering
 https://bootlin.com
---=-7ElAg6Ux7kGsIjD5tVrd
+--=-OkMVK6E3uX4i+oLxbLBv
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsE7kACgkQ3cLmz3+f
-v9HomAf/U5gnx6ZprY8K3VbK3hDNSCzIPHXorx02poTTlLsTDO/H5j+5Woi/y9BF
-kV/Y6TdvZVyoR6mkXUrqxA+zAjr68cMsvtNwcoWODVtVGzmmgtqfQmlhvzzs8sIv
-RdTIxHaWDbHTMn39MS40xQjGrFkEZ5haPLjnDh9ziVisr7gftvWmwawhB0JkRsqm
-/XKucxJVj5UPucPGfAVBBLJmnOxOsXNjOWq7IEPnaUWIJktKzSuYHWLiRikXsoPF
-W8tJLWQNRt8xJFHaJHEZeKz/9Hao1jm0+x1x/zL7DViUje2KUaw4mrY2n2RHLq5P
-NTxR6xAHKKJTzFzl1ZkAA53Ab+OZbg==
-=3zgR
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsE9EACgkQ3cLmz3+f
+v9HYxwf9GfHkwCzO+xymDzRl8+yiO7l0OJn+I66l64ESLA+4bTLsrXnox8NkNFAX
+y2bZ0hxgk8ZDQ2Utu/T3RjoSdxtmKEchgKcwSti0Ljx//N6fdXZR6Pw2+/JMEX0N
+hpUGhFFkF4gSkjV6TD+PggXZWSnxzKTUkyTrCvw/AdzKdBy5nYjYTI6sdL9b6cod
+eqUUxREXsGHjvKBxZu74sA3LH6TQ5fa7yaLcZqfLLy3ARrzuzhQ1yLlyAOjp0xQ+
+PZMNLuU8vrJ2aZ7Sqn5njhDsXdRBkSAdxrHQXU5tMN82tMG45CJPJnnJXVHWCA81
+Fnyo4av3S7P6vODY0RqgwODQ3soPdA==
+=zhfg
 -----END PGP SIGNATURE-----
 
---=-7ElAg6Ux7kGsIjD5tVrd--
+--=-OkMVK6E3uX4i+oLxbLBv--
