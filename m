@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751349AbeEDP23 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 11:28:29 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:41202 "EHLO
+        id S1751344AbeEDPcZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 11:32:25 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:41213 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751196AbeEDP22 (ORCPT
+        with ESMTP id S1751196AbeEDPcX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 11:28:28 -0400
+        Fri, 4 May 2018 11:32:23 -0400
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: alsa-devel@alsa-project.org
-Cc: tglx@linutronix.de, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Nicholas Bellinger <nab@linux-iscsi.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH] ALSA: pcm: Hide local_irq_disable/enable() and local_irqsave/restore()
-Date: Fri,  4 May 2018 17:28:10 +0200
-Message-Id: <20180504152810.7220-1-bigeasy@linutronix.de>
+Subject: [PATCH] percpu_ida: Use _irqsave() instead of local_irq_save() + spin_lock
+Date: Fri,  4 May 2018 17:32:18 +0200
+Message-Id: <20180504153218.7301-1-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -23,160 +22,177 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+percpu_ida() decouples disabling interrupts from the locking operations.
+This breaks some assumptions if the locking operations are replaced like
+they are under -RT.
+The same locking can be achieved by avoiding local_irq_save() and using
+spin_lock_irqsave() instead. percpu_ida_alloc() gains one more
+preemption point because after unlocking the fastpath and before the
+pool lock is acquired, the interrupts are briefly enabled.
 
-The snd_pcm_stream_lock_irq*() functions decouple disabling interrupts
-from the actual locking process. This does not work as expected if the
-locking primitives are replaced like on preempt-rt.
-
-Provide one function for locking which uses correct locking primitives.
-
-Signed-off-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- sound/core/pcm_native.c | 85 +++++++++++++++++++++++++++--------------
- 1 file changed, 57 insertions(+), 28 deletions(-)
+ lib/percpu_ida.c | 63 ++++++++++++++++--------------------------------
+ 1 file changed, 21 insertions(+), 42 deletions(-)
 
-diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
-index d18b3982548b..92c10fc838e9 100644
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -99,6 +99,57 @@ static inline void down_write_nonblock(struct rw_semapho=
-re *lock)
- 		cond_resched();
+diff --git a/lib/percpu_ida.c b/lib/percpu_ida.c
+index 6016f1deb1f5..9bbd9c5d375a 100644
+--- a/lib/percpu_ida.c
++++ b/lib/percpu_ida.c
+@@ -112,18 +112,6 @@ static inline void alloc_global_tags(struct percpu_ida=
+ *pool,
+ 		  min(pool->nr_free, pool->percpu_batch_size));
  }
 =20
-+#define PCM_LOCK_DEFAULT	0
-+#define PCM_LOCK_IRQ	1
-+#define PCM_LOCK_IRQSAVE	2
-+
-+static unsigned long __snd_pcm_stream_lock_mode(struct snd_pcm_substream *=
-substream,
-+						unsigned int mode)
-+{
-+	unsigned long flags =3D 0;
-+	if (substream->pcm->nonatomic) {
-+		down_read_nested(&snd_pcm_link_rwsem, SINGLE_DEPTH_NESTING);
-+		mutex_lock(&substream->self_group.mutex);
-+	} else {
-+		switch (mode) {
-+		case PCM_LOCK_DEFAULT:
-+			read_lock(&snd_pcm_link_rwlock);
-+			break;
-+		case PCM_LOCK_IRQ:
-+			read_lock_irq(&snd_pcm_link_rwlock);
-+			break;
-+		case PCM_LOCK_IRQSAVE:
-+			read_lock_irqsave(&snd_pcm_link_rwlock, flags);
-+			break;
-+		}
-+		spin_lock(&substream->self_group.lock);
-+	}
-+	return flags;
-+}
-+
-+static void __snd_pcm_stream_unlock_mode(struct snd_pcm_substream *substre=
-am,
-+					 unsigned int mode, unsigned long flags)
-+{
-+	if (substream->pcm->nonatomic) {
-+		mutex_unlock(&substream->self_group.mutex);
-+		up_read(&snd_pcm_link_rwsem);
-+	} else {
-+		spin_unlock(&substream->self_group.lock);
-+
-+		switch (mode) {
-+		case PCM_LOCK_DEFAULT:
-+			read_unlock(&snd_pcm_link_rwlock);
-+			break;
-+		case PCM_LOCK_IRQ:
-+			read_unlock_irq(&snd_pcm_link_rwlock);
-+			break;
-+		case PCM_LOCK_IRQSAVE:
-+			read_unlock_irqrestore(&snd_pcm_link_rwlock, flags);
-+			break;
-+		}
-+	}
-+}
-+
+-static inline unsigned alloc_local_tag(struct percpu_ida_cpu *tags)
+-{
+-	int tag =3D -ENOSPC;
+-
+-	spin_lock(&tags->lock);
+-	if (tags->nr_free)
+-		tag =3D tags->freelist[--tags->nr_free];
+-	spin_unlock(&tags->lock);
+-
+-	return tag;
+-}
+-
  /**
-  * snd_pcm_stream_lock - Lock the PCM stream
-  * @substream: PCM substream
-@@ -109,13 +160,7 @@ static inline void down_write_nonblock(struct rw_semap=
-hore *lock)
-  */
- void snd_pcm_stream_lock(struct snd_pcm_substream *substream)
- {
--	if (substream->pcm->nonatomic) {
--		down_read_nested(&snd_pcm_link_rwsem, SINGLE_DEPTH_NESTING);
--		mutex_lock(&substream->self_group.mutex);
--	} else {
--		read_lock(&snd_pcm_link_rwlock);
--		spin_lock(&substream->self_group.lock);
--	}
-+	__snd_pcm_stream_lock_mode(substream, PCM_LOCK_DEFAULT);
- }
- EXPORT_SYMBOL_GPL(snd_pcm_stream_lock);
+  * percpu_ida_alloc - allocate a tag
+  * @pool: pool to allocate from
+@@ -147,20 +135,22 @@ int percpu_ida_alloc(struct percpu_ida *pool, int sta=
+te)
+ 	DEFINE_WAIT(wait);
+ 	struct percpu_ida_cpu *tags;
+ 	unsigned long flags;
+-	int tag;
++	int tag =3D -ENOSPC;
 =20
-@@ -127,13 +172,7 @@ EXPORT_SYMBOL_GPL(snd_pcm_stream_lock);
-  */
- void snd_pcm_stream_unlock(struct snd_pcm_substream *substream)
- {
--	if (substream->pcm->nonatomic) {
--		mutex_unlock(&substream->self_group.mutex);
--		up_read(&snd_pcm_link_rwsem);
--	} else {
--		spin_unlock(&substream->self_group.lock);
--		read_unlock(&snd_pcm_link_rwlock);
--	}
-+	__snd_pcm_stream_unlock_mode(substream, PCM_LOCK_DEFAULT, 0);
- }
- EXPORT_SYMBOL_GPL(snd_pcm_stream_unlock);
+-	local_irq_save(flags);
+-	tags =3D this_cpu_ptr(pool->tag_cpu);
++	tags =3D raw_cpu_ptr(pool->tag_cpu);
++	spin_lock_irqsave(&tags->lock, flags);
 =20
-@@ -147,9 +186,7 @@ EXPORT_SYMBOL_GPL(snd_pcm_stream_unlock);
-  */
- void snd_pcm_stream_lock_irq(struct snd_pcm_substream *substream)
- {
--	if (!substream->pcm->nonatomic)
--		local_irq_disable();
--	snd_pcm_stream_lock(substream);
-+	__snd_pcm_stream_lock_mode(substream, PCM_LOCK_IRQ);
- }
- EXPORT_SYMBOL_GPL(snd_pcm_stream_lock_irq);
-=20
-@@ -161,19 +198,13 @@ EXPORT_SYMBOL_GPL(snd_pcm_stream_lock_irq);
-  */
- void snd_pcm_stream_unlock_irq(struct snd_pcm_substream *substream)
- {
--	snd_pcm_stream_unlock(substream);
--	if (!substream->pcm->nonatomic)
--		local_irq_enable();
-+	__snd_pcm_stream_unlock_mode(substream, PCM_LOCK_IRQ, 0);
- }
- EXPORT_SYMBOL_GPL(snd_pcm_stream_unlock_irq);
-=20
- unsigned long _snd_pcm_stream_lock_irqsave(struct snd_pcm_substream *subst=
-ream)
- {
--	unsigned long flags =3D 0;
--	if (!substream->pcm->nonatomic)
--		local_irq_save(flags);
--	snd_pcm_stream_lock(substream);
--	return flags;
-+	return __snd_pcm_stream_lock_mode(substream, PCM_LOCK_IRQSAVE);
- }
- EXPORT_SYMBOL_GPL(_snd_pcm_stream_lock_irqsave);
-=20
-@@ -187,9 +218,7 @@ EXPORT_SYMBOL_GPL(_snd_pcm_stream_lock_irqsave);
- void snd_pcm_stream_unlock_irqrestore(struct snd_pcm_substream *substream,
- 				      unsigned long flags)
- {
--	snd_pcm_stream_unlock(substream);
--	if (!substream->pcm->nonatomic)
+ 	/* Fastpath */
+-	tag =3D alloc_local_tag(tags);
+-	if (likely(tag >=3D 0)) {
 -		local_irq_restore(flags);
-+	__snd_pcm_stream_unlock_mode(substream, PCM_LOCK_IRQSAVE, flags);
- }
- EXPORT_SYMBOL_GPL(snd_pcm_stream_unlock_irqrestore);
++	if (likely(tags->nr_free >=3D 0)) {
++		tag =3D tags->freelist[--tags->nr_free];
++		spin_unlock_irqrestore(&tags->lock, flags);
+ 		return tag;
+ 	}
++	spin_unlock_irqrestore(&tags->lock, flags);
 =20
+ 	while (1) {
+-		spin_lock(&pool->lock);
++		spin_lock_irqsave(&pool->lock, flags);
++		tags =3D this_cpu_ptr(pool->tag_cpu);
+=20
+ 		/*
+ 		 * prepare_to_wait() must come before steal_tags(), in case
+@@ -184,8 +174,7 @@ int percpu_ida_alloc(struct percpu_ida *pool, int state)
+ 						&pool->cpus_have_tags);
+ 		}
+=20
+-		spin_unlock(&pool->lock);
+-		local_irq_restore(flags);
++		spin_unlock_irqrestore(&pool->lock, flags);
+=20
+ 		if (tag >=3D 0 || state =3D=3D TASK_RUNNING)
+ 			break;
+@@ -196,9 +185,6 @@ int percpu_ida_alloc(struct percpu_ida *pool, int state)
+ 		}
+=20
+ 		schedule();
+-
+-		local_irq_save(flags);
+-		tags =3D this_cpu_ptr(pool->tag_cpu);
+ 	}
+ 	if (state !=3D TASK_RUNNING)
+ 		finish_wait(&pool->wait, &wait);
+@@ -222,28 +208,24 @@ void percpu_ida_free(struct percpu_ida *pool, unsigne=
+d tag)
+=20
+ 	BUG_ON(tag >=3D pool->nr_tags);
+=20
+-	local_irq_save(flags);
+-	tags =3D this_cpu_ptr(pool->tag_cpu);
++	tags =3D raw_cpu_ptr(pool->tag_cpu);
+=20
+-	spin_lock(&tags->lock);
++	spin_lock_irqsave(&tags->lock, flags);
+ 	tags->freelist[tags->nr_free++] =3D tag;
+=20
+ 	nr_free =3D tags->nr_free;
+-	spin_unlock(&tags->lock);
+=20
+ 	if (nr_free =3D=3D 1) {
+ 		cpumask_set_cpu(smp_processor_id(),
+ 				&pool->cpus_have_tags);
+ 		wake_up(&pool->wait);
+ 	}
++	spin_unlock_irqrestore(&tags->lock, flags);
+=20
+ 	if (nr_free =3D=3D pool->percpu_max_size) {
+-		spin_lock(&pool->lock);
++		spin_lock_irqsave(&pool->lock, flags);
++		spin_lock(&tags->lock);
+=20
+-		/*
+-		 * Global lock held and irqs disabled, don't need percpu
+-		 * lock
+-		 */
+ 		if (tags->nr_free =3D=3D pool->percpu_max_size) {
+ 			move_tags(pool->freelist, &pool->nr_free,
+ 				  tags->freelist, &tags->nr_free,
+@@ -251,10 +233,9 @@ void percpu_ida_free(struct percpu_ida *pool, unsigned=
+ tag)
+=20
+ 			wake_up(&pool->wait);
+ 		}
+-		spin_unlock(&pool->lock);
++		spin_unlock(&tags->lock);
++		spin_unlock_irqrestore(&pool->lock, flags);
+ 	}
+-
+-	local_irq_restore(flags);
+ }
+ EXPORT_SYMBOL_GPL(percpu_ida_free);
+=20
+@@ -346,29 +327,27 @@ int percpu_ida_for_each_free(struct percpu_ida *pool,=
+ percpu_ida_cb fn,
+ 	struct percpu_ida_cpu *remote;
+ 	unsigned cpu, i, err =3D 0;
+=20
+-	local_irq_save(flags);
+ 	for_each_possible_cpu(cpu) {
+ 		remote =3D per_cpu_ptr(pool->tag_cpu, cpu);
+-		spin_lock(&remote->lock);
++		spin_lock_irqsave(&remote->lock, flags);
+ 		for (i =3D 0; i < remote->nr_free; i++) {
+ 			err =3D fn(remote->freelist[i], data);
+ 			if (err)
+ 				break;
+ 		}
+-		spin_unlock(&remote->lock);
++		spin_unlock_irqrestore(&remote->lock, flags);
+ 		if (err)
+ 			goto out;
+ 	}
+=20
+-	spin_lock(&pool->lock);
++	spin_lock_irqsave(&pool->lock, flags);
+ 	for (i =3D 0; i < pool->nr_free; i++) {
+ 		err =3D fn(pool->freelist[i], data);
+ 		if (err)
+ 			break;
+ 	}
+-	spin_unlock(&pool->lock);
++	spin_unlock_irqrestore(&pool->lock, flags);
+ out:
+-	local_irq_restore(flags);
+ 	return err;
+ }
+ EXPORT_SYMBOL_GPL(percpu_ida_for_each_free);
 --=20
 2.17.0
