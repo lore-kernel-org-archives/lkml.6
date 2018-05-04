@@ -1,65 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751566AbeEDPxX (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 11:53:23 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:53879 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751454AbeEDPxV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 11:53:21 -0400
-X-IronPort-AV: E=Sophos;i="5.49,363,1520924400";
-   d="scan'208";a="13799637"
-From: Radu Pirea <radu.pirea@microchip.com>
-To: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-CC: <Zhiqiang.Hou@nxp.com>, <pp@emlix.com>, <richard@nod.at>,
-        <boris.brezillon@bootlin.com>, <computersforpeace@gmail.com>,
-        <dwmw2@infradead.org>, <marek.vasut@gmail.com>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH] mtd: spi-nor: add support for Microchip 25LC256
-Date: Fri, 4 May 2018 18:54:04 +0300
-Message-ID: <20180504155404.5285-1-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.17.0
+        id S1751731AbeEDPyN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 11:54:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57728 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751508AbeEDPyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 11:54:10 -0400
+Message-Id: <20180504155408.949705090@goodmis.org>
+User-Agent: quilt/0.63-1
+Date: Fri, 04 May 2018 11:52:43 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Subject: [PATCH 2/2] tracing: Fix the file mode of stack tracer
+References: <20180504155241.113624273@goodmis.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Disposition: inline; filename=0002-tracing-Fix-the-file-mode-of-stack-tracer.patch
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added geometry description for Microchip 25LC256 memory.
+From: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
+It looks weird that the stack_trace_filter file can be written by root
+but shows that it does not have write permission by ll command.
+
+Link: http://lkml.kernel.org/r/1518054113-28096-1-git-send-email-liuzhengyuan@kylinos.cn
+
+Signed-off-by: Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- drivers/mtd/devices/m25p80.c  | 3 +++
- drivers/mtd/spi-nor/spi-nor.c | 3 +++
- 2 files changed, 6 insertions(+)
+ kernel/trace/trace_stack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-index a4e18f6aaa33..1e359d811261 100644
---- a/drivers/mtd/devices/m25p80.c
-+++ b/drivers/mtd/devices/m25p80.c
-@@ -372,6 +372,9 @@ static const struct spi_device_id m25p_ids[] = {
- 	{ "mr25h10" },  /*   1 Mib, 40 MHz */
- 	{ "mr25h40" },  /*   4 Mib, 40 MHz */
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 3c7bfc4bf5e9..4237eba4ef20 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -472,7 +472,7 @@ static __init int stack_trace_init(void)
+ 			NULL, &stack_trace_fops);
  
-+	/* Microchip */
-+	{ "25lc256" },
-+
- 	{ },
- };
- MODULE_DEVICE_TABLE(spi, m25p_ids);
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index d445a4d3b770..6341c86be647 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1076,6 +1076,9 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048, SPI_NOR_QUAD_READ) },
+ #ifdef CONFIG_DYNAMIC_FTRACE
+-	trace_create_file("stack_trace_filter", 0444, d_tracer,
++	trace_create_file("stack_trace_filter", 0644, d_tracer,
+ 			  &trace_ops, &stack_trace_filter_fops);
+ #endif
  
-+	/* Microchip */
-+	{ "25lc256", CAT25_INFO(32 * 1024, 1, 64, 2, SPI_NOR_NO_ERASE | SPI_NOR_NO_FR) },
-+
- 	/* Micron */
- 	{ "n25q016a",	 INFO(0x20bb15, 0, 64 * 1024,   32, SECT_4K | SPI_NOR_QUAD_READ) },
- 	{ "n25q032",	 INFO(0x20ba16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
 -- 
-2.16.2
+2.17.0
