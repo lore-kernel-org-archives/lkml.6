@@ -1,112 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751527AbeEDH3b (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:29:31 -0400
-Received: from smtp.nue.novell.com ([195.135.221.5]:34180 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeEDH33 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 4 May 2018 03:29:29 -0400
-Date: Fri, 4 May 2018 15:29:16 +0800
-From: joeyli <jlee@suse.com>
-To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: "Lee, Chun-Yi" <joeyli.kernel@gmail.com>, linux-efi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.de>, Vivek Goyal <vgoyal@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] efi: Fix the size not consistent issue when unmapping
- memory map
-Message-ID: <20180504072916.GR4235@linux-l9pv.suse>
-References: <20180502061724.25833-1-jlee@suse.com>
- <CAKv+Gu_1vNmNy6vYEdSRW6r97DSxj_t=1LmWFE-nsv7oA=1ApQ@mail.gmail.com>
+        id S1751605AbeEDHcE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:32:04 -0400
+Received: from mga12.intel.com ([192.55.52.136]:23513 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751339AbeEDHcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 03:32:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,361,1520924400";
+   d="scan'208";a="55889734"
+Subject: Re: [PATCH v3 0/2] iommu/vt-d: Fix mapping PSI missing for
+ iommu_map()
+To: Peter Xu <peterx@redhat.com>,
+        Linux IOMMU Mailing List <iommu@lists.linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20180504023453.25682-1-peterx@redhat.com>
+Cc: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jintack Lim <jintack@cs.columbia.edu>,
+        Alexander Witte <alexander.witte@baicanada.com>
+From: Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <5AEC0C70.4080700@linux.intel.com>
+Date: Fri, 4 May 2018 15:32:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_1vNmNy6vYEdSRW6r97DSxj_t=1LmWFE-nsv7oA=1ApQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180504023453.25682-1-peterx@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+Hi,
 
-On Thu, May 03, 2018 at 02:05:51PM +0200, Ard Biesheuvel wrote:
-> On 2 May 2018 at 08:17, Lee, Chun-Yi <joeyli.kernel@gmail.com> wrote:
-> > When using kdump, SOMETIMES the "size not consistent" warning message
-> > shows up when the crash kernel boots with early_ioremap_debug parameter:
-> >
-> > WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
-> > early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
-> >
-> > The root cause is that the unmapping size of memory map doesn't
-> > match with the original size when mapping:
-> >
-> > in __efi_memmap_init()
-> >         map.map = early_memremap(phys_map, data->size);
-> >
-> > in efi_memmap_unmap()
-> >         size = efi.memmap.desc_size * efi.memmap.nr_map;
-> >         early_memunmap(efi.memmap.map, size);
-> >
-> > But the efi.memmap.nr_map is from __efi_memmap_init(). The remainder
-> > of size was discarded when calculating the nr_map:
-> >         map.nr_map = data->size / data->desc_size;
-> >
-> > When the original size of memory map region does not equal to the
-> > result of multiplication. The "size not consistent" warning
-> > will be triggered.
-> >
-> > This issue sometimes was hit by kdump because kexec set the efi map
-> > size to align with 16 when loading crash kernel image:
-> >
-> > in bzImage64_load()
-> >         efi_map_sz = efi_get_runtime_map_size();
-> >         efi_map_sz = ALIGN(efi_map_sz, 16);
-> >
-> > Dave Young's a841aa83d patch fixed kexec issue. On UEFI side, this
-> > patch changes the logic in the unmapping function. Using the end
-> > address of map to calcuate original size.
-> >
-> 
-> Why do we still need this patch? I.e., in which circumstances will
-> efi_memory_map_data::size assume a value that is rounded up or
-> otherwise incorrect?
+On 05/04/2018 10:34 AM, Peter Xu wrote:
+> v3:
+> - drop the pr_debug patch [Joerg]
+> - rename all the subjects as suggested [Joerg]
+> - rebase
 >
+> v2:
+> - cc correct people and iommu list
+>
+> (PSI stands for: Page Selective Invalidations)
+>
+> Intel IOMMU has the caching mode to ease emulation of the device.
+> When that bit is set, we need to send PSIs even for newly mapped
+> pages.  However current driver is not fully obey the rule.  E.g.,
+> iommu_map() API will only do the mapping but it never sent the PSIs
+> before.  That can be problematic to emulated IOMMU devices since
+> they'll never be able to build up the shadow page tables if without
+> such information.  This patchset tries to fix the problem.
+>
+> Patch 1 introduces a helper to notify the MAP PSIs.
+>
+> Patch 2 fixes the real problem by making sure every domain mapping
+> will trigger the MAP PSI notifications.
+>
+> Without the patchset, nested device assignment (assign one device
+> firstly to L1 guest, then to L2 guest) won't work for QEMU.  After
+> applying the patchset, it works.
+>
+> Please review.  Thanks.
 
-There have no other case except kexec. But I think that it's better
-to sync mapping/unmapping size between __efi_memmap_init() and 
-efi_memmap_unmap(). 
+Both patches look good to me.
 
+Best regards,
+Lu Baolu
 
-Thanks
-Joey Lee
- 
-> > Thank Randy Wright for his report and testing. And also thank
-> > Takashi Iwai for his help to trace issue.
-> >
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Cc: Takashi Iwai <tiwai@suse.de>
-> > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Tested-by: Randy Wright <rwright@hpe.com>
-> > Signed-off-by: "Lee, Chun-Yi" <jlee@suse.com>
-> > ---
-> >  drivers/firmware/efi/memmap.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-> > index 5fc7052..1f592d8 100644
-> > --- a/drivers/firmware/efi/memmap.c
-> > +++ b/drivers/firmware/efi/memmap.c
-> > @@ -121,7 +121,7 @@ void __init efi_memmap_unmap(void)
-> >         if (!efi.memmap.late) {
-> >                 unsigned long size;
-> >
-> > -               size = efi.memmap.desc_size * efi.memmap.nr_map;
-> > +               size = efi.memmap.map_end - efi.memmap.map;
-> >                 early_memunmap(efi.memmap.map, size);
-> >         } else {
-> >                 memunmap(efi.memmap.map);
-> > --
-> > 2.10.2
-> >
+>
+> Peter Xu (2):
+>   iommu/vt-d: Introduce __mapping_notify_one()
+>   iommu/vt-d: Fix iotlb psi missing for mappings
+>
+>  drivers/iommu/intel-iommu.c | 65 ++++++++++++++++++++++++++-----------
+>  1 file changed, 46 insertions(+), 19 deletions(-)
+>
