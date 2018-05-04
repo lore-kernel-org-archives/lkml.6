@@ -1,89 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeEDXdI (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 19:33:08 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:34711 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbeEDXdF (ORCPT
+        id S1751820AbeEDXfV (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 19:35:21 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:36091 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751775AbeEDXfT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 19:33:05 -0400
-X-Google-Smtp-Source: AB8JxZptsGYUrtUqnTCWY/IO0PRG6+HG/1vAsqOzhQ/jVfnHhlsySEoQEoJ8joFjcfDquC08pvbfxA==
-Subject: Re: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-To: Shiju Jose <shiju.jose@huawei.com>, "bp@alien8.de" <bp@alien8.de>
-Cc: "alex_gagniuc@dellteam.com" <alex_gagniuc@dellteam.com>,
-        "austin_bolen@dell.com" <austin_bolen@dell.com>,
-        "shyam_iyer@dell.com" <shyam_iyer@dell.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        gengdongjiu <gengdongjiu@huawei.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>
-References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-2-mr.nuke.me@gmail.com>
- <86258A5CC0A3704780874CF6004BA8A64EE2C974@FRAEML521-MBX.china.huawei.com>
-From: "Alex G." <mr.nuke.me@gmail.com>
-Message-ID: <796c5f59-ec98-0fca-a9de-012057506843@gmail.com>
-Date: Fri, 4 May 2018 18:33:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Fri, 4 May 2018 19:35:19 -0400
+X-Google-Smtp-Source: AB8JxZqWt1nrQwpArxtgTuztMR2FSBzUPUQPum5wJINlSbqrqlmW6DRHikFfE8S0d8i9O+TDLZ/Wyw==
+Date: Fri, 4 May 2018 16:35:16 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Alex Elder <elder@linaro.org>
+Cc: andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: qmi: fix a buffer sizing bug
+Message-ID: <20180504233516.GV18510@minitux>
+References: <20180427140817.10871-1-elder@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <86258A5CC0A3704780874CF6004BA8A64EE2C974@FRAEML521-MBX.china.huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427140817.10871-1-elder@linaro.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 27 Apr 07:08 PDT 2018, Alex Elder wrote:
 
-
-On 05/04/2018 06:56 AM, Shiju Jose wrote:
-> Hi Alex,
-
-Hi
-
->> -----Original Message-----
->> From: Alexandru Gagniuc [mailto:mr.nuke.me@gmail.com]
-
-[snip]
-
->> -static inline int ghes_severity(int severity)
->> +static inline int ghes_cper_severity(int severity)
+> In qmi_handle_init(), a buffer is allocated for to hold messages
+> received through the handle's socket.  Any "normal" messages
+> (expected by the caller) will have a header prepended, so the
+> buffer size is adjusted to accomodate that.
 > 
-> [...]
->>   	else
->>   		ratelimit = &ratelimit_uncorrected;
->> @@ -705,9 +705,8 @@ static int ghes_proc(struct ghes *ghes)
->>   	if (rc)
->>   		goto out;
->>
->> -	if (ghes_severity(ghes->estatus->error_severity) >=
->> GHES_SEV_PANIC) {
->> +	if (ghes_cper_severity(ghes->estatus->error_severity) >=
->> GHES_SEV_PANIC)
->>   		__ghes_panic(ghes);
+> The buffer must also be of sufficient size to receive control
+> messages, so the size is increased if necessary to ensure these
+> will fit.
 > 
-> PCIe AER fatal errors result panic here.
-> I think ghes_cper_severity to be replaced with ghes_severity in the ghes_proc function as well in the patch
-> "acpi: apei: Do not panic() on PCIe errors reported through GHES"?
+> Unfortunately the calculation is done wrong, making it possible
+> for the calculated buffer size to be too small to hold a "normal"
+> message.  Specifically, if:
+> 
+>   recv_buf_size > sizeof(struct qrtr_ctrl_pkt) - sizeof(struct qmi_header)
+> 		AND
+>   recv_buf_size < sizeof(struct qrtr_ctrl_pkt)
+> 
+> the current logic will use sizeof(struct qrtr_ctrl_pkt) as the
+> receive buffer size, which is not enough to hold the maximum
+> "normal" message plus its header.  Currently this problem occurs
+> for (13 < recv_buf_size < 20).
+> 
+> This patch corrects this.
+> 
+> Signed-off-by: Alex Elder <elder@linaro.org>
 
-Hmm.
-ghes_proc calls ghes_do_proc, which is not irq safe. So the entire 
-concern we had in v1 about deferring to a less restrictive context is 
-moot in this case.
+Good catch, thanks!
 
-ghes_proc is related, but a little beyond the scope of this series. I'd 
-love to fix all cases, but I'd prefer someone who has specific interests 
-take ownership of changing ghes_proc.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Alex
+Regards,
+Bjorn
+
+> ---
+>  drivers/soc/qcom/qmi_interface.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/qmi_interface.c b/drivers/soc/qcom/qmi_interface.c
+> index 321982277697..938ca41c56cd 100644
+> --- a/drivers/soc/qcom/qmi_interface.c
+> +++ b/drivers/soc/qcom/qmi_interface.c
+> @@ -639,10 +639,11 @@ int qmi_handle_init(struct qmi_handle *qmi, size_t recv_buf_size,
+>  	if (ops)
+>  		qmi->ops = *ops;
+>  
+> +	/* Make room for the header */
+> +	recv_buf_size += sizeof(struct qmi_header);
+> +	/* Must also be sufficient to hold a control packet */
+>  	if (recv_buf_size < sizeof(struct qrtr_ctrl_pkt))
+>  		recv_buf_size = sizeof(struct qrtr_ctrl_pkt);
+> -	else
+> -		recv_buf_size += sizeof(struct qmi_header);
+>  
+>  	qmi->recv_buf_size = recv_buf_size;
+>  	qmi->recv_buf = kzalloc(recv_buf_size, GFP_KERNEL);
+> -- 
+> 2.14.1
+> 
