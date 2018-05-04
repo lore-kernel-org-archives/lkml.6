@@ -1,195 +1,211 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-155233-1525442054-2-9916745720076150833
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525442054; b=k3Drp/HLgllTrUwCqRskbu5pEC9tKH8L/ypBejySgB8ePn/f+o
-    CpMep8yjRISfaA0+3YMUYfClh48a/0BbLEu9beomCQ5j/gw8IAhYnzv1bpPiCOPT
-    6aLmW9RV5An1Yhi26+Tj/fAw2LSuDJktbz/l7LIDlHOBhmyuQBI3KdhyWk/V2BQQ
-    eysRrWswbym7tBdCu6jPv1GYdv7Ib+n84rvCMpntUdAxs0o6BdZCtUWy9x4LtRJ6
-    zszrwJy0EVCdTWb42JxzX3TjcckZOz9vIN9CSYD9jWGz3j5qe4lYU47EtuEaTYCX
-    nvqY+jmw//eucxGP02bL5DHmdkdieqxOTMhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:date
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525442054; bh=EacL8
-    TBzRvD4KQBQww679msYWXpjfaVP6kr5GJr2SvI=; b=KTHDw2/Jp5S/Ua6FLNK4j
-    xgnEXgNKc7c7v0rx7WWQ3HQmPRIczb2Kv6JQGPDxO882S8t08Go8y5NFUH2g58CC
-    JEwMYyJ9oas83x6SL6GjUY/shHgNOMq8WPhnryuLHA75wIkGefKewCJ4Du1cpeVS
-    wwtjCYM1FAr2GKRPdFZWnfmjZvf9zl/Ujmquz7Vvom13RFnfjBk6DUq6D9eClHel
-    VBX/yLOqxzRyZl/GIqOFTM4xZq28LtsX5Uf8XD6nrKTjN8AdVAF1U3mXO8EOgT2M
-    udLY8vxsBjVmsNpQnGjMaoIFGtPXZSwmIxxZsp7O0dkZ/nJbDW2i/CWEn5gIXwZS
-    A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=linux.intel.com
-    header.result=pass header_org.domain=intel.com header_org.result=pass
-    header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=linux.intel.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=linux.intel.com
-      header.result=pass header_org.domain=intel.com header_org.result=pass
-      header_is_org_domain=no;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPeg2ma+Gh376LdDedBuQfAH8blygMqk4QUB8SkqYzO1jdvLcN9CmpWg2FxTBBDCi6vXSXiSFG36ir1EielqSa8Bhhi52g4mJwciydJS6GMlNzrX/4UA
-    +pmhTuq5F6Li4uanj2TFjDx5J/dh7C6v1n+QWZ3YScvAio6IYmYLartYgnC8T9ujR0k8J/D3kMng5BgnxMTXitqo2vx/ZvvJaGhLzuK9inZD71Vahrf1IpaC
-    zduSP+sgbvrQmO8R9icasA==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8 a=DDOyTI_5AAAA:8
-    a=ZzBMc9_pC5uVsZ1HnokA:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
-    a=-nnoQVB1o6_ym-ke:21 a=6Yd-4-I_yhwV1aY-:21 a=CjuIK1q_8ugA:10
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,362,1520924400"; d="scan'208";a="38432497"
-Message-ID: <1525442037.21176.659.camel@linux.intel.com>
-Subject: Re: [PATCH] media: staging: atomisp: fix a potential missing-check bug
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Wenwen Wang <wang6495@umn.edu>
-Date: Fri, 04 May 2018 16:53:57 +0300
-In-Reply-To: <1525418996-19246-1-git-send-email-wang6495@umn.edu>
-References: <1525418996-19246-1-git-send-email-wang6495@umn.edu>
-Organization: Intel Finland Oy
-X-Mailer: Evolution 3.26.5-1+b1 
-Mime-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kangjie Lu <kjlu@umn.edu>,
- "open list:STAGING - ATOMISP DRIVER" <linux-media@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- Hans Verkuil <hans.verkuil@cisco.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Alan Cox <alan@linux.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <391rsWgkbADwqwxiYjjcpYnngb.emmejcsqcpamlrclr.amk@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525439223; cv=none;
+        d=google.com; s=arc-20160816;
+        b=aiuY2cgb3nM2aWVj9CD6se7pjuMF3P+BiYIGuAjS9L53e2dcy4hVH4WMk9pzDt3h97
+         avrphw1stS69deTs+ZqPJ5uceSvs8OUzoLh+rZ/8/bxL3loas4VJJVD9DO3guJNuYCwh
+         uzIw6Ob2gfYAU2SeOncu225uqVU0gSFZqq6nxc9s9kDtbNHaZcW04Z4Ox56uGI9UjNcE
+         88c1J3dafVzjvdgzLCWkNOh9S+exYDWvhuWCyehtiR4f17K2zNT0NziTc9ugYLYwYZZY
+         LeaYU/CShWeKsJdOYmaKD1tsURCnY6aWsHA4HA4g/9euYVEgHGYos1zGL8oUXMpEOk1x
+         +U4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=to:from:subject:message-id:date:mime-version
+         :arc-authentication-results;
+        bh=TxlEfOa1zQKqRldIE5rrRq+4k68Zg0gFpfrs5f0qWoo=;
+        b=o4PcyPcG4+A+llKFbz8yem5NHGoUtAVRvW5Q6VHeVAmORJMypkg+x8CJPR50T4OTJB
+         XYtI0DJ+5sIFqkYF2eyeJW0OLLT+lqDB1tnWOXkLiuJ9Q/C+cmnUNHKjJCI7KbhYOF4e
+         w7CcXvlL2PgudVlzV5s+krnVLeXFJipKsBUtDkHqoEUX4uf0KFN4PphgFzFdfOdrar3C
+         HjXkbqqBEYXX7no5Srzf9tT68EX+yOpvMP5VQkF6jyf5+/bBwpYgNECn94NdhcAj11cv
+         LdhwmBPEtMMPYq0c69hNwggKpzxzzJU745XbVNM1rD4+G1LVrNFNuCBWzVFDMOVKuQli
+         8YwA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of 391rswgkbadwqwxiyjjcpynngb.emmejcsqcpamlrclr.amk@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=391rsWgkbADwqwxiYjjcpYnngb.emmejcsqcpamlrclr.amk@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of 391rswgkbadwqwxiyjjcpynngb.emmejcsqcpamlrclr.amk@m3kw2wvrgufz5godrsrytgd7.apphosting.bounces.google.com designates 209.85.220.69 as permitted sender) smtp.mailfrom=391rsWgkbADwqwxiYjjcpYnngb.emmejcsqcpamlrclr.amk@M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=appspotmail.com
+X-Google-Smtp-Source: AB8JxZo+ncjnVCEMzDm9dxCqFYjKZew9NTBWLc1nyS4ZM41fLa3BRqQPYmNBUJNsN4xqLqZWbf7NOCiGCZfthiKyBV/bkOXCdDgV
+MIME-Version: 1.0
+Date: Fri, 04 May 2018 06:07:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000004e875056b60fffe@google.com>
+Subject: KASAN: use-after-free Read in should_fail
+From: syzbot <syzbot+7f7b8d424eb621469f0a@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, gregkh@linuxfoundation.org, hmclauchlan@fb.com,
+	kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, pombredanne@nexb.com, syzkaller-bugs@googlegroups.com,
+	tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599538959464679177?=
+X-GMAIL-MSGID: =?utf-8?q?1599538959464679177?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, 2018-05-04 at 02:29 -0500, Wenwen Wang wrote:
-> At the end of atomisp_subdev_set_selection(), the function
-> atomisp_subdev_get_rect() is invoked to get the pointer to v4l2_rect.
-> Since
-> this function may return a NULL pointer, it is firstly invoked to
-> check
-> the returned pointer. If the returned pointer is not NULL, then the
-> function is invoked again to obtain the pointer and the memory content
-> at the location of the returned pointer is copied to the memory
-> location of
-> r. In most cases, the pointers returned by the two invocations are
-> same.
-> However, given that the pointer returned by the function
-> atomisp_subdev_get_rect() is not a constant, it is possible that the
-> two
-> invocations return two different pointers. For example, another thread
-> may
-> race to modify the related pointers during the two invocations. In
-> that
-> case, even if the first returned pointer is not null, the second
-> returned
-> pointer might be null, which will cause issues such as null pointer
-> dereference.
-> 
-> This patch saves the pointer returned by the first invocation and
-> removes
-> the second invocation. If the returned pointer is not NULL, the memory
-> content is copied according to the original code.
-> 
+Hello,
 
-The driver will be gone soon, don't bother with it anymore.
-Thanks!
+syzbot found the following crash on:
 
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-> ---
->  drivers/staging/media/atomisp/pci/atomisp2/atomisp_subdev.c | 6 ++++-
-> -
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git
-> a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_subdev.c
-> b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_subdev.c
-> index 49a9973..d5fa513 100644
-> --- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_subdev.c
-> +++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_subdev.c
-> @@ -366,6 +366,7 @@ int atomisp_subdev_set_selection(struct
-> v4l2_subdev *sd,
->  	unsigned int i;
->  	unsigned int padding_w = pad_w;
->  	unsigned int padding_h = pad_h;
-> +	struct v4l2_rect *p;
->  
->  	stream_id = atomisp_source_pad_to_stream_id(isp_sd,
-> vdev_pad);
->  
-> @@ -536,9 +537,10 @@ int atomisp_subdev_set_selection(struct
-> v4l2_subdev *sd,
->  		ffmt[pad]->height = comp[pad]->height;
->  	}
->  
-> -	if (!atomisp_subdev_get_rect(sd, cfg, which, pad, target))
-> +	p = atomisp_subdev_get_rect(sd, cfg, which, pad, target);
-> +	if (!p)
->  		return -EINVAL;
-> -	*r = *atomisp_subdev_get_rect(sd, cfg, which, pad, target);
-> +	*r = *p;
->  
->  	dev_dbg(isp->dev, "sel actual: l %d t %d w %d h %d\n",
->  		r->left, r->top, r->width, r->height);
+HEAD commit:    150426981426 Merge tag 'linux-kselftest-4.17-rc4' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e4975b800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
+dashboard link: https://syzkaller.appspot.com/bug?extid=7f7b8d424eb621469f0a
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=10652e57800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11036e47800000
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7f7b8d424eb621469f0a@syzkaller.appspotmail.com
+
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+CPU: 0 PID: 4531 Comm: syz-executor152 Not tainted 4.17.0-rc3+ #32
+==================================================================
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+BUG: KASAN: use-after-free in __lock_acquire+0x3888/0x5140  
+kernel/locking/lockdep.c:3310
+Read of size 8 at addr ffff8801b75554c8 by task syz-executor152/4523
+Call Trace:
+
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  fail_dump lib/fault-inject.c:51 [inline]
+  should_fail.cold.4+0xa/0x1a lib/fault-inject.c:149
+  __should_failslab+0x124/0x180 mm/failslab.c:32
+  should_failslab+0x9/0x14 mm/slab_common.c:1522
+  slab_pre_alloc_hook mm/slab.h:423 [inline]
+  slab_alloc mm/slab.c:3378 [inline]
+  __do_kmalloc mm/slab.c:3716 [inline]
+  __kmalloc_track_caller+0x2c4/0x760 mm/slab.c:3733
+  kstrdup+0x39/0x70 mm/util.c:56
+  fs_set_subtype fs/namespace.c:2443 [inline]
+  do_new_mount fs/namespace.c:2521 [inline]
+  do_mount+0x25e7/0x3070 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x447cd9
+RSP: 002b:00007fbb431e0828 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000447cd9
+RDX: 00000000004b08f6 RSI: 0000000020000100 RDI: 00000000004c74a5
+RBP: 000000000000c000 R08: 00007fbb431e0840 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+CPU: 1 PID: 4523 Comm: syz-executor152 Not tainted 4.17.0-rc3+ #32
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __lock_acquire+0x3888/0x5140 kernel/locking/lockdep.c:3310
+  lock_acquire+0x1dc/0x520 kernel/locking/lockdep.c:3920
+  down_write+0x87/0x120 kernel/locking/rwsem.c:70
+  fuse_kill_sb_anon+0x50/0xb0 fs/fuse/inode.c:1200
+  deactivate_locked_super+0x97/0x100 fs/super.c:316
+  mount_nodev+0xfa/0x110 fs/super.c:1212
+  fuse_mount+0x2c/0x40 fs/fuse/inode.c:1192
+  mount_fs+0xae/0x328 fs/super.c:1267
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x447cd9
+RSP: 002b:00007fbb431e0828 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000447cd9
+RDX: 00000000004b08f6 RSI: 0000000020000100 RDI: 00000000004c74a5
+RBP: 000000000000c000 R08: 00007fbb431e0840 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 4523:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
+  kmalloc include/linux/slab.h:512 [inline]
+  fuse_fill_super+0xc92/0x1e20 fs/fuse/inode.c:1096
+  mount_nodev+0x6b/0x110 fs/super.c:1210
+  fuse_mount+0x2c/0x40 fs/fuse/inode.c:1192
+  mount_fs+0xae/0x328 fs/super.c:1267
+  vfs_kern_mount.part.34+0xd4/0x4d0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x564/0x3070 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 4312:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xd9/0x260 mm/slab.c:3813
+  __rcu_reclaim kernel/rcu/rcu.h:173 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2675 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2930 [inline]
+  __rcu_process_callbacks kernel/rcu/tree.c:2897 [inline]
+  rcu_process_callbacks+0xa69/0x15f0 kernel/rcu/tree.c:2914
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+
+The buggy address belongs to the object at ffff8801b7555200
+  which belongs to the cache kmalloc-1024 of size 1024
+The buggy address is located 712 bytes inside of
+  1024-byte region [ffff8801b7555200, ffff8801b7555600)
+The buggy address belongs to the page:
+page:ffffea0006dd5500 count:1 mapcount:0 mapping:ffff8801b7554000 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801b7554000 0000000000000000 0000000100000007
+raw: ffffea0006dd9020 ffffea0006db0d20 ffff8801da800ac0 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b7555380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b7555400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801b7555480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                               ^
+  ffff8801b7555500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b7555580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+If you want to test a patch for this bug, please reply with:
+#syz test: git://repo/address.git branch
+and provide the patch inline or as an attachment.
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
