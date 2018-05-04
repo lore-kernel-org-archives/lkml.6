@@ -1,10 +1,10 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-336646-1525448827-2-11017745302291691166
+X-Cyrus-Session-Id: sloti22d1t05-336646-1525448786-2-13227594653265429514
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES roenca, BAYES_USED global,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
   SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525448826; b=TB/uSloLExlPM64qu+f5ab1ToR9drrdqhclKCOxQmyzGMs582h
-    7FTw/EsyO9BYtkrNvWJc7jdEeub/HNoYSDuHciY7+B7aMDrdC2HAQPpoBMTQ4kTx
-    RXrjihPJ+zUSOJ+CO3VuMMiehd1tVklvhRXAq+MYz3jysr31dEy/glNOGuFgYF4K
-    vFryh5sf7SUzd7yNO0tTWbyI5qzycav1fvDu1XY6IL8gik3taPjcCXgtrUxdymtM
-    HibrTbZOcHCQVNONGStmmvr1vVy9Kj1GulYR64UrpLQZ/6Xhut/T0Aomm6x1OiTR
-    LexD7HTZXaofQbA0+zw9JbAzBJamhjukoUPg==
+    1525448785; b=Ojc4+/n+rkslK4Q2/QkfEF05+GBUM1datEnKdWBXpLThgRAZ4V
+    QBTM+qkgZgRH8byQmZ02d8r9tuRUlzlAxhFiwlfHWgAAEXSPofDU5qAkjl3gdtzd
+    VhddJEM9oBfGN3R+1347OyV6B1nJ8Y30vum2kM5sexyVpIkHtgT1rjkN+xzvWAL4
+    JsDVZF249YZDo5HEl+vUb5rm9EA+7/uIsufmGE087Xj2Z3OtT6XvS/SP8fum+t0g
+    z6r/mVcWzhqetC6Tjud/3p6wl94CR7qYyfnBkLnScgJjg7wDaWn+JysLfwxHDFCC
+    8os5X+2S/TWkXjCZaCu9tz0fY7/eqDGVQ5gA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525448826; bh=I+lIilTPptdxDEvmkxYf28Qgr4XKdP
-    6U6vZIUH+iyp4=; b=KJ5qoK/4PxVJ6oCpD5t74WYL0rb3b0moWOVMNEm2EeosCV
-    87KnUtsWJ/6HJqZXZC7ZT5WfyoSJv5uHCZpuopICYp19jM57GbGaKhoDfnledJ3l
-    ctDX2L3vk41XFos9nhHETpZHBBBOwr92fqXq0P49rCZkf5VO9QGCuy+7RzxkHcxx
-    aChCGuWyijMbvINRhcpFyOWqW5O3uz/jtZ3URqc96spMyDy0QBBzqU+dodf2VhpN
-    r5l73L4HOo7aB2OJGSaulT6p7u69NCCUF2j7Z94P8nOqaXYQBf/+7dQIlOqo4YW8
-    3gzBmS17xd3zltfAdCSYz6C78lhNouJ/lW+yog2Q==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1525448785; bh=0ixiStglR1eFNY4kuD020bk98i/EZ7
+    9Q/FleJjYRkmc=; b=gjp7deVhINcTnNNv93Vbe7am697+JTnd/jRPwpi0DcCV+J
+    O2Tf+1EbfgvD2+i1lIKnIqx1aJGE54inALWJ5UlSDvC/hTbEubH2kOHjeBsL1gGV
+    qeBqwgPXBb92dhiuIY9E60saL/KdHSuKh5Cr4XHHe6C3qB8yZpu6eNmVDhckfwc5
+    m22kqPWI++1N+bU16BU21wLfbyf+ZMgo192yFyhXnCzrGtJoF0lik3oorOGUtqmo
+    cFafPZJVn7viwofDmfmltA+Pa91cSuvU+anygZQwNe4bwj6nxPwU8A3uLiTmzInG
+    Z9lxr2z33JERJn4zRFYsa1r0vOGliz4X9p/hJbtw==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,7 +43,7 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     header.domain=microchip.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
@@ -59,24 +59,24 @@ Authentication-Results: mx5.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfL8rzEe4z8Ys9lygB3znclZcd9lp0hTbLHUZH9CWNbOtzeznEmF2dC5EBOz+3uZ7w8ng0LjIvLIx3D5KoMmQFuT2C5+pyKd3Ku5cC3vQQYzDUaeTI/QV
-    Mc2MpegdLIFdofU6R7Zb/KrsNRV2Uv6+G8SvPfCoP2PSDcfV7WiS4EQqwkgQIHfT24KAEePbfFjZrusuHwFRW/Epvyd+s+O0V82K43UDJpIVrOT/LsvGLZRO
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfG03kjqv/HvLjnSPJ5qbC8PJtzypdPVIx4owxGZjwuLn+W1kgEYT4QySX/kDzsC1XcO4vWFdiN9a3TKn0kYzd2Jp5xs2Krzp4CvvhZs3mQd26nz9k9t1
+    L/Z9G5ZqBnEI1wsELXt4eOXVGt9l2N6WjY6qKDnWE/opM12TJXDoR1AMM7pJ+gXXUQF8fw+/3krUKB0PxGrnrlgQL9weHfA7+2A+KoCM4mPmZDHOs717OO21
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=XYAwZIGsAAAA:8
-    a=VwQbUJbxAAAA:8 a=0NpaGdu5TIiVLeCDOaAA:9 a=0bXxn9q0MV6snEgNplNhOjQmxlI=:19
+    a=VwQbUJbxAAAA:8 a=OnUtjZ6cSmIPTM4q2h0A:9 a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19
     a=x8gzFH9gYPwA:10 a=E8ToXWR_bxluHZ7gmE-Z:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeEDPqv (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 4 May 2018 11:46:51 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:7302 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751874AbeEDPqq (ORCPT
+        id S1751775AbeEDPqV (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 11:46:21 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:51559 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751729AbeEDPqU (ORCPT
         <rfc822;linux-serial@vger.kernel.org>);
-        Fri, 4 May 2018 11:46:46 -0400
+        Fri, 4 May 2018 11:46:20 -0400
 X-IronPort-AV: E=Sophos;i="5.49,363,1520924400";
-   d="scan'208";a="14509205"
+   d="scan'208";a="13799020"
 From: Radu Pirea <radu.pirea@microchip.com>
 To: <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
@@ -85,9 +85,9 @@ CC: <lee.jones@linaro.org>, <broonie@kernel.org>,
         <alexandre.belloni@bootlin.com>, <nicolas.ferre@microchip.com>,
         <jslaby@suse.com>, <gregkh@linuxfoundation.org>,
         <richard.genoud@gmail.com>, Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v2 6/6] tty/serial: atmel: changed the driver to work under at91-usart mfd
-Date: Fri, 4 May 2018 18:47:14 +0300
-Message-ID: <20180504154714.5109-7-radu.pirea@microchip.com>
+Subject: [PATCH v2 2/6] mfd: at91-usart: added mfd driver for usart
+Date: Fri, 4 May 2018 18:47:10 +0300
+Message-ID: <20180504154714.5109-3-radu.pirea@microchip.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180504154714.5109-1-radu.pirea@microchip.com>
 References: <20180504154714.5109-1-radu.pirea@microchip.com>
@@ -99,131 +99,164 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch modifies the place where resources and device tree properties
-are searched.
+This mfd driver is just a wrapper over atmel_serial driver and
+spi-at91-usart driver. Selection of one of the drivers is based on a
+property from device tree. If the property is not specified, the default
+driver is atmel_serial.
 
 Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
 ---
- drivers/tty/serial/Kconfig        |  1 +
- drivers/tty/serial/atmel_serial.c | 29 +++++++++++++++--------------
- 2 files changed, 16 insertions(+), 14 deletions(-)
+ drivers/mfd/Kconfig                  | 10 ++++
+ drivers/mfd/Makefile                 |  1 +
+ drivers/mfd/at91-usart.c             | 81 ++++++++++++++++++++++++++++
+ include/dt-bindings/mfd/at91-usart.h | 17 ++++++
+ 4 files changed, 109 insertions(+)
+ create mode 100644 drivers/mfd/at91-usart.c
+ create mode 100644 include/dt-bindings/mfd/at91-usart.h
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 3682fd3e960c..25e55332f8b1 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -119,6 +119,7 @@ config SERIAL_ATMEL
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_MCTRL_GPIO if GPIOLIB
-+	select MFD_AT91_USART
- 	help
- 	  This enables the driver for the on-chip UARTs of the Atmel
- 	  AT91 processors.
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index df46a9e88c34..6b4494352853 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -193,8 +193,8 @@ static struct console atmel_console;
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..de99b79061b7 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -99,6 +99,16 @@ config MFD_AAT2870_CORE
+ 	  additional drivers must be enabled in order to use the
+ 	  functionality of the device.
  
- #if defined(CONFIG_OF)
- static const struct of_device_id atmel_serial_dt_ids[] = {
--	{ .compatible = "atmel,at91rm9200-usart" },
--	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ .compatible = "atmel,at91rm9200-usart-serial" },
-+	{ .compatible = "atmel,at91sam9260-usart-serial" },
- 	{ /* sentinel */ }
- };
- #endif
-@@ -1631,7 +1631,7 @@ static void atmel_tasklet_tx_func(unsigned long data)
- static void atmel_init_property(struct atmel_uart_port *atmel_port,
- 				struct platform_device *pdev)
- {
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = pdev->dev.parent->of_node;
- 
- 	/* DMA/PDC usage specification */
- 	if (of_property_read_bool(np, "atmel,use-dma-rx")) {
-@@ -2223,7 +2223,8 @@ static const char *atmel_type(struct uart_port *port)
- static void atmel_release_port(struct uart_port *port)
- {
- 	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	int size = to_platform_device(pdev->dev.parent)->resource[0].end -
-+		to_platform_device(pdev->dev.parent)->resource[0].start + 1;
- 
- 	release_mem_region(port->mapbase, size);
- 
-@@ -2239,7 +2240,8 @@ static void atmel_release_port(struct uart_port *port)
- static int atmel_request_port(struct uart_port *port)
- {
- 	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	int size = to_platform_device(pdev->dev.parent)->resource[0].end -
-+		to_platform_device(pdev->dev.parent)->resource[0].start + 1;
- 
- 	if (!request_mem_region(port->mapbase, size, "atmel_serial"))
- 		return -EBUSY;
-@@ -2345,23 +2347,23 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- 	atmel_init_property(atmel_port, pdev);
- 	atmel_set_ops(port);
- 
--	uart_get_rs485_mode(&pdev->dev, &port->rs485);
-+	uart_get_rs485_mode(pdev->dev.parent, &port->rs485);
- 
- 	port->iotype		= UPIO_MEM;
- 	port->flags		= UPF_BOOT_AUTOCONF | UPF_IOREMAP;
- 	port->ops		= &atmel_pops;
- 	port->fifosize		= 1;
- 	port->dev		= &pdev->dev;
--	port->mapbase	= pdev->resource[0].start;
--	port->irq	= pdev->resource[1].start;
-+	port->mapbase		= to_platform_device(pdev->dev.parent)->resource[0].start;
-+	port->irq		= to_platform_device(pdev->dev.parent)->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
--	port->membase	= NULL;
-+	port->membase		= NULL;
- 
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
- 
- 	/* for console, the clock could already be configured */
- 	if (!atmel_port->clk) {
--		atmel_port->clk = clk_get(&pdev->dev, "usart");
-+		atmel_port->clk = clk_get(pdev->dev.parent, "usart");
- 		if (IS_ERR(atmel_port->clk)) {
- 			ret = PTR_ERR(atmel_port->clk);
- 			atmel_port->clk = NULL;
-@@ -2656,7 +2658,7 @@ static void atmel_serial_probe_fifos(struct atmel_uart_port *atmel_port,
- 	atmel_port->rts_low = 0;
- 	atmel_port->rts_high = 0;
- 
--	if (of_property_read_u32(pdev->dev.of_node,
-+	if (of_property_read_u32(pdev->dev.parent->of_node,
- 				 "atmel,fifo-size",
- 				 &atmel_port->fifo_size))
- 		return;
-@@ -2694,11 +2696,10 @@ static void atmel_serial_probe_fifos(struct atmel_uart_port *atmel_port,
- static int atmel_serial_probe(struct platform_device *pdev)
- {
- 	struct atmel_uart_port *atmel_port;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = pdev->dev.parent->of_node;
- 	void *data;
- 	int ret = -ENODEV;
- 	bool rs485_enabled;
--
- 	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
- 
- 	ret = of_alias_get_id(np, "serial");
-@@ -2845,7 +2846,7 @@ static struct platform_driver atmel_serial_driver = {
- 	.suspend	= atmel_serial_suspend,
- 	.resume		= atmel_serial_resume,
- 	.driver		= {
--		.name			= "atmel_usart",
-+		.name			= "atmel_usart_serial",
- 		.of_match_table		= of_match_ptr(atmel_serial_dt_ids),
- 	},
- };
++config MFD_AT91_USART
++	tristate "AT91 USART Driver"
++	select MFD_CORE
++	depends on OF
++	help
++	  Select this to get support for AT91 USART IP. This is a wrapper
++	  over at91-usart-serial driver and usart-spi-driver. Only one function
++	  can be used at a time. The choice is done at boot time by the probe
++	  function of this MFD driver according to a device tree property.
++
+ config MFD_ATMEL_FLEXCOM
+ 	tristate "Atmel Flexcom (Flexible Serial Communication Unit)"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index d9d2cf0d32ef..db1332aa96db 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -185,6 +185,7 @@ obj-$(CONFIG_MFD_SPMI_PMIC)	+= qcom-spmi-pmic.o
+ obj-$(CONFIG_TPS65911_COMPARATOR)	+= tps65911-comparator.o
+ obj-$(CONFIG_MFD_TPS65090)	+= tps65090.o
+ obj-$(CONFIG_MFD_AAT2870_CORE)	+= aat2870-core.o
++obj-$(CONFIG_MFD_AT91_USART)	+= at91-usart.o
+ obj-$(CONFIG_MFD_ATMEL_FLEXCOM)	+= atmel-flexcom.o
+ obj-$(CONFIG_MFD_ATMEL_HLCDC)	+= atmel-hlcdc.o
+ obj-$(CONFIG_MFD_ATMEL_SMC)	+= atmel-smc.o
+diff --git a/drivers/mfd/at91-usart.c b/drivers/mfd/at91-usart.c
+new file mode 100644
+index 000000000000..cd8f020ca7c0
+--- /dev/null
++++ b/drivers/mfd/at91-usart.c
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Driver for AT91 USART
++ *
++ * Copyright (C) 2018 Microchip Technology
++ *
++ * Author: Radu Pirea <radu.pirea@microchip.com>
++ *
++ */
++
++#include <dt-bindings/mfd/at91-usart.h>
++
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mfd/core.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/types.h>
++
++static struct mfd_cell at91_usart_spi_subdev = {
++		.name = "at91_usart_spi",
++		.of_compatible = "microchip,at91sam9g45-usart-spi",
++	};
++
++static struct mfd_cell at91_usart_serial_subdev = {
++		.name = "atmel_usart_serial",
++		.of_compatible = "atmel,at91rm9200-usart-serial",
++	};
++
++static int at91_usart_mode_probe(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	struct mfd_cell cell;
++	u32 opmode;
++	int err;
++
++	err = of_property_read_u32(np, "at91,usart-mode", &opmode);
++
++	switch (opmode) {
++	case AT91_USART_MODE_SPI:
++		cell = at91_usart_spi_subdev;
++		break;
++	case AT91_USART_MODE_SERIAL:
++	default:
++		cell = at91_usart_serial_subdev;
++	}
++
++	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO, &cell, 1,
++			      NULL, 0, NULL);
++	if (err) {
++		dev_err(&pdev->dev, "failed to add subdevices\n");
++		return err;
++	}
++
++	return devm_of_platform_populate(&pdev->dev);
++}
++
++static const struct of_device_id at91_usart_mode_of_match[] = {
++	{ .compatible = "atmel,at91rm9200-usart" },
++	{ .compatible = "atmel,at91sam9260-usart" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, at91_flexcom_of_match);
++
++static struct platform_driver at91_usart_mfd = {
++	.probe	= at91_usart_mode_probe,
++	.driver	= {
++		.name		= "at91_usart_mode",
++		.of_match_table	= at91_usart_mode_of_match,
++	},
++};
++
++module_platform_driver(at91_usart_mfd);
++
++MODULE_AUTHOR("Radu Pirea <radu.pirea@microchip.com>");
++MODULE_DESCRIPTION("AT91 USART MFD driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/dt-bindings/mfd/at91-usart.h b/include/dt-bindings/mfd/at91-usart.h
+new file mode 100644
+index 000000000000..ac811628a42d
+--- /dev/null
++++ b/include/dt-bindings/mfd/at91-usart.h
+@@ -0,0 +1,17 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This header provides macros for AT91 USART DT bindings.
++ *
++ * Copyright (C) 2018 Microchip Technology
++ *
++ * Author: Radu Pirea <radu.pirea@microchip.com>
++ *
++ */
++
++#ifndef __DT_BINDINGS_AT91_USART_H__
++#define __DT_BINDINGS_AT91_USART_H__
++
++#define AT91_USART_MODE_SERIAL	1
++#define AT91_USART_MODE_SPI	2
++
++#endif /* __DT_BINDINGS_AT91_USART_H__ */
 -- 
 2.17.0
 
