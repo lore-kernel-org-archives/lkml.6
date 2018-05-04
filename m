@@ -1,57 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751840AbeEDUQU (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:16:20 -0400
-Received: from mga07.intel.com ([134.134.136.100]:4821 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751748AbeEDUQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:16:17 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,363,1520924400";
-   d="scan'208";a="221714036"
-Date: Sat, 5 May 2018 04:16:06 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: kbuild-all@01.org, djkurtz@chromium.org, akshu.agrawal@amd.com,
-        Alexander.Deucher@amd.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "open list:ACPI" <linux-acpi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] ACPI: APD: Add AMD misc clock handler support
-Message-ID: <201805050356.n04IuGDl%fengguang.wu@intel.com>
-References: <1525422930-27826-2-git-send-email-akshu.agrawal@amd.com>
+        id S1751733AbeEDUUr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:20:47 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60599 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751544AbeEDUUq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 16:20:46 -0400
+Date: Fri, 4 May 2018 22:20:44 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Tony Lindgren <tony@atomide.com>
+Cc: kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
+        mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: Motorola Droid 4 progress, power consumption
+Message-ID: <20180504202044.GC22519@amd>
+References: <20180501183148.GA26996@amd>
+ <20180502144158.GJ98604@atomide.com>
+ <20180503090611.GA14451@amd>
+ <20180503142240.GQ98604@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="L6iaP+gRLNZHKoI4"
 Content-Disposition: inline
-In-Reply-To: <1525422930-27826-2-git-send-email-akshu.agrawal@amd.com>
+In-Reply-To: <20180503142240.GQ98604@atomide.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Akshu,
 
-Thank you for the patch! Perhaps something to improve:
+--L6iaP+gRLNZHKoI4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on v4.17-rc3 next-20180504]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Hi!
 
-url:    https://github.com/0day-ci/linux/commits/Akshu-Agrawal/clk-x86-Add-ST-oscout-platform-clock/20180504-220653
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> > user@devuan:/sys/class/power_supply/battery$ date; cat current_now
+> > current_avg
+> > Thu May  3 09:33:07 CEST 2018
+> > -56000
+> > -72308
+> > user@devuan:/sys/class/power_supply/battery$ date; cat current_now
+> > current_avg
+> > Thu May  3 09:33:08 CEST 2018
+> > -37000
+> > -211362
+>=20
+> I recall it just being calculated based on the time between
+> the reads. Hard to say what it does, -ENODOCS.. Maybe the mc13783
+> PMIC docs have something similar.
 
+Hmm. current_avg is world readable; if it does changes to the
+hardware, that's somehow bad.
 
-coccinelle warnings: (new ones prefixed by >>)
+But I guess I can sample charge_counter every minute or so and get
+what I need?
 
->> drivers/acpi/acpi_apd.c:114:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+> > > Hmm oh and the POWER_SUPPLY_CHARGE_COUNTER value should be monitored
+> > > by your libbattery and it's low value and high value should be saved
+> > > to a file. Low should be saved when we get the battery low interrupt
+> > > and battery state changes to POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL.
+> > > High value should be saved on POWER_SUPPLY_CAPACITY_LEVEL_FULL.
+> > >=20
+> > > Then when you know the high value and low value, you can calculate
+> > > the remaining capacity based on the current value and
+> > > POWER_SUPPLY_POWER_AVG.
+> >=20
+> > I'll look into that... but probably will do experiments with python,
+> > first.
+>=20
+> Sure. The reason why I think we should not do it in the kernel in
+> addition to the earlier reasoning is that we don't have a place
+> to store the min and max values across reboot. I think there's
+> some flash on the battery over 1w bus, but it probably just
+> contains battery serial number or something and is not intended
+> for writing much to it. I guess the min and max values should be
+> really keyd based on this battery id in case the battery gets
+> changed.
 
-Please review and possibly fold the followup patch.
+I agree this should not be done in kernel as it requires persistent
+storage.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Battery is not user-replacable (and this will recalibrate itself on
+charge/discharge cycle) so.. I don't think keying is strictly
+neccessary for D4.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--L6iaP+gRLNZHKoI4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlrswJwACgkQMOfwapXb+vIH7QCgpxYlXpWTAwSJ80cbWykIGDz8
+tBEAnR0kn4Hui9uXJbjI4Pfmqhiq4NHp
+=epNT
+-----END PGP SIGNATURE-----
+
+--L6iaP+gRLNZHKoI4--
