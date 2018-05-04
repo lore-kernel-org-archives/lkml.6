@@ -1,241 +1,537 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751835AbeEDRJk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:09:40 -0400
-Received: from mail-sn1nam02on0074.outbound.protection.outlook.com ([104.47.36.74]:3264
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751425AbeEDRJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:09:33 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com;
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: djkurtz@chromium.org, akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
-        mturquette@baylibre.com, sboyd@kernel.org, christian.koenig@amd.com,
-        airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH v3 1/2] clk: x86: Add ST oscout platform clock
-Date: Sat,  5 May 2018 01:07:18 +0800
-Message-Id: <1525453639-30575-2-git-send-email-akshu.agrawal@amd.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525453639-30575-1-git-send-email-akshu.agrawal@amd.com>
-References: <1525453639-30575-1-git-send-email-akshu.agrawal@amd.com>
+        id S1751877AbeEDRKw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:10:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56956 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751562AbeEDRKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:10:49 -0400
+Subject: Re: [PATCH v4 2/2] ThunderX2: Add Cavium ThunderX2 SoC UNCORE PMU
+ driver
+To: Kim Phillips <kim.phillips@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Vadim.Lomovtsev@cavium.com,
+        linux-doc@vger.kernel.org, gklkml16@gmail.com, Jan.Glauber@cavium.com,
+        linux-kernel@vger.kernel.org, Robert.Richter@cavium.com,
+        jnair@caviumnetworks.com,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180425090047.6485-1-ganapatrao.kulkarni@cavium.com>
+ <20180425090047.6485-3-ganapatrao.kulkarni@cavium.com>
+ <20180426170624.bfcba885431d57d0de2a3ddd@arm.com>
+ <20180427093027.ngtuoezyh6mtz26p@lakrids.cambridge.arm.com>
+ <20180427081525.f9dcc756678baf3bb6e6e473@arm.com>
+ <20180427143719.GA5093@arm.com>
+ <20180427104629.2bff4b4b683a93ddf39f8df5@arm.com>
+ <20180427160914.GA5286@arm.com>
+ <20180427115625.b5191d381cd41e7ee092fea1@arm.com>
+ <20180501115405.GE25237@arm.com>
+ <20180503193023.9c27512d6a0e9af85f8c0407@arm.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <bb3e3c6f-f4df-a182-c947-10c77c998cd1@arm.com>
+Date: Fri, 4 May 2018 18:10:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: MA1PR0101CA0056.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:20::18) To SN1PR12MB2366.namprd12.prod.outlook.com
- (2603:10b6:802:25::19)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2366;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;3:XSmsPpcPHeoCfpocsKunjHTqYXeeB6LrBq1DILN1z+Rz1SAFx/USbHHRrZXAKX871IqO+av8FMEcm2VCZoU0zdG0K8SbR7GTNXad6xFQ2Sk17ZrB+6kS2pFSgcArnGF1Hu4tpnUBGjozYwuk/kc+1UvWuFf4sfpA7EMKE8Cnz7s/W5S9PDJMT3Wgks2g6GQalqq62UGUDhPvMg97mz3/sP9jitwrmmli4sDbya3lseqsS96ZfVre44bqC6M4GHvk;25:fW75CycXUbzf14a/yw1+y9Iup4PuNNI1Ds1A32n/PukzgQbgzSYAOVsslwv18ZrGxQb+7s/l6q64BUCKTkYz8HZTeXuSACwIOXRJoflT8ASM7dr99SWZIzWNNydhwisX2UkWt79m9gmHyx0v4Ury1NFj/rOpczjtRKcu6BGwF4IaiUocCIsC7bS0h7NAjgmS00uRfvFapCMiU/fD5L1H0AOhnw19XvTYT861YdKMQSgTLdlMIrQOxXHMjC5ahY55b9/Y7+B5DSGjEd5h5s80YDmAudbyoM8njInXF6yvxS8xjYcjtBzMOckv0kRKFPbhzZLzUmnLLifMSbscLYp/ug==;31:Zgok79hOv1fQ9pK/EEb6+9LWnpuBco2yUj0nthMqTwkJc3LteZqZulYltBISt8og+Vio3BVK5VGHCtq5XQ9f8aA6gE/JOTml3FBCLgM3o4u2iHP/saUnpcnTdH/+EozQsZ9zHbDDCdidjHkbPqOUCyCNN2VI7yxBDgjR4WcfzIjp7hgMk/XsUW0zwgf9OsLE9OZ0YzHy+FIN/hbihyKbkMPKJjNti4EO1wJPuw2eyrA=
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2366:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;20:ViOcIAkO89ekeyZq0G27bdNXpeYxmGoh0NQiLwgJggl4nVPamcNth6922EC3TMw2WyN0L0MnA5rtaGhJAMFxOG8rj+0x50/iOOP1dc85njRbLr2LvOIK9yV5VUeF1znYh2PF+PgDRBIQ8W+BOYcfElDl4W1WEGXeKyY+ca+dhriSgb82rNpzWIWVszLbdG+Oz6j094RWw+t3kfhWTE6JWCk3a5RgwVFm4O1ZQ9abZscbIcYb+RzZEjb6tGZW+/zM5xMOOKoLdIKg2RnmcDXQeEsjRp/x86l+G+jfNKw5Gfg4GYBBGjATS1D8L587zQ+gJ3nhbDGLaBNoAuuin3MWlvRxhM6GD4/+DkFRk4BGQp8+17WDWjp0DEsiVtxdDH7zwLu37s8nq7aPr+QL8sRrvl2nfvXzoVRNYeO/8hoOTTh3yPVcfMROm5Gtx92q5hXTYTfsqjH03pbpqi9oJtygybNTHOKVQJki4FbwqQ8QDQguvjqvBKDc3x3O9uPxd9Nd;4:9/tE/vAcN+LrThr6P/1GNiYwcXSeQ6WrlZohSkoK4pLtB/BRD0rWFhOYdyiUDCLN301pcDCQQrQcWWb3iTJlbiZT4OeIyEbOpwC4OCC9jYieSJPE01FTwvfLxlU0Tbsc8Fb6oNk/F5DGBtNmtDloPrOKBVrM46oBQZKio5SeP6cItH1hP03mC+sQvETlIc9DSA1NCrOVNGcOwvdOzB4Y+2UKmTyEhPYWW8ps2nbMGQwUQwckhf1VHh1FtM/O7oHNIj/fBDnnTG3IuZ59DKEdHW4bkneV589qexNdvAWTEyDDRQTXS7WoCFSItljIFdq9
-X-Microsoft-Antispam-PRVS: <SN1PR12MB236616EBE95BD9EE24B64CB9F8860@SN1PR12MB2366.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:SN1PR12MB2366;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2366;
-X-Forefront-PRVS: 06628F7CA4
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(376002)(366004)(39380400002)(199004)(189003)(26005)(11346002)(5660300001)(2906002)(50466002)(52116002)(186003)(1671002)(106356001)(68736007)(51416003)(36756003)(7696005)(105586002)(4326008)(76176011)(8936002)(48376002)(50226002)(97736004)(3846002)(44832011)(386003)(109986005)(6116002)(478600001)(72206003)(7736002)(305945005)(486006)(53416004)(16526019)(81166006)(16586007)(25786009)(8676002)(6486002)(86362001)(476003)(956004)(81156014)(316002)(53936002)(66066001)(47776003)(2616005)(6666003)(59450400001)(446003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2366;H:akshu-HP-EliteBook-745-G2.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB2366;23:NLq9TOQByVcYFSaa96+pI4oT7mouoKuqGrtwrb4P6?=
- =?us-ascii?Q?4nwF5GgGvjWCyFMtpiUS0TVzWcXGPQS/uBJAPv4g6uKr6wGIwxCFnIz24Vyy?=
- =?us-ascii?Q?b6ijNIp5pDMZvVnbB4WB8pXhGHls3KUx9iCTGx6x0BXsgzrnk/GYXzabdGNr?=
- =?us-ascii?Q?ryGCiAfyWMM2AGm9ChAs5grVsKNoTPp/h2crUE7c9MQmATxNYe0Mr3FF62L6?=
- =?us-ascii?Q?Ls9Hbu76sbZpWHP93u8pGf+kPSACvy5WkHg6ibsJjNLJOaw3++bGyF4D9jGQ?=
- =?us-ascii?Q?ZrEODNRRvEV6veAiswPt7iRIq4kPQT7KP3Q4xfc80duZInMZ/0l8dXp+g/y4?=
- =?us-ascii?Q?z42B2nP7WYYeTiiGLI52g9TrvzZd93tIFAZuH+IjJPrQwueAGnh3kPN51nMW?=
- =?us-ascii?Q?Ql41umbdSWExPAZLpLKDlaoVMhHcf+6s2yEWB2AOFTJPg0pvEm/q7xg0rvpO?=
- =?us-ascii?Q?d0x+QXmy7Q8b7engsTijSiu4Jah5XsWKX+41iq6EE/fsYVYVlOHduE1zMntC?=
- =?us-ascii?Q?2uBmk4O63mVLeS67lGy00HIwRku4Bsi5yX4Q3/bq8UDq0PvQhPRIYf8ZAUZA?=
- =?us-ascii?Q?CpRO62Gp4D2iYk0s7mcX2dIzuTNEE3iX8bjtO0MRCTInOhhpOBmHSagTcsfO?=
- =?us-ascii?Q?EXg4JcbJpazQS2RBr2udelPRqbgQUapfhECesvVDqQcyibjQCGW3UIMU7wV1?=
- =?us-ascii?Q?S8yGl4S2Tv4cjp81wCxgqCUJqnYUUwlfHOTR/unsTlDVrJeSKNGjgkBPy1D2?=
- =?us-ascii?Q?QCZ+x/QPv3eryaPe5NqtpYCvh5NYC7wDq7HuMYO/rNC1w24QE0eRKn5Yr+4Q?=
- =?us-ascii?Q?3pF9Pdb0h4b1u0um/cxU+UwFZNAR0DY+qX4843vBEssLFSVNrHARG/PaT9ee?=
- =?us-ascii?Q?4n5UJFpx3AgvmcQ6a/xbmk4Eg0bKfoSWx5Hu8/qa0RksBuXZAN9OfQI706k7?=
- =?us-ascii?Q?o+93FSjbtjCxC5KLzlvYJP+tkgTcNTZmJsdyOGL1kYFPcoWVrfF4hHQZN67v?=
- =?us-ascii?Q?JnZ3cgq4ABFx5NOatdI3pz9A/+1EV9fDhMYEXAMFyybOBRn3kfIDk8AuNkXQ?=
- =?us-ascii?Q?oibVRuW/cMufiAeNymbvJ16bd8QoAr+FX60YPM3mXHoPjfKe7SYzKyx0/vTP?=
- =?us-ascii?Q?rYJ7tH8mH7Sgv78Ktdum9aHUF2PRchKDItgFcSUSzw/eX7myu+1MiSvbXbSb?=
- =?us-ascii?Q?gu6IiTe/F0GK8GVzbzxOwmLMo8PvQhVfJk13sGUVmiEMXsf52CXAOVgsxm+n?=
- =?us-ascii?Q?Tgw7xWOJVGecAqxNtqmo3qnX22lRhQmTepcBbMB8ThgDsGSfsSY1atFqXlcC?=
- =?us-ascii?B?dz09?=
-X-Microsoft-Antispam-Message-Info: J5+IbFswVWsaWv+Tytr9CM2/gMoKnLycmDG7ALZgf6DjgAPcQnyFP+CMDA8VjgTq/phed724UY4wvxyJZli09jOYs0RIM0544TI+DhgWyargt2L+Od06aGa7hjOkZoFKcdh7LwyhhNxO3dz1fqmBVuOLbuA8vM2KabH9BrARYBcaI0fUEnBIdsbFhxg5ou4X
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;6:BJWpv7oLDthMCq27SjsMgIHnztU3E33Gj44BAX2S9qGve6cC+oH1g8t0IqvTkvStWwFKw5yuwXJKFv5Szke+9hIdpK0onFoqrUH+xFX20jNCLPYLGmFqiOUEaX14jb2gOVyzA3lNttpFMltxdKB0pWd5N3MGr/Dd+elay4YfuUpdKdNfN7HOFtUpy07B/CcSjq1ktZPGv5qGmZ9030zkRJrOKLsqik50HAx3FBhWO36Xjh7e6z74yJxmH63XX6PeWIU95rg2PJKZGT7xYUowHyDxJi/6SVbbJxXFp3X22w4fOTPDYsToiyDHDtjpGMHOpg5f4DLyNGzjYNPSXUjWMrEAgzp55ZobpQXH+VpUEFBGz4kqb+WaBzP60WFIenzhoHg8oDeHo2W1U6qkHEHxY59majbwSpaybb0pOhWUvCHELEt//zyMF/pM31GwOBbizMp2U1exQehce+OOztm1CQ==;5:NfFPeNTJWNXM80toVvILqsBVwJQPZIFVkG91kqaSjKCCp/V9Gpi4lD3gGrSdFSDy5B+vUgYA/BMhMEf2nMfddFC123D9iVmFYgqHbqKcXwpZKSI0ALej+wxd+BYr3YE8OirUm34b4+IhWAz25IIqKPP0JWIxCgL6q8NU1Khf0/w=;24:+WeGqIAHFfSiFJ8FlSIbhdu9ZVo8bCvAWIS+u1ygWsBVVW3atVAkXPUUIivgY4IiYTn9tsh8oG5d5ORRXjoks9HwVipHZiu30Y/KOMESLI8=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;7:2bTcG7POFb75ElNQUeZV9XnUQ70E9679JaXZKU/ke2BLV5DyS6XUtSikz8H6Bxp+RNIKb/8KlUs+WYQauj30ik2KCfcZADTRWdAtCf77lar3eQFw1nwzXohEwbJSW0GMVHbMcig2zI0Xagks7O8RLjV5i84Mc9GCp1hJq1sw3kntvTlKc1NYPRb4x9PYSfL+Y6IjksiYUQxNa/QUbgkTeXrjlqA25d3WebDsnSBpQXX0KsmocONmjdZP/sfQYuYT;20:yhW/qIwU8v1Omr2KBBtH2LTXCDG7dH1HK4CSpu398/M/RPNJXmcN2PqnSCgNEPcqeDFwL1dRpLsRrIlgHjznLNzFHkEejvMQHcJefLIHQo+2eo22rqHG24YaJvyl9vsYkFisSgDKzz1jZsfVUS8A9XTMe+KfrfIg9O94uEvYU2aoOxJ+Pps7n8889JPWSy84Sc9POjyXHJPYEsp9SjC88kZ4BvdhQ9+2hIilQPeo+E9yE1e1t75HYXbGGVSoQPyH
-X-MS-Office365-Filtering-Correlation-Id: fa231617-b849-4b0f-6baf-08d5b1e1cd33
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 May 2018 17:09:27.6562 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa231617-b849-4b0f-6baf-08d5b1e1cd33
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2366
-To: unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20180503193023.9c27512d6a0e9af85f8c0407@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stoney SoC provides oscout clock. This clock can support 25Mhz and
-48Mhz of frequency.
-The clock is available for general system use.
+Hi Kim,
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
----
-v2: config change, added SPDX tag and used clk_hw_register_.
-v3: Fix kbuild warning for checking of NULL pointer
- drivers/clk/x86/Makefile             |  1 +
- drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
- include/linux/platform_data/clk-st.h | 35 ++++++++++++++
- 3 files changed, 124 insertions(+)
- create mode 100644 drivers/clk/x86/clk-st.c
- create mode 100644 include/linux/platform_data/clk-st.h
+On 04/05/18 01:30, Kim Phillips wrote:
+> On Tue, 1 May 2018 12:54:05 +0100
+> Will Deacon <will.deacon@arm.com> wrote:
+> 
+>> Hi Kim,
+> 
+> Hi Will, thanks for responding.
+> 
+>> On Fri, Apr 27, 2018 at 11:56:25AM -0500, Kim Phillips wrote:
+>>> On Fri, 27 Apr 2018 17:09:14 +0100
+>>> Will Deacon <will.deacon@arm.com> wrote:
+>>>> On Fri, Apr 27, 2018 at 10:46:29AM -0500, Kim Phillips wrote:
+>>>>> On Fri, 27 Apr 2018 15:37:20 +0100
+>>>>> Will Deacon <will.deacon@arm.com> wrote:
+>>>>>> For anything under drivers/perf/, I'd prefer not to have these prints
+>>>>>> and instead see efforts to improve error reporting via the perf system
+>>>>>> call interface.
+>>>>>
+>>>>> We'd all prefer that, and for all PMU drivers, why should ones under
+>>>>> drivers/perf be treated differently?
+>>>>
+>>>> Because they're the ones I maintain...
+>>>
+>>> You represent a minority on your opinion on this matter though.
+>>
+>> I'm not sure that's true
+> 
+> I haven't seen another arch/PMU driver maintainer actively oppose it
+> other than you (and Mark).
+> 
+>> -- you tend to be the only one raising this issue;
+> 
+> If you're basing that on list activity, I wouldn't, since most Arm perf
+> users don't subscribe to LKML.  I'm trying to represent current and
+> future Arm perf users that shouldn't be expected to hang out here on
+> LKML and review PMU drivers.  Couldn't tell you why PMU driver authors
+> themselves don't chime in, but will note that some drivers in
+> drivers/perf do print things from their event_init functions.
 
-diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-index 1367afb..2aee002 100644
---- a/drivers/clk/x86/Makefile
-+++ b/drivers/clk/x86/Makefile
-@@ -1,3 +1,4 @@
- clk-x86-lpss-objs		:= clk-lpt.o
- obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
- obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
-+obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
-diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-new file mode 100644
-index 0000000..c3d5b84
---- /dev/null
-+++ b/drivers/clk/x86/clk-st.c
-@@ -0,0 +1,88 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * clock framework for AMD Stoney based clocks
-+ *
-+ * Copyright 2018 Advanced Micro Devices, Inc.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clkdev.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_data/clk-st.h>
-+#include <linux/platform_device.h>
-+
-+/* Clock Driving Strength 2 register */
-+#define CLKDRVSTR2	0x28
-+/* Clock Control 1 register */
-+#define MISCCLKCNTL1	0x40
-+/* Auxiliary clock1 enable bit */
-+#define OSCCLKENB	2
-+/* 25Mhz auxiliary output clock freq bit */
-+#define OSCOUT1CLK25MHZ	16
-+
-+#define ST_CLK_48M	0
-+#define ST_CLK_25M	1
-+#define ST_CLK_MUX	2
-+#define ST_CLK_GATE	3
-+#define ST_MAX_CLKS	4
-+
-+static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
-+
-+static int st_clk_probe(struct platform_device *pdev)
-+{
-+	struct st_clk_data *st_data;
-+	struct clk_hw **hws;
-+
-+	st_data = dev_get_platdata(&pdev->dev);
-+	if (!st_data || !st_data->base)
-+		return -EINVAL;
-+
-+	hws = kzalloc(sizeof(*hws) * ST_MAX_CLKS, GFP_KERNEL);
-+	if (!hws)
-+		return -ENOMEM;
-+
-+	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
-+						     48000000);
-+	hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
-+						     25000000);
-+
-+	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-+		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
-+		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
-+
-+	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-+
-+	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
-+		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-+		CLK_GATE_SET_TO_DISABLE, NULL);
-+
-+	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver st_clk_driver = {
-+	.driver = {
-+		.name = "clk-st",
-+	},
-+	.probe = st_clk_probe,
-+};
-+builtin_platform_driver(st_clk_driver);
-diff --git a/include/linux/platform_data/clk-st.h b/include/linux/platform_data/clk-st.h
-new file mode 100644
-index 0000000..6a992e9
---- /dev/null
-+++ b/include/linux/platform_data/clk-st.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * clock framework for AMD Stoney based clock
-+ *
-+ * Copyright 2018 Advanced Micro Devices, Inc.
-+ *
-+ * Permission is hereby granted, free of charge, to any person obtaining a
-+ * copy of this software and associated documentation files (the "Software"),
-+ * to deal in the Software without restriction, including without limitation
-+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+ * and/or sell copies of the Software, and to permit persons to whom the
-+ * Software is furnished to do so, subject to the following conditions:
-+ *
-+ * The above copyright notice and this permission notice shall be included in
-+ * all copies or substantial portions of the Software.
-+ *
-+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+ * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-+ * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+#ifndef __CLK_ST_H
-+#define __CLK_ST_H
-+
-+#include <linux/compiler.h>
-+
-+struct st_clk_data {
-+	void __iomem *base;
-+};
-+
-+#endif /* __CLK_ST_H */
--- 
-1.9.1
+As a PMU driver author who *has* already invested not-inconsiderable 
+time and effort in trying to explain to you the technical issues from a 
+non-maintainer perspective (and is about to do so again), I can't help 
+but feel rather slighted by that comment.
+
+> Also, you have been cc'd on off-list email threads where SPE users had
+> to debug the SPE driver's event_init() manually.  There are other SPE
+> users I know that have had to go through the same painstaking process of
+> debugging the SPE driver.  Last but not least, there's me, and I'd sure
+> appreciate more verbose PMU drivers, based on my real-life performance
+> monitoring experience(s).
+> 
+>> I think most people don't actually care one way or the other. If you know of
+> 
+> Like I said, I think you're limiting your audience to LKML subscribers,
+> who are more amenable to being convinced they need to debug their
+> kernel.
+> 
+>> others who care about it too then I suggest you work together as a group to
+>> solve the problem in a way which is amenable to the upstream maintainers.
+> 
+> I know a few off-list people that would like a more user-friendly Arm
+> perf experience, but we're not qualified to solve the larger problem
+> that perf has had since its inception, and I think it's a little unfair
+> for you to suggest that, esp. given you're one of the maintainers, and
+> there's Linus on top of you.
+> 
+>> Then you won't have to worry about fixing it personally. You could even
+>> propose a topic for plumbers if there is enough interest in a general
+>> framework for propagating error messages to userspace.
+> 
+> I'm not worried about fixing it personally or not.  I'm worried about
+> our perf users' experience given your objection to using the vehicle
+> already in use on other architectures and PMU drivers.
+> 
+> If you - or anyone else for that matter - know of a way that'll get us
+> past this, by all means, say something.
+> 
+> If it helps, I recently asked acme if we could borrow bits from struct
+> perf_event and got no response.
+> 
+>>>>> As you are already aware, I've personally tried to fix this problem -
+>>>>> that has existed since before the introduction of the perf tool (I
+>>>>> consider it a syscall-independent enhanced error interface), multiple
+>>>>> times, and failed.
+>>>>
+>>>> Why is that my problem? Try harder?
+>>>
+>>> It's your problem because we're here reviewing a patch that happens to
+>>> fall under your maintainership.  I'll be the first person to tell you
+>>> I'm obviously incompetent and haven't been able to come up with a
+>>> solution that is acceptable for everyone up to and including Linus
+>>> Torvalds.  I'm just noticing a chronic usability problem that can be
+>>> easily alleviated in the context of this patch review.
+>>
+>> I don't see how incompetence has anything to do with it and, like most
+> 
+> Well you told me to try harder, and I'm trying to let you know that I
+> can try harder - ad infinitum - and still not get it, so telling me to
+> try harder isn't going to necessarily resolve the issue.
+> 
+>> people (lucky gits...), I doubt Torvalds cares too deeply about PMU driver
+>> internals. No arguments on the usability problem, but this ain't the fix
+> 
+> Like acme, I doubt Linus runs perf on real Arm h/w, so yes, I don't
+> think they care that much, but if they did try to do it one day, I'd
+> like to that they'd be able to have dmesg contain that extra error
+> information for them.
+> 
+> As you know, David Howells wrote a supplemental error syscall facility
+> [1], that Linus nacked (off list no less).  Does Linus care about what
+> David Howells was developing it for?  I don't know, but he does have
+> enough experience to know whether a certain approach to a problem is
+> sustainable in his kernel or not.
+> 
+>> you're looking for: it's a bodge. We've been over this many times before.
+> 
+> I think it's OK - necessary even - until this error infrastructure
+> problem perf has is fixed, and I think you're being unrealistic if you
+> think it will be fixed anytime soon.
+> 
+>>>>> So until someone comes up with a solution that works for everyone
+>>>>> up to and including Linus Torvalds (who hasn't put up a problem
+>>>>> pulling PMU drivers emitting things to dmesg so far, by the way), this
+>>>>> keep PMU drivers' errors silent preference of yours is unnecessarily
+>>>>> impeding people trying to measure system performance on Arm based
+>>>>> machines - all other archs' maintainers are fine with PMU drivers using
+>>>>> dmesg.
+>>>>
+>>>> Good for them, although I'm pretty sure that at least the x86 folks are
+>>>> against this crap too.
+>>>
+>>> Unfortunately, it doesn't affect them nearly as much as it does our
+>>> more diverse platforms, which is why I don't think they care to do
+>>> much about it.
+>>
+>> x86 has its fair share of PMUs too, so I don't think we're special in this
+>> regard. The main difference seems to be that they have better support in
+>> the perf tool for diagnosing problems.
+> 
+> Indeed, their software is as vertically integrated as their hardware,
+> and, well, they have more people with more experience working and caring
+> about perf running and being more usable.
+
+I note that uncore_pmu_event_init() and snb_uncore_imc_event_init(), to 
+pick a couple of Intel examples, contain a lot of the same logic to the 
+ARM system PMU drivers you repeatedly request should be more verbose. 
+Now, surely either perf tool already has some magic which somehow makes 
+those routines "user-friendly", in which case there seems no reason that 
+at least any generic event attribute stuff couldn't be applied to ARM 
+PMUs as well; or if not then you could easily send a patch adding 
+"helpful" printk()s to those drivers too and actively solicit the 
+maintainer feedback you lament not having.
+
+>>>>>> Anyway, I think this driver has bigger problems that need addressing.
+>>>>>
+>>>>> To me it represents yet another PMU driver submission - as the years go
+>>>>> by - that is lacking in the user messaging area.  Which reminds me, can
+>>>>> you take another look at applying this?:
+>>>>
+>>>> As I said before, I'm not going to take anything that logs above pr_debug
+>>>> for things that are directly triggerable from userspace. Spin a version
+>>>
+>>> Why?  There are plenty of things that emit stuff into dmesg that are
+>>> directly triggerable from userspace.  Is it because it upsets fuzzing
+>>> tests?  How about those be run with a patched kernel that somehow
+>>> mitigates the printing?
+>>
+>> [we've been over this before]
+>> There are two camps that might find this information useful:
+>>
+>>    1. People writing userspace support for a new PMU using the
+>>       perf_event_open syscall
+>>
+>>    2. People trying to use a tool which abstracts the PMU details to some
+>>       degree (e.g. perf tool)
+>>
+>> Those in (1) can get by with pr_debug. Sure, they have to recompile, but
+>> it's not like there are many people in this camp and they'll probably be
+>> working with the PMU driver writer to some degree anyway and taking new
+>> kernel drops.
+> 
+> No, please, that's a worse user experience than necessary.
+> 
+> FWIW, I see this type of person as e.g., a JIT developer - a
+> compiler/toolchain person - who has decided to use h/w monitoring to
+> help the JIT engine find hotspots.  The first place they should start
+> is to start using the perf tool itself, experimenting with events and
+> PMUs of interest.  When satisfied, they should clone the parameters
+> the tool makes to the perf_event_open syscall in their JIT engine.  We
+> should not be wasting their time forcing them to hack around in the
+> kernel trying to debug perf driver semantics.
+> 
+>> Those in (2) may not have access to dmesg, absolutely should not be able
+> 
+> I don't think you're being realistic here: we're talking about people
+> trying to improve performance: They would likely have kptr_restrict ==
+> 0 (unrestricted), so why would they have dmesg_restrict set?  Btw, the
+> rationale for dmesg_restrict was kernel pointer visibility [2], but now
+> %Kp hashes addresses before printing them, so it's even less likely to
+> be used.  Curious, where have you seen dmesg_restrict being set?
+> 
+>> to spam it (since this could hide other important messages), will probably
+> 
+> How will it hide other important messages?  Run a logging daemon?
+> We're not talking about a lot of messages here: one line per perf
+> invocation: see e.g. runs in [2].
+
+Assuming you meant [3], that's a pretty trivial case which doesn't 
+really illustrate the whole scope of the problem.
+
+Just for you, I added prints in 4 places where event_init validation 
+returns -EINVAL in my not-yet-upstream SMMUv2 PMU driver. Let's capture 
+a few events on my Juno board to get some arbitrary cross-sections of 
+system-wide I/O activity:
+
+[root@space-channel-5 ~]# perf stat -e arm_smmu/cycles/ -e 
+arm_smmu/access,tcefcfg=1/ -e arm_smmu/access,tcefcfg=1,smr_id=1/ -e 
+arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ -e 
+arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ find /usr > /dev/null
+
+  Performance counter stats for 'system wide':
+
+          729128494      arm_smmu/cycles/ 
+               (12.08%)
+          841301489      arm_smmu/cycles/ 
+               (28.10%)
+          834458758      arm_smmu/cycles/ 
+               (23.40%)
+          774373529      arm_smmu/cycles/ 
+               (15.69%)
+         1028501665      arm_smmu/cycles/ 
+               (13.84%)
+               5401      arm_smmu/access,tcefcfg=1/ 
+                (27.11%)
+                  0      arm_smmu/access,tcefcfg=1/ 
+                (14.73%)
+                  0      arm_smmu/access,tcefcfg=1/ 
+                (23.27%)
+                  0      arm_smmu/access,tcefcfg=1/ 
+                (20.54%)
+             220788      arm_smmu/access,tcefcfg=1/ 
+                (17.37%)
+                  0      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+                         (28.18%)
+                  0      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+                         (24.10%)
+                  0      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+                         (12.52%)
+                  0      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+                         (16.17%)
+                  0      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+                         (19.71%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+                         (19.68%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+                         (23.69%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+                         (29.15%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+                         (29.19%)
+              12092      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+                         (27.70%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+                         (16.97%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+                         (13.36%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+                         (16.01%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+                         (24.70%)
+                  0      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+                         (28.39%)
+
+        2.315150449 seconds time elapsed
+
+
+Wonderful, it worked OK. And yet in that brief time it spammed 
+*sixty-one* lines to the kernel log:
+
+[ 2096.220934] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.226893] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.232852] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.238798] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.244744] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.250690] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.256641] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.262594] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.268546] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.274492] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.280437] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.286381] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.292326] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.298271] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.304215] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.310164] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.316109] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.322053] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.327997] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.333941] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.339887] event_source arm_smmu_3: Incompatible SMR value
+[ 2096.345408] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.351361] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.357313] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.363263] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.369214] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.375171] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.381124] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.387078] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.393029] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.398984] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.404936] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.410890] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.416840] event_source arm_smmu_4: Incompatible context bank index
+[ 2096.423130] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.429075] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.435019] event_source arm_smmu_1: Incompatible context bank index
+[ 2096.441308] event_source arm_smmu_3: Incompatible context bank index
+[ 2096.447611] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.453557] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.459501] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.465445] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.471390] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.477342] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.483286] event_source arm_smmu_2: Incompatible SMR value
+[ 2096.488800] event_source arm_smmu_0: Incompatible SMR value
+[ 2096.494316] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.500319] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.571799] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.577749] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.583705] event_source arm_smmu_4: Incompatible SMR value
+[ 2096.589221] event_source arm_smmu_2: Incompatible SMR value
+[ 2096.594736] event_source arm_smmu_0: Incompatible SMR value
+[ 2096.600256] event_source arm_smmu_1: Incompatible SMR value
+[ 2096.605770] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.611718] event_source arm_smmu_4: Incompatible filtering mode
+[ 2096.617663] event_source arm_smmu_2: Incompatible filtering mode
+[ 2096.623607] event_source arm_smmu_0: Incompatible filtering mode
+[ 2096.629550] event_source arm_smmu_1: Incompatible filtering mode
+[ 2096.635494] event_source arm_smmu_3: Incompatible filtering mode
+[ 2096.641443] event_source arm_smmu_4: Incompatible context bank index
+
+(and in case it's not clear, that output is *continual* during the perf 
+run; empirically, the runtime only needs to reach about 6 seconds or so 
+for the dmesg ringbuffer to wrap so I have to fall back to journalctl to 
+see what I missed)
+
+Now how about we try counting those exact same events a slightly 
+different way:
+
+[root@space-channel-5 ~]# perf stat -e 
+\{arm_smmu/cycles/,arm_smmu/access,tcefcfg=1/,arm_smmu/access,tcefcfg=1,smr_id=1/,arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/,arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/\} 
+find /usr > /dev/null
+
+  Performance counter stats for 'system wide':
+
+      <not counted>      arm_smmu/cycles/ 
+
+    <not supported>      arm_smmu/cycles/ 
+
+    <not supported>      arm_smmu/cycles/ 
+
+    <not supported>      arm_smmu/cycles/ 
+
+    <not supported>      arm_smmu/cycles/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+
+    <not supported>      arm_smmu/access,tcefcfg=1,smr_id=1/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=0/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+
+    <not supported>      arm_smmu/tlb_alloc,tcefcfg=2,ndx=1/ 
+
+
+        0.721310193 seconds time elapsed
+
+
+Oh, that didn't work. Let's check dmesg to see why:
+
+[ 2416.494951] event_source arm_smmu_3: Incompatible filtering mode
+[ 2416.500933] event_source arm_smmu_3: Incompatible filtering mode
+[ 2416.506958] event_source arm_smmu_3: Incompatible filtering mode
+[ 2416.513276] event_source arm_smmu_3: Incompatible filtering mode
+
+
+Well, it said the same thing continually when it worked correctly, so I 
+guess it must have failed for some other reason. As the user I'm now not 
+only confused but unknowingly heading towards the *wrong* conclusion 
+thanks to those "helpful" messages. And that's not even contemplating 
+the "what if multiple programs did this at the same time" case.
+
+>> struggle to match an internal message from the PMU driver to their
+>> invocation of the high-level tool and may well be in a multi-user
+>> environment so will struggle to identify the messages that they are
+>> responsible for.
+> 
+> Again, I think you're being unrealistic.  My experience - in
+> multiple performance analysis roles - was that I was always the only
+> person using the machine at the time, and can easily correlate perf
+> invocations with dmesg output, particularly if I run 'dmesg -w &' prior
+> to invoking perf.  In one of those roles, having to mess with the
+> kernel was almost inconceivable - it literally 'just worked' for
+> everything else.  I was lucky that I had prior kernel experience in
+> order to debug the driver and be able find out how to invoke perf.
+> 
+>> What they actually want is for the perf tool to give
+>> them more information, and dmesg is not the right channel for that, for
+>> similar reasons.
+> 
+> We'd all like the perf tool to do things better, and dmesg is all we
+> have for now, and now I'm sounding like I did 1 1/2 years ago.
+> 
+>>>> using pr_debug and I'll queue it.
+>>>
+>>> How about using a ratelimited dev_err variant?
+>>
+>> Nah, I don't want dmesg being parsed by users of perf tool. pr_debug should
+>> be sufficient for perf tool developers working with a new PMU type.
+> 
+> OK the question was to the ratelimited part, but I think that even
+> might be the default these days [4].
+> 
+> For reasons (different perceptions?) already mentioned above, I also
+> don't agree that this has to do with just perf tool developers, and
+> only when working with a new PMU type.  My main concern is new/future
+> users to perf on Arm, working with any PMU type - new or old.  If there
+> is a perf tool-side component to this driver, I don't see it.  Having
+> said that, I think the owners of this and other PMU drivers should have
+> a say in what type of experience they want for their users in this
+> regard...is that fair?
+
+As I've said before, a significant portion of what you want to improve 
+involves generic perf_event properties which would already be much 
+better validated in the core than by every driver individually, so the 
+first straightforward step would be to improve the interface between 
+drivers and perf core, such that the "hard" problem reduces to 
+communicating from a single part of perf core to userspace. As it is, 
+PMU drivers alone simply don't have enough context to know when an 
+event_init "failure" is actually significant to the user or not, thus if 
+they display user-visible messages directly then half the time the user 
+will be thoroughly misled unless they are intimately familiar with how 
+perf core grouping and event rotation work (see above), yet required 
+knowledge of perf internals is exactly what you're arguing against!
+
+Robin.
+
+> 
+> Thanks,
+> 
+> Kim
+> 
+> [1] https://patchwork.kernel.org/patch/9907463/
+> [2] https://lwn.net/Articles/414813/
+> [3] https://lkml.org/lkml/2017/11/21/385
+> [4] https://lwn.net/Articles/693010/
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
