@@ -1,114 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751701AbeEDTDP convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 15:03:15 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:39501 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751561AbeEDTDN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 15:03:13 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-References: <20180504144014.5378-1-bigeasy@linutronix.de>
-        <87fu37e4rn.fsf@xmission.com>
-        <20180504170459.624e7vkro5fn2bgw@linutronix.de>
-        <876043e3xb.fsf@xmission.com>
-        <20180504175241.GT26088@linux.vnet.ibm.com>
-Date: Fri, 04 May 2018 14:03:04 -0500
-In-Reply-To: <20180504175241.GT26088@linux.vnet.ibm.com> (Paul E. McKenney's
-        message of "Fri, 4 May 2018 10:52:41 -0700")
-Message-ID: <87sh77b5w7.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        id S1751736AbeEDTGs (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 15:06:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42907 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751632AbeEDTGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 15:06:46 -0400
+From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
+To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
+Subject: [PATCH v9 00/12] Sunxi: Add SMP support on A83T
+Date: Fri,  4 May 2018 21:05:33 +0200
+Message-Id: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1fEfz6-0006F7-8Z;;;mid=<87sh77b5w7.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19AOhYxMGB1gWpPYm5DiaRurCZMlpxcKQI=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.7 XMSubLong Long Subject
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4995]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-        *  0.1 XMSolicitRefs_0 Weightloss drug
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;"Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 501 ms - load_scoreonly_sql: 0.05 (0.0%),
-        signal_user_changed: 3.0 (0.6%), b_tie_ro: 2.1 (0.4%), parse: 1.33 (0.3%),
-        extract_message_metadata: 26 (5.2%), get_uri_detail_list: 3.0 (0.6%),
-        tests_pri_-1000: 10 (2.0%), tests_pri_-950: 2.0 (0.4%), tests_pri_-900: 1.60
-        (0.3%), tests_pri_-400: 32 (6.4%), check_bayes: 30 (6.1%), b_tokenize: 11
-        (2.3%), b_tok_get_all: 7 (1.5%), b_comp_prob: 4.4 (0.9%), b_tok_touch_all:
-        4.1 (0.8%), b_finish: 0.74 (0.1%), tests_pri_0: 412 (82.2%),
-        check_dkim_signature: 0.86 (0.2%), check_dkim_adsp: 4.8 (1.0%),
-        tests_pri_500: 7 (1.4%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] kernel/signal: Remove no longer required irqsave/restore
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Paul E. McKenney" <paulmck@linux.vnet.ibm.com> writes:
+Hello everyone,
 
-> On Fri, May 04, 2018 at 12:17:20PM -0500, Eric W. Biederman wrote:
->> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
->> 
->> > On 2018-05-04 11:59:08 [-0500], Eric W. Biederman wrote:
->> >> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
->> >> > From: Anna-Maria Gleixner <anna-maria@linutronix.de>
->> > …
->> >> > This long-term fix has been made in commit 4abf91047cf ("rtmutex: Make >
->> >> > wait_lock irq safe") for different reason.
->> >> 
->> >> Which tree has this change been made in?  I am not finding the commit
->> >> you mention above in Linus's tree.
->> >
->> > I'm sorry, it should have been commit b4abf91047cf ("rtmutex: Make
->> > wait_lock irq safe").
->> 
->> Can you fix that in your patch description and can you also up the
->> description of rcu_read_unlock?
->> 
->> If we don't need to jump through hoops it looks very reasonable to
->> remove this unnecessary logic.  But we should fix the description
->> in rcu_read_unlock that still says we need these hoops.
->
-> The hoops are still required for rcu_read_lock(), otherwise you
-> get deadlocks between the scheduler and RCU in PREEMPT=y kernels.
-> What happens with this patch (if I understand it correctly) is that the
-> signal code now uses a different way of jumping through the hoops.
-> But the hoops are still jumped through.
+This is a V9 of my series that adds SMP support for Allwinner sun8i-a83t.
+Based on sunxi's tree, sunxi/for-next branch.
+Depends on a patch from Doug Berger that allows to include the "cpu-type"
+header on assembly files that I included in my series (patch 01).
 
-The patch changes:
+The difference with the v8 is just that the machine is renamed in sun8i-a83t
+(see patch 07), according to Maxime's review.
 
-local_irq_disable();
-rcu_read_lock();
-spin_lock();
-rcu_read_unlock();
+Thank you in advance,
+Best regards,
+Mylène
 
-to:
+Changes from v8:
+    - Rename machine into "sun8i-a83t"
 
-rcu_read_lock();
-spin_lock_irq();
-rcu_read_unlock();
+Changes from v7:
+    - Add the patch of Doug Berger in my series.
+    - Rename the machine name to start secure_cntvoff into "sun8i-a83t",
+    according to Maxime's review.
+    - Change the type of is_a83t field from integer into boolean.
 
-Now that I have a chance to relfect on it the fact that the patern
-that is being restored does not work is scary.  As the failure has
-nothing to do with lock ordering and people won't realize what is going
-on.  Especially since the common rcu modes won't care.
+Changes from v6:
+    - Correct the commit log on patch 07 according to Sergei Shtylyov's
+    review.
+    - Rename the field "is_sun8i" into "is_a83t".
+    - Add all Tested-by and Reviewed-by from previous version.
 
-So is it true that taking spin_lock_irq before calling rcu_read_unlock
-is a problem because of rt_mutex_unlock()?  Or has b4abf91047cf ("rtmutex: Make
-wait_lock irq safe") actually fixed that and we can correct the
-documentation of rcu_read_unlock() ?  And fix __lock_task_sighand?
+Changes from v5:
+    - Remove my patch 01 and use the patch of Doug Berger to be able to
+    include the cpu-type header on assembly files.
+    - Rename smp_init_cntvoff function into secure_cntvoff_init according
+    to Marc Zyngier's review.
+    - According to Chen-Yu and Maxime's reviews, remove the patch that was
+    moving structures. Instead of using an index to retrieve which
+    architecture we are having, use a global variable.
+    - Merge the 2 patches that move assembly code from C to assembly file.
+    - Use a sun8i field instead of sun9i to know on which architecture we
+    are using because many modifications/additions of the code are for
+    sun8i-a83t.
+    - Rework the patch "add is_sun8i field" to add only this field in this
+    patch. The part of the patch that was starting to handle the differences
+    between sun8i-a83t and sun9i-a80 is merged in the patch that adds the
+    support of sun8i-a83t.
+    - Add a new patch that refactor the shmobile code to use the new function
+    secure_cntvoff_init introduced in this series.
 
-Eric
+Changes from v4:
+    - Rebased my series according to new Chen-Yu series:
+       "ARM: sunxi: Clean and improvements for multi-cluster SMP"
+       https://lkml.org/lkml/2018/3/8/886
+    - Updated my series according to Marc Zyngier's reviews to add CNTVOFF
+    initialization's function into ARM's common part. Thanks to that, other
+    platforms such as Renesa can use this function.
+    - For boot CPU, create a new machine to handle the CNTVOFF initialization
+    using "init_early" callback.
+
+Changes from v3:
+    - Take into account Maxime's reviews:
+	- split the first patch into 4 new patches: add sun9i device tree
+	parsing, rename some variables, add a83t support and finally,
+	add hotplug support.
+	- Move the code of previous patch 07 (to disable CPU0 disabling)
+	into hotplug support patch (see patch 04)
+	- Remove the patch that added PRCM register because it is already
+	available. Because of that, update the device tree parsing to use
+	"sun8i-a83t-r-ccu".
+	- Use a variable to know which SoC we currently have
+    - Take into account Chen-Yu's reviews: create two iounmap functions
+    to release the resources of the device tree parsing.
+    - Take into account Marc's review: Update the code to initialize CNTVOFF
+    register. As there is already assembly code in the driver, I decided
+    to create an assembly file not to mix assembly and C code.
+    For that, I create 3 new patches: move the current assembly code that
+    handles the cluster cache enabling into a file, move the cpu_resume entry
+    in this file and finally, add a new assembly entry to initialize the timer
+    offset for boot CPU and secondary CPUs.
+
+Changes from v2:
+    - Rebased my modifications according to new Chen Yu's patch series
+    that adds SMP support for sun9i-a80 (without MCPM).
+    - Split the device-tree patches into 3 patches for CPUCFG, R_CPUCFG
+    and PRCM registers for more visibility.
+    - The hotplug of CPU0 is currently not working (even after trying what
+    Allwinner's code is doing) so remove the possibility of disabling
+    this CPU. Created a new patch for it.
+
+Changes from v1:
+    - Add Chen Yu's patch in my series (see path 01)
+    - Add new compatibles for prcm and cpucfg registers for sun8i-a83t.
+    Create two functions to separate the DT parsing of sun9i-a80 and
+    sun8i-a83t.
+    - Thanks to Maxime's review: order device tree's nodes according
+    to physical addresses, remove unused label and fix registers' sizes.
+    Update the commit log and commit title of my last patch (see
+    patch 05).
+
+Doug Berger (1):
+  ARM: Allow this header to be included by assembly files
+
+Mylène Josserand (11):
+  ARM: sunxi: smp: Move assembly code into a file
+  ARM: dts: sun8i: Add CPUCFG device node for A83T dtsi
+  ARM: dts: sun8i: Add R_CPUCFG device node for the A83T dtsi
+  ARM: dts: sun8i: a83t: Add CCI-400 node
+  ARM: smp: Add initialization of CNTVOFF
+  ARM: sunxi: Add initialization of CNTVOFF
+  ARM: sun9i: smp: Rename clusters's power-off
+  ARM: sun9i: smp: Add is_a83t field
+  ARM: sun8i: smp: Add support for A83T
+  ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
+  ARM: shmobile: Convert file to use cntvoff
+
+ arch/arm/boot/dts/sun8i-a83t.dtsi        |  59 ++++++++
+ arch/arm/common/Makefile                 |   1 +
+ arch/arm/common/secure_cntvoff.S         |  31 ++++
+ arch/arm/include/asm/cputype.h           |  10 +-
+ arch/arm/include/asm/secure_cntvoff.h    |   8 ++
+ arch/arm/mach-shmobile/common.h          |   1 -
+ arch/arm/mach-shmobile/headsmp-apmu.S    |  22 +--
+ arch/arm/mach-shmobile/setup-rcar-gen2.c |   3 +-
+ arch/arm/mach-sunxi/Kconfig              |   2 +-
+ arch/arm/mach-sunxi/Makefile             |   2 +-
+ arch/arm/mach-sunxi/headsmp.S            |  81 +++++++++++
+ arch/arm/mach-sunxi/mc_smp.c             | 239 +++++++++++++++++++------------
+ arch/arm/mach-sunxi/sunxi.c              |  20 ++-
+ 13 files changed, 356 insertions(+), 123 deletions(-)
+ create mode 100644 arch/arm/common/secure_cntvoff.S
+ create mode 100644 arch/arm/include/asm/secure_cntvoff.h
+ create mode 100644 arch/arm/mach-sunxi/headsmp.S
+
+-- 
+2.11.0
