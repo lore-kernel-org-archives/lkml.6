@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751275AbeEDBKH (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 21:10:07 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52082 "EHLO
+        id S1751371AbeEDBKQ (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 21:10:16 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:52101 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751190AbeEDBKG (ORCPT
+        with ESMTP id S1751336AbeEDBKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 21:10:06 -0400
+        Thu, 3 May 2018 21:10:13 -0400
 From: Tyler Hicks <tyhicks@canonical.com>
 To: linux-kernel@vger.kernel.org
 Cc: Kees Cook <keescook@chromium.org>,
@@ -15,9 +15,9 @@ Cc: Kees Cook <keescook@chromium.org>,
         Steve Grubb <sgrubb@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
         linux-audit@redhat.com, linux-security-module@vger.kernel.org,
         linux-doc@vger.kernel.org
-Subject: [PATCH v3 3/4] seccomp: Audit attempts to modify the actions_logged sysctl
-Date: Fri,  4 May 2018 01:08:14 +0000
-Message-Id: <1525396095-27737-4-git-send-email-tyhicks@canonical.com>
+Subject: [PATCH v3 2/4] seccomp: Configurable separator for the actions_logged string
+Date: Fri,  4 May 2018 01:08:13 +0000
+Message-Id: <1525396095-27737-3-git-send-email-tyhicks@canonical.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525396095-27737-1-git-send-email-tyhicks@canonical.com>
 References: <1525396095-27737-1-git-send-email-tyhicks@canonical.com>
@@ -25,210 +25,67 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The decision to log a seccomp action will always be subject to the
-value of the kernel.seccomp.actions_logged sysctl, even for processes
-that are being inspected via the audit subsystem, in an upcoming patch.
-Therefore, we need to emit an audit record on attempts at writing to the
-actions_logged sysctl when auditing is enabled.
+The function that converts a bitmask of seccomp actions that are
+allowed to be logged is currently only used for constructing the display
+string for the kernel.seccomp.actions_logged sysctl. That string wants a
+space character to be used for the separator between actions.
 
-This patch updates the write handler for the actions_logged sysctl to
-emit an audit record on attempts to write to the sysctl. Successful
-writes to the sysctl will result in a record that includes a normalized
-list of logged actions in the "actions" field and a "res" field equal to
-1. Unsuccessful writes to the sysctl will result in a record that
-doesn't include the "actions" field and has a "res" field equal to 0.
+A future patch will make use of the same function for building a string
+that will be sent to the audit subsystem for tracking modifications to
+the kernel.seccomp.actions_logged sysctl. That string will need to use a
+comma as a separator. This patch allows the separator character to be
+configurable to meet both needs.
 
-Not all unsuccessful writes to the sysctl are audited. For example, an
-audit record will not be emitted if an unprivileged process attempts to
-open the sysctl file for reading since that access control check is not
-part of the sysctl's write handler.
-
-Below are some example audit records when writing various strings to the
-actions_logged sysctl.
-
-Writing "not-a-real-action", when the kernel.seccomp.actions_logged
-sysctl previously was "kill_process kill_thread trap errno trace log",
-emits this audit record:
-
- type=CONFIG_CHANGE msg=audit(1525392371.454:120): op=seccomp-logging
- actions=? old-actions=kill_process,kill_thread,trap,errno,trace,log
- res=0
-
-If you then write "kill_process kill_thread errno trace log", this audit
-record is emitted:
-
- type=CONFIG_CHANGE msg=audit(1525392401.645:126): op=seccomp-logging
- actions=kill_process,kill_thread,errno,trace,log
- old-actions=kill_process,kill_thread,trap,errno,trace,log res=1
-
-If you then write "log log errno trace kill_process kill_thread", which
-is unordered and contains the log action twice, it results in the same
-actions value as the previous record:
-
- type=CONFIG_CHANGE msg=audit(1525392436.354:132): op=seccomp-logging
- actions=kill_process,kill_thread,errno,trace,log
- old-actions=kill_process,kill_thread,errno,trace,log res=1
-
-If you then write an empty string to the sysctl, this audit record is
-emitted:
-
- type=CONFIG_CHANGE msg=audit(1525392494.413:138): op=seccomp-logging
- actions=(none) old-actions=kill_process,kill_thread,errno,trace,log
- res=1
-
-No audit records are generated when reading the actions_logged sysctl.
-
-Suggested-by: Steve Grubb <sgrubb@redhat.com>
 Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
 ---
- include/linux/audit.h |  5 +++++
- kernel/auditsc.c      | 20 ++++++++++++++++++
- kernel/seccomp.c      | 58 +++++++++++++++++++++++++++++++++++++++++++--------
- 3 files changed, 74 insertions(+), 9 deletions(-)
+ kernel/seccomp.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 75d5b03..d4e35e7 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -233,6 +233,8 @@ extern void __audit_inode_child(struct inode *parent,
- 				const struct dentry *dentry,
- 				const unsigned char type);
- extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-+extern void audit_seccomp_actions_logged(const char *names,
-+					 const char *old_names, int res);
- extern void __audit_ptrace(struct task_struct *t);
- 
- static inline bool audit_dummy_context(void)
-@@ -502,6 +504,9 @@ static inline void __audit_seccomp(unsigned long syscall, long signr, int code)
- { }
- static inline void audit_seccomp(unsigned long syscall, long signr, int code)
- { }
-+static inline void audit_seccomp_actions_logged(const char *names,
-+						const char *old_names, int res)
-+{ }
- static inline int auditsc_get_stamp(struct audit_context *ctx,
- 			      struct timespec64 *t, unsigned int *serial)
- {
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 4e0a4ac..5195a29 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2478,6 +2478,26 @@ void __audit_seccomp(unsigned long syscall, long signr, int code)
- 	audit_log_end(ab);
- }
- 
-+void audit_seccomp_actions_logged(const char *names, const char *old_names,
-+				  int res)
-+{
-+	struct audit_buffer *ab;
-+
-+	if (!audit_enabled)
-+		return;
-+
-+	ab = audit_log_start(current->audit_context, GFP_KERNEL,
-+			     AUDIT_CONFIG_CHANGE);
-+	if (unlikely(!ab))
-+		return;
-+
-+	audit_log_format(ab, "op=seccomp-logging");
-+	audit_log_format(ab, " actions=%s", names);
-+	audit_log_format(ab, " old-actions=%s", old_names);
-+	audit_log_format(ab, " res=%d", res);
-+	audit_log_end(ab);
-+}
-+
- struct list_head *audit_killed_trees(void)
- {
- 	struct audit_context *ctx = current->audit_context;
 diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-index b36ac1e..f5630d1 100644
+index f4afe67..b36ac1e 100644
 --- a/kernel/seccomp.c
 +++ b/kernel/seccomp.c
-@@ -1219,11 +1219,10 @@ static int read_actions_logged(struct ctl_table *ro_table, void __user *buffer,
- }
+@@ -1135,10 +1135,11 @@ static const struct seccomp_log_name seccomp_log_names[] = {
+ };
  
- static int write_actions_logged(struct ctl_table *ro_table, void __user *buffer,
--				size_t *lenp, loff_t *ppos)
-+				size_t *lenp, loff_t *ppos, u32 *actions_logged)
+ static bool seccomp_names_from_actions_logged(char *names, size_t size,
+-					      u32 actions_logged)
++					      u32 actions_logged,
++					      const char *sep)
  {
- 	char names[sizeof(seccomp_actions_avail)];
- 	struct ctl_table table;
--	u32 actions_logged;
- 	int ret;
+ 	const struct seccomp_log_name *cur;
+-	bool append_space = false;
++	bool append_sep = false;
  
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -1238,24 +1237,65 @@ static int write_actions_logged(struct ctl_table *ro_table, void __user *buffer,
- 	if (ret)
- 		return ret;
+ 	for (cur = seccomp_log_names; cur->name && size; cur++) {
+ 		ssize_t ret;
+@@ -1146,15 +1147,15 @@ static bool seccomp_names_from_actions_logged(char *names, size_t size,
+ 		if (!(actions_logged & cur->log))
+ 			continue;
  
--	if (!seccomp_actions_logged_from_names(&actions_logged, table.data))
-+	if (!seccomp_actions_logged_from_names(actions_logged, table.data))
+-		if (append_space) {
+-			ret = strscpy(names, " ", size);
++		if (append_sep) {
++			ret = strscpy(names, sep, size);
+ 			if (ret < 0)
+ 				return false;
+ 
+ 			names += ret;
+ 			size -= ret;
+ 		} else
+-			append_space = true;
++			append_sep = true;
+ 
+ 		ret = strscpy(names, cur->name, size);
+ 		if (ret < 0)
+@@ -1208,7 +1209,7 @@ static int read_actions_logged(struct ctl_table *ro_table, void __user *buffer,
+ 	memset(names, 0, sizeof(names));
+ 
+ 	if (!seccomp_names_from_actions_logged(names, sizeof(names),
+-					       seccomp_actions_logged))
++					       seccomp_actions_logged, " "))
  		return -EINVAL;
  
--	if (actions_logged & SECCOMP_LOG_ALLOW)
-+	if (*actions_logged & SECCOMP_LOG_ALLOW)
- 		return -EINVAL;
- 
--	seccomp_actions_logged = actions_logged;
-+	seccomp_actions_logged = *actions_logged;
- 	return 0;
- }
- 
-+static void audit_actions_logged(u32 actions_logged, u32 old_actions_logged,
-+				 int ret)
-+{
-+	char names[sizeof(seccomp_actions_avail)];
-+	char old_names[sizeof(seccomp_actions_avail)];
-+	const char *new = names;
-+	const char *old = old_names;
-+
-+	if (!audit_enabled)
-+		return;
-+
-+	memset(names, 0, sizeof(names));
-+	memset(old_names, 0, sizeof(old_names));
-+
-+	if (ret)
-+		new = "?";
-+	else if (!actions_logged)
-+		new = "(none)";
-+	else if (!seccomp_names_from_actions_logged(names, sizeof(names),
-+						    actions_logged, ","))
-+		new = "?";
-+
-+	if (!old_actions_logged)
-+		old = "(none)";
-+	else if (!seccomp_names_from_actions_logged(old_names,
-+						    sizeof(old_names),
-+						    old_actions_logged, ","))
-+		old = "?";
-+
-+	return audit_seccomp_actions_logged(new, old, !ret);
-+}
-+
- static int seccomp_actions_logged_handler(struct ctl_table *ro_table, int write,
- 					  void __user *buffer, size_t *lenp,
- 					  loff_t *ppos)
- {
--	if (write)
--		return write_actions_logged(ro_table, buffer, lenp, ppos);
--	else
--		return read_actions_logged(ro_table, buffer, lenp, ppos);
-+	int ret;
-+
-+	if (write) {
-+		u32 actions_logged = 0;
-+		u32 old_actions_logged = seccomp_actions_logged;
-+
-+		ret = write_actions_logged(ro_table, buffer, lenp, ppos,
-+					   &actions_logged);
-+		audit_actions_logged(actions_logged, old_actions_logged, ret);
-+	} else
-+		ret = read_actions_logged(ro_table, buffer, lenp, ppos);
-+
-+	return ret;
- }
- 
- static struct ctl_path seccomp_sysctl_path[] = {
+ 	table = *ro_table;
 -- 
 2.7.4
