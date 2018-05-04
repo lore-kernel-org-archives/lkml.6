@@ -1,70 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeEDSk0 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 14:40:26 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42423 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751736AbeEDSkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 14:40:25 -0400
-Date: Fri, 4 May 2018 20:40:13 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Radu Pirea <radu.pirea@microchip.com>
-Cc: <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <Zhiqiang.Hou@nxp.com>, <pp@emlix.com>, <richard@nod.at>,
-        <computersforpeace@gmail.com>, <dwmw2@infradead.org>,
-        <marek.vasut@gmail.com>
-Subject: Re: [PATCH] mtd: spi-nor: add support for Microchip 25LC256
-Message-ID: <20180504204013.254d90cf@bbrezillon>
-In-Reply-To: <20180504155404.5285-1-radu.pirea@microchip.com>
-References: <20180504155404.5285-1-radu.pirea@microchip.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S1751709AbeEDSpx (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 14:45:53 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42650 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeEDSpv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 14:45:51 -0400
+Date: Fri, 4 May 2018 20:45:39 +0200
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [RFC PATCH 2/2] net: mac808211: mac802154: use
+ lockdep_assert_in_softirq() instead own warning
+Message-ID: <20180504184538.gavk7e2vtm73e32w@linutronix.de>
+References: <20180504175144.12179-1-bigeasy@linutronix.de>
+ <20180504175144.12179-3-bigeasy@linutronix.de>
+ <20180504183249.GU12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180504183249.GU12217@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 May 2018 18:54:04 +0300
-Radu Pirea <radu.pirea@microchip.com> wrote:
-
-> Added geometry description for Microchip 25LC256 memory.
-
-Same as for the dataflash stuff you posted a few weeks ago: I don't
-think this device belongs in the SPI NOR framework.
-
+On 2018-05-04 20:32:49 [+0200], Peter Zijlstra wrote:
+> On Fri, May 04, 2018 at 07:51:44PM +0200, Sebastian Andrzej Siewior wrote:
+> > From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+> > 
+> > The warning in ieee802154_rx() and ieee80211_rx_napi() is there to ensure
+> > the softirq context for the subsequent netif_receive_skb() call. 
 > 
-> Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-> ---
->  drivers/mtd/devices/m25p80.c  | 3 +++
->  drivers/mtd/spi-nor/spi-nor.c | 3 +++
->  2 files changed, 6 insertions(+)
-> 
-> diff --git a/drivers/mtd/devices/m25p80.c b/drivers/mtd/devices/m25p80.c
-> index a4e18f6aaa33..1e359d811261 100644
-> --- a/drivers/mtd/devices/m25p80.c
-> +++ b/drivers/mtd/devices/m25p80.c
-> @@ -372,6 +372,9 @@ static const struct spi_device_id m25p_ids[] = {
->  	{ "mr25h10" },  /*   1 Mib, 40 MHz */
->  	{ "mr25h40" },  /*   4 Mib, 40 MHz */
->  
-> +	/* Microchip */
-> +	{ "25lc256" },
-> +
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(spi, m25p_ids);
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index d445a4d3b770..6341c86be647 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -1076,6 +1076,9 @@ static const struct flash_info spi_nor_ids[] = {
->  	{ "mx66l1g45g",  INFO(0xc2201b, 0, 64 * 1024, 2048, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
->  	{ "mx66l1g55g",  INFO(0xc2261b, 0, 64 * 1024, 2048, SPI_NOR_QUAD_READ) },
->  
-> +	/* Microchip */
-> +	{ "25lc256", CAT25_INFO(32 * 1024, 1, 64, 2, SPI_NOR_NO_ERASE | SPI_NOR_NO_FR) },
-> +
->  	/* Micron */
->  	{ "n25q016a",	 INFO(0x20bb15, 0, 64 * 1024,   32, SECT_4K | SPI_NOR_QUAD_READ) },
->  	{ "n25q032",	 INFO(0x20ba16, 0, 64 * 1024,   64, SPI_NOR_QUAD_READ) },
+> That's not in fact what it does though; so while that might indeed be
+> the intent that's not what it does.
+
+It was introduced in commit d20ef63d3246 ("mac80211: document
+ieee80211_rx() context requirement"):
+
+    mac80211: document ieee80211_rx() context requirement
+    
+    ieee80211_rx() must be called with softirqs disabled
+    since the networking stack requires this for netif_rx()
+    and some code in mac80211 can assume that it can not
+    be processing its own tasklet and this call at the same
+    time.
+    
+    It may be possible to remove this requirement after a
+    careful audit of mac80211 and doing any needed locking
+    improvements in it along with disabling softirqs around
+    netif_rx(). An alternative might be to push all packet
+    processing to process context in mac80211, instead of
+    to the tasklet, and add other synchronisation.
+
+Sebastian
