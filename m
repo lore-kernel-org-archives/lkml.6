@@ -1,117 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751403AbeEDHFH (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:05:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55936 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750733AbeEDHFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:05:05 -0400
-Subject: Re: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
-To: js1304@gmail.com, Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>,
-        Ye Xiaolong <xiaolong.ye@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-References: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
-Date: Fri, 4 May 2018 09:03:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1751455AbeEDHFT (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:05:19 -0400
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:45284 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751412AbeEDHFR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 03:05:17 -0400
+X-Google-Smtp-Source: AB8JxZoT7HLLhfaLXm5tHsGJY8TwJoS3DpcLsa/T/ZAsXIiYbH9PF0basfn8vxpJQspNQ4jH8+Y+Sw==
+From: Wenwen Wang <wang6495@umn.edu>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Jamal Hadi Salim <jhs@mojatatu.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org (open list:TC subsystem),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] net: sched: cls: fix a potential missing-check bug
+Date: Fri,  4 May 2018 02:05:05 -0500
+Message-Id: <1525417505-19056-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/04/2018 06:30 AM, js1304@gmail.com wrote:
-> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> 
-> Currently, we use the zone index of preferred_zone which represents
-> the best matching zone for allocation, as classzone_idx. It has a problem
-> on NUMA system with ZONE_MOVABLE.
-> 
-> In NUMA system, it can be possible that each node has different populated
-> zones. For example, node 0 could have DMA/DMA32/NORMAL/MOVABLE zone and
-> node 1 could have only NORMAL zone. In this setup, allocation request
-> initiated on node 0 and the one on node 1 would have different
-> classzone_idx, 3 and 2, respectively, since their preferred_zones are
-> different. If they are handled by only their own node, there is no problem.
-> However, if they are somtimes handled by the remote node, the problem
-> would happen.
-> 
-> In the following setup, allocation initiated on node 1 will have some
-> precedence than allocation initiated on node 0 when former allocation is
-> processed on node 0 due to not enough memory on node 1. They will have
-> different lowmem reserve due to their different classzone_idx thus
-> an watermark bars are also different.
-> 
-...
+In rsvp_change(), the value of f->res.classid is checked to be no more
+than 255. Otherwise, the execution will goto errout. This is enforced by a
+if-statement check. However, in the following execution, f->res.classid is
+assigned with a new value returned from gen_tunnel(), and the new value
+is only checked against 0. Given that gen_tunnel() may return a value
+larger than 255 based on data, the new value of f->res.classid should
+be re-checked.
 
-> 
-> min watermark for NORMAL zone on node 0
-> allocation initiated on node 0: 750 + 4096 = 4846
-> allocation initiated on node 1: 750 + 0 = 750
-> 
-> This watermark difference could cause too many numa_miss allocation
-> in some situation and then performance could be downgraded.
-> 
-> Recently, there was a regression report about this problem on CMA patches
-> since CMA memory are placed in ZONE_MOVABLE by those patches. I checked
-> that problem is disappeared with this fix that uses high_zoneidx
-> for classzone_idx.
-> 
-> http://lkml.kernel.org/r/20180102063528.GG30397@yexl-desktop
-> 
-> Using high_zoneidx for classzone_idx is more consistent way than previous
-> approach because system's memory layout doesn't affect anything to it.
+This patch adds a re-check to ensure the new value of f->res.classid is not
+great than 255; otherwise, an error code will be returned.
 
-So to summarize;
-- ac->high_zoneidx is computed via the arcane gfp_zone(gfp_mask) and
-represents the highest zone the allocation can use
-- classzone_idx was supposed to be the highest zone that the allocation
-can use, that is actually available in the system. Somehow that became
-the highest zone that is available on the preferred node (in the default
-node-order zonelist), which causes the watermark inconsistencies you
-mention.
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ net/sched/cls_rsvp.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I don't see a problem with your change. I would be worried about
-inflated reserves when e.g. ZONE_MOVABLE doesn't exist, but that doesn't
-seem to be the case. My laptop has empty ZONE_MOVABLE and the
-ZONE_NORMAL protection for movable is 0.
-
-But there had to be some reason for classzone_idx to be like this and
-not simple high_zoneidx. Maybe Mel remembers? Maybe it was important
-then, but is not anymore? Sigh, it seems to be pre-git.
-
-> With this patch, both classzone_idx on above example will be 3 so will
-> have the same min watermark.
-> 
-> allocation initiated on node 0: 750 + 4096 = 4846
-> allocation initiated on node 1: 750 + 4096 = 4846
-> 
-> Reported-by: Ye Xiaolong <xiaolong.ye@intel.com>
-> Tested-by: Ye Xiaolong <xiaolong.ye@intel.com>
-> Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> ---
->  mm/internal.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/internal.h b/mm/internal.h
-> index 228dd66..e1d7376 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -123,7 +123,7 @@ struct alloc_context {
->  	bool spread_dirty_pages;
->  };
->  
-> -#define ac_classzone_idx(ac) zonelist_zone_idx(ac->preferred_zoneref)
-> +#define ac_classzone_idx(ac) (ac->high_zoneidx)
->  
->  /*
->   * Locate the struct page for both the matching buddy in our
-> 
+diff --git a/net/sched/cls_rsvp.h b/net/sched/cls_rsvp.h
+index 4f12976..7ced8fc 100644
+--- a/net/sched/cls_rsvp.h
++++ b/net/sched/cls_rsvp.h
+@@ -590,6 +590,9 @@ static int rsvp_change(struct net *net, struct sk_buff *in_skb,
+ 		if (f->res.classid == 0 &&
+ 		    (f->res.classid = gen_tunnel(data)) == 0)
+ 			goto errout;
++
++		if (f->res.classid > 255)
++			goto errout;
+ 	}
+ 
+ 	for (sp = &data->ht[h1];
+-- 
+2.7.4
