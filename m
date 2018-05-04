@@ -1,55 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751875AbeEDRwJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:52:09 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42370 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751558AbeEDRwF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:52:05 -0400
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org
-Subject: [RFC PATCH 0/2] Introduce assert_in_softirq()
-Date: Fri,  4 May 2018 19:51:42 +0200
-Message-Id: <20180504175144.12179-1-bigeasy@linutronix.de>
-X-Mailer: git-send-email 2.17.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        id S1751900AbeEDRwP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:52:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751558AbeEDRwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:52:13 -0400
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: avoid fsync() failure caused by EAGAIN in writepage()
+Date: Fri,  4 May 2018 10:52:10 -0700
+Message-Id: <20180504175210.26903-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.17.0.484.g0c8726318c-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ieee80211_rx_napi() has a check to ensure that it is invoked in softirq
-context / with BH disabled. It is there because it invokes
-netif_receive_skb() which has this requirement.
-On -RT this check does not work as expected so there is always this
-warning.
-Tree wide there are two users of this check: ieee80211_rx_napi() and
-ieee802154_rx(). This approach introduces assert_in_softirq() which does
-the check if lockdep is enabled. This check could then become a nop on
--RT.
+pageout() in MM traslates EAGAIN, so calls handle_write_error()
+ -> mapping_set_error() -> set_bit(AS_EIO, ...).
+ file_write_and_wait_range() will see EIO error, which is critical
+ to return value of fsync() followed by atomic_write failure to user.
 
-As an alternative netif_receive_skb() (or ieee80211_rx_napi() could do
-local_bh_disable() / local_bh_enable() unconditionally. The _disable()
-part is very cheap. The _enable() part is more expensive because it
-includes a function call. We could avoid that jump in the likely case
-when BH was already disabled by something like:
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/data.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
- static inline void local_bh_enable(void)
- {
-         if (softirq_count() =3D=3D SOFTIRQ_DISABLE_OFFSET)
-                 __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
-         else
-                 preempt_count_sub(SOFTIRQ_DISABLE_OFFSET);
- }
-
-Which would make bh_enable() cheaper for everyone.
-
-Sebastian
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5477fc09c3cd..ac8720fa5868 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1904,7 +1904,13 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 
+ redirty_out:
+ 	redirty_page_for_writepage(wbc, page);
+-	if (!err)
++	/*
++	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
++	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
++	 * file_write_and_wait_range() will see EIO error, which is critical
++	 * to return value of fsync() followed by atomic_write failure to user.
++	 */
++	if (!err || wbc->for_reclaim)
+ 		return AOP_WRITEPAGE_ACTIVATE;
+ 	unlock_page(page);
+ 	return err;
+-- 
+2.17.0.484.g0c8726318c-goog
