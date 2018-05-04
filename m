@@ -1,154 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751411AbeEDBUP (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 21:20:15 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33758 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751314AbeEDBUN (ORCPT
+        id S1751344AbeEDBXo (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 21:23:44 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:43683 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751236AbeEDBXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 21:20:13 -0400
-X-Google-Smtp-Source: AB8JxZrMY6kVVxVTqgi1rJ1gzxE3/LihB8PNPFk5ODVa7NcqWVfbuOnDL2h1TXyb8PRtYiELpuad/g==
-From: Dmitry Safonov <dima@arista.com>
-To: linux-kernel@vger.kernel.org
-Cc: 0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Masahide NAKAMURA <nakam@linux-ipv6.org>,
-        YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Subject: [PATCHv2] net/xfrm: Revert "[XFRM]: Do not add a state whose SPI is zero to the SPI hash."
-Date: Fri,  4 May 2018 02:20:09 +0100
-Message-Id: <20180504012009.643-1-dima@arista.com>
-X-Mailer: git-send-email 2.13.6
+        Thu, 3 May 2018 21:23:42 -0400
+X-Google-Smtp-Source: AB8JxZoQFNBPINRZFSRvcOhGTxtsAV5vQM6fj5WfWbvIKur5ljP+RYYjQya6A6QQa4Q3wH7OoLT6Iw==
+Date: Thu, 3 May 2018 22:23:31 -0300
+From: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To: Christian Brauner <christian.brauner@canonical.com>
+Cc: linux-next@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -next] user_namespace: Replace gotos with return
+ statements
+Message-ID: <20180504012328.GA4719@bebop>
+References: <20180419024641.24213-1-marcos.souza.org@gmail.com>
+ <CAPP7u0XztHVja18pJV+0cfRNr7cGmKq4i0nYKt03Sd6oyKUuVQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPP7u0XztHVja18pJV+0cfRNr7cGmKq4i0nYKt03Sd6oyKUuVQ@mail.gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 7b4dc3600e48 ("[XFRM]: Do not add a state whose SPI
-is zero to the SPI hash.").
+On Wed, May 02, 2018 at 04:12:18PM +0200, Christian Brauner wrote:
+> On Wed, Apr 18, 2018 at 11:46:38PM -0300, Marcos Paulo de Souza wrote:
+> > Found while inspecting the code that handles the setgroups procfs file.
+> 
+> This is not really improving anything so I unfortunately don't really
+> see why we should take this.
 
-Zero SPI is legal and defined for IPcomp.
-We shouldn't omit adding the state to SPI hash because it'll not be
-possible to delete or lookup for it afterward:
-__xfrm_state_insert() obviously doesn't add hash for zero
-SPI in xfrm.state_byspi, and xfrm_user_state_lookup() will fail as
-xfrm_state_lookup() does lookups by hash.
+Sorry for the late reply. My idea was to make the code more straightforward,
+never happened to me this would led to a worse code being generated. So, please
+discard the patch.
 
-It also isn't possible to workaround from userspace as
-xfrm_id_proto_match() will be always true for ah/esp/comp protos.
+Thanks,
 
-v1 link: https://lkml.kernel.org/r/<20180502020220.2027-1-dima@arista.com>
+> 
+> Christian
+> 
+> >
+> > Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+> > ---
+> > Tested locally setting up a new userns, and setting setgroups as deny and allow,
+> > worked as before.
+> >
+> >  kernel/user_namespace.c | 20 +++++++-------------
+> >  1 file changed, 7 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> > index 246d4d4ce5c7..64a01254ac6b 100644
+> > --- a/kernel/user_namespace.c
+> > +++ b/kernel/user_namespace.c
+> > @@ -1142,22 +1142,18 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+> >   struct user_namespace *ns = seq->private;
+> >   char kbuf[8], *pos;
+> >   bool setgroups_allowed;
+> > - ssize_t ret;
+> >
+> >   /* Only allow a very narrow range of strings to be written */
+> > - ret = -EINVAL;
+> >   if ((*ppos != 0) || (count >= sizeof(kbuf)))
+> > - goto out;
+> > + return -EINVAL;
+> >
+> >   /* What was written? */
+> > - ret = -EFAULT;
+> >   if (copy_from_user(kbuf, buf, count))
+> > - goto out;
+> > + return -EFAULT;
+> >   kbuf[count] = '\0';
+> >   pos = kbuf;
+> >
+> >   /* What is being requested? */
+> > - ret = -EINVAL;
+> >   if (strncmp(pos, "allow", 5) == 0) {
+> >   pos += 5;
+> >   setgroups_allowed = true;
+> > @@ -1167,14 +1163,13 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+> >   setgroups_allowed = false;
+> >   }
+> >   else
+> > - goto out;
+> > + return -EINVAL;
+> >
+> >   /* Verify there is not trailing junk on the line */
+> >   pos = skip_spaces(pos);
+> >   if (*pos != '\0')
+> > - goto out;
+> > + return -EINVAL;
+> >
+> > - ret = -EPERM;
+> >   mutex_lock(&userns_state_mutex);
+> >   if (setgroups_allowed) {
+> >   /* Enabling setgroups after setgroups has been disabled
+> > @@ -1194,12 +1189,11 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+> >
+> >   /* Report a successful write */
+> >   *ppos = count;
+> > - ret = count;
+> > -out:
+> > - return ret;
+> > + return count;
+> > +
+> >  out_unlock:
+> >   mutex_unlock(&userns_state_mutex);
+> > - goto out;
+> > + return -EPERM;
+> >  }
+> >
+> >  bool userns_may_setgroups(const struct user_namespace *ns)
+> > --
+> > 2.14.3
+> >
 
-Cc: Masahide NAKAMURA <nakam@linux-ipv6.org>
-Cc: YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org
-Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- net/xfrm/xfrm_state.c | 39 +++++++++++++++------------------------
- 1 file changed, 15 insertions(+), 24 deletions(-)
-
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index f9d2f2233f09..03afe5423448 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -97,12 +97,9 @@ static void xfrm_hash_transfer(struct hlist_head *list,
- 				    nhashmask);
- 		hlist_add_head_rcu(&x->bysrc, nsrctable + h);
- 
--		if (x->id.spi) {
--			h = __xfrm_spi_hash(&x->id.daddr, x->id.spi,
--					    x->id.proto, x->props.family,
--					    nhashmask);
--			hlist_add_head_rcu(&x->byspi, nspitable + h);
--		}
-+		h = __xfrm_spi_hash(&x->id.daddr, x->id.spi, x->id.proto,
-+				    x->props.family, nhashmask);
-+		hlist_add_head_rcu(&x->byspi, nspitable + h);
- 	}
- }
- 
-@@ -613,8 +610,7 @@ int __xfrm_state_delete(struct xfrm_state *x)
- 		list_del(&x->km.all);
- 		hlist_del_rcu(&x->bydst);
- 		hlist_del_rcu(&x->bysrc);
--		if (x->id.spi)
--			hlist_del_rcu(&x->byspi);
-+		hlist_del_rcu(&x->byspi);
- 		net->xfrm.state_num--;
- 		spin_unlock(&net->xfrm.xfrm_state_lock);
- 
-@@ -958,7 +954,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- 		    xfrm_state_addr_check(x, daddr, saddr, encap_family) &&
- 		    tmpl->mode == x->props.mode &&
- 		    tmpl->id.proto == x->id.proto &&
--		    (tmpl->id.spi == x->id.spi || !tmpl->id.spi))
-+		    tmpl->id.spi == x->id.spi)
- 			xfrm_state_look_at(pol, x, fl, encap_family,
- 					   &best, &acquire_in_progress, &error);
- 	}
-@@ -974,7 +970,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- 		    xfrm_addr_equal(&x->id.daddr, daddr, encap_family) &&
- 		    tmpl->mode == x->props.mode &&
- 		    tmpl->id.proto == x->id.proto &&
--		    (tmpl->id.spi == x->id.spi || !tmpl->id.spi))
-+		    tmpl->id.spi == x->id.spi)
- 			xfrm_state_look_at(pol, x, fl, encap_family,
- 					   &best, &acquire_in_progress, &error);
- 	}
-@@ -982,8 +978,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- found:
- 	x = best;
- 	if (!x && !error && !acquire_in_progress) {
--		if (tmpl->id.spi &&
--		    (x0 = __xfrm_state_lookup(net, mark, daddr, tmpl->id.spi,
-+		if ((x0 = __xfrm_state_lookup(net, mark, daddr, tmpl->id.spi,
- 					      tmpl->id.proto, encap_family)) != NULL) {
- 			to_put = x0;
- 			error = -EEXIST;
-@@ -1025,10 +1020,8 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- 			hlist_add_head_rcu(&x->bydst, net->xfrm.state_bydst + h);
- 			h = xfrm_src_hash(net, daddr, saddr, encap_family);
- 			hlist_add_head_rcu(&x->bysrc, net->xfrm.state_bysrc + h);
--			if (x->id.spi) {
--				h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, encap_family);
--				hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
--			}
-+			h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, encap_family);
-+			hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
- 			x->lft.hard_add_expires_seconds = net->xfrm.sysctl_acq_expires;
- 			tasklet_hrtimer_start(&x->mtimer, ktime_set(net->xfrm.sysctl_acq_expires, 0), HRTIMER_MODE_REL);
- 			net->xfrm.state_num++;
-@@ -1134,7 +1127,7 @@ static void __xfrm_state_insert(struct xfrm_state *x)
- 	h = xfrm_src_hash(net, &x->id.daddr, &x->props.saddr, x->props.family);
- 	hlist_add_head_rcu(&x->bysrc, net->xfrm.state_bysrc + h);
- 
--	if (x->id.spi) {
-+	if (xfrm_id_proto_match(x->id.proto, IPSEC_PROTO_ANY)) {
- 		h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto,
- 				  x->props.family);
- 
-@@ -1787,14 +1780,12 @@ int xfrm_alloc_spi(struct xfrm_state *x, u32 low, u32 high)
- 			xfrm_state_put(x0);
- 		}
- 	}
--	if (x->id.spi) {
--		spin_lock_bh(&net->xfrm.xfrm_state_lock);
--		h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, x->props.family);
--		hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
--		spin_unlock_bh(&net->xfrm.xfrm_state_lock);
-+	spin_lock_bh(&net->xfrm.xfrm_state_lock);
-+	h = xfrm_spi_hash(net, &x->id.daddr, x->id.spi, x->id.proto, x->props.family);
-+	hlist_add_head_rcu(&x->byspi, net->xfrm.state_byspi + h);
-+	spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- 
--		err = 0;
--	}
-+	err = 0;
- 
- unlock:
- 	spin_unlock_bh(&x->lock);
 -- 
-2.13.6
+Thanks,
+	Marcos
