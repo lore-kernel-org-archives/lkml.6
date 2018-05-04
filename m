@@ -1,45 +1,234 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751666AbeEDMeQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:34:16 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:23270 "EHLO pegase1.c-s.fr"
+        id S1751919AbeEDMfr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:35:47 -0400
+Received: from verein.lst.de ([213.95.11.211]:49001 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751612AbeEDMeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:34:13 -0400
-Message-Id: <4fd69cf9e9a7ce45e7bf1c64de4272d519944a80.1525435203.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1525435203.git.christophe.leroy@c-s.fr>
-References: <cover.1525435203.git.christophe.leroy@c-s.fr>
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH  10/17] powerpc: use _ALIGN macro
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date: Fri,  4 May 2018 14:34:10 +0200 (CEST)
+        id S1751886AbeEDMfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:35:45 -0400
+Date: Fri, 4 May 2018 14:38:34 +0200
+From: Torsten Duwe <duwe@lst.de>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
+Subject: [PATCH v3] On ppc64le we HAVE_RELIABLE_STACKTRACE
+Message-ID: <20180504123834.GA16581@lst.de>
+References: <20180305164928.GA17953@lst.de> <20180308162616.yhbymodggnfzpskx@treble> <20180309174718.2700b29e@blackhole.lan> <20180312153536.7avozx64ku4lvd3e@treble>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180312153536.7avozx64ku4lvd3e@treble>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/nohash/32/pgtable.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index b413abcd5a09..93dc22dbe964 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -99,9 +99,9 @@ extern int icache_44x_need_flush;
+The "Power Architecture 64-Bit ELF V2 ABI" says in section 2.3.2.3:
+
+[...] There are several rules that must be adhered to in order to ensure
+reliable and consistent call chain backtracing:
+
+* Before a function calls any other function, it shall establish its
+  own stack frame, whose size shall be a multiple of 16 bytes.
+
+ – In instances where a function’s prologue creates a stack frame, the
+   back-chain word of the stack frame shall be updated atomically with
+   the value of the stack pointer (r1) when a back chain is implemented.
+   (This must be supported as default by all ELF V2 ABI-compliant
+   environments.)
+[...]
+ – The function shall save the link register that contains its return
+   address in the LR save doubleword of its caller’s stack frame before
+   calling another function.
+
+To me this sounds like the equivalent of HAVE_RELIABLE_STACKTRACE.
+This patch may be unneccessarily limited to ppc64le, but OTOH the only
+user of this flag so far is livepatching, which is only implemented on
+PPCs with 64-LE, a.k.a. ELF ABI v2.
+
+Feel free to add other ppc variants, but so far only ppc64le got tested.
+
+This change also implements save_stack_trace_tsk_reliable() for ppc64le
+that checks for the above conditions, where possible.
+
+Signed-off-by: Torsten Duwe <duwe@suse.de>
+Signed-off-by: Nicolai Stange <nstange@suse.de>
+
+---
+v3:
+ * big bunch of fixes, credits go to Nicolai Stange:
+   - get the correct return address from the graph tracer,
+     should it be active.
+     IMO this should be moved into to generic code, but I'll
+     leave it like this for now, to get things going.
+   - bail out on a kretprobe
+   - also stop at an exception frame
+   - accomodate for the different stack layout of the idle task
+   - use an even more beautiful test: __kernel_text_address()
+
+v2:
+ * implemented save_stack_trace_tsk_reliable(), with a bunch of sanity
+   checks. The test for a kernel code pointer is much nicer now, and
+   the exit condition is exact (when compared to last week's follow-up)
+
+---
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index c32a181a7cbb..54f1daf4f9e5 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -220,6 +220,7 @@ config PPC
+ 	select HAVE_PERF_USER_STACK_DUMP
+ 	select HAVE_RCU_TABLE_FREE		if SMP
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
++	select HAVE_RELIABLE_STACKTRACE		if PPC64 && CPU_LITTLE_ENDIAN
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_VIRT_CPU_ACCOUNTING
+ 	select HAVE_IRQ_TIME_ACCOUNTING
+diff --git a/arch/powerpc/kernel/stacktrace.c b/arch/powerpc/kernel/stacktrace.c
+index d534ed901538..3d62ecb2587b 100644
+--- a/arch/powerpc/kernel/stacktrace.c
++++ b/arch/powerpc/kernel/stacktrace.c
+@@ -2,7 +2,7 @@
+  * Stack trace utility
+  *
+  * Copyright 2008 Christoph Hellwig, IBM Corp.
+- *
++ * Copyright 2018 SUSE Linux GmbH
+  *
+  *      This program is free software; you can redistribute it and/or
+  *      modify it under the terms of the GNU General Public License
+@@ -11,11 +11,16 @@
   */
- #define VMALLOC_OFFSET (0x1000000) /* 16M */
- #ifdef PPC_PIN_SIZE
--#define VMALLOC_BASE (((_ALIGN((long)high_memory, PPC_PIN_SIZE) + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
-+#define VMALLOC_BASE _ALIGN_DOWN(_ALIGN((long)high_memory, PPC_PIN_SIZE) + VMALLOC_OFFSET, VMALLOC_OFFSET)
- #else
--#define VMALLOC_BASE ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
-+#define VMALLOC_BASE _ALIGN_DOWN((long)high_memory + VMALLOC_OFFSET, VMALLOC_OFFSET)
- #endif
- #define VMALLOC_START	ioremap_bot
- #define VMALLOC_END	IOREMAP_END
--- 
-2.13.3
+ 
+ #include <linux/export.h>
++#include <linux/kallsyms.h>
++#include <linux/module.h>
+ #include <linux/sched.h>
+ #include <linux/sched/debug.h>
++#include <linux/sched/task_stack.h>
+ #include <linux/stacktrace.h>
+ #include <asm/ptrace.h>
+ #include <asm/processor.h>
++#include <linux/ftrace.h>
++#include <asm/kprobes.h>
+ 
+ /*
+  * Save stack-backtrace addresses into a stack_trace buffer.
+@@ -76,3 +81,114 @@ save_stack_trace_regs(struct pt_regs *regs, struct stack_trace *trace)
+ 	save_context_stack(trace, regs->gpr[1], current, 0);
+ }
+ EXPORT_SYMBOL_GPL(save_stack_trace_regs);
++
++#ifdef CONFIG_HAVE_RELIABLE_STACKTRACE
++int
++save_stack_trace_tsk_reliable(struct task_struct *tsk,
++				struct stack_trace *trace)
++{
++	unsigned long sp;
++	unsigned long stack_page = (unsigned long)task_stack_page(tsk);
++	unsigned long stack_end;
++	int graph_idx = 0;
++
++	/* The last frame (unwinding first) may not yet have saved
++	 * its LR onto the stack.
++	 */
++	int firstframe = 1;
++
++	if (tsk == current)
++		sp = current_stack_pointer();
++	else
++		sp = tsk->thread.ksp;
++
++	stack_end = stack_page + THREAD_SIZE;
++	if (!is_idle_task(tsk)) {
++		/*
++		 * For user tasks, this is the SP value loaded on
++		 * kernel entry, see "PACAKSAVE(r13)" in _switch() and
++		 * system_call_common()/EXCEPTION_PROLOG_COMMON().
++		 *
++		 * Likewise for non-swapper kernel threads,
++		 * this also happens to be the top of the stack
++		 * as setup by copy_thread().
++		 *
++		 * Note that stack backlinks are not properly setup by
++		 * copy_thread() and thus, a forked task() will have
++		 * an unreliable stack trace until it's been
++		 * _switch()'ed to for the first time.
++		 */
++		stack_end -= STACK_FRAME_OVERHEAD + sizeof(struct pt_regs);
++	} else {
++		/*
++		 * idle tasks have a custom stack layout,
++		 * c.f. cpu_idle_thread_init().
++		 */
++		stack_end -= STACK_FRAME_OVERHEAD;
++	}
++
++	if (sp < stack_page + sizeof(struct thread_struct) ||
++	    sp > stack_end - STACK_FRAME_MIN_SIZE) {
++		return 1;
++	}
++
++	for (;;) {
++		unsigned long *stack = (unsigned long *) sp;
++		unsigned long newsp, ip;
++
++		/* sanity check: ABI requires SP to be aligned 16 bytes. */
++		if (sp & 0xF)
++			return 1;
++
++		/* Mark stacktraces with exception frames as unreliable. */
++		if (sp <= stack_end - STACK_INT_FRAME_SIZE &&
++		    stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER) {
++			return 1;
++		}
++
++		newsp = stack[0];
++		/* Stack grows downwards; unwinder may only go up. */
++		if (newsp <= sp)
++			return 1;
++
++		if (newsp != stack_end &&
++		    newsp > stack_end - STACK_FRAME_MIN_SIZE) {
++			return 1; /* invalid backlink, too far up. */
++		}
++
++		/* Examine the saved LR: it must point into kernel code. */
++		ip = stack[STACK_FRAME_LR_SAVE];
++		if (!firstframe && !__kernel_text_address(ip))
++			return 1;
++		firstframe = 0;
++
++		/*
++		 * FIXME: IMHO these tests do not belong in
++		 * arch-dependent code, they are generic.
++		 */
++		ip = ftrace_graph_ret_addr(tsk, &graph_idx, ip, NULL);
++
++		/*
++		 * Mark stacktraces with kretprobed functions on them
++		 * as unreliable.
++		 */
++		if (ip == (unsigned long)kretprobe_trampoline)
++			return 1;
++
++		if (!trace->skip)
++			trace->entries[trace->nr_entries++] = ip;
++		else
++			trace->skip--;
++
++		if (newsp == stack_end)
++			break;
++
++		if (trace->nr_entries >= trace->max_entries)
++			return -E2BIG;
++
++		sp = newsp;
++	}
++	return 0;
++}
++EXPORT_SYMBOL_GPL(save_stack_trace_tsk_reliable);
++#endif /* CONFIG_HAVE_RELIABLE_STACKTRACE */
