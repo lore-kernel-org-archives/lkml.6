@@ -1,179 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751146AbeEDEaQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 00:30:16 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:36093 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEDEaP (ORCPT
+        id S1751279AbeEDEa5 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 00:30:57 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:33653 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDEa4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 00:30:15 -0400
-X-Google-Smtp-Source: AB8JxZpRBp3/CpSBvZCMmYRFkYn7LevETPajkbK6xDvXzrFNIrQw3htmQHiE61aE3FLz9ryEVDjezbBa0SVwPhIu5EI=
-MIME-Version: 1.0
-In-Reply-To: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
-References: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
-From: Connor McAdams <conmanx360@gmail.com>
-Date: Fri, 4 May 2018 00:30:14 -0400
-Message-ID: <CAM8Agx0s1Rg5bGCXP5gQftcfsqbQoCvZtNyg4fmUpNaJsix=-A@mail.gmail.com>
-Subject: Re: [PATCH 1/9] R3Di and SBZ quirk entires + alt firmware loading
-To: Connor McAdams <conmanx360@gmail.com>
-Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        =?UTF-8?B?SsOpcsOpbXkgTGVmYXVyZQ==?= <jeremy.lefaure@lse.epita.fr>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 4 May 2018 00:30:56 -0400
+X-Google-Smtp-Source: AB8JxZqPCVDd13SecRTBx+MmRf04hyA6xwpJSbtwcjFDwnTZEZOO+dmr9QOIJBzyUW9noeJvSUCruA==
+From: js1304@gmail.com
+X-Google-Original-From: iamjoonsoo.kim@lge.com
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Minchan Kim <minchan@kernel.org>, Ye Xiaolong <xiaolong.ye@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Subject: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
+Date: Fri,  4 May 2018 13:30:46 +0900
+Message-Id: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry for sending these twice, I made a formatting mistake in the
-first series, and they would not apply properly. Hopefully these do
-not show up as spam because of this.
+From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-I went through and fixed them all individually and re-committed them,
-but kept the same commit messages. I still have a lot to learn.
+Currently, we use the zone index of preferred_zone which represents
+the best matching zone for allocation, as classzone_idx. It has a problem
+on NUMA system with ZONE_MOVABLE.
 
-Thanks,
-Connor
+In NUMA system, it can be possible that each node has different populated
+zones. For example, node 0 could have DMA/DMA32/NORMAL/MOVABLE zone and
+node 1 could have only NORMAL zone. In this setup, allocation request
+initiated on node 0 and the one on node 1 would have different
+classzone_idx, 3 and 2, respectively, since their preferred_zones are
+different. If they are handled by only their own node, there is no problem.
+However, if they are somtimes handled by the remote node, the problem
+would happen.
 
-On Fri, May 4, 2018 at 12:19 AM, Connor McAdams <conmanx360@gmail.com> wrote:
-> This patch adds PCI quirk ID's for the Sound Blaster Z and Recon3Di.
-> Only the currently tested ID's have been added.
->
-> This patch also adds the ability to load alternative firmwares for each
-> card, the firmwares can be obtained from within the Windows driver.
-> The Recon3Di uses "ctefx-r3di.bin" and the Sound Blaster Z uses
-> "ctefx-sbz.bin". If the alternative firmware for the given quirk is not
-> found, the original ctefx.bin will be used. This has been confirmed to
-> work for both the R3Di and the SBZ.
->
-> This patch also makes the character array *dirstr a const.
->
-> Signed-off-by: Connor McAdams <conmanx360@gmail.com>
-> ---
->  sound/pci/hda/patch_ca0132.c | 61 +++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 55 insertions(+), 6 deletions(-)
->
-> diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-> index 768ea86..8346100 100644
-> --- a/sound/pci/hda/patch_ca0132.c
-> +++ b/sound/pci/hda/patch_ca0132.c
-> @@ -72,12 +72,16 @@
->  #define SCP_GET    1
->
->  #define EFX_FILE   "ctefx.bin"
-> +#define SBZ_EFX_FILE   "ctefx-sbz.bin"
-> +#define R3DI_EFX_FILE  "ctefx-r3di.bin"
->
->  #ifdef CONFIG_SND_HDA_CODEC_CA0132_DSP
->  MODULE_FIRMWARE(EFX_FILE);
-> +MODULE_FIRMWARE(SBZ_EFX_FILE);
-> +MODULE_FIRMWARE(R3DI_EFX_FILE);
->  #endif
->
-> -static char *dirstr[2] = { "Playback", "Capture" };
-> +static const char *dirstr[2] = { "Playback", "Capture" };
->
->  enum {
->         SPEAKER_OUT,
-> @@ -734,6 +738,7 @@ struct ca0132_spec {
->         unsigned int scp_resp_header;
->         unsigned int scp_resp_data[4];
->         unsigned int scp_resp_count;
-> +       bool alt_firmware_present;
->
->         /* mixer and effects related */
->         unsigned char dmic_ctl;
-> @@ -762,6 +767,8 @@ struct ca0132_spec {
->  enum {
->         QUIRK_NONE,
->         QUIRK_ALIENWARE,
-> +       QUIRK_SBZ,
-> +       QUIRK_R3DI,
->  };
->
->  static const struct hda_pintbl alienware_pincfgs[] = {
-> @@ -782,6 +789,10 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
->         SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
->         SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
->         SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
-> +       SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
-> +       SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
-> +       SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
-> +       SND_PCI_QUIRK(0x1458, 0xA036, "Recon3Di", QUIRK_R3DI),
->         {}
->  };
->
-> @@ -3207,7 +3218,7 @@ static int ca0132_select_out(struct hda_codec *codec)
->                                     pin_ctl & ~PIN_HP);
->                 /* enable speaker node */
->                 pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
-> -                                            AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-> +                               AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
->                 snd_hda_set_pin_ctl(codec, spec->out_pins[0],
->                                     pin_ctl | PIN_OUT);
->         } else {
-> @@ -4370,11 +4381,49 @@ static void ca0132_set_dsp_msr(struct hda_codec *codec, bool is96k)
->  static bool ca0132_download_dsp_images(struct hda_codec *codec)
->  {
->         bool dsp_loaded = false;
-> +       struct ca0132_spec *spec = codec->spec;
->         const struct dsp_image_seg *dsp_os_image;
->         const struct firmware *fw_entry;
-> -
-> -       if (request_firmware(&fw_entry, EFX_FILE, codec->card->dev) != 0)
-> -               return false;
-> +       /*
-> +        * Alternate firmwares for different variants. The Recon3Di apparently
-> +        * can use the default firmware, but I'll leave the option in case
-> +        * it needs it again.
-> +        */
-> +       switch (spec->quirk) {
-> +       case QUIRK_SBZ:
-> +               if (request_firmware(&fw_entry, SBZ_EFX_FILE,
-> +                                       codec->card->dev) != 0) {
-> +                       codec_dbg(codec, "SBZ alt firmware not detected. ");
-> +                       spec->alt_firmware_present = false;
-> +               } else {
-> +                       codec_dbg(codec, "Sound Blaster Z firmware selected.");
-> +                       spec->alt_firmware_present = true;
-> +               }
-> +               break;
-> +       case QUIRK_R3DI:
-> +               if (request_firmware(&fw_entry, R3DI_EFX_FILE,
-> +                                       codec->card->dev) != 0) {
-> +                       codec_dbg(codec, "Recon3Di alt firmware not detected.");
-> +                       spec->alt_firmware_present = false;
-> +               } else {
-> +                       codec_dbg(codec, "Recon3Di firmware selected.");
-> +                       spec->alt_firmware_present = true;
-> +               }
-> +               break;
-> +       default:
-> +               spec->alt_firmware_present = false;
-> +               break;
-> +       }
-> +       /*
-> +        * Use default ctefx.bin if no alt firmware is detected, or if none
-> +        * exists for your particular codec.
-> +        */
-> +       if (!spec->alt_firmware_present) {
-> +               codec_dbg(codec, "Default firmware selected.");
-> +               if (request_firmware(&fw_entry, EFX_FILE,
-> +                                       codec->card->dev) != 0)
-> +                       return false;
-> +       }
->
->         dsp_os_image = (struct dsp_image_seg *)(fw_entry->data);
->         if (dspload_image(codec, dsp_os_image, 0, 0, true, 0)) {
-> @@ -4476,7 +4525,7 @@ static struct hda_verb ca0132_base_exit_verbs[] = {
->         {}
->  };
->
-> -/* Other verbs tables.  Sends after DSP download. */
-> +/* Other verbs tables. Sends after DSP download. */
->  static struct hda_verb ca0132_init_verbs0[] = {
->         /* chip init verbs */
->         {0x15, 0x70D, 0xF0},
-> --
-> 2.7.4
->
+In the following setup, allocation initiated on node 1 will have some
+precedence than allocation initiated on node 0 when former allocation is
+processed on node 0 due to not enough memory on node 1. They will have
+different lowmem reserve due to their different classzone_idx thus
+an watermark bars are also different.
+
+root@ubuntu:/sys/devices/system/memory# cat /proc/zoneinfo
+Node 0, zone      DMA
+  per-node stats
+...
+  pages free     3965
+        min      5
+        low      8
+        high     11
+        spanned  4095
+        present  3998
+        managed  3977
+        protection: (0, 2961, 4928, 5440)
+...
+Node 0, zone    DMA32
+  pages free     757955
+        min      1129
+        low      1887
+        high     2645
+        spanned  1044480
+        present  782303
+        managed  758116
+        protection: (0, 0, 1967, 2479)
+...
+Node 0, zone   Normal
+  pages free     459806
+        min      750
+        low      1253
+        high     1756
+        spanned  524288
+        present  524288
+        managed  503620
+        protection: (0, 0, 0, 4096)
+...
+Node 0, zone  Movable
+  pages free     130759
+        min      195
+        low      326
+        high     457
+        spanned  1966079
+        present  131072
+        managed  131072
+        protection: (0, 0, 0, 0)
+...
+Node 1, zone      DMA
+  pages free     0
+        min      0
+        low      0
+        high     0
+        spanned  0
+        present  0
+        managed  0
+        protection: (0, 0, 1006, 1006)
+Node 1, zone    DMA32
+  pages free     0
+        min      0
+        low      0
+        high     0
+        spanned  0
+        present  0
+        managed  0
+        protection: (0, 0, 1006, 1006)
+Node 1, zone   Normal
+  per-node stats
+...
+  pages free     233277
+        min      383
+        low      640
+        high     897
+        spanned  262144
+        present  262144
+        managed  257744
+        protection: (0, 0, 0, 0)
+...
+Node 1, zone  Movable
+  pages free     0
+        min      0
+        low      0
+        high     0
+        spanned  262144
+        present  0
+        managed  0
+        protection: (0, 0, 0, 0)
+
+min watermark for NORMAL zone on node 0
+allocation initiated on node 0: 750 + 4096 = 4846
+allocation initiated on node 1: 750 + 0 = 750
+
+This watermark difference could cause too many numa_miss allocation
+in some situation and then performance could be downgraded.
+
+Recently, there was a regression report about this problem on CMA patches
+since CMA memory are placed in ZONE_MOVABLE by those patches. I checked
+that problem is disappeared with this fix that uses high_zoneidx
+for classzone_idx.
+
+http://lkml.kernel.org/r/20180102063528.GG30397@yexl-desktop
+
+Using high_zoneidx for classzone_idx is more consistent way than previous
+approach because system's memory layout doesn't affect anything to it.
+With this patch, both classzone_idx on above example will be 3 so will
+have the same min watermark.
+
+allocation initiated on node 0: 750 + 4096 = 4846
+allocation initiated on node 1: 750 + 4096 = 4846
+
+Reported-by: Ye Xiaolong <xiaolong.ye@intel.com>
+Tested-by: Ye Xiaolong <xiaolong.ye@intel.com>
+Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+---
+ mm/internal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mm/internal.h b/mm/internal.h
+index 228dd66..e1d7376 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -123,7 +123,7 @@ struct alloc_context {
+ 	bool spread_dirty_pages;
+ };
+ 
+-#define ac_classzone_idx(ac) zonelist_zone_idx(ac->preferred_zoneref)
++#define ac_classzone_idx(ac) (ac->high_zoneidx)
+ 
+ /*
+  * Locate the struct page for both the matching buddy in our
+-- 
+2.7.4
