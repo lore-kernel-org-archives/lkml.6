@@ -1,104 +1,204 @@
-Return-Path: <geert.uytterhoeven@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525760918; cv=none;
-        d=google.com; s=arc-20160816;
-        b=nzSDbvDml6pCTxSTDBEIz7QTiF7hWfLE+FTybL6VRhWoP6i2MsynGuruUj3n+gh3GQ
-         p94D+oT1Qa0smIPnEJc3FkOLZ6pQHojiXII1OpHIsLcvGafL1ko24Lm9IJLtG7MikNzs
-         p7nacKSV4nt0mew7cqj45YQ4uA6wk67UoDjKc1vaI/xlsx5Vtx024SKheQKxRtVzTbVH
-         H+tKC7DSG0GniDkE/rSAW9+mIDxvKnSKCQ8wg00lU9WBonhb2NfbimDizIaartrbR2xM
-         Te0xtIeOfox3upUOBTB+RNXgNLycv8ujK1Yl2hcUFTvp2W/uJJ785QGNid342B9V2fXR
-         xv7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=TaJiNpZ4n2Bw4LZCYU4pHKSya4UNpJJVNTR0XEgwqmc=;
-        b=avsK87MEBHsrAeCcMj1l+DGS8s/BDnB/1Tx277A7X54OgrTs9iIZc96+XdZ93HxSSu
-         QvnuNQGnOdbtFEIaMEC1wUkickvqUnJ5qSc+UaFS1QrZgP/5uZHKPs+lcOLZ0InquSsj
-         dOhcIX/WSIa/CZeSL72+7pszQ38l4yujXMyyMLmIG1l4D85n3EPpeCRrzVD15r8wdw+g
-         ROC+dZrmyrwH4bwdUg480+7C7IoGyCtywTay1DHWsh+D8xwMUCrv4ZS6U17N6ITYZi2/
-         GU7fRQWNVIxUhL39BCkBJ+BCLDiZZ/wRb/kPewSh4kXichaoR4Yr3svYpTHVCS6/D95Q
-         2U+Q==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AC27Ed2r;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AC27Ed2r;
-       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
-X-Google-Smtp-Source: AB8JxZq9wOikBzaY6kcauv0O6NZg/MQfeVjvL6F6fW4cyPyNF7TpEKYtVRvWiBvgxNt/bC0U8boM+HOs9N41sOs9PQA=
-MIME-Version: 1.0
-Sender: geert.uytterhoeven@gmail.com
-In-Reply-To: <20180507144511.GA22694@kroah.com>
-References: <5aee5ed3.1c69fb81.19d98.ef06SMTPIN_ADDED_MISSING@mx.google.com>
- <20180506045530.GA5328@kroah.com> <alpine.LNX.2.21.1805061544550.8@nippy.intranet>
- <20180506202018.GC8924@kroah.com> <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
- <CAMuHMdV_5p0Un3xMC1SMw71xpLAzVH0u4oJCTeGeo7jXS4KZSA@mail.gmail.com> <20180507144511.GA22694@kroah.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 8 May 2018 08:28:37 +0200
-X-Google-Sender-Auth: o49Z92gWKvOh2W1hJjfo1_l75ic
-Message-ID: <CAMuHMdUBdm-wQ-swoBCRLJT7-=qaF4oRG-i4Rvc+tctWpWD38Q@mail.gmail.com>
-Subject: Re: [PATCH] nubus: Unconditionally register bus type
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Finn Thain <fthain@telegraphics.com.au>,
-	linux-m68k <linux-m68k@lists.linux-m68k.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-404623-1525451453-2-2760915224257523047
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525451453; b=aawH2YlWO3PqDdzh0vHgXdDa9LFVvSZlyakxlF+Sb7yVAp2g5f
+    YiK428JWfgIt42yhuDaR2VuLI1aIDs+94yLLHFvc306za5ksbDWUAoJnr/nVO+I/
+    05LhEfG2ZcwW2qSqsBpZFiVsYsZ6IpWRBDsnNlPWreeDZGkaQ13JmVLwCEzb7ceE
+    ic7f8PiSXHXiO776rbRIIJJX4vkjoMpGkaZRv+mpixZK/sPfWkpS29vYtBygbK7K
+    WAmU+kvk61uxNg8u3HgVm8lA0sq1X8oGcLUTxC9waeqHEbAOLOeuJ0DDtFBzjpMn
+    mQepaIIReSHlDqtIa3Q1GG7bh6//r228xlxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525451453; bh=73ZdL4nDp+DmKPR8/fLjXLqXHm6OWp
+    olUWBNQYjAeSA=; b=Bzu5i2CXiUqv+Se+n+niIbHdInWHbnkX2ZF9XOKMjpkWxR
+    0InZMk0NWT4lDFs1/HsNen/lYEA+R02Mx81vMsHNafQpwBzormovGxWvPfGj4eLv
+    X8dR7xnbq2/J5cIXfkouXRzhibcGefXGKFUw/CPSmbWk1thAIzffz7EtVBj4sTAQ
+    knzscppWu6zI7o09R3qLQpUeyWjgp7QHxECI3mJKBka3siz5cNoJurFVC2jA7Bcg
+    NcbdPwBI3pR6HI2ZG36gDuuHPmUILiaqHSbxxS7803dDuBZn0kOBz0qkctPNEYmp
+    YXQ4VttdLDDOoIQO5s1JbjiFoC+d60+wCX8I2arw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=monom.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=monom.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=monom.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=monom.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfOTz4N2Z9CoVGvpeSkm5asogkqIxRzDc57ADcBIr3mMlxKuGMGKEcuTHhM/ArzF8eLuUk4rLFXq+fqUnUNQIIW9imMyo1vCFhIZzIewzRRxM2CMB01Qw
+    peEOUZuvmMxihI7NPadl/52q3yiMZ9CuKOd7TO1qkHlo0YXoHKS2+iJLb3seAaNQSzitWic7ijbba9yQmZ6rKVXwUqHJvWmtRkfi+3CHAylNyjW2GQUAN6Pi
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=a_U1oVfrAAAA:8
+    a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8 a=tgf0_7RPPExJJp9HkRQA:9
+    a=9tQt16chFYpXjSPs:21 a=UQkWfTKAC_-ToryL:21 a=x8gzFH9gYPwA:10
+    a=ILgoY2Ve9XsnFM_ECIJt:22 a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751558AbeEDQau (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 12:30:50 -0400
+Received: from mail.monom.org ([188.138.9.77]:45246 "EHLO mail.monom.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751539AbeEDQat (ORCPT <rfc822;linux-serial@vger.kernel.org>);
+        Fri, 4 May 2018 12:30:49 -0400
+X-Remote-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on mail.monom.org
+X-Remote-Spam-Level: 
+X-Remote-Spam-Status: No, score=-2.5 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.1
+From: Daniel Wagner <wagi@monom.org>
+To: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-rt-users@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-sh@vger.kernel.org, gregkh@linuxfoundation.org,
+        Daniel Wagner <daniel.wagner@siemens.com>
+Subject: [PATCH v2] serial: sh-sci: Use spin_{try}lock_irqsave instead of open coding version
+Date: Fri,  4 May 2018 18:30:41 +0200
+Message-Id: <20180504163041.28726-1-wagi@monom.org>
+X-Mailer: git-send-email 2.14.3
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599677433904135296?=
-X-GMAIL-MSGID: =?utf-8?q?1599876280781970947?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Greg,
+From: Daniel Wagner <daniel.wagner@siemens.com>
 
-On Mon, May 7, 2018 at 4:45 PM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Mon, May 07, 2018 at 02:53:13PM +0200, Geert Uytterhoeven wrote:
->> On Mon, May 7, 2018 at 1:57 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
->> > On Sun, 6 May 2018, Greg Kroah-Hartman wrote:
->> >> > > Why not just have an "bus is registered" flag in your driver
->> >> > > register function that refuses to let drivers register with the
->> >> > > driver core if it isn't set?
->> >> >
->> >> > Perhaps that should happen in the core driver_register() function.
->> >> > BUG_ON is frowned upon, after all. Would that be acceptable?
->> >>
->> >> I don't understand what you mean here, perhaps make a patch to show it?
->> >>
->> >
->> > As an alternative to your suggestion (add flag to avoid the BUG_ON):
->> >
->> > --- a/drivers/base/driver.c
->> > +++ b/drivers/base/driver.c
->> > @@ -148,7 +148,10 @@ int driver_register(struct device_driver *drv)
->> >         int ret;
->> >         struct device_driver *other;
->> >
->> > -       BUG_ON(!drv->bus->p);
->> > +       if (!drv->bus->p) {
->> > +               WARN_ONCE(1, "Cannot register driver with invalid bus\n");
->> > +               return -EPROBE_DEFER;
->> > +       }
->> >
->> >         if ((drv->bus->probe && drv->probe) ||
->> >             (drv->bus->remove && drv->remove) ||
->> >
->> > I'm not actually proposing this change; just responding to your question.
->>
->> The bus_type.p field may be unused by some bus drivers, hence this
->> would prevent their drivers from being registered.
->
-> bus_type.p is an internal-to-the-driver-core structure, no bus driver
-> should ever be touching it.  This is a catch to see if someone is using
-> the driver core incorrectly.
+Commit 40f70c03e33a ("serial: sh-sci: add locking to console write
+function to avoid SMP lockup") copied the strategy to avoid locking
+problems in conjuncture with the console from the UART8250
+driver. Instead using directly spin_{try}lock_irqsave(),
+local_irq_save() followed by spin_{try}lock() was used. While this is
+correct on mainline, for -rt it is a problem. spin_{try}lock() will
+check if it is running in a valid context. Since the local_irq_save()
+has already been executed, the context has changed and
+spin_{try}lock() will complain. The reason why spin_{try}lock()
+complains is that on -rt the spin locks are turned into mutexes and
+therefore can sleep. Sleeping with interrupts disabled is not valid.
 
-Thanks, I stand corrected.
+BUG: sleeping function called from invalid context at /home/wagi/work/rt/v4.4-cip-rt/kernel/locking/rtmutex.c:995
+in_atomic(): 0, irqs_disabled(): 128, pid: 778, name: irq/76-eth0
+CPU: 0 PID: 778 Comm: irq/76-eth0 Not tainted 4.4.126-test-cip22-rt14-00403-gcd03665c8318 #12
+Hardware name: Generic RZ/G1 (Flattened Device Tree)
+Backtrace:
+[<c00140a0>] (dump_backtrace) from [<c001424c>] (show_stack+0x18/0x1c)
+ r7:c06b01f0 r6:60010193 r5:00000000 r4:c06b01f0
+[<c0014234>] (show_stack) from [<c01d3c94>] (dump_stack+0x78/0x94)
+[<c01d3c1c>] (dump_stack) from [<c004c134>] (___might_sleep+0x134/0x194)
+ r7:60010113 r6:c06d3559 r5:00000000 r4:ffffe000
+[<c004c000>] (___might_sleep) from [<c04ded60>] (rt_spin_lock+0x20/0x74)
+ r5:c06f4d60 r4:c06f4d60
+[<c04ded40>] (rt_spin_lock) from [<c02577e4>] (serial_console_write+0x100/0x118)
+ r5:c06f4d60 r4:c06f4d60
+[<c02576e4>] (serial_console_write) from [<c0061060>] (call_console_drivers.constprop.15+0x10c/0x124)
+ r10:c06d2894 r9:c04e18b0 r8:00000028 r7:00000000 r6:c06d3559 r5:c06d2798
+ r4:c06b9914 r3:c02576e4
+[<c0060f54>] (call_console_drivers.constprop.15) from [<c0062984>] (console_unlock+0x32c/0x430)
+ r10:c06d30d8 r9:00000028 r8:c06dd518 r7:00000005 r6:00000000 r5:c06d2798
+ r4:c06d2798 r3:00000028
+[<c0062658>] (console_unlock) from [<c0062e1c>] (vprintk_emit+0x394/0x4f0)
+ r10:c06d2798 r9:c06d30ee r8:00000006 r7:00000005 r6:c06a78fc r5:00000027
+ r4:00000003
+[<c0062a88>] (vprintk_emit) from [<c0062fa0>] (vprintk+0x28/0x30)
+ r10:c060bd46 r9:00001000 r8:c06b9a90 r7:c06b9a90 r6:c06b994c r5:c06b9a3c
+ r4:c0062fa8
+[<c0062f78>] (vprintk) from [<c0062fb8>] (vprintk_default+0x10/0x14)
+[<c0062fa8>] (vprintk_default) from [<c009cd30>] (printk+0x78/0x84)
+[<c009ccbc>] (printk) from [<c025afdc>] (credit_entropy_bits+0x17c/0x2cc)
+ r3:00000001 r2:decade60 r1:c061a5ee r0:c061a523
+ r4:00000006
+[<c025ae60>] (credit_entropy_bits) from [<c025bf74>] (add_interrupt_randomness+0x160/0x178)
+ r10:466e7196 r9:1f536000 r8:fffeef74 r7:00000000 r6:c06b9a60 r5:c06b9a3c
+ r4:dfbcf680
+[<c025be14>] (add_interrupt_randomness) from [<c006536c>] (irq_thread+0x1e8/0x248)
+ r10:c006537c r9:c06cdf21 r8:c0064fcc r7:df791c24 r6:df791c00 r5:ffffe000
+ r4:df525180
+[<c0065184>] (irq_thread) from [<c003fba4>] (kthread+0x108/0x11c)
+ r10:00000000 r9:00000000 r8:c0065184 r7:df791c00 r6:00000000 r5:df791d00
+ r4:decac000
+[<c003fa9c>] (kthread) from [<c00101b8>] (ret_from_fork+0x14/0x3c)
+ r8:00000000 r7:00000000 r6:00000000 r5:c003fa9c r4:df791d00
 
-Gr{oetje,eeting}s,
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Daniel Wagner <daniel.wagner@siemens.com>
+---
 
-                        Geert
+changes since v1:
+ - Ported to current mainline (initial version was against v4.4.y)
+ - Left local_irq_save() in place when spinlocks are not used as suggested
+   by Geert.
 
+ drivers/tty/serial/sh-sci.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index fdbbff547106..ec7417be9e08 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2890,16 +2890,16 @@ static void serial_console_write(struct console *co, const char *s,
+ 	unsigned long flags;
+ 	int locked = 1;
+ 
+-	local_irq_save(flags);
+ #if defined(SUPPORT_SYSRQ)
+-	if (port->sysrq)
++	if (port->sysrq) {
+ 		locked = 0;
+-	else
++		local_irq_save(flags);
++	} else
+ #endif
+ 	if (oops_in_progress)
+-		locked = spin_trylock(&port->lock);
++		locked = spin_trylock_irqsave(&port->lock, flags);
+ 	else
+-		spin_lock(&port->lock);
++		spin_lock_irqsave(&port->lock, flags);
+ 
+ 	/* first save SCSCR then disable interrupts, keep clock source */
+ 	ctrl = serial_port_in(port, SCSCR);
+@@ -2919,8 +2919,9 @@ static void serial_console_write(struct console *co, const char *s,
+ 	serial_port_out(port, SCSCR, ctrl);
+ 
+ 	if (locked)
+-		spin_unlock(&port->lock);
+-	local_irq_restore(flags);
++		spin_unlock_irqrestore(&port->lock, flags);
++	else
++		local_irq_restore(flags);
+ }
+ 
+ static int serial_console_setup(struct console *co, char *options)
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+2.14.3
