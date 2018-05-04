@@ -1,178 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751301AbeEDNOq (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 09:14:46 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54170 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751107AbeEDNOp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 09:14:45 -0400
-Date: Fri, 4 May 2018 06:14:41 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <mawilcox@microsoft.com>, linux-mm <linux-mm@kvack.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
-Message-ID: <20180504131441.GA24691@bombadil.infradead.org>
-References: <20180214182618.14627-1-willy@infradead.org>
- <20180214182618.14627-3-willy@infradead.org>
- <CA+55aFzLgES5qTAt2szDKcRtoUP5X--UPCoYX-38ea67cRFHxQ@mail.gmail.com>
+        id S1751359AbeEDNQi (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 09:16:38 -0400
+Received: from foss.arm.com ([217.140.101.70]:53186 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751107AbeEDNQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 09:16:37 -0400
+Date: Fri, 4 May 2018 14:16:28 +0100
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: honghui.zhang@mediatek.com
+Cc: marc.zyngier@arm.com, bhelgaas@google.com, matthias.bgg@gmail.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        yingjoe.chen@mediatek.com, eddie.huang@mediatek.com,
+        ryder.lee@mediatek.com, hongkun.cao@mediatek.com,
+        youlin.pei@mediatek.com, yong.wu@mediatek.com, yt.shen@mediatek.com,
+        sean.wang@mediatek.com, xinping.qian@mediatek.com
+Subject: Re: [PATCH v7 0/2] PCI: mediatek: Fixups for the IRQ handle routine
+ and MT7622's class code
+Message-ID: <20180504131628.GA8759@e107981-ln.cambridge.arm.com>
+References: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFzLgES5qTAt2szDKcRtoUP5X--UPCoYX-38ea67cRFHxQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1525412853-24367-1-git-send-email-honghui.zhang@mediatek.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 07:42:52AM +0000, Linus Torvalds wrote:
-> On Wed, Feb 14, 2018 at 8:27 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > +static inline __must_check
-> > +void *kvmalloc_ab_c(size_t n, size_t size, size_t c, gfp_t gfp)
-> > +{
-> > +       if (size != 0 && n > (SIZE_MAX - c) / size)
-> > +               return NULL;
-> > +
-> > +       return kvmalloc(n * size + c, gfp);
+On Fri, May 04, 2018 at 01:47:31PM +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
 > 
-> Ok, so some more bikeshedding:
-
-I'm putting up the bikeshed against your house ... the colour is your
-choice!
-
->   - I really don't want to encourage people to use kvmalloc().
+> Two fixups for mediatek's host bridge:
+> The first patch fixup class type and vendor ID for MT7622.
+> The second patch fixup the IRQ handle routine by using irq_chip solution
+> to avoid IRQ reentry which may exist for both MT2712 and MT7622.
 > 
-> In fact, the conversion I saw was buggy. You can *not* convert a GFP_ATOMIC
-> user of kmalloc() to use kvmalloc.
-
-Not sure which conversion you're referring to; not one of mine, I hope?
-
->   - that divide is really really expensive on many architectures.
-
-'c' and 'size' are _supposed_ to be constant and get evaluated at
-compile-time.  ie you should get something like this on x86:
-
-   0:   48 b8 fe ff ff ff ff    movabs $0x1ffffffffffffffe,%rax
-   7:   ff ff 1f 
-   a:   48 39 c7                cmp    %rax,%rdi
-   d:   76 09                   jbe    18 <a+0x18>
-   f:   48 c1 e7 03             shl    $0x3,%rdi
-  13:   e9 00 00 00 00          jmpq   18 <a+0x18>
-                        14: R_X86_64_PLT32      malloc-0x4
-  18:   31 c0                   xor    %eax,%eax
-  1a:   c3                      retq   
-
-Now, if someone's an idiot, then you'll get the divide done at runtime,
-and that'll be expensive.
-
-> Normal kernel allocations are *limited*. It's simply not ok to allocate
-> megabytes (or gigabytes) of mmory in general. We have serious limits, and
-> we *should* have serious limits. If people worry about the multiply
-> overflowing because a user is controlling the size valus, then dammit, such
-> a user should not be able to do a huge gigabyte vmalloc() that exhausts
-> memory and then spends time clearing it all!
-
-I agree.
-
-> So the whole notion that "overflows are dangerous, let's get rid of them"
-> somehow fixes a bug is BULLSHIT. You literally introduced a *new* bug by
-> removing the normal kmalloc() size limit because you thought that pverflows
-> are the only problem.
-
-Rather, I replaced one bug with another.  The removed bug was one
-where we allocated 24 bytes and then indexed into the next slab object.
-The added bug was that someone can now persuade the driver to allocate
-gigabytes of memory.  It's a less severe bug, but I take your point.
-We do have _some_ limits in vmalloc -- we fail if you're trying to
-allocate more memory than is in the machine, and we fail if there's
-insufficient contiguous space in the virtual address space.  But, yes,
-this does allow people to allocate more memory than kmalloc would allow.
-
-> So stop doing things like this. We should not do a stupid divide, because
-> we damn well know that it is NOT VALID to allocate arrays that have
-> hundreds of fthousands of elements,  or where the size of one element is
-> very big.
+> Change since v6:
+>  - Remove the irq_mask, irq_unmask callback in lower layer irq_chip since we
+>    have set the MSI_FLAG_USE_DEF_CHIP_OPS flags.
+>  - Add irq_ack callback in irq_chip to handle edge IRQ.
+>  - Uing handle_edge_irq to handle the MSI IRQs.
 > 
-> So get rid of the stupid divide, and make the limits be much stricter. Like
-> saying "the array element size had better be smaller than one page"
-> (because honestly, bigger elements are not valid in the kernel), and "the
-> size of the array cannot be more than "pick-some-number-out-of-your-ass".
+> Change since v5:
+>  - Make the comments consistend with the code modification in the first patch.
+>  - Using writew to performing a 16-bit write.
+>  - Using irq_chip solution to fix the IRQ issue.
 > 
-> So just make the divide go the hell away, a and check the size for validity.
+> The v5 patchset could be found in:
+>  https://patchwork.kernel.org/patch/10133303
+>  https://patchwork.kernel.org/patch/10133305
 > 
-> Something like
+> Change since v4:
+>  - Only setup vendor ID for MT7622, igorning the device ID since mediatek's
+>    host bridge driver does not cares about the device ID.
 > 
->       if (size > PAGE_SIZE)
->            return NULL;
->       if (elem > 65535)
->            return NULL;
->       if (offset > PAGE_SIZE)
->            return NULL;
->       return kzalloc(size*elem+offset);
+> Change since v3:
+>  - Setup the class type and vendor ID at the beginning of startup instead
+>    of in a quirk.
+>  - Add mediatek's vendor ID, it could be found in:
+>    https://pcisig.com/membership/member-companies?combine=&page=4
 > 
-> and now you (a) guarantee it can't overflow and (b) don't make people use
-> crazy vmalloc() allocations when they damn well shouldn't.
-
-I find your faith in the size of structs in the kernel touching ;-)
-
-struct cmp_data {
-        /* size: 290904, cachelines: 4546, members: 11 */
-struct dec_data {
-        /* size: 274520, cachelines: 4290, members: 10 */
-struct cpu_entry_area {
-        /* size: 180224, cachelines: 2816, members: 7 */
-struct saved_cmdlines_buffer {
-        /* size: 131104, cachelines: 2049, members: 5 */
-struct debug_store_buffers {
-        /* size: 131072, cachelines: 2048, members: 2 */
-struct bunzip_data {
-        /* size: 42648, cachelines: 667, members: 23 */
-struct inflate_workspace {
-        /* size: 42312, cachelines: 662, members: 2 */
-struct xz_dec_lzma2 {
-        /* size: 28496, cachelines: 446, members: 5 */
-struct lzma_dec {
-        /* size: 28304, cachelines: 443, members: 21 */
-struct rcu_state {
-        /* size: 17344, cachelines: 271, members: 34 */
-struct pglist_data {
-        /* size: 18304, cachelines: 286, members: 34 */
-struct tss_struct {
-        /* size: 12288, cachelines: 192, members: 2 */
-struct bts_ctx {
-        /* size: 12288, cachelines: 192, members: 3 */
-
-Those are just the ones above 10kB.  Sure, I can see some of them are
-boot time use only, or we allocate one per node, or whatever.  But people
-do create arrays of these things.  The biggest object we have in the
-slab_cache today is 23488 bytes (kvm_vcpu) -- at least on my laptop.  Maybe
-there's some insane driver out there that's creating larger things.
-
-> And yeah, if  somebody has a page size bigger than 64k, then the above can
-> still overflow. I'm sorry, that architecture s broken shit.
+> Change since v2:
+>  - Move the initialize of the iterate before the loop to fix an
+>    INTx IRQ issue in the first patch
 > 
-> Are there  cases where vmalloc() is ok? Yes. But they should be rare, and
-> they should have a good reason for them. And honestly, even then the above
-> limits really really sound quite reasonable. There is no excuse for
-> million-entry arrays in the kernel. You are doing something seriously wrong
-> if you do those.
+> Change since v1:
+>  - Add the second patch.
+>  - Make the first patch's commit message more standard.
+> 
+> Honghui Zhang (2):
+>   PCI: mediatek: Set up vendor ID and class type for MT7622
+>   PCI: mediatek: Using chained IRQ to setup IRQ handle
+> 
+>  drivers/pci/host/pcie-mediatek.c | 234 +++++++++++++++++++++++----------------
+>  include/linux/pci_ids.h          |   2 +
+>  2 files changed, 143 insertions(+), 93 deletions(-)
 
-Normally, yes.  But then you get people like Google who want to have
-a million file descriptors open in a single process.  So I'm leery of
-putting hard limits on, like the ones you suggest above, because I'm not
-going to be the one who Google come to when they want to exceed the limit.
-If you want to draw that line in the sand, then I'm happy to respin the
-patch in that direction.
+Applied to pci/mediatek for v4.18, thanks.
 
-We really have two reasons for using vmalloc -- one is "fragmentation
-currently makes it impossible to allocate enough contiguous memory
-to satisfy your needs" and the other is "this request is for too much
-memory to satisfy through the buddy allocator".  kvmalloc is normally
-(not always; see file descriptor example above) for the first kind of
-problem, but I wonder if kvmalloc() shouldn't have the same limit as
-kmalloc (2048 pages), then add a kvmalloc_large() which will not impose
-that limit check.
+Lorenzo
