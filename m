@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeEDVrp (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:47:45 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38846 "EHLO mx1.redhat.com"
+        id S1751820AbeEDVtE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:49:04 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38936 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751781AbeEDVro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:47:44 -0400
-Subject: Re: [PATCH v7 11/13] KVM: x86: Implement Intel Processor Trace MSRs
- read/write
+        id S1751741AbeEDVtC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 17:49:02 -0400
+Subject: Re: [PATCH v7 13/13] KVM: x86: Disable Intel Processor Trace when
+ VMXON in L1 guest
 To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Luwei Kang <luwei.kang@intel.com>
 Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
@@ -15,8 +15,8 @@ Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
         linux-kernel@vger.kernel.org, joro@8bytes.org, peterz@infradead.org,
         chao.p.peng@linux.intel.com
 References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-12-git-send-email-luwei.kang@intel.com>
- <20180504101132.ybh3b7ggpl2ny77v@um.fi.intel.com>
+ <1525349323-9938-14-git-send-email-luwei.kang@intel.com>
+ <20180504102358.eojiggqrnhxng2ru@um.fi.intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -54,12 +54,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <dd3bc913-fc99-74f8-b3fc-f8cad316566e@redhat.com>
-Date: Fri, 4 May 2018 23:47:41 +0200
+Message-ID: <42da55ab-aefb-aa3c-bfed-d6f0457db798@redhat.com>
+Date: Fri, 4 May 2018 23:49:00 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180504101132.ybh3b7ggpl2ny77v@um.fi.intel.com>
+In-Reply-To: <20180504102358.eojiggqrnhxng2ru@um.fi.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,25 +67,21 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 12:11, Alexander Shishkin wrote:
->> +	 */
->> +	if ((data & RTIT_CTL_TRACEEN) && !(data & RTIT_CTL_TOPA) &&
->> +		!(data & RTIT_CTL_FABRIC_EN) &&
->> +		!__pt_cap_get(vmx->pt_desc.caps, PT_CAP_single_range_output))
-> You seem to be doing a lot of __pt_cap_get()s on each wrmsr. Did you consider
-> decoding the capabilities once and storing the decoded values instead, so
-> that in functions like these you can access them by
-> 
->    if (vmx->pt_desc.caps[PT_CAP_single_range_output]) ...
-> 
-> ?
+On 04/05/2018 12:23, Alexander Shishkin wrote:
+>> Currently, Intel Processor Trace do not support tracing in L1 guest
+>> VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
+> I don't understand this patch. You mention VMX_MISC[14] here, but I
+> can't see anything related to it in the code.
 
-Or pt_cap_get could use a switch statement in pt_cap_get and make it
-__always_inline.  The argument is always a constant except for pt_cap_show.
+This is talking about the _guest_'s view of IA32_VMX_MISC.  The code
+does nothing to set it, so the patch does what the commit message says
+below:
 
-What you say is also a possibility though.  Are you okay with adding a
-PT_CAP_first_unused at the end of enum pt_capabilities, so that the
-array can be sized?
+>> on these type of processors, execution of the VMXON instruction will
+>> clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
+>> causes a general-protection exception (#GP).
+>>
+>> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 
 Thanks,
 
