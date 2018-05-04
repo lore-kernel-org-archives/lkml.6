@@ -1,125 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751393AbeEDG6h (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 02:58:37 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:41689 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751146AbeEDG6f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 02:58:35 -0400
-X-Google-Smtp-Source: AB8JxZrok5zeWukneTSus8l4SJMtD6+A8hRvPfiopcBrg2gpPzQ+8VA+tgFWk/tzGYLViSi3Ke/7KA==
-From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-To: ldufour@linux.vnet.ibm.com, catalin.marinas@arm.com,
-        will.deacon@arm.com, mark.rutland@arm.com, cpandya@codeaurora.org,
-        punit.agrawal@arm.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Ganesh Mahendran <opensource.ganesh@gmail.com>
-Subject: [PATCH v2 2/2] arm64/mm: add speculative page fault
-Date: Fri,  4 May 2018 14:57:49 +0800
-Message-Id: <1525417069-27401-2-git-send-email-opensource.ganesh@gmail.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525417069-27401-1-git-send-email-opensource.ganesh@gmail.com>
-References: <1525417069-27401-1-git-send-email-opensource.ganesh@gmail.com>
+        id S1751350AbeEDHEC (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:04:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751172AbeEDHD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 03:03:58 -0400
+Date: Fri, 4 May 2018 15:03:40 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: =?iso-8859-1?B?VPxyayw=?= Jan <Jan.Tuerk@emtrion.de>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        LinuxArmKernelMailingListe <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 6/7] ARM: dts: Add support for emtrion emCON-MX6 series
+Message-ID: <20180504070339.GS3443@dragon>
+References: <20180420125108.14197-1-jan.tuerk@emtrion.com>
+ <20180427132445.3458-1-jan.tuerk@emtrion.com>
+ <20180427132445.3458-7-jan.tuerk@emtrion.com>
+ <20180428031231.GB3693@dragon>
+ <95F51F4B902CAC40AF459205F6322F01B83109E5C3@BMK019S01.emtrion.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <95F51F4B902CAC40AF459205F6322F01B83109E5C3@BMK019S01.emtrion.local>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables the speculative page fault on the arm64
-architecture.
+On Thu, May 03, 2018 at 12:00:06PM +0200, Türk, Jan wrote:
+> > > +/ {
+> > > +   aliases {
+> > > +           mmc0 = &usdhc3;
+> > > +           mmc2 = &usdhc1;
+> > > +           mmc1 = &usdhc2;
+> > > +           mmc3 = &usdhc4;
+> > > +           boardID = &boardID;
+> >
+> > Why do you need this boardID alias?
+> I wanted to have a generic entry point to address the board-id on all CPU-modules with their different SoC's resulting in different devicetree paths.
+> Also as it now has the generic "gpio@3a" name, there would be no other way in differencing the board Identifying GPIO-expander from an additionally
+> attached one (except platform code etc.)
+> With the alias every code could look up the information required over the alias path with the same piece of code.
 
-I completed spf porting in 4.9. From the test result,
-we can see app launching time improved by about 10% in average.
-For the apps which have more than 50 threads, 15% or even more
-improvement can be got.
+Okay.  But no uppercase please.  Otherwise, you introduce the following
+DTC warnings (with W=1 switch) we are trying to clean up.
 
-Signed-off-by: Ganesh Mahendran <opensource.ganesh@gmail.com>
----
-v2:
-  move find_vma() to do_page_fault()
-  remove IS_ENABLED()
-  remove fault != VM_FAULT_SIGSEGV check
-  initilize vma = NULL
----
- arch/arm64/mm/fault.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+ Warning (alias_paths): /aliases: aliases property name must include only lowercase and '-'
 
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 4165485..efd5956 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -320,14 +320,12 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
- #define VM_FAULT_BADMAP		0x010000
- #define VM_FAULT_BADACCESS	0x020000
- 
--static int __do_page_fault(struct mm_struct *mm, unsigned long addr,
-+static int __do_page_fault(struct vm_area_struct *vma, unsigned long addr,
- 			   unsigned int mm_flags, unsigned long vm_flags,
- 			   struct task_struct *tsk)
- {
--	struct vm_area_struct *vma;
- 	int fault;
- 
--	vma = find_vma(mm, addr);
- 	fault = VM_FAULT_BADMAP;
- 	if (unlikely(!vma))
- 		goto out;
-@@ -371,6 +369,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 	int fault, major = 0;
- 	unsigned long vm_flags = VM_READ | VM_WRITE;
- 	unsigned int mm_flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
-+	struct vm_area_struct *vma = NULL;
- 
- 	if (notify_page_fault(regs, esr))
- 		return 0;
-@@ -410,6 +409,16 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, addr);
- 
- 	/*
-+	 * let's try a speculative page fault without grabbing the
-+	 * mmap_sem.
-+	 */
-+	fault = handle_speculative_fault(mm, addr, mm_flags, &vma);
-+	if (fault != VM_FAULT_RETRY) {
-+		perf_sw_event(PERF_COUNT_SW_SPF, 1, regs, addr);
-+		goto done;
-+	}
-+
-+	/*
- 	 * As per x86, we may deadlock here. However, since the kernel only
- 	 * validly references user space from well defined areas of the code,
- 	 * we can bug out early if this is from code which shouldn't.
-@@ -431,7 +440,10 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- #endif
- 	}
- 
--	fault = __do_page_fault(mm, addr, mm_flags, vm_flags, tsk);
-+	if (!vma || !can_reuse_spf_vma(vma, addr))
-+		vma = find_vma(mm, addr);
-+
-+	fault = __do_page_fault(vma, addr, mm_flags, vm_flags, tsk);
- 	major |= fault & VM_FAULT_MAJOR;
- 
- 	if (fault & VM_FAULT_RETRY) {
-@@ -454,11 +466,20 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
- 		if (mm_flags & FAULT_FLAG_ALLOW_RETRY) {
- 			mm_flags &= ~FAULT_FLAG_ALLOW_RETRY;
- 			mm_flags |= FAULT_FLAG_TRIED;
-+
-+			/*
-+			 * Do not try to reuse this vma and fetch it
-+			 * again since we will release the mmap_sem.
-+			 */
-+			vma = NULL;
-+
- 			goto retry;
- 		}
- 	}
- 	up_read(&mm->mmap_sem);
- 
-+done:
-+
- 	/*
- 	 * Handle the "normal" (no error) case first.
- 	 */
--- 
-1.9.1
+> >
+> > > +   };
+
+<snip>
+
+> > > &pinctrl_nor_flash
+> > > +            &pinctrl_usdhc2
+> > > +            &pinctrl_spdif_out     &pinctrl_spdif_in
+> > > +            &pinctrl_cpi1          &pinctrl_cpi2
+> > > +           >;
+> >
+> > Again, please do not put consumer device specific pins in hog group.
+> > Also, it's confusing to have the same pinctrl in both hog and consumer device
+> > node, like pinctrl_nor_flash and pinctrl_usdhc2 here.
+> 
+> About pinctrl_nor_flash I fully agree, that's a mistake.
+> pinctrl_usdhc2 is not connected on the avari, and therefore not enabled.
+> As told before it is added to the Hog group to force the default pinmuxing without enabling the hardware itself.
+
+If you want to do such default pinmuxing, please do it in your firmware.
+We generally do not want to use hog group too much, because that makes
+it difficult to find out which client devices consume which pins.
+
+> 
+> >
+> > > +};
+
+<snip>
+
+> > > +&i2c1 {
+> > > +   clock-frequency = <100000>;
+> > > +   pinctrl-names = "default";
+> > > +   pinctrl-0 = <&pinctrl_i2c1>;
+> > > +   status = "okay";
+> > > +
+> > > +   rtc: rtc@68 {
+> >
+> > Is the label actually used?  If yes, I would suggest a more specific name like
+> > ds1307.
+> Really? Why should it be a generic name for "gpio" and "pmic" but not a generic name for an "rtc" chip?
+
+I'm talking about label not node name.  That said I was suggesting
+something like:
+
+	ds1307: rtc@68
+
+> 
+> >
+> > > +           compatible = "dallas,ds1307";
+> > > +           reg = <0x68>;
+> > > +   };
+
+Shawn
