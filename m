@@ -1,112 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751314AbeEDMYw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:24:52 -0400
-Received: from sauhun.de ([88.99.104.3]:51556 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751261AbeEDMYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:24:50 -0400
-Date: Fri, 4 May 2018 14:24:47 +0200
-From: Wolfram Sang <wsa@the-dreams.de>
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>,
-        linux-i2c@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: I2C PM overhaul needed? (Re: [PATCH 1/2] i2c: sprd: Prevent i2c
- accesses after suspend is called)
-Message-ID: <20180504122447.u3xgrkperxz5dpcz@ninjato>
-References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
- <20180427121417.auv4ppryegkprv32@ninjato>
- <CAMz4kuK3fyBhdrUcLvY0s0N-0yY9_0MrAAi9cWdX1ZfdNW+R0w@mail.gmail.com>
- <20180502052336.i5f4yv2ho3za7qa7@tetsubishi>
- <CAMz4kuJAzr-ybCCmjx_Tcdw6qNYN0wLGQgWsb1H0WEkR4ZpyYg@mail.gmail.com>
- <3485f73f-e356-6db0-89fc-d51bf8bdab71@ti.com>
+        id S1751355AbeEDM15 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:27:57 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53275 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751262AbeEDM1z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:27:55 -0400
+X-Google-Smtp-Source: AB8JxZoWQn55TauI56QCwbIbaqvwMPX1pdLDtOqUrjYrEBNCzXBMQASJdZ7pA5K7z6CB3S5Kq8jTuA==
+Date: Fri, 4 May 2018 14:27:51 +0200
+From: Robert Richter <rric@kernel.org>
+To: Matt Redfearn <matt.redfearn@mips.com>
+Cc: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
+        linux-mips@linux-mips.org, Huacai Chen <chenhc@lemote.com>,
+        linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, oprofile-list@lists.sf.net
+Subject: Re: [RFC PATCH] MIPS: Oprofile: Drop support
+Message-ID: <20180504122750.GE4493@rric.localdomain>
+References: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
+ <20180424130511.GB28813@saruman>
+ <5e464a40-4e4d-dde4-b5b5-ceb637dc5f38@mips.com>
+ <20180504093002.GC4493@rric.localdomain>
+ <dd951d1e-206d-78dd-49ae-3a16cad9ebcc@mips.com>
+ <20180504102600.GD4493@rric.localdomain>
+ <294858af-9164-f0c3-62d3-d6b643e89e09@mips.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="3kht52n2ohte3uw3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3485f73f-e356-6db0-89fc-d51bf8bdab71@ti.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <294858af-9164-f0c3-62d3-d6b643e89e09@mips.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04.05.18 12:03:12, Matt Redfearn wrote:
+> >As said, oprofile version 0.9.x is still available for cpus that do
+> >not support perf. What is the breakage?
+> 
+> The breakage I originally set out to fix was the MT support in perf.
+> https://www.linux-mips.org/archives/linux-mips/2018-04/msg00259.html
+> 
+> Since the perf code shares so much copied code from oprofile, those same
+> issues exist in oprofile and ought to be addressed. But as newer oprofile
+> userspace does not use the (MIPS) kernel oprofile code, then we could,
+> perhaps, just remove it (as per the RFC). That would break legacy tools
+> (0.9.x) though...
 
---3kht52n2ohte3uw3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Those support perf:
 
-Hi Grygorii,
+ (CPU_MIPS32 || CPU_MIPS64 || CPU_R10000 || CPU_SB1 || CPU_CAVIUM_OCTEON || CPU_XLP || CPU_LOONGSON3)
 
-thanks for stepping in.  I kept thinking about better I2C core support
-for such situations and the more input the better.
+Here is the total list of CPU_*:
 
-> And you have to fix it (touch screen) - not your i2c driver. Otherwise, y=
-ou can get
-> situation when set of I2C transfers (executed from some kthread/work/thre=
-aded_irq/..)
-> will be just interrupted in the middle - usual behavior after this is (I2=
-C timeout) [and/or
-> not-functional I2C client device [and/or I2C bus stuck (worst case)].
+ $ git grep -h config.CPU_ arch/mips/ | sort -u | wc -l
+ 79
 
-This. I also tend to think that most issues need to be fixed in the
-client drivers ensuring proper states of client devices when suspending
-/ resuming.. I wonder, though, if the core shouldn't assist by
-guaranteeing that an on-going transfer has finished before suspending?
-Or more technically, wait for a locked adapter to become unlocked again?
+The comparisation might not be accurate, but at least gives a hint
+that there are many cpus not supporting perf. You would drop profiling
+support at al to them.
 
-I still need to set it up and test, yet seeing that the EEPROM driver
-at24.c has no suspend/resume callbacks, I'd assume a big write operation
-will only be partially done when interrupted by a suspend.
+If it is too hard to also fix the oprofile code (code duplication
+seems the main issue here), then it would be also ok to blacklist
+newer cpus to enable oprofile kernel code (where it is broken).
 
-> In case, somebody is trying to access I2C after .suspend_noirq() stage I2=
-C bus driver=20
-> should produce big fat warning and, most probably, abort suspend.
-> Above, in general, can be part of I2C core functionality.
-
-Also this. However, there might be an exception of devices like PMICs
-which may need to be accessed to trigger the final suspend state.
-
-I at least know of some Renesas boards which needed the I2C connected
-PMIC to do a system reset (not sure about suspend, need to recheck
-that). That still today causes problems because interrupts are disabled
-then.
-
-To handle that, I imagined an additional adapter callback like
-'master_xfer_irqless' to be used for such special I2C messages. These
-kind of special messages could be tagged with a new I2C_M_something
-flag.
-
-And maybe this could be used here, too? Introduce this flag for very
-late/early messages. If they have it, messages are even sent in
-suspend_noirq() phase with the master_xfer_irqless() callback, otherwise
-we will have the WARNing printed out.
-
-Thoughts? Any other cases missed so far?
-
-Kind regards,
-
-   Wolfram
-
-
---3kht52n2ohte3uw3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrsUQoACgkQFA3kzBSg
-KbZs+hAAomsL2h4cBH6MXh3Ni5rDcvYMfGOxLvvJAkJwiV61hRbKJnXyQ+3EqxCM
-TC5Ja+IxuwAu0yybd5giGaOYHpmQI5Hu2SCLWXFVdyAlTesoi5CQNzEiAgd09Dil
-TMfq+9m38VnRayj01HyNNJ66C1IbLafUtzLYnJ6AWwwYPAYoqlfiUa0Nx/LOXi3j
-mxHCFKcxBLMmfahd/r+zeTS6s21c1aAnnxBmj5mrU+h0OJpY/KXHPPCuwfbRSJbu
-ZF/gnJBodja1zElhckSit4cJebJcCJ6JnwOgrpNPipj54mPtI7crPEccvjI23PeL
-I35kqUeb0tvOdoAMq0euuDz4y5w0P/6si1TJ70z5RzexeAKjw8kxtleDR33CUdhS
-eyFgy/bi6isFSJ/UEq2E8TB7CjdoVY6uXUdwZwatTrNw4nAbSvsWj067ZDVFk25o
-+78/6D8HabP+FkpP3cxICPMR7HGe8Ahq35Iwy8IgoHyuJ4BdnVha1rHbfJeNSWyL
-JMI+iOr7avXWIjyWS8EA2Y6p1J/M6Wx8ptssS/Kh2KxIglTWeUNf93LxPfZTFp85
-Vb6amB2o5skPFLg8QkgANIv5jY2q/hssd08q0X0oJe+sSfmt55j6vW6b7njeDXaY
-bQSA7jkWnNcARu3/wfzTYZ59joB+IXUQBRxYalAhJpfGyEGwGZw=
-=5+F9
------END PGP SIGNATURE-----
-
---3kht52n2ohte3uw3--
+-Robert
