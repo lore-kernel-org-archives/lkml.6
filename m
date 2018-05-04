@@ -1,79 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751239AbeEDHnA (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:43:00 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20846 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750707AbeEDHm7 (ORCPT
+        id S1751417AbeEDHnH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:43:07 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:38865 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750707AbeEDHnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:42:59 -0400
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable STM32 analog & timer
- drivers
-To: Arnd Bergmann <arnd@arndb.de>
-CC: Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1525274696-11968-1-git-send-email-fabrice.gasnier@st.com>
- <cc934eb9-f9e4-3c52-7f38-413a1b63fce2@st.com>
- <CAK8P3a0maxno4S-dXoT1O5zp3NgHP2LWuGhtVoqFMMEv-tm07Q@mail.gmail.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <84f8b1bf-d6df-ca0e-cb3f-e5b7f7ded14b@st.com>
-Date: Fri, 4 May 2018 09:42:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 4 May 2018 03:43:04 -0400
+X-Google-Smtp-Source: AB8JxZpsbAfbUAzBiZKMSl1EZD5/chlo/9GB4NridaXt0gKU/22FM9vRVfj7XVEYgV5d4U7spU2+VScEqyGpyPbNQRg=
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0maxno4S-dXoT1O5zp3NgHP2LWuGhtVoqFMMEv-tm07Q@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.47]
-X-ClientProxiedBy: SFHDAG2NODE2.st.com (10.75.127.5) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_02:,,
- signatures=0
+References: <20180214182618.14627-1-willy@infradead.org> <20180214182618.14627-3-willy@infradead.org>
+In-Reply-To: <20180214182618.14627-3-willy@infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 04 May 2018 07:42:52 +0000
+Message-ID: <CA+55aFzLgES5qTAt2szDKcRtoUP5X--UPCoYX-38ea67cRFHxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: Add kvmalloc_ab_c and kvzalloc_struct
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>, linux-mm <linux-mm@kvack.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 14, 2018 at 8:27 AM Matthew Wilcox <willy@infradead.org> wrote:
+> +static inline __must_check
+> +void *kvmalloc_ab_c(size_t n, size_t size, size_t c, gfp_t gfp)
+> +{
+> +       if (size != 0 && n > (SIZE_MAX - c) / size)
+> +               return NULL;
+> +
+> +       return kvmalloc(n * size + c, gfp);
 
+Ok, so some more bikeshedding:
 
-On 05/04/2018 12:12 AM, Arnd Bergmann wrote:
-> On Thu, May 3, 2018 at 10:05 AM, Alexandre Torgue
-> <alexandre.torgue@st.com> wrote:
->> Hi Fabrice,
->>
->> On 05/02/2018 05:24 PM, Fabrice Gasnier wrote:
->>>
->>> This enables drivers for STM32 timer, low power timer and analog hardware
->>> that can be used on STM32MP1 SoC:
->>> - Timer & LP Timer MFD core, PWM, trigger & encoder drivers
->>> - IIO ADC/DAC/DFSDM
->>> - vrefbuf regu driver (voltage reference buffer).
->>>
->>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->>> ---
->>>    arch/arm/configs/multi_v7_defconfig | 10 ++++++++++
->>>    1 file changed, 10 insertions(+)
->>>
->>
->> Applied on stm32-next.
->>
->> Arnd,
->> Do you agree if I take multi_v7_defconfig related patches in my stm32 pull
->> requests ?
-> 
-> Yes, just make sure that all drivers that can reasonably be loadable
-> modules are configured that way rather than as built-in, so a defconfig
-> build doesn't become too big.
+  - I really don't want to encourage people to use kvmalloc().
 
-Ok. You're right, this drivers could be configured as module. We just 
-need to verify impact before send it.
+In fact, the conversion I saw was buggy. You can *not* convert a GFP_ATOMIC
+user of kmalloc() to use kvmalloc.
 
-Regards
-alex
+  - that divide is really really expensive on many architectures.
 
-> 
->         Arnd
-> 
+Note that these issues kind of go hand in hand.
+
+Normal kernel allocations are *limited*. It's simply not ok to allocate
+megabytes (or gigabytes) of mmory in general. We have serious limits, and
+we *should* have serious limits. If people worry about the multiply
+overflowing because a user is controlling the size valus, then dammit, such
+a user should not be able to do a huge gigabyte vmalloc() that exhausts
+memory and then spends time clearing it all!
+
+So the whole notion that "overflows are dangerous, let's get rid of them"
+somehow fixes a bug is BULLSHIT. You literally introduced a *new* bug by
+removing the normal kmalloc() size limit because you thought that pverflows
+are the only problem.
+
+So stop doing things like this. We should not do a stupid divide, because
+we damn well know that it is NOT VALID to allocate arrays that have
+hundreds of fthousands of elements,  or where the size of one element is
+very big.
+
+So get rid of the stupid divide, and make the limits be much stricter. Like
+saying "the array element size had better be smaller than one page"
+(because honestly, bigger elements are not valid in the kernel), and "the
+size of the array cannot be more than "pick-some-number-out-of-your-ass".
+
+So just make the divide go the hell away, a and check the size for validity.
+
+Something like
+
+      if (size > PAGE_SIZE)
+           return NULL;
+      if (elem > 65535)
+           return NULL;
+      if (offset > PAGE_SIZE)
+           return NULL;
+      return kzalloc(size*elem+offset);
+
+and now you (a) guarantee it can't overflow and (b) don't make people use
+crazy vmalloc() allocations when they damn well shouldn't.
+
+And yeah, if  somebody has a page size bigger than 64k, then the above can
+still overflow. I'm sorry, that architecture s broken shit.
+
+Are there  cases where vmalloc() is ok? Yes. But they should be rare, and
+they should have a good reason for them. And honestly, even then the above
+limits really really sound quite reasonable. There is no excuse for
+million-entry arrays in the kernel. You are doing something seriously wrong
+if you do those.
+
+             Linus
