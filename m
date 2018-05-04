@@ -1,121 +1,153 @@
-Return-Path: <hns@goldelico.com>
-X-Google-Smtp-Source: AB8JxZoq03xl8PNdK5Qo98stG65ACjhh2pII9WbQblCPw7dMOt5lBSLuPeTi0m3yObRDEf02iJkI
-ARC-Seal: i=1; a=rsa-sha256; t=1525410963; cv=none;
+Return-Path: <sre@kernel.org>
+X-Google-Smtp-Source: AB8JxZqnbtuCr8/TO+ZZ9RLAGlbVFbeZeyCxfmoaY5ivsPKdNTOJarzDnrlA9n+cv77aUz2xvmkF
+ARC-Seal: i=1; a=rsa-sha256; t=1525434137; cv=none;
         d=google.com; s=arc-20160816;
-        b=GIqNcCW24h6UqAZqO9dANdcoouhhK4PR2Dy0JuN09Sl2Bg768NU5SPVkyRJHUrY+er
-         351pykqx62g/VXUtW/nLuslsKRavgBBqppaoG4V/ZlLB+aljK2QQbEc/q7vcs9uE7zd5
-         StA3DX72o2bXi2v21bAKmpE5eBU6MBWfEe9268ZSjY1uvkQ5tcxDjhi6Jz9zSsy7LfCW
-         SrUAJNpDy8rmIrbPXwz5NJYRlujeHNWpg7NIujhS3+M/oB4RMqx6dv757KPLCCd8xzr1
-         SKWmdB4nRSC9xIb99lWDpgahsqw3G61ee4Th6WYKuiBSrieP2ZOqofzqMeVZMeiG4Ynv
-         /bGQ==
+        b=yo+FiHgGQqIqb6+Mt0xfo7Jwzxgs0qLVK2AbHimayyiYYLlXeEfEX6IWnwullyuPvC
+         564mk7/SRy76vFzj0W/Sf48Fp5iZisavcs703UahSAKYWScMejR1OdxnaEGKSKicvBGr
+         ZB2q2JLrxjZfUOskrC7J18mpI+diDFkaQgRCAwq4L0p78eAWwe9DYO/63dw3wJyh61ti
+         lTGTuKBenyRpk1KhaRVIeQM643XukKGhFQ1HG92VcfOUhLPld2ww7uUrxZMUPDn7NvOb
+         55Hv0FaNUZ8oW90bzuheg9oZT+TxBVLlEw699QzvXwoKJcWGJux5hMIc3m6n8vHoI6KQ
+         AO/w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=to:references:message-id:cc:date:in-reply-to:from:mime-version
-         :subject:dkim-signature:arc-authentication-results;
-        bh=HPD3zx7SD6MHHdOLFMAe1wcnQsKJ2xsbM5Pjqdv709g=;
-        b=DDnB1Xcw4LkcDLS6LO7u3kSrPDNkMDEHFUfFv5WeWwDA2xit5dz2nEMfRQTi5IrViW
-         BDHhZha2bYi+NhqkgeW64JyPP76tPLbDSO4hwQr2YHoqW2lUaF7PGTCXSU3Skb5dNa8j
-         zyeE29Qdc8Uyx4E7OLruQea5AquivltK8im1tHg5Oyc0FOZdS1DdZkziY3TH2FHnSE1v
-         pH6onsglZDR1yCFeUoDDkGrganjxQYpnwTQqFwA4rK4yBCv7Ye5fxW8t6r6rWK0DcWva
-         vks664Fk4KAbHjiUQHicBBTc9DK+JPAQi/9/BYr41PEp3K9Mmim6kbkzHuE7d+yHk4q8
-         7qQA==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=eydVPYIsIXoKCjm7dL7pQJkHt+uISrf1jp8gfhYoJtg=;
+        b=bSbpdAPPWM1iYr7Cgfmt3BK52uYtjFngspPZe4VgTAPXjPnOhKB6cZfgKX0Qoko/bD
+         t3rRcpKC1Kl3imYE6onMJrFABgUcKe1P9qYIX5i05RCrPAmuha+WwIeB8R2EgswZm6/k
+         K0r95UwmFzTRzj820FNW+2IA5gcTOdqeYhn6X29Xo0uUiRUKQFzm+4fjHFd6gIuHlpEF
+         C+we4F920BhT1Z81fRSUD2V8esSIEDVAh2YTZGUuSojCtamZvGpwJOyNAcK9UnF9TcMw
+         LZoaNxVL/xF6eJD4/kEsQwidtZkXVXL9HkGE3zUZ0J2wIYn657gA8uxw60dfaPyT7p++
+         IMtQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=qNQnKlGM;
-       spf=neutral (google.com: 2a01:238:20a:202:5301::1 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
+       dkim=pass header.i=@kernel.org header.s=default header.b=v+0AUmYM;
+       spf=pass (google.com: domain of sre@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sre@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@goldelico.com header.s=strato-dkim-0002 header.b=qNQnKlGM;
-       spf=neutral (google.com: 2a01:238:20a:202:5301::1 is neither permitted nor denied by best guess record for domain of hns@goldelico.com) smtp.mailfrom=hns@goldelico.com
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN9EVM="
-X-RZG-CLASS-ID: mo00
+       dkim=pass header.i=@kernel.org header.s=default header.b=v+0AUmYM;
+       spf=pass (google.com: domain of sre@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sre@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Fri, 4 May 2018 13:42:13 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Andreas Kemnade <andreas@kemnade.info>, Johan Hovold <johan@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	Pavel Machek <pavel@ucw.cz>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh+dt@kernel.org>, Tony Lindgren <tony@atomide.com>
 Subject: Re: [PATCH 4/7] dt-bindings: gnss: add u-blox binding
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: multipart/signed; boundary="Apple-Mail=_616FFBD6-319C-45AC-80B9-58545B949B9C"; protocol="application/pgp-signature"; micalg=pgp-sha256
-X-Pgp-Agent: GPGMail
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180503205037.7be552c1@aktux>
-Date: Fri, 4 May 2018 07:16:00 +0200
-Cc: Johan Hovold <johan@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Arnd Bergmann <arnd@arndb.de>,
- Pavel Machek <pavel@ucw.cz>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh+dt@kernel.org>
-Message-Id: <44A0BC7C-67C7-4116-849F-90FF7CF2B1F0@goldelico.com>
-References: <20180424163458.11947-1-johan@kernel.org> <20180424163458.11947-5-johan@kernel.org> <CAL_Jsq+mCp=geT8t_j+0fuTxAB7C9RYn6pESRpLc2GH273fM1Q@mail.gmail.com> <20180426091018.GU4615@localhost> <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com> <20180502081637.GE2285@localhost> <5242FCAD-3139-4A9C-B9FA-7BBAA0E6AE57@goldelico.com> <20180503205037.7be552c1@aktux>
-To: Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3124)
+Message-ID: <20180504114213.3xlzqxe74n55tk5s@earth.universe>
+References: <20180424163458.11947-1-johan@kernel.org>
+ <20180424163458.11947-5-johan@kernel.org>
+ <CAL_Jsq+mCp=geT8t_j+0fuTxAB7C9RYn6pESRpLc2GH273fM1Q@mail.gmail.com>
+ <20180426091018.GU4615@localhost>
+ <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com>
+ <20180502081637.GE2285@localhost>
+ <5242FCAD-3139-4A9C-B9FA-7BBAA0E6AE57@goldelico.com>
+ <20180503205037.7be552c1@aktux>
+ <44A0BC7C-67C7-4116-849F-90FF7CF2B1F0@goldelico.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fr6vxnvn3axa4j5k"
+Content-Disposition: inline
+In-Reply-To: <44A0BC7C-67C7-4116-849F-90FF7CF2B1F0@goldelico.com>
+User-Agent: NeoMutt/20180323
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598647064088300079?=
-X-GMAIL-MSGID: =?utf-8?q?1599509326252286241?=
+X-GMAIL-MSGID: =?utf-8?q?1599533625527775159?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 
---Apple-Mail=_616FFBD6-319C-45AC-80B9-58545B949B9C
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
+--fr6vxnvn3axa4j5k
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andreas,
+[+cc Tony]
 
-> Am 03.05.2018 um 20:50 schrieb Andreas Kemnade <andreas@kemnade.info>:
-> 
-> On Thu, 3 May 2018 11:35:21 +0200
-> H. Nikolaus Schaller <hns@goldelico.com> wrote:
-> 
-> 
->> I have realized that the w2sg0004 is an exception (although a Sirf chip)
->> that it does not provide a WAKEUP signal. And another significant
->> difference is that we have to keep the serdev UART enabled even if there
->> is no user-space client. Otherwise we are not able to detect unexpected
->> activity. So we unfortunately can't move serdev open/close into the .open
->> and .close ops but need to open it in probe.
->> 
-> how much power does it use to keep the uart enabled? Or should it
-> better be reprogrammed as gpio?
+Hi,
 
-I think it does not need much more (if at all) than a gpio controller on
-the OMAP3 chip (I think the clocks are active anyways for use by the other
-UARTs).
+On Fri, May 04, 2018 at 07:16:00AM +0200, H. Nikolaus Schaller wrote:
+> > Am 03.05.2018 um 20:50 schrieb Andreas Kemnade <andreas@kemnade.info>:
+> > On Thu, 3 May 2018 11:35:21 +0200
+> > H. Nikolaus Schaller <hns@goldelico.com> wrote:
+> >=20
+> >> I have realized that the w2sg0004 is an exception (although a Sirf chi=
+p)
+> >> that it does not provide a WAKEUP signal. And another significant
+> >> difference is that we have to keep the serdev UART enabled even if the=
+re
+> >> is no user-space client. Otherwise we are not able to detect unexpected
+> >> activity. So we unfortunately can't move serdev open/close into the .o=
+pen
+> >> and .close ops but need to open it in probe.
+> >>=20
+> > how much power does it use to keep the uart enabled? Or should it
+> > better be reprogrammed as gpio?
+>=20
+> I think it does not need much more (if at all) than a gpio controller on
+> the OMAP3 chip (I think the clocks are active anyways for use by the other
+> UARTs).
+>
+> We had proposed years ago to reprogram the UART RX pin by pinmux-states
+> into an interrupt gpio but that was rejected because it was not general
+> enough and ugly in the device tree (an rx-gpios record where the rx-line
+> is already connected to the UART-rx).
+>=20
+> Then we did experiment with tapping the UART driver and finally the
+> serdev API was developed to solve this problem. Hence we use it now this
+> way.
 
-We had proposed years ago to reprogram the UART RX pin by pinmux-states
-into an interrupt gpio but that was rejected because it was not general
-enough and ugly in the device tree (an rx-gpios record where the rx-line
-is already connected to the UART-rx).
+Having any UART active on OMAP results in the SoC not entering
+idle/off wasting energy. For normal (i.e. not connected to a peripheral)
+TTYs you can enable runtime autosuspend and configure the RX pin as
+wakeup interrupt. This will wakeup the TTY on incoming traffic, but you
+will lose the first few characters (since the serial device needs some
+time to wakeup). This is for example supported by the N900 uart3
+(debug uart):
 
-Then we did experiment with tapping the UART driver and finally the
-serdev API was developed to solve this problem. Hence we use it now this
-way.
+$ grep -A4 "&uart3 {" arch/arm/boot/dts/omap3-n900.dts=20
+&uart3 {
+	interrupts-extended =3D <&intc 74 &omap3_pmx_core OMAP3_UART3_RX>;
+	pinctrl-names =3D "default";
+	pinctrl-0 =3D <&uart3_pins>;
+};
 
-BR and thanks,
-Nikolaus
+To get it working, you also need to enable autosuspend for the tty
+in userspace (echo 3000 /sys/class/tty/ttyS2/device/power/autosuspend_delay=
+_ms).
+This is not enabled by default due to the character loss characteristic
+during wakeup.
 
+Having said all of this, serdev does not yet support runtime PM (at
+all). Tony is currently looking into it. Fortunately serdev allows
+us to enable runtime PM by default (once implemented), since we know
+the remote side and can (hopefully) avoid losing characters (i.e.
+with sideband wakeup gpios).
 
+-- Sebastian
 
---Apple-Mail=_616FFBD6-319C-45AC-80B9-58545B949B9C
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP using GPGMail
+--fr6vxnvn3axa4j5k
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJa6+yRAAoJEIl79TGLgAm6n9MP/ioJJNtWTpXLVcDKETg7CFxN
-FirfrzbJU07z3SwTU9fPtf8VcC6Uu6835f+1LYUXS8QmYGGwZRSH2miwSQKfYwgy
-TmEnDjNph5HfS8EP8ONnL6fcYndYsDyxdhqZ9joi6sjUyRriCjDIjtimZY9vddCW
-XnRm/N92wIKxFoReCJXNOJxtGZ7Ashi0hIVW67o0d1EGbqyttdnzPWRo9BGw6/JU
-4+HmgnW5JB8lX0Q5fk8BTni0h2GEWM3KVfqs8jtwKxehTixi7E2h5XfWTtl4swBY
-Cp250gAZZTlo1QfFSOwS0B58AVO8fecL92zuC2C2tvwtpGZqnQ8UmtoMf3rgR4eo
-Q+Ph6QVFrez0LdI+hOBvQzcAwX6k4rs3BwDYT5X4ZXRImYco2IJc6TwzEGBSp5vP
-Arkwm5atWHqCU0qVCzmeAuiUEVb47vYMSQ9fUKYnu1e87NVgpMLP91CQ7xGnuFgw
-9pNhsIpD+jS2l98/WP8jo9a9BywhvwniyVotWXKVSXC9+9zNUVMDfmE0vKZNWiX5
-YD2vu0kcS7FH0E1te7BdbRUZVzVCl9w/tfBQfbqH0YqMulREEALb5GEBO38VqZDg
-ExUg45Xu8/b1PjtJf4vUBVSBOGDP9VtF2XTCWUWtIu/Qs/9tZTlAUTdGRy69igAR
-v+HkIxWuv2aCoTPh9jOK
-=IwUu
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrsRw8ACgkQ2O7X88g7
++pqGdg//elQzv9AQMj6Bh2X1IMnncHM5o8P+66xvaTfO3HsdYPKnMchK3CaThTSg
+g3pGreNXkWqbj9YFiAWeyIAXs2WNjQ3dxtz3r3LuivdCboZ4BI7vnYj/mtZ8h5rP
+PYS7XarMTgAB0ieZgVfxUTP7+jJTAKdOOwICpO4A+pYXJAKjeH3HORAILhYyRs9L
+7Ve0fEeNcdIp0XEQ9ZNH1698KhOmaBiPC5qekcNLA0jb1mg0czpcM7vXVfldqrNX
+9pb9XDZNW2VmDUqISbf5oO2p25p34d02ffv0ccdXt0foGzb6Km/a6SufjcTtIcy7
+Labmo1XNSQWuPxIM6o1FZFrfEE404k3zDdWN0H3QwNZ8EylWZBOVT0eZtmmr99Js
+AD7l1KzD+k1sVL1yJyAm4qr3armQkymDVraLi3QxU0iouhHNr++OP1eNx7Esbc4W
+zF07J0cuGdc2zQR+NkWKNc2K4UF0F6MjGd9n2jiHrMpyKy4ZgVkFH+qkGJcIG0tD
+QQpmoLrNlu9+nDjy8doACRd1+LZd2F5GqDfT7IGawNOo/qqvIjwKB7CbNhKymrow
+Yu/MgfOU0d+53VCU4uVruvdSKL1+c7fsf32fgfc1eqG1W01LQQmxTdIbH7vZlFab
++ECGmzbz6wV5ePpRh5Uk5UepE7dLbgyDYB/RXxTtwQ/tQGytgEg=
+=bbq8
 -----END PGP SIGNATURE-----
 
---Apple-Mail=_616FFBD6-319C-45AC-80B9-58545B949B9C--
+--fr6vxnvn3axa4j5k--
