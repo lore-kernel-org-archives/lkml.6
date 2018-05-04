@@ -1,127 +1,187 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751869AbeEDJh5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 05:37:57 -0400
-Received: from mail-he1eur01on0110.outbound.protection.outlook.com ([104.47.0.110]:47008
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751269AbeEDJhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 05:37:53 -0400
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-To: "stefan@agner.ch" <stefan@agner.ch>,
-        "krzk@kernel.org" <krzk@kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "dev@lynxeye.de" <dev@lynxeye.de>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
- (plus such board on Iris)
-Thread-Topic: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
- (plus such board on Iris)
-Thread-Index: AQHT4vCk47h5qV3BckuAqk8fndyFEaQfTBMAgAAFKIA=
-Date: Fri, 4 May 2018 09:37:47 +0000
-Message-ID: <1525426665.6296.7.camel@toradex.com>
-References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
-         <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
-In-Reply-To: <c47c07b2c112219093b668c0b4d46ac8@agner.ch>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=marcel.ziswiler@toradex.com;
-x-originating-ip: [84.227.20.26]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0501MB2459;7:uMYhtzEHWzBzTzwnlkkh0l0xKyxa1jRmK1u5tYTY8/VYt5Y69uUWHUjIa8UufpxDZxph9pDgNpx6fqSe0cofq5TMVcbG7OfW3GYjCI2nNcImnXqotwOLFWEGDywwtUZFqRiQUFheELD+REs7KBtLDUE4mp5rGaG4AGre3u4+Xv+h+udmFopBlsnBTotvtkQ8lpzFKL/l0Ccw6pqVJiCR3VeQe3pCxUj+wm0HeFMWuoYNDBsW5dnd094ng0+8iYyD
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0501MB2459;
-x-ms-traffictypediagnostic: HE1PR0501MB2459:
-x-microsoft-antispam-prvs: <HE1PR0501MB2459B86AFB1E864750EE6526FB860@HE1PR0501MB2459.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93001095)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:HE1PR0501MB2459;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0501MB2459;
-x-forefront-prvs: 06628F7CA4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(396003)(39380400002)(376002)(346002)(366004)(377424004)(189003)(199004)(316002)(6512007)(478600001)(3846002)(2906002)(6116002)(86362001)(105586002)(106356001)(3660700001)(97736004)(3280700002)(476003)(66066001)(14454004)(102836004)(2616005)(966005)(446003)(7736002)(7416002)(11346002)(26005)(2501003)(2900100001)(186003)(5660300001)(5250100002)(110136005)(4326008)(103116003)(54906003)(6436002)(486006)(36756003)(53936002)(6306002)(305945005)(25786009)(6506007)(81156014)(6246003)(53546011)(8676002)(44832011)(68736007)(8936002)(99286004)(81166006)(76176011)(229853002)(6486002)(39060400002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0501MB2459;H:HE1PR0501MB2330.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: cg2HL1mL/AdcK7ZpNuu6ODEZikovDVW13gB6a2aekcz3WCvAgaHJM+5+OmdY9T9Vr8jNYP6rg9MEpiaLKh8LMScxwyV0JUiei2AM0qa3dxG3Or5msESCrHaDsFSy7qVpxPWiVKXSQHFI4xKI/ERHYUlvCBKt8vCnD++K5+rs5hsLAbUTLfc5DyN/M4sXXFGW
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A7F450C509846E428FFA0046778F25F7@eurprd05.prod.outlook.com>
+        id S1751896AbeEDJi0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 05:38:26 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52595 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751775AbeEDJiZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 05:38:25 -0400
+Date: Fri, 4 May 2018 02:37:58 -0700
+From: tip-bot for Rohit Jain <tipbot@zytor.com>
+Message-ID: <tip-247f2f6f3c706b40b5f3886646f3eb53671258bf@git.kernel.org>
+Cc: linux-kernel@vger.kernel.org, rohit.k.jain@oracle.com, hpa@zytor.com,
+        peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+        torvalds@linux-foundation.org
+Reply-To: mingo@kernel.org, torvalds@linux-foundation.org, tglx@linutronix.de,
+        peterz@infradead.org, rohit.k.jain@oracle.com,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+In-Reply-To: <1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com>
+References: <1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/core: Don't schedule threads on pre-empted
+ vCPUs
+Git-Commit-ID: 247f2f6f3c706b40b5f3886646f3eb53671258bf
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 0f1559ce-7d44-4d29-5d85-08d5b1a2b250
-X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f1559ce-7d44-4d29-5d85-08d5b1a2b250
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 May 2018 09:37:47.4879
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0501MB2459
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w449c1C1016139
 
-Hi Krzysztof
+Commit-ID:  247f2f6f3c706b40b5f3886646f3eb53671258bf
+Gitweb:     https://git.kernel.org/tip/247f2f6f3c706b40b5f3886646f3eb53671258bf
+Author:     Rohit Jain <rohit.k.jain@oracle.com>
+AuthorDate: Wed, 2 May 2018 13:52:10 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Fri, 4 May 2018 10:00:09 +0200
 
-On Fri, 2018-05-04 at 11:19 +0200, Stefan Agner wrote:
-> On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
-> > Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
-> > (with 1024 MB NAND) flavors.  Add support for the 256 MB version on
-> > Iris
-> > evaluation board.
-> 
-> To we really need to specify memory size these days? I think all
-> common
-> boot loaders fill the memory node anyway.
-> 
-> arch/arm/boot/dts/imx6qdl-apalis.dtsi:
-> 	/* Will be filled by the bootloader */
-> 	memory@10000000 {
-> 		reg = <0x10000000 0>;
-> 	};
+sched/core: Don't schedule threads on pre-empted vCPUs
 
-Yes, both mainline as well as our downstream U-Boot do actually set the
-memory node.
+In paravirt configurations today, spinlocks figure out whether a vCPU is
+running to determine whether or not spinlock should bother spinning. We
+can use the same logic to prioritize CPUs when scheduling threads. If a
+vCPU has been pre-empted, it will incur the extra cost of VMENTER and
+the time it actually spends to be running on the host CPU. If we had
+other vCPUs which were actually running on the host CPU and idle we
+should schedule threads there.
 
-In the past some people used to set it to the smallest SKU's memory
-size just to be on the safe side.
+Performance numbers:
 
-However lately it is agreed that the memory node should no longer even
-be present as can be seen from e.g. arch/arm/boot/dts/tegra30-
-apalis.dtsi resp. tegra30-apalis-eval.dts.
+Note: With patch is referred to as Paravirt in the following and without
+patch is referred to as Base.
 
-> I think we should just rename tegra20-colibri-512.dtsi =>
-> tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-iris.dts
-> avoid confusion and add such an empty node.
+1) When only 1 VM is running:
 
-I would rather suggest going to the regular SoC, module, carrier naming
-convention making it tegra20-colibri-iris.dts instead.
+    a) Hackbench test on KVM 8 vCPUs, 10,000 loops (lower is better):
 
-> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > 
-> > ---
-> > 
-> > Changes since v1:
-> > 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine
-> > because
-> >    my bootloader uses mem= argument).
-> 
-> What boot loader are you using? You even can omit mem= if your boot
-> loader fills the memory node properly.
+	+-------+-----------------+----------------+
+	|Number |Paravirt         |Base            |
+	|of     +---------+-------+-------+--------+
+	|Threads|Average  |Std Dev|Average| Std Dev|
+	+-------+---------+-------+-------+--------+
+	|1      |1.817    |0.076  |1.721  | 0.067  |
+	|2      |3.467    |0.120  |3.468  | 0.074  |
+	|4      |6.266    |0.035  |6.314  | 0.068  |
+	|8      |11.437   |0.105  |11.418 | 0.132  |
+	|16     |21.862   |0.167  |22.161 | 0.129  |
+	|25     |33.341   |0.326  |33.692 | 0.147  |
+	+-------+---------+-------+-------+--------+
 
-Yes, using mem= should only be used to force memory size for test
-purpose [1].
+2) When two VMs are running with same CPU affinities:
 
-> --
-> Stefan
+    a) tbench test on VM 8 cpus
 
-[1] https://www.kernel.org/doc/html/v4.14/admin-guide/kernel-parameters
-.html
+    Base:
 
-Cheers
+	VM1:
 
-Marcel
+	Throughput 220.59 MB/sec   1 clients  1 procs  max_latency=12.872 ms
+	Throughput 448.716 MB/sec  2 clients  2 procs  max_latency=7.555 ms
+	Throughput 861.009 MB/sec  4 clients  4 procs  max_latency=49.501 ms
+	Throughput 1261.81 MB/sec  7 clients  7 procs  max_latency=76.990 ms
+
+	VM2:
+
+	Throughput 219.937 MB/sec  1 clients  1 procs  max_latency=12.517 ms
+	Throughput 470.99 MB/sec   2 clients  2 procs  max_latency=12.419 ms
+	Throughput 841.299 MB/sec  4 clients  4 procs  max_latency=37.043 ms
+	Throughput 1240.78 MB/sec  7 clients  7 procs  max_latency=77.489 ms
+
+    Paravirt:
+
+	VM1:
+
+	Throughput 222.572 MB/sec  1 clients  1 procs  max_latency=7.057 ms
+	Throughput 485.993 MB/sec  2 clients  2 procs  max_latency=26.049 ms
+	Throughput 947.095 MB/sec  4 clients  4 procs  max_latency=45.338 ms
+	Throughput 1364.26 MB/sec  7 clients  7 procs  max_latency=145.124 ms
+
+	VM2:
+
+	Throughput 224.128 MB/sec  1 clients  1 procs  max_latency=4.564 ms
+	Throughput 501.878 MB/sec  2 clients  2 procs  max_latency=11.061 ms
+	Throughput 965.455 MB/sec  4 clients  4 procs  max_latency=45.370 ms
+	Throughput 1359.08 MB/sec  7 clients  7 procs  max_latency=168.053 ms
+
+    b) Hackbench with 4 fd 1,000,000 loops
+
+	+-------+--------------------------------------+----------------------------------------+
+	|Number |Paravirt                              |Base                                    |
+	|of     +----------+--------+---------+--------+----------+--------+---------+----------+
+	|Threads|Average1  |Std Dev1|Average2 | Std Dev|Average1  |Std Dev1|Average2 | Std Dev 2|
+	+-------+----------+--------+---------+--------+----------+--------+---------+----------+
+	|  1    | 3.748    | 0.620  | 3.576   | 0.432  | 4.006    | 0.395  | 3.446   | 0.787    |
+	+-------+----------+--------+---------+--------+----------+--------+---------+----------+
+
+    Note that this test was run just to show the interference effect
+    over-subscription can have in baseline
+
+    c) schbench results with 2 message groups on 8 vCPU VMs
+
+	+-----------+-------+---------------+--------------+------------+
+	|           |       | Paravirt      | Base         |            |
+	+-----------+-------+-------+-------+-------+------+------------+
+	|           |Threads| VM1   | VM2   |  VM1  | VM2  |%Improvement|
+	+-----------+-------+-------+-------+-------+------+------------+
+	|50.0000th  |    1  | 52    | 53    |  58   | 54   |  +6.25%    |
+	|75.0000th  |    1  | 69    | 61    |  83   | 59   |  +8.45%    |
+	|90.0000th  |    1  | 80    | 80    |  89   | 83   |  +6.98%    |
+	|95.0000th  |    1  | 83    | 83    |  93   | 87   |  +7.78%    |
+	|*99.0000th |    1  | 92    | 94    |  99   | 97   |  +5.10%    |
+	|99.5000th  |    1  | 95    | 100   |  102  | 103  |  +4.88%    |
+	|99.9000th  |    1  | 107   | 123   |  105  | 203  |  +25.32%   |
+	+-----------+-------+-------+-------+-------+------+------------+
+	|50.0000th  |    2  | 56    | 62    |  67   | 59   |  +6.35%    |
+	|75.0000th  |    2  | 69    | 75    |  80   | 71   |  +4.64%    |
+	|90.0000th  |    2  | 80    | 82    |  90   | 81   |  +5.26%    |
+	|95.0000th  |    2  | 85    | 87    |  97   | 91   |  +8.51%    |
+	|*99.0000th |    2  | 98    | 99    |  107  | 109  |  +8.79%    |
+	|99.5000th  |    2  | 107   | 105   |  109  | 116  |  +5.78%    |
+	|99.9000th  |    2  | 9968  | 609   |  875  | 3116 | -165.02%   |
+	+-----------+-------+-------+-------+-------+------+------------+
+	|50.0000th  |    4  | 78    | 77    |  78   | 79   |  +1.27%    |
+	|75.0000th  |    4  | 98    | 106   |  100  | 104  |   0.00%    |
+	|90.0000th  |    4  | 987   | 1001  |  995  | 1015 |  +1.09%    |
+	|95.0000th  |    4  | 4136  | 5368  |  5752 | 5192 |  +13.16%   |
+	|*99.0000th |    4  | 11632 | 11344 |  11024| 10736|  -5.59%    |
+	|99.5000th  |    4  | 12624 | 13040 |  12720| 12144|  -3.22%    |
+	|99.9000th  |    4  | 13168 | 18912 |  14992| 17824|  +2.24%    |
+	+-----------+-------+-------+-------+-------+------+------------+
+
+    Note: Improvement is measured for (VM1+VM2)
+
+Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: dhaval.giani@oracle.com
+Cc: matt@codeblueprint.co.uk
+Cc: steven.sistare@oracle.com
+Cc: subhra.mazumdar@oracle.com
+Link: http://lkml.kernel.org/r/1525294330-7759-1-git-send-email-rohit.k.jain@oracle.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ kernel/sched/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ffde9eebc846..71bdb86e07f9 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4028,6 +4028,9 @@ int idle_cpu(int cpu)
+ 		return 0;
+ #endif
+ 
++	if (vcpu_is_preempted(cpu))
++		return 0;
++
+ 	return 1;
+ }
+ 
