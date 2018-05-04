@@ -1,111 +1,111 @@
-Return-Path: <zohar@linux.vnet.ibm.com>
-X-Google-Smtp-Source: AB8JxZoHoLyHSWet02pgLJOyB7OBILQksDJFYbn68IY7pzdjXC3AWPQqXxVazfwr3lWjvgS6pH9O
-ARC-Seal: i=1; a=rsa-sha256; t=1526388247; cv=none;
+Return-Path: <lurodriguez@suse.de>
+X-Google-Smtp-Source: AB8JxZoK03YfUzbQf3AB1o8oJ3ut5ZKQqfItNM6o+P2mA9hnnwwEMKlGFejFlmG2tMpNz5ROQdDV
+ARC-Seal: i=1; a=rsa-sha256; t=1525392180; cv=none;
         d=google.com; s=arc-20160816;
-        b=j7euTZEwdIM/LOZNy6OSmLlvIdQFx3hsmV9D5fzT1jkyrdlqAIYEbo2ghYIVoWNX8E
-         BKnv2yebrzB3+Y8KzsXsyyWAKiqprKQ2djaceFhVIVhnjBKKEAk0tFraLiBVApIe/1DE
-         Ldn060n70c3l8iKYpXk05j4bB/YUj13cborqppq9QQSyLVBVGypAnwMN7rH7IZSco0q6
-         e3e7yYipCnQLIBX+SLj21b+WjZbYBRC4RvuBwfuPlHytcUDZvf0nsrhWC4qXvdDINM3A
-         zZo4+SxeUPCzJk7tMNHruuPvvkRBiIQV4zZWlsoMuewOo17tfd9BjszF1Np8x+zkEwnh
-         cBog==
+        b=gWueZhggAC4922yAcwQjNOSouafi+bqlk6zbToJTPYeaPGgN/rGLnfw8PZWMtr2nlk
+         zkrmQdE3RWm5JOMg2HIdSyRje35ZoOcAwDxlSotbR3buSX1DkYDBpcnPd5sb60qRSOoe
+         IFpmvvTI5Ri2kuOHdjE+wcyUb/7AsNqkAJZpzDnEbHCfpMfNAQvOyee20Vnq8WIC8ccm
+         UPNX8S2MOgEFInbFJjXC/iTSFQsvMAop+BW3ITA/Zc6Sj9vFsnDNdRqwNSCe+TwLrTL6
+         0NE8dzAEijATrNz3KcPxvmXAMGkeOaAcJVqVqWGJt9oQ1lM676OkdaRqtAWlZkwSmPe4
+         hwcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:mime-version:references
-         :in-reply-to:date:cc:to:from:subject:arc-authentication-results;
-        bh=Q+BJR1i7qyAeRBGv1YZRu8d9xqbb1KQofr0r4zZUSGI=;
-        b=z8G+tjtMmmozUK8XavHMFzq2X+qoJ07gzNTIUXIeD3zAiolZIXMB68CLjbc4hdYIYD
-         YngaJogpFd1n/37HXeJ4qxAEitlhybwL5dZeYheCOdKDr2seREpKI976A+mW7Cw/UyAK
-         XWHG0dYP0sCq0f7PHl1Fe2aPxf1SnymT/rDkQ7lVLwhmYtORGGkjFQ4bodupqNQmJ0AN
-         QHmD+e7ZuRyQ5koIxYk161n759BLpnibMoCSXYTaKy1hg6hIIqQQlCHoLd1xssQlW5mj
-         nEEgs2/KO2iORAuFlw7YMlmqWD/KfzPx4vROomcJSyJ5uTjJkZwt4s5cclIId6t6z+du
-         nlYw==
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:arc-authentication-results;
+        bh=/utSPfZlDEIDFTCl6SmSb8XB+JsfkA7aOK8bRMTT4SM=;
+        b=NSqvZfxxWFXM0r8vyChGXeCMZ1BRU9SSuuoFtxvINFFVGNc54aE8r6yhkuzrzcyaib
+         QvcsNm8rWz893rXK1ximsvM4i+7zbuYOLLOZopJzt1Hny5Y0HjRMTc7muTZry9vfoJI/
+         xZVgqvQ3qKsh7iRXeCLOeM9LDpMY8cQ5Dy/SaLQYhUs/bMjprR/cwcJt4yVA1ThDZG4q
+         cexVozDXLZsRrsITxwymYEDOUHCdm9CbT6ok8regDY/5H6vRd8C0ch/TJcKMwYcLYMUo
+         JZQV2ZONgLwqtB4FogCGmHelHXb8zZeFMFDMA8S/SaUtKu6ZaXUh8pcnhGEhW1DYvRAk
+         hMtQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 148.163.158.5 is neither permitted nor denied by best guess record for domain of zohar@linux.vnet.ibm.com) smtp.mailfrom=zohar@linux.vnet.ibm.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH 3/6] firmware: differentiate between signed
- regulatory.db and other firmware
-From: Mimi Zohar <zohar@linux.vnet.ibm.com>
-To: Josh Boyer <jwboyer@kernel.org>, mcgrof@kernel.org
-Cc: Harald Hoyer <harald@redhat.com>, Hannes Reinecke <hare@suse.de>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        "Eric W. Biederman"
- <ebiederm@xmission.com>,
-        Casey Schaufler <casey@schaufler-ca.com>, ast@kernel.org,
-        David Miller <davem@davemloft.net>, jeyu@kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        One Thousand Gnomes
- <gnomes@lxorguk.ukuu.org.uk>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Peter
- Jones <pjones@redhat.com>, takahiro.akashi@linaro.org,
-        David Howells
- <dhowells@redhat.com>,
-        Linux Wireless <linux-wireless@vger.kernel.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Seth Forshee
- <seth.forshee@canonical.com>, johannes.berg@intel.com,
-        linux-integrity@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Ard
- Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-security-module
- <linux-security-module@vger.kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org"
- <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg KH
- <gregkh@linuxfoundation.org>, andresx7@gmail.com,
-        Linus Torvalds
- <torvalds@linux-foundation.org>, luto@kernel.org,
-        Justin Forbes
- <jforbes@redhat.com>, Laura Abbott <labbott@redhat.com>
-Date: Tue, 15 May 2018 08:43:39 -0400
-In-Reply-To: <CA+5PVA7QU0k91zvoBTAFzG+unkh-=-s9Lhk3hn3eTJhHo4ovCQ@mail.gmail.com>
-References: <20180509212212.GX27853@wotan.suse.de>
-	 <1525903617.3551.281.camel@linux.vnet.ibm.com>
-	 <20180509234814.GY27853@wotan.suse.de>
-	 <1525917658.3551.322.camel@linux.vnet.ibm.com>
-	 <20180510232639.GF27853@wotan.suse.de>
-	 <1526014826.3414.46.camel@linux.vnet.ibm.com>
-	 <20180511215250.GJ27853@wotan.suse.de>
-	 <1526302692.3898.145.camel@linux.vnet.ibm.com>
-	 <20180514192853.GM27853@wotan.suse.de>
-	 <1526349751.3937.78.camel@linux.vnet.ibm.com>
-	 <20180515032656.GR27853@wotan.suse.de>
-	 <CA+5PVA7QU0k91zvoBTAFzG+unkh-=-s9Lhk3hn3eTJhHo4ovCQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18051512-0008-0000-0000-000004F6AD70
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051512-0009-0000-0000-00001E8B1354
-Message-Id: <1526388219.3937.137.camel@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-15_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805150131
+       spf=pass (google.com: domain of lurodriguez@suse.de designates 195.135.220.15 as permitted sender) smtp.mailfrom=lurodriguez@suse.de;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Fri, 4 May 2018 00:02:58 +0000
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: linux-integrity@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	Peter Jones <pjones@redhat.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>,
+	"Luis R . Rodriguez" <mcgrof@kernel.org>,
+	Kees Cook <keescook@chromium.org>,
+	Matthew Garrett <mjg59@google.com>,
+	Andres Rodriguez <andresx7@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 1/6] firmware: permit LSMs and IMA to fail firmware sysfs
+ fallback loading
+Message-ID: <20180504000258.GP27853@wotan.suse.de>
+References: <1525182503-13849-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525182503-13849-2-git-send-email-zohar@linux.vnet.ibm.com>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcSW1wb3J0YW50Ig==?=
-X-GMAIL-THRID: =?utf-8?q?1599489927866627191?=
-X-GMAIL-MSGID: =?utf-8?q?1600534083287638478?=
+X-GMAIL-THRID: =?utf-8?q?1599489630660050876?=
+X-GMAIL-MSGID: =?utf-8?q?1599489630660050876?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 2018-05-15 at 08:32 -0400, Josh Boyer wrote:
+If you can add Andres Rodriguez <andresx7@gmail.com>, and Greg to your Cc list
+in the future patches that'd be appreciated.
 
-> One aspect that was always a concern to some is whether the firmware files
-> were modified directly to have the signature attached to them.  That may
-> run afoul of the "no modification" license that most blobs are shipped
-> under.  Does IMA have the signatures for the files stored in xattrs or in
-> some other detached manner?
+On Tue, May 01, 2018 at 09:48:18AM -0400, Mimi Zohar wrote:
+> Add an LSM hook prior to allowing firmware sysfs fallback loading.
+> 
+> Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
+> Cc: Luis R. Rodriguez <mcgrof@suse.com>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Matthew Garrett <mjg59@google.com>
+> ---
+>  drivers/base/firmware_loader/fallback.c | 7 +++++++
+>  include/linux/fs.h                      | 1 +
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
+> index 31b5015b59fe..23d2af30474e 100644
+> --- a/drivers/base/firmware_loader/fallback.c
+> +++ b/drivers/base/firmware_loader/fallback.c
+> @@ -651,6 +651,8 @@ static bool fw_force_sysfs_fallback(unsigned int opt_flags)
+>  
+>  static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+>  {
+> +	int ret;
+> +
+>  	if (fw_fallback_config.ignore_sysfs_fallback) {
+>  		pr_info_once("Ignoring firmware sysfs fallback due to sysctl knob\n");
+>  		return false;
+> @@ -659,6 +661,11 @@ static bool fw_run_sysfs_fallback(unsigned int opt_flags)
+>  	if ((opt_flags & FW_OPT_NOFALLBACK))
+>  		return false;
+>  
+> +	/* Also permit LSMs and IMA to fail firmware sysfs fallback */
+> +	ret = security_kernel_read_file(NULL, READING_FIRMWARE_FALLBACK);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	return fw_force_sysfs_fallback(opt_flags);
+>  }
+>  
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 760d8da1b6c7..dc16a73c3d38 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2810,6 +2810,7 @@ extern int do_pipe_flags(int *, int);
+>  	id(UNKNOWN, unknown)		\
+>  	id(FIRMWARE, firmware)		\
+>  	id(FIRMWARE_PREALLOC_BUFFER, firmware)	\
+> +	id(FIRMWARE_FALLBACK, firmware)	\
 
-They're stored as xattrs.  RPM has support for including file
-signatures in the RPM header.
+If you're going to add this perhaps FIRMWARE_FALLBACK_SYSFS as we may later
+get FIRMWARE_FALLBACK_EFI.
 
-Mimi
+  Luis
