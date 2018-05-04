@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751283AbeEDL26 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:28:58 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34296 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751001AbeEDL24 (ORCPT
+        id S1751275AbeEDLb1 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:31:27 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34633 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDLbZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:28:56 -0400
-X-Google-Smtp-Source: AB8JxZradVhDAPbSTqXzd6OkTseETv8ISoVxhpQHSB8BGGnDm2YLStHj+3wk2W7ChqRIN1CAFo5utg==
-Subject: Re: [PATCH v1 1/5] drm/tegra: dc: Balance IOMMU group refcounting
+        Fri, 4 May 2018 07:31:25 -0400
+X-Google-Smtp-Source: AB8JxZpk+bs07tgp4JSfAAp256NHGN7UtUtBG+OrZgXTZeZeKFHNxjw9PpyFUzKYnv4ebNc8fmivMw==
+Subject: Re: [PATCH v1 2/5] drm/tegra: gr2d: Add IOMMU support
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20180503234723.4368-1-digetx@gmail.com>
- <20180503234723.4368-2-digetx@gmail.com> <20180504104515.GM13459@ulmo>
+ <20180503234723.4368-3-digetx@gmail.com> <20180504105416.GN13459@ulmo>
 From: Dmitry Osipenko <digetx@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
@@ -40,150 +40,83 @@ Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
  DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
  90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
  c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
-Message-ID: <940fd992-b40c-a6f7-d527-7e0e356eeb44@gmail.com>
-Date: Fri, 4 May 2018 14:28:52 +0300
+Message-ID: <56f36af6-6113-9b96-4bd3-b386d31c6b5b@gmail.com>
+Date: Fri, 4 May 2018 14:31:22 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180504104515.GM13459@ulmo>
+In-Reply-To: <20180504105416.GN13459@ulmo>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.05.2018 13:45, Thierry Reding wrote:
-> On Fri, May 04, 2018 at 02:47:19AM +0300, Dmitry Osipenko wrote:
->> Remove unneeded iommu_group_get() and add missing iommu_group_put(),
->> correcting IOMMU group refcount. This is a minor correction / cleanup that
->> doesn't really fix anything because Tegra's IOMMU driver are built-in and
->> hence groups refcounting can't hold IOMMU driver from unloading.
+On 04.05.2018 13:54, Thierry Reding wrote:
+> On Fri, May 04, 2018 at 02:47:20AM +0300, Dmitry Osipenko wrote:
+>> Attach GR2D to the display IOMMU group in order to provide GR2D access
+>> to BO's IOVA.
 >>
 >> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 >> ---
->>  drivers/gpu/drm/tegra/dc.c  | 35 +++++++++++++++++------------------
->>  drivers/gpu/drm/tegra/dc.h  |  2 +-
->>  drivers/gpu/drm/tegra/drm.h |  2 +-
->>  3 files changed, 19 insertions(+), 20 deletions(-)
+>>  drivers/gpu/drm/tegra/gr2d.c | 31 +++++++++++++++++++++++++++++--
+>>  1 file changed, 29 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
->> index d7a0f62c6e2e..9fc34c6a7218 100644
->> --- a/drivers/gpu/drm/tegra/dc.c
->> +++ b/drivers/gpu/drm/tegra/dc.c
->> @@ -1927,7 +1927,6 @@ static irqreturn_t tegra_dc_irq(int irq, void *data)
->>  static int tegra_dc_init(struct host1x_client *client)
->>  {
->>  	struct drm_device *drm = dev_get_drvdata(client->parent);
->> -	struct iommu_group *group = iommu_group_get(client->dev);
->>  	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
->>  	struct tegra_dc *dc = host1x_client_to_dc(client);
->>  	struct tegra_drm *tegra = drm->dev_private;
->> @@ -1939,20 +1938,21 @@ static int tegra_dc_init(struct host1x_client *client)
->>  	if (!dc->syncpt)
->>  		dev_warn(dc->dev, "failed to allocate syncpoint\n");
+>> diff --git a/drivers/gpu/drm/tegra/gr2d.c b/drivers/gpu/drm/tegra/gr2d.c
+>> index 9a8ea93016a9..8eb530a85dd0 100644
+>> --- a/drivers/gpu/drm/tegra/gr2d.c
+>> +++ b/drivers/gpu/drm/tegra/gr2d.c
+>> @@ -7,12 +7,14 @@
+>>   */
 >>  
->> -	if (group && tegra->domain) {
->> -		if (group != tegra->group) {
->> -			err = iommu_attach_group(tegra->domain, group);
->> +	if (tegra->domain) {
->> +		dc->group = iommu_group_get(client->dev);
->> +
->> +		if (dc->group && dc->group != tegra->dc_group) {
->> +			err = iommu_attach_group(tegra->domain, dc->group);
->>  			if (err < 0) {
->>  				dev_err(dc->dev,
->>  					"failed to attach to domain: %d\n",
->>  					err);
->> +				iommu_group_put(dc->group);
->>  				return err;
->>  			}
+>>  #include <linux/clk.h>
+>> +#include <linux/iommu.h>
 >>  
->> -			tegra->group = group;
->> +			tegra->dc_group = dc->group;
->>  		}
->> -
->> -		dc->domain = tegra->domain;
->>  	}
+>>  #include "drm.h"
+>>  #include "gem.h"
+>>  #include "gr2d.h"
 >>  
->>  	if (dc->soc->wgrps)
->> @@ -2017,13 +2017,13 @@ static int tegra_dc_init(struct host1x_client *client)
->>  	if (!IS_ERR(primary))
->>  		drm_plane_cleanup(primary);
->>  
->> -	if (group && dc->domain) {
->> -		if (group == tegra->group) {
->> -			iommu_detach_group(dc->domain, group);
->> -			tegra->group = NULL;
->> +	if (dc->group) {
->> +		if (dc->group && dc->group == tegra->dc_group) {
-> 
-> You can drop the dc->group check from the second conditional.
-
-Indeed.
-
->> +			iommu_detach_group(tegra->domain, dc->group);
->> +			tegra->dc_group = NULL;
->>  		}
->>  
->> -		dc->domain = NULL;
->> +		iommu_group_put(dc->group);
->>  	}
->>  
->>  	return err;
->> @@ -2032,7 +2032,6 @@ static int tegra_dc_init(struct host1x_client *client)
->>  static int tegra_dc_exit(struct host1x_client *client)
->>  {
->>  	struct drm_device *drm = dev_get_drvdata(client->parent);
->> -	struct iommu_group *group = iommu_group_get(client->dev);
->>  	struct tegra_dc *dc = host1x_client_to_dc(client);
->>  	struct tegra_drm *tegra = drm->dev_private;
->>  	int err;
->> @@ -2045,13 +2044,13 @@ static int tegra_dc_exit(struct host1x_client *client)
->>  		return err;
->>  	}
->>  
->> -	if (group && dc->domain) {
->> -		if (group == tegra->group) {
->> -			iommu_detach_group(dc->domain, group);
->> -			tegra->group = NULL;
->> +	if (dc->group) {
->> +		if (dc->group && dc->group == tegra->dc_group) {
->> +			iommu_detach_group(tegra->domain, dc->group);
->> +			tegra->dc_group = NULL;
->>  		}
->>  
->> -		dc->domain = NULL;
->> +		iommu_group_put(dc->group);
->>  	}
->>  
->>  	host1x_syncpt_free(dc->syncpt);
->> diff --git a/drivers/gpu/drm/tegra/dc.h b/drivers/gpu/drm/tegra/dc.h
->> index ca5cac6bf8ea..5ca4e07333bb 100644
->> --- a/drivers/gpu/drm/tegra/dc.h
->> +++ b/drivers/gpu/drm/tegra/dc.h
->> @@ -94,7 +94,7 @@ struct tegra_dc {
->>  
->>  	const struct tegra_dc_soc_info *soc;
->>  
->> -	struct iommu_domain *domain;
+>>  struct gr2d {
 >> +	struct iommu_group *group;
->>  };
+>>  	struct tegra_drm_client client;
+>>  	struct host1x_channel *channel;
+>>  	struct clk *clk;
+>> @@ -30,7 +32,9 @@ static int gr2d_init(struct host1x_client *client)
+>>  	struct tegra_drm_client *drm = host1x_to_drm_client(client);
+>>  	struct drm_device *dev = dev_get_drvdata(client->parent);
+>>  	unsigned long flags = HOST1X_SYNCPT_HAS_BASE;
+>> +	struct tegra_drm *tegra = dev->dev_private;
+>>  	struct gr2d *gr2d = to_gr2d(drm);
+>> +	int err;
 >>  
->>  static inline struct tegra_dc *
->> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
->> index 4f41aaec8530..7777640a6911 100644
->> --- a/drivers/gpu/drm/tegra/drm.h
->> +++ b/drivers/gpu/drm/tegra/drm.h
->> @@ -46,7 +46,7 @@ struct tegra_drm {
->>  	struct drm_device *drm;
+>>  	gr2d->channel = host1x_channel_request(client->dev);
+>>  	if (!gr2d->channel)
+>> @@ -42,23 +46,46 @@ static int gr2d_init(struct host1x_client *client)
+>>  		return -ENOMEM;
+>>  	}
 >>  
->>  	struct iommu_domain *domain;
->> -	struct iommu_group *group;
->> +	struct iommu_group *dc_group;
+>> -	return tegra_drm_register_client(dev->dev_private, drm);
+>> +	if (tegra->domain) {
+>> +		gr2d->group = iommu_group_get(client->dev);
+>> +
+>> +		if (gr2d->group) {
+>> +			err = iommu_attach_group(tegra->domain, gr2d->group);
+>> +			if (err < 0) {
+>> +				dev_err(client->dev,
+>> +					"failed to attach to domain: %d\n",
+>> +					err);
+>> +				host1x_syncpt_free(client->syncpts[0]);
+>> +				host1x_channel_put(gr2d->channel);
+>> +				iommu_group_put(gr2d->group);
+>> +				return err;
+>> +			}
+>> +		}
+>> +	}
 > 
-> It's not obvious to me why this needs to be renamed.
+> This is almost identical to the code in DC, perhaps we should factor
+> this out into a separate helper? Nothing that needs to be done right
+> now, I'll take a look at it and see if I can come up with something
+> good in a follow-up patch.
 
-tegra->group is only used by the dc.c and seems its sole purpose is to avoid
-re-attaching DC group if DC0 and DC1 share the same group, like DC's on newer
-Tegra's do. I think it's better to rename 'group' to 'dc_group' for the clarity.
+Sounds good.
