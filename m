@@ -1,108 +1,94 @@
-Date: Wed, 9 May 2018 16:50:35 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Adrian Salido <salidoa@google.com>,
-	Nicolai Stange <nstange@suse.de>,
-	Sasha Levin <Alexander.Levin@microsoft.com>,
-	Todd Kjos <tkjos@android.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] ARM: amba: Fix race condition with driver_override
-Message-ID: <20180509145035.GF18586@kroah.com>
-References: <1523366506-19832-1-git-send-email-geert+renesas@glider.be>
- <1523366506-19832-3-git-send-email-geert+renesas@glider.be>
- <20180425160645.GA16732@kroah.com>
- <CAMuHMdUVowxjG0Q=DGie_JjPqfz3UBDikvLnZ6_86jbcJMKqyQ@mail.gmail.com>
- <20180426070410.GM14025@kroah.com>
- <CAMuHMdWLCQoHzuW1UZNP9gdRV3EE6_yPcdyX1NDy65q7Nt4tZw@mail.gmail.com>
- <20180426083542.GA31073@kroah.com>
- <CAMuHMdWO+C3g4T_rPbcyPFgVpqubjj4HZ++O+P7d0VYYFP0xWA@mail.gmail.com>
- <20180509103954.GR16141@n2100.armlinux.org.uk>
- <CAMuHMdVD59kA1BRrce+jHEMr7Sq7AqEzQEXJWL7SPDUY32Fgmw@mail.gmail.com>
+Return-Path: <shuah@kernel.org>
+X-Google-Smtp-Source: AB8JxZrkBVw0aDSL32+uA+tu6s5MALpor6D12oCB20zRoVG27fHSo8buE8wIDgdQ9t1sTXEMrdn6
+ARC-Seal: i=1; a=rsa-sha256; t=1525463289; cv=none;
+        d=google.com; s=arc-20160816;
+        b=v61AwH9R1p+p3hBXvVJlx/wy+lml3hscEmbRfQBkwJ3vHmYPBp+mC9qNuTqCHVJ47e
+         qhQT9CUpKczynBqx06ib2axiS0mdyZnoq/lTAu/8vuLW3RmCoQ1NsdglVaK4sEPQAp6i
+         MHr7VQNFpuuru/pl6FTmdBlc+w5MusF10j8OqkgAq9rs9gs15Vh6OHdWrt8gM/vbOAzw
+         TZ5qEFVe9nrYQSmmG+e8mA6C9nEG60P468dThEQodZhDFKQsa+TPPWsOlUG0VeQzSjut
+         4f9mhSko1WgsuILAexn45lK8BnmW4I4ksr4l+lP7kmLBZm/7Ih5ejIon7ILB1QQIWLUU
+         kBCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=FuVoqYN8z6kCbqfdBr0GTUYil3FiMNzHifg8CkTSZNc=;
+        b=w190wBEVqV3vzdVcRZsvErqDEjq/DiyZGpnpji0EOxNQufXDGgmQ7PwZtwDMLLfP9X
+         ohnBSjGVVETWYS0ygyA4IDw7Y/OXrbzm2b8C4fVHEyGA8wmSkbmRHo7nuJzOKc6nc+RY
+         EXZHfGbnTISbbEWSc7BX1CZlquUWynC6h592NkN2W46BDXw7PhfyqELxC26mj9FcszqW
+         QQRNP423EYmW+AB+C2Iujyi/3Lu0G8gnYPStlPjgR7iN8/EkaJ60lFq5Y5s9C4LnaLLS
+         bdAnIWX6chXRjWHWR+z4kyqs/JPv+OFqB2a9/lTFoygMl9z4ZRjhtg8jmeadQa3UXJCU
+         KUKA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning shuah@kernel.org does not designate 64.68.200.34 as permitted sender) smtp.mailfrom=shuah@kernel.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Subject: Re: [PATCH] selftests:intel_pstate: fixes typical crash of a testing
+ script for Intel P-State driver
+To: Jeffrin Jose T <ahiliation@yahoo.co.in>, kstewart@linuxfoundation.org,
+ daniel.diaz@linaro.org, pombredanne@nexb.com, gregkh@linuxfoundation.org,
+ thomas@m3y3r.de
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jeffrin Jose T <jeffrin@rajagiritech.edu.in>, Shuah Khan <shuah@kernel.org>
+References: <20180429191226.14242-1-ahiliation@yahoo.co.in>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <62c2484a-b8fe-513c-a9c7-dff1f3f3979a@kernel.org>
+Date: Fri, 4 May 2018 13:47:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVD59kA1BRrce+jHEMr7Sq7AqEzQEXJWL7SPDUY32Fgmw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180429191226.14242-1-ahiliation@yahoo.co.in>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599109031684062016?=
+X-GMAIL-MSGID: =?utf-8?q?1599564193861056648?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 09, 2018 at 03:32:16PM +0200, Geert Uytterhoeven wrote:
-> Hi Russell,
+On 04/29/2018 01:12 PM, Jeffrin Jose T wrote:
+>  Testing script for Intel P-State driver crashes during
+>  the run.  this patch fixes that crash and produce typical results.
 > 
-> On Wed, May 9, 2018 at 12:39 PM, Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
-> > On Thu, Apr 26, 2018 at 10:45:49AM +0200, Geert Uytterhoeven wrote:
-> >> On Thu, Apr 26, 2018 at 10:35 AM, Greg Kroah-Hartman
-> >> <gregkh@linuxfoundation.org> wrote:
-> >> > On Thu, Apr 26, 2018 at 09:40:08AM +0200, Geert Uytterhoeven wrote:
-> >> >> On Thu, Apr 26, 2018 at 9:04 AM, Greg Kroah-Hartman
-> >> >> <gregkh@linuxfoundation.org> wrote:
-> >> >> > On Wed, Apr 25, 2018 at 07:53:06PM +0200, Geert Uytterhoeven wrote:
-> >> >> >> On Wed, Apr 25, 2018 at 6:06 PM, Greg Kroah-Hartman
-> >> >> >> <gregkh@linuxfoundation.org> wrote:
-> >> >> >> > On Tue, Apr 10, 2018 at 03:21:44PM +0200, Geert Uytterhoeven wrote:
-> >> >> >> >> The driver_override implementation is susceptible to a race condition
-> >> >> >> >> when different threads are reading vs storing a different driver
-> >> >> >> >> override.  Add locking to avoid this race condition.
-> >> >> >> >>
-> >> >> >> >> Cfr. commits 6265539776a0810b ("driver core: platform: fix race
-> >> >> >> >> condition with driver_override") and 9561475db680f714 ("PCI: Fix race
-> >> >> >> >> condition with driver_override").
-> >> >> >> >>
-> >> >> >> >> Fixes: 3cf385713460eb2b ("ARM: 8256/1: driver coamba: add device binding path 'driver_override'")
-> >> >> >> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> >> >> >> Reviewed-by: Todd Kjos <tkjos@google.com>
-> >> >> >> >> Cc: stable <stable@vger.kernel.org>
-> >> >> >>
-> >> >> >> > As this should go to stable kernels, I've fixed it up to apply without
-> >> >> >> > patch 1 as that's not a real "fix" that anyone needs...
-> >> >> >> >
-> >> >> >> > Please try to remember to put fixes first, and then "trivial" things
-> >> >> >> > later on in a series.
-> >> >> >>
-> >> >> >> I did it on purpose, as the fix is much more ugly without patch 1 applied.
-> >> >> >> Can't you just take patch 1, too? More consistency is always nice, even for
-> >> >> >> stable ;-)
-> >> >> >
-> >> >> > Consistency is nice, but when you have bug fixes that rely on "trivial"
-> >> >> > patches, it's usually not nice :(
-> >> >> >
-> >> >> > I already committed patch 2 to my tree without 1, so let's leave it
-> >> >> > as-is for now.
-> >> >>
-> >> >> Unfortunately the version you committed is buggy: the race condition
-> >> >> also covers the NULL check removed by the trivial patch you skipped,
-> >> >> so now you can get inconsistent behavior (no output or "(null)") on the
-> >> >> same running kernel version...
-> >> >>
-> >> >> Please revert and apply both. Thanks!
-> >> >
-> >> > Ugh, you are right, sorry about that.
-> >> >
-> >> > I've reverted the offending patch, and added them in the correct order
-> >> > now, I should have listened to you :)
-> >>
-> >> Np, issue detected and fixed.
-> >> Thanks!
-> >
-> > So what about the patches you submitted to the patch system - should
-> > I pick those up or not?
+> Signed-off-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
 > 
-> I think only the 4th patch (#8759) in the series is still applicable.
+> ---
+>  tools/testing/selftests/intel_pstate/run.sh | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> > Please don't ask other maintainers to take patches that have been
-> > submitted to the patch system without first changing their status,
-> > they're liable to get applied anyway.
+> diff --git a/tools/testing/selftests/intel_pstate/run.sh b/tools/testing/selftests/intel_pstate/run.sh
+> index c670359becc6..cd32aca8806f 100755
+> --- a/tools/testing/selftests/intel_pstate/run.sh
+> +++ b/tools/testing/selftests/intel_pstate/run.sh
+> @@ -27,6 +27,7 @@
+>  # and the test will error out in those cases.  The result.X file can be checked
+>  # for consistency and modified to remove the extra MHz values.  The result.X
+>  # files can be re-evaluated by setting EVALUATE_ONLY to 1 below.
+> +#set -xv
+>  
+>  EVALUATE_ONLY=0
+>  
+> @@ -101,12 +102,13 @@ cpupower frequency-set -g powersave --max=${max_freq}MHz >& /dev/null
+>  echo "Target      Actual      Difference     MSR(0x199)     max_perf_pct"
+>  for freq in `seq $max_freq -100 $min_freq`
+>  do
+> -	result_freq=$(cat /tmp/result.${freq} | grep "cpu MHz" | awk ' { print $4 } ' | awk -F "." ' { print $1 } ')
+> +       result_freq=$(cat /tmp/result.${freq} | grep "cpu MHz" \
+>         | awk '{print $4}' | awk -F "." '{print $1}')
+> +	result_freq=$(echo $result_freq | head -n1 | cut -d " " -f1)
+>  	msr=$(cat /tmp/result.${freq} | grep "msr" | awk ' { print $3 } ')
+>  	max_perf_pct=$(cat /tmp/result.${freq} | grep "max_perf_pct" | awk ' { print $2 } ' )
+> -	if [ $result_freq -eq $freq ]; then
+> +	if (( "$result_freq" == "$freq" ))
+> +	then
+>  		echo " $freq        $result_freq             0          $msr         $(($max_perf_pct*3300))"
+>  	else
+>  		echo " $freq        $result_freq          $(($result_freq-$freq))          $msr          $(($max_perf_pct*$max_freq))"
 > 
-> They got picked up by Greg, on request of a third party who wanted them in
-> -stable ASAP. Not much I can do to prevent that.
-> Especially with an "Odd Fixes" maintainership status.
 
-I was going to pick up the last one if needed and put it through my
-tree, as it's still in my queue.
+Thanks. I will get this into 4.17-rc5
 
-thanks,
-
-greg k-h
+-- Shuah
