@@ -1,102 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751511AbeEDGBM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 02:01:12 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:37439 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751404AbeEDGBG (ORCPT
+        id S1751989AbeEDGEJ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 02:04:09 -0400
+Received: from mail-io0-f178.google.com ([209.85.223.178]:36821 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751975AbeEDGEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 02:01:06 -0400
-X-Google-Smtp-Source: AB8JxZqpETwR6ZH5W4PtiY0+S7ydEPdRHyQpcE76J36v4I2CPfuAhUML/itjltBqmOuvPwyFCxWV+w==
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To: linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@suse.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 02/17] efi/cper: Remove the INDENT_SP silliness
-Date: Fri,  4 May 2018 07:59:48 +0200
-Message-Id: <20180504060003.19618-3-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
-References: <20180504060003.19618-1-ard.biesheuvel@linaro.org>
+        Fri, 4 May 2018 02:04:06 -0400
+X-Google-Smtp-Source: AB8JxZrRxr+B0YLgDxD0mBq09+lrOMa1Q1byN8O3yhPsjU6ovQxaNzhk5PjZ4cj2rc8L5Jh+pE9fESOuFMRjr3tRMSc=
+MIME-Version: 1.0
+In-Reply-To: <20180402091617.GA3572@vireshk-i7>
+References: <1522358807-10413-1-git-send-email-ilialin@codeaurora.org>
+ <1522358807-10413-9-git-send-email-ilialin@codeaurora.org> <20180402091617.GA3572@vireshk-i7>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Date: Fri, 4 May 2018 11:34:04 +0530
+Message-ID: <CAKohpo=cw+2Leuwa6XjEYh4kVYK093A5eckUmPBDutgqeqpvog@mail.gmail.com>
+Subject: Re: [PATCH v4 08/14] dt: qcom: Add opp and thermal to the msm8996
+To: Ilia Lin <ilialin@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Clock List <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+        <linux-arm-kernel@lists.infradead.org>,
+        "Nayak, Rajendra" <rnayak@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>, celster@codeaurora.org,
+        tfinkel@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On 2 April 2018 at 14:46, Viresh Kumar <viresh.kumar@linaro.org> wrote:
 
-A separate define just to print a space character is silly and
-completely unneeded. Remove it.
+>> +     cluster0_opp: opp_table0 {
+>> +             compatible = "operating-points-v2";
+>> +             opp-shared;
+>
+> Is Kryo like krait where CPUs do DVFS independently ? If yes, then opp-shared
+> thing should be dropped.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- drivers/firmware/efi/cper-arm.c | 6 ++----
- drivers/firmware/efi/cper.c     | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
-index 698e5c8e0c8d..502811344e81 100644
---- a/drivers/firmware/efi/cper-arm.c
-+++ b/drivers/firmware/efi/cper-arm.c
-@@ -30,8 +30,6 @@
- #include <acpi/ghes.h>
- #include <ras/ras_event.h>
- 
--#define INDENT_SP	" "
--
- static const char * const arm_reg_ctx_strs[] = {
- 	"AArch32 general purpose registers",
- 	"AArch32 EL1 context registers",
-@@ -283,7 +281,7 @@ void cper_print_proc_arm(const char *pfx,
- 			pfx, proc->psci_state);
- 	}
- 
--	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-+	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
- 
- 	err_info = (struct cper_arm_err_info *)(proc + 1);
- 	for (i = 0; i < proc->err_info_num; i++) {
-@@ -310,7 +308,7 @@ void cper_print_proc_arm(const char *pfx,
- 		if (err_info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO) {
- 			printk("%serror_info: 0x%016llx\n", newpfx,
- 			       err_info->error_info);
--			snprintf(infopfx, sizeof(infopfx), "%s%s", newpfx, INDENT_SP);
-+			snprintf(infopfx, sizeof(infopfx), "%s ", newpfx);
- 			cper_print_arm_err_info(infopfx, err_info->type,
- 						err_info->error_info);
- 		}
-diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-index c165933ebf38..ab21f1614007 100644
---- a/drivers/firmware/efi/cper.c
-+++ b/drivers/firmware/efi/cper.c
-@@ -37,8 +37,6 @@
- #include <acpi/ghes.h>
- #include <ras/ras_event.h>
- 
--#define INDENT_SP	" "
--
- static char rcd_decode_str[CPER_REC_LEN];
- 
- /*
-@@ -433,7 +431,7 @@ cper_estatus_print_section(const char *pfx, struct acpi_hest_generic_data *gdata
- 	if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
- 		printk("%s""fru_text: %.20s\n", pfx, gdata->fru_text);
- 
--	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-+	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
- 	if (guid_equal(sec_type, &CPER_SEC_PROC_GENERIC)) {
- 		struct cper_sec_proc_generic *proc_err = acpi_hest_get_payload(gdata);
- 
-@@ -500,7 +498,7 @@ void cper_estatus_print(const char *pfx,
- 		       "It has been corrected by h/w "
- 		       "and requires no further action");
- 	printk("%s""event severity: %s\n", pfx, cper_severity_str(severity));
--	snprintf(newpfx, sizeof(newpfx), "%s%s", pfx, INDENT_SP);
-+	snprintf(newpfx, sizeof(newpfx), "%s ", pfx);
- 
- 	apei_estatus_for_each_section(estatus, gdata) {
- 		cper_estatus_print_section(newpfx, gdata, sec_no);
--- 
-2.17.0
+Have you ever replied to this question ? Sorry, but I am not able to
+find it in my inbox :(
