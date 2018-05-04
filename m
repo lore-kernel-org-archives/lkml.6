@@ -1,107 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751283AbeEDK7R (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:59:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36522 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbeEDK7Q (ORCPT
+        id S1751324AbeEDLCp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:02:45 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54054 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751001AbeEDLCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:59:16 -0400
-Date: Fri, 4 May 2018 07:59:06 -0300
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-        Anders Roxell <anders.roxell@linaro.org>, tomi.valkeinen@ti.com,
-        linux-omap@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: omap2: Kconfig: make FB_OMAP2_DSS_INIT depend
- on OF
-Message-ID: <20180504075906.02ecf32e@vento.lan>
-In-Reply-To: <44871995.YYHkG5ofpC@amdc3058>
-References: <20180420112551.27027-1-anders.roxell@linaro.org>
-        <CGME20180503154901epcas2p417fd08a4daaf1520ec4d8ed1312728c8@epcas2p4.samsung.com>
-        <16e74acc-1265-faec-0c36-49681a7760e4@infradead.org>
-        <44871995.YYHkG5ofpC@amdc3058>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 4 May 2018 07:02:43 -0400
+Subject: Re: [PATCH 04/10] vfio: ccw: replace IO_REQ event with SSCH_REQ event
+To: Dong Jia Shi <bjsdjshi@linux.ibm.com>
+Cc: Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>, pasic@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <1524149293-12658-1-git-send-email-pmorel@linux.vnet.ibm.com>
+ <1524149293-12658-5-git-send-email-pmorel@linux.vnet.ibm.com>
+ <20180426073053.GZ12194@bjsdjshi@linux.vnet.ibm.com>
+ <20180426074806.GB12194@bjsdjshi@linux.vnet.ibm.com>
+ <20180430173305.632faa80.cohuck@redhat.com>
+ <20180502074622.GV5428@bjsdjshi@linux.vnet.ibm.com>
+ <5816643d-5406-06b9-0727-fdcd771aba63@linux.vnet.ibm.com>
+ <20180504011916.GA26081@bjsdjshi@linux.ibm.com>
+From: Pierre Morel <pmorel@linux.vnet.ibm.com>
+Date: Fri, 4 May 2018 13:02:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180504011916.GA26081@bjsdjshi@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18050411-0012-0000-0000-000005D1EFEF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050411-0013-0000-0000-0000194F1CB1
+Message-Id: <8c75acd1-c00b-4d7f-ea4b-d32e9b05989b@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805040101
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w44AxMYZ023220
 
-Em Fri, 04 May 2018 12:48:46 +0200
-Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> escreveu:
-
-> On Thursday, May 03, 2018 08:48:56 AM Randy Dunlap wrote:
-> > On 04/20/2018 04:25 AM, Anders Roxell wrote:  
-> > > Commit 7378f1149884 ("media: omap2: omapfb: allow building it with
-> > > COMPILE_TEST") broke compilation without CONFIG_OF selected.
-> > >   CC      drivers/video/fbdev/core/fbmem.o
-> > > drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c: In function ‘omapdss_update_prop’:
-> > > drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.c:68:2: error: implicit declaration of function ‘of_update_property’; did you mean ‘of_get_property’? [-Werror=implicit-function-declaration]
-> > >   of_update_property(node, prop);
-> > >   ^~~~~~~~~~~~~~~~~~
-> > >   of_get_property
-> > > cc1: some warnings being treated as errors
-> > > scripts/Makefile.build:312: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o' failed
-> > > make[7]: *** [drivers/video/fbdev/omap2/omapfb/dss/omapdss-boot-init.o] Error 1
-> > > scripts/Makefile.build:559: recipe for target 'drivers/video/fbdev/omap2/omapfb/dss' failed
-> > > make[6]: *** [drivers/video/fbdev/omap2/omapfb/dss] Error 2
-> > > make[6]: *** Waiting for unfinished jobs....
-> > > 
-> > > Add OF dependency in order to make all configurations work again.
-> > > 
-> > > of_update_property() has no inline stub, and that that could be added as
-> > > an alternative.
-> > > 
-> > > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > > ---
-> > >  drivers/video/fbdev/omap2/Kconfig | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/video/fbdev/omap2/Kconfig b/drivers/video/fbdev/omap2/Kconfig
-> > > index 82008699d253..4de381f2452e 100644
-> > > --- a/drivers/video/fbdev/omap2/Kconfig
-> > > +++ b/drivers/video/fbdev/omap2/Kconfig
-> > > @@ -1,4 +1,4 @@
-> > > -if ARCH_OMAP2PLUS || COMPILE_TEST
-> > > +if OF && (ARCH_OMAP2PLUS || COMPILE_TEST)
-> > >  
-> > >  source "drivers/video/fbdev/omap2/omapfb/Kconfig"
-> > >  
-> > >   
-> > 
-> > Hi,
-> > 
-> > This patch certainly fixes the build errors that I have been seeing in
-> > linux-next for several days now, so:
-> > 
-> > Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> > Tested-by: Randy Dunlap <rdunlap@infradead.org>  
-> 
-> Thanks.
-> 
-> Since there has been no follow up from Mauro on this ([1]) I guess
-> that the best thing I can do is simply merging both patches to fbdev
-> tree..
-> 
-> [1] https://www.spinics.net/lists/linux-media/msg132583.html
-
-Sorry, it seems I missed it. If you didn't merge them yet, I'll
-merge it on my tree today, if you think it would be best to have
-it together with the patch that enabled FB_OMAP builds with
-COMPILE_TEST.
-
-If you prefer, instead, feel free to merge via your tree, as this is
-FB stuff anyway.
-
-If you need/want:
-
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+On 04/05/2018 03:19, Dong Jia Shi wrote:
+> * Pierre Morel <pmorel@linux.vnet.ibm.com> [2018-05-03 16:26:29 +0200]:
+>
+>> On 02/05/2018 09:46, Dong Jia Shi wrote:
+>>> * Cornelia Huck <cohuck@redhat.com> [2018-04-30 17:33:05 +0200]:
+>>>
+>>>> On Thu, 26 Apr 2018 15:48:06 +0800
+>>>> Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> wrote:
+>>>>
+>>>>> * Dong Jia Shi <bjsdjshi@linux.vnet.ibm.com> [2018-04-26 15:30:54 +0800]:
+>>>>>
+>>>>> [...]
+>>>>>
+>>>>>>> @@ -179,7 +160,7 @@ static int fsm_irq(struct vfio_ccw_private *private,
+>>>>>>>   	if (private->io_trigger)
+>>>>>>>   		eventfd_signal(private->io_trigger, 1);
+>>>>>>>
+>>>>>>> -	return private->state;
+>>>>>>> +	return VFIO_CCW_STATE_IDLE;
+>>>>>> This is not right. For example, if we are in STANDBY state (subch driver
+>>>>>> is probed, but mdev device is not created), we can not jump to IDLE
+>>>>>> state.
+>>>>> I see my problem, for STANDBY state, we should introduce another event
+>>>>> callback for VFIO_CCW_EVENT_INTERRUPT. It doesn't make sense to call
+>>>>> fsm_irq() which tries to signal userspace with interrupt notification
+>>>>> when mdev is not created yet... So we'd need a separated fix for this
+>>>>> issue too.
+>>>> But how do we even get into that situation when we don't have an mdev
+>>>> yet?
+>>>>
+>>> We cann't... So let's assign fsm_nop() as the interrupt callback for
+>>> STANDBY state?
+>>>
+>> :) Isn't it exactly what my patch series handle?
+> As far as I see, that's not true. ;)
+>
+> After this series applied,
+> vfio_ccw_jumptable[VFIO_CCW_STATE_STANDBY][VFIO_CCW_EVENT_INTERRUPT] is
+> still fsm_irq().
+>
 
 
+What I mean is, this code tries to handle design problems
+without changing too much of the original code at first.
 
-Thanks,
-Mauro
+The problem here is not that the fsm_irq function is called on interrupt,
+if we have an interrupt it must be signaled to user land.
+The problem is that this state is entered at the wrong moment.
+
+STANDBY should be entered, during the mdev_open when we realize the QEMU 
+device,
+and not during the probe, in which we should stay in NOT_OPER until we 
+get the QEMU device.
+
+The probe() and mdev_open() function should be modified, not the state 
+table.
+
+Regards,
+
+Pierre
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
