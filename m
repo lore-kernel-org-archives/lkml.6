@@ -1,104 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751566AbeEDHcD (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:32:03 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:55529 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbeEDHcB (ORCPT
+        id S1751440AbeEDHeN (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:34:13 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56012 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751239AbeEDHeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:32:01 -0400
-X-Google-Smtp-Source: AB8JxZpE584SLVIajHPZK6SivPfDb0Eveb/WW/i5GshRCVE24QI6firWvPHB3tyIyJsBAkxlxAHxunMNjfGfuCk+2IY=
-MIME-Version: 1.0
-In-Reply-To: <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
-References: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com> <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
-From: Joonsoo Kim <js1304@gmail.com>
-Date: Fri, 4 May 2018 16:31:59 +0900
-Message-ID: <CAAmzW4OXLgc3ghqnvBHP7QRnjt93a3ZwREn7qH=rQFPeoC5r=w@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, Minchan Kim <minchan@kernel.org>,
-        Ye Xiaolong <xiaolong.ye@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 4 May 2018 03:34:11 -0400
+X-Google-Smtp-Source: AB8JxZrmCyAdY9pnj6qLfgu3VyiEx843hQz1shPv6i+sfrAUjsOCW5y3h9Wr2OQlaPPN14HIx5Sumg==
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH v2] Input: i8042 - Fix KBD port cannot wake up system from
+ suspend-to-idle
+From: Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20180419084951.25130-1-kai.heng.feng@canonical.com>
+Date: Fri, 4 May 2018 15:34:04 +0800
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <58201402-7316-4F7A-8D28-DAD694017536@canonical.com>
+References: <20180419084951.25130-1-kai.heng.feng@canonical.com>
+To: dmitry.torokhov@gmail.com
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-05-04 16:03 GMT+09:00 Vlastimil Babka <vbabka@suse.cz>:
-> On 05/04/2018 06:30 AM, js1304@gmail.com wrote:
->> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
->>
->> Currently, we use the zone index of preferred_zone which represents
->> the best matching zone for allocation, as classzone_idx. It has a problem
->> on NUMA system with ZONE_MOVABLE.
->>
->> In NUMA system, it can be possible that each node has different populated
->> zones. For example, node 0 could have DMA/DMA32/NORMAL/MOVABLE zone and
->> node 1 could have only NORMAL zone. In this setup, allocation request
->> initiated on node 0 and the one on node 1 would have different
->> classzone_idx, 3 and 2, respectively, since their preferred_zones are
->> different. If they are handled by only their own node, there is no problem.
->> However, if they are somtimes handled by the remote node, the problem
->> would happen.
->>
->> In the following setup, allocation initiated on node 1 will have some
->> precedence than allocation initiated on node 0 when former allocation is
->> processed on node 0 due to not enough memory on node 1. They will have
->> different lowmem reserve due to their different classzone_idx thus
->> an watermark bars are also different.
->>
-> ...
+Hi Dmitry,
+
+> On Apr 19, 2018, at 4:49 PM, Kai-Heng Feng <kai.heng.feng@canonical.com>  
+> wrote:
 >
->>
->> min watermark for NORMAL zone on node 0
->> allocation initiated on node 0: 750 + 4096 = 4846
->> allocation initiated on node 1: 750 + 0 = 750
->>
->> This watermark difference could cause too many numa_miss allocation
->> in some situation and then performance could be downgraded.
->>
->> Recently, there was a regression report about this problem on CMA patches
->> since CMA memory are placed in ZONE_MOVABLE by those patches. I checked
->> that problem is disappeared with this fix that uses high_zoneidx
->> for classzone_idx.
->>
->> http://lkml.kernel.org/r/20180102063528.GG30397@yexl-desktop
->>
->> Using high_zoneidx for classzone_idx is more consistent way than previous
->> approach because system's memory layout doesn't affect anything to it.
+> From: Kai Heng Feng <kai.heng.feng@canonical.com>
 >
-> So to summarize;
-> - ac->high_zoneidx is computed via the arcane gfp_zone(gfp_mask) and
-> represents the highest zone the allocation can use
-> - classzone_idx was supposed to be the highest zone that the allocation
-> can use, that is actually available in the system. Somehow that became
-> the highest zone that is available on the preferred node (in the default
-> node-order zonelist), which causes the watermark inconsistencies you
-> mention.
+> Commit f13b2065de81 ("Input: i8042 - allow KBD and AUX ports to wake up
+> from suspend-to-idle") make system in s2idle can be woken up by i8042
+> keyboard, but it's disabled by default.
+>
+> In commit 3e6e15a862a0 ("Input: enable remote wakeup for PNP i8042
+> keyboard ports") states that "Keyboard ports are always supposed to be
+> wakeup-enabled", it should be enabled by default. Keyboard wakeup from
+> s2idles is also the default behavior for other x86 OSes.
+>
+> In addition to PNP port, enable keyboard wakeup from serio port by
+> default for x86 systems.
 
-Yes! Thanks for summarize!
+Is there any improvement that I can make to let this patch gets merged?
 
-> I don't see a problem with your change. I would be worried about
-> inflated reserves when e.g. ZONE_MOVABLE doesn't exist, but that doesn't
-> seem to be the case. My laptop has empty ZONE_MOVABLE and the
-> ZONE_NORMAL protection for movable is 0.
+Kai-Heng
 
-Yes! Protection number is calculated by using the number of managed page
-in upper zone. If there is no memory on the upper zone, protection will be 0.
-
-> But there had to be some reason for classzone_idx to be like this and
-> not simple high_zoneidx. Maybe Mel remembers? Maybe it was important
-> then, but is not anymore? Sigh, it seems to be pre-git.
-
-Based on my code inspection, this patch changing classzone_idx implementation
-would not cause the problem. I also have tried to find the reason
-for classzone_idx implementation by searching git history but I can't.
-As you said,
-it seems to be pre-git. It would be really helpful that someone who remembers
-the reason for current classzone_idx implementation teaches me the reason.
-
-Thanks.
+>
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+> v2:
+> Keep the PNP wakeup part.
+> Only enable for x86 systems.
+> Update commit message.
+>
+>  drivers/input/serio/i8042.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
+> index 824f4c1c1f31..0b6878e8037b 100644
+> --- a/drivers/input/serio/i8042.c
+> +++ b/drivers/input/serio/i8042.c
+> @@ -1400,6 +1400,12 @@ static void __init i8042_register_ports(void)
+>  				i8042_ports[i].irq);
+>  			serio_register_port(serio);
+>  			device_set_wakeup_capable(&serio->dev, true);
+> +
+> +#ifdef CONFIG_X86
+> +			/* Keyboard ports are always supposed to be wakeup-enabled */
+> +			if (i == I8042_KBD_PORT_NO)
+> +				device_wakeup_enable(&serio->dev);
+> +#endif
+>  		}
+>  	}
+>  }
+> -- 
+> 2.17.0
