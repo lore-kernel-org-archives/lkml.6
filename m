@@ -1,109 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeEDT5W (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 15:57:22 -0400
-Received: from mail-wm0-f54.google.com ([74.125.82.54]:53396 "EHLO
-        mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751527AbeEDT5V (ORCPT
+        id S1751721AbeEDUBl (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:01:41 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:41293 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751561AbeEDUBj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 15:57:21 -0400
-X-Google-Smtp-Source: AB8JxZrVnnuW4yWXgLQTL7smOimzAQtXw6+OkOkiYX0VOFBKJdQKIMMfhfMCm1crpMN3lGLJDKVjvr/lr4YDEuFk3hk=
-MIME-Version: 1.0
-In-Reply-To: <20180504184951.GU26088@linux.vnet.ibm.com>
-References: <CAJWu+oqCun1Ae6GqPxnS+eCDi3jadGPp+MO8TjOWgs+AiAh79A@mail.gmail.com>
- <20180504123050.2841f80d@gandalf.local.home> <CAJWu+oqXmSC3zUZobQA4=qY_acRvOsq67c6dHXfVzTGqxqdaTA@mail.gmail.com>
- <20180504174330.GS26088@linux.vnet.ibm.com> <CAJWu+opXqw6BoKSzoV4xD0QBJ4s3C-KL=QBESZdEZ5RQCQKphw@mail.gmail.com>
- <20180504184951.GU26088@linux.vnet.ibm.com>
-From: Joel Fernandes <joel.opensrc@gmail.com>
-Date: Fri, 4 May 2018 12:57:19 -0700
-Message-ID: <CAEi0qN=8c6tzNq26x=BBj5u3JoZHXF0DvfwWg=1vjmTU0UC4-w@mail.gmail.com>
-Subject: Re: rcu-bh design
-To: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 4 May 2018 16:01:39 -0400
+From: Guenter Roeck <linux@roeck-us.net>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Clemens Ladisch <clemens@ladisch.de>
+Cc: Jean Delvare <jdelvare@suse.com>, Borislav Petkov <bp@suse.de>,
+        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Brian Woods <brian.woods@amd.com>, linux-kernel@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH v3 1/2] x86/amd_nb: Add support for Raven Ridge CPUs
+Date: Fri,  4 May 2018 13:01:32 -0700
+Message-Id: <1525464093-20280-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 11:49 AM, Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
-> On Fri, May 04, 2018 at 06:34:32PM +0000, Joel Fernandes wrote:
->> On Fri, May 4, 2018 at 10:42 AM Paul E. McKenney
->> <paulmck@linux.vnet.ibm.com>
->> wrote:
->> [...]
->> > > > > But preemptible RCU *does not* use context-switch as a quiescent
->> state.
->> > > > It doesn't?
->> > >
->> > > I thought that's what preemptible rcu is about. You can get preempted
->> but
->> > > you shouldn't block in a read-section. Is that not true?
->>
->> > Almost.  All context switches in an RCU-preempt read-side critical section
->> > must be subject to priority boosting.  Preemption is one example, because
->> > boosting the priority of the preempted task will make it runnable.
->> > The priority-inheritance -rt "spinlock" is another example, because
->> > boosting the priority of the task holding the lock will eventually make
->> > runnable the task acquiring the lock within the RCU-preempt read-side
->> > critical section.
->>
->> Yes I understand priority boosting is needed with preemptible RCU so that
->> read-sections are making forward progress. I meant (and correct me if I'm
->> wrong) that, as long as a task doesn't sleep in a preemptible RCU
->> read-section (rcu-preempt flavor), then bad things wont happen and RCU will
->> work correctly.
->
-> The exception is -rt "spinlock" acquisition.  If the "spinlock" is held,
-> the task acquiring it will block, which is legal within an RCU-preempt
-> read-side critical section.
->
-> This exception is why I define bad things in terms of lack of
-> susceptibility to priority boosting instead of sleeping.
+Add Raven Ridge root bridge and data fabric PCI IDs.
+This is required for amd_pci_dev_to_node_id() and amd_smn_read().
 
-Oh, that's a tricky situation. Thanks for letting me know. I guess my
-view was too idealistic. Makes sense now.
+Tested-by: Gabriel Craciunescu <nix.or.die@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+v3: No change.
+v2: Use naming scheme suggested by Borislav Petkov.
 
->> > > I was asking why rcu-bh is needed in the kernel, like why can't we just
->> use
->> > > rcu-preempt. As per above link, the motivation of rcu-bh was to prevent
->> > > denial of service during heavy softirq load. I was trying to understand
->> > > that usecase. In my mind, such denial of service / out of memory is then
->> > > even possible with preemptible rcu which is used in many places in the
->> > > kernel, then why not just use rcu-bh for everything? I was just studying
->> > > this RCU flavor (and all other RCU flavors) and so this question popped
->> up.
->>
->> > Because RCU-bh is not preemptible.
->>
->> > And the non-DoS nature of RCU-bh is one challenge in my current quest to
->> > fold all three flavors (RCU-bh,  RCU-preempt, and RCU-sched) into one
->> > flavor to rule them all.  ;-)
->>
->> But what prevents DoS'ing of RCU-preempt? That means all RCU-preempt uses
->> in the kernel are susceptible to DoS'ing as well?
->
-> Right now, not much.  So this is one of the problems I must solve.
+ arch/x86/kernel/amd_nb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Oh, ok.
-
->> Isn't the issue the heavy softirq processing itself which can also lead to
->> other issues such as scheduling issues (other than the OOM) so probably
->> that should be fixed instead of RCU?
->
-> In theory, yes.  In practice, the way that the kernel hangs leads them
-> to yell at me about RCU instead of yelling at whoever is behind the
-> root cause.  So it behooves me to make RCU able to deal with whatever
-> shows up, at least where reasonably feasible.  Otherwise, I am signed up
-> to fix random DoS-related bugs though more that 20 million lines of code,
-> which would be a nobel quest, but not one that I am currently prepared
-> to sign up for.  ;-)
-
-Yes, I understand. :-)
-
-thanks,
-
-- Joel
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index c88e0b127810..b481b95bd8f6 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -14,8 +14,11 @@
+ #include <asm/amd_nb.h>
+ 
+ #define PCI_DEVICE_ID_AMD_17H_ROOT	0x1450
++#define PCI_DEVICE_ID_AMD_17H_M10H_ROOT	0x15d0
+ #define PCI_DEVICE_ID_AMD_17H_DF_F3	0x1463
+ #define PCI_DEVICE_ID_AMD_17H_DF_F4	0x1464
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F3 0x15eb
++#define PCI_DEVICE_ID_AMD_17H_M10H_DF_F4 0x15ec
+ 
+ /* Protect the PCI config register pairs used for SMN and DF indirect access. */
+ static DEFINE_MUTEX(smn_mutex);
+@@ -24,6 +27,7 @@ static u32 *flush_words;
+ 
+ static const struct pci_device_id amd_root_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_ROOT) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_ROOT) },
+ 	{}
+ };
+ 
+@@ -39,6 +43,7 @@ const struct pci_device_id amd_nb_misc_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F3) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F3) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F3) },
+ 	{}
+ };
+@@ -51,6 +56,7 @@ static const struct pci_device_id amd_nb_link_ids[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_NB_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_16H_M30H_NB_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_DF_F4) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_17H_M10H_DF_F4) },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_CNB17H_F4) },
+ 	{}
+ };
+-- 
+2.7.4
