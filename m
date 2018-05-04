@@ -1,73 +1,224 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751377AbeEDICd (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:02:33 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:55750 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750709AbeEDICb (ORCPT
+        id S1751563AbeEDICr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:02:47 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45500 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751507AbeEDICl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:02:31 -0400
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-To: keith.busch@intel.com, axboe@fb.com, hch@lst.de, sagi@grimberg.me
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme-rdma: clear NVME_RDMA_Q_LIVE before free the queue
-Date: Fri,  4 May 2018 16:02:38 +0800
-Message-Id: <1525420958-9537-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8882 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805040075
+        Fri, 4 May 2018 04:02:41 -0400
+X-Google-Smtp-Source: AB8JxZpXDb0RG+IgKk1DqTf5wv+DGLHc0DuS+1cE4KP+U4+p8xWHmXecPe0k9ARs/62jDjNnoSwXHg==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: dan.j.williams@intel.com, vinod.koul@intel.com
+Cc: eric.long@spreadtrum.com, broonie@kernel.org, baolin.wang@linaro.org,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dmaengine: sprd: Optimize the sprd_dma_prep_dma_memcpy()
+Date: Fri,  4 May 2018 16:01:36 +0800
+Message-Id: <c54ccfe653c5c8e206e5482f741a3a9d941935e0.1525420581.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When nvme_init_identify in nvme_rdma_configure_admin_queue fails,
-the ctrl->queues[0] is freed but the NVME_RDMA_Q_LIVE is still set.
-If nvme_rdma_stop_queue is invoked, we will incur use-after-free
-which will cause memory corruption.
- BUG: KASAN: use-after-free in rdma_disconnect+0x1f/0xe0 [rdma_cm]
- Read of size 8 at addr ffff8801dc3969c0 by task kworker/u16:3/9304
+From: Eric Long <eric.long@spreadtrum.com>
 
- CPU: 3 PID: 9304 Comm: kworker/u16:3 Kdump: loaded Tainted: G        W         4.17.0-rc3+ #20
- Workqueue: nvme-delete-wq nvme_delete_ctrl_work
- Call Trace:
-  dump_stack+0x91/0xeb
-  print_address_description+0x6b/0x290
-  kasan_report+0x261/0x360
-  rdma_disconnect+0x1f/0xe0 [rdma_cm]
-  nvme_rdma_stop_queue+0x25/0x40 [nvme_rdma]
-  nvme_rdma_shutdown_ctrl+0xf3/0x150 [nvme_rdma]
-  nvme_delete_ctrl_work+0x98/0xe0
-  process_one_work+0x3ca/0xaa0
-  worker_thread+0x4e2/0x6c0
-  kthread+0x18d/0x1e0
-  ret_from_fork+0x24/0x30
+This is one preparation patch, we can use default DMA configuration to
+implement the device_prep_dma_memcpy() interface instead of issuing
+sprd_dma_config().
 
-To fix it, clear the NVME_RDMA_Q_LIVE before free the ctrl->queues[0].
-The queue will be freed, so it certainly is not LIVE any more.
+We will implement one new sprd_dma_config() function with introducing
+device_prep_slave_sg() interface in following patch. So we can remove
+the obsolete sprd_dma_config() firstly.
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Eric Long <eric.long@spreadtrum.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/nvme/host/rdma.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/dma/sprd-dma.c |  154 ++++++++++--------------------------------------
+ 1 file changed, 32 insertions(+), 122 deletions(-)
 
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index fd965d0..ffbfe82 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -812,6 +812,11 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
- 	if (new)
- 		nvme_rdma_free_tagset(&ctrl->ctrl, ctrl->ctrl.admin_tagset);
- out_free_queue:
-+	/*
-+	 * The queue will be freed, so it is not LIVE any more.
-+	 * This could avoid use-after-free in nvme_rdma_stop_queue.
-+	 */
-+	clear_bit(NVME_RDMA_Q_LIVE, &ctrl->queues[0].flags);
- 	nvme_rdma_free_queue(&ctrl->queues[0]);
- 	return error;
+diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
+index ccdeb8f..a7a89fd 100644
+--- a/drivers/dma/sprd-dma.c
++++ b/drivers/dma/sprd-dma.c
+@@ -552,147 +552,57 @@ static void sprd_dma_issue_pending(struct dma_chan *chan)
+ 	spin_unlock_irqrestore(&schan->vc.lock, flags);
  }
+ 
+-static int sprd_dma_config(struct dma_chan *chan, struct sprd_dma_desc *sdesc,
+-			   dma_addr_t dest, dma_addr_t src, size_t len)
++static struct dma_async_tx_descriptor *
++sprd_dma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
++			 size_t len, unsigned long flags)
+ {
+-	struct sprd_dma_dev *sdev = to_sprd_dma_dev(chan);
+-	struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
+-	u32 datawidth, src_step, des_step, fragment_len;
+-	u32 block_len, req_mode, irq_mode, transcation_len;
+-	u32 fix_mode = 0, fix_en = 0;
++	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
++	struct sprd_dma_desc *sdesc;
++	struct sprd_dma_chn_hw *hw;
++	enum sprd_dma_datawidth datawidth;
++	u32 step;
+ 
+-	if (IS_ALIGNED(len, 4)) {
+-		datawidth = SPRD_DMA_DATAWIDTH_4_BYTES;
+-		src_step = SPRD_DMA_WORD_STEP;
+-		des_step = SPRD_DMA_WORD_STEP;
+-	} else if (IS_ALIGNED(len, 2)) {
+-		datawidth = SPRD_DMA_DATAWIDTH_2_BYTES;
+-		src_step = SPRD_DMA_SHORT_STEP;
+-		des_step = SPRD_DMA_SHORT_STEP;
+-	} else {
+-		datawidth = SPRD_DMA_DATAWIDTH_1_BYTE;
+-		src_step = SPRD_DMA_BYTE_STEP;
+-		des_step = SPRD_DMA_BYTE_STEP;
+-	}
++	sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
++	if (!sdesc)
++		return NULL;
+ 
+-	fragment_len = SPRD_DMA_MEMCPY_MIN_SIZE;
+-	if (len <= SPRD_DMA_BLK_LEN_MASK) {
+-		block_len = len;
+-		transcation_len = 0;
+-		req_mode = SPRD_DMA_BLK_REQ;
+-		irq_mode = SPRD_DMA_BLK_INT;
+-	} else {
+-		block_len = SPRD_DMA_MEMCPY_MIN_SIZE;
+-		transcation_len = len;
+-		req_mode = SPRD_DMA_TRANS_REQ;
+-		irq_mode = SPRD_DMA_TRANS_INT;
+-	}
++	hw = &sdesc->chn_hw;
+ 
+ 	hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
++	hw->intc = SPRD_DMA_TRANS_INT | SPRD_DMA_CFG_ERR_INT_EN;
++	hw->src_addr = (u32)(src & SPRD_DMA_LOW_ADDR_MASK);
++	hw->des_addr = (u32)(dest & SPRD_DMA_LOW_ADDR_MASK);
+ 	hw->wrap_ptr = (u32)((src >> SPRD_DMA_HIGH_ADDR_OFFSET) &
+ 			     SPRD_DMA_HIGH_ADDR_MASK);
+ 	hw->wrap_to = (u32)((dest >> SPRD_DMA_HIGH_ADDR_OFFSET) &
+ 			    SPRD_DMA_HIGH_ADDR_MASK);
+ 
+-	hw->src_addr = (u32)(src & SPRD_DMA_LOW_ADDR_MASK);
+-	hw->des_addr = (u32)(dest & SPRD_DMA_LOW_ADDR_MASK);
+-
+-	if ((src_step != 0 && des_step != 0) || (src_step | des_step) == 0) {
+-		fix_en = 0;
++	if (IS_ALIGNED(len, 8)) {
++		datawidth = SPRD_DMA_DATAWIDTH_8_BYTES;
++		step = SPRD_DMA_DWORD_STEP;
++	} else if (IS_ALIGNED(len, 4)) {
++		datawidth = SPRD_DMA_DATAWIDTH_4_BYTES;
++		step = SPRD_DMA_WORD_STEP;
++	} else if (IS_ALIGNED(len, 2)) {
++		datawidth = SPRD_DMA_DATAWIDTH_2_BYTES;
++		step = SPRD_DMA_SHORT_STEP;
+ 	} else {
+-		fix_en = 1;
+-		if (src_step)
+-			fix_mode = 1;
+-		else
+-			fix_mode = 0;
++		datawidth = SPRD_DMA_DATAWIDTH_1_BYTE;
++		step = SPRD_DMA_BYTE_STEP;
+ 	}
+ 
+ 	hw->frg_len = datawidth << SPRD_DMA_SRC_DATAWIDTH_OFFSET |
+ 		datawidth << SPRD_DMA_DES_DATAWIDTH_OFFSET |
+-		req_mode << SPRD_DMA_REQ_MODE_OFFSET |
+-		fix_mode << SPRD_DMA_FIX_SEL_OFFSET |
+-		fix_en << SPRD_DMA_FIX_EN_OFFSET |
+-		(fragment_len & SPRD_DMA_FRG_LEN_MASK);
+-	hw->blk_len = block_len & SPRD_DMA_BLK_LEN_MASK;
+-
+-	hw->intc = SPRD_DMA_CFG_ERR_INT_EN;
+-
+-	switch (irq_mode) {
+-	case SPRD_DMA_NO_INT:
+-		break;
+-
+-	case SPRD_DMA_FRAG_INT:
+-		hw->intc |= SPRD_DMA_FRAG_INT_EN;
+-		break;
+-
+-	case SPRD_DMA_BLK_INT:
+-		hw->intc |= SPRD_DMA_BLK_INT_EN;
+-		break;
++		SPRD_DMA_TRANS_REQ << SPRD_DMA_REQ_MODE_OFFSET |
++		(len & SPRD_DMA_FRG_LEN_MASK);
++	hw->blk_len = len & SPRD_DMA_BLK_LEN_MASK;
++	hw->trsc_len = len & SPRD_DMA_TRSC_LEN_MASK;
+ 
+-	case SPRD_DMA_BLK_FRAG_INT:
+-		hw->intc |= SPRD_DMA_BLK_INT_EN | SPRD_DMA_FRAG_INT_EN;
+-		break;
+-
+-	case SPRD_DMA_TRANS_INT:
+-		hw->intc |= SPRD_DMA_TRANS_INT_EN;
+-		break;
+-
+-	case SPRD_DMA_TRANS_FRAG_INT:
+-		hw->intc |= SPRD_DMA_TRANS_INT_EN | SPRD_DMA_FRAG_INT_EN;
+-		break;
+-
+-	case SPRD_DMA_TRANS_BLK_INT:
+-		hw->intc |= SPRD_DMA_TRANS_INT_EN | SPRD_DMA_BLK_INT_EN;
+-		break;
+-
+-	case SPRD_DMA_LIST_INT:
+-		hw->intc |= SPRD_DMA_LIST_INT_EN;
+-		break;
+-
+-	case SPRD_DMA_CFGERR_INT:
+-		hw->intc |= SPRD_DMA_CFG_ERR_INT_EN;
+-		break;
+-
+-	default:
+-		dev_err(sdev->dma_dev.dev, "invalid irq mode\n");
+-		return -EINVAL;
+-	}
+-
+-	if (transcation_len == 0)
+-		hw->trsc_len = block_len & SPRD_DMA_TRSC_LEN_MASK;
+-	else
+-		hw->trsc_len = transcation_len & SPRD_DMA_TRSC_LEN_MASK;
+-
+-	hw->trsf_step = (des_step & SPRD_DMA_TRSF_STEP_MASK) <<
++	hw->trsf_step = (step & SPRD_DMA_TRSF_STEP_MASK) <<
+ 			SPRD_DMA_DEST_TRSF_STEP_OFFSET |
+-			(src_step & SPRD_DMA_TRSF_STEP_MASK) <<
++			(step & SPRD_DMA_TRSF_STEP_MASK) <<
+ 			SPRD_DMA_SRC_TRSF_STEP_OFFSET;
+ 
+-	hw->frg_step = 0;
+-	hw->src_blk_step = 0;
+-	hw->des_blk_step = 0;
+-	hw->src_blk_step = 0;
+-	return 0;
+-}
+-
+-static struct dma_async_tx_descriptor *
+-sprd_dma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
+-			 size_t len, unsigned long flags)
+-{
+-	struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
+-	struct sprd_dma_desc *sdesc;
+-	int ret;
+-
+-	sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
+-	if (!sdesc)
+-		return NULL;
+-
+-	ret = sprd_dma_config(chan, sdesc, dest, src, len);
+-	if (ret) {
+-		kfree(sdesc);
+-		return NULL;
+-	}
+-
+ 	return vchan_tx_prep(&schan->vc, &sdesc->vd, flags);
+ }
+ 
 -- 
-2.7.4
+1.7.9.5
