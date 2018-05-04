@@ -1,337 +1,217 @@
-Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1572352-1526340763-2-2447484506942754371
+Return-Path: <linux-security-module-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-260683-1525444624-2-10700577848016813192
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
+X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-arch-owner@vger.kernel.org
+X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526340762; b=iIjydBcVnlt6YuGykE2eeB8JzJWeZeaXu6Yno0wlLxEADgPQ1G
-    Aa+R6YoiHnIF7TxSO6aqZIwcpO0SbA4+xwO8/26FB22pPj9DRx18NLk4xMtIft4l
-    thhULCEH9K3iK9oY64YxwOtbWguxgEccBBXrfiALwM0zFfpyTbIc/00F1fHjgVo7
-    M9FBEqdINwzdXqlKwWMH0y+N95agIWdlF0oLNNKZG+Ey67vdxCSqIhAg1Ff5rz6t
-    4LigrCYI1JpRDfFdTpLx4tbaxCDT292aa9Sz5Yu7PHSYYyum1eyUnoHJY/R3SmgW
-    xi6Sn74ic/jrTb1dpForKnf2A81TRt7drMWg==
+    1525444624; b=LUeWsCThJI77flWg0CcXa16JyPR8JJ7aEW0i5wtyi3pk9RDxSS
+    U/0OPlDCqby+he7J3B0cZwHZM3mS/l9K1oh+x/p6fJbXSCezdsI6b4uqg/XIipEd
+    ZpLz9sRA5QIyVTJ99A+JTpRe4C0HyKtcWaRd+1c08Yn1fuz1RutTO0nX42ay1sPo
+    9EgTeC3kU2WI7eX7nmRkIxO78cOqh9CDFMNOADkDBcKTHWXu8hajx65ofezkRkFS
+    u5q56pyvWQGVyQhuVaiH4DuwtX1imwAQr1tC6BmDtKwjHFM4VDUaR9BbzYdAOS+6
+    iF29J0L8hxC8zE0V2mQaPE9BRYjZ0v1CGW6Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:in-reply-to
-    :references:message-id:sender:list-id; s=fm2; t=1526340762; bh=t
-    NueCzY7xqIuR6y/OgRIdPT/2dYDO83uD68opOX+PyA=; b=J4qYDies2Ydoz279t
-    nVL3V3Zb3DU77n7vLE7bA7T7gwN4tbAe5lFr3sNn45jbfcC4tqKhzo6uExzIyr9P
-    U9e4lVB7PBqEkC47xznzX7WiYnt0L+tDyqoNUbKqaBTm6o436C0vU8fIF0+LqdIP
-    xx5kMtBDOrxxR6RTMpJ1TIdoe9DUTVn+lbPEe+AXxJEsUz+zzJQItX5yNq+JM0FT
-    bLH79XMOYrjel2fZYrOURCGl63k0CbjVEMUYTkgwsBYT73ZZzNl+erXPUdanZ8jw
-    5sZ5gXD/4PulJRBIYZhT/s9xkJO95dXzwcG50s2t1FY5UkxkC8xvJt/YHn85PIpg
-    lzcXQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525444624;
+    bh=CdGLTmRmd1UlqOuUF9QRM0bYHJyYhc6xjJhm+j/B78k=; b=BYtL/D1kIRab
+    FIsGfgioVO34gyLhnvUvTVSR1oESbhN1xlFrOI9YXQ1Lih4jUgm1McmhX9C0O1Ti
+    OxzAqc2fcgKJnZOtep8XagPcvJGU4FZJOTA4UqDBfQHTKknOXbvP6MrLds67XNTv
+    XE9bvGZk5vWN7VkSXgrsygKmxBKp8InQ+sw3yuhCdgAdHf+6+oZJ4HgvPyV4atdQ
+    HDmwdPn+OuoIr7AUjroCHVqHAV1ikluTRSm6JTAKgLRpbH9jK8C4dEedFC10lNX3
+    z0eqRQIvDKZRzWkpd8jewhTo1a1w3qT9DS+9QAXn8XusLAJpk4qZD+65cLYovVxc
+    mQnBNrtlzw==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linux.vnet.ibm.com header.result=pass
-    header_org.domain=ibm.com header_org.result=pass
-    header_is_org_domain=no;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+    header.domain=canonical.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=linux.vnet.ibm.com;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=canonical.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linux.vnet.ibm.com header.result=pass
-      header_org.domain=ibm.com header_org.result=pass
-      header_is_org_domain=no;
-    x-vs=clean score=0 state=0
+      header.domain=canonical.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFCK9VkCw6X/SIECg1z/ksOmzJ4ASCtfz/KuEFsjIVHgSbxF7xhb4OSUn/kyQZmBfEVRoQmC6Lu3KYwDIpgyMX0MYAUaAGSi0f8CZydZF53kSJtI9gyE
-    n6hMEbeJQqbgkl9e+QWCEe/xwqD8GUd07teAyAiljzBwNzUVSEsKZRRfa20L0U/4xa9ef+zzxrVmzZtO9XujAqswxFizLyhofWE5vIZEesnYq76YSutN9qA0
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8
-    a=VnNF1IyMAAAA:8 a=rWxYv37JJcz0kMPLFtwA:9 a=VMpyODe1Uoos0Z8B:21
-    a=pyZeGBqIJIY4p1he:21 a=ExYj8_QAJ_gO5D1l:21
+X-CM-Envelope: MS4wfHcz8zTESp+hk3mhr2U+iKR40YtsVt7BtZmo35B2/gs+tzbkHT4NX5BDb+8eyqDvnZflfjvx/B8V54D+GH6IjROCEllHIRxFljXygW/l0Zdqx6EJEC7E
+    hk56cpg2c+Md1qjzTZ07a/6lGoByGpOBes68TWCjvA/LtD1uLQN0GGMd0sQyY5dTyBgTf1hc2OzogsCZ91327qAmGEj7/fwH7iHdO+WoGMd2EV9T2ES8qohu
+    TdsTMU2BP6MimLdmCYhciA==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=_Wotqz80AAAA:8 a=VwQbUJbxAAAA:8 a=WqHXEHlq1YoW2ERZOxMA:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=buJP51TR1BpY-zbLSsyS:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752376AbeENXcj (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 14 May 2018 19:32:39 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51866 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752405AbeENXcd (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>);
-        Mon, 14 May 2018 19:32:33 -0400
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH memory-model 01/19] tools/memory-model: Rename link and rcu-path to rcu-link and rb
-Date: Mon, 14 May 2018 16:33:39 -0700
-X-Mailer: git-send-email 2.5.2
-In-Reply-To: <20180514233328.GA7601@linux.vnet.ibm.com>
-References: <20180514233328.GA7601@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18051423-2213-0000-0000-000002A53F81
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009026; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000260; SDB=6.01032383; UDB=6.00527784; IPR=6.00811515;
- MB=3.00021114; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-14 23:32:31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18051423-2214-0000-0000-00005A1EAEC4
-Message-Id: <1526340837-12222-1-git-send-email-paulmck@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-14_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805140230
-Sender: linux-arch-owner@vger.kernel.org
-X-Mailing-List: linux-arch@vger.kernel.org
+        id S1751499AbeEDOhB (ORCPT <rfc822;linux@kroah.com>);
+        Fri, 4 May 2018 10:37:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34340 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeEDOg7 (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Fri, 4 May 2018 10:36:59 -0400
+Subject: Re: [PATCH v2] apparmor: secid: fix error return value in error
+ handling path
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20180504140914.GA16787@embeddedor.com>
+From: Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1f4a965f-a245-a5a9-f815-9915df9b3a9d@canonical.com>
+Date: Fri, 4 May 2018 15:36:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180504140914.GA16787@embeddedor.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Alan Stern <stern@rowland.harvard.edu>
+Hi Gustavo,
 
-This patch makes a simple non-functional change to the RCU portion of
-the Linux Kernel Memory Consistency Model by renaming the "link" and
-"rcu-path" relations to "rcu-link" and "rb", respectively.
+if you are using the coverity scan bug tracking, please can you mark a
+bug as being worked on by yourself so I don't work on it at the same
+time as we're duplicating work here.
 
-The name "link" was an unfortunate choice, because it was too generic
-and subject to confusion with other meanings of the same word, which
-occur quite often in LKMM documentation.  The name "rcu-path" is not
-very appropriate, because the relation is analogous to the
-happens-before (hb) and propagates-before (pb) relations -- although
-that fact won't become apparent until the second patch in this series.
+Colin
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Acked-by: Andrea Parri <parri.andrea@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
----
- tools/memory-model/Documentation/explanation.txt | 93 ++++++++++++------------
- tools/memory-model/linux-kernel.cat              | 16 ++--
- 2 files changed, 55 insertions(+), 54 deletions(-)
+On 04/05/18 15:09, Gustavo A. R. Silva wrote:
+> Currently, function apparmor_secid_to_secctx returns always zero,
+> no matter if the value returned by aa_label_asxprint is negative
+> (which implies that an error has occurred).
+> 
+> Notice that *seclen* is of type u32 (32 bits, unsigned), and a
+> less-than-zero comparison of an unsigned value is never true.
+> 
+> Fix this by temporarily storing the value returned by aa_label_asxprint
+> into a variable of type int (signed) for its further evaluation.
+> 
+> Addresses-Coverity-ID: 1468514 ("Unsigned compared against 0")
+> Fixes: c092921219d2 ("apparmor: add support for mapping secids and using
+> secctxes")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+> Changes is v2:
+>  - Update changelog.
+>  - Fix misaligned lines.
+> 
+>  security/apparmor/secid.c | 23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
+> 
+> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+> index 5029248..efaa0d9 100644
+> --- a/security/apparmor/secid.c
+> +++ b/security/apparmor/secid.c
+> @@ -142,6 +142,7 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+>  {
+>  	/* TODO: cache secctx and ref count so we don't have to recreate */
+>  	struct aa_label *label = aa_secid_to_label(secid);
+> +	int seclen_tmp;
+>  
+>  	AA_BUG(!secdata);
+>  	AA_BUG(!seclen);
+> @@ -150,17 +151,21 @@ int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+>  		return -EINVAL;
+>  
+>  	if (secdata)
+> -		*seclen = aa_label_asxprint(secdata, root_ns, label,
+> -					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+> -					    FLAG_HIDDEN_UNCONFINED |
+> -					    FLAG_ABS_ROOT, GFP_ATOMIC);
+> +		seclen_tmp = aa_label_asxprint(secdata, root_ns, label,
+> +					       FLAG_SHOW_MODE |
+> +					       FLAG_VIEW_SUBNS |
+> +					       FLAG_HIDDEN_UNCONFINED |
+> +					       FLAG_ABS_ROOT, GFP_ATOMIC);
+>  	else
+> -		*seclen = aa_label_snxprint(NULL, 0, root_ns, label,
+> -					    FLAG_SHOW_MODE | FLAG_VIEW_SUBNS |
+> -					    FLAG_HIDDEN_UNCONFINED |
+> -					    FLAG_ABS_ROOT);
+> -	if (*seclen < 0)
+> +		seclen_tmp = aa_label_snxprint(NULL, 0, root_ns, label,
+> +					       FLAG_SHOW_MODE |
+> +					       FLAG_VIEW_SUBNS |
+> +					       FLAG_HIDDEN_UNCONFINED |
+> +					       FLAG_ABS_ROOT);
+> +	if (seclen_tmp < 0)
+>  		return -ENOMEM;
+> +	else
+> +		*seclen = seclen_tmp;
+>  
+>  	return 0;
+>  }
+> 
 
-diff --git a/tools/memory-model/Documentation/explanation.txt b/tools/memory-model/Documentation/explanation.txt
-index a727c82bd434..1a387d703212 100644
---- a/tools/memory-model/Documentation/explanation.txt
-+++ b/tools/memory-model/Documentation/explanation.txt
-@@ -27,7 +27,7 @@ Explanation of the Linux-Kernel Memory Consistency Model
-   19. AND THEN THERE WAS ALPHA
-   20. THE HAPPENS-BEFORE RELATION: hb
-   21. THE PROPAGATES-BEFORE RELATION: pb
--  22. RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
-+  22. RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
-   23. ODDS AND ENDS
- 
- 
-@@ -1451,8 +1451,8 @@ they execute means that it cannot have cycles.  This requirement is
- the content of the LKMM's "propagation" axiom.
- 
- 
--RCU RELATIONS: link, gp-link, rscs-link, and rcu-path
-------------------------------------------------------
-+RCU RELATIONS: rcu-link, gp-link, rscs-link, and rb
-+---------------------------------------------------
- 
- RCU (Read-Copy-Update) is a powerful synchronization mechanism.  It
- rests on two concepts: grace periods and read-side critical sections.
-@@ -1509,8 +1509,8 @@ y, which occurs before the end of the critical section, did not
- propagate to P1 before the end of the grace period, violating the
- Guarantee.
- 
--In the kernel's implementations of RCU, the business about stores
--propagating to every CPU is realized by placing strong fences at
-+In the kernel's implementations of RCU, the requirements for stores
-+to propagate to every CPU are fulfilled by placing strong fences at
- suitable places in the RCU-related code.  Thus, if a critical section
- starts before a grace period does then the critical section's CPU will
- execute an smp_mb() fence after the end of the critical section and
-@@ -1523,19 +1523,19 @@ executes.
- What exactly do we mean by saying that a critical section "starts
- before" or "ends after" a grace period?  Some aspects of the meaning
- are pretty obvious, as in the example above, but the details aren't
--entirely clear.  The LKMM formalizes this notion by means of a
--relation with the unfortunately generic name "link".  It is a very
--general relation; among other things, X ->link Z includes cases where
--X happens-before or is equal to some event Y which is equal to or
--comes before Z in the coherence order.  Taking Y = Z, this says that
--X ->rfe Z implies X ->link Z, and taking Y = X, it says that X ->fr Z
--and X ->co Z each imply X ->link Z.
--
--The formal definition of the link relation is more than a little
-+entirely clear.  The LKMM formalizes this notion by means of the
-+rcu-link relation.  rcu-link encompasses a very general notion of
-+"before": Among other things, X ->rcu-link Z includes cases where X
-+happens-before or is equal to some event Y which is equal to or comes
-+before Z in the coherence order.  When Y = Z this says that X ->rfe Z
-+implies X ->rcu-link Z.  In addition, when Y = X it says that X ->fr Z
-+and X ->co Z each imply X ->rcu-link Z.
-+
-+The formal definition of the rcu-link relation is more than a little
- obscure, and we won't give it here.  It is closely related to the pb
- relation, and the details don't matter unless you want to comb through
- a somewhat lengthy formal proof.  Pretty much all you need to know
--about link is the information in the preceding paragraph.
-+about rcu-link is the information in the preceding paragraph.
- 
- The LKMM goes on to define the gp-link and rscs-link relations.  They
- bring grace periods and read-side critical sections into the picture,
-@@ -1543,32 +1543,33 @@ in the following way:
- 
- 	E ->gp-link F means there is a synchronize_rcu() fence event S
- 	and an event X such that E ->po S, either S ->po X or S = X,
--	and X ->link F.  In other words, E and F are connected by a
--	grace period followed by an instance of link.
-+	and X ->rcu-link F.  In other words, E and F are linked by a
-+	grace period followed by an instance of rcu-link.
- 
- 	E ->rscs-link F means there is a critical section delimited by
- 	an rcu_read_lock() fence L and an rcu_read_unlock() fence U,
- 	and an event X such that E ->po U, either L ->po X or L = X,
--	and X ->link F.  Roughly speaking, this says that some event
--	in the same critical section as E is connected by link to F.
--
--If we think of the link relation as standing for an extended "before",
--then E ->gp-link F says that E executes before a grace period which
--ends before F executes.  (In fact it says more than this, because it
--includes cases where E executes before a grace period and some store
--propagates to F's CPU before F executes and doesn't propagate to some
--other CPU until after the grace period ends.)  Similarly,
--E ->rscs-link F says that E is part of (or before the start of) a
--critical section which starts before F executes.
-+	and X ->rcu-link F.  Roughly speaking, this says that some
-+	event in the same critical section as E is linked by rcu-link
-+	to F.
-+
-+If we think of the rcu-link relation as standing for an extended
-+"before", then E ->gp-link F says that E executes before a grace
-+period which ends before F executes.  (In fact it covers more than
-+this, because it also includes cases where E executes before a grace
-+period and some store propagates to F's CPU before F executes and
-+doesn't propagate to some other CPU until after the grace period
-+ends.)  Similarly, E ->rscs-link F says that E is part of (or before
-+the start of) a critical section which starts before F executes.
- 
- Putting this all together, the LKMM expresses the Grace Period
- Guarantee by requiring that there are no cycles consisting of gp-link
--and rscs-link connections in which the number of gp-link instances is
-->= the number of rscs-link instances.  It does this by defining the
--rcu-path relation to link events E and F whenever it is possible to
--pass from E to F by a sequence of gp-link and rscs-link connections
--with at least as many of the former as the latter.  The LKMM's "rcu"
--axiom then says that there are no events E such that E ->rcu-path E.
-+and rscs-link links in which the number of gp-link instances is >= the
-+number of rscs-link instances.  It does this by defining the rb
-+relation to link events E and F whenever it is possible to pass from E
-+to F by a sequence of gp-link and rscs-link links with at least as
-+many of the former as the latter.  The LKMM's "rcu" axiom then says
-+that there are no events E with E ->rb E.
- 
- Justifying this axiom takes some intellectual effort, but it is in
- fact a valid formalization of the Grace Period Guarantee.  We won't
-@@ -1585,10 +1586,10 @@ rcu_read_unlock() fence events delimiting the critical section in
- question, and let S be the synchronize_rcu() fence event for the grace
- period.  Saying that the critical section starts before S means there
- are events E and F where E is po-after L (which marks the start of the
--critical section), E is "before" F in the sense of the link relation,
--and F is po-before the grace period S:
-+critical section), E is "before" F in the sense of the rcu-link
-+relation, and F is po-before the grace period S:
- 
--	L ->po E ->link F ->po S.
-+	L ->po E ->rcu-link F ->po S.
- 
- Let W be the store mentioned above, let Z come before the end of the
- critical section and witness that W propagates to the critical
-@@ -1600,12 +1601,12 @@ some event X which is po-after S.  Symbolically, this amounts to:
- 
- The fr link from Y to W indicates that W has not propagated to Y's CPU
- at the time that Y executes.  From this, it can be shown (see the
--discussion of the link relation earlier) that X and Z are connected by
--link, yielding:
-+discussion of the rcu-link relation earlier) that X and Z are related
-+by rcu-link, yielding:
- 
--	S ->po X ->link Z ->po U.
-+	S ->po X ->rcu-link Z ->po U.
- 
--These formulas say that S is po-between F and X, hence F ->gp-link Z
-+The formulas say that S is po-between F and X, hence F ->gp-link Z
- via X.  They also say that Z comes before the end of the critical
- section and E comes after its start, hence Z ->rscs-link F via E.  But
- now we have a forbidden cycle: F ->gp-link Z ->rscs-link F.  Thus the
-@@ -1635,13 +1636,13 @@ time with statement labels added to the memory access instructions:
- 	}
- 
- 
--If r2 = 0 at the end then P0's store at X overwrites the value
--that P1's load at Z reads from, so we have Z ->fre X and thus
--Z ->link X.  In addition, there is a synchronize_rcu() between Y and
--Z, so therefore we have Y ->gp-link X.
-+If r2 = 0 at the end then P0's store at X overwrites the value that
-+P1's load at Z reads from, so we have Z ->fre X and thus Z ->rcu-link X.
-+In addition, there is a synchronize_rcu() between Y and Z, so therefore
-+we have Y ->gp-link X.
- 
- If r1 = 1 at the end then P1's load at Y reads from P0's store at W,
--so we have W ->link Y.  In addition, W and X are in the same critical
-+so we have W ->rcu-link Y.  In addition, W and X are in the same critical
- section, so therefore we have X ->rscs-link Y.
- 
- This gives us a cycle, Y ->gp-link X ->rscs-link Y, with one gp-link
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index df97db03b6c2..cdf682859d4e 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -100,22 +100,22 @@ let rscs = po ; crit^-1 ; po?
-  * one but two non-rf relations, but only in conjunction with an RCU
-  * read-side critical section.
-  *)
--let link = hb* ; pb* ; prop
-+let rcu-link = hb* ; pb* ; prop
- 
- (* Chains that affect the RCU grace-period guarantee *)
--let gp-link = gp ; link
--let rscs-link = rscs ; link
-+let gp-link = gp ; rcu-link
-+let rscs-link = rscs ; rcu-link
- 
- (*
-  * A cycle containing at least as many grace periods as RCU read-side
-  * critical sections is forbidden.
-  *)
--let rec rcu-path =
-+let rec rb =
- 	gp-link |
- 	(gp-link ; rscs-link) |
- 	(rscs-link ; gp-link) |
--	(rcu-path ; rcu-path) |
--	(gp-link ; rcu-path ; rscs-link) |
--	(rscs-link ; rcu-path ; gp-link)
-+	(rb ; rb) |
-+	(gp-link ; rb ; rscs-link) |
-+	(rscs-link ; rb ; gp-link)
- 
--irreflexive rcu-path as rcu
-+irreflexive rb as rcu
--- 
-2.5.2
