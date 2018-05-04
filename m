@@ -1,66 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeEDOaa (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 10:30:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48614 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751729AbeEDOa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 10:30:27 -0400
-Date: Fri, 4 May 2018 16:30:21 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: mhiramat@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        peterz@infradead.org, srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        acme@kernel.org, ananth@linux.vnet.ibm.com, akpm@linux-foundation.org,
-        alexander.shishkin@linux.intel.com, alexis.berlemont@gmail.com,
-        corbet@lwn.net, dan.j.williams@intel.com, jolsa@redhat.com,
-        kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com
-Subject: Re: [PATCH v3 0/9] trace_uprobe: Support SDT markers having
- reference count (semaphore)
-Message-ID: <20180504143021.GB26151@redhat.com>
-References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
- <f77789c0-9277-23bf-9abb-92f3f36c4baa@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f77789c0-9277-23bf-9abb-92f3f36c4baa@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1751598AbeEDObI (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 10:31:08 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:38687 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751654AbeEDO3p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 10:29:45 -0400
+X-Google-Smtp-Source: AB8JxZq3D00P3eUDIwlZI0xLA1vGYM5x7KihME3mQJuNiwHsRCU2kxsMEPS9dlRZ1VcnfZCVhL0epA==
+From: David Herrmann <dh.herrmann@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
+        teg@jklm.no, Stephen Smalley <sds@tycho.nsa.gov>,
+        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
+        Eric Paris <eparis@parisplace.org>, serge@hallyn.com,
+        Casey Schaufler <casey@schaufler-ca.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, David Herrmann <dh.herrmann@gmail.com>
+Subject: [PATCH v2 3/4] selinux: provide socketpair callback
+Date: Fri,  4 May 2018 16:28:21 +0200
+Message-Id: <20180504142822.15233-4-dh.herrmann@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180504142822.15233-1-dh.herrmann@gmail.com>
+References: <20180504142822.15233-1-dh.herrmann@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry Ravi, I saved the new version for review and forgot about it... I'll
-try to do this on weekend.
+Make sure to implement the new socketpair callback so the SO_PEERSEC
+call on socketpair(2)s will return correct information.
 
-On 05/03, Ravi Bangoria wrote:
-> 
-> On 04/17/2018 10:02 AM, Ravi Bangoria wrote:
-> > Userspace Statically Defined Tracepoints[1] are dtrace style markers
-> > inside userspace applications. Applications like PostgreSQL, MySQL,
-> > Pthread, Perl, Python, Java, Ruby, Node.js, libvirt, QEMU, glib etc
-> > have these markers embedded in them. These markers are added by developer
-> > at important places in the code. Each marker source expands to a single
-> > nop instruction in the compiled code but there may be additional
-> > overhead for computing the marker arguments which expands to couple of
-> > instructions. In case the overhead is more, execution of it can be
-> > omitted by runtime if() condition when no one is tracing on the marker:
-> >
-> >     if (reference_counter > 0) {
-> >         Execute marker instructions;
-> >     }   
-> >
-> > Default value of reference counter is 0. Tracer has to increment the 
-> > reference counter before tracing on a marker and decrement it when
-> > done with the tracing.
-> 
-> Hi Oleg, Masami,
-> 
-> Can you please review this :) ?
-> 
-> Thanks.
-> 
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Tom Gundersen <teg@jklm.no>
+Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+---
+ security/selinux/hooks.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 4cafe6a19167..02ebd1585eaf 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4569,6 +4569,18 @@ static int selinux_socket_post_create(struct socket *sock, int family,
+ 	return err;
+ }
+ 
++static int selinux_socket_socketpair(struct socket *socka,
++				     struct socket *sockb)
++{
++	struct sk_security_struct *sksec_a = socka->sk->sk_security;
++	struct sk_security_struct *sksec_b = sockb->sk->sk_security;
++
++	sksec_a->peer_sid = sksec_b->sid;
++	sksec_b->peer_sid = sksec_a->sid;
++
++	return 0;
++}
++
+ /* Range of port numbers used to automatically bind.
+    Need to determine whether we should perform a name_bind
+    permission check between the socket and the port number. */
+@@ -6999,6 +7011,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 
+ 	LSM_HOOK_INIT(socket_create, selinux_socket_create),
+ 	LSM_HOOK_INIT(socket_post_create, selinux_socket_post_create),
++	LSM_HOOK_INIT(socket_socketpair, selinux_socket_socketpair),
+ 	LSM_HOOK_INIT(socket_bind, selinux_socket_bind),
+ 	LSM_HOOK_INIT(socket_connect, selinux_socket_connect),
+ 	LSM_HOOK_INIT(socket_listen, selinux_socket_listen),
+-- 
+2.17.0
