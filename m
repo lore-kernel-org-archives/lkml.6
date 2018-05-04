@@ -1,127 +1,205 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeEDMgB (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:36:01 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:21049 "EHLO pegase1.c-s.fr"
+        id S1751961AbeEDMgP (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:36:15 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:8879 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751890AbeEDMfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:35:46 -0400
-Subject: Re: [PATCH 1/3] powerpc/nohash: remove hash related code from nohash
- headers.
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <02633d43f29e1ba01865cd334216dc8efb8b4b11.1524587425.git.christophe.leroy@c-s.fr>
- <201804270438.utPklxgP%fengguang.wu@intel.com>
- <878t8z8yah.fsf@concordia.ellerman.id.au>
-From: Christophe LEROY <christophe.leroy@c-s.fr>
-Message-ID: <7b5e3ac5-57d8-d846-247b-422858c01016@c-s.fr>
-Date: Fri, 4 May 2018 14:35:45 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <878t8z8yah.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1751618AbeEDMeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:34:14 -0400
+Message-Id: <457781f2de403852ba2a60257c3d9aca75c4d2c8.1525435203.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1525435203.git.christophe.leroy@c-s.fr>
+References: <cover.1525435203.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH  09/17] powerpc: make __ioremap_caller() common to PPC32 and
+ PPC64
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Fri,  4 May 2018 14:34:08 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 04/05/2018 à 13:17, Michael Ellerman a écrit :
-> kbuild test robot <lkp@intel.com> writes:
-> 
->> Hi Christophe,
->>
->> Thank you for the patch! Yet something to improve:
->>
->> [auto build test ERROR on powerpc/next]
->> [also build test ERROR on v4.17-rc2 next-20180426]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>
->> url:    https://github.com/0day-ci/linux/commits/Christophe-Leroy/powerpc-nohash-remove-hash-related-code-from-nohash-headers/20180425-182026
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
->> config: powerpc-ppc64e_defconfig (attached as .config)
->> compiler: powerpc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
->> reproduce:
->>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>          chmod +x ~/bin/make.cross
->>          # save the attached .config to linux build tree
->>          make.cross ARCH=powerpc
->>
->> All errors (new ones prefixed by >>):
->>
->>     In file included from arch/powerpc/include/asm/nohash/pgtable.h:6:0,
->>                      from arch/powerpc/include/asm/pgtable.h:19,
->>                      from include/linux/memremap.h:8,
->>                      from include/linux/mm.h:27,
->>                      from include/linux/mman.h:5,
->>                      from arch/powerpc/kernel/asm-offsets.c:22:
->>     arch/powerpc/include/asm/nohash/64/pgtable.h: In function '__ptep_test_and_clear_young':
->>>> arch/powerpc/include/asm/nohash/64/pgtable.h:214:6: error: implicit declaration of function 'pte_young'; did you mean 'pte_pud'? [-Werror=implicit-function-declaration]
->>       if (pte_young(*ptep))
->>           ^~~~~~~~~
->>           pte_pud
-> 
-> Urk.
-> 
-> There's a circular dependency here.
-> 
-> I fixed it with the patch below, which seems to be the least worst
-> solution. Possibly we can clean things up further in future.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/book3s/64/pgtable.h |   1 +
+ arch/powerpc/mm/ioremap.c                    | 126 +++++++--------------------
+ 2 files changed, 34 insertions(+), 93 deletions(-)
 
-Oops, I just sent you a new version of the patch not using pte_young() 
-anymore. I'll let you decide what to do.
-
-Christophe
-
-> 
-> cheers
-> 
-> diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-> index 140f8e74b478..987a658b18e1 100644
-> --- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-> +++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-> @@ -267,6 +267,11 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
->   	pte_update(ptep, clr, set);
->   }
->   
-> +static inline int pte_young(pte_t pte)
-> +{
-> +	return pte_val(pte) & _PAGE_ACCESSED;
-> +}
-> +
->   #define __HAVE_ARCH_PTE_SAME
->   #define pte_same(A,B)	((pte_val(A) ^ pte_val(B)) == 0)
->   
-> diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
-> index e8de7cb4d3fb..6ac8381f4c7a 100644
-> --- a/arch/powerpc/include/asm/nohash/64/pgtable.h
-> +++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
-> @@ -204,6 +204,11 @@ static inline unsigned long pte_update(struct mm_struct *mm,
->   	return old;
->   }
->   
-> +static inline int pte_young(pte_t pte)
-> +{
-> +	return pte_val(pte) & _PAGE_ACCESSED;
-> +}
-> +
->   static inline int __ptep_test_and_clear_young(struct mm_struct *mm,
->   					      unsigned long addr, pte_t *ptep)
->   {
-> diff --git a/arch/powerpc/include/asm/nohash/pgtable.h b/arch/powerpc/include/asm/nohash/pgtable.h
-> index 077472640b35..2160be2e4339 100644
-> --- a/arch/powerpc/include/asm/nohash/pgtable.h
-> +++ b/arch/powerpc/include/asm/nohash/pgtable.h
-> @@ -17,7 +17,6 @@ static inline int pte_write(pte_t pte)
->   }
->   static inline int pte_read(pte_t pte)		{ return 1; }
->   static inline int pte_dirty(pte_t pte)		{ return pte_val(pte) & _PAGE_DIRTY; }
-> -static inline int pte_young(pte_t pte)		{ return pte_val(pte) & _PAGE_ACCESSED; }
->   static inline int pte_special(pte_t pte)	{ return pte_val(pte) & _PAGE_SPECIAL; }
->   static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
->   static inline pgprot_t pte_pgprot(pte_t pte)	{ return __pgprot(pte_val(pte) & PAGE_PROT_BITS); }
-> 
+diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+index c5c6ead06bfb..2bebdd8302cb 100644
+--- a/arch/powerpc/include/asm/book3s/64/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+@@ -18,6 +18,7 @@
+ #define _PAGE_RO		0
+ #define _PAGE_USER		0
+ #define _PAGE_HWWRITE		0
++#define _PAGE_COHERENT		0
+ 
+ #define _PAGE_EXEC		0x00001 /* execute permission */
+ #define _PAGE_WRITE		0x00002 /* write access allowed */
+diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
+index 65d611d44d38..59be5dfcb3e9 100644
+--- a/arch/powerpc/mm/ioremap.c
++++ b/arch/powerpc/mm/ioremap.c
+@@ -33,95 +33,6 @@ unsigned long ioremap_bot;
+ unsigned long ioremap_bot = IOREMAP_BASE;
+ #endif
+ 
+-#ifdef CONFIG_PPC32
+-
+-void __iomem *
+-__ioremap_caller(phys_addr_t addr, unsigned long size, unsigned long flags,
+-		 void *caller)
+-{
+-	unsigned long v, i;
+-	phys_addr_t p;
+-	int err;
+-
+-	/* Make sure we have the base flags */
+-	if ((flags & _PAGE_PRESENT) == 0)
+-		flags |= pgprot_val(PAGE_KERNEL);
+-
+-	/* Non-cacheable page cannot be coherent */
+-	if (flags & _PAGE_NO_CACHE)
+-		flags &= ~_PAGE_COHERENT;
+-
+-	/*
+-	 * Choose an address to map it to.
+-	 * Once the vmalloc system is running, we use it.
+-	 * Before then, we use space going up from IOREMAP_BASE
+-	 * (ioremap_bot records where we're up to).
+-	 */
+-	p = addr & PAGE_MASK;
+-	size = PAGE_ALIGN(addr + size) - p;
+-
+-	/*
+-	 * If the address lies within the first 16 MB, assume it's in ISA
+-	 * memory space
+-	 */
+-	if (p < 16*1024*1024)
+-		p += _ISA_MEM_BASE;
+-
+-#ifndef CONFIG_CRASH_DUMP
+-	/*
+-	 * Don't allow anybody to remap normal RAM that we're using.
+-	 * mem_init() sets high_memory so only do the check after that.
+-	 */
+-	if (slab_is_available() && (p < virt_to_phys(high_memory)) &&
+-	    page_is_ram(__phys_to_pfn(p))) {
+-		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
+-		       (unsigned long long)p, __builtin_return_address(0));
+-		return NULL;
+-	}
+-#endif
+-
+-	if (size == 0)
+-		return NULL;
+-
+-	/*
+-	 * Is it already mapped?  Perhaps overlapped by a previous
+-	 * mapping.
+-	 */
+-	v = p_block_mapped(p);
+-	if (v)
+-		goto out;
+-
+-	if (slab_is_available()) {
+-		struct vm_struct *area;
+-		area = get_vm_area_caller(size, VM_IOREMAP, caller);
+-		if (area == 0)
+-			return NULL;
+-		area->phys_addr = p;
+-		v = (unsigned long) area->addr;
+-	} else {
+-		v = ioremap_bot;
+-		ioremap_bot += size;
+-	}
+-
+-	/*
+-	 * Should check if it is a candidate for a BAT mapping
+-	 */
+-
+-	err = 0;
+-	for (i = 0; i < size && err == 0; i += PAGE_SIZE)
+-		err = map_kernel_page(v+i, p+i, flags);
+-	if (err) {
+-		if (slab_is_available())
+-			vunmap((void *)v);
+-		return NULL;
+-	}
+-
+-out:
+-	return (void __iomem *) (v + ((unsigned long)addr & ~PAGE_MASK));
+-}
+-
+-#else
+-
+ /**
+  * __ioremap_at - Low level function to establish the page tables
+  *                for an IO mapping
+@@ -135,6 +46,10 @@ void __iomem * __ioremap_at(phys_addr_t pa, void *ea, unsigned long size,
+ 	if ((flags & _PAGE_PRESENT) == 0)
+ 		flags |= pgprot_val(PAGE_KERNEL);
+ 
++	/* Non-cacheable page cannot be coherent */
++	if (flags & _PAGE_NO_CACHE)
++		flags &= ~_PAGE_COHERENT;
++
+ 	/* We don't support the 4K PFN hack with ioremap */
+ 	if (flags & H_PAGE_4K_PFN)
+ 		return NULL;
+@@ -187,6 +102,33 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+ 	if ((size == 0) || (paligned == 0))
+ 		return NULL;
+ 
++	/*
++	 * If the address lies within the first 16 MB, assume it's in ISA
++	 * memory space
++	 */
++	if (IS_ENABLED(CONFIG_PPC32) && paligned < 16*1024*1024)
++		paligned += _ISA_MEM_BASE;
++
++	/*
++	 * Don't allow anybody to remap normal RAM that we're using.
++	 * mem_init() sets high_memory so only do the check after that.
++	 */
++	if (!IS_ENABLED(CONFIG_CRASH_DUMP) &&
++	    slab_is_available() && (paligned < virt_to_phys(high_memory)) &&
++	    page_is_ram(__phys_to_pfn(paligned))) {
++		printk("__ioremap(): phys addr 0x%llx is RAM lr %ps\n",
++		       (u64)paligned, __builtin_return_address(0));
++		return NULL;
++	}
++
++	/*
++	 * Is it already mapped?  Perhaps overlapped by a previous
++	 * mapping.
++	 */
++	ret = (void __iomem *)p_block_mapped(paligned);
++	if (ret)
++		goto out;
++
+ 	if (slab_is_available()) {
+ 		struct vm_struct *area;
+ 
+@@ -205,14 +147,12 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+ 		if (ret)
+ 			ioremap_bot += size;
+ 	}
+-
++out:
+ 	if (ret)
+-		ret += addr & ~PAGE_MASK;
++		ret += (unsigned long)addr & ~PAGE_MASK;
+ 	return ret;
+ }
+ 
+-#endif
+-
+ /*
+  * Unmap an IO region and remove it from imalloc'd list.
+  * Access to IO memory should be serialized by driver.
+-- 
+2.13.3
