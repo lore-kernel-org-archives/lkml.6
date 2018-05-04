@@ -1,7 +1,7 @@
 Return-Path: <ksummit-discuss-bounces@lists.linuxfoundation.org>
-X-Cyrus-Session-Id: sloti22d1t05-4069134-1525427885-2-12166262539798156714
+X-Cyrus-Session-Id: sloti22d1t05-74247-1525436928-2-10557093994757439584
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001, SPF_PASS -0.001,
@@ -9,32 +9,31 @@ X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MU
 X-Spam-source: IP='140.211.169.12', Host='mail.linuxfoundation.org', Country='US',
   FromHeader='com', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: ksummit-discuss-bounces@lists.linuxfoundation.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525427885; b=EIvm+WgCkExQwHfwi2o/JoSYmwspH1erUvcyROw9buaYYouOEN
-    pcnTFUvw6f7M2z9OQQQhQMtpcDtxlQNjayNorbuCKvLUQrPuGdbfnSej4jLV8eM9
-    m0EcWAgqoO6jcW94JbJk/wlBzSdR8deWNrU18+Pm8ttFJPfo85AzVEqYJDLy6iHG
-    C6SIdCamJ/lsM3d/vMmVrRiw+TSLo+2c7LU6zZeIDBOILpK4C/1ObsKikKAB0cGC
-    livSb8G0lJ8cJqesG4jMJfzybCv1LOlxVAUiqGbXgSHwjXhGw+igyg3EZBG5hCHZ
-    hedANY8x0HIupHpJH5MiIu5sDx5PDa/NZ16Q==
+    1525436927; b=IO9KcLUb5hKCXfodd7YQadSluoUnnOGIqbGLIZ+2IfkQFLIKZr
+    bBsLjKiUAYu61cFEL8gDMCgMAOP79TMWIxze3va4sPiwp7hYKvMfe+ZoIWPgLJ+h
+    Y8uxsKjI4wji9GWAoy5hOajwkxn63Lxs/r2MxfqS+IZSLjCoKi3rOLO5DORvNH5m
+    ftf6AMHMqJ3QmVENu0MvoiuUhwQEqoGroorU0YsnDpYUM6oZQnd/VNmV2CZA9c2O
+    Kdc29F/9ECFDaQFLK9fHNawMpb2gX43c1SaAEXy1FPu9cH4fYlNstGPSTo4hlbG+
+    qMHW7i0lwzNQrhOZGsNzrBxSnXyzPLoYsf8A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:in-reply-to:references:to
-    :mime-version:content-id:date:message-id:cc:subject:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:content-type:content-transfer-encoding:sender;
-    s=fm2; t=1525427885; bh=iHf6al0Kr/8ycO28nF2DTxf5qlfj+OOrjhmyjgK
-    7iok=; b=icLuU1XKh4YQJgl+OaXH9FWZWLUIarmDAn3TIZWhBQDoeObRFzNYcve
-    J6C6tr87g4eIyrtTDKhA+YVVwqC9iu9yg+Mg4cWYF6mnLT+o2LQudyoomogzT1BE
-    EXZJxpy1bX8B2M4BKuBTv97wH+wTF7bamKj/8vzkq2cK04alGEaie4lF/7PNf866
-    2m1u+d7m9GWAu27E25nR+mys2Ck8pZ4rHYkDN1S5tepfJimnWBz32FGtAzL+Mxbm
-    eSy375tHKNG6dilExW14w+4L5YZwNaI43bu3Lbs2TlATTNhGAQCIHSceS/PI1rs0
-    phG05fkpcH+gTNNx4TkThlIlPIBGL/A==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:in-reply-to:references:date
+    :message-id:mime-version:cc:subject:list-id:list-unsubscribe
+    :list-archive:list-post:list-help:list-subscribe:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525436927; bh=vWEa3
+    43746C9CQKBRhqY5gZ1+zK4skUMXdNonVFHs34=; b=edT8/oFNZgnL9dr+0SF3C
+    NB8GDm1+pSr8MPL4d6iaRuPpLQgiJBeYppAr5qOv8KAKh+84uI4rirnUZb8u+lR/
+    KckGKcj6ypPS2abp9qALh335Rg5tst8cxkb9/wXfnxcLCEG5n1k1ePU3VDlcYZn5
+    GjfOrdgA5Txu8JiYaeIqjxI3hRTAL+3ryRxn7LcPE5imn62HkaCXEbcnICrtyr2R
+    2o/qiuo1SgBoL4SwPU8r+7kogIJmvPNRinTAVgHtC1+4nZn4jdSZOqQ2GreOz+x6
+    OaJih2WLr5zr/0yKQg3iEuVB+GzM2wfT8yK5zUKI20Dfr+XY91nXyixPvyyysA4x
+    A==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
     spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
     smtp.helo=mail.linuxfoundation.org;
@@ -44,15 +43,15 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
     smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-    smtp_is_org_domain=no header.domain=redhat.com header.result=pass
+    smtp_is_org_domain=no header.domain=intel.com header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
     spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
       smtp.helo=mail.linuxfoundation.org;
@@ -62,29 +61,32 @@ Authentication-Results: mx5.messagingengine.com;
       x-ptr-lookup=mail.linuxfoundation.org;
     x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
       smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-      smtp_is_org_domain=no header.domain=redhat.com header.result=pass
+      smtp_is_org_domain=no header.domain=intel.com header.result=pass
       header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMTKZenJeW6nX3L4k2OQkBvFTh1mUlFRek7g3/5+Y31sFXR+KTeQ1xn74cycUftSdyb7VslnWbiG5tVMybakaOj3vnwFR/F9MLmsyyJagp/Q9p09C+qm
-    ZfIXcoVebyfNOQqaesiENCrCK55ANNMdzU45RVptlS0twMqiHHVkKpFvzYrX/Swxr6Y9nxuPaxEanVHt8mUbs/7ETtremXmkxhpl+qbUWXjH20lEVTOeiVU6
-    60pTaLI6hZYZV4GhdinNiQ==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
+X-CM-Envelope: MS4wfKUIzqHCi21rjvzus1gMDxgeCnbXfKHrvbmCJZ9pHSo/noEKIEa4hsOUORUrqAKD7NgKTMLBJk8e3IOf3XPiZVPnL/P3yXxBGnSNFr09jYpByzfs7BYn
+    pQxD6DEhx8nTZPOEIHwJ3Ny8FxQB1l/T1NTy0oSDg4tWUbn2XNq6V+06LDtrzYuI8xlMzPWwd8JX0ljNgwbQPB7whsycU+aqXiAt2gopDmh59OSMqq6mQBfM
+    7tlU+319ZoejkkSluvGuBQ==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
     a=5MPDoNpceV4HFXFrvkM3CQ==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8
-    a=EIY8bSkbpr-BgZ2jaH0A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-    a=Yupwre4RP9_Eg_Bd0iYG:22 cc=dsc
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8
+    a=ag1SF4gXAAAA:8 a=WlhSJogrsaN7um2xiokA:9 a=CjuIK1q_8ugA:10
+    a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: ksummit-discuss@mail.linuxfoundation.org
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20180503190431.GV18390@sasha-vm>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,362,1520924400"; d="scan'208";a="52398756"
+From: Jani Nikula <jani.nikula@intel.com>
+To: David Howells <dhowells@redhat.com>,
+	Sasha Levin <Alexander.Levin@microsoft.com>
+In-Reply-To: <8669.1525427874@warthog.procyon.org.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 References: <20180503190431.GV18390@sasha-vm> <20180501163818.GD1468@sasha-vm>
 	<CAMuHMdWNFz_9OpddZ6tTaQcNVH01pkhwd0+3Z31uDcZvbkV6Ow@mail.gmail.com>
 	<20180502195138.GC18390@sasha-vm>
@@ -94,20 +96,18 @@ References: <20180503190431.GV18390@sasha-vm> <20180501163818.GD1468@sasha-vm>
 	<20180503165446.GB30522@ZenIV.linux.org.uk>
 	<20180503173422.GR18390@sasha-vm>
 	<20180503182039.GC30522@ZenIV.linux.org.uk>
-To: Sasha Levin <Alexander.Levin@microsoft.com>
+	<8669.1525427874@warthog.procyon.org.uk>
+Date: Fri, 04 May 2018 15:31:17 +0300
+Message-ID: <87fu377gbu.fsf@intel.com>
 MIME-Version: 1.0
-Content-ID: <8668.1525427874.1@warthog.procyon.org.uk>
-Date: Fri, 04 May 2018 10:57:54 +0100
-Message-ID: <8669.1525427874@warthog.procyon.org.uk>
-X-Remote-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED
+X-Remote-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI
 	autolearn=ham version=3.3.1
 X-Remote-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
 	smtp1.linux-foundation.org
-Cc: "ksummit-discuss@lists.linuxfoundation.org"
-	<ksummit-discuss@lists.linuxfoundation.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
+Cc: Greg KH <gregkh@linuxfoundation.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"w@1wt.eu" <w@1wt.eu>
+	"ksummit-discuss@lists.linuxfoundation.org"
+	<ksummit-discuss@lists.linuxfoundation.org>, "w@1wt.eu" <w@1wt.eu>
 Subject: Re: [Ksummit-discuss] bug-introducing patches
 X-BeenThere: ksummit-discuss@lists.linuxfoundation.org
 X-Mailman-Version: 2.1.12
@@ -126,14 +126,31 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Sasha Levin via Ksummit-discuss wrote:
+On Fri, 04 May 2018, David Howells <dhowells@redhat.com> wrote:
+> Sasha Levin via Ksummit-discuss wrote:
+>
+>> 	Cc: stable@vger.kernel.org # commit-id-of-(2)
+>
+> Can you please not do this?  This screws up email address parsing in some
+> tools.
 
-> 	Cc: stable@vger.kernel.org # commit-id-of-(2)
+This has been documented since
 
-Can you please not do this?  This screws up email address parsing in some
+commit 8e9b9362266dd16255473c080d846b13e27247bf
+Author: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Date:   Sun Dec 6 12:24:31 2009 +0100
+
+    Doc/stable rules: add new cherry-pick logic
+
+in v2.6.33 so seems like there should have been enough time to fix the
 tools.
 
-David
+
+BR,
+Jani.
+
+-- 
+Jani Nikula, Intel Open Source Technology Center
 _______________________________________________
 Ksummit-discuss mailing list
 Ksummit-discuss@lists.linuxfoundation.org
