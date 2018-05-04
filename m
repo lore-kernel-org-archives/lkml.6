@@ -1,151 +1,140 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2323227-1525764143-2-5777502438850684973
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-516977-1525459780-2-16986164871853374005
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525764142; b=MM5t1Q5HmyHTRfPBnYJ4vo1I9ScY2W45Lfeo8abhD87q5Hbfb2
-    WM4FaN7aFuO2I8i1OCl6+Cf9pAwI0xQ9sxs3F2fr9QGVPAJyrB36ff4/Veox92D9
-    UwcnBVWVymXjdFG09qX1yNSvkNFwQyxO5MwtqLU2l8ZBnGiyZXuPF/88dVFbwqCu
-    FJPpKcdjGEq5gKlkEaXMCex3DGBaOdlqQlOmIS/fsqTTi0yPS6rCIIrmQ59RUUgo
-    X/jDZ9l+6qFoTV7WbBrclRadRCb9Lu1PSo0zh+Ct05fgY3GW2vzk/FOZ6roSciu6
-    BMsYrxLZaxWYWXQz9PS0ag18uJVWem1fzHaw==
+    1525459779; b=kanp6b9k9GtKa8k+ZdqSPXIGVnAHTA09pIv7CtCynPH81kH4Xa
+    S+zktJusE4eM5ckVIOo+oFGxN+BSCItbGgoYgRndvULA4iZRG21cQuVkf5auWtqr
+    9GDTvnsBMN/RVDYpQM3okirkjaLPtbt4HIobONCpIXVe+CuAGhK1tLnX1TGdf/EO
+    22erXJvzU3dlBtrhdN+vVGxPiB0/Lb21GUxQGdNwJfyA1DbjXOjYsVix/KJTJjG9
+    2DTrcBEoOTFI6qLS9OM0MLGF6aUe8dLD05Zo4QfZd5RJTFCW82kf7dirnJuPOpjf
+    dfLbRJ13vsoG937Oh21xOSja+oRfsPcyKvig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525764142; bh=Q0hmJ
-    Y8T1ikabtMzYm3tDu9g0qfdIpb2YNU/44r6gkk=; b=Mamus5hiex+kBo5sEMKD/
-    Axm/zkLBsF0eEQGInW5OfnK6Z6/SlYXZz0M3cyJlYc3v3ISjKweNHnJK44L1WUG3
-    +06gemzjUF1ee6d1iE+0/YAGw2CdGoMtljTc3PpemjRPcksCSs1bNOrTfn/4GYdl
-    zBe3LOcQz0KZS0qxpS2L0pgqc3u64FGPsVtQQxRbZkU+aOfvqnmx6lhCbRiF01m8
-    2wtYhyNjXNrV2JESVsgNg3cBYyKZSXq2aahw823XfFY63Yco/3DmsN6Hypylk2R8
-    UHJ1HEUrbpX/pKcT5GYxBg9dHW44eg8rj+S+L+SnV8CsLPdKuv5SuS4oiHPp+1D2
-    g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525459779; bh=ICTDpEYRBX1nR0kM/Vl9Z6DkHM/O63
+    zPwQi2mB1t+cc=; b=C5HPg48AaZ2vSKJek9LVhswgqpvbD1oSp1Swa26GYuyyNL
+    CoD8Q5isc6WfY7lKPzDu2ZVVYWydWdMqx6MEBn9MHm7wFpCpbOumV0kQJ51iE9ME
+    /U48p0qEHPc26NwD8DDy9EDqrcb9T7NQO8ZcECHBp3xw7u9OLjtpCJGGhTURI+WF
+    p6/rIJQlOA/WfmXdGge95DynA4zH4oLmm/bsu2+fdCNiRJ2qfNu9RmHgyF6v/fsg
+    5nPjTowpBvkGcZ56i9GTt3bRTYL4ZGTIAEpRrI9P9e79smNhDP6tjzyHz7IV6H2U
+    N8L5YGVXzBX0tvvRgksH1v6r0c9aGM4tM5G3r/DA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=lszC80Ui
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=codeaurora.org header.i=@codeaurora.org header.b=lszC80Ui
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=intel.com header.result=pass
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=codeaurora.org header.result=pass
     header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=lszC80Ui
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=codeaurora.org header.i=@codeaurora.org header.b=lszC80Ui
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=codeaurora.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=intel.com header.result=pass
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=codeaurora.org header.result=pass
       header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIwJ1qmuNfBl1AUNPh2XXLRBCNYyN5Va1k+/SKLyck1iVu/EECjW0ru/T7w4fWWNP/44Q+QXenwgt5TfidQrgj5SfEp1tvK8gVY0OERsCpk/bH4i39s4
-    KoFtI8W+4PFGo9tqo4Ltfk8msbhO+LbWIwsYyYqaYKnKFX0cubA05v08T9xocB18q2xPiXt/0PliC1KpUXFPn4n91Onvb4z5w+6kZxvIx4TxgW+mshLKyQrG
-    dN579WBLQSwnLv+/7COFuQ==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DfNHnWVPAAAA:8 a=DDOyTI_5AAAA:8
-    a=HAZ7V5VAKuDbAxE40uYA:9 a=CjuIK1q_8ugA:10 a=rjTVMONInIDnV1a_A2c_:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfIeX3SDJFaSoyytMdYDZWtGNWh0zoCT9a7GBCy0vTBEMo1pzrnWL7Y3XAf0SLl38VckCLjruJd6XpET6Nb6P1lJphng0HF38/Z5k9g2AA+akpPx46NSq
+    CFfTNedSrfzlRRxZIwLhQvmwgjzMX1AXA+S26ECFcBB2caekJ79faszByK/VquvKM1yRraSMM9CbHjHJIc9rxC1Ixeb+SuWdBrvKXnHbNg0KtS/eLksmdPE8
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
+    a=8287THB72YZbVCV3DXIA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,377,1520924400"; d="scan'208";a="52419556"
-Date: Tue, 8 May 2018 15:18:51 +0800
-From: Yunliang Ding <yunliang.ding@intel.com>
-To: Colin King <colin.king@canonical.com>
-Subject: Re: [PATCH] media: atomisp: fix spelling mistake: "diregard" ->
- "disregard"
-Message-ID: <20180508071850.GA17320@intel.com>
-References: <20180429120647.10194-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180429120647.10194-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Alan Cox <alan@linux.intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751684AbeEDSsY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 14:48:24 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34592 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751611AbeEDSsX (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 4 May 2018 14:48:23 -0400
+X-Remote-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Remote-Spam-Level: 
+X-Remote-Spam-Status: No, score=-2.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_SIGNED,T_DKIM_INVALID autolearn=no autolearn_force=no version=3.4.0
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4B7616085F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+From: Manu Gautam <mgautam@codeaurora.org>
+To: balbi@kernel.org, robh@kernel.org, andy.gross@linaro.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>
+Subject: [PATCH v3 0/3] usb: dwc3: support for Qualcomm DWC3 glue
+Date: Sat,  5 May 2018 00:18:06 +0530
+Message-Id: <1525459689-1358-1-git-send-email-mgautam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 2018-04-29 at 13:06:47 +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Trivial fix to spelling mistake in ia_css_print message text
+Add separate dwc3-qcom glue driver for Qualcomm SOCs having dwc3 core.
+It is needed to support peripheral mode.
+Patches also add support to invoke PHY runtime PM functions on host
+mode bus-suspend.
 
-Hi Colin,
+Changes since v2:
+ - Addressed Rob's comments for DT binding documentation.
 
-The atomisp drivers will soon EOL accorinding to the ML discussion.
+Changes since v1:
+ - Move dwc3 core register accesses from glue driver to dwc3 core as
+   per review comment from Felipe.
+ - Addressed other review comments from Felipe and Rob.
+ - Some other minor code changes related to redability.
+ - Add reset_control assert in driver probe to ensure core registers
+   are reset to POR value in case of any initalization by boot code. 
 
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  .../css2400/css_2401_csi2p_system/host/csi_rx_private.h         | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h b/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h
-> index 9c0cb4a63862..4fa74e7a96e6 100644
-> --- a/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h
-> +++ b/drivers/staging/media/atomisp/pci/atomisp2/css2400/css_2401_csi2p_system/host/csi_rx_private.h
-> @@ -202,7 +202,7 @@ static inline void csi_rx_be_ctrl_dump_state(
->  		ia_css_print("CSI RX BE STATE Controller %d PEC ID %d custom pec 0x%x \n", ID, i, state->pec[i]);
->  	}
->  #endif
-> -	ia_css_print("CSI RX BE STATE Controller %d Global LUT diregard reg 0x%x \n", ID, state->global_lut_disregard_reg);
-> +	ia_css_print("CSI RX BE STATE Controller %d Global LUT disregard reg 0x%x \n", ID, state->global_lut_disregard_reg);
->  	ia_css_print("CSI RX BE STATE Controller %d packet stall reg 0x%x \n", ID, state->packet_status_stall);
->  	/*
->  	 * Get the values of the register-set per
-> -- 
-> 2.17.0
-> 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Manu Gautam (3):
+  dt-bindings: usb: Update documentation for Qualcomm DWC3 driver
+  usb: dwc3: Add Qualcomm DWC3 glue driver
+  usb: dwc3: core: Suspend PHYs on runtime suspend in host mode
+
+ .../devicetree/bindings/usb/qcom,dwc3.txt          |  85 ++-
+ drivers/usb/dwc3/Kconfig                           |  12 +
+ drivers/usb/dwc3/Makefile                          |   1 +
+ drivers/usb/dwc3/core.c                            |  36 +-
+ drivers/usb/dwc3/dwc3-of-simple.c                  |   1 -
+ drivers/usb/dwc3/dwc3-qcom.c                       | 618 +++++++++++++++++++++
+ 6 files changed, 727 insertions(+), 26 deletions(-)
+ create mode 100644 drivers/usb/dwc3/dwc3-qcom.c
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
