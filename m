@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751670AbeEDBvy (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 21:51:54 -0400
+        id S1751737AbeEDBwY (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 21:52:24 -0400
 Received: from mga01.intel.com ([192.55.52.88]:35622 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751419AbeEDBuv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 21:50:51 -0400
+        id S1751336AbeEDBuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 21:50:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
-   d="scan'208";a="37326254"
+   d="scan'208";a="37326235"
 From: Lu Baolu <baolu.lu@linux.intel.com>
 To: Joerg Roedel <joro@8bytes.org>, David Woodhouse <dwmw2@infradead.org>
 Cc: ashok.raj@intel.com, sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
@@ -18,9 +18,9 @@ Cc: ashok.raj@intel.com, sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
         Lu Baolu <baolu.lu@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v2 5/9] iommu/vt-d: Per domain pasid table interfaces
-Date: Fri,  4 May 2018 09:41:20 +0800
-Message-Id: <1525398084-28815-6-git-send-email-baolu.lu@linux.intel.com>
+Subject: [PATCH v2 2/9] iommu/vt-d: Decouple idr bond pointer from svm
+Date: Fri,  4 May 2018 09:41:17 +0800
+Message-Id: <1525398084-28815-3-git-send-email-baolu.lu@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525398084-28815-1-git-send-email-baolu.lu@linux.intel.com>
 References: <1525398084-28815-1-git-send-email-baolu.lu@linux.intel.com>
@@ -28,145 +28,94 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the interfaces for per domain pasid table
-management. Currently we allocate one pasid table for all
-devices under the scope of an IOMMU. It's insecure in the
-cases where multiple devices under one single IOMMU unit
-support PASID feature. With per domain pasid table, we can
-achieve finer protection and isolation granularity.
+As we move the PASID idr out of SVM code and make it serving
+as a global PASID name space, the consumer can specify a ptr
+to bind it with a PASID. We shouldn't assume that each PASID
+will be bond with a ptr of struct intel_svm anymore.
+
+This patch cleans up a idr_for_each_entry() usage in the SVM
+code. It's required to replace the SVM-specific idr with the
+global PASID idr.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
 Cc: Kevin Tian <kevin.tian@intel.com>
 Cc: Liu Yi L <yi.l.liu@intel.com>
-Suggested-by: Ashok Raj <ashok.raj@intel.com>
 Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
 ---
- drivers/iommu/intel-pasid.c | 75 +++++++++++++++++++++++++++++++++++++++++++++
- drivers/iommu/intel-pasid.h |  4 +++
- include/linux/intel-iommu.h |  5 +++
- 3 files changed, 84 insertions(+)
+ drivers/iommu/intel-svm.c   | 14 ++++++++++----
+ include/linux/intel-iommu.h |  1 +
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
-index 0690f39..b8691a6 100644
---- a/drivers/iommu/intel-pasid.c
-+++ b/drivers/iommu/intel-pasid.c
-@@ -13,6 +13,7 @@
- #include <linux/intel-iommu.h>
- #include <linux/iommu.h>
- #include <linux/memory.h>
-+#include <linux/pci.h>
- #include <linux/spinlock.h>
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index e8cd984..983af0c 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -298,6 +298,7 @@ static const struct mmu_notifier_ops intel_mmuops = {
+ };
  
- #include "intel-pasid.h"
-@@ -58,3 +59,77 @@ void *intel_pasid_lookup_id(int pasid)
+ static DEFINE_MUTEX(pasid_mutex);
++static LIST_HEAD(global_svm_list);
  
- 	return p;
- }
-+
-+/*
-+ * Interfaces for per domain pasid table management:
-+ */
-+int intel_pasid_alloc_table(struct device *dev, size_t entry_size,
-+			    size_t entry_count)
-+{
-+	struct device_domain_info *info;
-+	struct dmar_domain *domain;
-+	struct page *pages;
-+	int order;
-+
-+	info = dev->archdata.iommu;
-+	if (WARN_ON(!info || !dev_is_pci(dev) ||
-+		    !info->pasid_supported ||
-+		    !info->domain))
-+		return -EINVAL;
-+
-+	domain = info->domain;
-+
-+	if (entry_count > intel_pasid_max_id)
-+		entry_count = intel_pasid_max_id;
-+
-+	order = get_order(entry_size * entry_count);
-+	pages = alloc_pages_node(domain->nid, GFP_KERNEL | __GFP_ZERO, order);
-+	if (!pages)
-+		return -ENOMEM;
-+
-+	spin_lock(&pasid_lock);
-+	if (domain->pasid_table) {
-+		__free_pages(pages, order);
-+	} else {
-+		domain->pasid_table	= page_address(pages);
-+		domain->order		= order;
-+		domain->max_pasid	= entry_count;
-+	}
-+	domain->pasid_users++;
-+	spin_unlock(&pasid_lock);
-+
-+	return 0;
-+}
-+
-+void intel_pasid_free_table(struct device *dev)
-+{
-+	struct dmar_domain *domain;
-+
-+	domain = get_valid_domain_for_dev(dev);
-+	if (!domain || !dev_is_pci(dev))
-+		return;
-+
-+	spin_lock(&pasid_lock);
-+	if (domain->pasid_table) {
-+		domain->pasid_users--;
-+		if (!domain->pasid_users) {
-+			free_pages((unsigned long)domain->pasid_table,
-+				   domain->order);
-+			domain->pasid_table	= NULL;
-+			domain->order		= 0;
-+			domain->max_pasid	= 0;
-+		}
-+	}
-+	spin_unlock(&pasid_lock);
-+}
-+
-+void *intel_pasid_get_table(struct device *dev)
-+{
-+	struct dmar_domain *domain;
-+
-+	domain = get_valid_domain_for_dev(dev);
-+	if (!domain)
-+		return NULL;
-+
-+	return domain->pasid_table;
-+}
-diff --git a/drivers/iommu/intel-pasid.h b/drivers/iommu/intel-pasid.h
-index 0c36af0..a90c60b 100644
---- a/drivers/iommu/intel-pasid.h
-+++ b/drivers/iommu/intel-pasid.h
-@@ -26,5 +26,9 @@ extern u32 intel_pasid_max_id;
- int intel_pasid_alloc_id(void *ptr, int start, int end, gfp_t gfp);
- void intel_pasid_free_id(int pasid);
- void *intel_pasid_lookup_id(int pasid);
-+int intel_pasid_alloc_table(struct device *dev, size_t entry_size,
-+			    size_t entry_count);
-+void intel_pasid_free_table(struct device *dev);
-+void *intel_pasid_get_table(struct device *dev);
+ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_ops *ops)
+ {
+@@ -329,13 +330,13 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
  
- #endif /* __INTEL_PASID_H */
+ 	mutex_lock(&pasid_mutex);
+ 	if (pasid && !(flags & SVM_FLAG_PRIVATE_PASID)) {
+-		int i;
++		struct intel_svm *t;
+ 
+-		idr_for_each_entry(&iommu->pasid_idr, svm, i) {
+-			if (svm->mm != mm ||
+-			    (svm->flags & SVM_FLAG_PRIVATE_PASID))
++		list_for_each_entry(t, &global_svm_list, list) {
++			if (t->mm != mm || (t->flags & SVM_FLAG_PRIVATE_PASID))
+ 				continue;
+ 
++			svm = t;
+ 			if (svm->pasid >= pasid_max) {
+ 				dev_warn(dev,
+ 					 "Limited PASID width. Cannot use existing PASID %d\n",
+@@ -404,6 +405,7 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		svm->mm = mm;
+ 		svm->flags = flags;
+ 		INIT_LIST_HEAD_RCU(&svm->devs);
++		INIT_LIST_HEAD(&svm->list);
+ 		ret = -ENOMEM;
+ 		if (mm) {
+ 			ret = mmu_notifier_register(&svm->notifier, mm);
+@@ -430,6 +432,8 @@ int intel_svm_bind_mm(struct device *dev, int *pasid, int flags, struct svm_dev_
+ 		 */
+ 		if (cap_caching_mode(iommu->cap))
+ 			intel_flush_pasid_dev(svm, sdev, svm->pasid);
++
++		list_add_tail(&svm->list, &global_svm_list);
+ 	}
+ 	list_add_rcu(&sdev->list, &svm->devs);
+ 
+@@ -485,6 +489,8 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 					if (svm->mm)
+ 						mmu_notifier_unregister(&svm->notifier, svm->mm);
+ 
++					list_del(&svm->list);
++
+ 					/* We mandate that no page faults may be outstanding
+ 					 * for the PASID when intel_svm_unbind_mm() is called.
+ 					 * If that is not obeyed, subtle errors will happen.
 diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index a4463f0..bee7a3f 100644
+index ef169d6..795717e 100644
 --- a/include/linux/intel-iommu.h
 +++ b/include/linux/intel-iommu.h
-@@ -424,6 +424,11 @@ struct dmar_domain {
- 					 */
- 	u64		max_addr;	/* maximum mapped address */
+@@ -486,6 +486,7 @@ struct intel_svm {
+ 	int flags;
+ 	int pasid;
+ 	struct list_head devs;
++	struct list_head list;
+ };
  
-+	void		*pasid_table;	/* pointer of pasid table */
-+	unsigned int	pasid_users;	/* User number of pasid table */
-+	int		order;		/* the page order of tables */
-+	int		max_pasid;	/* max pasid */
-+
- 	struct iommu_domain domain;	/*
- 					 * generic domain data structure for
- 					 * iommu core
+ extern int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct intel_svm_dev *sdev);
 -- 
 2.7.4
