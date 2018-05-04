@@ -1,63 +1,173 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751978AbeEDRjw (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:39:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57336 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751646AbeEDRjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:39:51 -0400
+        id S1752002AbeEDRj6 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:39:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:57374 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751988AbeEDRj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 13:39:56 -0400
 From: Mark Rutland <mark.rutland@arm.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, aryabinin@virtuozzo.com,
         boqun.feng@gmail.com, catalin.marinas@arm.com, dvyukov@google.com,
         mark.rutland@arm.com, mingo@kernel.org, peterz@infradead.org,
         will.deacon@arm.com
-Subject: [PATCH 0/6] arm64: add instrumented atomics
-Date: Fri,  4 May 2018 18:39:31 +0100
-Message-Id: <20180504173937.25300-1-mark.rutland@arm.com>
+Subject: [PATCH 2/6] locking/atomic, asm-generic: instrument atomic*andnot*()
+Date: Fri,  4 May 2018 18:39:33 +0100
+Message-Id: <20180504173937.25300-3-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180504173937.25300-1-mark.rutland@arm.com>
+References: <20180504173937.25300-1-mark.rutland@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series (based on v4.17-rc3) allows arm64's atomics to be
-instrumented, which should make it easier to catch bugs where atomics
-are used on erroneous memory locations.
+We don't currently define instrumentation wrappers for the various forms
+of atomic*andnot*(), as these aren't implemented directly by x86.
 
-The bulk of the diffstat is teaching the generic instrumentation about
-the acquire/release/relaxed variants of each atomic, along with some
-optional atomics which x86 doesn't implement directly.
+So that we can instrument architectures which provide these, let's
+define wrappers for all the variants of these atomics.
 
-To build an arm64 defonfig one additional patch [1] is required, which
-fixes an include in the SUNRPC code. I've pushed the series, along with
-that patch, to my arm64/atomic-instrumentation branch [2].
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ include/asm-generic/atomic-instrumented.h | 112 ++++++++++++++++++++++++++++++
+ 1 file changed, 112 insertions(+)
 
-This has seen basic testing on a Juno R1 machine so far.
-
-Thanks,
-Mark.
-
-[1] https://lkml.kernel.org/r/1489574142-20856-1-git-send-email-mark.rutland@arm.com
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git arm64/atomic-instrumentation
-
-Mark Rutland (6):
-  locking/atomic, asm-generic: instrument ordering variants
-  locking/atomic, asm-generic: instrument atomic*andnot*()
-  arm64: use <linux/atomic.h> for cmpxchg
-  arm64: fix assembly constraints for cmpxchg
-  arm64: use instrumented atomics
-  arm64: instrument smp_{load_acquire,store_release}
-
- arch/arm64/include/asm/atomic.h           |  299 +++----
- arch/arm64/include/asm/atomic_ll_sc.h     |   30 +-
- arch/arm64/include/asm/atomic_lse.h       |   43 +-
- arch/arm64/include/asm/barrier.h          |   22 +-
- arch/arm64/include/asm/cmpxchg.h          |   25 +-
- arch/arm64/include/asm/pgtable.h          |    2 +-
- arch/arm64/include/asm/sync_bitops.h      |    3 +-
- arch/arm64/mm/fault.c                     |    2 +-
- include/asm-generic/atomic-instrumented.h | 1305 +++++++++++++++++++++++++----
- 9 files changed, 1339 insertions(+), 392 deletions(-)
-
+diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
+index 26f0e3098442..b1920f0f64ab 100644
+--- a/include/asm-generic/atomic-instrumented.h
++++ b/include/asm-generic/atomic-instrumented.h
+@@ -498,6 +498,62 @@ INSTR_ATOMIC64_AND(_release)
+ #define atomic64_and_release atomic64_and_release
+ #endif
+ 
++#define INSTR_ATOMIC_ANDNOT(order)					\
++static __always_inline void						\
++atomic_andnot##order(int i, atomic_t *v)				\
++{									\
++	kasan_check_write(v, sizeof(*v));				\
++	arch_atomic_andnot##order(i, v);				\
++}
++
++#ifdef arch_atomic_andnot
++INSTR_ATOMIC_ANDNOT()
++#define atomic_andnot atomic_andnot
++#endif
++
++#ifdef arch_atomic_andnot_relaxed
++INSTR_ATOMIC_ANDNOT(_relaxed)
++#define atomic_andnot_relaxed atomic_andnot_relaxed
++#endif
++
++#ifdef arch_atomic_andnot_acquire
++INSTR_ATOMIC_ANDNOT(_acquire)
++#define atomic_andnot_acquire atomic_andnot_acquire
++#endif
++
++#ifdef arch_atomic_andnot_release
++INSTR_ATOMIC_ANDNOT(_release)
++#define atomic_andnot_release atomic_andnot_release
++#endif
++
++#define INSTR_ATOMIC64_ANDNOT(order)					\
++static __always_inline void						\
++atomic64_andnot##order(s64 i, atomic64_t *v)				\
++{									\
++	kasan_check_write(v, sizeof(*v));				\
++	arch_atomic64_andnot##order(i, v);				\
++}
++
++#ifdef arch_atomic64_andnot
++INSTR_ATOMIC64_ANDNOT()
++#define atomic64_andnot atomic64_andnot
++#endif
++
++#ifdef arch_atomic64_andnot_relaxed
++INSTR_ATOMIC64_ANDNOT(_relaxed)
++#define atomic64_andnot_relaxed atomic64_andnot_relaxed
++#endif
++
++#ifdef arch_atomic64_andnot_acquire
++INSTR_ATOMIC64_ANDNOT(_acquire)
++#define atomic64_andnot_acquire atomic64_andnot_acquire
++#endif
++
++#ifdef arch_atomic64_andnot_release
++INSTR_ATOMIC64_ANDNOT(_release)
++#define atomic64_andnot_release atomic64_andnot_release
++#endif
++
+ #define INSTR_ATOMIC_OR(order)						\
+ static __always_inline void						\
+ atomic_or##order(int i, atomic_t *v)					\
+@@ -984,6 +1040,62 @@ INSTR_ATOMIC64_FETCH_AND(_release)
+ #define atomic64_fetch_and_release atomic64_fetch_and_release
+ #endif
+ 
++#define INSTR_ATOMIC_FETCH_ANDNOT(order)				\
++static __always_inline int						\
++atomic_fetch_andnot##order(int i, atomic_t *v)				\
++{									\
++	kasan_check_write(v, sizeof(*v));				\
++	return arch_atomic_fetch_andnot##order(i, v);			\
++}
++
++#ifdef arch_atomic_fetch_andnot
++INSTR_ATOMIC_FETCH_ANDNOT()
++#define atomic_fetch_andnot atomic_fetch_andnot
++#endif
++
++#ifdef arch_atomic_fetch_andnot_relaxed
++INSTR_ATOMIC_FETCH_ANDNOT(_relaxed)
++#define atomic_fetch_andnot_relaxed atomic_fetch_andnot_relaxed
++#endif
++
++#ifdef arch_atomic_fetch_andnot_acquire
++INSTR_ATOMIC_FETCH_ANDNOT(_acquire)
++#define atomic_fetch_andnot_acquire atomic_fetch_andnot_acquire
++#endif
++
++#ifdef arch_atomic_fetch_andnot_release
++INSTR_ATOMIC_FETCH_ANDNOT(_release)
++#define atomic_fetch_andnot_release atomic_fetch_andnot_release
++#endif
++
++#define INSTR_ATOMIC64_FETCH_ANDNOT(order)				\
++static __always_inline s64						\
++atomic64_fetch_andnot##order(s64 i, atomic64_t *v)			\
++{									\
++	kasan_check_write(v, sizeof(*v));				\
++	return arch_atomic64_fetch_andnot##order(i, v);			\
++}
++
++#ifdef arch_atomic64_fetch_andnot
++INSTR_ATOMIC64_FETCH_ANDNOT()
++#define atomic64_fetch_andnot atomic64_fetch_andnot
++#endif
++
++#ifdef arch_atomic64_fetch_andnot_relaxed
++INSTR_ATOMIC64_FETCH_ANDNOT(_relaxed)
++#define atomic64_fetch_andnot_relaxed atomic64_fetch_andnot_relaxed
++#endif
++
++#ifdef arch_atomic64_fetch_andnot_acquire
++INSTR_ATOMIC64_FETCH_ANDNOT(_acquire)
++#define atomic64_fetch_andnot_acquire atomic64_fetch_andnot_acquire
++#endif
++
++#ifdef arch_atomic64_fetch_andnot_release
++INSTR_ATOMIC64_FETCH_ANDNOT(_release)
++#define atomic64_fetch_andnot_release atomic64_fetch_andnot_release
++#endif
++
+ #define INSTR_ATOMIC_FETCH_OR(order)					\
+ static __always_inline int						\
+ atomic_fetch_or##order(int i, atomic_t *v)				\
 -- 
 2.11.0
