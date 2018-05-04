@@ -1,211 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751324AbeEDLPM (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:15:12 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:43226 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751106AbeEDLPL (ORCPT
+        id S1751354AbeEDLPr (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 07:15:47 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:39318 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751106AbeEDLPq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:15:11 -0400
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Joseph Salisbury <joseph.salisbury@canonical.com>
-Cc: Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        1745646@bugs.launchpad.net,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [Regression] PCI / PM: Simplify device wakeup settings code
-Date: Fri, 04 May 2018 13:14:50 +0200
-Message-ID: <3450120.zJjNP64voh@aspire.rjw.lan>
-In-Reply-To: <CAJZ5v0gMY03BWN8D0Of=+bHf22jUgnmyDF8_OsRtQTX-YuMdew@mail.gmail.com>
-References: <56a8953c-d833-837c-57d5-fe758d4db02a@canonical.com> <20180503191126.GA15790@bhelgaas-glaptop.roam.corp.google.com> <CAJZ5v0gMY03BWN8D0Of=+bHf22jUgnmyDF8_OsRtQTX-YuMdew@mail.gmail.com>
+        Fri, 4 May 2018 07:15:46 -0400
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, Mike Galbraith <umgwanakikbuti@gmail.com>,
+        x86@kernel.org, Mike Galbraith <mgalbraith@suse.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] x86: UV: raw_spinlock conversion
+Date: Fri,  4 May 2018 13:14:59 +0200
+Message-Id: <20180504111459.24825-2-bigeasy@linutronix.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180504111459.24825-1-bigeasy@linutronix.de>
+References: <20180504111459.24825-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, May 3, 2018 11:29:18 PM CEST Rafael J. Wysocki wrote:
-> On Thu, May 3, 2018 at 9:11 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Thu, May 03, 2018 at 02:29:02PM -0400, Joseph Salisbury wrote:
-> >> On 05/02/2018 06:41 AM, Rafael J. Wysocki wrote:
-> >> > On Tue, May 1, 2018 at 9:55 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> >> >> On Tue, May 01, 2018 at 10:34:29AM +0200, Rafael J. Wysocki wrote:
-> >> >>> On Mon, Apr 30, 2018 at 4:22 PM, Joseph Salisbury
-> >> >>> <joseph.salisbury@canonical.com> wrote:
-> >> >>>> On 04/16/2018 11:58 AM, Rafael J. Wysocki wrote:
-> >> >>>>> On Mon, Apr 16, 2018 at 5:31 PM, Joseph Salisbury
-> >> >>>>> <joseph.salisbury@canonical.com> wrote:
-> >> >>>>>> On 04/13/2018 05:34 PM, Rafael J. Wysocki wrote:
-> >> >>>>>>> On Fri, Apr 13, 2018 at 7:56 PM, Joseph Salisbury
-> >> >>>>>>> <joseph.salisbury@canonical.com> wrote:
-> >> >>>>>>>> Hi Rafael,
-> >> >>>>>>>>
-> >> >>>>>>>> A kernel bug report was opened against Ubuntu [0].  After a kernel
-> >> >>>>>>>> bisect, it was found that reverting the following two commits resolved
-> >> >>>>>>>> this bug:
-> >> >>>>>>>>
-> >> >>>>>>>> 0ce3fcaff929 ("PCI / PM: Restore PME Enable after config space restoration")
-> >> >>>>>>>> 0847684cfc5f("PCI / PM: Simplify device wakeup settings code")
-> >> >>>>>>>>
-> >> >>>>>>>> This is a regression introduced in v4.13-rc1 and still exists in
-> >> >>>>>>>> mainline.  The bug causes the battery to drain when the system is
-> >> >>>>>>>> powered down and unplugged, which does not happed prior to these two
-> >> >>>>>>>> commits.
-> >> >>>>>>> What system and what do you mean by "powered down"?  How much time
-> >> >>>>>>> does it take for the battery to drain now?
-> >> >>>>>> By powered down, the bug reporter is saying physically powered off and
-> >> >>>>>> unplugged.  The system is a HP laptop:
-> >> >>>>>>
-> >> >>>>>> dmi.chassis.vendor: HP
-> >> >>>>>> dmi.product.family: 103C_5335KV HP Notebook
-> >> >>>>>> dmi.product.name: HP Notebook
-> >> >>>>>> vendor_id    : GenuineIntel
-> >> >>>>>> cpu family    : 6
-> >> >>>>>>
-> >> >>>>>>
-> >> >>>>>>>> The bisect actually pointed to commit de3ef1e, but reverting
-> >> >>>>>>>> these two commits fixes the issue.
-> >> >>>>>>>>
-> >> >>>>>>>> I was hoping to get your feedback, since you are the patch author.  Do
-> >> >>>>>>>> you think gathering any additional data will help diagnose this issue,
-> >> >>>>>>>> or would it be best to submit a revert request?
-> >> >>>>>>> First, reverting these is not an option or you will break systems
-> >> >>>>>>> relying on them now.  4.13 is three releases back at this point.
-> >> >>>>>>>
-> >> >>>>>>> Second, your issue appears to be related to the suspend/shutdown path
-> >> >>>>>>> whereas commit 0ce3fcaff929 is mostly about resume, so presumably the
-> >> >>>>>>> change in pci_enable_wake() causes the problem to happen.  Can you try
-> >> >>>>>>> to revert this one alone and see if that helps?
-> >> >>>>>> A test kernel with commits 0ce3fcaff929 and de3ef1eb1cd0 reverted was
-> >> >>>>>> tested.  However, the test kernel still exhibited the bug.
-> >> >>>>> So essentially the bisection result cannot be trusted.
-> >> >>>> We performed some more testing and confirmed just a revert of the
-> >> >>>> following commit resolves the bug:
-> >> >>>>
-> >> >>>> 0847684cfc5f0 ("PCI / PM: Simplify device wakeup settings code")
-> >> >>> Thanks for confirming this!
-> >> >>>
-> >> >>>> Can you think of any suggestions to help debug further?
-> >> >>> The root cause of the regression is likely the change in
-> >> >>> pci_enable_wake() removing the device_may_wakeup() check from it.
-> >> >>>
-> >> >>> Probably, one of the drivers in the platform calls pci_enable_wake()
-> >> >>> directly from its ->shutdown() callback and that causes the device to
-> >> >>> be set up for system wakeup which in turn causes the power draw while
-> >> >>> the system is off to increase.
-> >> >>>
-> >> >>> I would look at the PCI drivers used on that platform to find which of
-> >> >>> them call pci_enable_wake() directly from ->shutdown() and I would
-> >> >>> make these calls conditional on device_may_wakeup().
-> >> >> I took a quick look with
-> >> >>
-> >> >>   git grep -E "pci_enable_wake\(.*[^0]\);|device_may_wakeup"
-> >> >>
-> >> >> and didn't notice any pci_enable_wake() callers that called
-> >> >> device_may_wakeup() first.
-> >> > I've just look at a bunch of network drivers doing that.
-> >> >
-> >> > It looks like I may need to restore __pci_enable_wake() with an extra
-> >> > "runtime" argument for internal use.
-> >> >
-> >> > Joseph, can you ask the reporter to test the Bjorn's patch, please?
-> >>
-> >> The bug reporter has testing Bjorn's patch.  It did in fact resolve the
-> >> bug.  Thanks for the quick help, Rafael and Bjorn!
-> >
-> > Just as a word of caution, I think Rafael said my patch was not the
-> > right fix because it would break something else.  So I would wait for
-> > a better patch from Rafael before actually resolving this issue.
-> 
-> I'll do my best to provide one in the next couple of days.
+From: Mike Galbraith <umgwanakikbuti@gmail.com>
 
-Something like the appended one (compiled-only at this point).
+Shrug.  Lots of hobbyists have a beast in their basement, right?
 
-Joseph, this should be functionally equivalent to the Bjorn's patch except
-for the runtime PM part which is irrelevant for the issue in question, but
-please ask the reported to test this one too.
-
-If it is confirmed to work, I'll repost it with a proper changelog.
-
+Cc: x86@kernel.org
+Signed-off-by: Mike Galbraith <mgalbraith@suse.de>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- drivers/pci/pci.c |   31 ++++++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/uv/uv_bau.h |   14 +++++++-------
+ arch/x86/platform/uv/tlb_uv.c    |   26 +++++++++++++-------------
+ arch/x86/platform/uv/uv_time.c   |   20 ++++++++++++--------
+ 3 files changed, 32 insertions(+), 28 deletions(-)
 
-Index: linux-pm/drivers/pci/pci.c
-===================================================================
---- linux-pm.orig/drivers/pci/pci.c
-+++ linux-pm/drivers/pci/pci.c
-@@ -1910,7 +1910,7 @@ void pci_pme_active(struct pci_dev *dev,
- EXPORT_SYMBOL(pci_pme_active);
- 
- /**
-- * pci_enable_wake - enable PCI device as wakeup event source
-+ * __pci_enable_wake - enable PCI device as wakeup event source
-  * @dev: PCI device affected
-  * @state: PCI state from which device will issue wakeup events
-  * @enable: True to enable event generation; false to disable
-@@ -1928,7 +1928,7 @@ EXPORT_SYMBOL(pci_pme_active);
-  * Error code depending on the platform is returned if both the platform and
-  * the native mechanism fail to enable the generation of wake-up events
+--- a/arch/x86/include/asm/uv/uv_bau.h
++++ b/arch/x86/include/asm/uv/uv_bau.h
+@@ -643,9 +643,9 @@ struct bau_control {
+ 	cycles_t		send_message;
+ 	cycles_t		period_end;
+ 	cycles_t		period_time;
+-	spinlock_t		uvhub_lock;
+-	spinlock_t		queue_lock;
+-	spinlock_t		disable_lock;
++	raw_spinlock_t		uvhub_lock;
++	raw_spinlock_t		queue_lock;
++	raw_spinlock_t		disable_lock;
+ 	/* tunables */
+ 	int			max_concurr;
+ 	int			max_concurr_const;
+@@ -847,15 +847,15 @@ static inline int atom_asr(short i, stru
+  * to be lowered below the current 'v'.  atomic_add_unless can only stop
+  * on equal.
   */
--int pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
-+static int __pci_enable_wake(struct pci_dev *dev, pci_power_t state, bool enable)
+-static inline int atomic_inc_unless_ge(spinlock_t *lock, atomic_t *v, int =
+u)
++static inline int atomic_inc_unless_ge(raw_spinlock_t *lock, atomic_t *v, =
+int u)
  {
- 	int ret = 0;
- 
-@@ -1969,6 +1969,23 @@ int pci_enable_wake(struct pci_dev *dev,
- 
- 	return ret;
- }
-+
-+/**
-+ * pci_enable_wake - enable PCI device as wakeup event source
-+ * @pci_dev: Target device
-+ * @state: PCI state from which device will issue wakeup events
-+ * @enable: Whether or not to enable event generation
-+ *
-+ * If @enable is set and device_may_wakeup() returns false for the device, it
-+ * will not be enabled to generate wakeup events.
-+ */
-+int pci_enable_wake(struct pci_dev *pci_dev, pci_power_t state, bool enable)
-+{
-+	if (enable && !device_may_wakeup(&pci_dev->dev))
-+		return -EINVAL;
-+
-+	return __pci_enable_wake(pci_dev, state, enable);
-+}
- EXPORT_SYMBOL(pci_enable_wake);
- 
- /**
-@@ -1981,9 +1998,9 @@ EXPORT_SYMBOL(pci_enable_wake);
-  * should not be called twice in a row to enable wake-up due to PCI PM vs ACPI
-  * ordering constraints.
-  *
-- * This function only returns error code if the device is not capable of
-- * generating PME# from both D3_hot and D3_cold, and the platform is unable to
-- * enable wake-up power for it.
-+ * This function only returns error code if the device is not allowed to wake
-+ * up the system from sleep or it is not capable of generating PME# from both
-+ * D3_hot and D3_cold and the platform is unable to enable wake-up power for it.
-  */
- int pci_wake_from_d3(struct pci_dev *dev, bool enable)
- {
-@@ -2114,12 +2131,12 @@ int pci_finish_runtime_suspend(struct pc
- 
- 	dev->runtime_d3cold = target_state == PCI_D3cold;
- 
--	pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
-+	__pci_enable_wake(dev, target_state, pci_dev_run_wake(dev));
- 
- 	error = pci_set_power_state(dev, target_state);
- 
- 	if (error) {
--		pci_enable_wake(dev, target_state, false);
-+		__pci_enable_wake(dev, target_state, false);
- 		dev->runtime_d3cold = false;
+-	spin_lock(lock);
++	raw_spin_lock(lock);
+ 	if (atomic_read(v) >=3D u) {
+-		spin_unlock(lock);
++		raw_spin_unlock(lock);
+ 		return 0;
  	}
- 
+ 	atomic_inc(v);
+-	spin_unlock(lock);
++	raw_spin_unlock(lock);
+ 	return 1;
+ }
+=20
+--- a/arch/x86/platform/uv/tlb_uv.c
++++ b/arch/x86/platform/uv/tlb_uv.c
+@@ -740,9 +740,9 @@ static void destination_plugged(struct b
+=20
+ 		quiesce_local_uvhub(hmaster);
+=20
+-		spin_lock(&hmaster->queue_lock);
++		raw_spin_lock(&hmaster->queue_lock);
+ 		reset_with_ipi(&bau_desc->distribution, bcp);
+-		spin_unlock(&hmaster->queue_lock);
++		raw_spin_unlock(&hmaster->queue_lock);
+=20
+ 		end_uvhub_quiesce(hmaster);
+=20
+@@ -762,9 +762,9 @@ static void destination_timeout(struct b
+=20
+ 		quiesce_local_uvhub(hmaster);
+=20
+-		spin_lock(&hmaster->queue_lock);
++		raw_spin_lock(&hmaster->queue_lock);
+ 		reset_with_ipi(&bau_desc->distribution, bcp);
+-		spin_unlock(&hmaster->queue_lock);
++		raw_spin_unlock(&hmaster->queue_lock);
+=20
+ 		end_uvhub_quiesce(hmaster);
+=20
+@@ -785,7 +785,7 @@ static void disable_for_period(struct ba
+ 	cycles_t tm1;
+=20
+ 	hmaster =3D bcp->uvhub_master;
+-	spin_lock(&hmaster->disable_lock);
++	raw_spin_lock(&hmaster->disable_lock);
+ 	if (!bcp->baudisabled) {
+ 		stat->s_bau_disabled++;
+ 		tm1 =3D get_cycles();
+@@ -798,7 +798,7 @@ static void disable_for_period(struct ba
+ 			}
+ 		}
+ 	}
+-	spin_unlock(&hmaster->disable_lock);
++	raw_spin_unlock(&hmaster->disable_lock);
+ }
+=20
+ static void count_max_concurr(int stat, struct bau_control *bcp,
+@@ -861,7 +861,7 @@ static void record_send_stats(cycles_t t
+  */
+ static void uv1_throttle(struct bau_control *hmaster, struct ptc_stats *st=
+at)
+ {
+-	spinlock_t *lock =3D &hmaster->uvhub_lock;
++	raw_spinlock_t *lock =3D &hmaster->uvhub_lock;
+ 	atomic_t *v;
+=20
+ 	v =3D &hmaster->active_descriptor_count;
+@@ -995,7 +995,7 @@ static int check_enable(struct bau_contr
+ 	struct bau_control *hmaster;
+=20
+ 	hmaster =3D bcp->uvhub_master;
+-	spin_lock(&hmaster->disable_lock);
++	raw_spin_lock(&hmaster->disable_lock);
+ 	if (bcp->baudisabled && (get_cycles() >=3D bcp->set_bau_on_time)) {
+ 		stat->s_bau_reenabled++;
+ 		for_each_present_cpu(tcpu) {
+@@ -1007,10 +1007,10 @@ static int check_enable(struct bau_contr
+ 				tbcp->period_giveups =3D 0;
+ 			}
+ 		}
+-		spin_unlock(&hmaster->disable_lock);
++		raw_spin_unlock(&hmaster->disable_lock);
+ 		return 0;
+ 	}
+-	spin_unlock(&hmaster->disable_lock);
++	raw_spin_unlock(&hmaster->disable_lock);
+ 	return -1;
+ }
+=20
+@@ -1941,9 +1941,9 @@ static void __init init_per_cpu_tunables
+ 		bcp->cong_reps			=3D congested_reps;
+ 		bcp->disabled_period		=3D sec_2_cycles(disabled_period);
+ 		bcp->giveup_limit		=3D giveup_limit;
+-		spin_lock_init(&bcp->queue_lock);
+-		spin_lock_init(&bcp->uvhub_lock);
+-		spin_lock_init(&bcp->disable_lock);
++		raw_spin_lock_init(&bcp->queue_lock);
++		raw_spin_lock_init(&bcp->uvhub_lock);
++		raw_spin_lock_init(&bcp->disable_lock);
+ 	}
+ }
+=20
+--- a/arch/x86/platform/uv/uv_time.c
++++ b/arch/x86/platform/uv/uv_time.c
+@@ -57,7 +57,7 @@ static DEFINE_PER_CPU(struct clock_event
+=20
+ /* There is one of these allocated per node */
+ struct uv_rtc_timer_head {
+-	spinlock_t	lock;
++	raw_spinlock_t	lock;
+ 	/* next cpu waiting for timer, local node relative: */
+ 	int		next_cpu;
+ 	/* number of cpus on this node: */
+@@ -177,7 +177,7 @@ static __init int uv_rtc_allocate_timers
+ 				uv_rtc_deallocate_timers();
+ 				return -ENOMEM;
+ 			}
+-			spin_lock_init(&head->lock);
++			raw_spin_lock_init(&head->lock);
+ 			head->ncpus =3D uv_blade_nr_possible_cpus(bid);
+ 			head->next_cpu =3D -1;
+ 			blade_info[bid] =3D head;
+@@ -231,7 +231,7 @@ static int uv_rtc_set_timer(int cpu, u64
+ 	unsigned long flags;
+ 	int next_cpu;
+=20
+-	spin_lock_irqsave(&head->lock, flags);
++	raw_spin_lock_irqsave(&head->lock, flags);
+=20
+ 	next_cpu =3D head->next_cpu;
+ 	*t =3D expires;
+@@ -243,12 +243,12 @@ static int uv_rtc_set_timer(int cpu, u64
+ 		if (uv_setup_intr(cpu, expires)) {
+ 			*t =3D ULLONG_MAX;
+ 			uv_rtc_find_next_timer(head, pnode);
+-			spin_unlock_irqrestore(&head->lock, flags);
++			raw_spin_unlock_irqrestore(&head->lock, flags);
+ 			return -ETIME;
+ 		}
+ 	}
+=20
+-	spin_unlock_irqrestore(&head->lock, flags);
++	raw_spin_unlock_irqrestore(&head->lock, flags);
+ 	return 0;
+ }
+=20
+@@ -267,7 +267,7 @@ static int uv_rtc_unset_timer(int cpu, i
+ 	unsigned long flags;
+ 	int rc =3D 0;
+=20
+-	spin_lock_irqsave(&head->lock, flags);
++	raw_spin_lock_irqsave(&head->lock, flags);
+=20
+ 	if ((head->next_cpu =3D=3D bcpu && uv_read_rtc(NULL) >=3D *t) || force)
+ 		rc =3D 1;
+@@ -279,7 +279,7 @@ static int uv_rtc_unset_timer(int cpu, i
+ 			uv_rtc_find_next_timer(head, pnode);
+ 	}
+=20
+-	spin_unlock_irqrestore(&head->lock, flags);
++	raw_spin_unlock_irqrestore(&head->lock, flags);
+=20
+ 	return rc;
+ }
+@@ -299,13 +299,17 @@ static int uv_rtc_unset_timer(int cpu, i
+ static u64 uv_read_rtc(struct clocksource *cs)
+ {
+ 	unsigned long offset;
++	u64 cycles;
+=20
++	preempt_disable();
+ 	if (uv_get_min_hub_revision_id() =3D=3D 1)
+ 		offset =3D 0;
+ 	else
+ 		offset =3D (uv_blade_processor_id() * L1_CACHE_BYTES) % PAGE_SIZE;
+=20
+-	return (u64)uv_read_local_mmr(UVH_RTC | offset);
++	cycles =3D (u64)uv_read_local_mmr(UVH_RTC | offset);
++	preempt_enable();
++	return cycles;
+ }
+=20
+ /*
