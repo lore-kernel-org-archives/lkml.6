@@ -1,120 +1,90 @@
-Return-Path: <drustafa@yandex.ru>
-X-Google-Smtp-Source: AB8JxZqHY5t4oAzERPJbKgIHLipCsmeZt8dmL/AWVyLnd+m4KNAGX3y7RRaZ/W5By1vUt5CMy1Qg
-ARC-Seal: i=1; a=rsa-sha256; t=1525777339; cv=none;
+Return-Path: <sfr@canb.auug.org.au>
+X-Google-Smtp-Source: AB8JxZpqBFUvQK6v4IytfKNcl1Zbi+DAd1IPZhBzAQP30t479RBAluU1VGj+1ttD818PApC8ibj/
+ARC-Seal: i=1; a=rsa-sha256; t=1525407500; cv=none;
         d=google.com; s=arc-20160816;
-        b=nnuGOGS8+QlPFxTfE9mVBI+p1lsN/ybY9DEIpzii/6FV+2NQzxv+MGPe5fMOghyTFr
-         tPh4p9nxpr65+pEVxBFRn9hP9ed+QB3/cH/tC8DYZaIP3Q0H3WKY92AgJS8LQMVJeKCh
-         P4/jdDOWq6/ytA9uFAphtLnZUsedfJna0vkn5L2vb5V0TBtl8VBqortYdpmvbygFF90F
-         riK53H1UvCJZf0XWQ9rr3E7PcvpuTa6rDtVo2qFo+LWldcg115IAP134WQPQLgP0Yv7S
-         SpSKl+gRfzTHrq/8U3E/z4xTfNgLhv2xoVwZzdQdwJKCcLcFVEE1DZHXuzVFjqy4i7cJ
-         dpsw==
+        b=d6qfRydMj9ReZWt+YKtlaqiynN2ksh9SZCzWdtQKIiI7qr/Y51rHiZzu+3IBxEyLbo
+         2zg8sAHdivRuL9QeaNg8dofqoQFkM9Rudku8tr0lr5VFfzEMlqEqhnnIQZEKKicSrKCt
+         5mwxTsLnwcdGhMFxcM9WPu1TvdwkTM8iFqCfEg7bPyR21Fhx9CLYou7SPx0ABpJn9Lgn
+         YaVl+a2rV3Y1DqdEFzqcMLf0BxyEDttKvPXcxsk1EpDtRaygT6uKszP6ylxK7fr4W4dM
+         GTag7YL8A+j2zhpXavQnP8VS/hGfoxao04HGH3LbAxKQkgj45xUB+6t0Ja72BqBpUkW2
+         HTpw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:date:message-id:mime-version:subject
-         :references:in-reply-to:cc:to:envelope-from:from:dkim-signature
+        h=mime-version:message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=pZKG8s2N3BqSZrRpwOnCxELDlAnbiPIneigIBImz/wc=;
-        b=r0QhTXZn7AVbV9d6PxWJk/J9HhCCfFfPwtJWX3Y59+dSxchN16vLpcNRFx8oinwYLS
-         HZZEZvpH/zGTmnrCAeqCmLE9GC2G1VAsF6JnJhMZaOwkUDZY7Zz9p1iafrdWBaF0kBZM
-         zC9zt7Bflp/Nl2lakza3SUUoBHZqMVGcUoWPBwXGfdrrrTr3Gl6phKT3iqc/Sy6U5Nw4
-         JMtg1sxvvC7U8Ff6drsHZ7qvaVNrsMBnXTjTs9WS0jI+FopTDBt2j2VbBt4oeiVds2pb
-         LhI2T2TcNP8mg2XGIe5eCM3Zjs4fCw7T96twnA/JlCfScZ1wIfb1kQPsnPzKqYZnpd/5
-         z+eg==
+        bh=lO2uFeaCQBGFCP8iicsIzIYgVD8hfoTjQbVMvoeXbDw=;
+        b=XZw85To0xB+BHwP74XYeL6Amc5oocFo5qj5Twbzv1xMSMJuOVaoYonSbgeLcBNGKqG
+         X23QOx+Wxy8+Rd1U2e9Hkm+2CvI4YhKp1uIwS5KsQstXIYTpc59gm4wjaQ/lbvGCHeXT
+         4U1Ub/6/Ayx8rtZ+Ficq1bw09K+8pa9p5xWZinz/rRcc836Lo8vvyOw3UCjMcOPIb9XO
+         8tzH6g6X5FtEqao4M+jzQ0w4ns0Aev/+f8dpfIfIDMj8dqE4LUn1nhwTm6Qg0YTO7Ri1
+         1KGS+mVyoLI6xgXRAuiBdh4KPXJIl9xRW7+KTw/syDhX2whneBALnQ+6ou6qGYk3FIe4
+         jx8w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@yandex.ru header.s=mail header.b=aZIcWwZK;
-       spf=pass (google.com: domain of drustafa@yandex.ru designates 37.9.109.247 as permitted sender) smtp.mailfrom=drustafa@yandex.ru
+       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=S9Al+HJq;
+       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 203.11.71.1 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@yandex.ru header.s=mail header.b=aZIcWwZK;
-       spf=pass (google.com: domain of drustafa@yandex.ru designates 37.9.109.247 as permitted sender) smtp.mailfrom=drustafa@yandex.ru
-Authentication-Results: mxback6j.mail.yandex.net; dkim=pass header.i=@yandex.ru
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Envelope-From: drustafa@yandex.ru
-To: Stefan Potyra <stefan.potyra@elektrobit.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"ldv-project@linuxtesting.org" <ldv-project@linuxtesting.org>,
-	"sil2review@lists.osadl.org" <sil2review@lists.osadl.org>
-In-Reply-To: <20180502085531.GA10525@er01809n.ebgroup.elektrobit.com>
-References: <20180419130254.7nriykiybpyi6j2g@agrajag.zerfleddert.de>
-	 <4863111525100577@web2o.yandex.ru>
-	 <20180502083420.GA8549@er01809n.ebgroup.elektrobit.com> <20180502085531.GA10525@er01809n.ebgroup.elektrobit.com>
-Subject: Re: [PATCH v2] w1: mxc_w1: Enable clock before calling clk_get_rate() on it
+       dkim=pass header.i=@canb.auug.org.au header.s=201702 header.b=S9Al+HJq;
+       spf=pass (google.com: domain of sfr@canb.auug.org.au designates 203.11.71.1 as permitted sender) smtp.mailfrom=sfr@canb.auug.org.au
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Fri, 4 May 2018 14:17:56 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Minchan Kim <minchan@kernel.org>, Randy
+ Dunlap <rdunlap@infradead.org>, Sergey Senozhatsky
+ <sergey.senozhatsky@gmail.com>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Message-ID: <20180504141756.670dc3f3@canb.auug.org.au>
 MIME-Version: 1.0
-Message-Id: <692971525777337@web22j.yandex.ru>
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date: Tue, 08 May 2018 14:02:17 +0300
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij"; protocol="application/pgp-signature"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599341943708820209?=
-X-GMAIL-MSGID: =?utf-8?q?1599893499721820025?=
+X-GMAIL-THRID: =?utf-8?q?1599505695773381278?=
+X-GMAIL-MSGID: =?utf-8?q?1599505695773381278?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Stefan
+--Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-02.05.2018, 11:55, "Stefan Potyra" <stefan.potyra@elektrobit.com>:
-> According to the API, you may only call clk_get_rate() after actually
-> enabling it.
->
-> Found by Linux Driver Verification project (linuxtesting.org).
->
-> Fixes: a5fd9139f74c ("w1: add 1-wire master driver for i.MX27 / i.MX31")
-> Signed-off-by: Stefan Potyra <Stefan.Potyra@elektrobit.com>
+Hi Andrew,
 
-Looks good to me, thank you!
-Greg, please pull it into your tree, this also sounds like stable material, is it?
+After merging the akpm-current tree, today's linux-next build
+(x86_64_allmodconfig) produced this warning:
 
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+drivers/block/zram/zram_drv.c: In function 'read_block_state':
+drivers/block/zram/zram_drv.c:674:16: warning: format '%llu' expects argume=
+nt of type 'long long unsigned int', but argument 5 has type '__kernel_time=
+_t {aka long int}' [-Wformat=3D]
+    "%12lu %12llu.%06lu %c%c%c\n",
+           ~~~~~^
+           %12lu
+    (unsigned long)index, ts.tv_sec,
+                          ~~~~~~~~~
 
-> ---
->  drivers/w1/masters/mxc_w1.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/w1/masters/mxc_w1.c b/drivers/w1/masters/mxc_w1.c
-> index 74f2e6e6202a..8851d441e5fd 100644
-> --- a/drivers/w1/masters/mxc_w1.c
-> +++ b/drivers/w1/masters/mxc_w1.c
-> @@ -112,6 +112,10 @@ static int mxc_w1_probe(struct platform_device *pdev)
->          if (IS_ERR(mdev->clk))
->                  return PTR_ERR(mdev->clk);
->
-> + err = clk_prepare_enable(mdev->clk);
-> + if (err)
-> + return err;
-> +
->          clkrate = clk_get_rate(mdev->clk);
->          if (clkrate < 10000000)
->                  dev_warn(&pdev->dev,
-> @@ -125,12 +129,10 @@ static int mxc_w1_probe(struct platform_device *pdev)
->
->          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->          mdev->regs = devm_ioremap_resource(&pdev->dev, res);
-> - if (IS_ERR(mdev->regs))
-> - return PTR_ERR(mdev->regs);
-> -
-> - err = clk_prepare_enable(mdev->clk);
-> - if (err)
-> - return err;
-> + if (IS_ERR(mdev->regs)) {
-> + err = PTR_ERR(mdev->regs);
-> + goto out_disable_clk;
-> + }
->
->          /* Software reset 1-Wire module */
->          writeb(MXC_W1_RESET_RST, mdev->regs + MXC_W1_RESET);
-> @@ -146,8 +148,12 @@ static int mxc_w1_probe(struct platform_device *pdev)
->
->          err = w1_add_master_device(&mdev->bus_master);
->          if (err)
-> - clk_disable_unprepare(mdev->clk);
-> + goto out_disable_clk;
->
-> + return 0;
-> +
-> +out_disable_clk:
-> + clk_disable_unprepare(mdev->clk);
->          return err;
->  }
->
-> --
-> 2.17.0
+Introduced by commit
+
+  827c7dbda8eb ("zram-introduce-zram-memory-tracking-update-fix-fix")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrr3vQACgkQAVBC80lX
+0GzoEAgApamxJmvlwEytxiGZwDhW3CYK3Za0jtTD7LMd+b17SyZIAT/Ah95K6j7L
+3XcgiI6GbJ+YUhSVHbAfcvMb5HoLD+IDegl+0Ma+9NqfS18vYEciiXl0RM5LPtT2
+Pn1CdUy0xaKYJThBbcWcKR41MlpaMWxlqzj7ihGXJa1JzG53d343g7fDQCIgEFjJ
+hNZZYGeIVbOqQGFxI9e/R5EZtUvJtfuE2+dOwCjqrs7NM6bIpyWszWoUDZb3GjCL
+GMdV3nBB5JsQVJWF+Q/brOk5RgwcZaMYc/4rOk1kfuDXVYv6R8UzdXjZPtStIBqX
+u27JHdNU8yzktdiQWrWsvuBIgG0VVw==
+=sutG
+-----END PGP SIGNATURE-----
+
+--Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij--
