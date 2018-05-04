@@ -1,84 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeEDMh4 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 08:37:56 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7654 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751480AbeEDMeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 08:34:01 -0400
-Subject: Re: [PATCH 2/2] HISI LPC: Add ACPI UART support
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
-        <lee.jones@linaro.org>
-References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
- <1525360119-102166-3-git-send-email-john.garry@huawei.com>
- <1525366584.21176.654.camel@linux.intel.com>
-CC: <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
-        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
-        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <3fd88684-7bdd-b3b4-cddc-a551d5d820ff@huawei.com>
-Date: Fri, 4 May 2018 13:33:35 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <1525366584.21176.654.camel@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        id S1751776AbeEDMiw (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:38:52 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:39728 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751269AbeEDMdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:33:55 -0400
+Message-Id: <7332568467307f9fc79eeef47507909ddc423c4b.1525435203.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1525435203.git.christophe.leroy@c-s.fr>
+References: <cover.1525435203.git.christophe.leroy@c-s.fr>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH  02/17] powerpc/nohash: remove _PAGE_BUSY
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, aneesh.kumar@linux.vnet.ibm.com
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date: Fri,  4 May 2018 14:33:54 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/2018 17:56, Andy Shevchenko wrote:
-> On Thu, 2018-05-03 at 23:08 +0800, John Garry wrote:
->> On the Huawei D03 development board the system UART is
->> the UART connected on the LPC bus.
->>
->> The profile for the device driver required for this HW
->> would be as follows:
->> - platform driver
->> - supports 16550
->> - supports ACPI
->> - supports polling mode
->> - supports IO space
->>
->> In principle we should use the PNP driver (8250_dw.c) for
->> 8250-devices with ACPI FW. However since this host driver
->> does not support PNP devices, and modifying the PNP core
->> code to support it is not worth the effort, use the generic
->> 8250 isa driver.
->>
->> For this, we need to setup the MFD cell platform data for
->> a serial 8250 Port.
->>
->> In addition to this change, we also make the following
->> changes:
->> - set child ACPI device as enumerated. This fixes a conflict
->>   in serdev setup for the UART
->> - use platform device ID auto for creating the uart child
->>   platform device to avoid conflict with platform devices
->>   created for serial8250_isa_devs from 8250_core.c
->
+_PAGE_BUSY is always 0, remove it
 
-Hi Andy,
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/nohash/64/pgtable.h | 10 +++-------
+ arch/powerpc/include/asm/nohash/pte-book3e.h |  5 -----
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
->> +	mfd_cell->platform_data = devm_kmemdup(hostdev, &ref_port,
->> +					       sizeof(ref_port),
->> GFP_KERNEL);
->
-> Isn't this done by MFD core?
-
-It does, but what we are copying from is on the stack and could be 
-overwritten by the point we call the mfd_add_devices(). But this could 
-be improved.
-
-BTW, As seen in other discussion, future of MFD usage is in doubt, so 
-all this may be dropped.
-
-Thanks very much,
-John
-
->
->
+diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
+index 4f6f5a27bfb5..c3559d7a94fb 100644
+--- a/arch/powerpc/include/asm/nohash/64/pgtable.h
++++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
+@@ -186,14 +186,12 @@ static inline unsigned long pte_update(struct mm_struct *mm,
+ 
+ 	__asm__ __volatile__(
+ 	"1:	ldarx	%0,0,%3		# pte_update\n\
+-	andi.	%1,%0,%6\n\
+-	bne-	1b \n\
+ 	andc	%1,%0,%4 \n\
+-	or	%1,%1,%7\n\
++	or	%1,%1,%6\n\
+ 	stdcx.	%1,0,%3 \n\
+ 	bne-	1b"
+ 	: "=&r" (old), "=&r" (tmp), "=m" (*ptep)
+-	: "r" (ptep), "r" (clr), "m" (*ptep), "i" (_PAGE_BUSY), "r" (set)
++	: "r" (ptep), "r" (clr), "m" (*ptep), "r" (set)
+ 	: "cc" );
+ #else
+ 	unsigned long old = pte_val(*ptep);
+@@ -290,13 +288,11 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
+ 
+ 	__asm__ __volatile__(
+ 	"1:	ldarx	%0,0,%4\n\
+-		andi.	%1,%0,%6\n\
+-		bne-	1b \n\
+ 		or	%0,%3,%0\n\
+ 		stdcx.	%0,0,%4\n\
+ 		bne-	1b"
+ 	:"=&r" (old), "=&r" (tmp), "=m" (*ptep)
+-	:"r" (bits), "r" (ptep), "m" (*ptep), "i" (_PAGE_BUSY)
++	:"r" (bits), "r" (ptep), "m" (*ptep)
+ 	:"cc");
+ #else
+ 	unsigned long old = pte_val(*ptep);
+diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
+index 9ff51b4c0cac..12730b81cd98 100644
+--- a/arch/powerpc/include/asm/nohash/pte-book3e.h
++++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
+@@ -57,13 +57,8 @@
+ #define _PAGE_USER		(_PAGE_BAP_UR | _PAGE_BAP_SR) /* Can be read */
+ #define _PAGE_PRIVILEGED	(_PAGE_BAP_SR)
+ 
+-#define _PAGE_BUSY	0
+-
+ #define _PAGE_SPECIAL	_PAGE_SW0
+ 
+-/* Flags to be preserved on PTE modifications */
+-#define _PAGE_HPTEFLAGS	_PAGE_BUSY
+-
+ /* Base page size */
+ #ifdef CONFIG_PPC_64K_PAGES
+ #define _PAGE_PSIZE	_PAGE_PSIZE_64K
+-- 
+2.13.3
