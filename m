@@ -1,269 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751311AbeEDD0S (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 23:26:18 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:51375 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751214AbeEDD0Q (ORCPT
+        id S1751339AbeEDD33 (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 23:29:29 -0400
+Received: from mail-it0-f74.google.com ([209.85.214.74]:56661 "EHLO
+        mail-it0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751275AbeEDD31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 23:26:16 -0400
-X-UUID: 43a74e46122045dc94eb0e0bd47566f4-20180504
-Message-ID: <1525404358.22948.29.camel@mhfsdcap03>
-Subject: Re: [PATCH 2/2] PCI: mediatek: Using chained IRQ to setup IRQ handle
-From: Honghui Zhang <honghui.zhang@mediatek.com>
-To: Marc Zyngier <marc.zyngier@arm.com>
-CC: <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <matthias.bgg@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <ryder.lee@mediatek.com>, <hongkun.cao@mediatek.com>,
-        <youlin.pei@mediatek.com>, <yong.wu@mediatek.com>,
-        <yt.shen@mediatek.com>, <sean.wang@mediatek.com>,
-        <xinping.qian@mediatek.com>
-Date: Fri, 4 May 2018 11:25:58 +0800
-In-Reply-To: <7efd1486-9f65-a647-5ab0-9a97b10c2ec7@arm.com>
-References: <1524201910-22836-1-git-send-email-honghui.zhang@mediatek.com>
-         <1524201910-22836-3-git-send-email-honghui.zhang@mediatek.com>
-         <a2f7e70a-fdef-d925-8838-be3051c2e96d@arm.com>
-         <1525254064.22948.11.camel@mhfsdcap03>
-         <e04ea8b1-731f-e72b-8944-5c067e1a04da@arm.com>
-         <1525340514.22948.25.camel@mhfsdcap03>
-         <7efd1486-9f65-a647-5ab0-9a97b10c2ec7@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 3 May 2018 23:29:27 -0400
+X-Google-Smtp-Source: AB8JxZqCiX7vKzrkAkXvq0TtIhuCfxhgrLvZBSXOTWlmHogFDjjLb1v5hXOdrUtrW1J1pzbKBUUpeCWSjKIY
 MIME-Version: 1.0
-X-MTK: N
+Date: Thu,  3 May 2018 20:29:19 -0700
+Message-Id: <20180504032919.90515-1-gthelen@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+Subject: [PATCH] IB: remove redundant INFINIBAND kconfig dependencies
+From: Greg Thelen <gthelen@google.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Thelen <gthelen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-05-03 at 14:05 +0100, Marc Zyngier wrote:
-> On 03/05/18 10:41, Honghui Zhang wrote:
-> > On Wed, 2018-05-02 at 11:09 +0100, Marc Zyngier wrote:
-> >> On 02/05/18 10:41, Honghui Zhang wrote:
-> >>> On Mon, 2018-04-30 at 12:03 +0100, Marc Zyngier wrote:
-> >>>> Hi Zhang,
-> >>>>
-> >>>> On 20/04/18 06:25, honghui.zhang@mediatek.com wrote:
-> >>>>> From: Honghui Zhang <honghui.zhang@mediatek.com>
-> >>>>>
-> >>>>> Using irq_chip solution to setup IRQs for the consistent with IRQ framework.
-> >>>>>
-> >>>>> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> >>>>> ---
-> >>>>>  drivers/pci/host/pcie-mediatek.c | 192 +++++++++++++++++++++------------------
-> >>>>>  1 file changed, 105 insertions(+), 87 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/pci/host/pcie-mediatek.c b/drivers/pci/host/pcie-mediatek.c
-> >>>>> index c3dc549..1d9c6f1 100644
-> >>>>> --- a/drivers/pci/host/pcie-mediatek.c
-> >>>>> +++ b/drivers/pci/host/pcie-mediatek.c
-> >>>>> @@ -11,8 +11,10 @@
-> >>>>>  #include <linux/delay.h>
-> >>>>>  #include <linux/iopoll.h>
-> >>>>>  #include <linux/irq.h>
-> >>>>> +#include <linux/irqchip/chained_irq.h>
-> >>>>>  #include <linux/irqdomain.h>
-> >>>>>  #include <linux/kernel.h>
-> >>>>> +#include <linux/msi.h>
-> >>>>>  #include <linux/of_address.h>
-> >>>>>  #include <linux/of_pci.h>
-> >>>>>  #include <linux/of_platform.h>
-> >>>>> @@ -130,14 +132,12 @@ struct mtk_pcie_port;
-> >>>>>  /**
-> >>>>>   * struct mtk_pcie_soc - differentiate between host generations
-> >>>>>   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-> >>>>> - * @has_msi: whether this host supports MSI interrupts or not
-> >>>>>   * @ops: pointer to configuration access functions
-> >>>>>   * @startup: pointer to controller setting functions
-> >>>>>   * @setup_irq: pointer to initialize IRQ functions
-> >>>>>   */
-> >>>>>  struct mtk_pcie_soc {
-> >>>>>  	bool need_fix_class_id;
-> >>>>> -	bool has_msi;
-> >>>>>  	struct pci_ops *ops;
-> >>>>>  	int (*startup)(struct mtk_pcie_port *port);
-> >>>>>  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-> >>>>> @@ -161,7 +161,9 @@ struct mtk_pcie_soc {
-> >>>>>   * @lane: lane count
-> >>>>>   * @slot: port slot
-> >>>>>   * @irq_domain: legacy INTx IRQ domain
-> >>>>> + * @inner_domain: inner IRQ domain
-> >>>>>   * @msi_domain: MSI IRQ domain
-> >>>>> + * @lock: protect the msi_irq_in_use bitmap
-> >>>>>   * @msi_irq_in_use: bit map for assigned MSI IRQ
-> >>>>>   */
-> >>>>>  struct mtk_pcie_port {
-> >>>>> @@ -179,7 +181,9 @@ struct mtk_pcie_port {
-> >>>>>  	u32 lane;
-> >>>>>  	u32 slot;
-> >>>>>  	struct irq_domain *irq_domain;
-> >>>>> +	struct irq_domain *inner_domain;
-> >>>>>  	struct irq_domain *msi_domain;
-> >>>>> +	struct mutex lock;
-> >>>>>  	DECLARE_BITMAP(msi_irq_in_use, MTK_MSI_IRQS_NUM);
-> >>>>>  };
-> >>>>>  
-> >>>>> @@ -446,103 +450,122 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> >>>>>  	return 0;
-> >>>>>  }
-> >>>>>  
-> >>>>> -static int mtk_pcie_msi_alloc(struct mtk_pcie_port *port)
-> >>>>> +static void mtk_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
-> >>>>>  {
-> >>>>> -	int msi;
-> >>>>> +	struct mtk_pcie_port *port = irq_data_get_irq_chip_data(data);
-> >>>>> +	phys_addr_t addr;
-> >>>>>  
-> >>>>> -	msi = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
-> >>>>> -	if (msi < MTK_MSI_IRQS_NUM)
-> >>>>> -		set_bit(msi, port->msi_irq_in_use);
-> >>>>> -	else
-> >>>>> -		return -ENOSPC;
-> >>>>> +	/* MT2712/MT7622 only support 32-bit MSI addresses */
-> >>>>> +	addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
-> >>>>> +	msg->address_hi = 0;
-> >>>>> +	msg->address_lo = lower_32_bits(addr);
-> >>>>>  
-> >>>>> -	return msi;
-> >>>>> +	msg->data = data->hwirq;
-> >>>>> +
-> >>>>> +	dev_dbg(port->pcie->dev, "msi#%d address_hi %#x address_lo %#x\n",
-> >>>>> +		(int)data->hwirq, msg->address_hi, msg->address_lo);
-> >>>>>  }
-> >>>>>  
-> >>>>> -static void mtk_pcie_msi_free(struct mtk_pcie_port *port, unsigned long hwirq)
-> >>>>> +static int mtk_msi_set_affinity(struct irq_data *irq_data,
-> >>>>> +				   const struct cpumask *mask, bool force)
-> >>>>>  {
-> >>>>> -	clear_bit(hwirq, port->msi_irq_in_use);
-> >>>>> +	return -EINVAL;
-> >>>>>  }
-> >>>>>  
-> >>>>> -static int mtk_pcie_msi_setup_irq(struct msi_controller *chip,
-> >>>>> -				  struct pci_dev *pdev, struct msi_desc *desc)
-> >>>>> -{
-> >>>>> -	struct mtk_pcie_port *port;
-> >>>>> -	struct msi_msg msg;
-> >>>>> -	unsigned int irq;
-> >>>>> -	int hwirq;
-> >>>>> -	phys_addr_t msg_addr;
-> >>>>> +static struct irq_chip mtk_msi_bottom_irq_chip = {
-> >>>>> +	.name			= "MTK MSI",
-> >>>>> +	.irq_compose_msi_msg	= mtk_compose_msi_msg,
-> >>>>> +	.irq_set_affinity	= mtk_msi_set_affinity,
-> >>>>> +	.irq_mask		= pci_msi_mask_irq,
-> >>>>> +	.irq_unmask	= pci_msi_unmask_irq,
-> >>>>> +};
-> >>>>>  
-> >>>>> -	port = mtk_pcie_find_port(pdev->bus, pdev->devfn);
-> >>>>> -	if (!port)
-> >>>>> -		return -EINVAL;
-> >>>>> +static int mtk_pcie_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-> >>>>> +				     unsigned int nr_irqs, void *args)
-> >>>>> +{
-> >>>>> +	struct mtk_pcie_port *port = domain->host_data;
-> >>>>> +	unsigned long bit;
-> >>>>>  
-> >>>>> -	hwirq = mtk_pcie_msi_alloc(port);
-> >>>>> -	if (hwirq < 0)
-> >>>>> -		return hwirq;
-> >>>>> +	WARN_ON(nr_irqs != 1);
-> >>>>> +	mutex_lock(&port->lock);
-> >>>>>  
-> >>>>> -	irq = irq_create_mapping(port->msi_domain, hwirq);
-> >>>>> -	if (!irq) {
-> >>>>> -		mtk_pcie_msi_free(port, hwirq);
-> >>>>> -		return -EINVAL;
-> >>>>> +	bit = find_first_zero_bit(port->msi_irq_in_use, MTK_MSI_IRQS_NUM);
-> >>>>> +	if (bit >= MTK_MSI_IRQS_NUM) {
-> >>>>> +		mutex_unlock(&port->lock);
-> >>>>> +		return -ENOSPC;
-> >>>>>  	}
-> >>>>>  
-> >>>>> -	chip->dev = &pdev->dev;
-> >>>>> -
-> >>>>> -	irq_set_msi_desc(irq, desc);
-> >>>>> +	__set_bit(bit, port->msi_irq_in_use);
-> >>>>>  
-> >>>>> -	/* MT2712/MT7622 only support 32-bit MSI addresses */
-> >>>>> -	msg_addr = virt_to_phys(port->base + PCIE_MSI_VECTOR);
-> >>>>> -	msg.address_hi = 0;
-> >>>>> -	msg.address_lo = lower_32_bits(msg_addr);
-> >>>>> -	msg.data = hwirq;
-> >>>>> +	mutex_unlock(&port->lock);
-> >>>>>  
-> >>>>> -	pci_write_msi_msg(irq, &msg);
-> >>>>> +	irq_domain_set_info(domain, virq, bit, &mtk_msi_bottom_irq_chip,
-> >>>>> +			    domain->host_data, handle_simple_irq,
-> >>>>
-> >>>> Why don't you handle the interrupt as an edge interrupt
-> >>>> (handle_edge_irq)? That's what it really is, and the fact that you use
-> >>>> "handle_simple_irq" makes me think that wou're papering over some other
-> >>>> issue (see below).
-> >>>
-> >>> Hi, Marc,
-> >>>
-> >>> Thanks very much for your comments.
-> >>>
-> >>> I guess the MSI irq is more like a level IRQ instead of edge IRQ.
-> >>> When a MSI IRQ arrived, the corresponding bit of MSI status register
-> >>> will be asserted and stay asserted until it's been cleared by software.
-> >>
-> >> There is some confusion here. The MSI itself is always edge-triggered.
-> >> That's by definition, and you cannot change it. The interrupt that is
-> >> used to signal that MSIs are pending (the multiplexing interrupt) can
-> >> itself be level triggered (and goes low once all the MSIs have been
-> >> acknowledged).
-> > 
-> > Hi, Marc, thanks for your comments.
-> > 
-> > Yes, PCIe SPEC have defined that the MSI must be edge trigged. But I'm
-> > not sure whether the HW design needed to following some edge irq
-> > standard. 
-> 
-> 
-> Given that the device is writing to the MSI doorbell, this can only be
-> an edge (one way to look at it is that you cannot "unwrite" something,
-> so you can't drop the level).
-> 
-Thanks for your explain in this point of view. I will handle it as edge
-IRQ in the next version.
+INFINIBAND_ADDR_TRANS depends on INFINIBAND.  So there's no need for
+options which depend INFINIBAND_ADDR_TRANS to also depend on INFINIBAND.
+Remove the unnecessary INFINIBAND depends.
 
-> > In our design, when there's MSI irq trigged(which may is edge
-> > trigged in hw implemented), the corresponding msi irq status bits will
-> > be asserted until it's been cleared by software. It's more like that the
-> > HW IP have translate the edge irq to level status. Do you think using
-> > handle_level_irq or handle_simple_irq(which most of the pci host driver
-> > now doing) is acceptable in this case?
-> 
-> This is how it is supposed to work:
-> 
-> Device --edge--> MSI-controller --level--> primary controller
-> 
-> When you're handling the MSI, it has to be edge. When handling the
-> interrupt between the MSI controller and the main irqchip, this is level.
-> 
-> At the moment, you have handle that first interrupt as level, which is
-> wrong.
-> 
-> > BTW, I'm still struggling in trying the handle_edge_irq solution. Seems
-> > that I could not get the msi index in irq_ack callback from
-> > irq_data->hwirq, the hwirq was set by pci_msi_domain_calc_hwirq() which
-> > I'm still try to figure out the proper routine in my driver.
-> 
-> That's because you've plugged it in the wrong irqchip. Your top-level
-> irqchip (the one backing the PCI domain) must be implemented with
-> irq_chip_ack_parent, and you them implement the ack logic in the
-> HW-specific irqchip.
-> 
+Signed-off-by: Greg Thelen <gthelen@google.com>
+---
+ drivers/infiniband/ulp/srpt/Kconfig | 2 +-
+ drivers/nvme/host/Kconfig           | 2 +-
+ drivers/nvme/target/Kconfig         | 2 +-
+ drivers/staging/lustre/lnet/Kconfig | 2 +-
+ fs/cifs/Kconfig                     | 2 +-
+ net/9p/Kconfig                      | 2 +-
+ net/rds/Kconfig                     | 2 +-
+ net/sunrpc/Kconfig                  | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
 
-Thanks very much for your advise, that's exactly the mistake that I
-made. Now it's works fine, I will check it again and send the next
-version.
-
-thanks.
-
-> 	M.
+diff --git a/drivers/infiniband/ulp/srpt/Kconfig b/drivers/infiniband/ulp/srpt/Kconfig
+index fb8b7182f05e..25bf6955b6d0 100644
+--- a/drivers/infiniband/ulp/srpt/Kconfig
++++ b/drivers/infiniband/ulp/srpt/Kconfig
+@@ -1,6 +1,6 @@
+ config INFINIBAND_SRPT
+ 	tristate "InfiniBand SCSI RDMA Protocol target support"
+-	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && TARGET_CORE
++	depends on INFINIBAND_ADDR_TRANS && TARGET_CORE
+ 	---help---
+ 
+ 	  Support for the SCSI RDMA Protocol (SRP) Target driver. The
+diff --git a/drivers/nvme/host/Kconfig b/drivers/nvme/host/Kconfig
+index 88a8b5916624..dbb7464c018c 100644
+--- a/drivers/nvme/host/Kconfig
++++ b/drivers/nvme/host/Kconfig
+@@ -27,7 +27,7 @@ config NVME_FABRICS
+ 
+ config NVME_RDMA
+ 	tristate "NVM Express over Fabrics RDMA host driver"
+-	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && BLOCK
++	depends on INFINIBAND_ADDR_TRANS && BLOCK
+ 	select NVME_CORE
+ 	select NVME_FABRICS
+ 	select SG_POOL
+diff --git a/drivers/nvme/target/Kconfig b/drivers/nvme/target/Kconfig
+index 3c7b61ddb0d1..7595664ee753 100644
+--- a/drivers/nvme/target/Kconfig
++++ b/drivers/nvme/target/Kconfig
+@@ -27,7 +27,7 @@ config NVME_TARGET_LOOP
+ 
+ config NVME_TARGET_RDMA
+ 	tristate "NVMe over Fabrics RDMA target support"
+-	depends on INFINIBAND && INFINIBAND_ADDR_TRANS
++	depends on INFINIBAND_ADDR_TRANS
+ 	depends on NVME_TARGET
+ 	select SGL_ALLOC
+ 	help
+diff --git a/drivers/staging/lustre/lnet/Kconfig b/drivers/staging/lustre/lnet/Kconfig
+index ad049e6f24e4..f3b1ad4bd3dc 100644
+--- a/drivers/staging/lustre/lnet/Kconfig
++++ b/drivers/staging/lustre/lnet/Kconfig
+@@ -34,7 +34,7 @@ config LNET_SELFTEST
+ 
+ config LNET_XPRT_IB
+ 	tristate "LNET infiniband support"
+-	depends on LNET && PCI && INFINIBAND && INFINIBAND_ADDR_TRANS
++	depends on LNET && PCI && INFINIBAND_ADDR_TRANS
+ 	default LNET && INFINIBAND
+ 	help
+ 	  This option allows the LNET users to use infiniband as an
+diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
+index 5f132d59dfc2..d61e2de8d0eb 100644
+--- a/fs/cifs/Kconfig
++++ b/fs/cifs/Kconfig
+@@ -197,7 +197,7 @@ config CIFS_SMB311
+ 
+ config CIFS_SMB_DIRECT
+ 	bool "SMB Direct support (Experimental)"
+-	depends on CIFS=m && INFINIBAND && INFINIBAND_ADDR_TRANS || CIFS=y && INFINIBAND=y && INFINIBAND_ADDR_TRANS=y
++	depends on CIFS=m && INFINIBAND_ADDR_TRANS || CIFS=y && INFINIBAND_ADDR_TRANS=y
+ 	help
+ 	  Enables SMB Direct experimental support for SMB 3.0, 3.02 and 3.1.1.
+ 	  SMB Direct allows transferring SMB packets over RDMA. If unsure,
+diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+index e6014e0e51f7..46c39f7da444 100644
+--- a/net/9p/Kconfig
++++ b/net/9p/Kconfig
+@@ -32,7 +32,7 @@ config NET_9P_XEN
+ 
+ 
+ config NET_9P_RDMA
+-	depends on INET && INFINIBAND && INFINIBAND_ADDR_TRANS
++	depends on INET && INFINIBAND_ADDR_TRANS
+ 	tristate "9P RDMA Transport (Experimental)"
+ 	help
+ 	  This builds support for an RDMA transport.
+diff --git a/net/rds/Kconfig b/net/rds/Kconfig
+index bffde4b46c5d..1a31502ee7db 100644
+--- a/net/rds/Kconfig
++++ b/net/rds/Kconfig
+@@ -8,7 +8,7 @@ config RDS
+ 
+ config RDS_RDMA
+ 	tristate "RDS over Infiniband"
+-	depends on RDS && INFINIBAND && INFINIBAND_ADDR_TRANS
++	depends on RDS && INFINIBAND_ADDR_TRANS
+ 	---help---
+ 	  Allow RDS to use Infiniband as a transport.
+ 	  This transport supports RDMA operations.
+diff --git a/net/sunrpc/Kconfig b/net/sunrpc/Kconfig
+index ac09ca803296..6358e5271070 100644
+--- a/net/sunrpc/Kconfig
++++ b/net/sunrpc/Kconfig
+@@ -50,7 +50,7 @@ config SUNRPC_DEBUG
+ 
+ config SUNRPC_XPRT_RDMA
+ 	tristate "RPC-over-RDMA transport"
+-	depends on SUNRPC && INFINIBAND && INFINIBAND_ADDR_TRANS
++	depends on SUNRPC && INFINIBAND_ADDR_TRANS
+ 	default SUNRPC && INFINIBAND
+ 	select SG_POOL
+ 	help
+-- 
+2.17.0.441.gb46fe60e1d-goog
