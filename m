@@ -1,31 +1,32 @@
 Return-Path: <ruslan.bilovol@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525397089; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525397103; cv=none;
         d=google.com; s=arc-20160816;
-        b=AOet9hUMMuQL/YILzM9eotiSsD+4ZHCV7n0qxuuQXZJZksoDaWkDsk+z5ZyK67ZTst
-         KvQhaPfVK/oUKRTs3y+3WX/4TEMvYz9kKVtl8RPriVgY4mO6cMCRWYZRBV42beo9jUtV
-         KdNtkCXbKZAeyqKtl2NxhmxLZP6CqONeOM3wBYpqg7DxUbqfvYDgWzGCoMD1ES6p2UNB
-         awbQOzXTdYVpJewe3rJuS2dH9nkASeWXOemaygGRvmzW3X7SHysme3PGaSw6iUjJbqIZ
-         A+zYppHNjGKX/36Khx8i7eTGJgpFoRSSxVbKW4DE0lYkh1DC7Oeqo8AX4aVfhlTZn3bh
-         4hng==
+        b=wVCBmBzq4SK7GMUhKhz8l2errApW8+ccxi1yyJFB/yEDKFF1wKCj3/Km1GUL1BVE1s
+         0KBZXrG649sT1hiYMDhHgPThUYXfqpS/RpVbu1d42MDHiQHqXGRl4fpXuNRjaCWHDc4S
+         D8pOohi+S2x1wDySmthZpEi1IXGVAsVeiNZ98pM18dDZ6xuEEtzTalL4iIdg31gyIven
+         DHhBuNGjYvUnPG+1/+q9lKvvyfoUj95QF7P8fizM5IiQzc9aUycDnXuirLO+Aj1fGuj4
+         XX29LcFYdJdPdYNMs2mkj5grCOK99wK2qjZAjXyQWIXfxPbepr+s42TffcosA2jLqSKC
+         9Rxg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=JYiEkko72DtkesBuFZdNkly8w/aDOD6VivnmAubVmuc=;
-        b=q60VyG8cmYuyvXQHRKbVqWJjHyzsIzGouI98FVibwsc87c9bK25rCKevQtNN00F+il
-         mlqx1GQVM4jknwTV2ELYoV2Qm1iFoiFKbiNbRHBhMaTlMl+ZGFCqm6FXuGWL2sucYF/0
-         Piya3fzSJa8gY2blrrGszC/BLNJDwov744t/f9hYexk3CsXlVaWCe5XCOS7mPfIE5HF7
-         OiW8Qk5evu5eJd6gF9pVVfQ8ajUMhBQhkaXBfyo9SiJiBh6hIVEiOa5n6cnT69he2TYU
-         0OpQ4YuqGbZpC9p1DIRlioqfkIF7BBpJsd3BRqjD9wYY/FFC39JsRclQeCaZ6BBMwJ78
-         0yQw==
+        bh=n4mwxUpBSBRLd3RhIK9CHtBtxwoRdR5fvvGnHLLrbBI=;
+        b=mDIhhlTM8WXuYpmz2n2X56Eb7IQTioTlly9PiE88/7ygZ6xRBlFFjKTUOQZ59+16fj
+         iLmI9O1upsxLsytFH51rA1goZTN2t4JQ2/D3nUu4dF1F0+mPySbF32QV9lPp+YwEvptK
+         IgFwA7wceyVRNf029HwkVtAXng/cmeYrvtxR/P/PuTRD+LSAWz2kQVzAw/pGqdGrhl0L
+         BorxpKGxGWipT6qJ12u0xAdDKIKKJkbcabAc5yQ18TKW2gMJQv/+gpEgGF777mZJZies
+         OME+CTk1mOE8EX+cS1lLy/9esPlZx0SQXC6XJjiQsNWheGMhvvfh16g7PKfz+nxCdhg/
+         4ukw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FhcZy1hH;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g9wXOACT;
        spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FhcZy1hH;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=g9wXOACT;
        spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZrhsaSWu+OuOlt0OI+uRR8BcKnb54caHR/oJT9qQnhNmf6Hj2jQVz0OhaAM0Y3focpa4gUOSA==
+X-Google-Smtp-Source: AB8JxZqAZrR4EEhIOk0GksiEESaculP9DotR7TESxfpFMBq+fjK7uw/dHhcTWp4vw6geyHutGz/mSg==
 From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
 To: Takashi Iwai <tiwai@suse.com>
 Cc: Jorge <jorge.sanjuan@codethink.co.uk>,
@@ -33,90 +34,756 @@ Cc: Jorge <jorge.sanjuan@codethink.co.uk>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	alsa-devel@alsa-project.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/7] USB Audio Device Class 3.0 BADD profiles support
-Date: Fri,  4 May 2018 04:23:57 +0300
-Message-Id: <1525397044-15080-1-git-send-email-ruslan.bilovol@gmail.com>
+Subject: [PATCH v2 7/7] ALSA: usb: add UAC3 BADD profiles support
+Date: Fri,  4 May 2018 04:24:04 +0300
+Message-Id: <1525397044-15080-8-git-send-email-ruslan.bilovol@gmail.com>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1525397044-15080-1-git-send-email-ruslan.bilovol@gmail.com>
+References: <1525397044-15080-1-git-send-email-ruslan.bilovol@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599494778683653955?=
-X-GMAIL-MSGID: =?utf-8?q?1599494778683653955?=
+X-GMAIL-THRID: =?utf-8?q?1599494792901410572?=
+X-GMAIL-MSGID: =?utf-8?q?1599494792901410572?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patchset adds BADD profiles support from the USB Audio
-Device Class 3.0 spec [1].
+Recently released USB Audio Class 3.0 specification
+contains BADD (Basic Audio Device Definition) document
+which describes pre-defined UAC3 configurations.
 
-BADD profile support is defined as mandatory feature of
-UAC3-compliant device, it should be implemented as a separate
-USB configuration.
+BADD support is mandatory for UAC3 devices, it should be
+implemented as a separate USB device configuration.
+As per BADD document, class-specific descriptors
+shall not be included in the Device’s Configuration
+descriptor ("inferred"), but host can guess them
+from BADD profile number, number of endpoints and
+their max packed sizes.
 
-Notable issue with BADD configuration is that it misses
-class-specific descriptors (and it's mandatory as per spec),
-so host should guess them from BADD profile number and
-parameters of endpoints (type, number of endpoints and
-max packet size)
+This patch adds support of all BADD profiles from the spec
 
-This patchset adds support of all known/existing BADD profiles
-from the UAC3 specification.
+Signed-off-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+---
+ sound/usb/card.c       |  14 +++
+ sound/usb/clock.c      |   9 +-
+ sound/usb/mixer.c      | 327 ++++++++++++++++++++++++++++++++++++++++++++-----
+ sound/usb/mixer_maps.c |  65 ++++++++++
+ sound/usb/stream.c     |  83 +++++++++++--
+ sound/usb/usbaudio.h   |   2 +
+ 6 files changed, 459 insertions(+), 41 deletions(-)
 
-First 5 patches are refactoring and improvements, and last 2
-patches actually implement UAC3 BADD profiles support.
-
-It's an alternative implementation comparing to [2],
-and doesn't build usb descriptors on the host but instead
-initializes alsa-usb structures with known parameters,
-so we don't need to keep whole class-specific descriptors
-in the driver since we anyway need to have BADD-specific
-logic.
-
-I've picked one Jorge's UAC1 patch-improvement and
-updated it to v4.17 wich contais recently introduced
-header's sanity checks.
-
-Remaining part is to add interrupt endpoint support
-so we will be able to detect jack insertion in
-the Headset Adapter profile.
-
-This has been tested on ARM and x86-64 machines with
-custom UAC3 gadget which I'll post later to linux-usb
-
-Comments and testing are welcome.
-
-v2:
-  - split refactoring patch to more atomic and bisectable
-    changes as suggested by Takashi
-  - renamed "Side Tone"->"Sidetone" as suggested by Andrew
-  - revorked main BADD patch to have table lookup for
-    checking BADD channels validity and to reduce identation
-    as suggested by Takashi
-  - also removed code duplication in BADD patch by reusing
-    common part of build_feature_ctl() func
-
-v1: http://mailman.alsa-project.org/pipermail/alsa-devel/2018-April/134412.html
-
-
-[1] http://www.usb.org/developers/docs/devclass_docs/USB_Audio_v3.0.zip
-[2] https://www.spinics.net/lists/alsa-devel/msg71614.html
-
-Jorge Sanjuan (1):
-  ALSA: usb: Only get AudioControl header for UAC1 class.
-
-Ruslan Bilovol (6):
-  ALSA: usb: stream: move audioformat alloc/init into separate function
-  ALSA: usb: stream: refactor uac1/2 audio interface parsing
-  ALSA: usb: stream: refactor uac3 audio interface parsing
-  ALSA: usb: mixer: make string parsing independent of mixer_build state
-  include: usb: audio-v3: add BADD-specific values
-  ALSA: usb: add UAC3 BADD profiles support
-
- include/linux/usb/audio-v3.h |  26 ++
- sound/usb/card.c             |  53 ++--
- sound/usb/clock.c            |   9 +-
- sound/usb/mixer.c            | 351 +++++++++++++++++++---
- sound/usb/mixer_maps.c       |  65 ++++
- sound/usb/stream.c           | 687 +++++++++++++++++++++++++------------------
- sound/usb/usbaudio.h         |   2 +
- 7 files changed, 849 insertions(+), 344 deletions(-)
-
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 0d7a5d7..f6c3c1c 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -307,6 +307,20 @@ static int snd_usb_create_streams(struct snd_usb_audio *chip, int ctrlif)
+ 			return -EINVAL;
+ 		}
+ 
++		if (protocol == UAC_VERSION_3) {
++			int badd = assoc->bFunctionSubClass;
++
++			if (badd != UAC3_FUNCTION_SUBCLASS_FULL_ADC_3_0 &&
++			    (badd < UAC3_FUNCTION_SUBCLASS_GENERIC_IO ||
++			     badd > UAC3_FUNCTION_SUBCLASS_SPEAKERPHONE)) {
++				dev_err(&dev->dev,
++					"Unsupported UAC3 BADD profile\n");
++				return -EINVAL;
++			}
++
++			chip->badd_profile = badd;
++		}
++
+ 		for (i = 0; i < assoc->bInterfaceCount; i++) {
+ 			int intf = assoc->bFirstInterface + i;
+ 
+diff --git a/sound/usb/clock.c b/sound/usb/clock.c
+index 0b030d8..17673f3 100644
+--- a/sound/usb/clock.c
++++ b/sound/usb/clock.c
+@@ -587,8 +587,15 @@ int snd_usb_init_sample_rate(struct snd_usb_audio *chip, int iface,
+ 	default:
+ 		return set_sample_rate_v1(chip, iface, alts, fmt, rate);
+ 
+-	case UAC_VERSION_2:
+ 	case UAC_VERSION_3:
++		if (chip->badd_profile >= UAC3_FUNCTION_SUBCLASS_GENERIC_IO) {
++			if (rate != UAC3_BADD_SAMPLING_RATE)
++				return -ENXIO;
++			else
++				return 0;
++		}
++	/* fall through */
++	case UAC_VERSION_2:
+ 		return set_sample_rate_v2v3(chip, iface, alts, fmt, rate);
+ 	}
+ }
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index e280354..d98bc3f 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -112,14 +112,12 @@ enum {
+ #include "mixer_maps.c"
+ 
+ static const struct usbmix_name_map *
+-find_map(struct mixer_build *state, int unitid, int control)
++find_map(const struct usbmix_name_map *p, int unitid, int control)
+ {
+-	const struct usbmix_name_map *p = state->map;
+-
+ 	if (!p)
+ 		return NULL;
+ 
+-	for (p = state->map; p->id; p++) {
++	for (; p->id; p++) {
+ 		if (p->id == unitid &&
+ 		    (!control || !p->control || control == p->control))
+ 			return p;
+@@ -1333,16 +1331,16 @@ static struct usb_feature_control_info *get_feature_control_info(int control)
+ 	return NULL;
+ }
+ 
+-static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+-			      unsigned int ctl_mask, int control,
+-			      struct usb_audio_term *iterm, int unitid,
+-			      int readonly_mask)
++static void __build_feature_ctl(struct usb_mixer_interface *mixer,
++				const struct usbmix_name_map *imap,
++				unsigned int ctl_mask, int control,
++				struct usb_audio_term *iterm,
++				struct usb_audio_term *oterm,
++				int unitid, int nameid, int readonly_mask)
+ {
+-	struct uac_feature_unit_descriptor *desc = raw_desc;
+ 	struct usb_feature_control_info *ctl_info;
+ 	unsigned int len = 0;
+ 	int mapped_name = 0;
+-	int nameid = uac_feature_unit_iFeature(desc);
+ 	struct snd_kcontrol *kctl;
+ 	struct usb_mixer_elem_info *cval;
+ 	const struct usbmix_name_map *map;
+@@ -1353,14 +1351,14 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 		return;
+ 	}
+ 
+-	map = find_map(state, unitid, control);
++	map = find_map(imap, unitid, control);
+ 	if (check_ignored_ctl(map))
+ 		return;
+ 
+ 	cval = kzalloc(sizeof(*cval), GFP_KERNEL);
+ 	if (!cval)
+ 		return;
+-	snd_usb_mixer_elem_init_std(&cval->head, state->mixer, unitid);
++	snd_usb_mixer_elem_init_std(&cval->head, mixer, unitid);
+ 	cval->control = control;
+ 	cval->cmask = ctl_mask;
+ 
+@@ -1369,7 +1367,7 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 		kfree(cval);
+ 		return;
+ 	}
+-	if (state->mixer->protocol == UAC_VERSION_1)
++	if (mixer->protocol == UAC_VERSION_1)
+ 		cval->val_type = ctl_info->type;
+ 	else /* UAC_VERSION_2 */
+ 		cval->val_type = ctl_info->type_uac2 >= 0 ?
+@@ -1398,7 +1396,7 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 		kctl = snd_ctl_new1(&usb_feature_unit_ctl, cval);
+ 
+ 	if (!kctl) {
+-		usb_audio_err(state->chip, "cannot malloc kcontrol\n");
++		usb_audio_err(mixer->chip, "cannot malloc kcontrol\n");
+ 		kfree(cval);
+ 		return;
+ 	}
+@@ -1407,7 +1405,7 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 	len = check_mapped_name(map, kctl->id.name, sizeof(kctl->id.name));
+ 	mapped_name = len != 0;
+ 	if (!len && nameid)
+-		len = snd_usb_copy_string_desc(state->chip, nameid,
++		len = snd_usb_copy_string_desc(mixer->chip, nameid,
+ 				kctl->id.name, sizeof(kctl->id.name));
+ 
+ 	switch (control) {
+@@ -1422,10 +1420,12 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 		 * - otherwise, anonymous name.
+ 		 */
+ 		if (!len) {
+-			len = get_term_name(state->chip, iterm, kctl->id.name,
+-					    sizeof(kctl->id.name), 1);
+-			if (!len)
+-				len = get_term_name(state->chip, &state->oterm,
++			if (iterm)
++				len = get_term_name(mixer->chip, iterm,
++						    kctl->id.name,
++						    sizeof(kctl->id.name), 1);
++			if (!len && oterm)
++				len = get_term_name(mixer->chip, oterm,
+ 						    kctl->id.name,
+ 						    sizeof(kctl->id.name), 1);
+ 			if (!len)
+@@ -1434,15 +1434,15 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 		}
+ 
+ 		if (!mapped_name)
+-			check_no_speaker_on_headset(kctl, state->mixer->chip->card);
++			check_no_speaker_on_headset(kctl, mixer->chip->card);
+ 
+ 		/*
+ 		 * determine the stream direction:
+ 		 * if the connected output is USB stream, then it's likely a
+ 		 * capture stream.  otherwise it should be playback (hopefully :)
+ 		 */
+-		if (!mapped_name && !(state->oterm.type >> 16)) {
+-			if ((state->oterm.type & 0xff00) == 0x0100)
++		if (!mapped_name && oterm && !(oterm->type >> 16)) {
++			if ((oterm->type & 0xff00) == 0x0100)
+ 				append_ctl_name(kctl, " Capture");
+ 			else
+ 				append_ctl_name(kctl, " Playback");
+@@ -1470,7 +1470,7 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 		}
+ 	}
+ 
+-	snd_usb_mixer_fu_apply_quirk(state->mixer, cval, unitid, kctl);
++	snd_usb_mixer_fu_apply_quirk(mixer, cval, unitid, kctl);
+ 
+ 	range = (cval->max - cval->min) / cval->res;
+ 	/*
+@@ -1479,21 +1479,41 @@ static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
+ 	 * devices. It will definitively catch all buggy Logitech devices.
+ 	 */
+ 	if (range > 384) {
+-		usb_audio_warn(state->chip,
++		usb_audio_warn(mixer->chip,
+ 			       "Warning! Unlikely big volume range (=%u), cval->res is probably wrong.",
+ 			       range);
+-		usb_audio_warn(state->chip,
++		usb_audio_warn(mixer->chip,
+ 			       "[%d] FU [%s] ch = %d, val = %d/%d/%d",
+ 			       cval->head.id, kctl->id.name, cval->channels,
+ 			       cval->min, cval->max, cval->res);
+ 	}
+ 
+-	usb_audio_dbg(state->chip, "[%d] FU [%s] ch = %d, val = %d/%d/%d\n",
++	usb_audio_dbg(mixer->chip, "[%d] FU [%s] ch = %d, val = %d/%d/%d\n",
+ 		      cval->head.id, kctl->id.name, cval->channels,
+ 		      cval->min, cval->max, cval->res);
+ 	snd_usb_mixer_add_control(&cval->head, kctl);
+ }
+ 
++static void build_feature_ctl(struct mixer_build *state, void *raw_desc,
++			      unsigned int ctl_mask, int control,
++			      struct usb_audio_term *iterm, int unitid,
++			      int readonly_mask)
++{
++	struct uac_feature_unit_descriptor *desc = raw_desc;
++	int nameid = uac_feature_unit_iFeature(desc);
++
++	__build_feature_ctl(state->mixer, state->map, ctl_mask, control,
++			iterm, &state->oterm, unitid, nameid, readonly_mask);
++}
++
++static void build_feature_ctl_badd(struct usb_mixer_interface *mixer,
++			      unsigned int ctl_mask, int control, int unitid,
++			      const struct usbmix_name_map *badd_map)
++{
++	__build_feature_ctl(mixer, badd_map, ctl_mask, control,
++			NULL, NULL, unitid, 0, 0);
++}
++
+ static void get_connector_control_name(struct mixer_build *state,
+ 				       struct usb_audio_term *term,
+ 				       bool is_input, char *name, int name_size)
+@@ -1807,7 +1827,7 @@ static void build_mixer_unit_ctl(struct mixer_build *state,
+ 	struct snd_kcontrol *kctl;
+ 	const struct usbmix_name_map *map;
+ 
+-	map = find_map(state, unitid, 0);
++	map = find_map(state->map, unitid, 0);
+ 	if (check_ignored_ctl(map))
+ 		return;
+ 
+@@ -2106,7 +2126,7 @@ static int build_audio_procunit(struct mixer_build *state, int unitid,
+ 
+ 		if (!(controls[valinfo->control / 8] & (1 << ((valinfo->control % 8) - 1))))
+ 			continue;
+-		map = find_map(state, unitid, valinfo->control);
++		map = find_map(state->map, unitid, valinfo->control);
+ 		if (check_ignored_ctl(map))
+ 			continue;
+ 		cval = kzalloc(sizeof(*cval), GFP_KERNEL);
+@@ -2310,7 +2330,7 @@ static int parse_audio_selector_unit(struct mixer_build *state, int unitid,
+ 	if (desc->bNrInPins == 1) /* only one ? nonsense! */
+ 		return 0;
+ 
+-	map = find_map(state, unitid, 0);
++	map = find_map(state->map, unitid, 0);
+ 	if (check_ignored_ctl(map))
+ 		return 0;
+ 
+@@ -2497,6 +2517,246 @@ static int snd_usb_mixer_dev_free(struct snd_device *device)
+ 	return 0;
+ }
+ 
++/* UAC3 predefined channels configuration */
++struct uac3_badd_profile {
++	int subclass;
++	const char *name;
++	int c_chmask;	/* capture channels mask */
++	int p_chmask;	/* playback channels mask */
++	int st_chmask;	/* side tone mixing channel mask */
++};
++
++static struct uac3_badd_profile uac3_badd_profiles[] = {
++	{
++		/*
++		 * BAIF, BAOF or combination of both
++		 * IN: Mono or Stereo cfg, Mono alt possible
++		 * OUT: Mono or Stereo cfg, Mono alt possible
++		 */
++		.subclass = UAC3_FUNCTION_SUBCLASS_GENERIC_IO,
++		.name = "GENERIC IO",
++		.c_chmask = -1,		/* dynamic channels */
++		.p_chmask = -1,		/* dynamic channels */
++	},
++	{
++		/* BAOF; Stereo only cfg, Mono alt possible */
++		.subclass = UAC3_FUNCTION_SUBCLASS_HEADPHONE,
++		.name = "HEADPHONE",
++		.p_chmask = 3,
++	},
++	{
++		/* BAOF; Mono or Stereo cfg, Mono alt possible */
++		.subclass = UAC3_FUNCTION_SUBCLASS_SPEAKER,
++		.name = "SPEAKER",
++		.p_chmask = -1,		/* dynamic channels */
++	},
++	{
++		/* BAIF; Mono or Stereo cfg, Mono alt possible */
++		.subclass = UAC3_FUNCTION_SUBCLASS_MICROPHONE,
++		.name = "MICROPHONE",
++		.c_chmask = -1,		/* dynamic channels */
++	},
++	{
++		/*
++		 * BAIOF topology
++		 * IN: Mono only
++		 * OUT: Mono or Stereo cfg, Mono alt possible
++		 */
++		.subclass = UAC3_FUNCTION_SUBCLASS_HEADSET,
++		.name = "HEADSET",
++		.c_chmask = 1,
++		.p_chmask = -1,		/* dynamic channels */
++		.st_chmask = 1,
++	},
++	{
++		/* BAIOF; IN: Mono only; OUT: Stereo only, Mono alt possible */
++		.subclass = UAC3_FUNCTION_SUBCLASS_HEADSET_ADAPTER,
++		.name = "HEADSET ADAPTER",
++		.c_chmask = 1,
++		.p_chmask = 3,
++		.st_chmask = 1,
++	},
++	{
++		/* BAIF + BAOF; IN: Mono only; OUT: Mono only */
++		.subclass = UAC3_FUNCTION_SUBCLASS_SPEAKERPHONE,
++		.name = "SPEAKERPHONE",
++		.c_chmask = 1,
++		.p_chmask = 1,
++	},
++	{ 0 } /* terminator */
++};
++
++static bool uac3_badd_func_has_valid_channels(struct usb_mixer_interface *mixer,
++					      struct uac3_badd_profile *f,
++					      int c_chmask, int p_chmask)
++{
++	/*
++	 * If both playback/capture channels are dynamic, make sure
++	 * at least one channel is present
++	 */
++	if (f->c_chmask < 0 && f->p_chmask < 0) {
++		if (!c_chmask && !p_chmask) {
++			usb_audio_warn(mixer->chip, "BAAD %s: no channels?",
++				       f->name);
++			return false;
++		}
++		return true;
++	}
++
++	if ((f->c_chmask < 0 && !c_chmask) ||
++	    (f->c_chmask >= 0 && f->c_chmask != c_chmask)) {
++		usb_audio_warn(mixer->chip, "BAAD %s c_chmask mismatch",
++			       f->name);
++		return false;
++	}
++	if ((f->p_chmask < 0 && !p_chmask) ||
++	    (f->p_chmask >= 0 && f->p_chmask != p_chmask)) {
++		usb_audio_warn(mixer->chip, "BAAD %s p_chmask mismatch",
++			       f->name);
++		return false;
++	}
++	return true;
++}
++
++/*
++ * create mixer controls for UAC3 BADD profiles
++ *
++ * UAC3 BADD device doesn't contain CS descriptors thus we will guess everything
++ *
++ * BADD device may contain Mixer Unit, which doesn't have any controls, skip it
++ */
++static int snd_usb_mixer_controls_badd(struct usb_mixer_interface *mixer,
++				       int ctrlif)
++{
++	struct usb_device *dev = mixer->chip->dev;
++	struct usb_interface_assoc_descriptor *assoc;
++	int badd_profile = mixer->chip->badd_profile;
++	struct uac3_badd_profile *f;
++	const struct usbmix_ctl_map *map;
++	int p_chmask = 0, c_chmask = 0, st_chmask = 0;
++	int i;
++
++	assoc = usb_ifnum_to_if(dev, ctrlif)->intf_assoc;
++
++	/* Detect BADD capture/playback channels from AS EP descriptors */
++	for (i = 0; i < assoc->bInterfaceCount; i++) {
++		int intf = assoc->bFirstInterface + i;
++
++		struct usb_interface *iface;
++		struct usb_host_interface *alts;
++		struct usb_interface_descriptor *altsd;
++		unsigned int maxpacksize;
++		char dir_in;
++		int chmask, num;
++
++		if (intf == ctrlif)
++			continue;
++
++		iface = usb_ifnum_to_if(dev, intf);
++		num = iface->num_altsetting;
++
++		if (num < 2)
++			return -EINVAL;
++
++		/*
++		 * The number of Channels in an AudioStreaming interface
++		 * and the audio sample bit resolution (16 bits or 24
++		 * bits) can be derived from the wMaxPacketSize field in
++		 * the Standard AS Audio Data Endpoint descriptor in
++		 * Alternate Setting 1
++		 */
++		alts = &iface->altsetting[1];
++		altsd = get_iface_desc(alts);
++
++		if (altsd->bNumEndpoints < 1)
++			return -EINVAL;
++
++		/* check direction */
++		dir_in = (get_endpoint(alts, 0)->bEndpointAddress & USB_DIR_IN);
++		maxpacksize = le16_to_cpu(get_endpoint(alts, 0)->wMaxPacketSize);
++
++		switch (maxpacksize) {
++		default:
++			usb_audio_err(mixer->chip,
++				"incorrect wMaxPacketSize 0x%x for BADD profile\n",
++				maxpacksize);
++			return -EINVAL;
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_MONO_16:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_MONO_16:
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_MONO_24:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_MONO_24:
++			chmask = 1;
++			break;
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_STEREO_16:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_STEREO_16:
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_STEREO_24:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_STEREO_24:
++			chmask = 3;
++			break;
++		}
++
++		if (dir_in)
++			c_chmask = chmask;
++		else
++			p_chmask = chmask;
++	}
++
++	usb_audio_dbg(mixer->chip,
++		"UAC3 BADD profile 0x%x: detected c_chmask=%d p_chmask=%d\n",
++		badd_profile, c_chmask, p_chmask);
++
++	/* check the mapping table */
++	for (map = uac3_badd_usbmix_ctl_maps; map->id; map++) {
++		if (map->id == badd_profile)
++			break;
++	}
++
++	if (!map->id)
++		return -EINVAL;
++
++	for (f = uac3_badd_profiles; f->name; f++) {
++		if (badd_profile == f->subclass)
++			break;
++	}
++	if (!f->name)
++		return -EINVAL;
++	if (!uac3_badd_func_has_valid_channels(mixer, f, c_chmask, p_chmask))
++		return -EINVAL;
++	st_chmask = f->st_chmask;
++
++	/* Playback */
++	if (p_chmask) {
++		/* Master channel, always writable */
++		build_feature_ctl_badd(mixer, 0, UAC_FU_MUTE,
++				       UAC3_BADD_FU_ID2, map->map);
++		/* Mono/Stereo volume channels, always writable */
++		build_feature_ctl_badd(mixer, p_chmask, UAC_FU_VOLUME,
++				       UAC3_BADD_FU_ID2, map->map);
++	}
++
++	/* Capture */
++	if (c_chmask) {
++		/* Master channel, always writable */
++		build_feature_ctl_badd(mixer, 0, UAC_FU_MUTE,
++				       UAC3_BADD_FU_ID5, map->map);
++		/* Mono/Stereo volume channels, always writable */
++		build_feature_ctl_badd(mixer, c_chmask, UAC_FU_VOLUME,
++				       UAC3_BADD_FU_ID5, map->map);
++	}
++
++	/* Side tone-mixing */
++	if (st_chmask) {
++		/* Master channel, always writable */
++		build_feature_ctl_badd(mixer, 0, UAC_FU_MUTE,
++				       UAC3_BADD_FU_ID7, map->map);
++		/* Mono volume channel, always writable */
++		build_feature_ctl_badd(mixer, 1, UAC_FU_VOLUME,
++				       UAC3_BADD_FU_ID7, map->map);
++	}
++
++	return 0;
++}
++
+ /*
+  * create mixer controls
+  *
+@@ -2883,9 +3143,14 @@ int snd_usb_create_mixer(struct snd_usb_audio *chip, int ctrlif,
+ 		break;
+ 	}
+ 
+-	if ((err = snd_usb_mixer_controls(mixer)) < 0 ||
+-	    (err = snd_usb_mixer_status_create(mixer)) < 0)
++	if (mixer->protocol == UAC_VERSION_3 &&
++			chip->badd_profile >= UAC3_FUNCTION_SUBCLASS_GENERIC_IO) {
++		if ((err = snd_usb_mixer_controls_badd(mixer, ctrlif)) < 0)
++			goto _error;
++	} else if ((err = snd_usb_mixer_controls(mixer)) < 0 ||
++			(err = snd_usb_mixer_status_create(mixer)) < 0) {
+ 		goto _error;
++	}
+ 	err = create_keep_iface_ctl(mixer);
+ 	if (err < 0)
+ 		goto _error;
+diff --git a/sound/usb/mixer_maps.c b/sound/usb/mixer_maps.c
+index eaa03ac..71069e1 100644
+--- a/sound/usb/mixer_maps.c
++++ b/sound/usb/mixer_maps.c
+@@ -485,3 +485,68 @@ struct usbmix_ctl_map {
+ 	{ 0 } /* terminator */
+ };
+ 
++/*
++ * Control map entries for UAC3 BADD profiles
++ */
++
++static struct usbmix_name_map uac3_badd_generic_io_map[] = {
++	{ UAC3_BADD_FU_ID2, "Generic Out Playback" },
++	{ UAC3_BADD_FU_ID5, "Generic In Capture" },
++	{ 0 }					/* terminator */
++};
++static struct usbmix_name_map uac3_badd_headphone_map[] = {
++	{ UAC3_BADD_FU_ID2, "Headphone Playback" },
++	{ 0 }					/* terminator */
++};
++static struct usbmix_name_map uac3_badd_speaker_map[] = {
++	{ UAC3_BADD_FU_ID2, "Speaker Playback" },
++	{ 0 }					/* terminator */
++};
++static struct usbmix_name_map uac3_badd_microphone_map[] = {
++	{ UAC3_BADD_FU_ID5, "Mic Capture" },
++	{ 0 }					/* terminator */
++};
++/* Covers also 'headset adapter' profile */
++static struct usbmix_name_map uac3_badd_headset_map[] = {
++	{ UAC3_BADD_FU_ID2, "Headset Playback" },
++	{ UAC3_BADD_FU_ID5, "Headset Capture" },
++	{ UAC3_BADD_FU_ID7, "Sidetone Mixing" },
++	{ 0 }					/* terminator */
++};
++static struct usbmix_name_map uac3_badd_speakerphone_map[] = {
++	{ UAC3_BADD_FU_ID2, "Speaker Playback" },
++	{ UAC3_BADD_FU_ID5, "Mic Capture" },
++	{ 0 }					/* terminator */
++};
++
++static struct usbmix_ctl_map uac3_badd_usbmix_ctl_maps[] = {
++	{
++		.id = UAC3_FUNCTION_SUBCLASS_GENERIC_IO,
++		.map = uac3_badd_generic_io_map,
++	},
++	{
++		.id = UAC3_FUNCTION_SUBCLASS_HEADPHONE,
++		.map = uac3_badd_headphone_map,
++	},
++	{
++		.id = UAC3_FUNCTION_SUBCLASS_SPEAKER,
++		.map = uac3_badd_speaker_map,
++	},
++	{
++		.id = UAC3_FUNCTION_SUBCLASS_MICROPHONE,
++		.map = uac3_badd_microphone_map,
++	},
++	{
++		.id = UAC3_FUNCTION_SUBCLASS_HEADSET,
++		.map = uac3_badd_headset_map,
++	},
++	{
++		.id = UAC3_FUNCTION_SUBCLASS_HEADSET_ADAPTER,
++		.map = uac3_badd_headset_map,
++	},
++	{
++		.id = UAC3_FUNCTION_SUBCLASS_SPEAKERPHONE,
++		.map = uac3_badd_speakerphone_map,
++	},
++	{ 0 } /* terminator */
++};
+diff --git a/sound/usb/stream.c b/sound/usb/stream.c
+index 764be07..de8bbb3 100644
+--- a/sound/usb/stream.c
++++ b/sound/usb/stream.c
+@@ -817,15 +817,67 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+ 	struct uac3_input_terminal_descriptor *input_term;
+ 	struct uac3_output_terminal_descriptor *output_term;
+ 	struct uac3_cluster_header_descriptor *cluster;
+-	struct uac3_as_header_descriptor *as;
++	struct uac3_as_header_descriptor *as = NULL;
+ 	struct uac3_hc_descriptor_header hc_header;
+ 	struct snd_pcm_chmap_elem *chmap;
++	unsigned char badd_profile;
++	u64 badd_formats = 0;
+ 	unsigned int num_channels;
+ 	struct audioformat *fp;
+ 	u16 cluster_id, wLength;
+ 	int clock = 0;
+ 	int err;
+ 
++	badd_profile = chip->badd_profile;
++
++	if (badd_profile >= UAC3_FUNCTION_SUBCLASS_GENERIC_IO) {
++		unsigned int maxpacksize =
++			le16_to_cpu(get_endpoint(alts, 0)->wMaxPacketSize);
++
++		switch (maxpacksize) {
++		default:
++			dev_err(&dev->dev,
++				"%u:%d : incorrect wMaxPacketSize for BADD profile\n",
++				iface_no, altno);
++			return NULL;
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_MONO_16:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_MONO_16:
++			badd_formats = SNDRV_PCM_FMTBIT_S16_LE;
++			num_channels = 1;
++			break;
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_MONO_24:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_MONO_24:
++			badd_formats = SNDRV_PCM_FMTBIT_S24_3LE;
++			num_channels = 1;
++			break;
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_STEREO_16:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_STEREO_16:
++			badd_formats = SNDRV_PCM_FMTBIT_S16_LE;
++			num_channels = 2;
++			break;
++		case UAC3_BADD_EP_MAXPSIZE_SYNC_STEREO_24:
++		case UAC3_BADD_EP_MAXPSIZE_ASYNC_STEREO_24:
++			badd_formats = SNDRV_PCM_FMTBIT_S24_3LE;
++			num_channels = 2;
++			break;
++		}
++
++		chmap = kzalloc(sizeof(*chmap), GFP_KERNEL);
++		if (!chmap)
++			return ERR_PTR(-ENOMEM);
++
++		if (num_channels == 1) {
++			chmap->map[0] = SNDRV_CHMAP_MONO;
++		} else {
++			chmap->map[0] = SNDRV_CHMAP_FL;
++			chmap->map[1] = SNDRV_CHMAP_FR;
++		}
++
++		chmap->channels = num_channels;
++		clock = UAC3_BADD_CS_ID9;
++		goto found_clock;
++	}
++
+ 	as = snd_usb_find_csint_desc(alts->extra, alts->extralen,
+ 				     NULL, UAC_AS_GENERAL);
+ 	if (!as) {
+@@ -931,16 +983,29 @@ static int parse_uac_endpoint_attributes(struct snd_usb_audio *chip,
+ 	if (!fp)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	fp->attributes = parse_uac_endpoint_attributes(chip, alts,
+-						       UAC_VERSION_3,
+-						       iface_no);
+ 	fp->chmap = chmap;
+ 
+-	/* ok, let's parse further... */
+-	if (snd_usb_parse_audio_format_v3(chip, fp, as, stream) < 0) {
+-		kfree(fp->rate_table);
+-		kfree(fp);
+-		return NULL;
++	if (badd_profile >= UAC3_FUNCTION_SUBCLASS_GENERIC_IO) {
++		fp->attributes = 0; /* No attributes */
++
++		fp->fmt_type = UAC_FORMAT_TYPE_I;
++		fp->formats = badd_formats;
++
++		fp->nr_rates = 0;	/* SNDRV_PCM_RATE_CONTINUOUS */
++		fp->rate_min = UAC3_BADD_SAMPLING_RATE;
++		fp->rate_max = UAC3_BADD_SAMPLING_RATE;
++		fp->rates = SNDRV_PCM_RATE_CONTINUOUS;
++
++	} else {
++		fp->attributes = parse_uac_endpoint_attributes(chip, alts,
++							       UAC_VERSION_3,
++							       iface_no);
++		/* ok, let's parse further... */
++		if (snd_usb_parse_audio_format_v3(chip, fp, as, stream) < 0) {
++			kfree(fp->rate_table);
++			kfree(fp);
++			return NULL;
++		}
+ 	}
+ 
+ 	return fp;
+diff --git a/sound/usb/usbaudio.h b/sound/usb/usbaudio.h
+index 1cb6b3e..7b28cbd 100644
+--- a/sound/usb/usbaudio.h
++++ b/sound/usb/usbaudio.h
+@@ -49,6 +49,8 @@ struct snd_usb_audio {
+ 	int num_suspended_intf;
+ 	int sample_rate_read_error;
+ 
++	int badd_profile;		/* UAC3 BADD profile */
++
+ 	struct list_head pcm_list;	/* list of pcm streams */
+ 	struct list_head ep_list;	/* list of audio-related endpoints */
+ 	int pcm_devs;
 -- 
 1.9.1
