@@ -1,135 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751480AbeEDIvS (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:51:18 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39957 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEDIvR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:51:17 -0400
-X-Google-Smtp-Source: AB8JxZoKhLJt1IHDxYTQc7p9VRuJdr53CV8gS3RJFIo4T38ZIxpKEOpvzRJ4pAaZmR3Fhanw6oo0ar8LPkoh81pLW9M=
-MIME-Version: 1.0
-In-Reply-To: <CAOGPPbd8ysq3XDpa4TYQpWVMmpVo4NPhPw5NWyQS1OSc6rXjQQ@mail.gmail.com>
-References: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
- <20180503153310.GA9738@ziepe.ca> <CAOGPPbd8ysq3XDpa4TYQpWVMmpVo4NPhPw5NWyQS1OSc6rXjQQ@mail.gmail.com>
-From: 858585 jemmy <jemmy858585@gmail.com>
-Date: Fri, 4 May 2018 16:51:15 +0800
-Message-ID: <CAOGPPbenmtuFwCuGMFJDZrqK+D5atkhK+srm+2yX=+CAwgjPHQ@mail.gmail.com>
-Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
-        Leon Romanovsky <leon@kernel.org>, artemyko@mellanox.com,
-        dan.j.williams@intel.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, adido@mellanox.com,
-        Gal Shachaf <galsha@mellanox.com>,
-        Aviad Yehezkel <aviadye@mellanox.com>,
-        Lidong Chen <lidongchen@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1751359AbeEDIzv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:55:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53220 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750709AbeEDIzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 04:55:50 -0400
+Message-ID: <5f7961d548b4d27eab8e0bd6bcfc35ea70e2d79b.camel@bootlin.com>
+Subject: Re: [PATCH v2 09/10] ARM: dts: sun7i-a20: Add Video Engine and
+ reserved memory nodes
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 04 May 2018 10:54:18 +0200
+In-Reply-To: <e8cd340605ab4db8ebf2888a4fce645e8bc481d0.camel@bootlin.com>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+         <20180419154536.17846-5-paul.kocialkowski@bootlin.com>
+         <20180420073908.nkcbsdxibnzkqski@flea>
+         <82057e2f734137a3902d9313c228b01ceb345ee7.camel@bootlin.com>
+         <20180504084008.h6p4brari3xrbv6l@flea>
+         <e8cd340605ab4db8ebf2888a4fce645e8bc481d0.camel@bootlin.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-nNmSDE07s9p6POYMMwU2"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 11:14 AM, 858585 jemmy <jemmy858585@gmail.com> wrote:
-> On Thu, May 3, 2018 at 11:33 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
->> On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
->>> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
->>> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
->>> exited, get_pid_task will return NULL, ib_umem_release does not decrease
->>> mm->pinned_vm. This patch fixes it by use tgid.
->>>
->>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
->>> ---
->>>  drivers/infiniband/core/umem.c | 12 ++++++------
->>>  include/rdma/ib_umem.h         |  2 +-
->>>  2 files changed, 7 insertions(+), 7 deletions(-)
->>
->> Why are we even using a struct pid for this? Does anyone know?
->
-> commit 87773dd56d5405ac28119fcfadacefd35877c18f add pid in ib_umem structure.
->
-> and the comment has such information:
-> Later a different process with a different mm_struct than the one that
-> allocated the ib_umem struct
-> ends up releasing it which results in decrementing the new processes
-> mm->pinned_vm count past
-> zero and wrapping.
->
 
-I think a different process should not have the permission to release ib_umem.
-so maybe the reason is not a different process?
-can ib_umem_release be invoked in interrupt context?
+--=-nNmSDE07s9p6POYMMwU2
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>
->> I'm surprised that struct task isn't held in the struct ib_umem..
->>
->> Is group_leader really OK and always guarenteed to return the same
->> struct mm?? For some reason I have this recollection that the leader
->> can change under some situation..
->>
->>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
->>> index 9a4e899..8813ba5 100644
->>> --- a/drivers/infiniband/core/umem.c
->>> +++ b/drivers/infiniband/core/umem.c
->>> @@ -119,7 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>>       umem->length     = size;
->>>       umem->address    = addr;
->>>       umem->page_shift = PAGE_SHIFT;
->>> -     umem->pid        = get_task_pid(current, PIDTYPE_PID);
->>> +     umem->tgid       = get_task_pid(current->group_leader, PIDTYPE_PID);
->>>       /*
->>>        * We ask for writable memory if any of the following
->>>        * access flags are set.  "Local write" and "remote write"
->>> @@ -132,7 +132,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>>                IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
->>>
->>>       if (access & IB_ACCESS_ON_DEMAND) {
->>> -             put_pid(umem->pid);
->>> +             put_pid(umem->tgid);
->>>               ret = ib_umem_odp_get(context, umem, access);
->>>               if (ret) {
->>>                       kfree(umem);
->>> @@ -148,7 +148,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>>
->>>       page_list = (struct page **) __get_free_page(GFP_KERNEL);
->>>       if (!page_list) {
->>> -             put_pid(umem->pid);
->>> +             put_pid(umem->tgid);
->>>               kfree(umem);
->>>               return ERR_PTR(-ENOMEM);
->>>       }
->>> @@ -231,7 +231,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
->>>       if (ret < 0) {
->>>               if (need_release)
->>>                       __ib_umem_release(context->device, umem, 0);
->>> -             put_pid(umem->pid);
->>> +             put_pid(umem->tgid);
->>>               kfree(umem);
->>>       } else
->>>               current->mm->pinned_vm = locked;
->>> @@ -274,8 +274,8 @@ void ib_umem_release(struct ib_umem *umem)
->>>
->>>       __ib_umem_release(umem->context->device, umem, 1);
->>>
->>> -     task = get_pid_task(umem->pid, PIDTYPE_PID);
->>> -     put_pid(umem->pid);
->>> +     task = get_pid_task(umem->tgid, PIDTYPE_PID);
->>> +     put_pid(umem->tgid);
->>>       if (!task)
->>>               goto out;
->>>       mm = get_task_mm(task);
->>> diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
->>> index 23159dd..2398849 100644
->>> --- a/include/rdma/ib_umem.h
->>> +++ b/include/rdma/ib_umem.h
->>> @@ -48,7 +48,7 @@ struct ib_umem {
->>>       int                     writable;
->>>       int                     hugetlb;
->>>       struct work_struct      work;
->>> -     struct pid             *pid;
->>> +     struct pid             *tgid;
->>>       struct mm_struct       *mm;
->>>       unsigned long           diff;
->>>       struct ib_umem_odp     *odp_data;
->>> --
->>> 1.8.3.1
->>>
+On Fri, 2018-05-04 at 10:47 +0200, Paul Kocialkowski wrote:
+> > > > Don't you also need to map the SRAM on the A20?
+> > >=20
+> > > That's a good point, there is currently no syscon handle for A20
+> > > (and
+> > > also A13). Maybe SRAM is muxed to the VE by default so it "just
+> > > works"?=20
+
+I just checked on the manual and it appears that SRAM Area C1 is muxed
+to the VE at reset, so we can probably keep things as-is until the SRAM
+driver is ready to handle explicitly muxing that area to the VE.
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-nNmSDE07s9p6POYMMwU2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsH7oACgkQ3cLmz3+f
+v9Gjzwf/VJIPyfbLP57WySJ3jDDD22f6uslLoKf/Jc3wmwMDAAcuEE+5yWOhx5ih
+9xHkkQSJMLZBry9FkSQ2JFQz58shk/uDDCP4QWFXKHbAuALMSfqf4iX+SFQV8Nun
+lNB4ccI3NhVSvG9YS6QSUHMGd4+hBPTpdRlYigZ0DCD089E4ftldhNKdWQQWT7nW
+SuaGAE9vBwpt/aEvOO26xnPD2oq/wjTkboh82X+BW2Uw6bKJnZ49Dec6uKMGFBP0
+ZyiV/vlggjBvaCcH8LKB7sATWQ97S1yVyC4GCXs9g7EHrN2Su9qyauivkEw/eErI
+otMRSx1PFmPftpXL7jqVoU1HqAAxgw==
+=nOQ+
+-----END PGP SIGNATURE-----
+
+--=-nNmSDE07s9p6POYMMwU2--
