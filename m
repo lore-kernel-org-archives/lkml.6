@@ -1,174 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751279AbeEDEa5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 00:30:57 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33653 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750820AbeEDEa4 (ORCPT
+        id S1751060AbeEDEbZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 00:31:25 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:36198 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750753AbeEDEbX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 00:30:56 -0400
-X-Google-Smtp-Source: AB8JxZqPCVDd13SecRTBx+MmRf04hyA6xwpJSbtwcjFDwnTZEZOO+dmr9QOIJBzyUW9noeJvSUCruA==
-From: js1304@gmail.com
-X-Google-Original-From: iamjoonsoo.kim@lge.com
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Minchan Kim <minchan@kernel.org>, Ye Xiaolong <xiaolong.ye@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
-Date: Fri,  4 May 2018 13:30:46 +0900
-Message-Id: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 4 May 2018 00:31:23 -0400
+X-Google-Smtp-Source: AB8JxZpamE47jkbkDdf4MeMKDVgP9V/nGKlLMG+7m83PSO/EkthsPtMytkUq9SQ/iHQa6BtNPX57jVJ9pk9oy08pqEI=
+MIME-Version: 1.0
+In-Reply-To: <20180503183408.GA12152@kroah.com>
+References: <CAHhAz+iPbNjeHH72Omi7VCUVL_cOUnQjrqbyJKQstUSL6J1hCw@mail.gmail.com>
+ <20180503183408.GA12152@kroah.com>
+From: Muni Sekhar <munisekharrms@gmail.com>
+Date: Fri, 4 May 2018 10:01:21 +0530
+Message-ID: <CAHhAz+iub6boqtK7UgFuKW=4t9DYPrnPX6nDu8R4T2J4=v=-DA@mail.gmail.com>
+Subject: Re: serial: start_tx & buffer handling
+To: Greg KH <greg@kroah.com>
+Cc: linux-serial <linux-serial@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        kernelnewbies <kernelnewbies@kernelnewbies.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w444VVkU020861
 
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+On Fri, May 4, 2018 at 12:04 AM, Greg KH <greg@kroah.com> wrote:
+> On Thu, May 03, 2018 at 08:08:48PM +0530, Muni Sekhar wrote:
+>> Hi All,
+>>
+>> I’m trying to understand how user mode buffer is written to low level
+>> serial hardware registers.
+>>
+>> For this I read the kernel code and I came to know that from user mode
+>> write() API lands into kernel’s tty_write() ("drivers/tty/tty_io.c")
+>> and then it calls a uart_write() ("drivers/tty/serial/serial_core.c").
+>>
+>> In uart_write(), the buffer is copied to circ_buf and then it calls
+>> low level serial hardware driver’s start_tx() (struct uart_ops
+>> .start_tx). But here I could not find how the buffer kept in circ_buf
+>> is copied to serial port’s TX_FIFO registers?
+>>
+>> Can someone take a moment to explain me on this?
+>
+> It all depends on which specific UART driver you are looking at, they
+> all do it a bit different depending on the hardware.
+>
+> Which one are you looking at?  Look at what the start_tx callback does
+> for that specific driver, that should give you a hint as to how data
+> starts flowing.  Usually an interrupt is enabled that is used to flush
+> the buffer out to the hardware.
+>
 
-Currently, we use the zone index of preferred_zone which represents
-the best matching zone for allocation, as classzone_idx. It has a problem
-on NUMA system with ZONE_MOVABLE.
+I’m looking for any existing sample code which does DMA transfers of
+UART transmitted data. I looked at the bcm63xx_uart.c, it looks it
+does not handle DMA transfers. Even copying the Tx buffer (from
+circ_buf) to UART_FIFO_REG happening in ISR.
 
-In NUMA system, it can be possible that each node has different populated
-zones. For example, node 0 could have DMA/DMA32/NORMAL/MOVABLE zone and
-node 1 could have only NORMAL zone. In this setup, allocation request
-initiated on node 0 and the one on node 1 would have different
-classzone_idx, 3 and 2, respectively, since their preferred_zones are
-different. If they are handled by only their own node, there is no problem.
-However, if they are somtimes handled by the remote node, the problem
-would happen.
 
-In the following setup, allocation initiated on node 1 will have some
-precedence than allocation initiated on node 0 when former allocation is
-processed on node 0 due to not enough memory on node 1. They will have
-different lowmem reserve due to their different classzone_idx thus
-an watermark bars are also different.
+> thanks,
+>
+> greg k-h
 
-root@ubuntu:/sys/devices/system/memory# cat /proc/zoneinfo
-Node 0, zone      DMA
-  per-node stats
-...
-  pages free     3965
-        min      5
-        low      8
-        high     11
-        spanned  4095
-        present  3998
-        managed  3977
-        protection: (0, 2961, 4928, 5440)
-...
-Node 0, zone    DMA32
-  pages free     757955
-        min      1129
-        low      1887
-        high     2645
-        spanned  1044480
-        present  782303
-        managed  758116
-        protection: (0, 0, 1967, 2479)
-...
-Node 0, zone   Normal
-  pages free     459806
-        min      750
-        low      1253
-        high     1756
-        spanned  524288
-        present  524288
-        managed  503620
-        protection: (0, 0, 0, 4096)
-...
-Node 0, zone  Movable
-  pages free     130759
-        min      195
-        low      326
-        high     457
-        spanned  1966079
-        present  131072
-        managed  131072
-        protection: (0, 0, 0, 0)
-...
-Node 1, zone      DMA
-  pages free     0
-        min      0
-        low      0
-        high     0
-        spanned  0
-        present  0
-        managed  0
-        protection: (0, 0, 1006, 1006)
-Node 1, zone    DMA32
-  pages free     0
-        min      0
-        low      0
-        high     0
-        spanned  0
-        present  0
-        managed  0
-        protection: (0, 0, 1006, 1006)
-Node 1, zone   Normal
-  per-node stats
-...
-  pages free     233277
-        min      383
-        low      640
-        high     897
-        spanned  262144
-        present  262144
-        managed  257744
-        protection: (0, 0, 0, 0)
-...
-Node 1, zone  Movable
-  pages free     0
-        min      0
-        low      0
-        high     0
-        spanned  262144
-        present  0
-        managed  0
-        protection: (0, 0, 0, 0)
 
-min watermark for NORMAL zone on node 0
-allocation initiated on node 0: 750 + 4096 = 4846
-allocation initiated on node 1: 750 + 0 = 750
 
-This watermark difference could cause too many numa_miss allocation
-in some situation and then performance could be downgraded.
-
-Recently, there was a regression report about this problem on CMA patches
-since CMA memory are placed in ZONE_MOVABLE by those patches. I checked
-that problem is disappeared with this fix that uses high_zoneidx
-for classzone_idx.
-
-http://lkml.kernel.org/r/20180102063528.GG30397@yexl-desktop
-
-Using high_zoneidx for classzone_idx is more consistent way than previous
-approach because system's memory layout doesn't affect anything to it.
-With this patch, both classzone_idx on above example will be 3 so will
-have the same min watermark.
-
-allocation initiated on node 0: 750 + 4096 = 4846
-allocation initiated on node 1: 750 + 4096 = 4846
-
-Reported-by: Ye Xiaolong <xiaolong.ye@intel.com>
-Tested-by: Ye Xiaolong <xiaolong.ye@intel.com>
-Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
----
- mm/internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index 228dd66..e1d7376 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -123,7 +123,7 @@ struct alloc_context {
- 	bool spread_dirty_pages;
- };
- 
--#define ac_classzone_idx(ac) zonelist_zone_idx(ac->preferred_zoneref)
-+#define ac_classzone_idx(ac) (ac->high_zoneidx)
- 
- /*
-  * Locate the struct page for both the matching buddy in our
 -- 
-2.7.4
+Thanks,
+Sekhar
