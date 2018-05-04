@@ -1,165 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751349AbeEDEU2 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 00:20:28 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:35918 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751229AbeEDEU1 (ORCPT
+        id S1751393AbeEDEUf (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 00:20:35 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:35924 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751394AbeEDEUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 00:20:27 -0400
-X-Google-Smtp-Source: AB8JxZpbVx4oDzLshTxdm9YRuxlDTQYWi+bo0CODgCzkWBd7utrD/xLgkaLS1vcMGumBHVJ5AL8jcg==
+        Fri, 4 May 2018 00:20:31 -0400
+X-Google-Smtp-Source: AB8JxZoXB/qfBIsG7BJIal3SXeh/iFhqWPBA5H65O8SkcDep+ZckI4AcBEUCKx2X5SWHIuRyFmSvGg==
 From: Connor McAdams <conmanx360@gmail.com>
 Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
         <jeremy.lefaure@lse.epita.fr>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/9] R3Di and SBZ quirk entires + alt firmware loading
-Date: Fri,  4 May 2018 00:19:44 -0400
-Message-Id: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH 3/9] Add PCI region2 iomap for SBZ
+Date: Fri,  4 May 2018 00:19:46 -0400
+Message-Id: <1525407594-25644-3-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
+References: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
 To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds PCI quirk ID's for the Sound Blaster Z and Recon3Di.
-Only the currently tested ID's have been added.
+This patch adds iomapping for the region2 section of memory on the SBZ.
+This memory region is used in later patches for setting inputs and
+outputs. If the mapping fails, the quirk is changed back to QUIRK_NONE
+to avoid attempts to write to uninitialized memory.
 
-This patch also adds the ability to load alternative firmwares for each
-card, the firmwares can be obtained from within the Windows driver.
-The Recon3Di uses "ctefx-r3di.bin" and the Sound Blaster Z uses
-"ctefx-sbz.bin". If the alternative firmware for the given quirk is not
-found, the original ctefx.bin will be used. This has been confirmed to
-work for both the R3Di and the SBZ.
-
-This patch also makes the character array *dirstr a const.
+It also adds a new exit sequence to unmap the iomem for the SBZ.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 61 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 55 insertions(+), 6 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 768ea86..8346100 100644
+index 02238fe..68e5122 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -72,12 +72,16 @@
- #define SCP_GET    1
- 
- #define EFX_FILE   "ctefx.bin"
-+#define SBZ_EFX_FILE   "ctefx-sbz.bin"
-+#define R3DI_EFX_FILE  "ctefx-r3di.bin"
- 
- #ifdef CONFIG_SND_HDA_CODEC_CA0132_DSP
- MODULE_FIRMWARE(EFX_FILE);
-+MODULE_FIRMWARE(SBZ_EFX_FILE);
-+MODULE_FIRMWARE(R3DI_EFX_FILE);
+@@ -29,6 +29,9 @@
+ #include <linux/firmware.h>
+ #include <linux/kernel.h>
+ #include <sound/core.h>
++#include <linux/types.h>
++#include <linux/io.h>
++#include <linux/pci.h>
+ #include "hda_codec.h"
+ #include "hda_local.h"
+ #include "hda_auto_parser.h"
+@@ -760,6 +763,11 @@ struct ca0132_spec {
+ #ifdef ENABLE_TUNING_CONTROLS
+ 	long cur_ctl_vals[TUNING_CTLS_COUNT];
  #endif
- 
--static char *dirstr[2] = { "Playback", "Capture" };
-+static const char *dirstr[2] = { "Playback", "Capture" };
- 
- enum {
- 	SPEAKER_OUT,
-@@ -734,6 +738,7 @@ struct ca0132_spec {
- 	unsigned int scp_resp_header;
- 	unsigned int scp_resp_data[4];
- 	unsigned int scp_resp_count;
-+	bool alt_firmware_present;
- 
- 	/* mixer and effects related */
- 	unsigned char dmic_ctl;
-@@ -762,6 +767,8 @@ struct ca0132_spec {
- enum {
- 	QUIRK_NONE,
- 	QUIRK_ALIENWARE,
-+	QUIRK_SBZ,
-+	QUIRK_R3DI,
- };
- 
- static const struct hda_pintbl alienware_pincfgs[] = {
-@@ -782,6 +789,10 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
- 	SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
- 	SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
- 	SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
-+	SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
-+	SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
-+	SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
-+	SND_PCI_QUIRK(0x1458, 0xA036, "Recon3Di", QUIRK_R3DI),
- 	{}
- };
- 
-@@ -3207,7 +3218,7 @@ static int ca0132_select_out(struct hda_codec *codec)
- 				    pin_ctl & ~PIN_HP);
- 		/* enable speaker node */
- 		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
--					     AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+				AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
- 		snd_hda_set_pin_ctl(codec, spec->out_pins[0],
- 				    pin_ctl | PIN_OUT);
- 	} else {
-@@ -4370,11 +4381,49 @@ static void ca0132_set_dsp_msr(struct hda_codec *codec, bool is96k)
- static bool ca0132_download_dsp_images(struct hda_codec *codec)
- {
- 	bool dsp_loaded = false;
-+	struct ca0132_spec *spec = codec->spec;
- 	const struct dsp_image_seg *dsp_os_image;
- 	const struct firmware *fw_entry;
--
--	if (request_firmware(&fw_entry, EFX_FILE, codec->card->dev) != 0)
--		return false;
 +	/*
-+	 * Alternate firmwares for different variants. The Recon3Di apparently
-+	 * can use the default firmware, but I'll leave the option in case
-+	 * it needs it again.
++	 * Sound Blaster Z PCI region 2 iomem, used for input and output
++	 * switching, and other unknown commands.
 +	 */
++	void __iomem *mem_base;
+ };
+ 
+ /*
+@@ -4693,8 +4701,17 @@ static void ca0132_free(struct hda_codec *codec)
+ 
+ 	cancel_delayed_work_sync(&spec->unsol_hp_work);
+ 	snd_hda_power_up(codec);
+-	snd_hda_sequence_write(codec, spec->base_exit_verbs);
+-	ca0132_exit_chip(codec);
 +	switch (spec->quirk) {
 +	case QUIRK_SBZ:
-+		if (request_firmware(&fw_entry, SBZ_EFX_FILE,
-+					codec->card->dev) != 0) {
-+			codec_dbg(codec, "SBZ alt firmware not detected. ");
-+			spec->alt_firmware_present = false;
-+		} else {
-+			codec_dbg(codec, "Sound Blaster Z firmware selected.");
-+			spec->alt_firmware_present = true;
-+		}
-+		break;
-+	case QUIRK_R3DI:
-+		if (request_firmware(&fw_entry, R3DI_EFX_FILE,
-+					codec->card->dev) != 0) {
-+			codec_dbg(codec, "Recon3Di alt firmware not detected.");
-+			spec->alt_firmware_present = false;
-+		} else {
-+			codec_dbg(codec, "Recon3Di firmware selected.");
-+			spec->alt_firmware_present = true;
-+		}
++		iounmap(spec->mem_base);
++		snd_hda_sequence_write(codec, spec->base_exit_verbs);
++		ca0132_exit_chip(codec);
 +		break;
 +	default:
-+		spec->alt_firmware_present = false;
++		snd_hda_sequence_write(codec, spec->base_exit_verbs);
++		ca0132_exit_chip(codec);
 +		break;
 +	}
-+	/*
-+	 * Use default ctefx.bin if no alt firmware is detected, or if none
-+	 * exists for your particular codec.
-+	 */
-+	if (!spec->alt_firmware_present) {
-+		codec_dbg(codec, "Default firmware selected.");
-+		if (request_firmware(&fw_entry, EFX_FILE,
-+					codec->card->dev) != 0)
-+			return false;
+ 	snd_hda_power_down(codec);
+ 	kfree(spec->spec_init_verbs);
+ 	kfree(codec->spec);
+@@ -4911,6 +4928,15 @@ static int patch_ca0132(struct hda_codec *codec)
+ 	else
+ 		spec->quirk = QUIRK_NONE;
+ 
++	/* Setup BAR Region 2 for Sound Blaster Z */
++	if (spec->quirk == QUIRK_SBZ) {
++		spec->mem_base = pci_iomap(codec->bus->pci, 2, 0xC20);
++		if (spec->mem_base == NULL) {
++			codec_dbg(codec, "pci_iomap failed!");
++			codec_dbg(codec, "perhaps this is not an SBZ?");
++			spec->quirk = QUIRK_NONE;
++		}
 +	}
- 
- 	dsp_os_image = (struct dsp_image_seg *)(fw_entry->data);
- 	if (dspload_image(codec, dsp_os_image, 0, 0, true, 0)) {
-@@ -4476,7 +4525,7 @@ static struct hda_verb ca0132_base_exit_verbs[] = {
- 	{}
- };
- 
--/* Other verbs tables.  Sends after DSP download. */
-+/* Other verbs tables. Sends after DSP download. */
- static struct hda_verb ca0132_init_verbs0[] = {
- 	/* chip init verbs */
- 	{0x15, 0x70D, 0xF0},
+ 	spec->dsp_state = DSP_DOWNLOAD_INIT;
+ 	spec->num_mixers = 1;
+ 	spec->mixers[0] = ca0132_mixer;
 -- 
 2.7.4
