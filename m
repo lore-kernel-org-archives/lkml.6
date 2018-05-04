@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752010AbeEDTHc (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 15:07:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43031 "EHLO mail.bootlin.com"
+        id S1751941AbeEDTHH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 15:07:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43011 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751886AbeEDTHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 15:07:08 -0400
+        id S1751886AbeEDTHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 15:07:05 -0400
 From: =?UTF-8?q?Myl=C3=A8ne=20Josserand?= <mylene.josserand@bootlin.com>
 To: linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
         marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
@@ -15,9 +15,9 @@ Cc: f.fainelli@gmail.com, opendmb@gmail.com,
         clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
         thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, mylene.josserand@bootlin.com
-Subject: [PATCH v9 11/12] ARM: dts: sun8i: Add enable-method for SMP support for the A83T SoC
-Date: Fri,  4 May 2018 21:05:44 +0200
-Message-Id: <20180504190545.5114-12-mylene.josserand@bootlin.com>
+Subject: [PATCH v9 09/12] ARM: sun9i: smp: Add is_a83t field
+Date: Fri,  4 May 2018 21:05:42 +0200
+Message-Id: <20180504190545.5114-10-mylene.josserand@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180504190545.5114-1-mylene.josserand@bootlin.com>
 References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
@@ -28,83 +28,46 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the use of enable-method property for SMP support which allows
-to handle the SMP support for this specific SoC.
+To prepare the support of sun8i-a83t, add a field in the smp_data
+structure to know if we are on sun9i-a80 or sun8i-a83t.
 
-This commit adds enable-method properties to all CPU nodes.
+Add also a global variable to retrieve which architecture we are
+having.
 
 Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/mach-sunxi/mc_smp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-a83t.dtsi
-index 0669b8dc499d..2be23d600957 100644
---- a/arch/arm/boot/dts/sun8i-a83t.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -67,6 +67,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0>;
- 		};
+diff --git a/arch/arm/mach-sunxi/mc_smp.c b/arch/arm/mach-sunxi/mc_smp.c
+index 03f021d0c73e..fc10e3a3268f 100644
+--- a/arch/arm/mach-sunxi/mc_smp.c
++++ b/arch/arm/mach-sunxi/mc_smp.c
+@@ -74,6 +74,7 @@ static void __iomem *sram_b_smp_base;
  
-@@ -75,6 +76,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <1>;
- 		};
+ extern void sunxi_mc_smp_secondary_startup(void);
+ extern void sunxi_mc_smp_resume(void);
++static bool is_a83t;
  
-@@ -83,6 +85,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <2>;
- 		};
+ static bool sunxi_core_is_cortex_a15(unsigned int core, unsigned int cluster)
+ {
+@@ -624,6 +625,7 @@ struct sunxi_mc_smp_nodes {
+ struct sunxi_mc_smp_data {
+ 	const char *enable_method;
+ 	int (*get_smp_nodes)(struct sunxi_mc_smp_nodes *nodes);
++	bool is_a83t;
+ };
  
-@@ -91,6 +94,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			cci-control-port = <&cci_control0>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <3>;
- 		};
+ static void __init sunxi_mc_smp_put_nodes(struct sunxi_mc_smp_nodes *nodes)
+@@ -697,6 +699,8 @@ static int __init sunxi_mc_smp_init(void)
+ 			break;
+ 	}
  
-@@ -101,6 +105,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x100>;
- 		};
- 
-@@ -109,6 +114,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x101>;
- 		};
- 
-@@ -117,6 +123,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x102>;
- 		};
- 
-@@ -125,6 +132,7 @@
- 			device_type = "cpu";
- 			operating-points-v2 = <&cpu1_opp_table>;
- 			cci-control-port = <&cci_control1>;
-+			enable-method = "allwinner,sun8i-a83t-smp";
- 			reg = <0x103>;
- 		};
- 	};
++	is_a83t = sunxi_mc_smp_data[i].is_a83t;
++
+ 	of_node_put(node);
+ 	if (ret)
+ 		return -ENODEV;
 -- 
 2.11.0
