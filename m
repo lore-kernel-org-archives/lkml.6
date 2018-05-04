@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3611583-1525407384-2-1453942860213434193
+X-Cyrus-Session-Id: sloti22d1t05-3611583-1525407355-2-13486414659358148410
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,26 +12,26 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525407383; b=cYwI7+MmHfj4VU9Eqd2SF2pqGbg86K4s41AtdFLpIy1hhQA8Eq
-    495JxUNSHMoP6GVEZ1ptINCDAekzvucwoh/AP1ndTitFhpoJtv6gt10ojTBmt0aX
-    nOlyEkQirqrXHWtJbEveUFs712FRhvkfAspOzrC8NOR8MwH2LoOHa4wdpmJnIBG5
-    nWiwR02PkqXwI/JSmoAh/hkOzyQJcqsaBG2UdGBm8uL+v9s/ZL+GxBGKt+r9uM2+
-    4bfA30+SQEOMXCtO2DrTKNxstMQDF7gHgTVrgnvmw078Xsb3h4zRJhTg/Iyx07gR
-    fI3yTxNTV6Idsl+IkT6Raz8K1+/Hosy43llA==
+    1525407355; b=H6IrkTcKDSUxp4L5/A/78iLoYrPhy5eo5+XaWbceAtKU5D16sX
+    zQgo0rE6NsYsrLQAQQGEHfbxeDtzLfTOUv6srJ+ga40YPCYpi9JdPc+YWhy3vABK
+    UCKwV5YPiLki5zWSq3BI2Gxb+IrZyWJrMIAcS4TamS6pOYZW202BOp/8ANI35yKT
+    8hrEnyRsXKfBJNxFIRfqpL0IrYJz6TJOUxePDWjnF2saCIKdx11gn1kP+95vAao9
+    Dpiw8riFFGBOUTc/MPBdQmHqrHRb0RQmhLhAttlBQ1jLCdxg8WzAb1wy2a5FcR5n
+    0Y9IV1yJ4iV6i6o/Jxng2e7OWpNsRtzcCZaA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525407383;
-    bh=StawBZ4ozHAVRM1OdFwbZGhznIeWVZyLG961+Nck2J0=; b=NT5yRjVVg3oE
-    DVXn0ZydSSCZKcNXDbrUAA+YIyh8sVYeLqtxWhX/dPUV/sb9CFNPbTbH/adayR6W
-    WEC9p9OciNbDJSg3O22GG53o+HoJOODgA5z0cLGl6oBSmML5XousX/Sz8Oje08s9
-    y8SET3s5+uI4yZvaUuHhoOFX9EzShsWLMgrqHYCTvXJKji17sBGhGPLZ9GDIoD8n
-    jKYRmKV8aqecSnjYJeeXaRPWGwWoXCRsRp6qjinNKaZAQc25Quv61wLDqrzU0F5L
-    PbJKGxMl3U1sEfUF7RWTdIsg4RSEN5IhOPsgz7sdj/Cr683J1S0XzSFB5Sz/sIWO
-    rhnVayQ7Sw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525407355;
+    bh=4bBbXp0pCCqzZyqFoVCpIHaH6r3DL26JWrSraUTRQOg=; b=jcmbVFCBBlBD
+    yLXiA5oBdXwaB4Dc/+MYDBJCTwlrsgnoNMMwrP6yKap94UK3RYJxMqtcM6NxrnHK
+    9/BShUq+IuVB+Y4czRBnBJpZitl18oJBOrkqNRWzzczYZuV0SYlQX65aipPc1fsx
+    CQ093LGkHX7Xihj86TdVn+G+vCMinVzL5DmhxM8Ewu5FdUqpRBdK1iz79TM1m+Qi
+    x7Bujz+yoSJUUcjjSSCGFejuRMlE1GS+ohXy8P2yY66a/9lNforGxp2mQRDKKKGM
+    OOsRI2AKaIJJ3wcT/+R6BEGYhKl/czj6GU0PLgFMnILwQHLy6IspCh9Q61qL6nzO
+    aDDm+2zHDw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=dhg1Ja08 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=uBdbMCWf x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -44,10 +44,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=dhg1Ja08 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=uBdbMCWf x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=pass (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -61,21 +61,21 @@ Authentication-Results: mx6.messagingengine.com;
       header.domain=kernel.org header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDh/OoxABcjBU3KFptRyHL2mHVgihD3qx8OcGNWG89SArdJBJJQzB2cjr++O1UrHqxf2HNNtZT+QeW8ekWSr71lZN49bMtWhJFVcXeCciPySlAKTJ+iA
-    LEatFN2LHuJqtB2NvIEVNKC+RpkunOz5jWB0bb9QTrSiMXa5nqVxeSz7g1NTVP+7nzAKPieoCsNwuLCFtAvWOl29DVlSjD6tRyRySneSH3MHI64/MrDPYV3C
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfHG2Z9X1gtFvSqpg0hX8jN6VAdF4VKoCz0cvuKexd9YfaL9i/LYtz+wFmTIdo652564VQrBIgAe26aptBW3G8jYCfXq3QgofwD2TmY8tG1zkz1y9BGJf
+    3tAgE05vbeVQJ78yuARxb68Zf1F/CcxBlgDgZFLh4V+iAshZOPvpRr2Sfu8EYsaEcE8qmxM6omQwVFuK4/wI4eVM+LZMCzdf77jRCE7YOedSKPfp8Xjvk81I
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=1xjQt4pIUNXleNVYppwA:9 a=QEXdDO2ut3YA:10
+    a=VwQbUJbxAAAA:8 a=ZULaGYWSKZfac68WfhMA:9 a=QEXdDO2ut3YA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750709AbeEDEQW (ORCPT <rfc822;greg@kroah.com>);
-        Fri, 4 May 2018 00:16:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42678 "EHLO mail.kernel.org"
+        id S1751236AbeEDEPx (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 00:15:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbeEDEQW (ORCPT <rfc822;stable@vger.kernel.org>);
-        Fri, 4 May 2018 00:16:22 -0400
+        id S1751002AbeEDEPx (ORCPT <rfc822;stable@vger.kernel.org>);
+        Fri, 4 May 2018 00:15:53 -0400
 From: Masami Hiramatsu <mhiramat@kernel.org>
 To: Russell King <linux@armlinux.org.uk>
 Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
@@ -83,9 +83,9 @@ Cc: Wang Nan <wangnan0@huawei.com>, Will Deacon <will.deacon@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         mhiramat@kernel.org, David Long <dave.long@linaro.org>,
         stable@vger.kernel.org
-Subject: [BUGFIX PATCH v3 3/4] arm: kprobes: Prohibit kprobes on do_undefinstr
-Date: Fri,  4 May 2018 13:15:58 +0900
-Message-Id: <152540735813.29650.10807161581632067171.stgit@devbox>
+Subject: [BUGFIX PATCH v3 2/4] arm: kprobes: Prohibit probing on optimized_callback
+Date: Fri,  4 May 2018 13:15:29 +0900
+Message-Id: <152540732952.29650.11645105922811248579.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <152540727123.29650.13679359124038587629.stgit@devbox>
 References: <152540727123.29650.13679359124038587629.stgit@devbox>
@@ -99,45 +99,27 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Prohibit kprobes on do_undefinstr because kprobes on
-arm is implemented by undefined instruction. This means
-if we probe do_undefinstr(), it can cause infinit
-recursive exception.
+Prohibit probing on optimized_callback() because
+it is called from kprobes itself. If we put a kprobes
+on it, that will cause a recursive call loop.
+Mark it NOKPROBE_SYMBOL.
 
-Fixes: 24ba613c9d6c ("ARM kprobes: core code")
+Fixes: 0dc016dbd820 ("ARM: kprobes: enable OPTPROBES for ARM 32")
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: stable@vger.kernel.org
 ---
- arch/arm/kernel/traps.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm/probes/kprobes/opt-arm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
-index 5e3633c24e63..2fe87109ae46 100644
---- a/arch/arm/kernel/traps.c
-+++ b/arch/arm/kernel/traps.c
-@@ -19,6 +19,7 @@
- #include <linux/uaccess.h>
- #include <linux/hardirq.h>
- #include <linux/kdebug.h>
-+#include <linux/kprobes.h>
- #include <linux/module.h>
- #include <linux/kexec.h>
- #include <linux/bug.h>
-@@ -417,7 +418,8 @@ void unregister_undef_hook(struct undef_hook *hook)
- 	raw_spin_unlock_irqrestore(&undef_lock, flags);
- }
+diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
+index ddc5a82eb10d..b2aa9b32bff2 100644
+--- a/arch/arm/probes/kprobes/opt-arm.c
++++ b/arch/arm/probes/kprobes/opt-arm.c
+@@ -192,6 +192,7 @@ optimized_callback(struct optimized_kprobe *op, struct pt_regs *regs)
  
--static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
-+static nokprobe_inline
-+int call_undef_hook(struct pt_regs *regs, unsigned int instr)
+ 	local_irq_restore(flags);
+ }
++NOKPROBE_SYMBOL(optimized_callback)
+ 
+ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *orig)
  {
- 	struct undef_hook *hook;
- 	unsigned long flags;
-@@ -490,6 +492,7 @@ asmlinkage void do_undefinstr(struct pt_regs *regs)
- 
- 	arm_notify_die("Oops - undefined instruction", regs, &info, 0, 6);
- }
-+NOKPROBE_SYMBOL(do_undefinstr)
- 
- /*
-  * Handle FIQ similarly to NMI on x86 systems.
