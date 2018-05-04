@@ -1,83 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751440AbeEDHeN (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:34:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:56012 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751239AbeEDHeL (ORCPT
+        id S1751519AbeEDHhE (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:37:04 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:34953 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751314AbeEDHhC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:34:11 -0400
-X-Google-Smtp-Source: AB8JxZrmCyAdY9pnj6qLfgu3VyiEx843hQz1shPv6i+sfrAUjsOCW5y3h9Wr2OQlaPPN14HIx5Sumg==
-Content-Type: text/plain;
-        charset=us-ascii;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH v2] Input: i8042 - Fix KBD port cannot wake up system from
- suspend-to-idle
-From: Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <20180419084951.25130-1-kai.heng.feng@canonical.com>
-Date: Fri, 4 May 2018 15:34:04 +0800
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <58201402-7316-4F7A-8D28-DAD694017536@canonical.com>
-References: <20180419084951.25130-1-kai.heng.feng@canonical.com>
-To: dmitry.torokhov@gmail.com
-X-Mailer: Apple Mail (2.3445.6.18)
+        Fri, 4 May 2018 03:37:02 -0400
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisNN9EVM="
+X-RZG-CLASS-ID: mo00
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v5 4/7] gpio: pca953x: define masks for addressing common and extended registers
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <FA9DBCAF-2EA5-4317-BBA3-E2D6A9EAC5D4@goldelico.com>
+Date: Fri, 4 May 2018 09:33:57 +0200
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>, kernel@pyra-handheld.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Kumar Gala <galak@codeaurora.org>,
+        Discussions about the Letux Kernel
+        <letux-kernel@openphoenux.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Message-Id: <71415CEC-6763-4658-A0C4-7AD4E3C1746D@goldelico.com>
+References: <cover.1524933096.git.hns@goldelico.com> <3df974ea890116d759844e56362dc0786388869a.1524933096.git.hns@goldelico.com> <CAHp75Ve37aARbNZ8qu5W9C-fFG5Kf9GRE_VR4aRLFpX61zviyg@mail.gmail.com> <FA9DBCAF-2EA5-4317-BBA3-E2D6A9EAC5D4@goldelico.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w447bCqU008667
 
-Hi Dmitry,
+Hi Linus,
 
-> On Apr 19, 2018, at 4:49 PM, Kai-Heng Feng <kai.heng.feng@canonical.com>  
-> wrote:
->
-> From: Kai Heng Feng <kai.heng.feng@canonical.com>
->
-> Commit f13b2065de81 ("Input: i8042 - allow KBD and AUX ports to wake up
-> from suspend-to-idle") make system in s2idle can be woken up by i8042
-> keyboard, but it's disabled by default.
->
-> In commit 3e6e15a862a0 ("Input: enable remote wakeup for PNP i8042
-> keyboard ports") states that "Keyboard ports are always supposed to be
-> wakeup-enabled", it should be enabled by default. Keyboard wakeup from
-> s2idles is also the default behavior for other x86 OSes.
->
-> In addition to PNP port, enable keyboard wakeup from serio port by
-> default for x86 systems.
+> Am 02.05.2018 um 14:36 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
+> 
+> 
+>> Am 02.05.2018 um 14:29 schrieb Andy Shevchenko <andy.shevchenko@gmail.com>:
+>> 
+>> On Sat, Apr 28, 2018 at 7:31 PM, H. Nikolaus Schaller <hns@goldelico.com> wrote:
+>>> These mask bits are to be used to map the extended register
+>>> addreseses (which are defined for an unsupported 8-bit pcal chip)
+>>> to 16 and 24 bit chips (pcal6524).
+>>> 
 
-Is there any improvement that I can make to let this patch gets merged?
+>>> 
+>>> +#define PCAL_GPIO_MASK         GENMASK(4, 0)
+>>> +#define PCAL_PINCTRL_MASK      (~PCAL_GPIO_MASK)
+>> 
+>> I'm not sure which would be better here
+>> 
+>> 1) to follow existing style
+>> 0x1F
+>> 0xE0
+>> 
+>> 2) to use GENMASK() in both definitions
+>> 
+>> 3) as it in this patch.
+>> 
+>> 
+>> Whatever Linus prefers.
+> 
+> Ok, waiting for his suggestion.
 
-Kai-Heng
+Any advice if we should change or keep this?
 
->
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
-> v2:
-> Keep the PNP wakeup part.
-> Only enable for x86 systems.
-> Update commit message.
->
->  drivers/input/serio/i8042.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/input/serio/i8042.c b/drivers/input/serio/i8042.c
-> index 824f4c1c1f31..0b6878e8037b 100644
-> --- a/drivers/input/serio/i8042.c
-> +++ b/drivers/input/serio/i8042.c
-> @@ -1400,6 +1400,12 @@ static void __init i8042_register_ports(void)
->  				i8042_ports[i].irq);
->  			serio_register_port(serio);
->  			device_set_wakeup_capable(&serio->dev, true);
-> +
-> +#ifdef CONFIG_X86
-> +			/* Keyboard ports are always supposed to be wakeup-enabled */
-> +			if (i == I8042_KBD_PORT_NO)
-> +				device_wakeup_enable(&serio->dev);
-> +#endif
->  		}
->  	}
->  }
-> -- 
-> 2.17.0
+(Please do not merge before I submit a v6 because there are
+some more suggested-by and reviewed-by).
+
+BR and thanks,
+Nikolaus
