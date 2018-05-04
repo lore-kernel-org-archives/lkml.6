@@ -1,118 +1,135 @@
-Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525414993; cv=none;
-        d=google.com; s=arc-20160816;
-        b=AHe4Fh4ZzccZBJTWUmAYvGzuIvS76SB344SA0cxa7U+OJMATy/OwY6xXYQFvjYv8+R
-         ONGw+NFs1htnKJDs2Z3IvwrKmwRDnkPYG7+l443BZdARrTza34qrwtt47pSmB4KzR+0J
-         2ZN+Er2S1wFajzwSlRR0rscMjur4d0vnfLmmo+OPH2SfEi7dLBCXTvRXXDhaS1HLRcDW
-         TJHqw7ll1nS9nJaS38wFLXqLlYaSHVZniMrD5rZX9aCSvjOQCnKGeSjP1ep78Pv18dMT
-         fNhvjyffQY27AeIFscMEmEaV9vL/eZjOyoo6tSUU0b/xaaBbhe6zDKqgvDLRFX9vsCng
-         l1WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=tpDAjOk4CfkAwXnsVkyXW8Y7XibRYdiqMPiH5aZEV5g=;
-        b=KTZ7P9Rtr/y/8CCY+qtYZLH/lDLtrNczcSM4vwstrVcwdjmC0+qMLttcJYjhjfdHOg
-         R27K8YI5OiOYsigyYraN5uPxff6DNvUFtJWa6c+tAPO0cPZH+Zr4wBZkDv+MetPI5rey
-         UF2v/2Ck9VQdwTe3brWOwQB0Eg3H2D9XpofIQVJPAsKHMNuhWmuVDGvutwgqQg497UUk
-         wUfSow0HdkJK8iOL9Ymx9bZglpJSzqPBxo6rd6kld/KnWcyqnpnSOHPAx2tsqjtiYtOh
-         NYDEZJDb+l4iOdxW8NqiYekea1qIju9NcjyCebuDITIVTEaSy5r8K9anjRo8IHdFHHfs
-         wScg==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=XScgim0Y;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=XScgim0Y;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZqXJ8L3zu7BbNR7vYwbEG91NzZk7ME8z3daH/yZHi1we1+JMujzGFN2lZ8gmQ+oGKjY3+V36nsJwFkfHseSiKM=
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-3667791-1525410055-2-6650221610712775650
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='name', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525410055; b=QzlZsWyoXmHn5DK92aTAMYzucGEVmR20TzbhCfTV/o0BgsVQbG
+    ShIY89kgsldo3eVNPyNF7RhNllxZdQkbf5IzKCXdQ0usdgfprRkyj6zxd5rxBp8l
+    TWIFHD98EbL48dXZ9A4sYSl+alxmwdLqcvhprgisrT3qx9Ale+a2iQ4yr71TxuLR
+    SoSz+yooZI26mTkSbN2aNgI9rY5q87F6hhdkOKJnsofAg3DgTGArWgIa65ZEeZLs
+    jkuMtxy/OflHuZI+ZpovMxLqUcqXezlFLootrO4+sdN/OnMJzU15pJ8i8dboxNOW
+    eI07743YcsuisYe0/WxolPDZ2FIqoJ/zL9VQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:date:subject:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525410055; bh=mPpkN
+    b/wEAdflRJdKd9Mn4JC/pYIUdeHemTzpVm5maQ=; b=XAWxDOIbmxXvQAIDziu4h
+    kBJVqrj951vDnNlQ4CvqKK1bkPLKYPWAxjOCA0KuKzWfnyz9miBPmVMFDnlO9RV+
+    AYXr8mabMD2TVhtN7qM3n9SuvHcs94emKAwzILgLRtODL/oZwXvlZq5TkXR6uV22
+    SedsPJTU09Ljr6Jr8OAjrWNzZQtOSKB+UkGcOZPO2rNC52/CvmtvxDnEaJ4nUgKG
+    s9VcLbdu4R8z6z861JJIHiZVABSyayM3xXBftD9/+lXYDSJ1HIupVp1FjvD2gCfJ
+    wt6+K3GcmWFQUSd7nFcfVEMe2+WCx9C5NiKXVbitdyiQwpWczxLKD8yEp8/UWyjt
+    A==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=brown.name header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx2.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=hemlock.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=brown.name header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEowGw7+Bo2F+r4oi8n1BXbeVX4vLSemj7xh6UUSXdrWgMPDp3fmZ2QwwUF/wWbOzORA6RYGyMbRh8hGV+Tt7PaN3AQtD8YqCYmwjIq3RlsAo0bC+9HV
+    4Ou/t5oY78hOOEUQhvGpBhSuQmF5GOgOk0RWZd9vXI1XT9QVxAhGt5cQUj/r2Qjyi2TI4zfyWvDlUJryuiurKWVl7LHkFZApu6B4Korfzt+H0MqDtdlFH6XR
+    YXoe7vo7QT7kuPugHpktaQ==
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
+    a=VUJBJC2UJ8kA:10 a=qEKT6kP3PEYA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
+    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=AZKa23BuJWmuy-52xWQA:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
+From: NeilBrown <neil@brown.name>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date: Fri, 04 May 2018 14:58:35 +1000
+Subject: [PATCH 0/8] staging: various mt7621 fixes
+Message-ID: <152540982998.12190.15220622955317261586.stgit@noble>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3TJ-5+22_CSYjdtL3pXEVHC7t_KzaOX6PG4X_1R1bMxQ@mail.gmail.com>
-References: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525262725.git.baolin.wang@linaro.org>
- <e8ddeeea84626e43dcac4f0731992cbad932ce7a.1525262725.git.baolin.wang@linaro.org>
- <CAK8P3a3TJ-5+22_CSYjdtL3pXEVHC7t_KzaOX6PG4X_1R1bMxQ@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Fri, 4 May 2018 14:23:13 +0800
-Message-ID: <CAMz4ku+WbtBGGcmsYmMexxcBTJONHF3J-T8Sxo7wgHoZZCVt1w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] MIPS: Convert update_persistent_clock() to update_persistent_clock64()
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
-	James Hogan <jhogan@kernel.org>, chenhc@lemote.com,
-	Kate Stewart <kstewart@linuxfoundation.org>, gregkh <gregkh@linuxfoundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>,
-	Mark Brown <broonie@kernel.org>, Paul Burton <paul.burton@mips.com>,
-	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599409843687594194?=
-X-GMAIL-MSGID: =?utf-8?q?1599513552285182792?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 4 May 2018 at 06:31, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wed, May 2, 2018 at 10:53 PM, Baolin Wang <baolin.wang@linaro.org> wrote:
->> diff --git a/arch/mips/include/asm/time.h b/arch/mips/include/asm/time.h
->> index 17d4cd2..c4e2a1a 100644
->> --- a/arch/mips/include/asm/time.h
->> +++ b/arch/mips/include/asm/time.h
->> @@ -27,8 +27,8 @@
->>   *     rtc_mips_set_mmss - similar to rtc_set_time, but only min and sec need
->>   *                     to be set.  Used by RTC sync-up.
->>   */
->> -extern int rtc_mips_set_time(unsigned long);
->> -extern int rtc_mips_set_mmss(unsigned long);
->> +extern int rtc_mips_set_time(time64_t);
->> +extern int rtc_mips_set_mmss(time64_t);
->>
->
-> I think these should just get removed, and each implementation replaced
-> with a direct update_persistent_clock64() function.
+Highlights here are a bugfix for the ethernet driver,
+and proper handling of irq assignments in the PCI driver.
 
-I thought this was one minor modification that will reduce the risk of
-introducing other issues, but as you suggested we can do some complete
-cleanup by removing set_mmss/set_time. OK, I will do that.
+We also make the full 32M of the gnubee flash available and start
+cleaning up the mt7621-pci code.
 
->
->> -int update_persistent_clock(struct timespec now)
->> +int update_persistent_clock64(struct timespec64 now)
->>  {
->>         return rtc_mips_set_mmss(now.tv_sec);
->>  }
->
-> And this one also removed
+---
 
-Sure.
+NeilBrown (8):
+      staging: mt7621-eth: Lock is never unlocked.
+      staging: mt7621-spi: remove unused lock.
+      staging: mt7621-pci: improve interrupt mapping
+      staging: mt7621-pci: white-space cleanups.
+      staging: mt7621-pci: remove conditional compilation.
+      staging: mt7621-pci: remove unnecessary resource details.
+      staging: mt7621-pci: remove some dead code.
+      staging: mt7621-dts: update nor-flash info for gnubee1
 
->
->> @@ -69,7 +69,7 @@ int proc_dolasatrtc(struct ctl_table *table, int write,
->>                 if (rtctmp < 0)
->>                         rtctmp = 0;
->>         }
->> -       r = proc_dointvec(table, write, buffer, lenp, ppos);
->> +       r = proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
->>         if (r)
->>                 return r;
->>
->> @@ -224,7 +224,7 @@ int proc_lasat_prid(struct ctl_table *table, int write,
->>         {
->>                 .procname       = "rtc",
->>                 .data           = &rtctmp,
->> -               .maxlen         = sizeof(int),
->> +               .maxlen         = sizeof(time64_t),
->>                 .mode           = 0644,
->>                 .proc_handler   = proc_dolasatrtc,
->>         },
->
-> Something seems wrong here: time64_t is not the same as 'unsigned long',
-> and the 'rtctmp' variable is still 'unsigned int'. Not sure what the right fix
-> would be (we don't seem to have a sysctl helper for s64), but the change
-> here makes it worse.
 
-After checking again, I agree with you. So I will keep the original code here.
+ drivers/staging/mt7621-dts/gbpc1.dts    |    3 
+ drivers/staging/mt7621-dts/mt7621.dtsi  |    9 -
+ drivers/staging/mt7621-eth/mdio.c       |    1 
+ drivers/staging/mt7621-pci/pci-mt7621.c |  482 +++++++++++--------------------
+ drivers/staging/mt7621-spi/spi-mt7621.c |    3 
+ 5 files changed, 175 insertions(+), 323 deletions(-)
 
--- 
-Baolin.wang
-Best Regards
+--
+Signature
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
