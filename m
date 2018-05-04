@@ -1,24 +1,24 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751800AbeEDRbP (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:31:15 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:36268 "EHLO
+        id S1751840AbeEDRb2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:31:28 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:36276 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751709AbeEDRbL (ORCPT
+        with ESMTP id S1751803AbeEDRb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:31:11 -0400
-Date: Fri, 04 May 2018 13:31:08 -0400 (EDT)
-Message-Id: <20180504.133108.824679852510791586.davem@davemloft.net>
-To: dh.herrmann@gmail.com
-Cc: linux-kernel@vger.kernel.org, jmorris@namei.org, paul@paul-moore.com,
-        teg@jklm.no, sds@tycho.nsa.gov, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org, eparis@parisplace.org,
-        serge@hallyn.com, casey@schaufler-ca.com, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] net: hook socketpair() into LSM
+        Fri, 4 May 2018 13:31:26 -0400
+Date: Fri, 04 May 2018 13:31:24 -0400 (EDT)
+Message-Id: <20180504.133124.1418203002698359321.davem@davemloft.net>
+To: antoine.tenart@bootlin.com
+Cc: linux@armlinux.org.uk, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net] net: phy: sfp: fix the BR,min computation
 From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180504142822.15233-3-dh.herrmann@gmail.com>
-References: <20180504142822.15233-1-dh.herrmann@gmail.com>
-        <20180504142822.15233-3-dh.herrmann@gmail.com>
+In-Reply-To: <20180504151054.17525-1-antoine.tenart@bootlin.com>
+References: <20180504151054.17525-1-antoine.tenart@bootlin.com>
 X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
@@ -27,15 +27,19 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Herrmann <dh.herrmann@gmail.com>
-Date: Fri,  4 May 2018 16:28:20 +0200
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Date: Fri,  4 May 2018 17:10:54 +0200
 
-> Use the newly created LSM-hook for socketpair(). The default hook
-> return-value is 0, so behavior stays the same unless LSMs start using
-> this hook.
+> In an SFP EEPROM values can be read to get information about a given SFP
+> module. One of those is the bitrate, which can be determined using a
+> nominal bitrate in addition with min and max values (in %). The SFP code
+> currently compute both BR,min and BR,max values thanks to this nominal
+> and min,max values.
 > 
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> Signed-off-by: Tom Gundersen <teg@jklm.no>
-> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+> This patch fixes the BR,min computation as the min value should be
+> subtracted to the nominal one, not added.
+> 
+> Fixes: 9962acf7fb8c ("sfp: add support for 1000Base-PX and 1000Base-BX10")
+> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
 
-Acked-by: David S. Miller <davem@davemloft.net>
+Applied and queued up for -stable, thanks.
