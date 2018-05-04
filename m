@@ -1,109 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeEDL4P convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 07:56:15 -0400
-Received: from lhrrgout.huawei.com ([194.213.3.17]:37362 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751060AbeEDL4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 07:56:13 -0400
-From: Shiju Jose <shiju.jose@huawei.com>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        "bp@alien8.de" <bp@alien8.de>
-CC: "alex_gagniuc@dellteam.com" <alex_gagniuc@dellteam.com>,
-        "austin_bolen@dell.com" <austin_bolen@dell.com>,
-        "shyam_iyer@dell.com" <shyam_iyer@dell.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <lenb@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>,
-        "Jonathan (Zhixiong) Zhang" <zjzhang@codeaurora.org>,
-        gengdongjiu <gengdongjiu@huawei.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "devel@acpica.org" <devel@acpica.org>
-Subject: RE: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-Thread-Topic: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
- ghes_cper_severity()
-Thread-Index: AQHT4MsCQf6Nt4waY0S65Mk3QcBWH6Qfd+HA
-Date: Fri, 4 May 2018 11:56:03 +0000
-Message-ID: <86258A5CC0A3704780874CF6004BA8A64EE2C974@FRAEML521-MBX.china.huawei.com>
-References: <20180430212836.7807-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-1-mr.nuke.me@gmail.com>
- <20180430213358.8319-2-mr.nuke.me@gmail.com>
-In-Reply-To: <20180430213358.8319-2-mr.nuke.me@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.226.53]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1751262AbeEDMDq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 08:03:46 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:43961 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbeEDMDo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 08:03:44 -0400
+X-Google-Smtp-Source: AB8JxZrmk0q5P+RXtb2+yCeaU7PzmQRdhlgovqSTF0HWHM5h3tnfysJM1vu89twZ/qB+FxIFEygJVQ==
+Subject: Re: [PATCH v1 0/5] Support IOMMU for 2d/3d on Tegra30/114
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180503234723.4368-1-digetx@gmail.com>
+ <20180504105653.GO13459@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=digetx@gmail.com; prefer-encrypt=mutual; keydata=
+ xsBNBFpX5TwBCADQhg+lBnTunWSPbP5I+rM9q6EKPm5fu2RbqyVAh/W3fRvLyghdb58Yrmjm
+ KpDYUhBIZvAQoFLEL1IPAgJBtmPvemO1XUGPxfYNh/3BlcDFBAgERrI3BfA/6pk7SAFn8u84
+ p+J1TW4rrPYcusfs44abJrn8CH0GZKt2AZIsGbGQ79O2HHXKHr9V95ZEPWH5AR0UtL6wxg6o
+ O56UNG3rIzSL5getRDQW3yCtjcqM44mz6GPhSE2sxNgqureAbnzvr4/93ndOHtQUXPzzTrYB
+ z/WqLGhPdx5Ouzn0Q0kSVCQiqeExlcQ7i7aKRRrELz/5/IXbCo2O+53twlX8xOps9iMfABEB
+ AAHNIkRtaXRyeSBPc2lwZW5rbyA8ZGlnZXR4QGdtYWlsLmNvbT7CwJQEEwEIAD4WIQSczHcO
+ 3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgIDAQIeAQIX
+ gAAKCRDTNNaPsNRzvFjTCACqAh1M9/YPq73/ai5h2ExDquTgJnjegL8KL2yHL3G+XINwzN5E
+ nPI7esoYm+zVWDJbv3UuRqylpookLNSRA01yyvkaMcipB/B128UnqmUiGRqezj9QE20yIauo
+ uHRuwHPE2q+UkfUhRX9iuOaEyQtZDiCa0myMjmRkJ+Z8ZetclEPG8dYZu47w04phuMlu1QAt
+ a0gkZOaMKvXgj21ushALS6nYnvm7HiIPQXfnEXThartatRvFdmbG4PCn0IoICkQBizwJtXrL
+ HEjELIFap0M8krVJlUoZTFaZnaZkGpUDWikeFtAuie2KuIxmVBYPM4X7pM3eP3AVvIPGS7EE
+ UUFuzsBNBFpX5TwBCADFNDou220thijaLLGaQsebWjzc/gPRxMixIpk856MRyRaQin+IbGD6
+ YskMb5ZSD3nS88LIKNfY4MMH0LwfYztI++ICG2vdFLkbBt78E+LqEa+kZ9072l4W5KO3mWQo
+ +jMfxXbpgGlc7iuEReDgl8iyZ27r51kSW665CYvvu2YJhLqgdj6QM1lN2D1UnhEhkkU+pRAj
+ 1rJVOxdfJaQNQS4+204p3TrURovzNGkN/brqakpNIcqGOAGQqb8F0tuwwuP7ERq/BzDNkbdr
+ qJOrVC/wkHRq1jfabQczWKf8MwYOvivR3HY8d3CpSQxmUXDtdOWfg0XGm1dxYnVfqPjuJaZt
+ ABEBAAHCwHwEGAEIACYWIQSczHcO3uc4K1eb3yvTNNaPsNRzvAUCWlflPAIbDAUJA8JnAAAK
+ CRDTNNaPsNRzvJzuB/9d+sxcwHbO8ZDcgaLX9N+bXFqN9fIRVmBUyWa+qqTSREA4uVAtYcRT
+ lfPE2OQ7aMFxaYPwo+/z5SLpu8HcEhN/FG9uIkfYwK0mdCO0vgvlfvBJm4VHe7C6vyAeEPJQ
+ DKbBvdgeqFqO+PsLkk2sawF/9sontMJ5iFfjNDj4UeAo4VsdlduTBZv5hHFvIbv/p7jKH6OT
+ 90FsgUSVbShh7SH5OzAcgqSy4kxuS1AHizWo6P3f9vei987LZWTyhuEuhJsOfivDsjKIq7qQ
+ c5eR+JJtyLEA0Jt4cQGhpzHtWB0yB3XxXzHVa4QUp00BNVWyiJ/t9JHT4S5mdyLfcKm7ddc9
+Message-ID: <94305d59-e778-61b9-f264-8add7853d16c@gmail.com>
+Date: Fri, 4 May 2018 15:03:40 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180504105653.GO13459@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On 04.05.2018 13:56, Thierry Reding wrote:
+> On Fri, May 04, 2018 at 02:47:18AM +0300, Dmitry Osipenko wrote:
+>> Hi,
+>>
+>> This series enables IOMMU support for 2d/3d HW on Tegra30/114, as a result
+>> userspace that uses 2d/3d could work with the active IOMMU.
+>>
+>> Dmitry Osipenko (5):
+>>   drm/tegra: dc: Balance IOMMU group refcounting
+>>   drm/tegra: gr2d: Add IOMMU support
+>>   drm/tegra: gr3d: Add IOMMU support
+>>   ARM: dts: tegra30: Add IOMMU nodes to Host1x and its clients
+>>   ARM: dts: tegra114: Add IOMMU nodes to Host1x and its clients
+>>
+>>  arch/arm/boot/dts/tegra114.dtsi |  5 +++++
+>>  arch/arm/boot/dts/tegra30.dtsi  | 14 +++++++++++++
+>>  drivers/gpu/drm/tegra/dc.c      | 35 ++++++++++++++++-----------------
+>>  drivers/gpu/drm/tegra/dc.h      |  2 +-
+>>  drivers/gpu/drm/tegra/drm.h     |  2 +-
+>>  drivers/gpu/drm/tegra/gr2d.c    | 31 +++++++++++++++++++++++++++--
+>>  drivers/gpu/drm/tegra/gr3d.c    | 27 +++++++++++++++++++++++++
+>>  7 files changed, 94 insertions(+), 22 deletions(-)
+> 
+> Overall I think this is great. No need to resend for the two comments on
+> patch 1, I can fix those up when I apply if you have no objections.
 
-> -----Original Message-----
-> From: Alexandru Gagniuc [mailto:mr.nuke.me@gmail.com]
-> Sent: 30 April 2018 22:34
-> To: bp@alien8.de
-> Cc: alex_gagniuc@dellteam.com; austin_bolen@dell.com;
-> shyam_iyer@dell.com; Alexandru Gagniuc; Rafael J. Wysocki; Len Brown;
-> Tony Luck; Mauro Carvalho Chehab; Robert Moore; Erik Schmauss; Tyler
-> Baicar; Will Deacon; James Morse; Shiju Jose; Jonathan (Zhixiong) Zhang;
-> gengdongjiu; linux-acpi@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linux-edac@vger.kernel.org; devel@acpica.org
-> Subject: [RFC PATCH v4 2/3] acpi: apei: Rename ghes_severity() to
-> ghes_cper_severity()
-> 
-> ghes_severity() is a misnomer in this case, as it implies the severity
-> of the entire GHES structure. Instead, it maps one CPER value to a
-> monotonically increasing number. ghes_cper_severity() is clearer.
-> 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
->  drivers/acpi/apei/ghes.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index f9b53a6f55f3..c9f1971333c1 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -271,7 +271,7 @@ static void ghes_fini(struct ghes *ghes)
->  		unmap_gen_v2(ghes);
->  }
-> 
-> -static inline int ghes_severity(int severity)
-> +static inline int ghes_cper_severity(int severity)
-
-[...]
->  	else
->  		ratelimit = &ratelimit_uncorrected;
-> @@ -705,9 +705,8 @@ static int ghes_proc(struct ghes *ghes)
->  	if (rc)
->  		goto out;
-> 
-> -	if (ghes_severity(ghes->estatus->error_severity) >=
-> GHES_SEV_PANIC) {
-> +	if (ghes_cper_severity(ghes->estatus->error_severity) >=
-> GHES_SEV_PANIC)
->  		__ghes_panic(ghes);
-
-PCIe AER fatal errors result panic here.
-I think ghes_cper_severity to be replaced with ghes_severity in the ghes_proc function as well in the patch 
-"acpi: apei: Do not panic() on PCIe errors reported through GHES"?
-> -	}
-> 
-[...]
-> 2.14.3
-
-Thanks,
-Shiju
+No objections from me, thanks.
