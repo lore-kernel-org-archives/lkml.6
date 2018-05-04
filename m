@@ -1,42 +1,42 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1542750-1525508975-2-236237297640929366
+X-Cyrus-Session-Id: sloti22d1t05-3611583-1525407626-2-8320352209538518606
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, UNPARSEABLE_RELAY 0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
 X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
+  FromHeader='edu', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525508974; b=B3Sq6le/nxIK+8yDt9Ke5MemkSD4yxZ0jV6eaV7pKI+/MtrikV
-    sLx9MY2b7iQ8HX6wmCjbTvY9mtRB7dgJD5c9QSNoW3PMhZZEiwyZKJy4v7XNbJai
-    SWMDBrnWGCADZ3zHhdIM/kRe0GHG2rZlV166KzynSCvwyDT+Jizou8K83k7/xCFZ
-    /s+6oXrPSkJUSnXrx2Zm3UC3aiu/k3Gr8b2vU2E0PbFVoSrdybEAFL3CbV/EckLo
-    1SJCnMfSz8U6SbRc2/PvKu/cijRsRD+q2Tv4dVEzpK3JoJ3TYb9uOY1uZwcswyBJ
-    92sU0Oa8ji1fUy+B6JGvDjXRmzYhdWDujeCQ==
+    1525407626; b=Qci5d5FOuyj5+a58hMe+V540cE8szs3UWI1q9PKcxsqHZDubn9
+    k7jWvQ2mJb+henP82JDn8AK/vzd1B+RmzkNnIAjeVpXoLDv2h9l80iCU8flhY2In
+    X/KztXhvEsiHua1MNSuFiSEuJL2cqK2VA07npiKGQaL4pFPnr2CWFWK+uIMOQ/MJ
+    j2o9H68jD6U8+d42DaF0PgovpCEher7RRSZLx5jfas6XE0Lkse42l02+o1TGia8a
+    fom5bpfyeLaG0zCYcrj8n8Gk/fV27G38mc4X/yULd/stuIu/VPy82Ng9WeUDlbDg
+    UdNNEiq7RZg3PKckv+mAvFlT1FFExSf4ujNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525508974; bh=KGTLM
-    5FomsNRtGdlsiBDRE0GJh2I+XYkACtm0Pe9YaE=; b=XvpFjGmaPp+/YS5+ogAwm
-    ULp1Va3/nF3xltuibEgdPjm96awrQ4Ej6lqk55aZFvkqT2WxPn7wpneaWyI3xtcm
-    7bsmBwORTM/nhXY04RdZ3s+NoDSGWl00XTbU1Z1M0tZshwzgJn/lHeHbabVOG1u1
-    YGsu5g8CWciDpM46naxFBjbYuByr6dJUPaFMOcqi7y1oNTV0Sg6tzZv4Ktn/O265
-    dpBIqjVAFazG32z/O5+UzvnCq0//u96oNt3jgTOe4yvVBvBgIEhawBqxZpdgYCM8
-    EoAiGL6idccYmAH1J9MtulWEzijoCbJc/coJbg1HUpw3iKQgQmitG38f/WQyia38
-    w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1525407626; bh=DFQzI
+    tfUnhTb99uDTEMOXGUAp6VmRBh0aELA8Oc6drU=; b=jvRSfqyk8EWwLPYEtlz2S
+    5qYu/q8lgLGh6Gp8zWFlfYEn+x+XvZaeSeFsAKHyuUw1n4th9tFnoR/8B/jLKvWI
+    NOY/Te738yOXwMsw3axjdVZRfxpQ95hN+ZhkzLo5x3znkPEAqx+LPy8lni+plysY
+    eDsaodM9gV4G6j1lnfDSOXwBjzY2iLi2cFJaC76vqINqdk2NIdo+OeiK+s8fRh4M
+    RiPQ/WeunoHjTc6NX4NWWI6TOlXT5UtmvTgVqlxyBJFDhZ2oLYiKOMh7DTH0uzkE
+    JnqE8+AAYktMf6ey27zbjQF4GplJEYVqbEU1jAm5duHe1qgcOWhqPhwJDTL6OO5A
+    g==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=oracle.com header.i=@oracle.com header.b=lf09Gvci x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+    header.d=umn.edu header.i=@umn.edu header.b=Ez3RMwpC x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20160920;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=umn.edu;
     iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
     smtp.helo=fraxinus.osuosl.org;
@@ -44,17 +44,17 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-cm=discussion score=0;
     x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=oracle.com header.result=pass
+    smtp_is_org_domain=yes header.domain=umn.edu header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=oracle.com header.i=@oracle.com header.b=lf09Gvci x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=corp-2017-10-26;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=oracle.com;
+      header.d=umn.edu header.i=@umn.edu header.b=Ez3RMwpC x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20160920;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=umn.edu;
     iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
       smtp.helo=fraxinus.osuosl.org;
@@ -62,40 +62,35 @@ Authentication-Results: mx2.messagingengine.com;
     x-cm=discussion score=0;
     x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=oracle.com header.result=pass
+      smtp_is_org_domain=yes header.domain=umn.edu header.result=pass
       header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfD7/vCbSlK9EaHMqAeSb3AJhfs0/un0YDRimB3FBIgcy8oef2AeGxffUmypECy0SkKiAMQmgts9KXDQOtIfrArIZdJv9gwN+KXh9lSSI+KLqABfIuL65
-    hc1hM9gscTvVBnTXYS2CAacu/6uyq6vJeuasbugyPHJR9Qshce5vZt9qVdimXEZVrgByUj44h7Df4NNO9TqrTH4NObf5/3+Xu2aMyO/D9TNdJBelzxCTIxAF
-    0ACyTzziRZBZXL7alTEvZg==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=sOK_bZnoAqTFMIwO9lsA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfLNlNVRsC0yRiRvG6ek1nzmVq+VJBMlD45XlmHuB05IbYu25xhL+1P/qvH7c6hlnZc+IMqgnYAeBFLDCZ8oQoLl76tQZIALN5REV4BZ4NBCQ9l52RA2R
+    OBF2oIwCJ9cDd8jwmp8bTQzx3rjBPk+NmEhpmFASpyeGGGYJNXbsKw48cn2+DmJfjLWEnYsjcjQiwNjG4PsfxjPxjM1i6dDiZkldUS+ICd5bcrohYWflSNpl
+    jLRwJgPdKupvoG3DynYQZQ==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
+    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=yPCof4ZbAAAA:8
+    a=DDOyTI_5AAAA:8 a=pPOgiJgIYe2XS45olIQA:9 a=CjuIK1q_8ugA:10
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sat, 5 May 2018 11:29:13 +0300
-From: Dan Carpenter <dan.carpenter@oracle.com>
-To: Kangjie Lu <kjlu@umn.edu>
+X-Google-Smtp-Source: AB8JxZoHCwaVmzB7VdM+1m0JWeoyfi8Ri2GlOKyIcb6kttE2ZQKXEvbcq9gPL7VnJgMJHIWHYM3XpePf/YzaN/S8htY=
+MIME-Version: 1.0
+In-Reply-To: <20180501084621.jfxrm3qoqfmftnxh@mwanda>
+References: <1525128971-8946-1-git-send-email-wang6495@umn.edu>
+ <20180501084621.jfxrm3qoqfmftnxh@mwanda>
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Thu, 3 May 2018 23:19:37 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7dHK9grwfFLOpVv=Wpv32mLS66CxXJDHOzNBNaqsWLXaA@mail.gmail.com>
+Message-ID: <CAAa=b7dHK9grwfFLOpVv=Wpv32mLS66CxXJDHOzNBNaqsWLXaA@mail.gmail.com>
 Subject: Re: [PATCH v2] staging: lustre: llite: fix potential missing-check
  bug when copying lumv
-Message-ID: <20180505082912.r4a6tawjv7ykedc7@mwanda>
-References: <CAK8Kejq0h_Rgq__W_KSD_u+KUbS=cYkVXoHJpdbDrmYOU+iJDg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <CAK8Kejq0h_Rgq__W_KSD_u+KUbS=cYkVXoHJpdbDrmYOU+iJDg@mail.gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8883
- signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
- malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=672
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805050079
+To: Dan Carpenter <dan.carpenter@oracle.com>
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -108,12 +103,12 @@ List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driver
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
 Cc: "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
  Aastha Gupta <aastha.gupta4104@gmail.com>,
- Roman Storozhenko <romeusmeister@gmail.com>, "Dilger,
- Andreas" <andreas.dilger@intel.com>, Jeff Layton <jlayton@redhat.com>,
+ Roman Storozhenko <romeusmeister@gmail.com>,
+ Andreas Dilger <andreas.dilger@intel.com>, Jeff Layton <jlayton@redhat.com>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Wenwen Wang <wang6495@umn.edu>, NeilBrown <neilb@suse.com>,
- open list <linux-kernel@vger.kernel.org>, "Drokin,
- Oleg" <oleg.drokin@intel.com>,
+ Wenwen Wang <wang6495@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+ NeilBrown <neilb@suse.com>, open list <linux-kernel@vger.kernel.org>,
+ Oleg Drokin <oleg.drokin@intel.com>,
  "moderated list:STAGING - LUSTRE PARALLEL FILESYSTEM"
  <lustre-devel@lists.lustre.org>
 Content-Type: text/plain; charset="us-ascii"
@@ -124,26 +119,43 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 04, 2018 at 10:01:44AM -0500, Kangjie Lu wrote:
-> > There is nothing preventing the user from using struct lov_mds_md_v3 but
-> > filling in lmm_magic = LOV_MAGIC_V1 from the beginning, no need for a race.
-> >
-> 
-> Right. No need for users to race. There might be a type confusion issue
-> though if V1
-> object is  used as V3 or the other way.
-> 
+On Tue, May 1, 2018 at 3:46 AM, Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> On Mon, Apr 30, 2018 at 05:56:10PM -0500, Wenwen Wang wrote:
+>> However, given that the user data resides in the user space, a malicious
+>> user-space process can race to change the data between the two copies. By
+>> doing so, the attacker can provide a data with an inconsistent version,
+>> e.g., v1 version + v3 data. This can lead to logical errors in the
+>> following execution in ll_dir_setstripe(), which performs different actions
+>> according to the version specified by the field lmm_magic.
+>
+> This part is misleading.  The fix is to improve readability and make
+> static checkers happy.  You're over dramatizing it to make people think
+> it has a security impact when it doesn't.
+>
+> If the user wants to specify v1 data they can just say that on the first
+> read.  They don't need to do funny tricks and race between the two
+> reads.  It's allowed.
+>
+> In other words this allows the user to do something in a very
+> complicated way which they are already allowed to do in a very simple
+> straight forward way.
+>
+> regards,
+> dan carpenter
 
-It's a bit confusing for someone reading the code, but in terms of the
-kernel it's straightforward.
+Thanks for your comment, Dan! How about this:
 
-It's like if someone is typing with their toes, that's sort of confusing
-but it's not a security issue.  And here we're implementing a no typing
-with your toes policy just to make things more higienic (static checkers
-in this metaphor).
+However, given that the user data resides in the user space, a
+malicious user-space process can race to change the data between the
+two copies. By doing so, the attacker can provide a data with an
+inconsistent version, e.g., v1 version + v3 data. The current kernel
+can handle such inconsistent data. But, it may pose a potential
+security risk for future implementations. Also, to improve code
+readability and make static analysis tools happy, which will warn
+about read-verify-re-read type bugs, this issue should be fixed.
 
-regards,
-dan carpenter
+Thanks,
+Wenwen
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
