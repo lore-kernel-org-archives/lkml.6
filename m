@@ -1,61 +1,61 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3658149-1525410065-2-6308628287241226710
+X-Cyrus-Session-Id: sloti22d1t05-3672311-1525410059-2-16589381694105031363
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='name', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525410065; b=TSwmDSvjXvarc0fCrY9Wq2WkCWMRyv+ZbWGsdRHznLNam39gpu
-    UtEaSQbxi/AAvaSKMV0+2rF0BamDwinEA3kDaD+NnSFnrlkZiFkEVIU0CsJKNwb2
-    lc0OAPJa0btnn4x3ZuFW8WK6SdJsKpROU9XttIt3qC1n3r8Av1c8Gsfgx16cXzES
-    A6bD2LvvWmDFbIkhJfyHprt+26EvLCGOGJTLfQwldZhYQBzzV23ocLkA7xK9coFf
-    3OeuHu7zha2pYBocEOrCnTT3agBJ2vfgSeJYo/T/Vrn1Rw0OnLEi2xgk869hjn/V
-    VZkYDQqLAhTKWhhrxVFLTyxwdNsjrF8xnyEw==
+    1525410059; b=kdPnxW6wv5xLb2PjWvEFju3VaqmLXrNG0r22b1iGmy1KFlxgkg
+    Di77btnuSBWPb/+KnindCVyKpE3x9GUNW87cezAIul4HWxWpHUyA3AMbhrlqE1Rf
+    f8fLrGgZMOLNHLOEmMbKHccclkKMl8zsH0XpTW8IUMw4LBTQA2oaH6DpngUEMAnR
+    eoYSJ8CMCqIorZBzXyPDn9egUstpaxW1NV5v+3y3SIYlH0+k5Dw5/NbKyBIjae6L
+    XJAJjkDQUwOazH3j0fOzdMcJ6CmD0CQRgoW92/P5IQ5zr6hznkuaHqdKSz9jaMMJ
+    h4ElaIevaBINc+BkbRXXdaZ6Sf3j779fSNVg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:date:subject:message-id
     :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525410065; bh=rBlIy
-    AwjrhaeT+PP3wLK21i2gmIiSyCVCVmZUmn8El4=; b=ashF1eW3v6iUYRylKaS/X
-    vkAhq5gvunybs39EX//NIhXnv98aIpEAbB1aDw+h7F9hORuLfu+IBc9Hglz7sM79
-    Z/V4dfwc/Tbi2FXPfcRqQusYb6SPgH26QX40o1rIZZSclQp4XT9pYokA/PALFRbt
-    l1yLdbnKpLmOosi85dGW/g5qGgAsTVuEwLJiAxaWFrKz0FAG9XlaRUAy3Tntk35/
-    rxj87MsxD3rw0YSZ/f3CQPW+V13w3UEGJtAqm/xN5zaaqm5ujp2+8nzcB6wdmZnV
-    Z39u4ywBQyo+PL9tyb7hoXhTJbg8tsYFrnLtz9ImcmaCi4YpKLv0sJ99V8lE6RLx
-    w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1525410059; bh=alp9m
+    KCYDWiNU9cnG7ngMu0K0j8r5hlNEPuMrFNJCtY=; b=DiZp6qmB8T/QVr9wD0GVH
+    Wo31Q7w5Khi+eLfZJ47ui5G40Ak8vJwERE0le+jgxmVNfOmRGC6NJKc+xefw2yfl
+    7ySe70yrzGaQT0MRbyEJW0qsDbtoBgYL4XDgMBknQgXYfzK91CKma84FZYSosfzb
+    KavDvXLoKtvDDv611TtRWF7QRUBL0UuzDSkS2o84oDaRuaImaqqzZcU1xon/w11e
+    Eg22F+WQQD7YkBzAiSvT3uSgx8HFa71ObKQYKuDKhL2h0xgaVsKOolvNrmb6XjhC
+    PnwjgVI8S+yY6gerIzA5XnGMRtpt/T0z54CIFQHqKvzGChtXyQr80i+TgWYbAdLp
+    A==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
+    smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=brown.name header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
+      smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=brown.name header.result=pass
       header_is_org_domain=yes;
@@ -63,13 +63,13 @@ Authentication-Results: mx6.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDu4RreNtYWnLAi4PjwpwDXJLT/Q6NNH2gx/avuMcxR+UGiFfb2U+TKJGeVLfZm9A73i24Jon6zyEsM6gcGRZFx/oeZSfLTpz83q7mZAR5444eiUD2Cg
-    DYovfT+HxVIiRNxLN83kBdX7pJCUlM/jsvDmCMp9Y46FMj/TbvsB6ecMIdXTF4229gOnllR7LlhV0X+DRU7Jr8Oe3ghlVKPzWpwm6/0BEzKojUGcT8kmQ2Ec
-    0+IOKC80a5zntlLe5ag6iw==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
+X-CM-Envelope: MS4wfDor9URSIxOUqMHV6JB/WiTisnb6p1MTmH79AHfteFfyXs9bu5iu4yG5qn5cCXT9l+FeV0eWrrxDyDP7c4XBCz9Wa2Y/gt7wlNM74p7ttvCQRS1wVqCG
+    i/Fw2mWOrS5X1WO+e21GmEF6CB9LkdyXUq1fSCZBjyMeObYrMOIm7LMPES8picXlT28SkS6AAy8tw8eUPzuVpax+Ex3TTIvnr5zzZGmC/aA7Ayt+uZR1efMv
+    CqdbinhqDD2Kbaf5aVBKzQ==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
     a=VUJBJC2UJ8kA:10 a=qEKT6kP3PEYA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=t8BFDMFo6shNlZR3MjAA:9 a=CjuIK1q_8ugA:10
+    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=go3m4GvL071v4VyiW80A:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -77,8 +77,8 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: NeilBrown <neil@brown.name>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Fri, 04 May 2018 14:58:35 +1000
-Subject: [PATCH 2/8] staging: mt7621-spi: remove unused lock.
-Message-ID: <152540991592.12190.11665748499471801563.stgit@noble>
+Subject: [PATCH 1/8] staging: mt7621-eth: Lock is never unlocked.
+Message-ID: <152540991585.12190.1091705512182182698.stgit@noble>
 In-Reply-To: <152540982998.12190.15220622955317261586.stgit@noble>
 References: <152540982998.12190.15220622955317261586.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -102,42 +102,28 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This lock is never initialized, locked once, and never unlocked.
-Clearly it is pointless - so remove it.
+mtk_phy_link_adjust takes a spinlock and disables
+interrupts, but never unlocks.
+This can leave interrupts disabled on one CPU and
+various things stop working.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- drivers/staging/mt7621-spi/spi-mt7621.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/staging/mt7621-eth/mdio.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/staging/mt7621-spi/spi-mt7621.c b/drivers/staging/mt7621-spi/spi-mt7621.c
-index d9b55d2059b0..37f299080410 100644
---- a/drivers/staging/mt7621-spi/spi-mt7621.c
-+++ b/drivers/staging/mt7621-spi/spi-mt7621.c
-@@ -65,7 +65,6 @@ struct mt7621_spi {
- 	unsigned int		sys_freq;
- 	unsigned int		speed;
- 	struct clk		*clk;
--	spinlock_t		lock;
+diff --git a/drivers/staging/mt7621-eth/mdio.c b/drivers/staging/mt7621-eth/mdio.c
+index 9d713078ef90..c6db11aad9e4 100644
+--- a/drivers/staging/mt7621-eth/mdio.c
++++ b/drivers/staging/mt7621-eth/mdio.c
+@@ -57,6 +57,7 @@ static void mtk_phy_link_adjust(struct net_device *dev)
+ 			}
+ 		}
+ 	}
++	spin_unlock_irqrestore(&eth->phy->lock, flags);
+ }
  
- 	struct mt7621_spi_ops	*ops;
- };
-@@ -395,7 +394,6 @@ static int mt7621_spi_probe(struct platform_device *pdev)
- 	const struct of_device_id *match;
- 	struct spi_master *master;
- 	struct mt7621_spi *rs;
--	unsigned long flags;
- 	void __iomem *base;
- 	struct resource *r;
- 	int status = 0;
-@@ -447,7 +445,6 @@ static int mt7621_spi_probe(struct platform_device *pdev)
- 	rs->sys_freq = clk_get_rate(rs->clk);
- 	rs->ops = ops;
- 	dev_info(&pdev->dev, "sys_freq: %u\n", rs->sys_freq);
--	spin_lock_irqsave(&rs->lock, flags);
- 
- 	device_reset(&pdev->dev);
- 
+ int mtk_connect_phy_node(struct mtk_eth *eth, struct mtk_mac *mac,
 
 
 _______________________________________________
