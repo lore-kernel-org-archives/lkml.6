@@ -1,109 +1,122 @@
-Return-Path: <opensource.ganesh@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525228002; cv=none;
+Return-Path: <ruslan.bilovol@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525397089; cv=none;
         d=google.com; s=arc-20160816;
-        b=C495kSpBYuGL4rBZzdJV6i1WaCbmwwyWDNiBQdf69ynY2/uLmVS23r9t3PCMZcDCNS
-         s1wBxsVo8dkCWDkYi+CkXEXHHZPc8nQkSB+iUD2p08DWbpzISNBJi+Mw3/GRWkdCQGTT
-         R48MSCAIBGT8SSYhHhPaxcAz62UJ5csgjjbFyuTrimIXI/zczGBM80gbHpCC+YXFXrHK
-         Qn/M+jINhWg1mY5r46EV/L33YIQmUAYmLarIAo9f6BKRIQCWasZj6g7XnfHjEQN/JXTj
-         mxjcIonxBJJqiIi0A9kIpogszesakmVOnTC5cVdkTs+W5dm6PMEZK7BaX0bNV9BO97aD
-         3Nag==
+        b=AOet9hUMMuQL/YILzM9eotiSsD+4ZHCV7n0qxuuQXZJZksoDaWkDsk+z5ZyK67ZTst
+         KvQhaPfVK/oUKRTs3y+3WX/4TEMvYz9kKVtl8RPriVgY4mO6cMCRWYZRBV42beo9jUtV
+         KdNtkCXbKZAeyqKtl2NxhmxLZP6CqONeOM3wBYpqg7DxUbqfvYDgWzGCoMD1ES6p2UNB
+         awbQOzXTdYVpJewe3rJuS2dH9nkASeWXOemaygGRvmzW3X7SHysme3PGaSw6iUjJbqIZ
+         A+zYppHNjGKX/36Khx8i7eTGJgpFoRSSxVbKW4DE0lYkh1DC7Oeqo8AX4aVfhlTZn3bh
+         4hng==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=hG4HEbrQQTRCwwRkT1102Pvywfuo9VzJGaVZf0r/D98=;
-        b=B4quVu/hHQICQDCxwsjvQoY4dnjIZENA+wsXrheM2DnFIeEpSmmX9m2Mj/NI3mQPfn
-         6JDXF4FG6NSrX3c07rwtFoWX25RL/SPpxiELEVbzyVc6lu7ekFAGTSdk2d1CzmmVuuTo
-         CCx0u2HWrdwbe6hq+PFlipDfspbWd5VfoHuUKRpmaOKfjyvan3QsAtjIdRn0NHBKnWv/
-         XzFrKEbcc9EBOiRWxlrXpvO4G9lL2gd4vcTDcmDh9eRxQgERI2EexveVo0P2nc7LP2BD
-         4P16vsq0Hv8QJ/QLWQtGyK6cIBNDTEEC7Yry+QJH0taQMQ4ndMhQy0SaBPpUGWxezXWv
-         xt0Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=JYiEkko72DtkesBuFZdNkly8w/aDOD6VivnmAubVmuc=;
+        b=q60VyG8cmYuyvXQHRKbVqWJjHyzsIzGouI98FVibwsc87c9bK25rCKevQtNN00F+il
+         mlqx1GQVM4jknwTV2ELYoV2Qm1iFoiFKbiNbRHBhMaTlMl+ZGFCqm6FXuGWL2sucYF/0
+         Piya3fzSJa8gY2blrrGszC/BLNJDwov744t/f9hYexk3CsXlVaWCe5XCOS7mPfIE5HF7
+         OiW8Qk5evu5eJd6gF9pVVfQ8ajUMhBQhkaXBfyo9SiJiBh6hIVEiOa5n6cnT69he2TYU
+         0OpQ4YuqGbZpC9p1DIRlioqfkIF7BBpJsd3BRqjD9wYY/FFC39JsRclQeCaZ6BBMwJ78
+         0yQw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DzmTwxS1;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FhcZy1hH;
+       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=DzmTwxS1;
-       spf=pass (google.com: domain of opensource.ganesh@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=opensource.ganesh@gmail.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=FhcZy1hH;
+       spf=pass (google.com: domain of ruslan.bilovol@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=ruslan.bilovol@gmail.com;
        dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZoJl0j3jaqoxESoSXacYYAHjHuP1XMbBY2Cj1mCuSKXfB3UZgAjz2iy5x34Ktlb0VlGShsVhFpKZEsYW9+rCrs=
-MIME-Version: 1.0
-In-Reply-To: <20180429143002.GC13475@amd>
-References: <1524653971-10425-1-git-send-email-opensource.ganesh@gmail.com> <20180429143002.GC13475@amd>
-From: Ganesh Mahendran <opensource.ganesh@gmail.com>
-Date: Wed, 2 May 2018 10:26:41 +0800
-Message-ID: <CADAEsF_onq=H65ZUi2kC7b_WmEpdvMLdLcBPn8bqDQP_DPyEjQ@mail.gmail.com>
-Subject: Re: [PATCH v3] PM / wakeup: use seq_open() to show wakeup stats
-To: Pavel Machek <pavel@ucw.cz>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>, Linux PM <linux-pm@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Google-Smtp-Source: AB8JxZrhsaSWu+OuOlt0OI+uRR8BcKnb54caHR/oJT9qQnhNmf6Hj2jQVz0OhaAM0Y3focpa4gUOSA==
+From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
+To: Takashi Iwai <tiwai@suse.com>
+Cc: Jorge <jorge.sanjuan@codethink.co.uk>,
+	Andrew Chant <achant@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/7] USB Audio Device Class 3.0 BADD profiles support
+Date: Fri,  4 May 2018 04:23:57 +0300
+Message-Id: <1525397044-15080-1-git-send-email-ruslan.bilovol@gmail.com>
+X-Mailer: git-send-email 1.9.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598715584055641513?=
-X-GMAIL-MSGID: =?utf-8?q?1599317477523043831?=
+X-GMAIL-THRID: =?utf-8?q?1599494778683653955?=
+X-GMAIL-MSGID: =?utf-8?q?1599494778683653955?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi, Pavel
+This patchset adds BADD profiles support from the USB Audio
+Device Class 3.0 spec [1].
 
-Thanks for your review.
+BADD profile support is defined as mandatory feature of
+UAC3-compliant device, it should be implemented as a separate
+USB configuration.
 
-2018-04-29 22:30 GMT+08:00 Pavel Machek <pavel@ucw.cz>:
-> On Wed 2018-04-25 18:59:31, Ganesh Mahendran wrote:
->> single_open() interface requires that the whole output must
->> fit into a single buffer. This will lead to timeout when
->> system memory is not in a good situation.
->>
->> This patch use seq_open() to show wakeup stats. This method
->> need only one page, so timeout will not be observed.
->
-> Sounds like magic.
+Notable issue with BADD configuration is that it misses
+class-specific descriptors (and it's mandatory as per spec),
+so host should guess them from BADD profile number and
+parameters of endpoints (type, number of endpoints and
+max packet size)
 
-I did not explain clearly here.
+This patchset adds support of all known/existing BADD profiles
+from the UAC3 specification.
 
-If we use single_open() to open the file, a single buffer(physical
-continious) will be allocated
-to store the whole data of file /sys/kernel/debug/wakeup_sources.
-When memory situation is not good(fragments...), long time may be used
-to allocate
-such buffer which may cause android watchdog timeout.
+First 5 patches are refactoring and improvements, and last 2
+patches actually implement UAC3 BADD profiles support.
 
->
->> -static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
->> +static void *wakeup_sources_stats_seq_start(struct seq_file *m,
->> +                                     loff_t *pos)
->>  {
-> ...
->> -     srcuidx = srcu_read_lock(&wakeup_srcu);
->> -     list_for_each_entry_rcu(ws, &wakeup_sources, entry)
->> -             print_wakeup_source_stats(m, ws);
->> -     srcu_read_unlock(&wakeup_srcu, srcuidx);
->> +     *srcuidx = srcu_read_lock(&wakeup_srcu);
->> +     list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
->> +             if (n-- <= 0)
->> +                     return ws;
->> +     }
->> +
->> +     return NULL;
->> +}
-> ...
->> +static void wakeup_sources_stats_seq_stop(struct seq_file *m, void *v)
->> +{
->> +     int *srcuidx = m->private;
->> +
->> +     srcu_read_unlock(&wakeup_srcu, *srcuidx);
->> +}
->
-> But you are holding srcu_lock over return to userspace, and somehow I
-> don't think that's permitted?
+It's an alternative implementation comparing to [2],
+and doesn't build usb descriptors on the host but instead
+initializes alsa-usb structures with known parameters,
+so we don't need to keep whole class-specific descriptors
+in the driver since we anyway need to have BADD-specific
+logic.
 
-In seq_read(), the m->op->[start | stop] will be invoked as a pair.
-So the srcu_lock will not be hold and return to userspace.
+I've picked one Jorge's UAC1 patch-improvement and
+updated it to v4.17 wich contais recently introduced
+header's sanity checks.
 
-Thanks.
+Remaining part is to add interrupt endpoint support
+so we will be able to detect jack insertion in
+the Headset Adapter profile.
 
->                                                                         Pavel
-> --
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+This has been tested on ARM and x86-64 machines with
+custom UAC3 gadget which I'll post later to linux-usb
+
+Comments and testing are welcome.
+
+v2:
+  - split refactoring patch to more atomic and bisectable
+    changes as suggested by Takashi
+  - renamed "Side Tone"->"Sidetone" as suggested by Andrew
+  - revorked main BADD patch to have table lookup for
+    checking BADD channels validity and to reduce identation
+    as suggested by Takashi
+  - also removed code duplication in BADD patch by reusing
+    common part of build_feature_ctl() func
+
+v1: http://mailman.alsa-project.org/pipermail/alsa-devel/2018-April/134412.html
+
+
+[1] http://www.usb.org/developers/docs/devclass_docs/USB_Audio_v3.0.zip
+[2] https://www.spinics.net/lists/alsa-devel/msg71614.html
+
+Jorge Sanjuan (1):
+  ALSA: usb: Only get AudioControl header for UAC1 class.
+
+Ruslan Bilovol (6):
+  ALSA: usb: stream: move audioformat alloc/init into separate function
+  ALSA: usb: stream: refactor uac1/2 audio interface parsing
+  ALSA: usb: stream: refactor uac3 audio interface parsing
+  ALSA: usb: mixer: make string parsing independent of mixer_build state
+  include: usb: audio-v3: add BADD-specific values
+  ALSA: usb: add UAC3 BADD profiles support
+
+ include/linux/usb/audio-v3.h |  26 ++
+ sound/usb/card.c             |  53 ++--
+ sound/usb/clock.c            |   9 +-
+ sound/usb/mixer.c            | 351 +++++++++++++++++++---
+ sound/usb/mixer_maps.c       |  65 ++++
+ sound/usb/stream.c           | 687 +++++++++++++++++++++++++------------------
+ sound/usb/usbaudio.h         |   2 +
+ 7 files changed, 849 insertions(+), 344 deletions(-)
+
+-- 
+1.9.1
