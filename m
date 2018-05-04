@@ -1,193 +1,323 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-680809-1525885645-2-4930991189137372484
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES endaca,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525885644; b=CpbXE6vnFmMuA1awr+kej0zsW/saSHydNu4F6NWFMgbN81NJfm
-    FfTfDIfbWF8LQOgCxjd59ifXRloNHzTn6xPYtCu5smVYACBBwcWiW/S3TTxLT2JL
-    WruUoo196fBnU+gYpctiQ3ED2/F4X81RemsxwyX/YuzteU2xa/1HWLk5URW2pf6q
-    myPQr2Yk6NNTSEH0VrNsq/7Ms0SjQS+mGnksVscMPZGQ7ePHQn2twBk+orxv0tRa
-    3Iufiw1Gqbyn9dL71G/wfZmVeMdKX/3JAiI+r5YVoWQtDh+ZxVEneeW14smzwVdt
-    FX3wmSM+queJNWhRnfPRczWTCC7XHaGpXBQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :references:in-reply-to:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525885644; bh=iKirE
-    jyv/FnDDslY44atxdpuvciBYLVu1iqjPtceHkY=; b=edJEnO6bVBvrQ2c83DFmM
-    5QSOPKzYbu1kibFPuILQU5Hb4By91KIEOEW7sbrJBU2fDRLV5D+mrFsSSRCu6qSy
-    VlfGfac0troKZVuc6CQ3OA4r61VlJ8r310coATv8V4IwzaLHGp4qvaNwAR5V8tse
-    HpKX6U8c4xL1Kw76zDFrPKs/cBgCDQ/O+dplpxMCTbfBsWmgvNEUiIrIgzDTjif8
-    P90L4SJbaVQVxswJigCyBAP1hj4ulRsdy9m4+tkqxReAzuF/dH3+twpucPNHduaw
-    09nL2WaUoXPTL4Pht6BJv5OZeYAlMLhl1p8Uf4JIl06CjIMrP3rM8UkyiOcR04hc
-    w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=microsoft.com header.i=@microsoft.com header.b=Gw1U3fFU
-    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject)
-    header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=microsoft.com header.i=@microsoft.com header.b=Gw1U3fFU
-      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject)
-      header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCW3JZFOzSi245ifSr11EPVxYwdSJqzkatPLlsr/KeqsOLpteEBt2dmcCcTrZYLPwmXnouiKxTG+5LHDztYFVbVsC9yyQxcJ7PLfPfH4k1UoE94DT6Q/
-    31LF/JWDtQinqtyXrvL2c6ggeiHBFBCHeSHAmjoPWLk/oCS4zkj3NA3PP1FPZqktuDp8s8ujZ2pHr2l5Hmnyc/zisXVmbul06pBkzNlds7hR6ThUSYgcF8mW
-    WMgo3rF4VKUbazSDYNoCUg==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=R4fxTKrshSIA:10 a=LGqW9EbBbJ0A:10
-    a=kj9zAlcOel0A:10 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10 a=Lf-vpJhqX20A:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=Odnh0R2cAAAA:8 a=VwQbUJbxAAAA:8
-    a=ag1SF4gXAAAA:8 a=DDOyTI_5AAAA:8 a=DfNHnWVPAAAA:8 a=20KFwNOVAAAA:8
-    a=oGMlB6cnAAAA:8 a=yMhMjlubAAAA:8 a=s7peT8EUuh0m-dQXGEMA:9 a=CjuIK1q_8ugA:10
-    a=lNAA6UHySJB7qmBR1x20:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 a=rjTVMONInIDnV1a_A2c_:22 a=NdAtdrkLVvyUPsUoGJp4:22
-    cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-To: KY Srinivasan <kys@microsoft.com>, "x86@kernel.org" <x86@kernel.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
- "olaf@aepfle.de" <olaf@aepfle.de>, "apw@canonical.com" <apw@canonical.com>,
- "jasowang@redhat.com" <jasowang@redhat.com>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "hpa@zytor.com" <hpa@zytor.com>, Stephen Hemminger
- <sthemmin@microsoft.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>
-Subject: RE: [PATCH V2 3/5] X86: Hyper-V: Enhanced IPI enlightenment
-Thread-Topic: [PATCH V2 3/5] X86: Hyper-V: Enhanced IPI enlightenment
-Thread-Index: AQHT42525MZxRhvXB0uZTJSf+GY4xaQnqU5A
-Date: Wed, 9 May 2018 17:07:12 +0000
-Message-ID: <SN6PR2101MB1120AEFDD51D08C126DD6DE6DC990@SN6PR2101MB1120.namprd21.prod.outlook.com>
+Return-Path: <kys@linuxonhyperv2.linuxonhyperv.com>
+X-Google-Smtp-Source: AB8JxZoVRUYJD2QVTv8AE+Hq3KiYJBA3QN+SYWy/55cnzq7LudEz3Mor6K9mXLbXrpf6CzMv07L/
+ARC-Seal: i=1; a=rsa-sha256; t=1525414166; cv=none;
+        d=google.com; s=arc-20160816;
+        b=AL+CfS5UYWRJJDIphsEPLpP6V2S1tuPyL9KoxkkXBYuwZ+NiSaZtvyQmazvWSa8q2q
+         9qN64HM5Br1MubR9qRXR5M0HeaWrwO9rCyjSo/Knxg/TOomxGZaJek48HWGe6qCY0Ab/
+         /jFl8/inQxLgt+XrFNrfNPiSk4pef1q4reWveiZ9rfxJMhbVV4sLeNBsvzFF7cxpRyQD
+         J6LaJaj8YnjS8lFjKGlkwwbyUNkYRw7cCEZO7cWYKWbcoOp+QVOqaCppT49fK8Gg6MnI
+         LT9tovUkpQok1yEspBby1/g8/czbey+oNPXL42++q6bAYAYeqd0cVOj8aaG0j9WbDfuJ
+         /9YQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=reply-to:references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=Bj7pVIWaUFZERTfx5E6Tkge/y1MHZ+1q9D1ZYJyL5Z8=;
+        b=riX3nIsjjV6GabVVpbhhulprRUNY8DSmsazQdFBovPc8JBUgihIgwOf8ljLUNSVQdO
+         mHB1R1XQEtLaUaH4tzlMtiI87HKYUT8VjTN5ptoj0HsoRt3TUbMHr6jPzSfV7SSuM3V1
+         cYMYK0Yto6KDk09j7mjy4FRC/4vNYnKraFBvvNYNoEebQI/WPFBcEC/noqnQxpaZ1+uz
+         AjR7hxsdflr8WRkgx5pPuKGUVJwr/atWW25rsx2BRTbO2fdFh5yzq5+JRDkFzfWAWfq7
+         yqnFPOY92HOz+W2sy8943cgImr2FMdxdPq9EGjA8r208R4DO8nvCl3trpuuRZU24AnmE
+         Pv/g==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=neutral (google.com: 198.71.225.38 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
+Authentication-Results: mx.google.com;
+       spf=neutral (google.com: 198.71.225.38 is neither permitted nor denied by best guess record for domain of kys@linuxonhyperv2.linuxonhyperv.com) smtp.mailfrom=kys@linuxonhyperv2.linuxonhyperv.com
+x-originating-ip: 107.180.71.197
+From: kys@linuxonhyperv.com
+To: x86@kernel.org,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	devel@linuxdriverproject.org,
+	olaf@aepfle.de,
+	apw@canonical.com,
+	jasowang@redhat.com,
+	tglx@linutronix.de,
+	hpa@zytor.com,
+	sthemmin@microsoft.com,
+	Michael.H.Kelley@microsoft.com,
+	vkuznets@redhat.com
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+Subject: [PATCH V2 2/5] X86: Hyper-V: Enable IPI enlightenments
+Date: Thu,  3 May 2018 23:08:20 -0700
+Message-Id: <20180504060823.3345-2-kys@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180504060823.3345-1-kys@linuxonhyperv.com>
 References: <20180504060653.3240-1-kys@linuxonhyperv.com>
  <20180504060823.3345-1-kys@linuxonhyperv.com>
- <20180504060823.3345-3-kys@linuxonhyperv.com>
-In-Reply-To: <20180504060823.3345-3-kys@linuxonhyperv.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-05-09T17:07:11.5993022Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [2001:4898:80e8:a::4a9]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1; SN6PR2101MB0928;
- 7:pbZwIxfOMORB/Y4Wx0ditVdQbGJ9dHeryz0G0NCcHMyy88G6ttwbUACfAnlCyNzrMf7vfCIa702NsinWcjIkjBSU2N8SvojDHki6sr0QwZrvSUuDBfc14khDELa9Ak9j1yvC7q4WbC/0IFKZfptzNHUsYzy45TuyhsIfqZrybPPqJuj64aJC0A5wYlZx11pk/begTO9ifRSox9lcYsasiz8CzsAtcPHm2iXfb2X1KjW59oRJ6dfPwe6EtPK9vFTX;
- 20:BrJVycOGFSi9rLopO5kyz9Wr4z8QshFRK4MQrcp3VMGIqn7B+cYIGADulCs3gNyEaBb/Oh0muGx5Jm72y1ARnBLJtNs0l879B728xYl5Hob5EwML7C91pZ4x182CakdxkNnUQ6TqyBqNXksjxFFJ4O6fv0oDhVPaLydOGl8vG+o=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7193020);
- SRVR:SN6PR2101MB0928;
-x-ms-traffictypediagnostic: SN6PR2101MB0928:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michael.H.Kelley@microsoft.com;
-x-microsoft-antispam-prvs: <SN6PR2101MB092858EBF74DA265FB7BF73DDC990@SN6PR2101MB0928.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055)(198206253151910); 
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
- RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231254)(2018427008)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);
- SRVR:SN6PR2101MB0928; BCL:0; PCL:0; RULEID:; SRVR:SN6PR2101MB0928;
-x-forefront-prvs: 0667289FF8
-x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(39860400002)(376002)(346002)(39380400002)(366004)(396003)(13464003)(189003)(199004)(106356001)(3280700002)(2201001)(14454004)(68736007)(10090500001)(105586002)(316002)(110136005)(86362001)(97736004)(1511001)(22452003)(7416002)(5660300001)(229853002)(8990500004)(6246003)(74316002)(3660700001)(8676002)(305945005)(102836004)(25786009)(7736002)(6436002)(53936002)(446003)(81166006)(2906002)(81156014)(46003)(9686003)(8936002)(76176011)(33656002)(6506007)(53546011)(2900100001)(55016002)(10290500003)(6116002)(476003)(7696005)(5250100002)(86612001)(486006)(2501003)(99286004)(11346002)(478600001)(72206003)(921003)(1121003);
- DIR:OUT; SFP:1102; SCL:1; SRVR:SN6PR2101MB0928;
- H:SN6PR2101MB1120.namprd21.prod.outlook.com; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:1;
-x-microsoft-antispam-message-info: CaR5IqRkP8HqbOQ4+Qj+a1/w+2F20xTjSYZCQKN6mFmySyNTwOG57O3Sc7Ej4FwkF3lV7lEQ9gTm0mIgtNJ8vXJt0NfmIqe8fF6iQvwMjEvPpj6EPNzoVAd8zujg/wBIcNUuqYxhy9u6Y/3wkXJIHKmv0qv1DZ7242zHmyBoP/Ky61cr5Kvthan2UrCMLGMA
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 606c9dda-6209-4c22-82ea-08d5b5cf4ef6
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 606c9dda-6209-4c22-82ea-08d5b5cf4ef6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 May 2018 17:07:12.9058 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB0928
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Reply-To: kys@microsoft.com
+X-CMAE-Envelope: MS4wfJxoowwJpg6bD+qGFhrS2kwH1RyfGv7DND0ojyFHAFX9aP4dqBq5ZZ1L12KCYIpVZfObmLwZ0ACCOeg4cXPTKIiNNwVhrVn1PWizxB24uG6iB5nt7i7A
+ 1x72gQsnZ3I9dBJx1m9sriQLXqmfBpmGI9DsIbpxnnvM7HTCIeoTTylDDFwXO37HMldRT3AumRFOhEVAe3hJaEcGoZhRJlK9LAkwAcPnABhhsrssewKgSa0H
+ MY6tLCpQcb5VMG15JU1KwfNugEHdg8tu+HbD1OKFXRVSz8iuoSJ/LuTagvUDe19DtE1NBimMQvnCV5Vukpy9hmvQhFWJLZyd1MHZUbQN0qR+KCWVyOvFYV7U
+ VHGCiiBdVmXbLqtlBzIFtPxA049rbYsTcIJyaKMuyQs2z9oB34mN4xXP5wD4ue4/TJeK9t+KIh4L9jAS+AazgO9ZJ/RJzTGBh1SxZojOymlgSj6CVPZ47u2o
+ uUd3KWGV2ZnXqC6UQp2ZibGmxFSsBcP9nMaiQof9Vn0E6MERjt0ph5gfKabigY/IDRVwOMCWv4F6mBEIQtw1ArSHZ30MhTSHoVdOgjWnCiflzA2PmZXWm8E8
+ 6dJrSkbM/IF2VesBlrd1ugJo
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599512684545315328?=
+X-GMAIL-MSGID: =?utf-8?q?1599512684545315328?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> -----Original Message-----
-> From: kys@linuxonhyperv.com <kys@linuxonhyperv.com>
-> Sent: Thursday, May 3, 2018 11:08 PM
-> To: x86@kernel.org; gregkh@linuxfoundation.org; linux-kernel@vger.kernel.org;
-> devel@linuxdriverproject.org; olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com;
-> tglx@linutronix.de; hpa@zytor.com; Stephen Hemminger <sthemmin@microsoft.com>;
-> Michael Kelley (EOSG) <Michael.H.Kelley@microsoft.com>; vkuznets@redhat.com
-> Cc: KY Srinivasan <kys@microsoft.com>
-> Subject: [PATCH V2 3/5] X86: Hyper-V: Enhanced IPI enlightenment
-> 
-> From: "K. Y. Srinivasan" <kys@microsoft.com>
-> 
-> Support enhanced IPI enlightenments (to target more than 64 CPUs).
-> 
-> Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-> ---
+From: "K. Y. Srinivasan" <kys@microsoft.com>
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Hyper-V supports hypercalls to implement IPI; use them.
+
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+---
+ arch/x86/hyperv/hv_apic.c          | 118 +++++++++++++++++++++++++++++++++++++
+ arch/x86/hyperv/hv_init.c          |  27 +++++++++
+ arch/x86/include/asm/hyperv-tlfs.h |  15 +++++
+ arch/x86/include/asm/mshyperv.h    |   1 +
+ 4 files changed, 161 insertions(+)
+
+diff --git a/arch/x86/hyperv/hv_apic.c b/arch/x86/hyperv/hv_apic.c
+index 41f8b71ca19e..f52d08a7a343 100644
+--- a/arch/x86/hyperv/hv_apic.c
++++ b/arch/x86/hyperv/hv_apic.c
+@@ -31,6 +31,9 @@
+ #include <asm/mshyperv.h>
+ 
+ #if IS_ENABLED(CONFIG_HYPERV)
++
++static struct apic orig_apic;
++
+ static u64 hv_apic_icr_read(void)
+ {
+ 	u64 reg_val;
+@@ -86,8 +89,123 @@ static void hv_apic_eoi_write(u32 reg, u32 val)
+ 	wrmsr(HV_X64_MSR_EOI, val, 0);
+ }
+ 
++/*
++ * IPI implementation on Hyper-V.
++ */
++static bool __send_ipi_mask(const struct cpumask *mask, int vector)
++{
++	int cur_cpu, vcpu;
++	struct ipi_arg_non_ex **arg;
++	struct ipi_arg_non_ex *ipi_arg;
++	int ret = 1;
++	unsigned long flags;
++
++	if (cpumask_empty(mask))
++		return true;
++
++	if (!hv_hypercall_pg)
++		return false;
++
++	if ((vector < HV_IPI_LOW_VECTOR) || (vector > HV_IPI_HIGH_VECTOR))
++		return false;
++
++	local_irq_save(flags);
++	arg = (struct ipi_arg_non_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
++
++	ipi_arg = *arg;
++	if (unlikely(!ipi_arg))
++		goto ipi_mask_done;
++
++	ipi_arg->vector = vector;
++	ipi_arg->reserved = 0;
++	ipi_arg->cpu_mask = 0;
++
++	for_each_cpu(cur_cpu, mask) {
++		vcpu = hv_cpu_number_to_vp_number(cur_cpu);
++		/*
++		 * This particular version of the IPI hypercall can
++		 * only target upto 64 CPUs.
++		 */
++		if (vcpu >= 64)
++			goto ipi_mask_done;
++
++		__set_bit(vcpu, (unsigned long *)&ipi_arg->cpu_mask);
++	}
++
++	ret = hv_do_hypercall(HVCALL_SEND_IPI, ipi_arg, NULL);
++
++ipi_mask_done:
++	local_irq_restore(flags);
++	return ((ret == 0) ? true : false);
++}
++
++static bool __send_ipi_one(int cpu, int vector)
++{
++	struct cpumask mask = CPU_MASK_NONE;
++
++	cpumask_set_cpu(cpu, &mask);
++	return __send_ipi_mask(&mask, vector);
++}
++
++static void hv_send_ipi(int cpu, int vector)
++{
++	if (!__send_ipi_one(cpu, vector))
++		orig_apic.send_IPI(cpu, vector);
++}
++
++static void hv_send_ipi_mask(const struct cpumask *mask, int vector)
++{
++	if (!__send_ipi_mask(mask, vector))
++		orig_apic.send_IPI_mask(mask, vector);
++}
++
++static void hv_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
++{
++	unsigned int this_cpu = smp_processor_id();
++	struct cpumask new_mask;
++	const struct cpumask *local_mask;
++
++	cpumask_copy(&new_mask, mask);
++	cpumask_clear_cpu(this_cpu, &new_mask);
++	local_mask = &new_mask;
++	if (!__send_ipi_mask(local_mask, vector))
++		orig_apic.send_IPI_mask_allbutself(mask, vector);
++}
++
++static void hv_send_ipi_allbutself(int vector)
++{
++	hv_send_ipi_mask_allbutself(cpu_online_mask, vector);
++}
++
++static void hv_send_ipi_all(int vector)
++{
++	if (!__send_ipi_mask(cpu_online_mask, vector))
++		orig_apic.send_IPI_all(vector);
++}
++
++static void hv_send_ipi_self(int vector)
++{
++	if (!__send_ipi_one(smp_processor_id(), vector))
++		orig_apic.send_IPI_self(vector);
++}
++
+ void __init hv_apic_init(void)
+ {
++	if (ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) {
++		pr_info("Hyper-V: Using IPI hypercalls\n");
++		/*
++		 * Set the IPI entry points.
++		 */
++		orig_apic = *apic;
++
++		apic->send_IPI = hv_send_ipi;
++		apic->send_IPI_mask = hv_send_ipi_mask;
++		apic->send_IPI_mask_allbutself = hv_send_ipi_mask_allbutself;
++		apic->send_IPI_allbutself = hv_send_ipi_allbutself;
++		apic->send_IPI_all = hv_send_ipi_all;
++		apic->send_IPI_self = hv_send_ipi_self;
++	}
++
+ 	if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
+ 		pr_info("Hyper-V: Using MSR based APIC access\n");
+ 		apic_set_eoi_write(hv_apic_eoi_write);
+diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+index 71e50fc2b7ef..6bc90d68ac8b 100644
+--- a/arch/x86/hyperv/hv_init.c
++++ b/arch/x86/hyperv/hv_init.c
+@@ -91,12 +91,19 @@ EXPORT_SYMBOL_GPL(hv_vp_index);
+ struct hv_vp_assist_page **hv_vp_assist_page;
+ EXPORT_SYMBOL_GPL(hv_vp_assist_page);
+ 
++void  __percpu **hyperv_pcpu_input_arg;
++EXPORT_SYMBOL_GPL(hyperv_pcpu_input_arg);
++
+ u32 hv_max_vp_index;
+ 
+ static int hv_cpu_init(unsigned int cpu)
+ {
+ 	u64 msr_vp_index;
+ 	struct hv_vp_assist_page **hvp = &hv_vp_assist_page[smp_processor_id()];
++	void **input_arg;
++
++	input_arg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
++	*input_arg = page_address(alloc_page(GFP_KERNEL));
+ 
+ 	hv_get_vp_index(msr_vp_index);
+ 
+@@ -217,6 +224,16 @@ static int hv_cpu_die(unsigned int cpu)
+ {
+ 	struct hv_reenlightenment_control re_ctrl;
+ 	unsigned int new_cpu;
++	unsigned long flags;
++	void **input_arg;
++	void *input_pg = NULL;
++
++	local_irq_save(flags);
++	input_arg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
++	input_pg = *input_arg;
++	*input_arg = NULL;
++	local_irq_restore(flags);
++	free_page((unsigned long)input_pg);
+ 
+ 	if (hv_vp_assist_page && hv_vp_assist_page[cpu])
+ 		wrmsrl(HV_X64_MSR_VP_ASSIST_PAGE, 0);
+@@ -260,6 +277,16 @@ void __init hyperv_init(void)
+ 	if ((ms_hyperv.features & required_msrs) != required_msrs)
+ 		return;
+ 
++	/*
++	 * Allocate the per-CPU state for the hypercall input arg.
++	 * If this allocation fails, we will not be able to setup
++	 * (per-CPU) hypercall input page and thus this failure is
++	 * fatal on Hyper-V.
++	 */
++	hyperv_pcpu_input_arg = alloc_percpu(void  *);
++
++	BUG_ON(hyperv_pcpu_input_arg == NULL);
++
+ 	/* Allocate percpu VP index */
+ 	hv_vp_index = kmalloc_array(num_possible_cpus(), sizeof(*hv_vp_index),
+ 				    GFP_KERNEL);
+diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+index 416cb0e0c496..332e786d4deb 100644
+--- a/arch/x86/include/asm/hyperv-tlfs.h
++++ b/arch/x86/include/asm/hyperv-tlfs.h
+@@ -164,6 +164,11 @@
+  */
+ #define HV_X64_DEPRECATING_AEOI_RECOMMENDED	(1 << 9)
+ 
++/*
++ * Recommend using cluster IPI hypercalls.
++ */
++#define HV_X64_CLUSTER_IPI_RECOMMENDED         (1 << 10)
++
+ /* Recommend using the newer ExProcessorMasks interface */
+ #define HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED	(1 << 11)
+ 
+@@ -329,10 +334,14 @@ struct hv_tsc_emulation_status {
+ #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_MASK	\
+ 		(~((1ull << HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT) - 1))
+ 
++#define HV_IPI_LOW_VECTOR	0x10
++#define HV_IPI_HIGH_VECTOR	0xff
++
+ /* Declare the various hypercall operations. */
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_SPACE	0x0002
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST	0x0003
+ #define HVCALL_NOTIFY_LONG_SPIN_WAIT		0x0008
++#define HVCALL_SEND_IPI				0x000b
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_SPACE_EX  0x0013
+ #define HVCALL_FLUSH_VIRTUAL_ADDRESS_LIST_EX   0x0014
+ #define HVCALL_POST_MESSAGE			0x005c
+@@ -706,4 +715,10 @@ struct hv_enlightened_vmcs {
+ #define HV_STIMER_AUTOENABLE		(1ULL << 3)
+ #define HV_STIMER_SINT(config)		(__u8)(((config) >> 16) & 0x0F)
+ 
++struct ipi_arg_non_ex {
++	u32 vector;
++	u32 reserved;
++	u64 cpu_mask;
++};
++
+ #endif
+diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
+index 162977b82e2e..1eff91599c2b 100644
+--- a/arch/x86/include/asm/mshyperv.h
++++ b/arch/x86/include/asm/mshyperv.h
+@@ -122,6 +122,7 @@ static inline void hv_disable_stimer0_percpu_irq(int irq) {}
+ #if IS_ENABLED(CONFIG_HYPERV)
+ extern struct clocksource *hyperv_cs;
+ extern void *hv_hypercall_pg;
++extern void  __percpu  **hyperv_pcpu_input_arg;
+ 
+ static inline u64 hv_do_hypercall(u64 control, void *input, void *output)
+ {
+-- 
+2.15.1
