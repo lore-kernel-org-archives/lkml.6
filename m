@@ -1,61 +1,63 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3667791-1525410095-2-6641860621173489952
+X-Cyrus-Session-Id: sloti22d1t05-3667791-1525410089-2-1408841461981882596
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES enro,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
   FromHeader='name', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525410093; b=gxVWKZqyXuZ7roBh1qMzLi5yAN3MoCLFC/Zo57gbcLVDIVQpZ3
-    0YZOOQNAM8M/s7lpVzM9ellV5FoJp2vdvW9tTW/9uyqzedFqvkE9Vrfi5CnMxJ5t
-    TDzAwpa0vJeRC5aRZFEnts48apHgOagnDzIGZ3dlKSm+KtrcJhx7nuRer0L+Qs48
-    s1AlOtY7NPqXSHDGR6K3MKpaynMQ19jag/MGa+eSadlAt27NnDiHTM9NItbv3MvE
-    g0BtymkBpeGaj6nCOVOge8Og1CmOlnsjSqO77/dqcQe5jJwPOrTxopF3F5al3SqW
-    4NBV0RZj7FnSL8beUe0A4SKVAvnJiHFcrlIQ==
+    1525410089; b=RFyusIPkHtNyhKcQXfwRgzeXfKOansz4zYrgpEIEvznLgSTxim
+    0NrO10IvP+HW4yFo66GECixwq3hCgnA9TW+czBtbyNenRIf+uLy5ju3FHbK6gOg9
+    p0rzUCxDMFd9Iyls7f+1c8fQF2eXpzIHay5CXm/9RY7B/Axjiim2Qy5r9bdZ5Uoo
+    Krf/94AY38lyCllai+ia/FHdl0FfmM5ivd42J486Hy/cD+LeMctm2vpmMzAtf1E2
+    UftQynMT2T66ocWs+DJMXOSobF1ZmpcC9xuEB72GAs2CMS9lEtmac0UIgQePcU4n
+    /6njoW7YD39f2Jx85s1FU1UgFk5BfP6hN3zQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:date:subject:message-id
     :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525410093; bh=LNkIG
-    o+DyokIiNMDxvLvL4GdVzwwpvNa0lp0t4zEqCI=; b=FruYmS4wFZV2ZZAn8mBsX
-    RwiWpasle/05OhKTrfedB4NlxQLifTtcnbUOurOWfTSjxbNcv5xUKzq4XDC6GTtN
-    OoWnh2Nby2UtQ1cNwoKwVuEywD4z4SkgmOmHrjcOfAv8pFgmTe9YWXf4FABHgkuC
-    MaXiQiTUgjl+WVvo02pXIuzbGgE7qvRP2fubICH5qYCR8mDZnfv70VYNxBWzM9va
-    L8Sx4ReA+3QyEFjgJNk/pX3mc/LeywFCQHXfMk9U7ChzsOY7QCUe6uBtGHPo1BVE
-    Oh7++cbe1lFuTriGN1Dn7GPCjIOceVzqu/9Pd6eueeCGTq+m+XJfLzTKbvupsjfd
-    g==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1525410089; bh=IA14e
+    O0a+h2+87mthKigmdcgMCcP4uPUm6WqRlvgNic=; b=DzXxYLNyO/+XsYJWDIyK5
+    L7u32nNd7pIaOcWslWa9BzS/J9TyG+FPKz/WpTuyimbhBR7S6NG1AdSV45XTfDq1
+    B3vMbuZyF5YodwoNrwqxmQCtLeRtmGUk4gUWKNevdOlvkYdB88+e08tQyZ4dJ3jb
+    ocBJPMQPb4IVrRjyroMN2eMU4X7fayvugRGay2gOYLeIp5WpO8pCdxg5KQPDkLhU
+    wOgWBmmyC0/aM6GfE+beXbALj5F16lHPJVD0N4JxtB8aMmawExfBuL8s0TQ4BdW6
+    /y0H2g6kRA73uWPvRnlCmT5m/JDG4BMZIqeOCwOVwTrxbJcB2uEyToobbqYsWLS0
+    w==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
+    smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+    x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=brown.name header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=brown.name;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
+      smtp.helo=whitealder.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
+      x-ptr-lookup=smtp1.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=brown.name header.result=pass
       header_is_org_domain=yes;
@@ -63,14 +65,13 @@ Authentication-Results: mx5.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEEeRsZa9MzW5GX2GYkjeD7BniMcFYL7mSi7oBe/Kwn9tL4ctT+q7k/SHuP0UVsiOhyfzq/RujRfy9SztC/3F+qtcW8d8Swq6ctVHhlV9rmKTHk52o6Y
-    1ZJVYL8lELRAtc4mxSBdsmHjbqBwRpTCuRltybZ1pX8Ya51SMS1zEaqxvMVT/t9p5kY5KrGqYgVqt8kLEBkpe61tqpGQd9hz1SDLeumIpn+xsjcBNXc7ixZD
-    5DsLmZJZqRfBOYJHoilxxQ==
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
+X-CM-Envelope: MS4wfPuGiitWhz+2Fj+Xw2/e5MRq1sIt4oRmnifE4KeSIw5HCutlS+AzDHhbByGa995ux9Tk2vPPVs2NIemKK5Pg8zuTU0zE1UgGjGgN8jxBNu/uT5V4hz/i
+    BaGBwn8nxI8QfHaIgEe5rB4MaPjyixsn/pEOsJTIKqxgbJtYj8O+c/j6EdAefy8Rd+MczKx8yJchznTJ+LG6+UJShxplCJ0X5DDR7crMZC6f0zC3IcZV37Y3
+    Fftf6MoL2/HNQtW0H6ki+A==
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
+    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=MKtGQD3n3ToA:10
     a=VUJBJC2UJ8kA:10 a=qEKT6kP3PEYA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=hvb4E0EZvg1QZLyvD4QA:9
-    a=tgLVWfHEyX5EvBOS:21 a=fS--FbwQ45HYDDQC:21 a=CjuIK1q_8ugA:10
+    a=ZZnuYtJkoWoA:10 a=DDOyTI_5AAAA:8 a=flgAyN5zoFFWhOLXUhkA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
@@ -78,8 +79,8 @@ X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: NeilBrown <neil@brown.name>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Date: Fri, 04 May 2018 14:58:36 +1000
-Subject: [PATCH 7/8] staging: mt7621-pci: remove some dead code.
-Message-ID: <152540991631.12190.9879547396075931701.stgit@noble>
+Subject: [PATCH 6/8] staging: mt7621-pci: remove unnecessary resource details.
+Message-ID: <152540991626.12190.2556491761847659514.stgit@noble>
 In-Reply-To: <152540982998.12190.15220622955317261586.stgit@noble>
 References: <152540982998.12190.15220622955317261586.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -103,97 +104,48 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Some code is dead because it is commented out.
-Some is dead because it is uninteresting printks.
-Some is dead because it declares unused functions.
-
-Remove it all.
+These resources are extracted from devicetree, so they aren't
+needed here.
 
 Signed-off-by: NeilBrown <neil@brown.name>
 ---
- drivers/staging/mt7621-pci/pci-mt7621.c |   14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/staging/mt7621-pci/pci-mt7621.c |   19 ++-----------------
+ 1 file changed, 2 insertions(+), 17 deletions(-)
 
 diff --git a/drivers/staging/mt7621-pci/pci-mt7621.c b/drivers/staging/mt7621-pci/pci-mt7621.c
-index 5094e90eaf69..edd95013faf3 100644
+index 616960e01052..5094e90eaf69 100644
 --- a/drivers/staging/mt7621-pci/pci-mt7621.c
 +++ b/drivers/staging/mt7621-pci/pci-mt7621.c
-@@ -56,9 +56,6 @@
+@@ -302,27 +302,12 @@ struct pci_ops mt7621_pci_ops= {
+ 	.write		= pci_config_write,
+ };
  
- #include <ralink_regs.h>
- 
--extern void pcie_phy_init(void);
--extern void chk_phy_pll(void);
+-static struct resource mt7621_res_pci_mem1 = {
+-	.name		= "PCI MEM1",
+-	.start		= RALINK_PCI_MM_MAP_BASE,
+-	.end		= (u32)((RALINK_PCI_MM_MAP_BASE + (unsigned char *)0x0fffffff)),
+-	.flags		= IORESOURCE_MEM,
+-};
 -
- /*
-  * These functions and structures provide the BIOS scan and mapping of the PCI
-  * devices.
-@@ -364,11 +361,8 @@ pcibios_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
- void
- set_pcie_phy(u32 *addr, int start_b, int bits, int val)
- {
--//	printk("0x%p:", addr);
--//	printk(" %x", *addr);
- 	*(unsigned int *)(addr) &= ~(((1<<bits) - 1)<<start_b);
- 	*(unsigned int *)(addr) |= val << start_b;
--//	printk(" -> %x\n", *addr);
- }
+-static struct resource mt7621_res_pci_io1 = {
+-	.name		= "PCI I/O1",
+-	.start		= RALINK_PCI_IO_MAP_BASE,
+-	.end		= (u32)((RALINK_PCI_IO_MAP_BASE + (unsigned char *)0x0ffff)),
+-	.flags		= IORESOURCE_IO,
+-};
+-
++static struct resource mt7621_res_pci_mem1;
++static struct resource mt7621_res_pci_io1;
+ static struct pci_controller mt7621_controller = {
+ 	.pci_ops	= &mt7621_pci_ops,
+ 	.mem_resource	= &mt7621_res_pci_mem1,
+ 	.io_resource	= &mt7621_res_pci_io1,
+-	.mem_offset	= 0x00000000UL,
+-	.io_offset	= 0x00000000UL,
+-	.io_map_base	= 0xa0000000,
+ };
  
- void
-@@ -497,7 +491,6 @@ static int mt7621_pci_probe(struct platform_device *pdev)
- 	val |= RALINK_PCIE2_RST;
- 
- 	ASSERT_SYSRST_PCIE(RALINK_PCIE0_RST | RALINK_PCIE1_RST | RALINK_PCIE2_RST);
--	printk("pull PCIe RST: RALINK_RSTCTRL = %x\n", RALINK_RSTCTRL);
- 
- 	*(unsigned int *)(0xbe000060) &= ~(0x3<<10 | 0x3<<3);
- 	*(unsigned int *)(0xbe000060) |= 0x1<<10 | 0x1<<3;
-@@ -513,12 +506,10 @@ static int mt7621_pci_probe(struct platform_device *pdev)
- 	val |= RALINK_PCIE2_RST;
- 
- 	DEASSERT_SYSRST_PCIE(val);
--	printk("release PCIe RST: RALINK_RSTCTRL = %x\n", RALINK_RSTCTRL);
- 
- 	if ((*(unsigned int *)(0xbe00000c)&0xFFFF) == 0x0101) // MT7621 E2
- 		bypass_pipe_rst();
- 	set_phy_for_ssc();
--	printk("release PCIe RST: RALINK_RSTCTRL = %x\n", RALINK_RSTCTRL);
- 
- 	read_config(0, 0, 0, 0x70c, &val);
- 	printk("Port 0 N_FTS = %x\n", (unsigned int)val);
-@@ -614,8 +605,6 @@ pcie(2/1/0) link status	pcie2_num	pcie1_num	pcie0_num
- 		RALINK_PCI_PCICFG_ADDR |= 0x1 << 24;	//port2
- 		break;
- 	}
--	printk(" -> %x\n", RALINK_PCI_PCICFG_ADDR);
--	//printk(" RALINK_PCI_ARBCTL = %x\n", RALINK_PCI_ARBCTL);
- 
- /*
- 	ioport_resource.start = mt7621_res_pci_io1.start;
-@@ -653,7 +642,6 @@ pcie(2/1/0) link status	pcie2_num	pcie1_num	pcie0_num
- 	case 7:
- 		read_config(0, 2, 0, 0x4, &val);
- 		write_config(0, 2, 0, 0x4, val|0x4);
--		// write_config(0, 1, 0, 0x4, val|0x7);
- 		read_config(0, 2, 0, 0x70c, &val);
- 		val &= ~(0xff)<<8;
- 		val |= 0x50<<8;
-@@ -663,7 +651,6 @@ pcie(2/1/0) link status	pcie2_num	pcie1_num	pcie0_num
- 	case 6:
- 		read_config(0, 1, 0, 0x4, &val);
- 		write_config(0, 1, 0, 0x4, val|0x4);
--		// write_config(0, 1, 0, 0x4, val|0x7);
- 		read_config(0, 1, 0, 0x70c, &val);
- 		val &= ~(0xff)<<8;
- 		val |= 0x50<<8;
-@@ -671,7 +658,6 @@ pcie(2/1/0) link status	pcie2_num	pcie1_num	pcie0_num
- 	default:
- 		read_config(0, 0, 0, 0x4, &val);
- 		write_config(0, 0, 0, 0x4, val|0x4); //bus master enable
--		// write_config(0, 0, 0, 0x4, val|0x7); //bus master enable
- 		read_config(0, 0, 0, 0x70c, &val);
- 		val &= ~(0xff)<<8;
- 		val |= 0x50<<8;
+ static void
 
 
 _______________________________________________
