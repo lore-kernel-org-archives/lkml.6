@@ -1,22 +1,29 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751873AbeEDVtt (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:49:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55494 "EHLO mx1.redhat.com"
+        id S1751808AbeEDVwv (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:52:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56920 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751710AbeEDVtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:49:47 -0400
-Subject: Re: [PATCH v7 09/13] KVM: x86: Implement Intel Processor Trace
- context switch
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Luwei Kang <luwei.kang@intel.com>
-Cc: kvm@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, rkrcmar@redhat.com,
-        linux-kernel@vger.kernel.org, joro@8bytes.org, peterz@infradead.org,
-        chao.p.peng@linux.intel.com
+        id S1751622AbeEDVwu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 17:52:50 -0400
+Subject: Re: [PATCH v7 06/13] KVM: x86: Add Intel Processor Trace
+ virtualization mode
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        rkrcmar@redhat.com, linux-kernel@vger.kernel.org, joro@8bytes.org,
+        peterz@infradead.org, chao.p.peng@linux.intel.com
 References: <1525349323-9938-1-git-send-email-luwei.kang@intel.com>
- <1525349323-9938-10-git-send-email-luwei.kang@intel.com>
- <20180504102958.u6c3mqackl4kzd54@um.fi.intel.com>
+ <1525349323-9938-7-git-send-email-luwei.kang@intel.com>
+ <20180503113223.x2ykby6wglppgdwf@um.fi.intel.com>
+ <47494e95-edcb-e8b5-0a32-004e9470dbdf@redhat.com>
+ <20180503120215.dev7ti43zk7yoovn@um.fi.intel.com>
+ <221c297b-1270-371b-70a3-4cff4bed7a7e@redhat.com>
+ <20180503124847.tcrizs2sxy3j6mu2@um.fi.intel.com>
+ <26505f7a-9e6b-efb9-e5f9-8aae3756be49@redhat.com>
+ <20180503133823.tqbraql3b7ltuo6a@um.fi.intel.com>
+ <e948d77e-b96e-147a-745d-aad05935b61b@redhat.com>
+ <20180504103842.rcbpnkjeoavulii6@um.fi.intel.com>
 From: Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -54,12 +61,12 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  1lJAPPSIqZKvHzGShdh8DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT
  /ujKaGd4vxG2Ei+MMNDmS1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO
  53DliFMkVTecLptsXaesuUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <c339bc07-c852-cb76-6c65-393488bdfe7e@redhat.com>
-Date: Fri, 4 May 2018 23:49:44 +0200
+Message-ID: <270eb55a-b033-f2f6-1cbe-76953079da27@redhat.com>
+Date: Fri, 4 May 2018 23:52:48 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180504102958.u6c3mqackl4kzd54@um.fi.intel.com>
+In-Reply-To: <20180504103842.rcbpnkjeoavulii6@um.fi.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,38 +74,27 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 12:29, Alexander Shishkin wrote:
-> On Thu, May 03, 2018 at 08:08:39PM +0800, Luwei Kang wrote:
->> +static void pt_guest_enter(struct vcpu_vmx *vmx)
->> +{
->> +	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
->> +		rdmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
->> +
->> +	if (pt_mode == PT_MODE_HOST_GUEST &&
->> +		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
->> +		wrmsrl(MSR_IA32_RTIT_CTL, 0);
->> +		pt_save_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
->> +		pt_load_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
->> +	}
->> +}
->> +
->> +static void pt_guest_exit(struct vcpu_vmx *vmx)
->> +{
->> +	if (pt_mode == PT_MODE_HOST_GUEST &&
->> +		vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
->> +		pt_save_msr(&vmx->pt_desc.guest, vmx->pt_desc.range_cnt);
->> +		pt_load_msr(&vmx->pt_desc.host, vmx->pt_desc.range_cnt);
->> +	}
->> +
->> +	if (pt_mode == PT_MODE_HOST || pt_mode == PT_MODE_HOST_GUEST)
->> +		wrmsrl(MSR_IA32_RTIT_CTL, vmx->pt_desc.host.ctl);
->> +}
-> 
-> This means that a host PT event won't get the guest traces and won't get
-> any notification as to what'd happened or why. At the minimum we need to
-> send a PARTIAL AUX record at the pt_guest_enter(), when we turn the host
-> tracing off.
+On 04/05/2018 12:38, Alexander Shishkin wrote:
+>>> Or rather a parameter to decide who wins in case both host and guest want
+>>> to trace the guest. That's arguably better than having different versions of
+>>> PT in the guest depending on a module parameter setting.
+>> It's not different versions; it's having PT vs. not having PT at all.  I
+>> don't really see it as a big issue.  The nice thing about this series is
+>> that the interactions between PT code and KVM code are minimal.
+> Unfortunately, it gets it wrong. Like I just said in another email, if you
+> switch off host's PT, you need to let them know, which this patchset doesn't
+> do. And when it does, it would be the same amount of interaction with PT
+> code as what would be required to get the dynamic guest PT right.
 
-How do you do that? :)
+Two issues:
+
+1) Is there a fast (10 clock cycles, better if less) way for KVM to know
+"PT is enabled on the host", or a callback that KVM can register when
+e.g. RTIT_CTL is written?
+
+2) We'd have to write trace records into the guest.  That does not sound
+that easy.  Does it entail parsing the ToPA and all that?
+
+Thanks,
 
 Paolo
