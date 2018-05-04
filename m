@@ -1,170 +1,278 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751621AbeEDIS3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:18:29 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:51986 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751268AbeEDIS1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:18:27 -0400
-Message-ID: <1525421898.9367.116.camel@infradead.org>
-Subject: Re: [PATCH] jffs2: safely remove obsolete dirent from the f->dents
- list
-From: David Woodhouse <dwmw2@infradead.org>
-To: yuyufen <yuyufen@huawei.com>
-Cc: Joakim.Tjernlund@infinera.com, viro@zeniv.linux.org.uk,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <223f07c9-f07d-f434-6478-274990fbdf54@huawei.com>
-References: <20180329120023.33169-1-yuyufen@huawei.com>
-         <1524867762.18504.89.camel@infradead.org>
-         <223f07c9-f07d-f434-6478-274990fbdf54@huawei.com>
-Face: iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-QQ9r06kiDnwh90ET6FuG"
-Date: Fri, 04 May 2018 09:18:18 +0100
+        id S1751689AbeEDIXR (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:23:17 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51733 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751172AbeEDIXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 04:23:15 -0400
+Message-ID: <d728db1b56907c0f86aa661d71e16038329da2e1.camel@bootlin.com>
+Subject: Re: [PATCH v2 05/10] media: v4l: Add definitions for MPEG2 frame
+ format and header metadata
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>, Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>
+Date: Fri, 04 May 2018 10:21:43 +0200
+In-Reply-To: <20180424090150.rtbejfjaddd6wysk@paasikivi.fi.intel.com>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+         <20180419154536.17846-1-paul.kocialkowski@bootlin.com>
+         <20180424090150.rtbejfjaddd6wysk@paasikivi.fi.intel.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-5uYNwX/eeAle0iuBdbDf"
+X-Mailer: Evolution 3.28.1 
 Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---=-QQ9r06kiDnwh90ET6FuG
+--=-5uYNwX/eeAle0iuBdbDf
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-
-On Fri, 2018-05-04 at 16:06 +0800, yuyufen wrote:
+On Tue, 2018-04-24 at 12:01 +0300, Sakari Ailus wrote:
+> Hi Paul,
 >=20
-> > You've made JFFS2_INVALID_LIMIT 64, which is reasonable enough
-> > (although it's a bit of a weird name and possibly wants to be more
-> > specific =E2=80=94 invalid *what*?).
->
-> Thansk a lot for your suggestions.
+> On Thu, Apr 19, 2018 at 05:45:31PM +0200, Paul Kocialkowski wrote:
+> > Stateless video decoding engines require both the MPEG slices and
+> > associated metadata from the video stream in order to decode frames.
+> >=20
+> > This introduces definitions for a new pixel format, describing
+> > buffers
+> > with MPEG2 slice data, as well as a control structure for passing
+> > the
+> > frame header (metadata) to drivers.
 >=20
-> Yes, it is really a bad name. How about JFFS2_OBS_DIRENT_LIMIT?=C2=A0 I a=
-m=C2=A0
-> not sure.
+> What's the typical relationship between MPEG2 slice data and the
+> header?
+>=20
+> Are the two always used together, do they originate from the same
+> source, for instance? I have to admit I'm not very familiar with
+> MPEG...
 
-That'll do; at least it's a hint in the right direction :)
+Yes, the header is closely related to the slice data, as it expresses
+the metadata required for properly decoding the slice data. Both are
+extracted from the MPEG bitstream and there is dedicated metadata for
+each new set of slices that is decoded to a single frame.
 
-> >
-> > So the maximum interesting value of ->obsolete_count is 64. Which means
-> > it might as well be a uint8_t and sit in the padding after the
-> > 'usercompr' field.
-> >
-> > It might be useful to look at putting the mutually exclusive fields in
-> > struct jffs2_inode_info into a union, and then we don't need the
-> > additional space of the atomic_t either; we'll never need that *and*
-> > the fragtree at the same time... will we?
->
-> You are right, thanks. But, obsolete_count may be large. So, I apply to=
-=C2=A0
-> use uint16_t and it also sits in the padding after the 'usercompr'=C2=A0
-> field.
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
+> > ---
+> >  drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
+> >  drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
+> >  include/uapi/linux/v4l2-controls.h   | 26
+> > ++++++++++++++++++++++++++
+> >  include/uapi/linux/videodev2.h       |  3 +++
+> >  4 files changed, 40 insertions(+)
+> >=20
+> > diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > index ba05a8b9a095..fcdc12b9a9e0 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > @@ -761,6 +761,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+> >  	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:	=09
+> > return "Vertical MV Search Range";
+> >  	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:	=09
+> > return "Repeat Sequence Header";
+> >  	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		re
+> > turn "Force Key Frame";
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		re
+> > turn "MPEG2 Frame Header";
+> > =20
+> >  	/* VPX controls */
+> >  	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:	=09
+> > return "VPX Number of Partitions";
+> > @@ -1152,6 +1153,9 @@ void v4l2_ctrl_fill(u32 id, const char **name,
+> > enum v4l2_ctrl_type *type,
+> >  	case V4L2_CID_RDS_TX_ALT_FREQS:
+> >  		*type =3D V4L2_CTRL_TYPE_U32;
+> >  		break;
+> > +	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
+> > +		*type =3D V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
+> > +		break;
+> >  	default:
+> >  		*type =3D V4L2_CTRL_TYPE_INTEGER;
+> >  		break;
+> > @@ -1472,6 +1476,9 @@ static int std_validate(const struct v4l2_ctrl
+> > *ctrl, u32 idx,
+> >  			return -ERANGE;
+> >  		return 0;
+> > =20
+> > +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> > +		return 0;
+> > +
+> >  	default:
+> >  		return -EINVAL;
+> >  	}
+> > @@ -2046,6 +2053,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct
+> > v4l2_ctrl_handler *hdl,
+> >  	case V4L2_CTRL_TYPE_U32:
+> >  		elem_size =3D sizeof(u32);
+> >  		break;
+> > +	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
+> > +		elem_size =3D sizeof(struct
+> > v4l2_ctrl_mpeg2_frame_hdr);
+> > +		break;
+> >  	default:
+> >  		if (type < V4L2_CTRL_COMPOUND_TYPES)
+> >  			elem_size =3D sizeof(s32);
+> > diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > index 468c3c65362d..8070203da5d2 100644
+> > --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> > +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> > @@ -1273,6 +1273,7 @@ static void v4l_fill_fmtdesc(struct
+> > v4l2_fmtdesc *fmt)
+> >  		case V4L2_PIX_FMT_VC1_ANNEX_L:	descr =3D "VC-1=20
+> > (SMPTE 412M Annex L)"; break;
+> >  		case V4L2_PIX_FMT_VP8:		descr =3D
+> > "VP8"; break;
+> >  		case V4L2_PIX_FMT_VP9:		descr =3D
+> > "VP9"; break;
+> > +		case V4L2_PIX_FMT_MPEG2_FRAME:	descr =3D
+> > "MPEG2 Frame"; break;
+> >  		case V4L2_PIX_FMT_CPIA1:	descr =3D "GSPCA CPiA
+> > YUV"; break;
+> >  		case V4L2_PIX_FMT_WNVA:		descr =3D
+> > "WNVA"; break;
+> >  		case V4L2_PIX_FMT_SN9C10X:	descr =3D "GSPCA
+> > SN9C10X"; break;
+> > diff --git a/include/uapi/linux/v4l2-controls.h
+> > b/include/uapi/linux/v4l2-controls.h
+> > index cbbb750d87d1..8431b2a540c7 100644
+> > --- a/include/uapi/linux/v4l2-controls.h
+> > +++ b/include/uapi/linux/v4l2-controls.h
+> > @@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
+> >  };
+> >  #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPE
+> > G_BASE+407)
+> > =20
+> > +#define
+> > V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
+> > +
+> >  /*  Control IDs for VP8 streams
+> >   *  Although VP8 is not part of MPEG we add these controls to the
+> > MPEG class
+> >   *  as that class is already handling other video compression
+> > standards
+> > @@ -985,4 +987,28 @@ enum v4l2_detect_md_mode {
+> >  #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_C
+> > LASS_BASE + 3)
+> >  #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DET
+> > ECT_CLASS_BASE + 4)
+> > =20
+> > +struct v4l2_ctrl_mpeg2_frame_hdr {
+> > +	__u32 slice_len;
+> > +	__u32 slice_pos;
+> > +	enum { MPEG1, MPEG2 } type;
+> > +
+> > +	__u16 width;
+> > +	__u16 height;
+> > +
+> > +	enum { PCT_I =3D 1, PCT_P, PCT_B, PCT_D }
+> > picture_coding_type;
+> > +	__u8 f_code[2][2];
+> > +
+> > +	__u8 intra_dc_precision;
+> > +	__u8 picture_structure;
+> > +	__u8 top_field_first;
+> > +	__u8 frame_pred_frame_dct;
+> > +	__u8 concealment_motion_vectors;
+> > +	__u8 q_scale_type;
+> > +	__u8 intra_vlc_format;
+> > +	__u8 alternate_scan;
+> > +
+> > +	__u8 backward_ref_index;
+> > +	__u8 forward_ref_index;
+> > +};
+>=20
+> Besides the comments that have been given, please add
+> __attribute__((packed)) to the struct definition.
 
-You can always just cap it. Once it reaches 64 it never changes again,
-until you actually harvest them. Without that, a uint16_t could
-overflow too.
+Noted.
 
---=-QQ9r06kiDnwh90ET6FuG
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+> > +
+> >  #endif
+> > diff --git a/include/uapi/linux/videodev2.h
+> > b/include/uapi/linux/videodev2.h
+> > index 31b5728b56e9..4b8336f7bcf0 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -635,6 +635,7 @@ struct v4l2_pix_format {
+> >  #define V4L2_PIX_FMT_VC1_ANNEX_L v4l2_fourcc('V', 'C', '1', 'L') /*
+> > SMPTE 421M Annex L compliant stream */
+> >  #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /*
+> > VP8 */
+> >  #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /*
+> > VP9 */
+> > +#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /*
+> > MPEG2 frame */
+>=20
+> This format needs documentation.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA1MDQwODE4MThaMC8GCSqG
-SIb3DQEJBDEiBCC4fTtCVFxNFpUraci6e0mObOzQB/M0TYbbcPslD/2mhjCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAD7U11jWEvNx
-NWGbr4jnqpM3pLJwV9tw4QZA/ENp6HstQdo6m549RzM6Q4kEF9e/23BhtS+SxpNfNqVxUBRVNdPz
-Lh0Q/LN0bEJRXF4cnObO4KTC6WZYasn585aZVYenk8KuHaZevzWzgr3I5XT1kl7PEsZn8N48zpY5
-dB4RNXldt+G7D3m84N3EnV+Umz9qy+kF7JiFSxrN9OrUelNG1yUHwdUSnF/tQPYGPR8Ar1py9+rS
-pVre+dlvWXBr6mqfGgH7U3pGoUartpeRtD8OCN5uaGq/90QAE80UFDvOOjdjXayDm2KinNv3HVnm
-P2TyITT0gUgGf2z+BR3+sROCbzUAAAAAAAA=
+Noted too. Thanks for the review!
 
+> > =20
+> >  /*  Vendor-specific formats   */
+> >  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /*
+> > cpia1 YUV */
+> > @@ -1586,6 +1587,7 @@ struct v4l2_ext_control {
+> >  		__u8 __user *p_u8;
+> >  		__u16 __user *p_u16;
+> >  		__u32 __user *p_u32;
+> > +		struct v4l2_ctrl_mpeg2_frame_hdr __user
+> > *p_mpeg2_frame_hdr;
+> >  		void __user *ptr;
+> >  	};
+> >  } __attribute__ ((packed));
+> > @@ -1631,6 +1633,7 @@ enum v4l2_ctrl_type {
+> >  	V4L2_CTRL_TYPE_U8	     =3D 0x0100,
+> >  	V4L2_CTRL_TYPE_U16	     =3D 0x0101,
+> >  	V4L2_CTRL_TYPE_U32	     =3D 0x0102,
+> > +	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR =3D 0x0109,
+> >  };
+> > =20
+> >  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
+> > --=20
+> > 2.16.3
+> >=20
+>=20
+>=20
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-5uYNwX/eeAle0iuBdbDf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
---=-QQ9r06kiDnwh90ET6FuG--
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsGBcACgkQ3cLmz3+f
+v9GJ0Qf+Kh9QkBwKJdeggme3IYIU5j54LqZoyra3vhjuZXghyNb/coLQZS+WesFG
+BpBgcJJPKUeuwuHc9R1ZXuWCZJl7d4htmvcEHlGRQANzO1tdHkMTSlUainTpEOOj
+nOOgeTig+xFg1eRJUZTqYCsvxRfeawbkpWXw0Lql8hd0mN02lq6IEqslGZdi48/t
+iwjaG6fMm2rRnkGChTJ6i7qtgN/icNFMlqx/evEIn1kZTp1AOhEyEutnvrjydFsE
+QpDup2ux/CJhh0xaNlY0WKdmL0nqUiIHbhtOc/gjT92mFEi9QYHAwkSYCkFfC8/w
+3jyZ/V7yZLVZaRiM+LLPkcZQmpdKiw==
+=UV8Z
+-----END PGP SIGNATURE-----
+
+--=-5uYNwX/eeAle0iuBdbDf--
