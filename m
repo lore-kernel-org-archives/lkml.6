@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751907AbeEDUHz (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:07:55 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53982 "EHLO
+        id S1751959AbeEDUIA (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:08:00 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54022 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751756AbeEDUHr (ORCPT
+        with ESMTP id S1751887AbeEDUH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:07:47 -0400
+        Fri, 4 May 2018 16:07:59 -0400
 From: Ezequiel Garcia <ezequiel@collabora.com>
 To: linux-media@vger.kernel.org
 Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
@@ -17,9 +17,9 @@ Cc: kernel@collabora.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Ezequiel Garcia <ezequiel@collabora.com>
-Subject: [PATCH v9 02/15] hackrf: group device capabilities
-Date: Fri,  4 May 2018 17:05:59 -0300
-Message-Id: <20180504200612.8763-3-ezequiel@collabora.com>
+Subject: [PATCH v9 05/15] vb2: add unordered vb2_queue property for drivers
+Date: Fri,  4 May 2018 17:06:02 -0300
+Message-Id: <20180504200612.8763-6-ezequiel@collabora.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180504200612.8763-1-ezequiel@collabora.com>
 References: <20180504200612.8763-1-ezequiel@collabora.com>
@@ -29,40 +29,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-Instead of putting V4L2_CAP_STREAMING and V4L2_CAP_READWRITE
-everywhere, set device_caps earlier with these values.
+Explicit synchronization benefits a lot from ordered queues, they fit
+better in a pipeline with DRM for example so create a opt-in way for
+drivers notify videobuf2 that the queue is unordered.
+
+v5: go back to a bitfield property for the unordered property.
+
+v4: rename it to vb2_ops_is_unordered() (Hans Verkuil)
+
+v3: - make it bool (Hans)
+    - create vb2_ops_set_unordered() helper
+
+v2: improve comments for is_unordered flag (Hans Verkuil)
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
 ---
- drivers/media/usb/hackrf/hackrf.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ include/media/videobuf2-core.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/media/usb/hackrf/hackrf.c b/drivers/media/usb/hackrf/hackrf.c
-index 7eb53517a82f..6d692fb3e8dd 100644
---- a/drivers/media/usb/hackrf/hackrf.c
-+++ b/drivers/media/usb/hackrf/hackrf.c
-@@ -909,18 +909,15 @@ static int hackrf_querycap(struct file *file, void *fh,
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index f9633de0386c..364e4cb41b10 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -467,6 +467,8 @@ struct vb2_buf_ops {
+  * @quirk_poll_must_check_waiting_for_buffers: Return %EPOLLERR at poll when QBUF
+  *              has not been called. This is a vb1 idiom that has been adopted
+  *              also by vb2.
++ * @unordered:	tell if the queue is unordered, i.e. buffers can be
++ *		dequeued in a different order from how they were queued.
+  * @lock:	pointer to a mutex that protects the &struct vb2_queue. The
+  *		driver can set this to a mutex to let the v4l2 core serialize
+  *		the queuing ioctls. If the driver wants to handle locking
+@@ -533,6 +535,7 @@ struct vb2_queue {
+ 	unsigned			fileio_read_once:1;
+ 	unsigned			fileio_write_immediately:1;
+ 	unsigned			allow_zero_bytesused:1;
++	unsigned			unordered:1;
+ 	unsigned		   quirk_poll_must_check_waiting_for_buffers:1;
  
- 	dev_dbg(&intf->dev, "\n");
- 
-+	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
- 	if (vdev->vfl_dir == VFL_DIR_RX)
--		cap->device_caps = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
--				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
--
-+		cap->device_caps |= V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER;
- 	else
--		cap->device_caps = V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
--				   V4L2_CAP_STREAMING | V4L2_CAP_READWRITE;
-+		cap->device_caps |= V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR;
- 
- 	cap->capabilities = V4L2_CAP_SDR_CAPTURE | V4L2_CAP_TUNER |
- 			    V4L2_CAP_SDR_OUTPUT | V4L2_CAP_MODULATOR |
--			    V4L2_CAP_STREAMING | V4L2_CAP_READWRITE |
--			    V4L2_CAP_DEVICE_CAPS;
-+			    V4L2_CAP_DEVICE_CAPS | cap->device_caps;
- 	strlcpy(cap->driver, KBUILD_MODNAME, sizeof(cap->driver));
- 	strlcpy(cap->card, dev->rx_vdev.name, sizeof(cap->card));
- 	usb_make_path(dev->udev, cap->bus_info, sizeof(cap->bus_info));
+ 	struct mutex			*lock;
 -- 
 2.16.3
