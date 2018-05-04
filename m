@@ -1,457 +1,292 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751781AbeEDS7t (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 14:59:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43334 "EHLO mail.kernel.org"
+        id S1751765AbeEDTAm (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 15:00:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751507AbeEDS7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 14:59:47 -0400
-Date: Fri, 4 May 2018 11:59:46 -0700
+        id S1751522AbeEDTAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 15:00:40 -0400
+Date: Fri, 4 May 2018 12:00:39 -0700
 From: Jaegeuk Kim <jaegeuk@kernel.org>
 To: Chao Yu <yuchao0@huawei.com>
 Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
         chao@kernel.org
-Subject: Re: [PATCH v2] f2fs: fix to avoid race during access gc_thread
- pointer
-Message-ID: <20180504185946.GD27993@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180424024214.83177-1-yuchao0@huawei.com>
- <20180426160359.GH68594@jaegeuk-macbookpro.roam.corp.google.com>
- <96ccc4d2-8360-14c2-6d98-6fdf35255b65@huawei.com>
- <20180428023621.GC10595@jaegeuk-macbookpro.roam.corp.google.com>
- <e52ecabe-7d30-b729-b78c-17984a54d1b4@huawei.com>
+Subject: Re: [PATCH v2] f2fs: avoid stucking GC due to atomic write
+Message-ID: <20180504184313.GC27993@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180424025136.44247-1-yuchao0@huawei.com>
+ <20180426155449.GG68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <b110085f-bcc2-c744-762d-123cea4d6b5b@huawei.com>
+ <20180428023433.GB10595@jaegeuk-macbookpro.roam.corp.google.com>
+ <b7257bc0-d65a-3ee5-bdd7-300f3903383e@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e52ecabe-7d30-b729-b78c-17984a54d1b4@huawei.com>
+In-Reply-To: <b7257bc0-d65a-3ee5-bdd7-300f3903383e@huawei.com>
 User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 05/02, Chao Yu wrote:
-> On 2018/4/28 10:36, Jaegeuk Kim wrote:
+> On 2018/4/28 10:34, Jaegeuk Kim wrote:
 > > On 04/27, Chao Yu wrote:
-> >> On 2018/4/27 0:03, Jaegeuk Kim wrote:
+> >> On 2018/4/26 23:54, Jaegeuk Kim wrote:
 > >>> On 04/24, Chao Yu wrote:
-> >>>> Thread A			Thread B		Thread C
-> >>>> - f2fs_remount
-> >>>>  - stop_gc_thread
-> >>>> 				- f2fs_sbi_store
-> >>>> 							- issue_discard_thread
-> >>>>    sbi->gc_thread = NULL;
-> >>>> 				  sbi->gc_thread->gc_wake = 1
-> >>>> 							  access sbi->gc_thread->gc_urgent
-> >>>>
-> >>>> Previously, we allocate memory for sbi->gc_thread based on background
-> >>>> gc thread mount option, the memory can be released if we turn off
-> >>>> that mount option, but still there are several places access gc_thread
-> >>>> pointer without considering race condition, result in NULL point
-> >>>> dereference.
+> >>>> f2fs doesn't allow abuse on atomic write class interface, so except
+> >>>> limiting in-mem pages' total memory usage capacity, we need to limit
+> >>>> atomic-write usage as well when filesystem is seriously fragmented,
+> >>>> otherwise we may run into infinite loop during foreground GC because
+> >>>> target blocks in victim segment are belong to atomic opened file for
+> >>>> long time.
 > >>>
-> >>> Do we just need to check &sb->s_umount in f2fs_sbi_store() and
+> >>> How about using fi->i_gc_failure likewise pin_file?
 > >>
-> >> Better,
-> >>
-> >>> issue_discard_thread?
-> >>
-> >> There is more cases can be called from different scenarios:
-> >> - select_policy()
-> >> - need_SSR()
+> >> OK, how about changing it to array fi->i_gc_failure[MAX_GC_FAILURE], and change
+> >> the type to unsigned long long to avoid overflow?
 > > 
-> > No? They should be blocked by remount(2).
+> > It'd be enough to share i_gc_failure between the types, IMO.
 > 
-> How about below cases?
-> 
-> - do_remount
+> IMO, for atomic case, we don't need to persist the count into on-disk
+> i_gc_failure, as we only care about in-mem value instead of on-disk one.
+> Another concern is that if both functionalities are used, we can not decide to
+> drop atomic written data due to the failure value which may be only increased by
+> a pinned file.
 
-Was there no guard to block any filesystem operations?
-If it's true, yeah, we need to cover them.
+Then, okay with the array. :P
 
->  - do_remount_sb
->   - remount_fs
->    - f2fs_remount
->     - stop_gc_thread
-> 					- fsync
-> 					 - f2fs_sync_file
-> 					  - file_write_and_wait_range
-> 					   - f2fs_write_data_pages
-> 					    - __write_data_page
-> 					     - should_update_inplace
-> 					      - check_inplace_update_policy
-> 					       - need_SSR
->      : sbi->gc_thread = NULL;
-> 
-> or
-> 
-> 					     - write_data_page
-> 					      - allocate_data_block
-> 					       - allocate_segment
-> 					        - get_ssr_segment
-> 					         - select_gc_type
->      : sbi->gc_thread = NULL;
 > 
 > Thanks,
 > 
 > > 
 > >>
+> >> enum {
+> >> 	GC_FAILURE_PIN,
+> >> 	GC_FAILURE_ATOMIC,
+> >> 	MAX_GC_FAILURE
+> >> }
+> >>
 > >> Thanks,
 > >>
 > >>>
 > >>>>
-> >>>> In order to fix this issue, keep gc_thread structure valid in sbi all
-> >>>> the time instead of alloc/free it dynamically.
+> >>>> Now, we will detect failure due to atomic write in foreground GC, if
+> >>>> the count exceeds threshold, we will drop all atomic written data in
+> >>>> cache, by this, I expect it can keep our system running safely to
+> >>>> prevent Dos attack.
 > >>>>
-> >>>> In addition, add a rw semaphore to exclude rw operation in fields of
-> >>>> gc_thread.
+> >>>> In addition, his patch adds to show GC skip information in debugfs,
+> >>>> now it just shows count of skipped caused by atomic write.
 > >>>>
 > >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
 > >>>> ---
 > >>>> v2:
-> >>>> - add a rw semaphore to exclude rw operation suggested by Jaegeuk.
-> >>>>  fs/f2fs/debug.c   |  3 +--
-> >>>>  fs/f2fs/f2fs.h    |  9 ++++++-
-> >>>>  fs/f2fs/gc.c      | 78 ++++++++++++++++++++++++++++++++++++-------------------
-> >>>>  fs/f2fs/gc.h      |  1 +
-> >>>>  fs/f2fs/segment.c | 10 +++++--
-> >>>>  fs/f2fs/super.c   | 26 +++++++++++++------
-> >>>>  fs/f2fs/sysfs.c   | 26 ++++++++++++++-----
-> >>>>  7 files changed, 107 insertions(+), 46 deletions(-)
+> >>>> - add to show skip info in debugfs.
+> >>>>  fs/f2fs/debug.c   |  8 ++++++++
+> >>>>  fs/f2fs/f2fs.h    |  2 ++
+> >>>>  fs/f2fs/file.c    |  5 +++++
+> >>>>  fs/f2fs/gc.c      | 29 +++++++++++++++++++++++++----
+> >>>>  fs/f2fs/gc.h      |  3 +++
+> >>>>  fs/f2fs/segment.c |  1 +
+> >>>>  fs/f2fs/segment.h |  2 ++
+> >>>>  7 files changed, 46 insertions(+), 4 deletions(-)
 > >>>>
 > >>>> diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-> >>>> index a66107b5cfff..0fbd674c66fb 100644
+> >>>> index 0fbd674c66fb..607b258a9b61 100644
 > >>>> --- a/fs/f2fs/debug.c
 > >>>> +++ b/fs/f2fs/debug.c
-> >>>> @@ -221,8 +221,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
-> >>>>  	si->cache_mem = 0;
-> >>>>  
-> >>>>  	/* build gc */
-> >>>> -	if (sbi->gc_thread)
-> >>>> -		si->cache_mem += sizeof(struct f2fs_gc_kthread);
-> >>>> +	si->cache_mem += sizeof(struct f2fs_gc_kthread);
-> >>>>  
-> >>>>  	/* build merge flush thread */
-> >>>>  	if (SM_I(sbi)->fcc_info)
+> >>>> @@ -104,6 +104,10 @@ static void update_general_status(struct f2fs_sb_info *sbi)
+> >>>>  	si->avail_nids = NM_I(sbi)->available_nids;
+> >>>>  	si->alloc_nids = NM_I(sbi)->nid_cnt[PREALLOC_NID];
+> >>>>  	si->bg_gc = sbi->bg_gc;
+> >>>> +	si->skipped_atomic_files[BG_GC] =
+> >>>> +			sbi->gc_thread->skipped_atomic_files[BG_GC];
+> >>>> +	si->skipped_atomic_files[FG_GC] =
+> >>>> +			sbi->gc_thread->skipped_atomic_files[FG_GC];
+> >>>>  	si->util_free = (int)(free_user_blocks(sbi) >> sbi->log_blocks_per_seg)
+> >>>>  		* 100 / (int)(sbi->user_block_count >> sbi->log_blocks_per_seg)
+> >>>>  		/ 2;
+> >>>> @@ -341,6 +345,10 @@ static int stat_show(struct seq_file *s, void *v)
+> >>>>  				si->bg_data_blks);
+> >>>>  		seq_printf(s, "  - node blocks : %d (%d)\n", si->node_blks,
+> >>>>  				si->bg_node_blks);
+> >>>> +		seq_printf(s, "Skipped : atomic write %llu (%llu)\n",
+> >>>> +				si->skipped_atomic_files[BG_GC] +
+> >>>> +				si->skipped_atomic_files[FG_GC],
+> >>>> +				si->skipped_atomic_files[BG_GC]);
+> >>>>  		seq_puts(s, "\nExtent Cache:\n");
+> >>>>  		seq_printf(s, "  - Hit Count: L1-1:%llu L1-2:%llu L2:%llu\n",
+> >>>>  				si->hit_largest, si->hit_cached,
 > >>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> >>>> index 8f3ad9662d13..75d3b4875429 100644
+> >>>> index 75d3b4875429..c2b92cb377c6 100644
 > >>>> --- a/fs/f2fs/f2fs.h
 > >>>> +++ b/fs/f2fs/f2fs.h
-> >>>> @@ -1412,6 +1412,11 @@ static inline struct sit_info *SIT_I(struct f2fs_sb_info *sbi)
-> >>>>  	return (struct sit_info *)(SM_I(sbi)->sit_info);
-> >>>>  }
+> >>>> @@ -2254,6 +2254,7 @@ enum {
+> >>>>  	FI_EXTRA_ATTR,		/* indicate file has extra attribute */
+> >>>>  	FI_PROJ_INHERIT,	/* indicate file inherits projectid */
+> >>>>  	FI_PIN_FILE,		/* indicate file should not be gced */
+> >>>> +	FI_ATOMIC_REVOKE_REQUEST,/* indicate atomic committed data has been dropped */
+> >>>>  };
 > >>>>  
-> >>>> +static inline struct f2fs_gc_kthread *GC_I(struct f2fs_sb_info *sbi)
-> >>>> +{
-> >>>> +	return (struct f2fs_gc_kthread *)(sbi->gc_thread);
-> >>>> +}
-> >>>> +
-> >>>>  static inline struct free_segmap_info *FREE_I(struct f2fs_sb_info *sbi)
-> >>>>  {
-> >>>>  	return (struct free_segmap_info *)(SM_I(sbi)->free_info);
-> >>>> @@ -2954,8 +2959,10 @@ bool f2fs_overwrite_io(struct inode *inode, loff_t pos, size_t len);
-> >>>>  /*
-> >>>>   * gc.c
-> >>>>   */
-> >>>> +int init_gc_context(struct f2fs_sb_info *sbi);
-> >>>> +void destroy_gc_context(struct f2fs_sb_info * sbi);
-> >>>>  int start_gc_thread(struct f2fs_sb_info *sbi);
-> >>>> -void stop_gc_thread(struct f2fs_sb_info *sbi);
-> >>>> +bool stop_gc_thread(struct f2fs_sb_info *sbi);
-> >>>>  block_t start_bidx_of_node(unsigned int node_ofs, struct inode *inode);
-> >>>>  int f2fs_gc(struct f2fs_sb_info *sbi, bool sync, bool background,
-> >>>>  			unsigned int segno);
+> >>>>  static inline void __mark_inode_dirty_flag(struct inode *inode,
+> >>>> @@ -3010,6 +3011,7 @@ struct f2fs_stat_info {
+> >>>>  	int bg_node_segs, bg_data_segs;
+> >>>>  	int tot_blks, data_blks, node_blks;
+> >>>>  	int bg_data_blks, bg_node_blks;
+> >>>> +	unsigned long long skipped_atomic_files[2];
+> >>>>  	int curseg[NR_CURSEG_TYPE];
+> >>>>  	int cursec[NR_CURSEG_TYPE];
+> >>>>  	int curzone[NR_CURSEG_TYPE];
+> >>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >>>> index a352804af244..0cfa65c21d3f 100644
+> >>>> --- a/fs/f2fs/file.c
+> >>>> +++ b/fs/f2fs/file.c
+> >>>> @@ -1702,6 +1702,7 @@ static int f2fs_ioc_start_atomic_write(struct file *filp)
+> >>>>  skip_flush:
+> >>>>  	set_inode_flag(inode, FI_HOT_DATA);
+> >>>>  	set_inode_flag(inode, FI_ATOMIC_FILE);
+> >>>> +	clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >>>>  	f2fs_update_time(F2FS_I_SB(inode), REQ_TIME);
+> >>>>  
+> >>>>  	F2FS_I(inode)->inmem_task = current;
+> >>>> @@ -1750,6 +1751,10 @@ static int f2fs_ioc_commit_atomic_write(struct file *filp)
+> >>>>  		ret = f2fs_do_sync_file(filp, 0, LLONG_MAX, 1, false);
+> >>>>  	}
+> >>>>  err_out:
+> >>>> +	if (is_inode_flag_set(inode, FI_ATOMIC_REVOKE_REQUEST)) {
+> >>>> +		clear_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >>>> +		ret = -EINVAL;
+> >>>> +	}
+> >>>>  	up_write(&F2FS_I(inode)->dio_rwsem[WRITE]);
+> >>>>  	inode_unlock(inode);
+> >>>>  	mnt_drop_write_file(filp);
 > >>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> >>>> index 70418b34c5f6..2febb84b2fd6 100644
+> >>>> index 2febb84b2fd6..ec6cb7b417a1 100644
 > >>>> --- a/fs/f2fs/gc.c
 > >>>> +++ b/fs/f2fs/gc.c
-> >>>> @@ -26,8 +26,8 @@
-> >>>>  static int gc_thread_func(void *data)
-> >>>>  {
-> >>>>  	struct f2fs_sb_info *sbi = data;
-> >>>> -	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
-> >>>> -	wait_queue_head_t *wq = &sbi->gc_thread->gc_wait_queue_head;
-> >>>> +	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
-> >>>> +	wait_queue_head_t *wq = &gc_th->gc_wait_queue_head;
-> >>>>  	unsigned int wait_ms;
+> >>>> @@ -135,6 +135,9 @@ int init_gc_context(struct f2fs_sb_info *sbi)
 > >>>>  
-> >>>>  	wait_ms = gc_th->min_sleep_time;
-> >>>> @@ -114,17 +114,15 @@ static int gc_thread_func(void *data)
-> >>>>  	return 0;
-> >>>>  }
+> >>>>  	init_rwsem(&gc_th->gc_rwsem);
 > >>>>  
-> >>>> -int start_gc_thread(struct f2fs_sb_info *sbi)
-> >>>> +int init_gc_context(struct f2fs_sb_info *sbi)
-> >>>>  {
-> >>>>  	struct f2fs_gc_kthread *gc_th;
-> >>>> -	dev_t dev = sbi->sb->s_bdev->bd_dev;
-> >>>> -	int err = 0;
-> >>>>  
-> >>>>  	gc_th = f2fs_kmalloc(sbi, sizeof(struct f2fs_gc_kthread), GFP_KERNEL);
-> >>>> -	if (!gc_th) {
-> >>>> -		err = -ENOMEM;
-> >>>> -		goto out;
-> >>>> -	}
-> >>>> +	if (!gc_th)
-> >>>> +		return -ENOMEM;
-> >>>> +
-> >>>> +	gc_th->f2fs_gc_task = NULL;
-> >>>>  
-> >>>>  	gc_th->urgent_sleep_time = DEF_GC_THREAD_URGENT_SLEEP_TIME;
-> >>>>  	gc_th->min_sleep_time = DEF_GC_THREAD_MIN_SLEEP_TIME;
-> >>>> @@ -135,35 +133,59 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
-> >>>>  	gc_th->gc_urgent = 0;
-> >>>>  	gc_th->gc_wake= 0;
-> >>>>  
-> >>>> +	init_rwsem(&gc_th->gc_rwsem);
+> >>>> +	gc_th->skipped_atomic_files[BG_GC] = 0;
+> >>>> +	gc_th->skipped_atomic_files[FG_GC] = 0;
 > >>>> +
 > >>>>  	sbi->gc_thread = gc_th;
-> >>>> -	init_waitqueue_head(&sbi->gc_thread->gc_wait_queue_head);
-> >>>> -	sbi->gc_thread->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
-> >>>> +
-> >>>> +	return 0;
-> >>>> +}
-> >>>> +
-> >>>> +void destroy_gc_context(struct f2fs_sb_info *sbi)
-> >>>> +{
-> >>>> +	kfree(GC_I(sbi));
-> >>>> +	sbi->gc_thread = NULL;
-> >>>> +}
-> >>>> +
-> >>>> +int start_gc_thread(struct f2fs_sb_info *sbi)
-> >>>> +{
-> >>>> +	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
-> >>>> +	dev_t dev = sbi->sb->s_bdev->bd_dev;
-> >>>> +	int err = 0;
-> >>>> +
-> >>>> +	init_waitqueue_head(&gc_th->gc_wait_queue_head);
-> >>>> +	gc_th->f2fs_gc_task = kthread_run(gc_thread_func, sbi,
-> >>>>  			"f2fs_gc-%u:%u", MAJOR(dev), MINOR(dev));
-> >>>>  	if (IS_ERR(gc_th->f2fs_gc_task)) {
-> >>>>  		err = PTR_ERR(gc_th->f2fs_gc_task);
-> >>>> -		kfree(gc_th);
-> >>>> -		sbi->gc_thread = NULL;
-> >>>> +		gc_th->f2fs_gc_task = NULL;
-> >>>>  	}
-> >>>> -out:
-> >>>> +
-> >>>>  	return err;
-> >>>>  }
 > >>>>  
-> >>>> -void stop_gc_thread(struct f2fs_sb_info *sbi)
-> >>>> +bool stop_gc_thread(struct f2fs_sb_info *sbi)
+> >>>>  	return 0;
+> >>>> @@ -629,7 +632,7 @@ static bool is_alive(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>>>   * This can be used to move blocks, aka LBAs, directly on disk.
+> >>>>   */
+> >>>>  static void move_data_block(struct inode *inode, block_t bidx,
+> >>>> -					unsigned int segno, int off)
+> >>>> +				int gc_type, unsigned int segno, int off)
 > >>>>  {
-> >>>> -	struct f2fs_gc_kthread *gc_th = sbi->gc_thread;
-> >>>> -	if (!gc_th)
-> >>>> -		return;
-> >>>> -	kthread_stop(gc_th->f2fs_gc_task);
-> >>>> -	kfree(gc_th);
-> >>>> -	sbi->gc_thread = NULL;
-> >>>> +	struct f2fs_gc_kthread *gc_th = GC_I(sbi);
-> >>>> +	bool stopped = false;
-> >>>> +
-> >>>> +	down_write(&gc_th->gc_rwsem);
-> >>>> +	if (gc_th->f2fs_gc_task) {
-> >>>> +		kthread_stop(gc_th->f2fs_gc_task);
-> >>>> +		gc_th->f2fs_gc_task = NULL;
-> >>>> +		stopped = true;
+> >>>>  	struct f2fs_io_info fio = {
+> >>>>  		.sbi = F2FS_I_SB(inode),
+> >>>> @@ -656,8 +659,10 @@ static void move_data_block(struct inode *inode, block_t bidx,
+> >>>>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+> >>>>  		goto out;
+> >>>>  
+> >>>> -	if (f2fs_is_atomic_file(inode))
+> >>>> +	if (f2fs_is_atomic_file(inode)) {
+> >>>> +		GC_I(F2FS_I_SB(inode))->skipped_atomic_files[gc_type]++;
+> >>>>  		goto out;
 > >>>> +	}
-> >>>> +	up_write(&gc_th->gc_rwsem);
+> >>>>  
+> >>>>  	if (f2fs_is_pinned_file(inode)) {
+> >>>>  		f2fs_pin_file_control(inode, true);
+> >>>> @@ -763,8 +768,10 @@ static void move_data_page(struct inode *inode, block_t bidx, int gc_type,
+> >>>>  	if (!check_valid_map(F2FS_I_SB(inode), segno, off))
+> >>>>  		goto out;
+> >>>>  
+> >>>> -	if (f2fs_is_atomic_file(inode))
+> >>>> +	if (f2fs_is_atomic_file(inode)) {
+> >>>> +		GC_I(F2FS_I_SB(inode))->skipped_atomic_files[gc_type]++;
+> >>>>  		goto out;
+> >>>> +	}
+> >>>>  	if (f2fs_is_pinned_file(inode)) {
+> >>>>  		if (gc_type == FG_GC)
+> >>>>  			f2fs_pin_file_control(inode, true);
+> >>>> @@ -926,7 +933,8 @@ static void gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> >>>>  			start_bidx = start_bidx_of_node(nofs, inode)
+> >>>>  								+ ofs_in_node;
+> >>>>  			if (f2fs_post_read_required(inode))
+> >>>> -				move_data_block(inode, start_bidx, segno, off);
+> >>>> +				move_data_block(inode, start_bidx, gc_type,
+> >>>> +								segno, off);
+> >>>>  			else
+> >>>>  				move_data_page(inode, start_bidx, gc_type,
+> >>>>  								segno, off);
+> >>>> @@ -1043,6 +1051,9 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >>>>  		.ilist = LIST_HEAD_INIT(gc_list.ilist),
+> >>>>  		.iroot = RADIX_TREE_INIT(gc_list.iroot, GFP_NOFS),
+> >>>>  	};
+> >>>> +	unsigned long long last_skipped =
+> >>>> +			GC_I(sbi)->skipped_atomic_files[FG_GC];
+> >>>> +	unsigned int skipped_round = 0, round = 0;
+> >>>>  
+> >>>>  	trace_f2fs_gc_begin(sbi->sb, sync, background,
+> >>>>  				get_pages(sbi, F2FS_DIRTY_NODES),
+> >>>> @@ -1094,11 +1105,21 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+> >>>>  		sec_freed++;
+> >>>>  	total_freed += seg_freed;
+> >>>>  
+> >>>> +	if (gc_type == FG_GC) {
+> >>>> +		if (GC_I(sbi)->skipped_atomic_files[FG_GC] > last_skipped)
+> >>>> +			skipped_round++;
+> >>>> +		last_skipped = GC_I(sbi)->skipped_atomic_files[FG_GC];
+> >>>> +		round++;
+> >>>> +	}
 > >>>> +
-> >>>> +	return stopped;
-> >>>>  }
+> >>>>  	if (gc_type == FG_GC)
+> >>>>  		sbi->cur_victim_sec = NULL_SEGNO;
 > >>>>  
-> >>>>  static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
-> >>>>  {
-> >>>>  	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
-> >>>>  
-> >>>> -	if (!gc_th)
-> >>>> -		return gc_mode;
-> >>>> +	down_read(&gc_th->gc_rwsem);
-> >>>> +	if (!gc_th->f2fs_gc_task)
-> >>>> +		goto out;
-> >>>>  
-> >>>>  	if (gc_th->gc_idle) {
-> >>>>  		if (gc_th->gc_idle == 1)
-> >>>> @@ -173,6 +195,8 @@ static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
-> >>>>  	}
-> >>>>  	if (gc_th->gc_urgent)
-> >>>>  		gc_mode = GC_GREEDY;
-> >>>> +out:
-> >>>> +	up_read(&gc_th->gc_rwsem);
-> >>>>  	return gc_mode;
-> >>>>  }
-> >>>>  
-> >>>> @@ -187,17 +211,19 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
-> >>>>  		p->max_search = dirty_i->nr_dirty[type];
-> >>>>  		p->ofs_unit = 1;
-> >>>>  	} else {
-> >>>> -		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
-> >>>> +		p->gc_mode = select_gc_type(GC_I(sbi), gc_type);
-> >>>>  		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
-> >>>>  		p->max_search = dirty_i->nr_dirty[DIRTY];
-> >>>>  		p->ofs_unit = sbi->segs_per_sec;
-> >>>>  	}
-> >>>>  
-> >>>>  	/* we need to check every dirty segments in the FG_GC case */
-> >>>> -	if (gc_type != FG_GC &&
-> >>>> -			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
-> >>>> +	down_read(&GC_I(sbi)->gc_rwsem);
-> >>>> +	if (gc_type != FG_GC && GC_I(sbi)->f2fs_gc_task &&
-> >>>> +			!GC_I(sbi)->gc_urgent &&
-> >>>>  			p->max_search > sbi->max_victim_search)
-> >>>>  		p->max_search = sbi->max_victim_search;
-> >>>> +	up_read(&GC_I(sbi)->gc_rwsem);
-> >>>>  
-> >>>>  	/* let's select beginning hot/small space first in no_heap mode*/
-> >>>>  	if (test_opt(sbi, NOHEAP) &&
+> >>>>  	if (!sync) {
+> >>>>  		if (has_not_enough_free_secs(sbi, sec_freed, 0)) {
+> >>>> +			if (skipped_round > MAX_SKIP_ATOMIC_COUNT &&
+> >>>> +				skipped_round * 2 >= round)
+> >>>> +				drop_inmem_pages_all(sbi);
+> >>>>  			segno = NULL_SEGNO;
+> >>>>  			goto gc_more;
+> >>>>  		}
 > >>>> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
-> >>>> index b0045d4c8d1e..9a5b273328c2 100644
+> >>>> index 9a5b273328c2..9aa341cc4347 100644
 > >>>> --- a/fs/f2fs/gc.h
 > >>>> +++ b/fs/f2fs/gc.h
-> >>>> @@ -26,6 +26,7 @@
-> >>>>  #define DEF_MAX_VICTIM_SEARCH 4096 /* covers 8GB */
+> >>>> @@ -40,6 +40,9 @@ struct f2fs_gc_kthread {
+> >>>>  	unsigned int gc_idle;
+> >>>>  	unsigned int gc_urgent;
+> >>>>  	unsigned int gc_wake;
+> >>>> +
+> >>>> +	/* for skip statistic */
+> >>>> +	unsigned long long skipped_atomic_files[2];
+> >>>>  };
 > >>>>  
-> >>>>  struct f2fs_gc_kthread {
-> >>>> +	struct rw_semaphore gc_rwsem;		/* semaphore for f2fs_gc_task */
-> >>>>  	struct task_struct *f2fs_gc_task;
-> >>>>  	wait_queue_head_t gc_wait_queue_head;
-> >>>>  
+> >>>>  struct gc_inode_list {
 > >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index 5960768d26df..f787eea1b2f6 100644
+> >>>> index f787eea1b2f6..ce108a909d66 100644
 > >>>> --- a/fs/f2fs/segment.c
 > >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -177,8 +177,12 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+> >>>> @@ -293,6 +293,7 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi)
+> >>>>  	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
 > >>>>  
-> >>>>  	if (test_opt(sbi, LFS))
-> >>>>  		return false;
-> >>>> -	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-> >>>> +	down_read(&GC_I(sbi)->gc_rwsem);
-> >>>> +	if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent) {
-> >>>> +		down_read(&GC_I(sbi)->gc_rwsem);
-> >>>>  		return true;
-> >>>> +	}
-> >>>> +	up_read(&GC_I(sbi)->gc_rwsem);
-> >>>>  
-> >>>>  	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
-> >>>>  			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
-> >>>> @@ -1425,8 +1429,10 @@ static int issue_discard_thread(void *data)
-> >>>>  		if (dcc->discard_wake)
-> >>>>  			dcc->discard_wake = 0;
-> >>>>  
-> >>>> -		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-> >>>> +		down_read(&GC_I(sbi)->gc_rwsem);
-> >>>> +		if (GC_I(sbi)->f2fs_gc_task && GC_I(sbi)->gc_urgent)
-> >>>>  			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
-> >>>> +		up_read(&GC_I(sbi)->gc_rwsem);
-> >>>>  
-> >>>>  		sb_start_intwrite(sbi->sb);
-> >>>>  
-> >>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>>> index dedb8e50b440..199f29dce86d 100644
-> >>>> --- a/fs/f2fs/super.c
-> >>>> +++ b/fs/f2fs/super.c
-> >>>> @@ -1044,6 +1044,7 @@ static void f2fs_put_super(struct super_block *sb)
-> >>>>  	kfree(sbi->raw_super);
-> >>>>  
-> >>>>  	destroy_device_list(sbi);
-> >>>> +	destroy_gc_context(sbi);
-> >>>>  	mempool_destroy(sbi->write_io_dummy);
-> >>>>  #ifdef CONFIG_QUOTA
-> >>>>  	for (i = 0; i < MAXQUOTAS; i++)
-> >>>> @@ -1476,15 +1477,18 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> >>>>  	 * option. Also sync the filesystem.
-> >>>>  	 */
-> >>>>  	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
-> >>>> -		if (sbi->gc_thread) {
-> >>>> -			stop_gc_thread(sbi);
-> >>>> -			need_restart_gc = true;
-> >>>> +		need_restart_gc = stop_gc_thread(sbi);
-> >>>> +	} else {
-> >>>> +		down_write(&GC_I(sbi)->gc_rwsem);
-> >>>> +		if (!GC_I(sbi)->f2fs_gc_task) {
-> >>>> +			err = start_gc_thread(sbi);
-> >>>> +			if (err) {
-> >>>> +				up_write(&GC_I(sbi)->gc_rwsem);
-> >>>> +				goto restore_opts;
-> >>>> +			}
-> >>>> +			need_stop_gc = true;
-> >>>>  		}
-> >>>> -	} else if (!sbi->gc_thread) {
-> >>>> -		err = start_gc_thread(sbi);
-> >>>> -		if (err)
-> >>>> -			goto restore_opts;
-> >>>> -		need_stop_gc = true;
-> >>>> +		up_write(&GC_I(sbi)->gc_rwsem);
+> >>>>  	if (inode) {
+> >>>> +		set_inode_flag(inode, FI_ATOMIC_REVOKE_REQUEST);
+> >>>>  		drop_inmem_pages(inode);
+> >>>>  		iput(inode);
 > >>>>  	}
+> >>>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> >>>> index 492ad0c86fa9..7702b054689c 100644
+> >>>> --- a/fs/f2fs/segment.h
+> >>>> +++ b/fs/f2fs/segment.h
+> >>>> @@ -215,6 +215,8 @@ struct segment_allocation {
+> >>>>  #define IS_DUMMY_WRITTEN_PAGE(page)			\
+> >>>>  		(page_private(page) == (unsigned long)DUMMY_WRITTEN_PAGE)
 > >>>>  
-> >>>>  	if (*flags & SB_RDONLY ||
-> >>>> @@ -2771,6 +2775,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >>>>  		goto free_meta_inode;
-> >>>>  	}
-> >>>>  
-> >>>> +	err = init_gc_context(sbi);
-> >>>> +	if (err)
-> >>>> +		goto free_checkpoint;
+> >>>> +#define MAX_SKIP_ATOMIC_COUNT			16
 > >>>> +
-> >>>>  	/* Initialize device list */
-> >>>>  	err = f2fs_scan_devices(sbi);
-> >>>>  	if (err) {
-> >>>> @@ -2981,6 +2989,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >>>>  	destroy_segment_manager(sbi);
-> >>>>  free_devices:
-> >>>>  	destroy_device_list(sbi);
-> >>>> +	destroy_gc_context(sbi);
-> >>>> +free_checkpoint:
-> >>>>  	kfree(sbi->ckpt);
-> >>>>  free_meta_inode:
-> >>>>  	make_bad_inode(sbi->meta_inode);
-> >>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-> >>>> index 2c53de9251be..b8d09935e43f 100644
-> >>>> --- a/fs/f2fs/sysfs.c
-> >>>> +++ b/fs/f2fs/sysfs.c
-> >>>> @@ -46,7 +46,7 @@ struct f2fs_attr {
-> >>>>  static unsigned char *__struct_ptr(struct f2fs_sb_info *sbi, int struct_type)
-> >>>>  {
-> >>>>  	if (struct_type == GC_THREAD)
-> >>>> -		return (unsigned char *)sbi->gc_thread;
-> >>>> +		return (unsigned char *)GC_I(sbi);
-> >>>>  	else if (struct_type == SM_INFO)
-> >>>>  		return (unsigned char *)SM_I(sbi);
-> >>>>  	else if (struct_type == DCC_INFO)
-> >>>> @@ -248,16 +248,28 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
-> >>>>  	if (!strcmp(a->attr.name, "trim_sections"))
-> >>>>  		return -EINVAL;
-> >>>>  
-> >>>> -	*ui = t;
-> >>>> -
-> >>>> -	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
-> >>>> +	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
-> >>>>  		f2fs_reset_iostat(sbi);
-> >>>> -	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
-> >>>> -		sbi->gc_thread->gc_wake = 1;
-> >>>> -		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
-> >>>> +
-> >>>> +	if (a->struct_type == GC_THREAD) {
-> >>>> +		down_write(&GC_I(sbi)->gc_rwsem);
-> >>>> +		if (!GC_I(sbi)->f2fs_gc_task) {
-> >>>> +			up_write(&GC_I(sbi)->gc_rwsem);
-> >>>> +			return -EINVAL;
-> >>>> +		}
-> >>>> +	}
-> >>>> +
-> >>>> +	if (!strcmp(a->attr.name, "gc_urgent") && t == 1) {
-> >>>> +		GC_I(sbi)->gc_wake = 1;
-> >>>> +		wake_up_interruptible_all(&GC_I(sbi)->gc_wait_queue_head);
-> >>>>  		wake_up_discard_thread(sbi, true);
-> >>>>  	}
-> >>>>  
-> >>>> +	*ui = t;
-> >>>> +
-> >>>> +	if (a->struct_type == GC_THREAD)
-> >>>> +		up_write(&GC_I(sbi)->gc_rwsem);
-> >>>> +
-> >>>>  	return count;
-> >>>>  }
-> >>>>  
+> >>>>  struct inmem_pages {
+> >>>>  	struct list_head list;
+> >>>>  	struct page *page;
 > >>>> -- 
 > >>>> 2.15.0.55.gc2ece9dc4de6
 > >>>
