@@ -1,281 +1,199 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751892AbeEDIjW (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:39:22 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:34491 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751411AbeEDIjU (ORCPT
+        id S1751912AbeEDIjh (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:39:37 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51604 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751399AbeEDIjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:39:20 -0400
-X-Google-Smtp-Source: AB8JxZpBqFjToV0cRW2CMI5kro/Tg/vp2ixpk2p6p4ejcI8+PuVR0/jgpklF0Cs8iQukTJAvBb6opHOyUrtk1Zx5+ks=
+        Fri, 4 May 2018 04:39:33 -0400
+X-Google-Smtp-Source: AB8JxZpvtqR1ixDuYmWwSQlpp0zJlO5J793y706zwglHWG/zqMrLyWRAZ6gsX5F5c5emNJHnaKFQIw==
+Subject: Re: [PATCH V4 5/8] soc: mediatek: pwrap: add pwrap for mt6797 SoCs
+To: Sean Wang <sean.wang@mediatek.com>, Argus Lin <argus.lin@mediatek.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Chenglin Xu <chenglin.xu@mediatek.com>, wsd_upstream@mediatek.com,
+        henryc.chen@mediatek.com, flora.fu@mediatek.com,
+        Chen Zhong <chen.zhong@mediatek.com>,
+        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+References: <20180502092112.3991-1-argus.lin@mediatek.com>
+ <20180502092112.3991-6-argus.lin@mediatek.com>
+ <1525320067.14792.95.camel@mtkswgap22> <1525328436.6214.10.camel@mtkswgap22>
+ <1525403052.14792.131.camel@mtkswgap22>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <69e4766f-8c7a-7729-93f8-4f87d2ceff8b@gmail.com>
+Date: Fri, 4 May 2018 10:39:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CAJX1YtYhbutYFC-cT+dRoRvjqkOY_qSWtU_tSUZ99Q9-yGUF_g@mail.gmail.com>
-References: <20180502110811.10886-1-gi-oh.kim@profitbricks.com> <CAJX1YtYhbutYFC-cT+dRoRvjqkOY_qSWtU_tSUZ99Q9-yGUF_g@mail.gmail.com>
-From: Gi-Oh Kim <gi-oh.kim@profitbricks.com>
-Date: Fri, 4 May 2018 10:38:38 +0200
-Message-ID: <CAJX1YtYc=TANNCUr+Sj3_zjR55ed9VYx9KAi9iEpg2M5=YZ3gw@mail.gmail.com>
-Subject: Re: [PATCH] md/raid1: add error handling of read error from FailFast device
-To: shli@kernel.org, NeilBrown <neilb@suse.com>
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gioh Kim <gi-oh.kim@profitbricks.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1525403052.14792.131.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w448dQ7H012490
 
-On Wed, May 2, 2018 at 2:11 PM, Gi-Oh Kim <gi-oh.kim@profitbricks.com> wrote:
-> On Wed, May 2, 2018 at 1:08 PM, Gioh Kim <gi-oh.kim@profitbricks.com> wrote:
->> Current handle_read_error() function calls fix_read_error()
->> only if md device is RW and rdev does not include FailFast flag.
->> It does not handle a read error from a RW device including
->> FailFast flag.
+
+
+On 05/04/2018 05:04 AM, Sean Wang wrote:
+> On Thu, 2018-05-03 at 14:20 +0800, Argus Lin wrote:
+>> On Thu, 2018-05-03 at 12:01 +0800, Sean Wang wrote:
+>>>  };
+> 
+> [...]
+> 
+>>>> @@ -1503,11 +1581,13 @@ static int pwrap_probe(struct platform_device *pdev)
+>>>>  	if (IS_ERR(wrp->base))
+>>>>  		return PTR_ERR(wrp->base);
+>>>>  
+>>>> -	wrp->rstc = devm_reset_control_get(wrp->dev, "pwrap");
+>>>> -	if (IS_ERR(wrp->rstc)) {
+>>>> -		ret = PTR_ERR(wrp->rstc);
+>>>> -		dev_dbg(wrp->dev, "cannot get pwrap reset: %d\n", ret);
+>>>> -		return ret;
+>>>> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_RESET)) {
+>>>> +		wrp->rstc = devm_reset_control_get(wrp->dev, "pwrap");
+>>>
+>>> there should be a reset bit present for pwrap on infrasys.
+>>>
+>>> the specific condition can be dropped when the reset cell is exported from infrasys and then the device has a reference to it.
+>> hmm, I think it need to keep here.
+>> because after pwrap initialized, it can't be reset alone.
+>> It needs to reset PMIC simultaneously, too.
+> 
+> Reset a pair, either a master or its slave, all had been a part of
+> pwrap_init.
+> 
+> The reset controller provided here is just to reset pwrap device.
+> And for its slave reset, it should be done by pwrap_reset_spislave. 
+> 
+> So for MT6397, it should be able to fall into the same procedure.
+> 
+>>>
+>>>> +		if (IS_ERR(wrp->rstc)) {
+>>>> +			ret = PTR_ERR(wrp->rstc);
+>>>> +			dev_dbg(wrp->dev, "cannot get pwrap reset: %d\n", ret);
+>>>> +			return ret;
+>>>> +		}
+>>>>  	}
+>>>>  
+>>>>  	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_BRIDGE)) {
+>>>> @@ -1549,9 +1629,17 @@ static int pwrap_probe(struct platform_device *pdev)
+>>>>  	if (ret)
+>>>>  		goto err_out1;
+>>>>  
+>>>> -	/* Enable internal dynamic clock */
+>>>> -	pwrap_writel(wrp, 1, PWRAP_DCM_EN);
+>>>> -	pwrap_writel(wrp, 0, PWRAP_DCM_DBC_PRD);
+>>>> +	/*
+>>>> +	 * add dcm capability check
+>>>> +	 */
+>>>> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_DCM)) {
+>>>
+>>> the specific condition can be dropped since so far all devices the driver can support are owning PWRAP_CAP_DCM
+>> We did not support DCM for future chips.
+>> MT6797 is the last one.
+>> This why I want to add judgement here.
+> 
+> The series is only for MT6797 pwrap, so it's fine with only adding these
+> things the SoC actually relies on. 
+> 
+> PWRAP_CAP_DCM should not be added until a new SoC without dcm is really
+> introduced.
+> 
+
+I agree (and I think I said this already in a previous review).
+
+Regards,
+Matthias
+
+>>>
+>>>> +		if (wrp->master->type == PWRAP_MT6797)
+>>>> +			pwrap_writel(wrp, 3, PWRAP_DCM_EN);
+>>>
+>>> the setup for MT6797 can be moved into .init_soc_specific callback ?
 >>
->> I am not sure it is intended. But I found that write IO error
->> sets rdev faulty. The md module should handle the read IO error and
->> write IO error equally. So I think read IO error should set rdev faulty.
-
-Hi Mr. Neil Brown.
-
-Could you please inform me if it is a bug or feature that md module
-does not set device faulty after read IO error?
-My company product uses failfast flag to create md devices for a
-virtual machine.
-Even if storage get failed and the virtual machine fails to read data,
-I cannot check which md device is faulty with mdadm tool.
-If it is intended, I need to disable failfast flag.
-
-Thank you in advance.
-
+>> I think put it here is more generally.
+>>>
+>>>> +		else
+>>>> +			pwrap_writel(wrp, 1, PWRAP_DCM_EN);
+>>>> +
+>>>> +		pwrap_writel(wrp, 0, PWRAP_DCM_DBC_PRD);
+>>>> +	}
+>>>>  
+>>>>  	/*
+>>>>  	 * The PMIC could already be initialized by the bootloader.
+>>>> @@ -1580,6 +1668,12 @@ static int pwrap_probe(struct platform_device *pdev)
+>>>>  	pwrap_writel(wrp, wrp->master->wdt_src, PWRAP_WDT_SRC_EN);
+>>>>  	pwrap_writel(wrp, 0x1, PWRAP_TIMER_EN);
+>>>>  	pwrap_writel(wrp, wrp->master->int_en_all, PWRAP_INT_EN);
+>>>> +	/*
+>>>> +	 * We add INT1 interrupt to handle starvation and request exception
+>>>> +	 * If we support it, we should enable them here.
+>>>> +	 */
+>>>> +	if (HAS_CAP(wrp->master->caps, PWRAP_CAP_INT1_EN))
+>>>> +		pwrap_writel(wrp, wrp->master->int1_en_all, PWRAP_INT1_EN);
+>>>>  
+>>>
+>>> if there is no explicitly enabling on INT1, then ISR handling for INT1 is also unnecessary
 >>
->> Signed-off-by: Gioh Kim <gi-oh.kim@profitbricks.com>
->> ---
->>  drivers/md/raid1.c | 2 ++
->>  1 file changed, 2 insertions(+)
+>> It's ok for me.
+>>>
+>>>>  	irq = platform_get_irq(pdev, 0);
+>>>>  	ret = devm_request_irq(wrp->dev, irq, pwrap_interrupt,
+>>>
+>>>
+>>>
 >>
->> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
->> index e9e3308cb0a7..4445179aa4c8 100644
->> --- a/drivers/md/raid1.c
->> +++ b/drivers/md/raid1.c
->> @@ -2474,6 +2474,8 @@ static void handle_read_error(struct r1conf *conf, struct r1bio *r1_bio)
->>                 fix_read_error(conf, r1_bio->read_disk,
->>                                r1_bio->sector, r1_bio->sectors);
->>                 unfreeze_array(conf);
->> +       } else if (mddev->ro == 0 && test_bit(FailFast, &rdev->flags)) {
->> +               md_error(mddev, rdev);
->>         } else {
->>                 r1_bio->bios[r1_bio->read_disk] = IO_BLOCKED;
->>         }
->> --
->> 2.14.1
 >>
->
-> I think it would be helpful to show how I tested it.
->
-> As following I used Ubuntu 17.10 and mdadm v4.0.
-> # cat /etc/lsb-release
-> DISTRIB_ID=Ubuntu
-> DISTRIB_RELEASE=17.10
-> DISTRIB_CODENAME=artful
-> DISTRIB_DESCRIPTION="Ubuntu 17.10"
-> # uname -a
-> Linux ws00837 4.13.0-16-generic #19-Ubuntu SMP Wed Oct 11 18:35:14 UTC
-> 2017 x86_64 x86_64 x86_64 GNU/Linux
-> # mdadm --version
-> mdadm - v4.0 - 2017-01-09
->
-> Following is how I generated the read IO error and checked md device.
-> After read IO, no device was set as faulty
->
-> # modprobe scsi_debug num_parts=2
-> # man mdadm
-> # mdadm -C /dev/md111 --failfast -l 1 -n 2 /dev/sdc1 /dev/sdc2
-> mdadm: Note: this array has metadata at the start and
->     may not be suitable as a boot device.  If you plan to
->     store '/boot' on this device please ensure that
->     your boot-loader understands md/v1.x metadata, or use
->     --metadata=0.90
-> mdadm: largest drive (/dev/sdc2) exceeds size (3904K) by more than 1%
-> Continue creating array? y
-> mdadm: Defaulting to version 1.2 metadata
-> mdadm: array /dev/md111 started.
-> # mdadm -D /dev/md111
-> /dev/md111:
->         Version : 1.2
->   Creation Time : Wed May  2 10:55:35 2018
->      Raid Level : raid1
->      Array Size : 3904
->   Used Dev Size : 3904
->    Raid Devices : 2
->   Total Devices : 2
->     Persistence : Superblock is persistent
->
->     Update Time : Wed May  2 10:55:36 2018
->           State : clean
->  Active Devices : 2
-> Working Devices : 2
->  Failed Devices : 0
->   Spare Devices : 0
->
->            Name : ws00837:111  (local to host ws00837)
->            UUID : 9f214193:03cf7c97:3208da22:d6ab8a13
->          Events : 17
->
->     Number   Major   Minor   RaidDevice State
->        0       8       33        0      active sync failfast   /dev/sdc1
->        1       8       34        1      active sync failfast   /dev/sdc2
-> # cat /proc/mdstat
-> Personalities : [raid1]
-> md111 : active raid1 sdc2[1] sdc1[0]
->       3904 blocks super 1.2 [2/2] [UU]
->
-> unused devices: <none>
-> # echo -1 > /sys/module/scsi_debug/parameters/every_nth && echo 4 >
-> /sys/module/scsi_debug/parameters/opts
-> # dd if=/dev/md111 of=/dev/null bs=4K count=1 iflag=direct &
-> [1] 6322
-> # dd: error reading '/dev/md111': Input/output error
-> 0+0 records in
-> 0+0 records out
-> 0 bytes copied, 124,376 s, 0,0 kB/s
->
-> [1]+  Exit 1                  dd if=/dev/md111 of=/dev/null bs=4K
-> count=1 iflag=direct
-> # mdadm -D /dev/md111/dev/md111:
->         Version : 1.2
->   Creation Time : Wed May  2 10:55:35 2018
->      Raid Level : raid1
->      Array Size : 3904
->   Used Dev Size : 3904
->    Raid Devices : 2
->   Total Devices : 2
->     Persistence : Superblock is persistent
->
->     Update Time : Wed May  2 10:55:36 2018
->           State : clean
->  Active Devices : 2
-> Working Devices : 2
->  Failed Devices : 0
->   Spare Devices : 0
->
->     Number   Major   Minor   RaidDevice State
->        0       8       33        0      active sync failfast   /dev/sdc1
->        1       8       34        1      active sync failfast   /dev/sdc2
->
->
-> Following is how I generated the write IO error and checked md device.
-> After write IO error, one device was set as faulty.
->
-> gohkim@ws00837:~$ sudo modprobe scsi_debug num_parts=2
-> gohkim@ws00837:~$ sudo mdadm -C /dev/md111 --failfast -l 1 -n 2
-> /dev/sdc1 /dev/sdc2
-> mdadm: Note: this array has metadata at the start and
->     may not be suitable as a boot device.  If you plan to
->     store '/boot' on this device please ensure that
->     your boot-loader understands md/v1.x metadata, or use
->     --metadata=0.90
-> mdadm: largest drive (/dev/sdc2) exceeds size (3904K) by more than 1%
-> Continue creating array? y
-> mdadm: Defaulting to version 1.2 metadata
-> mdadm: array /dev/md111 started.
-> gohkim@ws00837:~$ sudo mdadm -D /dev/md111
-> /dev/md111:
->         Version : 1.2
->   Creation Time : Wed May  2 14:03:30 2018
->      Raid Level : raid1
->      Array Size : 3904
->   Used Dev Size : 3904
->    Raid Devices : 2
->   Total Devices : 2
->     Persistence : Superblock is persistent
->
->     Update Time : Wed May  2 14:03:31 2018
->           State : clean
->  Active Devices : 2
-> Working Devices : 2
->  Failed Devices : 0
->   Spare Devices : 0
->
->            Name : ws00837:111  (local to host ws00837)
->            UUID : ba51fe65:c517a25a:a381ccc5:3617322b
->          Events : 17
->
->     Number   Major   Minor   RaidDevice State
->        0       8       33        0      active sync failfast   /dev/sdc1
->        1       8       34        1      active sync failfast   /dev/sdc2
-> gohkim@ws00837:~$ echo -1 | sudo tee /sys/module/scsi_debug/parameters/every_nth
-> -1
-> gohkim@ws00837:~$ echo 4 | sudo tee /sys/module/scsi_debug/parameters/opts
-> 4
-> gohkim@ws00837:~$ sudo dd if=/dev/zero of=/dev/md111 bs=4K count=1
-> oflag=direct &
-> [1] 13081
-> gohkim@ws00837:~$ dd: error writing '/dev/md111': Input/output error
-> 1+0 records in
-> 0+0 records out
-> 0 bytes copied, 184,523 s, 0,0 kB/s
->
-> [1]+  Exit 1                  sudo dd if=/dev/zero of=/dev/md111 bs=4K
-> count=1 oflag=direct
-> gohkim@ws00837:~$ sudo mdadm -D /dev/md111
-> /dev/md111:
->         Version : 1.2
->   Creation Time : Wed May  2 14:03:30 2018
->      Raid Level : raid1
->      Array Size : 3904
->   Used Dev Size : 3904
->    Raid Devices : 2
->   Total Devices : 2
->     Persistence : Superblock is persistent
->
->     Update Time : Wed May  2 14:07:47 2018
->           State : clean, degraded
->  Active Devices : 1
-> Working Devices : 1
->  Failed Devices : 1
->   Spare Devices : 0
->
->     Number   Major   Minor   RaidDevice State
->        0       8       33        0      active sync failfast   /dev/sdc1
->        -       0        0        1      removed
->
->        1       8       34        -      faulty failfast   /dev/sdc2
->
->
->
-> --
-> GIOH KIM
-> Linux Kernel Entwickler
->
-> ProfitBricks GmbH
-> Greifswalder Str. 207
-> D - 10405 Berlin
->
-> Tel:       +49 176 2697 8962
-> Fax:      +49 30 577 008 299
-> Email:    gi-oh.kim@profitbricks.com
-> URL:      https://www.profitbricks.de
->
-> Sitz der Gesellschaft: Berlin
-> Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-> Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
-
-
-
--- 
-GIOH KIM
-Linux Kernel Entwickler
-
-ProfitBricks GmbH
-Greifswalder Str. 207
-D - 10405 Berlin
-
-Tel:       +49 176 2697 8962
-Fax:      +49 30 577 008 299
-Email:    gi-oh.kim@profitbricks.com
-URL:      https://www.profitbricks.de
-
-Sitz der Gesellschaft: Berlin
-Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
-Geschäftsführer: Achim Weiss, Matthias Steinberg, Christoph Steffens
+> 
+> 
