@@ -1,29 +1,29 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZrhdGMqauhrcaqIVAZTPe6RLokOyE1LlHxYzs0CXooBJ6Hm2lY3S3dYW6EFBZ6JVx8sdL6q
-ARC-Seal: i=1; a=rsa-sha256; t=1525455844; cv=none;
+X-Google-Smtp-Source: AB8JxZpbVTgqqg55AyT2RhLAMwSjxe+Q5hqDsgUmgc8ArNepcCbETEGFX8DTcTH79D7uppOlYL9s
+ARC-Seal: i=1; a=rsa-sha256; t=1525455842; cv=none;
         d=google.com; s=arc-20160816;
-        b=xJH+UJAxZ3EdTAWzsbT24zG86A4PFGBpOjy9d12MTMQqZ1xniOpCLtkd+8jgH6Q9kk
-         CB1u4TdwJ8PrW23Z/0zVDO6gSgj3fGnxB/oNx/cAWzYBFpMQ4ptBP4WCIQOp9VjVf8IT
-         XCOtRBpI8yAITJ06Rx04otww+XwMb+8jT3jx0osGPaZQWTvlBuyQhsZ3GLpqwJrrZrmS
-         vkWVxualYbrhgN8RpXM8Mk4/yOc920NrvRdXedFZh3F/Xg/1e/uIcs4KDHOsyBlgVrPM
-         5YUsQ0536dh2ixFrxylxvhCsBttLgOquhHgtbUSGM+HXDWJ0zT7/VyitAYcM9lry1I5T
-         +MBw==
+        b=f2USoCr582pevVWvZUBFYIau92fYfCzvOE0EKuNdnovMAyI/gn/fWiGTOle/BBb16H
+         8/DBjRF3lUd7Yr4CU/K8zzDEHzONiworXRNNVhWrHfOf0PsUwj3P18gKdzrWtUt8zXv1
+         BzaevwbLKiL5QlhCfyWUj1WcpULgHim99Gcb2qF7KbZW15YpTnBTemhm+sy8oY6W9klH
+         PzmAw1jfNaajma+YPR/jHkmNY4vOE7beK/7V6Giwdjn5RxmEkzC1foLHKcuRCk2ezbiW
+         hz/XXe4+Dl+5bZF3twHCFlZLIpZrQfXEXdxz0lujoYS6i/Yn6OsaIf278eincdn4WOk1
+         EDDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=sFLRgTHgxeYbCiMbyHuCvTP7Hg+jDIttVO9afuWQWtE=;
-        b=FUMth4rasowdKvXY075O1/hJcLQ50ed0XN4j9NpB4f0c+b5V9DPetogccTbvQ4uS5x
-         IGKLK0TROvIYDvqLZB6SoRy+CUY9yIK0a3TK4SvhlMiw/uQaYc3LT00bKM7/5mkft5Od
-         UHS52SbnehVIRnGslC9HPbW/DUeJil60dQu05QOClO1QPY6h0jKrjzgfXw4HKKwLZuCJ
-         zd5ih2RKsN3feHzDOwoktKPbGjo2mZGO2jZ5ogNWAEQgPkMZTFil3M41oMSutSvTHBrv
-         GmSBnoMp4rQoxWfpAdva22khX1GG+t+sZ4fUOdTWoWR+So5vs66k9GQM02/npwLVv6iK
-         Yjew==
+        bh=reJePXvHOqsi+4heFbKBuA3RYqKTaZg8uVhP54Ul7Us=;
+        b=CZZmMt8LjExZvw9ijEjXSw/j2+a7RNNQZsYZC6F0wRNABhe0NvnzSu+FfFdJgsajtG
+         IZUsAHZT33pHTkuVJcihDAf4yS/TLGtNYc+cwcAVix81CBxrO+zh/GdONr7rQcpJTmKH
+         bHBskFXsr+KzQiGHupCYRcFGeW1YOShl2fAH9yUdO7zJnmLFBJ7P9IezZJ8JDt0kKHJV
+         j0wxVseQRSu1/jpnSzN1pXzhNlx18xCipLDPzzR9eA/ClxY0iSxdYyALuaVPKt7TVkSR
+         iyOVsfzwMrn47c1v1IFN3nbV4fmaHL/1i/ecsbWKwRpCjdafeKjKB1As8y2GumVYHBnb
+         661w==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0kV4OYrj;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aO1dym6w;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0kV4OYrj;
+       dkim=pass header.i=@kernel.org header.s=default header.b=aO1dym6w;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -71,113 +71,164 @@ Cc: akpm@linux-foundation.org,
 	linux-wireless@vger.kernel.org,
 	netdev@vger.kernel.org,
 	"Luis R . Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v5 3/6] firmware: rename fw_sysfs_fallback to firmware_fallback_sysfs()
-Date: Fri,  4 May 2018 10:43:52 -0700
-Message-Id: <20180504174356.13227-4-mcgrof@kernel.org>
+Subject: [PATCH v5 2/6] firmware: use () to terminate kernel-doc function names
+Date: Fri,  4 May 2018 10:43:51 -0700
+Message-Id: <20180504174356.13227-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180504174356.13227-1-mcgrof@kernel.org>
 References: <20180504174356.13227-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599556387173662948?=
-X-GMAIL-MSGID: =?utf-8?q?1599556387173662948?=
+X-GMAIL-THRID: =?utf-8?q?1599556385766648710?=
+X-GMAIL-MSGID: =?utf-8?q?1599556385766648710?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Andres Rodriguez <andresx7@gmail.com>
 
-This is done since this call is now exposed through kernel-doc,
-and since this also paves the way for different future types of
-fallback mechanims.
+The kernel-doc spec dictates a function name ends in ().
 
 Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
-[mcgrof: small coding style changes]
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
  drivers/base/firmware_loader/fallback.c |  8 ++++----
- drivers/base/firmware_loader/fallback.h | 16 ++++++++--------
- drivers/base/firmware_loader/firmware.h |  2 +-
- drivers/base/firmware_loader/main.c     |  2 +-
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/base/firmware_loader/main.c     | 20 ++++++++++----------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 529f7013616f..3db9e0f225ac 100644
+index b57a7b3b4122..529f7013616f 100644
 --- a/drivers/base/firmware_loader/fallback.c
 +++ b/drivers/base/firmware_loader/fallback.c
-@@ -662,10 +662,10 @@ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
- 	return fw_force_sysfs_fallback(opt_flags);
+@@ -125,7 +125,7 @@ static ssize_t timeout_show(struct class *class, struct class_attribute *attr,
  }
  
--int fw_sysfs_fallback(struct firmware *fw, const char *name,
--		      struct device *device,
--		      enum fw_opt opt_flags,
--		      int ret)
-+int firmware_fallback_sysfs(struct firmware *fw, const char *name,
-+			    struct device *device,
-+			    enum fw_opt opt_flags,
-+			    int ret)
- {
- 	if (!fw_run_sysfs_fallback(opt_flags))
- 		return ret;
-diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
-index a3b73a09db6c..21063503e4ea 100644
---- a/drivers/base/firmware_loader/fallback.h
-+++ b/drivers/base/firmware_loader/fallback.h
-@@ -31,10 +31,10 @@ struct firmware_fallback_config {
- };
+ /**
+- * firmware_timeout_store - set number of seconds to wait for firmware
++ * firmware_timeout_store() - set number of seconds to wait for firmware
+  * @class: device class pointer
+  * @attr: device attribute pointer
+  * @buf: buffer to scan for timeout value
+@@ -239,7 +239,7 @@ static int map_fw_priv_pages(struct fw_priv *fw_priv)
+ }
  
- #ifdef CONFIG_FW_LOADER_USER_HELPER
--int fw_sysfs_fallback(struct firmware *fw, const char *name,
--		      struct device *device,
--		      enum fw_opt opt_flags,
--		      int ret);
-+int firmware_fallback_sysfs(struct firmware *fw, const char *name,
-+			    struct device *device,
-+			    enum fw_opt opt_flags,
-+			    int ret);
- void kill_pending_fw_fallback_reqs(bool only_kill_custom);
+ /**
+- * firmware_loading_store - set value in the 'loading' control file
++ * firmware_loading_store() - set value in the 'loading' control file
+  * @dev: device pointer
+  * @attr: device attribute pointer
+  * @buf: buffer to scan for loading control value
+@@ -431,7 +431,7 @@ static int fw_realloc_pages(struct fw_sysfs *fw_sysfs, int min_size)
+ }
  
- void fw_fallback_set_cache_timeout(void);
-@@ -43,10 +43,10 @@ void fw_fallback_set_default_timeout(void);
- int register_sysfs_loader(void);
- void unregister_sysfs_loader(void);
- #else /* CONFIG_FW_LOADER_USER_HELPER */
--static inline int fw_sysfs_fallback(struct firmware *fw, const char *name,
--				    struct device *device,
--				    enum fw_opt opt_flags,
--				    int ret)
-+static inline int firmware_fallback_sysfs(struct firmware *fw, const char *name,
-+					  struct device *device,
-+					  enum fw_opt opt_flags,
-+					  int ret)
- {
- 	/* Keep carrying over the same error */
- 	return ret;
-diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
-index 4f433b447367..4c1395f8e7ed 100644
---- a/drivers/base/firmware_loader/firmware.h
-+++ b/drivers/base/firmware_loader/firmware.h
-@@ -20,7 +20,7 @@
-  * @FW_OPT_NOWAIT: Used to describe the firmware request is asynchronous.
-  * @FW_OPT_USERHELPER: Enable the fallback mechanism, in case the direct
-  *	filesystem lookup fails at finding the firmware.  For details refer to
-- *	fw_sysfs_fallback().
-+ *	firmware_fallback_sysfs().
-  * @FW_OPT_NO_WARN: Quiet, avoid printing warning messages.
-  * @FW_OPT_NOCACHE: Disables firmware caching. Firmware caching is used to
-  *	cache the firmware upon suspend, so that upon resume races against the
+ /**
+- * firmware_data_write - write method for firmware
++ * firmware_data_write() - write method for firmware
+  * @filp: open sysfs file
+  * @kobj: kobject for the device
+  * @bin_attr: bin_attr structure
+@@ -537,7 +537,7 @@ fw_create_instance(struct firmware *firmware, const char *fw_name,
+ }
+ 
+ /**
+- * fw_load_sysfs_fallback - load a firmware via the sysfs fallback mechanism
++ * fw_load_sysfs_fallback() - load a firmware via the sysfs fallback mechanism
+  * @fw_sysfs: firmware sysfs information for the firmware to load
+  * @opt_flags: flags of options, FW_OPT_*
+  * @timeout: timeout to wait for the load
 diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-index 7f2bc7e8e3c0..d951af29017a 100644
+index 9919f0e6a7cc..7f2bc7e8e3c0 100644
 --- a/drivers/base/firmware_loader/main.c
 +++ b/drivers/base/firmware_loader/main.c
-@@ -581,7 +581,7 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
- 			dev_warn(device,
- 				 "Direct firmware load for %s failed with error %d\n",
- 				 name, ret);
--		ret = fw_sysfs_fallback(fw, name, device, opt_flags, ret);
-+		ret = firmware_fallback_sysfs(fw, name, device, opt_flags, ret);
- 	} else
- 		ret = assign_fw(fw, device, opt_flags);
+@@ -597,7 +597,7 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+ }
  
+ /**
+- * request_firmware: - send firmware request and wait for it
++ * request_firmware() - send firmware request and wait for it
+  * @firmware_p: pointer to firmware image
+  * @name: name of firmware file
+  * @device: device for which firmware is being loaded
+@@ -657,7 +657,7 @@ int request_firmware_direct(const struct firmware **firmware_p,
+ EXPORT_SYMBOL_GPL(request_firmware_direct);
+ 
+ /**
+- * firmware_request_cache: - cache firmware for suspend so resume can use it
++ * firmware_request_cache() - cache firmware for suspend so resume can use it
+  * @name: name of firmware file
+  * @device: device for which firmware should be cached for
+  *
+@@ -681,7 +681,7 @@ int firmware_request_cache(struct device *device, const char *name)
+ EXPORT_SYMBOL_GPL(firmware_request_cache);
+ 
+ /**
+- * request_firmware_into_buf - load firmware into a previously allocated buffer
++ * request_firmware_into_buf() - load firmware into a previously allocated buffer
+  * @firmware_p: pointer to firmware image
+  * @name: name of firmware file
+  * @device: device for which firmware is being loaded and DMA region allocated
+@@ -713,7 +713,7 @@ request_firmware_into_buf(const struct firmware **firmware_p, const char *name,
+ EXPORT_SYMBOL(request_firmware_into_buf);
+ 
+ /**
+- * release_firmware: - release the resource associated with a firmware image
++ * release_firmware() - release the resource associated with a firmware image
+  * @fw: firmware resource to release
+  **/
+ void release_firmware(const struct firmware *fw)
+@@ -755,7 +755,7 @@ static void request_firmware_work_func(struct work_struct *work)
+ }
+ 
+ /**
+- * request_firmware_nowait - asynchronous version of request_firmware
++ * request_firmware_nowait() - asynchronous version of request_firmware
+  * @module: module requesting the firmware
+  * @uevent: sends uevent to copy the firmware image if this flag
+  *	is non-zero else the firmware copy must be done manually.
+@@ -824,7 +824,7 @@ EXPORT_SYMBOL(request_firmware_nowait);
+ static ASYNC_DOMAIN_EXCLUSIVE(fw_cache_domain);
+ 
+ /**
+- * cache_firmware - cache one firmware image in kernel memory space
++ * cache_firmware() - cache one firmware image in kernel memory space
+  * @fw_name: the firmware image name
+  *
+  * Cache firmware in kernel memory so that drivers can use it when
+@@ -866,7 +866,7 @@ static struct fw_priv *lookup_fw_priv(const char *fw_name)
+ }
+ 
+ /**
+- * uncache_firmware - remove one cached firmware image
++ * uncache_firmware() - remove one cached firmware image
+  * @fw_name: the firmware image name
+  *
+  * Uncache one firmware image which has been cached successfully
+@@ -1042,7 +1042,7 @@ static void __device_uncache_fw_images(void)
+ }
+ 
+ /**
+- * device_cache_fw_images - cache devices' firmware
++ * device_cache_fw_images() - cache devices' firmware
+  *
+  * If one device called request_firmware or its nowait version
+  * successfully before, the firmware names are recored into the
+@@ -1075,7 +1075,7 @@ static void device_cache_fw_images(void)
+ }
+ 
+ /**
+- * device_uncache_fw_images - uncache devices' firmware
++ * device_uncache_fw_images() - uncache devices' firmware
+  *
+  * uncache all firmwares which have been cached successfully
+  * by device_uncache_fw_images earlier
+@@ -1092,7 +1092,7 @@ static void device_uncache_fw_images_work(struct work_struct *work)
+ }
+ 
+ /**
+- * device_uncache_fw_images_delay - uncache devices firmwares
++ * device_uncache_fw_images_delay() - uncache devices firmwares
+  * @delay: number of milliseconds to delay uncache device firmwares
+  *
+  * uncache all devices's firmwares which has been cached successfully
 -- 
 2.17.0
