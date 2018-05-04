@@ -1,39 +1,38 @@
 Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3039369-1525378423-2-13546135462891036573
+X-Cyrus-Session-Id: sloti22d1t05-3604505-1525406396-2-10078008462797565812
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: cc='iso-8859-1', plain='iso-8859-1'
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='hk',
+  MailFrom='org'
+X-Spam-charsets: cc='UTF-8', plain='utf-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525378423; b=ZX6Td1vVplcZOOgAh0KStCsdoQ2tFU129RRo8q3QFHIxc7YXGG
-    1V8eEJkrxcIO1mdiN5IF6Xrx+UmAD8C1XXnnWZHl1o40d6xeyIvJ9gbLGeC4qP41
-    3nJoks7OLjmYIA/Q0qQMnJyYOWnQaP4NhVpMH8LguykY/lIool+oefHJRIr/Xbqk
-    BQ6t/nB8of9zsEyIpt0CXY7W1arYoqWnchiaVWQLiTZJSwmuyPCg05hl+PMBa5iu
-    I4WWoIQ7KH/vuUECtBGSPendMwETMVdLFJg14mD4wOQgUvI/32fFDlrfm4eP+JhX
-    LiNCbqE29MuDbwYu4FOAdjFoWn3YlwD8vIkw==
+    1525406395; b=YbrOV1njWBWTgUAvDHjn5BrJD/HqQHKaJTCXgT5A/M5FWPA0fz
+    lXBPkClC//qBYFBSJ6JyMYus0l/KEKRXD/zRQ/P5dUoTEuewcmbdXQeb0tR39Z+t
+    h9VeK5pjfWgPq2/IVP6QZRft4wEzp1GyytzQd/pO51k9dOGfAj2CMwPMl7O2rcpc
+    e/6n63PWRy28LeIkVd2DjfNXYcic2bia7xOgo9hsSV0ld5h80bdlC55WZPIFLn7x
+    SpClRAUomv1EiqmrkJFKNSTXcXiDDFVXiEUOxwHBuGpES0I0zKanS3I8GL4QlIUJ
+    1dbYDF6JDzTefvxzSGYjrwE95c5HA68dwbkQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:message-id
-    :references:mime-version:content-type:content-transfer-encoding
-    :in-reply-to:sender:list-id; s=fm2; t=1525378423; bh=m3YduLnPCgn
-    EAo4Fyg4xbfCCwU3WwjZlY8HGu1/fEAA=; b=AcRfXeVcWGd55Lr4XEWOOy7SjzO
-    S/3XP0C4OgYnXLtUh4g7wGNQGpe8qSSWiRvOkiYr2LacTdaMTkzwClDYSqRWQ+PI
-    5SxzCY/U8D3e1MlHXjngjCGviZrLu2vLw+PqQV9GiYxvBwRnSR5ymzsNSJVj3air
-    7NpS9b/ir9TdQSKLZcXoiSqA1s4FBpf6zQTJryJgVVuFGzXJLca8c74OU5rMk7Fo
-    M31Jzi1/d7zUYHLxQ977QEeR+ZXapY5qfTYppkE/guKdF/r+nLp+MZdYOh+bkX9b
-    ZunLzmtJ6BR8Kbf3CUOQREhwz4ZLhkepx4WXQ4Yc/vMRfQNBB/Yct7IPrWA==
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525406395;
+    bh=6X3lC6zdcc9zlvNQppyIfmET5X7NxfcZp8eTSKIJTBI=; b=lwBWZEzf2xHD
+    NKHPjXnA4Ru+mXHTI9gtECphM0eJ6pe5qHWgXk2JOCmzNkPPNA51Y5XB+ExWYx4+
+    Ld6roMz8TsanUCtfht4MUb/OJLigRvn+xnETCUXkpglxNG4yOTSdOeuzbhRfQwEQ
+    5vO6rvHvecOPW0lSOA0Ah9sp41SFgYUkjEJZ6AX6h22ol11wr7bzMnJKU5U/+XNh
+    kfd1QcgvTXaF//uOp8Sv1y9RYXnO538DYPEsj3UfzSXo6gtt3AYWuB+3MQiY8Jqk
+    3WUTgneBGOfv/fMrxe9LC5dNor5/JhQgTb36z5kCz8xlRBw6JLIL55EsEKMMudM3
+    wA5+GhPnwg==
 ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=nW5elRQW x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gtsys.com.hk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -42,16 +41,13 @@ ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
+    header.domain=gtsys.com.hk header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=nW5elRQW x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=gtsys.com.hk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -60,95 +56,68 @@ Authentication-Results: mx5.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
+      header.domain=gtsys.com.hk header.result=pass
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK6DZ/j8UKoLK4ce8qn8WsM9YzjGtE5P1rneiml7j2stAsd7IozvXcaLmL4Xjp9MvIqVQVUzwORSsFoyv4t5brijVN7E+n8Z7VgtjAYxN53jf6spVwvF
-    atqiDU6MOk5TcyoEx56BjaYqolE9od58DxXmsqFMWyzXmtG+7OXhikZpofD24BIfU1OgddJumvDQC9Dc0r74RZYcghhL2/k9h1qLiENso70v4b9GDgxCBO3j
+X-CM-Envelope: MS4wfOfP1MKuNm2vKVsGkMGm+MVF13rFPM/lCahn6ELHLH42wfEzUPnObab0tfYpTIHDQlZ4cl6wCd7Ym8AUH/IceI+hXrHmZ6dj1he0gKQKSLDnuUbr2ign
+    IGVB0Fx8U514LONNra9JqwhN33Er7VbzIe3gZRCl8+fHFJiMsTsXrjG2ui+xH0jX8Hk7akOfeOmBZieE30a7761gN9kGxLqKlHlb0V+ZVqy0mVUhD7iQV/RZ
 X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=8nJEP1OIZ-IA:10 a=VUJBJC2UJ8kA:10
-    a=O7zmUmNSAAAA:8 a=VwQbUJbxAAAA:8 a=hAeWe7OAgna5fDyplI8A:9 a=wPNLvfGTeEIA:10
-    a=HUqATDVKn4QA:10 a=x8gzFH9gYPwA:10 a=IJxu9zi5bFdC9NS7oKyv:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=HF_MKpNI09jAw7FtRnoA:9 a=QEXdDO2ut3YA:10
+    a=HUqATDVKn4QA:10 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750962AbeECUNa (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 3 May 2018 16:13:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42142 "EHLO mail.kernel.org"
+        id S1751287AbeEDD7x (ORCPT <rfc822;greg@kroah.com>);
+        Thu, 3 May 2018 23:59:53 -0400
+Received: from sh1.xit.com.hk ([111.91.236.50]:46570 "EHLO sh1.xit.com.hk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751081AbeECUN3 (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 3 May 2018 16:13:29 -0400
-Date: Thu, 3 May 2018 13:13:17 -0700
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-        <u.kleine-koenig@pengutronix.de>, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1751278AbeEDD7w (ORCPT <rfc822;linux-serial@vger.kernel.org>);
+        Thu, 3 May 2018 23:59:52 -0400
 Subject: Re: [PATCH] serial: imx: enable IMX21_UCR3_RXDMUXSEL for non-dte-mode
-Message-ID: <20180503201317.GA19401@kroah.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <1524186479-25315-1-git-send-email-chris.ruehl@gtsys.com.hk>
  <20180420061316.sakoupltqxn2qhfr@pengutronix.de>
  <ca240b4a-aa42-b747-9bab-49b18290ca49@gtsys.com.hk>
+ <20180503201317.GA19401@kroah.com>
+From: Chris Ruehl <chris.ruehl@gtsys.com.hk>
+Message-ID: <162654a7-5add-2ea4-b947-783189535091@gtsys.com.hk>
+Date: Fri, 4 May 2018 11:59:42 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ca240b4a-aa42-b747-9bab-49b18290ca49@gtsys.com.hk>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+In-Reply-To: <20180503201317.GA19401@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-serial-owner@vger.kernel.org
 X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 02:13:53PM +0800, Chris Ruehl wrote:
-> Hi Greg,
+>>
+>> The IMX serial driver is broken in the 4.9.x tree since 4.9.89.
+>> Uwe's patch
+>>
+>> 6df765dca378bddf994cfd2044acafa501bd800f
+>>
+>> please apply to clear the situation.
+>>
+>> I know you very busy! -
 > 
-> On Friday, April 20, 2018 02:13 PM, Uwe Kleine-König wrote:
-> > Hello Chris,
-> > 
-> > On Fri, Apr 20, 2018 at 09:07:59AM +0800, Chris Ruehl wrote:
-> > > Fix a problem introduced with
-> > > commit e61c38d85b73 ("serial: imx: setup DCEDTE early and ensure DCD and RI irqs to be off")
-> > > result in non dte-mode imx-uart fail receive data.
-> > > By add back IMX21_UCR3_RXDMUXSEL the serial port works as expected.
-> > > 
-> > > Signed-off-by: Chris Ruehl <chris.ruehl@gtsys.com.hk>
-> > > ---
-> > >   drivers/tty/serial/imx.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> > > index 91f3a1a..3d09933 100644
-> > > --- a/drivers/tty/serial/imx.c
-> > > +++ b/drivers/tty/serial/imx.c
-> > > @@ -1391,7 +1391,7 @@ static int imx_uart_startup(struct uart_port *port)
-> > >   		ucr3 = imx_uart_readl(sport, UCR3);
-> > > -		ucr3 |= UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
-> > > +		ucr3 |= IMX21_UCR3_RXDMUXSEL | UCR3_DTRDEN | UCR3_RI | UCR3_DCD;
-> > >   		if (sport->dte_mode)
-> > >   			/* disable broken interrupts */
-> > 
-> > Doesn't 6df765dca378bddf994cfd2044acafa501bd800f fix this for you?
-> > 
-> > Best regards
-> > Uwe
-> > 
+> It's best to email stable@vger.kernel.org for stuff like this, as I
+> almost missed it...
 > 
-> The IMX serial driver is broken in the 4.9.x tree since 4.9.89.
-> Uwe's patch
+> Now queued up.
 > 
-> 6df765dca378bddf994cfd2044acafa501bd800f
-> 
-> please apply to clear the situation.
-> 
-> I know you very busy! -
+> greg k-h
 
-It's best to email stable@vger.kernel.org for stuff like this, as I
-almost missed it...
+Thanks!
+will follow up and cc the stable@ next time.
 
-Now queued up.
-
-greg k-h
+Chris
