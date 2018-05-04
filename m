@@ -1,47 +1,51 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751621AbeEDAQj (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 20:16:39 -0400
-Received: from www62.your-server.de ([213.133.104.62]:58247 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751445AbeEDAQe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 20:16:34 -0400
-Subject: Re: [PATCH] bpf: fix possible spectre-v1 in find_and_alloc_map()
-To: Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org
-Cc: Alexei Starovoitov <ast@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Peter Zijlstra <peterz@infradead.org>, netdev@vger.kernel.org
-References: <20180503160459.4111-1-mark.rutland@arm.com>
-From: Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <28363c0d-0b78-681c-d9ea-908671b0067e@iogearbox.net>
-Date: Fri, 4 May 2018 02:16:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S1751687AbeEDAQq (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 20:16:46 -0400
+Received: from mga01.intel.com ([192.55.52.88]:31676 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751632AbeEDAQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 3 May 2018 20:16:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,360,1520924400";
+   d="scan'208";a="42944386"
+Subject: [PATCH v3 8/9] pmem: switch to copy_to_iter_mcsafe()
+From: Dan Williams <dan.j.williams@intel.com>
+To: linux-nvdimm@lists.01.org
+Cc: hch@lst.de, linux-kernel@vger.kernel.org, tony.luck@intel.com,
+        linux-fsdevel@vger.kernel.org
+Date: Thu, 03 May 2018 17:06:47 -0700
+Message-ID: <152539240757.31796.14176557943876214824.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <152539236455.31796.7516599166555186700.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <152539236455.31796.7516599166555186700.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-In-Reply-To: <20180503160459.4111-1-mark.rutland@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/03/2018 06:04 PM, Mark Rutland wrote:
-> It's possible for userspace to control attr->map_type. Sanitize it when
-> using it as an array index to prevent an out-of-bounds value being used
-> under speculation.
-> 
-> Found by smatch.
-> 
-> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Dan Carpenter <dan.carpenter@oracle.com>
-> Cc: Daniel Borkmann <daniel@iogearbox.net>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: netdev@vger.kernel.org
+Use the machine check safe version of copy_to_iter() for the
+->copy_to_iter() operation published by the pmem driver.
 
-Applied to bpf tree, thanks Mark! I've also just submitted one for
-BPF progs (http://patchwork.ozlabs.org/patch/908385/) which is same
-situation.
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/nvdimm/pmem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 1b8ab48365de..6d3da8c92868 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -267,7 +267,7 @@ static size_t pmem_copy_from_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ static size_t pmem_copy_to_iter(struct dax_device *dax_dev, pgoff_t pgoff,
+ 		void *addr, size_t bytes, struct iov_iter *i)
+ {
+-	return copy_to_iter(addr, bytes, i);
++	return copy_to_iter_mcsafe(addr, bytes, i);
+ }
+ 
+ static const struct dax_operations pmem_dax_ops = {
