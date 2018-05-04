@@ -1,329 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751765AbeEDIG5 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 04:06:57 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:36443 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbeEDIGy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 04:06:54 -0400
-X-Google-Smtp-Source: AB8JxZrSTPyL/HMq591n31Bt1rZAnI7HbYvV1pSg44lLK+K98MbO8kxqebd+R0hsnHIKg0QYRWGwL00guzWoSJf7mwM=
+        id S1751790AbeEDIHH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 04:07:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50701 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751539AbeEDIHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 04:07:04 -0400
+Date: Fri, 4 May 2018 10:06:52 +0200
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 7/7] ARM: dts: sun7i: Add dts file for the A20-linova1-7
+ HMI
+Message-ID: <20180504080652.dniwaqqhbeuknp7y@flea>
+References: <1521662593-25468-1-git-send-email-giulio.benetti@micronovasrl.com>
+ <1521662593-25468-7-git-send-email-giulio.benetti@micronovasrl.com>
+ <20180322180508.my64gobhh5rc2x2m@flea>
+ <8ef3b259-03b4-6987-286e-36ff627a8b76@micronovasrl.com>
+ <20180424084137.7xfwji2gcibxavvt@flea>
+ <03a02abb-e95c-b4ec-748f-907c0af67969@micronovasrl.com>
+ <20180425184016.xktppxw7egddr7li@flea>
+ <42feccc9-1d09-9ff2-3ccc-1dea63bacfb6@micronovasrl.com>
+ <839d2560-0250-9b3a-8019-4e83d9e931e2@micronovasrl.com>
 MIME-Version: 1.0
-In-Reply-To: <795030fce89ec55d015602fbf4594838a22a9094.1525420581.git.baolin.wang@linaro.org>
-References: <c54ccfe653c5c8e206e5482f741a3a9d941935e0.1525420581.git.baolin.wang@linaro.org>
- <795030fce89ec55d015602fbf4594838a22a9094.1525420581.git.baolin.wang@linaro.org>
-From: Baolin Wang <baolin.wang@linaro.org>
-Date: Fri, 4 May 2018 16:06:53 +0800
-Message-ID: <CAMz4kuLyZ9=hBC1euK57XAoX1wAkQdphLyz3dPcWK3c9cQ=cjw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dmaengine: sprd: Add Spreadtrum DMA configuration
-To: Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vinod.koul@intel.com>, vkoul@kernel.org
-Cc: Eric Long <eric.long@spreadtrum.com>, Mark Brown <broonie@kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>, dmaengine@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rttcqilsjxraxvtj"
+Content-Disposition: inline
+In-Reply-To: <839d2560-0250-9b3a-8019-4e83d9e931e2@micronovasrl.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Vinod new email.
 
-On 4 May 2018 at 16:01, Baolin Wang <baolin.wang@linaro.org> wrote:
-> From: Eric Long <eric.long@spreadtrum.com>
->
-> This patch adds the 'device_config' and 'device_prep_slave_sg' interfaces
-> for users to configure DMA, as well as adding one 'struct sprd_dma_config'
-> structure to save Spreadtrum DMA configuration for each DMA channel.
->
-> Signed-off-by: Eric Long <eric.long@spreadtrum.com>
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
->  drivers/dma/sprd-dma.c       |  215 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/dma/sprd-dma.h |    4 +
->  2 files changed, 219 insertions(+)
->
-> diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-> index a7a89fd..d7c7ffa 100644
-> --- a/drivers/dma/sprd-dma.c
-> +++ b/drivers/dma/sprd-dma.c
-> @@ -100,6 +100,8 @@
->  #define SPRD_DMA_DES_DATAWIDTH_OFFSET  28
->  #define SPRD_DMA_SWT_MODE_OFFSET       26
->  #define SPRD_DMA_REQ_MODE_OFFSET       24
-> +#define SPRD_DMA_WRAP_SEL_OFFSET       23
-> +#define SPRD_DMA_WRAP_EN_OFFSET                22
->  #define SPRD_DMA_REQ_MODE_MASK         GENMASK(1, 0)
->  #define SPRD_DMA_FIX_SEL_OFFSET                21
->  #define SPRD_DMA_FIX_EN_OFFSET         20
-> @@ -154,6 +156,35 @@ struct sprd_dma_chn_hw {
->         u32 des_blk_step;
->  };
->
-> +/*
-> + * struct sprd_dma_config - DMA configuration structure
-> + * @cfg: dma slave channel runtime config
-> + * @src_addr: the source physical address
-> + * @dst_addr: the destination physical address
-> + * @block_len: specify one block transfer length
-> + * @transcation_len: specify one transcation transfer length
-> + * @src_step: source transfer step
-> + * @dst_step: destination transfer step
-> + * @wrap_ptr: wrap pointer address, once the transfer address reaches the
-> + * 'wrap_ptr', the next transfer address will jump to the 'wrap_to' address.
-> + * @wrap_to: wrap jump to address
-> + * @req_mode: specify the DMA request mode
-> + * @int_mode: specify the DMA interrupt type
-> + */
-> +struct sprd_dma_config {
-> +       struct dma_slave_config cfg;
-> +       phys_addr_t src_addr;
-> +       phys_addr_t dst_addr;
-> +       u32 block_len;
-> +       u32 transcation_len;
-> +       u32 src_step;
-> +       u32 dst_step;
-> +       phys_addr_t wrap_ptr;
-> +       phys_addr_t wrap_to;
-> +       enum sprd_dma_req_mode req_mode;
-> +       enum sprd_dma_int_type int_mode;
-> +};
-> +
->  /* dma request description */
->  struct sprd_dma_desc {
->         struct virt_dma_desc    vd;
-> @@ -164,6 +195,7 @@ struct sprd_dma_desc {
->  struct sprd_dma_chn {
->         struct virt_dma_chan    vc;
->         void __iomem            *chn_base;
-> +       struct sprd_dma_config  slave_cfg;
->         u32                     chn_num;
->         u32                     dev_id;
->         struct sprd_dma_desc    *cur_desc;
-> @@ -552,6 +584,121 @@ static void sprd_dma_issue_pending(struct dma_chan *chan)
->         spin_unlock_irqrestore(&schan->vc.lock, flags);
->  }
->
-> +static enum sprd_dma_datawidth
-> +sprd_dma_get_datawidth(enum dma_slave_buswidth buswidth)
-> +{
-> +       switch (buswidth) {
-> +       case DMA_SLAVE_BUSWIDTH_1_BYTE:
-> +               return SPRD_DMA_DATAWIDTH_1_BYTE;
-> +
-> +       case DMA_SLAVE_BUSWIDTH_2_BYTES:
-> +               return SPRD_DMA_DATAWIDTH_2_BYTES;
-> +
-> +       case DMA_SLAVE_BUSWIDTH_4_BYTES:
-> +               return SPRD_DMA_DATAWIDTH_4_BYTES;
-> +
-> +       case DMA_SLAVE_BUSWIDTH_8_BYTES:
-> +               return SPRD_DMA_DATAWIDTH_8_BYTES;
-> +
-> +       default:
-> +               return SPRD_DMA_DATAWIDTH_4_BYTES;
-> +       }
-> +}
-> +
-> +static u32 sprd_dma_get_step(enum sprd_dma_datawidth datawidth)
-> +{
-> +       switch (datawidth) {
-> +       case SPRD_DMA_DATAWIDTH_1_BYTE:
-> +               return SPRD_DMA_BYTE_STEP;
-> +
-> +       case SPRD_DMA_DATAWIDTH_2_BYTES:
-> +               return SPRD_DMA_SHORT_STEP;
-> +
-> +       case SPRD_DMA_DATAWIDTH_4_BYTES:
-> +               return SPRD_DMA_WORD_STEP;
-> +
-> +       case SPRD_DMA_DATAWIDTH_8_BYTES:
-> +               return SPRD_DMA_DWORD_STEP;
-> +
-> +       default:
-> +               return SPRD_DMA_DWORD_STEP;
-> +       }
-> +}
-> +
-> +static int sprd_dma_config(struct dma_chan *chan, struct sprd_dma_desc *sdesc,
-> +                          struct sprd_dma_config *slave_cfg)
-> +{
-> +       struct sprd_dma_dev *sdev = to_sprd_dma_dev(chan);
-> +       struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
-> +       struct sprd_dma_chn_hw *hw = &sdesc->chn_hw;
-> +       u32 fix_mode = 0, fix_en = 0, wrap_en = 0, wrap_mode = 0;
-> +       u32 src_datawidth, dst_datawidth;
-> +
-> +       if (slave_cfg->cfg.slave_id)
-> +               schan->dev_id = slave_cfg->cfg.slave_id;
-> +
-> +       hw->cfg = SPRD_DMA_DONOT_WAIT_BDONE << SPRD_DMA_WAIT_BDONE_OFFSET;
-> +       hw->wrap_ptr = (u32)((slave_cfg->wrap_ptr & SPRD_DMA_LOW_ADDR_MASK) |
-> +               ((slave_cfg->src_addr >> SPRD_DMA_HIGH_ADDR_OFFSET) &
-> +                SPRD_DMA_HIGH_ADDR_MASK));
-> +       hw->wrap_to = (u32)((slave_cfg->wrap_to & SPRD_DMA_LOW_ADDR_MASK) |
-> +               ((slave_cfg->dst_addr >> SPRD_DMA_HIGH_ADDR_OFFSET) &
-> +                SPRD_DMA_HIGH_ADDR_MASK));
-> +
-> +       hw->src_addr = (u32)(slave_cfg->src_addr & SPRD_DMA_LOW_ADDR_MASK);
-> +       hw->des_addr = (u32)(slave_cfg->dst_addr & SPRD_DMA_LOW_ADDR_MASK);
-> +
-> +       if ((slave_cfg->src_step != 0 && slave_cfg->dst_step != 0)
-> +           || (slave_cfg->src_step | slave_cfg->dst_step) == 0) {
-> +               fix_en = 0;
-> +       } else {
-> +               fix_en = 1;
-> +               if (slave_cfg->src_step)
-> +                       fix_mode = 1;
-> +               else
-> +                       fix_mode = 0;
-> +       }
-> +
-> +       if (slave_cfg->wrap_ptr && slave_cfg->wrap_to) {
-> +               wrap_en = 1;
-> +               if (slave_cfg->wrap_to == slave_cfg->src_addr) {
-> +                       wrap_mode = 0;
-> +               } else if (slave_cfg->wrap_to == slave_cfg->dst_addr) {
-> +                       wrap_mode = 1;
-> +               } else {
-> +                       dev_err(sdev->dma_dev.dev, "invalid wrap mode\n");
-> +                       return -EINVAL;
-> +               }
-> +       }
-> +
-> +       hw->intc = slave_cfg->int_mode | SPRD_DMA_CFG_ERR_INT_EN;
-> +
-> +       src_datawidth = sprd_dma_get_datawidth(slave_cfg->cfg.src_addr_width);
-> +       dst_datawidth = sprd_dma_get_datawidth(slave_cfg->cfg.dst_addr_width);
-> +       hw->frg_len = src_datawidth << SPRD_DMA_SRC_DATAWIDTH_OFFSET |
-> +               dst_datawidth << SPRD_DMA_DES_DATAWIDTH_OFFSET |
-> +               slave_cfg->req_mode << SPRD_DMA_REQ_MODE_OFFSET |
-> +               wrap_mode << SPRD_DMA_WRAP_SEL_OFFSET |
-> +               wrap_en << SPRD_DMA_WRAP_EN_OFFSET |
-> +               fix_mode << SPRD_DMA_FIX_SEL_OFFSET |
-> +               fix_en << SPRD_DMA_FIX_EN_OFFSET |
-> +               (slave_cfg->cfg.src_maxburst & SPRD_DMA_FRG_LEN_MASK);
-> +
-> +       hw->blk_len = slave_cfg->block_len & SPRD_DMA_BLK_LEN_MASK;
-> +
-> +       hw->trsc_len = slave_cfg->transcation_len & SPRD_DMA_TRSC_LEN_MASK;
-> +
-> +       hw->trsf_step = (slave_cfg->dst_step & SPRD_DMA_TRSF_STEP_MASK) <<
-> +                       SPRD_DMA_DEST_TRSF_STEP_OFFSET |
-> +                       (slave_cfg->src_step & SPRD_DMA_TRSF_STEP_MASK) <<
-> +                       SPRD_DMA_SRC_TRSF_STEP_OFFSET;
-> +
-> +       hw->frg_step = 0;
-> +       hw->src_blk_step = 0;
-> +       hw->des_blk_step = 0;
-> +       return 0;
-> +}
-> +
->  static struct dma_async_tx_descriptor *
->  sprd_dma_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
->                          size_t len, unsigned long flags)
-> @@ -606,6 +753,72 @@ static void sprd_dma_issue_pending(struct dma_chan *chan)
->         return vchan_tx_prep(&schan->vc, &sdesc->vd, flags);
->  }
->
-> +static struct dma_async_tx_descriptor *
-> +sprd_dma_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
-> +                      unsigned int sglen, enum dma_transfer_direction dir,
-> +                      unsigned long flags, void *context)
-> +{
-> +       struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
-> +       struct sprd_dma_config *slave_cfg = &schan->slave_cfg;
-> +       struct sprd_dma_desc *sdesc;
-> +       struct scatterlist *sg;
-> +       int ret, i;
-> +
-> +       /* TODO: now we only support one sg for each DMA configuration. */
-> +       if (!is_slave_direction(dir) || sglen > 1)
-> +               return NULL;
-> +
-> +       sdesc = kzalloc(sizeof(*sdesc), GFP_NOWAIT);
-> +       if (!sdesc)
-> +               return NULL;
-> +
-> +       for_each_sg(sgl, sg, sglen, i) {
-> +               if (dir == DMA_MEM_TO_DEV) {
-> +                       slave_cfg->src_addr = sg_dma_address(sg);
-> +                       slave_cfg->dst_addr = slave_cfg->cfg.dst_addr;
-> +                       slave_cfg->src_step =
-> +                       sprd_dma_get_step(slave_cfg->cfg.src_addr_width);
-> +                       slave_cfg->dst_step = SPRD_DMA_NONE_STEP;
-> +               } else {
-> +                       slave_cfg->src_addr = slave_cfg->cfg.src_addr;
-> +                       slave_cfg->dst_addr = sg_dma_address(sg);
-> +                       slave_cfg->src_step = SPRD_DMA_NONE_STEP;
-> +                       slave_cfg->dst_step =
-> +                       sprd_dma_get_step(slave_cfg->cfg.dst_addr_width);
-> +               }
-> +
-> +               slave_cfg->block_len = sg_dma_len(sg);
-> +               slave_cfg->transcation_len = sg_dma_len(sg);
-> +       }
-> +
-> +       slave_cfg->req_mode =
-> +               (flags >> SPRD_DMA_REQ_SHIFT) & SPRD_DMA_REQ_MODE_MASK;
-> +       slave_cfg->int_mode = flags & SPRD_DMA_INT_MASK;
-> +
-> +       ret = sprd_dma_config(chan, sdesc, slave_cfg);
-> +       if (ret) {
-> +               kfree(sdesc);
-> +               return NULL;
-> +       }
-> +
-> +       return vchan_tx_prep(&schan->vc, &sdesc->vd, flags);
-> +}
-> +
-> +static int sprd_dma_slave_config(struct dma_chan *chan,
-> +                                struct dma_slave_config *config)
-> +{
-> +       struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
-> +       struct sprd_dma_config *slave_cfg = &schan->slave_cfg;
-> +
-> +       if (!is_slave_direction(config->direction))
-> +               return -EINVAL;
-> +
-> +       memset(slave_cfg, 0, sizeof(*slave_cfg));
-> +       memcpy(&slave_cfg->cfg, config, sizeof(*config));
-> +
-> +       return 0;
-> +}
-> +
->  static int sprd_dma_pause(struct dma_chan *chan)
->  {
->         struct sprd_dma_chn *schan = to_sprd_dma_chan(chan);
-> @@ -733,6 +946,8 @@ static int sprd_dma_probe(struct platform_device *pdev)
->         sdev->dma_dev.device_tx_status = sprd_dma_tx_status;
->         sdev->dma_dev.device_issue_pending = sprd_dma_issue_pending;
->         sdev->dma_dev.device_prep_dma_memcpy = sprd_dma_prep_dma_memcpy;
-> +       sdev->dma_dev.device_prep_slave_sg = sprd_dma_prep_slave_sg;
-> +       sdev->dma_dev.device_config = sprd_dma_slave_config;
->         sdev->dma_dev.device_pause = sprd_dma_pause;
->         sdev->dma_dev.device_resume = sprd_dma_resume;
->         sdev->dma_dev.device_terminate_all = sprd_dma_terminate_all;
-> diff --git a/include/linux/dma/sprd-dma.h b/include/linux/dma/sprd-dma.h
-> index c545162..b0115e3 100644
-> --- a/include/linux/dma/sprd-dma.h
-> +++ b/include/linux/dma/sprd-dma.h
-> @@ -3,6 +3,10 @@
->  #ifndef _SPRD_DMA_H_
->  #define _SPRD_DMA_H_
->
-> +#define SPRD_DMA_REQ_SHIFT 16
-> +#define SPRD_DMA_FLAGS(req_mode, int_type) \
-> +       ((req_mode) << SPRD_DMA_REQ_SHIFT | (int_type))
-> +
->  /*
->   * enum sprd_dma_req_mode: define the DMA request mode
->   * @SPRD_DMA_FRAG_REQ: fragment request mode
-> --
-> 1.7.9.5
->
+--rttcqilsjxraxvtj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+On Wed, May 02, 2018 at 06:41:34PM +0200, Giulio Benetti wrote:
+> > > You don't have to handcode the fragments anymore with the new syntax,
+> > > and U-Boot makes it really trivial to use if you use the FIT image
+> > > format to have multiple overlays bundled in the same image. You can
+> > > choose to apply them dynamically, for example based on an EEPROM or
+> > > some other metric to see which combination you have.
+> >=20
+> > Ah, this is interesting. I'm going to experiment with that.
+> >=20
+>=20
+> I'm struggling against this, I don't really know how to proceed,
+> except keeping monolithic dts files including other dtsi files.
+>=20
+> About dt-overlays I've tried to look around lot of time,
+> but the only thing I've found is this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+/tree/arch/arm/boot/dts?h=3Dtopic/renesas-overlays
+>=20
+> where they use .dtso tagging them as "/plugin/;"
+> and compile all .dtso found in dts folder.
+> Then they obtain .dtbo files that should be the dt-overlays we have spoken
+> about right?
 
--- 
-Baolin.wang
-Best Regards
+Yes. You don't have to do that though, you can just rely on dtc to
+compile them, outside of the linux build system.
+
+> What I can't understand is if there's a real standard at this time to
+> follow, because on renesas-driver they use their way to handle all .dtso
+> files, but on mainline there seems to be nothing about that.
+
+I'm not sure what you mean here. It's just fragments of device tree,
+that have to be compiled using dtc, that's it. You can use the Linux
+build system infrastructure to do that, or you can build your own
+simpler one. That's really up to you. See for example
+https://github.com/NextThingCo/CHIP-dt-overlays/blob/master/Makefile
+
+(even though the overlays themselves use the legacy syntax and
+shouldn't really be used an examples)
+
+> So at the moment I'm trying to compile dts tagged as /plugin/;
+> but dtc gives me a lot of warnings.
+>=20
+> dts:
+> "
+> /dts-v1/;
+> /plugin/;
+>=20
+> #include <dt-bindings/gpio/gpio.h>
+> #include <dt-bindings/interrupt-controller/irq.h>
+>=20
+> &i2c2 {
+> 	pinctrl-names =3D "default";
+> 	pinctrl-0 =3D <&i2c2_pins_a>;
+> 	status =3D "okay";
+>=20
+> 	ft5x {
+> 		compatible =3D "edt,edt-ft5306";
+> 		reg =3D <0x38>;
+> 		interrupt-parent =3D <&pio>;
+> 		interrupts =3D <7 2 IRQ_TYPE_EDGE_FALLING>; /* PH2 */
+> 		reset-gpios =3D <&pio 7 3 GPIO_ACTIVE_LOW>; /* PH3 */
+> 		touchscreen-size-x =3D <480>;
+> 		touchscreen-size-y =3D <272>;
+> 	};
+> };
+> "
+>=20
+> Build output issuing make ARCH=3Darm CROSS_COMPILE=3Darm-linux- aaa.dtb (=
+I use
+> aaa.dts as source):
+> "
+> arch/arm/boot/dts/aaa.dtb: Warning (reg_format):
+> /fragment@0/__overlay__/ft5x:reg: property has invalid length (4 bytes)
+> (#address-cells =3D=3D 2, #size-cells =3D=3D 1)
+> arch/arm/boot/dts/aaa.dtb: Warning (pci_device_bus_num): Failed prerequis=
+ite
+> 'reg_format'
+> arch/arm/boot/dts/aaa.dtb: Warning (simple_bus_reg): Failed prerequisite
+> 'reg_format'
+> arch/arm/boot/dts/aaa.dtb: Warning (avoid_default_addr_size):
+> /fragment@0/__overlay__/ft5x: Relying on default #address-cells value
+> arch/arm/boot/dts/aaa.dtb: Warning (avoid_default_addr_size):
+> /fragment@0/__overlay__/ft5x: Relying on default #size-cells value
+> "
+
+Yeah, your i2c node doesn't have the right address-cells and
+size-cells properties value, like dtc is telling you.
+
+> Then in uboot I'm trying to do as follows:
+> # fdt addr 0x43000000 (where dtb is)
+> # fdt resize 8192
+> # fdt apply 0x430c0000 (where dtbo is)
+> But it gives me "libfdt fdt_check_header(): FDT_ERR_BADMAGIC"
+> (I was expecting some error)
+
+It looks like your overlay hasn't been properly loaded.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rttcqilsjxraxvtj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrsFJsACgkQ0rTAlCFN
+r3TVBw/9F7pOTRJNK4/JtxdlsA7UcgdtzJy9YXm9DySLRCZltkonNjqJOI9Niwt7
+D7hWMZrP0HSrN0ecl3+2LLiVd/JPJ40EX++3iCnLmyNmJv7WVDyhYFiRGd+ktaZ4
+xH9PMJsBu75wDucsZc6GJo2Md6zXb6VEpQ7tsbXQTqIZXq43iOpeCSZxqiQwbWkn
+V6BaD/aIZoQxnaFBxIwj5ennlL9E+0QpsgOePNvGUD5Uz1o0lM04T5ldUi6B8QA0
+5znF2fAq1MDBqwbYPqLBGScfcEVoURpPP9Upt8JesYAJXUTmCLeL1hRVutNidFJH
+m/6D7fYJ6Qg5lAqOiNKu/ddOKsBCQzvt+Ua3bdwvhqlCVTpHxqNCd2x3q/XNXoyF
+57QXkqWLUrHp+6D0JZlIAOYZY2Nl3gR3yATW2bnx+ppF4ACFnECaYZlcpCUTuaKJ
+d4tPL+urjiimjvqxTK/j8tRjQkAu3MR8bj1kDNwe/7aqVkMICpje5fz12T8hhnAu
+GJkL6W3nZpuDQrStcZAym6ASw4W9EV/AqpTINHLaTE0AOxC5ulSIETNcGLAtRqeD
+z6ypjIvI/NRB44RNqaEyvm1FgENnqvZ5A94PEPQEEfjzee4kzPhWU3v92/T5/LQ4
+rsZcKZFiTQm0jq0nlQquOy9zkkZogAfe1DmW62ZY+uFFEVYrU9M=
+=jt3Q
+-----END PGP SIGNATURE-----
+
+--rttcqilsjxraxvtj--
