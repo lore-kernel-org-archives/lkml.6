@@ -1,158 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751321AbeEDDMV (ORCPT <rfc822;w@1wt.eu>);
-        Thu, 3 May 2018 23:12:21 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35035 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751262AbeEDDMU (ORCPT
+        id S1751346AbeEDDOR (ORCPT <rfc822;w@1wt.eu>);
+        Thu, 3 May 2018 23:14:17 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36186 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeEDDOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 3 May 2018 23:12:20 -0400
-X-Google-Smtp-Source: AB8JxZpat++gS23N089WqJI/pmz4VlaQ41j3IVDckxDdPA3lIdD/p+K3P82th6U2fmEMYhhInlbSPw==
-From: Jia He <hejianet@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Jia He <hejianet@gmail.com>,
-        jia.he@hxt-semitech.com
-Subject: [PATCH v2] mm/ksm: ignore STABLE_FLAG of rmap_item->address in rmap_walk_ksm
-Date: Fri,  4 May 2018 11:11:46 +0800
-Message-Id: <1525403506-6750-1-git-send-email-hejianet@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
-References: <20180503124415.3f9d38aa@p-imbrenda.boeblingen.de.ibm.com>
+        Thu, 3 May 2018 23:14:15 -0400
+X-Google-Smtp-Source: AB8JxZojbmmv3wG7ByZfGxGnXrNIWWuYH3kR3uCf1l+gz4Dd5PoRZogOHSOcNjo7B6Xo5pTh/4eihJZOW315FMBLwX4=
+MIME-Version: 1.0
+In-Reply-To: <20180503153310.GA9738@ziepe.ca>
+References: <1525356274-736-1-git-send-email-lidongchen@tencent.com> <20180503153310.GA9738@ziepe.ca>
+From: 858585 jemmy <jemmy858585@gmail.com>
+Date: Fri, 4 May 2018 11:14:14 +0800
+Message-ID: <CAOGPPbd8ysq3XDpa4TYQpWVMmpVo4NPhPw5NWyQS1OSc6rXjQQ@mail.gmail.com>
+Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
+        leon@kernel.org, artemyko@mellanox.com, dan.j.williams@intel.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        adido@mellanox.com, Gal Shachaf <galsha@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Lidong Chen <lidongchen@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In our armv8a server(QDF2400), I noticed lots of WARN_ON caused by PAGE_SIZE
-unaligned for rmap_item->address under memory pressure tests(start 20 guests
-and run memhog in the host).
+On Thu, May 3, 2018 at 11:33 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
+>> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+>> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+>> exited, get_pid_task will return NULL, ib_umem_release does not decrease
+>> mm->pinned_vm. This patch fixes it by use tgid.
+>>
+>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+>> ---
+>>  drivers/infiniband/core/umem.c | 12 ++++++------
+>>  include/rdma/ib_umem.h         |  2 +-
+>>  2 files changed, 7 insertions(+), 7 deletions(-)
+>
+> Why are we even using a struct pid for this? Does anyone know?
 
---------------------------begin--------------------------------------
-[  410.853828] WARNING: CPU: 4 PID: 4641 at
-arch/arm64/kvm/../../../virt/kvm/arm/mmu.c:1826
-kvm_age_hva_handler+0xc0/0xc8
-[  410.864518] Modules linked in: vhost_net vhost tap xt_CHECKSUM
-ipt_MASQUERADE nf_nat_masquerade_ipv4 ip6t_rpfilter ipt_REJECT
-nf_reject_ipv4 ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink
-ebtable_nat ebtable_broute bridge stp llc ip6table_nat nf_conntrack_ipv6
-nf_defrag_ipv6 nf_nat_ipv6 ip6table_mangle ip6table_security
-ip6table_raw iptable_nat nf_conntrack_ipv4 nf_defrag_ipv4 nf_nat_ipv4
-nf_nat nf_conntrack iptable_mangle iptable_security iptable_raw
-ebtable_filter ebtables ip6table_filter ip6_tables iptable_filter
-rpcrdma ib_isert iscsi_target_mod ib_iser libiscsi scsi_transport_iscsi
-ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm
-ib_ucm ib_umad rdma_cm ib_cm iw_cm mlx5_ib vfat fat ib_uverbs dm_mirror
-dm_region_hash ib_core dm_log dm_mod crc32_ce ipmi_ssif sg nfsd
-[  410.935101]  auth_rpcgss nfs_acl lockd grace sunrpc ip_tables xfs
-libcrc32c mlx5_core ixgbe mlxfw devlink mdio ahci_platform
-libahci_platform qcom_emac libahci hdma hdma_mgmt i2c_qup
-[  410.951369] CPU: 4 PID: 4641 Comm: memhog Tainted: G        W
-4.17.0-rc3+ #8
-[  410.959104] Hardware name: <snip for confidential issues>
-[  410.969791] pstate: 80400005 (Nzcv daif +PAN -UAO)
-[  410.974575] pc : kvm_age_hva_handler+0xc0/0xc8
-[  410.979012] lr : handle_hva_to_gpa+0xa8/0xe0
-[  410.983274] sp : ffff801761553290
-[  410.986581] x29: ffff801761553290 x28: 0000000000000000
-[  410.991888] x27: 0000000000000002 x26: 0000000000000000
-[  410.997195] x25: ffff801765430058 x24: ffff0000080b5608
-[  411.002501] x23: 0000000000000000 x22: ffff8017ccb84000
-[  411.007807] x21: 0000000003ff0000 x20: ffff8017ccb84000
-[  411.013113] x19: 000000000000fe00 x18: ffff000008fb3c08
-[  411.018419] x17: 0000000000000000 x16: 0060001645820bd3
-[  411.023725] x15: ffff80176aacbc08 x14: 0000000000000000
-[  411.029031] x13: 0000000000000040 x12: 0000000000000228
-[  411.034337] x11: 0000000000000000 x10: 0000000000000000
-[  411.039643] x9 : 0000000000000010 x8 : 0000000000000004
-[  411.044949] x7 : 0000000000000000 x6 : 00008017f0770000
-[  411.050255] x5 : 0000fffda59f0200 x4 : 0000000000000000
-[  411.055561] x3 : 0000000000000000 x2 : 000000000000fe00
-[  411.060867] x1 : 0000000003ff0000 x0 : 0000000020000000
-[  411.066173] Call trace:
-[  411.068614]  kvm_age_hva_handler+0xc0/0xc8
-[  411.072703]  handle_hva_to_gpa+0xa8/0xe0
-[  411.076619]  kvm_age_hva+0x4c/0xe8
-[  411.080014]  kvm_mmu_notifier_clear_flush_young+0x54/0x98
-[  411.085408]  __mmu_notifier_clear_flush_young+0x6c/0xa0
-[  411.090627]  page_referenced_one+0x154/0x1d8
-[  411.094890]  rmap_walk_ksm+0x12c/0x1d0
-[  411.098632]  rmap_walk+0x94/0xa0
-[  411.101854]  page_referenced+0x194/0x1b0
-[  411.105770]  shrink_page_list+0x674/0xc28
-[  411.109772]  shrink_inactive_list+0x26c/0x5b8
-[  411.114122]  shrink_node_memcg+0x35c/0x620
-[  411.118211]  shrink_node+0x100/0x430
-[  411.121778]  do_try_to_free_pages+0xe0/0x3a8
-[  411.126041]  try_to_free_pages+0xe4/0x230
-[  411.130045]  __alloc_pages_nodemask+0x564/0xdc0
-[  411.134569]  alloc_pages_vma+0x90/0x228
-[  411.138398]  do_anonymous_page+0xc8/0x4d0
-[  411.142400]  __handle_mm_fault+0x4a0/0x508
-[  411.146489]  handle_mm_fault+0xf8/0x1b0
-[  411.150321]  do_page_fault+0x218/0x4b8
-[  411.154064]  do_translation_fault+0x90/0xa0
-[  411.158239]  do_mem_abort+0x68/0xf0
-[  411.161721]  el0_da+0x24/0x28
----------------------------end---------------------------------------
+commit 87773dd56d5405ac28119fcfadacefd35877c18f add pid in ib_umem structure.
 
-In rmap_walk_ksm, the rmap_item->address might still have the STABLE_FLAG,
-then the start and end in handle_hva_to_gpa might not be PAGE_SIZE aligned.
-Thus it will cause exceptions in handle_hva_to_gpa on arm64.
+and the comment has such information:
+Later a different process with a different mm_struct than the one that
+allocated the ib_umem struct
+ends up releasing it which results in decrementing the new processes
+mm->pinned_vm count past
+zero and wrapping.
 
-This patch fixes it by ignoring(not removing) the low bits of address when
-doing rmap_walk_ksm.
-
-Signed-off-by: jia.he@hxt-semitech.com
----
-v2: refine the codes as suggested by Claudio Imbrenda
-
- mm/ksm.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index e3cbf9a..e6a9640 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -199,6 +199,8 @@ struct rmap_item {
- #define SEQNR_MASK	0x0ff	/* low bits of unstable tree seqnr */
- #define UNSTABLE_FLAG	0x100	/* is a node of the unstable tree */
- #define STABLE_FLAG	0x200	/* is listed from the stable tree */
-+#define KSM_FLAG_MASK	(SEQNR_MASK|UNSTABLE_FLAG|STABLE_FLAG)
-+				/* to mask all the flags */
- 
- /* The stable and unstable tree heads */
- static struct rb_root one_stable_tree[1] = { RB_ROOT };
-@@ -2570,10 +2572,15 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
- 		anon_vma_lock_read(anon_vma);
- 		anon_vma_interval_tree_foreach(vmac, &anon_vma->rb_root,
- 					       0, ULONG_MAX) {
-+			unsigned long addr;
-+
- 			cond_resched();
- 			vma = vmac->vma;
--			if (rmap_item->address < vma->vm_start ||
--			    rmap_item->address >= vma->vm_end)
-+
-+			/* Ignore the stable/unstable/sqnr flags */
-+			addr = rmap_item->address & ~KSM_FLAG_MASK;
-+
-+			if (addr < vma->vm_start || addr >= vma->vm_end)
- 				continue;
- 			/*
- 			 * Initially we examine only the vma which covers this
-@@ -2587,8 +2594,7 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
- 			if (rwc->invalid_vma && rwc->invalid_vma(vma, rwc->arg))
- 				continue;
- 
--			if (!rwc->rmap_one(page, vma,
--					rmap_item->address, rwc->arg)) {
-+			if (!rwc->rmap_one(page, vma, addr, rwc->arg)) {
- 				anon_vma_unlock_read(anon_vma);
- 				return;
- 			}
--- 
-1.8.3.1
+>
+> I'm surprised that struct task isn't held in the struct ib_umem..
+>
+> Is group_leader really OK and always guarenteed to return the same
+> struct mm?? For some reason I have this recollection that the leader
+> can change under some situation..
+>
+>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+>> index 9a4e899..8813ba5 100644
+>> --- a/drivers/infiniband/core/umem.c
+>> +++ b/drivers/infiniband/core/umem.c
+>> @@ -119,7 +119,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>       umem->length     = size;
+>>       umem->address    = addr;
+>>       umem->page_shift = PAGE_SHIFT;
+>> -     umem->pid        = get_task_pid(current, PIDTYPE_PID);
+>> +     umem->tgid       = get_task_pid(current->group_leader, PIDTYPE_PID);
+>>       /*
+>>        * We ask for writable memory if any of the following
+>>        * access flags are set.  "Local write" and "remote write"
+>> @@ -132,7 +132,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>                IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
+>>
+>>       if (access & IB_ACCESS_ON_DEMAND) {
+>> -             put_pid(umem->pid);
+>> +             put_pid(umem->tgid);
+>>               ret = ib_umem_odp_get(context, umem, access);
+>>               if (ret) {
+>>                       kfree(umem);
+>> @@ -148,7 +148,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>
+>>       page_list = (struct page **) __get_free_page(GFP_KERNEL);
+>>       if (!page_list) {
+>> -             put_pid(umem->pid);
+>> +             put_pid(umem->tgid);
+>>               kfree(umem);
+>>               return ERR_PTR(-ENOMEM);
+>>       }
+>> @@ -231,7 +231,7 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>       if (ret < 0) {
+>>               if (need_release)
+>>                       __ib_umem_release(context->device, umem, 0);
+>> -             put_pid(umem->pid);
+>> +             put_pid(umem->tgid);
+>>               kfree(umem);
+>>       } else
+>>               current->mm->pinned_vm = locked;
+>> @@ -274,8 +274,8 @@ void ib_umem_release(struct ib_umem *umem)
+>>
+>>       __ib_umem_release(umem->context->device, umem, 1);
+>>
+>> -     task = get_pid_task(umem->pid, PIDTYPE_PID);
+>> -     put_pid(umem->pid);
+>> +     task = get_pid_task(umem->tgid, PIDTYPE_PID);
+>> +     put_pid(umem->tgid);
+>>       if (!task)
+>>               goto out;
+>>       mm = get_task_mm(task);
+>> diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
+>> index 23159dd..2398849 100644
+>> --- a/include/rdma/ib_umem.h
+>> +++ b/include/rdma/ib_umem.h
+>> @@ -48,7 +48,7 @@ struct ib_umem {
+>>       int                     writable;
+>>       int                     hugetlb;
+>>       struct work_struct      work;
+>> -     struct pid             *pid;
+>> +     struct pid             *tgid;
+>>       struct mm_struct       *mm;
+>>       unsigned long           diff;
+>>       struct ib_umem_odp     *odp_data;
+>> --
+>> 1.8.3.1
+>>
