@@ -1,100 +1,162 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751735AbeEDUiY (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 16:38:24 -0400
-Received: from muru.com ([72.249.23.125]:40510 "EHLO muru.com"
+        id S1751819AbeEDUig (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 16:38:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751544AbeEDUiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 16:38:23 -0400
-Date: Fri, 4 May 2018 13:38:19 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Motorola Droid 4 progress, power consumption
-Message-ID: <20180504203819.GF98604@atomide.com>
-References: <20180501183148.GA26996@amd>
- <20180502144158.GJ98604@atomide.com>
- <20180503090611.GA14451@amd>
- <20180503142240.GQ98604@atomide.com>
- <20180504202044.GC22519@amd>
+        id S1751760AbeEDUif (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 16:38:35 -0400
+X-Google-Smtp-Source: AB8JxZol4/4eLumWKlApWODA1ETQIUKZwTWgNZerxuGTLG7B7ZmAPIDP9HdmXnSHm9LpYb7G1dfyH1Pm1Kv6xQehl3I=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180504202044.GC22519@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <26de0a75-e4e1-7c43-e31d-599d3c7de0ff@st.com>
+References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
+ <1524759514-12392-8-git-send-email-ludovic.Barre@st.com> <20180501145611.GA6842@rob-hp-laptop>
+ <6fdb652b-e7f9-7035-3eda-39f763ed7ea3@st.com> <CAL_JsqLvbGdPC9ifPZ5+tVxznHbsDuWGRg4R47st8Y9BtnNYUQ@mail.gmail.com>
+ <26de0a75-e4e1-7c43-e31d-599d3c7de0ff@st.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 4 May 2018 15:38:13 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLh4+vs-hQceg3bZ-ALWKE182vKbL90xxLwdgb09OtZ7Q@mail.gmail.com>
+Message-ID: <CAL_JsqLh4+vs-hQceg3bZ-ALWKE182vKbL90xxLwdgb09OtZ7Q@mail.gmail.com>
+Subject: Re: [PATCH 07/11] irqchip: stm32: add stm32mp1 support with hierarchy domain
+To: Ludovic BARRE <ludovic.barre@st.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+        <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Pavel Machek <pavel@ucw.cz> [180504 20:22]:
-> Hi!
-> 
-> > > user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-> > > current_avg
-> > > Thu May  3 09:33:07 CEST 2018
-> > > -56000
-> > > -72308
-> > > user@devuan:/sys/class/power_supply/battery$ date; cat current_now
-> > > current_avg
-> > > Thu May  3 09:33:08 CEST 2018
-> > > -37000
-> > > -211362
-> > 
-> > I recall it just being calculated based on the time between
-> > the reads. Hard to say what it does, -ENODOCS.. Maybe the mc13783
-> > PMIC docs have something similar.
-> 
-> Hmm. current_avg is world readable; if it does changes to the
-> hardware, that's somehow bad.
+On Thu, May 3, 2018 at 4:55 AM, Ludovic BARRE <ludovic.barre@st.com> wrote:
+>
+>
+> On 05/02/2018 07:45 PM, Rob Herring wrote:
+>>
+>> On Wed, May 2, 2018 at 11:03 AM, Ludovic BARRE <ludovic.barre@st.com>
+>> wrote:
+>>>
+>>> Hi Rob
+>>>
+>>>
+>>>
+>>> On 05/01/2018 04:56 PM, Rob Herring wrote:
+>>>>
+>>>>
+>>>> On Thu, Apr 26, 2018 at 06:18:30PM +0200, Ludovic Barre wrote:
+>>>>>
+>>>>>
+>>>>> From: Ludovic Barre <ludovic.barre@st.com>
+>>>>>
+>>>>> Exti controller has been differently integrated on stm32mp1 SoC.
+>>>>> A parent irq has only one external interrupt. A hierachy domain could
+>>>>> be used. Handlers are call by parent, each parent interrupt could be
+>>>>> masked and unmasked according to the needs.
+>>>>>
+>>>>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
+>>>>> ---
+>>>>>    .../interrupt-controller/st,stm32-exti.txt         |   3 +
+>>>>>    drivers/irqchip/irq-stm32-exti.c                   | 322
+>>>>> +++++++++++++++++++++
+>>>>>    2 files changed, 325 insertions(+)
+>>>>>
+>>>>> diff --git
+>>>>>
+>>>>> a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>>>>>
+>>>>> b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>>>>> index edf03f0..136bd61 100644
+>>>>> ---
+>>>>>
+>>>>> a/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>>>>> +++
+>>>>>
+>>>>> b/Documentation/devicetree/bindings/interrupt-controller/st,stm32-exti.txt
+>>>>> @@ -5,11 +5,14 @@ Required properties:
+>>>>>    - compatible: Should be:
+>>>>>        "st,stm32-exti"
+>>>>>        "st,stm32h7-exti"
+>>>>> +    "st,stm32mp1-exti"
+>>>>>    - reg: Specifies base physical address and size of the registers
+>>>>>    - interrupt-controller: Indentifies the node as an interrupt
+>>>>> controller
+>>>>>    - #interrupt-cells: Specifies the number of cells to encode an
+>>>>> interrupt
+>>>>>      specifier, shall be 2
+>>>>>    - interrupts: interrupts references to primary interrupt controller
+>>>>> +  (only needed for exti controller with multiple exti under
+>>>>> +  same parent interrupt: st,stm32-exti and st,stm32h7-exti")
+>>>>>      Example:
+>>>>>    diff --git a/drivers/irqchip/irq-stm32-exti.c
+>>>>> b/drivers/irqchip/irq-stm32-exti.c
+>>>>> index b38c655..ebf7146 100644
+>>>>> --- a/drivers/irqchip/irq-stm32-exti.c
+>>>>> +++ b/drivers/irqchip/irq-stm32-exti.c
+>>>>
+>>>>
+>>>>
+>>>> [...]
+>>>>
+>>>>> +static const struct stm32_desc_irq stm32mp1_desc_irq[] = {
+>>>>> +       { .exti = 1, .irq_parent = 7 },
+>>>>> +       { .exti = 2, .irq_parent = 8 },
+>>>>> +       { .exti = 3, .irq_parent = 9 },
+>>>>> +       { .exti = 4, .irq_parent = 10 },
+>>>>> +       { .exti = 5, .irq_parent = 23 },
+>>>>> +       { .exti = 6, .irq_parent = 64 },
+>>>>> +       { .exti = 7, .irq_parent = 65 },
+>>>>> +       { .exti = 8, .irq_parent = 66 },
+>>>>> +       { .exti = 9, .irq_parent = 67 },
+>>>>> +       { .exti = 10, .irq_parent = 40 },
+>>>>> +       { .exti = 11, .irq_parent = 42 },
+>>>>> +       { .exti = 12, .irq_parent = 76 },
+>>>>> +       { .exti = 13, .irq_parent = 77 },
+>>>>> +       { .exti = 14, .irq_parent = 121 },
+>>>>> +       { .exti = 15, .irq_parent = 127 },
+>>>>> +       { .exti = 16, .irq_parent = 1 },
+>>>>> +       { .exti = 65, .irq_parent = 144 },
+>>>>> +       { .exti = 68, .irq_parent = 143 },
+>>>>> +       { .exti = 73, .irq_parent = 129 },
+>>>>> +};
+>>>>
+>>>>
+>>>>
+>>>> You can use an interrupt-map property rather than put this into the
+>>>> driver.
+>>>
+>>>
+>>>
+>>> interrupt-map seemed interesting and promising like used in pci host.
+>>> At first sight this property can't be used into node with
+>>> "interrupt-controller" property (see in drivers/of/irq.c function:
+>>> of_irq_parse_raw) because "of_irq_parse_raw" checks if node got
+>>> it first, and after lookup the interrupt-map.
+>>>
+>>> Rob, Thomas, Jason, Marc what do you prefers or the right ways...?
+>>
+>>
+>> I believe the correct thing to do is simply drop "interrupt-controller".
+>
 
-No it just calls cpcap_battery_cc_get_avg_current() that calculates
-the average from last time it got sampled based on number of samples
-collected between the two reads. Seems to match what I see on my
-power supply here.
+Actually, that's not right.
 
-> But I guess I can sample charge_counter every minute or so and get
-> what I need?
+> if I drop "interrupt-controller" of my node, my driver will not be
+> initialized by "of_irq_init"
+> (start_kernel->init_IRQ->irqchip_init->of_irq_init).
+> Probably, we could replace "IRQCHIP_DECLARE" by a
+> "module_platform_driver" or "postcore_initcall" but I'm not a big fan of
+> this solution. what do you think ?
 
-Not sure what the max time range is for the PMIC, but yeah I'd
-assume once a minute is duoable. Maybe compare it to the chart
-you already have?
+You'd have to parse 'interrupt-map' yourself to extract the data for
+this to work because interrupt-map currently only works when the
+translation is transparent (i.e. doesn't need s/w handling). So I
+guess leave this in the driver. Sorry for the noise.
 
-> > > > Hmm oh and the POWER_SUPPLY_CHARGE_COUNTER value should be monitored
-> > > > by your libbattery and it's low value and high value should be saved
-> > > > to a file. Low should be saved when we get the battery low interrupt
-> > > > and battery state changes to POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL.
-> > > > High value should be saved on POWER_SUPPLY_CAPACITY_LEVEL_FULL.
-> > > > 
-> > > > Then when you know the high value and low value, you can calculate
-> > > > the remaining capacity based on the current value and
-> > > > POWER_SUPPLY_POWER_AVG.
-> > > 
-> > > I'll look into that... but probably will do experiments with python,
-> > > first.
-> > 
-> > Sure. The reason why I think we should not do it in the kernel in
-> > addition to the earlier reasoning is that we don't have a place
-> > to store the min and max values across reboot. I think there's
-> > some flash on the battery over 1w bus, but it probably just
-> > contains battery serial number or something and is not intended
-> > for writing much to it. I guess the min and max values should be
-> > really keyd based on this battery id in case the battery gets
-> > changed.
-> 
-> I agree this should not be done in kernel as it requires persistent
-> storage.
-> 
-> Battery is not user-replacable (and this will recalibrate itself on
-> charge/discharge cycle) so.. I don't think keying is strictly
-> neccessary for D4.
-
-Yeah right, that can be added later on if needed if you just
-plan accordingly. It's replaceable with a T5 after you peel off the
-sticker from the corners :)
-
-Regards,
-
-Tony
+Rob
