@@ -1,94 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751792AbeEDJ13 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 05:27:29 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53740 "EHLO huawei.com"
+        id S1751855AbeEDJ2H (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 05:28:07 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54009 "EHLO huawei.com"
         rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751755AbeEDJ10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 05:27:26 -0400
-Subject: Re: [PATCH 1/2] HISI LPC: Reference static MFD cells for ACPI support
-To: Lee Jones <lee.jones@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <1525360119-102166-1-git-send-email-john.garry@huawei.com>
- <1525360119-102166-2-git-send-email-john.garry@huawei.com>
- <1525366486.21176.653.camel@linux.intel.com> <20180504090216.GC3928@dell>
-CC: <xuwei5@huawei.com>, <mika.westerberg@linux.intel.com>,
-        <rjw@rjwysocki.net>, <linux-kernel@vger.kernel.org>, <arnd@arndb.de>,
-        <graeme.gregory@linaro.org>, <helgaas@kernel.org>,
-        <z.liuxinliang@hisilicon.com>, <linuxarm@huawei.com>
-From: John Garry <john.garry@huawei.com>
-Message-ID: <4a15b0b4-5707-d51b-4762-02df8e153bd9@huawei.com>
-Date: Fri, 4 May 2018 10:27:10 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1751823AbeEDJ2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 05:28:06 -0400
+Subject: Re: [PATCH] jffs2: safely remove obsolete dirent from the f->dents
+ list
+To: David Woodhouse <dwmw2@infradead.org>
+CC: <Joakim.Tjernlund@infinera.com>, <viro@zeniv.linux.org.uk>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20180329120023.33169-1-yuyufen@huawei.com>
+ <1524867762.18504.89.camel@infradead.org>
+ <223f07c9-f07d-f434-6478-274990fbdf54@huawei.com>
+ <1525421898.9367.116.camel@infradead.org>
+From: yuyufen <yuyufen@huawei.com>
+Message-ID: <012cd157-0c85-34a2-b42a-d9b3f6434c49@huawei.com>
+Date: Fri, 4 May 2018 17:27:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20180504090216.GC3928@dell>
+In-Reply-To: <1525421898.9367.116.camel@infradead.org>
 Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [10.177.219.49]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/2018 10:02, Lee Jones wrote:
-> On Thu, 03 May 2018, Andy Shevchenko wrote:
+
+Hi, David.
+On 2018/5/4 16:18, David Woodhouse wrote:
 >
->> On Thu, 2018-05-03 at 23:08 +0800, John Garry wrote:
->>> Currently for ACPI support the driver models the host as
->>> an MFD. For a device connected to the LPC bus, we dynamically
->>> create an MFD cell for that device, configuring the cell
->>> name and ACPI match parameters manually. This makes supporting
->>> named devices and also special setup handling for certain devices
->>> awkward, as we would need to introduce some special ACPI device
->>> handling according to device HID.
->>>
->>> To avoid this, create reference static MFD cells for known
->>> child devices, so when adding an MFD cell we can fix the cell
->>> platform data as required. For this, a setup callback function
->>> is added.
->>>
->>> For now, only the IPMI cell is added.
+> On Fri, 2018-05-04 at 16:06 +0800, yuyufen wrote:
+>>> You've made JFFS2_INVALID_LIMIT 64, which is reasonable enough
+>>> (although it's a bit of a weird name and possibly wants to be more
+>>> specific — invalid *what*?).
+>> Thansk a lot for your suggestions.
 >>
->>> +static const struct mfd_cell *hisi_lpc_acpi_mfd_get_cell(const char
->>> *hid)
->>> +{
->>> +	const struct hisi_lpc_acpi_mfd_cell *cell =
->>> hisi_lpc_acpi_mfd_cells;
->>> +
->>> +	for (; cell && cell->mfd_cell.name; cell++) {
->>> +		const struct mfd_cell *mfd_cell = &cell->mfd_cell;
->>> +		const struct mfd_cell_acpi_match *acpi_match;
->>> +
->>> +		acpi_match = mfd_cell->acpi_match;
->>> +		if (!strcmp(acpi_match->pnpid, hid))
->>> +			return mfd_cell;
->>> +	}
->>> +
->>> +	return NULL;
->>> +}
->>
->> I'm not sure I understand why MFD core can't do it (as seen in lines
->> drivers/mfd/core.c:105 and below).
+>> Yes, it is really a bad name. How about JFFS2_OBS_DIRENT_LIMIT?  I am
+>> not sure.
+> That'll do; at least it's a hint in the right direction :)
 >
+>>> So the maximum interesting value of ->obsolete_count is 64. Which means
+>>> it might as well be a uint8_t and sit in the padding after the
+>>> 'usercompr' field.
+>>>
+>>> It might be useful to look at putting the mutually exclusive fields in
+>>> struct jffs2_inode_info into a union, and then we don't need the
+>>> additional space of the atomic_t either; we'll never need that *and*
+>>> the fragtree at the same time... will we?
+>> You are right, thanks. But, obsolete_count may be large. So, I apply to
+>> use uint16_t and it also sits in the padding after the 'usercompr'
+>> field.
+> You can always just cap it. Once it reaches 64 it never changes again,
+> until you actually harvest them. Without that, a uint16_t could
+> overflow too.
 
-Hi Lee,
+I think 'JFFS2_OBS_DIRENT_LIMIT' may cause misunderstanding. Sorry for that.
+In my patch, it just means a threshold value. when ->nr_dir_opening is 
+'0' and
+  ->obsolete_count is bigger than the value, it can trigger removing 
+operations.
 
-> You shouldn't be using the MFD API outside of MFD anyway.  Either it
-> is an MFD driver, or it isn't.  If it is, please move it. If it's not,
-> please don't use the API.
+If ->nr_dir_opening is not '0', obsolete_count may continuously increase 
+and can
+exceed 64.
 
-We're modelling as an MFD, but it's not an MFD in the classic sense. 
-We're just using the MFD API for convenience (and to avoid code 
-duplication), as the MFD API does what we require for this driver.
++static int jffs2_dir_release(struct inode *dir_i, struct file *filp)
++{
++#ifndef CONFIG_JFFS2_SUMMARY
++       struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
++
++       BUG_ON(atomic_read(&dir_f->nr_dir_opening) <= 0);
++
++       mutex_lock(&dir_f->sem);
++       /* jffs2_dir_open may increase nr_dir_opening after
++        * atomic_dec_and_test() returning true.
++        * However, it cannot traverse the list until hold
++        * mutex dir_f->sem lock, so that we can go on
++{
++#ifndef CONFIG_JFFS2_SUMMARY
++       struct jffs2_inode_info *dir_f = JFFS2_INODE_INFO(dir_i);
++
++       BUG_ON(atomic_read(&dir_f->nr_dir_opening) <= 0);
++
++       mutex_lock(&dir_f->sem);
++       /* jffs2_dir_open may increase nr_dir_opening after
++        * atomic_dec_and_test() returning true.
++        * However, it cannot traverse the list until hold
++        * mutex dir_f->sem lock, so that we can go on
++        * removing.*/
++       if (atomic_dec_and_test(&dir_f->nr_dir_opening) &&
++                       dir_f->obsolete_count > JFFS2_OBS_DIRENT_LIMIT) {
++               struct jffs2_full_dirent **prev = &dir_f->dents;
++
++               /* remove all obsolete dirent from the list, which
++                * can save memory space and reduce CPU time for
++                * traverse the list */
++               while((*prev) && (dir_f->obsolete_count--)) {
++                       if ((*prev)->raw == NULL && (*prev)->ino == 0) {
++                               struct jffs2_full_dirent *this = *prev;
++                               *prev = this->next;
++                               jffs2_free_full_dirent(this);
++                       } else
++                               prev = &((*prev)->next);
++               }
++       }
++       mutex_unlock(&dir_f->sem);
++#endif
++
++       return 0;
++}
 
->
-> My current suspicion is that the driver needs splitting and only part
-> of it ends up in MFD.
->
-
-How would you propose splitting the driver? By adding a lib function 
-specific for this driver for the ACPI probe?
-
-Cheers,
-John
+Thanks,
+Yufen
