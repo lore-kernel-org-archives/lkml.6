@@ -1,83 +1,226 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751342AbeEDHyf (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 03:54:35 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47212 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751257AbeEDHyc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 03:54:32 -0400
-Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not
- compiled by default
-To: <gabriel.fernandez@st.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        Loic PALLARDY <loic.pallardy@st.com>
-References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
-Date: Fri, 4 May 2018 09:54:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_02:,,
- signatures=0
+        id S1751261AbeEDH6b (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 03:58:31 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:50141 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750707AbeEDH63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 03:58:29 -0400
+Message-ID: <ce85c790b639bf9101b8c33526bdf149070bcc03.camel@bootlin.com>
+Subject: Re: [PATCH v2 08/10] dt-bindings: media: Document bindings for the
+ Sunxi-Cedrus VPU driver
+From: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Tomasz Figa <tfiga@chromium.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg "
+         "Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>, wens@csie.org,
+        Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexandre Courbot <acourbot@chromium.org>
+Date: Fri, 04 May 2018 09:56:20 +0200
+In-Reply-To: <20180427030436.3ptrb2ldhtnssipj@rob-hp-laptop>
+References: <20180419154124.17512-1-paul.kocialkowski@bootlin.com>
+         <20180419154536.17846-4-paul.kocialkowski@bootlin.com>
+         <1524153860.3416.9.camel@pengutronix.de>
+         <CAAFQd5DT_xjUbZzFOoKk7_duiSZ8Awb1J=0dPEhVTBk0P3gppA@mail.gmail.com>
+         <5fa80b1e88ad2a215f51ea3a2b9b62274fa9b1ec.camel@bootlin.com>
+         <20180427030436.3ptrb2ldhtnssipj@rob-hp-laptop>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-b/HxHQn6MyZGhNkytJKo"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen
 
-On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> Clock driver is mandatory if the machine is selected.
-> Then don't use 'bool' and 'depends on' commands, but 'def_bool'
-> with the machine(s).
-> 
-> Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
-> 
+--=-b/HxHQn6MyZGhNkytJKo
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
+Hi,
 
-Thanks in advance
-Alex
+On Thu, 2018-04-26 at 22:04 -0500, Rob Herring wrote:
+> On Fri, Apr 20, 2018 at 09:22:20AM +0200, Paul Kocialkowski wrote:
+> > Hi and thanks for the review,
+> >=20
+> > On Fri, 2018-04-20 at 01:31 +0000, Tomasz Figa wrote:
+> > > Hi Paul, Philipp,
+> > >=20
+> > > On Fri, Apr 20, 2018 at 1:04 AM Philipp Zabel <p.zabel@pengutronix
+> > > .de>
+> > > wrote:
+> > >=20
+> > > > Hi Paul,
+> > > > On Thu, 2018-04-19 at 17:45 +0200, Paul Kocialkowski wrote:
+> > > > > This adds a device-tree binding document that specifies the
+> > > > > properties
+> > > > > used by the Sunxi-Cedurs VPU driver, as well as examples.
+> > > > >=20
+> > > > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.co
+> > > > > m>
+> > > > > ---
+> > > > >  .../devicetree/bindings/media/sunxi-cedrus.txt     | 50
+> > >=20
+> > > ++++++++++++++++++++++
+> > > > >  1 file changed, 50 insertions(+)
+> > > > >  create mode 100644
+> > >=20
+> > > Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> > > > >=20
+> > > > > diff --git a/Documentation/devicetree/bindings/media/sunxi-
+> > > > > cedrus.txt
+> > >=20
+> > > b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> > > > > new file mode 100644
+> > > > > index 000000000000..71ad3f9c3352
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/media/sunxi-cedrus.txt
+> > > > > @@ -0,0 +1,50 @@
+> > > > > +Device-tree bindings for the VPU found in Allwinner SoCs,
+> > > > > referred to
+> > >=20
+> > > as the
+> > > > > +Video Engine (VE) in Allwinner literature.
+> > > > > +
+> > > > > +The VPU can only access the first 256 MiB of DRAM, that are
+> > > > > DMA-
+> > > > > mapped
+> > >=20
+> > > starting
+> > > > > +from the DRAM base. This requires specific memory allocation
+> > > > > and
+> > >=20
+> > > handling.
+> > >=20
+> > > And no IOMMU? Brings back memories.
+> >=20
+> > Exactly, no IOMMU so we don't have much choice but cope with that
+> > hardware limitation...
+> >=20
+> > > > > +
+> > > > > +Required properties:
+> > > > > +- compatible         : "allwinner,sun4i-a10-video-engine";
+> > > > > +- memory-region         : DMA pool for buffers allocation;
+> > > > > +- clocks             : list of clock specifiers,
+> > > > > corresponding to
+> > >=20
+> > > entries in
+> > > > > +                          the clock-names property;
+> > > > > +- clock-names                : should contain "ahb", "mod"
+> > > > > and
+> > > > > "ram"
+> > >=20
+> > > entries;
+> > > > > +- assigned-clocks       : list of clocks assigned to the VE;
+> > > > > +- assigned-clocks-rates : list of clock rates for the clocks
+> > > > > assigned
+> > >=20
+> > > to the VE;
+> > > > > +- resets             : phandle for reset;
+> > > > > +- interrupts         : should contain VE interrupt number;
+> > > > > +- reg                        : should contain register base
+> > > > > and
+> > > > > length
+> > >=20
+> > > of VE.
+> > > > > +
+> > > > > +Example:
+> > > > > +
+> > > > > +reserved-memory {
+> > > > > +     #address-cells =3D <1>;
+> > > > > +     #size-cells =3D <1>;
+> > > > > +     ranges;
+> > > > > +
+> > > > > +     /* Address must be kept in the lower 256 MiBs of DRAM
+> > > > > for
+> > > > > VE. */
+> > > > > +     ve_memory: cma@4a000000 {
+> > > > > +             compatible =3D "shared-dma-pool";
+> > > > > +             reg =3D <0x4a000000 0x6000000>;
+> > > > > +             no-map;
+> > > > > +             linux,cma-default;
+> > > > > +     };
+> > > > > +};
+> > > > > +
+> > > > > +video-engine@1c0e000 {
+> > > >=20
+> > > > This is not really required by any specification, and not as
+> > > > common
+> > > > as
+> > > > gpu@..., but could this reasonably be called "vpu@1c0e000" to
+> > > > follow
+> > > > somewhat-common practice?
+> > >=20
+> > > AFAIR the name is supposed to be somewhat readable for someone
+> > > that
+> > > doesn't know the hardware. To me, "video-engine" sounds more
+> > > obvious
+> > > than "vpu", but we actually use "codec" already, in case of MFC
+> > > and
+> > > JPEG codec on Exynos. If encode/decode is the only functionality
+> > > of
+> > > this block, I'd personally go with "codec". If it can do other
+> > > things,
+> > > e.g. scaling/rotation without encode/decode, I'd probably call it
+> > > "video-processor".
+> >=20
+> > I agree that the term VPU is more commonly associated with video
+> > decoding, while video engine could mean a number of things.
+> >=20
+> > The reason I went with "video-engine" here (while still presenting
+> > the
+> > driver as a VPU driver) is that Video Engine is the term used in
+> > Allwinner's litterature. Other nodes in Allwinner device-trees
+> > generally
+> > stick to these terms (for instance, we have "display-engine" nodes).
+> > This also makes it easier to find the matching parts in the
+> > documentation.
+>=20
+> 'video-codec' is what is defined in the DT spec.
 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
-> ---
->   drivers/clk/Kconfig | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 24a5bc3..721572a 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
->   	  Support for stm32mp157 SoC family clocks
->   
->   config COMMON_CLK_STM32F
-> -	bool "Clock driver for stm32f4 and stm32f7 SoC families"
-> -	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
-> +	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
->   	help
->   	---help---
->   	  Support for stm32f4 and stm32f7 SoC families clocks
->   
->   config COMMON_CLK_STM32H7
-> -	bool "Clock driver for stm32h7 SoC family"
-> -	depends on MACH_STM32H743
-> +	def_bool COMMON_CLK && MACH_STM32H743
->   	help
->   	---help---
->   	  Support for stm32h7 SoC family clocks
-> 
+Is that an actively-enforced guideline or a suggestion? I'd like to keep
+video-engine just to stick with the technical documentation wording and
+my personal taste is also to prefer vpu over video-codec (in terms of
+clarity/straightforwardness) as a second choice.
+
+Still, if the choice isn't up to me, we can go with video-codec (or
+vpu).
+
+Cheers,
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-b/HxHQn6MyZGhNkytJKo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlrsEiQACgkQ3cLmz3+f
+v9E79gf/TOaR+bQQFevAdm0ib4NhBuRzUx3VuTMs2eWeaxoSJ/6oHXfqmq2w8DOp
+lWW7dGt8q7/Q3yvx1MnoVBWJZFepwrJB9IPiZ05R/wkKCgkPaIkpE2Yc4C18ykby
+eX2gnwyfiMuVvMdAmDRYAoWV1VZHVlPbLyUtR2r8JMXxKIR6WYJDYeB2tnzlB3zD
+iq/n12jFw8o8tayGFDUgL0H6y9CL/5ZM77vI1MSM08uHrkvm3YhBCFKLdrCZLkei
+5+1CzRvzZdy252eTNAGVbg8O6FO4G6cAmT4C7haZFkVAEPCWKo4geZSTOqlio331
+6gvUMRKGbw8PhzOX7yJrW0FzW1n3+g==
+=x0aN
+-----END PGP SIGNATURE-----
+
+--=-b/HxHQn6MyZGhNkytJKo--
