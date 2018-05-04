@@ -1,37 +1,36 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751533AbeEDRaa convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 13:30:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53952 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751262AbeEDRa1 (ORCPT
+        id S1751612AbeEDRau (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 13:30:50 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36566 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751464AbeEDRat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 13:30:27 -0400
-Date: Fri, 04 May 2018 23:00:20 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-trace-users@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, shuah@kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-        <20180503181137.6d82d897@gandalf.local.home>
-        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
-        <20180504120642.354cdd1f@gandalf.local.home>
-In-Reply-To: <20180504120642.354cdd1f@gandalf.local.home>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        Fri, 4 May 2018 13:30:49 -0400
+Date: Fri, 4 May 2018 10:32:06 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Joel Fernandes <joelaf@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: rcu-bh design
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <CAJWu+oqCun1Ae6GqPxnS+eCDi3jadGPp+MO8TjOWgs+AiAh79A@mail.gmail.com>
+ <20180504123050.2841f80d@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504123050.2841f80d@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 X-TM-AS-GCONF: 00
-x-cbid: 18050417-0040-0000-0000-0000043613DB
+x-cbid: 18050417-0036-0000-0000-000002EF8D11
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008970; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01027465; UDB=6.00524844; IPR=6.00806598;
+ MB=3.00020930; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-04 17:30:46
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050417-0041-0000-0000-0000263A3DD0
-Message-Id: <1525453638.1fh5wo34i6.naveen@linux.ibm.com>
+x-cbparentid: 18050417-0037-0000-0000-00004437678D
+Message-Id: <20180504173205.GQ26088@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -43,121 +42,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steven Rostedt wrote:
-> On Sat, 5 May 2018 00:48:28 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
->> > 
->> > Also, when looking at the kprobe code, I was looking at this function:
->> >   
->> > > /* Ftrace callback handler for kprobes -- called under preepmt disabed */
->> > > void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
->> > > 			   struct ftrace_ops *ops, struct pt_regs *regs)
->> > > {
->> > > 	struct kprobe *p;
->> > > 	struct kprobe_ctlblk *kcb;
->> > > 
->> > > 	/* Preempt is disabled by ftrace */
->> > > 	p = get_kprobe((kprobe_opcode_t *)ip);
->> > > 	if (unlikely(!p) || kprobe_disabled(p))
->> > > 		return;
->> > > 
->> > > 	kcb = get_kprobe_ctlblk();
->> > > 	if (kprobe_running()) {
->> > > 		kprobes_inc_nmissed_count(p);
->> > > 	} else {
->> > > 		unsigned long orig_ip = regs->ip;
->> > > 		/* Kprobe handler expects regs->ip = ip + 1 as breakpoint hit */
->> > > 		regs->ip = ip + sizeof(kprobe_opcode_t);
->> > > 
->> > > 		/* To emulate trap based kprobes, preempt_disable here */
->> > > 		preempt_disable();
->> > > 		__this_cpu_write(current_kprobe, p);
->> > > 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> > > 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
->> > > 			__skip_singlestep(p, regs, kcb, orig_ip);
->> > > 			preempt_enable_no_resched();  
->> > 
->> > This preemption disabling and enabling looks rather strange. Looking at
->> > git blame, it appears this was added for jprobes. Can we remove it now
->> > that jprobes is going away?  
->> 
->> No, that is not for jprobes but for compatibility with kprobe's user
->> handler. Since this transformation is done silently, user can not
->> change their handler for ftrace case. So we need to keep this condition
->> same as original kprobes.
->> 
->> And anyway, for using smp_processor_id() for accessing per-cpu,
->> we should disable preemption, correct?
+On Fri, May 04, 2018 at 12:30:50PM -0400, Steven Rostedt wrote:
+> On Fri, 04 May 2018 16:20:11 +0000
+> Joel Fernandes <joelaf@google.com> wrote:
 > 
-> But as stated at the start of the function:
+> > Hi Paul, everyone,
+> > 
+> > I had some question(s) about rcu-bh design.
+> > I am trying to understand the reasoning or need of it. I see that rcu-bh
+> > will disable softirqs across read-side sections. But I am wondering why
+> > this is needed. __do_softirq already disables softirq when a softirq
+> > handler is running. The only reason I can see is, rcu-bh helps in
+> > situations where - a softirq interrupts a preemptible RCU read-section and
+> > prevents that read section from completing. But this problem would happen
+> > if anyone where to use rcu-preempt - then does rcu-preempt even make sense
+> > to use and shouldn't everyone be using rcu-bh?
 > 
->  /* Preempt is disabled by ftrace */
-> 
-> 
-> The reason I ask, is that we have for this function:
-> 
-> 		/* To emulate trap based kprobes, preempt_disable here */
-> 		preempt_disable();
-> 		__this_cpu_write(current_kprobe, p);
-> 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-> 			__skip_singlestep(p, regs, kcb, orig_ip);
-> 			preempt_enable_no_resched();
-> 		}
-> 
-> And in arch/x86/kernel/kprobes/core.c we have:
-> 
-> 	preempt_disable();
-> 
-> 	kcb = get_kprobe_ctlblk();
-> 	p = get_kprobe(addr);
-> 
-> 	if (p) {
-> 		if (kprobe_running()) {
-> 			if (reenter_kprobe(p, regs, kcb))
-> 				return 1;
-> 		} else {
-> 			set_current_kprobe(p, regs, kcb);
-> 			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> 
-> 			/*
-> 			 * If we have no pre-handler or it returned 0, we
-> 			 * continue with normal processing.  If we have a
-> 			 * pre-handler and it returned non-zero, it prepped
-> 			 * for calling the break_handler below on re-entry
-> 			 * for jprobe processing, so get out doing nothing
-> 			 * more here.
-> 			 */
-> 			if (!p->pre_handler || !p->pre_handler(p, regs))
-> 				setup_singlestep(p, regs, kcb, 0);
-> 			return 1;
-> 
-> 
-> Which is why I thought it was for jprobes. I'm a bit confused about
-> where preemption is enabled again.
+> I thought rcu-bh uses softirqs as a quiescent state. Thus, blocking
+> softirqs from happening makes sense. I don't think an
+> rcu_read_lock_bh() makes sense in a softirq.
 
-Jprobes was the in-kernel user for that. However, users can write custom 
-kprobe [pre-]handlers that return a non-zero value if they want to 
-suppress normal processing of the probe (single stepping the instruction 
-where the probe was installed). In this case, the custom handler is 
-expected to deal with re-enabling preemption before returning from the 
-pre handler. Or, there must be some other way to re-enable preemption 
-later on like with jprobes -- where the hook would cause a trap to 
-complete jprobe handling.
+Agreed, any place in the code where bottom halves are enabled is an RCU-bh
+quiescent state.
 
-For optprobes, we actually break this and do not disable preemption.  
-But, the expectation there is that the user set a post-handler to force 
-optprobes to be disabled, *if* they want to do custom handling by 
-returning a non-zero return value from the pre handler.
+> > The other usecase for rcu-bh seems to be if context-switch is used as a
+> > quiescent state, then softirq flood can prevent that from happening and
+> > cause rcu grace periods from completing. 
+> 
+> > But preemptible RCU *does not* use context-switch as a quiescent state.
+> 
+> It doesn't?
 
-For KPROBES_ON_FTRACE, we need to emulate the behavior of the normal, 
-trap-based kprobes. This is the reason preemption needs to be disabled 
-again, so as to balance it with the user's custom handler re-enabling 
-it.
+It does, but only sort of.
 
-Of course, with the in-kernel user (jprobes) now gone, it is anybody's 
-guess as to who is still depending on this custom pre-handler behavior 
-;)
+A context switch really is always an RCU-preempt quiescent state from
+the perspective of the CPU.  However, from the perspective of the task,
+context switch is a quiescent state only if the task is not in an
+RCU-preempt read-side critical section at the time.
 
+> > So in that case rcu-bh would make
+> > sense only in a configuration where we're not using preemptible-rcu at all
+> > and are getting flooded by softirqs. Is that the reason rcu-bh needs to
+> > exist?
+> 
+> Maybe I'm confused by what you are asking.
 
-- Naveen
+The existence and use of RCU-bh in no way degrades the preemptibility of
+RCU-preempt read-side critical sections.  The reason is that RCU-bh and
+RCU-preempt are completely separate, represented by different rcu_state
+structure instances.
+
+							Thanx, Paul
