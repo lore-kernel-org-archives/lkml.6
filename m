@@ -1,55 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751825AbeEDVMs (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 17:12:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55670 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751760AbeEDVMr (ORCPT
+        id S1751874AbeEDVOD (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 17:14:03 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:45445 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751781AbeEDVOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 17:12:47 -0400
-Date: Fri, 4 May 2018 14:12:44 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>, x86@kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: Proof-of-concept: better(?) page-table manipulation API
-Message-ID: <20180504211244.GD29829@bombadil.infradead.org>
-References: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com>
+        Fri, 4 May 2018 17:14:01 -0400
+X-Google-Smtp-Source: AB8JxZqQX9HFcwXff8EyM4PwBJPoggHflff7iWVR6HRTfRQj9Imcg4s0qrJmmIPbVl9EjqCU+AMBahlPpYWujxyc7EA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
+References: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Fri, 4 May 2018 14:13:59 -0700
+X-Google-Sender-Auth: EquFrQ8Dmr3BjaoqOrK2TghzyfY
+Message-ID: <CAGXu5jKHb8-P-Y2ecnH9sd6vWhY9cWPfow1Lx_gzRMbHWusRXg@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: refcount-vs-atomic: Update reference to
+ LKMM doc.
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+        Elena Reshetova <elena.reshetova@intel.com>, linux-doc@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Apr 24, 2018 at 06:43:56PM +0300, Kirill A. Shutemov wrote:
-> +struct pt_ptr {
-> +	unsigned long *ptr;
-> +	int lvl;
-> +};
+On Fri, May 4, 2018 at 2:11 PM, Andrea Parri
+<andrea.parri@amarulasolutions.com> wrote:
+> The LKMM project has moved to 'tools/memory-model/'.
+>
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> ---
+>  Documentation/core-api/refcount-vs-atomic.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
+> index 83351c258cdb9..322851bada167 100644
+> --- a/Documentation/core-api/refcount-vs-atomic.rst
+> +++ b/Documentation/core-api/refcount-vs-atomic.rst
+> @@ -17,7 +17,7 @@ in order to help maintainers validate their code against the change in
+>  these memory ordering guarantees.
+>
+>  The terms used through this document try to follow the formal LKMM defined in
+> -github.com/aparri/memory-model/blob/master/Documentation/explanation.txt
+> +tools/memory-model/Documentation/explanation.txt.
+>
+>  memory-barriers.txt and atomic_t.txt provide more background to the
+>  memory ordering in general and for atomic operations specifically.
 
-On x86, you've got three kinds of paging scheme, referred to in the manual
-as 32-bit, PAE and 4-level.  On 32-bit, you've got 3 levels (Directory,
-Table and Entry), and you can encode those three levels in the bottom
-two bits of the pointer.  With PAE and 4L, pointers are 64-bit aligned,
-so you can encode up to eight levels in the bottom three bits of the
-pointer.
+Will this get linkified by rst ?
 
-> +struct pt_val {
-> +	unsigned long val;
-> +	int lvl;
-> +};
+-Kees
 
-I don't think it's possible to shrink this down to a single ulong.
-_Maybe_ it is if you can squirm a single bit free from the !pte_present
-case.
-
-... this is only for x86 4L and maybe 32 paging, right?  It'd need to
-use unsigned long val[2] for PAE.
-
-I'm going to think about this some more.  There's a lot of potential here.
+-- 
+Kees Cook
+Pixel Security
