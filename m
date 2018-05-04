@@ -1,100 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751567AbeEDQIk (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 12:08:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50571 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751196AbeEDQIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 12:08:39 -0400
-Date: Fri, 4 May 2018 18:08:37 +0200
-From: Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Laura Abbott <lauraa@codeaurora.org>,
-        Gargi Sharma <gs051095@gmail.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] init/main.c: simplify repair_env_string
-Message-ID: <20180504180837.346cd966@kitsune.suse.cz>
-In-Reply-To: <20180504114035.111ad8f7@gandalf.local.home>
-References: <151075904367.14434.5164139208561977016.stgit@hbathini.in.ibm.com>
-        <20171215213317.3151-1-msuchanek@suse.de>
-        <20180504114035.111ad8f7@gandalf.local.home>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+        id S1751623AbeEDQIp (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 12:08:45 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:43326 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751196AbeEDQIm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 12:08:42 -0400
+X-Google-Smtp-Source: AB8JxZpTiE2hCQ3LIvHPns2Gwk/FF/I7TTpjkObL3l1skcF4289M3/8rCjiQ1DX5NuFERIKymjcLIOBwu37YatKh6hk=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <05b0fcf2-7670-101e-d4ab-1f656ff6b02f@gmail.com>
+References: <1523431317-30612-1-git-send-email-hejianet@gmail.com> <05b0fcf2-7670-101e-d4ab-1f656ff6b02f@gmail.com>
+From: Daniel Vacek <neelx@redhat.com>
+Date: Fri, 4 May 2018 18:08:40 +0200
+Message-ID: <CACjP9X8bHmrxmd7ZPcfQq6Eq0Mzwmt0saOR3Ph53gp2n-dcKBQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/6] optimize memblock_next_valid_pfn and
+ early_pfn_valid on arm and arm64
+To: Jia He <hejianet@gmail.com>
+Cc: Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Wei Yang <richard.weiyang@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Laura Abbott <labbott@redhat.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Philip Derrin <philip@cog.systems>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, Steve Capper <steve.capper@arm.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Gioh Kim <gi-oh.kim@profitbricks.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@suse.de>,
+        Johannes Weiner <hannes@cmpxchg.org>, Kemi Wang <kemi.wang@intel.com>,
+        Petr Tesarik <ptesarik@suse.com>,
+        YASUAKI ISHIMATSU <yasu.isimatu@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 May 2018 11:40:35 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri, May 4, 2018 at 4:45 AM, Jia He <hejianet@gmail.com> wrote:
+> Ping
+>
+> Sorry if I am a little bit verbose, but it can speedup the arm64 booting
+> time indeed.
 
-> Cleaning out my INBOX, I stumbled across this old patch.
-> 
-> On Fri, 15 Dec 2017 22:33:17 +0100
-> Michal Suchanek <msuchanek@suse.de> wrote:
-> 
-> > Quoting characters are now removed from the parameter so value
-> > always follows directly after the NUL terminating parameter name.
-> > 
-> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-> > ---
-> >  init/main.c | 13 ++++---------
-> >  1 file changed, 4 insertions(+), 9 deletions(-)
-> > 
-> > Since the previous "[PATCH v9 3/8] lib/cmdline.c: add backslash
-> > support to kernel commandline parsing" adds the memmove in
-> > lib/cmdline.c it is now superfluous in init/main.c  
-> 
-> I don't believe the above patches were ever applied. Were they?
+I'm wondering, ain't simple enabling of config
+DEFERRED_STRUCT_PAGE_INIT provide even better speed-up? If that is the
+case then it seems like this series is not needed at all, right?
+I am not sure why is this config optional. It looks like it could be
+enabled by default or even unconditionally considering that with
+commit c9e97a1997fb ("mm: initialize pages on demand during boot") the
+deferred code is statically disabled after all the pages are
+initialized.
 
-No, they weren't.
+--nX
 
-The reason to write them was to support the fadump_extra_args argument
-with peculiar semantics that required the quoting cleanup in kernel
-argument parsing.
-
-A different solution for the fadump memory consumption is in the works
-so I dropped this. There was lack of interest from reviewers, too.
-
-Thanks
-
-Michal
-
-> 
-> -- Steve
-> 
-> > 
-> > diff --git a/init/main.c b/init/main.c
-> > index 1f5fdedbb293..1e5b1dc940d9 100644
-> > --- a/init/main.c
-> > +++ b/init/main.c
-> > @@ -244,15 +244,10 @@ static int __init repair_env_string(char
-> > *param, char *val, const char *unused, void *arg)
-> >  {
-> >  	if (val) {
-> > -		/* param=val or param="val"? */
-> > -		if (val == param+strlen(param)+1)
-> > -			val[-1] = '=';
-> > -		else if (val == param+strlen(param)+2) {
-> > -			val[-2] = '=';
-> > -			memmove(val-1, val, strlen(val)+1);
-> > -			val--;
-> > -		} else
-> > -			BUG();
-> > +		int parm_len = strlen(param);
-> > +
-> > +		param[parm_len] = '=';
-> > +		BUG_ON(val != param + parm_len + 1);
-> >  	}
-> >  	return 0;
-> >  }  
-> 
+>
+> --
+> Cheers,
+> Jia
+>
+>
+> On 4/11/2018 3:21 PM, Jia He Wrote:
+>>
+>> Commit b92df1de5d28 ("mm: page_alloc: skip over regions of invalid pfns
+>> where possible") tried to optimize the loop in memmap_init_zone(). But
+>> there is still some room for improvement.
+>>
+>> Patch 1 introduce new config to make codes more generic
+>> Patch 2 remain the memblock_next_valid_pfn on arm and arm64
+>> Patch 3 optimizes the memblock_next_valid_pfn()
+>> Patch 4~6 optimizes the early_pfn_valid()
+>>
+>> As for the performance improvement, after this set, I can see the time
+>> overhead of memmap_init() is reduced from 41313 us to 24389 us in my
+>> armv8a server(QDF2400 with 96G memory).
+>>
+>> Without this patchset:
+>> [  117.113677] before memmap_init
+>> [  117.118195] after  memmap_init
+>>>>>
+>>>>> memmap_init takes 4518 us
+>>
+>> [  117.121446] before memmap_init
+>> [  117.154992] after  memmap_init
+>>>>>
+>>>>> memmap_init takes 33546 us
+>>
+>> [  117.158241] before memmap_init
+>> [  117.161490] after  memmap_init
+>>>>>
+>>>>> memmap_init takes 3249 us
+>>>>> totally takes 41313 us
+>>
+>> With this patchset:
+>> [  123.222962] before memmap_init
+>> [  123.226819] after  memmap_init
+>>>>>
+>>>>> memmap_init takes 3857
+>>
+>> [  123.230070] before memmap_init
+>> [  123.247354] after  memmap_init
+>>>>>
+>>>>> memmap_init takes 17284
+>>
+>> [  123.250604] before memmap_init
+>> [  123.253852] after  memmap_init
+>>>>>
+>>>>> memmap_init takes 3248
+>>>>> totally takes 24389 us
+>>
+>> Attached the memblock region information in my server.
+>> [   86.956758] Zone ranges:
+>> [   86.959452]   DMA      [mem 0x0000000000200000-0x00000000ffffffff]
+>> [   86.966041]   Normal   [mem 0x0000000100000000-0x00000017ffffffff]
+>> [   86.972631] Movable zone start for each node
+>> [   86.977179] Early memory node ranges
+>> [   86.980985]   node   0: [mem 0x0000000000200000-0x000000000021ffff]
+>> [   86.987666]   node   0: [mem 0x0000000000820000-0x000000000307ffff]
+>> [   86.994348]   node   0: [mem 0x0000000003080000-0x000000000308ffff]
+>> [   87.001029]   node   0: [mem 0x0000000003090000-0x00000000031fffff]
+>> [   87.007710]   node   0: [mem 0x0000000003200000-0x00000000033fffff]
+>> [   87.014392]   node   0: [mem 0x0000000003410000-0x000000000563ffff]
+>> [   87.021073]   node   0: [mem 0x0000000005640000-0x000000000567ffff]
+>> [   87.027754]   node   0: [mem 0x0000000005680000-0x00000000056dffff]
+>> [   87.034435]   node   0: [mem 0x00000000056e0000-0x00000000086fffff]
+>> [   87.041117]   node   0: [mem 0x0000000008700000-0x000000000871ffff]
+>> [   87.047798]   node   0: [mem 0x0000000008720000-0x000000000894ffff]
+>> [   87.054479]   node   0: [mem 0x0000000008950000-0x0000000008baffff]
+>> [   87.061161]   node   0: [mem 0x0000000008bb0000-0x0000000008bcffff]
+>> [   87.067842]   node   0: [mem 0x0000000008bd0000-0x0000000008c4ffff]
+>> [   87.074524]   node   0: [mem 0x0000000008c50000-0x0000000008e2ffff]
+>> [   87.081205]   node   0: [mem 0x0000000008e30000-0x0000000008e4ffff]
+>> [   87.087886]   node   0: [mem 0x0000000008e50000-0x0000000008fcffff]
+>> [   87.094568]   node   0: [mem 0x0000000008fd0000-0x000000000910ffff]
+>> [   87.101249]   node   0: [mem 0x0000000009110000-0x00000000092effff]
+>> [   87.107930]   node   0: [mem 0x00000000092f0000-0x000000000930ffff]
+>> [   87.114612]   node   0: [mem 0x0000000009310000-0x000000000963ffff]
+>> [   87.121293]   node   0: [mem 0x0000000009640000-0x000000000e61ffff]
+>> [   87.127975]   node   0: [mem 0x000000000e620000-0x000000000e64ffff]
+>> [   87.134657]   node   0: [mem 0x000000000e650000-0x000000000fffffff]
+>> [   87.141338]   node   0: [mem 0x0000000010800000-0x0000000017feffff]
+>> [   87.148019]   node   0: [mem 0x000000001c000000-0x000000001c00ffff]
+>> [   87.154701]   node   0: [mem 0x000000001c010000-0x000000001c7fffff]
+>> [   87.161383]   node   0: [mem 0x000000001c810000-0x000000007efbffff]
+>> [   87.168064]   node   0: [mem 0x000000007efc0000-0x000000007efdffff]
+>> [   87.174746]   node   0: [mem 0x000000007efe0000-0x000000007efeffff]
+>> [   87.181427]   node   0: [mem 0x000000007eff0000-0x000000007effffff]
+>> [   87.188108]   node   0: [mem 0x000000007f000000-0x00000017ffffffff]
+>> [   87.194791] Initmem setup node 0 [mem
+>> 0x0000000000200000-0x00000017ffffffff]
+>>
+>> Changelog:
+>> V8: - introduce new config and move generic code to early_pfn.h
+>>      - optimize memblock_next_valid_pfn as suggested by Matthew Wilcox
+>> V7: - fix i386 compilation error. refine the commit description
+>> V6: - simplify the codes, move arm/arm64 common codes to one file.
+>>      - refine patches as suggested by Danial Vacek and Ard Biesheuvel
+>> V5: - further refining as suggested by Danial Vacek. Make codes
+>>        arm/arm64 more arch specific
+>> V4: - refine patches as suggested by Danial Vacek and Wei Yang
+>>      - optimized on arm besides arm64
+>> V3: - fix 2 issues reported by kbuild test robot
+>> V2: - rebase to mmotm latest
+>>      - remain memblock_next_valid_pfn on arm64
+>>      - refine memblock_search_pfn_regions and pfn_valid_region
+>>
+>> Jia He (6):
+>>    arm: arm64: introduce CONFIG_HAVE_MEMBLOCK_PFN_VALID
+>>    mm: page_alloc: remain memblock_next_valid_pfn() on arm/arm64
+>>    arm: arm64: page_alloc: reduce unnecessary binary search in
+>>      memblock_next_valid_pfn()
+>>    mm/memblock: introduce memblock_search_pfn_regions()
+>>    arm: arm64: introduce pfn_valid_region()
+>>    mm: page_alloc: reduce unnecessary binary search in early_pfn_valid()
+>>
+>>   arch/arm/Kconfig          |  4 +++
+>>   arch/arm/mm/init.c        |  1 +
+>>   arch/arm64/Kconfig        |  4 +++
+>>   arch/arm64/mm/init.c      |  1 +
+>>   include/linux/early_pfn.h | 79
+>> +++++++++++++++++++++++++++++++++++++++++++++++
+>>   include/linux/memblock.h  |  2 ++
+>>   include/linux/mmzone.h    | 18 ++++++++++-
+>>   mm/Kconfig                |  3 ++
+>>   mm/memblock.c             |  9 ++++++
+>>   mm/page_alloc.c           |  5 ++-
+>>   10 files changed, 124 insertions(+), 2 deletions(-)
+>>   create mode 100644 include/linux/early_pfn.h
+>>
+>
