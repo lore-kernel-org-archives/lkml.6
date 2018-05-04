@@ -1,116 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751257AbeEDFaE (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 01:30:04 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:50017 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEDFaC (ORCPT
+        id S1751229AbeEDFhH (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 01:37:07 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:43675 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750866AbeEDFhG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 01:30:02 -0400
-X-Google-Smtp-Source: AB8JxZp5w0q3i+mVpxIIIvZaj88UKg4O634p/+2S+TyfbSukncAB819PovgSYX+GEOEqHd8nfhVJrSsf0IBr6UjpD3Xq9jskmt16
+        Fri, 4 May 2018 01:37:06 -0400
+X-Google-Smtp-Source: AB8JxZpqpW9xgH1vH9f17d8hUju+chzWDKFv6o6X32n3jVlxylDxZR/E6xVFh3Sh83BpfQMIN9Q5sCAq5Me3qgFFxh4=
 MIME-Version: 1.0
-Date: Thu, 03 May 2018 22:30:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000962411056b5a9c73@google.com>
-Subject: KASAN: use-after-free Write in process_preds
-From: syzbot <syzbot+873ae613c636f037d5f8@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <000000000000962411056b5a9c73@google.com>
+References: <000000000000962411056b5a9c73@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 4 May 2018 07:36:45 +0200
+Message-ID: <CACT4Y+ZkEsoP_dHvFuRq9n0nfDiXS63P3Kx20+FeBWQVi_VR0Q@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Write in process_preds
+To: syzbot <syzbot+873ae613c636f037d5f8@syzkaller.appspotmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    03f5781be2c7 bpf, x86_32: add eBPF JIT compiler for ia32
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13627237800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d356c2d908b7293
-dashboard link: https://syzkaller.appspot.com/bug?extid=873ae613c636f037d5f8
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+873ae613c636f037d5f8@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in predicate_parse  
-kernel/trace/trace_events_filter.c:557 [inline]
-BUG: KASAN: use-after-free in process_preds+0x1958/0x19b0  
-kernel/trace/trace_events_filter.c:1505
-Write of size 4 at addr ffff8801ada34ff0 by task syz-executor3/6458
-
-CPU: 0 PID: 6458 Comm: syz-executor3 Not tainted 4.17.0-rc2+ #22
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
-  predicate_parse kernel/trace/trace_events_filter.c:557 [inline]
-  process_preds+0x1958/0x19b0 kernel/trace/trace_events_filter.c:1505
-  create_filter+0x155/0x270 kernel/trace/trace_events_filter.c:1713
-  ftrace_profile_set_filter+0x130/0x2e0  
-kernel/trace/trace_events_filter.c:2038
-  perf_event_set_filter+0x248/0x1230 kernel/events/core.c:9079
-  _perf_ioctl+0x84c/0x15e0 kernel/events/core.c:5059
-  perf_ioctl+0x59/0x80 kernel/events/core.c:5110
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455979
-RSP: 002b:00007fd67f515c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fd67f5166d4 RCX: 0000000000455979
-RDX: 0000000020000040 RSI: 0000000040082406 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000002bf R14: 00000000006f8288 R15: 0000000000000000
-
-The buggy address belongs to the page:
-page:ffffea0006b68d00 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
-raw: ffff8801daf2fcd8 ffffea0006a5d9e0 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801ada34e80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801ada34f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff8801ada34f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                                                              ^
-  ffff8801ada35000: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-  ffff8801ada35080: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+On Fri, May 4, 2018 at 7:30 AM, syzbot
+<syzbot+873ae613c636f037d5f8@syzkaller.appspotmail.com> wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    03f5781be2c7 bpf, x86_32: add eBPF JIT compiler for ia32
+> git tree:       bpf-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13627237800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3d356c2d908b7293
+> dashboard link: https://syzkaller.appspot.com/bug?extid=873ae613c636f037d5f8
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+873ae613c636f037d5f8@syzkaller.appspotmail.com
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+This looks similar to the old crash with reproducer:
 
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+#syz dup: KASAN: slab-out-of-bounds Write in process_preds
+
+https://syzkaller.appspot.com/bug?id=e84ebd53b11608595ca4fd595d48ae9ddce9cf11
+
+> ==================================================================
+> BUG: KASAN: use-after-free in predicate_parse
+> kernel/trace/trace_events_filter.c:557 [inline]
+> BUG: KASAN: use-after-free in process_preds+0x1958/0x19b0
+> kernel/trace/trace_events_filter.c:1505
+> Write of size 4 at addr ffff8801ada34ff0 by task syz-executor3/6458
+>
+> CPU: 0 PID: 6458 Comm: syz-executor3 Not tainted 4.17.0-rc2+ #22
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+>  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
+>  predicate_parse kernel/trace/trace_events_filter.c:557 [inline]
+>  process_preds+0x1958/0x19b0 kernel/trace/trace_events_filter.c:1505
+>  create_filter+0x155/0x270 kernel/trace/trace_events_filter.c:1713
+>  ftrace_profile_set_filter+0x130/0x2e0
+> kernel/trace/trace_events_filter.c:2038
+>  perf_event_set_filter+0x248/0x1230 kernel/events/core.c:9079
+>  _perf_ioctl+0x84c/0x15e0 kernel/events/core.c:5059
+>  perf_ioctl+0x59/0x80 kernel/events/core.c:5110
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  file_ioctl fs/ioctl.c:500 [inline]
+>  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+>  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+>  __do_sys_ioctl fs/ioctl.c:708 [inline]
+>  __se_sys_ioctl fs/ioctl.c:706 [inline]
+>  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x455979
+> RSP: 002b:00007fd67f515c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007fd67f5166d4 RCX: 0000000000455979
+> RDX: 0000000020000040 RSI: 0000000040082406 RDI: 0000000000000013
+> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 00000000000002bf R14: 00000000006f8288 R15: 0000000000000000
+>
+> The buggy address belongs to the page:
+> page:ffffea0006b68d00 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> flags: 0x2fffc0000000000()
+> raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+> raw: ffff8801daf2fcd8 ffffea0006a5d9e0 0000000000000000 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+>  ffff8801ada34e80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>  ffff8801ada34f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>>
+>> ffff8801ada34f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>
+>                                                              ^
+>  ffff8801ada35000: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+>  ffff8801ada35080: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+> ==================================================================
+>
+>
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000962411056b5a9c73%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
