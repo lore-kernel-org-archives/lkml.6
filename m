@@ -1,90 +1,165 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751013AbeEDEJQ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 00:09:16 -0400
-Received: from mta-p2.oit.umn.edu ([134.84.196.202]:50740 "EHLO
-        mta-p2.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750707AbeEDEJO (ORCPT
+        id S1751349AbeEDEU2 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 00:20:28 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:35918 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751229AbeEDEU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 00:09:14 -0400
-X-Google-Smtp-Source: AB8JxZpMWCr44VDBnRgE8LEWHSEpJkJMMqIhnM7o1iTK3VWBsiKfEFGuwxYZmSieraMtlFDrubsqVscksAUJ4hL6SmA=
-MIME-Version: 1.0
-In-Reply-To: <4390a69e-a297-313d-044d-abf846eff1d1@axentia.se>
-References: <1525300581-27217-1-git-send-email-wang6495@umn.edu> <4390a69e-a297-313d-044d-abf846eff1d1@axentia.se>
-From: Wenwen Wang <wang6495@umn.edu>
-Date: Thu, 3 May 2018 23:08:32 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7e5_E_7zSaAfTm8kSA_2MkyYXv-xS=ZH1AY9-u_s+Y+CA@mail.gmail.com>
-Message-ID: <CAAa=b7e5_E_7zSaAfTm8kSA_2MkyYXv-xS=ZH1AY9-u_s+Y+CA@mail.gmail.com>
-Subject: Re: [PATCH] i2c: core-smbus: fix a potential uninitialization bug
-To: Peter Rosin <peda@axentia.se>
-Cc: Kangjie Lu <kjlu@umn.edu>, Wolfram Sang <wsa@the-dreams.de>,
-        "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wang6495@umn.edu>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 4 May 2018 00:20:27 -0400
+X-Google-Smtp-Source: AB8JxZpbVx4oDzLshTxdm9YRuxlDTQYWi+bo0CODgCzkWBd7utrD/xLgkaLS1vcMGumBHVJ5AL8jcg==
+From: Connor McAdams <conmanx360@gmail.com>
+Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
+        <jeremy.lefaure@lse.epita.fr>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/9] R3Di and SBZ quirk entires + alt firmware loading
+Date: Fri,  4 May 2018 00:19:44 -0400
+Message-Id: <1525407594-25644-1-git-send-email-conmanx360@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 3, 2018 at 3:34 PM, Peter Rosin <peda@axentia.se> wrote:
-> On 2018-05-03 00:36, Wenwen Wang wrote:
->> In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
->> which are used to save a series of messages, as mentioned in the comment.
->> According to the value of the variable "size", msgbuf0 is initialized to
->> various values. In contrast, msgbuf1 is left uninitialized until the
->> function i2c_transfer() is invoked. However, mgsbuf1 is not always
->> initialized on all possible execution paths (implementation) of
->> i2c_transfer(). Thus, it is possible that mgsbuf1 may still not be
->
-> double negation here
->
->> uninitialized even after the invocation of the function i2c_transfer(). In
->> the following execution, the uninitialized msgbuf1 will be used, such as
->> for security checks. Since uninitialized values can be random and
->> arbitrary, this will cause undefined behaviors or even check bypass. For
->> example, it is expected that if the value of "size" is
->> I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
->> than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
->> value read from msgbuf1 is assigned to data->block[0], which can
->> potentially lead to invalid block write size, as demonstrated in the error
->> message.
->>
->> This patch simply initializes the buffer msgbuf1 with 0 to avoid undefined
->> behaviors or security issues.
->>
->> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
->> ---
->>  drivers/i2c/i2c-core-smbus.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
->> index b5aec33..0fcca75 100644
->> --- a/drivers/i2c/i2c-core-smbus.c
->> +++ b/drivers/i2c/i2c-core-smbus.c
->> @@ -324,7 +324,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
->>        * somewhat simpler.
->>        */
->>       unsigned char msgbuf0[I2C_SMBUS_BLOCK_MAX+3];
->> -     unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2];
->> +     unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2] = {0};
->
-> I think this will result in the whole of msgbuf1 being filled with zeroes.
-> It might be cheaper to do this with code proper rather than with an
-> initializer?
+This patch adds PCI quirk ID's for the Sound Blaster Z and Recon3Di.
+Only the currently tested ID's have been added.
 
-Thanks for your comment, Peter!  How about using a memset() only when
-i2c_smbus_xfer_emulated() emulates reading commands, since msgbuf1 is
-used only in that case?
+This patch also adds the ability to load alternative firmwares for each
+card, the firmwares can be obtained from within the Windows driver.
+The Recon3Di uses "ctefx-r3di.bin" and the Sound Blaster Z uses
+"ctefx-sbz.bin". If the alternative firmware for the given quirk is not
+found, the original ctefx.bin will be used. This has been confirmed to
+work for both the R3Di and the SBZ.
 
-Thanks,
-Wenwen
+This patch also makes the character array *dirstr a const.
 
->
-> Cheers,
-> Peter
->
->>       int num = read_write == I2C_SMBUS_READ ? 2 : 1;
->>       int i;
->>       u8 partial_pec = 0;
->>
->
+Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+---
+ sound/pci/hda/patch_ca0132.c | 61 +++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 55 insertions(+), 6 deletions(-)
+
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 768ea86..8346100 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -72,12 +72,16 @@
+ #define SCP_GET    1
+ 
+ #define EFX_FILE   "ctefx.bin"
++#define SBZ_EFX_FILE   "ctefx-sbz.bin"
++#define R3DI_EFX_FILE  "ctefx-r3di.bin"
+ 
+ #ifdef CONFIG_SND_HDA_CODEC_CA0132_DSP
+ MODULE_FIRMWARE(EFX_FILE);
++MODULE_FIRMWARE(SBZ_EFX_FILE);
++MODULE_FIRMWARE(R3DI_EFX_FILE);
+ #endif
+ 
+-static char *dirstr[2] = { "Playback", "Capture" };
++static const char *dirstr[2] = { "Playback", "Capture" };
+ 
+ enum {
+ 	SPEAKER_OUT,
+@@ -734,6 +738,7 @@ struct ca0132_spec {
+ 	unsigned int scp_resp_header;
+ 	unsigned int scp_resp_data[4];
+ 	unsigned int scp_resp_count;
++	bool alt_firmware_present;
+ 
+ 	/* mixer and effects related */
+ 	unsigned char dmic_ctl;
+@@ -762,6 +767,8 @@ struct ca0132_spec {
+ enum {
+ 	QUIRK_NONE,
+ 	QUIRK_ALIENWARE,
++	QUIRK_SBZ,
++	QUIRK_R3DI,
+ };
+ 
+ static const struct hda_pintbl alienware_pincfgs[] = {
+@@ -782,6 +789,10 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
+ 	SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
+ 	SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
++	SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
++	SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
++	SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
++	SND_PCI_QUIRK(0x1458, 0xA036, "Recon3Di", QUIRK_R3DI),
+ 	{}
+ };
+ 
+@@ -3207,7 +3218,7 @@ static int ca0132_select_out(struct hda_codec *codec)
+ 				    pin_ctl & ~PIN_HP);
+ 		/* enable speaker node */
+ 		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
+-					     AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
++				AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
+ 		snd_hda_set_pin_ctl(codec, spec->out_pins[0],
+ 				    pin_ctl | PIN_OUT);
+ 	} else {
+@@ -4370,11 +4381,49 @@ static void ca0132_set_dsp_msr(struct hda_codec *codec, bool is96k)
+ static bool ca0132_download_dsp_images(struct hda_codec *codec)
+ {
+ 	bool dsp_loaded = false;
++	struct ca0132_spec *spec = codec->spec;
+ 	const struct dsp_image_seg *dsp_os_image;
+ 	const struct firmware *fw_entry;
+-
+-	if (request_firmware(&fw_entry, EFX_FILE, codec->card->dev) != 0)
+-		return false;
++	/*
++	 * Alternate firmwares for different variants. The Recon3Di apparently
++	 * can use the default firmware, but I'll leave the option in case
++	 * it needs it again.
++	 */
++	switch (spec->quirk) {
++	case QUIRK_SBZ:
++		if (request_firmware(&fw_entry, SBZ_EFX_FILE,
++					codec->card->dev) != 0) {
++			codec_dbg(codec, "SBZ alt firmware not detected. ");
++			spec->alt_firmware_present = false;
++		} else {
++			codec_dbg(codec, "Sound Blaster Z firmware selected.");
++			spec->alt_firmware_present = true;
++		}
++		break;
++	case QUIRK_R3DI:
++		if (request_firmware(&fw_entry, R3DI_EFX_FILE,
++					codec->card->dev) != 0) {
++			codec_dbg(codec, "Recon3Di alt firmware not detected.");
++			spec->alt_firmware_present = false;
++		} else {
++			codec_dbg(codec, "Recon3Di firmware selected.");
++			spec->alt_firmware_present = true;
++		}
++		break;
++	default:
++		spec->alt_firmware_present = false;
++		break;
++	}
++	/*
++	 * Use default ctefx.bin if no alt firmware is detected, or if none
++	 * exists for your particular codec.
++	 */
++	if (!spec->alt_firmware_present) {
++		codec_dbg(codec, "Default firmware selected.");
++		if (request_firmware(&fw_entry, EFX_FILE,
++					codec->card->dev) != 0)
++			return false;
++	}
+ 
+ 	dsp_os_image = (struct dsp_image_seg *)(fw_entry->data);
+ 	if (dspload_image(codec, dsp_os_image, 0, 0, true, 0)) {
+@@ -4476,7 +4525,7 @@ static struct hda_verb ca0132_base_exit_verbs[] = {
+ 	{}
+ };
+ 
+-/* Other verbs tables.  Sends after DSP download. */
++/* Other verbs tables. Sends after DSP download. */
+ static struct hda_verb ca0132_init_verbs0[] = {
+ 	/* chip init verbs */
+ 	{0x15, 0x70D, 0xF0},
+-- 
+2.7.4
