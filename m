@@ -1,49 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751240AbeEDK0L (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 06:26:11 -0400
-Received: from mail-wm0-f46.google.com ([74.125.82.46]:54307 "EHLO
-        mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbeEDK0J (ORCPT
+        id S1751283AbeEDK3F (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 06:29:05 -0400
+Received: from mail-out.m-online.net ([212.18.0.9]:54925 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbeEDK3C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 06:26:09 -0400
-X-Google-Smtp-Source: AB8JxZq4DXWDCmu9PMzTA+5fKTihwLLVJh1gGkbIoz93Uv3kHqbr8Y/kqI/mhcyeEbBl9zv/L6AWIA==
-Date: Fri, 4 May 2018 12:26:01 +0200
-From: Robert Richter <rric@kernel.org>
-To: Matt Redfearn <matt.redfearn@mips.com>
-Cc: James Hogan <jhogan@kernel.org>, Ralf Baechle <ralf@linux-mips.org>,
-        linux-mips@linux-mips.org, Huacai Chen <chenhc@lemote.com>,
-        linux-kernel@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, oprofile-list@lists.sf.net
-Subject: Re: [RFC PATCH] MIPS: Oprofile: Drop support
-Message-ID: <20180504102600.GD4493@rric.localdomain>
-References: <1524574554-7451-1-git-send-email-matt.redfearn@mips.com>
- <20180424130511.GB28813@saruman>
- <5e464a40-4e4d-dde4-b5b5-ceb637dc5f38@mips.com>
- <20180504093002.GC4493@rric.localdomain>
- <dd951d1e-206d-78dd-49ae-3a16cad9ebcc@mips.com>
+        Fri, 4 May 2018 06:29:02 -0400
+X-Auth-Info: 01g/1B0wQtA922cDWE77wd6bZE6PB9R/7jFIaOHa2uk=
+Date: Fri, 4 May 2018 12:28:42 +0200
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] display: panel: Add KOE tx14d24vm1bpa display support
+ (320x240)
+Message-ID: <20180504122842.33643142@jawa>
+In-Reply-To: <20180416192442.qnb53b6u3bsfet6y@rob-hp-laptop>
+References: <20180412143715.6828-1-lukma@denx.de>
+        <20180416192442.qnb53b6u3bsfet6y@rob-hp-laptop>
+Organization: denx.de
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dd951d1e-206d-78dd-49ae-3a16cad9ebcc@mips.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/vW.pxVg+QsLWJxUUfG=jmkD"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.05.18 10:54:32, Matt Redfearn wrote:
-> perf is available for MIPS and supports many more CPU types than oprofile.
-> oprofile userspace seemingly has been broken since 1.0.0 - removing oprofile
-> support from the MIPS kernel would not break it more thatn it already is,
+--Sig_/vW.pxVg+QsLWJxUUfG=jmkD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-What do you mean with "oprofile is broken"? It looks like you modified
-Kconfig to enable oprofile and perf in parallel, which is not intended
-to work. Have you tried a kernel with oprofile disabled and perf
-enabled?
+Hi Rob,
 
-As said, oprofile version 0.9.x is still available for cpus that do
-not support perf. What is the breakage?
+> On Thu, Apr 12, 2018 at 04:37:15PM +0200, Lukasz Majewski wrote:
+> > This commit adds support for KOE's 5.7" display.
+> >=20
+> > Signed-off-by: Lukasz Majewski <lukma@denx.de>
+> > ---
+> >  .../bindings/display/panel/koe,tx14d24vm1bpa.txt   | 42
+> > ++++++++++++++++++++++
+> > drivers/gpu/drm/panel/panel-simple.c               | 26
+> > ++++++++++++++ 2 files changed, 68 insertions(+) create mode 100644
+> > Documentation/devicetree/bindings/display/panel/koe,tx14d24vm1bpa.txt =
+=20
+>=20
+> Reviewed-by: Rob Herring <robh@kernel.org>
+>=20
 
-Thanks,
+Gentle ping on this - as I don't know if this patch been applied.
 
--Robert
+Best regards,
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-10 Fax: (+49)-8142-66989-80 Email: wd@denx.de
+
+--Sig_/vW.pxVg+QsLWJxUUfG=jmkD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlrsNdoACgkQAR8vZIA0
+zr2C1Af+KPlXskVTiaT8QMTA/1HLzsFY7FXlA+zWBgOpgV3QZBB69A+WCCZQplzl
+dRs43NMKuig9Lq4SOOKoSL+loF9g0i/saWVgo2oKro6Bitlzc/KDl0W800HnwSVm
+manbykIv1EchHXPdNFGiRF9yEfvVHWm46gtE80QCRofmKAWfW6cPiQokob/q9qhL
+qWxKKmbraH/5W9LcEUucOZzUIsa4m7hVjqO8PL1k2Oeu0JhhIqB/fdkoDiFv6K1n
+Jq5ZcYb9UvkcxFGeqXWPsPgyvm5xZyevuXDI2FTjPMOet4m7HfocajAGK2Mr8Vdo
+iLtcmpjv7cwyttMjyIzw1yV9Erg6xQ==
+=ZOoF
+-----END PGP SIGNATURE-----
+
+--Sig_/vW.pxVg+QsLWJxUUfG=jmkD--
