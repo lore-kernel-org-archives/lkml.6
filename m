@@ -1,77 +1,118 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751855AbeEESyG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 14:54:06 -0400
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:58770 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751824AbeEESyE (ORCPT
+        id S1751814AbeEETEH (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 15:04:07 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:54099 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751252AbeEETEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 14:54:04 -0400
-X-Google-Smtp-Source: AB8JxZqE5i1HhWcWW6dsRkzoLI3PZsK8LIDIBppBm3vi8wzjBefLy8jNwBEXrsJEhqVxgd+l8fWLxA==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Harsh Jain <harsh@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        Michael Werner <werner@chelsio.com>, Casey Leedom <leedom@chelsio.com>,
-        linux-crypto@vger.kernel.org (open list:CXGB4 CRYPTO DRIVER (chcr)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] crypto: chtls - fix a missing-check bug
-Date: Sat,  5 May 2018 13:53:48 -0500
-Message-Id: <1525546431-12535-1-git-send-email-wang6495@umn.edu>
+        Sat, 5 May 2018 15:04:05 -0400
+X-Google-Smtp-Source: AB8JxZpoyWVOBx4fjCk9E/VIqrn8OXY1mHqNQkqU8q0xWKnTY/TUoLqWFkUPUIX5ViIWCEGW1MF6zg==
+From: Connor McAdams <conmanx360@gmail.com>
+Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
+        <jeremy.lefaure@lse.epita.fr>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/9] ALSA: hda/ca0132: Patch Series for Recon3Di and Sound Blaster Z Support 
+Date: Sat,  5 May 2018 15:03:11 -0400
+Message-Id: <1525547001-17588-1-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
+To: unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In do_chtls_setsockopt(), the tls crypto info is first copied from the
-poiner 'optval' in userspace and saved to 'tmp_crypto_info'. Then the
-'version' of the crypto info is checked. If the version is not as expected,
-i.e., TLS_1_2_VERSION, error code -ENOTSUPP is returned to indicate that
-the provided crypto info is not supported yet. Then, the 'cipher_type'
-field of the 'tmp_crypto_info' is also checked to see if it is
-TLS_CIPHER_AES_GCM_128. If it is, the whole struct of
-tls12_crypto_info_aes_gcm_128 is copied from the pointer 'optval' and then
-the function chtls_setkey() is invoked to set the key.
+This patchset adds support for the Sound Blaster Z and the Recon3Di.
 
-Given that the 'optval' pointer resides in userspace, a malicious userspace
-process can race to change the data pointed by 'optval' between the two
-copies. For example, a user can provide a crypto info with TLS_1_2_VERSION
-and TLS_CIPHER_AES_GCM_128. After the first copy, the user can modify the
-'version' and the 'cipher_type' fields to any versions and/or cipher types
-that are not allowed. This way, the user can bypass the checks, inject
-bad data to the kernel, cause chtls_setkey() to set a wrong key or other
-issues.
+In order to figure out how to get these cards to work, I made a program called
+QemuHDADump[1], which uses the trace function of qemu to see interactions with
+the memory mapped pci BAR space of the card being used in the virtual machine.
+With this, I obtain the CORB buffer location to get the command verbs, and then
+dump them each time the buffer rolls over. This program may be useful for fixing
+other HDA related driver issues where there is no documentation for the device.
 
-This patch reuses the data copied in the first try so as to ensure these
-checks will not be bypassed.
+So far, I have been able to get all features supported on the Sound Blaster Z
+and the Recon3Di. All output and input effects work, all inputs and outputs
+work, and just about anything else I can think of. I have also added new 
+controls in order to select the new inputs and outputs, as well as controls to
+change the effect levels and presets. 
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- drivers/crypto/chelsio/chtls/chtls_main.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+I have also added the ability to use firmware taken from the Windows drivers of
+both the Sound Blaster Z and Recon3Di. I am trying to get into contact with 
+Creative to get permission to redistribute these along with the current 
+file included with the Chromebook, but they have not been very responsive. 
+Luckily, the cards work with the Chromebook firmware just fine, although I 
+believe there has to be a reason they have different firmware in Windows. I 
+will not link to the firmwares here, but if you look up my thread on Creative
+Labs forums, you will find the link to download the firmwares there.
 
-diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
-index 007c45c..859958a 100644
---- a/drivers/crypto/chelsio/chtls/chtls_main.c
-+++ b/drivers/crypto/chelsio/chtls/chtls_main.c
-@@ -491,9 +491,13 @@ static int do_chtls_setsockopt(struct sock *sk, int optname,
- 
- 	switch (tmp_crypto_info.cipher_type) {
- 	case TLS_CIPHER_AES_GCM_128: {
--		rc = copy_from_user(crypto_info, optval,
--				    sizeof(struct
--					   tls12_crypto_info_aes_gcm_128));
-+		/* Obtain version and type from previous copy */
-+		crypto_info[0] = tmp_crypto_info;
-+		/* Now copy the following data */
-+		rc = copy_from_user(crypto_info + sizeof(*crypto_info),
-+				optval + sizeof(*crypto_info),
-+				sizeof(struct tls12_crypto_info_aes_gcm_128)
-+				- sizeof(*crypto_info));
- 
- 		if (rc) {
- 			rc = -EFAULT;
+I am willing to help get the other non-working cards such as the ZxR and the
+newer AE-5 working too, but I will need someone willing to run QemuHDADump in a
+virtual machine in order to get the commands.
+
+So, in summary:
+-This patchset makes the cards work better than they did before (they really 
+ didn't work before)
+
+-This patchset leaves the original chromebook related stuff alone.
+
+Thanks.
+
+[1] https://github.com/Conmanx360/QemuHDADump
+
+Bugs:
+-------------------------------------------------------------------------------
+Recon3Di: (Reported by Mariusz Ceier)
+*******************
+-Occasionally switching between rear and front mic breaks the input until 
+ computer is shutdown or put to sleep.
+
+-Surround Sound works, but is inconsistent. Sometimes, just updating the volume
+ fixes it, and sometimes, it requires a restart. 
+
+Sound Blaster Z:
+*******************
+-none that I'm aware of.
+
+
+Version changes:
+-------------------------------------------------------------------------------
+v1:
+*******************
+-Massive patch formatting failure, please ignore v1.
+
+v2:
+*******************
+-Fixed patch formatting failure.
+
+v3:
+*******************
+-Fixed mem_base unmap, instead of checking for QUIRK_SBZ on exit, have it check
+ if the area is mapped, and if it is, unmap it. Also make it unmap after all 
+ other commands are finished.
+
+-Change notification of failure to map mem_base from codec_dbg to codec_warn, 
+ and use codec_info to tell the user that their card might have been incorrectly
+ identified as a Sound Blaster Z.
+
+-Remove commented out commands in sbz_exit_chip function, only reintroduce them
+ when their functions are defined.
+
+
+Connor McAdams (9):
+  ALSA: hda/ca0132: R3Di and SBZ quirk entires + alt firmware loading
+  ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
+  ALSA: hda/ca0132: Add PCI region2 iomap for SBZ
+  ALSA: hda/ca0132: Add extra exit functions for R3Di and SBZ
+  ALSA: hda/ca0132: add/change helper functions for R3Di and SBZ
+  ALSA: hda/ca0132: add alt_select_in/out for R3Di + SBZ
+  ALSA: hda/ca0132: Add DSP Volume set and New mixers for SBZ + R3Di
+  ALSA: hda/ca0132: add ca0132_alt_set_vipsource
+  ALSA: hda/ca0132: Add new control changes for SBZ + R3Di
+
+ sound/pci/hda/patch_ca0132.c | 3055 ++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 2941 insertions(+), 114 deletions(-)
+
 -- 
 2.7.4
