@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751933AbeEEVvD (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 17:51:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47214 "EHLO mx2.suse.de"
+        id S1751891AbeEEWBB (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 18:01:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47585 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751243AbeEEVvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 17:51:02 -0400
+        id S1750967AbeEEWA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 18:00:57 -0400
 From: NeilBrown <neilb@suse.com>
 To: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Sun, 06 May 2018 07:50:54 +1000
+Date: Sun, 06 May 2018 08:00:49 +1000
 Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/8] rhashtable: further improve stability of rhashtable_walk
-In-Reply-To: <20180505094212.hpqjyv5ijibviuwh@gondor.apana.org.au>
-References: <152540595840.18473.11298241115621799037.stgit@noble> <152540605438.18473.4797800779538116583.stgit@noble> <20180505094212.hpqjyv5ijibviuwh@gondor.apana.org.au>
-Message-ID: <87vac1db5t.fsf@notabene.neil.brown.name>
+Subject: Re: [PATCH 8/8] rhashtable: don't hold lock on first table throughout insertion.
+In-Reply-To: <20180505094117.pl7b6bbk6mtyri6d@gondor.apana.org.au>
+References: <152540595840.18473.11298241115621799037.stgit@noble> <152540605444.18473.9591316658457316578.stgit@noble> <20180505094117.pl7b6bbk6mtyri6d@gondor.apana.org.au>
+Message-ID: <87sh75dapa.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: multipart/signed; boundary="=-=-=";
         micalg=pgp-sha256; protocol="application/pgp-signature"
@@ -29,72 +29,71 @@ Content-Transfer-Encoding: quoted-printable
 On Sat, May 05 2018, Herbert Xu wrote:
 
 > On Fri, May 04, 2018 at 01:54:14PM +1000, NeilBrown wrote:
->> If the sequence:
->>    obj =3D rhashtable_walk_next(iter);
->>    rhashtable_walk_stop(iter);
->>    rhashtable_remove_fast(ht, &obj->head, params);
->>    rhashtable_walk_start(iter);
+>> rhashtable_try_insert() currently hold a lock on the bucket in
+>> the first table, while also locking buckets in subsequent tables.
+>> This is unnecessary and looks like a hold-over from some earlier
+>> version of the implementation.
 >>=20
->>  races with another thread inserting or removing
->>  an object on the same hash chain, a subsequent
->>  rhashtable_walk_next() is not guaranteed to get the "next"
->>  object. It is possible that an object could be
->>  repeated, or missed.
+>> As insert and remove always lock a bucket in each table in turn, and
+>> as insert only inserts in the final table, there cannot be any races
+>> that are not covered by simply locking a bucket in each table in turn.
 >>=20
->>  This can be made more reliable by keeping the objects in a hash chain
->>  sorted by memory address.  A subsequent rhashtable_walk_next()
->>  call can reliably find the correct position in the list, and thus
->>  find the 'next' object.
+>> When an insert call reaches that last table it can be sure that there
+>> is no match entry in any other table as it has searched them all, and
+>> insertion never happens anywhere but in the last table.  The fact that
+>> code tests for the existence of future_tbl while holding a lock on
+>> the relevant bucket ensures that two threads inserting the same key
+>> will make compatible decisions about which is the "last" table.
 >>=20
->>  It is not possible (certainly not so easy) to achieve this with an
->>  rhltable as keeping the hash chain in order is not so easy.  When the
->>  first object with a given key is removed, it is replaced in the chain
->>  with the next object with the same key, and the address of that
->>  object may not be correctly ordered.
->>  No current user of rhltable_walk_enter() calls
->>  rhashtable_walk_start() more than once, so no current code
->>  could benefit from a more reliable walk of rhltables.
->>=20
->>  This patch only attempts to improve walks for rhashtables.
->>  - a new object is always inserted after the last object with a
->>    smaller address, or at the start
->>  - when rhashtable_walk_start() is called, it records that 'p' is not
->>    'safe', meaning that it cannot be dereferenced.  The revalidation
->>    that was previously done here is moved to rhashtable_walk_next()
->>  - when rhashtable_walk_next() is called while p is not NULL and not
->>    safe, it walks the chain looking for the first object with an
->>    address greater than p and returns that.  If there is none, it moves
->>    to the next hash chain.
+>> This simplifies the code and allows the ->rehash field to be
+>> discarded.
+>> We still need a way to ensure that a dead bucket_table is never
+>> re-linked by rhashtable_walk_stop().  This can be achieved by
+>> setting the ->size to 1.  This still allows lookup code to work (and
+>> correctly not find anything) but can never happen on an active bucket
+>> table (as the minimum size is 4).
 >>=20
 >> Signed-off-by: NeilBrown <neilb@suse.com>
 >
-> I'm a bit torn on this.  On the hand this is definitely an improvement
-> over the status quo.  On the other this does not work on rhltable and
-> we do have a way of fixing it for both rhashtable and rhltable.
+> I'm not convinced this is safe.  There can be multiple tables
+> in existence.  Unless you hold the lock on the first table, what
+> is to stop two parallel inserters each from inserting into their
+> "last" tables which may not be the same table?
 
-Do we?  How could we fix it for both rhashtable and rhltable?
+The insert function must (and does) take the lock on the bucket before
+testing if there is a "next" table.
+If one inserter finds that it has locked the "last" table (because there
+is no next) and successfully inserts, then the other inserter cannot
+have locked that table yet, else it would have inserted.  When it does,
+it will find what the first inserter inserted.=20
 
 Thanks,
 NeilBrown
 
+>
+> Cheers,
+> --=20
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
 --=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlruJz4ACgkQOeye3VZi
-gblVqA/9F7ZODtO/+GOk5akFPqS0M10RD4YyDXTAfbgj0s7tamZXDzXuFPa4VwAK
-oLcLgcySX/kfrff6BLv1Z8Y2XqZQKo1cnpxlxf4uhUraoIWcawNARL21TXE/58c0
-QVGJEBEofx1uVkifXH4cwuwyNdGbdNEOIVAIUCG71NLFWjiF1nO/xDQx5/RCM8IY
-KlPRSAJI8dIY2JMhE5Gc8GvRyoQueR14ExUxb5Adc/LfamhBuDD+jWofshQgtKvn
-fSFHOrNet0MpwdY7GRZMX+A3dphelJKZwQ3FCqXK2vsl/S1sge7tWJpMI6gUxb9M
-A7eNe2H8FR4E42z8RhjyyplZ6tMA9LM9PCHqOI2tbGwLfwQcXzqF/ZLia7BYb50Y
-hKBk+JcPMFwHuc33pJ1WhS5fIhQhAmn0gkcKIZb8fGmDcjAbWgks9QHBW51mBoMT
-lle6mKZ5WQuHQyxzqmztdIMJTrHcq7xiGF0MtHyXhnVlOIwOMm7ID6M67iGeTjrR
-8EeuPvynf/iRpQTywh3vchK5Q9WiqWh//ACdFbVFilBrrvXgUKYWx1NlAVXOJS00
-A8+gqcdJ6skbi5+/sXp9Sb7ekgsHk4pwRCu4XIp4oanDdGxI8FkUvfm1SII6EqCZ
-V+wZUayhgmzv0y3YlpwYEKvaGIlbAaNC0B/MgFfjhzA5m6cMiXI=
-=S76l
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlruKZEACgkQOeye3VZi
+gbkLShAAkWzZFmCM0fZVPaahGN4YV3gnD0+umc7IDvvVj50Nxhbzfz7D6UyIgaOs
+g8VuAvxiQwofvg6xU+hAWZr3ao4YGqh+ok4dxk5CcZkiU+bsQ8/lJHcuBKAt2xPd
+ZodYKB+Zwov9eMYV3vPaq8xyJwmqnVQK9wapwIu2NsZqUsDDjg1ezaWAtVEpjs09
+/2qRJ24qcLQSd7IqbwSI1cpzcOcwyzCHBMIHZ2DtWbjgkgx9ofO61s4+e+TQD2IA
+kf4t862YmTCz4ekq1uSlThqgtMnFo+6LUxfUANdd2cgVILsHz7JXYdmG75ZlsduQ
+DhPPnWQ/MVbQejGxhejQ//SqPz7oNRjK2tpIqfjnCWVzPIKgjtwAaKehW7g0jVoZ
+ElzGqqw8PNpxSHvg7xwVvy4RggU8mSYzBRlwrBKTUHGAKOKmrEi6xrPx4i1uf2XT
+E3Vn0F5oDUoGBZjXaWn91UlmuFtg9gcVaPK5XTX/veaQrEGRcydDl09uw14Sbai3
+aPFfXS8yexo6hEBz1Zca0MLEcpR0u2JpJ3bLbKsbUWgzXozpM90Qw9QQq8a13+sb
+tHHYYlcwcnit3OSuzS46at3IU+jMkt3Bc+UCPJ2/6okikiYg9TfxsC0s58h70mXn
+ckRSV5NU4AVjFGqy61WJD/agm0GlR9FJ6iut9p0Xvmu2Pq5TgHA=
+=D4ym
 -----END PGP SIGNATURE-----
 --=-=-=--
