@@ -1,35 +1,35 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1338303-1525921911-2-6248535799499652073
+X-Cyrus-Session-Id: sloti22d1t05-1031722-1525486961-2-17398831704321563988
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
   LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525921910; b=dUgZaCuoCwaEVMn+7WaJanX8FuOQ94K2q3o2U5R/M0rPw2MzsY
-    B8OPtSTCns0fi4WCHZnHvkbOqK/GxMRSKm8iWpnl/LRFq4HZEEhjpgxGe5/XF1uB
-    JT9vLpBoMCdgMLZfW/2mggkG4FxXr7qpygEO3a/K6JSQb1+4PRWZovevqsou90Jq
-    OeJaZ6VdDAdCZHg5E48dEItcnqp1JAJcVzIIin7RRu4KsqeiyzQh18zkJ2DMf40x
-    wuPLd1J8jVF0n9nP3h3BRBGC/eX3hUmgTUCwGgTUEjkpwY5ELNMP9RI7JIAY7Sdy
-    O1pwF1YsQCDpi34UGly+KBndeX1FAtTuxAHw==
+    1525486960; b=S29lVQBzOf8R/UJXA/vUDkjP8gz7MSPmSXu8jzWrlg34PtpAJJ
+    zTsjyOC1+cRI7yUr4ngYUCYEoeNMUEw2207ggmGYrJ97scgPzHY32XBwmYbYhBIs
+    Mi9NctZ0IHJdlYo1w48XxrqQtkYRxbzKaxZlb+34x7T2oF6w0QqOy33B/pQvscqO
+    VAPTHpC0es9D/A3e1HznNAstjUUBtW1RzsiAu/GxaKAeHj8eTXbNP1C7taYGX4g8
+    Ejt8wpwwt6/9W8oaKzWMOv4a8Ec+esecl90Tp3Ktw/Qrn8AmzWx68NLmiis6ZrWQ
+    qGSW1Wobl1LVx4sbfiFNl08JlAMEY7VqMmMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=message-id:subject:from:to:cc:date
-    :in-reply-to:references:content-type:content-transfer-encoding
-    :mime-version:sender:list-id; s=fm2; t=1525921910; bh=JsNO/i6HOH
-    yx6Y/jdj2omND7vLhbpnon5s86En05ZGM=; b=ixqmqRprTRgqsFzz/tEydz0rjb
-    NqEP+qiKQYyHDai8SpVO4X5dVKzHKHVvTntWuROErGUqP5hvTDOaIE/iE/ZiUz3x
-    JXhSNTkVf1v+7QrCz/hdN1gPEeiTLfERLpJzm+IFD6I6W51AvBJFVkhtFbQSbCXO
-    JfzDfX/t1DNmsU9zb8HIBsjbFfaFTM0WISYsNEzoVsq52sxk5n1Hwh5HLPMVBtqA
-    98bGfaeve9Ds5yvvs0AgKo7/NSS2cCnnZc20oXcVUa/ZWJFIUN88N5y33Ei5pktM
-    znHaXORjKbVs8dXTP/mwg3OKvC0DwV0W6fMKqYu8bSLR8p2suWetxi0fItYQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:mime-version:content-type:sender
+    :list-id; s=fm2; t=1525486960; bh=d3jrdG/py/PvhBeJLR2GcbQLr2cqkT
+    JB67gUgG+Nqqk=; b=NYV9dLdqIPcJZd0n8BD/jJJw007Hm9f7g/kxQQEFVcCJTa
+    uxCISsfJo5EiKncDqTHo/vZf/TgRYv5wXaWF9Kqf1LhRB64XLV1GW+d0K957WQyO
+    ANVxvqcCLa2BqR3VsI1cwsyMmuv9kuQzaa5q05HwsRncXxrFweAEqgIulShM4E4C
+    09e6bkDs6upqMbi2xDK+l1T9GWSpCyZiDA9ALflvRrkDGI/CORL9TxTiODzKixPh
+    CU4AOajXpEL15Olj7xx9mgPS3GwuOcVTRpVN3Di6YlnRc9abx42hLXCtNyLvSwRf
+    JDaEz5DBsd5TcQd7JXVK1PjpTg4IAV0CknyglnIA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -43,7 +43,7 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     header.domain=mediatek.com header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx4.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
@@ -59,41 +59,39 @@ Authentication-Results: mx2.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLO9fWR/1TizftueDOEQIuTf86i5h7KXR9JNURYFpI6uruXwiKKb+h7KBT9rPLQIeYIyWSRKt8/4cWleHLDhjY/0gUMKtBHY7exzt74Ly4VG/04SpPCj
-    Ou4YIFfi6SIy9c5Dg4IqdGx5NQbmSnRTWHmQ2ne6dfgrx900J7XjLPSlFZjbxBgKcSx8HKoZwMzlm3wjfU4fg7h+IWzxj49CYZDQ9WTJFNy5lZ02pv5DcRPC
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=mpaa-ttXAAAA:8 a=VwQbUJbxAAAA:8 a=c3D3SKACx2MFx_CIqtEA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfPZfHyy4Pk8LWaCVOqh9Ue3b69wluhF/JqEw7q4pmny5P5xeHLz3LmKQYmeuaClNbhFUMTHKy/5ZjzOhgN8k8GVIttGVtbTdnRiixPlqUdps5PJHt6ww
+    3EKiGLy9X4u+/F+YVHrf4DvjRFPiP8sTmiu8isFF3QPSMD6wwCw21QY5dVCYSF4rcHO9KzQJUrszO6Tlhkpp3IOe21bA07etTKU2fMRXkphlzb/sfDExCmWC
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=mpaa-ttXAAAA:8
+    a=VwQbUJbxAAAA:8 a=m-Vw8LavUTyuxteSGH4A:9 a=x8gzFH9gYPwA:10
+    a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933770AbeEJDLh (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 9 May 2018 23:11:37 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:19998 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1756291AbeEJDLg (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 9 May 2018 23:11:36 -0400
-X-UUID: 760c41ce495c49f18c29212c312d4427-20180510
-Message-ID: <1525921890.32173.12.camel@mhfsdcap03>
-Subject: Re: [RESEND PATCH 1/5] usb: mtu3: avoid TX data length truncated in
- SS/SSP mode
+        id S1752017AbeEECWY (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 22:22:24 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:61946 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751775AbeEECVe (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 4 May 2018 22:21:34 -0400
+X-UUID: 19a430aa20d44f7a8ee3c8e27aaf1b13-20180505
 From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
         <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>
-Date: Thu, 10 May 2018 11:11:30 +0800
-In-Reply-To: <1525918606.32173.9.camel@mhfsdcap03>
+Subject: [RESEND PATCH 5/5] usb: mtu3: make USB_MTU3_DUAL_ROLE depend on EXTCON but not USB_MTU3
+Date: Sat, 5 May 2018 10:21:20 +0800
+Message-ID: <9d0d09a973c6a7d76088f6cf557bb052d02dd440.1525486663.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <3b0c7ca576fee8220d63c9914483b70b0fbc8783.1525486663.git.chunfeng.yun@mediatek.com>
 References: <3b0c7ca576fee8220d63c9914483b70b0fbc8783.1525486663.git.chunfeng.yun@mediatek.com>
-         <1525918606.32173.9.camel@mhfsdcap03>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
+Content-Type: text/plain
 X-MTK: N
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
@@ -101,45 +99,36 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi, Greg
-On Thu, 2018-05-10 at 10:16 +0800, Chunfeng Yun wrote:
-> Hi, Greg
-> 
->    Could you please pick up the series of patches, thanks a lot
-Please ignore it, I find a problem in [RESEND PATCH 4/5], and need send
-a new version.
+In fact the driver depends on EXTCON only when it's configed as
+USB_MTU3_DUAL_ROLE, so make USB_MTU3_DUAL_ROLE depend on EXTCON but
+not USB_MTU3.
 
-Very sorry
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+ drivers/usb/mtu3/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
->  
-> On Sat, 2018-05-05 at 10:21 +0800, Chunfeng Yun wrote:
-> > The variable of 'count' is declared as u8, this will cause an issue
-> > due to value truncated when works in SS or SSP mode and data length
-> > is greater than 255, so change it as u32.
-> > 
-> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > ---
-> >  drivers/usb/mtu3/mtu3_gadget_ep0.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/mtu3/mtu3_gadget_ep0.c b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-> > index ebdcf7a..d67b540 100644
-> > --- a/drivers/usb/mtu3/mtu3_gadget_ep0.c
-> > +++ b/drivers/usb/mtu3/mtu3_gadget_ep0.c
-> > @@ -546,7 +546,7 @@ static void ep0_tx_state(struct mtu3 *mtu)
-> >  	struct usb_request *req;
-> >  	u32 csr;
-> >  	u8 *src;
-> > -	u8 count;
-> > +	u32 count;
-> >  	u32 maxp;
-> >  
-> >  	dev_dbg(mtu->dev, "%s\n", __func__);
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+diff --git a/drivers/usb/mtu3/Kconfig b/drivers/usb/mtu3/Kconfig
+index 25cd619..8daf277 100644
+--- a/drivers/usb/mtu3/Kconfig
++++ b/drivers/usb/mtu3/Kconfig
+@@ -2,7 +2,7 @@
+ 
+ config USB_MTU3
+ 	tristate "MediaTek USB3 Dual Role controller"
+-	depends on EXTCON && (USB || USB_GADGET) && HAS_DMA
++	depends on (USB || USB_GADGET) && HAS_DMA
+ 	depends on ARCH_MEDIATEK || COMPILE_TEST
+ 	select USB_XHCI_MTK if USB_SUPPORT && USB_XHCI_HCD
+ 	help
+@@ -40,6 +40,7 @@ config USB_MTU3_GADGET
+ config USB_MTU3_DUAL_ROLE
+ 	bool "Dual Role mode"
+ 	depends on ((USB=y || USB=USB_MTU3) && (USB_GADGET=y || USB_GADGET=USB_MTU3))
++	depends on (EXTCON=y || EXTCON=USB_MTU3)
+ 	help
+ 	  This is the default mode of working of MTU3 controller where
+ 	  both host and gadget features are enabled.
+-- 
+1.9.1
 
