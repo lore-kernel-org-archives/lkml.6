@@ -1,60 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751684AbeEEJcm (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 05:32:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45044 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751057AbeEEJcl (ORCPT
+        id S1751829AbeEEJfJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 05:35:09 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57126 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751617AbeEEJfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 05:32:41 -0400
-Date: Sat, 5 May 2018 11:32:37 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] locking/atomics: Clean up the atomic.h maze of #defines
-Message-ID: <20180505093237.GD12217@hirez.programming.kicks-ass.net>
-References: <20180504173937.25300-1-mark.rutland@arm.com>
- <20180504173937.25300-2-mark.rutland@arm.com>
- <20180504180105.GS12217@hirez.programming.kicks-ass.net>
- <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
- <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
- <20180505084721.GA32344@noisy.programming.kicks-ass.net>
- <CACT4Y+Z1WKxdkodRBc5PzfyQQmfJCJ3n1JyQc-+WCkqGZeg5Wg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Z1WKxdkodRBc5PzfyQQmfJCJ3n1JyQc-+WCkqGZeg5Wg@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Sat, 5 May 2018 05:35:05 -0400
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To: myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        robh+dt@kernel.org
+Cc: devicetree@vger.kernel.org, ulf.hansson@linaro.org, heiko@sntech.de,
+        linux-pm@vger.kernel.org, dbasehore@chromium.org,
+        linux-kernel@vger.kernel.org, dianders@google.com, groeck@chromium.org,
+        kernel@collabora.com, hl@rock-chips.com,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v3 3/5] devfreq: rk3399_dmc: remove wait for dcf irq event.
+Date: Sat,  5 May 2018 11:34:48 +0200
+Message-Id: <20180505093450.17327-4-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180505093450.17327-1-enric.balletbo@collabora.com>
+References: <20180505093450.17327-1-enric.balletbo@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 05, 2018 at 11:05:51AM +0200, Dmitry Vyukov wrote:
-> On Sat, May 5, 2018 at 10:47 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > And I seriously hate this one:
-> >
-> >   ba1c9f83f633 ("locking/atomic/x86: Un-macro-ify atomic ops implementation")
-> >
-> > and will likely undo that the moment I need to change anything there.
+We have already wait dcf done in ATF, so don't need wait dcf irq
+in kernel, besides, clear dcf irq in kernel will import competiton
+between kernel and ATF, only handle dcf irq in ATF is a better way.
 
-> That was asked by Ingo:
-> https://groups.google.com/d/msg/kasan-dev/3sNHjjb4GCI/Xz1uVWaaAAAJ
-> 
-> I think in the end all of current options suck in one way or another,
-> so we are just going in circles.
+Signed-off-by: Lin Huang <hl@rock-chips.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
 
-Yeah, and I disagree with him, but didn't have the energy to fight at
-that time (and still don't really, I'm just complaining).
+Changes in v3: None
+Changes in v2:
+- [3/6] Add Reviewed-by Chanwoo Choi
 
-> We either need something different (e.g. codegen), or settle on one
-> option for doing it.
+ drivers/devfreq/rk3399_dmc.c | 53 +-----------------------------------
+ 1 file changed, 1 insertion(+), 52 deletions(-)
 
-Codegen I think is the only sensible option at this point for all the
-wrappers. The existing ones (without the annotation muck) were already
-cumbersome, the annotation stuff just makes it completely horrid.
+diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
+index 5dfbfa3cc878..44a379657cd5 100644
+--- a/drivers/devfreq/rk3399_dmc.c
++++ b/drivers/devfreq/rk3399_dmc.c
+@@ -68,15 +68,6 @@ struct rk3399_dmcfreq {
+ 	struct devfreq_event_dev *edev;
+ 	struct mutex lock;
+ 	struct dram_timing timing;
+-
+-	/*
+-	 * DDR Converser of Frequency (DCF) is used to implement DDR frequency
+-	 * conversion without the participation of CPU, we will implement and
+-	 * control it in arm trust firmware.
+-	 */
+-	wait_queue_head_t	wait_dcf_queue;
+-	int irq;
+-	int wait_dcf_flag;
+ 	struct regulator *vdd_center;
+ 	unsigned long rate, target_rate;
+ 	unsigned long volt, target_volt;
+@@ -117,7 +108,6 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
+ 			goto out;
+ 		}
+ 	}
+-	dmcfreq->wait_dcf_flag = 1;
+ 
+ 	err = clk_set_rate(dmcfreq->dmc_clk, target_rate);
+ 	if (err) {
+@@ -128,14 +118,6 @@ static int rk3399_dmcfreq_target(struct device *dev, unsigned long *freq,
+ 		goto out;
+ 	}
+ 
+-	/*
+-	 * Wait until bcf irq happen, it means freq scaling finish in
+-	 * arm trust firmware, use 100ms as timeout time.
+-	 */
+-	if (!wait_event_timeout(dmcfreq->wait_dcf_queue,
+-				!dmcfreq->wait_dcf_flag, HZ / 10))
+-		dev_warn(dev, "Timeout waiting for dcf interrupt\n");
+-
+ 	/*
+ 	 * Check the dpll rate,
+ 	 * There only two result we will get,
+@@ -241,22 +223,6 @@ static __maybe_unused int rk3399_dmcfreq_resume(struct device *dev)
+ static SIMPLE_DEV_PM_OPS(rk3399_dmcfreq_pm, rk3399_dmcfreq_suspend,
+ 			 rk3399_dmcfreq_resume);
+ 
+-static irqreturn_t rk3399_dmc_irq(int irq, void *dev_id)
+-{
+-	struct rk3399_dmcfreq *dmcfreq = dev_id;
+-	struct arm_smccc_res res;
+-
+-	dmcfreq->wait_dcf_flag = 0;
+-	wake_up(&dmcfreq->wait_dcf_queue);
+-
+-	/* Clear the DCF interrupt */
+-	arm_smccc_smc(ROCKCHIP_SIP_DRAM_FREQ, 0, 0,
+-		      ROCKCHIP_SIP_CONFIG_DRAM_CLR_IRQ,
+-		      0, 0, 0, 0, &res);
+-
+-	return IRQ_HANDLED;
+-}
+-
+ static int of_get_ddr_timings(struct dram_timing *timing,
+ 			      struct device_node *np)
+ {
+@@ -330,16 +296,10 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct rk3399_dmcfreq *data;
+-	int ret, irq, index, size;
++	int ret, index, size;
+ 	uint32_t *timing;
+ 	struct dev_pm_opp *opp;
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev,
+-			"Cannot get the dmc interrupt resource: %d\n", irq);
+-		return irq;
+-	}
+ 	data = devm_kzalloc(dev, sizeof(struct rk3399_dmcfreq), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+@@ -358,17 +318,6 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
+ 		return PTR_ERR(data->dmc_clk);
+ 	};
+ 
+-	data->irq = irq;
+-	ret = devm_request_irq(dev, irq, rk3399_dmc_irq, 0,
+-			       dev_name(dev), data);
+-	if (ret) {
+-		dev_err(dev, "Failed to request dmc irq: %d\n", ret);
+-		return ret;
+-	}
+-
+-	init_waitqueue_head(&data->wait_dcf_queue);
+-	data->wait_dcf_flag = 0;
+-
+ 	data->edev = devfreq_event_get_edev_by_phandle(dev, 0);
+ 	if (IS_ERR(data->edev))
+ 		return -EPROBE_DEFER;
+-- 
+2.17.0
