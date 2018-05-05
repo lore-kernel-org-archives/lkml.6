@@ -1,59 +1,107 @@
-Return-Path: <linus971@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525535446; cv=none;
-        d=google.com; s=arc-20160816;
-        b=m9IwmyzpSs39Bsw45w2TIYvypvVDQmNxY8cQsnr8uWX4Pc6gSIju6965gahtVWMhF9
-         IGeoRger76LibIm8dqaggw04tvGYSggPvvsFF3vF2/ZB42jYFq32WRLzp6s9NDj9E1i6
-         eQ7dXtOrncn534cMiXyGuSJil3vlu/f68dhg2AdzlFMrTpNUwxyIG5Tsuv0ZiAdmYmks
-         SRt7vkXRZWxYQq9DlP04dvzdRjnLvaUVfl0DHc23zS9CmvJw14b0lo9Hz1RNwAaKNdFQ
-         YSJpfo/lB6EKJfeWTtBTZuSdvYstPTSGFdRNnyOWk1vc+E8pDANFcO9CThRgQQjDXy2w
-         BIbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=x7CUpwm6zTN35+4BWjjLlgUOiVMKOq9dO2POAR75FPE=;
-        b=kkxZ2IOqetfrq28N2OQVM1MTjJJMLOefTCvwIOa9deriGXJeHqV9/lyJZgEm3HLeQ0
-         kzbNOx0hJRizXb40ecFfd6BZ4LGdhcsESCNOwBJ1IVNDe415UV3KSYYMBIO6M1iyFTZS
-         Vt3tyhHg92OnGas3pIB4oHvs800AHyqMQBzzzpgbCkdgrEbWfi0GCrEXUoTW/PlpUWOU
-         gBfBZv1OCOBGOXHIXUiuGSHYf47cFz7/IcHkTeCsKWwrsx9OKDDuO28+yoZxhwvBYeFP
-         dZ2Cf8isFPVjcEKj3NrUm4pJsDkLyIck4TGWD263B3w243NrznErQsiBHofrIN9cEKIT
-         iQbQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=FdAboMIu;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linux-foundation.org header.s=google header.b=FdAboMIu;
-       spf=pass (google.com: domain of linus971@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=linus971@gmail.com
-X-Google-Smtp-Source: AB8JxZrHNPT5uKkutO97LFZYq4SAbLChh80r88Z9bt2u0/+X1stSj697Mg26SATlr5TapE7mkEOnXBRgRAHIll0jx3s=
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1470203-1525504840-2-12100357137804128292
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525504839; b=ay5vzejCiHoJr2mrmPkZvGOigI2SYn8mjcthjA8OX5elMImnFB
+    +WRNmJIvM7HVsjkkQWMChtK9CBCH5Jl4roxT4RkmPNvewf/Ci7gx6gCjs3ERRpte
+    Qxm2hvL0Nolh+mLtYlUwwzSYDWEcue96aD0htexeQvjxB4usm2zzrpQl6L0zB007
+    S4iaMhVcBBRpLqjFnv2sH2aZelaqWflGqE3yIfoZzele1+uRAjGmOaxQ455kbJlh
+    PVROWM2BhRgZ1HmdRhUxKAaqyng8T7ZMDT4rkPr4ktXtBnEKdGKTlCJooyfq20GE
+    lgenJdE+AOZAiGuRPQZ0i81ZjKpdlE+oKQhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=mime-version:from:date:message-id:subject
+    :to:cc:content-type:sender:list-id; s=fm2; t=1525504839; bh=vTAR
+    4rd+VbdOhqBr/UXnjiGfKuL0BuE/WNKx4gTDtHo=; b=NXhNqcuxWx8fRZixQ2s0
+    O7K1ihlDF46kwINyJ3te5fP3+FLFXzTZ3AKDOVtiP+4t16d9zzve+s9Q72uTXMR9
+    4miBIWNFi/m0hEVqZk0H1zVqCqfVqF+oKtPa6u817yy6IFWNfb0GQwj1ZagYSFEv
+    9X1EVQMBaajpLyEiq8pIgyn7ytHiu6TGaMzUbxckjEZ4GZ1B1SKjXWvSpjNmeOfX
+    Xh3zitl/ww2lKiNCdPWBJRY/E3oL46BgZ+6MR+zBmLU0F+lHIYcb8M+tFt4gQIDR
+    NFspYlmeDcJqG8MvsivPL5me3n/+kDd71netQ3iR3KlDvFh8w5zcAwPauFKLVBsm
+    jQ==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+    header.i=@gmail.com header.b=ofMtNqa2 x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=Pd1aEoLS;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+      header.i=@gmail.com header.b=ofMtNqa2 x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=Pd1aEoLS;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfCO1n/y8L9IBnHJnfhioFZNkVJF72tK+XQioApO6hbatCe6+VvaPJiXMZgphn0oUsnO6hcTdHXAL26We5MFV+bZQrdiFYWHt4sUl6yjnVHBnG4pUuj+y
+    YV4HJnuWv27riV5dxjyTNiKS7rUy6VbyjARf7vsZP6ZKrvG7hBGLEaKKD1lb0zRXTp0JUlkz2c+vtoHquKglQlkQJswwwdkc0LjjSod5YU1jazRrSve0oF8Q
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10
+    a=AJ7UbYC7JNMA:10 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=QSSnCv9aFBVFueqTE3wA:9
+    a=QEXdDO2ut3YA:10 a=Qn6xTRysOZEA:10 a=FoiGvTp0eMAA:10 a=pRQRx_yQ9a0A:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1750831AbeEEHUh (ORCPT <rfc822;greg@kroah.com>);
+        Sat, 5 May 2018 03:20:37 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:38630 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750802AbeEEHUg (ORCPT
+        <rfc822;stable@vger.kernel.org>); Sat, 5 May 2018 03:20:36 -0400
+X-Google-Smtp-Source: AB8JxZrYJwwEUYhvmER02VsSH3pE53AHWwKM6xb1oxLckX/TSvWtZm+M44kpBguvgXIzoRETgMLIOXvXfCsbMvWTVr4=
 MIME-Version: 1.0
-References: <CAK7LNAR59KjaJdDNwJaSR_79s84hBj_MqMQ=PaFqJqzBKLUsJA@mail.gmail.com>
-In-Reply-To: <CAK7LNAR59KjaJdDNwJaSR_79s84hBj_MqMQ=PaFqJqzBKLUsJA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 05 May 2018 15:50:35 +0000
-Message-ID: <CA+55aFzX9CeRr3HZtVN5XKK2Ema5TjXo4FCgD8ukWz6Waz=pZw@mail.gmail.com>
-Subject: Re: [RFC] Removal of CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arch <linux-arch@vger.kernel.org>,
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"Steven Miao (Steven Miao)" <realmz6@gmail.com>, James Hogan <jhogan@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Charlemagne Lasse <charlemagnelasse@gmail.com>
+Date: Sat, 5 May 2018 09:20:35 +0200
+Message-ID: <CAFGhKbxsNyZqpwJER9RXtpW1FsoNYMHg2nXDLHr9wQXUuMr=+g@mail.gmail.com>
+Subject: EOL for the 3.2 kernel?
+To: Ben Hutchings <ben@decadent.org.uk>
+Cc: LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599618878977275794?=
-X-GMAIL-MSGID: =?utf-8?q?1599639856646467819?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sat, May 5, 2018 at 12:17 AM Masahiro Yamada <
-yamada.masahiro@socionext.com> wrote:
+Hi,
 
-> My question is,
-> is it OK to remove CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX entirely?
+will there be an announcement that Linux 3.2 is EOL or will there be
+another release which announces it as the last release of this stable
+series? The kernel release page
+https://www.kernel.org/category/releases.html lists it as EOL for this
+month.
 
-Absolutely. Let's not keep legacy stuff that complicates things around
-unless necessary.
-
-Even if there might be some unlikely future reason why it might be revived
-some day, let's not use "what if" as an argument to keep unused code around.
-
-              Linus
+Charlemagne
