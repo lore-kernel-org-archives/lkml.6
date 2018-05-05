@@ -1,72 +1,118 @@
-Return-Path: <jason.vas.dias@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525953783; cv=none;
-        d=google.com; s=arc-20160816;
-        b=of4z9ePcLQr1kcwSnfoWw4XZLTJgou6WLlWEBaK005DJaF9LKQOeUszGQhaTHJtrSZ
-         TshG9VsIWlRO+ZRixj97jDTMtCeJlkh1pTXSGSkU5nmoSo9nhWL75hPKNYNkcfco1NHI
-         zDVtwWLRHMZUMROYI8Ga6xuhQl5SbZgl3v5HbO/gOGGGPIib9ZbzxLTJAZH1113K3UcE
-         47BqGDdeuhBaXky45xW/sS321gWkbaTVGQoajfouJbbIPSGGYDlm46OnGSVkDMX7REjC
-         xRMmhj3aTv/eHH++nMIYhEbWwCtnVFBV9YAQ/RtU4hsqwoocO7X1Lb9Oc0r7NmphdTxM
-         XAzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to
-         :mime-version:dkim-signature:arc-authentication-results;
-        bh=5xS+HFeOn4uOLUdoVcuZgrMIaE5HIiotvF32una61N0=;
-        b=pJ75Ix8LzSvJZTt9jRHxIu/OMTQP2uKaYGemKXim0ipZFnoO5a8RncWlDnsxHBhEAK
-         vJQaNedh5wjp62ADCowW7VbJ8ChTyU2U7sbUbGH2FmfVJDucuFPKrlMeSOQYap3u3Rlz
-         C2Hp4SfYFv+u6gJDXw2OOYFXRUGApTb5aA9NVycM0OWmd8GOOYvb1wZoUrUeeFmgpiMe
-         NuqxECURwvUvyDAOwqsaq+ZvyzghBbbAN3yNuAoMS9+jL+oA71lu98zoOiWM7EBUcLF+
-         qeDLr0q+OhWUcOjdMZQBh4GrX2TkVIANELzc7iGK4KSnarBuevrZQFDujZzTAvE+i53x
-         az5A==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GPqMGxfM;
-       spf=pass (google.com: domain of jason.vas.dias@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jason.vas.dias@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=GPqMGxfM;
-       spf=pass (google.com: domain of jason.vas.dias@gmail.com designates 209.85.220.41 as permitted sender) smtp.mailfrom=jason.vas.dias@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZp1G50+uJpqVqlhrTB+P61w93Jc5xGuERCiuUB1zRcxD9AWEBAhqMyEx74U5kkMNLFcGnXOt0YkOu752dRzizw=
+Date: Sat, 5 May 2018 09:40:41 -0700
+From: Greg KH <gregkh@linuxfoundation.org>
+To: netdev@vger.kernel.org,
+	syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+	tj@kernel.org
+Subject: Re: WARNING in kernfs_add_one
+Message-ID: <20180505164041.GD7746@kroah.com>
+References: <0000000000000390eb056b77596d@google.com>
 MIME-Version: 1.0
-In-Reply-To: <4502a7e5-930f-15b6-fbef-929df29d5ef0@infradead.org>
-References: <CAKi4VA+1krn9rdBWE69DkhNZSrxJoeYzyPgvn-SUk8U0=CxFkw@mail.gmail.com>
- <54EB4C83.2000500@suse.cz> <CAKi4VAJwvtLaF1GTw1dg__CXHGjwOwJqUS=g5B0rbPNp1w8dDg@mail.gmail.com>
- <4502a7e5-930f-15b6-fbef-929df29d5ef0@infradead.org>
-From: Jason Vas Dias <jason.vas.dias@gmail.com>
-Date: Thu, 10 May 2018 12:03:01 +0000
-Message-ID: <CALyZvKzDYUFxbkZW=zVP6Z5KV3QQGJaZb6uW35qkZRV2xYUzJg@mail.gmail.com>
-Subject: Re: Differences between builtins and modules
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Lucas De Marchi <lucas.de.marchi@gmail.com>, Harish Jenny K N <harish_kandiga@mentor.com>,
-	linux-modules <linux-modules@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-	greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1493908198172541119?=
-X-GMAIL-MSGID: =?utf-8?q?1600078513973592061?=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000000390eb056b77596d@google.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Sorry I didn't see this mail until now - RE:
+On Sat, May 05, 2018 at 08:47:02AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    8fb11a9a8d51 net/ipv6: rename rt6_next to fib6_next
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14b27237800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c416c61f3cd96be
+> dashboard link: https://syzkaller.appspot.com/bug?extid=df47f81c226b31d89fb1
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=172fb3e7800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16552e57800000
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com
+> 
+> RBP: 00007fff808f3e10 R08: 0000000000000002 R09: 00007fff80003534
+> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+> R13: 0000000000000006 R14: 0000000000000000 R15: 0000000000000000
+> ------------[ cut here ]------------
+> kernfs: ns required in 'ieee80211' for 'phy3'
 
-Randy Dunlap <rdunlap@infradead.org> wrote:
-> Would someone please answer/reply to this (related) kernel bugzilla entry:
-> https://bugzilla.kernel.org/show_bug.cgi?id=118661
+That's interesting, this looks like a netfilter bug (adding netdev to
+the report here.)
 
-Yes, I raised this bug because I think modinfo should return 0 exit status
-if a requested module is built-in, not just when it has been loaded, like
-this modified version does:
-$ modinfo snd
-modinfo: ERROR: Module snd not found.
-built-in: snd
-$ echo $?
-0
+Yes, we can "tone down" the kernfs warning to just be an error message
+in the log, but there might be something worse going on here.
 
-What was the query about the Bug 118661 that needs to be answered ?
-I don't see any query on the bug report - just a comment from someone
-who also agrees modinfo should return OK for a built-in module .
+Network developers, any idea?  Rest of the callback chain is here:
 
-Glad to hear someone is finally considering fixing modinfo to report
-status of built-in modules - with only a 2 year response time.
 
-Thanks & Best Regards,
-Jason
+> WARNING: CPU: 0 PID: 4538 at fs/kernfs/dir.c:759 kernfs_add_one+0x406/0x4d0
+> fs/kernfs/dir.c:758
+> Kernel panic - not syncing: panic_on_warn set ...
+> 
+> CPU: 0 PID: 4538 Comm: syz-executor486 Not tainted 4.17.0-rc3+ #33
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  panic+0x22f/0x4de kernel/panic.c:184
+>  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+>  report_bug+0x252/0x2d0 lib/bug.c:186
+>  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+> RIP: 0010:kernfs_add_one+0x406/0x4d0 fs/kernfs/dir.c:758
+> RSP: 0018:ffff8801ca9eece0 EFLAGS: 00010286
+> RAX: 000000000000002d RBX: ffffffff87d5cee0 RCX: ffffffff8160ba7d
+> RDX: 0000000000000000 RSI: ffffffff81610731 RDI: ffff8801ca9ee840
+> RBP: ffff8801ca9eed20 R08: ffff8801d9538500 R09: 0000000000000006
+> R10: ffff8801d9538500 R11: 0000000000000000 R12: ffff8801ad1cb6c0
+> R13: ffffffff885da640 R14: 0000000000000020 R15: 0000000000000000
+>  kernfs_create_link+0x112/0x180 fs/kernfs/symlink.c:41
+>  sysfs_do_create_link_sd.isra.2+0x90/0x130 fs/sysfs/symlink.c:43
+>  sysfs_do_create_link fs/sysfs/symlink.c:79 [inline]
+>  sysfs_create_link+0x65/0xc0 fs/sysfs/symlink.c:91
+>  device_add_class_symlinks drivers/base/core.c:1612 [inline]
+>  device_add+0x7a0/0x16d0 drivers/base/core.c:1810
+>  wiphy_register+0x178a/0x2430 net/wireless/core.c:806
+>  ieee80211_register_hw+0x13cd/0x35d0 net/mac80211/main.c:1047
+>  mac80211_hwsim_new_radio+0x1d9b/0x3410
+> drivers/net/wireless/mac80211_hwsim.c:2772
+>  hwsim_new_radio_nl+0x7a7/0xa60 drivers/net/wireless/mac80211_hwsim.c:3246
+>  genl_family_rcv_msg+0x889/0x1120 net/netlink/genetlink.c:599
+>  genl_rcv_msg+0xc6/0x170 net/netlink/genetlink.c:624
+>  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2448
+>  genl_rcv+0x28/0x40 net/netlink/genetlink.c:635
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+>  netlink_unicast+0x58b/0x740 net/netlink/af_netlink.c:1336
+>  netlink_sendmsg+0x9f0/0xfa0 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:629 [inline]
+>  sock_sendmsg+0xd5/0x120 net/socket.c:639
+>  ___sys_sendmsg+0x805/0x940 net/socket.c:2117
+>  __sys_sendmsg+0x115/0x270 net/socket.c:2155
+>  __do_sys_sendmsg net/socket.c:2164 [inline]
+>  __se_sys_sendmsg net/socket.c:2162 [inline]
+>  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2162
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4404c9
+> RSP: 002b:00007fff808f3e08 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004404c9
+> RDX: 0000000000000000 RSI: 0000000020b3dfc8 RDI: 0000000000000005
+> RBP: 00007fff808f3e10 R08: 0000000000000002 R09: 00007fff80003534
+> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
+> R13: 0000000000000006 R14: 0000000000000000 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+
+
+Any ideas?
+
+thanks,
+
+greg k-h
