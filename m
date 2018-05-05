@@ -1,72 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751209AbeEEMKy (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 08:10:54 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:43618 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeEEMKw (ORCPT
+        id S1751243AbeEEMZz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 08:25:55 -0400
+Received: from mta-p4.oit.umn.edu ([134.84.196.204]:55274 "EHLO
+        mta-p4.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751086AbeEEMZx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 08:10:52 -0400
-X-Google-Smtp-Source: AB8JxZrZwGNBHoOePOtAqXU2vf0elJZjsgtSURO0xxzMlu7IVXI/JLWjOGIx0q8Ng6RHITsCNIucrGZYcHvou6L8UnU=
+        Sat, 5 May 2018 08:25:53 -0400
+X-Google-Smtp-Source: AB8JxZpJuO+BFSzmrt0hDdkXOLoNCUna4MzJY8sUg0AYHf0uQDhwt1xTbLKbHHI3xq/Tbkv3ciYG+kpbcrLwWclm6Lk=
 MIME-Version: 1.0
-In-Reply-To: <1525508963-7986-4-git-send-email-Anson.Huang@nxp.com>
-References: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com> <1525508963-7986-4-git-send-email-Anson.Huang@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 5 May 2018 09:10:51 -0300
-Message-ID: <CAOMZO5B8xrnjyoPoj0J_+WM6TBbE1Gbq8HChdTCQ=UpKYyRBmQ@mail.gmail.com>
-Subject: Re: [PATCH V6 4/7] ARM: dts: imx6sx-sabreauto: add fec support
-To: Anson Huang <Anson.Huang@nxp.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Haibo Chen <haibo.chen@freescale.com>,
-        Fugang Duan <fugang.duan@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-        Robin Gong <yibin.gong@nxp.com>, NXP Linux Team <Linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <63ff0aae-9a34-9c6a-625d-7b07b7da9ed3@axentia.se>
+References: <1525484596-5585-1-git-send-email-wang6495@umn.edu> <63ff0aae-9a34-9c6a-625d-7b07b7da9ed3@axentia.se>
+From: Wenwen Wang <wang6495@umn.edu>
+Date: Sat, 5 May 2018 07:17:29 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7e+Gvg3kAXbYwQRCvt0m-w-zWi-XqL5Q15vMGS80CWdng@mail.gmail.com>
+Message-ID: <CAAa=b7e+Gvg3kAXbYwQRCvt0m-w-zWi-XqL5Q15vMGS80CWdng@mail.gmail.com>
+Subject: Re: [PATCH] i2c: core-smbus: fix a potential uninitialization bug
+To: Peter Rosin <peda@axentia.se>
+Cc: Kangjie Lu <kjlu@umn.edu>, Wolfram Sang <wsa@the-dreams.de>,
+        "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 5, 2018 at 5:29 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Add FEC support on i.MX6SX Sabre Auto board.
+On Sat, May 5, 2018 at 5:28 AM, Peter Rosin <peda@axentia.se> wrote:
+> On 2018-05-05 03:43, Wenwen Wang wrote:
+>> In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
+>> which are used to save a series of messages, as mentioned in the comment.
+>> According to the value of the variable "size", msgbuf0 is initialized to
+>> various values. In contrast, msgbuf1 is left uninitialized until the
+>> function i2c_transfer() is invoked. However, mgsbuf1 is not always
+>> initialized on all possible execution paths (implementation) of
+>> i2c_transfer(). Thus, it is possible that mgsbuf1 may still be
+>> uninitialized even after the invocation of the function i2c_transfer(),
+>> especially when the return value of ic2_transfer() is not checked properly.
+>> In the following execution, the uninitialized msgbuf1 will be used, such as
+>> for security checks. Since uninitialized values can be random and
+>> arbitrary, this will cause undefined behaviors or even check bypass. For
+>> example, it is expected that if the value of "size" is
+>> I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
+>> than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
+>> value read from msgbuf1 is assigned to data->block[0], which can
+>> potentially lead to invalid block write size, as demonstrated in the error
+>> message.
+>>
+>> This patch checks the return value of i2c_transfer() and also initializes
+>> the first byte of msgbuf1 with 0 to avoid undefined behaviors or security
+>> issues.
+>>
+>> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+>> ---
+>>  drivers/i2c/i2c-core-smbus.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+>> index b5aec33..e8470d5 100644
+>> --- a/drivers/i2c/i2c-core-smbus.c
+>> +++ b/drivers/i2c/i2c-core-smbus.c
+>> @@ -344,6 +344,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+>>       };
+>>
+>>       msgbuf0[0] = command;
+>> +     msgbug1[0] = 0;
+>>       switch (size) {
+>>       case I2C_SMBUS_QUICK:
+>>               msg[0].len = 0;
+>> @@ -466,6 +467,8 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+>>       status = i2c_transfer(adapter, msg, num);
+>>       if (status < 0)
+>>               return status;
+>> +     if (status != num)
+>> +             return -EIO;
+>>
+>>       /* Check PEC if last message is a read */
+>>       if (i && (msg[num-1].flags & I2C_M_RD)) {
+>>
 >
-> Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+> I think these two hunks should be two separate patches. They address
+> orthogonal issues...
 
-Again, it is not clear who is the author here. Is it Fugang or yourself?
+Sure, I will split it into two patches and fix the typo :)
 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> changes since V5:
->         use "gpios" instead of "enable-gpio".
->  arch/arm/boot/dts/imx6sx-sabreauto.dts | 80 ++++++++++++++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> index 4d41b4d..7dda741 100644
-> --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> @@ -18,6 +18,17 @@
->                 reg = <0x80000000 0x80000000>;
->         };
->
-> +       reg_fec: fec_io_supply {
-> +               compatible = "regulator-gpio";
-> +               regulator-name = "1.8V_1.5V_FEC";
-> +               regulator-min-microvolt = <1500000>;
-> +               regulator-max-microvolt = <1800000>;
-> +               states = <1500000 0x0 1800000 0x1>;
-> +               gpios = <&max7322 0 GPIO_ACTIVE_HIGH>;
-> +               vin-supply = <&sw2_reg>;
-> +               enable-active-high;
-> +       };
-
-I still find this confusing.
-
-There is no consumer for reg_fec in, so it seems you are relying on
-the fact that the kernel regulator core will disable reg_fec to put
-the regulator in the state you require.
+Thanks!
+Wenwen
