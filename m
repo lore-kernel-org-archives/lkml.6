@@ -1,109 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751398AbeEEF1d (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 01:27:33 -0400
-Received: from mga18.intel.com ([134.134.136.126]:29744 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750744AbeEEF1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 01:27:31 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,364,1520924400";
-   d="scan'208";a="51701360"
-Date: Sat, 5 May 2018 13:26:42 +0800
-From: kbuild test robot <lkp@intel.com>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: kbuild-all@01.org, jacek.anaszewski@gmail.com, pavel@ucw.cz,
-        robh+dt@kernel.org, mark.rutland@arm.com, xiaotong.lu@spreadtrum.com,
-        baolin.wang@linaro.org, broonie@kernel.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] leds: Add Spreadtrum SC27xx breathing light
- controller driver
-Message-ID: <201805051300.jy5SNVta%fengguang.wu@intel.com>
-References: <1bf5bc3e007d237477d740f47ed63f05aa71b348.1525427961.git.baolin.wang@linaro.org>
+        id S1751085AbeEEFgt (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 01:36:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49894 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750744AbeEEFgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 01:36:48 -0400
+Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+From: Chao Yu <yuchao0@huawei.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20180426083247.86337-1-yuchao0@huawei.com>
+ <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
+ <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+Message-ID: <8dcbf002-b585-23fa-8c0d-0e3330eb54e5@huawei.com>
+Date: Sat, 5 May 2018 13:36:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1bf5bc3e007d237477d740f47ed63f05aa71b348.1525427961.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaotong,
+Ping,
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on v4.17-rc3 next-20180504]
-[cannot apply to j.anaszewski-leds/for-next]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Baolin-Wang/dt-bindings-leds-Add-SC27xx-breathing-light-controller-documentation/20180504-200830
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-
-smatch warnings:
-drivers/leds/leds-sc27xx-bltc.c:337 sc27xx_led_probe() warn: unsigned 'reg' is never less than zero.
-
-vim +/reg +337 drivers/leds/leds-sc27xx-bltc.c
-
-   299	
-   300	static int sc27xx_led_probe(struct platform_device *pdev)
-   301	{
-   302		struct device *dev = &pdev->dev;
-   303		struct device_node *np = dev->of_node, *child;
-   304		struct sc27xx_led_priv *priv;
-   305		u32 base, count, reg;
-   306		int err;
-   307	
-   308		count = of_get_child_count(np);
-   309		if (!count || count > SC27XX_LEDS_MAX)
-   310			return -EINVAL;
-   311	
-   312		err = of_property_read_u32(np, "reg", &base);
-   313		if (err) {
-   314			dev_err(dev, "fail to get reg of property\n");
-   315			return err;
-   316		}
-   317	
-   318		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-   319		if (!priv)
-   320			return -ENOMEM;
-   321	
-   322		priv->base = base;
-   323		priv->regmap = dev_get_regmap(dev->parent, NULL);
-   324		if (IS_ERR(priv->regmap)) {
-   325			err = PTR_ERR(priv->regmap);
-   326			dev_err(dev, "failed to get regmap: %d\n", err);
-   327			return err;
-   328		}
-   329	
-   330		for_each_child_of_node(np, child) {
-   331			err = of_property_read_u32(child, "reg", &reg);
-   332			if (err) {
-   333				of_node_put(child);
-   334				return err;
-   335			}
-   336	
- > 337			if (reg < 0 || reg >= SC27XX_LEDS_MAX
-   338			    || priv->leds[reg].active) {
-   339				of_node_put(child);
-   340				return -EINVAL;
-   341			}
-   342	
-   343			priv->leds[reg].active = true;
-   344			priv->leds[reg].ldev.name =
-   345				of_get_property(child, "label", NULL) ? : child->name;
-   346		}
-   347	
-   348		return sc27xx_led_register(dev, priv);
-   349	}
-   350	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+On 2018/4/27 10:37, Chao Yu wrote:
+> On 2018/4/27 0:36, Jaegeuk Kim wrote:
+>> On 04/26, Chao Yu wrote:
+>>> On 2018/4/26 23:48, Jaegeuk Kim wrote:
+>>>> On 04/26, Chao Yu wrote:
+>>>>> Thread A				Thread B
+>>>>> - f2fs_ioc_commit_atomic_write
+>>>>>  - commit_inmem_pages
+>>>>>   - f2fs_submit_merged_write_cond
+>>>>>   : write data
+>>>>> 					- write_checkpoint
+>>>>> 					 - do_checkpoint
+>>>>> 					 : commit all node within CP
+>>>>> 					 -> SPO
+>>>>>   - f2fs_do_sync_file
+>>>>>    - file_write_and_wait_range
+>>>>>    : wait data writeback
+>>>>>
+>>>>> In above race condition, data/node can be flushed in reversed order when
+>>>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+>>>>> atomic written data being corrupted.
+>>>>
+>>>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
+>>>> no problem. If it fails, there is no fsync mark where we can recover it, so
+>>>
+>>> Node is flushed by checkpoint before data, with reversed order, that's the problem.
+>>
+>> What do you mean? Data should be in disk, in order to proceed checkpoint.
+> 
+> 1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
+> it writeback.
+> 2. thread A: commit_inmem_pages update related node.
+> 3. thread B: do checkpoint, flush all nodes to disk
+> 4. SPOR
+> 
+> Then, atomic file becomes corrupted since nodes is flushed before data.
+> 
+> Thanks,
+> 
+>>
+>>>
+>>> Thanks,
+>>>
+>>>> we can just ignore the last written data as nothing.
+>>>>
+>>>>>
+>>>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+>>>>> keep data and node of atomic file being flushed orderly.
+>>>>>
+>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>> ---
+>>>>>  fs/f2fs/file.c    | 4 ++++
+>>>>>  fs/f2fs/segment.c | 3 +++
+>>>>>  2 files changed, 7 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>>> index be7578774a47..a352804af244 100644
+>>>>> --- a/fs/f2fs/file.c
+>>>>> +++ b/fs/f2fs/file.c
+>>>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>>  
+>>>>>  	trace_f2fs_sync_file_enter(inode);
+>>>>>  
+>>>>> +	if (atomic)
+>>>>> +		goto write_done;
+>>>>> +
+>>>>>  	/* if fdatasync is triggered, let's do in-place-update */
+>>>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>>>>>  		set_inode_flag(inode, FI_NEED_IPU);
+>>>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>>  		return ret;
+>>>>>  	}
+>>>>>  
+>>>>> +write_done:
+>>>>>  	/* if the inode is dirty, let's recover all the time */
+>>>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+>>>>>  		f2fs_write_inode(inode, NULL);
+>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>> index 584483426584..9ca3d0a43d93 100644
+>>>>> --- a/fs/f2fs/segment.c
+>>>>> +++ b/fs/f2fs/segment.c
+>>>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>>>>  
+>>>>>  		lock_page(page);
+>>>>>  
+>>>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
+>>>>> +
+>>>>>  		if (recover) {
+>>>>>  			struct dnode_of_data dn;
+>>>>>  			struct node_info ni;
+>>>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+>>>>>  		/* drop all uncommitted pages */
+>>>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>>>>>  	} else {
+>>>>> +		/* wait all committed IOs writeback and release them from list */
+>>>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+>>>>>  	}
+>>>>>  
+>>>>> -- 
+>>>>> 2.15.0.55.gc2ece9dc4de6
+>>
+>> .
+>>
+> 
+> 
+> .
+> 
