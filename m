@@ -1,79 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751238AbeEEHFU (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 03:05:20 -0400
-Received: from dd26836.kasserver.com ([85.13.145.193]:51296 "EHLO
-        dd26836.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeEEHFT (ORCPT
+        id S1751767AbeEEHHF (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 03:07:05 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:33082 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750831AbeEEHHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 03:05:19 -0400
-Date: Sat, 5 May 2018 09:05:13 +0200
-From: Danny Milosavljevic <dannym@scratchpost.org>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Andrea Bondavalli <andrea.bondavalli74@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.xyz>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v14 2/8] ASoC: sun4i-codec: Add Mic1 Boost Volume, Mic2
- Boost Volume
-Message-ID: <20180505090513.7e3f02c2@scratchpost.org>
-In-Reply-To: <20180503143319.4vyh2y5sluatssnv@flea>
-References: <20180502210800.1971-1-dannym@scratchpost.org>
-        <20180502210800.1971-3-dannym@scratchpost.org>
-        <20180503143319.4vyh2y5sluatssnv@flea>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-unknown-linux-gnu)
+        Sat, 5 May 2018 03:07:02 -0400
+X-Google-Smtp-Source: AB8JxZpaNXbWcjVXYRQ65UJTHTcJOgPFcnariwKHQ2hkb9mtotqX7rUtb1ilscazpLApP+EohYO+PQ==
+Date: Sat, 5 May 2018 09:06:58 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, Ingo Molnar <mingo@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@osg.samsung.com>, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [RFC PATCH 2/2] net: mac808211: mac802154: use
+ lockdep_assert_in_softirq() instead own warning
+Message-ID: <20180505070658.sqttolnnkgv7xyj5@gmail.com>
+References: <20180504175144.12179-1-bigeasy@linutronix.de>
+ <20180504175144.12179-3-bigeasy@linutronix.de>
+ <20180504183249.GU12217@hirez.programming.kicks-ass.net>
+ <20180504184538.gavk7e2vtm73e32w@linutronix.de>
+ <20180504185132.GV12217@hirez.programming.kicks-ass.net>
+ <20180504190735.izmzibhb66gjb5wr@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504190735.izmzibhb66gjb5wr@linutronix.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
 
-On Thu, 3 May 2018 16:33:19 +0200
-Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+* Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
 
-> > +struct sun4i_codec_quirks {
-> > +	const struct regmap_config *regmap_config;
-> > +	const struct snd_soc_component_driver *codec;
-> > +	struct snd_soc_card * (*create_card)(struct device *dev);
-> > +	struct reg_field reg_adc_fifoc;	/* used for regmap_field */
-> > +	unsigned int reg_dac_txdata;	/* TX FIFO offset for DMA config */
-> > +	unsigned int reg_adc_rxdata;	/* RX FIFO offset for DMA config */
-> > +	bool has_reset;
-> > +	const struct snd_kcontrol_new *controls;
-> > +	unsigned int num_controls;
-> > +};
-> > +
-> > +static int sun4i_codec_component_driver_probe(struct snd_soc_component *codec)
-> > +{
-> > +	const struct sun4i_codec_quirks *quirks;
-> > +
-> > +	quirks = of_device_get_match_data(codec->dev);
-> > +	return snd_soc_add_component_controls(codec,
-> > +					      quirks->controls,
-> > +					      quirks->num_controls);  
+> On 2018-05-04 20:51:32 [+0200], Peter Zijlstra wrote:
+> > On Fri, May 04, 2018 at 08:45:39PM +0200, Sebastian Andrzej Siewior wrote:
+> > > On 2018-05-04 20:32:49 [+0200], Peter Zijlstra wrote:
+> > > > On Fri, May 04, 2018 at 07:51:44PM +0200, Sebastian Andrzej Siewior wrote:
+> > > > > From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+> > > > > 
+> > > > > The warning in ieee802154_rx() and ieee80211_rx_napi() is there to ensure
+> > > > > the softirq context for the subsequent netif_receive_skb() call. 
+> > > > 
+> > > > That's not in fact what it does though; so while that might indeed be
+> > > > the intent that's not what it does.
+> > > 
+> > > It was introduced in commit d20ef63d3246 ("mac80211: document
+> > > ieee80211_rx() context requirement"):
+> > > 
+> > >     mac80211: document ieee80211_rx() context requirement
+> > >     
+> > >     ieee80211_rx() must be called with softirqs disabled
+> > 
+> > softirqs disabled, ack that is exactly what it checks.
+> > 
+> > But afaict the assertion you introduced tests that we are _in_ softirq
+> > context, which is not the same.
 > 
-> Why not just extending the sun4i_codec_controls to add it, and create
-> a duplicate one for the A20?
+> indeed, now it clicked. Given what I wrote in the cover letter would you
+> be in favour of (a proper) lockdep_assert_BH_disabled() or the cheaper
+> local_bh_enable() (assuming the network folks don't mind the cheaper
+> version)?
 
-Because sun4i_codec_controls has five controls shared between A10 and A20,
-and only two not shared.
+BTW., going by the hardirq variant nomenclature:
 
-And if we extended sun4i_codec_controls, we'd also have to duplicate
-sun4i_codec_codec in order to use sun4i_codec_controls vs. sun7i_codec_controls,
-which really contains exactly the same data otherwise.
+        lockdep_assert_irqs_enabled();
 
-The quirks here are just for two controls, Mic1 Boost Volume and Mic2 Boost Volume,
-and there not even for the names or anything - just for some reason the register
-moved away.
+... the proper name would not be lockdep_assert_BH_disabled(), but:
 
-The simplest way was to add it to the quirks - which already have a variant
-selection etc.
+        lockdep_assert_softirqs_disabled();
+
+Thanks,
+
+	Ingo
