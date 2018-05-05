@@ -1,21 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeEEL4K (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 07:56:10 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:43474 "EHLO
+        id S1751209AbeEEMKy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 08:10:54 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:43618 "EHLO
         mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeEEL4I (ORCPT
+        with ESMTP id S1750821AbeEEMKw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 07:56:08 -0400
-X-Google-Smtp-Source: AB8JxZoJhJ10gwK33b7BpVkzokd0DuFn1Ogr0x7lhrKYMPlvmR3f7jnuGGX3dnEj1Snk2Up97yM7IS7CPY0xQKFJS+Y=
+        Sat, 5 May 2018 08:10:52 -0400
+X-Google-Smtp-Source: AB8JxZrZwGNBHoOePOtAqXU2vf0elJZjsgtSURO0xxzMlu7IVXI/JLWjOGIx0q8Ng6RHITsCNIucrGZYcHvou6L8UnU=
 MIME-Version: 1.0
-In-Reply-To: <1525508963-7986-7-git-send-email-Anson.Huang@nxp.com>
-References: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com> <1525508963-7986-7-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1525508963-7986-4-git-send-email-Anson.Huang@nxp.com>
+References: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com> <1525508963-7986-4-git-send-email-Anson.Huang@nxp.com>
 From: Fabio Estevam <festevam@gmail.com>
-Date: Sat, 5 May 2018 08:56:07 -0300
-Message-ID: <CAOMZO5D1H4+w=FGh+8icBziunDzM4jN7peA=mirGb9RBHHqMsg@mail.gmail.com>
-Subject: Re: [PATCH V6 7/7] ARM: dts: imx6sx-sabreauto: add egalax touch
- screen support
+Date: Sat, 5 May 2018 09:10:51 -0300
+Message-ID: <CAOMZO5B8xrnjyoPoj0J_+WM6TBbE1Gbq8HChdTCQ=UpKYyRBmQ@mail.gmail.com>
+Subject: Re: [PATCH V6 4/7] ARM: dts: imx6sx-sabreauto: add fec support
 To: Anson Huang <Anson.Huang@nxp.com>
 Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
@@ -33,44 +32,41 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anson,
-
 On Sat, May 5, 2018 at 5:29 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> Add egalax touch screen support on i2c2 bus.
+> Add FEC support on i.MX6SX Sabre Auto board.
 >
-> Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
+> Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
 
-Is Haibo the author of this patch? If so, his name should appear in
-the From field.
+Again, it is not clear who is the author here. Is it Fugang or yourself?
 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
 > changes since V5:
->         improve pinctrl node name and touchscreen node name.
->  arch/arm/boot/dts/imx6sx-sabreauto.dts | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>         use "gpios" instead of "enable-gpio".
+>  arch/arm/boot/dts/imx6sx-sabreauto.dts | 80 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 80 insertions(+)
 >
 > diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> index 1dc5b58..3fe41d3 100644
+> index 4d41b4d..7dda741 100644
 > --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
 > +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-> @@ -122,6 +122,12 @@
->  };
+> @@ -18,6 +18,17 @@
+>                 reg = <0x80000000 0x80000000>;
+>         };
 >
->  &iomuxc {
-> +       pinctrl_egalax_int: egalax-intgrp {
-> +               fsl,pins = <
-> +                       MX6SX_PAD_SD4_RESET_B__GPIO6_IO_22      0x80000000
-> +               >;
+> +       reg_fec: fec_io_supply {
+> +               compatible = "regulator-gpio";
+> +               regulator-name = "1.8V_1.5V_FEC";
+> +               regulator-min-microvolt = <1500000>;
+> +               regulator-max-microvolt = <1800000>;
+> +               states = <1500000 0x0 1800000 0x1>;
+> +               gpios = <&max7322 0 GPIO_ACTIVE_HIGH>;
+> +               vin-supply = <&sw2_reg>;
+> +               enable-active-high;
 > +       };
-> +
->         pinctrl_enet1: enet1grp {
->                 fsl,pins = <
->                         MX6SX_PAD_ENET1_MDIO__ENET1_MDIO        0xa0b1
-> @@ -264,6 +270,16 @@
->         pinctrl-0 = <&pinctrl_i2c2>;
->         status = "okay";
->
-> +       egalax_touchscreen@4 {
 
-Should be touchscreen@4.
+I still find this confusing.
+
+There is no consumer for reg_fec in, so it seems you are relying on
+the fact that the kernel regulator core will disable reg_fec to put
+the regulator in the state you require.
