@@ -1,82 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751767AbeEEHHF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 03:07:05 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:33082 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbeEEHHC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 03:07:02 -0400
-X-Google-Smtp-Source: AB8JxZpaNXbWcjVXYRQ65UJTHTcJOgPFcnariwKHQ2hkb9mtotqX7rUtb1ilscazpLApP+EohYO+PQ==
-Date: Sat, 5 May 2018 09:06:58 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, Ingo Molnar <mingo@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-wpan@vger.kernel.org,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>
-Subject: Re: [RFC PATCH 2/2] net: mac808211: mac802154: use
- lockdep_assert_in_softirq() instead own warning
-Message-ID: <20180505070658.sqttolnnkgv7xyj5@gmail.com>
-References: <20180504175144.12179-1-bigeasy@linutronix.de>
- <20180504175144.12179-3-bigeasy@linutronix.de>
- <20180504183249.GU12217@hirez.programming.kicks-ass.net>
- <20180504184538.gavk7e2vtm73e32w@linutronix.de>
- <20180504185132.GV12217@hirez.programming.kicks-ass.net>
- <20180504190735.izmzibhb66gjb5wr@linutronix.de>
+        id S1751358AbeEEHQG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 03:16:06 -0400
+Received: from mga14.intel.com ([192.55.52.115]:62111 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750765AbeEEHQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 03:16:04 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,365,1520924400";
+   d="scan'208";a="48457682"
+Date: Sat, 5 May 2018 15:15:07 +0800
+From: kbuild test robot <lkp@intel.com>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: kbuild-all@01.org, Thierry Reding <thierry.reding@gmail.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH v4 2/3] drm/panel: Add Ilitek ILI9881c panel driver
+Message-ID: <201805051322.EipQom5M%fengguang.wu@intel.com>
+References: <e9348b12b59e6236a7965ceba94011a1e5b72720.1525447375.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180504190735.izmzibhb66gjb5wr@linutronix.de>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <e9348b12b59e6236a7965ceba94011a1e5b72720.1525447375.git-series.maxime.ripard@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: fengguang.wu@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Maxime,
 
-* Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
+I love your patch! Perhaps something to improve:
 
-> On 2018-05-04 20:51:32 [+0200], Peter Zijlstra wrote:
-> > On Fri, May 04, 2018 at 08:45:39PM +0200, Sebastian Andrzej Siewior wrote:
-> > > On 2018-05-04 20:32:49 [+0200], Peter Zijlstra wrote:
-> > > > On Fri, May 04, 2018 at 07:51:44PM +0200, Sebastian Andrzej Siewior wrote:
-> > > > > From: Anna-Maria Gleixner <anna-maria@linutronix.de>
-> > > > > 
-> > > > > The warning in ieee802154_rx() and ieee80211_rx_napi() is there to ensure
-> > > > > the softirq context for the subsequent netif_receive_skb() call. 
-> > > > 
-> > > > That's not in fact what it does though; so while that might indeed be
-> > > > the intent that's not what it does.
-> > > 
-> > > It was introduced in commit d20ef63d3246 ("mac80211: document
-> > > ieee80211_rx() context requirement"):
-> > > 
-> > >     mac80211: document ieee80211_rx() context requirement
-> > >     
-> > >     ieee80211_rx() must be called with softirqs disabled
-> > 
-> > softirqs disabled, ack that is exactly what it checks.
-> > 
-> > But afaict the assertion you introduced tests that we are _in_ softirq
-> > context, which is not the same.
-> 
-> indeed, now it clicked. Given what I wrote in the cover letter would you
-> be in favour of (a proper) lockdep_assert_BH_disabled() or the cheaper
-> local_bh_enable() (assuming the network folks don't mind the cheaper
-> version)?
+[auto build test WARNING on ]
 
-BTW., going by the hardirq variant nomenclature:
+url:    https://github.com/0day-ci/linux/commits/Maxime-Ripard/drm-panel-Add-Ilitek-ILI9881c-controller-driver/20180505-104031
+base:    
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
-        lockdep_assert_irqs_enabled();
 
-... the proper name would not be lockdep_assert_BH_disabled(), but:
+sparse warnings: (new ones prefixed by >>)
 
-        lockdep_assert_softirqs_disabled();
+>> drivers/gpu/drm/panel/panel-ilitek-ili9881c.c:303:62: sparse: incorrect type in initializer (different modifiers) @@    expected struct ili9881c_instr *instr @@    got structstruct ili9881c_instr *instr @@
+   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c:303:62:    expected struct ili9881c_instr *instr
+   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c:303:62:    got struct ili9881c_instr const *
+   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c: In function 'ili9881c_prepare':
+   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c:303:34: warning: initialization discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+      struct ili9881c_instr *instr = &ili9881c_init[i];
+                                     ^
 
-Thanks,
+vim +303 drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
 
-	Ingo
+   284	
+   285	static int ili9881c_prepare(struct drm_panel *panel)
+   286	{
+   287		struct ili9881c *ctx = panel_to_ili9881c(panel);
+   288		unsigned int i;
+   289		int ret;
+   290	
+   291		/* Power the panel */
+   292		gpiod_set_value(ctx->power, 1);
+   293		msleep(5);
+   294	
+   295		/* And reset it */
+   296		gpiod_set_value(ctx->reset, 1);
+   297		msleep(20);
+   298	
+   299		gpiod_set_value(ctx->reset, 0);
+   300		msleep(20);
+   301	
+   302		for (i = 0; i < ARRAY_SIZE(ili9881c_init); i++) {
+ > 303			struct ili9881c_instr *instr = &ili9881c_init[i];
+   304	
+   305			if (instr->op == ILI9881C_SWITCH_PAGE)
+   306				ret = ili9881c_switch_page(ctx, instr->arg.page);
+   307			else if (instr->op == ILI9881C_COMMAND)
+   308				ret = ili9881c_send_cmd_data(ctx, instr->arg.cmd.cmd,
+   309							      instr->arg.cmd.data);
+   310	
+   311			if (ret)
+   312				return ret;
+   313		}
+   314	
+   315		ret = ili9881c_switch_page(ctx, 0);
+   316		if (ret)
+   317			return ret;
+   318	
+   319		ret = mipi_dsi_dcs_set_tear_on(ctx->dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
+   320		if (ret)
+   321			return ret;
+   322	
+   323		mipi_dsi_dcs_exit_sleep_mode(ctx->dsi);
+   324		if (ret)
+   325			return ret;
+   326	
+   327		return 0;
+   328	}
+   329	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
