@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752008AbeEEBOi (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 21:14:38 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:50389 "EHLO
+        id S1752059AbeEEBPZ (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 21:15:25 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:50444 "EHLO
         mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751771AbeEEBOg (ORCPT
+        with ESMTP id S1751771AbeEEBPW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 21:14:36 -0400
+        Fri, 4 May 2018 21:15:22 -0400
 From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-To: shuah@kernel.org, smuckle.linux@gmail.com
+To: shuah@kernel.org, rostedt@goodmis.org, mhiramat@kernel.org
 Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 06/24] selftests: exec: return Kselftest Skip code for skipped tests
-Date: Fri,  4 May 2018 19:13:10 -0600
-Message-Id: <20180505011328.32078-6-shuah@kernel.org>
+Subject: [PATCH 09/24] selftests: ftrace: return Kselftest Skip code for skipped tests
+Date: Fri,  4 May 2018 19:13:13 -0600
+Message-Id: <20180505011328.32078-9-shuah@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180505011328.32078-1-shuah@kernel.org>
 References: <20180505011328.32078-1-shuah@kernel.org>
@@ -20,44 +20,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When execveat test is skipped because of unmet dependencies and/or
-unsupported configuration, it exits with error which is treated as
-a fail by the Kselftest framework. This leads to false negative
-result even when the test could not be run.
+When ftrace test is skipped because of unmet dependencies and/or
+unsupported configuration, it returns 0 which is treated as a pass
+by the Kselftest framework. This leads to false positive result even
+when the test could not be run.
 
 Change it to return kselftest skip code when a test gets skipped to
 clearly report that the test could not be run.
 
-Change it to use ksft_exit_skip() when kernel doesn't support execveat.
+Kselftest framework SKIP code is 4 and the framework prints appropriate
+messages to indicate that the test is skipped.
 
 Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 ---
- tools/testing/selftests/exec/execveat.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ tools/testing/selftests/ftrace/ftracetest | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/exec/execveat.c b/tools/testing/selftests/exec/execveat.c
-index 67cd4597db2b..47cbf54d0801 100644
---- a/tools/testing/selftests/exec/execveat.c
-+++ b/tools/testing/selftests/exec/execveat.c
-@@ -20,6 +20,8 @@
- #include <string.h>
- #include <unistd.h>
+diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+index f9a9d424c980..b731c8cdcffb 100755
+--- a/tools/testing/selftests/ftrace/ftracetest
++++ b/tools/testing/selftests/ftrace/ftracetest
+@@ -23,6 +23,9 @@ echo "		            If <dir> is -, all logs output in console only"
+ exit $1
+ }
  
-+#include "../kselftest.h"
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
 +
- static char longpath[2 * PATH_MAX] = "";
- static char *envp[] = { "IN_TEST=yes", NULL, NULL };
- static char *argv[] = { "execveat", "99", NULL };
-@@ -249,8 +251,8 @@ static int run_tests(void)
- 	errno = 0;
- 	execveat_(-1, NULL, NULL, NULL, 0);
- 	if (errno == ENOSYS) {
--		printf("[FAIL] ENOSYS calling execveat - no kernel support?\n");
--		return 1;
-+		ksft_exit_skip(
-+			"ENOSYS calling execveat - no kernel support?\n");
- 	}
+ errexit() { # message
+   echo "Error: $1" 1>&2
+   exit 1
+@@ -30,7 +33,8 @@ errexit() { # message
  
- 	/* Change file position to confirm it doesn't affect anything */
+ # Ensuring user privilege
+ if [ `id -u` -ne 0 ]; then
+-  errexit "this must be run by root user"
++  echo "Skipping: test must be run by root user"
++  exit $ksft_skip
+ fi
+ 
+ # Utilities
+@@ -249,7 +253,7 @@ trap 'SIG_RESULT=$UNTESTED' $SIG_UNTESTED
+ SIG_UNSUPPORTED=$((SIG_BASE + UNSUPPORTED))
+ exit_unsupported () {
+   kill -s $SIG_UNSUPPORTED $SIG_PID
+-  exit 0
++  exit $ksft_skip
+ }
+ trap 'SIG_RESULT=$UNSUPPORTED' $SIG_UNSUPPORTED
+ 
 -- 
 2.14.1
