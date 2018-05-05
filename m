@@ -1,27 +1,26 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751085AbeEEFgt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 01:36:49 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49894 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750744AbeEEFgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 01:36:48 -0400
-Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+        id S1751252AbeEEFhW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 01:37:22 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7655 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750744AbeEEFhV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 01:37:21 -0400
+Subject: Re: [PATCH 2/2] Revert "f2fs: add ovp valid_blocks check for bg gc
+ victim to fg_gc"
 From: Chao Yu <yuchao0@huawei.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+To: <jaegeuk@kernel.org>
 CC: <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <20180426083247.86337-1-yuchao0@huawei.com>
- <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
- <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
- <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
- <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
-Message-ID: <8dcbf002-b585-23fa-8c0d-0e3330eb54e5@huawei.com>
-Date: Sat, 5 May 2018 13:36:39 +0800
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180426090551.92364-1-yuchao0@huawei.com>
+ <20180426090551.92364-2-yuchao0@huawei.com>
+ <8989c3fe-2218-b368-6f8d-e6ba36189236@huawei.com>
+Message-ID: <00acefbf-9ad3-c81e-257a-fab74799a19c@huawei.com>
+Date: Sat, 5 May 2018 13:37:05 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+In-Reply-To: <8989c3fe-2218-b368-6f8d-e6ba36189236@huawei.com>
 Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -33,108 +32,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Ping,
 
-On 2018/4/27 10:37, Chao Yu wrote:
-> On 2018/4/27 0:36, Jaegeuk Kim wrote:
->> On 04/26, Chao Yu wrote:
->>> On 2018/4/26 23:48, Jaegeuk Kim wrote:
->>>> On 04/26, Chao Yu wrote:
->>>>> Thread A				Thread B
->>>>> - f2fs_ioc_commit_atomic_write
->>>>>  - commit_inmem_pages
->>>>>   - f2fs_submit_merged_write_cond
->>>>>   : write data
->>>>> 					- write_checkpoint
->>>>> 					 - do_checkpoint
->>>>> 					 : commit all node within CP
->>>>> 					 -> SPO
->>>>>   - f2fs_do_sync_file
->>>>>    - file_write_and_wait_range
->>>>>    : wait data writeback
->>>>>
->>>>> In above race condition, data/node can be flushed in reversed order when
->>>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
->>>>> atomic written data being corrupted.
->>>>
->>>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
->>>> no problem. If it fails, there is no fsync mark where we can recover it, so
->>>
->>> Node is flushed by checkpoint before data, with reversed order, that's the problem.
->>
->> What do you mean? Data should be in disk, in order to proceed checkpoint.
+On 2018/4/27 10:55, Chao Yu wrote:
+> Hi Jaegeuk,
 > 
-> 1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
-> it writeback.
-> 2. thread A: commit_inmem_pages update related node.
-> 3. thread B: do checkpoint, flush all nodes to disk
-> 4. SPOR
-> 
-> Then, atomic file becomes corrupted since nodes is flushed before data.
+> Missed this patch, or any problem in it?
 > 
 > Thanks,
 > 
+> On 2018/4/26 17:05, Chao Yu wrote:
+>> For extreme case:
+>> 10 section, op = 10%, no_fggc_threshold = 90%
+>> All section usage: 85% 85% 85% 85% 90% 90% 95% 95% 95% 95%
 >>
->>>
->>> Thanks,
->>>
->>>> we can just ignore the last written data as nothing.
->>>>
->>>>>
->>>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
->>>>> keep data and node of atomic file being flushed orderly.
->>>>>
->>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>>>> ---
->>>>>  fs/f2fs/file.c    | 4 ++++
->>>>>  fs/f2fs/segment.c | 3 +++
->>>>>  2 files changed, 7 insertions(+)
->>>>>
->>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>>> index be7578774a47..a352804af244 100644
->>>>> --- a/fs/f2fs/file.c
->>>>> +++ b/fs/f2fs/file.c
->>>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->>>>>  
->>>>>  	trace_f2fs_sync_file_enter(inode);
->>>>>  
->>>>> +	if (atomic)
->>>>> +		goto write_done;
->>>>> +
->>>>>  	/* if fdatasync is triggered, let's do in-place-update */
->>>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
->>>>>  		set_inode_flag(inode, FI_NEED_IPU);
->>>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
->>>>>  		return ret;
->>>>>  	}
->>>>>  
->>>>> +write_done:
->>>>>  	/* if the inode is dirty, let's recover all the time */
->>>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
->>>>>  		f2fs_write_inode(inode, NULL);
->>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>> index 584483426584..9ca3d0a43d93 100644
->>>>> --- a/fs/f2fs/segment.c
->>>>> +++ b/fs/f2fs/segment.c
->>>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
->>>>>  
->>>>>  		lock_page(page);
->>>>>  
->>>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
->>>>> +
->>>>>  		if (recover) {
->>>>>  			struct dnode_of_data dn;
->>>>>  			struct node_info ni;
->>>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
->>>>>  		/* drop all uncommitted pages */
->>>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
->>>>>  	} else {
->>>>> +		/* wait all committed IOs writeback and release them from list */
->>>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
->>>>>  	}
->>>>>  
->>>>> -- 
->>>>> 2.15.0.55.gc2ece9dc4de6
+>> During foreground GC, if we skip select dirty section whose usage
+>> is larger than no_fggc_threshold, we can only recycle 80% invalid
+>> space from four 85% usage sections and two 90% usage sections,
+>> result in encountering out-of-space issue.
 >>
->> .
+>> This reverts commit e93b9865251a0503d83fd570e7d5a7c8bc351715 to
+>> fix this issue, besides, we keep the logic that we scan all dirty
+>> section when searching a victim, so that GC can select victim with
+>> least valid blocks.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  fs/f2fs/f2fs.h    |  3 ---
+>>  fs/f2fs/gc.c      | 16 ----------------
+>>  fs/f2fs/segment.h |  9 ---------
+>>  3 files changed, 28 deletions(-)
+>>
+>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>> index 64e3677998d8..9f8b327272df 100644
+>> --- a/fs/f2fs/f2fs.h
+>> +++ b/fs/f2fs/f2fs.h
+>> @@ -1192,9 +1192,6 @@ struct f2fs_sb_info {
+>>  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+>>  	unsigned int cur_victim_sec;		/* current victim section num */
+>>  
+>> -	/* threshold for converting bg victims for fg */
+>> -	u64 fggc_threshold;
+>> -
+>>  	/* threshold for gc trials on pinned files */
+>>  	u64 gc_pin_file_threshold;
+>>  
+>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>> index 3134dd781252..62eba4a71123 100644
+>> --- a/fs/f2fs/gc.c
+>> +++ b/fs/f2fs/gc.c
+>> @@ -263,10 +263,6 @@ static unsigned int check_bg_victims(struct f2fs_sb_info *sbi)
+>>  	for_each_set_bit(secno, dirty_i->victim_secmap, MAIN_SECS(sbi)) {
+>>  		if (sec_usage_check(sbi, secno))
+>>  			continue;
+>> -
+>> -		if (no_fggc_candidate(sbi, secno))
+>> -			continue;
+>> -
+>>  		clear_bit(secno, dirty_i->victim_secmap);
+>>  		return GET_SEG_FROM_SEC(sbi, secno);
+>>  	}
+>> @@ -406,9 +402,6 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+>>  			goto next;
+>>  		if (gc_type == BG_GC && test_bit(secno, dirty_i->victim_secmap))
+>>  			goto next;
+>> -		if (gc_type == FG_GC && p.alloc_mode == LFS &&
+>> -					no_fggc_candidate(sbi, secno))
+>> -			goto next;
+>>  
+>>  		cost = get_gc_cost(sbi, segno, &p);
+>>  
+>> @@ -1152,17 +1145,8 @@ int f2fs_gc(struct f2fs_sb_info *sbi, bool sync,
+>>  
+>>  void build_gc_manager(struct f2fs_sb_info *sbi)
+>>  {
+>> -	u64 main_count, resv_count, ovp_count;
+>> -
+>>  	DIRTY_I(sbi)->v_ops = &default_v_ops;
+>>  
+>> -	/* threshold of # of valid blocks in a section for victims of FG_GC */
+>> -	main_count = SM_I(sbi)->main_segments << sbi->log_blocks_per_seg;
+>> -	resv_count = SM_I(sbi)->reserved_segments << sbi->log_blocks_per_seg;
+>> -	ovp_count = SM_I(sbi)->ovp_segments << sbi->log_blocks_per_seg;
+>> -
+>> -	sbi->fggc_threshold = div64_u64((main_count - ovp_count) *
+>> -				BLKS_PER_SEC(sbi), (main_count - resv_count));
+>>  	sbi->gc_pin_file_threshold = DEF_GC_FAILED_PINNED_FILES;
+>>  
+>>  	/* give warm/cold data area from slower device */
+>> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+>> index 7702b054689c..c385daabcb67 100644
+>> --- a/fs/f2fs/segment.h
+>> +++ b/fs/f2fs/segment.h
+>> @@ -774,15 +774,6 @@ static inline block_t sum_blk_addr(struct f2fs_sb_info *sbi, int base, int type)
+>>  				- (base + 1) + type;
+>>  }
+>>  
+>> -static inline bool no_fggc_candidate(struct f2fs_sb_info *sbi,
+>> -						unsigned int secno)
+>> -{
+>> -	if (get_valid_blocks(sbi, GET_SEG_FROM_SEC(sbi, secno), true) >
+>> -						sbi->fggc_threshold)
+>> -		return true;
+>> -	return false;
+>> -}
+>> -
+>>  static inline bool sec_usage_check(struct f2fs_sb_info *sbi, unsigned int secno)
+>>  {
+>>  	if (IS_CURSEC(sbi, secno) || (sbi->cur_victim_sec == secno))
 >>
 > 
 > 
