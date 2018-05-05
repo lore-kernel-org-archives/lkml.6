@@ -1,55 +1,201 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751270AbeEENTz (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 09:19:55 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:45222 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751157AbeEENTy (ORCPT
+        id S1751573AbeEEN0w (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 09:26:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51502 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750967AbeEEN0t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 09:19:54 -0400
-To: adobriyan@gmail.com
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        mhocko@suse.com
-Subject: Re: [PATCH] elf: don't hash userspace addresses
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20180504212308.GA7564@avx2>
-        <201805050931.FEG18215.tFJOFLHOFVSOQM@I-love.SAKURA.ne.jp>
-        <20180505123201.GA10847@avx2>
-In-Reply-To: <20180505123201.GA10847@avx2>
-Message-Id: <201805052219.AGC56242.LFVFQHOOOJFSMt@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Sat, 5 May 2018 22:19:43 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Sat, 5 May 2018 09:26:49 -0400
+Date: Sat, 5 May 2018 10:26:37 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-i2c@vger.kernel.org, Greg Ungerer <gerg@uclinux.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+        Sergey Lapin <slapin@ossfans.org>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Ralf Baechle <ralf@linux-mips.org>, James Hogan <jhogan@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/7] i2c: i2c-gpio: move header to platform_data
+Message-ID: <20180505102637.76ab7c41@vento.lan>
+In-Reply-To: <20180419200015.15095-2-wsa@the-dreams.de>
+References: <20180419200015.15095-1-wsa@the-dreams.de>
+        <20180419200015.15095-2-wsa@the-dreams.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexey Dobriyan wrote:
-> On Sat, May 05, 2018 at 09:31:50AM +0900, Tetsuo Handa wrote:
-> > Alexey Dobriyan wrote:
-> > > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > > ---
-> > > 
-> > >  fs/binfmt_elf.c |    4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > --- a/fs/binfmt_elf.c
-> > > +++ b/fs/binfmt_elf.c
-> > > @@ -379,8 +379,8 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
-> > >  
-> > >  	if ((type & MAP_FIXED_NOREPLACE) &&
-> > >  	    PTR_ERR((void *)map_addr) == -EEXIST)
-> > > -		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
-> > > -			task_pid_nr(current), current->comm, (void *)addr);
-> > > +		pr_info("%d (%s): Uhuuh, elf segment at %lx requested but the memory is mapped already\n",
-> > > +			task_pid_nr(current), current->comm, addr);
-> > 
-> > "%px" does not hash. For what reason you replace %px with %lx ?
-> 
-> Duh. There is no reason to use non-standard %px.
-> 
+Em Thu, 19 Apr 2018 22:00:07 +0200
+Wolfram Sang <wsa@the-dreams.de> escreveu:
 
-See the comment for pointer() function in lib/vsprintf.c .
-In Linux kernel world, various extension for %p is supported.
+> This header only contains platform_data. Move it to the proper directory.
+> 
+> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> ---
+>  MAINTAINERS                                      | 2 +-
+>  arch/arm/mach-ks8695/board-acs5k.c               | 2 +-
+>  arch/arm/mach-omap1/board-htcherald.c            | 2 +-
+>  arch/arm/mach-pxa/palmz72.c                      | 2 +-
+>  arch/arm/mach-pxa/viper.c                        | 2 +-
+>  arch/arm/mach-sa1100/simpad.c                    | 2 +-
+>  arch/mips/alchemy/board-gpr.c                    | 2 +-
+>  drivers/i2c/busses/i2c-gpio.c                    | 2 +-
+
+>  drivers/media/platform/marvell-ccic/mmp-driver.c | 2 +-
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+>  drivers/mfd/sm501.c                              | 2 +-
+>  include/linux/{ => platform_data}/i2c-gpio.h     | 0
+>  11 files changed, 10 insertions(+), 10 deletions(-)
+>  rename include/linux/{ => platform_data}/i2c-gpio.h (100%)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0a1410d5a621..7aad64b62102 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5872,7 +5872,7 @@ GENERIC GPIO I2C DRIVER
+>  M:	Haavard Skinnemoen <hskinnemoen@gmail.com>
+>  S:	Supported
+>  F:	drivers/i2c/busses/i2c-gpio.c
+> -F:	include/linux/i2c-gpio.h
+> +F:	include/linux/platform_data/i2c-gpio.h
+>  
+>  GENERIC GPIO I2C MULTIPLEXER DRIVER
+>  M:	Peter Korsgaard <peter.korsgaard@barco.com>
+> diff --git a/arch/arm/mach-ks8695/board-acs5k.c b/arch/arm/mach-ks8695/board-acs5k.c
+> index 937eb1d47e7b..ef835d82cdb9 100644
+> --- a/arch/arm/mach-ks8695/board-acs5k.c
+> +++ b/arch/arm/mach-ks8695/board-acs5k.c
+> @@ -19,7 +19,7 @@
+>  #include <linux/gpio/machine.h>
+>  #include <linux/i2c.h>
+>  #include <linux/i2c-algo-bit.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/platform_data/pca953x.h>
+>  
+>  #include <linux/mtd/mtd.h>
+> diff --git a/arch/arm/mach-omap1/board-htcherald.c b/arch/arm/mach-omap1/board-htcherald.c
+> index 67d46690a56e..da8f3fc3180f 100644
+> --- a/arch/arm/mach-omap1/board-htcherald.c
+> +++ b/arch/arm/mach-omap1/board-htcherald.c
+> @@ -31,7 +31,7 @@
+>  #include <linux/gpio.h>
+>  #include <linux/gpio_keys.h>
+>  #include <linux/i2c.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/htcpld.h>
+>  #include <linux/leds.h>
+>  #include <linux/spi/spi.h>
+> diff --git a/arch/arm/mach-pxa/palmz72.c b/arch/arm/mach-pxa/palmz72.c
+> index 5877e547cecd..c053c8ce1586 100644
+> --- a/arch/arm/mach-pxa/palmz72.c
+> +++ b/arch/arm/mach-pxa/palmz72.c
+> @@ -30,7 +30,7 @@
+>  #include <linux/wm97xx.h>
+>  #include <linux/power_supply.h>
+>  #include <linux/usb/gpio_vbus.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/gpio/machine.h>
+>  
+>  #include <asm/mach-types.h>
+> diff --git a/arch/arm/mach-pxa/viper.c b/arch/arm/mach-pxa/viper.c
+> index 90d0f277de55..39e05b7008d8 100644
+> --- a/arch/arm/mach-pxa/viper.c
+> +++ b/arch/arm/mach-pxa/viper.c
+> @@ -35,7 +35,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/gpio.h>
+>  #include <linux/jiffies.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/gpio/machine.h>
+>  #include <linux/platform_data/i2c-pxa.h>
+>  #include <linux/serial_8250.h>
+> diff --git a/arch/arm/mach-sa1100/simpad.c b/arch/arm/mach-sa1100/simpad.c
+> index ace010479eb6..49a61e6f3c5f 100644
+> --- a/arch/arm/mach-sa1100/simpad.c
+> +++ b/arch/arm/mach-sa1100/simpad.c
+> @@ -37,7 +37,7 @@
+>  #include <linux/input.h>
+>  #include <linux/gpio_keys.h>
+>  #include <linux/leds.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  
+>  #include "generic.h"
+>  
+> diff --git a/arch/mips/alchemy/board-gpr.c b/arch/mips/alchemy/board-gpr.c
+> index 4e79dbd54a33..fa75d75b5ba9 100644
+> --- a/arch/mips/alchemy/board-gpr.c
+> +++ b/arch/mips/alchemy/board-gpr.c
+> @@ -29,7 +29,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/gpio.h>
+>  #include <linux/i2c.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/gpio/machine.h>
+>  #include <asm/bootinfo.h>
+>  #include <asm/idle.h>
+> diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+> index 58abb3eced58..005e6e0330c2 100644
+> --- a/drivers/i2c/busses/i2c-gpio.c
+> +++ b/drivers/i2c/busses/i2c-gpio.c
+> @@ -11,7 +11,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/i2c.h>
+>  #include <linux/i2c-algo-bit.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/init.h>
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+> diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/media/platform/marvell-ccic/mmp-driver.c
+> index 816f4b6a7b8e..d9f0dd0d3525 100644
+> --- a/drivers/media/platform/marvell-ccic/mmp-driver.c
+> +++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
+> @@ -12,7 +12,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/i2c.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/slab.h>
+> diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+> index ad774161a22d..66af659b01b2 100644
+> --- a/drivers/mfd/sm501.c
+> +++ b/drivers/mfd/sm501.c
+> @@ -19,7 +19,7 @@
+>  #include <linux/device.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pci.h>
+> -#include <linux/i2c-gpio.h>
+> +#include <linux/platform_data/i2c-gpio.h>
+>  #include <linux/gpio/machine.h>
+>  #include <linux/slab.h>
+>  
+> diff --git a/include/linux/i2c-gpio.h b/include/linux/platform_data/i2c-gpio.h
+> similarity index 100%
+> rename from include/linux/i2c-gpio.h
+> rename to include/linux/platform_data/i2c-gpio.h
+
+
+
+Thanks,
+Mauro
