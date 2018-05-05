@@ -1,63 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751191AbeEEGTJ (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 02:19:09 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:35134 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750741AbeEEGTI (ORCPT
+        id S1751157AbeEEGby (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 02:31:54 -0400
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:34172 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeEEGbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 02:19:08 -0400
-Date: Sat, 5 May 2018 14:18:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "'Antoine Tenart'" <antoine.tenart@bootlin.com>
-Cc: David Laight <David.Laight@aculab.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "nadavh@marvell.com" <nadavh@marvell.com>,
-        "oferh@marvell.com" <oferh@marvell.com>,
-        "igall@marvell.com" <igall@marvell.com>
-Subject: Re: [PATCH 01/10] crypto: aead - allow to allocate AEAD requests on
- the stack
-Message-ID: <20180505061855.trmz34gsjfyi5xop@gondor.apana.org.au>
-References: <20180502095725.31935-1-antoine.tenart@bootlin.com>
- <20180502095725.31935-2-antoine.tenart@bootlin.com>
- <02ad9eb93c494314a85db69886cf787a@AcuMS.aculab.com>
- <20180503122330.GB3324@kwain>
- <20180503230006.oq6vycplwsomfprw@gondor.apana.org.au>
- <20180504071841.GG3324@kwain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180504071841.GG3324@kwain>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Sat, 5 May 2018 02:31:52 -0400
+X-Google-Smtp-Source: AB8JxZoxucysB60diXS5v9bTKMzh5FsgUzE4wrmJ0V+X5ok9ul8mccs4CMMaZpnb80h37RuGKEfokA==
+From: Wenwen Wang <wang6495@umn.edu>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>,
+        Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani
+        <suganath-prabu.subramani@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        MPT-FusionLinux.pdl@broadcom.com (open list:LSILOGIC MPT FUSION DRIVERS
+        (FC/SAS/SPI)),
+        linux-scsi@vger.kernel.org (open list:LSILOGIC MPT FUSION DRIVERS
+        (FC/SAS/SPI)),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] scsi: mpt3sas: fix a missing-check bug
+Date: Sat,  5 May 2018 01:31:35 -0500
+Message-Id: <1525501896-8235-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 09:18:41AM +0200, 'Antoine Tenart' wrote:
->
-> In this driver we need to perform in certain cases an invalidation,
-> which is done thanks to invalidation requests. To do this we create
-> dummy requests, using SKCIPHER_REQUEST_ON_STACK and
-> AHASH_REQUEST_ON_STACK for ciphers and hashes. So when adding the AEAD
-> algs support, in patch 8/10, AEAD_REQUEST_ON_STACK is used for the same
-> reason.
-> 
-> Should we allocate this in a different way?
+In _ctl_ioctl_main(), 'ioctl_header' is first copied from the userspace
+pointer 'arg'. 'ioctl_header.ioc_number' is then verified by
+_ctl_verify_adapter(). If the verification is failed, an error code -ENODEV
+is returned. Otherwise, the verification result, i.e., the MPT3SAS adapter
+that matches with the 'ioctl_header.ioc_number', is saved to 'ioc'. Later
+on, if the 'cmd' is MPT3COMMAND, the whole ioctl command struct is copied
+again from the userspace pointer 'arg' and saved to 'karg'. Then the
+function _ctl_do_mpt_command() is invoked to execute the command with the
+adapter 'ioc' and 'karg' as inputs.
 
-These are not uses intended for the ON_STACK macros.  They were
-only ever meant for existing users of the synchonous crypto API.
+Given that the pointer 'arg' resides in userspace, a malicious userspace
+process can race to change the 'ioc_number' between the two copies, which
+will cause inconsistency issues, potentially security issues since an
+inconsistent adapter could be used with the command struct 'karg' as inputs
+of _ctl_do_mpt_command(). Moreover, the user can potentially provide a
+valid 'ioc_number' to pass the verification, and then modify it to an
+invalid 'ioc_number'. That means, an invalid 'ioc_number' can potentially
+bypass the verification check.
 
-I would suggest either allocating a new request on the spot or if
-that is not convenient, pre-allocating it in the cra_init function.
+To fix this issue, we need to recheck the 'ioc_number' copied after the
+second copy to make sure it is not changed since the first copy.
 
-Cheers,
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/scsi/mpt3sas/mpt3sas_ctl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+index d3cb387..0c140c7 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
+@@ -2388,6 +2388,11 @@ _ctl_ioctl_main(struct file *file, unsigned int cmd, void __user *arg,
+ 			break;
+ 		}
+ 
++		if (karg.hdr.ioc_number != ioctl_header.ioc_number) {
++			ret = -EINVAL;
++			break;
++		}
++
+ 		if (_IOC_SIZE(cmd) == sizeof(struct mpt3_ioctl_command)) {
+ 			uarg = arg;
+ 			ret = _ctl_do_mpt_command(ioc, karg, &uarg->mf);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.7.4
