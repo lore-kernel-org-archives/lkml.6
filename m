@@ -1,116 +1,74 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1924002-1525531540-2-16470436308385103780
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
-  MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525531540; b=GwzJYeVTGmhT5N2/jgl1u8FUUz5RZ3L//aYOnKpoY+mRSSi1Vz
-    0yYhr/5BJL+QGuGTSRZGXhk2ZK63WiUgT6LFl9VxswexI/CPFMt0QE1d/zP0cGN6
-    rLeXHXby+SaeXTrm9aoyBamiJRzsHlsjqG+rBI0QfCgYb0CDQ1mYYzmMIKYWk9bS
-    D0yYj74xmrx1kB9SUWonin4lu/pRyg39mxUOPshaEqlmvbfdvHHuB7xC5b72mezK
-    0QDaJhW80EaiKnoWp+3gf5PO+e3yi5BhGzC08lGdvAiH6NBn/0Hk315O8jg3VOx7
-    Iam4XGtcSfMt2HbH/rVU0dlPySoUbD4LKPkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:in-reply-to:references:mime-version
-    :content-type:content-transfer-encoding:subject:to:cc:from
-    :message-id:sender:list-id; s=fm2; t=1525531540; bh=jYS47xnjR0JN
-    Z4QtzBEuroedtO1F6UD3oYXByajos2Y=; b=U7Bgsj8f60stauCtivjYoN0yPx+D
-    iC7gWP8EWzfq48GW8Dnd7XXYNRZ9ZoO8t6aN1JLmqxRfX/Rm285TRpgMtMQ+lara
-    ZUoLSUzVtsbHGfDpr29endx66E/b1+mxcZlmELmfAfUu758KcWNVjftx6ri3209f
-    ZLH9kzENHze+xJlSoR/p75wHcUYTAfGaNGLrfuIdn4LwGvQ4ZeH5g6ZvbPIKtUaC
-    ToMZCjOGdLHkOZr+YwLxXFnWiSl+NEd0o33rDRRSBIhhl635iAsJWCqlbWdYbuiL
-    LFzydFvx2Lii0DAwmivv41ZDcNcUivG0YLKWX0Nk0CmoNvSAd0fnTne4OQ==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=decadent.org.uk header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=decadent.org.uk;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=decadent.org.uk header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfO6gcoI/golaRVdN6NwnQOnSON5EliTSH2Oqh8l9j9Li3Rn3fbB4KiXA7x/oZvE8esBh8Gw81CVtIlA+PkX/0JyMpzVjkhBMQwxX3EFt4yglN2NWDQEp
-    I7ZFkaebU/MiBF/pnbJmYzmaa/XGSUuXp/y/rmXyTAJEm4tY1uacQ2apFNWWEWx2FgxhaJK2LQSgab4LFXT0crm86jS3S1czy6XpwS5gQB8JcpfDVF2b5Qow
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=n5lKZTBSTmxQdFr_EUEA:9 a=QEXdDO2ut3YA:10
-    a=Qn6xTRysOZEA:10 a=FoiGvTp0eMAA:10 a=pRQRx_yQ9a0A:10
-    a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751792AbeEEOpf convert rfc822-to-8bit (ORCPT
-        <rfc822;greg@kroah.com>); Sat, 5 May 2018 10:45:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52427 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751183AbeEEOp1 (ORCPT
-        <rfc822;stable@vger.kernel.org>); Sat, 5 May 2018 10:45:27 -0400
-Date: Sat, 05 May 2018 15:45:16 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAFGhKbxsNyZqpwJER9RXtpW1FsoNYMHg2nXDLHr9wQXUuMr=+g@mail.gmail.com>
-References: <CAFGhKbxsNyZqpwJER9RXtpW1FsoNYMHg2nXDLHr9wQXUuMr=+g@mail.gmail.com>
+Return-Path: <penguin-kernel@i-love.sakura.ne.jp>
+X-Google-Smtp-Source: AB8JxZp/X/0LkjHHBPoIrFuNG5WLLtU8lqt5D0N60WatFbFjormgxHO3Krg+yCveSxb9Vdj9ajfb
+ARC-Seal: i=1; a=rsa-sha256; t=1525521491; cv=none;
+        d=google.com; s=arc-20160816;
+        b=t8VnozILBa9yFUhJL25eylgaU/PYvukOpYD6X4vKjBb+JdMJxA+9/LB1Hw3DEB4DzP
+         vwNLCotkF9I63yiA4DBZ/UmuphDbEBl5sdWfeJbP/DMBGTBxCG+mT42jkvkZEMUc+E8P
+         emczdbesIL/8A6DukLWBggqNbCCxWxG1Lphym19fc2kTNY4BOI356A2E829yWCCJT3U1
+         JKq7ZtksNou8HFTv4DbZnnH2VrtlHjbsJjRpGWUIndVxAaDhzckFSJ36Y0C537qLdVBe
+         UT5uhCDec5HCehA0G73KHNoc8Tp2RI83cp/YS7TxFGusf6JZy4s9CLOfsTVo4qhPgq8Q
+         5zwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=UjuYSe/gdMxHywZT9KrDHaZvuIp8Hyh2hJPwDj71RY8=;
+        b=V1Oqf7FSs7ZjB6G9vnpMpQsLCrePeCgpquc2n8grzfm48GJtqNX6Dv1+QsgyTfJpux
+         ajqW1V9+f27JZc7Yd4Rov25NcIwC+mqS+nZsVoxwCea61T/YjX2jNBHR5S6ozi5Mm/+6
+         +NzT0d642FwAzZdSoL1uSsDOROBDTP/9kZjfx6Lqs5hjLmHb5TdjPfrcZfWuSAOS7fS9
+         ZGjWdseYmggjWSmmafiFYDRZMY0oJ3majLOJc2eW/t+jtI/amGi6TtsYKGHT+TaN4K40
+         eqM9zTf2wsPw3h5ks9swL40XCm4i8NTODhc1mxUP62PzBZcMVul+VGFjKyUR0CgHtKp/
+         Kfbw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of penguin-kernel@i-love.sakura.ne.jp designates 202.181.97.72 as permitted sender) smtp.mailfrom=penguin-kernel@i-love.sakura.ne.jp
+Subject: Re: INFO: rcu detected stall in blkdev_ioctl
+To: syzbot
+ <syzbot+369c35474963daf8f8eea897ecf33cb6ad6c7ea2@syzkaller.appspotmail.com>,
+        axboe@kernel.dk, linux-block@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, Jan Kara <jack@suse.cz>
+Cc: akpm@linux-foundation.org, gregkh@linuxfoundation.org, hpa@zytor.com,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, npiggin@gmail.com, pombredanne@nexb.com,
+        tglx@linutronix.de, x86@kernel.org
+References: <94eb2c05a38090aaeb0560706bb5@google.com>
+ <0000000000001554a7056add26c6@google.com>
+ <18608105-31d3-3d77-ccbb-a25bbe7e55e6@I-love.SAKURA.ne.jp>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <00724984-6edd-d0df-4c51-53be8c330234@I-love.SAKURA.ne.jp>
+Date: Sat, 5 May 2018 20:57:16 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: EOL for the 3.2 kernel?
-To: Charlemagne Lasse <charlemagnelasse@gmail.com>
-CC: LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
-From: Ben Hutchings <ben@decadent.org.uk>
-Message-ID: <4BE24D5A-C212-419C-AF82-B60DEEB4E0AB@decadent.org.uk>
-X-SA-Exim-Connect-IP: 94.197.120.74
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
+In-Reply-To: <18608105-31d3-3d77-ccbb-a25bbe7e55e6@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1586926286498565093?=
+X-GMAIL-MSGID: =?utf-8?q?1599625223163227475?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+If various stall reports regarding loop_set_fd() are hitting below sequence, a patch
+was proposed at https://groups.google.com/d/msg/syzkaller-bugs/5pzXJ8yQFR0/vWeRytaQBAAJ .
 
+----------
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/loop.h>
 
-On 5 May 2018 08:20:35 BST, Charlemagne Lasse <charlemagnelasse@gmail.com> wrote:
->Hi,
->
->will there be an announcement that Linux 3.2 is EOL or will there be
->another release which announces it as the last release of this stable
->series? The kernel release page
->https://www.kernel.org/category/releases.html lists it as EOL for this
->month.
-
-I intend to make at least one more release. I will say in the release announcement when it's the last one.
-
-Ben.
-
--- 
-Sent from my Android phone with K-9 Mail. Please excuse my brevity.
+int main(int argc, char *argv[])
+{
+        const int fd = open("/tmp/file", O_RDWR | O_CREAT | O_TRUNC, 0600);
+        const int fd0 = open("/dev/loop0", O_RDONLY);
+        const int fd1 = open("/dev/loop1", O_RDONLY);
+        ioctl(fd0, LOOP_SET_FD, fd);
+        ioctl(fd0, LOOP_CHANGE_FD, fd0);
+        ioctl(fd1, LOOP_SET_FD, fd0);
+        return 0;
+}
+----------
