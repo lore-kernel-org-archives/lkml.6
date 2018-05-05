@@ -1,50 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751203AbeEEITt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 04:19:49 -0400
-Received: from mout.gmx.net ([212.227.17.21]:59531 "EHLO mout.gmx.net"
+        id S1751238AbeEEIc7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 04:32:59 -0400
+Received: from sauhun.de ([88.99.104.3]:57192 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750821AbeEEITr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 04:19:47 -0400
-Message-ID: <1525508378.5406.6.camel@gmx.de>
-Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
- merge
-From: Mike Galbraith <efault@gmx.de>
-To: Paolo Valente <paolo.valente@linaro.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com, oleksandr@natalenko.name
-Date: Sat, 05 May 2018 10:19:38 +0200
-In-Reply-To: <1525463210.622.1.camel@gmx.de>
-References: <20180504171701.6876-1-paolo.valente@linaro.org>
-         <1525463210.622.1.camel@gmx.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:7SCqs7RtfH8TsyH6K883l0BX+TyFNujGUz2ss3e7EtPLIw9e6V9
- Ee4CzWZtAtjlzn1nyVeadpwvnwq62Ud2bJ/G4PNLEH67G/XURI5DX1KYDf+ogK4ArB9xh60
- Ixe5G1BZveZSl3m903i5q04kZpl/4vwam4CtLCyksmHFys9nyyV3sh0QVxWvM6ydgl+UVyP
- nDWts4H4T1vLygmc42Msw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:SN92bNAak1g=:twl5Yhh+UMn3sNe11183Wk
- 4T6eJYq7gGpvrG5li20kWvFNBRVzOEBSvPdtLJnF/s+8f98u5LuQe/yTxR/BfQYM45zKEBeIX
- IOpIqPv3eki01DsX5aFcosmVsFoBCwmc2T0oNlv5fAjYPrvfES94f0NCYXxBVmoaH6+KcErAE
- DMZVMou7YhKBCX27qguMrl2vHFksaQXLMmbjRyX/LzaUR9c77v6qbVxj9v67v43BPrpx/l0zo
- wY7jMyod4v4WQOyva9um0wTHkktwRlSNdDSi/dP7CyLwb+pML887PL+kXj8WBB9HdkMZqAG3v
- HmK4qdQlRTYZkLnuox6kRXuZizGbzF9jEd4NHGL+fem5sb8Y9ID7s5CqBFwglb0yVPpzW5h4O
- gjD2Llkk5SSXWpMf7CR8d+DjRsoJFLwcE1BI9K7/XfJumU4ffn12R9higd7s9jh6q5WdLA/5Q
- mQIJ15nd9r9s+4Dip5Fzai2bsZfNZChpgfcjaohaC1skD0qxNgpabyItOkTwrVUWLKN1U7B0+
- /x/yWYfooG0mIFEqKv+g25YJYg9qHlR6YC+uBnLy08PxxVooLliHh3PMYuRSBuzqBkgPkh62h
- OfBz5EKpY/JezlDxhm9jRummEcy0D66oqnxQPFKRb/n6JTmhDMxbKCVft/YETYU/8apm92LCH
- yVaY60PzPuq65wlPot6JBqPBlRRVnA1DJZ/Vet6I/bwwOfQC1gMkSPCF0bH72u94qM67lc4zW
- /rohAfZE+a/JS5AAFayUIO7PgIFr7HHNQWR9Hr2kel5dH3w8O3k/19Hmg46HwL4R4DLpOpsy4
- HAs8EPc
+        id S1750764AbeEEIc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 04:32:57 -0400
+Date: Sat, 5 May 2018 10:32:55 +0200
+From: Wolfram Sang <wsa@the-dreams.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
+        Baolin Wang <baolin.wang@linaro.org>, linux-i2c@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: I2C PM overhaul needed? (Re: [PATCH 1/2] i2c: sprd: Prevent i2c
+ accesses after suspend is called)
+Message-ID: <20180505083255.7gv3bcjxx3b6nzeb@ninjato>
+References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
+ <20180427121417.auv4ppryegkprv32@ninjato>
+ <CAMz4kuK3fyBhdrUcLvY0s0N-0yY9_0MrAAi9cWdX1ZfdNW+R0w@mail.gmail.com>
+ <20180502052336.i5f4yv2ho3za7qa7@tetsubishi>
+ <CAMz4kuJAzr-ybCCmjx_Tcdw6qNYN0wLGQgWsb1H0WEkR4ZpyYg@mail.gmail.com>
+ <3485f73f-e356-6db0-89fc-d51bf8bdab71@ti.com>
+ <20180504122447.u3xgrkperxz5dpcz@ninjato>
+ <20180505015458.GM13402@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xsupeutnjmsk6poi"
+Content-Disposition: inline
+In-Reply-To: <20180505015458.GM13402@sirena.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-05-04 at 21:46 +0200, Mike Galbraith wrote:
-> Tentatively, I suspect you've just fixed the nasty stalls I reported a
-> while back.
 
-Oh well, so much for optimism.  It took a lot, but just hung.
+--xsupeutnjmsk6poi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Mark,
+
+> > And maybe this could be used here, too? Introduce this flag for very
+> > late/early messages. If they have it, messages are even sent in
+> > suspend_noirq() phase with the master_xfer_irqless() callback, otherwise
+> > we will have the WARNing printed out.
+>=20
+> It feels like it'd be more elegant to have the core select the irqless
+> function automatically if called after interrupts have been disabled -
+> otherwise we end up with the need to special case through other layers
+> of the stack like regmap as well which seems like it'd be error prone.
+
+Yes, I was concerned about thae (i.e. regmap accessors), too.
+
+> OTOH it does mean we might not notice things happening later than they
+> should so it's not 100% clear...
+
+What do you mean here?
+
+Thanks,
+
+   Wolfram
+
+
+--xsupeutnjmsk6poi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlrtbDMACgkQFA3kzBSg
+KbbBzhAAseHOlxKKx9KMx3QscpyweK9YWECeEkcSlnJ0t94dmCi49zQoth7jq7MO
+66b/WvV4sLAqbqE4ksYrABXOFZY9Lp4+IeNe1THshZRFzEMNIs5oWtiUhuaBL6QV
+662jH76Mu84AuGguE6oMCvj9wvCPTW2fXHFZ2jC48X/ZercdA1ORpUwOYRF0c4XB
+Ww2nD3YSKnMHipRoYJhhUrN/e1ILy8mqIoT0O0hsOvN7zfm0AZ4PYQ5KsEYmZ4uR
+4WfQjqBPXjqPmWdydseC3CoR2nllyF/SSwAHLQlnslg7FtMeomyzaFFKBDuTggRi
+TjVDBOwsgGbyd6MHZY/E4IqwYsB36P1iup9OKksu6OoJBAmDCooY4o+fXjqMI3v7
+y/Ew6xRD6tSxH0phCLlvaLh6L6jKSUKRzYwT1cRUkTNy3Nj39ePgtD2CR1UEsn/I
+XCOhKje/Yr54droiAs9NVEB/E0fu4rgdVB+sSBW54vyDfhDhmeSXlcCITyztTA6E
+rMVxUG4KbiRoViVdpnqPjxl0plkOs+PS5qK7zoMJmnjcd0Vm9qg8RGyxg3C/nM7v
+mvU6MhW9FimoM2V5VqDEwDtLgvE8ok4bNi3x6TbhGMOvuKG9OA7YWWoUdLjgfYYz
+ysn1ErJaaWZABYKZQHc3TiLpWg76tNpt0SShRMuUUMvqPVdFB0Q=
+=cqOr
+-----END PGP SIGNATURE-----
+
+--xsupeutnjmsk6poi--
