@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751573AbeEEIdG (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 04:33:06 -0400
-Received: from mail-he1eur01on0077.outbound.protection.outlook.com ([104.47.0.77]:48522
+        id S1751781AbeEEIdQ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 04:33:16 -0400
+Received: from mail-he1eur01on0061.outbound.protection.outlook.com ([104.47.0.61]:32326
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751057AbeEEIdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 04:33:00 -0400
+        id S1751191AbeEEIdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 04:33:11 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=anson.huang@nxp.com;
 From: Anson Huang <Anson.Huang@nxp.com>
@@ -15,10 +15,12 @@ To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
         fugang.duan@nxp.com, aisheng.dong@nxp.com, yibin.gong@nxp.com
 Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V6 1/7] ARM: dts: imx6sx-sabreauto: add PMIC support
-Date: Sat,  5 May 2018 16:29:17 +0800
-Message-Id: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V6 3/7] ARM: dts: imx6sx-sabreauto: add IO expander max7310 support
+Date: Sat,  5 May 2018 16:29:19 +0800
+Message-Id: <1525508963-7986-3-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com>
+References: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [119.31.174.66]
@@ -27,46 +29,46 @@ X-ClientProxiedBy: TY1PR01CA0199.jpnprd01.prod.outlook.com (2603:1096:403::29)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1315;
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;3:vnGFnbH1DnFngmyG5D7bGOwu7dxjZkQnPcPWfuMBO0C1AIhlpG4LTyhZgog3CRYOLo8I/tPnK4lq5c828jwpYGZLPVlQIjx7NfUmgVSonFyxUPaGdhgH6zmKTmfS39tQSv65alrJgSXjyZlW73l4qQPk5/E+boRJeea3rYtCEc5OtJXMFAXCbv46rACA+V0gnQ8QmvbA3CiuCD3usZGI9w6X5YEGJlK9FNs82h+DMzta7XAK2ffa7GmZNmzPuYPc;25:fMWTYY76iHVfSYiPvrkBaj8HLyompB7tzKt8rABYr46kjKQhZ62+TL4LAe2Js5qg7jSZg5SzENRySgAPhKJLP4FUSMCrcS/Z0qKv7wo/U1heaRlclSJm01OOrST1Izm5o13tID/MkVGAt6lm5dn99N2BYI21OnHZhJ35cvwNRzuuiOdZ4J7hQjyJbUPeTmJA0MSjo7VRtETwlD8DmvvZCLlBHCPjBLacFsKCn1jIkJIohShrDibp/o1EBsJSf4Dz5oRL9qCoQwzkakyDw8fmULASMBqJ5a3CjgQeCu8deIJMmjG/kCJhj4ED3IFiaOVz8AkwqObICjb7qKPD2A/WOA==;31:IdXuzxN8KbPmxEMhW5Izoi+D8RP8GSJB7pQ70eoHNyLUpUPyw8im9pmAfiTVia5QRh+uUlqk5E8ZQ2bv6iBb6BJ4iF5ENy6PB7vMyO1LeHaC+AXTpy0MDpP+x+QnGSWx0dAsvQN53bbVr8OSuYULCWUJOhBFrgKPcVeocQqMJYGPLz1+vJkjICHuIaCROE6I6bEnJYYl0WW95K5i4vlNrFXm5khftu8TBfzGVAGNEww=
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;3:r6tSdU8h3LyszeiM8LqUG9Njv4Z0ykEbtyFp3g5q3+hYVJqBRkHWnrxSoBymPKPGdT0RkYS9Vi2nafmgc5Hnlgq/srP2baVtUj0qE4+fHqu+Gc63oFU7B97tqrzb6VXySlYV6/XCjgYDcT/MGqbXrVbUVZ1avdEWxZN+6NHEXvjDh86hp4x90W7bry/KMKDUiT5BsyXFn5umQvb1OUH10DHpnWcx4rQDgI1W8EwIk5Y/NWZ1oWysqV/Mb7lktmOZ;25:ZtHCUUpWWav9RealecOLhhhGSUaREW2Xab1B1xXthFC3GQAWNAYvcF4xfR+BbKCCc/jhV09HtNX8LYH2RF4L7XxWcmSgi9aT10CzgK+UtdrUHmMLt8503Y4LkFj1EJ3anA32cwM02PCnJnlLwXjUSUte9fYs2Gb+48tc9Z4alyM+04EmRY8j5T2cVcoDIcritvB8HjfYDglWyZ3cAwuXeTCnLBH2ns9Xa8P+3UFutT2bzlV+VkkMcLHaXWmyofMTORmSJlWuGnC5qp6qkwr8V15nmdchZzORzSBJhq1giFg+5w5PBd1nnQ21bfMNScTBMNoeWXi3SETjLC6gXWP0Rw==;31:0R2EM/3PKvA0Tho1XLadF3dkawsQX419PaK+MXGytOiX0XQ7HDbutxNxQyYy8uh14HmthiBxB9GQnVebehzwVpKjDlSSeyU5ba080A7aoM/M23atJTmYH6dZuN6fWp0sqVMhah04vb5DPn1yiQM+MO1iqAAryHC+bRi0RYtxd42Ccd77QYkqhq+Qnfnv6OJ6E+anUPZM80/37xM5XnxZcw15b3GpH3mGRcASp6/161E=
 X-MS-TrafficTypeDiagnostic: AM3PR04MB1315:
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;20:TOH9tVodn7tmClpg6njfPWGPHsXEMNEP2O7AKg37MMXDk17M/NQDAnMkMr52HVGx/OSMI9fjz72bPdER0inpvludXFNiuFn8dzLMTXkXewFcFVvipsaZLkVM0wbrNB1FCk7JYV2LuqFDuB765tABBVxuhedd45lQ5I1HaylKcWwhDdpFFZqf+VCikIW2vjZRNz3LzGMwnm2OMGERvUukSo71kGchPMKX/ROIUmzIuFeEZpDbplNeuktnfdEqM/dYiIeHioRGW1ya/RhidIBLgCHYgj06p0HEOvDSDsed24aUcxNxgvqdS4VXVbLVz9CG/e2xt50MNT9m8tzgNs1mE6weksYglqFAoSatINaoNwRCJTabXK3QJTze92/cwnTjwrU8CjwQZUcWiURiuiMc2fkWPxeKRvh+yfaEq55ibC9qvdC2inxHjVgqPTphFoMDp7JNJUXXpohsk3jd17Ji3l1XNUJRq+rcuBUla2sT4AWLLwnQ8xjCBqcneAdjYizt;4:NBf9o1XXtpUOQeNanwbd/XymgJYLdVdtvuV1JW2QGv9x5vA0MO36FGLUxWQeNedzFtf/Nb6xqi9wae4RlWsPnoWkn5CvaakqVjwrSdZhdPlZKxo8A+UKJf0o/w+2cJOzQb7PcS2YqLG4doU8Jo4fptz+kDW0munyluDtlM0LTx1UnAqtsEYNw6lComaNiUP0tx7QCtUaqCYpOvpiLlazp1WllLY72TDHNMXHooYMitUJuRHtmDeNo713bJ/HeWnzu3U2WUdYFDpp4amSBORTPgjSicKyzdG8+3OPwHJp/6x1sA973xqgWYEHI7IN9K3m
-X-Microsoft-Antispam-PRVS: <AM3PR04MB1315D547F9E6066837AE87C5F5850@AM3PR04MB1315.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;20:A/QMhyugj0vp8McR7StciovquOFvmmA1gEeIlgLoNszIzI7mYqXUMZwQlOx4tyPr2Vq/xZtDsecFJmOslV13iLo2QdDEVHP7ldZ6SMutCwsehXjF83WQhMesLa8d/0NCvdZkduf2kljhiNX9lI546iSXwkTWtDpb3UirGjau5M0bN57stdgH3dxBZH5xyhtlZzrA0MRun2lKJmvUYHLNjeSAQpwB8T5s3vUwnuQT57md9LxvQGqZB/f9xR2o3kN0SMq4W+/gvQNcX8MZ/YKlqO4CCDUpQ3NlH+Yrr5gqhmtFqHd7sj4oJNUsX38wACw3YV2o5dHKXUvERgeu2HZ1m0EyTGtQtxF/yMs7ITMNaGSVIHXWSs+EHQg9KTJjusYaOgHXCsqw0jD0x7BtuGVd5X4/9iUwtNf/msNC53R7v/md8XdkgQJV9cCibYl8kaRLfQZ/9An/Esvtan1uPFERTJumfT/CVPvjuyD8MPyaEYGVj24Yz49N9W9brTMJovQZ;4:XQU+bXpKxtZmFA6gPCCE9n+LU8vjqqxn91lB5pvNR1U7xTWbY9FDg804HiqC3Qavm4fWW3DKn/JE0dFhdISzpOrCVcAyfZID8Lau4nuz6nqE6p1DUiyXveXNjnlkIKWloIAXV6O13AvsHJjQUQOnrzYG/ECiTC49XLYmp2ZT1KoBFHsWuSxNQc0DmdKKS9grznNgfq9YbWiVvIXPooNgo8hgRhkFBggGzERV8MuXWFpL4CgVVZjhnaYY5zYsLDlzSCM8hXamf6km/CpHE1fBph2yUimlvDmZgckNOn+Yjh7nh/Ahue/QVZ2CjQeeZ2eS
+X-Microsoft-Antispam-PRVS: <AM3PR04MB13157FFC4D4575E090BD7657F5850@AM3PR04MB1315.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:AM3PR04MB1315;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1315;
 X-Forefront-PRVS: 0663390E1B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(39380400002)(376002)(199004)(189003)(6666003)(53936002)(81156014)(68736007)(6636002)(7736002)(50226002)(4326008)(6116002)(16586007)(6512007)(3846002)(8936002)(575784001)(186003)(86362001)(97736004)(8676002)(25786009)(16526019)(66066001)(50466002)(52116002)(51416003)(478600001)(106356001)(105586002)(26005)(956004)(305945005)(47776003)(386003)(2616005)(5660300001)(316002)(81166006)(48376002)(6486002)(6506007)(476003)(2906002)(36756003)(486006)(32563001)(473944003)(357404004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1315;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1315;23:5aW1eBcl178UZ7manW6sfMrGobDCsA13WVuHGI5Zp?=
- =?us-ascii?Q?fve9KV5Pi9/FCmf2iFSVb17olXHO9f1R22NelA/nUvkepzXxllsK9esItIio?=
- =?us-ascii?Q?iySEoAWX0o/N486yDDGKe9mGK6EmQrvZYIPS9bU92J/G3XM9GRyysvS/Z3ZL?=
- =?us-ascii?Q?+0cKuhDmAI3sdpkXNPtS2obyhOvPx3sHg4F8PEEPPE6mflVppkR1wIIAFXzs?=
- =?us-ascii?Q?Wzcv+yjReYU1RFE1LjaB6PNPS2WoXliC+ctpMtWDcaqapdU06C3YYRbauLaA?=
- =?us-ascii?Q?AxXUbZJ1cF7+DOuX2R30dKILFZIUnLVD0sMS61OuPQHDQ3nfKowP1xefTirz?=
- =?us-ascii?Q?kExXMvLKiI1K49mJmxgSN7f3FbWyScJzZD9E8Yx0noqBgIYJlXuRfWp5jnWc?=
- =?us-ascii?Q?Ur+6kBGxF8Wk2G0jXOfsB4XjgbvPmnurXKxsTIiW9FPK65S87sgIxnKl1ApZ?=
- =?us-ascii?Q?+3TwiEP7+2SUpV4+dfd/JNrcy7hIvvUZFVuJw2polN8uo77RZyD0eo7P03I0?=
- =?us-ascii?Q?Ptl87DXLRXnHudca2vsEaYIq6PfmruHaEgiQB8uYamz3OmbyGfE+87oqVHpr?=
- =?us-ascii?Q?TmH6t/LclWjQI+5ESqoS++eL6Krr1BgSMgNngTidyqJKMzElf01Q0M+LbDQh?=
- =?us-ascii?Q?8XgRcJi+Fg2AFRv8rfUtKop1JWu324Bj7pWOCeCjNt/iPP4VD4vA+Bd7weN2?=
- =?us-ascii?Q?MeWpA1MxU45FVT62IXFERuY57dpcd9u/tOTqEg8CUt0chn2tFSVK41iQPPmj?=
- =?us-ascii?Q?3sJRSYTLABpZVpeGO4iwoiWrcCLPrTB+JJ3mDftXzA1mLGIfcVBB/H7o543U?=
- =?us-ascii?Q?kdil2GbxrlQv4BNZ2+GqWAPvK/TgaRvZwR812dY5sfQiZ6poux+1ch4JyaAM?=
- =?us-ascii?Q?gwtMdX8GyHGJDV/SftCVH3VtcRi1mumLNP5womAWQ3UxuBlZhB1bS0F3tzfA?=
- =?us-ascii?Q?tiFquvNCXMNL6PAwdJXqjLb1oCdDxBhBMS1hAgMzeOfjZim/51avFUQS/oVz?=
- =?us-ascii?Q?m+MVGoTl7IYXdAnEJpJSkDg27Pe4oMMPcTzxNUqodkneKOp5k0FhWGALHyLM?=
- =?us-ascii?Q?6jOIGr+R1Syoef1mGmRFgsQSNiBX9m5xQIt8DS0/T7C2yLHeSwd9ccIMtJqY?=
- =?us-ascii?Q?9Mu/UaZTwFZnz8kq8jd641NL2tYiQbe20cX2pdBnZN6kcrDA0erlpcCq/PTg?=
- =?us-ascii?Q?EEbz08FLN0mtTKf4Eh0MURtw4bc+ZdH2zBXgnLcwYvm8T8xmjpi3Kgcyg=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: m6F9FVj2rDpe/Cspcqc/asrQbseNo8pcFhyP20sCTuNLlwbiXENYQrE9ZL8eHrlPBC5YwtoMvgmFvGAKMxMlibjuOr5CFJ9d2+rOZbU8wLaNsvA1etcku/aSErOTIunu6SVAHnkQAdGPH2FruRlk6TX3QCR98Ss73wytzdFHNJ0xgiDNQlHQxhh156A3EcTo
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;6:2lh8ap/nA9VSvBQ+ARFE4bXBIeDd6cYMxCZSC7FC7oKoMvYJ9ltak26tXMOq3ubiJsSpHJnOlW8CKgDVVGjebg3goqO/LMya5tHOokxC8I224qz4ODnebw6GOWEkqLwh7LfzXV84tp9gZB6HlknCAOR9xSE+4UDmF6njo+ar+1LF5a0FDqaiH6rnKSSV2zSM1eLAgzF+C1hLWCY3Cmiaq+80rWG7zgQ9uRfEzF8XoCofQ3/eFpT6X/RqNSZ7BFy+sZcrmeT62ge46OQ35aTNxitLl1q8pkEKoXa6vCuTDysjEsxti1WXZbpuJovWyykNpBwEOE/u419AmxycpYXitLLJ020QbbQOSH083dGIVux1R7icSkwRm+jLQLcMYiUi3CwpBrf+L76YC/7eLw1BoyxH47W5QwA59LWH8Inea96mQy7FFkK70pRoxR1Po91f1fMDQZPikk6d39S+GlKhUw==;5:krzQfK3gSXfcHYNn0OpgL0PW0rzr0v18YmyzmK7fg8v1wjulY2BuRVEbv3Xk2t4TsOUre21DOI4C2UExEnyRK8nM80OCVigWzvg3GtM7ZqT7GMQO/KryuPoSOjYgz8Muw+aoH71/IumXnlghIDiPkSn6IJSWZrbrv91EnljDTOE=;24:+tPPP+UyXHo2GaPGE+BCnCmAErd66GUMLkBqLWYceKmmGG7JZNK9of/u4mTk3dtzBq7jcqdqQt5zQBK2T/iKXBFBB/l73wa93a+KrLgHck4=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(39380400002)(376002)(199004)(189003)(6666003)(53936002)(81156014)(68736007)(6636002)(7736002)(50226002)(4326008)(6116002)(16586007)(6512007)(3846002)(8936002)(575784001)(186003)(86362001)(97736004)(8676002)(25786009)(16526019)(66066001)(50466002)(52116002)(51416003)(478600001)(106356001)(105586002)(26005)(956004)(76176011)(305945005)(47776003)(386003)(2616005)(5660300001)(316002)(81166006)(48376002)(446003)(6486002)(6506007)(476003)(2906002)(11346002)(36756003)(486006)(32563001)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1315;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1315;23:7k/5kj5ya/G+3MSrMfhnJYyLkflJ9OM41SWhONzDu?=
+ =?us-ascii?Q?px/D3nFMcw1L7Z989N4+HzV169Vc4G0Au0M7bBZGxNf1iMRiHuLeXiPcIAXH?=
+ =?us-ascii?Q?6VRrdxRGbHAJNZdau8mqxDU5lhOiqnLpqS5ogt8qaxeZzb/CfincTwiEOu4e?=
+ =?us-ascii?Q?/yX8fhw6JIdRI8vK6zzAHf9uIftGhRHUGyWg5MomB/wY9E6GM+zNJ0plr8He?=
+ =?us-ascii?Q?nEEszZJPXDVZmogh+Ca7vpiaJ4oB1xKYmV9pPvvvqVuS5jQrIbSGidv2OUC0?=
+ =?us-ascii?Q?rZ1e08baBjXyTnnBd2l56gxjZATzUHGoOq925Dbzy8/VyaqjRCQRbQ49TneX?=
+ =?us-ascii?Q?DcFV3e1wKQbO+4Pu6HisLcbLmiMhu5olp2K+40v6nnnpDagPY2eG5ty/Baxa?=
+ =?us-ascii?Q?FPf16ceSJjlPPEjODfbW8I6CvHr42IVrfFmmsmwMBeEU3xmq+/JUODmHup6v?=
+ =?us-ascii?Q?Gs04Q7TEfo0TTxBvI9aGCToAPgqWkI8QvwOJXcY5Sm7jC3b8ClOKI+33J58J?=
+ =?us-ascii?Q?NXjbop+oAsaX+fGmt6nJH4s5eao4QpV48k/1pKzqvxDfleUJkOFiqDLAA1tt?=
+ =?us-ascii?Q?L7ADhYaR4m/re+WZIHooFafDWxWN0tcA/YDHKx7HB60KXfSznl1T3FtTU5+W?=
+ =?us-ascii?Q?ka7zOnxqV5RtbsO2wIE1JoJEeGfZS6DeJY4039nBr9lFsVfRSNr+ZkrtKqp/?=
+ =?us-ascii?Q?NEIdz5w2e11IxWTSAIBak80thcaIoldubqSYZqpskMcvhovnhE2uC18GD2Z2?=
+ =?us-ascii?Q?4PbRqPU7J3qBwo8rtCpnEUK/5wNDGEzCNkk/BDfrjswGYlxV+JTdHAB1e3M5?=
+ =?us-ascii?Q?c/YRkr5wyGdEurB9nkNlTX+ZduVtRL3qFAaUvJuC5CGO7E/SUN786TGwWZar?=
+ =?us-ascii?Q?oMjV83l67GorpHwg/DqmddMBUKNaon6EY2wmOe1t8PBPYw6tDWqWBbFhUqjq?=
+ =?us-ascii?Q?7sTXlTNEE5WOFzj2GRomTY3TcOvN0lFI9QJwy/ZMF0SN/p0Hqtr7WDoqx3cn?=
+ =?us-ascii?Q?zW7EjZ2Hg46hJjCTNF3xln3KW6x4nqxnGEsVMxgKnz2prPFB0mCgZ5M7t2l0?=
+ =?us-ascii?Q?hwFsgBExkr0j5PbQwJifAHcoRGdzflLr0X6NxF1PLGItFT9T31xxpEky6Tj5?=
+ =?us-ascii?Q?COOHKNq4i0p2p2chiK5yYqARRpqdMuFNPFBTwgzJLt8SrSlUac5dQb9Deq3T?=
+ =?us-ascii?Q?WrlBDc3xenMARlMtie9gzlg4pjzxWYKSpk2LDzdMngpiF4bmbqsQ6hlWbZ7u?=
+ =?us-ascii?Q?XITEJ1PKYONS1ORFvE=3D?=
+X-Microsoft-Antispam-Message-Info: YcEPQwlpBCnAaTFaiLAsfiJt8CatMUQ+SLfsJBkYpHPAJyluhRI1+j/ejCf+a7Lv3aPUzfbEm10kH4YeAgCmYovRKVuoSJpCOZGl0RSgrw/+n0AWdOEQ59OH8qskVP4YRTgjGIwQHIMaIXhn9U7CM1u0tfeJz6cUcl9cGh3F4l7DcU+1o1paBjfRz/qU3ODD
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;6:EVR16ejs1Jsz0hrMhGafYbCZkNfYZjMAmftpPfxbXw88YOrOG7kiHlIDZiRtr4FJhe0xlibcmS4aExq+8v6Jhq4WC906R3sXgnZbK/DIG1YEz7BuoPv4p/AphCPhgdLCjF4rOMurPuOHoJ0/NF699BrTqirJEDpV3n4yARTgO8qqpsPNUoHAJM96Eg3v+nwJ+xoDKQGlCcpEViT915pYvqCzkwpAaFibGtmNdT24mg/Ur1+Q+CLEv5fzOa0xVnc1fW7OEphds//BJo4fZqO17xtzTRRVCd67wn9LyHf5255mpPY+96ptx84sLrbFTCxY8D6ScTzVqLXcTk46/P5ES2sIaw+7X249WGwum7grmGD68NdaHUbB6c65BC895QMGSopB5E2p338kJuZsUy4xkNbpr6kiEDTbpeJ2pS2eEFycoSViy47N1d50VKqKE1VUkWzWnc3lMLukYVGIvsF6sw==;5:enwFM0ajQdj8zMUuRxCN90ymZZl1qQp5AYSe2rrUOS5wg6wyLbRsGzrUwTtuCxoiUDhFPnWkiw1aJqO2W73xibVpPBA29gMgqTU2lZnnkocvN9bunLNdHcRz0v54ASUn6WmmVvO/sXU+pOrM+dE3Tw6ZkyAfqIespsvlq+5HMf8=;24:kbJM/+dbVQuc9nx0j3gurG0sPx/XrXVCNIb5mDYSIP/KIqNH4QJXn1j7b5JcyxsUWE5oWKeuv7eF5iUFr2UjqHheboVPU3hoQAvJEtAV6HI=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;7:T1133Tz+4qS3rWU04yNoT1KYgtaxo7x0JZF4qyJfZdnNIanOwcQmc1OfHcMEcDQ+nL/hXGcNjMAxQvTeMMSH09NygCC4i7uyW9RCt/Im3LQi6C7a7SPL6+4e6wDnfMcTHjZbmfq4nkngEnTxcIY+ipTwnu7KRqgCEJsFE3BMpCYMYXiyVUInkK7XIEuSseJBVAOqJ6k48NqLQ4rhnP3TIjyE8u3nmjOFU6EBz4zR0WPVccbGVANPTN2155SaSmFc
-X-MS-Office365-Filtering-Correlation-Id: 0900467a-5b77-4876-c1e2-08d5b262ccd1
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;7:p6cTnHby4QY9HzVQM0qRTaStxeJeUZpRrF9xoOYLz1vlu+YLWUQCPbRYtKwcCbLHv/eHkWExdK8/52RWMSfu7HyEeSjJ/vrpWMY2oxspXsgfP1nrwfxyOaHSX+JT3Gz5Z4gDx1I1RNAN9vdZEpsJT8d+T6qupm0u5cPxEbl6viOM6m4sEZdUG/4Njixcp+suHrPtLhUzsEIbxDZBizWUrQB8aM8s2jOirAO9E4mjcTSi7z155iKhRQZ72zhAnxwB
+X-MS-Office365-Filtering-Correlation-Id: f4a97c4e-44e9-4749-4c89-08d5b262d359
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2018 08:32:50.7498
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2018 08:33:01.7202
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0900467a-5b77-4876-c1e2-08d5b262ccd1
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4a97c4e-44e9-4749-4c89-08d5b262d359
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1315
@@ -74,145 +76,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pfuze100 support on i.MX6SX Sabre Auto board.
+i.MX6SX Sabre Auto board has two max7310 IO expander on I2C3 bus, add
+support for them.
 
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
 changes since V5:
-	improve node name and unit-address format.
- arch/arm/boot/dts/imx6sx-sabreauto.dts | 116 +++++++++++++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
+	improve pinctrl node name.
+ arch/arm/boot/dts/imx6sx-sabreauto.dts | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-index 87ffe2c..1d8cf0f 100644
+index ae253af..4d41b4d 100644
 --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
 +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-@@ -66,6 +66,13 @@
- };
+@@ -73,6 +73,13 @@
+ 		>;
+ 	};
  
- &iomuxc {
-+	pinctrl_i2c2: i2c2grp {
++	pinctrl_i2c3: i2c3grp {
 +		fsl,pins = <
-+			MX6SX_PAD_GPIO1_IO03__I2C2_SDA          0x4001b8b1
-+			MX6SX_PAD_GPIO1_IO02__I2C2_SCL          0x4001b8b1
++			MX6SX_PAD_KEY_ROW4__I2C3_SDA            0x4001b8b1
++			MX6SX_PAD_KEY_COL4__I2C3_SCL            0x4001b8b1
 +		>;
 +	};
 +
  	pinctrl_uart1: uart1grp {
  		fsl,pins = <
  			MX6SX_PAD_GPIO1_IO04__UART1_TX		0x1b0b1
-@@ -139,3 +146,112 @@
- 		>;
+@@ -262,3 +269,24 @@
+ 		#gpio-cells = <2>;
  	};
  };
 +
-+&i2c2 {
++&i2c3 {
 +	clock-frequency = <100000>;
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
++	pinctrl-0 = <&pinctrl_i2c3>;
 +	status = "okay";
 +
-+	pfuze100: pmic@8 {
-+		compatible = "fsl,pfuze100";
-+		reg = <0x08>;
++	max7310_a: gpio@30 {
++		compatible = "maxim,max7310";
++		reg = <0x30>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
 +
-+		regulators {
-+			sw1a_reg: sw1ab {
-+				regulator-min-microvolt = <300000>;
-+				regulator-max-microvolt = <1875000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <6250>;
-+			};
-+
-+			sw1c_reg: sw1c {
-+				regulator-min-microvolt = <300000>;
-+				regulator-max-microvolt = <1875000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <6250>;
-+			};
-+
-+			sw2_reg: sw2 {
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			sw3a_reg: sw3a {
-+				regulator-min-microvolt = <400000>;
-+				regulator-max-microvolt = <1975000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			sw3b_reg: sw3b {
-+				regulator-min-microvolt = <400000>;
-+				regulator-max-microvolt = <1975000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			sw4_reg: sw4 {
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			swbst_reg: swbst {
-+				regulator-min-microvolt = <5000000>;
-+				regulator-max-microvolt = <5150000>;
-+			};
-+
-+			snvs_reg: vsnvs {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vref_reg: vrefddr {
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vgen1_reg: vgen1 {
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1550000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen2_reg: vgen2 {
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1550000>;
-+			};
-+
-+			vgen3_reg: vgen3 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen4_reg: vgen4 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen5_reg: vgen5 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+
-+			vgen6_reg: vgen6 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+			};
-+		};
++	max7310_b: gpio@32 {
++		compatible = "maxim,max7310";
++		reg = <0x32>;
++		gpio-controller;
++		#gpio-cells = <2>;
 +	};
 +};
 -- 
