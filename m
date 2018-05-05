@@ -1,157 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752080AbeEEDqx (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 23:46:53 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34102 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751652AbeEEDqw (ORCPT
+        id S1751936AbeEEDse (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 23:48:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52966 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751508AbeEEDsb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 23:46:52 -0400
-Date: Fri, 4 May 2018 20:46:46 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <keescook@google.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: *alloc API changes
-Message-ID: <20180505034646.GA20495@bombadil.infradead.org>
-References: <CAGXu5j++1TLqGGiTLrU7OvECfBAR6irWNke9u7Rr2i8g6_30QQ@mail.gmail.com>
+        Fri, 4 May 2018 23:48:31 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5008460AE0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1] clk: qcom: gdsc: Add support to poll CFG register to
+ check GDSC state
+To: Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc: Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1525151013-28291-1-git-send-email-tdas@codeaurora.org>
+ <152524425583.138124.2497854182982735033@swboyd.mtv.corp.google.com>
+ <e1d6f7a1-9b2b-113a-4c21-4730c6514e9c@codeaurora.org>
+ <152548867593.138124.17769741201119581476@swboyd.mtv.corp.google.com>
+From: Taniya Das <tdas@codeaurora.org>
+Message-ID: <aae43315-1506-983d-312c-e28f1cc46b71@codeaurora.org>
+Date: Sat, 5 May 2018 09:18:21 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5j++1TLqGGiTLrU7OvECfBAR6irWNke9u7Rr2i8g6_30QQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <152548867593.138124.17769741201119581476@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 06:08:23PM -0700, Kees Cook wrote:
-> The number of permutations for our various allocation function is
-> rather huge. Currently, it is:
+Yeah sure Stephen.
+
+On 5/5/2018 8:21 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-05-03 02:09:57)
+>> Hello Stephen,
+>>
+>> I have tested the below patch & didn't see any issues.
 > 
-> system or wrapper:
-> kmem_cache_alloc, kmalloc, vmalloc, kvmalloc, devm_kmalloc,
-> dma_alloc_coherent, pci_alloc_consistent, kmem_alloc, f2fs_kvalloc,
-> and probably others I haven't found yet.
-
-dma_pool_alloc, page_frag_alloc, gen_pool_alloc, __alloc_bootmem_node,
-cma_alloc, quicklist_alloc (deprecated), mempool_alloc
-
-and if you're counting f2fs_*alloc, there's a metric tonne of *alloc
-wrappers out there.
-
-> allocation method (not all available in all APIs):
-> regular (kmalloc), zeroed (kzalloc), array (kmalloc_array), zeroed
-> array (kcalloc)
-
-... other initialiser (kmem_cache_alloc)
-
-> I wonder if we might be able to rearrange our APIs for the general
-> case and include a common "kitchen sink" API for the less common
-> options. I.e. why do we have an entire set of _node() APIs, 2 sets for
-> zeroing (kzalloc, kcalloc), etc.
-
-I'd love it if we had a common pattern for these things.  A regular API
-appeals to me (I blame those RISC people in my formative years).
-
-> kmalloc()-family was meant to be a simplification of
-> kmem_cache_alloc().
-
-That's a little revisionist ;-)  We had kmalloc before we had the slab
-allocator (kernel 1.2, I think?).  But I see your point, and that's
-certainly how it's implemented these days.
-
-> vmalloc() duplicated the kmalloc()-family, and
-> kvmalloc() does too. Then we have "specialty" allocators (devm, dma,
-> pci, f2fs, xfs's kmem) that have subsets and want to perform other
-> actions around the base allocators or have their own entirely (e.g.
-> dma).
+> Alright. Thanks! Can I take that as a "Tested-by"?
 > 
-> Instead of all the variations, it seems like we just want a per-family
-> alloc() and alloc_attrs(), where alloc_attrs() could handle the less
-> common stuff (e.g. gfp, zero, node).
-> 
-> kmalloc(size, GFP_KERNEL)
-> becomes a nice:
-> kmalloc(size)
 
-I got shot down for proposing adding
-#define malloc(x) kmalloc(x, GFP_KERNEL)
-on the grounds that driver writers will then use malloc in interrupt
-context.  So I think our base version has to be foo_alloc(size, gfp_t).
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-> But this doesn't solve the multiplication overflow case at all, which
-> is my real goal. Trying to incorporate some of the ideas from other
-> threads, maybe we could have a multiplication helper that would
-> saturate and the allocator would see that as a signal to return NULL?
-> e.g.:
-> 
-> inline size_t mult(size_t a, size_t b)
-> {
->     if (b != 0 && a >= SIZE_MAX / b)
->         return SIZE_MAX;
->     return a * b;
-> }
-> (really, this kind of helper should be based on Rasmus's helpers which
-> do correct type handling)
-
-Right, I was thinking:
-
-static inline size_t mul_ab(size_t a, size_t b)
-{
-#if COMPILER_SUPPORTS_OVERFLOW
-	unsigned long c;
-	if (__builtin_mul_overflow(a, b, &c))
-		return SIZE_MAX;
-	return c;
-#else
-	if (b != 0 && a >= SIZE_MAX / b)
-		return SIZE_MAX;
-	return a * b;
-#endif
-}
-
-> void *kmalloc(size_t size)
-> {
->     if (size == SIZE_MAX)
->         return NULL;
->     kmalloc_attrs(size, GFP_KERNEL, ALLOC_NOZERO, NUMA_NO_NODE);
-> }
-
-You don't need the size check here.  We have the size check buried deep in
-alloc_pages (look for MAX_ORDER), so kmalloc and then alloc_pages will try
-a bunch of paths all of which fail before returning NULL.
-
-> then we get:
-> var = kmalloc(mult(num, sizeof(*var)));
-> 
-> we could drop the *calloc(), *zalloc(), and *_array(), leaving only
-> *alloc() and *alloc_attrs() for all the allocator families.
-> 
-> I honestly can't tell if this is worse than doing all the family
-> conversions to *calloc() and *_array() for the 1000ish instances of
-> 2-factor products used for size arguments in the *alloc() functions.
-> We could still nest them for the 3-factor ones?
-> var = kmalloc(multi(row, mult(column, sizeof(*var))));
-> 
-> But now we're just pretending to be LISP.
-
-I'd rather have a mul_ab(), mul_abc(), mul_ab_add_c(), etc. than nest
-calls to mult().
-
-> And really, I'd like to keep the nicer *alloc_struct() with all its
-> type checking. But then do we do *zalloc_struct(),
-> *alloc_struct_node(), etc, etc?
-
-Nono, Linus had the better proposal, struct_size(p, member, n).
-
-> Bleh. C sucks for this.
-
-Ooh, we could instantiate classes and ... yeah, no, not C++.  We *could*
-abuse the C preprocessor to autogenerate every variant, but I hate that
-because you can't grep for it.
-
-One of the problems with having the single-argument foo_alloc be a static
-inline for foo_alloc_attrs is that you then have to marshall four arguments
-for the call instead of just one.  I would have two exported symbols for
-each variant.
+--
