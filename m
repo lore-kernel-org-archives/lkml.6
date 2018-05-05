@@ -1,200 +1,149 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752049AbeEETGr (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 15:06:47 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:44521 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751825AbeEETEJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 15:04:09 -0400
-X-Google-Smtp-Source: AB8JxZokXi3vPqv9KRD7zQdsqE7Ili3SfZ7WvT8v5Zk78o+77SU3aFRu358nItTVjkHAbbetaVZqpg==
-From: Connor McAdams <conmanx360@gmail.com>
-Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
-        <jeremy.lefaure@lse.epita.fr>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/9] ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
-Date: Sat,  5 May 2018 15:03:13 -0400
-Message-Id: <1525547001-17588-3-git-send-email-conmanx360@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525547001-17588-1-git-send-email-conmanx360@gmail.com>
-References: <1525547001-17588-1-git-send-email-conmanx360@gmail.com>
-To: unlisted-recipients:; (no To-header on input)
+        id S1751847AbeEETMW (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 15:12:22 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:50326 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751684AbeEETMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 15:12:21 -0400
+From: Andrew Lunn <andrew@lunn.ch>
+To: srinivas.kandagatla@linaro.org
+Cc: linux-kernel@vger.kernel.org, andrew.smirnov@gmail.com,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH RFC] drivers: nvmem: Export nvmem_add_cells()
+Date: Sat,  5 May 2018 21:11:47 +0200
+Message-Id: <1525547507-1428-1-git-send-email-andrew@lunn.ch>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds an unsolicited response tag for the front headphone
-panel which uses the same hp_callback as the rear headphone detection.
+Not all platforms use device tree. It is useful to be able to add
+cells to a NVMEM device from code. Export nvmem_add_cells() so making
+this possible.
 
-This patch also adds pincfgs for the R3Di and SBZ which were taken from
-the Windows driver. The pins are also defined in the function
-ca0132_config. Both the R3Di and SBZ are also given a max out channel
-value of 6 to handle 5.1 surround sound in later patches.
+This required changing the parameters a bit, so that just the cells
+and the number of cells are passed, not the whole nvmem config
+structure.
 
-Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 ---
- sound/pci/hda/patch_ca0132.c | 111 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 108 insertions(+), 3 deletions(-)
 
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 8346100..02238fe 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -723,6 +723,7 @@ struct ca0132_spec {
- 	hda_nid_t shared_mic_nid;
- 	hda_nid_t shared_out_nid;
- 	hda_nid_t unsol_tag_hp;
-+	hda_nid_t unsol_tag_front_hp; /* for desktop ca0132 codecs */
- 	hda_nid_t unsol_tag_amic1;
- 
- 	/* chip access */
-@@ -785,6 +786,36 @@ static const struct hda_pintbl alienware_pincfgs[] = {
- 	{}
- };
- 
-+/* Sound Blaster Z pin configs taken from Windows Driver */
-+static const struct hda_pintbl sbz_pincfgs[] = {
-+	{ 0x0b, 0x01017010 }, /* Port G -- Lineout FRONT L/R */
-+	{ 0x0c, 0x014510f0 }, /* SPDIF Out 1 */
-+	{ 0x0d, 0x014510f0 }, /* Digital Out */
-+	{ 0x0e, 0x01c510f0 }, /* SPDIF In */
-+	{ 0x0f, 0x0221701f }, /* Port A -- BackPanel HP */
-+	{ 0x10, 0x01017012 }, /* Port D -- Center/LFE or FP Hp */
-+	{ 0x11, 0x01017014 }, /* Port B -- LineMicIn2 / Rear L/R */
-+	{ 0x12, 0x01a170f0 }, /* Port C -- LineIn1 */
-+	{ 0x13, 0x908700f0 }, /* What U Hear In*/
-+	{ 0x18, 0x50d000f0 }, /* N/A */
-+	{}
-+};
-+
-+/* Recon3D integrated pin configs taken from Windows Driver */
-+static const struct hda_pintbl r3di_pincfgs[] = {
-+	{ 0x0b, 0x01014110 }, /* Port G -- Lineout FRONT L/R */
-+	{ 0x0c, 0x014510f0 }, /* SPDIF Out 1 */
-+	{ 0x0d, 0x014510f0 }, /* Digital Out */
-+	{ 0x0e, 0x41c520f0 }, /* SPDIF In */
-+	{ 0x0f, 0x0221401f }, /* Port A -- BackPanel HP */
-+	{ 0x10, 0x01016011 }, /* Port D -- Center/LFE or FP Hp */
-+	{ 0x11, 0x01011014 }, /* Port B -- LineMicIn2 / Rear L/R */
-+	{ 0x12, 0x02a090f0 }, /* Port C -- LineIn1 */
-+	{ 0x13, 0x908700f0 }, /* What U Hear In*/
-+	{ 0x18, 0x500000f0 }, /* N/A */
-+	{}
-+};
-+
- static const struct snd_pci_quirk ca0132_quirks[] = {
- 	SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
- 	SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
-@@ -4503,6 +4534,10 @@ static void ca0132_init_unsol(struct hda_codec *codec)
- 					    amic_callback);
- 	snd_hda_jack_detect_enable_callback(codec, UNSOL_TAG_DSP,
- 					    ca0132_process_dsp_response);
-+	/* Front headphone jack detection */
-+	if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3DI)
-+		snd_hda_jack_detect_enable_callback(codec,
-+			spec->unsol_tag_front_hp, hp_callback);
+This is an RFC.
+
+I have an intel platform with an AT24 EEPROM. I want to make use of
+nvmem, but don't have device tree to be able to specify cells. I have
+an x86 platform driver which does:
+
+struct nvmem_cell_info nameplate_cells[] = {
+       {
+               .name = "checksum",
+               .offset = 2,
+               .bytes = 1,
+       },
+       {
+               .name = "part_number",
+               .offset = 11,
+               .bytes = 11,
+       },
+};
+
+       err = nvmem_add_cells(nvmem, nameplate_cells,
+                             ARRAY_SIZE(nameplate_cells));
+       if (err) {
+               dev_err(dev, "Error adding cells to nameplate nvmem device\n");
+               return;
+       }
+
+       cell = nvmem_cell_get(NULL, "checksum");
+
+
+drivers/nvmem/core.c           | 15 ++++++++-------
+ include/linux/nvmem-provider.h | 11 +++++++++++
+ 2 files changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index b05aa8e81303..d1bd43874439 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -353,18 +353,18 @@ static int nvmem_cell_info_to_nvmem_cell(struct nvmem_device *nvmem,
+ 	return 0;
  }
+ 
+-static int nvmem_add_cells(struct nvmem_device *nvmem,
+-			   const struct nvmem_config *cfg)
++int nvmem_add_cells(struct nvmem_device *nvmem,
++		    const struct nvmem_cell_info *info,
++		    int ncells)
+ {
+ 	struct nvmem_cell **cells;
+-	const struct nvmem_cell_info *info = cfg->cells;
+ 	int i, rval;
+ 
+-	cells = kcalloc(cfg->ncells, sizeof(*cells), GFP_KERNEL);
++	cells = kcalloc(ncells, sizeof(*cells), GFP_KERNEL);
+ 	if (!cells)
+ 		return -ENOMEM;
+ 
+-	for (i = 0; i < cfg->ncells; i++) {
++	for (i = 0; i < ncells; i++) {
+ 		cells[i] = kzalloc(sizeof(**cells), GFP_KERNEL);
+ 		if (!cells[i]) {
+ 			rval = -ENOMEM;
+@@ -380,7 +380,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
+ 		nvmem_cell_add(cells[i]);
+ 	}
+ 
+-	nvmem->ncells = cfg->ncells;
++	nvmem->ncells = ncells;
+ 	/* remove tmp array */
+ 	kfree(cells);
+ 
+@@ -393,6 +393,7 @@ static int nvmem_add_cells(struct nvmem_device *nvmem,
+ 
+ 	return rval;
+ }
++EXPORT_SYMBOL_GPL(nvmem_add_cells);
  
  /*
-@@ -4684,9 +4719,14 @@ static void ca0132_config(struct hda_codec *codec)
- 
- 	spec->multiout.dac_nids = spec->dacs;
- 	spec->multiout.num_dacs = 3;
--	spec->multiout.max_channels = 2;
- 
--	if (spec->quirk == QUIRK_ALIENWARE) {
-+	if (spec->quirk == QUIRK_NONE || spec->quirk == QUIRK_ALIENWARE)
-+		spec->multiout.max_channels = 2;
-+	else
-+		spec->multiout.max_channels = 6;
-+
-+	switch (spec->quirk) {
-+	case QUIRK_ALIENWARE:
- 		codec_dbg(codec, "ca0132_config: QUIRK_ALIENWARE applied.\n");
- 		snd_hda_apply_pincfgs(codec, alienware_pincfgs);
- 
-@@ -4706,7 +4746,71 @@ static void ca0132_config(struct hda_codec *codec)
- 		spec->input_pins[2] = 0x13;
- 		spec->shared_mic_nid = 0x7;
- 		spec->unsol_tag_amic1 = 0x11;
--	} else {
-+		break;
-+	case QUIRK_SBZ:
-+		codec_dbg(codec, "%s: QUIRK_SBZ applied.\n", __func__);
-+		snd_hda_apply_pincfgs(codec, sbz_pincfgs);
-+
-+		spec->num_outputs = 2;
-+		spec->out_pins[0] = 0x0B; /* Line out */
-+		spec->out_pins[1] = 0x0F; /* Rear headphone out */
-+		spec->out_pins[2] = 0x10; /* Front Headphone / Center/LFE*/
-+		spec->out_pins[3] = 0x11; /* Rear surround */
-+		spec->shared_out_nid = 0x2;
-+		spec->unsol_tag_hp = spec->out_pins[1];
-+		spec->unsol_tag_front_hp = spec->out_pins[2];
-+
-+		spec->adcs[0] = 0x7; /* Rear Mic / Line-in */
-+		spec->adcs[1] = 0x8; /* Front Mic, but only if no DSP */
-+		spec->adcs[2] = 0xa; /* what u hear */
-+
-+		spec->num_inputs = 2;
-+		spec->input_pins[0] = 0x12; /* Rear Mic / Line-in */
-+		spec->input_pins[1] = 0x13; /* What U Hear */
-+		spec->shared_mic_nid = 0x7;
-+		spec->unsol_tag_amic1 = spec->input_pins[0];
-+
-+		/* SPDIF I/O */
-+		spec->dig_out = 0x05;
-+		spec->multiout.dig_out_nid = spec->dig_out;
-+		cfg->dig_out_pins[0] = 0x0c;
-+		cfg->dig_outs = 1;
-+		cfg->dig_out_type[0] = HDA_PCM_TYPE_SPDIF;
-+		spec->dig_in = 0x09;
-+		cfg->dig_in_pin = 0x0e;
-+		cfg->dig_in_type = HDA_PCM_TYPE_SPDIF;
-+		break;
-+	case QUIRK_R3DI:
-+		codec_dbg(codec, "%s: QUIRK_R3DI applied.\n", __func__);
-+		snd_hda_apply_pincfgs(codec, r3di_pincfgs);
-+
-+		spec->num_outputs = 2;
-+		spec->out_pins[0] = 0x0B; /* Line out */
-+		spec->out_pins[1] = 0x0F; /* Rear headphone out */
-+		spec->out_pins[2] = 0x10; /* Front Headphone / Center/LFE*/
-+		spec->out_pins[3] = 0x11; /* Rear surround */
-+		spec->shared_out_nid = 0x2;
-+		spec->unsol_tag_hp = spec->out_pins[1];
-+		spec->unsol_tag_front_hp = spec->out_pins[2];
-+
-+		spec->adcs[0] = 0x07; /* Rear Mic / Line-in */
-+		spec->adcs[1] = 0x08; /* Front Mic, but only if no DSP */
-+		spec->adcs[2] = 0x0a; /* what u hear */
-+
-+		spec->num_inputs = 2;
-+		spec->input_pins[0] = 0x12; /* Rear Mic / Line-in */
-+		spec->input_pins[1] = 0x13; /* What U Hear */
-+		spec->shared_mic_nid = 0x7;
-+		spec->unsol_tag_amic1 = spec->input_pins[0];
-+
-+		/* SPDIF I/O */
-+		spec->dig_out = 0x05;
-+		spec->multiout.dig_out_nid = spec->dig_out;
-+		cfg->dig_out_pins[0] = 0x0c;
-+		cfg->dig_outs = 1;
-+		cfg->dig_out_type[0] = HDA_PCM_TYPE_SPDIF;
-+		break;
-+	default:
- 		spec->num_outputs = 2;
- 		spec->out_pins[0] = 0x0b; /* speaker out */
- 		spec->out_pins[1] = 0x10; /* headphone out */
-@@ -4733,6 +4837,7 @@ static void ca0132_config(struct hda_codec *codec)
- 		spec->dig_in = 0x09;
- 		cfg->dig_in_pin = 0x0e;
- 		cfg->dig_in_type = HDA_PCM_TYPE_SPDIF;
-+		break;
+  * nvmem_setup_compat() - Create an additional binary entry in
+@@ -509,7 +510,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
  	}
+ 
+ 	if (config->cells)
+-		nvmem_add_cells(nvmem, config);
++		nvmem_add_cells(nvmem, config->cells, config->ncells);
+ 
+ 	return nvmem;
+ 
+diff --git a/include/linux/nvmem-provider.h b/include/linux/nvmem-provider.h
+index f89598bc4e1c..24def6ad09bb 100644
+--- a/include/linux/nvmem-provider.h
++++ b/include/linux/nvmem-provider.h
+@@ -77,6 +77,9 @@ struct nvmem_device *devm_nvmem_register(struct device *dev,
+ 
+ int devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem);
+ 
++int nvmem_add_cells(struct nvmem_device *nvmem,
++		    const struct nvmem_cell_info *info,
++		    int ncells);
+ #else
+ 
+ static inline struct nvmem_device *nvmem_register(const struct nvmem_config *c)
+@@ -99,6 +102,14 @@ static inline int
+ devm_nvmem_unregister(struct device *dev, struct nvmem_device *nvmem)
+ {
+ 	return nvmem_unregister(nvmem);
++
++}
++
++static inline int nvmem_add_cells(struct nvmem_device *nvmem,
++				  const struct nvmem_cell_info *info,
++				  int ncells)
++{
++	return -ENOSYS;
  }
  
+ #endif /* CONFIG_NVMEM */
 -- 
-2.7.4
+2.17.0
