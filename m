@@ -1,59 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751794AbeEEKge (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 06:36:34 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:42736 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751684AbeEEKgc (ORCPT
+        id S1751270AbeEEKjt (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 06:39:49 -0400
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:51585 "EHLO
+        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750830AbeEEKjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 06:36:32 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w45Aa9uP006382
-X-Nifty-SrcIP: [209.85.217.174]
-X-Google-Smtp-Source: AB8JxZr6WF4yQVaBqPkwmFksn6vlnk07b0RfyP9YIvR4WL0lJkWBmklCcF2iJ4M/FkRJ+93dBkFxsMs2gzXT/3Ars+c=
-MIME-Version: 1.0
-In-Reply-To: <CAKwvOdnjgEWDo8vjOiAS_TsEoJFZZagJgaqBAdW99L-Nkr9BxA@mail.gmail.com>
-References: <20180426212807.196279-1-ndesaulniers@google.com> <CAKwvOdnjgEWDo8vjOiAS_TsEoJFZZagJgaqBAdW99L-Nkr9BxA@mail.gmail.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Sat, 5 May 2018 19:35:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATHTAa+g3-Cud6iorgo-1riMzp07dmnXpk9XVmcZPuX9Q@mail.gmail.com>
-Message-ID: <CAK7LNATHTAa+g3-Cud6iorgo-1riMzp07dmnXpk9XVmcZPuX9Q@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: gcov: enable -fno-tree-loop-im if supported
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Prasad Sodagudi <psodagud@quicinc.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 5 May 2018 06:39:48 -0400
+X-Google-Smtp-Source: AB8JxZpLPzCs/90LUf4Gdv4yQcEPh7RQQ5w2D+yzc4ipV8X6gFV40dMdfXY7n9dOsgRYPtqy8Mip9w==
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
+Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
+ merge
+From: Paolo Valente <paolo.valente@linaro.org>
+In-Reply-To: <1525508378.5406.6.camel@gmx.de>
+Date: Sat, 5 May 2018 12:39:44 +0200
+Cc: Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name
+Message-Id: <9F155F9F-F6B2-465A-BA4D-A86FF6825071@linaro.org>
+References: <20180504171701.6876-1-paolo.valente@linaro.org>
+ <1525463210.622.1.camel@gmx.de> <1525508378.5406.6.camel@gmx.de>
+To: Mike Galbraith <efault@gmx.de>
+X-Mailer: Apple Mail (2.3445.6.18)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-2018-04-27 6:41 GMT+09:00 Nick Desaulniers <ndesaulniers@google.com>:
-> Hi Masahiro and Michal,
->
-> The reporter has asked for their email address to be updated to:
->
-> psodagud@codeaurora.org
->
-> if you're ok with this version of the patch and choose to apply it, can you
-> please update the commit message. Otherwise, I'll make this change should
-> we need other changes necessitating a v2.
-> On Thu, Apr 26, 2018 at 2:29 PM Nick Desaulniers <ndesaulniers@google.com>
-> wrote:
->
->> Clang does not recognize this compiler option.
->
->> Reported-by: Prasad Sodagudi <psodagud@quicinc.com>
->> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-
-Applied to linux-kbuild
-with the reporter's email address updated.
-
-Thanks!
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w45Adtfs000887
 
 
 
+> Il giorno 05 mag 2018, alle ore 10:19, Mike Galbraith <efault@gmx.de> ha scritto:
+> 
+> On Fri, 2018-05-04 at 21:46 +0200, Mike Galbraith wrote:
+>> Tentatively, I suspect you've just fixed the nasty stalls I reported a
+>> while back.
+> 
+> Oh well, so much for optimism.  It took a lot, but just hung.
 
--- 
-Best Regards
-Masahiro Yamada
+Yep, it'd have been a lot of luck, being your hang related to
+different operations from those touched by this fix.  Maybe
+time-before-failure stretched because your system suffered from the
+illness cured by this fix too.
+
+BTW, if you didn't run out of patience with this permanent issue yet,
+I was thinking of two o three changes to retry to trigger your failure
+reliably.  In case of success, I could restart racking my brains from
+there.
+
+Thanks,
+Paolo
