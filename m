@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751917AbeEETE2 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 15:04:28 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:33389 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751252AbeEETEQ (ORCPT
+        id S1752018AbeEETFm (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 15:05:42 -0400
+Received: from mail-io0-f177.google.com ([209.85.223.177]:38759 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751863AbeEETEY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 15:04:16 -0400
-X-Google-Smtp-Source: AB8JxZpcol0ZJcweXmx8wGIFU3OSMd99+ssmv0XGJiKwOnjFRm92w8MYDCimpkepvzACO7zQi3K/gQ==
+        Sat, 5 May 2018 15:04:24 -0400
+X-Google-Smtp-Source: AB8JxZpyfI4IYU4vGNvPXcQdnwrJmqrgFki7haeAmqe3p5iBladQtYMzagE0Wu9iu4w8fyRTv46YCA==
 From: Connor McAdams <conmanx360@gmail.com>
 Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
         <jeremy.lefaure@lse.epita.fr>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/9] ALSA: hda/ca0132: add/change helper functions for R3Di and SBZ
-Date: Sat,  5 May 2018 15:03:16 -0400
-Message-Id: <1525547001-17588-6-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH v3 9/9] ALSA: hda/ca0132: Add new control changes for SBZ + R3Di
+Date: Sat,  5 May 2018 15:03:20 -0400
+Message-Id: <1525547001-17588-10-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525547001-17588-1-git-send-email-conmanx360@gmail.com>
 References: <1525547001-17588-1-git-send-email-conmanx360@gmail.com>
@@ -25,1352 +25,973 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Edit core functions to support the Sound Blaster Z and Recon3Di for
-startup and loading of the DSP, as well as setting effects.
+This patch adds new controls to set the effect levels on the R3Di and
+SBZ. It also adds vmaster controls to control all surround sound
+channels. So that Surround effect switch doesn't conflict with Surround
+volume, FX: prefix added to all effect related switches.
 
+Tested-by: Mariusz Ceier <mceier+kernel@gmail.com>
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 1064 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 1018 insertions(+), 46 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 758 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 748 insertions(+), 10 deletions(-)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 5cda7a5..bb0feaa 100644
+index c1753b2..566ec9c 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -45,6 +45,7 @@
- #define FLOAT_ZERO	0x00000000
- #define FLOAT_ONE	0x3f800000
- #define FLOAT_TWO	0x40000000
-+#define FLOAT_THREE     0x40400000
- #define FLOAT_MINUS_5	0xc0a00000
+@@ -144,13 +144,26 @@ enum {
+ 	CRYSTAL_VOICE,
+ 	EFFECT_END_NID,
+ 	OUTPUT_SOURCE_ENUM,
+-	INPUT_SOURCE_ENUM
++	INPUT_SOURCE_ENUM,
++	XBASS_XOVER,
++	EQ_PRESET_ENUM,
++	SMART_VOLUME_ENUM,
++	MIC_BOOST_ENUM
+ #define EFFECTS_COUNT  (EFFECT_END_NID - EFFECT_START_NID)
+ };
  
- #define UNSOL_TAG_DSP	0x16
-@@ -710,6 +711,7 @@ struct ca0132_spec {
- 	const struct hda_verb *base_init_verbs;
- 	const struct hda_verb *base_exit_verbs;
- 	const struct hda_verb *chip_init_verbs;
-+	const struct hda_verb *sbz_init_verbs;
- 	struct hda_verb *spec_init_verbs;
- 	struct auto_pin_cfg autocfg;
+ /* Effects values size*/
+ #define EFFECT_VALS_MAX_COUNT 12
  
-@@ -743,6 +745,8 @@ struct ca0132_spec {
- 	unsigned int scp_resp_data[4];
- 	unsigned int scp_resp_count;
- 	bool alt_firmware_present;
-+	bool startup_check_entered;
-+	bool dsp_reload;
++/*
++ * Default values for the effect slider controls, they are in order of their
++ * effect NID's. Surround, Crystalizer, Dialog Plus, Smart Volume, and then
++ * X-bass.
++ */
++static const unsigned int effect_slider_defaults[] = {67, 65, 50, 74, 50};
++/* Amount of effect level sliders for ca0132_alt controls. */
++#define EFFECT_LEVEL_SLIDERS 5
++
+ /* Latency introduced by DSP blocks in milliseconds. */
+ #define DSP_CAPTURE_INIT_LATENCY        0
+ #define DSP_CRYSTAL_VOICE_LATENCY       124
+@@ -494,6 +507,93 @@ static struct ct_voicefx_preset ca0132_voicefx_presets[] = {
+ 	}
+ };
  
- 	/* mixer and effects related */
- 	unsigned char dmic_ctl;
-@@ -768,6 +772,13 @@ struct ca0132_spec {
- 	 * switching, and other unknown commands.
++/* ca0132 EQ presets, taken from Windows Sound Blaster Z Driver */
++
++#define EQ_PRESET_MAX_PARAM_COUNT 11
++
++struct ct_eq {
++	char *name;
++	hda_nid_t nid;
++	int mid;
++	int reqs[EQ_PRESET_MAX_PARAM_COUNT]; /*effect module request*/
++};
++
++struct ct_eq_preset {
++	char *name; /*preset name*/
++	unsigned int vals[EQ_PRESET_MAX_PARAM_COUNT];
++};
++
++static struct ct_eq ca0132_alt_eq_enum = {
++	.name = "FX: Equalizer Preset Switch",
++	.nid = EQ_PRESET_ENUM,
++	.mid = 0x96,
++	.reqs = {10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
++};
++
++
++static struct ct_eq_preset ca0132_alt_eq_presets[] = {
++	{ .name = "Flat",
++	 .vals = { 0x00000000, 0x00000000, 0x00000000,
++		   0x00000000, 0x00000000, 0x00000000,
++		   0x00000000, 0x00000000, 0x00000000,
++		   0x00000000, 0x00000000	     }
++	},
++	{ .name = "Acoustic",
++	 .vals = { 0x00000000, 0x00000000, 0x3F8CCCCD,
++		   0x40000000, 0x00000000, 0x00000000,
++		   0x00000000, 0x00000000, 0x40000000,
++		   0x40000000, 0x40000000	     }
++	},
++	{ .name = "Classical",
++	 .vals = { 0x00000000, 0x00000000, 0x40C00000,
++		   0x40C00000, 0x40466666, 0x00000000,
++		   0x00000000, 0x00000000, 0x00000000,
++		   0x40466666, 0x40466666	     }
++	},
++	{ .name = "Country",
++	 .vals = { 0x00000000, 0xBF99999A, 0x00000000,
++		   0x3FA66666, 0x3FA66666, 0x3F8CCCCD,
++		   0x00000000, 0x00000000, 0x40000000,
++		   0x40466666, 0x40800000	     }
++	},
++	{ .name = "Dance",
++	 .vals = { 0x00000000, 0xBF99999A, 0x40000000,
++		   0x40466666, 0x40866666, 0xBF99999A,
++		   0xBF99999A, 0x00000000, 0x00000000,
++		   0x40800000, 0x40800000	     }
++	},
++	{ .name = "Jazz",
++	 .vals = { 0x00000000, 0x00000000, 0x00000000,
++		   0x3F8CCCCD, 0x40800000, 0x40800000,
++		   0x40800000, 0x00000000, 0x3F8CCCCD,
++		   0x40466666, 0x40466666	     }
++	},
++	{ .name = "New Age",
++	 .vals = { 0x00000000, 0x00000000, 0x40000000,
++		   0x40000000, 0x00000000, 0x00000000,
++		   0x00000000, 0x3F8CCCCD, 0x40000000,
++		   0x40000000, 0x40000000	     }
++	},
++	{ .name = "Pop",
++	 .vals = { 0x00000000, 0xBFCCCCCD, 0x00000000,
++		   0x40000000, 0x40000000, 0x00000000,
++		   0xBF99999A, 0xBF99999A, 0x00000000,
++		   0x40466666, 0x40C00000	     }
++	},
++	{ .name = "Rock",
++	 .vals = { 0x00000000, 0xBF99999A, 0xBF99999A,
++		   0x3F8CCCCD, 0x40000000, 0xBF99999A,
++		   0xBF99999A, 0x00000000, 0x00000000,
++		   0x40800000, 0x40800000	     }
++	},
++	{ .name = "Vocal",
++	 .vals = { 0x00000000, 0xC0000000, 0xBF99999A,
++		   0xBF99999A, 0x00000000, 0x40466666,
++		   0x40800000, 0x40466666, 0x00000000,
++		   0x00000000, 0x3F8CCCCD	     }
++	}
++};
++
+ /* DSP command sequences for ca0132_alt_select_out */
+ #define ALT_OUT_SET_MAX_COMMANDS 9 /* Max number of commands in sequence */
+ struct ca0132_alt_out_set {
+@@ -844,6 +944,14 @@ struct ca0132_spec {
+ 	/* ca0132_alt control related values */
+ 	unsigned char in_enum_val;
+ 	unsigned char out_enum_val;
++	unsigned char mic_boost_enum_val;
++	unsigned char smart_volume_setting;
++	long fx_ctl_val[EFFECT_LEVEL_SLIDERS];
++	long xbass_xover_freq;
++	long eq_preset_val;
++	unsigned int tlv[4];
++	struct hda_vmaster_mute_hook vmaster_mute;
++
+ 
+ 	struct hda_codec *codec;
+ 	struct delayed_work unsol_hp_work;
+@@ -864,6 +972,13 @@ struct ca0132_spec {
+ 	 * surround sound support.
  	 */
- 	void __iomem *mem_base;
+ 	bool use_alt_functions;
 +
 +	/*
-+	 * Whether or not to use the alt functions like alt_select_out,
-+	 * alt_select_in, etc. Only used on desktop codecs for now, because of
-+	 * surround sound support.
++	 * Whether or not to use alt controls:	volume effect sliders, EQ
++	 * presets, smart volume presets, and new control names with FX prefix.
++	 * Renames PlayEnhancement and CrystalVoice too.
 +	 */
-+	bool use_alt_functions;
++	bool use_alt_controls;
  };
  
  /*
-@@ -1015,6 +1026,29 @@ static int chipio_write(struct hda_codec *codec,
- }
+@@ -3336,6 +3451,54 @@ static const unsigned int float_vol_db_lookup[] = {
+ 0x40C00000, 0x40E00000, 0x41000000, 0x41100000
+ };
  
- /*
-+ * Write given value to the given address through the chip I/O widget.
-+ * not protected by the Mutex
-+ */
-+static int chipio_write_no_mutex(struct hda_codec *codec,
-+		unsigned int chip_addx, const unsigned int data)
-+{
-+	int err;
-+
-+
-+	/* write the address, and if successful proceed to write data */
-+	err = chipio_write_address(codec, chip_addx);
-+	if (err < 0)
-+		goto exit;
-+
-+	err = chipio_write_data(codec, data);
-+	if (err < 0)
-+		goto exit;
-+
-+exit:
-+	return err;
-+}
-+
 +/*
-  * Write multiple values to the given address through the chip I/O widget.
-  * protected by the Mutex
-  */
-@@ -1108,6 +1142,81 @@ static void chipio_set_control_param(struct hda_codec *codec,
- }
- 
- /*
-+ * Set chip parameters through the chip I/O widget. NO MUTEX.
++ * This table counts from float 0 to 1 in increments of .01, which is
++ * useful for a few different sliders.
 + */
-+static void chipio_set_control_param_no_mutex(struct hda_codec *codec,
-+		enum control_param_id param_id, int param_val)
-+{
-+	int val;
-+
-+	if ((param_id < 32) && (param_val < 8)) {
-+		val = (param_val << 5) | (param_id);
-+		snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+				    VENDOR_CHIPIO_PARAM_SET, val);
-+	} else {
-+		if (chipio_send(codec, VENDOR_CHIPIO_STATUS, 0) == 0) {
-+			snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+					    VENDOR_CHIPIO_PARAM_EX_ID_SET,
-+					    param_id);
-+			snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+					    VENDOR_CHIPIO_PARAM_EX_VALUE_SET,
-+					    param_val);
-+		}
-+	}
-+}
-+/*
-+ * Connect stream to a source point, and then connect
-+ * that source point to a destination point.
-+ */
-+static void chipio_set_stream_source_dest(struct hda_codec *codec,
-+				int streamid, int source_point, int dest_point)
-+{
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_STREAM_ID, streamid);
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_STREAM_SOURCE_CONN_POINT, source_point);
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_STREAM_DEST_CONN_POINT, dest_point);
-+}
-+
-+/*
-+ * Set number of channels in the selected stream.
-+ */
-+static void chipio_set_stream_channels(struct hda_codec *codec,
-+				int streamid, unsigned int channels)
-+{
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_STREAM_ID, streamid);
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_STREAMS_CHANNELS, channels);
-+}
-+
-+/*
-+ * Enable/Disable audio stream.
-+ */
-+static void chipio_set_stream_control(struct hda_codec *codec,
-+				int streamid, int enable)
-+{
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_STREAM_ID, streamid);
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_STREAM_CONTROL, enable);
-+}
-+
-+
-+/*
-+ * Set sampling rate of the connection point. NO MUTEX.
-+ */
-+static void chipio_set_conn_rate_no_mutex(struct hda_codec *codec,
-+				int connid, enum ca0132_sample_rate rate)
-+{
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_CONN_POINT_ID, connid);
-+	chipio_set_control_param_no_mutex(codec,
-+			CONTROL_PARAM_CONN_POINT_SAMPLE_RATE, rate);
-+}
-+
-+/*
-  * Set sampling rate of the connection point.
-  */
- static void chipio_set_conn_rate(struct hda_codec *codec,
-@@ -1470,8 +1579,8 @@ static int dspio_send_scp_message(struct hda_codec *codec,
-  * Returns zero or a negative error code.
-  */
- static int dspio_scp(struct hda_codec *codec,
--		int mod_id, int req, int dir, void *data, unsigned int len,
--		void *reply, unsigned int *reply_len)
-+		int mod_id, int src_id, int req, int dir, const void *data,
-+		unsigned int len, void *reply, unsigned int *reply_len)
- {
- 	int status = 0;
- 	struct scp_msg scp_send, scp_reply;
-@@ -1495,7 +1604,7 @@ static int dspio_scp(struct hda_codec *codec,
- 		return -EINVAL;
- 	}
- 
--	scp_send.hdr = make_scp_header(mod_id, 0x20, (dir == SCP_GET), req,
-+	scp_send.hdr = make_scp_header(mod_id, src_id, (dir == SCP_GET), req,
- 				       0, 0, 0, len/sizeof(unsigned int));
- 	if (data != NULL && len > 0) {
- 		len = min((unsigned int)(sizeof(scp_send.data)), len);
-@@ -1552,15 +1661,24 @@ static int dspio_scp(struct hda_codec *codec,
-  * Set DSP parameters
-  */
- static int dspio_set_param(struct hda_codec *codec, int mod_id,
--			int req, void *data, unsigned int len)
-+			int src_id, int req, const void *data, unsigned int len)
- {
--	return dspio_scp(codec, mod_id, req, SCP_SET, data, len, NULL, NULL);
-+	return dspio_scp(codec, mod_id, src_id, req, SCP_SET, data, len, NULL,
-+			NULL);
- }
- 
- static int dspio_set_uint_param(struct hda_codec *codec, int mod_id,
--			int req, unsigned int data)
-+			int req, const unsigned int data)
- {
--	return dspio_set_param(codec, mod_id, req, &data, sizeof(unsigned int));
-+	return dspio_set_param(codec, mod_id, 0x20, req, &data,
-+			sizeof(unsigned int));
-+}
-+
-+static int dspio_set_uint_param_no_source(struct hda_codec *codec, int mod_id,
-+			int req, const unsigned int data)
-+{
-+	return dspio_set_param(codec, mod_id, 0x00, req, &data,
-+			sizeof(unsigned int));
- }
- 
- /*
-@@ -1572,8 +1690,9 @@ static int dspio_alloc_dma_chan(struct hda_codec *codec, unsigned int *dma_chan)
- 	unsigned int size = sizeof(dma_chan);
- 
- 	codec_dbg(codec, "     dspio_alloc_dma_chan() -- begin\n");
--	status = dspio_scp(codec, MASTERCONTROL, MASTERCONTROL_ALLOC_DMA_CHAN,
--			SCP_GET, NULL, 0, dma_chan, &size);
-+	status = dspio_scp(codec, MASTERCONTROL, 0x20,
-+			MASTERCONTROL_ALLOC_DMA_CHAN, SCP_GET, NULL, 0,
-+			dma_chan, &size);
- 
- 	if (status < 0) {
- 		codec_dbg(codec, "dspio_alloc_dma_chan: SCP Failed\n");
-@@ -1602,8 +1721,9 @@ static int dspio_free_dma_chan(struct hda_codec *codec, unsigned int dma_chan)
- 	codec_dbg(codec, "     dspio_free_dma_chan() -- begin\n");
- 	codec_dbg(codec, "dspio_free_dma_chan: chan=%d\n", dma_chan);
- 
--	status = dspio_scp(codec, MASTERCONTROL, MASTERCONTROL_ALLOC_DMA_CHAN,
--			   SCP_SET, &dma_chan, sizeof(dma_chan), NULL, &dummy);
-+	status = dspio_scp(codec, MASTERCONTROL, 0x20,
-+			MASTERCONTROL_ALLOC_DMA_CHAN, SCP_SET, &dma_chan,
-+			sizeof(dma_chan), NULL, &dummy);
- 
- 	if (status < 0) {
- 		codec_dbg(codec, "dspio_free_dma_chan: SCP Failed\n");
-@@ -2625,14 +2745,16 @@ static int dspxfr_image(struct hda_codec *codec,
-  */
- static void dspload_post_setup(struct hda_codec *codec)
- {
-+	struct ca0132_spec *spec = codec->spec;
- 	codec_dbg(codec, "---- dspload_post_setup ------\n");
-+	if (!spec->use_alt_functions) {
-+		/*set DSP speaker to 2.0 configuration*/
-+		chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x18), 0x08080080);
-+		chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x19), 0x3f800000);
- 
--	/*set DSP speaker to 2.0 configuration*/
--	chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x18), 0x08080080);
--	chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x19), 0x3f800000);
--
--	/*update write pointer*/
--	chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x29), 0x00000002);
-+		/*update write pointer*/
-+		chipio_write(codec, XRAM_XRAM_INST_OFFSET(0x29), 0x00000002);
-+	}
- }
- 
- /**
-@@ -2740,6 +2862,170 @@ static bool dspload_wait_loaded(struct hda_codec *codec)
- }
- 
- /*
-+ * Setup GPIO for the other variants of Core3D.
-+ */
-+
-+/*
-+ * Sets up the GPIO pins so that they are discoverable. If this isn't done,
-+ * the card shows as having no GPIO pins.
-+ */
-+static void ca0132_gpio_init(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		snd_hda_codec_write(codec, 0x01, 0, 0x793, 0x00);
-+		snd_hda_codec_write(codec, 0x01, 0, 0x794, 0x53);
-+		snd_hda_codec_write(codec, 0x01, 0, 0x790, 0x23);
-+		break;
-+	case QUIRK_R3DI:
-+		snd_hda_codec_write(codec, 0x01, 0, 0x793, 0x00);
-+		snd_hda_codec_write(codec, 0x01, 0, 0x794, 0x5B);
-+		break;
-+	}
-+
-+}
-+
-+/* Sets the GPIO for audio output. */
-+static void ca0132_gpio_setup(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DIRECTION, 0x07);
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_MASK, 0x07);
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DATA, 0x04);
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DATA, 0x06);
-+		break;
-+	case QUIRK_R3DI:
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DIRECTION, 0x1E);
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_MASK, 0x1F);
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DATA, 0x0C);
-+		break;
-+	}
-+}
-+
-+/*
-+ * GPIO control functions for the Recon3D integrated.
-+ */
-+
-+enum r3di_gpio_bit {
-+	/* Bit 1 - Switch between front/rear mic. 0 = rear, 1 = front */
-+	R3DI_MIC_SELECT_BIT = 1,
-+	/* Bit 2 - Switch between headphone/line out. 0 = Headphone, 1 = Line */
-+	R3DI_OUT_SELECT_BIT = 2,
-+	/*
-+	 * I dunno what this actually does, but it stays on until the dsp
-+	 * is downloaded.
-+	 */
-+	R3DI_GPIO_DSP_DOWNLOADING = 3,
-+	/*
-+	 * Same as above, no clue what it does, but it comes on after the dsp
-+	 * is downloaded.
-+	 */
-+	R3DI_GPIO_DSP_DOWNLOADED = 4
++static const unsigned int float_zero_to_one_lookup[] = {
++0x00000000, 0x3C23D70A, 0x3CA3D70A, 0x3CF5C28F, 0x3D23D70A, 0x3D4CCCCD,
++0x3D75C28F, 0x3D8F5C29, 0x3DA3D70A, 0x3DB851EC, 0x3DCCCCCD, 0x3DE147AE,
++0x3DF5C28F, 0x3E051EB8, 0x3E0F5C29, 0x3E19999A, 0x3E23D70A, 0x3E2E147B,
++0x3E3851EC, 0x3E428F5C, 0x3E4CCCCD, 0x3E570A3D, 0x3E6147AE, 0x3E6B851F,
++0x3E75C28F, 0x3E800000, 0x3E851EB8, 0x3E8A3D71, 0x3E8F5C29, 0x3E947AE1,
++0x3E99999A, 0x3E9EB852, 0x3EA3D70A, 0x3EA8F5C3, 0x3EAE147B, 0x3EB33333,
++0x3EB851EC, 0x3EBD70A4, 0x3EC28F5C, 0x3EC7AE14, 0x3ECCCCCD, 0x3ED1EB85,
++0x3ED70A3D, 0x3EDC28F6, 0x3EE147AE, 0x3EE66666, 0x3EEB851F, 0x3EF0A3D7,
++0x3EF5C28F, 0x3EFAE148, 0x3F000000, 0x3F028F5C, 0x3F051EB8, 0x3F07AE14,
++0x3F0A3D71, 0x3F0CCCCD, 0x3F0F5C29, 0x3F11EB85, 0x3F147AE1, 0x3F170A3D,
++0x3F19999A, 0x3F1C28F6, 0x3F1EB852, 0x3F2147AE, 0x3F23D70A, 0x3F266666,
++0x3F28F5C3, 0x3F2B851F, 0x3F2E147B, 0x3F30A3D7, 0x3F333333, 0x3F35C28F,
++0x3F3851EC, 0x3F3AE148, 0x3F3D70A4, 0x3F400000, 0x3F428F5C, 0x3F451EB8,
++0x3F47AE14, 0x3F4A3D71, 0x3F4CCCCD, 0x3F4F5C29, 0x3F51EB85, 0x3F547AE1,
++0x3F570A3D, 0x3F59999A, 0x3F5C28F6, 0x3F5EB852, 0x3F6147AE, 0x3F63D70A,
++0x3F666666, 0x3F68F5C3, 0x3F6B851F, 0x3F6E147B, 0x3F70A3D7, 0x3F733333,
++0x3F75C28F, 0x3F7851EC, 0x3F7AE148, 0x3F7D70A4, 0x3F800000
 +};
 +
-+enum r3di_mic_select {
-+	/* Set GPIO bit 1 to 0 for rear mic */
-+	R3DI_REAR_MIC = 0,
-+	/* Set GPIO bit 1 to 1 for front microphone*/
-+	R3DI_FRONT_MIC = 1
-+};
-+
-+enum r3di_out_select {
-+	/* Set GPIO bit 2 to 0 for headphone */
-+	R3DI_HEADPHONE_OUT = 0,
-+	/* Set GPIO bit 2 to 1 for speaker */
-+	R3DI_LINE_OUT = 1
-+};
-+enum r3di_dsp_status {
-+	/* Set GPIO bit 3 to 1 until DSP is downloaded */
-+	R3DI_DSP_DOWNLOADING = 0,
-+	/* Set GPIO bit 4 to 1 once DSP is downloaded */
-+	R3DI_DSP_DOWNLOADED = 1
-+};
-+/* Not used until next patch in series */
 +/*
-+static void r3di_gpio_mic_set(struct hda_codec *codec,
-+		enum r3di_mic_select cur_mic)
-+{
-+	unsigned int cur_gpio;
++ * This table counts from float 10 to 1000, which is the range of the x-bass
++ * crossover slider in Windows.
++ */
++static const unsigned int float_xbass_xover_lookup[] = {
++0x41200000, 0x41A00000, 0x41F00000, 0x42200000, 0x42480000, 0x42700000,
++0x428C0000, 0x42A00000, 0x42B40000, 0x42C80000, 0x42DC0000, 0x42F00000,
++0x43020000, 0x430C0000, 0x43160000, 0x43200000, 0x432A0000, 0x43340000,
++0x433E0000, 0x43480000, 0x43520000, 0x435C0000, 0x43660000, 0x43700000,
++0x437A0000, 0x43820000, 0x43870000, 0x438C0000, 0x43910000, 0x43960000,
++0x439B0000, 0x43A00000, 0x43A50000, 0x43AA0000, 0x43AF0000, 0x43B40000,
++0x43B90000, 0x43BE0000, 0x43C30000, 0x43C80000, 0x43CD0000, 0x43D20000,
++0x43D70000, 0x43DC0000, 0x43E10000, 0x43E60000, 0x43EB0000, 0x43F00000,
++0x43F50000, 0x43FA0000, 0x43FF0000, 0x44020000, 0x44048000, 0x44070000,
++0x44098000, 0x440C0000, 0x440E8000, 0x44110000, 0x44138000, 0x44160000,
++0x44188000, 0x441B0000, 0x441D8000, 0x44200000, 0x44228000, 0x44250000,
++0x44278000, 0x442A0000, 0x442C8000, 0x442F0000, 0x44318000, 0x44340000,
++0x44368000, 0x44390000, 0x443B8000, 0x443E0000, 0x44408000, 0x44430000,
++0x44458000, 0x44480000, 0x444A8000, 0x444D0000, 0x444F8000, 0x44520000,
++0x44548000, 0x44570000, 0x44598000, 0x445C0000, 0x445E8000, 0x44610000,
++0x44638000, 0x44660000, 0x44688000, 0x446B0000, 0x446D8000, 0x44700000,
++0x44728000, 0x44750000, 0x44778000, 0x447A0000
++};
 +
-+*/	/* Get the current GPIO Data setup */
-+/*	cur_gpio = snd_hda_codec_read(codec, 0x01, 0, AC_VERB_GET_GPIO_DATA, 0);
-+
-+	switch (cur_mic) {
-+	case R3DI_REAR_MIC:
-+		cur_gpio &= ~(1 << R3DI_MIC_SELECT_BIT);
-+		break;
-+	case R3DI_FRONT_MIC:
-+		cur_gpio |= (1 << R3DI_MIC_SELECT_BIT);
-+		break;
-+	}
-+	snd_hda_codec_write(codec, codec->core.afg, 0,
-+			    AC_VERB_SET_GPIO_DATA, cur_gpio);
-+}
-+
-+static void r3di_gpio_out_set(struct hda_codec *codec,
-+		enum r3di_out_select cur_out)
-+{
-+	unsigned int cur_gpio;
-+
-+*/	/* Get the current GPIO Data setup */
-+/*	cur_gpio = snd_hda_codec_read(codec, 0x01, 0, AC_VERB_GET_GPIO_DATA, 0);
-+
-+	switch (cur_out) {
-+	case R3DI_HEADPHONE_OUT:
-+		cur_gpio &= ~(1 << R3DI_OUT_SELECT_BIT);
-+		break;
-+	case R3DI_LINE_OUT:
-+		cur_gpio |= (1 << R3DI_OUT_SELECT_BIT);
-+		break;
-+	}
-+	snd_hda_codec_write(codec, codec->core.afg, 0,
-+			    AC_VERB_SET_GPIO_DATA, cur_gpio);
-+}
-+*/
-+static void r3di_gpio_dsp_status_set(struct hda_codec *codec,
-+		enum r3di_dsp_status dsp_status)
-+{
-+	unsigned int cur_gpio;
-+
-+	/* Get the current GPIO Data setup */
-+	cur_gpio = snd_hda_codec_read(codec, 0x01, 0, AC_VERB_GET_GPIO_DATA, 0);
-+
-+	switch (dsp_status) {
-+	case R3DI_DSP_DOWNLOADING:
-+		cur_gpio |= (1 << R3DI_GPIO_DSP_DOWNLOADING);
-+		snd_hda_codec_write(codec, codec->core.afg, 0,
-+				AC_VERB_SET_GPIO_DATA, cur_gpio);
-+		break;
-+	case R3DI_DSP_DOWNLOADED:
-+		/* Set DOWNLOADING bit to 0. */
-+		cur_gpio &= ~(1 << R3DI_GPIO_DSP_DOWNLOADING);
-+
-+		snd_hda_codec_write(codec, codec->core.afg, 0,
-+				AC_VERB_SET_GPIO_DATA, cur_gpio);
-+
-+		cur_gpio |= (1 << R3DI_GPIO_DSP_DOWNLOADED);
-+		break;
-+	}
-+
-+	snd_hda_codec_write(codec, codec->core.afg, 0,
-+			    AC_VERB_SET_GPIO_DATA, cur_gpio);
-+}
-+
-+/*
-  * PCM callbacks
-  */
- static int ca0132_playback_pcm_prepare(struct hda_pcm_stream *hinfo,
-@@ -2992,7 +3278,7 @@ static int tuning_ctl_set(struct hda_codec *codec, hda_nid_t nid,
- 			break;
+ /* The following are for tuning of products */
+ #ifdef ENABLE_TUNING_CONTROLS
  
- 	snd_hda_power_up(codec);
--	dspio_set_param(codec, ca0132_tuning_ctls[i].mid,
-+	dspio_set_param(codec, ca0132_tuning_ctls[i].mid, 0x20,
- 			ca0132_tuning_ctls[i].req,
- 			&(lookup[idx]), sizeof(unsigned int));
- 	snd_hda_power_down(codec);
-@@ -3318,6 +3604,9 @@ static void ca0132_unsol_hp_delayed(struct work_struct *work)
- static void ca0132_set_dmic(struct hda_codec *codec, int enable);
- static int ca0132_mic_boost_set(struct hda_codec *codec, long val);
- static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val);
-+static void resume_mic1(struct hda_codec *codec, unsigned int oldval);
-+static int stop_mic1(struct hda_codec *codec);
-+static int ca0132_cvoice_switch_set(struct hda_codec *codec);
+@@ -3936,6 +4099,7 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val);
+ static void resume_mic1(struct hda_codec *codec, unsigned int oldval);
+ static int stop_mic1(struct hda_codec *codec);
+ static int ca0132_cvoice_switch_set(struct hda_codec *codec);
++static int ca0132_alt_mic_boost_set(struct hda_codec *codec, long val);
  
  /*
   * Select the active VIP source
-@@ -3468,7 +3757,7 @@ static int ca0132_voicefx_set(struct hda_codec *codec, int enable)
- static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- {
- 	struct ca0132_spec *spec = codec->spec;
--	unsigned int on;
-+	unsigned int on, tmp;
- 	int num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT;
- 	int err = 0;
- 	int idx = nid - EFFECT_START_NID;
-@@ -3492,6 +3781,39 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- 		/* Voice Focus applies to 2-ch Mic, Digital Mic */
- 		if ((nid == VOICE_FOCUS) && (spec->cur_mic_type != DIGITAL_MIC))
- 			val = 0;
-+
-+		/* If Voice Focus on SBZ, set to two channel. */
-+		if ((nid == VOICE_FOCUS) && (spec->quirk == QUIRK_SBZ)) {
-+			if (spec->effects_switch[CRYSTAL_VOICE -
-+						 EFFECT_START_NID]) {
-+
-+				if (spec->effects_switch[VOICE_FOCUS -
-+							 EFFECT_START_NID]) {
-+					tmp = FLOAT_TWO;
-+					val = 1;
-+				} else
-+					tmp = FLOAT_ONE;
-+
-+				dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+			}
-+		}
-+		/*
-+		 * For SBZ noise reduction, there's an extra command
-+		 * to module ID 0x47. No clue why.
-+		 */
-+		if ((nid == NOISE_REDUCTION) && (spec->quirk == QUIRK_SBZ)) {
-+			if (spec->effects_switch[CRYSTAL_VOICE -
-+						 EFFECT_START_NID]) {
-+				if (spec->effects_switch[NOISE_REDUCTION -
-+							 EFFECT_START_NID])
-+					tmp = FLOAT_ONE;
-+				else
-+					tmp = FLOAT_ZERO;
-+			} else
-+				tmp = FLOAT_ZERO;
-+
-+			dspio_set_uint_param(codec, 0x47, 0x00, tmp);
-+		}
- 	}
- 
- 	codec_dbg(codec, "ca0132_effect_set: nid=0x%x, val=%ld\n",
-@@ -4126,12 +4448,16 @@ static int ca0132_build_pcms(struct hda_codec *codec)
- 	info->stream[SNDRV_PCM_STREAM_CAPTURE].substreams = 1;
- 	info->stream[SNDRV_PCM_STREAM_CAPTURE].nid = spec->adcs[0];
- 
--	info = snd_hda_codec_pcm_new(codec, "CA0132 Analog Mic-In2");
--	if (!info)
--		return -ENOMEM;
--	info->stream[SNDRV_PCM_STREAM_CAPTURE] = ca0132_pcm_analog_capture;
--	info->stream[SNDRV_PCM_STREAM_CAPTURE].substreams = 1;
--	info->stream[SNDRV_PCM_STREAM_CAPTURE].nid = spec->adcs[1];
-+	/* With the DSP enabled, desktops don't use this ADC. */
-+	if (spec->use_alt_functions) {
-+		info = snd_hda_codec_pcm_new(codec, "CA0132 Analog Mic-In2");
-+		if (!info)
-+			return -ENOMEM;
-+		info->stream[SNDRV_PCM_STREAM_CAPTURE] =
-+			ca0132_pcm_analog_capture;
-+		info->stream[SNDRV_PCM_STREAM_CAPTURE].substreams = 1;
-+		info->stream[SNDRV_PCM_STREAM_CAPTURE].nid = spec->adcs[1];
-+	}
- 
- 	info = snd_hda_codec_pcm_new(codec, "CA0132 What U Hear");
- 	if (!info)
-@@ -4338,6 +4664,196 @@ static void ca0132_refresh_widget_caps(struct hda_codec *codec)
- }
- 
- /*
-+ * Recon3Di r3di_setup_defaults sub functions.
-+ */
-+
-+static void r3di_dsp_scp_startup(struct hda_codec *codec)
-+{
-+	unsigned int tmp;
-+
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0A, tmp);
-+
-+	tmp = 0x00000001;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0B, tmp);
-+
-+	tmp = 0x00000004;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+	tmp = 0x00000005;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+}
-+
-+static void r3di_dsp_initial_mic_setup(struct hda_codec *codec)
-+{
-+	unsigned int tmp;
-+
-+	/* Mic 1 Setup */
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICIN1, SR_96_000);
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICOUT1, SR_96_000);
-+	/* This ConnPointID is unique to Recon3Di. Haven't seen it elsewhere */
-+	chipio_set_conn_rate(codec, 0x0F, SR_96_000);
-+	tmp = FLOAT_ONE;
-+	dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+
-+	/* Mic 2 Setup, even though it isn't connected on SBZ */
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICIN2, SR_96_000);
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICOUT2, SR_96_000);
-+	chipio_set_conn_rate(codec, 0x0F, SR_96_000);
-+	tmp = FLOAT_ZERO;
-+	dspio_set_uint_param(codec, 0x80, 0x01, tmp);
-+}
-+
-+/*
-+ * Initialize Sound Blaster Z analog microphones.
-+ */
-+static void sbz_init_analog_mics(struct hda_codec *codec)
-+{
-+	unsigned int tmp;
-+
-+	/* Mic 1 Setup */
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICIN1, SR_96_000);
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICOUT1, SR_96_000);
-+	tmp = FLOAT_THREE;
-+	dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+
-+	/* Mic 2 Setup, even though it isn't connected on SBZ */
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICIN2, SR_96_000);
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICOUT2, SR_96_000);
-+	tmp = FLOAT_ZERO;
-+	dspio_set_uint_param(codec, 0x80, 0x01, tmp);
-+
-+}
-+
-+/*
-+ * Sets the source of stream 0x14 to connpointID 0x48, and the destination
-+ * connpointID to 0x91. If this isn't done, the destination is 0x71, and
-+ * you get no sound. I'm guessing this has to do with the Sound Blaster Z
-+ * having an updated DAC, which changes the destination to that DAC.
-+ */
-+static void sbz_connect_streams(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	mutex_lock(&spec->chipio_mutex);
-+
-+	codec_dbg(codec, "Connect Streams entered, mutex locked and loaded.\n");
-+
-+	chipio_set_stream_channels(codec, 0x0C, 6);
-+	chipio_set_stream_control(codec, 0x0C, 1);
-+
-+	/* This value is 0x43 for 96khz, and 0x83 for 192khz. */
-+	chipio_write_no_mutex(codec, 0x18a020, 0x00000043);
-+
-+	/* Setup stream 0x14 with it's source and destination points */
-+	chipio_set_stream_source_dest(codec, 0x14, 0x48, 0x91);
-+	chipio_set_conn_rate_no_mutex(codec, 0x48, SR_96_000);
-+	chipio_set_conn_rate_no_mutex(codec, 0x91, SR_96_000);
-+	chipio_set_stream_channels(codec, 0x14, 2);
-+	chipio_set_stream_control(codec, 0x14, 1);
-+
-+	codec_dbg(codec, "Connect Streams exited, mutex released.\n");
-+
-+	mutex_unlock(&spec->chipio_mutex);
-+
-+}
-+
-+/*
-+ * Write data through ChipIO to setup proper stream destinations.
-+ * Not sure how it exactly works, but it seems to direct data
-+ * to different destinations. Example is f8 to c0, e0 to c0.
-+ * All I know is, if you don't set these, you get no sound.
-+ */
-+static void sbz_chipio_startup_data(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	mutex_lock(&spec->chipio_mutex);
-+	codec_dbg(codec, "Startup Data entered, mutex locked and loaded.\n");
-+
-+	/* These control audio output */
-+	chipio_write_no_mutex(codec, 0x190060, 0x0001f8c0);
-+	chipio_write_no_mutex(codec, 0x190064, 0x0001f9c1);
-+	chipio_write_no_mutex(codec, 0x190068, 0x0001fac6);
-+	chipio_write_no_mutex(codec, 0x19006c, 0x0001fbc7);
-+	/* Signal to update I think */
-+	chipio_write_no_mutex(codec, 0x19042c, 0x00000001);
-+
-+	chipio_set_stream_channels(codec, 0x0C, 6);
-+	chipio_set_stream_control(codec, 0x0C, 1);
-+	/* No clue what these control */
-+	chipio_write_no_mutex(codec, 0x190030, 0x0001e0c0);
-+	chipio_write_no_mutex(codec, 0x190034, 0x0001e1c1);
-+	chipio_write_no_mutex(codec, 0x190038, 0x0001e4c2);
-+	chipio_write_no_mutex(codec, 0x19003c, 0x0001e5c3);
-+	chipio_write_no_mutex(codec, 0x190040, 0x0001e2c4);
-+	chipio_write_no_mutex(codec, 0x190044, 0x0001e3c5);
-+	chipio_write_no_mutex(codec, 0x190048, 0x0001e8c6);
-+	chipio_write_no_mutex(codec, 0x19004c, 0x0001e9c7);
-+	chipio_write_no_mutex(codec, 0x190050, 0x0001ecc8);
-+	chipio_write_no_mutex(codec, 0x190054, 0x0001edc9);
-+	chipio_write_no_mutex(codec, 0x190058, 0x0001eaca);
-+	chipio_write_no_mutex(codec, 0x19005c, 0x0001ebcb);
-+
-+	chipio_write_no_mutex(codec, 0x19042c, 0x00000001);
-+
-+	codec_dbg(codec, "Startup Data exited, mutex released.\n");
-+	mutex_unlock(&spec->chipio_mutex);
-+}
-+
-+/*
-+ * Sound Blaster Z uses these after DSP is loaded. Weird SCP commands
-+ * without a 0x20 source like normal.
-+ */
-+static void sbz_dsp_scp_startup(struct hda_codec *codec)
-+{
-+	unsigned int tmp;
-+
-+	tmp = 0x00000003;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0A, tmp);
-+
-+	tmp = 0x00000001;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0B, tmp);
-+
-+	tmp = 0x00000004;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+	tmp = 0x00000005;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+	tmp = 0x00000000;
-+	dspio_set_uint_param_no_source(codec, 0x80, 0x0C, tmp);
-+
-+}
-+
-+static void sbz_dsp_initial_mic_setup(struct hda_codec *codec)
-+{
-+	unsigned int tmp;
-+
-+	chipio_set_stream_control(codec, 0x03, 0);
-+	chipio_set_stream_control(codec, 0x04, 0);
-+
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICIN1, SR_96_000);
-+	chipio_set_conn_rate(codec, MEM_CONNID_MICOUT1, SR_96_000);
-+
-+	tmp = FLOAT_THREE;
-+	dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+
-+	chipio_set_stream_control(codec, 0x03, 1);
-+	chipio_set_stream_control(codec, 0x04, 1);
-+
-+	chipio_write(codec, 0x18b098, 0x0000000c);
-+	chipio_write(codec, 0x18b09C, 0x0000000c);
-+}
-+
-+/*
-  * Setup default parameters for DSP
-  */
- static void ca0132_setup_defaults(struct hda_codec *codec)
-@@ -4382,16 +4898,162 @@ static void ca0132_setup_defaults(struct hda_codec *codec)
- }
- 
- /*
-+ * Setup default parameters for Recon3Di DSP.
-+ */
-+
-+static void r3di_setup_defaults(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int tmp;
-+	int num_fx;
-+	int idx, i;
-+
-+	if (spec->dsp_state != DSP_DOWNLOADED)
-+		return;
-+
-+	r3di_dsp_scp_startup(codec);
-+
-+	r3di_dsp_initial_mic_setup(codec);
-+
-+	/*remove DSP headroom*/
-+	tmp = FLOAT_ZERO;
-+	dspio_set_uint_param(codec, 0x96, 0x3C, tmp);
-+
-+	/* set WUH source */
-+	tmp = FLOAT_TWO;
-+	dspio_set_uint_param(codec, 0x31, 0x00, tmp);
-+	chipio_set_conn_rate(codec, MEM_CONNID_WUH, SR_48_000);
-+
-+	/* Set speaker source? */
-+	dspio_set_uint_param(codec, 0x32, 0x00, tmp);
-+
-+	r3di_gpio_dsp_status_set(codec, R3DI_DSP_DOWNLOADED);
-+
-+	/* Setup effect defaults */
-+	num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT + 1;
-+	for (idx = 0; idx < num_fx; idx++) {
-+		for (i = 0; i <= ca0132_effects[idx].params; i++) {
-+			dspio_set_uint_param(codec,
-+					ca0132_effects[idx].mid,
-+					ca0132_effects[idx].reqs[i],
-+					ca0132_effects[idx].def_vals[i]);
-+		}
-+	}
-+
-+}
-+
-+/*
-+ * Setup default parameters for the Sound Blaster Z DSP. A lot more going on
-+ * than the Chromebook setup.
-+ */
-+static void sbz_setup_defaults(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int tmp, stream_format;
-+	int num_fx;
-+	int idx, i;
-+
-+	if (spec->quirk == QUIRK_SBZ)
-+		sbz_dsp_scp_startup(codec);
-+
-+	if (spec->dsp_state != DSP_DOWNLOADED)
-+		return;
-+
-+	sbz_dsp_scp_startup(codec);
-+
-+	sbz_init_analog_mics(codec);
-+
-+	sbz_connect_streams(codec);
-+
-+	sbz_chipio_startup_data(codec);
-+
-+	chipio_set_stream_control(codec, 0x03, 1);
-+	chipio_set_stream_control(codec, 0x04, 1);
-+
-+	/*
-+	 * Sets internal input loopback to off, used to have a switch to
-+	 * enable input loopback, but turned out to be way too buggy.
-+	 */
-+	tmp = FLOAT_ONE;
-+	dspio_set_uint_param(codec, 0x37, 0x08, tmp);
-+	dspio_set_uint_param(codec, 0x37, 0x10, tmp);
-+
-+	/*remove DSP headroom*/
-+	tmp = FLOAT_ZERO;
-+	dspio_set_uint_param(codec, 0x96, 0x3C, tmp);
-+
-+	/* set WUH source */
-+	tmp = FLOAT_TWO;
-+	dspio_set_uint_param(codec, 0x31, 0x00, tmp);
-+	chipio_set_conn_rate(codec, MEM_CONNID_WUH, SR_48_000);
-+
-+	/* Set speaker source? */
-+	dspio_set_uint_param(codec, 0x32, 0x00, tmp);
-+
-+	sbz_dsp_initial_mic_setup(codec);
-+
-+
-+	/* out, in effects + voicefx */
-+	num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT + 1;
-+	for (idx = 0; idx < num_fx; idx++) {
-+		for (i = 0; i <= ca0132_effects[idx].params; i++) {
-+			dspio_set_uint_param(codec,
-+					ca0132_effects[idx].mid,
-+					ca0132_effects[idx].reqs[i],
-+					ca0132_effects[idx].def_vals[i]);
-+		}
-+	}
-+
-+	/*
-+	 * Have to make a stream to bind the sound output to, otherwise
-+	 * you'll get dead audio. Before I did this, it would bind to an
-+	 * audio input, and would never work
-+	 */
-+	stream_format = snd_hdac_calc_stream_format(48000, 2,
-+			SNDRV_PCM_FORMAT_S32_LE, 32, 0);
-+
-+	snd_hda_codec_setup_stream(codec, spec->dacs[0], spec->dsp_stream_id,
-+					0, stream_format);
-+
-+	snd_hda_codec_cleanup_stream(codec, spec->dacs[0]);
-+
-+	snd_hda_codec_setup_stream(codec, spec->dacs[0], spec->dsp_stream_id,
-+					0, stream_format);
-+
-+	snd_hda_codec_cleanup_stream(codec, spec->dacs[0]);
-+}
-+
-+/*
-  * Initialization of flags in chip
-  */
- static void ca0132_init_flags(struct hda_codec *codec)
- {
--	chipio_set_control_flag(codec, CONTROL_FLAG_IDLE_ENABLE, 0);
--	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_A_COMMON_MODE, 0);
--	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_D_COMMON_MODE, 0);
--	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_A_10KOHM_LOAD, 0);
--	chipio_set_control_flag(codec, CONTROL_FLAG_PORT_D_10KOHM_LOAD, 0);
--	chipio_set_control_flag(codec, CONTROL_FLAG_ADC_C_HIGH_PASS, 1);
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	if (spec->use_alt_functions) {
-+		chipio_set_control_flag(codec, CONTROL_FLAG_DSP_96KHZ, 1);
-+		chipio_set_control_flag(codec, CONTROL_FLAG_DAC_96KHZ, 1);
-+		chipio_set_control_flag(codec, CONTROL_FLAG_ADC_B_96KHZ, 1);
-+		chipio_set_control_flag(codec, CONTROL_FLAG_ADC_C_96KHZ, 1);
-+		chipio_set_control_flag(codec, CONTROL_FLAG_SRC_RATE_96KHZ, 1);
-+		chipio_set_control_flag(codec, CONTROL_FLAG_IDLE_ENABLE, 0);
-+		chipio_set_control_flag(codec, CONTROL_FLAG_SPDIF2OUT, 0);
-+		chipio_set_control_flag(codec,
-+				CONTROL_FLAG_PORT_D_10KOHM_LOAD, 0);
-+		chipio_set_control_flag(codec,
-+				CONTROL_FLAG_PORT_A_10KOHM_LOAD, 1);
-+	} else {
-+		chipio_set_control_flag(codec, CONTROL_FLAG_IDLE_ENABLE, 0);
-+		chipio_set_control_flag(codec,
-+				CONTROL_FLAG_PORT_A_COMMON_MODE, 0);
-+		chipio_set_control_flag(codec,
-+				CONTROL_FLAG_PORT_D_COMMON_MODE, 0);
-+		chipio_set_control_flag(codec,
-+				CONTROL_FLAG_PORT_A_10KOHM_LOAD, 0);
-+		chipio_set_control_flag(codec,
-+				CONTROL_FLAG_PORT_D_10KOHM_LOAD, 0);
-+		chipio_set_control_flag(codec, CONTROL_FLAG_ADC_C_HIGH_PASS, 1);
-+	}
- }
- 
- /*
-@@ -4399,6 +5061,16 @@ static void ca0132_init_flags(struct hda_codec *codec)
-  */
- static void ca0132_init_params(struct hda_codec *codec)
- {
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	if (spec->use_alt_functions) {
-+		chipio_set_conn_rate(codec, MEM_CONNID_WUH, SR_48_000);
-+		chipio_set_conn_rate(codec, 0x0B, SR_48_000);
-+		chipio_set_control_param(codec, CONTROL_PARAM_SPDIF1_SOURCE, 0);
-+		chipio_set_control_param(codec, 0, 0);
-+		chipio_set_control_param(codec, CONTROL_PARAM_VIP_SOURCE, 0);
-+	}
-+
- 	chipio_set_control_param(codec, CONTROL_PARAM_PORTA_160OHM_GAIN, 6);
- 	chipio_set_control_param(codec, CONTROL_PARAM_PORTD_160OHM_GAIN, 6);
- }
-@@ -4490,13 +5162,17 @@ static void ca0132_download_dsp(struct hda_codec *codec)
- 		return; /* don't retry failures */
- 
- 	chipio_enable_clocks(codec);
--	spec->dsp_state = DSP_DOWNLOADING;
--	if (!ca0132_download_dsp_images(codec))
--		spec->dsp_state = DSP_DOWNLOAD_FAILED;
--	else
--		spec->dsp_state = DSP_DOWNLOADED;
-+	if (spec->dsp_state != DSP_DOWNLOADED) {
-+		spec->dsp_state = DSP_DOWNLOADING;
-+
-+		if (!ca0132_download_dsp_images(codec))
-+			spec->dsp_state = DSP_DOWNLOAD_FAILED;
-+		else
-+			spec->dsp_state = DSP_DOWNLOADED;
-+	}
- 
--	if (spec->dsp_state == DSP_DOWNLOADED)
-+	/* For codecs using alt functions, this is already done earlier */
-+	if (spec->dsp_state == DSP_DOWNLOADED && (!spec->use_alt_functions))
- 		ca0132_set_dsp_msr(codec, true);
- }
- 
-@@ -4543,7 +5219,7 @@ static void ca0132_init_unsol(struct hda_codec *codec)
- 	snd_hda_jack_detect_enable_callback(codec, UNSOL_TAG_DSP,
- 					    ca0132_process_dsp_response);
- 	/* Front headphone jack detection */
--	if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3DI)
-+	if (spec->use_alt_functions)
- 		snd_hda_jack_detect_enable_callback(codec,
- 			spec->unsol_tag_front_hp, hp_callback);
- }
-@@ -4569,6 +5245,7 @@ static struct hda_verb ca0132_base_exit_verbs[] = {
- };
- 
- /* Other verbs tables. Sends after DSP download. */
-+
- static struct hda_verb ca0132_init_verbs0[] = {
- 	/* chip init verbs */
- 	{0x15, 0x70D, 0xF0},
-@@ -4598,8 +5275,27 @@ static struct hda_verb ca0132_init_verbs0[] = {
- 	{0x15, 0x546, 0xC9},
- 	{0x15, 0x53B, 0xCE},
- 	{0x15, 0x5E8, 0xC9},
--	{0x15, 0x717, 0x0D},
--	{0x15, 0x718, 0x20},
-+	{}
-+};
-+
-+/* Extra init verbs for SBZ */
-+static struct hda_verb sbz_init_verbs[] = {
-+	{0x15, 0x70D, 0x20},
-+	{0x15, 0x70E, 0x19},
-+	{0x15, 0x707, 0x00},
-+	{0x15, 0x539, 0xCE},
-+	{0x15, 0x546, 0xC9},
-+	{0x15, 0x70D, 0xB7},
-+	{0x15, 0x70E, 0x09},
-+	{0x15, 0x707, 0x10},
-+	{0x15, 0x70D, 0xAF},
-+	{0x15, 0x70E, 0x09},
-+	{0x15, 0x707, 0x01},
-+	{0x15, 0x707, 0x05},
-+	{0x15, 0x70D, 0x73},
-+	{0x15, 0x70E, 0x09},
-+	{0x15, 0x707, 0x14},
-+	{0x15, 0x6FF, 0xC4},
- 	{}
- };
- 
-@@ -4716,12 +5412,16 @@ static void sbz_gpio_shutdown_commands(struct hda_codec *codec, int dir,
- 
- static void sbz_exit_chip(struct hda_codec *codec)
- {
-+	chipio_set_stream_control(codec, 0x03, 0);
-+	chipio_set_stream_control(codec, 0x04, 0);
- 
- 	/* Mess with GPIO */
- 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, -1);
- 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x05);
- 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x01);
- 
-+	chipio_set_stream_control(codec, 0x14, 0);
-+	chipio_set_stream_control(codec, 0x0C, 0);
- 
- 	chipio_set_conn_rate(codec, 0x41, SR_192_000);
- 	chipio_set_conn_rate(codec, 0x91, SR_192_000);
-@@ -4732,6 +5432,7 @@ static void sbz_exit_chip(struct hda_codec *codec)
- 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x07);
- 	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x06);
- 
-+	chipio_set_stream_control(codec, 0x0C, 0);
- 
- 	chipio_set_control_param(codec, 0x0D, 0x24);
- 
-@@ -4758,28 +5459,264 @@ static void ca0132_exit_chip(struct hda_codec *codec)
- 		dsp_reset(codec);
- }
- 
-+/*
-+ * This fixes a problem that was hard to reproduce. Very rarely, I would
-+ * boot up, and there would be no sound, but the DSP indicated it had loaded
-+ * properly. I did a few memory dumps to see if anything was different, and
-+ * there were a few areas of memory uninitialized with a1a2a3a4. This function
-+ * checks if those areas are uninitialized, and if they are, it'll attempt to
-+ * reload the card 3 times. Usually it fixes by the second.
-+ */
-+static void sbz_dsp_startup_check(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int dsp_data_check[4];
-+	unsigned int cur_address = 0x390;
-+	unsigned int i;
-+	unsigned int failure = 0;
-+	unsigned int reload = 3;
-+
-+	if (spec->startup_check_entered)
-+		return;
-+
-+	spec->startup_check_entered = true;
-+
-+	for (i = 0; i < 4; i++) {
-+		chipio_read(codec, cur_address, &dsp_data_check[i]);
-+		cur_address += 0x4;
-+	}
-+	for (i = 0; i < 4; i++) {
-+		if (dsp_data_check[i] == 0xa1a2a3a4)
-+			failure = 1;
-+	}
-+
-+	codec_dbg(codec, "Startup Check: %d ", failure);
-+	if (failure)
-+		codec_info(codec, "DSP not initialized properly. Attempting to fix.");
-+	/*
-+	 * While the failure condition is true, and we haven't reached our
-+	 * three reload limit, continue trying to reload the driver and
-+	 * fix the issue.
-+	 */
-+	while (failure && (reload != 0)) {
-+		codec_info(codec, "Reloading... Tries left: %d", reload);
-+		sbz_exit_chip(codec);
-+		spec->dsp_state = DSP_DOWNLOAD_INIT;
-+		codec->patch_ops.init(codec);
-+		failure = 0;
-+		for (i = 0; i < 4; i++) {
-+			chipio_read(codec, cur_address, &dsp_data_check[i]);
-+			cur_address += 0x4;
-+		}
-+		for (i = 0; i < 4; i++) {
-+			if (dsp_data_check[i] == 0xa1a2a3a4)
-+				failure = 1;
-+		}
-+		reload--;
-+	}
-+
-+	if (!failure && reload < 3)
-+		codec_info(codec, "DSP fixed.");
-+
-+	if (!failure)
-+		return;
-+
-+	codec_info(codec, "DSP failed to initialize properly. Either try a full shutdown or a suspend to clear the internal memory.");
-+}
-+
-+/*
-+ * This is for the extra volume verbs 0x797 (left) and 0x798 (right). These add
-+ * extra precision for decibel values. If you had the dB value in floating point
-+ * you would take the value after the decimal point, multiply by 64, and divide
-+ * by 2. So for 8.59, it's (59 * 64) / 100. Useful if someone wanted to
-+ * implement fixed point or floating point dB volumes. For now, I'll set them
-+ * to 0 just incase a value has lingered from a boot into Windows.
-+ */
-+static void ca0132_alt_vol_setup(struct hda_codec *codec)
-+{
-+	snd_hda_codec_write(codec, 0x02, 0, 0x797, 0x00);
-+	snd_hda_codec_write(codec, 0x02, 0, 0x798, 0x00);
-+	snd_hda_codec_write(codec, 0x03, 0, 0x797, 0x00);
-+	snd_hda_codec_write(codec, 0x03, 0, 0x798, 0x00);
-+	snd_hda_codec_write(codec, 0x04, 0, 0x797, 0x00);
-+	snd_hda_codec_write(codec, 0x04, 0, 0x798, 0x00);
-+	snd_hda_codec_write(codec, 0x07, 0, 0x797, 0x00);
-+	snd_hda_codec_write(codec, 0x07, 0, 0x798, 0x00);
-+}
-+
-+/*
-+ * Extra commands that don't really fit anywhere else.
-+ */
-+static void sbz_pre_dsp_setup(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	writel(0x00820680, spec->mem_base + 0x01C);
-+	writel(0x00820680, spec->mem_base + 0x01C);
-+
-+	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfc);
-+	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfd);
-+	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xfe);
-+	snd_hda_codec_write(codec, 0x15, 0, 0xd00, 0xff);
-+
-+	chipio_write(codec, 0x18b0a4, 0x000000c2);
-+
-+	snd_hda_codec_write(codec, 0x11, 0,
-+			AC_VERB_SET_PIN_WIDGET_CONTROL, 0x44);
-+}
-+
-+/*
-+ * Extra commands that don't really fit anywhere else.
-+ */
-+static void r3di_pre_dsp_setup(struct hda_codec *codec)
-+{
-+	chipio_write(codec, 0x18b0a4, 0x000000c2);
-+
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_8051_ADDRESS_LOW, 0x1E);
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_8051_ADDRESS_HIGH, 0x1C);
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_8051_DATA_WRITE, 0x5B);
-+
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_8051_ADDRESS_LOW, 0x20);
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_8051_ADDRESS_HIGH, 0x19);
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_8051_DATA_WRITE, 0x00);
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_8051_DATA_WRITE, 0x40);
-+
-+	snd_hda_codec_write(codec, 0x11, 0,
-+			AC_VERB_SET_PIN_WIDGET_CONTROL, 0x04);
-+}
-+
-+
-+/*
-+ * These are sent before the DSP is downloaded. Not sure
-+ * what they do, or if they're necessary. Could possibly
-+ * be removed. Figure they're better to leave in.
-+ */
-+static void sbz_region2_startup(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	writel(0x00000000, spec->mem_base + 0x400);
-+	writel(0x00000000, spec->mem_base + 0x408);
-+	writel(0x00000000, spec->mem_base + 0x40C);
-+	writel(0x00880680, spec->mem_base + 0x01C);
-+	writel(0x00000083, spec->mem_base + 0xC0C);
-+	writel(0x00000030, spec->mem_base + 0xC00);
-+	writel(0x00000000, spec->mem_base + 0xC04);
-+	writel(0x00000003, spec->mem_base + 0xC0C);
-+	writel(0x00000003, spec->mem_base + 0xC0C);
-+	writel(0x00000003, spec->mem_base + 0xC0C);
-+	writel(0x00000003, spec->mem_base + 0xC0C);
-+	writel(0x000000C1, spec->mem_base + 0xC08);
-+	writel(0x000000F1, spec->mem_base + 0xC08);
-+	writel(0x00000001, spec->mem_base + 0xC08);
-+	writel(0x000000C7, spec->mem_base + 0xC08);
-+	writel(0x000000C1, spec->mem_base + 0xC08);
-+	writel(0x00000080, spec->mem_base + 0xC04);
-+}
-+
-+/*
-+ * Extra init functions for alternative ca0132 codecs. Done
-+ * here so they don't clutter up the main ca0132_init function
-+ * anymore than they have to.
-+ */
-+static void ca0132_alt_init(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	ca0132_alt_vol_setup(codec);
-+
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		codec_dbg(codec, "SBZ alt_init");
-+		ca0132_gpio_init(codec);
-+		sbz_pre_dsp_setup(codec);
-+		snd_hda_sequence_write(codec, spec->chip_init_verbs);
-+		snd_hda_sequence_write(codec, spec->sbz_init_verbs);
-+		break;
-+	case QUIRK_R3DI:
-+		codec_dbg(codec, "R3DI alt_init");
-+		ca0132_gpio_init(codec);
-+		ca0132_gpio_setup(codec);
-+		r3di_gpio_dsp_status_set(codec, R3DI_DSP_DOWNLOADING);
-+		r3di_pre_dsp_setup(codec);
-+		snd_hda_sequence_write(codec, spec->chip_init_verbs);
-+		snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0, 0x6FF, 0xC4);
-+		break;
-+	}
-+}
-+
- static int ca0132_init(struct hda_codec *codec)
- {
- 	struct ca0132_spec *spec = codec->spec;
- 	struct auto_pin_cfg *cfg = &spec->autocfg;
- 	int i;
-+	bool dsp_loaded;
-+
-+	/*
-+	 * If the DSP is already downloaded, and init has been entered again,
-+	 * there's only two reasons for it. One, the codec has awaken from a
-+	 * suspended state, and in that case dspload_is_loaded will return
-+	 * false, and the init will be ran again. The other reason it gets
-+	 * re entered is on startup for some reason it triggers a suspend and
-+	 * resume state. In this case, it will check if the DSP is downloaded,
-+	 * and not run the init function again. For codecs using alt_functions,
-+	 * it will check if the DSP is loaded properly.
-+	 */
-+	if (spec->dsp_state == DSP_DOWNLOADED) {
-+		dsp_loaded = dspload_is_loaded(codec);
-+		if (!dsp_loaded) {
-+			spec->dsp_reload = true;
-+			spec->dsp_state = DSP_DOWNLOAD_INIT;
-+		} else {
-+			if (spec->quirk == QUIRK_SBZ)
-+				sbz_dsp_startup_check(codec);
-+			return 0;
-+		}
-+	}
- 
- 	if (spec->dsp_state != DSP_DOWNLOAD_FAILED)
- 		spec->dsp_state = DSP_DOWNLOAD_INIT;
- 	spec->curr_chip_addx = INVALID_CHIP_ADDRESS;
- 
-+	if (spec->quirk == QUIRK_SBZ)
-+		sbz_region2_startup(codec);
-+
- 	snd_hda_power_up_pm(codec);
- 
- 	ca0132_init_unsol(codec);
--
- 	ca0132_init_params(codec);
- 	ca0132_init_flags(codec);
-+
- 	snd_hda_sequence_write(codec, spec->base_init_verbs);
-+
-+	if (spec->quirk != QUIRK_NONE)
-+		ca0132_alt_init(codec);
-+
- 	ca0132_download_dsp(codec);
-+
- 	ca0132_refresh_widget_caps(codec);
--	ca0132_setup_defaults(codec);
--	ca0132_init_analog_mic2(codec);
--	ca0132_init_dmic(codec);
-+
-+	if (spec->quirk == QUIRK_SBZ)
-+		writew(0x0107, spec->mem_base + 0x320);
-+
-+	switch (spec->quirk) {
-+	case QUIRK_R3DI:
-+		r3di_setup_defaults(codec);
-+		break;
-+	case QUIRK_NONE:
-+	case QUIRK_ALIENWARE:
-+		ca0132_setup_defaults(codec);
-+		ca0132_init_analog_mic2(codec);
-+		ca0132_init_dmic(codec);
-+		break;
-+	}
- 
- 	for (i = 0; i < spec->num_outputs; i++)
- 		init_output(codec, spec->out_pins[i], spec->dacs[0]);
-@@ -4791,7 +5728,19 @@ static int ca0132_init(struct hda_codec *codec)
- 
- 	init_input(codec, cfg->dig_in_pin, spec->dig_in);
- 
--	snd_hda_sequence_write(codec, spec->chip_init_verbs);
-+	if (!spec->use_alt_functions) {
-+		snd_hda_sequence_write(codec, spec->chip_init_verbs);
-+		snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_PARAM_EX_ID_SET, 0x0D);
-+		snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+			    VENDOR_CHIPIO_PARAM_EX_VALUE_SET, 0x20);
-+	}
-+
-+	if (spec->quirk == QUIRK_SBZ) {
-+		ca0132_gpio_setup(codec);
-+		sbz_setup_defaults(codec);
-+	}
-+
- 	snd_hda_sequence_write(codec, spec->spec_init_verbs);
- 
- 	ca0132_select_out(codec);
-@@ -4799,6 +5748,15 @@ static int ca0132_init(struct hda_codec *codec)
- 
- 	snd_hda_jack_report_sync(codec);
- 
-+	/*
-+	 * Re set the PlayEnhancement switch on a resume event, because the
-+	 * controls will not be reloaded.
-+	 */
-+	if (spec->dsp_reload) {
-+		spec->dsp_reload = false;
-+		ca0132_pe_switch_set(codec);
-+	}
-+
- 	snd_hda_power_down_pm(codec);
- 
- 	return 0;
-@@ -4857,7 +5815,7 @@ static void ca0132_config(struct hda_codec *codec)
- 	spec->multiout.dac_nids = spec->dacs;
- 	spec->multiout.num_dacs = 3;
- 
--	if (spec->quirk == QUIRK_NONE || spec->quirk == QUIRK_ALIENWARE)
-+	if (!spec->use_alt_functions)
- 		spec->multiout.max_channels = 2;
- 	else
- 		spec->multiout.max_channels = 6;
-@@ -4985,6 +5943,8 @@ static int ca0132_prepare_verbs(struct hda_codec *codec)
- 	struct ca0132_spec *spec = codec->spec;
- 
- 	spec->chip_init_verbs = ca0132_init_verbs0;
-+	if (spec->quirk == QUIRK_SBZ)
-+		spec->sbz_init_verbs = sbz_init_verbs;
- 	spec->spec_init_verbs = kzalloc(sizeof(struct hda_verb) * NUM_SPEC_VERBS, GFP_KERNEL);
- 	if (!spec->spec_init_verbs)
- 		return -ENOMEM;
-@@ -5057,10 +6017,22 @@ static int patch_ca0132(struct hda_codec *codec)
- 			spec->quirk = QUIRK_NONE;
+@@ -4145,6 +4309,7 @@ static int ca0132_alt_select_in(struct hda_codec *codec)
+ 			chipio_write(codec, 0x18B098, 0x0000000C);
+ 			chipio_write(codec, 0x18B09C, 0x0000000C);
  		}
++		ca0132_alt_mic_boost_set(codec, spec->mic_boost_enum_val);
+ 		break;
+ 	case REAR_LINE_IN:
+ 		ca0132_mic_boost_set(codec, 0);
+@@ -4203,6 +4368,7 @@ static int ca0132_alt_select_in(struct hda_codec *codec)
+ 			chipio_write(codec, 0x18B098, 0x0000000C);
+ 			chipio_write(codec, 0x18B09C, 0x000000CC);
+ 		}
++		ca0132_alt_mic_boost_set(codec, spec->mic_boost_enum_val);
+ 		break;
  	}
-+
- 	spec->dsp_state = DSP_DOWNLOAD_INIT;
- 	spec->num_mixers = 1;
- 	spec->mixers[0] = ca0132_mixer;
+ 	ca0132_cvoice_switch_set(codec);
+@@ -4442,6 +4608,16 @@ static int ca0132_mic_boost_set(struct hda_codec *codec, long val)
+ 	return ret;
+ }
  
-+	/* Setup whether or not to use alt functions */
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+	case QUIRK_R3DI:
-+		spec->use_alt_functions = true;
++static int ca0132_alt_mic_boost_set(struct hda_codec *codec, long val)
++{
++	struct ca0132_spec *spec = codec->spec;
++	int ret = 0;
++
++	ret = snd_hda_codec_amp_update(codec, spec->input_pins[0], 0,
++				HDA_INPUT, 0, HDA_AMP_VOLMASK, val);
++	return ret;
++}
++
+ static int ca0132_vnode_switch_set(struct snd_kcontrol *kcontrol,
+ 				struct snd_ctl_elem_value *ucontrol)
+ {
+@@ -4505,6 +4681,207 @@ static int ca0132_vnode_switch_set(struct snd_kcontrol *kcontrol,
+ 	return ret;
+ }
+ /* End of control change helpers. */
++/*
++ * Below I've added controls to mess with the effect levels, I've only enabled
++ * them on the Sound Blaster Z, but they would probably also work on the
++ * Chromebook. I figured they were probably tuned specifically for it, and left
++ * out for a reason.
++ */
++
++/* Sets DSP effect level from the sliders above the controls */
++static int ca0132_alt_slider_ctl_set(struct hda_codec *codec, hda_nid_t nid,
++			  const unsigned int *lookup, int idx)
++{
++	int i = 0;
++	unsigned int y;
++	/*
++	 * For X_BASS, req 2 is actually crossover freq instead of
++	 * effect level
++	 */
++	if (nid == X_BASS)
++		y = 2;
++	else
++		y = 1;
++
++	snd_hda_power_up(codec);
++	if (nid == XBASS_XOVER) {
++		for (i = 0; i < OUT_EFFECTS_COUNT; i++)
++			if (ca0132_effects[i].nid == X_BASS)
++				break;
++
++		dspio_set_param(codec, ca0132_effects[i].mid, 0x20,
++				ca0132_effects[i].reqs[1],
++				&(lookup[idx - 1]), sizeof(unsigned int));
++	} else {
++		/* Find the actual effect structure */
++		for (i = 0; i < OUT_EFFECTS_COUNT; i++)
++			if (nid == ca0132_effects[i].nid)
++				break;
++
++		dspio_set_param(codec, ca0132_effects[i].mid, 0x20,
++				ca0132_effects[i].reqs[y],
++				&(lookup[idx]), sizeof(unsigned int));
++	}
++
++	snd_hda_power_down(codec);
++
++	return 0;
++}
++
++static int ca0132_alt_xbass_xover_slider_ctl_get(struct snd_kcontrol *kcontrol,
++			  struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	long *valp = ucontrol->value.integer.value;
++
++	*valp = spec->xbass_xover_freq;
++	return 0;
++}
++
++static int ca0132_alt_slider_ctl_get(struct snd_kcontrol *kcontrol,
++			  struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	hda_nid_t nid = get_amp_nid(kcontrol);
++	long *valp = ucontrol->value.integer.value;
++	int idx = nid - OUT_EFFECT_START_NID;
++
++	*valp = spec->fx_ctl_val[idx];
++	return 0;
++}
++
++/*
++ * The X-bass crossover starts at 10hz, so the min is 1. The
++ * frequency is set in multiples of 10.
++ */
++static int ca0132_alt_xbass_xover_slider_info(struct snd_kcontrol *kcontrol,
++		struct snd_ctl_elem_info *uinfo)
++{
++	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
++	uinfo->count = 1;
++	uinfo->value.integer.min = 1;
++	uinfo->value.integer.max = 100;
++	uinfo->value.integer.step = 1;
++
++	return 0;
++}
++
++static int ca0132_alt_effect_slider_info(struct snd_kcontrol *kcontrol,
++		struct snd_ctl_elem_info *uinfo)
++{
++	int chs = get_amp_channels(kcontrol);
++
++	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
++	uinfo->count = chs == 3 ? 2 : 1;
++	uinfo->value.integer.min = 0;
++	uinfo->value.integer.max = 100;
++	uinfo->value.integer.step = 1;
++
++	return 0;
++}
++
++static int ca0132_alt_xbass_xover_slider_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	hda_nid_t nid = get_amp_nid(kcontrol);
++	long *valp = ucontrol->value.integer.value;
++	int idx;
++
++	/* any change? */
++	if (spec->xbass_xover_freq == *valp)
++		return 0;
++
++	spec->xbass_xover_freq = *valp;
++
++	idx = *valp;
++	ca0132_alt_slider_ctl_set(codec, nid, float_xbass_xover_lookup, idx);
++
++	return 0;
++}
++
++static int ca0132_alt_effect_slider_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	hda_nid_t nid = get_amp_nid(kcontrol);
++	long *valp = ucontrol->value.integer.value;
++	int idx;
++
++	idx = nid - EFFECT_START_NID;
++	/* any change? */
++	if (spec->fx_ctl_val[idx] == *valp)
++		return 0;
++
++	spec->fx_ctl_val[idx] = *valp;
++
++	idx = *valp;
++	ca0132_alt_slider_ctl_set(codec, nid, float_zero_to_one_lookup, idx);
++
++	return 0;
++}
++
++
++/*
++ * Mic Boost Enum for alternative ca0132 codecs. I didn't like that the original
++ * only has off or full 30 dB, and didn't like making a volume slider that has
++ * traditional 0-100 in alsamixer that goes in big steps. I like enum better.
++ */
++#define MIC_BOOST_NUM_OF_STEPS 4
++#define MIC_BOOST_ENUM_MAX_STRLEN 10
++
++static int ca0132_alt_mic_boost_info(struct snd_kcontrol *kcontrol,
++				 struct snd_ctl_elem_info *uinfo)
++{
++	char *sfx = "dB";
++	char namestr[SNDRV_CTL_ELEM_ID_NAME_MAXLEN];
++
++	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
++	uinfo->count = 1;
++	uinfo->value.enumerated.items = MIC_BOOST_NUM_OF_STEPS;
++	if (uinfo->value.enumerated.item >= MIC_BOOST_NUM_OF_STEPS)
++		uinfo->value.enumerated.item = MIC_BOOST_NUM_OF_STEPS - 1;
++	sprintf(namestr, "%d %s", (uinfo->value.enumerated.item * 10), sfx);
++	strcpy(uinfo->value.enumerated.name, namestr);
++	return 0;
++}
++
++static int ca0132_alt_mic_boost_get(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++
++	ucontrol->value.enumerated.item[0] = spec->mic_boost_enum_val;
++	return 0;
++}
++
++static int ca0132_alt_mic_boost_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	int sel = ucontrol->value.enumerated.item[0];
++	unsigned int items = MIC_BOOST_NUM_OF_STEPS;
++
++	if (sel >= items)
++		return 0;
++
++	codec_dbg(codec, "ca0132_alt_mic_boost: boost=%d\n",
++		    sel);
++
++	spec->mic_boost_enum_val = sel;
++
++	if (spec->in_enum_val != REAR_LINE_IN)
++		ca0132_alt_mic_boost_set(codec, spec->mic_boost_enum_val);
++
++	return 1;
++}
++
+ 
+ /*
+  * Input Select Control for alternative ca0132 codecs. This exists because
+@@ -4604,6 +4981,135 @@ static int ca0132_alt_output_select_put(struct snd_kcontrol *kcontrol,
+ 	return 1;
+ }
+ 
++/*
++ * Smart Volume output setting control. Three different settings, Normal,
++ * which takes the value from the smart volume slider. The two others, loud
++ * and night, disregard the slider value and have uneditable values.
++ */
++#define NUM_OF_SVM_SETTINGS 3
++static const char *out_svm_set_enum_str[3] = {"Normal", "Loud", "Night" };
++
++static int ca0132_alt_svm_setting_info(struct snd_kcontrol *kcontrol,
++				 struct snd_ctl_elem_info *uinfo)
++{
++	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
++	uinfo->count = 1;
++	uinfo->value.enumerated.items = NUM_OF_SVM_SETTINGS;
++	if (uinfo->value.enumerated.item >= NUM_OF_SVM_SETTINGS)
++		uinfo->value.enumerated.item = NUM_OF_SVM_SETTINGS - 1;
++	strcpy(uinfo->value.enumerated.name,
++			out_svm_set_enum_str[uinfo->value.enumerated.item]);
++	return 0;
++}
++
++static int ca0132_alt_svm_setting_get(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++
++	ucontrol->value.enumerated.item[0] = spec->smart_volume_setting;
++	return 0;
++}
++
++static int ca0132_alt_svm_setting_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	int sel = ucontrol->value.enumerated.item[0];
++	unsigned int items = NUM_OF_SVM_SETTINGS;
++	unsigned int idx = SMART_VOLUME - EFFECT_START_NID;
++	unsigned int tmp;
++
++	if (sel >= items)
++		return 0;
++
++	codec_dbg(codec, "ca0132_alt_svm_setting: sel=%d, preset=%s\n",
++		    sel, out_svm_set_enum_str[sel]);
++
++	spec->smart_volume_setting = sel;
++
++	switch (sel) {
++	case 0:
++		tmp = FLOAT_ZERO;
++		break;
++	case 1:
++		tmp = FLOAT_ONE;
++		break;
++	case 2:
++		tmp = FLOAT_TWO;
 +		break;
 +	default:
-+		spec->use_alt_functions = false;
++		tmp = FLOAT_ZERO;
++		break;
++	}
++	/* Req 2 is the Smart Volume Setting req. */
++	dspio_set_uint_param(codec, ca0132_effects[idx].mid,
++			ca0132_effects[idx].reqs[2], tmp);
++	return 1;
++}
++
++/* Sound Blaster Z EQ preset controls */
++static int ca0132_alt_eq_preset_info(struct snd_kcontrol *kcontrol,
++				 struct snd_ctl_elem_info *uinfo)
++{
++	unsigned int items = sizeof(ca0132_alt_eq_presets)
++				/ sizeof(struct ct_eq_preset);
++
++	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
++	uinfo->count = 1;
++	uinfo->value.enumerated.items = items;
++	if (uinfo->value.enumerated.item >= items)
++		uinfo->value.enumerated.item = items - 1;
++	strcpy(uinfo->value.enumerated.name,
++		ca0132_alt_eq_presets[uinfo->value.enumerated.item].name);
++	return 0;
++}
++
++static int ca0132_alt_eq_preset_get(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++
++	ucontrol->value.enumerated.item[0] = spec->eq_preset_val;
++	return 0;
++}
++
++static int ca0132_alt_eq_preset_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct ca0132_spec *spec = codec->spec;
++	int i, err = 0;
++	int sel = ucontrol->value.enumerated.item[0];
++	unsigned int items = sizeof(ca0132_alt_eq_presets)
++				/ sizeof(struct ct_eq_preset);
++
++	if (sel >= items)
++		return 0;
++
++	codec_dbg(codec, "%s: sel=%d, preset=%s\n", __func__, sel,
++			ca0132_alt_eq_presets[sel].name);
++	/*
++	 * Idx 0 is default.
++	 * Default needs to qualify with CrystalVoice state.
++	 */
++	for (i = 0; i < EQ_PRESET_MAX_PARAM_COUNT; i++) {
++		err = dspio_set_uint_param(codec, ca0132_alt_eq_enum.mid,
++				ca0132_alt_eq_enum.reqs[i],
++				ca0132_alt_eq_presets[sel].vals[i]);
++		if (err < 0)
++			break;
++	}
++
++	if (err >= 0)
++		spec->eq_preset_val = sel;
++
++	return 1;
++}
++
+ static int ca0132_voicefx_info(struct snd_kcontrol *kcontrol,
+ 				 struct snd_ctl_elem_info *uinfo)
+ {
+@@ -4993,14 +5499,61 @@ static int ca0132_volume_tlv(struct snd_kcontrol *kcontrol, int op_flag,
+ 	return err;
+ }
+ 
++/* Add volume slider control for effect level */
++static int ca0132_alt_add_effect_slider(struct hda_codec *codec, hda_nid_t nid,
++					const char *pfx, int dir)
++{
++	char *fx = "FX:";
++	char namestr[SNDRV_CTL_ELEM_ID_NAME_MAXLEN];
++	int type = dir ? HDA_INPUT : HDA_OUTPUT;
++	struct snd_kcontrol_new knew =
++		HDA_CODEC_VOLUME_MONO(namestr, nid, 1, 0, type);
++
++	sprintf(namestr, "%s %s %s Volume", fx, pfx, dirstr[dir]);
++
++	knew.tlv.c = 0;
++	knew.tlv.p = 0;
++
++	switch (nid) {
++	case XBASS_XOVER:
++		knew.info = ca0132_alt_xbass_xover_slider_info;
++		knew.get = ca0132_alt_xbass_xover_slider_ctl_get;
++		knew.put = ca0132_alt_xbass_xover_slider_put;
++		break;
++	default:
++		knew.info = ca0132_alt_effect_slider_info;
++		knew.get = ca0132_alt_slider_ctl_get;
++		knew.put = ca0132_alt_effect_slider_put;
++		knew.private_value =
++			HDA_COMPOSE_AMP_VAL(nid, 1, 0, type);
 +		break;
 +	}
 +
- 	spec->base_init_verbs = ca0132_base_init_verbs;
- 	spec->base_exit_verbs = ca0132_base_exit_verbs;
++	return snd_hda_ctl_add(codec, nid, snd_ctl_new1(&knew, codec));
++}
++
++/*
++ * Added FX: prefix for the alternative codecs, because otherwise the surround
++ * effect would conflict with the Surround sound volume control. Also seems more
++ * clear as to what the switches do. Left alone for others.
++ */
+ static int add_fx_switch(struct hda_codec *codec, hda_nid_t nid,
+ 			 const char *pfx, int dir)
+ {
++	struct ca0132_spec *spec = codec->spec;
++	char *fx = "FX:";
+ 	char namestr[SNDRV_CTL_ELEM_ID_NAME_MAXLEN];
+ 	int type = dir ? HDA_INPUT : HDA_OUTPUT;
+ 	struct snd_kcontrol_new knew =
+ 		CA0132_CODEC_MUTE_MONO(namestr, nid, 1, type);
+-	sprintf(namestr, "%s %s Switch", pfx, dirstr[dir]);
++	/* If using alt_controls, add FX: prefix. But, don't add FX:
++	 * prefix to OutFX or InFX enable controls.
++	 */
++	if ((spec->use_alt_controls) && (nid <= IN_EFFECT_END_NID))
++		sprintf(namestr, "%s %s %s Switch", fx, pfx, dirstr[dir]);
++	else
++		sprintf(namestr, "%s %s Switch", pfx, dirstr[dir]);
++
+ 	return snd_hda_ctl_add(codec, nid, snd_ctl_new1(&knew, codec));
+ }
  
+@@ -5015,6 +5568,37 @@ static int add_voicefx(struct hda_codec *codec)
+ 	return snd_hda_ctl_add(codec, VOICEFX, snd_ctl_new1(&knew, codec));
+ }
+ 
++/* Create the EQ Preset control */
++static int add_ca0132_alt_eq_presets(struct hda_codec *codec)
++{
++	struct snd_kcontrol_new knew =
++		HDA_CODEC_MUTE_MONO(ca0132_alt_eq_enum.name,
++				    EQ_PRESET_ENUM, 1, 0, HDA_OUTPUT);
++	knew.info = ca0132_alt_eq_preset_info;
++	knew.get = ca0132_alt_eq_preset_get;
++	knew.put = ca0132_alt_eq_preset_put;
++	return snd_hda_ctl_add(codec, EQ_PRESET_ENUM,
++				snd_ctl_new1(&knew, codec));
++}
++
++/*
++ * Add enumerated control for the three different settings of the smart volume
++ * output effect. Normal just uses the slider value, and loud and night are
++ * their own things that ignore that value.
++ */
++static int ca0132_alt_add_svm_enum(struct hda_codec *codec)
++{
++	struct snd_kcontrol_new knew =
++		HDA_CODEC_MUTE_MONO("FX: Smart Volume Setting",
++				    SMART_VOLUME_ENUM, 1, 0, HDA_OUTPUT);
++	knew.info = ca0132_alt_svm_setting_info;
++	knew.get = ca0132_alt_svm_setting_get;
++	knew.put = ca0132_alt_svm_setting_put;
++	return snd_hda_ctl_add(codec, SMART_VOLUME_ENUM,
++				snd_ctl_new1(&knew, codec));
++
++}
++
+ /*
+  * Create an Output Select enumerated control for codecs with surround
+  * out capabilities.
+@@ -5049,6 +5633,72 @@ static int ca0132_alt_add_input_enum(struct hda_codec *codec)
+ }
+ 
+ /*
++ * Add mic boost enumerated control. Switches through 0dB to 30dB. This adds
++ * more control than the original mic boost, which is either full 30dB or off.
++ */
++static int ca0132_alt_add_mic_boost_enum(struct hda_codec *codec)
++{
++	struct snd_kcontrol_new knew =
++		HDA_CODEC_MUTE_MONO("Mic Boost Capture Switch",
++				    MIC_BOOST_ENUM, 1, 0, HDA_INPUT);
++	knew.info = ca0132_alt_mic_boost_info;
++	knew.get = ca0132_alt_mic_boost_get;
++	knew.put = ca0132_alt_mic_boost_put;
++	return snd_hda_ctl_add(codec, MIC_BOOST_ENUM,
++				snd_ctl_new1(&knew, codec));
++
++}
++
++/*
++ * Need to create slave controls for the alternate codecs that have surround
++ * capabilities.
++ */
++static const char * const ca0132_alt_slave_pfxs[] = {
++	"Front", "Surround", "Center", "LFE", NULL,
++};
++
++/*
++ * Also need special channel map, because the default one is incorrect.
++ * I think this has to do with the pin for rear surround being 0x11,
++ * and the center/lfe being 0x10. Usually the pin order is the opposite.
++ */
++const struct snd_pcm_chmap_elem ca0132_alt_chmaps[] = {
++	{ .channels = 2,
++	  .map = { SNDRV_CHMAP_FL, SNDRV_CHMAP_FR } },
++	{ .channels = 4,
++	  .map = { SNDRV_CHMAP_FL, SNDRV_CHMAP_FR,
++		   SNDRV_CHMAP_RL, SNDRV_CHMAP_RR } },
++	{ .channels = 6,
++	  .map = { SNDRV_CHMAP_FL, SNDRV_CHMAP_FR,
++		   SNDRV_CHMAP_FC, SNDRV_CHMAP_LFE,
++		   SNDRV_CHMAP_RL, SNDRV_CHMAP_RR } },
++	{ }
++};
++
++/* Add the correct chmap for streams with 6 channels. */
++static void ca0132_alt_add_chmap_ctls(struct hda_codec *codec)
++{
++	int err = 0;
++	struct hda_pcm *pcm;
++
++	list_for_each_entry(pcm, &codec->pcm_list_head, list) {
++		struct hda_pcm_stream *hinfo =
++			&pcm->stream[SNDRV_PCM_STREAM_PLAYBACK];
++		struct snd_pcm_chmap *chmap;
++		const struct snd_pcm_chmap_elem *elem;
++
++		elem = ca0132_alt_chmaps;
++		if (hinfo->channels_max == 6) {
++			err = snd_pcm_add_chmap_ctls(pcm->pcm,
++					SNDRV_PCM_STREAM_PLAYBACK,
++					elem, hinfo->channels_max, 0, &chmap);
++			if (err < 0)
++				codec_dbg(codec, "snd_pcm_add_chmap_ctls failed!");
++		}
++	}
++}
++
++/*
+  * When changing Node IDs for Mixer Controls below, make sure to update
+  * Node IDs in ca0132_config() as well.
+  */
+@@ -5082,6 +5732,12 @@ static struct snd_kcontrol_new ca0132_mixer[] = {
+ static struct snd_kcontrol_new sbz_mixer[] = {
+ 	CA0132_ALT_CODEC_VOL("Front Playback Volume", 0x02, HDA_OUTPUT),
+ 	CA0132_CODEC_MUTE("Front Playback Switch", VNID_SPK, HDA_OUTPUT),
++	HDA_CODEC_VOLUME("Surround Playback Volume", 0x04, 0, HDA_OUTPUT),
++	HDA_CODEC_MUTE("Surround Playback Switch", 0x04, 0, HDA_OUTPUT),
++	HDA_CODEC_VOLUME_MONO("Center Playback Volume", 0x03, 1, 0, HDA_OUTPUT),
++	HDA_CODEC_MUTE_MONO("Center Playback Switch", 0x03, 1, 0, HDA_OUTPUT),
++	HDA_CODEC_VOLUME_MONO("LFE Playback Volume", 0x03, 2, 0, HDA_OUTPUT),
++	HDA_CODEC_MUTE_MONO("LFE Playback Switch", 0x03, 2, 0, HDA_OUTPUT),
+ 	CA0132_ALT_CODEC_VOL("Capture Volume", 0x07, HDA_INPUT),
+ 	CA0132_CODEC_MUTE("Capture Switch", VNID_MIC, HDA_INPUT),
+ 	HDA_CODEC_VOLUME("What U Hear Capture Volume", 0x0a, 0, HDA_INPUT),
+@@ -5098,6 +5754,12 @@ static struct snd_kcontrol_new sbz_mixer[] = {
+ static struct snd_kcontrol_new r3di_mixer[] = {
+ 	CA0132_ALT_CODEC_VOL("Front Playback Volume", 0x02, HDA_OUTPUT),
+ 	CA0132_CODEC_MUTE("Front Playback Switch", VNID_SPK, HDA_OUTPUT),
++	HDA_CODEC_VOLUME("Surround Playback Volume", 0x04, 0, HDA_OUTPUT),
++	HDA_CODEC_MUTE("Surround Playback Switch", 0x04, 0, HDA_OUTPUT),
++	HDA_CODEC_VOLUME_MONO("Center Playback Volume", 0x03, 1, 0, HDA_OUTPUT),
++	HDA_CODEC_MUTE_MONO("Center Playback Switch", 0x03, 1, 0, HDA_OUTPUT),
++	HDA_CODEC_VOLUME_MONO("LFE Playback Volume", 0x03, 2, 0, HDA_OUTPUT),
++	HDA_CODEC_MUTE_MONO("LFE Playback Switch", 0x03, 2, 0, HDA_OUTPUT),
+ 	CA0132_CODEC_VOL("Capture Volume", VNID_MIC, HDA_INPUT),
+ 	CA0132_CODEC_MUTE("Capture Switch", VNID_MIC, HDA_INPUT),
+ 	HDA_CODEC_VOLUME("What U Hear Capture Volume", 0x0a, 0, HDA_INPUT),
+@@ -5110,7 +5772,7 @@ static struct snd_kcontrol_new r3di_mixer[] = {
+ static int ca0132_build_controls(struct hda_codec *codec)
+ {
+ 	struct ca0132_spec *spec = codec->spec;
+-	int i, num_fx;
++	int i, num_fx, num_sliders;
+ 	int err = 0;
+ 
+ 	/* Add Mixer controls */
+@@ -5119,27 +5781,82 @@ static int ca0132_build_controls(struct hda_codec *codec)
+ 		if (err < 0)
+ 			return err;
+ 	}
++	/* Setup vmaster with surround slaves for desktop ca0132 devices */
++	if (spec->use_alt_functions) {
++		snd_hda_set_vmaster_tlv(codec, spec->dacs[0], HDA_OUTPUT,
++					spec->tlv);
++		snd_hda_add_vmaster(codec, "Master Playback Volume",
++					spec->tlv, ca0132_alt_slave_pfxs,
++					"Playback Volume");
++		err = __snd_hda_add_vmaster(codec, "Master Playback Switch",
++					    NULL, ca0132_alt_slave_pfxs,
++					    "Playback Switch",
++					    true, &spec->vmaster_mute.sw_kctl);
++
++	}
+ 
+ 	/* Add in and out effects controls.
+ 	 * VoiceFX, PE and CrystalVoice are added separately.
+ 	 */
+ 	num_fx = OUT_EFFECTS_COUNT + IN_EFFECTS_COUNT;
+ 	for (i = 0; i < num_fx; i++) {
++		/* SBZ breaks if Echo Cancellation is used */
++		if (spec->quirk == QUIRK_SBZ) {
++			if (i == (ECHO_CANCELLATION - IN_EFFECT_START_NID +
++						OUT_EFFECTS_COUNT))
++				continue;
++		}
++
+ 		err = add_fx_switch(codec, ca0132_effects[i].nid,
+ 				    ca0132_effects[i].name,
+ 				    ca0132_effects[i].direct);
+ 		if (err < 0)
+ 			return err;
+ 	}
++	/*
++	 * If codec has use_alt_controls set to true, add effect level sliders,
++	 * EQ presets, and Smart Volume presets. Also, change names to add FX
++	 * prefix, and change PlayEnhancement and CrystalVoice to match.
++	 */
++	if (spec->use_alt_controls) {
++		ca0132_alt_add_svm_enum(codec);
++		add_ca0132_alt_eq_presets(codec);
++		err = add_fx_switch(codec, PLAY_ENHANCEMENT,
++					"Enable OutFX", 0);
++		if (err < 0)
++			return err;
+ 
+-	err = add_fx_switch(codec, PLAY_ENHANCEMENT, "PlayEnhancement", 0);
+-	if (err < 0)
+-		return err;
++		err = add_fx_switch(codec, CRYSTAL_VOICE,
++					"Enable InFX", 1);
++		if (err < 0)
++			return err;
+ 
+-	err = add_fx_switch(codec, CRYSTAL_VOICE, "CrystalVoice", 1);
+-	if (err < 0)
+-		return err;
++		num_sliders = OUT_EFFECTS_COUNT - 1;
++		for (i = 0; i < num_sliders; i++) {
++			err = ca0132_alt_add_effect_slider(codec,
++					    ca0132_effects[i].nid,
++					    ca0132_effects[i].name,
++					    ca0132_effects[i].direct);
++			if (err < 0)
++				return err;
++		}
++
++		err = ca0132_alt_add_effect_slider(codec, XBASS_XOVER,
++					"X-Bass Crossover", EFX_DIR_OUT);
++
++		if (err < 0)
++			return err;
++	} else {
++		err = add_fx_switch(codec, PLAY_ENHANCEMENT,
++					"PlayEnhancement", 0);
++		if (err < 0)
++			return err;
+ 
++		err = add_fx_switch(codec, CRYSTAL_VOICE,
++					"CrystalVoice", 1);
++		if (err < 0)
++			return err;
++	}
+ 	add_voicefx(codec);
+ 
+ 	/*
+@@ -5150,6 +5867,7 @@ static int ca0132_build_controls(struct hda_codec *codec)
+ 	if (spec->use_alt_functions) {
+ 		ca0132_alt_add_output_enum(codec);
+ 		ca0132_alt_add_input_enum(codec);
++		ca0132_alt_add_mic_boost_enum(codec);
+ 	}
+ #ifdef ENABLE_TUNING_CONTROLS
+ 	add_tuning_ctls(codec);
+@@ -5175,6 +5893,10 @@ static int ca0132_build_controls(struct hda_codec *codec)
+ 		if (err < 0)
+ 			return err;
+ 	}
++
++	if (spec->use_alt_functions)
++		ca0132_alt_add_chmap_ctls(codec);
++
+ 	return 0;
+ }
+ 
+@@ -5229,6 +5951,11 @@ static int ca0132_build_pcms(struct hda_codec *codec)
+ 	info = snd_hda_codec_pcm_new(codec, "CA0132 Analog");
+ 	if (!info)
+ 		return -ENOMEM;
++	if (spec->use_alt_functions) {
++		info->own_chmap = true;
++		info->stream[SNDRV_PCM_STREAM_PLAYBACK].chmap
++			= ca0132_alt_chmaps;
++	}
+ 	info->stream[SNDRV_PCM_STREAM_PLAYBACK] = ca0132_pcm_analog_playback;
+ 	info->stream[SNDRV_PCM_STREAM_PLAYBACK].nid = spec->dacs[0];
+ 	info->stream[SNDRV_PCM_STREAM_PLAYBACK].channels_max =
+@@ -6120,6 +6847,15 @@ static void ca0132_init_chip(struct hda_codec *codec)
+ 		on = (unsigned int)ca0132_effects[i].reqs[0];
+ 		spec->effects_switch[i] = on ? 1 : 0;
+ 	}
++	/*
++	 * Sets defaults for the effect slider controls, only for alternative
++	 * ca0132 codecs. Also sets x-bass crossover frequency to 80hz.
++	 */
++	if (spec->use_alt_controls) {
++		spec->xbass_xover_freq = 8;
++		for (i = 0; i < EFFECT_LEVEL_SLIDERS; i++)
++			spec->fx_ctl_val[i] = effect_slider_defaults[i];
++	}
+ 
+ 	spec->voicefx_val = 0;
+ 	spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID] = 1;
+@@ -6839,13 +7575,15 @@ static int patch_ca0132(struct hda_codec *codec)
+ 		break;
+ 	}
+ 
+-	/* Setup whether or not to use alt functions */
++	/* Setup whether or not to use alt functions/controls */
+ 	switch (spec->quirk) {
+ 	case QUIRK_SBZ:
+ 	case QUIRK_R3DI:
++		spec->use_alt_controls = true;
+ 		spec->use_alt_functions = true;
+ 		break;
+ 	default:
++		spec->use_alt_controls = false;
+ 		spec->use_alt_functions = false;
+ 		break;
+ 	}
 -- 
 2.7.4
