@@ -1,61 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751819AbeEEA3p (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 20:29:45 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:37213 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751684AbeEEA3n (ORCPT
+        id S1751846AbeEEAcG (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 20:32:06 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:42559 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751751AbeEEAcF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 20:29:43 -0400
-X-Google-Smtp-Source: AB8JxZqUy7WFNbgmePHd1Lt/l/FkoAo3kO20gkgh2MxJFrssQNMKRBlH/H8Dlryq6aVmMFQDildd1w==
-Date: Fri, 4 May 2018 17:29:40 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Ramon Fried <rfried@codeaurora.org>,
-        Tobias Jordan <Tobias.Jordan@elektrobit.com>
-Subject: [GIT PULL] remoteproc and rpmsg fixes for v4.17
-Message-ID: <20180505002940.GG17344@builder>
-MIME-Version: 1.0
+        Fri, 4 May 2018 20:32:05 -0400
+To: adobriyan@gmail.com, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, mhocko@suse.com
+Subject: Re: [PATCH] elf: don't hash userspace addresses
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <20180504212308.GA7564@avx2>
+In-Reply-To: <20180504212308.GA7564@avx2>
+Message-Id: <201805050931.FEG18215.tFJOFLHOFVSOQM@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Sat, 5 May 2018 09:31:50 +0900
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+Alexey Dobriyan wrote:
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+> ---
+> 
+>  fs/binfmt_elf.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -379,8 +379,8 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
+>  
+>  	if ((type & MAP_FIXED_NOREPLACE) &&
+>  	    PTR_ERR((void *)map_addr) == -EEXIST)
+> -		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
+> -			task_pid_nr(current), current->comm, (void *)addr);
+> +		pr_info("%d (%s): Uhuuh, elf segment at %lx requested but the memory is mapped already\n",
+> +			task_pid_nr(current), current->comm, addr);
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+"%px" does not hash. For what reason you replace %px with %lx ?
 
-are available in the Git repository at:
-
-  git://github.com/andersson/remoteproc tags/rproc-v4.17-1
-
-for you to fetch changes up to 93dd4e73c0d9cc32f835d76a54257020b0bfc75a:
-
-  rpmsg: added MODULE_ALIAS for rpmsg_char (2018-04-25 16:46:55 -0700)
-
-----------------------------------------------------------------
-remoteproc and rpmsg fixes for v4.17
-
-Fixes screw up when reversing boolean for rproc_stop(), add missing of
-node dereferences and add missing MODULE_ALIAS in rpmsg_char.
-
-----------------------------------------------------------------
-Arnaud Pouliquen (1):
-      remoteproc: fix crashed parameter logic on stop call
-
-Ramon Fried (1):
-      rpmsg: added MODULE_ALIAS for rpmsg_char
-
-Tobias Jordan (1):
-      remoteproc: qcom: Fix potential device node leaks
-
- drivers/remoteproc/qcom_q6v5_pil.c   | 2 ++
- drivers/remoteproc/remoteproc_core.c | 4 ++--
- drivers/rpmsg/rpmsg_char.c           | 2 ++
- include/linux/remoteproc.h           | 2 +-
- 4 files changed, 7 insertions(+), 3 deletions(-)
+>  
+>  	return(map_addr);
+>  }
+> 
