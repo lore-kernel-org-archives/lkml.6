@@ -1,60 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751817AbeEESiT (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 14:38:19 -0400
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:58784 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751252AbeEESiR (ORCPT
+        id S1751855AbeEESyG (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 14:54:06 -0400
+Received: from mta-p8.oit.umn.edu ([134.84.196.208]:58770 "EHLO
+        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751824AbeEESyE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 14:38:17 -0400
-X-Google-Smtp-Source: AB8JxZosxZm6QQc5S/RrO4Xt+no6yXqPSUC+0Ia4SIMivK9iCzq8qmKW3yx4qrDjsau5rJPhZx75iw==
+        Sat, 5 May 2018 14:54:04 -0400
+X-Google-Smtp-Source: AB8JxZqE5i1HhWcWW6dsRkzoLI3PZsK8LIDIBppBm3vi8wzjBefLy8jNwBEXrsJEhqVxgd+l8fWLxA==
 From: Wenwen Wang <wang6495@umn.edu>
 To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        alsa-devel@alsa-project.org (moderated list:SOUND),
+Cc: Kangjie Lu <kjlu@umn.edu>, Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Atul Gupta <atul.gupta@chelsio.com>,
+        Michael Werner <werner@chelsio.com>, Casey Leedom <leedom@chelsio.com>,
+        linux-crypto@vger.kernel.org (open list:CXGB4 CRYPTO DRIVER (chcr)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ALSA: control: fix a redundant-copy issue
-Date: Sat,  5 May 2018 13:38:03 -0500
-Message-Id: <1525545485-12183-1-git-send-email-wang6495@umn.edu>
+Subject: [PATCH] crypto: chtls - fix a missing-check bug
+Date: Sat,  5 May 2018 13:53:48 -0500
+Message-Id: <1525546431-12535-1-git-send-email-wang6495@umn.edu>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In snd_ctl_elem_add_compat(), the fields of the struct 'data' need to be
-copied from the corresponding fields of the struct 'data32' in userspace.
-This is achieved by invoking copy_from_user() and get_user() functions. The
-problem here is that the 'type' field is copied twice. One is by
-copy_from_user() and one is by get_user(). Given that the 'type' field is
-not used between the two copies, the second copy is *completely* redundant
-and should be removed for better performance and cleanup. Also, these two
-copies can cause inconsistent data: as the struct 'data32' resides in
-userspace and a malicious userspace process can race to change the 'type'
-field between the two copies to cause inconsistent data. Depending on how
-the data is used in the future, such an inconsistency may cause potential
-security risks.
+In do_chtls_setsockopt(), the tls crypto info is first copied from the
+poiner 'optval' in userspace and saved to 'tmp_crypto_info'. Then the
+'version' of the crypto info is checked. If the version is not as expected,
+i.e., TLS_1_2_VERSION, error code -ENOTSUPP is returned to indicate that
+the provided crypto info is not supported yet. Then, the 'cipher_type'
+field of the 'tmp_crypto_info' is also checked to see if it is
+TLS_CIPHER_AES_GCM_128. If it is, the whole struct of
+tls12_crypto_info_aes_gcm_128 is copied from the pointer 'optval' and then
+the function chtls_setkey() is invoked to set the key.
 
-For above reasons, we should take out the second copy.
+Given that the 'optval' pointer resides in userspace, a malicious userspace
+process can race to change the data pointed by 'optval' between the two
+copies. For example, a user can provide a crypto info with TLS_1_2_VERSION
+and TLS_CIPHER_AES_GCM_128. After the first copy, the user can modify the
+'version' and the 'cipher_type' fields to any versions and/or cipher types
+that are not allowed. This way, the user can bypass the checks, inject
+bad data to the kernel, cause chtls_setkey() to set a wrong key or other
+issues.
+
+This patch reuses the data copied in the first try so as to ensure these
+checks will not be bypassed.
 
 Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 ---
- sound/core/control_compat.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/crypto/chelsio/chtls/chtls_main.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/sound/core/control_compat.c b/sound/core/control_compat.c
-index a848836..507fd52 100644
---- a/sound/core/control_compat.c
-+++ b/sound/core/control_compat.c
-@@ -396,8 +396,7 @@ static int snd_ctl_elem_add_compat(struct snd_ctl_file *file,
- 	if (copy_from_user(&data->id, &data32->id, sizeof(data->id)) ||
- 	    copy_from_user(&data->type, &data32->type, 3 * sizeof(u32)))
- 		goto error;
--	if (get_user(data->owner, &data32->owner) ||
--	    get_user(data->type, &data32->type))
-+	if (get_user(data->owner, &data32->owner))
- 		goto error;
- 	switch (data->type) {
- 	case SNDRV_CTL_ELEM_TYPE_BOOLEAN:
+diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
+index 007c45c..859958a 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_main.c
++++ b/drivers/crypto/chelsio/chtls/chtls_main.c
+@@ -491,9 +491,13 @@ static int do_chtls_setsockopt(struct sock *sk, int optname,
+ 
+ 	switch (tmp_crypto_info.cipher_type) {
+ 	case TLS_CIPHER_AES_GCM_128: {
+-		rc = copy_from_user(crypto_info, optval,
+-				    sizeof(struct
+-					   tls12_crypto_info_aes_gcm_128));
++		/* Obtain version and type from previous copy */
++		crypto_info[0] = tmp_crypto_info;
++		/* Now copy the following data */
++		rc = copy_from_user(crypto_info + sizeof(*crypto_info),
++				optval + sizeof(*crypto_info),
++				sizeof(struct tls12_crypto_info_aes_gcm_128)
++				- sizeof(*crypto_info));
+ 
+ 		if (rc) {
+ 			rc = -EFAULT;
 -- 
 2.7.4
