@@ -1,74 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751988AbeEEBn3 (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 21:43:29 -0400
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:44406 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751775AbeEEBn1 (ORCPT
+        id S1752008AbeEEBoW (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 21:44:22 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36642 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751709AbeEEBoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 21:43:27 -0400
-X-Google-Smtp-Source: AB8JxZqhLzcqYa+UDwKJiJEx6544pJ/A8qCBlRKXnGVB3ABefv64ZBL/PPev98E9qw5AbeIxkt1IZQ==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c@vger.kernel.org (open list:I2C SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] i2c: core-smbus: fix a potential uninitialization bug
-Date: Fri,  4 May 2018 20:43:16 -0500
-Message-Id: <1525484596-5585-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        Fri, 4 May 2018 21:44:21 -0400
+From: Mark Brown <broonie@kernel.org>
+To: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: pfuze100: Make the node name generic" to the regulator tree
+In-Reply-To: 
+Message-Id: <20180505014416.5E76544007C@finisterre.ee.mobilebroadband>
+Date: Sat,  5 May 2018 02:44:16 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
-which are used to save a series of messages, as mentioned in the comment.
-According to the value of the variable "size", msgbuf0 is initialized to
-various values. In contrast, msgbuf1 is left uninitialized until the
-function i2c_transfer() is invoked. However, mgsbuf1 is not always
-initialized on all possible execution paths (implementation) of
-i2c_transfer(). Thus, it is possible that mgsbuf1 may still be
-uninitialized even after the invocation of the function i2c_transfer(),
-especially when the return value of ic2_transfer() is not checked properly.
-In the following execution, the uninitialized msgbuf1 will be used, such as
-for security checks. Since uninitialized values can be random and
-arbitrary, this will cause undefined behaviors or even check bypass. For
-example, it is expected that if the value of "size" is
-I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
-than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
-value read from msgbuf1 is assigned to data->block[0], which can
-potentially lead to invalid block write size, as demonstrated in the error
-message.
+The patch
 
-This patch checks the return value of i2c_transfer() and also initializes
-the first byte of msgbuf1 with 0 to avoid undefined behaviors or security
-issues.
+   regulator: pfuze100: Make the node name generic
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+>From 60891ceb8075e02cbf841ac1e7f7437d711ffc5f Mon Sep 17 00:00:00 2001
+From: Fabio Estevam <fabio.estevam@nxp.com>
+Date: Fri, 4 May 2018 22:17:13 -0300
+Subject: [PATCH] regulator: pfuze100: Make the node name generic
+
+According to Devicetree Specification v0.2 document:
+
+"The name of a node should be somewhat generic, reflecting the function
+of the device and not its precise programming model."
+
+Do as suggested in the binding example.
+
+Signed-off-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/i2c/i2c-core-smbus.c | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/regulator/pfuze100.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index b5aec33..e8470d5 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -344,6 +344,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 	};
+diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+index c6dd3f5e485b..f0ada3b14d70 100644
+--- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
++++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
+@@ -21,7 +21,7 @@ Each regulator is defined using the standard binding for regulators.
  
- 	msgbuf0[0] = command;
-+	msgbug1[0] = 0;
- 	switch (size) {
- 	case I2C_SMBUS_QUICK:
- 		msg[0].len = 0;
-@@ -466,6 +467,8 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 	status = i2c_transfer(adapter, msg, num);
- 	if (status < 0)
- 		return status;
-+	if (status != num)
-+		return -EIO;
+ Example 1: PFUZE100
  
- 	/* Check PEC if last message is a read */
- 	if (i && (msg[num-1].flags & I2C_M_RD)) {
+-	pmic: pfuze100@8 {
++	pfuze100: pmic@8 {
+ 		compatible = "fsl,pfuze100";
+ 		reg = <0x08>;
+ 
+@@ -122,7 +122,7 @@ Example 1: PFUZE100
+ 
+ Example 2: PFUZE200
+ 
+-	pmic: pfuze200@8 {
++	pfuze200: pmic@8 {
+ 		compatible = "fsl,pfuze200";
+ 		reg = <0x08>;
+ 
+@@ -216,7 +216,7 @@ Example 2: PFUZE200
+ 
+ Example 3: PFUZE3000
+ 
+-	pmic: pfuze3000@8 {
++	pfuze3000: pmic@8 {
+ 		compatible = "fsl,pfuze3000";
+ 		reg = <0x08>;
+ 
 -- 
-2.7.4
+2.17.0
