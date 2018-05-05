@@ -1,378 +1,152 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751215AbeEEKWa (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 06:22:30 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:39123 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750821AbeEEKW2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 06:22:28 -0400
-X-Google-Smtp-Source: AB8JxZppcPMUERGZDBq+KQ7Q+e1RQlN2wkY8CR3cm3eYgs7IVJSFGAIp8WNeFlJFcWLqR0+YEUIzwg==
-X-ME-Sender: <xms:4oXtWgg2u8P0ZfRuSzt7pFOqYippoLu6Inse1WllKv-qG86Cs8lJnw>
-Date: Sat, 5 May 2018 18:26:49 +0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aryabinin@virtuozzo.com, catalin.marinas@arm.com, dvyukov@google.com,
-        will.deacon@arm.com
-Subject: Re: [RFC PATCH] locking/atomics/powerpc: Introduce optimized
- cmpxchg_release() family of APIs for PowerPC
-Message-ID: <20180505102649.t74xclzalkejeb6x@tardis>
-References: <20180504173937.25300-1-mark.rutland@arm.com>
- <20180504173937.25300-2-mark.rutland@arm.com>
- <20180504180105.GS12217@hirez.programming.kicks-ass.net>
- <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
- <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
- <20180505084721.GA32344@noisy.programming.kicks-ass.net>
- <20180505090403.p2ywuen42rnlwizq@gmail.com>
- <20180505093829.xfylnedwd5nonhae@gmail.com>
- <20180505100055.yc4upauxo5etq5ud@gmail.com>
+        id S1751327AbeEEK3I (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 06:29:08 -0400
+Received: from mail-he1eur01on0098.outbound.protection.outlook.com ([104.47.0.98]:4934
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750821AbeEEK3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 06:29:05 -0400
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se;
+Subject: Re: [PATCH] i2c: core-smbus: fix a potential uninitialization bug
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Wolfram Sang <wsa@the-dreams.de>,
+        "open list:I2C SUBSYSTEM" <linux-i2c@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1525484596-5585-1-git-send-email-wang6495@umn.edu>
+From: Peter Rosin <peda@axentia.se>
+Organization: Axentia Technologies AB
+Message-ID: <63ff0aae-9a34-9c6a-625d-7b07b7da9ed3@axentia.se>
+Date: Sat, 5 May 2018 12:28:53 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6emnqv4lzprmfndx"
-Content-Disposition: inline
-In-Reply-To: <20180505100055.yc4upauxo5etq5ud@gmail.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <1525484596-5585-1-git-send-email-wang6495@umn.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [85.226.244.23]
+X-ClientProxiedBy: CWLP265CA0179.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:4d::23) To DB6PR0202MB2774.eurprd02.prod.outlook.com
+ (2603:10a6:4:a8::20)
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DB6PR0202MB2774;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;3:lxbJmjBKLcmi2lfY0UxUTPgP3MNlH0a0mXSLZvSckNwxHeJjzUtgEGFln/GQPdn2gv3XWQaiqSsCT4U1jViGUVjaOx5rU2DGMGjYObtg68leyPIGc80RRhoo63obTzKSaCxxTkRC22HyjQvz66ku36ff7TinrUNVUzfRFI4Nhgz8+30sx7Ui3WmsDbjU+jCA0N70HVtdnjxSU6UzQh361FeTuo2ngEWZqMQpIf2tvC99pKCjBghDxAw/7cpiYKdF;25:g8cBqRXz4LQnu/tgls1zVZko42zb8XuWoVkEnTkbwwaeUCwTvloC68BQhnjxlV1Rdh7NRph8ikOKa/Rvm+UngVjwalE/9jq31TwCljhl5aibeEpO5f+BkFI9rfjCZUR/0waIsOztNeG0LENDKaLMRg3mGb5rQnW/20kw3DRfrg58XgnKOw0u1nwChDL3dr1iYzlZ9KKlsAxOqAYnlPc+KQxR3PSZnrziOxQ7dkAXzJjhi9qazy5H5mt0sOor3RX9WvR6pu2FoV04brY+5uENPHe8C+4uPjwyTuBmEofkhti+gKVHfB9/xQOMymCJEdC3dkOZEmWCjqs1a+IIPP/dTg==;31:6iHFVo+vclZ4weK9CEHZQqIUJVd6nuSnd+ihTJ9qupL0NziD5kIt6J1UEgEskR4PKXhfuzFf8Gh2P0H0UzXrU+LpewDEDiO1pJ1pRrZqfM0SD9bNxyeATucwNgJa/LkEtUijqwqsFGthupMb1uD7Ha7/LyyUjZ7bcpHTHcq1TeQGfKvi6JZUamksYotddfKboRtYfWy/IH2Hjnpgk96nCyRTJ4jyhChtlrqNsPQiHGM=
+X-MS-TrafficTypeDiagnostic: DB6PR0202MB2774:
+X-Microsoft-Antispam-PRVS: <DB6PR0202MB277414176693D4D6C3501BBFBC850@DB6PR0202MB2774.eurprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192374486261705)(8104003914727);
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6041310)(20161123562045)(20161123560045)(2016111802025)(20161123564045)(20161123558120)(6043046)(6072148)(201708071742011);SRVR:DB6PR0202MB2774;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0202MB2774;
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;4:oSlo1bQ56CqGqzjzo1qN4CSIHeMevSxLUTR4qQZptorq4mskWs7g3CCWoINhB4c8aqcGFfPAzecscvRu6hm9GCRXEDWD4m1R9fSJiVcCGPGX7cN2aTLIzHZO2jIOGN945XKf90ln9MesFc9KN4Fiud/Sm0zDLY2gTMYzeIXYKeG9xVxEMDnUKxgtJRuuivEj85I7f77/yY5n+r1LPSw4nAutVK5jaYl55mKO+qxhOeWEVkv1ciKNaICnYXYjodxodd+hRvOpi0Fqv0gbNr/M3omfFgl6QIWsBPcwiJII6jpe4Cxgk4NyVqCxWMvRLcrNrC3tVeCDLw+WT4LBsM7E8g==
+X-Forefront-PRVS: 0663390E1B
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6049001)(346002)(366004)(39380400002)(396003)(376002)(39830400003)(199004)(189003)(377424004)(59450400001)(53546011)(16526019)(77096007)(5660300001)(6916009)(386003)(66066001)(6666003)(65956001)(65806001)(26005)(76176011)(65826007)(68736007)(86362001)(229853002)(64126003)(117156002)(3260700006)(7736002)(25786009)(8676002)(305945005)(36756003)(23676004)(36916002)(52116002)(2486003)(3846002)(6116002)(52146003)(2906002)(230700001)(476003)(11346002)(74482002)(2171002)(6246003)(31686004)(53936002)(81166006)(8936002)(956004)(2616005)(486006)(16576012)(4326008)(186003)(97736004)(58126008)(31696002)(446003)(50466002)(54906003)(478600001)(105586002)(316002)(6486002)(106356001)(47776003)(81156014)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB6PR0202MB2774;H:[192.168.13.3];FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtEQjZQUjAyMDJNQjI3NzQ7MjM6UWNVVmFBbW82WXljVnp1SFNzOCtuQkpS?=
+ =?utf-8?B?TnpmcFFUejl4MEpiUVF0UEYwL2JhZG5PcUsvOTBwNWwyWXhoV3M4eGNKbm84?=
+ =?utf-8?B?SlNjNjJweG90WWxMMTFucm1LQWVEc2JwSklWQXg0eFNsUkxudHlIeVNSWWhk?=
+ =?utf-8?B?NUxId2t4NnorNnZZdlhaSzY4U1ozcDRkdTFMcUpWemFjVWRqRG5DZXhETkRz?=
+ =?utf-8?B?SG1ScWRoOGFCRFR6bk00Y09vWk42WWhQMGxXT1hMcit4ZmFvRnhkWmtWWnlE?=
+ =?utf-8?B?em05NnBPdVFtRFlETzIzZ2RJRWdSRVd1MWMwdU5QVm10RUxwM2liOWJ0YndX?=
+ =?utf-8?B?SVk0cThoTDNXV3FDek1SVzJEVFhIM2pJQ0tHNkJPMlEvQWZ2eHBtSHdjYitx?=
+ =?utf-8?B?WVFpUFdwdVRoSWZOOVdwVi8yRk1tY2VwQjZvWmlIV0lnTlNkSTdyaW9mc0k1?=
+ =?utf-8?B?eFpwZGtxTWdIQUFjcHc1bE5ZU1huSVQ2UkZQUUM3N2h6clp2SmJWVDJydTgz?=
+ =?utf-8?B?a1JPdGh5UDF2RFdIeTBjWW9GRDhiMHo2VFY5bHJkeEM3KzRNTEhqY1RYTzFj?=
+ =?utf-8?B?MVVFNUhiYjg1R3lNbXprdlBaN3BpT2NzVGpHNVJHQ3NOUjVaUWFBOVloNEFo?=
+ =?utf-8?B?Nm95dmtKM3FvTXVJcGJuWmNpSVlGbTF6Vm5aeVg1bmh5Z1J4ZTE1ZmZZMFdR?=
+ =?utf-8?B?NVZUeFlqNURQWk83YlpSZVdNcFBBVlBKQmxNb0tsQmVlY0lGcU83VXNVWlh1?=
+ =?utf-8?B?cS9Ia0swS1ZmR0FEdnBPa0k4cVNwVEovL0VRblB1SWFmOHZKdlFBYlY0ODYz?=
+ =?utf-8?B?NDJybkNQMEY5akVJUytBZDJYWGhvNXN5d2lBUE5EWHhoU1VzSHhNNG5ON3E3?=
+ =?utf-8?B?dk9Xa1pLVlZEa2tRSHNXK3NPK0drLzM3Z0pSWlh2SFRzWmttc3A4L1BKUWVD?=
+ =?utf-8?B?SXp0YzRPZlBXM3JIdzc4cHJFRGFTY2Z0UUxiVkZDK3p3ZFBwY0psZjNrcGZj?=
+ =?utf-8?B?V2s0elhCV2cxWk5JeUpvL0lEOHNNcnBSZ0tQdnVLT0VWeEsvNUxkb0R3RnhC?=
+ =?utf-8?B?YjVqZSs1aUV0VUF0dnZ2U2tqQVBoQk94MzViSm55alFOdU1ZV3NhQzJLNlp3?=
+ =?utf-8?B?SEtoQnJmdk1QT3YrRG5GbDZpcGtGNHJzZExyWnlqV2lXWmhXQURDNHNNaERa?=
+ =?utf-8?B?THNIWkd5Y3RsazdXVnNITnQ4QXR1aWlmWUl1U3FKdUFVeTlNRmhlSm9mQXNP?=
+ =?utf-8?B?R1dBSkYvL2VrN0x4eWtEM1FzdzhWSWhTdi9yVlJ6d0wraVphUmNabXZuRlJr?=
+ =?utf-8?B?VmlTRXlwT0VNZGtHQ3o1UkIzTzhhSXpoS0daZWE1THdWNVRZaW4vcUc0WERt?=
+ =?utf-8?B?UWo1aEU2aG9tWXA2Wjc3V2VjNW5PRzgrTFhySmNsOEJYNVRPYW1MRDlkQ3BX?=
+ =?utf-8?B?NlZXZDkrZUtMZDFBSURVMExXYUJpL3c3eHFMMjFsbEdGNmFKc3dYV0NYbzkx?=
+ =?utf-8?B?WTlpWlRPU0ZlM29aYTdiSlJyMFdlOVhvT0FsUEhScVJKWkRvRk1pbXFnSDU2?=
+ =?utf-8?B?aVZaVnhRL1dSaG9mejR6Q24vbGpGMUNRdkU4SVJyZSt6bUI2Z1UxcCtTdnBH?=
+ =?utf-8?B?NnNQb3pPMm9XcGpaTUhJU1JVclRaQUhtRC9aNVMweDJZRy9QMTlWbWs2RGpS?=
+ =?utf-8?B?OUtnc2o3cVdVTUxzSkc0dVhsQzRiRVJEQW1lcWZCY2ZjaTcxeDVESGpHalYw?=
+ =?utf-8?B?ajFBQWtCdXJRaW1mV3JKR1BhUEV2ckg2cjJyQlp5L0lhWFBKS3hOcEl6bTA3?=
+ =?utf-8?B?NmxlNDhLaWpzUEVYcUdoVUNXS0Z6Z3Y5YWRFT1BGVjQ4cTRNRWFmbGFJYTJn?=
+ =?utf-8?B?d0M1ZnFBOEU1bSsvQWMraHRwWm9GQXdpcnhhYTNQSm1XbkVHWnQ5Vm5xOHNE?=
+ =?utf-8?B?dXYrWTh4bjZON1BCT1dnN3VJenZoeDhTWFlLY1dPSnY5TkhKb1RyZkVBUGhE?=
+ =?utf-8?B?NGs1dWZBUUVEeXZ6YkVudXNXTWVlV3FqbkxzWi9xZHJOYTEzU0VjZUtrSFhn?=
+ =?utf-8?B?bVRBejVCZnRId3dtU1BZTEVNak5ibVlrR0NHRmVXUVpCd1U4MENKT0IrRXBZ?=
+ =?utf-8?B?bjdyYktSZ2NXYkV4aDY4cVVuUHdXQnd1emxONTNqMFZzdUZwdzZGWVhEblFK?=
+ =?utf-8?B?MVRKQVFGdzgvcHpwVU9Qc1lFUjhTVEE9PQ==?=
+X-Microsoft-Antispam-Message-Info: /bh6mFeYHhaPSEF80RSbLmmGotT/QewQA1HCl/kbvKeYxXN2KmPo6Rx3TF+XLbeDN/5er4T1ZEwnuKWH34vXLv0ko43421rhr8t8ruCWM6Zdk1u/uKCi+JEO32ZdqXSKGTpCVtqeWI/ZG18zis4aSA8slCTNs8guHYI6asf+7cd53QNPYveZU9zTE6dwsREY
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;6:6b+RggsAz5aSQqx8xz6FuNf2RHjzThATOKm4HdLQumaFtfn3x2UmoYUhoC8GuUeZIKeGps+q5JtSO7Qy5fsEUwf2w4fVsUsh0s1Hj72VKea7Gv8ssrGOsG/MWTUbJsAL/cOSVj07r58BAeBDKt6cWS2wMI/FiPkMlLhsHKF0qEfJzlggg/5QjnnhdZNxne3zqCDz94XRDH/PikaSN9lWU57RFcaGKqaeCfVKU84y5mgjMX0Pif1v0VWBik3GzxrVSy62bQgjebzSHeL4AZza+IwsEsT4FVz5DzxKt6XFkGpHT00tdfPTqzLOYpVntOIviP1xdZn8vwwqtCDeSmDNQ2y7+cKyMCyOBc3hPHRTps5Udw3DFYVVZFJ/mPlmWK7TKA0FBbiGkdv2ZCObyL7BOut+NMUohAAMPNAMZGFN8GDKOTBEMvPAZYU905NC1BrrijnRYEkrOuYG1P/YeJXuWQ==;5:Dw/zUZtNYTx4HwjwP5SgEeA0U/VsuxAKmJfaUw90TYN4z/adqYr2g5t11HBMTVz+USvnaumBlW1t26qjX2BR8DOezHzC8fKdcRTRbFJ3Zr48FsDa5hPdhLiZH+yGWah2RQDhoKBnOHx0JMrh3zLlgYglzsMDBbyKNPaGuqHOZTw=;24:L4hDq05jpzwcahw9r6qG/x+3YqxApD7spn2kdImIS25zw4zU/Evv5zNPqc6/ISYCiRK5LlRY23yS2ofuSxrRoUXoeU2IwQjowBh3nFgyfHY=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0202MB2774;7:OmOIyiobui2G9gozy0a1Od0lYLvuzNl27W+lGOVtNBEBdwWMKBDPWfXIAqyRKpjq08T9vBcqq7PkczSCOr1jLLPHFnT3L26tgL6mu5UV4tfJdVueZaZ4pnrjy7Ty14uZ53qEMifm8YuYx0m9UvwSyNIldxDO6qvK4FlAQug3zYhF7LCcLEXdD/khv3Vwbb/myqUxQFZ6p8UptDedoW9wN8xYPU5cRPLSw+ZvgbXyW1GtCE+51+sRbLZVk7H7A286
+X-MS-Office365-Filtering-Correlation-Id: f0f0276c-8564-4597-4712-08d5b273056b
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2018 10:29:02.0474 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0f0276c-8564-4597-4712-08d5b273056b
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0202MB2774
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---6emnqv4lzprmfndx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Ingo,
-
-On Sat, May 05, 2018 at 12:00:55PM +0200, Ingo Molnar wrote:
->=20
-> * Ingo Molnar <mingo@kernel.org> wrote:
->=20
-> > > So there's no loss in arch flexibility.
-> >=20
-> > BTW., PowerPC for example is already in such a situation, it does not d=
-efine=20
-> > atomic_cmpxchg_release(), only the other APIs:
-> >=20
-> > #define atomic_cmpxchg(v, o, n) (cmpxchg(&((v)->counter), (o), (n)))
-> > #define atomic_cmpxchg_relaxed(v, o, n) \
-> > 	cmpxchg_relaxed(&((v)->counter), (o), (n))
-> > #define atomic_cmpxchg_acquire(v, o, n) \
-> > 	cmpxchg_acquire(&((v)->counter), (o), (n))
-> >=20
-> > Was it really the intention on the PowerPC side that the generic code f=
-alls back=20
-> > to cmpxchg(), i.e.:
-> >=20
-> > #  define atomic_cmpxchg_release(...)           __atomic_op_release(ato=
-mic_cmpxchg, __VA_ARGS__)
-> >=20
-> > Which after macro expansion becomes:
-> >=20
-> > 	smp_mb__before_atomic();
-> > 	atomic_cmpxchg_relaxed(v, o, n);
-> >=20
-> > smp_mb__before_atomic() on PowerPC falls back to the generic __smp_mb()=
-, which=20
-> > falls back to mb(), which on PowerPC is the 'sync' instruction.
-> >=20
-> > Isn't this a inefficiency bug?
-> >=20
-> > While I'm pretty clueless about PowerPC low level cmpxchg atomics, they=
- appear to=20
-> > have the following basic structure:
-> >=20
-> > full cmpxchg():
-> >=20
-> > 	PPC_ATOMIC_ENTRY_BARRIER # sync
-> > 	ldarx + stdcx
-> > 	PPC_ATOMIC_EXIT_BARRIER  # sync
-> >=20
-> > cmpxchg_relaxed():
-> >=20
-> > 	ldarx + stdcx
-> >=20
-> > cmpxchg_acquire():
-> >=20
-> > 	ldarx + stdcx
-> > 	PPC_ACQUIRE_BARRIER      # lwsync
-> >=20
-> > The logical extension for cmpxchg_release() would be:
-> >=20
-> > cmpxchg_release():
-> >=20
-> > 	PPC_RELEASE_BARRIER      # lwsync
-> > 	ldarx + stdcx
-> >=20
-> > But instead we silently get the generic fallback, which does:
-> >=20
-> > 	smp_mb__before_atomic();
-> > 	atomic_cmpxchg_relaxed(v, o, n);
-> >=20
-> > Which maps to:
-> >=20
-> > 	sync
-> > 	ldarx + stdcx
-> >=20
-> > Note that it uses a full barrier instead of lwsync (does that stand for=
-=20
-> > 'lightweight sync'?).
-> >=20
-> > Even if it turns out we need the full barrier, with the overly finegrai=
-ned=20
-> > structure of the atomics this detail is totally undocumented and non-ob=
-vious.
->=20
-> The patch below fills in those bits and implements the optimized cmpxchg_=
-release()=20
-> family of APIs. The end effect should be that cmpxchg_release() will now =
-use=20
-> 'lwsync' instead of 'sync' on PowerPC, for the following APIs:
->=20
->   cmpxchg_release()
->   cmpxchg64_release()
->   atomic_cmpxchg_release()
->   atomic64_cmpxchg_release()
->=20
-> I based this choice of the release barrier on an existing bitops low leve=
-l PowerPC=20
-> method:
->=20
->    DEFINE_BITOP(clear_bits_unlock, andc, PPC_RELEASE_BARRIER)
->=20
-> This clearly suggests that PPC_RELEASE_BARRIER is in active use and 'lwsy=
-nc' is=20
-> the 'release barrier' instruction, if I interpreted that right.
->=20
-
-Thanks for looking into this, but as I said in other email:
-
-	https://marc.info/?l=3Dlinux-kernel&m=3D152551511324210&w=3D2
-
-, we actually generate light weight barriers for cmpxchg_release()
-familiy.
-
-The reason of the asymmetry between cmpxchg_acquire() and
-cmpxchg_release() is that we want to save a barrier for
-cmpxchg_acquire() if the cmp fails, but doing the similar for
-cmpxchg_release() will introduce a scenario that puts a barrier in a
-ll/sc loop, which may be a bad idea.
-
-> But I know very little about PowerPC so this might be spectacularly wrong=
-=2E It's=20
-> totally untested as well. I also pretty sick today so my mental capabilit=
-ies are=20
-> significantly reduced ...
->=20
-
-Feel sorry about that, hope you well!
-
-Please let me know if you think I should provide more document work to
-make this more informative.
-
-Regards,
-Boqun
-
-> So not signed off and such.
->=20
-> Thanks,
->=20
-> 	Ingo
->=20
+On 2018-05-05 03:43, Wenwen Wang wrote:
+> In i2c_smbus_xfer_emulated(), there are two buffers: msgbuf0 and msgbuf1,
+> which are used to save a series of messages, as mentioned in the comment.
+> According to the value of the variable "size", msgbuf0 is initialized to
+> various values. In contrast, msgbuf1 is left uninitialized until the
+> function i2c_transfer() is invoked. However, mgsbuf1 is not always
+> initialized on all possible execution paths (implementation) of
+> i2c_transfer(). Thus, it is possible that mgsbuf1 may still be
+> uninitialized even after the invocation of the function i2c_transfer(),
+> especially when the return value of ic2_transfer() is not checked properly.
+> In the following execution, the uninitialized msgbuf1 will be used, such as
+> for security checks. Since uninitialized values can be random and
+> arbitrary, this will cause undefined behaviors or even check bypass. For
+> example, it is expected that if the value of "size" is
+> I2C_SMBUS_BLOCK_PROC_CALL, the value of data->block[0] should not be larger
+> than I2C_SMBUS_BLOCK_MAX. But, at the end of i2c_smbus_xfer_emulated(), the
+> value read from msgbuf1 is assigned to data->block[0], which can
+> potentially lead to invalid block write size, as demonstrated in the error
+> message.
+> 
+> This patch checks the return value of i2c_transfer() and also initializes
+> the first byte of msgbuf1 with 0 to avoid undefined behaviors or security
+> issues.
+> 
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 > ---
->  arch/powerpc/include/asm/atomic.h  |  4 ++
->  arch/powerpc/include/asm/cmpxchg.h | 81 ++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 85 insertions(+)
->=20
-> diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm=
-/atomic.h
-> index 682b3e6a1e21..f7a6f29acb12 100644
-> --- a/arch/powerpc/include/asm/atomic.h
-> +++ b/arch/powerpc/include/asm/atomic.h
-> @@ -213,6 +213,8 @@ static __inline__ int atomic_dec_return_relaxed(atomi=
-c_t *v)
->  	cmpxchg_relaxed(&((v)->counter), (o), (n))
->  #define atomic_cmpxchg_acquire(v, o, n) \
->  	cmpxchg_acquire(&((v)->counter), (o), (n))
-> +#define atomic_cmpxchg_release(v, o, n) \
-> +	cmpxchg_release(&((v)->counter), (o), (n))
-> =20
->  #define atomic_xchg(v, new) (xchg(&((v)->counter), new))
->  #define atomic_xchg_relaxed(v, new) xchg_relaxed(&((v)->counter), (new))
-> @@ -519,6 +521,8 @@ static __inline__ long atomic64_dec_if_positive(atomi=
-c64_t *v)
->  	cmpxchg_relaxed(&((v)->counter), (o), (n))
->  #define atomic64_cmpxchg_acquire(v, o, n) \
->  	cmpxchg_acquire(&((v)->counter), (o), (n))
-> +#define atomic64_cmpxchg_release(v, o, n) \
-> +	cmpxchg_release(&((v)->counter), (o), (n))
-> =20
->  #define atomic64_xchg(v, new) (xchg(&((v)->counter), new))
->  #define atomic64_xchg_relaxed(v, new) xchg_relaxed(&((v)->counter), (new=
-))
-> diff --git a/arch/powerpc/include/asm/cmpxchg.h b/arch/powerpc/include/as=
-m/cmpxchg.h
-> index 9b001f1f6b32..6e46310b1833 100644
-> --- a/arch/powerpc/include/asm/cmpxchg.h
-> +++ b/arch/powerpc/include/asm/cmpxchg.h
-> @@ -213,10 +213,12 @@ __xchg_relaxed(void *ptr, unsigned long x, unsigned=
- int size)
->  CMPXCHG_GEN(u8, , PPC_ATOMIC_ENTRY_BARRIER, PPC_ATOMIC_EXIT_BARRIER, "me=
-mory");
->  CMPXCHG_GEN(u8, _local, , , "memory");
->  CMPXCHG_GEN(u8, _acquire, , PPC_ACQUIRE_BARRIER, "memory");
-> +CMPXCHG_GEN(u8, _release, PPC_RELEASE_BARRIER, , "memory");
->  CMPXCHG_GEN(u8, _relaxed, , , "cc");
->  CMPXCHG_GEN(u16, , PPC_ATOMIC_ENTRY_BARRIER, PPC_ATOMIC_EXIT_BARRIER, "m=
-emory");
->  CMPXCHG_GEN(u16, _local, , , "memory");
->  CMPXCHG_GEN(u16, _acquire, , PPC_ACQUIRE_BARRIER, "memory");
-> +CMPXCHG_GEN(u16, _release, PPC_RELEASE_BARRIER, , "memory");
->  CMPXCHG_GEN(u16, _relaxed, , , "cc");
-> =20
->  static __always_inline unsigned long
-> @@ -314,6 +316,29 @@ __cmpxchg_u32_acquire(u32 *p, unsigned long old, uns=
-igned long new)
->  	return prev;
->  }
-> =20
-> +static __always_inline unsigned long
-> +__cmpxchg_u32_release(u32 *p, unsigned long old, unsigned long new)
-> +{
-> +	unsigned long prev;
-> +
-> +	__asm__ __volatile__ (
-> +	PPC_RELEASE_BARRIER
-> +"1:	lwarx	%0,0,%2		# __cmpxchg_u32_release\n"
-> +"	cmpw	0,%0,%3\n"
-> +"	bne-	2f\n"
-> +	PPC405_ERR77(0, %2)
-> +"	stwcx.	%4,0,%2\n"
-> +"	bne-	1b\n"
-> +	"\n"
-> +"2:"
-> +	: "=3D&r" (prev), "+m" (*p)
-> +	: "r" (p), "r" (old), "r" (new)
-> +	: "cc", "memory");
-> +
-> +	return prev;
-> +}
-> +
-> +
->  #ifdef CONFIG_PPC64
->  static __always_inline unsigned long
->  __cmpxchg_u64(volatile unsigned long *p, unsigned long old, unsigned lon=
-g new)
-> @@ -397,6 +422,27 @@ __cmpxchg_u64_acquire(u64 *p, unsigned long old, uns=
-igned long new)
-> =20
->  	return prev;
->  }
-> +
-> +static __always_inline unsigned long
-> +__cmpxchg_u64_release(u64 *p, unsigned long old, unsigned long new)
-> +{
-> +	unsigned long prev;
-> +
-> +	__asm__ __volatile__ (
-> +	PPC_RELEASE_BARRIER
-> +"1:	ldarx	%0,0,%2		# __cmpxchg_u64_release\n"
-> +"	cmpd	0,%0,%3\n"
-> +"	bne-	2f\n"
-> +"	stdcx.	%4,0,%2\n"
-> +"	bne-	1b\n"
-> +	"\n"
-> +"2:"
-> +	: "=3D&r" (prev), "+m" (*p)
-> +	: "r" (p), "r" (old), "r" (new)
-> +	: "cc", "memory");
-> +
-> +	return prev;
-> +}
->  #endif
-> =20
->  static __always_inline unsigned long
-> @@ -478,6 +524,27 @@ __cmpxchg_acquire(void *ptr, unsigned long old, unsi=
-gned long new,
->  	BUILD_BUG_ON_MSG(1, "Unsupported size for __cmpxchg_acquire");
->  	return old;
->  }
-> +
-> +static __always_inline unsigned long
-> +__cmpxchg_release(void *ptr, unsigned long old, unsigned long new,
-> +		  unsigned int size)
-> +{
-> +	switch (size) {
-> +	case 1:
-> +		return __cmpxchg_u8_release(ptr, old, new);
-> +	case 2:
-> +		return __cmpxchg_u16_release(ptr, old, new);
-> +	case 4:
-> +		return __cmpxchg_u32_release(ptr, old, new);
-> +#ifdef CONFIG_PPC64
-> +	case 8:
-> +		return __cmpxchg_u64_release(ptr, old, new);
-> +#endif
-> +	}
-> +	BUILD_BUG_ON_MSG(1, "Unsupported size for __cmpxchg_release");
-> +	return old;
-> +}
-> +
->  #define cmpxchg(ptr, o, n)						 \
->    ({									 \
->       __typeof__(*(ptr)) _o_ =3D (o);					 \
-> @@ -512,6 +579,15 @@ __cmpxchg_acquire(void *ptr, unsigned long old, unsi=
-gned long new,
->  			(unsigned long)_o_, (unsigned long)_n_,		\
->  			sizeof(*(ptr)));				\
->  })
-> +
-> +#define cmpxchg_release(ptr, o, n)					\
-> +({									\
-> +	__typeof__(*(ptr)) _o_ =3D (o);					\
-> +	__typeof__(*(ptr)) _n_ =3D (n);					\
-> +	(__typeof__(*(ptr))) __cmpxchg_release((ptr),			\
-> +			(unsigned long)_o_, (unsigned long)_n_,		\
-> +			sizeof(*(ptr)));				\
-> +})
->  #ifdef CONFIG_PPC64
->  #define cmpxchg64(ptr, o, n)						\
->    ({									\
-> @@ -533,6 +609,11 @@ __cmpxchg_acquire(void *ptr, unsigned long old, unsi=
-gned long new,
->  	BUILD_BUG_ON(sizeof(*(ptr)) !=3D 8);				\
->  	cmpxchg_acquire((ptr), (o), (n));				\
->  })
-> +#define cmpxchg64_release(ptr, o, n)					\
-> +({									\
-> +	BUILD_BUG_ON(sizeof(*(ptr)) !=3D 8);				\
-> +	cmpxchg_release((ptr), (o), (n));				\
-> +})
->  #else
->  #include <asm-generic/cmpxchg-local.h>
->  #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o),=
- (n))
+>  drivers/i2c/i2c-core-smbus.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+> index b5aec33..e8470d5 100644
+> --- a/drivers/i2c/i2c-core-smbus.c
+> +++ b/drivers/i2c/i2c-core-smbus.c
+> @@ -344,6 +344,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+>  	};
+>  
+>  	msgbuf0[0] = command;
+> +	msgbug1[0] = 0;
+>  	switch (size) {
+>  	case I2C_SMBUS_QUICK:
+>  		msg[0].len = 0;
+> @@ -466,6 +467,8 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
+>  	status = i2c_transfer(adapter, msg, num);
+>  	if (status < 0)
+>  		return status;
+> +	if (status != num)
+> +		return -EIO;
+>  
+>  	/* Check PEC if last message is a read */
+>  	if (i && (msg[num-1].flags & I2C_M_RD)) {
+> 
 
---6emnqv4lzprmfndx
-Content-Type: application/pgp-signature; name="signature.asc"
+I think these two hunks should be two separate patches. They address
+orthogonal issues...
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlrthuYACgkQSXnow7UH
-+riybAgAkE2D2/lWoAaq5HRc51qEhomJWGZ+DZxHRf8AH03bg/X3sCrFG4S83wBa
-DbZYsifCUb6CHKVw2/vHO74zD3ah5cioGb6L/VnNni7lCoXxAnr1I6CtYc9zmCPs
-kN4bbTFRsOLqsmrhFPCYFi+9EWFVs5uU8LcuO659Tqa0juenijP8kYExUN0hQTU5
-eCSpb4322lCF7ALQuDHQrX0r+38bU9xESVm4bPnfHRhiE+0OlRBqtvf7Ncll/jk5
-Uj84sqVafj1iv6wXxzSPNY5LeJCQSMgilLm2jCkL2zlLVRvK5sglb/9XjPskAfrg
-LOHrhjTPsqwtz+AMHRpef5xBcS/jYQ==
-=cOha
------END PGP SIGNATURE-----
-
---6emnqv4lzprmfndx--
+Cheers,
+Peter
