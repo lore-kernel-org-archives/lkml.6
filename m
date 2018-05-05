@@ -1,185 +1,192 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2437530-1525147627-2-10186552220879275276
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='UNK'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525147626; b=TNuj2vYRQHSqGQcROspt2Ui6LHO63N+MGCMXOFtnkPlU+F69gv
-    TujGo/GraBpDoTScXtEZQoGYnUtmSK6NZVe/h9i/m26J47wkNfg46u3bYfZTq3k2
-    KhpMT3mJbWU6SY3RcBKmz6CvqmSOj3S8uqGBFpKypMZWYltFaGnLjrppX34KaUrR
-    PZpcypMjyAnZX+DF8ByROr4LWzRaWn9o+UsZSeEIm8brl0ce0/IqBtBByNzkeotD
-    HkHSQdd3k+p/ZSRXHIWM9jPceMxJM6oPANfRL+M0Ry8yfWco1i2YEMrHrcEOmB1A
-    CJJWDC6URy1AZ0BlboGNqYeuVhJUadc3+qNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :references:in-reply-to:content-id:mime-version:list-id
-    :list-unsubscribe:list-archive:list-post:list-help
-    :list-subscribe:cc:content-type:content-transfer-encoding
-    :sender; s=fm2; t=1525147626; bh=BXe8cNU8litXrdIQheZvNg85O7fCKcb
-    VARvEHfuWKrc=; b=fZFwAweb7SCy5eTfxS7BdOQSOmyqzkof6z9D79xCbj3u7rq
-    agSxOWxohPLlyvTPjgVMpKX+ZvSuuRI+UJBkAXNK1q6abPlHt8HAtOIqLa4amdNO
-    p4Ycp10sGn0gNbbRky+EsI9ysq7PY66rLkUKTvzmQ8FzXc5jetuEiI3QGPflG654
-    7jMVtrJq5x6aFmTUWTtFgvmLE3Yt03Hgy4tcR8JMc/hux6Bc83LYj0o36tsoS4TO
-    2Pf1JhQroZpU1qIHS136PbOn1o5tKmlNZ3fhysrKxGS64vt110654GCIGD8leG3Q
-    2YNnQNQCn+8MYWM5HTEtIO5jtupg6r4uczKY12Q==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=intel.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=intel.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAbxDvJKRixxtfi+/jUf3vQCTNHC6doYYZeTqjRS21B1HhNlAx1VuUEwh/W4kw+Nleiwy/dz1PHYJX9U5JnzCJ7UQxhGy8Uzv+5baus/CMBxZwOuH91f
-    GLSoK+XFfkUVbkimvuJXPjnT62+28Pl0rbavQSz9eFG1sJhpcUL0RkAkmnhFycN168+nQ+KJHI7jK7zXuObjbQOQu8F9wNn6E5TQKtD9np3vhfw+X1ifsNNV
-    /n0CnxGm0oRDxuXnBQe0Iw==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=AycjEXJFu3AA:10 a=kj9zAlcOel0A:10
-    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=QyXUC8HyAAAA:8
-    a=DDOyTI_5AAAA:8 a=V8LWtCLsv3H9hRq5sU0A:9 a=3eAYwqZii-nBWJql:21
-    a=r5XXeeRLJyhvVf7f:21 a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,349,1520924400"; d="scan'208";a="37444768"
-From: "Dilger, Andreas" <andreas.dilger@intel.com>
-To: Wenwen Wang <wang6495@umn.edu>
-Subject: Re: [PATCH v2] staging: lustre: llite: fix potential missing-check
- bug when copying lumv
-Thread-Topic: [PATCH v2] staging: lustre: llite: fix potential missing-check
- bug when copying lumv
-Thread-Index: AQHT4NZ/GvK7CQDrfEibHz/EWOxvVaQat1qA
-Date: Tue, 1 May 2018 04:06:56 +0000
-Message-ID: <BA97D240-2B0A-4AD4-B83B-201C285E4DEB@intel.com>
-References: <1525128971-8946-1-git-send-email-wang6495@umn.edu>
-In-Reply-To: <1525128971-8946-1-git-send-email-wang6495@umn.edu>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.252.137.157]
-Content-ID: <9C44E211C32C8846B8454FF0FA5249FC@intel.com>
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
- Aastha Gupta <aastha.gupta4104@gmail.com>,
- Roman Storozhenko <romeusmeister@gmail.com>, Jeff Layton <jlayton@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kangjie Lu <kjlu@umn.edu>,
- NeilBrown <neilb@suse.com>, open list <linux-kernel@vger.kernel.org>, "Drokin,
- Oleg" <oleg.drokin@intel.com>,
- "moderated list:STAGING - LUSTRE PARALLEL FILESYSTEM"
- <lustre-devel@lists.lustre.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <xtrat.dev@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525491939; cv=none;
+        d=google.com; s=arc-20160816;
+        b=VOgCyKicjBRB6fKA72xJBrTnQQ2JzedmI/lZJC4I4L7NWGSXJycCaaHNUhR0wn4ONS
+         CFRblPfSRpR4q6ymgvD6SjOILvgfi1tZdN7e0KE+W+fctCKdjXiXDetaY9l5l42EuDx+
+         DmVEDGhEmJNGzk6zMcSzDass8kl6xpetFRgAvkhSlmeAJFgqSWrGLipRdwYiFFPDrB7u
+         SuZFUxUho6Vc3XWM6L7fV0/GIMf0jG7nvWcypF6Fu44rgTtHmdjc/3TboNwpqOoMKV5i
+         OeLX8YmeiNqRJG7+qO3SqgCSz6803F+0MpPCSd8KkKC9CoVhJdd+wbjh/8GPm3D77lv9
+         IiBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=p/OeYHRbRX/5njXOE6qg6rzLrWMnGOaVwRCOhvTaztE=;
+        b=cJI+lL2KkDRIV5m9UklGtxPRc5a/POaMqCHyTyTE0gX+xqhXc4ZlpUbdKqObVYdhPD
+         2vMAF0l6MBN+w8oVtSVLG7y97wbkcjUPNwv4zddWzBahxtpV8q+FmOeH1gZvHxe0ssas
+         qlrB02yRO6leLU8C8pOW09zyFD9WPveYeCWYtSxi6oZvHKX+ihN2MKSKfB+HbE3f/WMm
+         Lz1QwOVHp3eP3g6yZL5wWTVN7I9oF1faZPqt57G7KnZ+jz8XaV+zNsFVj/ngLQUoZ1i2
+         IWolctqUO5+aO789DJer/0q2u58EAfsK/IQ6l+3s7CKXXGzfRLpTasG9p0eoaMfcqhzJ
+         Gzkw==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c+6j3uo6;
+       spf=pass (google.com: domain of xtrat.dev@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=xtrat.dev@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c+6j3uo6;
+       spf=pass (google.com: domain of xtrat.dev@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=xtrat.dev@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZq0kHY8O5ZwAckFx2MQ/sWH9nuLB3G6AJzVWnwpSD7udoW/Uu4GLpy7b7ryZP4ww8bpCLVhrg==
+From: Efstratios Gavas <xtrat.dev@gmail.com>
+X-Google-Original-From: Efstratios Gavas <xtrat@elg.io>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	Efstratios Gavas <xtrat@elg.io>
+Subject: [PATCH] [v6] staging: wlan-ng: prism2sta: fix indent coding-style issues
+Date: Sat,  5 May 2018 03:45:18 +0000
+Message-Id: <20180505034518.21895-1-xtrat@elg.io>
+X-Mailer: git-send-email 2.11.0
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599594236778992089?=
+X-GMAIL-MSGID: =?utf-8?q?1599594236778992089?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Apr 30, 2018, at 16:56, Wenwen Wang <wang6495@umn.edu> wrote:
-> 
-> In ll_dir_ioctl(), the object lumv3 is firstly copied from the user space
-> using Its address, i.e., lumv1 = &lumv3. If the lmm_magic field of lumv3 is
-> LOV_USER_MAGIC_V3, lumv3 will be modified by the second copy from the user
-> space. The second copy is necessary, because the two versions (i.e.,
-> lov_user_md_v1 and lov_user_md_v3) have different data formats and lengths.
-> However, given that the user data resides in the user space, a malicious
-> user-space process can race to change the data between the two copies. By
-> doing so, the attacker can provide a data with an inconsistent version,
-> e.g., v1 version + v3 data. This can lead to logical errors in the
-> following execution in ll_dir_setstripe(), which performs different actions
-> according to the version specified by the field lmm_magic.
-> 
-> This patch rechecks the version field lmm_magic in the second copy.  If the
-> version is not as expected, i.e., LOV_USER_MAGIC_V3, an error code will be
-> returned: -EINVAL.
-> 
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Fixed format/style issues found with checkpatch. No code changes.
+Corrected alignment of variables after open parenthesis and line breaks.
+Checkpatch now returns clean except for "line over 80 char" warnings.
 
-Thanks for the updated patch.
+Signed-off-by: Efstratios Gavas <xtrat@elg.io>
+---
+v2(unlabeled): changed title info
+v3: improved changelog description
+v4: corrected patch versioning
+v5: changed SMTP settings. changed maintainer email and removed
+    upstream contributors per README to eliminate double submission issue
+v6: changed SMTP server. changed title. resolved duplicate commit.
+---
+ drivers/staging/wlan-ng/prism2sta.c | 52 +++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 28 deletions(-)
 
-Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
-
-> ---
-> drivers/staging/lustre/lustre/llite/dir.c | 2 ++
-> 1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/staging/lustre/lustre/llite/dir.c b/drivers/staging/lustre/lustre/llite/dir.c
-> index d10d272..80d44ca 100644
-> --- a/drivers/staging/lustre/lustre/llite/dir.c
-> +++ b/drivers/staging/lustre/lustre/llite/dir.c
-> @@ -1185,6 +1185,8 @@ static long ll_dir_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-> 		if (lumv1->lmm_magic == LOV_USER_MAGIC_V3) {
-> 			if (copy_from_user(&lumv3, lumv3p, sizeof(lumv3)))
-> 				return -EFAULT;
-> +			if (lumv3.lmm_magic != LOV_USER_MAGIC_V3)
-> +				return -EINVAL;
-> 		}
-> 
-> 		if (is_root_inode(inode))
-> -- 
-> 2.7.4
-> 
-
-Cheers, Andreas
---
-Andreas Dilger
-Lustre Principal Architect
-Intel Corporation
-
-
-
-
-
-
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/staging/wlan-ng/prism2sta.c b/drivers/staging/wlan-ng/prism2sta.c
+index fed0b8ceca6f..914970249680 100644
+--- a/drivers/staging/wlan-ng/prism2sta.c
++++ b/drivers/staging/wlan-ng/prism2sta.c
+@@ -764,16 +764,16 @@ static int prism2sta_getcardinfo(struct wlandevice *wlandev)
+ 
+ 	if (hw->cap_sup_sta.id == 0x04) {
+ 		netdev_info(wlandev->netdev,
+-		       "STA:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
+-		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
+-		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
+-		       hw->cap_sup_sta.top);
++			    "STA:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
++			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
++			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
++			    hw->cap_sup_sta.top);
+ 	} else {
+ 		netdev_info(wlandev->netdev,
+-		       "AP:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
+-		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
+-		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
+-		       hw->cap_sup_sta.top);
++			    "AP:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
++			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
++			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
++			    hw->cap_sup_sta.top);
+ 	}
+ 
+ 	/* Compatibility range, primary f/w actor, CFI supplier */
+@@ -1189,7 +1189,6 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 			inf = (struct hfa384x_inf_frame *)skb->data;
+ 			prism2sta_inf_authreq_defer(wlandev, inf);
+ 		}
+-
+ 	}
+ 
+ 	/* Now let's handle the linkstatus stuff */
+@@ -1241,9 +1240,9 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 			/* Collect the BSSID, and set state to allow tx */
+ 
+ 			result = hfa384x_drvr_getconfig(hw,
+-						HFA384x_RID_CURRENTBSSID,
+-						wlandev->bssid,
+-						WLAN_BSSID_LEN);
++							HFA384x_RID_CURRENTBSSID,
++							wlandev->bssid,
++							WLAN_BSSID_LEN);
+ 			if (result) {
+ 				pr_debug
+ 				    ("getconfig(0x%02x) failed, result = %d\n",
+@@ -1260,14 +1259,13 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 				     HFA384x_RID_CURRENTSSID, result);
+ 				return;
+ 			}
+-			prism2mgmt_bytestr2pstr(
+-					(struct hfa384x_bytestr *)&ssid,
+-					(struct p80211pstrd *)&wlandev->ssid);
++			prism2mgmt_bytestr2pstr((struct hfa384x_bytestr *)&ssid,
++						(struct p80211pstrd *)&wlandev->ssid);
+ 
+ 			/* Collect the port status */
+ 			result = hfa384x_drvr_getconfig16(hw,
+-							HFA384x_RID_PORTSTATUS,
+-							&portstatus);
++							  HFA384x_RID_PORTSTATUS,
++							  &portstatus);
+ 			if (result) {
+ 				pr_debug
+ 				    ("getconfig(0x%02x) failed, result = %d\n",
+@@ -1404,7 +1402,7 @@ void prism2sta_processing_defer(struct work_struct *data)
+ 					       &joinreq,
+ 					       HFA384x_RID_JOINREQUEST_LEN);
+ 			netdev_info(wlandev->netdev,
+-			       "linkstatus=ASSOCFAIL (re-submitting join)\n");
++				    "linkstatus=ASSOCFAIL (re-submitting join)\n");
+ 		} else {
+ 			netdev_info(wlandev->netdev, "linkstatus=ASSOCFAIL (unhandled)\n");
+ 		}
+@@ -1501,7 +1499,7 @@ static void prism2sta_inf_assocstatus(struct wlandevice *wlandev,
+ 	if (i >= hw->authlist.cnt) {
+ 		if (rec.assocstatus != HFA384x_ASSOCSTATUS_AUTHFAIL)
+ 			netdev_warn(wlandev->netdev,
+-	"assocstatus info frame received for non-authenticated station.\n");
++				    "assocstatus info frame received for non-authenticated station.\n");
+ 	} else {
+ 		hw->authlist.assoc[i] =
+ 		    (rec.assocstatus == HFA384x_ASSOCSTATUS_STAASSOC ||
+@@ -1509,7 +1507,7 @@ static void prism2sta_inf_assocstatus(struct wlandevice *wlandev,
+ 
+ 		if (rec.assocstatus == HFA384x_ASSOCSTATUS_AUTHFAIL)
+ 			netdev_warn(wlandev->netdev,
+-"authfail assocstatus info frame received for authenticated station.\n");
++				    "authfail assocstatus info frame received for authenticated station.\n");
+ 	}
+ }
+ 
+@@ -1674,9 +1672,8 @@ static void prism2sta_inf_authreq_defer(struct wlandevice *wlandev,
+ 			if (hw->authlist.cnt >= WLAN_AUTH_MAX) {
+ 				rec.status = cpu_to_le16(P80211ENUM_status_ap_full);
+ 			} else {
+-				ether_addr_copy(
+-					hw->authlist.addr[hw->authlist.cnt],
+-					rec.address);
++				ether_addr_copy(hw->authlist.addr[hw->authlist.cnt],
++						rec.address);
+ 				hw->authlist.cnt++;
+ 				added = 1;
+ 			}
+@@ -1697,8 +1694,8 @@ static void prism2sta_inf_authreq_defer(struct wlandevice *wlandev,
+ 		if (added)
+ 			hw->authlist.cnt--;
+ 		netdev_err(wlandev->netdev,
+-		       "setconfig(authenticatestation) failed, result=%d\n",
+-		       result);
++			   "setconfig(authenticatestation) failed, result=%d\n",
++			   result);
+ 	}
+ }
+ 
+@@ -1937,9 +1934,8 @@ void prism2sta_commsqual_defer(struct work_struct *data)
+ 
+ 	/* It only makes sense to poll these in non-IBSS */
+ 	if (wlandev->macmode != WLAN_MACMODE_IBSS_STA) {
+-		result = hfa384x_drvr_getconfig(
+-				hw, HFA384x_RID_DBMCOMMSQUALITY,
+-				&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
++		result = hfa384x_drvr_getconfig(hw, HFA384x_RID_DBMCOMMSQUALITY,
++						&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
+ 
+ 		if (result) {
+ 			netdev_err(wlandev->netdev, "error fetching commsqual\n");
+-- 
+2.11.0
