@@ -1,140 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751266AbeEEIr3 (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 04:47:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44804 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbeEEIr1 (ORCPT
+        id S1751591AbeEEIt3 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 04:49:29 -0400
+Received: from mail-lf0-f48.google.com ([209.85.215.48]:33692 "EHLO
+        mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750821AbeEEIt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 04:47:27 -0400
-Date: Sat, 5 May 2018 10:47:22 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aryabinin@virtuozzo.com, boqun.feng@gmail.com, catalin.marinas@arm.com,
-        dvyukov@google.com, will.deacon@arm.com
-Subject: Re: [PATCH] locking/atomics: Clean up the atomic.h maze of #defines
-Message-ID: <20180505084721.GA32344@noisy.programming.kicks-ass.net>
-References: <20180504173937.25300-1-mark.rutland@arm.com>
- <20180504173937.25300-2-mark.rutland@arm.com>
- <20180504180105.GS12217@hirez.programming.kicks-ass.net>
- <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
- <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
+        Sat, 5 May 2018 04:49:27 -0400
+X-Google-Smtp-Source: AB8JxZoA0TFo8EAqMJlZCw7DIrGkv19eu/I/oYPTGXWf85lElSn/9n1kzzPgUfxjRL5LnD6UPP22ug==
+Subject: Re: [PATCH v9 01/12] ARM: Allow this header to be included by
+ assembly files
+To: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
+        linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        horms@verge.net.au, geert@linux-m68k.org, magnus.damm@gmail.com
+Cc: f.fainelli@gmail.com, opendmb@gmail.com,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
+        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
+ <20180504190545.5114-2-mylene.josserand@bootlin.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <60ba513e-d865-d4c0-7956-7d6302020165@cogentembedded.com>
+Date: Sat, 5 May 2018 11:49:23 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180504190545.5114-2-mylene.josserand@bootlin.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 05, 2018 at 10:11:00AM +0200, Ingo Molnar wrote:
+Hello!
 
-> Before:
-> 
->  #ifndef atomic_fetch_dec_relaxed
-> 
->  #ifndef atomic_fetch_dec
->  #define atomic_fetch_dec(v)	        atomic_fetch_sub(1, (v))
->  #define atomic_fetch_dec_relaxed(v)	atomic_fetch_sub_relaxed(1, (v))
->  #define atomic_fetch_dec_acquire(v)	atomic_fetch_sub_acquire(1, (v))
->  #define atomic_fetch_dec_release(v)	atomic_fetch_sub_release(1, (v))
->  #else /* atomic_fetch_dec */
->  #define atomic_fetch_dec_relaxed	atomic_fetch_dec
->  #define atomic_fetch_dec_acquire	atomic_fetch_dec
->  #define atomic_fetch_dec_release	atomic_fetch_dec
->  #endif /* atomic_fetch_dec */
-> 
->  #else /* atomic_fetch_dec_relaxed */
-> 
->  #ifndef atomic_fetch_dec_acquire
->  #define atomic_fetch_dec_acquire(...)					\
-> 	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
->  #endif
-> 
->  #ifndef atomic_fetch_dec_release
->  #define atomic_fetch_dec_release(...)					\
-> 	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
->  #endif
-> 
->  #ifndef atomic_fetch_dec
->  #define atomic_fetch_dec(...)						\
-> 	__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
->  #endif
->  #endif /* atomic_fetch_dec_relaxed */
-> 
-> After:
-> 
->  #ifndef atomic_fetch_dec_relaxed
->  # ifndef atomic_fetch_dec
->  #  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
->  #  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
->  #  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
->  #  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
->  # else
->  #  define atomic_fetch_dec_relaxed		atomic_fetch_dec
->  #  define atomic_fetch_dec_acquire		atomic_fetch_dec
->  #  define atomic_fetch_dec_release		atomic_fetch_dec
->  # endif
->  #else
->  # ifndef atomic_fetch_dec_acquire
->  #  define atomic_fetch_dec_acquire(...)	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
->  # endif
->  # ifndef atomic_fetch_dec_release
->  #  define atomic_fetch_dec_release(...)	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
->  # endif
->  # ifndef atomic_fetch_dec
->  #  define atomic_fetch_dec(...)		__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
->  # endif
->  #endif
-> 
-> The new variant is readable at a glance, and the hierarchy of defines is very 
-> obvious as well.
+On 5/4/2018 10:05 PM, Mylène Josserand wrote:
 
-It wraps and looks hideous in my normal setup. And I do detest that indent
-after # thing.
-
-> And I think we could do even better - there's absolutely no reason why _every_ 
-> operation has to be made conditional on a finegrained level - they are overriden 
-> in API groups. In fact allowing individual override is arguably a fragility.
+> From: Doug Berger <opendmb@gmail.com>
 > 
-> So we could do the following simplification on top of that:
+> The constants defined in this file are equally useful in assembly and C
+> source files. The arm64 architecture version of this file allows
+> inclusion in both assembly and C source files, so this this commit adds
+
+    One "this" is enough. :-)
+
+> that capability to the arm architecture version so that the constants
+> don't need to be defined in multiple places.
 > 
->  #ifndef atomic_fetch_dec_relaxed
->  # ifndef atomic_fetch_dec
->  #  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
->  #  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
->  #  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
->  #  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
->  # else
->  #  define atomic_fetch_dec_relaxed		atomic_fetch_dec
->  #  define atomic_fetch_dec_acquire		atomic_fetch_dec
->  #  define atomic_fetch_dec_release		atomic_fetch_dec
->  # endif
->  #else
->  # ifndef atomic_fetch_dec
->  #  define atomic_fetch_dec(...)		__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
->  #  define atomic_fetch_dec_acquire(...)	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
->  #  define atomic_fetch_dec_release(...)	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
->  # endif
->  #endif
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+[...]
 
-This would disallow an architecture to override just fetch_dec_release for
-instance.
-
-I don't think there currently is any architecture that does that, but the
-intent was to allow it to override anything and only provide defaults where it
-does not.
-
-None of this takes away the giant trainwreck that is the annotated atomic stuff
-though.
-
-And I seriously hate this one:
-
-  ba1c9f83f633 ("locking/atomic/x86: Un-macro-ify atomic ops implementation")
-
-and will likely undo that the moment I need to change anything there.
-
-So no, don't like.
+MBR, Sergei
