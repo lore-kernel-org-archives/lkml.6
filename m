@@ -1,192 +1,144 @@
-Return-Path: <xtrat.dev@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525491939; cv=none;
-        d=google.com; s=arc-20160816;
-        b=VOgCyKicjBRB6fKA72xJBrTnQQ2JzedmI/lZJC4I4L7NWGSXJycCaaHNUhR0wn4ONS
-         CFRblPfSRpR4q6ymgvD6SjOILvgfi1tZdN7e0KE+W+fctCKdjXiXDetaY9l5l42EuDx+
-         DmVEDGhEmJNGzk6zMcSzDass8kl6xpetFRgAvkhSlmeAJFgqSWrGLipRdwYiFFPDrB7u
-         SuZFUxUho6Vc3XWM6L7fV0/GIMf0jG7nvWcypF6Fu44rgTtHmdjc/3TboNwpqOoMKV5i
-         OeLX8YmeiNqRJG7+qO3SqgCSz6803F+0MpPCSd8KkKC9CoVhJdd+wbjh/8GPm3D77lv9
-         IiBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
-         :arc-authentication-results;
-        bh=p/OeYHRbRX/5njXOE6qg6rzLrWMnGOaVwRCOhvTaztE=;
-        b=cJI+lL2KkDRIV5m9UklGtxPRc5a/POaMqCHyTyTE0gX+xqhXc4ZlpUbdKqObVYdhPD
-         2vMAF0l6MBN+w8oVtSVLG7y97wbkcjUPNwv4zddWzBahxtpV8q+FmOeH1gZvHxe0ssas
-         qlrB02yRO6leLU8C8pOW09zyFD9WPveYeCWYtSxi6oZvHKX+ihN2MKSKfB+HbE3f/WMm
-         Lz1QwOVHp3eP3g6yZL5wWTVN7I9oF1faZPqt57G7KnZ+jz8XaV+zNsFVj/ngLQUoZ1i2
-         IWolctqUO5+aO789DJer/0q2u58EAfsK/IQ6l+3s7CKXXGzfRLpTasG9p0eoaMfcqhzJ
-         Gzkw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c+6j3uo6;
-       spf=pass (google.com: domain of xtrat.dev@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=xtrat.dev@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=c+6j3uo6;
-       spf=pass (google.com: domain of xtrat.dev@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=xtrat.dev@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZq0kHY8O5ZwAckFx2MQ/sWH9nuLB3G6AJzVWnwpSD7udoW/Uu4GLpy7b7ryZP4ww8bpCLVhrg==
-From: Efstratios Gavas <xtrat.dev@gmail.com>
-X-Google-Original-From: Efstratios Gavas <xtrat@elg.io>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	Efstratios Gavas <xtrat@elg.io>
-Subject: [PATCH] [v6] staging: wlan-ng: prism2sta: fix indent coding-style issues
-Date: Sat,  5 May 2018 03:45:18 +0000
-Message-Id: <20180505034518.21895-1-xtrat@elg.io>
-X-Mailer: git-send-email 2.11.0
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-977734-1525484904-2-14231824329366982310
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-usb-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525484903; b=aCLOacuZftqy44R3Bp0G8SiUU45KYpE+7/QdvsD1NK0hrsHRi9
+    kXxUiAOiStcxrmoqpWMW/pp8letPbjMnAGC8HFaKB/Zvc7+im2l79CR9zkrOkhcN
+    Zf1DtKGvK+LvC+FmrSp8XQP9MejT+iUwEbkawAm4kx6ZCcr5mwXbjIE2ZuloFoN5
+    vrt77n+hWvvsSpiSevEo6PchP2IXglQgdhMRjGShghu9feqMrUmc0HSBpguxlwHi
+    KYdbgwRdo2jdUuULXOMB/upK0q4zSgQ51eX1yBP+m7JxX4iCqQzDUDArMMc5I+i1
+    ZCevDNG+2kL8PgOhIyZt49HZhKP9MxhhI5/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :mime-version:content-type:sender:list-id; s=fm2; t=1525484903;
+    bh=aUahQTHjHS740rBSmYKx94vewUWOT1Fz5AblbasSznY=; b=BNHWtkUcpUZR
+    LLPUxgdoUxeP8aqgqmC2+Xg7e96ZDUYqdV0hywx9N4LrkTk58Mv6PkquQzvkDt+r
+    LnAOhRXrMqSJS56h+PHy49820A/NyCvVtkFr2Zcyk7xBxvyLm1Fo94EyWJfgsDg5
+    po9HOKjFouFoS5GnMveFIflFC5Lh2xnLtGSUTuLNUeDiVMT1WzyY7MvC1byIDn1m
+    AtWaK8Ua4H88ABeMl1O4gKxzSwGVZaNdMJ78eD6ZPTzq+C8Eiy/MyWT8lxzOUOEF
+    y0OCojgRPQ+cwEVcREGM4j9wdkJ1jjTC1f2PYv8mg7/OBGWFnQmYvlf9kcUn0g3L
+    TXvGPgmQ2w==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=mediatek.com header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=mediatek.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=mediatek.com header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfO3ZmdWo8I8OStZbGGpLRn6sO1X5FjHt2Pr9zkA0HR32kRzAe9FBeQN583vJh6gkY55crCfxq10e8tCU2l1OazU62ZjlBfAKcyjTmA88VRs8ac/Z0Jez
+    vqMpHjZdTH4PCVXqSsDzxXHZF80FTuSTD6iBenIm/I+pphfFFCT4VJgbDdb33hT5VErlXWkEZun5dSnr982v9Vk9B6NhvFHbhxXsK4iZQ4y2uNsYwsxmrqns
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=mpaa-ttXAAAA:8
+    a=VwQbUJbxAAAA:8 a=MIK1vUhpFAYyWxR2ApkA:9 a=x8gzFH9gYPwA:10
+    a=6heAxKwa5pAsJatQ0mat:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751775AbeEEBsL (ORCPT <rfc822;greg@kroah.com>);
+        Fri, 4 May 2018 21:48:11 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:33793 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1751711AbeEEBsK (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Fri, 4 May 2018 21:48:10 -0400
+X-UUID: 617b22dc2f3343b289fb7461095255ba-20180505
+From: Chunfeng Yun <chunfeng.yun@mediatek.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+CC: Matthias Brugger <matthias.bgg@gmail.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-usb@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+        <devicetree@vger.kernel.org>
+Subject: [PATCH v2] phy: phy-mtk-tphy: use SPDX license tag
+Date: Sat, 5 May 2018 09:47:41 +0800
+Message-ID: <e650d3f5f586e6282a5bbbc4007e4920d4a9147f.1525484369.git.chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK: N
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599594236778992089?=
-X-GMAIL-MSGID: =?utf-8?q?1599594236778992089?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Fixed format/style issues found with checkpatch. No code changes.
-Corrected alignment of variables after open parenthesis and line breaks.
-Checkpatch now returns clean except for "line over 80 char" warnings.
+Use SPDX-License-Identifier tag instead of the GPL license text
 
-Signed-off-by: Efstratios Gavas <xtrat@elg.io>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
-v2(unlabeled): changed title info
-v3: improved changelog description
-v4: corrected patch versioning
-v5: changed SMTP settings. changed maintainer email and removed
-    upstream contributors per README to eliminate double submission issue
-v6: changed SMTP server. changed title. resolved duplicate commit.
+v2: change subject line to fix checkpatch warning:
+    "A patch subject line should describe the change not
+    the tool that found it"
 ---
- drivers/staging/wlan-ng/prism2sta.c | 52 +++++++++++++++++--------------------
- 1 file changed, 24 insertions(+), 28 deletions(-)
+ drivers/phy/mediatek/Makefile       |  1 +
+ drivers/phy/mediatek/phy-mtk-tphy.c | 10 +---------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/staging/wlan-ng/prism2sta.c b/drivers/staging/wlan-ng/prism2sta.c
-index fed0b8ceca6f..914970249680 100644
---- a/drivers/staging/wlan-ng/prism2sta.c
-+++ b/drivers/staging/wlan-ng/prism2sta.c
-@@ -764,16 +764,16 @@ static int prism2sta_getcardinfo(struct wlandevice *wlandev)
+diff --git a/drivers/phy/mediatek/Makefile b/drivers/phy/mediatek/Makefile
+index 763a92e..1bdab14 100644
+--- a/drivers/phy/mediatek/Makefile
++++ b/drivers/phy/mediatek/Makefile
+@@ -1,3 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0
+ #
+ # Makefile for the phy drivers.
+ #
+diff --git a/drivers/phy/mediatek/phy-mtk-tphy.c b/drivers/phy/mediatek/phy-mtk-tphy.c
+index 38c281b..b962339 100644
+--- a/drivers/phy/mediatek/phy-mtk-tphy.c
++++ b/drivers/phy/mediatek/phy-mtk-tphy.c
+@@ -1,16 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015 MediaTek Inc.
+  * Author: Chunfeng Yun <chunfeng.yun@mediatek.com>
+  *
+- * This software is licensed under the terms of the GNU General Public
+- * License version 2, as published by the Free Software Foundation, and
+- * may be copied, distributed, and modified under those terms.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+  */
  
- 	if (hw->cap_sup_sta.id == 0x04) {
- 		netdev_info(wlandev->netdev,
--		       "STA:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
--		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
--		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
--		       hw->cap_sup_sta.top);
-+			    "STA:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
-+			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
-+			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
-+			    hw->cap_sup_sta.top);
- 	} else {
- 		netdev_info(wlandev->netdev,
--		       "AP:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
--		       hw->cap_sup_sta.role, hw->cap_sup_sta.id,
--		       hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
--		       hw->cap_sup_sta.top);
-+			    "AP:SUP:role=0x%02x:id=0x%02x:var=0x%02x:b/t=%d/%d\n",
-+			    hw->cap_sup_sta.role, hw->cap_sup_sta.id,
-+			    hw->cap_sup_sta.variant, hw->cap_sup_sta.bottom,
-+			    hw->cap_sup_sta.top);
- 	}
- 
- 	/* Compatibility range, primary f/w actor, CFI supplier */
-@@ -1189,7 +1189,6 @@ void prism2sta_processing_defer(struct work_struct *data)
- 			inf = (struct hfa384x_inf_frame *)skb->data;
- 			prism2sta_inf_authreq_defer(wlandev, inf);
- 		}
--
- 	}
- 
- 	/* Now let's handle the linkstatus stuff */
-@@ -1241,9 +1240,9 @@ void prism2sta_processing_defer(struct work_struct *data)
- 			/* Collect the BSSID, and set state to allow tx */
- 
- 			result = hfa384x_drvr_getconfig(hw,
--						HFA384x_RID_CURRENTBSSID,
--						wlandev->bssid,
--						WLAN_BSSID_LEN);
-+							HFA384x_RID_CURRENTBSSID,
-+							wlandev->bssid,
-+							WLAN_BSSID_LEN);
- 			if (result) {
- 				pr_debug
- 				    ("getconfig(0x%02x) failed, result = %d\n",
-@@ -1260,14 +1259,13 @@ void prism2sta_processing_defer(struct work_struct *data)
- 				     HFA384x_RID_CURRENTSSID, result);
- 				return;
- 			}
--			prism2mgmt_bytestr2pstr(
--					(struct hfa384x_bytestr *)&ssid,
--					(struct p80211pstrd *)&wlandev->ssid);
-+			prism2mgmt_bytestr2pstr((struct hfa384x_bytestr *)&ssid,
-+						(struct p80211pstrd *)&wlandev->ssid);
- 
- 			/* Collect the port status */
- 			result = hfa384x_drvr_getconfig16(hw,
--							HFA384x_RID_PORTSTATUS,
--							&portstatus);
-+							  HFA384x_RID_PORTSTATUS,
-+							  &portstatus);
- 			if (result) {
- 				pr_debug
- 				    ("getconfig(0x%02x) failed, result = %d\n",
-@@ -1404,7 +1402,7 @@ void prism2sta_processing_defer(struct work_struct *data)
- 					       &joinreq,
- 					       HFA384x_RID_JOINREQUEST_LEN);
- 			netdev_info(wlandev->netdev,
--			       "linkstatus=ASSOCFAIL (re-submitting join)\n");
-+				    "linkstatus=ASSOCFAIL (re-submitting join)\n");
- 		} else {
- 			netdev_info(wlandev->netdev, "linkstatus=ASSOCFAIL (unhandled)\n");
- 		}
-@@ -1501,7 +1499,7 @@ static void prism2sta_inf_assocstatus(struct wlandevice *wlandev,
- 	if (i >= hw->authlist.cnt) {
- 		if (rec.assocstatus != HFA384x_ASSOCSTATUS_AUTHFAIL)
- 			netdev_warn(wlandev->netdev,
--	"assocstatus info frame received for non-authenticated station.\n");
-+				    "assocstatus info frame received for non-authenticated station.\n");
- 	} else {
- 		hw->authlist.assoc[i] =
- 		    (rec.assocstatus == HFA384x_ASSOCSTATUS_STAASSOC ||
-@@ -1509,7 +1507,7 @@ static void prism2sta_inf_assocstatus(struct wlandevice *wlandev,
- 
- 		if (rec.assocstatus == HFA384x_ASSOCSTATUS_AUTHFAIL)
- 			netdev_warn(wlandev->netdev,
--"authfail assocstatus info frame received for authenticated station.\n");
-+				    "authfail assocstatus info frame received for authenticated station.\n");
- 	}
- }
- 
-@@ -1674,9 +1672,8 @@ static void prism2sta_inf_authreq_defer(struct wlandevice *wlandev,
- 			if (hw->authlist.cnt >= WLAN_AUTH_MAX) {
- 				rec.status = cpu_to_le16(P80211ENUM_status_ap_full);
- 			} else {
--				ether_addr_copy(
--					hw->authlist.addr[hw->authlist.cnt],
--					rec.address);
-+				ether_addr_copy(hw->authlist.addr[hw->authlist.cnt],
-+						rec.address);
- 				hw->authlist.cnt++;
- 				added = 1;
- 			}
-@@ -1697,8 +1694,8 @@ static void prism2sta_inf_authreq_defer(struct wlandevice *wlandev,
- 		if (added)
- 			hw->authlist.cnt--;
- 		netdev_err(wlandev->netdev,
--		       "setconfig(authenticatestation) failed, result=%d\n",
--		       result);
-+			   "setconfig(authenticatestation) failed, result=%d\n",
-+			   result);
- 	}
- }
- 
-@@ -1937,9 +1934,8 @@ void prism2sta_commsqual_defer(struct work_struct *data)
- 
- 	/* It only makes sense to poll these in non-IBSS */
- 	if (wlandev->macmode != WLAN_MACMODE_IBSS_STA) {
--		result = hfa384x_drvr_getconfig(
--				hw, HFA384x_RID_DBMCOMMSQUALITY,
--				&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
-+		result = hfa384x_drvr_getconfig(hw, HFA384x_RID_DBMCOMMSQUALITY,
-+						&hw->qual, HFA384x_RID_DBMCOMMSQUALITY_LEN);
- 
- 		if (result) {
- 			netdev_err(wlandev->netdev, "error fetching commsqual\n");
+ #include <dt-bindings/phy/phy.h>
 -- 
-2.11.0
+1.9.1
+
