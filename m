@@ -1,57 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751270AbeEEKjt (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 06:39:49 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:51585 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750830AbeEEKjs (ORCPT
+        id S1751767AbeEEKk7 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 06:40:59 -0400
+Received: from dd26836.kasserver.com ([85.13.145.193]:38366 "EHLO
+        dd26836.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751086AbeEEKk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 06:39:48 -0400
-X-Google-Smtp-Source: AB8JxZpLPzCs/90LUf4Gdv4yQcEPh7RQQ5w2D+yzc4ipV8X6gFV40dMdfXY7n9dOsgRYPtqy8Mip9w==
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.3 \(3445.6.18\))
-Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
- merge
-From: Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <1525508378.5406.6.camel@gmx.de>
-Date: Sat, 5 May 2018 12:39:44 +0200
-Cc: Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name
-Message-Id: <9F155F9F-F6B2-465A-BA4D-A86FF6825071@linaro.org>
-References: <20180504171701.6876-1-paolo.valente@linaro.org>
- <1525463210.622.1.camel@gmx.de> <1525508378.5406.6.camel@gmx.de>
-To: Mike Galbraith <efault@gmx.de>
-X-Mailer: Apple Mail (2.3445.6.18)
+        Sat, 5 May 2018 06:40:58 -0400
+Date: Sat, 5 May 2018 12:40:50 +0200
+From: Danny Milosavljevic <dannym@scratchpost.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrea Bondavalli <andrea.bondavalli74@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.xyz>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v14 8/8] ASoC: sun4i-codec: Add Left Capture Select,
+ Right Capture Select
+Message-ID: <20180505124050.66f74999@scratchpost.org>
+In-Reply-To: <20180503145408.yymk2ndt4sm2yt4i@flea>
+References: <20180502210800.1971-1-dannym@scratchpost.org>
+ <20180502210800.1971-9-dannym@scratchpost.org>
+ <20180503145408.yymk2ndt4sm2yt4i@flea>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-unknown-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Exol.Wno/UhQybeCm87A+jH"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w45Adtfs000887
 
+--Sig_/Exol.Wno/UhQybeCm87A+jH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Maxime,
 
-> Il giorno 05 mag 2018, alle ore 10:19, Mike Galbraith <efault@gmx.de> ha scritto:
-> 
-> On Fri, 2018-05-04 at 21:46 +0200, Mike Galbraith wrote:
->> Tentatively, I suspect you've just fixed the nasty stalls I reported a
->> while back.
-> 
-> Oh well, so much for optimism.  It took a lot, but just hung.
+On Thu, 3 May 2018 16:54:08 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-Yep, it'd have been a lot of luck, being your hang related to
-different operations from those touched by this fix.  Maybe
-time-before-failure stretched because your system suffered from the
-illness cured by this fix too.
+> > +static const char * const sun4i_codec_capture_source[] =3D {
+> > +	"Line",
+> > +	"FM",
+> > +	"Mic1",
+> > +	"Mic2",
+> > +	"Mic1,Mic2",
+> > +	"Mic1+Mic2",
+> > +	"Output Mixer",
+> > +	"Line,Mic1",
+> > +}; =20
+>=20
+> Shouldn't that be defined in a more generic way? As far as I know,
+> there's no way to tell what the difference between "Mic1,Mic2" and
+> "Mic1+Mic2" would be from the userspace.
 
-BTW, if you didn't run out of patience with this permanent issue yet,
-I was thinking of two o three changes to retry to trigger your failure
-reliably.  In case of success, I could restart racking my brains from
-there.
+Sounds good - but how?
 
-Thanks,
-Paolo
+Here, "Mic1,Mic2" means the left channel captured is Mic1 and the right
+channel captured is Mic2.
+
+On the other hand, "Mic1+Mic2" means that the signals from Mic1 and
+Mic2 are added together and that is captured (both as left and as right).
+
+"Mic1" means both the left channel and the right channel captured is
+from Mic1.  Likewise "Mic2".
+
+--Sig_/Exol.Wno/UhQybeCm87A+jH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEds7GsXJ0tGXALbPZ5xo1VCwwuqUFAlrtijIACgkQ5xo1VCww
+uqXnrAf/Xd0Yk0vL15fJLA/PwoWkuJBoKcYEX9enzceDXe+c63KP2DnPzRchI+Au
+qmPk3pQg/1DmcgYuKINKf8iaynvJHprovYFWlc3/paYTa/Nf8buucOJvLaSpGX4d
+4+WzB3XTSmHz/VXtYyBKPMof1/yUutS8JC8UYfKsAqQ2VfCzmYsS49TfYwRTAZmx
+QHn7mC2VOLJNMURGUDs2YnQGykwaLaAQEgzD5cwHYZ9Sf6qADXcBEdOhWFGBVo8w
+1hsl+lCQmM64ncbudP6eiZ8dZO0SDZgrTDKpSWrUlVXE8SGLzORaRZIZkf3OcttG
+00X1m3gBGbb0pXEoZwUyXuE8dpgLSg==
+=d3Hv
+-----END PGP SIGNATURE-----
+
+--Sig_/Exol.Wno/UhQybeCm87A+jH--
