@@ -1,155 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751218AbeEEHqN convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 03:46:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39662 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750764AbeEEHqM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 03:46:12 -0400
-Date: Sat, 05 May 2018 13:16:04 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
-To: Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-trace-users@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>, shuah@kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-        <20180503181137.6d82d897@gandalf.local.home>
-        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
-        <20180504120642.354cdd1f@gandalf.local.home>
-        <20180505113803.45700179a93091b114ec6984@kernel.org>
-In-Reply-To: <20180505113803.45700179a93091b114ec6984@kernel.org>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        id S1751238AbeEEHzf (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 03:55:35 -0400
+Received: from mout.web.de ([212.227.15.3]:54073 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750752AbeEEHzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 03:55:33 -0400
+Subject: Re: [v3] [media] Use common error handling code in 19 functions
+To: Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-media@vger.kernel.org
+Cc: Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Utkin <andrey_utkin@fastmail.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, Brian Johnson <brijohn@gmail.com>,
+        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= <christoph@boehmwalder.at>,
+        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
+        Colin Ian King <colin.king@canonical.com>,
+        Daniele Nicolodi <daniele@grinta.net>,
+        =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>,
+        Devendra Sharma <devendra.sharma9091@gmail.com>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>,
+        Kees Cook <keescook@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Max Kellermann <max.kellermann@gmail.com>,
+        Mike Isely <isely@pobox.com>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Santosh Kumar Singh <kumar.san1093@gmail.com>,
+        Satendra Singh Thakur <satendra.t@samsung.com>,
+        Sean Young <sean@mess.org>, Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Shyam Saini <mayhs11saini@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Wei Yongjun <weiyongjun1@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
+ <57ef3a56-2578-1d5f-1268-348b49b0c573@users.sourceforge.net>
+ <9e766f52-b09e-c61e-8d9f-23542d83f6b1@users.sourceforge.net>
+ <20180504144928.566ae507@vento.lan>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Message-ID: <980b7bd9-b922-55f7-c2d7-2d20552ade4c@users.sourceforge.net>
+Date: Sat, 5 May 2018 09:53:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18050507-0040-0000-0000-000004553ED6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050507-0041-0000-0000-000020F96F1C
-Message-Id: <1525506231.y43xvmd3yw.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-05_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805050070
+In-Reply-To: <20180504144928.566ae507@vento.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:zI95rEzgt66WrwkB+0/lwtunoaylC/HUnaZNbtqRXL/AYpE5sQV
+ wwjPfQb8SypwEp4DujLsLZaT7kmaH4qW0xYXu742PyhZvpwGJ+xLNGT4vxfor1CYAYOK6CY
+ 67R8UrLxBxSbkPAXhot+ANFehn80TmxkuspXCisAW26UdOd9dXA1HZuWVACBKrYhlXFDRqA
+ k7pkweaSpbOm4CfEIcZeg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ASWpoSubfAc=:748bqFOPcNu2QI8hiuMWjZ
+ kUSv3R4hPfeFoqX3dljAHNJG1KWfI4CJJHMChIHUgACY1XHfcp5Qca1h6q/LaOSZE4cYnS7WY
+ PJIVxmKLBcZKCysDPTO+GUc+rN9oLlvnwLgfXSp6rVFoVcFnsYt5B10ZgTTTHw2NL03NUvZqu
+ OwcbF38755bzh9fv0kbtyzeqQGQhvhvrq6X2JzLu8jvDFaTv2wigQbILl6OapvgAlRlgdH7K0
+ fywJjWlEL2Y6Q9ZpoeHRyA0dcZIJTdVXIi8tXB8v8OM5k8cKKFDUOuyQFWUVnPC79i3elqhGt
+ k4IDkjduFSCzyebqSuEOIHAgtbUH2CGf96anT1p7/QcA6h4fULXIq6mCnMt7AxDKTSEOOiHPH
+ oYAhRqqF9VdD7s8YBQgpC1tjqX1+/p6eBXhexpydmnmiqMmS121mBThPoHxmXzHSqNIjwaWwP
+ yhJyb0jw1j7vtiq+sh+DrXGT4bGfm6dsA1v4fHjVoE9icxna71PgxeRZWCMpO7AjHiG63F1Oq
+ 7eXgLh9Yiqe0BtPoo1iqXaiDHVtzoEp27jXgxHWKThtVB2e2+rbWd3bSPVZumbosixiwBr5eZ
+ TTX2FQNOlYnvxMswOpUkFCrIyNndT/+KPZiO9w5+Os2H+au9KTnSuIHF/b3zxMsFgUkTknx3y
+ k0IkOWgxoZYkl0kM53jUNPVfAq9zXb/UAQTQGz0qlD0xTX6yso1VuHPIu4hwgk59ZyTjQIqre
+ EdsYKayj9yhPRHRHraFGA15l0KI2BzzieGGH2OnKPVTMsDqRU5Wi3gcTVtBH8Hfd4rMqQY9Yc
+ fBliHh6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu wrote:
-> On Fri, 4 May 2018 12:06:42 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+> @@ -656,18 +656,18 @@  static int dvb_dmxdev_start_feed(struct dmxdev *dmxdev,
+>  	tsfeed->priv = filter;
+>  
+>  	ret = tsfeed->set(tsfeed, feed->pid, ts_type, ts_pes, timeout);
+> -	if (ret < 0) {
+> -		dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		goto release_feed;
+>  
+>  	ret = tsfeed->start_filtering(tsfeed);
+> -	if (ret < 0) {
+> -		dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
+> -		return ret;
+> -	}
+> +	if (ret < 0)
+> +		goto release_feed;
+>  
+>  	return 0;
+> +
+> +release_feed:
+> +	dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
+> +	return ret;
+>  }
 > 
->> On Sat, 5 May 2018 00:48:28 +0900
->> Masami Hiramatsu <mhiramat@kernel.org> wrote:
->> 
->> > > Also, when looking at the kprobe code, I was looking at this 
->> > > function:
->> > >   
->> > > > /* Ftrace callback handler for kprobes -- called under preepmt disabed */
->> > > > void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
->> > > > 			   struct ftrace_ops *ops, struct pt_regs *regs)
->> > > > {
->> > > > 	struct kprobe *p;
->> > > > 	struct kprobe_ctlblk *kcb;
->> > > > 
->> > > > 	/* Preempt is disabled by ftrace */
->> > > > 	p = get_kprobe((kprobe_opcode_t *)ip);
->> > > > 	if (unlikely(!p) || kprobe_disabled(p))
->> > > > 		return;
->> > > > 
->> > > > 	kcb = get_kprobe_ctlblk();
->> > > > 	if (kprobe_running()) {
->> > > > 		kprobes_inc_nmissed_count(p);
->> > > > 	} else {
->> > > > 		unsigned long orig_ip = regs->ip;
->> > > > 		/* Kprobe handler expects regs->ip = ip + 1 as breakpoint hit */
->> > > > 		regs->ip = ip + sizeof(kprobe_opcode_t);
->> > > > 
->> > > > 		/* To emulate trap based kprobes, preempt_disable here */
->> > > > 		preempt_disable();
->> > > > 		__this_cpu_write(current_kprobe, p);
->> > > > 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> > > > 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
->> > > > 			__skip_singlestep(p, regs, kcb, orig_ip);
->> > > > 			preempt_enable_no_resched();  
->> > > 
->> > > This preemption disabling and enabling looks rather strange. Looking at
->> > > git blame, it appears this was added for jprobes. Can we remove it now
->> > > that jprobes is going away?  
->> > 
->> > No, that is not for jprobes but for compatibility with kprobe's user
->> > handler. Since this transformation is done silently, user can not
->> > change their handler for ftrace case. So we need to keep this condition
->> > same as original kprobes.
->> > 
->> > And anyway, for using smp_processor_id() for accessing per-cpu,
->> > we should disable preemption, correct?
->> 
->> But as stated at the start of the function:
->> 
->>  /* Preempt is disabled by ftrace */
-> 
-> Ah, yes. So this is only for the jprobes.
-> 
->> 
->> 
->> The reason I ask, is that we have for this function:
->> 
->> 		/* To emulate trap based kprobes, preempt_disable here */
->> 		preempt_disable();
->> 		__this_cpu_write(current_kprobe, p);
->> 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
->> 			__skip_singlestep(p, regs, kcb, orig_ip);
->> 			preempt_enable_no_resched();
->> 		}
->> 
->> And in arch/x86/kernel/kprobes/core.c we have:
->> 
->> 	preempt_disable();
->> 
->> 	kcb = get_kprobe_ctlblk();
->> 	p = get_kprobe(addr);
->> 
->> 	if (p) {
->> 		if (kprobe_running()) {
->> 			if (reenter_kprobe(p, regs, kcb))
->> 				return 1;
->> 		} else {
->> 			set_current_kprobe(p, regs, kcb);
->> 			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> 
->> 			/*
->> 			 * If we have no pre-handler or it returned 0, we
->> 			 * continue with normal processing.  If we have a
->> 			 * pre-handler and it returned non-zero, it prepped
->> 			 * for calling the break_handler below on re-entry
->> 			 * for jprobe processing, so get out doing nothing
->> 			 * more here.
->> 			 */
->> 			if (!p->pre_handler || !p->pre_handler(p, regs))
->> 				setup_singlestep(p, regs, kcb, 0);
->> 			return 1;
->> 
->> 
->> Which is why I thought it was for jprobes. I'm a bit confused about
->> where preemption is enabled again.
-> 
-> You're right. So I would like to remove it with x86 jprobe support
-> code to avoid inconsistency.
+> There's *nothing* wrong with the above. It works fine,
 
-I didn't understand that. Which code are you planning to remove? Can you 
-please elaborate? I thought we still need to disable preemption in the 
-ftrace handler.
+I can agree to this view in principle according to the required control flow.
 
-Thanks,
-Naveen
+
+> avoids goto
+
+How does this wording fit to information from the section
+“7) Centralized exiting of functions” in the document “coding-style.rst”?
+
+
+> and probably even produce the same code, as gcc will likely optimize it.
+
+Would you like to clarify the current situation around supported
+software optimisations any more?
+
+
+> It is also easier to review, as the error handling is closer
+> to the code.
+
+Do we stumble on different coding style preferences once more?
+
+
+> On the other hand, there's nothing wrong on taking the approach
+> you're proposing.
+
+Thanks for another bit of positive feedback.
+
+
+> In the end, using goto or not on error handling like the above is 
+> a matter of personal taste - and taste changes with time
+
+Do Linux guidelines need any adjustments?
+
+
+> and with developer. I really don't have time to keep reviewing patches
+> that are just churning the code just due to someone's personal taste.
+
+I tried to apply another general source code transformation pattern.
+
+
+> I'm pretty sure if I start accepting things like that,
+> someone else would be on some future doing patches just reverting it,
+> and I would be likely having to apply them too.
+
+Why?
+
+I hope also that the source code can be kept consistent to some degree.
+
+
+> So, except if the patch is really fixing something - e.g. a broken
+> error handling code, I'll just ignore such patches and mark as
+> rejected without further notice/comments from now on.
+
+I would find such a communication style questionable.
+Do you distinguish between bug fixes and possible corrections for
+other error categories (or software weaknesses)?
+
+Regards,
+Markus
