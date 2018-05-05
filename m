@@ -1,160 +1,200 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751191AbeEEFKW convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 01:10:22 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:58818 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750725AbeEEFKU (ORCPT
+        id S1751118AbeEEFXo (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 01:23:44 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40644 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750744AbeEEFXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 01:10:20 -0400
-From: ebiederm@xmission.com (Eric W. Biederman)
-To: Tony Wallace <tony@tony.gen.nz>
-Cc: Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <decdbe00-2292-3012-d7ae-6bfa382fc74a@tony.gen.nz>
-        <1525165387.23227.44.camel@petrovitsch.priv.at>
-        <a91ef2fb-09ed-51ae-5dfa-8f71ec81f20c@tony.gen.nz>
-        <CAFLxGvxpe78WhrEKcKRt5XRBMtT-mZUe9Bm=sQsn8-f1TnX0eQ@mail.gmail.com>
-        <388f79ad-4ed0-ec39-f649-5c120ee9dc2f@tony.gen.nz>
-        <1525181758.23227.65.camel@petrovitsch.priv.at>
-        <fa04b946-c17f-4938-465e-345c76611c89@tony.gen.nz>
-Date: Sat, 05 May 2018 00:10:10 -0500
-In-Reply-To: <fa04b946-c17f-4938-465e-345c76611c89@tony.gen.nz> (Tony
-        Wallace's message of "Wed, 2 May 2018 06:41:59 +1200")
-Message-ID: <87zi1e7knh.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Sat, 5 May 2018 01:23:42 -0400
+Date: Fri, 4 May 2018 22:25:00 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>
+Subject: Re: [PATCH] kernel/signal: Remove no longer required irqsave/restore
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180504144014.5378-1-bigeasy@linutronix.de>
+ <87fu37e4rn.fsf@xmission.com>
+ <20180504170459.624e7vkro5fn2bgw@linutronix.de>
+ <876043e3xb.fsf@xmission.com>
+ <20180504175241.GT26088@linux.vnet.ibm.com>
+ <87sh77b5w7.fsf@xmission.com>
+ <20180504194510.GW26088@linux.vnet.ibm.com>
+ <87vac39oaf.fsf@xmission.com>
+ <20180504203713.GY26088@linux.vnet.ibm.com>
+ <87k1siaf8y.fsf@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1fEpSc-0000Xu-5V;;;mid=<87zi1e7knh.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.174.25;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/kQN+ZOWIAdEiYMFtW3Cz6o3y2xMGMayk=
-X-SA-Exim-Connect-IP: 97.119.174.25
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        * -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-        *      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
-X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Tony Wallace <tony@tony.gen.nz>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 776 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 3.3 (0.4%), b_tie_ro: 2.4 (0.3%), parse: 1.06 (0.1%),
-        extract_message_metadata: 13 (1.6%), get_uri_detail_list: 3.4 (0.4%),
-        tests_pri_-1000: 3.5 (0.5%), tests_pri_-950: 1.09 (0.1%), tests_pri_-900:
-        0.93 (0.1%), tests_pri_-400: 30 (3.8%), check_bayes: 28 (3.6%), b_tokenize: 7
-        (0.9%), b_tok_get_all: 10 (1.3%), b_comp_prob: 4.6 (0.6%), b_tok_touch_all:
-        3.7 (0.5%), b_finish: 0.85 (0.1%), tests_pri_0: 259 (33.4%),
-        check_dkim_signature: 0.45 (0.1%), check_dkim_adsp: 3.1 (0.4%),
-        tests_pri_500: 461 (59.4%), poll_dns_idle: 453 (58.5%), rewrite_mail: 0.00
-        (0.0%)
-Subject: Re: Suggested new user link command
-X-Spam-Flag: No
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87k1siaf8y.fsf@xmission.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18050505-0040-0000-0000-00000426F387
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008972; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01027702; UDB=6.00524987; IPR=6.00806836;
+ MB=3.00020941; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-05 05:23:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050505-0041-0000-0000-0000082CFDA6
+Message-Id: <20180505052500.GN26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-05_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805050046
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tony Wallace <tony@tony.gen.nz> writes:
+On Fri, May 04, 2018 at 11:38:37PM -0500, Eric W. Biederman wrote:
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> writes:
+> 
+> > On Fri, May 04, 2018 at 03:08:40PM -0500, Eric W. Biederman wrote:
+> >> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> writes:
+> >> 
+> >> > On Fri, May 04, 2018 at 02:03:04PM -0500, Eric W. Biederman wrote:
+> >> >> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> writes:
+> >> >> 
+> >> >> > On Fri, May 04, 2018 at 12:17:20PM -0500, Eric W. Biederman wrote:
+> >> >> >> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+> >> >> >> 
+> >> >> >> > On 2018-05-04 11:59:08 [-0500], Eric W. Biederman wrote:
+> >> >> >> >> Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+> >> >> >> >> > From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+> >> >> >> > …
+> >> >> >> >> > This long-term fix has been made in commit 4abf91047cf ("rtmutex: Make >
+> >> >> >> >> > wait_lock irq safe") for different reason.
+> >> >> >> >> 
+> >> >> >> >> Which tree has this change been made in?  I am not finding the commit
+> >> >> >> >> you mention above in Linus's tree.
+> >> >> >> >
+> >> >> >> > I'm sorry, it should have been commit b4abf91047cf ("rtmutex: Make
+> >> >> >> > wait_lock irq safe").
+> >> >> >> 
+> >> >> >> Can you fix that in your patch description and can you also up the
+> >> >> >> description of rcu_read_unlock?
+> >> >> >> 
+> >> >> >> If we don't need to jump through hoops it looks very reasonable to
+> >> >> >> remove this unnecessary logic.  But we should fix the description
+> >> >> >> in rcu_read_unlock that still says we need these hoops.
+> >> >> >
+> >> >> > The hoops are still required for rcu_read_lock(), otherwise you
+> >> >> > get deadlocks between the scheduler and RCU in PREEMPT=y kernels.
+> >> >> > What happens with this patch (if I understand it correctly) is that the
+> >> >> > signal code now uses a different way of jumping through the hoops.
+> >> >> > But the hoops are still jumped through.
+> >> >> 
+> >> >> The patch changes:
+> >> >> 
+> >> >> local_irq_disable();
+> >> >> rcu_read_lock();
+> >> >> spin_lock();
+> >> >> rcu_read_unlock();
+> >> >> 
+> >> >> to:
+> >> >> 
+> >> >> rcu_read_lock();
+> >> >> spin_lock_irq();
+> >> >> rcu_read_unlock();
+> >> >> 
+> >> >> Now that I have a chance to relfect on it the fact that the patern
+> >> >> that is being restored does not work is scary.  As the failure has
+> >> >> nothing to do with lock ordering and people won't realize what is going
+> >> >> on.  Especially since the common rcu modes won't care.
+> >> >> 
+> >> >> So is it true that taking spin_lock_irq before calling rcu_read_unlock
+> >> >> is a problem because of rt_mutex_unlock()?  Or has b4abf91047cf ("rtmutex: Make
+> >> >> wait_lock irq safe") actually fixed that and we can correct the
+> >> >> documentation of rcu_read_unlock() ?  And fix __lock_task_sighand?
+> >> >
+> >> > The problem is that the thing taking the lock might be the scheduler,
+> >> > or one of the locks taken while the scheduler's pi and rq locks are
+> >> > held.  This occurs only with RCU-preempt.
+> >> >
+> >> > Here is what can happen:
+> >> >
+> >> > o	A task does rcu_read_lock().
+> >> >
+> >> > o	That task is preempted.
+> >> >
+> >> > o	That task stays preempted for a long time, and is therefore
+> >> > 	priority boosted.  This boosting involves a high-priority RCU
+> >> > 	kthread creating an rt_mutex, pretending that the preempted task
+> >> > 	already holds it, and then acquiring it.
+> >> >
+> >> > o	The task awakens, acquires the scheduler's rq lock, and
+> >> > 	then does rcu_read_unlock().
+> >> >
+> >> > o	Because the task has been priority boosted, __rcu_read_unlock()
+> >> > 	invokes the rcu_read_unlock_special() slowpath, which does
+> >> > 	(as you say) rt_mutex_unlock() to deboost.  The deboosting
+> >> > 	can cause the scheduler to acquire the rq and pi locks, which
+> >> > 	results in deadlock.
+> >> >
+> >> > In contrast, holding these scheduler locks across the entirety of the
+> >> > RCU-preempt read-side critical section is harmless because then the
+> >> > critical section cannot be preempted, which means that priority boosting
+> >> > cannot happen, which means that there will be no need to deboost at
+> >> > rcu_read_unlock() time.
+> >> >
+> >> > This restriction has not changed, and as far as I can see is inherent
+> >> > in the fact that RCU uses the scheduler and the scheduler uses RCU.
+> >> > There is going to be an odd corner case in there somewhere!
+> >> 
+> >> However if I read things correctly b4abf91047cf ("rtmutex: Make
+> >> wait_lock irq safe") did change this.
+> >> 
+> >> In particular it changed things so that it is only the scheduler locks
+> >> that matter, not any old lock that disabled interrupts.  This was done
+> >> by disabling disabling interrupts when taking the wait_lock.
+> >> 
+> >> The rcu_read_unlock documentation states:
+> >> 
+> >>  * In most situations, rcu_read_unlock() is immune from deadlock.
+> >>  * However, in kernels built with CONFIG_RCU_BOOST, rcu_read_unlock()
+> >>  * is responsible for deboosting, which it does via rt_mutex_unlock().
+> >>  * Unfortunately, this function acquires the scheduler's runqueue and
+> >>  * priority-inheritance spinlocks.  This means that deadlock could result
+> >>  * if the caller of rcu_read_unlock() already holds one of these locks or
+> >>  * any lock that is ever acquired while holding them; or any lock which
+> >>  * can be taken from interrupt context because rcu_boost()->rt_mutex_lock()
+> >>  * does not disable irqs while taking ->wait_lock.
+> >> 
+> >> So we can now remove the clause:
+> >>  * ; or any lock which
+> >>  * can be taken from interrupt context because rcu_boost()->rt_mutex_lock()
+> >>  * does not disable irqs while taking ->wait_lock.
+> >> 
+> >> Without the any lock that disabled interrupts restriction it is now safe
+> >> to not worry about the issues with the scheduler locks and the rt_mutex
+> >> Which does make it safe to not worry about these crazy complexities in
+> >> lock_task_sighand.
+> >> 
+> >> Paul do you agree or is the patch unsafe?
+> >
+> > Ah, I thought you were trying to get rid of all but the first line of
+> > that paragraph, not just the final clause.  Apologies for my confusion!
+> >
+> > It looks plausible, but the patch should be stress-tested on a preemptible
+> > kernel with priority boosting enabled.  Has that been done?
+> >
+> > (Me, I would run rcutorture scenario TREE03 for an extended time period
+> > on b4abf91047cf with your patch applied.
 
-> On 02/05/18 01:35, Bernd Petrovitsch wrote:
->> Hi all!
->>
->> Top-quoting is evil BTW.
->>
->> On Wed, 2018-05-02 at 00:17 +1200, Tony Wallace wrote:
->>> Two issues here:
->>> 1) Use case (which I have)
->>> 2) Permissions
->>>
->>> 1) Use case
->>>
->>> I am trying to build a backup system.  To avoid duplication of files
->>> over multiple backups I take an Md5 check sum of file contents.  Files
->>> with the same sum are hardlinked together.   Files are linked in to a
->>> standard directory structure a new link for each backup that the file is
->>> part of.  When all backups pointing to a file are deleted the reference
->>> count drops to zero and the file is deleted.  We can keep a database of
->>> checksums and there related inode numbers for linking purposes.  So why
->> a) You can store one of the filenames instead of the inode number.
->> b) You can keep an extra directory with a hardlink named as the inode 
->>    number (and delete the entries there if the link count drops to 1).
->>
->>> not have some reference copy to link against it would take no extra
->>> space.  Well it doesn't, but it keeps at least one copy of the file on
->> You have a (disk) space problems on an backup system?
->> I don't think so, Tim;-)
->>
->>> disk forever and the reference count never drops to zero.  Using one of
->>> the backup copies to link to (as stored as the reference copy in the
->>> database) will not work as it could be deleted at any time.
->>>
->>> I have seen on stack overflow others wanting to do this also.
->> "Do. Or do not. There is no try." - Yoda
->> SCNR .....
->>
->>> 2) Permissions
->>>
->>> To maintain security there are two requirements: 
->>> 2.1) The effective user must have rights to the inode, that is they must
->>> either own it or be root
->>> 2.2) The effective user must have rights file creation rights to the
->>> directory where it is being linked
->> Obviously (und useful). And on a backup system, there is no problem
->> about that (because the backup software probably runs as root anyways
->> because otherwise 2.1) below will limit the deduplication severely).
->>
->> But for a (to be mainlined/accepted) new syscall, one should think
->> about all situations/use cases and not just one.
->>
->> Additionally to the 2 items above, one needs also x-permissions on
->> *all* directories from / to one existing hardlink in the traditional
->> case and such a syscall bypasses that.
->> Think about it: Everyone can write a progrm to try link all inodes from
->>  0 to ~0 to a directory entry and gets all files with restrictions 2.1)
->> and 2.2) from below.
->> ATM it is enough to `chmod o= ~` to keep all others from all files in
->> my $HOME. Afterwards it's no longer that easy.
->>
->>> If you say no, that is fine, but I do think this idea has merit and can
->>> be done without compromising the system.
->> I'm no one to say no (or yes;-) here to anything;-) I'm just thinking
->> about the implications.
->>
->> And you can always implement a patch and if it's ignored/not accepted,
->> you can use it locally anyways - no one can stop that:-)
->>
->> One more - more constructive - thing: Perhaps it is more
->> acceptable/useful if there is a mount option which must be activated on
->> the backup filesystems and that is not activated anywhere else.
->>
->> MfG,
->> 	Bernd
->
-> I want to thank everyone for their time. I have taken note of your
-> comments.  I believe that there is the need for a companion command
-> istat that obtains the stat data from an inode.  Istat may be useful in
-> constructing ilink.  For my proposed use case complexity is minimised,
-> and effectiveness is maximised by making both istat and ilink root only
-> system calls, and then doing my backup as root.  I do not know how a
-> mount option would work, and for my own use it is again probably
-> unnecessary complexity, but accept it may be necessary if released more
-> generally.
->
-> I will be dropping the matter now, at least until I have some code to
-> show, but if anyone has any more thoughts feel free to drop me an
-> email. 
+And with lockdep enabled, which TREE03 does not do by default.
 
-Actually the functionality you are looking for has in some sense already
-been implemented, and in a way that does not assume a strictly posix
-filesystem.
+> >                                           But what testing have you
+> > done already?)
+> 
+> Not my patch.  I was just the reviewer asking for some obvious cleanups.
+> So people won't get confused.  Sebastian?  Can you tell Paul what
+> testing you have done?
 
-The system calls are:
-name_to_handle_at
-open_by_handle_at
+Ah, apologies for my confusion!
 
-Good luck,
-Eric
+							Thanx, Paul
