@@ -1,822 +1,629 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751834AbeEEAHZ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 20:07:25 -0400
-Received: from mga06.intel.com ([134.134.136.31]:33440 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751742AbeEEAHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 20:07:24 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,363,1520924400";
-   d="gz'50?scan'50,208,50";a="225911347"
-Date: Sat, 5 May 2018 08:06:59 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kys@linuxonhyperv.com
-Cc: kbuild-all@01.org, x86@kernel.org, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
-        olaf@aepfle.de, apw@canonical.com, jasowang@redhat.com,
-        tglx@linutronix.de, hpa@zytor.com, sthemmin@microsoft.com,
-        Michael.H.Kelley@microsoft.com, vkuznets@redhat.com,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: Re: [PATCH V2 2/5] X86: Hyper-V: Enable IPI enlightenments
-Message-ID: <201805050803.WcPJNvsK%fengguang.wu@intel.com>
-References: <20180504060823.3345-2-kys@linuxonhyperv.com>
+        id S1751880AbeEEAKq (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 20:10:46 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:40895 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbeEEAKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 20:10:43 -0400
+X-Google-Smtp-Source: AB8JxZoHrpidLPiPVr8KmkBJhiQhXV4l+tHsWSAcDtvSNggrGvG612STRyYIAi0v8z0GNTLaMoubuw==
+Date: Fri, 4 May 2018 17:10:39 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Tirupathi Reddy <tirupath@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-input@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] Input: pm8941-pwrkey: add resin key capabilities
+Message-ID: <20180505001039.GA112416@dtor-ws>
+References: <1521786192-19487-1-git-send-email-tirupath@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="huq684BweRXVnRxX"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180504060823.3345-2-kys@linuxonhyperv.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: fengguang.wu@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+In-Reply-To: <1521786192-19487-1-git-send-email-tirupath@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Tirupathi,
 
---huq684BweRXVnRxX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Mar 23, 2018 at 11:53:12AM +0530, Tirupathi Reddy wrote:
+> Add resin key support to handle different types of key events
+> defined in different platforms.
+> 
+> Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+> ---
+>  .../bindings/input/qcom,pm8941-pwrkey.txt          | 32 +++++++++
+>  drivers/input/misc/pm8941-pwrkey.c                 | 81 ++++++++++++++++++++++
+>  2 files changed, 113 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> index 07bf55f..c671636 100644
+> --- a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> +++ b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+> @@ -32,6 +32,32 @@ PROPERTIES
+>  	Definition: presence of this property indicates that the KPDPWR_N pin
+>  		    should be configured for pull up.
+>  
+> +RESIN SUBNODE
+> +
+> +The HW module can generate other optional key events like RESIN(reset-in pin).
+> +The RESIN pin can be configured to support different key events on different
+> +platforms. The resin key is described by the following properties.
+> +
+> +- interrupts:
+> +	Usage: required
+> +	Value type: <prop-encoded-array>
+> +	Definition: key change interrupt; The format of the specifier is
+> +		    defined by the binding document describing the node's
+> +		    interrupt parent.
+> +
+> +- linux,code:
+> +	Usage: required
+> +	Value type: <u32>
+> +	Definition: The input key-code associated with the resin key.
+> +		    Use the linux event codes defined in
+> +		    include/dt-bindings/input/linux-event-codes.h
+> +
+> +- bias-pull-up:
+> +	Usage: optional
+> +	Value type: <empty>
+> +	Definition: presence of this property indicates that the RESIN pin
+> +		    should be configured for pull up.
+> +
+>  EXAMPLE
+>  
+>  	pwrkey@800 {
+> @@ -40,4 +66,10 @@ EXAMPLE
+>  		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+>  		debounce = <15625>;
+>  		bias-pull-up;
+> +
+> +		resin {
+> +			interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
+> +			linux,code = <KEY_VOLUMEDOWN>;
+> +			bias-pull-up;
+> +		};
+>  	};
 
-Hi Srinivasan,
+The new key and power key bindings are very similar, I would prefer if
+we shared the parsing code and our new DTS looked like:
 
-I love your patch! Yet something to improve:
+		power {
+			...
+		};
+ 
+		resin {
+			...
+		};
 
-[auto build test ERROR on v4.17-rc3]
-[also build test ERROR on next-20180504]
-[cannot apply to tip/x86/core]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+(we can easily keep backward compatibility with power properties being
+in device node).
 
-url:    https://github.com/0day-ci/linux/commits/kys-linuxonhyperv-com/X86-Hyper-V-APIC-enlightenments/20180505-045627
-config: x86_64-randconfig-a0-05050447 (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+> diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
+> index 18ad956..6e45d01 100644
+> --- a/drivers/input/misc/pm8941-pwrkey.c
+> +++ b/drivers/input/misc/pm8941-pwrkey.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/log2.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_irq.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/reboot.h>
+>  #include <linux/regmap.h>
+> @@ -28,6 +29,7 @@
+>  
+>  #define PON_RT_STS			0x10
+>  #define  PON_KPDPWR_N_SET		BIT(0)
+> +#define  PON_RESIN_N_SET		BIT(1)
+>  
+>  #define PON_PS_HOLD_RST_CTL		0x5a
+>  #define PON_PS_HOLD_RST_CTL2		0x5b
+> @@ -37,6 +39,7 @@
+>  #define  PON_PS_HOLD_TYPE_HARD_RESET	7
+>  
+>  #define PON_PULL_CTL			0x70
+> +#define  PON_RESIN_PULL_UP		BIT(0)
+>  #define  PON_KPDPWR_PULL_UP		BIT(1)
+>  
+>  #define PON_DBC_CTL			0x71
+> @@ -46,6 +49,7 @@
+>  struct pm8941_pwrkey {
+>  	struct device *dev;
+>  	int irq;
+> +	u32 resin_key_code;
+>  	u32 baseaddr;
+>  	struct regmap *regmap;
+>  	struct input_dev *input;
+> @@ -130,6 +134,24 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static irqreturn_t pm8941_resinkey_irq(int irq, void *_data)
+> +{
+> +	struct pm8941_pwrkey *pwrkey = _data;
+> +	unsigned int sts;
+> +	int error;
+> +	u32 key_code = pwrkey->resin_key_code;
+> +
+> +	error = regmap_read(pwrkey->regmap,
+> +			    pwrkey->baseaddr + PON_RT_STS, &sts);
+> +	if (error)
+> +		return IRQ_HANDLED;
+> +
+> +	input_report_key(pwrkey->input, key_code, !!(sts & PON_RESIN_N_SET));
+> +	input_sync(pwrkey->input);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  static int __maybe_unused pm8941_pwrkey_suspend(struct device *dev)
+>  {
+>  	struct pm8941_pwrkey *pwrkey = dev_get_drvdata(dev);
+> @@ -153,9 +175,56 @@ static int __maybe_unused pm8941_pwrkey_resume(struct device *dev)
+>  static SIMPLE_DEV_PM_OPS(pm8941_pwr_key_pm_ops,
+>  			 pm8941_pwrkey_suspend, pm8941_pwrkey_resume);
+>  
+> +static int pm8941_resin_key_init(struct pm8941_pwrkey *pwrkey,
+> +			struct device_node *np)
+> +{
+> +	int error, irq;
+> +	bool pull_up;
+> +
+> +	/*
+> +	 * Get the standard-key parameters. This might not be
+> +	 * specified if there is no key mapping on the reset line.
+> +	 */
+> +	error = of_property_read_u32(np, "linux,code", &pwrkey->resin_key_code);
+> +	if (error) {
+> +		dev_err(pwrkey->dev, "failed to read key-code for resin key\n");
+> +		return error;
+> +	}
+> +
+> +	pull_up = of_property_read_bool(np, "bias-pull-up");
+> +
+> +	irq = irq_of_parse_and_map(np, 0);
 
-All errors (new ones prefixed by >>):
+irq_of_parse_and_map() returns unsigned.
 
-   arch/x86/hyperv/hv_apic.c: In function 'hv_apic_read':
-   arch/x86/hyperv/hv_apic.c:69:10: error: implicit declaration of function 'native_apic_mem_read'; did you mean 'hv_apic_icr_read'? [-Werror=implicit-function-declaration]
-      return native_apic_mem_read(reg);
-             ^~~~~~~~~~~~~~~~~~~~
-             hv_apic_icr_read
-   arch/x86/hyperv/hv_apic.c: In function 'hv_apic_write':
-   arch/x86/hyperv/hv_apic.c:83:3: error: implicit declaration of function 'native_apic_mem_write'; did you mean 'hv_apic_icr_write'? [-Werror=implicit-function-declaration]
-      native_apic_mem_write(reg, val);
-      ^~~~~~~~~~~~~~~~~~~~~
-      hv_apic_icr_write
-   arch/x86/hyperv/hv_apic.c: In function 'hv_send_ipi':
->> arch/x86/hyperv/hv_apic.c:153:12: error: invalid use of undefined type 'struct apic'
-      orig_apic.send_IPI(cpu, vector);
-               ^
-   arch/x86/hyperv/hv_apic.c: In function 'hv_send_ipi_mask':
-   arch/x86/hyperv/hv_apic.c:159:12: error: invalid use of undefined type 'struct apic'
-      orig_apic.send_IPI_mask(mask, vector);
-               ^
-   arch/x86/hyperv/hv_apic.c: In function 'hv_send_ipi_mask_allbutself':
-   arch/x86/hyperv/hv_apic.c:172:12: error: invalid use of undefined type 'struct apic'
-      orig_apic.send_IPI_mask_allbutself(mask, vector);
-               ^
-   arch/x86/hyperv/hv_apic.c: In function 'hv_send_ipi_all':
-   arch/x86/hyperv/hv_apic.c:183:12: error: invalid use of undefined type 'struct apic'
-      orig_apic.send_IPI_all(vector);
-               ^
-   arch/x86/hyperv/hv_apic.c: In function 'hv_send_ipi_self':
-   arch/x86/hyperv/hv_apic.c:189:12: error: invalid use of undefined type 'struct apic'
-      orig_apic.send_IPI_self(vector);
-               ^
-   arch/x86/hyperv/hv_apic.c: In function 'hv_apic_init':
->> arch/x86/hyperv/hv_apic.c:199:16: error: 'apic' undeclared (first use in this function)
-      orig_apic = *apic;
-                   ^~~~
-   arch/x86/hyperv/hv_apic.c:199:16: note: each undeclared identifier is reported only once for each function it appears in
->> arch/x86/hyperv/hv_apic.c:199:13: error: 'orig_apic' has an incomplete type 'struct apic'
-      orig_apic = *apic;
-                ^
-   arch/x86/hyperv/hv_apic.c:211:3: error: implicit declaration of function 'apic_set_eoi_write'; did you mean 'hv_apic_eoi_write'? [-Werror=implicit-function-declaration]
-      apic_set_eoi_write(hv_apic_eoi_write);
-      ^~~~~~~~~~~~~~~~~~
-      hv_apic_eoi_write
-   arch/x86/hyperv/hv_apic.c: At top level:
->> arch/x86/hyperv/hv_apic.c:35:20: error: storage size of 'orig_apic' isn't known
-    static struct apic orig_apic;
-                       ^~~~~~~~~
-   cc1: some warnings being treated as errors
+> +	if (irq < 0) {
+> +		dev_err(pwrkey->dev, "failed to get resin irq\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Register key configuration */
+> +	input_set_capability(pwrkey->input, EV_KEY, pwrkey->resin_key_code);
+> +
+> +	error = regmap_update_bits(pwrkey->regmap,
+> +				   pwrkey->baseaddr + PON_PULL_CTL,
+> +				   PON_RESIN_PULL_UP,
+> +				   pull_up ? PON_RESIN_PULL_UP : 0);
+> +	if (error) {
+> +		dev_err(pwrkey->dev, "failed to set resin pull: %d\n", error);
+> +		return error;
+> +	}
+> +
+> +	error = devm_request_threaded_irq(pwrkey->dev, irq, NULL,
+> +					  pm8941_resinkey_irq, IRQF_ONESHOT,
+> +					  "pm8941_resinkey", pwrkey);
+> +	if (error)
+> +		dev_err(pwrkey->dev, "failed requesting resin key IRQ: %d\n",
+> +			error);
+> +
+> +	return error;
+> +}
+> +
+>  static int pm8941_pwrkey_probe(struct platform_device *pdev)
+>  {
+>  	struct pm8941_pwrkey *pwrkey;
+> +	struct device_node *np = NULL;
+>  	bool pull_up;
+>  	u32 req_delay;
+>  	int error;
+> @@ -241,6 +310,18 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+>  		return error;
+>  	}
+>  
+> +	np = of_find_node_by_name(pdev->dev.of_node, "resin");
+> +	if (np) {
+> +		/* resin key capabilities are defined in device node */
+> +		error = pm8941_resin_key_init(pwrkey, np);
+> +		of_node_put(np);
+> +		if (error) {
+> +			dev_err(&pdev->dev, "failed resin key initialization: %d\n",
+> +				error);
+> +			return error;
+> +		}
+> +	}
+> +
+>  	error = input_register_device(pwrkey->input);
+>  	if (error) {
+>  		dev_err(&pdev->dev, "failed to register input device: %d\n",
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
+> 
 
-vim +153 arch/x86/hyperv/hv_apic.c
+Can you please try the version below and let me know if it works for
+you?
 
-    34	
-  > 35	static struct apic orig_apic;
-    36	
-    37	static u64 hv_apic_icr_read(void)
-    38	{
-    39		u64 reg_val;
-    40	
-    41		rdmsrl(HV_X64_MSR_ICR, reg_val);
-    42		return reg_val;
-    43	}
-    44	
-    45	static void hv_apic_icr_write(u32 low, u32 id)
-    46	{
-    47		u64 reg_val;
-    48	
-    49		reg_val = SET_APIC_DEST_FIELD(id);
-    50		reg_val = reg_val << 32;
-    51		reg_val |= low;
-    52	
-    53		wrmsrl(HV_X64_MSR_ICR, reg_val);
-    54	}
-    55	
-    56	static u32 hv_apic_read(u32 reg)
-    57	{
-    58		u32 reg_val, hi;
-    59	
-    60		switch (reg) {
-    61		case APIC_EOI:
-    62			rdmsr(HV_X64_MSR_EOI, reg_val, hi);
-    63			return reg_val;
-    64		case APIC_TASKPRI:
-    65			rdmsr(HV_X64_MSR_TPR, reg_val, hi);
-    66			return reg_val;
-    67	
-    68		default:
-    69			return native_apic_mem_read(reg);
-    70		}
-    71	}
-    72	
-    73	static void hv_apic_write(u32 reg, u32 val)
-    74	{
-    75		switch (reg) {
-    76		case APIC_EOI:
-    77			wrmsr(HV_X64_MSR_EOI, val, 0);
-    78			break;
-    79		case APIC_TASKPRI:
-    80			wrmsr(HV_X64_MSR_TPR, val, 0);
-    81			break;
-    82		default:
-  > 83			native_apic_mem_write(reg, val);
-    84		}
-    85	}
-    86	
-    87	static void hv_apic_eoi_write(u32 reg, u32 val)
-    88	{
-    89		wrmsr(HV_X64_MSR_EOI, val, 0);
-    90	}
-    91	
-    92	/*
-    93	 * IPI implementation on Hyper-V.
-    94	 */
-    95	static bool __send_ipi_mask(const struct cpumask *mask, int vector)
-    96	{
-    97		int cur_cpu, vcpu;
-    98		struct ipi_arg_non_ex **arg;
-    99		struct ipi_arg_non_ex *ipi_arg;
-   100		int ret = 1;
-   101		unsigned long flags;
-   102	
-   103		if (cpumask_empty(mask))
-   104			return true;
-   105	
-   106		if (!hv_hypercall_pg)
-   107			return false;
-   108	
-   109		if ((vector < HV_IPI_LOW_VECTOR) || (vector > HV_IPI_HIGH_VECTOR))
-   110			return false;
-   111	
-   112		local_irq_save(flags);
-   113		arg = (struct ipi_arg_non_ex **)this_cpu_ptr(hyperv_pcpu_input_arg);
-   114	
-   115		ipi_arg = *arg;
-   116		if (unlikely(!ipi_arg))
-   117			goto ipi_mask_done;
-   118	
-   119		ipi_arg->vector = vector;
-   120		ipi_arg->reserved = 0;
-   121		ipi_arg->cpu_mask = 0;
-   122	
-   123		for_each_cpu(cur_cpu, mask) {
-   124			vcpu = hv_cpu_number_to_vp_number(cur_cpu);
-   125			/*
-   126			 * This particular version of the IPI hypercall can
-   127			 * only target upto 64 CPUs.
-   128			 */
-   129			if (vcpu >= 64)
-   130				goto ipi_mask_done;
-   131	
-   132			__set_bit(vcpu, (unsigned long *)&ipi_arg->cpu_mask);
-   133		}
-   134	
-   135		ret = hv_do_hypercall(HVCALL_SEND_IPI, ipi_arg, NULL);
-   136	
-   137	ipi_mask_done:
-   138		local_irq_restore(flags);
-   139		return ((ret == 0) ? true : false);
-   140	}
-   141	
-   142	static bool __send_ipi_one(int cpu, int vector)
-   143	{
-   144		struct cpumask mask = CPU_MASK_NONE;
-   145	
-   146		cpumask_set_cpu(cpu, &mask);
-   147		return __send_ipi_mask(&mask, vector);
-   148	}
-   149	
-   150	static void hv_send_ipi(int cpu, int vector)
-   151	{
-   152		if (!__send_ipi_one(cpu, vector))
- > 153			orig_apic.send_IPI(cpu, vector);
-   154	}
-   155	
-   156	static void hv_send_ipi_mask(const struct cpumask *mask, int vector)
-   157	{
-   158		if (!__send_ipi_mask(mask, vector))
-   159			orig_apic.send_IPI_mask(mask, vector);
-   160	}
-   161	
-   162	static void hv_send_ipi_mask_allbutself(const struct cpumask *mask, int vector)
-   163	{
-   164		unsigned int this_cpu = smp_processor_id();
-   165		struct cpumask new_mask;
-   166		const struct cpumask *local_mask;
-   167	
-   168		cpumask_copy(&new_mask, mask);
-   169		cpumask_clear_cpu(this_cpu, &new_mask);
-   170		local_mask = &new_mask;
-   171		if (!__send_ipi_mask(local_mask, vector))
-   172			orig_apic.send_IPI_mask_allbutself(mask, vector);
-   173	}
-   174	
-   175	static void hv_send_ipi_allbutself(int vector)
-   176	{
-   177		hv_send_ipi_mask_allbutself(cpu_online_mask, vector);
-   178	}
-   179	
-   180	static void hv_send_ipi_all(int vector)
-   181	{
-   182		if (!__send_ipi_mask(cpu_online_mask, vector))
- > 183			orig_apic.send_IPI_all(vector);
-   184	}
-   185	
-   186	static void hv_send_ipi_self(int vector)
-   187	{
-   188		if (!__send_ipi_one(smp_processor_id(), vector))
- > 189			orig_apic.send_IPI_self(vector);
-   190	}
-   191	
-   192	void __init hv_apic_init(void)
-   193	{
-   194		if (ms_hyperv.hints & HV_X64_CLUSTER_IPI_RECOMMENDED) {
-   195			pr_info("Hyper-V: Using IPI hypercalls\n");
-   196			/*
-   197			 * Set the IPI entry points.
-   198			 */
- > 199			orig_apic = *apic;
-   200	
-   201			apic->send_IPI = hv_send_ipi;
-   202			apic->send_IPI_mask = hv_send_ipi_mask;
-   203			apic->send_IPI_mask_allbutself = hv_send_ipi_mask_allbutself;
-   204			apic->send_IPI_allbutself = hv_send_ipi_allbutself;
-   205			apic->send_IPI_all = hv_send_ipi_all;
-   206			apic->send_IPI_self = hv_send_ipi_self;
-   207		}
-   208	
-   209		if (ms_hyperv.hints & HV_X64_APIC_ACCESS_RECOMMENDED) {
-   210			pr_info("Hyper-V: Using MSR based APIC access\n");
-   211			apic_set_eoi_write(hv_apic_eoi_write);
-   212			apic->read      = hv_apic_read;
-   213			apic->write     = hv_apic_write;
-   214			apic->icr_write = hv_apic_icr_write;
-   215			apic->icr_read  = hv_apic_icr_read;
-   216		}
-   217	}
-   218	
+Thanks!
 
+-- 
+Dmitry
+
+
+Input: pm8941-pwrkey - add resin key capabilities
+
+From: Tirupathi Reddy <tirupath@codeaurora.org>
+
+Add resin key support to handle different types of key events
+defined in different platforms.
+
+Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 ---
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+ .../bindings/input/qcom,pm8941-pwrkey.txt          |   56 ++++++-
+ drivers/input/misc/pm8941-pwrkey.c                 |  163 +++++++++++++-------
+ 2 files changed, 161 insertions(+), 58 deletions(-)
 
---huq684BweRXVnRxX
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---huq684BweRXVnRxX--
+diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+index 07bf55f6e0b9a..314bc7fd767d7 100644
+--- a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
++++ b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+@@ -13,6 +13,14 @@ PROPERTIES
+ 	Value type: <prop-encoded-array>
+ 	Definition: base address of registers for block
+ 
++- debounce:
++	Usage: optional
++	Value type: <u32>
++	Definition: time in microseconds that key must be pressed or released
++		    for state change interrupt to trigger.
++
++POWER SUBNODE
++
+ - interrupts:
+ 	Usage: required
+ 	Value type: <prop-encoded-array>
+@@ -20,11 +28,13 @@ PROPERTIES
+ 		    defined by the binding document describing the node's
+ 		    interrupt parent.
+ 
+-- debounce:
++- linux,code:
+ 	Usage: optional
+ 	Value type: <u32>
+-	Definition: time in microseconds that key must be pressed or released
+-		    for state change interrupt to trigger.
++	Definition: The input key-code associated with the power key.
++		    Use the linux event codes defined in
++		    include/dt-bindings/input/linux-event-codes.h
++		    When property is omitted KEY_POWER is assumed.
+ 
+ - bias-pull-up:
+ 	Usage: optional
+@@ -32,12 +42,48 @@ PROPERTIES
+ 	Definition: presence of this property indicates that the KPDPWR_N pin
+ 		    should be configured for pull up.
+ 
++RESIN SUBNODE (optional)
++
++The HW module can generate other optional key events like RESIN(reset-in pin).
++The RESIN pin can be configured to support different key events on different
++platforms. The resin key is described by the following properties.
++
++- interrupts:
++	Usage: required
++	Value type: <prop-encoded-array>
++	Definition: key change interrupt; The format of the specifier is
++		    defined by the binding document describing the node's
++		    interrupt parent.
++
++- linux,code:
++	Usage: required
++	Value type: <u32>
++	Definition: The input key-code associated with the resin key.
++		    Use the linux event codes defined in
++		    include/dt-bindings/input/linux-event-codes.h
++
++- bias-pull-up:
++	Usage: optional
++	Value type: <empty>
++	Definition: presence of this property indicates that the RESIN pin
++		    should be configured for pull up.
++
+ EXAMPLE
+ 
+ 	pwrkey@800 {
+ 		compatible = "qcom,pm8941-pwrkey";
+ 		reg = <0x800>;
+-		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+ 		debounce = <15625>;
+-		bias-pull-up;
++
++		power {
++			interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_POWER>;
++			bias-pull-up;
++		};
++
++		resin {
++			interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
++			linux,code = <KEY_VOLUMEDOWN>;
++			bias-pull-up;
++		};
+ 	};
+diff --git a/drivers/input/misc/pm8941-pwrkey.c b/drivers/input/misc/pm8941-pwrkey.c
+index 18ad956454f1e..ac079b0b94c9a 100644
+--- a/drivers/input/misc/pm8941-pwrkey.c
++++ b/drivers/input/misc/pm8941-pwrkey.c
+@@ -20,7 +20,9 @@
+ #include <linux/log2.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_irq.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_wakeirq.h>
+ #include <linux/reboot.h>
+ #include <linux/regmap.h>
+ 
+@@ -28,6 +30,7 @@
+ 
+ #define PON_RT_STS			0x10
+ #define  PON_KPDPWR_N_SET		BIT(0)
++#define  PON_RESIN_N_SET		BIT(1)
+ 
+ #define PON_PS_HOLD_RST_CTL		0x5a
+ #define PON_PS_HOLD_RST_CTL2		0x5b
+@@ -37,19 +40,21 @@
+ #define  PON_PS_HOLD_TYPE_HARD_RESET	7
+ 
+ #define PON_PULL_CTL			0x70
++#define  PON_RESIN_PULL_UP		BIT(0)
+ #define  PON_KPDPWR_PULL_UP		BIT(1)
+ 
+ #define PON_DBC_CTL			0x71
+ #define  PON_DBC_DELAY_MASK		0x7
+ 
+-
+ struct pm8941_pwrkey {
+ 	struct device *dev;
+-	int irq;
+-	u32 baseaddr;
+ 	struct regmap *regmap;
+ 	struct input_dev *input;
+ 
++	u32 baseaddr;
++	u32 power_keycode;
++	u32 resin_keycode;
++
+ 	unsigned int revision;
+ 	struct notifier_block reboot_notifier;
+ };
+@@ -122,41 +127,90 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
+ 	error = regmap_read(pwrkey->regmap,
+ 			    pwrkey->baseaddr + PON_RT_STS, &sts);
+ 	if (error)
+-		return IRQ_HANDLED;
++		goto out;
++
++	if (pwrkey->power_keycode != KEY_RESERVED)
++		input_report_key(pwrkey->input, pwrkey->power_keycode,
++				 sts & PON_KPDPWR_N_SET);
++
++	if (pwrkey->resin_keycode != KEY_RESERVED)
++		input_report_key(pwrkey->input, pwrkey->resin_keycode,
++				 sts & PON_RESIN_N_SET);
+ 
+-	input_report_key(pwrkey->input, KEY_POWER, !!(sts & PON_KPDPWR_N_SET));
+ 	input_sync(pwrkey->input);
+ 
++out:
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int __maybe_unused pm8941_pwrkey_suspend(struct device *dev)
++static int pm8941_key_init(struct device_node *np,
++			   struct pm8941_pwrkey *pwrkey,
++			   unsigned int *keycode,
++			   unsigned int default_keycode,
++			   u32 pull_up_bit,
++			   const char *keyname,
++			   bool wakeup)
+ {
+-	struct pm8941_pwrkey *pwrkey = dev_get_drvdata(dev);
++	char *irq_devname;
++	unsigned int irq;
++	int error;
++	bool pull_up;
+ 
+-	if (device_may_wakeup(dev))
+-		enable_irq_wake(pwrkey->irq);
++	error = of_property_read_u32(np, "linux,code", keycode);
++	if (error) {
++		if (default_keycode == KEY_RESERVED) {
++			dev_err(pwrkey->dev,
++				"failed to read key-code for %s key\n",
++				keyname);
++			return error;
++		}
++
++		*keycode = default_keycode;
++	}
+ 
+-	return 0;
+-}
++	/* Register key configuration */
++	input_set_capability(pwrkey->input, EV_KEY, *keycode);
+ 
+-static int __maybe_unused pm8941_pwrkey_resume(struct device *dev)
+-{
+-	struct pm8941_pwrkey *pwrkey = dev_get_drvdata(dev);
++	pull_up = of_property_read_bool(np, "bias-pull-up");
++	error = regmap_update_bits(pwrkey->regmap,
++				   pwrkey->baseaddr + PON_PULL_CTL,
++				   pull_up_bit, pull_up ? pull_up_bit : 0);
++	if (error) {
++		dev_err(pwrkey->dev, "failed to set %s pull: %d\n",
++			keyname, error);
++		return error;
++	}
+ 
+-	if (device_may_wakeup(dev))
+-		disable_irq_wake(pwrkey->irq);
++	irq = irq_of_parse_and_map(np, 0);
++	if (!irq) {
++		dev_err(pwrkey->dev, "failed to get %s irq\n", keyname);
++		return -EINVAL;
++	}
+ 
+-	return 0;
+-}
++	irq_devname = devm_kasprintf(pwrkey->dev,
++				     GFP_KERNEL, "pm8941_%skey", keyname);
++	if (!irq_devname)
++		return -ENOMEM;
++
++	error = devm_request_threaded_irq(pwrkey->dev, irq, NULL,
++					  pm8941_pwrkey_irq, IRQF_ONESHOT,
++					  irq_devname, pwrkey);
++	if (error)
++		dev_err(pwrkey->dev, "failed requesting %s key IRQ: %d\n",
++			keyname, error);
+ 
+-static SIMPLE_DEV_PM_OPS(pm8941_pwr_key_pm_ops,
+-			 pm8941_pwrkey_suspend, pm8941_pwrkey_resume);
++	if (wakeup) {
++		device_init_wakeup(pwrkey->dev, true);
++		dev_pm_set_wake_irq(pwrkey->dev, irq);
++	}
++
++	return error;
++}
+ 
+ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ {
+ 	struct pm8941_pwrkey *pwrkey;
+-	bool pull_up;
++	struct device_node *np;
+ 	u32 req_delay;
+ 	int error;
+ 
+@@ -168,8 +222,6 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	pull_up = of_property_read_bool(pdev->dev.of_node, "bias-pull-up");
+-
+ 	pwrkey = devm_kzalloc(&pdev->dev, sizeof(*pwrkey), GFP_KERNEL);
+ 	if (!pwrkey)
+ 		return -ENOMEM;
+@@ -182,12 +234,6 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	pwrkey->irq = platform_get_irq(pdev, 0);
+-	if (pwrkey->irq < 0) {
+-		dev_err(&pdev->dev, "failed to get irq\n");
+-		return pwrkey->irq;
+-	}
+-
+ 	error = of_property_read_u32(pdev->dev.of_node, "reg",
+ 				     &pwrkey->baseaddr);
+ 	if (error)
+@@ -195,6 +241,18 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ 
+ 	error = regmap_read(pwrkey->regmap, pwrkey->baseaddr + PON_REV2,
+ 			    &pwrkey->revision);
++	if (error) {
++		dev_err(&pdev->dev, "failed to read revision: %d\n", error);
++		return error;
++	}
++
++	req_delay = (req_delay << 6) / USEC_PER_SEC;
++	req_delay = ilog2(req_delay);
++
++	error = regmap_update_bits(pwrkey->regmap,
++				   pwrkey->baseaddr + PON_DBC_CTL,
++				   PON_DBC_DELAY_MASK,
++				   req_delay);
+ 	if (error) {
+ 		dev_err(&pdev->dev, "failed to set debounce: %d\n", error);
+ 		return error;
+@@ -211,34 +269,36 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ 	pwrkey->input->name = "pm8941_pwrkey";
+ 	pwrkey->input->phys = "pm8941_pwrkey/input0";
+ 
+-	req_delay = (req_delay << 6) / USEC_PER_SEC;
+-	req_delay = ilog2(req_delay);
+ 
+-	error = regmap_update_bits(pwrkey->regmap,
+-				   pwrkey->baseaddr + PON_DBC_CTL,
+-				   PON_DBC_DELAY_MASK,
+-				   req_delay);
+-	if (error) {
+-		dev_err(&pdev->dev, "failed to set debounce: %d\n", error);
+-		return error;
++	np = of_get_child_by_name(pdev->dev.of_node, "power");
++	if (!np) {
++		/*
++		 * Fall back to older format with power key properties
++		 * attached to the device itself.
++		 */
++		of_node_get(pdev->dev.of_node);
+ 	}
+ 
+-	error = regmap_update_bits(pwrkey->regmap,
+-				   pwrkey->baseaddr + PON_PULL_CTL,
+-				   PON_KPDPWR_PULL_UP,
+-				   pull_up ? PON_KPDPWR_PULL_UP : 0);
++	error = pm8941_key_init(np, pwrkey, &pwrkey->power_keycode, KEY_POWER,
++				PON_KPDPWR_PULL_UP, "pwr", true);
++	of_node_put(np);
+ 	if (error) {
+-		dev_err(&pdev->dev, "failed to set pull: %d\n", error);
++		dev_err(&pdev->dev,
++			"failed power key initialization: %d\n", error);
+ 		return error;
+ 	}
+ 
+-	error = devm_request_threaded_irq(&pdev->dev, pwrkey->irq,
+-					  NULL, pm8941_pwrkey_irq,
+-					  IRQF_ONESHOT,
+-					  "pm8941_pwrkey", pwrkey);
+-	if (error) {
+-		dev_err(&pdev->dev, "failed requesting IRQ: %d\n", error);
+-		return error;
++	np = of_find_node_by_name(pdev->dev.of_node, "resin");
++	if (np) {
++		error = pm8941_key_init(np, pwrkey,
++					&pwrkey->resin_keycode, KEY_RESERVED,
++					PON_RESIN_PULL_UP, "resin", false);
++		of_node_put(np);
++		if (error) {
++			dev_err(&pdev->dev,
++				"failed resin key initialization: %d\n", error);
++			return error;
++		}
+ 	}
+ 
+ 	error = input_register_device(pwrkey->input);
+@@ -257,8 +317,6 @@ static int pm8941_pwrkey_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	platform_set_drvdata(pdev, pwrkey);
+-	device_init_wakeup(&pdev->dev, 1);
+-
+ 	return 0;
+ }
+ 
+@@ -282,7 +340,6 @@ static struct platform_driver pm8941_pwrkey_driver = {
+ 	.remove = pm8941_pwrkey_remove,
+ 	.driver = {
+ 		.name = "pm8941-pwrkey",
+-		.pm = &pm8941_pwr_key_pm_ops,
+ 		.of_match_table = of_match_ptr(pm8941_pwr_key_id_table),
+ 	},
+ };
