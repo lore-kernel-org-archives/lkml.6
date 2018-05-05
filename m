@@ -1,77 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751157AbeEEGby (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 02:31:54 -0400
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:34172 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbeEEGbw (ORCPT
+        id S1751206AbeEEGvy (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 02:51:54 -0400
+Received: from dd26836.kasserver.com ([85.13.145.193]:50438 "EHLO
+        dd26836.kasserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750764AbeEEGvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 02:31:52 -0400
-X-Google-Smtp-Source: AB8JxZoxucysB60diXS5v9bTKMzh5FsgUzE4wrmJ0V+X5ok9ul8mccs4CMMaZpnb80h37RuGKEfokA==
-From: Wenwen Wang <wang6495@umn.edu>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>,
-        Sathya Prakash <sathya.prakash@broadcom.com>,
-        Chaitra P B <chaitra.basappa@broadcom.com>,
-        Suganath Prabu Subramani
-        <suganath-prabu.subramani@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        MPT-FusionLinux.pdl@broadcom.com (open list:LSILOGIC MPT FUSION DRIVERS
-        (FC/SAS/SPI)),
-        linux-scsi@vger.kernel.org (open list:LSILOGIC MPT FUSION DRIVERS
-        (FC/SAS/SPI)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] scsi: mpt3sas: fix a missing-check bug
-Date: Sat,  5 May 2018 01:31:35 -0500
-Message-Id: <1525501896-8235-1-git-send-email-wang6495@umn.edu>
-X-Mailer: git-send-email 2.7.4
+        Sat, 5 May 2018 02:51:53 -0400
+Date: Sat, 5 May 2018 08:51:43 +0200
+From: Danny Milosavljevic <dannym@scratchpost.org>
+To: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Andrea Bondavalli <andrea.bondavalli74@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.xyz>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v14 3/8] ASoC: sun4i-codec: Merge
+ sun4i_codec_left_mixer_controls and sun4i_codec_right_mixer_controls into
+ sun4i_codec_mixer_controls
+Message-ID: <20180505085056.6c6011ca@scratchpost.org>
+In-Reply-To: <20180503144618.oojhvmey44dtg5fa@flea>
+References: <20180502210800.1971-1-dannym@scratchpost.org>
+        <20180502210800.1971-4-dannym@scratchpost.org>
+        <20180503144618.oojhvmey44dtg5fa@flea>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-unknown-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Vzt_SN1Zr8bWNbQ9ZXq_W+0"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In _ctl_ioctl_main(), 'ioctl_header' is first copied from the userspace
-pointer 'arg'. 'ioctl_header.ioc_number' is then verified by
-_ctl_verify_adapter(). If the verification is failed, an error code -ENODEV
-is returned. Otherwise, the verification result, i.e., the MPT3SAS adapter
-that matches with the 'ioctl_header.ioc_number', is saved to 'ioc'. Later
-on, if the 'cmd' is MPT3COMMAND, the whole ioctl command struct is copied
-again from the userspace pointer 'arg' and saved to 'karg'. Then the
-function _ctl_do_mpt_command() is invoked to execute the command with the
-adapter 'ioc' and 'karg' as inputs.
+--Sig_/Vzt_SN1Zr8bWNbQ9ZXq_W+0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Given that the pointer 'arg' resides in userspace, a malicious userspace
-process can race to change the 'ioc_number' between the two copies, which
-will cause inconsistency issues, potentially security issues since an
-inconsistent adapter could be used with the command struct 'karg' as inputs
-of _ctl_do_mpt_command(). Moreover, the user can potentially provide a
-valid 'ioc_number' to pass the verification, and then modify it to an
-invalid 'ioc_number'. That means, an invalid 'ioc_number' can potentially
-bypass the verification check.
+Hi Maxime,
 
-To fix this issue, we need to recheck the 'ioc_number' copied after the
-second copy to make sure it is not changed since the first copy.
+On Thu, 3 May 2018 16:46:19 +0200
+Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
----
- drivers/scsi/mpt3sas/mpt3sas_ctl.c | 5 +++++
- 1 file changed, 5 insertions(+)
+> Doesn't that mean that the controls will be shared between the right
+> and left mixers now, which wasn't the case before?
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_ctl.c b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-index d3cb387..0c140c7 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_ctl.c
-@@ -2388,6 +2388,11 @@ _ctl_ioctl_main(struct file *file, unsigned int cmd, void __user *arg,
- 			break;
- 		}
- 
-+		if (karg.hdr.ioc_number != ioctl_header.ioc_number) {
-+			ret = -EINVAL;
-+			break;
-+		}
-+
- 		if (_IOC_SIZE(cmd) == sizeof(struct mpt3_ioctl_command)) {
- 			uarg = arg;
- 			ret = _ctl_do_mpt_command(ioc, karg, &uarg->mf);
--- 
-2.7.4
+Yes.  However Chen-Yu said that except for debugfs that cannot be
+observed by user space anyway.
+
+It's nice to have the NEW controls have multiple channels, which is what
+this does.
+
+>And also, wouldn't
+> the controls be called "Left Mixer Left Mixer Left DAC Playback
+> Switch" (for the first one) now?
+
+No.  I checked using "amixer" - the names look fine,
+"Left Mixer Left DAC Playback Switch".
+
+With the patch series, amixer says:
+
+numid=3D10,iface=3DMIXER,name=3D'FM Playback Switch'
+numid=3D6,iface=3DMIXER,name=3D'FM Playback Volume'
+numid=3D5,iface=3DMIXER,name=3D'Line Boost Volume'
+numid=3D9,iface=3DMIXER,name=3D'Line Playback Switch'
+numid=3D4,iface=3DMIXER,name=3D'Line Playback Volume'
+numid=3D1,iface=3DMIXER,name=3D'Mic1 Boost Volume'
+numid=3D11,iface=3DMIXER,name=3D'Mic1 Playback Switch'
+numid=3D2,iface=3DMIXER,name=3D'Mic2 Boost Volume'
+numid=3D12,iface=3DMIXER,name=3D'Mic2 Playback Switch'
+numid=3D7,iface=3DMIXER,name=3D'Mic Playback Volume'
+numid=3D18,iface=3DMIXER,name=3D'Capture Source'
+numid=3D19,iface=3DMIXER,name=3D'Differential Line Source'
+numid=3D8,iface=3DMIXER,name=3D'Left Mixer Left DAC Playback Switch'
+numid=3D15,iface=3DMIXER,name=3D'Power Amplifier DAC Playback Switch'
+numid=3D16,iface=3DMIXER,name=3D'Power Amplifier Mixer Playback Switch'
+numid=3D17,iface=3DMIXER,name=3D'Power Amplifier Mute Switch'
+numid=3D3,iface=3DMIXER,name=3D'Power Amplifier Volume'
+numid=3D14,iface=3DMIXER,name=3D'Right Mixer Left DAC Playback Switch'
+numid=3D13,iface=3DMIXER,name=3D'Right Mixer Right DAC Playback Switch'
+
+--Sig_/Vzt_SN1Zr8bWNbQ9ZXq_W+0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEds7GsXJ0tGXALbPZ5xo1VCwwuqUFAlrtVH8ACgkQ5xo1VCww
+uqWwlggAgfHEgljWfgiB2oJ5uYkyydqdJvrws9QwwzJV9d8I8gN0HD6W82Ok+0hr
+Q6JewwOxjBsBZwyBM0uT1k3QJoQhBU0DDkTjAkP6H5ycTKofCUkplCUVhndnEBnF
+XFab4ZlnpcAxtIFAQ62ALOSx8wkXojVNvamay+YfXc8iFas/XOMVwWFX2SFBZVUa
+b79DCj4mKhvRXbWqvqOFZ1EelrLeFhNlEDcRb9kmcWDb1TDk1ZDaoK9SmDiM+ho/
+PzoREKY8mrfho8iPHtW4i3VqyCn8gOXpA/qu/CdAUQ8vi8cfqgI2m//hTSO1HoyX
+JDn5+cNaTIlMBiTuxya4Zjdc2wDg0A==
+=bxuI
+-----END PGP SIGNATURE-----
+
+--Sig_/Vzt_SN1Zr8bWNbQ9ZXq_W+0--
