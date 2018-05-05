@@ -1,49 +1,43 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751846AbeEEAcG (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 20:32:06 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:42559 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751751AbeEEAcF (ORCPT
+        id S1751853AbeEEAf3 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 20:35:29 -0400
+Received: from mail2.candelatech.com ([208.74.158.173]:39258 "EHLO
+        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751742AbeEEAf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 20:32:05 -0400
-To: adobriyan@gmail.com, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, mhocko@suse.com
-Subject: Re: [PATCH] elf: don't hash userspace addresses
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20180504212308.GA7564@avx2>
-In-Reply-To: <20180504212308.GA7564@avx2>
-Message-Id: <201805050931.FEG18215.tFJOFLHOFVSOQM@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Sat, 5 May 2018 09:31:50 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Fri, 4 May 2018 20:35:28 -0400
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Ben Greear <greearb@candelatech.com>
+Subject: Re: Oops on the system startup in the function part_in_flight()
+Organization: Candela Technologies
+Message-ID: <b0b6d6b6-b9ba-a9d8-749a-5f252a738fae@candelatech.com>
+Date: Fri, 4 May 2018 17:35:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexey Dobriyan wrote:
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> ---
-> 
->  fs/binfmt_elf.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -379,8 +379,8 @@ static unsigned long elf_map(struct file *filep, unsigned long addr,
->  
->  	if ((type & MAP_FIXED_NOREPLACE) &&
->  	    PTR_ERR((void *)map_addr) == -EEXIST)
-> -		pr_info("%d (%s): Uhuuh, elf segment at %px requested but the memory is mapped already\n",
-> -			task_pid_nr(current), current->comm, (void *)addr);
-> +		pr_info("%d (%s): Uhuuh, elf segment at %lx requested but the memory is mapped already\n",
-> +			task_pid_nr(current), current->comm, addr);
+Hello,
 
-"%px" does not hash. For what reason you replace %px with %lx ?
+I am trying to bisect a pktgen related performance regression that appears to
+be between the 4.13 and 4.14 kernels.  But, my system keeps crashing due to part_in_flight
+oops so bisecting is not going well.
 
->  
->  	return(map_addr);
->  }
-> 
+It looks like this oops was fixed, but the link to the patch in the email is no longer
+valid.  Can someone let me know what patch fixes this crash so I can apply it while
+bisecting?
+
+https://www.spinics.net/lists/linux-block/msg17809.html
+
+Thanks,
+Ben
+
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
