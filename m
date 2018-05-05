@@ -1,155 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751861AbeEEC0n (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 22:26:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751684AbeEEC0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 22:26:41 -0400
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-To: Akshu Agrawal <akshu.agrawal@amd.com>
-From: Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <1525336264-29243-1-git-send-email-akshu.agrawal@amd.com>
-Cc: djkurtz@chromium.org, akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Shaoyun Liu <Shaoyun.Liu@amd.com>, Dave Airlie <airlied@redhat.com>,
+        id S1751948AbeEECdt (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 22:33:49 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:40626 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751709AbeEECdr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 22:33:47 -0400
+X-Google-Smtp-Source: AB8JxZrfgaMT53br0KRJn+E9HDKKIJPX99MbhZ4Mo+/pQ6azDtMdYriSFU/4aGa8z45VDVU1vvAQUg==
+Subject: Re: [v2 PATCH 1/1] tg3: fix meaningless hw_stats reading after
+ tg3_halt memset 0 hw_stats
+To: Michael Chan <michael.chan@broadcom.com>
+References: <20180502004234.230662-1-zumeng.chen@gmail.com>
+ <CACKFLikg+p_1iDQtd0XN8tJaKtAgX0jfxGXuoqxhDJZ922UkUg@mail.gmail.com>
+ <5af186f8-9718-c295-4e34-e84dd78ea157@gmail.com>
+ <CACKFLinOzi+F9j+gbBHjkGdMdXTqpfMRLUwqx=zUpVg76zGxNA@mail.gmail.com>
+ <8f73e98f-0c55-2d96-a1b7-0890bf90bf41@gmail.com>
+ <CACKFLi=Rv_+Gig5UpdnpbOPcyLyGr3TYGUbFEmeGcZWAk3YZRQ@mail.gmail.com>
+Cc: Netdev <netdev@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-References: <1525336264-29243-1-git-send-email-akshu.agrawal@amd.com>
-Message-ID: <152548720041.138124.2994178054788686137@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2] clk: x86: Add ST oscout platform clock
-Date: Fri, 04 May 2018 19:26:40 -0700
+        Siva Reddy Kallam <siva.kallam@broadcom.com>,
+        "prashant.sreedharan@broadcom.com" <prashant@broadcom.com>,
+        David Miller <davem@davemloft.net>
+From: Zumeng Chen <zumeng.chen@gmail.com>
+Message-ID: <38cee318-ef18-18fb-80c2-780718ef12f9@gmail.com>
+Date: Sat, 5 May 2018 10:40:55 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
+MIME-Version: 1.0
+In-Reply-To: <CACKFLi=Rv_+Gig5UpdnpbOPcyLyGr3TYGUbFEmeGcZWAk3YZRQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w452Qn5p031690
 
-Quoting Akshu Agrawal (2018-05-03 01:30:26)
-> diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
-> index 1367afb..2aee002 100644
-> --- a/drivers/clk/x86/Makefile
-> +++ b/drivers/clk/x86/Makefile
-> @@ -1,3 +1,4 @@
->  clk-x86-lpss-objs              := clk-lpt.o
->  obj-$(CONFIG_X86_INTEL_LPSS)   += clk-x86-lpss.o
->  obj-$(CONFIG_PMC_ATOM)         += clk-pmc-atom.o
-> +obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)  += clk-st.o
+On 05/03/2018 01:04 PM, Michael Chan wrote:
+> On Wed, May 2, 2018 at 5:30 PM, Zumeng Chen <zumeng.chen@gmail.com> wrote:
+>> On 2018年05月03日 01:32, Michael Chan wrote:
+>>> On Wed, May 2, 2018 at 3:27 AM, Zumeng Chen <zumeng.chen@gmail.com> wrote:
+>>>> On 2018年05月02日 13:12, Michael Chan wrote:
+>>>>> On Tue, May 1, 2018 at 5:42 PM, Zumeng Chen <zumeng.chen@gmail.com>
+>>>>> wrote:
+>>>>>
+>>>>>> diff --git a/drivers/net/ethernet/broadcom/tg3.h
+>>>>>> b/drivers/net/ethernet/broadcom/tg3.h
+>>>>>> index 3b5e98e..c61d83c 100644
+>>>>>> --- a/drivers/net/ethernet/broadcom/tg3.h
+>>>>>> +++ b/drivers/net/ethernet/broadcom/tg3.h
+>>>>>> @@ -3102,6 +3102,7 @@ enum TG3_FLAGS {
+>>>>>>            TG3_FLAG_ROBOSWITCH,
+>>>>>>            TG3_FLAG_ONE_DMA_AT_ONCE,
+>>>>>>            TG3_FLAG_RGMII_MODE,
+>>>>>> +       TG3_FLAG_HALT,
+>>>>> I think you should be able to use the existing INIT_COMPLETE flag
+>>>>
+>>>> No,  it will bring the uncertain factors into the existed complicate
+>>>> logic
+>>>> of INIT_COMPLETE.
+>>>> And I think it's very simple logic here to fix the meaningless hw_stats
+>>>> reading and the problem
+>>>> of commit f5992b72. I even suspect if you have read INIT_COMPLETE related
+>>>> codes carefully.
+>>>>
+>>> We should use an existing flag whenever appropriate
+>>
+>> I disagree. This is sort of blahblah...
+> I don't want to see another flag added that is practically the same as
+> !INIT_COMPLETE.  The driver already has close to one hundred flags.
+> Adding a new flag that is similar to an existing flag will just make
+> the code more difficult to understand and maintain.
+>
+> If you don't want to fix it the cleaner way, Siva or I will fix it.
 
-Ok. Can you sort this by kconfig? Or by file name?
+Feel free to go, I just take a double look, INIT_COMPLETE can directly 
+be used as follows:
 
-> diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
-> new file mode 100644
-> index 0000000..d8c283c
-> --- /dev/null
-> +++ b/drivers/clk/x86/clk-st.c
-> @@ -0,0 +1,86 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * clock framework for AMD Stoney based clocks
-> + *
-> + * Copyright 2018 Advanced Micro Devices, Inc.
-> + *
-> + * Permission is hereby granted, free of charge, to any person obtaining a
-> + * copy of this software and associated documentation files (the "Software"),
-> + * to deal in the Software without restriction, including without limitation
-> + * the rights to use, copy, modify, merge, publish, distribute, sublicense,
-> + * and/or sell copies of the Software, and to permit persons to whom the
-> + * Software is furnished to do so, subject to the following conditions:
-> + *
-> + * The above copyright notice and this permission notice shall be included in
-> + * all copies or substantial portions of the Software.
-> + *
-> + * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-> + * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-> + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-> + * THE COPYRIGHT HOLDER(S) OR AUTHOR(S) BE LIABLE FOR ANY CLAIM, DAMAGES OR
-> + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-> + * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-> + * OTHER DEALINGS IN THE SOFTWARE.
+diff --git a/drivers/net/ethernet/broadcom/tg3.c 
+b/drivers/net/ethernet/broadcom/tg3.c
+index 08bbb63..0e04fd7 100644
+--- a/drivers/net/ethernet/broadcom/tg3.c
++++ b/drivers/net/ethernet/broadcom/tg3.c
+@@ -8733,14 +8733,11 @@ static void tg3_free_consistent(struct tg3 *tp)
+         tg3_mem_rx_release(tp);
+         tg3_mem_tx_release(tp);
 
-One point of SPDX is to avoid this boiler plate multi-line license
-comments. Can you remove this and just leave the AMD copyright part?
+-       /* Protect tg3_get_stats64() from reading freed tp->hw_stats. */
+-       tg3_full_lock(tp, 0);
+         if (tp->hw_stats) {
+                 dma_free_coherent(&tp->pdev->dev, sizeof(struct 
+tg3_hw_stats),
+                                   tp->hw_stats, tp->stats_mapping);
+                 tp->hw_stats = NULL;
+         }
+-       tg3_full_unlock(tp);
+  }
 
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clkdev.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_data/clk-st.h>
-> +#include <linux/platform_device.h>
-> +
-> +/* Clock Driving Strength 2 register */
-> +#define CLKDRVSTR2     0x28
-> +/* Clock Control 1 register */
-> +#define MISCCLKCNTL1   0x40
-> +/* Auxiliary clock1 enable bit */
-> +#define OSCCLKENB      2
-> +/* 25Mhz auxiliary output clock freq bit */
-> +#define OSCOUT1CLK25MHZ        16
-> +
-> +#define ST_CLK_48M     0
-> +#define ST_CLK_25M     1
-> +#define ST_CLK_MUX     2
-> +#define ST_CLK_GATE    3
-> +#define ST_MAX_CLKS    4
-> +
-> +static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
-> +
-> +static int st_clk_probe(struct platform_device *pdev)
-> +{
-> +       struct st_clk_data *st_data;
-> +       struct clk_hw **hws;
-> +
-> +       st_data = dev_get_platdata(&pdev->dev);
-> +       if (!st_data || !st_data->base)
-> +               return -EINVAL;
-> +
-> +       hws = kzalloc(sizeof(*hws) * ST_MAX_CLKS, GFP_KERNEL);
+  /*
+@@ -14178,7 +14175,7 @@ static void tg3_get_stats64(struct net_device *dev,
+         struct tg3 *tp = netdev_priv(dev);
 
-Fix the kbuild robot errors please.
+         spin_lock_bh(&tp->lock);
+-       if (!tp->hw_stats) {
++       if (!tp->hw_stats || tg3_flag(tp, INIT_COMPLETE)) {
+                 *stats = tp->net_stats_prev;
+                 spin_unlock_bh(&tp->lock);
+                 return;
 
-> +
-> +       hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
-> +                                                    48000000);
-> +       hws[ST_CLK_25M] = clk_hw_register_fixed_rate(NULL, "clk25MHz", NULL, 0,
-> +                                                    25000000);
-
-I'm not sure why we even keep these pointers around though. The driver
-doesn't expose them as clks that clk_get() can find so they could just
-be local variables and no heap allocation is needed.
-
-> +
-> +       hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
-> +               clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
-> +               0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
-> +
-> +       clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_25M]->clk);
-> +
-> +       hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
-> +               0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
-> +               CLK_GATE_SET_TO_DISABLE, NULL);
-> +
-> +       clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
-
-Could use devm_*() here in case you want to drop this stuff on driver
-removal?
-
-> +
-> +       return 0;
-> +}
-> +
-> +static struct platform_driver st_clk_driver = {
-> +       .driver = {
-> +               .name = "clk-st",
-> +       },
-> +       .probe = st_clk_probe,
-
-suppress attributes here to prevent unbinding from sysfs?
-
-> +};
-> +builtin_platform_driver(st_clk_driver);
+Cheers,
+Zumeng
