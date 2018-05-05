@@ -1,152 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751943AbeEEBvC (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 21:51:02 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47912 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751736AbeEEBvA (ORCPT
+        id S1751941AbeEEBx0 (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 21:53:26 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:33662 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751751AbeEEBxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 21:51:00 -0400
-From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Tim Harvey <tharvey@gateworks.com>, Tim Harvey <tharvey@gateworks.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "media: i2c: tda1997: replace codec to component" to the asoc tree
-In-Reply-To: <87in94lwmq.wl%kuninori.morimoto.gx@renesas.com>
-Message-Id: <20180505015049.5225644007A@finisterre.ee.mobilebroadband>
-Date: Sat,  5 May 2018 02:50:49 +0100 (BST)
+        Fri, 4 May 2018 21:53:24 -0400
+Subject: Re: [PATCH 21/24] selftests: memfd: return Kselftest Skip code for
+ skipped tests
+To: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        akpm@linux-foundation.org, marcandre.lureau@redhat.com,
+        lizhijian@cn.fujitsu.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180505011328.32078-1-shuah@kernel.org>
+ <20180505011328.32078-21-shuah@kernel.org>
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <a5fff7b0-f308-25bc-909b-8579f6f14546@oracle.com>
+Date: Fri, 4 May 2018 18:52:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20180505011328.32078-21-shuah@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8883 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805050013
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On 05/04/2018 06:13 PM, Shuah Khan (Samsung OSG) wrote:
+> When memfd test is skipped because of unmet dependencies and/or unsupported
+> configuration, it returns non-zero value which is treated as a fail by the
+> Kselftest framework. This leads to false negative result even when the test
+> could not be run.
+> 
+> Change it to return kselftest skip code when a test gets skipped to
+> clearly report that the test could not be run.
+> 
+> Added an explicit check for root user and return skip code.
+> 
+> Kselftest framework SKIP code is 4 and the framework prints appropriate
+> messages to indicate that the test is skipped.
+> 
+> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+> ---
+>  tools/testing/selftests/memfd/run_tests.sh | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
+> index c2d41ed81b24..88dc206a69b7 100755
+> --- a/tools/testing/selftests/memfd/run_tests.sh
+> +++ b/tools/testing/selftests/memfd/run_tests.sh
+> @@ -1,6 +1,14 @@
+>  #!/bin/bash
+>  # please run as root
+>  
+> +# Kselftest framework requirement - SKIP code is 4.
+> +ksft_skip=4
+> +
+> +if [ $UID != 0 ]; then
+> +	echo "Please run this test as root"
+> +	exit $ksft_skip
+> +fi
+> +
+>  #
+>  # Normal tests requiring no special resources
+>  #
+> @@ -33,7 +41,7 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $hpages_test ]; then
+>  	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
+>  	if [ $? -ne 0 ]; then
+>  		echo "Please run this test as root"
+> -		exit 1
+> +		exit $ksft_skip
 
-   media: i2c: tda1997: replace codec to component
+We now KNOW that we are running as root because of the check above.  We
+can delete this test, and rely on the later check to determine if the
+number of huge pages was actually increased.
 
-has been applied to the asoc tree at
+How about this instead (untested)?
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From 2d8102cc9a27577ffa4335aaaed4a26060688de2 Mon Sep 17 00:00:00 2001
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Date: Mon, 23 Apr 2018 02:10:26 +0000
-Subject: [PATCH] media: i2c: tda1997: replace codec to component
-
-Now we can replace Codec to Component. Let's do it.
-
-Note:
-	xxx_codec_xxx()		->	xxx_component_xxx()
-	.idle_bias_off = 0	->	.idle_bias_on = 1
-	.ignore_pmdown_time = 0	->	.use_pmdown_time = 1
-	-			->	.endianness = 1
-	-			->	.non_legacy_dai_naming = 1
-
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Tim Harvey <tharvey@gateworks.com>
-Acked-by: Tim Harvey <tharvey@gateworks.com>
-Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/media/i2c/tda1997x.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/media/i2c/tda1997x.c b/drivers/media/i2c/tda1997x.c
-index 3021913c28fa..33d7fcf541fc 100644
---- a/drivers/media/i2c/tda1997x.c
-+++ b/drivers/media/i2c/tda1997x.c
-@@ -2444,7 +2444,7 @@ static int tda1997x_pcm_startup(struct snd_pcm_substream *substream,
- 				struct snd_soc_dai *dai)
- {
- 	struct tda1997x_state *state = snd_soc_dai_get_drvdata(dai);
--	struct snd_soc_codec *codec = dai->codec;
-+	struct snd_soc_component *component = dai->component;
- 	struct snd_pcm_runtime *rtd = substream->runtime;
- 	int rate, err;
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
+index c2d41ed81b24..99a265a84e1d 100755
+--- a/tools/testing/selftests/memfd/run_tests.sh
++++ b/tools/testing/selftests/memfd/run_tests.sh
+@@ -1,6 +1,14 @@
+ #!/bin/bash
+ # please run as root
  
-@@ -2452,11 +2452,11 @@ static int tda1997x_pcm_startup(struct snd_pcm_substream *substream,
- 	err = snd_pcm_hw_constraint_minmax(rtd, SNDRV_PCM_HW_PARAM_RATE,
- 					   rate, rate);
- 	if (err < 0) {
--		dev_err(codec->dev, "failed to constrain samplerate to %dHz\n",
-+		dev_err(component->dev, "failed to constrain samplerate to %dHz\n",
- 			rate);
- 		return err;
- 	}
--	dev_info(codec->dev, "set samplerate constraint to %dHz\n", rate);
-+	dev_info(component->dev, "set samplerate constraint to %dHz\n", rate);
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++if [ $UID != 0 ]; then
++	echo "Please run this test as root"
++	exit $ksft_skip
++fi
++
+ #
+ # Normal tests requiring no special resources
+ #
+@@ -31,10 +39,6 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $hpages_test ]; then
  
- 	return 0;
- }
-@@ -2479,20 +2479,22 @@ static struct snd_soc_dai_driver tda1997x_audio_dai = {
- 	.ops = &tda1997x_dai_ops,
- };
+ 	echo 3 > /proc/sys/vm/drop_caches
+ 	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
+-	if [ $? -ne 0 ]; then
+-		echo "Please run this test as root"
+-		exit 1
+-	fi
+ 	while read name size unit; do
+ 		if [ "$name" = "HugePages_Free:" ]; then
+ 			freepgs=$size
+@@ -53,7 +57,7 @@ if [ $freepgs -lt $hpages_test ]; then
+ 	fi
+ 	printf "Not enough huge pages available (%d < %d)\n" \
+ 		$freepgs $needpgs
+-	exit 1
++	exit $ksft_skip
+ fi
  
--static int tda1997x_codec_probe(struct snd_soc_codec *codec)
-+static int tda1997x_codec_probe(struct snd_soc_component *component)
- {
- 	return 0;
- }
- 
--static int tda1997x_codec_remove(struct snd_soc_codec *codec)
-+static void tda1997x_codec_remove(struct snd_soc_component *component)
- {
--	return 0;
- }
- 
--static struct snd_soc_codec_driver tda1997x_codec_driver = {
--	.probe = tda1997x_codec_probe,
--	.remove = tda1997x_codec_remove,
--	.reg_word_size = sizeof(u16),
-+static struct snd_soc_component_driver tda1997x_codec_driver = {
-+	.probe			= tda1997x_codec_probe,
-+	.remove			= tda1997x_codec_remove,
-+	.idle_bias_on		= 1,
-+	.use_pmdown_time	= 1,
-+	.endianness		= 1,
-+	.non_legacy_dai_naming	= 1,
- };
- 
- static int tda1997x_probe(struct i2c_client *client,
-@@ -2737,7 +2739,7 @@ static int tda1997x_probe(struct i2c_client *client,
- 		else
- 			formats = SNDRV_PCM_FMTBIT_S16_LE;
- 		tda1997x_audio_dai.capture.formats = formats;
--		ret = snd_soc_register_codec(&state->client->dev,
-+		ret = devm_snd_soc_register_component(&state->client->dev,
- 					     &tda1997x_codec_driver,
- 					     &tda1997x_audio_dai, 1);
- 		if (ret) {
-@@ -2782,7 +2784,6 @@ static int tda1997x_remove(struct i2c_client *client)
- 	struct tda1997x_platform_data *pdata = &state->pdata;
- 
- 	if (pdata->audout_format) {
--		snd_soc_unregister_codec(&client->dev);
- 		mutex_destroy(&state->audio_lock);
- 	}
- 
--- 
-2.17.0
+ #
