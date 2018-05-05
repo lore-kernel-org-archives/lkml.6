@@ -1,169 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeEECiJ (ORCPT <rfc822;w@1wt.eu>);
-        Fri, 4 May 2018 22:38:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42500 "EHLO mail.kernel.org"
+        id S1751936AbeEECpd (ORCPT <rfc822;w@1wt.eu>);
+        Fri, 4 May 2018 22:45:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751709AbeEECiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 4 May 2018 22:38:07 -0400
-Date: Sat, 5 May 2018 11:38:03 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
-Message-Id: <20180505113803.45700179a93091b114ec6984@kernel.org>
-In-Reply-To: <20180504120642.354cdd1f@gandalf.local.home>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-        <20180503181137.6d82d897@gandalf.local.home>
-        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
-        <20180504120642.354cdd1f@gandalf.local.home>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751709AbeEECpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 4 May 2018 22:45:31 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Alexandre Torgue <alexandre.torgue@st.com>,
+        Michael Turquette <mturquette@baylibre.com>, gabriel.fernandez@st.com
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>
+References: <1525329609-7291-1-git-send-email-gabriel.fernandez@st.com>
+ <0066b4db-8da6-007d-780d-a8ffc4884ad0@st.com>
+Message-ID: <152548833044.138124.7516235724401510636@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [RESEND PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+ default
+Date: Fri, 04 May 2018 19:45:30 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w452jc8b032006
 
-On Fri, 4 May 2018 12:06:42 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> On Sat, 5 May 2018 00:48:28 +0900
-> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+Quoting Alexandre Torgue (2018-05-04 00:54:16)
+> Stephen
 > 
-> > So the syntax will be
+> On 05/03/2018 08:40 AM, gabriel.fernandez@st.com wrote:
+> > From: Gabriel Fernandez <gabriel.fernandez@st.com>
 > > 
-> > p[:EVENT] SYM[(CAST)|+OFFS] [FETCHARG]
+> > Clock driver is mandatory if the machine is selected.
+> > Then don't use 'bool' and 'depends on' commands, but 'def_bool'
+> > with the machine(s).
 > > 
-> > And here is an example;
+> > Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
 > > 
-> > p:myevent vfs_read(void *file, char *buf, size_t count, void *pos) $arg1 $arg2
 > 
-> If we do this, why bother with $arg1 $arg2?
+> Sorry to insist but we need it to have STM32 MCUs booting on Kernel v4.17.
 
-User may want to trace only some of them. :)
+Thanks for the bump. I missed this one. Of course, the user can still select
+the configs now, just it's annoying for upgrade path.
 
 > 
-> We could allow this to be an alternative format?
-
-I think we can skip passing $args, which implies trace all arguments.
-
-p[:EVENT] SYM[(CAST)|+OFFS] [FETCHARG(*)]
-
-*) if SYM(CAST) is given but no FETCHARG, which implies to trace
-all arguments in the CAST.
-
-> > In this case inside '()' will be analyzed and packed as something
-> > like "reference type" data and it is used when converting "$argN".
-> > And maybe we can provide $args special variable to record all
-> > arguments (it can be available only when the (CAST) is given).
+> > Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+> > Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+> > ---
+> >   drivers/clk/Kconfig | 6 ++----
+> >   1 file changed, 2 insertions(+), 4 deletions(-)
 > > 
-> > This gives the user a consistent model; if you just give a symbol
-> > the arguments may not be correctly translated. but if you give a
-> > type-casting information, it will be much better.
-> > 
-> > > 
-> > > Also, when looking at the kprobe code, I was looking at this function:
-> > >   
-> > > > /* Ftrace callback handler for kprobes -- called under preepmt disabed */
-> > > > void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
-> > > > 			   struct ftrace_ops *ops, struct pt_regs *regs)
-> > > > {
-> > > > 	struct kprobe *p;
-> > > > 	struct kprobe_ctlblk *kcb;
-> > > > 
-> > > > 	/* Preempt is disabled by ftrace */
-> > > > 	p = get_kprobe((kprobe_opcode_t *)ip);
-> > > > 	if (unlikely(!p) || kprobe_disabled(p))
-> > > > 		return;
-> > > > 
-> > > > 	kcb = get_kprobe_ctlblk();
-> > > > 	if (kprobe_running()) {
-> > > > 		kprobes_inc_nmissed_count(p);
-> > > > 	} else {
-> > > > 		unsigned long orig_ip = regs->ip;
-> > > > 		/* Kprobe handler expects regs->ip = ip + 1 as breakpoint hit */
-> > > > 		regs->ip = ip + sizeof(kprobe_opcode_t);
-> > > > 
-> > > > 		/* To emulate trap based kprobes, preempt_disable here */
-> > > > 		preempt_disable();
-> > > > 		__this_cpu_write(current_kprobe, p);
-> > > > 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> > > > 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-> > > > 			__skip_singlestep(p, regs, kcb, orig_ip);
-> > > > 			preempt_enable_no_resched();  
-> > > 
-> > > This preemption disabling and enabling looks rather strange. Looking at
-> > > git blame, it appears this was added for jprobes. Can we remove it now
-> > > that jprobes is going away?  
-> > 
-> > No, that is not for jprobes but for compatibility with kprobe's user
-> > handler. Since this transformation is done silently, user can not
-> > change their handler for ftrace case. So we need to keep this condition
-> > same as original kprobes.
-> > 
-> > And anyway, for using smp_processor_id() for accessing per-cpu,
-> > we should disable preemption, correct?
-> 
-> But as stated at the start of the function:
-> 
->  /* Preempt is disabled by ftrace */
+> > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > index 24a5bc3..721572a 100644
+> > --- a/drivers/clk/Kconfig
+> > +++ b/drivers/clk/Kconfig
+> > @@ -266,15 +266,13 @@ config COMMON_CLK_STM32MP157
+> >         Support for stm32mp157 SoC family clocks
+> >   
+> >   config COMMON_CLK_STM32F
+> > -     bool "Clock driver for stm32f4 and stm32f7 SoC families"
+> > -     depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+> > +     def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
 
-Ah, yes. So this is only for the jprobes.
+But the point of the change this patch is fixing was to expose these to
+the user to turn off they wanted. You'll need to do something like that
+again here, instead of removing the prompt and replacing it with a
+def_bool.
 
-> 
-> 
-> The reason I ask, is that we have for this function:
-> 
-> 		/* To emulate trap based kprobes, preempt_disable here */
-> 		preempt_disable();
-> 		__this_cpu_write(current_kprobe, p);
-> 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-> 			__skip_singlestep(p, regs, kcb, orig_ip);
-> 			preempt_enable_no_resched();
-> 		}
-> 
-> And in arch/x86/kernel/kprobes/core.c we have:
-> 
-> 	preempt_disable();
-> 
-> 	kcb = get_kprobe_ctlblk();
-> 	p = get_kprobe(addr);
-> 
-> 	if (p) {
-> 		if (kprobe_running()) {
-> 			if (reenter_kprobe(p, regs, kcb))
-> 				return 1;
-> 		} else {
-> 			set_current_kprobe(p, regs, kcb);
-> 			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> 
-> 			/*
-> 			 * If we have no pre-handler or it returned 0, we
-> 			 * continue with normal processing.  If we have a
-> 			 * pre-handler and it returned non-zero, it prepped
-> 			 * for calling the break_handler below on re-entry
-> 			 * for jprobe processing, so get out doing nothing
-> 			 * more here.
-> 			 */
-> 			if (!p->pre_handler || !p->pre_handler(p, regs))
-> 				setup_singlestep(p, regs, kcb, 0);
-> 			return 1;
-> 
-> 
-> Which is why I thought it was for jprobes. I'm a bit confused about
-> where preemption is enabled again.
+So this patch instead? It leaves it around for the whole arch, but
+limits the default to be the machines that matter. I suppose we could
+put an 'if EXPERT' on the bool part too if we don't even want to expose
+the options to normal users.
 
-You're right. So I would like to remove it with x86 jprobe support
-code to avoid inconsistency.
+-----8<-----
+From: Gabriel Fernandez <gabriel.fernandez@st.com>
+Date: Thu, 3 May 2018 08:40:09 +0200
+Subject: [PATCH] clk: stm32: fix: stm32 clock drivers are not compiled by
+ default
+Cc: <linux-kernel@vger.kernel.org>,
+    <linux-arm-kernel@lists.infradead.org>
 
-Thanks!
+Clock driver is mandatory if the machine is selected. Add a default
+of the machines that need the clk driver, so that the user can turn it
+off if they want, but otherwise it's exposed on the SoCs the driver
+is for.
 
+Fixes: da32d3539fca ("clk: stm32: add configuration flags for each of the stm32 drivers")
+Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
+Acked-by: Alexandre TORGUE <alexandre.torgue@st.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/Kconfig | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 41492e980ef4..ac3f0e2bc03f 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -267,15 +267,16 @@ config COMMON_CLK_STM32MP157
+ 
+ config COMMON_CLK_STM32F
+ 	bool "Clock driver for stm32f4 and stm32f7 SoC families"
+-	depends on MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
++	depends on ARCH_STM32
++	default MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746
+ 	help
+ 	---help---
+ 	  Support for stm32f4 and stm32f7 SoC families clocks
+ 
+ config COMMON_CLK_STM32H7
+ 	bool "Clock driver for stm32h7 SoC family"
+-	depends on MACH_STM32H743
+-	help
++	depends on ARCH_STM32
++	default MACH_STM32H743
+ 	---help---
+ 	  Support for stm32h7 SoC family clocks
+ 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Sent by a computer through tubes
