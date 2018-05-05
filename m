@@ -1,176 +1,146 @@
-Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1981440-1525535229-2-8600646325943274248
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2440419-1525565258-2-14989332463173319927
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='UTF-8'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-fsdevel-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525535229; b=Ppo4GIT71SnvKaFG2swn0J/WAO7m7QTy4j6MkUfzPJ2m4KChxf
-    iecHKe9ZIMVlu4tuKQYhh8fogqVIyRT7Mcpx0ArGEpUT31lmQq5t+NXjIOnx99AG
-    RNQObW0sa6Kp7loIcybjXZAyCcuMEc4vKQfD/NVR+Bdwpwwph7ww7qjngH/D0r7K
-    enr5a7KI8dbSvngjlk/1veiXAhu095a9O0mK65fSfv+hmPvbkVlQYG1GqhqnTHbO
-    pZ6zr3ADTBr7kqhRh4UUlkwf6zneje3sB12WO7ebvHaXjPE8F5I+hwHNj53+xIHa
-    2Li9StChN/pRkFHp1eGWTxKGeJNwEGTX0cwQ==
+    1525565258; b=S0/fq58eH8nWBrjqSzhji4jDXd7yZyLCpvhugL80IlDaAQYaNn
+    LLM4VoyWVmMBI5z0tp6vgT3ApJ1D0TM412wiPema+b+hVOV6btLnnBvaffBax6eQ
+    0+TtWIFwGgZqEykG/2sFcXT7sePnNl3TOUwKA8aLypRLt5B0AcwoGDHcgYLAzA3/
+    LX2+Hc0V44GTZr6NaR4LY62uiphjJ+Bmcp50vIyX+XG+Z5NoyjvDipWMk+kSXLXD
+    Ee+y5qmVeVv0SA6g48NAGtT/MqC4iWStdOO+Zp8cQsvBXh0J9YJGX99VIBfVVlBt
+    sl+f3Ez0TCaz2qUL2Q2wo2lUmc1U+8I6fbzA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:date:message-id:subject:from
-    :to:content-type:sender:list-id; s=fm2; t=1525535229; bh=BVZ6Lwc
-    ksH3moHb0wZn9S6kZv5UIHO9ThrrKxbbO2ks=; b=jxRF7t6wqDeWnRb1VPUBgO0
-    S31MM2pW7NldHKbzkjdZ6Ko3Jw/R5Yyf3aDnTumUaCgEbfyNjSuOw4PeaMMbW6fE
-    PCWQyir9w1MG5BgL2NpKUw0HLD2oD2Z/ZxYUgDTEOfonj0d/MTVoAIFzNH9uKIEd
-    V9S3upA/69dTgFeSE9XzyV3tURx0pw4GhsWsnCVu55Tb+boUrwS0kmzP0eIDBa5H
-    6JAIWE1cWFtYpOezlUPMTLgfWCmS/89qRwke6KrhCBYWKmINySnp/UwyoC8M15iQ
-    CsY6QCd428ZP5uNW5SO/lOjPjpMPntfNjkK/BwHWrBBu9SYvXTUhLlPIMGH+UTw=
-    =
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525565258; bh=6lQrUSgmeulcgiPzp59Zf25PO5gWFA
+    rJOJiemybUqIo=; b=IDEVfras2hmfuvgG4cy0FRWm52McWefvCFS7r9gJHQauRO
+    CBrWIzjrqmH6rt8tglNRveo3c4GbxqQ9Y1HNkscMipYYKQGxcn6Z9REs6G8zqv/W
+    2wB+9b+kPzlFR8RAl5ECvCDNLjxl5gEANAtC2HaF98RMQ/4yYtFS7lDUFaOPs2G2
+    EpLlD2OYnPyF+NgWU5I9dNI5E0FyNAvCFQ5feXDui3SQabhTmjhdnY0aLS7xO+pU
+    vIaSeY/hVzTyxXCv1dlNXdwzwGVT+h59DVm/NESPXWjoIyYu9q5Voa+mmKxIYsmg
+    v/FYlA3vEQlw0rcvqIKlxebjJA20YB81+6oK4VMA==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-    header.from=syzkaller.appspotmail.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=lFeWFfKe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=syzkaller.appspotmail.com header.result=pass
-    header_org.domain=appspotmail.com header_org.result=pass
-    header_is_org_domain=no;
-    x-vs=clean score=49 state=0
-Authentication-Results: mx6.messagingengine.com;
+    header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none)
-      header.from=syzkaller.appspotmail.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=lFeWFfKe;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=syzkaller.appspotmail.com header.result=pass
-      header_org.domain=appspotmail.com header_org.result=pass
-      header_is_org_domain=no;
-    x-vs=clean score=49 state=0
+      header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGvQp4pbsWVRLXvJRWbmvMOv5g6U2+aCnJDV+cHritY0gUyLCC4YCUlb4LIhUUX+eu58XI3hJThWf9AeBqHxas4RH0KsRX0kk55GXD9f6kZRGl0aIqEF
-    pu6WmqAVvn/r8RaXz7figy9vl0lds7Ck28U1lByJ5VfTqa2QLJVzbC7+476xtI2gDJfatKqTBQoixkXFoeDw2c2wqXJU9mQuARMe+sam9YfEhDYj8dCxipdJ
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=mzoz-TVAAAAA:20 a=4RBUngkUAAAA:8
-    a=hXGII_ervTZYTjFEORMA:9 a=3mAEGIRFl-Ih8bHf:21 a=QEXdDO2ut3YA:10
-    a=vVHabExCe68A:10 a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22
-    a=_sbA2Q-Kp09kWB8D3iXc:22
+X-CM-Envelope: MS4wfLPPjvVdcb2BdVv1dZbxZyK2SE+iFKjc6j5CWZob3l99O9iLWNWEw8vA2HuxC0Kgv0emH+MMW+OnWouX6HWYhHJImw6TjRL8lglhBLB0hOS13cj+LX9k
+    qAeHJWlACcMIoL84sgjqGzh9vzS4AtXe1QMZgS3SWmB8q/3N5zVlNtuAGGKC4V4+BM/qMD/t37ckJ/Ylgt+dvB7v1dVoA9Y1OK4buM34mT1Vw6aqUj/rv7dx
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=QyXUC8HyAAAA:8 a=BN_EupdU00CviCaM-nMA:9 a=CjuIK1q_8ugA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751248AbeEEPrE (ORCPT <rfc822;linux@kroah.com>);
-        Sat, 5 May 2018 11:47:04 -0400
-Received: from mail-io0-f197.google.com ([209.85.223.197]:55521 "EHLO
-        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751193AbeEEPrD (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 5 May 2018 11:47:03 -0400
-X-Google-Smtp-Source: AB8JxZp8RGWhZlcnlQMeophH9kRJEMMMBFWEKbFLg6KjLcP9rX9xl3oz//KSmIEaN56K+2uEHbgWnVBk/MXYEKdVT3w0eeOiZnee
+        id S1751775AbeEFAHe (ORCPT <rfc822;linux@kroah.com>);
+        Sat, 5 May 2018 20:07:34 -0400
+Received: from mga01.intel.com ([192.55.52.88]:20708 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751573AbeEFAHd (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Sat, 5 May 2018 20:07:33 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,367,1520924400";
+   d="scan'208";a="43452204"
+Date: Sun, 6 May 2018 07:57:26 +0800
+From: "Du, Changbin" <changbin.du@intel.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Du, Changbin" <changbin.du@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        tglx@linutronix.de, mingo@redhat.com, rdunlap@infradead.org,
+        x86@kernel.org, lgirdwood@gmail.com, broonie@kernel.org,
+        arnd@arndb.de, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] kernel hacking: new config DEBUG_EXPERIENCE to
+ apply GCC -Og optimization
+Message-ID: <20180505235725.hglh6u77spw55qa5@intel.com>
+References: <1525268700-10631-1-git-send-email-changbin.du@intel.com>
+ <1525268700-10631-5-git-send-email-changbin.du@intel.com>
+ <20180502101707.206984e9@gandalf.local.home>
+ <20180502134558.1f388e097dcde6f589635404@linux-foundation.org>
+ <20180502211956.6c9e8d7b@vmware.local.home>
+ <20180503134546.5p3z4g5na7ew4fun@intel.com>
+ <20180503102823.5b54cd56@gandalf.local.home>
 MIME-Version: 1.0
-Date: Sat, 05 May 2018 08:47:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000005aaf6056b7759ba@google.com>
-Subject: KASAN: null-ptr-deref Write in simple_write_to_buffer
-From: syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Sender: linux-fsdevel-owner@vger.kernel.org
-X-Mailing-List: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180503102823.5b54cd56@gandalf.local.home>
+User-Agent: NeoMutt/20180323-6-5ca392
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hello,
+On Thu, May 03, 2018 at 10:28:23AM -0400, Steven Rostedt wrote:
+> On Thu, 3 May 2018 21:45:46 +0800
+> "Du, Changbin" <changbin.du@intel.com> wrote:
+> 
+> > > With that gcc comment, I still think CONFIG_OPTIMIZE_DEBUG is more
+> > > inline with what it is and understandable than
+> > > CONFIG_DEBUG_EXPERIENCE. The "OPTIMIZE" is the key word there.
+> > > 
+> > > -- Steve  
+> > What about CONFIG_CC_OPTIMIZE_FOR_DEBUGGING? We alreay have
+> > CONFIG_CC_OPTIMIZE_FOR_SIZE and CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE.
+> 
+> Yes I like that much better.
+> 
+> > 
+> > And do we need to move it to existing configuration menu "General setup->
+> > Compiler optimization level"? But I also want it appear in "kernel hacking"
+> > since this is a debug option.
+> 
+> I understand why you would want it by debugging, but I think it does
+> make more sense to be included with the above two other options, as
+> they are all mutually exclusive.
+> 
+> This brings up the topic of creating config paradigms. That is, a way
+> of saying "I want a debug kernel" and select one option that selects
+> everything you would expect. Or perhaps we should have a:
+> 
+>  make debug_config
+> 
+Agree, I accomplish this by running script scripts/kconfig/merge_config.sh.
 
-syzbot found the following crash on:
+> that does it.
+> 
+> But that's a different topic. For now, I would just included it in
+> init/Kconfig, and not worry about it not showing up in kernel hacking.
+> 
+> 
+> -- Steve
 
-HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17912237800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
-dashboard link: https://syzkaller.appspot.com/bug?extid=ae590932da6e45d6564d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=108c8e07800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=142f907b800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-Restarting kernel threads ... done.
-==================================================================
-BUG: KASAN: null-ptr-deref in _copy_from_user+0x100/0x150 lib/usercopy.c:12
-Write of size 32 at addr 0000000000000020 by task syz-executor101/4498
-
-CPU: 1 PID: 4498 Comm: syz-executor101 Not tainted 4.17.0-rc3+ #34
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  kasan_report_error mm/kasan/report.c:352 [inline]
-  kasan_report.cold.7+0x6d/0x2fe mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
-  _copy_from_user+0x100/0x150 lib/usercopy.c:12
-  copy_from_user include/linux/uaccess.h:147 [inline]
-  simple_write_to_buffer+0xaf/0x130 fs/libfs.c:669
-  snapshot_write+0x16d/0x270 kernel/power/user.c:189
-  __vfs_write+0x10b/0x960 fs/read_write.c:485
-  vfs_write+0x1f8/0x560 fs/read_write.c:549
-  ksys_write+0xf9/0x250 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4455a9
-RSP: 002b:00007f973a88ada8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000006dac24 RCX: 00000000004455a9
-RDX: 0000000000000020 RSI: 0000000020000040 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dac20
-R13: 616e732f7665642f R14: 00007f973a88b9c0 R15: 0000000000000003
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report.
-If you forgot to add the Reported-by tag, once the fix for this bug is  
-merged
-into any tree, please reply to this email with:
-#syz fix: exact-commit-title
-If you want to test a patch for this bug, please reply with:
-#syz test: git://repo/address.git branch
-and provide the patch inline or as an attachment.
-To mark this as a duplicate of another syzbot report, please reply with:
-#syz dup: exact-subject-of-another-report
-If it's a one-off invalid bug report, please reply with:
-#syz invalid
-Note: if the crash happens again, it will cause creation of a new bug  
-report.
-Note: all commands must start from beginning of the line in the email body.
+-- 
+Thanks,
+Changbin Du
