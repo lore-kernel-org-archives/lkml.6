@@ -1,54 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751774AbeEEJMP (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 05:12:15 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:35366 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750971AbeEEJMN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 05:12:13 -0400
-Date: Sat, 5 May 2018 17:12:08 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: NeilBrown <neilb@suse.com>
-Cc: Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/8] rhashtable: remove nulls_base and related code.
-Message-ID: <20180505091208.tnsxi6hdpjn456yz@gondor.apana.org.au>
-References: <152540595840.18473.11298241115621799037.stgit@noble>
- <152540605427.18473.12277050439942480863.stgit@noble>
+        id S1751811AbeEEJMj (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 05:12:39 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33616 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751266AbeEEJMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 05:12:38 -0400
+Date: Sat, 5 May 2018 10:12:29 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aryabinin@virtuozzo.com, boqun.feng@gmail.com, catalin.marinas@arm.com,
+        dvyukov@google.com, mingo@kernel.org, will.deacon@arm.com
+Subject: Re: [PATCH 1/6] locking/atomic, asm-generic: instrument ordering
+ variants
+Message-ID: <20180505091229.smbvp7vlgpyld7dn@salmiak>
+References: <20180504173937.25300-1-mark.rutland@arm.com>
+ <20180504173937.25300-2-mark.rutland@arm.com>
+ <20180504180105.GS12217@hirez.programming.kicks-ass.net>
+ <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
+ <20180504182422.GT12217@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <152540605427.18473.12277050439942480863.stgit@noble>
+In-Reply-To: <20180504182422.GT12217@hirez.programming.kicks-ass.net>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 01:54:14PM +1000, NeilBrown wrote:
-> This "feature" is unused, undocumented, and untested and so
-> doesn't really belong.  If a use for the nulls marker
-> is found, all this code would need to be reviewed to
-> ensure it works as required.  It would be just as easy to
-> just add the code if/when it is needed instead.
+On Fri, May 04, 2018 at 08:24:22PM +0200, Peter Zijlstra wrote:
+> On Fri, May 04, 2018 at 07:09:09PM +0100, Mark Rutland wrote:
+> > On Fri, May 04, 2018 at 08:01:05PM +0200, Peter Zijlstra wrote:
+> > > On Fri, May 04, 2018 at 06:39:32PM +0100, Mark Rutland wrote:
 > 
-> This patch actually fixes a bug too.  The table resizing allows a
-> table to grow to 2^31 buckets, but the hash is truncated to 27 bits -
-> any growth beyond 2^27 is wasteful an ineffective.
+> > > >  include/asm-generic/atomic-instrumented.h | 1195 ++++++++++++++++++++++++-----
+> > > >  1 file changed, 1008 insertions(+), 187 deletions(-)
+> > > 
+> > > Is there really no way to either generate or further macro compress this?
+> > 
+> > I can definitely macro compress this somewhat, but the bulk of the
+> > repetition will be the ifdeffery, which can't be macro'd away IIUC.
 > 
-> This patch result in NULLS_MARKER(0) being used for all chains,
-> and leave the use of rht_is_a_null() to test for it.
+> Right, much like what we already have in linux/atomic.h I suspect,
+> having to duplicating that isn't brilliant either.
 > 
-> Signed-off-by: NeilBrown <neilb@suse.com>
+> > Generating this with a script is possible -- do we do anything like that
+> > elsewhere?
+> 
+> There's include/generated/ in your build directory. But nothing on this
+> scale I think.
 
-I disagree.  This is a fundamental requirement for the use of
-rhashtable in certain networking systems such as TCP/UDP.  So
-we know that there will be a use for this.
-
-As to the bug fix, please separate it out of the patch and resubmit.
+Sure. I'm not familiar with how we generate those, so I'll go digging through
+the build infrastructure.
 
 Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Mark.
