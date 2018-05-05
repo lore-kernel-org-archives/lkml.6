@@ -1,142 +1,1692 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751591AbeEEH7A (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 03:59:00 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44298 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbeEEH66 (ORCPT
+        id S1751270AbeEEILJ (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 04:11:09 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37353 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750752AbeEEILF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 03:58:58 -0400
-X-Google-Smtp-Source: AB8JxZq8IVt0Eq7PXuQEiSPwVWPTsBXZMLoli3r7G6cvfHUejRBrD1iL+hoMD+HvMNAGl8ojmUgyHw==
-From: Kyle Spiers <ksspiers@google.com>
-To: dan.j.williams@intel.com
-Cc: davem@davemloft.net, keescook@chromium.org, vinod.koul@intel.com,
-        ray.jui@broadcom.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kyle Spiers <ksspiers@google.com>
-Subject: [PATCH v2] async_pq: Remove VLA usage
-Date: Sat,  5 May 2018 00:58:54 -0700
-Message-Id: <20180505075854.192237-1-ksspiers@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Sat, 5 May 2018 04:11:05 -0400
+X-Google-Smtp-Source: AB8JxZqpyz4d3m5t0oi9Qrd/1v4e/C5zaMHtl0YDDo64nNIHjQl+UdAPX1h++lC/+3C29Km10Xf9TA==
+Date: Sat, 5 May 2018 10:11:00 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aryabinin@virtuozzo.com, boqun.feng@gmail.com, catalin.marinas@arm.com,
+        dvyukov@google.com, will.deacon@arm.com
+Subject: [PATCH] locking/atomics: Clean up the atomic.h maze of #defines
+Message-ID: <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
+References: <20180504173937.25300-1-mark.rutland@arm.com>
+ <20180504173937.25300-2-mark.rutland@arm.com>
+ <20180504180105.GS12217@hirez.programming.kicks-ass.net>
+ <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove VLAs from the kernel[1], this moves the
-allocation of coefs and blocks from the stack to being kmalloc()ed.
 
-[1] https://lkml.org/lkml/2018/3/7/621
+* Mark Rutland <mark.rutland@arm.com> wrote:
 
-Signed-off-by: Kyle Spiers <ksspiers@google.com>
+> On Fri, May 04, 2018 at 08:01:05PM +0200, Peter Zijlstra wrote:
+> > On Fri, May 04, 2018 at 06:39:32PM +0100, Mark Rutland wrote:
+> > > Currently <asm-generic/atomic-instrumented.h> only instruments the fully
+> > > ordered variants of atomic functions, ignoring the {relaxed,acquire,release}
+> > > ordering variants.
+> > > 
+> > > This patch reworks the header to instrument all ordering variants of the atomic
+> > > functions, so that architectures implementing these are instrumented
+> > > appropriately.
+> > > 
+> > > To minimise repetition, a macro is used to generate each variant from a common
+> > > template. The {full,relaxed,acquire,release} order variants respectively are
+> > > then built using this template, where the architecture provides an
+> > > implementation.
+> 
+> > >  include/asm-generic/atomic-instrumented.h | 1195 ++++++++++++++++++++++++-----
+> > >  1 file changed, 1008 insertions(+), 187 deletions(-)
+> > 
+> > Is there really no way to either generate or further macro compress this?
+> 
+> I can definitely macro compress this somewhat, but the bulk of the
+> repetition will be the ifdeffery, which can't be macro'd away IIUC.
+
+The thing is, the existing #ifdeffery is suboptimal to begin with.
+
+I just did the following cleanups (patch attached):
+
+ include/linux/atomic.h | 1275 +++++++++++++++++++++---------------------------
+ 1 file changed, 543 insertions(+), 732 deletions(-)
+
+The gist of the changes is the following simplification of the main construct:
+
+Before:
+
+ #ifndef atomic_fetch_dec_relaxed
+
+ #ifndef atomic_fetch_dec
+ #define atomic_fetch_dec(v)	        atomic_fetch_sub(1, (v))
+ #define atomic_fetch_dec_relaxed(v)	atomic_fetch_sub_relaxed(1, (v))
+ #define atomic_fetch_dec_acquire(v)	atomic_fetch_sub_acquire(1, (v))
+ #define atomic_fetch_dec_release(v)	atomic_fetch_sub_release(1, (v))
+ #else /* atomic_fetch_dec */
+ #define atomic_fetch_dec_relaxed	atomic_fetch_dec
+ #define atomic_fetch_dec_acquire	atomic_fetch_dec
+ #define atomic_fetch_dec_release	atomic_fetch_dec
+ #endif /* atomic_fetch_dec */
+
+ #else /* atomic_fetch_dec_relaxed */
+
+ #ifndef atomic_fetch_dec_acquire
+ #define atomic_fetch_dec_acquire(...)					\
+	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+ #endif
+
+ #ifndef atomic_fetch_dec_release
+ #define atomic_fetch_dec_release(...)					\
+	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+ #endif
+
+ #ifndef atomic_fetch_dec
+ #define atomic_fetch_dec(...)						\
+	__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+ #endif
+ #endif /* atomic_fetch_dec_relaxed */
+
+After:
+
+ #ifndef atomic_fetch_dec_relaxed
+ # ifndef atomic_fetch_dec
+ #  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
+ #  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
+ #  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
+ #  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
+ # else
+ #  define atomic_fetch_dec_relaxed		atomic_fetch_dec
+ #  define atomic_fetch_dec_acquire		atomic_fetch_dec
+ #  define atomic_fetch_dec_release		atomic_fetch_dec
+ # endif
+ #else
+ # ifndef atomic_fetch_dec_acquire
+ #  define atomic_fetch_dec_acquire(...)	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+ # endif
+ # ifndef atomic_fetch_dec_release
+ #  define atomic_fetch_dec_release(...)	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+ # endif
+ # ifndef atomic_fetch_dec
+ #  define atomic_fetch_dec(...)		__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+ # endif
+ #endif
+
+The new variant is readable at a glance, and the hierarchy of defines is very 
+obvious as well.
+
+And I think we could do even better - there's absolutely no reason why _every_ 
+operation has to be made conditional on a finegrained level - they are overriden 
+in API groups. In fact allowing individual override is arguably a fragility.
+
+So we could do the following simplification on top of that:
+
+ #ifndef atomic_fetch_dec_relaxed
+ # ifndef atomic_fetch_dec
+ #  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
+ #  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
+ #  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
+ #  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
+ # else
+ #  define atomic_fetch_dec_relaxed		atomic_fetch_dec
+ #  define atomic_fetch_dec_acquire		atomic_fetch_dec
+ #  define atomic_fetch_dec_release		atomic_fetch_dec
+ # endif
+ #else
+ # ifndef atomic_fetch_dec
+ #  define atomic_fetch_dec(...)		__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+ #  define atomic_fetch_dec_acquire(...)	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+ #  define atomic_fetch_dec_release(...)	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+ # endif
+ #endif
+
+Note how the grouping of APIs based on 'atomic_fetch_dec' is already an assumption 
+in the primary !atomic_fetch_dec_relaxed branch.
+
+I much prefer such clear constructs of API mapping versus magic macros.
+
+Thanks,
+
+	Ingo
+
+=============================>
+>From 0171d4ed840d25befaedcf03e834bb76acb400c0 Mon Sep 17 00:00:00 2001
+From: Ingo Molnar <mingo@kernel.org>
+Date: Sat, 5 May 2018 09:57:02 +0200
+Subject: [PATCH] locking/atomics: Clean up the atomic.h maze of #defines
+
+Use structured defines to make it all much more readable.
+
+Before:
+
+ #ifndef atomic_fetch_dec_relaxed
+
+ #ifndef atomic_fetch_dec
+ #define atomic_fetch_dec(v)	        atomic_fetch_sub(1, (v))
+ #define atomic_fetch_dec_relaxed(v)	atomic_fetch_sub_relaxed(1, (v))
+ #define atomic_fetch_dec_acquire(v)	atomic_fetch_sub_acquire(1, (v))
+ #define atomic_fetch_dec_release(v)	atomic_fetch_sub_release(1, (v))
+ #else /* atomic_fetch_dec */
+ #define atomic_fetch_dec_relaxed	atomic_fetch_dec
+ #define atomic_fetch_dec_acquire	atomic_fetch_dec
+ #define atomic_fetch_dec_release	atomic_fetch_dec
+ #endif /* atomic_fetch_dec */
+
+ #else /* atomic_fetch_dec_relaxed */
+
+ #ifndef atomic_fetch_dec_acquire
+ #define atomic_fetch_dec_acquire(...)					\
+	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+ #endif
+
+ #ifndef atomic_fetch_dec_release
+ #define atomic_fetch_dec_release(...)					\
+	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+ #endif
+
+ #ifndef atomic_fetch_dec
+ #define atomic_fetch_dec(...)						\
+	__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+ #endif
+ #endif /* atomic_fetch_dec_relaxed */
+
+After:
+
+ #ifndef atomic_fetch_dec_relaxed
+ # ifndef atomic_fetch_dec
+ #  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
+ #  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
+ #  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
+ #  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
+ # else
+ #  define atomic_fetch_dec_relaxed		atomic_fetch_dec
+ #  define atomic_fetch_dec_acquire		atomic_fetch_dec
+ #  define atomic_fetch_dec_release		atomic_fetch_dec
+ # endif
+ #else
+ # ifndef atomic_fetch_dec_acquire
+ #  define atomic_fetch_dec_acquire(...)	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+ # endif
+ # ifndef atomic_fetch_dec_release
+ #  define atomic_fetch_dec_release(...)	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+ # endif
+ # ifndef atomic_fetch_dec
+ #  define atomic_fetch_dec(...)		__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+ # endif
+ #endif
+
+Beyond the linecount reduction this also makes it easier to follow
+the various conditions.
+
+Also clean up a few other minor details and make the code more
+consistent throughout.
+
+No change in functionality.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Forgot to add slab.h
----
- crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
- crypto/async_tx/raid6test.c |  9 ++++++++-
- 2 files changed, 22 insertions(+), 5 deletions(-)
+ include/linux/atomic.h | 1275 +++++++++++++++++++++---------------------------
+ 1 file changed, 543 insertions(+), 732 deletions(-)
 
-diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
-index 56bd612927ab..af1912313a23 100644
---- a/crypto/async_tx/async_pq.c
-+++ b/crypto/async_tx/async_pq.c
-@@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
- 	    (src_cnt <= dma_maxpq(device, 0) ||
- 	     dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
- 	    is_dma_pq_aligned(device, offset, 0, len)) {
--		struct dma_async_tx_descriptor *tx;
-+		struct dma_async_tx_descriptor *tx = NULL;
- 		enum dma_ctrl_flags dma_flags = 0;
--		unsigned char coefs[src_cnt];
-+		unsigned char *coefs;
- 		int i, j;
+diff --git a/include/linux/atomic.h b/include/linux/atomic.h
+index 01ce3997cb42..dc157c092ae5 100644
+--- a/include/linux/atomic.h
++++ b/include/linux/atomic.h
+@@ -24,11 +24,11 @@
+  */
  
- 		/* run the p+q asynchronously */
-@@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
- 		 * sources and update the coefficients accordingly
- 		 */
- 		unmap->len = len;
-+		coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
-+		if (!coefs)
-+			goto out;
- 		for (i = 0, j = 0; i < src_cnt; i++) {
- 			if (blocks[i] == NULL)
- 				continue;
-@@ -240,7 +243,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
- 		}
+ #ifndef atomic_read_acquire
+-#define  atomic_read_acquire(v)		smp_load_acquire(&(v)->counter)
++# define atomic_read_acquire(v)			smp_load_acquire(&(v)->counter)
+ #endif
  
- 		tx = do_async_gen_syndrome(chan, coefs, j, unmap, dma_flags, submit);
-+out:
- 		dmaengine_unmap_put(unmap);
-+		kfree(coefs);
- 		return tx;
- 	}
+ #ifndef atomic_set_release
+-#define  atomic_set_release(v, i)	smp_store_release(&(v)->counter, (i))
++# define atomic_set_release(v, i)		smp_store_release(&(v)->counter, (i))
+ #endif
  
-@@ -298,8 +303,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
- {
- 	struct dma_chan *chan = pq_val_chan(submit, blocks, disks, len);
- 	struct dma_device *device = chan ? chan->device : NULL;
--	struct dma_async_tx_descriptor *tx;
--	unsigned char coefs[disks-2];
-+	struct dma_async_tx_descriptor *tx = NULL;
-+	unsigned char *coefs = NULL;
- 	enum dma_ctrl_flags dma_flags = submit->cb_fn ? DMA_PREP_INTERRUPT : 0;
- 	struct dmaengine_unmap_data *unmap = NULL;
+ /*
+@@ -71,454 +71,351 @@
+ })
+ #endif
  
-@@ -318,6 +323,9 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
- 			 __func__, disks, len);
+-/* atomic_add_return_relaxed */
+-#ifndef atomic_add_return_relaxed
+-#define  atomic_add_return_relaxed	atomic_add_return
+-#define  atomic_add_return_acquire	atomic_add_return
+-#define  atomic_add_return_release	atomic_add_return
+-
+-#else /* atomic_add_return_relaxed */
+-
+-#ifndef atomic_add_return_acquire
+-#define  atomic_add_return_acquire(...)					\
+-	__atomic_op_acquire(atomic_add_return, __VA_ARGS__)
+-#endif
++/* atomic_add_return_relaxed() et al: */
  
- 		unmap->len = len;
-+		coefs = kmalloc_array(disks - 2, sizeof(*coefs), GFP_KERNEL);
-+		if (!coefs)
-+			goto out;
- 		for (i = 0; i < disks-2; i++)
- 			if (likely(blocks[i])) {
- 				unmap->addr[j] = dma_map_page(dev, blocks[i],
-@@ -423,6 +431,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
- 		async_tx_sync_epilog(submit);
- 		tx = NULL;
- 	}
-+out:
-+	kfree(coefs);
- 	dmaengine_unmap_put(unmap);
- 
- 	return tx;
-diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
-index dad95f45b88f..4237a5ae8f42 100644
---- a/crypto/async_tx/raid6test.c
-+++ b/crypto/async_tx/raid6test.c
-@@ -24,6 +24,7 @@
- #include <linux/mm.h>
- #include <linux/random.h>
- #include <linux/module.h>
-+#include <linux/slab.h>
- 
- #undef pr
- #define pr(fmt, args...) pr_info("raid6test: " fmt, ##args)
-@@ -81,11 +82,16 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
- 			init_async_submit(&submit, 0, NULL, NULL, NULL, addr_conv);
- 			tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
- 		} else {
--			struct page *blocks[disks];
-+			struct page **blocks;
- 			struct page *dest;
- 			int count = 0;
- 			int i;
- 
-+			blocks = kmalloc_array(disks, sizeof(*blocks),
-+							GFP_KERNEL);
-+			if (!blocks)
-+				return;
+-#ifndef atomic_add_return_release
+-#define  atomic_add_return_release(...)					\
+-	__atomic_op_release(atomic_add_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_add_return
+-#define  atomic_add_return(...)						\
+-	__atomic_op_fence(atomic_add_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic_add_return_relaxed */
++#ifndef atomic_add_return_relaxed
++# define atomic_add_return_relaxed		atomic_add_return
++# define atomic_add_return_acquire		atomic_add_return
++# define atomic_add_return_release		atomic_add_return
++#else
++# ifndef atomic_add_return_acquire
++#  define atomic_add_return_acquire(...)	__atomic_op_acquire(atomic_add_return, __VA_ARGS__)
++# endif
++# ifndef atomic_add_return_release
++#  define atomic_add_return_release(...)	__atomic_op_release(atomic_add_return, __VA_ARGS__)
++# endif
++# ifndef atomic_add_return
++#  define atomic_add_return(...)		__atomic_op_fence(atomic_add_return, __VA_ARGS__)
++# endif
++#endif
 +
- 			/* data+Q failure.  Reconstruct data from P,
- 			 * then rebuild syndrome
- 			 */
-@@ -101,6 +107,7 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
++/* atomic_inc_return_relaxed() et al: */
  
- 			init_async_submit(&submit, 0, tx, NULL, NULL, addr_conv);
- 			tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
-+			kfree(blocks);
- 		}
- 	} else {
- 		if (failb == disks-2) {
--- 
-2.17.0.441.gb46fe60e1d-goog
+-/* atomic_inc_return_relaxed */
+ #ifndef atomic_inc_return_relaxed
+-#define  atomic_inc_return_relaxed	atomic_inc_return
+-#define  atomic_inc_return_acquire	atomic_inc_return
+-#define  atomic_inc_return_release	atomic_inc_return
+-
+-#else /* atomic_inc_return_relaxed */
+-
+-#ifndef atomic_inc_return_acquire
+-#define  atomic_inc_return_acquire(...)					\
+-	__atomic_op_acquire(atomic_inc_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_inc_return_release
+-#define  atomic_inc_return_release(...)					\
+-	__atomic_op_release(atomic_inc_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_inc_return
+-#define  atomic_inc_return(...)						\
+-	__atomic_op_fence(atomic_inc_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic_inc_return_relaxed */
++# define atomic_inc_return_relaxed		atomic_inc_return
++# define atomic_inc_return_acquire		atomic_inc_return
++# define atomic_inc_return_release		atomic_inc_return
++#else
++# ifndef atomic_inc_return_acquire
++#  define atomic_inc_return_acquire(...)	__atomic_op_acquire(atomic_inc_return, __VA_ARGS__)
++# endif
++# ifndef atomic_inc_return_release
++#  define atomic_inc_return_release(...)	__atomic_op_release(atomic_inc_return, __VA_ARGS__)
++# endif
++# ifndef atomic_inc_return
++#  define atomic_inc_return(...)		__atomic_op_fence(atomic_inc_return, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_sub_return_relaxed() et al: */
+ 
+-/* atomic_sub_return_relaxed */
+ #ifndef atomic_sub_return_relaxed
+-#define  atomic_sub_return_relaxed	atomic_sub_return
+-#define  atomic_sub_return_acquire	atomic_sub_return
+-#define  atomic_sub_return_release	atomic_sub_return
+-
+-#else /* atomic_sub_return_relaxed */
+-
+-#ifndef atomic_sub_return_acquire
+-#define  atomic_sub_return_acquire(...)					\
+-	__atomic_op_acquire(atomic_sub_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_sub_return_release
+-#define  atomic_sub_return_release(...)					\
+-	__atomic_op_release(atomic_sub_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_sub_return
+-#define  atomic_sub_return(...)						\
+-	__atomic_op_fence(atomic_sub_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic_sub_return_relaxed */
++# define atomic_sub_return_relaxed		atomic_sub_return
++# define atomic_sub_return_acquire		atomic_sub_return
++# define atomic_sub_return_release		atomic_sub_return
++#else
++# ifndef atomic_sub_return_acquire
++#  define atomic_sub_return_acquire(...)	__atomic_op_acquire(atomic_sub_return, __VA_ARGS__)
++# endif
++# ifndef atomic_sub_return_release
++#  define atomic_sub_return_release(...)	__atomic_op_release(atomic_sub_return, __VA_ARGS__)
++# endif
++# ifndef atomic_sub_return
++#  define atomic_sub_return(...)		__atomic_op_fence(atomic_sub_return, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_dec_return_relaxed() et al: */
+ 
+-/* atomic_dec_return_relaxed */
+ #ifndef atomic_dec_return_relaxed
+-#define  atomic_dec_return_relaxed	atomic_dec_return
+-#define  atomic_dec_return_acquire	atomic_dec_return
+-#define  atomic_dec_return_release	atomic_dec_return
+-
+-#else /* atomic_dec_return_relaxed */
+-
+-#ifndef atomic_dec_return_acquire
+-#define  atomic_dec_return_acquire(...)					\
+-	__atomic_op_acquire(atomic_dec_return, __VA_ARGS__)
+-#endif
++# define atomic_dec_return_relaxed		atomic_dec_return
++# define atomic_dec_return_acquire		atomic_dec_return
++# define atomic_dec_return_release		atomic_dec_return
++#else
++# ifndef atomic_dec_return_acquire
++#  define atomic_dec_return_acquire(...)	__atomic_op_acquire(atomic_dec_return, __VA_ARGS__)
++# endif
++# ifndef atomic_dec_return_release
++#  define atomic_dec_return_release(...)	__atomic_op_release(atomic_dec_return, __VA_ARGS__)
++# endif
++# ifndef atomic_dec_return
++#  define atomic_dec_return(...)		__atomic_op_fence(atomic_dec_return, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_fetch_add_relaxed() et al: */
+ 
+-#ifndef atomic_dec_return_release
+-#define  atomic_dec_return_release(...)					\
+-	__atomic_op_release(atomic_dec_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_dec_return
+-#define  atomic_dec_return(...)						\
+-	__atomic_op_fence(atomic_dec_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic_dec_return_relaxed */
+-
+-
+-/* atomic_fetch_add_relaxed */
+ #ifndef atomic_fetch_add_relaxed
+-#define atomic_fetch_add_relaxed	atomic_fetch_add
+-#define atomic_fetch_add_acquire	atomic_fetch_add
+-#define atomic_fetch_add_release	atomic_fetch_add
+-
+-#else /* atomic_fetch_add_relaxed */
+-
+-#ifndef atomic_fetch_add_acquire
+-#define atomic_fetch_add_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_add, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_add_release
+-#define atomic_fetch_add_release(...)					\
+-	__atomic_op_release(atomic_fetch_add, __VA_ARGS__)
+-#endif
++# define atomic_fetch_add_relaxed		atomic_fetch_add
++# define atomic_fetch_add_acquire		atomic_fetch_add
++# define atomic_fetch_add_release		atomic_fetch_add
++#else
++# ifndef atomic_fetch_add_acquire
++#  define atomic_fetch_add_acquire(...)		__atomic_op_acquire(atomic_fetch_add, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_add_release
++#  define atomic_fetch_add_release(...)		__atomic_op_release(atomic_fetch_add, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_add
++#  define atomic_fetch_add(...)			__atomic_op_fence(atomic_fetch_add, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_fetch_inc_relaxed() et al: */
+ 
+-#ifndef atomic_fetch_add
+-#define atomic_fetch_add(...)						\
+-	__atomic_op_fence(atomic_fetch_add, __VA_ARGS__)
+-#endif
+-#endif /* atomic_fetch_add_relaxed */
+-
+-/* atomic_fetch_inc_relaxed */
+ #ifndef atomic_fetch_inc_relaxed
++# ifndef atomic_fetch_inc
++#  define atomic_fetch_inc(v)			atomic_fetch_add(1, (v))
++#  define atomic_fetch_inc_relaxed(v)		atomic_fetch_add_relaxed(1, (v))
++#  define atomic_fetch_inc_acquire(v)		atomic_fetch_add_acquire(1, (v))
++#  define atomic_fetch_inc_release(v)		atomic_fetch_add_release(1, (v))
++# else
++#  define atomic_fetch_inc_relaxed		atomic_fetch_inc
++#  define atomic_fetch_inc_acquire		atomic_fetch_inc
++#  define atomic_fetch_inc_release		atomic_fetch_inc
++# endif
++#else
++# ifndef atomic_fetch_inc_acquire
++#  define atomic_fetch_inc_acquire(...)		__atomic_op_acquire(atomic_fetch_inc, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_inc_release
++#  define atomic_fetch_inc_release(...)		__atomic_op_release(atomic_fetch_inc, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_inc
++#  define atomic_fetch_inc(...)			__atomic_op_fence(atomic_fetch_inc, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_fetch_sub_relaxed() et al: */
+ 
+-#ifndef atomic_fetch_inc
+-#define atomic_fetch_inc(v)	        atomic_fetch_add(1, (v))
+-#define atomic_fetch_inc_relaxed(v)	atomic_fetch_add_relaxed(1, (v))
+-#define atomic_fetch_inc_acquire(v)	atomic_fetch_add_acquire(1, (v))
+-#define atomic_fetch_inc_release(v)	atomic_fetch_add_release(1, (v))
+-#else /* atomic_fetch_inc */
+-#define atomic_fetch_inc_relaxed	atomic_fetch_inc
+-#define atomic_fetch_inc_acquire	atomic_fetch_inc
+-#define atomic_fetch_inc_release	atomic_fetch_inc
+-#endif /* atomic_fetch_inc */
+-
+-#else /* atomic_fetch_inc_relaxed */
+-
+-#ifndef atomic_fetch_inc_acquire
+-#define atomic_fetch_inc_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_inc, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_inc_release
+-#define atomic_fetch_inc_release(...)					\
+-	__atomic_op_release(atomic_fetch_inc, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_inc
+-#define atomic_fetch_inc(...)						\
+-	__atomic_op_fence(atomic_fetch_inc, __VA_ARGS__)
+-#endif
+-#endif /* atomic_fetch_inc_relaxed */
+-
+-/* atomic_fetch_sub_relaxed */
+ #ifndef atomic_fetch_sub_relaxed
+-#define atomic_fetch_sub_relaxed	atomic_fetch_sub
+-#define atomic_fetch_sub_acquire	atomic_fetch_sub
+-#define atomic_fetch_sub_release	atomic_fetch_sub
+-
+-#else /* atomic_fetch_sub_relaxed */
+-
+-#ifndef atomic_fetch_sub_acquire
+-#define atomic_fetch_sub_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_sub, __VA_ARGS__)
+-#endif
++# define atomic_fetch_sub_relaxed		atomic_fetch_sub
++# define atomic_fetch_sub_acquire		atomic_fetch_sub
++# define atomic_fetch_sub_release		atomic_fetch_sub
++#else
++# ifndef atomic_fetch_sub_acquire
++#  define atomic_fetch_sub_acquire(...)		__atomic_op_acquire(atomic_fetch_sub, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_sub_release
++#  define atomic_fetch_sub_release(...)		__atomic_op_release(atomic_fetch_sub, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_sub
++#  define atomic_fetch_sub(...)			__atomic_op_fence(atomic_fetch_sub, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_fetch_dec_relaxed() et al: */
+ 
+-#ifndef atomic_fetch_sub_release
+-#define atomic_fetch_sub_release(...)					\
+-	__atomic_op_release(atomic_fetch_sub, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_sub
+-#define atomic_fetch_sub(...)						\
+-	__atomic_op_fence(atomic_fetch_sub, __VA_ARGS__)
+-#endif
+-#endif /* atomic_fetch_sub_relaxed */
+-
+-/* atomic_fetch_dec_relaxed */
+ #ifndef atomic_fetch_dec_relaxed
++# ifndef atomic_fetch_dec
++#  define atomic_fetch_dec(v)			atomic_fetch_sub(1, (v))
++#  define atomic_fetch_dec_relaxed(v)		atomic_fetch_sub_relaxed(1, (v))
++#  define atomic_fetch_dec_acquire(v)		atomic_fetch_sub_acquire(1, (v))
++#  define atomic_fetch_dec_release(v)		atomic_fetch_sub_release(1, (v))
++# else
++#  define atomic_fetch_dec_relaxed		atomic_fetch_dec
++#  define atomic_fetch_dec_acquire		atomic_fetch_dec
++#  define atomic_fetch_dec_release		atomic_fetch_dec
++# endif
++#else
++# ifndef atomic_fetch_dec_acquire
++#  define atomic_fetch_dec_acquire(...)		__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_dec_release
++#  define atomic_fetch_dec_release(...)		__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_dec
++#  define atomic_fetch_dec(...)			__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_fetch_or_relaxed() et al: */
+ 
+-#ifndef atomic_fetch_dec
+-#define atomic_fetch_dec(v)	        atomic_fetch_sub(1, (v))
+-#define atomic_fetch_dec_relaxed(v)	atomic_fetch_sub_relaxed(1, (v))
+-#define atomic_fetch_dec_acquire(v)	atomic_fetch_sub_acquire(1, (v))
+-#define atomic_fetch_dec_release(v)	atomic_fetch_sub_release(1, (v))
+-#else /* atomic_fetch_dec */
+-#define atomic_fetch_dec_relaxed	atomic_fetch_dec
+-#define atomic_fetch_dec_acquire	atomic_fetch_dec
+-#define atomic_fetch_dec_release	atomic_fetch_dec
+-#endif /* atomic_fetch_dec */
+-
+-#else /* atomic_fetch_dec_relaxed */
+-
+-#ifndef atomic_fetch_dec_acquire
+-#define atomic_fetch_dec_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_dec, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_dec_release
+-#define atomic_fetch_dec_release(...)					\
+-	__atomic_op_release(atomic_fetch_dec, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_dec
+-#define atomic_fetch_dec(...)						\
+-	__atomic_op_fence(atomic_fetch_dec, __VA_ARGS__)
+-#endif
+-#endif /* atomic_fetch_dec_relaxed */
+-
+-/* atomic_fetch_or_relaxed */
+ #ifndef atomic_fetch_or_relaxed
+-#define atomic_fetch_or_relaxed	atomic_fetch_or
+-#define atomic_fetch_or_acquire	atomic_fetch_or
+-#define atomic_fetch_or_release	atomic_fetch_or
+-
+-#else /* atomic_fetch_or_relaxed */
+-
+-#ifndef atomic_fetch_or_acquire
+-#define atomic_fetch_or_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_or, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_or_release
+-#define atomic_fetch_or_release(...)					\
+-	__atomic_op_release(atomic_fetch_or, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_or
+-#define atomic_fetch_or(...)						\
+-	__atomic_op_fence(atomic_fetch_or, __VA_ARGS__)
+-#endif
+-#endif /* atomic_fetch_or_relaxed */
++# define atomic_fetch_or_relaxed		atomic_fetch_or
++# define atomic_fetch_or_acquire		atomic_fetch_or
++# define atomic_fetch_or_release		atomic_fetch_or
++#else
++# ifndef atomic_fetch_or_acquire
++#  define atomic_fetch_or_acquire(...)		__atomic_op_acquire(atomic_fetch_or, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_or_release
++#  define atomic_fetch_or_release(...)		__atomic_op_release(atomic_fetch_or, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_or
++#  define atomic_fetch_or(...)			__atomic_op_fence(atomic_fetch_or, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_fetch_and_relaxed() et al: */
+ 
+-/* atomic_fetch_and_relaxed */
+ #ifndef atomic_fetch_and_relaxed
+-#define atomic_fetch_and_relaxed	atomic_fetch_and
+-#define atomic_fetch_and_acquire	atomic_fetch_and
+-#define atomic_fetch_and_release	atomic_fetch_and
+-
+-#else /* atomic_fetch_and_relaxed */
+-
+-#ifndef atomic_fetch_and_acquire
+-#define atomic_fetch_and_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_and, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_and_release
+-#define atomic_fetch_and_release(...)					\
+-	__atomic_op_release(atomic_fetch_and, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_and
+-#define atomic_fetch_and(...)						\
+-	__atomic_op_fence(atomic_fetch_and, __VA_ARGS__)
++# define atomic_fetch_and_relaxed		atomic_fetch_and
++# define atomic_fetch_and_acquire		atomic_fetch_and
++# define atomic_fetch_and_release		atomic_fetch_and
++#else
++# ifndef atomic_fetch_and_acquire
++#  define atomic_fetch_and_acquire(...)		__atomic_op_acquire(atomic_fetch_and, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_and_release
++#  define atomic_fetch_and_release(...)		__atomic_op_release(atomic_fetch_and, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_and
++#  define atomic_fetch_and(...)			__atomic_op_fence(atomic_fetch_and, __VA_ARGS__)
++# endif
+ #endif
+-#endif /* atomic_fetch_and_relaxed */
+ 
+ #ifdef atomic_andnot
+-/* atomic_fetch_andnot_relaxed */
+-#ifndef atomic_fetch_andnot_relaxed
+-#define atomic_fetch_andnot_relaxed	atomic_fetch_andnot
+-#define atomic_fetch_andnot_acquire	atomic_fetch_andnot
+-#define atomic_fetch_andnot_release	atomic_fetch_andnot
+-
+-#else /* atomic_fetch_andnot_relaxed */
+ 
+-#ifndef atomic_fetch_andnot_acquire
+-#define atomic_fetch_andnot_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_andnot, __VA_ARGS__)
+-#endif
++/* atomic_fetch_andnot_relaxed() et al: */
+ 
+-#ifndef atomic_fetch_andnot_release
+-#define atomic_fetch_andnot_release(...)					\
+-	__atomic_op_release(atomic_fetch_andnot, __VA_ARGS__)
++#ifndef atomic_fetch_andnot_relaxed
++# define atomic_fetch_andnot_relaxed		atomic_fetch_andnot
++# define atomic_fetch_andnot_acquire		atomic_fetch_andnot
++# define atomic_fetch_andnot_release		atomic_fetch_andnot
++#else
++# ifndef atomic_fetch_andnot_acquire
++#  define atomic_fetch_andnot_acquire(...)	 __atomic_op_acquire(atomic_fetch_andnot, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_andnot_release
++#  define atomic_fetch_andnot_release(...)	 __atomic_op_release(atomic_fetch_andnot, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_andnot
++#  define atomic_fetch_andnot(...)		__atomic_op_fence(atomic_fetch_andnot, __VA_ARGS__)
++# endif
+ #endif
+ 
+-#ifndef atomic_fetch_andnot
+-#define atomic_fetch_andnot(...)						\
+-	__atomic_op_fence(atomic_fetch_andnot, __VA_ARGS__)
+-#endif
+-#endif /* atomic_fetch_andnot_relaxed */
+ #endif /* atomic_andnot */
+ 
+-/* atomic_fetch_xor_relaxed */
+-#ifndef atomic_fetch_xor_relaxed
+-#define atomic_fetch_xor_relaxed	atomic_fetch_xor
+-#define atomic_fetch_xor_acquire	atomic_fetch_xor
+-#define atomic_fetch_xor_release	atomic_fetch_xor
+-
+-#else /* atomic_fetch_xor_relaxed */
++/* atomic_fetch_xor_relaxed() et al: */
+ 
+-#ifndef atomic_fetch_xor_acquire
+-#define atomic_fetch_xor_acquire(...)					\
+-	__atomic_op_acquire(atomic_fetch_xor, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_fetch_xor_release
+-#define atomic_fetch_xor_release(...)					\
+-	__atomic_op_release(atomic_fetch_xor, __VA_ARGS__)
++#ifndef atomic_fetch_xor_relaxed
++# define atomic_fetch_xor_relaxed		atomic_fetch_xor
++# define atomic_fetch_xor_acquire		atomic_fetch_xor
++# define atomic_fetch_xor_release		atomic_fetch_xor
++#else
++# ifndef atomic_fetch_xor_acquire
++#  define atomic_fetch_xor_acquire(...)		__atomic_op_acquire(atomic_fetch_xor, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_xor_release
++#  define atomic_fetch_xor_release(...)		__atomic_op_release(atomic_fetch_xor, __VA_ARGS__)
++# endif
++# ifndef atomic_fetch_xor
++#  define atomic_fetch_xor(...)			__atomic_op_fence(atomic_fetch_xor, __VA_ARGS__)
++# endif
+ #endif
+ 
+-#ifndef atomic_fetch_xor
+-#define atomic_fetch_xor(...)						\
+-	__atomic_op_fence(atomic_fetch_xor, __VA_ARGS__)
+-#endif
+-#endif /* atomic_fetch_xor_relaxed */
+ 
++/* atomic_xchg_relaxed() et al: */
+ 
+-/* atomic_xchg_relaxed */
+ #ifndef atomic_xchg_relaxed
+-#define  atomic_xchg_relaxed		atomic_xchg
+-#define  atomic_xchg_acquire		atomic_xchg
+-#define  atomic_xchg_release		atomic_xchg
+-
+-#else /* atomic_xchg_relaxed */
+-
+-#ifndef atomic_xchg_acquire
+-#define  atomic_xchg_acquire(...)					\
+-	__atomic_op_acquire(atomic_xchg, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_xchg_release
+-#define  atomic_xchg_release(...)					\
+-	__atomic_op_release(atomic_xchg, __VA_ARGS__)
+-#endif
++#define atomic_xchg_relaxed			atomic_xchg
++#define atomic_xchg_acquire			atomic_xchg
++#define atomic_xchg_release			atomic_xchg
++#else
++# ifndef atomic_xchg_acquire
++#  define atomic_xchg_acquire(...)		__atomic_op_acquire(atomic_xchg, __VA_ARGS__)
++# endif
++# ifndef atomic_xchg_release
++#  define atomic_xchg_release(...)		__atomic_op_release(atomic_xchg, __VA_ARGS__)
++# endif
++# ifndef atomic_xchg
++#  define atomic_xchg(...)			__atomic_op_fence(atomic_xchg, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic_cmpxchg_relaxed() et al: */
+ 
+-#ifndef atomic_xchg
+-#define  atomic_xchg(...)						\
+-	__atomic_op_fence(atomic_xchg, __VA_ARGS__)
+-#endif
+-#endif /* atomic_xchg_relaxed */
+-
+-/* atomic_cmpxchg_relaxed */
+ #ifndef atomic_cmpxchg_relaxed
+-#define  atomic_cmpxchg_relaxed		atomic_cmpxchg
+-#define  atomic_cmpxchg_acquire		atomic_cmpxchg
+-#define  atomic_cmpxchg_release		atomic_cmpxchg
+-
+-#else /* atomic_cmpxchg_relaxed */
+-
+-#ifndef atomic_cmpxchg_acquire
+-#define  atomic_cmpxchg_acquire(...)					\
+-	__atomic_op_acquire(atomic_cmpxchg, __VA_ARGS__)
++# define atomic_cmpxchg_relaxed			atomic_cmpxchg
++# define atomic_cmpxchg_acquire			atomic_cmpxchg
++# define atomic_cmpxchg_release			atomic_cmpxchg
++#else
++# ifndef atomic_cmpxchg_acquire
++#  define atomic_cmpxchg_acquire(...)		__atomic_op_acquire(atomic_cmpxchg, __VA_ARGS__)
++# endif
++# ifndef atomic_cmpxchg_release
++#  define atomic_cmpxchg_release(...)		__atomic_op_release(atomic_cmpxchg, __VA_ARGS__)
++# endif
++# ifndef atomic_cmpxchg
++#  define atomic_cmpxchg(...)			__atomic_op_fence(atomic_cmpxchg, __VA_ARGS__)
++# endif
+ #endif
+ 
+-#ifndef atomic_cmpxchg_release
+-#define  atomic_cmpxchg_release(...)					\
+-	__atomic_op_release(atomic_cmpxchg, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic_cmpxchg
+-#define  atomic_cmpxchg(...)						\
+-	__atomic_op_fence(atomic_cmpxchg, __VA_ARGS__)
+-#endif
+-#endif /* atomic_cmpxchg_relaxed */
+-
+ #ifndef atomic_try_cmpxchg
+-
+-#define __atomic_try_cmpxchg(type, _p, _po, _n)				\
+-({									\
++# define __atomic_try_cmpxchg(type, _p, _po, _n)			\
++  ({									\
+ 	typeof(_po) __po = (_po);					\
+ 	typeof(*(_po)) __r, __o = *__po;				\
+ 	__r = atomic_cmpxchg##type((_p), __o, (_n));			\
+ 	if (unlikely(__r != __o))					\
+ 		*__po = __r;						\
+ 	likely(__r == __o);						\
+-})
+-
+-#define atomic_try_cmpxchg(_p, _po, _n)		__atomic_try_cmpxchg(, _p, _po, _n)
+-#define atomic_try_cmpxchg_relaxed(_p, _po, _n)	__atomic_try_cmpxchg(_relaxed, _p, _po, _n)
+-#define atomic_try_cmpxchg_acquire(_p, _po, _n)	__atomic_try_cmpxchg(_acquire, _p, _po, _n)
+-#define atomic_try_cmpxchg_release(_p, _po, _n)	__atomic_try_cmpxchg(_release, _p, _po, _n)
+-
+-#else /* atomic_try_cmpxchg */
+-#define atomic_try_cmpxchg_relaxed	atomic_try_cmpxchg
+-#define atomic_try_cmpxchg_acquire	atomic_try_cmpxchg
+-#define atomic_try_cmpxchg_release	atomic_try_cmpxchg
+-#endif /* atomic_try_cmpxchg */
+-
+-/* cmpxchg_relaxed */
+-#ifndef cmpxchg_relaxed
+-#define  cmpxchg_relaxed		cmpxchg
+-#define  cmpxchg_acquire		cmpxchg
+-#define  cmpxchg_release		cmpxchg
+-
+-#else /* cmpxchg_relaxed */
+-
+-#ifndef cmpxchg_acquire
+-#define  cmpxchg_acquire(...)						\
+-	__atomic_op_acquire(cmpxchg, __VA_ARGS__)
++  })
++# define atomic_try_cmpxchg(_p, _po, _n)	 __atomic_try_cmpxchg(, _p, _po, _n)
++# define atomic_try_cmpxchg_relaxed(_p, _po, _n) __atomic_try_cmpxchg(_relaxed, _p, _po, _n)
++# define atomic_try_cmpxchg_acquire(_p, _po, _n) __atomic_try_cmpxchg(_acquire, _p, _po, _n)
++# define atomic_try_cmpxchg_release(_p, _po, _n) __atomic_try_cmpxchg(_release, _p, _po, _n)
++#else
++# define atomic_try_cmpxchg_relaxed		atomic_try_cmpxchg
++# define atomic_try_cmpxchg_acquire		atomic_try_cmpxchg
++# define atomic_try_cmpxchg_release		atomic_try_cmpxchg
+ #endif
+ 
+-#ifndef cmpxchg_release
+-#define  cmpxchg_release(...)						\
+-	__atomic_op_release(cmpxchg, __VA_ARGS__)
+-#endif
++/* cmpxchg_relaxed() et al: */
+ 
+-#ifndef cmpxchg
+-#define  cmpxchg(...)							\
+-	__atomic_op_fence(cmpxchg, __VA_ARGS__)
+-#endif
+-#endif /* cmpxchg_relaxed */
++#ifndef cmpxchg_relaxed
++# define cmpxchg_relaxed			cmpxchg
++# define cmpxchg_acquire			cmpxchg
++# define cmpxchg_release			cmpxchg
++#else
++# ifndef cmpxchg_acquire
++#  define cmpxchg_acquire(...)			__atomic_op_acquire(cmpxchg, __VA_ARGS__)
++# endif
++# ifndef cmpxchg_release
++#  define cmpxchg_release(...)			__atomic_op_release(cmpxchg, __VA_ARGS__)
++# endif
++# ifndef cmpxchg
++#  define cmpxchg(...)				__atomic_op_fence(cmpxchg, __VA_ARGS__)
++# endif
++#endif
++
++/* cmpxchg64_relaxed() et al: */
+ 
+-/* cmpxchg64_relaxed */
+ #ifndef cmpxchg64_relaxed
+-#define  cmpxchg64_relaxed		cmpxchg64
+-#define  cmpxchg64_acquire		cmpxchg64
+-#define  cmpxchg64_release		cmpxchg64
+-
+-#else /* cmpxchg64_relaxed */
+-
+-#ifndef cmpxchg64_acquire
+-#define  cmpxchg64_acquire(...)						\
+-	__atomic_op_acquire(cmpxchg64, __VA_ARGS__)
+-#endif
+-
+-#ifndef cmpxchg64_release
+-#define  cmpxchg64_release(...)						\
+-	__atomic_op_release(cmpxchg64, __VA_ARGS__)
+-#endif
+-
+-#ifndef cmpxchg64
+-#define  cmpxchg64(...)							\
+-	__atomic_op_fence(cmpxchg64, __VA_ARGS__)
+-#endif
+-#endif /* cmpxchg64_relaxed */
++# define cmpxchg64_relaxed			cmpxchg64
++# define cmpxchg64_acquire			cmpxchg64
++# define cmpxchg64_release			cmpxchg64
++#else
++# ifndef cmpxchg64_acquire
++#  define cmpxchg64_acquire(...)		__atomic_op_acquire(cmpxchg64, __VA_ARGS__)
++# endif
++# ifndef cmpxchg64_release
++#  define cmpxchg64_release(...)		__atomic_op_release(cmpxchg64, __VA_ARGS__)
++# endif
++# ifndef cmpxchg64
++#  define cmpxchg64(...)			__atomic_op_fence(cmpxchg64, __VA_ARGS__)
++# endif
++#endif
++
++/* xchg_relaxed() et al: */
+ 
+-/* xchg_relaxed */
+ #ifndef xchg_relaxed
+-#define  xchg_relaxed			xchg
+-#define  xchg_acquire			xchg
+-#define  xchg_release			xchg
+-
+-#else /* xchg_relaxed */
+-
+-#ifndef xchg_acquire
+-#define  xchg_acquire(...)		__atomic_op_acquire(xchg, __VA_ARGS__)
+-#endif
+-
+-#ifndef xchg_release
+-#define  xchg_release(...)		__atomic_op_release(xchg, __VA_ARGS__)
++# define xchg_relaxed				xchg
++# define xchg_acquire				xchg
++# define xchg_release				xchg
++#else
++# ifndef xchg_acquire
++#  define xchg_acquire(...)			__atomic_op_acquire(xchg, __VA_ARGS__)
++# endif
++# ifndef xchg_release
++#  define xchg_release(...)			__atomic_op_release(xchg, __VA_ARGS__)
++# endif
++# ifndef xchg
++#  define xchg(...)				__atomic_op_fence(xchg, __VA_ARGS__)
++# endif
+ #endif
+ 
+-#ifndef xchg
+-#define  xchg(...)			__atomic_op_fence(xchg, __VA_ARGS__)
+-#endif
+-#endif /* xchg_relaxed */
+-
+ /**
+  * atomic_add_unless - add unless the number is already a given value
+  * @v: pointer of type atomic_t
+@@ -541,7 +438,7 @@ static inline int atomic_add_unless(atomic_t *v, int a, int u)
+  * Returns non-zero if @v was non-zero, and zero otherwise.
+  */
+ #ifndef atomic_inc_not_zero
+-#define atomic_inc_not_zero(v)		atomic_add_unless((v), 1, 0)
++# define atomic_inc_not_zero(v)			atomic_add_unless((v), 1, 0)
+ #endif
+ 
+ #ifndef atomic_andnot
+@@ -607,6 +504,7 @@ static inline int atomic_inc_not_zero_hint(atomic_t *v, int hint)
+ static inline int atomic_inc_unless_negative(atomic_t *p)
+ {
+ 	int v, v1;
++
+ 	for (v = 0; v >= 0; v = v1) {
+ 		v1 = atomic_cmpxchg(p, v, v + 1);
+ 		if (likely(v1 == v))
+@@ -620,6 +518,7 @@ static inline int atomic_inc_unless_negative(atomic_t *p)
+ static inline int atomic_dec_unless_positive(atomic_t *p)
+ {
+ 	int v, v1;
++
+ 	for (v = 0; v <= 0; v = v1) {
+ 		v1 = atomic_cmpxchg(p, v, v - 1);
+ 		if (likely(v1 == v))
+@@ -640,6 +539,7 @@ static inline int atomic_dec_unless_positive(atomic_t *p)
+ static inline int atomic_dec_if_positive(atomic_t *v)
+ {
+ 	int c, old, dec;
++
+ 	c = atomic_read(v);
+ 	for (;;) {
+ 		dec = c - 1;
+@@ -654,400 +554,311 @@ static inline int atomic_dec_if_positive(atomic_t *v)
+ }
+ #endif
+ 
+-#define atomic_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
+-#define atomic_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
++#define atomic_cond_read_relaxed(v, c)		smp_cond_load_relaxed(&(v)->counter, (c))
++#define atomic_cond_read_acquire(v, c)		smp_cond_load_acquire(&(v)->counter, (c))
+ 
+ #ifdef CONFIG_GENERIC_ATOMIC64
+ #include <asm-generic/atomic64.h>
+ #endif
+ 
+ #ifndef atomic64_read_acquire
+-#define  atomic64_read_acquire(v)	smp_load_acquire(&(v)->counter)
++# define atomic64_read_acquire(v)		smp_load_acquire(&(v)->counter)
+ #endif
+ 
+ #ifndef atomic64_set_release
+-#define  atomic64_set_release(v, i)	smp_store_release(&(v)->counter, (i))
+-#endif
+-
+-/* atomic64_add_return_relaxed */
+-#ifndef atomic64_add_return_relaxed
+-#define  atomic64_add_return_relaxed	atomic64_add_return
+-#define  atomic64_add_return_acquire	atomic64_add_return
+-#define  atomic64_add_return_release	atomic64_add_return
+-
+-#else /* atomic64_add_return_relaxed */
+-
+-#ifndef atomic64_add_return_acquire
+-#define  atomic64_add_return_acquire(...)				\
+-	__atomic_op_acquire(atomic64_add_return, __VA_ARGS__)
++# define atomic64_set_release(v, i)		smp_store_release(&(v)->counter, (i))
+ #endif
+ 
+-#ifndef atomic64_add_return_release
+-#define  atomic64_add_return_release(...)				\
+-	__atomic_op_release(atomic64_add_return, __VA_ARGS__)
+-#endif
++/* atomic64_add_return_relaxed() et al: */
+ 
+-#ifndef atomic64_add_return
+-#define  atomic64_add_return(...)					\
+-	__atomic_op_fence(atomic64_add_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_add_return_relaxed */
++#ifndef atomic64_add_return_relaxed
++# define atomic64_add_return_relaxed		atomic64_add_return
++# define atomic64_add_return_acquire		atomic64_add_return
++# define atomic64_add_return_release		atomic64_add_return
++#else
++# ifndef atomic64_add_return_acquire
++#  define atomic64_add_return_acquire(...)	__atomic_op_acquire(atomic64_add_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_add_return_release
++#  define atomic64_add_return_release(...)	__atomic_op_release(atomic64_add_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_add_return
++#  define atomic64_add_return(...)		__atomic_op_fence(atomic64_add_return, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_inc_return_relaxed() et al: */
+ 
+-/* atomic64_inc_return_relaxed */
+ #ifndef atomic64_inc_return_relaxed
+-#define  atomic64_inc_return_relaxed	atomic64_inc_return
+-#define  atomic64_inc_return_acquire	atomic64_inc_return
+-#define  atomic64_inc_return_release	atomic64_inc_return
+-
+-#else /* atomic64_inc_return_relaxed */
+-
+-#ifndef atomic64_inc_return_acquire
+-#define  atomic64_inc_return_acquire(...)				\
+-	__atomic_op_acquire(atomic64_inc_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_inc_return_release
+-#define  atomic64_inc_return_release(...)				\
+-	__atomic_op_release(atomic64_inc_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_inc_return
+-#define  atomic64_inc_return(...)					\
+-	__atomic_op_fence(atomic64_inc_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_inc_return_relaxed */
+-
++# define atomic64_inc_return_relaxed		atomic64_inc_return
++# define atomic64_inc_return_acquire		atomic64_inc_return
++# define atomic64_inc_return_release		atomic64_inc_return
++#else
++# ifndef atomic64_inc_return_acquire
++#  define atomic64_inc_return_acquire(...)	__atomic_op_acquire(atomic64_inc_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_inc_return_release
++#  define atomic64_inc_return_release(...)	__atomic_op_release(atomic64_inc_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_inc_return
++#  define atomic64_inc_return(...)		__atomic_op_fence(atomic64_inc_return, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_sub_return_relaxed() et al: */
+ 
+-/* atomic64_sub_return_relaxed */
+ #ifndef atomic64_sub_return_relaxed
+-#define  atomic64_sub_return_relaxed	atomic64_sub_return
+-#define  atomic64_sub_return_acquire	atomic64_sub_return
+-#define  atomic64_sub_return_release	atomic64_sub_return
++# define atomic64_sub_return_relaxed		atomic64_sub_return
++# define atomic64_sub_return_acquire		atomic64_sub_return
++# define atomic64_sub_return_release		atomic64_sub_return
++#else
++# ifndef atomic64_sub_return_acquire
++#  define atomic64_sub_return_acquire(...)	__atomic_op_acquire(atomic64_sub_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_sub_return_release
++#  define atomic64_sub_return_release(...)	__atomic_op_release(atomic64_sub_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_sub_return
++#  define atomic64_sub_return(...)		__atomic_op_fence(atomic64_sub_return, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_dec_return_relaxed() et al: */
+ 
+-#else /* atomic64_sub_return_relaxed */
+-
+-#ifndef atomic64_sub_return_acquire
+-#define  atomic64_sub_return_acquire(...)				\
+-	__atomic_op_acquire(atomic64_sub_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_sub_return_release
+-#define  atomic64_sub_return_release(...)				\
+-	__atomic_op_release(atomic64_sub_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_sub_return
+-#define  atomic64_sub_return(...)					\
+-	__atomic_op_fence(atomic64_sub_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_sub_return_relaxed */
+-
+-/* atomic64_dec_return_relaxed */
+ #ifndef atomic64_dec_return_relaxed
+-#define  atomic64_dec_return_relaxed	atomic64_dec_return
+-#define  atomic64_dec_return_acquire	atomic64_dec_return
+-#define  atomic64_dec_return_release	atomic64_dec_return
+-
+-#else /* atomic64_dec_return_relaxed */
+-
+-#ifndef atomic64_dec_return_acquire
+-#define  atomic64_dec_return_acquire(...)				\
+-	__atomic_op_acquire(atomic64_dec_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_dec_return_release
+-#define  atomic64_dec_return_release(...)				\
+-	__atomic_op_release(atomic64_dec_return, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_dec_return
+-#define  atomic64_dec_return(...)					\
+-	__atomic_op_fence(atomic64_dec_return, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_dec_return_relaxed */
++# define atomic64_dec_return_relaxed		atomic64_dec_return
++# define atomic64_dec_return_acquire		atomic64_dec_return
++# define atomic64_dec_return_release		atomic64_dec_return
++#else
++# ifndef atomic64_dec_return_acquire
++#  define atomic64_dec_return_acquire(...)	__atomic_op_acquire(atomic64_dec_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_dec_return_release
++#  define atomic64_dec_return_release(...)	__atomic_op_release(atomic64_dec_return, __VA_ARGS__)
++# endif
++# ifndef atomic64_dec_return
++#  define atomic64_dec_return(...)		__atomic_op_fence(atomic64_dec_return, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_fetch_add_relaxed() et al: */
+ 
+-
+-/* atomic64_fetch_add_relaxed */
+ #ifndef atomic64_fetch_add_relaxed
+-#define atomic64_fetch_add_relaxed	atomic64_fetch_add
+-#define atomic64_fetch_add_acquire	atomic64_fetch_add
+-#define atomic64_fetch_add_release	atomic64_fetch_add
+-
+-#else /* atomic64_fetch_add_relaxed */
+-
+-#ifndef atomic64_fetch_add_acquire
+-#define atomic64_fetch_add_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_add, __VA_ARGS__)
+-#endif
++# define atomic64_fetch_add_relaxed		atomic64_fetch_add
++# define atomic64_fetch_add_acquire		atomic64_fetch_add
++# define atomic64_fetch_add_release		atomic64_fetch_add
++#else
++# ifndef atomic64_fetch_add_acquire
++#  define atomic64_fetch_add_acquire(...)	__atomic_op_acquire(atomic64_fetch_add, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_add_release
++#  define atomic64_fetch_add_release(...)	__atomic_op_release(atomic64_fetch_add, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_add
++#  define atomic64_fetch_add(...)		__atomic_op_fence(atomic64_fetch_add, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_fetch_inc_relaxed() et al: */
+ 
+-#ifndef atomic64_fetch_add_release
+-#define atomic64_fetch_add_release(...)					\
+-	__atomic_op_release(atomic64_fetch_add, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_add
+-#define atomic64_fetch_add(...)						\
+-	__atomic_op_fence(atomic64_fetch_add, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_fetch_add_relaxed */
+-
+-/* atomic64_fetch_inc_relaxed */
+ #ifndef atomic64_fetch_inc_relaxed
++# ifndef atomic64_fetch_inc
++#  define atomic64_fetch_inc(v)			atomic64_fetch_add(1, (v))
++#  define atomic64_fetch_inc_relaxed(v)		atomic64_fetch_add_relaxed(1, (v))
++#  define atomic64_fetch_inc_acquire(v)		atomic64_fetch_add_acquire(1, (v))
++#  define atomic64_fetch_inc_release(v)		atomic64_fetch_add_release(1, (v))
++# else
++#  define atomic64_fetch_inc_relaxed		atomic64_fetch_inc
++#  define atomic64_fetch_inc_acquire		atomic64_fetch_inc
++#  define atomic64_fetch_inc_release		atomic64_fetch_inc
++# endif
++#else
++# ifndef atomic64_fetch_inc_acquire
++#  define atomic64_fetch_inc_acquire(...)	__atomic_op_acquire(atomic64_fetch_inc, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_inc_release
++#  define atomic64_fetch_inc_release(...)	__atomic_op_release(atomic64_fetch_inc, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_inc
++#  define atomic64_fetch_inc(...)		__atomic_op_fence(atomic64_fetch_inc, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_fetch_sub_relaxed() et al: */
+ 
+-#ifndef atomic64_fetch_inc
+-#define atomic64_fetch_inc(v)		atomic64_fetch_add(1, (v))
+-#define atomic64_fetch_inc_relaxed(v)	atomic64_fetch_add_relaxed(1, (v))
+-#define atomic64_fetch_inc_acquire(v)	atomic64_fetch_add_acquire(1, (v))
+-#define atomic64_fetch_inc_release(v)	atomic64_fetch_add_release(1, (v))
+-#else /* atomic64_fetch_inc */
+-#define atomic64_fetch_inc_relaxed	atomic64_fetch_inc
+-#define atomic64_fetch_inc_acquire	atomic64_fetch_inc
+-#define atomic64_fetch_inc_release	atomic64_fetch_inc
+-#endif /* atomic64_fetch_inc */
+-
+-#else /* atomic64_fetch_inc_relaxed */
+-
+-#ifndef atomic64_fetch_inc_acquire
+-#define atomic64_fetch_inc_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_inc, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_inc_release
+-#define atomic64_fetch_inc_release(...)					\
+-	__atomic_op_release(atomic64_fetch_inc, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_inc
+-#define atomic64_fetch_inc(...)						\
+-	__atomic_op_fence(atomic64_fetch_inc, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_fetch_inc_relaxed */
+-
+-/* atomic64_fetch_sub_relaxed */
+ #ifndef atomic64_fetch_sub_relaxed
+-#define atomic64_fetch_sub_relaxed	atomic64_fetch_sub
+-#define atomic64_fetch_sub_acquire	atomic64_fetch_sub
+-#define atomic64_fetch_sub_release	atomic64_fetch_sub
+-
+-#else /* atomic64_fetch_sub_relaxed */
+-
+-#ifndef atomic64_fetch_sub_acquire
+-#define atomic64_fetch_sub_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_sub, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_sub_release
+-#define atomic64_fetch_sub_release(...)					\
+-	__atomic_op_release(atomic64_fetch_sub, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_sub
+-#define atomic64_fetch_sub(...)						\
+-	__atomic_op_fence(atomic64_fetch_sub, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_fetch_sub_relaxed */
++# define atomic64_fetch_sub_relaxed		atomic64_fetch_sub
++# define atomic64_fetch_sub_acquire		atomic64_fetch_sub
++# define atomic64_fetch_sub_release		atomic64_fetch_sub
++#else
++# ifndef atomic64_fetch_sub_acquire
++#  define atomic64_fetch_sub_acquire(...)	__atomic_op_acquire(atomic64_fetch_sub, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_sub_release
++#  define atomic64_fetch_sub_release(...)	__atomic_op_release(atomic64_fetch_sub, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_sub
++#  define atomic64_fetch_sub(...)		__atomic_op_fence(atomic64_fetch_sub, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_fetch_dec_relaxed() et al: */
+ 
+-/* atomic64_fetch_dec_relaxed */
+ #ifndef atomic64_fetch_dec_relaxed
++# ifndef atomic64_fetch_dec
++#  define atomic64_fetch_dec(v)			atomic64_fetch_sub(1, (v))
++#  define atomic64_fetch_dec_relaxed(v)		atomic64_fetch_sub_relaxed(1, (v))
++#  define atomic64_fetch_dec_acquire(v)		atomic64_fetch_sub_acquire(1, (v))
++#  define atomic64_fetch_dec_release(v)		atomic64_fetch_sub_release(1, (v))
++# else
++#  define atomic64_fetch_dec_relaxed		atomic64_fetch_dec
++#  define atomic64_fetch_dec_acquire		atomic64_fetch_dec
++#  define atomic64_fetch_dec_release		atomic64_fetch_dec
++# endif
++#else
++# ifndef atomic64_fetch_dec_acquire
++#  define atomic64_fetch_dec_acquire(...)	__atomic_op_acquire(atomic64_fetch_dec, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_dec_release
++#  define atomic64_fetch_dec_release(...)	__atomic_op_release(atomic64_fetch_dec, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_dec
++#  define atomic64_fetch_dec(...)		__atomic_op_fence(atomic64_fetch_dec, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_fetch_or_relaxed() et al: */
+ 
+-#ifndef atomic64_fetch_dec
+-#define atomic64_fetch_dec(v)		atomic64_fetch_sub(1, (v))
+-#define atomic64_fetch_dec_relaxed(v)	atomic64_fetch_sub_relaxed(1, (v))
+-#define atomic64_fetch_dec_acquire(v)	atomic64_fetch_sub_acquire(1, (v))
+-#define atomic64_fetch_dec_release(v)	atomic64_fetch_sub_release(1, (v))
+-#else /* atomic64_fetch_dec */
+-#define atomic64_fetch_dec_relaxed	atomic64_fetch_dec
+-#define atomic64_fetch_dec_acquire	atomic64_fetch_dec
+-#define atomic64_fetch_dec_release	atomic64_fetch_dec
+-#endif /* atomic64_fetch_dec */
+-
+-#else /* atomic64_fetch_dec_relaxed */
+-
+-#ifndef atomic64_fetch_dec_acquire
+-#define atomic64_fetch_dec_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_dec, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_dec_release
+-#define atomic64_fetch_dec_release(...)					\
+-	__atomic_op_release(atomic64_fetch_dec, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_dec
+-#define atomic64_fetch_dec(...)						\
+-	__atomic_op_fence(atomic64_fetch_dec, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_fetch_dec_relaxed */
+-
+-/* atomic64_fetch_or_relaxed */
+ #ifndef atomic64_fetch_or_relaxed
+-#define atomic64_fetch_or_relaxed	atomic64_fetch_or
+-#define atomic64_fetch_or_acquire	atomic64_fetch_or
+-#define atomic64_fetch_or_release	atomic64_fetch_or
+-
+-#else /* atomic64_fetch_or_relaxed */
+-
+-#ifndef atomic64_fetch_or_acquire
+-#define atomic64_fetch_or_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_or, __VA_ARGS__)
++# define atomic64_fetch_or_relaxed		atomic64_fetch_or
++# define atomic64_fetch_or_acquire		atomic64_fetch_or
++# define atomic64_fetch_or_release		atomic64_fetch_or
++#else
++# ifndef atomic64_fetch_or_acquire
++#  define atomic64_fetch_or_acquire(...)	__atomic_op_acquire(atomic64_fetch_or, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_or_release
++#  define atomic64_fetch_or_release(...)	__atomic_op_release(atomic64_fetch_or, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_or
++#  define atomic64_fetch_or(...)		__atomic_op_fence(atomic64_fetch_or, __VA_ARGS__)
++# endif
+ #endif
+ 
+-#ifndef atomic64_fetch_or_release
+-#define atomic64_fetch_or_release(...)					\
+-	__atomic_op_release(atomic64_fetch_or, __VA_ARGS__)
+-#endif
+ 
+-#ifndef atomic64_fetch_or
+-#define atomic64_fetch_or(...)						\
+-	__atomic_op_fence(atomic64_fetch_or, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_fetch_or_relaxed */
++/* atomic64_fetch_and_relaxed() et al: */
+ 
+-/* atomic64_fetch_and_relaxed */
+ #ifndef atomic64_fetch_and_relaxed
+-#define atomic64_fetch_and_relaxed	atomic64_fetch_and
+-#define atomic64_fetch_and_acquire	atomic64_fetch_and
+-#define atomic64_fetch_and_release	atomic64_fetch_and
+-
+-#else /* atomic64_fetch_and_relaxed */
+-
+-#ifndef atomic64_fetch_and_acquire
+-#define atomic64_fetch_and_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_and, __VA_ARGS__)
++# define atomic64_fetch_and_relaxed		atomic64_fetch_and
++# define atomic64_fetch_and_acquire		atomic64_fetch_and
++# define atomic64_fetch_and_release		atomic64_fetch_and
++#else
++# ifndef atomic64_fetch_and_acquire
++#  define atomic64_fetch_and_acquire(...)	__atomic_op_acquire(atomic64_fetch_and, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_and_release
++#  define atomic64_fetch_and_release(...)	__atomic_op_release(atomic64_fetch_and, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_and
++#  define atomic64_fetch_and(...)		__atomic_op_fence(atomic64_fetch_and, __VA_ARGS__)
++# endif
+ #endif
+ 
+-#ifndef atomic64_fetch_and_release
+-#define atomic64_fetch_and_release(...)					\
+-	__atomic_op_release(atomic64_fetch_and, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_and
+-#define atomic64_fetch_and(...)						\
+-	__atomic_op_fence(atomic64_fetch_and, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_fetch_and_relaxed */
+-
+ #ifdef atomic64_andnot
+-/* atomic64_fetch_andnot_relaxed */
+-#ifndef atomic64_fetch_andnot_relaxed
+-#define atomic64_fetch_andnot_relaxed	atomic64_fetch_andnot
+-#define atomic64_fetch_andnot_acquire	atomic64_fetch_andnot
+-#define atomic64_fetch_andnot_release	atomic64_fetch_andnot
+-
+-#else /* atomic64_fetch_andnot_relaxed */
+ 
+-#ifndef atomic64_fetch_andnot_acquire
+-#define atomic64_fetch_andnot_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_andnot, __VA_ARGS__)
+-#endif
++/* atomic64_fetch_andnot_relaxed() et al: */
+ 
+-#ifndef atomic64_fetch_andnot_release
+-#define atomic64_fetch_andnot_release(...)					\
+-	__atomic_op_release(atomic64_fetch_andnot, __VA_ARGS__)
++#ifndef atomic64_fetch_andnot_relaxed
++# define atomic64_fetch_andnot_relaxed		atomic64_fetch_andnot
++# define atomic64_fetch_andnot_acquire		atomic64_fetch_andnot
++# define atomic64_fetch_andnot_release		atomic64_fetch_andnot
++#else
++# ifndef atomic64_fetch_andnot_acquire
++#  define atomic64_fetch_andnot_acquire(...)	__atomic_op_acquire(atomic64_fetch_andnot, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_andnot_release
++#  define atomic64_fetch_andnot_release(...)	__atomic_op_release(atomic64_fetch_andnot, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_andnot
++#  define atomic64_fetch_andnot(...)		__atomic_op_fence(atomic64_fetch_andnot, __VA_ARGS__)
++# endif
+ #endif
+ 
+-#ifndef atomic64_fetch_andnot
+-#define atomic64_fetch_andnot(...)						\
+-	__atomic_op_fence(atomic64_fetch_andnot, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_fetch_andnot_relaxed */
+ #endif /* atomic64_andnot */
+ 
+-/* atomic64_fetch_xor_relaxed */
+-#ifndef atomic64_fetch_xor_relaxed
+-#define atomic64_fetch_xor_relaxed	atomic64_fetch_xor
+-#define atomic64_fetch_xor_acquire	atomic64_fetch_xor
+-#define atomic64_fetch_xor_release	atomic64_fetch_xor
+-
+-#else /* atomic64_fetch_xor_relaxed */
++/* atomic64_fetch_xor_relaxed() et al: */
+ 
+-#ifndef atomic64_fetch_xor_acquire
+-#define atomic64_fetch_xor_acquire(...)					\
+-	__atomic_op_acquire(atomic64_fetch_xor, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_fetch_xor_release
+-#define atomic64_fetch_xor_release(...)					\
+-	__atomic_op_release(atomic64_fetch_xor, __VA_ARGS__)
++#ifndef atomic64_fetch_xor_relaxed
++# define atomic64_fetch_xor_relaxed		atomic64_fetch_xor
++# define atomic64_fetch_xor_acquire		atomic64_fetch_xor
++# define atomic64_fetch_xor_release		atomic64_fetch_xor
++#else
++# ifndef atomic64_fetch_xor_acquire
++#  define atomic64_fetch_xor_acquire(...)	__atomic_op_acquire(atomic64_fetch_xor, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_xor_release
++#  define atomic64_fetch_xor_release(...)	__atomic_op_release(atomic64_fetch_xor, __VA_ARGS__)
++# endif
++# ifndef atomic64_fetch_xor
++#  define atomic64_fetch_xor(...)		__atomic_op_fence(atomic64_fetch_xor, __VA_ARGS__)
+ #endif
+-
+-#ifndef atomic64_fetch_xor
+-#define atomic64_fetch_xor(...)						\
+-	__atomic_op_fence(atomic64_fetch_xor, __VA_ARGS__)
+ #endif
+-#endif /* atomic64_fetch_xor_relaxed */
+ 
++/* atomic64_xchg_relaxed() et al: */
+ 
+-/* atomic64_xchg_relaxed */
+ #ifndef atomic64_xchg_relaxed
+-#define  atomic64_xchg_relaxed		atomic64_xchg
+-#define  atomic64_xchg_acquire		atomic64_xchg
+-#define  atomic64_xchg_release		atomic64_xchg
+-
+-#else /* atomic64_xchg_relaxed */
+-
+-#ifndef atomic64_xchg_acquire
+-#define  atomic64_xchg_acquire(...)					\
+-	__atomic_op_acquire(atomic64_xchg, __VA_ARGS__)
+-#endif
++# define atomic64_xchg_relaxed			atomic64_xchg
++# define atomic64_xchg_acquire			atomic64_xchg
++# define atomic64_xchg_release			atomic64_xchg
++#else
++# ifndef atomic64_xchg_acquire
++#  define atomic64_xchg_acquire(...)		__atomic_op_acquire(atomic64_xchg, __VA_ARGS__)
++# endif
++# ifndef atomic64_xchg_release
++#  define atomic64_xchg_release(...)		__atomic_op_release(atomic64_xchg, __VA_ARGS__)
++# endif
++# ifndef atomic64_xchg
++#  define atomic64_xchg(...)			__atomic_op_fence(atomic64_xchg, __VA_ARGS__)
++# endif
++#endif
++
++/* atomic64_cmpxchg_relaxed() et al: */
+ 
+-#ifndef atomic64_xchg_release
+-#define  atomic64_xchg_release(...)					\
+-	__atomic_op_release(atomic64_xchg, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_xchg
+-#define  atomic64_xchg(...)						\
+-	__atomic_op_fence(atomic64_xchg, __VA_ARGS__)
+-#endif
+-#endif /* atomic64_xchg_relaxed */
+-
+-/* atomic64_cmpxchg_relaxed */
+ #ifndef atomic64_cmpxchg_relaxed
+-#define  atomic64_cmpxchg_relaxed	atomic64_cmpxchg
+-#define  atomic64_cmpxchg_acquire	atomic64_cmpxchg
+-#define  atomic64_cmpxchg_release	atomic64_cmpxchg
+-
+-#else /* atomic64_cmpxchg_relaxed */
+-
+-#ifndef atomic64_cmpxchg_acquire
+-#define  atomic64_cmpxchg_acquire(...)					\
+-	__atomic_op_acquire(atomic64_cmpxchg, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_cmpxchg_release
+-#define  atomic64_cmpxchg_release(...)					\
+-	__atomic_op_release(atomic64_cmpxchg, __VA_ARGS__)
+-#endif
+-
+-#ifndef atomic64_cmpxchg
+-#define  atomic64_cmpxchg(...)						\
+-	__atomic_op_fence(atomic64_cmpxchg, __VA_ARGS__)
++# define atomic64_cmpxchg_relaxed		atomic64_cmpxchg
++# define atomic64_cmpxchg_acquire		atomic64_cmpxchg
++# define atomic64_cmpxchg_release		atomic64_cmpxchg
++#else
++# ifndef atomic64_cmpxchg_acquire
++#  define atomic64_cmpxchg_acquire(...)		__atomic_op_acquire(atomic64_cmpxchg, __VA_ARGS__)
++# endif
++# ifndef atomic64_cmpxchg_release
++#  define atomic64_cmpxchg_release(...)		__atomic_op_release(atomic64_cmpxchg, __VA_ARGS__)
++# endif
++# ifndef atomic64_cmpxchg
++#  define atomic64_cmpxchg(...)			__atomic_op_fence(atomic64_cmpxchg, __VA_ARGS__)
++# endif
+ #endif
+-#endif /* atomic64_cmpxchg_relaxed */
+ 
+ #ifndef atomic64_try_cmpxchg
+-
+-#define __atomic64_try_cmpxchg(type, _p, _po, _n)			\
+-({									\
++# define __atomic64_try_cmpxchg(type, _p, _po, _n)			\
++  ({									\
+ 	typeof(_po) __po = (_po);					\
+ 	typeof(*(_po)) __r, __o = *__po;				\
+ 	__r = atomic64_cmpxchg##type((_p), __o, (_n));			\
+ 	if (unlikely(__r != __o))					\
+ 		*__po = __r;						\
+ 	likely(__r == __o);						\
+-})
+-
+-#define atomic64_try_cmpxchg(_p, _po, _n)		__atomic64_try_cmpxchg(, _p, _po, _n)
+-#define atomic64_try_cmpxchg_relaxed(_p, _po, _n)	__atomic64_try_cmpxchg(_relaxed, _p, _po, _n)
+-#define atomic64_try_cmpxchg_acquire(_p, _po, _n)	__atomic64_try_cmpxchg(_acquire, _p, _po, _n)
+-#define atomic64_try_cmpxchg_release(_p, _po, _n)	__atomic64_try_cmpxchg(_release, _p, _po, _n)
+-
+-#else /* atomic64_try_cmpxchg */
+-#define atomic64_try_cmpxchg_relaxed	atomic64_try_cmpxchg
+-#define atomic64_try_cmpxchg_acquire	atomic64_try_cmpxchg
+-#define atomic64_try_cmpxchg_release	atomic64_try_cmpxchg
+-#endif /* atomic64_try_cmpxchg */
++  })
++# define atomic64_try_cmpxchg(_p, _po, _n)	   __atomic64_try_cmpxchg(, _p, _po, _n)
++# define atomic64_try_cmpxchg_relaxed(_p, _po, _n) __atomic64_try_cmpxchg(_relaxed, _p, _po, _n)
++# define atomic64_try_cmpxchg_acquire(_p, _po, _n) __atomic64_try_cmpxchg(_acquire, _p, _po, _n)
++# define atomic64_try_cmpxchg_release(_p, _po, _n) __atomic64_try_cmpxchg(_release, _p, _po, _n)
++#else
++# define atomic64_try_cmpxchg_relaxed		atomic64_try_cmpxchg
++# define atomic64_try_cmpxchg_acquire		atomic64_try_cmpxchg
++# define atomic64_try_cmpxchg_release		atomic64_try_cmpxchg
++#endif
+ 
+ #ifndef atomic64_andnot
+ static inline void atomic64_andnot(long long i, atomic64_t *v)
