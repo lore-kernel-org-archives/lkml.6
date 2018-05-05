@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751877AbeEEIdi (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 04:33:38 -0400
-Received: from mail-he1eur01on0053.outbound.protection.outlook.com ([104.47.0.53]:40149
+        id S1751892AbeEEIe0 (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 04:34:26 -0400
+Received: from mail-he1eur01on0076.outbound.protection.outlook.com ([104.47.0.76]:60192
         "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751085AbeEEIdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 04:33:32 -0400
+        id S1751248AbeEEIdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 04:33:04 -0400
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=anson.huang@nxp.com;
 From: Anson Huang <Anson.Huang@nxp.com>
@@ -15,9 +15,9 @@ To: shawnguo@kernel.org, kernel@pengutronix.de, fabio.estevam@nxp.com,
         fugang.duan@nxp.com, aisheng.dong@nxp.com, yibin.gong@nxp.com
 Cc: Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V6 7/7] ARM: dts: imx6sx-sabreauto: add egalax touch screen support
-Date: Sat,  5 May 2018 16:29:23 +0800
-Message-Id: <1525508963-7986-7-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V6 2/7] ARM: dts: imx6sx-sabreauto: add max7322 IO expander support
+Date: Sat,  5 May 2018 16:29:18 +0800
+Message-Id: <1525508963-7986-2-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com>
 References: <1525508963-7986-1-git-send-email-Anson.Huang@nxp.com>
@@ -29,46 +29,46 @@ X-ClientProxiedBy: TY1PR01CA0199.jpnprd01.prod.outlook.com (2603:1096:403::29)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1315;
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;3:puCJZc7PVbIgRagKhlntmGlZe/iMMNtIxkghq1aeKe9cEL0lkyVwR+RYx0CgZTixxDtUKP+QWLaGCqONilj7IF+r0s/61dv55onYlFsrivXhxY25EY8RxNkUxmO0GOXoH55AO9mm3zdShTWswEpi8N1+I9637l0QrlVMoiwmRIGYaJ7QHpBbBG5o2JLyxLxdhF+mA9G0x8TxpC0Q6ywrWwdJ+inEfaClYsOEIWAVGU3b/ADP/7uRwRNTFgkycny+;25:U3QRGagA32vl0dkrt5lQG6nQTQWUMSq4GuCxeJF3MIMpYk4X225ORruDsakFOWO0zkrmX1Fwi4viJTYJ64BJtenAtaq0tdvlZvTcj9Pz9YoRu+CLPo4rchW/tilOhy6U03+R612THyZUiP3/kl7Ro/DonbvIOihxV/MjaOQJh+9OUpwHtzHgQgtZZLpRQL1OUNCVydatp/oOgxI4f+g6Ui2UO1u8zg8HkDem7HKUrlsReC9asRe25gPDYKrirgGwaiiyk/5xraVCOmd3kUxBhYjinUobakOqHdIgSHu7BnZpw0tXWpRAAzKznzgFL6IaplW5WdXOeqoTetgGWKEPcA==;31:DuDCSVetk2iW0gW8v1dqpZpmyDaz+VHh9rhuHOXM3zMzN3VtkcjKse42sGiHsIXyorL2JYozorKb14DjdZCQo0+ymhEbAUBag0zyBkBYiKujRyHb5LVpVv5rTgwF6y9fxPJpzWNsC+7dp+H4LeTCne/ejQi0CYQwcLG35MaJsoNZxtDeE5GF4xW8udqQPSShayWMAlzL4kLRG5oW4VFCVoW1F+UduGVxBXdQVpPvnY8=
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;3:eQ63hAArZ0Imy04vqxd+CacIgAgjBG11NJvKogoXvgxn6megL98fzALgOdR2Wnmgbdk/ryDEFVK148zSWVy3WZCI1TjbxDKWRTkXoXweM4l4XS1k6UPOlYdDcL7412b6q6GccJklpgSaGJI6mNQNGdNIFPWppRoOOCtoQHhr6D3OSW8Vsj7K4o3tqoWerg8o0VDVpZgn4eLVKqcNPSQlN9H83k7FyyL0R5ndXk7pkzRCkB6rjI5+BHZ3pH8hHJhy;25:4VoRdeSLzT6qazw3H/Wc8X/H5eXI5ncndjw5S2VR0fmXG+ZdFNbHfKqSTkfsuG0pr68OtRWPb8TYMLYNh0dFVajmKQq8oOAIo4hBWUjq9POr0VgJRBifB7Z1Ele0G+k6EMtsjm9g+7XrJEZL7fG9YgK4UHqHAHkDriH6QDUcsljSDcfm4phBKgPpsBW99Y9A9vLVX7GEIP/XZxmqEKhRLoUOuFszbHbwSRhvJ+sNP9tjW05ewenTlZRnk0Jj+vBITaoZyCV6U8l04ADvsmXbFHNRrAvn1IGBatEXS9ad/KZhBmX8zqUITkkKDCyammfo4sKiFqhfPKlVbOR5wS2JrQ==;31:+AOhzAQSch9gZkr9pmelf5+UqV/qMeCLu5uQhwHSUfVd98Aw6Ztpu1Ug8R4gTRdNcQZg/waSy0KxplNjA8kwHKR8IE0P6qQOLf48X38DsQaNIrIFOOp3IEZHJH914OX6ZyqByAgkj+yKbx5UfHI6Ju3++nzGPjZ+aDUHN1SZFqzj7EXg6N4LX5g9RySyGgB9mxIEvUVa3EDbS9BJSEae5HT2y9ivJXOiOo8ce9YYQss=
 X-MS-TrafficTypeDiagnostic: AM3PR04MB1315:
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;20:nxzcfO2Ojz9Q8k8dnl3WpASGCqMGn4hnQY0Gz7HhXQgSIpDO7R1ezBp683UPnG+edHvSH1zgerwW7HO9CQT/08ZZMNsOCUqzvZCFTleLeTJvOUkOlztcqY1BK6keHUEmzBWt4+n8M+8ZrUzIYv+Fl+v0uEoPBBwjWI3iM97zaDTk/HOZo6hdVM6IzZM2KpSRDaQjmsI1OilhhWMsBfIOItybxdkXMj2qf7Bn0FE5nm+Czpy2jREWObRRTtQWqdUqh8X4spENIdA13WRfgOKCJe0O4Ekryub6brp00dPHTjKagYsfLeLRKK+pbQLwiCAJtgFsQLmCOVr2uc7tHzodejjlo3b/tHsVw2Jsk3PzBvIdB1vjRYUov+ADgwneFlR4YFIBsfKc10uzmajdlzOUzGU39ogJNBfDJMn+h2OhA59SvroLeh+4aGp2JzDXNJBb2HdWVliEvXhmcMh+mBcgDCYx6uBrGXitCOJ7/MfqH1mQQJkviVKr1SqphQpguNPg;4:nlvNwETQOgDjr/I73j809nyFkxWSB85NvaicxRrZZNFWzn80DEEw2EGnQfXMpNs9/3ZlRiQa/mPM8yA3GgtsN+zygtiXBPEjskz1gkmEq+a9BN33lHALc6CcuXqNvfSba1bh9bE+YIfy3B0CwjokfwanDKcpIy0bgk9xCHO/uEjxc40e8Mw2PAkxtIBpJbU9r1qEKYqXNeWVMbqGUjx35OXnkKmA21rmfjIEVipRpsZ3oEvvIHdqtqUda2wpuz+iL38tPYDza4VErp84x2qcQqqSTK4VssqYfwxdzG422zMbJ549zAPgeeux7c3UKMmZRho403rb+WwsNxYtjSCE2H83X4v82oZQ2xchAbiEMEE=
-X-Microsoft-Antispam-PRVS: <AM3PR04MB1315D1B6B300FE59A998DFBDF5850@AM3PR04MB1315.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197)(101931422205132);
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;20:sG15fWr/ikwaHze1XeSiW+Ne5+ZtzxaeKf9BJenOviI9vUWeyS8Y/TWhvsCPt6A8jhU0f9rbag02DKhMN/ZKOiNzKscg/LP2mFpGcq7PbKqgoVZlXCRr1ya8e8DkfnnzkKBBuIrpQG4++sX2o6QJMOr9M9+hmPhBGlwK1kzz5yoACmxhBAtriQNvtqennkIwjTnqf8BalnmONwGpd2kAF1mxLNAw107F8BuWRj948/d6S2fGWAIyV/O1Vs7yZccqzIbghwNtzBHwTFPOXywCV0D6thw1a+Jeh3Ii2W1cKbxSgI/vxpsvZ7a1bi6Uc69irMH2WX4uoJ7dPh9Vrint6EC25zFLyrGRoGkc+wuRjtSSgdKYv/aJS0C7pCWDBKvd1o2WdwU4K47lX4vDc1TIvqrntUa4sh7E0rfKptefcsXKnIdq5lpFBOrdK00axQQZRKlS4kc47CsbHVGRBOpKMe/AZfB1iWC7d1fuYcWHe9vIoLCSGUx6SnVuogrPXnjZ;4:UYNDU4TV7CX4m3Pu1EL8Ag+AnbTqT8cvqxxvEft2gKQbFdz/gwVdM54GsY1pf83VOIIZm4CDxkb+nhUjpRv4asX3u5P+ACyIv9lK4367Xvc2XRiQSEY6itcbJi5rvdi1anKDqb16H12lOPNn/QWCp2Vgazcx3twOaHiestH3Bw8sCA3g8IWhK8kgn4yPDU9q/7uqfUV5VNKatn87X+zSEklUzbxFHMtsSgpolrlQQXfPW7KyW4TQP0xKHaGtlU2tDNuMTqNY0CPCJCig6tn15QC47kVmkrqx2o+BpW5cWyJbo52uZktihF8xhI2cIxuX
+X-Microsoft-Antispam-PRVS: <AM3PR04MB1315D9BE3FAF05C23D4B2671F5850@AM3PR04MB1315.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:AM3PR04MB1315;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1315;
 X-Forefront-PRVS: 0663390E1B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(39380400002)(376002)(199004)(189003)(53936002)(81156014)(68736007)(6636002)(7736002)(50226002)(4326008)(6116002)(16586007)(6512007)(3846002)(8936002)(575784001)(186003)(86362001)(97736004)(8676002)(25786009)(16526019)(66066001)(50466002)(52116002)(51416003)(478600001)(106356001)(105586002)(26005)(956004)(76176011)(305945005)(47776003)(386003)(2616005)(5660300001)(316002)(81166006)(48376002)(446003)(6486002)(6506007)(476003)(2906002)(11346002)(36756003)(486006)(32563001)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1315;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1315;23:uNoAVzuAr82i+VGo+btLvehguHEu2fxuT7BgcFAsX?=
- =?us-ascii?Q?Q5topR1GXWKxQhppJN4Wew0YyDgJF/6BW8bR/mGhyXCD1g+Qy9w8j+S4Ksdk?=
- =?us-ascii?Q?wtOBIuf4gfJqprZfuT/mHKq0LRzc1HloQ3p587pjP+R9NxQRmdV1CPobTyZq?=
- =?us-ascii?Q?McUPY1vT7jTZyRBqzPJn2V35LXF5H17w8oIr4rVyyhCioV+aiSivr+2zABk3?=
- =?us-ascii?Q?u0jHZCSzuke05vAOOpYR2VE0gbA4EyL83+6wk9SnlP27BfvvM8VStM1QF5b0?=
- =?us-ascii?Q?+yWzLTuf4UXlgALMn3Y0kj9I6HpwjwSekpJ8QiwotYjaIqkpAsAf4ntM9o24?=
- =?us-ascii?Q?PLj7JQilreVJ/5qbFXBHlCGGDI0db6tgOqEBGbcA+CgvpLqDWd6rwAUbTR1z?=
- =?us-ascii?Q?FAbOC45ret9ZORCI1ilGKIQyK1dPwHCmOsm6QWJLxXu48ZxMniuzuf74Q0+F?=
- =?us-ascii?Q?/VdMSyF6tYam5tIFQFsTwRo2KQFwoWOsbdn/XNKpx1pAZs8SD1N2ppf55vBj?=
- =?us-ascii?Q?v0y/na224Y1bqbhQmgYgWIgrAYmW4uzMDMbUtl4hSf6WzcnG9VQMwjLU2uur?=
- =?us-ascii?Q?hYfIVB+BiKW5gW3GV+R7xqB4hjSVLeY5XFTENdEiaHFS/3hfROA61pDxJ1YW?=
- =?us-ascii?Q?37nMdfB4rkpyWzvDRY45uk9GKxpXfuA8SvxYAkUhr8hp0FluuUo8b5u0k1cY?=
- =?us-ascii?Q?Ta8iwIylEzcSCuaKjQmKyriMuu36dDBJ0E17nkNV1lUjeKdmvk5sB311kLGf?=
- =?us-ascii?Q?J0edjQwUcCYgUckvtaSU+dhNH6tww2itOgtOMHhm59XnRq0en4hfiORLxa4l?=
- =?us-ascii?Q?rnt+F8VU4JKtyFn+6hBNh+zV6yeuX7/1drqE+9GVGNjbx9yBO5YxEdXCWXjJ?=
- =?us-ascii?Q?j+ls48tXAFWUEcnM4IMGivFZP6AAN/s2l5BjjHg4B8Zj9vhZttXcKWqJQS5u?=
- =?us-ascii?Q?kM6Av4alfTQb3Ll1of2eIXbbRyQ1LXg5xZAILeUWXb3FWI+CkBlKvbNw6GKE?=
- =?us-ascii?Q?6vGGhGeMTiIGOeYWyvEQT152sVbqdvFiFLPvKH7Eg2hpJcC2OBa8vasLoZU/?=
- =?us-ascii?Q?9PJ/IADLAhhtT5fic56Ggz4JjL6j3yPl+pTqs7gOrzsLJkCUrCE8rE7Ep6s0?=
- =?us-ascii?Q?2IYdtfhiiZCYnHSycHvzQiam09/6VZL8T0cl7syAYv/WD0rEwkZQnpC6KYRR?=
- =?us-ascii?Q?2d2TOPaZzEMawuIyT61hOZF8XN+crPDw0pOhcryrBC3qzzp372XJeCLOw=3D?=
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(39380400002)(376002)(199004)(189003)(6666003)(53936002)(81156014)(68736007)(6636002)(7736002)(50226002)(4326008)(6116002)(16586007)(6512007)(3846002)(8936002)(575784001)(186003)(86362001)(97736004)(8676002)(25786009)(16526019)(66066001)(50466002)(52116002)(51416003)(478600001)(106356001)(105586002)(26005)(956004)(76176011)(305945005)(47776003)(386003)(2616005)(5660300001)(316002)(81166006)(48376002)(446003)(6486002)(6506007)(476003)(2906002)(11346002)(36756003)(486006)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1315;H:anson-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM3PR04MB1315;23:35KGcd8TJJvmu+Npgf6LJswwZBEsmiXfGU70eITtv?=
+ =?us-ascii?Q?5fw6l2UzNCuca2jtpk0wWVIwIWf5ZrN5HIipmxfHBhX6KTA3nZslOevkzXWG?=
+ =?us-ascii?Q?FlfCzbcBwuLlqLK/hyfb4WWIgPdGN5b5KlLeJ524kYMtmoFg2Pr24xsW+wYN?=
+ =?us-ascii?Q?MUjM6PdmDxXjIFd6bm8YOMpnEv0pOuWWfaHIsOhm7Om7ETNKv3keoIjPYU9m?=
+ =?us-ascii?Q?cXCPhC8ukYMw25KGe9Ty6z5WUUPIXj3lBVLO41T9xwkB82VSNUKENuLCtn2b?=
+ =?us-ascii?Q?WlwgfY/dszsoZkzM5Y/mo1ckgRXi32kz4H2kJCy1R9Slk8F7KLoWPdEbry42?=
+ =?us-ascii?Q?apC63jlrOgOn42dTXYzKys7TglFVVtfMe970Fu3JpqYl/Xm6SwwqYwVFeBi9?=
+ =?us-ascii?Q?1fyZd7Ov/cr/5Cm3gfymU6fL4tKwMapiQq8dmHybJBK+yaZFI+pShJcnhRQR?=
+ =?us-ascii?Q?iy09r804dXLzi2wBt+eY+bKJiH0mTYOKETaMMjGyrwGal/ncorHxdYGyZcld?=
+ =?us-ascii?Q?FlXI9CmD6dSMJemInnyfSBt47oBY9a6F4N/k2bygvNXG/u9uM8Wz3qu9jT23?=
+ =?us-ascii?Q?XNietvDexeV3Q2ekYcIzkC4WzxSYRrCNats5VT/CW0p7ITpSjSSOcg/ne/Df?=
+ =?us-ascii?Q?zFw6v89PpSWnGb2cxiU5m00YsvHXtyAHmGONxDRzC5f9/sFgXKh011eRmUPB?=
+ =?us-ascii?Q?nMHrv9UgVwlPKtpP8keO5PN8dl8yTSGIZXCNVs5V2aaVPPc33TWEtJYSRn1E?=
+ =?us-ascii?Q?wfyPTH6FvSclQvR9vdoLZmBupcMdAc7fy9KkNAS/lYtM8bJkFim415NntwIe?=
+ =?us-ascii?Q?8Jne5QVj6QgzffrtYlYPIPCMu97XWp9veaQP3fCg6cOWbbUth4k4Ho/Le7VO?=
+ =?us-ascii?Q?TSABzbV7Zxm5q42DsekRYnbaRfb0T44xWe+DJ0Gmd/dHJOIYLC1I2Keigom2?=
+ =?us-ascii?Q?H08YwnS1lhG4rrYnw3oaQRcXh0GhDOIY2LQ2SnG/Oc7PcTW+gwXWUtZo/7xZ?=
+ =?us-ascii?Q?QMYjZc/z9wfobbIhSpIk5yK6F5A1c2qh8Aryd5KMCXTXsoDbr1PKjLp/eiss?=
+ =?us-ascii?Q?8no6JklkrGF2ugyAC5JKjKGG4K1KLMbML8jkLsQ5Z1kAYh2XjrG5WvKNTT8q?=
+ =?us-ascii?Q?wDjouXfEmm67LeAxmEsvf/mO5oESSuMkpfIcOZFNKzzpyuoLzMwvh9TAkMa1?=
+ =?us-ascii?Q?EnxYYJaWRi7npreGGPHUjelhUw+knv8a4lT2XoMeIOD+SllSja8NDqvbQ=3D?=
  =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: q39Ir3mbhIC3AlZSOpOYrtEGvT1hF7XdAoh7nLDEdbC4VRvuy+M0V5LfOBIofuEZh1FvClZNVeE7l/68lP4VtP/tJ2H8Ui7Jwnb9H9quen+gj9BiMINuwaN20M9owjvmP6JEGMw31VVJdI2ax8ff2M7KVTCy92lL5xLuC5VvddK+wrYTVHZQpiRoKuyMNfog
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;6:w8sUochZxUHCwlOaakd0US/DjN+GI6/hUBGTUC2LChk71LDYMo/NWvRG6DBXz6NeBREpVc2xdGHBm091xmHHLkOoN2/VqATfJqRBfLQxa4PZyxXDzRPYgfoTmHr0QpkWRXY0AddT1T1g8kN6xwVQZPe1bbHuAlQ0ENshx/Gotsty6MysDC696yeacqFVvoDsylIr9EMymPJ3LKYMYdz82yqg/vJw0p13ANLwZITaW2TIjw4zI05FK+d4Ukg7IXfbqBdIgvJBvPwMzlkEaZmhf39MGCNsTx5YUSWUINVUROMxGoHp6wlYWya/Su/mr3s3r2GpHHShqfIPvVc4BDL5tH5UcbvB6CaqIHIgcxWsfDh+Z90hMoMZ1lsZKnS/0PJOfr1Se3+TSSzNs+C9sFP40vWuM1tYz5BHUKp7UUI/1FYeMeohs+zNlPQM2lHlL3Z32c7NRWLMXbuGbrcVzST+0w==;5:RhJGHTB5SXcKBFgqNFXhyfAlrbTB0j2by021yyRvj+xGTE8/gW22GtPm2UR6q67R0LxJLnmh4H3kMfhbAZ+/zOASqD3X55ZX0erYIGYQmIXZasM8OCj044lDzMn0Dxm06I9A0+ZfOlI5+0gQXhru5H16oYWhmZDVV0gibLk9kBQ=;24:QzynT1QwVdiA8WJAENf8ox09iZNSaZ/4tXppdaj5IYPkWx2HIoDkOY0fR5DXWQk80Yy968GWrF2LzBrjSYfH60zsc2XEgXnP51CP74N+jPo=
+X-Microsoft-Antispam-Message-Info: /n6UeURMnc/BdJblitk2O/syTsPuGzLIfKhasqubnvYX1SuNGsKmP+aLH4VMPVvSqPww5NOpaLO0KCpoKD8xMuuM3YnBwq3D14h6ZA+Hf7HD2sCGOYkwRxIOuG1burr2+bYMcfrnpouJtwJ+VhBqzwyTzAsr3XN0CoDc7zY+1oDUAak3vUOzADMfxD5vCvez
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;6:vcTE1s42KpjqrkSYAQKcal/6/oD+tAsUeIvLlb7sLA6CzZpmgQo06V7zunAWyEtHnaEjEO9ICQLKtqWzXvLQ5mYaLr1QL2zWk+agncEogvDPtPpcrPZ6Sbd9cW7MUogyh8F0cLCPPc34rMD2gknGR3ZiwSfMdnI/3xIA7yawujOVeA2TAV1KFohKfP73wwGfNNMBMZcsTpgjQe/w2MdNQAsM02rO7nAxrcCIXSym2dRjJ7sM83UTpb7ntXM75KtWX/9yyPlkdp7m8uTmohaba0cHM0Ut5ioO7+nJMnR3W5FqToVjosrQimGtOm/zWdU0ZCmvTBeAUm5hJnRWr4DotnCDWf8+6Rp/R7V1p+2OJx7X9ayPvnxNVlDVMfZw2tzL8ytEJ9mZ+gfUxUezl7FNU24aZC2Ifv/XsnQc5eWnVMnEygfgOPMnEk9KCczkoTBxYpsQhRD1yjd9uYs3SOCWsg==;5:cASKwNdAwiTDJ/Ay3o3fMl6q87+vHC5kL+hS9+2ot6eOzQCe7IgLTmLgi7eVKtPCjS2J36JGjiUUa0TCd8tzGDEN7ABktDc8JTJdIPtIy5mpNQ7jZu25Sq1QlrPOcdVXRPLn7WNNjLzsMYiUcH8z/zlLNVNlwhbUqsrKSEvOWgM=;24:CdZuKPUgNHdQPkIxjN32P3B6EAVy3RaDzXDUfZ+BqFd+QvgANpHVBNEzIfnNKPuQCFx87gV/+WgI4lm+jNg/IMPwuTsha8WcJzJJI0CmRks=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;7:tjJYqVEBAbz9T1K5909q27yiHhSG56XN78ru9Wn4EyA9NPeXp+iT1Gdfmq4d7YxTYbYz1tZZhC+I2qRtT21ZjEO6fSVcKlssZhFgT8r81BkBOyzN/kkGuUPhlSghviEdcJ+UWn4PEKke6cffl8ck1wQH08T/eKLkVJzLvsvodmk2cQrE4UrQig156PrbjkfP1NGuWfoc5/qyNO6kZ9ImTxx7Rgj/brvpOuTcSRKpjS+ZQNIkGTOOs8J9/w26dUkO
-X-MS-Office365-Filtering-Correlation-Id: b3a38d3e-d951-44e8-eb9b-08d5b262e084
+X-Microsoft-Exchange-Diagnostics: 1;AM3PR04MB1315;7:8iW2Dt08zfClnKdHK/mekWJHeEjMckNtyQNwGnYx7oatHVzRXiwsi36GhOCVUgUx1LFdnW/onrvWJnKbIaMuHKESB25Km6DxN3k2xl3TThUzsmceuDl8NmqneVl37FKodJCK0pdTTGr6vvSQUAigzdQJISqhwMDv5QMjigQXmzkyFrf0BvOfMbzp/goGEwpC23O08hrGbaFJ8Y1vrJs1yk6mP3kH5wgUo34bBKxn4976nYPlPjbTyx3NTcUPAFF1
+X-MS-Office365-Filtering-Correlation-Id: cbf0a41a-875a-4e19-6ab0-08d5b262d008
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2018 08:33:23.8009
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2018 08:32:56.1569
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3a38d3e-d951-44e8-eb9b-08d5b262e084
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbf0a41a-875a-4e19-6ab0-08d5b262d008
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1315
@@ -76,49 +76,29 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add egalax touch screen support on i2c2 bus.
+Add MAX7322 IO expander support.
 
-Signed-off-by: Haibo Chen <haibo.chen@freescale.com>
+Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-changes since V5:
-	improve pinctrl node name and touchscreen node name.
- arch/arm/boot/dts/imx6sx-sabreauto.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/imx6sx-sabreauto.dts | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx6sx-sabreauto.dts b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-index 1dc5b58..3fe41d3 100644
+index 1d8cf0f..ae253af 100644
 --- a/arch/arm/boot/dts/imx6sx-sabreauto.dts
 +++ b/arch/arm/boot/dts/imx6sx-sabreauto.dts
-@@ -122,6 +122,12 @@
+@@ -254,4 +254,11 @@
+ 			};
+ 		};
+ 	};
++
++	max7322: gpio@68 {
++		compatible = "maxim,max7322";
++		reg = <0x68>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
  };
- 
- &iomuxc {
-+	pinctrl_egalax_int: egalax-intgrp {
-+		fsl,pins = <
-+			MX6SX_PAD_SD4_RESET_B__GPIO6_IO_22      0x80000000
-+		>;
-+	};
-+
- 	pinctrl_enet1: enet1grp {
- 		fsl,pins = <
- 			MX6SX_PAD_ENET1_MDIO__ENET1_MDIO        0xa0b1
-@@ -264,6 +270,16 @@
- 	pinctrl-0 = <&pinctrl_i2c2>;
- 	status = "okay";
- 
-+	egalax_touchscreen@4 {
-+		compatible = "eeti,egalax_ts";
-+		reg = <0x04>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_egalax_int>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <22 IRQ_TYPE_EDGE_FALLING>;
-+		wakeup-gpios = <&gpio6 22 GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	pfuze100: pmic@8 {
- 		compatible = "fsl,pfuze100";
- 		reg = <0x08>;
 -- 
 2.7.4
