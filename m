@@ -1,163 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751238AbeEEHzf (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 03:55:35 -0400
-Received: from mout.web.de ([212.227.15.3]:54073 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750752AbeEEHzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 03:55:33 -0400
-Subject: Re: [v3] [media] Use common error handling code in 19 functions
-To: Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-media@vger.kernel.org
-Cc: Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Utkin <andrey_utkin@fastmail.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, Brian Johnson <brijohn@gmail.com>,
-        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= <christoph@boehmwalder.at>,
-        Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        Colin Ian King <colin.king@canonical.com>,
-        Daniele Nicolodi <daniele@grinta.net>,
-        =?UTF-8?Q?David_H=c3=a4rdeman?= <david@hardeman.nu>,
-        Devendra Sharma <devendra.sharma9091@gmail.com>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        Inki Dae <inki.dae@samsung.com>, Joe Perches <joe@perches.com>,
-        Kees Cook <keescook@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Max Kellermann <max.kellermann@gmail.com>,
-        Mike Isely <isely@pobox.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Santosh Kumar Singh <kumar.san1093@gmail.com>,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        Sean Young <sean@mess.org>, Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Shyam Saini <mayhs11saini@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Wei Yongjun <weiyongjun1@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <227d2d7c-5aee-1190-1624-26596a048d9c@users.sourceforge.net>
- <57ef3a56-2578-1d5f-1268-348b49b0c573@users.sourceforge.net>
- <9e766f52-b09e-c61e-8d9f-23542d83f6b1@users.sourceforge.net>
- <20180504144928.566ae507@vento.lan>
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Message-ID: <980b7bd9-b922-55f7-c2d7-2d20552ade4c@users.sourceforge.net>
-Date: Sat, 5 May 2018 09:53:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180504144928.566ae507@vento.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:zI95rEzgt66WrwkB+0/lwtunoaylC/HUnaZNbtqRXL/AYpE5sQV
- wwjPfQb8SypwEp4DujLsLZaT7kmaH4qW0xYXu742PyhZvpwGJ+xLNGT4vxfor1CYAYOK6CY
- 67R8UrLxBxSbkPAXhot+ANFehn80TmxkuspXCisAW26UdOd9dXA1HZuWVACBKrYhlXFDRqA
- k7pkweaSpbOm4CfEIcZeg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ASWpoSubfAc=:748bqFOPcNu2QI8hiuMWjZ
- kUSv3R4hPfeFoqX3dljAHNJG1KWfI4CJJHMChIHUgACY1XHfcp5Qca1h6q/LaOSZE4cYnS7WY
- PJIVxmKLBcZKCysDPTO+GUc+rN9oLlvnwLgfXSp6rVFoVcFnsYt5B10ZgTTTHw2NL03NUvZqu
- OwcbF38755bzh9fv0kbtyzeqQGQhvhvrq6X2JzLu8jvDFaTv2wigQbILl6OapvgAlRlgdH7K0
- fywJjWlEL2Y6Q9ZpoeHRyA0dcZIJTdVXIi8tXB8v8OM5k8cKKFDUOuyQFWUVnPC79i3elqhGt
- k4IDkjduFSCzyebqSuEOIHAgtbUH2CGf96anT1p7/QcA6h4fULXIq6mCnMt7AxDKTSEOOiHPH
- oYAhRqqF9VdD7s8YBQgpC1tjqX1+/p6eBXhexpydmnmiqMmS121mBThPoHxmXzHSqNIjwaWwP
- yhJyb0jw1j7vtiq+sh+DrXGT4bGfm6dsA1v4fHjVoE9icxna71PgxeRZWCMpO7AjHiG63F1Oq
- 7eXgLh9Yiqe0BtPoo1iqXaiDHVtzoEp27jXgxHWKThtVB2e2+rbWd3bSPVZumbosixiwBr5eZ
- TTX2FQNOlYnvxMswOpUkFCrIyNndT/+KPZiO9w5+Os2H+au9KTnSuIHF/b3zxMsFgUkTknx3y
- k0IkOWgxoZYkl0kM53jUNPVfAq9zXb/UAQTQGz0qlD0xTX6yso1VuHPIu4hwgk59ZyTjQIqre
- EdsYKayj9yhPRHRHraFGA15l0KI2BzzieGGH2OnKPVTMsDqRU5Wi3gcTVtBH8Hfd4rMqQY9Yc
- fBliHh6
+        id S1751591AbeEEH7A (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 03:59:00 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:44298 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750790AbeEEH66 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 03:58:58 -0400
+X-Google-Smtp-Source: AB8JxZq8IVt0Eq7PXuQEiSPwVWPTsBXZMLoli3r7G6cvfHUejRBrD1iL+hoMD+HvMNAGl8ojmUgyHw==
+From: Kyle Spiers <ksspiers@google.com>
+To: dan.j.williams@intel.com
+Cc: davem@davemloft.net, keescook@chromium.org, vinod.koul@intel.com,
+        ray.jui@broadcom.com, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kyle Spiers <ksspiers@google.com>
+Subject: [PATCH v2] async_pq: Remove VLA usage
+Date: Sat,  5 May 2018 00:58:54 -0700
+Message-Id: <20180505075854.192237-1-ksspiers@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> @@ -656,18 +656,18 @@  static int dvb_dmxdev_start_feed(struct dmxdev *dmxdev,
->  	tsfeed->priv = filter;
->  
->  	ret = tsfeed->set(tsfeed, feed->pid, ts_type, ts_pes, timeout);
-> -	if (ret < 0) {
-> -		dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto release_feed;
->  
->  	ret = tsfeed->start_filtering(tsfeed);
-> -	if (ret < 0) {
-> -		dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
-> -		return ret;
-> -	}
-> +	if (ret < 0)
-> +		goto release_feed;
->  
->  	return 0;
-> +
-> +release_feed:
-> +	dmxdev->demux->release_ts_feed(dmxdev->demux, tsfeed);
-> +	return ret;
->  }
-> 
-> There's *nothing* wrong with the above. It works fine,
+In the quest to remove VLAs from the kernel[1], this moves the
+allocation of coefs and blocks from the stack to being kmalloc()ed.
 
-I can agree to this view in principle according to the required control flow.
+[1] https://lkml.org/lkml/2018/3/7/621
 
+Signed-off-by: Kyle Spiers <ksspiers@google.com>
+---
+Forgot to add slab.h
+---
+ crypto/async_tx/async_pq.c  | 18 ++++++++++++++----
+ crypto/async_tx/raid6test.c |  9 ++++++++-
+ 2 files changed, 22 insertions(+), 5 deletions(-)
 
-> avoids goto
-
-How does this wording fit to information from the section
-“7) Centralized exiting of functions” in the document “coding-style.rst”?
-
-
-> and probably even produce the same code, as gcc will likely optimize it.
-
-Would you like to clarify the current situation around supported
-software optimisations any more?
-
-
-> It is also easier to review, as the error handling is closer
-> to the code.
-
-Do we stumble on different coding style preferences once more?
-
-
-> On the other hand, there's nothing wrong on taking the approach
-> you're proposing.
-
-Thanks for another bit of positive feedback.
-
-
-> In the end, using goto or not on error handling like the above is 
-> a matter of personal taste - and taste changes with time
-
-Do Linux guidelines need any adjustments?
-
-
-> and with developer. I really don't have time to keep reviewing patches
-> that are just churning the code just due to someone's personal taste.
-
-I tried to apply another general source code transformation pattern.
-
-
-> I'm pretty sure if I start accepting things like that,
-> someone else would be on some future doing patches just reverting it,
-> and I would be likely having to apply them too.
-
-Why?
-
-I hope also that the source code can be kept consistent to some degree.
-
-
-> So, except if the patch is really fixing something - e.g. a broken
-> error handling code, I'll just ignore such patches and mark as
-> rejected without further notice/comments from now on.
-
-I would find such a communication style questionable.
-Do you distinguish between bug fixes and possible corrections for
-other error categories (or software weaknesses)?
-
-Regards,
-Markus
+diff --git a/crypto/async_tx/async_pq.c b/crypto/async_tx/async_pq.c
+index 56bd612927ab..af1912313a23 100644
+--- a/crypto/async_tx/async_pq.c
++++ b/crypto/async_tx/async_pq.c
+@@ -194,9 +194,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+ 	    (src_cnt <= dma_maxpq(device, 0) ||
+ 	     dma_maxpq(device, DMA_PREP_CONTINUE) > 0) &&
+ 	    is_dma_pq_aligned(device, offset, 0, len)) {
+-		struct dma_async_tx_descriptor *tx;
++		struct dma_async_tx_descriptor *tx = NULL;
+ 		enum dma_ctrl_flags dma_flags = 0;
+-		unsigned char coefs[src_cnt];
++		unsigned char *coefs;
+ 		int i, j;
+ 
+ 		/* run the p+q asynchronously */
+@@ -207,6 +207,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+ 		 * sources and update the coefficients accordingly
+ 		 */
+ 		unmap->len = len;
++		coefs = kmalloc_array(src_cnt, sizeof(*coefs), GFP_KERNEL);
++		if (!coefs)
++			goto out;
+ 		for (i = 0, j = 0; i < src_cnt; i++) {
+ 			if (blocks[i] == NULL)
+ 				continue;
+@@ -240,7 +243,9 @@ async_gen_syndrome(struct page **blocks, unsigned int offset, int disks,
+ 		}
+ 
+ 		tx = do_async_gen_syndrome(chan, coefs, j, unmap, dma_flags, submit);
++out:
+ 		dmaengine_unmap_put(unmap);
++		kfree(coefs);
+ 		return tx;
+ 	}
+ 
+@@ -298,8 +303,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+ {
+ 	struct dma_chan *chan = pq_val_chan(submit, blocks, disks, len);
+ 	struct dma_device *device = chan ? chan->device : NULL;
+-	struct dma_async_tx_descriptor *tx;
+-	unsigned char coefs[disks-2];
++	struct dma_async_tx_descriptor *tx = NULL;
++	unsigned char *coefs = NULL;
+ 	enum dma_ctrl_flags dma_flags = submit->cb_fn ? DMA_PREP_INTERRUPT : 0;
+ 	struct dmaengine_unmap_data *unmap = NULL;
+ 
+@@ -318,6 +323,9 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+ 			 __func__, disks, len);
+ 
+ 		unmap->len = len;
++		coefs = kmalloc_array(disks - 2, sizeof(*coefs), GFP_KERNEL);
++		if (!coefs)
++			goto out;
+ 		for (i = 0; i < disks-2; i++)
+ 			if (likely(blocks[i])) {
+ 				unmap->addr[j] = dma_map_page(dev, blocks[i],
+@@ -423,6 +431,8 @@ async_syndrome_val(struct page **blocks, unsigned int offset, int disks,
+ 		async_tx_sync_epilog(submit);
+ 		tx = NULL;
+ 	}
++out:
++	kfree(coefs);
+ 	dmaengine_unmap_put(unmap);
+ 
+ 	return tx;
+diff --git a/crypto/async_tx/raid6test.c b/crypto/async_tx/raid6test.c
+index dad95f45b88f..4237a5ae8f42 100644
+--- a/crypto/async_tx/raid6test.c
++++ b/crypto/async_tx/raid6test.c
+@@ -24,6 +24,7 @@
+ #include <linux/mm.h>
+ #include <linux/random.h>
+ #include <linux/module.h>
++#include <linux/slab.h>
+ 
+ #undef pr
+ #define pr(fmt, args...) pr_info("raid6test: " fmt, ##args)
+@@ -81,11 +82,16 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+ 			init_async_submit(&submit, 0, NULL, NULL, NULL, addr_conv);
+ 			tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
+ 		} else {
+-			struct page *blocks[disks];
++			struct page **blocks;
+ 			struct page *dest;
+ 			int count = 0;
+ 			int i;
+ 
++			blocks = kmalloc_array(disks, sizeof(*blocks),
++							GFP_KERNEL);
++			if (!blocks)
++				return;
++
+ 			/* data+Q failure.  Reconstruct data from P,
+ 			 * then rebuild syndrome
+ 			 */
+@@ -101,6 +107,7 @@ static void raid6_dual_recov(int disks, size_t bytes, int faila, int failb, stru
+ 
+ 			init_async_submit(&submit, 0, tx, NULL, NULL, addr_conv);
+ 			tx = async_gen_syndrome(ptrs, 0, disks, bytes, &submit);
++			kfree(blocks);
+ 		}
+ 	} else {
+ 		if (failb == disks-2) {
+-- 
+2.17.0.441.gb46fe60e1d-goog
