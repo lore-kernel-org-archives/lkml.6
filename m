@@ -1,32 +1,32 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-977734-1525482783-2-14356457069423786759
+X-Cyrus-Session-Id: sloti22d1t05-1145571-1525495364-2-6930638707220666907
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: plain='utf-8'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525482782; b=bNxDatnHmxPOGJP932HbRz+2Gjq63Ckb7nQiStYbKQDHoWJVEq
-    hLbYqsgX1pT+Xa+GtPMyX78QztsZNInmUin3mGsTf13t2b3sM4d+7KpewZam+sLj
-    6nfXRZYO6G3/t+3veOzhHYN6wdE+EJaR3DI2GbB+9xrqFgIESm2MYBayih1Winpv
-    LviKRSP/iaoSnrG6zHky/NCZVYXkupDo5kXLzF3Ma2Oq1EdrIkJx9nzvmIYQBvl1
-    24zC/EpckuCGzhuWrJb4XSdgYGsBCnVCG1GRxdDbQipz6zBldOQIMe5v7Gb4wtXd
-    0pFj0HqJsneiqw0RZH+rZbseKG7u8DCTtCnA==
+    1525495363; b=dNquw8/KfBvZZFOvvTn/UI/qXogABYt3iFlTngnlJLcDsI1Lez
+    QCr/y48r/3fzuji02sdklH6N3XxTNxcgQ6c+feb0LUbaek6RdKFO3YtsL7Byq9x2
+    UzcoQYDh3vCOF2gdbWZUWSCvuTtuduhso1OOLXoe6FtdmSJ7628Cey6+yxht6lO4
+    Q2VB7hnrEU7Ohmd4XITJF96ayU6BPKut5aOnS5V26lPGhH2JBTxU+MIFiI2UDxOb
+    7Q/sKtYRPurLU9DOWwhBSre2fepS2eh/TZPwiv+F9WmCF3WdAwFhxmrkfUWsuGpC
+    BtPb5crvYCgT0hjaR/alUbQbzRC3FIdEKNIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:cc:subject:reply-to
-    :references:mime-version:content-type:in-reply-to:message-id
-    :sender:list-id; s=fm2; t=1525482782; bh=KGgq+6nib5Pt6Rdcq/j4dFx
-    TkY/lA2jAEeJGR9gxbbE=; b=g9Oay33eUIN2ZYhto1km7T2yOksX1BzJELR/Sgn
-    quFLA+MjMhPK/fQ2eSp+0+wgFURNWbZUREt8VnlRxbZ3tFxVmNGW7UMHMhEalL1A
-    vCLA5bmjKkH7xsSw7MbUMm9J9mkyUqMtA8wwrj8CGBQ4YxxDPf1pGqLH3X+Hf8so
-    KeUDU96EER25Wpw1KQ4pFHT1dyekR4lsGFZTDv6EukpJGHmseTa4od3VxPc8YIaE
-    5GL+8/JsQ+aQ/et2rzXCwtO495qrMTgWf/Hy0vJEdHvZVRiqwDC8aUYDL5rADwgp
-    NGsMm5pK2Ds9pY8WTq2Yle+YCRJOGhcAYvnOgaQgnit/c8w==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=subject:to:references:cc:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525495363;
+    bh=Z8zpIhh9WVLgnfIGRPDjAIM4fM4d+dKFqptmLstJI9A=; b=KgiFDhe3fpln
+    GnuUQS4Zm3pxW0aOHPbIGreAsxbZzfZjQ/yb4GaEJW5cUqh1J8tW5X5mAbnbBE80
+    FHZL+4SZPwjpJvtd1UdorOr35dWK2uOOLMJKN5RIr13VI3VbkAYysspD1yv1SIst
+    QJjmOdW6qSvtIjYZpKufFhiulgIlSFlbOn1td/iMF9HKK3nU6aueEx/+bwn3Feaq
+    lJNJXf45RiQgo92niGi7aZZRv9NMyChKxKM1DzgEOqWqUsAg8LtYSs7TmCF6W2KC
+    k5bNLI9ElG74CkmlFuQvQWslT3DQy3ypIE0ACX/6Krlh56VRHrFuZyUGZrhijK3+
+    N8YuIMA4YQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=us.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -35,13 +35,12 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=us.ibm.com header.result=pass header_org.domain=ibm.com
-    header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+    header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=us.ibm.com;
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -50,27 +49,35 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=us.ibm.com header.result=pass header_org.domain=ibm.com
-      header_org.result=pass header_is_org_domain=no;
-    x-vs=clean score=-100 state=0
+      header.domain=intel.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfL1bWLS4t2uRbedp3mRrf8Cxy3r9UuxgjAAeTBADITRPT35HRvs5ohNyXyZCBheJJ2VN/zG9HL6tgm0rTUJA53zlixGYdrMv8XZrSPnM9vAVc44YqYBe
-    YTvZdLGM3IrKBstM9iUAO+b8VsRiIDniAhYlPbgBlOeX/J5HQlxj8M0z0Wwb9v1n4H+tVMr9syq1BkRx7QzDjUTP8zl8TET/U8yDHfZNE+HnW1rvWoqEmWxp
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=oYajKyDWE3nUfSxrg04A:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfMlv/rM/0A+mGSBaZSOKM4Ya7swJl8oGlrw686uUkiIm1f1bC9Gn3IDiyPFQJ3W1vi1C461oxnB2mR1cvmBfXEWy85Km2qvtWwnm1RdkF6GUx/raQxW7
+    mP1BfnYsouQJoBP7cQL+xHcTxvDQF9EusA676s8CNQYiKFye2n554aP+A3bpvq8PBpZez6zL1qBdMKu23P9A9laZLOctUZUqsR+/HTu0zPj3DfH8ZhYKH/LV
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=-OLwKGikQ9vXiKCKYdEA:9 a=QEXdDO2ut3YA:10
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751805AbeEEBM7 (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 4 May 2018 21:12:59 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55032 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751751AbeEEBM7 (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Fri, 4 May 2018 21:12:59 -0400
-Date: Fri, 4 May 2018 18:12:43 -0700
-From: Ram Pai <linuxram@us.ibm.com>
-To: Dave Hansen <dave.hansen@intel.com>
+        id S1750764AbeEEEml (ORCPT <rfc822;linux@kroah.com>);
+        Sat, 5 May 2018 00:42:41 -0400
+Received: from mga14.intel.com ([192.55.52.115]:35021 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750752AbeEEEmk (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Sat, 5 May 2018 00:42:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,364,1520924400";
+   d="scan'208";a="36994747"
+Subject: Re: [PATCH v13 3/3] mm, powerpc, x86: introduce an additional vma bit
+ for powerpc pkey
+To: Ram Pai <linuxram@us.ibm.com>
+References: <1525471183-21277-1-git-send-email-linuxram@us.ibm.com>
+ <1525471183-21277-3-git-send-email-linuxram@us.ibm.com>
+ <1e37895e-5a18-11c1-58f1-834f96dfd4d5@intel.com>
+ <20180505011243.GB5617@ram.oc3035372033.ibm.com>
 Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
         linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, x86@kernel.org,
         linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -79,73 +86,41 @@ Cc: mpe@ellerman.id.au, mingo@redhat.com, akpm@linux-foundation.org,
         bsingharora@gmail.com, hbabu@us.ibm.com, mhocko@kernel.org,
         bauerman@linux.vnet.ibm.com, ebiederm@xmission.com, corbet@lwn.net,
         arnd@arndb.de
-Subject: Re: [PATCH v13 3/3] mm, powerpc, x86: introduce an additional vma
- bit for powerpc pkey
-Reply-To: Ram Pai <linuxram@us.ibm.com>
-References: <1525471183-21277-1-git-send-email-linuxram@us.ibm.com>
- <1525471183-21277-3-git-send-email-linuxram@us.ibm.com>
- <1e37895e-5a18-11c1-58f1-834f96dfd4d5@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Message-ID: <7d1de723-f001-ebbe-6026-91bef88c566d@intel.com>
+Date: Fri, 4 May 2018 21:42:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e37895e-5a18-11c1-58f1-834f96dfd4d5@intel.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-TM-AS-GCONF: 00
-x-cbid: 18050501-0020-0000-0000-0000041929E7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050501-0021-0000-0000-000042AE531D
-Message-Id: <20180505011243.GB5617@ram.oc3035372033.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-04_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805050009
+In-Reply-To: <20180505011243.GB5617@ram.oc3035372033.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Fri, May 04, 2018 at 03:57:33PM -0700, Dave Hansen wrote:
-> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > index 0c9e392..3ddddc7 100644
-> > --- a/fs/proc/task_mmu.c
-> > +++ b/fs/proc/task_mmu.c
-> > @@ -679,6 +679,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
-> >  		[ilog2(VM_PKEY_BIT1)]	= "",
-> >  		[ilog2(VM_PKEY_BIT2)]	= "",
-> >  		[ilog2(VM_PKEY_BIT3)]	= "",
-> > +		[ilog2(VM_PKEY_BIT4)]	= "",
-> >  #endif /* CONFIG_ARCH_HAS_PKEYS */
-> ...
-> > +#if defined(CONFIG_PPC)
-> > +# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
-> > +#else 
-> > +# define VM_PKEY_BIT4	0
-> > +#endif
-> >  #endif /* CONFIG_ARCH_HAS_PKEYS */
+On 05/04/2018 06:12 PM, Ram Pai wrote:
+>> That new line boils down to:
+>>
+>> 		[ilog2(0)]	= "",
+>>
+>> on x86.  It wasn't *obvious* to me that it is OK to do that.  The other
+>> possibly undefined bits (VM_SOFTDIRTY for instance) #ifdef themselves
+>> out of this array.
+>>
+>> I would just be a wee bit worried that this would overwrite the 0 entry
+>> ("??") with "".
+> Yes it would :-( and could potentially break anything that depends on
+> 0th entry being "??"
 > 
-> That new line boils down to:
+> Is the following fix acceptable?
 > 
-> 		[ilog2(0)]	= "",
-> 
-> on x86.  It wasn't *obvious* to me that it is OK to do that.  The other
-> possibly undefined bits (VM_SOFTDIRTY for instance) #ifdef themselves
-> out of this array.
-> 
-> I would just be a wee bit worried that this would overwrite the 0 entry
-> ("??") with "".
+> #if VM_PKEY_BIT4
+>                 [ilog2(VM_PKEY_BIT4)]   = "",
+> #endif
 
-Yes it would :-( and could potentially break anything that depends on
-0th entry being "??"
-
-Is the following fix acceptable?
-
-#if VM_PKEY_BIT4
-                [ilog2(VM_PKEY_BIT4)]   = "",
-#endif
-
--- 
-Ram Pai
+Yep, I think that works for me.
