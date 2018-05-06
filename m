@@ -1,400 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751896AbeEFVjJ (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 17:39:09 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:54650 "EHLO leonov.paulk.fr"
+        id S1751908AbeEFVlD (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 17:41:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35273 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751834AbeEFVjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 17:39:07 -0400
-Message-ID: <2f45fb80d9c56b11a93a2ffc80217a4074cb572b.camel@paulk.fr>
-Subject: Re: [PATCH 3/3] ARM: dts: sun7i: Add support for the Ainol AW1
- tablet
-From: Paul Kocialkowski <contact@paulk.fr>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org
-Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org
-Date: Sun, 06 May 2018 23:38:51 +0200
-In-Reply-To: <20180506205619.5591-3-contact@paulk.fr>
-References: <20180506205619.5591-1-contact@paulk.fr>
-         <20180506205619.5591-3-contact@paulk.fr>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-ksghnooShb75xlCfqZvF"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S1751834AbeEFVlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 17:41:02 -0400
+From: NeilBrown <neil@brown.name>
+To: James Hogan <jhogan@kernel.org>
+Date: Mon, 07 May 2018 07:40:49 +1000
+Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] MIPS: c-r4k: fix data corruption related to cache coherence.
+In-Reply-To: <87vacdlf8d.fsf@notabene.neil.brown.name>
+References: <87sh7klyhc.fsf@notabene.neil.brown.name> <20180425214650.GA25917@saruman> <87h8nzlzf1.fsf@notabene.neil.brown.name> <20180425220834.GC25917@saruman> <87vacdlf8d.fsf@notabene.neil.brown.name>
+Message-ID: <87lgcwcvj2.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-ksghnooShb75xlCfqZvF
-Content-Type: text/plain; charset="UTF-8"
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-Le dimanche 06 mai 2018 =C3=A0 22:56 +0200, Paul Kocialkowski a =C3=A9crit =
-:
-> This adds support for the Ainol AW1, an A20-based 7" tablet from
-> Ainol.
->=20
-> The following board-specific features are supported:
-> * LCD panel
-> * Backlight
-> * USB OTG
-> * Buttons
-> * Touchscreen (doesn't work without non-free firmware)
-> * Accelerometer
-> * Battery
->=20
-> The following are untested:
-> * Audio output
-> * Audio speakers
-> * USB via SPCI connector
->=20
-> The following are not supported:
-> * Wi-Fi
-> * Bluetooth
-> * NAND
-> * Audio via SPCI connector
-> * Audio via Bluetooth I2S
->=20
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+
+Hi James,
+ this hasn't appear in linux-next yet, or in any branch
+ of
+   git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/mips.git
+
+ Should I expect it to?
+
+Thanks,
+NeilBrown
+
+On Fri, Apr 27 2018, NeilBrown wrote:
+
+> When DMA will be performed to a MIPS32 1004K CPS, the
+> L1-cache for the range needs to be flushed and invalidated
+> first.
+> The code currently takes one of two approaches.
+> 1/ If the range is less than the size of the dcache, then
+>    HIT type requests flush/invalidate cache lines for the
+>    particular addresses.  HIT-type requests a globalised
+>    by the CPS so this is safe on SMP.
+>
+> 2/ If the range is larger than the size of dcache, then
+>    INDEX type requests flush/invalidate the whole cache.
+>    INDEX type requests affect the local cache only. CPS
+>    does not propagate them in any way.  So this invalidation
+>    is not safe on SMP CPS systems.
+>
+> Data corruption due to '2' can quite easily be demonstrated by
+> repeatedly "echo 3 > /proc/sys/vm/drop_caches" and then sha1sum
+> a file that is several times the size of available memory.
+> Dropping caches means that large contiguous extents (large than
+> dcache) are more likely.
+>
+> This was not a problem before Linux-4.8 because option 2 was
+> never used if CONFIG_MIPS_CPS was defined.  The commit
+> which removed that apparently didn't appreciate the full
+> consequence of the change.
+>
+> We could, in theory, globalize the INDEX based flush by sending an IPI
+> to other cores.  These cache invalidation routines can be called with
+> interrupts disabled and synchronous IPI require interrupts to be
+> enabled.  Asynchronous IPI may not trigger writeback soon enough.
+> So we cannot use IPI in practice.
+>
+> We can already test is IPI would be needed for an INDEX operation
+> with r4k_op_needs_ipi(R4K_INDEX).  If this is True then we mustn't try
+> the INDEX approach as we cannot use IPI.  If this is False (e.g. when
+> there is only one core and hence one L1 cache) then it is safe to
+> use the INDEX approach without IPI.
+>
+> This patch avoids options 2 if r4k_op_needs_ipi(R4K_INDEX), and so
+> eliminates the corruption.
+>
+> Fixes: c00ab4896ed5 ("MIPS: Remove cpu_has_safe_index_cacheops")
+> Cc: stable@vger.kernel.org # v4.8+
+> Signed-off-by: NeilBrown <neil@brown.name>
 > ---
->  arch/arm/boot/dts/Makefile                |   1 +
->  arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts | 275
-> ++++++++++++++++++++++
->  2 files changed, 276 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts
->=20
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 7e2424957809..4a80971f2bc9 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -946,6 +946,7 @@ dtb-$(CONFIG_MACH_SUN6I) +=3D \
->  	sun6i-a31s-sinovoip-bpi-m2.dtb \
->  	sun6i-a31s-yones-toptech-bs1078-v2.dtb
->  dtb-$(CONFIG_MACH_SUN7I) +=3D \
-> +	sun7i-a20-ainol-aw1.dtb \
->  	sun7i-a20-bananapi.dtb \
->  	sun7i-a20-bananapi-m1-plus.dtb \
->  	sun7i-a20-bananapro.dtb \
-> diff --git a/arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts
-> b/arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts
-> new file mode 100644
-> index 000000000000..6bb7f47fd010
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts
-> @@ -0,0 +1,275 @@
-> +/*
-> + * Copyright (C) 2018 Paul Kocialkowski <contact@paulk.fr>
-> + *
-> + * SPDX-License-Identifier: GPL-2.0+
-> + */
-> +
-> +/dts-v1/;
-> +#include "sun7i-a20.dtsi"
-> +#include "sunxi-common-regulators.dtsi"
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> +
-> +/ {
-> +	model =3D "Ainol AW1";
-> +	compatible =3D "ainol,ainol-aw1", "allwinner,sun7i-a20";
-> +
-> +	aliases {
-> +		serial0 =3D &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path =3D "serial0:115200n8";
-> +	};
-> +
-> +	backlight: backlight {
-> +		compatible =3D "pwm-backlight";
-> +		pwms =3D <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-> +		brightness-levels =3D <0 10 20 30 40 50 60 70 80 90
-> 100>;
-> +		default-brightness-level =3D <5>;
-> +		enable-gpios =3D <&pio 7 7 GPIO_ACTIVE_HIGH>; /* PH7 */
-> +	};
-> +
-> +	panel: panel {
-> +		compatible =3D "innolux,at070tn90";
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +		power-supply =3D <&panel_power>;
-> +		backlight =3D <&backlight>;
-> +
-> +		port@0 {
-> +			reg =3D <0>;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +
-> +			panel_input: endpoint@0 {
-> +				reg =3D <0>;
-> +				remote-endpoint =3D <&tcon0_out_panel>;
-> +			};
-> +		};
-> +	};
-> +
-> +	panel_power: panel_power {
-> +		compatible =3D "regulator-fixed";
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&panel_power_pin>;
-> +		regulator-name =3D "panel-power";
-> +		regulator-min-microvolt =3D <10400000>;
-> +		regulator-max-microvolt =3D <10400000>;
-> +		gpio =3D <&pio 7 8 GPIO_ACTIVE_HIGH>; /* PH8 */
-> +		enable-active-high;
-> +		regulator-boot-on;
-> +	};
-> +};
-> +
-> +&codec {
-> +	allwinner,pa-gpios =3D <&pio 7 15 GPIO_ACTIVE_HIGH>; /* PH15 */
-> +	status =3D "okay";
-> +};
-> +
-> +&cpu0 {
-> +	cpu-supply =3D <&reg_dcdc2>;
-> +};
-> +
-> +&de {
-> +	status =3D "okay";
-> +};
-> +
-> +&ehci0 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ehci1 {
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c0_pins_a>;
-> +	status =3D "okay";
-> +
-> +	axp209: pmic@34 {
-> +		reg =3D <0x34>;
-> +		interrupt-parent =3D <&nmi_intc>;
-> +		interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +};
-> +
-> +&i2c1 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c1_pins_a>;
-> +	status =3D "okay";
-> +
-> +	lis3dh: accelerometer@18 {
-> +		compatible =3D "st,lis3dh-accel";
-> +		reg =3D <0x18>;
-> +		vdd-supply =3D <&reg_vcc3v3>;
-> +		vddio-supply =3D <&reg_vcc3v3>;
-> +		st,drdy-int-pin =3D <1>;
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c2_pins_a>;
-> +	status =3D "okay";
-> +	clock-frequency =3D <400000>;
-> +
-> +	gsl1680: touchscreen@40 {
-> +		compatible =3D "silead,gsl1680";
-> +		reg =3D <0x40>;
-> +		interrupt-parent =3D <&pio>;
-> +		interrupts =3D <7 21 IRQ_TYPE_EDGE_FALLING>; /* EINT21
-> (PH21) */
-> +		power-gpios =3D <&pio 7 20 GPIO_ACTIVE_HIGH>; /* PH20
-> */
-> +		firmware-name =3D "gsl1680-ainol-aw1.fw";
-> +		touchscreen-size-x =3D <480>;
-> +		touchscreen-size-y =3D <800>;
-> +		touchscreen-swapped-x-y;
-> +		touchscreen-inverted-y;
-> +		silead,max-fingers =3D <5>;
-> +	};
-> +};
-> +
-> +&lradc {
-> +	vref-supply =3D <&reg_ldo2>;
-> +	status =3D "okay";
-> +
-> +	button@571 {
-> +		label =3D "Volume Up";
-> +		linux,code =3D <KEY_VOLUMEUP>;
-> +		channel =3D <0>;
-> +		voltage =3D <571428>;
-> +	};
-> +
-> +	button@761 {
-> +		label =3D "Volume Down";
-> +		linux,code =3D <KEY_VOLUMEDOWN>;
-> +		channel =3D <0>;
-> +		voltage =3D <761904>;
-> +	};
-> +
-> +	button@952 {
-> +		label =3D "Home";
-> +		linux,code =3D <KEY_HOME>;
-> +		channel =3D <0>;
-> +		voltage =3D <952380>;
-> +	};
-> +};
-> +
-> +&mmc0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&mmc0_pins_a>;
-> +	vmmc-supply =3D <&reg_vcc3v3>;
-> +	bus-width =3D <4>;
-> +	cd-gpios =3D <&pio 7 1 GPIO_ACTIVE_HIGH>; /* PH1 */
-> +	cd-inverted;
-> +	status =3D "okay";
-> +};
-> +
-> +&ohci0 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ohci1 {
-> +	status =3D "okay";
-> +};
-> +
-> +&otg_sram {
-> +	status =3D "okay";
-> +};
-> +
-> +&pio {
-> +	panel_power_pin: panel_power_pin@0 {
-> +		pins =3D "PH8";
-> +		function =3D "gpio_out";
-> +	};
-> +};
-> +
-> +&pwm {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&pwm0_pins_a>;
-> +	status =3D "okay";
-> +};
-> +
-> +&tcon0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&lcd0_rgb888_pins>;
+>  arch/mips/mm/c-r4k.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/mips/mm/c-r4k.c b/arch/mips/mm/c-r4k.c
+> index 6f534b209971..e12dfa48b478 100644
+> --- a/arch/mips/mm/c-r4k.c
+> +++ b/arch/mips/mm/c-r4k.c
+> @@ -851,9 +851,12 @@ static void r4k_dma_cache_wback_inv(unsigned long ad=
+dr, unsigned long size)
+>  	/*
+>  	 * Either no secondary cache or the available caches don't have the
+>  	 * subset property so we have to flush the primary caches
+> -	 * explicitly
+> +	 * explicitly.
+> +	 * If we would need IPI to perform an INDEX-type operation, then
+> +	 * we have to use the HIT-type alternative as IPI cannot be used
+> +	 * here due to interrupts possibly being disabled.
+>  	 */
+> -	if (size >=3D dcache_size) {
+> +	if (!r4k_op_needs_ipi(R4K_INDEX) && size >=3D dcache_size) {
+>  		r4k_blast_dcache();
+>  	} else {
+>  		R4600_HIT_CACHEOP_WAR_IMPL;
+> @@ -890,7 +893,7 @@ static void r4k_dma_cache_inv(unsigned long addr, uns=
+igned long size)
+>  		return;
+>  	}
+>=20=20
+> -	if (size >=3D dcache_size) {
+> +	if (!r4k_op_needs_ipi(R4K_INDEX) && size >=3D dcache_size) {
+>  		r4k_blast_dcache();
+>  	} else {
+>  		R4600_HIT_CACHEOP_WAR_IMPL;
+> --=20
+> 2.14.0.rc0.dirty
 
-Mhh, looks like this should be lcd0_rgb666_pins.
-
-> +	status =3D "okay";
-> +};
-> +
-> +&tcon0_out {
-> +	tcon0_out_panel: endpoint@0 {
-> +		reg =3D <0>;
-> +		remote-endpoint =3D <&panel_input>;
-> +	};
-> +};
-> +
-> +&uart0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&uart0_pins_a>;
-> +	status =3D "okay";
-> +};
-> +
-> +&usb_otg {
-> +	dr_mode =3D "otg";
-> +	status =3D "okay";
-> +};
-> +
-> +&usbphy {
-> +	usb0_id_det-gpio =3D <&pio 7 4 GPIO_ACTIVE_HIGH>; /* PH4 */
-> +	usb0_vbus_power-supply =3D <&usb_power_supply>;
-> +	usb0_vbus-supply =3D <&reg_usb0_vbus>;
-> +	usb1_vbus-supply =3D <&reg_usb1_vbus>;
-> +	usb2_vbus-supply =3D <&reg_usb2_vbus>;
-> +	status =3D "okay";
-> +};
-> +
-> +#include "axp209.dtsi"
-> +
-> +&battery_power_supply {
-> +	status =3D "okay";
-> +};
-> +
-> +&reg_dcdc2 {
-> +	regulator-always-on;
-> +	regulator-min-microvolt =3D <1000000>;
-> +	regulator-max-microvolt =3D <1450000>;
-> +	regulator-name =3D "vdd-cpu";
-> +};
-> +
-> +&reg_dcdc3 {
-> +	regulator-always-on;
-> +	regulator-min-microvolt =3D <1000000>;
-> +	regulator-max-microvolt =3D <1400000>;
-> +	regulator-name =3D "vdd-int-dll";
-> +};
-> +
-> +&reg_ldo1 {
-> +	regulator-name =3D "vdd-rtc";
-> +};
-> +
-> +&reg_ldo2 {
-> +	regulator-always-on;
-> +	regulator-min-microvolt =3D <3000000>;
-> +	regulator-max-microvolt =3D <3000000>;
-> +	regulator-name =3D "avcc";
-> +};
-> +
-> +&reg_usb0_vbus {
-> +	status =3D "okay";
-> +};
-> +
-> +&reg_usb1_vbus {
-> +	status =3D "okay";
-> +};
-> +
-> +&reg_usb2_vbus {
-> +	status =3D "okay";
-> +};
-> +
-> +&usb_power_supply {
-> +	status =3D "okay";
-> +};
---=20
-Paul Kocialkowski,
-
-developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-ksghnooShb75xlCfqZvF
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlrvdesACgkQhP3B6o/u
-lQwX8Q//ZrTxkRkWS8IGQc0mVZtauRG7BCpGHLcJUJOemBgnMPXuQmofXNTGIRVJ
-/0lL4YOzJbukt3xnEqnNEiPYLs+PEKmCmy0r1EKosS0bStpew86LPVkgFKQxOdCJ
-qtCDKKYZoRcwjgVQkGpzsb14miZSkJ/aLPSt1gPA+YGG6346sMpc6hrn5E4fsiDI
-fNswH43M1xB8dfeqUfL9kwKD7GMF+7oqnV0xYbjwsDn8zaMNqMsIveHogbO5RzOd
-6Y0BN5kcKosrdrowwIcecE48KbCaEeXv3QqTeRrGMUQF7TvRHl789yiIPxVdOkaM
-tjdJs2T0cpaRgFJIDdizqWhJxSdT/lHN2Ot68buNFsQ6VI90Eh7R05AHPY+LU5lt
-Fb3AKxvaaMmeBjqwDNzDOU2OOHFBmIDqttdNNUIdYHhyyyMxOguEcD4OmV9RqTki
-ACv8YaGxN97RUPKscSN3ceht6fa2cYKepOSt25N04YfyYVoGwfNKzjSOYUoQyVzd
-q3CHkh7WYS0m9lfCQntw6psxGTrKsq5tGNUBtauS/1dTfdshkvbPmfgMc++5mJN4
-DvrE5awVTTS42FBOz84j4OTU9vjNLMWwzUhNt0lPTwXLDnvcop3o3bVy/UQTcuHW
-1IKVDom6cUctQhI3VWJr6F3b6ftqkWQ7bm8Ok97MX5PlBrJLK5g=
-=UuhG
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlrvdmIACgkQOeye3VZi
+gblfHRAAgf8cjAtiUtHQcthwyvpc+S+TIUiVtf8tCbiLyDfoDHp7zeXK45cyUZfN
+Tlf1VJ2psDZ0GIVhfr0ZBY0Db4bEpDg7aCZ55vs7V7HlDVum9TJW2nRoz4wX1ss7
+EFkIUXlOs7ABC04CfeC/NdfH53DAE4GQDSdK6C/8kweiPksUY0uq8o+hEL/ILxRi
+mnPFuFR2zycNHe9/k6maqNJigNF4Os788EtaopdzupKueqfN9eel+Lfla8y6phkd
+A9NmXBnKEj/52kP8fUfTlPWfBgNq1oy1D0fF1c1ePCVwJ9MtfaR8rdZ0MZ77arRd
+XjY27O5DzG+M+Chdd/Lscyob+Mab7jDA4bULBBBRxDmYJGCAV4Ftw4Ru/DHtQDvd
+YJEg0DkQhoOtdO4XIDI44L73ltZaCYiUwtdoxhESYdMl6tmHkaNjEZR2dmPjFcZm
+MtdAhB59ZeCj/boP5+JijFcqtyVAAOPk47mN7swb3nzO8xCwTQHtZe3mcTBPhHAc
+VoK0kekL8oW5WvsTDdiINSq1c8cM6yGR2NrAdp60j/2SsDWnYa2NWUAn8CWfB+uj
+5je55gZMa63DRRrllop9e+X7aeFH1d++0fY/KpEg7y0bj7EGlrf0CIWroORl61Iq
+u4bHxFyIoSR8gS/+RcukkH2Fk5r3i2AKEOAMUCR3ZLUb0Z2l4bs=
+=Adyd
 -----END PGP SIGNATURE-----
-
---=-ksghnooShb75xlCfqZvF--
+--=-=-=--
