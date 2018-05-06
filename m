@@ -1,268 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751711AbeEFHdg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 03:33:36 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:48840 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750824AbeEFHdb (ORCPT
+        id S1751835AbeEFHeG (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 03:34:06 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47114 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751297AbeEFHde (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 03:33:31 -0400
-ARC-Authentication-Results: i=1; vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1525592021; a=rsa-sha256;
-        cv=none;
-        b=i+wdLOHPgpkSUNxvpNBRdsiSY6hp3T5V9PLDEoD3WpMbKv7DXHecz+ZNTUN7hKcth3Z5L8WhDz7vEJeaZk5Ja0b1dqExehu7yJpKM8wVpTzgC3wI7lL69slGtOhaaUTkndv/mQ75U2CPMroQfQcaSqpEtMW08L05j2ZO/x2lmbo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1525592021;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qt7oxayoddxV7CEdTef/XPZKiinDu5rI3ciLXi90aIg=;
-        b=WZQeevm+ymliZ070UhH+593jJE2zc108cr/RyzzW8F5lwgvvNG+w/nB6z9pQt5kS6LvCgz
-        ZJHlSZeYHLNEg8WxdVrYjQJXXpLElkhobAEb1JtoDpK/IAX5vwHTGt/rg0auOWpJjoL9ZX
-        GAtBRQTPHaqUQvqrK1tMEj/EzinwasA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 6D88635FF33
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Sun, 6 May 2018 03:33:34 -0400
+Date: Sun, 6 May 2018 09:33:26 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Guenter Roeck <linux@roeck-us.net>
+cc: Israel Rukshin <israelr@mellanox.com>,
+        Max Gurtovoy <maxg@mellanox.com>, Matan Barak <matanb@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] net/mlx5: Fix mlx5_get_vector_affinity function
+In-Reply-To: <20180505143838.GA12621@roeck-us.net>
+Message-ID: <alpine.DEB.2.21.1805060929540.1685@nanos.tec.linutronix.de>
+References: <20180505143838.GA12621@roeck-us.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Sun, 06 May 2018 09:33:41 +0200
-From: Oleksandr Natalenko <oleksandr@natalenko.name>
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        bfq-iosched@googlegroups.com
-Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
- merge
-In-Reply-To: <20180504171701.6876-1-paolo.valente@linaro.org>
-References: <20180504171701.6876-1-paolo.valente@linaro.org>
-Message-ID: <8f68cb3cfa16a239a3895687cf329bb3@natalenko.name>
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: multipart/mixed; boundary="8323329-1015051829-1525592006=:1685"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 04.05.2018 19:17, Paolo Valente wrote:
-> When invoked for an I/O request rq, the prepare_request hook of bfq
-> increments reference counters in the destination bfq_queue for rq. In
-> this respect, after this hook has been invoked, rq may still be
-> transformed into a request with no icq attached, i.e., for bfq, a
-> request not associated with any bfq_queue. No further hook is invoked
-> to signal this tranformation to bfq (in general, to the destination
-> elevator for rq). This leads bfq into an inconsistent state, because
-> bfq has no chance to correctly lower these counters back. This
-> inconsistency may in its turn cause incorrect scheduling and hangs. It
-> certainly causes memory leaks, by making it impossible for bfq to free
-> the involved bfq_queue.
-> 
-> On the bright side, no transformation can still happen for rq after rq
-> has been inserted into bfq, or merged with another, already inserted,
-> request. Exploiting this fact, this commit addresses the above issue
-> by delaying the preparation of an I/O request to when the request is
-> inserted or merged.
-> 
-> This change also gives a performance bonus: a lock-contention point
-> gets removed. To prepare a request, bfq needs to hold its scheduler
-> lock. After postponing request preparation to insertion or merging, no
-> lock needs to be grabbed any longer in the prepare_request hook, while
-> the lock already taken to perform insertion or merging is used to
-> preparare the request as well.
-> 
-> Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
-> ---
->  block/bfq-iosched.c | 86 
-> +++++++++++++++++++++++++++++++++++------------------
->  1 file changed, 57 insertions(+), 29 deletions(-)
-> 
-> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-> index 771ae9730ac6..ea02162df6c7 100644
-> --- a/block/bfq-iosched.c
-> +++ b/block/bfq-iosched.c
-> @@ -1858,6 +1858,8 @@ static int bfq_request_merge(struct
-> request_queue *q, struct request **req,
->  	return ELEVATOR_NO_MERGE;
->  }
-> 
-> +static struct bfq_queue *bfq_init_rq(struct request *rq);
-> +
->  static void bfq_request_merged(struct request_queue *q, struct request 
-> *req,
->  			       enum elv_merge type)
->  {
-> @@ -1866,7 +1868,7 @@ static void bfq_request_merged(struct
-> request_queue *q, struct request *req,
->  	    blk_rq_pos(req) <
->  	    blk_rq_pos(container_of(rb_prev(&req->rb_node),
->  				    struct request, rb_node))) {
-> -		struct bfq_queue *bfqq = RQ_BFQQ(req);
-> +		struct bfq_queue *bfqq = bfq_init_rq(req);
->  		struct bfq_data *bfqd = bfqq->bfqd;
->  		struct request *prev, *next_rq;
-> 
-> @@ -1894,7 +1896,8 @@ static void bfq_request_merged(struct
-> request_queue *q, struct request *req,
->  static void bfq_requests_merged(struct request_queue *q, struct 
-> request *rq,
->  				struct request *next)
->  {
-> -	struct bfq_queue *bfqq = RQ_BFQQ(rq), *next_bfqq = RQ_BFQQ(next);
-> +	struct bfq_queue *bfqq = bfq_init_rq(rq),
-> +		*next_bfqq = bfq_init_rq(next);
-> 
->  	if (!RB_EMPTY_NODE(&rq->rb_node))
->  		goto end;
-> @@ -4540,14 +4543,12 @@ static inline void
-> bfq_update_insert_stats(struct request_queue *q,
->  					   unsigned int cmd_flags) {}
->  #endif
-> 
-> -static void bfq_prepare_request(struct request *rq, struct bio *bio);
-> -
->  static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct 
-> request *rq,
->  			       bool at_head)
->  {
->  	struct request_queue *q = hctx->queue;
->  	struct bfq_data *bfqd = q->elevator->elevator_data;
-> -	struct bfq_queue *bfqq = RQ_BFQQ(rq);
-> +	struct bfq_queue *bfqq;
->  	bool idle_timer_disabled = false;
->  	unsigned int cmd_flags;
-> 
-> @@ -4562,24 +4563,13 @@ static void bfq_insert_request(struct
-> blk_mq_hw_ctx *hctx, struct request *rq,
->  	blk_mq_sched_request_inserted(rq);
-> 
->  	spin_lock_irq(&bfqd->lock);
-> +	bfqq = bfq_init_rq(rq);
->  	if (at_head || blk_rq_is_passthrough(rq)) {
->  		if (at_head)
->  			list_add(&rq->queuelist, &bfqd->dispatch);
->  		else
->  			list_add_tail(&rq->queuelist, &bfqd->dispatch);
-> -	} else {
-> -		if (WARN_ON_ONCE(!bfqq)) {
-> -			/*
-> -			 * This should never happen. Most likely rq is
-> -			 * a requeued regular request, being
-> -			 * re-inserted without being first
-> -			 * re-prepared. Do a prepare, to avoid
-> -			 * failure.
-> -			 */
-> -			bfq_prepare_request(rq, rq->bio);
-> -			bfqq = RQ_BFQQ(rq);
-> -		}
-> -
-> +	} else { /* bfqq is assumed to be non null here */
->  		idle_timer_disabled = __bfq_insert_request(bfqd, rq);
->  		/*
->  		 * Update bfqq, because, if a queue merge has occurred
-> @@ -4922,11 +4912,48 @@ static struct bfq_queue
-> *bfq_get_bfqq_handle_split(struct bfq_data *bfqd,
->  }
-> 
->  /*
-> - * Allocate bfq data structures associated with this request.
-> + * Only reset private fields. The actual request preparation will be
-> + * performed by bfq_init_rq, when rq is either inserted or merged. See
-> + * comments on bfq_init_rq for the reason behind this delayed
-> + * preparation.
->   */
->  static void bfq_prepare_request(struct request *rq, struct bio *bio)
-> +{
-> +	/*
-> +	 * Regardless of whether we have an icq attached, we have to
-> +	 * clear the scheduler pointers, as they might point to
-> +	 * previously allocated bic/bfqq structs.
-> +	 */
-> +	rq->elv.priv[0] = rq->elv.priv[1] = NULL;
-> +}
-> +
-> +/*
-> + * If needed, init rq, allocate bfq data structures associated with
-> + * rq, and increment reference counters in the destination bfq_queue
-> + * for rq. Return the destination bfq_queue for rq, or NULL is rq is
-> + * not associated with any bfq_queue.
-> + *
-> + * This function is invoked by the functions that perform rq insertion
-> + * or merging. One may have expected the above preparation operations
-> + * to be performed in bfq_prepare_request, and not delayed to when rq
-> + * is inserted or merged. The rationale behind this delayed
-> + * preparation is that, after the prepare_request hook is invoked for
-> + * rq, rq may still be transformed into a request with no icq, i.e., a
-> + * request not associated with any queue. No bfq hook is invoked to
-> + * signal this tranformation. As a consequence, should these
-> + * preparation operations be performed when the prepare_request hook
-> + * is invoked, and should rq be transformed one moment later, bfq
-> + * would end up in an inconsistent state, because it would have
-> + * incremented some queue counters for an rq destined to
-> + * transformation, without any chance to correctly lower these
-> + * counters back. In contrast, no transformation can still happen for
-> + * rq after rq has been inserted or merged. So, it is safe to execute
-> + * these preparation operations when rq is finally inserted or merged.
-> + */
-> +static struct bfq_queue *bfq_init_rq(struct request *rq)
->  {
->  	struct request_queue *q = rq->q;
-> +	struct bio *bio = rq->bio;
->  	struct bfq_data *bfqd = q->elevator->elevator_data;
->  	struct bfq_io_cq *bic;
->  	const int is_sync = rq_is_sync(rq);
-> @@ -4934,20 +4961,21 @@ static void bfq_prepare_request(struct request
-> *rq, struct bio *bio)
->  	bool new_queue = false;
->  	bool bfqq_already_existing = false, split = false;
-> 
-> +	if (unlikely(!rq->elv.icq))
-> +		return NULL;
-> +
->  	/*
-> -	 * Even if we don't have an icq attached, we should still clear
-> -	 * the scheduler pointers, as they might point to previously
-> -	 * allocated bic/bfqq structs.
-> +	 * Assuming that elv.priv[1] is set only if everything is set
-> +	 * for this rq. This holds true, because this function is
-> +	 * invoked only for insertion or merging, and, after such
-> +	 * events, a request cannot be manipulated any longer before
-> +	 * being removed from bfq.
->  	 */
-> -	if (!rq->elv.icq) {
-> -		rq->elv.priv[0] = rq->elv.priv[1] = NULL;
-> -		return;
-> -	}
-> +	if (rq->elv.priv[1])
-> +		return rq->elv.priv[1];
-> 
->  	bic = icq_to_bic(rq->elv.icq);
-> 
-> -	spin_lock_irq(&bfqd->lock);
-> -
->  	bfq_check_ioprio_change(bic, bio);
-> 
->  	bfq_bic_update_cgroup(bic, bio);
-> @@ -5006,7 +5034,7 @@ static void bfq_prepare_request(struct request
-> *rq, struct bio *bio)
->  	if (unlikely(bfq_bfqq_just_created(bfqq)))
->  		bfq_handle_burst(bfqd, bfqq);
-> 
-> -	spin_unlock_irq(&bfqd->lock);
-> +	return bfqq;
->  }
-> 
->  static void bfq_idle_slice_timer_body(struct bfq_queue *bfqq)
+--8323329-1015051829-1525592006=:1685
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-No harm is observed on both test VM with smartctl hammer and my laptop. 
-So,
+On Sat, 5 May 2018, Guenter Roeck wrote:
 
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+> On Thu, Apr 12, 2018 at 09:49:11AM +0000, Israel Rukshin wrote:
+> > Adding the vector offset when calling to mlx5_vector2eqn() is wrong.
+> > This is because mlx5_vector2eqn() checks if EQ index is equal to vector number
+> > and the fact that the internal completion vectors that mlx5 allocates
+> > don't get an EQ index.
+> > 
+> > The second problem here is that using effective_affinity_mask gives the same
+> > CPU for different vectors.
+> > This leads to unmapped queues when calling it from blk_mq_rdma_map_queues().
+> > This doesn't happen when using affinity_hint mask.
+> > 
+> Except that affinity_hint is only defined if SMP is enabled. Without:
+> 
+> include/linux/mlx5/driver.h: In function ‘mlx5_get_vector_affinity_hint’:
+> include/linux/mlx5/driver.h:1299:13: error:
+>         ‘struct irq_desc’ has no member named ‘affinity_hint’
+> 
+> Note that this is the only use of affinity_hint outside kernel/irq.
+> Don't other drivers have similar problems ?
 
-Thanks.
+Aside of that.
 
--- 
-   Oleksandr Natalenko (post-factum)
+> >  static inline const struct cpumask *
+> > -mlx5_get_vector_affinity(struct mlx5_core_dev *dev, int vector)
+> > +mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
+> >  {
+> > -	const struct cpumask *mask;
+> >  	struct irq_desc *desc;
+> >  	unsigned int irq;
+> >  	int eqn;
+> >  	int err;
+> >  
+> > -	err = mlx5_vector2eqn(dev, MLX5_EQ_VEC_COMP_BASE + vector, &eqn, &irq);
+> > +	err = mlx5_vector2eqn(dev, vector, &eqn, &irq);
+> >  	if (err)
+> >  		return NULL;
+> >  
+> >  	desc = irq_to_desc(irq);
+> > -#ifdef CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK
+> > -	mask = irq_data_get_effective_affinity_mask(&desc->irq_data);
+> > -#else
+> > -	mask = desc->irq_common_data.affinity;
+> > -#endif
+> > -	return mask;
+> > +	return desc->affinity_hint;
+
+NAK.
+
+Nothing in regular device drivers is supposed to ever fiddle with struct
+irq_desc. The existing code is already a violation of that rule and needs
+to be fixed, but not in that way.
+
+The logic here is completely screwed. affinity_hint is set by the driver,
+so the driver already knows what it is. If the driver does not set it, then
+the thing is NULL.
+
+Thanks,
+
+	tglx
+
+
+--8323329-1015051829-1525592006=:1685--
