@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2499662-1525566636-2-5175987596999200879
+X-Cyrus-Session-Id: sloti22d1t05-2499662-1525566649-2-13019706616969811400
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: 
@@ -7,21 +7,22 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525566635; b=KW7IEQVaQ1FjiaF6ZbtViWAdwlUKbC3YPK9NlG5y8c/OOUlK7C
-    xZPq4hwWaTfueQflD/er2c9zq269WKQU7oJ+6/kcoaQ//ay8v8OM0tqkwBtFoZST
-    4aVa69uo1ZUwxmikeM/MfaPe4KR3nEaXP4djpILAlQxExc5beE0P0evHZBWmXPR0
-    dRL9HN0C2wXAJdSnCanobZh3qo+CE/f3tp+PhcP3aJra+bhhpbRXp+u1+BXPMo8t
-    HM60gFBLwm0XXrRPM9Y65giNIWjDH2Hl6iyC9DVe4arnGLBOeYOMUa4ws2r5tDGU
-    w03JCGyzpJnrujkjNQXJP1polALlpajce7cQ==
+    1525566649; b=PV37+FwbkgvpxFJy4Xo2kE/05kwAIzr5UJfH9XoZT/v5ZlJ3WF
+    1tUToxkSkgyw8Z/PJRdxwAja3a+Dz1E6vR3yxAXWmrEWsLuETo2Ohlgtjsbe4/w0
+    84gzfGMNm5BjbBWgl0EC/1jYEZrwFF5zREwNW5ck7dfhX5I/Xf7H/6w7S6kNEp8/
+    5FIM2TIuS42YwsUzRNcH6LOwIwQpBrV4ziu4U5B8r7Fl25tGuZhoSI/o7xWsoK9v
+    pDjd2f93vIRZ72UGRFDBgWYA5vVpi9lNIKWS1c1R6rVUGQjxsjWwF23hYinUVTn2
+    5xfjkChjw0try9Og/eJKDlJFR6u4Nrkv4I3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1525566635; bh=PUSftjzkM5Kia5rDqr2Uod8PZu0RQt
-    rQ5QhTsWntoqg=; b=ANQdM5Xe6XcuuyCx9a571wbL2T5TyXY1z2gZGYstJPr+Ri
-    8H5tCzLw5pC/hlejzpag8uo6YRp6Uv13cmHTzGHS9918cnE/SK5OrzsSjitYLb28
-    P51yXmr0OGpnSz8/GfW0ULb8J58qV03fYzStJTAEl+tdC2h7WZV6PyC8oaJK5XTd
-    8se8SutzlstjK0pcvdzlLq8Wg5NavwE5hDkOOiEEWyvOExtksVECH8GSyD0Wi3BA
-    T7Ytd8E19Rbr3eljKXMZW8X+ElMhFK5+bdKh2I8i4Nz33bR6KFl6A8nSLPA6njc5
-    A7sz9QquOQB8ZelKKu8rgcxYK6lqY5o7QoTqMY3w==
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525566649; bh=
+    SjDclrEDL9Iu04gmCE30jeY1Qbt9fTR2CstvGaBHBnA=; b=YRqkYXlAjKBmwxeF
+    KoNV9gs6p6M1xjL8dhgsDHUml0tm6/5HEkdGBhNC58zkgtzkx/KcCrouP/ju3HjO
+    waTOKD2SzFeX9W+D/GZO9mgiNgiQCsYTOjgqz2a3VLqoj+cIjOjY3arLAnmLp32C
+    CpSC7HGUgP/WfAH+GYJ9jP2nq4bqs7aO5lwRGSW6HgkpPlFQQlrcEF3cNVnLpHV2
+    S/F7v0Hg4OuQPH+ih5wRgt6UFXsBjWDYHOowB1Dzvm2FXNQSU6Q44jxYY4aYNf8C
+    h9fldkQ//x5S8Q1oM0Cx4qhiGWUxbN2joNKkhBtESQv9Dp7VCnTY5rk4yA3H1Waa
+    +3Y1Vg==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
@@ -50,25 +51,25 @@ Authentication-Results: mx3.messagingengine.com;
       header.domain=intel.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNgvICjibsOsjhsxWo31le58nPEr1wWmwac6Lu3pdJ/5JRfEvUrj5b41wRskNdtJ98BH+xOV3ip/XQiXv+QnnHd+IA56ErctG8S1jA4ZfZtavW523Py9
-    xXWd9fYDfhbTpiJXEAkoTn00DVU3mVW7JZ/yTWFqxw3TV9xwYaPlBp3aPv6Xin0BORyR/KeyKJxUnbjjbc2RhPQiTOCMepM7Vjikb5eeULf4QnB67J5uMhwv
+X-CM-Envelope: MS4wfJEqN++QagpXxFEq7vc4DG6AJVI+FI5jwkmiuXTF+yGn+ioM44nyVGuLiwdjbOK5M51iwg8YC4ZkWtdU9W7G/Ec4Q+CCFUwBdYv/yzPb6i6SRXqwkSUh
+    5FxtgLWDItZmAnwu2GxycwytsRVvArb6hc784K+k5Rn7UHB7u60n8TGsLM9VHvUz5oieLFQA7DvA4qPevyHOjS9tFpLck7/0bz0mpYNHE3MJy8uYroSwcFGK
 X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=D19gQVrFAAAA:8 a=6LfA-sCeOnnXfaMpjo4A:9 a=W4TVW4IDbPiebHqcZpNg:22
+    a=OvG5uloFpF5yMZtpmc0A:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751791AbeEFAad (ORCPT <rfc822;linux@kroah.com>);
-        Sat, 5 May 2018 20:30:33 -0400
-Received: from mga01.intel.com ([192.55.52.88]:21259 "EHLO mga01.intel.com"
+        id S1751775AbeEFAap (ORCPT <rfc822;linux@kroah.com>);
+        Sat, 5 May 2018 20:30:45 -0400
+Received: from mga02.intel.com ([134.134.136.20]:58221 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751775AbeEFAac (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Sat, 5 May 2018 20:30:32 -0400
+        id S1751952AbeEFAan (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Sat, 5 May 2018 20:30:43 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,367,1520924400";
-   d="scan'208";a="226149297"
+   d="scan'208";a="226149324"
 From: changbin.du@intel.com
 To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
         tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
@@ -76,10 +77,12 @@ Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
         lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
         linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v3 0/5] kernel hacking: GCC optimization for better debug experience (-Og)
-Date: Sun,  6 May 2018 08:20:11 +0800
-Message-Id: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
+Subject: [PATCH v3 2/5] regulator: add dummy function of_find_regulator_by_node
+Date: Sun,  6 May 2018 08:20:13 +0800
+Message-Id: <1525566016-30172-3-git-send-email-changbin.du@intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
+References: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
@@ -88,110 +91,73 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Changbin Du <changbin.du@intel.com>
 
-Hi all,
-I know some kernel developers was searching for a method to dissable GCC
-optimizations, probably they want to apply GCC '-O0' option. But since Linux
-kernel replys on GCC optimization to remove some dead code, so '-O0' just
-breaks the build. They do need this because they want to debug kernel with
-qemu, simics, kgtp or kgdb.
+If device tree is not enabled, of_find_regulator_by_node() should have
+a dummy function since the function call is still there.
 
-Thanks for the GCC '-Og' optimization level introduced in GCC 4.8, which
-offers a reasonable level of optimization while maintaining fast compilation
-and a good debugging experience. It is similar to '-O1' while perferring to
-keep debug ability over runtime speed. With '-Og', we can build a kernel with
-better debug ability and little performance drop after some simple change.
+This is to fix build error after CONFIG_NO_AUTO_INLINE is introduced.
+If this option is enabled, GCC will not auto-inline functions that are
+not explicitly marked as inline.
 
-In this series, firstly introduce a new config CONFIG_NO_AUTO_INLINE after two
-fixes for this new option. With this option, only functions explicitly marked
-with "inline" will  be inlined. This will allow the function tracer to trace
-more functions because it only traces functions that the compiler has not
-inlined.
+In this case (no CONFIG_OF), the copmiler will report error in function
+regulator_dev_lookup().
 
-Then introduce new config CC_OPTIMIZE_FOR_DEBUGGING which apply '-Og'
-optimization level for whole kernel, with a simple fix in fix_to_virt().
-Currently I have only tested this option on x86 and ARM platform. Other
-platforms should also work but probably need some compiling fixes as what
-having done in this series. I leave that to who want to try this debug
-option.
+W/O NO_AUTO_INLINE, function of_get_regulator() is auto-inlined and then
+the call to of_find_regulator_by_node() is optimized out since
+of_get_regulator() always return NULL.
 
-Comparison of vmlinux size: a bit smaller.
+W/ NO_AUTO_INLINE, the return value of of_get_regulator() is a variable
+so the call to of_find_regulator_by_node() cannot be optimized out. So
+we need a stub of_find_regulator_by_node().
 
-    w/o CONFIG_DEBUG_EXPERIENCE
-    $ size vmlinux
-       text    data     bss     dec     hex filename
-    22665554   9709674  2920908 35296136        21a9388 vmlinux
+static struct regulator_dev *regulator_dev_lookup(struct device *dev,
+						  const char *supply)
+{
+	struct regulator_dev *r = NULL;
+	struct device_node *node;
+	struct regulator_map *map;
+	const char *devname = NULL;
 
-    w/ CONFIG_DEBUG_EXPERIENCE
-    $ size vmlinux
-       text    data     bss     dec     hex filename
-    21499032   10102758 2920908 34522698        20ec64a vmlinux
+	regulator_supply_alias(&dev, &supply);
 
+	/* first do a dt based lookup */
+	if (dev && dev->of_node) {
+		node = of_get_regulator(dev, supply);
+		if (node) {
+			r = of_find_regulator_by_node(node);
+			if (r)
+				return r;
+	...
 
-Comparison of system performance: a bit drop (~6%).
-    This benchmark of kernel compilation is suggested by Ingo Molnar.
-    https://lkml.org/lkml/2018/5/2/74
+Signed-off-by: Changbin Du <changbin.du@intel.com>
+---
+ drivers/regulator/internal.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-    Preparation: Set cpufreq to 'performance'.
-    for ((cpu=0; cpu<120; cpu++)); do
-      G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
-      [ -f $G ] && echo performance > $G
-    done
-
-    w/o CONFIG_DEBUG_EXPERIENCE
-    $ perf stat --repeat 5 --null --pre                 '\
-        cp -a kernel ../kernel.copy.$(date +%s);         \
-        rm -rf *;                                        \
-        git checkout .;                                  \
-        echo 1 > /proc/sys/vm/drop_caches;               \
-        find ../kernel* -type f | xargs cat >/dev/null;  \
-        make -j kernel >/dev/null;                       \
-        make clean >/dev/null 2>&1;                      \
-        sync                                            '\
-                                                         \
-        make -j8 >/dev/null
-
-     Performance counter stats for 'make -j8' (5 runs):
-
-        219.764246652 seconds time elapsed                   ( +-  0.78% )
-
-    w/ CONFIG_DEBUG_EXPERIENCE
-    $ perf stat --repeat 5 --null --pre                 '\
-        cp -a kernel ../kernel.copy.$(date +%s);         \
-        rm -rf *;                                        \
-        git checkout .;                                  \
-        echo 1 > /proc/sys/vm/drop_caches;               \
-        find ../kernel* -type f | xargs cat >/dev/null;  \
-        make -j kernel >/dev/null;                       \
-        make clean >/dev/null 2>&1;                      \
-        sync                                            '\
-                                                         \
-        make -j8 >/dev/null
-
-    Performance counter stats for 'make -j8' (5 runs):
-
-         233.574187771 seconds time elapsed                  ( +-  0.19% )
-
-Changbin Du (5):
-  x86/mm: surround level4_kernel_pgt with #ifdef
-    CONFIG_X86_5LEVEL...#endif
-  regulator: add dummy function of_find_regulator_by_node
-  kernel hacking: new config NO_AUTO_INLINE to disable compiler
-    auto-inline optimizations
-  kernel hacking: new config CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og
-    optimization
-  asm-generic: fix build error in fix_to_virt with
-    CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
-
- Makefile                          | 10 ++++++++++
- arch/arm/mm/mmu.c                 |  2 +-
- arch/x86/include/asm/pgtable_64.h |  2 ++
- arch/x86/kernel/head64.c          | 13 ++++++-------
- drivers/regulator/internal.h      |  9 +++++++--
- include/linux/compiler-gcc.h      |  2 +-
- include/linux/compiler.h          |  2 +-
- init/Kconfig                      | 19 +++++++++++++++++++
- lib/Kconfig.debug                 | 17 +++++++++++++++++
- 9 files changed, 64 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
+index abfd56e..24fde1e 100644
+--- a/drivers/regulator/internal.h
++++ b/drivers/regulator/internal.h
+@@ -56,14 +56,19 @@ static inline struct regulator_dev *dev_to_rdev(struct device *dev)
+ 	return container_of(dev, struct regulator_dev, dev);
+ }
+ 
+-struct regulator_dev *of_find_regulator_by_node(struct device_node *np);
+-
+ #ifdef CONFIG_OF
++struct regulator_dev *of_find_regulator_by_node(struct device_node *np);
+ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 			         const struct regulator_desc *desc,
+ 				 struct regulator_config *config,
+ 				 struct device_node **node);
+ #else
++static inline struct regulator_dev *
++of_find_regulator_by_node(struct device_node *np)
++{
++	return NULL;
++}
++
+ static inline struct regulator_init_data *
+ regulator_of_get_init_data(struct device *dev,
+ 			   const struct regulator_desc *desc,
 -- 
 2.7.4
