@@ -1,68 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751853AbeEFR7U (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 13:59:20 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36103 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751751AbeEFR7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 13:59:16 -0400
-Date: Sun, 6 May 2018 19:59:14 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Eugen Hristev <eugen.hristev@microchip.com>,
-        ludovic.desroches@microchip.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
-        nicolas.ferre@microchip.com, dmitry.torokhov@gmail.com,
-        robh@kernel.org
-Subject: Re: [PATCH v4 5/9] iio: adc: at91-sama5d2_adc: add support for
- position and pressure channels
-Message-ID: <20180506175914.GL10960@piout.net>
-References: <1525084335-11276-1-git-send-email-eugen.hristev@microchip.com>
- <1525084335-11276-6-git-send-email-eugen.hristev@microchip.com>
- <20180506182953.6adad5b5@archlinux>
+        id S1751855AbeEFSui (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 14:50:38 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:43232 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeEFSug (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 14:50:36 -0400
+To: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        axboe <axboe@kernel.dk>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Cai Zhiyong <caizhiyong@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] Documentation: block: cmdline-partition.txt fixes and
+ additions
+Message-ID: <dba389fc-2745-34b1-e33e-fc83f53eaf42@infradead.org>
+Date: Sun, 6 May 2018 11:50:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180506182953.6adad5b5@archlinux>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Randy Dunlap <rdunlap@infradead.org>
 
-On 06/05/2018 18:29:53+0100, Jonathan Cameron wrote:
-> On Mon, 30 Apr 2018 13:32:11 +0300
-> Eugen Hristev <eugen.hristev@microchip.com> wrote:
-> 
-> > This implements the support for position and pressure for the included
-> > touchscreen support in the SAMA5D2 SOC ADC block.
-> > Two position channels are added and one for pressure.
-> > They can be read in raw format, or through a buffer.
-> > A normal use case is for a consumer driver to register a callback buffer
-> > for these channels.
-> > When the touchscreen channels are in the active scan mask,
-> > the driver will start the touchscreen sampling and push the data to the
-> > buffer.
-> > 
-> > Some parts of this patch are based on initial original work by
-> > Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
-> > 
-> > Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> Looks good to me now.
-> 
-> I'm assuming that once Dmitry and others are happy, I'll take the
-> series through the IIO tree. Will reply to the cover letter if the
-> rest of the patches look good to me to let everyone know that without
-> having to catch this comment down in here!
-> 
+Make the description of the kernel command line option "blkdevparts"
+a bit more flowing and readable.
 
-I'm planning to take both DT patches through the at91 tree once you take
-the DT bindings patches.
+Fix a few typos.
+Add the optional <size> and <offset> suffixes.
+Note that size can be "-" to indicate all of the remaining space.
 
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Cai Zhiyong <caizhiyong@huawei.com>
+---
+Should the "ro" and "lk" flags options be described?
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+ Documentation/block/cmdline-partition.txt |   21 +++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+--- linux-next-20180504.orig/Documentation/block/cmdline-partition.txt
++++ linux-next-20180504/Documentation/block/cmdline-partition.txt
+@@ -1,7 +1,9 @@
+ Embedded device command line partition parsing
+ =====================================================================
+ 
+-Support for reading the block device partition table from the command line.
++The "blkdevparts" command line option adds support for reading the
++block device partition table from the kernel command line.
++
+ It is typically used for fixed block (eMMC) embedded devices.
+ It has no MBR, so saves storage space. Bootloader can be easily accessed
+ by absolute address of data on the block device.
+@@ -14,22 +16,27 @@ blkdevparts=<blkdev-def>[;<blkdev-def>]
+     <partdef> := <size>[@<offset>](part-name)
+ 
+ <blkdev-id>
+-    block device disk name, embedded device used fixed block device,
+-    it's disk name also fixed. such as: mmcblk0, mmcblk1, mmcblk0boot0.
++    block device disk name. Embedded device uses fixed block device.
++    Its disk name is also fixed, such as: mmcblk0, mmcblk1, mmcblk0boot0.
+ 
+ <size>
+     partition size, in bytes, such as: 512, 1m, 1G.
++    size may contain an optional suffix of (upper or lower case):
++      K, M, G, T, P, E.
++    "-" is used to denote all remaining space.
+ 
+ <offset>
+     partition start address, in bytes.
++    offset may contain an optional suffix of (upper or lower case):
++      K, M, G, T, P, E.
+ 
+ (part-name)
+-    partition name, kernel send uevent with "PARTNAME". application can create
+-    a link to block device partition with the name "PARTNAME".
+-    user space application can access partition by partition name.
++    partition name. Kernel sends uevent with "PARTNAME". Application can
++    create a link to block device partition with the name "PARTNAME".
++    User space application can access partition by partition name.
+ 
+ Example:
+-    eMMC disk name is "mmcblk0" and "mmcblk0boot0"
++    eMMC disk names are "mmcblk0" and "mmcblk0boot0".
+ 
+   bootargs:
+     'blkdevparts=mmcblk0:1G(data0),1G(data1),-;mmcblk0boot0:1m(boot),-(kernel)'
