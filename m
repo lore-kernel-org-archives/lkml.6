@@ -1,56 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751874AbeEFU1i (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 16:27:38 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:37095 "EHLO mail.bootlin.com"
+        id S1751884AbeEFUbA (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 16:31:00 -0400
+Received: from imap.thunk.org ([74.207.234.97]:49488 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751789AbeEFU1f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 16:27:35 -0400
-Date: Sun, 6 May 2018 22:27:33 +0200
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-To: Amelie Delaunay <amelie.delaunay@st.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1751809AbeEFUa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 16:30:57 -0400
+Date: Sun, 6 May 2018 16:30:47 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot+a9a45987b8b2daabdc88@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Various fixes on STM32 RTC
-Message-ID: <20180506202733.GM10960@piout.net>
-References: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
+Subject: Re: kernel panic: EXT4-fs (device loop0): panic forced after error
+Message-ID: <20180506203046.GV29205@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot+a9a45987b8b2daabdc88@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <000000000000019f50056b7f0890@google.com>
+ <20180506022428.GQ29205@thunk.org>
+ <d295f575-ba4b-b0ba-a856-405f9d393c9d@I-love.SAKURA.ne.jp>
+ <20180506133154.GS29205@thunk.org>
+ <201805062340.HFC78625.VFFFOHSOtQMOJL@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524144103-21432-1-git-send-email-amelie.delaunay@st.com>
+In-Reply-To: <201805062340.HFC78625.VFFFOHSOtQMOJL@I-love.SAKURA.ne.jp>
 User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/04/2018 15:21:39+0200, Amelie Delaunay wrote:
-> This series makes some corrections on STM32 RTC:
-> - update copyright and adopt SPDX identifier
-> - fix alarm interrupt flags
-> - rework DBP (Disable Backup domain Protection) management.
+On Sun, May 06, 2018 at 11:40:10PM +0900, Tetsuo Handa wrote:
+> > We could add a full kernel-mode fsck which gets run before mount ---
+> > the question is how much complexity we want to add.  If SELinux is
+> > enabled, then we have to check xattr consinsistency, etc., etc.
 > 
-> This series is a preamble to the serie which will introduce next STM32 RTC
-> version.
-> 
-> Amelie Delaunay (4):
->   rtc: stm32: fix copyright and adopt SPDX identifier
->   rtc: stm32: fix alarm interrupt flags by removing IRQF_TRIGGER_RISING
->   dt-bindings: rtc: update stm32-rtc documentation for st,syscfg
->     property
->   rtc: stm32: get DBP register and mask from DT st,syscfg property
-> 
->  .../devicetree/bindings/rtc/st,stm32-rtc.txt       | 10 ++--
->  drivers/rtc/rtc-stm32.c                            | 68 +++++++++++++---------
->  2 files changed, 47 insertions(+), 31 deletions(-)
-> 
+> You are thinking too complicated. I'm not asking for kernel-mode fsck.
 
-Applied, thanks.
+That is the logical outcome of what you are asking for.  There will
+*always* be a point after which where we can't atomically unwind the
+mount, and we have to proceed.  And after that point, when we detect
+an inconsistency all we can do is what the system administrator
+requested that we do.  Sure, for this particular case, we can
+significantly add more complexity and decrease the maintainability of
+the code paths involved.  But there will always be another case
+(e.g,. xattr's being read by SELinux or IMA) that will happen during
+the mount, and are we expected to catch all of those cases?
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+We do catch a lot of cases where we refuse the mount and complain that
+the file system is badly corrupted.  This just doesn't happen to be
+one of them.
+
+> I'm just suggesting that mount() request returns an error to the caller
+> (and the administrator invokes fsck etc. as needed).
+> 
+> We are fixing bugs which occur during mount operation (e.g.
+> 
+>   https://groups.google.com/d/msg/syzkaller-bugs/Yp4q8n-MijM/yDX3zl1XBQAJ
+>   https://groups.google.com/d/msg/syzkaller-bugs/4C4oiBX8vZ0/W6pi8NdbBgAJ
+>   https://groups.google.com/d/msg/syzkaller-bugs/QBnHAQBy2pI/ccf-yL5bBgAJ
+
+These are different because there are kernel OOPS or warning messages.
+This is neither a kernel OOPS or a WARN_ON or BUG_ON.
+
+> And extX filesystem is different from other filesystems that it invokes
+> error action specified by errors= parameter rather than return an error to
+> the caller.
+
+Syzkaller (or anyone else) can mount the file system with
+errors=continue or errors=remount-ro if it wants to override the
+requested behavior of the flag in the superblock which is manipulated
+by tune2fs.
+
+						- Ted
