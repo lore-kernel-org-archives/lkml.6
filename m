@@ -1,74 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751335AbeEFMLg (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 08:11:36 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:32818 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751123AbeEFMLd (ORCPT
+        id S1751520AbeEFMNc (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 08:13:32 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58287 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751123AbeEFMN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 08:11:33 -0400
-X-Google-Smtp-Source: AB8JxZpB5ylEKZBey5S5cR1LZF35IZyLIQqgUPEb+vvERKUHfwV2FwaFOrM4frLOsgxRiedQpsP5rw==
-Date: Sun, 6 May 2018 14:11:29 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aryabinin@virtuozzo.com, catalin.marinas@arm.com, dvyukov@google.com,
-        will.deacon@arm.com
-Subject: Re: [PATCH] locking/atomics/powerpc: Move cmpxchg helpers to
- asm/cmpxchg.h and define the full set of cmpxchg APIs
-Message-ID: <20180506121129.baacc4fxgr72rzex@gmail.com>
-References: <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
- <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
- <20180505084721.GA32344@noisy.programming.kicks-ass.net>
- <20180505090403.p2ywuen42rnlwizq@gmail.com>
- <20180505093829.xfylnedwd5nonhae@gmail.com>
- <20180505101609.5wb56j4mspjkokmw@tardis>
- <20180505103550.s7xsnto7tgppkmle@gmail.com>
- <20180505112817.ihrb726i37bwm4cj@tardis>
- <20180505132751.gwzu2vbzibr2risd@gmail.com>
- <20180505140340.uzfhoc42xvas4m72@tardis>
+        Sun, 6 May 2018 08:13:29 -0400
+Date: Sun, 6 May 2018 05:13:10 -0700
+From: tip-bot for Jann Horn <tipbot@zytor.com>
+Message-ID: <tip-e0f6d1a526b6adfa9ca3b336b83ece0eed345033@git.kernel.org>
+Cc: torvalds@linux-foundation.org, hpa@zytor.com, jannh@google.com,
+        mingo@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        peterz@infradead.org
+Reply-To: peterz@infradead.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, jannh@google.com,
+        torvalds@linux-foundation.org, hpa@zytor.com
+In-Reply-To: <20180504175935.104085-1-jannh@google.com>
+References: <20180504175935.104085-1-jannh@google.com>
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/vdso: Remove unused file
+Git-Commit-ID: e0f6d1a526b6adfa9ca3b336b83ece0eed345033
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20180505140340.uzfhoc42xvas4m72@tardis>
-User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  e0f6d1a526b6adfa9ca3b336b83ece0eed345033
+Gitweb:     https://git.kernel.org/tip/e0f6d1a526b6adfa9ca3b336b83ece0eed345033
+Author:     Jann Horn <jannh@google.com>
+AuthorDate: Fri, 4 May 2018 19:59:35 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Sat, 5 May 2018 09:02:36 +0200
 
-* Boqun Feng <boqun.feng@gmail.com> wrote:
+x86/vdso: Remove unused file
 
-> > The only change I made beyond a trivial build fix is that I also added the release 
-> > atomics variants explicitly:
-> > 
-> > +#define atomic_cmpxchg_release(v, o, n) \
-> > +	cmpxchg_release(&((v)->counter), (o), (n))
-> > +#define atomic64_cmpxchg_release(v, o, n) \
-> > +	cmpxchg_release(&((v)->counter), (o), (n))
-> > 
-> > It has passed a PowerPC cross-build test here, but no runtime tests.
-> > 
-> 
-> Do you have the commit at any branch in tip tree? I could pull it and
-> cross-build and check the assembly code of lib/atomic64_test.c, that way
-> I could verify whether we mess something up.
-> 
-> > Does this patch look good to you?
-> > 
-> 
-> Yep!
+commit da861e18eccc ("x86, vdso: Get rid of the fake section mechanism")
+left this file behind; nothing is using it anymore.
 
-Great - I have pushed the commits out into the locking tree, they can be found in:
+Signed-off-by: Jann Horn <jannh@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: luto@amacapital.net
+Link: http://lkml.kernel.org/r/20180504175935.104085-1-jannh@google.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/entry/vdso/vdso32/vdso-fakesections.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-  git fetch git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-
-The PowerPC preparatory commit from you is:
-
-  0476a632cb3a: locking/atomics/powerpc: Move cmpxchg helpers to asm/cmpxchg.h and define the full set of cmpxchg APIs
-
-Thanks,
-
-	Ingo
+diff --git a/arch/x86/entry/vdso/vdso32/vdso-fakesections.c b/arch/x86/entry/vdso/vdso32/vdso-fakesections.c
+deleted file mode 100644
+index 541468e25265..000000000000
+--- a/arch/x86/entry/vdso/vdso32/vdso-fakesections.c
++++ /dev/null
+@@ -1 +0,0 @@
+-#include "../vdso-fakesections.c"
