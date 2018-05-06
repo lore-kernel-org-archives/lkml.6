@@ -1,218 +1,229 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751714AbeEFOQB (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 10:16:01 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52615 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751327AbeEFOP7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 10:15:59 -0400
-X-Google-Smtp-Source: AB8JxZovMuaSbotbbUN/U7Q7EiflLD3gs7dUMVMpjrVjpkOLVBrd1WicjhiFdKd+SuT9wmY2SIqRhA==
-Date: Sun, 6 May 2018 16:15:52 +0200
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
+        id S1751714AbeEFO2j (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 10:28:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53368 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751230AbeEFO2h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 10:28:37 -0400
+Date: Sun, 6 May 2018 16:28:30 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aryabinin@virtuozzo.com, boqun.feng@gmail.com, catalin.marinas@arm.com,
-        dvyukov@google.com, will.deacon@arm.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Paul E. McKenney" <paulmck@us.ibm.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] locking/atomics: Combine the atomic_andnot() and
- atomic64_andnot() API definitions
-Message-ID: <20180506141552.GA28937@andrea>
-References: <20180504173937.25300-1-mark.rutland@arm.com>
- <20180504173937.25300-2-mark.rutland@arm.com>
- <20180504180105.GS12217@hirez.programming.kicks-ass.net>
- <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
- <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
- <20180505083635.622xmcvb42dw5xxh@gmail.com>
- <20180505085445.cmdnqh6xpnpfoqzb@gmail.com>
+        Arnaldo Carvalho de Melo <acme@redhat.com>, kan.liang@linux.intel.com
+Subject: [PATCH] perf tools: Fix parser for empty pmu terms case
+Message-ID: <20180506142830.GA18865@krava>
+References: <20180425160008.3407-1-acme@kernel.org>
+ <20180425160008.3407-6-acme@kernel.org>
+ <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
+ <20180503103717.GA14776@krava>
+ <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
+ <20180504160228.GA25229@krava>
+ <87a7tdphyo.fsf@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180505085445.cmdnqh6xpnpfoqzb@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87a7tdphyo.fsf@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
-
-> From f5efafa83af8c46b9e81b010b46caeeadb450179 Mon Sep 17 00:00:00 2001
-> From: Ingo Molnar <mingo@kernel.org>
-> Date: Sat, 5 May 2018 10:46:41 +0200
-> Subject: [PATCH] locking/atomics: Combine the atomic_andnot() and atomic64_andnot() API definitions
+On Sat, May 05, 2018 at 08:43:11PM -0700, Andi Kleen wrote:
+> Jiri Olsa <jolsa@redhat.com> writes:
 > 
-> The atomic_andnot() and atomic64_andnot() are defined in 4 separate groups
-> spred out in the atomic.h header:
-> 
->  #ifdef atomic_andnot
->  ...
->  #endif /* atomic_andnot */
->  ...
->  #ifndef atomic_andnot
->  ...
->  #endif
->  ...
->  #ifdef atomic64_andnot
->  ...
->  #endif /* atomic64_andnot */
->  ...
->  #ifndef atomic64_andnot
->  ...
->  #endif
-> 
-> Combine them into unify them into two groups:
+> Please fix this quickly, PT is currently totally non functional in Linus
+> mainline.
 
-Nit: "Combine them into unify them into"
+attached.. Kan, could you please test it wrt your latest changes?
 
-  Andrea
+thanks,
+jirka
 
 
-> 
->  #ifdef atomic_andnot
->  #else
->  #endif
-> 
->  ...
-> 
->  #ifdef atomic64_andnot
->  #else
->  #endif
-> 
-> So that one API group is defined in a single place within the header.
-> 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> ---
->  include/linux/atomic.h | 72 +++++++++++++++++++++++++-------------------------
->  1 file changed, 36 insertions(+), 36 deletions(-)
-> 
-> diff --git a/include/linux/atomic.h b/include/linux/atomic.h
-> index 352ecc72d7f5..1176cf7c6f03 100644
-> --- a/include/linux/atomic.h
-> +++ b/include/linux/atomic.h
-> @@ -205,22 +205,6 @@
->  # endif
->  #endif
->  
-> -#ifdef atomic_andnot
-> -
-> -#ifndef atomic_fetch_andnot_relaxed
-> -# define atomic_fetch_andnot_relaxed		atomic_fetch_andnot
-> -# define atomic_fetch_andnot_acquire		atomic_fetch_andnot
-> -# define atomic_fetch_andnot_release		atomic_fetch_andnot
-> -#else
-> -# ifndef atomic_fetch_andnot
-> -#  define atomic_fetch_andnot(...)		__atomic_op_fence(atomic_fetch_andnot, __VA_ARGS__)
-> -#  define atomic_fetch_andnot_acquire(...)	__atomic_op_acquire(atomic_fetch_andnot, __VA_ARGS__)
-> -#  define atomic_fetch_andnot_release(...)	__atomic_op_release(atomic_fetch_andnot, __VA_ARGS__)
-> -# endif
-> -#endif
-> -
-> -#endif /* atomic_andnot */
-> -
->  #ifndef atomic_fetch_xor_relaxed
->  # define atomic_fetch_xor_relaxed		atomic_fetch_xor
->  # define atomic_fetch_xor_acquire		atomic_fetch_xor
-> @@ -338,7 +322,22 @@ static inline int atomic_add_unless(atomic_t *v, int a, int u)
->  # define atomic_inc_not_zero(v)			atomic_add_unless((v), 1, 0)
->  #endif
->  
-> -#ifndef atomic_andnot
-> +#ifdef atomic_andnot
-> +
-> +#ifndef atomic_fetch_andnot_relaxed
-> +# define atomic_fetch_andnot_relaxed		atomic_fetch_andnot
-> +# define atomic_fetch_andnot_acquire		atomic_fetch_andnot
-> +# define atomic_fetch_andnot_release		atomic_fetch_andnot
-> +#else
-> +# ifndef atomic_fetch_andnot
-> +#  define atomic_fetch_andnot(...)		__atomic_op_fence(atomic_fetch_andnot, __VA_ARGS__)
-> +#  define atomic_fetch_andnot_acquire(...)	__atomic_op_acquire(atomic_fetch_andnot, __VA_ARGS__)
-> +#  define atomic_fetch_andnot_release(...)	__atomic_op_release(atomic_fetch_andnot, __VA_ARGS__)
-> +# endif
-> +#endif
-> +
-> +#else /* !atomic_andnot: */
-> +
->  static inline void atomic_andnot(int i, atomic_t *v)
->  {
->  	atomic_and(~i, v);
-> @@ -363,7 +362,8 @@ static inline int atomic_fetch_andnot_release(int i, atomic_t *v)
->  {
->  	return atomic_fetch_and_release(~i, v);
->  }
-> -#endif
-> +
-> +#endif /* !atomic_andnot */
->  
->  /**
->   * atomic_inc_not_zero_hint - increment if not null
-> @@ -600,22 +600,6 @@ static inline int atomic_dec_if_positive(atomic_t *v)
->  # endif
->  #endif
->  
-> -#ifdef atomic64_andnot
-> -
-> -#ifndef atomic64_fetch_andnot_relaxed
-> -# define atomic64_fetch_andnot_relaxed		atomic64_fetch_andnot
-> -# define atomic64_fetch_andnot_acquire		atomic64_fetch_andnot
-> -# define atomic64_fetch_andnot_release		atomic64_fetch_andnot
-> -#else
-> -# ifndef atomic64_fetch_andnot
-> -#  define atomic64_fetch_andnot(...)		__atomic_op_fence(atomic64_fetch_andnot, __VA_ARGS__)
-> -#  define atomic64_fetch_andnot_acquire(...)	__atomic_op_acquire(atomic64_fetch_andnot, __VA_ARGS__)
-> -#  define atomic64_fetch_andnot_release(...)	__atomic_op_release(atomic64_fetch_andnot, __VA_ARGS__)
-> -# endif
-> -#endif
-> -
-> -#endif /* atomic64_andnot */
-> -
->  #ifndef atomic64_fetch_xor_relaxed
->  # define atomic64_fetch_xor_relaxed		atomic64_fetch_xor
->  # define atomic64_fetch_xor_acquire		atomic64_fetch_xor
-> @@ -672,7 +656,22 @@ static inline int atomic_dec_if_positive(atomic_t *v)
->  # define atomic64_try_cmpxchg_release		atomic64_try_cmpxchg
->  #endif
->  
-> -#ifndef atomic64_andnot
-> +#ifdef atomic64_andnot
-> +
-> +#ifndef atomic64_fetch_andnot_relaxed
-> +# define atomic64_fetch_andnot_relaxed		atomic64_fetch_andnot
-> +# define atomic64_fetch_andnot_acquire		atomic64_fetch_andnot
-> +# define atomic64_fetch_andnot_release		atomic64_fetch_andnot
-> +#else
-> +# ifndef atomic64_fetch_andnot
-> +#  define atomic64_fetch_andnot(...)		__atomic_op_fence(atomic64_fetch_andnot, __VA_ARGS__)
-> +#  define atomic64_fetch_andnot_acquire(...)	__atomic_op_acquire(atomic64_fetch_andnot, __VA_ARGS__)
-> +#  define atomic64_fetch_andnot_release(...)	__atomic_op_release(atomic64_fetch_andnot, __VA_ARGS__)
-> +# endif
-> +#endif
-> +
-> +#else /* !atomic64_andnot: */
-> +
->  static inline void atomic64_andnot(long long i, atomic64_t *v)
->  {
->  	atomic64_and(~i, v);
-> @@ -697,7 +696,8 @@ static inline long long atomic64_fetch_andnot_release(long long i, atomic64_t *v
->  {
->  	return atomic64_fetch_and_release(~i, v);
->  }
-> -#endif
-> +
-> +#endif /* !atomic64_andnot */
->  
->  #define atomic64_cond_read_relaxed(v, c)	smp_cond_load_relaxed(&(v)->counter, (c))
->  #define atomic64_cond_read_acquire(v, c)	smp_cond_load_acquire(&(v)->counter, (c))
+---
+Adrian reported broken event parsing for Intel PT:
+
+  $ perf record -e intel_pt//u uname
+  event syntax error: 'intel_pt//u'
+                               \___ parser error
+  Run 'perf list' for a list of valid events
+
+It's caused by recent change in parsing grammar
+(see Fixes: for commit).
+
+Adding special rule with empty terms config to handle
+the reported case and moving the common rule code into
+new parse_events_pmu function.
+
+Fixes: 9a4a931ce847 ("perf pmu: Fix pmu events parsing rule")
+Reported-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Link: http://lkml.kernel.org/n/tip-uorb0azuem7b7ydace7cf6vc@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/util/parse-events.c | 46 +++++++++++++++++++++++++++++++++++++
+ tools/perf/util/parse-events.h |  3 +++
+ tools/perf/util/parse-events.y | 51 +++++++++++++-----------------------------
+ 3 files changed, 65 insertions(+), 35 deletions(-)
+
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 3576aaaa9e4c..7cf326a8effe 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -8,6 +8,7 @@
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <sys/param.h>
++#include <fnmatch.h>
+ #include "term.h"
+ #include "../perf.h"
+ #include "evlist.h"
+@@ -1294,6 +1295,51 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+ 	return evsel ? 0 : -ENOMEM;
+ }
+ 
++int parse_events_pmu(struct parse_events_state *parse_state,
++		     struct list_head *list, char *name,
++		     struct list_head *head_config)
++{
++	struct list_head *orig_terms;
++	struct perf_pmu *pmu = NULL;
++	char *pattern = NULL;
++	int ok = 0;
++
++	if (!parse_events_add_pmu(parse_state, list, name,
++				  head_config, false, false))
++		return 0;
++
++	if (parse_events_copy_term_list(head_config, &orig_terms))
++		return -1;
++
++	if (asprintf(&pattern, "%s*", name) < 0)
++		goto out;
++
++	while ((pmu = perf_pmu__scan(pmu)) != NULL) {
++		char *tmp = pmu->name;
++
++		if (!strncmp(tmp, "uncore_", 7) &&
++		    strncmp(name, "uncore_", 7))
++			tmp += 7;
++		if (!fnmatch(pattern, tmp, 0)) {
++			struct list_head *terms;
++
++			if (parse_events_copy_term_list(orig_terms, &terms)) {
++				ok = 0;
++				goto out;
++			}
++			if (!parse_events_add_pmu(parse_state, list, pmu->name,
++						  terms, true, false))
++				ok++;
++			parse_events_terms__delete(terms);
++		}
++	}
++
++out:
++	parse_events_terms__delete(orig_terms);
++	free(pattern);
++	return ok ? 0 : -1;
++}
++
+ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+ 			       char *str, struct list_head **listp)
+ {
+diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+index 4473dac27aee..553fcaf5d23e 100644
+--- a/tools/perf/util/parse-events.h
++++ b/tools/perf/util/parse-events.h
+@@ -170,6 +170,9 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+ 			 struct list_head *head_config,
+ 			 bool auto_merge_stats,
+ 			 bool use_alias);
++int parse_events_pmu(struct parse_events_state *parse_state,
++		     struct list_head *list, char *name,
++		     struct list_head *head_config);
+ 
+ int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+ 			       char *str,
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index 47f6399a309a..d44599bece43 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -8,7 +8,6 @@
+ 
+ #define YYDEBUG 1
+ 
+-#include <fnmatch.h>
+ #include <linux/compiler.h>
+ #include <linux/list.h>
+ #include <linux/types.h>
+@@ -226,44 +225,26 @@ event_def: event_pmu |
+ event_pmu:
+ PE_NAME '/' event_config '/'
+ {
+-	struct list_head *list, *orig_terms, *terms;
++	struct list_head *list;
++
++	ALLOC_LIST(list);
+ 
+-	if (parse_events_copy_term_list($3, &orig_terms))
++	if (parse_events_pmu(_parse_state, list, $1, $3))
+ 		YYABORT;
+ 
+-	ALLOC_LIST(list);
+-	if (parse_events_add_pmu(_parse_state, list, $1, $3, false, false)) {
+-		struct perf_pmu *pmu = NULL;
+-		int ok = 0;
+-		char *pattern;
+-
+-		if (asprintf(&pattern, "%s*", $1) < 0)
+-			YYABORT;
+-
+-		while ((pmu = perf_pmu__scan(pmu)) != NULL) {
+-			char *name = pmu->name;
+-
+-			if (!strncmp(name, "uncore_", 7) &&
+-			    strncmp($1, "uncore_", 7))
+-				name += 7;
+-			if (!fnmatch(pattern, name, 0)) {
+-				if (parse_events_copy_term_list(orig_terms, &terms)) {
+-					free(pattern);
+-					YYABORT;
+-				}
+-				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true, false))
+-					ok++;
+-				parse_events_terms__delete(terms);
+-			}
+-		}
+-
+-		free(pattern);
+-
+-		if (!ok)
+-			YYABORT;
+-	}
+ 	parse_events_terms__delete($3);
+-	parse_events_terms__delete(orig_terms);
++	$$ = list;
++}
++|
++PE_NAME '/' '/'
++{
++	struct list_head *list;
++
++	ALLOC_LIST(list);
++
++	if (parse_events_pmu(_parse_state, list, $1, NULL))
++		YYABORT;
++
+ 	$$ = list;
+ }
+ |
+-- 
+2.13.6
