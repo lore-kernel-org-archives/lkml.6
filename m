@@ -1,120 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751800AbeEFNuH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 09:50:07 -0400
-Received: from imap.thunk.org ([74.207.234.97]:46896 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751203AbeEFNuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 09:50:06 -0400
-Date: Sun, 6 May 2018 09:50:02 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Dmitry Vyukov <dvyukov@google.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+a9a45987b8b2daabdc88@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: kernel panic: EXT4-fs (device loop0): panic forced after error
-Message-ID: <20180506135002.GT29205@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzbot <syzbot+a9a45987b8b2daabdc88@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <000000000000019f50056b7f0890@google.com>
- <20180506022428.GQ29205@thunk.org>
- <d295f575-ba4b-b0ba-a856-405f9d393c9d@I-love.SAKURA.ne.jp>
- <CACT4Y+YDy2GTXV=q6B+zqXtnz5nsZsbisxy1T=_R=PLNdAqcog@mail.gmail.com>
+        id S1751509AbeEFN6K (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 09:58:10 -0400
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:44348 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751230AbeEFN6J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 09:58:09 -0400
+X-Google-Smtp-Source: AB8JxZo2NJ3TNLMLkJwbJSjBnkGjhvATG4lgSxlsIfPltH0fGsbFwZDUTDub/GTG3g3YphaC+sTDckthZ0pxpyRMsdA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+YDy2GTXV=q6B+zqXtnz5nsZsbisxy1T=_R=PLNdAqcog@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180505202450.26630-1-malat@debian.org>
+References: <20180505202450.26630-1-malat@debian.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 6 May 2018 16:58:08 +0300
+Message-ID: <CAHp75VcG6qX8_BjEHpB8UGHP+bw+=E8ki8_r=-PVqv1kQUOQXQ@mail.gmail.com>
+Subject: Re: [PATCH] nvmem: properly handle returned value nvmem_reg_read
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w46DwOIr001480
 
-On Sun, May 06, 2018 at 11:15:45AM +0200, Dmitry Vyukov wrote:
-> >> I don't get why syzbot considers this a bug.  It created a corrupted
-> >> file system, mounted it as root, and said file system had the flag
-> >> which says, "panic if you find a file system corruption".
-> > In what world is this a security bug?
-> 
-> Do you mean why syzbot considers kernel panics as something to report?
-> Or why syzbot has not understood why this panic is somehow special?
-> syzbot doesn't report only security problems. It just reports bugs.
-> E.g. NULL derefs and deadlocks are also not security bugs, but are
-> reported.
+On Sat, May 5, 2018 at 11:24 PM, Mathieu Malaterre <malat@debian.org> wrote:
+> Function nvmem_reg_read can return a non zero value indicating an error.
+> This returned value must be read and error propagated to
+> nvmem_cell_prepare_write_buffer.
 
-EXT4-fs (device loop0): panic forced after error
+Must is to strong word here. How come it *must*?
+Did you investigate the history of the changes that brought us to current code?
 
-This is working as intended.  See the tune2fs man page.
+How had you tested your change?
+While it looks subtle it is in one of the storage class devices core,
+which might be very sensible to changing workflow.
 
-     -e error-behavior
-              Change the behavior of the kernel code when errors are
-              detected.  In all cases, a filesystem error will cause
-              e2fsck(8) to check the filesystem on the next boot.
-              error-behavior can be one of the following:
+> Silence the following gcc warning (W=1):
+>
+>   drivers/nvmem/core.c:1093:9: warning: variable ‘rc’ set but not used [-Wunused-but-set-variable]
 
-                   continue    Continue normal execution.
+This is least argument to accept this patch.
 
-                   remount-ro  Remount filesystem read-only.
+>
+> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> ---
+>  drivers/nvmem/core.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index b05aa8e81303..f34f2363925a 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -1107,6 +1107,8 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
+>
+>                 /* setup the first byte with lsb bits from nvmem */
+>                 rc = nvmem_reg_read(nvmem, cell->offset, &v, 1);
+> +               if (rc)
+> +                       goto err;
+>                 *b++ |= GENMASK(bit_offset - 1, 0) & v;
+>
+>                 /* setup rest of the byte if any */
+> @@ -1125,11 +1127,16 @@ static void *nvmem_cell_prepare_write_buffer(struct nvmem_cell *cell,
+>                 /* setup the last byte with msb bits from nvmem */
+>                 rc = nvmem_reg_read(nvmem,
+>                                     cell->offset + cell->bytes - 1, &v, 1);
+> +               if (rc)
+> +                       goto err;
+>                 *p |= GENMASK(7, (nbits + bit_offset) % BITS_PER_BYTE) & v;
+>
+>         }
+>
+>         return buf;
+> +err:
+> +       kfree(buf);
+> +       return NULL;
+>  }
+>
+>  /**
+> --
+> 2.11.0
+>
 
-                   panic       Cause a kernel panic.
 
 
-> Can you please give me background regarding purpose of this flag?
-> What's the intended use case? And what exactly is corrupted?
-
-When the file system is corrupted, you might not want to continue
-processing.  If you have some kind High Availability system available,
-having the system shutdown so the secondary/backup system can take
-over for the corrupted file system.  This might be better than
-continuing to steer the spaceship, or continuning to control the x-ray
-dosage received by a patient, etc., etc.
-
-> If kernel detects that an image is corrupted during mount shouldn't it
-> just report an error?
-
-The problem is that this would, in the general case, putting in a full
-or partial kernel-mode fsck and requiring it to be run before mount.
-Sure, I could add more complexity in the system to bypass the check in
-iget() if it is being called from mount, but what if SELinux is
-running and it tries to fetch an xattr?  Or what if Syzkaller's
-repro.c decides to start reading or writing files, or deleting files
-in the directory?
-
-More generally, root can always do stuff which will cause the system
-to crash or shut down.  It can kexec a file containing garbage; it can
-call the shutdown system call.  Presumably it is not reasonable to
-require the kexec(2) system call to validate the image before
-transfering control to it?  After all, that would require solving the
-Halting Problem.  :-)
-
-> If I am reading this correctly, any USB cable
-> that plug into my computer can shut it down. Or maybe even existing
-> cables can shut down all computers in a country on a remote command.
-> Am I missing something here?
-
-If you have physical access to the machine, you can shut it down.  And
-there cases when shutting down a system or even all of the computers
-in a cluster is the right thing to do.  Not shutting down the computer
-could actually have harmful physical effects (e.g., a transformer
-blowing up, a centrifuge tearing itself apart[1], etc.)  The system
-administrator should have the choice to set up a file system such that
-if an inconsistency is detected.
-
-						- Ted
-
-[1] Although if the centrifuge is in Iran, and you are in the NSA,
-that might be considered a feature, not a bug.  Of course, if the
-transformer is in the US or Germany, and the entity triggering a bug
-which causes it to blow up is sponsored by Russia, then of course
-that's a different story.  :-)
+-- 
+With Best Regards,
+Andy Shevchenko
