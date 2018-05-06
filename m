@@ -1,191 +1,268 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751180AbeEFHbW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 03:31:22 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46876 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750824AbeEFHbV (ORCPT
+        id S1751711AbeEFHdg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 03:33:36 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:48840 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750824AbeEFHdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 03:31:21 -0400
-Date: Sun, 6 May 2018 09:31:18 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: Handling lm3559 flash on Motorola Droid 4 and others
-Message-ID: <20180506073118.GA6811@amd>
-References: <20180505213951.GA4530@amd>
+        Sun, 6 May 2018 03:33:31 -0400
+ARC-Authentication-Results: i=1; vulcan.natalenko.name;
+        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1525592021; a=rsa-sha256;
+        cv=none;
+        b=i+wdLOHPgpkSUNxvpNBRdsiSY6hp3T5V9PLDEoD3WpMbKv7DXHecz+ZNTUN7hKcth3Z5L8WhDz7vEJeaZk5Ja0b1dqExehu7yJpKM8wVpTzgC3wI7lL69slGtOhaaUTkndv/mQ75U2CPMroQfQcaSqpEtMW08L05j2ZO/x2lmbo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1525592021;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qt7oxayoddxV7CEdTef/XPZKiinDu5rI3ciLXi90aIg=;
+        b=WZQeevm+ymliZ070UhH+593jJE2zc108cr/RyzzW8F5lwgvvNG+w/nB6z9pQt5kS6LvCgz
+        ZJHlSZeYHLNEg8WxdVrYjQJXXpLElkhobAEb1JtoDpK/IAX5vwHTGt/rg0auOWpJjoL9ZX
+        GAtBRQTPHaqUQvqrK1tMEj/EzinwasA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 6D88635FF33
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
-Content-Disposition: inline
-In-Reply-To: <20180505213951.GA4530@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Sun, 06 May 2018 09:33:41 +0200
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
+        broonie@kernel.org, linus.walleij@linaro.org,
+        bfq-iosched@googlegroups.com
+Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
+ merge
+In-Reply-To: <20180504171701.6876-1-paolo.valente@linaro.org>
+References: <20180504171701.6876-1-paolo.valente@linaro.org>
+Message-ID: <8f68cb3cfa16a239a3895687cf329bb3@natalenko.name>
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi.
 
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04.05.2018 19:17, Paolo Valente wrote:
+> When invoked for an I/O request rq, the prepare_request hook of bfq
+> increments reference counters in the destination bfq_queue for rq. In
+> this respect, after this hook has been invoked, rq may still be
+> transformed into a request with no icq attached, i.e., for bfq, a
+> request not associated with any bfq_queue. No further hook is invoked
+> to signal this tranformation to bfq (in general, to the destination
+> elevator for rq). This leads bfq into an inconsistent state, because
+> bfq has no chance to correctly lower these counters back. This
+> inconsistency may in its turn cause incorrect scheduling and hangs. It
+> certainly causes memory leaks, by making it impossible for bfq to free
+> the involved bfq_queue.
+> 
+> On the bright side, no transformation can still happen for rq after rq
+> has been inserted into bfq, or merged with another, already inserted,
+> request. Exploiting this fact, this commit addresses the above issue
+> by delaying the preparation of an I/O request to when the request is
+> inserted or merged.
+> 
+> This change also gives a performance bonus: a lock-contention point
+> gets removed. To prepare a request, bfq needs to hold its scheduler
+> lock. After postponing request preparation to insertion or merging, no
+> lock needs to be grabbed any longer in the prepare_request hook, while
+> the lock already taken to perform insertion or merging is used to
+> preparare the request as well.
+> 
+> Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+> ---
+>  block/bfq-iosched.c | 86 
+> +++++++++++++++++++++++++++++++++++------------------
+>  1 file changed, 57 insertions(+), 29 deletions(-)
+> 
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index 771ae9730ac6..ea02162df6c7 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -1858,6 +1858,8 @@ static int bfq_request_merge(struct
+> request_queue *q, struct request **req,
+>  	return ELEVATOR_NO_MERGE;
+>  }
+> 
+> +static struct bfq_queue *bfq_init_rq(struct request *rq);
+> +
+>  static void bfq_request_merged(struct request_queue *q, struct request 
+> *req,
+>  			       enum elv_merge type)
+>  {
+> @@ -1866,7 +1868,7 @@ static void bfq_request_merged(struct
+> request_queue *q, struct request *req,
+>  	    blk_rq_pos(req) <
+>  	    blk_rq_pos(container_of(rb_prev(&req->rb_node),
+>  				    struct request, rb_node))) {
+> -		struct bfq_queue *bfqq = RQ_BFQQ(req);
+> +		struct bfq_queue *bfqq = bfq_init_rq(req);
+>  		struct bfq_data *bfqd = bfqq->bfqd;
+>  		struct request *prev, *next_rq;
+> 
+> @@ -1894,7 +1896,8 @@ static void bfq_request_merged(struct
+> request_queue *q, struct request *req,
+>  static void bfq_requests_merged(struct request_queue *q, struct 
+> request *rq,
+>  				struct request *next)
+>  {
+> -	struct bfq_queue *bfqq = RQ_BFQQ(rq), *next_bfqq = RQ_BFQQ(next);
+> +	struct bfq_queue *bfqq = bfq_init_rq(rq),
+> +		*next_bfqq = bfq_init_rq(next);
+> 
+>  	if (!RB_EMPTY_NODE(&rq->rb_node))
+>  		goto end;
+> @@ -4540,14 +4543,12 @@ static inline void
+> bfq_update_insert_stats(struct request_queue *q,
+>  					   unsigned int cmd_flags) {}
+>  #endif
+> 
+> -static void bfq_prepare_request(struct request *rq, struct bio *bio);
+> -
+>  static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct 
+> request *rq,
+>  			       bool at_head)
+>  {
+>  	struct request_queue *q = hctx->queue;
+>  	struct bfq_data *bfqd = q->elevator->elevator_data;
+> -	struct bfq_queue *bfqq = RQ_BFQQ(rq);
+> +	struct bfq_queue *bfqq;
+>  	bool idle_timer_disabled = false;
+>  	unsigned int cmd_flags;
+> 
+> @@ -4562,24 +4563,13 @@ static void bfq_insert_request(struct
+> blk_mq_hw_ctx *hctx, struct request *rq,
+>  	blk_mq_sched_request_inserted(rq);
+> 
+>  	spin_lock_irq(&bfqd->lock);
+> +	bfqq = bfq_init_rq(rq);
+>  	if (at_head || blk_rq_is_passthrough(rq)) {
+>  		if (at_head)
+>  			list_add(&rq->queuelist, &bfqd->dispatch);
+>  		else
+>  			list_add_tail(&rq->queuelist, &bfqd->dispatch);
+> -	} else {
+> -		if (WARN_ON_ONCE(!bfqq)) {
+> -			/*
+> -			 * This should never happen. Most likely rq is
+> -			 * a requeued regular request, being
+> -			 * re-inserted without being first
+> -			 * re-prepared. Do a prepare, to avoid
+> -			 * failure.
+> -			 */
+> -			bfq_prepare_request(rq, rq->bio);
+> -			bfqq = RQ_BFQQ(rq);
+> -		}
+> -
+> +	} else { /* bfqq is assumed to be non null here */
+>  		idle_timer_disabled = __bfq_insert_request(bfqd, rq);
+>  		/*
+>  		 * Update bfqq, because, if a queue merge has occurred
+> @@ -4922,11 +4912,48 @@ static struct bfq_queue
+> *bfq_get_bfqq_handle_split(struct bfq_data *bfqd,
+>  }
+> 
+>  /*
+> - * Allocate bfq data structures associated with this request.
+> + * Only reset private fields. The actual request preparation will be
+> + * performed by bfq_init_rq, when rq is either inserted or merged. See
+> + * comments on bfq_init_rq for the reason behind this delayed
+> + * preparation.
+>   */
+>  static void bfq_prepare_request(struct request *rq, struct bio *bio)
+> +{
+> +	/*
+> +	 * Regardless of whether we have an icq attached, we have to
+> +	 * clear the scheduler pointers, as they might point to
+> +	 * previously allocated bic/bfqq structs.
+> +	 */
+> +	rq->elv.priv[0] = rq->elv.priv[1] = NULL;
+> +}
+> +
+> +/*
+> + * If needed, init rq, allocate bfq data structures associated with
+> + * rq, and increment reference counters in the destination bfq_queue
+> + * for rq. Return the destination bfq_queue for rq, or NULL is rq is
+> + * not associated with any bfq_queue.
+> + *
+> + * This function is invoked by the functions that perform rq insertion
+> + * or merging. One may have expected the above preparation operations
+> + * to be performed in bfq_prepare_request, and not delayed to when rq
+> + * is inserted or merged. The rationale behind this delayed
+> + * preparation is that, after the prepare_request hook is invoked for
+> + * rq, rq may still be transformed into a request with no icq, i.e., a
+> + * request not associated with any queue. No bfq hook is invoked to
+> + * signal this tranformation. As a consequence, should these
+> + * preparation operations be performed when the prepare_request hook
+> + * is invoked, and should rq be transformed one moment later, bfq
+> + * would end up in an inconsistent state, because it would have
+> + * incremented some queue counters for an rq destined to
+> + * transformation, without any chance to correctly lower these
+> + * counters back. In contrast, no transformation can still happen for
+> + * rq after rq has been inserted or merged. So, it is safe to execute
+> + * these preparation operations when rq is finally inserted or merged.
+> + */
+> +static struct bfq_queue *bfq_init_rq(struct request *rq)
+>  {
+>  	struct request_queue *q = rq->q;
+> +	struct bio *bio = rq->bio;
+>  	struct bfq_data *bfqd = q->elevator->elevator_data;
+>  	struct bfq_io_cq *bic;
+>  	const int is_sync = rq_is_sync(rq);
+> @@ -4934,20 +4961,21 @@ static void bfq_prepare_request(struct request
+> *rq, struct bio *bio)
+>  	bool new_queue = false;
+>  	bool bfqq_already_existing = false, split = false;
+> 
+> +	if (unlikely(!rq->elv.icq))
+> +		return NULL;
+> +
+>  	/*
+> -	 * Even if we don't have an icq attached, we should still clear
+> -	 * the scheduler pointers, as they might point to previously
+> -	 * allocated bic/bfqq structs.
+> +	 * Assuming that elv.priv[1] is set only if everything is set
+> +	 * for this rq. This holds true, because this function is
+> +	 * invoked only for insertion or merging, and, after such
+> +	 * events, a request cannot be manipulated any longer before
+> +	 * being removed from bfq.
+>  	 */
+> -	if (!rq->elv.icq) {
+> -		rq->elv.priv[0] = rq->elv.priv[1] = NULL;
+> -		return;
+> -	}
+> +	if (rq->elv.priv[1])
+> +		return rq->elv.priv[1];
+> 
+>  	bic = icq_to_bic(rq->elv.icq);
+> 
+> -	spin_lock_irq(&bfqd->lock);
+> -
+>  	bfq_check_ioprio_change(bic, bio);
+> 
+>  	bfq_bic_update_cgroup(bic, bio);
+> @@ -5006,7 +5034,7 @@ static void bfq_prepare_request(struct request
+> *rq, struct bio *bio)
+>  	if (unlikely(bfq_bfqq_just_created(bfqq)))
+>  		bfq_handle_burst(bfqd, bfqq);
+> 
+> -	spin_unlock_irq(&bfqd->lock);
+> +	return bfqq;
+>  }
+> 
+>  static void bfq_idle_slice_timer_body(struct bfq_queue *bfqq)
 
-Hi!
+No harm is observed on both test VM with smartctl hammer and my laptop. 
+So,
 
-> It seems lm3559 flash driver is available on github (
-> https://github.com/ZenfoneArea/android_kernel_asus_zenfone5/tree/master/l=
-inux/modules/camera/drivers/media/i2c
-> ) but there'll be some fun getting it cleaned up and merged.
->=20
-> Did anyone start doing anything in that area? Is there possibly better
-> source to start from?
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
 
-It turned out to be easier than expected. Of course, using flash w/o
-v4l will not be easy, but that's generic problem.
+Thanks.
 
-									Pavel
-
-diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/o=
-map4-droid4-xt894.dts
-index bdf73cb..45305e8 100644
---- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-+++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-@@ -271,6 +271,34 @@
- 	};
- };
-=20
-+&i2c3 {
-+      rearcam: camera@36 {
-+            compatible =3D "micron,ov8820";
-+	    reg =3D <0x36>;
-+	    clocks =3D <&auxclk1_ck>;
-+	    clock-names =3D "xvclk";
-+	    clock-frequency =3D <24000000>;
-+	    power-gpios =3D <&gpio2 16 GPIO_ACTIVE_HIGH>, // gpio48
-+	    		  <&gpio3 19 GPIO_ACTIVE_HIGH>, // gpio83
-+			  <&gpio5 23 GPIO_ACTIVE_HIGH>; // gpio151
-+      };
-+      frontcam: camera@48 {
-+       		compatible =3D "ovti,mt9m114";
-+		reg =3D <0x48>;
-+		clocks =3D <&auxclk2_ck>;
-+		clock-names =3D "extclk";
-+		clock-frequency =3D <24000000>;
-+		power-gpios =3D <&gpio6 11 GPIO_ACTIVE_HIGH>, // gpio171
-+			      <&gpio2 5 GPIO_ACTIVE_HIGH>; // gpio37
-+		};
-+	flashlight: flash@53 {
-+ 	    compatible =3D "ti,lm3559";
-+	    reg =3D <0x53>;
-+	};
-+};
-+
-+
-+
- &keypad {
- 	keypad,num-rows =3D <8>;
- 	keypad,num-columns =3D <8>;
-diff --git a/drivers/media/i2c/lm3560.c b/drivers/media/i2c/lm3560.c
-index b600e03a..a9b2ba2 100644
---- a/drivers/media/i2c/lm3560.c
-+++ b/drivers/media/i2c/lm3560.c
-@@ -17,6 +17,8 @@
-  * General Public License for more details.
-  */
-=20
-+// Probably compatible with lm3559, too.
-+
- #include <linux/delay.h>
- #include <linux/module.h>
- #include <linux/i2c.h>
-@@ -395,6 +397,22 @@ static int lm3560_init_device(struct lm3560_flash *fla=
-sh)
- 		return rval;
- 	/* reset faults */
- 	rval =3D regmap_read(flash->regmap, REG_FLAG, &reg_val);
-+
-+	printk("lm3560: Device initialized\n");
-+
-+	flash->led_mode =3D V4L2_FLASH_LED_MODE_TORCH;
-+	rval =3D lm3560_mode_ctrl(flash);
-+	rval =3D lm3560_torch_brt_ctrl(flash, 0, LM3560_TORCH_BRT_MIN);
-+	rval =3D lm3560_torch_brt_ctrl(flash, 1, LM3560_TORCH_BRT_MIN);	=09
-+
-+	mdelay(1000);
-+
-+	rval =3D lm3560_torch_brt_ctrl(flash, 0, 0);
-+	rval =3D lm3560_torch_brt_ctrl(flash, 1, 0);	=09
-+=09
-+	flash->led_mode =3D V4L2_FLASH_LED_MODE_NONE;
-+	rval =3D lm3560_mode_ctrl(flash);
-+=09
- 	return rval;
- }
-=20
-@@ -405,6 +423,8 @@ static int lm3560_probe(struct i2c_client *client,
- 	struct lm3560_platform_data *pdata =3D dev_get_platdata(&client->dev);
- 	int rval;
-=20
-+	printk("3560: probe\n");
-+
- 	flash =3D devm_kzalloc(&client->dev, sizeof(*flash), GFP_KERNEL);
- 	if (flash =3D=3D NULL)
- 		return -ENOMEM;
-@@ -417,17 +437,19 @@ static int lm3560_probe(struct i2c_client *client,
-=20
- 	/* if there is no platform data, use chip default value */
- 	if (pdata =3D=3D NULL) {
-+		printk("3560: no pdata\n");
-+	=09
- 		pdata =3D devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
- 		if (pdata =3D=3D NULL)
- 			return -ENODEV;
--		pdata->peak =3D LM3560_PEAK_3600mA;
--		pdata->max_flash_timeout =3D LM3560_FLASH_TOUT_MAX;
-+		pdata->peak =3D LM3560_PEAK_1600mA;
-+		pdata->max_flash_timeout =3D LM3560_FLASH_TOUT_MIN;
- 		/* led 1 */
--		pdata->max_flash_brt[LM3560_LED0] =3D LM3560_FLASH_BRT_MAX;
--		pdata->max_torch_brt[LM3560_LED0] =3D LM3560_TORCH_BRT_MAX;
-+		pdata->max_flash_brt[LM3560_LED0] =3D LM3560_FLASH_BRT_MIN;
-+		pdata->max_torch_brt[LM3560_LED0] =3D LM3560_TORCH_BRT_MIN;
- 		/* led 2 */
--		pdata->max_flash_brt[LM3560_LED1] =3D LM3560_FLASH_BRT_MAX;
--		pdata->max_torch_brt[LM3560_LED1] =3D LM3560_TORCH_BRT_MAX;
-+		pdata->max_flash_brt[LM3560_LED1] =3D LM3560_FLASH_BRT_MIN;
-+		pdata->max_torch_brt[LM3560_LED1] =3D LM3560_TORCH_BRT_MIN;
- 	}
- 	flash->pdata =3D pdata;
- 	flash->dev =3D &client->dev;
-@@ -466,6 +488,8 @@ static int lm3560_remove(struct i2c_client *client)
-=20
- static const struct i2c_device_id lm3560_id_table[] =3D {
- 	{LM3560_NAME, 0},
-+	{"lm3559", 0},
-+	{"ti,lm3559", 0},
- 	{}
- };
-=20
-
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrur0YACgkQMOfwapXb+vK2EwCeIGRJVP3ijtYcAvGnVTqdrKrb
-McAAn1j5AeBXV6ql7EwjGYdIMPP6ZT/Q
-=rlk1
------END PGP SIGNATURE-----
-
---7AUc2qLy4jB3hD7Z--
+-- 
+   Oleksandr Natalenko (post-factum)
