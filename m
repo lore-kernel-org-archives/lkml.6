@@ -1,116 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751383AbeEFMqh (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 08:46:37 -0400
-Received: from mail-lf0-f50.google.com ([209.85.215.50]:40551 "EHLO
-        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751180AbeEFMqe (ORCPT
+        id S1751337AbeEFMwP (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 08:52:15 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:44701 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751180AbeEFMwM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 08:46:34 -0400
-X-Google-Smtp-Source: AB8JxZovWbvVWytxF0ICJu3rppVg+SWoKCmIjZI7snBpU16ml1XxNenZ+zgjsFoRCApkyPPro4IUeFFuYHb9QPMYXj8=
+        Sun, 6 May 2018 08:52:12 -0400
+X-Google-Smtp-Source: AB8JxZpIjXo2xisuqKCu/+SqACjWuaPqvxJC6i+dGmlVaYI/0LQn5Pv+yAL+r2LB1SK2aYq0RHNH9w==
+Date: Sun, 6 May 2018 15:52:08 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: Jonathan de Boyne Pollard
+        <J.deBoynePollard-newsgroups@NTLWorld.COM>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrey Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [RFC] prctl: (Please do not!) Deprecate non PR_SET_MM_MAP
+ operations
+Message-ID: <20180506125208.GO31735@uranus>
+References: <c8d4aa19-1bb4-3f72-4600-8d20fdad98d9@NTLWorld.COM>
 MIME-Version: 1.0
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Sun, 6 May 2018 14:46:32 +0200
-Message-ID: <CA+icZUXrHmOJPKT0gnym9yOs6Erm3wDOZU3sbr_MGB8pYjfuzA@mail.gmail.com>
-Subject: [linux-firmware] Version in WHENCE file
-To: Luca Coelho <luciano.coelho@intel.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="00000000000063ed1c056b88f161"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8d4aa19-1bb4-3f72-4600-8d20fdad98d9@NTLWorld.COM>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---00000000000063ed1c056b88f161
-Content-Type: text/plain; charset="UTF-8"
+On Sun, May 06, 2018 at 12:01:44PM +0100, Jonathan de Boyne Pollard wrote:
+...
+> 
+> Incidentally, it is a welcome change to see the idea that unprivileged
+> processes may alter these things being introduced, as is already the case on
+> (say) FreeBSD.
+> 
+> (I am not subscribed to linux-kernel.)
 
-Hi Luca,
-
-I hope I catched the correct MLs (not sure if linux-firmware has a ML,
-I did not found any in the MAINTAINERS file).
-
-I have seen that in the WHENCE file there is "Version" with and
-without ":", mostly iwlwifi ucodes.
-
-As an example:
-
- File: iwlwifi-8265-36.ucode
--Version 36.e91976c0.0
-+Version: 36.e91976c0.0
-
-I don't know the workflow: Do you want to fix it in your tree or
-directly in linux-firmware.git upstream?
-My attached patch is against upstream.
-
-Thanks.
-
-Regards,
-- Sedat -
-
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/linux-firmware.git/commit/?id=1f4dbd8cb94ec37497e58627a127058d53c5968f
-
---00000000000063ed1c056b88f161
-Content-Type: text/x-patch; charset="US-ASCII"; name="0001-WHENCE-Fix-typo-Version.patch"
-Content-Disposition: attachment;
-	filename="0001-WHENCE-Fix-typo-Version.patch"
-Content-Transfer-Encoding: base64
-X-Attachment-Id: f_jgut91xm0
-
-RnJvbSA1NzZkMzBhY2U4MTQwY2E3YjVjOGEyNzZmNjdkYTFjYjJlYmZiMGMyIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTZWRhdCBEaWxlayA8c2VkYXQuZGlsZWtAY3JlZGF0aXYuZGU+
-CkRhdGU6IFN1biwgNiBNYXkgMjAxOCAxNDo0NDo1NCArMDIwMApTdWJqZWN0OiBbUEFUQ0hdIFdI
-RU5DRTogRml4IHR5cG8gVmVyc2lvbgoKLS0tCiBXSEVOQ0UgfCA1OCArKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdl
-ZCwgMjkgaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvV0hFTkNF
-IGIvV0hFTkNFCmluZGV4IDY5MGE2YTVkNDE0OS4uYWI5MTVlZTZiMjRmIDEwMDY0NAotLS0gYS9X
-SEVOQ0UKKysrIGIvV0hFTkNFCkBAIC04NjYsMTAgKzg2NiwxMCBAQCBGaWxlOiBpd2x3aWZpLTcy
-NjAtMTMudWNvZGUKIFZlcnNpb246IDI1LjMwLjEzLjAKIAogRmlsZTogaXdsd2lmaS03MjYwLTE2
-LnVjb2RlCi1WZXJzaW9uIDE2LjI0MjQxNC4wCitWZXJzaW9uOiAxNi4yNDI0MTQuMAogCiBGaWxl
-OiBpd2x3aWZpLTcyNjAtMTcudWNvZGUKLVZlcnNpb24gMTcuMzg4ZjExMWYuMAorVmVyc2lvbjog
-MTcuMzg4ZjExMWYuMAogCiBGaWxlOiBpd2x3aWZpLTMxNjAtNy51Y29kZQogVmVyc2lvbjogMjIu
-MS43LjAKQEAgLTg5MCwxMCArODkwLDEwIEBAIEZpbGU6IGl3bHdpZmktMzE2MC0xMy51Y29kZQog
-VmVyc2lvbjogMjUuMzAuMTMuMAogCiBGaWxlOiBpd2x3aWZpLTMxNjAtMTYudWNvZGUKLVZlcnNp
-b24gMTYuMjQyNDE0LjAKK1ZlcnNpb246IDE2LjI0MjQxNC4wCiAKIEZpbGU6IGl3bHdpZmktMzE2
-MC0xNy51Y29kZQotVmVyc2lvbiAxNy4zODhmMTExZi4wCitWZXJzaW9uOiAxNy4zODhmMTExZi4w
-CiAKIEZpbGU6IGl3bHdpZmktNzI2NS04LnVjb2RlCiBWZXJzaW9uOiAyMi4yNC44LjAKQEAgLTkx
-MSwxMCArOTExLDEwIEBAIEZpbGU6IGl3bHdpZmktNzI2NS0xMy51Y29kZQogVmVyc2lvbjogMjUu
-MzAuMTMuMAogCiBGaWxlOiBpd2x3aWZpLTcyNjUtMTYudWNvZGUKLVZlcnNpb24gMTYuMjQyNDE0
-LjAKK1ZlcnNpb246IDE2LjI0MjQxNC4wCiAKIEZpbGU6IGl3bHdpZmktNzI2NS0xNy51Y29kZQot
-VmVyc2lvbiAxNy4zODhmMTExZi4wCitWZXJzaW9uOiAxNy4zODhmMTExZi4wCiAKIEZpbGU6IGl3
-bHdpZmktNzI2NUQtMTAudWNvZGUKIFZlcnNpb246IDIzLjE1LjEwLjAKQEAgLTkyNiw3NiArOTI2
-LDc2IEBAIEZpbGU6IGl3bHdpZmktNzI2NUQtMTMudWNvZGUKIFZlcnNpb246IDI1LjMwLjEzLjAK
-IAogRmlsZTogaXdsd2lmaS03MjY1RC0xNi51Y29kZQotVmVyc2lvbiAxNi4yNDI0MTQuMAorVmVy
-c2lvbjogMTYuMjQyNDE0LjAKIAogRmlsZTogaXdsd2lmaS03MjY1RC0xNy51Y29kZQotVmVyc2lv
-biAxNy4zNTI3MzguMAorVmVyc2lvbjogMTcuMzUyNzM4LjAKIAogRmlsZTogaXdsd2lmaS03MjY1
-RC0yMS51Y29kZQotVmVyc2lvbiAyMS4zMDI4MDAuMAorVmVyc2lvbjogMjEuMzAyODAwLjAKIAog
-RmlsZTogaXdsd2lmaS03MjY1RC0yMi51Y29kZQotVmVyc2lvbiAyMi4zOTE3NDAuMAorVmVyc2lv
-bjogMjIuMzkxNzQwLjAKIAogRmlsZTogaXdsd2lmaS03MjY1RC0yNy51Y29kZQotVmVyc2lvbiAy
-Ny41NDEwMzMuMAorVmVyc2lvbjogMjcuNTQxMDMzLjAKIAogRmlsZTogaXdsd2lmaS03MjY1RC0y
-OS51Y29kZQotVmVyc2lvbiAyOS4zZTNiNGRlNS4wCitWZXJzaW9uOiAyOS4zZTNiNGRlNS4wCiAK
-IEZpbGU6IGl3bHdpZmktMzE2OC0yMS51Y29kZQotVmVyc2lvbiAyMS4zMDI4MDAuMAorVmVyc2lv
-bjogMjEuMzAyODAwLjAKIAogRmlsZTogaXdsd2lmaS0zMTY4LTIyLnVjb2RlCi1WZXJzaW9uIDIy
-LjM5MTc0MC4wCitWZXJzaW9uOiAyMi4zOTE3NDAuMAogCiBGaWxlOiBpd2x3aWZpLTMxNjgtMjcu
-dWNvZGUKLVZlcnNpb24gMjcuNTQxMDMzLjAKK1ZlcnNpb246IDI3LjU0MTAzMy4wCiAKIEZpbGU6
-IGl3bHdpZmktMzE2OC0yOS51Y29kZQotVmVyc2lvbiAyOS4zZTNiNGRlNS4wCitWZXJzaW9uOiAy
-OS4zZTNiNGRlNS4wCiAKIEZpbGU6IGl3bHdpZmktODAwMEMtMTMudWNvZGUKIFZlcnNpb246IDI1
-LjMwLjEzLjAKIAogRmlsZTogaXdsd2lmaS04MDAwQy0xNi51Y29kZQotVmVyc2lvbiAxNi4yNDI0
-MTQuMAorVmVyc2lvbjogMTYuMjQyNDE0LjAKIAogRmlsZTogaXdsd2lmaS04MDAwQy0yMS51Y29k
-ZQotVmVyc2lvbiAyMS4zMDI4MDAuMAorVmVyc2lvbjogMjEuMzAyODAwLjAKIAogRmlsZTogaXds
-d2lmaS04MDAwQy0yMi51Y29kZQotVmVyc2lvbiAyMi4zOTE3NDAuMAorVmVyc2lvbjogMjIuMzkx
-NzQwLjAKIAogRmlsZTogaXdsd2lmaS04MDAwQy0yNy51Y29kZQotVmVyc2lvbiAyNy41NDEwMzMu
-MAorVmVyc2lvbjogMjcuNTQxMDMzLjAKIAogRmlsZTogaXdsd2lmaS04MDAwQy0zMS51Y29kZQot
-VmVyc2lvbiAzMS41NjA0ODQuMAorVmVyc2lvbjogMzEuNTYwNDg0LjAKIAogRmlsZTogaXdsd2lm
-aS04MDAwQy0zNC51Y29kZQotVmVyc2lvbiAzNC42MTAyODguMAorVmVyc2lvbjogMzQuNjEwMjg4
-LjAKIAogRmlsZTogaXdsd2lmaS04MDAwQy0zNi51Y29kZQotVmVyc2lvbiAzNi5lOTE5NzZjMC4w
-CitWZXJzaW9uOiAzNi5lOTE5NzZjMC4wCiAKIEZpbGU6IGl3bHdpZmktODI2NS0yMS51Y29kZQot
-VmVyc2lvbiAyMS4zMDI4MDAuMAorVmVyc2lvbjogMjEuMzAyODAwLjAKIAogRmlsZTogaXdsd2lm
-aS04MjY1LTIyLnVjb2RlCi1WZXJzaW9uIDIyLjM5MTc0MC4wCitWZXJzaW9uOiAyMi4zOTE3NDAu
-MAogCiBGaWxlOiBpd2x3aWZpLTgyNjUtMjcudWNvZGUKLVZlcnNpb24gMjcuNTQxMDMzLjAKK1Zl
-cnNpb246IDI3LjU0MTAzMy4wCiAKIEZpbGU6IGl3bHdpZmktODI2NS0zMS51Y29kZQotVmVyc2lv
-biAzMS41NjA0ODQuMAorVmVyc2lvbjogMzEuNTYwNDg0LjAKIAogRmlsZTogaXdsd2lmaS04MjY1
-LTM0LnVjb2RlCi1WZXJzaW9uIDM0LjYxMDI4OC4wCitWZXJzaW9uOiAzNC42MTAyODguMAogCiBG
-aWxlOiBpd2x3aWZpLTgyNjUtMzYudWNvZGUKLVZlcnNpb24gMzYuZTkxOTc2YzAuMAorVmVyc2lv
-bjogMzYuZTkxOTc2YzAuMAogCiBGaWxlOiBpd2x3aWZpLTkwMDAtcHUtYjAtamYtYjAtMzMudWNv
-ZGUKIFZlcnNpb246IDMzLjYxMDI5NC4wCi0tIAoyLjE3LjAKCg==
---00000000000063ed1c056b88f161--
+First of all, thank a lot for the feedback, Jonathan!
+I'm out of office at the moment, will reply with more
+details once I back.
