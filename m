@@ -1,60 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751954AbeEFCfF (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 22:35:05 -0400
-Received: from mail-qt0-f178.google.com ([209.85.216.178]:37557 "EHLO
-        mail-qt0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751832AbeEFCfE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 22:35:04 -0400
-X-Google-Smtp-Source: AB8JxZrooKU0ieM2zFWGGCM7OXOHDCfKZd4Xyj9JkmFJdrAYr4QUZskhb8XQEgU9iFY3Hh+n1qoWG89RIvu4FC6TRQI=
-MIME-Version: 1.0
-In-Reply-To: <1b8328d1-4e41-c4f9-c07b-87530e85eb7c@infradead.org>
-References: <1b8328d1-4e41-c4f9-c07b-87530e85eb7c@infradead.org>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Sat, 5 May 2018 22:35:03 -0400
-X-Google-Sender-Auth: iG0eS4xrStikrKR6Ox-pQCOLfSo
-Message-ID: <CAK8P3a1fPK0eqfkehphXF9aeL0sbryzOyqD3rXej6YSrySSMwA@mail.gmail.com>
-Subject: Re: crosstool requirements?
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
+        id S1751940AbeEFCtA (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 22:49:00 -0400
+Received: from gate.crashing.org ([63.228.1.57]:35106 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751833AbeEFCs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 22:48:58 -0400
+Message-ID: <cafd11f9b594903ff1f0acc4d7e7f7453aeb971f.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH] locking/atomics/powerpc: Introduce optimized
+ cmpxchg_release() family of APIs for PowerPC
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aryabinin@virtuozzo.com, boqun.feng@gmail.com, catalin.marinas@arm.com,
+        dvyukov@google.com, will.deacon@arm.com
+Date: Sun, 06 May 2018 11:56:44 +1000
+In-Reply-To: <20180505100055.yc4upauxo5etq5ud@gmail.com>
+References: <20180504173937.25300-1-mark.rutland@arm.com>
+         <20180504173937.25300-2-mark.rutland@arm.com>
+         <20180504180105.GS12217@hirez.programming.kicks-ass.net>
+         <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
+         <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
+         <20180505084721.GA32344@noisy.programming.kicks-ass.net>
+         <20180505090403.p2ywuen42rnlwizq@gmail.com>
+         <20180505093829.xfylnedwd5nonhae@gmail.com>
+         <20180505100055.yc4upauxo5etq5ud@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 5, 2018 at 2:20 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> Hi Arnd,
->
-> I was trying to use the x86_64 hosted openrisc/or1k gcc compiler (7.3.0-nolibc)
-> but I mostly what I get are errors like the following:
->
-> crosstool/gcc-7.3.0-nolibc/or1k-linux/bin/../libexec/gcc/or1k-linux/7.3.0/cc1: error while loading shared libraries: libisl.so.15: cannot open shared object file: No such file or directory
->
->
-> I do have /usr/lib64/libisl.so.10 (not .15) installed on my system.
-> Am I just outofluck for doing this?
+On Sat, 2018-05-05 at 12:00 +0200, Ingo Molnar wrote:
+> This clearly suggests that PPC_RELEASE_BARRIER is in active use and 'lwsync' is 
+> the 'release barrier' instruction, if I interpreted that right.
 
-This has been pointed out by some others before, sorry for not having addressed
-it yet. I'll be back from travelling on May 22 and should be able to build a set
-of gcc-8.1 binaries without this problem, and also rebuild some of the older
-compilers to fix it (gcc-4.8 is already fixed, but IIRC doesn't
-support openrisc)
+The closest to one we got.
 
-What happened here is that I built against the libraries that came
-with Ubuntu 16.04,
-intentionally picking a somewhat older distro in the hope that this
-would produce
-binaries that work on a wider range of systems, but I had it use the
-system libisl,
-libgmp, libmpfc, and libmpc rather than using the one provided by the
-gcc project
-for static linking.
+The semantics are that it orders all load/store pairs to cachable
+storage except store+load.
 
-You should be able to just install the binaries from
-https://launchpad.net/ubuntu/xenial/amd64/libisl15/0.16.1-1
-as well as any others you might need along with the toolchain (either
-using dpkg on Debian or Ubuntu, or extracting the .so file into an
-appropriate directory for others) until then.
-
-        Arnd
+Cheers,
+Ben.
