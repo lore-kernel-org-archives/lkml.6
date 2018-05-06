@@ -1,20 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751808AbeEFLYW (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 07:24:22 -0400
-Received: from sauhun.de ([88.99.104.3]:37628 "EHLO pokefinder.org"
+        id S1751834AbeEFLYa (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 07:24:30 -0400
+Received: from sauhun.de ([88.99.104.3]:37654 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751776AbeEFLYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 07:24:19 -0400
+        id S1751776AbeEFLYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 07:24:24 -0400
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: trivial@kernel.org
 Cc: linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/9] hwmon: fschmd: fix typo 'can by' to 'can be'
-Date: Sun,  6 May 2018 13:23:48 +0200
-Message-Id: <20180506112404.24872-5-wsa+renesas@sang-engineering.com>
+        Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>,
+        Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <Allen.Hubbe@emc.com>,
+        linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/9] NTB: ntb_hw_idt: fix typo 'can by' to 'can be'
+Date: Sun,  6 May 2018 13:23:50 +0200
+Message-Id: <20180506112404.24872-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
 References: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
@@ -24,21 +25,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/hwmon/fschmd.c | 2 +-
+ drivers/ntb/hw/idt/ntb_hw_idt.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/fschmd.c b/drivers/hwmon/fschmd.c
-index 5e78229ade049f..22d3a84f13ef58 100644
---- a/drivers/hwmon/fschmd.c
-+++ b/drivers/hwmon/fschmd.c
-@@ -105,7 +105,7 @@ static const u8 FSCHMD_REG_VOLT[7][6] = {
- static const int FSCHMD_NO_VOLT_SENSORS[7] = { 3, 3, 3, 3, 3, 3, 6 };
- 
- /*
-- * minimum pwm at which the fan is driven (pwm can by increased depending on
-+ * minimum pwm at which the fan is driven (pwm can be increased depending on
-  * the temp. Notice that for the scy some fans share there minimum speed.
-  * Also notice that with the scy the sensor order is different than with the
-  * other chips, this order was in the 2.4 driver and kept for consistency.
+diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
+index 8d98872d0983b7..dbe72f116017ab 100644
+--- a/drivers/ntb/hw/idt/ntb_hw_idt.c
++++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
+@@ -1401,7 +1401,7 @@ static int idt_ntb_peer_mw_clear_trans(struct ntb_dev *ntb, int pidx,
+  *                          5. Doorbell operations
+  *
+  *    Doorbell functionality of IDT PCIe-switches is pretty unusual. First of
+- * all there is global doorbell register which state can by changed by any
++ * all there is global doorbell register which state can be changed by any
+  * NT-function of the IDT device in accordance with global permissions. These
+  * permissions configs are not supported by NTB API, so it must be done by
+  * either BIOS or EEPROM settings. In the same way the state of the global
 -- 
 2.11.0
