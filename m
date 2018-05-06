@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3852358-1525646983-2-1924933134026522755
+X-Cyrus-Session-Id: sloti22d1t05-3852358-1525646974-5-15472311380468678976
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525646983; b=deohr+sds0wV9OiMqJ5BZDvMhgr8lUYOUvHJWDw87kX+nMsard
-    opBHQiFrNF3vtOdFvVl9pbdKBLpldvsScKYXUzdO09GKeivJKFqKpoZQqk65n04K
-    X8wP/DJVGbFHH4SeenfTJWiu5xTNvdbxCXohkDDvwOANPV5DpOtpWR7V5RZ3jfMh
-    C1dcHujj7I/NSwzUBZy500jOxQSK/JkWulPEY6vmy1Oxz2YVolAS/NJiElKHFBUY
-    d/clxR7SxaFPSVfP0JRLeEoHYliC7zaX4OfmJpRtFrvtRTNk+Ryjy1Rfx0aWwEqT
-    pl9jY/SXDqRPeiIobmSf7kuxTrAPSDJ7Puzg==
+    1525646973; b=aNXRrXBiQQDxU29ww6BlsHCldnI1soxkSZmXReLIZ0xuXNOqUf
+    q1RwJFMOjeaSINr2ydLUs0SKjfYS7OwWl9gygjYquWGlMpzzK6Z/Pad9Uwk/d9Yw
+    c84z+/F4lITxa4b7oZDsIbCGdIfHkEiI47I0Cr+vXRPOy9TBWvnjRABNyy0kQCmF
+    F5cZAHS1buXdVsf3VHnIenTI7Rs0TgHym7N2iPnw7FAoc4oZMsfcSN58Xoe9XYwQ
+    7bdjZdT6rj5/YgZWET6Y905JSmwZ6/RM9fwwYvYSsV3qScVd2w9/fEfLyu2L9pJI
+    ixhX0r7bHGGvXxRkUdMib8ipVoNJR02EhKug==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525646983; bh=
-    pAPOvK954VlgV1CdJ0wwFLZevp/iys8sNuWvAq/7LRA=; b=GeRY5fDq26t18m2v
-    ChaN2vqoYf9171kypmbmn8LPi7pYLWIPCI8yJhYhaMOJ/3jgkesOz5lmoDFPLqC4
-    1j5L+rgoVqbmmQJf303ubPZV1jz2D+NOAuCpK9d2gYFK2IEo1sFQtkm171Bw7lqH
-    A4d2kmYa9M4fsXLsXSlLp4E5Ijm7b1geIl56/n+8ipfnphSRdgk/l3ccR46IzTNm
-    vTorgClWJ6fgt/5SdW2LUQS/39+t3/TKQbn7IoUn+drimhFmz0QhFu9YvxwBPGXh
-    C+omk440N2jLgq9uhicy/KCjiU71tlATtUexlO/V3KYkp/Cnwm20G9D5Qu7BYKSX
-    72Zv6A==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525646973; bh=
+    QZqQKqe5aaRSrbAieUOWa6z0wmIm2g+nBPaj5GJXk1Y=; b=AufjzQnxAjvv3DZU
+    JGl+nNrVkeyRcocNldWB7Lu4L066Sew/ZqWZv6oyPPDR9liWtM44rNtnEvXU2Kff
+    GrfdMN+V4EcJcTUeFq+fRj4UmTloLdlFMdLUjdW1j0zkEcNVPnG6TkUz98IOCnT/
+    KWdP1O+i+av20p6y3MisAexzU9nb48TCrbC8XgHWpgjbGAfVTJ/+vPC/IggF/oxW
+    nh3p5DsrYhQ003UNOhsONYH6Sw+PNC6+B+uxhfE1PJZMgDmAEwIB0udIGeawuLSX
+    RTP15VM0saXHCpGlMOSFDmOaHEw34gl6851ZxgOqOpFt+QTLo455AULW4HxYguoH
+    ivqC4g==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=ubuntu.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,13 +38,13 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=Ib/r8N15;
+    header.d=1e100.net header.i=@1e100.net header.b=jlidZP3C;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=ubuntu.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=ubuntu.com;
@@ -54,29 +54,29 @@ Authentication-Results: mx1.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=Ib/r8N15;
+      header.d=1e100.net header.i=@1e100.net header.b=jlidZP3C;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=ubuntu.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfKTLDOhfF+nyXnuVViomYvKPc8yXVWzzcYxWFf50wbC1sZI9ODmdp9al+19a0G9evo5XqtCMckwAB2KsoPzgVqjsOJN5VW+tFyrwwZ62cz21EbD1pDWN
-    GVRreDeNCquYykJcjXtIhz5+5iwi8x4lPGsR9Xi5UwSKf9p6sqen2IlnklG59f3/UZD/6CApwWwY47ezM+5YfhHpyr2/3kP+UlsQpKWpHbvgaQzv2lX/Cm5u
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfD9RQRi5l5ViZ8GlIeM2LOv8CtBAVXIHNWHg5PGnTGlF58lesiCKf17Ktodgcap5xOyiWtWSciOjDdA7fdDHi4Ke7u2T+ELY/4i5sRx24HfTjpDeuSh7
+    DtQPWAxSabUgap6eTdlGQMZcjbuE8FAe1x7gmIhR4+rGzxzeg4RQ6VObY10q4yqueo5Z+BwQg+haDce81QYAdSaqADz8Oh9bGKuw/0JcaiRnCCF+fEWYU9bn
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
     a=fxJcL_dCAAAA:8 a=VwQbUJbxAAAA:8 a=V5zyGy9ClZnDF-sAG1AA:9 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751923AbeEFWsp (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 6 May 2018 18:48:45 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:36312 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752121AbeEFWsP (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Sun, 6 May 2018 18:48:15 -0400
-X-Google-Smtp-Source: AB8JxZp22rxbpwd302zoMP2f/1QcbW41okTbS/fbqqIfwqor0EeTxj7gMWm3BYdomaAH5d92zD/VOQ==
+        id S1752121AbeEFWsu (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 6 May 2018 18:48:50 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:44518 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752117AbeEFWsN (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Sun, 6 May 2018 18:48:13 -0400
+X-Google-Smtp-Source: AB8JxZpC+d0+qGJXPoJDlf0Qlf9HEVD3uxfkwZZfERiGRDzK6tCv1pqkFoEDfAf+wGZ2CiOq145lxQ==
 From: Christian Brauner <christian.brauner@ubuntu.com>
 To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -84,9 +84,9 @@ Cc: torvalds@linux-foundation.org, tglx@linutronix.de,
         kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 6/6 v1] statfs: add ST_PRIVATE
-Date: Mon,  7 May 2018 00:47:04 +0200
-Message-Id: <20180506224704.14669-7-christian.brauner@ubuntu.com>
+Subject: [PATCH 4/6 v1] statfs: add ST_SHARED
+Date: Mon,  7 May 2018 00:47:02 +0200
+Message-Id: <20180506224704.14669-5-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180506224704.14669-1-christian.brauner@ubuntu.com>
 References: <20180506224704.14669-1-christian.brauner@ubuntu.com>
@@ -96,14 +96,15 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently userspace can only determine whether a mountpoint is private
+Currently userspace can only determine whether a mountpoint is shared
 by parsing /proc/<pid>/mountinfo. It would be convenient to simply retrieve
 this property with a statvfs() call.
 This let's userspace avoid costly parsing, supports cases where /proc is
 not mounted, and supports usecases where file descriptors to mountpoints
 are passed between processes that are inspected via fstatvfs().
-A mountpoint is considered ST_PRIVATE iff and it is neither ST_SLAVE nor
-ST_SHARED.
+This is especially helpful in all cases where userspace is not interested
+in specific propagation properties but rather just wants to either turn on
+or turn off propagation for specific mountpoints.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
@@ -115,30 +116,29 @@ v0->v1:
  2 files changed, 3 insertions(+)
 
 diff --git a/fs/statfs.c b/fs/statfs.c
-index 35ad0402c9a3..899e899ee84c 100644
+index 61b3063d3921..2fc6f9c3793c 100644
 --- a/fs/statfs.c
 +++ b/fs/statfs.c
-@@ -58,6 +58,8 @@ static int calculate_f_flags(struct vfsmount *mnt)
- 
- 	if (IS_MNT_SLAVE(real_mount(mnt)))
- 		flags |= ST_SLAVE;
-+	else if (!(flags & ST_SHARED))
-+		flags |= ST_PRIVATE;
- 
+@@ -31,6 +31,8 @@ static int flags_by_mnt(int mnt_flags)
+ 		flags |= ST_RELATIME;
+ 	if (mnt_flags & MNT_UNBINDABLE)
+ 		flags |= ST_UNBINDABLE;
++	if (mnt_flags & MNT_SHARED)
++		flags |= ST_SHARED;
  	return flags;
  }
+ 
 diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index 048127effaad..663fa5498a7d 100644
+index e1b84d0388c1..5416b2936dd9 100644
 --- a/include/linux/statfs.h
 +++ b/include/linux/statfs.h
-@@ -41,6 +41,7 @@ struct kstatfs {
+@@ -41,5 +41,6 @@ struct kstatfs {
  #define ST_NODIRATIME	(1<<11) /* do not update directory access times */
  #define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
  #define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
-+#define ST_PRIVATE	(1<<18)	/* change to private */
- #define ST_SLAVE	(1<<19)	/* change to slave */
- #define ST_SHARED	(1<<20)	/* change to shared */
++#define ST_SHARED	(1<<20)	/* change to shared */
  
+ #endif
 -- 
 2.17.0
 
