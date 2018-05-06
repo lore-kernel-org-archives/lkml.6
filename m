@@ -1,115 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751407AbeEFJoL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 05:44:11 -0400
-Received: from 8bytes.org ([81.169.241.247]:41144 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751032AbeEFJoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 05:44:10 -0400
-Date: Sun, 6 May 2018 11:44:05 +0200
-From: Joerg Roedel <joro@8bytes.org>
+        id S1751509AbeEFJ4j (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 05:56:39 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58438 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751123AbeEFJ4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 05:56:38 -0400
+Date: Sun, 6 May 2018 11:56:35 +0200
+From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
-Subject: [git pull] IOMMU Fixes for Linux v4.17-rc4
-Message-ID: <20180506094358.ysb5lq7xbjejymxa@8bytes.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for Linux 4.17-rc4
+Message-ID: <20180506095634.GA29747@flask>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="64yjnfe6iayobsid"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---64yjnfe6iayobsid
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi Linus,
+Linus,
 
 The following changes since commit 6da6c0db5316275015e8cc2959f12a17584aeb64:
 
   Linux v4.17-rc3 (2018-04-29 14:17:42 -0700)
 
-are available in the git repository at:
+are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-fixes-v4.17-rc4
+  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
 
-for you to fetch changes up to 40fa84e10134ef5c892b628e02382349b5db3e0c:
+for you to fetch changes up to ecf08dad723d3e000aecff6c396f54772d124733:
 
-  iommu: rockchip: fix building without CONFIG_OF (2018-05-03 16:36:07 +0200)
-
-----------------------------------------------------------------
-IOMMU Fixes for Linux v4.17-rc4
-
-Fixes come with:
-
-	* Fix for compile warning in AMD IOMMU driver with irq remapping
-	  disabled
-
-	* Fix for VT-d interrupt remapping and invalidation size (caused
-	  a BUG_ON when trying to invalidate more than 4GB)
-
-	* Build fix and a regression fix for broken graphics with old
-	  DTS for the rockchip iommu driver
-
-	* A revert in PCI window reservation code which fixes a
-	  regression with VFIO.
+  KVM: x86: remove APIC Timer periodic/oneshot spikes (2018-05-05 23:09:39 +0200)
 
 ----------------------------------------------------------------
-Arnd Bergmann (2):
-      iommu/amd: Hide unused iommu_table_lock
-      iommu: rockchip: fix building without CONFIG_OF
+KVM fixes for v4.17-rc4
 
-Changbin Du (1):
-      iommu/vt-d: fix shift-out-of-bounds in bug checking
+ARM:
+ - Fix proxying of GICv2 CPU interface accesses
+ - Fix crash when switching to BE
+ - Track source vcpu git GICv2 SGIs
+ - Fix an outdated bit of documentation
 
-Heiko Stuebner (1):
-      iommu/rockchip: Make clock handling optional
+x86:
+ - Speed up injection of expired timers (for stable)
 
-Jagannathan Raman (1):
-      iommu/vt-d: Fix usage of force parameter in intel_ir_reconfigure_irte()
+----------------------------------------------------------------
+Anthoine Bourgeois (1):
+      KVM: x86: remove APIC Timer periodic/oneshot spikes
 
-Joerg Roedel (1):
-      iommu/vt-d: Use WARN_ON_ONCE instead of BUG_ON in qi_flush_dev_iotlb()
+James Morse (2):
+      KVM: arm64: Fix order of vcpu_write_sys_reg() arguments
+      arm64: vgic-v2: Fix proxying of cpuif access
 
-Shameer Kolothum (1):
-      iommu/dma: Move PCI window region reservation back into dma specific path.
+Marc Zyngier (1):
+      KVM: arm/arm64: vgic: Fix source vcpu issues for GICv2 SGI
 
- drivers/iommu/amd_iommu.c           |  2 +-
- drivers/iommu/dma-iommu.c           | 54 +++++++++++++++++--------------------
- drivers/iommu/dmar.c                |  2 +-
- drivers/iommu/intel_irq_remapping.c |  2 +-
- drivers/iommu/rockchip-iommu.c      | 11 ++++++--
- 5 files changed, 37 insertions(+), 34 deletions(-)
+Radim Krčmář (1):
+      Merge tag 'kvmarm-fixes-for-4.17-2' of git://git.kernel.org/.../kvmarm/kvmarm
 
-Please pull.
+Valentin Schneider (1):
+      KVM: arm/arm64: vgic_init: Cleanup reference to process_maintenance
 
-Thanks,
-
-	Joerg
-
---64yjnfe6iayobsid
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJa7s5eAAoJECvwRC2XARrjnhAQAJAagB6m6DoQrbYywRK3b55+
-8dl3rNEZ6v7daJIBZ9hlLQP+zMVLvvC9fcFqQIAs6PtZbag9misXp/EIvxotRCHQ
-fHMbs9xC8PJclmaMgd9UG8mJ1b45hjRa0jGDm2eddaZq/s4toMHrBg8JktnlIfVI
-FVc1nOFiJEXpIhwngJi8sxenhmzcO/MmA1noevqhnkXYnTa+0PXFzTUBQNPM1CnJ
-xXLAYmnHwA7ZzOK7vXs/q3ZbeFZBQhSLkOe15qX+paqiXdPiYegOrp1rRDjh55Kt
-NCMzxpaMtmzb/rjKM4WC81820iWv01HAUb4hPbp9W9bcAF1qxSD9DTr3DQiGqPMl
-JvjzAOxosnlPKwPA8Xci/5aiP7sgCuqGdksAmBPTVIuOrch3NSfgezXvYZi+a1ro
-V/z9unDE5/Vt19kVyX8OS1FxFYyPBcV2ovYvCd34agtbmGGPtNuJiN6/fNxIT/gu
-56mOinTotQU6hQ3vYzlQ0TPNwfeSXUN3JVafVIWp1I8FpRmDU7GD08nv5DFFXdB3
-uZMrmhbB91SOqO13g7dm6gyJqgIAeJW7M7WPG8eK62DaT5F0kbLJSsiyNqOkYfCu
-GzFAt3q66NNm2u9Hu/NpKr5EEWq+9J0653fkv8TM20u4G1oAcxoWyi62hqBiLDQB
-IzVfuCRuPKE0x/TtPOY1
-=qw4c
------END PGP SIGNATURE-----
-
---64yjnfe6iayobsid--
+ arch/arm64/include/asm/kvm_emulate.h     |  2 +-
+ arch/arm64/kvm/hyp/vgic-v2-cpuif-proxy.c | 24 ++++++++++++----
+ arch/x86/kvm/lapic.c                     | 37 +++++++++++++-----------
+ include/kvm/arm_vgic.h                   |  1 +
+ virt/kvm/arm/vgic/vgic-init.c            |  2 +-
+ virt/kvm/arm/vgic/vgic-mmio.c            | 10 +++++--
+ virt/kvm/arm/vgic/vgic-v2.c              | 38 ++++++++++++++-----------
+ virt/kvm/arm/vgic/vgic-v3.c              | 49 +++++++++++++++++++-------------
+ virt/kvm/arm/vgic/vgic.c                 | 30 +++++--------------
+ virt/kvm/arm/vgic/vgic.h                 | 14 +++++++++
+ 10 files changed, 122 insertions(+), 85 deletions(-)
