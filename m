@@ -1,95 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751855AbeEFSui (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 14:50:38 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:43232 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751771AbeEFSug (ORCPT
+        id S1751834AbeEFSzs (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 14:55:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38540 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751771AbeEFSzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 14:50:36 -0400
-To: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        axboe <axboe@kernel.dk>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-        Cai Zhiyong <caizhiyong@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] Documentation: block: cmdline-partition.txt fixes and
- additions
-Message-ID: <dba389fc-2745-34b1-e33e-fc83f53eaf42@infradead.org>
-Date: Sun, 6 May 2018 11:50:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 6 May 2018 14:55:45 -0400
+Date: Sun, 6 May 2018 11:55:32 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Huaisheng HS1 Ye <yehs1@lenovo.com>
+Cc: Michal Hocko <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+        <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned
+ int in gfp_zone
+Message-ID: <20180506185532.GA13604@bombadil.infradead.org>
+References: <1525416729-108201-1-git-send-email-yehs1@lenovo.com>
+ <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
+ <20180504133533.GR4535@dhcp22.suse.cz>
+ <20180504154004.GB29829@bombadil.infradead.org>
+ <HK2PR03MB168459A1C4FB2B7D3E1F6A4A92840@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180506134814.GB7362@bombadil.infradead.org>
+ <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Sun, May 06, 2018 at 04:17:06PM +0000, Huaisheng HS1 Ye wrote:
+> Upload my current patch and testing platform info for reference. This patch has been tested 
+> on a two sockets platform.
 
-Make the description of the kernel command line option "blkdevparts"
-a bit more flowing and readable.
+Thank you!
 
-Fix a few typos.
-Add the optional <size> and <offset> suffixes.
-Note that size can be "-" to indicate all of the remaining space.
+> It works, but some drivers or subsystem shall be modified to fit
+> these new type __GFP flags.
+> They use these flags directly to realize bit manipulations like this
+> below.
+> 
+> eg.
+> swiotlb-xen.c (drivers\xen):    flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+> extent_io.c (fs\btrfs):         mask &= ~(__GFP_DMA32|__GFP_HIGHMEM);
+> 
+> Because of these flags have been encoded within this patch, the
+> above operations can cause problem.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Cai Zhiyong <caizhiyong@huawei.com>
----
-Should the "ro" and "lk" flags options be described?
+I don't think this actually causes problems.  At least, no additional
+problems.  These users will successfully clear __GFP_DMA and __GFP_HIGHMEM
+no matter what values GFP_DMA and GFP_HIGHMEM have; the only problem will
+be if someone calls them with a zone type they're not expecting (eg DMA32
+for the first one or DMA for the second; or MOVABLE for either of them).
+The thing is, they're already buggy in those circumstances.
 
- Documentation/block/cmdline-partition.txt |   21 +++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+>   */
+> -#define __GFP_DMA      ((__force gfp_t)___GFP_DMA)
+> -#define __GFP_HIGHMEM  ((__force gfp_t)___GFP_HIGHMEM)
+> -#define __GFP_DMA32    ((__force gfp_t)___GFP_DMA32)
+> +#define __GFP_DMA      ((__force gfp_t)OPT_ZONE_DMA ^ ZONE_NORMAL)
+> +#define __GFP_HIGHMEM  ((__force gfp_t)ZONE_MOVABLE ^ ZONE_NORMAL)
+> +#define __GFP_DMA32    ((__force gfp_t)OPT_ZONE_DMA32 ^ ZONE_NORMAL)
+>  #define __GFP_MOVABLE  ((__force gfp_t)___GFP_MOVABLE)  /* ZONE_MOVABLE allowed */
+[...]
+>  static inline enum zone_type gfp_zone(gfp_t flags)
+> {
+>         enum zone_type z;
+> -       int bit = (__force int) (flags & GFP_ZONEMASK);
+> +       z = ((__force unsigned int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
+> 
+> -       z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+> -                                        ((1 << GFP_ZONES_SHIFT) - 1);
+> -       VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+> +       if (z > OPT_ZONE_HIGHMEM) {
+> +               z = OPT_ZONE_HIGHMEM +
+> +                       !!((__force unsigned int)flags & ___GFP_MOVABLE);
+> +       }
+>         return z;
+>  }
 
---- linux-next-20180504.orig/Documentation/block/cmdline-partition.txt
-+++ linux-next-20180504/Documentation/block/cmdline-partition.txt
-@@ -1,7 +1,9 @@
- Embedded device command line partition parsing
- =====================================================================
- 
--Support for reading the block device partition table from the command line.
-+The "blkdevparts" command line option adds support for reading the
-+block device partition table from the kernel command line.
-+
- It is typically used for fixed block (eMMC) embedded devices.
- It has no MBR, so saves storage space. Bootloader can be easily accessed
- by absolute address of data on the block device.
-@@ -14,22 +16,27 @@ blkdevparts=<blkdev-def>[;<blkdev-def>]
-     <partdef> := <size>[@<offset>](part-name)
- 
- <blkdev-id>
--    block device disk name, embedded device used fixed block device,
--    it's disk name also fixed. such as: mmcblk0, mmcblk1, mmcblk0boot0.
-+    block device disk name. Embedded device uses fixed block device.
-+    Its disk name is also fixed, such as: mmcblk0, mmcblk1, mmcblk0boot0.
- 
- <size>
-     partition size, in bytes, such as: 512, 1m, 1G.
-+    size may contain an optional suffix of (upper or lower case):
-+      K, M, G, T, P, E.
-+    "-" is used to denote all remaining space.
- 
- <offset>
-     partition start address, in bytes.
-+    offset may contain an optional suffix of (upper or lower case):
-+      K, M, G, T, P, E.
- 
- (part-name)
--    partition name, kernel send uevent with "PARTNAME". application can create
--    a link to block device partition with the name "PARTNAME".
--    user space application can access partition by partition name.
-+    partition name. Kernel sends uevent with "PARTNAME". Application can
-+    create a link to block device partition with the name "PARTNAME".
-+    User space application can access partition by partition name.
- 
- Example:
--    eMMC disk name is "mmcblk0" and "mmcblk0boot0"
-+    eMMC disk names are "mmcblk0" and "mmcblk0boot0".
- 
-   bootargs:
-     'blkdevparts=mmcblk0:1G(data0),1G(data1),-;mmcblk0boot0:1m(boot),-(kernel)'
+How about:
+
++#define __GFP_HIGHMEM  ((__force gfp_t)OPT_ZONE_HIGHMEM ^ ZONE_NORMAL)
+-#define __GFP_MOVABLE  ((__force gfp_t)___GFP_MOVABLE)  /* ZONE_MOVABLE allowed */
++#define __GFP_MOVABLE  ((__force gfp_t)ZONE_MOVABLE ^ ZONE_NORMAL | \
++					___GFP_MOVABLE)
+
+Then I think you can just make it:
+
+static inline enum zone_type gfp_zone(gfp_t flags)
+{
+	return ((__force int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
+}
+
+> @@ -370,42 +368,15 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+>  #error GFP_ZONES_SHIFT too large to create GFP_ZONE_TABLE integer
+>  #endif
+
+You should be able to delete GFP_ZONES_SHIFT too.
