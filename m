@@ -1,55 +1,88 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751776AbeEFOk0 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 10:40:26 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:21443 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751327AbeEFOkY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 10:40:24 -0400
-To: tytso@mit.edu
-Cc: syzbot+a9a45987b8b2daabdc88@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: kernel panic: EXT4-fs (device loop0): panic forced after error
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <000000000000019f50056b7f0890@google.com>
-        <20180506022428.GQ29205@thunk.org>
-        <d295f575-ba4b-b0ba-a856-405f9d393c9d@I-love.SAKURA.ne.jp>
-        <20180506133154.GS29205@thunk.org>
-In-Reply-To: <20180506133154.GS29205@thunk.org>
-Message-Id: <201805062340.HFC78625.VFFFOHSOtQMOJL@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Sun, 6 May 2018 23:40:10 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1751751AbeEFO4F (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 10:56:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52366 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751358AbeEFO4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 10:56:03 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        arm@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH fixes-for-current] arm64: dts: exynos: Fix interrupt type for I2S1 device on Exynos5433
+Date: Sun,  6 May 2018 16:55:24 +0200
+Message-Id: <20180506145524.14570-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Theodore Y. Ts'o wrote:
-> On Sun, May 06, 2018 at 02:03:57PM +0900, Tetsuo Handa wrote:
-> > 
-> > Since syzbot is hitting this error path inside mount() request, calling
-> > panic() when something went wrong inside mount() request might be
-> > overkill. We can recover without shutting down the system, can't we?
-> 
-> We could add a full kernel-mode fsck which gets run before mount ---
-> the question is how much complexity we want to add.  If SELinux is
-> enabled, then we have to check xattr consinsistency, etc., etc.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-You are thinking too complicated. I'm not asking for kernel-mode fsck.
-I'm just suggesting that mount() request returns an error to the caller
-(and the administrator invokes fsck etc. as needed).
+All interrupts from SoC internal modules are level triggered, so fix
+incorrect trigger type for I2S1 device on Exynos5433 SoCs.
 
-We are fixing bugs which occur during mount operation (e.g.
+This fixes following kernel warning:
 
-  https://groups.google.com/d/msg/syzkaller-bugs/Yp4q8n-MijM/yDX3zl1XBQAJ
-  https://groups.google.com/d/msg/syzkaller-bugs/4C4oiBX8vZ0/W6pi8NdbBgAJ
-  https://groups.google.com/d/msg/syzkaller-bugs/QBnHAQBy2pI/ccf-yL5bBgAJ
+WARNING: CPU: 2 PID: 1 at drivers/irqchip/irq-gic.c:1016 gic_irq_domain_translate+0xb0/0xb8
+Modules linked in:
+CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc7-next-20180329 #646
+Hardware name: Samsung TM2 board (DT)
+pstate: 20000005 (nzCv daif -PAN -UAO)
+pc : gic_irq_domain_translate+0xb0/0xb8
+lr : irq_create_fwspec_mapping+0x64/0x328
+sp : ffff0000098b38d0
+...
+Call trace:
+ gic_irq_domain_translate+0xb0/0xb8
+ irq_create_of_mapping+0x78/0xa0
+ of_irq_get+0x6c/0xa0
+ of_irq_to_resource+0x38/0x108
+ of_irq_to_resource_table+0x50/0x78
+ of_device_alloc+0x118/0x1b8
+ of_platform_device_create_pdata+0x54/0xe0
+ of_platform_bus_create+0x118/0x340
+ of_platform_bus_create+0x17c/0x340
+ of_platform_populate+0x74/0xd8
+ of_platform_default_populate_init+0xb0/0xcc
+ do_one_initcall+0x50/0x158
+ kernel_init_freeable+0x184/0x22c
+ kernel_init+0x10/0x108
+ ret_from_fork+0x10/0x18
+---[ end trace 6decb2b3078d73f0 ]---
 
-). And extX filesystem is different from other filesystems that it invokes
-error action specified by errors= parameter rather than return an error to
-the caller.
+Fixes: d8d579c316e8 ("ARM: dts: exynos: Add I2S1 device node to exynos5433")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+
+Hi Arnd and Olof,
+
+That's one fix for current release cycle (issue introduced in merge window).
+
+Best regards,
+Krzysztof
+
+
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+index c0231d077fa6..1ad8677f6a0a 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+@@ -1317,7 +1317,7 @@
+ 			reg = <0x14d60000 0x100>;
+ 			dmas = <&pdma0 31 &pdma0 30>;
+ 			dma-names = "tx", "rx";
+-			interrupts = <GIC_SPI 435 IRQ_TYPE_NONE>;
++			interrupts = <GIC_SPI 435 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cmu_peric CLK_PCLK_I2S1>,
+ 				 <&cmu_peric CLK_PCLK_I2S1>,
+ 				 <&cmu_peric CLK_SCLK_I2S1>;
+-- 
+2.14.1
