@@ -1,98 +1,97 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3509029-1525402635-2-3216291320100554856
+X-Cyrus-Session-Id: sloti22d1t05-3649652-1525633248-2-1181910578464627470
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
   BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
   FromHeader='org', MailFrom='org'
 X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525402632; b=Yru5EzyeZHTb72thMlZpYouTsxbpB0wbHQYtUKSNNk5ZE2EaqS
-    ZPRsGjp82nFrm28Ksp+0CYbdgK5rYqZOfL9wTuQZlp92zalelaXOMQ/u2T4JMv/i
-    vnpWv2odsejfpo1LUllBmecmK9R42aBmO9y2VBhnCo3Ue3ta5K42T5dJWwmhX/en
-    XziEeyxbRQhQV25HlN/BAXgCfBucEnfUhHLReSmR9MrpYy+/zJD9nCbvQMtqxfrw
-    L0uqiitYX0XE36/U1w1S4cDgH09swy10q1fKi/DLtKx63t+IWrLfyRxDf5pIs+JG
-    tJAzRPjwU0QLH1hLCbdn+hk+SXTH/1INjw0w==
+    1525633245; b=XhW2jmW6Q5xN1JW1erLMCszI5LRTnGHky9WuYXmhNqS6lnmqpL
+    DcQxQXKwZrYHN7v7h3uW30P/XUxQ47m2/cAcA8IAwmGDjSx2+bZLoJUZF12YTjfL
+    RZMON+jiLoa1XgOtAOkmbEjAwB/lLCcfFR8axYf3/EqFIVwn3uEvBFsZu+sICfnc
+    jrV6awrDmlrAw8yI5UOliIqBPbhvz+zA4FbFE8vk8NQIipYEhCwUs2KkFYeSwHmR
+    5nHGahVB4RmmzVeU0Hv5GettAOP25UB2sNaG5Sb6KI0FQdR+3smRdMMzOZeu/ifr
+    VZXUjVYcIvKAdQVJn8PjCI+wEKxi2oYqGS3g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
+    :in-reply-to:references:mime-version:list-id:list-unsubscribe
     :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525402632; bh=FsMS2
-    7zOyAxGJA1L7EGB3+eKaStkafnxVB9ibF9Xwo8=; b=QJsRtLKSqrQPmwMIBAXBG
-    YNb1YREH8tEr1dv2a6/NvkuBlbVGvExCC/V85ud4sP+avyLLPBRBWVcRwuR07Ik+
-    ErWb1aMrvNzCrFLwCB8JYc/li2iuCOBiHwLLM1J/6pyWanjhY86rfM3aHFSLQJi5
-    hkkQ9hm+18OC72hjXqZnU7xZp8UrmALOjUFkzvnNK7gdfXX5/uGXqoPtS5ZRZYYr
-    cadtIl+Q3FgrefrXyQRbn+WRI2tJYRcfrk2i7GW6FXPcM6zenvazrWPf+I6fbOQ5
-    OsxkMXmHTMTK+1i81os7TLLskJ1pZvceulxeOtQg7u7BRVKXjT0jLJsgIV1XQbTS
-    Q==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :content-transfer-encoding:sender; s=fm2; t=1525633245; bh=ofAr3
+    JmWreDQwmkorjatI8vrUcZQtZy+CY8dj52Qwtg=; b=TFK8vzJpaU51z1pBdtNzV
+    deKTyz2eAfroZQyL3iJ2HXLEL1Z3MWW8V2z0bh9TOx/MlAVIoku8BB0Os3v/3y5T
+    9viDQpJLbKcGHnCEYt/ek2bgoYPeN03BLjBM9livJ3KVDpHkCtyQlj5T1OSXzAsz
+    em/tHBnTAUGH9vpEiMzdST1zVLO1uc9aMWNYJxYIVher1ygovjNxQ9TAvy0uFvaV
+    yE/N2Dj92JM2IaQ3/hLml+kV2+pWgF4tK8kVorGjhZwqqFWYE5dkKEZaSr6khsfC
+    pI/dpbQ8Lfo/uEJfgdrwCQYXbPaqrwTb8KHvJJgNQ7bBBRBeZyJbb4Kki7UARuni
+    A==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=onstation.org header.i=@onstation.org header.b=fTM9pQqH
-    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+    header.d=kernel.org header.i=@kernel.org header.b=umjqYRUw x-bits=1024
+    x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
+    smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=onstation.org
-    header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn
+    smtp_is_org_domain=yes header.domain=kernel.org header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=onstation.org header.i=@onstation.org header.b=fTM9pQqH
-      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=onstation.org;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
+      header.d=kernel.org header.i=@kernel.org header.b=umjqYRUw x-bits=1024
+      x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
+      smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=onstation.org
-      header.mx.error=NOERROR header.aaaa.error=NOERROR header.result=warn
+      smtp_is_org_domain=yes header.domain=kernel.org header.result=pass
       header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
-    x-vs=clean score=0 state=0
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfK2lM7eHbmn467h+rf2alIayhRAIxZs8qs0ADbtzodtLqJtS/QLyBg5z2PeTe2sic0/WVKDr8ri2U32HONmZz7O5MQh2RzMBeXHeS0W8B6OvaqYbFTDB
-    HOFv+qFAewAaxo9S5qfAyOLks1KLuh+REIoxQDl6ZRa8Uezl2TfpVNUii4K7PiHlZm9DpHJ7NCoFFduvg3homBk3S7lui7CAGLlUq6J0QeVYZ55Ytp75vs8Z
-    y31k+ppfhdApOBSBDOBkMw==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+X-CM-Envelope: MS4wfLWzeKHbjcVamV7i4kUgVeJ1WEjtE1yKWXSrKNZnEC9PL4eEMgUbZnGkRC7xZZiBg33jtK0t4nkXehoSbULuuOHlI1RAEIgjKffxPA3xzhG9GxGyVCVm
+    dZL4KGdA83k2P8pc1zDrXGstHMKeJMDgjMmW/G60aC1iE1vS3xcnNM7t/E3D2zOSwTgPErHFx34xBYtyiS5g/gjwyT4dDwNrHl1AdGBioqdI6lkWuj0FaOZ9
+    E1r3HcDZy4Bx7n2jKkHnKA==
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
     a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tvE6cUz2AAAA:8 a=GlixS5zuAAAA:8
-    a=DDOyTI_5AAAA:8 a=kPYpdq12-W-3Buf6vDAA:9 a=zfTbJn5Z7FtefdRf:21
-    a=vFPridJE8c5k1Ml6:21 a=CjuIK1q_8ugA:10 a=sFRLSohfApMN8RASoVBY:22
+    a=DDOyTI_5AAAA:8 a=l0OHD4xysRlNJk0drv4A:9 a=h_7RP1pDrAj-dzMN:21
+    a=G0RCBVF_WSMPy11i:21 a=CjuIK1q_8ugA:10 a=sFRLSohfApMN8RASoVBY:22
     a=adCy40026U1O_QNtz7Gb:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 3 May 2018 22:56:54 -0400
-From: Brian Masney <masneyb@onstation.org>
-To: jic23@kernel.org, linux-iio@vger.kernel.org
+Date: Sun, 6 May 2018 20:00:28 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Brian Masney <masneyb@onstation.org>
 Subject: Re: [PATCH v2 11/11] staging: iio: tsl2x7x/tsl2772: move out of
  staging
-Message-ID: <20180504025654.ookir67gxu534pqn@a87a2039cb89>
+Message-ID: <20180506200028.63c04100@archlinux>
+In-Reply-To: <20180504025654.ookir67gxu534pqn@a87a2039cb89>
 References: <20180504025319.28953-1-masneyb@onstation.org>
  <20180504025319.28953-12-masneyb@onstation.org>
+ <20180504025654.ookir67gxu534pqn@a87a2039cb89>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180504025319.28953-12-masneyb@onstation.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -103,9 +102,9 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, lars@metafoo.de, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, pmeerw@pmeerw.net, knaack.h@gmx.de,
- drew.paterson@ams.com
+Cc: devel@driverdev.osuosl.org, lars@metafoo.de, linux-iio@vger.kernel.org,
+ gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, pmeerw@pmeerw.net,
+ knaack.h@gmx.de, drew.paterson@ams.com
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -114,1926 +113,1955 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hey Jonathan,
+On Thu, 3 May 2018 22:56:54 -0400
+Brian Masney <masneyb@onstation.org> wrote:
+
+> Hey Jonathan,
+> 
+> I intentionally didn't run git format-patch with the --no-renames since
+> patch 10 renamed the driver. Here is the .[ch] files included inline to
+> make your review easier.
+Thanks :)
+
+A few really minor things beyond that issue with the way the range
+is defined which came up in the earlier patch.
+
+So very nearly there!
+
+Jonathan
+> 
+> Brian
+> 
+> 
+> tsl2772.c:
+> 
+> // SPDX-License-Identifier: GPL-2.0+
+> /*
+>  * Device driver for monitoring ambient light intensity in (lux) and proximity
+>  * detection (prox) for the TAOS TSL2571, TSL2671, TMD2671, TSL2771, TMD2771,
+>  * TSL2572, TSL2672, TMD2672, TSL2772, and TMD2772 devices.
+>  *
+>  * Copyright (c) 2012, TAOS Corporation.
+>  * Copyright (c) 2017-2018 Brian Masney <masneyb@onstation.org>
+>  */
+> 
+> #include <linux/delay.h>
+> #include <linux/errno.h>
+> #include <linux/i2c.h>
+> #include <linux/interrupt.h>
+> #include <linux/kernel.h>
+> #include <linux/module.h>
+> #include <linux/mutex.h>
+> #include <linux/slab.h>
+> #include <linux/iio/events.h>
+> #include <linux/iio/iio.h>
+> #include <linux/iio/sysfs.h>
+> #include <linux/platform_data/tsl2772.h>
+> 
+> /* Cal defs */
+> #define PROX_STAT_CAL			0
+> #define PROX_STAT_SAMP			1
+> #define MAX_SAMPLES_CAL			200
+> 
+> /* TSL2772 Device ID */
+> #define TRITON_ID			0x00
+> #define SWORDFISH_ID			0x30
+> #define HALIBUT_ID			0x20
+> 
+> /* Lux calculation constants */
+> #define TSL2772_LUX_CALC_OVER_FLOW	65535
+> 
+> /*
+>  * TAOS Register definitions - Note: depending on device, some of these register
+>  * are not used and the register address is benign.
+>  */
+> 
+> /* Register offsets */
+> #define TSL2772_MAX_CONFIG_REG		16
+> 
+> /* Device Registers and Masks */
+> #define TSL2772_CNTRL			0x00
+> #define TSL2772_ALS_TIME		0X01
+> #define TSL2772_PRX_TIME		0x02
+> #define TSL2772_WAIT_TIME		0x03
+> #define TSL2772_ALS_MINTHRESHLO		0X04
+> #define TSL2772_ALS_MINTHRESHHI		0X05
+> #define TSL2772_ALS_MAXTHRESHLO		0X06
+> #define TSL2772_ALS_MAXTHRESHHI		0X07
+> #define TSL2772_PRX_MINTHRESHLO		0X08
+> #define TSL2772_PRX_MINTHRESHHI		0X09
+> #define TSL2772_PRX_MAXTHRESHLO		0X0A
+> #define TSL2772_PRX_MAXTHRESHHI		0X0B
+> #define TSL2772_PERSISTENCE		0x0C
+> #define TSL2772_ALS_PRX_CONFIG		0x0D
+> #define TSL2772_PRX_COUNT		0x0E
+> #define TSL2772_GAIN			0x0F
+> #define TSL2772_NOTUSED			0x10
+> #define TSL2772_REVID			0x11
+> #define TSL2772_CHIPID			0x12
+> #define TSL2772_STATUS			0x13
+> #define TSL2772_ALS_CHAN0LO		0x14
+> #define TSL2772_ALS_CHAN0HI		0x15
+> #define TSL2772_ALS_CHAN1LO		0x16
+> #define TSL2772_ALS_CHAN1HI		0x17
+> #define TSL2772_PRX_LO			0x18
+> #define TSL2772_PRX_HI			0x19
+> 
+> /* tsl2772 cmd reg masks */
+> #define TSL2772_CMD_REG			0x80
+> #define TSL2772_CMD_SPL_FN		0x60
+> #define TSL2772_CMD_REPEAT_PROTO	0x00
+> #define TSL2772_CMD_AUTOINC_PROTO	0x20
+> 
+> #define TSL2772_CMD_PROX_INT_CLR	0X05
+> #define TSL2772_CMD_ALS_INT_CLR		0x06
+> #define TSL2772_CMD_PROXALS_INT_CLR	0X07
+> 
+> /* tsl2772 cntrl reg masks */
+> #define TSL2772_CNTL_ADC_ENBL		0x02
+> #define TSL2772_CNTL_PWR_ON		0x01
+> 
+> /* tsl2772 status reg masks */
+> #define TSL2772_STA_ADC_VALID		0x01
+> #define TSL2772_STA_PRX_VALID		0x02
+> #define TSL2772_STA_ADC_PRX_VALID	(TSL2772_STA_ADC_VALID | \
+> 					 TSL2772_STA_PRX_VALID)
+> #define TSL2772_STA_ALS_INTR		0x10
+> #define TSL2772_STA_PRX_INTR		0x20
+> 
+> /* tsl2772 cntrl reg masks */
+> #define TSL2772_CNTL_REG_CLEAR		0x00
+> #define TSL2772_CNTL_PROX_INT_ENBL	0X20
+> #define TSL2772_CNTL_ALS_INT_ENBL	0X10
+> #define TSL2772_CNTL_WAIT_TMR_ENBL	0X08
+> #define TSL2772_CNTL_PROX_DET_ENBL	0X04
+> #define TSL2772_CNTL_PWRON		0x01
+> #define TSL2772_CNTL_ALSPON_ENBL	0x03
+> #define TSL2772_CNTL_INTALSPON_ENBL	0x13
+> #define TSL2772_CNTL_PROXPON_ENBL	0x0F
+> #define TSL2772_CNTL_INTPROXPON_ENBL	0x2F
+> 
+> /* TAOS Device family members */
+> enum {
+> 	tsl2571,
+> 	tsl2671,
+> 	tmd2671,
+> 	tsl2771,
+> 	tmd2771,
+> 	tsl2572,
+> 	tsl2672,
+> 	tmd2672,
+> 	tsl2772,
+> 	tmd2772
+> };
+> 
+> enum {
+> 	TSL2772_CHIP_UNKNOWN = 0,
+> 	TSL2772_CHIP_WORKING = 1,
+> 	TSL2772_CHIP_SUSPENDED = 2
+> };
+> 
+> /* Per-device data */
+> struct tsl2772_als_info {
+> 	u16 als_ch0;
+> 	u16 als_ch1;
+> 	u16 lux;
+> };
+> 
+> struct tsl2772_chip_info {
+> 	int chan_table_elements;
+> 	struct iio_chan_spec channel_with_events[4];
+> 	struct iio_chan_spec channel_without_events[4];
+> 	const struct iio_info *info;
+> };
+> 
+> struct tsl2772_chip {
+> 	kernel_ulong_t id;
+> 	struct mutex prox_mutex;
+> 	struct mutex als_mutex;
+> 	struct i2c_client *client;
+> 	u16 prox_data;
+> 	struct tsl2772_als_info als_cur_info;
+> 	struct tsl2772_settings settings;
+> 	struct tsl2772_platform_data *pdata;
+> 	int als_gain_time_scale;
+> 	int als_saturation;
+> 	int tsl2772_chip_status;
+> 	u8 tsl2772_config[TSL2772_MAX_CONFIG_REG];
+> 	const struct tsl2772_chip_info	*chip_info;
+> 	const struct iio_info *info;
+> 	s64 event_timestamp;
+> 	/*
+> 	 * This structure is intentionally large to accommodate
+> 	 * updates via sysfs.
+> 	 * Sized to 9 = max 8 segments + 1 termination segment
+> 	 */
+> 	struct tsl2772_lux tsl2772_device_lux[TSL2772_MAX_LUX_TABLE_SIZE];
+> };
+> 
+> /*
+>  * Different devices require different coefficents, and these numbers were
+>  * derived from the 'Lux Equation' section of the various device datasheets.
+>  * All of these coefficients assume a Glass Attenuation (GA) factor of 1.
+>  * The coefficients are multiplied by 1000 to avoid floating point operations.
+>  * The two rows in each table correspond to the Lux1 and Lux2 equations from
+>  * the datasheets.
+>  */
+> static const struct tsl2772_lux tsl2x71_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
+> 	{ 53000, 106000 },
+> 	{ 31800,  53000 },
+> 	{ 0,          0 },
+> };
+> 
+> static const struct tsl2772_lux tmd2x71_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
+> 	{ 24000,  48000 },
+> 	{ 14400,  24000 },
+> 	{ 0,          0 },
+> };
+> 
+> static const struct tsl2772_lux tsl2x72_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
+> 	{ 60000, 112200 },
+> 	{ 37800,  60000 },
+> 	{     0,      0 },
+> };
+> 
+> static const struct tsl2772_lux tmd2x72_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
+> 	{ 20000,  35000 },
+> 	{ 12600,  20000 },
+> 	{     0,      0 },
+> };
+> 
+> static const struct tsl2772_lux *tsl2772_default_lux_table_group[] = {
+> 	[tsl2571] =	tsl2x71_lux_table,
+> 	[tsl2671] =	tsl2x71_lux_table,
+> 	[tmd2671] =	tmd2x71_lux_table,
+> 	[tsl2771] =	tsl2x71_lux_table,
+> 	[tmd2771] =	tmd2x71_lux_table,
+> 	[tsl2572] =	tsl2x72_lux_table,
+> 	[tsl2672] =	tsl2x72_lux_table,
+> 	[tmd2672] =	tmd2x72_lux_table,
+> 	[tsl2772] =	tsl2x72_lux_table,
+> 	[tmd2772] =	tmd2x72_lux_table,
+Really minor, but the tab before the value really doesn't add anything.
+
+> };
+> 
+> static const struct tsl2772_settings tsl2772_default_settings = {
+> 	.als_time = 255, /* 2.72 / 2.73 ms */
+> 	.als_gain = 0,
+> 	.prox_time = 255, /* 2.72 / 2.73 ms */
+> 	.prox_gain = 0,
+> 	.wait_time = 255,
+> 	.als_prox_config = 0,
+> 	.als_gain_trim = 1000,
+> 	.als_cal_target = 150,
+> 	.als_persistence = 1,
+> 	.als_interrupt_en = false,
+> 	.als_thresh_low = 200,
+> 	.als_thresh_high = 256,
+> 	.prox_persistence = 1,
+> 	.prox_interrupt_en = false,
+> 	.prox_thres_low  = 0,
+> 	.prox_thres_high = 512,
+> 	.prox_max_samples_cal = 30,
+> 	.prox_pulse_count = 8,
+> 	.prox_diode = TSL2772_DIODE1,
+> 	.prox_power = TSL2772_100_mA
+> };
+> 
+> static const s16 tsl2772_als_gain[] = {
+> 	1,
+> 	8,
+> 	16,
+> 	120
+> };
+> 
+> static const s16 tsl2772_prox_gain[] = {
+> 	1,
+> 	2,
+> 	4,
+> 	8
+> };
+> 
+> struct tsl2772_int_time {
+> 	int increment_us;
+> 	char *display_range;
+> };
+> 
+> static const struct tsl2772_int_time tsl2772_int_time[] = {
+> 	[tsl2571] = { 2720, "0.00272 - 0.696" },
+> 	[tsl2671] = { 2720, "0.00272 - 0.696" },
+> 	[tmd2671] = { 2720, "0.00272 - 0.696" },
+> 	[tsl2771] = { 2720, "0.00272 - 0.696" },
+> 	[tmd2771] = { 2720, "0.00272 - 0.696" },
+> 	[tsl2572] = { 2730, "0.00273 - 0.699" },
+> 	[tsl2672] = { 2730, "0.00273 - 0.699" },
+> 	[tmd2672] = { 2730, "0.00273 - 0.699" },
+> 	[tsl2772] = { 2730, "0.00273 - 0.699" },
+> 	[tmd2772] = { 2730, "0.00273 - 0.699" },
+> };
+> 
+> /* Channel variations */
+> enum {
+> 	ALS,
+> 	PRX,
+> 	ALSPRX,
+> 	PRX2,
+> 	ALSPRX2,
+> };
+> 
+> static const u8 device_channel_config[] = {
+> 	[tsl2571] = ALS,
+> 	[tsl2671] = PRX,
+> 	[tmd2671] = PRX,
+> 	[tsl2771] = ALSPRX,
+> 	[tmd2771] = ALSPRX,
+> 	[tsl2572] = ALS,
+> 	[tsl2672] = PRX2,
+> 	[tmd2672] = PRX2,
+> 	[tsl2772] = ALSPRX2,
+> 	[tmd2772] = ALSPRX2
+> };
+> 
+> static int tsl2772_read_status(struct tsl2772_chip *chip)
+> {
+> 	int ret;
+> 
+> 	ret = i2c_smbus_read_byte_data(chip->client,
+> 				       TSL2772_CMD_REG | TSL2772_STATUS);
+> 	if (ret < 0)
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to read STATUS register: %d\n", __func__,
+> 			ret);
+> 
+> 	return ret;
+> }
+> 
+> static int tsl2772_write_control_reg(struct tsl2772_chip *chip, u8 data)
+> {
+> 	int ret;
+> 
+> 	ret = i2c_smbus_write_byte_data(chip->client,
+> 					TSL2772_CMD_REG | TSL2772_CNTRL, data);
+> 	if (ret < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to write to control register %x: %d\n",
+> 			__func__, data, ret);
+> 	}
+> 
+> 	return ret;
+> }
+> 
+> static int tsl2772_read_autoinc_regs(struct tsl2772_chip *chip, int lower_reg,
+> 				     int upper_reg)
+> {
+> 	u8 buf[2];
+> 	int ret;
+> 
+> 	ret = i2c_smbus_write_byte(chip->client,
+> 				   TSL2772_CMD_REG | TSL2772_CMD_AUTOINC_PROTO |
+> 				   lower_reg);
+> 	if (ret < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to enable auto increment protocol: %d\n",
+> 			__func__, ret);
+> 		return ret;
+> 	}
+> 
+> 	ret = i2c_smbus_read_byte_data(chip->client,
+> 				       TSL2772_CMD_REG | lower_reg);
+> 	if (ret < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to read from register %x: %d\n", __func__,
+> 			lower_reg, ret);
+> 		return ret;
+> 	}
+> 	buf[0] = ret;
+> 
+> 	ret = i2c_smbus_read_byte_data(chip->client,
+> 				       TSL2772_CMD_REG | upper_reg);
+> 	if (ret < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to read from register %x: %d\n", __func__,
+> 			upper_reg, ret);
+> 		return ret;
+> 	}
+> 	buf[1] = ret;
+> 
+> 	ret = i2c_smbus_write_byte(chip->client,
+> 				   TSL2772_CMD_REG | TSL2772_CMD_REPEAT_PROTO |
+> 				   lower_reg);
+> 	if (ret < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to enable repeated byte protocol: %d\n",
+> 			__func__, ret);
+> 		return ret;
+> 	}
+> 
+> 	return le16_to_cpup((const __le16 *)&buf[0]);
+> }
+> 
+> /**
+>  * tsl2772_get_lux() - Reads and calculates current lux value.
+>  * @indio_dev:	pointer to IIO device
+>  *
+>  * The raw ch0 and ch1 values of the ambient light sensed in the last
+>  * integration cycle are read from the device. The raw values are multiplied
+>  * by a device-specific scale factor, and divided by the integration time and
+>  * device gain. The code supports multiple lux equations through the lux table
+>  * coefficients. A lux gain trim is applied to each lux equation, and then the
+>  * maximum lux within the interval 0..65535 is selected.
+>  */
+> static int tsl2772_get_lux(struct iio_dev *indio_dev)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	struct tsl2772_lux *p;
+> 	int max_lux, ret;
+> 	bool overflow;
+> 
+> 	mutex_lock(&chip->als_mutex);
+> 
+> 	if (chip->tsl2772_chip_status != TSL2772_CHIP_WORKING) {
+> 		dev_err(&chip->client->dev, "%s: device is not enabled\n",
+> 			__func__);
+> 		ret = -EBUSY;
+> 		goto out_unlock;
+> 	}
+> 
+> 	ret = tsl2772_read_status(chip);
+> 	if (ret < 0)
+> 		goto out_unlock;
+> 
+> 	if (!(ret & TSL2772_STA_ADC_VALID)) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: data not valid yet\n", __func__);
+> 		ret = chip->als_cur_info.lux; /* return LAST VALUE */
+> 		goto out_unlock;
+> 	}
+> 
+> 	ret = tsl2772_read_autoinc_regs(chip, TSL2772_ALS_CHAN0LO,
+> 					TSL2772_ALS_CHAN0HI);
+> 	if (ret < 0)
+> 		goto out_unlock;
+> 	chip->als_cur_info.als_ch0 = ret;
+> 
+> 	ret = tsl2772_read_autoinc_regs(chip, TSL2772_ALS_CHAN1LO,
+> 					TSL2772_ALS_CHAN1HI);
+> 	if (ret < 0)
+> 		goto out_unlock;
+> 	chip->als_cur_info.als_ch1 = ret;
+> 
+> 	if (chip->als_cur_info.als_ch0 >= chip->als_saturation) {
+> 		max_lux = TSL2772_LUX_CALC_OVER_FLOW;
+> 		goto update_struct_with_max_lux;
+> 	}
+> 
+> 	if (!chip->als_cur_info.als_ch0) {
+> 		/* have no data, so return LAST VALUE */
+> 		ret = chip->als_cur_info.lux;
+> 		goto out_unlock;
+> 	}
+> 
+> 	max_lux = 0;
+> 	overflow = false;
+> 	for (p = (struct tsl2772_lux *)chip->tsl2772_device_lux; p->ch0 != 0;
+> 	     p++) {
+> 		int lux;
+> 
+> 		lux = ((chip->als_cur_info.als_ch0 * p->ch0) -
+> 		       (chip->als_cur_info.als_ch1 * p->ch1)) /
+> 			chip->als_gain_time_scale;
+> 
+> 		/*
+> 		 * The als_gain_trim can have a value within the range 250..4000
+> 		 * and is a multiplier for the lux. A trim of 1000 makes no
+> 		 * changes to the lux, less than 1000 scales it down, and
+> 		 * greater than 1000 scales it up.
+> 		 */
+> 		lux = (lux * chip->settings.als_gain_trim) / 1000;
+> 
+> 		if (lux > TSL2772_LUX_CALC_OVER_FLOW) {
+> 			overflow = true;
+> 			continue;
+> 		}
+> 
+> 		max_lux = max(max_lux, lux);
+> 	}
+> 
+> 	if (overflow && max_lux == 0)
+> 		max_lux = TSL2772_LUX_CALC_OVER_FLOW;
+> 
+> update_struct_with_max_lux:
+> 	chip->als_cur_info.lux = max_lux;
+> 	ret = max_lux;
+> 
+> out_unlock:
+> 	mutex_unlock(&chip->als_mutex);
+> 
+> 	return ret;
+> }
+> 
+> /**
+>  * tsl2772_get_prox() - Reads proximity data registers and updates
+>  *                      chip->prox_data.
+>  *
+>  * @indio_dev:	pointer to IIO device
+>  */
+> static int tsl2772_get_prox(struct iio_dev *indio_dev)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int ret;
+> 
+> 	mutex_lock(&chip->prox_mutex);
+> 
+> 	ret = tsl2772_read_status(chip);
+> 	if (ret < 0)
+> 		goto prox_poll_err;
+> 
+> 	switch (chip->id) {
+> 	case tsl2571:
+> 	case tsl2671:
+> 	case tmd2671:
+> 	case tsl2771:
+> 	case tmd2771:
+> 		if (!(ret & TSL2772_STA_ADC_VALID)) {
+> 			ret = -EINVAL;
+> 			goto prox_poll_err;
+> 		}
+> 		break;
+> 	case tsl2572:
+> 	case tsl2672:
+> 	case tmd2672:
+> 	case tsl2772:
+> 	case tmd2772:
+> 		if (!(ret & TSL2772_STA_PRX_VALID)) {
+> 			ret = -EINVAL;
+> 			goto prox_poll_err;
+> 		}
+> 		break;
+> 	}
+> 
+> 	ret = tsl2772_read_autoinc_regs(chip, TSL2772_PRX_LO, TSL2772_PRX_HI);
+> 	if (ret < 0)
+> 		goto prox_poll_err;
+> 	chip->prox_data = ret;
+> 
+> prox_poll_err:
+> 	mutex_unlock(&chip->prox_mutex);
+> 
+> 	return ret;
+> }
+> 
+> /**
+>  * tsl2772_defaults() - Populates the device nominal operating parameters
+>  *                      with those provided by a 'platform' data struct or
+>  *                      with prefined defaults.
+>  *
+>  * @chip:               pointer to device structure.
+>  */
+> static void tsl2772_defaults(struct tsl2772_chip *chip)
+> {
+> 	/* If Operational settings defined elsewhere.. */
+> 	if (chip->pdata && chip->pdata->platform_default_settings)
+> 		memcpy(&chip->settings, chip->pdata->platform_default_settings,
+> 		       sizeof(tsl2772_default_settings));
+> 	else
+> 		memcpy(&chip->settings, &tsl2772_default_settings,
+> 		       sizeof(tsl2772_default_settings));
+> 
+> 	/* Load up the proper lux table. */
+> 	if (chip->pdata && chip->pdata->platform_lux_table[0].ch0 != 0)
+> 		memcpy(chip->tsl2772_device_lux,
+> 		       chip->pdata->platform_lux_table,
+> 		       sizeof(chip->pdata->platform_lux_table));
+> 	else
+> 		memcpy(chip->tsl2772_device_lux,
+> 		       tsl2772_default_lux_table_group[chip->id],
+> 		       TSL2772_DEFAULT_TABLE_BYTES);
+> }
+> 
+> /**
+>  * tsl2772_als_calibrate() -	Obtain single reading and calculate
+>  *                              the als_gain_trim.
+>  *
+>  * @indio_dev:	pointer to IIO device
+>  */
+> static int tsl2772_als_calibrate(struct iio_dev *indio_dev)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int ret, lux_val;
+> 
+> 	ret = i2c_smbus_read_byte_data(chip->client,
+> 				       TSL2772_CMD_REG | TSL2772_CNTRL);
+> 	if (ret < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to read from the CNTRL register\n",
+> 			__func__);
+> 		return ret;
+> 	}
+> 
+> 	if ((ret & (TSL2772_CNTL_ADC_ENBL | TSL2772_CNTL_PWR_ON))
+> 			!= (TSL2772_CNTL_ADC_ENBL | TSL2772_CNTL_PWR_ON)) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: Device is not powered on and/or ADC is not enabled\n",
+> 			__func__);
+> 		return -EINVAL;
+> 	} else if ((ret & TSL2772_STA_ADC_VALID) != TSL2772_STA_ADC_VALID) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: The two ADC channels have not completed an integration cycle\n",
+> 			__func__);
+> 		return -ENODATA;
+> 	}
+> 
+> 	lux_val = tsl2772_get_lux(indio_dev);
+> 	if (lux_val < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to get lux\n", __func__);
+> 		return lux_val;
+> 	}
+> 
+> 	ret = (chip->settings.als_cal_target * chip->settings.als_gain_trim) /
+> 			lux_val;
+> 	if (ret < 250 || ret > 4000)
+> 		return -ERANGE;
+> 
+> 	chip->settings.als_gain_trim = ret;
+> 
+> 	return ret;
+> }
+> 
+> static int tsl2772_chip_on(struct iio_dev *indio_dev)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int ret, i, als_count, als_time_us;
+> 	u8 *dev_reg, reg_val;
+> 
+> 	/* Non calculated parameters */
+> 	chip->tsl2772_config[TSL2772_ALS_TIME] = chip->settings.als_time;
+> 	chip->tsl2772_config[TSL2772_PRX_TIME] = chip->settings.prox_time;
+> 	chip->tsl2772_config[TSL2772_WAIT_TIME] = chip->settings.wait_time;
+> 	chip->tsl2772_config[TSL2772_ALS_PRX_CONFIG] =
+> 		chip->settings.als_prox_config;
+> 
+> 	chip->tsl2772_config[TSL2772_ALS_MINTHRESHLO] =
+> 		(chip->settings.als_thresh_low) & 0xFF;
+> 	chip->tsl2772_config[TSL2772_ALS_MINTHRESHHI] =
+> 		(chip->settings.als_thresh_low >> 8) & 0xFF;
+> 	chip->tsl2772_config[TSL2772_ALS_MAXTHRESHLO] =
+> 		(chip->settings.als_thresh_high) & 0xFF;
+> 	chip->tsl2772_config[TSL2772_ALS_MAXTHRESHHI] =
+> 		(chip->settings.als_thresh_high >> 8) & 0xFF;
+> 	chip->tsl2772_config[TSL2772_PERSISTENCE] =
+> 		(chip->settings.prox_persistence & 0xFF) << 4 |
+> 		(chip->settings.als_persistence & 0xFF);
+> 
+> 	chip->tsl2772_config[TSL2772_PRX_COUNT] =
+> 			chip->settings.prox_pulse_count;
+> 	chip->tsl2772_config[TSL2772_PRX_MINTHRESHLO] =
+> 			(chip->settings.prox_thres_low) & 0xFF;
+> 	chip->tsl2772_config[TSL2772_PRX_MINTHRESHHI] =
+> 			(chip->settings.prox_thres_low >> 8) & 0xFF;
+> 	chip->tsl2772_config[TSL2772_PRX_MAXTHRESHLO] =
+> 			(chip->settings.prox_thres_high) & 0xFF;
+> 	chip->tsl2772_config[TSL2772_PRX_MAXTHRESHHI] =
+> 			(chip->settings.prox_thres_high >> 8) & 0xFF;
+> 
+> 	/* and make sure we're not already on */
+> 	if (chip->tsl2772_chip_status == TSL2772_CHIP_WORKING) {
+> 		/* if forcing a register update - turn off, then on */
+> 		dev_info(&chip->client->dev, "device is already enabled\n");
+> 		return -EINVAL;
+> 	}
+> 
+> 	/* Set the gain based on tsl2772_settings struct */
+> 	chip->tsl2772_config[TSL2772_GAIN] =
+> 		(chip->settings.als_gain & 0xFF) |
+> 		((chip->settings.prox_gain & 0xFF) << 2) |
+> 		(chip->settings.prox_diode << 4) |
+> 		(chip->settings.prox_power << 6);
+> 
+> 	/* set chip time scaling and saturation */
+> 	als_count = 256 - chip->settings.als_time;
+> 	als_time_us = als_count * tsl2772_int_time[chip->id].increment_us;
+> 	chip->als_saturation = als_count * 768; /* 75% of full scale */
+> 	chip->als_gain_time_scale = als_time_us *
+> 		tsl2772_als_gain[chip->settings.als_gain];
+> 
+> 	/*
+> 	 * TSL2772 Specific power-on / adc enable sequence
+> 	 * Power on the device 1st.
+> 	 */
+> 	ret = tsl2772_write_control_reg(chip, TSL2772_CNTL_PWR_ON);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	/*
+> 	 * Use the following shadow copy for our delay before enabling ADC.
+> 	 * Write all the registers.
+> 	 */
+> 	for (i = 0, dev_reg = chip->tsl2772_config;
+> 			i < TSL2772_MAX_CONFIG_REG; i++) {
+> 		int reg = TSL2772_CMD_REG + i;
+> 
+> 		ret = i2c_smbus_write_byte_data(chip->client, reg,
+> 						*dev_reg++);
+> 		if (ret < 0) {
+> 			dev_err(&chip->client->dev,
+> 				"%s: failed to write to register %x: %d\n",
+> 				__func__, reg, ret);
+> 			return ret;
+> 		}
+> 	}
+> 
+> 	/* Power-on settling time */
+> 	usleep_range(3000, 3500);
+> 
+> 	reg_val = TSL2772_CNTL_PWR_ON | TSL2772_CNTL_ADC_ENBL |
+> 		  TSL2772_CNTL_PROX_DET_ENBL;
+> 	if (chip->settings.als_interrupt_en)
+> 		reg_val |= TSL2772_CNTL_ALS_INT_ENBL;
+> 	if (chip->settings.prox_interrupt_en)
+> 		reg_val |= TSL2772_CNTL_PROX_INT_ENBL;
+> 
+> 	ret = tsl2772_write_control_reg(chip, reg_val);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	ret = i2c_smbus_write_byte(chip->client,
+> 				   TSL2772_CMD_REG | TSL2772_CMD_SPL_FN |
+> 				   TSL2772_CMD_PROXALS_INT_CLR);
+> 	if (ret < 0) {
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to clear interrupt status: %d\n",
+> 			__func__, ret);
+> 		return ret;
+> 	}
+> 
+> 	chip->tsl2772_chip_status = TSL2772_CHIP_WORKING;
+> 
+> 	return ret;
+> }
+> 
+> static int tsl2772_chip_off(struct iio_dev *indio_dev)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 
+> 	/* turn device off */
+> 	chip->tsl2772_chip_status = TSL2772_CHIP_SUSPENDED;
+> 	return tsl2772_write_control_reg(chip, 0x00);
+> }
+> 
+> /**
+>  * tsl2772_invoke_change - power cycle the device to implement the user
+>  *                         parameters
+>  * @indio_dev:	pointer to IIO device
+>  *
+>  * Obtain and lock both ALS and PROX resources, determine and save device state
+>  * (On/Off), cycle device to implement updated parameter, put device back into
+>  * proper state, and unlock resource.
+>  */
+> static int tsl2772_invoke_change(struct iio_dev *indio_dev)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int device_status = chip->tsl2772_chip_status;
+> 	int ret;
+> 
+> 	mutex_lock(&chip->als_mutex);
+> 	mutex_lock(&chip->prox_mutex);
+> 
+> 	if (device_status == TSL2772_CHIP_WORKING) {
+> 		ret = tsl2772_chip_off(indio_dev);
+> 		if (ret < 0)
+> 			goto unlock;
+> 	}
+> 
+> 	ret = tsl2772_chip_on(indio_dev);
+> 
+> unlock:
+> 	mutex_unlock(&chip->prox_mutex);
+> 	mutex_unlock(&chip->als_mutex);
+> 
+> 	return ret;
+> }
+> 
+> static int tsl2772_prox_cal(struct iio_dev *indio_dev)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int prox_history[MAX_SAMPLES_CAL + 1];
+> 	int i, ret, mean, max, sample_sum;
+> 
+> 	if (chip->settings.prox_max_samples_cal < 1 ||
+> 	    chip->settings.prox_max_samples_cal > MAX_SAMPLES_CAL)
+> 		return -EINVAL;
+> 
+> 	for (i = 0; i < chip->settings.prox_max_samples_cal; i++) {
+> 		usleep_range(15000, 17500);
+> 		ret = tsl2772_get_prox(indio_dev);
+> 		if (ret < 0)
+> 			return ret;
+> 
+> 		prox_history[i] = chip->prox_data;
+> 	}
+> 
+> 	sample_sum = 0;
+> 	max = INT_MIN;
+> 	for (i = 0; i < chip->settings.prox_max_samples_cal; i++) {
+> 		sample_sum += prox_history[i];
+> 		max = max(max, prox_history[i]);
+> 	}
+> 	mean = sample_sum / chip->settings.prox_max_samples_cal;
+> 
+> 	chip->settings.prox_thres_high = (max << 1) - mean;
+> 
+> 	return tsl2772_invoke_change(indio_dev);
+> }
+> 
+> static IIO_CONST_ATTR(in_intensity0_calibscale_available, "1 8 16 120");
+> 
+> static IIO_CONST_ATTR(in_proximity0_calibscale_available, "1 2 4 8");
+> 
+> static ssize_t
+> in_intensity0_integration_time_available_show(struct device *dev,
+> 					      struct device_attribute *attr,
+> 					      char *buf)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(dev_to_iio_dev(dev));
+> 
+> 	return snprintf(buf, PAGE_SIZE, "%s\n",
+> 			tsl2772_int_time[chip->id].display_range);
+> }
+> 
+> static ssize_t in_illuminance0_target_input_show(struct device *dev,
+> 						 struct device_attribute *attr,
+> 						 char *buf)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(dev_to_iio_dev(dev));
+> 
+> 	return snprintf(buf, PAGE_SIZE, "%d\n", chip->settings.als_cal_target);
+> }
+> 
+> static ssize_t in_illuminance0_target_input_store(struct device *dev,
+> 						  struct device_attribute *attr,
+> 						  const char *buf, size_t len)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	u16 value;
+> 	int ret;
+> 
+> 	if (kstrtou16(buf, 0, &value))
+> 		return -EINVAL;
+> 
+> 	chip->settings.als_cal_target = value;
+> 	ret = tsl2772_invoke_change(indio_dev);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	return len;
+> }
+> 
+> static ssize_t in_illuminance0_calibrate_store(struct device *dev,
+> 					       struct device_attribute *attr,
+> 					       const char *buf, size_t len)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	bool value;
+> 	int ret;
+> 
+> 	if (kstrtobool(buf, &value) || !value)
+> 		return -EINVAL;
+> 
+> 	ret = tsl2772_als_calibrate(indio_dev);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	ret = tsl2772_invoke_change(indio_dev);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	return len;
+> }
+> 
+> static ssize_t in_illuminance0_lux_table_show(struct device *dev,
+> 					      struct device_attribute *attr,
+> 					      char *buf)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(dev_to_iio_dev(dev));
+> 	int i = 0;
+> 	int offset = 0;
+> 
+> 	while (i < TSL2772_MAX_LUX_TABLE_SIZE) {
+> 		offset += snprintf(buf + offset, PAGE_SIZE, "%u,%u,",
+> 			chip->tsl2772_device_lux[i].ch0,
+> 			chip->tsl2772_device_lux[i].ch1);
+> 		if (chip->tsl2772_device_lux[i].ch0 == 0) {
+> 			/*
+> 			 * We just printed the first "0" entry.
+> 			 * Now get rid of the extra "," and break.
+> 			 */
+> 			offset--;
+> 			break;
+> 		}
+> 		i++;
+> 	}
+> 
+> 	offset += snprintf(buf + offset, PAGE_SIZE, "\n");
+> 	return offset;
+> }
+> 
+> static ssize_t in_illuminance0_lux_table_store(struct device *dev,
+> 					       struct device_attribute *attr,
+> 					       const char *buf, size_t len)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int value[ARRAY_SIZE(chip->tsl2772_device_lux) * 2 + 1];
+> 	int n, ret;
+> 
+> 	get_options(buf, ARRAY_SIZE(value), value);
+> 
+> 	/*
+> 	 * We now have an array of ints starting at value[1], and
+> 	 * enumerated by value[0].
+> 	 * We expect each group of two ints to be one table entry,
+> 	 * and the last table entry is all 0.
+> 	 */
+> 	n = value[0];
+> 	if ((n % 2) || n < 4 ||
+> 	    n > ((ARRAY_SIZE(chip->tsl2772_device_lux) - 1) * 2))
+> 		return -EINVAL;
+> 
+> 	if ((value[(n - 1)] | value[n]) != 0)
+> 		return -EINVAL;
+> 
+> 	if (chip->tsl2772_chip_status == TSL2772_CHIP_WORKING) {
+> 		ret = tsl2772_chip_off(indio_dev);
+> 		if (ret < 0)
+> 			return ret;
+> 	}
+> 
+> 	/* Zero out the table */
+> 	memset(chip->tsl2772_device_lux, 0, sizeof(chip->tsl2772_device_lux));
+> 	memcpy(chip->tsl2772_device_lux, &value[1], (value[0] * 4));
+> 
+> 	ret = tsl2772_invoke_change(indio_dev);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	return len;
+> }
+> 
+> static ssize_t in_proximity0_calibrate_store(struct device *dev,
+> 					     struct device_attribute *attr,
+> 					     const char *buf, size_t len)
+> {
+> 	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> 	bool value;
+> 	int ret;
+> 
+> 	if (kstrtobool(buf, &value) || !value)
+> 		return -EINVAL;
+> 
+> 	ret = tsl2772_prox_cal(indio_dev);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	ret = tsl2772_invoke_change(indio_dev);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	return len;
+> }
+> 
+> static int tsl2772_read_interrupt_config(struct iio_dev *indio_dev,
+> 					 const struct iio_chan_spec *chan,
+> 					 enum iio_event_type type,
+> 					 enum iio_event_direction dir)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 
+> 	if (chan->type == IIO_INTENSITY)
+> 		return chip->settings.als_interrupt_en;
+> 	else
+> 		return chip->settings.prox_interrupt_en;
+> }
+> 
+> static int tsl2772_write_interrupt_config(struct iio_dev *indio_dev,
+> 					  const struct iio_chan_spec *chan,
+> 					  enum iio_event_type type,
+> 					  enum iio_event_direction dir,
+> 					  int val)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 
+> 	if (chan->type == IIO_INTENSITY)
+> 		chip->settings.als_interrupt_en = val ? true : false;
+> 	else
+> 		chip->settings.prox_interrupt_en = val ? true : false;
+> 
+> 	return tsl2772_invoke_change(indio_dev);
+> }
+> 
+> static int tsl2772_write_event_value(struct iio_dev *indio_dev,
+> 				     const struct iio_chan_spec *chan,
+> 				     enum iio_event_type type,
+> 				     enum iio_event_direction dir,
+> 				     enum iio_event_info info,
+> 				     int val, int val2)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int ret = -EINVAL, count, persistence;
+> 	u8 time;
+> 
+> 	switch (info) {
+> 	case IIO_EV_INFO_VALUE:
+> 		if (chan->type == IIO_INTENSITY) {
+> 			switch (dir) {
+> 			case IIO_EV_DIR_RISING:
+> 				chip->settings.als_thresh_high = val;
+> 				ret = 0;
+> 				break;
+> 			case IIO_EV_DIR_FALLING:
+> 				chip->settings.als_thresh_low = val;
+> 				ret = 0;
+> 				break;
+> 			default:
+> 				break;
+> 			}
+> 		} else {
+> 			switch (dir) {
+> 			case IIO_EV_DIR_RISING:
+> 				chip->settings.prox_thres_high = val;
+> 				ret = 0;
+> 				break;
+> 			case IIO_EV_DIR_FALLING:
+> 				chip->settings.prox_thres_low = val;
+> 				ret = 0;
+> 				break;
+> 			default:
+> 				break;
+> 			}
+> 		}
+> 		break;
+> 	case IIO_EV_INFO_PERIOD:
+> 		if (chan->type == IIO_INTENSITY)
+> 			time = chip->settings.als_time;
+> 		else
+> 			time = chip->settings.prox_time;
+> 
+> 		count = 256 - time;
+> 		persistence = ((val * 1000000) + val2) /
+> 			(count * tsl2772_int_time[chip->id].increment_us);
+> 
+> 		if (chan->type == IIO_INTENSITY) {
+> 			/* ALS filter values are 1, 2, 3, 5, 10, 15, ..., 60 */
+> 			if (persistence > 3)
+> 				persistence = (persistence / 5) + 3;
+> 
+> 			chip->settings.als_persistence = persistence;
+> 		} else {
+> 			chip->settings.prox_persistence = persistence;
+> 		}
+> 
+> 		ret = 0;
+> 		break;
+> 	default:
+> 		break;
+> 	}
+> 
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	return tsl2772_invoke_change(indio_dev);
+> }
+> 
+> static int tsl2772_read_event_value(struct iio_dev *indio_dev,
+> 				    const struct iio_chan_spec *chan,
+> 				    enum iio_event_type type,
+> 				    enum iio_event_direction dir,
+> 				    enum iio_event_info info,
+> 				    int *val, int *val2)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int ret = -EINVAL, filter_delay, persistence;
+> 	u8 time;
+> 
+> 	switch (info) {
+> 	case IIO_EV_INFO_VALUE:
+> 		if (chan->type == IIO_INTENSITY) {
+> 			switch (dir) {
+> 			case IIO_EV_DIR_RISING:
+> 				*val = chip->settings.als_thresh_high;
+> 				ret = IIO_VAL_INT;
+> 				break;
+> 			case IIO_EV_DIR_FALLING:
+> 				*val = chip->settings.als_thresh_low;
+> 				ret = IIO_VAL_INT;
+> 				break;
+> 			default:
+> 				break;
+> 			}
+> 		} else {
+> 			switch (dir) {
+> 			case IIO_EV_DIR_RISING:
+> 				*val = chip->settings.prox_thres_high;
+> 				ret = IIO_VAL_INT;
+> 				break;
+> 			case IIO_EV_DIR_FALLING:
+> 				*val = chip->settings.prox_thres_low;
+> 				ret = IIO_VAL_INT;
+> 				break;
+> 			default:
+> 				break;
+> 			}
+> 		}
+> 		break;
+> 	case IIO_EV_INFO_PERIOD:
+> 		if (chan->type == IIO_INTENSITY) {
+> 			time = chip->settings.als_time;
+> 			persistence = chip->settings.als_persistence;
+> 
+> 			/* ALS filter values are 1, 2, 3, 5, 10, 15, ..., 60 */
+> 			if (persistence > 3)
+> 				persistence = (persistence - 3) * 5;
+> 		} else {
+> 			time = chip->settings.prox_time;
+> 			persistence = chip->settings.prox_persistence;
+> 		}
+> 
+> 		filter_delay = persistence * (256 - time) *
+> 			tsl2772_int_time[chip->id].increment_us;
+> 
+> 		*val = filter_delay / 1000000;
+> 		*val2 = filter_delay % 1000000;
+> 		ret = IIO_VAL_INT_PLUS_MICRO;
+
+Direct returns would be neater in here than break then return.
+
+> 		break;
+> 	default:
+> 		break;
+> 	}
+> 
+> 	return ret;
+> }
+> 
+> static int tsl2772_read_raw(struct iio_dev *indio_dev,
+> 			    struct iio_chan_spec const *chan,
+> 			    int *val,
+> 			    int *val2,
+> 			    long mask)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	int ret = -EINVAL;
+> 
+> 	switch (mask) {
+> 	case IIO_CHAN_INFO_PROCESSED:
+> 		switch (chan->type) {
+> 		case IIO_LIGHT:
+> 			tsl2772_get_lux(indio_dev);
+> 			*val = chip->als_cur_info.lux;
+> 			ret = IIO_VAL_INT;
+> 			break;
+> 		default:
+> 			return -EINVAL;
+> 		}
+> 		break;
+> 	case IIO_CHAN_INFO_RAW:
+> 		switch (chan->type) {
+> 		case IIO_INTENSITY:
+> 			tsl2772_get_lux(indio_dev);
+> 			if (chan->channel == 0)
+> 				*val = chip->als_cur_info.als_ch0;
+> 			else
+> 				*val = chip->als_cur_info.als_ch1;
+> 			ret = IIO_VAL_INT;
+> 			break;
+> 		case IIO_PROXIMITY:
+> 			tsl2772_get_prox(indio_dev);
+> 			*val = chip->prox_data;
+> 			ret = IIO_VAL_INT;
+> 			break;
+> 		default:
+> 			return -EINVAL;
+> 		}
+> 		break;
+> 	case IIO_CHAN_INFO_CALIBSCALE:
+> 		if (chan->type == IIO_LIGHT)
+> 			*val = tsl2772_als_gain[chip->settings.als_gain];
+> 		else
+> 			*val = tsl2772_prox_gain[chip->settings.prox_gain];
+> 		ret = IIO_VAL_INT;
+> 		break;
+> 	case IIO_CHAN_INFO_CALIBBIAS:
+> 		*val = chip->settings.als_gain_trim;
+> 		ret = IIO_VAL_INT;
+> 		break;
+> 	case IIO_CHAN_INFO_INT_TIME:
+> 		*val = 0;
+> 		*val2 = (256 - chip->settings.als_time) *
+> 			tsl2772_int_time[chip->id].increment_us;
+> 		ret = IIO_VAL_INT_PLUS_MICRO;
+> 		break;
+> 	default:
+> 		ret = -EINVAL;
+> 	}
+> 
+> 	return ret;
+> }
+> 
+> static int tsl2772_write_raw(struct iio_dev *indio_dev,
+> 			     struct iio_chan_spec const *chan,
+> 			     int val,
+> 			     int val2,
+> 			     long mask)
+> {
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 
+> 	switch (mask) {
+> 	case IIO_CHAN_INFO_CALIBSCALE:
+> 		if (chan->type == IIO_INTENSITY) {
+> 			switch (val) {
+> 			case 1:
+> 				chip->settings.als_gain = 0;
+> 				break;
+> 			case 8:
+> 				chip->settings.als_gain = 1;
+> 				break;
+> 			case 16:
+> 				chip->settings.als_gain = 2;
+> 				break;
+> 			case 120:
+> 				chip->settings.als_gain = 3;
+> 				break;
+> 			default:
+> 				return -EINVAL;
+> 			}
+> 		} else {
+> 			switch (val) {
+> 			case 1:
+> 				chip->settings.prox_gain = 0;
+> 				break;
+> 			case 2:
+> 				chip->settings.prox_gain = 1;
+> 				break;
+> 			case 4:
+> 				chip->settings.prox_gain = 2;
+> 				break;
+> 			case 8:
+> 				chip->settings.prox_gain = 3;
+> 				break;
+> 			default:
+> 				return -EINVAL;
+> 			}
+> 		}
+> 		break;
+> 	case IIO_CHAN_INFO_CALIBBIAS:
+> 		chip->settings.als_gain_trim = val;
+> 		break;
+> 	case IIO_CHAN_INFO_INT_TIME:
+> 		chip->settings.als_time = 256 -
+> 			(val2 / tsl2772_int_time[chip->id].increment_us);
+> 		break;
+> 	default:
+> 		return -EINVAL;
+> 	}
+> 
+> 	return tsl2772_invoke_change(indio_dev);
+> }
+> 
+> static DEVICE_ATTR_RO(in_intensity0_integration_time_available);
+> 
+> static DEVICE_ATTR_RW(in_illuminance0_target_input);
+> 
+> static DEVICE_ATTR_WO(in_illuminance0_calibrate);
+> 
+> static DEVICE_ATTR_WO(in_proximity0_calibrate);
+> 
+> static DEVICE_ATTR_RW(in_illuminance0_lux_table);
+> 
+> /* Use the default register values to identify the Taos device */
+> static int tsl2772_device_id_verif(int id, int target)
+> {
+> 	switch (target) {
+> 	case tsl2571:
+> 	case tsl2671:
+> 	case tsl2771:
+> 		return (id & 0xf0) == TRITON_ID;
+> 	case tmd2671:
+> 	case tmd2771:
+> 		return (id & 0xf0) == HALIBUT_ID;
+> 	case tsl2572:
+> 	case tsl2672:
+> 	case tmd2672:
+> 	case tsl2772:
+> 	case tmd2772:
+> 		return (id & 0xf0) == SWORDFISH_ID;
+> 	}
+> 
+> 	return -EINVAL;
+> }
+> 
+> static irqreturn_t tsl2772_event_handler(int irq, void *private)
+> {
+> 	struct iio_dev *indio_dev = private;
+> 	struct tsl2772_chip *chip = iio_priv(indio_dev);
+> 	s64 timestamp = iio_get_time_ns(indio_dev);
+> 	int ret;
+> 
+> 	ret = tsl2772_read_status(chip);
+> 	if (ret < 0)
+> 		return IRQ_HANDLED;
+> 
+> 	/* What type of interrupt do we need to process */
+> 	if (ret & TSL2772_STA_PRX_INTR) {
+> 		iio_push_event(indio_dev,
+> 			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY,
+> 						    0,
+> 						    IIO_EV_TYPE_THRESH,
+> 						    IIO_EV_DIR_EITHER),
+> 						    timestamp);
+> 	}
+> 
+> 	if (ret & TSL2772_STA_ALS_INTR) {
+> 		iio_push_event(indio_dev,
+> 			       IIO_UNMOD_EVENT_CODE(IIO_LIGHT,
+> 						    0,
+> 						    IIO_EV_TYPE_THRESH,
+> 						    IIO_EV_DIR_EITHER),
+> 			       timestamp);
+> 	}
+> 
+> 	ret = i2c_smbus_write_byte(chip->client,
+> 				   TSL2772_CMD_REG | TSL2772_CMD_SPL_FN |
+> 				   TSL2772_CMD_PROXALS_INT_CLR);
+> 	if (ret < 0)
+> 		dev_err(&chip->client->dev,
+> 			"%s: failed to clear interrupt status: %d\n",
+> 			__func__, ret);
+> 
+> 	return IRQ_HANDLED;
+> }
+> 
+> static struct attribute *tsl2772_ALS_device_attrs[] = {
+> 	&iio_const_attr_in_intensity0_calibscale_available.dev_attr.attr,
+> 	&dev_attr_in_intensity0_integration_time_available.attr,
+> 	&dev_attr_in_illuminance0_target_input.attr,
+> 	&dev_attr_in_illuminance0_calibrate.attr,
+> 	&dev_attr_in_illuminance0_lux_table.attr,
+> 	NULL
+> };
+> 
+> static struct attribute *tsl2772_PRX_device_attrs[] = {
+> 	&dev_attr_in_proximity0_calibrate.attr,
+> 	NULL
+> };
+> 
+> static struct attribute *tsl2772_ALSPRX_device_attrs[] = {
+> 	&iio_const_attr_in_intensity0_calibscale_available.dev_attr.attr,
+> 	&dev_attr_in_intensity0_integration_time_available.attr,
+> 	&dev_attr_in_illuminance0_target_input.attr,
+> 	&dev_attr_in_illuminance0_calibrate.attr,
+> 	&dev_attr_in_illuminance0_lux_table.attr,
+> 	NULL
+> };
+> 
+> static struct attribute *tsl2772_PRX2_device_attrs[] = {
+> 	&dev_attr_in_proximity0_calibrate.attr,
+> 	&iio_const_attr_in_proximity0_calibscale_available.dev_attr.attr,
+> 	NULL
+> };
+> 
+> static struct attribute *tsl2772_ALSPRX2_device_attrs[] = {
+> 	&iio_const_attr_in_intensity0_calibscale_available.dev_attr.attr,
+> 	&dev_attr_in_intensity0_integration_time_available.attr,
+> 	&dev_attr_in_illuminance0_target_input.attr,
+> 	&dev_attr_in_illuminance0_calibrate.attr,
+> 	&dev_attr_in_illuminance0_lux_table.attr,
+> 	&dev_attr_in_proximity0_calibrate.attr,
+> 	&iio_const_attr_in_proximity0_calibscale_available.dev_attr.attr,
+> 	NULL
+> };
+> 
+> static const struct attribute_group tsl2772_device_attr_group_tbl[] = {
+> 	[ALS] = {
+> 		.attrs = tsl2772_ALS_device_attrs,
+> 	},
+> 	[PRX] = {
+> 		.attrs = tsl2772_PRX_device_attrs,
+> 	},
+> 	[ALSPRX] = {
+> 		.attrs = tsl2772_ALSPRX_device_attrs,
+> 	},
+> 	[PRX2] = {
+> 		.attrs = tsl2772_PRX2_device_attrs,
+> 	},
+> 	[ALSPRX2] = {
+> 		.attrs = tsl2772_ALSPRX2_device_attrs,
+> 	},
+> };
+> 
+> static const struct iio_info tsl2772_device_info[] = {
+> 	[ALS] = {
+
+These blocks would perhaps benefit from a macro as the only
+difference (at first glance anyway) is the array index.
+
+> 		.attrs = &tsl2772_device_attr_group_tbl[ALS],
+> 		.read_raw = &tsl2772_read_raw,
+> 		.write_raw = &tsl2772_write_raw,
+> 		.read_event_value = &tsl2772_read_event_value,
+> 		.write_event_value = &tsl2772_write_event_value,
+> 		.read_event_config = &tsl2772_read_interrupt_config,
+> 		.write_event_config = &tsl2772_write_interrupt_config,
+> 	},
+> 	[PRX] = {
+> 		.attrs = &tsl2772_device_attr_group_tbl[PRX],
+> 		.read_raw = &tsl2772_read_raw,
+> 		.write_raw = &tsl2772_write_raw,
+> 		.read_event_value = &tsl2772_read_event_value,
+> 		.write_event_value = &tsl2772_write_event_value,
+> 		.read_event_config = &tsl2772_read_interrupt_config,
+> 		.write_event_config = &tsl2772_write_interrupt_config,
+> 	},
+> 	[ALSPRX] = {
+> 		.attrs = &tsl2772_device_attr_group_tbl[ALSPRX],
+> 		.read_raw = &tsl2772_read_raw,
+> 		.write_raw = &tsl2772_write_raw,
+> 		.read_event_value = &tsl2772_read_event_value,
+> 		.write_event_value = &tsl2772_write_event_value,
+> 		.read_event_config = &tsl2772_read_interrupt_config,
+> 		.write_event_config = &tsl2772_write_interrupt_config,
+> 	},
+> 	[PRX2] = {
+> 		.attrs = &tsl2772_device_attr_group_tbl[PRX2],
+> 		.read_raw = &tsl2772_read_raw,
+> 		.write_raw = &tsl2772_write_raw,
+> 		.read_event_value = &tsl2772_read_event_value,
+> 		.write_event_value = &tsl2772_write_event_value,
+> 		.read_event_config = &tsl2772_read_interrupt_config,
+> 		.write_event_config = &tsl2772_write_interrupt_config,
+> 	},
+> 	[ALSPRX2] = {
+> 		.attrs = &tsl2772_device_attr_group_tbl[ALSPRX2],
+> 		.read_raw = &tsl2772_read_raw,
+> 		.write_raw = &tsl2772_write_raw,
+> 		.read_event_value = &tsl2772_read_event_value,
+> 		.write_event_value = &tsl2772_write_event_value,
+> 		.read_event_config = &tsl2772_read_interrupt_config,
+> 		.write_event_config = &tsl2772_write_interrupt_config,
+> 	},
+> };
+> 
+> static const struct iio_event_spec tsl2772_events[] = {
+> 	{
+> 		.type = IIO_EV_TYPE_THRESH,
+> 		.dir = IIO_EV_DIR_RISING,
+> 		.mask_separate = BIT(IIO_EV_INFO_VALUE),
+> 	}, {
+> 		.type = IIO_EV_TYPE_THRESH,
+> 		.dir = IIO_EV_DIR_FALLING,
+> 		.mask_separate = BIT(IIO_EV_INFO_VALUE),
+> 	}, {
+> 		.type = IIO_EV_TYPE_THRESH,
+> 		.dir = IIO_EV_DIR_EITHER,
+> 		.mask_separate = BIT(IIO_EV_INFO_PERIOD) |
+> 			BIT(IIO_EV_INFO_ENABLE),
+> 	},
+> };
+> 
+> static const struct tsl2772_chip_info tsl2772_chip_info_tbl[] = {
+> 	[ALS] = {
+> 		.channel_with_events = {
+> 			{
+> 			.type = IIO_LIGHT,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_INT_TIME) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE) |
+> 				BIT(IIO_CHAN_INFO_CALIBBIAS),
+> 			.event_spec = tsl2772_events,
+> 			.num_event_specs = ARRAY_SIZE(tsl2772_events),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 1,
+> 			},
+> 		},
+> 		.channel_without_events = {
+> 			{
+> 			.type = IIO_LIGHT,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_INT_TIME) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE) |
+> 				BIT(IIO_CHAN_INFO_CALIBBIAS),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 1,
+> 			},
+> 		},
+> 		.chan_table_elements = 3,
+> 		.info = &tsl2772_device_info[ALS],
+> 	},
+> 	[PRX] = {
+> 		.channel_with_events = {
+> 			{
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			.event_spec = tsl2772_events,
+> 			.num_event_specs = ARRAY_SIZE(tsl2772_events),
+> 			},
+> 		},
+> 		.channel_without_events = {
+> 			{
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			},
+> 		},
+> 		.chan_table_elements = 1,
+> 		.info = &tsl2772_device_info[PRX],
+> 	},
+> 	[ALSPRX] = {
+> 		.channel_with_events = {
+> 			{
+> 			.type = IIO_LIGHT,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_INT_TIME) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE) |
+> 				BIT(IIO_CHAN_INFO_CALIBBIAS),
+> 			.event_spec = tsl2772_events,
+> 			.num_event_specs = ARRAY_SIZE(tsl2772_events),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 1,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			}, {
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			.event_spec = tsl2772_events,
+> 			.num_event_specs = ARRAY_SIZE(tsl2772_events),
+> 			},
+> 		},
+> 		.channel_without_events = {
+> 			{
+> 			.type = IIO_LIGHT,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_INT_TIME) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE) |
+> 				BIT(IIO_CHAN_INFO_CALIBBIAS),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 1,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			}, {
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			},
+> 		},
+> 		.chan_table_elements = 4,
+> 		.info = &tsl2772_device_info[ALSPRX],
+> 	},
+> 	[PRX2] = {
+> 		.channel_with_events = {
+> 			{
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE),
+> 			.event_spec = tsl2772_events,
+> 			.num_event_specs = ARRAY_SIZE(tsl2772_events),
+> 			},
+> 		},
+> 		.channel_without_events = {
+> 			{
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE),
+> 			},
+> 		},
+> 		.chan_table_elements = 1,
+> 		.info = &tsl2772_device_info[PRX2],
+> 	},
+> 	[ALSPRX2] = {
+> 		.channel_with_events = {
+> 			{
+> 			.type = IIO_LIGHT,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_INT_TIME) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE) |
+> 				BIT(IIO_CHAN_INFO_CALIBBIAS),
+> 			.event_spec = tsl2772_events,
+> 			.num_event_specs = ARRAY_SIZE(tsl2772_events),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 1,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			}, {
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE),
+> 			.event_spec = tsl2772_events,
+> 			.num_event_specs = ARRAY_SIZE(tsl2772_events),
+> 			},
+> 		},
+> 		.channel_without_events = {
+> 			{
+> 			.type = IIO_LIGHT,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_INT_TIME) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE) |
+> 				BIT(IIO_CHAN_INFO_CALIBBIAS),
+> 			}, {
+> 			.type = IIO_INTENSITY,
+> 			.indexed = 1,
+> 			.channel = 1,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
+> 			}, {
+> 			.type = IIO_PROXIMITY,
+> 			.indexed = 1,
+> 			.channel = 0,
+> 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> 				BIT(IIO_CHAN_INFO_CALIBSCALE),
+> 			},
+> 		},
+> 		.chan_table_elements = 4,
+> 		.info = &tsl2772_device_info[ALSPRX2],
+> 	},
+> };
+> 
+> static int tsl2772_probe(struct i2c_client *clientp,
+> 			 const struct i2c_device_id *id)
+> {
+> 	struct iio_dev *indio_dev;
+> 	struct tsl2772_chip *chip;
+> 	int ret;
+> 
+> 	indio_dev = devm_iio_device_alloc(&clientp->dev, sizeof(*chip));
+> 	if (!indio_dev)
+> 		return -ENOMEM;
+> 
+> 	chip = iio_priv(indio_dev);
+> 	chip->client = clientp;
+> 	i2c_set_clientdata(clientp, indio_dev);
+> 
+> 	ret = i2c_smbus_read_byte_data(chip->client,
+> 				       TSL2772_CMD_REG | TSL2772_CHIPID);
+> 	if (ret < 0)
+> 		return ret;
+> 
+> 	if (tsl2772_device_id_verif(ret, id->driver_data) <= 0) {
+> 		dev_info(&chip->client->dev,
+> 			 "%s: i2c device found does not match expected id\n",
+> 				__func__);
+> 		return -EINVAL;
+> 	}
+> 
+> 	ret = i2c_smbus_write_byte(clientp, TSL2772_CMD_REG | TSL2772_CNTRL);
+> 	if (ret < 0) {
+> 		dev_err(&clientp->dev,
+> 			"%s: Failed to write to CMD register: %d\n",
+> 			__func__, ret);
+> 		return ret;
+> 	}
+> 
+> 	mutex_init(&chip->als_mutex);
+> 	mutex_init(&chip->prox_mutex);
+> 
+> 	chip->tsl2772_chip_status = TSL2772_CHIP_UNKNOWN;
+> 	chip->pdata = dev_get_platdata(&clientp->dev);
+> 	chip->id = id->driver_data;
+> 	chip->chip_info =
+> 		&tsl2772_chip_info_tbl[device_channel_config[id->driver_data]];
+> 
+> 	indio_dev->info = chip->chip_info->info;
+> 	indio_dev->dev.parent = &clientp->dev;
+> 	indio_dev->modes = INDIO_DIRECT_MODE;
+> 	indio_dev->name = chip->client->name;
+> 	indio_dev->num_channels = chip->chip_info->chan_table_elements;
+> 
+> 	if (clientp->irq) {
+> 		indio_dev->channels = chip->chip_info->channel_with_events;
+> 
+> 		ret = devm_request_threaded_irq(&clientp->dev, clientp->irq,
+> 						NULL,
+> 						&tsl2772_event_handler,
+> 						IRQF_TRIGGER_FALLING |
+> 						IRQF_ONESHOT,
+> 						"TSL2772_event",
+> 						indio_dev);
+> 		if (ret) {
+> 			dev_err(&clientp->dev,
+> 				"%s: irq request failed\n", __func__);
+> 			return ret;
+> 		}
+> 	} else {
+> 		indio_dev->channels = chip->chip_info->channel_without_events;
+> 	}
+> 
+> 	tsl2772_defaults(chip);
+> 	tsl2772_chip_on(indio_dev);
+> 
+> 	ret = iio_device_register(indio_dev);
+> 	if (ret) {
+> 		dev_err(&clientp->dev,
+> 			"%s: iio registration failed\n", __func__);
+> 		return ret;
+
+Should probably turn the chip off if this fails...  At least
+that way it would look like error handling mirrors the remove
+which makes for easy review.
+
+> 	}
+> 
+> 	return 0;
+> }
+> 
+> static int tsl2772_suspend(struct device *dev)
+> {
+> 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> 
+> 	return tsl2772_chip_off(indio_dev);
+> }
+> 
+> static int tsl2772_resume(struct device *dev)
+> {
+> 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> 
+> 	return tsl2772_chip_on(indio_dev);
+> }
+> 
+> static int tsl2772_remove(struct i2c_client *client)
+> {
+> 	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+> 
+> 	tsl2772_chip_off(indio_dev);
+> 
+> 	iio_device_unregister(indio_dev);
+> 
+> 	return 0;
+> }
+> 
+> static const struct i2c_device_id tsl2772_idtable[] = {
+> 	{ "tsl2571", tsl2571 },
+> 	{ "tsl2671", tsl2671 },
+> 	{ "tmd2671", tmd2671 },
+> 	{ "tsl2771", tsl2771 },
+> 	{ "tmd2771", tmd2771 },
+> 	{ "tsl2572", tsl2572 },
+> 	{ "tsl2672", tsl2672 },
+> 	{ "tmd2672", tmd2672 },
+> 	{ "tsl2772", tsl2772 },
+> 	{ "tmd2772", tmd2772 },
+> 	{}
+> };
+> 
+> MODULE_DEVICE_TABLE(i2c, tsl2772_idtable);
+> 
+> static const struct of_device_id tsl2772_of_match[] = {
+> 	{ .compatible = "amstaos,tsl2571" },
+> 	{ .compatible = "amstaos,tsl2671" },
+> 	{ .compatible = "amstaos,tmd2671" },
+> 	{ .compatible = "amstaos,tsl2771" },
+> 	{ .compatible = "amstaos,tmd2771" },
+> 	{ .compatible = "amstaos,tsl2572" },
+> 	{ .compatible = "amstaos,tsl2672" },
+> 	{ .compatible = "amstaos,tmd2672" },
+> 	{ .compatible = "amstaos,tsl2772" },
+> 	{ .compatible = "amstaos,tmd2772" },
+> 	{}
+> };
+> MODULE_DEVICE_TABLE(of, tsl2772_of_match);
+> 
+> static const struct dev_pm_ops tsl2772_pm_ops = {
+> 	.suspend = tsl2772_suspend,
+> 	.resume  = tsl2772_resume,
+> };
+> 
+> static struct i2c_driver tsl2772_driver = {
+> 	.driver = {
+> 		.name = "tsl2772",
+> 		.of_match_table = tsl2772_of_match,
+> 		.pm = &tsl2772_pm_ops,
+> 	},
+> 	.id_table = tsl2772_idtable,
+> 	.probe = tsl2772_probe,
+> 	.remove = tsl2772_remove,
+> };
+> 
+> module_i2c_driver(tsl2772_driver);
+> 
+> MODULE_AUTHOR("J. August Brenner <Jon.Brenner@ams.com>");
+> MODULE_AUTHOR("Brian Masney <masneyb@onstation.org>");
+> MODULE_DESCRIPTION("TAOS tsl2772 ambient and proximity light sensor driver");
+> MODULE_LICENSE("GPL");
+> 
+> -----------------------------------------------------------------------
+> 
+> tsl2772.h:
+> 
+> /* SPDX-License-Identifier: GPL-2.0+ */
+> /*
+>  * Device driver for monitoring ambient light intensity (lux)
+>  * and proximity (prox) within the TAOS TSL2772 family of devices.
+>  *
+>  * Copyright (c) 2012, TAOS Corporation.
+>  */
+> 
+> #ifndef __TSL2772_H
+> #define __TSL2772_H
+> 
+> struct tsl2772_lux {
+> 	unsigned int ch0;
+> 	unsigned int ch1;
+> };
+> 
+> /* Max number of segments allowable in LUX table */
+> #define TSL2772_MAX_LUX_TABLE_SIZE		6
+> /* The default LUX tables all have 3 elements.  */
+> #define TSL2772_DEF_LUX_TABLE_SZ		3
+> #define TSL2772_DEFAULT_TABLE_BYTES (sizeof(struct tsl2772_lux) * \
+> 				     TSL2772_DEF_LUX_TABLE_SZ)
+> 
+> /* Proximity diode to use */
+> #define TSL2772_DIODE0                  0x01
+> #define TSL2772_DIODE1                  0x02
+> #define TSL2772_DIODE_BOTH              0x03
+> 
+> /* LED Power */
+> #define TSL2772_100_mA                  0x00
+> #define TSL2772_50_mA                   0x01
+> #define TSL2772_25_mA                   0x02
+> #define TSL2772_13_mA                   0x03
+> 
+> /**
+>  * struct tsl2772_settings - Settings for the tsl2772 driver
+>  *  @als_time:              Integration time of the ALS channel ADCs in 2.73 ms
+>  *                          increments. Total integration time is
+>  *                          (256 - als_time) * 2.73.
+>  *  @als_gain:              Index into the tsl2772_als_gain array.
+>  *  @als_gain_trim:         Default gain trim to account for aperture effects.
+>  *  @wait_time:             Time between proximity and ALS cycles in 2.73
+>  *                          periods.
+>  *  @prox_time:             Integration time of the proximity ADC in 2.73 ms
+>  *                          increments. Total integration time is
+>  *                          (256 - prx_time) * 2.73.
+>  *  @prox_gain:             Index into the tsl2772_prx_gain array.
+>  *  @als_prox_config:       The value of the ALS / Proximity configuration
+>  *                          register.
+>  *  @als_cal_target:        Known external ALS reading for calibration.
+>  *  @als_persistence:       H/W Filters, Number of 'out of limits' ALS readings.
+>  *  @als_interrupt_en:      Enable/Disable ALS interrupts
+>  *  @als_thresh_low:        CH0 'low' count to trigger interrupt.
+>  *  @als_thresh_high:       CH0 'high' count to trigger interrupt.
+>  *  @prox_persistence:      H/W Filters, Number of 'out of limits' proximity
+>  *                          readings.
+>  *  @prox_interrupt_en:     Enable/Disable proximity interrupts.
+>  *  @prox_thres_low:        Low threshold proximity detection.
+>  *  @prox_thres_high:       High threshold proximity detection.
+>  *  @prox_pulse_count:      Number if proximity emitter pulses.
+>  *  @prox_max_samples_cal:  The number of samples that are taken when performing
+>  *                          a proximity calibration.
+>  *  @prox_diode             Which diode(s) to use for driving the external
+>  *                          LED(s) for proximity sensing.
+>  *  @prox_power             The amount of power to use for the external LED(s).
+>  */
+> struct tsl2772_settings {
+> 	int als_time;
+> 	int als_gain;
+> 	int als_gain_trim;
+> 	int wait_time;
+> 	int prox_time;
+> 	int prox_gain;
+> 	int als_prox_config;
+> 	int als_cal_target;
+> 	u8 als_persistence;
+> 	bool als_interrupt_en;
+> 	int als_thresh_low;
+> 	int als_thresh_high;
+> 	u8 prox_persistence;
+> 	bool prox_interrupt_en;
+> 	int prox_thres_low;
+> 	int prox_thres_high;
+> 	int prox_pulse_count;
+> 	int prox_max_samples_cal;
+> 	int prox_diode;
+> 	int prox_power;
+> };
+> 
+> /**
+>  * struct tsl2772_platform_data - Platform callback, glass and defaults
+>  * @platform_lux_table:        Device specific glass coefficents
+>  * @platform_default_settings: Device specific power on defaults
+
+This blank line is pointless - be nice to get rid of it.
+
+>  *
+>  */
+> struct tsl2772_platform_data {
+> 	struct tsl2772_lux platform_lux_table[TSL2772_MAX_LUX_TABLE_SIZE];
+> 	struct tsl2772_settings *platform_default_settings;
+> };
+> 
+> #endif /* __TSL2772_H */
 
-I intentionally didn't run git format-patch with the --no-renames since
-patch 10 renamed the driver. Here is the .[ch] files included inline to
-make your review easier.
-
-Brian
-
-
-tsl2772.c:
-
-// SPDX-License-Identifier: GPL-2.0+
-/*
- * Device driver for monitoring ambient light intensity in (lux) and proximity
- * detection (prox) for the TAOS TSL2571, TSL2671, TMD2671, TSL2771, TMD2771,
- * TSL2572, TSL2672, TMD2672, TSL2772, and TMD2772 devices.
- *
- * Copyright (c) 2012, TAOS Corporation.
- * Copyright (c) 2017-2018 Brian Masney <masneyb@onstation.org>
- */
-
-#include <linux/delay.h>
-#include <linux/errno.h>
-#include <linux/i2c.h>
-#include <linux/interrupt.h>
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/mutex.h>
-#include <linux/slab.h>
-#include <linux/iio/events.h>
-#include <linux/iio/iio.h>
-#include <linux/iio/sysfs.h>
-#include <linux/platform_data/tsl2772.h>
-
-/* Cal defs */
-#define PROX_STAT_CAL			0
-#define PROX_STAT_SAMP			1
-#define MAX_SAMPLES_CAL			200
-
-/* TSL2772 Device ID */
-#define TRITON_ID			0x00
-#define SWORDFISH_ID			0x30
-#define HALIBUT_ID			0x20
-
-/* Lux calculation constants */
-#define TSL2772_LUX_CALC_OVER_FLOW	65535
-
-/*
- * TAOS Register definitions - Note: depending on device, some of these register
- * are not used and the register address is benign.
- */
-
-/* Register offsets */
-#define TSL2772_MAX_CONFIG_REG		16
-
-/* Device Registers and Masks */
-#define TSL2772_CNTRL			0x00
-#define TSL2772_ALS_TIME		0X01
-#define TSL2772_PRX_TIME		0x02
-#define TSL2772_WAIT_TIME		0x03
-#define TSL2772_ALS_MINTHRESHLO		0X04
-#define TSL2772_ALS_MINTHRESHHI		0X05
-#define TSL2772_ALS_MAXTHRESHLO		0X06
-#define TSL2772_ALS_MAXTHRESHHI		0X07
-#define TSL2772_PRX_MINTHRESHLO		0X08
-#define TSL2772_PRX_MINTHRESHHI		0X09
-#define TSL2772_PRX_MAXTHRESHLO		0X0A
-#define TSL2772_PRX_MAXTHRESHHI		0X0B
-#define TSL2772_PERSISTENCE		0x0C
-#define TSL2772_ALS_PRX_CONFIG		0x0D
-#define TSL2772_PRX_COUNT		0x0E
-#define TSL2772_GAIN			0x0F
-#define TSL2772_NOTUSED			0x10
-#define TSL2772_REVID			0x11
-#define TSL2772_CHIPID			0x12
-#define TSL2772_STATUS			0x13
-#define TSL2772_ALS_CHAN0LO		0x14
-#define TSL2772_ALS_CHAN0HI		0x15
-#define TSL2772_ALS_CHAN1LO		0x16
-#define TSL2772_ALS_CHAN1HI		0x17
-#define TSL2772_PRX_LO			0x18
-#define TSL2772_PRX_HI			0x19
-
-/* tsl2772 cmd reg masks */
-#define TSL2772_CMD_REG			0x80
-#define TSL2772_CMD_SPL_FN		0x60
-#define TSL2772_CMD_REPEAT_PROTO	0x00
-#define TSL2772_CMD_AUTOINC_PROTO	0x20
-
-#define TSL2772_CMD_PROX_INT_CLR	0X05
-#define TSL2772_CMD_ALS_INT_CLR		0x06
-#define TSL2772_CMD_PROXALS_INT_CLR	0X07
-
-/* tsl2772 cntrl reg masks */
-#define TSL2772_CNTL_ADC_ENBL		0x02
-#define TSL2772_CNTL_PWR_ON		0x01
-
-/* tsl2772 status reg masks */
-#define TSL2772_STA_ADC_VALID		0x01
-#define TSL2772_STA_PRX_VALID		0x02
-#define TSL2772_STA_ADC_PRX_VALID	(TSL2772_STA_ADC_VALID | \
-					 TSL2772_STA_PRX_VALID)
-#define TSL2772_STA_ALS_INTR		0x10
-#define TSL2772_STA_PRX_INTR		0x20
-
-/* tsl2772 cntrl reg masks */
-#define TSL2772_CNTL_REG_CLEAR		0x00
-#define TSL2772_CNTL_PROX_INT_ENBL	0X20
-#define TSL2772_CNTL_ALS_INT_ENBL	0X10
-#define TSL2772_CNTL_WAIT_TMR_ENBL	0X08
-#define TSL2772_CNTL_PROX_DET_ENBL	0X04
-#define TSL2772_CNTL_PWRON		0x01
-#define TSL2772_CNTL_ALSPON_ENBL	0x03
-#define TSL2772_CNTL_INTALSPON_ENBL	0x13
-#define TSL2772_CNTL_PROXPON_ENBL	0x0F
-#define TSL2772_CNTL_INTPROXPON_ENBL	0x2F
-
-/* TAOS Device family members */
-enum {
-	tsl2571,
-	tsl2671,
-	tmd2671,
-	tsl2771,
-	tmd2771,
-	tsl2572,
-	tsl2672,
-	tmd2672,
-	tsl2772,
-	tmd2772
-};
-
-enum {
-	TSL2772_CHIP_UNKNOWN = 0,
-	TSL2772_CHIP_WORKING = 1,
-	TSL2772_CHIP_SUSPENDED = 2
-};
-
-/* Per-device data */
-struct tsl2772_als_info {
-	u16 als_ch0;
-	u16 als_ch1;
-	u16 lux;
-};
-
-struct tsl2772_chip_info {
-	int chan_table_elements;
-	struct iio_chan_spec channel_with_events[4];
-	struct iio_chan_spec channel_without_events[4];
-	const struct iio_info *info;
-};
-
-struct tsl2772_chip {
-	kernel_ulong_t id;
-	struct mutex prox_mutex;
-	struct mutex als_mutex;
-	struct i2c_client *client;
-	u16 prox_data;
-	struct tsl2772_als_info als_cur_info;
-	struct tsl2772_settings settings;
-	struct tsl2772_platform_data *pdata;
-	int als_gain_time_scale;
-	int als_saturation;
-	int tsl2772_chip_status;
-	u8 tsl2772_config[TSL2772_MAX_CONFIG_REG];
-	const struct tsl2772_chip_info	*chip_info;
-	const struct iio_info *info;
-	s64 event_timestamp;
-	/*
-	 * This structure is intentionally large to accommodate
-	 * updates via sysfs.
-	 * Sized to 9 = max 8 segments + 1 termination segment
-	 */
-	struct tsl2772_lux tsl2772_device_lux[TSL2772_MAX_LUX_TABLE_SIZE];
-};
-
-/*
- * Different devices require different coefficents, and these numbers were
- * derived from the 'Lux Equation' section of the various device datasheets.
- * All of these coefficients assume a Glass Attenuation (GA) factor of 1.
- * The coefficients are multiplied by 1000 to avoid floating point operations.
- * The two rows in each table correspond to the Lux1 and Lux2 equations from
- * the datasheets.
- */
-static const struct tsl2772_lux tsl2x71_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
-	{ 53000, 106000 },
-	{ 31800,  53000 },
-	{ 0,          0 },
-};
-
-static const struct tsl2772_lux tmd2x71_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
-	{ 24000,  48000 },
-	{ 14400,  24000 },
-	{ 0,          0 },
-};
-
-static const struct tsl2772_lux tsl2x72_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
-	{ 60000, 112200 },
-	{ 37800,  60000 },
-	{     0,      0 },
-};
-
-static const struct tsl2772_lux tmd2x72_lux_table[TSL2772_DEF_LUX_TABLE_SZ] = {
-	{ 20000,  35000 },
-	{ 12600,  20000 },
-	{     0,      0 },
-};
-
-static const struct tsl2772_lux *tsl2772_default_lux_table_group[] = {
-	[tsl2571] =	tsl2x71_lux_table,
-	[tsl2671] =	tsl2x71_lux_table,
-	[tmd2671] =	tmd2x71_lux_table,
-	[tsl2771] =	tsl2x71_lux_table,
-	[tmd2771] =	tmd2x71_lux_table,
-	[tsl2572] =	tsl2x72_lux_table,
-	[tsl2672] =	tsl2x72_lux_table,
-	[tmd2672] =	tmd2x72_lux_table,
-	[tsl2772] =	tsl2x72_lux_table,
-	[tmd2772] =	tmd2x72_lux_table,
-};
-
-static const struct tsl2772_settings tsl2772_default_settings = {
-	.als_time = 255, /* 2.72 / 2.73 ms */
-	.als_gain = 0,
-	.prox_time = 255, /* 2.72 / 2.73 ms */
-	.prox_gain = 0,
-	.wait_time = 255,
-	.als_prox_config = 0,
-	.als_gain_trim = 1000,
-	.als_cal_target = 150,
-	.als_persistence = 1,
-	.als_interrupt_en = false,
-	.als_thresh_low = 200,
-	.als_thresh_high = 256,
-	.prox_persistence = 1,
-	.prox_interrupt_en = false,
-	.prox_thres_low  = 0,
-	.prox_thres_high = 512,
-	.prox_max_samples_cal = 30,
-	.prox_pulse_count = 8,
-	.prox_diode = TSL2772_DIODE1,
-	.prox_power = TSL2772_100_mA
-};
-
-static const s16 tsl2772_als_gain[] = {
-	1,
-	8,
-	16,
-	120
-};
-
-static const s16 tsl2772_prox_gain[] = {
-	1,
-	2,
-	4,
-	8
-};
-
-struct tsl2772_int_time {
-	int increment_us;
-	char *display_range;
-};
-
-static const struct tsl2772_int_time tsl2772_int_time[] = {
-	[tsl2571] = { 2720, "0.00272 - 0.696" },
-	[tsl2671] = { 2720, "0.00272 - 0.696" },
-	[tmd2671] = { 2720, "0.00272 - 0.696" },
-	[tsl2771] = { 2720, "0.00272 - 0.696" },
-	[tmd2771] = { 2720, "0.00272 - 0.696" },
-	[tsl2572] = { 2730, "0.00273 - 0.699" },
-	[tsl2672] = { 2730, "0.00273 - 0.699" },
-	[tmd2672] = { 2730, "0.00273 - 0.699" },
-	[tsl2772] = { 2730, "0.00273 - 0.699" },
-	[tmd2772] = { 2730, "0.00273 - 0.699" },
-};
-
-/* Channel variations */
-enum {
-	ALS,
-	PRX,
-	ALSPRX,
-	PRX2,
-	ALSPRX2,
-};
-
-static const u8 device_channel_config[] = {
-	[tsl2571] = ALS,
-	[tsl2671] = PRX,
-	[tmd2671] = PRX,
-	[tsl2771] = ALSPRX,
-	[tmd2771] = ALSPRX,
-	[tsl2572] = ALS,
-	[tsl2672] = PRX2,
-	[tmd2672] = PRX2,
-	[tsl2772] = ALSPRX2,
-	[tmd2772] = ALSPRX2
-};
-
-static int tsl2772_read_status(struct tsl2772_chip *chip)
-{
-	int ret;
-
-	ret = i2c_smbus_read_byte_data(chip->client,
-				       TSL2772_CMD_REG | TSL2772_STATUS);
-	if (ret < 0)
-		dev_err(&chip->client->dev,
-			"%s: failed to read STATUS register: %d\n", __func__,
-			ret);
-
-	return ret;
-}
-
-static int tsl2772_write_control_reg(struct tsl2772_chip *chip, u8 data)
-{
-	int ret;
-
-	ret = i2c_smbus_write_byte_data(chip->client,
-					TSL2772_CMD_REG | TSL2772_CNTRL, data);
-	if (ret < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to write to control register %x: %d\n",
-			__func__, data, ret);
-	}
-
-	return ret;
-}
-
-static int tsl2772_read_autoinc_regs(struct tsl2772_chip *chip, int lower_reg,
-				     int upper_reg)
-{
-	u8 buf[2];
-	int ret;
-
-	ret = i2c_smbus_write_byte(chip->client,
-				   TSL2772_CMD_REG | TSL2772_CMD_AUTOINC_PROTO |
-				   lower_reg);
-	if (ret < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to enable auto increment protocol: %d\n",
-			__func__, ret);
-		return ret;
-	}
-
-	ret = i2c_smbus_read_byte_data(chip->client,
-				       TSL2772_CMD_REG | lower_reg);
-	if (ret < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to read from register %x: %d\n", __func__,
-			lower_reg, ret);
-		return ret;
-	}
-	buf[0] = ret;
-
-	ret = i2c_smbus_read_byte_data(chip->client,
-				       TSL2772_CMD_REG | upper_reg);
-	if (ret < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to read from register %x: %d\n", __func__,
-			upper_reg, ret);
-		return ret;
-	}
-	buf[1] = ret;
-
-	ret = i2c_smbus_write_byte(chip->client,
-				   TSL2772_CMD_REG | TSL2772_CMD_REPEAT_PROTO |
-				   lower_reg);
-	if (ret < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to enable repeated byte protocol: %d\n",
-			__func__, ret);
-		return ret;
-	}
-
-	return le16_to_cpup((const __le16 *)&buf[0]);
-}
-
-/**
- * tsl2772_get_lux() - Reads and calculates current lux value.
- * @indio_dev:	pointer to IIO device
- *
- * The raw ch0 and ch1 values of the ambient light sensed in the last
- * integration cycle are read from the device. The raw values are multiplied
- * by a device-specific scale factor, and divided by the integration time and
- * device gain. The code supports multiple lux equations through the lux table
- * coefficients. A lux gain trim is applied to each lux equation, and then the
- * maximum lux within the interval 0..65535 is selected.
- */
-static int tsl2772_get_lux(struct iio_dev *indio_dev)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	struct tsl2772_lux *p;
-	int max_lux, ret;
-	bool overflow;
-
-	mutex_lock(&chip->als_mutex);
-
-	if (chip->tsl2772_chip_status != TSL2772_CHIP_WORKING) {
-		dev_err(&chip->client->dev, "%s: device is not enabled\n",
-			__func__);
-		ret = -EBUSY;
-		goto out_unlock;
-	}
-
-	ret = tsl2772_read_status(chip);
-	if (ret < 0)
-		goto out_unlock;
-
-	if (!(ret & TSL2772_STA_ADC_VALID)) {
-		dev_err(&chip->client->dev,
-			"%s: data not valid yet\n", __func__);
-		ret = chip->als_cur_info.lux; /* return LAST VALUE */
-		goto out_unlock;
-	}
-
-	ret = tsl2772_read_autoinc_regs(chip, TSL2772_ALS_CHAN0LO,
-					TSL2772_ALS_CHAN0HI);
-	if (ret < 0)
-		goto out_unlock;
-	chip->als_cur_info.als_ch0 = ret;
-
-	ret = tsl2772_read_autoinc_regs(chip, TSL2772_ALS_CHAN1LO,
-					TSL2772_ALS_CHAN1HI);
-	if (ret < 0)
-		goto out_unlock;
-	chip->als_cur_info.als_ch1 = ret;
-
-	if (chip->als_cur_info.als_ch0 >= chip->als_saturation) {
-		max_lux = TSL2772_LUX_CALC_OVER_FLOW;
-		goto update_struct_with_max_lux;
-	}
-
-	if (!chip->als_cur_info.als_ch0) {
-		/* have no data, so return LAST VALUE */
-		ret = chip->als_cur_info.lux;
-		goto out_unlock;
-	}
-
-	max_lux = 0;
-	overflow = false;
-	for (p = (struct tsl2772_lux *)chip->tsl2772_device_lux; p->ch0 != 0;
-	     p++) {
-		int lux;
-
-		lux = ((chip->als_cur_info.als_ch0 * p->ch0) -
-		       (chip->als_cur_info.als_ch1 * p->ch1)) /
-			chip->als_gain_time_scale;
-
-		/*
-		 * The als_gain_trim can have a value within the range 250..4000
-		 * and is a multiplier for the lux. A trim of 1000 makes no
-		 * changes to the lux, less than 1000 scales it down, and
-		 * greater than 1000 scales it up.
-		 */
-		lux = (lux * chip->settings.als_gain_trim) / 1000;
-
-		if (lux > TSL2772_LUX_CALC_OVER_FLOW) {
-			overflow = true;
-			continue;
-		}
-
-		max_lux = max(max_lux, lux);
-	}
-
-	if (overflow && max_lux == 0)
-		max_lux = TSL2772_LUX_CALC_OVER_FLOW;
-
-update_struct_with_max_lux:
-	chip->als_cur_info.lux = max_lux;
-	ret = max_lux;
-
-out_unlock:
-	mutex_unlock(&chip->als_mutex);
-
-	return ret;
-}
-
-/**
- * tsl2772_get_prox() - Reads proximity data registers and updates
- *                      chip->prox_data.
- *
- * @indio_dev:	pointer to IIO device
- */
-static int tsl2772_get_prox(struct iio_dev *indio_dev)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int ret;
-
-	mutex_lock(&chip->prox_mutex);
-
-	ret = tsl2772_read_status(chip);
-	if (ret < 0)
-		goto prox_poll_err;
-
-	switch (chip->id) {
-	case tsl2571:
-	case tsl2671:
-	case tmd2671:
-	case tsl2771:
-	case tmd2771:
-		if (!(ret & TSL2772_STA_ADC_VALID)) {
-			ret = -EINVAL;
-			goto prox_poll_err;
-		}
-		break;
-	case tsl2572:
-	case tsl2672:
-	case tmd2672:
-	case tsl2772:
-	case tmd2772:
-		if (!(ret & TSL2772_STA_PRX_VALID)) {
-			ret = -EINVAL;
-			goto prox_poll_err;
-		}
-		break;
-	}
-
-	ret = tsl2772_read_autoinc_regs(chip, TSL2772_PRX_LO, TSL2772_PRX_HI);
-	if (ret < 0)
-		goto prox_poll_err;
-	chip->prox_data = ret;
-
-prox_poll_err:
-	mutex_unlock(&chip->prox_mutex);
-
-	return ret;
-}
-
-/**
- * tsl2772_defaults() - Populates the device nominal operating parameters
- *                      with those provided by a 'platform' data struct or
- *                      with prefined defaults.
- *
- * @chip:               pointer to device structure.
- */
-static void tsl2772_defaults(struct tsl2772_chip *chip)
-{
-	/* If Operational settings defined elsewhere.. */
-	if (chip->pdata && chip->pdata->platform_default_settings)
-		memcpy(&chip->settings, chip->pdata->platform_default_settings,
-		       sizeof(tsl2772_default_settings));
-	else
-		memcpy(&chip->settings, &tsl2772_default_settings,
-		       sizeof(tsl2772_default_settings));
-
-	/* Load up the proper lux table. */
-	if (chip->pdata && chip->pdata->platform_lux_table[0].ch0 != 0)
-		memcpy(chip->tsl2772_device_lux,
-		       chip->pdata->platform_lux_table,
-		       sizeof(chip->pdata->platform_lux_table));
-	else
-		memcpy(chip->tsl2772_device_lux,
-		       tsl2772_default_lux_table_group[chip->id],
-		       TSL2772_DEFAULT_TABLE_BYTES);
-}
-
-/**
- * tsl2772_als_calibrate() -	Obtain single reading and calculate
- *                              the als_gain_trim.
- *
- * @indio_dev:	pointer to IIO device
- */
-static int tsl2772_als_calibrate(struct iio_dev *indio_dev)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int ret, lux_val;
-
-	ret = i2c_smbus_read_byte_data(chip->client,
-				       TSL2772_CMD_REG | TSL2772_CNTRL);
-	if (ret < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to read from the CNTRL register\n",
-			__func__);
-		return ret;
-	}
-
-	if ((ret & (TSL2772_CNTL_ADC_ENBL | TSL2772_CNTL_PWR_ON))
-			!= (TSL2772_CNTL_ADC_ENBL | TSL2772_CNTL_PWR_ON)) {
-		dev_err(&chip->client->dev,
-			"%s: Device is not powered on and/or ADC is not enabled\n",
-			__func__);
-		return -EINVAL;
-	} else if ((ret & TSL2772_STA_ADC_VALID) != TSL2772_STA_ADC_VALID) {
-		dev_err(&chip->client->dev,
-			"%s: The two ADC channels have not completed an integration cycle\n",
-			__func__);
-		return -ENODATA;
-	}
-
-	lux_val = tsl2772_get_lux(indio_dev);
-	if (lux_val < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to get lux\n", __func__);
-		return lux_val;
-	}
-
-	ret = (chip->settings.als_cal_target * chip->settings.als_gain_trim) /
-			lux_val;
-	if (ret < 250 || ret > 4000)
-		return -ERANGE;
-
-	chip->settings.als_gain_trim = ret;
-
-	return ret;
-}
-
-static int tsl2772_chip_on(struct iio_dev *indio_dev)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int ret, i, als_count, als_time_us;
-	u8 *dev_reg, reg_val;
-
-	/* Non calculated parameters */
-	chip->tsl2772_config[TSL2772_ALS_TIME] = chip->settings.als_time;
-	chip->tsl2772_config[TSL2772_PRX_TIME] = chip->settings.prox_time;
-	chip->tsl2772_config[TSL2772_WAIT_TIME] = chip->settings.wait_time;
-	chip->tsl2772_config[TSL2772_ALS_PRX_CONFIG] =
-		chip->settings.als_prox_config;
-
-	chip->tsl2772_config[TSL2772_ALS_MINTHRESHLO] =
-		(chip->settings.als_thresh_low) & 0xFF;
-	chip->tsl2772_config[TSL2772_ALS_MINTHRESHHI] =
-		(chip->settings.als_thresh_low >> 8) & 0xFF;
-	chip->tsl2772_config[TSL2772_ALS_MAXTHRESHLO] =
-		(chip->settings.als_thresh_high) & 0xFF;
-	chip->tsl2772_config[TSL2772_ALS_MAXTHRESHHI] =
-		(chip->settings.als_thresh_high >> 8) & 0xFF;
-	chip->tsl2772_config[TSL2772_PERSISTENCE] =
-		(chip->settings.prox_persistence & 0xFF) << 4 |
-		(chip->settings.als_persistence & 0xFF);
-
-	chip->tsl2772_config[TSL2772_PRX_COUNT] =
-			chip->settings.prox_pulse_count;
-	chip->tsl2772_config[TSL2772_PRX_MINTHRESHLO] =
-			(chip->settings.prox_thres_low) & 0xFF;
-	chip->tsl2772_config[TSL2772_PRX_MINTHRESHHI] =
-			(chip->settings.prox_thres_low >> 8) & 0xFF;
-	chip->tsl2772_config[TSL2772_PRX_MAXTHRESHLO] =
-			(chip->settings.prox_thres_high) & 0xFF;
-	chip->tsl2772_config[TSL2772_PRX_MAXTHRESHHI] =
-			(chip->settings.prox_thres_high >> 8) & 0xFF;
-
-	/* and make sure we're not already on */
-	if (chip->tsl2772_chip_status == TSL2772_CHIP_WORKING) {
-		/* if forcing a register update - turn off, then on */
-		dev_info(&chip->client->dev, "device is already enabled\n");
-		return -EINVAL;
-	}
-
-	/* Set the gain based on tsl2772_settings struct */
-	chip->tsl2772_config[TSL2772_GAIN] =
-		(chip->settings.als_gain & 0xFF) |
-		((chip->settings.prox_gain & 0xFF) << 2) |
-		(chip->settings.prox_diode << 4) |
-		(chip->settings.prox_power << 6);
-
-	/* set chip time scaling and saturation */
-	als_count = 256 - chip->settings.als_time;
-	als_time_us = als_count * tsl2772_int_time[chip->id].increment_us;
-	chip->als_saturation = als_count * 768; /* 75% of full scale */
-	chip->als_gain_time_scale = als_time_us *
-		tsl2772_als_gain[chip->settings.als_gain];
-
-	/*
-	 * TSL2772 Specific power-on / adc enable sequence
-	 * Power on the device 1st.
-	 */
-	ret = tsl2772_write_control_reg(chip, TSL2772_CNTL_PWR_ON);
-	if (ret < 0)
-		return ret;
-
-	/*
-	 * Use the following shadow copy for our delay before enabling ADC.
-	 * Write all the registers.
-	 */
-	for (i = 0, dev_reg = chip->tsl2772_config;
-			i < TSL2772_MAX_CONFIG_REG; i++) {
-		int reg = TSL2772_CMD_REG + i;
-
-		ret = i2c_smbus_write_byte_data(chip->client, reg,
-						*dev_reg++);
-		if (ret < 0) {
-			dev_err(&chip->client->dev,
-				"%s: failed to write to register %x: %d\n",
-				__func__, reg, ret);
-			return ret;
-		}
-	}
-
-	/* Power-on settling time */
-	usleep_range(3000, 3500);
-
-	reg_val = TSL2772_CNTL_PWR_ON | TSL2772_CNTL_ADC_ENBL |
-		  TSL2772_CNTL_PROX_DET_ENBL;
-	if (chip->settings.als_interrupt_en)
-		reg_val |= TSL2772_CNTL_ALS_INT_ENBL;
-	if (chip->settings.prox_interrupt_en)
-		reg_val |= TSL2772_CNTL_PROX_INT_ENBL;
-
-	ret = tsl2772_write_control_reg(chip, reg_val);
-	if (ret < 0)
-		return ret;
-
-	ret = i2c_smbus_write_byte(chip->client,
-				   TSL2772_CMD_REG | TSL2772_CMD_SPL_FN |
-				   TSL2772_CMD_PROXALS_INT_CLR);
-	if (ret < 0) {
-		dev_err(&chip->client->dev,
-			"%s: failed to clear interrupt status: %d\n",
-			__func__, ret);
-		return ret;
-	}
-
-	chip->tsl2772_chip_status = TSL2772_CHIP_WORKING;
-
-	return ret;
-}
-
-static int tsl2772_chip_off(struct iio_dev *indio_dev)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-
-	/* turn device off */
-	chip->tsl2772_chip_status = TSL2772_CHIP_SUSPENDED;
-	return tsl2772_write_control_reg(chip, 0x00);
-}
-
-/**
- * tsl2772_invoke_change - power cycle the device to implement the user
- *                         parameters
- * @indio_dev:	pointer to IIO device
- *
- * Obtain and lock both ALS and PROX resources, determine and save device state
- * (On/Off), cycle device to implement updated parameter, put device back into
- * proper state, and unlock resource.
- */
-static int tsl2772_invoke_change(struct iio_dev *indio_dev)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int device_status = chip->tsl2772_chip_status;
-	int ret;
-
-	mutex_lock(&chip->als_mutex);
-	mutex_lock(&chip->prox_mutex);
-
-	if (device_status == TSL2772_CHIP_WORKING) {
-		ret = tsl2772_chip_off(indio_dev);
-		if (ret < 0)
-			goto unlock;
-	}
-
-	ret = tsl2772_chip_on(indio_dev);
-
-unlock:
-	mutex_unlock(&chip->prox_mutex);
-	mutex_unlock(&chip->als_mutex);
-
-	return ret;
-}
-
-static int tsl2772_prox_cal(struct iio_dev *indio_dev)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int prox_history[MAX_SAMPLES_CAL + 1];
-	int i, ret, mean, max, sample_sum;
-
-	if (chip->settings.prox_max_samples_cal < 1 ||
-	    chip->settings.prox_max_samples_cal > MAX_SAMPLES_CAL)
-		return -EINVAL;
-
-	for (i = 0; i < chip->settings.prox_max_samples_cal; i++) {
-		usleep_range(15000, 17500);
-		ret = tsl2772_get_prox(indio_dev);
-		if (ret < 0)
-			return ret;
-
-		prox_history[i] = chip->prox_data;
-	}
-
-	sample_sum = 0;
-	max = INT_MIN;
-	for (i = 0; i < chip->settings.prox_max_samples_cal; i++) {
-		sample_sum += prox_history[i];
-		max = max(max, prox_history[i]);
-	}
-	mean = sample_sum / chip->settings.prox_max_samples_cal;
-
-	chip->settings.prox_thres_high = (max << 1) - mean;
-
-	return tsl2772_invoke_change(indio_dev);
-}
-
-static IIO_CONST_ATTR(in_intensity0_calibscale_available, "1 8 16 120");
-
-static IIO_CONST_ATTR(in_proximity0_calibscale_available, "1 2 4 8");
-
-static ssize_t
-in_intensity0_integration_time_available_show(struct device *dev,
-					      struct device_attribute *attr,
-					      char *buf)
-{
-	struct tsl2772_chip *chip = iio_priv(dev_to_iio_dev(dev));
-
-	return snprintf(buf, PAGE_SIZE, "%s\n",
-			tsl2772_int_time[chip->id].display_range);
-}
-
-static ssize_t in_illuminance0_target_input_show(struct device *dev,
-						 struct device_attribute *attr,
-						 char *buf)
-{
-	struct tsl2772_chip *chip = iio_priv(dev_to_iio_dev(dev));
-
-	return snprintf(buf, PAGE_SIZE, "%d\n", chip->settings.als_cal_target);
-}
-
-static ssize_t in_illuminance0_target_input_store(struct device *dev,
-						  struct device_attribute *attr,
-						  const char *buf, size_t len)
-{
-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	u16 value;
-	int ret;
-
-	if (kstrtou16(buf, 0, &value))
-		return -EINVAL;
-
-	chip->settings.als_cal_target = value;
-	ret = tsl2772_invoke_change(indio_dev);
-	if (ret < 0)
-		return ret;
-
-	return len;
-}
-
-static ssize_t in_illuminance0_calibrate_store(struct device *dev,
-					       struct device_attribute *attr,
-					       const char *buf, size_t len)
-{
-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-	bool value;
-	int ret;
-
-	if (kstrtobool(buf, &value) || !value)
-		return -EINVAL;
-
-	ret = tsl2772_als_calibrate(indio_dev);
-	if (ret < 0)
-		return ret;
-
-	ret = tsl2772_invoke_change(indio_dev);
-	if (ret < 0)
-		return ret;
-
-	return len;
-}
-
-static ssize_t in_illuminance0_lux_table_show(struct device *dev,
-					      struct device_attribute *attr,
-					      char *buf)
-{
-	struct tsl2772_chip *chip = iio_priv(dev_to_iio_dev(dev));
-	int i = 0;
-	int offset = 0;
-
-	while (i < TSL2772_MAX_LUX_TABLE_SIZE) {
-		offset += snprintf(buf + offset, PAGE_SIZE, "%u,%u,",
-			chip->tsl2772_device_lux[i].ch0,
-			chip->tsl2772_device_lux[i].ch1);
-		if (chip->tsl2772_device_lux[i].ch0 == 0) {
-			/*
-			 * We just printed the first "0" entry.
-			 * Now get rid of the extra "," and break.
-			 */
-			offset--;
-			break;
-		}
-		i++;
-	}
-
-	offset += snprintf(buf + offset, PAGE_SIZE, "\n");
-	return offset;
-}
-
-static ssize_t in_illuminance0_lux_table_store(struct device *dev,
-					       struct device_attribute *attr,
-					       const char *buf, size_t len)
-{
-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int value[ARRAY_SIZE(chip->tsl2772_device_lux) * 2 + 1];
-	int n, ret;
-
-	get_options(buf, ARRAY_SIZE(value), value);
-
-	/*
-	 * We now have an array of ints starting at value[1], and
-	 * enumerated by value[0].
-	 * We expect each group of two ints to be one table entry,
-	 * and the last table entry is all 0.
-	 */
-	n = value[0];
-	if ((n % 2) || n < 4 ||
-	    n > ((ARRAY_SIZE(chip->tsl2772_device_lux) - 1) * 2))
-		return -EINVAL;
-
-	if ((value[(n - 1)] | value[n]) != 0)
-		return -EINVAL;
-
-	if (chip->tsl2772_chip_status == TSL2772_CHIP_WORKING) {
-		ret = tsl2772_chip_off(indio_dev);
-		if (ret < 0)
-			return ret;
-	}
-
-	/* Zero out the table */
-	memset(chip->tsl2772_device_lux, 0, sizeof(chip->tsl2772_device_lux));
-	memcpy(chip->tsl2772_device_lux, &value[1], (value[0] * 4));
-
-	ret = tsl2772_invoke_change(indio_dev);
-	if (ret < 0)
-		return ret;
-
-	return len;
-}
-
-static ssize_t in_proximity0_calibrate_store(struct device *dev,
-					     struct device_attribute *attr,
-					     const char *buf, size_t len)
-{
-	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-	bool value;
-	int ret;
-
-	if (kstrtobool(buf, &value) || !value)
-		return -EINVAL;
-
-	ret = tsl2772_prox_cal(indio_dev);
-	if (ret < 0)
-		return ret;
-
-	ret = tsl2772_invoke_change(indio_dev);
-	if (ret < 0)
-		return ret;
-
-	return len;
-}
-
-static int tsl2772_read_interrupt_config(struct iio_dev *indio_dev,
-					 const struct iio_chan_spec *chan,
-					 enum iio_event_type type,
-					 enum iio_event_direction dir)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-
-	if (chan->type == IIO_INTENSITY)
-		return chip->settings.als_interrupt_en;
-	else
-		return chip->settings.prox_interrupt_en;
-}
-
-static int tsl2772_write_interrupt_config(struct iio_dev *indio_dev,
-					  const struct iio_chan_spec *chan,
-					  enum iio_event_type type,
-					  enum iio_event_direction dir,
-					  int val)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-
-	if (chan->type == IIO_INTENSITY)
-		chip->settings.als_interrupt_en = val ? true : false;
-	else
-		chip->settings.prox_interrupt_en = val ? true : false;
-
-	return tsl2772_invoke_change(indio_dev);
-}
-
-static int tsl2772_write_event_value(struct iio_dev *indio_dev,
-				     const struct iio_chan_spec *chan,
-				     enum iio_event_type type,
-				     enum iio_event_direction dir,
-				     enum iio_event_info info,
-				     int val, int val2)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int ret = -EINVAL, count, persistence;
-	u8 time;
-
-	switch (info) {
-	case IIO_EV_INFO_VALUE:
-		if (chan->type == IIO_INTENSITY) {
-			switch (dir) {
-			case IIO_EV_DIR_RISING:
-				chip->settings.als_thresh_high = val;
-				ret = 0;
-				break;
-			case IIO_EV_DIR_FALLING:
-				chip->settings.als_thresh_low = val;
-				ret = 0;
-				break;
-			default:
-				break;
-			}
-		} else {
-			switch (dir) {
-			case IIO_EV_DIR_RISING:
-				chip->settings.prox_thres_high = val;
-				ret = 0;
-				break;
-			case IIO_EV_DIR_FALLING:
-				chip->settings.prox_thres_low = val;
-				ret = 0;
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-	case IIO_EV_INFO_PERIOD:
-		if (chan->type == IIO_INTENSITY)
-			time = chip->settings.als_time;
-		else
-			time = chip->settings.prox_time;
-
-		count = 256 - time;
-		persistence = ((val * 1000000) + val2) /
-			(count * tsl2772_int_time[chip->id].increment_us);
-
-		if (chan->type == IIO_INTENSITY) {
-			/* ALS filter values are 1, 2, 3, 5, 10, 15, ..., 60 */
-			if (persistence > 3)
-				persistence = (persistence / 5) + 3;
-
-			chip->settings.als_persistence = persistence;
-		} else {
-			chip->settings.prox_persistence = persistence;
-		}
-
-		ret = 0;
-		break;
-	default:
-		break;
-	}
-
-	if (ret < 0)
-		return ret;
-
-	return tsl2772_invoke_change(indio_dev);
-}
-
-static int tsl2772_read_event_value(struct iio_dev *indio_dev,
-				    const struct iio_chan_spec *chan,
-				    enum iio_event_type type,
-				    enum iio_event_direction dir,
-				    enum iio_event_info info,
-				    int *val, int *val2)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int ret = -EINVAL, filter_delay, persistence;
-	u8 time;
-
-	switch (info) {
-	case IIO_EV_INFO_VALUE:
-		if (chan->type == IIO_INTENSITY) {
-			switch (dir) {
-			case IIO_EV_DIR_RISING:
-				*val = chip->settings.als_thresh_high;
-				ret = IIO_VAL_INT;
-				break;
-			case IIO_EV_DIR_FALLING:
-				*val = chip->settings.als_thresh_low;
-				ret = IIO_VAL_INT;
-				break;
-			default:
-				break;
-			}
-		} else {
-			switch (dir) {
-			case IIO_EV_DIR_RISING:
-				*val = chip->settings.prox_thres_high;
-				ret = IIO_VAL_INT;
-				break;
-			case IIO_EV_DIR_FALLING:
-				*val = chip->settings.prox_thres_low;
-				ret = IIO_VAL_INT;
-				break;
-			default:
-				break;
-			}
-		}
-		break;
-	case IIO_EV_INFO_PERIOD:
-		if (chan->type == IIO_INTENSITY) {
-			time = chip->settings.als_time;
-			persistence = chip->settings.als_persistence;
-
-			/* ALS filter values are 1, 2, 3, 5, 10, 15, ..., 60 */
-			if (persistence > 3)
-				persistence = (persistence - 3) * 5;
-		} else {
-			time = chip->settings.prox_time;
-			persistence = chip->settings.prox_persistence;
-		}
-
-		filter_delay = persistence * (256 - time) *
-			tsl2772_int_time[chip->id].increment_us;
-
-		*val = filter_delay / 1000000;
-		*val2 = filter_delay % 1000000;
-		ret = IIO_VAL_INT_PLUS_MICRO;
-		break;
-	default:
-		break;
-	}
-
-	return ret;
-}
-
-static int tsl2772_read_raw(struct iio_dev *indio_dev,
-			    struct iio_chan_spec const *chan,
-			    int *val,
-			    int *val2,
-			    long mask)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	int ret = -EINVAL;
-
-	switch (mask) {
-	case IIO_CHAN_INFO_PROCESSED:
-		switch (chan->type) {
-		case IIO_LIGHT:
-			tsl2772_get_lux(indio_dev);
-			*val = chip->als_cur_info.lux;
-			ret = IIO_VAL_INT;
-			break;
-		default:
-			return -EINVAL;
-		}
-		break;
-	case IIO_CHAN_INFO_RAW:
-		switch (chan->type) {
-		case IIO_INTENSITY:
-			tsl2772_get_lux(indio_dev);
-			if (chan->channel == 0)
-				*val = chip->als_cur_info.als_ch0;
-			else
-				*val = chip->als_cur_info.als_ch1;
-			ret = IIO_VAL_INT;
-			break;
-		case IIO_PROXIMITY:
-			tsl2772_get_prox(indio_dev);
-			*val = chip->prox_data;
-			ret = IIO_VAL_INT;
-			break;
-		default:
-			return -EINVAL;
-		}
-		break;
-	case IIO_CHAN_INFO_CALIBSCALE:
-		if (chan->type == IIO_LIGHT)
-			*val = tsl2772_als_gain[chip->settings.als_gain];
-		else
-			*val = tsl2772_prox_gain[chip->settings.prox_gain];
-		ret = IIO_VAL_INT;
-		break;
-	case IIO_CHAN_INFO_CALIBBIAS:
-		*val = chip->settings.als_gain_trim;
-		ret = IIO_VAL_INT;
-		break;
-	case IIO_CHAN_INFO_INT_TIME:
-		*val = 0;
-		*val2 = (256 - chip->settings.als_time) *
-			tsl2772_int_time[chip->id].increment_us;
-		ret = IIO_VAL_INT_PLUS_MICRO;
-		break;
-	default:
-		ret = -EINVAL;
-	}
-
-	return ret;
-}
-
-static int tsl2772_write_raw(struct iio_dev *indio_dev,
-			     struct iio_chan_spec const *chan,
-			     int val,
-			     int val2,
-			     long mask)
-{
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-
-	switch (mask) {
-	case IIO_CHAN_INFO_CALIBSCALE:
-		if (chan->type == IIO_INTENSITY) {
-			switch (val) {
-			case 1:
-				chip->settings.als_gain = 0;
-				break;
-			case 8:
-				chip->settings.als_gain = 1;
-				break;
-			case 16:
-				chip->settings.als_gain = 2;
-				break;
-			case 120:
-				chip->settings.als_gain = 3;
-				break;
-			default:
-				return -EINVAL;
-			}
-		} else {
-			switch (val) {
-			case 1:
-				chip->settings.prox_gain = 0;
-				break;
-			case 2:
-				chip->settings.prox_gain = 1;
-				break;
-			case 4:
-				chip->settings.prox_gain = 2;
-				break;
-			case 8:
-				chip->settings.prox_gain = 3;
-				break;
-			default:
-				return -EINVAL;
-			}
-		}
-		break;
-	case IIO_CHAN_INFO_CALIBBIAS:
-		chip->settings.als_gain_trim = val;
-		break;
-	case IIO_CHAN_INFO_INT_TIME:
-		chip->settings.als_time = 256 -
-			(val2 / tsl2772_int_time[chip->id].increment_us);
-		break;
-	default:
-		return -EINVAL;
-	}
-
-	return tsl2772_invoke_change(indio_dev);
-}
-
-static DEVICE_ATTR_RO(in_intensity0_integration_time_available);
-
-static DEVICE_ATTR_RW(in_illuminance0_target_input);
-
-static DEVICE_ATTR_WO(in_illuminance0_calibrate);
-
-static DEVICE_ATTR_WO(in_proximity0_calibrate);
-
-static DEVICE_ATTR_RW(in_illuminance0_lux_table);
-
-/* Use the default register values to identify the Taos device */
-static int tsl2772_device_id_verif(int id, int target)
-{
-	switch (target) {
-	case tsl2571:
-	case tsl2671:
-	case tsl2771:
-		return (id & 0xf0) == TRITON_ID;
-	case tmd2671:
-	case tmd2771:
-		return (id & 0xf0) == HALIBUT_ID;
-	case tsl2572:
-	case tsl2672:
-	case tmd2672:
-	case tsl2772:
-	case tmd2772:
-		return (id & 0xf0) == SWORDFISH_ID;
-	}
-
-	return -EINVAL;
-}
-
-static irqreturn_t tsl2772_event_handler(int irq, void *private)
-{
-	struct iio_dev *indio_dev = private;
-	struct tsl2772_chip *chip = iio_priv(indio_dev);
-	s64 timestamp = iio_get_time_ns(indio_dev);
-	int ret;
-
-	ret = tsl2772_read_status(chip);
-	if (ret < 0)
-		return IRQ_HANDLED;
-
-	/* What type of interrupt do we need to process */
-	if (ret & TSL2772_STA_PRX_INTR) {
-		iio_push_event(indio_dev,
-			       IIO_UNMOD_EVENT_CODE(IIO_PROXIMITY,
-						    0,
-						    IIO_EV_TYPE_THRESH,
-						    IIO_EV_DIR_EITHER),
-						    timestamp);
-	}
-
-	if (ret & TSL2772_STA_ALS_INTR) {
-		iio_push_event(indio_dev,
-			       IIO_UNMOD_EVENT_CODE(IIO_LIGHT,
-						    0,
-						    IIO_EV_TYPE_THRESH,
-						    IIO_EV_DIR_EITHER),
-			       timestamp);
-	}
-
-	ret = i2c_smbus_write_byte(chip->client,
-				   TSL2772_CMD_REG | TSL2772_CMD_SPL_FN |
-				   TSL2772_CMD_PROXALS_INT_CLR);
-	if (ret < 0)
-		dev_err(&chip->client->dev,
-			"%s: failed to clear interrupt status: %d\n",
-			__func__, ret);
-
-	return IRQ_HANDLED;
-}
-
-static struct attribute *tsl2772_ALS_device_attrs[] = {
-	&iio_const_attr_in_intensity0_calibscale_available.dev_attr.attr,
-	&dev_attr_in_intensity0_integration_time_available.attr,
-	&dev_attr_in_illuminance0_target_input.attr,
-	&dev_attr_in_illuminance0_calibrate.attr,
-	&dev_attr_in_illuminance0_lux_table.attr,
-	NULL
-};
-
-static struct attribute *tsl2772_PRX_device_attrs[] = {
-	&dev_attr_in_proximity0_calibrate.attr,
-	NULL
-};
-
-static struct attribute *tsl2772_ALSPRX_device_attrs[] = {
-	&iio_const_attr_in_intensity0_calibscale_available.dev_attr.attr,
-	&dev_attr_in_intensity0_integration_time_available.attr,
-	&dev_attr_in_illuminance0_target_input.attr,
-	&dev_attr_in_illuminance0_calibrate.attr,
-	&dev_attr_in_illuminance0_lux_table.attr,
-	NULL
-};
-
-static struct attribute *tsl2772_PRX2_device_attrs[] = {
-	&dev_attr_in_proximity0_calibrate.attr,
-	&iio_const_attr_in_proximity0_calibscale_available.dev_attr.attr,
-	NULL
-};
-
-static struct attribute *tsl2772_ALSPRX2_device_attrs[] = {
-	&iio_const_attr_in_intensity0_calibscale_available.dev_attr.attr,
-	&dev_attr_in_intensity0_integration_time_available.attr,
-	&dev_attr_in_illuminance0_target_input.attr,
-	&dev_attr_in_illuminance0_calibrate.attr,
-	&dev_attr_in_illuminance0_lux_table.attr,
-	&dev_attr_in_proximity0_calibrate.attr,
-	&iio_const_attr_in_proximity0_calibscale_available.dev_attr.attr,
-	NULL
-};
-
-static const struct attribute_group tsl2772_device_attr_group_tbl[] = {
-	[ALS] = {
-		.attrs = tsl2772_ALS_device_attrs,
-	},
-	[PRX] = {
-		.attrs = tsl2772_PRX_device_attrs,
-	},
-	[ALSPRX] = {
-		.attrs = tsl2772_ALSPRX_device_attrs,
-	},
-	[PRX2] = {
-		.attrs = tsl2772_PRX2_device_attrs,
-	},
-	[ALSPRX2] = {
-		.attrs = tsl2772_ALSPRX2_device_attrs,
-	},
-};
-
-static const struct iio_info tsl2772_device_info[] = {
-	[ALS] = {
-		.attrs = &tsl2772_device_attr_group_tbl[ALS],
-		.read_raw = &tsl2772_read_raw,
-		.write_raw = &tsl2772_write_raw,
-		.read_event_value = &tsl2772_read_event_value,
-		.write_event_value = &tsl2772_write_event_value,
-		.read_event_config = &tsl2772_read_interrupt_config,
-		.write_event_config = &tsl2772_write_interrupt_config,
-	},
-	[PRX] = {
-		.attrs = &tsl2772_device_attr_group_tbl[PRX],
-		.read_raw = &tsl2772_read_raw,
-		.write_raw = &tsl2772_write_raw,
-		.read_event_value = &tsl2772_read_event_value,
-		.write_event_value = &tsl2772_write_event_value,
-		.read_event_config = &tsl2772_read_interrupt_config,
-		.write_event_config = &tsl2772_write_interrupt_config,
-	},
-	[ALSPRX] = {
-		.attrs = &tsl2772_device_attr_group_tbl[ALSPRX],
-		.read_raw = &tsl2772_read_raw,
-		.write_raw = &tsl2772_write_raw,
-		.read_event_value = &tsl2772_read_event_value,
-		.write_event_value = &tsl2772_write_event_value,
-		.read_event_config = &tsl2772_read_interrupt_config,
-		.write_event_config = &tsl2772_write_interrupt_config,
-	},
-	[PRX2] = {
-		.attrs = &tsl2772_device_attr_group_tbl[PRX2],
-		.read_raw = &tsl2772_read_raw,
-		.write_raw = &tsl2772_write_raw,
-		.read_event_value = &tsl2772_read_event_value,
-		.write_event_value = &tsl2772_write_event_value,
-		.read_event_config = &tsl2772_read_interrupt_config,
-		.write_event_config = &tsl2772_write_interrupt_config,
-	},
-	[ALSPRX2] = {
-		.attrs = &tsl2772_device_attr_group_tbl[ALSPRX2],
-		.read_raw = &tsl2772_read_raw,
-		.write_raw = &tsl2772_write_raw,
-		.read_event_value = &tsl2772_read_event_value,
-		.write_event_value = &tsl2772_write_event_value,
-		.read_event_config = &tsl2772_read_interrupt_config,
-		.write_event_config = &tsl2772_write_interrupt_config,
-	},
-};
-
-static const struct iio_event_spec tsl2772_events[] = {
-	{
-		.type = IIO_EV_TYPE_THRESH,
-		.dir = IIO_EV_DIR_RISING,
-		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-	}, {
-		.type = IIO_EV_TYPE_THRESH,
-		.dir = IIO_EV_DIR_FALLING,
-		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-	}, {
-		.type = IIO_EV_TYPE_THRESH,
-		.dir = IIO_EV_DIR_EITHER,
-		.mask_separate = BIT(IIO_EV_INFO_PERIOD) |
-			BIT(IIO_EV_INFO_ENABLE),
-	},
-};
-
-static const struct tsl2772_chip_info tsl2772_chip_info_tbl[] = {
-	[ALS] = {
-		.channel_with_events = {
-			{
-			.type = IIO_LIGHT,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_INT_TIME) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE) |
-				BIT(IIO_CHAN_INFO_CALIBBIAS),
-			.event_spec = tsl2772_events,
-			.num_event_specs = ARRAY_SIZE(tsl2772_events),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 1,
-			},
-		},
-		.channel_without_events = {
-			{
-			.type = IIO_LIGHT,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_INT_TIME) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE) |
-				BIT(IIO_CHAN_INFO_CALIBBIAS),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 1,
-			},
-		},
-		.chan_table_elements = 3,
-		.info = &tsl2772_device_info[ALS],
-	},
-	[PRX] = {
-		.channel_with_events = {
-			{
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			.event_spec = tsl2772_events,
-			.num_event_specs = ARRAY_SIZE(tsl2772_events),
-			},
-		},
-		.channel_without_events = {
-			{
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			},
-		},
-		.chan_table_elements = 1,
-		.info = &tsl2772_device_info[PRX],
-	},
-	[ALSPRX] = {
-		.channel_with_events = {
-			{
-			.type = IIO_LIGHT,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_INT_TIME) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE) |
-				BIT(IIO_CHAN_INFO_CALIBBIAS),
-			.event_spec = tsl2772_events,
-			.num_event_specs = ARRAY_SIZE(tsl2772_events),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 1,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			}, {
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			.event_spec = tsl2772_events,
-			.num_event_specs = ARRAY_SIZE(tsl2772_events),
-			},
-		},
-		.channel_without_events = {
-			{
-			.type = IIO_LIGHT,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_INT_TIME) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE) |
-				BIT(IIO_CHAN_INFO_CALIBBIAS),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 1,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			}, {
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			},
-		},
-		.chan_table_elements = 4,
-		.info = &tsl2772_device_info[ALSPRX],
-	},
-	[PRX2] = {
-		.channel_with_events = {
-			{
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE),
-			.event_spec = tsl2772_events,
-			.num_event_specs = ARRAY_SIZE(tsl2772_events),
-			},
-		},
-		.channel_without_events = {
-			{
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE),
-			},
-		},
-		.chan_table_elements = 1,
-		.info = &tsl2772_device_info[PRX2],
-	},
-	[ALSPRX2] = {
-		.channel_with_events = {
-			{
-			.type = IIO_LIGHT,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_INT_TIME) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE) |
-				BIT(IIO_CHAN_INFO_CALIBBIAS),
-			.event_spec = tsl2772_events,
-			.num_event_specs = ARRAY_SIZE(tsl2772_events),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 1,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			}, {
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE),
-			.event_spec = tsl2772_events,
-			.num_event_specs = ARRAY_SIZE(tsl2772_events),
-			},
-		},
-		.channel_without_events = {
-			{
-			.type = IIO_LIGHT,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_INT_TIME) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE) |
-				BIT(IIO_CHAN_INFO_CALIBBIAS),
-			}, {
-			.type = IIO_INTENSITY,
-			.indexed = 1,
-			.channel = 1,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-			}, {
-			.type = IIO_PROXIMITY,
-			.indexed = 1,
-			.channel = 0,
-			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-				BIT(IIO_CHAN_INFO_CALIBSCALE),
-			},
-		},
-		.chan_table_elements = 4,
-		.info = &tsl2772_device_info[ALSPRX2],
-	},
-};
-
-static int tsl2772_probe(struct i2c_client *clientp,
-			 const struct i2c_device_id *id)
-{
-	struct iio_dev *indio_dev;
-	struct tsl2772_chip *chip;
-	int ret;
-
-	indio_dev = devm_iio_device_alloc(&clientp->dev, sizeof(*chip));
-	if (!indio_dev)
-		return -ENOMEM;
-
-	chip = iio_priv(indio_dev);
-	chip->client = clientp;
-	i2c_set_clientdata(clientp, indio_dev);
-
-	ret = i2c_smbus_read_byte_data(chip->client,
-				       TSL2772_CMD_REG | TSL2772_CHIPID);
-	if (ret < 0)
-		return ret;
-
-	if (tsl2772_device_id_verif(ret, id->driver_data) <= 0) {
-		dev_info(&chip->client->dev,
-			 "%s: i2c device found does not match expected id\n",
-				__func__);
-		return -EINVAL;
-	}
-
-	ret = i2c_smbus_write_byte(clientp, TSL2772_CMD_REG | TSL2772_CNTRL);
-	if (ret < 0) {
-		dev_err(&clientp->dev,
-			"%s: Failed to write to CMD register: %d\n",
-			__func__, ret);
-		return ret;
-	}
-
-	mutex_init(&chip->als_mutex);
-	mutex_init(&chip->prox_mutex);
-
-	chip->tsl2772_chip_status = TSL2772_CHIP_UNKNOWN;
-	chip->pdata = dev_get_platdata(&clientp->dev);
-	chip->id = id->driver_data;
-	chip->chip_info =
-		&tsl2772_chip_info_tbl[device_channel_config[id->driver_data]];
-
-	indio_dev->info = chip->chip_info->info;
-	indio_dev->dev.parent = &clientp->dev;
-	indio_dev->modes = INDIO_DIRECT_MODE;
-	indio_dev->name = chip->client->name;
-	indio_dev->num_channels = chip->chip_info->chan_table_elements;
-
-	if (clientp->irq) {
-		indio_dev->channels = chip->chip_info->channel_with_events;
-
-		ret = devm_request_threaded_irq(&clientp->dev, clientp->irq,
-						NULL,
-						&tsl2772_event_handler,
-						IRQF_TRIGGER_FALLING |
-						IRQF_ONESHOT,
-						"TSL2772_event",
-						indio_dev);
-		if (ret) {
-			dev_err(&clientp->dev,
-				"%s: irq request failed\n", __func__);
-			return ret;
-		}
-	} else {
-		indio_dev->channels = chip->chip_info->channel_without_events;
-	}
-
-	tsl2772_defaults(chip);
-	tsl2772_chip_on(indio_dev);
-
-	ret = iio_device_register(indio_dev);
-	if (ret) {
-		dev_err(&clientp->dev,
-			"%s: iio registration failed\n", __func__);
-		return ret;
-	}
-
-	return 0;
-}
-
-static int tsl2772_suspend(struct device *dev)
-{
-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-
-	return tsl2772_chip_off(indio_dev);
-}
-
-static int tsl2772_resume(struct device *dev)
-{
-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-
-	return tsl2772_chip_on(indio_dev);
-}
-
-static int tsl2772_remove(struct i2c_client *client)
-{
-	struct iio_dev *indio_dev = i2c_get_clientdata(client);
-
-	tsl2772_chip_off(indio_dev);
-
-	iio_device_unregister(indio_dev);
-
-	return 0;
-}
-
-static const struct i2c_device_id tsl2772_idtable[] = {
-	{ "tsl2571", tsl2571 },
-	{ "tsl2671", tsl2671 },
-	{ "tmd2671", tmd2671 },
-	{ "tsl2771", tsl2771 },
-	{ "tmd2771", tmd2771 },
-	{ "tsl2572", tsl2572 },
-	{ "tsl2672", tsl2672 },
-	{ "tmd2672", tmd2672 },
-	{ "tsl2772", tsl2772 },
-	{ "tmd2772", tmd2772 },
-	{}
-};
-
-MODULE_DEVICE_TABLE(i2c, tsl2772_idtable);
-
-static const struct of_device_id tsl2772_of_match[] = {
-	{ .compatible = "amstaos,tsl2571" },
-	{ .compatible = "amstaos,tsl2671" },
-	{ .compatible = "amstaos,tmd2671" },
-	{ .compatible = "amstaos,tsl2771" },
-	{ .compatible = "amstaos,tmd2771" },
-	{ .compatible = "amstaos,tsl2572" },
-	{ .compatible = "amstaos,tsl2672" },
-	{ .compatible = "amstaos,tmd2672" },
-	{ .compatible = "amstaos,tsl2772" },
-	{ .compatible = "amstaos,tmd2772" },
-	{}
-};
-MODULE_DEVICE_TABLE(of, tsl2772_of_match);
-
-static const struct dev_pm_ops tsl2772_pm_ops = {
-	.suspend = tsl2772_suspend,
-	.resume  = tsl2772_resume,
-};
-
-static struct i2c_driver tsl2772_driver = {
-	.driver = {
-		.name = "tsl2772",
-		.of_match_table = tsl2772_of_match,
-		.pm = &tsl2772_pm_ops,
-	},
-	.id_table = tsl2772_idtable,
-	.probe = tsl2772_probe,
-	.remove = tsl2772_remove,
-};
-
-module_i2c_driver(tsl2772_driver);
-
-MODULE_AUTHOR("J. August Brenner <Jon.Brenner@ams.com>");
-MODULE_AUTHOR("Brian Masney <masneyb@onstation.org>");
-MODULE_DESCRIPTION("TAOS tsl2772 ambient and proximity light sensor driver");
-MODULE_LICENSE("GPL");
-
------------------------------------------------------------------------
-
-tsl2772.h:
-
-/* SPDX-License-Identifier: GPL-2.0+ */
-/*
- * Device driver for monitoring ambient light intensity (lux)
- * and proximity (prox) within the TAOS TSL2772 family of devices.
- *
- * Copyright (c) 2012, TAOS Corporation.
- */
-
-#ifndef __TSL2772_H
-#define __TSL2772_H
-
-struct tsl2772_lux {
-	unsigned int ch0;
-	unsigned int ch1;
-};
-
-/* Max number of segments allowable in LUX table */
-#define TSL2772_MAX_LUX_TABLE_SIZE		6
-/* The default LUX tables all have 3 elements.  */
-#define TSL2772_DEF_LUX_TABLE_SZ		3
-#define TSL2772_DEFAULT_TABLE_BYTES (sizeof(struct tsl2772_lux) * \
-				     TSL2772_DEF_LUX_TABLE_SZ)
-
-/* Proximity diode to use */
-#define TSL2772_DIODE0                  0x01
-#define TSL2772_DIODE1                  0x02
-#define TSL2772_DIODE_BOTH              0x03
-
-/* LED Power */
-#define TSL2772_100_mA                  0x00
-#define TSL2772_50_mA                   0x01
-#define TSL2772_25_mA                   0x02
-#define TSL2772_13_mA                   0x03
-
-/**
- * struct tsl2772_settings - Settings for the tsl2772 driver
- *  @als_time:              Integration time of the ALS channel ADCs in 2.73 ms
- *                          increments. Total integration time is
- *                          (256 - als_time) * 2.73.
- *  @als_gain:              Index into the tsl2772_als_gain array.
- *  @als_gain_trim:         Default gain trim to account for aperture effects.
- *  @wait_time:             Time between proximity and ALS cycles in 2.73
- *                          periods.
- *  @prox_time:             Integration time of the proximity ADC in 2.73 ms
- *                          increments. Total integration time is
- *                          (256 - prx_time) * 2.73.
- *  @prox_gain:             Index into the tsl2772_prx_gain array.
- *  @als_prox_config:       The value of the ALS / Proximity configuration
- *                          register.
- *  @als_cal_target:        Known external ALS reading for calibration.
- *  @als_persistence:       H/W Filters, Number of 'out of limits' ALS readings.
- *  @als_interrupt_en:      Enable/Disable ALS interrupts
- *  @als_thresh_low:        CH0 'low' count to trigger interrupt.
- *  @als_thresh_high:       CH0 'high' count to trigger interrupt.
- *  @prox_persistence:      H/W Filters, Number of 'out of limits' proximity
- *                          readings.
- *  @prox_interrupt_en:     Enable/Disable proximity interrupts.
- *  @prox_thres_low:        Low threshold proximity detection.
- *  @prox_thres_high:       High threshold proximity detection.
- *  @prox_pulse_count:      Number if proximity emitter pulses.
- *  @prox_max_samples_cal:  The number of samples that are taken when performing
- *                          a proximity calibration.
- *  @prox_diode             Which diode(s) to use for driving the external
- *                          LED(s) for proximity sensing.
- *  @prox_power             The amount of power to use for the external LED(s).
- */
-struct tsl2772_settings {
-	int als_time;
-	int als_gain;
-	int als_gain_trim;
-	int wait_time;
-	int prox_time;
-	int prox_gain;
-	int als_prox_config;
-	int als_cal_target;
-	u8 als_persistence;
-	bool als_interrupt_en;
-	int als_thresh_low;
-	int als_thresh_high;
-	u8 prox_persistence;
-	bool prox_interrupt_en;
-	int prox_thres_low;
-	int prox_thres_high;
-	int prox_pulse_count;
-	int prox_max_samples_cal;
-	int prox_diode;
-	int prox_power;
-};
-
-/**
- * struct tsl2772_platform_data - Platform callback, glass and defaults
- * @platform_lux_table:        Device specific glass coefficents
- * @platform_default_settings: Device specific power on defaults
- *
- */
-struct tsl2772_platform_data {
-	struct tsl2772_lux platform_lux_table[TSL2772_MAX_LUX_TABLE_SIZE];
-	struct tsl2772_settings *platform_default_settings;
-};
-
-#endif /* __TSL2772_H */
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
