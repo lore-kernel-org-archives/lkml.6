@@ -1,194 +1,327 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751563AbeEFH6e (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 03:58:34 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55918 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751209AbeEFH6b (ORCPT
+        id S1751617AbeEFH7b (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 03:59:31 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:47162 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750872AbeEFH7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 03:58:31 -0400
-X-Google-Smtp-Source: AB8JxZr/qdv9BBlxiqPFXlwaOtvIW3dJqaDzF2iRIoa9MSMMjM+tFTzHAeO2IQK5Yu3ohvZr/j9agw==
-From: Eyal Reizer <eyalreizer@gmail.com>
-X-Google-Original-From: Eyal Reizer <eyalr@ti.com>
-To: bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nsekhar@ti.com
-Cc: Eyal Reizer <eyalr@ti.com>
-Subject: [PATCH v2] ARM: dts: am437x-sk-evm: add wilink8 support
-Date: Sun,  6 May 2018 10:58:06 +0300
-Message-Id: <1525593486-13028-1-git-send-email-eyalr@ti.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 6 May 2018 03:59:30 -0400
+Date: Sun, 6 May 2018 09:59:28 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
+Subject: [GIT pull] clocksource fixes for 4.17
+Message-ID: <alpine.DEB.2.21.1805060955020.1685@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-enable mmc3 used for wlan and uart1 used for bluetooth
-configure the gpios used for wlan and bluetooth controls
-add fixed voltage regulator used for wlan power control
+Linus,
 
-Signed-off-by: Eyal Reizer <eyalr@ti.com>
----
-Changes since V1:
- - Fix wlcore node number to @2
- - Capialaize ARM in subject line.
+please pull the latest timers-urgent-for-linus git tree from:
 
- arch/arm/boot/dts/am437x-sk-evm.dts | 115 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 115 insertions(+)
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
 
-diff --git a/arch/arm/boot/dts/am437x-sk-evm.dts b/arch/arm/boot/dts/am437x-sk-evm.dts
-index 16d9db0..afffdb1 100644
---- a/arch/arm/boot/dts/am437x-sk-evm.dts
-+++ b/arch/arm/boot/dts/am437x-sk-evm.dts
-@@ -15,6 +15,7 @@
- #include <dt-bindings/pwm/pwm.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
- 
- / {
- 	model = "TI AM437x SK EVM";
-@@ -158,6 +159,22 @@
- 			};
- 		};
- 	};
-+
-+	vmmcwl_fixed: fixedregulator-mmcwl {
-+		/*
-+		 * WL_EN is not SDIO standard compliant. It is an out of band
-+		 * signal and hard to be dealt with in a standard way by the
-+		 * SDIO core driver.
-+		 * So modelling the WL_EN line as a regulator was a natural
-+		 * choice as the MMC core already deals with MMC supplies.
-+		 */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vmmcwl_fixed";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
+The recent addition of the early TSC clocksource breaks on machines which
+have an unstable TSC because in case that TSC is disabled, then the
+clocksource selection logic falls back to the early TSC which is obviously
+bogus. That also unearthed a few robustness issues in the clocksource
+derating code which are addressed as well.
+
+Thanks,
+
+	tglx
+
+------------------>
+Peter Zijlstra (6):
+      x86/tsc: Always unregister clocksource_tsc_early
+      clocksource: Allow clocksource_mark_unstable() on unregistered clocksources
+      clocksource: Initialize cs->wd_list
+      x86/tsc: Fix mark_tsc_unstable()
+      clocksource: Consistent de-rate when marking unstable
+      clocksource: Rework stale comment
+
+
+ arch/x86/kernel/tsc.c     | 22 ++++++++---------
+ kernel/time/clocksource.c | 63 +++++++++++++++++++++++++++++++++--------------
+ 2 files changed, 55 insertions(+), 30 deletions(-)
+
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 91e6da48cbb6..74392d9d51e0 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -1067,6 +1067,7 @@ static struct clocksource clocksource_tsc_early = {
+ 	.resume			= tsc_resume,
+ 	.mark_unstable		= tsc_cs_mark_unstable,
+ 	.tick_stable		= tsc_cs_tick_stable,
++	.list			= LIST_HEAD_INIT(clocksource_tsc_early.list),
  };
  
- &am43xx_pinmux {
-@@ -424,6 +441,62 @@
- 			AM4372_IOPAD(0xac4, PIN_OUTPUT | MUX_MODE0) /* usb0_drvvbus.usb0_drvvbus */
- 		>;
- 	};
-+
-+	mmc3_pins_default: pinmux_mmc3_pins_default {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9f0, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD21) cam1_data2.mmc2_clk */
-+			AM4372_IOPAD(0x9f4, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE22) cam1_data3.mmc2_cmd */
-+			AM4372_IOPAD(0x9f8, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD22) cam1_data4.mmc2_dat0 */
-+			AM4372_IOPAD(0x9fc, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE23) cam1_data5.mmc2_dat1 */
-+			AM4372_IOPAD(0xa00, PIN_INPUT_PULLUP | MUX_MODE3) /* (AD23) cam1_data6.mmc2_dat2 */
-+			AM4372_IOPAD(0xa04, PIN_INPUT_PULLUP | MUX_MODE3) /* (AE24) cam1_data7.mmc2_dat3 */
-+		>;
-+	};
-+
-+	mmc3_pins_sleep: pinmux_mmc3_pins_sleep {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9f0, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD21) cam1_data2.mmc2_clk */
-+			AM4372_IOPAD(0x9f4, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE22) cam1_data3.mmc2_cmd */
-+			AM4372_IOPAD(0x9f8, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD22) cam1_data4.mmc2_dat0 */
-+			AM4372_IOPAD(0x9fc, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE23) cam1_data5.mmc2_dat1 */
-+			AM4372_IOPAD(0xa00, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AD23) cam1_data6.mmc2_dat2 */
-+			AM4372_IOPAD(0xa04, PIN_INPUT_PULLDOWN | MUX_MODE7) /* (AE24) cam1_data7.mmc2_dat3 */
-+		>;
-+	};
-+
-+	wlan_pins_default: pinmux_wlan_pins_default {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9d0, PIN_OUTPUT_PULLDOWN | MUX_MODE7)		/* cam1_data8.gpio4_8 WL_EN */
-+			AM4372_IOPAD(0x9e4, PIN_INPUT | WAKEUP_ENABLE | MUX_MODE7)	/* cam1_wen.gpio4_13 WL_IRQ */
-+		>;
-+	};
-+
-+	wlan_pins_sleep: pinmux_wlan_pins_sleep {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x9d0, PIN_OUTPUT_PULLDOWN | MUX_MODE7)		/* cam1_data8.gpio4_8 WL_EN */
-+			AM4372_IOPAD(0x9e4, PIN_INPUT | WAKEUP_ENABLE | MUX_MODE7)	/* cam1_wen.gpio4_13 WL_IRQ */
-+		>;
-+	};
-+
-+	uart1_bt_pins_default: pinmux_uart1_bt_pins_default {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x980, PIN_INPUT | MUX_MODE0)		/* uart1_rxd.uart1_rxd */
-+			AM4372_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* uart1_txd.uart1_txd */
-+			AM4372_IOPAD(0x978, PIN_INPUT_PULLUP | MUX_MODE0)	/* uart1_ctsn.uart1_ctsn */
-+			AM4372_IOPAD(0x97c, PIN_OUTPUT_PULLDOWN | MUX_MODE0)	/* uart1_rtsn.uart1_rtsn */
-+			AM4372_IOPAD(0x9cc, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* cam1_data9.gpio4_7 BT_EN */
-+		>;
-+	};
-+
-+	uart1_bt_pins_sleep: pinmux_uart1_bt_pins_sleep {
-+		pinctrl-single,pins = <
-+			AM4372_IOPAD(0x980, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_rxd.uart1_rxd */
-+			AM4372_IOPAD(0x984, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_txd.uart1_txd */
-+			AM4372_IOPAD(0x978, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_ctsn.uart1_ctsn */
-+			AM4372_IOPAD(0x97c, PIN_OUTPUT_PULLDOWN | MUX_MODE7)	/* uart1_rtsn.uart1_rtsn */
-+			AM4372_IOPAD(0x9cc, PIN_OUTPUT_PULLUP | MUX_MODE7)	/* cam1_data9.gpio4_7 BT_EN */
-+		>;
-+	};
+ /*
+@@ -1086,6 +1087,7 @@ static struct clocksource clocksource_tsc = {
+ 	.resume			= tsc_resume,
+ 	.mark_unstable		= tsc_cs_mark_unstable,
+ 	.tick_stable		= tsc_cs_tick_stable,
++	.list			= LIST_HEAD_INIT(clocksource_tsc.list),
  };
  
- &i2c0 {
-@@ -606,6 +679,10 @@
- 	status = "okay";
- };
- 
-+&gpio4 {
-+	status = "okay";
-+};
+ void mark_tsc_unstable(char *reason)
+@@ -1098,13 +1100,9 @@ void mark_tsc_unstable(char *reason)
+ 		clear_sched_clock_stable();
+ 	disable_sched_clock_irqtime();
+ 	pr_info("Marking TSC unstable due to %s\n", reason);
+-	/* Change only the rating, when not registered */
+-	if (clocksource_tsc.mult) {
+-		clocksource_mark_unstable(&clocksource_tsc);
+-	} else {
+-		clocksource_tsc.flags |= CLOCK_SOURCE_UNSTABLE;
+-		clocksource_tsc.rating = 0;
+-	}
 +
- &gpio5 {
- 	status = "okay";
- };
-@@ -620,6 +697,44 @@
- 	cd-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- };
++	clocksource_mark_unstable(&clocksource_tsc_early);
++	clocksource_mark_unstable(&clocksource_tsc);
+ }
  
-+&uart1 {
-+	status = "okay";
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&uart1_bt_pins_default>;
-+	pinctrl-1 = <&uart1_bt_pins_sleep>;
-+};
+ EXPORT_SYMBOL_GPL(mark_tsc_unstable);
+@@ -1244,7 +1242,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 
+ 	/* Don't bother refining TSC on unstable systems */
+ 	if (tsc_unstable)
+-		return;
++		goto unreg;
+ 
+ 	/*
+ 	 * Since the work is started early in boot, we may be
+@@ -1297,11 +1295,12 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 
+ out:
+ 	if (tsc_unstable)
+-		return;
++		goto unreg;
+ 
+ 	if (boot_cpu_has(X86_FEATURE_ART))
+ 		art_related_clocksource = &clocksource_tsc;
+ 	clocksource_register_khz(&clocksource_tsc, tsc_khz);
++unreg:
+ 	clocksource_unregister(&clocksource_tsc_early);
+ }
+ 
+@@ -1311,8 +1310,8 @@ static int __init init_tsc_clocksource(void)
+ 	if (!boot_cpu_has(X86_FEATURE_TSC) || tsc_disabled > 0 || !tsc_khz)
+ 		return 0;
+ 
+-	if (check_tsc_unstable())
+-		return 0;
++	if (tsc_unstable)
++		goto unreg;
+ 
+ 	if (tsc_clocksource_reliable)
+ 		clocksource_tsc.flags &= ~CLOCK_SOURCE_MUST_VERIFY;
+@@ -1328,6 +1327,7 @@ static int __init init_tsc_clocksource(void)
+ 		if (boot_cpu_has(X86_FEATURE_ART))
+ 			art_related_clocksource = &clocksource_tsc;
+ 		clocksource_register_khz(&clocksource_tsc, tsc_khz);
++unreg:
+ 		clocksource_unregister(&clocksource_tsc_early);
+ 		return 0;
+ 	}
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 0e974cface0b..84f37420fcf5 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -119,6 +119,16 @@ static DEFINE_SPINLOCK(watchdog_lock);
+ static int watchdog_running;
+ static atomic_t watchdog_reset_pending;
+ 
++static void inline clocksource_watchdog_lock(unsigned long *flags)
++{
++	spin_lock_irqsave(&watchdog_lock, *flags);
++}
 +
-+&mmc3 {
-+	status = "okay";
++static void inline clocksource_watchdog_unlock(unsigned long *flags)
++{
++	spin_unlock_irqrestore(&watchdog_lock, *flags);
++}
++
+ static int clocksource_watchdog_kthread(void *data);
+ static void __clocksource_change_rating(struct clocksource *cs, int rating);
+ 
+@@ -142,9 +152,19 @@ static void __clocksource_unstable(struct clocksource *cs)
+ 	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
+ 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
+ 
 +	/*
-+	 * these are on the crossbar and are outlined in the
-+	 * xbar-event-map element
++	 * If the clocksource is registered clocksource_watchdog_kthread() will
++	 * re-rate and re-select.
 +	 */
-+	dmas = <&edma_xbar 30 0 1>,
-+		<&edma_xbar 31 0 2>;
-+	dma-names = "tx", "rx";
-+	vmmc-supply = <&vmmcwl_fixed>;
-+	bus-width = <4>;
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&mmc3_pins_default>;
-+	pinctrl-1 = <&mmc3_pins_sleep>;
-+	cap-power-off-card;
-+	keep-power-in-suspend;
-+	ti,non-removable;
++	if (list_empty(&cs->list)) {
++		cs->rating = 0;
++		return;
++	}
 +
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	wlcore: wlcore@2 {
-+		compatible = "ti,wl1835";
-+		pinctrl-names = "default", "sleep";
-+		pinctrl-0 = <&wlan_pins_default>;
-+		pinctrl-1 = <&wlan_pins_sleep>;
-+		reg = <2>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <13 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+};
+ 	if (cs->mark_unstable)
+ 		cs->mark_unstable(cs);
+ 
++	/* kick clocksource_watchdog_kthread() */
+ 	if (finished_booting)
+ 		schedule_work(&watchdog_work);
+ }
+@@ -153,10 +173,8 @@ static void __clocksource_unstable(struct clocksource *cs)
+  * clocksource_mark_unstable - mark clocksource unstable via watchdog
+  * @cs:		clocksource to be marked unstable
+  *
+- * This function is called instead of clocksource_change_rating from
+- * cpu hotplug code to avoid a deadlock between the clocksource mutex
+- * and the cpu hotplug mutex. It defers the update of the clocksource
+- * to the watchdog thread.
++ * This function is called by the x86 TSC code to mark clocksources as unstable;
++ * it defers demotion and re-selection to a kthread.
+  */
+ void clocksource_mark_unstable(struct clocksource *cs)
+ {
+@@ -164,7 +182,7 @@ void clocksource_mark_unstable(struct clocksource *cs)
+ 
+ 	spin_lock_irqsave(&watchdog_lock, flags);
+ 	if (!(cs->flags & CLOCK_SOURCE_UNSTABLE)) {
+-		if (list_empty(&cs->wd_list))
++		if (!list_empty(&cs->list) && list_empty(&cs->wd_list))
+ 			list_add(&cs->wd_list, &watchdog_list);
+ 		__clocksource_unstable(cs);
+ 	}
+@@ -319,9 +337,8 @@ static void clocksource_resume_watchdog(void)
+ 
+ static void clocksource_enqueue_watchdog(struct clocksource *cs)
+ {
+-	unsigned long flags;
++	INIT_LIST_HEAD(&cs->wd_list);
+ 
+-	spin_lock_irqsave(&watchdog_lock, flags);
+ 	if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
+ 		/* cs is a clocksource to be watched. */
+ 		list_add(&cs->wd_list, &watchdog_list);
+@@ -331,7 +348,6 @@ static void clocksource_enqueue_watchdog(struct clocksource *cs)
+ 		if (cs->flags & CLOCK_SOURCE_IS_CONTINUOUS)
+ 			cs->flags |= CLOCK_SOURCE_VALID_FOR_HRES;
+ 	}
+-	spin_unlock_irqrestore(&watchdog_lock, flags);
+ }
+ 
+ static void clocksource_select_watchdog(bool fallback)
+@@ -373,9 +389,6 @@ static void clocksource_select_watchdog(bool fallback)
+ 
+ static void clocksource_dequeue_watchdog(struct clocksource *cs)
+ {
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&watchdog_lock, flags);
+ 	if (cs != watchdog) {
+ 		if (cs->flags & CLOCK_SOURCE_MUST_VERIFY) {
+ 			/* cs is a watched clocksource. */
+@@ -384,21 +397,19 @@ static void clocksource_dequeue_watchdog(struct clocksource *cs)
+ 			clocksource_stop_watchdog();
+ 		}
+ 	}
+-	spin_unlock_irqrestore(&watchdog_lock, flags);
+ }
+ 
+ static int __clocksource_watchdog_kthread(void)
+ {
+ 	struct clocksource *cs, *tmp;
+ 	unsigned long flags;
+-	LIST_HEAD(unstable);
+ 	int select = 0;
+ 
+ 	spin_lock_irqsave(&watchdog_lock, flags);
+ 	list_for_each_entry_safe(cs, tmp, &watchdog_list, wd_list) {
+ 		if (cs->flags & CLOCK_SOURCE_UNSTABLE) {
+ 			list_del_init(&cs->wd_list);
+-			list_add(&cs->wd_list, &unstable);
++			__clocksource_change_rating(cs, 0);
+ 			select = 1;
+ 		}
+ 		if (cs->flags & CLOCK_SOURCE_RESELECT) {
+@@ -410,11 +421,6 @@ static int __clocksource_watchdog_kthread(void)
+ 	clocksource_stop_watchdog();
+ 	spin_unlock_irqrestore(&watchdog_lock, flags);
+ 
+-	/* Needs to be done outside of watchdog lock */
+-	list_for_each_entry_safe(cs, tmp, &unstable, wd_list) {
+-		list_del_init(&cs->wd_list);
+-		__clocksource_change_rating(cs, 0);
+-	}
+ 	return select;
+ }
+ 
+@@ -447,6 +453,9 @@ static inline int __clocksource_watchdog_kthread(void) { return 0; }
+ static bool clocksource_is_watchdog(struct clocksource *cs) { return false; }
+ void clocksource_mark_unstable(struct clocksource *cs) { }
+ 
++static void inline clocksource_watchdog_lock(unsigned long *flags) { }
++static void inline clocksource_watchdog_unlock(unsigned long *flags) { }
 +
- &usb2_phy1 {
- 	status = "okay";
- };
--- 
-2.7.4
+ #endif /* CONFIG_CLOCKSOURCE_WATCHDOG */
+ 
+ /**
+@@ -779,14 +788,19 @@ EXPORT_SYMBOL_GPL(__clocksource_update_freq_scale);
+  */
+ int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+ {
++	unsigned long flags;
+ 
+ 	/* Initialize mult/shift and max_idle_ns */
+ 	__clocksource_update_freq_scale(cs, scale, freq);
+ 
+ 	/* Add clocksource to the clocksource list */
+ 	mutex_lock(&clocksource_mutex);
++
++	clocksource_watchdog_lock(&flags);
+ 	clocksource_enqueue(cs);
+ 	clocksource_enqueue_watchdog(cs);
++	clocksource_watchdog_unlock(&flags);
++
+ 	clocksource_select();
+ 	clocksource_select_watchdog(false);
+ 	mutex_unlock(&clocksource_mutex);
+@@ -808,8 +822,13 @@ static void __clocksource_change_rating(struct clocksource *cs, int rating)
+  */
+ void clocksource_change_rating(struct clocksource *cs, int rating)
+ {
++	unsigned long flags;
++
+ 	mutex_lock(&clocksource_mutex);
++	clocksource_watchdog_lock(&flags);
+ 	__clocksource_change_rating(cs, rating);
++	clocksource_watchdog_unlock(&flags);
++
+ 	clocksource_select();
+ 	clocksource_select_watchdog(false);
+ 	mutex_unlock(&clocksource_mutex);
+@@ -821,6 +840,8 @@ EXPORT_SYMBOL(clocksource_change_rating);
+  */
+ static int clocksource_unbind(struct clocksource *cs)
+ {
++	unsigned long flags;
++
+ 	if (clocksource_is_watchdog(cs)) {
+ 		/* Select and try to install a replacement watchdog. */
+ 		clocksource_select_watchdog(true);
+@@ -834,8 +855,12 @@ static int clocksource_unbind(struct clocksource *cs)
+ 		if (curr_clocksource == cs)
+ 			return -EBUSY;
+ 	}
++
++	clocksource_watchdog_lock(&flags);
+ 	clocksource_dequeue_watchdog(cs);
+ 	list_del_init(&cs->list);
++	clocksource_watchdog_unlock(&flags);
++
+ 	return 0;
+ }
+ 
