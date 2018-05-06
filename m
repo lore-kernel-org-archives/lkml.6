@@ -1,70 +1,166 @@
-Return-Path: <caizhiyong@hisilicon.com>
-X-Google-Smtp-Source: AB8JxZrxfR0vvG9soKcIFbZTFqzn1ztq0q4W6mhBN4YCNdKVOHlB/iHFfpC0bi/4HUvvGstQqWr1
-ARC-Seal: i=1; a=rsa-sha256; t=1525660260; cv=none;
+Return-Path: <rdunlap@infradead.org>
+X-Google-Smtp-Source: AB8JxZrFdxICZDu9wo5+H170xbWeHWeKLYiwYHg8CPad9Kp3zn0rWwywR1LKUkio4dYnUyYTBdu+
+ARC-Seal: i=1; a=rsa-sha256; t=1525627217; cv=none;
         d=google.com; s=arc-20160816;
-        b=JBOBLM2eQ1I9l3bcL+hsSCQn4qBun/XWD8Dtnla8OkusWkNY8+UTtOFJ0tdHuo1LAS
-         YwfG/DwsYmOjt6O8MU3xwrhKtP2NsTo6cV5n6+RtQOdH3f2bJEG7O+p1kGZQ/KnT2snF
-         sbbEvRsBKD+XtSZq2drCP8Go3+FvsXpwGCc2LS+eXzyhrWoyFz6HPe3VLVVUw7gqfGkE
-         UQ3F3mjUJ2BBnWagMrZRZCmypWPT0n3C6NUolLKxfHjB5XsWQFkubpsUb4YbydtTlz6h
-         EP/ViFthCLGR4QxRqAON/8hPHx/nRritGTodXNEZQ4OO2UowGwe9EjjPMQ808A/hMHMf
-         bxWw==
+        b=EzCXVSyZf71SNBf0RVINrEIK0XfizFnDj7a4u9v+s20mi7glg+eXe+fiRvIpEtPh6J
+         mmKBCmfAxPTa2duQdCAZUm+xHa8KLNaqVzZL8y/E/jblbKZRRoiaKfJYLA97zPrm8/El
+         XMxm2GFP0tEsrYphrpwvi2+ephmhpHco+/SCINX5rv8Yc4YJVnq1UGPtpAAbzyxzE3yN
+         tYwG0fhYljT0okjSC2hPHMGaIKobp5afKtGSNOsn3WC/jK5NZMBQ+Q7w0hMGKM2m6mtI
+         KqRWFHH+TfejvepAnOE5MmTKcbi9HrBDCm2Y4XU0KjJRvQ3uC6r63OQgVfrstKI852k+
+         vPFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=sV8RTe1y4rJTs/xm8GhebWVACedQfUOyvAON/nCx+/Y=;
-        b=y1wgJz7UmcUKgoRx4YVAegmcV0QHTvdv6Buu/bgF5SosJm2t8ME/4lSuEBUyZI2hJk
-         INjE9StvEezUOD8bq9cxtvwYgssac6QePq533uJ+ZKlLvzL/2LaSF2WydGkSTRcmW8Nm
-         CX2SEm6DhOpNsY0ZHJMOWaI87uxQuwX59AVyKSig6TcXr/0nVaFXWieHGoXo9CPiYqJb
-         Ip5ag9NHGXcNxV6ckxG34pkAyQXjOeTRVi51EOlASYXofrXPSpTimQWew5BMTB2jSEcU
-         THHACokzTX13iLHgCo5Yc89za68dO0IwU6lidCtS3dmD06UB+oMM0IhBhXVpuz0M5MYs
-         Rs+A==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:to:subject
+         :dkim-signature:arc-authentication-results;
+        bh=UAozudyOsQcTG9uhjKg1MvoBvE+/LxHExRDi37I2ALc=;
+        b=s7/PgrV+OcfrOFnnHquZThyUyionNgNMnaAZGquf6b6LayJATaOKdEBMaFYt3zEGhb
+         DBhKZE5tz3s48hLjgJQkDGcxbEA1xYK6saJet+/O6a8GNjllQiVeCSiXU3xONUfUitWu
+         IByiE+MiouIt2LTBD3Mt37aeko2YiFcx9EC3Q29PT7KOnEn59cOg3j5yIz4MvHL6T1Q3
+         ZaDuPaff0Dt0EqKDWd0/NoajtWuIBE/8Slexy60IACap6XGMuxECfovexVqdPVnicLmV
+         E4pbCejOr7xGIcDVV2DkmbBi7xs9uIxoOhzTo3xsXZbn8c501ZIkjl9v6doB/cPP4vNt
+         hLmg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of caizhiyong@hisilicon.com designates 45.249.212.189 as permitted sender) smtp.mailfrom=caizhiyong@hisilicon.com
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=ELpjm647;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of caizhiyong@hisilicon.com designates 45.249.212.189 as permitted sender) smtp.mailfrom=caizhiyong@hisilicon.com
-From: Caizhiyong <caizhiyong@hisilicon.com>
-To: Wang YanQing <udknight@gmail.com>, "axboe@kernel.dk" <axboe@kernel.dk>
-CC: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"pombredanne@nexb.com" <pombredanne@nexb.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "linux-block@vger.kernel.org"
-	<linux-block@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Jiangheng <jiangheng@hisilicon.com>
-Subject: RE: [PATCH v3] block: add verifier for cmdline partition
-Thread-Topic: [PATCH v3] block: add verifier for cmdline partition
-Thread-Index: AQHT5PqY+KKQKUgW/0aJEG996SsL+qQjiy9A
-Date: Mon, 7 May 2018 02:30:47 +0000
-Message-ID: <C3050A4DBA34F345975765E43127F10F8B7720E8@dggemm511-mbs.china.huawei.com>
+       dkim=pass header.i=@infradead.org header.s=merlin.20170209 header.b=ELpjm647;
+       spf=pass (google.com: best guess record for domain of rdunlap@infradead.org designates 2001:8b0:10b:1231::1 as permitted sender) smtp.mailfrom=rdunlap@infradead.org
+Subject: Re: [PATCH v3] block: add verifier for cmdline partition
+To: Wang YanQing <udknight@gmail.com>, axboe@kernel.dk,
+ gregkh@linuxfoundation.org, pombredanne@nexb.com, tglx@linutronix.de,
+ caizhiyong@hisilicon.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 References: <20180506052356.GA11163@udknight>
-In-Reply-To: <20180506052356.GA11163@udknight>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.67.217.112]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <cdc6b40d-4bc7-797b-facb-dd2b1552ff49@infradead.org>
+Date: Sun, 6 May 2018 10:20:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180506052356.GA11163@udknight>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599689092526143942?=
-X-GMAIL-MSGID: =?utf-8?q?1599770732878513601?=
+X-GMAIL-MSGID: =?utf-8?q?1599736083493401247?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Hi,
+
+On 05/05/2018 10:23 PM, Wang YanQing wrote:
+> I meet strange filesystem corruption issue recently, the reason
+> is there are overlaps partitions in cmdline partition argument.
+> 
+> This patch add verifier for cmdline partition, then if there are
+> overlaps partitions, cmdline_partition will log a warning.
+> 
+> Signed-off-by: Wang YanQing <udknight@gmail.com>
+> ---
+>  Changes
+>  v2-v3:
+>  1:Fix log one pair of overlaps partitions twice in cmdline_parts_verifier.
+>  2:Fix out of bound access in cmdline_parts_verifier.
+> 
+>  v1-v2:
+>  1:Don't treat overlaps partition as a error, but log a warning.
+> 
+>  block/partitions/cmdline.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+> 
+> diff --git a/block/partitions/cmdline.c b/block/partitions/cmdline.c
+> index e333583..fefcc72 100644
+> --- a/block/partitions/cmdline.c
+> +++ b/block/partitions/cmdline.c
+> @@ -58,6 +58,71 @@ static int __init cmdline_parts_setup(char *s)
+>  }
+>  __setup("blkdevparts=", cmdline_parts_setup);
+>  
+> +static bool has_overlaps(sector_t from, sector_t size,
+> +			 sector_t from2, sector_t size2)
+> +{
+> +	sector_t end = from + size;
+> +	sector_t end2 = from2 + size2;
+> +
+> +	if (from >= from2 && from < end2)
+> +		return true;
+> +
+> +	if (end > from2 && end <= end2)
+> +		return true;
+> +
+> +	if (from2 >= from && from2 < end)
+> +		return true;
+> +
+> +	if (end2 > from && end2 <= end)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +static inline void overlaps_warns_header(void)
+> +{
+> +	pr_warn("\n");
+> +	pr_warn("Overlaps partitions being used in command line partition.\n");
+
+	        "Overlapping partitions are used in the command line partitions.\n"
+
+> +	pr_warn("Don't use filesystems on overlaps partitions:\n");
+
+	        "Don't use filesystems on overlapping partitions:\n"
+
+> +}
+> +
+> +static inline void overlaps_warns_tailer(void)
+> +{
+> +	pr_warn("\n");
+> +}
+> +
+> +static void cmdline_parts_verifier(int slot, struct parsed_partitions *state)
+> +{
+> +	int i;
+> +	bool header = true;
+> +
+> +	for (; slot < state->limit && state->parts[slot].has_info; slot++) {
+> +		for (i = slot+1; i < state->limit && state->parts[i].has_info;
+> +		     i++) {
+> +			if (has_overlaps(state->parts[slot].from,
+> +					 state->parts[slot].size,
+> +					 state->parts[i].from,
+> +					 state->parts[i].size)) {
+> +				if (header) {
+> +					header = false;
+> +					overlaps_warns_header();
+> +				}
+> +				pr_warn("%s[%llu,%llu] overlaps with "
+> +					"%s[%llu,%llu].\n",
+> +					state->parts[slot].info.volname,
+> +					(u64)state->parts[slot].from << 9,
+> +					(u64)state->parts[slot].size << 9,
+> +					state->parts[i].info.volname,
+> +					(u64)state->parts[i].from << 9,
+> +					(u64)state->parts[i].size << 9);
+> +			}
+> +		}
+> +	}
+> +
+> +	if (!header)
+> +		overlaps_warns_tailer();
+> +}
+> +
 >  /*
 >   * Purpose: allocate cmdline partitions.
 >   * Returns:
 > @@ -93,6 +158,7 @@ int cmdline_partition(struct parsed_partitions *state)
->  	disk_size =3D get_capacity(state->bdev->bd_disk) << 9;
->=20
+>  	disk_size = get_capacity(state->bdev->bd_disk) << 9;
+>  
 >  	cmdline_parts_set(parts, disk_size, 1, add_part, (void *)state);
 > +	cmdline_parts_verifier(1, (void *)state);
-
-cmdline_parts_verifier(1, state);=20
-
->=20
+>  
 >  	strlcat(state->pp_buf, "\n", PAGE_SIZE);
->=20
-> --
-> 1.8.5.6.2.g3d8a54e.dirty
+>  
+> 
+
+
+-- 
+~Randy
