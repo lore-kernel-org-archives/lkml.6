@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751955AbeEFTUa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 15:20:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38552 "EHLO mail.kernel.org"
+        id S1752013AbeEFTUw (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 15:20:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751938AbeEFTUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 15:20:25 -0400
+        id S1751825AbeEFTUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 15:20:45 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -24,9 +24,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 3/9] sh: Split breakpoint validation into "check" and "commit"
-Date: Sun,  6 May 2018 21:19:49 +0200
-Message-Id: <1525634395-23380-4-git-send-email-frederic@kernel.org>
+Subject: [PATCH 7/9] powerpc: Split breakpoint validation into "check" and "commit"
+Date: Sun,  6 May 2018 21:19:53 +0200
+Message-Id: <1525634395-23380-8-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525634395-23380-1-git-send-email-frederic@kernel.org>
 References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
@@ -62,140 +62,119 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 ---
- arch/sh/kernel/hw_breakpoint.c | 89 ++++++++++++++++++++++++------------------
- 1 file changed, 50 insertions(+), 39 deletions(-)
+ arch/powerpc/kernel/hw_breakpoint.c | 82 ++++++++++++++++++++++++-------------
+ 1 file changed, 53 insertions(+), 29 deletions(-)
 
-diff --git a/arch/sh/kernel/hw_breakpoint.c b/arch/sh/kernel/hw_breakpoint.c
-index 286c3ab..c89152f 100644
---- a/arch/sh/kernel/hw_breakpoint.c
-+++ b/arch/sh/kernel/hw_breakpoint.c
-@@ -174,14 +174,53 @@ int arch_bp_generic_fields(int sh_len, int sh_type,
+diff --git a/arch/powerpc/kernel/hw_breakpoint.c b/arch/powerpc/kernel/hw_breakpoint.c
+index 4c1012b..c39fc86 100644
+--- a/arch/powerpc/kernel/hw_breakpoint.c
++++ b/arch/powerpc/kernel/hw_breakpoint.c
+@@ -138,33 +138,20 @@ int arch_bp_generic_fields(int type, int *gen_bp_type)
  	return 0;
  }
  
--static int arch_build_bp_info(struct perf_event *bp)
+-/*
+- * Validate the arch-specific HW Breakpoint register settings
+- */
+-int arch_validate_hwbkpt_settings(struct perf_event *bp)
 +static int hw_breakpoint_arch_check(struct perf_event *bp,
 +				    const struct perf_event_attr *attr)
-+{
-+	unsigned int align;
-+
-+	/* Check type */
-+	switch (attr->bp_type) {
-+	case HW_BREAKPOINT_W:
-+	case HW_BREAKPOINT_R:
-+	case HW_BREAKPOINT_W | HW_BREAKPOINT_R:
-+		break;
-+	default:
+ {
+-	int ret = -EINVAL, length_max;
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
++	int length_max;
+ 
+ 	if (!bp)
+-		return ret;
 +		return -EINVAL;
-+	}
-+
-+	/* Check len */
-+	switch (attr->bp_len) {
-+	case HW_BREAKPOINT_LEN_1:
-+	case HW_BREAKPOINT_LEN_2:
-+	case HW_BREAKPOINT_LEN_4:
-+	case HW_BREAKPOINT_LEN_8:
-+		break;
-+	default:
+ 
+-	info->type = HW_BRK_TYPE_TRANSLATE;
+-	if (bp->attr.bp_type & HW_BREAKPOINT_R)
+-		info->type |= HW_BRK_TYPE_READ;
+-	if (bp->attr.bp_type & HW_BREAKPOINT_W)
+-		info->type |= HW_BRK_TYPE_WRITE;
+-	if (info->type == HW_BRK_TYPE_TRANSLATE)
+-		/* must set alteast read or write */
+-		return ret;
+-	if (!(bp->attr.exclude_user))
+-		info->type |= HW_BRK_TYPE_USER;
+-	if (!(bp->attr.exclude_kernel))
+-		info->type |= HW_BRK_TYPE_KERNEL;
+-	if (!(bp->attr.exclude_hv))
+-		info->type |= HW_BRK_TYPE_HYP;
+-	info->address = bp->attr.bp_addr;
+-	info->len = bp->attr.bp_len;
++	/* Must set at least read or write */
++	if (!(attr->bp_type & (HW_BREAKPOINT_R | HW_BREAKPOINT_W)))
 +		return -EINVAL;
-+	}
 +
-+	align = attr->bp_len - 1;
-+
-+	/*
-+	 * Check that the low-order bits of the address are appropriate
-+	 * for the alignment implied by len.
-+	 */
-+	if (attr->bp_addr & align)
-+		return -EINVAL;
++	if (!ppc_breakpoint_available())
++		return -ENODEV;
+ 
+ 	/*
+ 	 * Since breakpoint length can be a maximum of HW_BREAKPOINT_LEN(8)
+@@ -172,19 +159,56 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+ 	 * HW_BREAKPOINT_ALIGN by rounding off to the lower address, the
+ 	 * 'symbolsize' should satisfy the check below.
+ 	 */
+-	if (!ppc_breakpoint_available())
+-		return -ENODEV;
+ 	length_max = 8; /* DABR */
+ 	if (cpu_has_feature(CPU_FTR_DAWR)) {
+ 		length_max = 512 ; /* 64 doublewords */
+ 		/* DAWR region can't cross 512 boundary */
+-		if ((bp->attr.bp_addr >> 10) != 
+-		    ((bp->attr.bp_addr + bp->attr.bp_len - 1) >> 10))
++		if ((attr->bp_addr >> 10) !=
++		    ((attr->bp_addr + attr->bp_len - 1) >> 10))
+ 			return -EINVAL;
+ 	}
+-	if (info->len >
+-	    (length_max - (info->address & HW_BREAKPOINT_ALIGN)))
++	if (attr->bp_len >
++	    (length_max - (attr->bp_addr & HW_BREAKPOINT_ALIGN)))
+ 		return -EINVAL;
 +
 +	return 0;
 +}
 +
 +static void hw_breakpoint_arch_commit(struct perf_event *bp)
- {
- 	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
++{
++	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 +	struct perf_event_attr *attr = &bp->attr;
- 
--	info->address = bp->attr.bp_addr;
++
++	info->type = HW_BRK_TYPE_TRANSLATE;
++	if (attr->bp_type & HW_BREAKPOINT_R)
++		info->type |= HW_BRK_TYPE_READ;
++	if (attr->bp_type & HW_BREAKPOINT_W)
++		info->type |= HW_BRK_TYPE_WRITE;
++
++	if (!attr->exclude_user)
++		info->type |= HW_BRK_TYPE_USER;
++	if (!attr->exclude_kernel)
++		info->type |= HW_BRK_TYPE_KERNEL;
++	if (!attr->exclude_hv)
++		info->type |= HW_BRK_TYPE_HYP;
++
 +	info->address = attr->bp_addr;
- 
- 	/* Len */
--	switch (bp->attr.bp_len) {
-+	switch (attr->bp_len) {
- 	case HW_BREAKPOINT_LEN_1:
- 		info->len = SH_BREAKPOINT_LEN_1;
- 		break;
-@@ -195,11 +234,11 @@ static int arch_build_bp_info(struct perf_event *bp)
- 		info->len = SH_BREAKPOINT_LEN_8;
- 		break;
- 	default:
--		return -EINVAL;
-+		WARN_ON_ONCE(1);
- 	}
- 
- 	/* Type */
--	switch (bp->attr.bp_type) {
-+	switch (attr->bp_type) {
- 	case HW_BREAKPOINT_R:
- 		info->type = SH_BREAKPOINT_READ;
- 		break;
-@@ -210,10 +249,8 @@ static int arch_build_bp_info(struct perf_event *bp)
- 		info->type = SH_BREAKPOINT_RW;
- 		break;
- 	default:
--		return -EINVAL;
-+		WARN_ON_ONCE(1);
- 	}
--
--	return 0;
- }
- 
- /*
-@@ -221,39 +258,13 @@ static int arch_build_bp_info(struct perf_event *bp)
-  */
- int arch_validate_hwbkpt_settings(struct perf_event *bp)
- {
--	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
--	unsigned int align;
--	int ret;
++	info->len = attr->bp_len;
++}
++
++/*
++ * Validate the arch-specific HW Breakpoint register settings
++ */
++int arch_validate_hwbkpt_settings(struct perf_event *bp)
++{
 +	int err;
- 
--	ret = arch_build_bp_info(bp);
--	if (ret)
--		return ret;
++
 +	err = hw_breakpoint_arch_check(bp, &bp->attr);
 +	if (err)
 +		return err;
- 
--	ret = -EINVAL;
--
--	switch (info->len) {
--	case SH_BREAKPOINT_LEN_1:
--		align = 0;
--		break;
--	case SH_BREAKPOINT_LEN_2:
--		align = 1;
--		break;
--	case SH_BREAKPOINT_LEN_4:
--		align = 3;
--		break;
--	case SH_BREAKPOINT_LEN_8:
--		align = 7;
--		break;
--	default:
--		return ret;
--	}
--
--	/*
--	 * Check that the low-order bits of the address are appropriate
--	 * for the alignment implied by len.
--	 */
--	if (info->address & align)
--		return -EINVAL;
++
 +	hw_breakpoint_arch_commit(bp);
- 
++
  	return 0;
  }
+ 
 -- 
 2.7.4
