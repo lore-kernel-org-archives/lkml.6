@@ -1,77 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751509AbeEFJ4j (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 05:56:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58438 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751123AbeEFJ4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 05:56:38 -0400
-Date: Sun, 6 May 2018 11:56:35 +0200
-From: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for Linux 4.17-rc4
-Message-ID: <20180506095634.GA29747@flask>
+        id S1751563AbeEFKKo (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 06:10:44 -0400
+Received: from mondschein.lichtvoll.de ([194.150.191.11]:45643 "EHLO
+        mail.lichtvoll.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751200AbeEFKKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 06:10:43 -0400
+Authentication-Results: auth=pass smtp.auth=martin smtp.mailfrom=martin@lichtvoll.de
+From: Martin Steigerwald <martin@lichtvoll.de>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: jdow <jdow@earthlink.net>, Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matthew Wilcox <willy@infradead.org>, David Sterba <dsterba@suse.cz>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-m68k <linux-m68k@vger.kernel.org>
+Subject: Re: moving affs + RDB partition support to staging?
+Date: Sun, 06 May 2018 12:10:40 +0200
+Message-ID: <1580998.mIZvI3OA13@merkaba>
+In-Reply-To: <f8a044e8-01b0-7008-49ac-7e9c5ce7defd@physik.fu-berlin.de>
+References: <20180425154602.GA8546@bombadil.infradead.org> <7a997bb7-7f1c-e8b4-667c-3993f1d82e7c@earthlink.net> <f8a044e8-01b0-7008-49ac-7e9c5ce7defd@physik.fu-berlin.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+John Paul Adrian Glaubitz - 06.05.18, 10:52:
+> On 04/27/2018 03:26 AM, jdow wrote:
+> > And before I forget there are two features of the RDBs that I
+> > heartily recommend never implementing on Linux. They were good
+> > ideas at the time; but, times changed. The RDBs are capable of
+> > storing a filesystem driver and some drive init code for the plugin
+> > disk driver card. That is giving malware authors entirely goo easy
+> > a shot at owning a machine. Martin S., I would strongly suggest
+> > that going forward those two capabilities be removed from the RDB
+> > readers in AmigaOS as well as Linux OS.
+> 
+> I assume removing the feature for AmigaOS isn't really possible since
+> we don't have the source code for that, do we?
 
-The following changes since commit 6da6c0db5316275015e8cc2959f12a17584aeb64:
+AmigaOS 4.x does not support loading filesystems from RDB anymore as far 
+as I know. Meanwhile I am not involved with the AmigaOS development 
+anymore, but that is the last state I know. Similarily to Linux 
+filesystems drivers are loaded as "modules" into the kernel. Its also 
+still possible to load a filesystem as a file from disk, but that does 
+not work for the filesystem the kernel boots from. The AmigaOS kernel 
+still decides which of the kernel filesystem to use according to the 
+DOSType of the partition.
 
-  Linux v4.17-rc3 (2018-04-29 14:17:42 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/virt/kvm/kvm tags/for-linus
-
-for you to fetch changes up to ecf08dad723d3e000aecff6c396f54772d124733:
-
-  KVM: x86: remove APIC Timer periodic/oneshot spikes (2018-05-05 23:09:39 +0200)
-
-----------------------------------------------------------------
-KVM fixes for v4.17-rc4
-
-ARM:
- - Fix proxying of GICv2 CPU interface accesses
- - Fix crash when switching to BE
- - Track source vcpu git GICv2 SGIs
- - Fix an outdated bit of documentation
-
-x86:
- - Speed up injection of expired timers (for stable)
-
-----------------------------------------------------------------
-Anthoine Bourgeois (1):
-      KVM: x86: remove APIC Timer periodic/oneshot spikes
-
-James Morse (2):
-      KVM: arm64: Fix order of vcpu_write_sys_reg() arguments
-      arm64: vgic-v2: Fix proxying of cpuif access
-
-Marc Zyngier (1):
-      KVM: arm/arm64: vgic: Fix source vcpu issues for GICv2 SGI
-
-Radim Krčmář (1):
-      Merge tag 'kvmarm-fixes-for-4.17-2' of git://git.kernel.org/.../kvmarm/kvmarm
-
-Valentin Schneider (1):
-      KVM: arm/arm64: vgic_init: Cleanup reference to process_maintenance
-
- arch/arm64/include/asm/kvm_emulate.h     |  2 +-
- arch/arm64/kvm/hyp/vgic-v2-cpuif-proxy.c | 24 ++++++++++++----
- arch/x86/kvm/lapic.c                     | 37 +++++++++++++-----------
- include/kvm/arm_vgic.h                   |  1 +
- virt/kvm/arm/vgic/vgic-init.c            |  2 +-
- virt/kvm/arm/vgic/vgic-mmio.c            | 10 +++++--
- virt/kvm/arm/vgic/vgic-v2.c              | 38 ++++++++++++++-----------
- virt/kvm/arm/vgic/vgic-v3.c              | 49 +++++++++++++++++++-------------
- virt/kvm/arm/vgic/vgic.c                 | 30 +++++--------------
- virt/kvm/arm/vgic/vgic.h                 | 14 +++++++++
- 10 files changed, 122 insertions(+), 85 deletions(-)
+Thanks,
+-- 
+Martin
