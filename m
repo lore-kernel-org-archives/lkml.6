@@ -1,99 +1,98 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2513336-1525352584-2-8711951129861859484
+X-Cyrus-Session-Id: sloti22d1t05-2878077-1525589463-5-5933558591376761272
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
+  HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
   SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525352583; b=iEu2Kys9kS8N5fJz6X0S/FYa3f8x4XcOCvNBtmwXnkSZD75Trq
-    DBBuGNw3RwHDbBgqtrfbOrUMod8ByntYIZFZVZc5upS62MHJeLMAwFm/yHxNYNlS
-    qTlFCa8BEsE+34yt3Rk6Dv/3HrDpEwcfzFoY/SNKWWh4zMOZQ8O4cHXqUV1jh7hr
-    xH2MTCt3DAUDwiVRt3x34KYuyMiN7oRQYCNqW/MaVc1mCWYCLndhql8uSK+rwaFP
-    IG3RDTqcpZmk/BkayPL0J9tBGJ1U+LI/5RrElBeQk8lCqr7/8znJT//gepFOC7+E
-    OQxel7fx/UPlEM5BPDcOEx/CT0aniMiNZxqA==
+    1525589463; b=IC8LozTO8exL1tuKD3FVYTxNgkKgpiuulVlDvo/DAvQuwY8Bi3
+    i70h/jwZ0HufArqvP1p1Y/v7amGfj29JEgZdZBt9XZhBFNlY5fb7TnFCcZ9sKgP0
+    e+iw01pPYfSh8535agTTp7gLJWDkyV8OCcenRiIz46GGtsPFwBKDGe0D6tSnwyN/
+    dtqJEZiwyKwSyWXqsiPus0/Hgg16qKH7WQ7v0rgpkadNWTOFPqjeZxGDPQRR7Cjp
+    Jlg/FacXewzntASChD86mQqNho3rwP3/3DUA4eIwbGBwYfxCJ18XLNmCJzWJizjR
+    NUj3hlDE4gsIqKSIVWMkKsylEEmM4Ogvrvqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525352583; bh=J4ZdO
-    sU09laWwBlvCDsQ8Y5QdEvSLPGWGfa/JMSCvb8=; b=MptnLMgu0CC4o7UUtmX8N
-    85WcYa/8+gbZ0Nx4WvnvlrxoZK7y/E46VnrKMeV4NJuawvvk56rOBa8dCLMgWvMZ
-    F/zuYkCPtdP1+vUJ+EqHuQVMG2Btv/L6TqgkENr4R9fEtpRiROdho1Bhrxl8hfL6
-    i4Jga4O0WmYUdxB1dd5WA8BhUqr1MD3XIwdXlG9WDCMHcFQdtlxLWX1rRMW07Z+e
-    D3FqOH8ZropCzn59WMYm+8M1gpfcoHpMVSpIxGNNj2ScmDLEdfXQbobwUrPgcqNm
-    OPmdWmwCGn8KE68aPsieSZY7KtyuGAN7F1VBAWJ3s6xWtV6EW2wjy43uWQxW3Ftc
-    w==
-ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    messagingengine.com; h=from:to:subject:date:message-id
+    :mime-version:list-id:list-unsubscribe:list-archive:list-post
+    :list-help:list-subscribe:cc:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525589463; bh=4utt0
+    lzmgg/jC0ZlhAhEief/1QuQkwx3s/E7HjSeCP8=; b=Dige457o2HtMg8v6O5imt
+    HsCZtJLRQVhtveS3+aCcaVQ0f/shpFx4xrj3Y8VqEXb3uK3YLNfFDcreu/hA3zWi
+    YkUksnZINhaFYqkByr3XOQZ2RJ6Tw5nVMBXE3LUv8Th6hL1j4S1sjmL0vayYrYTz
+    jvUZ/WJdoICdvxlXFxNfSZk4DuZEEjmH9C6HXi95+RH6McgNn2VOhkrp3y2oZxOs
+    Pc2y5GrJAZ2M5fioHG8NPWcvtbTw/VJnVl3WhBF0D0pUmHP2k7shLSEgUk+4SUcx
+    a32Yn5wpIiy9p1ts7seS4druCWg6I+F5YgSbF0nefa+ocGzfQNYxiGFG4NaUm1UQ
+    g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=8bytes.org header.i=@8bytes.org header.b=YkpuKBCX x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=mail-1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=8bytes.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    header.d=gmail.com header.i=@gmail.com header.b=SGKkL+/G x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=pzxlp78W;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=8bytes.org header.result=pass
+    smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
     header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
     bits=128/128;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx1.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=8bytes.org header.i=@8bytes.org header.b=YkpuKBCX x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=mail-1;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=8bytes.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+      header.d=gmail.com header.i=@gmail.com header.b=SGKkL+/G x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+      smtp.helo=hemlock.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=pzxlp78W;
+    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=8bytes.org header.result=pass
+      smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
       header_is_org_domain=yes;
     x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfAIe7p+dyo750oenJwHeNSbovMadvqvoE3MHX8MRqxkYYkWZOPaC/mBjT8V8ZfzcPH2BTkn8kw6FXj47fUAeOkAINdQsnqe8t6kSehqVVLuwZKxJa7K+
-    oIlUMtavmeS09XBKduMIdYvSVbpzhCq1Q8fcPIVBI4D922+fK8zQ9t8eJDaiGMYnr5nydsTb3B3foNoqFLh3mr/7deTZMwWEbWmf/LVttFExj2SHst7VtIev
-    JSppRZ7DwDSPB8i7NtbWmw==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tBb2bbeoAAAA:8 a=VwQbUJbxAAAA:8
-    a=7CQSdrXTAAAA:8 a=DDOyTI_5AAAA:8 a=CKI3KOnNTA-zpUAOr0UA:9 a=CjuIK1q_8ugA:10
-    a=Oj-tNtZlA1e06AYgeCfH:22 a=AjGcO6oz07-iQ99wixmX:22 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-CM-Envelope: MS4wfO8r9HQicPcfVJh+1msjUKgD/7/i2gQu8bsnOppjyQehjZooxp1PDwZZPKwKWLrUsbKHamcDKKexTftwolRi3U4GOTOp1cNbjeJyL32NDovOY71AGpNm
+    o/yvbzBBY+f3IHRU+yoopglQXMvbmpMbrfaELoAp+JKve9psq6LFE06DbkkXZhvzcp995SbAL9bwT72e6mHV/lKp+l1GDChi6hs3gxK+w4fA9J99U/GFBlA2
+    xCbYvpt5CQu0f98pOJTpMQ==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
+    a=kIo7DnY5WRu98hpln7do/g==:17 a=TpujumX0jH7REod0KhDaHZOp9kI=:19
+    a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10 a=vY_346TuTMEA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8
+    a=DDOyTI_5AAAA:8 a=2ZfT-T1qzbMdvYaZ0scA:9 a=QEXdDO2ut3YA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Thu, 3 May 2018 15:02:44 +0200
-From: Joerg Roedel <joro@8bytes.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 09/20] iommu: Remove depends on HAS_DMA in case of
- platform dependency
-Message-ID: <20180503130244.ifal7n4tyxvekjnj@8bytes.org>
-References: <1523987360-18760-1-git-send-email-geert@linux-m68k.org>
- <1523987360-18760-10-git-send-email-geert@linux-m68k.org>
+X-Google-Smtp-Source: AB8JxZoDXzwlToUX6eTrO38O0ArPzsZB7bpWWbgzdFpvYAePHjKKfLdK2edkkwVu0fASO3ypvLFeCQ==
+From: Nathan Chancellor <natechancellor@gmail.com>
+To: greybus-dev@lists.linaro.org
+Subject: [PATCH] staging: greybus: Remove unused local variable
+Date: Sat,  5 May 2018 23:50:44 -0700
+Message-Id: <20180506065044.25311-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <1523987360-18760-10-git-send-email-geert@linux-m68k.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -104,63 +103,35 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa@the-dreams.de>,
- linux-iio@vger.kernel.org, linux-fpga@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, alsa-devel@alsa-project.org,
- Bjorn Andersson <bjorn.andersson@linaro.org>, Eric Anholt <eric@anholt.net>,
- netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-i2c@vger.kernel.org, linux1394-devel@lists.sourceforge.net,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Stefan Wahren <stefan.wahren@i2se.com>,
- Boris Brezillon <boris.brezillon@free-electrons.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Richard Weinberger <richard@nod.at>,
- Jassi Brar <jassisinghbrar@gmail.com>, Marek Vasut <marek.vasut@gmail.com>,
- linux-serial@vger.kernel.org, Matias Bjorling <mb@lightnvm.io>,
- linux-media@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>,
- devel@driverdev.osuosl.org, Alan Tull <atull@kernel.org>,
- Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
- linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
- linux-block@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- Moritz Fischer <mdf@kernel.org>, linux-fbdev@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Kalle Valo <kvalo@codeaurora.org>,
- Felipe Balbi <balbi@kernel.org>, linux-ide@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- linux-mmc@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
- linux-spi@vger.kernel.org, iommu@lists.linux-foundation.org,
- Stefan Richter <stefanr@s5r6.in-berlin.de>, linux-crypto@vger.kernel.org,
- Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Tejun Heo <tj@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brian Norris <computersforpeace@gmail.com>,
- David Woodhouse <dwmw2@infradead.org>,
- "David S . Miller" <davem@davemloft.net>, Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Johan Hovold <johan@kernel.org>, linux-kernel@vger.kernel.org,
+ Nathan Chancellor <natechancellor@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
 Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, Apr 17, 2018 at 07:49:09PM +0200, Geert Uytterhoeven wrote:
-> Remove dependencies on HAS_DMA where a Kconfig symbol depends on another
-> symbol that implies HAS_DMA, and, optionally, on "|| COMPILE_TEST".
-> In most cases this other symbol is an architecture or platform specific
-> symbol, or PCI.
-> 
-> Generic symbols and drivers without platform dependencies keep their
-> dependencies on HAS_DMA, to prevent compiling subsystems or drivers that
-> cannot work anyway.
-> 
-> This simplifies the dependencies, and allows to improve compile-testing.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reviewed-by: Mark Brown <broonie@kernel.org>
-> Acked-by: Robin Murphy <robin.murphy@arm.com>
-> Acked-by: Joerg Roedel <jroedel@suse.de>
-
-Applied, thanks.
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Rml4ZXMgdGhlIGZvbGxvd2luZyBXPTEgd2FybmluZzogdmFyaWFibGUg4oCYaW50Zl9pZOKAmSBz
+ZXQgYnV0Cm5vdCB1c2VkIFstV3VudXNlZC1idXQtc2V0LXZhcmlhYmxlXQoKU2lnbmVkLW9mZi1i
+eTogTmF0aGFuIENoYW5jZWxsb3IgPG5hdGVjaGFuY2VsbG9yQGdtYWlsLmNvbT4KLS0tCiBkcml2
+ZXJzL3N0YWdpbmcvZ3JleWJ1cy9zdmMuYyB8IDMgLS0tCiAxIGZpbGUgY2hhbmdlZCwgMyBkZWxl
+dGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdpbmcvZ3JleWJ1cy9zdmMuYyBiL2Ry
+aXZlcnMvc3RhZ2luZy9ncmV5YnVzL3N2Yy5jCmluZGV4IGE4NzRmZWQ3NjFhMS4uYTJiYjdlMWEz
+ZGIzIDEwMDY0NAotLS0gYS9kcml2ZXJzL3N0YWdpbmcvZ3JleWJ1cy9zdmMuYworKysgYi9kcml2
+ZXJzL3N0YWdpbmcvZ3JleWJ1cy9zdmMuYwpAQCAtMTEzNyw3ICsxMTM3LDYgQEAgc3RhdGljIGlu
+dCBnYl9zdmNfaW50Zl9yZXNldF9yZWN2KHN0cnVjdCBnYl9vcGVyYXRpb24gKm9wKQogCXN0cnVj
+dCBnYl9zdmMgKnN2YyA9IGdiX2Nvbm5lY3Rpb25fZ2V0X2RhdGEob3AtPmNvbm5lY3Rpb24pOwog
+CXN0cnVjdCBnYl9tZXNzYWdlICpyZXF1ZXN0ID0gb3AtPnJlcXVlc3Q7CiAJc3RydWN0IGdiX3N2
+Y19pbnRmX3Jlc2V0X3JlcXVlc3QgKnJlc2V0OwotCXU4IGludGZfaWQ7CiAKIAlpZiAocmVxdWVz
+dC0+cGF5bG9hZF9zaXplIDwgc2l6ZW9mKCpyZXNldCkpIHsKIAkJZGV2X3dhcm4oJnN2Yy0+ZGV2
+LCAic2hvcnQgcmVzZXQgcmVxdWVzdCByZWNlaXZlZCAoJXp1IDwgJXp1KVxuIiwKQEAgLTExNDYs
+OCArMTE0NSw2IEBAIHN0YXRpYyBpbnQgZ2Jfc3ZjX2ludGZfcmVzZXRfcmVjdihzdHJ1Y3QgZ2Jf
+b3BlcmF0aW9uICpvcCkKIAl9CiAJcmVzZXQgPSByZXF1ZXN0LT5wYXlsb2FkOwogCi0JaW50Zl9p
+ZCA9IHJlc2V0LT5pbnRmX2lkOwotCiAJLyogRklYTUUgUmVzZXQgdGhlIGludGVyZmFjZSBoZXJl
+ICovCiAKIAlyZXR1cm4gMDsKLS0gCjIuMTcuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZGV2ZWwgbWFpbGluZyBsaXN0CmRldmVsQGxpbnV4ZHJpdmVy
+cHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRldi5saW51eGRyaXZlcnByb2plY3Qub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsCg==
