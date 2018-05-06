@@ -1,16 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeEFAam (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 20:30:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:58221 "EHLO mga02.intel.com"
+        id S1752003AbeEFAaz (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 20:30:55 -0400
+Received: from mga06.intel.com ([134.134.136.31]:51493 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751775AbeEFAak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 20:30:40 -0400
+        id S1751984AbeEFAau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 20:30:50 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,367,1520924400";
-   d="scan'208";a="226149309"
+   d="scan'208";a="226149339"
 From: changbin.du@intel.com
 To: yamada.masahiro@socionext.com, michal.lkml@markovi.net,
         tglx@linutronix.de, mingo@redhat.com, akpm@linux-foundation.org
@@ -18,9 +18,9 @@ Cc: rostedt@goodmis.org, rdunlap@infradead.org, x86@kernel.org,
         lgirdwood@gmail.com, broonie@kernel.org, arnd@arndb.de,
         linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, Changbin Du <changbin.du@intel.com>
-Subject: [PATCH v3 1/5] x86/mm: surround level4_kernel_pgt with #ifdef CONFIG_X86_5LEVEL...#endif
-Date: Sun,  6 May 2018 08:20:12 +0800
-Message-Id: <1525566016-30172-2-git-send-email-changbin.du@intel.com>
+Subject: [PATCH v3 3/5] kernel hacking: new config NO_AUTO_INLINE to disable compiler auto-inline optimizations
+Date: Sun,  6 May 2018 08:20:14 +0800
+Message-Id: <1525566016-30172-4-git-send-email-changbin.du@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
 References: <1525566016-30172-1-git-send-email-changbin.du@intel.com>
@@ -30,56 +30,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Changbin Du <changbin.du@intel.com>
 
-The level4_kernel_pgt is only defined when X86_5LEVEL is enabled. So
-surround level4_kernel_pgt with #ifdef CONFIG_X86_5LEVEL...#endif to
-make code correct.
+This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
+this option will prevent the compiler from optimizing the kernel by
+auto-inlining functions not marked with the inline keyword.
+
+With this option, only functions explicitly marked with "inline" will
+be inlined. This will allow the function tracer to trace more functions
+because it only traces functions that the compiler has not inlined.
 
 Signed-off-by: Changbin Du <changbin.du@intel.com>
----
- arch/x86/include/asm/pgtable_64.h |  2 ++
- arch/x86/kernel/head64.c          | 13 ++++++-------
- 2 files changed, 8 insertions(+), 7 deletions(-)
+Cc: Steven Rostedt <rostedt@goodmis.org>
 
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 877bc27..9e7f667 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -15,7 +15,9 @@
- #include <linux/bitops.h>
- #include <linux/threads.h>
+---
+v2: Some grammar updates from Steven.
+---
+ Makefile          |  6 ++++++
+ lib/Kconfig.debug | 17 +++++++++++++++++
+ 2 files changed, 23 insertions(+)
+
+diff --git a/Makefile b/Makefile
+index 619a85a..eb694f6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -775,6 +775,12 @@ KBUILD_CFLAGS 	+= $(call cc-option, -femit-struct-debug-baseonly) \
+ 		   $(call cc-option,-fno-var-tracking)
+ endif
  
-+#ifdef CONFIG_X86_5LEVEL
- extern p4d_t level4_kernel_pgt[512];
-+#endif
- extern p4d_t level4_ident_pgt[512];
- extern pud_t level3_kernel_pgt[512];
- extern pud_t level3_ident_pgt[512];
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 0c408f8..775d7a6 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -143,16 +143,15 @@ unsigned long __head __startup_64(unsigned long physaddr,
++ifdef CONFIG_NO_AUTO_INLINE
++KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
++		   $(call cc-option, -fno-inline-small-functions) \
++		   $(call cc-option, -fno-inline-functions-called-once)
++endif
++
+ ifdef CONFIG_FUNCTION_TRACER
+ ifndef CC_FLAGS_FTRACE
+ CC_FLAGS_FTRACE := -pg
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index c40c7b7..da52243 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -198,6 +198,23 @@ config GDB_SCRIPTS
+ 	  instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
+ 	  for further details.
  
- 	pgd = fixup_pointer(&early_top_pgt, physaddr);
- 	p = pgd + pgd_index(__START_KERNEL_map);
--	if (la57)
--		*p = (unsigned long)level4_kernel_pgt;
--	else
--		*p = (unsigned long)level3_kernel_pgt;
--	*p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
--
-+#ifdef CONFIG_X86_5LEVEL
- 	if (la57) {
-+		*p = (unsigned long)level4_kernel_pgt;
- 		p4d = fixup_pointer(&level4_kernel_pgt, physaddr);
- 		p4d[511] += load_delta;
--	}
-+	} else
-+#endif
-+		*p = (unsigned long)level3_kernel_pgt;
-+	*p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
- 
- 	pud = fixup_pointer(&level3_kernel_pgt, physaddr);
- 	pud[510] += load_delta;
++config NO_AUTO_INLINE
++	bool "Disable compiler auto-inline optimizations"
++	help
++	  This will prevent the compiler from optimizing the kernel by
++	  auto-inlining functions not marked with the inline keyword.
++	  With this option, only functions explicitly marked with
++	  "inline" will be inlined. This will allow the function tracer
++	  to trace more functions because it only traces functions that
++	  the compiler has not inlined.
++
++	  Enabling this function can help debugging a kernel if using
++	  the function tracer. But it can also change how the kernel
++	  works, because inlining functions may change the timing,
++	  which could make it difficult while debugging race conditions.
++
++	  If unsure, select N.
++
+ config ENABLE_WARN_DEPRECATED
+ 	bool "Enable __deprecated logic"
+ 	default y
 -- 
 2.7.4
