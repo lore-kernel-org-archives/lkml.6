@@ -1,85 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751299AbeEFIk5 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 04:40:57 -0400
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:47027 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750981AbeEFIkz (ORCPT
+        id S1751266AbeEFJQK (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 05:16:10 -0400
+Received: from mail-pg0-f42.google.com ([74.125.83.42]:45388 "EHLO
+        mail-pg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750967AbeEFJQH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 04:40:55 -0400
-Subject: Re: moving affs + RDB partition support to staging?
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Martin Steigerwald <martin@lichtvoll.de>,
-        Matthew Wilcox <willy@infradead.org>, dsterba@suse.cz,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-m68k@vger.kernel.org,
-        Debian m68k <debian-68k@lists.debian.org>
-References: <20180425154602.GA8546@bombadil.infradead.org>
- <20180425203029.GQ21272@twin.jikos.cz>
- <20180426025717.GA32430@bombadil.infradead.org> <1613268.lKBQxPXt8J@merkaba>
- <76ca15e2-7b43-8b02-43e1-9ee65ab85356@physik.fu-berlin.de>
- <20180506005946.GI30522@ZenIV.linux.org.uk>
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <a0d2e079-275a-b275-e70f-5fe822b4060a@physik.fu-berlin.de>
-Date: Sun, 6 May 2018 10:40:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Sun, 6 May 2018 05:16:07 -0400
+X-Google-Smtp-Source: AB8JxZoK52b6B33S56BZ+5cIbKXTDKv22e1rGCkKOItzCfueVM4+Gkl4R/+Gqx+1WJH3vX4rdFY37hcF7H4Ozg1xGxA=
 MIME-Version: 1.0
-In-Reply-To: <20180506005946.GI30522@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: 85.182.115.218
+In-Reply-To: <d295f575-ba4b-b0ba-a856-405f9d393c9d@I-love.SAKURA.ne.jp>
+References: <000000000000019f50056b7f0890@google.com> <20180506022428.GQ29205@thunk.org>
+ <d295f575-ba4b-b0ba-a856-405f9d393c9d@I-love.SAKURA.ne.jp>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Sun, 6 May 2018 11:15:45 +0200
+Message-ID: <CACT4Y+YDy2GTXV=q6B+zqXtnz5nsZsbisxy1T=_R=PLNdAqcog@mail.gmail.com>
+Subject: Re: kernel panic: EXT4-fs (device loop0): panic forced after error
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        syzbot <syzbot+a9a45987b8b2daabdc88@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/06/2018 02:59 AM, Al Viro wrote:
->> There is nothing at the moment that needs fixing.
-> 
-> Funny, that...  I'd been going through the damn thing for the
-> last week or so; open-by-fhandle/nfs export support is completely
-> buggered.  And as for the rest... the least said about the error
-> handling, the better - something like rename() hitting an IO
-> error (read one) can not only screw the on-disk data into the
-> ground, it can do seriously bad things to kernel data structures.
+On Sun, May 6, 2018 at 7:03 AM, Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2018/05/06 11:24, Theodore Y. Ts'o wrote:
+>> On Sat, May 05, 2018 at 05:57:02PM -0700, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following crash on:
+>>>
+>>> EXT4-fs error (device loop0): ext4_iget:4756: inode #2: comm
+>>> syz-executor909: root inode unallocated
+>>> Kernel panic - not syncing: EXT4-fs (device loop0): panic forced after error
+>>
+>> I don't get why syzbot considers this a bug.  It created a corrupted
+>> file system, mounted it as root, and said file system had the flag
+>> which says, "panic if you find a file system corruption".
+> In what world is this a security bug?
 
-Well, yes, there are certainly things in the affs code that can cause
-unexpected behavior. But that wasn't my point. My point was that the
-purpose for what people are using the affs driver in the kernel, it's
-doing its job perfectly fine.
+Hi Ted,
 
-The standard use case is either to run Debian m68k on an Amiga and
-access the Amiga partitions through Linux for simple file transfers
-between the two operating systems, e.g. copying a new kernel plus
-newly generated initrd to the affs boot partition of AmigaOS.
+Do you mean why syzbot considers kernel panics as something to report?
+Or why syzbot has not understood why this panic is somehow special?
+syzbot doesn't report only security problems. It just reports bugs.
+E.g. NULL derefs and deadlocks are also not security bugs, but are
+reported.
 
-Or, just reading data off an old Amiga harddisk or floppy disk by
-either attaching the disk to the Linux machine directly or reading
-the contents of a floppy disk with an advanced floppy disk controller
-like the Catweasel or KryoFlux.
 
-For both cases, I haven't run into any issues with the affs driver
-and I also haven't heard of complaints from anyone in communities
-like EAB Amiga, amiga.org, a1k.org etc. That doesn't mean that people
-haven't run into issues, of course. I'm just saying I haven't heard
-of any.
+> "panic if file system error occurred (so that we won't continue with
+> inconsistent state)", doesn't it?
+>
+> Since syzbot is hitting this error path inside mount() request, calling
+> panic() when something went wrong inside mount() request might be
+> overkill. We can recover without shutting down the system, can't we?
 
-> Is there anything resembling fsck for that thing, BTW?  Nevermind
-> the repairs, just the validity checks would be nice...
+Can you please give me background regarding purpose of this flag?
+What's the intended use case? And what exactly is corrupted?
+If kernel detects that an image is corrupted during mount shouldn't it
+just report an error? If I am reading this correctly, any USB cable
+that plug into my computer can shut it down. Or maybe even existing
+cables can shut down all computers in a country on a remote command.
+Am I missing something here?
 
-Not that I know of.
 
-Adrian
-
-PS: Even Matthew Garrett seems to be a Linux/m68k fan:
-
-    > https://twitter.com/mjg59/status/945779704329629697
-
-    :)
-
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+>> In what world is this a security bug?  There's a *reason* why I've
+>> always said people who want to containers to be allowed to mount
+>> arbitrary file systems controlled by potentially malicious container
+>> users are insane....
+>>
+>> I could mark this as a one-off invalid bug, but if syzkaller is going
+>> to be generating classes of corrupted file systems like this, and are
+>> going to be complaing about how this causes the kernel to crash, then
+>> we have a fundamental syzkaller BUG.
+>>
+>>                                       - Ted
+>
+> If we won't try to recover this case, this specific report would be
+> marked as "#syz invalid".
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/d295f575-ba4b-b0ba-a856-405f9d393c9d%40I-love.SAKURA.ne.jp.
+> For more options, visit https://groups.google.com/d/optout.
