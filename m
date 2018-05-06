@@ -1,86 +1,117 @@
-Date: Tue, 8 May 2018 09:41:55 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Schmitz <schmitzmic@gmail.com>,
-	Finn Thain <fthain@telegraphics.com.au>,
-	Linux/m68k <linux-m68k@lists.linux-m68k.org>,
-	Linux Kernel Development <linux-kernel@vger.kernel.org>
+Return-Path: <fthain@telegraphics.com.au>
+X-Google-Smtp-Source: AB8JxZoG72qew3ai15Nx1Yc1/4T6OvE75lXF9/5pZlBa2xz+YEw1ja7qMQgZ26Ju3WQhkXKwP2ah
+ARC-Seal: i=1; a=rsa-sha256; t=1525651041; cv=none;
+        d=google.com; s=arc-20160816;
+        b=Qpk7g6wprn5vzBzrdZ5kpi/mRbwHPBxJVF8tTyZn52YwTQVhwJayEZyhoG5mJ5akDn
+         3Poq2VeGkhhllgHw0PM8pxK9rXa77153FAF53plr4npOfU2IkLURbkfdck9rvZUpP2OA
+         UuZHbqkYU5H3ddimn0IcaLGCSBPiEk3DV/bEeN1JYXYsct7R8uAE2PnlfdzUGos1TBxZ
+         xvIfhkJKfxrOBrbAiKLQcktTl5WlEgt8YD0/uNIEnOxR4cA5IKPEMaJ80+/BSdvGqTVt
+         FRbwlzCGddriTIdZe2sU5WzONEgvas6R+47lXtSVhdwDtht3APgikIEpxmmXeOwV7KvL
+         4NOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:arc-authentication-results;
+        bh=904Zf7hCKvMeI6wbDgOpcSqLW4QRIHYKT9N6f18rm5E=;
+        b=xDyHtU6urYVKCtKUINhrLPPSLORBX+G/6BuTqPaWC2eyqrRm+xXGZEcyHOau+EiZ/A
+         C4mmLP3MkTcPKguhcPiWoTFT+1YZIZiO2yMC8hg2Z9S/WioTCD3w1jROQBD/5Y1rqEaB
+         pGCVM/FwIJLTpD1MuXond7wU/QHamvNsoeTzEWdAFsncXaSebIQXZYxe4nearRG7zfHv
+         kHEWg85yv0mrL5uGt8aLyjF4NRM+ZSYxAvPFDbU2xwevAl4X8Yyw69An5YijzHkheT69
+         ZFxWTw6b1fbZAdNHWB7/i42wxpK3x1YiwMb3f+WjWHTMpP/fdJRmSOL+ALwpVmilDlEK
+         EeZA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of fthain@telegraphics.com.au designates 98.124.60.144 as permitted sender) smtp.mailfrom=fthain@telegraphics.com.au
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of fthain@telegraphics.com.au designates 98.124.60.144 as permitted sender) smtp.mailfrom=fthain@telegraphics.com.au
+Date: Mon, 7 May 2018 09:57:22 +1000 (AEST)
+From: Finn Thain <fthain@telegraphics.com.au>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org,
+    linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] nubus: Unconditionally register bus type
-Message-ID: <20180508074155.GA8561@kroah.com>
-References: <5aee5ed3.1c69fb81.19d98.ef06SMTPIN_ADDED_MISSING@mx.google.com>
- <20180506045530.GA5328@kroah.com>
- <alpine.LNX.2.21.1805061544550.8@nippy.intranet>
- <20180506202018.GC8924@kroah.com>
- <CAOmrzk+bY5wUxJhNAwO-pf+O--HiqJ63rB3BmxRsY8qq_PeLmw@mail.gmail.com>
- <20180508070037.GA4792@kroah.com>
- <CAMuHMdUAWfmiaZG7snEQRL1N-w69NuSYzeoQgQosQRf_JTZ5OQ@mail.gmail.com>
- <20180508072522.GA26568@kroah.com>
- <CAMuHMdX+utbGHOV1p_oFwaKigxGBMMgkC_v5hWCO4EoVXeqezg@mail.gmail.com>
+In-Reply-To: <20180506202018.GC8924@kroah.com>
+Message-ID: <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
+References: <5aee5ed3.1c69fb81.19d98.ef06SMTPIN_ADDED_MISSING@mx.google.com> <20180506045530.GA5328@kroah.com> <alpine.LNX.2.21.1805061544550.8@nippy.intranet> <20180506202018.GC8924@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdX+utbGHOV1p_oFwaKigxGBMMgkC_v5hWCO4EoVXeqezg@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=US-ASCII
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599677433904135296?=
+X-GMAIL-MSGID: =?utf-8?q?1599761065975770741?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 08, 2018 at 09:35:10AM +0200, Geert Uytterhoeven wrote:
-> Hi Greg,
+On Sun, 6 May 2018, Greg Kroah-Hartman wrote:
+
+> > > Why not just have an "bus is registered" flag in your driver 
+> > > register function that refuses to let drivers register with the 
+> > > driver core if it isn't set?
+> > 
+> > Perhaps that should happen in the core driver_register() function. 
+> > BUG_ON is frowned upon, after all. Would that be acceptable?
 > 
-> On Tue, May 8, 2018 at 9:25 AM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Tue, May 08, 2018 at 09:07:27AM +0200, Geert Uytterhoeven wrote:
-> >> On Tue, May 8, 2018 at 9:00 AM, Greg Kroah-Hartman
-> >> <gregkh@linuxfoundation.org> wrote:
-> >> > On Mon, May 07, 2018 at 09:51:12AM +1200, Michael Schmitz wrote:
-> >> >> the BUG() was triggered by loading a Mac Nubus network card module on
-> >> >> a multiplatform kernel running on an Amiga machine. Up to Finn's Nubus
-> >> >> core rewrite (this February), we've seen no errors. Since then, Nubus
-> >> >> drivers fail to register because the Nubus bus is only registered on
-> >> >> Macs.
-> >> >>
-> >> >> Can't see link order involved here at all.
-> >> >
-> >> > The link order is totally involved here :)
-> >> >
-> >> > Link order determines the order in which init calls are run, so you need
-> >> > to ensure that your bus code comes before any drivers that use that bus
-> >> > code in link order.  That way, at init time, your bus is created first,
-> >> > preventing this type of error to happen.
-> >>
-> >> The issue here is not due to link ordering, but due to the bus not being
-> >> registered on a system that doesn't have that particular bus.
-> >
-> > But how can that happen if the bus code is not present in the system at
-> > that point in time?  Hardware doesn't matter at all here.
+> I don't understand what you mean here, perhaps make a patch to show it?
 > 
-> The bus code is present in the system.
-> The bus is just not registered by the NuBus bus driver if the hardware
-> doesn't have a NuBus host.
 
-Ah, that sounds like some "tight" coupling that other bus cores do not
-have.  That's the confusion here that I have, sorry.
+As an alternative to your suggestion (add flag to avoid the BUG_ON):
 
-> >> Akin to booting a kernel on an old PC without PCI, and loading a driver
-> >> module for a PCI network card. I guess that doesn't crash (because no one
-> >> has a PC without PCI anymore? ;-)
-> >
-> > No, it should work just fine, try it!  :)
-> >
-> > The driver will not bind to anything, but the bus code should work
-> > properly, as long as it is initialized before the driver tries to
-> > register with that specific bus type.
+--- a/drivers/base/driver.c
++++ b/drivers/base/driver.c
+@@ -148,7 +148,10 @@ int driver_register(struct device_driver *drv)
+ 	int ret;
+ 	struct device_driver *other;
+ 
+-	BUG_ON(!drv->bus->p);
++	if (!drv->bus->p) {
++		WARN_ONCE(1, "Cannot register driver with invalid bus\n");
++		return -EPROBE_DEFER;
++	}
+ 
+ 	if ((drv->bus->probe && drv->probe) ||
+ 	    (drv->bus->remove && drv->remove) ||
+
+I'm not actually proposing this change; just responding to your question.
+
+For the bug at hand, I still prefer the patch at the beginning of this 
+thread, because it seems to follow the conventional pattern.
+
+> > I found a few drivers that set a flag the way you describe, which 
+> > could then be simplified.
+> > 
+> > But that pattern is rare. Most buses use the postcore_initcall() 
+> > pattern, and so my patch took the conventional approach.
 > 
-> Hence the NuBus bus code should register the bus irregardless of the
-> presence of the NuBus host hardware.
+> It all depends on link order, not necessarily the postcore stuff.
+> 
+> > > And then fix your linking error, the bus should come first in link 
+> > > order, before your drivers :)
+> > > 
+> > 
+> > I didn't encounter any errors. How shall I reproduce this?
+> 
+> If you have not seen this error, then why change the code at all if it 
+> is working properly?
 
-Yes it should.  Shouldn't cause any problems as long as you don't have
-any hardware specific code in your bus code.  Because of this, I don't
-think the original patch would help at all here, as the error would
-still be the same.
+I never saw the link error you mentioned.
 
-So add a "is bus registered" flag to your bus and all should be fine.
+Please see this thread for one example of how to hit the BUG_ON.
+https://marc.info/?l=linux-m68k&m=152522162801182&w=2
 
-thanks,
+Another way to trigger the BUG_ON is to set,
+CONFIG_ATARI=y
+CONFIG_MAC=y
+CONFIG_NUBUS=y
+CONFIG_MAC8390=y
+and try to boot the result on aranym.
 
-greg k-h
+-- 
+
+> Most busses do not need this as they have their link order set up 
+> correctly, no need to mess with stuff that is not broken :)
+> 
+> thanks,
+> 
+> greg k-h
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-m68k" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
