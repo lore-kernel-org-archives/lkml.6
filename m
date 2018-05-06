@@ -1,48 +1,64 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeEFDnO (ORCPT <rfc822;w@1wt.eu>);
-        Sat, 5 May 2018 23:43:14 -0400
-Received: from mga17.intel.com ([192.55.52.151]:19497 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751833AbeEFDnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 5 May 2018 23:43:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,367,1520924400";
-   d="scan'208";a="39578948"
-From: Andi Kleen <ak@linux.intel.com>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, kan.liang@linux.intel.com
-Subject: Re: [PATCH 05/12] perf pmu: Fix pmu events parsing rule
-References: <20180425160008.3407-1-acme@kernel.org>
-        <20180425160008.3407-6-acme@kernel.org>
-        <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
-        <20180503103717.GA14776@krava>
-        <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
-        <20180504160228.GA25229@krava>
-Date: Sat, 05 May 2018 20:43:11 -0700
-In-Reply-To: <20180504160228.GA25229@krava> (Jiri Olsa's message of "Fri, 4
-        May 2018 18:02:28 +0200")
-Message-ID: <87a7tdphyo.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1751997AbeEFDoP (ORCPT <rfc822;w@1wt.eu>);
+        Sat, 5 May 2018 23:44:15 -0400
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:57614 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751881AbeEFDoM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 5 May 2018 23:44:12 -0400
+X-Google-Smtp-Source: AB8JxZrPBokhavNcjM4Vf4z1NThrdY3uT/p65+qOvckXbBr/me9b0ElYUeIjZZbGkCNsHoGX6dWgrQ==
+From: Wenwen Wang <wang6495@umn.edu>
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>, Adam Radford <aradford@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] scsi: 3w-9xxx: fix a missing-check bug
+Date: Sat,  5 May 2018 22:43:13 -0500
+Message-Id: <1525578221-16283-1-git-send-email-wang6495@umn.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jiri Olsa <jolsa@redhat.com> writes:
+In twa_chrdev_ioctl(), the ioctl driver command is firstly copied from the
+userspace pointer 'argp' and saved to the kernel object 'driver_command'.
+Then a security check is performed on the data buffer size indicated by
+'driver_command', which is 'driver_command.buffer_length'. If the security
+check is passed, the entire ioctl command is copied again from the 'argp'
+pointer and saved to the kernel object 'tw_ioctl'. Then, various operations
+are performed on 'tw_ioctl' according to the 'cmd'. Given that the 'argp'
+pointer resides in userspace, a malicious userspace process can race to
+change the buffer size between the two copies. This way, the user can
+bypass the security check and inject invalid data buffer size. This can
+cause potential security issues in the following execution.
 
-Please fix this quickly, PT is currently totally non functional in Linus
-mainline.
+This patch checks the buffer size obtained in the second copy. An error
+code -EINVAL will be returned if it is not same as the original one in the
+first copy.
 
--Andi
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+---
+ drivers/scsi/3w-9xxx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
+index b42c9c4..8bc43db 100644
+--- a/drivers/scsi/3w-9xxx.c
++++ b/drivers/scsi/3w-9xxx.c
+@@ -684,6 +684,12 @@ static long twa_chrdev_ioctl(struct file *file, unsigned int cmd, unsigned long
+ 	if (copy_from_user(tw_ioctl, argp, driver_command.buffer_length + sizeof(TW_Ioctl_Buf_Apache) - 1))
+ 		goto out3;
+ 
++	if (tw_ioctl->driver_command.buffer_length
++		 != driver_command.buffer_length) {
++		retval = TW_IOCTL_ERROR_OS_EINVAL;
++		goto out3;
++	}
++
+ 	/* See which ioctl we are doing */
+ 	switch (cmd) {
+ 	case TW_IOCTL_FIRMWARE_PASS_THROUGH:
+-- 
+2.7.4
