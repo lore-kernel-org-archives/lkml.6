@@ -1,89 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751273AbeEFEJH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 00:09:07 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:43837 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750718AbeEFEJC (ORCPT
+        id S1751256AbeEFE0X (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 00:26:23 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:38561 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750824AbeEFE0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 00:09:02 -0400
-X-Google-Smtp-Source: AB8JxZruxAMuXJjas+nu2C4h9VIhjiAKPPYUY/379oYThiodXzDZYrlNnputj2K0ZdnuKT6byZt4kwZFuDnQF1qL+i9mUi69A3xu
+        Sun, 6 May 2018 00:26:19 -0400
+X-Google-Smtp-Source: AB8JxZqa9pOZtoJ44m388kp6HfO/L+BkAT4GtN9jFuQE0XPDtXQEZPfZCHuggWK3jrxXQ41AjlyTmg==
+Date: Sat, 5 May 2018 18:26:15 -1000
+From: Joey Pabalinas <joeypabalinas@gmail.com>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc: Joey Pabalinas <joeypabalinas@gmail.com>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/kvm: replace TASK_UNINTERRUPTIBLE with TASK_KILLABLE
+Message-ID: <20180506042615.fflhefdcyhovkntt@gmail.com>
+References: <20180316105729.ykomeftdvlzqm4p6@gmail.com>
+ <20180329214116.GO26753@flask>
 MIME-Version: 1.0
-Date: Sat, 05 May 2018 21:09:02 -0700
-In-Reply-To: <000000000000a366e2056a35c6fd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009c49d7056b81b646@google.com>
-Subject: Re: BUG: corrupted list in rdma_listen
-From: syzbot <syzbot+8458d13b13562abf6b77@syzkaller.appspotmail.com>
-To: dasaratharaman.chandramouli@intel.com, dledford@redhat.com,
-        jgg@ziepe.ca, leonro@mellanox.com, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, markb@mellanox.com, monis@mellanox.com,
-        parav@mellanox.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xb75uyorqradflzk"
+Content-Disposition: inline
+In-Reply-To: <20180329214116.GO26753@flask>
+User-Agent: NeoMutt/20180323-62-378db9
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
 
-HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem pages
-git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=126df297800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48f9de3384bcd0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=8458d13b13562abf6b77
-compiler:       clang version 7.0.0 (trunk 329391)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=168a7237800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176f5e07800000
+--xb75uyorqradflzk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+8458d13b13562abf6b77@syzkaller.appspotmail.com
+On Thu, Mar 29, 2018 at 11:41:20PM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 wrote:
+> I remember we had a bug where tasks were getting stuck when running
+> nested and maybe there are going to be other cases to excuse the change.
+> I'm slightly against changing the behavior as it's pretty hard to test,
+> but I can be easily convinced with a well reasoned patch,
+>=20
+> thanks!
 
-list_add corruption. prev->next should be next (00000000f634c78e), but  
-was           (null). (prev=000000004ec1b2e1).
-------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:28!
-invalid opcode: 0000 [#1] SMP PTI
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Modules linked in:
-CPU: 1 PID: 4686 Comm: syz-executor918 Not tainted 4.16.0+ #87
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__list_add_valid+0x43c/0x450 lib/list_debug.c:26
-RSP: 0018:ffff8801af0df9e0 EFLAGS: 00010286
-RAX: 0000000000000075 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: aaaaaaaaaaaab000 RDI: ffffea0000000000
-RBP: ffff8801af0dfa48 R08: 0000000001080020 R09: 0000000000000002
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffffff8acd0d90
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff88019d514418
-FS:  0000000001259880(0000) GS:ffff88021fd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cc0a0 CR3: 000000019d4a4000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __list_add include/linux/list.h:60 [inline]
-  list_add_tail include/linux/list.h:93 [inline]
-  cma_listen_on_all drivers/infiniband/core/cma.c:2309 [inline]
-  rdma_listen+0x65f/0x10f0 drivers/infiniband/core/cma.c:3333
-  ucma_listen+0x4e9/0x630 drivers/infiniband/core/ucma.c:1074
-  ucma_write+0x576/0x5e0 drivers/infiniband/core/ucma.c:1656
-  __vfs_write+0x1a3/0x9f0 fs/read_write.c:480
-  vfs_write+0x463/0x8d0 fs/read_write.c:544
-  SYSC_write+0x172/0x360 fs/read_write.c:589
-  SyS_write+0x55/0x80 fs/read_write.c:581
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x4417b9
-RSP: 002b:00007ffd97fcaf88 EFLAGS: 00000207 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004417b9
-RDX: 0000000000000010 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
-R10: 0000000000000001 R11: 0000000000000207 R12: 000000000000aa92
-R13: 00000000006cd448 R14: 0000000000000000 R15: 0000000000000000
-Code: 80 0c 00 00 00 00 00 00 41 c7 87 20 03 00 00 00 00 00 00 48 c7 c7 c8  
-f6 82 8a 31 c0 4c 89 e6 4c 89 ea 48 8b 4d c0 e8 34 ab 51 fd <0f> 0b 66 90  
-eb fe 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55
-RIP: __list_add_valid+0x43c/0x450 lib/list_debug.c:26 RSP: ffff8801af0df9e0
----[ end trace 0c643a8ef7cc369f ]---
+Yes, that was quite a thorough explanation, thank you for that :). Took
+me a while to read through all of your reply as well as look through the
+accompanying code. I can definitely see that, yeah, this is quite a bit
+more complicated that it appears at first glance. This will take a lot
+more thought before tackling, and I am unsure if honestl it may be a bit
+over my head as well, but I suppose I will see, haha.
+
+Regardless, I did learn a lot, so thank you for taking the time to make
+such a detailed reply!
+
+If I do end up seeing something I can improve will definitely cook up
+a patch and send it in, thanks again!
+
+--=20
+Cheers,
+Joey Pabalinas
+
+--xb75uyorqradflzk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEKlZXrihdNOcUPZTNruvLfWhyVBkFAlrug+cACgkQruvLfWhy
+VBn2Mw//eoJk/2FQA6wZ5F1NFiq66E6jmOzJoa1rCMtanii1/eINW3A8mboDARVR
+lTeEdhNe+H2JJvAiSXdud6wBOwqgk0LshqBCK5C7A1f4QbH3oJcNLSWI5yrF++kS
+p1UQWXgFbK7IHraq/V6ETmUkhY2ZZPD3c/bsyv18Iy4Cfb21Jvf/S+X8nZ2GX+YS
+uxHzIAAS8wiBpXTsD6Wxs/D4fVOs9kWYotTU0T20zkWGaeYs01lihuUUcdAGjRCP
+VlUd0MdtuT/3eWNSIYMKxMvRbbRZ2S3W3rZ9Ka+8JsPgIJwAY6roCFPnB76xKJjO
+N2uQtuF/sbp58Rawb4ULer1n31EHAW5W2ANM992Zx4gviOUiliDiHLbeWXoqz+70
+sbb+lTBP6S0Q8nS3Ack1Iiw3kIh4cOlkfMiayWcilc75KHqKQcgJKBa22H82vgHq
+eYxZpGyr/QvHpNrIH9BGJKYT4aCXfLKfYFslCiQcqT+BGlWoX177Y1cLinkm8HRB
+qjVYruqxvgRCnnXtZsdznSOcnljuP3lQ1qPQyBzqZ32PaHrC4ZYVwVMlk54z/ptS
+qa5CilAyBzOYL9/xS6pYhXe61E9/T+nBHU/T4mvrUGamFb+gE/6MMYzN7R3ePLkI
+1hrnHztvBg4s9njnjArYzm0H0P7e+2zWxhc5nWBgvHsxrwwsWVw=
+=SgS3
+-----END PGP SIGNATURE-----
+
+--xb75uyorqradflzk--
