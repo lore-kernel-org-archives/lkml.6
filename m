@@ -1,82 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeEFXo7 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 19:44:59 -0400
-Received: from ozlabs.org ([203.11.71.1]:50267 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751625AbeEFXo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 19:44:58 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 7 May 2018 09:44:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Steve Wise <swise@opengridcomputing.com>
-Subject: linux-next: build warning after merge of the rdma tree
-Message-ID: <20180507094454.4a71f8a2@canb.auug.org.au>
+        id S1751908AbeEFXtk (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 19:49:40 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50500 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751625AbeEFXtg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 19:49:36 -0400
+Date: Sun, 6 May 2018 18:49:35 -0500
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+To: Vince Weaver <vincent.weaver@maine.edu>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: perf: fuzzer causes stack going in wrong direction warnings
+Message-ID: <20180506234935.yq6zxjetlpldpzz7@treble>
+References: <20180111192112.d35nkotzklicd27c@treble>
+ <alpine.DEB.2.21.1805010925140.19413@macbook-air>
+ <20180501135850.enx4waqd5d7yowlj@treble>
+ <alpine.DEB.2.21.1805011557240.19937@macbook-air>
+ <20180501220458.p3rgwzh3jcqt4jmm@treble>
+ <20180502205009.codkvscnh4j4hm6b@treble>
+ <alpine.DEB.2.21.1805041033230.6376@macbook-air>
+ <20180504162557.iodmglq3duomz6c2@treble>
+ <alpine.DEB.2.21.1805051134230.11518@macbook-air>
+ <20180505182912.llj7jb3v7yd43t5h@treble>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/urf6QHI24rbiQ+/LhSOKBh1"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180505182912.llj7jb3v7yd43t5h@treble>
+User-Agent: Mutt/1.6.0.1 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/urf6QHI24rbiQ+/LhSOKBh1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, May 05, 2018 at 01:29:12PM -0500, Josh Poimboeuf wrote:
+> On Sat, May 05, 2018 at 11:38:16AM -0400, Vince Weaver wrote:
+> > On Fri, 4 May 2018, Josh Poimboeuf wrote:
+> > > 
+> > > The 'nmi_restore' warning points to a bug in my patch, but the others
+> > > are head scratchers.  Here's a patch which combines the first two
+> > > patches, plus improves the existing warnings a bit.  Can you try it?
+> > 
+> > with that updated patch I hit
+> > 
+> > May  4 21:51:20 haswell kernel: [19245.450607] WARNING: stack recursion on stack type 2
+> > May  4 22:21:29 haswell kernel: [21055.268717] WARNING: can't dereference registers at 000000006546ba71 for ip ret_from_intr+0x6/0x1d
+> > May  4 22:36:22 haswell kernel: [21948.106762] WARNING: stack going in the wrong direction? ip=native_sched_clock+0xe/0x90
+> > May  4 22:36:22 haswell kernel: [21948.115377] WARNING: stack going in the wrong direction? ip=native_sched_clock+0xe/0x90
+> > May  4 22:36:22 haswell kernel: [21948.124086] WARNING: stack going in the wrong direction? ip=native_sched_clock+0xd/0x90
+> > May  4 22:36:22 haswell kernel: [21948.124088] WARNING: stack going in the wrong direction? ip=intel_pmu_handle_irq+0x12/0x4a0
+> > May  4 22:36:22 haswell kernel: [21948.124097] WARNING: stack going in the wrong direction? ip=native_sched_clock+0xe/0x90
+> > May  4 22:36:22 haswell kernel: [21948.150189] WARNING: stack going in the wrong direction? ip=native_sched_clock+0xe/0x90
+> > May  4 22:36:22 haswell kernel: [21948.150199] WARNING: stack going in the wrong direction? ip=intel_pmu_handle_irq+0xe/0x4a0
+> > 
+> > the last bit repeated for a few minutes (flooding the log with a few 
+> > thousand entries that look mostly similar)
+> 
+> Thanks.  I can recreate now, so I'll stop bugging you for a bit.  This
+> fuzzer is really good at finding unwinder issues.
 
-Hi all,
+Deja vu.  Most of these are related to perf PEBS, similar to the
+following issue:
 
-After merging the rdma tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+  b8000586c90b ("perf/x86/intel: Cure bogus unwind from PEBS entries")
 
-drivers/infiniband/hw/cxgb4/restrack.c: In function 'fill_res_qp_entry':
-drivers/infiniband/hw/cxgb4/restrack.c:140:6: warning: 'last_rq_idx' may be=
- used uninitialized in this function [-Wmaybe-uninitialized]
-  if (rdma_nl_put_driver_u32(msg, "idx", idx))
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/infiniband/hw/cxgb4/restrack.c:180:20: note: 'last_rq_idx' was decl=
-ared here
-  u16 first_rq_idx, last_rq_idx;
-                    ^~~~~~~~~~~
-drivers/infiniband/hw/cxgb4/restrack.c:140:6: warning: 'first_rq_idx' may b=
-e used uninitialized in this function [-Wmaybe-uninitialized]
-  if (rdma_nl_put_driver_u32(msg, "idx", idx))
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/infiniband/hw/cxgb4/restrack.c:180:6: note: 'first_rq_idx' was decl=
-ared here
-  u16 first_rq_idx, last_rq_idx;
-      ^~~~~~~~~~~~
-drivers/infiniband/hw/cxgb4/restrack.c:228:6: warning: 'last_sq_idx' may be=
- used uninitialized in this function [-Wmaybe-uninitialized]
-  if (fill_swsqes(msg, &wq.sq, first_sq_idx, fsp, last_sq_idx, lsp))
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/infiniband/hw/cxgb4/restrack.c:228:6: warning: 'first_sq_idx' may b=
-e used uninitialized in this function [-Wmaybe-uninitialized]
+This is basically the ORC version of that.  setup_pebs_sample_data() is
+assembling a franken-pt_regs which ORC isn't happy about.  RIP is
+inconsistent with some of the other registers (like RSP and RBP).
 
-Introduced by commit
+Peter, any ideas?
 
-  056f9c7f39bf ("iw_cxgb4: dump detailed driver-specific QP information")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/urf6QHI24rbiQ+/LhSOKBh1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrvk3YACgkQAVBC80lX
-0GzkqwgAgDEj76kBFUK+GbJnCvrNIYNUoaX6pNBUE1T2Eqzk8z9hqsG5tfcg9vKT
-X9zmmXJD+Bh0S61CailM5Ksme1dlccKqKWN8W7XsI3yROZoQ6CTHmTKpBDylvEoS
-ofc4z5/QNU5AyB7d2AbTjTmjRqj9+pJ9kR0B1XwR1VPltFOqaVYG7Y38Cyd/ncqV
-TbMaVrFfZnzd1F/vQjZsj/uRQpqI5pbTDDWUqoHb1Vf5H0PI9D42PyZ48Tu4I/IF
-ZWCErDI4FCO3T9xWIeuv5o4nHZRODam8PDSHOn2JggUZBOpIKLPgk+JWyxQdc+vY
-ibzq5d1FWmJ266EjMi9sCvge3nqIlg==
-=NuDS
------END PGP SIGNATURE-----
-
---Sig_/urf6QHI24rbiQ+/LhSOKBh1--
+-- 
+Josh
