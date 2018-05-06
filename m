@@ -1,102 +1,181 @@
-Date: Sun, 6 May 2018 13:17:51 -0700
-From: Greg KH <gregkh@linuxfoundation.org>
-To: syzbot <syzbot+995c889cef82be5ccddf@syzkaller.appspotmail.com>
-Cc: jslaby@suse.com, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: BUG: soft lockup in commit_echoes
-Message-ID: <20180506201751.GA8924@kroah.com>
-References: <000000000000ea358d056b8c0547@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000ea358d056b8c0547@google.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Return-Path: <linux-api-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3852358-1525646902-2-16555607815904823469
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-api-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525646901; b=cp0Qo3TssakKwQyEiBgnTV7qOqoJXrxnkzGbd/td/uYmVOKkoO
+    XHWb2FpgCnMHWGSFIZpGNYxna6cjcby/oALXKrwtwDFSFYWfm+wctzmUwZuLHYIZ
+    1CH3+WUZprD6saiHS0lM7hTBIwxmKPP5c2hnKWyOYGLCT5FiqiK8WWVgMoBDcH/d
+    CgygxAH2vlIpwSPPWziFGEqYRv7lGu36wH7NZT5004FmWT8pPsfbxO7k5l5Ygezi
+    pjEOabOnMddomj4jbtn7C1yGTlIvu9d+3op2bfNFOcRhL0CD2o8LfnE8k7Eqd/2p
+    OzyURD3RhmIrxOpHP3xq5k7W0VSSCPBHf82w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525646901; bh=qNEMyWjk0lWt31am/YRhZziN71tiD1
+    c7pxvdatNz/+I=; b=AIkp4KVg8+JOPpRWV4DHTxgFh75yZIGEr6ymxAJyT3V4+N
+    qOuJkg2F1KT+LpFi7n5heX1Mr8A3RLFjPvqdlNa7qhl3fLqm7MTRmUOIbbFXs1lf
+    OjCjRyFXX15hYtYAJeSps8S6qz/VbIOwgD+C5sFwJifvxVJVDFWWXraFT/4OHXnR
+    7iBwPT4GaW9Fx6cFdALp9qHUmeB/HnqWCQfv1xKekW8VFk8FTu9LC9qkA6LDppYq
+    elp7fsUU45Y+1/6IuNUhzZHbtMy3Zyo8wHtJBhR00BxlWiVNemUxUI6xIZTKruZB
+    JIk++8+29IsEWKAaj9FqX0S73gmTcJ4yygPmqtHA==
+ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ubuntu.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=VD0kiHVT;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=ubuntu.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx4.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=ubuntu.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=VD0kiHVT;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=ubuntu.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfAOmnJVxQu/B8jGgi5q2yblnjZwflvY/iNOQPL4m4NCP1FpjGBAzd0R29j36a1SQ17rOEtusHckzzQlAv3ZCj/Eo31feTUcrYrd3KCiiNkJb7CdQnCpB
+    LZ7UJPMUZciuEIm+fp8g0Mlfh5ulZJ4b8oRvzH2DCCQsp39H2x47yh3+HUWZIZLw/JEeO0BwktiakTwUjogJkcUPEbWE6rLALFE9/W4zhnv2XzqQQvhD/1Jk
+X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
+    a=VwQbUJbxAAAA:8 a=se4zhiC73Y2lUqnZhy0A:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1752111AbeEFWsS (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 6 May 2018 18:48:18 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:32797 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752104AbeEFWsJ (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Sun, 6 May 2018 18:48:09 -0400
+X-Google-Smtp-Source: AB8JxZry8Xy54GSvyQCsT2ECIHBk6Ln7F4QDcdRR8bEMOZh7q9XJgNBkW/7dR+iM4HRK37vnfFrWQA==
+From: Christian Brauner <christian.brauner@ubuntu.com>
+To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, tglx@linutronix.de,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        pombredanne@nexb.com, linux-api@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 0/6 v1] statfs: handle mount propagation
+Date: Mon,  7 May 2018 00:46:58 +0200
+Message-Id: <20180506224704.14669-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.17.0
+Sender: linux-api-owner@vger.kernel.org
+X-Mailing-List: linux-api@vger.kernel.org
+X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, May 06, 2018 at 09:27:02AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
+Hey,
 
-Meta comment on the format of all of this:
+This is v1 of this patchset. All changes from v0 to v1 are non-functional.
+Specifically, the commit messages and justification have been extended as
+requested by Linus and Al.
 
-> 
-> HEAD commit:    c1c07416cdd4 Merge tag 'kbuild-fixes-v4.17' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=138afde7800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5a1dc06635c10d27
-> dashboard link: https://syzkaller.appspot.com/bug?extid=995c889cef82be5ccddf
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1355fc37800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1033f657800000
+This little series does the following:
 
-First off, great job, that's a nice summary.
+- unify the definition of constants in statfs.h and fs.h:
+  The definitions for MS_* flags are currently a mixture between hex values
+  and bit-shifts. All higher values are already initialized with bit-shifts
+  for MS_* constants starting with (1<<16). This patch switches the
+  definitions for MS_* constants over to uniformly use bit-shifts and
+  alignes the definitions of ST_* flags too.
+  Initializing them identically let's userspace easily detect when flags
+  indicate the same property but use a different value in doing so.
 
-You might want to put the "dashboard link" at the top somewhere, it is
-burried in there and I totally missed it and wrote a long paragraph
-asking that you add something like that to this report, before I noticed
-that it was already there :)
+- extend statfs to handle mount propagation:
+  For all cases the only way to do this right now is by parsing
+  /proc/<pid>/mountinfo. Yes, it is doable but still it is somewhat costly
+  and annoying as e.g. those mount propagation fields are optional.
+  1. prevent propagation from happening:
+     From a userspace perspective we often run into the case where we
+     simply want to know whether a given mountpoint is MS_SHARED or is
+     MS_SLAVE. If it is we remount it as MS_PRIVATE to prevent any
+     propagation from happening. We don't care about the peer
+     relationship or how the propagation is exactly setup. We only want
+     to prevent any propagation from happening.
+     These mountpoints might be known in advance so parsing
+     /proc/<pid>/mountinfo should not be needed.
+  2. differentiate between MS_SLAVE and MS_SHARED mountpoints:
+     Mountpoints that are MS_SLAVE are kept intact and mountpoints that
+     are MS_SHARED are made MS_PRIVATE. These mountpoint might be known in
+     advance so parsing /proc/<pid>/mountinfo should not be needed.
+  3. retrieve propagation properties when procfs is not mounted:
+     When the set of interesting mountpoints is known and /proc is not
+     mounted calling statfs() is the only good way to reliably determine
+     the propagation property of a mountpoint.
+  4. inspecting file descriptors to mountpoints for propagation
+     properties:
+     When file descriptors to mountpoints are passed around between
+     processes it is useful to have fstatvfs() handle mount propagation
+     properties too.
+  To this end the flags:
+  - ST_UNBINDABLE
+  - ST_SHARED
+  - ST_PRIVATE
+  - ST_SLAVE
+  are added. They have the same value as their MS_* counterparts.
 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+995c889cef82be5ccddf@syzkaller.appspotmail.com
+- Testing:
+  I verified that now userspace can do e.g.
 
-Nit, should you have < > around that email address?
+  int ret;
+  char *s = "/some/path";
+  struct statvfs sb;
 
-> watchdog: BUG: soft lockup - CPU#0 stuck for 135s! [kworker/u4:3:4495]
-> Modules linked in:
-> irq event stamp: 916736
-> hardirqs last  enabled at (916735): [<ffffffff878009d5>]
-> restore_regs_and_return_to_kernel+0x0/0x2b
-> hardirqs last disabled at (916736): [<ffffffff87800905>]
-> interrupt_entry+0xb5/0xf0 arch/x86/entry/entry_64.S:625
-> softirqs last  enabled at (746274): [<ffffffff87a00778>]
-> __do_softirq+0x778/0xaf5 kernel/softirq.c:311
-> softirqs last disabled at (746209): [<ffffffff81475281>] invoke_softirq
-> kernel/softirq.c:365 [inline]
-> softirqs last disabled at (746209): [<ffffffff81475281>]
-> irq_exit+0x1d1/0x200 kernel/softirq.c:405
+  ret = statvfs(s, &sb);
+  if (ret < 0)
+          return false;
 
-As a script generates this, why is it being line-wrapped?
+  if (sb.f_flag & ST_SHARED) {
+          ret = mount("", s, NULL, MS_SLAVE | MS_REC, NULL);
+          if (ret < 0)
+                  return -1;
+  }
 
+Thanks!
+Christian
 
-> CPU: 0 PID: 4495 Comm: kworker/u4:3 Not tainted 4.17.0-rc3+ #34
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Workqueue: events_unbound flush_to_ldisc
-> RIP: 0010:echo_buf drivers/tty/n_tty.c:144 [inline]
-> RIP: 0010:__process_echoes+0x1fd/0x8d0 drivers/tty/n_tty.c:733
-> RSP: 0018:ffff8801adbc7268 EFLAGS: 00000293 ORIG_RAX: ffffffffffffff13
-> RAX: ffff8801ad126280 RBX: 00000001fda8cfee RCX: ffffffff8397b54c
-> RDX: 0000000000000000 RSI: ffffffff8397b46d RDI: 0000000000000001
-> RBP: ffff8801adbc72d0 R08: ffff8801ad126280 R09: 0000000000000006
-> R10: ffff8801ad126280 R11: 0000000000000000 R12: ffffc90001eec000
-> R13: 0000000000001a02 R14: 00000001fda8cfef R15: 00000000000000ff
-> FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000021000000 CR3: 00000001ada40000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  commit_echoes+0x163/0x1d0 drivers/tty/n_tty.c:764
->  n_tty_receive_char_fast drivers/tty/n_tty.c:1416 [inline]
->  n_tty_receive_buf_fast drivers/tty/n_tty.c:1576 [inline]
->  __receive_buf drivers/tty/n_tty.c:1611 [inline]
->  n_tty_receive_buf_common+0x2048/0x2c50 drivers/tty/n_tty.c:1709
->  n_tty_receive_buf2+0x33/0x40 drivers/tty/n_tty.c:1744
->  tty_ldisc_receive_buf+0xb0/0x190 drivers/tty/tty_buffer.c:456
->  tty_port_default_receive_buf+0x110/0x170 drivers/tty/tty_port.c:38
->  receive_buf drivers/tty/tty_buffer.c:475 [inline]
->  flush_to_ldisc+0x3e9/0x560 drivers/tty/tty_buffer.c:524
->  process_one_work+0xc1e/0x1b50 kernel/workqueue.c:2145
->  worker_thread+0x1cc/0x1440 kernel/workqueue.c:2279
->  kthread+0x345/0x410 kernel/kthread.c:238
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-> Code: 48 83 c3 01 48 b9 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 08 00 0f
-> 85 17 06 00 00 4d 8b 6c 24 20 e9 db fe ff ff e8 73 7b e1 fd <41> 81 e6 ff 0f
-> 00 00 48 b9 00 00 00 00 00 fc ff df 4b 8d bc 34
+Christian Brauner (6):
+  fs: use << for MS_* flags
+  statfs: use << to align with fs header
+  statfs: add ST_UNBINDABLE
+  statfs: add ST_SHARED
+  statfs: add ST_SLAVE
+  statfs: add ST_PRIVATE
 
-Anyway, keep up the great work, I'll add this to my every-growing list
-of stuff to look at...
+ fs/statfs.c             | 16 +++++++++++++++-
+ include/linux/statfs.h  | 30 +++++++++++++++++-------------
+ include/uapi/linux/fs.h | 33 +++++++++++++++++----------------
+ 3 files changed, 49 insertions(+), 30 deletions(-)
 
-greg k-h
+-- 
+2.17.0
+
