@@ -1,132 +1,145 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2709797-1526392755-2-7777684437130802672
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.133', Host='smtp2.osuosl.org', Country='US',
-  FromHeader='de', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526392754; b=mB9dfaXuI/xawAJD30mLNngtpmRpmcCE1VoGINYEPOoIPINpqO
-    aPARpV6AYT++hObB0AhCu8MKS6DSUhw8NCkeV3A4T0gdQdXR5JZogCOFj2yjwnMD
-    kUQhmsGTzpCB1V7VTC/z1zMxDmrwRvV28kbQCIIDzFuuaupl0xSlzfa5JrHulGbu
-    HCpr9q1kJ++sX7IcP7B5AqoetIhcd7znG6x5S8seE10422SY2h3ZTlj6zZ8+/K0x
-    zX17WcU/a0AQRw05Zj8dLcDGA0g5o/zDbTvAYdlGXEyAKFr9kb8QkI+GMjJJ18cU
-    UOxRjX85uL7kNss/zuX+o2oDIVcuzY6uAz5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1526392754; bh=a5pgV
-    iWEoWQz+BVeJ0YBgXLApqpEg1X1Boda38uI/6Q=; b=OIgfsG1hQ4RRjWCkXYcQe
-    phzH7Fy8djxlf2ehyhKnVK0AXGK2Knsl09ThX2ETdh3VK7JALLPxiGRTaHCfpC7x
-    +k7DB+3rq2Rfm7jxlAtL/DHMlp25rIcIUTNyedbNgBhe3AcjMOD9EjY41ZN6RN5s
-    OGyMiZl442kq7mIXoV+vo6+URxQAAMrxmK4FQcMZT16cK6CAGwSHslIMoS7mkkYE
-    TTm9DZyDn2OrHVnc4fTeJnjQuRHDcNZPyXoJlKmI4tXjEothmF4/dHpsTZmFCHXR
-    6pltZvJN3jcdfany5yCE28jlm2IEDJNQuzNemNeC0SL0rNrPzg+/qWrlfb+x/P+G
-    g==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=lst.de header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=lst.de;
-    iprev=pass policy.iprev=140.211.166.133 (smtp2.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=hemlock.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=hemlock.osuosl.org x-ptr-lookup=smtp2.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=lst.de header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfLzVX5sfEDv/pcG4EgW+aVb2+yirZ7HWU4iCdCe1pMgBs0Q/B3BCw+rqX0SFy0pRdNx11zwruP6cqY9pZ5ypFyk+VMYBKsCvRJ+BfYqLGrR6MOFxMQjQ
-    LsQbURmmjPIAKQvpzf3csGnYWk+q27iTfdfbdDWHToP+9oEm7x/VvP1fRX5YkuK+5eXYXocBnTW2+oYxkAnynWqbV2rjjyAx2hA8rEEFmLSxl7fI4JSVj4wC
-    8DzYN/DRRCUggvKlZG360A==
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=kIo7DnY5WRu98hpln7do/g==:117
-    a=kIo7DnY5WRu98hpln7do/g==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=DDOyTI_5AAAA:8 a=QiEDfoRPBmZhUppsx_QA:9
-    a=CjuIK1q_8ugA:10 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Tue, 15 May 2018 16:03:26 +0200
-From: Christoph Hellwig <hch@lst.de>
+Return-Path: <viro@ftp.linux.org.uk>
+X-Google-Smtp-Source: AB8JxZr8UVHqPhAVAhEyJVRlsFfr1aO4b0VeXpi67sCzc1GOTtmFEtJYSHr+KVvMEo+x+XLS82hd
+ARC-Seal: i=1; a=rsa-sha256; t=1525628743; cv=none;
+        d=google.com; s=arc-20160816;
+        b=NT9FekDLsAUcD88GkUlMs8wOma36XRn2khgNg0ZgSGt32LczdprYRB74GDtr4BVs+x
+         nkjGWXyKvw11LyFurpFv35wNqMudJS9UwANo+amURcc5k1ylJ7EqCxv9Jxi8mmBHcVwU
+         hsraK/R230wO8ECbf2lSnOU8XhwzlAQvIVaOTBV+fLX6+FUPQBbMDClSx6a/JL+RzuuN
+         5/q9ztOT6HrV+Cmm8pVEF98eB9VkkZI92/sm2sAUuUJKaXbsDRNNM4nFBDvfVMGuSF5x
+         RfB7vbqHFTdLVEgffxZY3yFrRcNbcaEI4Zr8A9k77EiKiQFwO9h8Gnc4oXphxIZvoOZ/
+         cYzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=sender:user-agent:in-reply-to:content-disposition:mime-version
+         :references:message-id:subject:cc:to:from:date
+         :arc-authentication-results;
+        bh=Farno0zDq0Sp3FzqBvV2O6gsbI0dgSYt0tYWxdGiSvs=;
+        b=Y19nteJ7nqVbSx5CVvkl3B0Sief3IFsEvNOIIHjJROxR69rArxhJ5QVufPp/WGrhoY
+         968tQBezV2P0kZ6j0BU5WfEhdWhCs1gXPs0R60GVR/7Sqka8hWPq1tMc9WDnEJkQL9zt
+         lLEMVbmeDiY3davLKQZtrnZQOk9taKO1jhckGygd8m3OaGDRe/V+Ix5hxb1fMjTVIR4W
+         XksMwrJ4SS+RDwm+lBk0DE+cYKwrGQAhJVhQuQw5xnWL+wmf4BMZPNBTFnBWlPOpQvvy
+         ftifxGqMx/tu4PH2SMwQP6Dgf1Evz+gNzx+hxV1DEo7u7kluia+IUh+okFRG6rkZ2Be9
+         3w0w==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: best guess record for domain of viro@ftp.linux.org.uk designates 195.92.253.2 as permitted sender) smtp.mailfrom=viro@ftp.linux.org.uk
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: best guess record for domain of viro@ftp.linux.org.uk designates 195.92.253.2 as permitted sender) smtp.mailfrom=viro@ftp.linux.org.uk
+Date: Sun, 6 May 2018 18:45:31 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
 To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jslaby@suse.com>,
+	Alessandro Zummo <a.zummo@towertech.it>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-acpi@vger.kernel.org, drbd-dev@lists.linbit.com,
+	linux-ide@vger.kernel.org, netdev@vger.kernel.org,
+	linux-rtc@vger.kernel.org, megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org, devel@driverdev.osuosl.org,
+	linux-afs@lists.infradead.org, linux-ext4@vger.kernel.org,
+	jfs-discussion@lists.sourceforge.net,
+	netfilter-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: simplify procfs code for seq_file instances V2
-Message-ID: <20180515140326.GC31296@lst.de>
-References: <20180425154827.32251-1-hch@lst.de> <20180506171948.GA769@avx2>
+Message-ID: <20180506174531.GK30522@ZenIV.linux.org.uk>
+References: <20180425154827.32251-1-hch@lst.de>
+ <20180506171948.GA769@avx2>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20180506171948.GA769@avx2>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, devel@driverdev.osuosl.org,
- linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-ide@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- jfs-discussion@lists.sourceforge.net, linux-afs@lists.infradead.org,
- linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
- netfilter-devel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Jiri Slaby <jslaby@suse.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-ext4@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
- megaraidlinux.pdl@broadcom.com, drbd-dev@lists.linbit.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+Sender: Al Viro <viro@ftp.linux.org.uk>
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1598733748805898460?=
+X-GMAIL-MSGID: =?utf-8?q?1599737685237560402?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 On Sun, May 06, 2018 at 08:19:49PM +0300, Alexey Dobriyan wrote:
-> On Wed, Apr 25, 2018 at 05:47:47PM +0200, Christoph Hellwig wrote:
-> > Changes since V1:
-> >  - open code proc_create_data to avoid setting not fully initialized
-> >    entries live
-> >  - use unsigned int for state_size
-> 
-> Need this to maintain sizeof(struct proc_dir_entry):
+> +++ b/fs/proc/internal.h
+> @@ -48,8 +48,8 @@ struct proc_dir_entry {
+>  		const struct seq_operations *seq_ops;
+>  		int (*single_show)(struct seq_file *, void *);
+>  	};
+> -	unsigned int state_size;
+>  	void *data;
+> +	unsigned int state_size;
+>  	unsigned int low_ino;
+>  	nlink_t nlink;
+>  	kuid_t uid;
 
-I'll fold your changes into the relevant patches.
+Makes sense
 
-> Otherwise ACK fs/proc/ part.
+> @@ -62,9 +62,9 @@ struct proc_dir_entry {
+>  	umode_t mode;
+>  	u8 namelen;
+>  #ifdef CONFIG_64BIT
+> -#define SIZEOF_PDE_INLINE_NAME	(192-139)
+> +#define SIZEOF_PDE_INLINE_NAME	(192-155)
+>  #else
+> -#define SIZEOF_PDE_INLINE_NAME	(128-87)
+> +#define SIZEOF_PDE_INLINE_NAME	(128-95)
 
-I'll take this as a formal ACK-ed by for all patches touching
-procfs.  If I was wrong please scream.
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+>  #endif
+>  	char inline_name[SIZEOF_PDE_INLINE_NAME];
+>  } __randomize_layout;
+
+*UGH*
+
+Both to the original state and that kind of "adjustments".
+Incidentally, with __bugger_layout in there these expressions
+are simply wrong.
+
+If nothing else, I would suggest turning the last one into
+	char inline_name[];
+in hope that layout won't get... randomized that much and
+used
+
+#ifdef CONFIG_64BIT
+#define PDE_SIZE 192
+#else
+#define PDE_SIZE 128
+#endif
+
+union __proc_dir_entry {
+	char pad[PDE_SIZE];
+	struct proc_dir_entry real;
+};
+
+#define SIZEOF_PDE_INLINE_NAME (PDE_SIZE - offsetof(struct proc_dir_entry, inline_name))
+
+for constants, adjusted sizeof and sizeof_field when creating
+proc_dir_entry_cache and turned proc_root into
+
+union __proc_dir_entry __proc_root = { .real = {
+        .low_ino        = PROC_ROOT_INO,
+        .namelen        = 5,
+        .mode           = S_IFDIR | S_IRUGO | S_IXUGO,
+        .nlink          = 2,
+        .refcnt         = REFCOUNT_INIT(1),
+        .proc_iops      = &proc_root_inode_operations,
+        .proc_fops      = &proc_root_operations,
+        .parent         = &__proc_root.real,
+        .subdir         = RB_ROOT,
+        .name           = __proc_root.real.inline_name,
+        .inline_name    = "/proc",
+}};
+
+#define proc_root __proc_root.real
+(or actually used __proc_root.real in all of a 6 places where it remains).
+
+> diff --git a/fs/proc/proc_net.c b/fs/proc/proc_net.c
+> index baf1994289ce..7d94fa005b0d 100644
+> --- a/fs/proc/proc_net.c
+> +++ b/fs/proc/proc_net.c
+> @@ -40,7 +40,7 @@ static struct net *get_proc_net(const struct inode *inode)
+>  
+>  static int seq_open_net(struct inode *inode, struct file *file)
+>  {
+> -	size_t state_size = PDE(inode)->state_size;
+> +	unsigned int state_size = PDE(inode)->state_size;
+>  	struct seq_net_private *p;
+>  	struct net *net;
+
+<shakes head>
+You and your "size_t is evil" crusade...
