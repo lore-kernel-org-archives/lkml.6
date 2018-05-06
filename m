@@ -1,66 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751204AbeEFHzD (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 03:55:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47151 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750872AbeEFHzB (ORCPT
+        id S1751297AbeEFH6J (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 03:58:09 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:44668 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750981AbeEFH6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 03:55:01 -0400
-Date: Sun, 6 May 2018 09:54:59 +0200 (CEST)
-From: Thomas Gleixner <tglx@linutronix.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>
-Subject: [GIT pull] irq fix for 4.17
-Message-ID: <alpine.DEB.2.21.1805060948550.1685@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 6 May 2018 03:58:06 -0400
+X-Google-Smtp-Source: AB8JxZp+zLXU0ai12c6wCQq8sXvs8rsEAIv7QC9kI9Z3vMuAZ8OoBGnQ9jAbLUgOKl2GKrlc3UzNXrJBa/McGib7nNM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Reply-To: sedat.dilek@gmail.com
+In-Reply-To: <CACT4Y+b4caLPQ7rD3390ep3eGV5j+04upKjLmC7Ky5e1NYrzXA@mail.gmail.com>
+References: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
+ <20180423174224.GA243180@google.com> <CA+icZUUPmiCPVxDbaAoJyVXxwwU4v=iYDtK1tf3JdgFC2i8Wsg@mail.gmail.com>
+ <CACT4Y+b4caLPQ7rD3390ep3eGV5j+04upKjLmC7Ky5e1NYrzXA@mail.gmail.com>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Sun, 6 May 2018 09:58:04 +0200
+Message-ID: <CA+icZUWxSNC+KVgzXziDnHTXmqsCSo45Ya7GN=kjtweFGPEbuQ@mail.gmail.com>
+Subject: Re: Clang patch stacks for LTS kernels (v4.4 and v4.9) and status update
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Matthias Kaehlcke <mka@chromium.org>,
+        lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sun, May 6, 2018 at 9:41 AM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Sun, May 6, 2018 at 8:35 AM, Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>> On Mon, Apr 23, 2018 at 7:42 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+>> [...]
+>>>> [ ASM-GOTO ]
+>>>>
+>>>> Foremore, I have seen you have a "refs/sandbox/mka/llvm/v4.14" Git branch.
+>>>> Linux v4.14 is also an LTS release.
+>>>
+>>> Yes, there is also a follow up post:
+>>> https://lkml.org/lkml/2017/11/22/943
+>>>
+>>>> After Linux v4.9 "asm-goto" support was added which is GCC specific.
+>>>
+>>> asm-goto was optional until a few weeks ago, when x86 maintainers
+>>> decided to make it mandatory, and thus break clang builds for x86:
+>>>
+>>> https://lkml.org/lkml/2018/4/2/486
+>>>
+>>>> Is there a workaround to compile Linux-kernel with any CLANG
+>>>> version?
+>>>
+>>> You could revert the patch that makes asm-goto mandatory.
+>>>
+>>>> You happen to know the status in LLVM upstream?
+>>>
+>>> I know people are actively working on this, but don't know an ETA.
+>>>
+>>
+>> [ CC Dimitry ]
+>>
+>> Sorry for the late response.
+>> This weekend I had some time to play with clang-7 and Linux-4.17-rcN.
+>>
+>> I tried with Linux v4.17-rc3-261-gc1c07416cdd4 and reverted the
+>> mandatory patch [1].
+>>
+>> commit e501ce957a786ecd076ea0cfb10b114e6e4d0f40
+>> "x86: Force asm-goto"
+>>
+>> This needed a follow up [2]...
+>>
+>> commit d0266046ad54e0c964941364cd82a0d0478ce286
+>> "x86: Remove FAST_FEATURE_TESTS"
+>>
+>> ...but breaks my build.
+>>
+>> That seems to be a known issue [3] and Dimitry bisected this to [4].
+>> Is there a fix for this?
+>>
+>> I have attached my kernel-config and the broken build-log.
+>>
+>> Hope this helps.
+>>
+>> Regards,
+>> - Sedat -
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e501ce957a786ecd076ea0cfb10b114e6e4d0f40
+>> [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/arch/x86/include/asm/cpufeature.h?id=d0266046ad54e0c964941364cd82a0d0478ce286
+>> [3] https://www.spinics.net/lists/linux-mm/msg147669.html
+>> [4] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8bf705d130396e69c04cd8e6e010244ad2ce71f4
+>
+>
+> Hi Sedat,
+>
+> Sorry for the breakage.
+>
+> This was reported and discussed here:
+> https://groups.google.com/forum/#!topic/kasan-dev/oMgCP37n1vw
+> The plan is to make clang behave the same way as gcc wrt asm
+> constraint checking. But I don't know what's the progress.
 
-please pull the latest irq-urgent-for-linus git tree from:
+Hi Dimitry,
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
+that's the thread I looked into and also looked into the involved
+commits and appropriate files in the linux-source without knowing of
+[1].
 
-A single fix to prevent false positives in the spurious interrupt detector
-when more than a single demultiplex register is evaluated in the Qualcom
-irq combiner driver.
+Just just for the records...
+I used the kernel-config of Debian's
+linux-image-4.17.0-rc3-amd64-unsigned (4.17~rc3-1~exp1) as a base with
+this modification:
 
-Thanks,
+$ cd /path/to/linux-source
+$ LINUX_CONFIG="./.config"
+$ scripts/config --file $LINUX_CONFIG --disable X86_X32
 
-	tglx
+...and...
 
------------------->
-Agustin Vega-Frias (1):
-      irqchip/qcom: Fix check for spurious interrupts
+# CONFIG_KASAN is not set
 
+...if this matters.
 
- drivers/irqchip/qcom-irq-combiner.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Kind regards,
+- Sedat -
 
-diff --git a/drivers/irqchip/qcom-irq-combiner.c b/drivers/irqchip/qcom-irq-combiner.c
-index f31265937439..7f0c0be322e0 100644
---- a/drivers/irqchip/qcom-irq-combiner.c
-+++ b/drivers/irqchip/qcom-irq-combiner.c
-@@ -1,4 +1,4 @@
--/* Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
-+/* Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 and
-@@ -68,7 +68,7 @@ static void combiner_handle_irq(struct irq_desc *desc)
- 
- 		bit = readl_relaxed(combiner->regs[reg].addr);
- 		status = bit & combiner->regs[reg].enabled;
--		if (!status)
-+		if (bit && !status)
- 			pr_warn_ratelimited("Unexpected IRQ on CPU%d: (%08x %08lx %p)\n",
- 					    smp_processor_id(), bit,
- 					    combiner->regs[reg].enabled,
+[1] https://bugs.llvm.org/show_bug.cgi?id=33587
+[2] https://packages.debian.org/experimental/linux-image-4.17.0-rc3-amd64-unsigned
