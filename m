@@ -1,129 +1,90 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525294943; cv=none;
+Return-Path: <tglx@linutronix.de>
+X-Google-Smtp-Source: AB8JxZo64JUlK3GMiedfWqY1XF08F92c4KQqtW/iBHN0aOoiZ2OO8DdYw6qGjUlDt68IRPDTbgT1
+ARC-Seal: i=1; a=rsa-sha256; t=1525601131; cv=none;
         d=google.com; s=arc-20160816;
-        b=CTvvFiBTCwHhdafVw3isiyiHbsUTmj9E90l2/xkWoVAF+g7olLfs73cSoP7odg0js0
-         vmzYWxv5K8+Jh07GRL5oGsBnI8yjqmJX6d0FKeP1skqt4/v8yZkadk+vroSJTWTdhW3p
-         JzLN2XToA2FLTu0hCyF4MjONim/DHWc6Kejop3i12sEwdIJ+NFqSfcSkHcZbzRdvJrXV
-         wPo+4wPTPQmL8rFjGtjRlLqObc/ggO4ztwsn1sc7K0MlrhRGkdutmfZC5r5HIHZ+/Ana
-         RKeb5wcx3oB0XOFjkydTdKaKrlXDQHqXnyNXtqzmzI7x7385u88b06VakC9uGWK+JCFv
-         4cQQ==
+        b=OGT3lJn7AYOUvj4TO1xOj8ajHt/86wHxvsBv4eKD44MsAVFqvsqufr2Kl1ebQDt6nD
+         D8P+KG5BGv19WSpJCF2PzT9VZZtiC2jHwsCHBBVDEVx7/Ihv1jmoAGdoSPPIN/ujMilI
+         Fk1PFJeJWbq6dB+W6ojfPkt0DESNF0JWYkW88V1zyp7UUOx5fRYN6Il7K4lhbxXpPRC/
+         wZBMth4XslSN5fiFOgtRoaudBW64ajeOYcnoX929nUdsUvEHlKA2Nb6Unh6FLMLqZtYH
+         egLqNgTJC4ltUnHCmL4ldsXXP8yE3tNaKDwei7cSI03wrvByvYADV9rjrNPLfZfCd8W4
+         zO5w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=+E5Du/B18iggdjyiF01EinpNkCOfPSpUHq5gAqkhoLs=;
-        b=Ok8vQGzeavgfBW+WLApnqdTeLWb5fT5jybn+IzWRTnnRIWmS+GFCbCJh08XA9OL8lo
-         Vsz7PrLe4xdniqMvWu4zcNAxck8x1ZCDJg6N951XuZuHYN6p8yhJ52VHwoqfrQ8ZulHH
-         TDPrmyeuqtYTA4ZTs0QLE7+lBiN+9Shbhha+uYu3GKOa11WY0JgTDzYUq2xxNGC3DTUN
-         3clD5ABPaQD98w8ZnAj6BLb0ENDrN7wmUlmtNvZLmWCOKCnJsNwKTkSuNiRdFLkhKikd
-         505rgrM03iggDegjRkpukUXJeDEbm5pr/psSW1jNZHf6Ng1/OBSwX3Nt+Xk6GuUmvmj2
-         c+iQ==
+        h=mime-version:user-agent:references:message-id:in-reply-to:subject
+         :cc:to:from:date:arc-authentication-results;
+        bh=CKShoNw859JoAcxSWO2dnXa71IpHxX03Ho909swdfL4=;
+        b=tajLdnM9ae2xp7aMY0aGDxEZD/FXfw/GrpZliPoBpFrZaOL/yLjuDnDEvgljpcM6pQ
+         vQy+KCjerbwRIAwW9urs4S8NubqTnqTCbvb45wa2FO1HfYU/NvQCbdUk7pOTJ+es8NOo
+         uPBw+J+uUhtlRh3My7JMbfCrfLUNTvoYEJoZD4BWYegqX/M9UzIdm3GA45Ro7UkaO6nn
+         pSPv75yGKc89FmRgrn5Bnzc8RQsv9qwS6HFCspwJd4sPS0Fz7y1D18I5a7J+ls6ZaXfc
+         n3I0urMMA7TZHLmWUAPs4iKPKvgO2PzS4d26Z9eMJUx8k2rLxwbcQzc6vwZYa0tyt2Ok
+         dXOw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=X8+O43kk;
-       dkim=pass header.i=@chromium.org header.s=google header.b=OANIXiOJ;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=X8+O43kk;
-       dkim=pass header.i=@chromium.org header.s=google header.b=OANIXiOJ;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AB8JxZoYxioI25q9WHIRSvX9XkF5GJJgLNdCYopAUbKA5S/IlbKsGDGyNilFanlkHFpkMTu0yvwfryMbgcz1uVWOX0I=
+       spf=pass (google.com: best guess record for domain of tglx@linutronix.de designates 146.0.238.70 as permitted sender) smtp.mailfrom=tglx@linutronix.de
+Date: Sun, 6 May 2018 12:04:31 +0200 (CEST)
+From: Thomas Gleixner <tglx@linutronix.de>
+To: Kees Cook <keescook@chromium.org>
+cc: Dave Hansen <dave.hansen@linux.intel.com>,
+    Linus Torvalds <torvalds@linux-foundation.org>,
+    Alexander Popov <alex.popov@linux.com>,
+    Kernel Hardening <kernel-hardening@lists.openwall.com>,
+    PaX Team <pageexec@freemail.hu>, Brad Spengler <spender@grsecurity.net>,
+    Ingo Molnar <mingo@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+    Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
+    Mark Rutland <mark.rutland@arm.com>,
+    Ard Biesheuvel <ard.biesheuvel@linaro.org>, Borislav Petkov <bp@alien8.de>,
+    Richard Sandiford <richard.sandiford@arm.com>,
+    "H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
+    "Dmitry V . Levin" <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>,
+    Jonathan Corbet <corbet@lwn.net>,
+    Andrey Ryabinin <aryabinin@virtuozzo.com>,
+    "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+    Thomas Garnier <thgarnie@google.com>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
+    Masami Hiramatsu <mhiramat@kernel.org>,
+    Nicholas Piggin <npiggin@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+    "David S . Miller" <davem@davemloft.net>,
+    Ding Tianhong <dingtianhong@huawei.com>,
+    David Woodhouse <dwmw@amazon.co.uk>, Josh Poimboeuf <jpoimboe@redhat.com>,
+    Steven Rostedt <rostedt@goodmis.org>,
+    Dominik Brodowski <linux@dominikbrodowski.net>,
+    Juergen Gross <jgross@suse.com>,
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+    Dan Williams <dan.j.williams@intel.com>,
+    Mathias Krause <minipli@googlemail.com>,
+    Vikas Shivappa <vikas.shivappa@linux.intel.com>,
+    Kyle Huey <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
+    Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+    Florian Weimer <fweimer@redhat.com>,
+    Boris Lukashev <blukashev@sempervictus.com>, X86 ML <x86@kernel.org>,
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel
+ stack at the end of syscalls
+In-Reply-To: <CAGXu5jJ1rPmb_fs=iN5x6fTMtew8+jxrb=VxQQwiPLYzjxE07g@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1805061204060.1685@nanos.tec.linutronix.de>
+References: <1523024546-6150-1-git-send-email-alex.popov@linux.com> <1523024546-6150-3-git-send-email-alex.popov@linux.com> <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com> <CAGXu5jJ_0e63QSv0YZsQoT_=zN8U-83nwxrQ10h=QjszbHK-aQ@mail.gmail.com>
+ <alpine.DEB.2.21.1805021041260.1668@nanos.tec.linutronix.de> <CAGXu5j+4Rj3oOH_iHhfD9sMMa2hRVm_dp9oA6YKhN9omhjdtEg@mail.gmail.com> <alpine.DEB.2.21.1805021438470.1560@nanos.tec.linutronix.de> <CAGXu5jJDwLfg0LPYkYKZcgqwbej-xVUB+6rSaLE+OvKQxy-Y9w@mail.gmail.com>
+ <CAGXu5jJ1rPmb_fs=iN5x6fTMtew8+jxrb=VxQQwiPLYzjxE07g@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <CAGXu5jJDwLfg0LPYkYKZcgqwbej-xVUB+6rSaLE+OvKQxy-Y9w@mail.gmail.com>
-References: <1523024546-6150-1-git-send-email-alex.popov@linux.com>
- <1523024546-6150-3-git-send-email-alex.popov@linux.com> <4e668302-8754-3f4e-3372-d0d7ba30cfa3@linux.intel.com>
- <CAGXu5jJ_0e63QSv0YZsQoT_=zN8U-83nwxrQ10h=QjszbHK-aQ@mail.gmail.com>
- <alpine.DEB.2.21.1805021041260.1668@nanos.tec.linutronix.de>
- <CAGXu5j+4Rj3oOH_iHhfD9sMMa2hRVm_dp9oA6YKhN9omhjdtEg@mail.gmail.com>
- <alpine.DEB.2.21.1805021438470.1560@nanos.tec.linutronix.de> <CAGXu5jJDwLfg0LPYkYKZcgqwbej-xVUB+6rSaLE+OvKQxy-Y9w@mail.gmail.com>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 2 May 2018 14:02:22 -0700
-X-Google-Sender-Auth: RRK8XGcCJV34b9HcJL8sgGqOjsQ
-Message-ID: <CAGXu5jJ1rPmb_fs=iN5x6fTMtew8+jxrb=VxQQwiPLYzjxE07g@mail.gmail.com>
-Subject: Re: [PATCH v11 2/6] x86/entry: Add STACKLEAK erasing the kernel stack
- at the end of syscalls
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>, Alexander Popov <alex.popov@linux.com>,
-	Kernel Hardening <kernel-hardening@lists.openwall.com>, PaX Team <pageexec@freemail.hu>,
-	Brad Spengler <spender@grsecurity.net>, Ingo Molnar <mingo@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>, Tycho Andersen <tycho@tycho.ws>, Laura Abbott <labbott@redhat.com>,
-	Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-	Borislav Petkov <bp@alien8.de>, Richard Sandiford <richard.sandiford@arm.com>,
-	"H . Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <a.p.zijlstra@chello.nl>,
-	"Dmitry V . Levin" <ldv@altlinux.org>, Emese Revfy <re.emese@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Andrey Ryabinin <aryabinin@virtuozzo.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Thomas Garnier <thgarnie@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, Josef Bacik <jbacik@fb.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, "David S . Miller" <davem@davemloft.net>,
-	Ding Tianhong <dingtianhong@huawei.com>, David Woodhouse <dwmw@amazon.co.uk>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Dominik Brodowski <linux@dominikbrodowski.net>, Juergen Gross <jgross@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Mathias Krause <minipli@googlemail.com>, Vikas Shivappa <vikas.shivappa@linux.intel.com>,
-	Kyle Huey <me@kylehuey.com>, Dmitry Safonov <dsafonov@virtuozzo.com>,
-	Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Florian Weimer <fweimer@redhat.com>,
-	Boris Lukashev <blukashev@sempervictus.com>, X86 ML <x86@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1597007022879408472?=
-X-GMAIL-MSGID: =?utf-8?q?1599387670995231559?=
+X-GMAIL-MSGID: =?utf-8?q?1599708732251432384?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 2, 2018 at 5:51 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Wed, May 2, 2018 at 5:39 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->> On Wed, 2 May 2018, Kees Cook wrote:
->>> On Wed, May 2, 2018 at 1:42 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
->>> > On Mon, 30 Apr 2018, Kees Cook wrote:
->>> >
->>> >> On Mon, Apr 23, 2018 at 9:23 PM, Dave Hansen
->>> >> <dave.hansen@linux.intel.com> wrote:
->>> >> > Hi Alexander,
->>> >> >
->>> >> > You can add:
->>> >> >
->>> >> > Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
->>> >> >
->>> >> > for this patch if you like.  I haven't taken a super close look at the
->>> >> > rest, but this is certainly minimally invasive from my point of view for
->>> >> > the entry code.  Thanks, again for reworking it.
->>> >>
->>> >> Thanks Dave!
->>> >>
->>> >> Given this improvement and your review, I'm going to start carrying
->>> >> this for linux-next. Linus, if you're still opposed to this even after
->>> >> the changes here in v11, please let us know. I'd rather hash things
->>> >> out now instead of during a NAK in the 4.18 merge window. :)
->>> >
->>> > Kees, can we please route that x86/entry stuff through tip to avoid
->>> > conflicts as there are other changes in that area on the horizon.
->>>
->>> Sure, let me figure out how best to split up the patches, since it
->>> touch x86/entry, gcc-plugins, and lkdtm. Thanks!
->>
->> Are they independent or do they carry dependencies?
->
-> They carry dependencies, as it interacts with the gcc plugin (and
-> lkdtm). As I don't have other plugin changes for 4.18 queued, you
-> could take the whole series for x86/entry if you want? Otherwise I can
-> try to split out the x86 change so it's more self-contained.
+On Wed, 2 May 2018, Kees Cook wrote:
+> On Wed, May 2, 2018 at 5:51 AM, Kees Cook <keescook@chromium.org> wrote:
+> I think it'd be better for this to go via my tree with your Ack (where
+> I can carry the plugin, lkdtm, x86, and arm64 changes). How does that
+> sound?
 
-The best way to do this would be to add the x86 entry changes without
-CONFIG_GCC_PLUGIN_STACKLEAK, which leaves the results not
-compile-testable. Alternatively, if you carried everything, it'd be
-weird too, with arm64 coming (which has small changes to the plugin).
+Works for me.
 
-I think it'd be better for this to go via my tree with your Ack (where
-I can carry the plugin, lkdtm, x86, and arm64 changes). How does that
-sound?
-
--Kees
-
--- 
-Kees Cook
-Pixel Security
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
