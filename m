@@ -1,5 +1,5 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3852358-1525646968-5-3431602547260573096
+X-Cyrus-Session-Id: sloti22d1t05-3852358-1525646932-2-3959855791757120305
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525646968; b=bZAwDepd9uG+G/pyglh7UjOFvLt2HSX2I8d3ddB5khbsxm8hk9
-    AvawSne5jynrDlL+l7CypE8bEodFx8Cku78SvxeXa2qOjh6nQWpQO7cNRGdRMDO1
-    sH3pLaPnodKnuSPasfNUo4lwtrJxgxl8DjD1wIrfPmWmjOJXuRBCdd4eESTpsT0Y
-    JOCCjiJojCK3ipSiREabuiE0RsGYNMlW++Uk4GGXyktji/7Bn+D0Ahdp+BRNxc0J
-    e3izDVhyKxpvztGsjvEOG4hDS2wgFRNSePxoyR+riezberWdVleuwIFxoH65MRQg
-    k8Ge9d1IfmZ3ktUduieRC61u0wV7BmIk8+uw==
+    1525646932; b=ZIzz3jah9UKPNCVTEy7nUqjOhzmxB4QCch/czIzl5eDd636Odt
+    XF3UowpNodGsgCVR1cfMpk/wJKJZ5bVRobGAMHtbubVs9U/jut7/xND749wgp19i
+    DZeZzFD/FykT9sQN+fXDoeR85W0nkHWZJxa95kzQiU5DXiY8UCYiU25ZIFho0SyR
+    GuAiJ764HD8VIAxmPZo3FVZdoCBppfshit3NcvT2KnctKD+7m+WF0VVdNBE2wt/v
+    1buKnYiGBSlydYXyuLJ7wycUtGbCK4MOC4qxjBullViffBEXEQhTcHusAjLiQ6OT
+    tEclzky/zUy/RqHzCqcKfz2wVdiyQx0xP0Yw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525646968; bh=
-    8/FLH3TQ3os4COHYOLOu/dw3YPo8jzJ1D2NjxNvJxpk=; b=TdD6wg7UMETQvS+g
-    NbJSEd3Zkbo1YL6CFN5a5HPv/1Vc1ygIz/99ffHqMMwGNsmmNCyOGx+9RSlMqLmj
-    1S7wfJu3TTRgq3hIIgeRJLyI+JQkjNrIxa75rppgteNzkvJI1UdDaWpp2sAiJZjf
-    +e3lE4dul7AjiHTt+bjo3xOGXl7aw6gtM+f1ir0TYw64+f/Gi9e6R/RVmugmpu37
-    Ye7MKl80XRaGUUOO4M0zE7quH1G6y3LxM7KJ7/7HOtCcaTQw5zbzAeVetbE5rJoG
-    7aIOsH4LVa/qB+xb15q2xZ1VPoS86w0cMP2CnEVAxCOLgt2qIJOKVW10H3Ohyjk8
-    kH1UAw==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525646932; bh=
+    7xsEfixuvCjDZhkfPWXWRM8G1bmpkIXBNfGkSHIbCd8=; b=ZzLr1Qdg3TdGy//q
+    wDKWxN6dhQJtGRl87JaMNXH0EqOakGzZWGf0kkY+7EwVTC5c2lTU7ySkDBkdriEv
+    HIxyMDoRToj/4nW0+o44IJlwr6MyIrwth8jaINzdNjOs9EbhDPq7Of1Aor52P1WY
+    U80tIRw+OQJPWA+3EcRa4Cz0J7FIiJCALiv5kCGxKLmifwM3XdyERad2iNep0ujt
+    Lfx//XKKuDGtIDz5bdIx6/MVw+2IM0abqYl4tw/wZ5fQvIecVKP9H7swd/gKcJRM
+    v9DgUbafMrU1lch1NMaM7ibtBf95N0r17VYza5YImx0mCfT9A9I1njcCMyG+/6pD
+    5ndRmQ==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=ubuntu.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -38,13 +38,13 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=aQhVOejM;
+    header.d=1e100.net header.i=@1e100.net header.b=gswxy+1f;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=ubuntu.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=ubuntu.com;
@@ -54,29 +54,29 @@ Authentication-Results: mx6.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=aQhVOejM;
+      header.d=1e100.net header.i=@1e100.net header.b=gswxy+1f;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=ubuntu.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIV4tLDSg8EvZc0olsbIeFB5lHktXLr5bv/FCU9GowWMmk64V/ePhPcMaciedTcf3xSAqt1Ex4wMr6jg7yboVaPaeQR2hXMRDZVQ9pWDHr5Drf6hlj4C
-    jpdj+pKACFM6VGE6MvtqKuq/wg2FRwJZyyUMLxEEPF2dD5c74hl18zgKulhFATFld40M7MAveYJI/vxCY+XlNWMRHOHGuenIN8XcllXNeIUEPS+pWiLEIpp3
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfKf/h7HEWVlKO5QIHcC7mmCFq000KVkRAOIl7AcD+4quRblpSoiGq+0bsJWCAfoSV7gUY/ASByU4o2ZX+8OodGfRpr0yjS+gmEzUoLGKJMO4Lbl68EQQ
+    o8eoEk0V5enW4BSCLrEz+ji6Yiz0EZVwNVjINNuAWS1W8Y++BMONlwp0aPDCSaD7ISwnP8rn+Dq4iCAqk+FxBrtPlqBKY+EIofNvLK3tnQ/BXviK6AVsNm9p
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=xqWC_Br6kY4A:10 a=VUJBJC2UJ8kA:10
-    a=fxJcL_dCAAAA:8 a=VwQbUJbxAAAA:8 a=5VoLgkW5MDAwbdDaw2UA:9 a=x8gzFH9gYPwA:10
+    a=fxJcL_dCAAAA:8 a=VwQbUJbxAAAA:8 a=FMiol41Xt7q6hRQp6E0A:9 a=x8gzFH9gYPwA:10
     a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752192AbeEFWsw (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 6 May 2018 18:48:52 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38359 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752079AbeEFWsM (ORCPT
-        <rfc822;linux-api@vger.kernel.org>); Sun, 6 May 2018 18:48:12 -0400
-X-Google-Smtp-Source: AB8JxZptn+ZHMy9dSdfTjOXe3MMUnH/MIWhvqHEBEPq0Uib30Z50QCzkuHbssASn+XLRic4IAnGGcg==
+        id S1752177AbeEFWsr (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 6 May 2018 18:48:47 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40284 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752119AbeEFWsO (ORCPT
+        <rfc822;linux-api@vger.kernel.org>); Sun, 6 May 2018 18:48:14 -0400
+X-Google-Smtp-Source: AB8JxZoyNW47iLS9CTAmUTEDmjYYRPTvDauEUuNfm/efKgOqjallaNOLdgOSZRecSp4xOLX1wTKPXg==
 From: Christian Brauner <christian.brauner@ubuntu.com>
 To: viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -84,9 +84,9 @@ Cc: torvalds@linux-foundation.org, tglx@linutronix.de,
         kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, linux-api@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 3/6 v1] statfs: add ST_UNBINDABLE
-Date: Mon,  7 May 2018 00:47:01 +0200
-Message-Id: <20180506224704.14669-4-christian.brauner@ubuntu.com>
+Subject: [PATCH 5/6 v1] statfs: add ST_SLAVE
+Date: Mon,  7 May 2018 00:47:03 +0200
+Message-Id: <20180506224704.14669-6-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180506224704.14669-1-christian.brauner@ubuntu.com>
 References: <20180506224704.14669-1-christian.brauner@ubuntu.com>
@@ -96,44 +96,64 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Currently userspace can only determine whether a mountpoint is unbindable
+Currently userspace can only determine whether a mountpoint is slave
 by parsing /proc/<pid>/mountinfo. It would be convenient to simply retrieve
 this property with a statvfs() call.
 This let's userspace avoid costly parsing, supports cases where /proc is
 not mounted, and supports usecases where file descriptors to mountpoints
 are passed between processes that are inspected via fstatvfs().
+This is especially helpful in all cases where userspace is not interested
+in specific propagation properties our peer group layouts but rather just
+wants to either turn on or turn off propagation for specific mountpoints.
 
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 v0->v1:
 * non-functional changes: extend commit message
 ---
- fs/statfs.c            | 2 ++
- include/linux/statfs.h | 1 +
- 2 files changed, 3 insertions(+)
+ fs/statfs.c            | 10 +++++++++-
+ include/linux/statfs.h |  1 +
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/fs/statfs.c b/fs/statfs.c
-index 5b2a24f0f263..61b3063d3921 100644
+index 2fc6f9c3793c..35ad0402c9a3 100644
 --- a/fs/statfs.c
 +++ b/fs/statfs.c
-@@ -29,6 +29,8 @@ static int flags_by_mnt(int mnt_flags)
- 		flags |= ST_NODIRATIME;
- 	if (mnt_flags & MNT_RELATIME)
- 		flags |= ST_RELATIME;
-+	if (mnt_flags & MNT_UNBINDABLE)
-+		flags |= ST_UNBINDABLE;
- 	return flags;
+@@ -10,6 +10,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/compat.h>
+ #include "internal.h"
++#include "pnode.h"
+ 
+ static int flags_by_mnt(int mnt_flags)
+ {
+@@ -50,8 +51,15 @@ static int flags_by_sb(int s_flags)
+ 
+ static int calculate_f_flags(struct vfsmount *mnt)
+ {
+-	return ST_VALID | flags_by_mnt(mnt->mnt_flags) |
++	int flags = 0;
++
++	flags = ST_VALID | flags_by_mnt(mnt->mnt_flags) |
+ 		flags_by_sb(mnt->mnt_sb->s_flags);
++
++	if (IS_MNT_SLAVE(real_mount(mnt)))
++		flags |= ST_SLAVE;
++
++	return flags;
  }
  
+ static int statfs_by_dentry(struct dentry *dentry, struct kstatfs *buf)
 diff --git a/include/linux/statfs.h b/include/linux/statfs.h
-index b336c04e793c..e1b84d0388c1 100644
+index 5416b2936dd9..048127effaad 100644
 --- a/include/linux/statfs.h
 +++ b/include/linux/statfs.h
-@@ -40,5 +40,6 @@ struct kstatfs {
- #define ST_NOATIME	(1<<10) /* do not update access times */
+@@ -41,6 +41,7 @@ struct kstatfs {
  #define ST_NODIRATIME	(1<<11) /* do not update directory access times */
  #define ST_RELATIME	(1<<12) /* update atime relative to mtime/ctime */
-+#define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
+ #define ST_UNBINDABLE	(1<<17)	/* change to unbindable */
++#define ST_SLAVE	(1<<19)	/* change to slave */
+ #define ST_SHARED	(1<<20)	/* change to shared */
  
  #endif
 -- 
