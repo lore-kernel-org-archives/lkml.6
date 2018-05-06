@@ -1,75 +1,79 @@
-Return-Path: <mst@redhat.com>
-X-Google-Smtp-Source: AB8JxZrwh1+TYvSdtDCMTyPnviJthBXoBQfl/PbbznSXW+twsLNieRWDqZ3FyzqsRWb1FWAu5bdi
-ARC-Seal: i=1; a=rsa-sha256; t=1525375713; cv=none;
+Return-Path: <amit@amitshah.net>
+X-Google-Smtp-Source: AB8JxZr2qgC4UUPsLnqDEnW1MXxUCZbEra7dsBaAhC9sizY12hVWtKV8K7L9bLEAISS/hBndhGi4
+ARC-Seal: i=1; a=rsa-sha256; t=1525631073; cv=none;
         d=google.com; s=arc-20160816;
-        b=Vru7SPuz6BzilZAfXZcegbCp4jlFKkQWPcGjbVHOHcDzS8XbcJc384F+9cAY9A8VGW
-         XcoMu4INjgqyF/CV6owUHKL74poqJShj0ACeDeFusfBw8TmICfd5CqlFhXTrZ0Yavl78
-         HroQde/r5WthH4UibpXnV5tT1L8bbxIeRIWF1B4OGH3pkUYTfPnS6HsBMFYWduHxMJwZ
-         /L36fClgMu+V5uhzf4DPHEgZRqmD/yBxcAUDh/VUC26oDSFY6sRVUv5kJX5VzZ62ziW6
-         zkyqDaeu6wVTkG5M51b/tn+LdNR9R/hAASKf2BT480eb1PoeHctAzaNI8PI2cJFzcVI2
-         qAug==
+        b=Q18J8h9pDoMRYzXohtDLdfjezOiBg83bp+HRUziDedfJoEx/KK8r0RIwegcgIo+UVp
+         rGiQ6+YwpA+WYPgfh8Zy1/1eW6M2Eo1oQNGiXCwCVujk4GnOobyuEXdl2hnPdetI21GV
+         HvSyK/ta/tQncrShiQJJBfe+TX7CSnndIiHH+VuEvIrN2/54x/ndrUOrje2vXiw6QeFE
+         VvpTBpkXFeDWvOk9YQ6oLd7gB7R2K3QCtfj8juCHHJZo9t2HLwCP3wafRL9Dy7Ek2a7R
+         To1yZ8nWkWPPP6oq4+OtmATLsLPE0L9QvZ3U/zZJk53vFCDv+pycIbapz91qsf1bmyb5
+         +19w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:arc-authentication-results;
-        bh=6shUN1+gCJjg0eJDuX2f1aCr0hZOV/T3neK4/6Y0pL0=;
-        b=SldfV9MTvq3LIYKXIwU8ZlHb185W9B7+ChwLQELtnAkRpe6r+nMWWBhJydD61Cfuqx
-         ZCoJmGkctG+kdfGhvFWGsvVsT8n9yaOTuWNoeUjIwR2nwT58FfhYufEkQUKyKb8lD9wX
-         ZvnCX6Nc1D9CmqMrglxDWZZ/YuWwdM319UljVjBbbYxoaMVbMQ/QU+A9YDi1c8Ntj+Eg
-         nmf29vDp4zWXzbxqk/tujEPHu3wEymoooA/1tib64uyFOpCmIg5ZFi2Q+lztan6qkVGm
-         aaIlALwEGQYonmQ2Gq3O0bgzmUZgcnZ2ljdmZQR+LQRLM8Hcecj4JqEYXvm5/2VAXYD+
-         jbYQ==
+        bh=TmKdTwdPE8FraUrrUSpvK7p0n0j75/1Tb93vNA8uxpo=;
+        b=KVQg3GwLLCLTq97FtCS12YldQCII9mJra4ZAzn7oW6n3XPlXmjFa9ZUDp8XlvG1H4C
+         quLJ1pyMXesDub8jsQhDZPMr/Dohh2szwhUnMaiCTtW0OT0iHtCw5UpTh0Se7NPdg81q
+         ewN+7qOVUK+pvCDNapkwKjw6Z7Gz6CcrWQFsoiozKDGIgkUi8ULYD+Nbj9d0gQU4t3QJ
+         zQFNTyCk6i8Q68v5Mhee/nK9AXD7RWMrqvhkqz0+jSjCMQo0WyDr+HPjO2eqLrCVkSso
+         6iHjoYJCL4HMzdJefpV8br0InJEJcHJ3PLXawWagtVmZrJkrlEXYxJkqcFWY5VPDva0N
+         0o7A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of mst@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=mst@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       spf=pass (google.com: domain of amit@amitshah.net designates 217.70.178.230 as permitted sender) smtp.mailfrom=amit@amitshah.net
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of mst@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=mst@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Thu, 3 May 2018 22:28:32 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Amit Shah <amit@amitshah.net>
-Cc: linux-kernel@vger.kernel.org, Amit Shah <amit@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
+       spf=pass (google.com: domain of amit@amitshah.net designates 217.70.178.230 as permitted sender) smtp.mailfrom=amit@amitshah.net
+Date: Sun, 6 May 2018 20:24:30 +0200
+From: Amit Shah <amit@amitshah.net>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	virtualization@lists.linux-foundation.org, stable@vger.kernel.org,
 	Tiwei Bie <tiwei.bie@intel.com>, Jason Wang <jasowang@redhat.com>
 Subject: Re: [PATCH 0/6] virtio-console: spec compliance fixes
-Message-ID: <20180503222702-mutt-send-email-mst@kernel.org>
+Message-ID: <20180506182430.GB19628@grmbl.mre>
 References: <1524248223-393618-1-git-send-email-mst@redhat.com>
  <20180424214104-mutt-send-email-mst@kernel.org>
  <20180503034529.GA16676@grmbl.mre>
+ <20180503222702-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180503034529.GA16676@grmbl.mre>
+In-Reply-To: <20180503222702-mutt-send-email-mst@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1598290166308217501?=
-X-GMAIL-MSGID: =?utf-8?q?1599472364676411024?=
+X-GMAIL-MSGID: =?utf-8?q?1599740128541729529?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu, May 03, 2018 at 05:45:29AM +0200, Amit Shah wrote:
-> (apologies if you received a dup)
-> 
-> On (Tue) 24 Apr 2018 [21:41:29], Michael S. Tsirkin wrote:
-> > On Fri, Apr 20, 2018 at 09:17:59PM +0300, Michael S. Tsirkin wrote:
-> > > Turns out virtio console tries to take a buffer out of an active vq.
-> > > Works by sheer luck, and is explicitly forbidden by spec.  And while
-> > > going over it I saw that error handling is also broken -
-> > > failure is easy to trigger if I force allocations to fail.
-> > > 
-> > > Lightly tested.
+On (Thu) 03 May 2018 [22:28:32], Michael S. Tsirkin wrote:
+> On Thu, May 03, 2018 at 05:45:29AM +0200, Amit Shah wrote:
+> > (apologies if you received a dup)
 > > 
-> > Amit - any feedback before I push these patches?
+> > On (Tue) 24 Apr 2018 [21:41:29], Michael S. Tsirkin wrote:
+> > > On Fri, Apr 20, 2018 at 09:17:59PM +0300, Michael S. Tsirkin wrote:
+> > > > Turns out virtio console tries to take a buffer out of an active vq.
+> > > > Works by sheer luck, and is explicitly forbidden by spec.  And while
+> > > > going over it I saw that error handling is also broken -
+> > > > failure is easy to trigger if I force allocations to fail.
+> > > > 
+> > > > Lightly tested.
+> > > 
+> > > Amit - any feedback before I push these patches?
+> > 
+> > The changes look good spec-wise.
+> > 
+> > There are a bunch of tests in avocado-vt that test virtio-console
+> > functionality.  Can you give those a try before pushing?
+> > 
+> > 		Amit
 > 
-> The changes look good spec-wise.
-> 
-> There are a bunch of tests in avocado-vt that test virtio-console
-> functionality.  Can you give those a try before pushing?
-> 
-> 		Amit
+> I pushed before I did that test, will try to find the time later.  BTW
+> do you still want to be on the maintainers list?
 
-I pushed before I did that test, will try to find the time later.  BTW
-do you still want to be on the maintainers list?
+Yes, I want to be on the maintainers list; but won't mind
+co-maintainers.  The recent changes seem to be spec-related, and I'd
+expect you to have a good handle on that anyway.
 
-> -- 
-> http://amitshah.net/
+		Amit
+-- 
+http://amitshah.net/
