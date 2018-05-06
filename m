@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751910AbeEFTUU (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 15:20:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38354 "EHLO mail.kernel.org"
+        id S1751980AbeEFTUg (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 15:20:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751807AbeEFTUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 15:20:14 -0400
+        id S1751950AbeEFTUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 15:20:30 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -24,9 +24,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
         Andy Lutomirski <luto@kernel.org>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 1/9] x86/breakpoint: Split validation into "check" and "commit"
-Date: Sun,  6 May 2018 21:19:47 +0200
-Message-Id: <1525634395-23380-2-git-send-email-frederic@kernel.org>
+Subject: [PATCH 4/9] arm: Split breakpoint validation into "check" and "commit"
+Date: Sun,  6 May 2018 21:19:50 +0200
+Message-Id: <1525634395-23380-5-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525634395-23380-1-git-send-email-frederic@kernel.org>
 References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
@@ -41,7 +41,6 @@ breakpoint struct.
 
 Prepare fox fixing this misdesign and separate both logics.
 
-Original-patch-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Andy Lutomirski <luto@kernel.org>
@@ -63,88 +62,164 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 ---
- arch/x86/kernel/hw_breakpoint.c | 137 +++++++++++++++++++++-------------------
- 1 file changed, 72 insertions(+), 65 deletions(-)
+ arch/arm/kernel/hw_breakpoint.c | 176 +++++++++++++++++++++++-----------------
+ 1 file changed, 103 insertions(+), 73 deletions(-)
 
-diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-index 8771766..6960800 100644
---- a/arch/x86/kernel/hw_breakpoint.c
-+++ b/arch/x86/kernel/hw_breakpoint.c
-@@ -233,20 +233,15 @@ int arch_bp_generic_fields(int x86_len, int x86_type,
+diff --git a/arch/arm/kernel/hw_breakpoint.c b/arch/arm/kernel/hw_breakpoint.c
+index 629e251..1769d3a 100644
+--- a/arch/arm/kernel/hw_breakpoint.c
++++ b/arch/arm/kernel/hw_breakpoint.c
+@@ -515,45 +515,33 @@ int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
  	return 0;
  }
  
--
+-/*
+- * Construct an arch_hw_breakpoint from a perf_event.
+- */
 -static int arch_build_bp_info(struct perf_event *bp)
 +static int hw_breakpoint_arch_check(struct perf_event *bp,
 +				    const struct perf_event_attr *attr)
  {
 -	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
-+	unsigned int align;
++	u32 offset, alignment_mask = 0x3;
++
++	/* Ensure that we are in monitor debug mode. */
++	if (!monitor_mode_enabled())
++		return -ENODEV;
  
+ 	/* Type */
+-	switch (bp->attr.bp_type) {
++	switch (attr->bp_type) {
+ 	case HW_BREAKPOINT_X:
+-		info->ctrl.type = ARM_BREAKPOINT_EXECUTE;
+-		break;
+ 	case HW_BREAKPOINT_R:
+-		info->ctrl.type = ARM_BREAKPOINT_LOAD;
+-		break;
+ 	case HW_BREAKPOINT_W:
+-		info->ctrl.type = ARM_BREAKPOINT_STORE;
+-		break;
+ 	case HW_BREAKPOINT_RW:
+-		info->ctrl.type = ARM_BREAKPOINT_LOAD | ARM_BREAKPOINT_STORE;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+ 
+ 	/* Len */
+-	switch (bp->attr.bp_len) {
++	switch (attr->bp_len) {
+ 	case HW_BREAKPOINT_LEN_1:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_1;
+-		break;
+ 	case HW_BREAKPOINT_LEN_2:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_2;
+-		break;
+ 	case HW_BREAKPOINT_LEN_4:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_4;
+-		break;
+ 	case HW_BREAKPOINT_LEN_8:
+-		info->ctrl.len = ARM_BREAKPOINT_LEN_8;
+-		if ((info->ctrl.type != ARM_BREAKPOINT_EXECUTE)
++		if ((attr->bp_type != HW_BREAKPOINT_X)
+ 			&& max_watchpoint_len >= 8)
+ 			break;
+ 	default:
+@@ -566,50 +554,17 @@ static int arch_build_bp_info(struct perf_event *bp)
+ 	 * by the hardware and must be aligned to the appropriate number of
+ 	 * bytes.
+ 	 */
+-	if (info->ctrl.type == ARM_BREAKPOINT_EXECUTE &&
+-	    info->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
+-	    info->ctrl.len != ARM_BREAKPOINT_LEN_4)
++	if (attr->bp_type == HW_BREAKPOINT_X &&
++	    attr->bp_len != HW_BREAKPOINT_LEN_2 &&
++	    attr->bp_len != HW_BREAKPOINT_LEN_4)
+ 		return -EINVAL;
+ 
+-	/* Address */
 -	info->address = bp->attr.bp_addr;
 -
--	/* Type */
--	switch (bp->attr.bp_type) {
-+	/* Check type */
-+	switch (attr->bp_type) {
- 	case HW_BREAKPOINT_W:
--		info->type = X86_BREAKPOINT_WRITE;
--		break;
- 	case HW_BREAKPOINT_W | HW_BREAKPOINT_R:
--		info->type = X86_BREAKPOINT_RW;
- 		break;
- 	case HW_BREAKPOINT_X:
- 		/*
-@@ -254,33 +249,84 @@ static int arch_build_bp_info(struct perf_event *bp)
- 		 * acceptable for kprobes.  On non-kprobes kernels, we don't
- 		 * allow kernel breakpoints at all.
- 		 */
--		if (bp->attr.bp_addr >= TASK_SIZE_MAX) {
-+		if (attr->bp_addr >= TASK_SIZE_MAX) {
- #ifdef CONFIG_KPROBES
--			if (within_kprobe_blacklist(bp->attr.bp_addr))
-+			if (within_kprobe_blacklist(attr->bp_addr))
- 				return -EINVAL;
- #else
- 			return -EINVAL;
- #endif
- 		}
+-	/* Privilege */
+-	info->ctrl.privilege = ARM_BREAKPOINT_USER;
+-	if (arch_check_bp_in_kernelspace(bp))
+-		info->ctrl.privilege |= ARM_BREAKPOINT_PRIV;
+-
+-	/* Enabled? */
+-	info->ctrl.enabled = !bp->attr.disabled;
+-
+-	/* Mismatch */
+-	info->ctrl.mismatch = 0;
+-
+-	return 0;
+-}
+-
+-/*
+- * Validate the arch-specific HW Breakpoint register settings.
+- */
+-int arch_validate_hwbkpt_settings(struct perf_event *bp)
+-{
+-	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+-	int ret = 0;
+-	u32 offset, alignment_mask = 0x3;
+-
+-	/* Ensure that we are in monitor debug mode. */
+-	if (!monitor_mode_enabled())
+-		return -ENODEV;
+-
+-	/* Build the arch_hw_breakpoint. */
+-	ret = arch_build_bp_info(bp);
+-	if (ret)
+-		goto out;
+-
+ 	/* Check address alignment. */
+-	if (info->ctrl.len == ARM_BREAKPOINT_LEN_8)
++	if (attr->bp_len == HW_BREAKPOINT_LEN_8)
+ 		alignment_mask = 0x7;
+-	offset = info->address & alignment_mask;
++
++	offset = attr->bp_addr & alignment_mask;
++
+ 	switch (offset) {
+ 	case 0:
+ 		/* Aligned */
+@@ -617,20 +572,16 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+ 	case 1:
+ 	case 2:
+ 		/* Allow halfword watchpoints and breakpoints. */
+-		if (info->ctrl.len == ARM_BREAKPOINT_LEN_2)
++		if (attr->bp_len == HW_BREAKPOINT_LEN_2)
+ 			break;
+ 	case 3:
+ 		/* Allow single byte watchpoint. */
+-		if (info->ctrl.len == ARM_BREAKPOINT_LEN_1)
++		if (attr->bp_len == HW_BREAKPOINT_LEN_1)
+ 			break;
+ 	default:
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
  
-+		if (attr->bp_len == sizeof(long))
-+			return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	/* Check len */
-+	switch (attr->bp_len) {
-+	case HW_BREAKPOINT_LEN_1:
-+	case HW_BREAKPOINT_LEN_2:
-+	case HW_BREAKPOINT_LEN_4:
-+		break;
-+#ifdef CONFIG_X86_64
-+	case HW_BREAKPOINT_LEN_8:
-+		break;
-+	default:
-+		/* AMD range breakpoint */
-+		if (!is_power_of_2(attr->bp_len))
-+			return -EINVAL;
-+
-+		if (!boot_cpu_has(X86_FEATURE_BPEXT))
-+			return -EOPNOTSUPP;
-+#endif
-+	}
-+
-+	align = attr->bp_len - 1;
-+
-+	/*
-+	 * Check that the low-order bits of the address are appropriate
-+	 * for the alignment implied by len.
-+	 */
-+	if (attr->bp_addr & align)
-+		return -EINVAL;
-+
+-	info->address &= ~alignment_mask;
+-	info->ctrl.len <<= offset;
+-
+ 	if (is_default_overflow_handler(bp)) {
+ 		/*
+ 		 * Mismatch breakpoints are required for single-stepping
+@@ -655,13 +606,92 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+ 		 * reports them.
+ 		 */
+ 		if (!debug_exception_updates_fsr() &&
+-		    (info->ctrl.type == ARM_BREAKPOINT_LOAD ||
+-		     info->ctrl.type == ARM_BREAKPOINT_STORE))
++		    (attr->bp_type == HW_BREAKPOINT_R ||
++		     attr->bp_type == HW_BREAKPOINT_W))
+ 			return -EINVAL;
+ 	}
+ 
+-out:
+-	return ret;
 +	return 0;
 +}
 +
@@ -152,121 +227,82 @@ index 8771766..6960800 100644
 +{
 +	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
 +	struct perf_event_attr *attr = &bp->attr;
++	u32 offset, alignment_mask = 0x3;
 +
++	/* Type */
++	switch (attr->bp_type) {
++	case HW_BREAKPOINT_X:
++		info->ctrl.type = ARM_BREAKPOINT_EXECUTE;
++		break;
++	case HW_BREAKPOINT_R:
++		info->ctrl.type = ARM_BREAKPOINT_LOAD;
++		break;
++	case HW_BREAKPOINT_W:
++		info->ctrl.type = ARM_BREAKPOINT_STORE;
++		break;
++	case HW_BREAKPOINT_RW:
++		info->ctrl.type = ARM_BREAKPOINT_LOAD | ARM_BREAKPOINT_STORE;
++		break;
++	default:
++		WARN_ON_ONCE(1);
++	}
++
++	/* Len */
++	switch (attr->bp_len) {
++	case HW_BREAKPOINT_LEN_1:
++		info->ctrl.len = ARM_BREAKPOINT_LEN_1;
++		break;
++	case HW_BREAKPOINT_LEN_2:
++		info->ctrl.len = ARM_BREAKPOINT_LEN_2;
++		break;
++	case HW_BREAKPOINT_LEN_4:
++		info->ctrl.len = ARM_BREAKPOINT_LEN_4;
++		break;
++	case HW_BREAKPOINT_LEN_8:
++		info->ctrl.len = ARM_BREAKPOINT_LEN_8;
++		break;
++	default:
++		WARN_ON_ONCE(1);
++	}
++
++	/* Address */
 +	info->address = attr->bp_addr;
 +
-+	/* Set type */
-+	switch (attr->bp_type) {
-+	case HW_BREAKPOINT_W:
-+		info->type = X86_BREAKPOINT_WRITE;
-+		break;
-+	case HW_BREAKPOINT_W | HW_BREAKPOINT_R:
-+		info->type = X86_BREAKPOINT_RW;
-+		break;
-+	case HW_BREAKPOINT_X:
- 		info->type = X86_BREAKPOINT_EXECUTE;
- 		/*
- 		 * x86 inst breakpoints need to have a specific undefined len.
- 		 * But we still need to check userspace is not trying to setup
- 		 * an unsupported length, to get a range breakpoint for example.
- 		 */
--		if (bp->attr.bp_len == sizeof(long)) {
--			info->len = X86_BREAKPOINT_LEN_X;
--			return 0;
--		}
-+		info->len = X86_BREAKPOINT_LEN_X;
-+		return;
- 	default:
--		return -EINVAL;
-+		WARN_ON_ONCE(1);
- 	}
- 
--	/* Len */
-+	/* Set len */
- 	info->mask = 0;
- 
--	switch (bp->attr.bp_len) {
-+	switch (attr->bp_len) {
- 	case HW_BREAKPOINT_LEN_1:
- 		info->len = X86_BREAKPOINT_LEN_1;
- 		break;
-@@ -296,15 +342,6 @@ static int arch_build_bp_info(struct perf_event *bp)
- 		break;
- #endif
- 	default:
--		/* AMD range breakpoint */
--		if (!is_power_of_2(bp->attr.bp_len))
--			return -EINVAL;
--		if (bp->attr.bp_addr & (bp->attr.bp_len - 1))
--			return -EINVAL;
--
--		if (!boot_cpu_has(X86_FEATURE_BPEXT))
--			return -EOPNOTSUPP;
--
- 		/*
- 		 * It's impossible to use a range breakpoint to fake out
- 		 * user vs kernel detection because bp_len - 1 can't
-@@ -312,54 +349,24 @@ static int arch_build_bp_info(struct perf_event *bp)
- 		 * breakpoints, then we'll have to check for kprobe-blacklisted
- 		 * addresses anywhere in the range.
- 		 */
--		info->mask = bp->attr.bp_len - 1;
-+		info->mask = attr->bp_len - 1;
- 		info->len = X86_BREAKPOINT_LEN_1;
- 	}
--
--	return 0;
- }
- 
++	/* Privilege */
++	info->ctrl.privilege = ARM_BREAKPOINT_USER;
++	if (arch_check_bp_in_kernelspace(bp))
++		info->ctrl.privilege |= ARM_BREAKPOINT_PRIV;
 +
- /*
-  * Validate the arch-specific HW Breakpoint register settings
-  */
- int arch_validate_hwbkpt_settings(struct perf_event *bp)
- {
--	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
--	unsigned int align;
--	int ret;
++	/* Enabled? */
++	info->ctrl.enabled = !attr->disabled;
++
++	/* Mismatch */
++	info->ctrl.mismatch = 0;
++
++	if (info->ctrl.len == ARM_BREAKPOINT_LEN_8)
++		alignment_mask = 0x7;
++
++	offset = info->address & alignment_mask;
++	info->address &= ~alignment_mask;
++	info->ctrl.len <<= offset;
++}
++
++/*
++ * Validate the arch-specific HW Breakpoint register settings.
++ */
++int arch_validate_hwbkpt_settings(struct perf_event *bp)
++{
 +	int err;
- 
++
 +	err = hw_breakpoint_arch_check(bp, &bp->attr);
 +	if (err)
 +		return err;
- 
--	ret = arch_build_bp_info(bp);
--	if (ret)
--		return ret;
--
--	switch (info->len) {
--	case X86_BREAKPOINT_LEN_1:
--		align = 0;
--		if (info->mask)
--			align = info->mask;
--		break;
--	case X86_BREAKPOINT_LEN_2:
--		align = 1;
--		break;
--	case X86_BREAKPOINT_LEN_4:
--		align = 3;
--		break;
--#ifdef CONFIG_X86_64
--	case X86_BREAKPOINT_LEN_8:
--		align = 7;
--		break;
--#endif
--	default:
--		WARN_ON_ONCE(1);
--	}
--
--	/*
--	 * Check that the low-order bits of the address are appropriate
--	 * for the alignment implied by len.
--	 */
--	if (info->address & align)
--		return -EINVAL;
++
 +	hw_breakpoint_arch_commit(bp);
- 
- 	return 0;
++
++	return 0;
  }
+ 
+ /*
 -- 
 2.7.4
