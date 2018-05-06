@@ -1,209 +1,135 @@
-Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1186102-1525707345-2-14197578169285422485
+Return-Path: <linux-fsdevel-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2527795-1525568429-3-298826957765829770
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
-X-Spam-charsets: 
+X-Spam-charsets: plain='us-ascii'
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-arch-owner@vger.kernel.org
+X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525707345; b=IdxX2ALoRwW1lOl7bSC+MjyMA6ckDwycwqI4ge3H8te7/DMleM
-    4FTwDza9UX0UIppu9E0bKC0iOAhNh0jJrcvOFsECCmgNAP8Y4RI8E1L99K00oWku
-    4+8KCF7eYI7gs6xfGf8GZxxC31qsz92SQrbybnwPmDLW9TeJbmvwOin2zn25wwE8
-    cQq8FXQ6Oaj7gXegG4NrpJSaE9a4J/JDRRzqH24qk7Uxi9iVyJGby0vVOvdfL2uw
-    sUAwePm1bYcFLr2E32EpEMPAfbXBoqw9+fck7dNHybUCIvOfQK7N9IV6AZS4nflP
-    n0FKEZf/Er9w5igjLLOCp1Ckw4j5hHZQvbzw==
+    1525568429; b=SQP5ShatZbzUCEc4+2THXEFodxE/3FjqYmg0CNjBfUTtcsQwmU
+    J1lOyDUIa3nD9r1Wo3npKsK4TUq12+QsT5cplnUeEdyZTRduKYCYOAxbyWrqS2Ay
+    xIFySvlKni595PZiBCN+5PaK6a9yXNaP4U6yACzoonuIiIFSOW9jlGxlDZ/+ALSf
+    sAqX8zH6KfQv3cKCCJirqt9yTCuEi/JrQdUKNKVK8vHcHWVbciBE/hZFhTsbxT3G
+    rHIv2XGCuoCQ+Qto0TZP35iYx1hCEGTz44k6PoG/1D7ShEpfeJuPQnCL71iNN0T9
+    xx2aZfGUhov+1tWfJQunsDBG/sZRHwJG5Yvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525707345; bh=
-    7Yqxn8f02xGv64GoRNMIvu3lBrnW81qZRBJYu4SXOtE=; b=dpUqr2sm/0khARoG
-    OMQnJCzduxUOjrJa35Dj7duY4+0xHYOrkERYzTh9ZPsHAXf+sWyGP2c/ArGBw4rS
-    Vt6KygVTyWsQQaAeuistuQuVAw16AyM6VcuKpqewFXnerBJEz8eyx0VY8oEgLIEc
-    aT7il07BpcatdGcQQzh0DmWBdWMMVzmGuOfQmidc+PY7u97jyxL2faqgkWnFk4Z7
-    IDApJ2Z/FdTUgp5l8YSQlCX1MsTEGGUXPUYecULH3/Hvg+NUK02BtG5Rg1FkooK0
-    ZtWRGt690TP2RQwLoWIBLUvR7XIoIxnBMQNH2PICy33FjkDbBVGhe4vtUJ9gsCKy
-    wltZtA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-    header.i=@gmail.com header.b=YXVwlrZZ x-bits=2048 x-keytype=rsa
-    x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    messagingengine.com; h=date:from:to:cc:subject:message-id
+    :references:mime-version:content-type:in-reply-to:sender
+    :list-id; s=fm2; t=1525568429; bh=Kmb5ikneXfr/9F8M5VmAWp3JuYnOIf
+    OZJmTA6WfgoeE=; b=IB/OwYgtY5gnz7sSofyb5q/QkpbRe3IRYyRfsg3YKnclqv
+    BMTLXbk5qmObY5Rx+EGkkCmkTETQqTf1nPMTPOAU39stuQqFYTzbM9jkvn2DYyHn
+    zMhfBjaARk584n3U+jucKjSCUpg3GQ10q+Zx9ZGt+p4xyZw/4bh+DBX/hXZ0RDem
+    kcvvcAmUcVNdT2eaLgPU5xo+BxjOECwxaVfEEgOoIvQg8JIA4CPqAKf8YE45FdFf
+    XeyehAmPSSFjVYDnkh5H8ceVKRWWylpuKUVjNyd2fP1tn1AzUSkE5rnsC6s2ZNhD
+    7pXeUJ/tszh6QkKaBBljMplV5lKOD/FJgkDzP+gw==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none)
+    header.from=zeniv.linux.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=lojXOiSx;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx4.messagingengine.com;
+    header.domain=zeniv.linux.org.uk header.mx.error=NOERROR
+    header.result=warn header_org.domain=linux.org.uk
+    header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
-      header.i=@gmail.com header.b=YXVwlrZZ x-bits=2048 x-keytype=rsa
-      x-algorithm=sha256 x-selector=20161025;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none)
+      header.from=zeniv.linux.org.uk;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
-    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=lojXOiSx;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=zeniv.linux.org.uk header.mx.error=NOERROR
+      header.result=warn header_org.domain=linux.org.uk
+      header_org.result=pass header_is_org_domain=no;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfPmOtmY0hCjDud48miOZoeF/Ot/1n/GxHhxMd/2z/k1uPwVN3FwaTwLP+ZgVsJryB1P2+DqSTLj9S2pXIlRJ6aRsgc1jo7r4pb/4v0qOh8wR1zqdp75f
-    HNtvZBXIfn43/B1NtM1S8+2BpPTIoVcMQPUFeO/nkE2F8sDnAZ31yxA3lIcP+cn1B1A2awD7Islf6iD5s+UrWxJ4+WYxZIbTHzC1xfJH2pO2rXENM8PdCKWI
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=i6uMeK6BI1QA:10
-    a=VUJBJC2UJ8kA:10 a=pGLkceISAAAA:8 a=23zcXjzEi2UVHqVrFbEA:9
-    a=+jEqtf1s3R9VXZ0wqowq2kgwd+I=:19
+X-CM-Envelope: MS4wfHMwEN++kvmuQ/NAnwzezWOnoTjbfHEv/KmRGL5MUwF4qi8vMRXV4/xwcr863xuWoqFlP8UCSn+tJFJWE/jb28fi5kJOrHuCJhZf3hJcAa8pIed1nBFe
+    b2zyPfL+vMBR7Z4mA4v7h+ksRDW4EiaHhIZaMvqyo30p1fwotvZr7HDLqGLuBiFUHitUJYwNHXnAMIliZVD3BKVc7r2AhcUYEWnR+RDelnB9cUDtQaqFqJgD
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=X8rsvPtmAAAA:8 a=ZuO3l6faAAAA:8 a=gJcQh2trAAAA:8 a=PEN_4dZorEWS9r-IfQUA:9
+    a=CjuIK1q_8ugA:10 a=iFvzNDAcT74_nAS09Xtt:22 a=jhS11inhvYEtIRtj4HQL:22
+    a=orh-YdTTE9rb79OYXCg8:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752326AbeEGPfm (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 7 May 2018 11:35:42 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:36027 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752309AbeEGPfj (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Mon, 7 May 2018 11:35:39 -0400
-X-Google-Smtp-Source: AB8JxZrAoeacKT63RdgoMmOdrn/SuHEraPvwpA2TqZRlMnTTDQ7PluDj51cPBUOb24HRAmylat+8HA==
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-To: linus.walleij@linaro.org
-Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 2/7] gpio: 104-dio-48e: Utilize for_each_set_port_word macro
-Date: Mon,  7 May 2018 11:35:31 -0400
-Message-Id: <1ae1bf3604e0fe5136322c26054770a29a129f20.1525704095.git.vilhelm.gray@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1525704095.git.vilhelm.gray@gmail.com>
-References: <cover.1525704095.git.vilhelm.gray@gmail.com>
-Sender: linux-arch-owner@vger.kernel.org
-X-Mailing-List: linux-arch@vger.kernel.org
+        id S1751952AbeEFBAZ (ORCPT <rfc822;linux@kroah.com>);
+        Sat, 5 May 2018 21:00:25 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:59970 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751832AbeEFBAX (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sat, 5 May 2018 21:00:23 -0400
+Date: Sun, 6 May 2018 01:59:51 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Martin Steigerwald <martin@lichtvoll.de>,
+        Matthew Wilcox <willy@infradead.org>, dsterba@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, linux-m68k@lists.linux-m68k.org,
+        Debian m68k <debian-68k@lists.debian.org>
+Subject: Re: moving affs + RDB partition support to staging?
+Message-ID: <20180506005946.GI30522@ZenIV.linux.org.uk>
+References: <20180425154602.GA8546@bombadil.infradead.org>
+ <20180425203029.GQ21272@twin.jikos.cz>
+ <20180426025717.GA32430@bombadil.infradead.org>
+ <1613268.lKBQxPXt8J@merkaba>
+ <76ca15e2-7b43-8b02-43e1-9ee65ab85356@physik.fu-berlin.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76ca15e2-7b43-8b02-43e1-9ee65ab85356@physik.fu-berlin.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+Sender: linux-fsdevel-owner@vger.kernel.org
+X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Replace boilerplate code in get_multiple/set_multiple callbacks with
-for_each_set_port_word macro to simplify code and improve clarity.
+On Thu, Apr 26, 2018 at 12:45:41PM +0200, John Paul Adrian Glaubitz wrote:
 
-Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
----
- drivers/gpio/gpio-104-dio-48e.c | 67 ++++++++-------------------------
- 1 file changed, 16 insertions(+), 51 deletions(-)
+> Exactly. It works fine as is:
+> 
+> root@elgar:~> uname -a
+> Linux elgar 4.16.0-rc2-amiga-16784-ga8917fc #650 Mon Mar 5 15:32:52 NZDT 2018 m68k GNU/Linux
+> root@elgar:~> mount /dev/sda1 /mnt -taffs
+> root@elgar:~> ls -l /mnt | head
+> total 0
+> drwx------ 1 root root      0 Mar 30  2001 Alt
+> -rw------- 1 root root   1352 Mar 27  1997 Alt.info
+> drwx------ 1 root root      0 Nov 16 14:39 C
+> drwx------ 1 root root      0 Mar 27  1997 CS_Fonts
+> drwx------ 1 root root      0 Mar 27  1997 Classes
+> -rwx------ 1 root root   1132 Aug 14  1996 Classes.info
+> drwx------ 1 root root      0 Feb 10  2004 Commodities
+> -rw------- 1 root root    628 Jan 14  2002 Commodities.info
+> drwx------ 1 root root      0 Apr 10  1999 CyberTools
+> root@elgar:~> mount |grep affs
+> /dev/sda1 on /mnt type affs (rw,relatime,bs=512,volume=:)
+> root@elgar:~>
+> 
+> There is nothing at the moment that needs fixing.
 
-diff --git a/drivers/gpio/gpio-104-dio-48e.c b/drivers/gpio/gpio-104-dio-48e.c
-index 9c4e07fcb74b..843f1c71e814 100644
---- a/drivers/gpio/gpio-104-dio-48e.c
-+++ b/drivers/gpio/gpio-104-dio-48e.c
-@@ -183,46 +183,23 @@ static int dio48e_gpio_get(struct gpio_chip *chip, unsigned offset)
- 	return !!(port_state & mask);
- }
- 
-+static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
-+
- static int dio48e_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	unsigned long *bits)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
- 	size_t i;
--	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
--	const unsigned int gpio_reg_size = 8;
--	unsigned int bits_offset;
--	size_t word_index;
--	unsigned int word_offset;
--	unsigned long word_mask;
--	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
-+	size_t word;
-+	unsigned int offset;
- 	unsigned long port_state;
- 
- 	/* clear bits array to a clean slate */
- 	bitmap_zero(bits, chip->ngpio);
- 
--	/* get bits are evaluated a gpio port register at a time */
--	for (i = 0; i < ARRAY_SIZE(ports); i++) {
--		/* gpio offset in bits array */
--		bits_offset = i * gpio_reg_size;
--
--		/* word index for bits array */
--		word_index = BIT_WORD(bits_offset);
--
--		/* gpio offset within current word of bits array */
--		word_offset = bits_offset % BITS_PER_LONG;
--
--		/* mask of get bits for current gpio within current word */
--		word_mask = mask[word_index] & (port_mask << word_offset);
--		if (!word_mask) {
--			/* no get bits in this port so skip to next one */
--			continue;
--		}
--
--		/* read bits from current gpio port */
-+	for_each_set_port_word(i, word, offset, mask, ARRAY_SIZE(ports), 8) {
- 		port_state = inb(dio48egpio->base + ports[i]);
--
--		/* store acquired bits at respective bits array offset */
--		bits[word_index] |= port_state << word_offset;
-+		bits[word] |= port_state << offset;
- 	}
- 
- 	return 0;
-@@ -252,37 +229,25 @@ static void dio48e_gpio_set_multiple(struct gpio_chip *chip,
- 	unsigned long *mask, unsigned long *bits)
- {
- 	struct dio48e_gpio *const dio48egpio = gpiochip_get_data(chip);
--	unsigned int i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int port;
--	unsigned int out_port;
-+	size_t i;
-+	size_t word;
-+	unsigned int offset;
-+	unsigned int iomask;
- 	unsigned int bitmask;
- 	unsigned long flags;
- 
--	/* set bits are evaluated a gpio register size at a time */
--	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
--		/* no more set bits in this mask word; skip to the next word */
--		if (!mask[BIT_WORD(i)]) {
--			i = (BIT_WORD(i) + 1) * BITS_PER_LONG - gpio_reg_size;
--			continue;
--		}
--
--		port = i / gpio_reg_size;
--		out_port = (port > 2) ? port + 1 : port;
--		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
-+	for_each_set_port_word(i, word, offset, mask, ARRAY_SIZE(ports), 8) {
-+		iomask = mask[word] >> offset;
-+		bitmask = iomask & (bits[word] >> offset);
- 
- 		raw_spin_lock_irqsave(&dio48egpio->lock, flags);
- 
- 		/* update output state data and set device gpio register */
--		dio48egpio->out_state[port] &= ~mask[BIT_WORD(i)];
--		dio48egpio->out_state[port] |= bitmask;
--		outb(dio48egpio->out_state[port], dio48egpio->base + out_port);
-+		dio48egpio->out_state[i] &= ~iomask;
-+		dio48egpio->out_state[i] |= bitmask;
-+		outb(dio48egpio->out_state[i], dio48egpio->base + ports[i]);
- 
- 		raw_spin_unlock_irqrestore(&dio48egpio->lock, flags);
--
--		/* prepare for next gpio register set */
--		mask[BIT_WORD(i)] >>= gpio_reg_size;
--		bits[BIT_WORD(i)] >>= gpio_reg_size;
- 	}
- }
- 
--- 
-2.17.0
+Funny, that...  I'd been going through the damn thing for the
+last week or so; open-by-fhandle/nfs export support is completely
+buggered.  And as for the rest... the least said about the error
+handling, the better - something like rename() hitting an IO
+error (read one) can not only screw the on-disk data into the
+ground, it can do seriously bad things to kernel data structures.
+
+Is there anything resembling fsck for that thing, BTW?  Nevermind
+the repairs, just the validity checks would be nice...
