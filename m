@@ -1,125 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751887AbeEFR4v (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 13:56:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53134 "EHLO mail.kernel.org"
+        id S1751853AbeEFR7U (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 13:59:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:36103 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751766AbeEFR4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 13:56:44 -0400
-Date: Sun, 6 May 2018 18:56:37 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc: <robh+dt@kernel.org>, <alexandre.torgue@st.com>,
-        <mark.rutland@arm.com>, <mcoquelin.stm32@gmail.com>, <lars@metafoo.de>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@linaro.org>,
-        <arnaud.pouliquen@st.com>
-Subject: Re: [PATCH] iio: adc: stm32-dfsdm: Add support for stm32mp1
-Message-ID: <20180506185637.494494b3@archlinux>
-In-Reply-To: <1525266323-4922-1-git-send-email-fabrice.gasnier@st.com>
-References: <1525266323-4922-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1751751AbeEFR7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 13:59:16 -0400
+Date: Sun, 6 May 2018 19:59:14 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Eugen Hristev <eugen.hristev@microchip.com>,
+        ludovic.desroches@microchip.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+        nicolas.ferre@microchip.com, dmitry.torokhov@gmail.com,
+        robh@kernel.org
+Subject: Re: [PATCH v4 5/9] iio: adc: at91-sama5d2_adc: add support for
+ position and pressure channels
+Message-ID: <20180506175914.GL10960@piout.net>
+References: <1525084335-11276-1-git-send-email-eugen.hristev@microchip.com>
+ <1525084335-11276-6-git-send-email-eugen.hristev@microchip.com>
+ <20180506182953.6adad5b5@archlinux>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180506182953.6adad5b5@archlinux>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 May 2018 15:05:23 +0200
-Fabrice Gasnier <fabrice.gasnier@st.com> wrote:
+Hi,
 
-> Add support for DFSDM (Digital Filter For Sigma Delta Modulators)
-> to STM32MP1. This variant is close to STM32H7 DFSDM, it implements
-> 6 filter instances. Registers map is also increased.
+On 06/05/2018 18:29:53+0100, Jonathan Cameron wrote:
+> On Mon, 30 Apr 2018 13:32:11 +0300
+> Eugen Hristev <eugen.hristev@microchip.com> wrote:
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-Looks good to me. I'd like to give a little more time for others
-to comment however.  Give me a poke if I seem to have forgotten
-about it.
-
-Jonathan
-
-> ---
->  .../bindings/iio/adc/st,stm32-dfsdm-adc.txt         |  7 +++++--
->  drivers/iio/adc/stm32-dfsdm-core.c                  | 21 +++++++++++++++++++++
->  2 files changed, 26 insertions(+), 2 deletions(-)
+> > This implements the support for position and pressure for the included
+> > touchscreen support in the SAMA5D2 SOC ADC block.
+> > Two position channels are added and one for pressure.
+> > They can be read in raw format, or through a buffer.
+> > A normal use case is for a consumer driver to register a callback buffer
+> > for these channels.
+> > When the touchscreen channels are in the active scan mask,
+> > the driver will start the touchscreen sampling and push the data to the
+> > buffer.
+> > 
+> > Some parts of this patch are based on initial original work by
+> > Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
+> > 
+> > Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> Looks good to me now.
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
-> index ed7520d..75ba25d 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.txt
-> @@ -8,14 +8,16 @@ It is mainly targeted for:
->  - PDM microphones (audio digital microphone)
->  
->  It features up to 8 serial digital interfaces (SPI or Manchester) and
-> -up to 4 filters on stm32h7.
-> +up to 4 filters on stm32h7 or 6 filters on stm32mp1.
->  
->  Each child node match with a filter instance.
->  
->  Contents of a STM32 DFSDM root node:
->  ------------------------------------
->  Required properties:
-> -- compatible: Should be "st,stm32h7-dfsdm".
-> +- compatible: Should be one of:
-> +  "st,stm32h7-dfsdm"
-> +  "st,stm32mp1-dfsdm"
->  - reg: Offset and length of the DFSDM block register set.
->  - clocks: IP and serial interfaces clocking. Should be set according
->  		to rcc clock ID and "clock-names".
-> @@ -45,6 +47,7 @@ Required properties:
->  	"st,stm32-dfsdm-adc" for sigma delta ADCs
->  	"st,stm32-dfsdm-dmic" for audio digital microphone.
->  - reg: Specifies the DFSDM filter instance used.
-> +	Valid values are from 0 to 3 on stm32h7, 0 to 5 on stm32mp1.
->  - interrupts: IRQ lines connected to each DFSDM filter instance.
->  - st,adc-channels:	List of single-ended channels muxed for this ADC.
->  			valid values:
-> diff --git a/drivers/iio/adc/stm32-dfsdm-core.c b/drivers/iio/adc/stm32-dfsdm-core.c
-> index e50efdc..d924e6c 100644
-> --- a/drivers/iio/adc/stm32-dfsdm-core.c
-> +++ b/drivers/iio/adc/stm32-dfsdm-core.c
-> @@ -25,6 +25,8 @@ struct stm32_dfsdm_dev_data {
->  
->  #define STM32H7_DFSDM_NUM_FILTERS	4
->  #define STM32H7_DFSDM_NUM_CHANNELS	8
-> +#define STM32MP1_DFSDM_NUM_FILTERS	6
-> +#define STM32MP1_DFSDM_NUM_CHANNELS	8
->  
->  static bool stm32_dfsdm_volatile_reg(struct device *dev, unsigned int reg)
->  {
-> @@ -61,6 +63,21 @@ static bool stm32_dfsdm_volatile_reg(struct device *dev, unsigned int reg)
->  	.regmap_cfg = &stm32h7_dfsdm_regmap_cfg,
->  };
->  
-> +static const struct regmap_config stm32mp1_dfsdm_regmap_cfg = {
-> +	.reg_bits = 32,
-> +	.val_bits = 32,
-> +	.reg_stride = sizeof(u32),
-> +	.max_register = 0x7fc,
-> +	.volatile_reg = stm32_dfsdm_volatile_reg,
-> +	.fast_io = true,
-> +};
-> +
-> +static const struct stm32_dfsdm_dev_data stm32mp1_dfsdm_data = {
-> +	.num_filters = STM32MP1_DFSDM_NUM_FILTERS,
-> +	.num_channels = STM32MP1_DFSDM_NUM_CHANNELS,
-> +	.regmap_cfg = &stm32mp1_dfsdm_regmap_cfg,
-> +};
-> +
->  struct dfsdm_priv {
->  	struct platform_device *pdev; /* platform device */
->  
-> @@ -243,6 +260,10 @@ static int stm32_dfsdm_parse_of(struct platform_device *pdev,
->  		.compatible = "st,stm32h7-dfsdm",
->  		.data = &stm32h7_dfsdm_data,
->  	},
-> +	{
-> +		.compatible = "st,stm32mp1-dfsdm",
-> +		.data = &stm32mp1_dfsdm_data,
-> +	},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, stm32_dfsdm_of_match);
+> I'm assuming that once Dmitry and others are happy, I'll take the
+> series through the IIO tree. Will reply to the cover letter if the
+> rest of the patches look good to me to let everyone know that without
+> having to catch this comment down in here!
+> 
+
+I'm planning to take both DT patches through the at91 tree once you take
+the DT bindings patches.
+
+
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
