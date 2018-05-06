@@ -1,166 +1,190 @@
-Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2590916-1525773016-2-10027529460259715410
+Return-Path: <linux-security-module-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3943043-1525649817-2-7785227355658382530
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='utf-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-arch-owner@vger.kernel.org
+X-Mail-from: linux-security-module-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525773016; b=mwNywdwReN0LVpATOWERM/6s0ipQE16tO1ouU7F6ch9uw3tjVD
-    w8UBRHVWymadYf6ulogZP/+ZgXj+eYK5V1xa03R9Y6OekZE9IroCvuGG8cpaz+iN
-    cPK+sQx9sOgZRlUBtM2X1zyQ9gqlt0D+TMUeayJArWSHWCw6839mTOJtMJFhuD4q
-    uTty1jmSwq0sTA6FK9H42ueJN/b1eE18J4489930+rjFI75VR4eoQjLnY4xiXc/9
-    bw3D4d1RanFBmcQxP7lJom5+H6GwT8C4mRLNA7DEGF89Pdke44wswaKa4bvt0heS
-    8asUFQlTlk/IpiOkuq5dEX6vCugjmO54zrtQ==
+    1525649817; b=jnNBBvQsYcdDwPXTSF67diOO5IK1BLowD1nIJvqiGJkmNRnIGu
+    xt6BATZ2/bGmQz4XQ1Q6l9UfJ70+wL+PbwU5dBAKN7A8IzHWq12V1WydRxUwJrKB
+    tbpuSU/X/Pk6+emOoQY3QksfijcSvDIZxT0we9DCwiB5u1CC5XI1PNCoXzvuzkd9
+    eotEsPZ3Xx50gW7pZhl8ZyVLOjkYZaqPfm0Ne8p0UgnsIznEeH/3jEfdY1goqXc2
+    mI7URvAFz7jpcILrTFIdwK/ZX/38i1r7IUYuj2FEowndbmI/h0bLHEcWb9v72wLa
+    uQ9CBXIpPaD/4c1j8Qp4t5MkT+HfSaJ/6bhw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1525773016;
-    bh=bxpwrFDs2wT3qXUWh83hT2kDe+RJ+JCsaobsPAWSfpw=; b=ej6rPbhvhNsi
-    3uWZHYAs4lM6V0feSOg42xiTmVGR0ApuueXeMin95sfanl8fE75VacBZ476N2iOj
-    XfU+g95+WAk3SUnBKBRAp1ApjRLqUOxm2xuhVD64UC1Q+3n2iMwuY/ajEj72Q9lz
-    8Xe+3KDDyWup/0CzjgRNJBYJD2ATV5hrxcR3K/qx2RNbNNbLay/5Q7DLFVYNsPpI
-    UvhRAN+8vm5EjbQeVxShBMXy012ExJZWkBh8a+ifhDYD5o434QukmQ8pOaoPtSOs
-    L3Agxc6YYS/CBLP/mKkqdWVBXnrhi4ggJeMyiIPGzUMBelhQkZp6KmjrU6BG2zD1
-    vx8jM82pvA==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1525649817; bh=HtPW+9lcjFc3LaKkkhjzOsB1rxdkxNgeEAogRl1q1G
+    M=; b=cLB45uW0n3u65IqRPbs5OzptFEs2zFw12rhNTvQgWoFhKY1vi+KW0X/U20
+    rGO85SQhvgk1ANMzScLU7zfai1DznJUrnj9xG0dPmb++6DtR5HbsB/S/uai6LArN
+    4qbgXgHqGdeDMT9DkjDbpVF7PKMbBWp6MC2o8H5hLIlUvVJQczP68myOGGxlg14O
+    uh912jc9oy/7A+Wgi3TqKw8Z78Z+nG3ZYCz03fzbeZxkX+0rUaNBS8rwUXgDjFIN
+    evkuEjsekPAVnjga9U/YJTTv7abQO2kQpZRYkUX2w5AjtdvU9Aa+dtKeZha4lbIt
+    +2bMGeAy0XCQhmOK2BsacdmqLOBg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+    header.d=chromium.org header.i=@chromium.org header.b=X+L7yOtA
+    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=google.com header.i=@google.com header.b=X1T8gVA9 x-bits=2048
+    x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=K1fdqzeI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=arm.com header.result=pass header_is_org_domain=yes;
+    header.domain=chromium.org header.result=pass
+    header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
+    dkim=fail (message has been altered, 1024-bit rsa key sha256)
+      header.d=chromium.org header.i=@chromium.org header.b=X+L7yOtA
+      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=google;
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=google.com header.i=@google.com header.b=X1T8gVA9 x-bits=2048
+      x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=chromium.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=K1fdqzeI;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=arm.com header.result=pass header_is_org_domain=yes;
+      header.domain=chromium.org header.result=pass
+      header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHapVZO8n9F3q95ilu6VQvcSQ+7lDgcxuizV9jHO/d8HHCHZkxg/oUT7DEriUuKBtDqJpf8okbKeAs67aQHP/O+Piv2lrX0hk4Yo/AAhEuauNGeehO4C
-    Z28JrQ92zrOClvOCKWyeCUdAHlBaZlNnNCR0EOXAxRVwHFfw870oauh+bd5EiZc5+pXxbnjHqUPkt451tcSFzMuR6T+o418gn3AH3XvJcknWuqbXBWpthpl6
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfAUDYG0Y9nkUfbYsrGWp1Slj7qBl8ZiYNxpo9/SbCGf9CiErJEzXlZsKyFVGKlBP0m96rE0SGX9/PraRvQsrUdkzO/gt69Z44d+Pzk49tNhGpo0b9JS6
+    GfO8u3ozOr4LeFSgVaNBNefqKVloU+oWOXYcbfgtGy5EBn7Ex2YToRgKqL7tf4LROfzMSJqAuamg5WaZaPrT39C4mbGncdPm1AhH0soNXWgsJtZXskyWhVr+
+    6i65dagD5MrEDSRpmvq7nQ==
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=7CQSdrXTAAAA:8 a=1vKIvyqXOD9gt3GkSekA:9 a=S-sYJPeHnEmMzYR0:21
-    a=HizSdXcWkUOcpaL6:21 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+    a=xVhDTqbCAAAA:8 a=DfNHnWVPAAAA:8 a=cm27Pg_UAAAA:8 a=VwQbUJbxAAAA:8
+    a=7qeQYpzoQLmxHY6nwEwA:9 a=QEXdDO2ut3YA:10 a=x8gzFH9gYPwA:10
+    a=GrmWmAYt4dzCMttCBZOh:22 a=rjTVMONInIDnV1a_A2c_:22 a=xmb-EsYY8bH0VWELuYED:22
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754598AbeEHJuM (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 8 May 2018 05:50:12 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55120 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754763AbeEHJuL (ORCPT <rfc822;linux-arch@vger.kernel.org>);
-        Tue, 8 May 2018 05:50:11 -0400
-Subject: Re: [PATCH 2/3] dma-debug: simplify counting of preallocated requests
-To: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
-Cc: linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Michal Simek <monstr@monstr.eu>,
-        Vincent Chen <deanbo422@gmail.com>,
-        linux-c6x-dev@linux-c6x.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
-        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180424140235.9125-1-hch@lst.de>
- <20180424140235.9125-3-hch@lst.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b50ef15a-8ffb-e8f2-11a7-b38d2ebda1c6@arm.com>
-Date: Tue, 8 May 2018 10:50:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1751864AbeEFXgw (ORCPT <rfc822;linux@kroah.com>);
+        Sun, 6 May 2018 19:36:52 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:39674 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751849AbeEFXgu (ORCPT
+        <rfc822;linux-security-module@vger.kernel.org>);
+        Sun, 6 May 2018 19:36:50 -0400
+X-Google-Smtp-Source: AB8JxZrIEUfv3DdVuEYxoBS+EH7R2x4Rfp7WEjjmwYvmXxCTLhWHKxZqTA1KdZFTvUis12uuPXycyKmQ1E6qM2um7/8=
 MIME-Version: 1.0
-In-Reply-To: <20180424140235.9125-3-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-Sender: linux-arch-owner@vger.kernel.org
-X-Mailing-List: linux-arch@vger.kernel.org
+In-Reply-To: <CAHC9VhQb46F0q4bbum9NMqi-spuDHaVDG7xSPDmOsWDP0RZ47g@mail.gmail.com>
+References: <1525396095-27737-1-git-send-email-tyhicks@canonical.com> <CAHC9VhQb46F0q4bbum9NMqi-spuDHaVDG7xSPDmOsWDP0RZ47g@mail.gmail.com>
+From: Kees Cook <keescook@chromium.org>
+Date: Sun, 6 May 2018 16:36:48 -0700
+X-Google-Sender-Auth: z478aClRDNeZoRkqrdo54EPi8qE
+Message-ID: <CAGXu5jLZ5MRrQzg0zOvLbmnq_sJe3EA_VN6S=xwRmzgHLTzCeA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Better integrate seccomp logging and auditing
+To: Paul Moore <paul@paul-moore.com>
+Cc: Tyler Hicks <tyhicks@canonical.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Audit <linux-audit@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Sender: owner-linux-security-module@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 24/04/18 15:02, Christoph Hellwig wrote:
-> Just keep a single variable with a descriptive name instead of two
-> with confusing names.
+On Sun, May 6, 2018 at 2:31 PM, Paul Moore <paul@paul-moore.com> wrote:
+> On Thu, May 3, 2018 at 9:08 PM, Tyler Hicks <tyhicks@canonical.com> wrote:
+>> Seccomp received improved logging controls in v4.14. Applications can opt into
+>> logging of "handled" actions (SECCOMP_RET_TRAP, SECCOMP_RET_TRACE,
+>> SECCOMP_RET_ERRNO) using the SECCOMP_FILTER_FLAG_LOG bit when loading filters.
+>> They can also debug filter matching with the new SECCOMP_RET_LOG action.
+>> Administrators can prevent specific actions from being logged using the
+>> kernel.seccomp.actions_logged sysctl.
+>>
+>> However, one corner case intentionally wasn't addressed in those v4.14 changes.
+>> When a process is being inspected by the audit subsystem, seccomp's decision
+>> making for logging ignores the new controls and unconditionally logs every
+>> action taken except for SECCOMP_RET_ALLOW. This isn't particularly useful since
+>> many existing applications don't intend to log handled actions due to them
+>> occurring very frequently. This amount of logging fills the audit logs without
+>> providing many benefits now that application authors have fine grained controls
+>> at their disposal.
+>>
+>> This patch set aligns the seccomp logging behavior for both audited and
+>> non-audited processes. It also emits an audit record, if auditing is enabled,
+>> when the kernel.seccomp.actions_logged sysctl is written to so that there's a
+>> paper trail when entire actions are quieted.
+>>
+>> Changes in v3:
+>> * Patch 3
+>>   - Never drop a field when emitting the audit record
+>>   - Use the value "?" for the actions field when an error occurred while
+>>     writing to the sysctl
+>>   - Use the value "?" for the actions and/or old-actions fields when a failure
+>>     to translate actions to names
+>>   - Use the value "(none)" for the actions and/or old-actions fields when no
+>>     actions are specified
+>>     + This is possible when writing an empty string to the sysctl
+>>   - Update the commit message to note the new values and give an example of
+>>     when an empty string is written
+>> * Patch 4
+>>   - Adjust the control flow of seccomp_log() to exit early if nothing should be
+>>     logged
+>>
+>> Changes in v2:
+>> * Patch 2
+>>   - New patch, allowing for a configurable separator between action names
+>> * Patch 3
+>>   - The value of the actions field in the audit record now uses a comma instead
+>>     of a space
+>>   - The value of the actions field in the audit record is no longer enclosed in
+>>     quotes
+>>   - audit_log_start() is called with the current processes' audit_context in
+>>     audit_seccomp_actions_logged()
+>>   - audit_seccomp_actions_logged() no longer records the pid, uid, auid, tty,
+>>     ses, task context, comm, or executable path
+>>   - The new and old value of seccomp_actions_logged is recorded in the
+>>     AUDIT_CONFIG_CHANGE record
+>>   - The value of the "res" field in the CONFIG_CHANGE audit record is corrected
+>>     (1 indicates success, 0 failure)
+>>   - Updated patch 3's commit message to reflect the updated audit record format
+>>     in the examples
+>> * Patch 4
+>>   - A function comment for audit_seccomp() was added to explain, among other
+>>     things, that event filtering is performed in seccomp_log()
+>
+> Kees, are you still okay with v3?  Also, are you okay with these
+> patches going in via the audit tree, or would you prefer to take them
+> via seccomp?  I've got a slight preference for the audit tree myself,
+> but as I said before, as long as it hits Linus' tree I'm happy.
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Yup, it looks good. I have no tree preference, so you win! :) Please
+consider the whole series:
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   lib/dma-debug.c | 20 ++++----------------
->   1 file changed, 4 insertions(+), 16 deletions(-)
-> 
-> diff --git a/lib/dma-debug.c b/lib/dma-debug.c
-> index 712a897174e4..075253cb613b 100644
-> --- a/lib/dma-debug.c
-> +++ b/lib/dma-debug.c
-> @@ -132,7 +132,7 @@ static u32 min_free_entries;
->   static u32 nr_total_entries;
->   
->   /* number of preallocated entries requested by kernel cmdline */
-> -static u32 req_entries;
-> +static u32 nr_prealloc_entries = PREALLOC_DMA_DEBUG_ENTRIES;
->   
->   /* debugfs dentry's for the stuff above */
->   static struct dentry *dma_debug_dent        __read_mostly;
-> @@ -1011,7 +1011,6 @@ void dma_debug_add_bus(struct bus_type *bus)
->   
->   static int dma_debug_init(void)
->   {
-> -	u32 num_entries;
->   	int i;
->   
->   	/* Do not use dma_debug_initialized here, since we really want to be
-> @@ -1032,12 +1031,7 @@ static int dma_debug_init(void)
->   		return 0;
->   	}
->   
-> -	if (req_entries)
-> -		num_entries = req_entries;
-> -	else
-> -		num_entries = PREALLOC_DMA_DEBUG_ENTRIES;
-> -
-> -	if (prealloc_memory(num_entries) != 0) {
-> +	if (prealloc_memory(nr_prealloc_entries) != 0) {
->   		pr_err("DMA-API: debugging out of memory error - disabled\n");
->   		global_disable = true;
->   
-> @@ -1068,16 +1062,10 @@ static __init int dma_debug_cmdline(char *str)
->   
->   static __init int dma_debug_entries_cmdline(char *str)
->   {
-> -	int res;
-> -
->   	if (!str)
->   		return -EINVAL;
-> -
-> -	res = get_option(&str, &req_entries);
-> -
-> -	if (!res)
-> -		req_entries = 0;
-> -
-> +	if (!get_option(&str, &nr_prealloc_entries))
-> +		nr_prealloc_entries = PREALLOC_DMA_DEBUG_ENTRIES;
->   	return 0;
->   }
->   
-> 
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
