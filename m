@@ -1,196 +1,274 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3584689-1525629611-2-8592709465206077477
+Return-Path: <linux-usb-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3524759-1525625329-2-1406386692488970586
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES ensk.us-ascii,
+  BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: 
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525629610; b=Diyq4La7alix4kznIZwcLXXoKPxK63cc55tSADIdybRqC9oexQ
-    hxpRiU75Ojk81eKmSjowF86GPvYrPzM5vJKrMsHRtkeopgQVvJ9cXGAp+8vg7Lqe
-    aaz3CJoBr5EJhvgW65VQdU8GCxOh/KXFZzSzQTU0O3EgMsHP6x6XYHugoD4a9I9x
-    W3Cq702B+/s2+Qy23v8vsdBB2iwCedzEXwuvpW7/U4e1A5gPspdjP9rYheKDkyAB
-    T9kPAfJ7vwkp+PVKP3XQjemRGNlEc8uWc/QizmduGgSKegebSt/T7EZb4a7Cd7ds
-    2JAA1yy+NS3yzRHfdyuWRL9P4N+9n25JMMIg==
+    1525625329; b=nTDQK8T0CPG1i2Lv0Ug0Wvpcn8TT6L6dQlUzXw7ntRe5m/ud4f
+    UeIMk+rU+YJe1/uOmMoXfr0rKEOeHq5lDKLlFBElM2Je1P0kpxpih+X6VHzZbAja
+    hP07zpArd6U67+FSJK1Q8ShUxp6vqonyzrbhc/UjKn/6NqtY7M7D1z1E+kByqk17
+    5WXz52lwOgA1UrsENoAoux+HjIp4K06HCo6VsfX5bY0CoiGgtMi5IslgTTuLF56m
+    MmAa8K6FNxjSzBkESLW+HtM42yzoRq5XpmDIqjlx6/0wOnXVEqwMxEsFdTrXoqqm
+    yQZJXTgdJ/gr0G26E3ASmR0cxvu4+6/pgpHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525629610; bh=5NNgy
-    SJVlf0NfyRy2PWUC3k8DKOgZ5n3crOEAbZIM14=; b=S0t8lizGH0GMZPC8L3MD6
-    CnRjD3/6WY6DbS8lsdUPoYAYBfrGsphRr0KlI34jH+lfix/5oYg4xZWd+GxidDwM
-    eggI8X5wG88opy/7QwDNAlymEzGTEpmrRwvTCa39M23mICxPwGz0KSUc4vLgwYpG
-    zjMrX9whpnfSc+V66x0c5OQUGaikUjzJiNKdHXiWgOjogv72fzhY/xEvsP9ZYbBE
-    KK/AsZJej5irhDwUApcwb1YkJmXxk5fw4byYebsA5/RcZbqh5b+nv7AqLsXBRARE
-    zRjUmLkZhQlUmfMOgyHffPadOn0eVqjAe/8j52FGb7miz9OYcLy75Nibu6hCWJ+Q
-    w==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525625329; bh=TVWQg3oncoKrHc0dk3a4l6BZFbCVFi
+    zVISvbeVAbRiA=; b=Neeq+lt4ChNU/j0/WjW56NeeqY+rL1pBh3yoCvBJ+m2s23
+    eSrSdY5uV1/SOTIXWbZm4NWWrFJAFRqO/GALToWarjaoT9MH1LWJJNv2HnM+ig8R
+    6T7Kzr9t6grDuEbZULAUPqMEfMHj9uF2hSs8OUnSm/HD5Wu5xZ4yU81zsV77xVuH
+    uN2LDoOdIc9xqFmSRiCNVNLvjd2txWeReHjwe9y4uN1RrXluNZuJAXdDb0gbduOZ
+    1f5jW0pFEDi4RVDRco9gRkHcxxzPkOK5bNOzJg5h4hD9NVm5HiSaZrNIKLcIwXNL
+    sC+C8DAFRCDw6an7IFba36ux9iUhhIE1U9oG4NGA==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=0lRAPkPZ x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=kernel.org header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=atomide.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 Authentication-Results: mx1.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (message has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=0lRAPkPZ x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=atomide.com;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-usb-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=kernel.org header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=atomide.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfG895nmzKtMJX8K0Pf+pjEZCmygd9CWKXWuFHsoq8FptRrrih2lYvv7XT2vxGpCEqNJy0bqm3z2v8iuqm2nIMOW8N754YKNLVVleRHyl34Ehe3nVIy1w
-    RmO1CS6f0kiauUW8NG44dfH+H38kF9B6LM4Tx75LmZB7HTKdIIOWh3eEziUoCtREGBjpiNyirPt95QfdjgzPhV+KkYVxy3T8RehsgIIQ9lqoydlgMIs5kGI9
-    AautGpBdUcpGtLVVUMA1NQ==
-X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=tvE6cUz2AAAA:8 a=DDOyTI_5AAAA:8
-    a=1XH82ks_koQIDDZe6VMA:9 a=CjuIK1q_8ugA:10 a=sFRLSohfApMN8RASoVBY:22
-    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-CM-Envelope: MS4wfAVEaQOvt+I5YxOZZ8IJOjo7I0BSr8MG5J8CLqyEEVGvPRx7nFahg5f8cCOz9Jh0ytfCQc+KINIdbO5MFAeaOl2cubp0wjAvI+0+VAAFSbw5PCwNZAG1
+    jgXdf3itQVerZgW8m7N5ZQdmA1t29B4Z49Jo9REpu4vrABoM+3tupr9DsmG1zxgl3J0Rgy5y5p7EVKsIFyIhKAJIkZsQ7c2IcJSaG6vRXTH8IjJhFhxBh0ZW
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VVlED5B4AAAA:8
+    a=_ua-DJzVAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8 a=2KMo9-giAAAA:8
+    a=Lp8wAptM41S5FXBCLtAA:9 a=x8gzFH9gYPwA:10 a=Rns7OpQVW6Hshu8udh8j:22
+    a=AjGcO6oz07-iQ99wixmX:22 a=UeCTMeHK7YUBiLmz_SX7:22
 X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-Date: Sun, 6 May 2018 18:59:54 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Brian Masney <masneyb@onstation.org>
-Subject: Re: [PATCH v2 01/11] staging: iio: tsl2x7x: use GPL-2.0+ SPDX
- license identifier
-Message-ID: <20180506185954.7367ef59@archlinux>
-In-Reply-To: <20180504025319.28953-2-masneyb@onstation.org>
-References: <20180504025319.28953-1-masneyb@onstation.org>
- <20180504025319.28953-2-masneyb@onstation.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, lars@metafoo.de, linux-iio@vger.kernel.org,
- gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, pmeerw@pmeerw.net,
- knaack.h@gmx.de, drew.paterson@ams.com
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1751796AbeEFQsc (ORCPT <rfc822;greg@kroah.com>);
+        Sun, 6 May 2018 12:48:32 -0400
+Received: from muru.com ([72.249.23.125]:40660 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751736AbeEFQsb (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Sun, 6 May 2018 12:48:31 -0400
+From: Tony Lindgren <tony@atomide.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, Marcel Partap <mpartap@gmx.net>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Scott <hashcode0f@gmail.com>,
+        NeKit <nekit1000@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH] phy: mapphone-mdm6600: Add runtime PM support for n_gsm on USB suspend
+Date: Sun,  6 May 2018 09:48:25 -0700
+Message-Id: <20180506164825.82294-1-tony@atomide.com>
+X-Mailer: git-send-email 2.17.0
+Sender: linux-usb-owner@vger.kernel.org
+X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thu,  3 May 2018 22:53:09 -0400
-Brian Masney <masneyb@onstation.org> wrote:
+We can suspend the mdm6600 over USB via sysfs and then mdm6600 enters
+a low-power idle mode. In the low-power mode, mdm6600 radio and n_gsm
+uart are functional but we need to use USB mode0 GPIO pin to send a
+wake-up pulse to the modem to talk with it over n_gsm.
 
-> The summary text for the GPL is not needed since the SPDX identifier
-> is a legally binding shorthand that can be used instead.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-I'm always less than totally keen on these patches not coming from the
-copyright holder, but is is probably fine.  If taos is unhappy we
-can always switch back again.
+As the GPIO mode0 line is dual purposed and and also needed by the
+USB PHY driver to boot mdm6600 into the correct USB mode, let's also
+manage the wake-up GPIO in the USB PHY driver. For the USB PHY idle,
+there does not anything specific we need to do for runtime PM after
+getting the PHY configured. The PHY framework already idles the USB
+PHY when not in use separately from the mdm6600 state.
 
-Applied to the togreg branch of iio.git and pushed out as testing for the
-autobuilders to ignore it.
+It seems that it takes about 100 - 200ms for mdm6600 to wake up from
+the low-power idle mode. And then mdm6600 stays awake about 1.2s until
+it needs to be kicked again. The mdm6600 status GPIO pins don't seem
+to change state when mdm6600 changes between normal and idle mode.
 
-Thanks,
+Let's manage the mdm6600 mode with runtime PM. If phy-mapphone-mdm6600
+sysfs entry for power/control is set to "on", we keep mdm6600 out of
+idle by kicking the GPIO line. If the entry is set to "auto" we let
+mdm6600 enter low-power state.
 
-Jonathan
+Cc: Marcel Partap <mpartap@gmx.net>
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Michael Scott <hashcode0f@gmail.com>
+Cc: NeKit <nekit1000@gmail.com>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/phy/motorola/phy-mapphone-mdm6600.c | 85 +++++++++++++++++++++
+ 1 file changed, 85 insertions(+)
 
-> ---
->  drivers/staging/iio/light/tsl2x7x.c | 11 +----------
->  drivers/staging/iio/light/tsl2x7x.h | 15 +--------------
->  2 files changed, 2 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/light/tsl2x7x.c b/drivers/staging/iio/light/tsl2x7x.c
-> index e65621948cf8..01bff4593640 100644
-> --- a/drivers/staging/iio/light/tsl2x7x.c
-> +++ b/drivers/staging/iio/light/tsl2x7x.c
-> @@ -1,19 +1,10 @@
-> +// SPDX-License-Identifier: GPL-2.0+
->  /*
->   * Device driver for monitoring ambient light intensity in (lux) and proximity
->   * detection (prox) within the TAOS TSL2X7X family of devices.
->   *
->   * Copyright (c) 2012, TAOS Corporation.
->   * Copyright (c) 2017-2018 Brian Masney <masneyb@onstation.org>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful, but WITHOUT
-> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> - * more details.
->   */
->  
->  #include <linux/delay.h>
-> diff --git a/drivers/staging/iio/light/tsl2x7x.h b/drivers/staging/iio/light/tsl2x7x.h
-> index 91ce8f98982e..8eb7f4749ea7 100644
-> --- a/drivers/staging/iio/light/tsl2x7x.h
-> +++ b/drivers/staging/iio/light/tsl2x7x.h
-> @@ -1,22 +1,9 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
->  /*
->   * Device driver for monitoring ambient light intensity (lux)
->   * and proximity (prox) within the TAOS TSL2X7X family of devices.
->   *
->   * Copyright (c) 2012, TAOS Corporation.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful, but WITHOUT
-> - * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> - * more details.
-> - *
-> - * You should have received a copy of the GNU General Public License along
-> - * with this program; if not, write to the Free Software Foundation, Inc.,
-> - * 51 Franklin Street, Fifth Floor, Boston, MA	02110-1301, USA.
->   */
->  
->  #ifndef __TSL2X7X_H
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+diff --git a/drivers/phy/motorola/phy-mapphone-mdm6600.c b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+--- a/drivers/phy/motorola/phy-mapphone-mdm6600.c
++++ b/drivers/phy/motorola/phy-mapphone-mdm6600.c
+@@ -19,6 +19,8 @@
+ 
+ #define PHY_MDM6600_PHY_DELAY_MS	4000	/* PHY enable 2.2s to 3.5s */
+ #define PHY_MDM6600_ENABLED_DELAY_MS	8000	/* 8s more total for MDM6600 */
++#define MDM6600_MODEM_IDLE_DELAY_MS	1000	/* modem after USB suspend */
++#define MDM6600_MODEM_WAKE_DELAY_MS	200	/* modem response after idle */
+ 
+ enum phy_mdm6600_ctrl_lines {
+ 	PHY_MDM6600_ENABLE,			/* USB PHY enable */
+@@ -93,9 +95,11 @@ struct phy_mdm6600 {
+ 	struct gpio_descs *cmd_gpios;
+ 	struct delayed_work bootup_work;
+ 	struct delayed_work status_work;
++	struct delayed_work modem_wake_work;
+ 	struct completion ack;
+ 	bool enabled;				/* mdm6600 phy enabled */
+ 	bool running;				/* mdm6600 boot done */
++	bool awake;				/* mdm6600 respnds on n_gsm */
+ 	int status;
+ };
+ 
+@@ -446,6 +450,62 @@ static void phy_mdm6600_deferred_power_on(struct work_struct *work)
+ 		dev_err(ddata->dev, "Device not functional\n");
+ }
+ 
++/*
++ * USB suspend puts mdm6600 into low power mode. For any n_gsm using apps,
++ * we need to keep the modem awake by kicking it's mode0 GPIO. This will
++ * keep the modem awake for about 1.2 seconds. When no n_gsm apps are using
++ * the modem, runtime PM auto mode can be enabled so modem can enter low
++ * power mode.
++ */
++static void phy_mdm6600_wake_modem(struct phy_mdm6600 *ddata)
++{
++	struct gpio_desc *mode_gpio0;
++
++	mode_gpio0 = ddata->mode_gpios->desc[PHY_MDM6600_MODE0];
++	gpiod_set_value_cansleep(mode_gpio0, 1);
++	usleep_range(5, 15);
++	gpiod_set_value_cansleep(mode_gpio0, 0);
++	if (ddata->awake)
++		usleep_range(5, 15);
++	else
++		msleep(MDM6600_MODEM_WAKE_DELAY_MS);
++}
++
++static void phy_mdm6600_modem_wake(struct work_struct *work)
++{
++	struct phy_mdm6600 *ddata;
++
++	ddata = container_of(work, struct phy_mdm6600, modem_wake_work.work);
++	phy_mdm6600_wake_modem(ddata);
++	schedule_delayed_work(&ddata->modem_wake_work,
++			      msecs_to_jiffies(MDM6600_MODEM_IDLE_DELAY_MS));
++}
++
++static int __maybe_unused phy_mdm6600_runtime_suspend(struct device *dev)
++{
++	struct phy_mdm6600 *ddata = dev_get_drvdata(dev);
++
++	cancel_delayed_work_sync(&ddata->modem_wake_work);
++	ddata->awake = false;
++
++	return 0;
++}
++
++static int __maybe_unused phy_mdm6600_runtime_resume(struct device *dev)
++{
++	struct phy_mdm6600 *ddata = dev_get_drvdata(dev);
++
++	phy_mdm6600_modem_wake(&ddata->modem_wake_work.work);
++	ddata->awake = true;
++
++	return 0;
++}
++
++static const struct dev_pm_ops phy_mdm6600_pm_ops = {
++	SET_RUNTIME_PM_OPS(phy_mdm6600_runtime_suspend,
++			   phy_mdm6600_runtime_resume, NULL)
++};
++
+ static const struct of_device_id phy_mdm6600_id_table[] = {
+ 	{ .compatible = "motorola,mapphone-mdm6600", },
+ 	{},
+@@ -464,6 +524,7 @@ static int phy_mdm6600_probe(struct platform_device *pdev)
+ 	INIT_DELAYED_WORK(&ddata->bootup_work,
+ 			  phy_mdm6600_deferred_power_on);
+ 	INIT_DELAYED_WORK(&ddata->status_work, phy_mdm6600_status);
++	INIT_DELAYED_WORK(&ddata->modem_wake_work, phy_mdm6600_modem_wake);
+ 	init_completion(&ddata->ack);
+ 
+ 	ddata->dev = &pdev->dev;
+@@ -500,6 +561,24 @@ static int phy_mdm6600_probe(struct platform_device *pdev)
+ 	 */
+ 	msleep(PHY_MDM6600_PHY_DELAY_MS + 500);
+ 
++	/*
++	 * Enable PM runtime only after PHY has been powered up properly.
++	 * It is currently only needed after USB suspends mdm6600 and n_gsm
++	 * needs to access the device. We don't want to do this earlier as
++	 * gpio mode0 pin doubles as mdm6600 wake-up gpio.
++	 */
++	pm_runtime_use_autosuspend(ddata->dev);
++	pm_runtime_set_autosuspend_delay(ddata->dev,
++					 MDM6600_MODEM_IDLE_DELAY_MS);
++	pm_runtime_enable(ddata->dev);
++	error = pm_runtime_get_sync(ddata->dev);
++	if (error < 0) {
++		dev_warn(ddata->dev, "failed to wake modem: %i\n", error);
++		pm_runtime_put_noidle(ddata->dev);
++	}
++	pm_runtime_mark_last_busy(ddata->dev);
++	pm_runtime_put_autosuspend(ddata->dev);
++
+ 	return 0;
+ 
+ cleanup:
+@@ -512,6 +591,10 @@ static int phy_mdm6600_remove(struct platform_device *pdev)
+ 	struct phy_mdm6600 *ddata = platform_get_drvdata(pdev);
+ 	struct gpio_desc *reset_gpio = ddata->ctrl_gpios[PHY_MDM6600_RESET];
+ 
++	pm_runtime_dont_use_autosuspend(ddata->dev);
++	pm_runtime_put_sync(ddata->dev);
++	pm_runtime_disable(ddata->dev);
++
+ 	if (!ddata->running)
+ 		wait_for_completion_timeout(&ddata->ack,
+ 			msecs_to_jiffies(PHY_MDM6600_ENABLED_DELAY_MS));
+@@ -519,6 +602,7 @@ static int phy_mdm6600_remove(struct platform_device *pdev)
+ 	gpiod_set_value_cansleep(reset_gpio, 1);
+ 	phy_mdm6600_device_power_off(ddata);
+ 
++	cancel_delayed_work_sync(&ddata->modem_wake_work);
+ 	cancel_delayed_work_sync(&ddata->bootup_work);
+ 	cancel_delayed_work_sync(&ddata->status_work);
+ 
+@@ -530,6 +614,7 @@ static struct platform_driver phy_mdm6600_driver = {
+ 	.remove = phy_mdm6600_remove,
+ 	.driver = {
+ 		.name = "phy-mapphone-mdm6600",
++		.pm = &phy_mdm6600_pm_ops,
+ 		.of_match_table = of_match_ptr(phy_mdm6600_id_table),
+ 	},
+ };
+-- 
+2.17.0
