@@ -1,64 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753347AbeEGWVk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 18:21:40 -0400
-Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:50196
-        "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753061AbeEGWVe (ORCPT
+        id S1753387AbeEGWVp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 18:21:45 -0400
+Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:60958
+        "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753061AbeEGWVl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 18:21:34 -0400
+        Mon, 7 May 2018 18:21:41 -0400
 x-originating-ip: 107.180.71.197
 From: Long Li <longli@linuxonhyperv.com>
 To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH 3/7] cifs: smbd: Return EINTR when interrupted
-Date: Mon,  7 May 2018 15:20:02 -0700
-Message-Id: <20180507222006.20781-3-longli@linuxonhyperv.com>
+Subject: [PATCH 5/7] cifs: smbd: Protect memory registration using RCU
+Date: Mon,  7 May 2018 15:20:04 -0700
+Message-Id: <20180507222006.20781-5-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180507222006.20781-1-longli@linuxonhyperv.com>
 References: <20180507222006.20781-1-longli@linuxonhyperv.com>
 Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfDn9jugCorh4uZqMVktUN0N+LQzhLctzy3THfzRDDhqZ5I8zUFXs/zETN63ZGbVa96bWLe2WCYU6VSPwukOVC4QUpkHwLVKPsieyIm4MU8naJV9f+C77
- sNdUEEOzXxopLavAC4NhwVFUZjcWzz1NIkY1cisiG9J6QD2lDPxhdwmijVnhdE6qq8kRXA3peh+GjDFrNBzATYhrt8euL4tNPGopeXHTzT9REz04aNAQG/ib
- x77DiBMUMRMGMaP35DexGCrriI3nJ/pPh3MujSpqNSdUszvyotX9OWvAAhQie2AHPyNA9ZpOffDXVpGXuvAYwO0qDkA5vxvjqy78+OmlnG1F4BrFAXRG8Qjz
- 6k15djuMB/e21Vf0+JT52GERIkAYzNgXLvFbv5SjWsXyBm+OLWFo5gYILGXr5lTbZSsRsQun
+X-CMAE-Envelope: MS4wfEeXLCCZzDJVI+Otos8+83JuGgCZsKXFXKajynRtz11DXItDlP+WWcIN4DyltSGUTqJaUfGPRrnyzGFSf2zmcvUTrRrue7/fhe7JicFKNf/zRqKJ/VbA
+ RYltrYR5TbwdLhIw32Lo7MyP0ZXQA4ZxCKXRhteisBIGWjXkCEkkJDfRdhb6wkMAiqRB0eNGDFSQXPKiYbYxuIxx4Uqa5Abmg6q/uQc3d0SeS1YNVBPDfq7d
+ Bjxr4zB+GlDlArQSeGwVdpoU/XJMHa4AY7lV0/JIBxH74Sm3ALnenrlKlMwGX+F6VHwwp7adVyL6GgpGbgs0WhEppiBciDXTfXgFdDgGv1RKTX5ZGFaLPKR9
+ pJeEHeo3gN08SAq6Q8hTZ8eJpwouYvPiKhD/ViHXEChwUWB6E12rihbdcxWiHwIe85dgbpI6
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-When packets are waiting for outbound I/O and interrupted, return the
-proper error code to user process.
+Unlike packet I/O sending path, the memory registration is not locked. They
+need to be protected when doing transport reconnect or shutdown.
+
+It's not necessary to lock for memory deregistration, since at the time the
+transport is already destroyed so it's impossible to pick up the wrong
+transport.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- fs/cifs/smbdirect.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/cifs/smb2pdu.c   | 6 ++++++
+ fs/cifs/smbdirect.c | 3 +++
+ 2 files changed, 9 insertions(+)
 
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 8cd164e..09ca098 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2609,10 +2609,13 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
+ 		bool need_invalidate =
+ 			io_parms->tcon->ses->server->dialect == SMB30_PROT_ID;
+ 
++		rcu_read_lock();
++		rcu_dereference(server->smbd_conn);
+ 		rdata->mr = smbd_register_mr(
+ 				server->smbd_conn, rdata->pages,
+ 				rdata->nr_pages, rdata->tailsz,
+ 				true, need_invalidate);
++		rcu_read_unlock();
+ 		if (!rdata->mr)
+ 			return -ENOBUFS;
+ 
+@@ -2986,10 +2989,13 @@ smb2_async_writev(struct cifs_writedata *wdata,
+ 		struct smbd_buffer_descriptor_v1 *v1;
+ 		bool need_invalidate = server->dialect == SMB30_PROT_ID;
+ 
++		rcu_read_lock();
++		rcu_dereference(server->smbd_conn);
+ 		wdata->mr = smbd_register_mr(
+ 				server->smbd_conn, wdata->pages,
+ 				wdata->nr_pages, wdata->tailsz,
+ 				false, need_invalidate);
++		rcu_read_unlock();
+ 		if (!wdata->mr) {
+ 			rc = -ENOBUFS;
+ 			goto async_writev_out;
 diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index 79b025e..b8dd493 100644
+index 74620f5..8c46898 100644
 --- a/fs/cifs/smbdirect.c
 +++ b/fs/cifs/smbdirect.c
-@@ -1963,7 +1963,7 @@ static int smbd_recv_buf(struct smbd_connection *info, char *buf,
- 			info->transport_status != SMBD_CONNECTED);
- 	/* Don't return any data if interrupted */
- 	if (rc)
--		return -ENODEV;
-+		return rc;
+@@ -1482,6 +1482,9 @@ void smbd_destroy(struct TCP_Server_Info *server)
  
- 	if (info->transport_status != SMBD_CONNECTED) {
- 		log_read(ERR, "disconnected\n");
-@@ -1991,7 +1991,7 @@ static int smbd_recv_page(struct smbd_connection *info,
- 		info->reassembly_data_length >= to_read ||
- 			info->transport_status != SMBD_CONNECTED);
- 	if (ret)
--		return 0;
-+		return ret;
+ 	info->transport_status = SMBD_DESTROYED;
  
- 	/* now we can read from reassembly queue and not sleep */
- 	to_address = kmap_atomic(page);
++	rcu_assign_pointer(server->smbd_conn, NULL);
++	synchronize_rcu();
++
+ 	destroy_workqueue(info->workqueue);
+ 	kfree(info);
+ }
 -- 
 2.7.4
