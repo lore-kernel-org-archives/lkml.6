@@ -1,72 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752267AbeEGJfY (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:35:24 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:50420 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751764AbeEGJfX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:35:23 -0400
-Date: Mon, 7 May 2018 17:35:11 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: "Dey, Megha" <megha.dey@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
- support
-Message-ID: <20180507093511.jscgnk436e3ba4un@gondor.apana.org.au>
-References: <20180118113905.GA19904@gondor.apana.org.au>
- <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
- <20180316145351.GA6231@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
- <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
- <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
- <20180426094445.4jiwondmtbenepo2@gondor.apana.org.au>
- <C440BA31B54DCD4AAC682D2365C8FEE738C4291E@ORSMSX111.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C440BA31B54DCD4AAC682D2365C8FEE738C4291E@ORSMSX111.amr.corp.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1752561AbeEGJgQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:36:16 -0400
+Received: from osg.samsung.com ([64.30.133.232]:52363 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752096AbeEGJgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 05:36:03 -0400
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH 14/18] fbdev: modedb.c: fix a kernel-doc markup
+Date: Mon,  7 May 2018 06:35:50 -0300
+Message-Id: <a712d724d034cedeab76335071f916808db77e7a.1525684985.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 01, 2018 at 10:39:15PM +0000, Dey, Megha wrote:
->
-> crypto/simd.c provides a simd_skcipher_create_compat. I have used the same template to introduce simd_ahash_create_compat
-> which would wrap around the inner hash algorithm.
-> 
-> Hence we would still register 2 algs, outer and inner.
+Use code blocks to avoid those warnings and make it look nicer.
 
-Right.
+	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
+	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
+	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
+	./drivers/video/fbdev/core/modedb.c:647: WARNING: Inline strong start-string without end-string.
 
-> Currently we have outer_alg -> mcryptd alg -> inner_alg
-> 
-> Mcryptd is mainly providing the following:
-> 1. Ensuring the lanes(8 in case of AVX2) are full before dispatching to the lower inner algorithm. This is obviously why we would expect better performance for multi-buffer as opposed to the present single-buffer algorithms.
-> 2. If there no new incoming jobs, issue a flush.
-> 3. A glue layer which sends the correct pointers and completions.
-> 
-> If we get rid of mcryptd, these functions needs to be done by someone. Since all multi-buffer algorithms would require this tasks, where do you suggest these helpers live, if not the current mcryptd.c?
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ drivers/video/fbdev/core/modedb.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-That's the issue.  I don't think mcryptd is doing any of these
-claimed functions except for hosting the flush helper which could
-really live anywhere.
-
-All these functions are actually being carried out in the inner
-algorithm already.
-
-> I am not sure if you are suggesting that we need to get rid of the mcryptd work queue itself. In that case, we would need to execute in the context of the job requesting the crypto transformation.
-
-Which is fine as long as you can disable the FPU.  If not the simd
-wrapper will defer the job to kthread context as required.
-
-Cheers,
+diff --git a/drivers/video/fbdev/core/modedb.c b/drivers/video/fbdev/core/modedb.c
+index 2510fa728d77..7284324fbd77 100644
+--- a/drivers/video/fbdev/core/modedb.c
++++ b/drivers/video/fbdev/core/modedb.c
+@@ -642,23 +642,23 @@ static int fb_try_mode(struct fb_var_screeninfo *var, struct fb_info *info,
+  *     @default_mode fails, all modes in the video mode database will
+  *     be tried.
+  *
+- *     Valid mode specifiers for @mode_option:
++ *     Valid mode specifiers for @mode_option::
+  *
+- *     <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][m] or
+- *     <name>[-<bpp>][@<refresh>]
++ *       <xres>x<yres>[M][R][-<bpp>][@<refresh>][i][m] or
++ *       <name>[-<bpp>][@<refresh>]
+  *
+  *     with <xres>, <yres>, <bpp> and <refresh> decimal numbers and
+  *     <name> a string.
+  *
+- *      If 'M' is present after yres (and before refresh/bpp if present),
+- *      the function will compute the timings using VESA(tm) Coordinated
+- *      Video Timings (CVT).  If 'R' is present after 'M', will compute with
+- *      reduced blanking (for flatpanels).  If 'i' is present, compute
+- *      interlaced mode.  If 'm' is present, add margins equal to 1.8%
+- *      of xres rounded down to 8 pixels, and 1.8% of yres. The char
+- *      'i' and 'm' must be after 'M' and 'R'. Example:
++ *     If 'M' is present after yres (and before refresh/bpp if present),
++ *     the function will compute the timings using VESA(tm) Coordinated
++ *     Video Timings (CVT).  If 'R' is present after 'M', will compute with
++ *     reduced blanking (for flatpanels).  If 'i' is present, compute
++ *     interlaced mode.  If 'm' is present, add margins equal to 1.8%
++ *     of xres rounded down to 8 pixels, and 1.8% of yres. The char
++ *     'i' and 'm' must be after 'M' and 'R'. Example::
+  *
+- *      1024x768MR-8@60m - Reduced blank with margins at 60Hz.
++ *       1024x768MR-8@60m - Reduced blank with margins at 60Hz.
+  *
+  *     NOTE: The passed struct @var is _not_ cleared!  This allows you
+  *     to supply values for e.g. the grayscale and accel_flags fields.
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.0
