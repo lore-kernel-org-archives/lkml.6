@@ -1,23 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752240AbeEGJg7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:36:59 -0400
-Received: from osg.samsung.com ([64.30.133.232]:53118 "EHLO osg.samsung.com"
+        id S1752304AbeEGJhZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:37:25 -0400
+Received: from osg.samsung.com ([64.30.133.232]:46721 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752548AbeEGJgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:36:12 -0400
+        id S1752513AbeEGJgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 05:36:10 -0400
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH 09/18] net: mac80211.h: fix a bad comment line
-Date: Mon,  7 May 2018 06:35:45 -0300
-Message-Id: <1b14ef4f63547c86c544e112b74acfff2b41f4af.1525684985.git.mchehab+samsung@kernel.org>
+        Evgeniy Polyakov <zbr@ioremap.net>
+Subject: [PATCH 18/18] w1: w1_io.c: fix a kernel-doc warning
+Date: Mon,  7 May 2018 06:35:54 -0300
+Message-Id: <cd5b6e6a8d51820ee158127cdd50e44645c44ee7.1525684985.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
 References: <cover.1525684985.git.mchehab+samsung@kernel.org>
@@ -27,26 +25,25 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sphinx produces a lot of errors like this:
-	./include/net/mac80211.h:2083: warning: bad line:  >
+Add a blank line to avoid this Sphinx warning:
+	./drivers/w1/w1_io.c:197: WARNING: Definition list ends without a blank line; unexpected unindent.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- include/net/mac80211.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/w1/w1_io.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/net/mac80211.h b/include/net/mac80211.h
-index d2279b2d61aa..b2f3a0c018e7 100644
---- a/include/net/mac80211.h
-+++ b/include/net/mac80211.h
-@@ -2080,7 +2080,7 @@ struct ieee80211_txq {
-  *	virtual interface might not be given air time for the transmission of
-  *	the frame, as it is not synced with the AP/P2P GO yet, and thus the
-  *	deauthentication frame might not be transmitted.
-- >
+diff --git a/drivers/w1/w1_io.c b/drivers/w1/w1_io.c
+index 075d120e7b88..0364d3329c52 100644
+--- a/drivers/w1/w1_io.c
++++ b/drivers/w1/w1_io.c
+@@ -194,6 +194,7 @@ static u8 w1_read_bit(struct w1_master *dev)
+  *  bit 0 = id_bit
+  *  bit 1 = comp_bit
+  *  bit 2 = dir_taken
 + *
-  * @IEEE80211_HW_DOESNT_SUPPORT_QOS_NDP: The driver (or firmware) doesn't
-  *	support QoS NDP for AP probing - that's most likely a driver bug.
+  * If both bits 0 & 1 are set, the search should be restarted.
   *
+  * Return:        bit fields - see above
 -- 
 2.17.0
