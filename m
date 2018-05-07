@@ -1,95 +1,144 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752139AbeEGPKN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:10:13 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:46199 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750881AbeEGPKK (ORCPT
+        id S1752267AbeEGPMK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:12:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44420 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752133AbeEGPMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:10:10 -0400
-X-Google-Smtp-Source: AB8JxZoXQKBeILBXLXYZM1PSDC/Es86oQ/ZUfVWYm6Kn/TiSBFk+j9CB04GCJBX0EBMkJHbmxTheYgfcV4SE1VF249A=
-MIME-Version: 1.0
-From: Rob Herring <robherring2@gmail.com>
-Date: Mon, 7 May 2018 10:09:49 -0500
-Message-ID: <CAL_JsqJcQnEoWK8F0f1SzUstAPvYyRwht4UQOo1ZLGb6t-o8YQ@mail.gmail.com>
-Subject: [GIT PULL] DeviceTree fixes for 4.17
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 7 May 2018 11:12:07 -0400
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com
+Subject: [PATCH v5 00/13] s390: vfio-ap: guest dedicated crypto adapters
+Date: Mon,  7 May 2018 11:11:39 -0400
+X-Mailer: git-send-email 1.7.1
+X-TM-AS-GCONF: 00
+x-cbid: 18050715-0024-0000-0000-0000185BEEA3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008987; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01028858; UDB=6.00525678; IPR=6.00807992;
+ MB=3.00020972; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-07 15:12:03
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050715-0025-0000-0000-00004FDB7711
+Message-Id: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805070154
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On s390, we have cryptographic coprocessor cards, which are modeled on
+Linux as devices on the AP bus. Each card can be partitioned into domains
+which can be thought of as a set of hardware registers for processing 
+crypto commands. Crypto commands are sent to a specific domain within a
+card is via a queue which is identified as a (card,domain) tuple. We model 
+this something like the following (assuming we have access to cards 3 and 
+4 and domains 1 and 2):
 
-Please pull DT fixes for 4.17. Details below.
+AP -> card3 -> queue (3,1)
+            -> queue (3,2)
+   -> card4 -> queue (4,1)
+            -> queue (4,2)
 
-Rob
+If we want to virtualize this, we can use a feature provided by the
+hardware. We basically attach a satellite control block to our main
+hardware virtualization control block and the hardware takes care of
+most of the rest.
+
+For this control block, we don't specify explicit tuples, but a list of
+cards and a list of domains. The guest will get access to the cross
+product.
+
+Because of this, we need to take care that the lists provided to
+different guests don't overlap; i.e., we need to enforce sane
+configurations. Otherwise, one guest may get access to things like
+secret keys for another guest.
+
+The idea of this patch set is to introduce a new device, the matrix
+device. This matrix device hangs off a different root and acts as the
+parent node for mdev devices.
+
+If you now want to give the tuples (4,1) and (4,2), you need to do the
+following:
+
+- Unbind the (4,1) and (4,2) tuples from their ap bus driver.
+- Bind the (4,1) and (4,2) tuples to the vfio_ap driver.
+- Create the mediated device.
+- Assign card 4 and domains 1 and 2 to the mediated device
+
+QEMU will now simply consume the mediated device and things should work.
+
+For a complete description of the architecture and concepts underlying the 
+design, see the Documentation/s390/vfio-ap.txt file included with this
+patch set.
+
+v4 => v5 Change log:
+===================
+* Added code to mdev open callback to ensure not more than one vfio-ap
+  device can be opened by a guest.
+* Interpret AP instructions by default
+* Removed patch implementing interface to enable/disable AP interpretation,
+  since that will now be done by default
+* Removed patch to reset crypto attributes for ALL vcpus. That will be 
+  submitted as a single patch since it will not be needed in this series - 
+  i.e., it was called from the interface to enable/disable AP instructions
+* All code for initializing crypto for a guest has been moved back to 
+  kvm-s390.c, kvm_s390_crypto_init(kvm) function
+* Maintaining a module reference count for the vfio_ap module so it is not
+  removed while a guest with AP devices is running.
+* AP bus interfaces needed by KVM that are unavailable if CONFIG_ZCRYPT=n
+  are temporarily embedded in KVM until available statically via future 
+  patch.
 
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+Tony Krowiak (13):
+  KVM: s390: Interface to test whether APXA installed
+  KVM: s390: refactor crypto initialization
+  KVM: s390: CPU model support for AP virtualization
+  s390: vfio-ap: base implementation of VFIO AP device driver
+  s390: vfio-ap: register matrix device with VFIO mdev framework
+  KVM: s390: interfaces to manage guest's AP matrix
+  s390: vfio-ap: sysfs interfaces to configure adapters
+  s390: vfio-ap: sysfs interfaces to configure domains
+  s390: vfio-ap: sysfs interfaces to configure control domains
+  s390: vfio-ap: sysfs interface to view matrix mdev matrix
+  KVM: s390: implement mediated device open callback
+  s390: vfio-ap: implement VFIO_DEVICE_GET_INFO ioctl
+  s390: doc: detailed specifications for AP virtualization
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-tags/devicetree-fixes-for-4.17
-
-for you to fetch changes up to f130307054a59ca21d2396f386be77ebd2e8ca96:
-
-  dt-bindings: panel: lvds: Fix path to display timing bindings
-(2018-05-01 09:26:31 -0500)
-
-----------------------------------------------------------------
-DeviceTree fixes for 4.17:
-
-- Fix path to display timing binding
-
-- Fix some typos in interrupt-names and clock-names
-
-- Fix a resource leak on overlay removal
-
-- Add missing documentation for R8A77965 DMA, serial, and net
-
-- Cleanup sunxi pinctrl description
-
-- Add Kieback & Peter GmbH vendor prefix
-
-----------------------------------------------------------------
-Geert Uytterhoeven (3):
-      dt-bindings: meson-uart: DT fix s/clocks-names/clock-names/
-      dt-bindings: mvebu-uart: DT fix s/interrupts-names/interrupt-names/
-      dt-bindings: panel: lvds: Fix path to display timing bindings
-
-Jacopo Mondi (3):
-      dt-bindings: net: ravb: Add support for r8a77965 SoC
-      dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
-      dt-bindings: dmaengine: rcar-dmac: document R8A77965 support
-
-Jan Kiszka (1):
-      of: overlay: Stop leaking resources on overlay removal
-
-Lukasz Majewski (1):
-      doc: Add vendor prefix for Kieback & Peter GmbH
-
-Matheus Castello (1):
-      dt-bindings: pinctrl: sunxi: Fix reference to driver
-
-Rob Herring (1):
-      dtc: checks: drop warning for missing PCI bridge bus-range
-
- .../bindings/display/panel/panel-common.txt        |  2 +-
- .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |  1 +
- .../devicetree/bindings/net/renesas,ravb.txt       |  1 +
- .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |  6 ++---
- .../bindings/serial/amlogic,meson-uart.txt         |  2 +-
- .../devicetree/bindings/serial/mvebu-uart.txt      |  2 +-
- .../bindings/serial/renesas,sci-serial.txt         |  2 ++
- .../devicetree/bindings/vendor-prefixes.txt        |  1 +
- Documentation/devicetree/overlay-notes.txt         |  8 ++++++
- drivers/of/overlay.c                               | 30 +++++++++++++++-------
- scripts/dtc/checks.c                               |  5 ++--
- 11 files changed, 42 insertions(+), 18 deletions(-)
+ Documentation/s390/vfio-ap.txt        |  575 +++++++++++++++++++++
+ MAINTAINERS                           |   13 +
+ arch/s390/Kconfig                     |   11 +
+ arch/s390/include/asm/kvm-ap.h        |  133 +++++
+ arch/s390/include/asm/kvm_host.h      |    5 +
+ arch/s390/include/uapi/asm/kvm.h      |    1 +
+ arch/s390/kvm/Makefile                |    2 +-
+ arch/s390/kvm/kvm-ap.c                |  263 ++++++++++
+ arch/s390/kvm/kvm-s390.c              |  116 +++---
+ arch/s390/tools/gen_facilities.c      |    3 +
+ drivers/s390/crypto/Makefile          |    4 +
+ drivers/s390/crypto/vfio_ap_drv.c     |  143 ++++++
+ drivers/s390/crypto/vfio_ap_ops.c     |  906 +++++++++++++++++++++++++++++++++
+ drivers/s390/crypto/vfio_ap_private.h |   76 +++
+ include/uapi/linux/vfio.h             |    2 +
+ 15 files changed, 2194 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/s390/vfio-ap.txt
+ create mode 100644 arch/s390/include/asm/kvm-ap.h
+ create mode 100644 arch/s390/kvm/kvm-ap.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_drv.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+ create mode 100644 drivers/s390/crypto/vfio_ap_private.h
