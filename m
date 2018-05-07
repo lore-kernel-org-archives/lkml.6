@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZrmt2UA7og7fMBNUAiZ1aHd+4/hhBfBqhu2h+W9le1Tx4zP/oC9Dw5psHNEqG5ElU2tmRjl
-ARC-Seal: i=1; a=rsa-sha256; t=1525654558; cv=none;
+X-Google-Smtp-Source: AB8JxZoPXINYkOEWxB5YMdMe2XR9n8E7I4AhoFs/8XMv5loj8kCrZ1dDE8QZO33+TGeUeOQoKkDS
+ARC-Seal: i=1; a=rsa-sha256; t=1525654551; cv=none;
         d=google.com; s=arc-20160816;
-        b=qK91xJFney4ltkyXKIT9KKc6YyUr1vv494G3nPQUvTXT3zXTrEE3aYkZ7/BcyYOxQ/
-         1ICTGosu/w/XH45X60o/+n85sF1o7/hTng7gPx2uefNPfI7a8ug/vlHNNyrVeCOBN0LN
-         2WmF1YpU4W+76iZC7pQaW+DxDW9Xpo5fX29xNh9XbRigbNa19QacVcDCpJoxyX3Wdvki
-         6PaqrqK274jlmgd3TTXGbOhlTagiWLyPwKcn0sFLitNjSALtnB7abXoABD0OxoZPWKh2
-         c9WiaXG77/l9wfd0lMHUmjAUv7XheEuAKR9yLVSkteaknAaSdyMPaZYLkXvuOvIRhhz/
-         u//w==
+        b=DqdQKl+rZ1v/A2dDjoJgK2jZIkpHtf682gVN51vKAflwNBlxJF2nIwbIVPB8UJbFa6
+         EeCY5b7HNlmrbFh/0K0iL6uOGELm8Uxq7vAeTCZx866GFPSoyjr2AYWdoyQlsFGSR1pU
+         RnESh3+qKUIizB0Jb7SQlHKgVWQnCzLDUP5CkuiGQFf7bqkVIbOGBCTAeg2BmQKJGuHE
+         e+ZK1iLsRsRnc6GI1A7dKzVeEka6v9PMotbX+MfBqUaxri0onYysqvbhif4aFa+jEO0m
+         mjRpRRePD/NSl7uztpuL7HtYL1TKitJ7AioOC5xbHWXZSuD8bsrdrLJ0RhMx1nUE24X0
+         C1IA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=CSsrwDkhjHKZAyJ7bDBT09e8Wgzyzf40DOTGrvYbJJQ=;
-        b=i17gPVZIXUXNdyNUAFjE6LDhF++ZIJk7EhsUBwYiU3kzzHu0b9uTrPZcGnQu1CqtXj
-         I++OHET+KF+JCV4xulVXwMOdf9g6Qqas22Mg/QNm6hsFc+ska1Ftzxv3Od3weUwBeNit
-         4YFevdMyxC13BFzohNcnlqTbEG3Vc9A+gVkWfEnHKnjG+2NVTUO8SupmqdA1YcnJf4I4
-         k7H7PfAI8Pr30vbTNgnvJiwaq5p2a2S4/jL6LKjJDTwNx8K4hAZ8a9IXJ247yeBhyrId
-         C/jJyXOi/HSH09GKrrhVVwiFPwbkyRBvZVcrWJFikPtvmiCxXqAfB3JBeYwEDhgEfTQD
-         J33A==
+        bh=4T+WQJVTz+MP7rSzhnQpZUVmZBp2Ib3E706OL7HJoKI=;
+        b=R8Rv6eG4v57tmpvYCy5+06gBeiWGi3W4A97609fuHxiGIY5jc0ttfjj5jL08emKqEQ
+         qVBDaG7iW3ujNWJtm4+DUc8JyjsG0dk7OHCMfBKSwBJa1zq9f2QAOKLyM23mHSf4f4Is
+         Ia47u3SS9EQe71PgtGesU+jW8LIi1rj1iRPSJrqz/OFuWQkAXocYu0q/tVbBHh1WkgJY
+         hwDAZBp7AR7imFHV16ZHo7qCELPfPhiR/INhi73qCCNJNYL6v/siWwUTHMOU0jfAXvjS
+         IpNEAEu4MjeNwIHvXwqREf/7h2JbwhIWbUDM9+ZdJn+Mbp9g6YuqBCNvOlpUu0mOwX76
+         ecew==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,11 +29,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Mon, 07 May 2018 10:54:48 +1000
-Subject: [PATCH 05/10] staging: lustre: fold lu_object_new() into
- lu_object_find_at()
+Subject: [PATCH 04/10] staging: lustre: lu_object: move retry logic inside
+ htable_lookup
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152565448814.30131.1410451753531304804.stgit@noble>
+Message-ID: <152565448811.30131.18427155547615728371.stgit@noble>
 In-Reply-To: <152565436690.30131.2229703651041382739.stgit@noble>
 References: <152565436690.30131.2229703651041382739.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -41,92 +41,164 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599764754993439206?=
-X-GMAIL-MSGID: =?utf-8?q?1599764754993439206?=
+X-GMAIL-THRID: =?utf-8?q?1599764746935488075?=
+X-GMAIL-MSGID: =?utf-8?q?1599764746935488075?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-lu_object_new() duplicates a lot of code that is in
-lu_object_find_at().
-There is no real need for a separate function, it is simpler just
-to skip the bits of lu_object_find_at() that we don't
-want in the LOC_F_NEW case.
+The current retry logic, to wait when a 'dying' object is found,
+spans multiple functions.  The process is attached to a waitqueue
+and set TASK_UNINTERRUPTIBLE in htable_lookup, and this status
+is passed back through lu_object_find_try() to lu_object_find_at()
+where schedule() is called and the process is removed from the queue.
+
+This can be simplified by moving all the logic (including
+hashtable locking) inside htable_lookup(), which now never returns
+EAGAIN.
+
+Note that htable_lookup() is called with the hash bucket lock
+held, and will drop and retake it if it needs to schedule.
+
+I made this a 'goto' loop rather than a 'while(1)' loop as the
+diff is easier to read.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/obdclass/lu_object.c |   44 +++++---------------
- 1 file changed, 12 insertions(+), 32 deletions(-)
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |   70 ++++++++------------
+ 1 file changed, 27 insertions(+), 43 deletions(-)
 
 diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-index 0c9419a6d5d6..7981c7d8ecc1 100644
+index bf5b309edeae..0c9419a6d5d6 100644
 --- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
 +++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-@@ -682,29 +682,6 @@ static void lu_object_limit(const struct lu_env *env, struct lu_device *dev)
- 			      false);
+@@ -584,16 +584,24 @@ void lu_object_print(const struct lu_env *env, void *cookie,
+ }
+ EXPORT_SYMBOL(lu_object_print);
+ 
++/*
++ * NOTE: htable_lookup() is called with the relevant
++ * hash bucket locked, but might drop and re-acquire the lock.
++ */
+ static struct lu_object *htable_lookup(struct lu_site *s,
+ 				       struct cfs_hash_bd *bd,
+ 				       const struct lu_fid *f,
+-				       wait_queue_entry_t *waiter,
+ 				       __u64 *version)
+ {
++	struct cfs_hash		*hs = s->ls_obj_hash;
+ 	struct lu_site_bkt_data *bkt;
+ 	struct lu_object_header *h;
+ 	struct hlist_node	*hnode;
+-	__u64  ver = cfs_hash_bd_version_get(bd);
++	__u64 ver;
++	wait_queue_entry_t waiter;
++
++retry:
++	ver = cfs_hash_bd_version_get(bd);
+ 
+ 	if (*version == ver)
+ 		return ERR_PTR(-ENOENT);
+@@ -626,11 +634,15 @@ static struct lu_object *htable_lookup(struct lu_site *s,
+ 	 * drained), and moreover, lookup has to wait until object is freed.
+ 	 */
+ 
+-	init_waitqueue_entry(waiter, current);
+-	add_wait_queue(&bkt->lsb_marche_funebre, waiter);
++	init_waitqueue_entry(&waiter, current);
++	add_wait_queue(&bkt->lsb_marche_funebre, &waiter);
+ 	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	lprocfs_counter_incr(s->ls_stats, LU_SS_CACHE_DEATH_RACE);
+-	return ERR_PTR(-EAGAIN);
++	cfs_hash_bd_unlock(hs, bd, 1);
++	schedule();
++	remove_wait_queue(&bkt->lsb_marche_funebre, &waiter);
++	cfs_hash_bd_lock(hs, bd, 1);
++	goto retry;
  }
  
--static struct lu_object *lu_object_new(const struct lu_env *env,
--				       struct lu_device *dev,
--				       const struct lu_fid *f,
--				       const struct lu_object_conf *conf)
--{
--	struct lu_object	*o;
--	struct cfs_hash	      *hs;
--	struct cfs_hash_bd	    bd;
--
--	o = lu_object_alloc(env, dev, f, conf);
--	if (IS_ERR(o))
--		return o;
--
--	hs = dev->ld_site->ls_obj_hash;
--	cfs_hash_bd_get_and_lock(hs, (void *)f, &bd, 1);
--	cfs_hash_bd_add_locked(hs, &bd, &o->lo_header->loh_hash);
--	cfs_hash_bd_unlock(hs, &bd, 1);
--
--	lu_object_limit(env, dev);
--
--	return o;
--}
--
  /**
-  * Much like lu_object_find(), but top level device of object is specifically
-  * \a dev rather than top level device of the site. This interface allows
-@@ -740,18 +717,18 @@ struct lu_object *lu_object_find_at(const struct lu_env *env,
+@@ -694,13 +706,14 @@ static struct lu_object *lu_object_new(const struct lu_env *env,
+ }
+ 
+ /**
+- * Core logic of lu_object_find*() functions.
++ * Much like lu_object_find(), but top level device of object is specifically
++ * \a dev rather than top level device of the site. This interface allows
++ * objects of different "stacking" to be created within the same site.
+  */
+-static struct lu_object *lu_object_find_try(const struct lu_env *env,
+-					    struct lu_device *dev,
+-					    const struct lu_fid *f,
+-					    const struct lu_object_conf *conf,
+-					    wait_queue_entry_t *waiter)
++struct lu_object *lu_object_find_at(const struct lu_env *env,
++				    struct lu_device *dev,
++				    const struct lu_fid *f,
++				    const struct lu_object_conf *conf)
+ {
+ 	struct lu_object      *o;
+ 	struct lu_object      *shadow;
+@@ -726,8 +739,6 @@ static struct lu_object *lu_object_find_try(const struct lu_env *env,
+ 	 * It is unnecessary to perform lookup-alloc-lookup-insert, instead,
  	 * just alloc and insert directly.
  	 *
+-	 * If dying object is found during index search, add @waiter to the
+-	 * site wait-queue and return ERR_PTR(-EAGAIN).
  	 */
--	if (conf && conf->loc_flags & LOC_F_NEW)
--		return lu_object_new(env, dev, f, conf);
--
+ 	if (conf && conf->loc_flags & LOC_F_NEW)
+ 		return lu_object_new(env, dev, f, conf);
+@@ -735,8 +746,9 @@ static struct lu_object *lu_object_find_try(const struct lu_env *env,
  	s  = dev->ld_site;
  	hs = s->ls_obj_hash;
--	cfs_hash_bd_get_and_lock(hs, (void *)f, &bd, 1);
--	o = htable_lookup(s, &bd, f, &version);
--	cfs_hash_bd_unlock(hs, &bd, 1);
+ 	cfs_hash_bd_get_and_lock(hs, (void *)f, &bd, 1);
+-	o = htable_lookup(s, &bd, f, waiter, &version);
++	o = htable_lookup(s, &bd, f, &version);
+ 	cfs_hash_bd_unlock(hs, &bd, 1);
++
+ 	if (!IS_ERR(o) || PTR_ERR(o) != -ENOENT)
+ 		return o;
  
--	if (!IS_ERR(o) || PTR_ERR(o) != -ENOENT)
--		return o;
-+	cfs_hash_bd_get(hs, f, &bd);
-+	if (!(conf && conf->loc_flags & LOC_F_NEW)) {
-+		cfs_hash_bd_lock(hs, &bd, 1);
-+		o = htable_lookup(s, &bd, f, &version);
-+		cfs_hash_bd_unlock(hs, &bd, 1);
- 
-+		if (!IS_ERR(o) || PTR_ERR(o) != -ENOENT)
-+			return o;
-+	}
- 	/*
- 	 * Allocate new object. This may result in rather complicated
- 	 * operations, including fld queries, inode loading, etc.
-@@ -764,7 +741,10 @@ struct lu_object *lu_object_find_at(const struct lu_env *env,
+@@ -752,7 +764,7 @@ static struct lu_object *lu_object_find_try(const struct lu_env *env,
  
  	cfs_hash_bd_lock(hs, &bd, 1);
  
--	shadow = htable_lookup(s, &bd, f, &version);
-+	if (conf && conf->loc_flags & LOC_F_NEW)
-+		shadow = ERR_PTR(-ENOENT);
-+	else
-+		shadow = htable_lookup(s, &bd, f, &version);
+-	shadow = htable_lookup(s, &bd, f, waiter, &version);
++	shadow = htable_lookup(s, &bd, f, &version);
  	if (likely(PTR_ERR(shadow) == -ENOENT)) {
  		cfs_hash_bd_add_locked(hs, &bd, &o->lo_header->loh_hash);
  		cfs_hash_bd_unlock(hs, &bd, 1);
+@@ -767,34 +779,6 @@ static struct lu_object *lu_object_find_try(const struct lu_env *env,
+ 	lu_object_free(env, o);
+ 	return shadow;
+ }
+-
+-/**
+- * Much like lu_object_find(), but top level device of object is specifically
+- * \a dev rather than top level device of the site. This interface allows
+- * objects of different "stacking" to be created within the same site.
+- */
+-struct lu_object *lu_object_find_at(const struct lu_env *env,
+-				    struct lu_device *dev,
+-				    const struct lu_fid *f,
+-				    const struct lu_object_conf *conf)
+-{
+-	wait_queue_head_t	*wq;
+-	struct lu_object	*obj;
+-	wait_queue_entry_t	   wait;
+-
+-	while (1) {
+-		obj = lu_object_find_try(env, dev, f, conf, &wait);
+-		if (obj != ERR_PTR(-EAGAIN))
+-			return obj;
+-		/*
+-		 * lu_object_find_try() already added waiter into the
+-		 * wait queue.
+-		 */
+-		schedule();
+-		wq = lu_site_wq_from_fid(dev->ld_site, (void *)f);
+-		remove_wait_queue(wq, &wait);
+-	}
+-}
+ EXPORT_SYMBOL(lu_object_find_at);
+ 
+ /**
