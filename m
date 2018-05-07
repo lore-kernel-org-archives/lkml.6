@@ -1,185 +1,170 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751822AbeEGF6Z (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 01:58:25 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:40587 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeEGF6W (ORCPT
+        id S1750998AbeEGGCC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:02:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47332 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750708AbeEGGCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 01:58:22 -0400
-X-Google-Smtp-Source: AB8JxZqt4qaBIfKQHu6o2UiL7Tzz37qLN9ZafGSwEiXnAjdX6Y2ybJAFer1Z8w/hKwqemPpm1ekCcg==
-Date: Mon, 7 May 2018 14:59:07 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: James Morse <james.morse@arm.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
-        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 04/11] arm64: kexec_file: allocate memory walking
- through memblock list
-Message-ID: <20180507055906.GE11326@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
- <20180425062629.29404-5-takahiro.akashi@linaro.org>
- <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
+        Mon, 7 May 2018 02:02:00 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Mon, 07 May 2018 11:31:58 +0530
+From: Abhishek Sahu <absahu@codeaurora.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v2 01/14] mtd: rawnand: helper function for setting up ECC
+ parameters
+In-Reply-To: <CAK7LNASWErFrvW+_6Lsw-aqO4T3=iyRZLXG21ML+ebOX=po2Zw@mail.gmail.com>
+References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
+ <1525350041-22995-2-git-send-email-absahu@codeaurora.org>
+ <CAK7LNASWErFrvW+_6Lsw-aqO4T3=iyRZLXG21ML+ebOX=po2Zw@mail.gmail.com>
+Message-ID: <fd8f768c78a6522e671d20e701db0f51@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James,
-
-On Tue, May 01, 2018 at 06:46:09PM +0100, James Morse wrote:
-> Hi Akashi,
+On 2018-05-07 09:10, Masahiro Yamada wrote:
+> 2018-05-03 21:20 GMT+09:00 Abhishek Sahu <absahu@codeaurora.org>:
+>> commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
+>> match, maximize ECC settings") provides generic helpers which
+>> drivers can use for setting up ECC parameters.
+>> 
+>> Since same board can have different ECC strength nand chips so
+>> following is the logic for setting up ECC strength and ECC step
+>> size, which can be used by most of the drivers.
+>> 
+>> 1. If both ECC step size and ECC strength are already set
+>>    (usually by DT) then just check whether this setting
+>>    is supported by NAND controller.
+>> 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
+>>    supported by NAND controller.
+>> 3. Otherwise, try to match the ECC step size and ECC strength closest
+>>    to the chip's requirement. If available OOB size can't fit the chip
+>>    requirement then select maximum ECC strength which can be fit with
+>>    available OOB size with warning.
+>> 
+>> This patch introduces nand_ecc_param_setup function which calls the
+>> required helper functions for the above logic. The drivers can use
+>> this single function instead of calling the 3 helper functions
+>> individually.
+>> 
+>> CC: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+>> ---
+>> * Changes from v1:
+>> 
+>>   NEW PATCH
+>> 
+>>  drivers/mtd/nand/raw/nand_base.c | 42 
+>> ++++++++++++++++++++++++++++++++++++++++
+>>  include/linux/mtd/rawnand.h      |  3 +++
+>>  2 files changed, 45 insertions(+)
+>> 
+>> diff --git a/drivers/mtd/nand/raw/nand_base.c 
+>> b/drivers/mtd/nand/raw/nand_base.c
+>> index 72f3a89..dd7a984 100644
+>> --- a/drivers/mtd/nand/raw/nand_base.c
+>> +++ b/drivers/mtd/nand/raw/nand_base.c
+>> @@ -6249,6 +6249,48 @@ int nand_maximize_ecc(struct nand_chip *chip,
+>>  }
+>>  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
+>> 
+>> +/**
+>> + * nand_ecc_param_setup - Set the ECC strength and ECC step size
+>> + * @chip: nand chip info structure
+>> + * @caps: ECC engine caps info structure
+>> + * @oobavail: OOB size that the ECC engine can use
+>> + *
+>> + * Choose the ECC strength according to following logic
+>> + *
+>> + * 1. If both ECC step size and ECC strength are already set (usually 
+>> by DT)
+>> + *    then check if it is supported by this controller.
+>> + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
+>> + * 3. Otherwise, try to match the ECC step size and ECC strength 
+>> closest
+>> + *    to the chip's requirement. If available OOB size can't fit the 
+>> chip
+>> + *    requirement then fallback to the maximum ECC step size and ECC 
+>> strength
+>> + *    and print the warning.
+>> + *
+>> + * On success, the chosen ECC settings are set.
+>> + */
+>> +int nand_ecc_param_setup(struct nand_chip *chip,
+>> +                        const struct nand_ecc_caps *caps, int 
+>> oobavail)
+>> +{
+>> +       int ret;
+>> +
+>> +       if (chip->ecc.size && chip->ecc.strength)
+>> +               return nand_check_ecc_caps(chip, caps, oobavail);
+>> +
+>> +       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
+>> +               return nand_maximize_ecc(chip, caps, oobavail);
+>> +
+>> +       if (!nand_match_ecc_req(chip, caps, oobavail))
+>> +               return 0;
+>> +
+>> +       ret = nand_maximize_ecc(chip, caps, oobavail);
 > 
-> On 25/04/18 07:26, AKASHI Takahiro wrote:
-> > We need to prevent firmware-reserved memory regions, particularly EFI
-> > memory map as well as ACPI tables, from being corrupted by loading
-> > kernel/initrd (or other kexec buffers). We also want to support memory
-> > allocation in top-down manner in addition to default bottom-up.
-> > So let's have arm64 specific arch_kexec_walk_mem() which will search
-> > for available memory ranges in usable memblock list,
-> > i.e. !NOMAP & !reserved, 
 > 
-> > instead of system resource tree.
+> Why two calls for nand_maximize_ecc()?
 > 
-> Didn't we try to fix the system-resource-tree in order to fix regular-kexec to
-> be safe in the EFI-memory-map/ACPI-tables case?
+> My code is simpler, and does not display
+> false-positive warning.
 > 
-> It would be good to avoid having two ways of doing this, and I would like to
-> avoid having extra arch code...
 
-I know what you mean.
-/proc/iomem or system resource is, in my opinion, not the best place to
-describe memory usage of kernel but rather to describe *physical* hardware
-layout. As we are still discussing about "reserved" memory, I don't want
-to depend on it.
-Along with memblock list, we will have more accurate control over memory
-usage.
+  Thanks Masahiro.
 
-> 
-> > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-> > new file mode 100644
-> > index 000000000000..f9ebf54ca247
-> > --- /dev/null
-> > +++ b/arch/arm64/kernel/machine_kexec_file.c
-> > @@ -0,0 +1,57 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * kexec_file for arm64
-> > + *
-> > + * Copyright (C) 2018 Linaro Limited
-> > + * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-> > + *
-> 
-> > + * Most code is derived from arm64 port of kexec-tools
-> 
-> How does kexec-tools walk memblock?
+  Since, Now this is in moved to generic layer that's why I put
+  this warning that this function is falling back to some
+  other ECC settings which is not recommend by chip.
 
-Will remove this comment from this patch.
-Obviously, this comment is for the rest of the code which will be
-added to succeeding patches (patch #5 and #7).
-
-
-> 
-> > + */
-> > +
-> > +#define pr_fmt(fmt) "kexec_file: " fmt
-> > +
-> > +#include <linux/ioport.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/kexec.h>
-> > +#include <linux/memblock.h>
-> > +
-> > +int arch_kexec_walk_mem(struct kexec_buf *kbuf,
-> > +				int (*func)(struct resource *, void *))
-> > +{
-> > +	phys_addr_t start, end;
-> > +	struct resource res;
-> > +	u64 i;
-> > +	int ret = 0;
-> > +
-> > +	if (kbuf->image->type == KEXEC_TYPE_CRASH)
-> > +		return func(&crashk_res, kbuf);
-> > +
-> > +	if (kbuf->top_down)
-> > +		for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,
-> > +				NUMA_NO_NODE, MEMBLOCK_NONE,
-> > +				&start, &end, NULL) {
-> 
-> for_each_free_mem_range_reverse() is a more readable version of this helper.
-
-OK. I used to use my own limited list of reserved memory instead of
-memblock.reserved here to exclude verbose ranges.
-
-
-> > +			if (!memblock_is_map_memory(start))
-> > +				continue;
-> 
-> Passing MEMBLOCK_NONE means this walk will never find MEMBLOCK_NOMAP memory.
-
-Sure, I confirmed it.
-
-> 
-> > +			res.start = start;
-> > +			res.end = end;
-> > +			ret = func(&res, kbuf);
-> > +			if (ret)
-> > +				break;
-> > +		}
-> > +	else
-> > +		for_each_mem_range(i, &memblock.memory, &memblock.reserved,
-> > +				NUMA_NO_NODE, MEMBLOCK_NONE,
-> > +				&start, &end, NULL) {
-> 
-> for_each_free_mem_range()?
-
-OK.
-
-> > +			if (!memblock_is_map_memory(start))
-> > +				continue;
-> > +
-> > +			res.start = start;
-> > +			res.end = end;
-> > +			ret = func(&res, kbuf);
-> > +			if (ret)
-> > +				break;
-> > +		}
-> > +
-> > +	return ret;
-> > +}
-> > 
-> 
-> With these changes, what we have is almost:
-> arch/powerpc/kernel/machine_kexec_file_64.c::arch_kexec_walk_mem() !
-> (the difference being powerpc doesn't yet support crash-kernels here)
-> 
-> If the argument is walking memblock gives a better answer than the stringy
-> walk_system_ram_res() thing, is there any mileage in moving this code into
-> kexec_file.c, and using it if !IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK)?
-> 
-> This would save arm64/powerpc having near-identical implementations.
-> 32bit arm keeps memblock if it has kexec, so it may be useful there too if
-> kexec_file_load() support is added.
-
-Thanks. I've forgot ppc.
-
--Takahiro AKASHI
-
+  If this warning seems unnecessary then I can remove this
+  and then directly your code changes can be put here
+  instead of calling nand_maximize_ecc 2 times.
 
 > 
-> Thanks,
+>> +       if (!ret)
+>> +               pr_warn("ECC (step, strength) = (%d, %d) not supported 
+>> on this controller. Fallback to (%d, %d)\n",
+>> +                       chip->ecc_step_ds, chip->ecc_strength_ds,
+>> +                       chip->ecc.size, chip->ecc.strength);
 > 
-> James
+> 
+> This is annoying.
+> 
+> {ecc_step_ds, ecc_strength_ds} are not provided by Non-ONFi devices.
+> 
+> So,
+>   ECC (step, strength) = (0, 0) not supported on this controller.
+> 
+> will be always displayed.
+> 
+> 
+> The strength will be checked by nand_ecc_strength_good() anyway.
+> 
+
+  But for most of the non ONFI devices also, this is being calculated
+  by ID.
+
+  You can get some background for this in
+  http://lists.infradead.org/pipermail/linux-mtd/2018-April/080193.html
+
+  Regards,
+  Abhishek
