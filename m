@@ -1,64 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752872AbeEGUTW (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:19:22 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35190 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752158AbeEGUTV (ORCPT
+        id S1752918AbeEGUT2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:19:28 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:36650 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752879AbeEGUTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:19:21 -0400
-X-Google-Smtp-Source: AB8JxZrZ29JANeIMOidBh25qMwpTPs/B8x8dVlpk5VAfUKfbrniB2/MWzsBEbLkPWaNULiB3VA9TNKOzX3jBkOpY6G4=
+        Mon, 7 May 2018 16:19:25 -0400
+Subject: Re: [PATCH 14/24] selftests: kvm: return Kselftest Skip code for
+ skipped tests
+To: Paolo Bonzini <pbonzini@redhat.com>, hofsass@google.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180505011328.32078-1-shuah@kernel.org>
+ <20180505011328.32078-14-shuah@kernel.org>
+ <08ca6038-00a0-1526-493a-36e6732b5934@redhat.com>
+ <004c6cf7-a79d-ab00-ee68-f8c5bc7f5988@kernel.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <aad4ff59-a43f-7074-b5c6-e6ade55d887c@kernel.org>
+Date: Mon, 7 May 2018 14:19:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180507201651.165879-1-shakeelb@google.com>
-In-Reply-To: <20180507201651.165879-1-shakeelb@google.com>
-From: Shakeel Butt <shakeelb@google.com>
-Date: Mon, 07 May 2018 20:19:08 +0000
-Message-ID: <CALvZod7gktckGdTRCmTQTACXZKbtpCJqqovxFvSqG1uDa07ocg@mail.gmail.com>
-Subject: Re: [PATCH] mm: memcontrol: drain memcg stock on force_empty
-To: Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Junaid Shahid <junaids@google.com>, Junaid Shahid <juanids@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <004c6cf7-a79d-ab00-ee68-f8c5bc7f5988@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 1:16 PM Shakeel Butt <shakeelb@google.com> wrote:
+On 05/07/2018 01:41 PM, Shuah Khan wrote:
+> On 05/07/2018 05:46 AM, Paolo Bonzini wrote:
+>> On 05/05/2018 03:13, Shuah Khan (Samsung OSG) wrote:
+>>> When kvm test is skipped because of unmet dependencies and/or unsupported
+>>> configuration, it exits with error which is treated as a fail by the
+>>> Kselftest framework. This leads to false negative result even when the test
+>>> could not be run.
+>>>
+>>> Change it to return kselftest skip code when a test gets skipped to clearly
+>>> report that the test could not be run.
+>>>
+>>> Change it to use ksft_exit_skip() when the test is skipped. In addition,
+>>> refine test_assert() message to include strerror() string and add explicit
+>>> check for root user to clearly identofy non-root user skip case.
+>>
+>> Root should not be needed.
+> 
+> Will remove the root check and send v2.
 
-> From: Junaid Shahid <junaids@google.com>
+Hmm. I am seeing 
 
-> The per-cpu memcg stock can retain a charge of upto 32 pages. On a
-> machine with large number of cpus, this can amount to a decent amount
-> of memory. Additionally force_empty interface might be triggering
-> unneeded memcg reclaims.
+selftests: kvm: sync_regs_test
+========================================
+==== Test Assertion Failure ====
+  lib/kvm_util.c:54: kvm_fd >= 0
+  pid=2840 tid=2840 - Permission denied
+     1	0x0000564cd5206163: ?? ??:0
+     2	0x0000564cd520531b: ?? ??:0
+     3	0x00007f7ec018f1c0: ?? ??:0
+     4	0x0000564cd52058f9: ?? ??:0
+  open /dev/kvm failed, rc: -1 errno: 13
 
-> Signed-off-by: Junaid Shahid <juanids@google.com>
+There are a couple of other tests that fail with EACCES
+It would make sense report these tests as Skipped perhaps.
 
-This should be "Junaid Shahid <junaids@google.com>".
-
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> ---
->   mm/memcontrol.c | 3 +++
->   1 file changed, 3 insertions(+)
-
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e2d33a37f971..2c3c69524b49 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2841,6 +2841,9 @@ static int mem_cgroup_force_empty(struct mem_cgroup
-*memcg)
-
->          /* we call try-to-free pages for make this cgroup empty */
->          lru_add_drain_all();
-> +
-> +       drain_all_stock(memcg);
-> +
->          /* try to free all pages in this cgroup */
->          while (nr_retries && page_counter_read(&memcg->memory)) {
->                  int progress;
-> --
-> 2.17.0.441.gb46fe60e1d-goog
+thanks,
+-- Shuah
