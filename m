@@ -1,69 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752117AbeEGKQq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:16:46 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:29949 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751889AbeEGKQl (ORCPT
+        id S1752137AbeEGKRJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:17:09 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54534 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751961AbeEGKRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:16:41 -0400
-Subject: Re: KASAN: null-ptr-deref Write in simple_write_to_buffer
-To: syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
-References: <00000000000005aaf6056b7759ba@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <1a822b55-30bc-2bf3-427e-18c3d8e2b285@I-love.SAKURA.ne.jp>
-Date: Mon, 7 May 2018 19:15:42 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <00000000000005aaf6056b7759ba@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 7 May 2018 06:17:04 -0400
+X-Google-Smtp-Source: AB8JxZpdJshRPqmcNRgqIdrAmi8G2f6QQR+lHwxSvXaZvPhPdSx2lOxXCWeEH3I9SlpuZT9VzGmE6w==
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Vadim Pasternak <vadimp@mellanox.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH] eeprom: at24: fix retrieving the at24_chip_data structure
+Date: Mon,  7 May 2018 12:16:58 +0200
+Message-Id: <20180507101658.7788-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->From 166fa14420aa17f9a693621ef76bd107e1cb5ce8 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Mon, 7 May 2018 13:12:20 +0900
-Subject: [PATCH] PM / hibernate: Fix oops at snapshot_write().
+Commit feb2f19b1e8f ("eeprom: at24: move platform data processing into
+a separate routine") introduced a bug where we incorrectly retireve the
+at24_chip_data structure. Remove the unnecessary ampersand operator.
 
-syzbot is reporting NULL pointer dereference at snapshot_write() [1].
-This is because data->handle is zero-cleared by ioctl(SNAPSHOT_FREE).
-Fix this by checking data_of(data->handle) != NULL before using it.
-
-[1] https://syzkaller.appspot.com/bug?id=828a3c71bd344a6de8b6a31233d51a72099f27fd
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+ae590932da6e45d6564d@syzkaller.appspotmail.com>
-Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Pavel Machek <pavel@ucw.cz>
+Fixes: feb2f19b1e8f ("eeprom: at24: move platform data processing into a separate routine")
+Reported-by: Vadim Pasternak <vadimp@mellanox.com>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- kernel/power/user.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/misc/eeprom/at24.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/power/user.c b/kernel/power/user.c
-index 75c959d..abd2255 100644
---- a/kernel/power/user.c
-+++ b/kernel/power/user.c
-@@ -186,6 +186,11 @@ static ssize_t snapshot_write(struct file *filp, const char __user *buf,
- 		res = PAGE_SIZE - pg_offp;
- 	}
+diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+index 0c125f207aea..33053b0d1fdf 100644
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -518,7 +518,7 @@ static int at24_get_pdata(struct device *dev, struct at24_platform_data *pdata)
+ 	if (of_node && of_match_device(at24_of_match, dev))
+ 		cdata = of_device_get_match_data(dev);
+ 	else if (id)
+-		cdata = (void *)&id->driver_data;
++		cdata = (void *)id->driver_data;
+ 	else
+ 		cdata = acpi_device_get_match_data(dev);
  
-+	if (!data_of(data->handle)) {
-+		res = -EINVAL;
-+		goto unlock;
-+	}
-+
- 	res = simple_write_to_buffer(data_of(data->handle), res, &pg_offp,
- 			buf, count);
- 	if (res > 0)
 -- 
-1.8.3.1
+2.17.0
