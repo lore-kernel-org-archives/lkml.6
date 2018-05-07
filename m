@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752302AbeEGKuv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:50:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35168 "EHLO
+        id S1752354AbeEGKvB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:51:01 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35248 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752235AbeEGKup (ORCPT
+        with ESMTP id S1752273AbeEGKuw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:50:45 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 333EE60A06
+        Mon, 7 May 2018 06:50:52 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 276C8601A0
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
 From: Amit Nischal <anischal@codeaurora.org>
@@ -21,9 +21,9 @@ Cc: Andy Gross <andy.gross@linaro.org>,
         linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v7 1/3] clk: qcom: Configure the RCGs to a safe source as needed
-Date: Mon,  7 May 2018 16:20:18 +0530
-Message-Id: <1525690220-26525-2-git-send-email-anischal@codeaurora.org>
+Subject: [PATCH v7 2/3] clk: qcom: Add DT bindings for SDM845 gcc clock controller
+Date: Mon,  7 May 2018 16:20:19 +0530
+Message-Id: <1525690220-26525-3-git-send-email-anischal@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
 References: <1525690220-26525-1-git-send-email-anischal@codeaurora.org>
@@ -31,277 +31,274 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some root clock generators, there could be child branches which are
-controlled by an entity other than application processor subsystem. For
-such RCGs, as per application processor subsystem clock driver, all of
-its downstream clocks are disabled and RCG is in disabled state but in
-reality downstream clocks can be left enabled before.
+Add compatible string and the include file for gcc clock
+controller for SDM845.
 
-So in this scenario, when RCG is disabled as per clock driver's point of
-view and when rate scaling request comes before downstream clock enable
-request, then RCG fails to update its configuration because in reality
-RCG is on and it expects its new source to already be in enable state but
-in reality new source is off. In order to avoid having the RCG to go into
-an invalid state, add support to update the CFG, M, N and D registers
-during set_rate() without configuration update and defer the actual RCG
-configuration update to be done during clk_enable() as at this point of
-time, both its new parent and safe source will be already enabled and RCG
-can safely switch to new parent.
-
-During clk_disable() request, configure it to safe source as both its
-parents, safe source and current parent will be enabled and RCG can
-safely execute a switch.
-
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
 Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg.h  |  17 ++---
- drivers/clk/qcom/clk-rcg2.c | 170 ++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 163 insertions(+), 24 deletions(-)
+ .../devicetree/bindings/clock/qcom,gcc.txt         |   1 +
+ include/dt-bindings/clock/qcom,gcc-sdm845.h        | 239 +++++++++++++++++++++
+ 2 files changed, 240 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sdm845.h
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 2a7489a..b209a2f 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -1,15 +1,5 @@
--/*
-- * Copyright (c) 2013, The Linux Foundation. All rights reserved.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- */
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+index d1fb8b2..664ea1f 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+@@ -19,6 +19,7 @@ Required properties :
+ 			"qcom,gcc-msm8996"
+ 			"qcom,gcc-msm8998"
+ 			"qcom,gcc-mdm9615"
++			"qcom,gcc-sdm845"
+
+ - reg : shall contain base register location and length
+ - #clock-cells : shall contain 1
+diff --git a/include/dt-bindings/clock/qcom,gcc-sdm845.h b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+new file mode 100644
+index 0000000..aca6126
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gcc-sdm845.h
+@@ -0,0 +1,239 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved. */
-
- #ifndef __QCOM_CLK_RCG_H__
- #define __QCOM_CLK_RCG_H__
-@@ -144,6 +134,7 @@ struct clk_dyn_rcg {
-  * @cmd_rcgr: corresponds to *_CMD_RCGR
-  * @mnd_width: number of bits in m/n/d values
-  * @hid_width: number of bits in half integer divider
-+ * @safe_src_index: safe src index value
-  * @parent_map: map from software's parent index to hardware's src_sel field
-  * @freq_tbl: frequency table
-  * @clkr: regmap clock handle
-@@ -153,6 +144,7 @@ struct clk_rcg2 {
- 	u32			cmd_rcgr;
- 	u8			mnd_width;
- 	u8			hid_width;
-+	u8			safe_src_index;
- 	const struct parent_map	*parent_map;
- 	const struct freq_tbl	*freq_tbl;
- 	struct clk_regmap	clkr;
-@@ -167,5 +159,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
-+extern const struct clk_ops clk_rcg2_shared_ops;
-
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index e63db10..6827ab3 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1,14 +1,6 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * Copyright (c) 2013, 2018, The Linux Foundation. All rights reserved.
-- *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-  */
-
- #include <linux/kernel.h>
-@@ -249,7 +241,7 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
- 	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
- }
-
--static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-+static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- {
- 	u32 cfg, mask;
- 	struct clk_hw *hw = &rcg->clkr.hw;
-@@ -282,8 +274,16 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
- 	if (rcg->mnd_width && f->n && (f->m != f->n))
- 		cfg |= CFG_MODE_DUAL_EDGE;
--	ret = regmap_update_bits(rcg->clkr.regmap,
--			rcg->cmd_rcgr + CFG_REG, mask, cfg);
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
 +
-+	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
-+					mask, cfg);
-+}
++#ifndef _DT_BINDINGS_CLK_SDM_GCC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_GCC_SDM845_H
 +
-+static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-+{
-+	int ret;
++/* GCC clock registers */
++#define GCC_AGGRE_NOC_PCIE_TBU_CLK				0
++#define GCC_AGGRE_UFS_CARD_AXI_CLK				1
++#define GCC_AGGRE_UFS_PHY_AXI_CLK				2
++#define GCC_AGGRE_USB3_PRIM_AXI_CLK				3
++#define GCC_AGGRE_USB3_SEC_AXI_CLK				4
++#define GCC_BOOT_ROM_AHB_CLK					5
++#define GCC_CAMERA_AHB_CLK					6
++#define GCC_CAMERA_AXI_CLK					7
++#define GCC_CAMERA_XO_CLK					8
++#define GCC_CE1_AHB_CLK						9
++#define GCC_CE1_AXI_CLK						10
++#define GCC_CE1_CLK						11
++#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				12
++#define GCC_CFG_NOC_USB3_SEC_AXI_CLK				13
++#define GCC_CPUSS_AHB_CLK					14
++#define GCC_CPUSS_AHB_CLK_SRC					15
++#define GCC_CPUSS_RBCPR_CLK					16
++#define GCC_CPUSS_RBCPR_CLK_SRC					17
++#define GCC_DDRSS_GPU_AXI_CLK					18
++#define GCC_DISP_AHB_CLK					19
++#define GCC_DISP_AXI_CLK					20
++#define GCC_DISP_GPLL0_CLK_SRC					21
++#define GCC_DISP_GPLL0_DIV_CLK_SRC				22
++#define GCC_DISP_XO_CLK						23
++#define GCC_GP1_CLK						24
++#define GCC_GP1_CLK_SRC						25
++#define GCC_GP2_CLK						26
++#define GCC_GP2_CLK_SRC						27
++#define GCC_GP3_CLK						28
++#define GCC_GP3_CLK_SRC						29
++#define GCC_GPU_CFG_AHB_CLK					30
++#define GCC_GPU_GPLL0_CLK_SRC					31
++#define GCC_GPU_GPLL0_DIV_CLK_SRC				32
++#define GCC_GPU_MEMNOC_GFX_CLK					33
++#define GCC_GPU_SNOC_DVM_GFX_CLK				34
++#define GCC_MSS_AXIS2_CLK					35
++#define GCC_MSS_CFG_AHB_CLK					36
++#define GCC_MSS_GPLL0_DIV_CLK_SRC				37
++#define GCC_MSS_MFAB_AXIS_CLK					38
++#define GCC_MSS_Q6_MEMNOC_AXI_CLK				39
++#define GCC_MSS_SNOC_AXI_CLK					40
++#define GCC_PCIE_0_AUX_CLK					41
++#define GCC_PCIE_0_AUX_CLK_SRC					42
++#define GCC_PCIE_0_CFG_AHB_CLK					43
++#define GCC_PCIE_0_CLKREF_CLK					44
++#define GCC_PCIE_0_MSTR_AXI_CLK					45
++#define GCC_PCIE_0_PIPE_CLK					46
++#define GCC_PCIE_0_SLV_AXI_CLK					47
++#define GCC_PCIE_0_SLV_Q2A_AXI_CLK				48
++#define GCC_PCIE_1_AUX_CLK					49
++#define GCC_PCIE_1_AUX_CLK_SRC					50
++#define GCC_PCIE_1_CFG_AHB_CLK					51
++#define GCC_PCIE_1_CLKREF_CLK					52
++#define GCC_PCIE_1_MSTR_AXI_CLK					53
++#define GCC_PCIE_1_PIPE_CLK					54
++#define GCC_PCIE_1_SLV_AXI_CLK					55
++#define GCC_PCIE_1_SLV_Q2A_AXI_CLK				56
++#define GCC_PCIE_PHY_AUX_CLK					57
++#define GCC_PCIE_PHY_REFGEN_CLK					58
++#define GCC_PCIE_PHY_REFGEN_CLK_SRC				59
++#define GCC_PDM2_CLK						60
++#define GCC_PDM2_CLK_SRC					61
++#define GCC_PDM_AHB_CLK						62
++#define GCC_PDM_XO4_CLK						63
++#define GCC_PRNG_AHB_CLK					64
++#define GCC_QMIP_CAMERA_AHB_CLK					65
++#define GCC_QMIP_DISP_AHB_CLK					66
++#define GCC_QMIP_VIDEO_AHB_CLK					67
++#define GCC_QUPV3_WRAP0_S0_CLK					68
++#define GCC_QUPV3_WRAP0_S0_CLK_SRC				69
++#define GCC_QUPV3_WRAP0_S1_CLK					70
++#define GCC_QUPV3_WRAP0_S1_CLK_SRC				71
++#define GCC_QUPV3_WRAP0_S2_CLK					72
++#define GCC_QUPV3_WRAP0_S2_CLK_SRC				73
++#define GCC_QUPV3_WRAP0_S3_CLK					74
++#define GCC_QUPV3_WRAP0_S3_CLK_SRC				75
++#define GCC_QUPV3_WRAP0_S4_CLK					76
++#define GCC_QUPV3_WRAP0_S4_CLK_SRC				77
++#define GCC_QUPV3_WRAP0_S5_CLK					78
++#define GCC_QUPV3_WRAP0_S5_CLK_SRC				79
++#define GCC_QUPV3_WRAP0_S6_CLK					80
++#define GCC_QUPV3_WRAP0_S6_CLK_SRC				81
++#define GCC_QUPV3_WRAP0_S7_CLK					82
++#define GCC_QUPV3_WRAP0_S7_CLK_SRC				83
++#define GCC_QUPV3_WRAP1_S0_CLK					84
++#define GCC_QUPV3_WRAP1_S0_CLK_SRC				85
++#define GCC_QUPV3_WRAP1_S1_CLK					86
++#define GCC_QUPV3_WRAP1_S1_CLK_SRC				87
++#define GCC_QUPV3_WRAP1_S2_CLK					88
++#define GCC_QUPV3_WRAP1_S2_CLK_SRC				89
++#define GCC_QUPV3_WRAP1_S3_CLK					90
++#define GCC_QUPV3_WRAP1_S3_CLK_SRC				91
++#define GCC_QUPV3_WRAP1_S4_CLK					92
++#define GCC_QUPV3_WRAP1_S4_CLK_SRC				93
++#define GCC_QUPV3_WRAP1_S5_CLK					94
++#define GCC_QUPV3_WRAP1_S5_CLK_SRC				95
++#define GCC_QUPV3_WRAP1_S6_CLK					96
++#define GCC_QUPV3_WRAP1_S6_CLK_SRC				97
++#define GCC_QUPV3_WRAP1_S7_CLK					98
++#define GCC_QUPV3_WRAP1_S7_CLK_SRC				99
++#define GCC_QUPV3_WRAP_0_M_AHB_CLK				100
++#define GCC_QUPV3_WRAP_0_S_AHB_CLK				101
++#define GCC_QUPV3_WRAP_1_M_AHB_CLK				102
++#define GCC_QUPV3_WRAP_1_S_AHB_CLK				103
++#define GCC_SDCC2_AHB_CLK					104
++#define GCC_SDCC2_APPS_CLK					105
++#define GCC_SDCC2_APPS_CLK_SRC					106
++#define GCC_SDCC4_AHB_CLK					107
++#define GCC_SDCC4_APPS_CLK					108
++#define GCC_SDCC4_APPS_CLK_SRC					109
++#define GCC_SYS_NOC_CPUSS_AHB_CLK				110
++#define GCC_TSIF_AHB_CLK					111
++#define GCC_TSIF_INACTIVITY_TIMERS_CLK				112
++#define GCC_TSIF_REF_CLK					113
++#define GCC_TSIF_REF_CLK_SRC					114
++#define GCC_UFS_CARD_AHB_CLK					115
++#define GCC_UFS_CARD_AXI_CLK					116
++#define GCC_UFS_CARD_AXI_CLK_SRC				117
++#define GCC_UFS_CARD_CLKREF_CLK					118
++#define GCC_UFS_CARD_ICE_CORE_CLK				119
++#define GCC_UFS_CARD_ICE_CORE_CLK_SRC				120
++#define GCC_UFS_CARD_PHY_AUX_CLK				121
++#define GCC_UFS_CARD_PHY_AUX_CLK_SRC				122
++#define GCC_UFS_CARD_RX_SYMBOL_0_CLK				123
++#define GCC_UFS_CARD_RX_SYMBOL_1_CLK				124
++#define GCC_UFS_CARD_TX_SYMBOL_0_CLK				125
++#define GCC_UFS_CARD_UNIPRO_CORE_CLK				126
++#define GCC_UFS_CARD_UNIPRO_CORE_CLK_SRC			127
++#define GCC_UFS_MEM_CLKREF_CLK					128
++#define GCC_UFS_PHY_AHB_CLK					129
++#define GCC_UFS_PHY_AXI_CLK					130
++#define GCC_UFS_PHY_AXI_CLK_SRC					131
++#define GCC_UFS_PHY_ICE_CORE_CLK				132
++#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				133
++#define GCC_UFS_PHY_PHY_AUX_CLK					134
++#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				135
++#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				136
++#define GCC_UFS_PHY_RX_SYMBOL_1_CLK				137
++#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				138
++#define GCC_UFS_PHY_UNIPRO_CORE_CLK				139
++#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				140
++#define GCC_USB30_PRIM_MASTER_CLK				141
++#define GCC_USB30_PRIM_MASTER_CLK_SRC				142
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK				143
++#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			144
++#define GCC_USB30_PRIM_SLEEP_CLK				145
++#define GCC_USB30_SEC_MASTER_CLK				146
++#define GCC_USB30_SEC_MASTER_CLK_SRC				147
++#define GCC_USB30_SEC_MOCK_UTMI_CLK				148
++#define GCC_USB30_SEC_MOCK_UTMI_CLK_SRC				149
++#define GCC_USB30_SEC_SLEEP_CLK					150
++#define GCC_USB3_PRIM_CLKREF_CLK				151
++#define GCC_USB3_PRIM_PHY_AUX_CLK				152
++#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				153
++#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				154
++#define GCC_USB3_PRIM_PHY_PIPE_CLK				155
++#define GCC_USB3_SEC_CLKREF_CLK					156
++#define GCC_USB3_SEC_PHY_AUX_CLK				157
++#define GCC_USB3_SEC_PHY_AUX_CLK_SRC				158
++#define GCC_USB3_SEC_PHY_PIPE_CLK				159
++#define GCC_USB3_SEC_PHY_COM_AUX_CLK				160
++#define GCC_USB_PHY_CFG_AHB2PHY_CLK				161
++#define GCC_VIDEO_AHB_CLK					162
++#define GCC_VIDEO_AXI_CLK					163
++#define GCC_VIDEO_XO_CLK					164
++#define GPLL0							165
++#define GPLL0_OUT_EVEN						166
++#define GPLL0_OUT_MAIN						167
++#define GCC_GPU_IREF_CLK					168
++#define GCC_SDCC1_AHB_CLK					169
++#define GCC_SDCC1_APPS_CLK					170
++#define GCC_SDCC1_ICE_CORE_CLK					171
++#define GCC_SDCC1_APPS_CLK_SRC					172
++#define GCC_SDCC1_ICE_CORE_CLK_SRC				173
++#define GCC_APC_VS_CLK						174
++#define GCC_GPU_VS_CLK						175
++#define GCC_MSS_VS_CLK						176
++#define GCC_VDDA_VS_CLK						177
++#define GCC_VDDCX_VS_CLK					178
++#define GCC_VDDMX_VS_CLK					179
++#define GCC_VS_CTRL_AHB_CLK					180
++#define GCC_VS_CTRL_CLK						181
++#define GCC_VS_CTRL_CLK_SRC					182
++#define GCC_VSENSOR_CLK_SRC					183
++#define GPLL4							184
 +
-+	ret = __clk_rcg2_configure(rcg, f);
- 	if (ret)
- 		return ret;
-
-@@ -790,3 +790,149 @@ static int clk_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
- 	.determine_rate = clk_gfx3d_determine_rate,
- };
- EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
++/* GCC Resets */
++#define GCC_MMSS_BCR						0
++#define GCC_PCIE_0_BCR						1
++#define GCC_PCIE_1_BCR						2
++#define GCC_PCIE_PHY_BCR					3
++#define GCC_PDM_BCR						4
++#define GCC_PRNG_BCR						5
++#define GCC_QUPV3_WRAPPER_0_BCR					6
++#define GCC_QUPV3_WRAPPER_1_BCR					7
++#define GCC_QUSB2PHY_PRIM_BCR					8
++#define GCC_QUSB2PHY_SEC_BCR					9
++#define GCC_SDCC2_BCR						10
++#define GCC_SDCC4_BCR						11
++#define GCC_TSIF_BCR						12
++#define GCC_UFS_CARD_BCR					13
++#define GCC_UFS_PHY_BCR						14
++#define GCC_USB30_PRIM_BCR					15
++#define GCC_USB30_SEC_BCR					16
++#define GCC_USB3_PHY_PRIM_BCR					17
++#define GCC_USB3PHY_PHY_PRIM_BCR				18
++#define GCC_USB3_DP_PHY_PRIM_BCR				19
++#define GCC_USB3_PHY_SEC_BCR					20
++#define GCC_USB3PHY_PHY_SEC_BCR					21
++#define GCC_USB3_DP_PHY_SEC_BCR					22
++#define GCC_USB_PHY_CFG_AHB2PHY_BCR				23
++#define GCC_PCIE_0_PHY_BCR					24
++#define GCC_PCIE_1_PHY_BCR					25
 +
-+static int clk_rcg2_set_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const char *name = clk_hw_get_name(hw);
-+	int ret, count;
++/* GCC GDSCRs */
++#define PCIE_0_GDSC						0
++#define PCIE_1_GDSC						1
++#define UFS_CARD_GDSC						2
++#define UFS_PHY_GDSC						3
++#define USB30_PRIM_GDSC						4
++#define USB30_SEC_GDSC						5
++#define HLOS1_VOTE_AGGRE_NOC_MMU_AUDIO_TBU_GDSC			6
++#define HLOS1_VOTE_AGGRE_NOC_MMU_PCIE_TBU_GDSC			7
++#define HLOS1_VOTE_AGGRE_NOC_MMU_TBU1_GDSC			8
++#define HLOS1_VOTE_AGGRE_NOC_MMU_TBU2_GDSC			9
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC			10
++#define HLOS1_VOTE_MMNOC_MMU_TBU_HF1_GDSC			11
++#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC			12
 +
-+	/* Force enable bit */
-+	ret = regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+				 CMD_ROOT_EN, CMD_ROOT_EN);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for RCG to turn ON */
-+	for (count = 500; count > 0; count--) {
-+		if (clk_rcg2_is_enabled(hw))
-+			return 0;
-+
-+		/* Delay for 1usec and retry polling the status bit */
-+		udelay(1);
-+	}
-+	if (!count)
-+		pr_err("%s: RCG did not turn on\n", name);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static int clk_rcg2_clear_force_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/* Clear force enable bit */
-+	return regmap_update_bits(rcg->clkr.regmap, rcg->cmd_rcgr + CMD_REG,
-+					CMD_ROOT_EN, 0);
-+}
-+
-+static int
-+clk_rcg2_shared_force_enable_clear(struct clk_hw *hw, const struct freq_tbl *f)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	if (!f)
-+		return -EINVAL;
-+
-+	ret = clk_rcg2_set_force_enable(hw);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_rcg2_configure(rcg, f);
-+	if (ret)
-+		return ret;
-+
-+	return clk_rcg2_clear_force_enable(hw);
-+}
-+
-+static int clk_rcg2_shared_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	const struct freq_tbl *f;
-+
-+	f = qcom_find_freq(rcg->freq_tbl, rate);
-+	if (!f)
-+		return -EINVAL;
-+
-+	/*
-+	 * In case clock is disabled, update the CFG, M, N and D registers
-+	 * and do not hit the update bit of CMD register.
-+	 */
-+	if (!__clk_is_enabled(hw->clk))
-+		/* Skip the configuration update */
-+		return __clk_rcg2_configure(rcg, f);
-+
-+	return clk_rcg2_shared_force_enable_clear(hw, f);
-+}
-+
-+static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
-+}
-+
-+static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+
-+	/*
-+	 * Set the update bit only.
-+	 * As required configuration has been already written in set_rate() op.
-+	 */
-+	ret = clk_rcg2_set_force_enable(hw);
-+	if (ret)
-+		return ret;
-+
-+	ret = update_config(rcg);
-+	if (ret)
-+		return ret;
-+
-+	return clk_rcg2_clear_force_enable(hw);
-+}
-+
-+static void clk_rcg2_shared_disable(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	u32 cfg;
-+
-+	/*
-+	 * Store current configuration as switching to safe source
-+	 * would clear the SRC and DIV of CFG register.
-+	 */
-+	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
-+
-+	/*
-+	 * Park the RCG at a safe configuration - sourced off from safe source.
-+	 * Force enable and disable the RCG while configuring it to safeguard
-+	 * against any update signal coming from the downstream clock.
-+	 * The current parent is still prepared and enabled at this point, and
-+	 * the safe source is always on while application processor subsystem
-+	 * is online. Therefore, the RCG can safely switch its parent.
-+	 */
-+	clk_rcg2_set_force_enable(hw);
-+
-+	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG,
-+				rcg->safe_src_index << CFG_SRC_SEL_SHIFT);
-+
-+	update_config(rcg);
-+
-+	clk_rcg2_clear_force_enable(hw);
-+
-+	/* Write back the stored configuration corresponding to current rate */
-+	regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
-+}
-+
-+const struct clk_ops clk_rcg2_shared_ops = {
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_rate,
-+	.set_rate = clk_rcg2_shared_set_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
++#endif
 --
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
