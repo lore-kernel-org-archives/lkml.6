@@ -1,94 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752606AbeEGOeJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 10:34:09 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48246 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751991AbeEGOeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 10:34:06 -0400
-Date: Mon, 7 May 2018 16:33:58 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-Message-ID: <20180507143358.GA3071@redhat.com>
-References: <20180502132026.GB16060@cmpxchg.org>
- <87lgd1zww0.fsf_-_@xmission.com>
- <20180503133338.GA23401@redhat.com>
- <87y3h0x0qg.fsf@xmission.com>
- <20180504142056.GA26151@redhat.com>
- <87r2mrh4is.fsf@xmission.com>
- <20180504145435.GA26573@redhat.com>
- <87y3gzfmjt.fsf@xmission.com>
- <20180504162209.GB26573@redhat.com>
- <871serfk77.fsf@xmission.com>
+        id S1752274AbeEGOnY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 10:43:24 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:53758 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750881AbeEGOnW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 10:43:22 -0400
+Date: Mon, 7 May 2018 10:43:06 -0400
+From: Rich Felker <dalias@libc.org>
+To: Rob Landley <rob@landley.net>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
+ device tree
+Message-ID: <20180507144306.GG1392@brightrain.aerifal.cx>
+References: <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
+ <20171117191706.GF1627@brightrain.aerifal.cx>
+ <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
+ <20180105212857.GR1627@brightrain.aerifal.cx>
+ <20180503013708.GC1392@brightrain.aerifal.cx>
+ <20180503023320.GD1392@brightrain.aerifal.cx>
+ <048ab147-21b8-045d-d21c-e1be2dd0e954@physik.fu-berlin.de>
+ <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
+ <5f690985-e905-deb9-aa4f-51561463ae22@physik.fu-berlin.de>
+ <9051f0a5-bc75-b49e-c8c3-aa877be1979e@landley.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <871serfk77.fsf@xmission.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <9051f0a5-bc75-b49e-c8c3-aa877be1979e@landley.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/04, Eric W. Biederman wrote:
->
-> Oleg Nesterov <oleg@redhat.com> writes:
->
-> > On 05/04, Eric W. Biederman wrote:
-> >>
-> >> Oleg Nesterov <oleg@redhat.com> writes:
-> >>
-> >> > I'd vote for the change in exec_mmap(). This way mm_init_memcg() can just
-> >> > nullify mm->memcg.
-> >>
-> >> There is at least one common path where we need the memory control group
-> >> properly initialized so memory allocations don't escape the memory
-> >> control group.
-> >>
-> >> do_execveat_common
-> >>    copy_strings
-> >>       get_arg_page
-> >>          get_user_pages_remote
-> >>             __get_user_pages_locked
-> >>                __get_user_pages
-> >>                   faultin_page
-> >>                      handle_mm_fault
-> >>                         count_memcg_event_mm
-> >>                         __handle_mm_fault
-> >>                           handle_pte_fault
-> >>                              do_anonymous_page
-> >>                                 mem_cgroup_try_charge
+On Mon, May 07, 2018 at 08:40:35AM -0500, Rob Landley wrote:
+> On 05/07/2018 06:00 AM, John Paul Adrian Glaubitz wrote:
+> > I have been able to boot my own kernel on my USL-5P device, but
+> > I could never get it to detect the IDE controller. Do I need
+> > an additional patch for that?
+> 
+> On a related note, is there a list of boards anywhere? I'm working on a 7760
+> system at $DAYJOB, Rich has a landisk which according to
+> https://www.openbsd.org/landisk.html is an SH7751R, and Sato-san says that
+> QEMU's -r2d emulates that too? ("RTS7751R2Dplus is QEMU-SH4 target. So easy
+> trying.")
+> 
+> What other boards do we need to covert to device tree? arch/sh/boards has 15 C
+> files and 19 subdirectories, but I dunno the status of any of them...
 
-Ah yes, indeed.
+I think asking "what we need to convert" is at least slightly
+mis-framed. Once the basics for device tree support are in place
+(basically patches 06-09), which boards are supported by device tree
+is mostly a matter of (1) whether the hardware drivers you want to use
+have bindings and use modern kernel interfaces, and (2) someone
+writing the dts files.
 
-> mm_init_memcg is at the same point as mm_init_owner.  So my change did
-> not introduce any logic changes on when the memory control group became
-> valid.
+Unless there's strong objection, I'd be happy with just doing a survey
+of device drivers used on currently supported boards, making sure they
+all nominally support device tree, then removing the old board file
+framework and waiting to see user response. If we take this path it
+should likely happen in a release not planned for LTS so there's time
+to add appropriate driver fixes and dts files before the next LTS
+release.
 
-Not sure, but perhaps I am all confused....
+I don't mind holding off a little bit on removal of the legacy board
+file support if it's hard to get enough hardware working right away
+with device tree, but I do want to move towards getting rid of it as
+soon as we can, since it's a large volume of code cutting into my
+ability to have a good maintainer-level understanding of the arch/sh
+tree and has a lot of crufty, unmaintained parallel infrastructure
+duplicating stuff that can be done in cleaner and more modern ways
+(see the threads on early platform device stuff, rtc drivers, etc.).
 
-before your patch get_mem_cgroup_from_mm() looks at mm->owner == current
-(in this case) and mem_cgroup_from_task() should return the correct memcg
-even if execing task migrates after bprm_mm_init(). At least in the common
-case when the old mm is not shared.
-
-After your patch the memory allocations in copy_strings() won't be accounted
-correctly, bprm->mm->memcg is wrong if this task migrates. And iiuc your recent
-"[PATCH 2/2] memcg: Close the race between migration and installing bprm->mm as mm"
-doesn't fix the problem.
-
-No?
-
-Perhaps we can change get_mem_cgroup_from_mm() to use
-mem_cgroup_from_css(current, memory_cgrp_id) if mm->memcg == NULL?
-
-Oleg.
+Rich
