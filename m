@@ -1,284 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752700AbeEGPNo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:13:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52486 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752687AbeEGPNh (ORCPT
+        id S1752715AbeEGPNt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:13:49 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38252 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752691AbeEGPNg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:13:37 -0400
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com
-Subject: [PATCH v5 05/13] s390: vfio-ap: register matrix device with VFIO mdev framework
-Date: Mon,  7 May 2018 11:11:44 -0400
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18050715-0016-0000-0000-000008AC4146
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008987; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01028859; UDB=6.00525678; IPR=6.00807992;
- MB=3.00020972; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-07 15:13:34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050715-0017-0000-0000-00003E987B88
-Message-Id: <1525705912-12815-6-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805070154
+        Mon, 7 May 2018 11:13:36 -0400
+X-Google-Smtp-Source: AB8JxZpIBr7VDe6R6bBLDwK+cYmkB9RvAlVP8i4m495khMTrRIlNlN4f7OuVU2inKznAPWgvlefk+A==
+Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
+ device tree
+To: Rich Felker <dalias@libc.org>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
+ <20171117191706.GF1627@brightrain.aerifal.cx>
+ <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
+ <20180105212857.GR1627@brightrain.aerifal.cx>
+ <20180503013708.GC1392@brightrain.aerifal.cx>
+ <20180503023320.GD1392@brightrain.aerifal.cx>
+ <048ab147-21b8-045d-d21c-e1be2dd0e954@physik.fu-berlin.de>
+ <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
+ <5f690985-e905-deb9-aa4f-51561463ae22@physik.fu-berlin.de>
+ <9051f0a5-bc75-b49e-c8c3-aa877be1979e@landley.net>
+ <20180507144306.GG1392@brightrain.aerifal.cx>
+From: Rob Landley <rob@landley.net>
+Message-ID: <775bc754-0181-6a13-d625-825bf601eb77@landley.net>
+Date: Mon, 7 May 2018 10:13:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180507144306.GG1392@brightrain.aerifal.cx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Registers the matrix device created by the VFIO AP device
-driver with the VFIO mediated device framework.
-Registering the matrix device will create the sysfs
-structures needed to create mediated matrix devices
-each of which will be used to configure the AP matrix
-for a guest and connect it to the VFIO AP device driver.
 
-Registering the matrix device with the VFIO mediated device
-framework will create the following sysfs structures:
 
-/sys/devices/vfio_ap
-... [matrix]
-...... [mdev_supported_types]
-......... [vfio_ap-passthrough]
-............ create
+On 05/07/2018 09:43 AM, Rich Felker wrote:
+> On Mon, May 07, 2018 at 08:40:35AM -0500, Rob Landley wrote:
+>> On 05/07/2018 06:00 AM, John Paul Adrian Glaubitz wrote:
+>>> I have been able to boot my own kernel on my USL-5P device, but
+>>> I could never get it to detect the IDE controller. Do I need
+>>> an additional patch for that?
+>>
+>> On a related note, is there a list of boards anywhere? I'm working on a 7760
+>> system at $DAYJOB, Rich has a landisk which according to
+>> https://www.openbsd.org/landisk.html is an SH7751R, and Sato-san says that
+>> QEMU's -r2d emulates that too? ("RTS7751R2Dplus is QEMU-SH4 target. So easy
+>> trying.")
+>>
+>> What other boards do we need to covert to device tree? arch/sh/boards has 15 C
+>> files and 19 subdirectories, but I dunno the status of any of them...
+> 
+> I think asking "what we need to convert" is at least slightly
+> mis-framed. Once the basics for device tree support are in place
+> (basically patches 06-09), which boards are supported by device tree
+> is mostly a matter of (1) whether the hardware drivers you want to use
+> have bindings and use modern kernel interfaces, and (2) someone
+> writing the dts files.
 
-To create a mediated device for the AP matrix device, write a UUID
-to the create file:
+(3) being able to test the result on real hardware.
 
-	uuidgen > create
+We can _add_ device tree support without that, but can we remove the old board
+files without it?
 
-A symbolic link to the mediated device's directory will be created in the
-devices subdirectory named after the generated $uuid:
+> I don't mind holding off a little bit on removal of the legacy board
+> file support if it's hard to get enough hardware working right away
+> with device tree, but I do want to move towards getting rid of it as
+> soon as we can, since it's a large volume of code cutting into my
+> ability to have a good maintainer-level understanding of the arch/sh
+> tree and has a lot of crufty, unmaintained parallel infrastructure
+> duplicating stuff that can be done in cleaner and more modern ways
+> (see the threads on early platform device stuff, rtc drivers, etc.).
 
-/sys/devices/vfio_ap
-... [matrix]
-...... [mdev_supported_types]
-......... [vfio_ap-passthrough]
-............ [devices]
-............... [$uuid]
+The process may include a deprecation of hardware nobody has anymore, with call
+for testers, for a year or so before deleting stuff. (And then the old stuff's
+in git if somebody finds a board and wants to fish it out.)
 
-Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
----
- MAINTAINERS                           |    1 +
- drivers/s390/crypto/Makefile          |    2 +-
- drivers/s390/crypto/vfio_ap_drv.c     |    9 +++
- drivers/s390/crypto/vfio_ap_ops.c     |  106 +++++++++++++++++++++++++++++++++
- drivers/s390/crypto/vfio_ap_private.h |   17 +++++
- 5 files changed, 134 insertions(+), 1 deletions(-)
- create mode 100644 drivers/s390/crypto/vfio_ap_ops.c
+Also, I'd really like QEMU support to act as a first class board. At least 256
+megs of ram (so you can do native compiles on it), serial support that works
+(enabling the FIFO broke it because they don't implement the '15 bits of silence
+triggers a flush timer' part, so data gets stranded in the buffer until enough
+comes in to fill it the rest of the way which is a pain to type at when it's a
+serial console), multiple hard drives, and so on.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2792c81..cecadf2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12246,6 +12246,7 @@ W:	http://www.ibm.com/developerworks/linux/linux390/
- S:	Supported
- F:	drivers/s390/crypto/vfio_ap_drv.c
- F:	drivers/s390/crypto/vfio_ap_private.h
-+F:	drivers/s390/crypto/vfio_ap_ops.c
- 
- S390 ZFCP DRIVER
- M:	Steffen Maier <maier@linux.ibm.com>
-diff --git a/drivers/s390/crypto/Makefile b/drivers/s390/crypto/Makefile
-index 48e466e..8d36b05 100644
---- a/drivers/s390/crypto/Makefile
-+++ b/drivers/s390/crypto/Makefile
-@@ -17,5 +17,5 @@ pkey-objs := pkey_api.o
- obj-$(CONFIG_PKEY) += pkey.o
- 
- # adjunct processor matrix
--vfio_ap-objs := vfio_ap_drv.o
-+vfio_ap-objs := vfio_ap_drv.o vfio_ap_ops.o
- obj-$(CONFIG_VFIO_AP) += vfio_ap.o
-diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-index 014d70f..cc7fbd7 100644
---- a/drivers/s390/crypto/vfio_ap_drv.c
-+++ b/drivers/s390/crypto/vfio_ap_drv.c
-@@ -121,11 +121,20 @@ int __init vfio_ap_init(void)
- 		return ret;
- 	}
- 
-+	ret = vfio_ap_mdev_register(ap_matrix);
-+	if (ret) {
-+		ap_driver_unregister(&vfio_ap_drv);
-+		vfio_ap_matrix_dev_destroy(ap_matrix);
-+
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
- void __exit vfio_ap_exit(void)
- {
-+	vfio_ap_mdev_unregister(ap_matrix);
- 	ap_driver_unregister(&vfio_ap_drv);
- 	vfio_ap_matrix_dev_destroy(ap_matrix);
- }
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-new file mode 100644
-index 0000000..d7d36fb
---- /dev/null
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -0,0 +1,106 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Adjunct processor matrix VFIO device driver callbacks.
-+ *
-+ * Copyright IBM Corp. 2017
-+ * Author(s): Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-+ *
-+ */
-+#include <linux/string.h>
-+#include <linux/vfio.h>
-+#include <linux/device.h>
-+#include <linux/list.h>
-+#include <linux/ctype.h>
-+
-+#include "vfio_ap_private.h"
-+
-+#define VFOP_AP_MDEV_TYPE_HWVIRT "passthrough"
-+#define VFIO_AP_MDEV_NAME_HWVIRT "VFIO AP Passthrough Device"
-+
-+static int vfio_ap_mdev_create(struct kobject *kobj, struct mdev_device *mdev)
-+{
-+	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
-+
-+	ap_matrix->available_instances--;
-+
-+	return 0;
-+}
-+
-+static int vfio_ap_mdev_remove(struct mdev_device *mdev)
-+{
-+	struct ap_matrix *ap_matrix = to_ap_matrix(mdev_parent_dev(mdev));
-+
-+	ap_matrix->available_instances++;
-+
-+	return 0;
-+}
-+
-+static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
-+{
-+	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
-+}
-+
-+MDEV_TYPE_ATTR_RO(name);
-+
-+static ssize_t available_instances_show(struct kobject *kobj,
-+					struct device *dev, char *buf)
-+{
-+	struct ap_matrix *ap_matrix;
-+
-+	ap_matrix = to_ap_matrix(dev);
-+
-+	return sprintf(buf, "%d\n", ap_matrix->available_instances);
-+}
-+
-+MDEV_TYPE_ATTR_RO(available_instances);
-+
-+static ssize_t device_api_show(struct kobject *kobj, struct device *dev,
-+			       char *buf)
-+{
-+	return sprintf(buf, "%s\n", VFIO_DEVICE_API_AP_STRING);
-+}
-+
-+MDEV_TYPE_ATTR_RO(device_api);
-+
-+static struct attribute *vfio_ap_mdev_type_attrs[] = {
-+	&mdev_type_attr_name.attr,
-+	&mdev_type_attr_device_api.attr,
-+	&mdev_type_attr_available_instances.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group vfio_ap_mdev_hwvirt_type_group = {
-+	.name = VFOP_AP_MDEV_TYPE_HWVIRT,
-+	.attrs = vfio_ap_mdev_type_attrs,
-+};
-+
-+static struct attribute_group *vfio_ap_mdev_type_groups[] = {
-+	&vfio_ap_mdev_hwvirt_type_group,
-+	NULL,
-+};
-+
-+static const struct mdev_parent_ops vfio_ap_matrix_ops = {
-+	.owner			= THIS_MODULE,
-+	.supported_type_groups	= vfio_ap_mdev_type_groups,
-+	.create			= vfio_ap_mdev_create,
-+	.remove			= vfio_ap_mdev_remove,
-+};
-+
-+int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
-+{
-+	int ret;
-+
-+	ret = mdev_register_device(&ap_matrix->device, &vfio_ap_matrix_ops);
-+	if (ret)
-+		return ret;
-+
-+	ap_matrix->available_instances = AP_MATRIX_MAX_AVAILABLE_INSTANCES;
-+
-+	return 0;
-+}
-+
-+void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix)
-+{
-+	ap_matrix->available_instances--;
-+	mdev_unregister_device(&ap_matrix->device);
-+}
-diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-index cf23675..afd8dbc 100644
---- a/drivers/s390/crypto/vfio_ap_private.h
-+++ b/drivers/s390/crypto/vfio_ap_private.h
-@@ -10,14 +10,31 @@
- #define _VFIO_AP_PRIVATE_H_
- 
- #include <linux/types.h>
-+#include <linux/device.h>
-+#include <linux/mdev.h>
- 
- #include "ap_bus.h"
- 
- #define VFIO_AP_MODULE_NAME "vfio_ap"
- #define VFIO_AP_DRV_NAME "vfio_ap"
-+/**
-+ * There must be one mediated matrix device per guest. If every APQN is assigned
-+ * to a guest, then the maximum number of guests with a unique APQN assigned
-+ * would be 255 adapters x 255 domains = 72351 guests.
-+ */
-+#define AP_MATRIX_MAX_AVAILABLE_INSTANCES 72351
- 
- struct ap_matrix {
- 	struct device device;
-+	int available_instances;
- };
- 
-+static inline struct ap_matrix *to_ap_matrix(struct device *dev)
-+{
-+	return container_of(dev, struct ap_matrix, device);
-+}
-+
-+extern int vfio_ap_mdev_register(struct ap_matrix *ap_matrix);
-+extern void vfio_ap_mdev_unregister(struct ap_matrix *ap_matrix);
-+
- #endif /* _VFIO_AP_PRIVATE_H_ */
--- 
-1.7.1
+I'd be fine with virtio but there's no virtio devices on that target I've
+noticed yet, although maybe I just haven't figured out how to enable it...
+
+> Rich
+
+Rob
