@@ -1,80 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751901AbeEGAqV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 20:46:21 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33704 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751849AbeEGAqS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 20:46:18 -0400
-X-Google-Smtp-Source: AB8JxZrfR8Ftip8/oVlm2g4IBj4lhE+QWFTYyEK5Y56/0COYNbGFSHp9vzcVEDf7tHGwBaUTG0beNAM60frzdoVI0xM=
+        id S1751941AbeEGAz2 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 20:55:28 -0400
+Received: from ozlabs.org ([203.11.71.1]:57243 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751864AbeEGAzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 20:55:23 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 7 May 2018 10:55:19 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>
+Subject: linux-next: build warning after merge of the netfilter-next tree
+Message-ID: <20180507105519.1d34f19e@canb.auug.org.au>
 MIME-Version: 1.0
-References: <1525634395-23380-1-git-send-email-frederic@kernel.org> <1525634395-23380-9-git-send-email-frederic@kernel.org>
-In-Reply-To: <1525634395-23380-9-git-send-email-frederic@kernel.org>
-From: Joel Fernandes <joel.opensrc@gmail.com>
-Date: Mon, 07 May 2018 00:46:06 +0000
-Message-ID: <CAEi0qNkSUig2i92qEpPekO1Z0kDTVB+95UKbJy5b+9YKQHfciA@mail.gmail.com>
-Subject: Re: [PATCH 8/9] perf/breakpoint: Split breakpoint "check" and "commit"
-To: frederic@kernel.org
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jolsa@redhat.com, namhyung@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, torvalds@linux-foundation.org,
-        ysato@users.sourceforge.jp, benh@kernel.crashing.org,
-        Catalin Marinas <catalin.marinas@arm.com>, chris@zankel.net,
-        paulus@samba.org, Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, mpe@ellerman.id.au, dalias@libc.org,
-        Ingo Molnar <mingo@kernel.org>, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, luto@kernel.org, acme@kernel.org,
-        jcmvbkbc@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/8uVLuQXPtL_r+dAryLA7MBJ"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 6, 2018 at 12:22 PM Frederic Weisbecker <frederic@kernel.org>
-wrote:
+--Sig_/8uVLuQXPtL_r+dAryLA7MBJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> arch_validate_hwbkpt_settings() mixes up attribute check and commit into
-> a single code entity. Therefore the validation may return an error due to
-> incorrect atributes while still leaving halfway modified architecture
-> breakpoint struct.
+Hi all,
 
-> Now that we have split its logic on all archs, we can remove this
-> misdesigned function and call directly the arch check and commit
-> functions instead. This allows us to later avoid commiting
-> a breakpoint to architecture when its slot couldn't be allocated.
+After merging the netfilter-next tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-[...]
-> diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-> index 6e28d28..6896ceeb 100644
-> --- a/kernel/events/hw_breakpoint.c
-> +++ b/kernel/events/hw_breakpoint.c
-> @@ -402,11 +402,12 @@ int dbg_release_bp_slot(struct perf_event *bp)
+./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type wi=
+thout #include <linux/types.h>
 
->   static int validate_hw_breakpoint(struct perf_event *bp)
->   {
-> -       int ret;
-> +       int err;
+Introduced by commit
 
-> -       ret = arch_validate_hwbkpt_settings(bp);
-> -       if (ret)
-> -               return ret;
-> +       err = hw_breakpoint_arch_check(bp, &bp->attr);
-> +       if (err)
-> +               return err;
-> +       hw_breakpoint_arch_commit(bp);
+  bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure f=
+rom xt_osf")
 
-minor nit:
-To preserve bisectability, shouldn't this be the following in this and
-earlier patches?
+--=20
+Cheers,
+Stephen Rothwell
 
-        err = hw_breakpoint_arch_check(bp, &bp->attr);
-        hw_breakpoint_arch_commit(bp);
-        if (err)
-                return err;
+--Sig_/8uVLuQXPtL_r+dAryLA7MBJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-And then in patch 9/9 you can fix it the right way?
+-----BEGIN PGP SIGNATURE-----
 
-thanks,
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrvo/cACgkQAVBC80lX
+0GxieQgAi4CHHiG95PCz6z2PsjnoW1KIITozD6mai2UBEaOVK+2IkRkMmm4h6dkb
+zdq9VIcVxw7lZ4y5IeXtAdUd+cO/JxtL9ljm5JESznDUYNQK3cBPAALUvD9YGvVr
+64UO5kvFfOL7cAt1bRqDWiHWH5orpT+mlqaqAGAXQmOQmC76CLOUd8avYph3M9Eg
+Ccbw4rQtpkLgGSKLJruSfPUvAGSXx8hDSTh5Wc27JnFuPCjoQypJNh4mF/fXkjwx
+UDSHcCdiqyybODuu+SXItRZTOWguUgGYUTUOHux5DsOZUmetcgayCHwZEhYW6zvm
+ZgDkKcr8FcGB14R801P9g4rCb6pnTw==
+=GVse
+-----END PGP SIGNATURE-----
 
-- Joel
+--Sig_/8uVLuQXPtL_r+dAryLA7MBJ--
