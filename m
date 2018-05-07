@@ -1,157 +1,171 @@
-Return-Path: <bhe@redhat.com>
-X-Google-Smtp-Source: AB8JxZqQd0ZbpLepWvuwcwVV8C82VQN4BZMmw0WxgH5OGhr0kY3o9gB9UGZbYCo9Cl+hcTjnKrZ2
-ARC-Seal: i=1; a=rsa-sha256; t=1525781554; cv=none;
-        d=google.com; s=arc-20160816;
-        b=dJwZFKy7OCD1RoEB9gO59qMI5jdSbK2lgKvFFBg+0YpSOHZB+V9NeakqObs7hzViRd
-         1OP21sszICJBFIR6fEyTqVxbaz9ot8gGSM8pMtR+mXgBljxeoKiGNsQ7Dz9y/e1u+O/q
-         N7waGyzw4S8OsomM4HQ2hkol47vReO4vFg6sp4qqtR20emZiCgLZyLkxsKfLmCaci3ZG
-         wOEls2gN59d+jLKAYRfwbf7elJ3x0O4i1fbSkjeh+IrHGcr6lsDckuZf7/3HUShfP7ZD
-         PPptnz758KA9heurimLCnuVOgZPTX/177DgLUhjXc7/MZKOpTfyLnwGbE9mjKhmPzBRK
-         DemQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=GNTg95ry3MWmLSLl+fK4euOt87HvKTRH0oDL61VQvN4=;
-        b=rm3iifOrsmva8L5TLCOB7SFMcsYe47F970ZSdTXIzgopSs8IS56yWJX10sXrIpKZcy
-         dXWuAlQeRDNeVcB1+stCq+lMlbTgAFqaZc7MExealHZPK2pqWK+DKmtBpUK+grE9pOxm
-         jclXS4pCcF4/9/B2eb03GqF5yN7wGbBIRkD+GtFjgNKimCTgqh2mzv8JQS+CeRlJOSxe
-         NkCJxEBkbDad+Xo5FavKhqnCbi7aB5AjelPyhgmYswAwQHZR/YAbjRNvcEp1iKrCTJYU
-         6xn3Gcfse6/GXJ0pIdJv6hgfIQ2owGiepWlK33st2drSHLuzRGjBfCfPRG1havsjQ3jY
-         gYXA==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bhe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=bhe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bhe@redhat.com designates 66.187.233.73 as permitted sender) smtp.mailfrom=bhe@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-Date: Tue, 8 May 2018 20:12:26 +0800
+Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
+X-Cyrus-Session-Id: sloti22d1t05-311249-1525674832-8-580403766123501307
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
+  FromHeader='com', MailFrom='org'
+X-Spam-charsets: plain='us-ascii'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525674832; b=iTJOfAqcT4H6Ry2T9XU4fdjI7kKaXrEdf8EkQFlquRCi3jc6P3
+    ng5FwtcKn3gl43EsLG+jyPRjxR+STU4D9WesZrw00lK8CZdMsXodv+jcaHup5Xey
+    SVznIZUGjyUbUyLVUpH3ONllPjRA8JNG4OwwwPhZnAEQ66wp0Lr3VHu/OaV2O9Wk
+    PIaV7aNQdmIWC1kHdyUA08uRxyJ/GhRlR7PyPfyNUcpw1gLWTMIc7sPbYpU6gm7N
+    0Pop8JnuM72ChsinIftGIftUIuSoB7DuPuiakHfx+LpMEYotw7EWzjHmX+xe8aDD
+    1TFzhMykDvCOAws+1E3gK3Q0sKc8wbT6mp1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:subject:date:message-id
+    :in-reply-to:references:list-id:list-unsubscribe:list-archive
+    :list-post:list-help:list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525674832; bh=KFi3G
+    8bFI5wz56xDR7iCemxSkpOwTLTe1f5JMPF2WDk=; b=cpj4osm5NIdPpAS0APCe1
+    no+mhcGwtZxIkUOhYlLKxoxocqNSPCcCOqq1FRGadSgIASjXOnWJjLeqd5inNPnH
+    pbctpLkVNsiBZ3a4e89cBnQE+idw/qyk59FCZmJuU057M/2B35mT3VCfP8IJNJ3l
+    wlTcyq8RcU3yEEE6IahTyFh7JYtu0173QS/PmglYryQ4u4PkZ4kjhMjSF5bmrL+V
+    wCiCdQvy8GOmRHgnPtTOEHdN7Z6UuqE/rQYtgUbiJhiwHiAiMfCUJ20ezrscFKGN
+    AKNsr2SfmK/e4uVvfyJh0phD31gKnksvJ4naIPPSjByrHluWW5OtdL3arng0PkaK
+    Q==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+    smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+    smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
+    header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+    bits=128/128;
+    x-vs=clean score=0 state=0
+Authentication-Results: mx5.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
+    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
+      smtp.helo=fraxinus.osuosl.org;
+    x-aligned-from=fail;
+    x-cm=discussion score=0;
+    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
+    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
+      smtp_is_org_domain=yes header.domain=redhat.com header.result=pass
+      header_is_org_domain=yes;
+    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
+      bits=128/128;
+    x-vs=clean score=0 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfLzW6Suy+Guus40hYAL7Ed9yejWYP5P/RrXi/0Kakn+VvcIfy3hTuGVT+kXSWmUZcIA0Vq9aTG3V5MTEMK1vtTosyu2viWblkDdEqIQVS8CMEcW80CKt
+    Kij+rr9wp+gMv6KLsTf+l7LFUQ47eSfiY6ILwsEVA6y2TJvijndiG9UFQvOQmReeJGTOCHOh63h9q1G3qjceS+k7XPeE5VWdwUCnyX6qEERx/QEEfTdv3glA
+    iSBSXbd1SQOkfAkBSSNGIw==
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
+    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
+    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=20KFwNOVAAAA:8 a=PtDNVHqPAAAA:8
+    a=Z4Rwk6OoAAAA:8 a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=DDOyTI_5AAAA:8
+    a=GyvjMoo1nnRyjdH4L1YA:9 a=CjuIK1q_8ugA:10 a=BpimnaHY1jUKGyF_4-AF:22
+    a=HkZW87K1Qel5hWWM3VKY:22 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
+    a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
+X-ME-CMScore: 0
+X-ME-CMCategory: discussion
+X-Remote-Delivered-To: driverdev-devel@osuosl.org
 From: Baoquan He <bhe@redhat.com>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, robh+dt@kernel.org,
-	dan.j.williams@intel.com, nicolas.pitre@linaro.org,
-	josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de,
-	patrik.r.jakobsson@gmail.com, airlied@linux.ie, kys@microsoft.com,
-	haiyangz@microsoft.com, sthemmin@microsoft.com,
-	dmitry.torokhov@gmail.com, frowand.list@gmail.com,
-	keith.busch@intel.com, jonathan.derrick@intel.com,
-	lorenzo.pieralisi@arm.com, bhelgaas@google.com, tglx@linutronix.de,
-	brijesh.singh@amd.com, jglisse@redhat.com, thomas.lendacky@amd.com,
-	gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-	richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-	linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-	yinghai@kernel.org, kexec@lists.infradead.org, monstr@monstr.eu,
-	davem@davemloft.net, chris@zankel.net, jcmvbkbc@gmail.com,
-	gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-	seanpaul@chromium.org, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] resource: Use list_head to link sibling resource
-Message-ID: <20180508121226.GJ30581@MiWiFi-R3L-srv>
-References: <20180507063224.24229-2-bhe@redhat.com>
- <201805072210.H1bsHs9Y%fengguang.wu@intel.com>
+To: linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+ robh+dt@kernel.org, dan.j.williams@intel.com, nicolas.pitre@linaro.org,
+ josh@joshtriplett.org, fengguang.wu@intel.com, bp@suse.de
+Subject: [PATCH v4 3/3] kexec_file: Load kernel at top of system RAM if
+ required
+Date: Mon,  7 May 2018 14:32:24 +0800
+Message-Id: <20180507063224.24229-4-bhe@redhat.com>
+In-Reply-To: <20180507063224.24229-1-bhe@redhat.com>
+References: <20180507063224.24229-1-bhe@redhat.com>
+X-BeenThere: driverdev-devel@linuxdriverproject.org
+X-Mailman-Version: 2.1.24
+ <driverdev-devel.linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Cc: brijesh.singh@amd.com, devicetree@vger.kernel.org, airlied@linux.ie,
+ linux-pci@vger.kernel.org, richard.weiyang@gmail.com, keith.busch@intel.com,
+ jcmvbkbc@gmail.com, baiyaowei@cmss.chinamobile.com, frowand.list@gmail.com,
+ lorenzo.pieralisi@arm.com, sthemmin@microsoft.com, Baoquan He <bhe@redhat.com>,
+ linux-nvdimm@lists.01.org, patrik.r.jakobsson@gmail.com,
+ linux-input@vger.kernel.org, gustavo@padovan.org, dyoung@redhat.com,
+ vgoyal@redhat.com, thomas.lendacky@amd.com, haiyangz@microsoft.com,
+ maarten.lankhorst@linux.intel.com, jglisse@redhat.com, seanpaul@chromium.org,
+ bhelgaas@google.com, tglx@linutronix.de, yinghai@kernel.org,
+ jonathan.derrick@intel.com, chris@zankel.net, monstr@monstr.eu,
+ linux-parisc@vger.kernel.org, gregkh@linuxfoundation.org,
+ dmitry.torokhov@gmail.com, kexec@lists.infradead.org, ebiederm@xmission.com,
+ devel@linuxdriverproject.org, davem@davemloft.net
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201805072210.H1bsHs9Y%fengguang.wu@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1598131700389744779?=
-X-GMAIL-MSGID: =?utf-8?q?1599897918974995660?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/07/18 at 11:50pm, kbuild test robot wrote:
-> Hi Baoquan,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.17-rc4 next-20180504]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180507-144345
-> config: arm-allmodconfig (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm 
-> 
-> All errors (new ones prefixed by >>):
+For kexec_file loading, if kexec_buf.top_down is 'true', the memory which
+is used to load kernel/initrd/purgatory is supposed to be allocated from
+top to down. This is what we have been doing all along in the old kexec
+loading interface and the kexec loading is still default setting in some
+distributions. However, the current kexec_file loading interface doesn't
+do likt this. The function arch_kexec_walk_mem() it calls ignores checking
+kexec_buf.top_down, but calls walk_system_ram_res() directly to go through
+all resources of System RAM from bottom to up, to try to find memory region
+which can contain the specific kexec buffer, then call locate_mem_hole_callback()
+to allocate memory in that found memory region from top to down. This brings
+confusion especially when KASLR is widely supported , users have to make clear
+why kexec/kdump kernel loading position is different between these two
+interfaces in order to exclude unnecessary noises. Hence these two interfaces
+need be unified on behaviour.
 
-Thanks, below patch can fix it:
+Here add checking if kexec_buf.top_down is 'true' in arch_kexec_walk_mem(),
+if yes, call the newly added walk_system_ram_res_rev() to find memory region
+from top to down to load kernel.
 
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Yinghai Lu <yinghai@kernel.org>
+Cc: kexec@lists.infradead.org
+---
+ kernel/kexec_file.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/plat-samsung/pm-check.c b/arch/arm/plat-samsung/pm-check.c
-index cd2c02c68bc3..5494355b1c49 100644
---- a/arch/arm/plat-samsung/pm-check.c
-+++ b/arch/arm/plat-samsung/pm-check.c
-@@ -46,8 +46,8 @@ typedef u32 *(run_fn_t)(struct resource *ptr, u32 *arg);
- static void s3c_pm_run_res(struct resource *ptr, run_fn_t fn, u32 *arg)
- {
- 	while (ptr != NULL) {
--		if (ptr->child != NULL)
--			s3c_pm_run_res(ptr->child, fn, arg);
-+		if (!list_empty(&ptr->child))
-+			s3c_pm_run_res(resource_first_child(&ptr->child), fn, arg);
- 
- 		if ((ptr->flags & IORESOURCE_SYSTEM_RAM)
- 				== IORESOURCE_SYSTEM_RAM) {
-@@ -57,7 +57,7 @@ static void s3c_pm_run_res(struct resource *ptr, run_fn_t fn, u32 *arg)
- 			arg = (fn)(ptr, arg);
- 		}
- 
--		ptr = ptr->sibling;
-+		ptr = resource_sibling(ptr);
- 	}
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 75d8e7cf040e..7a66d9d5a534 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -518,6 +518,8 @@ int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
+ 					   IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY,
+ 					   crashk_res.start, crashk_res.end,
+ 					   kbuf, func);
++	else if (kbuf->top_down)
++		return walk_system_ram_res_rev(0, ULONG_MAX, kbuf, func);
+ 	else
+ 		return walk_system_ram_res(0, ULONG_MAX, kbuf, func);
  }
- 
+-- 
+2.13.6
 
-> 
->    arch/arm/plat-samsung/pm-check.c: In function 's3c_pm_run_res':
-> >> arch/arm/plat-samsung/pm-check.c:49:18: error: invalid operands to binary != (have 'struct list_head' and 'void *')
->       if (ptr->child != NULL)
->           ~~~~~~~~~~ ^~
-> >> arch/arm/plat-samsung/pm-check.c:50:19: error: incompatible type for argument 1 of 's3c_pm_run_res'
->        s3c_pm_run_res(ptr->child, fn, arg);
->                       ^~~
->    arch/arm/plat-samsung/pm-check.c:46:13: note: expected 'struct resource *' but argument is of type 'struct list_head'
->     static void s3c_pm_run_res(struct resource *ptr, run_fn_t fn, u32 *arg)
->                 ^~~~~~~~~~~~~~
-> >> arch/arm/plat-samsung/pm-check.c:60:7: error: incompatible types when assigning to type 'struct resource *' from type 'struct list_head'
->       ptr = ptr->sibling;
->           ^
-> 
-> vim +49 arch/arm/plat-samsung/pm-check.c
-> 
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  45  
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  46  static void s3c_pm_run_res(struct resource *ptr, run_fn_t fn, u32 *arg)
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  47  {
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  48  	while (ptr != NULL) {
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12 @49  		if (ptr->child != NULL)
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12 @50  			s3c_pm_run_res(ptr->child, fn, arg);
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  51  
-> 05fee7cf arch/arm/plat-samsung/pm-check.c Toshi Kani 2016-01-26  52  		if ((ptr->flags & IORESOURCE_SYSTEM_RAM)
-> 05fee7cf arch/arm/plat-samsung/pm-check.c Toshi Kani 2016-01-26  53  				== IORESOURCE_SYSTEM_RAM) {
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  54  			S3C_PMDBG("Found system RAM at %08lx..%08lx\n",
-> 840eeeb8 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  55  				  (unsigned long)ptr->start,
-> 840eeeb8 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  56  				  (unsigned long)ptr->end);
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  57  			arg = (fn)(ptr, arg);
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  58  		}
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  59  
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12 @60  		ptr = ptr->sibling;
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  61  	}
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  62  }
-> 549c7e33 arch/arm/plat-s3c/pm-check.c     Ben Dooks  2008-12-12  63  
-> 
-> :::::: The code at line 49 was first introduced by commit
-> :::::: 549c7e33aeb9bfe441ecf68639d2227bb90978e7 [ARM] S3C: Split the resume memory check code from pm.c
-> 
-> :::::: TO: Ben Dooks <ben-linux@fluff.org>
-> :::::: CC: Ben Dooks <ben-linux@fluff.org>
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
