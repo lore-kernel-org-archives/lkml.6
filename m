@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZrSPj99kcXXPYE4kpM8ku3sgcCQHOhVUpgB3KWiZ1xn7kTaAh/Y+M2lkLp3B6bYnFYjGIJc
-ARC-Seal: i=1; a=rsa-sha256; t=1525654597; cv=none;
+X-Google-Smtp-Source: AB8JxZpMzrBoP8I8CJnnBCf4aBMteT7W8xDm6Ck85PsJsgMwLnopemFZ/FSxP0BG2xNrCzvX6rXo
+ARC-Seal: i=1; a=rsa-sha256; t=1525654589; cv=none;
         d=google.com; s=arc-20160816;
-        b=hvVMDlolQFnw4Lb8UkKtzhWUBn+BqA7FFqgIP2PvlMySVqoZXVanoEUAfWFk9GkZLW
-         A+A6lM2GfS2MMv8woMYb2lCs4KcKS4txG/Fo4L3vrEfPWU78pBmrI5NbLMs+Dy7Gufxp
-         v3ByWjgCESXopN+VBEIKoe1Qs11gjBSTagYV6lO5bzqDInXW7PR54KvpX+OzoyuPEkyt
-         aifvXe2ZNBTNtE0IyhAV7OM1rK6+1DkGjMtwY85AySzP8JWWzLF2J9BNunSy1Q/sttNF
-         b1r9joDh7iogP7RhMRbX7MrCxfPmVHeladvTgK6++tMP2EqcK6pPQNNzhlZL53gghWYH
-         /Mqw==
+        b=YA0s4I6u8ZCND2mjCue5k3QLGfj5yCMjCSiS2rUdDtwGreqEQGHTjm260QOx+UdKc6
+         ndO6CuMWKNQfx5vau6bdiIUk/QrdZYVOyWhGpXu1j7jx6nOoKVs8g/MCX0ooPLNJrhCX
+         a+Sja0fggYZ2OcsZQ8LLAOuh6JWIG1NYTGdic7wzSga8g4Lbm1wzAtwBkHmabph1oA0/
+         2WecrLWZoKyyPrmU/JXSopcYWpGecBinADkDgfkSlpZMmOqtS4YRPRWtejctu8XjkWfZ
+         14STkw7OxYcJDL+IaysHkkJb5nYxJp7sr7aUWzeua1aNKFaNpetLE9E69KA1Dkrg78bs
+         bNgw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=aagqde/1R/viZRZGuxIU8hbsmM2eqCHZRspOFSA+LAY=;
-        b=a7JXTdKEjnGR+VwEHfIB+mluklGirCEbZWhNfpWQ/2tza3qxhZaiQMayFbquzzISW0
-         FofWaOmW220sgn5PBZXZYPgvBi9EDPTpGJjfopfRsJ4VHblfd92lQV02cydnRPcGr+Ta
-         zhw6YXk3DT2gCZ72tY2iCv0v2JpIwq6B2xb7cYTIu/mt7IV1QFhqRpmEA+e5flniSVHM
-         8BBY3gA20Eug4a12ManJkYsNsjfsHJs29itkqEXhsFIRoV6q/uPKx0dzkOHrLXCkNxua
-         r8hyZBjmnj4iid/oJKiOhHwyKzyJMs9TbbUn6t5UqvSpt2T+kpJEw8KIyour8r1YllRu
-         6qTg==
+        bh=z35Z7WTxI6dJXFNr6Op3gT3E1qtc/AnNDtyEfLSJJFU=;
+        b=MGb4lqJf6Vc/fgrlo5R0LIRAEqZhdPNhDvkGyxT4cm4lmwYWlg+qUjTnLVRVkyTERp
+         XN9gsnubnnUPvmRSpByHzarMk/+dvXkGak0h7Or0G4I2f7XwGcBLmADkjUhOnvXCH+yP
+         OHEqN0a0K6m92vbb6W9zKwGY+uRHttV6wxYyRXQ7XhHd2mgJtSPNpzOAScr+hLzM6/yS
+         qwnUezYIk7cN3DyqCOmKd9RBaEQBn5IzDtVBBlG9FTWUHg/os1WNDDP+vv1Mk+DijGNN
+         MdDhCSoptAbYn9JV6xIx6m5vLTqQl7Zla2q1yu55Yq00b9C+HrRMwxpZLBb9Dm0AnO71
+         3NEQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Mon, 07 May 2018 10:54:48 +1000
-Subject: [PATCH 10/10] staging: lustre: fix error deref in ll_splice_alias().
+Subject: [PATCH 09/10] staging: lustre: move remaining code from
+ linux-module.c to module.c
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152565448830.30131.6113766424862020086.stgit@noble>
+Message-ID: <152565448827.30131.17228150971595835649.stgit@noble>
 In-Reply-To: <152565436690.30131.2229703651041382739.stgit@noble>
 References: <152565436690.30131.2229703651041382739.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,46 +41,364 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599764795063797888?=
-X-GMAIL-MSGID: =?utf-8?q?1599764795063797888?=
+X-GMAIL-THRID: =?utf-8?q?1599764786992720170?=
+X-GMAIL-MSGID: =?utf-8?q?1599764786992720170?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-d_splice_alias() can return an ERR_PTR().
-If it does while debugging is enabled, the following
-CDEBUG() will dereference that error and crash.
+There is no longer any need to keep this code separate,
+and now we can remove linux-module.c
 
-So add appropriate checking, and provide a separate
-debug message for the error case.
-
-Reported-and-tested-by: James Simmons <jsimmons@infradead.org>
-Fixes: e9d4f0b9f559 ("staging: lustre: llite: use d_splice_alias for directories.")
 Reviewed-by: James Simmons <jsimmons@infradead.org>
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/llite/namei.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ .../staging/lustre/include/linux/libcfs/libcfs.h   |    4 
+ drivers/staging/lustre/lnet/libcfs/Makefile        |    1 
+ .../lustre/lnet/libcfs/linux/linux-module.c        |  168 --------------------
+ drivers/staging/lustre/lnet/libcfs/module.c        |  131 ++++++++++++++++
+ 4 files changed, 131 insertions(+), 173 deletions(-)
+ delete mode 100644 drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
 
-diff --git a/drivers/staging/lustre/lustre/llite/namei.c b/drivers/staging/lustre/lustre/llite/namei.c
-index 6c9ec462eb41..9ac7f097802d 100644
---- a/drivers/staging/lustre/lustre/llite/namei.c
-+++ b/drivers/staging/lustre/lustre/llite/namei.c
-@@ -442,11 +442,16 @@ struct dentry *ll_splice_alias(struct inode *inode, struct dentry *de)
- 	} else {
- 		struct dentry *new = d_splice_alias(inode, de);
+diff --git a/drivers/staging/lustre/include/linux/libcfs/libcfs.h b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+index 9263e151451b..d420449b620e 100644
+--- a/drivers/staging/lustre/include/linux/libcfs/libcfs.h
++++ b/drivers/staging/lustre/include/linux/libcfs/libcfs.h
+@@ -138,10 +138,6 @@ struct libcfs_ioctl_handler {
+ int libcfs_register_ioctl(struct libcfs_ioctl_handler *hand);
+ int libcfs_deregister_ioctl(struct libcfs_ioctl_handler *hand);
  
-+		if (IS_ERR(new))
-+			CDEBUG(D_DENTRY,
-+			       "splice inode %p as %pd gives error %lu\n",
-+			       inode, de, PTR_ERR(new));
- 		if (new)
- 			de = new;
- 	}
--	CDEBUG(D_DENTRY, "Add dentry %p inode %p refc %d flags %#x\n",
--	       de, d_inode(de), d_count(de), de->d_flags);
-+	if (!IS_ERR(de))
-+		CDEBUG(D_DENTRY, "Add dentry %p inode %p refc %d flags %#x\n",
-+		       de, d_inode(de), d_count(de), de->d_flags);
- 	return de;
+-int libcfs_ioctl_getdata(struct libcfs_ioctl_hdr **hdr_pp,
+-			 const struct libcfs_ioctl_hdr __user *uparam);
+-int libcfs_ioctl_data_adjust(struct libcfs_ioctl_data *data);
+-
+ #define _LIBCFS_H
+ 
+ /**
+diff --git a/drivers/staging/lustre/lnet/libcfs/Makefile b/drivers/staging/lustre/lnet/libcfs/Makefile
+index e6fda27fdabd..e73515789a11 100644
+--- a/drivers/staging/lustre/lnet/libcfs/Makefile
++++ b/drivers/staging/lustre/lnet/libcfs/Makefile
+@@ -5,7 +5,6 @@ subdir-ccflags-y += -I$(srctree)/drivers/staging/lustre/lustre/include
+ obj-$(CONFIG_LNET) += libcfs.o
+ 
+ libcfs-linux-objs := linux-tracefile.o linux-debug.o
+-libcfs-linux-objs += linux-module.o
+ libcfs-linux-objs += linux-crypto.o
+ libcfs-linux-objs += linux-crypto-adler.o
+ 
+diff --git a/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c b/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
+deleted file mode 100644
+index 954b681f9db7..000000000000
+--- a/drivers/staging/lustre/lnet/libcfs/linux/linux-module.c
++++ /dev/null
+@@ -1,168 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-/*
+- * GPL HEADER START
+- *
+- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 only,
+- * as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * General Public License version 2 for more details (a copy is included
+- * in the LICENSE file that accompanied this code).
+- *
+- * You should have received a copy of the GNU General Public License
+- * version 2 along with this program; If not, see
+- * http://www.gnu.org/licenses/gpl-2.0.html
+- *
+- * GPL HEADER END
+- */
+-/*
+- * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+- * Use is subject to license terms.
+- *
+- * Copyright (c) 2012, Intel Corporation.
+- */
+-/*
+- * This file is part of Lustre, http://www.lustre.org/
+- * Lustre is a trademark of Sun Microsystems, Inc.
+- */
+-
+-#define DEBUG_SUBSYSTEM S_LNET
+-
+-#include <linux/miscdevice.h>
+-#include <linux/libcfs/libcfs.h>
+-
+-static inline size_t libcfs_ioctl_packlen(struct libcfs_ioctl_data *data)
+-{
+-	size_t len = sizeof(*data);
+-
+-	len += cfs_size_round(data->ioc_inllen1);
+-	len += cfs_size_round(data->ioc_inllen2);
+-	return len;
+-}
+-
+-static inline bool libcfs_ioctl_is_invalid(struct libcfs_ioctl_data *data)
+-{
+-	if (data->ioc_hdr.ioc_len > BIT(30)) {
+-		CERROR("LIBCFS ioctl: ioc_len larger than 1<<30\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen1 > BIT(30)) {
+-		CERROR("LIBCFS ioctl: ioc_inllen1 larger than 1<<30\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen2 > BIT(30)) {
+-		CERROR("LIBCFS ioctl: ioc_inllen2 larger than 1<<30\n");
+-		return true;
+-	}
+-	if (data->ioc_inlbuf1 && !data->ioc_inllen1) {
+-		CERROR("LIBCFS ioctl: inlbuf1 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_inlbuf2 && !data->ioc_inllen2) {
+-		CERROR("LIBCFS ioctl: inlbuf2 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_pbuf1 && !data->ioc_plen1) {
+-		CERROR("LIBCFS ioctl: pbuf1 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_pbuf2 && !data->ioc_plen2) {
+-		CERROR("LIBCFS ioctl: pbuf2 pointer but 0 length\n");
+-		return true;
+-	}
+-	if (data->ioc_plen1 && !data->ioc_pbuf1) {
+-		CERROR("LIBCFS ioctl: plen1 nonzero but no pbuf1 pointer\n");
+-		return true;
+-	}
+-	if (data->ioc_plen2 && !data->ioc_pbuf2) {
+-		CERROR("LIBCFS ioctl: plen2 nonzero but no pbuf2 pointer\n");
+-		return true;
+-	}
+-	if ((u32)libcfs_ioctl_packlen(data) != data->ioc_hdr.ioc_len) {
+-		CERROR("LIBCFS ioctl: packlen != ioc_len\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen1 &&
+-	    data->ioc_bulk[data->ioc_inllen1 - 1] != '\0') {
+-		CERROR("LIBCFS ioctl: inlbuf1 not 0 terminated\n");
+-		return true;
+-	}
+-	if (data->ioc_inllen2 &&
+-	    data->ioc_bulk[cfs_size_round(data->ioc_inllen1) +
+-			   data->ioc_inllen2 - 1] != '\0') {
+-		CERROR("LIBCFS ioctl: inlbuf2 not 0 terminated\n");
+-		return true;
+-	}
+-	return false;
+-}
+-
+-int libcfs_ioctl_data_adjust(struct libcfs_ioctl_data *data)
+-{
+-	if (libcfs_ioctl_is_invalid(data)) {
+-		CERROR("libcfs ioctl: parameter not correctly formatted\n");
+-		return -EINVAL;
+-	}
+-
+-	if (data->ioc_inllen1)
+-		data->ioc_inlbuf1 = &data->ioc_bulk[0];
+-
+-	if (data->ioc_inllen2)
+-		data->ioc_inlbuf2 = &data->ioc_bulk[0] +
+-			cfs_size_round(data->ioc_inllen1);
+-
+-	return 0;
+-}
+-
+-int libcfs_ioctl_getdata(struct libcfs_ioctl_hdr **hdr_pp,
+-			 const struct libcfs_ioctl_hdr __user *uhdr)
+-{
+-	struct libcfs_ioctl_hdr hdr;
+-	int err;
+-
+-	if (copy_from_user(&hdr, uhdr, sizeof(hdr)))
+-		return -EFAULT;
+-
+-	if (hdr.ioc_version != LIBCFS_IOCTL_VERSION &&
+-	    hdr.ioc_version != LIBCFS_IOCTL_VERSION2) {
+-		CERROR("libcfs ioctl: version mismatch expected %#x, got %#x\n",
+-		       LIBCFS_IOCTL_VERSION, hdr.ioc_version);
+-		return -EINVAL;
+-	}
+-
+-	if (hdr.ioc_len < sizeof(hdr)) {
+-		CERROR("libcfs ioctl: user buffer too small for ioctl\n");
+-		return -EINVAL;
+-	}
+-
+-	if (hdr.ioc_len > LIBCFS_IOC_DATA_MAX) {
+-		CERROR("libcfs ioctl: user buffer is too large %d/%d\n",
+-		       hdr.ioc_len, LIBCFS_IOC_DATA_MAX);
+-		return -EINVAL;
+-	}
+-
+-	*hdr_pp = kvmalloc(hdr.ioc_len, GFP_KERNEL);
+-	if (!*hdr_pp)
+-		return -ENOMEM;
+-
+-	if (copy_from_user(*hdr_pp, uhdr, hdr.ioc_len)) {
+-		err = -EFAULT;
+-		goto free;
+-	}
+-
+-	if ((*hdr_pp)->ioc_version != hdr.ioc_version ||
+-	    (*hdr_pp)->ioc_len != hdr.ioc_len) {
+-		err = -EINVAL;
+-		goto free;
+-	}
+-
+-	return 0;
+-
+-free:
+-	kvfree(*hdr_pp);
+-	return err;
+-}
+diff --git a/drivers/staging/lustre/lnet/libcfs/module.c b/drivers/staging/lustre/lnet/libcfs/module.c
+index f627b2d1beb5..ca942f474a55 100644
+--- a/drivers/staging/lustre/lnet/libcfs/module.c
++++ b/drivers/staging/lustre/lnet/libcfs/module.c
+@@ -95,6 +95,137 @@ int libcfs_deregister_ioctl(struct libcfs_ioctl_handler *hand)
  }
+ EXPORT_SYMBOL(libcfs_deregister_ioctl);
  
++static inline size_t libcfs_ioctl_packlen(struct libcfs_ioctl_data *data)
++{
++	size_t len = sizeof(*data);
++
++	len += cfs_size_round(data->ioc_inllen1);
++	len += cfs_size_round(data->ioc_inllen2);
++	return len;
++}
++
++static inline bool libcfs_ioctl_is_invalid(struct libcfs_ioctl_data *data)
++{
++	if (data->ioc_hdr.ioc_len > BIT(30)) {
++		CERROR("LIBCFS ioctl: ioc_len larger than 1<<30\n");
++		return true;
++	}
++	if (data->ioc_inllen1 > BIT(30)) {
++		CERROR("LIBCFS ioctl: ioc_inllen1 larger than 1<<30\n");
++		return true;
++	}
++	if (data->ioc_inllen2 > BIT(30)) {
++		CERROR("LIBCFS ioctl: ioc_inllen2 larger than 1<<30\n");
++		return true;
++	}
++	if (data->ioc_inlbuf1 && !data->ioc_inllen1) {
++		CERROR("LIBCFS ioctl: inlbuf1 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_inlbuf2 && !data->ioc_inllen2) {
++		CERROR("LIBCFS ioctl: inlbuf2 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_pbuf1 && !data->ioc_plen1) {
++		CERROR("LIBCFS ioctl: pbuf1 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_pbuf2 && !data->ioc_plen2) {
++		CERROR("LIBCFS ioctl: pbuf2 pointer but 0 length\n");
++		return true;
++	}
++	if (data->ioc_plen1 && !data->ioc_pbuf1) {
++		CERROR("LIBCFS ioctl: plen1 nonzero but no pbuf1 pointer\n");
++		return true;
++	}
++	if (data->ioc_plen2 && !data->ioc_pbuf2) {
++		CERROR("LIBCFS ioctl: plen2 nonzero but no pbuf2 pointer\n");
++		return true;
++	}
++	if ((u32)libcfs_ioctl_packlen(data) != data->ioc_hdr.ioc_len) {
++		CERROR("LIBCFS ioctl: packlen != ioc_len\n");
++		return true;
++	}
++	if (data->ioc_inllen1 &&
++	    data->ioc_bulk[data->ioc_inllen1 - 1] != '\0') {
++		CERROR("LIBCFS ioctl: inlbuf1 not 0 terminated\n");
++		return true;
++	}
++	if (data->ioc_inllen2 &&
++	    data->ioc_bulk[cfs_size_round(data->ioc_inllen1) +
++			   data->ioc_inllen2 - 1] != '\0') {
++		CERROR("LIBCFS ioctl: inlbuf2 not 0 terminated\n");
++		return true;
++	}
++	return false;
++}
++
++static int libcfs_ioctl_data_adjust(struct libcfs_ioctl_data *data)
++{
++	if (libcfs_ioctl_is_invalid(data)) {
++		CERROR("libcfs ioctl: parameter not correctly formatted\n");
++		return -EINVAL;
++	}
++
++	if (data->ioc_inllen1)
++		data->ioc_inlbuf1 = &data->ioc_bulk[0];
++
++	if (data->ioc_inllen2)
++		data->ioc_inlbuf2 = &data->ioc_bulk[0] +
++			cfs_size_round(data->ioc_inllen1);
++
++	return 0;
++}
++
++static int libcfs_ioctl_getdata(struct libcfs_ioctl_hdr **hdr_pp,
++				const struct libcfs_ioctl_hdr __user *uhdr)
++{
++	struct libcfs_ioctl_hdr hdr;
++	int err;
++
++	if (copy_from_user(&hdr, uhdr, sizeof(hdr)))
++		return -EFAULT;
++
++	if (hdr.ioc_version != LIBCFS_IOCTL_VERSION &&
++	    hdr.ioc_version != LIBCFS_IOCTL_VERSION2) {
++		CERROR("libcfs ioctl: version mismatch expected %#x, got %#x\n",
++		       LIBCFS_IOCTL_VERSION, hdr.ioc_version);
++		return -EINVAL;
++	}
++
++	if (hdr.ioc_len < sizeof(hdr)) {
++		CERROR("libcfs ioctl: user buffer too small for ioctl\n");
++		return -EINVAL;
++	}
++
++	if (hdr.ioc_len > LIBCFS_IOC_DATA_MAX) {
++		CERROR("libcfs ioctl: user buffer is too large %d/%d\n",
++		       hdr.ioc_len, LIBCFS_IOC_DATA_MAX);
++		return -EINVAL;
++	}
++
++	*hdr_pp = kvmalloc(hdr.ioc_len, GFP_KERNEL);
++	if (!*hdr_pp)
++		return -ENOMEM;
++
++	if (copy_from_user(*hdr_pp, uhdr, hdr.ioc_len)) {
++		err = -EFAULT;
++		goto free;
++	}
++
++	if ((*hdr_pp)->ioc_version != hdr.ioc_version ||
++	    (*hdr_pp)->ioc_len != hdr.ioc_len) {
++		err = -EINVAL;
++		goto free;
++	}
++
++	return 0;
++
++free:
++	kvfree(*hdr_pp);
++	return err;
++}
++
+ static int libcfs_ioctl(unsigned long cmd, void __user *uparam)
+ {
+ 	struct libcfs_ioctl_data *data = NULL;
