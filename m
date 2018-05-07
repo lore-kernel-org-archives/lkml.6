@@ -1,102 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753108AbeEGVIx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:08:53 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:39280 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752846AbeEGVIw (ORCPT
+        id S1753259AbeEGVJn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:09:43 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:44905 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752676AbeEGVJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:08:52 -0400
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-To: shuah@kernel.org, pbonzini@redhat.com, hofsass@google.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [[PATCH v2 14/24]] selftests: kvm: return Kselftest Skip code for skipped tests
-Date: Mon,  7 May 2018 15:08:21 -0600
-Message-Id: <20180507210821.23910-1-shuah@kernel.org>
-X-Mailer: git-send-email 2.14.1
+        Mon, 7 May 2018 17:09:42 -0400
+X-Google-Smtp-Source: AB8JxZoEr/qB04VExoY2opxSoG3N2ahJMLkUJtbZE+TU4/S8XsIPp4iK128f4JA8vJ5B16sTrXo07ap956zAS05epNo=
+MIME-Version: 1.0
+In-Reply-To: <d099cce32d109caefd2fc39196ce5bca@agner.ch>
+References: <20180325180959.28008-1-stefan@agner.ch> <d099cce32d109caefd2fc39196ce5bca@agner.ch>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 7 May 2018 17:09:41 -0400
+X-Google-Sender-Auth: fLg170SQ8QbIubNc9vrEq36nHNM
+Message-ID: <CAK8P3a3-0q-YrA0gdT-wJD3fp3a4pXQOCx9mVwp8qFWS3n7dMg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] ARM: clang support
+To: Stefan Agner <stefan@agner.ch>
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Behan Webster <behanw@converseincode.com>,
+        Kees Cook <keescook@chromium.org>,
+        =?UTF-8?Q?Bernhard_Rosenkr=C3=A4nzer?=
+        <Bernhard.Rosenkranzer@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kvm test is skipped because of unmet dependencies and/or unsupported
-configuration, it exits with error which is treated as a fail by the
-Kselftest framework. This leads to false negative result even when the test
-could not be run.
+On Mon, May 7, 2018 at 4:24 PM, Stefan Agner <stefan@agner.ch> wrote:
+> On 25.03.2018 20:09, Stefan Agner wrote:
+>> This patchset fixes some remaining issues when building the ARM
+>> architecture using LLVM/clang.  The patchset requires the following
+>> kbuild change:
+>> https://lkml.org/lkml/2018/3/19/1756
+>>
+>> With that patch and this patchset applied and I can successfully
+>> build (and boot) the multi_v7_defconfig with 4.16-rc5 using clang
+>> 5.0.1 and 6.0.0.
+>
+> Russel, Arnd, any comment on this patch series? How can we get it
+> merged?
+>
+> I was thinking patch 1 through armsoc since that is the way previous
+> patches have been merged.
 
-Change it to return kselftest skip code when a test gets skipped to clearly
-report that the test could not be run.
+Please resend it to arm@kernel.org.
 
-Change it to use ksft_exit_skip() when the test is skipped. In addition,
-refine test_assert() message to include strerror() string and add explicit
-check for EACCES to cleary identify when test doesn't run when access is
-denied to resources required e.g: open /dev/kvm failed, rc: -1 errno: 13
+Lorenzo, Robin, Will, Suzuki: could one of you look at the patch and
+provide an Ack
+and maybe send a patch to add a MAINTAINERS file entry for the the
+arm-cci driver to make it less ambiguous to who's responsible for it?
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
----
+I know very little about the code and don't want to be the main person having
+to decide if a patch can go in or not.
 
-Changes since v1:
-- Don't do root check at the top of assert.
-- Instead do check for EACCES.
+> Note sure about patch 2,
 
- tools/testing/selftests/kvm/lib/assert.c          | 9 +++++++--
- tools/testing/selftests/kvm/vmx_tsc_adjust_test.c | 4 +++-
- 2 files changed, 10 insertions(+), 3 deletions(-)
+This should be up to Ard to pick up or comment on. I think I had
+previously suggested a similar patch to him, but don't remember
+what happened to that.
 
-diff --git a/tools/testing/selftests/kvm/lib/assert.c b/tools/testing/selftests/kvm/lib/assert.c
-index c9f5b7d4ce38..cd01144d27c8 100644
---- a/tools/testing/selftests/kvm/lib/assert.c
-+++ b/tools/testing/selftests/kvm/lib/assert.c
-@@ -13,6 +13,8 @@
- #include <execinfo.h>
- #include <sys/syscall.h>
- 
-+#include "../../kselftest.h"
-+
- /* Dumps the current stack trace to stderr. */
- static void __attribute__((noinline)) test_dump_stack(void);
- static void test_dump_stack(void)
-@@ -70,8 +72,9 @@ test_assert(bool exp, const char *exp_str,
- 
- 		fprintf(stderr, "==== Test Assertion Failure ====\n"
- 			"  %s:%u: %s\n"
--			"  pid=%d tid=%d\n",
--			file, line, exp_str, getpid(), gettid());
-+			"  pid=%d tid=%d - %s\n",
-+			file, line, exp_str, getpid(), gettid(),
-+			strerror(errno));
- 		test_dump_stack();
- 		if (fmt) {
- 			fputs("  ", stderr);
-@@ -80,6 +83,8 @@ test_assert(bool exp, const char *exp_str,
- 		}
- 		va_end(ap);
- 
-+		if (errno == EACCES)
-+			ksft_exit_skip("Access denied - Exiting.\n");
- 		exit(254);
- 	}
- 
-diff --git a/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c b/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
-index 8f7f62093add..62fb73699eb6 100644
---- a/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
-+++ b/tools/testing/selftests/kvm/vmx_tsc_adjust_test.c
-@@ -28,6 +28,8 @@
- #include <string.h>
- #include <sys/ioctl.h>
- 
-+#include "../kselftest.h"
-+
- #ifndef MSR_IA32_TSC_ADJUST
- #define MSR_IA32_TSC_ADJUST 0x3b
- #endif
-@@ -190,7 +192,7 @@ int main(int argc, char *argv[])
- 
- 	if (!(entry->ecx & CPUID_VMX)) {
- 		printf("nested VMX not enabled, skipping test");
--		return 0;
-+		return KSFT_SKIP;
- 	}
- 
- 	vm = vm_create_default_vmx(VCPU_ID, (void *) l1_guest_code);
--- 
-2.14.1
+> Russel can you comment on Thierry's email?
+>
+> And patch 3 through 6 through Russel's tree?
+
+Sounds good to me. Please submit those through
+http://www.arm.linux.org.uk/developer/patches/ once they are
+ready. I think patches 4, 5 and 6 are good to go in, while patch
+3 has an unfinished discussion.
+
+It might also be a good idea to pick up the CONFIG_FRAME_POINTER
+problem and disable that option for clang based builds now, using
+the new infrastructure we have for detecting compiler features at
+Kconfig time.
+
+       Arnd
