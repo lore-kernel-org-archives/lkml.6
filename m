@@ -1,52 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752676AbeEGOIm (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 10:08:42 -0400
-Received: from mail-oi0-f48.google.com ([209.85.218.48]:34808 "EHLO
-        mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751943AbeEGOIg (ORCPT
+        id S1752692AbeEGOI4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 10:08:56 -0400
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:41117 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752465AbeEGOIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 10:08:36 -0400
-X-Google-Smtp-Source: AB8JxZrzUgQ26v/zEzJJ5kaFUGsRfO2I6nBU3K4VNm/aUrLXu5mV07zVl29Vjy3qCFfbydQj8jRJRTq6hj33BIJy0x8=
+        Mon, 7 May 2018 10:08:39 -0400
+X-Google-Smtp-Source: AB8JxZoT/cNwERTHMqmToubZKA+M2xppJrXsnk9TafSReo/32S4xe/qmSik58fkjkod0NAkHNFEdxPgz+8kqGyfVrTo=
 MIME-Version: 1.0
-In-Reply-To: <20180425173932.7213-4-jagan@amarulasolutions.com>
-References: <20180425173932.7213-1-jagan@amarulasolutions.com> <20180425173932.7213-4-jagan@amarulasolutions.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 7 May 2018 11:08:35 -0300
-Message-ID: <CAOMZO5B5jwXiByfCm1aGY9+DHq7QOpq1hrbnD-DLMsqtpFWsrw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ARM: dts: i.MX6: imx6dl-mamoj: Add usb host and
- device support
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Fabio maggi <fabio.mauri@bticino.it>,
-        Raffaele Recalcati <lamiaposta71@gmail.com>,
-        Andrea CORTESE <andrea.cortese@bticino.it>,
-        "davide . bonfanti" <davide.bonfanti@bticino.it>,
-        Shyam Saini <shyam.saini@amarulasolutions.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Simone CIANNI <simone.cianni@bticino.it>,
-        Raffaele RECALCATI <raffaele.recalcati@bticino.it>
+In-Reply-To: <20180427215021.2120-1-antonio.intilisano@gmail.com>
+References: <20180427215021.2120-1-antonio.intilisano@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 7 May 2018 17:08:38 +0300
+Message-ID: <CAHp75VdQegkRceJ10_QLoHvj++FUOYTnmOD2WAYEDRUG2iL4bQ@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: acer-wmi: add another KEY_POWER keycode
+To: Antonio Rosario Intilisano <antonio.intilisano@gmail.com>
+Cc: Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Gianfranco Costamagna <locutusofborg@debian.org>,
+        Chris Chiu <chiu@endlessm.com>, Daniel Drake <drake@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 2:39 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> From: Michael Trimarchi <michael@amarulasolutions.com>
+On Sat, Apr 28, 2018 at 12:50 AM, Antonio Rosario Intilisano
+<antonio.intilisano@gmail.com> wrote:
+>     Now that we have informed the firmware that the Power Button driver is
+>     active, laptops such as the Acer Swift 3 will generate
+>     a WMI key event with code 0x87 when the power button key is
+>     pressed.
 >
-> Add USB host and device support for BTicino i.MX6DL Mamoj board.
->
-> Signed-off-by: Simone CIANNI <simone.cianni@bticino.it>
-> Signed-off-by: Raffaele RECALCATI <raffaele.recalcati@bticino.it>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+>     Add this keycode to the table so that it is converted to an appropriate
+>     input event.
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+I pushed it to my review and testing queue, thanks!
+
+Though, see below.
+
+>
+> Signed-off-by: Antonio Rosario Intilisano <antonio.intilisano@gmail.com>
+> Acked-by: Gianfranco Costamagna <locutusofborg@debian.org>
+> Tested-by: Antonio Rosario Intilisano <antonio.intilisano@gmail.com>
+> Cc: Chris Chiu <chiu@endlessm.com>
+> Cc: Daniel Drake <drake@endlessm.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>
+> ---
+>  drivers/platform/x86/acer-wmi.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+> index 1be71f956d5c..8952173dd380 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -129,6 +129,7 @@ static const struct key_entry acer_wmi_keymap[] __initconst = {     {KE_IGNORE, 0x83, {KEY_TOUCHPAD_TOGGLE} },
+
+This is malformed patch. It states 6 lines for context, though only 4
+provided. Please, fix your tools.
+
+>         {KE_KEY, 0x85, {KEY_TOUCHPAD_TOGGLE} },
+>         {KE_KEY, 0x86, {KEY_WLAN} },
+> +       {KE_KEY, 0x87, {KEY_POWER} },
+>         {KE_END, 0}
+>  };
+>
+> --
+> 2.15.1
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
