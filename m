@@ -1,78 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753379AbeEGVQ3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:16:29 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:45853 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752524AbeEGVQ2 (ORCPT
+        id S1753441AbeEGVRe (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:17:34 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:44648 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753091AbeEGVRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:16:28 -0400
-Subject: Re: [PATCH 21/24] selftests: memfd: return Kselftest Skip code for
- skipped tests
-To: Mike Kravetz <mike.kravetz@oracle.com>, akpm@linux-foundation.org,
-        marcandre.lureau@redhat.com, lizhijian@cn.fujitsu.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180505011328.32078-1-shuah@kernel.org>
- <20180505011328.32078-21-shuah@kernel.org>
- <a5fff7b0-f308-25bc-909b-8579f6f14546@oracle.com>
- <f2b3f38a-7c7a-43ec-9c2d-94bbb7d56eb7@kernel.org>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <72a499bc-5c32-b553-88c6-a56704c398fc@kernel.org>
-Date: Mon, 7 May 2018 15:16:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 17:17:32 -0400
+X-Google-Smtp-Source: AB8JxZp4pKiKWZ1gULX5VgvTkGZpuhxk/Dus5jdI8s1XzIMZYwiGmjgOc3gHtD5i0aSUGpXdjHlXC896oVU6DF5+k6Y=
 MIME-Version: 1.0
-In-Reply-To: <f2b3f38a-7c7a-43ec-9c2d-94bbb7d56eb7@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <36e4effa-135d-daeb-1abb-f55500a9dfee@xs4all.nl>
+References: <20180424204158.2764095-1-arnd@arndb.de> <20180425061537.GA23383@infradead.org>
+ <CAK8P3a06ragAPWpHGm-bGoZ8t6QyAttWJfD0jU_wcGy7FqLb5w@mail.gmail.com>
+ <20180425072138.GA16375@infradead.org> <CAK8P3a1cs_SPesadAQhV3QU97WjNE8bLPSQCfaMQRU7zr_oh3w@mail.gmail.com>
+ <20180425152636.GC27076@infradead.org> <CAK8P3a0CHSC7yP3x8xDJgcg5xMzD1-sC-rmBJECtYvGFmyG4vQ@mail.gmail.com>
+ <20180425142229.25d756ed@vento.lan> <36e4effa-135d-daeb-1abb-f55500a9dfee@xs4all.nl>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 7 May 2018 17:17:31 -0400
+X-Google-Sender-Auth: puzWTxv56lJtoaD5-4MftkwmhYk
+Message-ID: <CAK8P3a2Pfo+MDYC=TMnOdhhRsYLDojbTGD+Wu9MrEX9VLY9sVA@mail.gmail.com>
+Subject: Re: [PATCH] media: zoran: move to dma-mapping interface
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arvind Yadav <arvind.yadav.cs@gmail.com>,
+        mjpeg-users@lists.sourceforge.net,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Trent Piepho <tpiepho@impinj.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/2018 12:45 PM, Shuah Khan wrote:
-> On 05/04/2018 07:52 PM, Mike Kravetz wrote:
->> On 05/04/2018 06:13 PM, Shuah Khan (Samsung OSG) wrote:
->>> When memfd test is skipped because of unmet dependencies and/or unsupported
->>> configuration, it returns non-zero value which is treated as a fail by the
->>> Kselftest framework. This leads to false negative result even when the test
->>> could not be run.
+On Mon, May 7, 2018 at 5:05 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+> On 25/04/18 19:22, Mauro Carvalho Chehab wrote:
+>> Em Wed, 25 Apr 2018 17:58:25 +0200
+>> Arnd Bergmann <arnd@arndb.de> escreveu:
+>>
+>>> On Wed, Apr 25, 2018 at 5:26 PM, Christoph Hellwig <hch@infradead.org> wrote:
+>>>> On Wed, Apr 25, 2018 at 01:15:18PM +0200, Arnd Bergmann wrote:
+>>>>> That thought had occurred to me as well. I removed the oldest ISDN
+>>>>> drivers already some years ago, and the OSS sound drivers
+>>>>> got removed as well, and comedi got converted to the dma-mapping
+>>>>> interfaces, so there isn't much left at all now. This is what we
+>>>>> have as of v4.17-rc1:
+>>>>
+>>>> Yes, I've been looking at various grotty old bits to purge.  Usually
+>>>> I've been looking for some non-tree wide patches and CCed the last
+>>>> active people to see if they care.  In a few cases people do, but
+>>>> most often no one does.
 >>>
->>> Change it to return kselftest skip code when a test gets skipped to
->>> clearly report that the test could not be run.
+>>> Let's start with this one (zoran) then, as Mauro is keen on having
+>>> all media drivers compile-testable on x86-64 and arm.
 >>>
->>> Added an explicit check for root user and return skip code.
+>>> Trent Piepho and Hans Verkuil both worked on this driver in the
+>>> 2008/2009 timeframe and those were the last commits from anyone
+>>> who appears to have tested their patches on actual hardware.
+>>
+>> Zoran is a driver for old hardware. I don't doubt that are people
+>> out there still using it, but who knows?
+>>
+>> I have a few those boards packed somewhere. I haven't work with PCI
+>> hardware for a while. If needed, I can try to seek for them and
+>> do some tests. I need first to unpack a machine with PCI slots...
+>> the NUCs I generally use for development don't have any :-)
+>>
+>> Anyway, except for virt_to_bus() and related stuff, I think that this
+>> driver is in good shape, as Hans did a lot of work in the past to
+>> make it to use the current media framework.
+>>
 >>>
->>> Kselftest framework SKIP code is 4 and the framework prints appropriate
->>> messages to indicate that the test is skipped.
->>>
->>> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
->>> ---
->>>  tools/testing/selftests/memfd/run_tests.sh | 10 +++++++++-
->>>  1 file changed, 9 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
->>> index c2d41ed81b24..88dc206a69b7 100755
->>> --- a/tools/testing/selftests/memfd/run_tests.sh
->>> +++ b/tools/testing/selftests/memfd/run_tests.sh
->>> @@ -1,6 +1,14 @@
->>>  #!/bin/bash
->>>  # please run as root
->>>  
->>> +# Kselftest framework requirement - SKIP code is 4.
->>> +ksft_skip=4
->>> +
->>> +if [ $UID != 0 ]; then
->>> +	echo "Please run this test as root"
->>> +	exit $ksft_skip
->>> +fi
->>> +
+>>> Trent, Hans: do you have reason to believe that there might still
+>>> be users out there?
+>
+> I have no way of knowing this. However, I think they are easily replaced
+> by much cheaper USB alternatives today.
+>
+> I did some work on the zoran driver several years ago, but it doesn't use
+> the vb2 framework (and not even the older vb1 framework!) so I'm sure there
+> are all sorts of bugs in that driver.
+>
+> Personally I would be fine with moving this driver to staging and removing
+> it by, say, the end of the year.
+>
+> Nobody is going to work on it and I think it is time to retire it.
 
-Moving root check this far up messes the test up and requires root access for
-run_fuse_test.sh and memfd_test which is incorrect.
+Based on the link to the old discussed that Bernhard provided, it
+seems that the driver was already in a barely usable state 5 years
+ago (the remaining users decided to use an even older 2.6 kernel instead),
+and nobody has worked on fixing it since, so moving it to staging or
+immediately removing it would both seem appropriate.
 
-I will re-do the patch
-
-thanks,
--- Shuah
+        Arnd
