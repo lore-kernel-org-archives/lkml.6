@@ -1,170 +1,116 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750998AbeEGGCC (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:02:02 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47332 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbeEGGCA (ORCPT
+        id S1751886AbeEGGCL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:02:11 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:45300 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751082AbeEGGCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:02:00 -0400
+        Mon, 7 May 2018 02:02:06 -0400
+X-Google-Smtp-Source: AB8JxZroqIE/5zisAhKRlFD+Jq/LvO0t1TABnNsQDbs4ExbeGkoh3rjNCAaCBJ64fL8pji+CxSql5T0TJjROzkveOXo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 07 May 2018 11:31:58 +0530
-From: Abhishek Sahu <absahu@codeaurora.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v2 01/14] mtd: rawnand: helper function for setting up ECC
- parameters
-In-Reply-To: <CAK7LNASWErFrvW+_6Lsw-aqO4T3=iyRZLXG21ML+ebOX=po2Zw@mail.gmail.com>
-References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org>
- <1525350041-22995-2-git-send-email-absahu@codeaurora.org>
- <CAK7LNASWErFrvW+_6Lsw-aqO4T3=iyRZLXG21ML+ebOX=po2Zw@mail.gmail.com>
-Message-ID: <fd8f768c78a6522e671d20e701db0f51@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <CACT4Y+Y-=9wmOOm3Q5BpNOL+2H123YAaRvBCbv-zCBv3Y4Ysew@mail.gmail.com>
+References: <CAD1Xb+-kbRLxe1XNSkhY-VXZWV8fSy-gZeeGhtKH2hO42VJKzA@mail.gmail.com>
+ <CACT4Y+Y-=9wmOOm3Q5BpNOL+2H123YAaRvBCbv-zCBv3Y4Ysew@mail.gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 7 May 2018 08:01:45 +0200
+Message-ID: <CACT4Y+Ze3tKeLL=c5UbSMmzBEDdz7EURh6769-L4fRFGM7X5tA@mail.gmail.com>
+Subject: Re: Use-after-scope Write in mem_cgroup_uncharge' bug.(Plain text)
+To: Dongsong Yu <yudongsong1992@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, cgroups@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-07 09:10, Masahiro Yamada wrote:
-> 2018-05-03 21:20 GMT+09:00 Abhishek Sahu <absahu@codeaurora.org>:
->> commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
->> match, maximize ECC settings") provides generic helpers which
->> drivers can use for setting up ECC parameters.
->> 
->> Since same board can have different ECC strength nand chips so
->> following is the logic for setting up ECC strength and ECC step
->> size, which can be used by most of the drivers.
->> 
->> 1. If both ECC step size and ECC strength are already set
->>    (usually by DT) then just check whether this setting
->>    is supported by NAND controller.
->> 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
->>    supported by NAND controller.
->> 3. Otherwise, try to match the ECC step size and ECC strength closest
->>    to the chip's requirement. If available OOB size can't fit the chip
->>    requirement then select maximum ECC strength which can be fit with
->>    available OOB size with warning.
->> 
->> This patch introduces nand_ecc_param_setup function which calls the
->> required helper functions for the above logic. The drivers can use
->> this single function instead of calling the 3 helper functions
->> individually.
->> 
->> CC: Masahiro Yamada <yamada.masahiro@socionext.com>
->> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
->> ---
->> * Changes from v1:
->> 
->>   NEW PATCH
->> 
->>  drivers/mtd/nand/raw/nand_base.c | 42 
->> ++++++++++++++++++++++++++++++++++++++++
->>  include/linux/mtd/rawnand.h      |  3 +++
->>  2 files changed, 45 insertions(+)
->> 
->> diff --git a/drivers/mtd/nand/raw/nand_base.c 
->> b/drivers/mtd/nand/raw/nand_base.c
->> index 72f3a89..dd7a984 100644
->> --- a/drivers/mtd/nand/raw/nand_base.c
->> +++ b/drivers/mtd/nand/raw/nand_base.c
->> @@ -6249,6 +6249,48 @@ int nand_maximize_ecc(struct nand_chip *chip,
->>  }
->>  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
->> 
->> +/**
->> + * nand_ecc_param_setup - Set the ECC strength and ECC step size
->> + * @chip: nand chip info structure
->> + * @caps: ECC engine caps info structure
->> + * @oobavail: OOB size that the ECC engine can use
->> + *
->> + * Choose the ECC strength according to following logic
->> + *
->> + * 1. If both ECC step size and ECC strength are already set (usually 
->> by DT)
->> + *    then check if it is supported by this controller.
->> + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
->> + * 3. Otherwise, try to match the ECC step size and ECC strength 
->> closest
->> + *    to the chip's requirement. If available OOB size can't fit the 
->> chip
->> + *    requirement then fallback to the maximum ECC step size and ECC 
->> strength
->> + *    and print the warning.
->> + *
->> + * On success, the chosen ECC settings are set.
->> + */
->> +int nand_ecc_param_setup(struct nand_chip *chip,
->> +                        const struct nand_ecc_caps *caps, int 
->> oobavail)
->> +{
->> +       int ret;
->> +
->> +       if (chip->ecc.size && chip->ecc.strength)
->> +               return nand_check_ecc_caps(chip, caps, oobavail);
->> +
->> +       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
->> +               return nand_maximize_ecc(chip, caps, oobavail);
->> +
->> +       if (!nand_match_ecc_req(chip, caps, oobavail))
->> +               return 0;
->> +
->> +       ret = nand_maximize_ecc(chip, caps, oobavail);
-> 
-> 
-> Why two calls for nand_maximize_ecc()?
-> 
-> My code is simpler, and does not display
-> false-positive warning.
-> 
+On Wed, May 2, 2018 at 1:18 PM, Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Wed, May 2, 2018 at 1:11 PM, Dongsong Yu <yudongsong1992@gmail.com> wrote:
+>> Hi,
+>> I've got the following bug report while fuzzing linux kenrel (4.16.0) on
+>> arm64 with syzkaller.
+>> The kernel config file and poc generated by C reproducer are attached.
+>>
+>> Syzkaller hit 'KASAN: use-after-scope Write in mem_cgroup_uncharge' bug.
+>
+> Hi Dongsong,
+>
+> If I am looking at the right source:
+> https://elixir.bootlin.com/linux/v4.16/source/mm/memcontrol.c#L5667
+> this report does not make sense.
+> What version of compiler do you use?
+> Please post disasm of mem_cgroup_uncharge with source/line annotations.
 
-  Thanks Masahiro.
 
-  Since, Now this is in moved to generic layer that's why I put
-  this warning that this function is falling back to some
-  other ECC settings which is not recommend by chip.
+I don't see how the bug can happen. Nor I see who stores 0xf8f8f8f8
+into KASAN shadow, though I am not very proficient in arm64 asm. I
+don't remember any similar false positives on x86.
++Mark, have you seen any KASAN false positives related to
+use-after-scope on arm64?
 
-  If this warning seems unnecessary then I can remove this
-  and then directly your code changes can be put here
-  instead of calling nand_maximize_ecc 2 times.
 
-> 
->> +       if (!ret)
->> +               pr_warn("ECC (step, strength) = (%d, %d) not supported 
->> on this controller. Fallback to (%d, %d)\n",
->> +                       chip->ecc_step_ds, chip->ecc_strength_ds,
->> +                       chip->ecc.size, chip->ecc.strength);
-> 
-> 
-> This is annoying.
-> 
-> {ecc_step_ds, ecc_strength_ds} are not provided by Non-ONFi devices.
-> 
-> So,
->   ECC (step, strength) = (0, 0) not supported on this controller.
-> 
-> will be always displayed.
-> 
-> 
-> The strength will be checked by nand_ecc_strength_good() anyway.
-> 
 
-  But for most of the non ONFI devices also, this is being calculated
-  by ID.
-
-  You can get some background for this in
-  http://lists.infradead.org/pipermail/linux-mtd/2018-April/080193.html
-
-  Regards,
-  Abhishek
+>> ==================================================================
+>> BUG: KASAN: use-after-scope in uncharge_gather_clear mm/memcontrol.c:5546
+>> [inline]
+>> BUG: KASAN: use-after-scope in mem_cgroup_uncharge+0xcc/0xf0
+>> mm/memcontrol.c:5667
+>> Write of size 64 at addr ffff8000738c6cf0 by task syzkaller348646/1477
+>>
+>> CPU: 0 PID: 1477 Comm: syzkaller348646 Not tainted 4.16.0 #2
+>> Hardware name: linux,dummy-virt (DT)
+>> Call trace:
+>>   dump_backtrace+0x0/0x350 arch/arm64/kernel/time.c:64
+>>   show_stack+0x20/0x30 arch/arm64/kernel/traps.c:151
+>>   __dump_stack lib/dump_stack.c:17 [inline]
+>>   dump_stack+0x11c/0x198 lib/dump_stack.c:53
+>>   print_address_description+0x60/0x270 mm/kasan/report.c:256
+>>   kasan_report_error mm/kasan/report.c:354 [inline]
+>>   kasan_report+0x248/0x348 mm/kasan/report.c:412
+>>   check_memory_region_inline mm/kasan/kasan.c:253 [inline]
+>>   check_memory_region+0x148/0x198 mm/kasan/kasan.c:267
+>>   memset+0x2c/0x50 mm/kasan/kasan.c:285
+>>   uncharge_gather_clear mm/memcontrol.c:5546 [inline]
+>>   mem_cgroup_uncharge+0xcc/0xf0 mm/memcontrol.c:5667
+>>   __page_cache_release+0x11c/0x640 mm/swap.c:73
+>>   __put_compound_page+0x30/0x70 mm/swap.c:93
+>>   release_pages+0x6b4/0x990 mm/swap.c:760
+>>   free_pages_and_swap_cache+0x1e8/0x250 mm/swap_state.c:322
+>>   tlb_flush_mmu_free+0x6c/0xb8 mm/memory.c:259
+>>   tlb_flush_mmu+0x3c/0x48 mm/memory.c:268
+>>   arch_tlb_finish_mmu+0x70/0xc0 mm/memory.c:283
+>>   tlb_finish_mmu+0xd0/0x128 mm/memory.c:433
+>>   unmap_region+0x248/0x2b8 mm/mmap.c:2514
+>>   do_munmap+0x3b8/0x670 mm/mmap.c:2726
+>>   mmap_region+0x3b8/0xa78 mm/mmap.c:1646
+>>   do_mmap+0x448/0x6a0 mm/mmap.c:1483
+>>   do_mmap_pgoff include/linux/mm.h:2223 [inline]
+>>   vm_mmap_pgoff+0x17c/0x1b8 mm/util.c:355
+>>   SYSC_mmap_pgoff mm/mmap.c:1533 [inline]
+>>   SyS_mmap_pgoff+0x184/0x3e8 mm/mmap.c:1491
+>>   sys_mmap+0x58/0x80 arch/arm64/kernel/sys.c:37
+>>   el0_svc_naked+0x30/0x34
+>>
+>> The buggy address belongs to the page:
+>> page:ffff7e0001ce3180 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+>> flags: 0x4fffc00000000000()
+>> raw: 4fffc00000000000 0000000000000000 0000000000000000 00000000ffffffff
+>> raw: 0000000000000000 ffff7e0001ce31a0 0000000000000000 0000000000000000
+>> page dumped because: kasan: bad access detected
+>>
+>> Memory state around the buggy address:
+>>   ffff8000738c6b80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>   ffff8000738c6c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>>> ffff8000738c6c80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f1 f1 f1 f1 f8 f8
+>>                                                               ^
+>>   ffff8000738c6d00: f8 f8 f8 f8 f8 f8 f3 f3 f3 f3 f8 f8 f8 f8 f8 f8
+>>   ffff8000738c6d80: f8 f8 f8 f8 f8 f8 00 00 00 00 00 00 00 00 00 00
+>> ==================================================================
+>>
+>> --
+>> You received this message because you are subscribed to the Google Groups "syzkaller" group.
+>> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller+unsubscribe@googlegroups.com.
+>> For more options, visit https://groups.google.com/d/optout.
