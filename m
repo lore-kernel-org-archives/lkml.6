@@ -1,90 +1,132 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752793AbeEGSpj (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 14:45:39 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46969 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752656AbeEGSph (ORCPT
+        id S1752815AbeEGSpn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 14:45:43 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:59730 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752656AbeEGSpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 14:45:37 -0400
-X-Google-Smtp-Source: AB8JxZq4V/vXSIyx/PnhIPokBlLti6rx/Q1q7zr4Wte2jznX/WH7vX9vd0B52UxTAYtqLCHtKDKVoA==
-Date: Mon, 7 May 2018 11:46:59 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Tirupathi Reddy <tirupath@codeaurora.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-input@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] Input: pm8941-pwrkey: add resin key capabilities
-Message-ID: <20180507184659.GG2259@tuxbook-pro>
-References: <1521786192-19487-1-git-send-email-tirupath@codeaurora.org>
- <20180505001039.GA112416@dtor-ws>
+        Mon, 7 May 2018 14:45:41 -0400
+Subject: Re: [PATCH 21/24] selftests: memfd: return Kselftest Skip code for
+ skipped tests
+To: Mike Kravetz <mike.kravetz@oracle.com>, akpm@linux-foundation.org,
+        marcandre.lureau@redhat.com, lizhijian@cn.fujitsu.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180505011328.32078-1-shuah@kernel.org>
+ <20180505011328.32078-21-shuah@kernel.org>
+ <a5fff7b0-f308-25bc-909b-8579f6f14546@oracle.com>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <f2b3f38a-7c7a-43ec-9c2d-94bbb7d56eb7@kernel.org>
+Date: Mon, 7 May 2018 12:45:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180505001039.GA112416@dtor-ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a5fff7b0-f308-25bc-909b-8579f6f14546@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 04 May 17:10 PDT 2018, Dmitry Torokhov wrote:
+On 05/04/2018 07:52 PM, Mike Kravetz wrote:
+> On 05/04/2018 06:13 PM, Shuah Khan (Samsung OSG) wrote:
+>> When memfd test is skipped because of unmet dependencies and/or unsupported
+>> configuration, it returns non-zero value which is treated as a fail by the
+>> Kselftest framework. This leads to false negative result even when the test
+>> could not be run.
+>>
+>> Change it to return kselftest skip code when a test gets skipped to
+>> clearly report that the test could not be run.
+>>
+>> Added an explicit check for root user and return skip code.
+>>
+>> Kselftest framework SKIP code is 4 and the framework prints appropriate
+>> messages to indicate that the test is skipped.
+>>
+>> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+>> ---
+>>  tools/testing/selftests/memfd/run_tests.sh | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
+>> index c2d41ed81b24..88dc206a69b7 100755
+>> --- a/tools/testing/selftests/memfd/run_tests.sh
+>> +++ b/tools/testing/selftests/memfd/run_tests.sh
+>> @@ -1,6 +1,14 @@
+>>  #!/bin/bash
+>>  # please run as root
+>>  
+>> +# Kselftest framework requirement - SKIP code is 4.
+>> +ksft_skip=4
+>> +
+>> +if [ $UID != 0 ]; then
+>> +	echo "Please run this test as root"
+>> +	exit $ksft_skip
+>> +fi
+>> +
+>>  #
+>>  # Normal tests requiring no special resources
+>>  #
+>> @@ -33,7 +41,7 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $hpages_test ]; then
+>>  	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
+>>  	if [ $? -ne 0 ]; then
+>>  		echo "Please run this test as root"
+>> -		exit 1
+>> +		exit $ksft_skip
+> 
+> We now KNOW that we are running as root because of the check above.  We
+> can delete this test, and rely on the later check to determine if the
+> number of huge pages was actually increased.
 
-> Hi Tirupathi,
+Thanks for the review. Yesh this check can go away.
+
 > 
-> On Fri, Mar 23, 2018 at 11:53:12AM +0530, Tirupathi Reddy wrote:
-> > Add resin key support to handle different types of key events
-> > defined in different platforms.
-> > 
-> > Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
-> > ---
-> >  .../bindings/input/qcom,pm8941-pwrkey.txt          | 32 +++++++++
-> >  drivers/input/misc/pm8941-pwrkey.c                 | 81 ++++++++++++++++++++++
-> >  2 files changed, 113 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
-[..]
-> >  EXAMPLE
-> >  
-> >  	pwrkey@800 {
-> > @@ -40,4 +66,10 @@ EXAMPLE
-> >  		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-> >  		debounce = <15625>;
-> >  		bias-pull-up;
-> > +
-> > +		resin {
-> > +			interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
-> > +			linux,code = <KEY_VOLUMEDOWN>;
-> > +			bias-pull-up;
-> > +		};
-> >  	};
+> How about this instead (untested)?
 > 
-> The new key and power key bindings are very similar, I would prefer if
-> we shared the parsing code and our new DTS looked like:
-> 
-> 		power {
-> 			...
-> 		};
+> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+> diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
+> index c2d41ed81b24..99a265a84e1d 100755
+> --- a/tools/testing/selftests/memfd/run_tests.sh
+> +++ b/tools/testing/selftests/memfd/run_tests.sh
+> @@ -1,6 +1,14 @@
+>  #!/bin/bash
+>  # please run as root
 >  
-> 		resin {
-> 			...
-> 		};
-> 
-> (we can easily keep backward compatibility with power properties being
-> in device node).
-> 
+> +# Kselftest framework requirement - SKIP code is 4.
+> +ksft_skip=4
+> +
+> +if [ $UID != 0 ]; then
+> +	echo "Please run this test as root"
+> +	exit $ksft_skip
+> +fi
+> +
+>  #
+>  # Normal tests requiring no special resources
+>  #
+> @@ -31,10 +39,6 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $hpages_test ]; then
+>  
+>  	echo 3 > /proc/sys/vm/drop_caches
+>  	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
+> -	if [ $? -ne 0 ]; then
+> -		echo "Please run this test as root"
+> -		exit 1
+> -	fi
+>  	while read name size unit; do
+>  		if [ "$name" = "HugePages_Free:" ]; then
+>  			freepgs=$size
+> @@ -53,7 +57,7 @@ if [ $freepgs -lt $hpages_test ]; then
+>  	fi
+>  	printf "Not enough huge pages available (%d < %d)\n" \
+>  		$freepgs $needpgs
+> -	exit 1
+> +	exit $ksft_skip
+>  fi
 
-As discussed here https://patchwork.kernel.org/patch/9751627/ the PON
-block does, in addition to providing power and resin key support also
-handle the restart reason ("reboot bootloader" in Android).
+I thought about changing this to skip and wasn't sure since the test did
+run partially. Good to know this case can be classified as skip. I will
+make the suggested changes and send v2.
 
-My interpretation of our conclusion was to come up with a new binding
-for the "pon" and a driver for this block that instantiates the power
-key device.
-
-It seems reasonable for such binding to describe the two keys, as you
-propose here Dmitry, and instantiates the two input devices based on
-this.
-
-Regards,
-Bjorn
+thanks,
+-- Shuah
