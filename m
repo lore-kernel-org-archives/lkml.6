@@ -1,67 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751927AbeEGGUp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:20:45 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:49574 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751892AbeEGGUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:20:42 -0400
-Date: Mon, 7 May 2018 08:20:37 +0200
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: Dmitry Safonov <dima@arista.com>
-CC: <linux-kernel@vger.kernel.org>, <0x7f454c46@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Masahide NAKAMURA <nakam@linux-ipv6.org>,
-        YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
-Subject: Re: [PATCHv2] net/xfrm: Revert "[XFRM]: Do not add a state whose SPI
- is zero to the SPI hash."
-Message-ID: <20180507062037.kxuh2yqfu4z5rkgd@gauss3.secunet.de>
-References: <20180504012009.643-1-dima@arista.com>
+        id S1752026AbeEGGVb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:21:31 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:38727 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751983AbeEGGVI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 02:21:08 -0400
+X-IronPort-AV: E=Sophos;i="5.49,373,1520924400";
+   d="scan'208";a="14570674"
+Subject: Re: [PATCH v4 5/9] iio: adc: at91-sama5d2_adc: add support for
+ position and pressure channels
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Jonathan Cameron <jic23@kernel.org>
+CC: <ludovic.desroches@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
+References: <1525084335-11276-1-git-send-email-eugen.hristev@microchip.com>
+ <1525084335-11276-6-git-send-email-eugen.hristev@microchip.com>
+ <20180506182953.6adad5b5@archlinux> <20180506175914.GL10960@piout.net>
+From: Eugen Hristev <eugen.hristev@microchip.com>
+Message-ID: <eaeced9e-390f-0eea-0466-66c789bacdd6@microchip.com>
+Date: Mon, 7 May 2018 09:18:39 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180504012009.643-1-dima@arista.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 6C0E9F6A-719B-4F01-875B-91B44F9D2810
+In-Reply-To: <20180506175914.GL10960@piout.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 02:20:09AM +0100, Dmitry Safonov wrote:
-> This reverts commit 7b4dc3600e48 ("[XFRM]: Do not add a state whose SPI
-> is zero to the SPI hash.").
-> 
-> Zero SPI is legal and defined for IPcomp.
-> We shouldn't omit adding the state to SPI hash because it'll not be
-> possible to delete or lookup for it afterward:
-> __xfrm_state_insert() obviously doesn't add hash for zero
-> SPI in xfrm.state_byspi, and xfrm_user_state_lookup() will fail as
-> xfrm_state_lookup() does lookups by hash.
-> 
-> It also isn't possible to workaround from userspace as
-> xfrm_id_proto_match() will be always true for ah/esp/comp protos.
-> 
-> v1 link: https://lkml.kernel.org/r/<20180502020220.2027-1-dima@arista.com>
-> 
-> Cc: Masahide NAKAMURA <nakam@linux-ipv6.org>
-> Cc: YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
-> Cc: Steffen Klassert <steffen.klassert@secunet.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: netdev@vger.kernel.org
-> Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
-> Signed-off-by: Dmitry Safonov <dima@arista.com>
 
-This patch does much more than reverting the commit you mentioned.
-It removes all the logic that is needed to handle larval SAs.
 
-The result is a disaster, all connections that are negotiated
-by an IKE deamon stop working.
+On 06.05.2018 20:59, Alexandre Belloni wrote:
+> Hi,
+> 
+> On 06/05/2018 18:29:53+0100, Jonathan Cameron wrote:
+>> On Mon, 30 Apr 2018 13:32:11 +0300
+>> Eugen Hristev <eugen.hristev@microchip.com> wrote:
+>>
+>>> This implements the support for position and pressure for the included
+>>> touchscreen support in the SAMA5D2 SOC ADC block.
+>>> Two position channels are added and one for pressure.
+>>> They can be read in raw format, or through a buffer.
+>>> A normal use case is for a consumer driver to register a callback buffer
+>>> for these channels.
+>>> When the touchscreen channels are in the active scan mask,
+>>> the driver will start the touchscreen sampling and push the data to the
+>>> buffer.
+>>>
+>>> Some parts of this patch are based on initial original work by
+>>> Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
+>>>
+>>> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+>> Looks good to me now.
+>>
+>> I'm assuming that once Dmitry and others are happy, I'll take the
+>> series through the IIO tree. Will reply to the cover letter if the
+>> rest of the patches look good to me to let everyone know that without
+>> having to catch this comment down in here!
+>>
+> 
+> I'm planning to take both DT patches through the at91 tree once you take
+> the DT bindings patches.
 
-On traffic triggered connections the IKE deamon inserts a new SA
-for each packet that matches a policy.
+Please take into consideration that those DT patches do not build 
+stand-alone, they depend on
+[PATCH v4 7/9] dt-bindings: iio: adc: at91-sama5d2_adc: add channel 
+specific consumer info
+
+(the DT patches add an include statement of a file which is created in 
+this patch).
+
+Thanks !
+Eugen
+> 
+> 
