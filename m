@@ -1,63 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752747AbeEGTOc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 15:14:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50556 "EHLO mx1.redhat.com"
+        id S1752693AbeEGTQ7 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 15:16:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59926 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752099AbeEGTOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 15:14:30 -0400
-Subject: Re: [PATCH v6 0/8] ipc: Clamp *mni to the real IPCMNI limit &
- increase that limit
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-References: <1524862838-8247-1-git-send-email-longman@redhat.com>
- <87po2ex0k6.fsf@xmission.com>
- <5aac35f0-77e3-5693-ddf0-a03695ff1192@redhat.com>
- <87tvrqf66r.fsf@xmission.com>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <a767b365-0646-55fe-6c23-f05c212c9104@redhat.com>
-Date: Mon, 7 May 2018 15:14:28 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1752099AbeEGTQ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 15:16:57 -0400
+Date: Mon, 7 May 2018 21:16:53 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, kan.liang@linux.intel.com
+Subject: Re: [PATCH 05/12] perf pmu: Fix pmu events parsing rule
+Message-ID: <20180507191653.GA1924@krava>
+References: <20180425160008.3407-1-acme@kernel.org>
+ <20180425160008.3407-6-acme@kernel.org>
+ <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
+ <20180503103717.GA14776@krava>
+ <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
+ <20180504160228.GA25229@krava>
+ <87a7tdphyo.fsf@linux.intel.com>
+ <20180507183749.GA2095@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <87tvrqf66r.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507183749.GA2095@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 11:06 AM, Eric W. Biederman wrote:
->
->>> and or users that may or may not exist.  If you can find something that
->>> will care sure.  We need to avoid breaking userspace and causing
->>> regressions.  However as this stands it looks you are making maintenance
->>> of the kernel more difficult to avoid having to look to see if there are
->>> monsters under the bed.
->> I shall admit that it can be hard to find applications that will
->> explicitly need that as we usually don't have access to the applications
->> that the customers have. It is more a correctness issue where the
->> existing code is kind of lying about what can actually be supported. I
->> just want to make the users more aware of what the right limits are.
-> You presume the kernel is lying to applications.  I admit the kernel
-> can lie to applications.  I don't see any evidence that the kernel is
-> actually doing so.  So far (to me) it looks like a large number of sysv
-> shared memory segments is not particulalry common.
->
-> So I would not be at all surprised if no regressions would be generated
-> if you simply deny setting the value past the maximum.
+On Mon, May 07, 2018 at 03:37:49PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Sat, May 05, 2018 at 08:43:11PM -0700, Andi Kleen escreveu:
+> > Jiri Olsa <jolsa@redhat.com> writes:
+> > 
+> > Please fix this quickly, PT is currently totally non functional in Linus
+> > mainline.
+> 
+> Ok, so I'm reverting this patch, the previous situation was just a
+> misleading error message, so it can wait for the discussion about the
+> parser fixes to come to a conclusion and a proper patch to be submitted.
 
-Maybe you are right. I will update the patchset to fail the update if
-the range is exceeded since I had added option of extending the limit if
-the users choose to do so.
+ok, I was waiting for some feedback on the new patch.. I'll merge
+it with the one you reverted now
 
-Cheers,
-Longman
+thanks,
+jirka
