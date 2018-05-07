@@ -1,146 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753452AbeEGXfR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 19:35:17 -0400
-Received: from mail-pl0-f44.google.com ([209.85.160.44]:38893 "EHLO
-        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753149AbeEGXfP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 19:35:15 -0400
-X-Google-Smtp-Source: AB8JxZriHqDInfUgQwbTfz6GoRP0HB+hPomaYsd8JeDROH65do6KIs+ybrGKd2DZx9kS71+eQZ7KIg==
-Date: Mon, 7 May 2018 16:35:11 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: Add msm8998 SoC and MTP board support
-Message-ID: <20180507233511.GC14924@minitux>
-References: <20180428054248.22387-1-bjorn.andersson@linaro.org>
- <152573399648.138124.10341359049104453178@swboyd.mtv.corp.google.com>
+        id S1753507AbeEGXfY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 19:35:24 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54384 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753108AbeEGXfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 19:35:21 -0400
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <dc207a94-35a6-6182-1331-154ece9ac00d@deltatee.com>
+Date: Mon, 7 May 2018 17:34:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152573399648.138124.10341359049104453178@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 07 May 15:59 PDT 2018, Stephen Boyd wrote:
 
-> Quoting Bjorn Andersson (2018-04-27 22:42:47)
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> > new file mode 100644
-> > index 000000000000..d6665e4f801f
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> > @@ -0,0 +1,340 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/* Copyright (c) 2016, The Linux Foundation. All rights reserved. */
-> > +
-> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +#include <dt-bindings/clock/qcom,gcc-msm8998.h>
-> > +
-> > +/ {
-> > +       model = "Qualcomm Technologies, Inc. MSM 8998";
-> > +
-> > +       interrupt-parent = <&intc>;
-> > +
-> > +       qcom,msm-id = <292 0x0>;
+> How do you envison merging this?  There's a big chunk in drivers/pci, but
+> really no opportunity for conflicts there, and there's significant stuff in
+> block and nvme that I don't really want to merge.
 > 
-> No update to dtbtool?
-> 
+> If Alex is OK with the ACS situation, I can ack the PCI parts and you could
+> merge it elsewhere?
 
-This allows me to concatenate the dtb to the Image.gz and boot the
-device. From my scripts I see that I tried to use dtbTool before
-reverting to this...
+Honestly, I don't know. I guess with your ACK on the PCI parts, the vast
+balance is NVMe stuff so we could look at merging it through that tree.
+The block patch and IB patch are pretty small.
 
-[..]
-> > +               cpu-map {
-> > +                       cluster0 {
-> > +                               core0 {
-> > +                                       cpu = <&CPU0>;
-> > +                               };
-> > +
-> > +                               core1 {
-> > +                                       cpu = <&CPU1>;
-> > +                               };
-> > +
-> > +                               core2 {
-> > +                                       cpu = <&CPU2>;
-> > +                               };
-> > +
-> > +                               core3 {
-> > +                                       cpu = <&CPU3>;
-> > +                               };
-> > +                       };
-> > +
-> > +                       cluster1 {
-> > +                               core0 {
-> > +                                       cpu = <&CPU4>;
-> > +                               };
-> > +
-> > +                               core1 {
-> > +                                       cpu = <&CPU5>;
-> > +                               };
-> > +
-> > +                               core2 {
-> > +                                       cpu = <&CPU6>;
-> > +                               };
-> > +
-> > +                               core3 {
-> > +                                       cpu = <&CPU7>;
-> > +                               };
-> > +                       };
-> > +               };
-> 
-> I still wonder if this is accurate, but OK.
-> 
+Thanks,
 
-Afaict it matches downstream, not sure if I'm missing something?
-
-[..]
-> > +       intc: interrupt-controller@17a00000 {
-> > +               compatible = "arm,gic-v3";
-> > +               reg = <0x17a00000 0x10000>,       /* GICD */
-> > +                     <0x17b00000 0x100000>;      /* GICR * 8 */
-> > +               #interrupt-cells = <3>;
-> > +               #address-cells = <1>;
-> > +               #size-cells = <1>;
-> > +               ranges;
-> > +               interrupt-controller;
-> > +               #redistributor-regions = <1>;
-> > +               redistributor-stride = <0x0 0x20000>;
-> 
-> Is this needed? The redistributor stuff can be left out if there's only
-> one right?
-> 
-
-#redistributor-regions is listed as optional if there's more than 1, the
-stride is still needed.
-
-Afaict the stride still needs to be specified, as it's different from
-the default 64kb.
-
-> > +               interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> > +       };
-> > +
-> > +       blsp2_uart1: serial@c1b0000 {
-> 
-> Clk name says uart2 though?
-> 
-
-That's because it's the wrong clock. Thanks!
-
-> > +               compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-> > +               reg = <0xc1b0000 0x1000>;
-> > +               interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-> > +               clocks = <&gcc GCC_BLSP2_UART2_APPS_CLK>,
-> > +                        <&gcc GCC_BLSP2_AHB_CLK>;
-> > +               clock-names = "core", "iface";
-> > +               status = "disabled";
-> > +       };
-
-Regards,
-Bjorn
+Logan
