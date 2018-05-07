@@ -1,71 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752219AbeEGNFo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 09:05:44 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:45127 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751951AbeEGNFl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 09:05:41 -0400
-X-Google-Smtp-Source: AB8JxZoQsU1xjNyIhHAoFdZZ//sLVQ2xR86rl9NmwUkgM04gUnSV2fMvOAt67wRwuNahY1RY6ZxUNg==
-Subject: Re: [PATCH v2 0/3] Rework write error handling in pblk
-To: Hans Holmberg <hans.ml.holmberg@owltronix.com>
-Cc: linux-block@vger.kernel.org, Javier Gonzales <javier@cnexlabs.com>,
-        linux-kernel@vger.kernel.org,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-References: <1524548732-4326-1-git-send-email-hans.ml.holmberg@owltronix.com>
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <a53698ac-71c3-733e-991a-491d6ad7dd8a@lightnvm.io>
-Date: Mon, 7 May 2018 15:05:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        id S1752081AbeEGNLF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 09:11:05 -0400
+Received: from mga17.intel.com ([192.55.52.151]:37969 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751949AbeEGNLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 09:11:03 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,374,1520924400";
+   d="scan'208";a="226476542"
+Date: Mon, 7 May 2018 16:10:59 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Proof-of-concept: better(?) page-table manipulation API
+Message-ID: <20180507131059.3cdpfd4dcnwznhyw@black.fi.intel.com>
+References: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com>
+ <CALCETrVzD8oPv=h2q91AMdCHn3S782GmvsY-+mwoaPUw=5N7HQ@mail.gmail.com>
+ <20180507113124.ewpbrfd3anyg7pli@kshutemo-mobl1>
+ <20180507122346.GE18116@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1524548732-4326-1-git-send-email-hans.ml.holmberg@owltronix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507122346.GE18116@bombadil.infradead.org>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/24/2018 07:45 AM, Hans Holmberg wrote:
-> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+On Mon, May 07, 2018 at 12:23:46PM +0000, Matthew Wilcox wrote:
+> On Mon, May 07, 2018 at 02:31:25PM +0300, Kirill A. Shutemov wrote:
+> > > Also, what does lvl == 0 mean?  Is it the top or the bottom?  I think a
+> > > comment would be helpful.
+> > 
+> > It is bottom. But it should be up to architecture to decide.
 > 
-> This patch series fixes the(currently incomplete) write error handling
-> in pblk by:
+> That's not true because ...
 > 
->   * queuing and re-submitting failed writes in the write buffer
->   * evacuating valid data data in lines with write failures, so the
->     chunk(s) with write failures can be reset to a known state by the fw
+> > > > +static inline void ptp_walk(ptp_t *ptp, unsigned long addr)
+> > > > +{
+> > > > +       ptp->ptr = (unsigned long *)ptp_page_vaddr(ptp);
+> > > > +       ptp->ptr += __pt_index(addr, --ptp->lvl);
+> > > > +}
+> > > 
+> > > Can you add a comment that says what this function does?
+> > 
+> > Okay, I will.
+> > 
+> > > Why does it not change the level?
+> > 
+> > It does. --ptp->lvl.
 > 
-> Lines with failures in smeta are put back on the free list.
-> Failed chunks will be reset on the next use.
+> ... you've hardcoded that walking down decrements the level by 1.
 > 
-> If a write failes in emeta, the lba list is cached so the line can be
-> garbage collected without scanning the out-of-band area.
-> 
-> Changes in V2:
-> - Added the recov_writes counter increase to the new path
-> - Moved lba list emeta reading during gc to a separate function
-> - Allocating the saved lba list with pblk_malloc instead of kmalloc
-> - Fixed formatting issues
-> - Removed dead code
-> 
-> Hans Holmberg (3):
->    lightnvm: pblk: rework write error recovery path
->    lightnvm: pblk: garbage collect lines with failed writes
->    lightnvm: pblk: fix smeta write error path
-> 
->   drivers/lightnvm/pblk-core.c     |  52 +++++++-
->   drivers/lightnvm/pblk-gc.c       | 102 +++++++++------
->   drivers/lightnvm/pblk-init.c     |  47 ++++---
->   drivers/lightnvm/pblk-rb.c       |  39 ------
->   drivers/lightnvm/pblk-recovery.c |  91 -------------
->   drivers/lightnvm/pblk-rl.c       |  29 ++++-
->   drivers/lightnvm/pblk-sysfs.c    |  15 ++-
->   drivers/lightnvm/pblk-write.c    | 269 ++++++++++++++++++++++++++-------------
->   drivers/lightnvm/pblk.h          |  36 ++++--
->   9 files changed, 384 insertions(+), 296 deletions(-)
-> 
+> I don't see that as a defect; it's just part of the API that needs
+> documenting.
 
-Applied for 4.18.
+You assume that the function is a generic one. This may or may not be
+true.
+
+This is subject for refinement anyway.
+
+-- 
+ Kirill A. Shutemov
