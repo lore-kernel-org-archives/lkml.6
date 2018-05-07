@@ -1,127 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752726AbeEGSoZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 14:44:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35188 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752352AbeEGSoY (ORCPT
+        id S1752755AbeEGSoi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 14:44:38 -0400
+Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:47272 "EHLO
+        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752352AbeEGSog (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 14:44:24 -0400
-Date: Mon, 7 May 2018 11:44:10 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Huaisheng HS1 Ye <yehs1@lenovo.com>
-Cc: Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned
- int in gfp_zone
-Message-ID: <20180507184410.GA12361@bombadil.infradead.org>
-References: <1525416729-108201-1-git-send-email-yehs1@lenovo.com>
- <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
- <20180504133533.GR4535@dhcp22.suse.cz>
- <20180504154004.GB29829@bombadil.infradead.org>
- <HK2PR03MB168459A1C4FB2B7D3E1F6A4A92840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506134814.GB7362@bombadil.infradead.org>
- <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506185532.GA13604@bombadil.infradead.org>
- <HK2PR03MB1684BF10B3B515BFABD35F8B929B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <HK2PR03MB1684BF10B3B515BFABD35F8B929B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 7 May 2018 14:44:36 -0400
+From: Josh Hunt <johunt@akamai.com>
+To: mingo@redhat.com, acme@kernel.org
+Cc: peterz@infradead.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ak@linux.intel.com, eranian@google.com, Josh Hunt <johunt@akamai.com>
+Subject: [PATCH v2] perf tools: allow map files to specify DSO
+Date: Mon,  7 May 2018 14:24:16 -0400
+Message-Id: <1525717456-21475-1-git-send-email-johunt@akamai.com>
+X-Mailer: git-send-email 1.9.1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805070183
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
+ definitions=main-1805070183
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 05:16:50PM +0000, Huaisheng HS1 Ye wrote:
-> I hope it couldn't cause problem, but based on my analyzation it has the potential to go wrong if users still use the flags as usual, which are __GFP_DMA, __GFP_DMA32 and __GFP_HIGHMEM.
-> Let me take an example with my testing platform, these logics are much abstract, an example will be helpful.
-> 
-> There is a two sockets X86_64 server, No HIGHMEM and it has 16 + 16GB memories.
-> Its zone types shall be like this below,
-> 
-> ZONE_DMA		0		0b0000
-> ZONE_DMA32		1		0b0001
-> ZONE_NORMAL		2		0b0010
-> (OPT_ZONE_HIGHMEM)	2		0b0010
-> ZONE_MOVABLE		3		0b0011
-> ZONE_DEVICE		4		0b0100 (virtual zone)
-> __MAX_NR_ZONES	5
-> 
-> __GFP_DMA	= ZONE_DMA ^ ZONE_NORMAL= 0b0010
-> __GFP_DMA32	= ZONE_DMA32 ^ ZONE_NORMAL= 0b0011
-> __GFP_HIGHMEM = OPT_ZONE_HIGHMEM ^ ZONE_NORMAL = 0b0000
-> __GFP_MOVABLE	= ZONE_MOVABLE ^ ZONE_NORMAL | ___GFP_MOVABLE = 0b1001
-> 
-> Eg.
-> If a driver uses flags like this below,
-> Step 1:
-> gfp_mask  |  __GFP_DMA32;	
-> (0b 0000		|	0b 0011	= 0b 0011)
-> gfp_mask's low four bits shall equal to 0011, assuming no __GFP_MOVABLE
-> 
-> Step 2:
-> gfp_mask  & ~__GFP_DMA;	
-> (0b 0011	 & ~0b0010   = 0b0001)
-> gfp_mask's low four bits shall equal to 0001 now, then when it enter gfp_zone(),
-> 
-> return ((__force int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
-> (0b0001 ^ 0b0010 = 0b0011)
-> You know 0011 means that ZONE_MOVABLE will be returned.
-> In this case, error can be found, because gfp_mask needs to get ZONE_DMA32 originally.
-> But with existing GFP_ZONE_TABLE/BAD, it is correct. Because the bits are way of 0x1, 0x2, 0x4, 0x8
+Add the ability to specify a DSO in the /tmp/perf-<PID>.map file.
+The DSO should be the first line in the file and readable by the
+running user. If a valid DSO is found all other contents of the
+file will be ignored. This allows things like callchain unwinding
+with DWARF to work.
 
-Yes, I understand your point here.  My point was that this was already a bug;
-the caller shouldn't simply be clearing __GFP_DMA; they really mean to clear
-all of the GFP_ZONE bits so that they allocate from ZONE_NORMAL.  And for
-that, they should be using ~GFP_ZONEMASK
+Suggested-by: Wang Nan <wangnan0@huawei.com>
+Signed-off-by: Josh Hunt <johunt@akamai.com>
+---
+We have an application which uses huge pages for its text section, but
+still needs the ability to do callchain unwinding with DWARF. We use
+the perf-<PID>.map file setup to do symbol resolution and that works
+great, but callchain unwinding fails.
 
-Unless they already know, of course.  For example, this one in
-arch/x86/mm/pgtable.c is fine:
+A few months ago I mentioned this to Wang Nan and he suggested a way
+around this problem could be to specify the path of the DSO in the map
+file. The attached patch is my initial hack at this. Running with this
+patch I can now get full callchain unwinding with DWARF.
 
-        if (strcmp(arg, "nohigh") == 0)
-                __userpte_alloc_gfp &= ~__GFP_HIGHMEM;
+FWIW LBR + map file works with callchains, but unfortunately there are
+some cases where we still need DWARF.
 
-because it knows that __userpte_alloc_gfp can only have __GFP_HIGHMEM set.
+I submitted an RFC as an earlier draft:
+https://lkml.org/lkml/2018/4/24/1070
 
-But something like btrfs should almost certainly be using ~GFP_ZONEMASK.
+v2:
+1. Rebase RFC patch to
+git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
+2. Update jit-interface.txt as per Arnaldo's request
 
-> > +#define __GFP_HIGHMEM  ((__force gfp_t)OPT_ZONE_HIGHMEM ^
-> > ZONE_NORMAL)
-> > -#define __GFP_MOVABLE  ((__force gfp_t)___GFP_MOVABLE)  /*
-> > ZONE_MOVABLE allowed */
-> > +#define __GFP_MOVABLE  ((__force gfp_t)ZONE_MOVABLE ^
-> > ZONE_NORMAL | \
-> > +					___GFP_MOVABLE)
-> > 
-> > Then I think you can just make it:
-> > 
-> > static inline enum zone_type gfp_zone(gfp_t flags)
-> > {
-> > 	return ((__force int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
-> > }
-> Sorry, I think it has risk in this way, let me introduce a failure case for example.
-> 
-> Now suppose that, there is a flag should represent DMA flag with movable.
-> It should be like this below,
-> __GFP_DMA | __GFP_MOVABLE
-> (0b 0010       |   0b 1001   = 0b 1011)
-> Normally, gfp_zone shall return ZONE_DMA but with MOVABLE policy, right?
+ tools/perf/Documentation/jit-interface.txt |  8 +++++---
+ tools/perf/util/map.c                      | 32 ++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 3 deletions(-)
 
-No, if you somehow end up with __GFP_MOVABLE | __GFP_DMA, it should give you
-ZONE_DMA.
-
-> But with your code, gfp_zone will return ZONE_DMA32 with MOVABLE policy.
-> (0b 1011  ^  0b 0010 = 1001)
-
-___GFP_ZONE_MASK is 0x7, so it excludes __GFP_MOVABLE.
+diff --git a/tools/perf/Documentation/jit-interface.txt b/tools/perf/Documentation/jit-interface.txt
+index a8656f564915..8a25b979802f 100644
+--- a/tools/perf/Documentation/jit-interface.txt
++++ b/tools/perf/Documentation/jit-interface.txt
+@@ -3,13 +3,15 @@ by a JIT.
+ 
+ The JIT has to write a /tmp/perf-%d.map  (%d = pid of process) file
+ 
+-This is a text file.
++This is a text file and can have one of the following formats:
+ 
+-Each line has the following format, fields separated with spaces:
++1) Each line has the following format, fields separated with spaces:
+ 
+ START SIZE symbolname
+ 
+ START and SIZE are hex numbers without 0x.
+ symbolname is the rest of the line, so it could contain special characters.
+ 
+-The ownership of the file has to match the process.
++2) A single line with the full pathname of the DSO to use.
++
++For both formats, the ownership of the file has to match the process.
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index c8fe836e4c3c..da3050b18e34 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -139,6 +139,31 @@ void map__init(struct map *map, u64 start, u64 end, u64 pgoff, struct dso *dso)
+ 	refcount_set(&map->refcnt, 1);
+ }
+ 
++static bool replace_anon(char *mapfilename)
++{
++	FILE *file = NULL;
++	bool ret = false;
++
++	file = fopen(mapfilename, "r");
++	if (file != NULL) {
++		char *line = NULL;
++		size_t line_len, linesz=0;
++
++		line_len = getline(&line, &linesz, file);
++		if (line_len > 0) {
++			line[line_len-1] = '\0'; /* null terminate */
++			if (!access(line, R_OK)) {
++				strlcpy(mapfilename, line, line_len);
++				ret = true;
++			}
++		}
++		free(line);
++		fclose(file);
++	}
++
++	return ret;
++}
++
+ struct map *map__new(struct machine *machine, u64 start, u64 len,
+ 		     u64 pgoff, u32 d_maj, u32 d_min, u64 ino,
+ 		     u64 ino_gen, u32 prot, u32 flags, char *filename,
+@@ -170,6 +195,13 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
+ 			snprintf(newfilename, sizeof(newfilename),
+ 				 "/tmp/perf-%d.map", nsi->pid);
+ 			filename = newfilename;
++			/*
++			 * Check to see if map file references DSO to use, if so, use it.
++			 */
++			if (anon && replace_anon(newfilename)) {
++				anon = 0;
++				filename = newfilename;
++			}
+ 		}
+ 
+ 		if (android) {
+-- 
+1.9.1
