@@ -1,54 +1,34 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751889AbeEGBb6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 21:31:58 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7228 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751444AbeEGBb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 21:31:57 -0400
-From: Wei Yongjun <weiyongjun1@huawei.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
-CC: Wei Yongjun <weiyongjun1@huawei.com>, <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] ASoC: fix return value check in mt6351_codec_driver_probe()
-Date: Mon, 7 May 2018 01:39:45 +0000
-Message-ID: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        id S1751913AbeEGBhB (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 21:37:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751781AbeEGBg5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 21:36:57 -0400
+Date: Mon, 7 May 2018 09:36:31 +0800
+From: Shawn Guo <shawnguo@kernel.org>
+To: Anson Huang <Anson.Huang@nxp.com>
+Cc: kernel@pengutronix.de, fabio.estevam@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, fugang.duan@nxp.com, haibo.chen@nxp.com,
+        yibin.gong@nxp.com, aisheng.dong@nxp.com, devicetree@vger.kernel.org,
+        Linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V7 1/7] ARM: dts: imx6sx-sabreauto: add PMIC support
+Message-ID: <20180507013630.GI3443@dragon>
+References: <1525588093-29994-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525588093-29994-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In case of error, the function dev_get_regmap() returns NULL pointer not
-ERR_PTR(). The IS_ERR() test in the return value check should be
-replaced with NULL test.
+On Sun, May 06, 2018 at 02:28:07PM +0800, Anson Huang wrote:
+> Add pfuze100 support on i.MX6SX Sabre Auto board.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- sound/soc/codecs/mt6351.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
-index e739f07..f73dcd7 100644
---- a/sound/soc/codecs/mt6351.c
-+++ b/sound/soc/codecs/mt6351.c
-@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
- 	priv->dev = &pdev->dev;
- 
- 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
--	if (IS_ERR(priv->regmap))
--		return PTR_ERR(priv->regmap);
-+	if (!priv->regmap)
-+		return -ENODEV;
- 
- 	dev_dbg(priv->dev, "%s(), dev name %s\n",
- 		__func__, dev_name(&pdev->dev));
+Applied all, thanks.
