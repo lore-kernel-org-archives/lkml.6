@@ -1,122 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752199AbeEGKll (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:41:41 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:57117 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751848AbeEGKlj (ORCPT
+        id S1752221AbeEGKmg (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:42:36 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:61961 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751901AbeEGKmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:41:39 -0400
-Subject: Re: [PATCH 00/28] Venus updates
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <29a88d99-537f-5fdc-9e6a-8238703ea8d1@xs4all.nl>
-Date: Mon, 7 May 2018 12:41:36 +0200
+        Mon, 7 May 2018 06:42:32 -0400
+X-IronPort-AV: E=Sophos;i="5.49,373,1520924400";
+   d="scan'208";a="11249940"
+Subject: Re: [PATCH v4 5/9] iio: adc: at91-sama5d2_adc: add support for
+ position and pressure channels
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Jonathan Cameron <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
+References: <1525084335-11276-1-git-send-email-eugen.hristev@microchip.com>
+ <1525084335-11276-6-git-send-email-eugen.hristev@microchip.com>
+ <20180506182953.6adad5b5@archlinux> <20180506175914.GL10960@piout.net>
+ <eaeced9e-390f-0eea-0466-66c789bacdd6@microchip.com>
+ <20180507102810.GO10960@piout.net>
+From: Eugen Hristev <eugen.hristev@microchip.com>
+Message-ID: <99e5d795-eaf6-eb07-3f80-d8b09772e5ff@microchip.com>
+Date: Mon, 7 May 2018 13:40:03 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180507102810.GO10960@piout.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfAJSP8xE8PoIu/LrVoWQNeDn0xpxGqfDmo4eJX9EwjTriHSR5BwyW5YZmtpAVmDMRoETB9ST6t76UFLJbiK/B4Bp3YOH48U9evMFO5dwL1ORBtpawAFv
- 4+rfTCRVWSeJrEk6uqp/BweRXUbeiyQD2bt0y3th8lkJBSI5kjNB/cq+9BY6V5HuaCw42rofdKqWIIuu6Gqv7d5O7DhaKQbGrQ5C9KihL2Md9U3oF+2Fbj/A
- xwJVOyWYA71UiJkhz6VxE0gtMLx8KNSnZrk5w6MqfNWZwN+/LckSRkS1T9soJ1C5/hp/7AZgeUuTYQTt0ttDS6DDQ+HmAta/X/A2cUhoSSChpGJCRgNyeuRA
- kCC0Oy3AHb8U49gL5X1PUE7N8GxsqLk4VHVqu1WLplK7xlgTrotHNvBCJtURdI+s2F4UY0gnmb0lJMb9jUiOsxQApIYscYpaz0yFNNaSoF/yoP5PONMI+BZ3
- XmrbChRdORAMtosT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/04/18 14:44, Stanimir Varbanov wrote:
-> Hello,
-> 
-> This patch set aims to:
-> 
-> * add initial support for Venus version 4xx (found on sdm845).
-> 
-> * introduce a common capability parser to enumerate better
->   supported uncompressed formats, capabilities by codec,
->   supported codecs and so on.
-> 
-> * also contains various cleanups, readability improvements
->   and fixes.
-> 
-> * adds HEVC codec support for the Venus versions which has
->   support for it.
-> 
-> * add multi-stream support (secondary decoder output), which
->   will give as an opportunity to use UBWC compressed formats
->   to optimize internal interconnect bandwidth on higher
->   resolutions.
 
-I'm a bit confused about this: is this a purely driver-internal thing,
-or is this exposed somehow to userspace as well? It seems to be purely
-internal.
 
-Regards,
+On 07.05.2018 13:28, Alexandre Belloni wrote:
+> On 07/05/2018 09:18:39+0300, Eugen Hristev wrote:
+>> On 06.05.2018 20:59, Alexandre Belloni wrote:
+>>> Hi,
+>>>
+>>> On 06/05/2018 18:29:53+0100, Jonathan Cameron wrote:
+>>>> On Mon, 30 Apr 2018 13:32:11 +0300
+>>>> Eugen Hristev <eugen.hristev@microchip.com> wrote:
+>>>>
+>>>>> This implements the support for position and pressure for the included
+>>>>> touchscreen support in the SAMA5D2 SOC ADC block.
+>>>>> Two position channels are added and one for pressure.
+>>>>> They can be read in raw format, or through a buffer.
+>>>>> A normal use case is for a consumer driver to register a callback buffer
+>>>>> for these channels.
+>>>>> When the touchscreen channels are in the active scan mask,
+>>>>> the driver will start the touchscreen sampling and push the data to the
+>>>>> buffer.
+>>>>>
+>>>>> Some parts of this patch are based on initial original work by
+>>>>> Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
+>>>>>
+>>>>> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+>>>> Looks good to me now.
+>>>>
+>>>> I'm assuming that once Dmitry and others are happy, I'll take the
+>>>> series through the IIO tree. Will reply to the cover letter if the
+>>>> rest of the patches look good to me to let everyone know that without
+>>>> having to catch this comment down in here!
+>>>>
+>>>
+>>> I'm planning to take both DT patches through the at91 tree once you take
+>>> the DT bindings patches.
+>>
+>> Please take into consideration that those DT patches do not build
+>> stand-alone, they depend on
+>> [PATCH v4 7/9] dt-bindings: iio: adc: at91-sama5d2_adc: add channel specific
+>> consumer info
+>>
+>> (the DT patches add an include statement of a file which is created in this
+>> patch).
+>>
+> 
+> So the proper way is to actually have the values in the dt instead of
+> the define and then patch it on the next version of the kernel.
+> 
+> Or we take the dts patches on the next version.
 
-	Hans
+Taking the DTS patches on the next version is fine for me.
 
-> 
-> Comments are welcome!
-> 
-> regards,
-> Stan
-> 
-> Stanimir Varbanov (28):
->   venus: hfi_msgs: correct pointer increment
->   venus: hfi: preparation to support venus 4xx
->   venus: hfi: update sequence event to handle more properties
->   venus: hfi_cmds: add set_properties for 4xx version
->   venus: hfi: support session continue for 4xx version
->   venus: hfi: handle buffer output2 type as well
->   venus: hfi_venus: add halt AXI support for Venus 4xx
->   venus: hfi_venus: add suspend function for 4xx version
->   venus: venc,vdec: adds clocks needed for venus 4xx
->   venus: vdec: call session_continue in insufficient event
->   venus: add common capability parser
->   venus: helpers: make a commmon function for power_enable
->   venus: core: delete not used flag for buffer mode
->   venus: helpers: rename a helper function and use buffer mode from caps
->   venus: add a helper function to set dynamic buffer mode
->   venus: add helper function to set actual buffer size
->   venus: delete no longer used bufmode flag from instance
->   venus: helpers: add buffer type argument to a helper
->   venus: helpers: add a new helper to set raw format
->   venus: helpers,vdec,venc: add helpers to set work mode and core usage
->   venus: helpers: extend set_num_bufs helper with one more argument
->   venus: helpers: add a helper to return opb buffer sizes
->   venus: vdec: get required input buffers as well
->   venus: vdec: new function for output configuration
->   venus: move frame size calculations in common place
->   venus: implementing multi-stream support
->   venus: add sdm845 compatible and resource data
->   venus: add HEVC codec support
-> 
->  .../devicetree/bindings/media/qcom,venus.txt       |   1 +
->  drivers/media/platform/qcom/venus/Makefile         |   3 +-
->  drivers/media/platform/qcom/venus/core.c           | 102 ++++
->  drivers/media/platform/qcom/venus/core.h           |  91 ++--
->  drivers/media/platform/qcom/venus/helpers.c        | 558 +++++++++++++++++++--
->  drivers/media/platform/qcom/venus/helpers.h        |  23 +-
->  drivers/media/platform/qcom/venus/hfi.c            |  12 +-
->  drivers/media/platform/qcom/venus/hfi.h            |   9 +
->  drivers/media/platform/qcom/venus/hfi_cmds.c       |  64 ++-
->  drivers/media/platform/qcom/venus/hfi_helper.h     | 112 ++++-
->  drivers/media/platform/qcom/venus/hfi_msgs.c       | 401 +++------------
->  drivers/media/platform/qcom/venus/hfi_parser.c     | 290 +++++++++++
->  drivers/media/platform/qcom/venus/hfi_parser.h     |  45 ++
->  drivers/media/platform/qcom/venus/hfi_venus.c      |  69 +++
->  drivers/media/platform/qcom/venus/hfi_venus_io.h   |  24 +
->  drivers/media/platform/qcom/venus/vdec.c           | 324 +++++++-----
->  drivers/media/platform/qcom/venus/venc.c           | 166 +++---
->  17 files changed, 1641 insertions(+), 653 deletions(-)
->  create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.c
->  create mode 100644 drivers/media/platform/qcom/venus/hfi_parser.h
+Thanks
 > 
