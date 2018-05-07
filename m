@@ -1,73 +1,221 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752536AbeEGInS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:43:18 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:58908 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752315AbeEGInN (ORCPT
+        id S1752573AbeEGIok (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:44:40 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:36672 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752564AbeEGIof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:43:13 -0400
-Message-ID: <1525682589.6049.4.camel@sipsolutions.net>
-Subject: Re: WARNING in kernfs_add_one
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Greg KH <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org,
-        Eric Dumazet <eric.dumazet@gmail.com>
-Cc: netdev@vger.kernel.org,
-        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tj@kernel.org
-Date: Mon, 07 May 2018 10:43:09 +0200
-In-Reply-To: <20180505220721.GA10829@kroah.com> (sfid-20180506_000758_042156_C31EA22A)
-References: <0000000000000390eb056b77596d@google.com>
-         <20180505164041.GD7746@kroah.com>
-         <095bc684-0029-0b2e-5e28-23376174ca02@gmail.com>
-         <20180505220721.GA10829@kroah.com> (sfid-20180506_000758_042156_C31EA22A)
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 7 May 2018 04:44:35 -0400
+X-Google-Smtp-Source: AB8JxZraqzoSMbp5rumBoBTE+7WCa/EAiZlwoWYgGa0QKfTrEnv4md0pqYobzolU0te8DQ52s9HRxA==
+Date: Mon, 7 May 2018 10:44:31 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Mario.Limonciello@dell.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
+Message-ID: <20180507084431.r2dipv32wt3vbx3k@pali>
+References: <20180124104121.7g3zfay5smc5v2tc@pali>
+ <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
+ <20180506134733.zttaitnf6ej4tith@pali>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="asjchmkbtcxqj7g7"
+Content-Disposition: inline
+In-Reply-To: <20180506134733.zttaitnf6ej4tith@pali>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-05-05 at 15:07 -0700, Greg KH wrote:
 
-> > > > syzbot found the following crash on:
+--asjchmkbtcxqj7g7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Maybe it should learn to differentiate warnings, if it's going to set
-panic_on_warn :-)
+On Sunday 06 May 2018 15:47:33 Pali Roh=C3=A1r wrote:
+> On Thursday 01 February 2018 11:29:45 Dmitry Torokhov wrote:
+> > Hi Pali,
+> >=20
+> > On Wed, Jan 24, 2018 at 11:41:21AM +0100, Pali Roh=C3=A1r wrote:
+> > > Hi Dmitry!
+> > >=20
+> > > I'm observing a problem with internal touchpad (handled by psmouse.ko)
+> > > on Dell laptops connected to Dell E docking station. When I connect
+> > > external PS/2 keyboard to docking station then internal laptop touchp=
+ad
+> > > switch from multitouch absolute mode to relative bare PS/2 mode.
+> > >=20
+> > > And because ALPS driver in psmouse.ko is capable to process interleav=
+ed
+> > > bare 3-byte PS/2 packets with 6-byte ALPS packets (which handles
+> > > trackstick data on some ALPS models), ALPS driver does not show any
+> > > message about this "downgrade" from multitouch to bare mode. And
+> > > continue working in bare mode.
+> > >=20
+> > > When I rmmod psmouse and modprobe it again, then touchpad switch back=
+ to
+> > > multitouch mode.
+> > >=20
+> > > Mario told me that Dell Embedded Controller, which handle internal
+> > > keyboard, internal touchpad and external PS/2 keyboard, automatically
+> > > send RESET command to *all* those devices when external PS/2 keyboard=
+ is
+> > > connected. Therefore this is reason why touchpad downgrade to to bare
+> > > mode. And according to Mario, host system should issue vendor specific
+> > > PS/2 commands to re-initialize all PS/2 devices when this situation
+> > > happen. Mario also told me that Windows is doing this action.
+> >=20
+> > Yeah, I remember fun with Inspiron 8100 - when you dock it it woudl
+> > silently switch Synaptics touchpad into standard mode and it would not
+> > come back as Synaptics until you disconnect. And there was no
+> > notification to the kernel as far as I could tell.
+> >=20
+> > It could be that we need to monitor dock events and then kick reconnect
+> > of serio port, either from userspace via udev (I think that would be
+> > preferred), or in kernel.
+> >=20
+> > >=20
+> > > Every time when I connect external PS/2 keyboard to dock I see this
+> > > message in dmesg:
+> > >=20
+> > > Spurious ACK... Some program might be trying to access hardware direc=
+tly.
+> > >=20
+> > > I see it also every time when I dock laptop into docking station (to
+> > > which is keyboard already connected). And it happens also when I conn=
+ect
+> > > external PS/2 mouse to dock.
+> > >=20
+> > > Dmitry, how to handle this situation to re-initialize psmouse.ko when
+> > > external PS/2 device is connected to Dell E docking station? According
+> > > to Mario, this is how Dell Embedded Controller is designed and suppose
+> > > how OS should work with it.
+> > >=20
+> > > Manually rmmoding and modprobing for every docking/undocking laptop is
+> > > not ideal solution.
+> > >=20
+> > > Could it be possible to use that Spurious ATKBD_RET_ACK from atkbd.c =
+be
+> > > handled on Dell systems (probably via DMI) as an event to reset and
+> > > reinitialize all PS/2 devices?
+> >=20
+> > So we need to figure out what exactly we are getting from the docking
+> > station in this case. We do try to handle the new device 0xaa 0x00
+> > announcements:
+> >=20
+> > 	/* Check if this is a new device announcement (0xAA 0x00) */
+> > 	if (unlikely(psmouse->packet[0] =3D=3D PSMOUSE_RET_BAT && psmouse->pkt=
+cnt <=3D 2)) {
+> > 		if (psmouse->pktcnt =3D=3D 1) {
+> > 			psmouse->last =3D jiffies;
+> > 			goto out;
+> > 		}
+> >=20
+> > 		if (psmouse->packet[1] =3D=3D PSMOUSE_RET_ID ||
+> > 		    (psmouse->protocol->type =3D=3D PSMOUSE_HGPK &&
+> > 		     psmouse->packet[1] =3D=3D PSMOUSE_RET_BAT)) {
+> > 			__psmouse_set_state(psmouse, PSMOUSE_IGNORE);
+> > 			serio_reconnect(serio);
+> > 			goto out;
+> > 		}
+> >=20
+> > ...
+> >=20
+> > I am not sure where the "spurious ACK comes from". Can you enable i8042
+> > debug before trying to dock and capture the data stream from the mouse?
+> >=20
+> > Thanks.
+> >=20
+>=20
+> Hi Dmitry!
+>=20
+> I enabled unmask_kbd_data and debug and here is output from dmesg.
+>=20
+> echo Y >=C2=A0/sys/module/i8042/parameters/debug
+> echo Y > /sys/module/i8042/parameters/unmask_kbd_data
+>=20
+> PS/2 keyboard is already connected in dock and laptop was just docked:
+>=20
+> [25461.552314] i8042: [6365474] fa <- i8042 (interrupt, 0, 1)
+> [25461.552319] atkbd serio0: Spurious ACK on isa0060/serio0. Some program=
+ might be trying to access hardware directly.
+> [25462.707296] i8042: [6365763] ed -> i8042 (kbd-data)
+> [25462.851289] i8042: [6365799] fa <- i8042 (interrupt, 0, 1)
+> [25462.851303] i8042: [6365799] 00 -> i8042 (kbd-data)
+> [25462.858437] i8042: [6365801] fa <- i8042 (interrupt, 0, 1)
+> [25462.869512] i8042: [6365804] fa <- i8042 (interrupt, 0, 1)
+> [25462.869517] atkbd serio0: Spurious ACK on isa0060/serio0. Some program=
+ might be trying to access hardware directly.
+> [25463.670515] i8042: [6366004] ed -> i8042 (kbd-data)
+> [25463.670647] i8042: [6366004] fa <- i8042 (interrupt, 0, 1)
+> [25463.670655] i8042: [6366004] 02 -> i8042 (kbd-data)
+> [25463.676769] i8042: [6366005] fa <- i8042 (interrupt, 0, 1)
+>=20
+>=20
+> Laptop is docked and PS/2 keyboard was just connected:
+>=20
+> [26571.014368] i8042: [6642848] fa <- i8042 (interrupt, 0, 1)
+> [26571.014380] atkbd serio0: Spurious ACK on isa0060/serio0. Some program=
+ might be trying to access hardware directly.
+>=20
+>=20
+> In both cases there is no events from touchpad, only from keyboard. So
+> Dell EC silently reset PS/2 touchpad when PS/2 keyboard is attached.
+>=20
+> So I think we should capture 0xFA and on Dell machines we should
+> reinitialize PS/2 drivers. As there is really nothing more then 0xFA.
 
-I get why, but still, at least differentiating in the emails wouldn't be
-bad.
+Info about PS/2 mouse:
 
-> > > > kernfs: ns required in 'ieee80211' for 'phy3'
+In case I have laptop already docked and just connect PS/2 mouse there
+is absolutely no i8042 event.
 
-Huh. What does that even mean?
+To check that mouse is worked I clicked button and then in dmesg
+appeared:
 
-> > > > RIP: 0010:kernfs_add_one+0x406/0x4d0 fs/kernfs/dir.c:758
-> > > > RSP: 0018:ffff8801ca9eece0 EFLAGS: 00010286
-> > > > RAX: 000000000000002d RBX: ffffffff87d5cee0 RCX: ffffffff8160ba7d
-> > > > RDX: 0000000000000000 RSI: ffffffff81610731 RDI: ffff8801ca9ee840
-> > > > RBP: ffff8801ca9eed20 R08: ffff8801d9538500 R09: 0000000000000006
-> > > > R10: ffff8801d9538500 R11: 0000000000000000 R12: ffff8801ad1cb6c0
-> > > > R13: ffffffff885da640 R14: 0000000000000020 R15: 0000000000000000
-> > > >  kernfs_create_link+0x112/0x180 fs/kernfs/symlink.c:41
-> > > >  sysfs_do_create_link_sd.isra.2+0x90/0x130 fs/sysfs/symlink.c:43
-> > > >  sysfs_do_create_link fs/sysfs/symlink.c:79 [inline]
-> > > >  sysfs_create_link+0x65/0xc0 fs/sysfs/symlink.c:91
-> > > >  device_add_class_symlinks drivers/base/core.c:1612 [inline]
-> > > >  device_add+0x7a0/0x16d0 drivers/base/core.c:1810
-> > > >  wiphy_register+0x178a/0x2430 net/wireless/core.c:806
-> > > >  ieee80211_register_hw+0x13cd/0x35d0 net/mac80211/main.c:1047
-> > > >  mac80211_hwsim_new_radio+0x1d9b/0x3410
-> > > > drivers/net/wireless/mac80211_hwsim.c:2772
-> > > >  hwsim_new_radio_nl+0x7a7/0xa60 drivers/net/wireless/mac80211_hwsim.c:3246
-> > > >  genl_family_rcv_msg+0x889/0x1120 net/netlink/genetlink.c:599
+[ 3945.481403] i8042: [986322] 09 <- i8042 (interrupt, 1, 12)
+[ 3945.482486] i8042: [986323] 00 <- i8042 (interrupt, 1, 12)
+[ 3945.483667] i8042: [986323] 00 <- i8042 (interrupt, 1, 12)
+[ 3945.483917] input: PS/2 ALPS Mouse as /devices/platform/i8042/serio1/inp=
+ut/input36
+[ 3945.594926] i8042: [986351] 08 <- i8042 (interrupt, 1, 12)
+[ 3945.596062] i8042: [986351] 00 <- i8042 (interrupt, 1, 12)
+[ 3945.597203] i8042: [986351] 00 <- i8042 (interrupt, 1, 12)
 
-Basically we're creating a new virtual radio, which in turn creates a
-new device, which we have to register.
+So we have no way to detect when external PS/2 mouse was connected to
+dock. But ALPS driver can deal with it and process these mouse events.
 
-Something is going on with the context here that makes sysfs unhappy,
-but TBH I have no idea what.
+And when I have already connected PS/2 mouse to the dock and I'm just
+putting laptop into dock, then I get following events:
 
-johannes
+[ 4336.481381] i8042: [1084079] fa <- i8042 (interrupt, 0, 1)
+[ 4336.481388] atkbd serio0: Spurious ACK on isa0060/serio0. Some program m=
+ight be trying to access hardware directly.
+[ 4337.653275] i8042: [1084372] ed -> i8042 (kbd-data)
+[ 4337.949198] i8042: [1084446] fa <- i8042 (interrupt, 0, 1)
+[ 4337.949202] atkbd serio0: Spurious ACK on isa0060/serio0. Some program m=
+ight be trying to access hardware directly.
+[ 4338.623167] i8042: [1084615] ed -> i8042 (kbd-data)
+
+So again, no event from mouse, just from keyboard.
+
+Note that in these tests I have disconnected my PS/2 keyboard from
+dock.
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--asjchmkbtcxqj7g7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWvAR7AAKCRCL8Mk9A+RD
+UiG0AJ93cVO2sfNuf4i7YemVhGAnZA4a7ACfeAdvJjQYi/frKm/NZQ0KzKq7tp8=
+=024B
+-----END PGP SIGNATURE-----
+
+--asjchmkbtcxqj7g7--
