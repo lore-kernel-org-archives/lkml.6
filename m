@@ -1,175 +1,167 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2957852-1525791835-2-6146742899792287260
+X-Cyrus-Session-Id: sloti22d1t05-488117-1525683070-2-14873307388212769864
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-charsets: plain='UTF-8'
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-charsets: 
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525791835; b=j/hbe4VSiXkRkQFclFVIuTMY9uVIcQSo7OLLV028F+F7iinDah
-    tRFpMSbtQp9HlkxRmnK9VTE/2U/BgTvmaULX2G1Kx3r7UfZwsNvPJqUxmzNDB/Y1
-    a7opXyOiF9rvQIHSxAHGBk8/EPAFh5+mad1WxLHGk3Z6QURqQmxkc4/6nWzojTwL
-    peiICNakZoz7JLZrMs9aOcD0c0t05D/3aUKjqIHkQNyhJN6Qr0qSdqrYEPuS4ANU
-    f3l7VsBlmLAEPwF42acserq9PWBmQOabl9MO55B5vTHsW6K3QNXfDqZENl35xXU+
-    5XZxp+ysaNjRsanswkrgyw+GaGmqu6AjvdmA==
+    1525683070; b=nQGs3UxpxvzI4UkOEStBNdrrtW8vt1VPe5iEnIFgka7lGRIAYY
+    2IXam4gvei54D4k6UzKzhYbK79jjo/sH1o1Ud+TY6qg9wt4xRuBkCvuHdq67aOio
+    WYkCtuGFYBKMUYK9n/aNg5ng/f+An4fXski4pmXgBMxLVGSShsgn9k6FZ3ukA5S9
+    QzdMeIu7TgfLndFlfUjR6+BSGkUmIG41eEi/ZMYmu9mSlANWOMcoTdyDhqa+atFm
+    9nnNXlfaDjZkWSewHY2AN1mEq+l/XGIOW6T2rmgDv4iPzP54B4+vrRcw6cFneEgT
+    mKvqdniFWrWbg2YUnXf2aWztYS99u1fevCfw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
-    fm2; t=1525791835; bh=7TD4lmr/IwuZhGnCXbngWcxeH8stvXwf+zhL+w2nQX
-    4=; b=Xs4U2l1ehVp8pxQDR/C7+yVJ67fq/8T5brm86ohtZuqGfxQYFRxW5t95n1
-    6sQexxDZi2iyk2a7YxjQ+Yhcyqgiv9p/YzR2PRAnSySbsdcuvgP0molCttyq7GoM
-    YuWZ/qGw5slJ31qNjovVsvLrdI9ikZKH10MgL2wj2UwhC7AVjEY7hf0Pg7dDagyy
-    vWxOj3JpNPsNBdIyoqa1lccVIIxA+gwGwbtkii5d4o4HDgGfmtqDRf9VjSBdFKVW
-    ZfPnfTi5Nn8WUnRFynV4jI6ZyDRHHmS4BUDkeEc/IEncs0RIWVfyQy/ljcaI3WsW
-    8MiT2ZTTbceTPRHnUsAHSyFgliWA==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=invalid (public key: not available, 0-bit  key sha256)
-    header.d=szeredi.hu header.i=@szeredi.hu header.b=M3khqJTj x-bits=0
-    x-keytype="" x-algorithm=sha256 x-selector=google;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=szeredi.hu;
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525683070; bh=
+    +RDJddIFjdNcSUOK41IyhB9NRT1ehVcS+vZRXo3j+5k=; b=Bl+U1akvzFbX2hCq
+    XR4bDt69+BxXgWuOj839s/RSi3MwU9xPxpsL7JIE059uCmY8+vHKEmfPeuEVH65X
+    +l3VMW4d9ChBfb4tGZ0AXW+bcqsk7B/r/h18/aun3JAAy4QYFVQYHet+xrbKQlaa
+    P5ndwOYv6Tp4pa1sKxVvVYVMwDtS32xY/O2TAqLS/M/gMEh5IdBTgR+bL9WLtmn7
+    VOnPfuSvIutK1X62sHafkeyy5cLMl9DMesEH5wHVGjnKEvxbrkQwqRiSOKZY2Qmi
+    KGin3pzl76IFRHjdy4bsG+YUOn9Y+oBZrXwWn6eeFA8B6WeGHWSYSrmURyFdyBJU
+    FBCm8g==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=FWD80XaO;
+    header.i=@1e100.net header.b=d5DBIj18;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=szeredi.hu header.result=pass header_is_org_domain=yes;
+    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx5.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
-    dkim=invalid (public key: not available, 0-bit  key sha256)
-      header.d=szeredi.hu header.i=@szeredi.hu header.b=M3khqJTj x-bits=0
-      x-keytype="" x-algorithm=sha256 x-selector=google;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=szeredi.hu;
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-fsdevel-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=FWD80XaO;
+      header.i=@1e100.net header.b=d5DBIj18;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=szeredi.hu header.result=pass header_is_org_domain=yes;
+      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfHZjlyUD+bp9z2597Yt4l+czPDh4p33lLVPgvBPzdDaIT0M1/YDEmMFys2MpsSa4Rv+PYGmv8CxUV5QUaTGR6KGH+iQZrCDi+cxq3B7SpDvdni9R8uI2
-    P8knax8JwsQJMXF3zNCjqAUC48dT3p+sekjYxnyVxt9rewAn6v9v3FyNAJ2vxckZXLUD+9isBVs6lmU35XCwNCbs3O25hVByOln9AMCUTSd86IsJLcjfDwUu
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x3-3yhV3NOoA:10 a=IkcTkHD0fZMA:10
-    a=VUJBJC2UJ8kA:10 a=JfrnYn6hAAAA:8 a=20KFwNOVAAAA:8 a=rgakPGm3yCeuZKKU_sQA:9
-    a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+X-CM-Envelope: MS4wfNC+0rIKFEs1A0jq8OcrbMxEjO0Y6mUHEINopcrUFHwuK6RGW/cqi+VI4URS9zXeFKYek4MJahzesUHa0yRUyeiF3WIkQXgyi7awoi8vldzhRc1l8VR3
+    D6CTrVgnXc+x7SlvaSUljAS1+WKmOOcJ/c4KfNZlPe0KPm34nlPz3lI+5rR2JAe+HQiL92RyilNI5bGjTHw8Ud8BrU+mHd0lANZPvlZgQHBhJVM+VWS442P0
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
+    a=jODR8vyYUQY6K4GUbjgA:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932792AbeEHPDv (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 8 May 2018 11:03:51 -0400
-Received: from mail-ot0-f180.google.com ([74.125.82.180]:41847 "EHLO
-        mail-ot0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932683AbeEHPDu (ORCPT
+        id S1752050AbeEGIiQ (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 7 May 2018 04:38:16 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:38533 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752017AbeEGIiO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 May 2018 11:03:50 -0400
-X-Google-Smtp-Source: AB8JxZrCaacB1NqasJOlJKg0aj1vG9rBXvVxOwx6hEJY4ww/J+HH/i/5ZJGnirAvV/4QTA+/7eywZZxq5mNS5igJezA=
-MIME-Version: 1.0
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <8f464b5f-a479-6bfe-3abf-b2ed6efe5eb6@infradead.org>
-References: <20180507083807.28792-1-mszeredi@redhat.com> <20180507083807.28792-24-mszeredi@redhat.com>
- <8f464b5f-a479-6bfe-3abf-b2ed6efe5eb6@infradead.org>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 8 May 2018 17:03:49 +0200
-Message-ID: <CAJfpegu-MDi21vBYnyqRBKG40ugPNDY9YUZmkmQ7A5pFp=ak0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 23/35] ovl: copy-up on MAP_SHARED
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 7 May 2018 04:38:14 -0400
+X-Google-Smtp-Source: AB8JxZrOy4G7KLYlg3pbIpWNsgoc1rEVwdxOKz9S5NL+x5K+ESrnTPvK5zNQ28ZTEGAfv/IrBrcJQg==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 01/35] vfs: add path_open()
+Date: Mon,  7 May 2018 10:37:33 +0200
+Message-Id: <20180507083807.28792-2-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
+References: <20180507083807.28792-1-mszeredi@redhat.com>
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 7, 2018 at 9:28 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> On 05/07/2018 01:37 AM, Miklos Szeredi wrote:
->> A corner case of a corner case is when
->>
->>  - file opened for O_RDONLY
->>  - which is then memory mapped SHARED
->>  - file opened for O_WRONLY
->>  - contents modified
->>  - contents read back though the shared mapping
->>
->> Unfortunately it looks very difficult to do anything about the established
->> shared map after the file is copied up.
->>
->> Instead, when a read-only file is mapped shared, copy up the file before
->> actually doing the map.  This may result in unnecessary copy-ups (but so
->> may copy-up on open(O_RDWR) for exampe).
->
->                               for example).
->
->>
->> We can revisit this later if it turns out to be a performance problem in
->> real life.
->>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> ---
->>  fs/overlayfs/Kconfig     | 21 +++++++++++++++++++++
->>  fs/overlayfs/file.c      | 22 ++++++++++++++++++++++
->>  fs/overlayfs/overlayfs.h |  7 +++++++
->>  fs/overlayfs/ovl_entry.h |  1 +
->>  fs/overlayfs/super.c     | 22 ++++++++++++++++++++++
->>  5 files changed, 73 insertions(+)
->>
->> diff --git a/fs/overlayfs/Kconfig b/fs/overlayfs/Kconfig
->> index 17032631c5cf..991c0a5a0e00 100644
->> --- a/fs/overlayfs/Kconfig
->> +++ b/fs/overlayfs/Kconfig
->> @@ -103,3 +103,24 @@ config OVERLAY_FS_XINO_AUTO
->>         For more information, see Documentation/filesystems/overlayfs.txt
->>
->>         If unsure, say N.
->> +
->> +config OVERLAY_FS_COPY_UP_SHARED
->> +       bool "Overlayfs: copy up when mapping a file shared"
->
->                                                 a shared file" ??
+Currently opening an overlay file results in:
 
-This is referring to MAP_SHARED flag of mmap().  So it's the mapping
-that is shared, not the file.
+ - the real file on the underlying layer being opened
+ - f_path being set to the overlay {mount, dentry} pair
 
->
->> +       default n
->> +       depends on OVERLAY_FS
->> +       help
->> +         If this option is enabled then on mapping a file with MAP_SHARED
->> +      overlayfs copies up the file in anticipation of it being modified (just
->> +      like we copy up the file on O_WRONLY and O_RDWR in anticipation of
->> +      modification).  This does not interfere with shared library loading, as
->> +      that uses MAP_PRIVATE.  But there might be use cases out there where
->> +      this impacts performance and disk usage.
->> +
->> +      This just selects the default, the feature can also be enabled or
->> +      disabled in the running kernel or individually on each overlay mount.
->> +
->> +      To get maximally standard compliant behavior, enable this option.
->> +
->> +      To get a maximally backward compatible kernel, disable this option.
->> +
->> +      If unsure, say N.
->
-> For Kconfig (coding-style.rst):
-> Lines under a ``config`` definition are indented with one tab, while help text
-> is indented an additional two spaces.
+This patch adds a new helper that allows the above to be explicitly
+performed.  I.e. it's the same as dentry_open(), except the underlying
+inode to open is given as a separate argument.
 
-Not sure what went wrong there.  Fixed now.
+This is in preparation for stacking I/O operations on overlay files.
 
-Thanks,
-Miklos
+Later, when implicit opening is removed, dentry_open() can be implemented
+by just calling path_open().
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ fs/open.c          | 31 +++++++++++++++++++++++++++++++
+ include/linux/fs.h |  2 ++
+ 2 files changed, 33 insertions(+)
+
+diff --git a/fs/open.c b/fs/open.c
+index c5ee7cd60424..d0bf7f061a1a 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -906,6 +906,37 @@ int vfs_open(const struct path *path, struct file *file,
+ 	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
+ }
+ 
++/**
++ * path_open() - Open an inode by a particular name.
++ * @path: The name of the file.
++ * @flags: The O_ flags used to open this file.
++ * @inode: The inode to open.
++ * @cred: The task's credentials used when opening this file.
++ *
++ * Context: Process context.
++ * Return: A pointer to a struct file or an IS_ERR pointer.  Cannot return NULL.
++ */
++struct file *path_open(const struct path *path, int flags, struct inode *inode,
++		       const struct cred *cred)
++{
++	struct file *file;
++	int retval;
++
++	file = get_empty_filp();
++	if (IS_ERR(file))
++		return file;
++
++	file->f_flags = flags;
++	file->f_path = *path;
++	retval = do_dentry_open(file, inode, NULL, cred);
++	if (retval) {
++		put_filp(file);
++		return ERR_PTR(retval);
++	}
++	return file;
++}
++EXPORT_SYMBOL(path_open);
++
+ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *cred)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8007a31c4d3c..d97a661342c8 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2401,6 +2401,8 @@ extern struct file *filp_open(const char *, int, umode_t);
+ extern struct file *file_open_root(struct dentry *, struct vfsmount *,
+ 				   const char *, int, umode_t);
+ extern struct file * dentry_open(const struct path *, int, const struct cred *);
++extern struct file *path_open(const struct path *, int, struct inode *,
++			      const struct cred *);
+ extern int filp_close(struct file *, fl_owner_t id);
+ 
+ extern struct filename *getname_flags(const char __user *, int, int *);
+-- 
+2.14.3
