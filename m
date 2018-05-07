@@ -1,5 +1,5 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-474343-1525682857-2-5093723758588415086
+X-Cyrus-Session-Id: sloti22d1t05-488117-1525682854-2-17517030971050404687
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-charsets: 
@@ -8,22 +8,22 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525682856; b=kOBa4Eo9g4v7ryWWPwcIJW+AJayF6QMZXbARmWsNaXMbYJPYec
-    VKbdx5Fcv/P+i+aYoJAZW2G/9W70AYsjhFdbjX0iLwMG5ShZnIFicghsmuqnmQ9Z
-    Xir+MRRGirLFAFdC7BWLZfzYccTmWIinqVJWVOPEcXEtzfhm35lc9vJrQOxoVD6F
-    cgVmsuDbVNWYZEWBkb35zUG8oantw4Ed0nGZNpRRmTBqbrTB2nrHFXuKPUdls3WG
-    3Nbr/wLVvRSlQGs2lPmI8OVIfZAIUeCBLaery34W9y2z7P372iSB3repE+V0QJov
-    crnb6GGvQi3/SJwwByXjN/eCZlk/KyLWz4wA==
+    1525682853; b=kwgStmCHSrEWpblJyFvMlBChGsgQTERIA4w7czFaK3aJsf2Udl
+    pHXx5afSH6uhVCWKpwNCw+x7K916q6TNslToLc1JjPkPSTqBc6qbNShGPyNuQA+j
+    z/QJoItsloZP6OOfK/CrXFwiAkkjHQdMxUrl+/9GGCYVpv4gDLDnhIuQ4oQqJTLC
+    ZBjp0v5IIWi7ZlvF8bCMhZnowLoC4Rqdx3uvNuITlQPv2UDbVZmYeCmjs51SRL1T
+    jBReN2P0HWr+lt+iQPkI0EanOnd3jnTM8wdCxU4C+ebTgDf6iohA02pO0IzeBe88
+    b8ndZHH8ZaeNi4MN0QyaGi4SlY7xcOYhfmBA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525682856; bh=
-    nyDOuW1GfPZQ1GZQbmZzRzhKXJNNA2S5T6nZHJoQFag=; b=aOMaTcWC6hMCkVDn
-    mVWnUXngv64rPwUbnq/S1Sf8/g67qf0OqNGAeZb/B1pdz8JvuKEuBe0fgdZhxnoR
-    3vzL+q2R5KPZeNB0LpwDcVhhcGF37lCo7LuFWeZ9BPuQ3XSQX9i3tkd/Nzz1E5PI
-    k7dmXIFk8mR6wCb0oBMdUj8cPdocKZd8a2FAmJ2UrvKY+6wTwAnPvS7xcDn4JSj5
-    n3rIEAUHipSJbvUzMvypOPccfPQFD2caOr8aaGeUgEb0hZGudwnhWtUHZEXfmWgX
-    kSz5BisirWOz+fdQBOohnbZRPHImwPK//cLRsCpjoLBUJY9cufbAo7lUqdaKvjJv
-    /tI19w==
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525682853; bh=
+    w3ISRALrxiZb0tBpzTga2UiXWAM05XSQu1T1cGI0SkM=; b=Nvpq8bmMWhh+cs+4
+    6D+WOhyXryLyGkbecQdw9JbRkf4IwkkvprgXq1hi7qrcu50L2WS6Ij5bs0s811IC
+    erRbJ6HJd+LZAfANiVf4NFvA/rcZOllSe882V2/IkrcEMjaRaw4ZOoEndtrErGtU
+    HglZxwRfUjWTyKzOFc07ymqS01cp4cNX1HuVB5MUmkfF01I2YM0e9VOQroEe/npr
+    jvX0c9Bug2VV2gcw7AbMd8hKc0koh7nPFY3rGcRonn7gHIPpohFPH2z5oJz6fKWQ
+    SGbciJl0vzThIUrsqZC9QfaBWpyfRWzKhAeOZ+co5WZ/WU2Fdyb+TfUO8tNPkFuC
+    sXpWCg==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -33,7 +33,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=XLFlFvR1;
+    header.i=@1e100.net header.b=alASHuP4;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
@@ -49,35 +49,35 @@ Authentication-Results: mx6.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=XLFlFvR1;
+      header.i=@1e100.net header.b=alASHuP4;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNtuiV82ctnLRpjSoytuGD/rCcxQR9NNqem9d6hEbonOcT4SpmN4JDW47xjt/FqexYEDoaH/CtLs0Nll3yhyR2/jOOcWjoK+Bh+cq2sKUDHn0kmASE4m
-    GSmqthFfaCVgbuXWwDVD1jk2HKMmgYiznwqnLzrf76sURvnYuopNszsh1yHcUZrn39dVIeBpRp9wyTsryYpcpfQ2l8q2+BYQoalbKInlCPP4WQFwyONYcu7b
+X-CM-Envelope: MS4wfB1ysoUHDls+vH4A6p3mOmclHhoC6F1Yg9pCXOgKLQi7Aplen6immXOumvWT50yCH5qjChDQ/lmckChbvaTZcDlV7x7AEMW3b4SHeUOqYbret4R5gfkN
+    BsnPzIdS5M+xoOd4PwG0WpHvHSTpGhQ0ABfDUZG3VJH1v70j8J9lYJ4zT7CVA6Zcs8WRc+NJX8BbElbXxp/bYrm+2YVwbj9RWTEMcc5UDSrZFLtTpNno2F1m
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=20KFwNOVAAAA:8
-    a=aXjWnk5xiyF4Ijyz-fwA:9
+    a=UxoLmwnZMme9cPmnS2oA:9
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752499AbeEGIrd (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 7 May 2018 04:47:33 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54681 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752129AbeEGIi1 (ORCPT
+        id S1752416AbeEGIr3 (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 7 May 2018 04:47:29 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:52114 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752135AbeEGIi3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:27 -0400
-X-Google-Smtp-Source: AB8JxZp/dGd+H7MdCID0GFouLxSzRnk4liAmi36vCNiMyZ4HpJkI26tvMQEAdbdS355Ryy+8H9+HEQ==
+        Mon, 7 May 2018 04:38:29 -0400
+X-Google-Smtp-Source: AB8JxZpJOuj9KlLFID6hXT8iK8qf7F6LGf3fUYHVn95LwmgmagIsnl+YlyUKK7EsSQysQoXIHVuyaw==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/35] ovl: stack file ops
-Date: Mon,  7 May 2018 10:37:43 +0200
-Message-Id: <20180507083807.28792-12-mszeredi@redhat.com>
+Subject: [PATCH v2 13/35] ovl: add ovl_read_iter()
+Date: Mon,  7 May 2018 10:37:45 +0200
+Message-Id: <20180507083807.28792-14-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
 References: <20180507083807.28792-1-mszeredi@redhat.com>
@@ -87,146 +87,99 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Implement file operations on a regular overlay file.  The underlying file
-is opened separately and cached in ->private_data.
-
-It might be worth making an exception for such files when accounting in
-nr_file to confirm to userspace expectations.  We are only adding a small
-overhead (248bytes for the struct file) since the real inode and dentry are
-pinned by overlayfs anyway.
-
-This patch doesn't have any effect, since the vfs will use d_real() to find
-the real underlying file to open.  The patch at the end of the series will
-actually enable this functionality.
+Implement stacked reading.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/Makefile    |  4 +--
- fs/overlayfs/file.c      | 76 ++++++++++++++++++++++++++++++++++++++++++++++++
- fs/overlayfs/inode.c     |  1 +
- fs/overlayfs/overlayfs.h |  3 ++
- 4 files changed, 82 insertions(+), 2 deletions(-)
- create mode 100644 fs/overlayfs/file.c
+ fs/overlayfs/file.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-diff --git a/fs/overlayfs/Makefile b/fs/overlayfs/Makefile
-index 30802347a020..46e1ff8ac056 100644
---- a/fs/overlayfs/Makefile
-+++ b/fs/overlayfs/Makefile
-@@ -4,5 +4,5 @@
- 
- obj-$(CONFIG_OVERLAY_FS) += overlay.o
- 
--overlay-objs := super.o namei.o util.o inode.o dir.o readdir.o copy_up.o \
--		export.o
-+overlay-objs := super.o namei.o util.o inode.o file.o dir.o readdir.o \
-+		copy_up.o export.o
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-new file mode 100644
-index 000000000000..a0b606885c41
---- /dev/null
+index db8778e7c37a..bbc40a14acf8 100644
+--- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -0,0 +1,76 @@
-+/*
-+ * Copyright (C) 2017 Red Hat, Inc.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ */
-+
-+#include <linux/cred.h>
-+#include <linux/file.h>
-+#include <linux/xattr.h>
-+#include "overlayfs.h"
-+
-+static struct file *ovl_open_realfile(const struct file *file)
+@@ -9,6 +9,7 @@
+ #include <linux/cred.h>
+ #include <linux/file.h>
+ #include <linux/xattr.h>
++#include <linux/uio.h>
+ #include "overlayfs.h"
+ 
+ static struct file *ovl_open_realfile(const struct file *file)
+@@ -129,8 +130,74 @@ static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
+ 					i_size_read(realinode));
+ }
+ 
++static void ovl_file_accessed(struct file *file)
 +{
-+	struct inode *inode = file_inode(file);
-+	struct inode *upperinode = ovl_inode_upper(inode);
-+	struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
-+	struct file *realfile;
-+	const struct cred *old_cred;
++	struct inode *inode, *upperinode;
 +
-+	old_cred = ovl_override_creds(inode->i_sb);
-+	realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
-+			     realinode, current_cred(), false);
++	if (file->f_flags & O_NOATIME)
++		return;
++
++	inode = file_inode(file);
++	upperinode = ovl_inode_upper(inode);
++
++	if (!upperinode)
++		return;
++
++	if ((!timespec_equal(&inode->i_mtime, &upperinode->i_mtime) ||
++	     !timespec_equal(&inode->i_ctime, &upperinode->i_ctime))) {
++		inode->i_mtime = upperinode->i_mtime;
++		inode->i_ctime = upperinode->i_ctime;
++	}
++
++	touch_atime(&file->f_path);
++}
++
++static rwf_t ovl_iocb_to_rwf(struct kiocb *iocb)
++{
++	int ifl = iocb->ki_flags;
++	rwf_t flags = 0;
++
++	if (ifl & IOCB_NOWAIT)
++		flags |= RWF_NOWAIT;
++	if (ifl & IOCB_HIPRI)
++		flags |= RWF_HIPRI;
++	if (ifl & IOCB_DSYNC)
++		flags |= RWF_DSYNC;
++	if (ifl & IOCB_SYNC)
++		flags |= RWF_SYNC;
++
++	return flags;
++}
++
++static ssize_t ovl_read_iter(struct kiocb *iocb, struct iov_iter *iter)
++{
++	struct file *file = iocb->ki_filp;
++	struct fd real;
++	const struct cred *old_cred;
++	ssize_t ret;
++
++	if (!iov_iter_count(iter))
++		return 0;
++
++	ret = ovl_real_fdget(file, &real);
++	if (ret)
++		return ret;
++
++	old_cred = ovl_override_creds(file_inode(file)->i_sb);
++	ret = vfs_iter_read(real.file, iter, &iocb->ki_pos,
++			    ovl_iocb_to_rwf(iocb));
 +	revert_creds(old_cred);
 +
-+	pr_debug("open(%p[%pD2/%c], 0%o) -> (%p, 0%o)\n",
-+		 file, file, upperinode ? 'u' : 'l', file->f_flags,
-+		 realfile, IS_ERR(realfile) ? 0 : realfile->f_flags);
++	ovl_file_accessed(file);
 +
-+	return realfile;
++	fdput(real);
++
++	return ret;
 +}
 +
-+static int ovl_open(struct inode *inode, struct file *file)
-+{
-+	struct dentry *dentry = file_dentry(file);
-+	struct file *realfile;
-+	int err;
-+
-+	err = ovl_open_maybe_copy_up(dentry, file->f_flags);
-+	if (err)
-+		return err;
-+
-+	/* No longer need these flags, so don't pass them on to underlying fs */
-+	file->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
-+
-+	realfile = ovl_open_realfile(file);
-+	if (IS_ERR(realfile))
-+		return PTR_ERR(realfile);
-+
-+	file->private_data = realfile;
-+
-+	return 0;
-+}
-+
-+static int ovl_release(struct inode *inode, struct file *file)
-+{
-+	fput(file->private_data);
-+
-+	return 0;
-+}
-+
-+static loff_t ovl_llseek(struct file *file, loff_t offset, int whence)
-+{
-+	struct inode *realinode = ovl_inode_real(file_inode(file));
-+
-+	return generic_file_llseek_size(file, offset, whence,
-+					realinode->i_sb->s_maxbytes,
-+					i_size_read(realinode));
-+}
-+
-+const struct file_operations ovl_file_operations = {
-+	.open		= ovl_open,
-+	.release	= ovl_release,
-+	.llseek		= ovl_llseek,
-+};
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index ba3f832cc39a..a228eda66ad8 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -535,6 +535,7 @@ static void ovl_fill_inode(struct inode *inode, umode_t mode, dev_t rdev,
- 	switch (mode & S_IFMT) {
- 	case S_IFREG:
- 		inode->i_op = &ovl_file_inode_operations;
-+		inode->i_fop = &ovl_file_operations;
- 		break;
- 
- 	case S_IFDIR:
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index b9f7c632ab9c..edbf69c8f45d 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -374,6 +374,9 @@ int ovl_create_real(struct inode *dir, struct dentry *newdentry,
- 		    struct dentry *hardlink, bool debug);
- int ovl_cleanup(struct inode *dir, struct dentry *dentry);
- 
-+/* file.c */
-+extern const struct file_operations ovl_file_operations;
-+
- /* copy_up.c */
- int ovl_copy_up(struct dentry *dentry);
- int ovl_copy_up_flags(struct dentry *dentry, int flags);
+ const struct file_operations ovl_file_operations = {
+ 	.open		= ovl_open,
+ 	.release	= ovl_release,
+ 	.llseek		= ovl_llseek,
++	.read_iter	= ovl_read_iter,
+ };
 -- 
 2.14.3
