@@ -1,55 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752307AbeEGKq6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:46:58 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33608 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752035AbeEGKqy (ORCPT
+        id S1752367AbeEGKrM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:47:12 -0400
+Received: from mail-lf0-f41.google.com ([209.85.215.41]:40397 "EHLO
+        mail-lf0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752211AbeEGKrK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:46:54 -0400
+        Mon, 7 May 2018 06:47:10 -0400
+X-Google-Smtp-Source: AB8JxZpZMu5IHfJ27fk0TJIT4EzgGsU5UjG2baGitGu0T6MSlEqVL5mFB7DLKHObpbB7RO6kf0WQ4Q==
+Date: Mon, 7 May 2018 13:47:11 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Larry Woodman <lwoodman@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mm: Introduce 'no5vl kernel parameter
+Message-ID: <20180507104711.fjs6264dmdifd6qs@kshutemo-mobl1>
+References: <20180502161027.36395-1-kirill.shutemov@linux.intel.com>
+ <20180506173315.GA14673@xo-6d-61-c0.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 07 May 2018 16:16:53 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
-In-Reply-To: <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
-References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
- <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
-Message-ID: <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180506173315.GA14673@xo-6d-61-c0.localdomain>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-04 22:01, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-05-03 05:35:23)
->> Changes in v1:
->>    https://lkml.org/lkml/2018/4/24/545
->> Addressed below review comments given by Rob
->> - Change the compatible property as per '<vendor>,<soc>-<block>' 
->> format.
->> - Add header definitions for resets and power-domain cells.
+On Sun, May 06, 2018 at 07:33:52PM +0200, Pavel Machek wrote:
+> On Wed 2018-05-02 19:10:27, Kirill A. Shutemov wrote:
+> > The kernel parameter allows to force kernel to use 4-level paging even
+> > if hardware and kernel support 5-level paging.
+> > 
+> > The option may be useful to workaround regressions related to 5-level
+> > paging.
 > 
-> You didn't add any reset definitions though?
+> There's typo in subject.
 
-We haven't added the reset definitions for videocc as there is no
-video reset client.
+Fixed in v2.
 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+ Kirill A. Shutemov
