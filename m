@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752463AbeEGIky (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:40:54 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42203 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752264AbeEGIiw (ORCPT
+        id S1752402AbeEGImn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:42:43 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52519 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752195AbeEGIil (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:52 -0400
-X-Google-Smtp-Source: AB8JxZrYVXVQNlAECxkCCvQrhYc3HZQYyg2tQ2ONh1VWbkbE+K7Mm1Yh7hSg9UYTLzIHTtk+71+wYw==
+        Mon, 7 May 2018 04:38:41 -0400
+X-Google-Smtp-Source: AB8JxZoqX/nrRlNVbVrnvpoFtHe5tTVgPS2lsL5lm5VjeyxugQdBKqXei/kxf6Bhqltn0QIeb4NfQg==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v2 34/35] vfs: remove open_flags from d_real()
-Date: Mon,  7 May 2018 10:38:06 +0200
-Message-Id: <20180507083807.28792-35-mszeredi@redhat.com>
+Subject: [PATCH v2 24/35] vfs: simplify dentry_open()
+Date: Mon,  7 May 2018 10:37:56 +0200
+Message-Id: <20180507083807.28792-25-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
 References: <20180507083807.28792-1-mszeredi@redhat.com>
@@ -22,195 +22,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Opening regular files on overlayfs is now handled via ovl_open().  Remove
-the now unused "open_flags" argument from d_op->d_real() and the d_real()
-helper.
+dentry_open() can now just call path_open().
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- Documentation/filesystems/Locking |  3 +--
- Documentation/filesystems/vfs.txt | 16 ++++------------
- fs/overlayfs/super.c              | 36 +++---------------------------------
- include/linux/dcache.h            | 11 ++++-------
- include/linux/fs.h                |  2 +-
- 5 files changed, 13 insertions(+), 55 deletions(-)
+ fs/open.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
-diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
-index a4afe96f0112..e1d7e43d302c 100644
---- a/Documentation/filesystems/Locking
-+++ b/Documentation/filesystems/Locking
-@@ -21,8 +21,7 @@ prototypes:
- 	char *(*d_dname)((struct dentry *dentry, char *buffer, int buflen);
- 	struct vfsmount *(*d_automount)(struct path *path);
- 	int (*d_manage)(const struct path *, bool);
--	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int);
-+	struct dentry *(*d_real)(struct dentry *, const struct inode *);
- 
- locking rules:
- 		rename_lock	->d_lock	may block	rcu-walk
-diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
-index af54d3651ff8..8b03c5e675bf 100644
---- a/Documentation/filesystems/vfs.txt
-+++ b/Documentation/filesystems/vfs.txt
-@@ -990,8 +990,7 @@ struct dentry_operations {
- 	char *(*d_dname)(struct dentry *, char *, int);
- 	struct vfsmount *(*d_automount)(struct path *);
- 	int (*d_manage)(const struct path *, bool);
--	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int);
-+	struct dentry *(*d_real)(struct dentry *, const struct inode *);
- };
- 
-   d_revalidate: called when the VFS needs to revalidate a dentry. This
-@@ -1125,22 +1124,15 @@ struct dentry_operations {
- 	dentry being transited from.
- 
-   d_real: overlay/union type filesystems implement this method to return one of
--	the underlying dentries hidden by the overlay.  It is used in three
-+	the underlying dentries hidden by the overlay.  It is used in two
- 	different modes:
- 
--	Called from open it may need to copy-up the file depending on the
--	supplied open flags.  This mode is selected with a non-zero flags
--	argument.  In this mode the d_real method can return an error.
+diff --git a/fs/open.c b/fs/open.c
+index 244cd2ecfefd..1d4bc541c619 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -935,25 +935,12 @@ EXPORT_SYMBOL(path_open);
+ struct file *dentry_open(const struct path *path, int flags,
+ 			 const struct cred *cred)
+ {
+-	int error;
+-	struct file *f;
 -
- 	Called from file_dentry() it returns the real dentry matching the inode
- 	argument.  The real dentry may be from a lower layer already copied up,
- 	but still referenced from the file.  This mode is selected with a
--	non-NULL inode argument.  This will always succeed.
+ 	validate_creds(cred);
+ 
+ 	/* We must always pass in a valid mount pointer. */
+ 	BUG_ON(!path->mnt);
+ 
+-	f = get_empty_filp();
+-	if (IS_ERR(f))
+-		return f;
 -
--	With NULL inode and zero flags the topmost real underlying dentry is
--	returned.  This will always succeed.
-+	non-NULL inode argument.
- 
--	This method is never called with both non-NULL inode and non-zero flags.
-+	With NULL inode the topmost real underlying dentry is returned.
- 
- Each dentry has a pointer to its parent dentry, as well as a hash list
- of child dentries. Child dentries are basically like files in a
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index f2a83fabe2eb..492d534058ae 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -80,28 +80,10 @@ static void ovl_dentry_release(struct dentry *dentry)
- 	}
- }
- 
--static int ovl_check_append_only(struct inode *inode, int flag)
--{
--	/*
--	 * This test was moot in vfs may_open() because overlay inode does
--	 * not have the S_APPEND flag, so re-check on real upper inode
--	 */
--	if (IS_APPEND(inode)) {
--		if  ((flag & O_ACCMODE) != O_RDONLY && !(flag & O_APPEND))
--			return -EPERM;
--		if (flag & O_TRUNC)
--			return -EPERM;
+-	f->f_flags = flags;
+-	error = vfs_open(path, f, cred);
+-	if (error) {
+-		put_filp(f);
+-		return ERR_PTR(error);
 -	}
--
--	return 0;
--}
--
- static struct dentry *ovl_d_real(struct dentry *dentry,
--				 const struct inode *inode,
--				 unsigned int open_flags)
-+				 const struct inode *inode)
- {
- 	struct dentry *real;
--	int err;
- 
- 	/* It's an overlay file */
- 	if (inode && d_inode(dentry) == inode)
-@@ -113,28 +95,16 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
- 		goto bug;
- 	}
- 
--	if (open_flags) {
--		err = ovl_open_maybe_copy_up(dentry, open_flags);
--		if (err)
--			return ERR_PTR(err);
--	}
--
- 	real = ovl_dentry_upper(dentry);
--	if (real && (!inode || inode == d_inode(real))) {
--		if (!inode) {
--			err = ovl_check_append_only(d_inode(real), open_flags);
--			if (err)
--				return ERR_PTR(err);
--		}
-+	if (real && (!inode || inode == d_inode(real)))
- 		return real;
--	}
- 
- 	real = ovl_dentry_lower(dentry);
- 	if (!real)
- 		goto bug;
- 
- 	/* Handle recursion */
--	real = d_real(real, inode, open_flags);
-+	real = d_real(real, inode);
- 
- 	if (!inode || inode == d_inode(real))
- 		return real;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 58fcc66ddccd..2458b18b9356 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -145,8 +145,7 @@ struct dentry_operations {
- 	char *(*d_dname)(struct dentry *, char *, int);
- 	struct vfsmount *(*d_automount)(struct path *);
- 	int (*d_manage)(const struct path *, bool);
--	struct dentry *(*d_real)(struct dentry *, const struct inode *,
--				 unsigned int);
-+	struct dentry *(*d_real)(struct dentry *, const struct inode *);
- } ____cacheline_aligned;
- 
- /*
-@@ -567,7 +566,6 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
-  * d_real - Return the real dentry
-  * @dentry: the dentry to query
-  * @inode: inode to select the dentry from multiple layers (can be NULL)
-- * @flags: open flags to control copy-up behavior
-  *
-  * If dentry is on a union/overlay, then return the underlying, real dentry.
-  * Otherwise return the dentry itself.
-@@ -575,11 +573,10 @@ static inline struct dentry *d_backing_dentry(struct dentry *upper)
-  * See also: Documentation/filesystems/vfs.txt
-  */
- static inline struct dentry *d_real(struct dentry *dentry,
--				    const struct inode *inode,
--				    unsigned int flags)
-+				    const struct inode *inode)
- {
- 	if (unlikely(dentry->d_flags & DCACHE_OP_REAL))
--		return dentry->d_op->d_real(dentry, inode, flags);
-+		return dentry->d_op->d_real(dentry, inode);
- 	else
- 		return dentry;
+-	return f;
++	return path_open(path, flags, d_backing_inode(path->dentry), cred, true);
  }
-@@ -594,7 +591,7 @@ static inline struct dentry *d_real(struct dentry *dentry,
- static inline struct inode *d_real_inode(const struct dentry *dentry)
- {
- 	/* This usage of d_real() results in const dentry */
--	return d_backing_inode(d_real((struct dentry *) dentry, NULL, 0));
-+	return d_backing_inode(d_real((struct dentry *) dentry, NULL));
- }
+ EXPORT_SYMBOL(dentry_open);
  
- struct name_snapshot {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 417e692a606a..8b8d793b3774 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1234,7 +1234,7 @@ static inline struct inode *file_inode(const struct file *f)
- 
- static inline struct dentry *file_dentry(const struct file *file)
- {
--	return d_real(file->f_path.dentry, file_inode(file), 0);
-+	return d_real(file->f_path.dentry, file_inode(file));
- }
- 
- static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
 -- 
 2.14.3
