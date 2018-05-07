@@ -1,71 +1,146 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753435AbeEGXaJ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 19:30:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57924 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752938AbeEGXaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 19:30:07 -0400
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: viro@zeniv.linux.org.uk
-Cc: ast@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH] coredump: rename umh_pipe_setup() to coredump_pipe_setup()
-Date: Mon,  7 May 2018 16:30:02 -0700
-Message-Id: <20180507233002.5571-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.17.0
+        id S1753452AbeEGXfR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 19:35:17 -0400
+Received: from mail-pl0-f44.google.com ([209.85.160.44]:38893 "EHLO
+        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753149AbeEGXfP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 19:35:15 -0400
+X-Google-Smtp-Source: AB8JxZriHqDInfUgQwbTfz6GoRP0HB+hPomaYsd8JeDROH65do6KIs+ybrGKd2DZx9kS71+eQZ7KIg==
+Date: Mon, 7 May 2018 16:35:11 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] arm64: dts: Add msm8998 SoC and MTP board support
+Message-ID: <20180507233511.GC14924@minitux>
+References: <20180428054248.22387-1-bjorn.andersson@linaro.org>
+ <152573399648.138124.10341359049104453178@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <152573399648.138124.10341359049104453178@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes it clearer this code is part of the coredump code, and
-is not an exported generic helper from kernel/umh.c.
+On Mon 07 May 15:59 PDT 2018, Stephen Boyd wrote:
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- fs/coredump.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> Quoting Bjorn Andersson (2018-04-27 22:42:47)
+> > diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> > new file mode 100644
+> > index 000000000000..d6665e4f801f
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> > @@ -0,0 +1,340 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/* Copyright (c) 2016, The Linux Foundation. All rights reserved. */
+> > +
+> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +#include <dt-bindings/clock/qcom,gcc-msm8998.h>
+> > +
+> > +/ {
+> > +       model = "Qualcomm Technologies, Inc. MSM 8998";
+> > +
+> > +       interrupt-parent = <&intc>;
+> > +
+> > +       qcom,msm-id = <292 0x0>;
+> 
+> No update to dtbtool?
+> 
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 1e2c87acac9b..566504781683 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -508,7 +508,7 @@ static void wait_for_dump_helpers(struct file *file)
- }
- 
- /*
-- * umh_pipe_setup
-+ * coredump_pipe_setup
-  * helper function to customize the process used
-  * to collect the core in userspace.  Specifically
-  * it sets up a pipe and installs it as fd 0 (stdin)
-@@ -518,7 +518,7 @@ static void wait_for_dump_helpers(struct file *file)
-  * is a special value that we use to trap recursive
-  * core dumps
-  */
--static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
-+static int coredump_pipe_setup(struct subprocess_info *info, struct cred *new)
- {
- 	struct file *files[2];
- 	struct coredump_params *cp = (struct coredump_params *)info->data;
-@@ -606,7 +606,7 @@ void do_coredump(const siginfo_t *siginfo)
- 		}
- 
- 		if (cprm.limit == 1) {
--			/* See umh_pipe_setup() which sets RLIMIT_CORE = 1.
-+			/* See coredump_pipe_setup() which sets RLIMIT_CORE = 1.
- 			 *
- 			 * Normally core limits are irrelevant to pipes, since
- 			 * we're not writing to the file system, but we use
-@@ -647,7 +647,8 @@ void do_coredump(const siginfo_t *siginfo)
- 		retval = -ENOMEM;
- 		sub_info = call_usermodehelper_setup(helper_argv[0],
- 						helper_argv, NULL, GFP_KERNEL,
--						umh_pipe_setup, NULL, &cprm);
-+						coredump_pipe_setup, NULL,
-+						&cprm);
- 		if (sub_info)
- 			retval = call_usermodehelper_exec(sub_info,
- 							  UMH_WAIT_EXEC);
--- 
-2.17.0
+This allows me to concatenate the dtb to the Image.gz and boot the
+device. From my scripts I see that I tried to use dtbTool before
+reverting to this...
+
+[..]
+> > +               cpu-map {
+> > +                       cluster0 {
+> > +                               core0 {
+> > +                                       cpu = <&CPU0>;
+> > +                               };
+> > +
+> > +                               core1 {
+> > +                                       cpu = <&CPU1>;
+> > +                               };
+> > +
+> > +                               core2 {
+> > +                                       cpu = <&CPU2>;
+> > +                               };
+> > +
+> > +                               core3 {
+> > +                                       cpu = <&CPU3>;
+> > +                               };
+> > +                       };
+> > +
+> > +                       cluster1 {
+> > +                               core0 {
+> > +                                       cpu = <&CPU4>;
+> > +                               };
+> > +
+> > +                               core1 {
+> > +                                       cpu = <&CPU5>;
+> > +                               };
+> > +
+> > +                               core2 {
+> > +                                       cpu = <&CPU6>;
+> > +                               };
+> > +
+> > +                               core3 {
+> > +                                       cpu = <&CPU7>;
+> > +                               };
+> > +                       };
+> > +               };
+> 
+> I still wonder if this is accurate, but OK.
+> 
+
+Afaict it matches downstream, not sure if I'm missing something?
+
+[..]
+> > +       intc: interrupt-controller@17a00000 {
+> > +               compatible = "arm,gic-v3";
+> > +               reg = <0x17a00000 0x10000>,       /* GICD */
+> > +                     <0x17b00000 0x100000>;      /* GICR * 8 */
+> > +               #interrupt-cells = <3>;
+> > +               #address-cells = <1>;
+> > +               #size-cells = <1>;
+> > +               ranges;
+> > +               interrupt-controller;
+> > +               #redistributor-regions = <1>;
+> > +               redistributor-stride = <0x0 0x20000>;
+> 
+> Is this needed? The redistributor stuff can be left out if there's only
+> one right?
+> 
+
+#redistributor-regions is listed as optional if there's more than 1, the
+stride is still needed.
+
+Afaict the stride still needs to be specified, as it's different from
+the default 64kb.
+
+> > +               interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> > +       };
+> > +
+> > +       blsp2_uart1: serial@c1b0000 {
+> 
+> Clk name says uart2 though?
+> 
+
+That's because it's the wrong clock. Thanks!
+
+> > +               compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
+> > +               reg = <0xc1b0000 0x1000>;
+> > +               interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
+> > +               clocks = <&gcc GCC_BLSP2_UART2_APPS_CLK>,
+> > +                        <&gcc GCC_BLSP2_AHB_CLK>;
+> > +               clock-names = "core", "iface";
+> > +               status = "disabled";
+> > +       };
+
+Regards,
+Bjorn
