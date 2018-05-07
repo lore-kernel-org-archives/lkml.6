@@ -1,202 +1,246 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-3571979-1525820788-2-8125891604323150521
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org', XOriginatingCountry='US'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525820787; b=S93q3Umn2EbMsxCLgk/fquGVxD7iFpzHMOezy7ob8JBvYzjuZp
-    R9cVD4q3LTNjubiJiG1GF5fPFV55ARg3KOh58GWT1KoxBFpakZe3AI/Jb/Fi4nqc
-    pXTEDA3uXzp/S3jIgZizh9AEvBY6X0NHn/jPdcagIEwADkPo0nSaXLksG2W04QrU
-    RMkGMR/xxfsNkpFssa4thNXDe1+PRXXqyJutte9TThocI5+Dr1AsuE1jd0Jqn0IA
-    /D8hZyqDjRWKEsXdcAF01RMoXqS8R+L5kkP0jiGdsYgy1xmOl6HsefT6JyZB//YU
-    hksopWre5E0DC9VjZ+/iu4CTWSVy7fpLqIHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :references:in-reply-to:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525820787; bh=Si7gR
-    JVAY80weo3PerQ4N8Nfa/JBUIqGmDV56mhV1+g=; b=FaZd8uh3evNnZV3/yLYV6
-    WEpg+PONYhb5pAuD7cuihjK0t0UoBNaZzIfhgrzBYeVw9KtOUh1VXKy7rek2WgnB
-    J7cz02phpsuGAvi+HKW1Gat0rs2o47uKmuUhkLHcR/Vq1+GDFuTPjf0NL5aFoVoI
-    KIMkp5IaetjFGsnX2WJlNGMDRgQlH0GPCZcj5IqsJDVyUYX9JnJb7FRbkea6mNE4
-    xE4udOm3RIjVuuM9dr84Olp0Vc8fEY1wjEHgwAjSbzGp14WRrx4OzYSC/7x7Vpl0
-    btHuG9ScikaRVSH5btn78oUOWht5SNBGAnGNzH1t2nuMuUyKb0ndoDfLyXxX18zY
-    w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=microsoft.com header.i=@microsoft.com header.b=dnuYnqxi
-    x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject)
-    header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=microsoft.com header.i=@microsoft.com header.b=dnuYnqxi
-      x-bits=1024 x-keytype=rsa x-algorithm=sha256 x-selector=selector1;
-    dmarc=fail (p=reject,has-list-id=yes,d=reject)
-      header.from=microsoft.com;
-    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=silver.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=microsoft.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDsXpzLph41ZdN/xJJEvgmtCeFZNUQtY6x2R5ZkKlI03e3kumufxQYFJ2nHzp4hvCgC8ZGInT9dbDURto2XFmQ+FipyiZnePsVz7j3++8uwGbIFOleqc
-    P4FGbpBZKAIowhN1v8ebm+18ou+7uRT5za0ZSuCDEwMOKMN05maGbkHXbgKLn8EJLaRDyvjQl59SKCHxRokZZMaACldFwRIM06kOGSLA3Ik7+4MqNz+d0o7F
-    L/b0v4dXA/ukyL3zlfdpDg==
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
-    a=FmzrR3azffoSx43hyxYGHg==:17 a=pP0Gbf12DoIA:10 a=hyy5rRJ4iSQA:10
-    a=i8TdBrTEp8QA:10 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10 a=Lf-vpJhqX20A:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=jZVsG21pAAAA:8 a=yMhMjlubAAAA:8
-    a=DDOyTI_5AAAA:8 a=WdetqbSWoILD-OKlLNIA:9 a=CjuIK1q_8ugA:10
-    a=3Sh2lD0sZASs_lUdrUhf:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Dexuan Cui <decui@microsoft.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Subject: RE: [PATCH] Drivers: hv: vmbus: enable VMBus protocol version 5.0
-Thread-Topic: [PATCH] Drivers: hv: vmbus: enable VMBus protocol version 5.0
-Thread-Index: AdPnGpZjEjN6JH3ySGSQrnm2yoYh9wAA6qmAAABexPA=
-Date: Tue, 8 May 2018 23:06:02 +0000
-Message-ID: <KL1P15301MB00064D52564FA764B6B00CE9BF9A0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
-References: <KL1P15301MB00067B95F6D0B3D97387E315BF9A0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
- <20180508154525.37b6ddee@xeon-e3>
-In-Reply-To: <20180508154525.37b6ddee@xeon-e3>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-05-08T23:05:59.9761146Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com;
-x-originating-ip: [131.107.159.5]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1; KL1P15301MB0038;
- 7:bE1EE3x4Tg8y/wNMFkqLZ8t8sUH1ILh+jmfKQOdZOWBzYeoqQ3k3ReVWh7qPXhcuSIB9GsroL8CtOX+Osuz8SaZdm7WQXrcHsNjbq82LK3Gd9bUEtogIeFZ+52w7ILB616H19a3fzXSfujfSpHuydL95OKfBr8RXrP72iHWB0bkCWofAOjlIylQyyD/Y28mpf0gxh8WCmdyaG7dQMNWteyWfj/GxQyoBwjkwoHIT66kNoCiH5gRaswd4SaNVqbfg;
- 20:8NBpkU7y3eibCwmFF/XOaVL2AS7y6QmytzhtWTMXzTsMlXYpSs1IcA4F784eSbVtT0LkYIbkMMZX3MbA1q6wlJHlzF8y5QnePu6e9nHbTVgpN/W5/YxaPsv2KzXerWBPUs0QXXpfB8QBPekX1/IUvxCF4FwYimHSdFogCC0FoK4=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:; BCL:0; PCL:0;
- RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);
- SRVR:KL1P15301MB0038;
-x-ms-traffictypediagnostic: KL1P15301MB0038:
-x-o365ent-eop-header: Message processed by -  O365_ENT: Allow from ranges
- (Engineering ONLY)
-x-microsoft-antispam-prvs: <KL1P15301MB003801F5AFC46A9B1C153F96BF9A0@KL1P15301MB0038.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(788757137089); 
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0; PCL:0;
- RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);
- SRVR:KL1P15301MB0038; BCL:0; PCL:0; RULEID:; SRVR:KL1P15301MB0038;
-x-forefront-prvs: 0666E15D35
-x-forefront-antispam-report: SFV:NSPM;
- SFS:(10019020)(346002)(366004)(39380400002)(39860400002)(396003)(376002)(24433001)(189003)(199004)(316002)(8936002)(33656002)(2906002)(81166006)(3280700002)(305945005)(9686003)(8676002)(22452003)(74316002)(6506007)(68736007)(55016002)(10290500003)(81156014)(6916009)(186003)(99286004)(7696005)(25786009)(26005)(2900100001)(54906003)(97736004)(76176011)(77096007)(102836004)(5660300001)(4326008)(6436002)(8990500004)(486006)(53936002)(106356001)(105586002)(66066001)(86612001)(7736002)(229853002)(6246003)(6116002)(11346002)(3846002)(10090500001)(14454004)(476003)(446003)(3660700001)(86362001)(478600001);
- DIR:OUT; SFP:1102; SCL:1; SRVR:KL1P15301MB0038;
- H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM; FPR:; SPF:None; LANG:en;
- PTR:InfoNoRecords; MX:1; A:1;
-x-microsoft-antispam-message-info: 7u/uIS0quacs9D3cfhKa8O3KsrZR9Pfv10I9KXMuDml/3SW7SuO4M0A/XvWYv5pecBoKz0jK/TkgNmB6R9pqhDKLcJ9GGcq2vmCNsopeJtFs1NhF/4QrK5C5ycayU85+CLVHQAfojpIh1O0YRnlaCY+O1gS7S2he9hPcdng9VORZLkTJUVKpfM8BYtK6a4R/B2yVZU46S9v8iV4uFn/hag==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 458c8b4c-b483-4cc2-ce7b-08d5b53845b4
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 458c8b4c-b483-4cc2-ce7b-08d5b53845b4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2018 23:06:02.9802 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0038
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: "'olaf@aepfle.de'" <olaf@aepfle.de>,
- Stephen Hemminger <sthemmin@microsoft.com>,
- Jork Loeser <Jork.Loeser@microsoft.com>,
- "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
- "'jasowang@redhat.com'" <jasowang@redhat.com>,
- "'driverdev-devel@linuxdriverproject.org'"
- <driverdev-devel@linuxdriverproject.org>,
- "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
- "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
- "'apw@canonical.com'" <apw@canonical.com>,
- "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>,
- "'vkuznets@redhat.com'" <vkuznets@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <baolin.wang@linaro.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525685380; cv=none;
+        d=google.com; s=arc-20160816;
+        b=RcqWUkQ2P/g2Uz/3uD3gbtBreN/JT98x358PQF77bYK3QqFBopiwyMxf+HwuU1YvYR
+         P1U5oNk2WrlC3hyuYBmd0QDDPqji65yzpn85P535QOQVKmFw0G8NIv88DnbL1CNXlgMB
+         QHZpXZNtFazAP2Sg9FTKrpcpdrq65oPFx7P+T1l0Arqj2/g0b2qxGnBGKheB08+7NGQu
+         ZRlPf9acT6QB5vR7Sg4KAvfzfAQ4p6tkL7a7EJwOEpjlF9st2JQZyBbKkyfsmt1NobPr
+         N3d6ABC7XpjtqN9AhVHs870HsXrNFdfk1HFDkX2bbaJE94ni5zw9yUJNw7Ie8neCoY7Y
+         UIPg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=2rJNs4E1e+dE9mJC2hUBQACnIonHWogaCNotKEm3Mog=;
+        b=njdmHsjnZtNwVosxjjPIrdXqmf/b5YGR/O7JB0Mfg4FqD4kFu35D2R+PWq4eTQVvli
+         igESrtw77xVLfGf2B8FaOe3+kuRBaIhYaESHdvXhy8DifE2JWkMwqKPkXBB/fWDDMQaP
+         2B/iRmDFrfGsSjpKLswVpqtnYZCWVlFn/e2wLtdhm2rtsAlJTa9bjQGyrwsmjmPpTIh2
+         l7ed7i9OlQEhY9l3krYklCJNnOKHxOPz2cwol+HMa1zBMz4yu9ckh1MJYSnkhea/hKft
+         npncytaHv0sQ6dgPWPEpM/qCR9ILT29GUPdDFE9t1MYCJlJvwOIfUO7ceXvatcYx1XR9
+         udRg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=daou/Fxq;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linaro.org header.s=google header.b=daou/Fxq;
+       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+X-Google-Smtp-Source: AB8JxZpoWD0xrc3qigqYUPsQHVPeLBWa4paIaTtKwcg1q8CgKiBE+nPEcDO7a2xzcJd0oXDCyZnsWA==
+From: Baolin Wang <baolin.wang@linaro.org>
+To: macro@linux-mips.org,
+	ralf@linux-mips.org,
+	jhogan@kernel.org,
+	chenhc@lemote.com
+Cc: kstewart@linuxfoundation.org,
+	gregkh@linuxfoundation.org,
+	tglx@linutronix.de,
+	pombredanne@nexb.com,
+	arnd@arndb.de,
+	broonie@kernel.org,
+	paul.burton@mips.com,
+	heiko@sntech.de,
+	daniel.lezcano@linaro.org,
+	viresh.kumar@linaro.org,
+	baolin.wang@linaro.org,
+	linux-mips@linux-mips.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] MIPS: Convert read_persistent_clock() to read_persistent_clock64()
+Date: Mon,  7 May 2018 17:28:27 +0800
+Message-Id: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525682212.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599797073537984267?=
+X-GMAIL-MSGID: =?utf-8?q?1599797073537984267?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Tuesday, May 8, 2018 15:45
-> On Tue, 8 May 2018 22:26:21 +0000
-> Dexuan Cui <decui@microsoft.com> wrote:
-> 
-> > @@ -63,6 +63,9 @@ static __u32 vmbus_get_next_version(__u32
-> current_version)
-> >  	case (VERSION_WIN10):
-> >  		return VERSION_WIN8_1;
-> >
-> > +	case (VERSION_WIN10_V5):
-> > +		return VERSION_WIN10;
-> > +
-> >  	case (VERSION_WS2008):
-> 
-> In a future patch, we should get rid of the use of parenthesis on this switch
-> statement.  Lots of other cleanup of this code is possible as well.
+Since struct timespec is not y2038 safe on 32bit machines, this patch
+converts read_persistent_clock() to read_persistent_clock64() using
+struct timespec64, as well as converting mktime() to mktime64().
 
-I agree.
-We can make another patch to clean up this function. Maybe we should
-replace the function with an array of versions.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes since v2;
+ - No updates.
 
-Thanks,
--- Dexuan
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+Changes since v1:
+ - No updates.
+---
+ arch/mips/dec/time.c                   |    4 ++--
+ arch/mips/include/asm/mc146818-time.h  |    4 ++--
+ arch/mips/lasat/ds1603.c               |    2 +-
+ arch/mips/loongson64/common/time.c     |    2 +-
+ arch/mips/mti-malta/malta-time.c       |    2 +-
+ arch/mips/sibyte/swarm/rtc_m41t81.c    |    4 ++--
+ arch/mips/sibyte/swarm/rtc_xicor1241.c |    4 ++--
+ arch/mips/sibyte/swarm/setup.c         |   10 +++++-----
+ 8 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/arch/mips/dec/time.c b/arch/mips/dec/time.c
+index a2a150e..9e992cf 100644
+--- a/arch/mips/dec/time.c
++++ b/arch/mips/dec/time.c
+@@ -19,7 +19,7 @@
+ #include <asm/dec/ioasic.h>
+ #include <asm/dec/machtype.h>
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	unsigned int year, mon, day, hour, min, sec, real_year;
+ 	unsigned long flags;
+@@ -54,7 +54,7 @@ void read_persistent_clock(struct timespec *ts)
+ 
+ 	year += real_year - 72 + 2000;
+ 
+-	ts->tv_sec = mktime(year, mon, day, hour, min, sec);
++	ts->tv_sec = mktime64(year, mon, day, hour, min, sec);
+ 	ts->tv_nsec = 0;
+ }
+ 
+diff --git a/arch/mips/include/asm/mc146818-time.h b/arch/mips/include/asm/mc146818-time.h
+index 9e1ad26..cbf5cec 100644
+--- a/arch/mips/include/asm/mc146818-time.h
++++ b/arch/mips/include/asm/mc146818-time.h
+@@ -86,7 +86,7 @@ static inline int mc146818_set_rtc_mmss(unsigned long nowtime)
+ 	return retval;
+ }
+ 
+-static inline unsigned long mc146818_get_cmos_time(void)
++static inline time64_t mc146818_get_cmos_time(void)
+ {
+ 	unsigned int year, mon, day, hour, min, sec;
+ 	unsigned long flags;
+@@ -113,7 +113,7 @@ static inline unsigned long mc146818_get_cmos_time(void)
+ 	spin_unlock_irqrestore(&rtc_lock, flags);
+ 	year = mc146818_decode_year(year);
+ 
+-	return mktime(year, mon, day, hour, min, sec);
++	return mktime64(year, mon, day, hour, min, sec);
+ }
+ 
+ #endif /* __ASM_MC146818_TIME_H */
+diff --git a/arch/mips/lasat/ds1603.c b/arch/mips/lasat/ds1603.c
+index 8bd5cf8..d75c887 100644
+--- a/arch/mips/lasat/ds1603.c
++++ b/arch/mips/lasat/ds1603.c
+@@ -136,7 +136,7 @@ static void rtc_end_op(void)
+ 	lasat_ndelay(1000);
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	unsigned long word;
+ 	unsigned long flags;
+diff --git a/arch/mips/loongson64/common/time.c b/arch/mips/loongson64/common/time.c
+index e1a5382a..0ba53c5 100644
+--- a/arch/mips/loongson64/common/time.c
++++ b/arch/mips/loongson64/common/time.c
+@@ -29,7 +29,7 @@ void __init plat_time_init(void)
+ #endif
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	ts->tv_sec = mc146818_get_cmos_time();
+ 	ts->tv_nsec = 0;
+diff --git a/arch/mips/mti-malta/malta-time.c b/arch/mips/mti-malta/malta-time.c
+index 66c8667..d22b7ed 100644
+--- a/arch/mips/mti-malta/malta-time.c
++++ b/arch/mips/mti-malta/malta-time.c
+@@ -134,7 +134,7 @@ static void __init estimate_frequencies(void)
+ 	}
+ }
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+ 	ts->tv_sec = mc146818_get_cmos_time();
+ 	ts->tv_nsec = 0;
+diff --git a/arch/mips/sibyte/swarm/rtc_m41t81.c b/arch/mips/sibyte/swarm/rtc_m41t81.c
+index e624664..aa27a22 100644
+--- a/arch/mips/sibyte/swarm/rtc_m41t81.c
++++ b/arch/mips/sibyte/swarm/rtc_m41t81.c
+@@ -188,7 +188,7 @@ int m41t81_set_time(unsigned long t)
+ 	return 0;
+ }
+ 
+-unsigned long m41t81_get_time(void)
++time64_t m41t81_get_time(void)
+ {
+ 	unsigned int year, mon, day, hour, min, sec;
+ 	unsigned long flags;
+@@ -218,7 +218,7 @@ unsigned long m41t81_get_time(void)
+ 
+ 	year += 2000;
+ 
+-	return mktime(year, mon, day, hour, min, sec);
++	return mktime64(year, mon, day, hour, min, sec);
+ }
+ 
+ int m41t81_probe(void)
+diff --git a/arch/mips/sibyte/swarm/rtc_xicor1241.c b/arch/mips/sibyte/swarm/rtc_xicor1241.c
+index 50a82c4..a2121c1 100644
+--- a/arch/mips/sibyte/swarm/rtc_xicor1241.c
++++ b/arch/mips/sibyte/swarm/rtc_xicor1241.c
+@@ -168,7 +168,7 @@ int xicor_set_time(unsigned long t)
+ 	return 0;
+ }
+ 
+-unsigned long xicor_get_time(void)
++time64_t xicor_get_time(void)
+ {
+ 	unsigned int year, mon, day, hour, min, sec, y2k;
+ 	unsigned long flags;
+@@ -201,7 +201,7 @@ unsigned long xicor_get_time(void)
+ 
+ 	year += (y2k * 100);
+ 
+-	return mktime(year, mon, day, hour, min, sec);
++	return mktime64(year, mon, day, hour, min, sec);
+ }
+ 
+ int xicor_probe(void)
+diff --git a/arch/mips/sibyte/swarm/setup.c b/arch/mips/sibyte/swarm/setup.c
+index 494fb0a..7073940 100644
+--- a/arch/mips/sibyte/swarm/setup.c
++++ b/arch/mips/sibyte/swarm/setup.c
+@@ -58,11 +58,11 @@
+ 
+ extern int xicor_probe(void);
+ extern int xicor_set_time(unsigned long);
+-extern unsigned long xicor_get_time(void);
++extern time64_t xicor_get_time(void);
+ 
+ extern int m41t81_probe(void);
+ extern int m41t81_set_time(unsigned long);
+-extern unsigned long m41t81_get_time(void);
++extern time64_t m41t81_get_time(void);
+ 
+ const char *get_system_type(void)
+ {
+@@ -87,9 +87,9 @@ enum swarm_rtc_type {
+ 
+ enum swarm_rtc_type swarm_rtc_type;
+ 
+-void read_persistent_clock(struct timespec *ts)
++void read_persistent_clock64(struct timespec64 *ts)
+ {
+-	unsigned long sec;
++	time64_t sec;
+ 
+ 	switch (swarm_rtc_type) {
+ 	case RTC_XICOR:
+@@ -102,7 +102,7 @@ void read_persistent_clock(struct timespec *ts)
+ 
+ 	case RTC_NONE:
+ 	default:
+-		sec = mktime(2000, 1, 1, 0, 0, 0);
++		sec = mktime64(2000, 1, 1, 0, 0, 0);
+ 		break;
+ 	}
+ 	ts->tv_sec = sec;
+-- 
+1.7.9.5
