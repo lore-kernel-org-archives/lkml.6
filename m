@@ -1,60 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752685AbeEGOpg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 10:45:36 -0400
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:53766 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752555AbeEGOpa (ORCPT
+        id S1752297AbeEGOqJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 10:46:09 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:43714 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbeEGOqG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 10:45:30 -0400
-Date: Mon, 7 May 2018 10:45:19 -0400
-From: Rich Felker <dalias@libc.org>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rob Landley <rob@landley.net>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
- device tree
-Message-ID: <20180507144519.GH1392@brightrain.aerifal.cx>
-References: <8c75b447-fc14-871e-1a04-733132527b65@landley.net>
- <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
- <20171117191706.GF1627@brightrain.aerifal.cx>
- <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
- <20180105212857.GR1627@brightrain.aerifal.cx>
- <20180503013708.GC1392@brightrain.aerifal.cx>
- <20180503023320.GD1392@brightrain.aerifal.cx>
- <048ab147-21b8-045d-d21c-e1be2dd0e954@physik.fu-berlin.de>
- <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
- <5f690985-e905-deb9-aa4f-51561463ae22@physik.fu-berlin.de>
+        Mon, 7 May 2018 10:46:06 -0400
+X-Google-Smtp-Source: AB8JxZrar1OkTKVDYLYH4MI2n+Qsd6Fa6+WulDohZs7NpKW2xyDbkqGzlaq0BxYJU3JaZ8QlW7ipAwytXUnl84dhBDc=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f690985-e905-deb9-aa4f-51561463ae22@physik.fu-berlin.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAHp75VfM+1HUi6W986r0iEiuS46TJc8XscO_ce4N-i66EtPLWA@mail.gmail.com>
+References: <20180503030438.51150-1-chiu@endlessm.com> <CAHp75VfM+1HUi6W986r0iEiuS46TJc8XscO_ce4N-i66EtPLWA@mail.gmail.com>
+From: Daniel Drake <drake@endlessm.com>
+Date: Mon, 7 May 2018 08:46:05 -0600
+Message-ID: <CAD8Lp46edWAR2iVti8gGp+L_yy91ij6AHuJh3iuuTLg8oUq47g@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/x86: asus-wmi: Add keyboard backlight toggle support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Chris Chiu <chiu@endlessm.com>,
+        Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        acpi4asus-user <acpi4asus-user@lists.sourceforge.net>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>, bberg@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 01:00:17PM +0200, John Paul Adrian Glaubitz wrote:
-> On 05/07/2018 03:40 AM, Yoshinori Sato wrote:
-> >>@Yoshinori:
-> >>
-> >>Did the HDL-160U LANDISK device you have use u-boot by default or
-> >>did you convert it from lilo?
+Hi Andy,
+
+On Mon, May 7, 2018 at 8:10 AM, Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Thu, May 3, 2018 at 6:04 AM, Chris Chiu <chiu@endlessm.com> wrote:
+> > Some Asus laptops like UX550GE has hotkey (Fn+F7) for keyboard
+> > backlight toggle. In this UX550GE, the hotkey incremet the level
+> > of brightness for each keypress from 1 to 3, and then switch it
+> > off when the brightness has been the max. This commit interprets
+> > the code 0xc7 generated from hotkey to KEY_KBDILLUMUP to increment
+> > the brightness, then pass KEY_KBDILLUMTOGGLE to user space after
+> > the brightness max been reached for switching the led off.
 > >
-> >Yes.
-> >Replace sh-lilo's second stage with u-boot.
-> >With this method it is unnecessary to rewrite Flash for boot.
-> 
-> Great, thank you. I will give it a try on my USL-5P and write down
-> the individual steps once I have figured it out.
+>
+> Pushed to my review and testing queue, thanks!
 
-Please let me know once you figure it out. I haven't made much
-progress yet and it would be really helpful to have some simple
-directions/outline of what to do, especially one that's not in terms
-of black box tools ("run this command") but how it all works (where
-the different bootloader components live when installed -- MBRs?
-partition boot records? files in a filesystem (who interprets it?)?
-etc.)
+We found that GNOME's handling of the toggle key is somewhat imperfect
+and it will need modifying before we achieve the
+Up-Up-Up-off-Up-Up-Up-off... cycle that we are looking for.
 
-Rich
+https://gitlab.gnome.org/GNOME/gnome-settings-daemon/issues/41
+
+In that discussion an alternative perspective was raised:
+
+Is it right for the kernel to modify the key sent to userspace, when
+it is then relying on the specific userspace action of it changing the
+brightness to the next expected level? (and this userspace behaviour
+is not even working right in the GNOME case)
+
+Instead, would it make sense for the kernel to always report TOGGLE in
+this case, and for GNOME to interpret toggle as simply "cycle through
+all the available brightness levels"?
+
+We'd be interested in your thoughts.
+
+Thanks
+Daniel
