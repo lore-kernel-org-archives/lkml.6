@@ -1,49 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752611AbeEGOIM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 10:08:12 -0400
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:41386 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752464AbeEGOIK (ORCPT
+        id S1752657AbeEGOI2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 10:08:28 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46916 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751943AbeEGOIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 10:08:10 -0400
-X-Google-Smtp-Source: AB8JxZo6KSBnidkebz6jSybTXRtrqRNWMx08HOaaI6T20CPV4uNWBLN6/7AbEfKaPzRFVPvCQwQcJQvk/Tk7VnYB4ck=
-MIME-Version: 1.0
-In-Reply-To: <20180425173932.7213-3-jagan@amarulasolutions.com>
-References: <20180425173932.7213-1-jagan@amarulasolutions.com> <20180425173932.7213-3-jagan@amarulasolutions.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Mon, 7 May 2018 11:08:09 -0300
-Message-ID: <CAOMZO5BAV5Gs3vuwK+_0FkDFm6k4WaMvdLD1Tyv=ye_9zNV11g@mail.gmail.com>
-Subject: Re: [PATCH 3/4] ARM: dts: i.MX6: imx6dl-mamoj: Add Wifi support
-To: Jagan Teki <jagan@amarulasolutions.com>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Fabio maggi <fabio.mauri@bticino.it>,
-        Raffaele Recalcati <lamiaposta71@gmail.com>,
-        Andrea CORTESE <andrea.cortese@bticino.it>,
-        "davide . bonfanti" <davide.bonfanti@bticino.it>,
-        Shyam Saini <shyam.saini@amarulasolutions.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Simone CIANNI <simone.cianni@bticino.it>,
-        Raffaele RECALCATI <raffaele.recalcati@bticino.it>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 7 May 2018 10:08:23 -0400
+X-Google-Smtp-Source: AB8JxZrg+93ndJTI6w3hw/apCVYENb8fNN0H1/JSkLorLhuem9lHGEoZ/hRVnJP9ScZUIqHtu3BnnQ==
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: davem@davemloft.net, fthain@telegraphics.com.au, joe@perches.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] net: 8390: Fix possible data races in __ei_get_stats
+Date: Mon,  7 May 2018 22:08:09 +0800
+Message-Id: <20180507140809.28847-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Apr 25, 2018 at 2:39 PM, Jagan Teki <jagan@amarulasolutions.com> wrote:
-> Add TI WL18XX Wifi for BTicino i.MX6DL board.
->
-> Signed-off-by: Simone CIANNI <simone.cianni@bticino.it>
-> Signed-off-by: Raffaele RECALCATI <raffaele.recalcati@bticino.it>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+The write operations to "dev->stats" are protected by 
+the spinlock on line 862-864, but the read operations to
+this data on line 858 and 867 are not protected by the spinlock.
+Thus, there may exist data races for "dev->stats".
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+To fix the data races, the read operations to "dev->stats" are 
+protected by the spinlock, and a local variable is used for return.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/ethernet/8390/lib8390.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/8390/lib8390.c b/drivers/net/ethernet/8390/lib8390.c
+index c9c55c9eab9f..198952247d30 100644
+--- a/drivers/net/ethernet/8390/lib8390.c
++++ b/drivers/net/ethernet/8390/lib8390.c
+@@ -852,19 +852,25 @@ static struct net_device_stats *__ei_get_stats(struct net_device *dev)
+ 	unsigned long ioaddr = dev->base_addr;
+ 	struct ei_device *ei_local = netdev_priv(dev);
+ 	unsigned long flags;
++	struct net_device_stats *stats;
++
++	spin_lock_irqsave(&ei_local->page_lock, flags);
+ 
+ 	/* If the card is stopped, just return the present stats. */
+-	if (!netif_running(dev))
+-		return &dev->stats;
++	if (!netif_running(dev)) {
++		stats = &dev->stats;
++		spin_unlock_irqrestore(&ei_local->page_lock, flags);
++		return stats;
++	}
+ 
+-	spin_lock_irqsave(&ei_local->page_lock, flags);
+ 	/* Read the counter registers, assuming we are in page 0. */
+ 	dev->stats.rx_frame_errors  += ei_inb_p(ioaddr + EN0_COUNTER0);
+ 	dev->stats.rx_crc_errors    += ei_inb_p(ioaddr + EN0_COUNTER1);
+ 	dev->stats.rx_missed_errors += ei_inb_p(ioaddr + EN0_COUNTER2);
++	stats = &dev->stats;
+ 	spin_unlock_irqrestore(&ei_local->page_lock, flags);
+ 
+-	return &dev->stats;
++	return stats;
+ }
+ 
+ /*
+-- 
+2.17.0
