@@ -1,475 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752472AbeEGN14 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 09:27:56 -0400
-Received: from mx1.emlix.com ([46.4.235.150]:54418 "EHLO mx1.emlix.com"
+        id S1752120AbeEGNh1 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 09:37:27 -0400
+Received: from nbd.name ([46.4.11.11]:48184 "EHLO nbd.name"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752433AbeEGN1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 09:27:47 -0400
-From: Philipp Puschmann <pp@emlix.com>
-To: dmitry.torokhov@gmail.com
-Cc: robh+dt@kernel.org, mark.rutland@arm.com, rydberg@bitmath.org,
-        pp@emlix.com, andi@etezian.org, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: ili251x - add support for Ilitek ILI251x touchscreens
-Date: Mon,  7 May 2018 15:18:23 +0200
-Message-Id: <20180507131823.28800-1-pp@emlix.com>
-Organization: emlix gmbh, Goettingen, Germany
+        id S1750732AbeEGNh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 09:37:26 -0400
+From: John Crispin <john@phrozen.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mips@linux-mips.org,
+        John Crispin <john@phrozen.org>
+Subject: [PATCH] irqchip/irq-ath79-intc: add irq cascade driver for QCA9556 SoCs
+Date: Mon,  7 May 2018 15:37:14 +0200
+Message-Id: <20180507133714.17384-1-john@phrozen.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver supports at least the ili2511 chipset but may support other
-Ilitek chipsets using Ilitek i2c protocol v3.x.
+The QCA ATH79 MIPS target is being converted to pure OF. Right now the
+platform code will setup the IRQ cascade found on the QCA9556 and newer
+SoCs and uses fixed IRQ numbers for the peripherals attached to the
+cascade. This patch adds a proper driver based on the code previously
+located inside arch/mips/ath79/irq.c.
 
-The tested ili2511-based touchscreen delivers garbage for more than 6
-fingers while it should support up to 10 fingers. The reason is still
-unclear and this remains a FIXME in the driver for now.
-
-The usage of pressure is optional. Touchscreens may deliver constant
-and so useless pressure data.
-
-Signed-off-by: Philipp Puschmann <pp@emlix.com>
+Signed-off-by: John Crispin <john@phrozen.org>
 ---
- .../bindings/input/touchscreen/ili251x.txt    |  35 ++
- drivers/input/touchscreen/Kconfig             |  12 +
- drivers/input/touchscreen/Makefile            |   1 +
- drivers/input/touchscreen/ili251x.c           | 350 ++++++++++++++++++
- 4 files changed, 398 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/ili251x.txt
- create mode 100644 drivers/input/touchscreen/ili251x.c
+ drivers/irqchip/Makefile         |   1 +
+ drivers/irqchip/irq-ath79-intc.c | 108 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 109 insertions(+)
+ create mode 100644 drivers/irqchip/irq-ath79-intc.c
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/ili251x.txt b/Documentation/devicetree/bindings/input/touchscreen/ili251x.txt
-new file mode 100644
-index 000000000000..f21ad93d3bdd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/ili251x.txt
-@@ -0,0 +1,35 @@
-+Ilitek ili251x touchscreen driver
-+
-+This driver uses protocol version 3 and should be compatible with other
-+Ilitek touch controllers that use protocol 3.x
-+
-+Required properties:
-+ - compatible:  "ili251x"
-+ - reg:         I2C slave address of the chip (0x41)
-+ - interrupt-parent: a phandle pointing to the interrupt controller
-+                     serving the interrupt for this chip
-+ - interrupts:       interrupt specification for the touchdetect
-+                     interrupt
-+
-+Optional properties:
-+ - reset-gpios: GPIO specification for the RESET input
-+
-+ - pinctrl-names: should be "default"
-+ - pinctrl-0:   a phandle pointing to the pin settings for the
-+                control gpios
-+ - max-fingers: the maximum number of fingers to handle
-+ - pressure: support pressure data
-+ - generic options	   : See touchscreen.txt
-+
-+Example:
-+
-+	ili251x@41 {
-+		compatible = "ili251x";
-+		reg = <0x41>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_touchpanel>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <20 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
-+		max-fingers = <6>;
-+	};
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 4f15496fec8b..569528834d48 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -380,6 +380,18 @@ config TOUCHSCREEN_ILI210X
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called ili210x.
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index d27e3e3619e0..f63c94a92e25 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -3,6 +3,7 @@ obj-$(CONFIG_IRQCHIP)			+= irqchip.o
  
-+config TOUCHSCREEN_ILI251X
-+	tristate "Ilitek ILI251X based touchscreen"
-+	depends on I2C
-+	help
-+	  Say Y here if you have a ILI251X based touchscreen
-+	  controller. This driver supports ILI2511.
-+
-+	  If unsure, say N.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called ili251x.
-+
- config TOUCHSCREEN_IPROC
- 	tristate "IPROC touch panel driver support"
- 	depends on ARCH_BCM_IPROC || COMPILE_TEST
-diff --git a/drivers/input/touchscreen/Makefile b/drivers/input/touchscreen/Makefile
-index dddae7973436..e795b62e5f64 100644
---- a/drivers/input/touchscreen/Makefile
-+++ b/drivers/input/touchscreen/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_TOUCHSCREEN_FUJITSU)	+= fujitsu_ts.o
- obj-$(CONFIG_TOUCHSCREEN_GOODIX)	+= goodix.o
- obj-$(CONFIG_TOUCHSCREEN_HIDEEP)	+= hideep.o
- obj-$(CONFIG_TOUCHSCREEN_ILI210X)	+= ili210x.o
-+obj-$(CONFIG_TOUCHSCREEN_ILI251X)	+= ili251x.o
- obj-$(CONFIG_TOUCHSCREEN_IMX6UL_TSC)	+= imx6ul_tsc.o
- obj-$(CONFIG_TOUCHSCREEN_INEXIO)	+= inexio.o
- obj-$(CONFIG_TOUCHSCREEN_IPROC)		+= bcm_iproc_tsc.o
-diff --git a/drivers/input/touchscreen/ili251x.c b/drivers/input/touchscreen/ili251x.c
+ obj-$(CONFIG_ALPINE_MSI)		+= irq-alpine-msi.o
+ obj-$(CONFIG_ATH79)			+= irq-ath79-cpu.o
++obj-$(CONFIG_ATH79)			+= irq-ath79-intc.o
+ obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
+ obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
+ obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
+diff --git a/drivers/irqchip/irq-ath79-intc.c b/drivers/irqchip/irq-ath79-intc.c
 new file mode 100644
-index 000000000000..203367b59902
+index 000000000000..ba15b1ac98b3
 --- /dev/null
-+++ b/drivers/input/touchscreen/ili251x.c
-@@ -0,0 +1,350 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2018, emlix GmbH. All rights reserved. */
++++ b/drivers/irqchip/irq-ath79-intc.c
+@@ -0,0 +1,108 @@
++/*
++ *  Atheros QCA955X specific interrupt cascade handling
++ *
++ *  Copyright (C) 2018 John Crispin <john@phrozen.org>
++ *
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ */
 +
-+#include <linux/module.h>
-+#include <linux/i2c.h>
 +#include <linux/interrupt.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/slab.h>
-+#include <linux/input.h>
-+#include <linux/input/mt.h>
-+#include <linux/irq.h>
++#include <linux/irqchip.h>
++#include <linux/of.h>
++#include <linux/of_irq.h>
++#include <linux/irqdomain.h>
 +
-+#define MAX_FINGERS		10
-+#define REG_TOUCHDATA		0x10
-+#define TOUCHDATA_FINGERS	6
-+#define REG_TOUCHDATA2		0x14
-+#define TOUCHDATA2_FINGERS	4
-+#define REG_PANEL_INFO		0x20
-+#define REG_FIRMWARE_VERSION	0x40
-+#define REG_PROTO_VERSION	0x42
-+#define REG_CALIBRATE		0xcc
++#include <asm/irq_cpu.h>
++#include <asm/mach-ath79/ath79.h>
++#include <asm/mach-ath79/ar71xx_regs.h>
 +
-+struct finger {
-+	u8 x_high:6;
-+	u8 dummy:1;
-+	u8 status:1;
-+	u8 x_low;
-+	u8 y_high;
-+	u8 y_low;
-+	u8 pressure;
-+} __packed;
++#define ATH79_MAX_INTC_CASCADE	3
 +
-+struct touchdata {
-+	u8 status;
-+	struct finger fingers[MAX_FINGERS];
-+} __packed;
-+
-+struct panel_info {
-+	u8 x_low;
-+	u8 x_high;
-+	u8 y_low;
-+	u8 y_high;
-+	u8 xchannel_num;
-+	u8 ychannel_num;
-+	u8 max_fingers;
-+} __packed;
-+
-+struct firmware_version {
-+	u8 id;
-+	u8 major;
-+	u8 minor;
-+} __packed;
-+
-+struct protocol_version {
-+	u8 major;
-+	u8 minor;
-+} __packed;
-+
-+struct ili251x_data {
-+	struct i2c_client *client;
-+	struct input_dev *input;
-+	unsigned int max_fingers;
-+	bool use_pressure;
-+	struct gpio_desc *reset_gpio;
++struct ath79_intc {
++	struct irq_chip chip;
++	u32 irq;
++	u32 pending_mask;
++	u32 irq_mask[ATH79_MAX_INTC_CASCADE];
 +};
 +
-+static int ili251x_read_reg(struct i2c_client *client, u8 reg, void *buf,
-+			    size_t len)
++static void ath79_intc_irq_handler(struct irq_desc *desc)
 +{
-+	struct i2c_msg msg[2] = {
-+		{
-+			.addr	= client->addr,
-+			.flags	= 0,
-+			.len	= 1,
-+			.buf	= &reg,
-+		},
-+		{
-+			.addr	= client->addr,
-+			.flags	= I2C_M_RD,
-+			.len	= len,
-+			.buf	= buf,
-+		}
-+	};
++	struct irq_domain *domain = irq_desc_get_handler_data(desc);
++	struct ath79_intc *intc = domain->host_data;
++	u32 pending;
 +
-+	if (i2c_transfer(client->adapter, msg, 2) != 2) {
-+		dev_err(&client->dev, "i2c transfer failed\n");
-+		return -EIO;
++	pending = ath79_reset_rr(QCA955X_RESET_REG_EXT_INT_STATUS);
++	pending &= intc->pending_mask;
++
++	if (pending) {
++		int i;
++
++		for (i = 0; i < domain->hwirq_max; i++)
++			if (pending & intc->irq_mask[i])
++				generic_handle_irq(irq_find_mapping(domain, i));
++	} else {
++		spurious_interrupt();
 +	}
++}
++
++static void ath79_intc_irq_unmask(struct irq_data *d)
++{
++}
++
++static void ath79_intc_irq_mask(struct irq_data *d)
++{
++}
++
++static int ath79_intc_map(struct irq_domain *d, unsigned int irq,
++			  irq_hw_number_t hw)
++{
++	struct ath79_intc *intc = d->host_data;
++
++	irq_set_chip_and_handler(irq, &intc->chip, handle_level_irq);
 +
 +	return 0;
 +}
 +
-+static void ili251x_report_events(struct ili251x_data *data,
-+				  const struct touchdata *touchdata)
-+{
-+	struct input_dev *input = data->input;
-+	unsigned int i;
-+	bool touch;
-+	unsigned int x, y;
-+	const struct finger *finger;
-+	unsigned int reported_fingers = 0;
-+
-+	/* the touch chip does not count the real fingers but switches between
-+	 * 0, 6 and 10 reported fingers *
-+	 *
-+	 * FIXME: With a tested ili2511 we received only garbage for fingers
-+	 *        6-9. As workaround we add a device tree option to limit the
-+	 *        handled number of fingers
-+	 */
-+	if (touchdata->status == 1)
-+		reported_fingers = 6;
-+	else if (touchdata->status == 2)
-+		reported_fingers = 10;
-+
-+	for (i = 0; i < reported_fingers && i < data->max_fingers; i++) {
-+		input_mt_slot(input, i);
-+
-+		finger = &touchdata->fingers[i];
-+
-+		touch = finger->status;
-+		input_mt_report_slot_state(input, MT_TOOL_FINGER, touch);
-+		x = finger->x_low | (finger->x_high << 8);
-+		y = finger->y_low | (finger->y_high << 8);
-+
-+		if (touch) {
-+			input_report_abs(input, ABS_MT_POSITION_X, x);
-+			input_report_abs(input, ABS_MT_POSITION_Y, y);
-+			if (data->use_pressure)
-+				input_report_abs(input, ABS_MT_PRESSURE,
-+						 finger->pressure);
-+
-+		}
-+	}
-+
-+	input_mt_report_pointer_emulation(input, false);
-+	input_sync(input);
-+}
-+
-+static irqreturn_t ili251x_irq(int irq, void *irq_data)
-+{
-+	struct ili251x_data *data = irq_data;
-+	struct i2c_client *client = data->client;
-+	struct touchdata touchdata;
-+	int error;
-+
-+	error = ili251x_read_reg(client, REG_TOUCHDATA,
-+				 &touchdata,
-+				 sizeof(touchdata) -
-+					sizeof(struct finger)*TOUCHDATA2_FINGERS);
-+
-+	if (!error && touchdata.status == 2 && data->max_fingers > 6)
-+		error = ili251x_read_reg(client, REG_TOUCHDATA2,
-+					 &touchdata.fingers[TOUCHDATA_FINGERS],
-+					 sizeof(struct finger)*TOUCHDATA2_FINGERS);
-+
-+	if (!error)
-+		ili251x_report_events(data, &touchdata);
-+	else
-+		dev_err(&client->dev,
-+			"Unable to get touchdata, err = %d\n", error);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void ili251x_reset(struct ili251x_data *data)
-+{
-+	if (data->reset_gpio) {
-+		gpiod_set_value(data->reset_gpio, 1);
-+		usleep_range(50, 100);
-+		gpiod_set_value(data->reset_gpio, 0);
-+		msleep(100);
-+	}
-+}
-+
-+static int ili251x_i2c_probe(struct i2c_client *client,
-+				       const struct i2c_device_id *id)
-+{
-+	struct device *dev = &client->dev;
-+	struct ili251x_data *data;
-+	struct input_dev *input;
-+	struct panel_info panel;
-+	struct device_node *np = dev->of_node;
-+	struct firmware_version firmware;
-+	struct protocol_version protocol;
-+	int xmax, ymax;
-+	int error;
-+
-+	dev_dbg(dev, "Probing for ili251x I2C Touschreen driver");
-+
-+	if (client->irq <= 0) {
-+		dev_err(dev, "No IRQ!\n");
-+		return -EINVAL;
-+	}
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	input = devm_input_allocate_device(dev);
-+	if (!data || !input)
-+		return -ENOMEM;
-+
-+	data->client = client;
-+	data->input = input;
-+	data->use_pressure = false;
-+
-+	data->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						   GPIOD_OUT_HIGH);
-+	if (IS_ERR(data->reset_gpio)) {
-+		error = PTR_ERR(data->reset_gpio);
-+		if (error != -EPROBE_DEFER)
-+			dev_err(dev,
-+				"Failed to get reset GPIO: %d\n", error);
-+		return error;
-+	}
-+
-+	ili251x_reset(data);
-+
-+	error = ili251x_read_reg(client, REG_FIRMWARE_VERSION,
-+				 &firmware, sizeof(firmware));
-+	if (error) {
-+		dev_err(dev, "Failed to get firmware version, err: %d\n",
-+			error);
-+		return error;
-+	}
-+
-+	error = ili251x_read_reg(client, REG_PROTO_VERSION,
-+				 &protocol, sizeof(protocol));
-+	if (error) {
-+		dev_err(dev, "Failed to get protocol version, err: %d\n",
-+			error);
-+		return error;
-+	}
-+	if (protocol.major != 3) {
-+		dev_err(dev, "This driver expects protocol version 3.x, Chip uses: %d\n",
-+				protocol.major);
-+		return -EINVAL;
-+	}
-+
-+	error = ili251x_read_reg(client, REG_PANEL_INFO, &panel, sizeof(panel));
-+	if (error) {
-+		dev_err(dev, "Failed to get panel information, err: %d\n",
-+			error);
-+		return error;
-+	}
-+
-+	data->max_fingers = panel.max_fingers;
-+	if (np) {
-+		int max_fingers;
-+
-+		error = of_property_read_u32(np, "max-fingers", &max_fingers);
-+		if (!error && max_fingers < data->max_fingers)
-+			data->max_fingers = max_fingers;
-+
-+		if (of_property_read_bool(np, "pressure"))
-+			data->use_pressure = true;
-+	}
-+
-+	xmax = panel.x_low | (panel.x_high << 8);
-+	ymax = panel.y_low | (panel.y_high << 8);
-+
-+	/* Setup input device */
-+	input->name = "ili251x Touchscreen";
-+	input->id.bustype = BUS_I2C;
-+	input->dev.parent = dev;
-+
-+	__set_bit(EV_SYN, input->evbit);
-+	__set_bit(EV_KEY, input->evbit);
-+	__set_bit(EV_ABS, input->evbit);
-+	__set_bit(BTN_TOUCH, input->keybit);
-+
-+	/* Single touch */
-+	input_set_abs_params(input, ABS_X, 0, xmax, 0, 0);
-+	input_set_abs_params(input, ABS_Y, 0, ymax, 0, 0);
-+
-+	/* Multi touch */
-+	input_mt_init_slots(input, data->max_fingers, 0);
-+	input_set_abs_params(input, ABS_MT_POSITION_X, 0, xmax, 0, 0);
-+	input_set_abs_params(input, ABS_MT_POSITION_Y, 0, ymax, 0, 0);
-+	if (data->use_pressure)
-+		input_set_abs_params(input, ABS_MT_PRESSURE, 0, U8_MAX, 0, 0);
-+
-+	i2c_set_clientdata(client, data);
-+
-+	error = devm_request_threaded_irq(dev, client->irq, NULL, ili251x_irq,
-+				 IRQF_ONESHOT, client->name, data);
-+
-+	if (error) {
-+		dev_err(dev, "Unable to request touchscreen IRQ, err: %d\n",
-+			error);
-+		return error;
-+	}
-+
-+	error = input_register_device(data->input);
-+	if (error) {
-+		dev_err(dev, "Cannot register input device, err: %d\n", error);
-+		return error;
-+	}
-+
-+	device_init_wakeup(dev, 1);
-+
-+	dev_info(dev,
-+		"ili251x initialized (IRQ: %d), firmware version %d.%d.%d fingers %d",
-+		client->irq, firmware.id, firmware.major, firmware.minor,
-+		data->max_fingers);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused ili251x_i2c_suspend(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+
-+	if (device_may_wakeup(&client->dev))
-+		enable_irq_wake(client->irq);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused ili251x_i2c_resume(struct device *dev)
-+{
-+	struct i2c_client *client = to_i2c_client(dev);
-+
-+	if (device_may_wakeup(&client->dev))
-+		disable_irq_wake(client->irq);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(ili251x_i2c_pm,
-+			 ili251x_i2c_suspend, ili251x_i2c_resume);
-+
-+static const struct i2c_device_id ili251x_i2c_id[] = {
-+	{ "ili251x", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, ili251x_i2c_id);
-+
-+static struct i2c_driver ili251x_ts_driver = {
-+	.driver = {
-+		.name = "ili251x_i2c",
-+		.pm = &ili251x_i2c_pm,
-+	},
-+	.id_table = ili251x_i2c_id,
-+	.probe = ili251x_i2c_probe,
++static const struct irq_domain_ops ath79_irq_domain_ops = {
++	.xlate = irq_domain_xlate_onecell,
++	.map = ath79_intc_map,
 +};
 +
-+module_i2c_driver(ili251x_ts_driver);
++static int __init qca9556_intc_of_init(
++	struct device_node *node, struct device_node *parent)
++{
++	struct irq_domain *domain;
++	struct ath79_intc *intc;
++	int cnt, i;
 +
-+MODULE_AUTHOR("Philipp Puschmann <pp@emlix.com>");
-+MODULE_DESCRIPTION("ili251x I2C Touchscreen Driver");
-+MODULE_LICENSE("GPL");
++	cnt = of_property_count_u32_elems(node, "qcom,pending-bits");
++	if (cnt > ATH79_MAX_INTC_CASCADE)
++		panic("Too many INTC pending bits\n");
++
++	intc = kzalloc(sizeof(*intc), GFP_KERNEL);
++	if (!intc)
++		panic("Failed to allocate INTC memory\n");
++	intc->chip.name = "INTC";
++	intc->chip.irq_unmask = ath79_intc_irq_unmask,
++	intc->chip.irq_mask = ath79_intc_irq_mask,
++
++	of_property_read_u32_array(node, "qcom,pending-bits", intc->irq_mask,
++				   cnt);
++	for (i = 0; i < cnt; i++)
++		intc->pending_mask |= intc->irq_mask[i];
++
++	intc->irq = irq_of_parse_and_map(node, 0);
++	if (!intc->irq)
++		panic("Failed to get INTC IRQ");
++
++	domain = irq_domain_add_linear(node, cnt, &ath79_irq_domain_ops,
++				       intc);
++	irq_set_chained_handler_and_data(intc->irq, ath79_intc_irq_handler,
++					 domain);
++
++	return 0;
++}
++IRQCHIP_DECLARE(qca9556_intc, "qcom,qca9556-intc",
++		qca9556_intc_of_init);
 -- 
-2.17.0
+2.11.0
