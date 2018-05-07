@@ -1,115 +1,148 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752857AbeEGW3T (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 18:29:19 -0400
-Received: from foss.arm.com ([217.140.101.70]:50968 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752158AbeEGW3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 18:29:17 -0400
-Date: Mon, 7 May 2018 17:29:15 -0500
-From: Kim Phillips <kim.phillips@arm.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-arm-kernel@lists.infradead.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: coresight: documentation: update sysfs section
-Message-Id: <20180507172915.c032cd71c07b1849bf419a5f@arm.com>
-Organization: Arm
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752990AbeEGWft (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 18:35:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:40978 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752884AbeEGWfq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 18:35:46 -0400
+Subject: Re: [PATCH] PCI/AER: add pcie TLP header information in the
+ tracepoint
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>
+References: <20180402154708.5032-1-thomas.tai@oracle.com>
+ <20180507222136.GD161390@bhelgaas-glaptop.roam.corp.google.com>
+From: Thomas Tai <thomas.tai@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <56c74c13-8a87-bec4-3f50-423a4699af6f@oracle.com>
+Date: Mon, 7 May 2018 18:35:32 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180507222136.GD161390@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805070220
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-- Align and show updated ls devices output from the TC2, based on
-  current driver
 
-- Provide an example from an ETMv4 based system (Juno)
 
-- Reflect changes to the way the RAM write pointer is accessed since
-  it got changed in commit 7d83d17795ef ("coresight: tmc: adding sysFS
-  management entries").
+On 2018-05-07 06:21 PM, Bjorn Helgaas wrote:
+> [+cc Steve, Alex]
+> 
+> On Mon, Apr 02, 2018 at 11:47:08AM -0400, Thomas Tai wrote:
+>> When a PCIe AER occurs, the TLP header information is
+>> printed in the kernel message but it is missing from
+>> the tracepoint. A userspace program can use this information
+>> in the tracepoint to better analyze problems.
+>>
+>> Example tracepoint output:
+>> aer_event: 0000:01:00.0
+>> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+>> TLP Header={0x0,0x1,0x2,0x3}
+>>
+>> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+> 
+> I tentatively applied this to pci/aer for v4.18, thanks!
 
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: Kim Phillips <kim.phillips@arm.com>
----
- Documentation/trace/coresight.txt | 40 ++++++++++++++++++-------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+Thank you very much Bjorn!
 
-diff --git a/Documentation/trace/coresight.txt b/Documentation/trace/coresight.txt
-index 6f0120c3a4f1..d23d6354b372 100644
---- a/Documentation/trace/coresight.txt
-+++ b/Documentation/trace/coresight.txt
-@@ -144,10 +144,21 @@ If everything goes well during the registration process the new devices will
- show up under /sys/bus/coresight/devices, as showns here for a TC2 platform:
- 
- root:~# ls /sys/bus/coresight/devices/
--replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
--20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-+20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm  replicator
-+20030000.tpiu  2201c000.ptm	2203c000.etm  2203e000.etm
- root:~#
- 
-+and here for a Juno platform:
-+
-+root@juno:~# ls /sys/bus/coresight/devices/
-+20010000.etf	 20120000.replicator  22040000.etm     230c0000.funnel
-+20030000.tpiu	 20130000.funnel      220c0000.funnel  23140000.etm
-+20040000.funnel  20140000.etf	      22140000.etm     23240000.etm
-+20070000.etr	 20150000.funnel      23040000.etm     23340000.etm
-+root@juno:~# 
-+
-+Note the Juno uses an Embedded Trace Router (ETR) instead of an ETB.
-+
- The functions take a "struct coresight_device", which looks like this:
- 
- struct coresight_desc {
-@@ -193,16 +204,16 @@ the information carried in "THIS_MODULE".
- How to use the tracer modules
- -----------------------------
- 
--Before trace collection can start, a coresight sink needs to be identify.
-+Before trace collection can start, a coresight sink needs to be identified.
- There is no limit on the amount of sinks (nor sources) that can be enabled at
- any given moment.  As a generic operation, all device pertaining to the sink
- class will have an "active" entry in sysfs:
- 
- root:/sys/bus/coresight/devices# ls
--replicator  20030000.tpiu    2201c000.ptm  2203c000.etm  2203e000.etm
--20010000.etb         20040000.funnel  2201d000.ptm  2203d000.etm
-+20010000.etb   20040000.funnel	2201d000.ptm  2203d000.etm  replicator
-+20030000.tpiu  2201c000.ptm	2203c000.etm  2203e000.etm
- root:/sys/bus/coresight/devices# ls 20010000.etb
--enable_sink  status  trigger_cntr
-+enable_sink  mgmt  power  subsystem  trigger_cntr  uevent
- root:/sys/bus/coresight/devices# echo 1 > 20010000.etb/enable_sink
- root:/sys/bus/coresight/devices# cat 20010000.etb/enable_sink
- 1
-@@ -216,16 +227,13 @@ trigger a trace capture:
- root:/sys/bus/coresight/devices# echo 1 > 2201c000.ptm/enable_source
- root:/sys/bus/coresight/devices# cat 2201c000.ptm/enable_source
- 1
--root:/sys/bus/coresight/devices# cat 20010000.etb/status
--Depth:          0x2000
--Status:         0x1
--RAM read ptr:   0x0
--RAM wrt ptr:    0x19d3   <----- The write pointer is moving
--Trigger cnt:    0x0
--Control:        0x1
--Flush status:   0x0
--Flush ctrl:     0x2001
--root:/sys/bus/coresight/devices#
-+
-+Observe the write pointer moving:
-+
-+root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-+0x1a8
-+root:/sys/bus/coresight/devices# cat 20010000.etb/mgmt/rwp
-+0x19a6
- 
- Trace collection is stopped the same way:
- 
--- 
-2.17.0
+Thomas
+
+> 
+> Steve, let me know if you have any comments.
+> 
+> Alex, I just copied you because you've been unifying the AER native and
+> CPER paths, and this is another case of code that appears in both paths.
+> FYI only, no action required :)
+> 
+>> ---
+>>   drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
+>>   include/ras/ras_event.h                | 20 ++++++++++++++++----
+>>   2 files changed, 18 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> index 6a352e638699..0a78a773bd25 100644
+>> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> @@ -192,7 +192,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>>   		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
+>>   
+>>   	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+>> -			info->severity);
+>> +			info->severity, info->tlp_header_valid, &info->tlp);
+>>   }
+>>   
+>>   void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+>> @@ -252,6 +252,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
+>>   		__print_tlp_header(dev, &aer->header_log);
+>>   
+>>   	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+>> -			aer_severity);
+>> +			aer_severity, tlp_header_valid, &aer->header_log);
+>>   }
+>>   #endif
+>> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+>> index 9c689868eb4d..90f59556f595 100644
+>> --- a/include/ras/ras_event.h
+>> +++ b/include/ras/ras_event.h
+>> @@ -298,30 +298,42 @@ TRACE_EVENT(non_standard_event,
+>>   TRACE_EVENT(aer_event,
+>>   	TP_PROTO(const char *dev_name,
+>>   		 const u32 status,
+>> -		 const u8 severity),
+>> +		 const u8 severity,
+>> +		 const u32 tlp_header_valid,
+>> +		 struct aer_header_log_regs *tlp),
+>>   
+>> -	TP_ARGS(dev_name, status, severity),
+>> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+>>   
+>>   	TP_STRUCT__entry(
+>>   		__string(	dev_name,	dev_name	)
+>>   		__field(	u32,		status		)
+>>   		__field(	u8,		severity	)
+>> +		__field(	u32, 		tlp_header_valid)
+>> +		__array(	u32, 		buf, 4		)
+>>   	),
+>>   
+>>   	TP_fast_assign(
+>>   		__assign_str(dev_name, dev_name);
+>>   		__entry->status		= status;
+>>   		__entry->severity	= severity;
+>> +		__entry->tlp_header_valid = tlp_header_valid;
+>> +		__entry->buf[0] = tlp->dw0;
+>> +		__entry->buf[1] = tlp->dw1;
+>> +		__entry->buf[2] = tlp->dw2;
+>> +		__entry->buf[3] = tlp->dw3;
+>>   	),
+>>   
+>> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
+>> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+>>   		__get_str(dev_name),
+>>   		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+>>   			__entry->severity == AER_FATAL ?
+>>   			"Fatal" : "Uncorrected, non-fatal",
+>>   		__entry->severity == AER_CORRECTABLE ?
+>>   		__print_flags(__entry->status, "|", aer_correctable_errors) :
+>> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
+>> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
+>> +		__entry->tlp_header_valid ?
+>> +			__print_array(__entry->buf, 4, sizeof(unsigned int)) :
+>> +			"Not available")
+>>   );
+>>   
+>>   /*
+>> -- 
+>> 2.14.1
+>>
