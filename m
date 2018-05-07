@@ -1,68 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751660AbeEGFFw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 01:05:52 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35197 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750811AbeEGFFt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 01:05:49 -0400
-X-Google-Smtp-Source: AB8JxZqGjHbJkheUWNOidjfLW14S6C6GQYXyUeEW5QvQvqrfVzDt7gQlBKXgB994nTc3gbMBzeOZUg==
-Date: Mon, 7 May 2018 10:35:46 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Cc: greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        Alex Elder <elder@kernel.org>, Johan Hovold <johan@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [greybus-dev] [PATCH] staging: greybus: Remove unused local
- variable
-Message-ID: <20180507050546.qiuigbsohhallell@vireshk-i7>
-References: <20180506065044.25311-1-natechancellor@gmail.com>
+        id S1751908AbeEGFNN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 01:13:13 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:51877 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750990AbeEGFNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 01:13:08 -0400
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH] scsi: sg: fix a missing-check bug
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "open list:SCSI SG DRIVER" <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1525576895-15708-1-git-send-email-wang6495@umn.edu>
+From: Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <be344261-9110-ed6f-6916-04e5a2e5fc7e@interlog.com>
+Date: Mon, 7 May 2018 01:13:03 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180506065044.25311-1-natechancellor@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <1525576895-15708-1-git-send-email-wang6495@umn.edu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05-05-18, 23:50, Nathan Chancellor wrote:
-> Fixes the following W=1 warning: variable ‘intf_id’ set but
-> not used [-Wunused-but-set-variable]
+On 2018-05-05 11:21 PM, Wenwen Wang wrote:
+> In sg_write(), the opcode of the command is firstly copied from the
+> userspace pointer 'buf' and saved to the kernel variable 'opcode', using
+> the __get_user() function. The size of the command, i.e., 'cmd_size' is
+> then calculated based on the 'opcode'. After that, the whole command,
+> including the opcode, is copied again from 'buf' using the
+> __copy_from_user() function and saved to 'cmnd'. Finally, the function
+>   sg_common_write() is invoked to process 'cmnd'. Given that the 'buf'
+> pointer resides in userspace, a malicious userspace process can race to
+> change the opcode of the command between the two copies. That means, the
+> opcode indicated by the variable 'opcode' could be different from the
+> opcode in 'cmnd'. This can cause inconsistent data in 'cmnd' and
+> potential logical errors in the function sg_common_write(), as it needs to
+> work on 'cmnd'.
 > 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> This patch reuses the opcode obtained in the first copy and only copies the
+> remaining part of the command from userspace.
+> 
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 > ---
->  drivers/staging/greybus/svc.c | 3 ---
->  1 file changed, 3 deletions(-)
+>   drivers/scsi/sg.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/staging/greybus/svc.c b/drivers/staging/greybus/svc.c
-> index a874fed761a1..a2bb7e1a3db3 100644
-> --- a/drivers/staging/greybus/svc.c
-> +++ b/drivers/staging/greybus/svc.c
-> @@ -1137,7 +1137,6 @@ static int gb_svc_intf_reset_recv(struct gb_operation *op)
->  	struct gb_svc *svc = gb_connection_get_data(op->connection);
->  	struct gb_message *request = op->request;
->  	struct gb_svc_intf_reset_request *reset;
-> -	u8 intf_id;
->  
->  	if (request->payload_size < sizeof(*reset)) {
->  		dev_warn(&svc->dev, "short reset request received (%zu < %zu)\n",
-> @@ -1146,8 +1145,6 @@ static int gb_svc_intf_reset_recv(struct gb_operation *op)
->  	}
->  	reset = request->payload;
->  
-> -	intf_id = reset->intf_id;
-> -
->  	/* FIXME Reset the interface here */
->  
->  	return 0;
+> diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+> index c198b963..0ad8106 100644
+> --- a/drivers/scsi/sg.c
+> +++ b/drivers/scsi/sg.c
+> @@ -657,7 +657,8 @@ sg_write(struct file *filp, const char __user *buf, size_t count, loff_t * ppos)
+>   	hp->flags = input_size;	/* structure abuse ... */
+>   	hp->pack_id = old_hdr.pack_id;
+>   	hp->usr_ptr = NULL;
+> -	if (__copy_from_user(cmnd, buf, cmd_size))
+> +	cmnd[0] = opcode;
+> +	if (__copy_from_user(cmnd + 1, buf + 1, cmd_size - 1))
+>   		return -EFAULT;
+>   	/*
+>   	 * SG_DXFER_TO_FROM_DEV is functionally equivalent to SG_DXFER_FROM_DEV,
+> 
 
-Don't you get a new error after removing this, i.e "reset set but unused" ? Or
-the sizeof() operation on that suppresses those warnings ..
+That is in the deprecated "v2" part of the sg driver (for around 15 years).
+There are lots more interesting races with that interface than that one
+described above. My guess is that all system calls would be susceptible
+to playing around with a buffer being passed to or from the OS by a thread
+other than the one doing the system call, during that call. Surely no Unix
+like OS gives any security guarantees to a thread being attacked by a
+malevolent thread in the same process!
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+My question is did this actually cause to program to fail; or is it something
+that a sanity checker flagged?
 
--- 
-viresh
+Also wouldn't it be better just to return an error such as EINVAL if
+opcode != command[0]  ?
+
+Doug Gilbert
