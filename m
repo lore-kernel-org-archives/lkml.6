@@ -1,101 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752782AbeEGSop (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 14:44:45 -0400
-Received: from bues.ch ([80.190.117.144]:36100 "EHLO bues.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752376AbeEGSol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 14:44:41 -0400
-Date: Mon, 7 May 2018 20:43:17 +0200
-From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Regression caused by commit 882164a4a928
-Message-ID: <20180507204317.52992b6c@wiggum>
-In-Reply-To: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752793AbeEGSpj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 14:45:39 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46969 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752656AbeEGSph (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 14:45:37 -0400
+X-Google-Smtp-Source: AB8JxZq4V/vXSIyx/PnhIPokBlLti6rx/Q1q7zr4Wte2jznX/WH7vX9vd0B52UxTAYtqLCHtKDKVoA==
+Date: Mon, 7 May 2018 11:46:59 -0700
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Tirupathi Reddy <tirupath@codeaurora.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-input@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] Input: pm8941-pwrkey: add resin key capabilities
+Message-ID: <20180507184659.GG2259@tuxbook-pro>
+References: <1521786192-19487-1-git-send-email-tirupath@codeaurora.org>
+ <20180505001039.GA112416@dtor-ws>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
- boundary="Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180505001039.GA112416@dtor-ws>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri 04 May 17:10 PDT 2018, Dmitry Torokhov wrote:
 
-On Mon, 7 May 2018 10:44:34 -0500
-Larry Finger <Larry.Finger@lwfinger.net> wrote:
+> Hi Tirupathi,
+> 
+> On Fri, Mar 23, 2018 at 11:53:12AM +0530, Tirupathi Reddy wrote:
+> > Add resin key support to handle different types of key events
+> > defined in different platforms.
+> > 
+> > Signed-off-by: Tirupathi Reddy <tirupath@codeaurora.org>
+> > ---
+> >  .../bindings/input/qcom,pm8941-pwrkey.txt          | 32 +++++++++
+> >  drivers/input/misc/pm8941-pwrkey.c                 | 81 ++++++++++++++++++++++
+> >  2 files changed, 113 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt b/Documentation/devicetree/bindings/input/qcom,pm8941-pwrkey.txt
+[..]
+> >  EXAMPLE
+> >  
+> >  	pwrkey@800 {
+> > @@ -40,4 +66,10 @@ EXAMPLE
+> >  		interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+> >  		debounce = <15625>;
+> >  		bias-pull-up;
+> > +
+> > +		resin {
+> > +			interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
+> > +			linux,code = <KEY_VOLUMEDOWN>;
+> > +			bias-pull-up;
+> > +		};
+> >  	};
+> 
+> The new key and power key bindings are very similar, I would prefer if
+> we shared the parsing code and our new DTS looked like:
+> 
+> 		power {
+> 			...
+> 		};
+>  
+> 		resin {
+> 			...
+> 		};
+> 
+> (we can easily keep backward compatibility with power properties being
+> in device node).
+> 
 
-> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in=
-=20
-> module") appeared to be harmless, it leads to complete failure of drivers=
- b43.=20
+As discussed here https://patchwork.kernel.org/patch/9751627/ the PON
+block does, in addition to providing power and resin key support also
+handle the restart reason ("reboot bootloader" in Android).
 
->   config SSB_DRIVER_PCICORE_POSSIBLE
->          bool
-> -       depends on SSB_PCIHOST && SSB =3D y
-> +       depends on SSB_PCIHOST && (SSB =3D y || !MIPS)
->          default y
->=20
->   config SSB_DRIVER_PCICORE
+My interpretation of our conclusion was to come up with a new binding
+for the "pon" and a driver for this block that instantiates the power
+key device.
 
+It seems reasonable for such binding to describe the two keys, as you
+propose here Dmitry, and instantiates the two input devices based on
+this.
 
-https://patchwork.kernel.org/patch/10161131/
-
-Could we _please_ switch to not applying patches to ssb or b43, if
-nobody acked (or better reviewed) a patch?
-
-We had multiple changes to ssb and b43 in the recent past that did not
-have a review at all and broke something. I don't think such software
-quality is acceptable at all.
-So please revert 882164a4a928.
-
-I'm sorry that this patch slipped through the cracks of my inbox.
-But the reaction to that shall not be to just apply the patch. It
-shall be to resubmit it for review.
-
-
-
-But back to the technical topic.
-I don't remember why SSB_DRIVER_PCICORE_POSSIBLE depends on SSB_PCIHOST.
-But that looks and feels wrong.
-
-I would say it should rather look like
-
-config SSB_DRIVER_PCICORE_POSSIBLE
-	depends on SSB && (PCI =3D y || PCI =3D SSB)
-
-completely untested, though.
-
---=20
-Michael
-
---Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlrwnkUACgkQ9TK+HZCN
-iw6+rw/+IKUHfewDddQA/cS2YI/26ozyojOOrFiKui7+NvBUWazjYMf4yjRKgLA2
-Rxjm2OaC8TjDREXG3wnvIgvnMDkJTYHTTQ8hti+EA4R0vUsPUsDfOCQ4cggD4ev4
-Ob0gk1pbAd5avlL6N/0zPTMc4c7TD4Htt1ZlWRq/01JQfLg3rlBz9PkfQpI1OE7r
-5doGf86Aks44GE9EVjGTLPmWoeX7AqqwMBm7jdB1U/TAUgyw8zW/9Mrd3QoUuKDO
-M+0S/fWiv9DNvKaR+fW00ngLiwuXR5g/9SI2+uIEuzgon0HSHV5daLVP4y0BXZvS
-BS4D0mfVnCMNLIDXqkqfJkc1zSY2Gy/qzHG6n8G6x7pbd9mlLWqJ8bFxek7iKCSA
-S0hLIR4jBmHoQrVJPHhAq15yRKl72gsUS6qA+ucGiv7oRJjwQDnIo4rZCOdXNVN8
-7d5tGTr5Q59nquerxodSvimbX+6yG/aqBLhEw6TfMafs3cZJB0A3LGio8zCz1IQR
-e//pycsWK4tbeThjQbJh3el0e0IHtyJmxJcDNIPXjidUvAAuPXgQdT26m61AKttM
-aoqJANhfItTPy9BLbf35vikHcZdmkx8jr05ossZpZ1nNDEuV70TBk2BkyWTV9k2g
-rrZQSEmsC0awOC4HQG7bTXyc1bWGzA2TPcPdlIaZK47puh5LTw0=
-=mn4E
------END PGP SIGNATURE-----
-
---Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t--
+Regards,
+Bjorn
