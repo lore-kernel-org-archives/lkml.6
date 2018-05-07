@@ -1,244 +1,284 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751970AbeEGHU5 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 03:20:57 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:37705 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750964AbeEGHUz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 03:20:55 -0400
-X-Google-Smtp-Source: AB8JxZpGO5w+JSkuyx09uXY7KEqlhuVFg5hdxEIGYDTvNC8EZO6lQDOR8ayYr+lTHJ5ryej6k1isGQ==
-Date: Mon, 7 May 2018 16:21:41 +0900
-From: AKASHI Takahiro <takahiro.akashi@linaro.org>
-To: James Morse <james.morse@arm.com>
-Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
-        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
-        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 06/11] arm64: kexec_file: allow for loading
- Image-format kernel
-Message-ID: <20180507072139.GF11326@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
- <20180425062629.29404-7-takahiro.akashi@linaro.org>
- <c604b578-6667-3532-eac9-55c428001025@arm.com>
+        id S1751660AbeEGHW6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 03:22:58 -0400
+Received: from mga02.intel.com ([134.134.136.20]:53786 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750716AbeEGHWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 03:22:54 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,373,1520924400";
+   d="scan'208,217";a="53759036"
+Subject: Re: [PATCH] perf tools: Fix parser for empty pmu terms case
+To: Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, kan.liang@linux.intel.com
+References: <20180425160008.3407-1-acme@kernel.org>
+ <20180425160008.3407-6-acme@kernel.org>
+ <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
+ <20180503103717.GA14776@krava>
+ <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
+ <20180504160228.GA25229@krava> <87a7tdphyo.fsf@linux.intel.com>
+ <20180506142830.GA18865@krava>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <97dc8045-0136-0c9b-8413-1957ceeae5d3@intel.com>
+Date: Mon, 7 May 2018 10:21:42 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c604b578-6667-3532-eac9-55c428001025@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180506142830.GA18865@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James,
-
-On Tue, May 01, 2018 at 06:46:11PM +0100, James Morse wrote:
-> Hi Akashi,
+On 06/05/18 17:28, Jiri Olsa wrote:
+> On Sat, May 05, 2018 at 08:43:11PM -0700, Andi Kleen wrote:
+>> Jiri Olsa <jolsa@redhat.com> writes:
+>>
+>> Please fix this quickly, PT is currently totally non functional in Linus
+>> mainline.
 > 
-> On 25/04/18 07:26, AKASHI Takahiro wrote:
-> > This patch provides kexec_file_ops for "Image"-format kernel. In this
-> > implementation, a binary is always loaded with a fixed offset identified
-> > in text_offset field of its header.
+> attached.. Kan, could you please test it wrt your latest changes?
 > 
-> 
-> > diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-> > index e4de1223715f..3cba4161818a 100644
-> > --- a/arch/arm64/include/asm/kexec.h
-> > +++ b/arch/arm64/include/asm/kexec.h
-> > @@ -102,6 +102,56 @@ struct kimage_arch {
-> >  	void *dtb_buf;
-> >  };
-> >  
-> > +/**
-> > + * struct arm64_image_header - arm64 kernel image header
-> > + *
-> > + * @pe_sig: Optional PE format 'MZ' signature
-> > + * @branch_code: Instruction to branch to stext
-> > + * @text_offset: Image load offset, little endian
-> > + * @image_size: Effective image size, little endian
-> > + * @flags:
-> > + *	Bit 0: Kernel endianness. 0=little endian, 1=big endian
-> 
-> Page size? What about 'phys_base'?, (whatever that is...)
-> Probably best to refer to Documentation/arm64/booting.txt here, its the
-> authoritative source of what these fields mean.
-
-While we don't care other bit fields for now, I will add the reference
-to the Documentation file.
-
-> 
-> > + * @reserved: Reserved
-> > + * @magic: Magic number, "ARM\x64"
-> > + * @pe_header: Optional offset to a PE format header
-> > + **/
-> > +
-> > +struct arm64_image_header {
-> > +	u8 pe_sig[2];
-> > +	u8 pad[2];
-> > +	u32 branch_code;
-> > +	u64 text_offset;
-> > +	u64 image_size;
-> > +	u64 flags;
-> 
-> __le64 as appropriate here would let tools like sparse catch any missing endian
-> conversion bugs.
-
-OK.
-
-> 
-> > +	u64 reserved[3];
-> > +	u8 magic[4];
-> > +	u32 pe_header;
-> > +};
-> 
-> I'm surprised we don't have a definition for this already, I guess its always
-> done in asm. We have kernel/image.h that holds some of this stuff, if we are
-> going to validate the flags, is it worth adding the code there, (and moving it
-> to include/asm)?
-
-A comment at the beginning of this file says,
-    #ifndef LINKER_SCRIPT
-    #error This file should only be included in vmlinux.lds.S
-    #endif
-Let me think about.
-
-> 
-> > +static const u8 arm64_image_magic[4] = {'A', 'R', 'M', 0x64U};
-> 
-> Any chance this magic could be a pre-processor symbol shared with head.S?
-
-OK.
-
-> 
-> > +
-> > +/**
-> > + * arm64_header_check_magic - Helper to check the arm64 image header.
-> > + *
-> > + * Returns non-zero if header is OK.
-> > + */
-> > +
-> > +static inline int arm64_header_check_magic(const struct arm64_image_header *h)
-> > +{
-> > +	if (!h)
-> > +		return 0;
-> > +
-> > +	if (!h->text_offset)
-> > +		return 0;
-> > +
-> > +	return (h->magic[0] == arm64_image_magic[0]
-> > +		&& h->magic[1] == arm64_image_magic[1]
-> > +		&& h->magic[2] == arm64_image_magic[2]
-> > +		&& h->magic[3] == arm64_image_magic[3]);
-> 
-> memcmp()? Or just define it as a 32bit value?
-
-OK. As you know, I always tried to keep the code not diverted
-from kexec-tools for maintainability reason.
-
-> I guess you skip the MZ prefix as its not present for !EFI?
-
-CONFIG_KEXEC_IMAGE_VERIFY_SIG depends on the fact that the file
-format is PE (that is, EFI is enabled).
-
-
-> Could we check branch_code is non-zero, and text-offset points within image-size?
-
-We could do it, but I don't think this check is very useful.
-
-> 
-> We could check that this platform supports the page-size/endian config that this
-> Image was built with... We get a message from the EFI stub if the page-size
-> can't be supported, it would be nice to do the same here (as we can).
-
-There is no restriction on page-size or endianness for kexec.
-What will be the purpose of this check?
-
-> (no idea if kexec-tool checks this stuff, it probably can't get at the id
-> registers to know)
+> thanks,
+> jirka
 > 
 > 
-> > diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
-> > new file mode 100644
-> > index 000000000000..4dd524ad6611
-> > --- /dev/null
-> > +++ b/arch/arm64/kernel/kexec_image.c
-> > @@ -0,0 +1,79 @@
+> ---
+> Adrian reported broken event parsing for Intel PT:
 > 
-> > +static void *image_load(struct kimage *image,
-> > +				char *kernel, unsigned long kernel_len,
-> > +				char *initrd, unsigned long initrd_len,
-> > +				char *cmdline, unsigned long cmdline_len)
-> > +{
-> > +	struct kexec_buf kbuf;
-> > +	struct arm64_image_header *h = (struct arm64_image_header *)kernel;
-> > +	unsigned long text_offset;
-> > +	int ret;
-> > +
-> > +	/* Load the kernel */
-> > +	kbuf.image = image;
-> > +	kbuf.buf_min = 0;
-> > +	kbuf.buf_max = ULONG_MAX;
-> > +	kbuf.top_down = false;
-> > +
-> > +	kbuf.buffer = kernel;
-> > +	kbuf.bufsz = kernel_len;
-> > +	kbuf.memsz = le64_to_cpu(h->image_size);
-> > +	text_offset = le64_to_cpu(h->text_offset);
-> > +	kbuf.buf_align = SZ_2M;
+>   $ perf record -e intel_pt//u uname
+>   event syntax error: 'intel_pt//u'
+>                                \___ parser error
+>   Run 'perf list' for a list of valid events
 > 
-> > +	/* Adjust kernel segment with TEXT_OFFSET */
-> > +	kbuf.memsz += text_offset;
-> > +
-> > +	ret = kexec_add_buffer(&kbuf);
-> > +	if (ret)
-> > +		goto out;
-> > +
-> > +	image->arch.kern_segment = image->nr_segments - 1;
+> It's caused by recent change in parsing grammar
+> (see Fixes: for commit).
 > 
-> You only seem to use kern_segment here, and in load_other_segments() called
-> below. Could it not be a local variable passed in? Instead of arch-specific data
-> we keep forever?
+> Adding special rule with empty terms config to handle
+> the reported case and moving the common rule code into
+> new parse_events_pmu function.
 
-No, kern_segment is also used in load_other_segments() in machine_kexec_file.c.
-To optimize memory hole allocation logic in locate_mem_hole_callback(),
-we need to know the exact range of kernel image (start and end).
+Hi
 
-(Known drawback in this code is that Image only occupies one segment, but
-once vmlinux might be supported, it would occupy two segments for text and
-data.)
+Can you explain why that is needed instead of just changing the grammar e.g.
+
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index 7afeb80cc39e..28806e0c7950 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -73,6 +73,7 @@ static void inc_group_count(struct list_head *list,
+ %type <num> value_sym
+ %type <head> event_config
+ %type <head> opt_event_config
++%type <head> opt_pmu_config
+ %type <term> event_term
+ %type <head> event_pmu
+ %type <head> event_legacy_symbol
+@@ -224,7 +225,7 @@ event_def: event_pmu |
+ 	   event_bpf_file
+
+ event_pmu:
+-PE_NAME opt_event_config
++PE_NAME opt_pmu_config
+ {
+ 	struct list_head *list, *orig_terms, *terms;
+
+@@ -496,6 +497,17 @@ opt_event_config:
+ 	$$ = NULL;
+ }
+
++opt_pmu_config:
++'/' event_config '/'
++{
++	$$ = $2;
++}
++|
++'/' '/'
++{
++	$$ = NULL;
++}
++
+ start_terms: event_config
+ {
+ 	struct parse_events_state *parse_state = _parse_state;
+
+
 
 > 
-> > +	image->segment[image->arch.kern_segment].mem += text_offset;
-> > +	image->segment[image->arch.kern_segment].memsz -= text_offset;
-> > +	image->start = image->segment[image->arch.kern_segment].mem;
-> > +
-> > +	pr_debug("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-> > +				image->segment[image->arch.kern_segment].mem,
-> > +				kbuf.bufsz, kbuf.memsz);
-> > +
-> > +	/* Load additional data */
-> > +	ret = load_other_segments(image, initrd, initrd_len,
-> > +				cmdline, cmdline_len);
-> > +
-> > +out:
-> > +	return ERR_PTR(ret);
-> > +}
-> Looks good,
-
-Thank you for thorough review.
-
--Takahiro AKASHI
-
-
-> Thanks,
+> Fixes: 9a4a931ce847 ("perf pmu: Fix pmu events parsing rule")
+> Reported-by: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Link: http://lkml.kernel.org/n/tip-uorb0azuem7b7ydace7cf6vc@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/parse-events.c | 46 +++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/parse-events.h |  3 +++
+>  tools/perf/util/parse-events.y | 51 +++++++++++++-----------------------------
+>  3 files changed, 65 insertions(+), 35 deletions(-)
 > 
-> James
+> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+> index 3576aaaa9e4c..7cf326a8effe 100644
+> --- a/tools/perf/util/parse-events.c
+> +++ b/tools/perf/util/parse-events.c
+> @@ -8,6 +8,7 @@
+>  #include <sys/stat.h>
+>  #include <fcntl.h>
+>  #include <sys/param.h>
+> +#include <fnmatch.h>
+>  #include "term.h"
+>  #include "../perf.h"
+>  #include "evlist.h"
+> @@ -1294,6 +1295,51 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  	return evsel ? 0 : -ENOMEM;
+>  }
+>  
+> +int parse_events_pmu(struct parse_events_state *parse_state,
+> +		     struct list_head *list, char *name,
+> +		     struct list_head *head_config)
+> +{
+> +	struct list_head *orig_terms;
+> +	struct perf_pmu *pmu = NULL;
+> +	char *pattern = NULL;
+> +	int ok = 0;
+> +
+> +	if (!parse_events_add_pmu(parse_state, list, name,
+> +				  head_config, false, false))
+> +		return 0;
+> +
+> +	if (parse_events_copy_term_list(head_config, &orig_terms))
+> +		return -1;
+> +
+> +	if (asprintf(&pattern, "%s*", name) < 0)
+> +		goto out;
+> +
+> +	while ((pmu = perf_pmu__scan(pmu)) != NULL) {
+> +		char *tmp = pmu->name;
+> +
+> +		if (!strncmp(tmp, "uncore_", 7) &&
+> +		    strncmp(name, "uncore_", 7))
+> +			tmp += 7;
+> +		if (!fnmatch(pattern, tmp, 0)) {
+> +			struct list_head *terms;
+> +
+> +			if (parse_events_copy_term_list(orig_terms, &terms)) {
+> +				ok = 0;
+> +				goto out;
+> +			}
+> +			if (!parse_events_add_pmu(parse_state, list, pmu->name,
+> +						  terms, true, false))
+> +				ok++;
+> +			parse_events_terms__delete(terms);
+> +		}
+> +	}
+> +
+> +out:
+> +	parse_events_terms__delete(orig_terms);
+> +	free(pattern);
+> +	return ok ? 0 : -1;
+> +}
+> +
+>  int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>  			       char *str, struct list_head **listp)
+>  {
+> diff --git a/tools/perf/util/parse-events.h b/tools/perf/util/parse-events.h
+> index 4473dac27aee..553fcaf5d23e 100644
+> --- a/tools/perf/util/parse-events.h
+> +++ b/tools/perf/util/parse-events.h
+> @@ -170,6 +170,9 @@ int parse_events_add_pmu(struct parse_events_state *parse_state,
+>  			 struct list_head *head_config,
+>  			 bool auto_merge_stats,
+>  			 bool use_alias);
+> +int parse_events_pmu(struct parse_events_state *parse_state,
+> +		     struct list_head *list, char *name,
+> +		     struct list_head *head_config);
+>  
+>  int parse_events_multi_pmu_add(struct parse_events_state *parse_state,
+>  			       char *str,
+> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+> index 47f6399a309a..d44599bece43 100644
+> --- a/tools/perf/util/parse-events.y
+> +++ b/tools/perf/util/parse-events.y
+> @@ -8,7 +8,6 @@
+>  
+>  #define YYDEBUG 1
+>  
+> -#include <fnmatch.h>
+>  #include <linux/compiler.h>
+>  #include <linux/list.h>
+>  #include <linux/types.h>
+> @@ -226,44 +225,26 @@ event_def: event_pmu |
+>  event_pmu:
+>  PE_NAME '/' event_config '/'
+>  {
+> -	struct list_head *list, *orig_terms, *terms;
+> +	struct list_head *list;
+> +
+> +	ALLOC_LIST(list);
+>  
+> -	if (parse_events_copy_term_list($3, &orig_terms))
+> +	if (parse_events_pmu(_parse_state, list, $1, $3))
+>  		YYABORT;
+>  
+> -	ALLOC_LIST(list);
+> -	if (parse_events_add_pmu(_parse_state, list, $1, $3, false, false)) {
+> -		struct perf_pmu *pmu = NULL;
+> -		int ok = 0;
+> -		char *pattern;
+> -
+> -		if (asprintf(&pattern, "%s*", $1) < 0)
+> -			YYABORT;
+> -
+> -		while ((pmu = perf_pmu__scan(pmu)) != NULL) {
+> -			char *name = pmu->name;
+> -
+> -			if (!strncmp(name, "uncore_", 7) &&
+> -			    strncmp($1, "uncore_", 7))
+> -				name += 7;
+> -			if (!fnmatch(pattern, name, 0)) {
+> -				if (parse_events_copy_term_list(orig_terms, &terms)) {
+> -					free(pattern);
+> -					YYABORT;
+> -				}
+> -				if (!parse_events_add_pmu(_parse_state, list, pmu->name, terms, true, false))
+> -					ok++;
+> -				parse_events_terms__delete(terms);
+> -			}
+> -		}
+> -
+> -		free(pattern);
+> -
+> -		if (!ok)
+> -			YYABORT;
+> -	}
+>  	parse_events_terms__delete($3);
+> -	parse_events_terms__delete(orig_terms);
+> +	$$ = list;
+> +}
+> +|
+> +PE_NAME '/' '/'
+> +{
+> +	struct list_head *list;
+> +
+> +	ALLOC_LIST(list);
+> +
+> +	if (parse_events_pmu(_parse_state, list, $1, NULL))
+> +		YYABORT;
+> +
+>  	$$ = list;
+>  }
+>  |
+> 
