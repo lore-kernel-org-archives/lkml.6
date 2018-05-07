@@ -1,23 +1,23 @@
 Return-Path: <paul.kocialkowski@bootlin.com>
-X-Google-Smtp-Source: AB8JxZr+GNjui2Grx1B1HmSnv7c1CDQC5uB1lRR5EuP/LmqrqDs83TWlBD7e7Q61cAxhIv7wC5l2
-ARC-Seal: i=1; a=rsa-sha256; t=1525697258; cv=none;
+X-Google-Smtp-Source: AB8JxZpaJu6PH+uZUNlA3kbYY6HVkWiTcKcm6FgtY0JbfEab7BjuCfQ9WsTZM1y8Xkn7wnkpTTJ0
+ARC-Seal: i=1; a=rsa-sha256; t=1525697257; cv=none;
         d=google.com; s=arc-20160816;
-        b=zJ56osz5k7esPUhS3+vl/va4ZbrfzSehq+BZ/gRLWWOR1gB1v1+Yu6UiagtmpNjP4Z
-         /vomF24YG0CBeifk2A9Wl6rRs/+gKR4fN00DRAM7rAV732XwP3hJHaW0NHtZnXYzChzX
-         d1cGYhtvSsZ0bi65O+6Mv6O/TPgn6PzigFf33pRjE1agfWVj0Kmzh2BG/RYujN+15JLN
-         R/CR6Ti/ILVGbZnnnKYoFquD75fp3ZaU3df2lIsCvele9RE+v9JvR81oGgqZm3NtaBl2
-         qt6YP0CdC7JGROVVzax4dZJzq4pdnFzw4mDspIOi1HuvX0BlvVQnXJF6E+aONTdu0p2z
-         MdUg==
+        b=pNQZGHxpnVhQtw+/e/zKwFWYG0VNBy9ODS64rfxQ3j6YO1taQyCzHIpKtYYGAM2U5U
+         ZXIFlErof7HyZKDq8qmtGjV6sW8pD5yh5hR2aB8dCLn5VZO8IkYqwY9U9eTSbRKukUlv
+         oRZT1xklmkDSnGId1ufQKo/pfwM0NbN/SwjSP4jWCINMpXe4DBlslRD1E2UMeebtX9Qe
+         42yQ+lzRrTRc0DqDSLrAG/HjvAaz7X1lKbjpzEPqX0XfGZTYdf1HNSYgbgqeobuFyG4V
+         oeM+qf/40Dp1f/z2Ql/doYpHxVA6hysgdg3KwweAlR8fQhm7bdT3oXFUO6u+cmdpCbTw
+         KsmA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=rvAnw8ENzEhkASds2+ETdOIgP/iMNPTZIfrXp9lwn2E=;
-        b=vkjcwNKupJkKfgNWyzQI+NNnaO8HGWA+k6DimHYMGBDpV6/etbJB0UsERhrRx5Q7zx
-         cTrousrlUrfni2blZ1qgvPlTZGDpUoCvySK28HBzJj20B2cNHKZA9e9gnRH2h3KsE3KG
-         oBiGbltq6ZFWV0wkEeazqJuho2j9011PkcAAutnSVmk2oVCk7bW2AmNwFSUbR7sm7DeH
-         xW0g52L7qJ+fuFfQYMl9fWmuyjCUOBwbfZLAq5+5wUljyGw5zv7vMv5X6+jf1Mtgo05P
-         aQj3LhT0IfxaJIALaQUkJvwQ9SqXf6NnKfB+6wuj++ixn8COS7k3jMX0THkG0ke9tcYj
-         JA5w==
+        bh=3uaK95uCb/KVWZZ8HkZvxn6aApd3GF0KLkPLHpqDqlM=;
+        b=FbAROIYWLJEjga22eOmkiAnGdOACe8LXwVRSi31MshKGNC5K2LydY1JpATioqvTLx1
+         WYRZs3Cx6PlujZSQ+/55JQ/luUfN82XbjdZ+aF9ZKSOb3Wi7WHK1FN1IadxKswB5TSKw
+         tzAmj8bU6qoJVRXnKMNpe8SOrqx0VKO3A7p1gvMRdHkjQFhEtrL/t3JEU5dNdba/yzPY
+         we1mPLoIO/9mD3yWmOl9uJVV5R/K3gYKXJky21eflgFUs1oRxQ3Jj+4nRIF3+Ua15AVM
+         yJvn8DW7iloZxY7P75M2Rm2JbUk3r4awpg7RSqoaVNFn+4SaIlP7SBIbqYpmZZdigDDy
+         gg1Q==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of paul.kocialkowski@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=paul.kocialkowski@bootlin.com
 Authentication-Results: mx.google.com;
@@ -55,20 +55,21 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Randy Li <ayaka@soulik.info>
-Subject: [PATCH v3 13/14] ARM: dts: sun7i-a20: Add Video Engine and reserved memory nodes
-Date: Mon,  7 May 2018 14:44:59 +0200
-Message-Id: <20180507124500.20434-14-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 12/14] ARM: dts: sun5i: Add Video Engine and reserved memory nodes
+Date: Mon,  7 May 2018 14:44:58 +0200
+Message-Id: <20180507124500.20434-13-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 References: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599809528107529238?=
-X-GMAIL-MSGID: =?utf-8?q?1599809528107529238?=
+X-GMAIL-THRID: =?utf-8?q?1599809527758853559?=
+X-GMAIL-MSGID: =?utf-8?q?1599809527758853559?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 This adds nodes for the Video Engine and the associated reserved memory
-for the A20. Up to 96 MiB of memory are dedicated to the CMA pool.
+for sun5i-based platforms. Up to 96 MiB of memory are dedicated to the
+CMA pool.
 
 The VPU can only map the first 256 MiB of DRAM, so the reserved memory
 pool has to be located in that area. Following Allwinner's decision in
@@ -77,15 +78,15 @@ reserved for this purpose.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- arch/arm/boot/dts/sun7i-a20.dtsi | 31 +++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/sun5i.dtsi | 31 +++++++++++++++++++++++++++++++
  1 file changed, 31 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 9bb6c35fb850..5fccccff469b 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -161,6 +161,21 @@
- 		reg = <0x40000000 0x80000000>;
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 6fa9e28edc59..306d265622e2 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -108,6 +108,21 @@
+ 		};
  	};
  
 +	reserved-memory {
@@ -103,15 +104,15 @@ index 9bb6c35fb850..5fccccff469b 100644
 +		};
 +	};
 +
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -463,6 +478,22 @@
+ 	soc@1c00000 {
+ 		compatible = "simple-bus";
+ 		#address-cells = <1>;
+@@ -292,6 +307,22 @@
  			};
  		};
  
 +		vpu: video-codec@1c0e000 {
-+			compatible = "allwinner,sun7i-a20-video-engine";
++			compatible = "allwinner,sun5i-a13-video-engine";
 +			reg = <0x01c0e000 0x1000>;
 +
 +			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
@@ -122,12 +123,12 @@ index 9bb6c35fb850..5fccccff469b 100644
 +			assigned-clock-rates = <320000000>;
 +
 +			resets = <&ccu RST_VE>;
-+			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <53>;
 +			allwinner,sram = <&ve_sram 1>;
 +		};
 +
  		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun7i-a20-mmc";
+ 			compatible = "allwinner,sun5i-a13-mmc";
  			reg = <0x01c0f000 0x1000>;
 -- 
 2.16.3
