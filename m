@@ -1,66 +1,208 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752086AbeEGM0a (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 08:26:30 -0400
-Received: from ozlabs.org ([203.11.71.1]:51269 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751899AbeEGM03 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 08:26:29 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 7 May 2018 22:25:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Tree for May 7
-Message-ID: <20180507222554.50c75122@canb.auug.org.au>
-In-Reply-To: <CAMuHMdXcc65hrm0NqOUvR9RDastMr8a_ERYWhByB7TZRo=sCFw@mail.gmail.com>
-References: <20180507153147.166ee38a@canb.auug.org.au>
-        <CAMuHMdXcc65hrm0NqOUvR9RDastMr8a_ERYWhByB7TZRo=sCFw@mail.gmail.com>
+        id S1752147AbeEGM1K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 08:27:10 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51011 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751937AbeEGM1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 08:27:09 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v4] f2fs: fix to avoid race during access gc_thread pointer
+Date: Mon, 7 May 2018 20:26:59 +0800
+Message-ID: <20180507122659.86536-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.17.0.391.g1f1cddd558b5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gfQt64b65O90SHHw_I2tXSX"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gfQt64b65O90SHHw_I2tXSX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Thread A			Thread B		Thread C
+- f2fs_remount
+ - stop_gc_thread
+				- f2fs_sbi_store
+							- issue_discard_thread
+   sbi->gc_thread = NULL;
+				  sbi->gc_thread->gc_wake = 1
+							  access sbi->gc_thread->gc_urgent
 
-Hi Geert,
+Previously, we allocate memory for sbi->gc_thread based on background
+gc thread mount option, the memory can be released if we turn off
+that mount option, but still there are several places access gc_thread
+pointer without considering race condition, result in NULL point
+dereference.
 
-On Mon, 7 May 2018 14:13:27 +0200 Geert Uytterhoeven <geert@linux-m68k.org>=
- wrote:
->
-> On Mon, May 7, 2018 at 7:31 AM, Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
-> > Status of my local build tests will be at
-> > http://kisskb.ellerman.id.au/linux-next . =20
->=20
-> Oops, Service Unavailable
+In order to fix this issue, introduce gc_rwsem to exclude those operations.
 
-I restarted docker and it seems to have come good, now.  Thanks for the
-notification.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v4:
+- use introduced sbi.gc_rwsem lock instead of sb.s_umount.
+ fs/f2fs/f2fs.h    |  1 +
+ fs/f2fs/gc.c      |  4 ++++
+ fs/f2fs/segment.c | 11 ++++++++++-
+ fs/f2fs/super.c   | 19 ++++++++++++++-----
+ fs/f2fs/sysfs.c   | 14 +++++++++++---
+ 5 files changed, 40 insertions(+), 9 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gfQt64b65O90SHHw_I2tXSX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrwRdIACgkQAVBC80lX
-0GyhCgf/cDjrmetylMbTZ9Kd2meIP5Fdt+vMiWhZ6wMTmJcrrkeDOQILPCNH2WSL
-0/knIVBWL1aG4yXC2THbjdHhmRHtILtiaXJhXM0YOYI2RX+TPs1VAVldvR3I7cEo
-qCw6ziNb7cQPDk0c8FavPIdo2+X2q5Bj2Bjc7lSHVmAkRgmpBMZN1qxm0KyaY6l5
-GMyuDrT24eT2BN623lo2I3332LdwFH1zfcsgYjRaU3/T/tmPDEJbQZkXt2cOmFrx
-l3fSxe6U0VWssBszlVFhxZp+BsgP4ttVMqIpRTxQCZbIzXDjEQih0xJeOWruRUBZ
-zK0II49HX4EUlXmGDrUMWGIdasNKnQ==
-=+RjP
------END PGP SIGNATURE-----
-
---Sig_/gfQt64b65O90SHHw_I2tXSX--
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 80490a7991a7..e238d0ea0be7 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1191,6 +1191,7 @@ struct f2fs_sb_info {
+ 
+ 	/* for cleaning operations */
+ 	struct mutex gc_mutex;			/* mutex for GC */
++	struct rw_semaphore gc_rwsem;		/* rw semaphore for gc_thread */
+ 	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+ 	unsigned int cur_victim_sec;		/* current victim section num */
+ 
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9bb2ddbbed1e..b74714be7be7 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -187,17 +187,21 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+ 		p->max_search = dirty_i->nr_dirty[type];
+ 		p->ofs_unit = 1;
+ 	} else {
++		down_read(&sbi->gc_rwsem);
+ 		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
++		up_read(&sbi->gc_rwsem);
+ 		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+ 		p->max_search = dirty_i->nr_dirty[DIRTY];
+ 		p->ofs_unit = sbi->segs_per_sec;
+ 	}
+ 
+ 	/* we need to check every dirty segments in the FG_GC case */
++	down_read(&sbi->gc_rwsem);
+ 	if (gc_type != FG_GC &&
+ 			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
+ 			p->max_search > sbi->max_victim_search)
+ 		p->max_search = sbi->max_victim_search;
++	up_read(&sbi->gc_rwsem);
+ 
+ 	/* let's select beginning hot/small space first in no_heap mode*/
+ 	if (test_opt(sbi, NOHEAP) &&
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 320cc1c57246..33d146939048 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -174,11 +174,18 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+ 	int node_secs = get_blocktype_secs(sbi, F2FS_DIRTY_NODES);
+ 	int dent_secs = get_blocktype_secs(sbi, F2FS_DIRTY_DENTS);
+ 	int imeta_secs = get_blocktype_secs(sbi, F2FS_DIRTY_IMETA);
++	bool gc_urgent = false;
+ 
+ 	if (test_opt(sbi, LFS))
+ 		return false;
++
++	down_read(&sbi->gc_rwsem);
+ 	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+-		return true;
++		gc_urgent = true;
++	up_read(&sbi->gc_rwsem);
++
++	if (gc_urgent)
++		return false;
+ 
+ 	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+ 			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
+@@ -1421,8 +1428,10 @@ static int issue_discard_thread(void *data)
+ 		if (dcc->discard_wake)
+ 			dcc->discard_wake = 0;
+ 
++		down_read(&sbi->gc_rwsem);
+ 		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+ 			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
++		up_read(&sbi->gc_rwsem);
+ 
+ 		sb_start_intwrite(sbi->sb);
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index c8e5fe5d71fe..294be9e92aee 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1476,15 +1476,23 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 	 * option. Also sync the filesystem.
+ 	 */
+ 	if ((*flags & SB_RDONLY) || !test_opt(sbi, BG_GC)) {
++		down_write(&sbi->gc_rwsem);
+ 		if (sbi->gc_thread) {
+ 			stop_gc_thread(sbi);
+ 			need_restart_gc = true;
+ 		}
+-	} else if (!sbi->gc_thread) {
+-		err = start_gc_thread(sbi);
+-		if (err)
+-			goto restore_opts;
+-		need_stop_gc = true;
++		up_write(&sbi->gc_rwsem);
++	} else {
++		down_write(&sbi->gc_rwsem);
++		if (!sbi->gc_thread) {
++			err = start_gc_thread(sbi);
++			if (err) {
++				up_write(&sbi->gc_rwsem);
++				goto restore_opts;
++			}
++			need_stop_gc = true;
++		}
++		up_write(&sbi->gc_rwsem);
+ 	}
+ 
+ 	if (*flags & SB_RDONLY ||
+@@ -2802,6 +2810,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 	}
+ 
+ 	init_rwsem(&sbi->cp_rwsem);
++	init_rwsem(&sbi->gc_rwsem);
+ 	init_waitqueue_head(&sbi->cp_wait);
+ 	init_sb_info(sbi);
+ 
+diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+index 6d8d8f41e517..34c542dbc459 100644
+--- a/fs/f2fs/sysfs.c
++++ b/fs/f2fs/sysfs.c
+@@ -173,6 +173,7 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	unsigned long t;
+ 	unsigned int *ui;
+ 	ssize_t ret;
++	bool gc_entry = (a->struct_type == GC_THREAD);
+ 
+ 	ptr = __struct_ptr(sbi, a->struct_type);
+ 	if (!ptr)
+@@ -248,16 +249,23 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+ 	if (!strcmp(a->attr.name, "trim_sections"))
+ 		return -EINVAL;
+ 
+-	*ui = t;
+-
+-	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
++	if (!strcmp(a->attr.name, "iostat_enable") && t == 0)
+ 		f2fs_reset_iostat(sbi);
++
++	if (gc_entry)
++		down_read(&sbi->gc_rwsem);
++
+ 	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+ 		sbi->gc_thread->gc_wake = 1;
+ 		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
+ 		wake_up_discard_thread(sbi, true);
+ 	}
+ 
++	*ui = t;
++
++	if (gc_entry)
++		up_read(&sbi->gc_rwsem);
++
+ 	return count;
+ }
+ 
+-- 
+2.17.0.391.g1f1cddd558b5
