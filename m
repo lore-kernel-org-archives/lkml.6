@@ -1,69 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752052AbeEGKSu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:18:50 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37072 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751954AbeEGKSt (ORCPT
+        id S1752151AbeEGKZt (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:25:49 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52872 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752017AbeEGKZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:18:49 -0400
-Date: Mon, 7 May 2018 13:18:46 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of
- omap3isp_stat_data
-Message-ID: <20180507101846.vmn4yqqu7i3iybcd@valkosipuli.retiisi.org.uk>
-References: <20180425213044.1535393-1-arnd@arndb.de>
- <20180503125627.6elsr4iiknnv227c@valkosipuli.retiisi.org.uk>
- <CAK8P3a0M5iKCXmKwQAzd9EKWo7Sr_0OR82Q=ozmj3f3Xtyde6A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0M5iKCXmKwQAzd9EKWo7Sr_0OR82Q=ozmj3f3Xtyde6A@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Mon, 7 May 2018 06:25:47 -0400
+From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+To: linux@roeck-us.net, mpe@ellerman.id.au
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-hwmon@vger.kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, jdelvare@suse.com, stewart@linux.vnet.ibm.com,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
+Subject: [PATCH 0/3] Add support for energy sensors
+Date: Mon,  7 May 2018 15:55:35 +0530
+X-Mailer: git-send-email 1.8.3.1
+X-TM-AS-GCONF: 00
+x-cbid: 18050710-0040-0000-0000-00000455E429
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050710-0041-0000-0000-000020FA1D75
+Message-Id: <1525688738-9185-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805070109
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 06:06:58PM -0400, Arnd Bergmann wrote:
-> On Thu, May 3, 2018 at 8:56 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> > On Wed, Apr 25, 2018 at 11:30:10PM +0200, Arnd Bergmann wrote:
-> >> @@ -165,7 +167,14 @@ struct omap3isp_h3a_aewb_config {
-> >>   * @config_counter: Number of the configuration associated with the data.
-> >>   */
-> >>  struct omap3isp_stat_data {
-> >> +#ifdef __KERNEL__
-> >> +     struct {
-> >> +             __s64   tv_sec;
-> >> +             __s64   tv_usec;
-> >
-> > Any particular reason for __s64 here instead of e.g. long or __s32? Kernel
-> > appears to use long in the timespec64 definition.
-> 
-> The user space 'timeval' definition is 16 bytes wide, with the layout
-> designed to be compatible between 32-bit and 64-bit, so it has to be like
-> this to match what user spaces sees with the old header files and a new
-> libc.
-> 
-> We don't yet know what the exact definition of timeval will be in all
-> libc implementations, but if they have a 32-bit tv_user field, it needs
+This patch series provides support for adding energy sensors to
+ibmpowernv-hwmon driver. This patch adds support to read 64bit
+sensor values.
 
-tv_usec?
+Shilpasri G Bhat (3):
+  powernv: opal-sensor: Add support to read 64bit sensor values
+  hwmon: (ibmpowernv): Add support to read 64 bit sensors
+  hwmon: (ibmpowernv) Add energy sensors
 
-> padding next to it so the lower 32 bits are in the same place as they
-> would be using that 64-bit field I used.
-
-I presume the definition would be endianness dependent then. I have no
-objections though, if you think this is the way to go.
-
-I'll apply the patch.
-
-Thanks.
+ arch/powerpc/include/asm/opal-api.h            |  1 +
+ arch/powerpc/include/asm/opal.h                |  2 +
+ arch/powerpc/platforms/powernv/opal-sensor.c   | 53 ++++++++++++++++++++++++++
+ arch/powerpc/platforms/powernv/opal-wrappers.S |  1 +
+ drivers/hwmon/ibmpowernv.c                     |  9 +++--
+ 5 files changed, 63 insertions(+), 3 deletions(-)
 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+1.8.3.1
