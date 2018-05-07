@@ -1,56 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752901AbeEGURA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:17:00 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:36689 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752081AbeEGUQ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:16:58 -0400
-X-Google-Smtp-Source: AB8JxZrjeNtyydkZCKZJ0DGYxw2qebuHIwIatNBHR0r0GXnYhks7qqb/DG9uA+xvIvJmfJ6s9irOBg==
-From: Shakeel Butt <shakeelb@google.com>
-To: Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Thelen <gthelen@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Linux MM <linux-mm@kvack.org>, Cgroups <cgroups@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Junaid Shahid <junaids@google.com>, Junaid Shahid <juanids@google.com>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: [PATCH] mm: memcontrol: drain memcg stock on force_empty
-Date: Mon,  7 May 2018 13:16:51 -0700
-Message-Id: <20180507201651.165879-1-shakeelb@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        id S1752933AbeEGURE (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:17:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752905AbeEGURB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 16:17:01 -0400
+Date: Mon, 7 May 2018 21:16:57 +0100
+From: James Hogan <jhogan@kernel.org>
+To: NeilBrown <neil@brown.name>
+Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] MIPS: c-r4k: fix data corruption related to cache
+ coherence.
+Message-ID: <20180507201655.GA27369@jamesdev>
+References: <87sh7klyhc.fsf@notabene.neil.brown.name>
+ <20180425214650.GA25917@saruman>
+ <87h8nzlzf1.fsf@notabene.neil.brown.name>
+ <20180425220834.GC25917@saruman>
+ <87vacdlf8d.fsf@notabene.neil.brown.name>
+ <87lgcwcvj2.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Disposition: inline
+In-Reply-To: <87lgcwcvj2.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junaid Shahid <junaids@google.com>
 
-The per-cpu memcg stock can retain a charge of upto 32 pages. On a
-machine with large number of cpus, this can amount to a decent amount
-of memory. Additionally force_empty interface might be triggering
-unneeded memcg reclaims.
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Junaid Shahid <juanids@google.com>
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
----
- mm/memcontrol.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Mon, May 07, 2018 at 07:40:49AM +1000, NeilBrown wrote:
+>=20
+> Hi James,
+>  this hasn't appear in linux-next yet, or in any branch
+>  of
+>    git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/mips.git
+>=20
+>  Should I expect it to?
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e2d33a37f971..2c3c69524b49 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2841,6 +2841,9 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
- 
- 	/* we call try-to-free pages for make this cgroup empty */
- 	lru_add_drain_all();
-+
-+	drain_all_stock(memcg);
-+
- 	/* try to free all pages in this cgroup */
- 	while (nr_retries && page_counter_read(&memcg->memory)) {
- 		int progress;
--- 
-2.17.0.441.gb46fe60e1d-goog
+Sorry Neil, I haven't applied it yet. I'm planning to get a few fixes
+sorted this week, at which point it would land in the mips-fixes branch
+at the above repo.
+
+Cheers
+James
+
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvC0NgAKCRA1zuSGKxAj
+8oKRAPwK7fmohcud0fjIl2pvltDY4gpwo83BsYs92ho1OS55JgEAlVOso4iJX4X5
+7NItreTsvuSUoS9uUB3be8tkG4FGKAk=
+=y4bN
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
