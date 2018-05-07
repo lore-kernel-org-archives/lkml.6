@@ -1,19 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752420AbeEGImq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:42:46 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:42176 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752192AbeEGIik (ORCPT
+        id S1752404AbeEGImx (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:42:53 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39059 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752126AbeEGIii (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:40 -0400
-X-Google-Smtp-Source: AB8JxZrVvR81YVz4BpfNmrUg4y55jRbJULkepWNDsZaYxP/LezhMvR9LeYqZmhdY/QW/hoReSFxWGA==
+        Mon, 7 May 2018 04:38:38 -0400
+X-Google-Smtp-Source: AB8JxZoZ44kg72TIlboG5TeeOv0XTxgxWk5k0Hm6O2X6yWmVj26AASntgUVt3w4o9IN0Fkp95dTK3g==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 23/35] ovl: copy-up on MAP_SHARED
-Date: Mon,  7 May 2018 10:37:55 +0200
-Message-Id: <20180507083807.28792-24-mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 22/35] vfs: don't open real
+Date: Mon,  7 May 2018 10:37:54 +0200
+Message-Id: <20180507083807.28792-23-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
 References: <20180507083807.28792-1-mszeredi@redhat.com>
@@ -21,206 +22,36 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A corner case of a corner case is when
+Let overlayfs do its thing when opening a file.
 
- - file opened for O_RDONLY
- - which is then memory mapped SHARED
- - file opened for O_WRONLY
- - contents modified
- - contents read back though the shared mapping
-
-Unfortunately it looks very difficult to do anything about the established
-shared map after the file is copied up.
-
-Instead, when a read-only file is mapped shared, copy up the file before
-actually doing the map.  This may result in unnecessary copy-ups (but so
-may copy-up on open(O_RDWR) for exampe).
-
-We can revisit this later if it turns out to be a performance problem in
-real life.
+This enables stacking and fixes the corner case when a file is opened for
+read, modified through a writable open, and data is read from the read-only
+file.  After this patch the read-only open will not return stale data even
+in this case.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/Kconfig     | 21 +++++++++++++++++++++
- fs/overlayfs/file.c      | 22 ++++++++++++++++++++++
- fs/overlayfs/overlayfs.h |  7 +++++++
- fs/overlayfs/ovl_entry.h |  1 +
- fs/overlayfs/super.c     | 22 ++++++++++++++++++++++
- 5 files changed, 73 insertions(+)
+ fs/open.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/fs/overlayfs/Kconfig b/fs/overlayfs/Kconfig
-index 17032631c5cf..991c0a5a0e00 100644
---- a/fs/overlayfs/Kconfig
-+++ b/fs/overlayfs/Kconfig
-@@ -103,3 +103,24 @@ config OVERLAY_FS_XINO_AUTO
- 	  For more information, see Documentation/filesystems/overlayfs.txt
- 
- 	  If unsure, say N.
-+
-+config OVERLAY_FS_COPY_UP_SHARED
-+       bool "Overlayfs: copy up when mapping a file shared"
-+       default n
-+       depends on OVERLAY_FS
-+       help
-+         If this option is enabled then on mapping a file with MAP_SHARED
-+	 overlayfs copies up the file in anticipation of it being modified (just
-+	 like we copy up the file on O_WRONLY and O_RDWR in anticipation of
-+	 modification).  This does not interfere with shared library loading, as
-+	 that uses MAP_PRIVATE.  But there might be use cases out there where
-+	 this impacts performance and disk usage.
-+
-+	 This just selects the default, the feature can also be enabled or
-+	 disabled in the running kernel or individually on each overlay mount.
-+
-+	 To get maximally standard compliant behavior, enable this option.
-+
-+	 To get a maximally backward compatible kernel, disable this option.
-+
-+	 If unsure, say N.
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index 2ac95c95e8e6..a60734ec89ec 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -10,6 +10,7 @@
- #include <linux/file.h>
- #include <linux/mount.h>
- #include <linux/xattr.h>
-+#include <linux/mman.h>
- #include <linux/uio.h>
- #include "overlayfs.h"
- 
-@@ -256,6 +257,26 @@ static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
- 	return ret;
- }
- 
-+static int ovl_pre_mmap(struct file *file, unsigned long prot,
-+			unsigned long flag)
-+{
-+	int err = 0;
-+
-+	/*
-+	 * Take MAP_SHARED as hint about future writes to the file (through
-+	 * another file descriptor).  Caller might not have had such an intent,
-+	 * but we hope MAP_PRIVATE will be used in most such cases.
-+	 *
-+	 * If we don't copy up now and the file is modified, it becomes really
-+	 * difficult to change the mapping to match that of the file's content
-+	 * later.
-+	 */
-+	if ((flag & MAP_SHARED) && ovl_copy_up_shared(file_inode(file)->i_sb))
-+		err = ovl_copy_up(file_dentry(file));
-+
-+	return err;
-+}
-+
- static int ovl_mmap(struct file *file, struct vm_area_struct *vma)
+diff --git a/fs/open.c b/fs/open.c
+index 6e52fd6fea7c..244cd2ecfefd 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -897,13 +897,8 @@ EXPORT_SYMBOL(file_path);
+ int vfs_open(const struct path *path, struct file *file,
+ 	     const struct cred *cred)
  {
- 	struct fd real;
-@@ -473,6 +494,7 @@ const struct file_operations ovl_file_operations = {
- 	.read_iter	= ovl_read_iter,
- 	.write_iter	= ovl_write_iter,
- 	.fsync		= ovl_fsync,
-+	.pre_mmap	= ovl_pre_mmap,
- 	.mmap		= ovl_mmap,
- 	.fallocate	= ovl_fallocate,
- 	.unlocked_ioctl	= ovl_ioctl,
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index edbf69c8f45d..caaa47cea2aa 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -272,6 +272,13 @@ static inline unsigned int ovl_xino_bits(struct super_block *sb)
- 	return ofs->xino_bits;
+-	struct dentry *dentry = d_real(path->dentry, NULL, file->f_flags, 0);
+-
+-	if (IS_ERR(dentry))
+-		return PTR_ERR(dentry);
+-
+ 	file->f_path = *path;
+-	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
++	return do_dentry_open(file, d_backing_inode(path->dentry), NULL, cred);
  }
  
-+static inline bool ovl_copy_up_shared(struct super_block *sb)
-+{
-+	struct ovl_fs *ofs = sb->s_fs_info;
-+
-+	return !(sb->s_flags & SB_RDONLY) && ofs->config.copy_up_shared;
-+}
-+
- 
- /* namei.c */
- int ovl_check_fh_len(struct ovl_fh *fh, int fh_len);
-diff --git a/fs/overlayfs/ovl_entry.h b/fs/overlayfs/ovl_entry.h
-index 41655a7d6894..3bea47c63fd9 100644
---- a/fs/overlayfs/ovl_entry.h
-+++ b/fs/overlayfs/ovl_entry.h
-@@ -18,6 +18,7 @@ struct ovl_config {
- 	const char *redirect_mode;
- 	bool index;
- 	bool nfs_export;
-+	bool copy_up_shared;
- 	int xino;
- };
- 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index ad6a5baf226b..c3d8c7ea180f 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -56,6 +56,12 @@ module_param_named(xino_auto, ovl_xino_auto_def, bool, 0644);
- MODULE_PARM_DESC(ovl_xino_auto_def,
- 		 "Auto enable xino feature");
- 
-+static bool ovl_copy_up_shared_def =
-+	IS_ENABLED(CONFIG_OVERLAY_FS_COPY_UP_SHARED);
-+module_param_named(copy_up_shared, ovl_copy_up_shared_def, bool, 0644);
-+MODULE_PARM_DESC(ovl_copy_up_shared_def,
-+		 "Copy up when mapping a file shared");
-+
- static void ovl_entry_stack_free(struct ovl_entry *oe)
- {
- 	unsigned int i;
-@@ -380,6 +386,9 @@ static int ovl_show_options(struct seq_file *m, struct dentry *dentry)
- 						"on" : "off");
- 	if (ofs->config.xino != ovl_xino_def())
- 		seq_printf(m, ",xino=%s", ovl_xino_str[ofs->config.xino]);
-+	if (ofs->config.copy_up_shared != ovl_copy_up_shared_def)
-+		seq_printf(m, ",copy_up_shared=%s",
-+			   ofs->config.copy_up_shared ? "on" : "off");
- 	return 0;
- }
- 
-@@ -417,6 +426,8 @@ enum {
- 	OPT_XINO_ON,
- 	OPT_XINO_OFF,
- 	OPT_XINO_AUTO,
-+	OPT_COPY_UP_SHARED_ON,
-+	OPT_COPY_UP_SHARED_OFF,
- 	OPT_ERR,
- };
- 
-@@ -433,6 +444,8 @@ static const match_table_t ovl_tokens = {
- 	{OPT_XINO_ON,			"xino=on"},
- 	{OPT_XINO_OFF,			"xino=off"},
- 	{OPT_XINO_AUTO,			"xino=auto"},
-+	{OPT_COPY_UP_SHARED_ON,		"copy_up_shared=on"},
-+	{OPT_COPY_UP_SHARED_OFF,	"copy_up_shared=off"},
- 	{OPT_ERR,			NULL}
- };
- 
-@@ -559,6 +572,14 @@ static int ovl_parse_opt(char *opt, struct ovl_config *config)
- 			config->xino = OVL_XINO_AUTO;
- 			break;
- 
-+		case OPT_COPY_UP_SHARED_ON:
-+			config->copy_up_shared = true;
-+			break;
-+
-+		case OPT_COPY_UP_SHARED_OFF:
-+			config->copy_up_shared = false;
-+			break;
-+
- 		default:
- 			pr_err("overlayfs: unrecognized mount option \"%s\" or missing value\n", p);
- 			return -EINVAL;
-@@ -1380,6 +1401,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
- 	ofs->config.index = ovl_index_def;
- 	ofs->config.nfs_export = ovl_nfs_export_def;
- 	ofs->config.xino = ovl_xino_def();
-+	ofs->config.copy_up_shared = ovl_copy_up_shared_def;
- 	err = ovl_parse_opt((char *) data, &ofs->config);
- 	if (err)
- 		goto out_err;
+ /**
 -- 
 2.14.3
