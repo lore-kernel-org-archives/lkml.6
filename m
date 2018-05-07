@@ -1,62 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751952AbeEGBYV (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 21:24:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53454 "EHLO mx1.redhat.com"
+        id S1751889AbeEGBb6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 21:31:58 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7228 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751864AbeEGBYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 21:24:18 -0400
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] objtool: fix dead end logic for recursive sibling calls
-Date: Sun,  6 May 2018 20:24:14 -0500
-Message-Id: <b75b33aa241b2ec1b78a72c2414b990a4fa0f659.1525656072.git.jpoimboe@redhat.com>
+        id S1751444AbeEGBb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 21:31:57 -0400
+From: Wei Yongjun <weiyongjun1@huawei.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Kai Chieh Chuang <kaichieh.chuang@mediatek.com>
+CC: Wei Yongjun <weiyongjun1@huawei.com>, <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ASoC: fix return value check in mt6351_codec_driver_probe()
+Date: Mon, 7 May 2018 01:39:45 +0000
+Message-ID: <1525657185-73163-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Objtool has some crude logic for detecting static functions which never
-return (aka "dead ends").  This is necessary for being able to correctly
-follow GCC code flow when such functions are called.
+In case of error, the function dev_get_regmap() returns NULL pointer not
+ERR_PTR(). The IS_ERR() test in the return value check should be
+replaced with NULL test.
 
-It's remotely possible for two functions to call each other via sibling
-calls.  If they don't have RET instructions, objtool's dead end
-detection logic goes into a recursive loop:
-
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
-  drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
-
-Instead of reporting an error in this case, consider the functions to be
-non-dead-ends.
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- tools/objtool/check.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ sound/soc/codecs/mt6351.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 92b6a2c21631..dae568fef2c1 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -190,9 +190,13 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
- 					continue;
+diff --git a/sound/soc/codecs/mt6351.c b/sound/soc/codecs/mt6351.c
+index e739f07..f73dcd7 100644
+--- a/sound/soc/codecs/mt6351.c
++++ b/sound/soc/codecs/mt6351.c
+@@ -1472,8 +1472,8 @@ static int mt6351_codec_driver_probe(struct platform_device *pdev)
+ 	priv->dev = &pdev->dev;
  
- 				if (recursion == 5) {
--					WARN_FUNC("infinite recursion (objtool bug!)",
--						  dest->sec, dest->offset);
--					return -1;
-+					/*
-+					 * Infinite recursion: two functions
-+					 * have sibling calls to each other.
-+					 * This is a very rare case.  It means
-+					 * they aren't dead ends.
-+					 */
-+					return 0;
- 				}
+ 	priv->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+-	if (IS_ERR(priv->regmap))
+-		return PTR_ERR(priv->regmap);
++	if (!priv->regmap)
++		return -ENODEV;
  
- 				return __dead_end_function(file, dest_func,
--- 
-2.14.3
+ 	dev_dbg(priv->dev, "%s(), dev name %s\n",
+ 		__func__, dev_name(&pdev->dev));
