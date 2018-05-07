@@ -1,91 +1,96 @@
-Date: Tue, 8 May 2018 09:01:29 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Finn Thain <fthain@telegraphics.com.au>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nubus: Unconditionally register bus type
-Message-ID: <20180508070129.GB4792@kroah.com>
-References: <5aee5ed3.1c69fb81.19d98.ef06SMTPIN_ADDED_MISSING@mx.google.com>
- <20180506045530.GA5328@kroah.com>
- <alpine.LNX.2.21.1805061544550.8@nippy.intranet>
- <20180506202018.GC8924@kroah.com>
- <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
+Return-Path: <geert.uytterhoeven@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525697594; cv=none;
+        d=google.com; s=arc-20160816;
+        b=POjLU3yqIJ8qmW/g9hESmG1tWhzyBbkOEwJsN5V8EkrD+Khmv7CJwbKBYpBuhh5B3y
+         q6AFpkVdbkcGgjbvoznjBlWemKp86CRPUnyrwExII3liyH78ezii9yDRWrvc8AbR4iyv
+         iNQazTXQIGk//m5pMK7F2ALZ/MGOZ04W6sT4kEcwRjOZb9Glx230GeeK32w/OygcGIR2
+         D/p89xJRX5nZPwOGh02P/QXPywE6IhvHoW0ECdC/n+4gwVL2XJZ1mf7QByz8dlXBcAFE
+         8lWIh4vIbvk3bScDPW8dxsFn+tj/i+M4NWZFqnRb158FLW1v7uvl5z5V0PYIxLN9x2Kb
+         z3gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=A6+yvOI/kzqzhVfgCICPo36DJePeOYaM601A/VgrFbc=;
+        b=isBlxSqI1GOR60WwMZQwGUM1D433WdAXeGjFMAxN9fc2mrc2LBkrhkVw+0459nIPow
+         fiu/mEWbwWcrLJIsbHrXIneWPrVg+AD3g6cyFiWsm80zSJpg6nXElBeCOVrx8Zb7olgu
+         UmrGlOtuUIJckNq9dLpRTQtx7XGdPz+iZHpgQ7O9oSFulQimavZxgVOVyiLlU576A50j
+         BuXRaDYeZ5SfO98cY+runiK6Jw5S13mnPQmIrNnx9Q+Hrz6QGqvzwbZPgKJydK690NCK
+         iNV+3mqkG5q+hx2yXMrFjqahk87lflfoYE7JptcEHV+E6E9c+H4WLDxngslTyoBpVt33
+         KZug==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AQkWljV5;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=AQkWljV5;
+       spf=pass (google.com: domain of geert.uytterhoeven@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=geert.uytterhoeven@gmail.com
+X-Google-Smtp-Source: AB8JxZrfVDgEHMdgw9sebx8Yu1z1HVgetohZuvSfrVJvRIEcmQ2JGfzuyBgK3INMfqXWKl2eOcNTfIhGB09n8bPFXg8=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sender: geert.uytterhoeven@gmail.com
 In-Reply-To: <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <5aee5ed3.1c69fb81.19d98.ef06SMTPIN_ADDED_MISSING@mx.google.com>
+ <20180506045530.GA5328@kroah.com> <alpine.LNX.2.21.1805061544550.8@nippy.intranet>
+ <20180506202018.GC8924@kroah.com> <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 7 May 2018 14:53:13 +0200
+X-Google-Sender-Auth: WRBTu4gbcLFf16zZ5TzmflmtB88
+Message-ID: <CAMuHMdV_5p0Un3xMC1SMw71xpLAzVH0u4oJCTeGeo7jXS4KZSA@mail.gmail.com>
+Subject: Re: [PATCH] nubus: Unconditionally register bus type
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-m68k <linux-m68k@lists.linux-m68k.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599677433904135296?=
+X-GMAIL-MSGID: =?utf-8?q?1599809880878552044?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 07, 2018 at 09:57:22AM +1000, Finn Thain wrote:
+Hi Finn,
+
+(responding immediately to patches doing non-kosher things ;-)
+
+On Mon, May 7, 2018 at 1:57 AM, Finn Thain <fthain@telegraphics.com.au> wrote:
 > On Sun, 6 May 2018, Greg Kroah-Hartman wrote:
-> 
-> > > > Why not just have an "bus is registered" flag in your driver 
-> > > > register function that refuses to let drivers register with the 
-> > > > driver core if it isn't set?
-> > > 
-> > > Perhaps that should happen in the core driver_register() function. 
-> > > BUG_ON is frowned upon, after all. Would that be acceptable?
-> > 
-> > I don't understand what you mean here, perhaps make a patch to show it?
-> > 
-> 
+>> > > Why not just have an "bus is registered" flag in your driver
+>> > > register function that refuses to let drivers register with the
+>> > > driver core if it isn't set?
+>> >
+>> > Perhaps that should happen in the core driver_register() function.
+>> > BUG_ON is frowned upon, after all. Would that be acceptable?
+>>
+>> I don't understand what you mean here, perhaps make a patch to show it?
+>>
+>
 > As an alternative to your suggestion (add flag to avoid the BUG_ON):
-> 
+>
 > --- a/drivers/base/driver.c
 > +++ b/drivers/base/driver.c
 > @@ -148,7 +148,10 @@ int driver_register(struct device_driver *drv)
->  	int ret;
->  	struct device_driver *other;
->  
-> -	BUG_ON(!drv->bus->p);
-> +	if (!drv->bus->p) {
-> +		WARN_ONCE(1, "Cannot register driver with invalid bus\n");
-> +		return -EPROBE_DEFER;
-> +	}
->  
->  	if ((drv->bus->probe && drv->probe) ||
->  	    (drv->bus->remove && drv->remove) ||
-> 
+>         int ret;
+>         struct device_driver *other;
+>
+> -       BUG_ON(!drv->bus->p);
+> +       if (!drv->bus->p) {
+> +               WARN_ONCE(1, "Cannot register driver with invalid bus\n");
+> +               return -EPROBE_DEFER;
+> +       }
+>
+>         if ((drv->bus->probe && drv->probe) ||
+>             (drv->bus->remove && drv->remove) ||
+>
 > I'm not actually proposing this change; just responding to your question.
-> 
-> For the bug at hand, I still prefer the patch at the beginning of this 
-> thread, because it seems to follow the conventional pattern.
-> 
-> > > I found a few drivers that set a flag the way you describe, which 
-> > > could then be simplified.
-> > > 
-> > > But that pattern is rare. Most buses use the postcore_initcall() 
-> > > pattern, and so my patch took the conventional approach.
-> > 
-> > It all depends on link order, not necessarily the postcore stuff.
-> > 
-> > > > And then fix your linking error, the bus should come first in link 
-> > > > order, before your drivers :)
-> > > > 
-> > > 
-> > > I didn't encounter any errors. How shall I reproduce this?
-> > 
-> > If you have not seen this error, then why change the code at all if it 
-> > is working properly?
-> 
-> I never saw the link error you mentioned.
-> 
-> Please see this thread for one example of how to hit the BUG_ON.
-> https://marc.info/?l=linux-m68k&m=152522162801182&w=2
-> 
-> Another way to trigger the BUG_ON is to set,
-> CONFIG_ATARI=y
-> CONFIG_MAC=y
-> CONFIG_NUBUS=y
-> CONFIG_MAC8390=y
-> and try to boot the result on aranym.
 
-See my other response in this thread describing the link order problem.
-But if you can't resolve this that way, then yes, your original patch
-should be fine.
+The bus_type.p field may be unused by some bus drivers, hence this
+would prevent their drivers from being registered.
 
-thanks,
+Gr{oetje,eeting}s,
 
-greg k-h
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
