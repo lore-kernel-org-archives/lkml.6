@@ -1,80 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752797AbeEGTEG (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 15:04:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55374 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeEGTEF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 15:04:05 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5ACD4601A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From: Kalle Valo <kvalo@codeaurora.org>
-To: Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>
-Cc: Larry Finger <Larry.Finger@lwfinger.net>,
-        Matt Redfearn <matt.redfearn@mips.com>,
-        =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Regression caused by commit 882164a4a928
-References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
-        <20180507204317.52992b6c@wiggum>
-Date: Mon, 07 May 2018 22:03:58 +0300
-In-Reply-To: <20180507204317.52992b6c@wiggum> ("Michael \=\?utf-8\?Q\?B\=C3\=BCs\?\=
- \=\?utf-8\?Q\?ch\=22's\?\= message of
-        "Mon, 7 May 2018 20:43:17 +0200")
-Message-ID: <874ljj2spt.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1752636AbeEGTGX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 15:06:23 -0400
+Received: from mga06.intel.com ([134.134.136.31]:23314 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751976AbeEGTGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 15:06:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,375,1520924400";
+   d="scan'208";a="222348471"
+Subject: Re: [V5 PATCH] perf parse-events: Specially handle uncore event alias
+ in small groups
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ganapatrao.kulkarni@cavium.com, zhangshaokun@hisilicon.com,
+        yao.jin@linux.intel.com, will.deacon@arm.com, ak@linux.intel.com,
+        agustinv@codeaurora.org
+References: <1525185096-13477-1-git-send-email-kan.liang@linux.intel.com>
+ <20180501163340.GB11539@krava>
+ <1c2fc5c1-2ad1-8caf-eac6-f08b5f42d7fc@linux.intel.com>
+ <20180504182116.GA32709@kernel.org> <20180507183930.GA13491@kernel.org>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <f1da4db7-e620-10a1-8cb2-ad65aecc61ef@linux.intel.com>
+Date: Mon, 7 May 2018 15:06:18 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180507183930.GA13491@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w47J4B4a013511
 
-Michael Büsch <m@bues.ch> writes:
 
-> On Mon, 7 May 2018 10:44:34 -0500
-> Larry Finger <Larry.Finger@lwfinger.net> wrote:
->
->> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in 
->> module") appeared to be harmless, it leads to complete failure of drivers b43. 
->
->>   config SSB_DRIVER_PCICORE_POSSIBLE
->>          bool
->> -       depends on SSB_PCIHOST && SSB = y
->> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
->>          default y
->> 
->>   config SSB_DRIVER_PCICORE
->
->
-> https://patchwork.kernel.org/patch/10161131/
->
-> Could we _please_ switch to not applying patches to ssb or b43, if
-> nobody acked (or better reviewed) a patch?
->
-> We had multiple changes to ssb and b43 in the recent past that did not
-> have a review at all and broke something. I don't think such software
-> quality is acceptable at all.
-> So please revert 882164a4a928.
 
-Yes, someone please send a revert so that this can be fixed quickly for
-v4.17.
+On 5/7/2018 2:39 PM, Arnaldo Carvalho de Melo wrote:
+> Em Fri, May 04, 2018 at 03:21:16PM -0300, Arnaldo Carvalho de Melo escreveu:
+>> Em Fri, May 04, 2018 at 01:57:33PM -0400, Liang, Kan escreveu:
+>>> On 5/1/2018 12:33 PM, Jiri Olsa wrote:
+>>>> Acked-by: Jiri Olsa <jolsa@kernel.org>
+> 
+>>> Thanks Jirka.
+> 
+>>> Are you OK with the patch?
+>>> It looks like Jirka has another patch which will touch the same code.
+>>> If it's OK for you, could you please merge the patch? So he can do the
+>>> changes on top of this patch.
+>   
+>> Yeah, I'm applying to my perf/core branch and pushing it out now.
+> 
+> So, this will probably break when merging with perf/urgent due to the
+> revert of a patch that touches the parser files, just a heads out.
+> 
 
-> I'm sorry that this patch slipped through the cracks of my inbox.
-> But the reaction to that shall not be to just apply the patch. It
-> shall be to resubmit it for review.
+Yes, it probably be a conflict.
+Do you want me to send a re-base version of this patch after the revert?
 
-The thing is that in general I do not have time to ping people for every
-patch, I get enough of emails as is. If there are no review comments I
-have to assume the patch is ok to apply.
-
-But as ssb has had two major regressions recently I'm going to
-significantly raise the bar for ssb patches, and will refuse to apply
-random patches if they have not been tested with b43/b44.
-
--- 
-Kalle Valo
+Thanks,
+Kan
