@@ -1,101 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeEGJqy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:46:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47651 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751147AbeEGJqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:46:53 -0400
-Date: Mon, 7 May 2018 11:46:50 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
-Subject: Re: [PATCH 16/18] mtd: rawnand.h: use nested union kernel-doc
- markups
-Message-ID: <20180507114650.171edcc2@bbrezillon>
-In-Reply-To: <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1752005AbeEGJxT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:53:19 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:60208 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751135AbeEGJxR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 05:53:17 -0400
+Message-ID: <1525686793.6049.5.camel@sipsolutions.net>
+Subject: Re: WARNING in kernfs_add_one
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org,
+        Eric Dumazet <eric.dumazet@gmail.com>, netdev <netdev@vger.kernel.org>,
+        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tejun Heo <tj@kernel.org>
+Date: Mon, 07 May 2018 11:53:13 +0200
+In-Reply-To: <CACT4Y+bWW8w7RJ1roUQ8dDk5Fv0syDsKtMH1wRnkkN4nWOootQ@mail.gmail.com> (sfid-20180507_113356_594681_C2241104)
+References: <0000000000000390eb056b77596d@google.com>
+         <20180505164041.GD7746@kroah.com>
+         <095bc684-0029-0b2e-5e28-23376174ca02@gmail.com>
+         <20180505220721.GA10829@kroah.com>
+         <1525682589.6049.4.camel@sipsolutions.net>
+         <CACT4Y+bWW8w7RJ1roUQ8dDk5Fv0syDsKtMH1wRnkkN4nWOootQ@mail.gmail.com>
+         (sfid-20180507_113356_594681_C2241104)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mauro,
-
-On Mon,  7 May 2018 06:35:52 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
-
-> Gets rid of those warnings and better document the parameters.
+On Mon, 2018-05-07 at 11:33 +0200, Dmitry Vyukov wrote:
+> On Mon, May 7, 2018 at 10:43 AM, Johannes Berg
+> <johannes@sipsolutions.net> wrote:
+> > On Sat, 2018-05-05 at 15:07 -0700, Greg KH wrote:
+> > 
+> > > > > > syzbot found the following crash on:
+> > 
+> > Maybe it should learn to differentiate warnings, if it's going to set
+> > panic_on_warn :-)
 > 
->   ./include/linux/mtd/rawnand.h:752: warning: Function parameter or member 'timings.sdr' not described in 'nand_data_interface'
->   ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf' not described in 'nand_op_data_instr'
->   ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.in' not described in 'nand_op_data_instr'
->   ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.out' not described in 'nand_op_data_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.cmd' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.data' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.waitrdy' not described in 'nand_op_instr'
->   ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx' not described in 'nand_op_parser_pattern_elem'
->   ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_parser_pattern_elem'
->   ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx.data' not described in 'nand_op_parser_pattern_elem'
->   ./include/linux/mtd/rawnand.h:1313: warning: Function parameter or member 'manufacturer.desc' not described in 'nand_chip'
->   ./include/linux/mtd/rawnand.h:1313: warning: Function parameter or member 'manufacturer.priv' not described in 'nand_chip'
+> How?
+> Note that this is not specific to syzbot. If you see WARNINGs in a
+> subsystem that you have no idea about (or you just a normal user),
+> what do you do? Right, you report it to maintainers.
+
+Yeah, no problem with that. Just some people seem to get so much more
+upset about crashes ... but then again I get bug reports about WARN_ON
+all the time anyway that say "my kernel crashed" so I guess it doesn't
+really matter :-)
+
+> > I get why, but still, at least differentiating in the emails wouldn't be
+> > bad.
 > 
->   ./include/linux/mtd/rawnand.h:848: WARNING: Unexpected indentation.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  include/linux/mtd/rawnand.h | 26 ++++++++++++++++++--------
->  1 file changed, 18 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-> index 5dad59b31244..b986f94906df 100644
-> --- a/include/linux/mtd/rawnand.h
-> +++ b/include/linux/mtd/rawnand.h
-> @@ -740,8 +740,9 @@ enum nand_data_interface_type {
->  
->  /**
->   * struct nand_data_interface - NAND interface timing
-> - * @type:	type of the timing
-> - * @timings:	The timing, type according to @type
-> + * @type:	 type of the timing
-> + * @timings:	 The timing, type according to @type
-> + * @timings.sdr: Use it when @type is %NAND_SDR_IFACE.
+> Well, the subject says "WARNING".
+> But note there are _very_ bad WARNINGs too. Generally, a WARNING means
+> a kernel bug just that kernel can tolerate without bringing the system
+> down (as opposed to BUG).
 
-Hm, really feels weird to do that. I mean, either we describe
-timings.sdr or timings, but not both. I this case, I agree that
-describing timings.sdr would make more sense than generically
-describing any possible entries in the timings union. Is there a simple
-way we can get rid of the warning we have when not describing timings
-but all of its fields?
+Yeah, fair point. I sort of missed the subject I guess.
 
->   */
->  struct nand_data_interface {
->  	enum nand_data_interface_type type;
-> @@ -798,8 +799,9 @@ struct nand_op_addr_instr {
->  /**
->   * struct nand_op_data_instr - Definition of a data instruction
->   * @len: number of data bytes to move
-> - * @in: buffer to fill when reading from the NAND chip
-> - * @out: buffer to read from when writing to the NAND chip
-> + * @buf: buffer to fill
-> + * @buf.in: buffer to fill when reading from the NAND chip
-> + * @buf.out: buffer to read from when writing to the NAND chip
-
-Same here. What we care about is @buf.in and @buf.out, the @buf
-description is useless...
-
-Regards,
-
-Boris
+johannes
