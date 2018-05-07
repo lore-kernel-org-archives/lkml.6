@@ -1,21 +1,21 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752602AbeEGPgV (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:36:21 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:34375 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752280AbeEGPgS (ORCPT
+        id S1752655AbeEGPgo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:36:44 -0400
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:34389 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752320AbeEGPgm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:36:18 -0400
-X-Google-Smtp-Source: AB8JxZozWrILmTbzXv6AQrjppnzUudgapi3rmY+9FEUMS8PzFfjNwmKg8oDfzfClaJb8BpLKJ+ooQQ==
+        Mon, 7 May 2018 11:36:42 -0400
+X-Google-Smtp-Source: AB8JxZrjaNkuKwJz9mjNtBxUiN/P6kEwDp7dZZ0M7esLNyfqyezKP+1oAuFfiivm/WT6p8QQc3D7Sg==
 From: William Breathitt Gray <vilhelm.gray@gmail.com>
 To: linus.walleij@linaro.org
 Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: [PATCH 4/7] gpio: gpio-mm: Utilize for_each_set_port_word macro
-Date: Mon,  7 May 2018 11:36:10 -0400
-Message-Id: <5ecf9d936d9a666e243c8f4a4857cc9eaaf23459.1525704095.git.vilhelm.gray@gmail.com>
+Subject: [PATCH 6/7] gpio: pci-idio-16: Utilize for_each_set_port_word macro
+Date: Mon,  7 May 2018 11:36:34 -0400
+Message-Id: <71119902fde043315d469f790e645666cf59b310.1525704095.git.vilhelm.gray@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1525704095.git.vilhelm.gray@gmail.com>
 References: <cover.1525704095.git.vilhelm.gray@gmail.com>
@@ -28,34 +28,31 @@ for_each_set_port_word macro to simplify code and improve clarity.
 
 Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 ---
- drivers/gpio/gpio-gpio-mm.c | 67 +++++++++----------------------------
- 1 file changed, 16 insertions(+), 51 deletions(-)
+ drivers/gpio/gpio-pci-idio-16.c | 67 +++++++++++----------------------
+ 1 file changed, 21 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/gpio/gpio-gpio-mm.c b/drivers/gpio/gpio-gpio-mm.c
-index b56ff2efbf36..0ede33e7e251 100644
---- a/drivers/gpio/gpio-gpio-mm.c
-+++ b/drivers/gpio/gpio-gpio-mm.c
-@@ -172,46 +172,23 @@ static int gpiomm_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(port_state & mask);
- }
- 
-+static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
-+
- static int gpiomm_gpio_get_multiple(struct gpio_chip *chip, unsigned long *mask,
- 	unsigned long *bits)
+diff --git a/drivers/gpio/gpio-pci-idio-16.c b/drivers/gpio/gpio-pci-idio-16.c
+index 25d16b2af1c3..f5c759d70081 100644
+--- a/drivers/gpio/gpio-pci-idio-16.c
++++ b/drivers/gpio/gpio-pci-idio-16.c
+@@ -109,44 +109,20 @@ static int idio_16_gpio_get_multiple(struct gpio_chip *chip,
  {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
+ 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
  	size_t i;
--	static const size_t ports[] = { 0, 1, 2, 4, 5, 6 };
 -	const unsigned int gpio_reg_size = 8;
 -	unsigned int bits_offset;
 -	size_t word_index;
 -	unsigned int word_offset;
 -	unsigned long word_mask;
 -	const unsigned long port_mask = GENMASK(gpio_reg_size - 1, 0);
+-	unsigned long port_state;
 +	size_t word;
 +	unsigned int offset;
- 	unsigned long port_state;
+ 	void __iomem *ports[] = {
+ 		&idio16gpio->reg->out0_7, &idio16gpio->reg->out8_15,
+ 		&idio16gpio->reg->in0_7, &idio16gpio->reg->in8_15,
+ 	};
++	unsigned long port_state;
  
  	/* clear bits array to a clean slate */
  	bitmap_zero(bits, chip->ngpio);
@@ -80,7 +77,7 @@ index b56ff2efbf36..0ede33e7e251 100644
 -
 -		/* read bits from current gpio port */
 +	for_each_set_port_word(i, word, offset, mask, ARRAY_SIZE(ports), 8) {
- 		port_state = inb(gpiommgpio->base + ports[i]);
+ 		port_state = ioread8(ports[i]);
 -
 -		/* store acquired bits at respective bits array offset */
 -		bits[word_index] |= port_state << word_offset;
@@ -88,53 +85,52 @@ index b56ff2efbf36..0ede33e7e251 100644
  	}
  
  	return 0;
-@@ -242,37 +219,25 @@ static void gpiomm_gpio_set_multiple(struct gpio_chip *chip,
+@@ -186,30 +162,29 @@ static void idio_16_gpio_set_multiple(struct gpio_chip *chip,
  	unsigned long *mask, unsigned long *bits)
  {
- 	struct gpiomm_gpio *const gpiommgpio = gpiochip_get_data(chip);
--	unsigned int i;
--	const unsigned int gpio_reg_size = 8;
--	unsigned int port;
--	unsigned int out_port;
+ 	struct idio_16_gpio *const idio16gpio = gpiochip_get_data(chip);
 +	size_t i;
 +	size_t word;
 +	unsigned int offset;
++	void __iomem *ports[] = {
++		&idio16gpio->reg->out0_7, &idio16gpio->reg->out8_15,
++	};
 +	unsigned int iomask;
- 	unsigned int bitmask;
++	unsigned int bitmask;
  	unsigned long flags;
+ 	unsigned int out_state;
  
--	/* set bits are evaluated a gpio register size at a time */
--	for (i = 0; i < chip->ngpio; i += gpio_reg_size) {
--		/* no more set bits in this mask word; skip to the next word */
--		if (!mask[BIT_WORD(i)]) {
--			i = (BIT_WORD(i) + 1) * BITS_PER_LONG - gpio_reg_size;
--			continue;
--		}
--
--		port = i / gpio_reg_size;
--		out_port = (port > 2) ? port + 1 : port;
--		bitmask = mask[BIT_WORD(i)] & bits[BIT_WORD(i)];
+-	raw_spin_lock_irqsave(&idio16gpio->lock, flags);
 +	for_each_set_port_word(i, word, offset, mask, ARRAY_SIZE(ports), 8) {
 +		iomask = mask[word] >> offset;
 +		bitmask = iomask & (bits[word] >> offset);
  
- 		spin_lock_irqsave(&gpiommgpio->lock, flags);
+-	/* process output lines 0-7 */
+-	if (*mask & 0xFF) {
+-		out_state = ioread8(&idio16gpio->reg->out0_7) & ~*mask;
+-		out_state |= *mask & *bits;
+-		iowrite8(out_state, &idio16gpio->reg->out0_7);
+-	}
++		raw_spin_lock_irqsave(&idio16gpio->lock, flags);
  
- 		/* update output state data and set device gpio register */
--		gpiommgpio->out_state[port] &= ~mask[BIT_WORD(i)];
--		gpiommgpio->out_state[port] |= bitmask;
--		outb(gpiommgpio->out_state[port], gpiommgpio->base + out_port);
-+		gpiommgpio->out_state[i] &= ~iomask;
-+		gpiommgpio->out_state[i] |= bitmask;
-+		outb(gpiommgpio->out_state[i], gpiommgpio->base + ports[i]);
+-	/* shift to next output line word */
+-	*mask >>= 8;
++		out_state = ioread8(ports[i]) & ~iomask;
++		out_state |= bitmask;
++		iowrite8(out_state, ports[i]);
  
- 		spin_unlock_irqrestore(&gpiommgpio->lock, flags);
--
--		/* prepare for next gpio register set */
--		mask[BIT_WORD(i)] >>= gpio_reg_size;
--		bits[BIT_WORD(i)] >>= gpio_reg_size;
+-	/* process output lines 8-15 */
+-	if (*mask & 0xFF) {
+-		*bits >>= 8;
+-		out_state = ioread8(&idio16gpio->reg->out8_15) & ~*mask;
+-		out_state |= *mask & *bits;
+-		iowrite8(out_state, &idio16gpio->reg->out8_15);
++		raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
  	}
+-
+-	raw_spin_unlock_irqrestore(&idio16gpio->lock, flags);
  }
  
+ static void idio_16_irq_ack(struct irq_data *data)
 -- 
 2.17.0
