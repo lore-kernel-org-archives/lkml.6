@@ -1,96 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeEGQvo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 12:51:44 -0400
-Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:51024 "EHLO
-        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751923AbeEGQvn (ORCPT
+        id S1752312AbeEGQ6S (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 12:58:18 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:43382 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751923AbeEGQ6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 12:51:43 -0400
-Date: Mon, 7 May 2018 11:52:48 -0500
-From: Julia Cartwright <julia@ni.com>
-To: Naga Sureshkumar Relli <nagasure@xilinx.com>
-CC: "nagasureshkumarrelli@gmail.com" <nagasureshkumarrelli@gmail.com>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "alexandre.belloni@free-electrons.com"
-        <alexandre.belloni@free-electrons.com>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "ladis@linux-mips.org" <ladis@linux-mips.org>,
-        "ada@thorsis.com" <ada@thorsis.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [LINUX PATCH v8 2/2] memory: pl353: Add driver for arm pl353
- static memory controller
-Message-ID: <20180507165248.GK967@jcartwri.amer.corp.natinst.com>
-References: <1521024235-30374-1-git-send-email-nagasureshkumarrelli@gmail.com>
- <1521024274-30467-1-git-send-email-nagasureshkumarrelli@gmail.com>
- <20180403165042.GE7654@jcartwri.amer.corp.natinst.com>
- <BY2PR02MB1411FA717E8DFB244F9B7976AF9B0@BY2PR02MB1411.namprd02.prod.outlook.com>
+        Mon, 7 May 2018 12:58:16 -0400
+X-Google-Smtp-Source: AB8JxZrydRJ4wJMqrgCTgZKfk/udbToDeSzruITP8KjmHWlGPiBp7R5bdDd10PUjAUxzMlcGhOAYjg==
+Date: Mon, 7 May 2018 11:58:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>
+Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
+ (plus such board on Iris)
+Message-ID: <20180507165814.GA4180@rob-hp-laptop>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BY2PR02MB1411FA717E8DFB244F9B7976AF9B0@BY2PR02MB1411.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_08:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
+In-Reply-To: <1525360112-9893-1-git-send-email-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 10:12:28AM +0000, Naga Sureshkumar Relli wrote:
-> Hi Julia,
->
-> Thanks for reviewing the patch and Sorry for my late reply. This patch
-> went to junk folder, hence I didn't catch this patch.
->
-> From: Julia Cartwright [mailto:julia@ni.com]
-[..]
-> > 
-> > It would be easier to follow if you constructed your two patchsets with git format-patch --
-> > thread.
-> >
->
-> I am using the same but with out --thread.
->
-> > Or, merge them into a single patchset, especially considering the dependency between patches.
->
-> But both are different patches, one for Device tree documentation and other for driver update.
+On Thu, May 03, 2018 at 05:08:32PM +0200, Krzysztof Kozlowski wrote:
+> Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB RAM
+> (with 1024 MB NAND) flavors.  Add support for the 256 MB version on Iris
+> evaluation board.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine because
+>    my bootloader uses mem= argument).
+> ---
+>  Documentation/devicetree/bindings/arm/tegra.txt    |   1 +
+>  arch/arm/boot/dts/Makefile                         |   1 +
+>  arch/arm/boot/dts/tegra20-colibri-256.dtsi         |  11 +
+>  arch/arm/boot/dts/tegra20-colibri-512.dtsi         | 531 +--------------------
+>  ...gra20-colibri-512.dtsi => tegra20-colibri.dtsi} |   4 -
+>  arch/arm/boot/dts/tegra20-iris-256.dts             |  10 +
+>  arch/arm/boot/dts/tegra20-iris-512.dts             |  98 +---
+>  ...gra20-iris-512.dts => tegra20-iris-common.dtsi} |  11 +-
+>  8 files changed, 31 insertions(+), 636 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/tegra20-colibri-256.dtsi
+>  copy arch/arm/boot/dts/{tegra20-colibri-512.dtsi => tegra20-colibri.dtsi} (99%)
+>  create mode 100644 arch/arm/boot/dts/tegra20-iris-256.dts
+>  copy arch/arm/boot/dts/{tegra20-iris-512.dts => tegra20-iris-common.dtsi} (85%)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
+> index 32f62bb7006d..d304574ae441 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra.txt
+> @@ -49,6 +49,7 @@ board-specific compatible values:
+>    toradex,apalis_t30-eval
+>    toradex,apalis-tk1
+>    toradex,apalis-tk1-eval
+> +  toradex,colibri_t20-256
 
-Yes, I'm not proposing you merge _patches_ but _patchsets_.  You have
-two patchsets, one for the SMC driver, and another for the NAND.  Given
-that they depend on one another, it's helpful for reviewers if you sent
-them all together, with a cover letter which describes the entire
-patchset, changelog, it's dependencies, revision changelog, etc.
+NAK unless there are changes beyond the memory size. Otherwise, just use 
+the existing string or deprecate the existing one for a new one without 
+the memory size. I prefer the less churn of the former option.
 
-Something like:
-
-   [PATCH v9 0/4] rawnand: memory: add support for PL353 static memory controller + NAND
-      [PATCH v9 1/4] Devicetree: Add pl353 smc controller devicetree binding information
-      [PATCH v9 2/4] memory: pl353: Add driver for arm pl353 static memory controller
-      [PATCH v9 3/4] Documentation: nand: pl353: Add documentation for controller and driver
-      [PATCH v9 4/4] mtd: rawnand: pl353: Add basic driver for arm pl353 smc nand interface
-
-Anyway, just with --thread enabled would be an improvement.
-
-[..]
-> > > --- a/drivers/memory/Kconfig
-> > > +++ b/drivers/memory/Kconfig
-> > > @@ -152,6 +152,13 @@ config DA8XX_DDRCTL
-> > >  	  This driver is for the DDR2/mDDR Memory Controller present on
-> > >  	  Texas Instruments da8xx SoCs. It's used to tweak various memory
-> > >  	  controller configuration options.
-> > > +config PL35X_SMC
-> > > +	bool "ARM PL35X Static Memory Controller(SMC) driver"
-> >
-> > Is there any reason why this can't be tristate?
->
-> There is a Nand driver which uses this driver. i.e The NAND driver
-> Depends on this driver.
-
-That's true, but it's irrelevant to question I asked.  It is perfectly
-valid for both the SMC and NAND drivers to be tristate, why are you not
-allowing this configuration?
-
-   Julia
+>    toradex,colibri_t20-512
+>    toradex,colibri_t30
+>    toradex,colibri_t30-eval-v3
