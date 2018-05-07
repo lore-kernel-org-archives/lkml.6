@@ -1,14 +1,14 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752490AbeEGQlB (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 12:41:01 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42223 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751923AbeEGQk6 (ORCPT
+        id S1752368AbeEGQpj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 12:45:39 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:36621 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751923AbeEGQpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 12:40:58 -0400
-X-Google-Smtp-Source: AB8JxZrqsJhqr9AQ9SKPYUZTBCPrc6m1q9gmz0joKnziZrpmxZ4acr4lBQyDIil2pHpcteHIRvVybw==
-Date: Mon, 7 May 2018 11:40:56 -0500
+        Mon, 7 May 2018 12:45:36 -0400
+X-Google-Smtp-Source: AB8JxZpkb9oPdPdSD6bg6kh5UOxBXMO3OVK3EuT/7pkW9sNBnE5g1lN2Ikvl92kxqiI1b32Io8WKdg==
+Date: Mon, 7 May 2018 11:45:34 -0500
 From: Rob Herring <robh@kernel.org>
 To: Kiran Gunda <kgunda@codeaurora.org>
 Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
@@ -20,34 +20,38 @@ Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
- qcom-wled.c
-Message-ID: <20180507164056.GA21042@rob-hp-laptop>
+Subject: Re: [PATCH V2 2/5] backlight: qcom-wled: Add support for WLED4
+ peripheral
+Message-ID: <20180507164534.GB21042@rob-hp-laptop>
 References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
- <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
+ <1525342352-25072-3-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
+In-Reply-To: <1525342352-25072-3-git-send-email-kgunda@codeaurora.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 03:42:28PM +0530, Kiran Gunda wrote:
-> pm8941-wled.c driver is supporting the WLED peripheral
-> on pm8941. Rename it to qcom-wled.c so that it can support
-> WLED on multiple PMICs.
+On Thu, May 03, 2018 at 03:42:29PM +0530, Kiran Gunda wrote:
+> WLED4 peripheral is present on some PMICs like pmi8998
+> and pm660l. It has a different register map and also
+> configurations are different. Add support for it.
 > 
 > Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
 > ---
->  .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 +-
+>  .../bindings/leds/backlight/qcom-wled.txt          | 172 ++++-
 
-Please split DT bindings from driver patches.
+Please split bindings to a separate patch.
 
->  drivers/video/backlight/Kconfig                                   | 8 ++++----
->  drivers/video/backlight/Makefile                                  | 2 +-
->  drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
->  4 files changed, 6 insertions(+), 6 deletions(-)
->  rename Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt} (95%)
->  rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
+This is also a whole lot of churn re-formatting. That is fine, but don't 
+mix actual changes to the binding with re-formatting. You can do 2 
+patches in this case: 
+
+- move and reformat (as long as the move shows up as a move 
+and not a remove and add) 
+- additions for new chips
+
+>  drivers/video/backlight/qcom-wled.c                | 749 +++++++++++++++------
+>  2 files changed, 696 insertions(+), 225 deletions(-)
