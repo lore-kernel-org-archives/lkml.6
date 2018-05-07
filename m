@@ -1,79 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752652AbeEGPaL (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:30:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752224AbeEGPaG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:30:06 -0400
-Date: Mon, 7 May 2018 11:30:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-trace-users@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        shuah@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
-Message-ID: <20180507113003.66045d18@gandalf.local.home>
-In-Reply-To: <20180506005143.7bd9030db298fcfbade73434@kernel.org>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-        <20180503181137.6d82d897@gandalf.local.home>
-        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
-        <20180504120642.354cdd1f@gandalf.local.home>
-        <20180505113803.45700179a93091b114ec6984@kernel.org>
-        <20180506005143.7bd9030db298fcfbade73434@kernel.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752230AbeEGPfa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:35:30 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:41638 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeEGPf0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 11:35:26 -0400
+X-Google-Smtp-Source: AB8JxZrYpgm/cMH3R1joLtBlKeS7Xelo+N83k64C2VDFVlHMacWpDVeeb9SZHoB1UVmi2bTICKy9hw==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 1/7] bitops: Introduce the for_each_set_port_word macro
+Date: Mon,  7 May 2018 11:35:18 -0400
+Message-Id: <7b704b1feb2f2cdb6c3a3061fa5f5d804954d15d.1525704095.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1525704095.git.vilhelm.gray@gmail.com>
+References: <cover.1525704095.git.vilhelm.gray@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 6 May 2018 00:51:43 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+This macro iterates for each group of bits (port word) with set bits,
+within a bitmap memory region. For each iteration, "port_word" is set to
+the found port word index, "word_index" is set to the word index of the
+bitmap containing the found port word, and "word_offset" is set to the
+bit offset of the found port word within the respective bitmap word.
 
-> OK, now I think it is a time to introduce new unified interface for dynamic events,
-> tracefs/dynamic_events and make uprobe_events and kprobe_events as symbolic-links
-> to the new interface file.
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+---
+ include/asm-generic/bitops/find.h | 24 ++++++++++++++++++++++++
+ include/linux/bitops.h            |  9 +++++++++
+ lib/find_bit.c                    | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 61 insertions(+)
 
-So basically make one file that does all the work?
-
-I'm not sure we can keep the other files as symbolic links. Because we
-don't want the kprobe_events showing up in the uprobe_events file, and
-vice versa. We need to keep all this backward compatible.
-
-But I do like the idea of one file to rule them all, approach.
-
--- Steve
-
-
-> 
-> Actually, there is no reason we split those 2 interfaces, since
-> both have similar, but very clear syntax differences.
-> 
-> o Uprobe event definition
->   p[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a uprobe
->   r[:[GRP/]EVENT] PATH:OFFSET [FETCHARGS] : Set a return uprobe (uretprobe)
->   -:[GRP/]EVENT                           : Clear uprobe or uretprobe event
-> 
-> o Kprobe event definition
->   p[:[GRP/]EVENT] [MOD:]SYM[+offs]|MEMADDR [FETCHARGS]  : Set a probe
->   r[MAXACTIVE][:[GRP/]EVENT] [MOD:]SYM[+0] [FETCHARGS]  : Set a return probe
->   -:[GRP/]EVENT                                         : Clear a probe
-> 
-> At first, it is clear that those can share the parser. 2nd, it is easy to
-> distinguish those, because Uprobe event must require the PATH which starts
-> with '/', on the other hand, Kprobe event must NOT start with '/'.
-> (both SYM and MOD will start with alphabet or '_', of course MEMADDR
-> will start with digits)
-> 
-> If we can merge those to unified dynamic_events interface, I think
-> 'f[:[GRP/]EVENT] SYM(CAST)' is also acceptable, since it is no more
-> only for kprobe/uprobe. We can directly add some other dynamic
-> events via dynamic_events interface. ;)
-> 
-> Thank you,
-> 
+diff --git a/include/asm-generic/bitops/find.h b/include/asm-generic/bitops/find.h
+index 8a1ee10014de..b24f3f92642b 100644
+--- a/include/asm-generic/bitops/find.h
++++ b/include/asm-generic/bitops/find.h
+@@ -80,4 +80,28 @@ extern unsigned long find_first_zero_bit(const unsigned long *addr,
+ 
+ #endif /* CONFIG_GENERIC_FIND_FIRST_BIT */
+ 
++/**
++ * find_next_port_word - find next port word with set bits in a memory region
++ * @word_index: location to store bitmap word index of found port word
++ * @word_offset: bits offset of the found port word in respective bitmap word
++ * @bits: address to base the search on
++ * @size: bitmap size in number of ports
++ * @offset: port word index to start searching at
++ * @port_size: port word size in bits
++ *
++ * Returns the port index for the next port word with set bits; the respective
++ * bitmap word index is stored at the location pointed by @word_index, and the
++ * bits offset of the found port word within the respective bitmap word is
++ * stored at the location pointed by @word_offset. If no bits are set, returns
++ * @size.
++ */
++size_t find_next_port_word(size_t *const word_index,
++			   unsigned int *const word_offset,
++			   const unsigned long *const bits, const size_t size,
++			   const size_t offset, const unsigned int port_size);
++
++#define find_first_port_word(word_index, word_offset, bits, size, port_size) \
++	find_next_port_word((word_index), (word_offset), (bits), (size), 0, \
++			    (port_size))
++
+ #endif /*_ASM_GENERIC_BITOPS_FIND_H_ */
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index 4cac4e1a72ff..c3b7caf4ad2d 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -59,6 +59,15 @@ extern unsigned long __sw_hweight64(__u64 w);
+ 	     (bit) < (size);					\
+ 	     (bit) = find_next_zero_bit((addr), (size), (bit) + 1))
+ 
++#define for_each_set_port_word(port_word, word_index, word_offset, bits, size, \
++			       port_size) \
++	for ((port_word) = find_first_port_word(&(word_index), &(word_offset), \
++					   (bits), (size), (port_size)); \
++	     (port_word) < (size); \
++	     (port_word) = find_next_port_word(&(word_index), &(word_offset), \
++					  (bits), (size), (port_word) + 1, \
++					  (port_size)))
++
+ static inline int get_bitmask_order(unsigned int count)
+ {
+ 	int order;
+diff --git a/lib/find_bit.c b/lib/find_bit.c
+index ee3df93ba69a..628c94d63d6b 100644
+--- a/lib/find_bit.c
++++ b/lib/find_bit.c
+@@ -20,6 +20,7 @@
+ #include <linux/bitmap.h>
+ #include <linux/export.h>
+ #include <linux/kernel.h>
++#include <linux/types.h>
+ 
+ #if !defined(find_next_bit) || !defined(find_next_zero_bit) || \
+ 		!defined(find_next_and_bit)
+@@ -218,3 +219,30 @@ EXPORT_SYMBOL(find_next_bit_le);
+ #endif
+ 
+ #endif /* __BIG_ENDIAN */
++
++size_t find_next_port_word(size_t *const word_index,
++			   unsigned int *const word_offset,
++			   const unsigned long *const bits, const size_t size,
++			   const size_t offset, const unsigned int port_size)
++{
++	size_t i;
++	unsigned int bits_offset;
++	unsigned long word_mask;
++	const unsigned long port_mask = GENMASK(port_size - 1, 0);
++
++	for (i = offset; i < size; i++) {
++		bits_offset = i * port_size;
++
++		*word_index = BIT_WORD(bits_offset);
++		*word_offset = bits_offset % BITS_PER_LONG;
++
++		word_mask = bits[*word_index] & (port_mask << *word_offset);
++		if (!word_mask)
++			continue;
++
++		return i;
++	}
++
++	return size;
++}
++EXPORT_SYMBOL(find_next_port_word);
+-- 
+2.17.0
