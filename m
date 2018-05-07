@@ -1,209 +1,215 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-272202-1525672455-3-3348455086032545973
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.137', Host='smtp4.osuosl.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525672455; b=AXmQTmFqsFo5II5n/IJ96PNMug/D1s03IQnOILEKT7XJP4F1H4
-    nK6QkL095WSAD6KlR7Q1rRMFV5hGTNU+fRmdeFZV4bBrA0gg3USAI6LHPheARZhG
-    4V6K/PrxNrSfu0f4kUBoNlA6KYZE+3P1BSIyK5DcGFREaC0JNaOhQEi5t8lW/FZx
-    usNjPRwqB/ThRNm/maiL5hPQSzUq3m6kDQMddQzR8EdKO07OH0vNpleDeOybyKpa
-    K/I6xtnuMKQJTMt5sBlUahWWpS2DQGJSsHsCO/6DTdtUsDGQBGE8D5ABLlq+rMVm
-    dB8a+d1O+dGRpATrtrtYEvFVLkCIGdG4hzWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :in-reply-to:references:mime-version:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525672455; bh=PTJGG
-    x+vKsXtusKI1VggCnSuUOIVsMIeww2GVcm1YRc=; b=WpWDWZGPvr68L253qcx4t
-    2TxE1gDXAEH+VEXV9ChWKhFCy/iubqgwkyN1Rh2kyW3z3GOUvlJIzffogigwyLwq
-    mdi/Pdr/lj1EQpa2tSMpf+zd0JTMzIcfj1hXF4oc8jq/CtZev300l881Z8mO1XQZ
-    huDbYnXqh+LC8c03UvmBj/dDEEccDYfJ2gotOvYNXI3vKPMSn4f185kBb0oKN1dD
-    72aimBeOJcNbFLkllZynsx4u/m7cZD4Nxsx9N6EXgVDPwPrb/n+ti9EJENeWo3JQ
-    K2+vxzwoej701dTafRYUU8+g8lsFaJZvsFr79Q/1UW26g6tgfWt2K1SwBXJglMmL
-    A==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=microchip.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=microchip.com;
-    iprev=pass policy.iprev=140.211.166.137 (smtp4.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=fraxinus.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=fraxinus.osuosl.org x-ptr-lookup=smtp4.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=microchip.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIxu0au6kng25PgR3VFfGeW/9VeFxK9Kms6jAwTU49RqI20H+qDVcCcNqYKbZZ2XY7lHME1I9iUIt1YJVd3x/HInGCkMgqiYdqeVsR08gZ4nYwP1l2AV
-    smZKopAChunjwCcbh7niSg9eaPdJllqjs2za4UfKSGa64m/VzJ4uYBXgL5U06MwoNCCreDcaY0PRZ+TDAIDzDz9P1GkeSKK0G8FzdCUCWrb0pZNAIFaaOu0I
-    1WB0v10PfnilK4aGjQE1nw==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=584k1XxxM9pnnVd4MmWcNA==:117
-    a=584k1XxxM9pnnVd4MmWcNA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8 a=XYAwZIGsAAAA:8
-    a=DDOyTI_5AAAA:8 a=e9YNR8KRjv5tQyLvbvMA:9 a=CjuIK1q_8ugA:10
-    a=E8ToXWR_bxluHZ7gmE-Z:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-IronPort-AV: E=Sophos;i="5.49,372,1520924400"; d="scan'208";a="14570233"
-Date: Mon, 7 May 2018 11:23:59 +0530
-From: Ajay Singh <ajay.kathat@microchip.com>
-To: Nathan Chancellor <natechancellor@gmail.com>
-Subject: Re: [PATCH 1/3] staging: wilc1000: Remove unused variables
-Message-ID: <20180507112359.2107677c@ajaysk-VirtualBox>
-In-Reply-To: <20180506073333.3770-1-natechancellor@gmail.com>
-References: <20180506073333.3770-1-natechancellor@gmail.com>
-Organization: Microchip Technology
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ganesh Krishna <ganesh.krishna@microchip.com>,
- Aditya Shankar <aditya.shankar@microchip.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Return-Path: <vadimp@mellanox.com>
+X-Google-Smtp-Source: AB8JxZo0u928/qY0sKPFh7pi3kbaihsG7O1Z/05VQPBwbXxd4bV8bUEzZgz8z+BsQPH8EW9sPOVd
+ARC-Seal: i=1; a=rsa-sha256; t=1525668788; cv=none;
+        d=google.com; s=arc-20160816;
+        b=jfKM/ZCovBQ5GYSgIUm5LL64FL3J3g3I2OI2wiZmqX16HgG6wA3EzAwNBjKPqywyAf
+         Uo2xR9Wl4nrmL3uxmhzjOOoipqxCJ8HOag8U19SXq3D0NZQkyBQ5kuHSGVYb/07Pohdr
+         GOw+N5Fy1SaUMW2oONEzCtyvvHO8zmi5yTqTyiXhpUUw79g9Gt+Vtl1OY4oq0IeVSS1U
+         R+83ahOcIbLpSIC7frQHTcSoaC0Ee8jkd2iPL+aJeTlnw4sn856nUbQWGosjs3rast47
+         CSaQ58GBqKDbQ4sOZG1Eg7sX3Lix1LVasxs5A2ZjHl5ohSCU2ulVCijYWRdfsQY6fU61
+         g9uQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=NqSn/WnMpf4FXXcZy3KWVd93yWjjGu0HmtyLZejWCKA=;
+        b=eK866bBQOjFHUT61dmv0hsY37GA1SsfJnJNT/76z/s+YCnAGy6dc/X7jnA6C6K1X4Y
+         R8N4vOf5yFZPEmunU84yKLfr8OO9ilZDvzHxxhkkbhNP1DHaF9NCcUZEpn9Lm+hofCD0
+         KmvSMSgf8esGwn8nhUZm5MynugSINXZvky+BEJFcGOBUp32BvcWEZszp2PYA/LHn2Bax
+         y+VMALkj8lS7e16UbDFaOULo+Fb6Wt7FNa0eyojt492IeYoBX9yDiFbDHZYEhPY/OmaU
+         3Tvd4TRFEhvAaCX2ruEZ83YnUTuMagz2CZ0eR3FM/jREFe5G7+Ctv7LEBfSv8oAr0mF9
+         LcxA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
+From: Vadim Pasternak <vadimp@mellanox.com>
+To: dvhart@infradead.org, andy.shevchenko@gmail.com,
+        gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com,
+        Vadim Pasternak <vadimp@mellanox.com>
+Subject: [PATCH v2 3/7] platform/mellanox: mlxreg-hotplug: add extra cycle for hotplug work queue
+Date: Mon,  7 May 2018 06:48:51 +0000
+Message-Id: <1525675735-125547-1-git-send-email-vadimp@mellanox.com>
+X-Mailer: git-send-email 2.1.4
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599779675291246402?=
+X-GMAIL-MSGID: =?utf-8?q?1599779675291246402?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Thank you for the patch series.
+Add extra cycle for hotplug work queue to handle the case when a signal is
+It adds missed logic for signal acknowledge, by adding an extra run for
+received, but no specific signal assertion is detected. Such case
+theoretically can happen for example in case several units are removed or
+inserted at the same time. In this situation acknowledge for some signal
+can be missed at signal top aggreagation status level. The extra run will
+allow to handler to acknowledge the missed signal.
 
-On Sun, 6 May 2018 00:33:31 -0700
-Nathan Chancellor <natechancellor@gmail.com> wrote:
+The interrupt handling flow performs the next steps:
+(1)
+Enter mlxreg_hotplug_work_handler due to signal assertion.
+Aggregation status register is changed for example from 0xff to 0xfd
+(event signal group related to bit 1).
+(2)
+Mask aggregation interrupts, read aggregation status register and save it
+(0xfd) in aggr_cache, then traverse down to handle signal from groups
+related to the changed bit.
+(3)
+Read and mask group related signal.
+Acknowledge and unmask group related signal (acknowledge should clear
+aggregation status register from 0xfd back to 0xff).
+(4)
+Re-schedule work queue for the immediate execution.
+(5)
+Enter mlxreg_hotplug_work_handler due to re-scheduling.
+Aggregation status is changed from previous 0xfd to 0xff.
+Go over steps (2) - (5) and in case no new signal assertion
+is detected - unmask aggregation interrupts.
 
-> GCC warns these variables are all set but never used so remove them.
-> 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+The possible race could happen in case new signal from the same group is
+asserted after step (3) and prior step (5). In such case aggregation
+status will change back from 0xff to 0xfd and the value read from the
+aggregation status register will be the same as a value saved in
+aggr_cache. As a result the handler will not traverse down and signal
+will stay unhandled.
 
-Reviewed-by: Ajay Singh <ajay.kathat@microchip.com>
+Example of faulty flow:
+The signal routing flow is as following (f.e. for of FANi removing):
+ - FAN status and event registers related bit is changed;
+ -- intermediate aggregation status register is changed;
+ --- top aggregation status register is changed;
+ ---- interrupt routed to CPU and interrupt handler is invoked.
 
-> ---
->  drivers/staging/wilc1000/host_interface.c         | 12 ------------
->  drivers/staging/wilc1000/wilc_wfi_cfgoperations.c |  6 ------
->  2 files changed, 18 deletions(-)
-> 
-> diff --git a/drivers/staging/wilc1000/host_interface.c
-> b/drivers/staging/wilc1000/host_interface.c index
-> 28edd904b33a..3fd4c8e62da6 100644 ---
-> a/drivers/staging/wilc1000/host_interface.c +++
-> b/drivers/staging/wilc1000/host_interface.c @@ -1432,13 +1432,7 @@
-> static s32 handle_rcvd_gnrl_async_info(struct wilc_vif *vif, {
->  	s32 result = 0;
->  	u8 msg_type = 0;
-> -	u8 msg_id = 0;
-> -	u16 msg_len = 0;
-> -	u16 wid_id = (u16)WID_NIL;
-> -	u8 wid_len  = 0;
->  	u8 mac_status;
-> -	u8 mac_status_reason_code;
-> -	u8 mac_status_additional_info;
->  	struct host_if_drv *hif_drv = vif->hif_drv;
->  
->  	if (!rcvd_info->buffer) {
-> @@ -1472,13 +1466,7 @@ static s32 handle_rcvd_gnrl_async_info(struct
-> wilc_vif *vif, return -EFAULT;
->  		}
->  
-> -		msg_id = rcvd_info->buffer[1];
-> -		msg_len = MAKE_WORD16(rcvd_info->buffer[2],
-> rcvd_info->buffer[3]);
-> -		wid_id = MAKE_WORD16(rcvd_info->buffer[4],
-> rcvd_info->buffer[5]);
-> -		wid_len = rcvd_info->buffer[6];
->  		mac_status  = rcvd_info->buffer[7];
-> -		mac_status_reason_code = rcvd_info->buffer[8];
-> -		mac_status_additional_info = rcvd_info->buffer[9];
->  		if (hif_drv->hif_state == HOST_IF_WAITING_CONN_RESP)
-> { host_int_parse_assoc_resp_info(vif, mac_status);
->  		} else if ((mac_status == MAC_STATUS_DISCONNECTED) &&
-> diff --git a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c
-> b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c index
-> 8be3c4c57579..76b4afaef423 100644 ---
-> a/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c +++
-> b/drivers/staging/wilc1000/wilc_wfi_cfgoperations.c @@ -917,12
-> +917,10 @@ static int add_key(struct wiphy *wiphy, struct net_device
-> *netdev, u8 key_index, const u8 *tx_mic = NULL; u8 mode = NO_ENCRYPT;
->  	u8 op_mode;
-> -	struct wilc *wl;
->  	struct wilc_vif *vif;
->  
->  	priv = wiphy_priv(wiphy);
->  	vif = netdev_priv(netdev);
-> -	wl = vif->wilc;
->  
->  	switch (params->cipher) {
->  	case WLAN_CIPHER_SUITE_WEP40:
-> @@ -1885,12 +1883,10 @@ static int start_ap(struct wiphy *wiphy,
-> struct net_device *dev, struct cfg80211_ap_settings *settings)
->  {
->  	struct cfg80211_beacon_data *beacon = &settings->beacon;
-> -	struct wilc_priv *priv;
->  	s32 ret = 0;
->  	struct wilc *wl;
->  	struct wilc_vif *vif;
->  
-> -	priv = wiphy_priv(wiphy);
->  	vif = netdev_priv(dev);
->  	wl = vif->wilc;
->  
-> @@ -2016,14 +2012,12 @@ static int change_station(struct wiphy
-> *wiphy, struct net_device *dev, const u8 *mac, struct
-> station_parameters *params) {
->  	s32 ret = 0;
-> -	struct wilc_priv *priv;
->  	struct add_sta_param sta_params = { {0} };
->  	struct wilc_vif *vif;
->  
->  	if (!wiphy)
->  		return -EFAULT;
->  
-> -	priv = wiphy_priv(wiphy);
->  	vif = netdev_priv(dev);
->  
->  	if (vif->iftype == AP_MODE || vif->iftype == GO_MODE) {
+When interrupt handler is invoked it follows the next simple logic (f.e
+FAN3 is removed):
+ (a1) mask top aggregation interrupt mask register;
+ (a2) read top aggregation interrupt status register and test to which
+      underling group belongs a signal (FANs in this case and is changed
+	  from 0xff to 0xfb and 0xfb is saved as a last status value);
+   (b1) mask FANs interrupt mask register;
+   (b2) read FANs status register and test which FAN has been changed
+        FAN3 in this example);
+     (c1) perform relevant action;
+              <--------------- (FAN2 is removed at this point)
+   (b3) clear FANs interrupt event register to acknowledge FAN3 signal;
+   (b4) unmask FANs interrupt mask register
+ (a3) unmask top aggregation interrupt mask register;
 
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+ An interrupt handler is invoked, since FAN2 interrupt is not acknowledge.
+ It should set top aggregation interrupt status register bit 6 (0xfb).
+ In step (a2)
+ (a2) read top aggregation interrupt and comparing it with saved value
+      does not show change (same 0xfb) and after (a2) execution jumps to
+	  (a3) and signal leaved unhandled
+
+The fix will enforce handler to traverse down in case the signal is
+received, but signal assertion is not detected.
+
+Fixes: 07b89c2b2a5e ("platform/x86: Introduce support for Mellanox hotplug driver")
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+---
+V1->v2:
+ Comments pointed out by Darren:
+ - Modify commit message;
+ - Remove redundant check of aggr_asserted;
+ - Change bug fix reference from 1f976f6978bf, which just relocated driver
+   to 07b89c2b2a5e, which was initial driver commit.
+---
+ drivers/platform/mellanox/mlxreg-hotplug.c | 48 +++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
+index b56953a..922913b 100644
+--- a/drivers/platform/mellanox/mlxreg-hotplug.c
++++ b/drivers/platform/mellanox/mlxreg-hotplug.c
+@@ -55,6 +55,7 @@
+ #define MLXREG_HOTPLUG_RST_CNTR		3
+ 
+ #define MLXREG_HOTPLUG_ATTRS_MAX	24
++#define MLXREG_HOTPLUG_NOT_ASSERT	3
+ 
+ /**
+  * struct mlxreg_hotplug_priv_data - platform private data:
+@@ -74,6 +75,7 @@
+  * @mask: top aggregation interrupt common mask;
+  * @aggr_cache: last value of aggregation register status;
+  * @after_probe: flag indication probing completion;
++ * @not_asserted: number of entries in workqueue with no signal assertion;
+  */
+ struct mlxreg_hotplug_priv_data {
+ 	int irq;
+@@ -93,6 +95,7 @@ struct mlxreg_hotplug_priv_data {
+ 	u32 mask;
+ 	u32 aggr_cache;
+ 	bool after_probe;
++	u8 not_asserted;
+ };
+ 
+ static int mlxreg_hotplug_device_create(struct mlxreg_hotplug_priv_data *priv,
+@@ -410,6 +413,18 @@ static void mlxreg_hotplug_work_handler(struct work_struct *work)
+ 	aggr_asserted = priv->aggr_cache ^ regval;
+ 	priv->aggr_cache = regval;
+ 
++	/*
++	 * Handler is invoked, but no assertion is detected at top aggregation
++	 * status level. Set aggr_asserted to mask value to allow handler extra
++	 * run over all relevant signals to recover any missed signal.
++	 */
++	if (priv->not_asserted == MLXREG_HOTPLUG_NOT_ASSERT) {
++		priv->not_asserted = 0;
++		aggr_asserted = pdata->mask;
++	}
++	if (!aggr_asserted)
++		goto unmask_event;
++
+ 	/* Handle topology and health configuration changes. */
+ 	for (i = 0; i < pdata->counter; i++, item++) {
+ 		if (aggr_asserted & item->aggr_mask) {
+@@ -420,27 +435,26 @@ static void mlxreg_hotplug_work_handler(struct work_struct *work)
+ 		}
+ 	}
+ 
+-	if (aggr_asserted) {
+-		spin_lock_irqsave(&priv->lock, flags);
++	spin_lock_irqsave(&priv->lock, flags);
+ 
+-		/*
+-		 * It is possible, that some signals have been inserted, while
+-		 * interrupt has been masked by mlxreg_hotplug_work_handler.
+-		 * In this case such signals will be missed. In order to handle
+-		 * these signals delayed work is canceled and work task
+-		 * re-scheduled for immediate execution. It allows to handle
+-		 * missed signals, if any. In other case work handler just
+-		 * validates that no new signals have been received during
+-		 * masking.
+-		 */
+-		cancel_delayed_work(&priv->dwork_irq);
+-		schedule_delayed_work(&priv->dwork_irq, 0);
++	/*
++	 * It is possible, that some signals have been inserted, while
++	 * interrupt has been masked by mlxreg_hotplug_work_handler. In this
++	 * case such signals will be missed. In order to handle these signals
++	 * delayed work is canceled and work task re-scheduled for immediate
++	 * execution. It allows to handle missed signals, if any. In other case
++	 * work handler just validates that no new signals have been received
++	 * during masking.
++	 */
++	cancel_delayed_work(&priv->dwork_irq);
++	schedule_delayed_work(&priv->dwork_irq, 0);
+ 
+-		spin_unlock_irqrestore(&priv->lock, flags);
++	spin_unlock_irqrestore(&priv->lock, flags);
+ 
+-		return;
+-	}
++	return;
+ 
++unmask_event:
++	priv->not_asserted++;
+ 	/* Unmask aggregation event (no need acknowledge). */
+ 	ret = regmap_write(priv->regmap, pdata->cell +
+ 			   MLXREG_HOTPLUG_AGGR_MASK_OFF, pdata->mask);
+-- 
+2.1.4
