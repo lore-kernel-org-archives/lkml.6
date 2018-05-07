@@ -1,106 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752064AbeEGLzr convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 07:55:47 -0400
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:46916 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751378AbeEGLzq (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:7:1>);
-        Mon, 7 May 2018 07:55:46 -0400
-Message-Id: <5AF03EBD02000078001C1303@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.0.0 
-Date: Mon, 07 May 2018 05:55:41 -0600
-From: "Jan Beulich" <JBeulich@suse.com>
-To: <mingo@elte.hu>, <tglx@linutronix.de>, <hpa@zytor.com>
-Cc: "Andy Lutomirski" <luto@kernel.org>,
-        "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] x86-64/Xen: fix stack switching
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8BIT
-Content-Disposition: inline
+        id S1751936AbeEGL6v (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 07:58:51 -0400
+Received: from pv33p00im-asmtp002.me.com ([17.142.194.251]:56113 "EHLO
+        pv33p00im-asmtp002.me.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750913AbeEGL6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 07:58:49 -0400
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-07_04:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1011 suspectscore=0 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805070113
+Date: Mon, 07 May 2018 12:57:44 +0200
+From: damian <linux_dti@icloud.com>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: Kernel build with gcc 8 a lot of warnings
+Message-id: <20180507105744.GA8586@zrhn9910b>
+Mail-followup-to: Josh Poimboeuf <jpoimboe@redhat.com>, peterz@infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20180505192112.GA18728@zrhn9910b>
+ <20180507045453.leou4zypnlcck4vr@treble>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Content-disposition: inline
+In-reply-to: <20180507045453.leou4zypnlcck4vr@treble>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While on native entry into the kernel happens on the trampoline stack,
-PV Xen kernels are being entered with the current thread stack right
-away. Hence source and destination stacks are identical in that case,
-and special care is needed.
+On Sun, 06. May 23:54, Josh Poimboeuf wrote:
+> On Sat, May 05, 2018 at 09:21:12PM +0200, damian wrote:
+> > Helllo together,
+> > 
+> > Hello everybody,
+> > 
+> > is something special to note when kernel build with gcc 8? I receive various warnings from the objtool:
+> > With GCC 7 works all fine.
+> > 
+> > kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags()+0x40: sibling call from callable instruction with modified stack frame
+> > kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files()+0x2a3: sibling call from callable instruction with modified stack frame
+> > kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable()+0x20b: sibling call from callable instruction with modified stack frame
+> > kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems()+0x296: sibling call from callable instruction with modified stack frame
+> > kernel/cgroup/cgroup.o: warning: objtool: cgroup_sk_alloc_disable()+0x10: sibling call from callable instruction with modified stack frame
+> > kernel/cgroup/cgroup.o: warning: objtool: parse_cgroup_root_flags.cold.45()+0xa: call without frame pointer save/setup
+> > kernel/cgroup/cgroup.o: warning: objtool: cgroup_addrm_files.cold.46()+0x17: call without frame pointer save/setup
+> > kernel/cgroup/cgroup.o: warning: objtool: cgroup_apply_control_enable.cold.47()+0x24: call without frame pointer save/setup
+> > kernel/cgroup/cgroup.o: warning: objtool: rebind_subsystems.cold.48()+0x10: call without frame pointer save/setup
+> > kernel/cgroup/cgroup.o: warning: objtool: cgroup_sk_alloc_disable.cold.49()+0x7: call without frame pointer save/setup
+> >   CC      kernel/cgroup/stat.o
+> >   CC [M]  arch/x86/kvm/../../../virt/kvm/kvm_main.o
+> > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_register_lapic()+0x10: sibling call from callable instruction with modified stack frame
+> > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_map_cpu()+0x2c: sibling call from callable instruction with modified stack frame
+> > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_register_lapic.cold.6()+0x7: call without frame pointer save/setup
+> > arch/x86/kernel/acpi/boot.o: warning: objtool: acpi_map_cpu.cold.7()+0x7: call without frame pointer save/setup
+> 
+> Thanks, this is a known issue with GCC 8 that I haven't gotten a chance
+> to fix yet.  They're related to the fact that GCC 8 is splitting out
+> 'unlikely' code into 'cold' subfunctions in .text.unlikely.
+> 
+> I've got some old patches that fix it.  Now that GCC 8 is out, I'll need
+> get the patches dusted off and cleaned up for merging.
+> 
+> -- 
+> Josh
 
-Other than in sync_regs() the copying done on the INT80 path as well as
-on the NMI path itself isn't NMI / #MC safe, as either of these events
-occurring in the middle of the stack copying would clobber data on the
-(source) stack. (Of course, in the NMI case only #MC could break
-things.)
+Hello Josh,
 
-I'm not altering the similar code in interrupt_entry(), as that code
-path is unreachable when running an PV Xen guest afaict.
+if you need any additional information, please feel free and contact me. 
 
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Cc: stable@kernel.org 
----
-There would certainly have been the option of using alternatives
-patching, but afaict the patching code isn't NMI / #MC safe, so I'd
-rather stay away from patching the NMI path. And I thought it would be
-better to use similar code in both cases.
-
-Another option would be to make the Xen case match the native one, by
-going through the trampoline stack, but to me this would look like extra
-overhead for no gain.
----
- arch/x86/entry/entry_64.S        |    8 ++++++++
- arch/x86/entry/entry_64_compat.S |    8 +++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
---- 4.17-rc4/arch/x86/entry/entry_64.S
-+++ 4.17-rc4-x86_64-stack-switch-Xen/arch/x86/entry/entry_64.S
-@@ -1399,6 +1399,12 @@ ENTRY(nmi)
- 	swapgs
- 	cld
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdx
-+
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rdx
-+	subq	$8, %rdx
-+	xorq	%rsp, %rdx
-+	shrq	$PAGE_SHIFT, %rdx
-+	jz	.Lnmi_keep_stack
- 	movq	%rsp, %rdx
- 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
- 	UNWIND_HINT_IRET_REGS base=%rdx offset=8
-@@ -1408,6 +1414,8 @@ ENTRY(nmi)
- 	pushq	2*8(%rdx)	/* pt_regs->cs */
- 	pushq	1*8(%rdx)	/* pt_regs->rip */
- 	UNWIND_HINT_IRET_REGS
-+.Lnmi_keep_stack:
-+
- 	pushq   $-1		/* pt_regs->orig_ax */
- 	PUSH_AND_CLEAR_REGS rdx=(%rdx)
- 	ENCODE_FRAME_POINTER
---- 4.17-rc4/arch/x86/entry/entry_64_compat.S
-+++ 4.17-rc4-x86_64-stack-switch-Xen/arch/x86/entry/entry_64_compat.S
-@@ -356,15 +356,21 @@ ENTRY(entry_INT80_compat)
- 
- 	/* Need to switch before accessing the thread stack. */
- 	SWITCH_TO_KERNEL_CR3 scratch_reg=%rdi
-+
-+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rdi
-+	subq	$8, %rdi
-+	xorq	%rsp, %rdi
-+	shrq	$PAGE_SHIFT, %rdi
-+	jz	.Lint80_keep_stack
- 	movq	%rsp, %rdi
- 	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
--
- 	pushq	6*8(%rdi)		/* regs->ss */
- 	pushq	5*8(%rdi)		/* regs->rsp */
- 	pushq	4*8(%rdi)		/* regs->eflags */
- 	pushq	3*8(%rdi)		/* regs->cs */
- 	pushq	2*8(%rdi)		/* regs->ip */
- 	pushq	1*8(%rdi)		/* regs->orig_ax */
-+.Lint80_keep_stack:
- 
- 	pushq	(%rdi)			/* pt_regs->di */
- 	pushq	%rsi			/* pt_regs->si */
+Best regards
+Damian
