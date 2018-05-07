@@ -1,79 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751968AbeEGGnw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:43:52 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:44633 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750980AbeEGGns (ORCPT
+        id S1751379AbeEGGu2 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:50:28 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:41807 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeEGGuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:43:48 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w476hbkE021691
-X-Nifty-SrcIP: [209.85.213.46]
-X-Google-Smtp-Source: AB8JxZpeFUP5hO7Oka6EAV8//JzXuhI51KSh7aQNzWP0CID+nI33BSifkJ5ZQ21DC94zjDN3jSJtAaABq1KA+qoCdqk=
+        Mon, 7 May 2018 02:50:25 -0400
+X-Google-Smtp-Source: AB8JxZr/e6vwd9eWPiZ0xZhwrltXEZaLskGy9iAtxDin5BNgvNZriTWeYyyW7IpjY574PgMT5UebGg==
+Date: Mon, 7 May 2018 08:50:21 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aryabinin@virtuozzo.com, catalin.marinas@arm.com, dvyukov@google.com,
+        will.deacon@arm.com
+Subject: Re: [PATCH] locking/atomics/powerpc: Move cmpxchg helpers to
+ asm/cmpxchg.h and define the full set of cmpxchg APIs
+Message-ID: <20180507065021.s63ndzpjq4pg4a74@gmail.com>
+References: <20180505084721.GA32344@noisy.programming.kicks-ass.net>
+ <20180505090403.p2ywuen42rnlwizq@gmail.com>
+ <20180505093829.xfylnedwd5nonhae@gmail.com>
+ <20180505101609.5wb56j4mspjkokmw@tardis>
+ <20180505103550.s7xsnto7tgppkmle@gmail.com>
+ <20180505112817.ihrb726i37bwm4cj@tardis>
+ <20180505132751.gwzu2vbzibr2risd@gmail.com>
+ <20180505140340.uzfhoc42xvas4m72@tardis>
+ <20180506121129.baacc4fxgr72rzex@gmail.com>
+ <1525655045.499830.1362901928.0EBFEACA@webmail.messagingengine.com>
 MIME-Version: 1.0
-In-Reply-To: <20180329180112.11055-4-labbott@redhat.com>
-References: <20180329180112.11055-1-labbott@redhat.com> <20180329180112.11055-4-labbott@redhat.com>
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date: Mon, 7 May 2018 15:42:57 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARS9ZrN=cUaZJkQQHwNc-nuBc6p0YYRhTgGecDbyiWN6g@mail.gmail.com>
-Message-ID: <CAK7LNARS9ZrN=cUaZJkQQHwNc-nuBc6p0YYRhTgGecDbyiWN6g@mail.gmail.com>
-Subject: Re: [RFCv2 PATCH 3/3] x86/vdso: Add build salt to the vDSO
-To: Laura Abbott <labbott@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>, mjw@fedoraproject.org,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525655045.499830.1362901928.0EBFEACA@webmail.messagingengine.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-03-30 3:01 GMT+09:00 Laura Abbott <labbott@redhat.com>:
-> The vDSO is linked separately from the kernel and modules. Ensure it picks
-> up the comment section, if available.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
-> v2: Updated name
-> ---
->  arch/x86/entry/vdso/vdso-layout.lds.S | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/arch/x86/entry/vdso/vdso-layout.lds.S b/arch/x86/entry/vdso/vdso-layout.lds.S
-> index acfd5ba7d943..7c78dd39aae8 100644
-> --- a/arch/x86/entry/vdso/vdso-layout.lds.S
-> +++ b/arch/x86/entry/vdso/vdso-layout.lds.S
-> @@ -1,5 +1,6 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  #include <asm/vdso.h>
-> +#include <generated/build-salt.h>
->
->  /*
->   * Linker script for vDSO.  This is an ELF shared object prelinked to
-> @@ -95,6 +96,8 @@ SECTIONS
->         .altinstructions        : { *(.altinstructions) }       :text
->         .altinstr_replacement   : { *(.altinstr_replacement) }  :text
->
-> +       BUILD_ID_SALT
-> +
->         /DISCARD/ : {
->                 *(.discard)
->                 *(.discard.*)
-> --
-> 2.16.2
->
 
+* Boqun Feng <boqun.feng@gmail.com> wrote:
 
-For consistency, I think '-T scripts/build-salt.lds'
-should be passed to cmd_vdso
-in arch/x86/entry/vdso/Makefile.
+> 
+> 
+> On Sun, May 6, 2018, at 8:11 PM, Ingo Molnar wrote:
+> > 
+> > * Boqun Feng <boqun.feng@gmail.com> wrote:
+> > 
+> > > > The only change I made beyond a trivial build fix is that I also added the release 
+> > > > atomics variants explicitly:
+> > > > 
+> > > > +#define atomic_cmpxchg_release(v, o, n) \
+> > > > +	cmpxchg_release(&((v)->counter), (o), (n))
+> > > > +#define atomic64_cmpxchg_release(v, o, n) \
+> > > > +	cmpxchg_release(&((v)->counter), (o), (n))
+> > > > 
+> > > > It has passed a PowerPC cross-build test here, but no runtime tests.
+> > > > 
+> > > 
+> > > Do you have the commit at any branch in tip tree? I could pull it and
+> > > cross-build and check the assembly code of lib/atomic64_test.c, that way
+> > > I could verify whether we mess something up.
+> > > 
+> > > > Does this patch look good to you?
+> > > > 
+> > > 
+> > > Yep!
+> > 
+> > Great - I have pushed the commits out into the locking tree, they can be 
+> > found in:
+> > 
+> >   git fetch git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git 
+> > locking/core
+> > 
+> 
+> Thanks! My compile test told me that we need to remove the definitions of 
+> atomic_xchg and atomic64_xchg in ppc's asm/atomic.h: they are now
+> duplicate, and will prevent the generation of _release and _acquire in the
+> new logic.
+> 
+> If you need a updated patch for this from me, I could send later today.
+> (I don't have a  handy environment for patch sending now, so...)
 
+That would be cool, thanks! My own cross-build testing didn't trigger that build 
+failure.
 
+> Other than this, the modification looks fine, the lib/atomic64_test.c
+> generated the same asm before and after the patches.
 
+Cool, thanks for checking!
 
--- 
-Best Regards
-Masahiro Yamada
+Thanks,
+
+	Ingo
