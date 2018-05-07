@@ -1,93 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753387AbeEGWVp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 18:21:45 -0400
+        id S1753406AbeEGWVy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 18:21:54 -0400
 Received: from a2nlsmtp01-05.prod.iad2.secureserver.net ([198.71.225.49]:60958
         "EHLO a2nlsmtp01-05.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753061AbeEGWVl (ORCPT
+        by vger.kernel.org with ESMTP id S1753061AbeEGWVr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 18:21:41 -0400
+        Mon, 7 May 2018 18:21:47 -0400
 x-originating-ip: 107.180.71.197
 From: Long Li <longli@linuxonhyperv.com>
 To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
         linux-rdma@vger.kernel.org
 Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH 5/7] cifs: smbd: Protect memory registration using RCU
-Date: Mon,  7 May 2018 15:20:04 -0700
-Message-Id: <20180507222006.20781-5-longli@linuxonhyperv.com>
+Subject: [PATCH 7/7] cifs: Call MID callback before destroying transport
+Date: Mon,  7 May 2018 15:20:06 -0700
+Message-Id: <20180507222006.20781-7-longli@linuxonhyperv.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180507222006.20781-1-longli@linuxonhyperv.com>
 References: <20180507222006.20781-1-longli@linuxonhyperv.com>
 Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfEeXLCCZzDJVI+Otos8+83JuGgCZsKXFXKajynRtz11DXItDlP+WWcIN4DyltSGUTqJaUfGPRrnyzGFSf2zmcvUTrRrue7/fhe7JicFKNf/zRqKJ/VbA
- RYltrYR5TbwdLhIw32Lo7MyP0ZXQA4ZxCKXRhteisBIGWjXkCEkkJDfRdhb6wkMAiqRB0eNGDFSQXPKiYbYxuIxx4Uqa5Abmg6q/uQc3d0SeS1YNVBPDfq7d
- Bjxr4zB+GlDlArQSeGwVdpoU/XJMHa4AY7lV0/JIBxH74Sm3ALnenrlKlMwGX+F6VHwwp7adVyL6GgpGbgs0WhEppiBciDXTfXgFdDgGv1RKTX5ZGFaLPKR9
- pJeEHeo3gN08SAq6Q8hTZ8eJpwouYvPiKhD/ViHXEChwUWB6E12rihbdcxWiHwIe85dgbpI6
+X-CMAE-Envelope: MS4wfCRQ3yB3TOmgwTXaZHe3IEA/HYY6qeOMBY+CJgza5j2EpphbxO+TI/6uFygdf9enw4ZFE1Rx/AyVR7u6FVSCb8gpBzghYkfnZ6UncUobsz4n+NbWaV0X
+ YWgLKdCJ7b8+CjRM3PlRlIygVEOckdpPLAjIMAWLXqrUwTxxYW89ldob/V+Prx9vg56d2ESKlL2xlv59RldqLmEB+8IN2jIfjDWn4oK4kHoEhP7HWIJkgZjK
+ sOj5kt04Vcf94sv66uWnRFWrtHT6H1LJjD+xuDG/BNf+il38z4DatikxmUVss1aaISfYjoGS5JGy6QEa39N/yh3P/yqspJ0KbLaL+zzj8ePPM4AhdjHC4KJ+
+ Iu5YehcgPXtWYo594pTjHAeWlVP0PGAIekgSkRB4AoGKEAX5WJnRvDkLO2Yfx96utB5RjEdA
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-Unlike packet I/O sending path, the memory registration is not locked. They
-need to be protected when doing transport reconnect or shutdown.
+When transport is being destroyed, it's possible that some processes may
+hold memory registrations that need to be deregistred.
 
-It's not necessary to lock for memory deregistration, since at the time the
-transport is already destroyed so it's impossible to pick up the wrong
-transport.
+Call them first so nobody is using transport resources, and it can be
+destroyed.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- fs/cifs/smb2pdu.c   | 6 ++++++
- fs/cifs/smbdirect.c | 3 +++
- 2 files changed, 9 insertions(+)
+ fs/cifs/connect.c | 36 +++++++++++++++++++-----------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index 8cd164e..09ca098 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2609,10 +2609,13 @@ smb2_new_read_req(void **buf, unsigned int *total_len,
- 		bool need_invalidate =
- 			io_parms->tcon->ses->server->dialect == SMB30_PROT_ID;
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 5db3e9d..7e7d40e 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -369,22 +369,6 @@ cifs_reconnect(struct TCP_Server_Info *server)
+ 	/* do not want to be sending data on a socket we are freeing */
+ 	cifs_dbg(FYI, "%s: tearing down socket\n", __func__);
+ 	mutex_lock(&server->srv_mutex);
+-	if (server->ssocket) {
+-		cifs_dbg(FYI, "State: 0x%x Flags: 0x%lx\n",
+-			 server->ssocket->state, server->ssocket->flags);
+-		kernel_sock_shutdown(server->ssocket, SHUT_WR);
+-		cifs_dbg(FYI, "Post shutdown state: 0x%x Flags: 0x%lx\n",
+-			 server->ssocket->state, server->ssocket->flags);
+-		sock_release(server->ssocket);
+-		server->ssocket = NULL;
+-	} else if (cifs_rdma_enabled(server))
+-		smbd_destroy(server);
+-	server->sequence_number = 0;
+-	server->session_estab = false;
+-	kfree(server->session_key.response);
+-	server->session_key.response = NULL;
+-	server->session_key.len = 0;
+-	server->lstrp = jiffies;
  
-+		rcu_read_lock();
-+		rcu_dereference(server->smbd_conn);
- 		rdata->mr = smbd_register_mr(
- 				server->smbd_conn, rdata->pages,
- 				rdata->nr_pages, rdata->tailsz,
- 				true, need_invalidate);
-+		rcu_read_unlock();
- 		if (!rdata->mr)
- 			return -ENOBUFS;
+ 	/* mark submitted MIDs for retry and issue callback */
+ 	INIT_LIST_HEAD(&retry_list);
+@@ -397,7 +381,6 @@ cifs_reconnect(struct TCP_Server_Info *server)
+ 		list_move(&mid_entry->qhead, &retry_list);
+ 	}
+ 	spin_unlock(&GlobalMid_Lock);
+-	mutex_unlock(&server->srv_mutex);
  
-@@ -2986,10 +2989,13 @@ smb2_async_writev(struct cifs_writedata *wdata,
- 		struct smbd_buffer_descriptor_v1 *v1;
- 		bool need_invalidate = server->dialect == SMB30_PROT_ID;
+ 	cifs_dbg(FYI, "%s: issuing mid callbacks\n", __func__);
+ 	list_for_each_safe(tmp, tmp2, &retry_list) {
+@@ -406,6 +389,25 @@ cifs_reconnect(struct TCP_Server_Info *server)
+ 		mid_entry->callback(mid_entry);
+ 	}
  
-+		rcu_read_lock();
-+		rcu_dereference(server->smbd_conn);
- 		wdata->mr = smbd_register_mr(
- 				server->smbd_conn, wdata->pages,
- 				wdata->nr_pages, wdata->tailsz,
- 				false, need_invalidate);
-+		rcu_read_unlock();
- 		if (!wdata->mr) {
- 			rc = -ENOBUFS;
- 			goto async_writev_out;
-diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index 74620f5..8c46898 100644
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -1482,6 +1482,9 @@ void smbd_destroy(struct TCP_Server_Info *server)
- 
- 	info->transport_status = SMBD_DESTROYED;
- 
-+	rcu_assign_pointer(server->smbd_conn, NULL);
-+	synchronize_rcu();
++	if (server->ssocket) {
++		cifs_dbg(FYI, "State: 0x%x Flags: 0x%lx\n",
++			 server->ssocket->state, server->ssocket->flags);
++		kernel_sock_shutdown(server->ssocket, SHUT_WR);
++		cifs_dbg(FYI, "Post shutdown state: 0x%x Flags: 0x%lx\n",
++			 server->ssocket->state, server->ssocket->flags);
++		sock_release(server->ssocket);
++		server->ssocket = NULL;
++	} else if (cifs_rdma_enabled(server))
++		smbd_destroy(server);
++	server->sequence_number = 0;
++	server->session_estab = false;
++	kfree(server->session_key.response);
++	server->session_key.response = NULL;
++	server->session_key.len = 0;
++	server->lstrp = jiffies;
 +
- 	destroy_workqueue(info->workqueue);
- 	kfree(info);
- }
++	mutex_unlock(&server->srv_mutex);
++
+ 	do {
+ 		try_to_freeze();
+ 
 -- 
 2.7.4
