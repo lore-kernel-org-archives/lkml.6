@@ -1,427 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752194AbeEGMhf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 08:37:35 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:38691 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752044AbeEGMhb (ORCPT
+        id S1752293AbeEGMiA (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 08:38:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53646 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752200AbeEGMhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 08:37:31 -0400
-X-Google-Smtp-Source: AB8JxZoxvsDILc3l2zl5yQ/K/y93fddXK1C4jaYg8bd5ccZ8ReG3oc9oRGcd6ypg2ogM6nzejoIdeg==
-From: Adam Ford <aford173@gmail.com>
-To: adam.ford@logicpd.com
-Cc: Adam Ford <aford173@gmail.com>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V3] ARM: dts: da850-evm: use phandles to extend nodes
-Date: Mon,  7 May 2018 07:37:21 -0500
-Message-Id: <20180507123721.9264-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Mon, 7 May 2018 08:37:54 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 20A3760B23
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 09/18] net: mac80211.h: fix a bad comment line
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <1b14ef4f63547c86c544e112b74acfff2b41f4af.1525684985.git.mchehab+samsung@kernel.org>
+Date: Mon, 07 May 2018 15:37:48 +0300
+In-Reply-To: <1b14ef4f63547c86c544e112b74acfff2b41f4af.1525684985.git.mchehab+samsung@kernel.org>
+        (Mauro Carvalho Chehab's message of "Mon, 7 May 2018 06:35:45 -0300")
+Message-ID: <87fu334p5v.fsf@purkki.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many node labels in the device tree (like serial0, serial1, etc) are being
-redefined, so let's modernize the device tree by using phandles to
-extend the existing nodes.  This helps reduce the whitespace.
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> writes:
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V3:  Rebase against 4.18/dt and fix subject.
+> Sphinx produces a lot of errors like this:
+> 	./include/net/mac80211.h:2083: warning: bad line:  >
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-V2: Rename subject per feedback from Sekhar.
-    Extend notes from tps6507x
-    Add empty line after each node
-    
-diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
-index 339cae353302..3c486d8675b8 100644
---- a/arch/arm/boot/dts/da850-evm.dts
-+++ b/arch/arm/boot/dts/da850-evm.dts
-@@ -27,143 +27,6 @@
- 		spi0 = &spi1;
- 	};
- 
--	soc@1c00000 {
--		pmx_core: pinmux@14120 {
--			status = "okay";
--
--			mcasp0_pins: pinmux_mcasp0_pins {
--				pinctrl-single,bits = <
--					/*
--					 * AHCLKX, ACLKX, AFSX, AHCLKR, ACLKR,
--					 * AFSR, AMUTE
--					 */
--					0x00 0x11111111 0xffffffff
--					/* AXR11, AXR12 */
--					0x04 0x00011000 0x000ff000
--				>;
--			};
--			nand_pins: nand_pins {
--				pinctrl-single,bits = <
--					/* EMA_WAIT[0], EMA_OE, EMA_WE, EMA_CS[4], EMA_CS[3] */
--					0x1c 0x10110110  0xf0ff0ff0
--					/*
--					 * EMA_D[0], EMA_D[1], EMA_D[2],
--					 * EMA_D[3], EMA_D[4], EMA_D[5],
--					 * EMA_D[6], EMA_D[7]
--					 */
--					0x24 0x11111111  0xffffffff
--					/* EMA_A[1], EMA_A[2] */
--					0x30 0x01100000  0x0ff00000
--				>;
--			};
--		};
--		serial0: serial@42000 {
--			status = "okay";
--		};
--		serial1: serial@10c000 {
--			status = "okay";
--		};
--		serial2: serial@10d000 {
--			status = "okay";
--		};
--		rtc0: rtc@23000 {
--			status = "okay";
--		};
--		i2c0: i2c@22000 {
--			status = "okay";
--			clock-frequency = <100000>;
--			pinctrl-names = "default";
--			pinctrl-0 = <&i2c0_pins>;
--
--			tps: tps@48 {
--				reg = <0x48>;
--			};
--			tlv320aic3106: tlv320aic3106@18 {
--				#sound-dai-cells = <0>;
--				compatible = "ti,tlv320aic3106";
--				reg = <0x18>;
--				status = "okay";
--
--				/* Regulators */
--				IOVDD-supply = <&vdcdc2_reg>;
--				/* Derived from VBAT: Baseboard 3.3V / 1.8V */
--				AVDD-supply = <&vbat>;
--				DRVDD-supply = <&vbat>;
--				DVDD-supply = <&vbat>;
--			};
--			tca6416: gpio@20 {
--				compatible = "ti,tca6416";
--				reg = <0x20>;
--				gpio-controller;
--				#gpio-cells = <2>;
--			};
--		};
--		wdt: wdt@21000 {
--			status = "okay";
--		};
--		mmc0: mmc@40000 {
--			max-frequency = <50000000>;
--			bus-width = <4>;
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&mmc0_pins>;
--		};
--		spi1: spi@30e000 {
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&spi1_pins &spi1_cs0_pin>;
--			flash: m25p80@0 {
--				#address-cells = <1>;
--				#size-cells = <1>;
--				compatible = "m25p64";
--				spi-max-frequency = <30000000>;
--				m25p,fast-read;
--				reg = <0>;
--				partition@0 {
--					label = "U-Boot-SPL";
--					reg = <0x00000000 0x00010000>;
--					read-only;
--				};
--				partition@1 {
--					label = "U-Boot";
--					reg = <0x00010000 0x00080000>;
--					read-only;
--				};
--				partition@2 {
--					label = "U-Boot-Env";
--					reg = <0x00090000 0x00010000>;
--					read-only;
--				};
--				partition@3 {
--					label = "Kernel";
--					reg = <0x000a0000 0x00280000>;
--				};
--				partition@4 {
--					label = "Filesystem";
--					reg = <0x00320000 0x00400000>;
--				};
--				partition@5 {
--					label = "MAC-Address";
--					reg = <0x007f0000 0x00010000>;
--					read-only;
--				};
--			};
--		};
--		mdio: mdio@224000 {
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&mdio_pins>;
--			bus_freq = <2200000>;
--		};
--		eth0: ethernet@220000 {
--			status = "okay";
--			pinctrl-names = "default";
--			pinctrl-0 = <&mii_pins>;
--		};
--		gpio: gpio@226000 {
--			status = "okay";
--		};
--	};
- 	vbat: fixedregulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vbat";
-@@ -200,56 +63,200 @@
- 	};
- };
- 
-+&pmx_core {
-+	status = "okay";
-+
-+	mcasp0_pins: pinmux_mcasp0_pins {
-+		pinctrl-single,bits = <
-+			/*
-+			 * AHCLKX, ACLKX, AFSX, AHCLKR, ACLKR,
-+			 * AFSR, AMUTE
-+			 */
-+			0x00 0x11111111 0xffffffff
-+			/* AXR11, AXR12 */
-+			0x04 0x00011000 0x000ff000
-+		>;
-+	};
-+	nand_pins: nand_pins {
-+		pinctrl-single,bits = <
-+			/* EMA_WAIT[0], EMA_OE, EMA_WE, EMA_CS[4], EMA_CS[3] */
-+			0x1c 0x10110110  0xf0ff0ff0
-+			/*
-+			 * EMA_D[0], EMA_D[1], EMA_D[2],
-+			 * EMA_D[3], EMA_D[4], EMA_D[5],
-+			 * EMA_D[6], EMA_D[7]
-+			 */
-+			0x24 0x11111111  0xffffffff
-+			/* EMA_A[1], EMA_A[2] */
-+			0x30 0x01100000  0x0ff00000
-+		>;
-+	};
-+};
-+
-+&serial0 {
-+	status = "okay";
-+};
-+
-+&serial1 {
-+	status = "okay";
-+};
-+
-+&serial2 {
-+	status = "okay";
-+};
-+
-+&rtc0 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+	clock-frequency = <100000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins>;
-+
-+	tps: tps@48 {
-+		reg = <0x48>;
-+	};
-+	tlv320aic3106: tlv320aic3106@18 {
-+		#sound-dai-cells = <0>;
-+		compatible = "ti,tlv320aic3106";
-+		reg = <0x18>;
-+		status = "okay";
-+
-+		/* Regulators */
-+		IOVDD-supply = <&vdcdc2_reg>;
-+		/* Derived from VBAT: Baseboard 3.3V / 1.8V */
-+		AVDD-supply = <&vbat>;
-+		DRVDD-supply = <&vbat>;
-+		DVDD-supply = <&vbat>;
-+	};
-+	tca6416: gpio@20 {
-+		compatible = "ti,tca6416";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+};
-+
-+&wdt {
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	max-frequency = <50000000>;
-+	bus-width = <4>;
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins>;
-+};
-+
-+&spi1 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi1_pins &spi1_cs0_pin>;
-+	flash: m25p80@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "m25p64";
-+		spi-max-frequency = <30000000>;
-+		m25p,fast-read;
-+		reg = <0>;
-+		partition@0 {
-+			label = "U-Boot-SPL";
-+			reg = <0x00000000 0x00010000>;
-+			read-only;
-+		};
-+		partition@1 {
-+			label = "U-Boot";
-+			reg = <0x00010000 0x00080000>;
-+			read-only;
-+		};
-+		partition@2 {
-+			label = "U-Boot-Env";
-+			reg = <0x00090000 0x00010000>;
-+			read-only;
-+		};
-+		partition@3 {
-+			label = "Kernel";
-+			reg = <0x000a0000 0x00280000>;
-+		};
-+		partition@4 {
-+			label = "Filesystem";
-+			reg = <0x00320000 0x00400000>;
-+		};
-+		partition@5 {
-+			label = "MAC-Address";
-+			reg = <0x007f0000 0x00010000>;
-+			read-only;
-+		};
-+	};
-+};
-+&mdio {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mdio_pins>;
-+	bus_freq = <2200000>;
-+};
-+
-+&eth0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mii_pins>;
-+};
-+
-+&gpio {
-+	status = "okay";
-+};
-+
- /include/ "tps6507x.dtsi"
- 
- &tps {
- 	vdcdc1_2-supply = <&vbat>;
- 	vdcdc3-supply = <&vbat>;
- 	vldo1_2-supply = <&vbat>;
-+};
- 
--	regulators {
--		vdcdc1_reg: regulator@0 {
--			regulator-name = "VDCDC1_3.3V";
--			regulator-min-microvolt = <3150000>;
--			regulator-max-microvolt = <3450000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
-+&vdcdc1_reg {
-+	regulator-name = "VDCDC1_3.3V";
-+	regulator-min-microvolt = <3150000>;
-+	regulator-max-microvolt = <3450000>;
-+	regulator-always-on;
-+	regulator-boot-on;
-+};
- 
--		vdcdc2_reg: regulator@1 {
--			regulator-name = "VDCDC2_3.3V";
--			regulator-min-microvolt = <1710000>;
--			regulator-max-microvolt = <3450000>;
--			regulator-always-on;
--			regulator-boot-on;
--			ti,defdcdc_default = <1>;
--		};
-+&vdcdc2_reg {
-+	regulator-name = "VDCDC2_3.3V";
-+	regulator-min-microvolt = <1710000>;
-+	regulator-max-microvolt = <3450000>;
-+	regulator-always-on;
-+	regulator-boot-on;
-+	ti,defdcdc_default = <1>;
-+};
- 
--		vdcdc3_reg: regulator@2 {
--			regulator-name = "VDCDC3_1.2V";
--			regulator-min-microvolt = <950000>;
--			regulator-max-microvolt = <1350000>;
--			regulator-always-on;
--			regulator-boot-on;
--			ti,defdcdc_default = <1>;
--		};
-+&vdcdc3_reg {
-+	regulator-name = "VDCDC3_1.2V";
-+	regulator-min-microvolt = <950000>;
-+	regulator-max-microvolt = <1350000>;
-+	regulator-always-on;
-+	regulator-boot-on;
-+	ti,defdcdc_default = <1>;
-+};
- 
--		ldo1_reg: regulator@3 {
--			regulator-name = "LDO1_1.8V";
--			regulator-min-microvolt = <1710000>;
--			regulator-max-microvolt = <1890000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
-+&ldo1_reg {
-+	regulator-name = "LDO1_1.8V";
-+	regulator-min-microvolt = <1710000>;
-+	regulator-max-microvolt = <1890000>;
-+	regulator-always-on;
-+	regulator-boot-on;
-+};
- 
--		ldo2_reg: regulator@4 {
--			regulator-name = "LDO2_1.2V";
--			regulator-min-microvolt = <1140000>;
--			regulator-max-microvolt = <1320000>;
--			regulator-always-on;
--			regulator-boot-on;
--		};
--	};
-+&ldo2_reg {
-+	regulator-name = "LDO2_1.2V";
-+	regulator-min-microvolt = <1140000>;
-+	regulator-max-microvolt = <1320000>;
-+	regulator-always-on;
-+	regulator-boot-on;
- };
- 
- &mcasp0 {
+Randy already submitted a similar patch:
+
+https://patchwork.kernel.org/patch/10367275/
+
+But it seems Johannes has not applied that yet.
+
 -- 
-2.17.0
+Kalle Valo
