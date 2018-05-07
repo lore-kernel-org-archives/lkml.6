@@ -1,207 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752058AbeEGLEc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 07:04:32 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52556 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751961AbeEGLEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 07:04:30 -0400
-From: Jason Yan <yanaijie@huawei.com>
-To: <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>,
-        <dan.j.williams@intel.com>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH-next v2] scsi: libsas: dynamically allocate and free ata host
-Date: Mon, 7 May 2018 19:15:10 +0800
-Message-ID: <20180507111510.32816-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.13.6
+        id S1752085AbeEGLEq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 07:04:46 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:34720 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751400AbeEGLEn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 07:04:43 -0400
+Subject: Re: [PATCH v9 08/15] cobalt: set queue as unordered
+To: Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org
+Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
+        Gustavo Padovan <gustavo.padovan@collabora.com>
+References: <20180504200612.8763-1-ezequiel@collabora.com>
+ <20180504200612.8763-9-ezequiel@collabora.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <de63cac5-b344-c220-bcae-33faddcb61ea@xs4all.nl>
+Date: Mon, 7 May 2018 13:04:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180504200612.8763-9-ezequiel@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfH/daySrRoSJwZOBfaCgVyLHn0HNdOqQivDrUX+ciqIzPHzOt3tOoHcIC2KpNgcct52zv5HIQaZpCXiXjEwlog0vOMq45VX13D73E4umCWR39LTe/5EE
+ fPY14KOiZrMU1UVG/KQfF9tSpVJ8IC6sqShtIvRW1uQ3rC5gGKB8yyGlX8Gqcn6U/zRzfWtENtgogUg/OeL6puMqpKIybLQts7i3kR8W8ekE2+nYymzaMD8B
+ iFeoTjCteFJXq1XWn2I4MEEH3X35JatlFGIwFauusy9To4NzwW1Kl+2hupx7hg4J/uLPC7A9TmobsgsvnImlSTn7B2oLsHmcgG2Vrf7Var7c4C01P878VNXv
+ 9FNcGbMUC9fN82UPm2zwYpNlMC9hxrDWo1tnxFct2sFTfDyza6er76EKCyhJQDacevKWKSP3gqgpZpjr7sEh7YTYY0+HVgrIyJ3CEhf69CUfENk9fBFZ5jQZ
+ HnKH9EYbJj2QZf5wAkYda0SI02orhGMzAanzI9c6VACg3ReTduhSgmVWrQqEtfUzw26kKZgyvri5afquNd3Fqwnm93k8wr7HeooeLftlGl96KHgZ3DswSuzh
+ cQUKJFa7yCCBMI8UTnFxt4e+
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now the ata host for libsas is embedded in domain_device, and the ->kref
-member is not initialized. Afer we add ata transport class,
-ata_host_get() will be called when adding transport ATA port and a
-warning will be triggered as below:
+On 04/05/18 22:06, Ezequiel Garcia wrote:
+> From: Gustavo Padovan <gustavo.padovan@collabora.com>
+> 
+> The cobalt driver may reorder the capture buffers so we need to report
+> it as such.
+> 
+> v3: set unordered as a property
+> v2: use vb2_ops_set_unordered() helper
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+> ---
+>  drivers/media/pci/cobalt/cobalt-v4l2.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/media/pci/cobalt/cobalt-v4l2.c b/drivers/media/pci/cobalt/cobalt-v4l2.c
+> index e2a4c705d353..8f06cc7f1c81 100644
+> --- a/drivers/media/pci/cobalt/cobalt-v4l2.c
+> +++ b/drivers/media/pci/cobalt/cobalt-v4l2.c
+> @@ -1236,6 +1236,7 @@ static int cobalt_node_register(struct cobalt *cobalt, int node)
+>  	q->min_buffers_needed = 2;
+>  	q->lock = &s->lock;
+>  	q->dev = &cobalt->pci_dev->dev;
+> +	q->unordered = 1;
+>  	vdev->queue = q;
+>  
+>  	video_set_drvdata(vdev, s);
+> 
 
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 2 PID: 103 at lib/refcount.c:153 refcount_inc+0x40/0x48
-......
-Call trace:
- refcount_inc+0x40/0x48
- ata_host_get+0x10/0x18
- ata_tport_add+0x40/0x120
- ata_sas_tport_add+0xc/0x14
- sas_ata_init+0x7c/0xc8
- sas_discover_domain+0x380/0x53c
- process_one_work+0x12c/0x288
- worker_thread+0x58/0x3f0
- kthread+0xfc/0x128
- ret_from_fork+0x10/0x18
+As mentioned in my review of v8 of this patch, you also need to mark all formats
+in this driver as unordered.
 
-And also when removing transport ATA port ata_host_put() will be called
-and another similar warning will be triggered. If the refcount decreased
-to zero, the ata host will be freed. But this ata host is only part of
-domain_device, it cannot be freed directly.
+Regards,
 
-So we have to change this embedded static ata host to a dynamically
-allocated ata host and initialize the ->kref member. To use
-ata_host_get() and ata_host_put() in libsas, we need to move the
-declaration of these functions to the public libata.h and export them.
-
-v2: export ata_host_get() and ata_host_put().
-
-Fixes: b6240a4df018 ("scsi: libsas: add transport class for ATA devices")
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
----
- drivers/ata/libata-core.c          |  3 +++
- drivers/ata/libata.h               |  2 --
- drivers/scsi/libsas/sas_ata.c      | 40 +++++++++++++++++++++++++-------------
- drivers/scsi/libsas/sas_discover.c |  2 ++
- include/linux/libata.h             |  2 ++
- include/scsi/libsas.h              |  2 +-
- 6 files changed, 34 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 68596bd4cf06..cdb48dccfb45 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -6424,6 +6424,7 @@ void ata_host_init(struct ata_host *host, struct device *dev,
- 	host->n_tags = ATA_MAX_QUEUE - 1;
- 	host->dev = dev;
- 	host->ops = ops;
-+	kref_init(&host->kref);
- }
- 
- void __ata_port_probe(struct ata_port *ap)
-@@ -7391,3 +7392,5 @@ EXPORT_SYMBOL_GPL(ata_cable_80wire);
- EXPORT_SYMBOL_GPL(ata_cable_unknown);
- EXPORT_SYMBOL_GPL(ata_cable_ignore);
- EXPORT_SYMBOL_GPL(ata_cable_sata);
-+EXPORT_SYMBOL_GPL(ata_host_get);
-+EXPORT_SYMBOL_GPL(ata_host_put);
-\ No newline at end of file
-diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index 9e21c49cf6be..f953cb4bb1ba 100644
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -100,8 +100,6 @@ extern int ata_port_probe(struct ata_port *ap);
- extern void __ata_port_probe(struct ata_port *ap);
- extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
- 				      u8 page, void *buf, unsigned int sectors);
--extern void ata_host_get(struct ata_host *host);
--extern void ata_host_put(struct ata_host *host);
- 
- #define to_ata_port(d) container_of(d, struct ata_port, tdev)
- 
-diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
-index ff1d612f6fb9..41cdda7a926b 100644
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -557,34 +557,46 @@ int sas_ata_init(struct domain_device *found_dev)
- {
- 	struct sas_ha_struct *ha = found_dev->port->ha;
- 	struct Scsi_Host *shost = ha->core.shost;
-+	struct ata_host *ata_host;
- 	struct ata_port *ap;
- 	int rc;
- 
--	ata_host_init(&found_dev->sata_dev.ata_host, ha->dev, &sas_sata_ops);
--	ap = ata_sas_port_alloc(&found_dev->sata_dev.ata_host,
--				&sata_port_info,
--				shost);
-+	ata_host = kzalloc(sizeof(*ata_host), GFP_KERNEL);
-+	if (!ata_host)	{
-+		SAS_DPRINTK("ata host alloc failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	ata_host_init(ata_host, ha->dev, &sas_sata_ops);
-+
-+	ap = ata_sas_port_alloc(ata_host, &sata_port_info, shost);
- 	if (!ap) {
- 		SAS_DPRINTK("ata_sas_port_alloc failed.\n");
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto free_host;
- 	}
- 
- 	ap->private_data = found_dev;
- 	ap->cbl = ATA_CBL_SATA;
- 	ap->scsi_host = shost;
- 	rc = ata_sas_port_init(ap);
--	if (rc) {
--		ata_sas_port_destroy(ap);
--		return rc;
--	}
--	rc = ata_sas_tport_add(found_dev->sata_dev.ata_host.dev, ap);
--	if (rc) {
--		ata_sas_port_destroy(ap);
--		return rc;
--	}
-+	if (rc)
-+		goto destroy_port;
-+
-+	rc = ata_sas_tport_add(ata_host->dev, ap);
-+	if (rc)
-+		goto destroy_port;
-+
-+	found_dev->sata_dev.ata_host = ata_host;
- 	found_dev->sata_dev.ap = ap;
- 
- 	return 0;
-+
-+destroy_port:
-+	ata_sas_port_destroy(ap);
-+free_host:
-+	ata_host_put(ata_host);
-+	return rc;
- }
- 
- void sas_ata_task_abort(struct sas_task *task)
-diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
-index 1ffca28fe6a8..0148ae62a52a 100644
---- a/drivers/scsi/libsas/sas_discover.c
-+++ b/drivers/scsi/libsas/sas_discover.c
-@@ -316,6 +316,8 @@ void sas_free_device(struct kref *kref)
- 	if (dev_is_sata(dev) && dev->sata_dev.ap) {
- 		ata_sas_tport_delete(dev->sata_dev.ap);
- 		ata_sas_port_destroy(dev->sata_dev.ap);
-+		ata_host_put(dev->sata_dev.ata_host);
-+		dev->sata_dev.ata_host = NULL;
- 		dev->sata_dev.ap = NULL;
- 	}
- 
-diff --git a/include/linux/libata.h b/include/linux/libata.h
-index 0619ebf4d475..852cdb2fc692 100644
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -1110,6 +1110,8 @@ extern struct ata_host *ata_host_alloc(struct device *dev, int max_ports);
- extern struct ata_host *ata_host_alloc_pinfo(struct device *dev,
- 			const struct ata_port_info * const * ppi, int n_ports);
- extern int ata_slave_link_init(struct ata_port *ap);
-+extern void ata_host_get(struct ata_host *host);
-+extern void ata_host_put(struct ata_host *host);
- extern int ata_host_start(struct ata_host *host);
- extern int ata_host_register(struct ata_host *host,
- 			     struct scsi_host_template *sht);
-diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
-index 225ab7783dfd..3de3b10da19a 100644
---- a/include/scsi/libsas.h
-+++ b/include/scsi/libsas.h
-@@ -161,7 +161,7 @@ struct sata_device {
- 	u8     port_no;        /* port number, if this is a PM (Port) */
- 
- 	struct ata_port *ap;
--	struct ata_host ata_host;
-+	struct ata_host *ata_host;
- 	struct smp_resp rps_resp ____cacheline_aligned; /* report_phy_sata_resp */
- 	u8     fis[ATA_RESP_FIS_SIZE];
- };
--- 
-2.13.6
+	Hans
