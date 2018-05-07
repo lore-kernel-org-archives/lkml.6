@@ -1,378 +1,589 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752668AbeEGRsl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 13:48:41 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:27830 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752359AbeEGRsi (ORCPT
+        id S1752688AbeEGRtO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 13:49:14 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:36835 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752223AbeEGRtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 13:48:38 -0400
-Subject: Re: I2C PM overhaul needed? (Re: [PATCH 1/2] i2c: sprd: Prevent i2c
- accesses after suspend is called)
-To: Wolfram Sang <wsa@the-dreams.de>
-CC: Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>,
-        <linux-i2c@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <99031524fa147e72451d26f54b24f36093c0d3fa.1523255712.git.baolin.wang@linaro.org>
- <20180427121417.auv4ppryegkprv32@ninjato>
- <CAMz4kuK3fyBhdrUcLvY0s0N-0yY9_0MrAAi9cWdX1ZfdNW+R0w@mail.gmail.com>
- <20180502052336.i5f4yv2ho3za7qa7@tetsubishi>
- <CAMz4kuJAzr-ybCCmjx_Tcdw6qNYN0wLGQgWsb1H0WEkR4ZpyYg@mail.gmail.com>
- <3485f73f-e356-6db0-89fc-d51bf8bdab71@ti.com>
- <20180504122447.u3xgrkperxz5dpcz@ninjato>
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <bef80500-4727-d324-f0c8-4fc6016f43ed@ti.com>
-Date: Mon, 7 May 2018 12:48:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 13:49:11 -0400
+X-Google-Smtp-Source: AB8JxZqSbUr/3vZe6nawhI5fg92TN7EZWafan28esz+iRnILRaNpW9ftysNz16TjJcy/A9JjjcS/aA==
+Date: Mon, 7 May 2018 10:49:09 -0700
+From: Matthias Kaehlcke <mka@chromium.org>
+To: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: lkml <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <nick.desaulniers@gmail.com>,
+        Manoj Gupta <manojgupta@chromium.org>,
+        AlistairStrachan <astrachan@google.com>
+Subject: Re: Clang patch stacks for LTS kernels (v4.4 and v4.9) and status
+ update
+Message-ID: <20180507174909.GF19594@google.com>
+References: <CA+icZUUPGQsRWpdmASzPQAdjmSFmhBwPKGh_CO65C9ot9+nOSQ@mail.gmail.com>
+ <20180423174224.GA243180@google.com>
+ <CA+icZUUpxh=99JP5K_R1KpxouqDW4KY5BjCn5VTcmyByEb0R5w@mail.gmail.com>
+ <20180424230645.GB243180@google.com>
+ <CA+icZUWhLNvjbyMv+2dB9iXgHnkLZwy5+_GZYG7-sk2b_TJa8Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180504122447.u3xgrkperxz5dpcz@ninjato>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+icZUWhLNvjbyMv+2dB9iXgHnkLZwy5+_GZYG7-sk2b_TJa8Q@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/04/2018 07:24 AM, Wolfram Sang wrote:
-> Hi Grygorii,
+On Sun, May 06, 2018 at 09:42:09AM +0200, Sedat Dilek wrote:
+> On Wed, Apr 25, 2018 at 1:06 AM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> > On Tue, Apr 24, 2018 at 01:54:29PM +0200, Sedat Dilek wrote:
+> >> Hi Matthias,
+> >>
+> >> a big thank you for giving all the informations!
+> >>
+> >> I used your mka/llvm/v4.14_ext Git tree...
+> >>
+> >> https://chromium.googlesource.com/chromiumos/third_party/kernel/+log/sandbox/mka/llvm/v4.14_ext
+> >>
+> >> ...and was able to compile with clang-6.0 from Debian/buster64 with...
+> >>
+> >> ...reverting the clang-3/clang-4 patches...
+> >>
+> >> user$ for p in 69e44656ae43 222b88977a00 cdfcf1e45537 26f14c9225a6
+> >> 0385a18e9995 68dab143c9b4 ; do echo [ $p ] ; LC_ALL=C git revert
+> >> --no-edit $p ; done
+> >>
+> >> 0001-Revert-CLANG3-core-clang-work-around-x86-regparm-int.patch
+> >> 0002-Revert-CLANG4-futex-don-t-optimize-futex_detect_cmpx.patch
+> >> 0003-Revert-CLANG4-Disable-lkdtm-when-ftrace-is-enabled.patch
+> >> 0004-Revert-CLANG4-arm64-prefetch-Use-__builtin_arm_prefe.patch
+> >> 0005-Revert-CLANG4-kbuild-Add-meabi-gnu-to-the-clang-para.patch
+> >> 0006-Revert-CLANG4-crypto-arm64-aes-ce-Explicitly-pass-th.patch
+> >>
+> >> ...and needed two additional patches from upstream:
+> >>
+> >> 0007-kbuild-clang-remove-crufty-HOSTCFLAGS.patch <--- Label with
+> >> BACKPORT (XXX: Backported; Required when using HOSTCC in make-line,
+> >> see below)
+> >> 0008-x86-xen-remove-the-use-of-VLAIS.patch <--- Label with UPSTREAM
+> >> (XXX: cherry-picked)
+> >>
+> >> These 3 patches in your Git branch are in Linux v4.14.36...
+> >>
+> >> 9af5ddf981ed BACKPORT: kbuild: disable clang's default use of
+> >> -fmerge-all-constants
+> >> f24088a3842c BACKPORT: kbuild: Set KBUILD_CFLAGS before incl. arch Makefile
+> >> d4dfe384346d UPSTREAM: kbuild: fix linker feature test macros when
+> >> cross compiling with Clang
+> >>
+> >> ...and can be dropped.
+> >> I do not know your work-flow/policy: Maybe you want to keep your
+> >> patch-stack against vanilla Linux v4.14 - without stables from
+> >> linux-stable-4.14.y.
+> >
+> > Yes, these patch stacks are based on vanilla Linux v4.14, one reason
+> > is that it isn't a moving target. Also I think it makes it easier for
+> > folks not merging LTS (though they probably should!) to locate all
+> > patches, and it's fairly trivial to skip the (currently) few patches
+> > not needed with the -stable tree.
+> >
+> >> For easy switching "mycompiler" I use a wrapper-script:
+> >>
+> >> root# cat /usr/bin/mycompiler
+> >> #!/bin/bash
+> >>
+> >> clang-6.0 "$@"
+> >> - EOF -
+> >>
+> >> user$ cp -v /boot/config-4.14.35-1-iniza-amd64 .config
+> >> user$ MAKE="make V=1" ; COMPILER="mycompiler" ;
+> >> MAKE_OPTS="CC=$COMPILER HOSTCC=$COMPILER"
+> >> user$ yes "" | $MAKE $MAKE_OPTS oldconfig && $MAKE $MAKE_OPTS
+> >> silentoldconfig < /dev/null
+> >>
+> >> The diffconfig to my current kernel-config-4.14 looks like this...
+> >>
+> >> user$ ./scripts/diffconfig /boot/config-4.14.35-1-iniza-amd64 .config
+> >> -ARCH_HAS_REFCOUNT y
+> >> -BPF_JIT_ALWAYS_ON n
+> >> -EXOFS_DEBUG n
+> >> -EXOFS_FS m
+> >> -GENERIC_CPU_VULNERABILITIES y
+> >> -KASAN n
+> >> -ORE m
+> >> -PAGE_TABLE_ISOLATION y
+> >> -RETPOLINE y
+> >> -UNWINDER_FRAME_POINTER n
+> >> -UNWINDER_GUESS n
+> >> -UNWINDER_ORC y
+> >> +FRAME_POINTER y
+> >> +FRAME_POINTER_UNWINDER y
+> >> +GUESS_UNWINDER n
+> >> +HAVE_ARCH_KMEMCHECK y
+> >> +HAVE_RELIABLE_STACKTRACE y
+> >> +ORC_UNWINDER n
+> >>
+> >> Unfortunately, I cannot boot into the generated kernel on bare metal.
+> >>
+> >> Checking with QEMU (version: 2.12~rc3) and catching earlyprintk, I see this...
+> >>
+> >> user$ echo $KPATH
+> >> $HOME/src/linux-kernel/important-files
+> >>
+> >> user$ ls -al
+> >> insgesamt 344916
+> >> drwxr-xr-x  2 sdi sdi      4096 Apr 24 13:15 .
+> >> drwxr-xr-x 20 sdi sdi      4096 Apr 24 13:13 ..
+> >> -rw-r--r--  1 sdi sdi   4528416 Apr 24 12:42 bzImage
+> >> lrwxrwxrwx  1 sdi sdi        35 Apr 24 13:15 initrd.img ->
+> >> initrd.img-4.14.0-1-iniza-llvmlinux
+> >> -rw-r--r--  1 sdi sdi  25572955 Apr 24 13:08
+> >> initrd.img-4.14.0-1-iniza-llvmlinux
+> >> -rw-r--r--  1 sdi sdi   2887195 Apr 24 12:42 System.map
+> >> -rwxr-xr-x  1 sdi sdi 326116744 Apr 24 12:42 vmlinux
+> >>
+> >> user$ sudo qemu-system-x86_64 -enable-kvm -M pc -kernel $KPATH/bzImage
+> >> -initrd $KPATH/initrd.img -m 512 -net none -serial stdio -append
+> >> "root=/dev/ram0 console=ttyS0 hung_task_panic=1
+> >> earlyprintk=ttyS0,115200"
+> >>
+> >> Probing EDD (edd=off to disable)... ok
+> >> [    0.000000] Linux version 4.14.0-1-iniza-llvmlinux
+> >> (sedat.dilek@gmail.com@iniza) (clang version 6.0.0-1
+> >> (tags/RELEASE_600/final)) #1 SMP Tue Apr 24 12:42:21 CEST 2018
+> >> [    0.000000] Command line: root=/dev/ram0 console=ttyS0
+> >> hung_task_panic=1 earlyprintk=ttyS0,115200
+> >> [    0.000000] x86/fpu: x87 FPU will use FXSAVE
+> >> [    0.000000] e820: BIOS-provided physical RAM map:
+> >> [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+> >> [    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+> >> [    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+> >> [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000001ffdffff] usable
+> >> [    0.000000] BIOS-e820: [mem 0x000000001ffe0000-0x000000001fffffff] reserved
+> >> [    0.000000] BIOS-e820: [mem 0x00000000feffc000-0x00000000feffffff] reserved
+> >> [    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+> >> [    0.000000] bootconsole [earlyser0] enabled
+> >> [    0.000000] NX (Execute Disable) protection: active
+> >> [    0.000000] random: fast init done
+> >> [    0.000000] SMBIOS 2.8 present.
+> >> [    0.000000] DMI: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
+> >> 1.11.1-1 04/01/2014
+> >> [    0.000000] Hypervisor detected: KVM
+> >> [    0.000000] tsc: Fast TSC calibration using PIT
+> >> [    0.000000] e820: last_pfn = 0x1ffe0 max_arch_pfn = 0x400000000
+> >> [    0.000000] x86/PAT: PAT not supported by CPU.
+> >> [    0.000000] x86/PAT: Configuration [0-7]: WB  WT  UC- UC  WB  WT  UC- UC
+> >> Memory KASLR using RDTSC...
+> >> [    0.000000] found SMP MP-table at [mem 0x000f5d60-0x000f5d6f]
+> >> mapped at [ffffffffff000d60]
+> >> [    0.000000] RAMDISK: [mem 0x1e77c000-0x1ffdffff]
+> >> [    0.000000] ACPI: Early table checksum verification disabled
+> >> [    0.000000] ACPI: RSDP 0x00000000000F5B90 000014 (v00 BOCHS )
+> >> [    0.000000] ACPI: RSDT 0x000000001FFE157C 000030 (v01 BOCHS
+> >> BXPCRSDT 00000001 BXPC 00000001)
+> >> [    0.000000] ACPI: FACP 0x000000001FFE1458 000074 (v01 BOCHS
+> >> BXPCFACP 00000001 BXPC 00000001)
+> >> [    0.000000] ACPI: DSDT 0x000000001FFE0040 001418 (v01 BOCHS
+> >> BXPCDSDT 00000001 BXPC 00000001)
+> >> [    0.000000] ACPI: FACS 0x000000001FFE0000 000040
+> >> [    0.000000] ACPI: APIC 0x000000001FFE14CC 000078 (v01 BOCHS
+> >> BXPCAPIC 00000001 BXPC 00000001)
+> >> [    0.000000] ACPI: HPET 0x000000001FFE1544 000038 (v01 BOCHS
+> >> BXPCHPET 00000001 BXPC 00000001)
+> >> [    0.000000] No NUMA configuration found
+> >> [    0.000000] Faking a node at [mem 0x0000000000000000-0x000000001ffdffff]
+> >> [    0.000000] NODE_DATA(0) allocated [mem 0x1e777000-0x1e77bfff]
+> >> [    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
+> >> [    0.000000] kvm-clock: cpu 0, msr 0:1e76f001, primary cpu clock
+> >> [    0.000000] kvm-clock: using sched offset of 528742140 cycles
+> >> [    0.000000] clocksource: kvm-clock: mask: 0xffffffffffffffff
+> >> max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
+> >> [    0.000000] Zone ranges:
+> >> [    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+> >> [    0.000000]   DMA32    [mem 0x0000000001000000-0x000000001ffdffff]
+> >> [    0.000000]   Normal   empty
+> >> [    0.000000]   Device   empty
+> >> [    0.000000] Movable zone start for each node
+> >> [    0.000000] Early memory node ranges
+> >> [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+> >> [    0.000000]   node   0: [mem 0x0000000000100000-0x000000001ffdffff]
+> >> [    0.000000] Initmem setup node 0 [mem 0x0000000000001000-0x000000001ffdffff]
+> >> [    0.000000] ACPI: PM-Timer IO Port: 0x608
+> >> [    0.000000] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+> >> [    0.000000] IOAPIC[0]: apic_id 0, version 17, address 0xfec00000, GSI 0-23
+> >> [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+> >> [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+> >> [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+> >> [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+> >> [    0.000000] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+> >> [    0.000000] Using ACPI (MADT) for SMP configuration information
+> >> [    0.000000] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+> >> [    0.000000] smpboot: Allowing 1 CPUs, 0 hotplug CPUs
+> >> [    0.000000] PM: Registered nosave memory: [mem 0x00000000-0x00000fff]
+> >> [    0.000000] PM: Registered nosave memory: [mem 0x0009f000-0x0009ffff]
+> >> [    0.000000] PM: Registered nosave memory: [mem 0x000a0000-0x000effff]
+> >> [    0.000000] PM: Registered nosave memory: [mem 0x000f0000-0x000fffff]
+> >> [    0.000000] e820: [mem 0x20000000-0xfeffbfff] available for PCI devices
+> >> [    0.000000] Booting paravirtualized kernel on KVM
+> >> [    0.000000] clocksource: refined-jiffies: mask: 0xffffffff
+> >> max_cycles: 0xffffffff, max_idle_ns: 7645519600211568 ns
+> >> [    0.000000] setup_percpu: NR_CPUS:512 nr_cpumask_bits:512
+> >> nr_cpu_ids:1 nr_node_ids:1
+> >> [    0.000000] percpu: Embedded 37 pages/cpu @ffff96dd9e400000 s114392
+> >> r8192 d28968 u2097152
+> >> [    0.000000] KVM setup async PF for cpu 0
+> >> [    0.000000] kvm-stealtime: cpu 0, msr 1e40d900
+> >> [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 128872
+> >> [    0.000000] Policy zone: DMA32
+> >> [    0.000000] Kernel command line: root=/dev/ram0 console=ttyS0
+> >> hung_task_panic=1 earlyprintk=ttyS0,115200
+> >> [    0.000000] PID hash table entries: 2048 (order: 2, 16384 bytes)
+> >> [    0.000000] Memory: 474480K/523768K available (7639K kernel code,
+> >> 1005K rwdata, 2936K rodata, 1636K init, 688K bss, 49288K reserved, 0K
+> >> cma-reserved)
+> >> [    0.000000] ftrace: allocating 27586 entries in 108 pages
+> >> [    0.004000] Hierarchical RCU implementation.
+> >> [    0.004000]  RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=1.
+> >> [    0.004000] RCU: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+> >> [    0.004000] NR_IRQS: 33024, nr_irqs: 256, preallocated irqs: 16
+> >> [    0.004000] Console: colour VGA+ 80x25
+> >> [    0.004000] console [ttyS0] enabled
+> >> [    0.004000] console [ttyS0] enabled
+> >> [    0.004000] bootconsole [earlyser0] disabled
+> >> [    0.004000] bootconsole [earlyser0] disabled
+> >> [    0.004000] clocksource: hpet: mask: 0xffffffff max_cycles:
+> >> 0xffffffff, max_idle_ns: 19112604467 ns
+> >> [    0.004000] general protection fault: 0000 [#1] SMP
+> >> [    0.004000] Modules linked in:
+> >> [    0.004000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted
+> >> 4.14.0-1-iniza-llvmlinux #1
+> >> [    0.004000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> >> BIOS 1.11.1-1 04/01/2014
+> >> [    0.004000] task: ffffffffaa610480 task.stack: ffffffffaa600000
+> >> [    0.004000] RIP: 0010:irq_work_tick+0x9d/0x110
+> >> [    0.004000] RSP: 0000:ffff96dd9e403e58 EFLAGS: 00010046
+> >> [    0.004000] RAX: 0000000000000082 RBX: ffff96dd9e411d80 RCX: adecc9cc04e2ca00
+> >> [    0.004000] RDX: 000000000001ba00 RSI: fffffffffffffed4 RDI: ffff96dd9e41ba38
+> >> [    0.004000] RBP: ffff96dd9e403e78 R08: 0000000000000000 R09: 0000000000000018
+> >> [    0.004000] R10: 0000000000000000 R11: 0000000000000018 R12: ffffffffaa61bd40
+> >> [    0.004000] R13: 0000000000000000 R14: ffffffffaa610480 R15: 0000000000000000
+> >> [    0.004000] FS:  0000000000000000(0000) GS:ffff96dd9e400000(0000)
+> >> knlGS:0000000000000000
+> >> [    0.004000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >> [    0.004000] CR2: 00000000ffffffff CR3: 0000000008a09000 CR4: 00000000000006b0
+> >> [    0.004000] Call Trace:
+> >> [    0.004000]  <IRQ>
+> >> [    0.004000]  update_process_times+0x6e/0xa0
+> >> [    0.004000]  tick_periodic+0x78/0x90
+> >> [    0.004000]  tick_handle_periodic+0x26/0x80
+> >> [    0.004000]  timer_interrupt+0x13/0x20
+> >> [    0.004000]  __handle_irq_event_percpu+0x106/0x230
+> >> [    0.004000]  handle_irq_event+0x5a/0xc0
+> >> [    0.004000]  handle_level_irq+0x11a/0x190
+> >> [    0.004000]  handle_irq+0x1f/0x30
+> >> [    0.004000]  do_IRQ+0x4b/0xd0
+> >> [    0.004000]  common_interrupt+0x93/0x93
+> >> [    0.004000]  </IRQ>
+> >> [    0.004000] RIP: 0010:native_restore_fl+0x12/0x20
+> >> [    0.004000] RSP: 0000:ffffffffaa603e10 EFLAGS: 00000286 ORIG_RAX:
+> >> ffffffffffffffcf
+> >> [    0.004000] RAX: 0000000000000001 RBX: ffff96dd9d0c0608 RCX: 0000000000000000
+> >> [    0.004000] RDX: ffff96dd9d0c0400 RSI: 0000000000000286 RDI: 0000000000000286
+> >> [    0.004000] RBP: ffffffffaa603e18 R08: 0000000000000001 R09: 000000000000003f
+> >> [    0.004000] R10: 0000000000000286 R11: 0000000000000007 R12: ffff96dd9d0c0514
+> >> [    0.004000] R13: ffff96dd9d0c04e0 R14: ffffffffaa61bd40 R15: ffff96dd9d0c0400
+> >> [    0.004000]  _raw_spin_unlock_irqrestore+0x1a/0x20
+> >> [    0.004000]  __setup_irq+0x5d9/0x780
+> >> [    0.004000]  setup_irq+0x5c/0x90
+> >> [    0.004000]  hpet_time_init+0x32/0x40
+> >> [    0.004000]  x86_late_time_init+0x10/0x20
+> >> [    0.004000]  start_kernel+0x45d/0x580
+> >> [    0.004000]  x86_64_start_kernel+0x30f/0x320
+> >> [    0.004000]  secondary_startup_64+0xa5/0xa5
+> >> [    0.004000] Code: f0 f0 4c 0f b1 7b f8 4c 89 e3 4d 85 e4 75 cf 48
+> >> c7 c1 88 5b 01 00 65 48 03 0c 25 d8 a1 00 00 ff 14 25 10 08 62 aa f6
+> >> c4 02 75 4d <48> 83 39 00 74 3e 31 db 48 87 19 48 85 db 74 34 0f 1f 00
+> >> 48 8d
+> >> [    0.004000] RIP: irq_work_tick+0x9d/0x110 RSP: ffff96dd9e403e58
+> >> [    0.004000] ---[ end trace 8c7851007fbc6b6f ]---
+> >> [    0.004000] Kernel panic - not syncing: Fatal exception in interrupt
+> >> [    0.004000] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
+> >>
+> >> Is this saying someting to you?
+> >
+> > It doesn't ring a bell, but I can repro it (with different offsets):
+> >
+> > [    0.004000] general protection fault: 0000 [#1] SMP
+> > [    0.004000] Modules linked in:
+> > [    0.004000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0+ #10
+> > [    0.004000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> > [    0.004000] task: ffffffffbb410480 task.stack: ffffffffbb400000
+> > [    0.004000] RIP: 0010:irq_work_tick+0xaf/0x120
+> > [    0.004000] RSP: 0000:ffff96fb5fc03e58 EFLAGS: 00010046
+> > [    0.004000] RAX: 0000000000000082 RBX: ffff96fb5fc11d80 RCX: 47e992c1bc778d00
+> > [    0.004000] RDX: 000000000001ba00 RSI: fffffffffffffed4 RDI: ffff96fb5fc1ba38
+> > [    0.004000] RBP: ffff96fb5fc03e78 R08: 0000000000000000 R09: 0000000000000018
+> > [    0.004000] R10: 0000000000000000 R11: 0000000000000018 R12: ffffffffbb41bd40
+> > [    0.004000] R13: 0000000000000000 R14: ffffffffbb410480 R15: 0000000000000000
+> > [    0.004000] FS:  0000000000000000(0000) GS:ffff96fb5fc00000(0000) knlGS:0000000000000000
+> > [    0.004000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [    0.004000] CR2: 00000000ffffffff CR3: 000000001ec09000 CR4: 00000000000006b0
+> > [    0.004000] Call Trace:
+> > [    0.004000]  <IRQ>
+> > [    0.004000]  update_process_times+0x6e/0xa0
+> > [    0.004000]  tick_periodic+0x78/0x90
+> > [    0.004000]  tick_handle_periodic+0x26/0x80
+> > [    0.004000]  timer_interrupt+0x13/0x20
+> > [    0.004000]  __handle_irq_event_percpu+0x106/0x230
+> > [    0.004000]  handle_irq_event+0x5a/0xc0
+> > [    0.004000]  handle_level_irq+0x11a/0x190
+> > [    0.004000]  handle_irq+0x1f/0x30
+> > [    0.004000]  do_IRQ+0x4b/0xd0
+> > [    0.004000]  common_interrupt+0x93/0x93
+> > [    0.004000]  </IRQ>
+> > [    0.004000] RIP: 0010:native_restore_fl+0xd/0x20
+> > [    0.004000] RSP: 0000:ffffffffbb403e08 EFLAGS: 00000282 ORIG_RAX: ffffffffffffffcf
+> > [    0.004000] RAX: 0000000000000001 RBX: 0000000000000000 RCX: 0000000000000000
+> > [    0.004000] RDX: ffff96fb5f01b800 RSI: 0000000000000282 RDI: 0000000000000282
+> > [    0.004000] RBP: ffffffffbb403e10 R08: 0000000000000001 R09: 000000000000003f
+> > [    0.004000] R10: ffff96fb5f01b800 R11: 0000000000000007 R12: ffff96fb5f01ba08
+> > [    0.004000] R13: ffff96fb5f01b8e0 R14: ffffffffbb41bd40 R15: ffff96fb5f01b800
+> > [    0.004000]  _raw_spin_unlock_irqrestore+0x1a/0x20
+> > [    0.004000]  __setup_irq+0x610/0x7b0
+> > [    0.004000]  setup_irq+0x5b/0x90
+> > [    0.004000]  hpet_time_init+0x32/0x40
+> > [    0.004000]  x86_late_time_init+0x10/0x20
+> > [    0.004000]  start_kernel+0x460/0x580
+> > [    0.004000]  x86_64_start_kernel+0x30f/0x320
+> > [    0.004000]  secondary_startup_64+0xa5/0xa5
+> > [    0.004000] Code: 4c 0f b1 7b f8 4c 89 e3 4d 85 e4 75 cf 48 c7 c1 88 5b 01 00 65 48 03 0c 25 d8 a1 00 00 ff 14 25 10 08 42 bb a9 00 02 00 00 75 4b <48> 83 39 00 74 3c 31 db 48 87 19 48 85 db 74 32 90 48 8d 7b f8
+> > [    0.004000] RIP: irq_work_tick+0xaf/0x120 RSP: ffff96fb5fc03e58
+> > [    0.004000] ---[ end trace 08945838e05bf5b2 ]---
+> > [    0.004000] Kernel panic - not syncing: Fatal exception in interrupt
+> > [    0.004000] ---[ end Kernel panic - not syncing: Fatal exception in interrupt
+> >
+> > The exception occurs at 'irq_work_tick+0xaf'
+> >
+> > objdump -d -S --start-address=0x$(grep irq_work_tick System.map | sed -e
+> >  "s/ \+.*//") vmlinux | less
+> >
+> > ...
+> > void irq_work_tick(void)
+> > {
+> > ffffffff81193200:       55                      push   %rbp
+> > ...
+> > static inline struct llist_node *llist_del_all(struct llist_head *head)
+> > {
+> >         return xchg(&head->first, NULL);
+> > ffffffff8119324a:       48 87 19                xchg   %rbx,(%rcx)
+> >         while (llnode != NULL) {
+> > ffffffff8119324d:       48 85 db                test   %rbx,%rbx
+> > ffffffff81193250:       74 3f                   je     ffffffff81193291 <irq_work_tick+0x91>
+> > ffffffff81193252:       0f 1f 40 00             nopl   0x0(%rax)
+> > ffffffff81193256:       66 2e 0f 1f 84 00 00    nopw   %cs:0x0(%rax,%rax,1)
+> > ffffffff8119325d:       00 00 00
+> >                 work = llist_entry(llnode, struct irq_work, llnode);
+> > ffffffff81193260:       48 8d 7b f8             lea    -0x8(%rbx),%rdi
+> >                 flags = work->flags & ~IRQ_WORK_PENDING;
+> > ffffffff81193264:       4c 8b 7b f8             mov    -0x8(%rbx),%r15
+> >         return node->next;
+> > ffffffff81193268:       4c 8b 23                mov    (%rbx),%r12
+> > ffffffff8119326b:       4d 89 fe                mov    %r15,%r14
+> > ffffffff8119326e:       49 83 e6 fe             and    $0xfffffffffffffffe,%r14
+> >                 xchg(&work->flags, flags);
+> > ffffffff81193272:       4c 89 f0                mov    %r14,%rax
+> > ffffffff81193275:       48 87 43 f8             xchg   %rax,-0x8(%rbx)
+> >                 work->func(work);
+> > ffffffff81193279:       ff 53 08                callq  *0x8(%rbx)
+> >                 (void)cmpxchg(&work->flags, flags, flags & ~IRQ_WORK_BUSY);
+> > ffffffff8119327c:       49 83 e7 fc             and    $0xfffffffffffffffc,%r15
+> > ffffffff81193280:       4c 89 f0                mov    %r14,%rax
+> > ffffffff81193283:       f0 4c 0f b1 7b f8       lock cmpxchg %r15,-0x8(%rbx)
+> > ffffffff81193289:       4c 89 e3                mov    %r12,%rbx
+> >         while (llnode != NULL) {
+> > ffffffff8119328c:       4d 85 e4                test   %r12,%r12
+> > ffffffff8119328f:       75 cf                   jne    ffffffff81193260 <irq_work_tick+0x60>
+> >                 irq_work_run_list(raised);
+> >         irq_work_run_list(this_cpu_ptr(&lazy_list));
+> > ffffffff81193291:       48 c7 c1 88 5b 01 00    mov    $0x15b88,%rcx
+> > ffffffff81193298:       65 48 03 0c 25 d8 a1    add    %gs:0xa1d8,%rcx
+> > ffffffff8119329f:       00 00
+> > ffffffff811932a1:       ff 14 25 10 08 c2 81    callq  *0xffffffff81c20810
+> >         BUG_ON(!irqs_disabled());
+> > ffffffff811932a8:       a9 00 02 00 00          test   $0x200,%eax
+> > ffffffff811932ad:       75 4b                   jne    ffffffff811932fa <irq_work_tick+0xfa>
+> >         return ACCESS_ONCE(head->first) == NULL;
+> > ffffffff811932af:       48 83 39 00             cmpq   $0x0,(%rcx)
+> >
+> >
+> > I'm no x86/assembly expert, anyway my interpretation is:
+> >
+> > 'irq_work_tick+0xaf' corresponds to address 0xffffffff811932af, so the
+> > exception occurs during the execution of 'cmpq   $0x0,(%rcx)' or
+> > 'ACCESS_ONCE(head->first) == NULL'. The instruction checks if the
+> > memory location in RCX contains 0. Supposedly the register should
+> > contain the address of 'head->first', however the value is
+> > 0x47e992c1bc778d00, which doesn't look like a valid address.
+> >
+> > RCX is set shortly before:
+> >
+> > ffffffff81193291:       48 c7 c1 88 5b 01 00    mov    $0x15b88,%rcx
+> > ffffffff81193298:       65 48 03 0c 25 d8 a1    add    %gs:0xa1d8,%rcx
+> >
+> > As stated in https://www.kernel.org/doc/Documentation/this_cpu_ops.txt
+> > the GS segment register is used by the kernel for per-cpu
+> > variables. And effectively System.map tells us the offset 0x15b88
+> > corresponds to the per-cpu variable lazy_list:
+> >
+> > 0000000000015b88 d lazy_list
+> >
+> > The register dump shows GS with a value of 0xffff96fb5fc00000, which
+> > looks reasonable.
+> >
+> > But wait, right after setting RCX we do this:
+> >
+> > ffffffff811932a1:       ff 14 25 10 08 c2 81    callq  *0xffffffff81c20810
+> >         BUG_ON(!irqs_disabled());
+> >
+> > According to my (limited) understanding of x86 calling conventions RCX
+> > is a caller-saved register, thus the caller should save it on the
+> > stack to preserve its value across a function call.
+> > (https://en.wikipedia.org/wiki/X86_calling_conventions)
+> >
+> > The call to '*0xffffffff81c20810' appears to be related with
+> > KVM/paravirtualization:
+> >
+> > grep ffffffff81c20810 System.map
+> > ffffffff81c20810 D pv_irq_ops
+> >
+> > Since there is no offset it must be calling the first function in the
+> > structure, which is 'safe_fl' and points to 'native_save_fl'
+> > (https://elixir.bootlin.com/linux/v4.14.36/source/arch/x86/kernel/paravirt.c#L316)
+> >
+> > objdump -d -S --start-address=0x$(grep native_save_fl System.map | sed
+> >  -e "s/ \+.*//") vmlinux | less
+> >
+> > static inline unsigned long native_save_fl(void)
+> > {
+> > ffffffff81060240:       55                      push   %rbp
+> > ffffffff81060241:       48 89 e5                mov    %rsp,%rbp
+> > ffffffff81060244:       48 83 ec 10             sub    $0x10,%rsp
+> > ffffffff81060248:       65 48 8b 04 25 28 00    mov    %gs:0x28,%rax
+> > ffffffff8106024f:       00 00
+> > ffffffff81060251:       48 89 45 f8             mov    %rax,-0x8(%rbp)
+> >         /*
+> >          * "=rm" is safe here, because "pop" adjusts the stack before
+> >          * it evaluates its effective address -- this is part of the
+> >          * documented behavior of the "pop" instruction.
+> >          */
+> >         asm volatile("# __raw_save_flags\n\t"
+> > ffffffff81060255:       9c                      pushfq
+> > ffffffff81060256:       8f 45 f0                popq   -0x10(%rbp)
+> >                      "pushf ; pop %0"
+> >                      : "=rm" (flags)
+> >                      : /* no input */
+> >                      : "memory");
+> >
+> >         return flags;
+> > ffffffff81060259:       48 8b 45 f0             mov    -0x10(%rbp),%rax
+> > ffffffff8106025d:       65 48 8b 0c 25 28 00    mov    %gs:0x28,%rcx
+> > ffffffff81060264:       00 00
+> > ffffffff81060266:       48 3b 4d f8             cmp    -0x8(%rbp),%rcx
+> > ffffffff8106026a:       75 06                   jne    ffffffff81060272 <native_save_fl+0x32>
+> > ffffffff8106026c:       48 83 c4 10             add    $0x10,%rsp
+> > ffffffff81060270:       5d                      pop    %rbp
+> > ffffffff81060271:       c3                      retq
+> > ffffffff81060272:       e8 09 ec 01 00          callq  ffffffff8107ee80 <__stack_chk_fail>
+> > ffffffff81060277:       66 0f 1f 84 00 00 00    nopw   0x0(%rax,%rax,1)
+> > ffffffff8106027e:       00 0
+> >
+> > At 0xffffffff8106025d this clobbers RCX! I don't know why clang
+> > doesn't save the value on the stack before calling native_save_fl(),
+> > but that seems to be the problem.
+> >
+> > Again, I'm not an expert in this area and ventured into territory
+> > unknown to me, so please excuse if I got something totally wrong ...
+> >
 > 
-> thanks for stepping in.  I kept thinking about better I2C core support
-> for such situations and the more input the better.
+> Hi Matthias,
 > 
->> And you have to fix it (touch screen) - not your i2c driver. Otherwise, you can get
->> situation when set of I2C transfers (executed from some kthread/work/threaded_irq/..)
->> will be just interrupted in the middle - usual behavior after this is (I2C timeout) [and/or
->> not-functional I2C client device [and/or I2C bus stuck (worst case)].
+> again you helped me a lot.
 > 
-> This. I also tend to think that most issues need to be fixed in the
-> client drivers ensuring proper states of client devices when suspending
-> / resuming.. I wonder, though, if the core shouldn't assist by
-> guaranteeing that an on-going transfer has finished before suspending?
-> Or more technically, wait for a locked adapter to become unlocked again?
-
-That would be great, but note:
-1) only i2c_transfer() operations are locked, so if driver is doing 
-i2c_transfer(1)
-i2c_transfer(2) <- suspend in the middle
-<- suspend in between
-i2c_transfer(3)
-It will not help.
-In other word, one suspend cycle may be done without warnings or issues,
-while another may show up broken devices after suspend or even system crash.
-Everything depends on timings :( - in my practice 10000 suspend iteration tests
-where required to run many times to catch 3 buggy I2C client drivers.
-
-2) It's normal to abort suspend if system is busy, so if I2C core will be able
-to catch active I2C operation - it should abort, but again I do not see how it
- can be detected 100% with current I2C core design or without reworking huge number of drivers.
-
-3) So, only one thing I2C core potentially can do - catch invalid access and
-report it. "wait for transfer to finish" wouldn't work as for me.
-
+> I recalled that I had success in the early days of llvmlinux with...
 > 
-> I still need to set it up and test, yet seeing that the EEPROM driver
-> at24.c has no suspend/resume callbacks, I'd assume a big write operation
-> will only be partially done when interrupted by a suspend.
+>     CONFIG_PARAVIRT=n
 > 
->> In case, somebody is trying to access I2C after .suspend_noirq() stage I2C bus driver
->> should produce big fat warning and, most probably, abort suspend.
->> Above, in general, can be part of I2C core functionality.
+> ...as suggested by Steve Rostedt.
 > 
-> Also this. However, there might be an exception of devices like PMICs
-> which may need to be accessed to trigger the final suspend state.
+> This needed some more hackish kconfig kungfu these days - patches attached.
 > 
-> I at least know of some Renesas boards which needed the I2C connected
-> PMIC to do a system reset (not sure about suspend, need to recheck
-> that). That still today causes problems because interrupts are disabled
-> then.
-
-this was triggered few times already (sry, don't have links), as of now,
- and as I know, the only ways to W/A this is:
-- to create barametal platform driver (some time in ASM)
-- or delegate final suspend operation to another system controller (co-processor),
-  as example TI am335x SoCs,
-- or implement I2C driver in hw - TI AVS/SmartReflex. 
-
+> In the end I could boot into a 4.14.37-1-iniza-llvmlinux kernel
+> (kernel-config and dmesg-log attached).
 > 
-> To handle that, I imagined an additional adapter callback like
-> 'master_xfer_irqless' to be used for such special I2C messages. These
-> kind of special messages could be tagged with a new I2C_M_something
-> flag.
+> Concerning your analysis...
 > 
-> And maybe this could be used here, too? Introduce this flag for very
-> late/early messages. If they have it, messages are even sent in
-> suspend_noirq() phase with the master_xfer_irqless() callback, otherwise
-> we will have the WARNing printed out.
+> Is this a clang-bug?
+> Or can this be solved in the linux-kernel code?
+> What are your suggestion?
+> And can you help on getting this fixed with the help of your Chromium
+> team and/or bring it to the right persons?
 
-Sry, but 99% percent of I2C client drivers *should not* access I2C bus after
-.suspend_noirq() stage it's BUG-BUG!! Any W/A will just hide real problems.
+Apparently stack-protector code is clobbering RCX, however the
+paravirt code expects the register to be preserved:
 
-"master_xfer_irqless" might be a not bad idea, but, in my opinion, it 
-should be used explicitly by platform code only, and each usage should
-be proved to exist. 
+struct pv_irq_ops {
+	/*
+	 * ...
+	 * NOTE: These functions callers expect the callee to preserve
+	 * more registers than the standard C calling convention.
+	 */
+	struct paravirt_callee_save save_fl;
 
-Some additional info:
-static int suspend_enter(suspend_state_t state, bool *wakeup)
-{
-[...]
+We think the solution is to mark native_save_fl with
+'__nostackprotector', however this requires adding support for
+such an attribute to clang. Our compiler team is working on this.
 
-	error = dpm_suspend_noirq(PMSG_SUSPEND);
-	if (error) {
-		pr_err("noirq suspend of devices failed\n");
-		goto Platform_early_resume;
-	}
-
-^^^ after this no drivers expect to work, unless they are wake up
-sources and even in this case - they should handle wake up in
-their .suspend_noirq() or even later.
-
-	error = platform_suspend_prepare_noirq(state);
-	if (error)
-		goto Platform_wake;
-
-	if (suspend_test(TEST_PLATFORM))
-		goto Platform_wake;
-
-^^^ before disable_nonboot_cpus() there can be few processes
-    running in parallel on SMP: one is suspend, others can be anything  
-
-	error = disable_nonboot_cpus();
-	if (error || suspend_test(TEST_CPUS))
-		goto Enable_cpus;
-
-	arch_suspend_disable_irqs();
-^^^ after this point only suspend process is active
- any regular drivers usage is prohibited,BUG-BUG (at least in regular way,
- but some special irqless APIs still can be used, but only by platform suspend code)
-
-	BUG_ON(!irqs_disabled());
-
-	error = syscore_suspend();
-	if (!error) {
-
-^^^ scheduler and systimers are disabled
-
-		*wakeup = pm_wakeup_pending();
-		if (!(suspend_test(TEST_CORE) || *wakeup)) {
-			trace_suspend_resume(TPS("machine_suspend"),
-				state, true);
-			error = suspend_ops->enter(state);
-
-^^^ platform code - final suspend stage
-
-			trace_suspend_resume(TPS("machine_suspend"),
-				state, false);
-		} else if (*wakeup) {
-			error = -EBUSY;
-		}
-		syscore_resume();
-	}
-
-	arch_suspend_enable_irqs();
-	BUG_ON(irqs_disabled());
-
- Enable_cpus:
-	enable_nonboot_cpus();
-
- Platform_wake:
-	platform_resume_noirq(state);
-	dpm_resume_noirq(PMSG_RESUME);
-
-^^^ I2C can be accessible again
-
-[...]
-
-}
+> IMHO an analysis like you did might help, too.
+> I am not an expert in this area to say it is good/correct but I could
+> follow and read it like a thriller.
+> Where is Lieutenant Columbo when you need him :-)?
 > 
-> Thoughts? Any other cases missed so far?
+> Moreover, a test-case can be helpful, e.g. "Is clang clobbering RCX?"
+> when it's a clang-bug.
 > 
+> I tried to find some suitable test-case myself.
+> 
+> The clang-source has a test-dir, but this is new to me.
+> 
+> I tried to run a single test like test/Sema/asm.c in [1] with
+> llvm-tools Debian-package which ships "lit.py" script.
+> 
+> Not sure if this is a suitable for x86-64 (amd64) as the first line says...
+> 
+> // RUN: %clang_cc1 %s -Wno-private-extern -triple i386-pc-linux-gnu
+> -verify -fsyntax-only
+> 
+> root# cd /path/to/clang-source
+> 
+> root# python /usr/lib/llvm-7/build/utils/lit/lit.py -sv test/Sema
+> lit.py: /usr/lib/llvm-7/build/utils/lit/lit/TestingConfig.py:101:
+> fatal: unable to parse config file
+> '/path/to/clang-source/test/lit.cfg.py', traceback: Traceback (most
+> recent call last):
+>   File "/usr/lib/llvm-7/build/utils/lit/lit/TestingConfig.py", line
+> 88, in load_from_path
+>     exec(compile(data, path, 'exec'), cfg_globals, None)
+>   File "/home/sdi/src/linux-kernel/clang/test/lit.cfg.py", line 25, in <module>
+>     config.test_format = lit.formats.ShTest(not llvm_config.use_lit_shell)
+> AttributeError: 'NoneType' object has no attribute 'use_lit_shell'
+> 
+> Not sure if you have any experiences in this area, but I think asking
+> on llvm-dev is a good idea.
+> 
+> If we have a reproducible test-case we could ask on llvm-dev?
+> 
+> In the case of linux-kernel...
+> Ask Linux/x86 folks for a test-case to see if the compiler clobbers RCX?
+> Show your analysis to Linux/(x86)/KVM folks?
 
-I'm attaching some very old patch (don't ask me why it was not sent :()
-I did for Android system - which likes suspend very much. Some
-part of below diff are obsolete now (like omap_i2c_suspend()),
-but .noirq() callback are still valid and can show over all idea.
-Really helped to catch min 3 buggy client drivers with timers, delayed
-or periodic works.
-
-Huh, hope it's useful :)
-
-By the way, original patch from this thread is ok in general, but 
-WARN() after checking is_suspended flag will be helpful. 
-
-+	if (i2c_dev->is_suspended)
-^^ WARN()?
-+		return -EBUSY;
-
--- 
-regards,
--grygorii
-
-----
-commit 125ef8f7016e7b205886f93862288a45a312b1d8
-Author: Grygorii Strashko <grygorii.strashko@ti.com>
-Date:   Thu Sep 20 19:56:44 2012 +0300
-
-    I2C: OMAP: Fix PM runtime functionality during suspend/resume
-    
-    The OMAP I2C devices power management is based on Runtime PM only,
-    because they are intended to be used at later/earlier stages of System
-    wide suspend/resume execution. In addition, OMAP PM framework is based
-    on OMAP HWMOD framework which, in turn, connected to Runtime PM
-    subsystem.
-    But now, the Runtime PM is disabled for I2C devices immediately after
-    execution of its .suspend() callback. As result, I2C devices can't be
-    accessible during later suspend/early resume stages.
-
-
-    
-    This patch always enables I2C device from .suspend() callback,
-    so it can be accessible during later stages of suspending.
-
-^^^^ this part is not valid any more
-
-    Then, I2C 
-    device is finally turned off on exit .suspend_noirq() callback by
-    omap_device framework, so it can be accessible during later suspending
-    stages.
-    From other side, the I2C device is unconditionally turned on before
-    entering resume_noirq() callback by omap_device framework, so it can be
-    accessible during earlier stages of resuming.
-    
-    More over, the additional check added to ensure that there are no
-    activities on I2C bus, because some drivers may still have active kernel
-    thread/works which may be executed on another CPU and try to access I2C
-    -- this is the BUG and this may cause system crash.
-    To prevent such situations additional flag "suspended" is added in
-    struct omap_i2c_dev which is used to forbid access to I2C bus after
-    .suspend_noirq() callback execution.
-   
-    Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
-diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
-index 5ef9b7e..f5914c9 100644
---- a/drivers/i2c/busses/i2c-omap.c
-+++ b/drivers/i2c/busses/i2c-omap.c
-@@ -207,6 +207,9 @@ struct omap_i2c_dev {
-        u16                     westate;
-        u16                     errata;
-        int                     dev_lost_count;
-+       bool                    suspended;      /* if true - I2C device
-+                                                  suspended and can't be
-+                                                  accessible*/
- };
- 
- static const u8 reg_map_ip_v1[] = {
-@@ -643,6 +646,12 @@ omap_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
-                return -EINVAL;
-        }
- 
-+       if (dev->suspended) {
-+               WARN(true, "%s: Access denied - device already suspended\n",
-+                    dev_name(dev->dev));
-+               return -EACCES;
-+       }
-+
-        r = omap_i2c_hwspinlock_lock(dev);
-        /* To-Do: if we are unable to acquire the lock, we must
-        try to recover somehow */
-@@ -651,7 +660,6 @@ omap_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 
-        r = pm_runtime_get_sync(dev->dev);
-        if (r < 0) {
--               pm_runtime_put_noidle(dev->dev);
-                goto err_pm;
-        }
- 
-@@ -690,8 +698,8 @@ omap_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
-        omap_i2c_wait_for_bb(dev);
- out:
-        disable_irq(dev->irq);
--       pm_runtime_put_sync(dev->dev);
- err_pm:
-+       pm_runtime_put_sync(dev->dev);
-        omap_i2c_hwspinlock_unlock(dev);
-        return r;
- }
-@@ -1270,7 +1278,79 @@ static int omap_i2c_runtime_resume(struct device *dev)
- }
- #endif /* CONFIG_PM_RUNTIME */
- 
-+static int omap_i2c_suspend(struct device *dev)
-+{
-+       int ret;
-+
-+       /*
-+        *  Enable I2C device, so it will be accessible during
-+        * later stages of suspending when device Runtime PM is disabled.
-+        * I2C device will be turned off at "noirq" suspend stage.
-+        */
-+       ret = pm_runtime_resume(dev);
-+       if (ret < 0)
-+               return ret;
-+       return 0;
-+}
-+
-+static int omap_i2c_suspend_noirq(struct device *dev)
-+{
-+       struct platform_device *pdev = to_platform_device(dev);
-+       struct omap_i2c_dev *_dev = platform_get_drvdata(pdev);
-+
-+       /*
-+        * Below code is needed only to ensure that there are no
-+        * activities on I2C bus. if at this moment any driver
-+        * is trying to use I2C bus - this is the BUG and this
-+        * may cause system crash.
-+        *
-+        * So forbid access to I2C device using _dev->suspended flag.
-+        */
-+
-+       i2c_lock_adapter(&_dev->adapter);
-+
-+       /* Check for active I2C transaction */
-+       if (atomic_read(&dev->power.usage_count) > 1) {
-+               dev_info(dev,
-+                        "active I2C transaction detected - suspend aborted\n");
-+               return -EBUSY;
-+       }
-+
-+       _dev->suspended = true;
-+
-+       i2c_unlock_adapter(&_dev->adapter);
-+
-+       /*
-+        * I2C device will be turned off by omap_device framework
-+        * on exit from .suspend_noirq() callback.
-+        * So, it will not be accessible any more.
-+        */
-+       return 0;
-+}
-+
-+static int omap_i2c_resume_noirq(struct device *dev)
-+{
-+       struct platform_device *pdev = to_platform_device(dev);
-+       struct omap_i2c_dev *_dev = platform_get_drvdata(pdev);
-+
-+       /*
-+        * I2C device  has been turned on already by omap_device framework
-+        * unconditionally. So, it will be accessible during earlier
-+        * stages of resuming when device Runtime PM is disabled
-+        */
-+
-+       /* Allow access to I2C bus*/
-+       i2c_lock_adapter(&_dev->adapter);
-+       _dev->suspended = false;
-+       i2c_unlock_adapter(&_dev->adapter);
-+
-+       return 0;
-+}
-+
- static struct dev_pm_ops omap_i2c_pm_ops = {
-+       .suspend_noirq = omap_i2c_suspend_noirq,
-+       .resume_noirq = omap_i2c_resume_noirq,
-+       SET_SYSTEM_SLEEP_PM_OPS(omap_i2c_suspend, NULL)
-        SET_RUNTIME_PM_OPS(omap_i2c_runtime_suspend,
-                           omap_i2c_runtime_resume, NULL)
- };
+I'm not an expert, but I don't think there is a generic test case for
+this special scenario involving paravirt and stack protector. It's
+probably best to just fix the problem and move on.
