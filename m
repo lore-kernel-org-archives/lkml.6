@@ -1,67 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751989AbeEGHtu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 03:49:50 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:53871 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeEGHtr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 03:49:47 -0400
-X-Google-Smtp-Source: AB8JxZqK+bcSoDBTAJI/Z6MbJvyD6wPtmmVOL7JqIYxbWlmilm1zqXyoRJ32I2BCmQxlh5Bvp1KqZg==
-Date: Mon, 7 May 2018 09:49:43 +0200
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: Chunyan Zhang <chunyan.zhang@spreadtrum.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Baolin Wang <baolin.wang@spreadtrum.com>,
-        Orson Zhai <orson.zhai@spreadtrum.com>
-Subject: Re: [PATCH] clocksource/drivers/sprd: Fix Kconfig dependency
-Message-ID: <20180507074943.GB19313@mai>
-References: <1525350452-14433-1-git-send-email-chunyan.zhang@spreadtrum.com>
- <20180507055130.GA19313@mai>
- <CAAfSe-uBy00gR+Upcc1aO0LWwLMGT-WrCmt4oo_SiEXUcW+PuA@mail.gmail.com>
+        id S1751977AbeEGHxM (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 03:53:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55384 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751042AbeEGHxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 03:53:10 -0400
+Date: Mon, 7 May 2018 09:53:03 +0200
+From: Cornelia Huck <cohuck@redhat.com>
+To: "dongbo (E)" <dongbo4@huawei.com>
+Cc: <alex.williamson@redhat.com>, <corbet@lwn.net>, <kvm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vfio: fix documentation
+Message-ID: <20180507095303.450aef9b.cohuck@redhat.com>
+In-Reply-To: <eacddc78-279c-abe8-e663-9849973dd6a3@huawei.com>
+References: <eacddc78-279c-abe8-e663-9849973dd6a3@huawei.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAfSe-uBy00gR+Upcc1aO0LWwLMGT-WrCmt4oo_SiEXUcW+PuA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 02:04:38PM +0800, Chunyan Zhang wrote:
-> Hi Daniel,
+On Mon, 7 May 2018 11:02:10 +0800
+"dongbo (E)" <dongbo4@huawei.com> wrote:
+
+> From: Dong Bo <dongbo4@huawei.com>
 > 
-> On 7 May 2018 at 13:51, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> > On Thu, May 03, 2018 at 08:27:32PM +0800, Chunyan Zhang wrote:
-> >> SPRD arch doesn't select SPRD_TIMER, so this config would not
-> >> appear even if ARCH_SPRD is set and COMPILE_TEST is not.
-> >>
-> >> Fix the Kconfig selection rule by letting the SPRD arch to select.
-> >
-> > Instead of changing this Kconfig, please fix the arch's Kconfig by selecting
-> > SPRD_TIMER.
+> Update vfio_add_group_dev description to match the current API.
 > 
-> Oh, that's not my expectation, I hope we can give users permission of
-> not selecting SPRD TIMER driver even if SPRD arch is selected. (I can
-> confirm that all Spreadtrum's platforms in mainline can work without
-> this driver. An enough minimum workable system doesn't need this
-> driver indeed.)
+> Signed-off-by: Dong Bo <dongbo4@huawei.com>
+> ---
+>  Documentation/vfio.txt | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
+> index ef6a511..f1a4d3c 100644
+> --- a/Documentation/vfio.txt
+> +++ b/Documentation/vfio.txt
+> @@ -252,15 +252,14 @@ into VFIO core.  When devices are bound and unbound to the driver,
+>  the driver should call vfio_add_group_dev() and vfio_del_group_dev()
+>  respectively::
+> 
+> -	extern int vfio_add_group_dev(struct iommu_group *iommu_group,
+> -	                              struct device *dev,
+> +	extern int vfio_add_group_dev(struct device *dev,
+>  				      const struct vfio_device_ops *ops,
+>  				      void *device_data);
+> 
+>  	extern void *vfio_del_group_dev(struct device *dev);
+> 
+>  vfio_add_group_dev() indicates to the core to begin tracking the
+> -specified iommu_group and register the specified dev as owned by
+> +iommu_group of the specified dev and register the dev as owned by
+>  a VFIO bus driver.  The driver provides an ops structure for callbacks
+>  similar to a file operations structure::
+> 
 
-Ok, can you add the EXPERT option in addition to the bool like:
-
-https://lkml.org/lkml/2018/4/3/897
-
-Thanks.
-
-  -- Daniel
-
-
--- 
-
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
