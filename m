@@ -1,10 +1,10 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752576AbeEGJhw (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:37:52 -0400
-Received: from osg.samsung.com ([64.30.133.232]:57534 "EHLO osg.samsung.com"
+        id S1752564AbeEGJhs (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:37:48 -0400
+Received: from osg.samsung.com ([64.30.133.232]:65419 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752501AbeEGJgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1752502AbeEGJgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 May 2018 05:36:09 -0400
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
@@ -12,103 +12,48 @@ To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "Tobin C. Harding" <me@tobin.cc>, SeongJae Park <sj38.park@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, Helmut Grohne <h.grohne@intenta.de>
-Subject: [PATCH 07/18] docs: core-api: add circular-buffers documentation
-Date: Mon,  7 May 2018 06:35:43 -0300
-Message-Id: <93ca8a46ed15b23d522ce514dbda62bd64d4584e.1525684985.git.mchehab+samsung@kernel.org>
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Subject: [PATCH 11/18] docs: crypto_engine.rst: Fix two parse warnings
+Date: Mon,  7 May 2018 06:35:47 -0300
+Message-Id: <13511fdb708dc5319630b03c48e733eb4eb978d7.1525684985.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
 References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-MIME-Version: 1.0
 In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
 References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The circular-buffers.txt is already in ReST format. So, move it to the
-core-api guide, where it belongs.
+./Documentation/crypto/crypto_engine.rst:13: WARNING: Unexpected indentation.
+./Documentation/crypto/crypto_engine.rst:15: WARNING: Block quote ends without a blank line; unexpected unindent.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/00-INDEX                                          | 2 --
- .../{circular-buffers.txt => core-api/circular-buffers.rst}     | 0
- Documentation/core-api/index.rst                                | 1 +
- Documentation/memory-barriers.txt                               | 2 +-
- Documentation/translations/ko_KR/memory-barriers.txt            | 2 +-
- 5 files changed, 3 insertions(+), 4 deletions(-)
- rename Documentation/{circular-buffers.txt => core-api/circular-buffers.rst} (100%)
+ Documentation/crypto/crypto_engine.rst | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/00-INDEX b/Documentation/00-INDEX
-index c6b81ef9827b..a9dd1384d8e3 100644
---- a/Documentation/00-INDEX
-+++ b/Documentation/00-INDEX
-@@ -80,8 +80,6 @@ cdrom/
- 	- directory with information on the CD-ROM drivers that Linux has.
- cgroup-v1/
- 	- cgroups v1 features, including cpusets and memory controller.
--circular-buffers.txt
--	- how to make use of the existing circular buffer infrastructure
- clk.txt
- 	- info on the common clock framework
- cma/
-diff --git a/Documentation/circular-buffers.txt b/Documentation/core-api/circular-buffers.rst
-similarity index 100%
-rename from Documentation/circular-buffers.txt
-rename to Documentation/core-api/circular-buffers.rst
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index d4d71ee564ae..3864de589126 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -26,6 +26,7 @@ Core utilities
-    genalloc
-    errseq
-    printk-formats
-+   circular-buffers
+diff --git a/Documentation/crypto/crypto_engine.rst b/Documentation/crypto/crypto_engine.rst
+index 8272ac92a14f..1d56221dfe35 100644
+--- a/Documentation/crypto/crypto_engine.rst
++++ b/Documentation/crypto/crypto_engine.rst
+@@ -8,11 +8,13 @@ The crypto engine API (CE), is a crypto queue manager.
  
- Interfaces for kernel debugging
- ===============================
-diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-index 983249906fc6..33b8bc9573f8 100644
---- a/Documentation/memory-barriers.txt
-+++ b/Documentation/memory-barriers.txt
-@@ -3083,7 +3083,7 @@ CIRCULAR BUFFERS
- Memory barriers can be used to implement circular buffering without the need
- of a lock to serialise the producer with the consumer.  See:
- 
--	Documentation/circular-buffers.txt
-+	Documentation/core-api/circular-buffers.rst
- 
- for details.
- 
-diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
-index 081937577c1a..2ec5fe0c9cf4 100644
---- a/Documentation/translations/ko_KR/memory-barriers.txt
-+++ b/Documentation/translations/ko_KR/memory-barriers.txt
-@@ -3023,7 +3023,7 @@ smp_mb() 가 아니라 virt_mb() 를 사용해야 합니다.
- 동기화에 락을 사용하지 않고 구현하는데에 사용될 수 있습니다.  더 자세한 내용을
- 위해선 다음을 참고하세요:
- 
--	Documentation/circular-buffers.txt
-+	Documentation/core-api/circular-buffers.rst
- 
- 
- =========
+ Requirement
+ -----------
+-You have to put at start of your tfm_ctx the struct crypto_engine_ctx
+-struct your_tfm_ctx {
++You have to put at start of your tfm_ctx the struct crypto_engine_ctx::
++
++  struct your_tfm_ctx {
+         struct crypto_engine_ctx enginectx;
+         ...
+-};
++  };
++
+ Why: Since CE manage only crypto_async_request, it cannot know the underlying
+ request_type and so have access only on the TFM.
+ So using container_of for accessing __ctx is impossible.
 -- 
 2.17.0
