@@ -1,172 +1,146 @@
-Return-Path: <sebastian.reichel@collabora.co.uk>
-X-Google-Smtp-Source: AB8JxZrTMwO8BFQyiEp3tT6zdh4K0asc2FtMUW7NGTdvCunq8LvfxLIA9NnyW0k7opACEJFygJHm
-ARC-Seal: i=1; a=rsa-sha256; t=1525865333; cv=none;
-        d=google.com; s=arc-20160816;
-        b=USaz/WD52bMEYyz21n+SaF5cF/NuDigmCveCOMWrTIdkSHWjSmoKHhSbpNCOtMrQRD
-         IlXq8HumfHJn4dcRjb4MZwaKsEt5wU3EPQQhgXOReS36EBJiDusx/r0IoRH32BNx7RtG
-         oYlYEpg3sSFrwi//S65RnbjfSrGIzIeen3D4y8iZgizSneGfVXcNmtY42DzktV9PJP1Z
-         pwFP66HqD88L3OeoK2QisP8X2Ty2wpcp2YY3x8UYQ5SCd46K8sjCX7qj/tp6+ll1Piso
-         JdvRGdHC12xdbCU5BB3lGFd2ZR8r+rv8/kNVZRTZRIQLgZAW6uv1RlRC8u6UcHcVqGbb
-         2xNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=YGarjxycFhDUyVG9ebzWwxDUlKxKBgihfeWpJLplHVY=;
-        b=Gz+UBvC9gJ2O426yhLznINU92MjSg7P5YWXenY4HoIpkWm8nJfqi9UchxAofc9+mSN
-         lyu3iQwoy/qrK2B5b4jJDdI0qTYtcYpUiDvHLLG3iOWoQIsevYMdAP7vYDjGEUHgxuTC
-         zgpVJ8iRbhCXUXo9pYlg02kiVYpZ0BOD3el15StQDePXJ+cQHRsSYA/F8uKGe6NpUkDs
-         /HqpJex21g/0VBaWWcdSGXT9VB91dQIb9A4rsnmvXQ3lb9WMVr9hEiFbdk+wdK2QZxCC
-         vw79C/g2rc3tiK4XXWnnSu4fiNanrE8ZGQc8pk0r/CgbrgFxh5rAA3WYt2m24BIZN41+
-         jvwQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 2a00:1098:0:82:1000:25:2eeb:e3e3 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of sebastian.reichel@collabora.co.uk designates 2a00:1098:0:82:1000:25:2eeb:e3e3 as permitted sender) smtp.mailfrom=sebastian.reichel@collabora.co.uk;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=collabora.co.uk
-Date: Wed, 9 May 2018 13:28:50 +0200
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1651933-1525729013-2-17539252338794154542
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, UNPARSEABLE_RELAY 0.001,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='uk',
+  MailFrom='org'
+X-Spam-charsets: cc='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: linux-serial-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525729012; b=TGrWr/Q200SMwv2Fbn69KzI3iAHullJiwicQQHgIDuqmZ4gvHH
+    weVpxZYE6QYTACeI9N+/O7t8iwTUHd8FOzh3bwYUcOVBg7A3NcA2z1SSR1mbDNlU
+    20hl8eowPR1F3UX9aZFP/ep6YRXpK363DQqD8b4WJbvpuvKR/17/CrRZHJq7CRgl
+    4rzRphtsHcWoqiTgzB5/WXeh8lPlY9HVQh+sjeOplYICzP1nDizDco96Yc5OtMho
+    BytS/E3BStsg10wnZkZ/l3o14JDbImRX1EFsG29iG/bfVMCkxIqu0cuhkqmH+pmH
+    N+LbB1ng0GxMBjr4Jgi/8m94yxY8VZrJOPDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=from:to:cc:subject:date:message-id
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525729012; bh=
+    lHpDAjkWRHqzodjXff2oaU09bgReQMkGazRqzibu4pQ=; b=RKIsBS3anef9FcL0
+    OQqnfo1L2idRbR7IGY8FPI0Yhk9QcZEZVg4hYeUSTaVHdiNF1TuRoNKR3cyESr+Z
+    We2Zc7vaVgM66tLjWq/+VJOWqIe+iizBjGTV3xCDOlWXgDM23Z6uUIFJHp/+terD
+    Oa11trbSFId+4MZFfTGUYkTjKaOUHefSQvS2qwaisVZJpP/6vMParaD/7Ppvj1nL
+    xrdE4/dFP6kKScd4GsRKqosWQYfUvZKUzIrPg7wukkBMiWx6YvnmcfbYCRsQ+9zV
+    pKhEM876BiF8ImBXkkxL5e7DT97yvSk3fUp+/AsC/BSBkDLPKW7GmjvPYN8oSToz
+    MWSPiA==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=collabora.co.uk header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-49 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=collabora.co.uk;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=fail;
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=collabora.co.uk header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-49 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfEIj/C32+wzrqFdNdMIViNk+PuRrcX4wWwOTIieSos55uVX3w9ysYZypmECo9JOnllMl8Aa5L5MuxnRKqT0G/MHRY28K4ewykI+rzPUGY2uL0CheOI8P
+    brL9X5g82uG5wnu44hI8b6a8pLht5BbJwDoiBGlXu+SZvYYlfaNPOp12ZweomTpGr9v1Eyt8T9nPU8K7dIbI1dfPzXwOS+jpDhOd9EnB0BfYXkK+GltVfZ3H
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=OScXe70xAAAA:8
+    a=gvl4HP8tAAAA:8 a=VwQbUJbxAAAA:8 a=6ZDyq-tEkk-8IfLj3vAA:9 a=x8gzFH9gYPwA:10
+    a=X7_D5SgixhGjaE2bLVSS:22 a=tRkgsvjveJ3YVe9fnr1q:22 a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S1753130AbeEGVgW (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 7 May 2018 17:36:22 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43712 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753254AbeEGVgQ (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Mon, 7 May 2018 17:36:16 -0400
 From: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-	Fabio Estevam <fabio.estevam@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] serial: imx: dma_unmap_sg buffers on shutdown
-Message-ID: <20180509112850.52amrm7ffxhk2zm2@earth.universe>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org
+Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Subject: [PATCH 1/2] serial: imx: cleanup imx_uart_disable_dma()
+Date: Mon,  7 May 2018 23:36:09 +0200
+Message-Id: <20180507213610.17330-2-sebastian.reichel@collabora.co.uk>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180507213610.17330-1-sebastian.reichel@collabora.co.uk>
 References: <20180507213610.17330-1-sebastian.reichel@collabora.co.uk>
- <20180507213610.17330-3-sebastian.reichel@collabora.co.uk>
- <20180508064351.ioczgw2v4jtryr3x@pengutronix.de>
- <20180508134047.zocurxwelw3a24ti@earth.universe>
- <20180508184612.iixr3psap4ik5fdr@pengutronix.de>
- <20180509102058.6mshag4y7aq4w2n2@earth.universe>
- <20180509104256.slkzauicnhsktqqf@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="q42juzzebumcprf7"
-Content-Disposition: inline
-In-Reply-To: <20180509104256.slkzauicnhsktqqf@pengutronix.de>
-User-Agent: NeoMutt/20180323
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599842789547446869?=
-X-GMAIL-MSGID: =?utf-8?q?1599985768077685130?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+Remove unrelated CTSC/CTS disabling from imx_uart_disable_dma() and
+move it to imx_uart_shutdown(), which is the only user of the DMA
+disabling function. This should not change the driver's behaviour,
+but improves readability. After this change imx_uart_disable_dma()
+does the reverse thing of imx_uart_enable_dma().
 
---q42juzzebumcprf7
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Suggested-by: Nandor Han <nandor.han@ge.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+---
+ drivers/tty/serial/imx.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-Hi,
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index c2fc6bef7a6f..3ca767b1162a 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -1291,18 +1291,13 @@ static void imx_uart_enable_dma(struct imx_port *sport)
+ 
+ static void imx_uart_disable_dma(struct imx_port *sport)
+ {
+-	u32 ucr1, ucr2;
++	u32 ucr1;
+ 
+ 	/* clear UCR1 */
+ 	ucr1 = imx_uart_readl(sport, UCR1);
+ 	ucr1 &= ~(UCR1_RXDMAEN | UCR1_TXDMAEN | UCR1_ATDMAEN);
+ 	imx_uart_writel(sport, ucr1, UCR1);
+ 
+-	/* clear UCR2 */
+-	ucr2 = imx_uart_readl(sport, UCR2);
+-	ucr2 &= ~(UCR2_CTSC | UCR2_CTS | UCR2_ATEN);
+-	imx_uart_writel(sport, ucr2, UCR2);
+-
+ 	imx_uart_setup_ufcr(sport, TXTL_DEFAULT, RXTL_DEFAULT);
+ 
+ 	sport->dma_is_enabled = 0;
+@@ -1447,7 +1442,7 @@ static void imx_uart_shutdown(struct uart_port *port)
+ 
+ 	spin_lock_irqsave(&sport->port.lock, flags);
+ 	ucr2 = imx_uart_readl(sport, UCR2);
+-	ucr2 &= ~(UCR2_TXEN | UCR2_ATEN);
++	ucr2 &= ~(UCR2_TXEN | UCR2_CTSC | UCR2_CTS | UCR2_ATEN);
+ 	imx_uart_writel(sport, ucr2, UCR2);
+ 	spin_unlock_irqrestore(&sport->port.lock, flags);
+ 
+-- 
+2.17.0
 
-On Wed, May 09, 2018 at 12:42:56PM +0200, Uwe Kleine-K=F6nig wrote:
-> On Wed, May 09, 2018 at 12:20:58PM +0200, Sebastian Reichel wrote:
-> > Hi,
-> >=20
-> > On Tue, May 08, 2018 at 08:46:12PM +0200, Uwe Kleine-K=F6nig wrote:
-> > > On Tue, May 08, 2018 at 03:40:47PM +0200, Sebastian Reichel wrote:
-> > > > On Tue, May 08, 2018 at 08:43:51AM +0200, Uwe Kleine-K=F6nig wrote:
-> > > > > On Mon, May 07, 2018 at 11:36:10PM +0200, Sebastian Reichel wrote:
-> > > > > > This properly unmaps DMA SG on device shutdown.
-> > > > > >=20
-> > > > > > Reported-by: Nandor Han <nandor.han@ge.com>
-> > > > > > Suggested-by: Nandor Han <nandor.han@ge.com>
-> > > > > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.c=
-o.uk>
-> > > > > > ---
-> > > > > >  drivers/tty/serial/imx.c | 12 ++++++++++--
-> > > > > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> > > > > > index 3ca767b1162a..6c53e74244ec 100644
-> > > > > > --- a/drivers/tty/serial/imx.c
-> > > > > > +++ b/drivers/tty/serial/imx.c
-> > > > > > @@ -1425,10 +1425,18 @@ static void imx_uart_shutdown(struct ua=
-rt_port *port)
-> > > > > >  	u32 ucr1, ucr2;
-> > > > > > =20
-> > > > > >  	if (sport->dma_is_enabled) {
-> > > > > > -		sport->dma_is_rxing =3D 0;
-> > > > > > -		sport->dma_is_txing =3D 0;
-> > > > > >  		dmaengine_terminate_sync(sport->dma_chan_tx);
-> > > > > > +		if (sport->dma_is_txing) {
-> > > > > > +			dma_unmap_sg(sport->port.dev, &sport->tx_sgl[0],
-> > > > > > +				     sport->dma_tx_nents, DMA_TO_DEVICE);
-> > > > > > +			sport->dma_is_txing =3D 0;
-> > > > > > +		}
-> > > > >=20
-> > > > > did you find this because the kernel crashed or consumed more and=
- more
-> > > > > memory, or is this "only" a finding of reading the source code? I=
-f the
-> > > > > former it would be great to point out in the commit log, if the l=
-atter,
-> > > > > I wonder if this is a real problem that warrants a stable backpor=
-t.
-> > > >=20
-> > > > A bit of both. One of Collabora's customers had a (scarce) kernel c=
-rash
-> > > > in imx-serial and modified multiple things in the driver. The crash=
- is
-> > > > gone, but it's not clear which change fixed it. I could not
-> > > > reproduce the crash so far and I'm currently rebasing and splitting
-> > > > their changes into upstreamable portions with proper patch
-> > > > descriptions. From reading the source this looked like a real issue.
-> > >=20
-> > > In which context (kernel version, operating mode (e.g. rs485)) did th=
-ese
-> > > happen? What does "crash" mean? The kernel did just hang or produced =
-an
-> > > oops? If the latter, can you show it/them?
-> >=20
-> > I pasted the oops, that triggered writing the patches (Linux 4.8, no
-> > rs485, 4MHz baudrate). I think, that the actual issue has already been
-> > fixed upstream between 4.13 and current master.
-> >=20
-> > -- Sebastian
-> >=20
-> > ...
-> > [  302.516696] Unhandled fault: external abort on non-linefetch (0x1008=
-) at 0xf0938000
->=20
-> This is usually a missing clk. Alternatively RX is disabled and the
-> RXDATA register is read. Scrolling through
->=20
-> 	git log v4.13..linus/master -- drivers/tty/serial/imx.c
->=20
-> I didn't find a candidate for fixing that.
-
-It happens while the port is being torn apart. I think the following
-patches from you are very good candidates. Especially since the
-remaining diff fixing the issue in the customer's old kernel has a
-smilar change:
-
-76821e222c18 - serial: imx: ensure that RX irqs are off if RX is off (9 wee=
-ks ago) <Uwe Kleine-K=F6nig>
-dedc64e02f5d - serial: imx: Stop to receive in .stop_rx() (9 weeks ago) <Uw=
-e Kleine-K=F6nig>
-
--- Sebastian
-
---q42juzzebumcprf7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlry228ACgkQ2O7X88g7
-+prf1w//RO3HU/eZRCF7548Kz17+XDcy+upDoVOGyOpul/nboloktn5mpqf04j0L
-onMEwFMxCfb2Z0VmJCYyVdLacl1tLap1FCou1gIOdPkiwO75366HA6K5IYNVVmKe
-5VojtI7pafSVS+S5FeCp6BD0OB2RLte745C1CuO8kdFD4d+eFhiVpL8wtQHg8zBd
-9VivfONK2dxdo7fUTMB6b3Ng+mB32NESopD3pg+ntvLNT7InJoOPWgaPVeLmYP4m
-HkDJLBtvOFfyklk3xK7f6KSk4s4wKIY6hxD51fwQhhraUnnUe9sZpE7b+rw+cQGy
-ovMdK8qt51rv2S3YOfCOB0/87QhlzF+aUzs+DqDdUh8185wmT2MTyUxwe/6U1DsE
-GlXD+/v6dozkaaOBBKDxw1kckoYp5RYCnHzpnykkd6I8DFaCIPO3GUaSuJt0Drx9
-xEDT46KVl6RTOW+gn8PeiXr3NPPTGMbosL8JRYq0rZOEOhL/almTrwCWsaDxgIb4
-0OsfQ9GWIrl5Q+zQ/2iohKNh1XFDMKLngnt92trYYKuTD3cEQ2ZeJJEv6Z3SKVW4
-2isspDC4Gcv6yEedaQiYrsx/Dge8t6CSAIDOMxWviPXJF0aBmf8Cl6/zS5vcvo7C
-QL5mI9uUtQ4vRsNds3j3J4vzYQLuX7u+Ye3gokJzP+jQYbxmggA=
-=eFu/
------END PGP SIGNATURE-----
-
---q42juzzebumcprf7--
