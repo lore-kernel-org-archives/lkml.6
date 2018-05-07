@@ -1,20 +1,20 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752501AbeEGIk4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:40:56 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40359 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752259AbeEGIiv (ORCPT
+        id S1752523AbeEGIlD (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:41:03 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38628 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752218AbeEGIin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:51 -0400
-X-Google-Smtp-Source: AB8JxZrrhNVpFj+OdAeISbrRPM2O4Ra03x+AA0IgCx/2AShncX7vQ+Vxj9Ocw7g1plMfJiVjjNsTyQ==
+        Mon, 7 May 2018 04:38:43 -0400
+X-Google-Smtp-Source: AB8JxZrGQIFECZ0bIkI0kPHo8Vb1ALMmUkN//wJ+oRLqBXneQLBfntexe7/LRf/puU3iMuFsAvD/uQ==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v2 33/35] Revert "fsnotify: support overlayfs"
-Date: Mon,  7 May 2018 10:38:05 +0200
-Message-Id: <20180507083807.28792-34-mszeredi@redhat.com>
+Subject: [PATCH v2 26/35] Revert "ovl: don't allow writing ioctl on lower layer"
+Date: Mon,  7 May 2018 10:37:58 +0200
+Message-Id: <20180507083807.28792-27-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
 References: <20180507083807.28792-1-mszeredi@redhat.com>
@@ -22,67 +22,185 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit f3fbbb079263bd29ae592478de6808db7e708267.
+This reverts commit 7c6893e3c9abf6a9676e060a1e35e5caca673d57.
 
-Overlayfs now works correctly without adding hacks to fsnotify.
+Overlayfs no longer relies on the vfs for checking writability of files.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- include/linux/fsnotify.h | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ fs/internal.h  |  2 --
+ fs/namespace.c | 64 +++-------------------------------------------------------
+ fs/open.c      |  4 ++--
+ fs/xattr.c     |  9 ++++-----
+ 4 files changed, 9 insertions(+), 70 deletions(-)
 
-diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-index bdaf22582f6e..fd1ce10553bf 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -30,11 +30,7 @@ static inline int fsnotify_parent(const struct path *path, struct dentry *dentry
- static inline int fsnotify_perm(struct file *file, int mask)
+diff --git a/fs/internal.h b/fs/internal.h
+index 6821cf475fc6..29c9a2fab592 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -80,10 +80,8 @@ extern void __init mnt_init(void);
+ 
+ extern int __mnt_want_write(struct vfsmount *);
+ extern int __mnt_want_write_file(struct file *);
+-extern int mnt_want_write_file_path(struct file *);
+ extern void __mnt_drop_write(struct vfsmount *);
+ extern void __mnt_drop_write_file(struct file *);
+-extern void mnt_drop_write_file_path(struct file *);
+ 
+ /*
+  * fs_struct.c
+diff --git a/fs/namespace.c b/fs/namespace.c
+index c3f7152a8419..5286c5313e67 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -431,18 +431,13 @@ int __mnt_want_write_file(struct file *file)
+ }
+ 
+ /**
+- * mnt_want_write_file_path - get write access to a file's mount
++ * mnt_want_write_file - get write access to a file's mount
+  * @file: the file who's mount on which to take a write
+  *
+  * This is like mnt_want_write, but it takes a file and can
+  * do some optimisations if the file is open for write already
+- *
+- * Called by the vfs for cases when we have an open file at hand, but will do an
+- * inode operation on it (important distinction for files opened on overlayfs,
+- * since the file operations will come from the real underlying file, while
+- * inode operations come from the overlay).
+  */
+-int mnt_want_write_file_path(struct file *file)
++int mnt_want_write_file(struct file *file)
  {
- 	const struct path *path = &file->f_path;
--	/*
--	 * Do not use file_inode() here or anywhere in this file to get the
--	 * inode.  That would break *notity on overlayfs.
--	 */
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 fsnotify_mask = 0;
  	int ret;
  
-@@ -178,7 +174,7 @@ static inline void fsnotify_mkdir(struct inode *inode, struct dentry *dentry)
- static inline void fsnotify_access(struct file *file)
- {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 mask = FS_ACCESS;
+@@ -452,53 +447,6 @@ int mnt_want_write_file_path(struct file *file)
+ 		sb_end_write(file->f_path.mnt->mnt_sb);
+ 	return ret;
+ }
+-
+-static inline int may_write_real(struct file *file)
+-{
+-	struct dentry *dentry = file->f_path.dentry;
+-	struct dentry *upperdentry;
+-
+-	/* Writable file? */
+-	if (file->f_mode & FMODE_WRITER)
+-		return 0;
+-
+-	/* Not overlayfs? */
+-	if (likely(!(dentry->d_flags & DCACHE_OP_REAL)))
+-		return 0;
+-
+-	/* File refers to upper, writable layer? */
+-	upperdentry = d_real(dentry, NULL, 0, D_REAL_UPPER);
+-	if (upperdentry && file_inode(file) == d_inode(upperdentry))
+-		return 0;
+-
+-	/* Lower layer: can't write to real file, sorry... */
+-	return -EPERM;
+-}
+-
+-/**
+- * mnt_want_write_file - get write access to a file's mount
+- * @file: the file who's mount on which to take a write
+- *
+- * This is like mnt_want_write, but it takes a file and can
+- * do some optimisations if the file is open for write already
+- *
+- * Mostly called by filesystems from their ioctl operation before performing
+- * modification.  On overlayfs this needs to check if the file is on a read-only
+- * lower layer and deny access in that case.
+- */
+-int mnt_want_write_file(struct file *file)
+-{
+-	int ret;
+-
+-	ret = may_write_real(file);
+-	if (!ret) {
+-		sb_start_write(file_inode(file)->i_sb);
+-		ret = __mnt_want_write_file(file);
+-		if (ret)
+-			sb_end_write(file_inode(file)->i_sb);
+-	}
+-	return ret;
+-}
+ EXPORT_SYMBOL_GPL(mnt_want_write_file);
  
- 	if (S_ISDIR(inode->i_mode))
-@@ -196,7 +192,7 @@ static inline void fsnotify_access(struct file *file)
- static inline void fsnotify_modify(struct file *file)
- {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 mask = FS_MODIFY;
+ /**
+@@ -536,15 +484,9 @@ void __mnt_drop_write_file(struct file *file)
+ 	__mnt_drop_write(file->f_path.mnt);
+ }
  
- 	if (S_ISDIR(inode->i_mode))
-@@ -214,7 +210,7 @@ static inline void fsnotify_modify(struct file *file)
- static inline void fsnotify_open(struct file *file)
+-void mnt_drop_write_file_path(struct file *file)
+-{
+-	mnt_drop_write(file->f_path.mnt);
+-}
+-
+ void mnt_drop_write_file(struct file *file)
  {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	__u32 mask = FS_OPEN;
+-	__mnt_drop_write(file->f_path.mnt);
+-	sb_end_write(file_inode(file)->i_sb);
++	mnt_drop_write(file->f_path.mnt);
+ }
+ EXPORT_SYMBOL(mnt_drop_write_file);
  
- 	if (S_ISDIR(inode->i_mode))
-@@ -230,7 +226,7 @@ static inline void fsnotify_open(struct file *file)
- static inline void fsnotify_close(struct file *file)
- {
- 	const struct path *path = &file->f_path;
--	struct inode *inode = path->dentry->d_inode;
-+	struct inode *inode = file_inode(file);
- 	fmode_t mode = file->f_mode;
- 	__u32 mask = (mode & FMODE_WRITE) ? FS_CLOSE_WRITE : FS_CLOSE_NOWRITE;
+diff --git a/fs/open.c b/fs/open.c
+index 1d4bc541c619..2db39216c393 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -707,12 +707,12 @@ int ksys_fchown(unsigned int fd, uid_t user, gid_t group)
+ 	if (!f.file)
+ 		goto out;
  
+-	error = mnt_want_write_file_path(f.file);
++	error = mnt_want_write_file(f.file);
+ 	if (error)
+ 		goto out_fput;
+ 	audit_file(f.file);
+ 	error = chown_common(&f.file->f_path, user, group);
+-	mnt_drop_write_file_path(f.file);
++	mnt_drop_write_file(f.file);
+ out_fput:
+ 	fdput(f);
+ out:
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 61cd28ba25f3..78eaffbdbee0 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -23,7 +23,6 @@
+ #include <linux/posix_acl_xattr.h>
+ 
+ #include <linux/uaccess.h>
+-#include "internal.h"
+ 
+ static const char *
+ strcmp_prefix(const char *a, const char *a_prefix)
+@@ -503,10 +502,10 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
+ 	if (!f.file)
+ 		return error;
+ 	audit_file(f.file);
+-	error = mnt_want_write_file_path(f.file);
++	error = mnt_want_write_file(f.file);
+ 	if (!error) {
+ 		error = setxattr(f.file->f_path.dentry, name, value, size, flags);
+-		mnt_drop_write_file_path(f.file);
++		mnt_drop_write_file(f.file);
+ 	}
+ 	fdput(f);
+ 	return error;
+@@ -735,10 +734,10 @@ SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
+ 	if (!f.file)
+ 		return error;
+ 	audit_file(f.file);
+-	error = mnt_want_write_file_path(f.file);
++	error = mnt_want_write_file(f.file);
+ 	if (!error) {
+ 		error = removexattr(f.file->f_path.dentry, name);
+-		mnt_drop_write_file_path(f.file);
++		mnt_drop_write_file(f.file);
+ 	}
+ 	fdput(f);
+ 	return error;
 -- 
 2.14.3
