@@ -1,25 +1,25 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752425AbeEGJhn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:37:43 -0400
-Received: from osg.samsung.com ([64.30.133.232]:33876 "EHLO osg.samsung.com"
+        id S1752495AbeEGJgI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:36:08 -0400
+Received: from osg.samsung.com ([64.30.133.232]:46532 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752507AbeEGJgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:36:09 -0400
+        id S1752088AbeEGJgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 05:36:02 -0400
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
-Subject: [PATCH 16/18] mtd: rawnand.h: use nested union kernel-doc markups
-Date: Mon,  7 May 2018 06:35:52 -0300
-Message-Id: <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [PATCH 10/18] rcu: rcupdate.h: get rid of Sphinx warnings at rcu_pointer_handoff()
+Date: Mon,  7 May 2018 06:35:46 -0300
+Message-Id: <a87d742e81124ddfeaa5b83daf10c91758c1b025.1525684985.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
 References: <cover.1525684985.git.mchehab+samsung@kernel.org>
@@ -29,94 +29,43 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gets rid of those warnings and better document the parameters.
+The code example at rcupdate.h currently produce lots of warnings:
 
-  ./include/linux/mtd/rawnand.h:752: warning: Function parameter or member 'timings.sdr' not described in 'nand_data_interface'
-  ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf' not described in 'nand_op_data_instr'
-  ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.in' not described in 'nand_op_data_instr'
-  ./include/linux/mtd/rawnand.h:817: warning: Function parameter or member 'buf.out' not described in 'nand_op_data_instr'
-  ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx' not described in 'nand_op_instr'
-  ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.cmd' not described in 'nand_op_instr'
-  ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_instr'
-  ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.data' not described in 'nand_op_instr'
-  ./include/linux/mtd/rawnand.h:863: warning: Function parameter or member 'ctx.waitrdy' not described in 'nand_op_instr'
-  ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx' not described in 'nand_op_parser_pattern_elem'
-  ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx.addr' not described in 'nand_op_parser_pattern_elem'
-  ./include/linux/mtd/rawnand.h:1010: warning: Function parameter or member 'ctx.data' not described in 'nand_op_parser_pattern_elem'
-  ./include/linux/mtd/rawnand.h:1313: warning: Function parameter or member 'manufacturer.desc' not described in 'nand_chip'
-  ./include/linux/mtd/rawnand.h:1313: warning: Function parameter or member 'manufacturer.priv' not described in 'nand_chip'
+	./include/linux/rcupdate.h:572: WARNING: Unexpected indentation.
+	./include/linux/rcupdate.h:576: WARNING: Unexpected indentation.
+	./include/linux/rcupdate.h:580: WARNING: Block quote ends without a blank line; unexpected unindent.
+	./include/linux/rcupdate.h:582: WARNING: Block quote ends without a blank line; unexpected unindent.
+	./include/linux/rcupdate.h:582: WARNING: Inline literal start-string without end-string.
 
-  ./include/linux/mtd/rawnand.h:848: WARNING: Unexpected indentation.
+Change it to a code-block.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- include/linux/mtd/rawnand.h | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ include/linux/rcupdate.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
-index 5dad59b31244..b986f94906df 100644
---- a/include/linux/mtd/rawnand.h
-+++ b/include/linux/mtd/rawnand.h
-@@ -740,8 +740,9 @@ enum nand_data_interface_type {
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 36360d07f25b..c890d10978fa 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -568,8 +568,8 @@ static inline void rcu_preempt_sleep_check(void) { }
+  * This is simply an identity function, but it documents where a pointer
+  * is handed off from RCU to some other synchronization mechanism, for
+  * example, reference counting or locking.  In C11, it would map to
+- * kill_dependency().  It could be used as follows:
+- * ``
++ * kill_dependency().  It could be used as follows::
++ *
+  *	rcu_read_lock();
+  *	p = rcu_dereference(gp);
+  *	long_lived = is_long_lived(p);
+@@ -580,7 +580,6 @@ static inline void rcu_preempt_sleep_check(void) { }
+  *			p = rcu_pointer_handoff(p);
+  *	}
+  *	rcu_read_unlock();
+- *``
+  */
+ #define rcu_pointer_handoff(p) (p)
  
- /**
-  * struct nand_data_interface - NAND interface timing
-- * @type:	type of the timing
-- * @timings:	The timing, type according to @type
-+ * @type:	 type of the timing
-+ * @timings:	 The timing, type according to @type
-+ * @timings.sdr: Use it when @type is %NAND_SDR_IFACE.
-  */
- struct nand_data_interface {
- 	enum nand_data_interface_type type;
-@@ -798,8 +799,9 @@ struct nand_op_addr_instr {
- /**
-  * struct nand_op_data_instr - Definition of a data instruction
-  * @len: number of data bytes to move
-- * @in: buffer to fill when reading from the NAND chip
-- * @out: buffer to read from when writing to the NAND chip
-+ * @buf: buffer to fill
-+ * @buf.in: buffer to fill when reading from the NAND chip
-+ * @buf.out: buffer to read from when writing to the NAND chip
-  * @force_8bit: force 8-bit access
-  *
-  * Please note that "in" and "out" are inverted from the ONFI specification
-@@ -842,9 +844,13 @@ enum nand_op_instr_type {
- /**
-  * struct nand_op_instr - Instruction object
-  * @type: the instruction type
-- * @cmd/@addr/@data/@waitrdy: extra data associated to the instruction.
-- *                            You'll have to use the appropriate element
-- *                            depending on @type
-+ * @ctx:  extra data associated to the instruction. You'll have to use the
-+ *        appropriate element depending on @type
-+ * @ctx.cmd: use it if @type is %NAND_OP_CMD_INSTR
-+ * @ctx.addr: use it if @type is %NAND_OP_ADDR_INSTR
-+ * @ctx.data: use it if @type is %NAND_OP_DATA_IN_INSTR
-+ *	      or %NAND_OP_DATA_OUT_INSTR
-+ * @ctx.waitrdy: use it if @type is %NAND_OP_WAITRDY_INSTR
-  * @delay_ns: delay the controller should apply after the instruction has been
-  *	      issued on the bus. Most modern controllers have internal timings
-  *	      control logic, and in this case, the controller driver can ignore
-@@ -997,7 +1003,9 @@ struct nand_op_parser_data_constraints {
-  * struct nand_op_parser_pattern_elem - One element of a pattern
-  * @type: the instructuction type
-  * @optional: whether this element of the pattern is optional or mandatory
-- * @addr/@data: address or data constraint (number of cycles or data length)
-+ * @ctx: address or data constraint
-+ * @ctx.addr: address constraint (number of cycles)
-+ * @ctx.data: data constraint (data length)
-  */
- struct nand_op_parser_pattern_elem {
- 	enum nand_op_instr_type type;
-@@ -1224,6 +1232,8 @@ int nand_op_parser_exec_op(struct nand_chip *chip,
-  *			devices.
-  * @priv:		[OPTIONAL] pointer to private chip data
-  * @manufacturer:	[INTERN] Contains manufacturer information
-+ * @manufacturer.desc:	[INTERN] Contains manufacturer's description
-+ * @manufacturer.priv:	[INTERN] Contains manufacturer private information
-  */
- 
- struct nand_chip {
 -- 
 2.17.0
