@@ -1,95 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752027AbeEGJR6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:17:58 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:36622 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750934AbeEGJR4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:17:56 -0400
-Date: Mon, 7 May 2018 12:17:54 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: hans.verkuil@cisco.com, mchehab@kernel.org, robh+dt@kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        id S1752010AbeEGJXu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:23:50 -0400
+Received: from osg.samsung.com ([64.30.133.232]:61215 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751899AbeEGJWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 05:22:54 -0400
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Linux Media Mailing List <linux-media@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: media: i2c: Add mt9t111 image sensor
-Message-ID: <20180507091753.fectimexhgyho3vk@valkosipuli.retiisi.org.uk>
-References: <1524654014-17852-1-git-send-email-jacopo+renesas@jmondi.org>
- <1524654014-17852-2-git-send-email-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524654014-17852-2-git-send-email-jacopo+renesas@jmondi.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Subject: [PATCH] media: v4l2-dev.h: document VFL_TYPE_MAX
+Date: Mon,  7 May 2018 06:22:38 -0300
+Message-Id: <0293dccdddd73007013831d7e65834a05827e3f8.1525684917.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
+Cleanup this Sphinx warning:
+   read./include/media/v4l2-dev.h:42: warning: Enum value 'VFL_TYPE_MAX' not described in enum 'vfl_devnode_type'
 
-On Wed, Apr 25, 2018 at 01:00:13PM +0200, Jacopo Mondi wrote:
-> Add device tree bindings documentation for Micron MT9T111/MT9T112 image
-> sensors.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  Documentation/devicetree/bindings/mt9t112.txt | 41 +++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mt9t112.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/mt9t112.txt b/Documentation/devicetree/bindings/mt9t112.txt
-> new file mode 100644
-> index 0000000..cbad475
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mt9t112.txt
-> @@ -0,0 +1,41 @@
-> +Micron 3.1Mp CMOS Digital Image Sensor
-> +--------------------------------------
-> +
-> +The Micron MT9T111 and MT9T112 are 1/4 inch 3.1Mp System-On-A-Chip (SOC) CMOS
-> +digital image sensors which support up to QXGA (2048x1536) image resolution in
-> +4/3 format.
-> +
-> +The sensors can be programmed through a two-wire serial interface and can
-> +work both in parallel data output mode as well as in MIPI CSI-2 mode.
-> +
-> +Required Properties:
-> +- compatible: shall be one of the following values
-> +  	"micron,mt9t111" for MT9T111 sensors
-> +	"micron,mt9t112" for MT9T112 sensors
-> +
-> +Optional properties:
-> +- powerdown-gpios: reference to powerdown input GPIO signal. Pin name "STANDBY".
-> +  Active level is high.
-> +
-> +The device node shall contain one 'port' sub-node with one 'endpoint' child
-> +node, modeled accordingly to bindings described in:
-> +Documentation/devicetree/bindings/media/video-interfaces.txt
-> +
-> +Example:
-> +--------
-> +
-> +	mt9t112@3d {
-> +		compatible = "micron,mt9t112";
-> +		reg = <0x3d>;
-> +
-> +		powerdown-gpios = <&gpio4 2 GPIO_ACTIVE_HIGH>;
-> +
-> +		port {
-> +			mt9t112_out: endpoint {
-> +				pclk-sample = <1>;
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ include/media/v4l2-dev.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Could you document pclk-sample as an endpoint property? I'd suggest making
-it optional with a default configuration.
-
-> +				remote-endpoint = <&ceu_in>;
-> +			};
-> +		};
-> +	};
-> +
-> +
-
+diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+index f60cf9cf3b9c..9e73d7e2cee0 100644
+--- a/include/media/v4l2-dev.h
++++ b/include/media/v4l2-dev.h
+@@ -30,6 +30,8 @@
+  * @VFL_TYPE_SUBDEV:	for V4L2 subdevices
+  * @VFL_TYPE_SDR:	for Software Defined Radio tuners
+  * @VFL_TYPE_TOUCH:	for touch sensors
++ *
++ * @VFL_TYPE_MAX:	number of elements of &enum vfl_devnode_type
+  */
+ enum vfl_devnode_type {
+ 	VFL_TYPE_GRABBER	= 0,
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+2.17.0
