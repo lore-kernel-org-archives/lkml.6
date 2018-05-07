@@ -1,56 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752636AbeEGQfr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 12:35:47 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:37258 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752163AbeEGQfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 12:35:46 -0400
-Date: Mon, 7 May 2018 18:35:26 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/6] x86/microcode/AMD: Check microcode container data
- in the late loader
-Message-ID: <20180507163526.GC733@pd.tnic>
-References: <cover.1524515406.git.mail@maciej.szmigiero.name>
- <8f204a953dc4b46477e214ebd291021d7ab6fa6c.1524515406.git.mail@maciej.szmigiero.name>
- <20180430090527.GC6509@pd.tnic>
- <bce73502-0d18-e50c-b78b-8159dc9f8f66@maciej.szmigiero.name>
- <20180501084317.GC31863@pd.tnic>
- <e10212ef-c876-4965-6279-967005f53950@maciej.szmigiero.name>
- <20180501200308.GC13171@pd.tnic>
- <9cf234e8-4d96-46f0-70e0-7d60d49671d8@maciej.szmigiero.name>
- <20180503100133.GB20023@pd.tnic>
- <756e5bd8-6cd8-5f28-6cab-c60396dc5de4@maciej.szmigiero.name>
+        id S1752623AbeEGQg6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 12:36:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52224 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751951AbeEGQg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 12:36:57 -0400
+Subject: Re: drivers/gpu/drm/bridge/sil-sii8620.c:2229: undefined reference to
+ `extcon_find_edev_by_node'
+From: Randy Dunlap <rdunlap@infradead.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, kbuild test robot <lkp@intel.com>,
+        Maciej Purski <m.purski@samsung.com>
+Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+References: <201805060754.UgJOHqtz%fengguang.wu@intel.com>
+ <CGME20180506004653epcas5p395fb6e0f17a554f22485a3febd2054eb@epcas5p3.samsung.com>
+ <6bea8cdd-8d9c-f474-12c6-8143e206ce9b@infradead.org>
+ <35314d5f-7683-7769-f5a0-2cb0be1ae57f@samsung.com>
+ <d429947c-e238-da71-94ab-022af0972b46@infradead.org>
+Message-ID: <b1fd759a-5cea-0bdd-87d1-601cdc68f335@infradead.org>
+Date: Mon, 7 May 2018 09:36:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <756e5bd8-6cd8-5f28-6cab-c60396dc5de4@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.3 (2018-01-21)
+In-Reply-To: <d429947c-e238-da71-94ab-022af0972b46@infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 01:26:50AM +0200, Maciej S. Szmigiero wrote:
-> Here we return this variable, implicitly converting it into a
-> (signed) int.
-> Any value above INT_MAX will wrap around to a negative pseudo-error
-> code (which might not match any actual error number).
+On 05/07/2018 09:13 AM, Randy Dunlap wrote:
+> On 05/07/2018 12:09 AM, Andrzej Hajda wrote:
+>> On 06.05.2018 02:46, Randy Dunlap wrote:
+>>> On 05/05/2018 04:22 PM, kbuild test robot wrote:
+>>>> Hi Maciej,
+>>>>
+>>>> FYI, the error/warning still remains.
+>>> Hi M. Robot,
+>>>
+>>> I am cc-ing dri-devel@lists.freedesktop.org so that they are aware of the
+>>> multiple times that you have posted this kbuild error (I have 3 different
+>>> posts in my Inbox with the same errors; I may have missed some).
+>>>
+>>> I hope that someone there will have some insights into this problem.
+>>>
+>>> I have looked at the issues and concluded that the correct fix for this IMO is:
+>>>
+>>> config DRM_SIL_SII8620
+>>> ...
+>>> 	depends on EXTCON || !EXTCON
+>>>
+>>> However, that causes some unhappy errors from scripts/kconfig/ concerning
+>>> Kconfig recursive dependencies detected.  Alternatively, using
+>>> 	select EXTCON
+>>> does not cause any kconfig recursive dependency issues and solves the build
+>>> errors.
+>>>
+>>>
+>>> thanks!
+>>
+>>
+>> Hi Randy,
+>>
+>> Proper patch was posted some times ago[1], and it was merged today to
+>> drm-misc-fixes branch.
+>>
+>> [1]: https://patchwork.kernel.org/patch/10330653/
+>>
+>>
+>> Regards
+>> Andrzej
+> 
+> Thank you for the info.
 
-If you want to widen the return type and do proper checking then have
-the function return int which denotes success (0) or negative on
-error and then return crnt_size through an u32 * arg.
-
-All this in a separate patch with properly explained situation in the
-commit message.
-
-Thx.
+and
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+~Randy
