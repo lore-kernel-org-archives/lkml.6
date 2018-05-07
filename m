@@ -1,270 +1,122 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753468AbeEGVR4 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:17:56 -0400
-Received: from mail.efficios.com ([167.114.142.138]:55992 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753002AbeEGVRz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:17:55 -0400
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6E2C51B1A10
-Date: Mon, 7 May 2018 17:17:53 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        kbuild test robot <fengguang.wu@intel.com>,
-        baohong liu <baohong.liu@intel.com>,
-        vedang patel <vedang.patel@intel.com>,
-        kernel-team <kernel-team@android.com>
-Message-ID: <2001761952.217.1525727873194.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180507210801.GZ26088@linux.vnet.ibm.com>
-References: <20180507204143.13061-1-joelaf@google.com> <20180507204143.13061-5-joelaf@google.com> <20180507210801.GZ26088@linux.vnet.ibm.com>
-Subject: Re: [PATCH RFC v6 4/5] tracepoint: Make rcuidle tracepoint callers
- use SRCU
+        id S1753433AbeEGV1o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:27:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43601 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752908AbeEGV1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 17:27:43 -0400
+Date: Mon, 7 May 2018 23:25:01 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Huaisheng HS1 Ye <yehs1@lenovo.com>, Michal Hocko <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+        <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned
+ int in gfp_zone
+Message-ID: <20180507212500.bdphwfhk55w6vlbb@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        Huaisheng HS1 Ye <yehs1@lenovo.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "penguin-kernel@I-love.SAKURA.ne.jp" <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "colyli@suse.de" <colyli@suse.de>,
+        NingTing Cheng <chengnt@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1525416729-108201-1-git-send-email-yehs1@lenovo.com>
+ <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
+ <20180504133533.GR4535@dhcp22.suse.cz>
+ <20180504154004.GB29829@bombadil.infradead.org>
+ <HK2PR03MB168459A1C4FB2B7D3E1F6A4A92840@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180506134814.GB7362@bombadil.infradead.org>
+ <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180506185532.GA13604@bombadil.infradead.org>
+ <HK2PR03MB1684BF10B3B515BFABD35F8B929B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+ <20180507184410.GA12361@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2026 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2031)
-Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
-Thread-Index: nnlZJ4fddsYlY5dHLZYvhuQmw8obAA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507184410.GA12361@bombadil.infradead.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On May 7, 2018, at 5:08 PM, Paul E. McKenney paulmck@linux.vnet.ibm.com wrote:
-
-> On Mon, May 07, 2018 at 01:41:42PM -0700, Joel Fernandes wrote:
->> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
->> 
->> In recent tests with IRQ on/off tracepoints, a large performance
->> overhead ~10% is noticed when running hackbench. This is root caused to
->> calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
->> tracepoint code. Following a long discussion on the list [1] about this,
->> we concluded that srcu is a better alternative for use during rcu idle.
->> Although it does involve extra barriers, its lighter than the sched-rcu
->> version which has to do additional RCU calls to notify RCU idle about
->> entry into RCU sections.
->> 
->> In this patch, we change the underlying implementation of the
->> trace_*_rcuidle API to use SRCU. This has shown to improve performance
->> alot for the high frequency irq enable/disable tracepoints.
->> 
->> Test: Tested idle and preempt/irq tracepoints.
->> 
->> Here are some performance numbers:
->> 
->> With a run of the following 30 times on a single core x86 Qemu instance
->> with 1GB memory:
->> hackbench -g 4 -f 2 -l 3000
->> 
->> Completion times in seconds. CONFIG_PROVE_LOCKING=y.
->> 
->> No patches (without this series)
->> Mean: 3.048
->> Median: 3.025
->> Std Dev: 0.064
->> 
->> With Lockdep using irq tracepoints with RCU implementation:
->> Mean: 3.451   (-11.66 %)
->> Median: 3.447 (-12.22%)
->> Std Dev: 0.049
->> 
->> With Lockdep using irq tracepoints with SRCU implementation (this series):
->> Mean: 3.020   (I would consider the improvement against the "without
->> 	       this series" case as just noise).
->> Median: 3.013
->> Std Dev: 0.033
->> 
->> [1] https://patchwork.kernel.org/patch/10344297/
->> 
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Peter Zilstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: Thomas Glexiner <tglx@linutronix.de>
->> Cc: Boqun Feng <boqun.feng@gmail.com>
->> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
->> Cc: Frederic Weisbecker <fweisbec@gmail.com>
->> Cc: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: Fenguang Wu <fengguang.wu@intel.com>
->> Cc: Baohong Liu <baohong.liu@intel.com>
->> Cc: Vedang Patel <vedang.patel@intel.com>
->> Cc: kernel-team@android.com
->> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> ---
->>  include/linux/tracepoint.h | 46 +++++++++++++++++++++++++++++++-------
->>  kernel/tracepoint.c        | 15 ++++++++++++-
->>  2 files changed, 52 insertions(+), 9 deletions(-)
->> 
->> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
->> index c94f466d57ef..f56f290cf8eb 100644
->> --- a/include/linux/tracepoint.h
->> +++ b/include/linux/tracepoint.h
->> @@ -15,6 +15,7 @@
->>   */
->> 
->>  #include <linux/smp.h>
->> +#include <linux/srcu.h>
->>  #include <linux/errno.h>
->>  #include <linux/types.h>
->>  #include <linux/cpumask.h>
->> @@ -33,6 +34,8 @@ struct trace_eval_map {
->> 
->>  #define TRACEPOINT_DEFAULT_PRIO	10
->> 
->> +extern struct srcu_struct tracepoint_srcu;
->> +
->>  extern int
->>  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
->>  extern int
->> @@ -77,6 +80,9 @@ int unregister_tracepoint_module_notifier(struct
->> notifier_block *nb)
->>   */
->>  static inline void tracepoint_synchronize_unregister(void)
->>  {
->> +#ifdef CONFIG_TRACEPOINTS
->> +	synchronize_srcu(&tracepoint_srcu);
->> +#endif
->>  	synchronize_sched();
->>  }
->> 
->> @@ -129,18 +135,38 @@ extern void syscall_unregfunc(void);
->>   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
->>   * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
->>   */
->> -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
->> +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
->>  	do {								\
->>  		struct tracepoint_func *it_func_ptr;			\
->>  		void *it_func;						\
->>  		void *__data;						\
->> +		int __maybe_unused idx = 0;				\
->>  									\
->>  		if (!(cond))						\
->>  			return;						\
->> -		if (rcucheck)						\
->> -			rcu_irq_enter_irqson();				\
->> -		rcu_read_lock_sched_notrace();				\
->> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
->> +									\
->> +		/*							\
->> +		 * For rcuidle callers, use srcu since sched-rcu	\
->> +		 * doesn't work from the idle path.			\
->> +		 */							\
->> +		if (rcuidle) {						\
->> +			if (in_nmi()) {					\
->> +				WARN_ON_ONCE(1);			\
->> +				return; /* no srcu from nmi */		\
->> +			}						\
->> +									\
->> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
->> +			it_func_ptr =					\
->> +				srcu_dereference_notrace((tp)->funcs,	\
->> +						&tracepoint_srcu);	\
->> +			/* To keep it consistent with !rcuidle path */	\
->> +			preempt_disable_notrace();			\
->> +		} else {						\
->> +			rcu_read_lock_sched_notrace();			\
->> +			it_func_ptr =					\
->> +				rcu_dereference_sched((tp)->funcs);	\
->> +		}							\
->> +									\
->>  		if (it_func_ptr) {					\
->>  			do {						\
->>  				it_func = (it_func_ptr)->func;		\
->> @@ -148,9 +174,13 @@ extern void syscall_unregfunc(void);
->>  				((void(*)(proto))(it_func))(args);	\
->>  			} while ((++it_func_ptr)->func);		\
->>  		}							\
->> -		rcu_read_unlock_sched_notrace();			\
->> -		if (rcucheck)						\
->> -			rcu_irq_exit_irqson();				\
->> +									\
->> +		if (rcuidle) {						\
+On Mon, May 07, 2018 at 11:44:10AM -0700, Matthew Wilcox wrote:
+> On Mon, May 07, 2018 at 05:16:50PM +0000, Huaisheng HS1 Ye wrote:
+> > I hope it couldn't cause problem, but based on my analyzation it has the potential to go wrong if users still use the flags as usual, which are __GFP_DMA, __GFP_DMA32 and __GFP_HIGHMEM.
+> > Let me take an example with my testing platform, these logics are much abstract, an example will be helpful.
+> > 
+> > There is a two sockets X86_64 server, No HIGHMEM and it has 16 + 16GB memories.
+> > Its zone types shall be like this below,
+> > 
+> > ZONE_DMA		0		0b0000
+> > ZONE_DMA32		1		0b0001
+> > ZONE_NORMAL		2		0b0010
+> > (OPT_ZONE_HIGHMEM)	2		0b0010
+> > ZONE_MOVABLE		3		0b0011
+> > ZONE_DEVICE		4		0b0100 (virtual zone)
+> > __MAX_NR_ZONES	5
+> > 
+> > __GFP_DMA	= ZONE_DMA ^ ZONE_NORMAL= 0b0010
+> > __GFP_DMA32	= ZONE_DMA32 ^ ZONE_NORMAL= 0b0011
+> > __GFP_HIGHMEM = OPT_ZONE_HIGHMEM ^ ZONE_NORMAL = 0b0000
+> > __GFP_MOVABLE	= ZONE_MOVABLE ^ ZONE_NORMAL | ___GFP_MOVABLE = 0b1001
+> > 
+> > Eg.
+> > If a driver uses flags like this below,
+> > Step 1:
+> > gfp_mask  |  __GFP_DMA32;	
+> > (0b 0000		|	0b 0011	= 0b 0011)
+> > gfp_mask's low four bits shall equal to 0011, assuming no __GFP_MOVABLE
+> > 
+> > Step 2:
+> > gfp_mask  & ~__GFP_DMA;	
+> > (0b 0011	 & ~0b0010   = 0b0001)
+> > gfp_mask's low four bits shall equal to 0001 now, then when it enter gfp_zone(),
+> > 
+> > return ((__force int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
+> > (0b0001 ^ 0b0010 = 0b0011)
+> > You know 0011 means that ZONE_MOVABLE will be returned.
+> > In this case, error can be found, because gfp_mask needs to get ZONE_DMA32 originally.
+> > But with existing GFP_ZONE_TABLE/BAD, it is correct. Because the bits are way of 0x1, 0x2, 0x4, 0x8
 > 
-> Don't we also need an in_nmi() check here in order to avoid unbalanced
-> srcu_read_unlock_notrace() calls?
-
-AFAIU the "return;" in the if (in_nmi()) branch above takes care of never
-executing the following code. diff appears to be a bit confused by the
-preprocessor macros, but in reality this is all part of the same static
-inline function.
-
-Thanks,
-
-Mathieu
-
+> Yes, I understand your point here.  My point was that this was already a bug;
+> the caller shouldn't simply be clearing __GFP_DMA; they really mean to clear
+> all of the GFP_ZONE bits so that they allocate from ZONE_NORMAL.  And for
+> that, they should be using ~GFP_ZONEMASK
 > 
->							Thanx, Paul
+> Unless they already know, of course.  For example, this one in
+> arch/x86/mm/pgtable.c is fine:
 > 
->> +			preempt_enable_notrace();			\
->> +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
->> +		} else {						\
->> +			rcu_read_unlock_sched_notrace();		\
->> +		}							\
->>  	} while (0)
->> 
->>  #ifndef MODULE
->> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
->> index 671b13457387..2089f579f790 100644
->> --- a/kernel/tracepoint.c
->> +++ b/kernel/tracepoint.c
->> @@ -31,6 +31,9 @@
->>  extern struct tracepoint * const __start___tracepoints_ptrs[];
->>  extern struct tracepoint * const __stop___tracepoints_ptrs[];
->> 
->> +DEFINE_SRCU(tracepoint_srcu);
->> +EXPORT_SYMBOL_GPL(tracepoint_srcu);
->> +
->>  /* Set to 1 to enable tracepoint debug output */
->>  static const int tracepoint_debug;
->> 
->> @@ -67,16 +70,26 @@ static inline void *allocate_probes(int count)
->>  	return p == NULL ? NULL : p->probes;
->>  }
->> 
->> -static void rcu_free_old_probes(struct rcu_head *head)
->> +static void srcu_free_old_probes(struct rcu_head *head)
->>  {
->>  	kfree(container_of(head, struct tp_probes, rcu));
->>  }
->> 
->> +static void rcu_free_old_probes(struct rcu_head *head)
->> +{
->> +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
->> +}
->> +
->>  static inline void release_probes(struct tracepoint_func *old)
->>  {
->>  	if (old) {
->>  		struct tp_probes *tp_probes = container_of(old,
->>  			struct tp_probes, probes[0]);
->> +		/*
->> +		 * Tracepoint probes are protected by both sched RCU and SRCU,
->> +		 * by calling the SRCU callback in the sched RCU callback we
->> +		 * cover both cases. So lets chain the SRCU and RCU callbacks.
->> +		 */
->>  		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
->>  	}
->>  }
->> --
->> 2.17.0.441.gb46fe60e1d-goog
+>         if (strcmp(arg, "nohigh") == 0)
+>                 __userpte_alloc_gfp &= ~__GFP_HIGHMEM;
+> 
+> because it knows that __userpte_alloc_gfp can only have __GFP_HIGHMEM set.
+> 
+> But something like btrfs should almost certainly be using ~GFP_ZONEMASK.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Agreed, the direct use of __GFP_DMA32 was added in 3ba7ab220e8918176c6f
+to substitute GFP_NOFS, so the allocation flags are less restrictive but
+still acceptable for allocation from slab.
+
+The requirement from btrfs is to avoid highmem, the 'must be acceptable
+for slab' requirement is more MM internal and should have been hidden
+under some opaque flag mask. There was no strong need for that at the
+time.
