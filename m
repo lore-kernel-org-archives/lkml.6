@@ -1,77 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752342AbeEGKo7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:44:59 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51014 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752303AbeEGKod (ORCPT
+        id S1752378AbeEGKpO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:45:14 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37282 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752357AbeEGKpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:44:33 -0400
-X-Google-Smtp-Source: AB8JxZruN7FCSfXuXbH5bV6gAvi8ah2MxrFT/WjCzKQClARJOU5DqcFlPoQLKm6VRVMoaa/kNAYvNQ==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@linux.vnet.ibm.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [RFC PATCH v3 5/6] Documentation/features/lib: Remove arch support status file for 'strncasecmp'
-Date: Mon,  7 May 2018 12:43:42 +0200
-Message-Id: <1525689823-3340-6-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525689823-3340-1-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1525689823-3340-1-git-send-email-andrea.parri@amarulasolutions.com>
+        Mon, 7 May 2018 06:45:11 -0400
+Date: Mon, 7 May 2018 13:45:09 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: media-device: fix ioctl function types
+Message-ID: <20180507104509.lq4ep22fm6h53gra@valkosipuli.retiisi.org.uk>
+References: <20180427195430.237342-1-samitolvanen@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180427195430.237342-1-samitolvanen@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- .../features/lib/strncasecmp/arch-support.txt      | 33 ----------------------
- 1 file changed, 33 deletions(-)
- delete mode 100644 Documentation/features/lib/strncasecmp/arch-support.txt
+Moi,
 
-diff --git a/Documentation/features/lib/strncasecmp/arch-support.txt b/Documentation/features/lib/strncasecmp/arch-support.txt
-deleted file mode 100644
-index 6148f42c3d902..0000000000000
---- a/Documentation/features/lib/strncasecmp/arch-support.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--#
--# Feature name:          strncasecmp
--#         Kconfig:       __HAVE_ARCH_STRNCASECMP
--#         description:   arch provides an optimized strncasecmp() function
--#
--    -----------------------
--    |         arch |status|
--    -----------------------
--    |       alpha: | TODO |
--    |         arc: | TODO |
--    |         arm: | TODO |
--    |       arm64: | TODO |
--    |         c6x: | TODO |
--    |       h8300: | TODO |
--    |     hexagon: | TODO |
--    |        ia64: | TODO |
--    |        m68k: | TODO |
--    |  microblaze: | TODO |
--    |        mips: | TODO |
--    |       nds32: | TODO |
--    |       nios2: | TODO |
--    |    openrisc: | TODO |
--    |      parisc: | TODO |
--    |     powerpc: | TODO |
--    |       riscv: | TODO |
--    |        s390: | TODO |
--    |          sh: | TODO |
--    |       sparc: | TODO |
--    |          um: | TODO |
--    |   unicore32: | TODO |
--    |         x86: | TODO |
--    |      xtensa: | TODO |
--    -----------------------
+On Fri, Apr 27, 2018 at 12:54:30PM -0700, Sami Tolvanen wrote:
+> This change fixes function types for media device ioctls to avoid
+> indirect call mismatches with Control-Flow Integrity checking.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  drivers/media/media-device.c | 21 +++++++++++----------
+>  1 file changed, 11 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+> index 35e81f7c0d2f..bc5c024906e6 100644
+> --- a/drivers/media/media-device.c
+> +++ b/drivers/media/media-device.c
+> @@ -54,9 +54,10 @@ static int media_device_close(struct file *filp)
+>  	return 0;
+>  }
+>  
+> -static int media_device_get_info(struct media_device *dev,
+> -				 struct media_device_info *info)
+> +static long media_device_get_info(struct media_device *dev, void *arg)
+>  {
+> +	struct media_device_info *info = (struct media_device_info *)arg;
+
+How about removing the cast? It's not really needed.
+
+Same below.
+
+> +
+>  	memset(info, 0, sizeof(*info));
+>  
+>  	if (dev->driver_name[0])
+> @@ -93,9 +94,9 @@ static struct media_entity *find_entity(struct media_device *mdev, u32 id)
+>  	return NULL;
+>  }
+>  
+> -static long media_device_enum_entities(struct media_device *mdev,
+> -				       struct media_entity_desc *entd)
+> +static long media_device_enum_entities(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_entity_desc *entd = (struct media_entity_desc *)arg;
+>  	struct media_entity *ent;
+>  
+>  	ent = find_entity(mdev, entd->id);
+> @@ -146,9 +147,9 @@ static void media_device_kpad_to_upad(const struct media_pad *kpad,
+>  	upad->flags = kpad->flags;
+>  }
+>  
+> -static long media_device_enum_links(struct media_device *mdev,
+> -				    struct media_links_enum *links)
+> +static long media_device_enum_links(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_links_enum *links = (struct media_links_enum *)arg;
+>  	struct media_entity *entity;
+>  
+>  	entity = find_entity(mdev, links->entity);
+> @@ -195,9 +196,9 @@ static long media_device_enum_links(struct media_device *mdev,
+>  	return 0;
+>  }
+>  
+> -static long media_device_setup_link(struct media_device *mdev,
+> -				    struct media_link_desc *linkd)
+> +static long media_device_setup_link(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_link_desc *linkd = (struct media_link_desc *)arg;
+>  	struct media_link *link = NULL;
+>  	struct media_entity *source;
+>  	struct media_entity *sink;
+> @@ -225,9 +226,9 @@ static long media_device_setup_link(struct media_device *mdev,
+>  	return __media_entity_setup_link(link, linkd->flags);
+>  }
+>  
+> -static long media_device_get_topology(struct media_device *mdev,
+> -				      struct media_v2_topology *topo)
+> +static long media_device_get_topology(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_v2_topology *topo = (struct media_v2_topology *)arg;
+>  	struct media_entity *entity;
+>  	struct media_interface *intf;
+>  	struct media_pad *pad;
+
 -- 
-2.7.4
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
