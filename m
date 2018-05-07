@@ -1,51 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752973AbeEGVFe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:05:34 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:43577 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752524AbeEGVFc (ORCPT
+        id S1753193AbeEGVFq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:05:46 -0400
+Received: from mail.efficios.com ([167.114.142.138]:54716 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753031AbeEGVFn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:05:32 -0400
-X-Google-Smtp-Source: AB8JxZqualI9c8aIL4+/TuEDI64cVs9JpIE05/ZpM7Mw3Bnz4KLFo2seInxBhCFZKh+Bx1TKDvpi3g==
-Date: Mon, 7 May 2018 16:05:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Icenowy Zheng <icenowy@aosc.io>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 3/7] pinctrl: sunxi: add support for H6 R_PIO pin
- controller
-Message-ID: <20180507210530.GA8285@rob-hp-laptop>
-References: <20180503183847.11046-1-icenowy@aosc.io>
- <20180503183847.11046-4-icenowy@aosc.io>
+        Mon, 7 May 2018 17:05:43 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2F4141B1743
+Date: Mon, 7 May 2018 17:05:41 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Joel Fernandes <joelaf@google.com>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        fweisbec <fweisbec@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@android.com>
+Message-ID: <568999860.209.1525727141943.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180507204143.13061-5-joelaf@google.com>
+References: <20180507204143.13061-1-joelaf@google.com> <20180507204143.13061-5-joelaf@google.com>
+Subject: Re: [PATCH RFC v6 4/5] tracepoint: Make rcuidle tracepoint callers
+ use SRCU
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503183847.11046-4-icenowy@aosc.io>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2026 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2031)
+Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
+Thread-Index: Plr0uP8pxuDHbbMQVMMmjb1ZX6x9GQ==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 02:38:43AM +0800, Icenowy Zheng wrote:
-> Allwinner H6 SoC has a R_PIO pin controller like other Allwinner SoCs,
-> which controls the PL and PM pin banks.
-> 
-> Add support for it.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> ---
->  .../bindings/pinctrl/allwinner,sunxi-pinctrl.txt   |   1 +
+----- On May 7, 2018, at 4:41 PM, Joel Fernandes joelaf@google.com wrote:
+[...]
+> +extern struct srcu_struct tracepoint_srcu;
+> +
+> extern int
+> tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+> extern int
+> @@ -77,6 +80,9 @@ int unregister_tracepoint_module_notifier(struct
+> notifier_block *nb)
+>  */
+> static inline void tracepoint_synchronize_unregister(void)
+> {
+> +#ifdef CONFIG_TRACEPOINTS
+> +	synchronize_srcu(&tracepoint_srcu);
+> +#endif
+> 	synchronize_sched();
 
-Acked-by: Rob Herring <robh@kernel.org>
+Why is this ifdef needed ?
 
-In the future, please split bindings to separate patches.
+Thanks,
 
->  drivers/pinctrl/sunxi/Kconfig                      |   4 +
->  drivers/pinctrl/sunxi/Makefile                     |   1 +
->  drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c        | 128 +++++++++++++++++++++
->  4 files changed, 134 insertions(+)
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-h6-r.c
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
