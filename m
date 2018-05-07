@@ -1,85 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeEGGNp (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:13:45 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:39800 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeEGGNl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:13:41 -0400
-X-Google-Smtp-Source: AB8JxZrJozZYhFrOkRaINgcxRsiP1PAoRzAndbL6Md1AS3tktZ2AviqjtLtmx51pRKhzAcLmsH/Vpw==
+        id S1751927AbeEGGUp (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:20:45 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:49574 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751892AbeEGGUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 02:20:42 -0400
+Date: Mon, 7 May 2018 08:20:37 +0200
+From: Steffen Klassert <steffen.klassert@secunet.com>
+To: Dmitry Safonov <dima@arista.com>
+CC: <linux-kernel@vger.kernel.org>, <0x7f454c46@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Masahide NAKAMURA <nakam@linux-ipv6.org>,
+        YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>
+Subject: Re: [PATCHv2] net/xfrm: Revert "[XFRM]: Do not add a state whose SPI
+ is zero to the SPI hash."
+Message-ID: <20180507062037.kxuh2yqfu4z5rkgd@gauss3.secunet.de>
+References: <20180504012009.643-1-dima@arista.com>
 MIME-Version: 1.0
-References: <20180308094807.9443-1-jacob-chen@iotwrt.com> <20180308094807.9443-6-jacob-chen@iotwrt.com>
- <20180503090909.o3dyhukzs2y7em5z@tarshish>
-In-Reply-To: <20180503090909.o3dyhukzs2y7em5z@tarshish>
-From: Tomasz Figa <tfiga@chromium.org>
-Date: Mon, 07 May 2018 06:13:27 +0000
-X-Gmail-Original-Message-ID: <CAAFQd5CvBv4hkE=PSHBJTYa9Lj0SyggxpMBEAYD=if0=T0uzHw@mail.gmail.com>
-Message-ID: <CAAFQd5CvBv4hkE=PSHBJTYa9Lj0SyggxpMBEAYD=if0=T0uzHw@mail.gmail.com>
-Subject: Re: [PATCH v6 05/17] media: rkisp1: add Rockchip ISP1 subdev driver
-To: baruch@tkos.co.il
-Cc: Jacob Chen <jacob-chen@iotwrt.com>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?B?6ZKf5Lul5bSH?= <zyc@rock-chips.com>,
-        Eddie Cai <eddie.cai.linux@gmail.com>,
-        Jeffy <jeffy.chen@rock-chips.com>, devicetree@vger.kernel.org,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Chen Jacob <jacob2.chen@rock-chips.com>,
-        =?UTF-8?B?6ZmI5Z+O?= <cc@rock-chips.com>,
-        Allon Huang <allon.huang@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180504012009.643-1-dima@arista.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 6C0E9F6A-719B-4F01-875B-91B44F9D2810
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Baruch,
+On Fri, May 04, 2018 at 02:20:09AM +0100, Dmitry Safonov wrote:
+> This reverts commit 7b4dc3600e48 ("[XFRM]: Do not add a state whose SPI
+> is zero to the SPI hash.").
+> 
+> Zero SPI is legal and defined for IPcomp.
+> We shouldn't omit adding the state to SPI hash because it'll not be
+> possible to delete or lookup for it afterward:
+> __xfrm_state_insert() obviously doesn't add hash for zero
+> SPI in xfrm.state_byspi, and xfrm_user_state_lookup() will fail as
+> xfrm_state_lookup() does lookups by hash.
+> 
+> It also isn't possible to workaround from userspace as
+> xfrm_id_proto_match() will be always true for ah/esp/comp protos.
+> 
+> v1 link: https://lkml.kernel.org/r/<20180502020220.2027-1-dima@arista.com>
+> 
+> Cc: Masahide NAKAMURA <nakam@linux-ipv6.org>
+> Cc: YOSHIFUJI Hideaki <yoshfuji@linux-ipv6.org>
+> Cc: Steffen Klassert <steffen.klassert@secunet.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: netdev@vger.kernel.org
+> Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Signed-off-by: Dmitry Safonov <dima@arista.com>
 
-On Thu, May 3, 2018 at 6:09 PM Baruch Siach <baruch@tkos.co.il> wrote:
+This patch does much more than reverting the commit you mentioned.
+It removes all the logic that is needed to handle larval SAs.
 
-> Hi Jacob,
+The result is a disaster, all connections that are negotiated
+by an IKE deamon stop working.
 
-> On Thu, Mar 08, 2018 at 05:47:55PM +0800, Jacob Chen wrote:
-> > +static int rkisp1_isp_sd_s_power(struct v4l2_subdev *sd, int on)
-> > +{
-> > +     struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
-> > +     int ret;
-> > +
-> > +     v4l2_dbg(1, rkisp1_debug, &isp_dev->v4l2_dev, "s_power: %d\n",
-on);
-> > +
-> > +     if (on) {
-> > +             ret = pm_runtime_get_sync(isp_dev->dev);
-> > +             if (ret < 0)
-> > +                     return ret;
-> > +
-> > +             rkisp1_config_clk(isp_dev);
-> > +     } else {
-> > +             ret = pm_runtime_put(isp_dev->dev);
-
-> I commented this line out to make more than one STREAMON work. Otherwise,
-the
-> second STREAMON hangs. I guess the bug is not this driver. Probably
-something
-> in drivers/soc/rockchip/pm_domains.c. Just noting that in case you or
-someone
-> on Cc would like to investigate it further.
-
-> I tested v4.16-rc4 on the Tinkerboard.
-
-Looks like that version doesn't include the IOMMU PM and clock handling
-rework [1], which should fix a lot of runtime PM issues. FWIW, linux-next
-seems to already include it.
-
-[1] https://lkml.org/lkml/2018/3/23/44
-
-Best regards,
-Tomasz
+On traffic triggered connections the IKE deamon inserts a new SA
+for each packet that matches a policy.
