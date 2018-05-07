@@ -1,84 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752687AbeEGTYM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 15:24:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38256 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751976AbeEGTYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 15:24:11 -0400
-Date: Mon, 7 May 2018 16:24:08 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, kan.liang@linux.intel.com
-Subject: Re: [PATCH 05/12] perf pmu: Fix pmu events parsing rule
-Message-ID: <20180507192408.GD13491@kernel.org>
-References: <20180425160008.3407-1-acme@kernel.org>
- <20180425160008.3407-6-acme@kernel.org>
- <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
- <20180503103717.GA14776@krava>
- <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
- <20180504160228.GA25229@krava>
- <87a7tdphyo.fsf@linux.intel.com>
- <20180507183749.GA2095@redhat.com>
+        id S1752751AbeEGTYo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 15:24:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:53793 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752713AbeEGTYm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 15:24:42 -0400
+X-Google-Smtp-Source: AB8JxZoG5YyKT8MRcpwtZfKTzvLu+9aSn5djHTucaFq3E7hGUiig4EDXUqrcXLZwXnEyT3YtJaSKxw==
+Subject: Re: [PATCH 28/28] venus: add HEVC codec support
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+ <20180424124436.26955-29-stanimir.varbanov@linaro.org>
+ <4ae458ed-97b6-b23f-88c4-0a5efd754d9d@xs4all.nl>
+From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <f2dfd7d4-c791-b44f-a30a-8acff945798c@linaro.org>
+Date: Mon, 7 May 2018 22:24:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507183749.GA2095@redhat.com>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <4ae458ed-97b6-b23f-88c4-0a5efd754d9d@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, May 07, 2018 at 03:37:49PM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Sat, May 05, 2018 at 08:43:11PM -0700, Andi Kleen escreveu:
-> > Jiri Olsa <jolsa@redhat.com> writes:
-> > 
-> > Please fix this quickly, PT is currently totally non functional in Linus
-> > mainline.
+Hi Hans,
+
+On  7.05.2018 13:39, Hans Verkuil wrote:
+> On 24/04/18 14:44, Stanimir Varbanov wrote:
+>> This add HEVC codec support for venus versions 3xx and 4xx.
+>>
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>   drivers/media/platform/qcom/venus/helpers.c | 3 +++
+>>   drivers/media/platform/qcom/venus/hfi.c     | 2 ++
+>>   drivers/media/platform/qcom/venus/vdec.c    | 4 ++++
+>>   drivers/media/platform/qcom/venus/venc.c    | 4 ++++
+>>   4 files changed, 13 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+>> index 87dcf9973e6f..fecadba039cf 100644
+>> --- a/drivers/media/platform/qcom/venus/helpers.c
+>> +++ b/drivers/media/platform/qcom/venus/helpers.c
+>> @@ -71,6 +71,9 @@ bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
+>>   	case V4L2_PIX_FMT_XVID:
+>>   		codec = HFI_VIDEO_CODEC_DIVX;
+>>   		break;
+>> +	case V4L2_PIX_FMT_HEVC:
+>> +		codec = HFI_VIDEO_CODEC_HEVC;
+>> +		break;
+>>   	default:
+>>   		return false;
+>>   	}
+>> diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
+>> index 94ca27b0bb99..24207829982f 100644
+>> --- a/drivers/media/platform/qcom/venus/hfi.c
+>> +++ b/drivers/media/platform/qcom/venus/hfi.c
+>> @@ -49,6 +49,8 @@ static u32 to_codec_type(u32 pixfmt)
+>>   		return HFI_VIDEO_CODEC_VP9;
+>>   	case V4L2_PIX_FMT_XVID:
+>>   		return HFI_VIDEO_CODEC_DIVX;
+>> +	case V4L2_PIX_FMT_HEVC:
+>> +		return HFI_VIDEO_CODEC_HEVC;
+>>   	default:
+>>   		return 0;
+>>   	}
+>> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+>> index 7deee104ac56..a114f421edad 100644
+>> --- a/drivers/media/platform/qcom/venus/vdec.c
+>> +++ b/drivers/media/platform/qcom/venus/vdec.c
+>> @@ -77,6 +77,10 @@ static const struct venus_format vdec_formats[] = {
+>>   		.pixfmt = V4L2_PIX_FMT_XVID,
+>>   		.num_planes = 1,
+>>   		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+>> +	}, {
+>> +		.pixfmt = V4L2_PIX_FMT_HEVC,
+>> +		.num_planes = 1,
+>> +		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+>>   	},
+>>   };
+>>   
+>> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+>> index a703bce78abc..fdb76b69786f 100644
+>> --- a/drivers/media/platform/qcom/venus/venc.c
+>> +++ b/drivers/media/platform/qcom/venus/venc.c
+>> @@ -59,6 +59,10 @@ static const struct venus_format venc_formats[] = {
+>>   		.pixfmt = V4L2_PIX_FMT_VP8,
+>>   		.num_planes = 1,
+>>   		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
+>> +	}, {
+>> +		.pixfmt = V4L2_PIX_FMT_HEVC,
+>> +		.num_planes = 1,
+>> +		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
+>>   	},
+>>   };
+>>   
+>>
 > 
-> Ok, so I'm reverting this patch, the previous situation was just a
-> misleading error message, so it can wait for the discussion about the
-> parser fixes to come to a conclusion and a proper patch to be submitted.
+> No changes are necessary to venc_set_properties() for HEVC support?
+> 
+> Just checking, I kind of expected that.
 
-... and I'm adding this to my perf/core branch, so that we notice this
-faster in the future:
+yes, I think so, but will leave that for future updates.
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index 18b06444f230..6829dd416a99 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1309,6 +1309,14 @@ static int test__checkevent_config_cache(struct perf_evlist *evlist)
- 	return 0;
- }
- 
-+static int test__intel_pt(struct perf_evlist *evlist)
-+{
-+	struct perf_evsel *evsel = perf_evlist__first(evlist);
-+
-+	TEST_ASSERT_VAL("wrong name setting", strcmp(evsel->name, "intel_pt//u") == 0);
-+	return 0;
-+}
-+
- static int count_tracepoints(void)
- {
- 	struct dirent *events_ent;
-@@ -1637,6 +1645,11 @@ static struct evlist_test test__events[] = {
- 		.check = test__checkevent_config_cache,
- 		.id    = 51,
- 	},
-+	{
-+		.name  = "intel_pt//u",
-+		.check = test__intel_pt,
-+		.id    = 52,
-+	},
- };
- 
- static struct evlist_test test__events_pmu[] = {
+regards,
+Stan
