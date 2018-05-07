@@ -1,73 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750881AbeEGK0f (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:26:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47178 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752162AbeEGKZz (ORCPT
+        id S1752157AbeEGK1Y (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:27:24 -0400
+Received: from mail-yb0-f177.google.com ([209.85.213.177]:36164 "EHLO
+        mail-yb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeEGK1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:25:55 -0400
-From: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-To: linux@roeck-us.net, mpe@ellerman.id.au
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-hwmon@vger.kernel.org, benh@kernel.crashing.org,
-        paulus@samba.org, jdelvare@suse.com, stewart@linux.vnet.ibm.com,
-        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
-Subject: [PATCH 2/3] hwmon: (ibmpowernv): Add support to read 64 bit sensors
-Date: Mon,  7 May 2018 15:55:37 +0530
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1525688738-9185-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-References: <1525688738-9185-1-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18050710-0020-0000-0000-00000419E365
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050710-0021-0000-0000-000042AF157C
-Message-Id: <1525688738-9185-3-git-send-email-shilpa.bhat@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805070109
+        Mon, 7 May 2018 06:27:20 -0400
+X-Google-Smtp-Source: AB8JxZr4BxHclBFhs+wnjoEwn1rmJz025r3vtkaTrgmGz1wV2blBG49n6KZldrqNJiKMqEY46J+ykB0cVqrsT+C7Mfo=
+MIME-Version: 1.0
+In-Reply-To: <20180507083807.28792-23-mszeredi@redhat.com>
+References: <20180507083807.28792-1-mszeredi@redhat.com> <20180507083807.28792-23-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 7 May 2018 13:27:19 +0300
+Message-ID: <CAOQ4uxi-_0xkSgHnzBhJLnWTyz_m0VXTx9206k2vZA6dgtQYmQ@mail.gmail.com>
+Subject: Re: [PATCH v2 22/35] vfs: don't open real
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The firmware has supported for reading sensor values of size u32.
-This patch adds support to use newer firmware functions which allows
-to read the sensors of size u64.
+On Mon, May 7, 2018 at 11:37 AM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> Let overlayfs do its thing when opening a file.
+>
+> This enables stacking and fixes the corner case when a file is opened for
+> read, modified through a writable open, and data is read from the read-only
+> file.  After this patch the read-only open will not return stale data even
+> in this case.
+>
 
-Signed-off-by: Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>
----
- drivers/hwmon/ibmpowernv.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+So now you can get rid of ovl_do_check_copy_up() and the check_copy_up
+module param ;-)
 
-diff --git a/drivers/hwmon/ibmpowernv.c b/drivers/hwmon/ibmpowernv.c
-index 5ccdd0b..74d9b5a 100644
---- a/drivers/hwmon/ibmpowernv.c
-+++ b/drivers/hwmon/ibmpowernv.c
-@@ -101,9 +101,10 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
- 	struct sensor_data *sdata = container_of(devattr, struct sensor_data,
- 						 dev_attr);
- 	ssize_t ret;
--	u32 x;
-+	u64 x;
-+
-+	ret =  opal_get_sensor_data_u64(sdata->id, &x);
- 
--	ret = opal_get_sensor_data(sdata->id, &x);
- 	if (ret)
- 		return ret;
- 
-@@ -114,7 +115,7 @@ static ssize_t show_sensor(struct device *dev, struct device_attribute *devattr,
- 	else if (sdata->type == POWER_INPUT)
- 		x *= 1000000;
- 
--	return sprintf(buf, "%u\n", x);
-+	return sprintf(buf, "%llu\n", x);
- }
- 
- static ssize_t show_label(struct device *dev, struct device_attribute *devattr,
--- 
-1.8.3.1
+Thanks,
+Amir.
