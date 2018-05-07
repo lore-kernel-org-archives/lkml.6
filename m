@@ -1,23 +1,23 @@
 Return-Path: <paul.kocialkowski@bootlin.com>
-X-Google-Smtp-Source: AB8JxZoQI55iGOVk7X/f18oqe2qPom69FtqgqY8f4xW38ZoEA3sjSV0qaUcHzpPGz18MIhtRJPWk
-ARC-Seal: i=1; a=rsa-sha256; t=1525697254; cv=none;
+X-Google-Smtp-Source: AB8JxZoyFEDd7YH7zFcqhF4ZCvYlczW6fdgnhdS3AZom8Be1jw0hF0RetLYTxE8n50eNAGPu+g7w
+ARC-Seal: i=1; a=rsa-sha256; t=1525697253; cv=none;
         d=google.com; s=arc-20160816;
-        b=m4jAI0v4s8FGp2dTcryxBth35T4l9cGvocyOX5I7t9jro+ViNJ5i/5tKVC6l8AKzKc
-         LbxWqgMMG30+PY3+beIVHGX+lqAn9opYGsSlcY9IiXgRSmykfyTQ5sQI9lcDQ+Bz7CWx
-         x1jc/7144LIWDEIqpuerie0fEdiHR5mh4QDzLNcwOpkqRRe3G/mVZMVoziNu318KYtdQ
-         gl9KmzlXUZKZq8ZVEuAvH5VnlnjqwJRAHY7Q1hYNJmTo1sFCYSHzGbC3aSDCdWIR0aCh
-         4MXpkzYYfB/364SPTAziJRy/KeScRAu32mUZqGjlY6IdCKJaCkiRT0ZpB9NXkYrqKzUO
-         +Gbw==
+        b=J+1mCzH8jZP/tUAStMMQZEXkiYTI6kPdZvfOm+9HbYnDWX8q5JQxYJO7Lj9BgjnY4Z
+         cmATqzK+Jkh4sClAbBOwN6ChmH9f+idrHs6pBgK1YlJzkSFCanXp8oSZeiXy4EDIEYr2
+         z0fF8OdUYGOShFj/s+WZz91dfm9s6gTWE1/zl5O2OV5RPV0HnDV+749CL/Eurxisdpz4
+         KVp8af49lUwtOXTpVpwML/JeSA9xqzBY5Xy1qQhU+ebaaD5SYwAR5toYx6CL9xovyT4Z
+         1nub/7d5a+5VId1zMV1KE6sXrp2mJuyY3QddVA1TuNpw9X+zEAlGrw/zIxrLpybbqtTK
+         NA2g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=uiviAfDh07ZwZbc8rQUWpoGHzb95F6U0TgBR6cthWUc=;
-        b=fEZDGZdIKdQ2gmBQ32Eps79+zf9hT1G1OvgmRLeOlTT5ETyawxkLAR0cjue8FQxpF8
-         dLYQTV0wznhVL8OWPBVn+fSrM5Kd15rTFhgBKzRnP4YxVnCOD5Rm8LOEbUb3kFvBfym2
-         zYyztdvNhzVydpft+0SWJEMn3iJqRUnxVf4QfwrzvmEbn1cPAquvupU2b2ueTNFYFjWC
-         e7RjL0hXMJTbWKi56fP2zSefrW9BZBzoFk8DNMzD9MqHdaMH7dAzMQ3jfqLLJERXgcdx
-         SXl68b50JV+fMkYXn8tAokrLW1hJhIJqhFCtnUNwu+HXNjeNwdxEWZ0uv2D41hi/v1Ni
-         VeDw==
+        bh=M5W3gvGTOTG9Al0qP7uzJxBTNP/zDjXZwXNwwL2m6Tw=;
+        b=LmRIEhD/jmhBD/td4TRpRJ0aklyfZQIf8fOkmXRZyJcJvzk6WyLd3Cc3e9glwqznoJ
+         IzPX9OL8fffdpOzwdWkZEOqmFgl/r1G2oiX9FmpRaf2eamuY1MqOsc4vCmEAklUULOaN
+         7YsjSpSRDPR5sJ9afwMvHG7dNXNfZgZedYaRJoA1kR6C4S15Jt0TSy6ISHK9x/xx6JRl
+         HS94JxYM4AbBVJdiGoxFbpbWVAp2ZQQIjgZC0MeMx9jnkCzbDVj25PPFn84bQmvnNSkT
+         vnlwiHXKMB/1LLRhmNy2L/kteGJrObcQS9EawlbGRJKDiPnnjoIt92aXVW03MTsxSYil
+         Z+Nw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of paul.kocialkowski@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=paul.kocialkowski@bootlin.com
 Authentication-Results: mx.google.com;
@@ -55,43 +55,38 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Randy Li <ayaka@soulik.info>
-Subject: [PATCH v3 07/14] ARM: sun8i-a33: Add SRAM controller node and C1 SRAM region
-Date: Mon,  7 May 2018 14:44:53 +0200
-Message-Id: <20180507124500.20434-8-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 06/14] ARM: sun7i-a20: Add support for the C1 SRAM region with the SRAM controller
+Date: Mon,  7 May 2018 14:44:52 +0200
+Message-Id: <20180507124500.20434-7-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 References: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599809524439461353?=
-X-GMAIL-MSGID: =?utf-8?q?1599809524439461353?=
+X-GMAIL-THRID: =?utf-8?q?1599809523794723293?=
+X-GMAIL-MSGID: =?utf-8?q?1599809523794723293?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
 From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-This adds a SRAM controller node for the A33, with support for the C1
-SRAM region that is shared between the Video Engine and the CPU.
+This adds support for the C1 SRAM region (to be used with the SRAM
+controller driver) for the A20 platform. The region is shared
+between the Video Engine and the CPU.
 
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- arch/arm/boot/dts/sun8i-a33.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ arch/arm/boot/dts/sun7i-a20.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index a21f2ed07a52..97a976b3b1ef 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -204,6 +204,28 @@
- 	};
- 
- 	soc@1c00000 {
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,sun8i-a33-sram-controller";
-+			reg = <0x01c00000 0x30>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index b179e05408e4..9bb6c35fb850 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -273,6 +273,20 @@
+ 					status = "disabled";
+ 				};
+ 			};
 +
 +			sram_c: sram@1d00000 {
 +				compatible = "mmio-sram";
@@ -101,15 +96,13 @@ index a21f2ed07a52..97a976b3b1ef 100644
 +				ranges = <0 0x01d00000 0xd00000>;
 +
 +				ve_sram: sram-section@0 {
-+					compatible = "allwinner,sun8i-a33-sram-c1",
++					compatible = "allwinner,sun7i-a20-sram-c1",
 +						     "allwinner,sun4i-a10-sram-c1";
 +					reg = <0x000000 0x80000>;
 +				};
 +			};
-+		};
-+
- 		tcon0: lcd-controller@1c0c000 {
- 			compatible = "allwinner,sun8i-a33-tcon";
- 			reg = <0x01c0c000 0x1000>;
+ 		};
+ 
+ 		nmi_intc: interrupt-controller@1c00030 {
 -- 
 2.16.3
