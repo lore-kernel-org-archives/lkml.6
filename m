@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752630AbeEGIrl (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:47:41 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:55809 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752131AbeEGIi2 (ORCPT
+        id S1752485AbeEGIrd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:47:33 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33521 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752141AbeEGIib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:28 -0400
-X-Google-Smtp-Source: AB8JxZpbS5BZYoDzNvnpLVtVXEMJMMjgWYgQGffsi4mMCpdivNGqGmIkGAqBJ3lcSoch/AEIVUtCFw==
+        Mon, 7 May 2018 04:38:31 -0400
+X-Google-Smtp-Source: AB8JxZqKTVNokt3N/W23kVecJD0L64mZ0EAaBKbzhWyESydBrqFtNxDr9BNUniX6knSRh050E6WDrw==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/35] ovl: add helper to return real file
-Date: Mon,  7 May 2018 10:37:44 +0200
-Message-Id: <20180507083807.28792-13-mszeredi@redhat.com>
+Subject: [PATCH v2 15/35] ovl: add ovl_fsync()
+Date: Mon,  7 May 2018 10:37:47 +0200
+Message-Id: <20180507083807.28792-16-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
 References: <20180507083807.28792-1-mszeredi@redhat.com>
@@ -21,93 +21,47 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the common case we can just use the real file cached in
-file->private_data.  There are two exceptions:
-
-1) File has been copied up since open: in this unlikely corner case just
-use a throwaway real file for the operation.  If ever this becomes a
-perfomance problem (very unlikely, since overlayfs has been doing most fine
-without correctly handling this case at all), then we can deal with that by
-updating the cached real file.
-
-2) File's f_flags have changed since open: no need to reopen the cached
-real file, we can just change the flags there as well.
+Implement stacked fsync().
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/file.c | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ fs/overlayfs/file.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index a0b606885c41..db8778e7c37a 100644
+index a7af56861aa5..419aa3f9967b 100644
 --- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -31,6 +31,66 @@ static struct file *ovl_open_realfile(const struct file *file)
- 	return realfile;
+@@ -233,10 +233,30 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
+ 	return ret;
  }
  
-+#define OVL_SETFL_MASK (O_APPEND | O_NONBLOCK | O_NDELAY | O_DIRECT)
-+
-+static int ovl_change_flags(struct file *file, unsigned int flags)
++static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
 +{
-+	struct inode *inode = file_inode(file);
-+	int err;
++	struct fd real;
++	const struct cred *old_cred;
++	int ret;
 +
-+	/* No atime modificaton on underlying */
-+	flags |= O_NOATIME;
++	ret = ovl_real_fdget(file, &real);
++	if (ret)
++		return ret;
 +
-+	/* If some flag changed that cannot be changed then something's amiss */
-+	if (WARN_ON((file->f_flags ^ flags) & ~OVL_SETFL_MASK))
-+		return -EIO;
++	old_cred = ovl_override_creds(file_inode(file)->i_sb);
++	ret = vfs_fsync_range(real.file, start, end, datasync);
++	revert_creds(old_cred);
 +
-+	flags &= OVL_SETFL_MASK;
++	fdput(real);
 +
-+	if (((flags ^ file->f_flags) & O_APPEND) && IS_APPEND(inode))
-+		return -EPERM;
-+
-+	if (flags & O_DIRECT) {
-+		if (!file->f_mapping->a_ops ||
-+		    !file->f_mapping->a_ops->direct_IO)
-+			return -EINVAL;
-+	}
-+
-+	if (file->f_op->check_flags) {
-+		err = file->f_op->check_flags(flags);
-+		if (err)
-+			return err;
-+	}
-+
-+	spin_lock(&file->f_lock);
-+	file->f_flags = (file->f_flags & ~OVL_SETFL_MASK) | flags;
-+	spin_unlock(&file->f_lock);
-+
-+	return 0;
++	return ret;
 +}
 +
-+static int ovl_real_fdget(const struct file *file, struct fd *real)
-+{
-+	struct inode *inode = file_inode(file);
-+
-+	real->flags = 0;
-+	real->file = file->private_data;
-+
-+	/* Has it been copied up since we'd opened it? */
-+	if (unlikely(file_inode(real->file) != ovl_inode_real(inode))) {
-+		real->flags = FDPUT_FPUT;
-+		real->file = ovl_open_realfile(file);
-+
-+		return PTR_ERR_OR_ZERO(real->file);
-+	}
-+
-+	/* Did the flags change since open? */
-+	if (unlikely((file->f_flags ^ real->file->f_flags) & ~O_NOATIME))
-+		return ovl_change_flags(real->file, file->f_flags);
-+
-+	return 0;
-+}
-+
- static int ovl_open(struct inode *inode, struct file *file)
- {
- 	struct dentry *dentry = file_dentry(file);
+ const struct file_operations ovl_file_operations = {
+ 	.open		= ovl_open,
+ 	.release	= ovl_release,
+ 	.llseek		= ovl_llseek,
+ 	.read_iter	= ovl_read_iter,
+ 	.write_iter	= ovl_write_iter,
++	.fsync		= ovl_fsync,
+ };
 -- 
 2.14.3
