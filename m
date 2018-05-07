@@ -1,126 +1,96 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2228745-1525961646-2-11609200175269030832
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
-  SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525961646; b=AsyXMyMhfE2M/6/nNLxBWtgRUbXu7+/c39hag4qeoHUOrgpsu+
-    ap/YN5TbU6GlNTRjU0wZcO1vitx2i/CUXNw+VfeknrpaE4FtfDrTFRUi2ucbNWjm
-    VCMlxCmGhoQexdyURtsAzrfO/Wo3uky9//mYcfAIspztKGe48jiO8QsLblPChmKN
-    N9Le/Nqg56I41Lj9/IV9MbtgAMBHMOAe5zVJY7uy1AVhsvrLTCeI1OjhhGGlkdGG
-    NNACEr7DhvHI+aNv+XUh9bMb56i4XgIDPtTdlQda9kPMRD+/l25X7C7lM4K97/Lv
-    A4u6uXaOwxO00qGMFtxtzKX7OSyriVUVrg6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1525961646; bh=NOOqiYEJvU2BvYGpFkX6IMHrkVjQp1
-    6HBNbl0UL/oRA=; b=nxvv/kFNjf15ZoJt5jLXhcQi0G0aTXzJP8jzoRKxM/V5W0
-    cFdyBARMQXdVXhptph3F6A4S5y2WAh7e+jqMljVh3JbvsA/t0dfQCpHBIWWaZQi6
-    2bkhFUgW7UkB3v8qwEhwuz/0bW+FdUwBS5vdDXjjKj/VSjnQV83piHdVcSEiJoe5
-    M5pxuShScvLpTczou/A84EfkVHpM7BrOJmH9nx0t9FldLYlizV8+FgnFR45p0KUd
-    t2YP/s4CDM25K0+XyHtorAf8O/q1rhygvsEtx8VxlrYLv3WLRpW7pPe1320pxT2P
-    zU+zDQZE15CSrxYTol7TJ5PHqjSuj7QEmSnOsDnA==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=renesas.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=renesas.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=renesas.com;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=renesas.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJMwpRpkxWHOlchRyYS3slCxy39Eu59oOr3nF4jz3/+x7hazMS0OHvu1c7zB6B9IByEIotY38p1SqG9xMBdG8R26G7yyt8ibcjL2Fb/zj7KOC25dA+/J
-    yOccFlF4gQgtvpNk692na9k95XDFk/Vrubqoh7qK0tKOs/WosS+ICArzL66HRIKcaARTJtdRggvuP7PnjeQ5K+yii+IDUj01BtbNNjKL7KhD2CPYrsREILj7
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=yC-0_ovQAAAA:8
-    a=VwQbUJbxAAAA:8 a=9xpCGcTiIBmaMevBej8A:9 a=x8gzFH9gYPwA:10
-    a=QsnFDINu91a9xkgZirup:22 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935420AbeEJOOE (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 10 May 2018 10:14:04 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:7521 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934609AbeEJOOD (ORCPT
-        <rfc822;linux-serial@vger.kernel.org>);
-        Thu, 10 May 2018 10:14:03 -0400
-X-IronPort-AV: E=Sophos;i="5.49,385,1520866800";
-   d="scan'208";a="279165654"
-From: Phil Edworthy <phil.edworthy@renesas.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>,
-        Joshua Scott <joshua.scott@alliedtelesis.co.nz>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stefan Potyra <Stefan.Potyra@elektrobit.com>,
-        Ed Blake <ed.blake@sondrel.com>,
-        Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH] serial: 8250_dw: Fix runtime PM handling
-Date: Thu, 10 May 2018 15:13:56 +0100
-Message-Id: <1525961636-6359-1-git-send-email-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.7.4
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Return-Path: <j.neuschaefer@gmx.net>
+X-Google-Smtp-Source: AB8JxZp/mZNfx28AlW4ibNmCHAELWytAKNjqbOrIWzFuzo3rCZwnAZ33SV/0eXqk5/iqEsu2wrpx
+ARC-Seal: i=1; a=rsa-sha256; t=1525702860; cv=none;
+        d=google.com; s=arc-20160816;
+        b=v8QD/8TWDLZ8wgNESHDhYQY6p/zQ2jE6UXedYHhGsR87eiPuBjgoO8xw/UPFuGUwO7
+         e14bwD+knG+OigwNaSoc7v4t5eipqpwRWwe57U08abYtFTVf3/FYJA8K3my8YysIiw87
+         3B+CiPwZLrqO5g61TmW0GwCwyZLUZdSIfQIjjbAtMn0dkwo595IS8EDj6eGT9oGKhAdq
+         ZaZbxFeC0bPIzl6PnLCe6YgluFcq4SZAEigzF+k746qbJvLmDD5h2xTBNyRgYMrTEhZF
+         9jGbdEYGGDAoK2/v1vhAECnpD3xclp3A43e/Xg6rLdTl+eby+CdUUKTZC1/87oJN8Ica
+         K/xA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=m9/yX/A6QzwgktVbA0N0ZE9LfIS+31NtcC3Bb3+QjaA=;
+        b=ejanBsD4TkWw7WUp/GSX0dwBK6HA6RS+GKPjVKzksWt+CCQqvsTyicysB7Zw9YXgs4
+         31o7CUNDOvW6ZOl+JadzFr5QQ3WjS6wRos6CSY0ZqnW4jVjnIpl/30GkjJBlT9BgQ0G3
+         dY7YjS7jRixZvWieet5+4YC+86VwOGIKSdx43lAxZoBrCzTdOtRsAZdiL0W9qFaIkSpl
+         40He6bhDBFsywRq4smQYLEo7zOnZ+NZq00Tv/cZnVIjYXygxC7/eC7JR8ma7z2ebhQw5
+         0p0InGAApwZ9N4WZCsM8pXmvN376yr1xJMq6HBL6IZariDqYodBlZUjuil7GeGgCFH+7
+         2o1A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.21 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of j.neuschaefer@gmx.net designates 212.227.17.21 as permitted sender) smtp.mailfrom=j.neuschaefer@gmx.net
+From: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Joel Stanley <joel@jms.id.au>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Benjamin Gilbert <benjamin.gilbert@coreos.com>,
+	"Robin H. Johnson" <robbat2@gentoo.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] powerpc: wii_defconfig: Disable Ethernet driver support code
+Date: Mon,  7 May 2018 16:20:16 +0200
+Message-Id: <20180507142019.32669-2-j.neuschaefer@gmx.net>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180507142019.32669-1-j.neuschaefer@gmx.net>
+References: <20180507142019.32669-1-j.neuschaefer@gmx.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:hoqHEiE9z55io5mWgVsRbIeENhVm1Lnyg4GyY/xbaPBrWGk9VUb
+ uI989b/m4GUvkt2qLPp8ZeDhV4sLkhtkZAQKhW/vC/ZzzulcGdAXChW0r2b13+HKYi0qwR8
+ 2NXgeQUo+obiGHowwTYZvnnN84Vd38CRdEdsj/ZBKC4Ch3jBymF6w/u65+q+cbLDADgei0u
+ uu3JJrtLd4qoaAuySTHmQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:HNOAEqv+6oA=:R1LPhBfnY89sTDYJWatTdl
+ IT/yG+wXL61YVEjIaplazL4E1jZf3Vus84XMKgxyhq6PayYzJRKu+KgCqsJX1Du6G6/XxfKRv
+ U1yPA3K/ZhD6ePNLjgoeZidbdioZRcGN4sVN/gnBCBr4OxHFm+C8WAF0LGRnpmz/lbm0c2VhZ
+ JtPWB8q9ztR2luA7dZCkrrgvaSS5FTsWwtJWTLQQdxAMOOAiAryeoRGigH9WEe0foJ8M7jH4v
+ 9v6r2UtQ3I5b5jM28rLkJIqNF83Ock+mw7UqRCTSpSe9T9+BBAuyKBUg+yml7mbli6JlpSwLa
+ nvEqxpc3etS7hfMkQF3NV/5AuLCFVT3ItOSMQxNmB0Ixt03a9NXmDa8I9zR3KnYNyREYh9S5H
+ KKN6vihotvbNT+AGERDFMBFSHCriC4EzByouoHv9M9YkcanGdU1L5kt27pu67sc24g/1FyERu
+ hFqUzms0yXJuUiz7BI2rNajaaEaxIItf19aUF7Hg2RU/AVNxhTnXWK8f5c42WFLGaG7Joe35p
+ Lm4S9Jc82S13Jq6x45ycl6bfa6oODCHfe0mY/kbgSgWa5NB3S3CizHFHeCeAiqewTU5SEZYgc
+ jFhIj61IZ+S4m8yG0cYERjAApBiGeyWj8NEgV5o6C16cnjwSzp4K/+WGYHmvgugCYvgxF8WpL
+ YJLkI17lYUkFxTEnukx74PlCgzjcpsrFYBVQ/7X8cM27pIoXpNbyDMMQWRmBgUxQ244++U4fd
+ SIfyIHljrxJBm9SywyU9kHDqATZO2pCMUWyyiRKvT8dm3254EKG6gtH/GdnFEfezYRJVQKn9V
+ +B8Ksn/
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599815401906137196?=
+X-GMAIL-MSGID: =?utf-8?q?1599815401906137196?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-When using kgdb, you get an abort when accessing the UART registers.
-This is because the driver has already entered runtime PM and so turned
-off the bus clock needed to access the registers.
+The Wii doesn't have built-in Ethernet and USB Ethernet adapters are in
+a different menu. Disable CONFIG_ETHERNET to save some space in support
+code for Ethernet drivers.
 
-To fix this, set the capability indicating Runtime PM is active while idle.
+Note that this patch doesn't disable any Ethernet drivers, because they
+are not enabled by default.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 ---
- drivers/tty/serial/8250/8250_dw.c | 4 ++++
- 1 file changed, 4 insertions(+)
+v2:
+- Drop the bloat-o-meter output from the commit message
+---
+ arch/powerpc/configs/wii_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 0529b5c..aff04f1 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -576,6 +576,10 @@ static int dw8250_probe(struct platform_device *pdev)
- 	if (!data->skip_autocfg)
- 		dw8250_setup_port(p);
- 
-+#ifdef CONFIG_PM
-+	uart.capabilities |= UART_CAP_RPM;
-+#endif
-+
- 	/* If we have a valid fifosize, try hooking up DMA */
- 	if (p->fifosize) {
- 		data->dma.rxconf.src_maxburst = p->fifosize / 4;
+diff --git a/arch/powerpc/configs/wii_defconfig b/arch/powerpc/configs/wii_defconfig
+index 0b0f78823a1b..3167b9d7f3e5 100644
+--- a/arch/powerpc/configs/wii_defconfig
++++ b/arch/powerpc/configs/wii_defconfig
+@@ -49,6 +49,7 @@ CONFIG_BLK_DEV_RAM_COUNT=2
+ CONFIG_SCSI=y
+ CONFIG_BLK_DEV_SD=y
+ CONFIG_NETDEVICES=y
++# CONFIG_ETHERNET is not set
+ CONFIG_B43=y
+ CONFIG_B43_SDIO=y
+ # CONFIG_B43_PHY_LP is not set
 -- 
-2.7.4
-
+2.17.0
