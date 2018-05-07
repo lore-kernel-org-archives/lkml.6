@@ -1,128 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752117AbeEGLAD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 07:00:03 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37366 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1750881AbeEGK77 (ORCPT
+        id S1752211AbeEGLAY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 07:00:24 -0400
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:33228 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750881AbeEGLAW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:59:59 -0400
-Date: Mon, 7 May 2018 13:59:56 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Todor Tomov <todor.tomov@linaro.org>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: v4l: Add new 10-bit packed grayscale format
-Message-ID: <20180507105956.o5fhjq7udmo7qt2z@valkosipuli.retiisi.org.uk>
-References: <1524829239-4664-1-git-send-email-todor.tomov@linaro.org>
- <1524829239-4664-3-git-send-email-todor.tomov@linaro.org>
+        Mon, 7 May 2018 07:00:22 -0400
+Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
+ device tree
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: Rich Felker <dalias@libc.org>, Rob Landley <rob@landley.net>,
+        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1467564402-2649-1-git-send-email-ysato@users.sourceforge.jp>
+ <c1ec211d-cbe2-1139-edb0-8baa0e7364e8@physik.fu-berlin.de>
+ <8c75b447-fc14-871e-1a04-733132527b65@landley.net>
+ <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
+ <20171117191706.GF1627@brightrain.aerifal.cx>
+ <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
+ <20180105212857.GR1627@brightrain.aerifal.cx>
+ <20180503013708.GC1392@brightrain.aerifal.cx>
+ <20180503023320.GD1392@brightrain.aerifal.cx>
+ <048ab147-21b8-045d-d21c-e1be2dd0e954@physik.fu-berlin.de>
+ <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <5f690985-e905-deb9-aa4f-51561463ae22@physik.fu-berlin.de>
+Date: Mon, 7 May 2018 13:00:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1524829239-4664-3-git-send-email-todor.tomov@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: 87.77.146.231
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Todor,
-
-On Fri, Apr 27, 2018 at 02:40:39PM +0300, Todor Tomov wrote:
-> The new format will be called V4L2_PIX_FMT_Y10P.
-> It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
-> but V4L2_PIX_FMT_Y10P is a grayscale format.
+On 05/07/2018 03:40 AM, Yoshinori Sato wrote:
+>> @Yoshinori:
+>>
+>> Did the HDL-160U LANDISK device you have use u-boot by default or
+>> did you convert it from lilo?
 > 
-> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-> ---
->  Documentation/media/uapi/v4l/pixfmt-y10p.rst | 31 ++++++++++++++++++++++++++++
->  Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
->  drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
->  include/uapi/linux/videodev2.h               |  1 +
->  4 files changed, 34 insertions(+)
->  create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
-> 
-> diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
-> new file mode 100644
-> index 0000000..0018fe7
-> --- /dev/null
-> +++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
-> @@ -0,0 +1,31 @@
-> +.. -*- coding: utf-8; mode: rst -*-
-> +
-> +.. _V4L2-PIX-FMT-Y10P:
-> +
-> +******************************
-> +V4L2_PIX_FMT_Y10P ('Y10P')
-> +******************************
-> +
-> +Grey-scale image as a MIPI RAW10 packed array
-> +
-> +
-> +Description
-> +===========
-> +
-> +This is a packed grey-scale image format with a depth of 10 bits per
-> +pixel. Every four consecutive pixels are packed into 5 bytes. Each of
-> +the first 4 bytes contain the 8 high order bits of the pixels, and
-> +the 5th byte contains the 2 least significants bits of each pixel,
-> +in the same order.
-> +
-> +**Bit-packed representation.**
-> +
-> +.. flat-table::
-> +    :header-rows:  0
-> +    :stub-columns: 0
-> +
-> +    * - Y'\ :sub:`00[9:2]`
-> +      - Y'\ :sub:`01[9:2]`
-> +      - Y'\ :sub:`02[9:2]`
-> +      - Y'\ :sub:`03[9:2]`
-> +      - Y'\ :sub:`03[1:0]`\ Y'\ :sub:`02[1:0]`\ Y'\ :sub:`01[1:0]`\ Y'\ :sub:`00[1:0]`
+> Yes.
+> Replace sh-lilo's second stage with u-boot.
+> With this method it is unnecessary to rewrite Flash for boot.
 
-Could you add which exact bits the two LSBs of each pixel go to in the last
-byte, as in the 10-bit packed Bayer format documentation?
+Great, thank you. I will give it a try on my USL-5P and write down
+the individual steps once I have figured it out.
 
-> diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
-> index 3334ea4..9ab0592 100644
-> --- a/Documentation/media/uapi/v4l/yuv-formats.rst
-> +++ b/Documentation/media/uapi/v4l/yuv-formats.rst
-> @@ -29,6 +29,7 @@ to brightness information.
->      pixfmt-y10
->      pixfmt-y12
->      pixfmt-y10b
-> +    pixfmt-y10p
->      pixfmt-y16
->      pixfmt-y16-be
->      pixfmt-y8i
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index f48c505..bdf2399 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1147,6 +1147,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
->  	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
->  	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
-> +	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
->  	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
->  	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
->  	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 600877b..b24ab720 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -522,6 +522,7 @@ struct v4l2_pix_format {
->  
->  /* Grey bit-packed formats */
->  #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
-> +#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
->  
->  /* Palette formats */
->  #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
-> -- 
-> 2.7.4
-> 
+As for the IDE controller: Can you tell me whether there are any
+particular patches necessary to get the kernel detect the IDE
+controller of the LANDISK devices?
+
+I have been able to boot my own kernel on my USL-5P device, but
+I could never get it to detect the IDE controller. Do I need
+an additional patch for that?
+
+Adrian
 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+  .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
