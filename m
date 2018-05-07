@@ -1,22 +1,23 @@
 Return-Path: <paul.kocialkowski@bootlin.com>
-X-Google-Smtp-Source: AB8JxZrTHmEEOSM4QSIIdUm4ja43cucackyGovl+mTgnoXiSt9Dl+oYfQgChj04jEDL8XRgmryq3
-ARC-Seal: i=1; a=rsa-sha256; t=1525697250; cv=none;
+X-Google-Smtp-Source: AB8JxZqr1t7dOc5UsT9COcWSIKSdV4Ldd0jvTMdctYbZvZhFvORZNCRh85tsFaHpF+AnDJkczv32
+ARC-Seal: i=1; a=rsa-sha256; t=1525697255; cv=none;
         d=google.com; s=arc-20160816;
-        b=I9jWR0EwXVnv8tqmXUBBU6QlsVisvKPuL3oM5DSdTLMvquIX6Zol6FUQZuJP0HMjiq
-         moCf5b1clgs2V7/Eq8mLCIfnFj6UmI4TqkdU3fmLaMCkbn6ljKbUW4digwFnmmYx1Kj/
-         1lZ3MYkCR5ymVcUYxkedE5G0cNoXunowk0+7I0Gz3uWbvQAes+pDuW2lnV0Oz4luOF+H
-         6LSgDCyiJkNOazg1ZvXwX9L90L2mcKc2xyD7drPYS1P7bOM8nM8lBbeQBmUFLWNdYr7H
-         HRQuQu5XwTub6pwOERVkDwms7OPj1+IhhQMSNzJPCK9uVT/2LVXGJFu6gRupl0fkFmtM
-         SSrw==
+        b=v83W1/gYFE9GQj+JHbwRDVqnnFzM2ckY6L6O1eT5MzIZPoVQPcXUsLU0tfFsmBr364
+         mBC0k5UCdjYZc9rpNh6sxrd/CTjMm540AjBvmakPhPABhhqw5YiZHUCyoROQlnLl0bWA
+         F8wXB9RdcM/Q/b+1umKiY1pZqORA9Kx0ZslVq5F2zeAdBxtvmdamvwl7Xj6Aw12ev0Ja
+         X5ugosev2LSTrKoxv9hyZXopwiPeEaHWdT7mxM5Z1/kD0GOl9R5O08vl2/7/htlEauJd
+         zwclr9+nniGle/NBQJkh7IdI6dMfuE/ZwnnO+e0GwnBWtsQmoCOI2XEk/ghP4TUAUw8Y
+         /VEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=BiHXRuk73lrI+m+mG7NlhY8hF1ac+epFTLvXUPZZF3k=;
-        b=F57/tFtIbssmzOW6PNPyYlgddm2HTIupzuA18Vj4MDSMKuOh6mLZIjNU+66KvYCZPO
-         pgakcsPNgJ9uBkecnp2CUsud/s2+63KZGa0kI+L/NSXLRLvIz7C3/L/Qbca976RUlKT9
-         RXvLG64syMwdfcrRsL06HC3L2fRuQEp/wVCRfJg8ufNdDwHO05STbxhQddx4vyc7x9en
-         ysoEI0y3Ysg04NIOh45mSQ/kZlFT/HleQVgXCJccThpIPQbeWg1Z837ZXtunmp9NWM1A
-         Hl2vFI2Ct5iHd1jFlpm7zL3wtT2jF3pm7Sh5LhENpptFomtGysX2rOw3f5x75i33BCmm
-         5qTg==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=mYC8K6kyngWUdSmMAhTmIFFLtkktBzyUPNrBu4wfiMI=;
+        b=SLc2p3NqxR3ZovZBAV3Wl7bDWiqnUiwMyLGBUtfB5uBfBXAhF+6BY13K0m7v8s0mTK
+         v69ovyyBdOQn0AHU3taJtydh2+lj08zG0WtjX7LxJVhV48FobjgjDk3jZ3qdDIthZ5Vc
+         GzwieRqblP5nA4fSPhq9kJppIZuR50ysU0Qa3Dn5ptYHWrUnjTMI2zrflOiRHmH2qah/
+         u+Qw1yeQYLaWF6XkaiIfPkx/uIDVnhPXeZZRrOwi5J3C2whZEqgbO7zJVbJpVdncXZct
+         5FP5j/OhngVEHq5HTgRChQDC2J0RUCkVEOOG5VxF7nwUWTsqcc5qqLi6rTzJM7fO/OpU
+         K0OQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of paul.kocialkowski@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=paul.kocialkowski@bootlin.com
 Authentication-Results: mx.google.com;
@@ -54,154 +55,159 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Randy Li <ayaka@soulik.info>
-Subject: [PATCH v3 00/14] Sunxi-Cedrus driver for the Allwinner Video Engine, using media requests
-Date: Mon,  7 May 2018 14:44:46 +0200
-Message-Id: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 08/14] media: v4l: Add definitions for MPEG2 frame format and header metadata
+Date: Mon,  7 May 2018 14:44:54 +0200
+Message-Id: <20180507124500.20434-9-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
+References: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599809519954132941?=
-X-GMAIL-MSGID: =?utf-8?q?1599809519954132941?=
+X-GMAIL-THRID: =?utf-8?q?1599809525009240133?=
+X-GMAIL-MSGID: =?utf-8?q?1599809525009240133?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This presents a third iteration of the updated Sunxi-Cedrus driver,
-that supports the Video Engine found in most Allwinner SoCs, starting
-with the A10. It was tested on the A13, A20 and A33.
+From: Florent Revest <florent.revest@free-electrons.com>
 
-The initial version of this driver[0] was originally written and
-submitted by Florent Revest using a previous version of the request API
-that is necessary to provide coherency between controls and the buffers
-they apply to.
+Stateless video decoding engines require both the MPEG slices and
+associated metadata from the video stream in order to decode frames.
 
-The driver was adapted to use the latest version of the media request
-API[1], as submitted by Hand Verkuil. Media request API support is a
-hard requirement for the Sunxi-Cedrus driver.
+This introduces definitions for a new pixel format, describing buffers
+with MPEG2 slice data, as well as a control structure for passing the
+frame header (metadata) to drivers.
 
-The driver itself currently only supports MPEG2 and more codecs will be
-added to the driver eventually. The output frames provided by the
-Video Engine are in a multi-planar 32x32-tiled YUV format, with a plane
-for luminance (Y) and a plane for chrominance (UV). A specific format is
-introduced in the V4L2 API to describe it.
+Signed-off-by: Florent Revest <florent.revest@free-electrons.com>
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ drivers/media/v4l2-core/v4l2-ctrls.c | 10 ++++++++++
+ drivers/media/v4l2-core/v4l2-ioctl.c |  1 +
+ include/uapi/linux/v4l2-controls.h   | 26 ++++++++++++++++++++++++++
+ include/uapi/linux/videodev2.h       |  3 +++
+ 4 files changed, 40 insertions(+)
 
-This implementation is based on the significant work that was conducted
-by various members of the linux-sunxi community for understanding and
-documenting the Video Engine's innards.
-
-Changes since v2:
-* updated to version 13 of the media request API;
-* integrated various changes from Maxime Ripard;
-* reworked memory reservation to use CMA, dynamic allocation and allow
-  DMABUF;
-* removed reserved memory binding since the CMA pool is the default one
-  (and allow ENODEV in the driver, for that use case);
-* added SRAM controller support for the SRAM region used by the VE;
-* updated the device-tree bindings the for SRAM region;
-* added per-platform bindings;
-* added A13 support;
-* renamed VE node name and label;
-* fixed Florent's authorship for the MPEG2 headers;
-* added a MAINTAINERS entry.
-
-Changes since v1:
-* use the latest version of the request API for Hans Verkuil;
-* added media controller support and dependency
-* renamed v4l2 format to the more explicit V4L2_PIX_FMT_MB32_NV12;
-* reworked bindings documentation;
-* moved driver to drivers/media/platforms/sunxi/cedrus to pair with
-  incoming CSI support ;
-* added a workqueue and lists to schedule buffer completion, since it
-  cannot be done in interrupt context;
-* split mpeg2 support into a setup and a trigger function to avoid race
-  condition;
-* split video-related ops to a dedicated sunxi_cedrus_video file;
-* cleaned up the included headers for each file;
-* used device PFN offset instead of subtracting PHYS_BASE;
-* used reset_control_reset instead of assert+deassert;
-* put the device in reset when removing driver;
-* changed dt bindings to use the last 96 Mib of the first 256 MiB of
-  DRAM;
-* made it clear in the mpeg frame header structure that forward and
-  backward indexes are used as reference frames for motion vectors;
-* lots of small cosmetic and consistency changes, including naming
-  harmonization and headers text rework.
-
-Remaining tasks:
-* cleaning up registers description and documenting the fields used;
-* removing the assigned-clocks property and setting the clock rate
-  in the driver directly;
-* checking the series with checkpatch and fixing warnings;
-* documenting the MB32 NV12 format and adding it to v4l_fill_fmtdesc;
-* reworking and documenting the MPEG2 header, then adding it to
-  v4l_fill_fmtdesc;
-* checking and fixing the error paths;
-* testing on more platforms.
-
-Cheers!
-
-[0]: https://patchwork.kernel.org/patch/9299073/
-[1]: https://git.linuxtv.org/hverkuil/media_tree.git/log/?h=reqv13
-
-Florent Revest (1):
-  media: v4l: Add definitions for MPEG2 frame format and header metadata
-
-Maxime Ripard (4):
-  drivers: soc: sunxi: Add support for the C1 SRAM region
-  ARM: sun5i: Add support for the C1 SRAM region with the SRAM
-    controller
-  ARM: sun7i-a20: Add support for the C1 SRAM region with the SRAM
-    controller
-  ARM: sun8i-a33: Add SRAM controller node and C1 SRAM region
-
-Paul Kocialkowski (9):
-  drivers: soc: sunxi: Add dedicated compatibles for the A13, A20 and
-    A33
-  ARM: dts: sun5i: Use dedicated SRAM controller compatible
-  ARM: dts: sun7i-a20: Use dedicated SRAM controller compatible
-  media: v4l: Add definition for Allwinner's MB32-tiled NV12 format
-  dt-bindings: media: Document bindings for the Sunxi-Cedrus VPU driver
-  media: platform: Add Sunxi-Cedrus VPU decoder driver
-  ARM: dts: sun5i: Add Video Engine and reserved memory nodes
-  ARM: dts: sun7i-a20: Add Video Engine and reserved memory nodes
-  ARM: dts: sun8i-a33: Add Video Engine and reserved memory nodes
-
- .../devicetree/bindings/media/sunxi-cedrus.txt     |  58 +++
- MAINTAINERS                                        |   7 +
- arch/arm/boot/dts/sun5i.dtsi                       |  47 +-
- arch/arm/boot/dts/sun7i-a20.dtsi                   |  47 +-
- arch/arm/boot/dts/sun8i-a33.dtsi                   |  54 +++
- drivers/media/platform/Kconfig                     |  15 +
- drivers/media/platform/Makefile                    |   1 +
- drivers/media/platform/sunxi/cedrus/Makefile       |   4 +
- drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c | 333 ++++++++++++++
- .../platform/sunxi/cedrus/sunxi_cedrus_common.h    | 128 ++++++
- .../media/platform/sunxi/cedrus/sunxi_cedrus_dec.c | 188 ++++++++
- .../media/platform/sunxi/cedrus/sunxi_cedrus_dec.h |  35 ++
- .../media/platform/sunxi/cedrus/sunxi_cedrus_hw.c  | 240 ++++++++++
- .../media/platform/sunxi/cedrus/sunxi_cedrus_hw.h  |  37 ++
- .../platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c     | 160 +++++++
- .../platform/sunxi/cedrus/sunxi_cedrus_mpeg2.h     |  33 ++
- .../platform/sunxi/cedrus/sunxi_cedrus_regs.h      | 175 +++++++
- .../platform/sunxi/cedrus/sunxi_cedrus_video.c     | 505 +++++++++++++++++++++
- .../platform/sunxi/cedrus/sunxi_cedrus_video.h     |  31 ++
- drivers/media/v4l2-core/v4l2-ctrls.c               |  10 +
- drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
- drivers/soc/sunxi/sunxi_sram.c                     |  13 +
- include/uapi/linux/v4l2-controls.h                 |  26 ++
- include/uapi/linux/videodev2.h                     |   4 +
- 24 files changed, 2150 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/sunxi-cedrus.txt
- create mode 100644 drivers/media/platform/sunxi/cedrus/Makefile
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus.c
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.h
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.h
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_regs.h
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
- create mode 100644 drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.h
-
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+index df58a23eb731..cdf860c8e3d8 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+@@ -826,6 +826,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+ 	case V4L2_CID_MPEG_VIDEO_MV_V_SEARCH_RANGE:		return "Vertical MV Search Range";
+ 	case V4L2_CID_MPEG_VIDEO_REPEAT_SEQ_HEADER:		return "Repeat Sequence Header";
+ 	case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:		return "Force Key Frame";
++	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:		return "MPEG2 Frame Header";
+ 
+ 	/* VPX controls */
+ 	case V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS:		return "VPX Number of Partitions";
+@@ -1271,6 +1272,9 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+ 	case V4L2_CID_RDS_TX_ALT_FREQS:
+ 		*type = V4L2_CTRL_TYPE_U32;
+ 		break;
++	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
++		*type = V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
++		break;
+ 	default:
+ 		*type = V4L2_CTRL_TYPE_INTEGER;
+ 		break;
+@@ -1591,6 +1595,9 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
+ 			return -ERANGE;
+ 		return 0;
+ 
++	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
++		return 0;
++
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -2165,6 +2172,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
+ 	case V4L2_CTRL_TYPE_U32:
+ 		elem_size = sizeof(u32);
+ 		break;
++	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
++		elem_size = sizeof(struct v4l2_ctrl_mpeg2_frame_hdr);
++		break;
+ 	default:
+ 		if (type < V4L2_CTRL_COMPOUND_TYPES)
+ 			elem_size = sizeof(s32);
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 561a1fe3160b..38d318c47c55 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1274,6 +1274,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+ 		case V4L2_PIX_FMT_VP8:		descr = "VP8"; break;
+ 		case V4L2_PIX_FMT_VP9:		descr = "VP9"; break;
+ 		case V4L2_PIX_FMT_HEVC:		descr = "HEVC"; break; /* aka H.265 */
++		case V4L2_PIX_FMT_MPEG2_FRAME:	descr = "MPEG2 Frame"; break;
+ 		case V4L2_PIX_FMT_CPIA1:	descr = "GSPCA CPiA YUV"; break;
+ 		case V4L2_PIX_FMT_WNVA:		descr = "WNVA"; break;
+ 		case V4L2_PIX_FMT_SN9C10X:	descr = "GSPCA SN9C10X"; break;
+diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+index 8d473c979b61..23da8bfa7e6f 100644
+--- a/include/uapi/linux/v4l2-controls.h
++++ b/include/uapi/linux/v4l2-controls.h
+@@ -557,6 +557,8 @@ enum v4l2_mpeg_video_mpeg4_profile {
+ };
+ #define V4L2_CID_MPEG_VIDEO_MPEG4_QPEL		(V4L2_CID_MPEG_BASE+407)
+ 
++#define V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR     (V4L2_CID_MPEG_BASE+450)
++
+ /*  Control IDs for VP8 streams
+  *  Although VP8 is not part of MPEG we add these controls to the MPEG class
+  *  as that class is already handling other video compression standards
+@@ -1076,4 +1078,28 @@ enum v4l2_detect_md_mode {
+ #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE + 3)
+ #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + 4)
+ 
++struct v4l2_ctrl_mpeg2_frame_hdr {
++	__u32 slice_len;
++	__u32 slice_pos;
++	enum { MPEG1, MPEG2 } type;
++
++	__u16 width;
++	__u16 height;
++
++	enum { PCT_I = 1, PCT_P, PCT_B, PCT_D } picture_coding_type;
++	__u8 f_code[2][2];
++
++	__u8 intra_dc_precision;
++	__u8 picture_structure;
++	__u8 top_field_first;
++	__u8 frame_pred_frame_dct;
++	__u8 concealment_motion_vectors;
++	__u8 q_scale_type;
++	__u8 intra_vlc_format;
++	__u8 alternate_scan;
++
++	__u8 backward_ref_index;
++	__u8 forward_ref_index;
++};
++
+ #endif
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index 1f6c4b52baae..d8f9b59d90d7 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -636,6 +636,7 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_VP8      v4l2_fourcc('V', 'P', '8', '0') /* VP8 */
+ #define V4L2_PIX_FMT_VP9      v4l2_fourcc('V', 'P', '9', '0') /* VP9 */
+ #define V4L2_PIX_FMT_HEVC     v4l2_fourcc('H', 'E', 'V', 'C') /* HEVC aka H.265 */
++#define V4L2_PIX_FMT_MPEG2_FRAME v4l2_fourcc('M', 'G', '2', 'F') /* MPEG2 frame */
+ 
+ /*  Vendor-specific formats   */
+ #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
+@@ -1587,6 +1588,7 @@ struct v4l2_ext_control {
+ 		__u8 __user *p_u8;
+ 		__u16 __user *p_u16;
+ 		__u32 __user *p_u32;
++		struct v4l2_ctrl_mpeg2_frame_hdr __user *p_mpeg2_frame_hdr;
+ 		void __user *ptr;
+ 	};
+ } __attribute__ ((packed));
+@@ -1632,6 +1634,7 @@ enum v4l2_ctrl_type {
+ 	V4L2_CTRL_TYPE_U8	     = 0x0100,
+ 	V4L2_CTRL_TYPE_U16	     = 0x0101,
+ 	V4L2_CTRL_TYPE_U32	     = 0x0102,
++	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
+ };
+ 
+ /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
 -- 
 2.16.3
