@@ -1,105 +1,303 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752017AbeEGKQF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:16:05 -0400
-Received: from mail-bl2nam02on0061.outbound.protection.outlook.com ([104.47.38.61]:27728
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751889AbeEGKP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:15:59 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Akshu.Agrawal@amd.com;
-From: Akshu Agrawal <akshu.agrawal@amd.com>
-Cc: djkurtz@chromium.org, akshu.agrawal@amd.com, Alexander.Deucher@amd.com,
-        mturquette@baylibre.com, sboyd@kernel.org, christian.koenig@amd.com,
-        airlied@redhat.com, Shaoyun.Liu@amd.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, rjw@rjwysocki.net, lenb@kernel.org,
-        linux-acpi@vger.kernel.org
-Subject: [PATCH v2 0/2] Add support for general system clock on ST AMD platform
-Date: Mon,  7 May 2018 18:13:31 +0800
-Message-Id: <1525688013-9928-1-git-send-email-akshu.agrawal@amd.com>
-X-Mailer: git-send-email 1.9.1
+        id S1752043AbeEGKQK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:16:10 -0400
+Received: from verein.lst.de ([213.95.11.211]:59723 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752007AbeEGKQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 06:16:04 -0400
+Date: Mon, 7 May 2018 12:19:17 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: whiteheadm@acm.org
+Cc: Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: PCI: Regression in remove NULL device handling from PCI DMA API
+Message-ID: <20180507101917.GA25806@lst.de>
+References: <CAP8WD_YRPFSwqqUPy7AtmPs-0x4u+7V0rxWU75VnMh5HdLCA8w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [202.56.249.162]
-X-ClientProxiedBy: MA1PR01CA0099.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:1::15) To SN1PR12MB2366.namprd12.prod.outlook.com
- (2603:10b6:802:25::19)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2366;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;3:xQYK8JDtpqRKyvaszsxxOfoSvW3dIvrVIWB2U9Lesm71gDgPmToI7sELaX5T826eXuiMA65hA4d1fEa5ZHhQkNL3mufwxdE0TP7OTYhU+3Buij++z8J4pQvNhPBiPMTWfmvqZPWNrnIzeKKxqNvm7uzZ5A177S0toEi2lLTPOmxue/Ox216yXS86iKvVOgMNQWX+1deHc58slIwOYGwq9BJzDReESBRo3SjJrFZzLCoRS+FonAlOdJ8vG49Xo1wh;25:cfneUBjdc1+rk6w5XibFD8ydGJiCv/KoNTpXyG0ENYSibYjg1MkeFI6LmPniu6DpHcyXnThE/Yn6FwcKQi41/ilKeW4zuaRQgZ4/fhG/Q4NqNyGG84KnKoMSg+RV/m9mEPYCryv8zx/HnuPFdvMbNJplJd+Bldlwuge/R8ilYtrto1hPA4vhkirkpOQrSAzh3Qxnm0Wg9D2Tez+CLym/6afpT564jN/Zyb2twDBNfF7kEGMVQ1grhPs7mwsT+QPXn6DiKVXbrfRCan07L7/NkpSQzB3qdTuCwOjVrdIx+y5FmJ9nS44dNKEbl07JPOahlJ/4lG/sxtYqeYS3EM/HqQ==;31:spUB6cR4eJDoSH5dRQebAI+QspepOlPUFtnvhkfHnYtUCj506/gfZNvuQ0SAZUYtaDuJhmD0CdXBdDAIbI2EbPGdc91tFcgn7GESXI0YqDhuoRbDqgYCjYhU9IG9lz9mz/Bb1gBE7BMf7N5X1dqSm/gpLnpc2kS9YfiEmgOW8EySQHd218TNdpUQqFmEr3KnaE1dP4hcfWg0KgszAFYu6GhfkhViTHceF/fqV/KksZ8=
-X-MS-TrafficTypeDiagnostic: SN1PR12MB2366:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;20:ufu2Imz/FS+0BWwcYzg+f3+ZoG+sfWoMUaI9DGQ1gbQaGotLMtoTpE+M2vl0oB08TGJeAW88tEvAmAxb3dbXoa9+AmM4koVmAaRoJlduJbCTbUy/0a3/lR0g3+rVqve160GKbbq5A4BLHXf2PvmIXz5fV/DQztj241itzorrpiCHzhDbnnlw8FzAymXE1LVgVZ+bAEelrTcjJU90oNPpFyIAbAXLU7rvYYbFwSKmt+PJJSLYqwjJfYJp81AXjFhB6Ma+hfhYG4IdP+paZlyU5dLrPqSEsT6bAbC2r272vP1sJkbkkgJfMgoOqS5+s3xmZCaRbCVC8Yf1Mz9QCqLZ1mbIAq7L0c6MniZK77YvG5eLSZpJGvot6U2P9FXVNUS4P5U3+XZV5SmTr9aoWwUv77YJ2WcCELkmPlPFf1ZzJOlMDgZSNHiPSHRLgmU72scit1PXgv+lXFrzWh2IzODiRdrdbnelMwosuLYWRKTn+327dxxkXnQF3L3TkzBxBscr;4:ozQlKkM8i6PJGCQIk0XFIkZZ0YFb74hxQ/sGo7UyNK8UDddj5ajRRx1LrWF0v0MN1gSUxXirYI2I+QCcxY/aP5TDo0nAnnnKOc+NpwjiuOrrVE5whY8wqrTzytZP1JxrlxhnpaoKLMnc4YZW7UKUhn80s9OTkuENvWQYMll1BJQ4n6JBI5cd2L7mx+20Ub6QjGAhncpo4jnkfjfmKV7nEhHojU5ab3wAGD5hUZjvUsEVI8cV7lF/QZBVmjLwq0kyiTxc2SxZnEEjbHpxBpjxyQ==
-X-Microsoft-Antispam-PRVS: <SN1PR12MB2366485A2217F900A5F33D93F89B0@SN1PR12MB2366.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:SN1PR12MB2366;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2366;
-X-Forefront-PRVS: 066517B35B
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(396003)(39380400002)(39860400002)(366004)(376002)(346002)(189003)(199004)(54534003)(1671002)(50466002)(8676002)(48376002)(66066001)(316002)(81166006)(186003)(81156014)(4326008)(44832011)(6116002)(69596002)(26005)(6486002)(3846002)(6666003)(8936002)(47776003)(305945005)(16586007)(25786009)(478600001)(2906002)(68736007)(50226002)(53936002)(36756003)(7736002)(6512007)(86362001)(105586002)(5660300001)(52116002)(51416003)(53416004)(476003)(386003)(6506007)(72206003)(16526019)(106356001)(109986005)(2616005)(956004)(486006)(97736004)(266003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2366;H:akshu-HP-EliteBook-745-G2.mshome.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR12MB2366;23:txQ7oAcoGb1h8ZvPEXCKrBN4l/V1f31zTm80YGp0w?=
- =?us-ascii?Q?ZFotAgbotUn+H4L7ovD8o4H6YQDRy0hMuWi5A1N2yZCGHtR8tlLRcQP1dnyw?=
- =?us-ascii?Q?HVlCGQ5CmmklgvCHuKCKzVjKuzTmnuzyEzN8XpHIf1jPyKWWBYji2HRfKRjz?=
- =?us-ascii?Q?nw+4McCj5sxAklBZibXDfV5r9kmClwqRaT31TSkG8hdJCOpWo/rzkLM3pMbW?=
- =?us-ascii?Q?rQ98y6Je386gQ8c1YEeYBdGjSJBVE8I940wUFvprYt8pzePDnQw6PMQ++2np?=
- =?us-ascii?Q?bjXVzWxdY59exyptRzGcNPB2yLTaot/u+Zk6OuujlX//mp76Zmp91u6sqCeJ?=
- =?us-ascii?Q?QKQvStn2va+76hv/ldcoS203gVqAV9cAsUCEtXGQ5XIWzRooADi6ExDugXpW?=
- =?us-ascii?Q?tvDSNSHiOszq0zSN8QcuRFl1ktdxY4tWHs5VJjllfAZk0xLI7esoZANNrntn?=
- =?us-ascii?Q?O34eMXAlLjz0dId5b9dVwUL3i18qXFYm1Ltbmadzz/i7nMuZ8ReRJrv5jAWk?=
- =?us-ascii?Q?QLQeZ2oM1VdPpRsruG1xw5DQRpSCSDeZgSPZ06aQB9BL9GKlEUH2rTnjk8JR?=
- =?us-ascii?Q?0dCV3gbcgRrNI7FTwHDYBSuh6/pudDpqkJsk3MEOyH1LjrWpQgjQVnhZD7uv?=
- =?us-ascii?Q?XWvdr90mBY9tY/0Pmrd/mPd8vD1Q6y+ac6taTgz8kFQoHZSMFyGJeR8NzjBv?=
- =?us-ascii?Q?zL/tfrT9w0hXX8uiR2Qt92e6sOFRnjMm0bdruywOYfmQ9Ps0sQ2GaOkRYbYx?=
- =?us-ascii?Q?cafQKW6qPoG9v5dKXQFslcjj9OdViwpQ2cKBP5VLFPqQbCbejumol7td9NHI?=
- =?us-ascii?Q?aRgozRc6I5PiwHWTraRM8ih91B+0UzDXr3TPWmKVD6m6hBy1g3vypR/wtna8?=
- =?us-ascii?Q?sGB1xF9MTqeHKGvb5Jpa1ytdN6yMVX8XF2yG+/q3qFFNoras6wL+2Ut4Dm89?=
- =?us-ascii?Q?9ebrLOICum4+4wzXAMsxzjLwuxP3JnQXAScGazQ1UArzqySjEIijc5UWOPjA?=
- =?us-ascii?Q?jiHlwq/bZG6Hf6nopPIUT+lVNqoBZsyu9rYdtkDGsPFS7yDM9uVjbKWaXW/l?=
- =?us-ascii?Q?JM3RWMBODjpLPWvxnJK1KbUpoNHtVgxgWtfN3772UK1LbTUmnXvI4FxF2nhz?=
- =?us-ascii?Q?P0YG4YWe6ewrqjz9eoDWUZePvsVTG/MIzd9dYoEyT5azFl6P/E+iX8rux+8m?=
- =?us-ascii?Q?RdDTlByqgdsyLtMQEnsxcbLHUtq05BEpXuHt0sw9ZNMOiIR3Ts7kv5UjID7P?=
- =?us-ascii?Q?qaA5pgccz/RmloyrY2GK3+aVXj10bsSCAcNmKQYGZBMxyb/7dxV0zBWAUiIv?=
- =?us-ascii?Q?0OBR92NiPhxaRZWQKLQdPW7sOSgbZasNsu3qr5u0pT55Llq5NIEC8x/p4e19?=
- =?us-ascii?Q?EqjfA=3D=3D?=
-X-Microsoft-Antispam-Message-Info: ImXBUkIF2fIKToxYwM7ZCTB9WjM9dZhcaK1Q/uTiuj6FvQGjvXsoi7U/UNUFwG+jNqETezKP9MmFSR8lUYwfRfWSgAmJ8fazkdcP1Q2tibJvnSosKqCZoI5i0rPKAJ97mi8i/1l7u1s75JJgNMyGIQE3vKo9aZJY5f/pitICTlJBFCB1VEjLt9Yeq7r6bSA0
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;6:POlFpYD/SFgkHHm/gaUGE068cenOKyVPzs6iirY9sHHOJsr7WjNNykPyXURwoGNHpDEKsajBhr9AKUG+5bJeO5mvJ1fiA9kCeekU6yJvS1rQXvDZF4ryT5fJ5aAVAs5TmzqWLfl46E+FncFqBrnosMHMtPJKuliAuS8U5nCnmBPxpxBPgEaIq3mviu7VgQig/GVIXNRp3AOSNad8lduVIiFKEyyq23J0ySdS7i847ys428r3VoQeYDOrVflikIqgXFRSSDx4R/HEG3Ve7ZCrX5mxqjXaDMla7mgdDuAkb1NEYrYpbeIqQE200hvjhDvUkVTklod/O2lvjC7jaqqQbS3wvcLY5t2xe+GMzpWXFPFhrAlwKov+55UwFEeCNZudL/0d3l6HJcs44+tTZi0BMo3zjULBcCymnSoEBtqyjs46SWxAC02n44ViN9m1c7hYT0vQCHLYasp5SyoXh4Tinw==;5:NhTtP2CWoUIu2XS//SY5kZ6cmwRGvHYkyq7Q+3buynV6xjWdZhC9vdnnYMeFzuGyJHRdgHqk+ouTFAC6SamNH2WewHxVq+e9EfsN3t0ZYWIHLM9vPbX20Kc8gg7a6DkB/jh5864++4bwe1g0s3+DaWbxR/HQD9fTofk+2rUTI/U=;24:6swhweO7wmxJsXxtFarvcYoApa/lEOCG5y0Dc9skTvY0XdFQS9n898LUw7tWWRi3TaQApFxFFtR6JrHdaATbPXRUbxqUfdbnt94sAIsgWBM=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR12MB2366;7:TQMn2B753Smnv8iTx/WIv5VscdzXXz8wBMoQKIQ9Ju59TsaZYQKKuhT6FGi3LiXFb9gfnW3TiB8k9wwOZBIROLdNEzNK4WY9xKaQw4MrYYn/2vzqFprXb772bsGx/jeaYnAo+7G3N/EW7Y0hp81uVA/hzpM9pLq+Esp6xY4Gpmwzqa5DEFoSjIvdN53Hxb28hLOxSw0TeA37oswBZ6KZlzBy5tDD7m6tlNynzqdjyWxKWbjNN9ARa7657TOsXnWC;20:w9f4jo32nHiGTYFazawKxgGz+D8dVd+L/4lSkog3XDluqUK+HknF3dXUsLe+2axrfIK6DVaR0TEEtImgmWoOMhiggZPi03PQZqG5Kp55RoTp5J+e1ZVIYuJKlYBA+xIsx0GkgnA3K1Fz5jjpb9/lYl5YvMBFiPNeU3wHTE+FNbRLxWfgSYjRYnmu7VTRicxz/2mmEn5HVLKSKmGQJJatyFw6aGaH8AoB8HZ9u6K6uPXonJE3XYCft4S0lWKoXBWE
-X-MS-Office365-Filtering-Correlation-Id: 9ed87ddb-f7e6-46f6-e284-08d5b4038620
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2018 10:15:53.4690 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ed87ddb-f7e6-46f6-e284-08d5b4038620
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2366
-To: unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAP8WD_YRPFSwqqUPy7AtmPs-0x4u+7V0rxWU75VnMh5HdLCA8w@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AMD ST/CZ platform provides a general system clock which can be used
-by any driver. Registration of this clock will done in clk-st driver.
-While the ACPI misc device will create the required MMIO mappings
-and pass the same to the clk-st driver. The clk-st driver will
-use the address to enable/disable and set frequency.
+Does it work with this patch applied?
 
-Changelog:
-v2:
-  clk: x86: Add ST oscout platform clock: v3->v4 unregister clk_hw
-  ACPI: APD: Add AMD misc clock handler support: No change (v2)
+---
+>From 564da7415bbd43457561b1e4c4cf07d1c7e20d44 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Mon, 7 May 2018 12:11:49 +0200
+Subject: 3c59x: convert to generic DMA API
 
-Akshu Agrawal (2):
-  clk: x86: Add ST oscout platform clock
-  ACPI: APD: Add AMD misc clock handler support
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/net/ethernet/3com/3c59x.c | 104 +++++++++++++++---------------
+ 1 file changed, 51 insertions(+), 53 deletions(-)
 
- drivers/acpi/acpi_apd.c              | 50 ++++++++++++++++++++
- drivers/clk/x86/Makefile             |  1 +
- drivers/clk/x86/clk-st.c             | 88 ++++++++++++++++++++++++++++++++++++
- include/linux/platform_data/clk-st.h | 35 ++++++++++++++
- 4 files changed, 174 insertions(+)
- create mode 100644 drivers/clk/x86/clk-st.c
- create mode 100644 include/linux/platform_data/clk-st.h
-
+diff --git a/drivers/net/ethernet/3com/3c59x.c b/drivers/net/ethernet/3com/3c59x.c
+index 36c8950dbd2d..176861bd2252 100644
+--- a/drivers/net/ethernet/3com/3c59x.c
++++ b/drivers/net/ethernet/3com/3c59x.c
+@@ -1212,9 +1212,9 @@ static int vortex_probe1(struct device *gendev, void __iomem *ioaddr, int irq,
+ 	vp->mii.reg_num_mask = 0x1f;
+ 
+ 	/* Makes sure rings are at least 16 byte aligned. */
+-	vp->rx_ring = pci_alloc_consistent(pdev, sizeof(struct boom_rx_desc) * RX_RING_SIZE
++	vp->rx_ring = dma_alloc_coherent(gendev, sizeof(struct boom_rx_desc) * RX_RING_SIZE
+ 					   + sizeof(struct boom_tx_desc) * TX_RING_SIZE,
+-					   &vp->rx_ring_dma);
++					   &vp->rx_ring_dma, GFP_KERNEL);
+ 	retval = -ENOMEM;
+ 	if (!vp->rx_ring)
+ 		goto free_device;
+@@ -1476,11 +1476,10 @@ static int vortex_probe1(struct device *gendev, void __iomem *ioaddr, int irq,
+ 		return 0;
+ 
+ free_ring:
+-	pci_free_consistent(pdev,
+-						sizeof(struct boom_rx_desc) * RX_RING_SIZE
+-							+ sizeof(struct boom_tx_desc) * TX_RING_SIZE,
+-						vp->rx_ring,
+-						vp->rx_ring_dma);
++	dma_free_coherent(&pdev->dev,
++		sizeof(struct boom_rx_desc) * RX_RING_SIZE +
++		sizeof(struct boom_tx_desc) * TX_RING_SIZE,
++		vp->rx_ring, vp->rx_ring_dma);
+ free_device:
+ 	free_netdev(dev);
+ 	pr_err(PFX "vortex_probe1 fails.  Returns %d\n", retval);
+@@ -1751,9 +1750,9 @@ vortex_open(struct net_device *dev)
+ 				break;			/* Bad news!  */
+ 
+ 			skb_reserve(skb, NET_IP_ALIGN);	/* Align IP on 16 byte boundaries */
+-			dma = pci_map_single(VORTEX_PCI(vp), skb->data,
+-					     PKT_BUF_SZ, PCI_DMA_FROMDEVICE);
+-			if (dma_mapping_error(&VORTEX_PCI(vp)->dev, dma))
++			dma = dma_map_single(vp->gendev, skb->data,
++					     PKT_BUF_SZ, DMA_FROM_DEVICE);
++			if (dma_mapping_error(vp->gendev, dma))
+ 				break;
+ 			vp->rx_ring[i].addr = cpu_to_le32(dma);
+ 		}
+@@ -2067,9 +2066,9 @@ vortex_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	if (vp->bus_master) {
+ 		/* Set the bus-master controller to transfer the packet. */
+ 		int len = (skb->len + 3) & ~3;
+-		vp->tx_skb_dma = pci_map_single(VORTEX_PCI(vp), skb->data, len,
+-						PCI_DMA_TODEVICE);
+-		if (dma_mapping_error(&VORTEX_PCI(vp)->dev, vp->tx_skb_dma)) {
++		vp->tx_skb_dma = dma_map_single(vp->gendev, skb->data, len,
++						DMA_TO_DEVICE);
++		if (dma_mapping_error(vp->gendev, vp->tx_skb_dma)) {
+ 			dev_kfree_skb_any(skb);
+ 			dev->stats.tx_dropped++;
+ 			return NETDEV_TX_OK;
+@@ -2168,9 +2167,9 @@ boomerang_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 			vp->tx_ring[entry].status = cpu_to_le32(skb->len | TxIntrUploaded | AddTCPChksum | AddUDPChksum);
+ 
+ 	if (!skb_shinfo(skb)->nr_frags) {
+-		dma_addr = pci_map_single(VORTEX_PCI(vp), skb->data, skb->len,
+-					  PCI_DMA_TODEVICE);
+-		if (dma_mapping_error(&VORTEX_PCI(vp)->dev, dma_addr))
++		dma_addr = dma_map_single(vp->gendev, skb->data, skb->len,
++					  DMA_TO_DEVICE);
++		if (dma_mapping_error(vp->gendev, dma_addr))
+ 			goto out_dma_err;
+ 
+ 		vp->tx_ring[entry].frag[0].addr = cpu_to_le32(dma_addr);
+@@ -2178,9 +2177,9 @@ boomerang_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	} else {
+ 		int i;
+ 
+-		dma_addr = pci_map_single(VORTEX_PCI(vp), skb->data,
+-					  skb_headlen(skb), PCI_DMA_TODEVICE);
+-		if (dma_mapping_error(&VORTEX_PCI(vp)->dev, dma_addr))
++		dma_addr = dma_map_single(vp->gendev, skb->data,
++					  skb_headlen(skb), DMA_TO_DEVICE);
++		if (dma_mapping_error(vp->gendev, dma_addr))
+ 			goto out_dma_err;
+ 
+ 		vp->tx_ring[entry].frag[0].addr = cpu_to_le32(dma_addr);
+@@ -2189,21 +2188,21 @@ boomerang_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		for (i = 0; i < skb_shinfo(skb)->nr_frags; i++) {
+ 			skb_frag_t *frag = &skb_shinfo(skb)->frags[i];
+ 
+-			dma_addr = skb_frag_dma_map(&VORTEX_PCI(vp)->dev, frag,
++			dma_addr = skb_frag_dma_map(vp->gendev, frag,
+ 						    0,
+ 						    frag->size,
+ 						    DMA_TO_DEVICE);
+-			if (dma_mapping_error(&VORTEX_PCI(vp)->dev, dma_addr)) {
++			if (dma_mapping_error(vp->gendev, dma_addr)) {
+ 				for(i = i-1; i >= 0; i--)
+-					dma_unmap_page(&VORTEX_PCI(vp)->dev,
++					dma_unmap_page(vp->gendev,
+ 						       le32_to_cpu(vp->tx_ring[entry].frag[i+1].addr),
+ 						       le32_to_cpu(vp->tx_ring[entry].frag[i+1].length),
+ 						       DMA_TO_DEVICE);
+ 
+-				pci_unmap_single(VORTEX_PCI(vp),
++				dma_unmap_single(vp->gendev,
+ 						 le32_to_cpu(vp->tx_ring[entry].frag[0].addr),
+ 						 le32_to_cpu(vp->tx_ring[entry].frag[0].length),
+-						 PCI_DMA_TODEVICE);
++						 DMA_TO_DEVICE);
+ 
+ 				goto out_dma_err;
+ 			}
+@@ -2218,8 +2217,8 @@ boomerang_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		}
+ 	}
+ #else
+-	dma_addr = pci_map_single(VORTEX_PCI(vp), skb->data, skb->len, PCI_DMA_TODEVICE);
+-	if (dma_mapping_error(&VORTEX_PCI(vp)->dev, dma_addr))
++	dma_addr = dma_map_single(vp->gendev, skb->data, skb->len, DMA_TO_DEVICE);
++	if (dma_mapping_error(vp->gendev, dma_addr))
+ 		goto out_dma_err;
+ 	vp->tx_ring[entry].addr = cpu_to_le32(dma_addr);
+ 	vp->tx_ring[entry].length = cpu_to_le32(skb->len | LAST_FRAG);
+@@ -2254,7 +2253,7 @@ boomerang_start_xmit(struct sk_buff *skb, struct net_device *dev)
+ out:
+ 	return NETDEV_TX_OK;
+ out_dma_err:
+-	dev_err(&VORTEX_PCI(vp)->dev, "Error mapping dma buffer\n");
++	dev_err(vp->gendev, "Error mapping dma buffer\n");
+ 	goto out;
+ }
+ 
+@@ -2322,7 +2321,7 @@ vortex_interrupt(int irq, void *dev_id)
+ 		if (status & DMADone) {
+ 			if (ioread16(ioaddr + Wn7_MasterStatus) & 0x1000) {
+ 				iowrite16(0x1000, ioaddr + Wn7_MasterStatus); /* Ack the event. */
+-				pci_unmap_single(VORTEX_PCI(vp), vp->tx_skb_dma, (vp->tx_skb->len + 3) & ~3, PCI_DMA_TODEVICE);
++				dma_unmap_single(vp->gendev, vp->tx_skb_dma, (vp->tx_skb->len + 3) & ~3, DMA_TO_DEVICE);
+ 				pkts_compl++;
+ 				bytes_compl += vp->tx_skb->len;
+ 				dev_kfree_skb_irq(vp->tx_skb); /* Release the transferred buffer */
+@@ -2459,19 +2458,19 @@ boomerang_interrupt(int irq, void *dev_id)
+ 					struct sk_buff *skb = vp->tx_skbuff[entry];
+ #if DO_ZEROCOPY
+ 					int i;
+-					pci_unmap_single(VORTEX_PCI(vp),
++					dma_unmap_single(vp->gendev,
+ 							le32_to_cpu(vp->tx_ring[entry].frag[0].addr),
+ 							le32_to_cpu(vp->tx_ring[entry].frag[0].length)&0xFFF,
+-							PCI_DMA_TODEVICE);
++							DMA_TO_DEVICE);
+ 
+ 					for (i=1; i<=skb_shinfo(skb)->nr_frags; i++)
+-							pci_unmap_page(VORTEX_PCI(vp),
++							dma_unmap_page(vp->gendev,
+ 											 le32_to_cpu(vp->tx_ring[entry].frag[i].addr),
+ 											 le32_to_cpu(vp->tx_ring[entry].frag[i].length)&0xFFF,
+-											 PCI_DMA_TODEVICE);
++											 DMA_TO_DEVICE);
+ #else
+-					pci_unmap_single(VORTEX_PCI(vp),
+-						le32_to_cpu(vp->tx_ring[entry].addr), skb->len, PCI_DMA_TODEVICE);
++					dma_unmap_single(vp->gendev,
++						le32_to_cpu(vp->tx_ring[entry].addr), skb->len, DMA_TO_DEVICE);
+ #endif
+ 					pkts_compl++;
+ 					bytes_compl += skb->len;
+@@ -2561,14 +2560,14 @@ static int vortex_rx(struct net_device *dev)
+ 				/* 'skb_put()' points to the start of sk_buff data area. */
+ 				if (vp->bus_master &&
+ 					! (ioread16(ioaddr + Wn7_MasterStatus) & 0x8000)) {
+-					dma_addr_t dma = pci_map_single(VORTEX_PCI(vp), skb_put(skb, pkt_len),
+-									   pkt_len, PCI_DMA_FROMDEVICE);
++					dma_addr_t dma = dma_map_single(vp->gendev, skb_put(skb, pkt_len),
++									   pkt_len, DMA_FROM_DEVICE);
+ 					iowrite32(dma, ioaddr + Wn7_MasterAddr);
+ 					iowrite16((skb->len + 3) & ~3, ioaddr + Wn7_MasterLen);
+ 					iowrite16(StartDMAUp, ioaddr + EL3_CMD);
+ 					while (ioread16(ioaddr + Wn7_MasterStatus) & 0x8000)
+ 						;
+-					pci_unmap_single(VORTEX_PCI(vp), dma, pkt_len, PCI_DMA_FROMDEVICE);
++					dma_unmap_single(vp->gendev, dma, pkt_len, DMA_FROM_DEVICE);
+ 				} else {
+ 					ioread32_rep(ioaddr + RX_FIFO,
+ 					             skb_put(skb, pkt_len),
+@@ -2635,11 +2634,11 @@ boomerang_rx(struct net_device *dev)
+ 			if (pkt_len < rx_copybreak &&
+ 			    (skb = netdev_alloc_skb(dev, pkt_len + 2)) != NULL) {
+ 				skb_reserve(skb, 2);	/* Align IP on 16 byte boundaries */
+-				pci_dma_sync_single_for_cpu(VORTEX_PCI(vp), dma, PKT_BUF_SZ, PCI_DMA_FROMDEVICE);
++				dma_sync_single_for_cpu(vp->gendev, dma, PKT_BUF_SZ, DMA_FROM_DEVICE);
+ 				/* 'skb_put()' points to the start of sk_buff data area. */
+ 				skb_put_data(skb, vp->rx_skbuff[entry]->data,
+ 					     pkt_len);
+-				pci_dma_sync_single_for_device(VORTEX_PCI(vp), dma, PKT_BUF_SZ, PCI_DMA_FROMDEVICE);
++				dma_sync_single_for_device(vp->gendev, dma, PKT_BUF_SZ, DMA_FROM_DEVICE);
+ 				vp->rx_copy++;
+ 			} else {
+ 				/* Pre-allocate the replacement skb.  If it or its
+@@ -2651,9 +2650,9 @@ boomerang_rx(struct net_device *dev)
+ 					dev->stats.rx_dropped++;
+ 					goto clear_complete;
+ 				}
+-				newdma = pci_map_single(VORTEX_PCI(vp), newskb->data,
+-							PKT_BUF_SZ, PCI_DMA_FROMDEVICE);
+-				if (dma_mapping_error(&VORTEX_PCI(vp)->dev, newdma)) {
++				newdma = dma_map_single(vp->gendev, newskb->data,
++							PKT_BUF_SZ, DMA_FROM_DEVICE);
++				if (dma_mapping_error(vp->gendev, newdma)) {
+ 					dev->stats.rx_dropped++;
+ 					consume_skb(newskb);
+ 					goto clear_complete;
+@@ -2664,7 +2663,7 @@ boomerang_rx(struct net_device *dev)
+ 				vp->rx_skbuff[entry] = newskb;
+ 				vp->rx_ring[entry].addr = cpu_to_le32(newdma);
+ 				skb_put(skb, pkt_len);
+-				pci_unmap_single(VORTEX_PCI(vp), dma, PKT_BUF_SZ, PCI_DMA_FROMDEVICE);
++				dma_unmap_single(vp->gendev, dma, PKT_BUF_SZ, DMA_FROM_DEVICE);
+ 				vp->rx_nocopy++;
+ 			}
+ 			skb->protocol = eth_type_trans(skb, dev);
+@@ -2761,8 +2760,8 @@ vortex_close(struct net_device *dev)
+ 	if (vp->full_bus_master_rx) { /* Free Boomerang bus master Rx buffers. */
+ 		for (i = 0; i < RX_RING_SIZE; i++)
+ 			if (vp->rx_skbuff[i]) {
+-				pci_unmap_single(	VORTEX_PCI(vp), le32_to_cpu(vp->rx_ring[i].addr),
+-									PKT_BUF_SZ, PCI_DMA_FROMDEVICE);
++				dma_unmap_single(vp->gendev, le32_to_cpu(vp->rx_ring[i].addr),
++									PKT_BUF_SZ, DMA_FROM_DEVICE);
+ 				dev_kfree_skb(vp->rx_skbuff[i]);
+ 				vp->rx_skbuff[i] = NULL;
+ 			}
+@@ -2775,12 +2774,12 @@ vortex_close(struct net_device *dev)
+ 				int k;
+ 
+ 				for (k=0; k<=skb_shinfo(skb)->nr_frags; k++)
+-						pci_unmap_single(VORTEX_PCI(vp),
++						dma_unmap_single(vp->gendev,
+ 										 le32_to_cpu(vp->tx_ring[i].frag[k].addr),
+ 										 le32_to_cpu(vp->tx_ring[i].frag[k].length)&0xFFF,
+-										 PCI_DMA_TODEVICE);
++										 DMA_TO_DEVICE);
+ #else
+-				pci_unmap_single(VORTEX_PCI(vp), le32_to_cpu(vp->tx_ring[i].addr), skb->len, PCI_DMA_TODEVICE);
++				dma_unmap_single(vp->gendev, le32_to_cpu(vp->tx_ring[i].addr), skb->len, DMA_TO_DEVICE);
+ #endif
+ 				dev_kfree_skb(skb);
+ 				vp->tx_skbuff[i] = NULL;
+@@ -3288,11 +3287,10 @@ static void vortex_remove_one(struct pci_dev *pdev)
+ 
+ 	pci_iounmap(pdev, vp->ioaddr);
+ 
+-	pci_free_consistent(pdev,
+-						sizeof(struct boom_rx_desc) * RX_RING_SIZE
+-							+ sizeof(struct boom_tx_desc) * TX_RING_SIZE,
+-						vp->rx_ring,
+-						vp->rx_ring_dma);
++	dma_free_coherent(&pdev->dev,
++			sizeof(struct boom_rx_desc) * RX_RING_SIZE +
++			sizeof(struct boom_tx_desc) * TX_RING_SIZE,
++			vp->rx_ring, vp->rx_ring_dma);
+ 
+ 	pci_release_regions(pdev);
+ 
 -- 
-1.9.1
+2.17.0
