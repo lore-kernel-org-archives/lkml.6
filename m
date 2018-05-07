@@ -1,30 +1,31 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752031AbeEGL13 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 07:27:29 -0400
-Received: from mail-qk0-f194.google.com ([209.85.220.194]:36416 "EHLO
-        mail-qk0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751818AbeEGL10 (ORCPT
+        id S1752081AbeEGL3o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 07:29:44 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:39118 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751980AbeEGL3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 07:27:26 -0400
-X-Google-Smtp-Source: AB8JxZqX61lh3T8kfB8EXWryUsXTh3Vw7XcAFleGEJudfWUWo310gEuuLe6mG3aVbVNN2syz3F3Jp+yzm7lWuxqHZ54=
+        Mon, 7 May 2018 07:29:40 -0400
+X-Google-Smtp-Source: AB8JxZoGUgP9o0DW9GtodQBX1rCMvamg/WKCZYyKG9Kx9COGSkosNudy5dm8QT/sXea8GIc8zV974QUnbHeB430AFew=
 MIME-Version: 1.0
-In-Reply-To: <1525421338-1021-1-git-send-email-hl@rock-chips.com>
-References: <1525421338-1021-1-git-send-email-hl@rock-chips.com>
+In-Reply-To: <1525421338-1021-4-git-send-email-hl@rock-chips.com>
+References: <1525421338-1021-1-git-send-email-hl@rock-chips.com> <1525421338-1021-4-git-send-email-hl@rock-chips.com>
 From: Enric Balletbo Serra <eballetbo@gmail.com>
-Date: Mon, 7 May 2018 13:27:24 +0200
-Message-ID: <CAFqH_522eDgyknF+sRGyZzusL7Ld0o_N-SP1jXCG1iwmav-n0Q@mail.gmail.com>
-Subject: Re: [PATCH 1/4] drm/rockchip: add transfer function for cdn-dp
+Date: Mon, 7 May 2018 13:29:39 +0200
+Message-ID: <CAFqH_531eY=cnuEsBbXaZRyPYjJJ0nmoqZg_QXcJN0A4tk95YQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] drm/rockchip: support dp training outside dp firmware
 To: Lin Huang <hl@rock-chips.com>
 Cc: Sean Paul <seanpaul@chromium.org>, David Airlie <airlied@linux.ie>,
         Chris Zhong <zyw@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Doug Anderson <dianders@chromium.org>,
         Brian Norris <briannorris@chromium.org>,
-        Doug Anderson <dianders@chromium.org>, jani.nikula@linux.intel.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
         "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, daniel.vetter@intel.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        daniel.vetter@intel.com, jani.nikula@linux.intel.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
@@ -32,308 +33,696 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Lin,
 
-I am interested in these patches, could you cc me on newer versions? Thanks.
-
-Some comments below.
+Thanks for the patch.
 
 2018-05-04 10:08 GMT+02:00 Lin Huang <hl@rock-chips.com>:
-> From: Chris Zhong <zyw@rock-chips.com>
+> DP firware use fix phy config value to do training, but some
+
+s/fiware/firmware/
+
+> board need to adjust these value to fit for their hardware design,
+> so we use new phy config to do training outside firmware to meet
+> this situation, if there have new phy config pass from dts, it will
+> use training outside firmware.
 >
-> We may support training outside firmware, so we need support
-> dpcd read/write to get the message or do some setting with
-> display.
->
+
+maybe you can rewrite all this in a better way.
+
+ooi, which boards needs this?
+
+
 > Signed-off-by: Chris Zhong <zyw@rock-chips.com>
 > Signed-off-by: Lin Huang <hl@rock-chips.com>
 > ---
->  drivers/gpu/drm/rockchip/cdn-dp-core.c | 55 ++++++++++++++++++++++++----
->  drivers/gpu/drm/rockchip/cdn-dp-core.h |  1 +
->  drivers/gpu/drm/rockchip/cdn-dp-reg.c  | 66 +++++++++++++++++++++++++++++-----
->  drivers/gpu/drm/rockchip/cdn-dp-reg.h  | 14 ++++++--
->  4 files changed, 119 insertions(+), 17 deletions(-)
+>  drivers/gpu/drm/rockchip/Makefile               |   3 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-core.c          |  23 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-core.h          |   2 +
+>  drivers/gpu/drm/rockchip/cdn-dp-link-training.c | 398 ++++++++++++++++++++++++
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.c           |  33 +-
+>  drivers/gpu/drm/rockchip/cdn-dp-reg.h           |  38 ++-
+>  6 files changed, 480 insertions(+), 17 deletions(-)
+>  create mode 100644 drivers/gpu/drm/rockchip/cdn-dp-link-training.c
 >
-
-In general, for this patch and all the other patches in the series I
-saw that checkpatch spits out some warnings, could you fix these and
-ideally run checkpatch with the --strict --subjective option?
-
+> diff --git a/drivers/gpu/drm/rockchip/Makefile b/drivers/gpu/drm/rockchip/Makefile
+> index a314e21..b932f62 100644
+> --- a/drivers/gpu/drm/rockchip/Makefile
+> +++ b/drivers/gpu/drm/rockchip/Makefile
+> @@ -9,7 +9,8 @@ rockchipdrm-y := rockchip_drm_drv.o rockchip_drm_fb.o \
+>  rockchipdrm-$(CONFIG_DRM_FBDEV_EMULATION) += rockchip_drm_fbdev.o
+>
+>  rockchipdrm-$(CONFIG_ROCKCHIP_ANALOGIX_DP) += analogix_dp-rockchip.o
+> -rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) += cdn-dp-core.o cdn-dp-reg.o
+> +rockchipdrm-$(CONFIG_ROCKCHIP_CDN_DP) += cdn-dp-core.o cdn-dp-reg.o \
+> +                                       cdn-dp-link-training.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_DW_HDMI) += dw_hdmi-rockchip.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_DW_MIPI_DSI) += dw-mipi-dsi.o
+>  rockchipdrm-$(CONFIG_ROCKCHIP_INNO_HDMI) += inno_hdmi.o
 > diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.c b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> index c6fbdcd..268c190 100644
+> index 268c190..a2a4208 100644
 > --- a/drivers/gpu/drm/rockchip/cdn-dp-core.c
 > +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.c
-> @@ -176,8 +176,8 @@ static int cdn_dp_get_sink_count(struct cdn_dp_device *dp, u8 *sink_count)
->         u8 value;
->
->         *sink_count = 0;
-> -       ret = cdn_dp_dpcd_read(dp, DP_SINK_COUNT, &value, 1);
-> -       if (ret)
-> +       ret = drm_dp_dpcd_read(&dp->aux, DP_SINK_COUNT, &value, 1);
-> +       if (ret < 0)
->                 return ret;
->
->         *sink_count = DP_GET_SINK_COUNT(value);
-> @@ -374,9 +374,9 @@ static int cdn_dp_get_sink_capability(struct cdn_dp_device *dp)
->         if (!cdn_dp_check_sink_connection(dp))
->                 return -ENODEV;
->
-> -       ret = cdn_dp_dpcd_read(dp, DP_DPCD_REV, dp->dpcd,
-> -                              DP_RECEIVER_CAP_SIZE);
+> @@ -629,11 +629,13 @@ static void cdn_dp_encoder_enable(struct drm_encoder *encoder)
+>                         goto out;
+>                 }
+>         }
+> -
+> -       ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_IDLE);
 > -       if (ret) {
+> -               DRM_DEV_ERROR(dp->dev, "Failed to idle video %d\n", ret);
+> -               goto out;
+> +       if (dp->sw_training_success == false) {
+> +               ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_IDLE);
+> +               if (ret) {
+> +                       DRM_DEV_ERROR(dp->dev,
+> +                                     "Failed to idle video %d\n", ret);
+> +                       goto out;
+> +               }
+>         }
+>
+>         ret = cdn_dp_config_video(dp);
+> @@ -642,11 +644,14 @@ static void cdn_dp_encoder_enable(struct drm_encoder *encoder)
+>                 goto out;
+>         }
+>
+> -       ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_VALID);
+> -       if (ret) {
+> -               DRM_DEV_ERROR(dp->dev, "Failed to valid video %d\n", ret);
+> -               goto out;
+> +       if (dp->sw_training_success == false) {
+> +               ret = cdn_dp_set_video_status(dp, CONTROL_VIDEO_VALID);
+> +               if (ret) {
+> +                       DRM_DEV_ERROR(dp->dev, "Failed to valid video %d\n", ret);
+> +                       goto out;
+> +               }
+>         }
+> +
+>  out:
+>         mutex_unlock(&dp->lock);
+>  }
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+> index 46159b2..c6050ab 100644
+> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
+> @@ -84,6 +84,7 @@ struct cdn_dp_device {
+>         bool connected;
+>         bool active;
+>         bool suspended;
+> +       bool sw_training_success;
+>
+>         const struct firmware *fw;      /* cdn dp firmware */
+>         unsigned int fw_version;        /* cdn fw version */
+> @@ -106,6 +107,7 @@ struct cdn_dp_device {
+>         u8 ports;
+>         u8 lanes;
+>         int active_port;
+> +       u8 train_set[4];
+>
+>         u8 dpcd[DP_RECEIVER_CAP_SIZE];
+>         bool sink_has_audio;
+> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-link-training.c b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+> new file mode 100644
+> index 0000000..558c945
+> --- /dev/null
+> +++ b/drivers/gpu/drm/rockchip/cdn-dp-link-training.c
+> @@ -0,0 +1,398 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+
+For a C source file the format is:
+(https://www.kernel.org/doc/html/latest/process/license-rules.html)
+
+// SPDX-License-Identifier: <SPDX License Expression>
+
+> +/*
+> + * Copyright (C) Fuzhou Rockchip Electronics Co.Ltd
+> + * Author: Chris Zhong <zyw@rock-chips.com>
+> + */
+> +
+> +#include <linux/arm-smccc.h>
+
+Why you need this include?
+
+> +#include <linux/clk.h>
+> +#include <linux/device.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/reset.h>
+> +#include <soc/rockchip/rockchip_phy_typec.h>
+> +
+
+In fact, I think that there are other includes that can be removed,
+please review.
+
+> +#include "cdn-dp-core.h"
+> +#include "cdn-dp-reg.h"
+> +
+> +static void cdn_dp_set_signal_levels(struct cdn_dp_device *dp)
+> +{
+> +       struct cdn_dp_port *port = dp->port[dp->active_port];
+> +       struct rockchip_typec_phy *tcphy = phy_get_drvdata(port->phy);
+> +
+> +       int rate = drm_dp_bw_code_to_link_rate(dp->link.rate);
+> +       u8 swing = (dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK) >>
+> +                  DP_TRAIN_VOLTAGE_SWING_SHIFT;
+> +       u8 pre_emphasis = (dp->train_set[0] & DP_TRAIN_PRE_EMPHASIS_MASK)
+> +                         >> DP_TRAIN_PRE_EMPHASIS_SHIFT;
+> +
+> +       tcphy->typec_phy_config(port->phy, rate, dp->link.num_lanes,
+> +                               swing, pre_emphasis);
+> +}
+> +
+> +static int cdn_dp_set_pattern(struct cdn_dp_device *dp, uint8_t dp_train_pat)
+> +{
+> +       u32 phy_config, global_config;
+> +       int ret;
+> +       uint8_t pattern = dp_train_pat & DP_TRAINING_PATTERN_MASK;
+> +
+> +       global_config = NUM_LANES(dp->link.num_lanes - 1) | SST_MODE |
+> +                       GLOBAL_EN | RG_EN | ENC_RST_DIS | WR_VHSYNC_FALL;
+> +
+> +       phy_config = DP_TX_PHY_ENCODER_BYPASS(0) |
+> +                    DP_TX_PHY_SKEW_BYPASS(0) |
+> +                    DP_TX_PHY_DISPARITY_RST(0) |
+> +                    DP_TX_PHY_LANE0_SKEW(0) |
+> +                    DP_TX_PHY_LANE1_SKEW(1) |
+> +                    DP_TX_PHY_LANE2_SKEW(2) |
+> +                    DP_TX_PHY_LANE3_SKEW(3) |
+> +                    DP_TX_PHY_10BIT_ENABLE(0);
+> +
+> +       if (pattern != DP_TRAINING_PATTERN_DISABLE) {
+> +               global_config |= NO_VIDEO;
+> +               phy_config |= DP_TX_PHY_TRAINING_ENABLE(1) |
+> +                             DP_TX_PHY_SCRAMBLER_BYPASS(1) |
+> +                             DP_TX_PHY_TRAINING_PATTERN(pattern);
+> +       }
+> +
+> +       ret = cdn_dp_reg_write(dp, DP_FRAMER_GLOBAL_CONFIG, global_config);
+> +       if (ret) {
+> +               DRM_ERROR("fail to set DP_FRAMER_GLOBAL_CONFIG, error: %d\n",
+> +                         ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = cdn_dp_reg_write(dp, DP_TX_PHY_CONFIG_REG, phy_config);
+> +       if (ret) {
+> +               DRM_ERROR("fail to set DP_TX_PHY_CONFIG_REG, error: %d\n",
+> +                         ret);
+> +               return ret;
+> +       }
+> +
+> +       ret = cdn_dp_reg_write(dp, DPTX_LANE_EN, BIT(dp->link.num_lanes) - 1);
+> +       if (ret) {
+> +               DRM_ERROR("fail to set DPTX_LANE_EN, error: %d\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       if (drm_dp_enhanced_frame_cap(dp->dpcd))
+> +               ret = cdn_dp_reg_write(dp, DPTX_ENHNCD, 1);
+> +       else
+> +               ret = cdn_dp_reg_write(dp, DPTX_ENHNCD, 0);
+> +       if (ret)
+> +               DRM_ERROR("failed to set DPTX_ENHNCD, error: %x\n", ret);
+> +
+> +       return ret;
+> +}
+> +
+> +static u8 cdn_dp_pre_emphasis_max(u8 voltage_swing)
+> +{
+> +       switch (voltage_swing & DP_TRAIN_VOLTAGE_SWING_MASK) {
+> +       case DP_TRAIN_VOLTAGE_SWING_LEVEL_0:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_3;
+> +       case DP_TRAIN_VOLTAGE_SWING_LEVEL_1:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_2;
+> +       case DP_TRAIN_VOLTAGE_SWING_LEVEL_2:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_1;
+> +       default:
+> +               return DP_TRAIN_PRE_EMPH_LEVEL_0;
+> +       }
+> +}
+> +
+> +static void cdn_dp_get_adjust_train(struct cdn_dp_device *dp,
+> +                                   uint8_t link_status[DP_LINK_STATUS_SIZE])
+> +{
+> +       int i;
+> +       uint8_t v = 0, p = 0;
+> +       uint8_t preemph_max;
+> +
+> +       for (i = 0; i < dp->link.num_lanes; i++) {
+> +               v = max(v, drm_dp_get_adjust_request_voltage(link_status, i));
+> +               p = max(p, drm_dp_get_adjust_request_pre_emphasis(link_status,
+> +                                                                 i));
+> +       }
+> +
+> +       if (v >= VOLTAGE_LEVEL_2)
+> +               v = VOLTAGE_LEVEL_2 | DP_TRAIN_MAX_SWING_REACHED;
+> +
+> +       preemph_max = cdn_dp_pre_emphasis_max(v);
+> +       if (p >= preemph_max)
+> +               p = preemph_max | DP_TRAIN_MAX_PRE_EMPHASIS_REACHED;
+> +
+> +       for (i = 0; i < dp->link.num_lanes; i++)
+> +               dp->train_set[i] = v | p;
+> +}
+> +
+> +/*
+> + * Pick training pattern for channel equalization. Training Pattern 3 for HBR2
+> + * or 1.2 devices that support it, Training Pattern 2 otherwise.
+> + */
+> +static u32 cdn_dp_select_chaneq_pattern(struct cdn_dp_device *dp)
+> +{
+> +       u32 training_pattern = DP_TRAINING_PATTERN_2;
+> +
+> +       /*
+> +        * cdn dp support HBR2 also support TPS3. TPS3 support is also mandatory
+> +        * for downstream devices that support HBR2. However, not all sinks
+> +        * follow the spec.
+> +        */
+> +       if (drm_dp_tps3_supported(dp->dpcd))
+> +               training_pattern = DP_TRAINING_PATTERN_3;
+> +       else
+> +               DRM_DEBUG_KMS("5.4 Gbps link rate without sink TPS3 support\n");
+> +
+> +       return training_pattern;
+> +}
+> +
+> +
+> +static bool cdn_dp_link_max_vswing_reached(struct cdn_dp_device *dp)
+> +{
+> +       int lane;
+> +
+> +       for (lane = 0; lane < dp->link.num_lanes; lane++)
+> +               if ((dp->train_set[lane] & DP_TRAIN_MAX_SWING_REACHED) == 0)
+> +                       return false;
+> +
+> +       return true;
+> +}
+> +
+> +static int cdn_dp_update_link_train(struct cdn_dp_device *dp)
+> +{
+> +       int ret;
+> +
+> +       cdn_dp_set_signal_levels(dp);
+> +
+> +       ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
+> +                               dp->train_set, dp->link.num_lanes);
+> +       if (ret != dp->link.num_lanes)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+> +static int cdn_dp_set_link_train(struct cdn_dp_device *dp,
+> +                                 uint8_t dp_train_pat)
+> +{
+> +       uint8_t buf[sizeof(dp->train_set) + 1];
+> +       int ret, len;
+> +
+> +       buf[0] = dp_train_pat;
+> +       if ((dp_train_pat & DP_TRAINING_PATTERN_MASK) ==
+> +           DP_TRAINING_PATTERN_DISABLE) {
+> +               /* don't write DP_TRAINING_LANEx_SET on disable */
+> +               len = 1;
+> +       } else {
+> +               /* DP_TRAINING_LANEx_SET follow DP_TRAINING_PATTERN_SET */
+> +               memcpy(buf + 1, dp->train_set, dp->link.num_lanes);
+> +               len = dp->link.num_lanes + 1;
+> +       }
+> +
+> +       ret = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_PATTERN_SET,
+> +                               buf, len);
+> +       if (ret != len)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+> +static int cdn_dp_reset_link_train(struct cdn_dp_device *dp,
+> +                                   uint8_t dp_train_pat)
+> +{
+> +       int ret;
+> +
+> +       memset(dp->train_set, 0, sizeof(dp->train_set));
+> +
+> +       cdn_dp_set_signal_levels(dp);
+> +
+> +       ret = cdn_dp_set_pattern(dp, dp_train_pat);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return cdn_dp_set_link_train(dp, dp_train_pat);
+> +}
+> +
+> +/* Enable corresponding port and start training pattern 1 */
+> +static int cdn_dp_link_training_clock_recovery(struct cdn_dp_device *dp)
+> +{
+> +       u8 voltage, link_config[2];
+> +       u8 link_status[DP_LINK_STATUS_SIZE];
+> +       u32 voltage_tries, max_vswing_tries;
+> +       u32 rate, sink_max, source_max;
+> +       int ret;
+> +
+> +       source_max = dp->lanes;
+> +       sink_max = drm_dp_max_lane_count(dp->dpcd);
+> +       dp->link.num_lanes = min(source_max, sink_max);
+> +
+> +       source_max = drm_dp_bw_code_to_link_rate(CDN_DP_MAX_LINK_RATE);
+> +       sink_max = drm_dp_max_link_rate(dp->dpcd);
+> +       rate = min(source_max, sink_max);
+> +       dp->link.rate = drm_dp_link_rate_to_bw_code(rate);
+> +
+> +       /* Write the link configuration data */
+> +       link_config[0] = dp->link.rate;
+> +       link_config[1] = dp->link.num_lanes;
+> +       if (drm_dp_enhanced_frame_cap(dp->dpcd))
+> +               link_config[1] |= DP_LANE_COUNT_ENHANCED_FRAME_EN;
+> +       drm_dp_dpcd_write(&dp->aux, DP_LINK_BW_SET, link_config, 2);
+> +
+> +       link_config[0] = 0;
+> +       link_config[1] = 0;
+> +       if (dp->dpcd[DP_MAIN_LINK_CHANNEL_CODING] & 0x01)
+> +               link_config[1] = DP_SET_ANSI_8B10B;
+> +
+> +       drm_dp_dpcd_write(&dp->aux, DP_DOWNSPREAD_CTRL, link_config, 2);
+> +
+> +       /* clock recovery */
+> +       ret = cdn_dp_reset_link_train(dp, DP_TRAINING_PATTERN_1 |
+> +                                         DP_LINK_SCRAMBLING_DISABLE);
+> +       if (ret) {
+> +               DRM_ERROR("failed to start link train\n");
+> +               return ret;
+> +       }
+> +
+> +       voltage_tries = 1;
+> +       max_vswing_tries = 0;
+> +       for (;;) {
+> +               drm_dp_link_train_clock_recovery_delay(dp->dpcd);
+> +               if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
+> +                   DP_LINK_STATUS_SIZE) {
+> +                       DRM_ERROR("failed to get link status\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if (drm_dp_clock_recovery_ok(link_status, dp->link.num_lanes)) {
+> +                       DRM_DEBUG_KMS("clock recovery OK\n");
+> +                       return 0;
+> +               }
+> +
+> +               if (voltage_tries >= 5) {
+> +                       DRM_DEBUG_KMS("Same voltage tried 5 times\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if (max_vswing_tries >= 1) {
+> +                       DRM_DEBUG_KMS("Max Voltage Swing reached\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               voltage = dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK;
+> +
+> +               /* Update training set as requested by target */
+> +               cdn_dp_get_adjust_train(dp, link_status);
+> +               if (cdn_dp_update_link_train(dp)) {
+> +                       DRM_ERROR("failed to update link training\n");
+> +                       return -EINVAL;
+> +               }
+> +
+> +               if ((dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK) ==
+> +                   voltage)
+> +                       ++voltage_tries;
+> +               else
+> +                       voltage_tries = 1;
+> +
+> +               if (cdn_dp_link_max_vswing_reached(dp))
+> +                       ++max_vswing_tries;
+> +       }
+> +}
+> +
+> +static int cdn_dp_link_training_channel_equalization(struct cdn_dp_device *dp)
+> +{
+> +       int tries, ret;
+> +       u32 training_pattern;
+> +       uint8_t link_status[DP_LINK_STATUS_SIZE];
+> +
+> +       training_pattern = cdn_dp_select_chaneq_pattern(dp);
+> +       training_pattern |= DP_LINK_SCRAMBLING_DISABLE;
+> +
+> +       ret = cdn_dp_set_pattern(dp, training_pattern);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = cdn_dp_set_link_train(dp, training_pattern);
+> +       if (ret) {
+> +               DRM_ERROR("failed to start channel equalization\n");
+> +               return ret;
+> +       }
+> +
+> +       for (tries = 0; tries < 5; tries++) {
+> +               drm_dp_link_train_channel_eq_delay(dp->dpcd);
+> +               if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
+> +                   DP_LINK_STATUS_SIZE) {
+> +                       DRM_ERROR("failed to get link status\n");
+> +                       break;
+> +               }
+> +
+> +               /* Make sure clock is still ok */
+> +               if (!drm_dp_clock_recovery_ok(link_status, dp->link.num_lanes)) {
+> +                       DRM_DEBUG_KMS("Clock recovery check failed, cannot "
+> +                                     "continue channel equalization\n");
+> +                       break;
+> +               }
+> +
+> +               if (drm_dp_channel_eq_ok(link_status,  dp->link.num_lanes)) {
+> +                       DRM_DEBUG_KMS("Channel EQ done. DP Training "
+> +                                     "successful\n");
+> +                       return 0;
+> +               }
+> +
+> +               /* Update training set as requested by target */
+> +               cdn_dp_get_adjust_train(dp, link_status);
+> +               if (cdn_dp_update_link_train(dp)) {
+> +                       DRM_ERROR("failed to update link training\n");
+> +                       break;
+> +               }
+> +       }
+> +
+> +       /* Try 5 times, else fail and try at lower BW */
+> +       if (tries == 5)
+> +               DRM_DEBUG_KMS("Channel equalization failed 5 times\n");
+> +
+> +       return -EINVAL;
+> +
+> +}
+> +
+> +static int cdn_dp_stop_link_train(struct cdn_dp_device *dp)
+> +{
+> +       int ret = cdn_dp_set_pattern(dp, DP_TRAINING_PATTERN_DISABLE);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       return cdn_dp_set_link_train(dp, DP_TRAINING_PATTERN_DISABLE);
+> +}
+> +
+> +int cdn_dp_software_train_link(struct cdn_dp_device *dp)
+> +{
+> +       int ret, stop_err;
+> +
 > +       ret = drm_dp_dpcd_read(&dp->aux, DP_DPCD_REV, dp->dpcd,
 > +                              sizeof(dp->dpcd));
 > +       if (ret < 0) {
->                 DRM_DEV_ERROR(dp->dev, "Failed to get caps %d\n", ret);
->                 return ret;
->         }
-> @@ -582,8 +582,8 @@ static bool cdn_dp_check_link_status(struct cdn_dp_device *dp)
->         if (!port || !dp->link.rate || !dp->link.num_lanes)
->                 return false;
->
-> -       if (cdn_dp_dpcd_read(dp, DP_LANE0_1_STATUS, link_status,
-> -                            DP_LINK_STATUS_SIZE)) {
-> +       if (drm_dp_dpcd_read_link_status(&dp->aux, link_status) !=
-> +           DP_LINK_STATUS_SIZE) {
->                 DRM_ERROR("Failed to get link status\n");
->                 return false;
->         }
-> @@ -1012,6 +1012,40 @@ static int cdn_dp_pd_event(struct notifier_block *nb,
->         return NOTIFY_DONE;
->  }
->
-> +static ssize_t cdn_dp_aux_transfer(struct drm_dp_aux *aux,
-> +                                  struct drm_dp_aux_msg *msg)
-> +{
-> +       struct cdn_dp_device *dp = container_of(aux, struct cdn_dp_device, aux);
-> +       int ret;
-> +       u8 status;
-> +
-> +       switch (msg->request & ~DP_AUX_I2C_MOT) {
-> +       case DP_AUX_NATIVE_WRITE:
-> +       case DP_AUX_I2C_WRITE:
-> +       case DP_AUX_I2C_WRITE_STATUS_UPDATE:
-> +               ret = cdn_dp_dpcd_write(dp, msg->address, msg->buffer,
-> +                                       msg->size);
-> +               break;
-> +       case DP_AUX_NATIVE_READ:
-> +       case DP_AUX_I2C_READ:
-> +               ret = cdn_dp_dpcd_read(dp, msg->address, msg->buffer,
-> +                                      msg->size);
-> +               break;
-> +       default:
-> +               return -EINVAL;
+> +               DRM_DEV_ERROR(dp->dev, "Failed to get caps %d\n", ret);
+> +               return ret;
 > +       }
 > +
-> +       status = cdn_dp_get_aux_status(dp);
-> +       if (status == AUX_STAUS_ACK)
-> +               msg->reply = DP_AUX_NATIVE_REPLY_ACK;
-> +       else if (status == AUX_STAUS_NACK)
-> +               msg->reply = DP_AUX_NATIVE_REPLY_NACK;
-> +       else if (status == AUX_STAUS_DEFER)
-> +               msg->reply = DP_AUX_NATIVE_REPLY_DEFER;
+> +       ret = cdn_dp_link_training_clock_recovery(dp);
+> +       if (ret) {
+> +               DRM_ERROR("training clock recovery fail, error: %d\n", ret);
+> +               goto out;
+> +       }
 > +
-
-I think that you would mean STATUS instead of STAUS on these defines.
-
-What happens if the status is AUX_STATUS_SINK_ERROR or AUX_STATUS_BUS_ERROR?
-
+> +       ret = cdn_dp_link_training_channel_equalization(dp);
+> +       if (ret) {
+> +               DRM_ERROR("training channel equalization fail, error: %d\n",
+> +                         ret);
+> +               goto out;
+> +       }
+> +out:
+> +       stop_err = cdn_dp_stop_link_train(dp);
+> +       if (stop_err) {
+> +               DRM_ERROR("stop training fail, error: %d\n", stop_err);
+> +               return stop_err;
+> +       }
+> +
 > +       return ret;
 > +}
-> +
->  static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->  {
->         struct cdn_dp_device *dp = dev_get_drvdata(dev);
-> @@ -1030,6 +1064,13 @@ static int cdn_dp_bind(struct device *dev, struct device *master, void *data)
->         dp->active = false;
->         dp->active_port = -1;
->         dp->fw_loaded = false;
-> +       dp->aux.name = "DP-AUX";
-> +       dp->aux.transfer = cdn_dp_aux_transfer;
-> +       dp->aux.dev = dev;
-> +
-> +       ret = drm_dp_aux_register(&dp->aux);
-> +       if (ret)
-> +               return ret;
->
->         INIT_WORK(&dp->event_work, cdn_dp_pd_event_work);
->
-> diff --git a/drivers/gpu/drm/rockchip/cdn-dp-core.h b/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> index f57e296..46159b2 100644
-> --- a/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> +++ b/drivers/gpu/drm/rockchip/cdn-dp-core.h
-> @@ -78,6 +78,7 @@ struct cdn_dp_device {
->         struct platform_device *audio_pdev;
->         struct work_struct event_work;
->         struct edid *edid;
-> +       struct drm_dp_aux aux;
->
->         struct mutex lock;
->         bool connected;
 > diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> index eb3042c..b2f532a 100644
+> index b2f532a..72780f1 100644
 > --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
 > +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
-> @@ -221,7 +221,11 @@ static int cdn_dp_reg_write_bit(struct cdn_dp_device *dp, u16 addr,
->                                    sizeof(field), field);
+> @@ -17,7 +17,9 @@
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+>  #include <linux/iopoll.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/reset.h>
+> +#include <soc/rockchip/rockchip_phy_typec.h>
+>
+>  #include "cdn-dp-core.h"
+>  #include "cdn-dp-reg.h"
+> @@ -189,7 +191,7 @@ static int cdn_dp_mailbox_send(struct cdn_dp_device *dp, u8 module_id,
+>         return 0;
 >  }
 >
-> -int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
-> +/*
-> + * Returns the number of bytes transferred on success, or a negative error
-> + * code on failure. -ETIMEDOUT is returned if mailbox message not send success;
-> + */
-
-Returns the number of bytes or -ETIMEDOUT, no other negative errors
-can be returned, right?
-
-I am not English native but the last phrase sounds incorrect to me,
-I'd rephrase it: (open to suggestions)
-
- -ETIMEDOUT if fails to receive the mailbox message.
-
-> +ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+> -static int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val)
+> +int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val)
 >  {
->         u8 msg[5], reg[5];
->         int ret;
-> @@ -247,24 +251,40 @@ int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
->                 goto err_dpcd_read;
+>         u8 msg[6];
 >
->         ret = cdn_dp_mailbox_read_receive(dp, data, len);
-> +       if (!ret)
-> +               return len;
->
->  err_dpcd_read:
-> +       DRM_DEV_ERROR(dp->dev, "dpcd read failed: %d\n", ret);
->         return ret;
->  }
->
-> -int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
-> +#define CDN_AUX_HEADER_SIZE    5
-> +#define CDN_AUX_MSG_SIZE       20
-> +/*
-> + * Returns the number of bytes transferred on success, or a negative error
-> + * code on failure. -ETIMEDOUT is returned if mailbox message not send success;
-
-Same as above. Sounds incorrect to me.
-
-> + * -EINVAL is return if get the wrong data size after message send.
-
-Same here.
-
-> + */
-> +ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len)
+> @@ -605,22 +607,41 @@ static int cdn_dp_get_training_status(struct cdn_dp_device *dp)
+>  int cdn_dp_train_link(struct cdn_dp_device *dp)
 >  {
-> -       u8 msg[6], reg[5];
-> +       u8 msg[CDN_AUX_MSG_SIZE + CDN_AUX_HEADER_SIZE];
-> +       u8 reg[CDN_AUX_HEADER_SIZE];
 >         int ret;
+> +       struct cdn_dp_port *port = dp->port[dp->active_port];
+> +       struct rockchip_typec_phy *tcphy = phy_get_drvdata(port->phy);
 >
-> -       msg[0] = 0;
-> -       msg[1] = 1;
-> +       if (WARN_ON(len > CDN_AUX_MSG_SIZE) || WARN_ON(len <= 0))
-> +               return -EINVAL;
-> +
-> +       msg[0] = (len >> 8) & 0xff;
-> +       msg[1] = len & 0xff;
->         msg[2] = (addr >> 16) & 0xff;
->         msg[3] = (addr >> 8) & 0xff;
->         msg[4] = addr & 0xff;
-> -       msg[5] = value;
-> +
-> +       memcpy(msg + CDN_AUX_HEADER_SIZE, data, len);
-> +
->         ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX, DPTX_WRITE_DPCD,
-> -                                 sizeof(msg), msg);
-> +                                 CDN_AUX_HEADER_SIZE + len, msg);
->         if (ret)
->                 goto err_dpcd_write;
->
-> @@ -277,8 +297,12 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
->         if (ret)
->                 goto err_dpcd_write;
->
-> -       if (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))
-> +       if ((len != (reg[0] << 8 | reg[1])) ||
-> +           (addr != (reg[2] << 16 | reg[3] << 8 | reg[4]))) {
->                 ret = -EINVAL;
-> +       } else {
-> +               return len;
+> +       /*
+> +        * DP firmware uses fixed phy config values to do training, but some
+> +        * boards need to adjust these values to fit for their unique hardware
+> +        * design. So if the phy is using custom config values, do software
+> +        * link training instead of relying on firmware, if software training
+> +        * fail, keep firmware training as a fallback if sw training fails.
+> +        */
+> +       if (tcphy->need_software_training) {
+> +               ret = cdn_dp_software_train_link(dp);
+> +               if (ret) {
+> +                       DRM_DEV_ERROR(dp->dev,
+> +                               "Failed to do software training %d\n", ret);
+> +                       goto do_fw_training;
+> +               }
+> +               cdn_dp_reg_write(dp, SOURCE_HDTX_CAR, 0xf);
+
+Check for an error here and act accordingly? Or doesn't matter?
+
+> +               dp->sw_training_success = true;
+> +               return 0;
 > +       }
->
->  err_dpcd_write:
->         if (ret)
-> @@ -286,6 +310,32 @@ int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value)
->         return ret;
+> +
+
+nit: Personally I don't like this goto. Maybe you can refactor this.
+
+       if (tcphy->need_software_training) {
+               ret = cdn_dp_software_train_link(dp);
+               if (!ret) {
+                       cdn_dp_reg_write(dp, SOURCE_HDTX_CAR, 0xf);
+                       dp->sw_training_success = true;
+                       return 0;
+               }
+               DRM_DEV_ERROR(dp->dev, "Failed to do software training
+%d\n", ret);
+       }
+
+> +do_fw_training:
+
+Then remove the goto label.
+
+> +       dp->sw_training_success = false;
+>         ret = cdn_dp_training_start(dp);
+>         if (ret) {
+>                 DRM_DEV_ERROR(dp->dev, "Failed to start training %d\n", ret);
+>                 return ret;
+>         }
+> -
+
+Do not remove the new line.
+
+>         ret = cdn_dp_get_training_status(dp);
+>         if (ret) {
+>                 DRM_DEV_ERROR(dp->dev, "Failed to get training stat %d\n", ret);
+>                 return ret;
+>         }
+> -
+> -       DRM_DEV_DEBUG_KMS(dp->dev, "rate:0x%x, lanes:%d\n", dp->link.rate,
+> -                         dp->link.num_lanes);
+
+Why you remove this debug message?
+
+> -       return ret;
+> +       return 0;
 >  }
 >
-> +int cdn_dp_get_aux_status(struct cdn_dp_device *dp)
-> +{
-> +       u8 status;
-> +       int ret;
-> +
-> +       ret = cdn_dp_mailbox_send(dp, MB_MODULE_ID_DP_TX, DPTX_GET_LAST_AUX_STAUS,
-> +                                 0, NULL);
-> +       if (ret)
-> +               goto err_get_hpd;
-> +
-> +       ret = cdn_dp_mailbox_validate_receive(dp, MB_MODULE_ID_DP_TX,
-> +                                             DPTX_GET_LAST_AUX_STAUS, sizeof(status));
-> +       if (ret)
-> +               goto err_get_hpd;
-> +
-> +       ret = cdn_dp_mailbox_read_receive(dp, &status, sizeof(status));
-> +       if (ret)
-> +               goto err_get_hpd;
-> +
-> +       return status;
-> +
-> +err_get_hpd:
-> +       DRM_DEV_ERROR(dp->dev, "get aux status failed: %d\n", ret);
-> +       return ret;
-> +}
-> +
->  int cdn_dp_load_firmware(struct cdn_dp_device *dp, const u32 *i_mem,
->                          u32 i_size, const u32 *d_mem, u32 d_size)
->  {
+>  int cdn_dp_set_video_status(struct cdn_dp_device *dp, int active)
 > diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.h b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> index c4bbb4a83..aedf2dc 100644
+> index aedf2dc..b60a6b2 100644
 > --- a/drivers/gpu/drm/rockchip/cdn-dp-reg.h
 > +++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.h
-> @@ -328,6 +328,13 @@
->  #define GENERAL_BUS_SETTINGS            0x03
->  #define GENERAL_TEST_ACCESS             0x04
+> @@ -137,7 +137,7 @@
+>  #define HPD_EVENT_MASK                 0x211c
+>  #define HPD_EVENT_DET                  0x2120
 >
-> +/* AUX status*/
-> +#define AUX_STAUS_ACK                  0
-> +#define AUX_STAUS_NACK                 1
-> +#define AUX_STAUS_DEFER                        2
-> +#define AUX_STAUS_SINK_ERROR           3
-> +#define AUX_STAUS_BUS_ERROR            4
+> -/* dpyx framer addr */
+> +/* dptx framer addr */
+>  #define DP_FRAMER_GLOBAL_CONFIG                0x2200
+>  #define DP_SW_RESET                    0x2204
+>  #define DP_FRAMER_TU                   0x2208
+> @@ -431,6 +431,40 @@
+>  /* Reference cycles when using lane clock as reference */
+>  #define LANE_REF_CYC                           0x8000
+>
+> +/* register CM_VID_CTRL */
+> +#define LANE_VID_REF_CYC(x)                    (((x) & (BIT(24) - 1)) << 0)
+> +#define NMVID_MEAS_TOLERANCE(x)                        (((x) & 0xf) << 24)
+> +
+> +/* register DP_TX_PHY_CONFIG_REG */
+> +#define DP_TX_PHY_TRAINING_ENABLE(x)           ((x) & 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_PRBS7          (0 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS1           (1 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS2           (2 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS3           (3 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_TPS4           (4 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_PLTPAT         (5 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_D10_2          (6 << 1)
+> +#define DP_TX_PHY_TRAINING_TYPE_HBR2CPAT       (8 << 1)
+> +#define DP_TX_PHY_TRAINING_PATTERN(x)          ((x) << 1)
+> +#define DP_TX_PHY_SCRAMBLER_BYPASS(x)          (((x) & 1) << 5)
+> +#define DP_TX_PHY_ENCODER_BYPASS(x)            (((x) & 1) << 6)
+> +#define DP_TX_PHY_SKEW_BYPASS(x)               (((x) & 1) << 7)
+> +#define DP_TX_PHY_DISPARITY_RST(x)             (((x) & 1) << 8)
+> +#define DP_TX_PHY_LANE0_SKEW(x)                (((x) & 7) << 9)
+> +#define DP_TX_PHY_LANE1_SKEW(x)                (((x) & 7) << 12)
+> +#define DP_TX_PHY_LANE2_SKEW(x)                (((x) & 7) << 15)
+> +#define DP_TX_PHY_LANE3_SKEW(x)                (((x) & 7) << 18)
+> +#define DP_TX_PHY_10BIT_ENABLE(x)              (((x) & 1) << 21)
+> +
+> +/* register DP_FRAMER_GLOBAL_CONFIG */
+> +#define NUM_LANES(x)           ((x) & 3)
+> +#define SST_MODE               (0 << 2)
+> +#define GLOBAL_EN              (1 << 3)
+> +#define RG_EN                  (0 << 4)
+> +#define NO_VIDEO               (1 << 5)
+> +#define ENC_RST_DIS            (1 << 6)
+> +#define WR_VHSYNC_FALL         (1 << 7)
 > +
 
-For the five defines, s/STAUS/STATUS/
+Use the BIT() macros for these.
 
->  #define DPTX_SET_POWER_MNG                     0x00
->  #define DPTX_SET_HOST_CAPABILITIES             0x01
->  #define DPTX_GET_EDID                          0x02
-> @@ -469,8 +476,11 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
+>  enum voltage_swing_level {
+>         VOLTAGE_LEVEL_0,
+>         VOLTAGE_LEVEL_1,
+> @@ -476,6 +510,7 @@ int cdn_dp_set_host_cap(struct cdn_dp_device *dp, u8 lanes, bool flip);
 >  int cdn_dp_event_config(struct cdn_dp_device *dp);
 >  u32 cdn_dp_get_event(struct cdn_dp_device *dp);
 >  int cdn_dp_get_hpd_status(struct cdn_dp_device *dp);
-> -int cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr, u8 value);
-> -int cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr, u8 *data, u16 len);
-> +ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
-> +                         u8 *data, u16 len);
-> +ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
-> +                        u8 *data, u16 len);
-> +int cdn_dp_get_aux_status(struct cdn_dp_device *dp);
->  int cdn_dp_get_edid_block(void *dp, u8 *edid,
->                           unsigned int block, size_t length);
->  int cdn_dp_train_link(struct cdn_dp_device *dp);
+> +int cdn_dp_reg_write(struct cdn_dp_device *dp, u16 addr, u32 val);
+>  ssize_t cdn_dp_dpcd_write(struct cdn_dp_device *dp, u32 addr,
+>                           u8 *data, u16 len);
+>  ssize_t cdn_dp_dpcd_read(struct cdn_dp_device *dp, u32 addr,
+> @@ -489,4 +524,5 @@ int cdn_dp_config_video(struct cdn_dp_device *dp);
+>  int cdn_dp_audio_stop(struct cdn_dp_device *dp, struct audio_info *audio);
+>  int cdn_dp_audio_mute(struct cdn_dp_device *dp, bool enable);
+>  int cdn_dp_audio_config(struct cdn_dp_device *dp, struct audio_info *audio);
+> +int cdn_dp_software_train_link(struct cdn_dp_device *dp);
+>  #endif /* _CDN_DP_REG_H */
 > --
 > 2.7.4
 >
->
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
