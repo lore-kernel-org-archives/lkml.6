@@ -1,124 +1,198 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751919AbeEGBmi (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 21:42:38 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42211 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751444AbeEGBmg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 21:42:36 -0400
-X-Google-Smtp-Source: AB8JxZqc0zg+SrnYZWYomDIVHQm4+d6HIUmZ0jbI+wEWfHW33KmJ8YrMEy4CzIEbDCDzJbONQy7NRw==
-Date: Mon, 7 May 2018 09:42:31 +0800
-From: YU Bo <tsu.yubo@gmail.com>
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>, Armin Schindler <mac@melware.de>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        "open list:ISDN SUBSYSTEM" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] isdn: eicon: fix a missing-check bug
-Message-ID: <20180507014230.5wquwxjoeztuv2k5@debian.debian>
-Mail-Followup-To: Wenwen Wang <wang6495@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
-        Armin Schindler <mac@melware.de>,
-        Karsten Keil <isdn@linux-pingi.de>,
-        "open list:ISDN SUBSYSTEM" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1525548766-13017-1-git-send-email-wang6495@umn.edu>
+        id S1751899AbeEGCAv (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 22:00:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7229 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751781AbeEGCAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 22:00:49 -0400
+From: Jason Yan <yanaijie@huawei.com>
+To: <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>,
+        <dan.j.williams@intel.com>, Jason Yan <yanaijie@huawei.com>
+Subject: [PATCH-next] scsi: libsas: dynamically allocate and free ata host
+Date: Mon, 7 May 2018 10:11:12 +0800
+Message-ID: <20180507021112.29036-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.13.6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1525548766-13017-1-git-send-email-wang6495@umn.edu>
-User-Agent: NeoMutt/20180323-232-a7e428-dirty
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-I am just notice your subject line.There are missing something i think
-On Sat, May 05, 2018 at 02:32:46PM -0500, Wenwen Wang wrote:
->In divasmain.c, the function divas_write() firstly invokes the function
->diva_xdi_open_adapter() to open the adapter that matches with the adapter
->number provided by the user, and then invokes the function diva_xdi_write()
->to perform the write operation using the matched adapter. The two functions
->diva_xdi_open_adapter() and diva_xdi_write() are located in diva.c.
->
->In diva_xdi_open_adapter(), the user command is copied to the object 'msg'
->from the userspace pointer 'src' through the function pointer 'cp_fn',
->which eventually calls copy_from_user() to do the copy. Then, the adapter
->number 'msg.adapter' is used to find out a matched adapter from the
->'adapter_queue'. A matched adapter will be returned if it is found.
->Otherwise, NULL is returned to indicate the failure of the verification on
->the adapter number.
->
->As mentioned above, if a matched adapter is returned, the function
->diva_xdi_write() is invoked to perform the write operation. In this
->function, the user command is copied once again from the userspace pointer
->'src', which is the same as the 'src' pointer in diva_xdi_open_adapter() as
->both of them are from the 'buf' pointer in divas_write(). Similarly, the
->copy is achieved through the function pointer 'cp_fn', which finally calls
->copy_from_user(). After the successful copy, the corresponding command
->processing handler of the matched adapter is invoked to perform the write
->operation.
->
->It is obvious that there are two copies here from userspace, one is in
->diva_xdi_open_adapter(), and one is in diva_xdi_write(). Plus, both of
->these two copies share the same source userspace pointer, i.e., the 'buf'
->pointer in divas_write(). Given that a malicious userspace process can race
->to change the content pointed by the 'buf' pointer, this can pose potential
->security issues. For example, in the first copy, the user provides a valid
->adapter number to pass the verification process and a valid adapter can be
->found. Then the user can modify the adapter number to an invalid number.
->This way, the user can bypass the verification process of the adapter
->number and inject inconsistent data.
->
->To avoid such issues, this patch adds a check after the second copy in the
->function diva_xdi_write(). If the adapter number is not equal to the one
->obtained in the first copy, (-4) will be returned to divas_write(), which
->will then return an error code -EINVAL.
->
->Signed-off-by: Wenwen Wang <wang6495@umn.edu>
->---
-> drivers/isdn/hardware/eicon/diva.c      | 6 +++++-
-> drivers/isdn/hardware/eicon/divasmain.c | 3 +++
-> 2 files changed, 8 insertions(+), 1 deletion(-)
->
->diff --git a/drivers/isdn/hardware/eicon/diva.c b/drivers/isdn/hardware/eicon/diva.c
->index 944a7f3..46cbf76 100644
->--- a/drivers/isdn/hardware/eicon/diva.c
->+++ b/drivers/isdn/hardware/eicon/diva.c
->@@ -440,6 +440,7 @@ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
-> 	       int length, divas_xdi_copy_from_user_fn_t cp_fn)
-> {
-> 	diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
->+	diva_xdi_um_cfg_cmd_t *p;
-> 	void *data;
->
-> 	if (a->xdi_mbox.status & DIVA_XDI_MBOX_BUSY) {
->@@ -461,7 +462,10 @@ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
->
-> 	length = (*cp_fn) (os_handle, data, src, length);
-> 	if (length > 0) {
->-		if ((*(a->interface.cmd_proc))
->+		p = (diva_xdi_um_cfg_cmd_t *) data;
->+		if (a->controller != (int)p->adapter) {
->+			length = -4;
->+		} else if ((*(a->interface.cmd_proc))
-> 		    (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
-> 			length = -3;
-> 		}
->diff --git a/drivers/isdn/hardware/eicon/divasmain.c b/drivers/isdn/hardware/eicon/divasmain.c
->index b9980e8..a03c658 100644
->--- a/drivers/isdn/hardware/eicon/divasmain.c
->+++ b/drivers/isdn/hardware/eicon/divasmain.c
->@@ -614,6 +614,9 @@ static ssize_t divas_write(struct file *file, const char __user *buf,
-> 	case -3:
-> 		ret = -ENXIO;
-> 		break;
->+	case -4:
->+		ret = -EINVAL;
->+		break;
-> 	}
-> 	DBG_TRC(("write: ret %d", ret));
-> 	return (ret);
->--
->2.7.4
->
+Now the ata host for libsas is embedded in domain_device, and the ->kref
+member is not initialized. Afer we add ata transport class,
+ata_host_get() will be called when adding transport ATA port and a
+warning will be triggered as below:
+
+refcount_t: increment on 0; use-after-free.
+WARNING: CPU: 2 PID: 103 at lib/refcount.c:153 refcount_inc+0x40/0x48
+......
+Call trace:
+ refcount_inc+0x40/0x48
+ ata_host_get+0x10/0x18
+ ata_tport_add+0x40/0x120
+ ata_sas_tport_add+0xc/0x14
+ sas_ata_init+0x7c/0xc8
+ sas_discover_domain+0x380/0x53c
+ process_one_work+0x12c/0x288
+ worker_thread+0x58/0x3f0
+ kthread+0xfc/0x128
+ ret_from_fork+0x10/0x18
+
+And also when removing transport ATA port ata_host_put() will be called
+and another similar warning will be triggered. If the refcount decreased
+to zero, the ata host will be freed. But this ata host is only part of
+domain_device, it cannot be freed directly.
+
+So we have to change this embedded static ata host to a dynamically
+allocated ata host and initialize the ->kref member. To use
+ata_host_get() and ata_host_put() in libsas, we need to move the
+declaration of these functions to the public libata.h.
+
+Fixes: b6240a4df018 ("scsi: libsas: add transport class for ATA devices")
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
+CC: John Garry <john.garry@huawei.com>
+---
+ drivers/ata/libata-core.c          |  1 +
+ drivers/ata/libata.h               |  2 --
+ drivers/scsi/libsas/sas_ata.c      | 40 +++++++++++++++++++++++++-------------
+ drivers/scsi/libsas/sas_discover.c |  2 ++
+ include/linux/libata.h             |  2 ++
+ include/scsi/libsas.h              |  2 +-
+ 6 files changed, 32 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 68596bd4cf06..33c2dfbbc02d 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -6424,6 +6424,7 @@ void ata_host_init(struct ata_host *host, struct device *dev,
+ 	host->n_tags = ATA_MAX_QUEUE - 1;
+ 	host->dev = dev;
+ 	host->ops = ops;
++	kref_init(&host->kref);
+ }
+ 
+ void __ata_port_probe(struct ata_port *ap)
+diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
+index 9e21c49cf6be..f953cb4bb1ba 100644
+--- a/drivers/ata/libata.h
++++ b/drivers/ata/libata.h
+@@ -100,8 +100,6 @@ extern int ata_port_probe(struct ata_port *ap);
+ extern void __ata_port_probe(struct ata_port *ap);
+ extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
+ 				      u8 page, void *buf, unsigned int sectors);
+-extern void ata_host_get(struct ata_host *host);
+-extern void ata_host_put(struct ata_host *host);
+ 
+ #define to_ata_port(d) container_of(d, struct ata_port, tdev)
+ 
+diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+index ff1d612f6fb9..41cdda7a926b 100644
+--- a/drivers/scsi/libsas/sas_ata.c
++++ b/drivers/scsi/libsas/sas_ata.c
+@@ -557,34 +557,46 @@ int sas_ata_init(struct domain_device *found_dev)
+ {
+ 	struct sas_ha_struct *ha = found_dev->port->ha;
+ 	struct Scsi_Host *shost = ha->core.shost;
++	struct ata_host *ata_host;
+ 	struct ata_port *ap;
+ 	int rc;
+ 
+-	ata_host_init(&found_dev->sata_dev.ata_host, ha->dev, &sas_sata_ops);
+-	ap = ata_sas_port_alloc(&found_dev->sata_dev.ata_host,
+-				&sata_port_info,
+-				shost);
++	ata_host = kzalloc(sizeof(*ata_host), GFP_KERNEL);
++	if (!ata_host)	{
++		SAS_DPRINTK("ata host alloc failed.\n");
++		return -ENOMEM;
++	}
++
++	ata_host_init(ata_host, ha->dev, &sas_sata_ops);
++
++	ap = ata_sas_port_alloc(ata_host, &sata_port_info, shost);
+ 	if (!ap) {
+ 		SAS_DPRINTK("ata_sas_port_alloc failed.\n");
+-		return -ENODEV;
++		rc = -ENODEV;
++		goto free_host;
+ 	}
+ 
+ 	ap->private_data = found_dev;
+ 	ap->cbl = ATA_CBL_SATA;
+ 	ap->scsi_host = shost;
+ 	rc = ata_sas_port_init(ap);
+-	if (rc) {
+-		ata_sas_port_destroy(ap);
+-		return rc;
+-	}
+-	rc = ata_sas_tport_add(found_dev->sata_dev.ata_host.dev, ap);
+-	if (rc) {
+-		ata_sas_port_destroy(ap);
+-		return rc;
+-	}
++	if (rc)
++		goto destroy_port;
++
++	rc = ata_sas_tport_add(ata_host->dev, ap);
++	if (rc)
++		goto destroy_port;
++
++	found_dev->sata_dev.ata_host = ata_host;
+ 	found_dev->sata_dev.ap = ap;
+ 
+ 	return 0;
++
++destroy_port:
++	ata_sas_port_destroy(ap);
++free_host:
++	ata_host_put(ata_host);
++	return rc;
+ }
+ 
+ void sas_ata_task_abort(struct sas_task *task)
+diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+index 1ffca28fe6a8..0148ae62a52a 100644
+--- a/drivers/scsi/libsas/sas_discover.c
++++ b/drivers/scsi/libsas/sas_discover.c
+@@ -316,6 +316,8 @@ void sas_free_device(struct kref *kref)
+ 	if (dev_is_sata(dev) && dev->sata_dev.ap) {
+ 		ata_sas_tport_delete(dev->sata_dev.ap);
+ 		ata_sas_port_destroy(dev->sata_dev.ap);
++		ata_host_put(dev->sata_dev.ata_host);
++		dev->sata_dev.ata_host = NULL;
+ 		dev->sata_dev.ap = NULL;
+ 	}
+ 
+diff --git a/include/linux/libata.h b/include/linux/libata.h
+index 0619ebf4d475..852cdb2fc692 100644
+--- a/include/linux/libata.h
++++ b/include/linux/libata.h
+@@ -1110,6 +1110,8 @@ extern struct ata_host *ata_host_alloc(struct device *dev, int max_ports);
+ extern struct ata_host *ata_host_alloc_pinfo(struct device *dev,
+ 			const struct ata_port_info * const * ppi, int n_ports);
+ extern int ata_slave_link_init(struct ata_port *ap);
++extern void ata_host_get(struct ata_host *host);
++extern void ata_host_put(struct ata_host *host);
+ extern int ata_host_start(struct ata_host *host);
+ extern int ata_host_register(struct ata_host *host,
+ 			     struct scsi_host_template *sht);
+diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
+index 225ab7783dfd..3de3b10da19a 100644
+--- a/include/scsi/libsas.h
++++ b/include/scsi/libsas.h
+@@ -161,7 +161,7 @@ struct sata_device {
+ 	u8     port_no;        /* port number, if this is a PM (Port) */
+ 
+ 	struct ata_port *ap;
+-	struct ata_host ata_host;
++	struct ata_host *ata_host;
+ 	struct smp_resp rps_resp ____cacheline_aligned; /* report_phy_sata_resp */
+ 	u8     fis[ATA_RESP_FIS_SIZE];
+ };
+-- 
+2.13.6
