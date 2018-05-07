@@ -1,153 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752781AbeEGU1m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:27:42 -0400
-Received: from mail-vk0-f53.google.com ([209.85.213.53]:39120 "EHLO
-        mail-vk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeEGU1k (ORCPT
+        id S1752847AbeEGU22 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:28:28 -0400
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:39149 "EHLO
+        mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752389AbeEGU20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:27:40 -0400
-X-Google-Smtp-Source: AB8JxZqEul9H60sXGFTdOYrZfDhoULR6Aa1myCgMxQ6PCVkKDdcQxkMnQ857PWpH6Es7jct6ZJHgw+MlWs57XBMw1sc=
+        Mon, 7 May 2018 16:28:26 -0400
+X-Google-Smtp-Source: AB8JxZqJzus41ginWn31Ui+NKAoSPfJyTnscmShDtBleWWBQwCeDBIQcbklyVUnHpPaBr0v8EAA18w==
+Date: Mon, 7 May 2018 22:28:22 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To: Mario.Limonciello@dell.com
+Cc: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
+Message-ID: <20180507202822.usgjneo7m35bsait@pali>
+References: <20180124104121.7g3zfay5smc5v2tc@pali>
+ <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
+ <20180506134733.zttaitnf6ej4tith@pali>
+ <20180507084431.r2dipv32wt3vbx3k@pali>
+ <20180507193306.GA31301@dtor-ws>
+ <147aa25ad2d14bad975731a6c9cf9281@ausx13mpc124.AMER.DELL.COM>
+ <20180507200733.s43zd2hfzw4f4wr2@pali>
+ <6825f48ea6da41799979d83ed37adf73@ausx13mpc124.AMER.DELL.COM>
 MIME-Version: 1.0
-In-Reply-To: <20180507201945.GB15604@bombadil.infradead.org>
-References: <CAGXu5j++1TLqGGiTLrU7OvECfBAR6irWNke9u7Rr2i8g6_30QQ@mail.gmail.com>
- <20180505034646.GA20495@bombadil.infradead.org> <CAGXu5jLbbts6Do5JtX8+fij0m=wEZ30W+k9PQAZ_ddOnpuPHZA@mail.gmail.com>
- <20180507113902.GC18116@bombadil.infradead.org> <CAGXu5jKq7uZsDN8qLzKTUC2eVQT2f3ZvVbr8s9oQFeikun9NjA@mail.gmail.com>
- <20180507201945.GB15604@bombadil.infradead.org>
-From: Kees Cook <keescook@google.com>
-Date: Mon, 7 May 2018 13:27:38 -0700
-Message-ID: <CAGXu5jL_vYWs7eKY34ews2pW24fvOqNPybmuugg9ycfR1siOLA@mail.gmail.com>
-Subject: Re: *alloc API changes
-To: Matthew Wilcox <willy@infradead.org>,
-        John Johansen <john.johansen@canonical.com>
-Cc: Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="nuccfinepqjjvuie"
+Content-Disposition: inline
+In-Reply-To: <6825f48ea6da41799979d83ed37adf73@ausx13mpc124.AMER.DELL.COM>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 1:19 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Mon, May 07, 2018 at 09:03:54AM -0700, Kees Cook wrote:
->> On Mon, May 7, 2018 at 4:39 AM, Matthew Wilcox <willy@infradead.org> wrote:
->> > On Fri, May 04, 2018 at 09:24:56PM -0700, Kees Cook wrote:
->> >> On Fri, May 4, 2018 at 8:46 PM, Matthew Wilcox <willy@infradead.org> wrote:
->> >> The only fear I have with the saturating helpers is that we'll end up
->> >> using them in places that don't recognize SIZE_MAX. Like, say:
->> >>
->> >> size = mul(a, b) + 1;
->> >>
->> >> then *poof* size == 0. Now, I'd hope that code would use add(mul(a,
->> >> b), 1), but still... it makes me nervous.
->> >
->> > That's reasonable.  So let's add:
->> >
->> > #define ALLOC_TOO_BIG   (PAGE_SIZE << MAX_ORDER)
->> >
->> > (there's a presumably somewhat obsolete CONFIG_FORCE_MAX_ZONEORDER on some
->> > architectures which allows people to configure MAX_ORDER all the way up
->> > to 64.  That config option needs to go away, or at least be limited to
->> > a much lower value).
->> >
->> > On x86, that's 4k << 11 = 8MB.  On PPC, that might be 64k << 9 == 32MB.
->> > Those values should be relatively immune to further arithmetic causing
->> > an additional overflow.
->>
->> But we can do larger than 8MB allocations with vmalloc, can't we?
->
-> Yes.  And today with kvmalloc.  However, I proposed to Linus that
-> kvmalloc() shouldn't allow it -- we should have kvmalloc_large() which
-> would, but kvmalloc wouldn't.  He liked that idea, so I'm going with it.
 
-How would we handle size calculations for _large?
+--nuccfinepqjjvuie
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> There are very, very few places which should need kvmalloc_large.
-> That's one million 8-byte pointers.  If you need more than that inside
-> the kernel, you're doing something really damn weird and should do
-> something that looks obviously different.
+On Monday 07 May 2018 20:18:30 Mario.Limonciello@dell.com wrote:
+> > > > So I guess you could write a platform driver that would install i80=
+42
+> > > > filter on Dell laptops/portables, monitor keyboard data stream and =
+kick
+> > > > of rescans on serio ports. The problem is filter gets "serio" so yo=
+u do
+> > > > not really know whether ACK is spurious or not. And I would really
+> > > > prefer keeping this crap out of atkbd proper... And all of this is =
+racy
+> > > > as hell. What happens if we get keyboard reconnected as we reinitia=
+lize
+> > > > it?
+> > >
+> > > If it's done as a platform driver I would suspect it's possible to te=
+ll whether
+> > > a dock is connected to at least give you some heuristic here to have =
+a better
+> > > guess whether it's spurious.
+> >=20
+> > Apparently checking for docking station is not enough. There are also
+> > Dell Legacy Extenders (or how it is called) which exports internal PS/2,
+> > Parallel and Serial Ports. It is also connecting to bottom of laptop.
+> > But currently I do not have them for testing.
+> >=20
+> > > Pali on your system that supports this dock, check and see how many
+> > > System Enclosure SMBIOS tables (structure type 03) are present.
+> >=20
+> > Do you mean DMI type 3 structure? Here is something from dmidecode:
+> >=20
+> > Handle 0x0003, DMI type 3, 22 bytes
+> > Chassis Information
+> >         Manufacturer: Dell Inc.
+> >         Type: Laptop
+> >         Lock: Not Present
+> >         Version: Not Specified
+> >         Serial Number: --REMOVED--
+> >         Asset Tag: Not Specified
+> >         Boot-up State: Safe
+> >         Power Supply State: Safe
+> >         Thermal State: Safe
+> >         Security Status: None
+> >         OEM Information: 0x00000000
+> >         Height: Unspecified
+> >         Number Of Power Cords: 1
+> >         Contained Elements: 0
+> >         SKU Number: To be filled by O.E.M.
+> >=20
+> > But probably you mean something different?
+>=20
+> Plug in your dock before you boot up and see if you have a second structu=
+re like
+> that type produced.
 
-I'm CCing John since I remember long ago running into problems loading
-the AppArmor DFA with kmalloc and switching it to kvmalloc. John, how
-large can the DFAs for AppArmor get? Would an 8MB limit be a problem?
+I already started docked laptop via dock power button. And in dmidecode
+output is only one DMI type 3 block.
 
-And do we have any large IO or network buffers >8MB?
+> If not, then I guess this isn't a reliable way to find the dock
+> on that system and I'll have to see if there is another.
 
->> > I don't think it should go in the callers though ... where it goes in
->> > the allocator is up to the allocator maintainers ;-)
->>
->> We need a self-test regardless, so checking that each allocator
->> returns NULL with the saturated value can be done.
->
-> Yes, absolutely.
->
->> >> > I'd rather have a mul_ab(), mul_abc(), mul_ab_add_c(), etc. than nest
->> >> > calls to mult().
->> >>
->> >> Agreed. I think having exactly those would cover almost everything,
->> >> and the two places where a 4-factor product is needed could just nest
->> >> them. (bikeshed: the very common mul_ab() should just be mul(), IMO.)
->> >>
->> >> > Nono, Linus had the better proposal, struct_size(p, member, n).
->> >>
->> >> Oh, yes! I totally missed that in the threads.
->> >
->> > so we're agreed on struct_size().  I think rather than the explicit 'mul',
->> > perhaps we should have array_size() and array3_size().
->>
->> I do like the symmetry there. My earlier "what if someone does +1"
->> continues to scratch at my brain, though I think it's likely
->> unimportant: there's no indication (in the name) that these calls
->> saturate. Will someone ever do something crazy like: array_size(a, b)
->> / array_size(c, d) and they can, effectively, a truncated value (if
->> "a, b" saturated and "c, d" didn't...)?
->
-> Without CPU support for a saturated value, there's no "safe" saturated
-> value.  You can always come up with some arithmetic that will bring it
-> back into the valid range.  All we can do is go "large enough" and hope.
->
->> >> Right, no. I think if we can ditch *calloc() and _array() by using
->> >> saturating helpers, we'll have the API in a much better form:
->> >>
->> >> kmalloc(foo * bar, GFP_KERNEL);
->> >> into
->> >> kmalloc_array(foo, bar, GFP_KERNEL);
->> >> into
->> >> kmalloc(mul(foo, bar), GFP_KERNEL);
->> >
->> > kmalloc(array_size(foo, bar), GFP_KERNEL);
->>
->> I can't come up with a better name. :P When it was "mul()" I was
->> thinking "smul()" for "saturating multiply". sarray_size() seems ...
->> bonkers.
->
-> smul would mean 'signed multiply' to me, having read the GCC manual:
->  -- Built-in Function: bool __builtin_smul_overflow (int a, int b, int *res)
->
-> but I thought of another problem with array_size.  We already have
-> ARRAY_SIZE and it means "the number of elements in the array".
->
-> so ... struct_bytes(), array_bytes(), array3_bytes()?
+Seems not. Also detection of dock should work also when you connect
+laptop at system runtime, not only when connected prior to booting.
 
-Maybe "calc"? struct_calc(), array_calc(), array3_calc()? This has the
-benefit of actually saying more about what it is doing, rather than
-its return value... In the end, I don't care. :)
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
->> > I think we're broadly in agreement here!
->>
->> Do we want addition helpers? (And division and subtraction?)
->
-> Keeping our focus on allocations ... do we have plain additions (as
-> opposed to multiply-and-add?)  And subtraction?
+--nuccfinepqjjvuie
+Content-Type: application/pgp-signature; name="signature.asc"
 
-All I've seen are just rare "weird" cases of lots of mult/add. Some
-are way worse than others:
-http://www.ozlabs.org/~akpm/mmotm/broken-out/exofs-avoid-vla-in-structures.patch
+-----BEGIN PGP SIGNATURE-----
 
-Just having the mult/add saturation would be lovely.
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWvC25AAKCRCL8Mk9A+RD
+UvuUAJ9lDC5yCUZrFXWXvOwFmW9h0q2UFgCgnJMVQVz2xux8mGavOauF9Q8Vlcs=
+=NAGw
+-----END PGP SIGNATURE-----
 
--Kees
-
--- 
-Kees Cook
-Pixel Security
+--nuccfinepqjjvuie--
