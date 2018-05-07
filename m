@@ -1,85 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752668AbeEGOPS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 10:15:18 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:51787 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752622AbeEGOPJ (ORCPT
+        id S1752730AbeEGOWJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 10:22:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752182AbeEGOWC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 10:15:09 -0400
-X-Google-Smtp-Source: AB8JxZrVLnqfaqAmkWRKbRtcYd7WAQ3C6uRuol4WLCmitExZ4AEOZv19FgyuWVxcHQz34f6xUfBtyw==
-Subject: Re: [PATCH] net: 8390: Fix possible data races in __ei_get_stats
-To: Jia-Ju Bai <baijiaju1990@gmail.com>, davem@davemloft.net,
-        fthain@telegraphics.com.au, joe@perches.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180507140809.28847-1-baijiaju1990@gmail.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <e48345b4-fe9f-d267-777b-6a51baba0307@gmail.com>
-Date: Mon, 7 May 2018 07:15:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Mon, 7 May 2018 10:22:02 -0400
+Date: Mon, 7 May 2018 07:23:22 -0700
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: Re: [PATCH 10/18] rcu: rcupdate.h: get rid of Sphinx warnings at
+ rcu_pointer_handoff()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+ <a87d742e81124ddfeaa5b83daf10c91758c1b025.1525684985.git.mchehab+samsung@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20180507140809.28847-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a87d742e81124ddfeaa5b83daf10c91758c1b025.1525684985.git.mchehab+samsung@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18050714-0040-0000-0000-00000427CAEE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008986; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01028842; UDB=6.00525668; IPR=6.00807975;
+ MB=3.00020971; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-07 14:22:00
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050714-0041-0000-0000-0000082DD707
+Message-Id: <20180507142322.GW26088@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805070147
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/07/2018 07:08 AM, Jia-Ju Bai wrote:
-> The write operations to "dev->stats" are protected by 
-> the spinlock on line 862-864, but the read operations to
-> this data on line 858 and 867 are not protected by the spinlock.
-> Thus, there may exist data races for "dev->stats".
+On Mon, May 07, 2018 at 06:35:46AM -0300, Mauro Carvalho Chehab wrote:
+> The code example at rcupdate.h currently produce lots of warnings:
 > 
-> To fix the data races, the read operations to "dev->stats" are 
-> protected by the spinlock, and a local variable is used for return.
+> 	./include/linux/rcupdate.h:572: WARNING: Unexpected indentation.
+> 	./include/linux/rcupdate.h:576: WARNING: Unexpected indentation.
+> 	./include/linux/rcupdate.h:580: WARNING: Block quote ends without a blank line; unexpected unindent.
+> 	./include/linux/rcupdate.h:582: WARNING: Block quote ends without a blank line; unexpected unindent.
+> 	./include/linux/rcupdate.h:582: WARNING: Inline literal start-string without end-string.
 > 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> Change it to a code-block.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+If you don't tell me otherwise, I will assume that you are pushing this.
+If you would rather that I take it, please let me know!
+
+							Thanx, Paul
+
 > ---
->  drivers/net/ethernet/8390/lib8390.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
+>  include/linux/rcupdate.h | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/8390/lib8390.c b/drivers/net/ethernet/8390/lib8390.c
-> index c9c55c9eab9f..198952247d30 100644
-> --- a/drivers/net/ethernet/8390/lib8390.c
-> +++ b/drivers/net/ethernet/8390/lib8390.c
-> @@ -852,19 +852,25 @@ static struct net_device_stats *__ei_get_stats(struct net_device *dev)
->  	unsigned long ioaddr = dev->base_addr;
->  	struct ei_device *ei_local = netdev_priv(dev);
->  	unsigned long flags;
-> +	struct net_device_stats *stats;
-> +
-> +	spin_lock_irqsave(&ei_local->page_lock, flags);
->  
->  	/* If the card is stopped, just return the present stats. */
-> -	if (!netif_running(dev))
-> -		return &dev->stats;
-> +	if (!netif_running(dev)) {
-> +		stats = &dev->stats;
-> +		spin_unlock_irqrestore(&ei_local->page_lock, flags);
-> +		return stats;
-> +	}
->  
-> -	spin_lock_irqsave(&ei_local->page_lock, flags);
->  	/* Read the counter registers, assuming we are in page 0. */
->  	dev->stats.rx_frame_errors  += ei_inb_p(ioaddr + EN0_COUNTER0);
->  	dev->stats.rx_crc_errors    += ei_inb_p(ioaddr + EN0_COUNTER1);
->  	dev->stats.rx_missed_errors += ei_inb_p(ioaddr + EN0_COUNTER2);
-> +	stats = &dev->stats;
->  	spin_unlock_irqrestore(&ei_local->page_lock, flags);
->  
-> -	return &dev->stats;
-> +	return stats;
->  }
->  
->  /*
+> diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+> index 36360d07f25b..c890d10978fa 100644
+> --- a/include/linux/rcupdate.h
+> +++ b/include/linux/rcupdate.h
+> @@ -568,8 +568,8 @@ static inline void rcu_preempt_sleep_check(void) { }
+>   * This is simply an identity function, but it documents where a pointer
+>   * is handed off from RCU to some other synchronization mechanism, for
+>   * example, reference counting or locking.  In C11, it would map to
+> - * kill_dependency().  It could be used as follows:
+> - * ``
+> + * kill_dependency().  It could be used as follows::
+> + *
+>   *	rcu_read_lock();
+>   *	p = rcu_dereference(gp);
+>   *	long_lived = is_long_lived(p);
+> @@ -580,7 +580,6 @@ static inline void rcu_preempt_sleep_check(void) { }
+>   *			p = rcu_pointer_handoff(p);
+>   *	}
+>   *	rcu_read_unlock();
+> - *``
+>   */
+>  #define rcu_pointer_handoff(p) (p)
 > 
-
-dev->stats is not a pointer, it is an array embedded in the 
-struct net_device
-
-So this patch is not needed, since dev->stats can not change.
+> -- 
+> 2.17.0
+> 
