@@ -1,93 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752699AbeEGO24 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 10:28:56 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47685 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752473AbeEGO2y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 10:28:54 -0400
-From: Amelie Delaunay <amelie.delaunay@st.com>
-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Amelie Delaunay <amelie.delaunay@st.com>
-Subject: [PATCH RESEND] phy: stm32: fix usbphyc static checker and checkpatch warnings
-Date: Mon, 7 May 2018 16:28:08 +0200
-Message-ID: <1525703288-26653-1-git-send-email-amelie.delaunay@st.com>
-X-Mailer: git-send-email 2.7.4
+        id S1752606AbeEGOeJ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 10:34:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48246 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751991AbeEGOeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 10:34:06 -0400
+Date: Mon, 7 May 2018 16:33:58 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        peterz@infradead.org, viro@zeniv.linux.org.uk, mingo@kernel.org,
+        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
+        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
+        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
+Message-ID: <20180507143358.GA3071@redhat.com>
+References: <20180502132026.GB16060@cmpxchg.org>
+ <87lgd1zww0.fsf_-_@xmission.com>
+ <20180503133338.GA23401@redhat.com>
+ <87y3h0x0qg.fsf@xmission.com>
+ <20180504142056.GA26151@redhat.com>
+ <87r2mrh4is.fsf@xmission.com>
+ <20180504145435.GA26573@redhat.com>
+ <87y3gzfmjt.fsf@xmission.com>
+ <20180504162209.GB26573@redhat.com>
+ <871serfk77.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.20.5]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_06:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871serfk77.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the following issues:
-* warning reported by checkpatch:
-WARNING: line over 80 characters
-#87: FILE: drivers/phy/st/phy-stm32-usbphyc.c:87:
-+static void stm32_usbphyc_get_pll_params(u32 clk_rate, struct pll_params *pll_params)
+On 05/04, Eric W. Biederman wrote:
+>
+> Oleg Nesterov <oleg@redhat.com> writes:
+>
+> > On 05/04, Eric W. Biederman wrote:
+> >>
+> >> Oleg Nesterov <oleg@redhat.com> writes:
+> >>
+> >> > I'd vote for the change in exec_mmap(). This way mm_init_memcg() can just
+> >> > nullify mm->memcg.
+> >>
+> >> There is at least one common path where we need the memory control group
+> >> properly initialized so memory allocations don't escape the memory
+> >> control group.
+> >>
+> >> do_execveat_common
+> >>    copy_strings
+> >>       get_arg_page
+> >>          get_user_pages_remote
+> >>             __get_user_pages_locked
+> >>                __get_user_pages
+> >>                   faultin_page
+> >>                      handle_mm_fault
+> >>                         count_memcg_event_mm
+> >>                         __handle_mm_fault
+> >>                           handle_pte_fault
+> >>                              do_anonymous_page
+> >>                                 mem_cgroup_try_charge
 
-* bug reported by static checker (Dan Carpenter):
-drivers/phy/st/phy-stm32-usbphyc.c:371 stm32_usbphyc_probe()
-error: uninitialized symbol 'i'.
+Ah yes, indeed.
 
-* unused stm32_usbphyc structure member: bool pll_enabled.
+> mm_init_memcg is at the same point as mm_init_owner.  So my change did
+> not introduce any logic changes on when the memory control group became
+> valid.
 
-* unnecessary extra line in stm32_usbphyc_of_xlate
+Not sure, but perhaps I am all confused....
 
-Fixes: 94c358da3a05 "phy: stm32: add support for STM32 USB PHY Controller (USBPHYC)"
-Signed-off-by: Amelie Delaunay <amelie.delaunay@st.com>
----
- drivers/phy/st/phy-stm32-usbphyc.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+before your patch get_mem_cgroup_from_mm() looks at mm->owner == current
+(in this case) and mem_cgroup_from_task() should return the correct memcg
+even if execing task migrates after bprm_mm_init(). At least in the common
+case when the old mm is not shared.
 
-diff --git a/drivers/phy/st/phy-stm32-usbphyc.c b/drivers/phy/st/phy-stm32-usbphyc.c
-index bc4e78a..1255cd1 100644
---- a/drivers/phy/st/phy-stm32-usbphyc.c
-+++ b/drivers/phy/st/phy-stm32-usbphyc.c
-@@ -71,7 +71,6 @@ struct stm32_usbphyc {
- 	struct stm32_usbphyc_phy **phys;
- 	int nphys;
- 	int switch_setup;
--	bool pll_enabled;
- };
- 
- static inline void stm32_usbphyc_set_bits(void __iomem *reg, u32 bits)
-@@ -84,7 +83,8 @@ static inline void stm32_usbphyc_clr_bits(void __iomem *reg, u32 bits)
- 	writel_relaxed(readl_relaxed(reg) & ~bits, reg);
- }
- 
--static void stm32_usbphyc_get_pll_params(u32 clk_rate, struct pll_params *pll_params)
-+static void stm32_usbphyc_get_pll_params(u32 clk_rate,
-+					 struct pll_params *pll_params)
- {
- 	unsigned long long fvco, ndiv, frac;
- 
-@@ -271,7 +271,6 @@ static struct phy *stm32_usbphyc_of_xlate(struct device *dev,
- 	struct stm32_usbphyc *usbphyc = dev_get_drvdata(dev);
- 	struct stm32_usbphyc_phy *usbphyc_phy = NULL;
- 	struct device_node *phynode = args->np;
--
- 	int port = 0;
- 
- 	for (port = 0; port < usbphyc->nphys; port++) {
-@@ -367,8 +366,8 @@ static int stm32_usbphyc_probe(struct platform_device *pdev)
- 		if (IS_ERR(phy)) {
- 			ret = PTR_ERR(phy);
- 			if (ret != -EPROBE_DEFER)
--				dev_err(dev,
--					"failed to create phy%d: %d\n", i, ret);
-+				dev_err(dev, "failed to create phy%d: %d\n",
-+					port, ret);
- 			goto put_child;
- 		}
- 
--- 
-2.7.4
+After your patch the memory allocations in copy_strings() won't be accounted
+correctly, bprm->mm->memcg is wrong if this task migrates. And iiuc your recent
+"[PATCH 2/2] memcg: Close the race between migration and installing bprm->mm as mm"
+doesn't fix the problem.
+
+No?
+
+Perhaps we can change get_mem_cgroup_from_mm() to use
+mem_cgroup_from_css(current, memory_cgrp_id) if mm->memcg == NULL?
+
+Oleg.
