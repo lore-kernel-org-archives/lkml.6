@@ -1,40 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752047AbeEGLQ6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 07:16:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47928 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751794AbeEGLQ5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 07:16:57 -0400
-Date: Mon, 7 May 2018 04:16:44 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH 2/3] vfs: dedupe: rationalize args
-Message-ID: <20180507111644.GB18116@bombadil.infradead.org>
-References: <20180507082108.28186-1-mszeredi@redhat.com>
- <20180507082108.28186-3-mszeredi@redhat.com>
+        id S1752096AbeEGLRK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 07:17:10 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7232 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752055AbeEGLRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 07:17:05 -0400
+From: Yisheng Xie <xieyisheng1@huawei.com>
+To: <konrad.wilk@oracle.com>, <mingo@kernel.org>, <hch@lst.de>
+CC: <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        Yisheng Xie <xieyisheng1@huawei.com>
+Subject: [PATCH] swiotlb: Update the comment of swiotlb
+Date: Mon, 7 May 2018 19:06:25 +0800
+Message-ID: <1525691185-55657-1-git-send-email-xieyisheng1@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507082108.28186-3-mszeredi@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 10:21:07AM +0200, Miklos Szeredi wrote:
-> @@ -1738,7 +1738,7 @@ struct file_operations {
->  			loff_t, size_t, unsigned int);
->  	int (*clone_file_range)(struct file *, loff_t, struct file *, loff_t,
->  			u64);
-> -	s64 (*dedupe_file_range)(struct file *, u64, u64, struct file *,
-> +	s64 (*dedupe_file_range)(struct file *, loff_t, struct file *, loff_t,
->  			u64);
+swiotlb use physical address of bounce buffer when do map and unmap,
+therefore, related comment should be updated.
 
-Please name the parameters here ...
+Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+---
+ lib/swiotlb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-+	loff_t (*dedupe_file_range)(struct file *src, loff_t src_off,
-+			struct file *dst, loff_t dst_off, loff_t len);
+diff --git a/lib/swiotlb.c b/lib/swiotlb.c
+index fece575..e3d9445 100644
+--- a/lib/swiotlb.c
++++ b/lib/swiotlb.c
+@@ -593,9 +593,8 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+ }
+ 
+ /*
+- * Allocates bounce buffer and returns its kernel virtual address.
++ * Allocates bounce buffer and returns its physical address.
+  */
+-
+ static phys_addr_t
+ map_single(struct device *hwdev, phys_addr_t phys, size_t size,
+ 	   enum dma_data_direction dir, unsigned long attrs)
+@@ -614,7 +613,7 @@ phys_addr_t swiotlb_tbl_map_single(struct device *hwdev,
+ }
+ 
+ /*
+- * dma_addr is the kernel virtual address of the bounce buffer to unmap.
++ * tlb_addr is the physical address of the bounce buffer to unmap.
+  */
+ void swiotlb_tbl_unmap_single(struct device *hwdev, phys_addr_t tlb_addr,
+ 			      size_t size, enum dma_data_direction dir,
+-- 
+1.7.12.4
