@@ -1,150 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752057AbeEGIMO (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:12:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56404 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751988AbeEGIMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:12:09 -0400
-Date: Mon, 7 May 2018 10:12:03 +0200
-From: Jiri Olsa <jolsa@redhat.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, kan.liang@linux.intel.com
-Subject: Re: [PATCH] perf tools: Fix parser for empty pmu terms case
-Message-ID: <20180507081203.GA26443@krava>
-References: <20180425160008.3407-1-acme@kernel.org>
- <20180425160008.3407-6-acme@kernel.org>
- <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
- <20180503103717.GA14776@krava>
- <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
- <20180504160228.GA25229@krava>
- <87a7tdphyo.fsf@linux.intel.com>
- <20180506142830.GA18865@krava>
- <97dc8045-0136-0c9b-8413-1957ceeae5d3@intel.com>
+        id S1752042AbeEGIPQ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:15:16 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:46274 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751900AbeEGIPN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 04:15:13 -0400
+Date: Mon, 7 May 2018 11:14:54 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: kbuild@01.org, Taniya Das <tdas@codeaurora.org>
+Cc: kbuild-all@01.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: Add support for RCG to register for DFS
+Message-ID: <20180507081454.cshoweumy46obmve@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <97dc8045-0136-0c9b-8413-1957ceeae5d3@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <1525320752-15091-1-git-send-email-tdas@codeaurora.org>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8885 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805070085
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 10:21:42AM +0300, Adrian Hunter wrote:
-> On 06/05/18 17:28, Jiri Olsa wrote:
-> > On Sat, May 05, 2018 at 08:43:11PM -0700, Andi Kleen wrote:
-> >> Jiri Olsa <jolsa@redhat.com> writes:
-> >>
-> >> Please fix this quickly, PT is currently totally non functional in Linus
-> >> mainline.
-> > 
-> > attached.. Kan, could you please test it wrt your latest changes?
-> > 
-> > thanks,
-> > jirka
-> > 
-> > 
-> > ---
-> > Adrian reported broken event parsing for Intel PT:
-> > 
-> >   $ perf record -e intel_pt//u uname
-> >   event syntax error: 'intel_pt//u'
-> >                                \___ parser error
-> >   Run 'perf list' for a list of valid events
-> > 
-> > It's caused by recent change in parsing grammar
-> > (see Fixes: for commit).
-> > 
-> > Adding special rule with empty terms config to handle
-> > the reported case and moving the common rule code into
-> > new parse_events_pmu function.
-> 
-> Hi
-> 
-> Can you explain why that is needed instead of just changing the grammar e.g.
+Hi Taniya,
 
-well, for one, mine is working ;-)
+Thank you for the patch! Perhaps something to improve:
 
-[jolsa@krava perf]$ sudo ./perf record -e intel_pt//u uname
-event syntax error: 'intel_pt//u'
-                              \___ parser error
-Run 'perf list' for a list of valid events
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on v4.17-rc3 next-20180503]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
- Usage: perf record [<options>] [<command>]
-    or: perf record [<options>] -- <command> [<options>]
+url:    https://github.com/0day-ci/linux/commits/Taniya-Das/clk-qcom-Add-support-for-RCG-to-register-for-DFS/20180503-220112
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 
-    -e, --event <event>   event selector. use 'perf list' to list available events
+smatch warnings:
+drivers/clk/qcom/clk-rcg2.c:820 clk_parent_index_pre_div_and_mode() warn: signedness bug returning '(-22)'
 
+# https://github.com/0day-ci/linux/commit/ac73368dea3e89ee63025d4da64dd908bcde367e
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout ac73368dea3e89ee63025d4da64dd908bcde367e
+vim +820 drivers/clk/qcom/clk-rcg2.c
 
-but yep, it's better solution.. with extra changes like below
-
-jirka
-
+ac73368d Taniya Das 2018-05-03  809  
+ac73368d Taniya Das 2018-05-03  810  /* Common APIs to be used for DFS based RCGR */
+ac73368d Taniya Das 2018-05-03  811  static u8 clk_parent_index_pre_div_and_mode(struct clk_hw *hw, u32 offset,
+ac73368d Taniya Das 2018-05-03  812  		u32 *mode, u32 *pre_div)
+ac73368d Taniya Das 2018-05-03  813  {
+ac73368d Taniya Das 2018-05-03  814  	struct clk_rcg2 *rcg;
+ac73368d Taniya Das 2018-05-03  815  	int num_parents;
+ac73368d Taniya Das 2018-05-03  816  	u32 cfg, mask;
+ac73368d Taniya Das 2018-05-03  817  	int i, ret;
+ac73368d Taniya Das 2018-05-03  818  
+ac73368d Taniya Das 2018-05-03  819  	if (!hw)
+ac73368d Taniya Das 2018-05-03 @820  		return -EINVAL;
+ac73368d Taniya Das 2018-05-03  821  
+ac73368d Taniya Das 2018-05-03  822  	num_parents = clk_hw_get_num_parents(hw);
+ac73368d Taniya Das 2018-05-03  823  
+ac73368d Taniya Das 2018-05-03  824  	rcg = to_clk_rcg2(hw);
+ac73368d Taniya Das 2018-05-03  825  
+ac73368d Taniya Das 2018-05-03  826  	ret = regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + offset, &cfg);
+ac73368d Taniya Das 2018-05-03  827  	if (ret)
+ac73368d Taniya Das 2018-05-03  828  		goto err;
+ac73368d Taniya Das 2018-05-03  829  
+ac73368d Taniya Das 2018-05-03  830  	mask = BIT(rcg->hid_width) - 1;
+ac73368d Taniya Das 2018-05-03  831  	*pre_div = cfg & mask ? (cfg & mask) : 1;
+ac73368d Taniya Das 2018-05-03  832  
+ac73368d Taniya Das 2018-05-03  833  	*mode = cfg & CFG_MODE_MASK;
+ac73368d Taniya Das 2018-05-03  834  	*mode >>= CFG_MODE_SHIFT;
+ac73368d Taniya Das 2018-05-03  835  
+ac73368d Taniya Das 2018-05-03  836  	cfg &= CFG_SRC_SEL_MASK;
+ac73368d Taniya Das 2018-05-03  837  	cfg >>= CFG_SRC_SEL_SHIFT;
+ac73368d Taniya Das 2018-05-03  838  
+ac73368d Taniya Das 2018-05-03  839  	for (i = 0; i < num_parents; i++)
+ac73368d Taniya Das 2018-05-03  840  		if (cfg == rcg->parent_map[i].cfg)
+ac73368d Taniya Das 2018-05-03  841  			return i;
+ac73368d Taniya Das 2018-05-03  842  err:
+ac73368d Taniya Das 2018-05-03  843  	return 0;
+ac73368d Taniya Das 2018-05-03  844  }
+ac73368d Taniya Das 2018-05-03  845  
 
 ---
-diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-index 47f6399a309a..155d2570274f 100644
---- a/tools/perf/util/parse-events.y
-+++ b/tools/perf/util/parse-events.y
-@@ -73,6 +73,7 @@ static void inc_group_count(struct list_head *list,
- %type <num> value_sym
- %type <head> event_config
- %type <head> opt_event_config
-+%type <head> opt_pmu_config
- %type <term> event_term
- %type <head> event_pmu
- %type <head> event_legacy_symbol
-@@ -224,15 +225,15 @@ event_def: event_pmu |
- 	   event_bpf_file
- 
- event_pmu:
--PE_NAME '/' event_config '/'
-+PE_NAME opt_pmu_config
- {
- 	struct list_head *list, *orig_terms, *terms;
- 
--	if (parse_events_copy_term_list($3, &orig_terms))
-+	if (parse_events_copy_term_list($2, &orig_terms))
- 		YYABORT;
- 
- 	ALLOC_LIST(list);
--	if (parse_events_add_pmu(_parse_state, list, $1, $3, false, false)) {
-+	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
- 		struct perf_pmu *pmu = NULL;
- 		int ok = 0;
- 		char *pattern;
-@@ -262,7 +263,7 @@ PE_NAME '/' event_config '/'
- 		if (!ok)
- 			YYABORT;
- 	}
--	parse_events_terms__delete($3);
-+	parse_events_terms__delete($2);
- 	parse_events_terms__delete(orig_terms);
- 	$$ = list;
- }
-@@ -496,6 +497,17 @@ opt_event_config:
- 	$$ = NULL;
- }
- 
-+opt_pmu_config:
-+'/' event_config '/'
-+{
-+	$$ = $2;
-+}
-+|
-+'/' '/'
-+{
-+	$$ = NULL;
-+}
-+
- start_terms: event_config
- {
- 	struct parse_events_state *parse_state = _parse_state;
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
