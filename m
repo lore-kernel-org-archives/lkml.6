@@ -1,301 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753450AbeEGWWa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 18:22:30 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:56470
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753102AbeEGWVn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 18:21:43 -0400
-x-originating-ip: 107.180.71.197
-From: Long Li <longli@linuxonhyperv.com>
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH 2/7] cifs: smbd: Don't destroy transport on RDMA disconnect
-Date: Mon,  7 May 2018 15:20:01 -0700
-Message-Id: <20180507222006.20781-2-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 2.15.1
-In-Reply-To: <20180507222006.20781-1-longli@linuxonhyperv.com>
-References: <20180507222006.20781-1-longli@linuxonhyperv.com>
-Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfDE2LkTQGKZJStgpKP32b6RCYiKVvIcnB64moYPNwwsKEH3bYrMEczvEadkW6Dt2v2C7XdqzMlGjM7HL99GakPAmJl2v6Hh/msfxicpgSwwbPoS37FhD
- gD1EwMIcr2h9hiUlvsTnkOaWsFWNJb0f0gqbc0aaANFubheqbFHPZ91p91ZqsPto2M94/5KF4f5nSYY8j3MqXJ/qtBt9Aa+ZdRie1aV9GfKoyteKfN0Bbqd0
- CehU/4+8sXAMjlVktNeIF+1rymPrmiHtTk90yf8PoVtUn1OMQskyLnfvAoPQpwdnwP22ILYHgEgw2izxh17gSoNyRcXI8CkInUuw6T1Lc7F15IrNUdZvODS7
- EVV2QOjcyhUYxRYKwUwrbg1XH8D6kzKIAtca4eKSVJLaNwnNkTNQD1R0WW1FBz/VZixsOMtS
+        id S1753468AbeEGWWq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 18:22:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753325AbeEGWVj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 18:21:39 -0400
+Date: Mon, 7 May 2018 17:21:37 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thomas Tai <thomas.tai@oracle.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Subject: Re: [PATCH] PCI/AER: add pcie TLP header information in the
+ tracepoint
+Message-ID: <20180507222136.GD161390@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180402154708.5032-1-thomas.tai@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180402154708.5032-1-thomas.tai@oracle.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+[+cc Steve, Alex]
 
-Now upper layer is handling the transport shutdown and reconnect, remove
-the code that handling transport shutdown on RDMA disconnect.
+On Mon, Apr 02, 2018 at 11:47:08AM -0400, Thomas Tai wrote:
+> When a PCIe AER occurs, the TLP header information is
+> printed in the kernel message but it is missing from
+> the tracepoint. A userspace program can use this information
+> in the tracepoint to better analyze problems.
+> 
+> Example tracepoint output:
+> aer_event: 0000:01:00.0
+> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+> TLP Header={0x0,0x1,0x2,0x3}
+> 
+> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
 
-Signed-off-by: Long Li <longli@microsoft.com>
----
- fs/cifs/cifs_debug.c |   8 ++--
- fs/cifs/smbdirect.c  | 122 ++++-----------------------------------------------
- fs/cifs/smbdirect.h  |   9 ----
- 3 files changed, 11 insertions(+), 128 deletions(-)
+I tentatively applied this to pci/aer for v4.18, thanks!
 
-diff --git a/fs/cifs/cifs_debug.c b/fs/cifs/cifs_debug.c
-index e6025e9..0337ee8 100644
---- a/fs/cifs/cifs_debug.c
-+++ b/fs/cifs/cifs_debug.c
-@@ -214,12 +214,10 @@ static int cifs_debug_data_proc_show(struct seq_file *m, void *v)
- 			atomic_read(&server->smbd_conn->send_credits),
- 			atomic_read(&server->smbd_conn->receive_credits),
- 			server->smbd_conn->receive_credit_target);
--		seq_printf(m, "\nPending send_pending: %x send_payload_pending:"
--			" %x smbd_send_pending: %x smbd_recv_pending: %x",
-+		seq_printf(m, "\nPending send_pending: %x "
-+			"send_payload_pending: %x",
- 			atomic_read(&server->smbd_conn->send_pending),
--			atomic_read(&server->smbd_conn->send_payload_pending),
--			server->smbd_conn->smbd_send_pending,
--			server->smbd_conn->smbd_recv_pending);
-+			atomic_read(&server->smbd_conn->send_payload_pending));
- 		seq_printf(m, "\nReceive buffers count_receive_queue: %x "
- 			"count_empty_packet_queue: %x",
- 			server->smbd_conn->count_receive_queue,
-diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index 1aa2d35..79b025e 100644
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -162,95 +162,6 @@ do {									\
- #define log_rdma_mr(level, fmt, args...) \
- 		log_rdma(level, LOG_RDMA_MR, fmt, ##args)
- 
--/*
-- * Destroy the transport and related RDMA and memory resources
-- * Need to go through all the pending counters and make sure on one is using
-- * the transport while it is destroyed
-- */
--static void smbd_destroy_rdma_work(struct work_struct *work)
--{
--	struct smbd_response *response;
--	struct smbd_connection *info =
--		container_of(work, struct smbd_connection, destroy_work);
--	unsigned long flags;
--
--	log_rdma_event(INFO, "destroying qp\n");
--	ib_drain_qp(info->id->qp);
--	rdma_destroy_qp(info->id);
--
--	/* Unblock all I/O waiting on the send queue */
--	wake_up_interruptible_all(&info->wait_send_queue);
--
--	log_rdma_event(INFO, "cancelling idle timer\n");
--	cancel_delayed_work_sync(&info->idle_timer_work);
--	log_rdma_event(INFO, "cancelling send immediate work\n");
--	cancel_delayed_work_sync(&info->send_immediate_work);
--
--	log_rdma_event(INFO, "wait for all send to finish\n");
--	wait_event(info->wait_smbd_send_pending,
--		info->smbd_send_pending == 0);
--
--	log_rdma_event(INFO, "wait for all recv to finish\n");
--	wake_up_interruptible(&info->wait_reassembly_queue);
--	wait_event(info->wait_smbd_recv_pending,
--		info->smbd_recv_pending == 0);
--
--	log_rdma_event(INFO, "wait for all send posted to IB to finish\n");
--	wait_event(info->wait_send_pending,
--		atomic_read(&info->send_pending) == 0);
--	wait_event(info->wait_send_payload_pending,
--		atomic_read(&info->send_payload_pending) == 0);
--
--	log_rdma_event(INFO, "freeing mr list\n");
--	wake_up_interruptible_all(&info->wait_mr);
--	wait_event(info->wait_for_mr_cleanup,
--		atomic_read(&info->mr_used_count) == 0);
--	destroy_mr_list(info);
--
--	/* It's not posssible for upper layer to get to reassembly */
--	log_rdma_event(INFO, "drain the reassembly queue\n");
--	do {
--		spin_lock_irqsave(&info->reassembly_queue_lock, flags);
--		response = _get_first_reassembly(info);
--		if (response) {
--			list_del(&response->list);
--			spin_unlock_irqrestore(
--				&info->reassembly_queue_lock, flags);
--			put_receive_buffer(info, response);
--		} else
--			spin_unlock_irqrestore(&info->reassembly_queue_lock, flags);
--	} while (response);
--
--	info->reassembly_data_length = 0;
--
--	log_rdma_event(INFO, "free receive buffers\n");
--	wait_event(info->wait_receive_queues,
--		info->count_receive_queue + info->count_empty_packet_queue
--			== info->receive_credit_max);
--	destroy_receive_buffers(info);
--
--	ib_free_cq(info->send_cq);
--	ib_free_cq(info->recv_cq);
--	ib_dealloc_pd(info->pd);
--	rdma_destroy_id(info->id);
--
--	/* free mempools */
--	mempool_destroy(info->request_mempool);
--	kmem_cache_destroy(info->request_cache);
--
--	mempool_destroy(info->response_mempool);
--	kmem_cache_destroy(info->response_cache);
--
--	info->transport_status = SMBD_DESTROYED;
--	wake_up_all(&info->wait_destroy);
--}
--
--static int smbd_process_disconnected(struct smbd_connection *info)
--{
--	schedule_work(&info->destroy_work);
--	return 0;
--}
--
- static void smbd_disconnect_rdma_work(struct work_struct *work)
- {
- 	struct smbd_connection *info =
-@@ -317,8 +228,7 @@ static int smbd_conn_upcall(
- 		}
- 
- 		info->transport_status = SMBD_DISCONNECTED;
--		smbd_process_disconnected(info);
--		wake_up(&info->disconn_wait);
-+		wake_up_interruptible(&info->disconn_wait);
- 		wake_up_interruptible(&info->wait_reassembly_queue);
- 		wake_up_interruptible_all(&info->wait_send_queue);
- 		break;
-@@ -1499,7 +1409,7 @@ void smbd_destroy(struct TCP_Server_Info *server)
- 	if (info->transport_status != SMBD_DISCONNECTED) {
- 		rdma_disconnect(server->smbd_conn->id);
- 		log_rdma_event(INFO, "wait for transport being disconnected\n");
--		wait_event(
-+		wait_event_interruptible(
- 			info->disconn_wait,
- 			info->transport_status == SMBD_DISCONNECTED);
- 	}
-@@ -1840,12 +1750,6 @@ static struct smbd_connection *_smbd_get_connection(
- 	queue_delayed_work(info->workqueue, &info->idle_timer_work,
- 		info->keep_alive_interval*HZ);
- 
--	init_waitqueue_head(&info->wait_smbd_send_pending);
--	info->smbd_send_pending = 0;
--
--	init_waitqueue_head(&info->wait_smbd_recv_pending);
--	info->smbd_recv_pending = 0;
--
- 	init_waitqueue_head(&info->wait_send_pending);
- 	atomic_set(&info->send_pending, 0);
- 
-@@ -1853,7 +1757,6 @@ static struct smbd_connection *_smbd_get_connection(
- 	atomic_set(&info->send_payload_pending, 0);
- 
- 	INIT_WORK(&info->disconnect_work, smbd_disconnect_rdma_work);
--	INIT_WORK(&info->destroy_work, smbd_destroy_rdma_work);
- 	INIT_WORK(&info->recv_done_work, smbd_recv_done_work);
- 	INIT_WORK(&info->post_send_credits_work, smbd_post_send_credits);
- 	info->new_credits_offered = 0;
-@@ -1947,11 +1850,6 @@ static int smbd_recv_buf(struct smbd_connection *info, char *buf,
- 	int rc;
- 
- again:
--	if (info->transport_status != SMBD_CONNECTED) {
--		log_read(ERR, "disconnected\n");
--		return -ENODEV;
--	}
--
- 	/*
- 	 * No need to hold the reassembly queue lock all the time as we are
- 	 * the only one reading from the front of the queue. The transport
-@@ -2067,6 +1965,11 @@ static int smbd_recv_buf(struct smbd_connection *info, char *buf,
- 	if (rc)
- 		return -ENODEV;
- 
-+	if (info->transport_status != SMBD_CONNECTED) {
-+		log_read(ERR, "disconnected\n");
-+		return 0;
-+	}
-+
- 	goto again;
- }
- 
-@@ -2114,8 +2017,6 @@ int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
- 	unsigned int to_read;
- 	int rc;
- 
--	info->smbd_recv_pending++;
--
- 	switch (msg->msg_iter.type) {
- 	case READ | ITER_KVEC:
- 		buf = msg->msg_iter.kvec->iov_base;
-@@ -2133,12 +2034,9 @@ int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
- 		/* It's a bug in upper layer to get there */
- 		cifs_dbg(VFS, "CIFS: invalid msg type %d\n",
- 			msg->msg_iter.type);
--		rc = -EIO;
-+		rc = -EINVAL;
- 	}
- 
--	info->smbd_recv_pending--;
--	wake_up(&info->wait_smbd_recv_pending);
--
- 	/* SMBDirect will read it all or nothing */
- 	if (rc > 0)
- 		msg->msg_iter.count = 0;
-@@ -2163,7 +2061,6 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
- 	struct kvec *iov;
- 	int rc;
- 
--	info->smbd_send_pending++;
- 	if (info->transport_status != SMBD_CONNECTED) {
- 		rc = -ENODEV;
- 		goto done;
-@@ -2319,9 +2216,6 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
- 	wait_event(info->wait_send_payload_pending,
- 		atomic_read(&info->send_payload_pending) == 0);
- 
--	info->smbd_send_pending--;
--	wake_up(&info->wait_smbd_send_pending);
--
- 	return rc;
- }
- 
-diff --git a/fs/cifs/smbdirect.h b/fs/cifs/smbdirect.h
-index 7849989..4563c0c 100644
---- a/fs/cifs/smbdirect.h
-+++ b/fs/cifs/smbdirect.h
-@@ -70,13 +70,11 @@ struct smbd_connection {
- 	int ri_rc;
- 	struct completion ri_done;
- 	wait_queue_head_t conn_wait;
--	wait_queue_head_t wait_destroy;
- 	wait_queue_head_t disconn_wait;
- 
- 	struct completion negotiate_completion;
- 	bool negotiate_done;
- 
--	struct work_struct destroy_work;
- 	struct work_struct disconnect_work;
- 	struct work_struct recv_done_work;
- 	struct work_struct post_send_credits_work;
-@@ -124,13 +122,6 @@ struct smbd_connection {
- 	wait_queue_head_t wait_for_mr_cleanup;
- 
- 	/* Activity accoutning */
--	/* Pending reqeusts issued from upper layer */
--	int smbd_send_pending;
--	wait_queue_head_t wait_smbd_send_pending;
--
--	int smbd_recv_pending;
--	wait_queue_head_t wait_smbd_recv_pending;
--
- 	atomic_t send_pending;
- 	wait_queue_head_t wait_send_pending;
- 	atomic_t send_payload_pending;
--- 
-2.7.4
+Steve, let me know if you have any comments.
+
+Alex, I just copied you because you've been unifying the AER native and
+CPER paths, and this is another case of code that appears in both paths.
+FYI only, no action required :)
+
+> ---
+>  drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
+>  include/ras/ras_event.h                | 20 ++++++++++++++++----
+>  2 files changed, 18 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> index 6a352e638699..0a78a773bd25 100644
+> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> @@ -192,7 +192,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>  		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
+>  
+>  	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+> -			info->severity);
+> +			info->severity, info->tlp_header_valid, &info->tlp);
+>  }
+>  
+>  void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+> @@ -252,6 +252,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
+>  		__print_tlp_header(dev, &aer->header_log);
+>  
+>  	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+> -			aer_severity);
+> +			aer_severity, tlp_header_valid, &aer->header_log);
+>  }
+>  #endif
+> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+> index 9c689868eb4d..90f59556f595 100644
+> --- a/include/ras/ras_event.h
+> +++ b/include/ras/ras_event.h
+> @@ -298,30 +298,42 @@ TRACE_EVENT(non_standard_event,
+>  TRACE_EVENT(aer_event,
+>  	TP_PROTO(const char *dev_name,
+>  		 const u32 status,
+> -		 const u8 severity),
+> +		 const u8 severity,
+> +		 const u32 tlp_header_valid,
+> +		 struct aer_header_log_regs *tlp),
+>  
+> -	TP_ARGS(dev_name, status, severity),
+> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+>  
+>  	TP_STRUCT__entry(
+>  		__string(	dev_name,	dev_name	)
+>  		__field(	u32,		status		)
+>  		__field(	u8,		severity	)
+> +		__field(	u32, 		tlp_header_valid)
+> +		__array(	u32, 		buf, 4		)
+>  	),
+>  
+>  	TP_fast_assign(
+>  		__assign_str(dev_name, dev_name);
+>  		__entry->status		= status;
+>  		__entry->severity	= severity;
+> +		__entry->tlp_header_valid = tlp_header_valid;
+> +		__entry->buf[0] = tlp->dw0;
+> +		__entry->buf[1] = tlp->dw1;
+> +		__entry->buf[2] = tlp->dw2;
+> +		__entry->buf[3] = tlp->dw3;
+>  	),
+>  
+> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
+> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+>  		__get_str(dev_name),
+>  		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+>  			__entry->severity == AER_FATAL ?
+>  			"Fatal" : "Uncorrected, non-fatal",
+>  		__entry->severity == AER_CORRECTABLE ?
+>  		__print_flags(__entry->status, "|", aer_correctable_errors) :
+> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
+> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
+> +		__entry->tlp_header_valid ?
+> +			__print_array(__entry->buf, 4, sizeof(unsigned int)) :
+> +			"Not available")
+>  );
+>  
+>  /*
+> -- 
+> 2.14.1
+> 
