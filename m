@@ -1,79 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752631AbeEGPmM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:42:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751923AbeEGPmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:42:10 -0400
-Date: Mon, 7 May 2018 10:42:08 -0500
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-To: Torsten Duwe <duwe@lst.de>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
-Subject: Re: [PATCH v3] On ppc64le we HAVE_RELIABLE_STACKTRACE
-Message-ID: <20180507154208.jo4s43olrf5a3hw4@treble>
-References: <20180305164928.GA17953@lst.de>
- <20180308162616.yhbymodggnfzpskx@treble>
- <20180309174718.2700b29e@blackhole.lan>
- <20180312153536.7avozx64ku4lvd3e@treble>
- <20180504123834.GA16581@lst.de>
+        id S1752360AbeEGPoi (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:44:38 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:39615 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751913AbeEGPog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 11:44:36 -0400
+X-Google-Smtp-Source: AB8JxZrethJj8GojzIfpUBOuN451/QzXPiP1vag5gTeEby+WLEq8ZqmsfFNGlTh18EkLx/YIc2PJpQ==
+To: Matt Redfearn <matt.redfearn@mips.com>,
+        =?UTF-8?Q?Michael_B=c3=bcsch?= <m@bues.ch>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Regression caused by commit 882164a4a928
+Message-ID: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+Date: Mon, 7 May 2018 10:44:34 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180504123834.GA16581@lst.de>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 02:38:34PM +0200, Torsten Duwe wrote:
-> 
-> The "Power Architecture 64-Bit ELF V2 ABI" says in section 2.3.2.3:
-> 
-> [...] There are several rules that must be adhered to in order to ensure
-> reliable and consistent call chain backtracing:
-> 
-> * Before a function calls any other function, it shall establish its
->   own stack frame, whose size shall be a multiple of 16 bytes.
-> 
->  – In instances where a function’s prologue creates a stack frame, the
->    back-chain word of the stack frame shall be updated atomically with
->    the value of the stack pointer (r1) when a back chain is implemented.
->    (This must be supported as default by all ELF V2 ABI-compliant
->    environments.)
-> [...]
->  – The function shall save the link register that contains its return
->    address in the LR save doubleword of its caller’s stack frame before
->    calling another function.
-> 
-> To me this sounds like the equivalent of HAVE_RELIABLE_STACKTRACE.
-> This patch may be unneccessarily limited to ppc64le, but OTOH the only
-> user of this flag so far is livepatching, which is only implemented on
-> PPCs with 64-LE, a.k.a. ELF ABI v2.
-> 
-> Feel free to add other ppc variants, but so far only ppc64le got tested.
-> 
-> This change also implements save_stack_trace_tsk_reliable() for ppc64le
-> that checks for the above conditions, where possible.
-> 
-> Signed-off-by: Torsten Duwe <duwe@suse.de>
-> Signed-off-by: Nicolai Stange <nstange@suse.de>
+Matt,
 
-The subject doesn't actively describe what the patch does, maybe change
-it to something like:
+Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in 
+module") appeared to be harmless, it leads to complete failure of drivers b43. 
+and b43legacy, and likely affects b44 as well. The problem is that 
+CONFIG_SSB_PCIHOST is undefined, which prevents the compilation of the code that 
+controls the PCI cores of the device. See 
+https://bugzilla.redhat.com/show_bug.cgi?id=1572349 for details.
 
-  powerpc: Add support for HAVE_RELIABLE_STACKTRACE
+As the underlying errors ("pcibios_enable_device" undefined, and 
+"register_pci_controller" undefined) do not appear on the architectures that I 
+have tested (x86_64, x86, and ppc), I suspect something in the arch-specific 
+code for your setup (MIPS?). As I have no idea on how to fix that problem, would 
+the following patch work for you?
 
-or maybe
+diff --git a/drivers/ssb/Kconfig b/drivers/ssb/Kconfig
+index 9371651d8017..3743533c8057 100644
+--- a/drivers/ssb/Kconfig
++++ b/drivers/ssb/Kconfig
+@@ -117,7 +117,7 @@ config SSB_SERIAL
 
-  powerpc: Add support for livepatch consistency model
+  config SSB_DRIVER_PCICORE_POSSIBLE
+         bool
+-       depends on SSB_PCIHOST && SSB = y
++       depends on SSB_PCIHOST && (SSB = y || !MIPS)
+         default y
 
-Otherwise it looks great to me.
+  config SSB_DRIVER_PCICORE
 
-Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Thanks,
 
--- 
-Josh
+Larry
