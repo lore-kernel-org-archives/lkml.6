@@ -1,112 +1,156 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752905AbeEGUl7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:41:59 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:43877 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752689AbeEGUl5 (ORCPT
+        id S1753091AbeEGUoN (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:44:13 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38018 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752389AbeEGUoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:41:57 -0400
-X-Google-Smtp-Source: AB8JxZqJGmlVA0xfkycI+4NmVlvWOtOG4KUhMi+near7dMWjhaE83GgEU7LZ6cJAV+tp1yGDi+QKlQ==
-From: Joel Fernandes <joelaf@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: [PATCH RFC v6 0/5] Centralize and unify usage of preempt/irq tracepoints
-Date: Mon,  7 May 2018 13:41:38 -0700
-Message-Id: <20180507204143.13061-1-joelaf@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Mon, 7 May 2018 16:44:11 -0400
+Date: Mon, 7 May 2018 13:43:50 -0700
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 21/35] ovl: add reflink/copyfile/dedup support
+Message-ID: <20180507204350.GB9510@magnolia>
+References: <20180507083807.28792-1-mszeredi@redhat.com>
+ <20180507083807.28792-22-mszeredi@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507083807.28792-22-mszeredi@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805070203
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On Mon, May 07, 2018 at 10:37:53AM +0200, Miklos Szeredi wrote:
+> Since set of arguments are so similar, handle in a common helper.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/overlayfs/file.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+> 
+> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> index ce871a15e185..2ac95c95e8e6 100644
+> --- a/fs/overlayfs/file.c
+> +++ b/fs/overlayfs/file.c
+> @@ -382,6 +382,90 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+>  	return ovl_ioctl(file, cmd, arg);
+>  }
+>  
+> +enum ovl_copyop {
+> +	OVL_COPY,
+> +	OVL_CLONE,
+> +	OVL_DEDUPE,
+> +};
+> +
+> +static s64 ovl_copyfile(struct file *file_in, loff_t pos_in,
+> +			struct file *file_out, loff_t pos_out,
+> +			u64 len, unsigned int flags, enum ovl_copyop op)
+> +{
+> +	struct inode *inode_out = file_inode(file_out);
+> +	struct fd real_in, real_out;
+> +	const struct cred *old_cred;
+> +	s64 ret;
+> +
+> +	ret = ovl_real_fdget(file_out, &real_out);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = ovl_real_fdget(file_in, &real_in);
+> +	if (ret) {
+> +		fdput(real_out);
+> +		return ret;
+> +	}
+> +
+> +	old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
+> +	switch (op) {
+> +	case OVL_COPY:
+> +		ret = vfs_copy_file_range(real_in.file, pos_in,
+> +					  real_out.file, pos_out, len, flags);
+> +		break;
+> +
+> +	case OVL_CLONE:
+> +		ret = vfs_clone_file_range(real_in.file, pos_in,
+> +					   real_out.file, pos_out, len);
+> +		break;
+> +
+> +	case OVL_DEDUPE:
+> +		ret = vfs_dedupe_file_range_one(real_in.file, pos_in,
+> +						real_out.file, pos_out, len);
+> +		break;
+> +	}
+> +	revert_creds(old_cred);
+> +
+> +	/* Update size */
+> +	ovl_copyattr(ovl_inode_real(inode_out), inode_out);
+> +
+> +	fdput(real_in);
+> +	fdput(real_out);
+> +
+> +	return ret;
+> +}
+> +
+> +static ssize_t ovl_copy_file_range(struct file *file_in, loff_t pos_in,
+> +				   struct file *file_out, loff_t pos_out,
+> +				   size_t len, unsigned int flags)
+> +{
+> +	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, flags,
+> +			    OVL_COPY);
+> +}
+> +
+> +static int ovl_clone_file_range(struct file *file_in, loff_t pos_in,
+> +				struct file *file_out, loff_t pos_out, u64 len)
+> +{
+> +	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
+> +			    OVL_CLONE);
+> +}
+> +
+> +static s64 ovl_dedupe_file_range(struct file *file_in, loff_t pos_in,
+> +				 struct file *file_out, loff_t pos_out,
+> +				 u64 len)
+> +{
+> +	/*
+> +	 * Don't copy up because of a dedupe request, this wouldn't make sense
+> +	 * most of the time (data would be duplicated instead of deduplicated).
+> +	 */
+> +	if (!ovl_inode_upper(file_inode(file_in)) ||
+> +	    !ovl_inode_upper(file_inode(file_out)))
+> +		return -EPERM;
 
-This is the next revision of preempt/irq tracepoint centralization and
-unified usage across the kernel.
-The preempt/irq tracepoints exist but not everything in the kernel is
-using it. This makes things not work simultaneously (for ex, only either
-lockdep or irqsoff events can be used at a time). This series is an attempt to
-solve that, and also results in a nice clean up of kernel in general.
-Several ifdefs are simpler, and the design is more unified and better.
-Also as a result of this, we also speeded performance all rcuidle
-tracepoints since their handling is simpler.
+/me wonders, why not EOPNOTSUPP?  That's what we've been using (in xfs
+anyway) for "filesystem doesn't want to let you do this".
 
-No major changes since v5. Just some spelling errors, small refactoring
-etc. Also I removed the softirq bug fix from this series and submitted it
-separately.
+(Or I guess EXDEV, but "cross-device link not supported" might not be
+quite what you want users to see...)
 
-I am also writing a tracepoint self-test that runs various tests, along
-with some documentation. I am planning to submit that separately since
-it'll take some time to complete them and so that these can go in first.
-See [1] for a preview of the tests I have so far (its early stage).
+--D
 
-v6:
-- fixed lockdep_recursion undefined issue, now using
-  lockdep_recursing().
-- minor patch clean up
-
-v5:
-- Fixed performance issues due to rcu-idle handling
-
-Joel Fernandes (Google) (4):
-  srcu: Add notrace variant of srcu_dereference
-  trace/irqsoff: Split reset into separate functions
-  tracepoint: Make rcuidle tracepoint callers use SRCU
-  tracing: Centralize preemptirq tracepoints and unify their usage
-
-Paul McKenney (1):
-  srcu: Add notrace variants of srcu_read_{lock,unlock}
-
- include/linux/ftrace.h            |  11 +-
- include/linux/irqflags.h          |  11 +-
- include/linux/lockdep.h           |   8 +-
- include/linux/preempt.h           |   2 +-
- include/linux/srcu.h              |  22 +++
- include/linux/tracepoint.h        |  46 +++++-
- include/trace/events/preemptirq.h |  23 +--
- init/main.c                       |   5 +-
- kernel/locking/lockdep.c          |  35 ++---
- kernel/sched/core.c               |   2 +-
- kernel/trace/Kconfig              |  22 ++-
- kernel/trace/Makefile             |   2 +-
- kernel/trace/trace_irqsoff.c      | 235 +++++++++---------------------
- kernel/trace/trace_preemptirq.c   |  71 +++++++++
- kernel/tracepoint.c               |  15 +-
- 15 files changed, 282 insertions(+), 228 deletions(-)
- create mode 100644 kernel/trace/trace_preemptirq.c
-
-[1] tracepoint-selftests: https://tinyurl.com/tptests-1
-
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Peter Zilstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Glexiner <tglx@linutronix.de>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Fenguang Wu <fengguang.wu@intel.com>
-Cc: Baohong Liu <baohong.liu@intel.com>
-Cc: Vedang Patel <vedang.patel@intel.com>
-Cc: kernel-team@android.com
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
--- 
-2.17.0.441.gb46fe60e1d-goog
+> +
+> +	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
+> +			    OVL_DEDUPE);
+> +}
+> +
+>  const struct file_operations ovl_file_operations = {
+>  	.open		= ovl_open,
+>  	.release	= ovl_release,
+> @@ -393,4 +477,8 @@ const struct file_operations ovl_file_operations = {
+>  	.fallocate	= ovl_fallocate,
+>  	.unlocked_ioctl	= ovl_ioctl,
+>  	.compat_ioctl	= ovl_compat_ioctl,
+> +
+> +	.copy_file_range	= ovl_copy_file_range,
+> +	.clone_file_range	= ovl_clone_file_range,
+> +	.dedupe_file_range	= ovl_dedupe_file_range,
+>  };
+> -- 
+> 2.14.3
+> 
