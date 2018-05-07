@@ -1,5 +1,5 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-1216624-1525706666-2-7822951174889307117
+X-Cyrus-Session-Id: sloti22d1t05-1216624-1525706603-2-9766110330433721694
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -13,23 +13,23 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525706665; b=IbciIVM2pLokwTv8FhS1/dR5h2YJZdodLjIgeYNeApAkWPbLYx
-    2wSXMjN1ldxlvluV51+yUjYl7Ep8IrP55I+liDpHpSZU9MQ+JGpwp/q2Fngj4OnA
-    qpwdJfEcSC6AGtU+zvTlZWQNY25wLQxR0cxv42QZEJvIuTCesXgwRe7WoCiakQgQ
-    msspDNpUgtAz/pbHvGM8PPceqsrBwonqM6M+mpiWlSZeZtxag4gMJQ+gNAGxxHFG
-    Gbe3LFyzcrxptGgKsWKKrHXNLn7yqwZc9OMcLFR1gQwKfrdRZZVcz/zmeD/JlOAC
-    eQ7uNN2LQ8IurbP7UUPxsmG0lj2MTo1WWfrg==
+    1525706602; b=mOcxGlHenhG8fTzTnr2dw0NCU1rJrws+H2+d0wn5+xxLDp2/Ug
+    b+ua6J5A49BQrQu3cZSlb+RVLKOqRBymumzrPCJHoZACIY0s5Xl5D2iMvCSa1tPr
+    cFSkhr0hASozdf/E4lOXmB5oGSDvEXAcpGEJf439Nnzkg67c393xVf5Y4BqthVHt
+    FedSwj+OYp0DtP2I1XiP0kyeNeiY68+v1WPN8h7P2PqI0d7n367wMM5Y3nvqAREu
+    OdqdHvHeAas83MsfwIY5unsIJyGBLcaLcJM9JSsbLHLFo2OSc6p6CRzfOF1OtINz
+    isdFMjCusr0ekPQxVQcglTs6gkgumXmN5xvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525706665; bh=
-    WnIrPkXY8pwiNTSITcvcB7PRj+jnpoxzw4v35Ki5poU=; b=kIz6GmM0e3M30Oj5
-    RceYRuw8UlD3btYfYWuGeKIWgK+3HGMcv1hIuVqB+I4Hfcx3rjgaTclzT7f8EX7Y
-    P6awrrZBk7fkKyBvc+bdP59Mi4/em1PksUXAFaQ3dKtMOxqpM8ZRu5hak9z4ucVY
-    F1deqcqC+hXjZoSpnbz+wOCcrVVMQkbBPnwpw+aDJYW6CCBfNy3URtlL+MDvu0GY
-    nykJJtwa1h5CkA69SohYM27rYIR6Kag+Xr3f4DcTKlB/h+aG/gJ2j/0HvJ3NJUHs
-    C5h4hREcqYqBrYR+S+kO5Wvk2iB6h3mz8MxELDXf44K9TOg47BO+uoyq66VCdkvc
-    XB1c1w==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :in-reply-to:references:sender:list-id; s=fm2; t=1525706602; bh=
+    XNWTR6vpFHwsfJ/UKVocdOqZLVpXxPD4/F4N9za7a7o=; b=RltlwykMi5eDMZjP
+    kVit2lmH5LDL1PVgFYYQnCITVc02dMNVDp5qzS5yaLX8zA6w6w+6uqBWy15PFXW4
+    iYjxfBQEsF3lZ6UixC+bijO0RCnxAZyshDdxWU7WsfHSmVXhLya54lhxudeBEchT
+    BvaaCS4JSQUf+Xu3CiS/N72pNSe9L0GK+YsH1shyRYjhg5KsdLybiPhKVp1DBOOW
+    +pFxcFWX0jl69wKhRNEQyJrhiPA62rEzNhNF3/u/fo4hPAWMSwh8AfjmfFpl9eJY
+    EVc54ZmkkRlx//MGTqRiUjYCqtDPjQqAHmpXdl5+RanH+3EK8vMMurxdaTmfsHEW
+    fYc1Ng==
+ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=aosc.io;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
@@ -42,7 +42,7 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
     header.domain=aosc.io header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx2.messagingengine.com;
     arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=aosc.io;
@@ -57,20 +57,20 @@ Authentication-Results: mx6.messagingengine.com;
       header.domain=aosc.io header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDg2FF6LgkzxeQ4kmeIzuNrzGnHNS2/2/XVtfX6tYu/Fzocxhl0VlC9F8GSG5sC8R1xe8lcq5SarhTm04YAZtR7O59Jxh+p1Zsaxh87jv2tKyhzfggMh
-    JzF3UxvgZHhG1J2BpimrteEUMdsuirVn7b6aHWSkXzjBCNYiy7zIfnhi1FWOMfLj+GhU8Z6kNvZkq5YciBOy5aTsna3Nv5tTgchyYDRqRBzIfnxmHTMC6kmf
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfFVR3lZfcIJ5bhIYiRHKMAu/gVoq1OQtEGj0zVgp55fmTCioNatOjaIz4xDuORFZPA5pPXo/Xx7nFbLlEUDpFKcgdLTdjwtg+Dgk0fJfzW+dKB7wrdv4
+    VfdCpUubSmw1DxHGSMg9/5FPDibIoRynuN8fufFWJDNZ3KZ53wX4cuuGkgehc0RlR6Q0yrfLLLmRkgdsGlLcavS+igj974vp8V8KeGrl0GjLmLgBmuY8pcJd
+X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=CNVg8Iy4Hc8mcmBTk-wA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
+    a=T9tvk05W3M3BFl53G_MA:9 a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752471AbeEGPYV (ORCPT <rfc822;greg@kroah.com>);
-        Mon, 7 May 2018 11:24:21 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:48516 "EHLO hermes.aosc.io"
+        id S1752465AbeEGPXO (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 7 May 2018 11:23:14 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:48457 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751912AbeEGPYT (ORCPT <rfc822;linux-usb@vger.kernel.org>);
-        Mon, 7 May 2018 11:24:19 -0400
+        id S1751860AbeEGPXN (ORCPT <rfc822;linux-usb@vger.kernel.org>);
+        Mon, 7 May 2018 11:23:13 -0400
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -82,9 +82,9 @@ To: Rob Herring <robh+dt@kernel.org>,
 Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH 3/5] usb: dwc3: of-simple: Add compatible for Allwinner H6 platform
-Date: Mon,  7 May 2018 23:18:15 +0800
-Message-Id: <20180507151817.55663-4-icenowy@aosc.io>
+Subject: [PATCH 2/5] dt-bindings: usb: add binding for the DWC3 controller on Allwinner SoC
+Date: Mon,  7 May 2018 23:18:14 +0800
+Message-Id: <20180507151817.55663-3-icenowy@aosc.io>
 In-Reply-To: <20180507151817.55663-1-icenowy@aosc.io>
 References: <20180507151817.55663-1-icenowy@aosc.io>
 Sender: linux-usb-owner@vger.kernel.org
@@ -93,26 +93,61 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add compatible string to use this generic glue layer to support
-Allwinner H6 platform's dwc3 controller.
+The Allwinner H6 SoC uses DWC3 controller for USB3.
+
+Add its device tree binding document.
 
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 ---
- drivers/usb/dwc3/dwc3-of-simple.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/usb/allwinner,dwc3.txt           | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/allwinner,dwc3.txt
 
-diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
-index cb2ee96fd3e8..a92a8e4c6b92 100644
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -215,6 +215,7 @@ static const struct of_device_id of_dwc3_simple_match[] = {
- 	{ .compatible = "sprd,sc9860-dwc3" },
- 	{ .compatible = "amlogic,meson-axg-dwc3" },
- 	{ .compatible = "amlogic,meson-gxl-dwc3" },
-+	{ .compatible = "allwinner,sun50i-h6-dwc3" },
- 	{ /* Sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, of_dwc3_simple_match);
+diff --git a/Documentation/devicetree/bindings/usb/allwinner,dwc3.txt b/Documentation/devicetree/bindings/usb/allwinner,dwc3.txt
+new file mode 100644
+index 000000000000..3f7714636785
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/allwinner,dwc3.txt
+@@ -0,0 +1,39 @@
++Allwinner SuperSpeed DWC3 USB SoC controller
++
++Required properties:
++- compatible:	should contain "allwinner,sun50i-h6-dwc3" for H6 SoC
++- clocks:	A list of phandle + clock-specifier pairs for the
++		clocks listed in clock-names
++- clock-names:	Should contain the following:
++  "bus"		The bus clock of the DWC3 part
++- resets:	A list of phandle + reset-specifier pairs for the
++		resets listed in reset-names
++- reset-names:	Should contain the following:
++  "bus"		The bus reset of the DWC3 part
++
++Required child node:
++A child node must exist to represent the core DWC3 IP block. The name of
++the node is not important. The content of the node is defined in dwc3.txt.
++
++Phy documentation is provided in the following places:
++Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
++
++Example device nodes:
++	usb3: usb@5200000 {
++		compatible = "allwinner,sun50i-h6-dwc3";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++		clocks = <&ccu CLK_BUS_XHCI>;
++		clock-names = "bus";
++		resets = <&ccu RST_BUS_XHCI>;
++		reset-names = "bus";
++
++		dwc3: dwc3 {
++			compatible = "snps,dwc3";
++			reg = <0x5200000 0x10000>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			phys = <&usb3phy>;
++			phy-names = "usb3-phy";
++		};
++	};
 -- 
 2.17.0
 
