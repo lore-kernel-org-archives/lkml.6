@@ -1,95 +1,60 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751379AbeEGGu2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:50:28 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41807 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750937AbeEGGuZ (ORCPT
+        id S1751210AbeEGGxq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:53:46 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:41356 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeEGGxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:50:25 -0400
-X-Google-Smtp-Source: AB8JxZr/e6vwd9eWPiZ0xZhwrltXEZaLskGy9iAtxDin5BNgvNZriTWeYyyW7IpjY574PgMT5UebGg==
-Date: Mon, 7 May 2018 08:50:21 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        aryabinin@virtuozzo.com, catalin.marinas@arm.com, dvyukov@google.com,
-        will.deacon@arm.com
-Subject: Re: [PATCH] locking/atomics/powerpc: Move cmpxchg helpers to
- asm/cmpxchg.h and define the full set of cmpxchg APIs
-Message-ID: <20180507065021.s63ndzpjq4pg4a74@gmail.com>
-References: <20180505084721.GA32344@noisy.programming.kicks-ass.net>
- <20180505090403.p2ywuen42rnlwizq@gmail.com>
- <20180505093829.xfylnedwd5nonhae@gmail.com>
- <20180505101609.5wb56j4mspjkokmw@tardis>
- <20180505103550.s7xsnto7tgppkmle@gmail.com>
- <20180505112817.ihrb726i37bwm4cj@tardis>
- <20180505132751.gwzu2vbzibr2risd@gmail.com>
- <20180505140340.uzfhoc42xvas4m72@tardis>
- <20180506121129.baacc4fxgr72rzex@gmail.com>
- <1525655045.499830.1362901928.0EBFEACA@webmail.messagingengine.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525655045.499830.1362901928.0EBFEACA@webmail.messagingengine.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
+        Mon, 7 May 2018 02:53:43 -0400
+X-Google-Smtp-Source: AB8JxZpeVXzTPENPZjWb6t7f0DFqxYpcvPKpFc26MK0kzVeW/QWon8HSVqiWaZlSCIXiS2MrA4r1rg==
+Subject: [PATCH 1/3] scsi: arcmsr: Add driver parameter cmd_timeout,
+ default value is ARCMSR_DEFAULT_TIMEOUT
+From: Ching Huang <ching2048@areca.com.tw>
+To: martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@oracle.com, hch@infradead.org, colin.king@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 07 May 2018 14:53:39 +0800
+Message-ID: <1525676019.8876.15.camel@Centos6.3-64>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+>From Ching Huang <ching2048@areca.com.tw>
 
-* Boqun Feng <boqun.feng@gmail.com> wrote:
+Add driver parameter cmd_timeout, default value is ARCMSR_DEFAULT_TIMEOUT
 
-> 
-> 
-> On Sun, May 6, 2018, at 8:11 PM, Ingo Molnar wrote:
-> > 
-> > * Boqun Feng <boqun.feng@gmail.com> wrote:
-> > 
-> > > > The only change I made beyond a trivial build fix is that I also added the release 
-> > > > atomics variants explicitly:
-> > > > 
-> > > > +#define atomic_cmpxchg_release(v, o, n) \
-> > > > +	cmpxchg_release(&((v)->counter), (o), (n))
-> > > > +#define atomic64_cmpxchg_release(v, o, n) \
-> > > > +	cmpxchg_release(&((v)->counter), (o), (n))
-> > > > 
-> > > > It has passed a PowerPC cross-build test here, but no runtime tests.
-> > > > 
-> > > 
-> > > Do you have the commit at any branch in tip tree? I could pull it and
-> > > cross-build and check the assembly code of lib/atomic64_test.c, that way
-> > > I could verify whether we mess something up.
-> > > 
-> > > > Does this patch look good to you?
-> > > > 
-> > > 
-> > > Yep!
-> > 
-> > Great - I have pushed the commits out into the locking tree, they can be 
-> > found in:
-> > 
-> >   git fetch git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git 
-> > locking/core
-> > 
-> 
-> Thanks! My compile test told me that we need to remove the definitions of 
-> atomic_xchg and atomic64_xchg in ppc's asm/atomic.h: they are now
-> duplicate, and will prevent the generation of _release and _acquire in the
-> new logic.
-> 
-> If you need a updated patch for this from me, I could send later today.
-> (I don't have a  handy environment for patch sending now, so...)
+Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+---
 
-That would be cool, thanks! My own cross-build testing didn't trigger that build 
-failure.
-
-> Other than this, the modification looks fine, the lib/atomic64_test.c
-> generated the same asm before and after the patches.
-
-Cool, thanks for checking!
-
-Thanks,
-
-	Ingo
+diff --git a/drivers/scsi/arcmsr/arcmsr.h b/drivers/scsi/arcmsr/arcmsr.h
+index 2e51ccc..62eeef5 100755
+--- a/drivers/scsi/arcmsr/arcmsr.h
++++ b/drivers/scsi/arcmsr/arcmsr.h
+@@ -82,6 +82,7 @@ struct device_attribute;
+ #endif
+ #define	ARCMSR_HOURS			(1000 * 60 * 60 * 4)
+ #define	ARCMSR_MINUTES			(1000 * 60 * 60)
++#define ARCMSR_DEFAULT_TIMEOUT		90
+ /*
+ **********************************************************************************
+ **
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index 732b5d9..f6ddaec 100755
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -95,6 +95,10 @@ static int set_date_time = 0;
+ module_param(set_date_time, int, S_IRUGO);
+ MODULE_PARM_DESC(set_date_time, " send date, time to iop(0 ~ 1), set_date_time=1(enable), default(=0) is disable");
+ 
++static int cmd_timeout = ARCMSR_DEFAULT_TIMEOUT;
++module_param(cmd_timeout, int, S_IRUGO);
++MODULE_PARM_DESC(cmd_timeout, " scsi cmd timeout(0 ~ 120 sec.), default is 90");
++
+ #define	ARCMSR_SLEEPTIME	10
+ #define	ARCMSR_RETRYCOUNT	12
+ 
