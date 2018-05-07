@@ -1,92 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752414AbeEGJd6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:33:58 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:34524 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752372AbeEGJdy (ORCPT
+        id S1752267AbeEGJfY (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:35:24 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:50420 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751764AbeEGJfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:33:54 -0400
-X-Google-Smtp-Source: AB8JxZoTDCI273N5PY2w97E4hacIbIHebOi3vhPcHWvl0PBuIL0fxdyKZxdtmJeIls+BX6geAAKLdEjeBYLvkuGZoRo=
+        Mon, 7 May 2018 05:35:23 -0400
+Date: Mon, 7 May 2018 17:35:11 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Dey, Megha" <megha.dey@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Subject: Re: [PATCH V8 1/5] crypto: Multi-buffer encryption infrastructure
+ support
+Message-ID: <20180507093511.jscgnk436e3ba4un@gondor.apana.org.au>
+References: <20180118113905.GA19904@gondor.apana.org.au>
+ <1516322661.2526.3.camel@megha-Z97X-UD7-TH>
+ <20180316145351.GA6231@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13267@ORSMSX111.amr.corp.intel.com>
+ <20180418110115.v2w3o5yfv4u3gc4r@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C13DDE@ORSMSX111.amr.corp.intel.com>
+ <20180419032525.6csodbz6lrksyudd@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C270FC@ORSMSX111.amr.corp.intel.com>
+ <20180426094445.4jiwondmtbenepo2@gondor.apana.org.au>
+ <C440BA31B54DCD4AAC682D2365C8FEE738C4291E@ORSMSX111.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1525682589.6049.4.camel@sipsolutions.net>
-References: <0000000000000390eb056b77596d@google.com> <20180505164041.GD7746@kroah.com>
- <095bc684-0029-0b2e-5e28-23376174ca02@gmail.com> <20180505220721.GA10829@kroah.com>
- <1525682589.6049.4.camel@sipsolutions.net>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 7 May 2018 11:33:33 +0200
-Message-ID: <CACT4Y+bWW8w7RJ1roUQ8dDk5Fv0syDsKtMH1wRnkkN4nWOootQ@mail.gmail.com>
-Subject: Re: WARNING in kernfs_add_one
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org,
-        Eric Dumazet <eric.dumazet@gmail.com>, netdev <netdev@vger.kernel.org>,
-        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <C440BA31B54DCD4AAC682D2365C8FEE738C4291E@ORSMSX111.amr.corp.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 10:43 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> On Sat, 2018-05-05 at 15:07 -0700, Greg KH wrote:
+On Tue, May 01, 2018 at 10:39:15PM +0000, Dey, Megha wrote:
 >
->> > > > syzbot found the following crash on:
->
-> Maybe it should learn to differentiate warnings, if it's going to set
-> panic_on_warn :-)
+> crypto/simd.c provides a simd_skcipher_create_compat. I have used the same template to introduce simd_ahash_create_compat
+> which would wrap around the inner hash algorithm.
+> 
+> Hence we would still register 2 algs, outer and inner.
 
-How?
-Note that this is not specific to syzbot. If you see WARNINGs in a
-subsystem that you have no idea about (or you just a normal user),
-what do you do? Right, you report it to maintainers.
+Right.
 
+> Currently we have outer_alg -> mcryptd alg -> inner_alg
+> 
+> Mcryptd is mainly providing the following:
+> 1. Ensuring the lanes(8 in case of AVX2) are full before dispatching to the lower inner algorithm. This is obviously why we would expect better performance for multi-buffer as opposed to the present single-buffer algorithms.
+> 2. If there no new incoming jobs, issue a flush.
+> 3. A glue layer which sends the correct pointers and completions.
+> 
+> If we get rid of mcryptd, these functions needs to be done by someone. Since all multi-buffer algorithms would require this tasks, where do you suggest these helpers live, if not the current mcryptd.c?
 
-> I get why, but still, at least differentiating in the emails wouldn't be
-> bad.
+That's the issue.  I don't think mcryptd is doing any of these
+claimed functions except for hosting the flush helper which could
+really live anywhere.
 
-Well, the subject says "WARNING".
-But note there are _very_ bad WARNINGs too. Generally, a WARNING means
-a kernel bug just that kernel can tolerate without bringing the system
-down (as opposed to BUG).
+All these functions are actually being carried out in the inner
+algorithm already.
 
+> I am not sure if you are suggesting that we need to get rid of the mcryptd work queue itself. In that case, we would need to execute in the context of the job requesting the crypto transformation.
 
->> > > > kernfs: ns required in 'ieee80211' for 'phy3'
->
-> Huh. What does that even mean?
->
->> > > > RIP: 0010:kernfs_add_one+0x406/0x4d0 fs/kernfs/dir.c:758
->> > > > RSP: 0018:ffff8801ca9eece0 EFLAGS: 00010286
->> > > > RAX: 000000000000002d RBX: ffffffff87d5cee0 RCX: ffffffff8160ba7d
->> > > > RDX: 0000000000000000 RSI: ffffffff81610731 RDI: ffff8801ca9ee840
->> > > > RBP: ffff8801ca9eed20 R08: ffff8801d9538500 R09: 0000000000000006
->> > > > R10: ffff8801d9538500 R11: 0000000000000000 R12: ffff8801ad1cb6c0
->> > > > R13: ffffffff885da640 R14: 0000000000000020 R15: 0000000000000000
->> > > >  kernfs_create_link+0x112/0x180 fs/kernfs/symlink.c:41
->> > > >  sysfs_do_create_link_sd.isra.2+0x90/0x130 fs/sysfs/symlink.c:43
->> > > >  sysfs_do_create_link fs/sysfs/symlink.c:79 [inline]
->> > > >  sysfs_create_link+0x65/0xc0 fs/sysfs/symlink.c:91
->> > > >  device_add_class_symlinks drivers/base/core.c:1612 [inline]
->> > > >  device_add+0x7a0/0x16d0 drivers/base/core.c:1810
->> > > >  wiphy_register+0x178a/0x2430 net/wireless/core.c:806
->> > > >  ieee80211_register_hw+0x13cd/0x35d0 net/mac80211/main.c:1047
->> > > >  mac80211_hwsim_new_radio+0x1d9b/0x3410
->> > > > drivers/net/wireless/mac80211_hwsim.c:2772
->> > > >  hwsim_new_radio_nl+0x7a7/0xa60 drivers/net/wireless/mac80211_hwsim.c:3246
->> > > >  genl_family_rcv_msg+0x889/0x1120 net/netlink/genetlink.c:599
->
-> Basically we're creating a new virtual radio, which in turn creates a
-> new device, which we have to register.
->
-> Something is going on with the context here that makes sysfs unhappy,
-> but TBH I have no idea what.
->
-> johannes
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/1525682589.6049.4.camel%40sipsolutions.net.
-> For more options, visit https://groups.google.com/d/optout.
+Which is fine as long as you can disable the FPU.  If not the simd
+wrapper will defer the job to kthread context as required.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
