@@ -1,57 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752404AbeEGImx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:42:53 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39059 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752126AbeEGIii (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:38 -0400
-X-Google-Smtp-Source: AB8JxZoZ44kg72TIlboG5TeeOv0XTxgxWk5k0Hm6O2X6yWmVj26AASntgUVt3w4o9IN0Fkp95dTK3g==
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-unionfs@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH v2 22/35] vfs: don't open real
-Date: Mon,  7 May 2018 10:37:54 +0200
-Message-Id: <20180507083807.28792-23-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
-References: <20180507083807.28792-1-mszeredi@redhat.com>
+        id S1752542AbeEGIm6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:42:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51372 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752422AbeEGImq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 04:42:46 -0400
+Date: Mon, 7 May 2018 09:42:41 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Matt Turner <mattst88@gmail.com>
+Cc: linux-mips@linux-mips.org, Arnd Bergmann <arnd@arndb.de>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        linux-alpha <linux-alpha@vger.kernel.org>, linux-arch@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 1/3] alpha: Use OPTIMIZE_INLINING instead of
+ asm/compiler.h
+Message-ID: <20180507084240.GA26491@jamesdev>
+References: <cover.ebc99f68d5063a817328b9184d747f539800cff0.1523959603.git-series.jhogan@kernel.org>
+ <a20761a842efe590da08e835ecc5690a4cf50213.1523959603.git-series.jhogan@kernel.org>
+ <CAEdQ38HfabRWgfLTStuZDOz0yjnfMNRc5beRdVcQhFfMi1SFKg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+Content-Disposition: inline
+In-Reply-To: <CAEdQ38HfabRWgfLTStuZDOz0yjnfMNRc5beRdVcQhFfMi1SFKg@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let overlayfs do its thing when opening a file.
 
-This enables stacking and fixes the corner case when a file is opened for
-read, modified through a writable open, and data is read from the read-only
-file.  After this patch the read-only open will not return stale data even
-in this case.
+--4Ckj6UjgE2iN1+kY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
- fs/open.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+On Sun, May 06, 2018 at 12:33:21PM -0700, Matt Turner wrote:
+> On Tue, Apr 17, 2018 at 3:11 AM, James Hogan <jhogan@kernel.org> wrote:
+> > Use CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING and CONFIG_OPTIMIZE_INLINING
+> > instead of undefining the inline macros in the alpha specific
+> > asm/compiler.h. This is to allow asm/compiler.h to become a general
+> > header that can be used for overriding linux/compiler*.h.
+> >
+> > A build of alpha's defconfig on GCC 7.3 before and after this series
+> > (i.e. this commit and "compiler.h: Allow arch-specific overrides" which
+> > includes asm/compiler.h from linux/compiler_types.h) results in the
+> > following size differences, which appear harmless to me:
+> >
+> > $ ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
+> > add/remove: 1/1 grow/shrink: 3/0 up/down: 264/-348 (-84)
+> > Function                                     old     new   delta
+> > cap_bprm_set_creds                          1496    1664    +168
+> > cap_issubset                                   -      68     +68
+> > flex_array_put                               328     344     +16
+> > cap_capset                                   488     500     +12
+> > nonroot_raised_pE.constprop                  348       -    -348
+> > Total: Before=3D5823709, After=3D5823625, chg -0.00%
+> >
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: James Hogan <jhogan@kernel.org>
+> > Cc: Richard Henderson <rth@twiddle.net>
+> > Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> > Cc: Matt Turner <mattst88@gmail.com>
+> > Cc: linux-alpha@vger.kernel.org
+>=20
+> Looks fine to me.
+>=20
+> Acked-by: Matt Turner <mattst88@gmail.com>
 
-diff --git a/fs/open.c b/fs/open.c
-index 6e52fd6fea7c..244cd2ecfefd 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -897,13 +897,8 @@ EXPORT_SYMBOL(file_path);
- int vfs_open(const struct path *path, struct file *file,
- 	     const struct cred *cred)
- {
--	struct dentry *dentry = d_real(path->dentry, NULL, file->f_flags, 0);
--
--	if (IS_ERR(dentry))
--		return PTR_ERR(dentry);
--
- 	file->f_path = *path;
--	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
-+	return do_dentry_open(file, d_backing_inode(path->dentry), NULL, cred);
- }
- 
- /**
--- 
-2.14.3
+Thanks
+
+>=20
+> Should I take it through the alpha tree?
+
+I'll take all 3 through the MIPS tree if thats okay with you, as its a
+prerequisite to allowing MIPS to override stuff in linux/compiler-gcc.h
+using asm/compiler.h, which is needed to fix build breakage in 4.17.
+
+Thanks
+James
+
+--4Ckj6UjgE2iN1+kY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvARdwAKCRA1zuSGKxAj
+8lBgAQCP2oPVxlMnAfCr0Yo39Uxm60KcRkh2IaN7I4Yy70sTUgD/WjirGCDfJ2kX
+nBSvzFt0+SEPc8JfmbIC+plydOz0LQ4=
+=XudF
+-----END PGP SIGNATURE-----
+
+--4Ckj6UjgE2iN1+kY--
