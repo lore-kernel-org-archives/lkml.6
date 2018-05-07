@@ -1,23 +1,23 @@
 Return-Path: <paul.kocialkowski@bootlin.com>
-X-Google-Smtp-Source: AB8JxZo7C1vj7qco9XPmB/wk+zEHPK/3bXMbHoCvJNjm6/1NSkC8pgb/iHoCFXe8yzZRnWEeXrjz
+X-Google-Smtp-Source: AB8JxZpPc6qL7GEzNKErzDsIwue+lD+6NNjkAjKPRUH04YY9Vcwu2S+Xh0rbgUJZXT9SwzdRGJ0c
 ARC-Seal: i=1; a=rsa-sha256; t=1525697252; cv=none;
         d=google.com; s=arc-20160816;
-        b=aDBTxa9CX4Pphseoy5jMKtv3xA3YTI0c7shSdvCBfeWPDmF8hcWoaXK6bzszwyZUsF
-         gYEGsd9x4B20SzjeXqEz+8I1nSR9ZwonDJ8UMvP4lSvgnYc2uLK8vsSl5cH38DN5lNzK
-         9McL4qQjfPBPVYzxRSmATZAg8BEM6chzv7CPhT5gG1wQbtDE5pgf8658ke2U1052KJJT
-         v5AyskpeZrtWWBXPO+t2oSVq/6bUsfUw1CH//R0L3qAm9Z27GKQQeYtIPSMEqjenPT6O
-         qduhOlO/4qFmlCtmVzgCvmnxeYkgD0HJ+PxAGr6+JOvNxVI4oUVPuayTLvkWI/ZVDTQf
-         wO0A==
+        b=W+JlSHuL1s7nJX699vhZyLOjGevfYabicfW+rPLtIdusuNP1rVUEsxNsCYX/HIoVJW
+         fRZeRGdwEWWNJ3V11t32BdJmoCHTOCAAaGZKGWANlYo85EYedwgUy2tQ4wGlsBOkXOtV
+         xyFi/P8NpIhhFboq9NnfdvxBo+IJQXtIKIgC4VebluwvMWt3BxcqjG4bm8mt4+BSHDft
+         S8jGvhkJi8NiwhSsnh6NyRxm0naDEycR0hrXC+ow7EKQhH5zqPn2RyenefdRm+KSfQJI
+         +c35mSgFDtCUtXgxJVT5HdOXSwD18qCq7gNZFKW42kTm6XOXh1sk2HCQKrlVco91bfFZ
+         pfLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=Oi/EU8GZvzwn8MW/bDtmUdP5rvUjzbrvSUkj3WSu8zo=;
-        b=jpmGYfuaRN1oZdLSEhV7jAYGycRhqPVEBaxgD9+TPYnrjSnUgWzcRZmB4IVtwZHU/d
-         WjIm8SxxlbbVNggz+fvbptPqZA01dzr6mh/6uOblrxg7YqmWujWpvKbMUViRs2Clb3zL
-         NrrgbD7UVOpIz52UAkolF99oHfe6wY5K3iO3NM4hC/73BkOKbLehIuUV5nU6le/s5Wf3
-         LTKUEQEhmzF5aPUuvZ07SYOyTe8Bajy3zJkVL7E7OMrHMVvWWSXcZWmfI3VZoNt93c2R
-         Tqa/ojcwovKbC90GhOukN6Ch2Mg6KnavtfmW7aG3JCti+As0DgQe47/2hFq1/f+YxRnj
-         dRaQ==
+        bh=gxi7gG12XYr0WQ4Z7ipFVhpME7zhWEM4aYHSxcLFNgU=;
+        b=qzwFnu24X7K08f9cPZ0FmeyUlj8Bg2KiygaJr2nFvlZlCfoPg8JSNkJyuwLwkS3weE
+         GRP598kJTAjx4HwNNknfdLk4J4SIfM5qbMNGYR5JT4zJAO6R/Yttvh5/Senl32aMr2Ss
+         90rKDR8Rj19ECrKbbwTl11Ohx/koMDkTw7yGBvWC31m0KuTeFDN1eenTwtazZ9E+vpL8
+         pxHyo/ulWDoxF7eCOxQfSyVJ/gMWW+ifIIevoiuYrZ8worotQfjo/Un6g19ldK0P06YZ
+         blmB5p0ieh340ngi5sDKdCEQkqPKQGcF13uXY96p8dp4FR5hiYaVL+mInCZZy2C42oyP
+         GKKg==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of paul.kocialkowski@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=paul.kocialkowski@bootlin.com
 Authentication-Results: mx.google.com;
@@ -55,36 +55,36 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Randy Li <ayaka@soulik.info>
-Subject: [PATCH v3 04/14] ARM: dts: sun7i-a20: Use dedicated SRAM controller compatible
-Date: Mon,  7 May 2018 14:44:50 +0200
-Message-Id: <20180507124500.20434-5-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 03/14] ARM: dts: sun5i: Use dedicated SRAM controller compatible
+Date: Mon,  7 May 2018 14:44:49 +0200
+Message-Id: <20180507124500.20434-4-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 References: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599809522188381521?=
-X-GMAIL-MSGID: =?utf-8?q?1599809522188381521?=
+X-GMAIL-THRID: =?utf-8?q?1599809522077574994?=
+X-GMAIL-MSGID: =?utf-8?q?1599809522077574994?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use the newly-introduced SRAM controller compatible for the A20 instead
-of its A10 fashion.
+Use the newly-introduced SRAM controller compatible for the A13 and
+other sun5i platforms instead of its A10 fashion.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- arch/arm/boot/dts/sun7i-a20.dtsi | 2 +-
+ arch/arm/boot/dts/sun5i.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index e529e4ff2174..b179e05408e4 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -240,7 +240,7 @@
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 07f2248ed5f8..72433f38b4e4 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -115,7 +115,7 @@
  		ranges;
  
  		sram-controller@1c00000 {
 -			compatible = "allwinner,sun4i-a10-sram-controller";
-+			compatible = "allwinner,sun7i-a20-sram-controller";
++			compatible = "allwinner,sun5i-a13-sram-controller";
  			reg = <0x01c00000 0x30>;
  			#address-cells = <1>;
  			#size-cells = <1>;
