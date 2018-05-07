@@ -1,145 +1,101 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752755AbeEGSoi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 14:44:38 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:47272 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752352AbeEGSog (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 14:44:36 -0400
-From: Josh Hunt <johunt@akamai.com>
-To: mingo@redhat.com, acme@kernel.org
-Cc: peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org, wangnan0@huawei.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, eranian@google.com, Josh Hunt <johunt@akamai.com>
-Subject: [PATCH v2] perf tools: allow map files to specify DSO
-Date: Mon,  7 May 2018 14:24:16 -0400
-Message-Id: <1525717456-21475-1-git-send-email-johunt@akamai.com>
-X-Mailer: git-send-email 1.9.1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805070183
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1711220000
- definitions=main-1805070183
+        id S1752782AbeEGSop (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 14:44:45 -0400
+Received: from bues.ch ([80.190.117.144]:36100 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752376AbeEGSol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 14:44:41 -0400
+Date: Mon, 7 May 2018 20:43:17 +0200
+From: Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Regression caused by commit 882164a4a928
+Message-ID: <20180507204317.52992b6c@wiggum>
+In-Reply-To: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the ability to specify a DSO in the /tmp/perf-<PID>.map file.
-The DSO should be the first line in the file and readable by the
-running user. If a valid DSO is found all other contents of the
-file will be ignored. This allows things like callchain unwinding
-with DWARF to work.
+--Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Wang Nan <wangnan0@huawei.com>
-Signed-off-by: Josh Hunt <johunt@akamai.com>
----
-We have an application which uses huge pages for its text section, but
-still needs the ability to do callchain unwinding with DWARF. We use
-the perf-<PID>.map file setup to do symbol resolution and that works
-great, but callchain unwinding fails.
+On Mon, 7 May 2018 10:44:34 -0500
+Larry Finger <Larry.Finger@lwfinger.net> wrote:
 
-A few months ago I mentioned this to Wang Nan and he suggested a way
-around this problem could be to specify the path of the DSO in the map
-file. The attached patch is my initial hack at this. Running with this
-patch I can now get full callchain unwinding with DWARF.
+> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in=
+=20
+> module") appeared to be harmless, it leads to complete failure of drivers=
+ b43.=20
 
-FWIW LBR + map file works with callchains, but unfortunately there are
-some cases where we still need DWARF.
+>   config SSB_DRIVER_PCICORE_POSSIBLE
+>          bool
+> -       depends on SSB_PCIHOST && SSB =3D y
+> +       depends on SSB_PCIHOST && (SSB =3D y || !MIPS)
+>          default y
+>=20
+>   config SSB_DRIVER_PCICORE
 
-I submitted an RFC as an earlier draft:
-https://lkml.org/lkml/2018/4/24/1070
 
-v2:
-1. Rebase RFC patch to
-git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-2. Update jit-interface.txt as per Arnaldo's request
+https://patchwork.kernel.org/patch/10161131/
 
- tools/perf/Documentation/jit-interface.txt |  8 +++++---
- tools/perf/util/map.c                      | 32 ++++++++++++++++++++++++++++++
- 2 files changed, 37 insertions(+), 3 deletions(-)
+Could we _please_ switch to not applying patches to ssb or b43, if
+nobody acked (or better reviewed) a patch?
 
-diff --git a/tools/perf/Documentation/jit-interface.txt b/tools/perf/Documentation/jit-interface.txt
-index a8656f564915..8a25b979802f 100644
---- a/tools/perf/Documentation/jit-interface.txt
-+++ b/tools/perf/Documentation/jit-interface.txt
-@@ -3,13 +3,15 @@ by a JIT.
- 
- The JIT has to write a /tmp/perf-%d.map  (%d = pid of process) file
- 
--This is a text file.
-+This is a text file and can have one of the following formats:
- 
--Each line has the following format, fields separated with spaces:
-+1) Each line has the following format, fields separated with spaces:
- 
- START SIZE symbolname
- 
- START and SIZE are hex numbers without 0x.
- symbolname is the rest of the line, so it could contain special characters.
- 
--The ownership of the file has to match the process.
-+2) A single line with the full pathname of the DSO to use.
-+
-+For both formats, the ownership of the file has to match the process.
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index c8fe836e4c3c..da3050b18e34 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -139,6 +139,31 @@ void map__init(struct map *map, u64 start, u64 end, u64 pgoff, struct dso *dso)
- 	refcount_set(&map->refcnt, 1);
- }
- 
-+static bool replace_anon(char *mapfilename)
-+{
-+	FILE *file = NULL;
-+	bool ret = false;
-+
-+	file = fopen(mapfilename, "r");
-+	if (file != NULL) {
-+		char *line = NULL;
-+		size_t line_len, linesz=0;
-+
-+		line_len = getline(&line, &linesz, file);
-+		if (line_len > 0) {
-+			line[line_len-1] = '\0'; /* null terminate */
-+			if (!access(line, R_OK)) {
-+				strlcpy(mapfilename, line, line_len);
-+				ret = true;
-+			}
-+		}
-+		free(line);
-+		fclose(file);
-+	}
-+
-+	return ret;
-+}
-+
- struct map *map__new(struct machine *machine, u64 start, u64 len,
- 		     u64 pgoff, u32 d_maj, u32 d_min, u64 ino,
- 		     u64 ino_gen, u32 prot, u32 flags, char *filename,
-@@ -170,6 +195,13 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
- 			snprintf(newfilename, sizeof(newfilename),
- 				 "/tmp/perf-%d.map", nsi->pid);
- 			filename = newfilename;
-+			/*
-+			 * Check to see if map file references DSO to use, if so, use it.
-+			 */
-+			if (anon && replace_anon(newfilename)) {
-+				anon = 0;
-+				filename = newfilename;
-+			}
- 		}
- 
- 		if (android) {
--- 
-1.9.1
+We had multiple changes to ssb and b43 in the recent past that did not
+have a review at all and broke something. I don't think such software
+quality is acceptable at all.
+So please revert 882164a4a928.
+
+I'm sorry that this patch slipped through the cracks of my inbox.
+But the reaction to that shall not be to just apply the patch. It
+shall be to resubmit it for review.
+
+
+
+But back to the technical topic.
+I don't remember why SSB_DRIVER_PCICORE_POSSIBLE depends on SSB_PCIHOST.
+But that looks and feels wrong.
+
+I would say it should rather look like
+
+config SSB_DRIVER_PCICORE_POSSIBLE
+	depends on SSB && (PCI =3D y || PCI =3D SSB)
+
+completely untested, though.
+
+--=20
+Michael
+
+--Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlrwnkUACgkQ9TK+HZCN
+iw6+rw/+IKUHfewDddQA/cS2YI/26ozyojOOrFiKui7+NvBUWazjYMf4yjRKgLA2
+Rxjm2OaC8TjDREXG3wnvIgvnMDkJTYHTTQ8hti+EA4R0vUsPUsDfOCQ4cggD4ev4
+Ob0gk1pbAd5avlL6N/0zPTMc4c7TD4Htt1ZlWRq/01JQfLg3rlBz9PkfQpI1OE7r
+5doGf86Aks44GE9EVjGTLPmWoeX7AqqwMBm7jdB1U/TAUgyw8zW/9Mrd3QoUuKDO
+M+0S/fWiv9DNvKaR+fW00ngLiwuXR5g/9SI2+uIEuzgon0HSHV5daLVP4y0BXZvS
+BS4D0mfVnCMNLIDXqkqfJkc1zSY2Gy/qzHG6n8G6x7pbd9mlLWqJ8bFxek7iKCSA
+S0hLIR4jBmHoQrVJPHhAq15yRKl72gsUS6qA+ucGiv7oRJjwQDnIo4rZCOdXNVN8
+7d5tGTr5Q59nquerxodSvimbX+6yG/aqBLhEw6TfMafs3cZJB0A3LGio8zCz1IQR
+e//pycsWK4tbeThjQbJh3el0e0IHtyJmxJcDNIPXjidUvAAuPXgQdT26m61AKttM
+aoqJANhfItTPy9BLbf35vikHcZdmkx8jr05ossZpZ1nNDEuV70TBk2BkyWTV9k2g
+rrZQSEmsC0awOC4HQG7bTXyc1bWGzA2TPcPdlIaZK47puh5LTw0=
+=mn4E
+-----END PGP SIGNATURE-----
+
+--Sig_/iHDMw0Mv5.LLHwtO+_Zrb7t--
