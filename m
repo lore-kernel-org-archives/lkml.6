@@ -1,25 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752495AbeEGJgI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:36:08 -0400
-Received: from osg.samsung.com ([64.30.133.232]:46532 "EHLO osg.samsung.com"
+        id S1752426AbeEGJi6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 05:38:58 -0400
+Received: from osg.samsung.com ([64.30.133.232]:49868 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752088AbeEGJgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:36:02 -0400
+        id S1752470AbeEGJgH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 05:36:07 -0400
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>
-Subject: [PATCH 10/18] rcu: rcupdate.h: get rid of Sphinx warnings at rcu_pointer_handoff()
-Date: Mon,  7 May 2018 06:35:46 -0300
-Message-Id: <a87d742e81124ddfeaa5b83daf10c91758c1b025.1525684985.git.mchehab+samsung@kernel.org>
+        Jonathan Cameron <jic23@kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>, linux-iio@vger.kernel.org
+Subject: [PATCH 15/18] iio: iio.h: use nested struct support on kernel-doc markup
+Date: Mon,  7 May 2018 06:35:51 -0300
+Message-Id: <1a31240699b1b6ee089b5b36889ab27ae14ad94e.1525684985.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1525684985.git.mchehab+samsung@kernel.org>
 References: <cover.1525684985.git.mchehab+samsung@kernel.org>
@@ -29,43 +27,58 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code example at rcupdate.h currently produce lots of warnings:
+Solve those Sphinx warnings:
 
-	./include/linux/rcupdate.h:572: WARNING: Unexpected indentation.
-	./include/linux/rcupdate.h:576: WARNING: Unexpected indentation.
-	./include/linux/rcupdate.h:580: WARNING: Block quote ends without a blank line; unexpected unindent.
-	./include/linux/rcupdate.h:582: WARNING: Block quote ends without a blank line; unexpected unindent.
-	./include/linux/rcupdate.h:582: WARNING: Inline literal start-string without end-string.
+    ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.sign' not described in 'iio_chan_spec'
+    ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.realbits' not described in 'iio_chan_spec'
+    ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.storagebits' not described in 'iio_chan_spec'
+    ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.shift' not described in 'iio_chan_spec'
+    ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.repeat' not described in 'iio_chan_spec'
+    ./include/linux/iio/iio.h:270: warning: Function parameter or member 'scan_type.endianness' not described in 'iio_chan_spec'
 
-Change it to a code-block.
+    ./include/linux/iio/iio.h:191: WARNING: Unexpected indentation.
+    ./include/linux/iio/iio.h:192: WARNING: Block quote ends without a blank line; unexpected unindent.
+    ./include/linux/iio/iio.h:198: WARNING: Definition list ends without a blank line; unexpected unindent.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- include/linux/rcupdate.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ include/linux/iio/iio.h | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 36360d07f25b..c890d10978fa 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -568,8 +568,8 @@ static inline void rcu_preempt_sleep_check(void) { }
-  * This is simply an identity function, but it documents where a pointer
-  * is handed off from RCU to some other synchronization mechanism, for
-  * example, reference counting or locking.  In C11, it would map to
-- * kill_dependency().  It could be used as follows:
-- * ``
-+ * kill_dependency().  It could be used as follows::
-+ *
-  *	rcu_read_lock();
-  *	p = rcu_dereference(gp);
-  *	long_lived = is_long_lived(p);
-@@ -580,7 +580,6 @@ static inline void rcu_preempt_sleep_check(void) { }
-  *			p = rcu_pointer_handoff(p);
-  *	}
-  *	rcu_read_unlock();
-- *``
-  */
- #define rcu_pointer_handoff(p) (p)
- 
+diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
+index 11579fd4126e..a74cb177dc6f 100644
+--- a/include/linux/iio/iio.h
++++ b/include/linux/iio/iio.h
+@@ -183,18 +183,18 @@ struct iio_event_spec {
+  * @address:		Driver specific identifier.
+  * @scan_index:		Monotonic index to give ordering in scans when read
+  *			from a buffer.
+- * @scan_type:		sign:		's' or 'u' to specify signed or unsigned
+- *			realbits:	Number of valid bits of data
+- *			storagebits:	Realbits + padding
+- *			shift:		Shift right by this before masking out
+- *					realbits.
+- *			repeat:		Number of times real/storage bits
+- *					repeats. When the repeat element is
+- *					more than 1, then the type element in
+- *					sysfs will show a repeat value.
+- *					Otherwise, the number of repetitions is
+- *					omitted.
+- *			endianness:	little or big endian
++ * @scan_type:		struct describing the scan type
++ * @scan_type.sign:		's' or 'u' to specify signed or unsigned
++ * @scan_type.realbits:		Number of valid bits of data
++ * @scan_type.storagebits:	Realbits + padding
++ * @scan_type.shift:		Shift right by this before masking out
++ *				realbits.
++ * @scan_type.repeat:		Number of times real/storage bits repeats.
++ *				When the repeat element is more than 1, then
++ *				the type element in sysfs will show a repeat
++ *				value. Otherwise, the number of repetitions
++ *				is omitted.
++ * @scan_type.endianness:	little or big endian
+  * @info_mask_separate: What information is to be exported that is specific to
+  *			this channel.
+  * @info_mask_separate_available: What availability information is to be
 -- 
 2.17.0
