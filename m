@@ -1,90 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751959AbeEGG6B (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:58:01 -0400
-Received: from mail-bn3nam01on0040.outbound.protection.outlook.com ([104.47.33.40]:52447
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750716AbeEGG6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:58:00 -0400
-From: Bharat Kumar Gogada <bharatku@xilinx.com>
-To: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "keith.busch@intel.com" <keith.busch@intel.com>,
-        "hch@lst.de" <hch@lst.de>, "axboe@fb.com" <axboe@fb.com>
-Subject: RE: NVMe Poll CQ on timeout
-Thread-Topic: NVMe Poll CQ on timeout
-Thread-Index: AdPdbaKnll1ikIRyRXyNIhFzf8HT4wIYrQ9g
-Date: Mon, 7 May 2018 06:57:54 +0000
-Message-ID: <BLUPR0201MB1505FC0425F87A1A8E6E50DAA59B0@BLUPR0201MB1505.namprd02.prod.outlook.com>
-References: <BLUPR0201MB1505A10C31E4E3A3BDF7BDBAA58E0@BLUPR0201MB1505.namprd02.prod.outlook.com>
-In-Reply-To: <BLUPR0201MB1505A10C31E4E3A3BDF7BDBAA58E0@BLUPR0201MB1505.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=bharatku@xilinx.com;
-x-originating-ip: [182.72.145.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BLUPR0201MB1586;7:1x4a0LRfHh1GLbChb+1WNJE3XaaGLjwMpDfMVml5bSWf5yPNjh7KszM+f/AqAf9MZ1topc23xatTFSZpKSM1v2S8mbPqM+kALycQC2tLVrOKHkz6nPwLRrIWNMZz8jXpc2AbriKfAbcMrbT56P4YBbedFwFUL7SAdcu1QWVykeKzEO1SHYTIph/EiMUttCu5PvNNFf8LplUYSioCDR0bSerN30SdOb8HeuiLJgGEqdzxgwZIWQkj8bdUSgiRUi5L
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BLUPR0201MB1586;
-x-ms-traffictypediagnostic: BLUPR0201MB1586:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-microsoft-antispam-prvs: <BLUPR0201MB15869C38841E87665ED27E21A59B0@BLUPR0201MB1586.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150025)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:BLUPR0201MB1586;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0201MB1586;
-x-forefront-prvs: 066517B35B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(396003)(39380400002)(189003)(199004)(3846002)(316002)(6116002)(97736004)(25786009)(110136005)(54906003)(3660700001)(106356001)(486006)(3280700002)(2906002)(446003)(476003)(11346002)(66066001)(186003)(105586002)(478600001)(6506007)(55236004)(7696005)(76176011)(86362001)(6436002)(102836004)(26005)(99286004)(55016002)(8936002)(5660300001)(7736002)(9686003)(8676002)(81156014)(81166006)(53936002)(305945005)(4326008)(14454004)(5250100002)(2501003)(74316002)(2900100001)(6246003)(33656002)(68736007)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0201MB1586;H:BLUPR0201MB1505.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: d4ZiIzCmpXXPV91e5ETuOaGsyE2FOQHEpuMJyJ0LmJ59V5w5KGlwEknwPkCDpdBG2BZHaAq+bU8D2duOeK0oWsloqNfJZPbKIdRRi6g6lC4cQ4uja+8duyoaQN3PF9GK6qeYg43rQ+bmRd37lSf0WdFxcHfqBEoA7VaJHYp0UxE6sWGcDvVUI5wDrZucEZ51
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        id S1751942AbeEGG7w (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:59:52 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:62854 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750795AbeEGG7s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 02:59:48 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w476xc8j027910
+X-Nifty-SrcIP: [209.85.217.169]
+X-Google-Smtp-Source: AB8JxZqHAcq6itflC7FG2ZSbjtMpGL50DM9JwoGRrGp+f7nQliitadiBDzAcIp2MvoixIYNqD2ow9o53mFe9E2dVdRk=
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: f69d9673-c1f0-4d29-ff8a-08d5b3e7dbc2
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f69d9673-c1f0-4d29-ff8a-08d5b3e7dbc2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2018 06:57:54.6725
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0201MB1586
+In-Reply-To: <1522413619.15770.88.camel@fedoraproject.org>
+References: <20180329180112.11055-1-labbott@redhat.com> <1522413619.15770.88.camel@fedoraproject.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 7 May 2018 15:58:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR5ZtwWH1SPMJeVpPkB38+9FyZOAG4AmS7NQ8NqCo_t9Q@mail.gmail.com>
+Message-ID: <CAK7LNAR5ZtwWH1SPMJeVpPkB38+9FyZOAG4AmS7NQ8NqCo_t9Q@mail.gmail.com>
+Subject: Re: [RFCv2 PATCH 0/3] Salted build ids via linker sections
+To: Mark Wielaard <mjw@fedoraproject.org>
+Cc: Laura Abbott <labbott@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w476w74a001476
 
-Hi,
+2018-03-30 21:40 GMT+09:00 Mark Wielaard <mjw@fedoraproject.org>:
+> On Thu, 2018-03-29 at 11:01 -0700, Laura Abbott wrote:
+>> I'm still mostly looking for feedback whether
+>> this would be acceptable for merging or if we should just persue a
+>> --build-id-salt in binutils.
+>
+> Personally I would go with this approach. It seems simple and it might
+> take years before a new linker option is available everywhere.
 
-Does anyone have any inputs ?
 
-Regards,
-Bharat
+Indeed.  This series is easier than --build-id-salt.
 
-> Hi,
-> 
-> We are testing NVMe cards on ARM64 platform, the card uses legacy
-> interrupts.
-> Intermittently we are hitting following case in drivers/nvme/host/pci.c
->        /*
->          * Did we miss an interrupt?
->          */
->         if (__nvme_poll(nvmeq, req->tag)) {
->                 dev_warn(dev->ctrl.device,
->                          "I/O %d QID %d timeout, completion polled\n",
->                          req->tag, nvmeq->qid);
->                 return BLK_EH_HANDLED;
->         }
-> 
-> Can anyone tell when does nvme_timeout gets invoked ?
-> What does "Did we miss an interrupt mean" ? Does it mean host missing to
-> service a interrupt raised by EP card ?
-> 
-> Regards,
-> Bharat
-> 
+If you do not see any better solution, I can accept this.
+
+
+BTW, when I read
+https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo
+I thought "we could reverse the symlink direction from debug file to
+build-id file)"
+sensible (but I understand it is not easy to change this way).
+
+
+If two packages share an identical image,
+one package can borrow the image from the other,
+then the storage space will be saved.
+
+So, having identical ID should be advantage,
+but we actually see only disadvantage...
+
+
+
+
+> To simplify things I think you could just always add the extra vdso
+> .comment initialized to something like KERNELRELEASE. Which distros
+> seem to update anyway to include their build number, so they wouldn't
+> need to do anything special to "update the build salt".
+>
+
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
