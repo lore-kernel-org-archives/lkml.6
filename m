@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752223AbeEGMcv (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 08:32:51 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:43719 "EHLO hermes.aosc.io"
+        id S1752256AbeEGMdd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 08:33:33 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:43765 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752049AbeEGMct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 08:32:49 -0400
+        id S1752117AbeEGMdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 08:33:31 -0400
 From: Icenowy Zheng <icenowy@aosc.io>
 To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -13,278 +13,88 @@ To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-sunxi@googlegroups.com,
         Ondrej Jirman <megous@megous.com>, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v4 2/3] regulator: add support for SY8106A regulator
-Date: Mon,  7 May 2018 20:29:41 +0800
-Message-Id: <20180507122942.25758-3-icenowy@aosc.io>
+Subject: [PATCH v4 3/3] ARM: dts: sun8i: h3: Add SY8106A regulator to Orange Pi PC
+Date: Mon,  7 May 2018 20:29:42 +0800
+Message-Id: <20180507122942.25758-4-icenowy@aosc.io>
 In-Reply-To: <20180507122942.25758-1-icenowy@aosc.io>
 References: <20180507122942.25758-1-icenowy@aosc.io>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ondrej Jirman <megous@megous.com>
 
-SY8106A is an I2C attached single output regulator made by Silergy Corp,
-which is used on several Allwinner H3/H5 SBCs to control the power
-supply of the ARM cores.
-
-Add a driver for it.
+Add SY8106A regulator to r_i2c bus and enable the r_i2c bus on
+Orange Pi PC, then set the power supply of the ARM cores to this
+regulator, in order to enable DVFS.
 
 Signed-off-by: Ondrej Jirman <megous@megous.com>
-[Icenowy: Change commit message, remove enable/disable code, add default
- ramp_delay, add comment for go bit, add code for fixed mode voltage]
+[Icenowy: Enable DVFS in this patch, slight changes and change commit
+ message]
 Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+[wens@csie.org: Rename regulator label]
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
-Changes in v4:
-- Drop custom {get,set}_voltage_sel function, and force GO_BIT to be set
-  when probing.
+No changes in v4.
 
 Changes in v3:
-- Return the fixed voltage defined in device tree when I2C regulating
-  not enabled (in this situation the register may contain no valid
-  voltage data).
+- Renamed regulator label (by Chen-Yu Tsai).
+- Added the fixed mode voltage number.
 
 Changes in v2:
-- Dropped the enable/disable code.
-- Added default ramp_delay value.
-- Added comment for the "go bit".
+- Reduce maximum voltage to 1.3V.
+- Slightly changed the comment at 1.0V minimum voltage for taking BSP
+  DVFS table instead of Armbian one.
 
- MAINTAINERS                           |   6 +
- drivers/regulator/Kconfig             |   7 ++
- drivers/regulator/Makefile            |   2 +-
- drivers/regulator/sy8106a-regulator.c | 168 ++++++++++++++++++++++++++
- 4 files changed, 182 insertions(+), 1 deletion(-)
- create mode 100644 drivers/regulator/sy8106a-regulator.c
+ arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts | 28 ++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e03887faca4f..a27b8e02c7d8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13512,6 +13512,12 @@ S:	Supported
- F:	net/switchdev/
- F:	include/net/switchdev.h
+diff --git a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+index cea4d647ecbf..46240334128f 100644
+--- a/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
++++ b/arch/arm/boot/dts/sun8i-h3-orangepi-pc.dts
+@@ -113,6 +113,10 @@
+ 	status = "okay";
+ };
  
-+SY8106A REGULATOR DRIVER
-+M:	Icenowy Zheng <icenowy@aosc.io>
-+S:	Maintained
-+F:	drivers/regulator/sy8106a-regulator.c
-+F:	Documentation/devicetree/bindings/regulator/sy8106a-regulator.txt
++&cpu0 {
++	cpu-supply = <&reg_vdd_cpux>;
++};
 +
- SYNC FILE FRAMEWORK
- M:	Sumit Semwal <sumit.semwal@linaro.org>
- R:	Gustavo Padovan <gustavo@padovan.org>
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 097f61784a7d..4efae3b7e746 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -801,6 +801,13 @@ config REGULATOR_STW481X_VMMC
- 	  This driver supports the internal VMMC regulator in the STw481x
- 	  PMIC chips.
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -182,6 +186,30 @@
+ 	};
+ };
  
-+config REGULATOR_SY8106A
-+	tristate "Silergy SY8106A regulator"
-+	depends on I2C && (OF || COMPILE_TEST)
-+	select REGMAP_I2C
-+	help
-+	  This driver supports SY8106A single output regulator.
++&r_i2c {
++	status = "okay";
 +
- config REGULATOR_TPS51632
- 	tristate "TI TPS51632 Power Regulator"
- 	depends on I2C
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 590674fbecd7..d81fb02bd6e9 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -100,6 +100,7 @@ obj-$(CONFIG_REGULATOR_SC2731) += sc2731-regulator.o
- obj-$(CONFIG_REGULATOR_SKY81452) += sky81452-regulator.o
- obj-$(CONFIG_REGULATOR_STM32_VREFBUF) += stm32-vrefbuf.o
- obj-$(CONFIG_REGULATOR_STW481X_VMMC) += stw481x-vmmc.o
-+obj-$(CONFIG_REGULATOR_SY8106A) += sy8106a-regulator.o
- obj-$(CONFIG_REGULATOR_TI_ABB) += ti-abb-regulator.o
- obj-$(CONFIG_REGULATOR_TPS6105X) += tps6105x-regulator.o
- obj-$(CONFIG_REGULATOR_TPS62360) += tps62360-regulator.o
-@@ -125,5 +126,4 @@ obj-$(CONFIG_REGULATOR_WM8350) += wm8350-regulator.o
- obj-$(CONFIG_REGULATOR_WM8400) += wm8400-regulator.o
- obj-$(CONFIG_REGULATOR_WM8994) += wm8994-regulator.o
- 
--
- ccflags-$(CONFIG_REGULATOR_DEBUG) += -DDEBUG
-diff --git a/drivers/regulator/sy8106a-regulator.c b/drivers/regulator/sy8106a-regulator.c
-new file mode 100644
-index 000000000000..0a398be3f023
---- /dev/null
-+++ b/drivers/regulator/sy8106a-regulator.c
-@@ -0,0 +1,167 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// sy8106a-regulator.c - Regulator device driver for SY8106A
-+//
-+// Copyright (C) 2016 Ondřej Jirman <megous@megous.com>
-+// Copyright (c) 2017-2018 Icenowy Zheng <icenowy@aosc.io>
-+
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/driver.h>
-+#include <linux/regulator/of_regulator.h>
-+
-+#define SY8106A_REG_VOUT1_SEL		0x01
-+#define SY8106A_REG_VOUT_COM		0x02
-+#define SY8106A_REG_VOUT1_SEL_MASK	0x7f
-+#define SY8106A_DISABLE_REG		BIT(0)
-+/*
-+ * The I2C controlled voltage will only work when this bit is set; otherwise
-+ * it will behave like a fixed regulator.
-+ */
-+#define SY8106A_GO_BIT			BIT(7)
-+
-+struct sy8106a {
-+	struct regulator_dev *rdev;
-+	struct regmap *regmap;
-+	u32 fixed_voltage;
++	reg_vdd_cpux: regulator@65 {
++		compatible = "silergy,sy8106a";
++		reg = <0x65>;
++		regulator-name = "vdd-cpux";
++		silergy,fixed-microvolt = <1200000>;
++		/*
++		 * The datasheet uses 1.1V as the minimum value of VDD-CPUX,
++		 * however both the Armbian DVFS table and the official one
++		 * have operating points with voltage under 1.1V, and both
++		 * DVFS table are known to work properly at the lowest
++		 * operating point.
++		 *
++		 * Use 1.0V as the minimum voltage instead.
++		 */
++		regulator-min-microvolt = <1000000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
 +};
 +
-+static const struct regmap_config sy8106a_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static const struct regulator_ops sy8106a_ops = {
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.set_voltage_time_sel = regulator_set_voltage_time_sel,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.list_voltage = regulator_list_voltage_linear,
-+	/* Enabling/disabling the regulator is not yet implemented */
-+};
-+
-+/* Default limits measured in millivolts */
-+#define SY8106A_MIN_MV		680
-+#define SY8106A_MAX_MV		1950
-+#define SY8106A_STEP_MV		10
-+
-+static const struct regulator_desc sy8106a_reg = {
-+	.name = "SY8106A",
-+	.id = 0,
-+	.ops = &sy8106a_ops,
-+	.type = REGULATOR_VOLTAGE,
-+	.n_voltages = ((SY8106A_MAX_MV - SY8106A_MIN_MV) / SY8106A_STEP_MV) + 1,
-+	.min_uV = (SY8106A_MIN_MV * 1000),
-+	.uV_step = (SY8106A_STEP_MV * 1000),
-+	.vsel_reg = SY8106A_REG_VOUT1_SEL,
-+	.vsel_mask = SY8106A_REG_VOUT1_SEL_MASK,
-+	/*
-+	 * This ramp_delay is a conservative default value which works on
-+	 * H3/H5 boards VDD-CPUX situations.
-+	 */
-+	.ramp_delay = 200,
-+	.owner = THIS_MODULE,
-+};
-+
-+/*
-+ * I2C driver interface functions
-+ */
-+static int sy8106a_i2c_probe(struct i2c_client *i2c,
-+			    const struct i2c_device_id *id)
-+{
-+	struct sy8106a *chip;
-+	struct device *dev = &i2c->dev;
-+	struct regulator_dev *rdev = NULL;
-+	struct regulator_config config = { };
-+	unsigned int reg, vsel;
-+	int error;
-+
-+	chip = devm_kzalloc(&i2c->dev, sizeof(struct sy8106a), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	error = of_property_read_u32(dev->of_node, "silergy,fixed-microvolt",
-+				     &chip->fixed_voltage);
-+	if (error)
-+		return error;
-+
-+	if (chip->fixed_voltage < SY8106A_MIN_MV * 1000 ||
-+	    chip->fixed_voltage > SY8106A_MAX_MV * 1000)
-+		return -EINVAL;
-+
-+	chip->regmap = devm_regmap_init_i2c(i2c, &sy8106a_regmap_config);
-+	if (IS_ERR(chip->regmap)) {
-+		error = PTR_ERR(chip->regmap);
-+		dev_err(dev, "Failed to allocate register map: %d\n", error);
-+		return error;
-+	}
-+
-+	config.dev = &i2c->dev;
-+	config.regmap = chip->regmap;
-+	config.driver_data = chip;
-+
-+	config.of_node = dev->of_node;
-+	config.init_data = of_get_regulator_init_data(dev, dev->of_node,
-+						      &sy8106a_reg);
-+
-+	if (!config.init_data)
-+		return -ENOMEM;
-+
-+	/* Ensure GO_BIT is enabled when probing */
-+	error = regmap_read(chip->regmap, SY8106A_REG_VOUT1_SEL, &reg);
-+	if (error)
-+		return error;
-+
-+	if (!(reg & SY8106A_GO_BIT)) {
-+		vsel = (chip->fixed_voltage / 1000 - SY8106A_MIN_MV) /
-+		       SY8106A_STEP_MV;
-+
-+		error = regmap_write(chip->regmap, SY8106A_REG_VOUT1_SEL,
-+				     vsel | SY8106A_GO_BIT);
-+		if (error)
-+			return error;
-+	}
-+
-+	/* Probe regulator */
-+	rdev = devm_regulator_register(&i2c->dev, &sy8106a_reg, &config);
-+	if (IS_ERR(rdev)) {
-+		error = PTR_ERR(rdev);
-+		dev_err(&i2c->dev, "Failed to register SY8106A regulator: %d\n", error);
-+		return error;
-+	}
-+
-+	chip->rdev = rdev;
-+
-+	i2c_set_clientdata(i2c, chip);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sy8106a_i2c_of_match[] = {
-+	{ .compatible = "silergy,sy8106a" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, sy8106a_i2c_of_match);
-+
-+static const struct i2c_device_id sy8106a_i2c_id[] = {
-+	{ "sy8106a", 0 },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(i2c, sy8106a_i2c_id);
-+
-+static struct i2c_driver sy8106a_regulator_driver = {
-+	.driver = {
-+		.name = "sy8106a",
-+		.of_match_table	= of_match_ptr(sy8106a_i2c_of_match),
-+	},
-+	.probe = sy8106a_i2c_probe,
-+	.id_table = sy8106a_i2c_id,
-+};
-+
-+module_i2c_driver(sy8106a_regulator_driver);
-+
-+MODULE_AUTHOR("Ondřej Jirman <megous@megous.com>");
-+MODULE_AUTHOR("Icenowy Zheng <icenowy@aosc.io>");
-+MODULE_DESCRIPTION("Regulator device driver for Silergy SY8106A");
-+MODULE_LICENSE("GPL");
+ &r_pio {
+ 	leds_r_opc: led_pins {
+ 		pins = "PL10";
 -- 
 2.17.0
