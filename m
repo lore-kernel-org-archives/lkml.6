@@ -1,131 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753108AbeEGWPR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 18:15:17 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40241 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752726AbeEGWPP (ORCPT
+        id S1753294AbeEGWVc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 18:21:32 -0400
+Received: from a2nlsmtp01-04.prod.iad2.secureserver.net ([198.71.225.38]:44442
+        "EHLO a2nlsmtp01-04.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753061AbeEGWV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 18:15:15 -0400
-X-Google-Smtp-Source: AB8JxZp35avp5OzHtjV4o6iRh3y0OTAzJNuQh1fJLVnP+5VhvEbNQFi5AdBQsv5g1wYFwaN3oF//Vg==
-Date: Mon, 7 May 2018 15:15:12 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Jeffy Chen <jeffy.chen@rock-chips.com>
-Cc: linux-kernel@vger.kernel.org, heiko@sntech.de,
-        linux-rockchip@lists.infradead.org,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Doug Anderson <dianders@chromium.org>
-Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when
- changing it's capability
-Message-ID: <20180507221511.GA6448@rodete-desktop-imager.corp.google.com>
-References: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 7 May 2018 18:21:29 -0400
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH 4/7] cifs: smbd: Indicate to retry on transport sending failure
+Date: Mon,  7 May 2018 15:20:03 -0700
+Message-Id: <20180507222006.20781-4-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180507222006.20781-1-longli@linuxonhyperv.com>
+References: <20180507222006.20781-1-longli@linuxonhyperv.com>
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfEJVHCaXpk0Kz5Wn9Pm3DOBlvfoZ6nUhJxwZm6sxI33iHjr5W6a4E2AQTqgqx/TDn1RKifI5HfY+nRT7n5wTwYOBXfR+UnTBxNjjTBM4+Bi8oPp77oof
+ ToUQfwUlv54WNwSM64oDscUVFf1zRVuitaVAQjzI0Y0OsMdWcsWGQIgu9aInhS+LcjtCvCuXai9yAjBoGm9elOgyNqOnB8Luzfg4l2HLa18kZll1i9k6dmXt
+ pVtJta6PACJCLeX9QsEDZHIsHhJmWC4WFdJW5GapMgun7wCtNUlb+lqsq2vEUmoz3H687tyB6aE6uQUN4iG/1Ah+Y2eEcQVTsD+s/LN6+9DdLUcf5k1+nE1j
+ 2mX5ZBCBywMrRDPy1siSdoapa07RMzlcviMKxhDfy5KGyFPFgmbmzJLQrtaO7KG+DXG9BbI3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Doug
+From: Long Li <longli@microsoft.com>
 
-Hi Jeffy,
+Failure to send a packet doesn't mean it's a permanent failure, it can't be
+returned to user process. This I/O should be retried or failed based on
+server packet response and transport health. This logic is handled by the
+upper layer.
 
-On Thu, May 03, 2018 at 02:55:53PM +0800, Jeffy Chen wrote:
-> We saw spurious irq when changing irq's trigger type, for example
-> setting gpio-keys's wakeup irq trigger type.
-> 
-> And according to the TRM:
-> "Programming the GPIO registers for interrupt capability, edge-sensitive
-> or level-sensitive interrupts, and interrupt polarity should be
-> completed prior to enabling the interrupts on Port A in order to prevent
-> spurious glitches on the interrupt lines to the interrupt controller."
-> 
-> Reported-by: Brian Norris <briannorris@google.com>
-> Signed-off-by: Jeffy Chen <jeffy.chen@rock-chips.com>
-> ---
-> 
->  drivers/pinctrl/pinctrl-rockchip.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-rockchip.c b/drivers/pinctrl/pinctrl-rockchip.c
-> index 3924779f55785..7ff45ec8330d1 100644
-> --- a/drivers/pinctrl/pinctrl-rockchip.c
-> +++ b/drivers/pinctrl/pinctrl-rockchip.c
-> @@ -2727,9 +2727,19 @@ static int rockchip_irq_set_type(struct irq_data *d, unsigned int type)
->  		return -EINVAL;
->  	}
->  
-> +	/**
+Give this decision to upper layer.
 
-The typical multiline comment style is to use only 1 asterisk -- 2
-asterisks usually denote something more formal, like kerneldoc.
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ fs/cifs/smbdirect.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> +	 * According to the TRM, we should keep irq disabled during programming
-> +	 * interrupt capability to prevent spurious glitches on the interrupt
-> +	 * lines to the interrupt controller.
-> +	 */
-
-It's also worth noting that this case may come up in
-rockchip_irq_demux() for EDGE_BOTH triggers:
-
-		/*
-		 * Triggering IRQ on both rising and falling edge
-		 * needs manual intervention.
-		 */
-		if (bank->toggle_edge_mode & BIT(irq)) {
-...
-				polarity = readl_relaxed(bank->reg_base +
-							 GPIO_INT_POLARITY);
-				if (data & BIT(irq))
-					polarity &= ~BIT(irq);
-				else
-					polarity |= BIT(irq);
-				writel(polarity,
-				       bank->reg_base + GPIO_INT_POLARITY);
-
-AIUI, this case is not actually a problem, because this polarity
-reconfiguration happens before we call generic_handle_irq(), so the
-extra spurious interrupt is handled and cleared after this point. But it
-seems like this should be noted somewhere in either the commit message,
-the code comments, or both.
-
-On the other hand...this also implies there may be a race condition
-there, where we might lose an interrupt if there is an edge between the
-re-configuration of the polarity in rockchip_irq_demux() and the
-clearing/handling of the interrupt (handle_edge_irq() ->
-chip->irq_ack()). If we have an edge between there, then we might ack
-it, but leave the polarity such that we aren't ready for the next
-(inverted) edge.
-
-I'm not 100% sure about the above, so it might be good to verify it. But
-I also expect this means there's really no way to 100% reliably
-implement both-edge trigger types on hardware like this that doesn't
-directly implement it. So I'm not sure what we'd do with that knowledge.
-
-> +	data = readl(bank->reg_base + GPIO_INTEN);
-> +	writel_relaxed(data & ~mask, gc->reg_base + GPIO_INTEN);
-
-Not sure if this is a needless optimization: but couldn't you only
-disable the interrupt (and make the level and polarity changes) only if
-the level or polarity are actually changing? For example, it's possible
-to end up here when changing from EDGE_BOTH to EDGE_RISING, but we might
-not actually program a new value.
-
-Brian
-
-> +
->  	writel_relaxed(level, gc->reg_base + GPIO_INTTYPE_LEVEL);
->  	writel_relaxed(polarity, gc->reg_base + GPIO_INT_POLARITY);
->  
-> +	writel_relaxed(data, gc->reg_base + GPIO_INTEN);
-> +
->  	irq_gc_unlock(gc);
->  	raw_spin_unlock_irqrestore(&bank->slock, flags);
->  	clk_disable(bank->clk);
-> -- 
-> 2.11.0
-> 
-> 
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index b8dd493..74620f5 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -851,7 +851,7 @@ static int smbd_create_header(struct smbd_connection *info,
+ 
+ 	if (info->transport_status != SMBD_CONNECTED) {
+ 		log_outgoing(ERR, "disconnected not sending\n");
+-		return -ENOENT;
++		return -EAGAIN;
+ 	}
+ 	atomic_dec(&info->send_credits);
+ 
+@@ -977,6 +977,7 @@ static int smbd_post_send(struct smbd_connection *info,
+ 				wake_up(&info->wait_send_pending);
+ 		}
+ 		smbd_disconnect_rdma_connection(info);
++		rc = -EAGAIN;
+ 	} else
+ 		/* Reset timer for idle connection after packet is sent */
+ 		mod_delayed_work(info->workqueue, &info->idle_timer_work,
+@@ -2062,7 +2063,7 @@ int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst)
+ 	int rc;
+ 
+ 	if (info->transport_status != SMBD_CONNECTED) {
+-		rc = -ENODEV;
++		rc = -EAGAIN;
+ 		goto done;
+ 	}
+ 
+-- 
+2.7.4
