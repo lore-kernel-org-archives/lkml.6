@@ -1,132 +1,127 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752815AbeEGSpn (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 14:45:43 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:59730 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752656AbeEGSpl (ORCPT
+        id S1752734AbeEGSqc (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 14:46:32 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35318 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752352AbeEGSqb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 14:45:41 -0400
-Subject: Re: [PATCH 21/24] selftests: memfd: return Kselftest Skip code for
- skipped tests
-To: Mike Kravetz <mike.kravetz@oracle.com>, akpm@linux-foundation.org,
-        marcandre.lureau@redhat.com, lizhijian@cn.fujitsu.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <20180505011328.32078-1-shuah@kernel.org>
- <20180505011328.32078-21-shuah@kernel.org>
- <a5fff7b0-f308-25bc-909b-8579f6f14546@oracle.com>
-From: Shuah Khan <shuah@kernel.org>
-Message-ID: <f2b3f38a-7c7a-43ec-9c2d-94bbb7d56eb7@kernel.org>
-Date: Mon, 7 May 2018 12:45:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 14:46:31 -0400
+Date: Mon, 7 May 2018 11:46:22 -0700
+From: Matthew Wilcox <willy@infradead.org>
+To: Huaisheng Ye <yehs1@lenovo.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org, mhocko@suse.com,
+        vbabka@suse.cz, mgorman@techsingularity.net, pasha.tatashin@oracle.com,
+        alexander.levin@verizon.com, hannes@cmpxchg.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, colyli@suse.de, chengnt@lenovo.com,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM (pmem) zone
+Message-ID: <20180507184622.GB12361@bombadil.infradead.org>
+References: <1525704627-30114-1-git-send-email-yehs1@lenovo.com>
 MIME-Version: 1.0
-In-Reply-To: <a5fff7b0-f308-25bc-909b-8579f6f14546@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1525704627-30114-1-git-send-email-yehs1@lenovo.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/04/2018 07:52 PM, Mike Kravetz wrote:
-> On 05/04/2018 06:13 PM, Shuah Khan (Samsung OSG) wrote:
->> When memfd test is skipped because of unmet dependencies and/or unsupported
->> configuration, it returns non-zero value which is treated as a fail by the
->> Kselftest framework. This leads to false negative result even when the test
->> could not be run.
->>
->> Change it to return kselftest skip code when a test gets skipped to
->> clearly report that the test could not be run.
->>
->> Added an explicit check for root user and return skip code.
->>
->> Kselftest framework SKIP code is 4 and the framework prints appropriate
->> messages to indicate that the test is skipped.
->>
->> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
->> ---
->>  tools/testing/selftests/memfd/run_tests.sh | 10 +++++++++-
->>  1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
->> index c2d41ed81b24..88dc206a69b7 100755
->> --- a/tools/testing/selftests/memfd/run_tests.sh
->> +++ b/tools/testing/selftests/memfd/run_tests.sh
->> @@ -1,6 +1,14 @@
->>  #!/bin/bash
->>  # please run as root
->>  
->> +# Kselftest framework requirement - SKIP code is 4.
->> +ksft_skip=4
->> +
->> +if [ $UID != 0 ]; then
->> +	echo "Please run this test as root"
->> +	exit $ksft_skip
->> +fi
->> +
->>  #
->>  # Normal tests requiring no special resources
->>  #
->> @@ -33,7 +41,7 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $hpages_test ]; then
->>  	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
->>  	if [ $? -ne 0 ]; then
->>  		echo "Please run this test as root"
->> -		exit 1
->> +		exit $ksft_skip
+On Mon, May 07, 2018 at 10:50:21PM +0800, Huaisheng Ye wrote:
+> Traditionally, NVDIMMs are treated by mm(memory management) subsystem as
+> DEVICE zone, which is a virtual zone and both its start and end of pfn 
+> are equal to 0, mm wouldn’t manage NVDIMM directly as DRAM, kernel uses
+> corresponding drivers, which locate at \drivers\nvdimm\ and 
+> \drivers\acpi\nfit and fs, to realize NVDIMM memory alloc and free with
+> memory hot plug implementation.
+
+You probably want to let linux-nvdimm know about this patch set.
+Adding to the cc.  Also, I only received patch 0 and 4.  What happened
+to 1-3,5 and 6?
+
+> With current kernel, many mm’s classical features like the buddy
+> system, swap mechanism and page cache couldn’t be supported to NVDIMM.
+> What we are doing is to expand kernel mm’s capacity to make it to handle
+> NVDIMM like DRAM. Furthermore we make mm could treat DRAM and NVDIMM
+> separately, that means mm can only put the critical pages to NVDIMM
+> zone, here we created a new zone type as NVM zone. That is to say for 
+> traditional(or normal) pages which would be stored at DRAM scope like
+> Normal, DMA32 and DMA zones. But for the critical pages, which we hope
+> them could be recovered from power fail or system crash, we make them
+> to be persistent by storing them to NVM zone.
 > 
-> We now KNOW that we are running as root because of the check above.  We
-> can delete this test, and rely on the later check to determine if the
-> number of huge pages was actually increased.
-
-Thanks for the review. Yesh this check can go away.
-
+> We installed two NVDIMMs to Lenovo Thinksystem product as development
+> platform, which has 125GB storage capacity respectively. With these 
+> patches below, mm can create NVM zones for NVDIMMs.
 > 
-> How about this instead (untested)?
+> Here is dmesg info,
+>  Initmem setup node 0 [mem 0x0000000000001000-0x000000237fffffff]
+>  On node 0 totalpages: 36879666
+>    DMA zone: 64 pages used for memmap
+>    DMA zone: 23 pages reserved
+>    DMA zone: 3999 pages, LIFO batch:0
+>  mminit::memmap_init Initialising map node 0 zone 0 pfns 1 -> 4096 
+>    DMA32 zone: 10935 pages used for memmap
+>    DMA32 zone: 699795 pages, LIFO batch:31
+>  mminit::memmap_init Initialising map node 0 zone 1 pfns 4096 -> 1048576
+>    Normal zone: 53248 pages used for memmap
+>    Normal zone: 3407872 pages, LIFO batch:31
+>  mminit::memmap_init Initialising map node 0 zone 2 pfns 1048576 -> 4456448
+>    NVM zone: 512000 pages used for memmap
+>    NVM zone: 32768000 pages, LIFO batch:31
+>  mminit::memmap_init Initialising map node 0 zone 3 pfns 4456448 -> 37224448
+>  Initmem setup node 1 [mem 0x0000002380000000-0x00000046bfffffff]
+>  On node 1 totalpages: 36962304
+>    Normal zone: 65536 pages used for memmap
+>    Normal zone: 4194304 pages, LIFO batch:31
+>  mminit::memmap_init Initialising map node 1 zone 2 pfns 37224448 -> 41418752
+>    NVM zone: 512000 pages used for memmap
+>    NVM zone: 32768000 pages, LIFO batch:31
+>  mminit::memmap_init Initialising map node 1 zone 3 pfns 41418752 -> 74186752
 > 
-> Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-> diff --git a/tools/testing/selftests/memfd/run_tests.sh b/tools/testing/selftests/memfd/run_tests.sh
-> index c2d41ed81b24..99a265a84e1d 100755
-> --- a/tools/testing/selftests/memfd/run_tests.sh
-> +++ b/tools/testing/selftests/memfd/run_tests.sh
-> @@ -1,6 +1,14 @@
->  #!/bin/bash
->  # please run as root
->  
-> +# Kselftest framework requirement - SKIP code is 4.
-> +ksft_skip=4
-> +
-> +if [ $UID != 0 ]; then
-> +	echo "Please run this test as root"
-> +	exit $ksft_skip
-> +fi
-> +
->  #
->  # Normal tests requiring no special resources
->  #
-> @@ -31,10 +39,6 @@ if [ -n "$freepgs" ] && [ $freepgs -lt $hpages_test ]; then
->  
->  	echo 3 > /proc/sys/vm/drop_caches
->  	echo $(( $hpages_needed + $nr_hugepgs )) > /proc/sys/vm/nr_hugepages
-> -	if [ $? -ne 0 ]; then
-> -		echo "Please run this test as root"
-> -		exit 1
-> -	fi
->  	while read name size unit; do
->  		if [ "$name" = "HugePages_Free:" ]; then
->  			freepgs=$size
-> @@ -53,7 +57,7 @@ if [ $freepgs -lt $hpages_test ]; then
->  	fi
->  	printf "Not enough huge pages available (%d < %d)\n" \
->  		$freepgs $needpgs
-> -	exit 1
-> +	exit $ksft_skip
->  fi
-
-I thought about changing this to skip and wasn't sure since the test did
-run partially. Good to know this case can be classified as skip. I will
-make the suggested changes and send v2.
-
-thanks,
--- Shuah
+> This comes /proc/zoneinfo
+> Node 0, zone      NVM
+>   pages free     32768000
+>         min      15244
+>         low      48012
+>         high     80780
+>         spanned  32768000
+>         present  32768000
+>         managed  32768000
+>         protection: (0, 0, 0, 0, 0, 0)
+>         nr_free_pages 32768000
+> Node 1, zone      NVM
+>   pages free     32768000
+>         min      15244
+>         low      48012
+>         high     80780
+>         spanned  32768000
+>         present  32768000
+>         managed  32768000
+> 
+> Huaisheng Ye (6):
+>   mm/memblock: Expand definition of flags to support NVDIMM
+>   mm/page_alloc.c: get pfn range with flags of memblock
+>   mm, zone_type: create ZONE_NVM and fill into GFP_ZONE_TABLE
+>   arch/x86/kernel: mark NVDIMM regions from e820_table
+>   mm: get zone spanned pages separately for DRAM and NVDIMM
+>   arch/x86/mm: create page table mapping for DRAM and NVDIMM both
+> 
+>  arch/x86/include/asm/e820/api.h |  3 +++
+>  arch/x86/kernel/e820.c          | 20 +++++++++++++-
+>  arch/x86/kernel/setup.c         |  8 ++++++
+>  arch/x86/mm/init_64.c           | 16 +++++++++++
+>  include/linux/gfp.h             | 57 ++++++++++++++++++++++++++++++++++++---
+>  include/linux/memblock.h        | 19 +++++++++++++
+>  include/linux/mm.h              |  4 +++
+>  include/linux/mmzone.h          |  3 +++
+>  mm/Kconfig                      | 16 +++++++++++
+>  mm/memblock.c                   | 46 +++++++++++++++++++++++++++----
+>  mm/nobootmem.c                  |  5 ++--
+>  mm/page_alloc.c                 | 60 ++++++++++++++++++++++++++++++++++++++++-
+>  12 files changed, 245 insertions(+), 12 deletions(-)
+> 
+> -- 
+> 1.8.3.1
+> 
