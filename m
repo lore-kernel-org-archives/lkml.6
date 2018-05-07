@@ -1,92 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752784AbeEGTCz (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 15:02:55 -0400
-Received: from mail-ua0-f193.google.com ([209.85.217.193]:33752 "EHLO
-        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752335AbeEGTCx (ORCPT
+        id S1752797AbeEGTEG (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 15:04:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55374 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbeEGTEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 15:02:53 -0400
-X-Google-Smtp-Source: AB8JxZoSFMakJCyPUTWWVD9hhC3RKyd0k/vY6ypZ1Mf9vTnTAhtBuFduyezgUv9t14Csy8TnjlHXBea/zVFzyTXi9MI=
+        Mon, 7 May 2018 15:04:05 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5ACD4601A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From: Kalle Valo <kvalo@codeaurora.org>
+To: Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Regression caused by commit 882164a4a928
+References: <7bbc067a-c412-3d2e-174a-abc31b46e246@lwfinger.net>
+        <20180507204317.52992b6c@wiggum>
+Date: Mon, 07 May 2018 22:03:58 +0300
+In-Reply-To: <20180507204317.52992b6c@wiggum> ("Michael \=\?utf-8\?Q\?B\=C3\=BCs\?\=
+ \=\?utf-8\?Q\?ch\=22's\?\= message of
+        "Mon, 7 May 2018 20:43:17 +0200")
+Message-ID: <874ljj2spt.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <d7fa9cf7-7c7e-b01c-8925-ce6dafc8721c@gmail.com>
-References: <1525706596-13601-1-git-send-email-s.mesoraca16@gmail.com> <d7fa9cf7-7c7e-b01c-8925-ce6dafc8721c@gmail.com>
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Date: Mon, 7 May 2018 21:02:32 +0200
-Message-ID: <CAJHCu1KsvPEs9vpp5bY04OeVfMtqZzPuO=9c8e2QP-+n+VKUjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] net: dsa: drop some VLAs in switch.c
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        David Laight <David.Laight@aculab.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w47J4B4a013511
 
-2018-05-07 20:14 GMT+02:00 Florian Fainelli <f.fainelli@gmail.com>:
-> On 05/07/2018 08:23 AM, Salvatore Mesoraca wrote:
->> We avoid 2 VLAs by using a pre-allocated field in dsa_switch.
->> We also try to avoid dynamic allocation whenever possible.
->>
->> Link: http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
->> Link: http://lkml.kernel.org/r/20180505185145.GB32630@lunn.ch
->>
->> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
->> ---
->>  include/net/dsa.h |  3 +++
->>  net/dsa/dsa2.c    | 14 ++++++++++++++
->>  net/dsa/switch.c  | 22 ++++++++++------------
->>  3 files changed, 27 insertions(+), 12 deletions(-)
->>
->> diff --git a/include/net/dsa.h b/include/net/dsa.h
->> index 60fb4ec..576791d 100644
->> --- a/include/net/dsa.h
->> +++ b/include/net/dsa.h
->> @@ -256,6 +256,9 @@ struct dsa_switch {
->>       /* Number of switch port queues */
->>       unsigned int            num_tx_queues;
->>
->> +     unsigned long           *bitmap;
->> +     unsigned long           _bitmap;
->> +
->>       /* Dynamically allocated ports, keep last */
->>       size_t num_ports;
->>       struct dsa_port ports[];
->> diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
->> index adf50fb..cebf35f0 100644
->> --- a/net/dsa/dsa2.c
->> +++ b/net/dsa/dsa2.c
->> @@ -748,6 +748,20 @@ struct dsa_switch *dsa_switch_alloc(struct device *dev, size_t n)
->>       if (!ds)
->>               return NULL;
->>
->> +     /* We avoid allocating memory outside dsa_switch
->> +      * if it is not needed.
->> +      */
->> +     if (n <= sizeof(ds->_bitmap) * 8) {
->> +             ds->bitmap = &ds->_bitmap;
+Michael Büsch <m@bues.ch> writes:
+
+> On Mon, 7 May 2018 10:44:34 -0500
+> Larry Finger <Larry.Finger@lwfinger.net> wrote:
 >
-> Should not this be / BITS_PER_BYTE? If the sizeof(unsigned long) is <=
-> 8, then you don't need to allocate it, otherwise, you have to.
+>> Although commit 882164a4a928 ("ssb: Prevent build of PCI host features in 
+>> module") appeared to be harmless, it leads to complete failure of drivers b43. 
+>
+>>   config SSB_DRIVER_PCICORE_POSSIBLE
+>>          bool
+>> -       depends on SSB_PCIHOST && SSB = y
+>> +       depends on SSB_PCIHOST && (SSB = y || !MIPS)
+>>          default y
+>> 
+>>   config SSB_DRIVER_PCICORE
+>
+>
+> https://patchwork.kernel.org/patch/10161131/
+>
+> Could we _please_ switch to not applying patches to ssb or b43, if
+> nobody acked (or better reviewed) a patch?
+>
+> We had multiple changes to ssb and b43 in the recent past that did not
+> have a review at all and broke something. I don't think such software
+> quality is acceptable at all.
+> So please revert 882164a4a928.
 
-No.
-We need one 1 bit per port, of course sizeof() returns size in bytes,
-hence the multiplication to get the number of bits.
-I might multiply per BITS_PER_BYTE instead of 8, but I doubt that
-Linux supports implementations where a byte is not an octet.
+Yes, someone please send a revert so that this can be fixed quickly for
+v4.17.
 
-> I would actually just always dynamically allocate the bitmap, optimizing
-> for the case where we have fewer than or 8 ports is not worth IMHO.
+> I'm sorry that this patch slipped through the cracks of my inbox.
+> But the reaction to that shall not be to just apply the patch. It
+> shall be to resubmit it for review.
 
-This optimization will save us an allocation when number of ports is
-less than 32 or 64 (depending on arch).
-IMHO it's useful, if you consider that, right now, DSA works only with
-12-ports switches.
+The thing is that in general I do not have time to ping people for every
+patch, I get enough of emails as is. If there are no review comments I
+have to assume the patch is ok to apply.
 
-Thank you for your time,
+But as ssb has had two major regressions recently I'm going to
+significantly raise the bar for ssb patches, and will refuse to apply
+random patches if they have not been tested with b43/b44.
 
-Salvatore
+-- 
+Kalle Valo
