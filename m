@@ -1,104 +1,94 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753468AbeEGXXu (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 19:23:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
+        id S1753385AbeEGX0K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 19:26:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:51547 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752719AbeEGXXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 19:23:48 -0400
-Date: Mon, 7 May 2018 18:23:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
-Message-ID: <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
+        id S1752782AbeEGX0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 19:26:09 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 8 May 2018 09:25:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bjorn Helgaas <bhelgaas@google.com>, Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the pci tree with the dma-mapping tree
+Message-ID: <20180508092555.01818b20@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180423233046.21476-1-logang@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XbChCFfWkNl1ul3TiRyXrGl"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 05:30:32PM -0600, Logan Gunthorpe wrote:
-> Hi Everyone,
-> 
-> Here's v4 of our series to introduce P2P based copy offload to NVMe
-> fabrics. This version has been rebased onto v4.17-rc2. A git repo
-> is here:
-> 
-> https://github.com/sbates130272/linux-p2pmem pci-p2p-v4
-> ...
+--Sig_/XbChCFfWkNl1ul3TiRyXrGl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Logan Gunthorpe (14):
->   PCI/P2PDMA: Support peer-to-peer memory
->   PCI/P2PDMA: Add sysfs group to display p2pmem stats
->   PCI/P2PDMA: Add PCI p2pmem dma mappings to adjust the bus offset
->   PCI/P2PDMA: Clear ACS P2P flags for all devices behind switches
->   docs-rst: Add a new directory for PCI documentation
->   PCI/P2PDMA: Add P2P DMA driver writer's documentation
->   block: Introduce PCI P2P flags for request and request queue
->   IB/core: Ensure we map P2P memory correctly in
->     rdma_rw_ctx_[init|destroy]()
->   nvme-pci: Use PCI p2pmem subsystem to manage the CMB
->   nvme-pci: Add support for P2P memory in requests
->   nvme-pci: Add a quirk for a pseudo CMB
->   nvmet: Introduce helper functions to allocate and free request SGLs
->   nvmet-rdma: Use new SGL alloc/free helper for requests
->   nvmet: Optionally use PCI P2P memory
-> 
->  Documentation/ABI/testing/sysfs-bus-pci    |  25 +
->  Documentation/PCI/index.rst                |  14 +
->  Documentation/driver-api/index.rst         |   2 +-
->  Documentation/driver-api/pci/index.rst     |  20 +
->  Documentation/driver-api/pci/p2pdma.rst    | 166 ++++++
->  Documentation/driver-api/{ => pci}/pci.rst |   0
->  Documentation/index.rst                    |   3 +-
->  block/blk-core.c                           |   3 +
->  drivers/infiniband/core/rw.c               |  13 +-
->  drivers/nvme/host/core.c                   |   4 +
->  drivers/nvme/host/nvme.h                   |   8 +
->  drivers/nvme/host/pci.c                    | 118 +++--
->  drivers/nvme/target/configfs.c             |  67 +++
->  drivers/nvme/target/core.c                 | 143 ++++-
->  drivers/nvme/target/io-cmd.c               |   3 +
->  drivers/nvme/target/nvmet.h                |  15 +
->  drivers/nvme/target/rdma.c                 |  22 +-
->  drivers/pci/Kconfig                        |  26 +
->  drivers/pci/Makefile                       |   1 +
->  drivers/pci/p2pdma.c                       | 814 +++++++++++++++++++++++++++++
->  drivers/pci/pci.c                          |   6 +
->  include/linux/blk_types.h                  |  18 +-
->  include/linux/blkdev.h                     |   3 +
->  include/linux/memremap.h                   |  19 +
->  include/linux/pci-p2pdma.h                 | 118 +++++
->  include/linux/pci.h                        |   4 +
->  26 files changed, 1579 insertions(+), 56 deletions(-)
->  create mode 100644 Documentation/PCI/index.rst
->  create mode 100644 Documentation/driver-api/pci/index.rst
->  create mode 100644 Documentation/driver-api/pci/p2pdma.rst
->  rename Documentation/driver-api/{ => pci}/pci.rst (100%)
->  create mode 100644 drivers/pci/p2pdma.c
->  create mode 100644 include/linux/pci-p2pdma.h
+Hi all,
 
-How do you envison merging this?  There's a big chunk in drivers/pci, but
-really no opportunity for conflicts there, and there's significant stuff in
-block and nvme that I don't really want to merge.
+Today's linux-next merge of the pci tree got a conflict in:
 
-If Alex is OK with the ACS situation, I can ack the PCI parts and you could
-merge it elsewhere?
+  arch/microblaze/include/asm/pci.h
 
-Bjorn
+between commit:
+
+  325ef1857fff ("PCI: remove PCI_DMA_BUS_IS_PHYS")
+
+from the dma-mapping tree and commits:
+
+  2fe31eb73520 ("microblaze/PCI: Remove pcibios_finish_adding_to_bus() dead=
+ code")
+  d52194a1e550 ("microblaze/PCI: Remove pcibios_claim_one_bus() dead code")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/microblaze/include/asm/pci.h
+index 66cf3a5a2f83,54ee91964852..000000000000
+--- a/arch/microblaze/include/asm/pci.h
++++ b/arch/microblaze/include/asm/pci.h
+@@@ -61,10 -62,12 +61,6 @@@ extern int pci_mmap_legacy_page_range(s
+ =20
+  #define HAVE_PCI_LEGACY	1
+ =20
+- extern void pcibios_claim_one_bus(struct pci_bus *b);
+-=20
+- extern void pcibios_finish_adding_to_bus(struct pci_bus *bus);
+ -/* The PCI address space does equal the physical memory
+ - * address space (no IOMMU).  The IDE and SCSI device layers use
+ - * this boolean for bounce buffer decisions.
+ - */
+ -#define PCI_DMA_BUS_IS_PHYS     (1)
+--
+  extern void pcibios_resource_survey(void);
+ =20
+  struct file;
+
+--Sig_/XbChCFfWkNl1ul3TiRyXrGl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw4IMACgkQAVBC80lX
+0GzxdQf+P9Ts5xEKw1jL2QSlWH95POlk4uKhjyPPG3OudmadzkRHmgcRtSiL/umQ
+zjj36gPZVV+OCxYJdFRb6KpdOs75QdLvUmynqCsZzjNTs7u9JHxgZwipVBecZT8R
+3B3SKdjLXE+7Q3VZgf0wXmaRPnCkCFptAr5RrvoLzFFuNBqb12ytE/eaCwZrRPVz
+EtdmrDnzXrN40HzdtFgunA8wS13ry1t5jC5TkIQf+dfn4W6reok7lfYQ2TR0+Row
+r+pX5MpljVMiuBc5ifiiG646VExrOqiSLXWbWrZ8O2qkiY2u6pLXkesdaKd/U7ik
+BSmFivg2mxAs10p2DdqbL5Fgyagfag==
+=XjGQ
+-----END PGP SIGNATURE-----
+
+--Sig_/XbChCFfWkNl1ul3TiRyXrGl--
