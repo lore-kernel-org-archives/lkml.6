@@ -1,81 +1,62 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753171AbeEGXIq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 19:08:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:51028 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752786AbeEGXIo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 19:08:44 -0400
-From: Colin King <colin.king@canonical.com>
-To: Daniel Scheller <d.scheller.oss@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][media-next] media: ddbridge: avoid out-of-bounds write on array demod_in_use
-Date: Tue,  8 May 2018 00:08:42 +0100
-Message-Id: <20180507230842.28409-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.0
+        id S1753398AbeEGXKT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 19:10:19 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:54218 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752726AbeEGXKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 19:10:17 -0400
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180423233046.21476-2-logang@deltatee.com>
+ <20180507230034.GE161390@bhelgaas-glaptop.roam.corp.google.com>
+From: Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <092f3da9-764e-2ece-b3a8-a9b3ab3c49a8@deltatee.com>
+Date: Mon, 7 May 2018 17:09:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180507230034.GE161390@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, alex.williamson@redhat.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v4 01/14] PCI/P2PDMA: Support peer-to-peer memory
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Thanks for the review. I'll apply all of these for the changes for next
+version of the set.
+>> +/*
+>> + * If a device is behind a switch, we try to find the upstream bridge
+>> + * port of the switch. This requires two calls to pci_upstream_bridge():
+>> + * one for the upstream port on the switch, one on the upstream port
+>> + * for the next level in the hierarchy. Because of this, devices connected
+>> + * to the root port will be rejected.
+>> + */
+>> +static struct pci_dev *get_upstream_bridge_port(struct pci_dev *pdev)
+> 
+> This function doesn't seem to be used anymore.  Thanks for all your hard
+> work to get rid of it!
 
-In function stop there is a check to see if state->demod is a stopped
-value of 0xff, however, later on, array demod_in_use is indexed with
-this value causing an out-of-bounds write error.  Avoid this by only
-writing to array demod_in_use if state->demod is not set to the stopped
-sentinal value for this specific corner case.  Also, replace the magic
-value 0xff with DEMOD_STOPPED to make code more readable.
+Oops, I thought I had gotten rid of it entirely, but I guess I messed it
+up a bit and it gets removed in patch 4. I'll fix it for v5.
 
-Detected by CoverityScan, CID#1468550 ("Out-of-bounds write")
-
-Fixes: daeeb1319e6f ("media: ddbridge: initial support for MCI-based MaxSX8 cards")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/media/pci/ddbridge/ddbridge-mci.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/pci/ddbridge/ddbridge-mci.c b/drivers/media/pci/ddbridge/ddbridge-mci.c
-index a85ff3e6b919..1f5ed53c8d35 100644
---- a/drivers/media/pci/ddbridge/ddbridge-mci.c
-+++ b/drivers/media/pci/ddbridge/ddbridge-mci.c
-@@ -20,6 +20,8 @@
- #include "ddbridge-io.h"
- #include "ddbridge-mci.h"
- 
-+#define DEMOD_STOPPED	(0xff)
-+
- static LIST_HEAD(mci_list);
- 
- static const u32 MCLK = (1550000000 / 12);
-@@ -193,7 +195,7 @@ static int stop(struct dvb_frontend *fe)
- 	u32 input = state->tuner;
- 
- 	memset(&cmd, 0, sizeof(cmd));
--	if (state->demod != 0xff) {
-+	if (state->demod != DEMOD_STOPPED) {
- 		cmd.command = MCI_CMD_STOP;
- 		cmd.demod = state->demod;
- 		mci_cmd(state, &cmd, NULL);
-@@ -209,10 +211,11 @@ static int stop(struct dvb_frontend *fe)
- 	state->base->tuner_use_count[input]--;
- 	if (!state->base->tuner_use_count[input])
- 		mci_set_tuner(fe, input, 0);
--	state->base->demod_in_use[state->demod] = 0;
-+	if (state->demod != DEMOD_STOPPED)
-+		state->base->demod_in_use[state->demod] = 0;
- 	state->base->used_ldpc_bitrate[state->nr] = 0;
--	state->demod = 0xff;
--	state->base->assigned_demod[state->nr] = 0xff;
-+	state->demod = DEMOD_STOPPED;
-+	state->base->assigned_demod[state->nr] = DEMOD_STOPPED;
- 	state->base->iq_mode = 0;
- 	mutex_unlock(&state->base->tuner_lock);
- 	state->started = 0;
--- 
-2.17.0
+Logan
