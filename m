@@ -1,63 +1,97 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751941AbeEGAz2 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 20:55:28 -0400
-Received: from ozlabs.org ([203.11.71.1]:57243 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751864AbeEGAzX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 20:55:23 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 7 May 2018 10:55:19 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-        NetFilter <netfilter-devel@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fernando Fernandez Mancera <ffmancera@riseup.net>
-Subject: linux-next: build warning after merge of the netfilter-next tree
-Message-ID: <20180507105519.1d34f19e@canb.auug.org.au>
+        id S1751925AbeEGBEO (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 21:04:14 -0400
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:50768 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751874AbeEGBEK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 21:04:10 -0400
+X-Google-Smtp-Source: AB8JxZq85LasLn/mlnpNrPIK1thzLGNkdHDHtOnayBzIB/mr0wDet9egrseeJM9IUG9wX6bdCphTEA==
+X-ME-Sender: <xms:BabvWp0I9dPi0IEwkSJnZiijjawF-TFcl5p2o8ZtcjYZRFp4RmGiig>
+Message-Id: <1525655045.499830.1362901928.0EBFEACA@webmail.messagingengine.com>
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        aryabinin@virtuozzo.com, catalin.marinas@arm.com, dvyukov@google.com,
+        will.deacon@arm.com
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8uVLuQXPtL_r+dAryLA7MBJ"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: MessagingEngine.com Webmail Interface - ajax-62b61488
+References: <20180504180909.dnhfflibjwywnm4l@lakrids.cambridge.arm.com>
+ <20180505081100.nsyrqrpzq2vd27bk@gmail.com>
+ <20180505084721.GA32344@noisy.programming.kicks-ass.net>
+ <20180505090403.p2ywuen42rnlwizq@gmail.com>
+ <20180505093829.xfylnedwd5nonhae@gmail.com>
+ <20180505101609.5wb56j4mspjkokmw@tardis>
+ <20180505103550.s7xsnto7tgppkmle@gmail.com>
+ <20180505112817.ihrb726i37bwm4cj@tardis>
+ <20180505132751.gwzu2vbzibr2risd@gmail.com>
+ <20180505140340.uzfhoc42xvas4m72@tardis>
+ <20180506121129.baacc4fxgr72rzex@gmail.com>
+In-Reply-To: <20180506121129.baacc4fxgr72rzex@gmail.com>
+Subject: Re: [PATCH] locking/atomics/powerpc: Move cmpxchg helpers to
+ asm/cmpxchg.h and define the full set of cmpxchg APIs
+Date: Mon, 07 May 2018 09:04:05 +0800
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8uVLuQXPtL_r+dAryLA7MBJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the netfilter-next tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+On Sun, May 6, 2018, at 8:11 PM, Ingo Molnar wrote:
+> 
+> * Boqun Feng <boqun.feng@gmail.com> wrote:
+> 
+> > > The only change I made beyond a trivial build fix is that I also added the release 
+> > > atomics variants explicitly:
+> > > 
+> > > +#define atomic_cmpxchg_release(v, o, n) \
+> > > +	cmpxchg_release(&((v)->counter), (o), (n))
+> > > +#define atomic64_cmpxchg_release(v, o, n) \
+> > > +	cmpxchg_release(&((v)->counter), (o), (n))
+> > > 
+> > > It has passed a PowerPC cross-build test here, but no runtime tests.
+> > > 
+> > 
+> > Do you have the commit at any branch in tip tree? I could pull it and
+> > cross-build and check the assembly code of lib/atomic64_test.c, that way
+> > I could verify whether we mess something up.
+> > 
+> > > Does this patch look good to you?
+> > > 
+> > 
+> > Yep!
+> 
+> Great - I have pushed the commits out into the locking tree, they can be 
+> found in:
+> 
+>   git fetch git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git 
+> locking/core
+> 
 
-./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type wi=
-thout #include <linux/types.h>
+Thanks! My compile test told me that we need to remove the definitions of 
+atomic_xchg and atomic64_xchg in ppc's asm/atomic.h: they are now
+duplicate, and will prevent the generation of _release and _acquire in the
+new logic.
 
-Introduced by commit
+If you need a updated patch for this from me, I could send later today.
+(I don't have a  handy environment for patch sending now, so...)
 
-  bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure f=
-rom xt_osf")
+Other than this, the modification looks fine, the lib/atomic64_test.c
+generated the same asm before and after the patches.
 
---=20
-Cheers,
-Stephen Rothwell
+Regards,
+Boqun
 
---Sig_/8uVLuQXPtL_r+dAryLA7MBJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrvo/cACgkQAVBC80lX
-0GxieQgAi4CHHiG95PCz6z2PsjnoW1KIITozD6mai2UBEaOVK+2IkRkMmm4h6dkb
-zdq9VIcVxw7lZ4y5IeXtAdUd+cO/JxtL9ljm5JESznDUYNQK3cBPAALUvD9YGvVr
-64UO5kvFfOL7cAt1bRqDWiHWH5orpT+mlqaqAGAXQmOQmC76CLOUd8avYph3M9Eg
-Ccbw4rQtpkLgGSKLJruSfPUvAGSXx8hDSTh5Wc27JnFuPCjoQypJNh4mF/fXkjwx
-UDSHcCdiqyybODuu+SXItRZTOWguUgGYUTUOHux5DsOZUmetcgayCHwZEhYW6zvm
-ZgDkKcr8FcGB14R801P9g4rCb6pnTw==
-=GVse
------END PGP SIGNATURE-----
-
---Sig_/8uVLuQXPtL_r+dAryLA7MBJ--
+> The PowerPC preparatory commit from you is:
+> 
+>   0476a632cb3a: locking/atomics/powerpc: Move cmpxchg helpers to asm/
+> cmpxchg.h and define the full set of cmpxchg APIs
+> 
+> Thanks,
+> 
+> 	Ingo
