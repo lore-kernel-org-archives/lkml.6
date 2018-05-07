@@ -1,158 +1,185 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751949AbeEGF5E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 01:57:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43768 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbeEGF5B (ORCPT
+        id S1751822AbeEGF6Z (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 01:58:25 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40587 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeEGF6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 01:57:01 -0400
+        Mon, 7 May 2018 01:58:22 -0400
+X-Google-Smtp-Source: AB8JxZqt4qaBIfKQHu6o2UiL7Tzz37qLN9ZafGSwEiXnAjdX6Y2ybJAFer1Z8w/hKwqemPpm1ekCcg==
+Date: Mon, 7 May 2018 14:59:07 +0900
+From: AKASHI Takahiro <takahiro.akashi@linaro.org>
+To: James Morse <james.morse@arm.com>
+Cc: catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au, davem@davemloft.net,
+        dyoung@redhat.com, bhe@redhat.com, arnd@arndb.de,
+        ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 04/11] arm64: kexec_file: allocate memory walking
+ through memblock list
+Message-ID: <20180507055906.GE11326@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180425062629.29404-1-takahiro.akashi@linaro.org>
+ <20180425062629.29404-5-takahiro.akashi@linaro.org>
+ <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Mon, 07 May 2018 11:26:59 +0530
-From: kgunda@codeaurora.org
-To: Jingoo Han <jingoohan1@gmail.com>
-Cc: bjorn.andersson@linaro.org, "'Lee Jones'" <lee.jones@linaro.org>,
-        "'Daniel Thompson'" <daniel.thompson@linaro.org>,
-        "'Jacek Anaszewski'" <jacek.anaszewski@gmail.com>,
-        "'Pavel Machek'" <pavel@ucw.cz>, "'Rob Herring'" <robh+dt@kernel.org>,
-        "'Mark Rutland'" <mark.rutland@arm.com>,
-        "'Bartlomiej Zolnierkiewicz'" <b.zolnierkie@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
- qcom-wled.c
-In-Reply-To: <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
-References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
- <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
- <000201d3e3c0$4cdf87a0$e69e96e0$@gmail.com>
-Message-ID: <a9faa8c2866f44b46c3733c8165f6bae@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <648656ef-1f1e-b0ac-581c-aba1e62f4eee@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jingoo Han,
-Thanks for the response.
+James,
 
-Thanks,
-Kiran
-On 2018-05-04 21:25, Jingoo Han wrote:
-> On Thursday, May 3, 2018 6:12 AM, Kiran Gunda wrote:
+On Tue, May 01, 2018 at 06:46:09PM +0100, James Morse wrote:
+> Hi Akashi,
 > 
-> If you really want someone to review your patch, please add more 
-> detailed
-> explanations.
+> On 25/04/18 07:26, AKASHI Takahiro wrote:
+> > We need to prevent firmware-reserved memory regions, particularly EFI
+> > memory map as well as ACPI tables, from being corrupted by loading
+> > kernel/initrd (or other kexec buffers). We also want to support memory
+> > allocation in top-down manner in addition to default bottom-up.
+> > So let's have arm64 specific arch_kexec_walk_mem() which will search
+> > for available memory ranges in usable memblock list,
+> > i.e. !NOMAP & !reserved, 
 > 
-> 1. Please add 0th patch.
-I have already added the 0th patch (cover letter). Following is the 
-subject for the same.
-forwarding the same to you.
-[PATCH V2 0/5] backlight: qcom-wled: Support for QCOM wled driver
+> > instead of system resource tree.
+> 
+> Didn't we try to fix the system-resource-tree in order to fix regular-kexec to
+> be safe in the EFI-memory-map/ACPI-tables case?
+> 
+> It would be good to avoid having two ways of doing this, and I would like to
+> avoid having extra arch code...
 
-> 2. Please add what the difference is between V1 and V2 patches.
-> 
-Already added the difference between V1 and V2 in the cover letter (0th 
-patch).
-Please let me know if you are looking for any other info. Following is 
-the difference
-added between v1 and v2.
->>> 
-changes from v1:
-     Fixed the commit message for
-     backlight: qcom-wled: Rename pm8941-wled.c to qcom-wled.c
+I know what you mean.
+/proc/iomem or system resource is, in my opinion, not the best place to
+describe memory usage of kernel but rather to describe *physical* hardware
+layout. As we are still discussing about "reserved" memory, I don't want
+to depend on it.
+Along with memblock list, we will have more accurate control over memory
+usage.
 
-> If you cannot understand what I am saying, just ask another person who 
-> have
-> an experience to send patches to Linux mailing-list.
 > 
-> Best regards,
-> Jingoo Han
+> > diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+> > new file mode 100644
+> > index 000000000000..f9ebf54ca247
+> > --- /dev/null
+> > +++ b/arch/arm64/kernel/machine_kexec_file.c
+> > @@ -0,0 +1,57 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * kexec_file for arm64
+> > + *
+> > + * Copyright (C) 2018 Linaro Limited
+> > + * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > + *
 > 
->> 
->> pm8941-wled.c driver is supporting the WLED peripheral
->> on pm8941. Rename it to qcom-wled.c so that it can support
->> WLED on multiple PMICs.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->>  .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 
->> +-
->>  drivers/video/backlight/Kconfig                                   | 8
-> ++++----
->>  drivers/video/backlight/Makefile                                  | 2 
->> +-
->>  drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
->>  4 files changed, 6 insertions(+), 6 deletions(-)
->>  rename 
->> Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt
->> => qcom-wled.txt} (95%)
->>  rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
->> 
->> diff --git a/Documentation/devicetree/bindings/leds/backlight/pm8941-
->> wled.txt 
->> b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> similarity index 95%
->> rename from Documentation/devicetree/bindings/leds/backlight/pm8941-
->> wled.txt
->> rename to 
->> Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> index e5b294d..fb39e32 100644
->> --- a/Documentation/devicetree/bindings/leds/backlight/pm8941-wled.txt
->> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.txt
->> @@ -1,4 +1,4 @@
->> -Binding for Qualcomm PM8941 WLED driver
->> +Binding for Qualcomm Technologies, Inc. WLED driver
->> 
->>  Required properties:
->>  - compatible: should be "qcom,pm8941-wled"
->> diff --git a/drivers/video/backlight/Kconfig
->> b/drivers/video/backlight/Kconfig
->> index 4e1d2ad..8c095e3 100644
->> --- a/drivers/video/backlight/Kconfig
->> +++ b/drivers/video/backlight/Kconfig
->> @@ -299,12 +299,12 @@ config BACKLIGHT_TOSA
->>  	  If you have an Sharp SL-6000 Zaurus say Y to enable a driver
->>  	  for its backlight
->> 
->> -config BACKLIGHT_PM8941_WLED
->> -	tristate "Qualcomm PM8941 WLED Driver"
->> +config BACKLIGHT_QCOM_WLED
->> +	tristate "Qualcomm PMIC WLED Driver"
->>  	select REGMAP
->>  	help
->> -	  If you have the Qualcomm PM8941, say Y to enable a driver for the
->> -	  WLED block.
->> +	  If you have the Qualcomm PMIC, say Y to enable a driver for the
->> +	  WLED block. Currently it supports PM8941 and PMI8998.
->> 
->>  config BACKLIGHT_SAHARA
->>  	tristate "Tabletkiosk Sahara Touch-iT Backlight Driver"
->> diff --git a/drivers/video/backlight/Makefile
->> b/drivers/video/backlight/Makefile
->> index 5e28f01..6fd76ef 100644
->> --- a/drivers/video/backlight/Makefile
->> +++ b/drivers/video/backlight/Makefile
->> @@ -49,8 +49,8 @@ obj-$(CONFIG_BACKLIGHT_OMAP1)		+=
-> omap1_bl.o
->>  obj-$(CONFIG_BACKLIGHT_OT200)		+= ot200_bl.o
->>  obj-$(CONFIG_BACKLIGHT_PANDORA)		+= pandora_bl.o
->>  obj-$(CONFIG_BACKLIGHT_PCF50633)	+= pcf50633-backlight.o
->> -obj-$(CONFIG_BACKLIGHT_PM8941_WLED)	+= pm8941-wled.o
->>  obj-$(CONFIG_BACKLIGHT_PWM)		+= pwm_bl.o
->> +obj-$(CONFIG_BACKLIGHT_QCOM_WLED)	+= qcom-wled.o
->>  obj-$(CONFIG_BACKLIGHT_SAHARA)		+= kb3886_bl.o
->>  obj-$(CONFIG_BACKLIGHT_SKY81452)	+= sky81452-backlight.o
->>  obj-$(CONFIG_BACKLIGHT_TOSA)		+= tosa_bl.o
->> diff --git a/drivers/video/backlight/pm8941-wled.c
->> b/drivers/video/backlight/qcom-wled.c
->> similarity index 100%
->> rename from drivers/video/backlight/pm8941-wled.c
->> rename to drivers/video/backlight/qcom-wled.c
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->>  a Linux Foundation Collaborative Project
+> > + * Most code is derived from arm64 port of kexec-tools
+> 
+> How does kexec-tools walk memblock?
+
+Will remove this comment from this patch.
+Obviously, this comment is for the rest of the code which will be
+added to succeeding patches (patch #5 and #7).
+
+
+> 
+> > + */
+> > +
+> > +#define pr_fmt(fmt) "kexec_file: " fmt
+> > +
+> > +#include <linux/ioport.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/kexec.h>
+> > +#include <linux/memblock.h>
+> > +
+> > +int arch_kexec_walk_mem(struct kexec_buf *kbuf,
+> > +				int (*func)(struct resource *, void *))
+> > +{
+> > +	phys_addr_t start, end;
+> > +	struct resource res;
+> > +	u64 i;
+> > +	int ret = 0;
+> > +
+> > +	if (kbuf->image->type == KEXEC_TYPE_CRASH)
+> > +		return func(&crashk_res, kbuf);
+> > +
+> > +	if (kbuf->top_down)
+> > +		for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,
+> > +				NUMA_NO_NODE, MEMBLOCK_NONE,
+> > +				&start, &end, NULL) {
+> 
+> for_each_free_mem_range_reverse() is a more readable version of this helper.
+
+OK. I used to use my own limited list of reserved memory instead of
+memblock.reserved here to exclude verbose ranges.
+
+
+> > +			if (!memblock_is_map_memory(start))
+> > +				continue;
+> 
+> Passing MEMBLOCK_NONE means this walk will never find MEMBLOCK_NOMAP memory.
+
+Sure, I confirmed it.
+
+> 
+> > +			res.start = start;
+> > +			res.end = end;
+> > +			ret = func(&res, kbuf);
+> > +			if (ret)
+> > +				break;
+> > +		}
+> > +	else
+> > +		for_each_mem_range(i, &memblock.memory, &memblock.reserved,
+> > +				NUMA_NO_NODE, MEMBLOCK_NONE,
+> > +				&start, &end, NULL) {
+> 
+> for_each_free_mem_range()?
+
+OK.
+
+> > +			if (!memblock_is_map_memory(start))
+> > +				continue;
+> > +
+> > +			res.start = start;
+> > +			res.end = end;
+> > +			ret = func(&res, kbuf);
+> > +			if (ret)
+> > +				break;
+> > +		}
+> > +
+> > +	return ret;
+> > +}
+> > 
+> 
+> With these changes, what we have is almost:
+> arch/powerpc/kernel/machine_kexec_file_64.c::arch_kexec_walk_mem() !
+> (the difference being powerpc doesn't yet support crash-kernels here)
+> 
+> If the argument is walking memblock gives a better answer than the stringy
+> walk_system_ram_res() thing, is there any mileage in moving this code into
+> kexec_file.c, and using it if !IS_ENABLED(CONFIG_ARCH_DISCARD_MEMBLOCK)?
+> 
+> This would save arm64/powerpc having near-identical implementations.
+> 32bit arm keeps memblock if it has kexec, so it may be useful there too if
+> kexec_file_load() support is added.
+
+Thanks. I've forgot ppc.
+
+-Takahiro AKASHI
+
+
+> 
+> Thanks,
+> 
+> James
