@@ -1,113 +1,125 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752114AbeEGKjr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:39:47 -0400
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:35700 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751147AbeEGKjn (ORCPT
+        id S1752174AbeEGKkV (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:40:21 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:47518 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbeEGKkT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:39:43 -0400
-Subject: Re: [PATCH 28/28] venus: add HEVC codec support
-To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>
-References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
- <20180424124436.26955-29-stanimir.varbanov@linaro.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <4ae458ed-97b6-b23f-88c4-0a5efd754d9d@xs4all.nl>
-Date: Mon, 7 May 2018 12:39:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 06:40:19 -0400
+Date: Mon, 7 May 2018 13:39:54 +0300
+From: Dan Carpenter <dan.carpenter@oracle.com>
+To: kbuild@01.org, Wenwen Wang <wang6495@umn.edu>
+Cc: kbuild-all@01.org, Wenwen Wang <wang6495@umn.edu>,
+        Kangjie Lu <kjlu@umn.edu>, Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Atul Gupta <atul.gupta@chelsio.com>,
+        Michael Werner <werner@chelsio.com>, Casey Leedom <leedom@chelsio.com>,
+        "open list:CXGB4 CRYPTO DRIVER (chcr)" <linux-crypto@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] crypto: chtls - fix a missing-check bug
+Message-ID: <20180507103954.d3gfgyjnce2ctp4p@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <20180424124436.26955-29-stanimir.varbanov@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfPPBYtGuPFFGc3yswdj7bLOLlheNlK34Y8nKK/1JIpWDbjm/Lmv0IUo8M7qXiD4OR4jLhjS9XCXrAi4XJpv3naqleMn2rNTpQ0BIMf+ER/+WmDoTK1a6
- JnRbFNLN9c26CUc1T2RoK4Dvs9TRyIkcYFBnJ0ANl2roMrNfF0QDoxxiu2ija13Zoz7EEC/hwd4n2Q9uYblv4psHEg4l96n0WvvraEzaddoWgCzifKtGgCXv
- kfchS6ZWudNsEtZA8PDEiz/7FOSVS/A80zVjoxzNTrscuw/C/aIO8Qh05t6+AiXp5f+S/Nf7LvPvUV0oYauIKYizGMnAOb9bVEv7T/wDDZ/r4vhtYgCXDf8i
- bjH/mYnude8GIUwa/CiPzAL5X5vKyG63v3REWerwmN43DTcBBLnQvhvD+n/yBJupeXSabG84hJgMAY/vMydUrPQMRd10WL+hx3u2v0uJy8OsQNcntV0dl/Tx
- EpcaC55pik2MtCkF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525546431-12535-1-git-send-email-wang6495@umn.edu>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8885 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805070110
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/04/18 14:44, Stanimir Varbanov wrote:
-> This add HEVC codec support for venus versions 3xx and 4xx.
-> 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/helpers.c | 3 +++
->  drivers/media/platform/qcom/venus/hfi.c     | 2 ++
->  drivers/media/platform/qcom/venus/vdec.c    | 4 ++++
->  drivers/media/platform/qcom/venus/venc.c    | 4 ++++
->  4 files changed, 13 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> index 87dcf9973e6f..fecadba039cf 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -71,6 +71,9 @@ bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
->  	case V4L2_PIX_FMT_XVID:
->  		codec = HFI_VIDEO_CODEC_DIVX;
->  		break;
-> +	case V4L2_PIX_FMT_HEVC:
-> +		codec = HFI_VIDEO_CODEC_HEVC;
-> +		break;
->  	default:
->  		return false;
->  	}
-> diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
-> index 94ca27b0bb99..24207829982f 100644
-> --- a/drivers/media/platform/qcom/venus/hfi.c
-> +++ b/drivers/media/platform/qcom/venus/hfi.c
-> @@ -49,6 +49,8 @@ static u32 to_codec_type(u32 pixfmt)
->  		return HFI_VIDEO_CODEC_VP9;
->  	case V4L2_PIX_FMT_XVID:
->  		return HFI_VIDEO_CODEC_DIVX;
-> +	case V4L2_PIX_FMT_HEVC:
-> +		return HFI_VIDEO_CODEC_HEVC;
->  	default:
->  		return 0;
->  	}
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 7deee104ac56..a114f421edad 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -77,6 +77,10 @@ static const struct venus_format vdec_formats[] = {
->  		.pixfmt = V4L2_PIX_FMT_XVID,
->  		.num_planes = 1,
->  		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
-> +	}, {
-> +		.pixfmt = V4L2_PIX_FMT_HEVC,
-> +		.num_planes = 1,
-> +		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
->  	},
->  };
->  
-> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-> index a703bce78abc..fdb76b69786f 100644
-> --- a/drivers/media/platform/qcom/venus/venc.c
-> +++ b/drivers/media/platform/qcom/venus/venc.c
-> @@ -59,6 +59,10 @@ static const struct venus_format venc_formats[] = {
->  		.pixfmt = V4L2_PIX_FMT_VP8,
->  		.num_planes = 1,
->  		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
-> +	}, {
-> +		.pixfmt = V4L2_PIX_FMT_HEVC,
-> +		.num_planes = 1,
-> +		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
->  	},
->  };
->  
-> 
+Hi Wenwen,
 
-No changes are necessary to venc_set_properties() for HEVC support?
+Thank you for the patch! Perhaps something to improve:
 
-Just checking, I kind of expected that.
+[auto build test WARNING on cryptodev/master]
+[also build test WARNING on v4.17-rc3 next-20180504]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-Regards,
+url:    https://github.com/0day-ci/linux/commits/Wenwen-Wang/crypto-chtls-fix-a-missing-check-bug/20180506-091039
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
+:::::: branch date: 26 hours ago
+:::::: commit date: 26 hours ago
 
-	Hans
+New smatch warnings:
+drivers/crypto/chelsio/chtls/chtls_main.c:496 do_chtls_setsockopt() warn: potential pointer math issue ('crypto_info' is a 32 bit pointer)
+
+Old smatch warnings:
+drivers/crypto/chelsio/chtls/chtls_main.c:253 chtls_uld_add() error: buffer overflow 'cdev->rspq_skb_cache' 32 <= 32
+drivers/crypto/chelsio/chtls/chtls_main.c:350 chtls_recv_packet() error: double free of 'skb'
+drivers/crypto/chelsio/chtls/chtls_main.c:390 chtls_recv_rsp() error: double free of 'skb'
+drivers/crypto/chelsio/chtls/chtls_main.c:408 chtls_recv() error: double free of 'skb'
+
+# https://github.com/0day-ci/linux/commit/183b5e3e71c75e3149dac2698883f0bd63a89c75
+git remote add linux-review https://github.com/0day-ci/linux
+git remote update linux-review
+git checkout 183b5e3e71c75e3149dac2698883f0bd63a89c75
+vim +496 drivers/crypto/chelsio/chtls/chtls_main.c
+
+a0894394 Atul Gupta  2018-03-31  461  
+a0894394 Atul Gupta  2018-03-31  462  static int do_chtls_setsockopt(struct sock *sk, int optname,
+a0894394 Atul Gupta  2018-03-31  463  			       char __user *optval, unsigned int optlen)
+a0894394 Atul Gupta  2018-03-31  464  {
+a0894394 Atul Gupta  2018-03-31  465  	struct tls_crypto_info *crypto_info, tmp_crypto_info;
+a0894394 Atul Gupta  2018-03-31  466  	struct chtls_sock *csk;
+a0894394 Atul Gupta  2018-03-31  467  	int keylen;
+a0894394 Atul Gupta  2018-03-31  468  	int rc = 0;
+a0894394 Atul Gupta  2018-03-31  469  
+a0894394 Atul Gupta  2018-03-31  470  	csk = rcu_dereference_sk_user_data(sk);
+a0894394 Atul Gupta  2018-03-31  471  
+a0894394 Atul Gupta  2018-03-31  472  	if (!optval || optlen < sizeof(*crypto_info)) {
+a0894394 Atul Gupta  2018-03-31  473  		rc = -EINVAL;
+a0894394 Atul Gupta  2018-03-31  474  		goto out;
+a0894394 Atul Gupta  2018-03-31  475  	}
+a0894394 Atul Gupta  2018-03-31  476  
+a0894394 Atul Gupta  2018-03-31  477  	rc = copy_from_user(&tmp_crypto_info, optval, sizeof(*crypto_info));
+a0894394 Atul Gupta  2018-03-31  478  	if (rc) {
+a0894394 Atul Gupta  2018-03-31  479  		rc = -EFAULT;
+a0894394 Atul Gupta  2018-03-31  480  		goto out;
+a0894394 Atul Gupta  2018-03-31  481  	}
+a0894394 Atul Gupta  2018-03-31  482  
+a0894394 Atul Gupta  2018-03-31  483  	/* check version */
+a0894394 Atul Gupta  2018-03-31  484  	if (tmp_crypto_info.version != TLS_1_2_VERSION) {
+a0894394 Atul Gupta  2018-03-31  485  		rc = -ENOTSUPP;
+a0894394 Atul Gupta  2018-03-31  486  		goto out;
+a0894394 Atul Gupta  2018-03-31  487  	}
+a0894394 Atul Gupta  2018-03-31  488  
+a0894394 Atul Gupta  2018-03-31  489  	crypto_info = (struct tls_crypto_info *)&csk->tlshws.crypto_info;
+a0894394 Atul Gupta  2018-03-31  490  
+a0894394 Atul Gupta  2018-03-31  491  	switch (tmp_crypto_info.cipher_type) {
+a0894394 Atul Gupta  2018-03-31  492  	case TLS_CIPHER_AES_GCM_128: {
+183b5e3e Wenwen Wang 2018-05-05  493  		/* Obtain version and type from previous copy */
+183b5e3e Wenwen Wang 2018-05-05  494  		crypto_info[0] = tmp_crypto_info;
+183b5e3e Wenwen Wang 2018-05-05  495  		/* Now copy the following data */
+183b5e3e Wenwen Wang 2018-05-05 @496  		rc = copy_from_user(crypto_info + sizeof(*crypto_info),
+183b5e3e Wenwen Wang 2018-05-05  497  				optval + sizeof(*crypto_info),
+183b5e3e Wenwen Wang 2018-05-05  498  				sizeof(struct tls12_crypto_info_aes_gcm_128)
+183b5e3e Wenwen Wang 2018-05-05  499  				- sizeof(*crypto_info));
+a0894394 Atul Gupta  2018-03-31  500  
+a0894394 Atul Gupta  2018-03-31  501  		if (rc) {
+a0894394 Atul Gupta  2018-03-31  502  			rc = -EFAULT;
+a0894394 Atul Gupta  2018-03-31  503  			goto out;
+a0894394 Atul Gupta  2018-03-31  504  		}
+a0894394 Atul Gupta  2018-03-31  505  
+a0894394 Atul Gupta  2018-03-31  506  		keylen = TLS_CIPHER_AES_GCM_128_KEY_SIZE;
+a0894394 Atul Gupta  2018-03-31  507  		rc = chtls_setkey(csk, keylen, optname);
+a0894394 Atul Gupta  2018-03-31  508  		break;
+a0894394 Atul Gupta  2018-03-31  509  	}
+a0894394 Atul Gupta  2018-03-31  510  	default:
+a0894394 Atul Gupta  2018-03-31  511  		rc = -EINVAL;
+a0894394 Atul Gupta  2018-03-31  512  		goto out;
+a0894394 Atul Gupta  2018-03-31  513  	}
+a0894394 Atul Gupta  2018-03-31  514  out:
+a0894394 Atul Gupta  2018-03-31  515  	return rc;
+a0894394 Atul Gupta  2018-03-31  516  }
+a0894394 Atul Gupta  2018-03-31  517  
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
