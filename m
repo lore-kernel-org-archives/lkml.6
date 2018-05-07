@@ -1,215 +1,113 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752176AbeEGKdi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:33:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55656 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750795AbeEGKde (ORCPT
+        id S1752114AbeEGKjr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:39:47 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:35700 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751147AbeEGKjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:33:34 -0400
+        Mon, 7 May 2018 06:39:43 -0400
+Subject: Re: [PATCH 28/28] venus: add HEVC codec support
+To: Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>
+References: <20180424124436.26955-1-stanimir.varbanov@linaro.org>
+ <20180424124436.26955-29-stanimir.varbanov@linaro.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4ae458ed-97b6-b23f-88c4-0a5efd754d9d@xs4all.nl>
+Date: Mon, 7 May 2018 12:39:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180424124436.26955-29-stanimir.varbanov@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date: Mon, 07 May 2018 16:03:33 +0530
-From: Amit Nischal <anischal@codeaurora.org>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] clk: qcom: Configure the RCGs to a safe source as
- needed
-In-Reply-To: <152549069940.138124.10210385659890209429@swboyd.mtv.corp.google.com>
-References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
- <1525105210-8689-2-git-send-email-anischal@codeaurora.org>
- <152524713612.138124.1776677011439726084@swboyd.mtv.corp.google.com>
- <68f6216b3de12d90a54207a6a0110c6b@codeaurora.org>
- <152549069940.138124.10210385659890209429@swboyd.mtv.corp.google.com>
-Message-ID: <f7c41c4d7df95ab093150de1d2c4b4b1@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+X-CMAE-Envelope: MS4wfPPBYtGuPFFGc3yswdj7bLOLlheNlK34Y8nKK/1JIpWDbjm/Lmv0IUo8M7qXiD4OR4jLhjS9XCXrAi4XJpv3naqleMn2rNTpQ0BIMf+ER/+WmDoTK1a6
+ JnRbFNLN9c26CUc1T2RoK4Dvs9TRyIkcYFBnJ0ANl2roMrNfF0QDoxxiu2ija13Zoz7EEC/hwd4n2Q9uYblv4psHEg4l96n0WvvraEzaddoWgCzifKtGgCXv
+ kfchS6ZWudNsEtZA8PDEiz/7FOSVS/A80zVjoxzNTrscuw/C/aIO8Qh05t6+AiXp5f+S/Nf7LvPvUV0oYauIKYizGMnAOb9bVEv7T/wDDZ/r4vhtYgCXDf8i
+ bjH/mYnude8GIUwa/CiPzAL5X5vKyG63v3REWerwmN43DTcBBLnQvhvD+n/yBJupeXSabG84hJgMAY/vMydUrPQMRd10WL+hx3u2v0uJy8OsQNcntV0dl/Tx
+ EpcaC55pik2MtCkF
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-05 08:54, Stephen Boyd wrote:
-> Quoting Amit Nischal (2018-05-03 04:57:37)
->> On 2018-05-02 13:15, Stephen Boyd wrote:
->> > Quoting Amit Nischal (2018-04-30 09:20:08)
->> >
->> >> +}
->> >> +
->> >> +static void clk_rcg2_shared_disable(struct clk_hw *hw)
->> >> +{
->> >> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
->> >> +       struct freq_tbl safe_src_tbl = { 0 };
->> >> +
->> >> +       /*
->> >> +        * Park the RCG at a safe configuration - sourced off from
->> >> safe source.
->> >> +        * Force enable and disable the RCG while configuring it to
->> >> safeguard
->> >> +        * against any update signal coming from the downstream clock.
->> >> +        * The current parent is still prepared and enabled at this
->> >> point, and
->> >> +        * the safe source is always on while application processor
->> >> subsystem
->> >> +        * is online. Therefore, the RCG can safely switch its parent.
->> >> +        */
->> >> +       safe_src_tbl.src = rcg->safe_src_index;
->> >> +       clk_rcg2_shared_force_enable_clear(hw, &safe_src_tbl);
->> >
->> > This should then re-dirty the config register to have the software
->> > frequency settings that existed in the hardware when disable was
->> > called.
->> > Given that MND shouldn't be changed here, this should be as simple as
->> > saving away the CFG register, forcing it to XO speed by changing the
->> > src
->> > and disabling dual edge in the CFG register (please don't call
->> > force_enable_clear with some frequency pointer, just do this inline
->> > here), and then rewriting the cfg register with the "real" settings for
->> > whatever frequency it's supposed to run at and then returning from this
->> > function.
->> >
->> > I guess we have to do a read cfg from hardware, write cfg, hit update
->> > config, and then write cfg again each time we disable. For enable, we
->> > just do an update config (if it's dirty?) inside of a force
->> > enable/disable pair. And set_rate doesn't really change except it
->> > either
->> > does or doesn't hit the update config bit if the clk is enabled or
->> > disabled respectively.
->> >
->> 
->> We have done the below changes suggested by you and that logic seems 
->> to
->> be
->> working fine. But we have one concern about leaving the RCG registers 
->> in
->> dirty state and would like to have a little bit modification as
->> explained
->> below:
->> 
->> Suggested Logic:
->> 1. set_rate()--> Update CFG, M, N and D registers and don't hit the
->> update
->>                   bit if clock is disabled - call new
->> __clk_rcg2_configure().
->>                   Above will make the CFG register as dirty.
->> 
->> 2. _disable()--> 2.1 - Store the CFG register configuration in a
->> variable.
->>                   2.2 - Move to the safe source (XO) and hit the 
->> update
->> bit.
->>                         It will only touch the CFG register and M, N, 
->> D
->>                         register values will remain as it was.
->>                   2.3 - Write back the stored CFG value done in step 
->> #2.1
->>                         This will again redirty the CFG register.
->> 
->> 3. _enable()--> Just hit the update bit as the configuration write 
->> will
->>                  be taken care in the steps #1 and #2.
->> 
->> It would be great if we don't redirty the CFG register and leave the 
->> RCG
->> CFG register to at safe source(XO) in disable() path.
->> 
->> This would help us to debug the issues where device crashes and we 
->> want
->> to dump the RCG registers to know whether from software, we have
->> actually
->> moved to safe source or not. Otherwise, we would get the dirty 
->> register
->> values in crash dumps.
->> 
->> So instead of writing back the stored CFG(corresponding to real rate
->> settings) in disable path, we want to restore the stored CFG in enable
->> path and then hit the update bit.
->> CFG configuration store can happen at two places - set_rate() and
->> disable()
->> path and above logic will be modified as below:
->> 
->> 1. set_rate()--> 1.1 - Update CFG, M, N and D registers and don't hit
->> the
->>                         update bit if clock is disabled.
->>                   1.2 - Store CFG register value in 'current_cfg' 
->> member
->>                         of 'rcg2' structure.
->> 
->> 2. _disable()--> 2.1 - Store the CFG register value in 'current_cfg'
->> before
->>                         switching to the safe source (XO).
->>                   2.2 - Move to the safe source (XO) and hit the 
->> update
->> bit.
->>                         Now RCG configuration wil not be dirty.
->> 
->> 3. _enable()--> 3.1 - Check for 'current_cfg' value and if 0 then
->> return.
->>                        This would catch the below one time condition:
->>                        - when clk_enable() gets call without 
->> set_rate().
+On 24/04/18 14:44, Stanimir Varbanov wrote:
+> This add HEVC codec support for venus versions 3xx and 4xx.
 > 
-> We want clk_enable() to work without set_rate() though. So returning 0
-> if the value is 0 is wrong.
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>  drivers/media/platform/qcom/venus/helpers.c | 3 +++
+>  drivers/media/platform/qcom/venus/hfi.c     | 2 ++
+>  drivers/media/platform/qcom/venus/vdec.c    | 4 ++++
+>  drivers/media/platform/qcom/venus/venc.c    | 4 ++++
+>  4 files changed, 13 insertions(+)
 > 
->>                  3.2 - Write the CFG value from 'current_cfg' to CFG
->> register.
->>                  3.2 - Hit the update bit as we have already written 
->> the
->> latest
->>                        configuration in step #3.2.
->>                  3.3 - Clear the 'current_cfg' value.
->> 
->> We feel above logic will work as expected and in this way, we don't 
->> have
->> CFG
->> registers in dirty state when clock is disabled.
->> Could you please inform us your thoughts about above implementation 
->> and
->> based
->> on that I will send the required changes.
->> 
+> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+> index 87dcf9973e6f..fecadba039cf 100644
+> --- a/drivers/media/platform/qcom/venus/helpers.c
+> +++ b/drivers/media/platform/qcom/venus/helpers.c
+> @@ -71,6 +71,9 @@ bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
+>  	case V4L2_PIX_FMT_XVID:
+>  		codec = HFI_VIDEO_CODEC_DIVX;
+>  		break;
+> +	case V4L2_PIX_FMT_HEVC:
+> +		codec = HFI_VIDEO_CODEC_HEVC;
+> +		break;
+>  	default:
+>  		return false;
+>  	}
+> diff --git a/drivers/media/platform/qcom/venus/hfi.c b/drivers/media/platform/qcom/venus/hfi.c
+> index 94ca27b0bb99..24207829982f 100644
+> --- a/drivers/media/platform/qcom/venus/hfi.c
+> +++ b/drivers/media/platform/qcom/venus/hfi.c
+> @@ -49,6 +49,8 @@ static u32 to_codec_type(u32 pixfmt)
+>  		return HFI_VIDEO_CODEC_VP9;
+>  	case V4L2_PIX_FMT_XVID:
+>  		return HFI_VIDEO_CODEC_DIVX;
+> +	case V4L2_PIX_FMT_HEVC:
+> +		return HFI_VIDEO_CODEC_HEVC;
+>  	default:
+>  		return 0;
+>  	}
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 7deee104ac56..a114f421edad 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -77,6 +77,10 @@ static const struct venus_format vdec_formats[] = {
+>  		.pixfmt = V4L2_PIX_FMT_XVID,
+>  		.num_planes = 1,
+>  		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+> +	}, {
+> +		.pixfmt = V4L2_PIX_FMT_HEVC,
+> +		.num_planes = 1,
+> +		.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+>  	},
+>  };
+>  
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index a703bce78abc..fdb76b69786f 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -59,6 +59,10 @@ static const struct venus_format venc_formats[] = {
+>  		.pixfmt = V4L2_PIX_FMT_VP8,
+>  		.num_planes = 1,
+>  		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
+> +	}, {
+> +		.pixfmt = V4L2_PIX_FMT_HEVC,
+> +		.num_planes = 1,
+> +		.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
+>  	},
+>  };
+>  
 > 
-> If you want to save away current_cfg in a memory location so you know
-> what it was before it was dirty, then perhaps that needs to be a debug
-> patch that you stack on top when debugging. In the end, it would just 
-> be
-> saving the state of the frequency setting that we have in software
-> though, and that would be the latest rate of the clk we have configured
-> the clk for. There aren't any mux switches going on when the clk is 
-> off,
-> so you're saying you want to know the rate of the clk that the kernel
-> set when we turned the clk off, which we already have with the clk 
-> rate.
-> I'm confused.
 
-Thanks for the suggestions. We will implement the new ops with the below
-logic which you suggested earlier i.e. re-dirtying the RCG in disable() 
-path
-with real CFG settings and in enable() path, only hit the update bit.
+No changes are necessary to venc_set_properties() for HEVC support?
 
-1. set_rate()--> Update CFG, M, N and D registers and don't hit the
-                  update bit if clock is disabled - call new
-                  __clk_rcg2_configure().
-                  Above will make the CFG register as dirty.
+Just checking, I kind of expected that.
 
-2. _disable()--> 2.1 - Store the CFG register configuration in a
-                        variable.
-                  2.2 - Move to the safe source (XO) and hit the update
-                        bit. It will only touch the CFG register and M, 
-N, D
-                        register values will remain as it was.
-                  2.3 - Write back the stored CFG value done in step #2.1
-                        This will again redirty the CFG register.
+Regards,
 
-3. _enable()--> Just hit the update bit as the configuration write will
-                 be taken care in the steps #1 and #2.
+	Hans
