@@ -1,92 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751960AbeEGCnY (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 22:43:24 -0400
-Received: from mout.gmx.net ([212.227.15.15]:41911 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751852AbeEGCnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 22:43:22 -0400
-Message-ID: <1525660992.5105.1.camel@gmx.de>
-Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
- merge
-From: Mike Galbraith <efault@gmx.de>
-To: Paolo Valente <paolo.valente@linaro.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
-        linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name
-Date: Mon, 07 May 2018 04:43:12 +0200
-In-Reply-To: <223CABEA-71E0-426F-A4AB-17BA8437C978@linaro.org>
-References: <20180504171701.6876-1-paolo.valente@linaro.org>
-         <1525463210.622.1.camel@gmx.de> <1525508378.5406.6.camel@gmx.de>
-         <9F155F9F-F6B2-465A-BA4D-A86FF6825071@linaro.org>
-         <1525532191.5406.15.camel@gmx.de>
-         <223CABEA-71E0-426F-A4AB-17BA8437C978@linaro.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:pq3SE9Qa/r4YewY2V05PAzveedUXpk9ENRrmpPZaoZ82VeRyKWv
- gxx0yIZxpGyjza4WkYXgfWAKrsmNmG1n6ldgWJ2CuAzxbDmH368KjmDNCcoIigr8Y0wHgpR
- 7CBDW1GjiXDZg3fORgCyU6i6Jfk7RZvQLciw6ARDJiGw7YE/6vtOABEEq1uow73vyULt71/
- JAwGFhfOPgK1VNv6vYLWw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:e4jCQZmuxzk=:p49Ci39QctJM0Rbgj579Ti
- QNUjwxhCaPlyrhIllJbeKmDVuSx8CQUsSI/UEApDxWkhiVfcEzstnhd5EkbeA2Rq85ZXMiIrd
- EJMvpXH2WViTPJ4ORiUBJdzW5PCIc1UxJZ34M5SMZnmhwXA/CJ9Zcv8TyZNL5inwE0Zj1qiQ0
- cCYQK+yzvwnKG+lxdIYRlFCWklyniYrq2Vrno571R/6ddE7U8l/6wonpv1n7dqTuf/3zwp3pd
- lfgDTwznQPLBKCS01HH7Tr8gIO4zeX3rCuwztQ/lQsxhN3BaPlThuHmtUWvBUClAkW/1MkAsL
- zQ2GGlstXPkJVTxLclOF2Zb46VxMHSHOdLrThuuxGM0miWDZ8xL8kqvOy5qgXr2/+odOmnp01
- +UPxU6bQpv2v9Gh5H9xL6ozinr03tBD9srM2tTmuZ/gS4vY9/JjnDui0BQti6wrbZuVpowpNI
- B80xmX+3kp6ygNJiBO6wgNwm8wczcg4V4/Z7rWUTsKNg7cEsE1Gzm9ydKfu2WMUNPv8Ig2gze
- wF3a33u7RckZx6qwiTa/ymv1huU4hv6zBcAuKmFEy8Wnr1kK5V9rp4NBRTtKAxbmIb0ovPyiF
- 59+pLQTPwrw2/3giMJlKmOBa1aZt+5rUh30Al0jl0rR6o2CMk/AZDOO+IJCzq8DLkv2xsssfV
- QEQKwGFG016+M5sDEku6kuMtcWPYyMSBO7RBtWVoHYtUCid5kwaWAUh+EJ0/3ahQhTpI6GfrZ
- zWBpqvuZ9v+seMMcLHp7+A08nGHA4fpM10QomGrPYWnXeWr2Eix6hcIEZx69aaexM03QcSceH
- WRc9fd7
+        id S1751982AbeEGCn5 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 22:43:57 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:5546 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751852AbeEGCnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 22:43:55 -0400
+From: Caizhiyong <caizhiyong@hisilicon.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        axboe <axboe@kernel.dk>
+CC: LKML <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Jiangheng <jiangheng@hisilicon.com>
+Subject: RE: [PATCH] Documentation: block: cmdline-partition.txt fixes and
+ additions
+Thread-Topic: [PATCH] Documentation: block: cmdline-partition.txt fixes and
+ additions
+Thread-Index: AQHT5Wsmk+zbgmPRgU6xzKM5CECa56QjjefQ
+Date: Mon, 7 May 2018 02:43:24 +0000
+Message-ID: <C3050A4DBA34F345975765E43127F10F8B7720F8@dggemm511-mbs.china.huawei.com>
+References: <dba389fc-2745-34b1-e33e-fc83f53eaf42@infradead.org>
+In-Reply-To: <dba389fc-2745-34b1-e33e-fc83f53eaf42@infradead.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.67.217.112]
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w472i4mh011795
 
-On Sun, 2018-05-06 at 09:42 +0200, Paolo Valente wrote:
+> -----Original Message-----
+> From: Randy Dunlap [mailto:rdunlap@infradead.org]
+> Sent: Monday, May 07, 2018 2:50 AM
+> To: linux-block@vger.kernel.org; axboe <axboe@kernel.dk>
+> Cc: LKML <linux-kernel@vger.kernel.org>; Caizhiyong
+> <caizhiyong@hisilicon.com>; Andrew Morton <akpm@linux-foundation.org>;
+> linux-doc@vger.kernel.org; Jonathan Corbet <corbet@lwn.net>
+> Subject: [PATCH] Documentation: block: cmdline-partition.txt fixes and
+> additions
 > 
-> I've attached a compressed patch (to avoid possible corruption from my
-> mailer).  I'm little confident, but no pain, no gain, right?
+> From: Randy Dunlap <rdunlap@infradead.org>
 > 
-> If possible, apply this patch on top of the fix I proposed in this
-> thread, just to eliminate possible further noise. Finally, the
-> patch content follows.
+> Make the description of the kernel command line option "blkdevparts"
+> a bit more flowing and readable.
 > 
-> Hoping for a stroke of luck,
-
-FWIW, box didn't survive the first full build of the morning.
-
-> Paolo
+> Fix a few typos.
+> Add the optional <size> and <offset> suffixes.
+> Note that size can be "-" to indicate all of the remaining space.
 > 
-> diff --git a/block/bfq-mq-iosched.c b/block/bfq-mq-iosched.c
-> index 118f319af7c0..6662efe29b69 100644
-> --- a/block/bfq-mq-iosched.c
-> +++ b/block/bfq-mq-iosched.c
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Cai Zhiyong <caizhiyong@huawei.com>
+> ---
+> Should the "ro" and "lk" flags options be described?
 
-That doesn't exist in master, so I applied it like so.
+thank you for fix typos.
+The "ro" and "lk" feature are not implemented in block devices. could you implement them?
 
----
- block/bfq-iosched.c |    4 ++++
- 1 file changed, 4 insertions(+)
-
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -554,8 +554,12 @@ static void bfq_limit_depth(unsigned int
-        if (unlikely(bfqd->sb_shift != bt->sb.shift))
-                bfq_update_depths(bfqd, bt);
- 
-+#if 0
-        data->shallow_depth =
-                bfqd->word_depths[!!bfqd->wr_busy_queues][op_is_sync(op)];
-+#else
-+       data->shallow_depth = 1;
-+#endif
- 
-        bfq_log(bfqd, "[%s] wr_busy %d sync %d depth %u",
-                        __func__, bfqd->wr_busy_queues, op_is_sync(op),
+>  Documentation/block/cmdline-partition.txt |   21 +++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+> 
+> --- linux-next-20180504.orig/Documentation/block/cmdline-partition.txt
+> +++ linux-next-20180504/Documentation/block/cmdline-partition.txt
+> @@ -1,7 +1,9 @@
+>  Embedded device command line partition parsing
+> 
+> ==========================================================
+> ===========
+> 
+> -Support for reading the block device partition table from the command line.
+> +The "blkdevparts" command line option adds support for reading the
+> +block device partition table from the kernel command line.
+> +
+>  It is typically used for fixed block (eMMC) embedded devices.
+>  It has no MBR, so saves storage space. Bootloader can be easily accessed
+>  by absolute address of data on the block device.
+> @@ -14,22 +16,27 @@ blkdevparts=<blkdev-def>[;<blkdev-def>]
+>      <partdef> := <size>[@<offset>](part-name)
+> 
+>  <blkdev-id>
+> -    block device disk name, embedded device used fixed block device,
+> -    it's disk name also fixed. such as: mmcblk0, mmcblk1, mmcblk0boot0.
+> +    block device disk name. Embedded device uses fixed block device.
+> +    Its disk name is also fixed, such as: mmcblk0, mmcblk1, mmcblk0boot0.
+> 
+>  <size>
+>      partition size, in bytes, such as: 512, 1m, 1G.
+> +    size may contain an optional suffix of (upper or lower case):
+> +      K, M, G, T, P, E.
+> +    "-" is used to denote all remaining space.
+> 
+>  <offset>
+>      partition start address, in bytes.
+> +    offset may contain an optional suffix of (upper or lower case):
+> +      K, M, G, T, P, E.
+> 
+>  (part-name)
+> -    partition name, kernel send uevent with "PARTNAME". application can
+> create
+> -    a link to block device partition with the name "PARTNAME".
+> -    user space application can access partition by partition name.
+> +    partition name. Kernel sends uevent with "PARTNAME". Application can
+> +    create a link to block device partition with the name "PARTNAME".
+> +    User space application can access partition by partition name.
+> 
+>  Example:
+> -    eMMC disk name is "mmcblk0" and "mmcblk0boot0"
+> +    eMMC disk names are "mmcblk0" and "mmcblk0boot0".
+> 
+>    bootargs:
+>      'blkdevparts=mmcblk0:1G(data0),1G(data1),-;mmcblk0boot0:1m(boot),-
+> (kernel)'
