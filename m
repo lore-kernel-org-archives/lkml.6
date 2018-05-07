@@ -1,72 +1,131 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeEGCQL (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 22:16:11 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:51230 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751831AbeEGCQG (ORCPT
+        id S1751900AbeEGCVj (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 22:21:39 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:35441 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeEGCVg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 22:16:06 -0400
-Date: Mon, 7 May 2018 03:15:54 +0100
-From: Al Viro <viro@ZenIV.linux.org.uk>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Martin Steigerwald <martin@lichtvoll.de>,
-        Matthew Wilcox <willy@infradead.org>, dsterba@suse.cz,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>, linux-m68k@vger.kernel.org,
-        Debian m68k <debian-68k@lists.debian.org>
-Subject: Re: moving affs + RDB partition support to staging?
-Message-ID: <20180507021554.GN30522@ZenIV.linux.org.uk>
-References: <20180425154602.GA8546@bombadil.infradead.org>
- <20180425203029.GQ21272@twin.jikos.cz>
- <20180426025717.GA32430@bombadil.infradead.org>
- <1613268.lKBQxPXt8J@merkaba>
- <76ca15e2-7b43-8b02-43e1-9ee65ab85356@physik.fu-berlin.de>
- <20180506005946.GI30522@ZenIV.linux.org.uk>
- <20180506073955.GJ30522@ZenIV.linux.org.uk>
- <20180506204622.GL30522@ZenIV.linux.org.uk>
- <20180506213247.GM30522@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180506213247.GM30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Sun, 6 May 2018 22:21:36 -0400
+X-Google-Smtp-Source: AB8JxZoDnioFFyT/nCrvlLSuHQRBCWO6+ZMRfSX5jgoomwlDAwuwKD+3CqTwGk9gE51gwJ1bQNNktw==
+Message-ID: <1525659688.4030.5.camel@canonical.com>
+Subject: Re: [PATCH] iio: humidity: hts221: Fix sensor reads after resume
+From: Shrirang Bagul <shrirang.bagul@canonical.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lorenzo.bianconi83@gmail.com, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Mon, 07 May 2018 10:21:28 +0800
+In-Reply-To: <20180506171942.0a4802d7@archlinux>
+References: <20180430042546.8801-1-shrirang.bagul@canonical.com>
+         <20180506171942.0a4802d7@archlinux>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-zMGSogCQuESQWws1m/lw"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 06, 2018 at 10:32:47PM +0100, Al Viro wrote:
-> On Sun, May 06, 2018 at 09:46:23PM +0100, Al Viro wrote:
-> 
-> > 	I'm fixing that pile of crap (along with the NFS exports
-> > one and, hopefully, rename mess as well).  HOWEVER, I am not going
-> > to take over the damn thing - David has violated the 11th
-> > commandment (Thou Shalt Never Volunteer), so he gets to joy of
-> > learning that codebase and taking care of it from now on.
-> 
-> 	Same scenario on link(2) ends up with
-> * ST_LINKFILE created, inserted into the link chain and left around,
-> without being present in any hash chain
-> * target becoming positive hashed dentry, as if link(2) has succeeded,
-> so dcache lookups will be finding it (for a while)
-> * unlink(2) on source will have very interesting effects, what with
-> the attempts to move ST_FILE entry into the directory presumed to
-> contain ST_LINKFILE one, removing ST_LINKFILE from it at the same time.
 
-Oh, lovely...  Looks like that thing wants the hash chains sorted by
-block number.  affs_insert_hash() doesn't give a toss - it always
-adds to the very end of chain.
+--=-zMGSogCQuESQWws1m/lw
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Maintaining that requirement (and I can understand the rationale -
-they don't want too many back-and-forth seeks on directory lookups)
-is going to be great fun on rename(), especially for the case when
-the target of rename happens to be a primary name for a file with
-additional hardlinks.
+On Sun, 2018-05-06 at 17:19 +0100, Jonathan Cameron wrote:
+> On Mon, 30 Apr 2018 12:25:46 +0800
+> Shrirang Bagul <shrirang.bagul@canonical.com> wrote:
+>=20
+> > CTRL1 register (ODR & BDU settings) gets reset after system comes back
+> > from suspend, causing subsequent reads from the sensor to fail.
+> >=20
+> > This patch restores the CTRL1 register after resume.
+> >=20
+> > Based on:
+> > git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git iio-fixes-f=
+or-4.14b
+> >=20
+> > Since 4.17.rc1, this driver uses REGMAP; I'll send a separate patch to
+> > address this issue.
+> >=20
+> > Cc: stable@vger.kernel.org
+> > Fixes: ffebe74b7c95 (iio: humidity: hts221: avoid useless ODR reconfigu=
+ration)
+>=20
+> Looks like part of the problem was introduced in that patch, part well pr=
+edated
+> it (BDU).
+>=20
+> > Signed-off-by: Shrirang Bagul <shrirang.bagul@canonical.com>
+>=20
+> As you way, this needs to be a bit different to take into account
+> the change to regmap.  We'll need to have that upstream before we look
+> at a back port.  One element inline surprises me and needs further
+> explanation.
+I have sent a patch based on iio-for-4.17b [1], Lorenzo and I are still=20
+discussing our findings. It's not just the CTRL1 reg, but also the AV_CONF(=
+0x10) reg.
+which loses it's contents coming out of suspend.
 
-I think I see how to deal with that sanely, but... ouch.
+[1] https://marc.info/?l=3Dlinux-iio&m=3D152534455701742&w=3D2
+>=20
+>=20
+> > ---
+> >  drivers/iio/humidity/hts221_core.c | 12 ++++++++----
+> >  1 file changed, 8 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/humidity/hts221_core.c b/drivers/iio/humidity/=
+hts221_core.c
+> > index 32524a8dc66f..fed2da64fa3b 100644
+> > --- a/drivers/iio/humidity/hts221_core.c
+> > +++ b/drivers/iio/humidity/hts221_core.c
+> > @@ -674,11 +674,15 @@ static int __maybe_unused hts221_resume(struct de=
+vice *dev)
+> >  	struct hts221_hw *hw =3D iio_priv(iio_dev);
+> >  	int err =3D 0;
+> > =20
+> > -	if (hw->enabled)
+> > -		err =3D hts221_write_with_mask(hw, HTS221_REG_CNTRL1_ADDR,
+> > -					     HTS221_ENABLE_MASK, true);
+>=20
+> Why drop the enable setting?  Seems that we want to do this 'as well',
+> if the device was previous enabled.
+Yes, will cover this in v2.
+>=20
+> > +	err =3D hts221_write_with_mask(hw, HTS221_REG_CNTRL1_ADDR,
+> > +				     HTS221_BDU_MASK, 1);
+> > +	if (err < 0)
+> > +		goto fail_err;
+> > =20
+> > -	return err;
+> > +	err =3D hts221_update_odr(hw, hw->odr);
+> > +
+> > +fail_err:
+> > +	return err < 0 ? err : 0;
+> >  }
+> > =20
+> >  const struct dev_pm_ops hts221_pm_ops =3D {
+>=20
+>=20
+--=-zMGSogCQuESQWws1m/lw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Incidentally, we'd better verify that hash chains are not looped - as it
-is, there's no checks whatsoever, and it *will* happily loop if you
-feed it an image with such braindamage.  I really hope that no fan of
-desktop experience has set the things up for e.g. USB sticks with
-that on them being recognized and automounted on insertion...
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJa77goAAoJELlj3b/+u+hk4XwP/0SHH/Cv407g+WHxOBSGbVBO
+bLtWtBUE0/aJKEglo6BANFA5RmtRaFslm95UlkdnB5yX0qG/2HpY8rgflBxOv8yj
+WW+6PhMgRBwNX/uf5576DtCK97VId+z18aSwQoPt6g/CjasaFQN0CLAuqYls5o9S
+Rx4MbRGFek6qElZ2NH4aGyjEVxmlLCLaO+QS9C3+6KKWa85iaYpUiccpBW5R08Pp
+WuqbXJlsLXvPsFQxF8DUpQ8iz4VgucZJopkdbC32cRyumQGcAcP5mFEyu6swIMBT
+Ju87+rXLXkrgqTM8b4FLNaiJEFurwXLvhvcV2ehSq+u/XH/VveGMyTU6akjnBNa1
+Q63V2VCS3wQiQA+wf3gcTNsBMERnABkJ3QMVt7ZTxkwEt+1mbujaZ7DOOtJnxKTW
+QCjaHBilrEYT+lE96fvqLdBAbqp3DhF8NE334YbGwQcFL+jZP9M1jg34J8sRG4IT
+528Kniqsxj5jmLeyNCzViWXK6eYrkTkHACOf90/78cD62Hn5P18dlxela91/ac2/
+fzhLyd939/yiDTAyHAX5akIeUABPCb84AIyAbnRuUiQ5+DS8IG2+SYg2/IEGroYM
+mUEVoJ/T5PMpq6mLTeH4MbEwi/iRRu1qJY+Br3V1Lrvqu3k39CjpJaZV9oo6+T+e
+Jmk0HNYqlvczgXaCMMgo
+=ZGkH
+-----END PGP SIGNATURE-----
+
+--=-zMGSogCQuESQWws1m/lw--
