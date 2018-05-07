@@ -1,190 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752163AbeEGLb2 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 07:31:28 -0400
-Received: from mail-lf0-f43.google.com ([209.85.215.43]:35865 "EHLO
-        mail-lf0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751938AbeEGLbZ (ORCPT
+        id S1752224AbeEGLcl (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 07:32:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59842 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752049AbeEGLcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 07:31:25 -0400
-X-Google-Smtp-Source: AB8JxZrLkIJh4cWcsKWIHAnRut8a3Jn2bWis6BexHrsW0cxikKmSINqkZGr0HW4lSAZchR64OMio8A==
-Date: Mon, 7 May 2018 14:31:25 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Andy Lutomirski <luto@amacapital.net>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Proof-of-concept: better(?) page-table manipulation API
-Message-ID: <20180507113124.ewpbrfd3anyg7pli@kshutemo-mobl1>
-References: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com>
- <CALCETrVzD8oPv=h2q91AMdCHn3S782GmvsY-+mwoaPUw=5N7HQ@mail.gmail.com>
+        Mon, 7 May 2018 07:32:39 -0400
+Date: Mon, 7 May 2018 08:32:32 -0300
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH 16/18] mtd: rawnand.h: use nested union kernel-doc
+ markups
+Message-ID: <20180507083232.5a084ba7@vento.lan>
+In-Reply-To: <20180507114650.171edcc2@bbrezillon>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <39d8d4f0e0ff5a06be0303f7f4f2eac5fb45b9ca.1525684985.git.mchehab+samsung@kernel.org>
+        <20180507114650.171edcc2@bbrezillon>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrVzD8oPv=h2q91AMdCHn3S782GmvsY-+mwoaPUw=5N7HQ@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 04:51:57AM +0000, Andy Lutomirski wrote:
-> On Tue, Apr 24, 2018 at 8:44 AM Kirill A. Shutemov <
-> kirill.shutemov@linux.intel.com> wrote:
+Hi Boris,
+
+Em Mon, 7 May 2018 11:46:50 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> escreveu:
+
+> Hi Mauro,
+
+> > diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+> > index 5dad59b31244..b986f94906df 100644
+> > --- a/include/linux/mtd/rawnand.h
+> > +++ b/include/linux/mtd/rawnand.h
+> > @@ -740,8 +740,9 @@ enum nand_data_interface_type {
+> >  
+> >  /**
+> >   * struct nand_data_interface - NAND interface timing
+> > - * @type:	type of the timing
+> > - * @timings:	The timing, type according to @type
+> > + * @type:	 type of the timing
+> > + * @timings:	 The timing, type according to @type
+> > + * @timings.sdr: Use it when @type is %NAND_SDR_IFACE.  
 > 
-> > Hi everybody,
-> 
-> > I've proposed to talk about page able manipulation API on the LSF/MM'2018,
-> > so I need something material to talk about.
-> 
-> 
-> I gave it a quick read.  I like the concept a lot, and I have a few
-> comments.
+> Hm, really feels weird to do that. I mean, either we describe
+> timings.sdr or timings, but not both. I this case, I agree that
+> describing timings.sdr would make more sense than generically
+> describing any possible entries in the timings union.
 
-Thank you for the input.
+This struct is funny, as the union has just one item. I assume
+that the original intend is to be ready to have more timing
+types (or you had it in the past). By the time you have a
+second value there, describing the union would make more
+sense.
 
-> > +/*
-> > + * How manu bottom level we account to mm->pgtables_bytes
-> > + */
-> > +#define PT_ACCOUNT_LVLS 3
-> > +
-> > +struct pt_ptr {
-> > +       unsigned long *ptr;
-> > +       int lvl;
-> > +};
-> > +
-> 
-> I think you've inherited something that I consider to be a defect in the
-> old code: you're conflating page *tables* with page table *entries*.  Your
-> 'struct pt_ptr' sounds like a pointer to an entire page table, but AFAICT
-> you're using it to point to a specific entry within a table.  I think that
-> both the new core code and the code that uses it would be clearer and less
-> error prone if you made the distinction explicit.  I can think of two clean
-> ways to do it:
-> 
-> 1. Add a struct pt_entry_ptr, and make it so that get_ptv(), etc take a
-> pt_entry_ptr instead of a pt_ptr.  Add a helper to find a pt_entry_ptr
-> given a pt_ptr and either an index or an address.
-> 
-> 2. Don't allow pointers to page table entries at all.  Instead, get_ptv()
-> would take an address or an index parameter.
+> Is there a simple
+> way we can get rid of the warning we have when not describing timings
+> but all of its fields?
 
-Well, I'm not sure how useful pointer to whole page tables are.
-Where do you them useful?
+There's no direct way. It won't be hard to add a way to do it,
+like applying the enclosed patch with ends by declaring timings as:
 
-How I see the picture so far:
+	* @timings:	 -- undescribed --
 
-- ptp_t represent a pointer to an entry in a page table.
+IMHO, this is uglier.
 
-  In x86-64 case I pretend that CR3 is single-entry page table. It
-  requires a special threatement in ptp_page_vaddr(), but works fine
-  otherwise.
+The way I see is that, if the embed struct/union is not interesting
+enough to be described, the best would be to use an anonymous one like:
 
-- ptv_t represents a value that dereferenced from ptp_t or can be set to
-  ptp_t.
+	struct nand_data_interface {
+		enum nand_data_interface_type type;
+		union {
+			struct nand_sdr_timings sdr;
+		};
+	};
 
-It's trivial to find the start of page table if we would need it by
-masking out botom bits from ptp->ptr. It works on x86 and should be
-possible on any architecture.
+With the above, kernel-doc will expect a description just for @sdr.
 
-> Also, what does lvl == 0 mean?  Is it the top or the bottom?  I think a
-> comment would be helpful.
+Btw, if you want to see how nested struct/union is parsed, the
+scripts/kernel_doc logic is at dump_struct() function.
 
-It is bottom. But it should be up to architecture to decide.
+When it finds an struct, it first handles private/public by simply
+removing everything that it is not public from the struct, by a
+very simple parser. Then, it converts nested struct/union into
+un-nested ones. E. g. it converts:
 
-> 
-> > +/*
-> > + * When walking page tables, get the address of the next boundary,
-> > + * or the end address of the range if that comes earlier.  Although no
-> > + * vma end wraps to 0, rounded up __boundary may wrap to 0 throughout.
-> > + */
-> 
-> I read this comment twice, and I still don't get it.  Can you clarify what
-> this function does and why you would use it?
+	struct {
+		union {
+			int foo1;
+		};
+		union {
+			int foo2;
+		} bar;
+	} foobar;
 
-That's basically ported variant of p?d_addr_end. It helps step address by
-right value for the page table entry and handles wrapping properly.
+into this internal representation:
 
-See example in copy_pt_range().
+	struct {
+		int foo1;
+		union;
+		int bar.foo2;
+		union bar;
+	};
 
-> > +/* Operations on page table pointers */
-> > +
-> > +/* Initialize ptp_t with pointer to top page table level. */
-> > +static inline ptp_t ptp_init(struct mm_struct *mm)
-> > +{
-> > +       struct pt_ptr ptp ={
-> > +               .ptr = (unsigned long *)mm->pgd,
-> > +               .lvl = PT_TOP_LEVEL,
-> > +       };
-> > +
-> > +       return ptp;
-> > +}
-> > +
-> 
-> On some architectures, there are multiple page table roots.  For example,
-> ARM64 has a root for the kernel half of the address space and a root for
-> the user half (at least -- I don't fully understand it).  x86 PAE sort-of
-> has four roots.  Would it make sense to expose this in the API for
-> real?
+Then it runs the normal un-nested struct parser.
 
-I will give it a thought.
 
-Is there a reason not to threat it as an additional page table layer and
-deal with it in a unified way?
+Thanks,
+Mauro
 
-> For example, ptp_init(mm) could be replaced with ptp_init(mm, addr).  This
-> would make it a bit cleaner to handle an separate user and kernel tables.
->   (As it stands, what is supposed to happen on ARM if you do
-> ptp_init(something that isn't init_mm) and then walk it to look for a
-> kernel address?)
+[PATCH] don't describe nested struct timings
 
-IIUC, we can handle it in ptp_walk() since we have all may handle root in
-a special way as I do for x86-64.
+IMHO, this is an ugly hack, but it allows having nested
+structs (or fields) undescribed by purpose.
 
-> Also, ptp_init() seems oddly named for me.  ptp_get_root_for_mm(),
-> perhaps?  There could also be ptp_get_kernel_root() to get the root for the
-> init_mm's tables.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Yeah, sounds better.
-
-> > +static inline void ptp_walk(ptp_t *ptp, unsigned long addr)
-> > +{
-> > +       ptp->ptr = (unsigned long *)ptp_page_vaddr(ptp);
-> > +       ptp->ptr += __pt_index(addr, --ptp->lvl);
-> > +}
-> 
-> Can you add a comment that says what this function does?
-
-Okay, I will.
-
-> Why does it not change the level?
-
-It does. --ptp->lvl.
-
-> > +
-> > +static void ptp_free(struct mm_struct *mm, ptv_t ptv)
-> > +{
-> > +       if (ptv.lvl < PT_SPLIT_LOCK_LVLS)
-> > +               ptlock_free(pfn_to_page(ptv_pfn(ptv)));
-> > +}
-> > +
-> 
-> As it stands, this is a function that seems easy easy to misuse given the
-> confusion between page tables and page table entries.
-
-Hm. I probably have a blind spot, but I don't see it.
-
-The function has to be named better for sure.
-
-> Finally, a general comment.  Actually fully implementing this the way
-> you've done it seems like a giant mess given that you need to support all
-> architectures.  But couldn't you implement the new API as a wrapper around
-> the old API so you automatically get all architectures?
-
-I will look into this. But I'm not sure if it possbile without measurable
-overhead.
-
--- 
- Kirill A. Shutemov
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index b986f94906df..b724c7edf532 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -741,7 +741,7 @@ enum nand_data_interface_type {
+ /**
+  * struct nand_data_interface - NAND interface timing
+  * @type:	 type of the timing
+- * @timings:	 The timing, type according to @type
++ * @timings:	 -- undescribed --
+  * @timings.sdr: Use it when @type is %NAND_SDR_IFACE.
+  */
+ struct nand_data_interface {
+diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+index 0057d8eafcc1..196a2107c8c1 100755
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -390,7 +390,7 @@ my $section = $section_default;
+ my $section_context = "Context";
+ my $section_return = "Return";
+ 
+-my $undescribed = "-- undescribed --";
++my $undescribed = "-- undescribed --\n";
+ 
+ reset_state();
+ 
