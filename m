@@ -1,28 +1,29 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-488117-1525681280-2-4607489692768523738
+X-Cyrus-Session-Id: sloti22d1t05-848599-1525692733-2-14661269009270232561
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: 
+X-Spam-charsets: plain='UTF-8'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-fsdevel-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525681280; b=RsFvj+D6OtkLd7kXGawxISJljl4i9GcS1aC3cjuthvlixHK6qJ
-    Z2Mb18cRJJxUmdgUGJvjw3X/U0sWfS5V9ArnjsmzkH/0SEoHoJDwn3Dgqq6GA8qa
-    Gdg3wBoD6QG/Zhp2FRgWx+wvCsQQdsi/VEvZI00N+fc4stn4qCqIOj13Ywg/2PBE
-    FPZGsfym0kwyF+tSX1y58o5eCJRE3OsP4dgFC5C6hT549lFqcQXovgv0Q7Nk4jCY
-    bSvN2ZlMu0vxpi28/pVIVRCBnWol73aphYNbys9VQn1Svd3XrxIEPnILgXlFym0/
-    KS1ajGoOpgQcbbZDiQo1vrXOi6GlWMjFgZ6g==
+    1525692733; b=c1c7Etm+L9SYgdITypf4pqEmQLwhNCDRHAZ0f59TXTH1ogBoQD
+    hq/iyXoUr6x/35+x3lxZH4lUe2RPgzPns0DZdTzdPTFHhC4/v6MD2g39CMVRukkR
+    Jj3CZz/mHbFC6wVyRXkQ6aNAnvSMa25RRPLlphE66w4N3CWot8lVzeFZ+nR3Avzz
+    G1fGIx1dKmx8xA/gudHpVM+m5l6/oAMHb5Uyiibr5j4s6xe1lYZBcE1KzdRW2ykV
+    l8vpUnsCjNUWr7cxrrrlZ6bunmDygeVYtI44M/xO71AULRmVznxDEC+kgxJGNyey
+    324wmPkW6kcinl4E6kwbCCqDEaA+8TWjhGqQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
-    :list-id; s=fm2; t=1525681280; bh=7iS9z6QfKCeT5DTUAul2X7aQrHimte
-    CljNMKa4qx46k=; b=h3k/9Dt0kZfmVaSJkbtuiSgCldb9MxVUO77wRioAN/MaKJ
-    LcQ7DAYOr+4ckee2mtSJ1XOz94aKRTvBVboHpoGSa55xSHM7xt5+n5kEHSkCQ5lC
-    eeWykV5iBgBnvJHEePLQkuCGx+5nwPVoN5Ks9V0HbFqBllJzfZudPKDRAzRYCjwb
-    Pi5MKXqHCMAcxgL2TCMyiow9Uv9MSbP0SQCoV2zC5R+jwkS+PfUJMD1Jv56KWxDA
-    kAvlmRKc6kaqEo59JOdqtk3CNE54gG6naSTKEyCMT0i2I0Y+DQPvVWZfMXx4Mp2K
-    EM/CoS46cu6zl6HB00kp3l6p1Q2VNGZQWRbUga1A==
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1525692733; bh=w+dd4uxn40E8oZdgsueHUZtN9gNTDN7xrV227qVEE8
+    M=; b=Txim8Ev/W0GZH6G+gfHHenKdhwQHcPFNEpx20W6LO6tsfp7tNqIbGZUZhI
+    oQ6zPAYjCalZNOu5ZY0hF7ZKIMPyEE/QWN+9IIIBJUNHkHCJ5IKn3liyCUaA5yie
+    VybzSlXp6vIMXyCRbtZV4UH/Blo4uqt1w9oKxefQ8HTD6/BzCogco3nx0JRs3I3Y
+    uVLE6gD8+5DxSjiVLh7EOC8tNaRUcNLfzvrGWDeklfTGbJAk53hnazI1bXrmcwdi
+    IPrIaszMzN+8SBY/bFFR6UzHfSX5MLjD9juXYCgl4Yr8PC77WH4oVhKkFSKQrdzz
+    Tg7olqAsMGfIIcJQvQlcvp7ijQ/A==
 ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
@@ -32,7 +33,7 @@ ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signature
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-    header.i=@1e100.net header.b=A7Pt3tlT;
+    header.i=@1e100.net header.b=COGRPPM+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
@@ -48,68 +49,66 @@ Authentication-Results: mx1.messagingengine.com;
     x-aligned-from=fail;
     x-cm=none score=0;
     x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
-      header.i=@1e100.net header.b=A7Pt3tlT;
+      header.i=@1e100.net header.b=COGRPPM+;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
       header.domain=redhat.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfMO9RvA11Dwmp47eulBIEIqHmsNfy2fpHS68OrC9uTKh1MhTf2dzICRh0X3+X7k5K0sfts9+7wtEv7r9tudjAk8RKDiMO2+B9QlW+8vEunlCBQshrN2U
-    E/ip+VeTn3m4ncj9UjGpWYnR++xz7GQWRZ3YgqFYB3iHQjDOhiTrL8N9A7jwJ53ddPM3ey08DNmZkuG7HMb5fqq06dRkNMv/6gCgG/786d7FUWAddU5T3fpi
+X-CM-Envelope: MS4wfN346ciFcMkJhCW6l3Kf7UUolRXErWUjlouC6HKya2vo1xkgSeGF3PpnJntkqvNxd4cZ2aoMA8Hzl+fmrv1Guugn+2ghOECbNxDOIX0jZZOHhIOpwbMm
+    BIbnu1QBIAIqsa92rRPFjO7emBaS0H2AKdY9Z9qQSv5M222F9owEX1eNxN/C2uG1Jsc6rLzCuplmjNc0F6oKu+cwUiY/wLiPuKqrdURlYpFPDEir64EsQVEA
 X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8
-    a=q75l-hZdVcqO2UtYMS0A:9 a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=JfrnYn6hAAAA:8 a=A2dn_LWby-bcAtiSJO0A:9 a=cuWTA9sZCVWSH8kd:21
+    a=6Y3LBeycOhDmgUSw:21 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752009AbeEGIVQ (ORCPT <rfc822;linux@kroah.com>);
-        Mon, 7 May 2018 04:21:16 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:32919 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751977AbeEGIVO (ORCPT
+        id S1752168AbeEGLcL (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 7 May 2018 07:32:11 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:39172 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752038AbeEGLcK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 May 2018 04:21:14 -0400
-X-Google-Smtp-Source: AB8JxZq1NRr22m9FZXRG8DSThV+Z4wQzsyRTWtE1Ntvslyk30+eBMFaMzgdq7kdTdvK+ua/9KKR40g==
+        Mon, 7 May 2018 07:32:10 -0400
+X-Google-Smtp-Source: AB8JxZqL26yZ03BApknjCpS3nMuo1ibt9oIQaLRwV17gAZXGLNSkw0rNEecPkWSTTyGa1RUFeSxXsIYKySy/WSAqzk0=
+MIME-Version: 1.0
+In-Reply-To: <20180507111142.GA18116@bombadil.infradead.org>
+References: <20180507082108.28186-1-mszeredi@redhat.com> <20180507082108.28186-2-mszeredi@redhat.com>
+ <20180507111142.GA18116@bombadil.infradead.org>
 From: Miklos Szeredi <mszeredi@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+Date: Mon, 7 May 2018 13:32:09 +0200
+Message-ID: <CAOssrKebppZhRbvM-3qk=S0aY57skYCEn2axknOtF9LcJcu8yA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] vfs: dedpue: return s64
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
         Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH 0/3] vfs: dedupe: cleanup API and implementation
-Date: Mon,  7 May 2018 10:21:05 +0200
-Message-Id: <20180507082108.28186-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.14.3
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-fsdevel-owner@vger.kernel.org
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Al,
+On Mon, May 7, 2018 at 1:11 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Mon, May 07, 2018 at 10:21:06AM +0200, Miklos Szeredi wrote:
+>> f_op->dedupe_file_range() gets a u64 length to dedup and returns an ssize_t
+>> actual length deduped.  This breaks badly on 32bit archs since the returned
+>> length will be truncated and possibly overflow into the sign bit (xfs and
+>> ocfs2 are affected, btrfs limits actual length to 16MiB).
+>>
+>> Returning s64 should be good, since clone_verify_area() makes sure that the
+>> supplied length doesn't overflow.
+>
+> Why s64 rather than loff_t?  Particularly since the next patch turns
+> the paramters into loff_t.
 
-Please apply this is a small cleanup/fix series.  It is also a prerequisite
-to the overlayfs file stacking patchset.
-
-Git tree is here:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git dedupe-cleanup
+Next patch turns the offsets into loff_t and leaves "len" as u64.  A
+size is definitely not an offset, I'd consider changing the type of
+"len" to loff_t a misuse.
 
 Thanks,
 Miklos
-
----
-Miklos Szeredi (3):
-  vfs: dedpue: return s64
-  vfs: dedupe: rationalize args
-  vfs: dedupe: extract helper for a single dedup
-
- fs/btrfs/ctree.h   |  4 +--
- fs/btrfs/ioctl.c   |  6 ++--
- fs/ocfs2/file.c    | 10 +++---
- fs/read_write.c    | 91 ++++++++++++++++++++++++++++++------------------------
- fs/xfs/xfs_file.c  |  8 ++---
- include/linux/fs.h |  2 +-
- 6 files changed, 65 insertions(+), 56 deletions(-)
-
--- 
-2.14.3
