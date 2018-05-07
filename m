@@ -1,312 +1,158 @@
-Return-Path: <linux-security-module-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-616729-1525462090-2-14653609167483863203
+Return-Path: <linux-arch-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-1186102-1525707320-2-16481866472245556749
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
-X-Spam-charsets: plain='us-ascii'
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
+X-Spam-charsets: 
 X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
-X-Mail-from: linux-security-module-owner@vger.kernel.org
+X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525462090; b=Rr0XNrbiwYT8I/6NrJXQjvDTfHnOXrCvJvegE6doHX+69h2AT8
-    bHOjGia/Uy4X+zYL+z2fd1qp/asf7huQ5Iaf5crXLID+AQEP8iTXb0yDBcTIuSEk
-    bb7pSfM/O0roV/hRWO6mZhy/zoEWyYrsVY8oFvKqw06S/K9zzpBI8Pb8esbQiV1k
-    3lsOEAda1/lar2MjoF3145XJRKeAcNxEaY4GrHNzVOMKZuROWfo4uZZ9Lu22Tzz9
-    hCeJ0TXymnPiLmoaKTbdCg5w5HD1kyPpTaakAO0T9yH5x6LiFh5Q5161PbmEw1R8
-    Ud65c6YEECAo/vcwbTjkGNS5rl9DI3hvcfxQ==
+    1525707320; b=SupDaMs0vdneJTgO+23aINK5Wkjsfp7KMkRLSzYebZJeqob516
+    z1Rqw6nqbuCX7Xm7upoVrKVa4PK9KSsefbjGEM4HXXcIGMaggOjx11Ui6fA77bTo
+    15LFCKenQNV5tjX/v6iWP556iWTXluWr3rnRQNLcOHcsa8R+h7l12qdJHcVLR+K1
+    fZL3CtbzpD6Eg54uHIN/nqd6dT7BBhMeeaNk0sQeVEvbkhYZtneEiOV1PnK85yEb
+    cFEKOEbRp8YY7yO2BhH70TZspfIu2DVD06Uw4jDKUWLSsUVIOMYAH/oVJUjL0I3E
+    p6MtmZcQ5TAovwluwk1kmgV10sFRlUApzQwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-transfer-encoding
-    :content-type:sender:list-id; s=fm2; t=1525462090; bh=odBCgF32Yi
-    TA4OZDiD5u2Hcu73NlxiJ8nzhqNiEJWi0=; b=JWN+ajhSsTnd0Ybg0YquNA08Hu
-    UWf0miLBa53HWHmeE/CCPG/vNy3/OY2pN6EwGceWviAAkcRH1zxM/oOR878yPtcG
-    KGp2QAEAmF/ToU+c24MvQPTTZJK23j3Gz5F7V9NHAM7Mcdhd/XHbLnLsdP5fbYre
-    g9PC6tNKoXa+236idjnBKmhYdINVlEuqrNkDMnwkKxQ3kWO78hE4tRDarxg/N3Q9
-    kGotC8S48eTGeeruDks+sC4PvwHQEv9kmJ7GoLQo/61TU2PWRSjm2Uw/cs06XMgJ
-    FL5wAMDA4Nl2BzXYxILE7Ams2I0vTMafU5DC/u1YSE+T7QO7lfAydGsKfPHQ==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525707320; bh=nr17vJJwcw8x5jSKlMYxR+ezHQSSze
+    b6t1G+kmLJBtA=; b=FQrFKAdoVSiu7iIhO64DJBqbXPKF0KVu/54g4NpT8FFCMr
+    zS0/vi71rP53aPxsWwtO3uhCxrj7v5J9jqVqATeQws0Id9Om0ESbcltjjSuKhttU
+    7xP3lxXUu1tW5+kdkoYtN3TlEdMEZMo0EXoRDV4m8Mdpm/eYMSGv/t3yYkPcKpa3
+    Ha52WpNY6JjN6lzkBadd3yO6j73sC5/mIIddrArm/BJCEBjHaiSU7mMb5+0zmUjj
+    ZT/2NUQSYkcFO6WCVrM6ydn2ydgNcp4Fuy94GsTrljvUbc/RcxPf9tkk43M7aIyW
+    zcL/HpdwBfmKL4jVXakNDBETy8TPOr2Y3/2Ko4zw==
 ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+    header.i=@gmail.com header.b=L9zObmCJ x-bits=2048 x-keytype=rsa
+    x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+    header.i=@1e100.net header.b=PykWn/Da;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+    header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=redhat.com;
+    dkim=pass (2048-bit rsa key sha256) header.d=gmail.com
+      header.i=@gmail.com header.b=L9zObmCJ x-bits=2048 x-keytype=rsa
+      x-algorithm=sha256 x-selector=20161025;
+    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=gmail.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-security-module-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
     x-aligned-from=fail;
     x-cm=none score=0;
+    x-google-dkim=pass (2048-bit rsa key) header.d=1e100.net
+      header.i=@1e100.net header.b=PykWn/Da;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=redhat.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
+      header.domain=gmail.com header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfNoKvzZJt1NBt+1D3vhiMlSACIEwqJSGl5jacq/Ic4ew0B83gQBEUf/h+W84xUIQdnlqZyl1/bW2dMMf2GfABF0yod98587A2cZmUbbvpIh5RQoEKnNn
-    9bSYb5koE9EnCRzBny3gDqSNj7xAb3iUDp/zqS2MZfqVF+PRztIBS7go2mxO8izGMVc8MGFx4GMKqjOIm4jOI89FPAa2nMMAvH3+pyMKvYH1iFMBkiCSto87
-    Vb3Y0ORC2kZ/qXQ0hgsgXA==
+X-CM-Envelope: MS4wfEnl5MrPbFLqfUm9WQvLKkEBKm5IjDpWigtODASGndjZ0tFNfpjVGWYgupc+XFyMQvrEgaEwJc8n67qxp96k7T4fJt114Ao5PwlkzJK0V/dWk6UKXcT1
+    FarEojXhhWbwbUYJFZoOxJbB98vTe7Z7c/HVF+gxVxYE3I2Fw+jtxqpUK2dbrMIq2mwvv8zcQyT+mYkQ6OaqXahkzI0/R2BN4CXbaGLSo4n3hjCztPFFAeU3
 X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=20KFwNOVAAAA:8 a=DfNHnWVPAAAA:8 a=VwQbUJbxAAAA:8 a=AUx5IaqTLitQ4H-0lNMA:9
-    a=CjuIK1q_8ugA:10 a=x8gzFH9gYPwA:10 a=rjTVMONInIDnV1a_A2c_:22
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=x7bEGLp0ZPQA:10 a=i6uMeK6BI1QA:10
+    a=VUJBJC2UJ8kA:10 a=DYZ8hesIYH_MQkQPfhUA:9 a=0Q2BJV46FgXys8O8:21
+    a=FA2hNFeXpfDbHSaL:21
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751622AbeEDT2H (ORCPT <rfc822;linux@kroah.com>);
-        Fri, 4 May 2018 15:28:07 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751558AbeEDT2G (ORCPT
-        <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 May 2018 15:28:06 -0400
-From: Steve Grubb <sgrubb@redhat.com>
-To: Tyler Hicks <tyhicks@canonical.com>
-Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-audit@redhat.com,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] seccomp: Audit attempts to modify the actions_logged sysctl
-Date: Fri, 04 May 2018 15:28:05 -0400
-Message-ID: <4245752.EBNmQNxroQ@x2>
-Organization: Red Hat
-In-Reply-To: <1525396095-27737-4-git-send-email-tyhicks@canonical.com>
-References: <1525396095-27737-1-git-send-email-tyhicks@canonical.com> <1525396095-27737-4-git-send-email-tyhicks@canonical.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-Sender: owner-linux-security-module@vger.kernel.org
+        id S1751923AbeEGPfP (ORCPT <rfc822;linux@kroah.com>);
+        Mon, 7 May 2018 11:35:15 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:45841 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750881AbeEGPfO (ORCPT
+        <rfc822;linux-arch@vger.kernel.org>); Mon, 7 May 2018 11:35:14 -0400
+X-Google-Smtp-Source: AB8JxZrxb3eL4gSiOK85YSc+mSlMQpuuIER64g9bbS8v24h2TgeL8WQXUJ1pbUsjBysnC2T8Q0txFw==
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-gpio@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH 0/7] Introduce the for_each_set_port_word macro
+Date: Mon,  7 May 2018 11:35:02 -0400
+Message-Id: <cover.1525704095.git.vilhelm.gray@gmail.com>
+X-Mailer: git-send-email 2.17.0
+Sender: linux-arch-owner@vger.kernel.org
+X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Thursday, May 3, 2018 9:08:14 PM EDT Tyler Hicks wrote:
-> The decision to log a seccomp action will always be subject to the
-> value of the kernel.seccomp.actions_logged sysctl, even for processes
-> that are being inspected via the audit subsystem, in an upcoming patch.
-> Therefore, we need to emit an audit record on attempts at writing to the
-> actions_logged sysctl when auditing is enabled.
-> 
-> This patch updates the write handler for the actions_logged sysctl to
-> emit an audit record on attempts to write to the sysctl. Successful
-> writes to the sysctl will result in a record that includes a normalized
-> list of logged actions in the "actions" field and a "res" field equal to
-> 1. Unsuccessful writes to the sysctl will result in a record that
-> doesn't include the "actions" field and has a "res" field equal to 0.
-> 
-> Not all unsuccessful writes to the sysctl are audited. For example, an
-> audit record will not be emitted if an unprivileged process attempts to
-> open the sysctl file for reading since that access control check is not
-> part of the sysctl's write handler.
-> 
-> Below are some example audit records when writing various strings to the
-> actions_logged sysctl.
-> 
-> Writing "not-a-real-action", when the kernel.seccomp.actions_logged
-> sysctl previously was "kill_process kill_thread trap errno trace log",
-> emits this audit record:
-> 
->  type=CONFIG_CHANGE msg=audit(1525392371.454:120): op=seccomp-logging
->  actions=? old-actions=kill_process,kill_thread,trap,errno,trace,log
->  res=0
-> 
-> If you then write "kill_process kill_thread errno trace log", this audit
-> record is emitted:
-> 
->  type=CONFIG_CHANGE msg=audit(1525392401.645:126): op=seccomp-logging
->  actions=kill_process,kill_thread,errno,trace,log
->  old-actions=kill_process,kill_thread,trap,errno,trace,log res=1
-> 
-> If you then write "log log errno trace kill_process kill_thread", which
-> is unordered and contains the log action twice, it results in the same
-> actions value as the previous record:
-> 
->  type=CONFIG_CHANGE msg=audit(1525392436.354:132): op=seccomp-logging
->  actions=kill_process,kill_thread,errno,trace,log
->  old-actions=kill_process,kill_thread,errno,trace,log res=1
-> 
-> If you then write an empty string to the sysctl, this audit record is
-> emitted:
-> 
->  type=CONFIG_CHANGE msg=audit(1525392494.413:138): op=seccomp-logging
->  actions=(none) old-actions=kill_process,kill_thread,errno,trace,log
->  res=1
-> 
-> No audit records are generated when reading the actions_logged sysctl.
+While adding GPIO get_multiple/set_multiple callback support for various
+drivers, I noticed a pattern of looping manifesting that would be useful
+standardized as a macro.
 
-This appears to cover all the corner cases we talked about. ACK for the 
-format of the records.
+This patchset introduces the for_each_set_port_word macro and utilizes
+it in several GPIO drivers. The for_each_set_port_word macro facilitates
+a for-loop syntax that iterates over entire groups of set bits at a
+time.
 
-Thanks,
--Steve
- 
-> Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> Signed-off-by: Tyler Hicks <tyhicks@canonical.com>
-> ---
->  include/linux/audit.h |  5 +++++
->  kernel/auditsc.c      | 20 ++++++++++++++++++
->  kernel/seccomp.c      | 58
-> +++++++++++++++++++++++++++++++++++++++++++-------- 3 files changed, 74
-> insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 75d5b03..d4e35e7 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -233,6 +233,8 @@ extern void __audit_inode_child(struct inode *parent,
->  				const struct dentry *dentry,
->  				const unsigned char type);
->  extern void __audit_seccomp(unsigned long syscall, long signr, int code);
-> +extern void audit_seccomp_actions_logged(const char *names,
-> +					 const char *old_names, int res);
->  extern void __audit_ptrace(struct task_struct *t);
-> 
->  static inline bool audit_dummy_context(void)
-> @@ -502,6 +504,9 @@ static inline void __audit_seccomp(unsigned long
-> syscall, long signr, int code) { }
->  static inline void audit_seccomp(unsigned long syscall, long signr, int
-> code) { }
-> +static inline void audit_seccomp_actions_logged(const char *names,
-> +						const char *old_names, int res)
-> +{ }
->  static inline int auditsc_get_stamp(struct audit_context *ctx,
->  			      struct timespec64 *t, unsigned int *serial)
->  {
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 4e0a4ac..5195a29 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -2478,6 +2478,26 @@ void __audit_seccomp(unsigned long syscall, long
-> signr, int code) audit_log_end(ab);
->  }
-> 
-> +void audit_seccomp_actions_logged(const char *names, const char
-> *old_names, +				  int res)
-> +{
-> +	struct audit_buffer *ab;
-> +
-> +	if (!audit_enabled)
-> +		return;
-> +
-> +	ab = audit_log_start(current->audit_context, GFP_KERNEL,
-> +			     AUDIT_CONFIG_CHANGE);
-> +	if (unlikely(!ab))
-> +		return;
-> +
-> +	audit_log_format(ab, "op=seccomp-logging");
-> +	audit_log_format(ab, " actions=%s", names);
-> +	audit_log_format(ab, " old-actions=%s", old_names);
-> +	audit_log_format(ab, " res=%d", res);
-> +	audit_log_end(ab);
-> +}
-> +
->  struct list_head *audit_killed_trees(void)
->  {
->  	struct audit_context *ctx = current->audit_context;
-> diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> index b36ac1e..f5630d1 100644
-> --- a/kernel/seccomp.c
-> +++ b/kernel/seccomp.c
-> @@ -1219,11 +1219,10 @@ static int read_actions_logged(struct ctl_table
-> *ro_table, void __user *buffer, }
-> 
->  static int write_actions_logged(struct ctl_table *ro_table, void __user
-> *buffer, -				size_t *lenp, loff_t *ppos)
-> +				size_t *lenp, loff_t *ppos, u32 *actions_logged)
->  {
->  	char names[sizeof(seccomp_actions_avail)];
->  	struct ctl_table table;
-> -	u32 actions_logged;
->  	int ret;
-> 
->  	if (!capable(CAP_SYS_ADMIN))
-> @@ -1238,24 +1237,65 @@ static int write_actions_logged(struct ctl_table
-> *ro_table, void __user *buffer, if (ret)
->  		return ret;
-> 
-> -	if (!seccomp_actions_logged_from_names(&actions_logged, table.data))
-> +	if (!seccomp_actions_logged_from_names(actions_logged, table.data))
->  		return -EINVAL;
-> 
-> -	if (actions_logged & SECCOMP_LOG_ALLOW)
-> +	if (*actions_logged & SECCOMP_LOG_ALLOW)
->  		return -EINVAL;
-> 
-> -	seccomp_actions_logged = actions_logged;
-> +	seccomp_actions_logged = *actions_logged;
->  	return 0;
->  }
-> 
-> +static void audit_actions_logged(u32 actions_logged, u32
-> old_actions_logged, +				 int ret)
-> +{
-> +	char names[sizeof(seccomp_actions_avail)];
-> +	char old_names[sizeof(seccomp_actions_avail)];
-> +	const char *new = names;
-> +	const char *old = old_names;
-> +
-> +	if (!audit_enabled)
-> +		return;
-> +
-> +	memset(names, 0, sizeof(names));
-> +	memset(old_names, 0, sizeof(old_names));
-> +
-> +	if (ret)
-> +		new = "?";
-> +	else if (!actions_logged)
-> +		new = "(none)";
-> +	else if (!seccomp_names_from_actions_logged(names, sizeof(names),
-> +						    actions_logged, ","))
-> +		new = "?";
-> +
-> +	if (!old_actions_logged)
-> +		old = "(none)";
-> +	else if (!seccomp_names_from_actions_logged(old_names,
-> +						    sizeof(old_names),
-> +						    old_actions_logged, ","))
-> +		old = "?";
-> +
-> +	return audit_seccomp_actions_logged(new, old, !ret);
-> +}
-> +
->  static int seccomp_actions_logged_handler(struct ctl_table *ro_table, int
-> write, void __user *buffer, size_t *lenp,
->  					  loff_t *ppos)
->  {
-> -	if (write)
-> -		return write_actions_logged(ro_table, buffer, lenp, ppos);
-> -	else
-> -		return read_actions_logged(ro_table, buffer, lenp, ppos);
-> +	int ret;
-> +
-> +	if (write) {
-> +		u32 actions_logged = 0;
-> +		u32 old_actions_logged = seccomp_actions_logged;
-> +
-> +		ret = write_actions_logged(ro_table, buffer, lenp, ppos,
-> +					   &actions_logged);
-> +		audit_actions_logged(actions_logged, old_actions_logged, ret);
-> +	} else
-> +		ret = read_actions_logged(ro_table, buffer, lenp, ppos);
-> +
-> +	return ret;
->  }
-> 
->  static struct ctl_path seccomp_sysctl_path[] = {
+For example, suppose you would like to iterate over a 16-bit integer 4
+bits at a time, skipping over 4-bit groups with no set bit, where XXXX
+represents the current 4-bit group:
 
+    Example:        1011 1110 0000 1111
+    First loop:     1011 1110 0000 XXXX
+    Second loop:    1011 XXXX 0000 1111
+    Third loop:     XXXX 1110 0000 1111
 
+Each iteration of the loop returns the next 4-bit group that has at
+least one set bit.
 
+The for_each_set_port_word macro has six parameters:
 
+    * port_word: set to current port word index for the iteration
+    * word_index: set to current bitmap word index for the iteration
+    * word_offset: bits offset of the found port word in the bitmap word
+    * bits: bitmap to search within
+    * size: bitmap size in number of port words
+    * port_size: port word size in number of bits
+
+The port_size argument can be an arbitrary number of bits and is not
+required to be a multiple of 2.
+
+I've called the group of bits a "port word" which may be a confusing
+naming convention; I was afraid calling that them a "group" may be too
+vague. Should a different name be chosen; what would you suggest?
+
+This patchset was rebased on top of the following three commits:
+
+    * aaf96e51de11 ("gpio: pci-idio-16: Fix port memory offset for get_multiple callback")
+    * 304440aa96c6 ("gpio: pcie-idio-24: Fix port memory offset for get_multiple/set_multiple callbacks")
+    * e026646c178d ("gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop")
+
+William Breathitt Gray
+
+William Breathitt Gray (7):
+  bitops: Introduce the for_each_set_port_word macro
+  gpio: 104-dio-48e: Utilize for_each_set_port_word macro
+  gpio: 104-idi-48: Utilize for_each_set_port_word macro
+  gpio: gpio-mm: Utilize for_each_set_port_word macro
+  gpio: ws16c48: Utilize for_each_set_port_word macro
+  gpio: pci-idio-16: Utilize for_each_set_port_word macro
+  gpio: pcie-idio-24: Utilize for_each_set_port_word macro
+
+ drivers/gpio/gpio-104-dio-48e.c   |  67 +++++---------------
+ drivers/gpio/gpio-104-idi-48.c    |  32 ++--------
+ drivers/gpio/gpio-gpio-mm.c       |  67 +++++---------------
+ drivers/gpio/gpio-pci-idio-16.c   |  67 ++++++--------------
+ drivers/gpio/gpio-pcie-idio-24.c  | 102 +++++++++++-------------------
+ drivers/gpio/gpio-ws16c48.c       |  66 +++++--------------
+ include/asm-generic/bitops/find.h |  24 +++++++
+ include/linux/bitops.h            |   9 +++
+ lib/find_bit.c                    |  28 ++++++++
+ 9 files changed, 170 insertions(+), 292 deletions(-)
+
+-- 
+2.17.0
