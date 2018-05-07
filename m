@@ -1,32 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750964AbeEGEE7 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 00:04:59 -0400
-Received: from mail-wr0-f169.google.com ([209.85.128.169]:42518 "EHLO
-        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750708AbeEGEE6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 00:04:58 -0400
-X-Google-Smtp-Source: AB8JxZok7amGNZJpp03oYs2WRkJ/D6w64bFgM2QR9riDJm5YvcSVk1ZfmZZXVECkcDqD/0pcAgAX6/DBmt6iNSlLgHU=
+        id S1751890AbeEGEKL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 00:10:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:51341 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750881AbeEGEKJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 00:10:09 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 7 May 2018 14:10:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the bpf-next tree
+Message-ID: <20180507141003.79783848@canb.auug.org.au>
+In-Reply-To: <20180507120909.1fee1683@canb.auug.org.au>
+References: <20180507120909.1fee1683@canb.auug.org.au>
 MIME-Version: 1.0
-References: <20180504175935.104085-1-jannh@google.com>
-In-Reply-To: <20180504175935.104085-1-jannh@google.com>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Mon, 07 May 2018 04:04:46 +0000
-Message-ID: <CALCETrXeUs7ar_j1vzneyEayDB6EcXa_ceRnxL_F4rdmKSh6fQ@mail.gmail.com>
-Subject: Re: [PATCH] x86/vdso: remove unused file
-To: Jann Horn <jannh@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hw=IYb7DNUBa+Czzs7Ie82F"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 4, 2018 at 10:59 AM Jann Horn <jannh@google.com> wrote:
+--Sig_/hw=IYb7DNUBa+Czzs7Ie82F
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> commit da861e18eccc ("x86, vdso: Get rid of the fake section mechanism")
-> left this file behind; nothing is using it anymore.
+Hi all,
 
-Acked-by: Andy Lutomirski <luto@kernel.org>
+On Mon, 7 May 2018 12:09:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the tip tree got a conflict in:
+>=20
+>   arch/x86/net/bpf_jit_comp.c
+>=20
+> between commit:
+>=20
+>   e782bdcf58c5 ("bpf, x64: remove ld_abs/ld_ind")
+>=20
+> from the bpf-next tree and commit:
+>=20
+>   5f26c50143f5 ("x86/bpf: Clean up non-standard comments, to make the cod=
+e more readable")
+>=20
+> from the tip tree.
+>=20
+> I fixed it up (the former commit removed some code modified by the latter,
+> so I just removed it) and can carry the fix as necessary. This is now
+> fixed as far as linux-next is concerned, but any non trivial conflicts
+> should be mentioned to your upstream maintainer when your tree is
+> submitted for merging.  You may also want to consider cooperating with
+> the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+Actually the tip tree commit has been added to the bpf-next tree as a
+different commit, so dropping it from the tip tree will clean this up.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hw=IYb7DNUBa+Czzs7Ie82F
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrv0ZsACgkQAVBC80lX
+0GyOXAf+JxiquAEWPrSyRDaDB/e54JPJ24C3gctU0pqfcCp8XFe6D2V0s2NQdeu/
+l/ydOpslZCDxYZqkT81FiWLQa9JLz5fDXxNJIYE4v9VPtR2NHuCGXUYqVes2rGeo
+OeOCxCkG1TAPLz68f1S/YdleEORWGHkdfzdJl2+GcmSwJa/NrnpCNSGNTfb7bOLj
+HxDR0gReH8GuKP7/0nXD5IlWJyj9+XNZKAnj2pAHjYTXbBwO8N4SxcQPgnvcaKE3
+UvEPBqFwPLo0aHItLFJ9AtEkzoCrR1JU0U3zbNFx1O3eSV0EQ0JeeGT2zVfMcgJ0
+mEhgMTn06a+NaJ05mShmJyY2PYAXvA==
+=br3K
+-----END PGP SIGNATURE-----
+
+--Sig_/hw=IYb7DNUBa+Czzs7Ie82F--
