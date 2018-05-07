@@ -1,200 +1,210 @@
-Return-Path: <prvs=658284444=Allen.Hsu@quantatw.com>
-X-Google-Smtp-Source: AB8JxZr8S9oGjJ6oGqKLITfh7rlutu8m7zyOVSlYRENtk35LE23HjlxgqOj9O+bx9Q97Hxi0f3M7
-ARC-Seal: i=1; a=rsa-sha256; t=1525677588; cv=none;
+Return-Path: <wulf@rock-chips.com>
+X-Google-Smtp-Source: AB8JxZoDZvgpczAfpD0kojdYYSLR83j0/rzuOWQXyks0CwiFiJjI2rilNuyG0L7M+BeNLflpcg3H
+ARC-Seal: i=1; a=rsa-sha256; t=1525699733; cv=none;
         d=google.com; s=arc-20160816;
-        b=RhuC1lg2EJXnndkENohliVh5pTFAEUj7cvcNsFRojdLq6pD7mbRcUoa6n+ztO360K6
-         H71Rg0Jnm75/2hgoi9xFbN7gF6ZYNk1++ohVCbd0qCaAu9eU3h3DsxAv+9BfRsvKp0S1
-         p3KR8hTGTZm943l0UxL/347qG028mRD7naX5c8P7OI74MlfmYpYFyg9svi5gUzRE2I3U
-         4Q1tNoCwCX1neXgKXUNA/bw1DcyODakLFb1cQsGZIUdGeSOAvhZgPpXaT5phNikwt8WE
-         unyJRwl/nHTMycQbZYcS1wZ6+9xYXEy+WFVkCCfsDMFqW09v7R2uup+xwGXQyTaS0hO4
-         DH0g==
+        b=JQuzct/QJpSCytRhsW3so+9YuCwxff5CmLXIHOvnnyXI7QyqJR5wR+rS1+DiGELbPf
+         SwiSk/hlC8U05qDcnIDUw/v1EUxNX6jlSNzXJkFtezzUazL3b1LkZiKVQMpwCnHpKTDj
+         QWEpjfdsr4c9/mSJwxswbexK4cNE2O8jl3CDk+87eVeXm59WwWWCu2R7act8m03+rEvp
+         JHPei8Ove05To3VYdb6UNBdt+Tdl3jWb8EErsRQe6ffFkD5HK6b/d/J+C/1jNut0Skh2
+         pDwx6KFo7KQrFixylQCt0qrRoKipYaF2bOgw282zqrwVEW2pFA6s/3XqbYDvtReD5K15
+         9QbQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:content-transfer-encoding:content-language
-         :accept-language:in-reply-to:references:message-id:date:thread-index
-         :thread-topic:subject:cc:to:from:arc-authentication-results;
-        bh=7tccy0HxqeM4Gjax3FNyTTgpkKfzNrUkD+jkBoM8+ww=;
-        b=JEkJETJ0c8Sa1xKNndF9JeCJd9H2h10u0s6P7+njaKrXaqllFh0VRKXWCqvU1MxETx
-         Nghi5bIjHcX0fEtyS/YoiZvfNV+5eZoym1tQ8KlmQuJpHcJs+Cc6yBYRgPx16pyjOfDT
-         yjFRLyT+g1ctHhwod5KoSfPqZNunW1ClTpcIAIFLpmiy60RyrFF3OQvVrZNtfljT+YoV
-         KuxAFcJBSvXGXShp4NQ+EsheAzTYPIFv4I19XOuAbFf8P2nRwiAIi1DIpHwUWYBJny0p
-         T6fACNf/w6iHJLSbyBylHE8A8m1AjSFCOkBFs6PsNwgvQ4/JRY2+3+PSe82B0KYKJqVK
-         elHA==
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :arc-authentication-results;
+        bh=jg25J39shvHHPcvAgCdN29gi2FoEy5sc7jNGUh0EkN8=;
+        b=lhcFFmgeFPoXMS/0lad4Ig9Iuu2hYEqSbigeI99Rprk9vgsmk0pEGj5T4my714H8J3
+         cygXrKTsS0FnhxwwAFiA7eQ1PNDjHewz2fRWbd05u/uGsg+3pv0hpfN8MDtQvV9UxvIi
+         WcC4hqWpWL0FgPLqr0XHY9hhvLJ03HpZLr6JTmvVY4NZybyD7rRDuSIqDxdZ/FU8Mchm
+         45bKlPzdw8TXhGCJoX/N9Q71KaHf6sBBGRpOQUvLsVnvOMb2yZWMghxgnULXqDXGMi5S
+         WdsGkybM2ngooWYww7bYsryr9HXcYQ7nuWSkN45D36Cyh1a9rZfkkNwNflgVAiHkjurh
+         SxNA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of prvs=658284444=allen.hsu@quantatw.com designates 219.87.191.90 as permitted sender) smtp.mailfrom=prvs=658284444=Allen.Hsu@quantatw.com
+       spf=pass (google.com: domain of wulf@rock-chips.com designates 211.150.80.22 as permitted sender) smtp.mailfrom=wulf@rock-chips.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of prvs=658284444=allen.hsu@quantatw.com designates 219.87.191.90 as permitted sender) smtp.mailfrom=prvs=658284444=Allen.Hsu@quantatw.com
-From: =?utf-8?B?QWxsZW4gSHN1ICjoqLHlmInpipgp?= <Allen.Hsu@quantatw.com>
-To: Doug Anderson <dianders@google.com>, wlf <wulf@rock-chips.com>
-CC: William Wu <william.wu@rock-chips.com>, "hminas@synopsys.com"
-	<hminas@synopsys.com>, "felipe.balbi@linux.intel.com"
-	<felipe.balbi@linux.intel.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Sergei Shtylyov
-	<sergei.shtylyov@cogentembedded.com>, =?utf-8?B?SGVpa28gU3TDvGJuZXI=?=
-	<heiko@sntech.de>, LKML <linux-kernel@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "open
- list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Frank Wang
-	<frank.wang@rock-chips.com>, =?utf-8?B?6buE5rab?= <huangtao@rock-chips.com>,
-	daniel.meng <daniel.meng@rock-chips.com>, John Youn <John.Youn@synopsys.com>,
-	=?utf-8?B?Q2xhdWQgQ2hhbmcgKOW8teaBreeviSk=?= <Claud.Chang@quantatw.com>,
-	=?utf-8?B?546L5b6B5aKe?= <wzz@rock-chips.com>, "zsq@rock-chips.com"
-	<zsq@rock-chips.com>, Stan Tsui <StanTsui@aopen.com>
-Subject: RE: [PATCH v2 1/2] usb: dwc2: alloc dma aligned buffer for isoc split
+       spf=pass (google.com: domain of wulf@rock-chips.com designates 211.150.80.22 as permitted sender) smtp.mailfrom=wulf@rock-chips.com
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
+X-RL-SENDER: wulf@rock-chips.com
+X-FST-TO: stantsui@aopen.com
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: wulf@rock-chips.com
+X-UNIQUE-TAG: <439be94572dea47b7d57502496c18874>
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v2 1/2] usb: dwc2: alloc dma aligned buffer for isoc split
  in
-Thread-Topic: [PATCH v2 1/2] usb: dwc2: alloc dma aligned buffer for isoc
- split in
-Thread-Index: AQHT4cKVsvj/2tgu30qp2ssQKMGF4aQbU7cAgADUx4CAAw8/AIAErBNg
-Date: Mon, 7 May 2018 07:19:46 +0000
-Message-ID: <c257333733244cf680f43128153956fd@quantatw.com>
+To: =?UTF-8?B?QWxsZW4gSHN1ICjoqLHlmInpipgp?= <Allen.Hsu@quantatw.com>,
+ Doug Anderson <dianders@google.com>
+Cc: William Wu <william.wu@rock-chips.com>,
+ "hminas@synopsys.com" <hminas@synopsys.com>,
+ "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+ =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+ Frank Wang <frank.wang@rock-chips.com>, =?UTF-8?B?6buE5rab?=
+ <huangtao@rock-chips.com>, "daniel.meng" <daniel.meng@rock-chips.com>,
+ John Youn <John.Youn@synopsys.com>,
+ =?UTF-8?B?Q2xhdWQgQ2hhbmcgKOW8teaBreeviSk=?= <Claud.Chang@quantatw.com>,
+ =?UTF-8?B?546L5b6B5aKe?= <wzz@rock-chips.com>,
+ "zsq@rock-chips.com" <zsq@rock-chips.com>, Stan Tsui <StanTsui@aopen.com>
 References: <1525230288-6014-1-git-send-email-william.wu@rock-chips.com>
  <1525230288-6014-2-git-send-email-william.wu@rock-chips.com>
  <CAD=FV=UTjLbh+Qj8JcyGa5dMH8=hFurA2qyWpi9vCJkE1_ExRg@mail.gmail.com>
  <8ce56264-cdd1-1a12-c642-79224c65f639@rock-chips.com>
  <CAD=FV=V1gFsyG+PDp6xF2w+=t87vcoSNcXGvwVu_YchY4MyNAQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=V1gFsyG+PDp6xF2w+=t87vcoSNcXGvwVu_YchY4MyNAQ@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.243.91.252]
-x-tm-as-product-ver: SMEX-12.0.0.1727-8.100.1062-23468.000
-x-tm-as-result: No--13.647600-0.000000-31
-x-tm-as-matchedid: 140026-150567-701625-704425-700685-704421-712203-139006-7
-	00648-703523-188019-700413-712224-106660-700075-139010-702354-705861-704049
-	-702216-708712-700079-708060-701122-700104-708915-702358-700151-701775-7010
-	17-106390-700264-710739-703157-702157-702020-703712-711432-701202-700546-70
-	0433-706023-105700-106470-700726-705526-702050-701099-706891-847298-702474-
-	702113-702084-702010-708733-707800-703179-701837-702200-703747-704980-70160
-	4-700476-700470-702688-700529-851458-703417-700999-700398-700949-709584-701
-	461-702143-707410-700810-110262-703283-711608-700202-701618-863916-105630-7
-	00324-701163-121270-106420-148004-148133-20043-42000-42003-63
-x-tm-as-user-approved-sender: Yes
-x-tm-as-user-blocked-sender: No
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ <c257333733244cf680f43128153956fd@quantatw.com>
+From: wlf <wulf@rock-chips.com>
+Message-ID: <377a3b28-bec6-3922-889a-94614277d390@rock-chips.com>
+Date: Mon, 7 May 2018 21:28:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
+In-Reply-To: <c257333733244cf680f43128153956fd@quantatw.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599319987763096118?=
-X-GMAIL-MSGID: =?utf-8?q?1599788903459634408?=
+X-GMAIL-MSGID: =?utf-8?q?1599812123337132983?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-QWRkIG1vcmU6DQoNCg0KQmVzdCByZWdhcmRzLA0KQlU0IEVFDQpBbGxlbiBIc3UNClFDSSA4ODYt
-My0zMjctMjM0NSBleHQgMTU0MTANCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206
-IERvdWcgQW5kZXJzb24gW21haWx0bzpkaWFuZGVyc0Bnb29nbGUuY29tXSANClNlbnQ6IEZyaWRh
-eSwgTWF5IDQsIDIwMTggMTE6NTggUE0NClRvOiB3bGYgPHd1bGZAcm9jay1jaGlwcy5jb20+DQpD
-YzogV2lsbGlhbSBXdSA8d2lsbGlhbS53dUByb2NrLWNoaXBzLmNvbT47IGhtaW5hc0BzeW5vcHN5
-cy5jb207IGZlbGlwZS5iYWxiaUBsaW51eC5pbnRlbC5jb207IEdyZWcgS3JvYWgtSGFydG1hbiA8
-Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+OyBTZXJnZWkgU2h0eWx5b3YgPHNlcmdlaS5zaHR5
-bHlvdkBjb2dlbnRlbWJlZGRlZC5jb20+OyBIZWlrbyBTdMO8Ym5lciA8aGVpa29Ac250ZWNoLmRl
-PjsgTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LXVzYkB2Z2VyLmtl
-cm5lbC5vcmc7IG9wZW4gbGlzdDpBUk0vUm9ja2NoaXAgU29DLi4uIDxsaW51eC1yb2NrY2hpcEBs
-aXN0cy5pbmZyYWRlYWQub3JnPjsgRnJhbmsgV2FuZyA8ZnJhbmsud2FuZ0Byb2NrLWNoaXBzLmNv
-bT47IOm7hOa2myA8aHVhbmd0YW9Acm9jay1jaGlwcy5jb20+OyBkYW5pZWwubWVuZyA8ZGFuaWVs
-Lm1lbmdAcm9jay1jaGlwcy5jb20+OyBKb2huIFlvdW4gPEpvaG4uWW91bkBzeW5vcHN5cy5jb20+
-OyDnjovlvoHlop4gPHd6ekByb2NrLWNoaXBzLmNvbT47IHpzcUByb2NrLWNoaXBzLmNvbTsgQWxs
-ZW4gSHN1ICjoqLHlmInpipgpIDxBbGxlbi5Ic3VAcXVhbnRhdHcuY29tPjsgU3RhbiBUc3VpIDxT
-dGFuVHN1aUBhb3Blbi5jb20+DQpTdWJqZWN0OiBSZTogW1BBVENIIHYyIDEvMl0gdXNiOiBkd2My
-OiBhbGxvYyBkbWEgYWxpZ25lZCBidWZmZXIgZm9yIGlzb2Mgc3BsaXQgaW4NCg0KSGksDQoNCk9u
-IFdlZCwgTWF5IDIsIDIwMTggYXQgMTA6MTQgQU0sIHdsZiA8d3VsZkByb2NrLWNoaXBzLmNvbT4g
-d3JvdGU6DQo+IEl0J3MgYSBnb29kIHdheSB0byBhbGxvY2F0ZSBhbiBleHRyYSAzIGJ5dGVzIGlu
-IHRoZSBvcmlnaW5hbCBib3VuY2UgDQo+IGJ1ZmZlciBmb3IgdGhpcyB1bmFsaWduZWQNCj4gaXNz
-dWXvvIwgaXQncyBzaW1pbGFyIHRvIHRoZSB0YWlscm9vbSBvZiBza19idWZmLiBIb3dldmVyLCBq
-dXN0IGFzIHlvdSANCj4gc2FpZCwgd2UnZCBiZXR0ZXIgZmluZCB0aGUgc3BlY2lhbCBjYXNlcyB3
-aGVyZSB3ZSBuZWVkIGFuIG92ZXJzaXplZCANCj4gYm91bmNlIGJ1ZmZlciwgb3RoZXJ3aXNl77yM
-d2UNCj4gbmVlZCB0byBhbGxvY2F0ZQ0KPiBhIGJvdW5jZSBidWZmZXIgZm9yIGFsbCBvZiB1cmJz
-Lg0KPg0KPiBJdCdzIGhhcmQgZm9yIG1lIHRvIGtub3cgdGhlIHNwZWNpYWwgY2FzZXMgaW4gdGhl
-IA0KPiBkd2MyX2FsbG9jX2RtYV9hbGlnbmVkX2J1ZmZlcigpLCBiZWNhdXNlIGl0J3MgY2FsbGVk
-IGZyb20gDQo+IHVzYl9zdWJtaXRfdXJiKCkgaW4gdGhlIGRldmljZSBjbGFzcyBkcml2ZXIsIGFu
-ZCBJIGhhcmRseSBrbm93IHRoZSANCj4gc3BsaXQgc3RhdGUgaW4gdGhpcyBwcm9jZXNzLCBtdWNo
-IGxlc3MgaWYgdGhlIHNwbGl0IHRyYW5zYWN0aW9uIG5lZWQgDQo+IGFsaWduZWQgYnVmZmVyLiBE
-byB5b3UgaGF2ZSBhbnkgaWRlYT8NCj4NCj4gSSBzdXBwb3NlIHRoYXQgd2UgY2FuJ3QgZmluZCB0
-aGUgc3BlY2lhbCBjYXNlcyB3aGVyZSB3ZSBuZWVkIGFuIA0KPiBvdmVyc2l6ZWQgYm91bmNlIGJ1
-ZmZlciBpbiB0aGUgZHdjMl9hbGxvY19kbWFfYWxpZ25lZF9idWZmZXIoKSwgYW5kIGlmIA0KPiB3
-ZSBzdGlsbCB3YW50IHRvIHJlLXVzZSB0aGUgb3JpZ2luYWwgYm91bmNlIGJ1ZmZlciB3aXRoIGV4
-dHJhIDMgYnl0ZXMsIA0KPiB0aGVuIHdlIG5lZWQgdG8gYWxsb2NhdGUgYSAgYm91bmNlIGJ1ZmZl
-ciBmb3IgYWxsIG9mIHVyYnMsIGFuZCBkbyANCj4gdW5uZWNlc3NhcnkgIGRhdGEgY29weSBmb3Ig
-dGhlc2UgdXJicyAgd2hvc2UgdHJhbnNmZXJfYnVmZmVyIHdlcmUgDQo+IGFscmVhZHkgYWxpZ25l
-ZC4gIFRoaXMgbWF5IHJlZHVjZSB0aGUgdHJhbnNtaXNzaW9uIHJhdGUgb2YgVVNCLg0KPg0KPiBD
-YW4gd2UganVzdCBwcmUtYWxsb2NhdGUgYW4gYWRkaXRpb25hbCBhbGlnbmVkIGJ1ZmZlciAodGhl
-IHNpemUgaXMgMjAwDQo+IGJ5dGVzKSBmb3Igc3BsaXQgdHJhbnNhY3Rpb24NCj4gaW4gZHdjMl9t
-YXBfdXJiX2Zvcl9kbWEgZm9yIGFsbCBvZiB1cmJzLiBBbmQgaWYgd2UgZmluZCB0aGUgc3BsaXQg
-DQo+IHRyYW5zYWN0aW9uIGlzIHVuYWxpZ25lZO+8jA0KPiB3ZSBjYW4gZWFzaWx5IHVzZSB0aGUg
-cHJlLWFsbG9jYXRlZCBhbGlnbmVkIGJ1ZmZlci4NCg0KT0ssIHNvIHRoaW5raW5nIGFib3V0IHRo
-aXMgbW9yZS4uLg0KDQpQcmV2aW91c2x5IHRoaW5ncyBnb3QgcmVhbGx5IHNsb3cgYXQgaW50ZXJy
-dXB0IHRpbWUgYmVjYXVzZSB3ZSB3ZXJlIHRyeWluZyB0byBhbGxvY2F0ZSBhcyBtdWNoIGFzIDY0
-SyBhdCBpbnRlcnJ1cHQgdGltZS4gIFRoYXQgd2Fzbid0IHNvIGdyZWF0LiAgSW4geW91ciBjYXNl
-LCB5b3UncmUgb25seSBhbGxvY2F0aW5nIDIwMCBieXRlcy4gIEFzIEkgdW5kZXJzdGFuZCB0aGlu
-Z3MsIGFsbG9jYXRpbmcgMjAwIGJ5dGVzIGF0IGludGVycnVwdCB0aW1lIGlzIHByb2JhYmx5IG5v
-dCBhIGh1Z2UgZGVhbC4NCg0KLi4uc28gSSBndWVzcyBpdCBjb21lIGRvd24gdG8gYSB0cmFkZW9m
-ZiBoZXJlOiBpcyBpdCB3b3J0aCBlYXRpbmcgMjAwIGJ5dGVzIGZvciBlYWNoIFVSQiB0byBzYXZl
-IGFuIDIwMCBieXRlIGFsbG9jYXRpb24gYXQgaW50ZXJydXB0IHRpbWUgaW4gdGhpcyBvbmUgcmFy
-ZSBjYXNlLg0KDQpJJ2QgY2VydGFpbmx5IHdlbGNvbWUgYW55b25lJ3Mgb3BpbmlvbiBoZXJlLCBi
-dXQgSSdtIGdvaW5nIHRvIGdvIHdpdGggc2F5aW5nIGl0J3MgZmluZSB0byBhbGxvY2F0ZSB0aGUg
-MjAwIGJ5dGVzIGF0IGludGVycnVwdCB0aW1lIChsaWtlIHlvdXIgcGF0Y2ggZG9lcykuICAuLi5i
-dXQsIEkgX3RoaW5rXyB5b3Ugd2FudCB0byB1c2UNCmttZW1fY2FjaGVfY3JlYXRlKCkgdG8gY3Jl
-YXRlIGEgY2FjaGUgYW5kIHRoZW4ga21lbV9jYWNoZV96YWxsb2MoKS4NClNpbmNlIGFsbCBhbGxv
-Y2F0aW9ucyBhcmUgdGhlIHNhbWUgc2l6ZSBhbmQgeW91IHdhbnQgdGhpcyB0byBiZSBmYXN0LCBJ
-IHRoaW5rIHVzaW5nIGttZW1fY2FjaGUgaXMgZ29vZC4NCg0KDQoNCj4+PiArICAgICAgIC8qIEZv
-ciBub24tZHdvcmQgYWxpZ25lZCBidWZmZXJzICovDQo+Pj4gKyAgICAgICBpZiAoaHNvdGctPnBh
-cmFtcy5ob3N0X2RtYSA+IDAgJiYgcWgtPmRvX3NwbGl0ICYmDQo+Pj4gKyAgICAgICAgICAgY2hh
-bi0+ZXBfaXNfaW4gJiYgKGNoYW4tPnhmZXJfZG1hICYgMHgzKSkgew0KPj4NCj4+IFNvIHdoYXQg
-aGFwcGVucyBpZiB3ZXJlIHVuYWxpZ25lZCAoQUtBIChjaGFuLT54ZmVyX2RtYSAmIDB4MykpIGJ1
-dCANCj4+IHdlJ3JlIG5vdCBkb2luZyBzcGxpdCBvciBpdCdzIG5vdCBhbiBJTiBFUD8gIERvIHdl
-IGp1c3QgZmFpbCB0aGVuPw0KPj4NCj4+IEkgZ3Vlc3MgdGhlIHJlc3Qgb2YgdGhpcyBwYXRjaCBv
-bmx5IGhhbmRsZXMgdGhlICJpbiIgY2FzZSBhbmQgbWF5YmUgDQo+PiB5b3UgZXhwZWN0IHRoYXQg
-dGhlIHByb2JsZW1zIHdpbGwgb25seSBjb21lIGFib3V0IGZvciBkb19zcGxpdCwgYnV0IA0KPj4g
-aXQgc3RpbGwgbWlnaHQgYmUgd2lzZSB0byBhdCBsZWFzdCBwcmludCBhIHdhcm5pbmcgaW4gdGhl
-IG90aGVyIGNhc2VzPw0KPj4gPkZyb20gcmVhZGluZyBkd2MyX2hjX2luaXRfeGZlcigpIGl0IHNl
-ZW1zIGxpa2UgeW91IGNvdWxkIHJ1biBpbnRvIA0KPj4gPnRoaXMNCj4+IHNhbWUgcHJvYmxlbSBp
-biB0aGUgIm91dCIgY2FzZT8NCj4NCj4gQWN0dWFsbHksIEkgb25seSBmaW5kIG5vbi1kd29yZCBh
-bGlnbmVkIGlzc3VlIGluIHRoZSBjYXNlIG9mIHNwbGl0IGluIA0KPiB0cmFuc2FjdGlvbi4NCj4g
-QW5kIEkgdGhpbmsgdGhhdCBpZiB3ZSdyZSBub3QgZG9pbmcgc3BsaXQgb3IgaXQncyBhbiBPVVQg
-RVAsIHdlIGNhbiANCj4gYWx3YXlzIGdldCBhbGlnbmVkIGJ1ZmZlciBpbiB0aGUgY3VycmVudCBj
-b2RlLiBGb3Igbm9uLXNwbGl0IGNhc2UsIHRoZSANCj4gZHdjMl9hbGxvY19kbWFfYWxpZ25lZF9i
-dWZmZXIoKSBpcyBlbm91Z2guIEFuZCBmb3Igc3BsaXQgb3V0IGNhc2UsIGlmIA0KPiB0aGUgdHJh
-bnNhY3Rpb24gaXMgc3ViZGl2aWRlZCBpbnRvIG11bHRpcGxlIHN0YXJ0LXNwbGl0cywgZWFjaCB3
-aXRoIGEgDQo+IGRhdGEgcGF5bG9hZCBvZiAxODggYnl0ZXMgb3IgbGVzcywgc28gdGhlIERNQSBh
-ZGRyZXNzIGlzIGFsd2F5cyANCj4gYWxpZ25lZC4NCg0KQ2FuIHlvdSBhdCBsZWFzdCBwcmludCBh
-biBlcnJvciBtZXNzYWdlIGlmIHlvdSBlbmQgdXAgd2l0aCBub24tYWxpZ25lZCBETUEgaW4gb25l
-IG9mIHRoZSBvdGhlciBjYXNlcz8NCg0KDQo+Pj4gRE1BX0ZST01fREVWSUNFKTsNCj4+PiArICAg
-ICAgICAgICAgICAgbWVtY3B5KHF0ZC0+dXJiLT5idWYgKyBmcmFtZV9kZXNjLT5vZmZzZXQgKw0K
-Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgcXRkLT5pc29jX3NwbGl0X29mZnNldCwgDQo+Pj4g
-KyBjaGFuLT5xaC0+ZHdfYWxpZ25fYnVmLA0KPj4+IGxlbik7DQo+Pg0KPj4gQXNzdW1pbmcgSSdt
-IHVuZGVyc3RhbmRpbmcgdGhpcyBwYXRjaCBjb3JyZWN0bHksIEkgdGhpbmsgaXQgd291bGQgYmUg
-DQo+PiBiZXR0ZXIgdG8gd3JpdGU6DQo+Pg0KPj4gICAgbWVtY3B5KHF0ZC0+eGZlcl9kbWEsIGNo
-YW4tPnFoLT5kd19hbGlnbl9idWYsIGxlbik7DQo+DQo+IFNvcnJ5LCB0aGVyZSdzIG5vICJ4ZmVy
-X2J1ZiIgaW4gcXRkLCBkbyB5b3UgbWVhbnMgdGhlIA0KPiAiY2hhbi0+eGZlcl9kbWEiPyBJZiBp
-dCdzLCBJIHRoaW5rIHdlIGNhbid0IGRvIG1lbWNweSBmcm9tIGEgdHJhbnNmZXIgDQo+IGJ1ZmZl
-ciB0byBhIERNQSBhZGRyZXNzLiBNYXliZSBjaGFuLT54ZmVyX2J1ZiBpcyBtb3JlIHN1aXRhYmxl
-LCBidXQgaXQgDQo+IHNlZW1zIHRoYXQgdGhlIGR3YzIgZHJpdmVyIGRvZXNuJ3QgdXBkYXRlIHRo
-ZSBjaGFuLT54ZmVyX2J1ZiBmb3IgaXNvYyANCj4gdHJhbnNmZXIgd2l0aCBkbWEgZW5hYmxlZCBp
-biBkd2MyX2hjX2luaXRfeGZlcigpLg0KDQpZZXMsIEkgbWVhbnQgY2hhbi0+eGZlcl9kbWEuICBB
-aCwgcmlnaHQuICB4ZmVyX2RtYSBpcyBhIERNQSBhZGRyZXNzLg0KDQpJIGd1ZXNzIHlvdSBjb3Vs
-ZCBpbiB0aGVvcnkgeW91IGNvdWxkIGRvOg0KDQptZW1jcHkocXRkLT51cmItPmJ1ZiArIChjaGFu
-LT54ZmVyX2RtYSAtIHVyYi0+ZG1hKSwNCiAgICBjaGFuLT5xaC0+ZHdfYWxpZ25fYnVmKTsNCg0K
-VGhhdCBhdCBsZWFzdCBhdm9pZHMgZHVwbGljYXRpbmcgdGhlIG1hdGguICBNYXliZSBlaXRoZXIg
-ZG8gdGhhdCwgb3IgaWYgeW91IGRvbid0IGxpa2UgaXQgYXQgbGVhc3QgYWRkIGEgY29tbWVudCBz
-YXlpbmcgdGhhdCB0aGUgbWF0aCBuZWVkcyB0byBtYXRjaCB0aGUgbWF0aCBpbiBkd2MyX2hjX2lu
-aXRfeGZlcigpLg0KDQoNCj4+IFRoZW4gaWYgeW91IGV2ZXIgZW5kIHVwIGhhdmluZyB0byBhbGln
-biBhIHRyYW5zZmVyIG90aGVyIHRoYW4gYSBzcGxpdCANCj4+IHlvdSB3b24ndCBiZSBkb2luZyB0
-aGUgd3JvbmcgbWF0aC4gIEFzIGl0IGlzIGl0J3MgdmVyeSBub24tb2J2aW91cyANCj4+IHRoYXQg
-eW91J3JlIGhhcmRjb2RpbmcgdGhlIHNhbWUgZm9ybXVsYSB0aGF0J3MgaW4gZHdjMl9oY19pbml0
-X3hmZXIoKQ0KPg0KPiBBY3R1YWxseSwgSSdtIGhhcmRjb2RpbmcgdGhlIHNhbWUgZm9ybXVsYSBm
-cm9tIHRoZSBvbGQgY29kZSB3aGljaCBoYXMgDQo+IGJlZW4gcmlwcGVkIG91dCBpbiB0aGUgY29t
-bWl0IDNiYzA0ZTI4YTAzMCAoInVzYjogZHdjMjogaG9zdDogR2V0IA0KPiBhbGlnbmVkIERNQSBp
-biBhIG1vcmUgc3VwcG9ydGVkIHdheSIpLg0KDQpBaCwgZ290IGl0LiAgV2VsbCwgSSB0aGluayB0
-aGUgb2xkIGNvZGUgd2FzIGp1c3QgaGFyZGNvZGluZyB0aGUgc2FtZSBmb3JtdWxhIGluIHR3byBw
-bGFjZXMgdGhlbi4gIDstKQ0KDQoNCj4+PiAtICAgICAgIGlmIChxaC0+ZGVzY19saXN0KQ0KPj4+
-ICsgICAgICAgaWYgKHFoLT5kZXNjX2xpc3QpIHsNCj4+PiAgICAgICAgICAgICAgICAgIGR3YzJf
-aGNkX3FoX2ZyZWVfZGRtYShoc290ZywgcWgpOw0KPj4+ICsgICAgICAgfSBlbHNlIHsNCj4+PiAr
-ICAgICAgICAgICAgICAgLyoga2ZyZWUoTlVMTCkgaXMgc2FmZSAqLw0KPj4+ICsgICAgICAgICAg
-ICAgICBrZnJlZShxaC0+ZHdfYWxpZ25fYnVmKTsNCj4+PiArICAgICAgICAgICAgICAgcWgtPmR3
-X2FsaWduX2J1Zl9kbWEgPSAoZG1hX2FkZHJfdCkwOw0KPj4NCj4+IFdoeSBhc3NpZ24gcWgtPmR3
-X2FsaWduX2J1Zl9kbWEgdG8gMD8gIFRoZSBuZXh0IHRoaW5nIHlvdSdyZSBkb2luZyBpcyANCj4+
-IGtmcmVlKHFoKS4gIElmIHlvdSB3YW50IGV4dHJhIGRlYnVnZ2luZywgdHVybiBvbiBzbHViX2Rl
-YnVnLg0KPg0KPiBJIGp1c3QgY29weSB0aGUgc2FtZSBjb2RlIGZyb20gdGhlIG9sZCBjb2RlIHdo
-aWNoIGhhcyBiZWVuIHJpcHBlZCBvdXQgDQo+IGluIHRoZSBjb21taXQgM2JjMDRlMjhhMDMwICgi
-dXNiOiBkd2MyOiBob3N0OiBHZXQgYWxpZ25lZCBETUEgaW4gYSANCj4gbW9yZSBzdXBwb3J0ZWQg
-d2F5IikuDQo+IEkgcmVhbGx5IGRvbid0IGtub3cgd2h5IGFzc2lnbiBxaC0+ZHdfYWxpZ25fYnVm
-X2RtYSB0byAwLg0KDQpUaGVyZSdzIG5vIHJlYXNvbi4gIEp1c3QgcmVtb3ZlIGl0Lg0KDQoNCi1E
-b3VnDQo=
+Dear Doug,
+
+在 2018年05月07日 15:19, Allen Hsu (許嘉銘) 写道:
+> Add more:
+>
+>
+> Best regards,
+> BU4 EE
+> Allen Hsu
+> QCI 886-3-327-2345 ext 15410
+>
+> -----Original Message-----
+> From: Doug Anderson [mailto:dianders@google.com]
+> Sent: Friday, May 4, 2018 11:58 PM
+> To: wlf <wulf@rock-chips.com>
+> Cc: William Wu <william.wu@rock-chips.com>; hminas@synopsys.com; felipe.balbi@linux.intel.com; Greg Kroah-Hartman <gregkh@linuxfoundation.org>; Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>; Heiko Stübner <heiko@sntech.de>; LKML <linux-kernel@vger.kernel.org>; linux-usb@vger.kernel.org; open list:ARM/Rockchip SoC... <linux-rockchip@lists.infradead.org>; Frank Wang <frank.wang@rock-chips.com>; 黄涛 <huangtao@rock-chips.com>; daniel.meng <daniel.meng@rock-chips.com>; John Youn <John.Youn@synopsys.com>; 王征增 <wzz@rock-chips.com>; zsq@rock-chips.com; Allen Hsu (許嘉銘) <Allen.Hsu@quantatw.com>; Stan Tsui <StanTsui@aopen.com>
+> Subject: Re: [PATCH v2 1/2] usb: dwc2: alloc dma aligned buffer for isoc split in
+>
+> Hi,
+>
+> On Wed, May 2, 2018 at 10:14 AM, wlf <wulf@rock-chips.com> wrote:
+>> It's a good way to allocate an extra 3 bytes in the original bounce
+>> buffer for this unaligned
+>> issue， it's similar to the tailroom of sk_buff. However, just as you
+>> said, we'd better find the special cases where we need an oversized
+>> bounce buffer, otherwise，we
+>> need to allocate
+>> a bounce buffer for all of urbs.
+>>
+>> It's hard for me to know the special cases in the
+>> dwc2_alloc_dma_aligned_buffer(), because it's called from
+>> usb_submit_urb() in the device class driver, and I hardly know the
+>> split state in this process, much less if the split transaction need
+>> aligned buffer. Do you have any idea?
+>>
+>> I suppose that we can't find the special cases where we need an
+>> oversized bounce buffer in the dwc2_alloc_dma_aligned_buffer(), and if
+>> we still want to re-use the original bounce buffer with extra 3 bytes,
+>> then we need to allocate a  bounce buffer for all of urbs, and do
+>> unnecessary  data copy for these urbs  whose transfer_buffer were
+>> already aligned.  This may reduce the transmission rate of USB.
+>>
+>> Can we just pre-allocate an additional aligned buffer (the size is 200
+>> bytes) for split transaction
+>> in dwc2_map_urb_for_dma for all of urbs. And if we find the split
+>> transaction is unaligned，
+>> we can easily use the pre-allocated aligned buffer.
+> OK, so thinking about this more...
+>
+> Previously things got really slow at interrupt time because we were trying to allocate as much as 64K at interrupt time.  That wasn't so great.  In your case, you're only allocating 200 bytes.  As I understand things, allocating 200 bytes at interrupt time is probably not a huge deal.
+>
+> ...so I guess it come down to a tradeoff here: is it worth eating 200 bytes for each URB to save an 200 byte allocation at interrupt time in this one rare case.
+>
+> I'd certainly welcome anyone's opinion here, but I'm going to go with saying it's fine to allocate the 200 bytes at interrupt time (like your patch does).  ...but, I _think_ you want to use
+> kmem_cache_create() to create a cache and then kmem_cache_zalloc().
+> Since all allocations are the same size and you want this to be fast, I think using kmem_cache is good.
+Yes, it seems good to use kmem_cache. I'm trying to test a new patch 
+with kmem_cache, and I will upstream v3 patch as soon as possible.
+>>>> +       /* For non-dword aligned buffers */
+>>>> +       if (hsotg->params.host_dma > 0 && qh->do_split &&
+>>>> +           chan->ep_is_in && (chan->xfer_dma & 0x3)) {
+>>> So what happens if were unaligned (AKA (chan->xfer_dma & 0x3)) but
+>>> we're not doing split or it's not an IN EP?  Do we just fail then?
+>>>
+>>> I guess the rest of this patch only handles the "in" case and maybe
+>>> you expect that the problems will only come about for do_split, but
+>>> it still might be wise to at least print a warning in the other cases?
+>>> >From reading dwc2_hc_init_xfer() it seems like you could run into 
+>>>> this
+>>> same problem in the "out" case?
+>> Actually, I only find non-dword aligned issue in the case of split in
+>> transaction.
+>> And I think that if we're not doing split or it's an OUT EP, we can
+>> always get aligned buffer in the current code. For non-split case, the
+>> dwc2_alloc_dma_aligned_buffer() is enough. And for split out case, if
+>> the transaction is subdivided into multiple start-splits, each with a
+>> data payload of 188 bytes or less, so the DMA address is always
+>> aligned.
+> Can you at least print an error message if you end up with non-aligned DMA in one of the other cases?
+That's an excellent suggestion. I will add warning message if end up 
+with unexpected non-aligned DMA.
+>>>> DMA_FROM_DEVICE);
+>>>> +               memcpy(qtd->urb->buf + frame_desc->offset +
+>>>> +                      qtd->isoc_split_offset,
+>>>> + chan->qh->dw_align_buf,
+>>>> len);
+>>> Assuming I'm understanding this patch correctly, I think it would be
+>>> better to write:
+>>>
+>>>     memcpy(qtd->xfer_dma, chan->qh->dw_align_buf, len);
+>> Sorry, there's no "xfer_buf" in qtd, do you means the
+>> "chan->xfer_dma"? If it's, I think we can't do memcpy from a transfer
+>> buffer to a DMA address. Maybe chan->xfer_buf is more suitable, but it
+>> seems that the dwc2 driver doesn't update the chan->xfer_buf for isoc
+>> transfer with dma enabled in dwc2_hc_init_xfer().
+> Yes, I meant chan->xfer_dma.  Ah, right.  xfer_dma is a DMA address.
+>
+> I guess you could in theory you could do:
+>
+> memcpy(qtd->urb->buf + (chan->xfer_dma - urb->dma),
+>      chan->qh->dw_align_buf);
+>
+> That at least avoids duplicating the math.  Maybe either do that, or if you don't like it at least add a comment saying that the math needs to match the math in dwc2_hc_init_xfer().
+Thanks, I will fix it in V3 patch according to your suggestion.
+>>> Then if you ever end up having to align a transfer other than a split
+>>> you won't be doing the wrong math.  As it is it's very non-obvious
+>>> that you're hardcoding the same formula that's in dwc2_hc_init_xfer()
+>> Actually, I'm hardcoding the same formula from the old code which has
+>> been ripped out in the commit 3bc04e28a030 ("usb: dwc2: host: Get
+>> aligned DMA in a more supported way").
+> Ah, got it.  Well, I think the old code was just hardcoding the same formula in two places then.  ;-)
+>
+>
+>>>> -       if (qh->desc_list)
+>>>> +       if (qh->desc_list) {
+>>>>                   dwc2_hcd_qh_free_ddma(hsotg, qh);
+>>>> +       } else {
+>>>> +               /* kfree(NULL) is safe */
+>>>> +               kfree(qh->dw_align_buf);
+>>>> +               qh->dw_align_buf_dma = (dma_addr_t)0;
+>>> Why assign qh->dw_align_buf_dma to 0?  The next thing you're doing is
+>>> kfree(qh).  If you want extra debugging, turn on slub_debug.
+>> I just copy the same code from the old code which has been ripped out
+>> in the commit 3bc04e28a030 ("usb: dwc2: host: Get aligned DMA in a
+>> more supported way").
+>> I really don't know why assign qh->dw_align_buf_dma to 0.
+> There's no reason.  Just remove it.
+OK, thank you for reminding me!
+> -Doug
+Best regards,
+         wulf
