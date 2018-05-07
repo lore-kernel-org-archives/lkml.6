@@ -1,23 +1,23 @@
 Return-Path: <paul.kocialkowski@bootlin.com>
-X-Google-Smtp-Source: AB8JxZpPc6qL7GEzNKErzDsIwue+lD+6NNjkAjKPRUH04YY9Vcwu2S+Xh0rbgUJZXT9SwzdRGJ0c
-ARC-Seal: i=1; a=rsa-sha256; t=1525697252; cv=none;
+X-Google-Smtp-Source: AB8JxZqOGDhuon240YRaSlItmTXgGQBq8jhUnjBGGhhZDfA7T2gwmmpYWhEOWtMFBj5peA/KLsNJ
+ARC-Seal: i=1; a=rsa-sha256; t=1525697251; cv=none;
         d=google.com; s=arc-20160816;
-        b=W+JlSHuL1s7nJX699vhZyLOjGevfYabicfW+rPLtIdusuNP1rVUEsxNsCYX/HIoVJW
-         fRZeRGdwEWWNJ3V11t32BdJmoCHTOCAAaGZKGWANlYo85EYedwgUy2tQ4wGlsBOkXOtV
-         xyFi/P8NpIhhFboq9NnfdvxBo+IJQXtIKIgC4VebluwvMWt3BxcqjG4bm8mt4+BSHDft
-         S8jGvhkJi8NiwhSsnh6NyRxm0naDEycR0hrXC+ow7EKQhH5zqPn2RyenefdRm+KSfQJI
-         +c35mSgFDtCUtXgxJVT5HdOXSwD18qCq7gNZFKW42kTm6XOXh1sk2HCQKrlVco91bfFZ
-         pfLQ==
+        b=SUTr5gpHlDZFnc2grLjgzBu6v9n8vW17DyaAzdJC1uCOck4amVkqvoBq6qJ3K6Dcgz
+         ffQ1WkkZvuFSwt/xHr6pR1+32JIwa5yWPe8ihUB4B7F/5REudS/DxV4orA2q2dWGvaiA
+         J04CwZFsTyq61c0dInvP3QYdovfocJuIZYmMiMnX+IkWwbF+oFw0Q9h/yNKXfSsT94wt
+         HojGdRnk/2MlmtXppqu+mXqvO/jbXdiPZ9RiruURso8Yl0Ggpk4leVkW7OVUml6Wd4K7
+         /v+EbK0/itJARtpg7Maz7AmBKy2KCQ5YiVKbbV5oRyJN/UWlX/8Jokzs19a0GWykdKbI
+         oO4A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :arc-authentication-results;
-        bh=gxi7gG12XYr0WQ4Z7ipFVhpME7zhWEM4aYHSxcLFNgU=;
-        b=qzwFnu24X7K08f9cPZ0FmeyUlj8Bg2KiygaJr2nFvlZlCfoPg8JSNkJyuwLwkS3weE
-         GRP598kJTAjx4HwNNknfdLk4J4SIfM5qbMNGYR5JT4zJAO6R/Yttvh5/Senl32aMr2Ss
-         90rKDR8Rj19ECrKbbwTl11Ohx/koMDkTw7yGBvWC31m0KuTeFDN1eenTwtazZ9E+vpL8
-         pxHyo/ulWDoxF7eCOxQfSyVJ/gMWW+ifIIevoiuYrZ8worotQfjo/Un6g19ldK0P06YZ
-         blmB5p0ieh340ngi5sDKdCEQkqPKQGcF13uXY96p8dp4FR5hiYaVL+mInCZZy2C42oyP
-         GKKg==
+        bh=w5X/QWN3csceZwFMlqjuc4Ob8PMUjR0t1SerzeXviFY=;
+        b=xHweyD+5sZCYY/CPbIazcvkeyc/SRdHgA+gz/m8f4Zk03oINxuopxGVyJZl2wScTvy
+         RYzZqrsRbQ7NLcwmiuPFUakiloNQh2qunb1bjRIiDyVkd1QslabsBevn2N9eGCdWPQ8w
+         MhLufULjSdrra0NEVPP3ztBxZzSJWTQJ1WQzBiG7zVFjMHJlXR+aDXr94yO2cW9Odklv
+         R6YGYLOUD/LOLAMpOsmXhdhXxm4AonFnLAVOgusXkPTXFd1KRh4ghro4nMX3RAjEmQOa
+         HHtU6KxNleUTe+9SYk1jOi4BDyirgFUuRwij/KUKXBsCIgzfCPopApFVQ3M1ix+9F+Uj
+         jhig==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of paul.kocialkowski@bootlin.com designates 62.4.15.54 as permitted sender) smtp.mailfrom=paul.kocialkowski@bootlin.com
 Authentication-Results: mx.google.com;
@@ -55,38 +55,61 @@ Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
 	Randy Li <ayaka@soulik.info>
-Subject: [PATCH v3 03/14] ARM: dts: sun5i: Use dedicated SRAM controller compatible
-Date: Mon,  7 May 2018 14:44:49 +0200
-Message-Id: <20180507124500.20434-4-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v3 01/14] drivers: soc: sunxi: Add support for the C1 SRAM region
+Date: Mon,  7 May 2018 14:44:47 +0200
+Message-Id: <20180507124500.20434-2-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.16.3
 In-Reply-To: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 References: <20180507124500.20434-1-paul.kocialkowski@bootlin.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599809522077574994?=
-X-GMAIL-MSGID: =?utf-8?q?1599809522077574994?=
+X-GMAIL-THRID: =?utf-8?q?1599809520628646705?=
+X-GMAIL-MSGID: =?utf-8?q?1599809520628646705?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Use the newly-introduced SRAM controller compatible for the A13 and
-other sun5i platforms instead of its A10 fashion.
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
+This introduces support for the SRAM C1 section, that is controlled by
+the system controller. This SRAM area can be muxed either to the CPU
+or the Video Engine, that needs this area to store various tables (e.g.
+the Huffman VLD decoding tables).
+
+This only supports devices with the same layout as the A10 (which also
+includes the A13, A20, A33 and other SoCs).
+
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- arch/arm/boot/dts/sun5i.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/sunxi/sunxi_sram.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 07f2248ed5f8..72433f38b4e4 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -115,7 +115,7 @@
- 		ranges;
+diff --git a/drivers/soc/sunxi/sunxi_sram.c b/drivers/soc/sunxi/sunxi_sram.c
+index 882be5ed7e84..74cb81f37bd6 100644
+--- a/drivers/soc/sunxi/sunxi_sram.c
++++ b/drivers/soc/sunxi/sunxi_sram.c
+@@ -63,6 +63,12 @@ static struct sunxi_sram_desc sun4i_a10_sram_a3_a4 = {
+ 				  SUNXI_SRAM_MAP(1, 1, "emac")),
+ };
  
- 		sram-controller@1c00000 {
--			compatible = "allwinner,sun4i-a10-sram-controller";
-+			compatible = "allwinner,sun5i-a13-sram-controller";
- 			reg = <0x01c00000 0x30>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
++static struct sunxi_sram_desc sun4i_a10_sram_c1 = {
++	.data	= SUNXI_SRAM_DATA("C1", 0x0, 0x0, 31,
++				  SUNXI_SRAM_MAP(0, 0, "cpu"),
++				  SUNXI_SRAM_MAP(0x7fffffff, 1, "ve")),
++};
++
+ static struct sunxi_sram_desc sun4i_a10_sram_d = {
+ 	.data	= SUNXI_SRAM_DATA("D", 0x4, 0x0, 1,
+ 				  SUNXI_SRAM_MAP(0, 0, "cpu"),
+@@ -80,6 +86,10 @@ static const struct of_device_id sunxi_sram_dt_ids[] = {
+ 		.compatible	= "allwinner,sun4i-a10-sram-a3-a4",
+ 		.data		= &sun4i_a10_sram_a3_a4.data,
+ 	},
++	{
++		.compatible	= "allwinner,sun4i-a10-sram-c1",
++		.data		= &sun4i_a10_sram_c1.data,
++	},
+ 	{
+ 		.compatible	= "allwinner,sun4i-a10-sram-d",
+ 		.data		= &sun4i_a10_sram_d.data,
 -- 
 2.16.3
