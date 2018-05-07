@@ -1,142 +1,141 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752887AbeEGUqc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:46:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752693AbeEGUqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:46:31 -0400
-Date: Mon, 7 May 2018 13:46:30 -0700
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <yuchao0@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
-Message-ID: <20180507204630.GB83867@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180426083247.86337-1-yuchao0@huawei.com>
- <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
- <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
- <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
- <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+        id S1752986AbeEGUqw (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:46:52 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:34616 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752709AbeEGUqv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 16:46:51 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date: Mon, 07 May 2018 22:46:49 +0200
+From: Stefan Agner <stefan@agner.ch>
+To: Satendra Singh Thakur <satendra.t@samsung.com>
+Cc: Alison Wang <alison.wang@freescale.com>,
+        David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Madhur Verma <madhur.verma@samsung.com>,
+        Hemanshu Srivastava <hemanshu.s@samsung.com>
+Subject: Re: [PATCH 04/13] drm/kms/mode/fsl-dcu: using helper func
+ drm_display_mode_to_videomode for calculating timing parameters
+In-Reply-To: <c6c9496f9824b73322646d360ed9250ce89bde7d.1525087679.git.satendra.t@samsung.com>
+References: <cover.1525087679.git.satendra.t@samsung.com>
+ <CGME20180503084441epcas5p371997e3772a2fe2bfb4dc26447dafe65@epcas5p3.samsung.com>
+ <c6c9496f9824b73322646d360ed9250ce89bde7d.1525087679.git.satendra.t@samsung.com>
+Message-ID: <ac53f43cece86178076bc78c94cf06d4@agner.ch>
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         MID_RHS_MATCH_FROM(0.00)[];
+         ARC_NA(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         RCVD_COUNT_ZERO(0.00)[0];
+         RCPT_COUNT_SEVEN(0.00)[7];
+         FROM_EQ_ENVFROM(0.00)[];
+         TO_DN_SOME(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/27, Chao Yu wrote:
-> On 2018/4/27 0:36, Jaegeuk Kim wrote:
-> > On 04/26, Chao Yu wrote:
-> >> On 2018/4/26 23:48, Jaegeuk Kim wrote:
-> >>> On 04/26, Chao Yu wrote:
-> >>>> Thread A				Thread B
-> >>>> - f2fs_ioc_commit_atomic_write
-> >>>>  - commit_inmem_pages
-> >>>>   - f2fs_submit_merged_write_cond
-> >>>>   : write data
-> >>>> 					- write_checkpoint
-> >>>> 					 - do_checkpoint
-> >>>> 					 : commit all node within CP
-> >>>> 					 -> SPO
-> >>>>   - f2fs_do_sync_file
-> >>>>    - file_write_and_wait_range
-> >>>>    : wait data writeback
-> >>>>
-> >>>> In above race condition, data/node can be flushed in reversed order when
-> >>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
-> >>>> atomic written data being corrupted.
-> >>>
-> >>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
-> >>> no problem. If it fails, there is no fsync mark where we can recover it, so
-> >>
-> >> Node is flushed by checkpoint before data, with reversed order, that's the problem.
-> > 
-> > What do you mean? Data should be in disk, in order to proceed checkpoint.
-> 
-> 1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
-> it writeback.
-> 2. thread A: commit_inmem_pages update related node.
-> 3. thread B: do checkpoint, flush all nodes to disk
+On 03.05.2018 10:44, Satendra Singh Thakur wrote:
+> To avoid duplicate logic for the same
 
-How about, in block_operations(),
+How about:
 
-	down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-	if (fail)
-		wait_on_all_pages_writeback(F2FS_WB_DATA);
-	else
-		up_read(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+Use drm_display_mode_to_videomode to avoid duplicate logic.
 
 
-> 4. SPOR
 > 
-> Then, atomic file becomes corrupted since nodes is flushed before data.
+> Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
+> Cc: Madhur Verma <madhur.verma@samsung.com>
+> Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
+> ---
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c | 29 ++++++++++++-----------------
+>  1 file changed, 12 insertions(+), 17 deletions(-)
 > 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>> we can just ignore the last written data as nothing.
-> >>>
-> >>>>
-> >>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
-> >>>> keep data and node of atomic file being flushed orderly.
-> >>>>
-> >>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> >>>> ---
-> >>>>  fs/f2fs/file.c    | 4 ++++
-> >>>>  fs/f2fs/segment.c | 3 +++
-> >>>>  2 files changed, 7 insertions(+)
-> >>>>
-> >>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> >>>> index be7578774a47..a352804af244 100644
-> >>>> --- a/fs/f2fs/file.c
-> >>>> +++ b/fs/f2fs/file.c
-> >>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
-> >>>>  
-> >>>>  	trace_f2fs_sync_file_enter(inode);
-> >>>>  
-> >>>> +	if (atomic)
-> >>>> +		goto write_done;
-> >>>> +
-> >>>>  	/* if fdatasync is triggered, let's do in-place-update */
-> >>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
-> >>>>  		set_inode_flag(inode, FI_NEED_IPU);
-> >>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
-> >>>>  		return ret;
-> >>>>  	}
-> >>>>  
-> >>>> +write_done:
-> >>>>  	/* if the inode is dirty, let's recover all the time */
-> >>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
-> >>>>  		f2fs_write_inode(inode, NULL);
-> >>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> >>>> index 584483426584..9ca3d0a43d93 100644
-> >>>> --- a/fs/f2fs/segment.c
-> >>>> +++ b/fs/f2fs/segment.c
-> >>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
-> >>>>  
-> >>>>  		lock_page(page);
-> >>>>  
-> >>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
-> >>>> +
-> >>>>  		if (recover) {
-> >>>>  			struct dnode_of_data dn;
-> >>>>  			struct node_info ni;
-> >>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
-> >>>>  		/* drop all uncommitted pages */
-> >>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
-> >>>>  	} else {
-> >>>> +		/* wait all committed IOs writeback and release them from list */
-> >>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
-> >>>>  	}
-> >>>>  
-> >>>> -- 
-> >>>> 2.15.0.55.gc2ece9dc4de6
-> > 
-> > .
-> > 
+> diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+> b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+> index 0e37524..3c651f8 100644
+> --- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+> +++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_crtc.c
+> @@ -17,6 +17,7 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_crtc_helper.h>
+> +#include <video/videomode.h>
+
+I don't think this is needed here.
+
+But probably drm/drm_modes.h is, since that is where
+drm_display_mode_to_videomode is declared...
+
+>  
+>  #include "fsl_dcu_drm_crtc.h"
+>  #include "fsl_dcu_drm_drv.h"
+> @@ -85,19 +86,13 @@ static void fsl_dcu_drm_crtc_mode_set_nofb(struct
+> drm_crtc *crtc)
+>  	struct fsl_dcu_drm_device *fsl_dev = dev->dev_private;
+>  	struct drm_connector *con = &fsl_dev->connector.base;
+>  	struct drm_display_mode *mode = &crtc->state->mode;
+> -	unsigned int hbp, hfp, hsw, vbp, vfp, vsw, index, pol = 0;
+> +	unsigned int  index, pol = 0;
+
+Remove space between int and index.
+
+> +	struct videomode vm;
+>  
+>  	index = drm_crtc_index(crtc);
+> -	clk_set_rate(fsl_dev->pix_clk, mode->clock * 1000);
+> -
+> -	/* Configure timings: */
+> -	hbp = mode->htotal - mode->hsync_end;
+> -	hfp = mode->hsync_start - mode->hdisplay;
+> -	hsw = mode->hsync_end - mode->hsync_start;
+> -	vbp = mode->vtotal - mode->vsync_end;
+> -	vfp = mode->vsync_start - mode->vdisplay;
+> -	vsw = mode->vsync_end - mode->vsync_start;
+> -
+> +	/* Configure timings:*/
+
+Drop that comment, it is not really helpful.
+
+> +	drm_display_mode_to_videomode(mode, &vm);
+> +	clk_set_rate(fsl_dev->pix_clk, vm.pixelclock);
+
+Add newline here.
+
+
+I like the patch! Thanks!
+
+--
+Stefan
+
+>  	/* INV_PXCK as default (most display sample data on rising edge) */
+>  	if (!(con->display_info.bus_flags & DRM_BUS_FLAG_PIXDATA_POSEDGE))
+>  		pol |= DCU_SYN_POL_INV_PXCK;
+> @@ -109,13 +104,13 @@ static void
+> fsl_dcu_drm_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  		pol |= DCU_SYN_POL_INV_VS_LOW;
+>  
+>  	regmap_write(fsl_dev->regmap, DCU_HSYN_PARA,
+> -		     DCU_HSYN_PARA_BP(hbp) |
+> -		     DCU_HSYN_PARA_PW(hsw) |
+> -		     DCU_HSYN_PARA_FP(hfp));
+> +		     DCU_HSYN_PARA_BP(vm.hback_porch) |
+> +		     DCU_HSYN_PARA_PW(vm.hsync_len) |
+> +		     DCU_HSYN_PARA_FP(vm.hfront_porch));
+>  	regmap_write(fsl_dev->regmap, DCU_VSYN_PARA,
+> -		     DCU_VSYN_PARA_BP(vbp) |
+> -		     DCU_VSYN_PARA_PW(vsw) |
+> -		     DCU_VSYN_PARA_FP(vfp));
+> +		     DCU_VSYN_PARA_BP(vm.vback_porch) |
+> +		     DCU_VSYN_PARA_PW(vm.vsync_len) |
+> +		     DCU_VSYN_PARA_FP(vm.vfront_porch));
+>  	regmap_write(fsl_dev->regmap, DCU_DISP_SIZE,
+>  		     DCU_DISP_SIZE_DELTA_Y(mode->vdisplay) |
+>  		     DCU_DISP_SIZE_DELTA_X(mode->hdisplay));
