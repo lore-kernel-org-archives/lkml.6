@@ -1,77 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751962AbeEFXwH (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 19:52:07 -0400
-Received: from ozlabs.org ([203.11.71.1]:48129 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751625AbeEFXwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 19:52:04 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 7 May 2018 09:52:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>, Martin KaFai Lau <kafai@fb.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20180507095200.1e925a8b@canb.auug.org.au>
+        id S1751960AbeEGAC3 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 20:02:29 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:61564 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751625AbeEGAC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 20:02:27 -0400
+X-IronPort-AV: E=Sophos;i="5.49,371,1520924400";
+   d="scan'208";a="11773686"
+From: <Woojung.Huh@microchip.com>
+To: <f.fainelli@gmail.com>, <netdev@vger.kernel.org>
+CC: <andrew@lunn.ch>, <rmk@armlinux.org.uk>,
+        <linux-kernel@vger.kernel.org>, <davem@davemloft.net>,
+        <cphealy@gmail.com>, <nikita.yoush@cogentembedded.com>,
+        <vivien.didelot@savoirfairelinux.com>, <Nisar.Sayed@microchip.com>,
+        <UNGLinuxDriver@microchip.com>
+Subject: RE: [RFC net-next 4/5] net: phy: Add support for IEEE standard test
+ modes
+Thread-Topic: [RFC net-next 4/5] net: phy: Add support for IEEE standard
+ test modes
+Thread-Index: AQHT3ohy2ggOrlDWfkGtc62i2Sy80aQbJc3ggACLHwD//4uqMIAAl/MAgAea0HA=
+Date: Mon, 7 May 2018 00:02:25 +0000
+Message-ID: <9235D6609DB808459E95D78E17F2E43D40D62045@CHN-SV-EXMX02.mchp-main.com>
+References: <20180428003237.1536-1-f.fainelli@gmail.com>
+ <20180428003237.1536-5-f.fainelli@gmail.com>
+ <9235D6609DB808459E95D78E17F2E43D40D553D5@CHN-SV-EXMX02.mchp-main.com>
+ <66f30fca-f485-7f52-7441-3c8cf1718640@gmail.com>
+ <9235D6609DB808459E95D78E17F2E43D40D55B0A@CHN-SV-EXMX02.mchp-main.com>
+ <6053df89-a77d-51bd-a72b-07f3cfa5fdde@gmail.com>
+In-Reply-To: <6053df89-a77d-51bd-a72b-07f3cfa5fdde@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.10.215.7]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/muvqRkCsOPSxMyVMbf6QHJS"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w4702ZVO004400
 
---Sig_/muvqRkCsOPSxMyVMbf6QHJS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Florian,
 
-Hi all,
+> Well, the way the code is structure is that if you call that function
+> with a test mode value that is not part of the standard set, it returns
+> -EOPNOTSUPP, so if your particular PHY driver wants to "overlay"
+> standard and non-standard modes, it can by using that hint.
+> 
+> This should work even if we have more standard test modes in the future
+> because the test modes are dynamically fetched by user-space using the
+> ETH_GSTRINGS ioctl().
+> 
+> Does that cover what you had in mind?
+Basically, agree on your explanation.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+My idea was making genphy_set_test() more expandable for other test modes
+because it would be a good place to add more standard test modes later.
 
-  kernel/bpf/syscall.c
+No problem to keep current codes.
 
-between commit:
-
-  9ef09e35e521 ("bpf: fix possible spectre-v1 in find_and_alloc_map()")
-
-from the net tree and commit:
-
-  a26ca7c982cb ("bpf: btf: Add pretty print support to the basic arraymap")
-
-from the net-next tree.
-
-I fixed it up (I removed the conflicting addition of an include of
-linux/btf.h in the latter commit as it had already been included
-earlier in the file by a previous commit) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/muvqRkCsOPSxMyVMbf6QHJS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrvlSAACgkQAVBC80lX
-0GyAtAf/X9undtDvXiux7WO0WcncrtBYGmO8wHZpPAshZfpLGwdAJ4R7U5wHrXcd
-U4Nf2h0/qTD2icqN2udGyeunqRThCjsrfEKX02tZ+CbjVNcfzzXXkQds6o1yyOhn
-iMXjDegkFOEey3/2a8BBHtFF/Bbwhh6kQADF5zFZIeZgS2nhG1eBd2OhKrLFf04c
-5k8OCOdIGFMe9oyiiT/78WQufpcn97/QAdV3HvzW2MD1gp2TjriRLoEtMh8Fq636
-1eXS3L2m1yIVCoTE7a8PrwPuAViJg2uuQgiz66mhT/i8T4+/Ua38ELv2ngcvsoUW
-bWI0cYEShWGQqn/xYXOMA5N0xQjVuw==
-=GtHY
------END PGP SIGNATURE-----
-
---Sig_/muvqRkCsOPSxMyVMbf6QHJS--
+Thanks.
+Woojung
