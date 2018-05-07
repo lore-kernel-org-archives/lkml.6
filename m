@@ -1,139 +1,33 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752642AbeEGPXf (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:23:35 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:54818 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752572AbeEGPXc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:23:32 -0400
-X-Google-Smtp-Source: AB8JxZqzTTh9aFDyLddPwiHSejYfSflhBnUrgufZNAV+aL+pY8ZO8065aEcK5rotifgvqSmrFi3LTQ==
-From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        David Laight <David.Laight@ACULAB.COM>
-Subject: [PATCH v2] net: dsa: drop some VLAs in switch.c
-Date: Mon,  7 May 2018 17:23:16 +0200
-Message-Id: <1525706596-13601-1-git-send-email-s.mesoraca16@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1752614AbeEGP2B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:28:01 -0400
+Received: from mga09.intel.com ([134.134.136.24]:19626 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751996AbeEGP2A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 11:28:00 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,374,1520924400";
+   d="scan'208";a="47379667"
+Date: Mon, 7 May 2018 09:29:42 -0600
+From: Keith Busch <keith.busch@linux.intel.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jianchao Wang <jianchao.w.wang@oracle.com>, axboe@fb.com,
+        sagi@grimberg.me, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, keith.busch@intel.com
+Subject: Re: [PATCH] nvme: fix use-after-free in nvme_free_ns_head
+Message-ID: <20180507152942.GD20686@localhost.localdomain>
+References: <1525420917-9448-1-git-send-email-jianchao.w.wang@oracle.com>
+ <20180507122653.GB27843@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507122653.GB27843@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We avoid 2 VLAs by using a pre-allocated field in dsa_switch.
-We also try to avoid dynamic allocation whenever possible.
-
-Link: http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
-Link: http://lkml.kernel.org/r/20180505185145.GB32630@lunn.ch
-
-Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
----
- include/net/dsa.h |  3 +++
- net/dsa/dsa2.c    | 14 ++++++++++++++
- net/dsa/switch.c  | 22 ++++++++++------------
- 3 files changed, 27 insertions(+), 12 deletions(-)
-
-diff --git a/include/net/dsa.h b/include/net/dsa.h
-index 60fb4ec..576791d 100644
---- a/include/net/dsa.h
-+++ b/include/net/dsa.h
-@@ -256,6 +256,9 @@ struct dsa_switch {
- 	/* Number of switch port queues */
- 	unsigned int		num_tx_queues;
- 
-+	unsigned long		*bitmap;
-+	unsigned long		_bitmap;
-+
- 	/* Dynamically allocated ports, keep last */
- 	size_t num_ports;
- 	struct dsa_port ports[];
-diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
-index adf50fb..cebf35f0 100644
---- a/net/dsa/dsa2.c
-+++ b/net/dsa/dsa2.c
-@@ -748,6 +748,20 @@ struct dsa_switch *dsa_switch_alloc(struct device *dev, size_t n)
- 	if (!ds)
- 		return NULL;
- 
-+	/* We avoid allocating memory outside dsa_switch
-+	 * if it is not needed.
-+	 */
-+	if (n <= sizeof(ds->_bitmap) * 8) {
-+		ds->bitmap = &ds->_bitmap;
-+	} else {
-+		ds->bitmap = devm_kzalloc(dev,
-+					  BITS_TO_LONGS(n) *
-+						sizeof(unsigned long),
-+					  GFP_KERNEL);
-+		if (unlikely(!ds->bitmap))
-+			return NULL;
-+	}
-+
- 	ds->dev = dev;
- 	ds->num_ports = n;
- 
-diff --git a/net/dsa/switch.c b/net/dsa/switch.c
-index b935117..142b294 100644
---- a/net/dsa/switch.c
-+++ b/net/dsa/switch.c
-@@ -136,21 +136,20 @@ static int dsa_switch_mdb_add(struct dsa_switch *ds,
- {
- 	const struct switchdev_obj_port_mdb *mdb = info->mdb;
- 	struct switchdev_trans *trans = info->trans;
--	DECLARE_BITMAP(group, ds->num_ports);
- 	int port;
- 
- 	/* Build a mask of Multicast group members */
--	bitmap_zero(group, ds->num_ports);
-+	bitmap_zero(ds->bitmap, ds->num_ports);
- 	if (ds->index == info->sw_index)
--		set_bit(info->port, group);
-+		set_bit(info->port, ds->bitmap);
- 	for (port = 0; port < ds->num_ports; port++)
- 		if (dsa_is_dsa_port(ds, port))
--			set_bit(port, group);
-+			set_bit(port, ds->bitmap);
- 
- 	if (switchdev_trans_ph_prepare(trans))
--		return dsa_switch_mdb_prepare_bitmap(ds, mdb, group);
-+		return dsa_switch_mdb_prepare_bitmap(ds, mdb, ds->bitmap);
- 
--	dsa_switch_mdb_add_bitmap(ds, mdb, group);
-+	dsa_switch_mdb_add_bitmap(ds, mdb, ds->bitmap);
- 
- 	return 0;
- }
-@@ -204,21 +203,20 @@ static int dsa_switch_vlan_add(struct dsa_switch *ds,
- {
- 	const struct switchdev_obj_port_vlan *vlan = info->vlan;
- 	struct switchdev_trans *trans = info->trans;
--	DECLARE_BITMAP(members, ds->num_ports);
- 	int port;
- 
- 	/* Build a mask of VLAN members */
--	bitmap_zero(members, ds->num_ports);
-+	bitmap_zero(ds->bitmap, ds->num_ports);
- 	if (ds->index == info->sw_index)
--		set_bit(info->port, members);
-+		set_bit(info->port, ds->bitmap);
- 	for (port = 0; port < ds->num_ports; port++)
- 		if (dsa_is_cpu_port(ds, port) || dsa_is_dsa_port(ds, port))
--			set_bit(port, members);
-+			set_bit(port, ds->bitmap);
- 
- 	if (switchdev_trans_ph_prepare(trans))
--		return dsa_switch_vlan_prepare_bitmap(ds, vlan, members);
-+		return dsa_switch_vlan_prepare_bitmap(ds, vlan, ds->bitmap);
- 
--	dsa_switch_vlan_add_bitmap(ds, vlan, members);
-+	dsa_switch_vlan_add_bitmap(ds, vlan, ds->bitmap);
- 
- 	return 0;
- }
--- 
-1.9.1
+Thank you, applied for the next nvme 4.17-rc.
