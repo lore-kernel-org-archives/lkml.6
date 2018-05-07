@@ -1,31 +1,32 @@
 Return-Path: <fbarrat@linux.ibm.com>
-X-Google-Smtp-Source: AB8JxZrgpmz5Vsohc2Y9cQpbxD/CAb3VOZgEBaYOSLVJ35YhkxFaAy+pkGKhp4N7fkI2D4YeBLmt
-ARC-Seal: i=1; a=rsa-sha256; t=1525716528; cv=none;
+X-Google-Smtp-Source: AB8JxZrUOl3O/t9ThcTjOeYsw3gjwCfajmqBeMseeFZ1QusCJFjuQlYyvLitRP7EF3DwysKHgVJH
+ARC-Seal: i=1; a=rsa-sha256; t=1525714744; cv=none;
         d=google.com; s=arc-20160816;
-        b=yBEKEjJmFl5JCabqfzkYJU6LeiC3M0xRAIBHNo/QU1Ws8TCJN8T/5LXKeDOIgKUJlA
-         ovJk9v1K3Y1kDG5VPmNog65UuoslJUCTrgQ4smseUV69QyTalFcoOLCBMAn6rG3CWkUe
-         +q/M7j2BI85rwmLSmbv9AsCjgbZ0W2LBG3PauVK/IUqd1u/y5lxGK+cbzAwJBHyyoUCV
-         bg6FMZ0jP+7VhOPO08KIKMxLgjHNJlCQq0x0qVQSMUHVb3MaiAnINcRGNWK87R1j/oSl
-         3+p8hmmKiCS/1pSmFYGuW0hF73T5iURar6+Rc9eG02+OaR9Udcaf+81Z+M1F1MfBK+Ty
-         MKyQ==
+        b=vGzWj5OPQK+etp5f5WZ1Vt6bu2drrlRy9AXbFAt6yBu0js1e4Pt3fNrzaxshzFotao
+         1WP0RCvVoAu9n2AVSRMwJU3YF4Tfkm311KmmAcpQl6te1B/Pivybrmb2QXsTph5IHKYQ
+         HHWvXbsPC94lHMeAF1WFcC4EwdMW7tbLKWAOiOEEDFmJQKAI5xCPe2pFh2SRxt6cflZr
+         uJDSvzogyRcVTTMBHFXgRK8K/dRc4urJLNVukgUPJkHQkVKZ8ZYzOsqEf/fHfEMS196m
+         9FV2Kng3HlsTaXkmhbiDBDL7L3yUSwIGD03Ikhhv3wnxYzeA7upilBAcF9Olx9trOOa0
+         doAQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:content-transfer-encoding:content-language:in-reply-to
          :mime-version:user-agent:date:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=8x4QReHkXCS1V6XpK16YHZc/nL2+Buv6qqKV5vj1zRM=;
-        b=se7JOOAsuB2/dk0CeF+9/INK32ItIqn5/VldRikUR3QfoErDAXzRdAQ9H7afdLDV8R
-         93d1zrzIDhz+VqZpHM5+vK/iJ+Z1nrHrN1wKNVCYajDIyEeX/94VT6/lZvR9siWTOj+H
-         zqqNAc+iuxLQX9bSW9Q9BkFcxbfZbwTvcsShDoY8krCWvTXU659S2qnMVEaCkoldBucJ
-         rGSe4o+oSiNH0bgv50IFd2QTLVfaqhhYZnSOFk6TKKe1EfP4A9Coc6OH0bb8loETpnt2
-         rfjgJGG/C2B92S8+Qiez2H/26cHodKyZDczaMF2jCXMgLWVLNbBAc5BlCTjUMtgCuhY6
-         yUGQ==
+        bh=SPRyyF2GBAImC545HwFzaHN686xtynAcU4cL1/ql38Q=;
+        b=fmglfELGZ+Bla1AztSD7lFLsa6q62dxMIZZSjAOZfy8P8eHpnxTICH5qzo45Q5sFi9
+         BbWBWw+1uKLVgdF+FinHuqOofJ6syNsjuaZYchcQfKPRkx2vdHBU2KdPpd8cS0qZa69w
+         K/wDcKQbE/4Rj8CNm8kYb6FSheZ9ReaOzWnkYmQ9Unmj2nCX/Kuzk2vmbNrd0AvkM7cv
+         OEMUwKT0XRL/kQHOx8a/zKpa346MEKMZx6F/tyGe5NEK+SGq2Hrwr9J+DETJCup8IXgf
+         WvIbQcbtmSNg02k46oVS8TY2BObBq1iFdTnpaub5pFkgpf+h5U3gy60YfddRoMLumxuk
+         KluQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
+       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
+       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v2 5/7] ocxl: Expose the thread_id needed for wait on p9
+Subject: Re: [PATCH v2 4/7] ocxl: Rename pnv_ocxl_spa_remove_pe to clarify
+ it's action
 To: "Alastair D'Silva" <alastair@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
         vaibhav@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
@@ -36,31 +37,31 @@ Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
         corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
 References: <20180417020950.21446-1-alastair@au1.ibm.com>
  <20180418010810.30937-1-alastair@au1.ibm.com>
- <20180418010810.30937-6-alastair@au1.ibm.com>
+ <20180418010810.30937-5-alastair@au1.ibm.com>
 From: Frederic Barrat <fbarrat@linux.ibm.com>
-Date: Mon, 7 May 2018 20:08:35 +0200
+Date: Mon, 7 May 2018 19:38:52 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180418010810.30937-6-alastair@au1.ibm.com>
+In-Reply-To: <20180418010810.30937-5-alastair@au1.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: fr
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18050718-0012-0000-0000-000005D3AD6F
+x-cbid: 18050717-0020-0000-0000-0000041A0C4B
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050718-0013-0000-0000-00001950B86C
-Message-Id: <76dccd99-f98b-6c56-56dc-eefd929f3ad0@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_09:,,
+x-cbparentid: 18050717-0021-0000-0000-000042AF40F4
+Message-Id: <80b45171-3708-d252-8f57-310f23eb18cd@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805070181
+ definitions=main-1805070177
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597957549588354093?=
-X-GMAIL-MSGID: =?utf-8?q?1599829733667829772?=
+X-GMAIL-THRID: =?utf-8?q?1597957549805591967?=
+X-GMAIL-MSGID: =?utf-8?q?1599827864127005282?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -69,251 +70,65 @@ List-ID: <linux-kernel.vger.kernel.org>
 Le 18/04/2018 à 03:08, Alastair D'Silva a écrit :
 > From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> In order to successfully issue as_notify, an AFU needs to know the TID
-> to notify, which in turn means that this information should be
-> available in userspace so it can be communicated to the AFU.
+> The function removes the process element from NPU cache.
 > 
 > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 > ---
->   drivers/misc/ocxl/context.c       |  5 +++-
->   drivers/misc/ocxl/file.c          | 53 +++++++++++++++++++++++++++++++++++++++
->   drivers/misc/ocxl/link.c          | 36 ++++++++++++++++++++++++++
->   drivers/misc/ocxl/ocxl_internal.h |  1 +
->   include/misc/ocxl.h               |  9 +++++++
->   include/uapi/misc/ocxl.h          | 10 ++++++++
->   6 files changed, 113 insertions(+), 1 deletion(-)
+
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+
+
+>   arch/powerpc/include/asm/pnv-ocxl.h   | 2 +-
+>   arch/powerpc/platforms/powernv/ocxl.c | 4 ++--
+>   drivers/misc/ocxl/link.c              | 2 +-
+>   3 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
-> index 909e8807824a..95f74623113e 100644
-> --- a/drivers/misc/ocxl/context.c
-> +++ b/drivers/misc/ocxl/context.c
-> @@ -34,6 +34,8 @@ int ocxl_context_init(struct ocxl_context *ctx, struct ocxl_afu *afu,
->   	mutex_init(&ctx->xsl_error_lock);
->   	mutex_init(&ctx->irq_lock);
->   	idr_init(&ctx->irq_idr);
-> +	ctx->tidr = 0;
-> +
->   	/*
->   	 * Keep a reference on the AFU to make sure it's valid for the
->   	 * duration of the life of the context
-> @@ -65,6 +67,7 @@ int ocxl_context_attach(struct ocxl_context *ctx, u64 amr)
->   {
->   	int rc;
+> diff --git a/arch/powerpc/include/asm/pnv-ocxl.h b/arch/powerpc/include/asm/pnv-ocxl.h
+> index f6945d3bc971..208b5503f4ed 100644
+> --- a/arch/powerpc/include/asm/pnv-ocxl.h
+> +++ b/arch/powerpc/include/asm/pnv-ocxl.h
+> @@ -28,7 +28,7 @@ extern int pnv_ocxl_map_xsl_regs(struct pci_dev *dev, void __iomem **dsisr,
+>   extern int pnv_ocxl_spa_setup(struct pci_dev *dev, void *spa_mem, int PE_mask,
+>   			void **platform_data);
+>   extern void pnv_ocxl_spa_release(void *platform_data);
+> -extern int pnv_ocxl_spa_remove_pe(void *platform_data, int pe_handle);
+> +extern int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle);
 > 
-> +	// Locks both status & tidr
->   	mutex_lock(&ctx->status_mutex);
->   	if (ctx->status != OPENED) {
->   		rc = -EIO;
-> @@ -72,7 +75,7 @@ int ocxl_context_attach(struct ocxl_context *ctx, u64 amr)
->   	}
-> 
->   	rc = ocxl_link_add_pe(ctx->afu->fn->link, ctx->pasid,
-> -			current->mm->context.id, 0, amr, current->mm,
-> +			current->mm->context.id, ctx->tidr, amr, current->mm,
->   			xsl_fault_error, ctx);
->   	if (rc)
->   		goto out;
-> diff --git a/drivers/misc/ocxl/file.c b/drivers/misc/ocxl/file.c
-> index 038509e5d031..eb409a469f21 100644
-> --- a/drivers/misc/ocxl/file.c
-> +++ b/drivers/misc/ocxl/file.c
-> @@ -5,6 +5,8 @@
->   #include <linux/sched/signal.h>
->   #include <linux/uaccess.h>
->   #include <uapi/misc/ocxl.h>
-> +#include <asm/reg.h>
-> +#include <asm/switch_to.h>
->   #include "ocxl_internal.h"
-> 
-> 
-> @@ -123,11 +125,55 @@ static long afu_ioctl_get_metadata(struct ocxl_context *ctx,
->   	return 0;
+>   extern int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr);
+>   extern void pnv_ocxl_free_xive_irq(u32 irq);
+> diff --git a/arch/powerpc/platforms/powernv/ocxl.c b/arch/powerpc/platforms/powernv/ocxl.c
+> index fa9b53af3c7b..8c65aacda9c8 100644
+> --- a/arch/powerpc/platforms/powernv/ocxl.c
+> +++ b/arch/powerpc/platforms/powernv/ocxl.c
+> @@ -475,7 +475,7 @@ void pnv_ocxl_spa_release(void *platform_data)
 >   }
+>   EXPORT_SYMBOL_GPL(pnv_ocxl_spa_release);
 > 
-> +#ifdef CONFIG_PPC64
-> +static long afu_ioctl_enable_p9_wait(struct ocxl_context *ctx,
-> +		struct ocxl_ioctl_p9_wait __user *uarg)
-> +{
-> +	struct ocxl_ioctl_p9_wait arg;
-> +
-> +	memset(&arg, 0, sizeof(arg));
-> +
-> +	if (cpu_has_feature(CPU_FTR_P9_TIDR)) {
-> +		enum ocxl_context_status status;
-> +
-> +		// Locks both status & tidr
-> +		mutex_lock(&ctx->status_mutex);
-> +		if (!ctx->tidr) {
-> +			if (set_thread_tidr(current))
-> +				return -ENOENT;
-> +
-> +			ctx->tidr = current->thread.tidr;
-> +		}
-
-
-Now that we don't have the TIDR limit problem, I'm wondering if we 
-cannot relax our rule a bit and have:
-- first thread to enable will become the default thread and update the 
-Process element
-- any subsequent enable would just allocate the TIDR for the calling thread.
-
-That way, more than one thread could be used for 'wait'.
-Thoughts?
-
-    Fred
-
-
-> +
-> +		status = ctx->status;
-> +		mutex_unlock(&ctx->status_mutex);
-> +
-> +		if (status == ATTACHED) {
-> +			int rc;
-> +			struct link *link = ctx->afu->fn->link;
-> +
-> +			rc = ocxl_link_update_pe(link, ctx->pasid, ctx->tidr);
-> +			if (rc)
-> +				return rc;
-> +		}
-> +
-> +		arg.thread_id = ctx->tidr;
-> +	} else
-> +		return -ENOENT;
-> +
-> +	if (copy_to_user(uarg, &arg, sizeof(arg)))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->   #define CMD_STR(x) (x == OCXL_IOCTL_ATTACH ? "ATTACH" :			\
->   			x == OCXL_IOCTL_IRQ_ALLOC ? "IRQ_ALLOC" :	\
->   			x == OCXL_IOCTL_IRQ_FREE ? "IRQ_FREE" :		\
->   			x == OCXL_IOCTL_IRQ_SET_FD ? "IRQ_SET_FD" :	\
->   			x == OCXL_IOCTL_GET_METADATA ? "GET_METADATA" :	\
-> +			x == OCXL_IOCTL_ENABLE_P9_WAIT ? "ENABLE_P9_WAIT" :	\
->   			"UNKNOWN")
+> -int pnv_ocxl_spa_remove_pe(void *platform_data, int pe_handle)
+> +int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle)
+>   {
+>   	struct spa_data *data = (struct spa_data *) platform_data;
+>   	int rc;
+> @@ -483,7 +483,7 @@ int pnv_ocxl_spa_remove_pe(void *platform_data, int pe_handle)
+>   	rc = opal_npu_spa_clear_cache(data->phb_opal_id, data->bdfn, pe_handle);
+>   	return rc;
+>   }
+> -EXPORT_SYMBOL_GPL(pnv_ocxl_spa_remove_pe);
+> +EXPORT_SYMBOL_GPL(pnv_ocxl_spa_remove_pe_from_cache);
 > 
->   static long afu_ioctl(struct file *file, unsigned int cmd,
-> @@ -186,6 +232,13 @@ static long afu_ioctl(struct file *file, unsigned int cmd,
->   				(struct ocxl_ioctl_metadata __user *) args);
->   		break;
-> 
-> +#ifdef CONFIG_PPC64
-> +	case OCXL_IOCTL_ENABLE_P9_WAIT:
-> +		rc = afu_ioctl_enable_p9_wait(ctx,
-> +				(struct ocxl_ioctl_p9_wait __user *) args);
-> +		break;
-> +#endif
-> +
->   	default:
->   		rc = -EINVAL;
->   	}
+>   int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr)
+>   {
 > diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
-> index 656e8610eec2..88876ae8f330 100644
+> index f30790582dc0..656e8610eec2 100644
 > --- a/drivers/misc/ocxl/link.c
 > +++ b/drivers/misc/ocxl/link.c
-> @@ -544,6 +544,42 @@ int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
->   }
->   EXPORT_SYMBOL_GPL(ocxl_link_add_pe);
-> 
-> +int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid)
-> +{
-> +	struct link *link = (struct link *) link_handle;
-> +	struct spa *spa = link->spa;
-> +	struct ocxl_process_element *pe;
-> +	int pe_handle, rc;
-> +
-> +	if (pasid > SPA_PASID_MAX)
-> +		return -EINVAL;
-> +
-> +	pe_handle = pasid & SPA_PE_MASK;
-> +	pe = spa->spa_mem + pe_handle;
-> +
-> +	mutex_lock(&spa->spa_lock);
-> +
-> +	pe->tid = tid;
-> +
-> +	/*
-> +	 * The barrier makes sure the PE is updated
-> +	 * before we clear the NPU context cache below, so that the
-> +	 * old PE cannot be reloaded erroneously.
-> +	 */
-> +	mb();
-> +
-> +	/*
-> +	 * hook to platform code
-> +	 * On powerpc, the entry needs to be cleared from the context
-> +	 * cache of the NPU.
-> +	 */
+> @@ -599,7 +599,7 @@ int ocxl_link_remove_pe(void *link_handle, int pasid)
+>   	 * On powerpc, the entry needs to be cleared from the context
+>   	 * cache of the NPU.
+>   	 */
+> -	rc = pnv_ocxl_spa_remove_pe(link->platform_data, pe_handle);
 > +	rc = pnv_ocxl_spa_remove_pe_from_cache(link->platform_data, pe_handle);
-> +	WARN_ON(rc);
-> +
-> +	mutex_unlock(&spa->spa_lock);
-> +	return rc;
-> +}
-> +
->   int ocxl_link_remove_pe(void *link_handle, int pasid)
->   {
->   	struct link *link = (struct link *) link_handle;
-> diff --git a/drivers/misc/ocxl/ocxl_internal.h b/drivers/misc/ocxl/ocxl_internal.h
-> index 5d421824afd9..6c6d4e61888e 100644
-> --- a/drivers/misc/ocxl/ocxl_internal.h
-> +++ b/drivers/misc/ocxl/ocxl_internal.h
-> @@ -77,6 +77,7 @@ struct ocxl_context {
->   	struct ocxl_xsl_error xsl_error;
->   	struct mutex irq_lock;
->   	struct idr irq_idr;
-> +	__u16 tidr; // Thread ID used for P9 wait implementation
->   };
+>   	WARN_ON(rc);
 > 
->   struct ocxl_process_element {
-> diff --git a/include/misc/ocxl.h b/include/misc/ocxl.h
-> index 51ccf76db293..9ff6ddc28e22 100644
-> --- a/include/misc/ocxl.h
-> +++ b/include/misc/ocxl.h
-> @@ -188,6 +188,15 @@ extern int ocxl_link_add_pe(void *link_handle, int pasid, u32 pidr, u32 tidr,
->   		void (*xsl_err_cb)(void *data, u64 addr, u64 dsisr),
->   		void *xsl_err_data);
-> 
-> +/**
-> + * Update values within a Process Element
-> + *
-> + * link_handle: the link handle associated with the process element
-> + * pasid: the PASID for the AFU context
-> + * tid: the new thread id for the process element
-> + */
-> +extern int ocxl_link_update_pe(void *link_handle, int pasid, __u16 tid);
-> +
->   /*
->    * Remove a Process Element from the Shared Process Area for a link
->    */
-> diff --git a/include/uapi/misc/ocxl.h b/include/uapi/misc/ocxl.h
-> index 0af83d80fb3e..8d2748e69c84 100644
-> --- a/include/uapi/misc/ocxl.h
-> +++ b/include/uapi/misc/ocxl.h
-> @@ -48,6 +48,15 @@ struct ocxl_ioctl_metadata {
->   	__u64 reserved[13]; // Total of 16*u64
->   };
-> 
-> +struct ocxl_ioctl_p9_wait {
-> +	__u16 thread_id; // The thread ID required to wake this thread
-> +	__u16 reserved1;
-> +	__u32 reserved2;
-> +	__u64 reserved3[3];
-> +};
-> +
-> +};
-> +
->   struct ocxl_ioctl_irq_fd {
->   	__u64 irq_offset;
->   	__s32 eventfd;
-> @@ -62,5 +71,6 @@ struct ocxl_ioctl_irq_fd {
->   #define OCXL_IOCTL_IRQ_FREE	_IOW(OCXL_MAGIC, 0x12, __u64)
->   #define OCXL_IOCTL_IRQ_SET_FD	_IOW(OCXL_MAGIC, 0x13, struct ocxl_ioctl_irq_fd)
->   #define OCXL_IOCTL_GET_METADATA _IOR(OCXL_MAGIC, 0x14, struct ocxl_ioctl_metadata)
-> +#define OCXL_IOCTL_ENABLE_P9_WAIT	_IOR(OCXL_MAGIC, 0x15, struct ocxl_ioctl_p9_wait)
-> 
->   #endif /* _UAPI_MISC_OCXL_H */
+>   	pe_data = radix_tree_delete(&spa->pe_tree, pe_handle);
 > 
