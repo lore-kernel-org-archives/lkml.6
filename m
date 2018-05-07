@@ -1,78 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751919AbeEGCJS (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 22:09:18 -0400
-Received: from ozlabs.org ([203.11.71.1]:54173 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751852AbeEGCJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 22:09:16 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Mon, 7 May 2018 12:09:09 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the tip tree with the bpf-next tree
-Message-ID: <20180507120909.1fee1683@canb.auug.org.au>
+        id S1751894AbeEGCP6 (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 22:15:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60198 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751831AbeEGCPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 22:15:54 -0400
+From: Yunlong Song <yunlong.song@huawei.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] f2fs-tools: fix to match with the start_sector
+Date: Mon, 7 May 2018 10:15:36 +0800
+Message-ID: <1525659336-145433-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
+In-Reply-To: <1525425645-127945-1-git-send-email-yunlong.song@huawei.com>
+References: <1525425645-127945-1-git-send-email-yunlong.song@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/pinGblI+CAMhna2p.DI8MNt"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/pinGblI+CAMhna2p.DI8MNt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+f2fs-tools uses ioctl BLKSSZGET to get sector_size, however, this ioctl
+will return a value which may be larger than 512 (according to the value
+of q->limits.logical_block_size), then this will be inconsistent with
+the start_sector, since start_sector is got from ioctl HDIO_GETGEO and
+is always in 512 size unit for a sector. To fix this problem, just
+change the sector_size to the default value when computing with
+start_sector. And fix sectors_per_blk as well.
 
-Hi all,
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fsck/resize.c      |  4 ++--
+ mkfs/f2fs_format.c | 12 ++++++------
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-Today's linux-next merge of the tip tree got a conflict in:
-
-  arch/x86/net/bpf_jit_comp.c
-
-between commit:
-
-  e782bdcf58c5 ("bpf, x64: remove ld_abs/ld_ind")
-
-from the bpf-next tree and commit:
-
-  5f26c50143f5 ("x86/bpf: Clean up non-standard comments, to make the code =
-more readable")
-
-from the tip tree.
-
-I fixed it up (the former commit removed some code modified by the latter,
-so I just removed it) and can carry the fix as necessary. This is now
-fixed as far as linux-next is concerned, but any non trivial conflicts
-should be mentioned to your upstream maintainer when your tree is
-submitted for merging.  You may also want to consider cooperating with
-the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/pinGblI+CAMhna2p.DI8MNt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrvtUUACgkQAVBC80lX
-0GxbnQf/WbCGq523yGk3BWfqBgqDNnzB3b/Y5FLqJXRrqvBvYjOBhJJJ7VbGQPMx
-wVArZAhwMlDh0Om4yB+rXHX0CzH6l5S0t7Uobg8xjVqe0DKQh5FaEGrgGqBuI1d6
-x3CcqwZlyu/qJTjc+PbBGngkqFkmLdhbKkLzyE7iYccJxgNZDP023mgRvbcs9iWu
-/S6FnVWHehMB/VEgh3p8wSnvJBf+rYoKCA5u1dYN951LIKYDibnScS1i5qEQHCbi
-cyT+4U58f53uuXzit7VduJVr9hz9tl5kbvI8FiZfHsKQ0GoIaQZ9BXDD8NzhgLd4
-00H1jxmUjmAortjW8r4oRAgHM40kxQ==
-=AlFX
------END PGP SIGNATURE-----
-
---Sig_/pinGblI+CAMhna2p.DI8MNt--
+diff --git a/fsck/resize.c b/fsck/resize.c
+index d285dd7..ada2155 100644
+--- a/fsck/resize.c
++++ b/fsck/resize.c
+@@ -27,10 +27,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
+ 
+ 	zone_size_bytes = segment_size_bytes * segs_per_zone;
+ 	zone_align_start_offset =
+-		(c.start_sector * c.sector_size +
++		(c.start_sector * DEFAULT_SECTOR_SIZE +
+ 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+ 		zone_size_bytes * zone_size_bytes -
+-		c.start_sector * c.sector_size;
++		c.start_sector * DEFAULT_SECTOR_SIZE;
+ 
+ 	set_sb(segment_count, (c.target_sectors * c.sector_size -
+ 				zone_align_start_offset) / segment_size_bytes /
+diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
+index 0a99a77..ced5fea 100644
+--- a/mkfs/f2fs_format.c
++++ b/mkfs/f2fs_format.c
+@@ -212,18 +212,18 @@ static int f2fs_prepare_super_block(void)
+ 	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
+ 
+ 	zone_align_start_offset =
+-		(c.start_sector * c.sector_size +
++		(c.start_sector * DEFAULT_SECTOR_SIZE +
+ 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
+ 		zone_size_bytes * zone_size_bytes -
+-		c.start_sector * c.sector_size;
++		c.start_sector * DEFAULT_SECTOR_SIZE;
+ 
+-	if (c.start_sector % c.sectors_per_blk) {
++	if (c.start_sector % DEFAULT_SECTORS_PER_BLOCK) {
+ 		MSG(1, "\t%s: Align start sector number to the page unit\n",
+ 				c.zoned_mode ? "FAIL" : "WARN");
+ 		MSG(1, "\ti.e., start sector: %d, ofs:%d (sects/page: %d)\n",
+ 				c.start_sector,
+-				c.start_sector % c.sectors_per_blk,
+-				c.sectors_per_blk);
++				c.start_sector % DEFAULT_SECTORS_PER_BLOCK,
++				DEFAULT_SECTORS_PER_BLOCK);
+ 		if (c.zoned_mode)
+ 			return -1;
+ 	}
+@@ -235,7 +235,7 @@ static int f2fs_prepare_super_block(void)
+ 					get_sb(segment0_blkaddr));
+ 
+ 	if (c.zoned_mode && (get_sb(segment0_blkaddr) + c.start_sector /
+-					c.sectors_per_blk) % c.zone_blocks) {
++					DEFAULT_SECTORS_PER_BLOCK) % c.zone_blocks) {
+ 		MSG(1, "\tError: Unaligned segment0 block address %u\n",
+ 				get_sb(segment0_blkaddr));
+ 		return -1;
+-- 
+1.8.5.2
