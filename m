@@ -1,68 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752764AbeEGT0t (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 15:26:49 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:51662 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752631AbeEGT0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 15:26:48 -0400
-Date: Mon, 7 May 2018 21:26:41 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Salvatore Mesoraca <s.mesoraca16@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>,
-        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
-        David Laight <David.Laight@aculab.com>
-Subject: Re: [PATCH v2] net: dsa: drop some VLAs in switch.c
-Message-ID: <20180507192641.GD31021@lunn.ch>
-References: <1525706596-13601-1-git-send-email-s.mesoraca16@gmail.com>
- <d7fa9cf7-7c7e-b01c-8925-ce6dafc8721c@gmail.com>
- <CAJHCu1KsvPEs9vpp5bY04OeVfMtqZzPuO=9c8e2QP-+n+VKUjQ@mail.gmail.com>
+        id S1752811AbeEGT2d convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 15:28:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752721AbeEGT2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 15:28:31 -0400
+From: Jeff Moyer <jmoyer@redhat.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Michal Hocko <mhocko@suse.com>,
+        Huaisheng Ye <yehs1@lenovo.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, chengnt@lenovo.com,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        pasha.tatashin@oracle.com, Linux MM <linux-mm@kvack.org>,
+        colyli@suse.de, Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sasha Levin <alexander.levin@verizon.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM (pmem) zone
+References: <1525704627-30114-1-git-send-email-yehs1@lenovo.com>
+        <20180507184622.GB12361@bombadil.infradead.org>
+        <CAPcyv4hBJN3npXwg3Ur32JSWtKvBUZh7F8W+Exx3BB-uKWwPag@mail.gmail.com>
+        <x49a7tbi8r3.fsf@segfault.boston.devel.redhat.com>
+        <CAPcyv4hekYsXFy1PHg7zMyoWtj1pYVfnANfrhpk-+Hr_NBV=BQ@mail.gmail.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+X-PCLoadLetter: What the f**k does that mean?
+Date: Mon, 07 May 2018 15:28:29 -0400
+In-Reply-To: <CAPcyv4hekYsXFy1PHg7zMyoWtj1pYVfnANfrhpk-+Hr_NBV=BQ@mail.gmail.com>
+        (Dan Williams's message of "Mon, 7 May 2018 12:17:05 -0700")
+Message-ID: <x491seni7tu.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJHCu1KsvPEs9vpp5bY04OeVfMtqZzPuO=9c8e2QP-+n+VKUjQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >> +++ b/include/net/dsa.h
-> >> @@ -256,6 +256,9 @@ struct dsa_switch {
-> >>       /* Number of switch port queues */
-> >>       unsigned int            num_tx_queues;
-> >>
-> >> +     unsigned long           *bitmap;
-> >> +     unsigned long           _bitmap;
-> >> +
-> >>       /* Dynamically allocated ports, keep last */
-> >>       size_t num_ports;
-> >>       struct dsa_port ports[];
-> >> diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
-> >> index adf50fb..cebf35f0 100644
-> >> --- a/net/dsa/dsa2.c
-> >> +++ b/net/dsa/dsa2.c
-> >> @@ -748,6 +748,20 @@ struct dsa_switch *dsa_switch_alloc(struct device *dev, size_t n)
-> >>       if (!ds)
-> >>               return NULL;
-> >>
-> >> +     /* We avoid allocating memory outside dsa_switch
-> >> +      * if it is not needed.
-> >> +      */
-> >> +     if (n <= sizeof(ds->_bitmap) * 8) {
-> >> +             ds->bitmap = &ds->_bitmap;
-> >
-> > Should not this be / BITS_PER_BYTE? If the sizeof(unsigned long) is <=
-> > 8, then you don't need to allocate it, otherwise, you have to.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-> This optimization will save us an allocation when number of ports is
-> less than 32 or 64 (depending on arch).
-> IMHO it's useful, if you consider that, right now, DSA works only with
-> 12-ports switches.
+> On Mon, May 7, 2018 at 12:08 PM, Jeff Moyer <jmoyer@redhat.com> wrote:
+>> Dan Williams <dan.j.williams@intel.com> writes:
+>>
+>>> On Mon, May 7, 2018 at 11:46 AM, Matthew Wilcox <willy@infradead.org> wrote:
+>>>> On Mon, May 07, 2018 at 10:50:21PM +0800, Huaisheng Ye wrote:
+>>>>> Traditionally, NVDIMMs are treated by mm(memory management) subsystem as
+>>>>> DEVICE zone, which is a virtual zone and both its start and end of pfn
+>>>>> are equal to 0, mm wouldn’t manage NVDIMM directly as DRAM, kernel uses
+>>>>> corresponding drivers, which locate at \drivers\nvdimm\ and
+>>>>> \drivers\acpi\nfit and fs, to realize NVDIMM memory alloc and free with
+>>>>> memory hot plug implementation.
+>>>>
+>>>> You probably want to let linux-nvdimm know about this patch set.
+>>>> Adding to the cc.
+>>>
+>>> Yes, thanks for that!
+>>>
+>>>> Also, I only received patch 0 and 4.  What happened
+>>>> to 1-3,5 and 6?
+>>>>
+>>>>> With current kernel, many mm’s classical features like the buddy
+>>>>> system, swap mechanism and page cache couldn’t be supported to NVDIMM.
+>>>>> What we are doing is to expand kernel mm’s capacity to make it to handle
+>>>>> NVDIMM like DRAM. Furthermore we make mm could treat DRAM and NVDIMM
+>>>>> separately, that means mm can only put the critical pages to NVDIMM
+>>
+>> Please define "critical pages."
+>>
+>>>>> zone, here we created a new zone type as NVM zone. That is to say for
+>>>>> traditional(or normal) pages which would be stored at DRAM scope like
+>>>>> Normal, DMA32 and DMA zones. But for the critical pages, which we hope
+>>>>> them could be recovered from power fail or system crash, we make them
+>>>>> to be persistent by storing them to NVM zone.
+>>
+>> [...]
+>>
+>>> I think adding yet one more mm-zone is the wrong direction. Instead,
+>>> what we have been considering is a mechanism to allow a device-dax
+>>> instance to be given back to the kernel as a distinct numa node
+>>> managed by the VM. It seems it times to dust off those patches.
+>>
+>> What's the use case?
+>
+> Use NVDIMMs as System-RAM given their potentially higher capacity than
+> DDR. The expectation in that case is that data is forfeit (not
+> persisted) after a crash. Any persistent use case would need to go
+> through the pmem driver, filesystem-dax or device-dax.
 
-Do you have a feeling for the savings? I don't see it being very
-large, and given the extra code, it might actually be negative.
+OK, but that sounds different from what was being proposed, here.  I'll
+quote from above:
 
-    Andrew
+>>>>> But for the critical pages, which we hope them could be recovered
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>> from power fail or system crash, we make them to be persistent by
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>>>>> storing them to NVM zone.
+
+Hence my confusion.
+
+Cheers,
+Jeff
