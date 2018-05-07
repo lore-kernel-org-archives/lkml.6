@@ -1,110 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752752AbeEGP46 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:56:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57506 "EHLO mail.kernel.org"
+        id S1752723AbeEGQAb (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 12:00:31 -0400
+Received: from mga04.intel.com ([192.55.52.120]:26947 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752303AbeEGP45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:56:57 -0400
-Date: Tue, 8 May 2018 00:56:51 +0900
-From: Masami Hiramatsu <mhiramat@kernel.org>
-To: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: oleg@redhat.com, peterz@infradead.org, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, acme@kernel.org, ananth@linux.vnet.ibm.com,
-        akpm@linux-foundation.org, alexander.shishkin@linux.intel.com,
-        alexis.berlemont@gmail.com, corbet@lwn.net, dan.j.williams@intel.com,
-        jolsa@redhat.com, kan.liang@intel.com, kjlx@templeofstupid.com,
-        kstewart@linuxfoundation.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        milian.wolff@kdab.com, mingo@redhat.com, namhyung@kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com, tglx@linutronix.de,
-        yao.jin@linux.intel.com, fengguang.wu@intel.com, jglisse@redhat.com
-Subject: Re: [PATCH v3 6/9] trace_uprobe: Support SDT markers having
- reference count (semaphore)
-Message-Id: <20180508005651.45553d3cf72521481d16b801@kernel.org>
-In-Reply-To: <f3d066d2-a85a-bd21-d4f9-fc27e59135df@linux.ibm.com>
-References: <20180417043244.7501-1-ravi.bangoria@linux.vnet.ibm.com>
-        <20180417043244.7501-7-ravi.bangoria@linux.vnet.ibm.com>
-        <20180504134816.8633a157dd036489d9b0f1db@kernel.org>
-        <206e4a16-ae21-7da3-f752-853dc2f51947@linux.ibm.com>
-        <f3d066d2-a85a-bd21-d4f9-fc27e59135df@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752437AbeEGQAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 12:00:30 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,374,1520924400";
+   d="scan'208";a="39903617"
+Date: Mon, 7 May 2018 10:02:12 -0600
+From: Keith Busch <keith.busch@linux.intel.com>
+To: Bharat Kumar Gogada <bharatku@xilinx.com>
+Cc: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "keith.busch@intel.com" <keith.busch@intel.com>,
+        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>
+Subject: Re: NVMe Poll CQ on timeout
+Message-ID: <20180507160211.GE20686@localhost.localdomain>
+References: <BLUPR0201MB1505A10C31E4E3A3BDF7BDBAA58E0@BLUPR0201MB1505.namprd02.prod.outlook.com>
+ <BLUPR0201MB1505FC0425F87A1A8E6E50DAA59B0@BLUPR0201MB1505.namprd02.prod.outlook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BLUPR0201MB1505FC0425F87A1A8E6E50DAA59B0@BLUPR0201MB1505.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 May 2018 13:51:21 +0530
-Ravi Bangoria <ravi.bangoria@linux.ibm.com> wrote:
-
-> Hi Masami,
+On Mon, May 07, 2018 at 06:57:54AM +0000, Bharat Kumar Gogada wrote:
+> Hi,
 > 
-> On 05/04/2018 07:51 PM, Ravi Bangoria wrote:
-> >
-> >>> +}
-> >>> +
-> >>> +static void sdt_increment_ref_ctr(struct trace_uprobe *tu)
-> >>> +{
-> >>> +	struct uprobe_map_info *info;
-> >>> +
-> >>> +	uprobe_down_write_dup_mmap();
-> >>> +	info = uprobe_build_map_info(tu->inode->i_mapping,
-> >>> +				tu->ref_ctr_offset, false);
-> >>> +	if (IS_ERR(info))
-> >>> +		goto out;
-> >>> +
-> >>> +	while (info) {
-> >>> +		down_write(&info->mm->mmap_sem);
-> >>> +
-> >>> +		if (sdt_find_vma(tu, info->mm, info->vaddr))
-> >>> +			sdt_update_ref_ctr(info->mm, info->vaddr, 1);
-> >> Don't you have to handle the error to map pages here?
-> > Correct.. I think, I've to feedback error code to probe_event_{enable|disable}
-> > and handler failure there.
-> 
-> I looked at this. Actually, It looks difficult to feedback errors to
-> probe_event_{enable|disable}, esp. in the mmap() case.
+> Does anyone have any inputs ?
 
-Hmm, can't you roll that back if sdt_increment_ref_ctr() fails?
-If so, how does sdt_decrement_ref_ctr() work in that case?
+Hi,
 
-> Is it fine if we just warn sdt_update_ref_ctr() failures in dmesg? I'm
-> doing this in [PATCH 7]. (Though, it makes more sense to do that in
-> [PATCH 6], will change it in next version).
+I recall we did observe issues like this when legacy interrupts were
+used, so the driver does try to use MSI/MSIx if possible.
 
-Of course we need to warn it at least, but the best is rejecting to
-enable it.
+The nvme_timeout() is called from the block layer when the driver didn't
+provide a completion within the timeout (default is 30 seconds for IO,
+60 seconds for admin).
 
-> 
-> Any better ideas?
-> 
-> BTW, same issue exists for normal uprobe. If uprobe_mmap() fails,
-> there is no feedback to trace_uprobe and no warnigns in dmesg as
-> well !! There was a patch by Naveen to warn such failures in dmesg
-> but that didn't go in: https://lkml.org/lkml/2017/9/22/155
+This message you're seeing means the device did indeed post a completion
+queue entry for the timed out command, but the driver believes it was
+never notified via interrupt to check the completion queue.
 
-Oops, that's a real bug. It seems the ball is in Naveen's hand.
-Naveen, could you update it according to Oleg's comment, and resend it?
+This means either one of two things happened: the interrupt was raised
+prior to the completion queue entry being written, or the interrupt was
+never raised in the first place.
 
-> 
-> Also, I'll add a check in sdt_update_ref_ctr() to make sure reference
-> counter never goes to negative incase increment fails but decrement
-> succeeds. OTOH, if increment succeeds but decrement fails, the
-> counter remains >0 but there is no harm as such, except we will
-> execute some unnecessary code.
+It might be possible to determine which if you can read the values from
+/proc/irq/<irq#>/spurious and see if the "last_unhandled" aligns with
+the expected completion time.
 
-I see. Please carefully clarify whether such case is kernel's bug or not.
-I would like to know what the condition causes that uneven behavior.
+Thanks,
+Keith
 
-Thank you,
-
-> 
-> Thanks,
-> Ravi
-> 
-
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+> > Hi,
+> > 
+> > We are testing NVMe cards on ARM64 platform, the card uses legacy
+> > interrupts.
+> > Intermittently we are hitting following case in drivers/nvme/host/pci.c
+> >        /*
+> >          * Did we miss an interrupt?
+> >          */
+> >         if (__nvme_poll(nvmeq, req->tag)) {
+> >                 dev_warn(dev->ctrl.device,
+> >                          "I/O %d QID %d timeout, completion polled\n",
+> >                          req->tag, nvmeq->qid);
+> >                 return BLK_EH_HANDLED;
+> >         }
+> > 
+> > Can anyone tell when does nvme_timeout gets invoked ?
+> > What does "Did we miss an interrupt mean" ? Does it mean host missing to
+> > service a interrupt raised by EP card ?
+> > 
+> > Regards,
+> > Bharat
