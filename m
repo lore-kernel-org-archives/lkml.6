@@ -1,171 +1,150 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752028AbeEGIMG convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:12:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39524 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751988AbeEGIMD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:12:03 -0400
-Date: Mon, 07 May 2018 13:41:53 +0530
-From: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH v7 00/16] tracing: probeevent: Improve fetcharg features
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-trace-users@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, shuah@kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-References: <152465856498.26224.16969986455942749517.stgit@devbox>
-        <20180503181137.6d82d897@gandalf.local.home>
-        <20180505004828.9b75b6802472f09b0d2de5b8@kernel.org>
-        <20180504120642.354cdd1f@gandalf.local.home>
-        <20180505113803.45700179a93091b114ec6984@kernel.org>
-        <1525506231.y43xvmd3yw.naveen@linux.ibm.com>
-        <20180505233211.ecad929b13461f1e5f6427d2@kernel.org>
-In-Reply-To: <20180505233211.ecad929b13461f1e5f6427d2@kernel.org>
-User-Agent: astroid/0.11.1 (https://github.com/astroidmail/astroid)
+        id S1752057AbeEGIMO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:12:14 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56404 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751988AbeEGIMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 04:12:09 -0400
+Date: Mon, 7 May 2018 10:12:03 +0200
+From: Jiri Olsa <jolsa@redhat.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>, kan.liang@linux.intel.com
+Subject: Re: [PATCH] perf tools: Fix parser for empty pmu terms case
+Message-ID: <20180507081203.GA26443@krava>
+References: <20180425160008.3407-1-acme@kernel.org>
+ <20180425160008.3407-6-acme@kernel.org>
+ <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
+ <20180503103717.GA14776@krava>
+ <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
+ <20180504160228.GA25229@krava>
+ <87a7tdphyo.fsf@linux.intel.com>
+ <20180506142830.GA18865@krava>
+ <97dc8045-0136-0c9b-8413-1957ceeae5d3@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 18050708-0020-0000-0000-00000419D5E6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050708-0021-0000-0000-000042AF071F
-Message-Id: <1525680222.8nou0tzkkt.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805070085
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <97dc8045-0136-0c9b-8413-1957ceeae5d3@intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masami Hiramatsu wrote:
-> On Sat, 05 May 2018 13:16:04 +0530
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
+On Mon, May 07, 2018 at 10:21:42AM +0300, Adrian Hunter wrote:
+> On 06/05/18 17:28, Jiri Olsa wrote:
+> > On Sat, May 05, 2018 at 08:43:11PM -0700, Andi Kleen wrote:
+> >> Jiri Olsa <jolsa@redhat.com> writes:
+> >>
+> >> Please fix this quickly, PT is currently totally non functional in Linus
+> >> mainline.
+> > 
+> > attached.. Kan, could you please test it wrt your latest changes?
+> > 
+> > thanks,
+> > jirka
+> > 
+> > 
+> > ---
+> > Adrian reported broken event parsing for Intel PT:
+> > 
+> >   $ perf record -e intel_pt//u uname
+> >   event syntax error: 'intel_pt//u'
+> >                                \___ parser error
+> >   Run 'perf list' for a list of valid events
+> > 
+> > It's caused by recent change in parsing grammar
+> > (see Fixes: for commit).
+> > 
+> > Adding special rule with empty terms config to handle
+> > the reported case and moving the common rule code into
+> > new parse_events_pmu function.
 > 
->> Masami Hiramatsu wrote:
->> > On Fri, 4 May 2018 12:06:42 -0400
->> > Steven Rostedt <rostedt@goodmis.org> wrote:
->> > 
->> >> On Sat, 5 May 2018 00:48:28 +0900
->> >> Masami Hiramatsu <mhiramat@kernel.org> wrote:
->> >> 
->> >> > > Also, when looking at the kprobe code, I was looking at this 
->> >> > > function:
->> >> > >   
->> >> > > > /* Ftrace callback handler for kprobes -- called under preepmt disabed */
->> >> > > > void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
->> >> > > > 			   struct ftrace_ops *ops, struct pt_regs *regs)
->> >> > > > {
->> >> > > > 	struct kprobe *p;
->> >> > > > 	struct kprobe_ctlblk *kcb;
->> >> > > > 
->> >> > > > 	/* Preempt is disabled by ftrace */
->> >> > > > 	p = get_kprobe((kprobe_opcode_t *)ip);
->> >> > > > 	if (unlikely(!p) || kprobe_disabled(p))
->> >> > > > 		return;
->> >> > > > 
->> >> > > > 	kcb = get_kprobe_ctlblk();
->> >> > > > 	if (kprobe_running()) {
->> >> > > > 		kprobes_inc_nmissed_count(p);
->> >> > > > 	} else {
->> >> > > > 		unsigned long orig_ip = regs->ip;
->> >> > > > 		/* Kprobe handler expects regs->ip = ip + 1 as breakpoint hit */
->> >> > > > 		regs->ip = ip + sizeof(kprobe_opcode_t);
->> >> > > > 
->> >> > > > 		/* To emulate trap based kprobes, preempt_disable here */
->> >> > > > 		preempt_disable();
->> >> > > > 		__this_cpu_write(current_kprobe, p);
->> >> > > > 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> >> > > > 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
->> >> > > > 			__skip_singlestep(p, regs, kcb, orig_ip);
->> >> > > > 			preempt_enable_no_resched();  
->> >> > > 
->> >> > > This preemption disabling and enabling looks rather strange. Looking at
->> >> > > git blame, it appears this was added for jprobes. Can we remove it now
->> >> > > that jprobes is going away?  
->> >> > 
->> >> > No, that is not for jprobes but for compatibility with kprobe's user
->> >> > handler. Since this transformation is done silently, user can not
->> >> > change their handler for ftrace case. So we need to keep this condition
->> >> > same as original kprobes.
->> >> > 
->> >> > And anyway, for using smp_processor_id() for accessing per-cpu,
->> >> > we should disable preemption, correct?
->> >> 
->> >> But as stated at the start of the function:
->> >> 
->> >>  /* Preempt is disabled by ftrace */
->> > 
->> > Ah, yes. So this is only for the jprobes.
->> > 
->> >> 
->> >> 
->> >> The reason I ask, is that we have for this function:
->> >> 
->> >> 		/* To emulate trap based kprobes, preempt_disable here */
->> >> 		preempt_disable();
->> >> 		__this_cpu_write(current_kprobe, p);
->> >> 		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> >> 		if (!p->pre_handler || !p->pre_handler(p, regs)) {
->> >> 			__skip_singlestep(p, regs, kcb, orig_ip);
->> >> 			preempt_enable_no_resched();
->> >> 		}
->> >> 
->> >> And in arch/x86/kernel/kprobes/core.c we have:
->> >> 
->> >> 	preempt_disable();
->> >> 
->> >> 	kcb = get_kprobe_ctlblk();
->> >> 	p = get_kprobe(addr);
->> >> 
->> >> 	if (p) {
->> >> 		if (kprobe_running()) {
->> >> 			if (reenter_kprobe(p, regs, kcb))
->> >> 				return 1;
->> >> 		} else {
->> >> 			set_current_kprobe(p, regs, kcb);
->> >> 			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> >> 
->> >> 			/*
->> >> 			 * If we have no pre-handler or it returned 0, we
->> >> 			 * continue with normal processing.  If we have a
->> >> 			 * pre-handler and it returned non-zero, it prepped
->> >> 			 * for calling the break_handler below on re-entry
->> >> 			 * for jprobe processing, so get out doing nothing
->> >> 			 * more here.
->> >> 			 */
->> >> 			if (!p->pre_handler || !p->pre_handler(p, regs))
->> >> 				setup_singlestep(p, regs, kcb, 0);
->> >> 			return 1;
->> >> 
->> >> 
->> >> Which is why I thought it was for jprobes. I'm a bit confused about
->> >> where preemption is enabled again.
->> > 
->> > You're right. So I would like to remove it with x86 jprobe support
->> > code to avoid inconsistency.
->> 
->> I didn't understand that. Which code are you planning to remove? Can you 
->> please elaborate? I thought we still need to disable preemption in the 
->> ftrace handler.
+> Hi
 > 
-> Yes, kprobe_ftrace_handler itself must be run under preempt disabled
-> because it depends on a per-cpu variable. What I will remove is the
-> redundant preempt disable/enable_noresched (unbalanced) pair in the
-> kprobe_ftrace_handler, and jprobe x86 ports which is no more used.
+> Can you explain why that is needed instead of just changing the grammar e.g.
 
-Won't that break out-of-tree users depending on returning a non-zero 
-value to handle preemption differently? You seem to have alluded to it 
-earlier in the mail chain above where you said that this is not just for 
-jprobes (though it was added for jprobes as the main use case).
+well, for one, mine is working ;-)
 
-- Naveen
+[jolsa@krava perf]$ sudo ./perf record -e intel_pt//u uname
+event syntax error: 'intel_pt//u'
+                              \___ parser error
+Run 'perf list' for a list of valid events
+
+ Usage: perf record [<options>] [<command>]
+    or: perf record [<options>] -- <command> [<options>]
+
+    -e, --event <event>   event selector. use 'perf list' to list available events
+
+
+but yep, it's better solution.. with extra changes like below
+
+jirka
+
+
+---
+diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
+index 47f6399a309a..155d2570274f 100644
+--- a/tools/perf/util/parse-events.y
++++ b/tools/perf/util/parse-events.y
+@@ -73,6 +73,7 @@ static void inc_group_count(struct list_head *list,
+ %type <num> value_sym
+ %type <head> event_config
+ %type <head> opt_event_config
++%type <head> opt_pmu_config
+ %type <term> event_term
+ %type <head> event_pmu
+ %type <head> event_legacy_symbol
+@@ -224,15 +225,15 @@ event_def: event_pmu |
+ 	   event_bpf_file
+ 
+ event_pmu:
+-PE_NAME '/' event_config '/'
++PE_NAME opt_pmu_config
+ {
+ 	struct list_head *list, *orig_terms, *terms;
+ 
+-	if (parse_events_copy_term_list($3, &orig_terms))
++	if (parse_events_copy_term_list($2, &orig_terms))
+ 		YYABORT;
+ 
+ 	ALLOC_LIST(list);
+-	if (parse_events_add_pmu(_parse_state, list, $1, $3, false, false)) {
++	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
+ 		struct perf_pmu *pmu = NULL;
+ 		int ok = 0;
+ 		char *pattern;
+@@ -262,7 +263,7 @@ PE_NAME '/' event_config '/'
+ 		if (!ok)
+ 			YYABORT;
+ 	}
+-	parse_events_terms__delete($3);
++	parse_events_terms__delete($2);
+ 	parse_events_terms__delete(orig_terms);
+ 	$$ = list;
+ }
+@@ -496,6 +497,17 @@ opt_event_config:
+ 	$$ = NULL;
+ }
+ 
++opt_pmu_config:
++'/' event_config '/'
++{
++	$$ = $2;
++}
++|
++'/' '/'
++{
++	$$ = NULL;
++}
++
+ start_terms: event_config
+ {
+ 	struct parse_events_state *parse_state = _parse_state;
