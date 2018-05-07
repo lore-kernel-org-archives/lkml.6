@@ -1,56 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752607AbeEGRLZ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 13:11:25 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:41771 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752523AbeEGRLX (ORCPT
+        id S1752457AbeEGRPB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 13:15:01 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:40540 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752020AbeEGRPA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 13:11:23 -0400
-X-Google-Smtp-Source: AB8JxZqL8zGc6qeUmvsW08zLvpqxk06lMZJoHGzJnMG6oefElQbQsnvsAh2zxGzjjrD0Rkm8Vm7bzg==
-Date: Mon, 7 May 2018 12:11:21 -0500
-From: Rob Herring <robh@kernel.org>
-To: Amit Nischal <anischal@codeaurora.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Odelu Kukatla <okukatla@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk-owner@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
-Message-ID: <20180507171121.GA22656@rob-hp-laptop>
-References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
- <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
- <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org>
+        Mon, 7 May 2018 13:15:00 -0400
+X-Google-Smtp-Source: AB8JxZoeAkMmmr62IdCI0KIhbOjbC2SKWRsE2wgbdlt/Rf/vStWJ9fR1jW/LiZ21fu7+CHJ6V8P4ow==
+Subject: Re: support for non-uniform SPI NOR flash memories
+To: Tudor Ambarus <tudor.ambarus@microchip.com>,
+        Cyrille Pitchen <cyrille.pitchen@microchip.com>, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        richard@nod.at
+Cc: linux-mtd@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <5bc6ab91-9ae3-28b1-2110-452f58fee8c7@microchip.com>
+From: Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <e9218dcf-dce6-a009-70ec-33d0cac5bc4d@gmail.com>
+Date: Mon, 7 May 2018 19:14:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <5bc6ab91-9ae3-28b1-2110-452f58fee8c7@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 04:16:53PM +0530, Amit Nischal wrote:
-> On 2018-05-04 22:01, Stephen Boyd wrote:
-> > Quoting Amit Nischal (2018-05-03 05:35:23)
-> > > Changes in v1:
-> > >    https://lkml.org/lkml/2018/4/24/545
-> > > Addressed below review comments given by Rob
-> > > - Change the compatible property as per '<vendor>,<soc>-<block>'
-> > > format.
-> > > - Add header definitions for resets and power-domain cells.
-> > 
-> > You didn't add any reset definitions though?
+On 05/07/2018 07:11 PM, Tudor Ambarus wrote:
+> Hi, Marek, all,
 > 
-> We haven't added the reset definitions for videocc as there is no
-> video reset client.
+> I'm studying Cyrille's patch for non-uniform SPI NOR flash memories:
+> https://lkml.org/lkml/2017/4/15/70.
+> 
+> It's not clear to me whether interleaved regions are possible or not. I
+> read the JEDEC Standard No. 216B and it looks like each region is well
+> delimited, there is no such thing as interleaved regions (see section
+> 6.5):
+> 
+> "When there is more than one sector size in a device, each contiguous
+> group of sectors, that are of the same size, and support the same erase
+> types, is called a region."
+> 
+> If interleaved regions are not possible, the code can be simplified. Do
+> I miss something, is there anything else that I should read in this
+> regard?
+> 
+> Apart of how we represent the regions, there is some improvement that we
+> can do. When in a region, I see that is preferred the biggest possible
+> erase type that meets all the conditions. If so, we can iterate from the
+> biggest erase type to the smallest, and when find one that meets all the
+> conditions, break the loop.
 
-So? You don't know what resets there are?
+There are flashes which have larger erase blocks at the beginning/end
+and then there are flashes with multiple dies, which support die-wide
+erase and chip-wide erase . Not all flashes support everything though.
 
-Rob
+But indeed there are -- to my knowledge -- no flashes with interleaved
+erase blocks. And yes, there could be improvement in erasing exactly the
+required chunk of flash with a fitting opcode :)
+
+-- 
+Best regards,
+Marek Vasut
