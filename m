@@ -1,109 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753412AbeEGVCK (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:02:10 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49632 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753300AbeEGU7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:59:22 -0400
-From: Waiman Long <longman@redhat.com>
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v7 2/4] ipc: IPCMNI limit check for semmni
-Date: Mon,  7 May 2018 16:59:10 -0400
-Message-Id: <1525726752-29281-3-git-send-email-longman@redhat.com>
-In-Reply-To: <1525726752-29281-1-git-send-email-longman@redhat.com>
-References: <1525726752-29281-1-git-send-email-longman@redhat.com>
+        id S1753478AbeEGVCa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:02:30 -0400
+Received: from muru.com ([72.249.23.125]:40964 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753031AbeEGVC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 17:02:28 -0400
+Date: Mon, 7 May 2018 14:02:25 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: Christina Quast <cquast@baylibre.com>
+Cc: linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Oleg Kokorin <ole2mail@mail.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/2] ARM: dts: am335x: Replaced register offsets with
+ defines
+Message-ID: <20180507210225.GS98604@atomide.com>
+References: <20180505085921.5513-1-cquast@baylibre.com>
+ <20180505085921.5513-3-cquast@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180505085921.5513-3-cquast@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For SysV semaphores, the semmni value is the last part of the 4-element
-sem number array. To make semmni behave in a similar way to msgmni and
-shmmni, we can't directly use the _minmax handler. Instead, a special
-sem specific handler is added to check the last argument to make sure
-that it is limited to the [0, IPCMNI] range. An error will be returned
-if this is not the case.
+Hi,
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- ipc/ipc_sysctl.c | 23 ++++++++++++++++++++++-
- ipc/util.h       |  9 +++++++++
- 2 files changed, 31 insertions(+), 1 deletion(-)
+Thanks for updating these, adding Linus Walleij to Cc too.
 
-diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
-index f87cb29..49f9bf4 100644
---- a/ipc/ipc_sysctl.c
-+++ b/ipc/ipc_sysctl.c
-@@ -88,12 +88,33 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 	return proc_dointvec_minmax(&ipc_table, write, buffer, lenp, ppos);
- }
- 
-+static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
-+	void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret, semmni;
-+	struct ipc_namespace *ns = current->nsproxy->ipc_ns;
-+
-+	semmni = ns->sem_ctls[3];
-+	ret = proc_ipc_dointvec(table, write, buffer, lenp, ppos);
-+
-+	if (!ret)
-+		ret = sem_check_semmni(current->nsproxy->ipc_ns);
-+
-+	/*
-+	 * Reset the semmni value if an error happens.
-+	 */
-+	if (ret)
-+		ns->sem_ctls[3] = semmni;
-+	return ret;
-+}
-+
- #else
- #define proc_ipc_doulongvec_minmax NULL
- #define proc_ipc_dointvec	   NULL
- #define proc_ipc_dointvec_minmax   NULL
- #define proc_ipc_dointvec_minmax_orphans   NULL
- #define proc_ipc_auto_msgmni	   NULL
-+#define proc_ipc_sem_dointvec	   NULL
- #endif
- 
- static int zero;
-@@ -175,7 +196,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
- 		.data		= &init_ipc_ns.sem_ctls,
- 		.maxlen		= 4*sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_ipc_dointvec,
-+		.proc_handler	= proc_ipc_sem_dointvec,
- 	},
- #ifdef CONFIG_CHECKPOINT_RESTORE
- 	{
-diff --git a/ipc/util.h b/ipc/util.h
-index acc5159..8b413f1 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -218,6 +218,15 @@ int ipcget(struct ipc_namespace *ns, struct ipc_ids *ids,
- void free_ipcs(struct ipc_namespace *ns, struct ipc_ids *ids,
- 		void (*free)(struct ipc_namespace *, struct kern_ipc_perm *));
- 
-+static inline int sem_check_semmni(struct ipc_namespace *ns) {
-+	/*
-+	 * Check semmni range [0, IPCMNI]
-+	 * semmni is the last element of sem_ctls[4] array
-+	 */
-+	return ((ns->sem_ctls[3] < 0) || (ns->sem_ctls[3] > IPCMNI))
-+		? -ERANGE : 0;
-+}
-+
- #ifdef CONFIG_COMPAT
- #include <linux/compat.h>
- struct compat_ipc_perm {
--- 
-1.8.3.1
+* Christina Quast <cquast@baylibre.com> [180505 09:02]:
+> The defines are taken from dt-bindings/pinctrl/am335x.h
+
+If we're going to replace all of these, I'd go a step further
+where we make pinctrl-single use the newish #pinctrl-cells but
+set it to 2 instead of 1. Then set the pull flags as one value
+using the generic pinctrl defines and the second value being
+the selected mux mode.
+
+Then the offset really should be from the padconf mux area,
+not from the control module base. And then we would just have
+a new macro for these being:
+
+AM33XX_PINCTRL(AM335X_PIN_UART1_RXD, PIN_INPUT, MUX_MODE0)
+
+Where the PIN_INPUT ideally would be a Linux generic define.
+
+Otherwise we'd be churning these same files over and
+over.
+
+Regards,
+
+Tony
