@@ -1,149 +1,158 @@
 Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-4101065-1525230330-2-5919127178813985769
+X-Cyrus-Session-Id: sloti22d1t05-1604446-1525727584-2-4821552389221175510
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES enroda, BAYES_USED global,
-  SA_VERSION 3.4.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES unknown, BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: 
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='UTF-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-api-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525230329; b=Br15Lwl5Ui2lpFauwQkWaer/eyIHbxSEd4bKPd8o7HfbkxhgLW
-    Pbe6CeWutE2oEXAefUfqmjuZT9BDsA/Mbda8nS/NfbtvhhGazlSkoersUx+hXx5Z
-    ZxQEzcpcC6pOSaMewu63e5pRIDGPWY54+/uWVuN6mdJ9TbkvcA6d2UPKwCFr2epM
-    ECkkTMnv/yd8BavNzT26YDagtBculcAsfAUSMfFmGe4XlwnMJlcRnP3je3jdAXy9
-    gzIdYFielzgcxda0cFT6dp5pDEPXx5dFVThVFaYE8nx326kdYkVa6AK9shKhXVDP
-    EM35KyD3bO8/QORM9FRZ3F7K6y82s4HPIGFA==
+    1525727583; b=cbCUcbax2dX60CsyfDYUyBiATMPDMlNOllZO6ESq+q4A2X5XeR
+    +CKmO8wKZQ++hPwWb+8EcxWEW2H5iM0yG5MtaS1UZVvoerX7ZJQUttMmzhHuLjbM
+    DRJr3ypgQ9nedC7isRpEVCplk0+u9V6Dy4YByVcpC0Pcm4f0Agf/yDhHn8tdI2fq
+    K1fnGsi6i1Za1SRBS5JVf1HGy+9V1ae5aYiPOZpX1lr2ViEOCXiafFseKZA4Tu09
+    gtIwegU9DdRUNikAsfzYavRa9BW4MRUDoXNyFe8oumfgZIAIODyMzmmIwluzXQWY
+    RpW6UZonVXa8zBVMEDIb40gAUWJDqV8J0Bww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525230329; bh=
-    sgwAy2Iq88n6/Gj5QWnjc8WgSVzrNW9JLCSpkeiPSSM=; b=cuv5zbbDQmvfiZMf
-    UaybIyG11f0uQEsvaZn3xFIiozt0vFhbUQrB1ZjnMd5G+F9P4q1MdWNkgBvyRydU
-    DP2TPdXdV1TMiFk0oSY7X0KFlwn34ORTQYttCS+jxHYOE+/Y9shykVJ4vvyYr0v0
-    7pqPZ2I+sS3x1upC9WHXIMitDgERTZy4TeapdTnz768NEysa4FRpUZyKMd0FhrH0
-    PB/uy+xNTxtp36wCkg5kG1IpBYCDa708x2v1XzEsE7NjNJJrp3sXXBaf3Zply/fQ
-    liMpZDpHeX5fozfW8633E4jUwo36QSSL+VSDb3m2dtIpoUGytxO7LWesgFhFuWyU
-    tpQp5g==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    messagingengine.com; h=mime-version:in-reply-to:references:from
+    :date:message-id:subject:to:cc:content-type:sender:list-id; s=
+    fm2; t=1525727583; bh=I2QGiVo8w60ffx+z6SOk1fRMBiDIxC13GB1WY9O6W1
+    Q=; b=OAwjDtVkFvvNc/lKDAJ92binljxRz3EigjZLnpSDG6wVnviHzKttt+Biw+
+    TywH5NTuJENpwlsbYPGs0iS4NPDVJ3IMO2ExpQgWjWWeob4HLIISxrTPQZS2k3W8
+    ab4HxaaHLidSO3qy2h8RdN36+clc3BeajLTIvbVpeqFhaKYo6TO3XL4O17TPPoGy
+    cWHR+kVKsFoXZWeUVq5m5RSSJmxB+dfqRY1b7S+/eQBGlGMBFLOtnxscWp5WNmi8
+    Zb+CEst6+3zQt8DG30LwQCuyg/oCvhQDQUnYVa6FLPWDYCm8aYt3WeeyX63DRvOR
+    Hn/5cYSKg2d47xYE31wRf0aFJ+kg==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+    header.d=kernel.org header.i=@kernel.org header.b=evSbalSF x-bits=1024
+    x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx3.messagingengine.com;
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
+    dkim=fail (body has been altered, 1024-bit rsa key sha256)
+      header.d=kernel.org header.i=@kernel.org header.b=evSbalSF x-bits=1024
+      x-keytype=rsa x-algorithm=sha256 x-selector=default;
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
+    x-aligned-from=orgdomain_pass (Domain org match);
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=intel.com header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfODQIdLyW6qt/NCrCxtE2uix5RdGXI77iTxBPxclZks1xUJXOv6JTg2ecWIuY5FxDU23WhzrotM5ibPVhqGy0B5+Mk79G/v1eMVil0wHShafVxUf20Ds
-    JOZzlzeqlbjsEF5r9aTIJhdfu8Fi4/G7D8KC9v996BQg1EWqi/2cUi12NdeJe6TkyXJVuJCs7CbTI1OXypZps4bRUUz76qg/5UhIpMrhVR1RprDA1OM9tSQr
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=QyXUC8HyAAAA:8
-    a=VwQbUJbxAAAA:8 a=94gbBRZrzIZMrSAYxZQA:9 a=x8gzFH9gYPwA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfPwHHkwkusxlGvT2h64dRQCb38qRTxtUR9UCZ59xJLMJRqWtu/Ozbt6L2EY/NCyp1tH/gn5OGFivGXyH6kUXbJA7d5msf0xdR0dJbSS0ezn/xU9j7sYL
+    ecDlHlkMkqLzreEzIEGl4faGxfPGspYCW360AOQQN/OXA1dzwm7Vd3G0kI7bOTW5KXuehIRIV54NYDji6Son7BeGGmflGf/MypSHXJP55mhv5yy6x8d9boBs
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
+    a=QyXUC8HyAAAA:8 a=VwQbUJbxAAAA:8 a=EVFJ7BQ72y2q6q7T_LYA:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751761AbeEBDE7 (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 1 May 2018 23:04:59 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63852 "EHLO mga12.intel.com"
+        id S1752790AbeEGVNA (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 7 May 2018 17:13:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751514AbeEBDCc (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Tue, 1 May 2018 23:02:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,353,1520924400";
-   d="scan'208";a="46058521"
-From: Wu Hao <hao.wu@intel.com>
-To: atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: linux-api@vger.kernel.org, luwei.kang@intel.com,
-        yi.z.zhang@intel.com, hao.wu@intel.com
-Subject: [PATCH v5 19/28] fpga: dfl: fme-mgr: add compat_id support
-Date: Wed,  2 May 2018 10:50:22 +0800
-Message-Id: <1525229431-3087-20-git-send-email-hao.wu@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
-References: <1525229431-3087-1-git-send-email-hao.wu@intel.com>
+        id S1752389AbeEGVNA (ORCPT <rfc822;linux-api@vger.kernel.org>);
+        Mon, 7 May 2018 17:13:00 -0400
+X-Google-Smtp-Source: AB8JxZpPXIHiwA5kys9fKWLpcRHxtyhXbS/EwODGVamMARC/dsMajYSOM70vU8jYVzviH0neCZbBCtKggzywhzQ5dGg=
+MIME-Version: 1.0
+In-Reply-To: <1525229431-3087-20-git-send-email-hao.wu@intel.com>
+References: <1525229431-3087-1-git-send-email-hao.wu@intel.com> <1525229431-3087-20-git-send-email-hao.wu@intel.com>
+From: Alan Tull <atull@kernel.org>
+Date: Mon, 7 May 2018 16:12:17 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRjZMnAtFMxka-O+AgMedGrbXNYZsNH7cLx=yJwmhFm=g@mail.gmail.com>
+Message-ID: <CANk1AXRjZMnAtFMxka-O+AgMedGrbXNYZsNH7cLx=yJwmhFm=g@mail.gmail.com>
+Subject: Re: [PATCH v5 19/28] fpga: dfl: fme-mgr: add compat_id support
+To: Wu Hao <hao.wu@intel.com>
+Cc: Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-api-owner@vger.kernel.org
 X-Mailing-List: linux-api@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This patch adds compat_id support to fme manager driver, it
-reads the ID from the hardware register. And it could be used
-for compatibility check before partial reconfiguration.
+On Tue, May 1, 2018 at 9:50 PM, Wu Hao <hao.wu@intel.com> wrote:
 
-Signed-off-by: Wu Hao <hao.wu@intel.com>
----
- drivers/fpga/dfl-fme-mgr.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Hi Hao,
 
-diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
-index 1c5bc5a..afcdb39 100644
---- a/drivers/fpga/dfl-fme-mgr.c
-+++ b/drivers/fpga/dfl-fme-mgr.c
-@@ -272,9 +272,17 @@ static u64 fme_mgr_status(struct fpga_manager *mgr)
- 	.status = fme_mgr_status,
- };
- 
-+static void fme_mgr_get_compat_id(void __iomem *fme_pr,
-+				  struct fpga_compat_id *id)
-+{
-+	id->id_l = readq(fme_pr + FME_PR_INTFC_ID_L);
-+	id->id_h = readq(fme_pr + FME_PR_INTFC_ID_H);
-+}
-+
- static int fme_mgr_probe(struct platform_device *pdev)
- {
- 	struct dfl_fme_mgr_pdata *pdata = dev_get_platdata(&pdev->dev);
-+	struct fpga_compat_id *compat_id;
- 	struct device *dev = &pdev->dev;
- 	struct fme_mgr_priv *priv;
- 	struct fpga_manager *mgr;
-@@ -295,11 +303,18 @@ static int fme_mgr_probe(struct platform_device *pdev)
- 			return PTR_ERR(priv->ioaddr);
- 	}
- 
-+	compat_id = devm_kzalloc(dev, sizeof(*compat_id), GFP_KERNEL);
-+	if (!compat_id)
-+		return -ENOMEM;
-+
-+	fme_mgr_get_compat_id(priv->ioaddr, compat_id);
-+
- 	mgr = fpga_mgr_create(dev, "DFL FME FPGA Manager",
- 			      &fme_mgr_ops, priv);
- 	if (!mgr)
- 		return -ENOMEM;
- 
-+	mgr->compat_id = compat_id;
- 	platform_set_drvdata(pdev, mgr);
- 
- 	ret = fpga_mgr_register(mgr);
--- 
-1.8.3.1
+> This patch adds compat_id support to fme manager driver, it
+> reads the ID from the hardware register. And it could be used
+> for compatibility check before partial reconfiguration.
+>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+Acked-by: Alan Tull <atull@kernel.org>
 
+> ---
+>  drivers/fpga/dfl-fme-mgr.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>
+> diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+> index 1c5bc5a..afcdb39 100644
+> --- a/drivers/fpga/dfl-fme-mgr.c
+> +++ b/drivers/fpga/dfl-fme-mgr.c
+> @@ -272,9 +272,17 @@ static u64 fme_mgr_status(struct fpga_manager *mgr)
+>         .status = fme_mgr_status,
+>  };
+>
+> +static void fme_mgr_get_compat_id(void __iomem *fme_pr,
+> +                                 struct fpga_compat_id *id)
+> +{
+> +       id->id_l = readq(fme_pr + FME_PR_INTFC_ID_L);
+> +       id->id_h = readq(fme_pr + FME_PR_INTFC_ID_H);
+> +}
+> +
+>  static int fme_mgr_probe(struct platform_device *pdev)
+>  {
+>         struct dfl_fme_mgr_pdata *pdata = dev_get_platdata(&pdev->dev);
+> +       struct fpga_compat_id *compat_id;
+>         struct device *dev = &pdev->dev;
+>         struct fme_mgr_priv *priv;
+>         struct fpga_manager *mgr;
+> @@ -295,11 +303,18 @@ static int fme_mgr_probe(struct platform_device *pdev)
+>                         return PTR_ERR(priv->ioaddr);
+>         }
+>
+> +       compat_id = devm_kzalloc(dev, sizeof(*compat_id), GFP_KERNEL);
+> +       if (!compat_id)
+> +               return -ENOMEM;
+> +
+> +       fme_mgr_get_compat_id(priv->ioaddr, compat_id);
+> +
+>         mgr = fpga_mgr_create(dev, "DFL FME FPGA Manager",
+>                               &fme_mgr_ops, priv);
+>         if (!mgr)
+>                 return -ENOMEM;
+>
+> +       mgr->compat_id = compat_id;
+>         platform_set_drvdata(pdev, mgr);
+>
+>         ret = fpga_mgr_register(mgr);
+> --
+> 1.8.3.1
+>
