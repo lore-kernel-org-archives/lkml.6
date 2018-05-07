@@ -1,160 +1,41 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753113AbeEGVpR (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:45:17 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41152 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753051AbeEGVpQ (ORCPT
+        id S1753259AbeEGVpn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:45:43 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41852 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752874AbeEGVpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:45:16 -0400
-X-Google-Smtp-Source: AB8JxZpPqTAAQnlB6hIZFnaBaBd32P6yOpuMRqil4MCr6bS3FvCp3kDF7VaeAfrX9F0dbgWP099L9A==
-Date: Mon, 7 May 2018 14:45:14 -0700
-From: Joel Fernandes <joel@joelfernandes.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-Subject: Re: [PATCH RFC v6 4/5] tracepoint: Make rcuidle tracepoint callers
- use SRCU
-Message-ID: <20180507214514.GA13787@joelaf.mtv.corp.google.com>
-References: <20180507204143.13061-1-joelaf@google.com>
- <20180507204143.13061-5-joelaf@google.com>
- <20180507210801.GZ26088@linux.vnet.ibm.com>
+        Mon, 7 May 2018 17:45:42 -0400
+Date: Tue, 8 May 2018 00:45:40 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: media-device: fix ioctl function types
+Message-ID: <20180507214540.55d5k7xk2ytdqjij@valkosipuli.retiisi.org.uk>
+References: <20180507104509.lq4ep22fm6h53gra@valkosipuli.retiisi.org.uk>
+ <20180507180946.104340-1-samitolvanen@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180507210801.GZ26088@linux.vnet.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180507180946.104340-1-samitolvanen@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 02:08:01PM -0700, Paul E. McKenney wrote:
-> On Mon, May 07, 2018 at 01:41:42PM -0700, Joel Fernandes wrote:
-> > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
-> > 
-> > In recent tests with IRQ on/off tracepoints, a large performance
-> > overhead ~10% is noticed when running hackbench. This is root caused to
-> > calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
-> > tracepoint code. Following a long discussion on the list [1] about this,
-> > we concluded that srcu is a better alternative for use during rcu idle.
-> > Although it does involve extra barriers, its lighter than the sched-rcu
-> > version which has to do additional RCU calls to notify RCU idle about
-> > entry into RCU sections.
-> > 
-> > In this patch, we change the underlying implementation of the
-> > trace_*_rcuidle API to use SRCU. This has shown to improve performance
-> > alot for the high frequency irq enable/disable tracepoints.
-[...]
->> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > ---
-> >  include/linux/tracepoint.h | 46 +++++++++++++++++++++++++++++++-------
-> >  kernel/tracepoint.c        | 15 ++++++++++++-
-> >  2 files changed, 52 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> > index c94f466d57ef..f56f290cf8eb 100644
-> > --- a/include/linux/tracepoint.h
-> > +++ b/include/linux/tracepoint.h
-> > @@ -15,6 +15,7 @@
-> >   */
-> > 
-> >  #include <linux/smp.h>
-> > +#include <linux/srcu.h>
-> >  #include <linux/errno.h>
-> >  #include <linux/types.h>
-> >  #include <linux/cpumask.h>
-> > @@ -33,6 +34,8 @@ struct trace_eval_map {
-> > 
-> >  #define TRACEPOINT_DEFAULT_PRIO	10
-> > 
-> > +extern struct srcu_struct tracepoint_srcu;
-> > +
-> >  extern int
-> >  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
-> >  extern int
-> > @@ -77,6 +80,9 @@ int unregister_tracepoint_module_notifier(struct notifier_block *nb)
-> >   */
-> >  static inline void tracepoint_synchronize_unregister(void)
-> >  {
-> > +#ifdef CONFIG_TRACEPOINTS
-> > +	synchronize_srcu(&tracepoint_srcu);
-> > +#endif
-> >  	synchronize_sched();
-> >  }
-> > 
-> > @@ -129,18 +135,38 @@ extern void syscall_unregfunc(void);
-> >   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
-> >   * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
-> >   */
-> > -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
-> > +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
-> >  	do {								\
-> >  		struct tracepoint_func *it_func_ptr;			\
-> >  		void *it_func;						\
-> >  		void *__data;						\
-> > +		int __maybe_unused idx = 0;				\
-> >  									\
-> >  		if (!(cond))						\
-> >  			return;						\
-> > -		if (rcucheck)						\
-> > -			rcu_irq_enter_irqson();				\
-> > -		rcu_read_lock_sched_notrace();				\
-> > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
-> > +									\
-> > +		/*							\
-> > +		 * For rcuidle callers, use srcu since sched-rcu	\
-> > +		 * doesn't work from the idle path.			\
-> > +		 */							\
-> > +		if (rcuidle) {						\
-> > +			if (in_nmi()) {					\
-> > +				WARN_ON_ONCE(1);			\
-> > +				return; /* no srcu from nmi */		\
-> > +			}						\
-> > +									\
-> > +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-> > +			it_func_ptr =					\
-> > +				srcu_dereference_notrace((tp)->funcs,	\
-> > +						&tracepoint_srcu);	\
-> > +			/* To keep it consistent with !rcuidle path */	\
-> > +			preempt_disable_notrace();			\
-> > +		} else {						\
-> > +			rcu_read_lock_sched_notrace();			\
-> > +			it_func_ptr =					\
-> > +				rcu_dereference_sched((tp)->funcs);	\
-> > +		}							\
-> > +									\
-> >  		if (it_func_ptr) {					\
-> >  			do {						\
-> >  				it_func = (it_func_ptr)->func;		\
-> > @@ -148,9 +174,13 @@ extern void syscall_unregfunc(void);
-> >  				((void(*)(proto))(it_func))(args);	\
-> >  			} while ((++it_func_ptr)->func);		\
-> >  		}							\
-> > -		rcu_read_unlock_sched_notrace();			\
-> > -		if (rcucheck)						\
-> > -			rcu_irq_exit_irqson();				\
-> > +									\
-> > +		if (rcuidle) {						\
+On Mon, May 07, 2018 at 11:09:46AM -0700, Sami Tolvanen wrote:
+> This change fixes function types for media device ioctls to avoid
+> indirect call mismatches with Control-Flow Integrity checking.
 > 
-> Don't we also need an in_nmi() check here in order to avoid unbalanced
-> srcu_read_unlock_notrace() calls?
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 
- The in_nmi() in the lock path should take care of making sure its balanced.
+Kiitos!
 
- The diff the way its formatted appears confusing as Mathieu pointed.
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
- thanks,
-
- - Joel
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
