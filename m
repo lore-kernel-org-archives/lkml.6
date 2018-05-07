@@ -1,95 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752542AbeEGIm6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:42:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752422AbeEGImq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:42:46 -0400
-Date: Mon, 7 May 2018 09:42:41 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Matt Turner <mattst88@gmail.com>
-Cc: linux-mips@linux-mips.org, Arnd Bergmann <arnd@arndb.de>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        linux-alpha <linux-alpha@vger.kernel.org>, linux-arch@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] alpha: Use OPTIMIZE_INLINING instead of
- asm/compiler.h
-Message-ID: <20180507084240.GA26491@jamesdev>
-References: <cover.ebc99f68d5063a817328b9184d747f539800cff0.1523959603.git-series.jhogan@kernel.org>
- <a20761a842efe590da08e835ecc5690a4cf50213.1523959603.git-series.jhogan@kernel.org>
- <CAEdQ38HfabRWgfLTStuZDOz0yjnfMNRc5beRdVcQhFfMi1SFKg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
-Content-Disposition: inline
-In-Reply-To: <CAEdQ38HfabRWgfLTStuZDOz0yjnfMNRc5beRdVcQhFfMi1SFKg@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S1752536AbeEGInS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:43:18 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:58908 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752315AbeEGInN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 04:43:13 -0400
+Message-ID: <1525682589.6049.4.camel@sipsolutions.net>
+Subject: Re: WARNING in kernfs_add_one
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Greg KH <gregkh@linuxfoundation.org>, linux-wireless@vger.kernel.org,
+        Eric Dumazet <eric.dumazet@gmail.com>
+Cc: netdev@vger.kernel.org,
+        syzbot <syzbot+df47f81c226b31d89fb1@syzkaller.appspotmail.com>,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        tj@kernel.org
+Date: Mon, 07 May 2018 10:43:09 +0200
+In-Reply-To: <20180505220721.GA10829@kroah.com> (sfid-20180506_000758_042156_C31EA22A)
+References: <0000000000000390eb056b77596d@google.com>
+         <20180505164041.GD7746@kroah.com>
+         <095bc684-0029-0b2e-5e28-23376174ca02@gmail.com>
+         <20180505220721.GA10829@kroah.com> (sfid-20180506_000758_042156_C31EA22A)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 2018-05-05 at 15:07 -0700, Greg KH wrote:
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > > > syzbot found the following crash on:
 
-On Sun, May 06, 2018 at 12:33:21PM -0700, Matt Turner wrote:
-> On Tue, Apr 17, 2018 at 3:11 AM, James Hogan <jhogan@kernel.org> wrote:
-> > Use CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING and CONFIG_OPTIMIZE_INLINING
-> > instead of undefining the inline macros in the alpha specific
-> > asm/compiler.h. This is to allow asm/compiler.h to become a general
-> > header that can be used for overriding linux/compiler*.h.
-> >
-> > A build of alpha's defconfig on GCC 7.3 before and after this series
-> > (i.e. this commit and "compiler.h: Allow arch-specific overrides" which
-> > includes asm/compiler.h from linux/compiler_types.h) results in the
-> > following size differences, which appear harmless to me:
-> >
-> > $ ./scripts/bloat-o-meter vmlinux.1 vmlinux.2
-> > add/remove: 1/1 grow/shrink: 3/0 up/down: 264/-348 (-84)
-> > Function                                     old     new   delta
-> > cap_bprm_set_creds                          1496    1664    +168
-> > cap_issubset                                   -      68     +68
-> > flex_array_put                               328     344     +16
-> > cap_capset                                   488     500     +12
-> > nonroot_raised_pE.constprop                  348       -    -348
-> > Total: Before=3D5823709, After=3D5823625, chg -0.00%
-> >
-> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: James Hogan <jhogan@kernel.org>
-> > Cc: Richard Henderson <rth@twiddle.net>
-> > Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-> > Cc: Matt Turner <mattst88@gmail.com>
-> > Cc: linux-alpha@vger.kernel.org
->=20
-> Looks fine to me.
->=20
-> Acked-by: Matt Turner <mattst88@gmail.com>
+Maybe it should learn to differentiate warnings, if it's going to set
+panic_on_warn :-)
 
-Thanks
+I get why, but still, at least differentiating in the emails wouldn't be
+bad.
 
->=20
-> Should I take it through the alpha tree?
+> > > > kernfs: ns required in 'ieee80211' for 'phy3'
 
-I'll take all 3 through the MIPS tree if thats okay with you, as its a
-prerequisite to allowing MIPS to override stuff in linux/compiler-gcc.h
-using asm/compiler.h, which is needed to fix build breakage in 4.17.
+Huh. What does that even mean?
 
-Thanks
-James
+> > > > RIP: 0010:kernfs_add_one+0x406/0x4d0 fs/kernfs/dir.c:758
+> > > > RSP: 0018:ffff8801ca9eece0 EFLAGS: 00010286
+> > > > RAX: 000000000000002d RBX: ffffffff87d5cee0 RCX: ffffffff8160ba7d
+> > > > RDX: 0000000000000000 RSI: ffffffff81610731 RDI: ffff8801ca9ee840
+> > > > RBP: ffff8801ca9eed20 R08: ffff8801d9538500 R09: 0000000000000006
+> > > > R10: ffff8801d9538500 R11: 0000000000000000 R12: ffff8801ad1cb6c0
+> > > > R13: ffffffff885da640 R14: 0000000000000020 R15: 0000000000000000
+> > > >  kernfs_create_link+0x112/0x180 fs/kernfs/symlink.c:41
+> > > >  sysfs_do_create_link_sd.isra.2+0x90/0x130 fs/sysfs/symlink.c:43
+> > > >  sysfs_do_create_link fs/sysfs/symlink.c:79 [inline]
+> > > >  sysfs_create_link+0x65/0xc0 fs/sysfs/symlink.c:91
+> > > >  device_add_class_symlinks drivers/base/core.c:1612 [inline]
+> > > >  device_add+0x7a0/0x16d0 drivers/base/core.c:1810
+> > > >  wiphy_register+0x178a/0x2430 net/wireless/core.c:806
+> > > >  ieee80211_register_hw+0x13cd/0x35d0 net/mac80211/main.c:1047
+> > > >  mac80211_hwsim_new_radio+0x1d9b/0x3410
+> > > > drivers/net/wireless/mac80211_hwsim.c:2772
+> > > >  hwsim_new_radio_nl+0x7a7/0xa60 drivers/net/wireless/mac80211_hwsim.c:3246
+> > > >  genl_family_rcv_msg+0x889/0x1120 net/netlink/genetlink.c:599
 
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
+Basically we're creating a new virtual radio, which in turn creates a
+new device, which we have to register.
 
------BEGIN PGP SIGNATURE-----
+Something is going on with the context here that makes sysfs unhappy,
+but TBH I have no idea what.
 
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvARdwAKCRA1zuSGKxAj
-8lBgAQCP2oPVxlMnAfCr0Yo39Uxm60KcRkh2IaN7I4Yy70sTUgD/WjirGCDfJ2kX
-nBSvzFt0+SEPc8JfmbIC+plydOz0LQ4=
-=XudF
------END PGP SIGNATURE-----
-
---4Ckj6UjgE2iN1+kY--
+johannes
