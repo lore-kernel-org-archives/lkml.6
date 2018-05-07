@@ -1,69 +1,135 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753489AbeEGXSF (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 19:18:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60640 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753171AbeEGXSE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 19:18:04 -0400
-Date: Mon, 7 May 2018 16:18:01 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, kbuild-all@01.org,
-        Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, peterz@infradead.org,
-        oleg@redhat.com, viro@zeniv.linux.org.uk, mingo@kernel.org,
-        paulmck@linux.vnet.ibm.com, keescook@chromium.org, riel@redhat.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
-        marcos.souza.org@gmail.com, hoeun.ryu@gmail.com,
-        pasha.tatashin@oracle.com, gs051095@gmail.com, dhowells@redhat.com,
-        rppt@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        Balbir Singh <balbir@linux.vnet.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] memcg: Replace mm->owner with mm->memcg
-Message-Id: <20180507161801.2641b71f63158839b9c528f3@linux-foundation.org>
-In-Reply-To: <201805052304.9QOZSH4V%fengguang.wu@intel.com>
-References: <87lgd1zww0.fsf_-_@xmission.com>
-        <201805052304.9QOZSH4V%fengguang.wu@intel.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1753510AbeEGXUd (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 19:20:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752966AbeEGXUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 19:20:31 -0400
+Date: Mon, 7 May 2018 18:20:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v4 06/14] PCI/P2PDMA: Add P2P DMA driver writer's
+ documentation
+Message-ID: <20180507232029.GH161390@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180423233046.21476-7-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180423233046.21476-7-logang@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 6 May 2018 00:54:48 +0800 kbuild test robot <lkp@intel.com> wrote:
+On Mon, Apr 23, 2018 at 05:30:38PM -0600, Logan Gunthorpe wrote:
+> Add a restructured text file describing how to write drivers
+> with support for P2P DMA transactions. The document describes
+> how to use the APIs that were added in the previous few
+> commits.
+> 
+> Also adds an index for the PCI documentation tree even though this
+> is the only PCI document that has been converted to restructured text
+> at this time.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  Documentation/PCI/index.rst             |  14 +++
+>  Documentation/driver-api/pci/index.rst  |   1 +
+>  Documentation/driver-api/pci/p2pdma.rst | 166 ++++++++++++++++++++++++++++++++
+>  Documentation/index.rst                 |   3 +-
+>  4 files changed, 183 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/PCI/index.rst
+>  create mode 100644 Documentation/driver-api/pci/p2pdma.rst
+> 
+> diff --git a/Documentation/PCI/index.rst b/Documentation/PCI/index.rst
+> new file mode 100644
+> index 000000000000..2fdc4b3c291d
+> --- /dev/null
+> +++ b/Documentation/PCI/index.rst
+> @@ -0,0 +1,14 @@
+> +==================================
+> +Linux PCI Driver Developer's Guide
+> +==================================
+> +
+> +.. toctree::
+> +
+> +   p2pdma
+> +
+> +.. only::  subproject and html
+> +
+> +   Indices
+> +   =======
+> +
+> +   * :ref:`genindex`
+> diff --git a/Documentation/driver-api/pci/index.rst b/Documentation/driver-api/pci/index.rst
+> index 03b57cbf8cc2..d12eeafbfc90 100644
+> --- a/Documentation/driver-api/pci/index.rst
+> +++ b/Documentation/driver-api/pci/index.rst
+> @@ -10,6 +10,7 @@ The Linux PCI driver implementer's API guide
+>     :maxdepth: 2
+>  
+>     pci
+> +   p2pdma
+>  
+>  .. only::  subproject and html
+>  
+> diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
+> new file mode 100644
+> index 000000000000..49a512c405b2
+> --- /dev/null
+> +++ b/Documentation/driver-api/pci/p2pdma.rst
+> @@ -0,0 +1,166 @@
+> +============================
+> +PCI Peer-to-Peer DMA Support
+> +============================
+> +
+> +The PCI bus has pretty decent support for performing DMA transfers
+> +between two endpoints on the bus. This type of transaction is
 
-> Hi Eric,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.17-rc3]
-> [cannot apply to next-20180504]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Eric-W-Biederman/memcg-Replace-mm-owner-with-mm-memcg/20180503-120054
-> config: xtensa-nommu_kc705_defconfig (attached as .config)
-> compiler: xtensa-de212-elf-gcc (crosstool-NG crosstool-ng-1.23.0-307-g452ee331) 7.3.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=xtensa 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    kernel/fork.o: In function `sighand_ctor':
-> >> fork.c:(.text+0x3b0): undefined reference to `mm_update_memcg'
->    kernel/fork.o: In function `mmdrop_async':
->    fork.c:(.text+0x43a): undefined reference to `mm_update_memcg'
->    kernel/fork.o: In function `set_task_stack_end_magic':
->    fork.c:(.text+0x752): undefined reference to `mm_update_memcg'
+s/endpoints/devices/
 
-Due to the combination of CONFIG_MMU=n and CONFIG_MEMCG=y. 
-mm/memcontrol.c's mm_update_memcg() depends upon CONFIG_MMU=y.
+> +henceforth called Peer-to-Peer (or P2P). However, there are a number of
+> +issues that make P2P transactions tricky to do in a perfectly safe way.
+> +
+> +One of the biggest issues is that PCI Root Complexes are not required
 
-Is this a valid conbination?  Do we actually support (and test!) memcg
-on nommu systems?
+s/PCI Root Complexes .../
+  PCI doesn't require forwarding transactions between hierarchy domains,
+and in PCIe, each Root Port defines a separate hierarchy domain./
+
+> +to support forwarding packets between Root Ports. To make things worse,
+> +there is no simple way to determine if a given Root Complex supports
+> +this or not. (See PCIe r4.0, sec 1.3.1). Therefore, as of this writing,
+> +the kernel only supports doing P2P when the endpoints involved are all
+> +behind the same PCIe root port as the spec guarantees that all
+> +packets will always be routable but does not require routing between
+> +root ports.
+
+s/endpoints involved .../
+  devices involved are all behind the same PCI bridge, as such devices are
+  all in the same PCI hierarchy domain, and the spec guarantees that all
+  transactions within the hierarchy will be routable, but it does not
+  require routing between hierarchies./
+
+> +
+> +The second issue is that to make use of existing interfaces in Linux,
+> +memory that is used for P2P transactions needs to be backed by struct
+> +pages. However, PCI BARs are not typically cache coherent so there are
+> +a few corner case gotchas with these pages so developers need to
+> +be careful about what they do with them.
