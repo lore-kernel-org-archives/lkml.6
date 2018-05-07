@@ -1,57 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751830AbeEGJ7k (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 05:59:40 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:40129 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750732AbeEGJ7j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 05:59:39 -0400
-X-Google-Smtp-Source: AB8JxZoE45FVY3KzVcPhHKSsXLDEOg1WMbXa54qN6l16yiU9Q311QjaqVpifNtp+wMkhk5MER6mCLA==
-From: Jens Wiklander <jens.wiklander@linaro.org>
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        tee-dev@lists.linaro.org
-Cc: Jann Horn <jannh@google.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>
-Subject: [PATCH] tee: shm: fix use-after-free via temporarily dropped reference
-Date: Mon,  7 May 2018 11:58:41 +0200
-Message-Id: <20180507095841.6452-1-jens.wiklander@linaro.org>
-X-Mailer: git-send-email 2.17.0
+        id S1751949AbeEGKBy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:01:54 -0400
+Received: from mout.gmx.net ([212.227.15.19]:55259 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750795AbeEGKBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 06:01:47 -0400
+Message-ID: <1525687297.26987.1.camel@gmx.de>
+Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
+ merge
+From: Mike Galbraith <efault@gmx.de>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name
+Date: Mon, 07 May 2018 12:01:37 +0200
+In-Reply-To: <1723D46D-579A-4C5A-BCC1-6ABAA6E7C3FB@linaro.org>
+References: <20180504171701.6876-1-paolo.valente@linaro.org>
+         <1525463210.622.1.camel@gmx.de> <1525508378.5406.6.camel@gmx.de>
+         <9F155F9F-F6B2-465A-BA4D-A86FF6825071@linaro.org>
+         <1525532191.5406.15.camel@gmx.de>
+         <223CABEA-71E0-426F-A4AB-17BA8437C978@linaro.org>
+         <1525672597.5064.3.camel@gmx.de>
+         <1723D46D-579A-4C5A-BCC1-6ABAA6E7C3FB@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:qlii2U8lsS+so9gIRGBDwpdF4rrod+KjPq/Im2QQHSdwE7Cp78d
+ h64iLewWwD+4AgYjsyRci0YKyNjJyGlpJ0xC3JS9l01UQ19yowKF+TV8lqYPnYYH5u8z4Wk
+ AJhJTFDrOslwZT2jXx/c6VJU8EOmUPrZeNQYsq/FVl8VnGDikRMgqFSktR3lKT2WFQU1R7/
+ ZEdKCXggexQLQtMfwF7wg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KdEZedLwRp0=:N7RIPoxquntQnybAV3oayW
+ dQji/3N9CFQw3yFPsXd79ale4kThsh6l158VOyP+ufcMTpp00NGXqEexv8DZO2ifMIno6ZqOb
+ tFF+jYpKBJbQ0VIWBA1DgYctOe6E7o5xEM5qb6Y2LW3Z62vKaYRBaW98VxFEnlgUgCjWbnGQJ
+ 3GBmKnxqmL9fq/b4E56KXXvQSW2BnDXsV0v5xgBYmyMHf4rj5FBKiHqcTgGBRVb1yd/lftmLF
+ r4Sd2QOfIwaOVediTzu3mqt9gRcsb1KFmIhHLCMmKbd+sTvQpm/ItSkoOJx6HrLleiYTZ02Xa
+ 6xsJ4ZHuRE6Goh8uuQGHwekZi/087/70AI5D80/8Jv9oQtnrslfpHkSZL8QL4/r8umIlo0S9g
+ BxDIrfh4qT9VfQ5oRrgKSValFLDqLM32KJYvU/kDN5FkRXT+/JH9qY/j/nTdaoGRdkrKk58I3
+ U29Hhgh8ZYF7eytC3vLcnKW6efKiZoOOccBMXpnZWJNsrL4oDoqP6WfeE76rBPwSTcp0PSnIw
+ cHUEac3jr7qp2j2V7/yYYmxjLsNi/YXQSgblIsIMd7OW75RJKhbLgjoiwhU1SLoj7rv+7PzWe
+ 6C22Ti7v4C4mZvgf9LfFR7MFv69p131hXY2P0fVmoM/sNoaaxaxIlRifxas831aGshezJfkCf
+ qjIzSm17T5Bw8AM8p1yJAv9VG9+CgUcanSn8YcBGssg0iVUvUQoTMZYRbDklZQ0crs7yhAE0Q
+ SrUL+Zdbf1CEjuWb/DqVKvi6zmiqAa4fGzX9ck80uwfm1i8dkSbtc0kGxksZA5W4Pq5Ts/m48
+ M+E8wfB
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+On Mon, 2018-05-07 at 11:27 +0200, Paolo Valente wrote:
+> 
+> 
+> Where is the bug?
 
-Bump the file's refcount before moving the reference into the fd table,
-not afterwards. The old code could drop the file's refcount to zero for a
-short moment before calling get_file() via get_dma_buf().
-
-This code can only be triggered on ARM systems that use Linaro's OP-TEE.
-
-Fixes: 967c9cca2cc5 ("tee: generic TEE subsystem")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
----
- drivers/tee/tee_shm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-index 556960a1bab3..07d3be6f0780 100644
---- a/drivers/tee/tee_shm.c
-+++ b/drivers/tee/tee_shm.c
-@@ -360,9 +360,10 @@ int tee_shm_get_fd(struct tee_shm *shm)
- 	if (!(shm->flags & TEE_SHM_DMA_BUF))
- 		return -EINVAL;
- 
-+	get_dma_buf(shm->dmabuf);
- 	fd = dma_buf_fd(shm->dmabuf, O_CLOEXEC);
--	if (fd >= 0)
--		get_dma_buf(shm->dmabuf);
-+	if (fd < 0)
-+		dma_buf_put(shm->dmabuf);
- 	return fd;
- }
- 
--- 
-2.17.0
+Hm, seems potent pain-killers and C don't mix all that well.
