@@ -1,156 +1,93 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752211AbeEGPE3 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:04:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47728 "EHLO mail.kernel.org"
+        id S1752195AbeEGPIa (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:08:30 -0400
+Received: from muru.com ([72.249.23.125]:40818 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751912AbeEGPE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:04:27 -0400
-Date: Mon, 7 May 2018 12:04:24 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
-        Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Ahern <dsahern@gmail.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, kan.liang@linux.intel.com
-Subject: Re: [PATCH] perf tools: Fix parser for empty pmu terms case
-Message-ID: <20180507150424.GA3259@kernel.org>
-References: <20180425160008.3407-1-acme@kernel.org>
- <20180425160008.3407-6-acme@kernel.org>
- <448c4e21-8232-3d04-cac4-49b95c8bca3a@intel.com>
- <20180503103717.GA14776@krava>
- <0c33d3f9-4b76-c94c-7306-e93e8cd8d4aa@intel.com>
- <20180504160228.GA25229@krava>
- <87a7tdphyo.fsf@linux.intel.com>
- <20180506142830.GA18865@krava>
- <97dc8045-0136-0c9b-8413-1957ceeae5d3@intel.com>
- <20180507081203.GA26443@krava>
+        id S1751923AbeEGPIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 11:08:25 -0400
+Date: Mon, 7 May 2018 08:08:21 -0700
+From: Tony Lindgren <tony@atomide.com>
+To: "Reizer, Eyal" <eyalr@ti.com>
+Cc: Eyal Reizer <eyalreizer@gmail.com>,
+        "bcousson@baylibre.com" <bcousson@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Loewy, Chen" <c-loewy@ti.com>
+Subject: Re: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
+ support
+Message-ID: <20180507150821.GM98604@atomide.com>
+References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
+ <20180502145100.GK98604@atomide.com>
+ <5cc906da15da45ab96e06957f878b65b@ti.com>
+ <20180503141759.GP98604@atomide.com>
+ <f0ea5260b3e2413aab4780b203ff24a4@ti.com>
+ <20180506165621.GL98604@atomide.com>
+ <a4dd3009f0f5492d8756f42c11590423@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180507081203.GA26443@krava>
-X-Url: http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <a4dd3009f0f5492d8756f42c11590423@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, May 07, 2018 at 10:12:03AM +0200, Jiri Olsa escreveu:
-> On Mon, May 07, 2018 at 10:21:42AM +0300, Adrian Hunter wrote:
-> > On 06/05/18 17:28, Jiri Olsa wrote:
-> > > On Sat, May 05, 2018 at 08:43:11PM -0700, Andi Kleen wrote:
-> > >> Jiri Olsa <jolsa@redhat.com> writes:
-> > >>
-> > >> Please fix this quickly, PT is currently totally non functional in Linus
-> > >> mainline.
-> > > 
-> > > attached.. Kan, could you please test it wrt your latest changes?
-> > > 
-> > > thanks,
-> > > jirka
-> > > 
-> > > 
-> > > ---
-> > > Adrian reported broken event parsing for Intel PT:
-> > > 
-> > >   $ perf record -e intel_pt//u uname
-> > >   event syntax error: 'intel_pt//u'
-> > >                                \___ parser error
-> > >   Run 'perf list' for a list of valid events
-> > > 
-> > > It's caused by recent change in parsing grammar
-> > > (see Fixes: for commit).
-> > > 
-> > > Adding special rule with empty terms config to handle
-> > > the reported case and moving the common rule code into
-> > > new parse_events_pmu function.
+* Reizer, Eyal <eyalr@ti.com> [180507 06:57]:
+> Hi Tony,
+> 
 > > 
-> > Hi
+> > Yeah my guess is that the reason for the separate GPIO interrupt was
+> > that on omap3 we did not have SDIO interrupt working for years. This was
+> > because of the issues related to padconf interrupts for off mode.
 > > 
-> > Can you explain why that is needed instead of just changing the grammar e.g.
+> > We now have Linux generic wakeirq support working with SDIO and it has
+> > been confirmed to work also for off mode with mwifiex at least. So
+> > there should be no reason to not also use the SDIO interrupt.
+> > 
 > 
-> well, for one, mine is working ;-)
+> There is more to this than just the padconf.
+> Using in-band interrupt instead of the out of band one requires
+> Supporting a feature called "Asynchronous interrupts in 4Bit mode"
+> Which is part of SDIO 3.0 spec:
+> https://www.sdcard.org/downloads/pls/pdf/index.php?p=PartE1_SDIO_Simplified_Specification_Ver3.00.jpg&f=PartE1_SDIO_Simplified_Specification_Ver3.00.pdf&e=EN_SSE1
 > 
-> [jolsa@krava perf]$ sudo ./perf record -e intel_pt//u uname
-> event syntax error: 'intel_pt//u'
->                               \___ parser error
-> Run 'perf list' for a list of valid events
-> 
->  Usage: perf record [<options>] [<command>]
->     or: perf record [<options>] -- <command> [<options>]
-> 
->     -e, --event <event>   event selector. use 'perf list' to list available events
-> 
-> 
-> but yep, it's better solution.. with extra changes like below
+> Take a look at page 41 at the bottom part of the table.
+> Wilink8 supports this feature but AFAIK this support is still not part of the 
+> mmc/sdio core in the Linux kernel.
+> If we want wilink8 to trigger a host wakeup using the in-band interrupt instead 
+> Of the wlan_irq pin we would need to enable/use this feature.
 
-So, can I get a final patch, with an Ack from Adrian, please?
+Well the SDIO dat line interrupt is working just fine with
+mwifiex_sdio driver and runtime PM like I said :)
 
-- Arnaldo
- 
-> jirka
+> I did use it internally in the past and was able to patch the Ubuntu kernel 
+> (3.5.0 at that time) to use wilink8 in a standard SD Card slot of an Ubuntu Laptop 
+> while removing the use of wlan_irq pin completely.
+> However this was an experimental patch set written by a third party 
+> that was not up-steamtable at that time.
+> I do have this patch set somewhere...
 > 
-> 
-> ---
-> diff --git a/tools/perf/util/parse-events.y b/tools/perf/util/parse-events.y
-> index 47f6399a309a..155d2570274f 100644
-> --- a/tools/perf/util/parse-events.y
-> +++ b/tools/perf/util/parse-events.y
-> @@ -73,6 +73,7 @@ static void inc_group_count(struct list_head *list,
->  %type <num> value_sym
->  %type <head> event_config
->  %type <head> opt_event_config
-> +%type <head> opt_pmu_config
->  %type <term> event_term
->  %type <head> event_pmu
->  %type <head> event_legacy_symbol
-> @@ -224,15 +225,15 @@ event_def: event_pmu |
->  	   event_bpf_file
->  
->  event_pmu:
-> -PE_NAME '/' event_config '/'
-> +PE_NAME opt_pmu_config
->  {
->  	struct list_head *list, *orig_terms, *terms;
->  
-> -	if (parse_events_copy_term_list($3, &orig_terms))
-> +	if (parse_events_copy_term_list($2, &orig_terms))
->  		YYABORT;
->  
->  	ALLOC_LIST(list);
-> -	if (parse_events_add_pmu(_parse_state, list, $1, $3, false, false)) {
-> +	if (parse_events_add_pmu(_parse_state, list, $1, $2, false, false)) {
->  		struct perf_pmu *pmu = NULL;
->  		int ok = 0;
->  		char *pattern;
-> @@ -262,7 +263,7 @@ PE_NAME '/' event_config '/'
->  		if (!ok)
->  			YYABORT;
->  	}
-> -	parse_events_terms__delete($3);
-> +	parse_events_terms__delete($2);
->  	parse_events_terms__delete(orig_terms);
->  	$$ = list;
->  }
-> @@ -496,6 +497,17 @@ opt_event_config:
->  	$$ = NULL;
->  }
->  
-> +opt_pmu_config:
-> +'/' event_config '/'
-> +{
-> +	$$ = $2;
-> +}
-> +|
-> +'/' '/'
-> +{
-> +	$$ = NULL;
-> +}
-> +
->  start_terms: event_config
->  {
->  	struct parse_events_state *parse_state = _parse_state;
+> It is similar to the following patch which is not  upstream as well for some reason:
+> https://gitlab.com/k2wl/g2_kernel/commit/5c4970fdaa50422d7ea7220efa20fb35148a4bca
+> It is not the only patch needed, there are a couple of additional patches needed 
+> for fully using it from driver.
+> I did check latest Linux-next and don't see this support there. Not sure why.
+
+Hmm not sure if this is needed here. When things enter idle, the whole
+SDIO block is off and the SDIO dat interrupt is delivered as wakeirq to
+the pinctrl-single driver instead that manages padconf wake events.
+Then we have runtime PM wake up MMC subsystem and the SDIO dat line
+interrupt is still there and will trigger as it's level sensitive.
+
+So the test to do would be simply configure wlcore to use SDIO dat line
+interrupt instead of the GPIO interrupt and configure a wakeirq for
+the board on the SDIO dat line. Sounds like I need to get my wlcore
+runtime PM patches ready though as that is needed for using the wakeirq.
+
+Regards,
+
+Tony
