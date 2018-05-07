@@ -1,86 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752623AbeEGQg6 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 12:36:58 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:52224 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751951AbeEGQg5 (ORCPT
+        id S1752457AbeEGQjS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 12:39:18 -0400
+Received: from mail-it0-f51.google.com ([209.85.214.51]:50563 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751953AbeEGQjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 12:36:57 -0400
-Subject: Re: drivers/gpu/drm/bridge/sil-sii8620.c:2229: undefined reference to
- `extcon_find_edev_by_node'
-From: Randy Dunlap <rdunlap@infradead.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, kbuild test robot <lkp@intel.com>,
-        Maciej Purski <m.purski@samsung.com>
-Cc: kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-References: <201805060754.UgJOHqtz%fengguang.wu@intel.com>
- <CGME20180506004653epcas5p395fb6e0f17a554f22485a3febd2054eb@epcas5p3.samsung.com>
- <6bea8cdd-8d9c-f474-12c6-8143e206ce9b@infradead.org>
- <35314d5f-7683-7769-f5a0-2cb0be1ae57f@samsung.com>
- <d429947c-e238-da71-94ab-022af0972b46@infradead.org>
-Message-ID: <b1fd759a-5cea-0bdd-87d1-601cdc68f335@infradead.org>
-Date: Mon, 7 May 2018 09:36:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 12:39:16 -0400
+X-Google-Smtp-Source: AB8JxZpRBI1eG7DVoPj0W7ksyvb0Gl/qdA4RcjIS3lN/3JRqenXe5gyA2Rw+Es0rx5HqD0pqEYjrRw==
+Subject: Re: bug in tag handling in blk-mq?
+To: Paolo Valente <paolo.valente@linaro.org>,
+        Mike Galbraith <efault@gmx.de>, Christoph Hellwig <hch@lst.de>
+Cc: linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
+Date: Mon, 7 May 2018 10:39:12 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <d429947c-e238-da71-94ab-022af0972b46@infradead.org>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/2018 09:13 AM, Randy Dunlap wrote:
-> On 05/07/2018 12:09 AM, Andrzej Hajda wrote:
->> On 06.05.2018 02:46, Randy Dunlap wrote:
->>> On 05/05/2018 04:22 PM, kbuild test robot wrote:
->>>> Hi Maciej,
->>>>
->>>> FYI, the error/warning still remains.
->>> Hi M. Robot,
->>>
->>> I am cc-ing dri-devel@lists.freedesktop.org so that they are aware of the
->>> multiple times that you have posted this kbuild error (I have 3 different
->>> posts in my Inbox with the same errors; I may have missed some).
->>>
->>> I hope that someone there will have some insights into this problem.
->>>
->>> I have looked at the issues and concluded that the correct fix for this IMO is:
->>>
->>> config DRM_SIL_SII8620
->>> ...
->>> 	depends on EXTCON || !EXTCON
->>>
->>> However, that causes some unhappy errors from scripts/kconfig/ concerning
->>> Kconfig recursive dependencies detected.  Alternatively, using
->>> 	select EXTCON
->>> does not cause any kconfig recursive dependency issues and solves the build
->>> errors.
->>>
->>>
->>> thanks!
->>
->>
->> Hi Randy,
->>
->> Proper patch was posted some times ago[1], and it was merged today to
->> drm-misc-fixes branch.
->>
->> [1]: https://patchwork.kernel.org/patch/10330653/
->>
->>
->> Regards
->> Andrzej
+On 5/7/18 8:03 AM, Paolo Valente wrote:
+> Hi Jens, Christoph, all,
+> Mike Galbraith has been experiencing hangs, on blk_mq_get_tag, only
+> with bfq [1].  Symptoms seem to clearly point to a problem in I/O-tag
+> handling, triggered by bfq because it limits the number of tags for
+> async and sync write requests (in bfq_limit_depth).
 > 
-> Thank you for the info.
+> Fortunately, I just happened to find a way to apparently confirm it.
+> With the following one-liner for block/bfq-iosched.c:
+> 
+> @@ -554,8 +554,7 @@ static void bfq_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
+>         if (unlikely(bfqd->sb_shift != bt->sb.shift))
+>                 bfq_update_depths(bfqd, bt);
+>  
+> -       data->shallow_depth =
+> -               bfqd->word_depths[!!bfqd->wr_busy_queues][op_is_sync(op)];
+> +       data->shallow_depth = 1;
+>  
+>         bfq_log(bfqd, "[%s] wr_busy %d sync %d depth %u",
+>                         __func__, bfqd->wr_busy_queues, op_is_sync(op),
+> 
+> Mike's machine now crashes soon and systematically, while nothing bad
+> happens on my machines, even with heavy workloads (apart from an
+> expected throughput drop).
+> 
+> This change simply reduces to 1 the maximum possible value for the sum
+> of the number of async requests and of sync write requests.
+> 
+> This email is basically a request for help to knowledgeable people.  To
+> start, here are my first doubts/questions:
+> 1) Just to be certain, I guess it is not normal that blk-mq hangs if
+> async requests and sync write requests can be at most one, right?
+> 2) Do you have any hint to where I could look for, to chase this bug?
+> Of course, the bug may be in bfq, i.e, it may be a somehow unrelated
+> bfq bug that causes this hang in blk-mq, indirectly.  But it is hard
+> for me to understand how.
 
-and
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+CC Omar, since he implemented the shallow part. But we'll need some
+traces to show where we are hung, probably also the value of the
+/sys/debug/kernel/block/<dev>/ directory. For the crash mentioned, a
+trace as well. Otherwise we'll be wasting a lot of time on this.
+
+Is there a reproducer?
 
 -- 
-~Randy
+Jens Axboe
