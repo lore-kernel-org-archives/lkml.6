@@ -1,75 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752414AbeEGKpb (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:45:31 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:55388 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752294AbeEGKob (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:44:31 -0400
-X-Google-Smtp-Source: AB8JxZpOANKrx2RZvWgS+ZUXtHLxF3xQsgMOyBpki+lbOcfdVSWWUeahXnkEtdLWqGHIeoL58QQz3A==
-From: Andrea Parri <andrea.parri@amarulasolutions.com>
-To: Ingo Molnar <mingo@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, paulmck@linux.vnet.ibm.com,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [RFC PATCH v3 4/6] Documentation/features/locking: Use '!RWSEM_GENERIC_SPINLOCK' as Kconfig for 'rwsem-optimized'
-Date: Mon,  7 May 2018 12:43:41 +0200
-Message-Id: <1525689823-3340-5-git-send-email-andrea.parri@amarulasolutions.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525689823-3340-1-git-send-email-andrea.parri@amarulasolutions.com>
-References: <1525689823-3340-1-git-send-email-andrea.parri@amarulasolutions.com>
+        id S1752230AbeEGKqX (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:46:23 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7658 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751378AbeEGKqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 06:46:22 -0400
+Subject: Re: [PATCH] perf bench numa: Fixes typo in options
+To: <acme@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
+CC: <jolsa@redhat.com>, <mingo@redhat.com>, <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>
+From: Yisheng Xie <xieyisheng1@huawei.com>
+Message-ID: <d333c15b-e0cd-4d6e-cbf5-17bbdfc55ccd@huawei.com>
+Date: Mon, 7 May 2018 18:45:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.0
+MIME-Version: 1.0
+In-Reply-To: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.40]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Uses '!RWSEM_GENERIC_SPINLOCK' in place of 'Optimized asm/rwsem.h' as
-Kconfig for 'rwsem-optimized': the new Kconfig expresses this feature
-equivalently, while also enabling the script 'features-refresh.sh' to
-operate on the corresponding arch support status file. Also refreshes
-the status matrix by using the script 'features-refresh.sh'.
+Hi Arnaldo,
 
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- Documentation/features/locking/rwsem-optimized/arch-support.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Just in case that you may miss this minor fix.
 
-diff --git a/Documentation/features/locking/rwsem-optimized/arch-support.txt b/Documentation/features/locking/rwsem-optimized/arch-support.txt
-index 8afe24ffa3ab4..e54b1f1a8091d 100644
---- a/Documentation/features/locking/rwsem-optimized/arch-support.txt
-+++ b/Documentation/features/locking/rwsem-optimized/arch-support.txt
-@@ -1,6 +1,6 @@
- #
- # Feature name:          rwsem-optimized
--#         Kconfig:       Optimized asm/rwsem.h
-+#         Kconfig:       !RWSEM_GENERIC_SPINLOCK
- #         description:   arch provides optimized rwsem APIs
- #
-     -----------------------
-@@ -8,8 +8,8 @@
-     -----------------------
-     |       alpha: |  ok  |
-     |         arc: | TODO |
--    |         arm: | TODO |
--    |       arm64: | TODO |
-+    |         arm: |  ok  |
-+    |       arm64: |  ok  |
-     |         c6x: | TODO |
-     |       h8300: | TODO |
-     |     hexagon: | TODO |
-@@ -26,7 +26,7 @@
-     |        s390: |  ok  |
-     |          sh: |  ok  |
-     |       sparc: |  ok  |
--    |          um: | TODO |
-+    |          um: |  ok  |
-     |   unicore32: | TODO |
-     |         x86: |  ok  |
-     |      xtensa: |  ok  |
--- 
-2.7.4
+Thanks
+Yisheng
+
+On 2018/4/25 16:25, Yisheng Xie wrote:
+> 'R' means access the data via reads instead of writes, fix this typo.
+> 
+> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
+> ---
+>  tools/perf/bench/numa.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
+> index 944070e..63eb4908 100644
+> --- a/tools/perf/bench/numa.c
+> +++ b/tools/perf/bench/numa.c
+> @@ -175,7 +175,7 @@ struct global_info {
+>  	OPT_UINTEGER('s', "nr_secs"	, &p0.nr_secs,		"max number of seconds to run (default: 5 secs)"),
+>  	OPT_UINTEGER('u', "usleep"	, &p0.sleep_usecs,	"usecs to sleep per loop iteration"),
+>  
+> -	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via writes (can be mixed with -W)"),
+> +	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via reads (can be mixed with -W)"),
+>  	OPT_BOOLEAN('W', "data_writes"	, &p0.data_writes,	"access the data via writes (can be mixed with -R)"),
+>  	OPT_BOOLEAN('B', "data_backwards", &p0.data_backwards,	"access the data backwards as well"),
+>  	OPT_BOOLEAN('Z', "data_zero_memset", &p0.data_zero_memset,"access the data via glibc bzero only"),
+> 
