@@ -1,150 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753009AbeEGVku (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:40:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49106 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752726AbeEGVkt (ORCPT
+        id S1753057AbeEGVlR (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:41:17 -0400
+Received: from mail-wm0-f49.google.com ([74.125.82.49]:53789 "EHLO
+        mail-wm0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752721AbeEGVlQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:40:49 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D4B76044E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=girishm@codeaurora.org
-Subject: Re: [PATCH] spi: spi-geni-qcom: Add SPI driver support for GENI based
- QUP
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        sdharia@codeaurora.org, kramasub@codeaurora.org, dianders@chromium.org,
-        linux-arm-msm@vger.kernel.org, swboyd@chromium.org
-References: <1525383283-18390-1-git-send-email-girishm@codeaurora.org>
- <20180503233849.GF13402@sirena.org.uk>
-From: "Mahadevan, Girish" <girishm@codeaurora.org>
-Message-ID: <a9146e14-19d6-c718-a5d8-64aba6db5465@codeaurora.org>
-Date: Mon, 7 May 2018 15:40:46 -0600
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Mon, 7 May 2018 17:41:16 -0400
+X-Google-Smtp-Source: AB8JxZqGRQPvpcT112XLUNUmkHwlhKOqACQcUxYKOgBypDFUcVww/n/7CXDRmwKrNSDLIoge6hj5nA==
+Subject: Re: *alloc API changes
+To: Kees Cook <keescook@google.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <CAGXu5j++1TLqGGiTLrU7OvECfBAR6irWNke9u7Rr2i8g6_30QQ@mail.gmail.com>
+ <20180505034646.GA20495@bombadil.infradead.org>
+ <CAGXu5jLbbts6Do5JtX8+fij0m=wEZ30W+k9PQAZ_ddOnpuPHZA@mail.gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <ee9322c7-801b-c88c-d78c-32d38dac32c1@rasmusvillemoes.dk>
+Date: Mon, 7 May 2018 23:41:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180503233849.GF13402@sirena.org.uk>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <CAGXu5jLbbts6Do5JtX8+fij0m=wEZ30W+k9PQAZ_ddOnpuPHZA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark
+On 2018-05-05 06:24, Kees Cook wrote:
+> 
+>> Right, I was thinking:
+>>
+>> static inline size_t mul_ab(size_t a, size_t b)
+>> {
+>> #if COMPILER_SUPPORTS_OVERFLOW
+>>         unsigned long c;
+>>         if (__builtin_mul_overflow(a, b, &c))
+>>                 return SIZE_MAX;
+>>         return c;
+>> #else
+>>         if (b != 0 && a >= SIZE_MAX / b)
+>>                 return SIZE_MAX;
+>>         return a * b;
+>> #endif
+>> }
+> 
+> Rasmus, what do you think of a saturating version of your helpers?
 
-On 5/3/2018 5:38 PM, Mark Brown wrote:
-> On Thu, May 03, 2018 at 03:34:43PM -0600, Girish Mahadevan wrote:
->> This driver supports GENI based SPI Controller in the Qualcomm SOCs. The
->> Qualcomm Generic Interface (GENI) is a programmable module supporting a
->> wide range of serial interfaces including SPI. This driver supports SPI
->> operations using FIFO mode of transfer.
-> 
-> This is a DT based driver but there is no binding documentation.
-> Binding documentation is required for any new DT stuff.
->
+They'd be trivial to implement (using the __type_max that I had to
+introduce anyway), and I'd prefer they'd have sat_ in their name - not
+just smult, s would more likely be interpreted as "signed". On that
+note, I'd want to enforce the sat_ ones are only used for unsigned
+types, because there's no sane value to saturate to for signed operands.
 
-The DT documentation for the SPI driver was done as part of this patch
-series
-https://patchwork.kernel.org/patch/10318125/
+But I don't think we should do the allocation-overflow in terms of
+saturate-and-rely-on-allocator-rejecting it. I suppose we'll still have
+the computation done in a static inline (to let the compiler see if one
+or both operands are constants, and generate code accordingly). If we do
 
->> +       depends on ARCH_QCOM || (ARM && COMPILE_TEST)
-> > Why the ARM dependency?  There's no architecture specific headers
-> included...
+static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+{
+        size_t p;
+        p = sat_mul(n, size);
+        return __kmalloc(p, flags);
+}
 
-Agree, I will remove it. I will add the dependency on QCOM_GENI_SE(to be
-consistent with the other GENI_QUP protocol drivers (I2C and UART))
+with sat_mul being implemented in terms of __builtin_mul_overflow(), gcc
+will probably waste a temp register on loading SIZE_MAX (or whatever
+sentinel we use), and do a pipeline-stalling cmov to the register used
+to pass p.
 
->>  obj-$(CONFIG_SPI_PXA2XX_PCI)		+= spi-pxa2xx-pci.o
->>  obj-$(CONFIG_SPI_QUP)			+= spi-qup.o
->> +obj-$(CONFIG_SPI_QCOM_GENI)		+= spi-geni-qcom.o
->>  obj-$(CONFIG_SPI_ROCKCHIP)		+= spi-rockchip.o
-> 
-> Please keep Kconfig and Makefile alphabetically sorted to reduce
-> conflicts.
-> 
-Ok.
->> +static struct spi_master *get_spi_master(struct device *dev)
->> +{
->> +	struct platform_device *pdev = to_platform_device(dev);
->> +	struct spi_master *spi = platform_get_drvdata(pdev);
->> +
->> +	return spi;
->> +}
-> 
-> This doesn't look at all driver specific with the current naming but it
-> actually is given that other drivers may use other driver data so it
-> should be renamed.  I'm also not clear why it's bouncing through the
-> platform device, dev_get_drvdata() exists.
-> 
-Agree, this function isn't needed, dev_get_drvdata() should be sufficient.
->> +static int spi_geni_unprepare_message(struct spi_master *spi_mas,
->> +					struct spi_message *spi_msg)
->> +{
->> +	struct spi_geni_master *mas = spi_master_get_devdata(spi_mas);
->> +
->> +	mas->cur_speed_hz = 0;
->> +	mas->cur_word_len = 0;
->> +	return 0;
->> +}
-> 
-> Is this really useful?  If the driver needs to reconfigure for every
-> message then it should just do that and not care about the state.  If it
-> might end up caring about the state anyway that suggests there's some
-> kind of bug somewhere that's being masked.
-> 
-Agree, it can be removed.
->> +static int spi_geni_prepare_transfer_hardware(struct spi_master *spi)
->> +{
->> +	struct spi_geni_master *mas = spi_master_get_devdata(spi);
->> +	int ret = 0;
->> +	struct geni_se *se = &mas->se;
->> +
->> +	ret = pm_runtime_get_sync(mas->dev);
->> +	if (ret < 0) {
-> 
-> Use auto_runtime_pm.
-> 
-Ok
->> +	if (unlikely(!mas->setup)) {
->> +		int proto = geni_se_read_proto(se);
-> 
-> Does this really need a likely/unlikely annotation - it shouldn't be any
-> kind of hot path...  There's a lot of these annotations in the code.
-> 
-Ok
->> +		ret = devm_request_irq(mas->dev, mas->irq, geni_spi_isr,
->> +			       IRQF_TRIGGER_HIGH, "spi_geni", mas);
->> +		if (ret) {
->> +			dev_err(mas->dev, "Request_irq failed:%d: err:%d\n",
-> 
-> Why are we dynamically requesting the IRQ outside of probe?  Normally an
-> interrupt is requested on startup and held through the life of the
-> device.  I'm also not seeing any sign that it's freed except via devm...
-> 
-Ok, will move this to probe.
->> +	spi->bus_num = of_alias_get_id(pdev->dev.of_node, "spi");
-> 
-> Don't do this, just set bus_num to -1 and let the core assign an ID.
-> 
-Ok.
->> +	spi->dev.of_node = pdev->dev.of_node;
-> 
-> This is broken, the virtual SPI device does not exist in DT and this
-> might break things.
-> 
-I don't follow, if I don't do this the framework won't be able to probe
-the slave devices of the controller.
->> +	pm_runtime_enable(&pdev->dev);
->> +	ret = spi_register_master(spi);
-> 
-> No devm?
-> 
-Agree, I will change this to use devm_spi_register_master()
+If instead we do
 
-Best Regards
-Girish
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora
-Forum, a Linux Foundation Collaborative Project.
+static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
+{
+        size_t p;
+        if (check_mul_overflow(n, size, &p))
+            return NULL;
+        return __kmalloc(p, flags);
+}
+
+we'd not get any extra code in the caller (that is, just a "mul" and
+"jo", instead of a load-immediate, mul, cmov), because gcc should be
+smart enough to combine the "return NULL" with the test for NULL which
+the caller code has, and thus make the jump go directly to the error
+handling (that error handling is likely itself a jump, but the "jo" will
+just get redirected to the target of that one).
+
+Also, I'd hate to have sat_mul not really saturating to type_max(t), but
+some large-enough-that-all-underlying-allocators-reject-it.
+
+> The only fear I have with the saturating helpers is that we'll end up
+> using them in places that don't recognize SIZE_MAX. Like, say:
+> 
+> size = mul(a, b) + 1;
+> 
+> then *poof* size == 0. Now, I'd hope that code would use add(mul(a,
+> b), 1), but still... it makes me nervous.
+> 
+>> You don't need the size check here.  We have the size check buried deep in
+>> alloc_pages (look for MAX_ORDER), so kmalloc and then alloc_pages will try
+>> a bunch of paths all of which fail before returning NULL.
+> 
+> Good point. Though it does kind of creep me out to let a known-bad
+> size float around in the allocator until it decides to reject it. I
+> would think an early:
+> 
+> if (unlikely(size == SIZE_MAX))
+>     return NULL;
+> 
+> would have virtually no cycle count difference...
+
+All allocators still need to reject insane sizes, since those can happen
+without coming from a multiplication. So sure, some early size >
+MAX_SANE_SIZE check in the out-of-line functions should be rather cheap,
+and they most likely already exist in some form. But we don't _have_ to
+go out of our way to make the multiplication overflow handling depend on
+those.
+
+> 
+> Right, no. I think if we can ditch *calloc() and _array() by using
+> saturating helpers, we'll have the API in a much better form:
+> 
+> kmalloc(foo * bar, GFP_KERNEL);
+> into
+> kmalloc_array(foo, bar, GFP_KERNEL);
+> into
+> kmalloc(mul(foo, bar), GFP_KERNEL);
+
+Urgh. Do you want to get completely rid of kmalloc_array() and move the
+mul() into the call-sites? That obviously necessitates mul returning a
+big-enough sentinel. I'd hate that. Not just because of the code-gen,
+but also because of the problem with giving mul() sane semantics that
+still make it immune to the extra arithmetic that will inevitably be
+done. There's also the problem with foo and bar having different,
+possibly signed, types - how should mul() handle those? A nice benefit
+from having the static inline wrappers taking size_t is that a negative
+value gets converted to a huge positive value, and then the whole thing
+overflows. Sure, you can build that into mul() (maybe make that itself a
+static inline), but then it doesn't really deserve that generic name
+anymore.
+
+> and
+> 
+> kmalloc(foo * bar, GFP_KERNEL | __GFP_ZERO);
+> into
+> kzalloc(foo * bar, GFP_KERNEL);
+> into
+> kcalloc(foo, bar, GFP_KERNEL);
+> into
+> kzalloc(mul(foo, bar), GFP_KERNEL);
+
+Yeah, part of the API mess is just copied from C (malloc vs calloc). We
+could make it a bit less messy by calling it kzalloc_array, but we have
+1700 callers of kcalloc(), so...
+
+Rasmus
