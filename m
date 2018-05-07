@@ -1,134 +1,46 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752359AbeEGKsQ (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:48:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34476 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751963AbeEGKsO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:48:14 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8D0E06044E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
- <1525428158-29147-2-git-send-email-tdas@codeaurora.org>
- <152545267793.138124.15345698220033125655@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <a926924f-2033-acd6-67cb-210a5e487ebb@codeaurora.org>
-Date: Mon, 7 May 2018 16:18:06 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752157AbeEGKtn (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:49:43 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:5547 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750795AbeEGKtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 06:49:39 -0400
+From: "Zengtao (B)" <prime.zeng@hisilicon.com>
+To: "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>
+CC: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Timeout issues in wait_for_avail function
+Thread-Topic: Timeout issues in wait_for_avail function
+Thread-Index: AdPl5MJ+cxjQClOhSGWGXpknWcpfpw==
+Date: Mon, 7 May 2018 10:49:34 +0000
+Message-ID: <678F3D1BB717D949B966B68EAEB446ED0C8D7B4E@DGGEMM506-MBS.china.huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.67.222.15]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <152545267793.138124.15345698220033125655@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w47Ankue016267
 
-Hello Stephen,
+Hi perex and tiwai:
 
-Could you please let me know your comments on the below.
+I have met a timeout case when capture audio from snd-usb-audio device, 
+when the host call the pcm_read and get into the wait_for_avail function.
+The following happends
+1.  No available data for capture(maybe because of the late response audio data by the uac device)
+2.  The current thread falls into sleep state and no one wakes up it.
+3.  The current thread will sleep 10s(schedule_timeout(1000)) and then wakeup.
 
-On 5/4/2018 10:21 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-05-04 03:02:38)
->> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->> new file mode 100644
->> index 0000000..944fe04
->> --- /dev/null
->> +++ b/drivers/clk/qcom/clk-rpmh.c
->> @@ -0,0 +1,334 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +};
->> +
->> +struct clk_rpmh_desc {
->> +       struct clk_hw **clks;
->> +       size_t num_clks;
->> +};
-> 
-> This could be replaced with the clk_hw_onecell_data struct and then the
-> only problem becomes the const part which seems pretty impossible to fix
-> at this point. One "workaround" is to memdup the structure. Ugh.
-> 
+I have two question about the wait_for_avail:
+1. The timeout value too long, is it a reasonable value? 
+2. Is there any mechanism to wake up the thread if there is data from the hw.
 
-Will be okay, if I can the following?
-
-_probe...
-{
-	struct clk_rpmh_desc *hw_desc_data;
-	....
-
-	hw_desc_data = kmemdup(desc, sizeof(*desc), GFP_KERNEL);
-
-	...
-	ret = devm_of_clk_add_hw_provider(&pdev->dev, 	  of_clk_rpmh_hw_get, 
-hw_desc_data);
-         ....
-
-}
-
-And also I fix the "getter" function.
-
->> +
->> +static DEFINE_MUTEX(rpmh_clk_lock);
->> +
->> +#define __DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,   \
->> +                         _res_en_offset, _res_on, _div)                \
->> +       static struct clk_rpmh _platform##_##_name_active;              \
->> +       static struct clk_rpmh _platform##_##_name = {                  \
-> [..]
->> +
->> +static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
->> +                                       unsigned long prate)
->> +{
->> +       struct clk_rpmh *r = to_clk_rpmh(hw);
->> +       unsigned long rate = prate;
->> +
->> +       /*
->> +        * RPMh clocks have a fixed rate. Return static rate.
->> +        */
->> +       do_div(rate, r->div);
-> 
-> Integer division won't suffice?
-> 
->> +       return rate;
->> +}
-> [...]
->> +
->> +static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->> +                                            void *data)
->> +{
->> +       struct clk_hw *hw_clks = data;
->> +       unsigned int idx = clkspec->args[0];
->> +
->> +       if (idx < 0) {
-> 
-> It can't be less than 0 though because it's unsigned.
-> 
->> +               pr_err("%s: invalid index %u\n", __func__, idx);
->> +               return ERR_PTR(-EINVAL);
->> +       }
->> +
->> +       return &hw_clks[idx];
->> +}
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Regards
+Zengtao
