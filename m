@@ -1,66 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752933AbeEGURE (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:17:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49116 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752905AbeEGURB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:17:01 -0400
-Date: Mon, 7 May 2018 21:16:57 +0100
-From: James Hogan <jhogan@kernel.org>
-To: NeilBrown <neil@brown.name>
-Cc: Ralf Baechle <ralf@linux-mips.org>, Paul Burton <paul.burton@mips.com>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] MIPS: c-r4k: fix data corruption related to cache
- coherence.
-Message-ID: <20180507201655.GA27369@jamesdev>
-References: <87sh7klyhc.fsf@notabene.neil.brown.name>
- <20180425214650.GA25917@saruman>
- <87h8nzlzf1.fsf@notabene.neil.brown.name>
- <20180425220834.GC25917@saruman>
- <87vacdlf8d.fsf@notabene.neil.brown.name>
- <87lgcwcvj2.fsf@notabene.neil.brown.name>
+        id S1752829AbeEGUSz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:18:55 -0400
+Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:23557 "EHLO
+        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752158AbeEGUSx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 16:18:53 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2E1AgCAtPBamD+a6ERdHAEBAQQBAQoBA?=
+ =?us-ascii?q?YQXgQgyg2WUdoF5gQ+TOoFkC4RsAhqCOiE4FAECAQEBAQEBAgEBAhABAQEBAQg?=
+ =?us-ascii?q?LCwYoL4I1IoJTAQEBAQIBIxFFEAIBCBoCJgICAkUQAgQODYURCKd9ghyIRoJIg?=
+ =?us-ascii?q?QmHHIIThBqEVwRkgjSCNCACh0eQYwiORYxqhW2KX4ElM4F0cIMUghwRCY4XkBu?=
+ =?us-ascii?q?BGAEB?=
+X-IPAS-Result: =?us-ascii?q?A2E1AgCAtPBamD+a6ERdHAEBAQQBAQoBAYQXgQgyg2WUdoF?=
+ =?us-ascii?q?5gQ+TOoFkC4RsAhqCOiE4FAECAQEBAQEBAgEBAhABAQEBAQgLCwYoL4I1IoJTA?=
+ =?us-ascii?q?QEBAQIBIxFFEAIBCBoCJgICAkUQAgQODYURCKd9ghyIRoJIgQmHHIIThBqEVwR?=
+ =?us-ascii?q?kgjSCNCACh0eQYwiORYxqhW2KX4ElM4F0cIMUghwRCY4XkBuBGAEB?=
+From: <Mario.Limonciello@dell.com>
+X-LoopCount0: from 10.166.132.189
+X-IronPort-AV: E=Sophos;i="5.49,375,1520917200";
+   d="scan'208";a="1084669096"
+X-DLP: DLP_GlobalPCIDSS
+To: <pali.rohar@gmail.com>
+CC: <dmitry.torokhov@gmail.com>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: RE: Dell docking station & Dell Embedded Controller & PS/2 devices
+Thread-Topic: Dell docking station & Dell Embedded Controller & PS/2 devices
+Thread-Index: AQHT5UDMWM1nc4K7y0Sd6Py+b6Y5jaQkSIuAgAC1NgD//7D3wIAAWKmA//+sgqA=
+Date: Mon, 7 May 2018 20:18:30 +0000
+Message-ID: <6825f48ea6da41799979d83ed37adf73@ausx13mpc124.AMER.DELL.COM>
+References: <20180124104121.7g3zfay5smc5v2tc@pali>
+ <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
+ <20180506134733.zttaitnf6ej4tith@pali> <20180507084431.r2dipv32wt3vbx3k@pali>
+ <20180507193306.GA31301@dtor-ws>
+ <147aa25ad2d14bad975731a6c9cf9281@ausx13mpc124.AMER.DELL.COM>
+ <20180507200733.s43zd2hfzw4f4wr2@pali>
+In-Reply-To: <20180507200733.s43zd2hfzw4f4wr2@pali>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
-Content-Disposition: inline
-In-Reply-To: <87lgcwcvj2.fsf@notabene.neil.brown.name>
-User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w47KJ1nW017252
 
+> > > So I guess you could write a platform driver that would install i8042
+> > > filter on Dell laptops/portables, monitor keyboard data stream and kick
+> > > of rescans on serio ports. The problem is filter gets "serio" so you do
+> > > not really know whether ACK is spurious or not. And I would really
+> > > prefer keeping this crap out of atkbd proper... And all of this is racy
+> > > as hell. What happens if we get keyboard reconnected as we reinitialize
+> > > it?
+> >
+> > If it's done as a platform driver I would suspect it's possible to tell whether
+> > a dock is connected to at least give you some heuristic here to have a better
+> > guess whether it's spurious.
+> 
+> Apparently checking for docking station is not enough. There are also
+> Dell Legacy Extenders (or how it is called) which exports internal PS/2,
+> Parallel and Serial Ports. It is also connecting to bottom of laptop.
+> But currently I do not have them for testing.
+> 
+> > Pali on your system that supports this dock, check and see how many
+> > System Enclosure SMBIOS tables (structure type 03) are present.
+> 
+> Do you mean DMI type 3 structure? Here is something from dmidecode:
+> 
+> Handle 0x0003, DMI type 3, 22 bytes
+> Chassis Information
+>         Manufacturer: Dell Inc.
+>         Type: Laptop
+>         Lock: Not Present
+>         Version: Not Specified
+>         Serial Number: --REMOVED--
+>         Asset Tag: Not Specified
+>         Boot-up State: Safe
+>         Power Supply State: Safe
+>         Thermal State: Safe
+>         Security Status: None
+>         OEM Information: 0x00000000
+>         Height: Unspecified
+>         Number Of Power Cords: 1
+>         Contained Elements: 0
+>         SKU Number: To be filled by O.E.M.
+> 
+> But probably you mean something different?
 
---Qxx1br4bt0+wmkIi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Plug in your dock before you boot up and see if you have a second structure like
+that type produced.
 
-On Mon, May 07, 2018 at 07:40:49AM +1000, NeilBrown wrote:
->=20
-> Hi James,
->  this hasn't appear in linux-next yet, or in any branch
->  of
->    git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/mips.git
->=20
->  Should I expect it to?
-
-Sorry Neil, I haven't applied it yet. I'm planning to get a few fixes
-sorted this week, at which point it would land in the mips-fixes branch
-at the above repo.
-
-Cheers
-James
-
---Qxx1br4bt0+wmkIi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvC0NgAKCRA1zuSGKxAj
-8oKRAPwK7fmohcud0fjIl2pvltDY4gpwo83BsYs92ho1OS55JgEAlVOso4iJX4X5
-7NItreTsvuSUoS9uUB3be8tkG4FGKAk=
-=y4bN
------END PGP SIGNATURE-----
-
---Qxx1br4bt0+wmkIi--
+If not, then I guess this isn't a reliable way to find the dock
+on that system and I'll have to see if there is another.
