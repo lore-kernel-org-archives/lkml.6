@@ -1,242 +1,175 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752412AbeEGRRN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 13:17:13 -0400
-Received: from mail1.bemta12.messagelabs.com ([216.82.251.2]:58016 "EHLO
-        mail1.bemta12.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751923AbeEGRRK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 13:17:10 -0400
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WTfUxbVRjGe+73Ri+7FJDXZiyxOgWSNmMuy9U
-  tRrMsuX+oMTMxyox4u125Df3Ae4uiJlqGTCl1kIWUQQsCU8aXQztGVrNgVmZks8sMOHSNG2MW
-  dUigOqNkxGEvt5v6z8nvPc/znvOck3MY3PQebWakGq+kuEWnhVpPyL/MYtY8f6psS2+Y58PDQ
-  xTfMybzrbUXaX4w8hQ/9XmY4q8OrZL8qY/HMP7XP3txvn48SvChdxdJPlR7CPEry2HqcaMwvr
-  CEC9FPBjDhRF+JEBlooITI74dpYeLICiH8NpcghHjXWVo48fVbwslbjwn1f+ULNyObnjGWkQ6
-  33VPzMil/v7hMV13aWdM6fRD3odQOP1rPmLgkgkTbHNKLMwiuHGqitYLgAjgMx/2ErjRhULfa
-  R+nFDwiO3jhP+tE6huKK4dzCNO5HDJPHFcHCyFbNg3MzBPS1RChtPpfbC4MXHtLsedyL0BmqQ
-  zo/B7GrCVpjgnsAjn3zKaUxm/ZcHmwg9b2mcTjzd+uaaR23E748MIFpjLhCCF6fWWOcK4COYP
-  taHuA4+Oj0RVznfLjx421Sy4C4PbA48pI+bYHo1MGMpRAmP2xEOjeTsBou17kUvur/AtcyANd
-  AwYGOMVIvRhEcOx7GdFcJtEbjGa6EiWQqwzugfz6VCbQJBj6YJfTmfhyafcGMsBFCLddQM7K1
-  /+cQOpdAp28F0/k+aGmcpdvXbiYHzrUliS5EDKAiVVJekxTrtu02u+KokL0u0eG0lpZutbkkV
-  RUrJKdoV237PK4ISj/EdwwGdApd6t4bQ/cymCWfzbq2VGbKtnv2vyGLqlyuVDslNYY2MowF2G
-  /fT5WZchSpQqp5xeFMv+Y7MjBGSx57UpNZtUp0qY4KXTqPHmGCvYEAzgyNHE6PyalgADcRbo9
-  bMhewSa2B0xrkavfd5e78j0lUaM5lkcFgMBmrJMXl8P5fn0cFDLLkske1VYwOt/furvPpQFg6
-  UI52Flb1iv9KZh96Qo73LG/5qehhJfZHDzEy15148vXKiXAjXLn/0aynd69+Zh6/2cy/fXv/6
-  HfbN5/tZYs764att2IXCmnb5ZBvsq2yQXlww0y9Zz5C/ZxtrztdXT7aJC4lX90c2xVgzLtr39
-  xw5IVE8eJ1LLty3/Pd1qxnXfFtx6PRqtg9Sx3ZK127LIQqi6UluKKK/wDdfp9kGgQAAA==
-X-Env-Sender: yehs1@lenovo.com
-X-Msg-Ref: server-12.tower-168.messagelabs.com!1525713426!68855537!1
-X-Originating-IP: [104.232.225.2]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-From: Huaisheng HS1 Ye <yehs1@lenovo.com>
-To: Matthew Wilcox <willy@infradead.org>
-CC: Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned int
- in gfp_zone
-Thread-Topic: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned
- int in gfp_zone
-Thread-Index: AQHT46zY0MF6WC61BUed7IoviL30RKQftP0AgAKu3ZCAAFaOAIAAIzywgAAyoACAAV5skA==
-Date: Mon, 7 May 2018 17:16:50 +0000
-Message-ID: <HK2PR03MB1684BF10B3B515BFABD35F8B929B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
-References: <1525416729-108201-1-git-send-email-yehs1@lenovo.com>
- <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
- <20180504133533.GR4535@dhcp22.suse.cz>
- <20180504154004.GB29829@bombadil.infradead.org>
- <HK2PR03MB168459A1C4FB2B7D3E1F6A4A92840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506134814.GB7362@bombadil.infradead.org>
- <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506185532.GA13604@bombadil.infradead.org>
-In-Reply-To: <20180506185532.GA13604@bombadil.infradead.org>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [123.120.83.217]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HK2PR03MB0868;7:l0Xrlbj1gq+XkTKCE7hZFowJvwChgfytUr67ggu4818f7O1w8D0/y2hpHtnKTD8tVe4//l3+3fHTi9IUEyIVI6CJGC5K5WWiNFWr6IiZiVmiSHZJ8LRjefLGsD1/PSNZI+iITQV1ZQoWyURfmJcomKualAoC1sKEBHzITZNOfdZl0fjcjZeGVzpMwPQT54udd4bXLBkjYfqLZhe3Vu3sAmx4n2O9WcZunzjMyQMHai3MKhPOnjhkb73gmZo1+8C4;20:juKFVZIT8YpNCafY3KrSg6R+En+QHSW6BrUe4NadW1bQbpFx9pNeLRi7mWtDBh20MxZGkV/eLMDu3K5h/7u544nboV5xavS00iqyFoe6rI20AhmpOyxNTl8FceIRoVrc0SwJQObTmSXvD1CWhpXhk12Qij6+GjLJF44w+ieKZ1RhicZD4khq1dpqjiub4GIf/D/dAPRVYwgBRxks7eiaTPmgERMLNsXNCLGuTVG8b99hJHNwKKCrD9NbpMc05kmYpQkuIWdJNRcVkQFVq8R+eGrSTN/DDvRxjjAZ0fCWUxR2Kys1a5IkXf4kippzYte3PCijgUL65s0yaBM5v+6qAg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(376002)(396003)(39850400004)(346002)(39380400002)(366004)(199004)(189003)(476003)(3846002)(33656002)(11346002)(99286004)(102836004)(5250100002)(186003)(26005)(76176011)(53936002)(7696005)(59450400001)(6506007)(6116002)(7736002)(229853002)(105586002)(106356001)(316002)(74316002)(6436002)(305945005)(5660300001)(7416002)(66066001)(6916009)(486006)(446003)(54906003)(86362001)(2900100001)(413944005)(25786009)(97736004)(14454004)(8936002)(2906002)(3280700002)(4326008)(55016002)(9686003)(81166006)(81156014)(3660700001)(8676002)(93886005)(478600001)(6246003)(68736007)(9126004);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR03MB0868;H:HK2PR03MB1684.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HK2PR03MB0868;
-x-ms-traffictypediagnostic: HK2PR03MB0868:
-x-microsoft-antispam-prvs: <HK2PR03MB08682B8CB7C4DA7517C5620E929B0@HK2PR03MB0868.apcprd03.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(158342451672863);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:HK2PR03MB0868;BCL:0;PCL:0;RULEID:;SRVR:HK2PR03MB0868;
-x-forefront-prvs: 066517B35B
-x-microsoft-antispam-message-info: wortlpvVoVFIuM6Fowi3nxl174dJUvQ4VzK+APtKbSfuT3I5FFr1r+R+lsnCQ65gdfNLAUcM8R1HwEDGBpgDP1duiBair9n5hkupx3g/5LKma86XwLPyFoGUWXGQAhkOfiZNSFfijHRp7iRjaJP10fNCbVjUtbxGFFVrb29FMRB9caZVbfsRkbwsPN83ya34
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
+        id S1752652AbeEGRTL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 13:19:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38368 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751976AbeEGRTJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 13:19:09 -0400
+Subject: Re: WARNING in __mutex_unlock_slowpath
+To: syzbot <syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com>,
+        hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, rkrcmar@redhat.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, x86@kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        Cathy Avery <cavery@redhat.com>
+References: <000000000000170595056affab1c@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <59d3e273-293d-7597-7d69-b5278318a026@redhat.com>
+Date: Mon, 7 May 2018 19:19:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: e901e31d-5188-45da-e629-08d5b43e5253
-X-MS-Exchange-CrossTenant-Network-Message-Id: e901e31d-5188-45da-e629-08d5b43e5253
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2018 17:16:50.3273
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR03MB0868
+In-Reply-To: <000000000000170595056affab1c@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w47HHHva006220
 
-Dear Matthew,
-
-I will try to explain them in depth. Correct me if anything wrong.
+On 29/04/2018 19:00, syzbot wrote:
+> Hello,
 > 
-> On Sun, May 06, 2018 at 04:17:06PM +0000, Huaisheng HS1 Ye wrote:
-> > Upload my current patch and testing platform info for reference. This patch
-> has been tested
-> > on a two sockets platform.
+> syzbot hit the following crash on upstream commit
+> bf8f5de17442bba5f811e7e724980730e079ee11 (Sat Apr 28 17:05:04 2018 +0000)
+> MAINTAINERS: add myself as maintainer of AFFS
+> syzbot dashboard link:
+> https://syzkaller.appspot.com/bug?extid=35666cba7f0a337e2e79
 > 
-> Thank you!
-My pleasure.
-
-> > It works, but some drivers or subsystem shall be modified to fit
-> > these new type __GFP flags.
-> > They use these flags directly to realize bit manipulations like this
-> > below.
-> >
-> > eg.
-> > swiotlb-xen.c (drivers\xen):    flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
-> > extent_io.c (fs\btrfs):         mask &= ~(__GFP_DMA32|__GFP_HIGHMEM);
-> >
-> > Because of these flags have been encoded within this patch, the
-> > above operations can cause problem.
+> C reproducer: https://syzkaller.appspot.com/x/repro.c?id=5686569910403072
+> syzkaller reproducer:
+> https://syzkaller.appspot.com/x/repro.syz?id=5767017265102848
+> Raw console output:
+> https://syzkaller.appspot.com/x/log.txt?id=6346308495343616
+> Kernel config:
+> https://syzkaller.appspot.com/x/.config?id=7043958930931867332
+> compiler: gcc (GCC) 8.0.1 20180413 (experimental)
 > 
-> I don't think this actually causes problems.  At least, no additional
-> problems.  These users will successfully clear __GFP_DMA and
-> __GFP_HIGHMEM
-> no matter what values GFP_DMA and GFP_HIGHMEM have; the only problem
-> will be if someone calls them with a zone type they're not expecting (eg DMA32
-> for the first one or DMA for the second; or MOVABLE for either of them).
-> The thing is, they're already buggy in those circumstances.
-
-I hope it couldn't cause problem, but based on my analyzation it has the potential to go wrong if users still use the flags as usual, which are __GFP_DMA, __GFP_DMA32 and __GFP_HIGHMEM.
-Let me take an example with my testing platform, these logics are much abstract, an example will be helpful.
-
-There is a two sockets X86_64 server, No HIGHMEM and it has 16 + 16GB memories.
-Its zone types shall be like this below,
-
-ZONE_DMA				0		0b0000
-ZONE_DMA32				1		0b0001
-ZONE_NORMAL			2		0b0010
-(OPT_ZONE_HIGHMEM)	2		0b0010
-ZONE_MOVABLE			3		0b0011
-ZONE_DEVICE				4		0b0100 (virtual zone)
-__MAX_NR_ZONES		5
-
-__GFP_DMA		= ZONE_DMA    			^ ZONE_NORMAL= 0b0010
-__GFP_DMA32		= ZONE_DMA32  		^ ZONE_NORMAL= 0b0011
-__GFP_HIGHMEM = OPT_ZONE_HIGHMEM ^ ZONE_NORMAL = 0b0000
-__GFP_MOVABLE	= ZONE_MOVABLE ^ ZONE_NORMAL | ___GFP_MOVABLE = 0b1001
-
-Eg.
-If a driver uses flags like this below,
-Step 1:
-gfp_mask  |  __GFP_DMA32;	
-(0b 0000		|	0b 0011	= 0b 0011)
-gfp_mask's low four bits shall equal to 0011, assuming no __GFP_MOVABLE
-
-Step 2:
-gfp_mask  & ~__GFP_DMA;	
-(0b 0011	 & ~0b0010   = 0b0001)
-gfp_mask's low four bits shall equal to 0001 now, then when it enter gfp_zone(),
-
-return ((__force int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
-(0b0001 ^ 0b0010 = 0b0011)
-You know 0011 means that ZONE_MOVABLE will be returned.
-In this case, error can be found, because gfp_mask needs to get ZONE_DMA32 originally.
-But with existing GFP_ZONE_TABLE/BAD, it is correct. Because the bits are way of 0x1, 0x2, 0x4, 0x8
-
-I just want to show a case of failure, please don't blame me that use case was invented.
-Again, your idea is great in my eyes, which has much advantages than ZONE_TABLE/BAD.
-But if we use this idea, that means other subsystem or driver shall not use the flags as existing way.
-Of course, this limitation only exists in low 3 bits of gfp_t. The remaining high bits can be used as usual.
-
-This is my opinion, maybe it is not accurate, but I really worry about it.
-
-> >   */
-> > -#define __GFP_DMA      ((__force gfp_t)___GFP_DMA)
-> > -#define __GFP_HIGHMEM  ((__force gfp_t)___GFP_HIGHMEM)
-> > -#define __GFP_DMA32    ((__force gfp_t)___GFP_DMA32)
-> > +#define __GFP_DMA      ((__force gfp_t)OPT_ZONE_DMA ^
-> ZONE_NORMAL)
-> > +#define __GFP_HIGHMEM  ((__force gfp_t)ZONE_MOVABLE ^
-> ZONE_NORMAL)
-> > +#define __GFP_DMA32    ((__force gfp_t)OPT_ZONE_DMA32 ^
-> ZONE_NORMAL)
-> >  #define __GFP_MOVABLE  ((__force gfp_t)___GFP_MOVABLE)  /*
-> ZONE_MOVABLE allowed */
-> [...]
-> >  static inline enum zone_type gfp_zone(gfp_t flags)
-> > {
-> >         enum zone_type z;
-> > -       int bit = (__force int) (flags & GFP_ZONEMASK);
-> > +       z = ((__force unsigned int)flags & ___GFP_ZONE_MASK) ^
-> ZONE_NORMAL;
-> >
-> > -       z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
-> > -                                        ((1 << GFP_ZONES_SHIFT) - 1);
-> > -       VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
-> > +       if (z > OPT_ZONE_HIGHMEM) {
-> > +               z = OPT_ZONE_HIGHMEM +
-> > +                       !!((__force unsigned int)flags & ___GFP_MOVABLE);
-> > +       }
-> >         return z;
-> >  }
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com
+> It will help syzbot understand when the bug is fixed. See footer for
+> details.
+> If you forward the report, please keep this part and the footer.
 > 
-> How about:
-> 
-> +#define __GFP_HIGHMEM  ((__force gfp_t)OPT_ZONE_HIGHMEM ^
-> ZONE_NORMAL)
-> -#define __GFP_MOVABLE  ((__force gfp_t)___GFP_MOVABLE)  /*
-> ZONE_MOVABLE allowed */
-> +#define __GFP_MOVABLE  ((__force gfp_t)ZONE_MOVABLE ^
-> ZONE_NORMAL | \
-> +					___GFP_MOVABLE)
-> 
-> Then I think you can just make it:
-> 
-> static inline enum zone_type gfp_zone(gfp_t flags)
-> {
-> 	return ((__force int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
-> }
-Sorry, I think it has risk in this way, let me introduce a failure case for example.
+> ------------[ cut here ]------------
+> DEBUG_LOCKS_WARN_ON(__owner_task(owner) != current)
+> WARNING: CPU: 0 PID: 4525 at kernel/locking/mutex.c:1032
+> __mutex_unlock_slowpath+0x62e/0x8a0 kernel/locking/mutex.c:1032
+> Kernel panic - not syncing: panic_on_warn set ...
 
-Now suppose that, there is a flag should represent DMA flag with movable.
-It should be like this below,
-__GFP_DMA | __GFP_MOVABLE
-(0b 0010       |   0b 1001   = 0b 1011)
-Normally, gfp_zone shall return ZONE_DMA but with MOVABLE policy, right?
-But with your code, gfp_zone will return ZONE_DMA32 with MOVABLE policy.
-(0b 1011  ^  0b 0010 = 1001)
+This doesn't make much sense, unless it's a "generic" memory corruption,
+but at least the reproducer seems to be simple, just (in pseudocode)
 
-You can find that something wrong happens, so that is why I make gfp_zone more complicated than yours.
+  ioctl(kvm_vm_fd, KVM_HYPERV_EVENTFD,
+        { fd = some_eventfd, conn_id = 0, flags = 0 })
+  ioctl(kvm_vm_fd, KVM_HYPERV_EVENTFD,
+        { fd = -1, conn_id = 5, flags = KVM_HYPERV_EVENTFD_DEASSIGN })
 
-> > @@ -370,42 +368,15 @@ static inline bool gfpflags_allow_blocking(const
-> gfp_t gfp_flags)
-> >  #error GFP_ZONES_SHIFT too large to create GFP_ZONE_TABLE integer
-> >  #endif
+Roman, Cathy, can you give it a quick look?  (Reproducing the reproducer
+link: https://syzkaller.appspot.com/x/repro.c?id=5686569910403072).
+
+Paolo
+
+> CPU: 0 PID: 4525 Comm: syz-executor809 Not tainted 4.17.0-rc2+ #22
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  panic+0x22f/0x4de kernel/panic.c:184
+>  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
+>  report_bug+0x252/0x2d0 lib/bug.c:186
+>  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+>  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
+>  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
+>  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+> RIP: 0010:__mutex_unlock_slowpath+0x62e/0x8a0 kernel/locking/mutex.c:1032
+> RSP: 0018:ffff8801cf31f138 EFLAGS: 00010286
+> RAX: 0000000000000033 RBX: 1ffff10039e63e30 RCX: ffffffff8160b82d
+> RDX: 0000000000000000 RSI: ffffffff816104e1 RDI: 0000000000000001
+> RBP: ffff8801cf31f2a8 R08: ffff8801d9042180 R09: fffffbfff11b0974
+> R10: fffffbfff11b0974 R11: ffffffff88d84ba3 R12: ffffffff8a713a20
+> R13: dffffc0000000000 R14: 0000000000000000 R15: ffff8801989d6b08
+>  mutex_unlock+0xd/0x10 kernel/locking/mutex.c:614
+>  kvm_hv_eventfd_deassign arch/x86/kvm/hyperv.c:1434 [inline]
+>  kvm_vm_ioctl_hv_eventfd+0x1ea/0x24b arch/x86/kvm/hyperv.c:1451
+>  kvm_arch_vm_ioctl+0x155e/0x2690 arch/x86/kvm/x86.c:4563
+>  kvm_vm_ioctl+0x246/0x1d90 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3100
+>  vfs_ioctl fs/ioctl.c:46 [inline]
+>  file_ioctl fs/ioctl.c:500 [inline]
+>  do_vfs_ioctl+0x1cf/0x16a0 fs/ioctl.c:684
+>  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+>  __do_sys_ioctl fs/ioctl.c:708 [inline]
+>  __se_sys_ioctl fs/ioctl.c:706 [inline]
+>  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x4401f9
+> RSP: 002b:00007ffcd5727a48 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 6d766b2f7665642f RCX: 00000000004401f9
+> RDX: 0000000020000140 RSI: 000000004018aebd RDI: 00000000000000ee
+> RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+> R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401720
+> R13: 00000000004017b0 R14: 0000000000000000 R15: 0000000000000000
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
 > 
-> You should be able to delete GFP_ZONES_SHIFT too.
-Yes, you are right.
-
-Sincerely,
-Huaisheng Ye | Ҷ��ʤ
-Linux kernel | Lenovo
+> 
+> ---
+> This bug is generated by a dumb bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for details.
+> Direct all questions to syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report.
+> If you forgot to add the Reported-by tag, once the fix for this bug is
+> merged
+> into any tree, please reply to this email with:
+> #syz fix: exact-commit-title
+> If you want to test a patch for this bug, please reply with:
+> #syz test: git://repo/address.git branch
+> and provide the patch inline or as an attachment.
+> To mark this as a duplicate of another syzbot report, please reply with:
+> #syz dup: exact-subject-of-another-report
+> If it's a one-off invalid bug report, please reply with:
+> #syz invalid
+> Note: if the crash happens again, it will cause creation of a new bug
+> report.
+> Note: all commands must start from beginning of the line in the email body.
