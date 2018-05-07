@@ -1,90 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753085AbeEGUhA (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:37:00 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:32888 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753027AbeEGUgr (ORCPT
+        id S1752980AbeEGUmC (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:42:02 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:37128 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752796AbeEGUmA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:36:47 -0400
-X-Google-Smtp-Source: AB8JxZpV9+igKIe7WCBCrmPx5NEqvmMCI8hdFH+mqPEDn1u13bUwcr9tsxRuUFn45SIlbKR2LLAhuudmRuoOoBT46dM=
-MIME-Version: 1.0
-In-Reply-To: <20180507131906.rdvcmvim5gvi5odk@valkosipuli.retiisi.org.uk>
-References: <20180425213044.1535393-1-arnd@arndb.de> <2922276.lKgGZtlCEW@avalon>
- <20180507131906.rdvcmvim5gvi5odk@valkosipuli.retiisi.org.uk>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 7 May 2018 16:36:45 -0400
-X-Google-Sender-Auth: Pf5QjQCjdf1PGhIYsNXZWYFg-c0
-Message-ID: <CAK8P3a2+Xi8VF7B40zev1CT55HCNE92+MsPEiaGj7tOXEV57dg@mail.gmail.com>
-Subject: Re: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of omap3isp_stat_data
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 7 May 2018 16:42:00 -0400
+X-Google-Smtp-Source: AB8JxZrlm0glBRexwV6jaVdivJaKUzSihEnAqWtb0j2fF9C4c5HlT++dAKJvye/zq3iYp9hZAyW7cw==
+From: Joel Fernandes <joelaf@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Fenguang Wu <fengguang.wu@intel.com>,
+        Baohong Liu <baohong.liu@intel.com>,
+        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
+Subject: [PATCH RFC v6 2/5] srcu: Add notrace variant of srcu_dereference
+Date: Mon,  7 May 2018 13:41:40 -0700
+Message-Id: <20180507204143.13061-3-joelaf@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+In-Reply-To: <20180507204143.13061-1-joelaf@google.com>
+References: <20180507204143.13061-1-joelaf@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 9:19 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> On Mon, May 07, 2018 at 04:17:32PM +0300, Laurent Pinchart wrote:
->> On Thursday, 26 April 2018 00:30:10 EEST Arnd Bergmann wrote:
->> > +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
->> > +                                   struct omap3isp_stat_data_time32 *data)
->> > +{
->> > +   struct omap3isp_stat_data data64;
->> > +   int ret;
->> > +
->> > +   ret = omap3isp_stat_request_statistics(stat, &data64);
->> > +
->> > +   data->ts.tv_sec = data64.ts.tv_sec;
->> > +   data->ts.tv_usec = data64.ts.tv_usec;
->> > +   memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
->> > +
->> > +   return ret;
->>
->> We could return immediately after omap3isp_stat_request_statistics() if the
->> function fails, but that's no big deal, the error path is clearly a cold path.
+From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
 
-I looked at it again and briefly thought that it would leak kernel stack
-data in my version and changing it would be required to avoid that,
-but I do see now that the absence of the INFO_FL_ALWAYS_COPY
-flag makes it safe after all.
+In the last patch in this series, we are making lockdep register hooks
+onto the irq_{disable,enable} tracepoints. These tracepoints use the
+_rcuidle tracepoint variant. In this series we switch the _rcuidle
+tracepoint callers to use SRCU instead of sched-RCU. Inorder to
+dereference the pointer to the probe functions, we could call
+srcu_dereference, however this API will call back into lockdep to check
+if the lock is held *before* the lockdep probe hooks have a chance to
+run and annotate the IRQ enabled/disabled state.
 
-I agree that returning early here would be nicer here, I'll leave it up to
-Sakari to fold in that change if he likes.
+For this reason we need a notrace variant of srcu_dereference since
+otherwise we get lockdep splats. This patch adds the needed
+srcu_dereference_notrace variant.
 
->> > @@ -165,7 +167,14 @@ struct omap3isp_h3a_aewb_config {
->> >   * @config_counter: Number of the configuration associated with the data.
->> >   */
->> >  struct omap3isp_stat_data {
->> > +#ifdef __KERNEL__
->> > +   struct {
->> > +           __s64   tv_sec;
->> > +           __s64   tv_usec;
->> > +   } ts;
->>
->> I share Sakari's comment about this method implying a little-endian system,
->> but as the SoCs that integrate this device are all little-endian, that's not a
->> problem in practice.
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zilstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Thomas Glexiner <tglx@linutronix.de>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Fenguang Wu <fengguang.wu@intel.com>
+Cc: Baohong Liu <baohong.liu@intel.com>
+Cc: Vedang Patel <vedang.patel@intel.com>
+Cc: kernel-team@android.com
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ include/linux/srcu.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-To clarify: the version I have here does *not* imply a little-endian system,
-it is supposed to work on both little-endian and big-endian builds, and
-endianess is not a property of the SoC either -- you should be able to
-build a big-endian kernel and run it on OMAP3 (aside from bugs in other
-drivers). Using 'long' here instead of __s64 would however make this
-interface broken on big-endian builds since the glibc definition of timeval
-does include extra padding on big-endian machines to make the structure
-compatible between 32-bit and 64-bit ABIs.
-
->> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->>
->> If you agree with the small comment about header ordering, let's get this
->> patch finally merged.
->
-> I can make the change locally in my tree, no need to resend.
->
-> Thanks.
-
-Thanks a lot!
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 2ec618979b20..a1c4947be877 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -135,6 +135,11 @@ static inline int srcu_read_lock_held(const struct srcu_struct *sp)
+  */
+ #define srcu_dereference(p, sp) srcu_dereference_check((p), (sp), 0)
+ 
++/**
++ * srcu_dereference_notrace - no tracing and no lockdep calls from here
++ */
++#define srcu_dereference_notrace(p, sp) srcu_dereference_check((p), (sp), 1)
++
+ /**
+  * srcu_read_lock - register a new reader for an SRCU-protected structure.
+  * @sp: srcu_struct in which to register the new reader.
+-- 
+2.17.0.441.gb46fe60e1d-goog
