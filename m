@@ -1,311 +1,126 @@
-Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-2676370-1525981359-2-6481674442562510622
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
-  FromHeader='net', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525981357; b=bj+NwfAjIFn7sQcNssg6wboViuLYRusgs6/aypMKF+2Kq/h3IH
-    H5ySnREJ3/5oIzqHyxL6HehOsLBb4TcRNx/jHsFq/uXW0Q7rzi2+n0EwAAX/Fpb9
-    96h/k2UvirVPYRipvcfL5PqelnVGSL5bBlc6OxvhRNImDgKwcM5Os0mBeMltt62n
-    aVtmio14Z5JIiOPSgOLeUh2UcU2pqRR3lwxcnAVHSyPdCpOj0VEndD6eBOo85YtP
-    M6wfYJhfAm01Dh2wbW78tTMaocWnH9Pf9Nxt428Q5B9ZD/0EqUUCJuayYEv2jmNC
-    UCWvaCjY5wgTWCylaMsTbMtnX4Bq5aJWmqzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:subject:date:message-id
-    :in-reply-to:references:list-id:list-unsubscribe:list-archive
-    :list-post:list-help:list-subscribe:cc:mime-version:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525981357; bh=QpXcz
-    7olYWtQPCHIwTQGhmtFU7S9Q42PS6WMkIuiO1E=; b=JR/DKm4YJ6H8/KGL6PEFb
-    8sMZ4JNdyr4KYhniJN3eQZ7IG0hPNx8W+nQQP6OEyyBG6juS2hq1ILoywh2h94Rb
-    VbCc7Gnr9o4C2dXx+SUgxCvV7cxpthIIKrZprd5BeZMymIbNqGGlQHzy32pc8W37
-    yL51poNK2At/BFVFopqI5TEepU/SmrneZmkBCdSHMaaQYpaQls9cc8ugJDCnBuGg
-    juATIlKY3eP0EGSZVhpVrO2Pkl7rGvkgGP3SSG5K18mBrnruPUKTzB4P7dTWkdX7
-    XgmZgsizXF/HgiV00+ca4jh4rAPikt71KRRd0n4+79Cd5ucky95rjR3ewlwMx6qn
-    A==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-    smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=none (no signatures found);
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=anholt.net;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
-    spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
-    x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
-      smtp_is_org_domain=yes header.domain=anholt.net header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfDLh3CEhWV7YlgZCOxlIreRHshKdhqQetwTPJ97LPHsfYHi2RH9XV9G3G+miTd/6YqCWkCEiWvrrnlnGGunNRl+bLKaYvgYPY0G7RI9BRC9JVkPI2Cs5
-    PnJ0YARqeg+3be/a6edAo87e+wWZHgINw1ky3NSm3dpmmpfhuHyZbfB+XrmV4mdPXNd/ZbbZ5qNEozv3txCT4Bvm7hYzIsoWG+UN6HZOKp/zUozeMULFVcPg
-    eN5HOZ6UGb20Lnz5YMTc2Q==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=WFZIRff2AAAA:8 a=-VAfIpHNAAAA:8
-    a=DDOyTI_5AAAA:8 a=cPnG7trEE0XDhgrGWNYA:9 a=CjuIK1q_8ugA:10
-    a=srlwD-8ojaedGGhPAyx8:22 a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: driverdev-devel@osuosl.org
-From: Eric Anholt <eric@anholt.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org,
- Stefan Wahren <stefan.wahren@i2se.com>
-Subject: [PATCH 04/15] staging: bcm2835-camera: Allocate context once per
- buffer
-Date: Thu, 10 May 2018 12:42:08 -0700
-Message-Id: <20180510194220.30675-5-eric@anholt.net>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180510194220.30675-1-eric@anholt.net>
-References: <20180510194220.30675-1-eric@anholt.net>
-X-BeenThere: driverdev-devel@linuxdriverproject.org
-X-Mailman-Version: 2.1.24
- <driverdev-devel.linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Eric Anholt <eric@anholt.net>,
- Dave Stevenson <dave.stevenson@raspberrypi.org>
+Return-Path: <minchan.kim@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525702546; cv=none;
+        d=google.com; s=arc-20160816;
+        b=k8FWG4dLCaHQXx3N/49cJ2yCX7abAHq4nAzDjOsgoLub1PgtKnMghdPhCSYG/7Sv+t
+         F7uGLhY8jBc8xVY0pOGJYjvCiD7ZvJv65PtOUEKlc4YxWeqLYwGBPjViQBXMmLMwBkSt
+         xyvd9pdxL0eJVF6GJGubybt0dJPDHnaaFwPgRe1cPLvrtA4n1iHcd8XPBKwsx8o4ZVfz
+         g9dJM+QogpV3zAzwSpJ0NMdHDJWKXc+PwUsnvncc/ORe2GG+BoKjJAEJASOcIekziL77
+         CkOqGvXESoLcF+O0PccQa0do5SAbkARXL7uXX0h8s5c/d2qOO3sdUBXrj8k3kjchNTU1
+         4pqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:dkim-signature:arc-authentication-results;
+        bh=A8za/HAl2IiLicvYE/2KOWhqmHyqEzVAnVWz7lYvwto=;
+        b=rUSGvXcLkaevWbzkVEeW3Hd6JWV16xK02QDJWpjM5jkSSD0EhcJBqAeARk6B7B1JUs
+         UHfiD2x/T0dwHsdiuTmPSeEZDIOg7MW/Cv47/hc5epR9GNIvoIonJzrU4beRwDW7+GPP
+         wvC8XDWyGLNlx/EWfTSb5AqezFSNfipU/a27voSxkMSxy8et5NZyPAx+j+92rS3eMHYG
+         82Le2ZlMIPr+vBoD0IYZB0/myh+ecZUR/mSFzlQAxniCWBODzBjk6FCX3Ba/5ymcv/5A
+         Xh+8DVtRD77Qrc4COqf6zQxLDS7/FY0qWaNKnDlXGlrWJ4ZEsBWnsm8act+Jfx8Dicd7
+         QHCg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bhB/NEn8;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=bhB/NEn8;
+       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+X-Google-Smtp-Source: AB8JxZrInYWV3192pHeDCCc/dTRmQupY8OCyxwj4OqkOrc+ZQGtt48lgeLirPMPnJml41eGuBwMQ+g==
+Sender: Minchan Kim <minchan.kim@gmail.com>
+From: Minchan Kim <minchan@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Minchan Kim <minchan@kernel.org>,
+	Ganesh Mahendran <opensource.ganesh@gmail.com>,
+	Joe Perches <joe@perches.com>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Martijn Coenen <maco@android.com>
+Subject: [PATCH v6] ANDROID: binder: change down_write to down_read
+Date: Mon,  7 May 2018 23:15:37 +0900
+Message-Id: <20180507141537.4855-1-minchan@kernel.org>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599815073448562806?=
+X-GMAIL-MSGID: =?utf-8?q?1599815073448562806?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-From: Dave Stevenson <dave.stevenson@raspberrypi.org>
+binder_update_page_range needs down_write of mmap_sem because
+vm_insert_page need to change vma->vm_flags to VM_MIXEDMAP unless
+it is set. However, when I profile binder working, it seems
+every binder buffers should be mapped in advance by binder_mmap.
+It means we could set VM_MIXEDMAP in binder_mmap time which is
+already hold a mmap_sem as down_write so binder_update_page_range
+doesn't need to hold a mmap_sem as down_write.
+Please use proper API down_read. It would help mmap_sem contention
+problem as well as fixing down_write abuse.
 
-The struct mmal_msg_context was being allocated for every message
-being sent to the VPU, and freed when it came back.  Whilst that is
-required behaviour for some messages (mainly the synchronous ones), it
-is wasteful for the video buffers that make up the majority of the
-traffic.
+Ganesh Mahendran tested app launching and binder throughput test
+and he said he couldn't find any problem and I did binder latency
+test per Greg KH request(Thanks Martijn to teach me how I can do)
+I cannot find any problem, too.
 
-Add to the buffer_init/cleanup hooks that it allocates/frees the
-msg_context required.
-
-v2: changes by anholt from the downstream tree: clean up indentation,
-    pass an error value through, forward-declare the struct so we have
-    less void *
-
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Cc: Ganesh Mahendran <opensource.ganesh@gmail.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Arve Hjønnevåg <arve@android.com>
+Cc: Todd Kjos <tkjos@google.com>
+Reviewed-by: Martijn Coenen <maco@android.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
- .../bcm2835-camera/bcm2835-camera.c           | 30 +++++++++++++--
- .../bcm2835-camera/mmal-common.h              |  4 ++
- .../vc04_services/bcm2835-camera/mmal-vchiq.c | 38 ++++++++++++++-----
- .../vc04_services/bcm2835-camera/mmal-vchiq.h |  3 ++
- 4 files changed, 62 insertions(+), 13 deletions(-)
+ drivers/android/binder.c       | 4 +++-
+ drivers/android/binder_alloc.c | 6 +++---
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-index 7b32c3a93873..dc1c2775bc0b 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c
-@@ -278,6 +278,20 @@ static int queue_setup(struct vb2_queue *vq,
- 	return 0;
- }
- 
-+static int buffer_init(struct vb2_buffer *vb)
-+{
-+	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vb->vb2_queue);
-+	struct vb2_v4l2_buffer *vb2 = to_vb2_v4l2_buffer(vb);
-+	struct mmal_buffer *buf = container_of(vb2, struct mmal_buffer, vb);
-+
-+	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev, "%s: dev:%p, vb %p\n",
-+		 __func__, dev, vb);
-+	buf->buffer = vb2_plane_vaddr(&buf->vb.vb2_buf, 0);
-+	buf->buffer_size = vb2_plane_size(&buf->vb.vb2_buf, 0);
-+
-+	return mmal_vchi_buffer_init(dev->instance, buf);
-+}
-+
- static int buffer_prepare(struct vb2_buffer *vb)
- {
- 	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vb->vb2_queue);
-@@ -300,6 +314,17 @@ static int buffer_prepare(struct vb2_buffer *vb)
- 	return 0;
- }
- 
-+static void buffer_cleanup(struct vb2_buffer *vb)
-+{
-+	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vb->vb2_queue);
-+	struct vb2_v4l2_buffer *vb2 = to_vb2_v4l2_buffer(vb);
-+	struct mmal_buffer *buf = container_of(vb2, struct mmal_buffer, vb);
-+
-+	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev, "%s: dev:%p, vb %p\n",
-+		 __func__, dev, vb);
-+	mmal_vchi_buffer_cleanup(buf);
-+}
-+
- static inline bool is_capturing(struct bm2835_mmal_dev *dev)
- {
- 	return dev->capture.camera_port ==
-@@ -467,9 +492,6 @@ static void buffer_queue(struct vb2_buffer *vb)
- 	v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
- 		 "%s: dev:%p buf:%p\n", __func__, dev, buf);
- 
--	buf->buffer = vb2_plane_vaddr(&buf->vb.vb2_buf, 0);
--	buf->buffer_size = vb2_plane_size(&buf->vb.vb2_buf, 0);
--
- 	ret = vchiq_mmal_submit_buffer(dev->instance, dev->capture.port, buf);
- 	if (ret < 0)
- 		v4l2_err(&dev->v4l2_dev, "%s: error submitting buffer\n",
-@@ -632,7 +654,9 @@ static void bm2835_mmal_unlock(struct vb2_queue *vq)
- 
- static const struct vb2_ops bm2835_mmal_video_qops = {
- 	.queue_setup = queue_setup,
-+	.buf_init = buffer_init,
- 	.buf_prepare = buffer_prepare,
-+	.buf_cleanup = buffer_cleanup,
- 	.buf_queue = buffer_queue,
- 	.start_streaming = start_streaming,
- 	.stop_streaming = stop_streaming,
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h b/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h
-index e68ca1bf7222..fe079d054174 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-common.h
-@@ -19,6 +19,8 @@
- /** Special value signalling that time is not known */
- #define MMAL_TIME_UNKNOWN (1LL<<63)
- 
-+struct mmal_msg_context;
-+
- /* mapping between v4l and mmal video modes */
- struct mmal_fmt {
- 	char  *name;
-@@ -43,6 +45,8 @@ struct mmal_buffer {
- 
- 	void *buffer; /* buffer pointer */
- 	unsigned long buffer_size; /* size of allocated buffer */
-+
-+	struct mmal_msg_context *msg_context;
- };
- 
- /* */
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-index a91ef6ea29ce..037c68b83df9 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.c
-@@ -321,8 +321,6 @@ static void buffer_work_cb(struct work_struct *work)
- 					    msg_context->u.bulk.dts,
- 					    msg_context->u.bulk.pts);
- 
--	/* release message context */
--	release_msg_context(msg_context);
- }
- 
- /* enqueue a bulk receive for a given message context */
-@@ -503,11 +501,13 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
- 		return -EINTR;
- 
- 	/* get context */
--	msg_context = get_msg_context(instance);
--	if (IS_ERR(msg_context)) {
--		ret = PTR_ERR(msg_context);
-+	if (!buf->msg_context) {
-+		pr_err("%s: msg_context not allocated, buf %p\n", __func__,
-+		       buf);
-+		ret = -EINVAL;
- 		goto unlock;
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 4eab5be3d00f..7b8e96f60719 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -4730,7 +4730,9 @@ static int binder_mmap(struct file *filp, struct vm_area_struct *vma)
+ 		failure_string = "bad vm_flags";
+ 		goto err_bad_arg;
  	}
-+	msg_context = buf->msg_context;
+-	vma->vm_flags = (vma->vm_flags | VM_DONTCOPY) & ~VM_MAYWRITE;
++	vma->vm_flags |= VM_DONTCOPY | VM_MIXEDMAP;
++	vma->vm_flags &= ~VM_MAYWRITE;
++
+ 	vma->vm_ops = &binder_vm_ops;
+ 	vma->vm_private_data = proc;
  
- 	/* store bulk message context for when data arrives */
- 	msg_context->u.bulk.instance = instance;
-@@ -557,11 +557,6 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
- 					sizeof(struct mmal_msg_header) +
- 					sizeof(m.u.buffer_from_host));
+diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
+index 5a426c877dfb..4f382d51def1 100644
+--- a/drivers/android/binder_alloc.c
++++ b/drivers/android/binder_alloc.c
+@@ -219,7 +219,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
+ 		mm = alloc->vma_vm_mm;
  
--	if (ret != 0) {
--		release_msg_context(msg_context);
--		/* todo: is this correct error value? */
--	}
--
- 	vchi_service_release(instance->handle);
+ 	if (mm) {
+-		down_write(&mm->mmap_sem);
++		down_read(&mm->mmap_sem);
+ 		vma = alloc->vma;
+ 	}
  
- unlock:
-@@ -1775,6 +1770,29 @@ int vchiq_mmal_submit_buffer(struct vchiq_mmal_instance *instance,
+@@ -288,7 +288,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
+ 		/* vm_insert_page does not seem to increment the refcount */
+ 	}
+ 	if (mm) {
+-		up_write(&mm->mmap_sem);
++		up_read(&mm->mmap_sem);
+ 		mmput(mm);
+ 	}
  	return 0;
- }
- 
-+int mmal_vchi_buffer_init(struct vchiq_mmal_instance *instance,
-+			  struct mmal_buffer *buf)
-+{
-+	struct mmal_msg_context *msg_context = get_msg_context(instance);
-+
-+	if (IS_ERR(msg_context))
-+		return (PTR_ERR(msg_context));
-+
-+	buf->msg_context = msg_context;
-+	return 0;
-+}
-+
-+int mmal_vchi_buffer_cleanup(struct mmal_buffer *buf)
-+{
-+	struct mmal_msg_context *msg_context = buf->msg_context;
-+
-+	if (msg_context)
-+		release_msg_context(msg_context);
-+	buf->msg_context = NULL;
-+
-+	return 0;
-+}
-+
- /* Initialise a mmal component and its ports
-  *
-  */
-diff --git a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
-index b1f22b6dca10..dadf47fe1bdc 100644
---- a/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
-+++ b/drivers/staging/vc04_services/bcm2835-camera/mmal-vchiq.h
-@@ -168,4 +168,7 @@ int vchiq_mmal_submit_buffer(struct vchiq_mmal_instance *instance,
- 			     struct vchiq_mmal_port *port,
- 			     struct mmal_buffer *buf);
- 
-+int mmal_vchi_buffer_init(struct vchiq_mmal_instance *instance,
-+			  struct mmal_buffer *buf);
-+int mmal_vchi_buffer_cleanup(struct mmal_buffer *buf);
- #endif /* MMAL_VCHIQ_H */
+@@ -321,7 +321,7 @@ static int binder_update_page_range(struct binder_alloc *alloc, int allocate,
+ 	}
+ err_no_vma:
+ 	if (mm) {
+-		up_write(&mm->mmap_sem);
++		up_read(&mm->mmap_sem);
+ 		mmput(mm);
+ 	}
+ 	return vma ? -ENOMEM : -ESRCH;
 -- 
-2.17.0
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+2.17.0.441.gb46fe60e1d-goog
