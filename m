@@ -1,118 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751942AbeEGDIa (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 23:08:30 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:56209 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751874AbeEGDI3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 23:08:29 -0400
-X-ME-Sender: <xms:LcPvWu7H7VOFjIgUX--VJ2qTnH79jKoBVsHWUSoxmWHzs_H9CtLgVw>
-Date: Mon, 7 May 2018 13:08:25 +1000
-From: "Tobin C. Harding" <tobin@apporbit.com>
-To: Andrea Greco <andrea.greco.gapmilano@gmail.com>
-Cc: m.grzeschik@pengutronix.de, Andrea Greco <a.greco@4sigma.it>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/3] arcnet: com20020: Add ethtool support
-Message-ID: <20180507030825.GH4197@eros>
-References: <20180505213530.8294-1-andrea.greco.gapmilano@gmail.com>
+        id S1751969AbeEGDJu (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 23:09:50 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7231 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751880AbeEGDJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 23:09:47 -0400
+Subject: Re: [PATCH] VFIO: Fix Documentation
+To: Alex Williamson <alex.williamson@redhat.com>
+References: <1524218521-61496-1-git-send-email-zhangshaokun@hisilicon.com>
+ <36f5940b-cac5-9a4a-86cb-7ad9766d5d62@huawei.com>
+ <20180430123857.006a0697@w520.home>
+CC: <corbet@lwn.net>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: "dongbo (E)" <dongbo4@huawei.com>
+Message-ID: <0f6b31a8-1be4-8817-a27c-716aa334efe8@huawei.com>
+Date: Mon, 7 May 2018 11:09:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180505213530.8294-1-andrea.greco.gapmilano@gmail.com>
-X-Mailer: Mutt 1.5.24 (2015-08-30)
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180430123857.006a0697@w520.home>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.63.195.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 05, 2018 at 11:35:29PM +0200, Andrea Greco wrote:
-> From: Andrea Greco <a.greco@4sigma.it>
+Hi, Alex.
+
+On 2018/5/1 2:38, Alex Williamson wrote:
+> On Fri, 20 Apr 2018 18:07:27 +0800
+> "dongbo (E)" <dongbo4@huawei.com> wrote:
 > 
-> Setup ethtols for export com20020 diag register
+>> From: Dong Bo <dongbo4@huawei.com>
+>>
+>> Signed-off-by: Dong Bo <dongbo4@huawei.com>
+>> ---
 > 
-> Signed-off-by: Andrea Greco <a.greco@4sigma.it>
-> ---
->  drivers/net/arcnet/com20020-isa.c    |  1 +
->  drivers/net/arcnet/com20020-membus.c |  1 +
->  drivers/net/arcnet/com20020.c        | 29 +++++++++++++++++++++++++++++
->  drivers/net/arcnet/com20020.h        |  1 +
->  drivers/net/arcnet/com20020_cs.c     |  1 +
->  include/uapi/linux/if_arcnet.h       |  6 ++++++
->  6 files changed, 39 insertions(+)
+> Hi Dong Bo,
 > 
-> diff --git a/drivers/net/arcnet/com20020-isa.c b/drivers/net/arcnet/com20020-isa.c
-> index 38fa60ddaf2e..44ab6dcccb58 100644
-> --- a/drivers/net/arcnet/com20020-isa.c
-> +++ b/drivers/net/arcnet/com20020-isa.c
-> @@ -154,6 +154,7 @@ static int __init com20020_init(void)
->  		dev->dev_addr[0] = node;
->  
->  	dev->netdev_ops = &com20020_netdev_ops;
-> +	dev->ethtool_ops = &com20020_ethtool_ops;
->  
->  	lp = netdev_priv(dev);
->  	lp->backplane = backplane;
-> diff --git a/drivers/net/arcnet/com20020-membus.c b/drivers/net/arcnet/com20020-membus.c
-> index 6e4a2f3a84f7..9eead734a3cf 100644
-> --- a/drivers/net/arcnet/com20020-membus.c
-> +++ b/drivers/net/arcnet/com20020-membus.c
-> @@ -91,6 +91,7 @@ static int com20020_probe(struct platform_device *pdev)
->  
->  	dev = alloc_arcdev(NULL);// Let autoassign name arc%d
->  	dev->netdev_ops = &com20020_netdev_ops;
-> +	dev->ethtool_ops = &com20020_ethtool_ops;
->  	lp = netdev_priv(dev);
->  
->  	lp->card_flags = ARC_CAN_10MBIT;/* pretend all of them can 10Mbit */
-> diff --git a/drivers/net/arcnet/com20020.c b/drivers/net/arcnet/com20020.c
-> index abd32ed8ec9b..2089b45e81c8 100644
-> --- a/drivers/net/arcnet/com20020.c
-> +++ b/drivers/net/arcnet/com20020.c
-> @@ -201,6 +201,34 @@ const struct net_device_ops com20020_netdev_ops = {
->  	.ndo_set_rx_mode = com20020_set_mc_list,
->  };
->  
-> +static int com20020_ethtool_regs_len(struct net_device *netdev)
-> +{
-> +	return sizeof(struct com20020_ethtool_regs);
-> +}
-> +
-> +static void com20020_ethtool_regs_read(struct net_device *dev,
-> +				       struct ethtool_regs *regs, void *p)
-> +{
-> +	struct arcnet_local *lp;
-> +	struct com20020_ethtool_regs *com_reg;
-> +
-> +	lp = netdev_priv(dev);
-> +	memset(p, 0, sizeof(struct com20020_ethtool_regs));
+> The patch is corrupted, please resend and also include a commit log,
+> something as simple as "Update vfio_add_group_dev description to match
+> the current API" would be fine.  Thanks,
+> 
+> Alex
+> 
+Sorry for the corrupted patch. I've resent one and added the commit log
+you suggested. Hope it would apply. Thanks.
 
-perhaps:
+Best Regards,
+Dong Bo
 
-	struct arcnet_local *lp = netdev_priv(dev);
-	struct com20020_ethtool_regs *com_reg = p;
-
-	memset(com_reg, 0, sizeof(*com_reg));
-
-> +
-> +	regs->version = 1;
-
-Should this function really have a side effect?  If so, perhaps it could
-be commented.
-
-> +
-> +	com_reg = p;
-> +
-> +	com_reg->status = lp->hw.status(dev) & 0xFF;
-> +	com_reg->diag_register = (lp->hw.status(dev) >> 8) & 0xFF;
-> +	com_reg->reconf_count = lp->num_recons;
-> +}
-> +
-> +const struct ethtool_ops com20020_ethtool_ops = {
-> +	.get_regs = com20020_ethtool_regs_read,
-> +	.get_regs_len  = com20020_ethtool_regs_len,
-> +};
-> +
-
-Hope this helps,
-Tobin.
+>>  Documentation/vfio.txt | 5 ++---
+>>  1 file changed, 2 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
+>> index ef6a511..f1a4d3c 100644
+>> --- a/Documentation/vfio.txt
+>> +++ b/Documentation/vfio.txt
+>> @@ -252,15 +252,14 @@ into VFIO core.  When devices are bound and unbound to the driver,
+>>  the driver should call vfio_add_group_dev() and vfio_del_group_dev()
+>>  respectively::
+>>  -	extern int vfio_add_group_dev(struct iommu_group *iommu_group,
+>> -	                              struct device *dev,
+>> +	extern int vfio_add_group_dev(struct device *dev,
+>>  				      const struct vfio_device_ops *ops,
+>>  				      void *device_data);
+>>   	extern void *vfio_del_group_dev(struct device *dev);
+>>   vfio_add_group_dev() indicates to the core to begin tracking the
+>> -specified iommu_group and register the specified dev as owned by
+>> +iommu_group of the specified dev and register the dev as owned by
+>>  a VFIO bus driver.  The driver provides an ops structure for callbacks
+>>  similar to a file operations structure::
+>>  -- 1.9.1
+>>
+>>
+>> .
+>>
+>>
+> 
+> 
+> .
+> 
