@@ -1,99 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751894AbeEGCP6 (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 22:15:58 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60198 "EHLO huawei.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751831AbeEGCPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 22:15:54 -0400
-From: Yunlong Song <yunlong.song@huawei.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC: <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] f2fs-tools: fix to match with the start_sector
-Date: Mon, 7 May 2018 10:15:36 +0800
-Message-ID: <1525659336-145433-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1525425645-127945-1-git-send-email-yunlong.song@huawei.com>
-References: <1525425645-127945-1-git-send-email-yunlong.song@huawei.com>
+        id S1751932AbeEGCQL (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 22:16:11 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:51230 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751831AbeEGCQG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 22:16:06 -0400
+Date: Mon, 7 May 2018 03:15:54 +0100
+From: Al Viro <viro@ZenIV.linux.org.uk>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Martin Steigerwald <martin@lichtvoll.de>,
+        Matthew Wilcox <willy@infradead.org>, dsterba@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>, linux-m68k@vger.kernel.org,
+        Debian m68k <debian-68k@lists.debian.org>
+Subject: Re: moving affs + RDB partition support to staging?
+Message-ID: <20180507021554.GN30522@ZenIV.linux.org.uk>
+References: <20180425154602.GA8546@bombadil.infradead.org>
+ <20180425203029.GQ21272@twin.jikos.cz>
+ <20180426025717.GA32430@bombadil.infradead.org>
+ <1613268.lKBQxPXt8J@merkaba>
+ <76ca15e2-7b43-8b02-43e1-9ee65ab85356@physik.fu-berlin.de>
+ <20180506005946.GI30522@ZenIV.linux.org.uk>
+ <20180506073955.GJ30522@ZenIV.linux.org.uk>
+ <20180506204622.GL30522@ZenIV.linux.org.uk>
+ <20180506213247.GM30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180506213247.GM30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-f2fs-tools uses ioctl BLKSSZGET to get sector_size, however, this ioctl
-will return a value which may be larger than 512 (according to the value
-of q->limits.logical_block_size), then this will be inconsistent with
-the start_sector, since start_sector is got from ioctl HDIO_GETGEO and
-is always in 512 size unit for a sector. To fix this problem, just
-change the sector_size to the default value when computing with
-start_sector. And fix sectors_per_blk as well.
+On Sun, May 06, 2018 at 10:32:47PM +0100, Al Viro wrote:
+> On Sun, May 06, 2018 at 09:46:23PM +0100, Al Viro wrote:
+> 
+> > 	I'm fixing that pile of crap (along with the NFS exports
+> > one and, hopefully, rename mess as well).  HOWEVER, I am not going
+> > to take over the damn thing - David has violated the 11th
+> > commandment (Thou Shalt Never Volunteer), so he gets to joy of
+> > learning that codebase and taking care of it from now on.
+> 
+> 	Same scenario on link(2) ends up with
+> * ST_LINKFILE created, inserted into the link chain and left around,
+> without being present in any hash chain
+> * target becoming positive hashed dentry, as if link(2) has succeeded,
+> so dcache lookups will be finding it (for a while)
+> * unlink(2) on source will have very interesting effects, what with
+> the attempts to move ST_FILE entry into the directory presumed to
+> contain ST_LINKFILE one, removing ST_LINKFILE from it at the same time.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fsck/resize.c      |  4 ++--
- mkfs/f2fs_format.c | 12 ++++++------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+Oh, lovely...  Looks like that thing wants the hash chains sorted by
+block number.  affs_insert_hash() doesn't give a toss - it always
+adds to the very end of chain.
 
-diff --git a/fsck/resize.c b/fsck/resize.c
-index d285dd7..ada2155 100644
---- a/fsck/resize.c
-+++ b/fsck/resize.c
-@@ -27,10 +27,10 @@ static int get_new_sb(struct f2fs_super_block *sb)
- 
- 	zone_size_bytes = segment_size_bytes * segs_per_zone;
- 	zone_align_start_offset =
--		(c.start_sector * c.sector_size +
-+		(c.start_sector * DEFAULT_SECTOR_SIZE +
- 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
- 		zone_size_bytes * zone_size_bytes -
--		c.start_sector * c.sector_size;
-+		c.start_sector * DEFAULT_SECTOR_SIZE;
- 
- 	set_sb(segment_count, (c.target_sectors * c.sector_size -
- 				zone_align_start_offset) / segment_size_bytes /
-diff --git a/mkfs/f2fs_format.c b/mkfs/f2fs_format.c
-index 0a99a77..ced5fea 100644
---- a/mkfs/f2fs_format.c
-+++ b/mkfs/f2fs_format.c
-@@ -212,18 +212,18 @@ static int f2fs_prepare_super_block(void)
- 	set_sb(block_count, c.total_sectors >> log_sectors_per_block);
- 
- 	zone_align_start_offset =
--		(c.start_sector * c.sector_size +
-+		(c.start_sector * DEFAULT_SECTOR_SIZE +
- 		2 * F2FS_BLKSIZE + zone_size_bytes - 1) /
- 		zone_size_bytes * zone_size_bytes -
--		c.start_sector * c.sector_size;
-+		c.start_sector * DEFAULT_SECTOR_SIZE;
- 
--	if (c.start_sector % c.sectors_per_blk) {
-+	if (c.start_sector % DEFAULT_SECTORS_PER_BLOCK) {
- 		MSG(1, "\t%s: Align start sector number to the page unit\n",
- 				c.zoned_mode ? "FAIL" : "WARN");
- 		MSG(1, "\ti.e., start sector: %d, ofs:%d (sects/page: %d)\n",
- 				c.start_sector,
--				c.start_sector % c.sectors_per_blk,
--				c.sectors_per_blk);
-+				c.start_sector % DEFAULT_SECTORS_PER_BLOCK,
-+				DEFAULT_SECTORS_PER_BLOCK);
- 		if (c.zoned_mode)
- 			return -1;
- 	}
-@@ -235,7 +235,7 @@ static int f2fs_prepare_super_block(void)
- 					get_sb(segment0_blkaddr));
- 
- 	if (c.zoned_mode && (get_sb(segment0_blkaddr) + c.start_sector /
--					c.sectors_per_blk) % c.zone_blocks) {
-+					DEFAULT_SECTORS_PER_BLOCK) % c.zone_blocks) {
- 		MSG(1, "\tError: Unaligned segment0 block address %u\n",
- 				get_sb(segment0_blkaddr));
- 		return -1;
--- 
-1.8.5.2
+Maintaining that requirement (and I can understand the rationale -
+they don't want too many back-and-forth seeks on directory lookups)
+is going to be great fun on rename(), especially for the case when
+the target of rename happens to be a primary name for a file with
+additional hardlinks.
+
+I think I see how to deal with that sanely, but... ouch.
+
+Incidentally, we'd better verify that hash chains are not looped - as it
+is, there's no checks whatsoever, and it *will* happily loop if you
+feed it an image with such braindamage.  I really hope that no fan of
+desktop experience has set the things up for e.g. USB sticks with
+that on them being recognized and automounted on insertion...
