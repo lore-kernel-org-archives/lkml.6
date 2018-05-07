@@ -1,122 +1,130 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753433AbeEGV1o (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:27:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43601 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752908AbeEGV1n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:27:43 -0400
-Date: Mon, 7 May 2018 23:25:01 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Huaisheng HS1 Ye <yehs1@lenovo.com>, Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned
- int in gfp_zone
-Message-ID: <20180507212500.bdphwfhk55w6vlbb@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        Huaisheng HS1 Ye <yehs1@lenovo.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp" <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>,
-        NingTing Cheng <chengnt@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1525416729-108201-1-git-send-email-yehs1@lenovo.com>
- <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
- <20180504133533.GR4535@dhcp22.suse.cz>
- <20180504154004.GB29829@bombadil.infradead.org>
- <HK2PR03MB168459A1C4FB2B7D3E1F6A4A92840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506134814.GB7362@bombadil.infradead.org>
- <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506185532.GA13604@bombadil.infradead.org>
- <HK2PR03MB1684BF10B3B515BFABD35F8B929B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180507184410.GA12361@bombadil.infradead.org>
+        id S1752913AbeEGVdK (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:33:10 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:41734 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752081AbeEGVdI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 17:33:08 -0400
+Date: Tue, 8 May 2018 00:33:05 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] [RESEND] [media] omap3isp: support 64-bit version of
+ omap3isp_stat_data
+Message-ID: <20180507213305.kfxabgkdvf7xwt7m@valkosipuli.retiisi.org.uk>
+References: <20180425213044.1535393-1-arnd@arndb.de>
+ <2922276.lKgGZtlCEW@avalon>
+ <20180507131906.rdvcmvim5gvi5odk@valkosipuli.retiisi.org.uk>
+ <CAK8P3a2+Xi8VF7B40zev1CT55HCNE92+MsPEiaGj7tOXEV57dg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180507184410.GA12361@bombadil.infradead.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <CAK8P3a2+Xi8VF7B40zev1CT55HCNE92+MsPEiaGj7tOXEV57dg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 11:44:10AM -0700, Matthew Wilcox wrote:
-> On Mon, May 07, 2018 at 05:16:50PM +0000, Huaisheng HS1 Ye wrote:
-> > I hope it couldn't cause problem, but based on my analyzation it has the potential to go wrong if users still use the flags as usual, which are __GFP_DMA, __GFP_DMA32 and __GFP_HIGHMEM.
-> > Let me take an example with my testing platform, these logics are much abstract, an example will be helpful.
-> > 
-> > There is a two sockets X86_64 server, No HIGHMEM and it has 16 + 16GB memories.
-> > Its zone types shall be like this below,
-> > 
-> > ZONE_DMA		0		0b0000
-> > ZONE_DMA32		1		0b0001
-> > ZONE_NORMAL		2		0b0010
-> > (OPT_ZONE_HIGHMEM)	2		0b0010
-> > ZONE_MOVABLE		3		0b0011
-> > ZONE_DEVICE		4		0b0100 (virtual zone)
-> > __MAX_NR_ZONES	5
-> > 
-> > __GFP_DMA	= ZONE_DMA ^ ZONE_NORMAL= 0b0010
-> > __GFP_DMA32	= ZONE_DMA32 ^ ZONE_NORMAL= 0b0011
-> > __GFP_HIGHMEM = OPT_ZONE_HIGHMEM ^ ZONE_NORMAL = 0b0000
-> > __GFP_MOVABLE	= ZONE_MOVABLE ^ ZONE_NORMAL | ___GFP_MOVABLE = 0b1001
-> > 
-> > Eg.
-> > If a driver uses flags like this below,
-> > Step 1:
-> > gfp_mask  |  __GFP_DMA32;	
-> > (0b 0000		|	0b 0011	= 0b 0011)
-> > gfp_mask's low four bits shall equal to 0011, assuming no __GFP_MOVABLE
-> > 
-> > Step 2:
-> > gfp_mask  & ~__GFP_DMA;	
-> > (0b 0011	 & ~0b0010   = 0b0001)
-> > gfp_mask's low four bits shall equal to 0001 now, then when it enter gfp_zone(),
-> > 
-> > return ((__force int)flags & ___GFP_ZONE_MASK) ^ ZONE_NORMAL;
-> > (0b0001 ^ 0b0010 = 0b0011)
-> > You know 0011 means that ZONE_MOVABLE will be returned.
-> > In this case, error can be found, because gfp_mask needs to get ZONE_DMA32 originally.
-> > But with existing GFP_ZONE_TABLE/BAD, it is correct. Because the bits are way of 0x1, 0x2, 0x4, 0x8
+On Mon, May 07, 2018 at 04:36:45PM -0400, Arnd Bergmann wrote:
+> On Mon, May 7, 2018 at 9:19 AM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
+> > On Mon, May 07, 2018 at 04:17:32PM +0300, Laurent Pinchart wrote:
+> >> On Thursday, 26 April 2018 00:30:10 EEST Arnd Bergmann wrote:
+> >> > +int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
+> >> > +                                   struct omap3isp_stat_data_time32 *data)
+> >> > +{
+> >> > +   struct omap3isp_stat_data data64;
+> >> > +   int ret;
+> >> > +
+> >> > +   ret = omap3isp_stat_request_statistics(stat, &data64);
+> >> > +
+> >> > +   data->ts.tv_sec = data64.ts.tv_sec;
+> >> > +   data->ts.tv_usec = data64.ts.tv_usec;
+> >> > +   memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
+> >> > +
+> >> > +   return ret;
+> >>
+> >> We could return immediately after omap3isp_stat_request_statistics() if the
+> >> function fails, but that's no big deal, the error path is clearly a cold path.
 > 
-> Yes, I understand your point here.  My point was that this was already a bug;
-> the caller shouldn't simply be clearing __GFP_DMA; they really mean to clear
-> all of the GFP_ZONE bits so that they allocate from ZONE_NORMAL.  And for
-> that, they should be using ~GFP_ZONEMASK
+> I looked at it again and briefly thought that it would leak kernel stack
+> data in my version and changing it would be required to avoid that,
+> but I do see now that the absence of the INFO_FL_ALWAYS_COPY
+> flag makes it safe after all.
 > 
-> Unless they already know, of course.  For example, this one in
-> arch/x86/mm/pgtable.c is fine:
-> 
->         if (strcmp(arg, "nohigh") == 0)
->                 __userpte_alloc_gfp &= ~__GFP_HIGHMEM;
-> 
-> because it knows that __userpte_alloc_gfp can only have __GFP_HIGHMEM set.
-> 
-> But something like btrfs should almost certainly be using ~GFP_ZONEMASK.
+> I agree that returning early here would be nicer here, I'll leave it up to
+> Sakari to fold in that change if he likes.
 
-Agreed, the direct use of __GFP_DMA32 was added in 3ba7ab220e8918176c6f
-to substitute GFP_NOFS, so the allocation flags are less restrictive but
-still acceptable for allocation from slab.
+I agree with the change; actually the data64 struct will be left untouched
+if there's an error so changing this doesn't seem to make a difference.
+Private IOCTLs have always_copy == false, so the argument struct isn't
+copied back to the kernel.
 
-The requirement from btrfs is to avoid highmem, the 'must be acceptable
-for slab' requirement is more MM internal and should have been hidden
-under some opaque flag mask. There was no strong need for that at the
-time.
+The diff is here. Let me know if something went wrong...
+
+diff --git a/drivers/media/platform/omap3isp/ispstat.c b/drivers/media/platform/omap3isp/ispstat.c
+index dfee8eaf2226..47353fee26c3 100644
+--- a/drivers/media/platform/omap3isp/ispstat.c
++++ b/drivers/media/platform/omap3isp/ispstat.c
+@@ -519,12 +519,14 @@ int omap3isp_stat_request_statistics_time32(struct ispstat *stat,
+ 	int ret;
+ 
+ 	ret = omap3isp_stat_request_statistics(stat, &data64);
++	if (ret)
++		return ret;
+ 
+ 	data->ts.tv_sec = data64.ts.tv_sec;
+ 	data->ts.tv_usec = data64.ts.tv_usec;
+ 	memcpy(&data->buf, &data64.buf, sizeof(*data) - sizeof(data->ts));
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ /*
+
+> 
+> >> > @@ -165,7 +167,14 @@ struct omap3isp_h3a_aewb_config {
+> >> >   * @config_counter: Number of the configuration associated with the data.
+> >> >   */
+> >> >  struct omap3isp_stat_data {
+> >> > +#ifdef __KERNEL__
+> >> > +   struct {
+> >> > +           __s64   tv_sec;
+> >> > +           __s64   tv_usec;
+> >> > +   } ts;
+> >>
+> >> I share Sakari's comment about this method implying a little-endian system,
+> >> but as the SoCs that integrate this device are all little-endian, that's not a
+> >> problem in practice.
+> 
+> To clarify: the version I have here does *not* imply a little-endian system,
+> it is supposed to work on both little-endian and big-endian builds, and
+> endianess is not a property of the SoC either -- you should be able to
+> build a big-endian kernel and run it on OMAP3 (aside from bugs in other
+> drivers). Using 'long' here instead of __s64 would however make this
+> interface broken on big-endian builds since the glibc definition of timeval
+> does include extra padding on big-endian machines to make the structure
+> compatible between 32-bit and 64-bit ABIs.
+
+Ah, there you go. :-)
+
+> 
+> >> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>
+> >> If you agree with the small comment about header ordering, let's get this
+> >> patch finally merged.
+> >
+> > I can make the change locally in my tree, no need to resend.
+> >
+> > Thanks.
+> 
+> Thanks a lot!
+
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
