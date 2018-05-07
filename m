@@ -1,92 +1,110 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752221AbeEGKmg (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:42:36 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:61961 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751901AbeEGKmc (ORCPT
+        id S1752260AbeEGKmy (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:42:54 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57998 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752230AbeEGKmu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:42:32 -0400
-X-IronPort-AV: E=Sophos;i="5.49,373,1520924400";
-   d="scan'208";a="11249940"
-Subject: Re: [PATCH v4 5/9] iio: adc: at91-sama5d2_adc: add support for
- position and pressure channels
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: Jonathan Cameron <jic23@kernel.org>, <ludovic.desroches@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-        <dmitry.torokhov@gmail.com>, <robh@kernel.org>
-References: <1525084335-11276-1-git-send-email-eugen.hristev@microchip.com>
- <1525084335-11276-6-git-send-email-eugen.hristev@microchip.com>
- <20180506182953.6adad5b5@archlinux> <20180506175914.GL10960@piout.net>
- <eaeced9e-390f-0eea-0466-66c789bacdd6@microchip.com>
- <20180507102810.GO10960@piout.net>
-From: Eugen Hristev <eugen.hristev@microchip.com>
-Message-ID: <99e5d795-eaf6-eb07-3f80-d8b09772e5ff@microchip.com>
-Date: Mon, 7 May 2018 13:40:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 06:42:50 -0400
 MIME-Version: 1.0
-In-Reply-To: <20180507102810.GO10960@piout.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Mon, 07 May 2018 16:12:49 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SDM845
+In-Reply-To: <152549007801.138124.1209193202019560634@swboyd.mtv.corp.google.com>
+References: <1525105210-8689-1-git-send-email-anischal@codeaurora.org>
+ <1525105210-8689-4-git-send-email-anischal@codeaurora.org>
+ <152524580953.138124.2159165461856101134@swboyd.mtv.corp.google.com>
+ <a56ffa424689ff354a63642bf2998088@codeaurora.org>
+ <152549007801.138124.1209193202019560634@swboyd.mtv.corp.google.com>
+Message-ID: <3f3049ee7cc151ac619cb29c3d07142c@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07.05.2018 13:28, Alexandre Belloni wrote:
-> On 07/05/2018 09:18:39+0300, Eugen Hristev wrote:
->> On 06.05.2018 20:59, Alexandre Belloni wrote:
->>> Hi,
->>>
->>> On 06/05/2018 18:29:53+0100, Jonathan Cameron wrote:
->>>> On Mon, 30 Apr 2018 13:32:11 +0300
->>>> Eugen Hristev <eugen.hristev@microchip.com> wrote:
->>>>
->>>>> This implements the support for position and pressure for the included
->>>>> touchscreen support in the SAMA5D2 SOC ADC block.
->>>>> Two position channels are added and one for pressure.
->>>>> They can be read in raw format, or through a buffer.
->>>>> A normal use case is for a consumer driver to register a callback buffer
->>>>> for these channels.
->>>>> When the touchscreen channels are in the active scan mask,
->>>>> the driver will start the touchscreen sampling and push the data to the
->>>>> buffer.
->>>>>
->>>>> Some parts of this patch are based on initial original work by
->>>>> Mohamed Jamsheeth Hajanajubudeen and Bandaru Venkateswara Swamy
->>>>>
->>>>> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
->>>> Looks good to me now.
->>>>
->>>> I'm assuming that once Dmitry and others are happy, I'll take the
->>>> series through the IIO tree. Will reply to the cover letter if the
->>>> rest of the patches look good to me to let everyone know that without
->>>> having to catch this comment down in here!
->>>>
->>>
->>> I'm planning to take both DT patches through the at91 tree once you take
->>> the DT bindings patches.
->>
->> Please take into consideration that those DT patches do not build
->> stand-alone, they depend on
->> [PATCH v4 7/9] dt-bindings: iio: adc: at91-sama5d2_adc: add channel specific
->> consumer info
->>
->> (the DT patches add an include statement of a file which is created in this
->> patch).
->>
+On 2018-05-05 08:44, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-05-04 03:45:12)
+>> On 2018-05-02 12:53, Stephen Boyd wrote:
+>> > Quoting Amit Nischal (2018-04-30 09:20:10)
+>> >> +
+>> >> +static struct clk_branch gcc_disp_gpll0_clk_src = {
+>> >> +       .halt_reg = 0x52004,
+>> >> +       .halt_check = BRANCH_HALT_DELAY,
+>> >
+>> > What about this one? It's not a phy so I'm confused again why we're
+>> > unable to check the halt bit. To be clear(er), I don't see why we ever
+>> > want to have HALT_DELAY used. Hopefully we can remove that flag.
+>> >
+>> > From what I recall, the flag is there for clks that don't toggle their
+>> > status bit at all, but that we know take a few cycles to ungate the
+>> > upstream clk. So we threw a delay into the code to make sure that when
+>> > clk_enable() returned, a driver wouldn't try to use hardware before the
+>> > clk was actually on. But these cases should pretty much never happen,
+>> > hence all the pushback against this flag.
+>> >
+>> 
+>> For these "*gpll0_clk_src" and "*gpll0_div_clk" clocks, there is no 
+>> halt
+>> bit to check the status and it is required to have delay for few 
+>> cycles
+>> so that clock gets turned on before a client driver to use the 
+>> hardware.
 > 
-> So the proper way is to actually have the values in the dt instead of
-> the define and then patch it on the next version of the kernel.
-> 
-> Or we take the dts patches on the next version.
+> Ok.. but then why is there a 'halt_reg' configured for the clk?
 
-Taking the DTS patches on the next version is fine for me.
+Thanks for the review.
+I will remove the halt_reg for the clocks where we are using the 
+'HALT_DELAY'
+flag and there is no need to poll the status bit as we are returning 
+early
+from the 'clk_branch_wait()' function.
 
-Thanks
 > 
+>> >> +
+>> >> +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
+>> >> +       .halt_reg = 0x75018,
+>> >> +       .halt_check = BRANCH_HALT_DELAY,
+>> >
+>> > There are still HALT_DELAY flags for UFS though? Why?
+>> 
+>> For ufs_card tx/rx symbol clocks, we don't poll the status bit as
+>> per the recommendation from the HW team. We can change the halt_check
+>> type to newly implemented flag "BRANCH_HALT_SKIP". Please update us 
+>> with
+>> your thoughts to change the flag to "BRANCH_HALT_SKIP".
+> 
+> Yes use HALT_SKIP please.
+
+Thanks for confirming. I will do the changes in the next patch series.
+
+> 
+>> 
+>> >
+>> > Also, are you going to send DFS support for the QUP clks? I would like
+>> > to see that code merged soon.
+>> 
+>> Taniya has sent the patches for DFS support for QUP clocks.
+>> https://patchwork.kernel.org/patch/10376951/
+>> 
+> 
+> I'll take a look.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
