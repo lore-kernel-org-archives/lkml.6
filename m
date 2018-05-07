@@ -1,22 +1,23 @@
 Return-Path: <vadimp@mellanox.com>
-X-Google-Smtp-Source: AB8JxZo0u928/qY0sKPFh7pi3kbaihsG7O1Z/05VQPBwbXxd4bV8bUEzZgz8z+BsQPH8EW9sPOVd
+X-Google-Smtp-Source: AB8JxZrqZM0gwbDJjrsiyVvOAp6MxTPxlxvKtZUgQCjwqUTBw1TcsJjJdtK+vCw7tPWMp0pSNO3Y
 ARC-Seal: i=1; a=rsa-sha256; t=1525668788; cv=none;
         d=google.com; s=arc-20160816;
-        b=jfKM/ZCovBQ5GYSgIUm5LL64FL3J3g3I2OI2wiZmqX16HgG6wA3EzAwNBjKPqywyAf
-         Uo2xR9Wl4nrmL3uxmhzjOOoipqxCJ8HOag8U19SXq3D0NZQkyBQ5kuHSGVYb/07Pohdr
-         GOw+N5Fy1SaUMW2oONEzCtyvvHO8zmi5yTqTyiXhpUUw79g9Gt+Vtl1OY4oq0IeVSS1U
-         R+83ahOcIbLpSIC7frQHTcSoaC0Ee8jkd2iPL+aJeTlnw4sn856nUbQWGosjs3rast47
-         CSaQ58GBqKDbQ4sOZG1Eg7sX3Lix1LVasxs5A2ZjHl5ohSCU2ulVCijYWRdfsQY6fU61
-         g9uQ==
+        b=cAvha5bSQJQ2sQj9N7hTlKPGnRBozk/JMZujVvY1YMgu3IkpWcrT3QI7Fp3PNuFwz6
+         UC2d41jeIuAVgdJqbB715qlqByGBv1ufWBFqYebYCi/plNk4ThFshTLJQYvc1YEJTPQX
+         wkZpx43IbCVSUOFWeY3g/Nw5/sFuydRKAELURJrmA0ZOrSWMFFGw8G2052LmxcwA/CAp
+         0Z4v609UMFEIUy56sn6A+KYcOQNXS5ZG693O+OOV519pVBtiLvaYw82M5nqTAOE0pAz8
+         cYxpcWzxnPCs47FvK5s5dxKTgROHrD5MAZySb5nRSuX9GKz/zzlxBnaqpbWwqvhf5tPp
+         W1OA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:arc-authentication-results;
-        bh=NqSn/WnMpf4FXXcZy3KWVd93yWjjGu0HmtyLZejWCKA=;
-        b=eK866bBQOjFHUT61dmv0hsY37GA1SsfJnJNT/76z/s+YCnAGy6dc/X7jnA6C6K1X4Y
-         R8N4vOf5yFZPEmunU84yKLfr8OO9ilZDvzHxxhkkbhNP1DHaF9NCcUZEpn9Lm+hofCD0
-         KmvSMSgf8esGwn8nhUZm5MynugSINXZvky+BEJFcGOBUp32BvcWEZszp2PYA/LHn2Bax
-         y+VMALkj8lS7e16UbDFaOULo+Fb6Wt7FNa0eyojt492IeYoBX9yDiFbDHZYEhPY/OmaU
-         3Tvd4TRFEhvAaCX2ruEZ83YnUTuMagz2CZ0eR3FM/jREFe5G7+Ctv7LEBfSv8oAr0mF9
-         LcxA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :arc-authentication-results;
+        bh=WLePEJL9X/s5wukJdyU05dQJYCLaER3NBO9w67GlQQQ=;
+        b=f0s8ZmOLTk58WkNWnHGBwF/t36mJQoBXmA+JImX3wd3LGooOCVEx4VyGEdRGrN5Xi3
+         fR1ZDgx3h3hrSta34sZwFtkRyFrvk/LqnlPaQcGmBRZBV66YtG8wsrAy8lBrPD2ZNPw9
+         nAfUZkWL0RhbJtWbTLPmJdedM32YV0s3I3ztCDnoC9/XlFLXzrXb4NV4cVh+cLmQjU39
+         qk3IG/uC5Re376GwQkvi1YLx+HptSOxVTyV9u4b+Nxy89McTX2VDsO1BjmYs/deLjXLH
+         Pv2eSkg9vwGH8tKwOZDzmQDfYdM16ulF7seXV24hTx8ixC5XhwYzku3+kaclS5QPgEwM
+         r9NA==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of vadimp@mellanox.com designates 193.47.165.129 as permitted sender) smtp.mailfrom=vadimp@mellanox.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=mellanox.com
@@ -29,187 +30,293 @@ To: dvhart@infradead.org, andy.shevchenko@gmail.com,
 Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v2 3/7] platform/mellanox: mlxreg-hotplug: add extra cycle for hotplug work queue
-Date: Mon,  7 May 2018 06:48:51 +0000
-Message-Id: <1525675735-125547-1-git-send-email-vadimp@mellanox.com>
+Subject: [PATCH v2 6/7] platform/mellanox: Introduce support for Mellanox register access driver
+Date: Mon,  7 May 2018 06:48:54 +0000
+Message-Id: <1525675735-125547-4-git-send-email-vadimp@mellanox.com>
 X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1525675735-125547-1-git-send-email-vadimp@mellanox.com>
+References: <1525675735-125547-1-git-send-email-vadimp@mellanox.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599779675291246402?=
-X-GMAIL-MSGID: =?utf-8?q?1599779675291246402?=
+X-GMAIL-THRID: =?utf-8?q?1599779675541657270?=
+X-GMAIL-MSGID: =?utf-8?q?1599779675541657270?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Add extra cycle for hotplug work queue to handle the case when a signal is
-It adds missed logic for signal acknowledge, by adding an extra run for
-received, but no specific signal assertion is detected. Such case
-theoretically can happen for example in case several units are removed or
-inserted at the same time. In this situation acknowledge for some signal
-can be missed at signal top aggreagation status level. The extra run will
-allow to handler to acknowledge the missed signal.
+Introduce new Mellanox platform driver to allow access to Mellanox
+programmable device register space trough sysfs interface.
+The driver purpose is to provide sysfs interface for user space for the
+registers essential for system control and monitoring.
+The sets of registers for sysfs access are supposed to be defined per
+system type bases and include the registers related to system resets
+operation, system reset causes monitoring and some kinds of mux selection.
 
-The interrupt handling flow performs the next steps:
-(1)
-Enter mlxreg_hotplug_work_handler due to signal assertion.
-Aggregation status register is changed for example from 0xff to 0xfd
-(event signal group related to bit 1).
-(2)
-Mask aggregation interrupts, read aggregation status register and save it
-(0xfd) in aggr_cache, then traverse down to handle signal from groups
-related to the changed bit.
-(3)
-Read and mask group related signal.
-Acknowledge and unmask group related signal (acknowledge should clear
-aggregation status register from 0xfd back to 0xff).
-(4)
-Re-schedule work queue for the immediate execution.
-(5)
-Enter mlxreg_hotplug_work_handler due to re-scheduling.
-Aggregation status is changed from previous 0xfd to 0xff.
-Go over steps (2) - (5) and in case no new signal assertion
-is detected - unmask aggregation interrupts.
-
-The possible race could happen in case new signal from the same group is
-asserted after step (3) and prior step (5). In such case aggregation
-status will change back from 0xff to 0xfd and the value read from the
-aggregation status register will be the same as a value saved in
-aggr_cache. As a result the handler will not traverse down and signal
-will stay unhandled.
-
-Example of faulty flow:
-The signal routing flow is as following (f.e. for of FANi removing):
- - FAN status and event registers related bit is changed;
- -- intermediate aggregation status register is changed;
- --- top aggregation status register is changed;
- ---- interrupt routed to CPU and interrupt handler is invoked.
-
-When interrupt handler is invoked it follows the next simple logic (f.e
-FAN3 is removed):
- (a1) mask top aggregation interrupt mask register;
- (a2) read top aggregation interrupt status register and test to which
-      underling group belongs a signal (FANs in this case and is changed
-	  from 0xff to 0xfb and 0xfb is saved as a last status value);
-   (b1) mask FANs interrupt mask register;
-   (b2) read FANs status register and test which FAN has been changed
-        FAN3 in this example);
-     (c1) perform relevant action;
-              <--------------- (FAN2 is removed at this point)
-   (b3) clear FANs interrupt event register to acknowledge FAN3 signal;
-   (b4) unmask FANs interrupt mask register
- (a3) unmask top aggregation interrupt mask register;
-
- An interrupt handler is invoked, since FAN2 interrupt is not acknowledge.
- It should set top aggregation interrupt status register bit 6 (0xfb).
- In step (a2)
- (a2) read top aggregation interrupt and comparing it with saved value
-      does not show change (same 0xfb) and after (a2) execution jumps to
-	  (a3) and signal leaved unhandled
-
-The fix will enforce handler to traverse down in case the signal is
-received, but signal assertion is not detected.
-
-Fixes: 07b89c2b2a5e ("platform/x86: Introduce support for Mellanox hotplug driver")
 Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 ---
-V1->v2:
- Comments pointed out by Darren:
- - Modify commit message;
- - Remove redundant check of aggr_asserted;
- - Change bug fix reference from 1f976f6978bf, which just relocated driver
-   to 07b89c2b2a5e, which was initial driver commit.
+v1->v2:
+ Changed added by Vadim:
+ - Change ---help--- to help in Kconfig, according to new requirements;
 ---
- drivers/platform/mellanox/mlxreg-hotplug.c | 48 +++++++++++++++++++-----------
- 1 file changed, 31 insertions(+), 17 deletions(-)
+ drivers/platform/mellanox/Kconfig     |  11 ++
+ drivers/platform/mellanox/Makefile    |   1 +
+ drivers/platform/mellanox/mlxreg-io.c | 221 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 233 insertions(+)
+ create mode 100644 drivers/platform/mellanox/mlxreg-io.c
 
-diff --git a/drivers/platform/mellanox/mlxreg-hotplug.c b/drivers/platform/mellanox/mlxreg-hotplug.c
-index b56953a..922913b 100644
---- a/drivers/platform/mellanox/mlxreg-hotplug.c
-+++ b/drivers/platform/mellanox/mlxreg-hotplug.c
-@@ -55,6 +55,7 @@
- #define MLXREG_HOTPLUG_RST_CNTR		3
+diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
+index 591bccd..ddfae9fc 100644
+--- a/drivers/platform/mellanox/Kconfig
++++ b/drivers/platform/mellanox/Kconfig
+@@ -23,4 +23,15 @@ config MLXREG_HOTPLUG
+ 	  This driver handles hot-plug events for the power suppliers, power
+ 	  cables and fans on the wide range Mellanox IB and Ethernet systems.
  
- #define MLXREG_HOTPLUG_ATTRS_MAX	24
-+#define MLXREG_HOTPLUG_NOT_ASSERT	3
- 
- /**
-  * struct mlxreg_hotplug_priv_data - platform private data:
-@@ -74,6 +75,7 @@
-  * @mask: top aggregation interrupt common mask;
-  * @aggr_cache: last value of aggregation register status;
-  * @after_probe: flag indication probing completion;
-+ * @not_asserted: number of entries in workqueue with no signal assertion;
-  */
- struct mlxreg_hotplug_priv_data {
- 	int irq;
-@@ -93,6 +95,7 @@ struct mlxreg_hotplug_priv_data {
- 	u32 mask;
- 	u32 aggr_cache;
- 	bool after_probe;
-+	u8 not_asserted;
- };
- 
- static int mlxreg_hotplug_device_create(struct mlxreg_hotplug_priv_data *priv,
-@@ -410,6 +413,18 @@ static void mlxreg_hotplug_work_handler(struct work_struct *work)
- 	aggr_asserted = priv->aggr_cache ^ regval;
- 	priv->aggr_cache = regval;
- 
-+	/*
-+	 * Handler is invoked, but no assertion is detected at top aggregation
-+	 * status level. Set aggr_asserted to mask value to allow handler extra
-+	 * run over all relevant signals to recover any missed signal.
-+	 */
-+	if (priv->not_asserted == MLXREG_HOTPLUG_NOT_ASSERT) {
-+		priv->not_asserted = 0;
-+		aggr_asserted = pdata->mask;
-+	}
-+	if (!aggr_asserted)
-+		goto unmask_event;
++config MLXREG_IO
++	tristate "Mellanox platform register access driver support"
++	depends on REGMAP
++	depends on HWMON
++	help
++	  This driver allows access to Mellanox programmable device register
++	  space trough sysfs interface. The sets of registers for sysfs access
++	  are defined per system type bases and includes the registers related
++	  to system resets operation, system reset causes monitoring and some
++	  kinds of mux selection.
 +
- 	/* Handle topology and health configuration changes. */
- 	for (i = 0; i < pdata->counter; i++, item++) {
- 		if (aggr_asserted & item->aggr_mask) {
-@@ -420,27 +435,26 @@ static void mlxreg_hotplug_work_handler(struct work_struct *work)
- 		}
- 	}
- 
--	if (aggr_asserted) {
--		spin_lock_irqsave(&priv->lock, flags);
-+	spin_lock_irqsave(&priv->lock, flags);
- 
--		/*
--		 * It is possible, that some signals have been inserted, while
--		 * interrupt has been masked by mlxreg_hotplug_work_handler.
--		 * In this case such signals will be missed. In order to handle
--		 * these signals delayed work is canceled and work task
--		 * re-scheduled for immediate execution. It allows to handle
--		 * missed signals, if any. In other case work handler just
--		 * validates that no new signals have been received during
--		 * masking.
--		 */
--		cancel_delayed_work(&priv->dwork_irq);
--		schedule_delayed_work(&priv->dwork_irq, 0);
-+	/*
-+	 * It is possible, that some signals have been inserted, while
-+	 * interrupt has been masked by mlxreg_hotplug_work_handler. In this
-+	 * case such signals will be missed. In order to handle these signals
-+	 * delayed work is canceled and work task re-scheduled for immediate
-+	 * execution. It allows to handle missed signals, if any. In other case
-+	 * work handler just validates that no new signals have been received
-+	 * during masking.
-+	 */
-+	cancel_delayed_work(&priv->dwork_irq);
-+	schedule_delayed_work(&priv->dwork_irq, 0);
- 
--		spin_unlock_irqrestore(&priv->lock, flags);
-+	spin_unlock_irqrestore(&priv->lock, flags);
- 
--		return;
--	}
-+	return;
- 
-+unmask_event:
-+	priv->not_asserted++;
- 	/* Unmask aggregation event (no need acknowledge). */
- 	ret = regmap_write(priv->regmap, pdata->cell +
- 			   MLXREG_HOTPLUG_AGGR_MASK_OFF, pdata->mask);
+ endif # MELLANOX_PLATFORM
+diff --git a/drivers/platform/mellanox/Makefile b/drivers/platform/mellanox/Makefile
+index 7c8385e..57074d9c 100644
+--- a/drivers/platform/mellanox/Makefile
++++ b/drivers/platform/mellanox/Makefile
+@@ -4,3 +4,4 @@
+ # Mellanox Platform-Specific Drivers
+ #
+ obj-$(CONFIG_MLXREG_HOTPLUG)	+= mlxreg-hotplug.o
++obj-$(CONFIG_MLXREG_IO) += mlxreg-io.o
+diff --git a/drivers/platform/mellanox/mlxreg-io.c b/drivers/platform/mellanox/mlxreg-io.c
+new file mode 100644
+index 0000000..f573b65
+--- /dev/null
++++ b/drivers/platform/mellanox/mlxreg-io.c
+@@ -0,0 +1,221 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Mellanox register access driver
++ *
++ * Copyright (C) 2018 Mellanox Technologies
++ * Copyright (C) 2018 Vadim Pasternak <vadimp@mellanox.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/hwmon.h>
++#include <linux/hwmon-sysfs.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_data/mlxreg.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++/* Attribute parameters. */
++#define MLXREG_IO_ATT_SIZE	10
++#define MLXREG_IO_ATT_NUM	48
++
++/**
++ * struct mlxreg_io_priv_data - driver's private data:
++ *
++ * @pdev: platform device;
++ * @pdata: platform data;
++ * @hwmon: hwmon device;
++ * @mlxreg_io_attr: sysfs attributes array;
++ * @mlxreg_io_dev_attr: sysfs sensor device attribute array;
++ * @group: sysfs attribute group;
++ * @groups: list of sysfs attribute group for hwmon registration;
++ */
++struct mlxreg_io_priv_data {
++	struct platform_device *pdev;
++	struct mlxreg_core_platform_data *pdata;
++	struct device *hwmon;
++	struct attribute *mlxreg_io_attr[MLXREG_IO_ATT_NUM + 1];
++	struct sensor_device_attribute mlxreg_io_dev_attr[MLXREG_IO_ATT_NUM];
++	struct attribute_group group;
++	const struct attribute_group *groups[2];
++};
++
++static ssize_t
++mlxreg_io_attr_show(struct device *dev, struct device_attribute *attr,
++		    char *buf)
++{
++	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
++	int index = to_sensor_dev_attr(attr)->index;
++	struct mlxreg_core_data *data = priv->pdata->data + index;
++	u32 regval = 0;
++	int ret;
++
++	ret = regmap_read(priv->pdata->regmap, data->reg, &regval);
++	if (ret)
++		goto access_error;
++
++	if (!data->bit)
++		regval = !!(regval & ~data->mask);
++
++	return sprintf(buf, "%u\n", regval);
++
++access_error:
++	return ret;
++}
++
++static ssize_t
++mlxreg_io_attr_store(struct device *dev, struct device_attribute *attr,
++		     const char *buf, size_t len)
++{
++	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
++	int index = to_sensor_dev_attr(attr)->index;
++	struct mlxreg_core_data *data = priv->pdata->data + index;
++	u32 val, regval;
++	int ret;
++
++	ret = kstrtou32(buf, MLXREG_IO_ATT_SIZE, &val);
++	if (ret)
++		return ret;
++
++	ret = regmap_read(priv->pdata->regmap, data->reg, &regval);
++	if (ret)
++		goto access_error;
++
++	regval &= data->mask;
++
++	val = !!val;
++	if (val)
++		regval |= ~data->mask;
++	else
++		regval &= data->mask;
++
++	ret = regmap_write(priv->pdata->regmap, data->reg, regval);
++	if (ret)
++		goto access_error;
++
++	return len;
++
++access_error:
++	dev_err(&priv->pdev->dev, "Bus access error\n");
++	return ret;
++}
++
++static int mlxreg_io_attr_init(struct mlxreg_io_priv_data *priv)
++{
++	int i;
++
++	priv->group.attrs = devm_kzalloc(&priv->pdev->dev,
++					 priv->pdata->counter *
++					 sizeof(struct attribute *),
++					 GFP_KERNEL);
++	if (!priv->group.attrs)
++		return -ENOMEM;
++
++	for (i = 0; i < priv->pdata->counter; i++) {
++		priv->mlxreg_io_attr[i] =
++				&priv->mlxreg_io_dev_attr[i].dev_attr.attr;
++
++		/* Set attribute name as a label. */
++		priv->mlxreg_io_attr[i]->name =
++				devm_kasprintf(&priv->pdev->dev, GFP_KERNEL,
++					       priv->pdata->data[i].label);
++
++		if (!priv->mlxreg_io_attr[i]->name) {
++			dev_err(&priv->pdev->dev, "Memory allocation failed for sysfs attribute %d.\n",
++				i + 1);
++			return -ENOMEM;
++		}
++
++		priv->mlxreg_io_dev_attr[i].dev_attr.attr.mode =
++						priv->pdata->data[i].mode;
++		switch (priv->pdata->data[i].mode) {
++		case 0200:
++			priv->mlxreg_io_dev_attr[i].dev_attr.store =
++							mlxreg_io_attr_store;
++			break;
++
++		case 0444:
++			priv->mlxreg_io_dev_attr[i].dev_attr.show =
++							mlxreg_io_attr_show;
++			break;
++
++		case 0644:
++			priv->mlxreg_io_dev_attr[i].dev_attr.show =
++							mlxreg_io_attr_show;
++			priv->mlxreg_io_dev_attr[i].dev_attr.store =
++							mlxreg_io_attr_store;
++			break;
++
++		default:
++			dev_err(&priv->pdev->dev, "Bad access mode %u for attribute %s.\n",
++				priv->pdata->data[i].mode,
++				priv->mlxreg_io_attr[i]->name);
++			return -EINVAL;
++		}
++
++		priv->mlxreg_io_dev_attr[i].dev_attr.attr.name =
++					priv->mlxreg_io_attr[i]->name;
++		priv->mlxreg_io_dev_attr[i].index = i;
++		sysfs_attr_init(&priv->mlxreg_io_dev_attr[i].dev_attr.attr);
++	}
++
++	priv->group.attrs = priv->mlxreg_io_attr;
++	priv->groups[0] = &priv->group;
++	priv->groups[1] = NULL;
++
++	return 0;
++}
++
++static int mlxreg_io_probe(struct platform_device *pdev)
++{
++	struct mlxreg_io_priv_data *priv;
++	int err;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->pdata = dev_get_platdata(&pdev->dev);
++	if (!priv->pdata) {
++		dev_err(&pdev->dev, "Failed to get platform data.\n");
++		return -EINVAL;
++	}
++
++	priv->pdev = pdev;
++
++	err = mlxreg_io_attr_init(priv);
++	if (err) {
++		dev_err(&priv->pdev->dev, "Failed to allocate attributes: %d\n",
++			err);
++		return err;
++	}
++
++	priv->hwmon = devm_hwmon_device_register_with_groups(&pdev->dev,
++							     "mlxreg_io",
++							      priv,
++							      priv->groups);
++	if (IS_ERR(priv->hwmon)) {
++		dev_err(&pdev->dev, "Failed to register hwmon device %ld\n",
++			PTR_ERR(priv->hwmon));
++		return PTR_ERR(priv->hwmon);
++	}
++
++	dev_set_drvdata(&pdev->dev, priv);
++
++	return 0;
++}
++
++static struct platform_driver mlxreg_io_driver = {
++	.driver = {
++	    .name = "mlxreg-io",
++	},
++	.probe = mlxreg_io_probe,
++};
++
++module_platform_driver(mlxreg_io_driver);
++
++MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
++MODULE_DESCRIPTION("Mellanox regmap I/O access driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:mlxreg-io");
 -- 
 2.1.4
