@@ -1,156 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753091AbeEGUoN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:44:13 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38018 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752389AbeEGUoL (ORCPT
+        id S1753260AbeEGUo5 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:44:57 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:33716 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752918AbeEGUoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:44:11 -0400
-Date: Mon, 7 May 2018 13:43:50 -0700
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Mon, 7 May 2018 16:44:55 -0400
+X-Google-Smtp-Source: AB8JxZrYw4Q4KNDoA/MKA86xXir+z7+1KOKV7hBooUxCOqay+m0r+ZJg/QoQ8d91lh6LFtSE2kr7qA==
+Subject: Re: [ovs-dev] [PATCH] openvswitch: make vport_ops:send()'s return
+ type consistent
+To: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 21/35] ovl: add reflink/copyfile/dedup support
-Message-ID: <20180507204350.GB9510@magnolia>
-References: <20180507083807.28792-1-mszeredi@redhat.com>
- <20180507083807.28792-22-mszeredi@redhat.com>
+Cc: dev@openvswitch.org, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
+References: <20180424131953.6474-1-luc.vanoostenryck@gmail.com>
+From: Gregory Rose <gvrose8192@gmail.com>
+Message-ID: <b1b45047-7730-a6b1-c80c-4443339ac20d@gmail.com>
+Date: Mon, 7 May 2018 13:44:53 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507083807.28792-22-mszeredi@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805070203
+In-Reply-To: <20180424131953.6474-1-luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 10:37:53AM +0200, Miklos Szeredi wrote:
-> Since set of arguments are so similar, handle in a common helper.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+On 4/24/2018 6:19 AM, Luc Van Oostenryck wrote:
+> The method struct vport_ops:send() is defined as returning an
+> 'netdev_tx_t', which is defined as a typedef for a bitwise type
+> and otherwise used for the start_xmit() methods.
+> However, most openvswitch drivers use for this method dev_queue_xmit()
+> which returns an 'int' and the return value of vport_ops:send() is
+> in fact never used.
+>
+> Make things typewise consistent and use 'int' for vport_ops:send()
+> as well for internal_dev_recv() (which is the only proper send method)
+> as using 'netdev_tx_t' doesn't offer any advantages and in fact seems,
+> if not wrong at least, inadequate.
+>
+> Signed-off-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 > ---
->  fs/overlayfs/file.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 88 insertions(+)
-> 
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index ce871a15e185..2ac95c95e8e6 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -382,6 +382,90 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
->  	return ovl_ioctl(file, cmd, arg);
->  }
->  
-> +enum ovl_copyop {
-> +	OVL_COPY,
-> +	OVL_CLONE,
-> +	OVL_DEDUPE,
-> +};
-> +
-> +static s64 ovl_copyfile(struct file *file_in, loff_t pos_in,
-> +			struct file *file_out, loff_t pos_out,
-> +			u64 len, unsigned int flags, enum ovl_copyop op)
-> +{
-> +	struct inode *inode_out = file_inode(file_out);
-> +	struct fd real_in, real_out;
-> +	const struct cred *old_cred;
-> +	s64 ret;
-> +
-> +	ret = ovl_real_fdget(file_out, &real_out);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = ovl_real_fdget(file_in, &real_in);
-> +	if (ret) {
-> +		fdput(real_out);
-> +		return ret;
-> +	}
-> +
-> +	old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
-> +	switch (op) {
-> +	case OVL_COPY:
-> +		ret = vfs_copy_file_range(real_in.file, pos_in,
-> +					  real_out.file, pos_out, len, flags);
-> +		break;
-> +
-> +	case OVL_CLONE:
-> +		ret = vfs_clone_file_range(real_in.file, pos_in,
-> +					   real_out.file, pos_out, len);
-> +		break;
-> +
-> +	case OVL_DEDUPE:
-> +		ret = vfs_dedupe_file_range_one(real_in.file, pos_in,
-> +						real_out.file, pos_out, len);
-> +		break;
-> +	}
-> +	revert_creds(old_cred);
-> +
-> +	/* Update size */
-> +	ovl_copyattr(ovl_inode_real(inode_out), inode_out);
-> +
-> +	fdput(real_in);
-> +	fdput(real_out);
-> +
-> +	return ret;
-> +}
-> +
-> +static ssize_t ovl_copy_file_range(struct file *file_in, loff_t pos_in,
-> +				   struct file *file_out, loff_t pos_out,
-> +				   size_t len, unsigned int flags)
-> +{
-> +	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, flags,
-> +			    OVL_COPY);
-> +}
-> +
-> +static int ovl_clone_file_range(struct file *file_in, loff_t pos_in,
-> +				struct file *file_out, loff_t pos_out, u64 len)
-> +{
-> +	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
-> +			    OVL_CLONE);
-> +}
-> +
-> +static s64 ovl_dedupe_file_range(struct file *file_in, loff_t pos_in,
-> +				 struct file *file_out, loff_t pos_out,
-> +				 u64 len)
-> +{
-> +	/*
-> +	 * Don't copy up because of a dedupe request, this wouldn't make sense
-> +	 * most of the time (data would be duplicated instead of deduplicated).
-> +	 */
-> +	if (!ovl_inode_upper(file_inode(file_in)) ||
-> +	    !ovl_inode_upper(file_inode(file_out)))
-> +		return -EPERM;
+>   net/openvswitch/vport-internal_dev.c | 6 +++---
+>   net/openvswitch/vport.h              | 2 +-
+>   2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
+> index 3ea55618e..2fd68c2fb 100644
+> --- a/net/openvswitch/vport-internal_dev.c
+> +++ b/net/openvswitch/vport-internal_dev.c
+> @@ -231,7 +231,7 @@ static void internal_dev_destroy(struct vport *vport)
+>   	rtnl_unlock();
+>   }
+>   
+> -static netdev_tx_t internal_dev_recv(struct sk_buff *skb)
+> +static int internal_dev_recv(struct sk_buff *skb)
+>   {
+>   	struct net_device *netdev = skb->dev;
+>   	struct pcpu_sw_netstats *stats;
+> @@ -239,7 +239,7 @@ static netdev_tx_t internal_dev_recv(struct sk_buff *skb)
+>   	if (unlikely(!(netdev->flags & IFF_UP))) {
+>   		kfree_skb(skb);
+>   		netdev->stats.rx_dropped++;
+> -		return NETDEV_TX_OK;
+> +		return 0;
+>   	}
+>   
+>   	skb_dst_drop(skb);
+> @@ -257,7 +257,7 @@ static netdev_tx_t internal_dev_recv(struct sk_buff *skb)
+>   	u64_stats_update_end(&stats->syncp);
+>   
+>   	netif_rx(skb);
+> -	return NETDEV_TX_OK;
+> +	return 0;
+>   }
+>   
+>   static struct vport_ops ovs_internal_vport_ops = {
+> diff --git a/net/openvswitch/vport.h b/net/openvswitch/vport.h
+> index cda66c26a..8dcb48fe8 100644
+> --- a/net/openvswitch/vport.h
+> +++ b/net/openvswitch/vport.h
+> @@ -141,7 +141,7 @@ struct vport_ops {
+>   	int (*set_options)(struct vport *, struct nlattr *);
+>   	int (*get_options)(const struct vport *, struct sk_buff *);
+>   
+> -	netdev_tx_t (*send) (struct sk_buff *skb);
+> +	int (*send) (struct sk_buff *skb);
+>   	struct module *owner;
+>   	struct list_head list;
+>   };
 
-/me wonders, why not EOPNOTSUPP?  That's what we've been using (in xfs
-anyway) for "filesystem doesn't want to let you do this".
+Yes, it does seem odd to use a tx return type for receive.  Nice fixup.
 
-(Or I guess EXDEV, but "cross-device link not supported" might not be
-quite what you want users to see...)
-
---D
-
-> +
-> +	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
-> +			    OVL_DEDUPE);
-> +}
-> +
->  const struct file_operations ovl_file_operations = {
->  	.open		= ovl_open,
->  	.release	= ovl_release,
-> @@ -393,4 +477,8 @@ const struct file_operations ovl_file_operations = {
->  	.fallocate	= ovl_fallocate,
->  	.unlocked_ioctl	= ovl_ioctl,
->  	.compat_ioctl	= ovl_compat_ioctl,
-> +
-> +	.copy_file_range	= ovl_copy_file_range,
-> +	.clone_file_range	= ovl_clone_file_range,
-> +	.dedupe_file_range	= ovl_dedupe_file_range,
->  };
-> -- 
-> 2.14.3
-> 
+Reviewed-by: Greg Rose <gvrose8192@gmail.com>
