@@ -1,76 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752083AbeEGNDc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 09:03:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43630 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752248AbeEGND1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 09:03:27 -0400
-Date: Mon, 7 May 2018 16:03:25 +0300
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Kevin Easton <kevin@guarana.org>
-Cc: Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH net] vhost: Use kzalloc() to allocate vhost_msg_node
-Message-ID: <20180507155534-mutt-send-email-mst@kernel.org>
-References: <000000000000a5b2b1056a86e98c@google.com>
- <20180427154502.GA22544@la.guarana.org>
+        id S1752101AbeEGNFZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 09:05:25 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:46837 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751976AbeEGNFW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 09:05:22 -0400
+X-Google-Smtp-Source: AB8JxZpwxN+5hytIjdgiFYKUNseTrbTxbgDkYmdrRjDg6KnzEefvgTjOK7Nbm3YxDYEf/1MC2Ron7Q==
+Subject: Re: [V2 PATCH 00/11] lightnvm: pblk: small fixes
+To: =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@javigon.com>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier@cnexlabs.com>
+References: <1525079409-6588-1-git-send-email-javier@cnexlabs.com>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <5f93b0a3-cc8e-0c16-d01f-c3c1fdf5642f@lightnvm.io>
+Date: Mon, 7 May 2018 15:05:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180427154502.GA22544@la.guarana.org>
+In-Reply-To: <1525079409-6588-1-git-send-email-javier@cnexlabs.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
-> The struct vhost_msg within struct vhost_msg_node is copied to userspace,
-> so it should be allocated with kzalloc() to ensure all structure padding
-> is zeroed.
+On 04/30/2018 11:09 AM, Javier González wrote:
+> Changes since V1 (from Matias):
+>   - Improve commit messages
+>   - Fix error code on read path refactoring
 > 
-> Signed-off-by: Kevin Easton <kevin@guarana.org>
-> Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
-> ---
->  drivers/vhost/vhost.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Changes can be found at. This includes this series, the 2 extra patches I sent
+> for pblk and Hans' write recovery on top.
+> 	https://github.com/OpenChannelSSD/linux/tree/for-4.18/pblk
 > 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index f3bd8e9..1b84dcff 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
->  /* Create a new message. */
->  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
->  {
-> -	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
-> +	struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
->  	if (!node)
->  		return NULL;
->  	node->vq = vq;
+> A bunch of small fixes and extra checks for pblk. Non is critical, though
+> ("lightnvm: pblk: check for chunk size before allocating it") might be nice to
+> get into 4.17 as it is a fix for the 2.0 pblk patches.
+> 
+> Javier
+> 
+> Javier González (11):
+>    lightnvm: pblk: fail gracefully on line alloc. failure
+>    lightnvm: pblk: recheck for bad lines at runtime
+>    lightnvm: pblk: check read lba on gc path
+>    lightnvn: pblk: improve error msg on corrupted LBAs
+>    lightnvm: pblk: warn in case of corrupted write buffer
+>    lightnvm: pblk: return NVM_ error on failed submission
+>    lightnvm: pblk: remove unnecessary indirection
+>    lightnvm: pblk: remove unnecessary argument
+>    lightnvm: pblk: check for chunk size before allocating it
+>    lightnvn: pass flag on graceful teardown to targets
+>    lightnvm: pblk: remove dead function
+> 
+>   drivers/lightnvm/core.c      | 10 +++---
+>   drivers/lightnvm/pblk-core.c | 86 ++++++++++++++++++++++++++------------------
+>   drivers/lightnvm/pblk-gc.c   | 10 +++---
+>   drivers/lightnvm/pblk-init.c | 38 ++++++++++++--------
+>   drivers/lightnvm/pblk-map.c  | 33 ++++++++++++-----
+>   drivers/lightnvm/pblk-rb.c   |  5 ++-
+>   drivers/lightnvm/pblk-read.c | 75 ++++++++++++++++++++++++++++----------
+>   drivers/lightnvm/pblk.h      |  7 ++--
+>   include/linux/lightnvm.h     |  2 +-
+>   9 files changed, 174 insertions(+), 92 deletions(-)
+> 
 
-
-Let's just init the msg though.
-
-OK it seems this is the best we can do for now,
-we need a new feature bit to fix it for 32 bit
-userspace on 64 bit kernels.
-
-Does the following help?
-
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index f3bd8e9..58d9aec 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -2342,6 +2342,9 @@ struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
- 	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
- 	if (!node)
- 		return NULL;
-+
-+	/* Make sure all padding within the structure is initialized. */
-+	memset(&node->msg, 0, sizeof node->msg);
- 	node->vq = vq;
- 	node->msg.type = type;
- 	return node;
+Applied for 4.18.
