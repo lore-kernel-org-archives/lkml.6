@@ -1,86 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751993AbeEGGzN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:55:13 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:32426 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751082AbeEGGzK (ORCPT
+        id S1751932AbeEGG53 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:57:29 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:46350 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750716AbeEGG5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:55:10 -0400
-From: "Reizer, Eyal" <eyalr@ti.com>
-To: Tony Lindgren <tony@atomide.com>
-CC: Eyal Reizer <eyalreizer@gmail.com>,
-        "bcousson@baylibre.com" <bcousson@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Loewy, Chen" <c-loewy@ti.com>
-Subject: RE: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
- support
-Thread-Topic: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
- support
-Thread-Index: AQHT4umNrIAS1VNvUkK07yas+IZ4paQiVQFAgADvToCAAJCfoA==
-Date: Mon, 7 May 2018 06:55:03 +0000
-Message-ID: <a4dd3009f0f5492d8756f42c11590423@ti.com>
-References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
- <20180502145100.GK98604@atomide.com>
- <5cc906da15da45ab96e06957f878b65b@ti.com>
- <20180503141759.GP98604@atomide.com>
- <f0ea5260b3e2413aab4780b203ff24a4@ti.com>
- <20180506165621.GL98604@atomide.com>
-In-Reply-To: <20180506165621.GL98604@atomide.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [137.167.25.139]
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+        Mon, 7 May 2018 02:57:25 -0400
+X-Google-Smtp-Source: AB8JxZoKW6qh9L+SJV0D8wOuc1FUNIDvFaaukH5wKDuG4eKh6+dP59hstEmPdYwqWqjgC599hmjn6A==
+Subject: [PATCH 2/3] scsi: arcmsr: Add slave_configure callback function to
+ set device command timeout value
+From: Ching Huang <ching2048@areca.com.tw>
+To: martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@oracle.com, hch@infradead.org, colin.king@canonical.com
+Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 07 May 2018 14:57:16 +0800
+Message-ID: <1525676236.8876.18.camel@Centos6.3-64>
+Mime-Version: 1.0
+X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w476tIcL001466
 
-Hi Tony,
+>From Ching Huang <ching2048@areca.com.tw>
 
-> 
-> Yeah my guess is that the reason for the separate GPIO interrupt was
-> that on omap3 we did not have SDIO interrupt working for years. This was
-> because of the issues related to padconf interrupts for off mode.
-> 
-> We now have Linux generic wakeirq support working with SDIO and it has
-> been confirmed to work also for off mode with mwifiex at least. So
-> there should be no reason to not also use the SDIO interrupt.
-> 
+Add slave_configure callback function to set device command timeout value
 
-There is more to this than just the padconf.
-Using in-band interrupt instead of the out of band one requires
-Supporting a feature called "Asynchronous interrupts in 4Bit mode"
-Which is part of SDIO 3.0 spec:
-https://www.sdcard.org/downloads/pls/pdf/index.php?p=PartE1_SDIO_Simplified_Specification_Ver3.00.jpg&f=PartE1_SDIO_Simplified_Specification_Ver3.00.pdf&e=EN_SSE1
+Signed-off-by: Ching Huang <ching2048@areca.com.tw>
+---
 
-Take a look at page 41 at the bottom part of the table.
-Wilink8 supports this feature but AFAIK this support is still not part of the 
-mmc/sdio core in the Linux kernel.
-If we want wilink8 to trigger a host wakeup using the in-band interrupt instead 
-Of the wlan_irq pin we would need to enable/use this feature.
-
-I did use it internally in the past and was able to patch the Ubuntu kernel 
-(3.5.0 at that time) to use wilink8 in a standard SD Card slot of an Ubuntu Laptop 
-while removing the use of wlan_irq pin completely.
-However this was an experimental patch set written by a third party 
-that was not up-steamtable at that time.
-I do have this patch set somewhere...
-
-It is similar to the following patch which is not  upstream as well for some reason:
-https://gitlab.com/k2wl/g2_kernel/commit/5c4970fdaa50422d7ea7220efa20fb35148a4bca
-It is not the only patch needed, there are a couple of additional patches needed 
-for fully using it from driver.
-I did check latest Linux-next and don't see this support there. Not sure why.
-
-Best Regards,
-Eyal
+diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
+index f6ddaec..79a4487 100755
+--- a/drivers/scsi/arcmsr/arcmsr_hba.c
++++ b/drivers/scsi/arcmsr/arcmsr_hba.c
+@@ -139,6 +139,7 @@ static irqreturn_t arcmsr_interrupt(struct AdapterControlBlock *acb);
+ static void arcmsr_free_irq(struct pci_dev *, struct AdapterControlBlock *);
+ static void arcmsr_wait_firmware_ready(struct AdapterControlBlock *acb);
+ static void arcmsr_set_iop_datetime(struct timer_list *);
++static int arcmsr_slave_config(struct scsi_device *sdev);
+ static int arcmsr_adjust_disk_queue_depth(struct scsi_device *sdev, int queue_depth)
+ {
+ 	if (queue_depth > ARCMSR_MAX_CMD_PERLUN)
+@@ -154,6 +155,7 @@ static struct scsi_host_template arcmsr_scsi_host_template = {
+ 	.eh_abort_handler	= arcmsr_abort,
+ 	.eh_bus_reset_handler	= arcmsr_bus_reset,
+ 	.bios_param		= arcmsr_bios_param,
++	.slave_configure	= arcmsr_slave_config,
+ 	.change_queue_depth	= arcmsr_adjust_disk_queue_depth,
+ 	.can_queue		= ARCMSR_DEFAULT_OUTSTANDING_CMD,
+ 	.this_id		= ARCMSR_SCSI_INITIATOR_ID,
+@@ -3033,6 +3035,17 @@ static int arcmsr_queue_command_lck(struct scsi_cmnd *cmd,
+ 
+ static DEF_SCSI_QCMD(arcmsr_queue_command)
+ 
++static int arcmsr_slave_config(struct scsi_device *sdev)
++{
++	unsigned int	dev_timeout;
++
++	dev_timeout = sdev->request_queue->rq_timeout;
++	if ((cmd_timeout > 0) && ((cmd_timeout * HZ) > dev_timeout))
++		blk_queue_rq_timeout(sdev->request_queue, cmd_timeout * HZ);
++	arcmsr_adjust_disk_queue_depth(sdev, cmd_per_lun);
++	return 0;
++}
++
+ static void arcmsr_get_adapter_config(struct AdapterControlBlock *pACB, uint32_t *rwbuffer)
+ {
+ 	int count;
