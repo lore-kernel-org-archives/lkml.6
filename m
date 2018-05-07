@@ -1,64 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752469AbeEGNTo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 09:19:44 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7236 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751923AbeEGNTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 09:19:43 -0400
-From: Zhao Chen <zhaochen6@huawei.com>
-To: <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <aviad.krawczyk@huawei.com>, <zhaochen6@huawei.com>,
-        <tony.qu@huawei.com>, <yin.yinshi@huawei.com>, <luoshaokai@huawei.com>
-Subject: [PATCH net-next] net-next/hinic: add pci device ids for 25ge and 100ge card
-Date: Mon, 7 May 2018 09:21:57 -0400
-Message-ID: <20180507132157.25047-1-zhaochen6@huawei.com>
-X-Mailer: git-send-email 2.17.0
+        id S1752320AbeEGNZ4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 09:25:56 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51050 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751884AbeEGNZx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 09:25:53 -0400
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Fabien Dessenne <fabien.dessenne@st.com>,
+        Jean-Christophe Trotin <jean-christophe.trotin@st.com>,
+        Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: Are media drivers abusing of GFP_DMA? - was: Re: [LSF/MM TOPIC NOTES] x86 ZONE_DMA love
+Date: Mon, 07 May 2018 16:26:08 +0300
+Message-ID: <3561479.qPIcrWnXEC@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180505130815.53a26955@vento.lan>
+References: <20180426215406.GB27853@wotan.suse.de> <20180505130815.53a26955@vento.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds PCI device IDs to support 25GE and 100GE card:
+Hi Mauro,
 
-1. Add device id 0x0201 for HINIC 100GE dual port card.
-2. Add device id 0x0200 for HINIC 25GE dual port card.
-3. Macro of device id 0x1822 is modified for HINIC 25GE quad port card.
+On Saturday, 5 May 2018 19:08:15 EEST Mauro Carvalho Chehab wrote:
+> There was a recent discussion about the use/abuse of GFP_DMA flag when
+> allocating memories at LSF/MM 2018 (see Luis notes enclosed).
+> 
+> The idea seems to be to remove it, using CMA instead. Before doing that,
+> better to check if what we have on media is are valid use cases for it, or
+> if it is there just due to some misunderstanding (or because it was
+> copied from some other code).
+> 
+> Hans de Goede sent us today a patch stopping abuse at gspca, and I'm
+> also posting today two other patches meant to stop abuse of it on USB
+> drivers. Still, there are 4 platform drivers using it:
+> 
+> 	$ git grep -l -E "GFP_DMA\\b" drivers/media/
+> 	drivers/media/platform/omap3isp/ispstat.c
+> 	drivers/media/platform/sti/bdisp/bdisp-hw.c
+> 	drivers/media/platform/sti/hva/hva-mem.c
+> 	drivers/media/spi/cxd2880-spi.c
+> 
+> Could you please check if GFP_DMA is really needed there, or if it is
+> just because of some cut-and-paste from some other place?
 
-Signed-off-by: Zhao Chen <zhaochen6@huawei.com>
----
- drivers/net/ethernet/huawei/hinic/hinic_main.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+I started looking at that for the omap3isp driver but Sakari beat me at 
+submitting a patch. GFP_DMA isn't needed for omap3isp.
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-index eb53bd93065e..5b122728dcb4 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-@@ -51,7 +51,9 @@ static unsigned int rx_weight = 64;
- module_param(rx_weight, uint, 0644);
- MODULE_PARM_DESC(rx_weight, "Number Rx packets for NAPI budget (default=64)");
- 
--#define PCI_DEVICE_ID_HI1822_PF         0x1822
-+#define HINIC_DEV_ID_QUAD_PORT_25GE     0x1822
-+#define HINIC_DEV_ID_DUAL_PORT_25GE     0x0200
-+#define HINIC_DEV_ID_DUAL_PORT_100GE    0x0201
- 
- #define HINIC_WQ_NAME                   "hinic_dev"
- 
-@@ -1097,7 +1099,9 @@ static void hinic_remove(struct pci_dev *pdev)
- }
- 
- static const struct pci_device_id hinic_pci_table[] = {
--	{ PCI_VDEVICE(HUAWEI, PCI_DEVICE_ID_HI1822_PF), 0},
-+	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_QUAD_PORT_25GE), 0},
-+	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_DUAL_PORT_25GE), 0},
-+	{ PCI_VDEVICE(HUAWEI, HINIC_DEV_ID_DUAL_PORT_100GE), 0},
- 	{ 0, 0}
- };
- MODULE_DEVICE_TABLE(pci, hinic_pci_table);
 -- 
-2.17.0
+Regards,
+
+Laurent Pinchart
