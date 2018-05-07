@@ -1,84 +1,60 @@
-Return-Path: <jhogan@kernel.org>
-X-Google-Smtp-Source: AB8JxZpm1MPU7C9hZyAok9nYRwv8ID75pKzqq9/i7vWkZYiD1K12kaD9l7S8z50dNq4CyEyLeu+Q
-ARC-Seal: i=1; a=rsa-sha256; t=1525819525; cv=none;
+Return-Path: <arndbergmann@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525727938; cv=none;
         d=google.com; s=arc-20160816;
-        b=srCHKcf/TK/6dOfZM75wJZKoMmjNjokv5inrlzIXZ0NsMw3cQeXRPhMIEgLtXfwO4g
-         hfXIh5oBH+n/jB1dfkD7jGxS7b+sWBrhZFwdV6J+cNXl4Xu9ynzu+sUfOIPNASKvMYq9
-         J7NoyaQGO+IsRi90h7Wi1YU52tSGyFeBrMmBjHY34p6+N2EWY+2CTteB+gmXbDnXMVbr
-         YaBE4l7HK/VARpF1krfZJmrvhTjLrvhJM/KAbiXRzwflhEnBMVDhL1sZGXQ0/3kkgWXv
-         LDyJWAHAy9w2KBke7R6rvrHoAvBM1X8v8s6h6TyBXhuT3746XbD8bQiu7U++YCFYweYP
-         OdFg==
+        b=CaHVoN31lOb7TXaPN8HP1/La83GpVAq+9CLdIaYVaOyPuuT2n/cEHRFyN6QPmsjWtT
+         WEieNXHiIsT5YHujUbRsC2bYWZh8h/iKFl+UVoMOwm68SdsBO0Dm2CdmRFRPwAe2rI0C
+         GEvgyrmUp8ymr0+KKUl6JOn9k4OQfw50UPiAV3OKfeh5DcyovkwyLJwpLinhRKXn8rhK
+         PvrK9Wcninv/N/fnDOcZCdFnGxTBIKQU2wIKlEdbLr0RvwhbhwacD69AoWKTGCZdNzjr
+         DFeB9jy6t7VCgKFD6g77XLffWVUYBcW8c6m/WcxZxrOz657fbX6r+XhYjfU/cP7YySdx
+         vLrg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=bWzQB5Pav3J3AR4KDRiDYlErkM3fc1Ngu1YdgM2oPyI=;
-        b=XmZy0aaYKIUNauO4GkFEaSZYoAmGl8Md9xklx0jrG3EIKYVwvh7tpn8wpscjvYSzE4
-         S/jZlG/8XY7ycdxa3iVxVsAS4MWJsvwbgaeHu5w8gXg+9HbRoQfjNQOK7nK/ArvSRC0D
-         sCTqIBw9XqEqnLDcWapP4lUaGe6EEP/sXlgtG3yMM6MQjGGhBWZUt8Xv8JcDD07r69bR
-         E0uvDQ7tZkT1YCyHfl/nwGvWadDVI40ThUrRTPA/7Rx1bAQyVuldvCUv9gepesQcYtUJ
-         ni7MWZ6GzMug4bR/X1MFGHLw+FgXZ0rK8/b260/HSy8cKWSBiZaqr+UVr/WxKSb/ZwyS
-         k1rw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=934J5myvKgY8hw1K2PJpRHALc09+msTVy00glGw4t3Y=;
+        b=miO765FGKYxJv8MQ2xCWXlSE2Sx4EmatuhEGFBM1oLdozoXnENk2KIWRBmBYl0rX9L
+         xMypQwjkuQuXJpv0IInyFVBmrspNzodUrHpq6ZOCMSU+8xn7eZkNVCWdAGVEZQDsIE7k
+         5FFiFUCCyvW22XinzAUTw/52QUnJmQBRxkLQNzZXc2APw/SWKHh5Bssb1o8cwT+M7kgC
+         2QbopupYMLMQukO6bUi0HA9s9H0wjUkjQyl3Ougx94vBLyO0QOuHNw2xx61E5W3svGPF
+         qqWXO1qCI/p9uKtw78vWGQVnYB4TYvC5aUmSr/3G5vS4uwsc8DBQiccwIxLVOCyLw6n5
+         b9Dg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vbqLFbBY;
-       spf=pass (google.com: domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=n20Hn1CR;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=vbqLFbBY;
-       spf=pass (google.com: domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Tue, 8 May 2018 23:45:19 +0100
-From: James Hogan <jhogan@kernel.org>
-To: Baolin Wang <baolin.wang@linaro.org>
-Cc: macro@linux-mips.org, ralf@linux-mips.org, chenhc@lemote.com,
-	kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
-	tglx@linutronix.de, pombredanne@nexb.com, arnd@arndb.de,
-	broonie@kernel.org, paul.burton@mips.com, heiko@sntech.de,
-	daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
-	linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] MIPS: Convert read_persistent_clock() to
- read_persistent_clock64()
-Message-ID: <20180508224519.GB14903@jamesdev>
-References: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525682212.git.baolin.wang@linaro.org>
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=n20Hn1CR;
+       spf=pass (google.com: domain of arndbergmann@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=arndbergmann@gmail.com
+X-Google-Smtp-Source: AB8JxZrGV5pczBd5e73Mh00vakGYNiBVCJwMFUQB63biHM9Pf/VDhqfwdKMorJEGOUAkZmGCjiVSBjLamS2j/VXAFTY=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
-Content-Disposition: inline
+Sender: arndbergmann@gmail.com
 In-Reply-To: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525682212.git.baolin.wang@linaro.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+References: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525682212.git.baolin.wang@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 7 May 2018 17:18:57 -0400
+X-Google-Sender-Auth: HHC7zavDtcXp1cilpu5kVZLxnqM
+Message-ID: <CAK8P3a3Wk+1Emz2g55vb7U7yPU=pPAQYg7ibwj7g4kGZWmmuKQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] MIPS: Convert read_persistent_clock() to read_persistent_clock64()
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: "Maciej W. Rozycki" <macro@linux-mips.org>, Ralf Baechle <ralf@linux-mips.org>,
+	James Hogan <jhogan@kernel.org>, chenhc@lemote.com,
+	Kate Stewart <kstewart@linuxfoundation.org>, gregkh <gregkh@linuxfoundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Philippe Ombredanne <pombredanne@nexb.com>,
+	Mark Brown <broonie@kernel.org>, Paul Burton <paul.burton@mips.com>,
+	Heiko Stuebner <heiko@sntech.de>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	"open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599797073537984267?=
-X-GMAIL-MSGID: =?utf-8?q?1599937735045488334?=
+X-GMAIL-MSGID: =?utf-8?q?1599841698882401590?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-
---NDin8bjvE/0mNLFQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, May 07, 2018 at 05:28:27PM +0800, Baolin Wang wrote:
+On Mon, May 7, 2018 at 5:28 AM, Baolin Wang <baolin.wang@linaro.org> wrote:
 > Since struct timespec is not y2038 safe on 32bit machines, this patch
 > converts read_persistent_clock() to read_persistent_clock64() using
 > struct timespec64, as well as converting mktime() to mktime64().
->=20
+>
 > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-Thanks, both applied for 4.18
-
-Cheers
-James
-
---NDin8bjvE/0mNLFQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvIofgAKCRA1zuSGKxAj
-8lCAAQD2Yqz1A+LNvd4Ccu6BSMvg/mBzTF06itJxvH2+d8GIlQD5AX+UDPiQGbvE
-iLK9CKDHu1wilodh7gUJsbZfVfdF5wQ=
-=O4XH
------END PGP SIGNATURE-----
-
---NDin8bjvE/0mNLFQ--
+Acked-by: Arnd Bergmann <arnd@arndb.de>
