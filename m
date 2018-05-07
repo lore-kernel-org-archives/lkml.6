@@ -1,178 +1,100 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752359AbeEGN07 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 09:26:59 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:37375 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751860AbeEGN05 (ORCPT
+        id S1752412AbeEGN1j (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 09:27:39 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:41864 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeEGN1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 09:26:57 -0400
-X-Google-Smtp-Source: AB8JxZptVtn/+NgpwgMlknHQ89Qk7wr3YjzvsB82eSe4mx2vxxKqrbYIRFIGwkZolCbtagO8seSUfg==
-X-ME-Sender: <xms:HVTwWowAW8e5dD2nbpgcE1HNme09D3rV2ja5ZyV2M7CJhVropGQckQ>
-From: Boqun Feng <boqun.feng@gmail.com>
-To: mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>, aryabinin@virtuozzo.com,
-        catalin.marinas@arm.com, dvyukov@google.com,
-        linux-arm-kernel@lists.infradead.org, will.deacon@arm.com
-Subject: [PATCH v2] locking/atomics/powerpc: Move cmpxchg helpers to asm/cmpxchg.h and define the full set of cmpxchg APIs
-Date: Mon,  7 May 2018 21:31:14 +0800
-Message-Id: <20180507133114.10106-1-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <tip-0476a632cb3aa88c03cefc294050a9a86760e88d@git.kernel.org>
-References: <tip-0476a632cb3aa88c03cefc294050a9a86760e88d@git.kernel.org>
+        Mon, 7 May 2018 09:27:36 -0400
+X-Google-Smtp-Source: AB8JxZqjU3cuiQXVm6iVf/QSh3LKP9oxA5+s6TmGl1a4hEH9FimvGNtu5/nyNVEbal6c6c58H8/DRQ==
+From: Anders Roxell <anders.roxell@linaro.org>
+To: andy.gross@linaro.org, david.brown@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] soc: qcom: cmd-db: initialize struct to remove warning
+Date: Mon,  7 May 2018 15:27:24 +0200
+Message-Id: <20180507132724.25846-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.17.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move PowerPC's __op_{acqurie,release}() from atomic.h to
-cmpxchg.h (in arch/powerpc/include/asm), plus use them to
-define these two methods:
+The struct isn't initialized, so gcc can't guarantee that the struct
+member is initialized thats why it says maybe-uninitialized.
 
-	#define cmpxchg_release __op_release(cmpxchg, __VA_ARGS__);
-	#define cmpxchg64_release __op_release(cmpxchg64, __VA_ARGS__);
+drivers/soc/qcom/cmd-db.c: In function ‘cmd_db_read_addr’:
+drivers/soc/qcom/cmd-db.c:194:21: warning: ‘ent.addr’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  return ret < 0 ? 0 : le32_to_cpu(ent.addr);
+drivers/soc/qcom/cmd-db.c: In function ‘cmd_db_read_aux_data’:
+drivers/soc/qcom/cmd-db.c:221:10: warning: ‘ent.len’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  ent_len = le16_to_cpu(ent.len);
+drivers/soc/qcom/cmd-db.c:226:15: warning: ‘*((void *)&rsc_hdr+4)’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  memcpy(data, rsc_offset(&rsc_hdr, &ent), len);
+               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/soc/qcom/cmd-db.c:226:15: warning: ‘*((void *)&ent+22)’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  CC      drivers/mfd/pcf50633-irq.o
+drivers/soc/qcom/cmd-db.c: In function ‘cmd_db_read_aux_data_len’:
+drivers/soc/qcom/cmd-db.c:247:38: warning: ‘ent.len’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  return ret < 0 ? 0 : le16_to_cpu(ent.len);
+                                      ^
+drivers/soc/qcom/cmd-db.c: In function ‘cmd_db_read_slave_id’:
+drivers/soc/qcom/cmd-db.c:269:7: warning: ‘ent.addr’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  addr = le32_to_cpu(ent.addr);
 
-... the idea is to generate all these methods in cmpxchg.h and to define the full
-array of atomic primitives, including the cmpxchg_release() methods which were
-defined by the generic code before.
+Initialize structs entry_header and rsc_hdr to remove the compile
+warning 'maybe-uninitialized'.
 
-Also define the atomic[64]_() variants explicitly.
-
-This ensures that all these low level cmpxchg APIs are defined in
-PowerPC headers, with no generic header fallbacks.
-
-Also remove the duplicate definitions of atomic_xchg() and
-atomic64_xchg() in asm/atomic.h: they could be generated via the generic
-atomic.h header using _relaxed() primitives. This helps ppc adopt the
-upcoming change of generic atomic.h header.
-
-No change in functionality or code generation.
-
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: aryabinin@virtuozzo.com
-Cc: catalin.marinas@arm.com
-Cc: dvyukov@google.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: will.deacon@arm.com
+Fixes: f22f5914c8c8 ("drivers: qcom: add command DB driver")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
-v1 --> v2:
-	remove duplicate definitions for atomic*_xchg() for future
-	change
+ drivers/soc/qcom/cmd-db.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Ingo,
-	I also remove the link and your SoB because I think your bot
-	could add them automatically.
-
- arch/powerpc/include/asm/atomic.h  | 24 ++++--------------------
- arch/powerpc/include/asm/cmpxchg.h | 24 ++++++++++++++++++++++++
- 2 files changed, 28 insertions(+), 20 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
-index 682b3e6a1e21..583837a41bcc 100644
---- a/arch/powerpc/include/asm/atomic.h
-+++ b/arch/powerpc/include/asm/atomic.h
-@@ -13,24 +13,6 @@
- 
- #define ATOMIC_INIT(i)		{ (i) }
- 
--/*
-- * Since *_return_relaxed and {cmp}xchg_relaxed are implemented with
-- * a "bne-" instruction at the end, so an isync is enough as a acquire barrier
-- * on the platform without lwsync.
-- */
--#define __atomic_op_acquire(op, args...)				\
--({									\
--	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
--	__asm__ __volatile__(PPC_ACQUIRE_BARRIER "" : : : "memory");	\
--	__ret;								\
--})
--
--#define __atomic_op_release(op, args...)				\
--({									\
--	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory");	\
--	op##_relaxed(args);						\
--})
--
- static __inline__ int atomic_read(const atomic_t *v)
+diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
+index a6f646295f06..1663dd1e46da 100644
+--- a/drivers/soc/qcom/cmd-db.c
++++ b/drivers/soc/qcom/cmd-db.c
+@@ -186,7 +186,7 @@ static int cmd_db_get_header(const char *id, struct entry_header *eh,
+ u32 cmd_db_read_addr(const char *id)
  {
- 	int t;
-@@ -213,8 +195,9 @@ static __inline__ int atomic_dec_return_relaxed(atomic_t *v)
- 	cmpxchg_relaxed(&((v)->counter), (o), (n))
- #define atomic_cmpxchg_acquire(v, o, n) \
- 	cmpxchg_acquire(&((v)->counter), (o), (n))
-+#define atomic_cmpxchg_release(v, o, n) \
-+	cmpxchg_release(&((v)->counter), (o), (n))
+ 	int ret;
+-	struct entry_header ent;
++	struct entry_header ent = {};
+ 	struct rsc_hdr rsc_hdr;
  
--#define atomic_xchg(v, new) (xchg(&((v)->counter), new))
- #define atomic_xchg_relaxed(v, new) xchg_relaxed(&((v)->counter), (new))
+ 	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
+@@ -207,8 +207,8 @@ EXPORT_SYMBOL(cmd_db_read_addr);
+ int cmd_db_read_aux_data(const char *id, u8 *data, size_t len)
+ {
+ 	int ret;
+-	struct entry_header ent;
+-	struct rsc_hdr rsc_hdr;
++	struct entry_header ent = {};
++	struct rsc_hdr rsc_hdr = {};
+ 	u16 ent_len;
  
- /**
-@@ -519,8 +502,9 @@ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
- 	cmpxchg_relaxed(&((v)->counter), (o), (n))
- #define atomic64_cmpxchg_acquire(v, o, n) \
- 	cmpxchg_acquire(&((v)->counter), (o), (n))
-+#define atomic64_cmpxchg_release(v, o, n) \
-+	cmpxchg_release(&((v)->counter), (o), (n))
+ 	if (!data)
+@@ -239,7 +239,7 @@ EXPORT_SYMBOL(cmd_db_read_aux_data);
+ size_t cmd_db_read_aux_data_len(const char *id)
+ {
+ 	int ret;
+-	struct entry_header ent;
++	struct entry_header ent = {};
+ 	struct rsc_hdr rsc_hdr;
  
--#define atomic64_xchg(v, new) (xchg(&((v)->counter), new))
- #define atomic64_xchg_relaxed(v, new) xchg_relaxed(&((v)->counter), (new))
+ 	ret = cmd_db_get_header(id, &ent, &rsc_hdr);
+@@ -258,7 +258,7 @@ EXPORT_SYMBOL(cmd_db_read_aux_data_len);
+ enum cmd_db_hw_type cmd_db_read_slave_id(const char *id)
+ {
+ 	int ret;
+-	struct entry_header ent;
++	struct entry_header ent = {};
+ 	struct rsc_hdr rsc_hdr;
+ 	u32 addr;
  
- /**
-diff --git a/arch/powerpc/include/asm/cmpxchg.h b/arch/powerpc/include/asm/cmpxchg.h
-index 9b001f1f6b32..e27a612b957f 100644
---- a/arch/powerpc/include/asm/cmpxchg.h
-+++ b/arch/powerpc/include/asm/cmpxchg.h
-@@ -8,6 +8,24 @@
- #include <asm/asm-compat.h>
- #include <linux/bug.h>
- 
-+/*
-+ * Since *_return_relaxed and {cmp}xchg_relaxed are implemented with
-+ * a "bne-" instruction at the end, so an isync is enough as a acquire barrier
-+ * on the platform without lwsync.
-+ */
-+#define __atomic_op_acquire(op, args...)				\
-+({									\
-+	typeof(op##_relaxed(args)) __ret  = op##_relaxed(args);		\
-+	__asm__ __volatile__(PPC_ACQUIRE_BARRIER "" : : : "memory");	\
-+	__ret;								\
-+})
-+
-+#define __atomic_op_release(op, args...)				\
-+({									\
-+	__asm__ __volatile__(PPC_RELEASE_BARRIER "" : : : "memory");	\
-+	op##_relaxed(args);						\
-+})
-+
- #ifdef __BIG_ENDIAN
- #define BITOFF_CAL(size, off)	((sizeof(u32) - size - off) * BITS_PER_BYTE)
- #else
-@@ -512,6 +530,9 @@ __cmpxchg_acquire(void *ptr, unsigned long old, unsigned long new,
- 			(unsigned long)_o_, (unsigned long)_n_,		\
- 			sizeof(*(ptr)));				\
- })
-+
-+#define cmpxchg_release(...) __atomic_op_release(cmpxchg, __VA_ARGS__)
-+
- #ifdef CONFIG_PPC64
- #define cmpxchg64(ptr, o, n)						\
-   ({									\
-@@ -533,6 +554,9 @@ __cmpxchg_acquire(void *ptr, unsigned long old, unsigned long new,
- 	BUILD_BUG_ON(sizeof(*(ptr)) != 8);				\
- 	cmpxchg_acquire((ptr), (o), (n));				\
- })
-+
-+#define cmpxchg64_release(...) __atomic_op_release(cmpxchg64, __VA_ARGS__)
-+
- #else
- #include <asm-generic/cmpxchg-local.h>
- #define cmpxchg64_local(ptr, o, n) __cmpxchg64_local_generic((ptr), (o), (n))
 -- 
-2.16.2
+2.17.0
