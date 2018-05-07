@@ -1,323 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751082AbeEGHTq (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 03:19:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:43164 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750716AbeEGHTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 03:19:43 -0400
-Date: Mon, 7 May 2018 09:19:31 +0200
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-To: Paul Kocialkowski <contact@paulk.fr>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] ARM: dts: sun7i: Add support for the Ainol AW1
- tablet
-Message-ID: <20180507071931.tebv45yxrojxxkeb@flea>
-References: <20180506214901.23429-1-contact@paulk.fr>
- <20180506214901.23429-3-contact@paulk.fr>
+        id S1751928AbeEGHUS (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 03:20:18 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:40717 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750732AbeEGHUP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 03:20:15 -0400
+X-Google-Smtp-Source: AB8JxZpR+IBH7qmljMxJ99xbCDZxucAlVe81flHcK+8+zcsdSmOUlWFPSEqETsrwoilBdxOcK3utGQ==
+Date: Mon, 7 May 2018 09:20:11 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Nathan Chancellor <natechancellor@gmail.com>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        Alex Elder <elder@kernel.org>, Johan Hovold <johan@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [greybus-dev] [PATCH] staging: greybus: Remove unused local
+ variable
+Message-ID: <20180507072011.GL2285@localhost>
+References: <20180506065044.25311-1-natechancellor@gmail.com>
+ <20180507050546.qiuigbsohhallell@vireshk-i7>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y6g2nzcki4pe24es"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20180506214901.23429-3-contact@paulk.fr>
-User-Agent: NeoMutt/20180323
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180507050546.qiuigbsohhallell@vireshk-i7>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, May 07, 2018 at 10:35:46AM +0530, Viresh Kumar wrote:
+> On 05-05-18, 23:50, Nathan Chancellor wrote:
+> > Fixes the following W=1 warning: variable ‘intf_id’ set but
+> > not used [-Wunused-but-set-variable]
+> > 
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >  drivers/staging/greybus/svc.c | 3 ---
+> >  1 file changed, 3 deletions(-)
+> > 
+> > diff --git a/drivers/staging/greybus/svc.c b/drivers/staging/greybus/svc.c
+> > index a874fed761a1..a2bb7e1a3db3 100644
+> > --- a/drivers/staging/greybus/svc.c
+> > +++ b/drivers/staging/greybus/svc.c
+> > @@ -1137,7 +1137,6 @@ static int gb_svc_intf_reset_recv(struct gb_operation *op)
+> >  	struct gb_svc *svc = gb_connection_get_data(op->connection);
+> >  	struct gb_message *request = op->request;
+> >  	struct gb_svc_intf_reset_request *reset;
+> > -	u8 intf_id;
+> >  
+> >  	if (request->payload_size < sizeof(*reset)) {
+> >  		dev_warn(&svc->dev, "short reset request received (%zu < %zu)\n",
+> > @@ -1146,8 +1145,6 @@ static int gb_svc_intf_reset_recv(struct gb_operation *op)
+> >  	}
+> >  	reset = request->payload;
+> >  
+> > -	intf_id = reset->intf_id;
+> > -
+> >  	/* FIXME Reset the interface here */
+> >  
+> >  	return 0;
+> 
+> Don't you get a new error after removing this, i.e "reset set but unused" ? Or
+> the sizeof() operation on that suppresses those warnings ..
 
---y6g2nzcki4pe24es
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That was my initial reaction as well, but I failed to notice the sizeof
+which prevents the new warning.
 
-Hi,
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-On Sun, May 06, 2018 at 11:49:01PM +0200, Paul Kocialkowski wrote:
-> This adds support for the Ainol AW1, an A20-based 7" tablet from Ainol.
->=20
-> The following board-specific features are supported:
-> * LCD panel
-> * Backlight
-> * USB OTG
-> * Buttons
-> * Touchscreen (doesn't work without non-free firmware)
-> * Accelerometer
-> * Battery
->=20
-> The following are untested:
-> * Audio output
-> * Audio speakers
-> * USB via SPCI connector
->=20
-> The following are not supported:
-> * Wi-Fi
-> * Bluetooth
-> * NAND
-> * Audio via SPCI connector
-> * Audio via Bluetooth I2S
->=20
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> ---
->  arch/arm/boot/dts/Makefile                |   1 +
->  arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts | 275 ++++++++++++++++++++++
->  2 files changed, 276 insertions(+)
->  create mode 100644 arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts
->=20
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 7e2424957809..4a80971f2bc9 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -946,6 +946,7 @@ dtb-$(CONFIG_MACH_SUN6I) +=3D \
->  	sun6i-a31s-sinovoip-bpi-m2.dtb \
->  	sun6i-a31s-yones-toptech-bs1078-v2.dtb
->  dtb-$(CONFIG_MACH_SUN7I) +=3D \
-> +	sun7i-a20-ainol-aw1.dtb \
->  	sun7i-a20-bananapi.dtb \
->  	sun7i-a20-bananapi-m1-plus.dtb \
->  	sun7i-a20-bananapro.dtb \
-> diff --git a/arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts b/arch/arm/boot/dt=
-s/sun7i-a20-ainol-aw1.dts
-> new file mode 100644
-> index 000000000000..9a1d54a9f9a0
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/sun7i-a20-ainol-aw1.dts
-> @@ -0,0 +1,275 @@
-> +/*
-> + * Copyright (C) 2018 Paul Kocialkowski <contact@paulk.fr>
-> + *
-> + * SPDX-License-Identifier: GPL-2.0+
+Acked-by: Johan Hovold <johan@kernel.org>
 
-This should be your first line. Also, we usually license our DT under
-a dual license (GPL and MIT) so that other projects (like FreeBSD) can
-use them as well, instead of duplicating them. It would be great if
-you'd consider it.
-
-> + */
-> +
-> +/dts-v1/;
-> +#include "sun7i-a20.dtsi"
-> +#include "sunxi-common-regulators.dtsi"
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> +
-> +/ {
-> +	model =3D "Ainol AW1";
-> +	compatible =3D "ainol,ainol-aw1", "allwinner,sun7i-a20";
-> +
-> +	aliases {
-> +		serial0 =3D &uart0;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path =3D "serial0:115200n8";
-> +	};
-> +
-> +	backlight: backlight {
-> +		compatible =3D "pwm-backlight";
-> +		pwms =3D <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-> +		brightness-levels =3D <0 10 20 30 40 50 60 70 80 90 100>;
-
-The increase in perceived brightness should be linear. Usually, for
-PWMs backed backlight, an exponential list is a much better
-approximation.
-
-> +		default-brightness-level =3D <5>;
-> +		enable-gpios =3D <&pio 7 7 GPIO_ACTIVE_HIGH>; /* PH7 */
-> +	};
-> +
-> +	panel: panel {
-> +		compatible =3D "innolux,at070tn90";
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +		power-supply =3D <&panel_power>;
-> +		backlight =3D <&backlight>;
-> +
-> +		port@0 {
-> +			reg =3D <0>;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +
-> +			panel_input: endpoint@0 {
-> +				reg =3D <0>;
-> +				remote-endpoint =3D <&tcon0_out_panel>;
-> +			};
-> +		};
-> +	};
-> +
-> +	panel_power: panel_power {
-> +		compatible =3D "regulator-fixed";
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&panel_power_pin>;
-> +		regulator-name =3D "panel-power";
-> +		regulator-min-microvolt =3D <10400000>;
-> +		regulator-max-microvolt =3D <10400000>;
-> +		gpio =3D <&pio 7 8 GPIO_ACTIVE_HIGH>; /* PH8 */
-> +		enable-active-high;
-> +		regulator-boot-on;
-> +	};
-> +};
-> +
-> +&codec {
-> +	allwinner,pa-gpios =3D <&pio 7 15 GPIO_ACTIVE_HIGH>; /* PH15 */
-> +	status =3D "okay";
-> +};
-> +
-> +&cpu0 {
-> +	cpu-supply =3D <&reg_dcdc2>;
-> +};
-> +
-> +&de {
-> +	status =3D "okay";
-> +};
-> +
-> +&ehci0 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ehci1 {
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c0_pins_a>;
-> +	status =3D "okay";
-> +
-> +	axp209: pmic@34 {
-> +		reg =3D <0x34>;
-> +		interrupt-parent =3D <&nmi_intc>;
-> +		interrupts =3D <0 IRQ_TYPE_LEVEL_LOW>;
-> +	};
-> +};
-> +
-> +&i2c1 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c1_pins_a>;
-> +	status =3D "okay";
-> +
-> +	lis3dh: accelerometer@18 {
-> +		compatible =3D "st,lis3dh-accel";
-> +		reg =3D <0x18>;
-> +		vdd-supply =3D <&reg_vcc3v3>;
-> +		vddio-supply =3D <&reg_vcc3v3>;
-> +		st,drdy-int-pin =3D <1>;
-> +	};
-> +};
-> +
-> +&i2c2 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c2_pins_a>;
-> +	status =3D "okay";
-> +	clock-frequency =3D <400000>;
-> +
-> +	gsl1680: touchscreen@40 {
-> +		compatible =3D "silead,gsl1680";
-> +		reg =3D <0x40>;
-> +		interrupt-parent =3D <&pio>;
-> +		interrupts =3D <7 21 IRQ_TYPE_EDGE_FALLING>; /* EINT21 (PH21) */
-> +		power-gpios =3D <&pio 7 20 GPIO_ACTIVE_HIGH>; /* PH20 */
-> +		firmware-name =3D "gsl1680-ainol-aw1.fw";
-> +		touchscreen-size-x =3D <480>;
-> +		touchscreen-size-y =3D <800>;
-> +		touchscreen-swapped-x-y;
-> +		touchscreen-inverted-y;
-> +		silead,max-fingers =3D <5>;
-> +	};
-> +};
-> +
-> +&lradc {
-> +	vref-supply =3D <&reg_ldo2>;
-> +	status =3D "okay";
-> +
-> +	button@571 {
-> +		label =3D "Volume Up";
-> +		linux,code =3D <KEY_VOLUMEUP>;
-> +		channel =3D <0>;
-> +		voltage =3D <571428>;
-> +	};
-> +
-> +	button@761 {
-> +		label =3D "Volume Down";
-> +		linux,code =3D <KEY_VOLUMEDOWN>;
-> +		channel =3D <0>;
-> +		voltage =3D <761904>;
-> +	};
-> +
-> +	button@952 {
-> +		label =3D "Home";
-> +		linux,code =3D <KEY_HOME>;
-> +		channel =3D <0>;
-> +		voltage =3D <952380>;
-> +	};
-> +};
-> +
-> +&mmc0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&mmc0_pins_a>;
-> +	vmmc-supply =3D <&reg_vcc3v3>;
-
-You have the regulators described in your DT, you'd better use them
-instead of the one coming from sunxi-common-regulators.dtsi.
-
-> +	bus-width =3D <4>;
-> +	cd-gpios =3D <&pio 7 1 GPIO_ACTIVE_HIGH>; /* PH1 */
-> +	cd-inverted;
-> +	status =3D "okay";
-> +};
-> +
-> +&ohci0 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ohci1 {
-> +	status =3D "okay";
-> +};
-> +
-> +&otg_sram {
-> +	status =3D "okay";
-> +};
-> +
-> +&pio {
-> +	panel_power_pin: panel_power_pin@0 {
-> +		pins =3D "PH8";
-> +		function =3D "gpio_out";
-> +	};
-> +};
-
-You don't need that pinctrl node.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---y6g2nzcki4pe24es
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlrv/gIACgkQ0rTAlCFN
-r3S4UA//UubFJ13xD4IpAyFnbvWrCjeIWtq2X4UddRSR0w1iLgZb2e4piqvGLa5H
-QBOS89vTHtjPxJVhdtZkX4bTHy/E+GMa1fQuMNGlVetRvYQfUx9XXabFMwQXVgw9
-8bdVeyB1AxNDm7PID49cjQcYJtW6005+e1CjMKi6/IR683iXhGqwuS9HfojwXK/Y
-oZakCLNWebFfY8fo91dtvjgzTWrgSvH3uDQKQDam3EBLLO0U3BRF9A6emrNQ33tz
-3K/bxuk7B6zzbNHvG9ZUw9iruP4OBOfCBZaQnnWcwbC38OQ6XvnfEIm+haHJ8Awv
-CkOh2DCyMYvE47FKb65yfhB1bGGdOBySinnPkAazFtW2LC/1VzhtO+Ctdpl8A1Hk
-HMIwQAp1Ped7+2puRamhc9QVf0YRt1UyUaSShngjcGTMQEEm+sGNUS78GO5mpHKb
-Qu2bE0MVRsxhYPxjrt9X+faF3P3WDdm3LrIelmZqWn5W9M0s/k4U4avXVM2Aahff
-PxUwFLuOd5NOLKzr+XVcNoTibsKoEQXvXLORyR+dux0/NsmSFaH06QyOpkl62cxA
-1w6B108mWaoFxLm6/Ea6dcg35gV+GPgBGnnifZpGpl8ZcPkNXDsakVjePIHxxQ/8
-c3htBM+2niylOtDST0YVU+4YxKahTwZVKme8oUqYzqw8wB5gqy4=
-=RXn1
------END PGP SIGNATURE-----
-
---y6g2nzcki4pe24es--
+Thanks,
+Johan
