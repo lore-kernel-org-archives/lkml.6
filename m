@@ -1,52 +1,51 @@
 Return-Path: <driverdev-devel-bounces@linuxdriverproject.org>
-X-Cyrus-Session-Id: sloti22d1t05-1362602-1525715986-2-1017761663079448604
+X-Cyrus-Session-Id: sloti22d1t05-4087485-1525655614-2-12675351055067068981
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no ("Email failed DMARC policy for domain")
 X-Spam-score: 0.0
 X-Spam-hits: BAYES_00 -1.9, FREEMAIL_FORGED_FROMDOMAIN 0.25, FREEMAIL_FROM 0.001,
   HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES unknown,
-  BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.166.138', Host='smtp1.osuosl.org', Country='US',
+  RCVD_IN_DNSWL_MED -2.3, SPF_PASS -0.001, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='140.211.166.136', Host='smtp3.osuosl.org', Country='US',
   FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
+X-Spam-charsets: cc='UTF-8', plain='us-ascii'
 X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: driverdev-devel-bounces@linuxdriverproject.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525715985; b=MjQWyvCAp/uebdYJV7KvG62HhhwJpP2ksk7VE/QJ8TSNV/vbCe
-    DVA9ryjiVylwEWkZF0imMZsIb9cfLjXQWczyzvXHUQGSLCLUH5bqTgIW2K1kipWC
-    q4JLR4bpT+vQw9H26AZxipJ5AchTROHRkNNm/CjKHerlPDOpdVUgjnGF+loZmfou
-    IOHyvd/2cwp/Lwb8eXhRsLNjbR47w4REFeS936X+JR/t8dwT0e/su77smXag82s/
-    M/vm9TOqXzlBdCNAF8KVeVD2i/m3IxOFsZRwKFTXVJo7+Fob5gEYTyGUt+ISAh+T
-    ooufOqVRfws0sF/X/lcYXSK2MclEdB27QVhg==
+    1525655614; b=ieavh/e/4cKYBJnm89/1OombLeS3erSKL/AyQLl8y8XBVgaGOZ
+    vHZwKMpFbAdg/huUweJ2wjrJ9Dhdgp4298NBiHKJjDJSWvJo39CYGi0z+B1xuYQD
+    Y/n8US2YyVEfOnmpfzl5EO/FF9oA6Tre1WMnXdBA9ph3XS5dHDdvUUFpvPntcMe4
+    7gWGbK3uX+nFK+mUoPk9/YZaNLHm0RI6kKiBprbCKwJH7fGaiURWSjtwh3gYZPXI
+    aVO3PyzWvciMfadnNEuvSfSd6btcawuV+KktfbgD19FRJFa6VIKDnuT3ncenxJlz
+    EKRtr8uVSJVijGfBOnmAgBeEUeaxXxALTEhQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=date:from:to:subject:message-id
-    :references:mime-version:in-reply-to:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:cc:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525715985; bh=bqKEx
-    uPCDt/HiSnBv98c9+hL6wQycYLU6np4Ld+5jXI=; b=klLMdYJ7UrzlWvxFYLpyB
-    NC30UeKnmTnZ4R8ZasyCnh+t54uIsRLRb0/Uyi2JNhkcQFbqkPppATBhPTEZWw+4
-    KgKqwMcvkXusE0UxbqbClLvhCnq9PSyGAYDqjsKx1KNeFZ5kYzhltGo+8dD6ALLz
-    YniIV65/JRpT9xAcItLbBkb83/sxxYPOKwh0EuqyfR663aBdEw+8oCVX2DUXm9J3
-    ZjxPe4I06tg77tECVzKisoyWGe6IxWo7A1VrkClviaOlJlnPD/y1NRED4SqNipsI
-    0LiBgtfaDiyEFf1f3zifk9DthItkthBSBfiD+xXgTPLFbbMMGcV19oY84BUgfYyN
+    messagingengine.com; h=from:to:subject:date:message-id:list-id
+    :list-unsubscribe:list-archive:list-post:list-help
+    :list-subscribe:cc:mime-version:content-type
+    :content-transfer-encoding:sender; s=fm2; t=1525655614; bh=mT6j5
+    NyDv/K4rCahOa/kFWedCXFQHZ3GvcrOxh8r2rw=; b=lcCmyhsLUlBKdvTLCfxeM
+    Zo8rWsiUvmhp/DHO1cIJjB/PwK8jaeusim1EzM2lzEsxH4KIyd3eo1rp43wmzdq6
+    uDLA0y++XGy43pO3pOMEv0STTQ0LKVJ+VAQNthDvrQK5/JXSjlg/hEcscrK5qjLz
+    wO7lJvHCwJRj+1wBzCHealhq1PpF7JWUCHqda7QUP2PSg9bg1wyRZG7PaYxJHEi6
+    cLBZy+I+j0SemYN0M4d8WZO8ZLz+vE1b89djybTZKlWJSMKcnwLbzhg+6QdV9nP7
+    ZTVn2NbYnfrWlQgZdGp1kJlLzy5Y+FAUgqJGs3ZMNFsNhVWvOvaqOEIZ0Apbr9my
     Q==
 ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=gmail.com header.i=@gmail.com header.b=OBlxQ+ZU x-bits=2048
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+    header.d=gmail.com header.i=@gmail.com header.b=TUZZjm6B x-bits=2048
     x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-    smtp.helo=whitealder.osuosl.org;
+    smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=pU1vpTLV;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-    x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+    header.d=1e100.net header.i=@1e100.net header.b=G7UVWGUh;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
     smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
     header_is_org_domain=yes;
@@ -55,19 +54,18 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     x-vs=clean score=-100 state=0
 Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=gmail.com header.i=@gmail.com header.b=OBlxQ+ZU x-bits=2048
+    dkim=fail (message has been altered, 2048-bit rsa key sha256)
+      header.d=gmail.com header.i=@gmail.com header.b=TUZZjm6B x-bits=2048
       x-keytype=rsa x-algorithm=sha256 x-selector=20161025;
     dmarc=fail (p=none,has-list-id=yes,d=none) header.from=gmail.com;
-    iprev=pass policy.iprev=140.211.166.138 (smtp1.osuosl.org);
+    iprev=pass policy.iprev=140.211.166.136 (smtp3.osuosl.org);
     spf=pass smtp.mailfrom=driverdev-devel-bounces@linuxdriverproject.org
-      smtp.helo=whitealder.osuosl.org;
+      smtp.helo=silver.osuosl.org;
     x-aligned-from=fail;
     x-cm=discussion score=0;
-    x-google-dkim=fail (body has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=pU1vpTLV;
-    x-ptr=fail x-ptr-helo=whitealder.osuosl.org
-      x-ptr-lookup=smtp1.osuosl.org;
+    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
+      header.d=1e100.net header.i=@1e100.net header.b=G7UVWGUh;
+    x-ptr=fail x-ptr-helo=silver.osuosl.org x-ptr-lookup=smtp3.osuosl.org;
     x-return-mx=pass smtp.domain=linuxdriverproject.org smtp.result=pass
       smtp_is_org_domain=yes header.domain=gmail.com header.result=pass
       header_is_org_domain=yes;
@@ -75,29 +73,25 @@ Authentication-Results: mx3.messagingengine.com;
       bits=128/128;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFe8A5J6B6KJTc6ZjM6AGLL0ZR49VQ07zQRW6eqiIw+DiiLuFjK48zfHa/yTIZjE/3CYNDrnCCKzwsURDMEwAL1QGbm9WAt73MAbj32cuoUjri9aYgA4
-    E6W/bZOybckXFEvyF+IwaBiPG2FIuZYBQNmApELpzkb89V70hXDDNfAmsuONy+DBthtZSfT4QXddr8UnVylixZtHsBMAPb9dTeoTIBYI7fmdwtMgAIOg4lt0
-    iDIobx9wL9EVaKbOd087Cw==
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=28bQ1EhdAjTzU1YDPmtEKw==:117
-    a=28bQ1EhdAjTzU1YDPmtEKw==:17 a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10
-    a=vY_346TuTMEA:10 a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10
-    a=pGLkceISAAAA:8 a=DDOyTI_5AAAA:8 a=pr1uMUhtlroiFnFafKwA:9 a=CjuIK1q_8ugA:10
+X-CM-Envelope: MS4wfFHqrUBR3M6wOd+8fWJmu7Oe96AeyBfSEvLjj+Om/QC99bTv99jsR8O7jt5WuVpJPGqyc45QS+Yuy9irvBh3xUqz6G/NgEN7MDdq0j8cCmr5KQwgM6q8
+    VpvzMZEH8vtjwYrjc3FUgKdQaV8QtN59bQOZXkuuYgyk9Wjq7xcRmvuLJAG3CmXibwzje7dvus9bKDpTbqopf5QE7gY8w5X18u1UCVVYgVBHWDOVLVcf6ZXB
+    5+jHIOgyle2NYg4lFa7ztQ==
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=FmzrR3azffoSx43hyxYGHg==:117
+    a=FmzrR3azffoSx43hyxYGHg==:17 a=TpujumX0jH7REod0KhDaHZOp9kI=:19
+    a=kj9zAlcOel0A:10 a=x7bEGLp0ZPQA:10 a=vY_346TuTMEA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=pGLkceISAAAA:8
+    a=DDOyTI_5AAAA:8 a=s2nohfGutZ3XZZZy17oA:9 a=CjuIK1q_8ugA:10
     a=_BcfOz0m4U4ohdxiHPKc:22 cc=dsc
 X-ME-CMScore: 0
 X-ME-CMCategory: discussion
 X-Remote-Delivered-To: driverdev-devel@osuosl.org
-X-Google-Smtp-Source: AB8JxZra8Ud1h08eaH5PiSsQkSKm6A4B8BHT2kIEPPHq6qRSHxhwEhUjYByrRhz07+XaZE/xI9RBhA==
-Date: Mon, 7 May 2018 10:59:34 -0700
+X-Google-Smtp-Source: AB8JxZo1LxBlmF6CxkOd2GIeK5/onQqrEMBbmTotF4fQ2DR32/+TYEH3EGWQIl9dvIjMcC+UCB+xnA==
 From: Nathan Chancellor <natechancellor@gmail.com>
 To: devel@driverdev.osuosl.org
-Subject: Re: [PATCH 2/7] staging: ks7010: Remove unused variables
-Message-ID: <20180507175934.GA14302@localhost>
-References: <20180506220304.13040-1-natechancellor@gmail.com>
- <20180506220304.13040-2-natechancellor@gmail.com>
-MIME-Version: 1.0
-Content-Disposition: inline
-In-Reply-To: <20180506220304.13040-2-natechancellor@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Subject: [PATCH 1/6] staging: android: Kconfig; Remove excessive hyphens
+Date: Sun,  6 May 2018 18:13:23 -0700
+Message-Id: <20180507011328.11982-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.17.0
 X-BeenThere: driverdev-devel@linuxdriverproject.org
 X-Mailman-Version: 2.1.24
  <driverdev-devel.linuxdriverproject.org>
@@ -108,8 +102,12 @@ List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
 List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
 List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
  <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
+Cc: Todd Kjos <tkjos@android.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+ =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+ Nathan Chancellor <natechancellor@gmail.com>,
+ Martijn Coenen <maco@android.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Errors-To: driverdev-devel-bounces@linuxdriverproject.org
@@ -118,84 +116,53 @@ X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Sun, May 06, 2018 at 03:02:59PM -0700, Nathan Chancellor wrote:
-> GCC warns these variables are all set but never used so remove them.
-> 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/staging/ks7010/ks_hostif.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
-> 
-> diff --git a/drivers/staging/ks7010/ks_hostif.c b/drivers/staging/ks7010/ks_hostif.c
-> index c0a9a67dc0b4..4c2f8f710c6e 100644
-> --- a/drivers/staging/ks7010/ks_hostif.c
-> +++ b/drivers/staging/ks7010/ks_hostif.c
-> @@ -354,7 +354,6 @@ void hostif_data_indication(struct ks_wlan_private *priv)
->  	unsigned short auth_type;
->  	unsigned char temp[256];
->  	struct ether_hdr *eth_hdr;
-> -	unsigned short eth_proto;
->  	struct ieee802_1x_hdr *aa1x_hdr;
->  	size_t size;
->  	int ret;
-> @@ -369,7 +368,6 @@ void hostif_data_indication(struct ks_wlan_private *priv)
->  	get_word(priv);	/* Reserve Area */
->  
->  	eth_hdr = (struct ether_hdr *)(priv->rxp);
-> -	eth_proto = ntohs(eth_hdr->h_proto);
->  
->  	/* source address check */
->  	if (ether_addr_equal(&priv->eth_addr[0], eth_hdr->h_source)) {
-> @@ -464,13 +462,9 @@ void hostif_mib_get_confirm(struct ks_wlan_private *priv)
->  	struct net_device *dev = priv->net_dev;
->  	u32 mib_status;
->  	u32 mib_attribute;
-> -	u16 mib_val_size;
-> -	u16 mib_val_type;
->  
->  	mib_status = get_dword(priv);	/* MIB status */
->  	mib_attribute = get_dword(priv);	/* MIB atttibute */
-> -	mib_val_size = get_word(priv);	/* MIB value size */
-> -	mib_val_type = get_word(priv);	/* MIB value type */
->  
->  	if (mib_status) {
->  		netdev_err(priv->net_dev, "attribute=%08X, status=%08X\n",
-> @@ -792,9 +786,6 @@ void hostif_ps_adhoc_set_confirm(struct ks_wlan_private *priv)
->  static
->  void hostif_infrastructure_set_confirm(struct ks_wlan_private *priv)
->  {
-> -	u16 result_code;
-> -
-> -	result_code = get_word(priv);
->  	priv->infra_status = 1;	/* infrastructure mode set */
->  	hostif_sme_enqueue(priv, SME_MODE_SET_CONFIRM);
->  }
-> @@ -872,14 +863,13 @@ static
->  void hostif_phy_information_confirm(struct ks_wlan_private *priv)
->  {
->  	struct iw_statistics *wstats = &priv->wstats;
-> -	unsigned char rssi, signal, noise;
-> +	unsigned char rssi, signal;
->  	unsigned char link_speed;
->  	unsigned int transmitted_frame_count, received_fragment_count;
->  	unsigned int failed_count, fcs_error_count;
->  
->  	rssi = get_byte(priv);
->  	signal = get_byte(priv);
-> -	noise = get_byte(priv);
->  	link_speed = get_byte(priv);
->  	transmitted_frame_count = get_dword(priv);
->  	received_fragment_count = get_dword(priv);
-> -- 
-> 2.17.0
-> 
+Fixes the following checkpatch.pl warning:
+"prefer 'help' over '---help---' for new help texts"
 
-On second glance, I did not realize most of these functions involve
-pointer semantics. Please do not apply this. I can send a v2 series if
-necessary although every other patch is fine.
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/staging/android/Kconfig     | 4 ++--
+ drivers/staging/android/ion/Kconfig | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-Nathan
+diff --git a/drivers/staging/android/Kconfig b/drivers/staging/android/Kconfig
+index 29d891355f7a..17c5587805f5 100644
+--- a/drivers/staging/android/Kconfig
++++ b/drivers/staging/android/Kconfig
+@@ -6,7 +6,7 @@ config ASHMEM
+ 	bool "Enable the Anonymous Shared Memory Subsystem"
+ 	default n
+ 	depends on SHMEM
+-	---help---
++	help
+ 	  The ashmem subsystem is a new shared memory allocator, similar to
+ 	  POSIX SHM but with different behavior and sporting a simpler
+ 	  file-based API.
+@@ -18,7 +18,7 @@ config ANDROID_VSOC
+ 	tristate "Android Virtual SoC support"
+ 	default n
+ 	depends on PCI_MSI
+-	---help---
++	help
+ 	  This option adds support for the Virtual SoC driver needed to boot
+ 	  a 'cuttlefish' Android image inside QEmu. The driver interacts with
+ 	  a QEmu ivshmem device. If built as a module, it will be called vsoc.
+diff --git a/drivers/staging/android/ion/Kconfig b/drivers/staging/android/ion/Kconfig
+index 898e9a834ccc..c16dd16afe6a 100644
+--- a/drivers/staging/android/ion/Kconfig
++++ b/drivers/staging/android/ion/Kconfig
+@@ -3,7 +3,7 @@ menuconfig ION
+ 	depends on HAVE_MEMBLOCK && HAS_DMA && MMU
+ 	select GENERIC_ALLOCATOR
+ 	select DMA_SHARED_BUFFER
+-	---help---
++	help
+ 	  Choose this option to enable the ION Memory Manager,
+ 	  used by Android to efficiently allocate buffers
+ 	  from userspace that can be shared between drivers.
+-- 
+2.17.0
+
 _______________________________________________
 devel mailing list
 devel@linuxdriverproject.org
