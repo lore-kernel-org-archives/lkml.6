@@ -1,57 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752230AbeEGKqX (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 06:46:23 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:7658 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751378AbeEGKqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 06:46:22 -0400
-Subject: Re: [PATCH] perf bench numa: Fixes typo in options
-To: <acme@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
-CC: <jolsa@redhat.com>, <mingo@redhat.com>, <peterz@infradead.org>,
-        <linux-kernel@vger.kernel.org>
-From: Yisheng Xie <xieyisheng1@huawei.com>
-Message-ID: <d333c15b-e0cd-4d6e-cbf5-17bbdfc55ccd@huawei.com>
-Date: Mon, 7 May 2018 18:45:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.0
+        id S1752307AbeEGKq6 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 06:46:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33608 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752035AbeEGKqy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 06:46:54 -0400
 MIME-Version: 1.0
-In-Reply-To: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.40]
-X-CFilter-Loop: Reflected
+Date: Mon, 07 May 2018 16:16:53 +0530
+From: Amit Nischal <anischal@codeaurora.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] Add QCOM video clock controller driver
+In-Reply-To: <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
+References: <1525350925-16006-1-git-send-email-anischal@codeaurora.org>
+ <152545146453.138124.2471609033510400995@swboyd.mtv.corp.google.com>
+Message-ID: <09ac2bd5eab25cfc70a1c5dc7b0f90ed@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
-
-Just in case that you may miss this minor fix.
-
-Thanks
-Yisheng
-
-On 2018/4/25 16:25, Yisheng Xie wrote:
-> 'R' means access the data via reads instead of writes, fix this typo.
+On 2018-05-04 22:01, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-05-03 05:35:23)
+>> Changes in v1:
+>>    https://lkml.org/lkml/2018/4/24/545
+>> Addressed below review comments given by Rob
+>> - Change the compatible property as per '<vendor>,<soc>-<block>' 
+>> format.
+>> - Add header definitions for resets and power-domain cells.
 > 
-> Signed-off-by: Yisheng Xie <xieyisheng1@huawei.com>
-> ---
->  tools/perf/bench/numa.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> You didn't add any reset definitions though?
+
+We haven't added the reset definitions for videocc as there is no
+video reset client.
+
 > 
-> diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
-> index 944070e..63eb4908 100644
-> --- a/tools/perf/bench/numa.c
-> +++ b/tools/perf/bench/numa.c
-> @@ -175,7 +175,7 @@ struct global_info {
->  	OPT_UINTEGER('s', "nr_secs"	, &p0.nr_secs,		"max number of seconds to run (default: 5 secs)"),
->  	OPT_UINTEGER('u', "usleep"	, &p0.sleep_usecs,	"usecs to sleep per loop iteration"),
->  
-> -	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via writes (can be mixed with -W)"),
-> +	OPT_BOOLEAN('R', "data_reads"	, &p0.data_reads,	"access the data via reads (can be mixed with -W)"),
->  	OPT_BOOLEAN('W', "data_writes"	, &p0.data_writes,	"access the data via writes (can be mixed with -R)"),
->  	OPT_BOOLEAN('B', "data_backwards", &p0.data_backwards,	"access the data backwards as well"),
->  	OPT_BOOLEAN('Z', "data_zero_memset", &p0.data_zero_memset,"access the data via glibc bzero only"),
-> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
