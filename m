@@ -1,93 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752195AbeEGPIa (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:08:30 -0400
-Received: from muru.com ([72.249.23.125]:40818 "EHLO muru.com"
+        id S1752360AbeEGPIj (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:08:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751923AbeEGPIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:08:25 -0400
-Date: Mon, 7 May 2018 08:08:21 -0700
-From: Tony Lindgren <tony@atomide.com>
-To: "Reizer, Eyal" <eyalr@ti.com>
-Cc: Eyal Reizer <eyalreizer@gmail.com>,
-        "bcousson@baylibre.com" <bcousson@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Loewy, Chen" <c-loewy@ti.com>
-Subject: Re: [EXTERNAL] Re: [PATCH] arm: dts: am437x-sk-evm: add wilink8
- support
-Message-ID: <20180507150821.GM98604@atomide.com>
-References: <1525159453-32489-1-git-send-email-eyalr@ti.com>
- <20180502145100.GK98604@atomide.com>
- <5cc906da15da45ab96e06957f878b65b@ti.com>
- <20180503141759.GP98604@atomide.com>
- <f0ea5260b3e2413aab4780b203ff24a4@ti.com>
- <20180506165621.GL98604@atomide.com>
- <a4dd3009f0f5492d8756f42c11590423@ti.com>
+        id S1752085AbeEGPI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 11:08:27 -0400
+Date: Mon, 7 May 2018 12:08:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Yisheng Xie <xieyisheng1@huawei.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, jolsa@redhat.com,
+        mingo@redhat.com, peterz@infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf bench numa: Fixes typo in options
+Message-ID: <20180507150825.GB3259@kernel.org>
+References: <1524644707-11030-1-git-send-email-xieyisheng1@huawei.com>
+ <d333c15b-e0cd-4d6e-cbf5-17bbdfc55ccd@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a4dd3009f0f5492d8756f42c11590423@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <d333c15b-e0cd-4d6e-cbf5-17bbdfc55ccd@huawei.com>
+X-Url: http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Reizer, Eyal <eyalr@ti.com> [180507 06:57]:
-> Hi Tony,
+Em Mon, May 07, 2018 at 06:45:31PM +0800, Yisheng Xie escreveu:
+> Hi Arnaldo,
 > 
-> > 
-> > Yeah my guess is that the reason for the separate GPIO interrupt was
-> > that on omap3 we did not have SDIO interrupt working for years. This was
-> > because of the issues related to padconf interrupts for off mode.
-> > 
-> > We now have Linux generic wakeirq support working with SDIO and it has
-> > been confirmed to work also for off mode with mwifiex at least. So
-> > there should be no reason to not also use the SDIO interrupt.
-> > 
+> Just in case that you may miss this minor fix.
 > 
-> There is more to this than just the padconf.
-> Using in-band interrupt instead of the out of band one requires
-> Supporting a feature called "Asynchronous interrupts in 4Bit mode"
-> Which is part of SDIO 3.0 spec:
-> https://www.sdcard.org/downloads/pls/pdf/index.php?p=PartE1_SDIO_Simplified_Specification_Ver3.00.jpg&f=PartE1_SDIO_Simplified_Specification_Ver3.00.pdf&e=EN_SSE1
-> 
-> Take a look at page 41 at the bottom part of the table.
-> Wilink8 supports this feature but AFAIK this support is still not part of the 
-> mmc/sdio core in the Linux kernel.
-> If we want wilink8 to trigger a host wakeup using the in-band interrupt instead 
-> Of the wlan_irq pin we would need to enable/use this feature.
+> Thanks
+> Yisheng
 
-Well the SDIO dat line interrupt is working just fine with
-mwifiex_sdio driver and runtime PM like I said :)
+Thanks, applied to my perf/core branch.
 
-> I did use it internally in the past and was able to patch the Ubuntu kernel 
-> (3.5.0 at that time) to use wilink8 in a standard SD Card slot of an Ubuntu Laptop 
-> while removing the use of wlan_irq pin completely.
-> However this was an experimental patch set written by a third party 
-> that was not up-steamtable at that time.
-> I do have this patch set somewhere...
-> 
-> It is similar to the following patch which is not  upstream as well for some reason:
-> https://gitlab.com/k2wl/g2_kernel/commit/5c4970fdaa50422d7ea7220efa20fb35148a4bca
-> It is not the only patch needed, there are a couple of additional patches needed 
-> for fully using it from driver.
-> I did check latest Linux-next and don't see this support there. Not sure why.
-
-Hmm not sure if this is needed here. When things enter idle, the whole
-SDIO block is off and the SDIO dat interrupt is delivered as wakeirq to
-the pinctrl-single driver instead that manages padconf wake events.
-Then we have runtime PM wake up MMC subsystem and the SDIO dat line
-interrupt is still there and will trigger as it's level sensitive.
-
-So the test to do would be simply configure wlcore to use SDIO dat line
-interrupt instead of the GPIO interrupt and configure a wakeirq for
-the board on the SDIO dat line. Sounds like I need to get my wlcore
-runtime PM patches ready though as that is needed for using the wakeirq.
-
-Regards,
-
-Tony
+- Arnaldo
