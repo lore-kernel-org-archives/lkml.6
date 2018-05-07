@@ -1,154 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752749AbeEGSuk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 14:50:40 -0400
-Received: from leonov.paulk.fr ([185.233.101.22]:36916 "EHLO leonov.paulk.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752676AbeEGSuh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 14:50:37 -0400
-Message-ID: <8050492b544e5783d16eb74050313bfdddc0fc0d.camel@paulk.fr>
-Subject: Re: [PATCH v3 1/3] drm/panel: Add RGB666 variant of Innolux
- AT070TN90
-From: Paul Kocialkowski <contact@paulk.fr>
-To: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org
-Date: Mon, 07 May 2018 20:50:23 +0200
-In-Reply-To: <20180507070855.dh47obvpmze577x5@flea>
-References: <20180506214901.23429-1-contact@paulk.fr>
-         <20180507070855.dh47obvpmze577x5@flea>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-pO4jWJbZQwRC3mFFtFHZ"
-X-Mailer: Evolution 3.28.1 
-Mime-Version: 1.0
+        id S1752774AbeEGS5N (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 14:57:13 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:40437 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752689AbeEGS5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 14:57:12 -0400
+X-Google-Smtp-Source: AB8JxZqsS5HGl4hp+kfzxV7LVyorBUmU7qO92dUZNeX3ed10Cl2rHbfl/HL3Nhs/RJDsYcgQJ+s6NVLOKOZxaXiY+W4=
+MIME-Version: 1.0
+In-Reply-To: <20180507184622.GB12361@bombadil.infradead.org>
+References: <1525704627-30114-1-git-send-email-yehs1@lenovo.com> <20180507184622.GB12361@bombadil.infradead.org>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Mon, 7 May 2018 11:57:10 -0700
+Message-ID: <CAPcyv4hBJN3npXwg3Ur32JSWtKvBUZh7F8W+Exx3BB-uKWwPag@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM (pmem) zone
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Huaisheng Ye <yehs1@lenovo.com>, Michal Hocko <mhocko@suse.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, chengnt@lenovo.com,
+        pasha.tatashin@oracle.com, Sasha Levin <alexander.levin@verizon.com>,
+        Linux MM <linux-mm@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>, colyli@suse.de,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Vlastimil Babka <vbabka@suse.cz>, Dave Hansen <dave.hansen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w47IvKJI013489
 
+On Mon, May 7, 2018 at 11:46 AM, Matthew Wilcox <willy@infradead.org> wrote:
+> On Mon, May 07, 2018 at 10:50:21PM +0800, Huaisheng Ye wrote:
+>> Traditionally, NVDIMMs are treated by mm(memory management) subsystem as
+>> DEVICE zone, which is a virtual zone and both its start and end of pfn
+>> are equal to 0, mm wouldn’t manage NVDIMM directly as DRAM, kernel uses
+>> corresponding drivers, which locate at \drivers\nvdimm\ and
+>> \drivers\acpi\nfit and fs, to realize NVDIMM memory alloc and free with
+>> memory hot plug implementation.
+>
+> You probably want to let linux-nvdimm know about this patch set.
+> Adding to the cc.
 
---=-pO4jWJbZQwRC3mFFtFHZ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yes, thanks for that!
 
-Hi,
+> Also, I only received patch 0 and 4.  What happened
+> to 1-3,5 and 6?
+>
+>> With current kernel, many mm’s classical features like the buddy
+>> system, swap mechanism and page cache couldn’t be supported to NVDIMM.
+>> What we are doing is to expand kernel mm’s capacity to make it to handle
+>> NVDIMM like DRAM. Furthermore we make mm could treat DRAM and NVDIMM
+>> separately, that means mm can only put the critical pages to NVDIMM
+>> zone, here we created a new zone type as NVM zone. That is to say for
+>> traditional(or normal) pages which would be stored at DRAM scope like
+>> Normal, DMA32 and DMA zones. But for the critical pages, which we hope
+>> them could be recovered from power fail or system crash, we make them
+>> to be persistent by storing them to NVM zone.
+>>
+>> We installed two NVDIMMs to Lenovo Thinksystem product as development
+>> platform, which has 125GB storage capacity respectively. With these
+>> patches below, mm can create NVM zones for NVDIMMs.
+>>
+>> Here is dmesg info,
+>>  Initmem setup node 0 [mem 0x0000000000001000-0x000000237fffffff]
+>>  On node 0 totalpages: 36879666
+>>    DMA zone: 64 pages used for memmap
+>>    DMA zone: 23 pages reserved
+>>    DMA zone: 3999 pages, LIFO batch:0
+>>  mminit::memmap_init Initialising map node 0 zone 0 pfns 1 -> 4096
+>>    DMA32 zone: 10935 pages used for memmap
+>>    DMA32 zone: 699795 pages, LIFO batch:31
+>>  mminit::memmap_init Initialising map node 0 zone 1 pfns 4096 -> 1048576
+>>    Normal zone: 53248 pages used for memmap
+>>    Normal zone: 3407872 pages, LIFO batch:31
+>>  mminit::memmap_init Initialising map node 0 zone 2 pfns 1048576 -> 4456448
+>>    NVM zone: 512000 pages used for memmap
+>>    NVM zone: 32768000 pages, LIFO batch:31
+>>  mminit::memmap_init Initialising map node 0 zone 3 pfns 4456448 -> 37224448
+>>  Initmem setup node 1 [mem 0x0000002380000000-0x00000046bfffffff]
+>>  On node 1 totalpages: 36962304
+>>    Normal zone: 65536 pages used for memmap
+>>    Normal zone: 4194304 pages, LIFO batch:31
+>>  mminit::memmap_init Initialising map node 1 zone 2 pfns 37224448 -> 41418752
+>>    NVM zone: 512000 pages used for memmap
+>>    NVM zone: 32768000 pages, LIFO batch:31
+>>  mminit::memmap_init Initialising map node 1 zone 3 pfns 41418752 -> 74186752
+>>
+>> This comes /proc/zoneinfo
+>> Node 0, zone      NVM
+>>   pages free     32768000
+>>         min      15244
+>>         low      48012
+>>         high     80780
+>>         spanned  32768000
+>>         present  32768000
+>>         managed  32768000
+>>         protection: (0, 0, 0, 0, 0, 0)
+>>         nr_free_pages 32768000
+>> Node 1, zone      NVM
+>>   pages free     32768000
+>>         min      15244
+>>         low      48012
+>>         high     80780
+>>         spanned  32768000
+>>         present  32768000
+>>         managed  32768000
 
-Le lundi 07 mai 2018 =C3=A0 09:08 +0200, Maxime Ripard a =C3=A9crit :
-> Hi,
->=20
-> On Sun, May 06, 2018 at 11:48:59PM +0200, Paul Kocialkowski wrote:
-> > This adds timings for the RGB666 variant of the Innolux AT070TN90
-> > panel,
-> > as found on the Ainol AW1 tablet.
-> >=20
-> > The panel also supports RGB888 output. When RGB666 mode is used
-> > instead,
-> > the two extra lanes per component are grounded.
-> >=20
-> > In the future, it might become necessary to introduce a dedicated
-> > device-tree property to specify the bus format and maybe specify it
-> > in
-> > the mode description instead of panel description so that the
-> > appropriate mode can be selected for each bus format.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
->=20
-> A change log would be nice. Also, you mentionned in your first version
-> that the screen was an AT070TN92, and now you mention that it is an
-> AT070TN90, which one is it?
-
-Yes, I should probably have explained why I changed the model here.
-I checked on the device yesterday and found that the ribbon cable
-indicates AT070TN90. I am not sure why I was initially assuming that the
-panel was an AT070TN92.=20
-
-> Maxime
->=20
-> > ---
-> >  drivers/gpu/drm/panel/panel-simple.c | 26
-> > ++++++++++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/panel/panel-simple.c
-> > b/drivers/gpu/drm/panel/panel-simple.c
-> > index cbf1ab404ee7..351742df8ee1 100644
-> > --- a/drivers/gpu/drm/panel/panel-simple.c
-> > +++ b/drivers/gpu/drm/panel/panel-simple.c
-> > @@ -1086,6 +1086,29 @@ static const struct panel_desc
-> > innolux_at070tn92 =3D {
-> >  	.bus_format =3D MEDIA_BUS_FMT_RGB888_1X24,
-> >  };
-> > =20
-> > +static const struct drm_display_mode innolux_at070tn90_mode =3D {
-> > +	.clock =3D 40000,
-> > +	.hdisplay =3D 800,
-> > +	.hsync_start =3D 800 + 112,
-> > +	.hsync_end =3D 800 + 112 + 1,
-> > +	.htotal =3D 800 + 112 + 1 + 87,
-> > +	.vdisplay =3D 480,
-> > +	.vsync_start =3D 480 + 141,
-> > +	.vsync_end =3D 480 + 141 + 1,
-> > +	.vtotal =3D 480 + 141 + 1 + 38,
-> > +	.vrefresh =3D 60,
-> > +};
-> > +
-> > +static const struct panel_desc innolux_at070tn90 =3D {
-> > +	.modes =3D &innolux_at070tn90_mode,
-> > +	.num_modes =3D 1,
-> > +	.size =3D {
-> > +		.width =3D 154,
-> > +		.height =3D 86,
-> > +	},
-> > +	.bus_format =3D MEDIA_BUS_FMT_RGB666_1X18,
-> > +};
-> > +
-> >  static const struct display_timing innolux_g101ice_l01_timing =3D {
-> >  	.pixelclock =3D { 60400000, 71100000, 74700000 },
-> >  	.hactive =3D { 1280, 1280, 1280 },
-> > @@ -2154,6 +2177,9 @@ static const struct of_device_id
-> > platform_of_match[] =3D {
-> >  	}, {
-> >  		.compatible =3D "innolux,at070tn92",
-> >  		.data =3D &innolux_at070tn92,
-> > +	}, {
-> > +		.compatible =3D "innolux,at070tn90",
-> > +		.data =3D &innolux_at070tn90,
->=20
-> This should be ordered alphabetically.
-
-Thanks for the review!
-
-Cheers,
-
-Paul
-
---=20
-Developer of free digital technology and hardware support.
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-pO4jWJbZQwRC3mFFtFHZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlrwn+8ACgkQhP3B6o/u
-lQxquA//XKzR9OjdCYa5ePJa1UQBRjpdiT1z/xGHn4bRm5XyBKByh5GtQ96yrHKG
-bLd5TIig/Cd6AbiX/sb6bS0Hpp5tYdEWb9XiLLn3JpUugBdoHh9qxiYenQt/5tlX
-JtdKfmifRkDoTjaBzFzSO/0CVVVmBzHuXSLxuif2Fn2WijdIJz3Ioof+7+feUjTX
-nSL85ueAdOzZGSrS2zHuFZb9UXu9yrJ10lvyMu5qBTtGn1lT3C+Q2lr3nkgTWw1r
-K/n3hd0T8Z5Zwkt4f7xqTcX7WQr8Jxf7fLYt26nTZYKORUYHNcHLuHcTHDZis1Ov
-kC9PI3dOtNMVx1eskKU8t8nDOvHI+ECObArxdMIDu+Zc13/UeqVea3GaLBvAzCOi
-gV4xDAtcIvt8c+Kk7tesXana/9uPg/CAl5wSfuOCGr6caFcYURLU8utc/8s5IAYh
-BQqZxl5ugV/XUhX/PhPbu7sOKcslFOUUVOMnOyKq6vXODLH7e4LDFs4D5aHnRKW1
-8zwreIfRV4ssnAFlROYQSzB6LaaPgjoAXTPEWUggL08VkgF9dF5sAIBa7M98FsNA
-KdfweSOmlKbaivRVReKf0+ZNe2FC8VyMuZuGGQ94//j3v1Z/kDnjKY4r0I4qtjbN
-4ub8nBqZlA3vHILQo9uBOkiEtb4lapShAkiVcE2sIedldRdvwiw=
-=R+uD
------END PGP SIGNATURE-----
-
---=-pO4jWJbZQwRC3mFFtFHZ--
+I think adding yet one more mm-zone is the wrong direction. Instead,
+what we have been considering is a mechanism to allow a device-dax
+instance to be given back to the kernel as a distinct numa node
+managed by the VM. It seems it times to dust off those patches.
