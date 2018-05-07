@@ -1,86 +1,69 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751969AbeEGDJu (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 23:09:50 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7231 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751880AbeEGDJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 23:09:47 -0400
-Subject: Re: [PATCH] VFIO: Fix Documentation
-To: Alex Williamson <alex.williamson@redhat.com>
-References: <1524218521-61496-1-git-send-email-zhangshaokun@hisilicon.com>
- <36f5940b-cac5-9a4a-86cb-7ad9766d5d62@huawei.com>
- <20180430123857.006a0697@w520.home>
-CC: <corbet@lwn.net>, <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: "dongbo (E)" <dongbo4@huawei.com>
-Message-ID: <0f6b31a8-1be4-8817-a27c-716aa334efe8@huawei.com>
-Date: Mon, 7 May 2018 11:09:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.1.1
-MIME-Version: 1.0
-In-Reply-To: <20180430123857.006a0697@w520.home>
-Content-Type: text/plain; charset="windows-1252"
+        id S1751936AbeEGDXT (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 23:23:19 -0400
+Received: from mout.gmx.net ([212.227.17.21]:49129 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751881AbeEGDXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 23:23:17 -0400
+Message-ID: <1525663384.5064.1.camel@gmx.de>
+Subject: Re: [PATCH BUGFIX] block, bfq: postpone rq preparation to insert or
+ merge
+From: Mike Galbraith <efault@gmx.de>
+To: Paolo Valente <paolo.valente@linaro.org>
+Cc: Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>,
+        linus.walleij@linaro.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name
+Date: Mon, 07 May 2018 05:23:04 +0200
+In-Reply-To: <1525660992.5105.1.camel@gmx.de>
+References: <20180504171701.6876-1-paolo.valente@linaro.org>
+         <1525463210.622.1.camel@gmx.de> <1525508378.5406.6.camel@gmx.de>
+         <9F155F9F-F6B2-465A-BA4D-A86FF6825071@linaro.org>
+         <1525532191.5406.15.camel@gmx.de>
+         <223CABEA-71E0-426F-A4AB-17BA8437C978@linaro.org>
+         <1525660992.5105.1.camel@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.63.195.168]
-X-CFilter-Loop: Reflected
+X-Provags-ID: V03:K1:LOuSnWERm9xqCuwdsZFCo9H9pOAqdvj1ZuPOQUeuqNz84V8LeT6
+ lp1NeymL+ZhVmNuHqPQNARQK4jOrnMn+qXi9RXKeUETOFPdHHf45G3sBGErrxQMdWyRAxhO
+ Q4aQKTpWddnzV9BglfKhU0XvpZmNaJABLEX23n6D7eQlX0/8z/jvZ2yFQoedIZ+XKScFdAE
+ dCe53oJ7Gj7m31BnvsDEA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:hCL3F3oVBeo=:pN0j6WZqvTEIxfnfg035dC
+ /ZQIHbSCdwHZVog57SlyHxis6RjC2h9N69UJNCYQbgH4rA+WXlZchVsSoZwB29GGRpWA5Mbak
+ mY60dihZn+LH0F5SedCzbd1LPNdJb19cua20oCvZyCiVxy8fPGFdMYcSLH5Ea96vzV3UOU2Rm
+ AeHFoSMittIMEH6Blzx/SmGgvlrdNo7+GHTn6r2eG3r/uarKkxC1FiYruvO80xxKMLZZYLRIK
+ KyWvbWPpOljMg66REWIYmaDcloRwEZWlWRqSTnKpZV/+JKEKRnqfdfvIO1mfcxO+5/NcH3K7R
+ XSpRX2vkHzS6tkJKuW79g/Vfq/2p7a8YG3jKY/pwjJSzTvClc4oW44JfOOsn8YObf6F+X2zCd
+ tjYUBsVzqJ6z59I8tX/ibbUxIiFP69fZcSkzo1tDAqqPj2c0gvcdOWeoSgGfoUiToekr5Kv8v
+ RFCkYEWQ/f4aHmE49zmUc+zbaLZRepTS30qPcut0Zvdl0WZJVhF86LVd6xXSyE1mwFWKSu1gz
+ wUeYCpq+AoSorWkKoQVJwwBWIm3M59SOZC9qkYCHc0IKIZE5+Iw/H7A1Kt3tVcyWetvY+w7sW
+ n9IuPBkJa7Qsuvbqq3L1qqDnKmS8N387G3TxR7QUqfdq+cdOsVSkf/EHpImfUn0SxYW4h7UI6
+ iyimBYwGn2LOOfX3nndp6LYo+e+QNg06JZZqj0vi40i8lSGw34cuHYwyFpQLsTcbvwcnvtNNv
+ heMgbN/2Ml6KPrKj9AsDkYGTWNqp7GkXO4ACmgLTKVLphHCLyF8LOXY7AW91reGPY9TcFk0k5
+ yJf4TED
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Alex.
+On Mon, 2018-05-07 at 04:43 +0200, Mike Galbraith wrote:
+> On Sun, 2018-05-06 at 09:42 +0200, Paolo Valente wrote:
+> > 
+> > I've attached a compressed patch (to avoid possible corruption from my
+> > mailer).  I'm little confident, but no pain, no gain, right?
+> > 
+> > If possible, apply this patch on top of the fix I proposed in this
+> > thread, just to eliminate possible further noise. Finally, the
+> > patch content follows.
+> > 
+> > Hoping for a stroke of luck,
+> 
+> FWIW, box didn't survive the first full build of the morning.
 
-On 2018/5/1 2:38, Alex Williamson wrote:
-> On Fri, 20 Apr 2018 18:07:27 +0800
-> "dongbo (E)" <dongbo4@huawei.com> wrote:
-> 
->> From: Dong Bo <dongbo4@huawei.com>
->>
->> Signed-off-by: Dong Bo <dongbo4@huawei.com>
->> ---
-> 
-> Hi Dong Bo,
-> 
-> The patch is corrupted, please resend and also include a commit log,
-> something as simple as "Update vfio_add_group_dev description to match
-> the current API" would be fine.  Thanks,
-> 
-> Alex
-> 
-Sorry for the corrupted patch. I've resent one and added the commit log
-you suggested. Hope it would apply. Thanks.
+Nor the second.
 
-Best Regards,
-Dong Bo
-
->>  Documentation/vfio.txt | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
->> index ef6a511..f1a4d3c 100644
->> --- a/Documentation/vfio.txt
->> +++ b/Documentation/vfio.txt
->> @@ -252,15 +252,14 @@ into VFIO core.  When devices are bound and unbound to the driver,
->>  the driver should call vfio_add_group_dev() and vfio_del_group_dev()
->>  respectively::
->>  -	extern int vfio_add_group_dev(struct iommu_group *iommu_group,
->> -	                              struct device *dev,
->> +	extern int vfio_add_group_dev(struct device *dev,
->>  				      const struct vfio_device_ops *ops,
->>  				      void *device_data);
->>   	extern void *vfio_del_group_dev(struct device *dev);
->>   vfio_add_group_dev() indicates to the core to begin tracking the
->> -specified iommu_group and register the specified dev as owned by
->> +iommu_group of the specified dev and register the dev as owned by
->>  a VFIO bus driver.  The driver provides an ops structure for callbacks
->>  similar to a file operations structure::
->>  -- 1.9.1
->>
->>
->> .
->>
->>
-> 
-> 
-> .
-> 
+	-Mike
