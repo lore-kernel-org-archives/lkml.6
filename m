@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753510AbeEGXUd (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 19:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56196 "EHLO mail.kernel.org"
+        id S1753468AbeEGXXu (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 19:23:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752966AbeEGXUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 19:20:31 -0400
-Date: Mon, 7 May 2018 18:20:29 -0500
+        id S1752719AbeEGXXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 19:23:48 -0400
+Date: Mon, 7 May 2018 18:23:46 -0500
 From: Bjorn Helgaas <helgaas@kernel.org>
 To: Logan Gunthorpe <logang@deltatee.com>
 Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
@@ -20,116 +20,85 @@ Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v4 06/14] PCI/P2PDMA: Add P2P DMA driver writer's
- documentation
-Message-ID: <20180507232029.GH161390@bhelgaas-glaptop.roam.corp.google.com>
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI Memory
+Message-ID: <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
 References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-7-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180423233046.21476-7-logang@deltatee.com>
+In-Reply-To: <20180423233046.21476-1-logang@deltatee.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Apr 23, 2018 at 05:30:38PM -0600, Logan Gunthorpe wrote:
-> Add a restructured text file describing how to write drivers
-> with support for P2P DMA transactions. The document describes
-> how to use the APIs that were added in the previous few
-> commits.
+On Mon, Apr 23, 2018 at 05:30:32PM -0600, Logan Gunthorpe wrote:
+> Hi Everyone,
 > 
-> Also adds an index for the PCI documentation tree even though this
-> is the only PCI document that has been converted to restructured text
-> at this time.
+> Here's v4 of our series to introduce P2P based copy offload to NVMe
+> fabrics. This version has been rebased onto v4.17-rc2. A git repo
+> is here:
 > 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> ---
->  Documentation/PCI/index.rst             |  14 +++
->  Documentation/driver-api/pci/index.rst  |   1 +
->  Documentation/driver-api/pci/p2pdma.rst | 166 ++++++++++++++++++++++++++++++++
->  Documentation/index.rst                 |   3 +-
->  4 files changed, 183 insertions(+), 1 deletion(-)
+> https://github.com/sbates130272/linux-p2pmem pci-p2p-v4
+> ...
+
+> Logan Gunthorpe (14):
+>   PCI/P2PDMA: Support peer-to-peer memory
+>   PCI/P2PDMA: Add sysfs group to display p2pmem stats
+>   PCI/P2PDMA: Add PCI p2pmem dma mappings to adjust the bus offset
+>   PCI/P2PDMA: Clear ACS P2P flags for all devices behind switches
+>   docs-rst: Add a new directory for PCI documentation
+>   PCI/P2PDMA: Add P2P DMA driver writer's documentation
+>   block: Introduce PCI P2P flags for request and request queue
+>   IB/core: Ensure we map P2P memory correctly in
+>     rdma_rw_ctx_[init|destroy]()
+>   nvme-pci: Use PCI p2pmem subsystem to manage the CMB
+>   nvme-pci: Add support for P2P memory in requests
+>   nvme-pci: Add a quirk for a pseudo CMB
+>   nvmet: Introduce helper functions to allocate and free request SGLs
+>   nvmet-rdma: Use new SGL alloc/free helper for requests
+>   nvmet: Optionally use PCI P2P memory
+> 
+>  Documentation/ABI/testing/sysfs-bus-pci    |  25 +
+>  Documentation/PCI/index.rst                |  14 +
+>  Documentation/driver-api/index.rst         |   2 +-
+>  Documentation/driver-api/pci/index.rst     |  20 +
+>  Documentation/driver-api/pci/p2pdma.rst    | 166 ++++++
+>  Documentation/driver-api/{ => pci}/pci.rst |   0
+>  Documentation/index.rst                    |   3 +-
+>  block/blk-core.c                           |   3 +
+>  drivers/infiniband/core/rw.c               |  13 +-
+>  drivers/nvme/host/core.c                   |   4 +
+>  drivers/nvme/host/nvme.h                   |   8 +
+>  drivers/nvme/host/pci.c                    | 118 +++--
+>  drivers/nvme/target/configfs.c             |  67 +++
+>  drivers/nvme/target/core.c                 | 143 ++++-
+>  drivers/nvme/target/io-cmd.c               |   3 +
+>  drivers/nvme/target/nvmet.h                |  15 +
+>  drivers/nvme/target/rdma.c                 |  22 +-
+>  drivers/pci/Kconfig                        |  26 +
+>  drivers/pci/Makefile                       |   1 +
+>  drivers/pci/p2pdma.c                       | 814 +++++++++++++++++++++++++++++
+>  drivers/pci/pci.c                          |   6 +
+>  include/linux/blk_types.h                  |  18 +-
+>  include/linux/blkdev.h                     |   3 +
+>  include/linux/memremap.h                   |  19 +
+>  include/linux/pci-p2pdma.h                 | 118 +++++
+>  include/linux/pci.h                        |   4 +
+>  26 files changed, 1579 insertions(+), 56 deletions(-)
 >  create mode 100644 Documentation/PCI/index.rst
+>  create mode 100644 Documentation/driver-api/pci/index.rst
 >  create mode 100644 Documentation/driver-api/pci/p2pdma.rst
-> 
-> diff --git a/Documentation/PCI/index.rst b/Documentation/PCI/index.rst
-> new file mode 100644
-> index 000000000000..2fdc4b3c291d
-> --- /dev/null
-> +++ b/Documentation/PCI/index.rst
-> @@ -0,0 +1,14 @@
-> +==================================
-> +Linux PCI Driver Developer's Guide
-> +==================================
-> +
-> +.. toctree::
-> +
-> +   p2pdma
-> +
-> +.. only::  subproject and html
-> +
-> +   Indices
-> +   =======
-> +
-> +   * :ref:`genindex`
-> diff --git a/Documentation/driver-api/pci/index.rst b/Documentation/driver-api/pci/index.rst
-> index 03b57cbf8cc2..d12eeafbfc90 100644
-> --- a/Documentation/driver-api/pci/index.rst
-> +++ b/Documentation/driver-api/pci/index.rst
-> @@ -10,6 +10,7 @@ The Linux PCI driver implementer's API guide
->     :maxdepth: 2
->  
->     pci
-> +   p2pdma
->  
->  .. only::  subproject and html
->  
-> diff --git a/Documentation/driver-api/pci/p2pdma.rst b/Documentation/driver-api/pci/p2pdma.rst
-> new file mode 100644
-> index 000000000000..49a512c405b2
-> --- /dev/null
-> +++ b/Documentation/driver-api/pci/p2pdma.rst
-> @@ -0,0 +1,166 @@
-> +============================
-> +PCI Peer-to-Peer DMA Support
-> +============================
-> +
-> +The PCI bus has pretty decent support for performing DMA transfers
-> +between two endpoints on the bus. This type of transaction is
+>  rename Documentation/driver-api/{ => pci}/pci.rst (100%)
+>  create mode 100644 drivers/pci/p2pdma.c
+>  create mode 100644 include/linux/pci-p2pdma.h
 
-s/endpoints/devices/
+How do you envison merging this?  There's a big chunk in drivers/pci, but
+really no opportunity for conflicts there, and there's significant stuff in
+block and nvme that I don't really want to merge.
 
-> +henceforth called Peer-to-Peer (or P2P). However, there are a number of
-> +issues that make P2P transactions tricky to do in a perfectly safe way.
-> +
-> +One of the biggest issues is that PCI Root Complexes are not required
+If Alex is OK with the ACS situation, I can ack the PCI parts and you could
+merge it elsewhere?
 
-s/PCI Root Complexes .../
-  PCI doesn't require forwarding transactions between hierarchy domains,
-and in PCIe, each Root Port defines a separate hierarchy domain./
-
-> +to support forwarding packets between Root Ports. To make things worse,
-> +there is no simple way to determine if a given Root Complex supports
-> +this or not. (See PCIe r4.0, sec 1.3.1). Therefore, as of this writing,
-> +the kernel only supports doing P2P when the endpoints involved are all
-> +behind the same PCIe root port as the spec guarantees that all
-> +packets will always be routable but does not require routing between
-> +root ports.
-
-s/endpoints involved .../
-  devices involved are all behind the same PCI bridge, as such devices are
-  all in the same PCI hierarchy domain, and the spec guarantees that all
-  transactions within the hierarchy will be routable, but it does not
-  require routing between hierarchies./
-
-> +
-> +The second issue is that to make use of existing interfaces in Linux,
-> +memory that is used for P2P transactions needs to be backed by struct
-> +pages. However, PCI BARs are not typically cache coherent so there are
-> +a few corner case gotchas with these pages so developers need to
-> +be careful about what they do with them.
+Bjorn
