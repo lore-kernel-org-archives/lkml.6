@@ -1,97 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753441AbeEGVRe (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 17:17:34 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:44648 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753091AbeEGVRc (ORCPT
+        id S1753468AbeEGVR4 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 17:17:56 -0400
+Received: from mail.efficios.com ([167.114.142.138]:55992 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753002AbeEGVRz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 17:17:32 -0400
-X-Google-Smtp-Source: AB8JxZp4pKiKWZ1gULX5VgvTkGZpuhxk/Dus5jdI8s1XzIMZYwiGmjgOc3gHtD5i0aSUGpXdjHlXC896oVU6DF5+k6Y=
+        Mon, 7 May 2018 17:17:55 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6E2C51B1A10
+Date: Mon, 7 May 2018 17:17:53 -0400 (EDT)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Joel Fernandes <joelaf@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>, fweisbec <fweisbec@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@android.com>
+Message-ID: <2001761952.217.1525727873194.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180507210801.GZ26088@linux.vnet.ibm.com>
+References: <20180507204143.13061-1-joelaf@google.com> <20180507204143.13061-5-joelaf@google.com> <20180507210801.GZ26088@linux.vnet.ibm.com>
+Subject: Re: [PATCH RFC v6 4/5] tracepoint: Make rcuidle tracepoint callers
+ use SRCU
 MIME-Version: 1.0
-In-Reply-To: <36e4effa-135d-daeb-1abb-f55500a9dfee@xs4all.nl>
-References: <20180424204158.2764095-1-arnd@arndb.de> <20180425061537.GA23383@infradead.org>
- <CAK8P3a06ragAPWpHGm-bGoZ8t6QyAttWJfD0jU_wcGy7FqLb5w@mail.gmail.com>
- <20180425072138.GA16375@infradead.org> <CAK8P3a1cs_SPesadAQhV3QU97WjNE8bLPSQCfaMQRU7zr_oh3w@mail.gmail.com>
- <20180425152636.GC27076@infradead.org> <CAK8P3a0CHSC7yP3x8xDJgcg5xMzD1-sC-rmBJECtYvGFmyG4vQ@mail.gmail.com>
- <20180425142229.25d756ed@vento.lan> <36e4effa-135d-daeb-1abb-f55500a9dfee@xs4all.nl>
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 7 May 2018 17:17:31 -0400
-X-Google-Sender-Auth: puzWTxv56lJtoaD5-4MftkwmhYk
-Message-ID: <CAK8P3a2Pfo+MDYC=TMnOdhhRsYLDojbTGD+Wu9MrEX9VLY9sVA@mail.gmail.com>
-Subject: Re: [PATCH] media: zoran: move to dma-mapping interface
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Arvind Yadav <arvind.yadav.cs@gmail.com>,
-        mjpeg-users@lists.sourceforge.net,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Trent Piepho <tpiepho@impinj.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2026 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_2031)
+Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
+Thread-Index: nnlZJ4fddsYlY5dHLZYvhuQmw8obAA==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 5:05 AM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On 25/04/18 19:22, Mauro Carvalho Chehab wrote:
->> Em Wed, 25 Apr 2018 17:58:25 +0200
->> Arnd Bergmann <arnd@arndb.de> escreveu:
->>
->>> On Wed, Apr 25, 2018 at 5:26 PM, Christoph Hellwig <hch@infradead.org> wrote:
->>>> On Wed, Apr 25, 2018 at 01:15:18PM +0200, Arnd Bergmann wrote:
->>>>> That thought had occurred to me as well. I removed the oldest ISDN
->>>>> drivers already some years ago, and the OSS sound drivers
->>>>> got removed as well, and comedi got converted to the dma-mapping
->>>>> interfaces, so there isn't much left at all now. This is what we
->>>>> have as of v4.17-rc1:
->>>>
->>>> Yes, I've been looking at various grotty old bits to purge.  Usually
->>>> I've been looking for some non-tree wide patches and CCed the last
->>>> active people to see if they care.  In a few cases people do, but
->>>> most often no one does.
->>>
->>> Let's start with this one (zoran) then, as Mauro is keen on having
->>> all media drivers compile-testable on x86-64 and arm.
->>>
->>> Trent Piepho and Hans Verkuil both worked on this driver in the
->>> 2008/2009 timeframe and those were the last commits from anyone
->>> who appears to have tested their patches on actual hardware.
->>
->> Zoran is a driver for old hardware. I don't doubt that are people
->> out there still using it, but who knows?
->>
->> I have a few those boards packed somewhere. I haven't work with PCI
->> hardware for a while. If needed, I can try to seek for them and
->> do some tests. I need first to unpack a machine with PCI slots...
->> the NUCs I generally use for development don't have any :-)
->>
->> Anyway, except for virt_to_bus() and related stuff, I think that this
->> driver is in good shape, as Hans did a lot of work in the past to
->> make it to use the current media framework.
->>
->>>
->>> Trent, Hans: do you have reason to believe that there might still
->>> be users out there?
->
-> I have no way of knowing this. However, I think they are easily replaced
-> by much cheaper USB alternatives today.
->
-> I did some work on the zoran driver several years ago, but it doesn't use
-> the vb2 framework (and not even the older vb1 framework!) so I'm sure there
-> are all sorts of bugs in that driver.
->
-> Personally I would be fine with moving this driver to staging and removing
-> it by, say, the end of the year.
->
-> Nobody is going to work on it and I think it is time to retire it.
+----- On May 7, 2018, at 5:08 PM, Paul E. McKenney paulmck@linux.vnet.ibm.com wrote:
 
-Based on the link to the old discussed that Bernhard provided, it
-seems that the driver was already in a barely usable state 5 years
-ago (the remaining users decided to use an even older 2.6 kernel instead),
-and nobody has worked on fixing it since, so moving it to staging or
-immediately removing it would both seem appropriate.
+> On Mon, May 07, 2018 at 01:41:42PM -0700, Joel Fernandes wrote:
+>> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+>> 
+>> In recent tests with IRQ on/off tracepoints, a large performance
+>> overhead ~10% is noticed when running hackbench. This is root caused to
+>> calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
+>> tracepoint code. Following a long discussion on the list [1] about this,
+>> we concluded that srcu is a better alternative for use during rcu idle.
+>> Although it does involve extra barriers, its lighter than the sched-rcu
+>> version which has to do additional RCU calls to notify RCU idle about
+>> entry into RCU sections.
+>> 
+>> In this patch, we change the underlying implementation of the
+>> trace_*_rcuidle API to use SRCU. This has shown to improve performance
+>> alot for the high frequency irq enable/disable tracepoints.
+>> 
+>> Test: Tested idle and preempt/irq tracepoints.
+>> 
+>> Here are some performance numbers:
+>> 
+>> With a run of the following 30 times on a single core x86 Qemu instance
+>> with 1GB memory:
+>> hackbench -g 4 -f 2 -l 3000
+>> 
+>> Completion times in seconds. CONFIG_PROVE_LOCKING=y.
+>> 
+>> No patches (without this series)
+>> Mean: 3.048
+>> Median: 3.025
+>> Std Dev: 0.064
+>> 
+>> With Lockdep using irq tracepoints with RCU implementation:
+>> Mean: 3.451   (-11.66 %)
+>> Median: 3.447 (-12.22%)
+>> Std Dev: 0.049
+>> 
+>> With Lockdep using irq tracepoints with SRCU implementation (this series):
+>> Mean: 3.020   (I would consider the improvement against the "without
+>> 	       this series" case as just noise).
+>> Median: 3.013
+>> Std Dev: 0.033
+>> 
+>> [1] https://patchwork.kernel.org/patch/10344297/
+>> 
+>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>> Cc: Peter Zilstra <peterz@infradead.org>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> Cc: Tom Zanussi <tom.zanussi@linux.intel.com>
+>> Cc: Namhyung Kim <namhyung@kernel.org>
+>> Cc: Thomas Glexiner <tglx@linutronix.de>
+>> Cc: Boqun Feng <boqun.feng@gmail.com>
+>> Cc: Paul McKenney <paulmck@linux.vnet.ibm.com>
+>> Cc: Frederic Weisbecker <fweisbec@gmail.com>
+>> Cc: Randy Dunlap <rdunlap@infradead.org>
+>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+>> Cc: Fenguang Wu <fengguang.wu@intel.com>
+>> Cc: Baohong Liu <baohong.liu@intel.com>
+>> Cc: Vedang Patel <vedang.patel@intel.com>
+>> Cc: kernel-team@android.com
+>> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+>> ---
+>>  include/linux/tracepoint.h | 46 +++++++++++++++++++++++++++++++-------
+>>  kernel/tracepoint.c        | 15 ++++++++++++-
+>>  2 files changed, 52 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+>> index c94f466d57ef..f56f290cf8eb 100644
+>> --- a/include/linux/tracepoint.h
+>> +++ b/include/linux/tracepoint.h
+>> @@ -15,6 +15,7 @@
+>>   */
+>> 
+>>  #include <linux/smp.h>
+>> +#include <linux/srcu.h>
+>>  #include <linux/errno.h>
+>>  #include <linux/types.h>
+>>  #include <linux/cpumask.h>
+>> @@ -33,6 +34,8 @@ struct trace_eval_map {
+>> 
+>>  #define TRACEPOINT_DEFAULT_PRIO	10
+>> 
+>> +extern struct srcu_struct tracepoint_srcu;
+>> +
+>>  extern int
+>>  tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+>>  extern int
+>> @@ -77,6 +80,9 @@ int unregister_tracepoint_module_notifier(struct
+>> notifier_block *nb)
+>>   */
+>>  static inline void tracepoint_synchronize_unregister(void)
+>>  {
+>> +#ifdef CONFIG_TRACEPOINTS
+>> +	synchronize_srcu(&tracepoint_srcu);
+>> +#endif
+>>  	synchronize_sched();
+>>  }
+>> 
+>> @@ -129,18 +135,38 @@ extern void syscall_unregfunc(void);
+>>   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
+>>   * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
+>>   */
+>> -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
+>> +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
+>>  	do {								\
+>>  		struct tracepoint_func *it_func_ptr;			\
+>>  		void *it_func;						\
+>>  		void *__data;						\
+>> +		int __maybe_unused idx = 0;				\
+>>  									\
+>>  		if (!(cond))						\
+>>  			return;						\
+>> -		if (rcucheck)						\
+>> -			rcu_irq_enter_irqson();				\
+>> -		rcu_read_lock_sched_notrace();				\
+>> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
+>> +									\
+>> +		/*							\
+>> +		 * For rcuidle callers, use srcu since sched-rcu	\
+>> +		 * doesn't work from the idle path.			\
+>> +		 */							\
+>> +		if (rcuidle) {						\
+>> +			if (in_nmi()) {					\
+>> +				WARN_ON_ONCE(1);			\
+>> +				return; /* no srcu from nmi */		\
+>> +			}						\
+>> +									\
+>> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+>> +			it_func_ptr =					\
+>> +				srcu_dereference_notrace((tp)->funcs,	\
+>> +						&tracepoint_srcu);	\
+>> +			/* To keep it consistent with !rcuidle path */	\
+>> +			preempt_disable_notrace();			\
+>> +		} else {						\
+>> +			rcu_read_lock_sched_notrace();			\
+>> +			it_func_ptr =					\
+>> +				rcu_dereference_sched((tp)->funcs);	\
+>> +		}							\
+>> +									\
+>>  		if (it_func_ptr) {					\
+>>  			do {						\
+>>  				it_func = (it_func_ptr)->func;		\
+>> @@ -148,9 +174,13 @@ extern void syscall_unregfunc(void);
+>>  				((void(*)(proto))(it_func))(args);	\
+>>  			} while ((++it_func_ptr)->func);		\
+>>  		}							\
+>> -		rcu_read_unlock_sched_notrace();			\
+>> -		if (rcucheck)						\
+>> -			rcu_irq_exit_irqson();				\
+>> +									\
+>> +		if (rcuidle) {						\
+> 
+> Don't we also need an in_nmi() check here in order to avoid unbalanced
+> srcu_read_unlock_notrace() calls?
 
-        Arnd
+AFAIU the "return;" in the if (in_nmi()) branch above takes care of never
+executing the following code. diff appears to be a bit confused by the
+preprocessor macros, but in reality this is all part of the same static
+inline function.
+
+Thanks,
+
+Mathieu
+
+> 
+>							Thanx, Paul
+> 
+>> +			preempt_enable_notrace();			\
+>> +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+>> +		} else {						\
+>> +			rcu_read_unlock_sched_notrace();		\
+>> +		}							\
+>>  	} while (0)
+>> 
+>>  #ifndef MODULE
+>> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+>> index 671b13457387..2089f579f790 100644
+>> --- a/kernel/tracepoint.c
+>> +++ b/kernel/tracepoint.c
+>> @@ -31,6 +31,9 @@
+>>  extern struct tracepoint * const __start___tracepoints_ptrs[];
+>>  extern struct tracepoint * const __stop___tracepoints_ptrs[];
+>> 
+>> +DEFINE_SRCU(tracepoint_srcu);
+>> +EXPORT_SYMBOL_GPL(tracepoint_srcu);
+>> +
+>>  /* Set to 1 to enable tracepoint debug output */
+>>  static const int tracepoint_debug;
+>> 
+>> @@ -67,16 +70,26 @@ static inline void *allocate_probes(int count)
+>>  	return p == NULL ? NULL : p->probes;
+>>  }
+>> 
+>> -static void rcu_free_old_probes(struct rcu_head *head)
+>> +static void srcu_free_old_probes(struct rcu_head *head)
+>>  {
+>>  	kfree(container_of(head, struct tp_probes, rcu));
+>>  }
+>> 
+>> +static void rcu_free_old_probes(struct rcu_head *head)
+>> +{
+>> +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+>> +}
+>> +
+>>  static inline void release_probes(struct tracepoint_func *old)
+>>  {
+>>  	if (old) {
+>>  		struct tp_probes *tp_probes = container_of(old,
+>>  			struct tp_probes, probes[0]);
+>> +		/*
+>> +		 * Tracepoint probes are protected by both sched RCU and SRCU,
+>> +		 * by calling the SRCU callback in the sched RCU callback we
+>> +		 * cover both cases. So lets chain the SRCU and RCU callbacks.
+>> +		 */
+>>  		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
+>>  	}
+>>  }
+>> --
+>> 2.17.0.441.gb46fe60e1d-goog
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
