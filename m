@@ -1,278 +1,168 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752630AbeEGPMx (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:12:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59340 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752528AbeEGPMn (ORCPT
+        id S1752642AbeEGPNO (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:13:14 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:39886 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752548AbeEGPMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:12:43 -0400
-From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
-To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
-        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
-        akrowiak@linux.vnet.ibm.com
-Subject: [PATCH v5 11/13] KVM: s390: implement mediated device open callback
-Date: Mon,  7 May 2018 11:11:50 -0400
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18050715-0020-0000-0000-00000DE13877
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00008987; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000258; SDB=6.01028859; UDB=6.00525678; IPR=6.00807992;
- MB=3.00020972; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-07 15:12:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050715-0021-0000-0000-00006140A8A6
-Message-Id: <1525705912-12815-12-git-send-email-akrowiak@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805070154
+        Mon, 7 May 2018 11:12:50 -0400
+Subject: Re: [PATCH 1/1] x86/xen: Reset VCPU0 info pointer after shared_info
+ remap
+To: "van der Linden, Frank" <fllinden@amazon.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "jgross@suse.com" <jgross@suse.com>
+References: <C508E5F5-024E-4F71-A91E-7BB0BE046F5D@amazon.com>
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <965354d1-e2e7-1764-a14e-bb4258b9ed13@oracle.com>
+Date: Mon, 7 May 2018 11:15:45 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <C508E5F5-024E-4F71-A91E-7BB0BE046F5D@amazon.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805070154
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implements the open callback on the mediated matrix device.
-The function registers a group notifier to receive notification
-of the VFIO_GROUP_NOTIFY_SET_KVM event. When notified,
-the vfio_ap device driver will get access to the guest's
-kvm structure. With access to this structure the driver will:
+On 05/04/2018 04:11 PM, van der Linden, Frank wrote:
+> This patch fixes crashes during boot for HVM guests on older (pre HVM
+> vector callback) Xen versions. Without this, current kernels will always
+> fail to boot on those Xen versions.
+>
+> Sample stack trace:
+>
+>    BUG: unable to handle kernel paging request at ffffffffff200000
+>    IP: __xen_evtchn_do_upcall+0x1e/0x80
+>    PGD 1e0e067 P4D 1e0e067 PUD 1e10067 PMD 235c067 PTE 0
+>     Oops: 0002 [#1] SMP PTI
+>    Modules linked in:
+>    CPU: 0 PID: 512 Comm: kworker/u2:0 Not tainted 4.14.33-52.13.amzn1.x86_64 #1
+>    Hardware name: Xen HVM domU, BIOS 3.4.3.amazon 11/11/2016
+>    task: ffff88002531d700 task.stack: ffffc90000480000
+>    RIP: 0010:__xen_evtchn_do_upcall+0x1e/0x80
+>    RSP: 0000:ffff880025403ef0 EFLAGS: 00010046
+>    RAX: ffffffff813cc760 RBX: ffffffffff200000 RCX: ffffc90000483ef0
+>    RDX: ffff880020540a00 RSI: ffff880023c78000 RDI: 000000000000001c
+>    RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+>    R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+>    R13: ffff880025403f5c R14: 0000000000000000 R15: 0000000000000000
+>    FS:  0000000000000000(0000) GS:ffff880025400000(0000) knlGS:0000000000000000
+>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>    CR2: ffffffffff200000 CR3: 0000000001e0a000 CR4: 00000000000006f0
+>     Call Trace:
+>    <IRQ>
+>    do_hvm_evtchn_intr+0xa/0x10
+>    __handle_irq_event_percpu+0x43/0x1a0
+>    handle_irq_event_percpu+0x20/0x50
+>    handle_irq_event+0x39/0x60
+>    handle_fasteoi_irq+0x80/0x140
+>    handle_irq+0xaf/0x120
+>    do_IRQ+0x41/0xd0
+>    common_interrupt+0x7d/0x7d
+>    </IRQ>
+>
+> During boot, the HYPERVISOR_shared_info page gets remapped to make it work
+> with KASLR. This means that any pointer derived from it needs to be
+> adjusted.
+>
+> The only value that this applies to is the vcpu_info pointer for VCPU 0.
+> For PV and HVM with the callback vector feature, this gets done via the
+> smp_ops prepare_boot_cpu callback. Older Xen versions do not support the
+> HVM callback vector, so there is no Xen-specific smp_ops set up in that
+> scenario. So, the vcpu_info pointer for VCPU 0 never gets set to the proper
+> value, and the first reference of it will be bad. Fix this by resetting it
+> immediately after the remap.
+>
+> Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+> Reviewed-by: Eduardo Valentin <eduval@amazon.com>
+> Reviewed-by: Alakesh Haloi <alakeshh@amazon.com>
+> Reviewed-by: Vallish Vaidyeshwara <vallish@amazon.com>
+> Cc: Juergen Gross <jgross@suse.com>
+> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: xen-devel@lists.xenproject.org
+> ---
+>  arch/x86/xen/enlighten_hvm.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
+> index 6b424da1ce75..c78b3e8fb2e5 100644
+> --- a/arch/x86/xen/enlighten_hvm.c
+> +++ b/arch/x86/xen/enlighten_hvm.c
+> @@ -71,6 +71,19 @@ static void __init xen_hvm_init_mem_mapping(void)
+>  {
+>  	early_memunmap(HYPERVISOR_shared_info, PAGE_SIZE);
+>  	HYPERVISOR_shared_info = __va(PFN_PHYS(shared_info_pfn));
+> +
+> +	/*
+> +	 * The virtual address of the shared_info page has changed, so
+> +	 * the vcpu_info pointer for VCPU 0 is now stale.
 
-1. Ensure that only one mediated device is opened for the guest
+Is it "has changed" or "has changed if kaslr is on"?
 
-2. Configure access to the AP devices for the guest.
+> +	 *
+> +	 * The prepare_boot_cpu callback will re-initialize it via
+> +	 * xen_vcpu_setup, but we can't rely on that to be called for
+> +	 * old Xen versions (xen_have_vector_callback == 0).
+> +	 *
+> +	 * It is, in any case, bad to have a stale vcpu_info pointer
+> +	 * so reset it now.
+> +	 */
+> +	xen_vcpu_info_reset(0);
 
-   Access to AP adapters, usage domains and control domains
-   is controlled by three bit masks contained in the Crypto Control
-   Block (CRYCB) referenced from the guest's SIE state description:
 
-   * The AP Mask (APM) controls access to the AP adapters. Each bit
-     in the APM represents an adapter number - from most significant
-     to least significant bit - from 0 to 255. The bits in the APM
-     are set according to the adapter numbers assigned to the mediated
-     matrix device via its 'assign_adapter' sysfs attribute file.
+Why not xen_vcpu_setup(0)?
 
-   * The AP Queue Mask (AQM) controls access to the AP queues. Each bit
-     in the AQM represents an AP queue index - from most significant
-     to least significant bit - from 0 to 255. A queue index references
-     a specific domain and is synonymous with the domian number. The
-     bits in the AQM are set according to the domain numbers assigned
-     to the mediated matrix device via its 'assign_domain' sysfs
-     attribute file.
-
-   * The AP Domain Mask (ADM) controls access to the AP control domains.
-     Each bit in the ADM represents a control domain - from most
-     significant to least significant bit - from 0-255. The
-     bits in the ADM are set according to the domain numbers assigned
-     to the mediated matrix device via its 'assign_control_domain'
-     sysfs attribute file.
-
-Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
----
- arch/s390/include/asm/kvm-ap.h        |   21 ++++++++++
- arch/s390/include/asm/kvm_host.h      |    1 +
- arch/s390/kvm/kvm-ap.c                |   19 +++++++++
- drivers/s390/crypto/vfio_ap_ops.c     |   68 +++++++++++++++++++++++++++++++++
- drivers/s390/crypto/vfio_ap_private.h |    2 +
- 5 files changed, 111 insertions(+), 0 deletions(-)
-
-diff --git a/arch/s390/include/asm/kvm-ap.h b/arch/s390/include/asm/kvm-ap.h
-index 21fe9f2..68c5a67 100644
---- a/arch/s390/include/asm/kvm-ap.h
-+++ b/arch/s390/include/asm/kvm-ap.h
-@@ -83,6 +83,27 @@ struct kvm_ap_matrix {
- bool kvm_ap_instructions_available(void);
- 
- /**
-+ * kvm_ap_refcount_read
-+ *
-+ * Read the AP reference count and return it.
-+ */
-+int kvm_ap_refcount_read(struct kvm *kvm);
-+
-+/**
-+ * kvm_ap_refcount_inc
-+ *
-+ * Increment the AP reference count.
-+ */
-+void kvm_ap_refcount_inc(struct kvm *kvm);
-+
-+/**
-+ * kvm_ap_refcount_dec
-+ *
-+ * Decrement the AP reference count
-+ */
-+void kvm_ap_refcount_dec(struct kvm *kvm);
-+
-+/**
-  * kvm_ap_configure_matrix
-  *
-  * Configure the AP matrix for a KVM guest.
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index 8736cde..5f1ad02 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -717,6 +717,7 @@ struct kvm_s390_crypto {
- 	__u8 aes_kw;
- 	__u8 dea_kw;
- 	__u8 apie;
-+	atomic_t aprefs;
- };
- 
- #define APCB0_MASK_SIZE 1
-diff --git a/arch/s390/kvm/kvm-ap.c b/arch/s390/kvm/kvm-ap.c
-index 98b53c7..848fb37 100644
---- a/arch/s390/kvm/kvm-ap.c
-+++ b/arch/s390/kvm/kvm-ap.c
-@@ -9,6 +9,7 @@
- #include <linux/kernel.h>
- #include <linux/bitops.h>
- #include <asm/kvm-ap.h>
-+#include <asm/atomic.h>
- 
- #include "kvm-s390.h"
- 
-@@ -218,6 +219,24 @@ static int kvm_ap_validate_queue_sharing(struct kvm *kvm,
- 	return 0;
- }
- 
-+int kvm_ap_refcount_read(struct kvm *kvm)
-+{
-+	return atomic_read(&kvm->arch.crypto.aprefs);
-+}
-+EXPORT_SYMBOL(kvm_ap_refcount_read);
-+
-+void kvm_ap_refcount_inc(struct kvm *kvm)
-+{
-+	atomic_inc(&kvm->arch.crypto.aprefs);
-+}
-+EXPORT_SYMBOL(kvm_ap_refcount_inc);
-+
-+void kvm_ap_refcount_dec(struct kvm *kvm)
-+{
-+	atomic_dec(&kvm->arch.crypto.aprefs);
-+}
-+EXPORT_SYMBOL(kvm_ap_refcount_dec);
-+
- int kvm_ap_configure_matrix(struct kvm *kvm, struct kvm_ap_matrix *matrix)
- {
- 	int ret = 0;
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 81e03b8..8866b0e 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -11,6 +11,8 @@
- #include <linux/device.h>
- #include <linux/list.h>
- #include <linux/ctype.h>
-+#include <linux/module.h>
-+#include <asm/kvm-ap.h>
- 
- #include "vfio_ap_private.h"
- 
-@@ -47,6 +49,70 @@ static int vfio_ap_mdev_remove(struct mdev_device *mdev)
- 	return 0;
- }
- 
-+static int vfio_ap_mdev_group_notifier(struct notifier_block *nb,
-+				       unsigned long action, void *data)
-+{
-+	struct ap_matrix_mdev *matrix_mdev;
-+
-+	if (action == VFIO_GROUP_NOTIFY_SET_KVM) {
-+		matrix_mdev = container_of(nb, struct ap_matrix_mdev,
-+					   group_notifier);
-+		matrix_mdev->kvm = data;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static int vfio_ap_mdev_open(struct mdev_device *mdev)
-+{
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+	unsigned long events;
-+	int ret;
-+
-+	if (!try_module_get(THIS_MODULE))
-+		return -ENODEV;
-+
-+	matrix_mdev->group_notifier.notifier_call = vfio_ap_mdev_group_notifier;
-+	events = VFIO_GROUP_NOTIFY_SET_KVM;
-+
-+	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
-+				     &events, &matrix_mdev->group_notifier);
-+	if (ret)
-+		goto out_err;
-+
-+	/* Only one mediated device allowed per guest */
-+	if (kvm_ap_refcount_read(matrix_mdev->kvm) != 0) {
-+		ret = -EEXIST;
-+		goto out_err;
-+	}
-+
-+	kvm_ap_refcount_inc(matrix_mdev->kvm);
-+
-+	ret = kvm_ap_configure_matrix(matrix_mdev->kvm, &matrix_mdev->matrix);
-+	if (ret)
-+		goto config_err;
-+
-+	return 0;
-+
-+config_err:
-+	kvm_ap_refcount_dec(matrix_mdev->kvm);
-+out_err:
-+	module_put(THIS_MODULE);
-+
-+	return ret;
-+}
-+
-+static void vfio_ap_mdev_release(struct mdev_device *mdev)
-+{
-+	struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
-+
-+	kvm_ap_deconfigure_matrix(matrix_mdev->kvm);
-+	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
-+				 &matrix_mdev->group_notifier);
-+	kvm_ap_refcount_dec(matrix_mdev->kvm);
-+	module_put(THIS_MODULE);
-+}
-+
- static ssize_t name_show(struct kobject *kobj, struct device *dev, char *buf)
- {
- 	return sprintf(buf, "%s\n", VFIO_AP_MDEV_NAME_HWVIRT);
-@@ -773,6 +839,8 @@ static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
- 	.mdev_attr_groups	= vfio_ap_mdev_attr_groups,
- 	.create			= vfio_ap_mdev_create,
- 	.remove			= vfio_ap_mdev_remove,
-+	.open			= vfio_ap_mdev_open,
-+	.release		= vfio_ap_mdev_release,
- };
- 
- int vfio_ap_mdev_register(struct ap_matrix *ap_matrix)
-diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-index 8b6ad66..ab072e9 100644
---- a/drivers/s390/crypto/vfio_ap_private.h
-+++ b/drivers/s390/crypto/vfio_ap_private.h
-@@ -32,6 +32,8 @@ struct ap_matrix {
- 
- struct ap_matrix_mdev {
- 	struct kvm_ap_matrix matrix;
-+	struct notifier_block group_notifier;
-+	struct kvm *kvm;
- };
- 
- static inline struct ap_matrix *to_ap_matrix(struct device *dev)
--- 
-1.7.1
+-boris
