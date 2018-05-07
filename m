@@ -1,62 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751977AbeEGHxM (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 03:53:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55384 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751042AbeEGHxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 03:53:10 -0400
-Date: Mon, 7 May 2018 09:53:03 +0200
-From: Cornelia Huck <cohuck@redhat.com>
-To: "dongbo (E)" <dongbo4@huawei.com>
-Cc: <alex.williamson@redhat.com>, <corbet@lwn.net>, <kvm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfio: fix documentation
-Message-ID: <20180507095303.450aef9b.cohuck@redhat.com>
-In-Reply-To: <eacddc78-279c-abe8-e663-9849973dd6a3@huawei.com>
-References: <eacddc78-279c-abe8-e663-9849973dd6a3@huawei.com>
-Organization: Red Hat GmbH
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1751959AbeEGH4K (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 03:56:10 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36914 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751042AbeEGH4J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 03:56:09 -0400
+X-Google-Smtp-Source: AB8JxZpuP5FVW6SVyYh4YidZA7W3Cjwoqr/bgZR63BwdgiRPfe+EUyY2Asg+79Kc5gZsmP8pye3iPg==
+Message-Id: <20180507075213.386076821@gmail.com>
+User-Agent: quilt/0.65
+Date: Mon, 07 May 2018 10:52:13 +0300
+From: Cyrill Gorcunov <gorcunov@gmail.com>
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Jonathan de Boyne Pollard
+        <J.deBoynePollard-newsgroups@NTLWorld.COM>,
+        Andrey Vagin <avagin@openvz.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: [rfc linux-next 0/3] prctl: prctl_set_mm -- Bring back handling of PR_SET_MM_x
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 May 2018 11:02:10 +0800
-"dongbo (E)" <dongbo4@huawei.com> wrote:
+Hi! Yesterday I've been pointed out that we unfortunatelly can't
+drop off PR_SET_MM_x operations. So here is a series which bring
+them back but instead of plain revert I tried to simplify the
+code and make it as minimum as possible.
 
-> From: Dong Bo <dongbo4@huawei.com>
-> 
-> Update vfio_add_group_dev description to match the current API.
-> 
-> Signed-off-by: Dong Bo <dongbo4@huawei.com>
-> ---
->  Documentation/vfio.txt | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
-> index ef6a511..f1a4d3c 100644
-> --- a/Documentation/vfio.txt
-> +++ b/Documentation/vfio.txt
-> @@ -252,15 +252,14 @@ into VFIO core.  When devices are bound and unbound to the driver,
->  the driver should call vfio_add_group_dev() and vfio_del_group_dev()
->  respectively::
-> 
-> -	extern int vfio_add_group_dev(struct iommu_group *iommu_group,
-> -	                              struct device *dev,
-> +	extern int vfio_add_group_dev(struct device *dev,
->  				      const struct vfio_device_ops *ops,
->  				      void *device_data);
-> 
->  	extern void *vfio_del_group_dev(struct device *dev);
-> 
->  vfio_add_group_dev() indicates to the core to begin tracking the
-> -specified iommu_group and register the specified dev as owned by
-> +iommu_group of the specified dev and register the dev as owned by
->  a VFIO bus driver.  The driver provides an ops structure for callbacks
->  similar to a file operations structure::
-> 
+WARN: the series is compile-tested only for a while, I wanted
+to share it early so maybe someone has better idea of how
+integrate old PR_SET_MM_x operations. I'll do full tests
+today hopefully.
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+	Cyrill
