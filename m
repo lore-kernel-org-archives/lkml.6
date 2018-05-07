@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZqw3VnrlorIBp4Dl1oGwxDYxd8xoFNuzDrHMpzmDRRlOBoDNAgYroqoJmY/7G4P7bIwNss0
-ARC-Seal: i=1; a=rsa-sha256; t=1525654543; cv=none;
+X-Google-Smtp-Source: AB8JxZrOTX7yZpROuZexSOewiZ70p2IjNW4ID4TLKrzLcEvqCFqUjPeZ89ypsNupqSQg/n0lJTUV
+ARC-Seal: i=1; a=rsa-sha256; t=1525654536; cv=none;
         d=google.com; s=arc-20160816;
-        b=HYiyxfJDDKDF+L4T0nw1vQP9pqsQSj7yTTBtaHAuhIcbIuQQQTfmPlWgGrYZujN/Wo
-         TDs79tHROdeRy7e4faK/3bLHb7QscQEcGau87IKR8pX08Kcyn8GQrDcZ5QALb+eYBTDl
-         e6oJvAnUlh4vvuLGOUpSdBm08ae/3zgyc/NScDLQ2Exhdg83UR6yE7cF+uhJsr+NM8H/
-         fYZzagAyCf4KtM4o/ymdGT+uszxt/DYE6yFG70FSM2AJVJSG5Se48dUjcrBycG2Dc6zA
-         ZzFBgokLuZTA8u/C7lFT0oET4EZV7lAeQbvSOGU8y2HeII6HHyNQGezqSuSgcM9FdAWW
-         PGfw==
+        b=z+ZsA9YbO4CcXZVxxotF5zc2GZ/CB31vDEPjYe3pHy2468TiFbE2pv4uWW8qugbZha
+         1XvSWyfMGmnn5gEtLDnS6nrq2rrTYaRw0E6olmUS96tCaPWlRlWrBI20buRY4SNoSadB
+         bJp6nFSvAKPqbJrvrPY7xP6SwYtoVm+ppBl2fbLBbCHmwfz+JSMoyTMTDj5EBik3O8g/
+         evYI5PCXWdTIozcG+7CZKs2ogtksSOl4iif6MszjFjGoOt8sY5l2NqqeW32muXDhtMFh
+         3DXNt3YRPYwEgRw1HmBY2Ha0pKZDa0Zo79O50kIjPG1J637g/RHtlYtmj9a/Uf7W+DI/
+         +X6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=RKG0BshFFvGjAKDa/8zwRfJB1fGpAusIQOtdpOzKLeE=;
-        b=Zw+IlWywS/9G2Bs2hf5s+h6lBDxnirIIc6zeMDnkIFoH6lW1pHgjtyD0yVjEhkawKK
-         hl/4j/cynq3WCEooYSqjvYjVe1xJj7FEiS9RfIf3xDZ9q3QoRI7j5ZAuxdq2CNu7wchT
-         D0hJAzhNreIj9je9yd8ltD6pHP8cu5ONZ0Gy9FgUp6NX3ksII71zehpfrqOotZyrTq18
-         kZh3Sy+zHFp5u7QyvaI3yT/T+XE8kba1dF48zKg94YNeFsUCi630EJKngoc2dBfp+1g0
-         0t/7ba23PU+jGUFC0WVqPAT1x9pvtFkQCYW2P0+3Tymmnwo0ubICt0E8y3I/RIiefkDU
-         2xVg==
+        bh=FVX/c7+wuASI18jdXXuui07ny0Lj+0hv/S0mVKkIPZ0=;
+        b=fKHT6H+DGGma6/1dZ4Y4Ix3OhWWc8UVsEggEqeR+4wxBvdPvyPHTrXJa0upUJt1BFj
+         TYu+5/gO2cKUciNcMhtywLJvPzdob3tU+rkdh338RryQJ0c60DHk4Vqc7k46hIZFS3Yu
+         AYsAl4lpwHvRFgIdcdrglC89mBb5bVnb0I5kiUSSK2Le08runIvf3YDbV2VdTBPW0udv
+         TxDJ+dAit+qUeN6jL6n2fgSwmFKFNMSe9QVdE/pcoHHTsf4KtFZcP3ZwPi1//ypRWOdr
+         SkR9L5hm8qpsSbcrbxfYDtf+2JC2sk0G4R9q6GGgCT1JjrTEQm3iDc0IFOxO3MUGaivW
+         ZzHQ==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,10 +29,10 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Mon, 07 May 2018 10:54:48 +1000
-Subject: [PATCH 03/10] staging: lustre: lu_object: discard extra lru count.
+Subject: [PATCH 02/10] staging: lustre: make struct lu_site_bkt_data private
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152565448808.30131.17399451482748227169.stgit@noble>
+Message-ID: <152565448804.30131.11034805069882522609.stgit@noble>
 In-Reply-To: <152565436690.30131.2229703651041382739.stgit@noble>
 References: <152565436690.30131.2229703651041382739.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -40,117 +40,250 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599764738560394621?=
-X-GMAIL-MSGID: =?utf-8?q?1599764738560394621?=
+X-GMAIL-THRID: =?utf-8?q?1599764731423487743?=
+X-GMAIL-MSGID: =?utf-8?q?1599764731423487743?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-lu_object maintains 2 lru counts.
-One is a per-bucket lsb_lru_len.
-The other is the per-cpu ls_lru_len_counter.
+This data structure only needs to be public so that
+various modules can access a wait queue to wait for object
+destruction.
+If we provide a function to get the wait queue, rather than the
+whole bucket, the structure can be made private.
 
-The only times the per-bucket counters are use are:
-- a debug message when an object is added
-- in lu_site_stats_get when all the counters are combined.
-
-The debug message is not essential, and the per-cpu counter
-can be used to get the combined total.
-
-So discard the per-bucket lsb_lru_len.
-
-Reviewed-by: Andreas Dilger <andreas.dilger@dilger.ca>
+Reviewed-by: Andreas Dilger <andreas.dilger@intel.com>
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/obdclass/lu_object.c |   27 +++++++++-----------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ drivers/staging/lustre/lustre/include/lu_object.h  |   36 +-------------
+ drivers/staging/lustre/lustre/llite/lcommon_cl.c   |    8 ++-
+ drivers/staging/lustre/lustre/lov/lov_object.c     |    8 ++-
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |   51 +++++++++++++++++---
+ 4 files changed, 55 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-index 83dacc413c32..bf5b309edeae 100644
---- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
-+++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
-@@ -57,10 +57,6 @@
- #include <linux/list.h>
+diff --git a/drivers/staging/lustre/lustre/include/lu_object.h b/drivers/staging/lustre/lustre/include/lu_object.h
+index c3b0ed518819..f29bbca5af65 100644
+--- a/drivers/staging/lustre/lustre/include/lu_object.h
++++ b/drivers/staging/lustre/lustre/include/lu_object.h
+@@ -549,31 +549,7 @@ struct lu_object_header {
+ };
  
- struct lu_site_bkt_data {
+ struct fld;
+-
+-struct lu_site_bkt_data {
 -	/**
 -	 * number of object in this bucket on the lsb_lru list.
 -	 */
 -	long			lsb_lru_len;
- 	/**
- 	 * LRU list, updated on each access to object. Protected by
- 	 * bucket lock of lu_site::ls_obj_hash.
-@@ -188,10 +184,9 @@ void lu_object_put(const struct lu_env *env, struct lu_object *o)
- 	if (!lu_object_is_dying(top)) {
- 		LASSERT(list_empty(&top->loh_lru));
- 		list_add_tail(&top->loh_lru, &bkt->lsb_lru);
--		bkt->lsb_lru_len++;
- 		percpu_counter_inc(&site->ls_lru_len_counter);
--		CDEBUG(D_INODE, "Add %p to site lru. hash: %p, bkt: %p, lru_len: %ld\n",
--		       o, site->ls_obj_hash, bkt, bkt->lsb_lru_len);
-+		CDEBUG(D_INODE, "Add %p to site lru. hash: %p, bkt: %p\n",
-+		       o, site->ls_obj_hash, bkt);
- 		cfs_hash_bd_unlock(site->ls_obj_hash, &bd, 1);
- 		return;
- 	}
-@@ -239,7 +234,6 @@ void lu_object_unhash(const struct lu_env *env, struct lu_object *o)
+-	/**
+-	 * LRU list, updated on each access to object. Protected by
+-	 * bucket lock of lu_site::ls_obj_hash.
+-	 *
+-	 * "Cold" end of LRU is lu_site::ls_lru.next. Accessed object are
+-	 * moved to the lu_site::ls_lru.prev (this is due to the non-existence
+-	 * of list_for_each_entry_safe_reverse()).
+-	 */
+-	struct list_head		lsb_lru;
+-	/**
+-	 * Wait-queue signaled when an object in this site is ultimately
+-	 * destroyed (lu_object_free()). It is used by lu_object_find() to
+-	 * wait before re-trying when object in the process of destruction is
+-	 * found in the hash table.
+-	 *
+-	 * \see htable_lookup().
+-	 */
+-	wait_queue_head_t	       lsb_marche_funebre;
+-};
++struct lu_site_bkt_data;
  
- 			list_del_init(&top->loh_lru);
- 			bkt = cfs_hash_bd_extra_get(obj_hash, &bd);
--			bkt->lsb_lru_len--;
- 			percpu_counter_dec(&site->ls_lru_len_counter);
- 		}
- 		cfs_hash_bd_del_locked(obj_hash, &bd, &top->loh_hash);
-@@ -423,7 +417,6 @@ int lu_site_purge_objects(const struct lu_env *env, struct lu_site *s,
- 			cfs_hash_bd_del_locked(s->ls_obj_hash,
- 					       &bd2, &h->loh_hash);
- 			list_move(&h->loh_lru, &dispose);
--			bkt->lsb_lru_len--;
- 			percpu_counter_dec(&s->ls_lru_len_counter);
- 			if (did_sth == 0)
- 				did_sth = 1;
-@@ -622,7 +615,6 @@ static struct lu_object *htable_lookup(struct lu_site *s,
- 		lprocfs_counter_incr(s->ls_stats, LU_SS_CACHE_HIT);
- 		if (!list_empty(&h->loh_lru)) {
- 			list_del_init(&h->loh_lru);
--			bkt->lsb_lru_len--;
- 			percpu_counter_dec(&s->ls_lru_len_counter);
- 		}
- 		return lu_object_top(h);
-@@ -1835,19 +1827,24 @@ struct lu_site_stats {
- 	unsigned int	lss_busy;
+ enum {
+ 	LU_SS_CREATED	 = 0,
+@@ -642,14 +618,8 @@ struct lu_site {
+ 	struct percpu_counter	 ls_lru_len_counter;
  };
  
--static void lu_site_stats_get(struct cfs_hash *hs,
-+static void lu_site_stats_get(const struct lu_site *s,
- 			      struct lu_site_stats *stats, int populated)
+-static inline struct lu_site_bkt_data *
+-lu_site_bkt_from_fid(struct lu_site *site, struct lu_fid *fid)
+-{
+-	struct cfs_hash_bd bd;
+-
+-	cfs_hash_bd_get(site->ls_obj_hash, fid, &bd);
+-	return cfs_hash_bd_extra_get(site->ls_obj_hash, &bd);
+-}
++wait_queue_head_t *
++lu_site_wq_from_fid(struct lu_site *site, struct lu_fid *fid);
+ 
+ static inline struct seq_server_site *lu_site2seq(const struct lu_site *s)
  {
-+	struct cfs_hash *hs = s->ls_obj_hash;
- 	struct cfs_hash_bd bd;
- 	unsigned int i;
-+	/*
-+	 * percpu_counter_sum_positive() won't accept a const pointer
-+	 * as it does modify the struct by taking a spinlock
+diff --git a/drivers/staging/lustre/lustre/llite/lcommon_cl.c b/drivers/staging/lustre/lustre/llite/lcommon_cl.c
+index df5c0c0ae703..d5b42fb1d601 100644
+--- a/drivers/staging/lustre/lustre/llite/lcommon_cl.c
++++ b/drivers/staging/lustre/lustre/llite/lcommon_cl.c
+@@ -211,12 +211,12 @@ static void cl_object_put_last(struct lu_env *env, struct cl_object *obj)
+ 
+ 	if (unlikely(atomic_read(&header->loh_ref) != 1)) {
+ 		struct lu_site *site = obj->co_lu.lo_dev->ld_site;
+-		struct lu_site_bkt_data *bkt;
++		wait_queue_head_t *wq;
+ 
+-		bkt = lu_site_bkt_from_fid(site, &header->loh_fid);
++		wq = lu_site_wq_from_fid(site, &header->loh_fid);
+ 
+ 		init_waitqueue_entry(&waiter, current);
+-		add_wait_queue(&bkt->lsb_marche_funebre, &waiter);
++		add_wait_queue(wq, &waiter);
+ 
+ 		while (1) {
+ 			set_current_state(TASK_UNINTERRUPTIBLE);
+@@ -226,7 +226,7 @@ static void cl_object_put_last(struct lu_env *env, struct cl_object *obj)
+ 		}
+ 
+ 		set_current_state(TASK_RUNNING);
+-		remove_wait_queue(&bkt->lsb_marche_funebre, &waiter);
++		remove_wait_queue(wq, &waiter);
+ 	}
+ 
+ 	cl_object_put(env, obj);
+diff --git a/drivers/staging/lustre/lustre/lov/lov_object.c b/drivers/staging/lustre/lustre/lov/lov_object.c
+index f7c69680cb7d..adc90f310fd7 100644
+--- a/drivers/staging/lustre/lustre/lov/lov_object.c
++++ b/drivers/staging/lustre/lustre/lov/lov_object.c
+@@ -370,7 +370,7 @@ static void lov_subobject_kill(const struct lu_env *env, struct lov_object *lov,
+ 	struct cl_object	*sub;
+ 	struct lov_layout_raid0 *r0;
+ 	struct lu_site	  *site;
+-	struct lu_site_bkt_data *bkt;
++	wait_queue_head_t *wq;
+ 	wait_queue_entry_t	  *waiter;
+ 
+ 	r0  = &lov->u.raid0;
+@@ -378,7 +378,7 @@ static void lov_subobject_kill(const struct lu_env *env, struct lov_object *lov,
+ 
+ 	sub  = lovsub2cl(los);
+ 	site = sub->co_lu.lo_dev->ld_site;
+-	bkt  = lu_site_bkt_from_fid(site, &sub->co_lu.lo_header->loh_fid);
++	wq   = lu_site_wq_from_fid(site, &sub->co_lu.lo_header->loh_fid);
+ 
+ 	cl_object_kill(env, sub);
+ 	/* release a reference to the sub-object and ... */
+@@ -391,7 +391,7 @@ static void lov_subobject_kill(const struct lu_env *env, struct lov_object *lov,
+ 	if (r0->lo_sub[idx] == los) {
+ 		waiter = &lov_env_info(env)->lti_waiter;
+ 		init_waitqueue_entry(waiter, current);
+-		add_wait_queue(&bkt->lsb_marche_funebre, waiter);
++		add_wait_queue(wq, waiter);
+ 		set_current_state(TASK_UNINTERRUPTIBLE);
+ 		while (1) {
+ 			/* this wait-queue is signaled at the end of
+@@ -408,7 +408,7 @@ static void lov_subobject_kill(const struct lu_env *env, struct lov_object *lov,
+ 				break;
+ 			}
+ 		}
+-		remove_wait_queue(&bkt->lsb_marche_funebre, waiter);
++		remove_wait_queue(wq, waiter);
+ 	}
+ 	LASSERT(!r0->lo_sub[idx]);
+ }
+diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+index 3de7dc0497c4..83dacc413c32 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
++++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+@@ -56,6 +56,31 @@
+ #include <lu_ref.h>
+ #include <linux/list.h>
+ 
++struct lu_site_bkt_data {
++	/**
++	 * number of object in this bucket on the lsb_lru list.
 +	 */
-+	struct lu_site *s2 = (struct lu_site *)s;
++	long			lsb_lru_len;
++	/**
++	 * LRU list, updated on each access to object. Protected by
++	 * bucket lock of lu_site::ls_obj_hash.
++	 *
++	 * "Cold" end of LRU is lu_site::ls_lru.next. Accessed object are
++	 * moved to the lu_site::ls_lru.prev (this is due to the non-existence
++	 * of list_for_each_entry_safe_reverse()).
++	 */
++	struct list_head		lsb_lru;
++	/**
++	 * Wait-queue signaled when an object in this site is ultimately
++	 * destroyed (lu_object_free()). It is used by lu_object_find() to
++	 * wait before re-trying when object in the process of destruction is
++	 * found in the hash table.
++	 *
++	 * \see htable_lookup().
++	 */
++	wait_queue_head_t	       lsb_marche_funebre;
++};
++
+ enum {
+ 	LU_CACHE_PERCENT_MAX	 = 50,
+ 	LU_CACHE_PERCENT_DEFAULT = 20
+@@ -88,6 +113,18 @@ MODULE_PARM_DESC(lu_cache_nr, "Maximum number of objects in lu_object cache");
+ static void lu_object_free(const struct lu_env *env, struct lu_object *o);
+ static __u32 ls_stats_read(struct lprocfs_stats *stats, int idx);
  
-+	stats->lss_busy += cfs_hash_size_get(hs) -
-+		percpu_counter_sum_positive(&s2->ls_lru_len_counter);
- 	cfs_hash_for_each_bucket(hs, &bd, i) {
--		struct lu_site_bkt_data *bkt = cfs_hash_bd_extra_get(hs, &bd);
- 		struct hlist_head	*hhead;
++wait_queue_head_t *
++lu_site_wq_from_fid(struct lu_site *site, struct lu_fid *fid)
++{
++	struct cfs_hash_bd bd;
++	struct lu_site_bkt_data *bkt;
++
++	cfs_hash_bd_get(site->ls_obj_hash, fid, &bd);
++	bkt = cfs_hash_bd_extra_get(site->ls_obj_hash, &bd);
++	return &bkt->lsb_marche_funebre;
++}
++EXPORT_SYMBOL(lu_site_wq_from_fid);
++
+ /**
+  * Decrease reference counter on object. If last reference is freed, return
+  * object to the cache, unless lu_object_is_dying(o) holds. In the latter
+@@ -288,7 +325,7 @@ static struct lu_object *lu_object_alloc(const struct lu_env *env,
+  */
+ static void lu_object_free(const struct lu_env *env, struct lu_object *o)
+ {
+-	struct lu_site_bkt_data *bkt;
++	wait_queue_head_t *wq;
+ 	struct lu_site	  *site;
+ 	struct lu_object	*scan;
+ 	struct list_head	      *layers;
+@@ -296,7 +333,7 @@ static void lu_object_free(const struct lu_env *env, struct lu_object *o)
  
- 		cfs_hash_bd_lock(hs, &bd, 1);
--		stats->lss_busy  +=
--			cfs_hash_bd_count_get(&bd) - bkt->lsb_lru_len;
- 		stats->lss_total += cfs_hash_bd_count_get(&bd);
- 		stats->lss_max_search = max((int)stats->lss_max_search,
- 					    cfs_hash_bd_depmax_get(&bd));
-@@ -2040,7 +2037,7 @@ int lu_site_stats_print(const struct lu_site *s, struct seq_file *m)
- 	struct lu_site_stats stats;
+ 	site   = o->lo_dev->ld_site;
+ 	layers = &o->lo_header->loh_layers;
+-	bkt    = lu_site_bkt_from_fid(site, &o->lo_header->loh_fid);
++	wq     = lu_site_wq_from_fid(site, &o->lo_header->loh_fid);
+ 	/*
+ 	 * First call ->loo_object_delete() method to release all resources.
+ 	 */
+@@ -324,8 +361,8 @@ static void lu_object_free(const struct lu_env *env, struct lu_object *o)
+ 		o->lo_ops->loo_object_free(env, o);
+ 	}
  
- 	memset(&stats, 0, sizeof(stats));
--	lu_site_stats_get(s->ls_obj_hash, &stats, 1);
-+	lu_site_stats_get(s, &stats, 1);
+-	if (waitqueue_active(&bkt->lsb_marche_funebre))
+-		wake_up_all(&bkt->lsb_marche_funebre);
++	if (waitqueue_active(wq))
++		wake_up_all(wq);
+ }
  
- 	seq_printf(m, "%d/%d %d/%ld %d %d %d %d %d %d %d\n",
- 		   stats.lss_busy,
+ /**
+@@ -749,7 +786,7 @@ struct lu_object *lu_object_find_at(const struct lu_env *env,
+ 				    const struct lu_fid *f,
+ 				    const struct lu_object_conf *conf)
+ {
+-	struct lu_site_bkt_data *bkt;
++	wait_queue_head_t	*wq;
+ 	struct lu_object	*obj;
+ 	wait_queue_entry_t	   wait;
+ 
+@@ -762,8 +799,8 @@ struct lu_object *lu_object_find_at(const struct lu_env *env,
+ 		 * wait queue.
+ 		 */
+ 		schedule();
+-		bkt = lu_site_bkt_from_fid(dev->ld_site, (void *)f);
+-		remove_wait_queue(&bkt->lsb_marche_funebre, &wait);
++		wq = lu_site_wq_from_fid(dev->ld_site, (void *)f);
++		remove_wait_queue(wq, &wait);
+ 	}
+ }
+ EXPORT_SYMBOL(lu_object_find_at);
