@@ -1,71 +1,90 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751932AbeEGG53 (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 02:57:29 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:46350 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750716AbeEGG5Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 02:57:25 -0400
-X-Google-Smtp-Source: AB8JxZoKW6qh9L+SJV0D8wOuc1FUNIDvFaaukH5wKDuG4eKh6+dP59hstEmPdYwqWqjgC599hmjn6A==
-Subject: [PATCH 2/3] scsi: arcmsr: Add slave_configure callback function to
- set device command timeout value
-From: Ching Huang <ching2048@areca.com.tw>
-To: martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@oracle.com, hch@infradead.org, colin.king@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Date: Mon, 07 May 2018 14:57:16 +0800
-Message-ID: <1525676236.8876.18.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
-Content-Transfer-Encoding: 7bit
+        id S1751959AbeEGG6B (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 02:58:01 -0400
+Received: from mail-bn3nam01on0040.outbound.protection.outlook.com ([104.47.33.40]:52447
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750716AbeEGG6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 02:58:00 -0400
+From: Bharat Kumar Gogada <bharatku@xilinx.com>
+To: "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "keith.busch@intel.com" <keith.busch@intel.com>,
+        "hch@lst.de" <hch@lst.de>, "axboe@fb.com" <axboe@fb.com>
+Subject: RE: NVMe Poll CQ on timeout
+Thread-Topic: NVMe Poll CQ on timeout
+Thread-Index: AdPdbaKnll1ikIRyRXyNIhFzf8HT4wIYrQ9g
+Date: Mon, 7 May 2018 06:57:54 +0000
+Message-ID: <BLUPR0201MB1505FC0425F87A1A8E6E50DAA59B0@BLUPR0201MB1505.namprd02.prod.outlook.com>
+References: <BLUPR0201MB1505A10C31E4E3A3BDF7BDBAA58E0@BLUPR0201MB1505.namprd02.prod.outlook.com>
+In-Reply-To: <BLUPR0201MB1505A10C31E4E3A3BDF7BDBAA58E0@BLUPR0201MB1505.namprd02.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=bharatku@xilinx.com;
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BLUPR0201MB1586;7:1x4a0LRfHh1GLbChb+1WNJE3XaaGLjwMpDfMVml5bSWf5yPNjh7KszM+f/AqAf9MZ1topc23xatTFSZpKSM1v2S8mbPqM+kALycQC2tLVrOKHkz6nPwLRrIWNMZz8jXpc2AbriKfAbcMrbT56P4YBbedFwFUL7SAdcu1QWVykeKzEO1SHYTIph/EiMUttCu5PvNNFf8LplUYSioCDR0bSerN30SdOb8HeuiLJgGEqdzxgwZIWQkj8bdUSgiRUi5L
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BLUPR0201MB1586;
+x-ms-traffictypediagnostic: BLUPR0201MB1586:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-microsoft-antispam-prvs: <BLUPR0201MB15869C38841E87665ED27E21A59B0@BLUPR0201MB1586.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(149027)(150025)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:BLUPR0201MB1586;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0201MB1586;
+x-forefront-prvs: 066517B35B
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(396003)(39380400002)(189003)(199004)(3846002)(316002)(6116002)(97736004)(25786009)(110136005)(54906003)(3660700001)(106356001)(486006)(3280700002)(2906002)(446003)(476003)(11346002)(66066001)(186003)(105586002)(478600001)(6506007)(55236004)(7696005)(76176011)(86362001)(6436002)(102836004)(26005)(99286004)(55016002)(8936002)(5660300001)(7736002)(9686003)(8676002)(81156014)(81166006)(53936002)(305945005)(4326008)(14454004)(5250100002)(2501003)(74316002)(2900100001)(6246003)(33656002)(68736007)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0201MB1586;H:BLUPR0201MB1505.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: d4ZiIzCmpXXPV91e5ETuOaGsyE2FOQHEpuMJyJ0LmJ59V5w5KGlwEknwPkCDpdBG2BZHaAq+bU8D2duOeK0oWsloqNfJZPbKIdRRi6g6lC4cQ4uja+8duyoaQN3PF9GK6qeYg43rQ+bmRd37lSf0WdFxcHfqBEoA7VaJHYp0UxE6sWGcDvVUI5wDrZucEZ51
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: f69d9673-c1f0-4d29-ff8a-08d5b3e7dbc2
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f69d9673-c1f0-4d29-ff8a-08d5b3e7dbc2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 May 2018 06:57:54.6725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0201MB1586
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w476w74a001476
 
->From Ching Huang <ching2048@areca.com.tw>
+Hi,
 
-Add slave_configure callback function to set device command timeout value
+Does anyone have any inputs ?
 
-Signed-off-by: Ching Huang <ching2048@areca.com.tw>
----
+Regards,
+Bharat
 
-diff --git a/drivers/scsi/arcmsr/arcmsr_hba.c b/drivers/scsi/arcmsr/arcmsr_hba.c
-index f6ddaec..79a4487 100755
---- a/drivers/scsi/arcmsr/arcmsr_hba.c
-+++ b/drivers/scsi/arcmsr/arcmsr_hba.c
-@@ -139,6 +139,7 @@ static irqreturn_t arcmsr_interrupt(struct AdapterControlBlock *acb);
- static void arcmsr_free_irq(struct pci_dev *, struct AdapterControlBlock *);
- static void arcmsr_wait_firmware_ready(struct AdapterControlBlock *acb);
- static void arcmsr_set_iop_datetime(struct timer_list *);
-+static int arcmsr_slave_config(struct scsi_device *sdev);
- static int arcmsr_adjust_disk_queue_depth(struct scsi_device *sdev, int queue_depth)
- {
- 	if (queue_depth > ARCMSR_MAX_CMD_PERLUN)
-@@ -154,6 +155,7 @@ static struct scsi_host_template arcmsr_scsi_host_template = {
- 	.eh_abort_handler	= arcmsr_abort,
- 	.eh_bus_reset_handler	= arcmsr_bus_reset,
- 	.bios_param		= arcmsr_bios_param,
-+	.slave_configure	= arcmsr_slave_config,
- 	.change_queue_depth	= arcmsr_adjust_disk_queue_depth,
- 	.can_queue		= ARCMSR_DEFAULT_OUTSTANDING_CMD,
- 	.this_id		= ARCMSR_SCSI_INITIATOR_ID,
-@@ -3033,6 +3035,17 @@ static int arcmsr_queue_command_lck(struct scsi_cmnd *cmd,
- 
- static DEF_SCSI_QCMD(arcmsr_queue_command)
- 
-+static int arcmsr_slave_config(struct scsi_device *sdev)
-+{
-+	unsigned int	dev_timeout;
-+
-+	dev_timeout = sdev->request_queue->rq_timeout;
-+	if ((cmd_timeout > 0) && ((cmd_timeout * HZ) > dev_timeout))
-+		blk_queue_rq_timeout(sdev->request_queue, cmd_timeout * HZ);
-+	arcmsr_adjust_disk_queue_depth(sdev, cmd_per_lun);
-+	return 0;
-+}
-+
- static void arcmsr_get_adapter_config(struct AdapterControlBlock *pACB, uint32_t *rwbuffer)
- {
- 	int count;
+> Hi,
+> 
+> We are testing NVMe cards on ARM64 platform, the card uses legacy
+> interrupts.
+> Intermittently we are hitting following case in drivers/nvme/host/pci.c
+>        /*
+>          * Did we miss an interrupt?
+>          */
+>         if (__nvme_poll(nvmeq, req->tag)) {
+>                 dev_warn(dev->ctrl.device,
+>                          "I/O %d QID %d timeout, completion polled\n",
+>                          req->tag, nvmeq->qid);
+>                 return BLK_EH_HANDLED;
+>         }
+> 
+> Can anyone tell when does nvme_timeout gets invoked ?
+> What does "Did we miss an interrupt mean" ? Does it mean host missing to
+> service a interrupt raised by EP card ?
+> 
+> Regards,
+> Bharat
+> 
