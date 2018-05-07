@@ -1,137 +1,245 @@
-Return-Path: <alastair@au1.ibm.com>
-X-Google-Smtp-Source: AB8JxZpuV7o/iCfqaJDb+LlCjWA4Jey4vsOjFHyBmmIvzXABLpRidOfyIxHUD6CH5tdP5pupTw3o
-ARC-Seal: i=1; a=rsa-sha256; t=1525749227; cv=none;
+Return-Path: <fbarrat@linux.ibm.com>
+X-Google-Smtp-Source: AB8JxZoB9Hz+ywWYgSekr2ztsXKsfBXHztSL8Lpxv+qNtHOrjTTxiW52l3HExjcsRp4kwpzTnRas
+ARC-Seal: i=1; a=rsa-sha256; t=1525714664; cv=none;
         d=google.com; s=arc-20160816;
-        b=ie8pq2I3lfldbrMpha13lSadr3uzKHwDrbU0Ao9QPYdWMouBsbpHHeDlLmtNjk2aB1
-         hxefQbtKTq80czkgprN3QVgjp3slm8BlhL+C4wHV8mPCGFa73ZQ2TaGj7dxuxvHrEdnk
-         S+tUtqllJdAcEJcBKv/3e5OjBBCIYnkBW56VUE+Ti+mEKoNUPIcT+JaQX175uTv2WZr1
-         uETNBBCWltEGH7jQvSFZbTi/wGR63y4KRNxG/K/VzoEoCq+/phAH3UrCwDjZfzzMwmaR
-         3dtWGjzVz1OVWWD2n2lliJipJ17FYjhjQPZiccNkoSiDsqCLWXszd6CDUdwNyI6cbiO6
-         62hQ==
+        b=Sx79ZEhFeP7WdcZEO6m8V/Bve4WlC5orOabqnQGVRZFOYz72G5kB4onDTFRfd9oohc
+         7vwDDAZFkI5KhcyOxwVrUDVjefJjlyF3T+CUDR2bn92SQ7vFB+tNZs+ItCItebz+5g9G
+         RQTyNsMaNs6RMFCLdZGk4TUl/JJppigjfLOcV6HfCG9tBrUyBZUZJQnuORas840Uvofw
+         7bARvKm+phk3yGdcVVPmg+WmBKeu9LZ5Tj1cB5qCP1r9D1KESOr2RXlG63rf0mBHXftZ
+         5GYcXC/6GIOd0fj72DQaxyN+ps3N3eSPniNYOXsqtqKnVYxytJT8SntQjnQVl1EVe9+/
+         /MQw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:content-transfer-encoding:mime-version:organization
-         :references:in-reply-to:date:cc:to:from:subject
+        h=message-id:content-transfer-encoding:content-language:in-reply-to
+         :mime-version:user-agent:date:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=c1i+xZIElj0NDVBE0x3DiEhkNtvMgpW5DPog7qenn9k=;
-        b=dGEmFsMFcCSI2Vkc0vHaR9G3rymue2NgWFTkJEfAldMBP9WrKCfvgzXLtqbiyNQytg
-         rF8TUNrnksJqvWW1mmLUnAQPbkiFr/3yi8G5E9CCFPwnuBbPj/37bxNNDOd6LpZhbvDX
-         bp8RHrPJwcJ5J4r39r9rEVcFL3uy5c021ZZXdCUpidsaKRKuylB/1w6qjJOEcLeDS7Xw
-         Mfuhwce6wqyd3ciqxCb50CK2hzj1bR91KooiESPd+nsQbc0pD6Ati9Y5W3t1BJk2XnTT
-         POLax9gXI174t6rXML+OthzRJMZ2bb9SZaB7XzZqBrXpNW6YyXwwLaKM3In7ttoVQw93
-         SRPw==
+        bh=qVbVXkmcxEV4v9zJ+GiUVp7rlLCLgcPut7oSBdW5oTs=;
+        b=vrC3mtNR0l+OyhwPwNiGq8f/sj2DN9x2prFib+3tvdMbPycR+o33R2LAA5QiJdsiVk
+         isGWSFdm14/3niOEFMwI+M+U9/RW3HhH+eAMMSBDMs0JQ5PzLzVVABsmbb9a1esjIDCt
+         R+rHH2gV4peb/wrVPVrZ2wXITDyaa4p6PpqZD9oJ/YD6aGx2lPyu4uWefu+e97Fw6f9v
+         AhbmaGaaifopCWZU3Ip3/1bnTtqnwT592YbRepSjdq24fQ2HxqHqA8O9WXFTqsVfIynw
+         Oeao8px3E56KhTyLvnHScaN7Jg3XYIl6c5wq/2wsxIGN+4qtupkDfTL2ejMb0hpNt9ck
+         +YBA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
+       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of alastair@au1.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=alastair@au1.ibm.com;
+       spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.158.5 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v2 1/7] powerpc: Add TIDR CPU feature for Power9
-From: "Alastair D'Silva" <alastair@au1.ibm.com>
-To: Frederic Barrat <fbarrat@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org
-Cc: mikey@neuling.org, arnd@arndb.de, linux-doc@vger.kernel.org,
-        malat@debian.org, gregkh@linuxfoundation.org, corbet@lwn.net,
-        vaibhav@linux.vnet.ibm.com, npiggin@gmail.com,
-        linux-kernel@vger.kernel.org, fbarrat@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, andrew.donnellan@au1.ibm.com,
-        pombredanne@nexb.com, felix@linux.vnet.ibm.com,
-        sukadev@linux.vnet.ibm.com
-Date: Tue, 08 May 2018 13:13:37 +1000
-In-Reply-To: <2f95cc6f-9843-e2b9-6fca-2f4153317a5f@linux.ibm.com>
+Subject: Re: [PATCH v2 3/7] powerpc: use task_pid_nr() for TID allocation
+To: "Alastair D'Silva" <alastair@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
+        vaibhav@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
+        malat@debian.org, felix@linux.vnet.ibm.com, pombredanne@nexb.com,
+        sukadev@linux.vnet.ibm.com, npiggin@gmail.com,
+        gregkh@linuxfoundation.org, arnd@arndb.de,
+        andrew.donnellan@au1.ibm.com, fbarrat@linux.vnet.ibm.com,
+        corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
 References: <20180417020950.21446-1-alastair@au1.ibm.com>
-	 <20180418010810.30937-1-alastair@au1.ibm.com>
-	 <20180418010810.30937-2-alastair@au1.ibm.com>
-	 <2f95cc6f-9843-e2b9-6fca-2f4153317a5f@linux.ibm.com>
-Organization: IBM Australia
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+ <20180418010810.30937-1-alastair@au1.ibm.com>
+ <20180418010810.30937-4-alastair@au1.ibm.com>
+From: Frederic Barrat <fbarrat@linux.ibm.com>
+Date: Mon, 7 May 2018 19:37:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180418010810.30937-4-alastair@au1.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18050803-0012-0000-0000-000005D3CC1E
+x-cbid: 18050717-0020-0000-0000-0000041A0C3C
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050803-0013-0000-0000-00001950D915
-Message-Id: <1525749217.7796.48.camel@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-08_01:,,
+x-cbparentid: 18050717-0021-0000-0000-000042AF40E1
+Message-Id: <b8aa28c4-9171-cb7f-9a43-22f2f15657b0@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805080030
+ definitions=main-1805070177
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597957549327672109?=
-X-GMAIL-MSGID: =?utf-8?q?1599864021955066261?=
+X-GMAIL-THRID: =?utf-8?q?1597957550726280592?=
+X-GMAIL-MSGID: =?utf-8?q?1599827779662609793?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, 2018-05-07 at 19:17 +0200, Frederic Barrat wrote:
-> 
-> Le 18/04/2018 à 03:08, Alastair D'Silva a écrit :
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> > 
-> > This patch adds a CPU feature bit to show whether the CPU has
-> > the TIDR register available, enabling as_notify/wait in userspace.
-> > 
-> > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> > ---
-> >   arch/powerpc/include/asm/cputable.h | 3 ++-
-> >   arch/powerpc/kernel/dt_cpu_ftrs.c   | 1 +
-> >   2 files changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/powerpc/include/asm/cputable.h
-> > b/arch/powerpc/include/asm/cputable.h
-> > index 4e332f3531c5..54c4cbbe57b4 100644
-> > --- a/arch/powerpc/include/asm/cputable.h
-> > +++ b/arch/powerpc/include/asm/cputable.h
-> > @@ -215,6 +215,7 @@ static inline void cpu_feature_keys_init(void)
-> > { }
-> >   #define CPU_FTR_P9_TM_HV_ASSIST		LONG_ASM_CONST(0x0
-> > 000100000000000)
-> >   #define CPU_FTR_P9_TM_XER_SO_BUG	LONG_ASM_CONST(0x00002000
-> > 00000000)
-> >   #define CPU_FTR_P9_TLBIE_BUG		LONG_ASM_CONST(0x0000
-> > 400000000000)
-> > +#define CPU_FTR_P9_TIDR			LONG_ASM_CONST(0x00
-> > 00800000000000)
-> > 
-> >   #ifndef __ASSEMBLY__
-> > 
-> > @@ -462,7 +463,7 @@ static inline void cpu_feature_keys_init(void)
-> > { }
-> >   	    CPU_FTR_CFAR | CPU_FTR_HVMODE | CPU_FTR_VMX_COPY | \
-> >   	    CPU_FTR_DBELL | CPU_FTR_HAS_PPR | CPU_FTR_ARCH_207S |
-> > \
-> >   	    CPU_FTR_TM_COMP | CPU_FTR_ARCH_300 | CPU_FTR_PKEY | \
-> > -	    CPU_FTR_P9_TLBIE_BUG)
-> > +	    CPU_FTR_P9_TLBIE_BUG | CPU_FTR_P9_TIDR)
-> >   #define CPU_FTRS_POWER9_DD1 ((CPU_FTRS_POWER9 |
-> > CPU_FTR_POWER9_DD1) & \
-> >   			     (~CPU_FTR_SAO))
-> >   #define CPU_FTRS_POWER9_DD2_0 CPU_FTRS_POWER9
-> > diff --git a/arch/powerpc/kernel/dt_cpu_ftrs.c
-> > b/arch/powerpc/kernel/dt_cpu_ftrs.c
-> > index 11a3a4fed3fb..10f8b7f55637 100644
-> > --- a/arch/powerpc/kernel/dt_cpu_ftrs.c
-> > +++ b/arch/powerpc/kernel/dt_cpu_ftrs.c
-> > @@ -722,6 +722,7 @@ static __init void cpufeatures_cpu_quirks(void)
-> >   	if ((version & 0xffff0000) == 0x004e0000) {
-> >   		cur_cpu_spec->cpu_features &= ~(CPU_FTR_DAWR);
-> >   		cur_cpu_spec->cpu_features |=
-> > CPU_FTR_P9_TLBIE_BUG; > +		cur_cpu_spec->cpu_features 
-> > |= CPU_FTR_P9_TIDR;
-> 
-> 
-> Isn't it redundant with adding the flag to CPU_FTRS_POWER9?
-> 
->    Fred
-> 
 
-No, cpu_features is populated from device tree, not from
-CPU_FTRS_POWER9. Since TIDR will not be explicitly requested in the
-device tree, we need to handle it in quirks.
 
--- 
-Alastair D'Silva
-Open Source Developer
-Linux Technology Centre, IBM Australia
-mob: 0423 762 819
+Le 18/04/2018 à 03:08, Alastair D'Silva a écrit :
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> The current implementation of TID allocation, using a global IDR, may
+> result in an errant process starving the system of available TIDs.
+> Instead, use task_pid_nr(), as mentioned by the original author. The
+> scenario described which prevented it's use is not applicable, as
+> set_thread_tidr can only be called after the task struct has been
+> populated.
+
+
+Here is how I understand what's going to happen if 2 threads are using 
+the same TIDR value, which is possible with this patch (if unlikely):
+
+1. waking up the wrong thread is not really a problem, as threads have 
+to handle spurious wake up from the 'wait' instruction anyway, and must 
+be using some other condition to know when to loop around the 'wait' 
+instruction.
+
+2. missing the right thread: if the wrong thread is on a CPU, and a 
+wake_host_thread/as_notify is sent, the core will see a matching thread 
+and will accept the command. The (open)capi adapter won't send an 
+interrupt. The wrong thread is awaken, which is not a problem as 
+discussed above. As the right thread to notify is not running, no harm 
+is done either: as soon as the thread runs, it's supposed to check its 
+condition (which will be met) or call 'wait', but 'wait' immediately 
+returns when called the first time after a thread is scheduled.
+
+So I believe we are ok. But I think it requires a huge comment with the 
+above (at the minimum) :-)
+
+With a comment:
+Reviewed-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+
+   Fred
+
+
+
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> ---
+>   arch/powerpc/include/asm/switch_to.h |  1 -
+>   arch/powerpc/kernel/process.c        | 97 +-----------------------------------
+>   2 files changed, 1 insertion(+), 97 deletions(-)
+> 
+> diff --git a/arch/powerpc/include/asm/switch_to.h b/arch/powerpc/include/asm/switch_to.h
+> index be8c9fa23983..5b03d8a82409 100644
+> --- a/arch/powerpc/include/asm/switch_to.h
+> +++ b/arch/powerpc/include/asm/switch_to.h
+> @@ -94,6 +94,5 @@ static inline void clear_task_ebb(struct task_struct *t)
+>   extern int set_thread_uses_vas(void);
+> 
+>   extern int set_thread_tidr(struct task_struct *t);
+> -extern void clear_thread_tidr(struct task_struct *t);
+> 
+>   #endif /* _ASM_POWERPC_SWITCH_TO_H */
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index 3b00da47699b..87f047fd2762 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -1496,103 +1496,12 @@ int set_thread_uses_vas(void)
+>   }
+> 
+>   #ifdef CONFIG_PPC64
+> -static DEFINE_SPINLOCK(vas_thread_id_lock);
+> -static DEFINE_IDA(vas_thread_ida);
+> -
+> -/*
+> - * We need to assign a unique thread id to each thread in a process.
+> - *
+> - * This thread id, referred to as TIDR, and separate from the Linux's tgid,
+> - * is intended to be used to direct an ASB_Notify from the hardware to the
+> - * thread, when a suitable event occurs in the system.
+> - *
+> - * One such event is a "paste" instruction in the context of Fast Thread
+> - * Wakeup (aka Core-to-core wake up in the Virtual Accelerator Switchboard
+> - * (VAS) in POWER9.
+> - *
+> - * To get a unique TIDR per process we could simply reuse task_pid_nr() but
+> - * the problem is that task_pid_nr() is not yet available copy_thread() is
+> - * called. Fixing that would require changing more intrusive arch-neutral
+> - * code in code path in copy_process()?.
+> - *
+> - * Further, to assign unique TIDRs within each process, we need an atomic
+> - * field (or an IDR) in task_struct, which again intrudes into the arch-
+> - * neutral code. So try to assign globally unique TIDRs for now.
+> - *
+> - * NOTE: TIDR 0 indicates that the thread does not need a TIDR value.
+> - *	 For now, only threads that expect to be notified by the VAS
+> - *	 hardware need a TIDR value and we assign values > 0 for those.
+> - */
+> -#define MAX_THREAD_CONTEXT	((1 << 16) - 1)
+> -static int assign_thread_tidr(void)
+> -{
+> -	int index;
+> -	int err;
+> -	unsigned long flags;
+> -
+> -again:
+> -	if (!ida_pre_get(&vas_thread_ida, GFP_KERNEL))
+> -		return -ENOMEM;
+> -
+> -	spin_lock_irqsave(&vas_thread_id_lock, flags);
+> -	err = ida_get_new_above(&vas_thread_ida, 1, &index);
+> -	spin_unlock_irqrestore(&vas_thread_id_lock, flags);
+> -
+> -	if (err == -EAGAIN)
+> -		goto again;
+> -	else if (err)
+> -		return err;
+> -
+> -	if (index > MAX_THREAD_CONTEXT) {
+> -		spin_lock_irqsave(&vas_thread_id_lock, flags);
+> -		ida_remove(&vas_thread_ida, index);
+> -		spin_unlock_irqrestore(&vas_thread_id_lock, flags);
+> -		return -ENOMEM;
+> -	}
+> -
+> -	return index;
+> -}
+> -
+> -static void free_thread_tidr(int id)
+> -{
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&vas_thread_id_lock, flags);
+> -	ida_remove(&vas_thread_ida, id);
+> -	spin_unlock_irqrestore(&vas_thread_id_lock, flags);
+> -}
+> -
+> -/*
+> - * Clear any TIDR value assigned to this thread.
+> - */
+> -void clear_thread_tidr(struct task_struct *t)
+> -{
+> -	if (!t->thread.tidr)
+> -		return;
+> -
+> -	if (!cpu_has_feature(CPU_FTR_P9_TIDR)) {
+> -		WARN_ON_ONCE(1);
+> -		return;
+> -	}
+> -
+> -	mtspr(SPRN_TIDR, 0);
+> -	free_thread_tidr(t->thread.tidr);
+> -	t->thread.tidr = 0;
+> -}
+> -
+> -void arch_release_task_struct(struct task_struct *t)
+> -{
+> -	clear_thread_tidr(t);
+> -}
+> -
+>   /*
+>    * Assign a unique TIDR (thread id) for task @t and set it in the thread
+>    * structure. For now, we only support setting TIDR for 'current' task.
+>    */
+>   int set_thread_tidr(struct task_struct *t)
+>   {
+> -	int rc;
+> -
+>   	if (!cpu_has_feature(CPU_FTR_P9_TIDR))
+>   		return -EINVAL;
+> 
+> @@ -1602,11 +1511,7 @@ int set_thread_tidr(struct task_struct *t)
+>   	if (t->thread.tidr)
+>   		return 0;
+> 
+> -	rc = assign_thread_tidr();
+> -	if (rc < 0)
+> -		return rc;
+> -
+> -	t->thread.tidr = rc;
+> +	t->thread.tidr = (u16)task_pid_nr(t);
+>   	mtspr(SPRN_TIDR, t->thread.tidr);
+> 
+>   	return 0;
+> 
