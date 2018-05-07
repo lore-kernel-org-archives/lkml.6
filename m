@@ -1,198 +1,78 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751899AbeEGCAv (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 22:00:51 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7229 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751781AbeEGCAt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 22:00:49 -0400
-From: Jason Yan <yanaijie@huawei.com>
-To: <martin.petersen@oracle.com>, <jejb@linux.vnet.ibm.com>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <john.garry@huawei.com>, <zhaohongjiang@huawei.com>,
-        <dan.j.williams@intel.com>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH-next] scsi: libsas: dynamically allocate and free ata host
-Date: Mon, 7 May 2018 10:11:12 +0800
-Message-ID: <20180507021112.29036-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.13.6
+        id S1751919AbeEGCJS (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 22:09:18 -0400
+Received: from ozlabs.org ([203.11.71.1]:54173 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751852AbeEGCJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 6 May 2018 22:09:16 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Mon, 7 May 2018 12:09:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the tip tree with the bpf-next tree
+Message-ID: <20180507120909.1fee1683@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/pinGblI+CAMhna2p.DI8MNt"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now the ata host for libsas is embedded in domain_device, and the ->kref
-member is not initialized. Afer we add ata transport class,
-ata_host_get() will be called when adding transport ATA port and a
-warning will be triggered as below:
+--Sig_/pinGblI+CAMhna2p.DI8MNt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-refcount_t: increment on 0; use-after-free.
-WARNING: CPU: 2 PID: 103 at lib/refcount.c:153 refcount_inc+0x40/0x48
-......
-Call trace:
- refcount_inc+0x40/0x48
- ata_host_get+0x10/0x18
- ata_tport_add+0x40/0x120
- ata_sas_tport_add+0xc/0x14
- sas_ata_init+0x7c/0xc8
- sas_discover_domain+0x380/0x53c
- process_one_work+0x12c/0x288
- worker_thread+0x58/0x3f0
- kthread+0xfc/0x128
- ret_from_fork+0x10/0x18
+Hi all,
 
-And also when removing transport ATA port ata_host_put() will be called
-and another similar warning will be triggered. If the refcount decreased
-to zero, the ata host will be freed. But this ata host is only part of
-domain_device, it cannot be freed directly.
+Today's linux-next merge of the tip tree got a conflict in:
 
-So we have to change this embedded static ata host to a dynamically
-allocated ata host and initialize the ->kref member. To use
-ata_host_get() and ata_host_put() in libsas, we need to move the
-declaration of these functions to the public libata.h.
+  arch/x86/net/bpf_jit_comp.c
 
-Fixes: b6240a4df018 ("scsi: libsas: add transport class for ATA devices")
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
-CC: John Garry <john.garry@huawei.com>
----
- drivers/ata/libata-core.c          |  1 +
- drivers/ata/libata.h               |  2 --
- drivers/scsi/libsas/sas_ata.c      | 40 +++++++++++++++++++++++++-------------
- drivers/scsi/libsas/sas_discover.c |  2 ++
- include/linux/libata.h             |  2 ++
- include/scsi/libsas.h              |  2 +-
- 6 files changed, 32 insertions(+), 17 deletions(-)
+between commit:
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 68596bd4cf06..33c2dfbbc02d 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -6424,6 +6424,7 @@ void ata_host_init(struct ata_host *host, struct device *dev,
- 	host->n_tags = ATA_MAX_QUEUE - 1;
- 	host->dev = dev;
- 	host->ops = ops;
-+	kref_init(&host->kref);
- }
- 
- void __ata_port_probe(struct ata_port *ap)
-diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
-index 9e21c49cf6be..f953cb4bb1ba 100644
---- a/drivers/ata/libata.h
-+++ b/drivers/ata/libata.h
-@@ -100,8 +100,6 @@ extern int ata_port_probe(struct ata_port *ap);
- extern void __ata_port_probe(struct ata_port *ap);
- extern unsigned int ata_read_log_page(struct ata_device *dev, u8 log,
- 				      u8 page, void *buf, unsigned int sectors);
--extern void ata_host_get(struct ata_host *host);
--extern void ata_host_put(struct ata_host *host);
- 
- #define to_ata_port(d) container_of(d, struct ata_port, tdev)
- 
-diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
-index ff1d612f6fb9..41cdda7a926b 100644
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -557,34 +557,46 @@ int sas_ata_init(struct domain_device *found_dev)
- {
- 	struct sas_ha_struct *ha = found_dev->port->ha;
- 	struct Scsi_Host *shost = ha->core.shost;
-+	struct ata_host *ata_host;
- 	struct ata_port *ap;
- 	int rc;
- 
--	ata_host_init(&found_dev->sata_dev.ata_host, ha->dev, &sas_sata_ops);
--	ap = ata_sas_port_alloc(&found_dev->sata_dev.ata_host,
--				&sata_port_info,
--				shost);
-+	ata_host = kzalloc(sizeof(*ata_host), GFP_KERNEL);
-+	if (!ata_host)	{
-+		SAS_DPRINTK("ata host alloc failed.\n");
-+		return -ENOMEM;
-+	}
-+
-+	ata_host_init(ata_host, ha->dev, &sas_sata_ops);
-+
-+	ap = ata_sas_port_alloc(ata_host, &sata_port_info, shost);
- 	if (!ap) {
- 		SAS_DPRINTK("ata_sas_port_alloc failed.\n");
--		return -ENODEV;
-+		rc = -ENODEV;
-+		goto free_host;
- 	}
- 
- 	ap->private_data = found_dev;
- 	ap->cbl = ATA_CBL_SATA;
- 	ap->scsi_host = shost;
- 	rc = ata_sas_port_init(ap);
--	if (rc) {
--		ata_sas_port_destroy(ap);
--		return rc;
--	}
--	rc = ata_sas_tport_add(found_dev->sata_dev.ata_host.dev, ap);
--	if (rc) {
--		ata_sas_port_destroy(ap);
--		return rc;
--	}
-+	if (rc)
-+		goto destroy_port;
-+
-+	rc = ata_sas_tport_add(ata_host->dev, ap);
-+	if (rc)
-+		goto destroy_port;
-+
-+	found_dev->sata_dev.ata_host = ata_host;
- 	found_dev->sata_dev.ap = ap;
- 
- 	return 0;
-+
-+destroy_port:
-+	ata_sas_port_destroy(ap);
-+free_host:
-+	ata_host_put(ata_host);
-+	return rc;
- }
- 
- void sas_ata_task_abort(struct sas_task *task)
-diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
-index 1ffca28fe6a8..0148ae62a52a 100644
---- a/drivers/scsi/libsas/sas_discover.c
-+++ b/drivers/scsi/libsas/sas_discover.c
-@@ -316,6 +316,8 @@ void sas_free_device(struct kref *kref)
- 	if (dev_is_sata(dev) && dev->sata_dev.ap) {
- 		ata_sas_tport_delete(dev->sata_dev.ap);
- 		ata_sas_port_destroy(dev->sata_dev.ap);
-+		ata_host_put(dev->sata_dev.ata_host);
-+		dev->sata_dev.ata_host = NULL;
- 		dev->sata_dev.ap = NULL;
- 	}
- 
-diff --git a/include/linux/libata.h b/include/linux/libata.h
-index 0619ebf4d475..852cdb2fc692 100644
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -1110,6 +1110,8 @@ extern struct ata_host *ata_host_alloc(struct device *dev, int max_ports);
- extern struct ata_host *ata_host_alloc_pinfo(struct device *dev,
- 			const struct ata_port_info * const * ppi, int n_ports);
- extern int ata_slave_link_init(struct ata_port *ap);
-+extern void ata_host_get(struct ata_host *host);
-+extern void ata_host_put(struct ata_host *host);
- extern int ata_host_start(struct ata_host *host);
- extern int ata_host_register(struct ata_host *host,
- 			     struct scsi_host_template *sht);
-diff --git a/include/scsi/libsas.h b/include/scsi/libsas.h
-index 225ab7783dfd..3de3b10da19a 100644
---- a/include/scsi/libsas.h
-+++ b/include/scsi/libsas.h
-@@ -161,7 +161,7 @@ struct sata_device {
- 	u8     port_no;        /* port number, if this is a PM (Port) */
- 
- 	struct ata_port *ap;
--	struct ata_host ata_host;
-+	struct ata_host *ata_host;
- 	struct smp_resp rps_resp ____cacheline_aligned; /* report_phy_sata_resp */
- 	u8     fis[ATA_RESP_FIS_SIZE];
- };
--- 
-2.13.6
+  e782bdcf58c5 ("bpf, x64: remove ld_abs/ld_ind")
+
+from the bpf-next tree and commit:
+
+  5f26c50143f5 ("x86/bpf: Clean up non-standard comments, to make the code =
+more readable")
+
+from the tip tree.
+
+I fixed it up (the former commit removed some code modified by the latter,
+so I just removed it) and can carry the fix as necessary. This is now
+fixed as far as linux-next is concerned, but any non trivial conflicts
+should be mentioned to your upstream maintainer when your tree is
+submitted for merging.  You may also want to consider cooperating with
+the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pinGblI+CAMhna2p.DI8MNt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrvtUUACgkQAVBC80lX
+0GxbnQf/WbCGq523yGk3BWfqBgqDNnzB3b/Y5FLqJXRrqvBvYjOBhJJJ7VbGQPMx
+wVArZAhwMlDh0Om4yB+rXHX0CzH6l5S0t7Uobg8xjVqe0DKQh5FaEGrgGqBuI1d6
+x3CcqwZlyu/qJTjc+PbBGngkqFkmLdhbKkLzyE7iYccJxgNZDP023mgRvbcs9iWu
+/S6FnVWHehMB/VEgh3p8wSnvJBf+rYoKCA5u1dYN951LIKYDibnScS1i5qEQHCbi
+cyT+4U58f53uuXzit7VduJVr9hz9tl5kbvI8FiZfHsKQ0GoIaQZ9BXDD8NzhgLd4
+00H1jxmUjmAortjW8r4oRAgHM40kxQ==
+=AlFX
+-----END PGP SIGNATURE-----
+
+--Sig_/pinGblI+CAMhna2p.DI8MNt--
