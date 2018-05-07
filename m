@@ -1,19 +1,19 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752190AbeEGIii (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:38:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:35263 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752124AbeEGIiZ (ORCPT
+        id S1752294AbeEGIjH (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:39:07 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46629 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752161AbeEGIih (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:38:25 -0400
-X-Google-Smtp-Source: AB8JxZpQESIGtMq1MKOALWZqZLLXbvuUNmUKEQuSL57sMxie6BJbkgNy2OlctaQWYvS+6HNO5991eg==
+        Mon, 7 May 2018 04:38:37 -0400
+X-Google-Smtp-Source: AB8JxZqF0nvoTgh2nyJ5jVgyBrKXJ9vPMaD9aOxsAeJNE8q6UwBBIaw4nHrjAGOeoduQrNv+aGpy1A==
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-unionfs@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/35] ovl: deal with overlay files in ovl_d_real()
-Date: Mon,  7 May 2018 10:37:42 +0200
-Message-Id: <20180507083807.28792-11-mszeredi@redhat.com>
+Subject: [PATCH v2 21/35] ovl: add reflink/copyfile/dedup support
+Date: Mon,  7 May 2018 10:37:53 +0200
+Message-Id: <20180507083807.28792-22-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
 References: <20180507083807.28792-1-mszeredi@redhat.com>
@@ -21,25 +21,116 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since set of arguments are so similar, handle in a common helper.
+
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/overlayfs/super.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/overlayfs/file.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 88 insertions(+)
 
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index e8551c97de51..ad6a5baf226b 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -97,6 +97,10 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
- 	struct dentry *real;
- 	int err;
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index ce871a15e185..2ac95c95e8e6 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -382,6 +382,90 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+ 	return ovl_ioctl(file, cmd, arg);
+ }
  
-+	/* It's an overlay file */
-+	if (inode && d_inode(dentry) == inode)
-+		return dentry;
++enum ovl_copyop {
++	OVL_COPY,
++	OVL_CLONE,
++	OVL_DEDUPE,
++};
 +
- 	if (flags & D_REAL_UPPER)
- 		return ovl_dentry_upper(dentry);
- 
++static s64 ovl_copyfile(struct file *file_in, loff_t pos_in,
++			struct file *file_out, loff_t pos_out,
++			u64 len, unsigned int flags, enum ovl_copyop op)
++{
++	struct inode *inode_out = file_inode(file_out);
++	struct fd real_in, real_out;
++	const struct cred *old_cred;
++	s64 ret;
++
++	ret = ovl_real_fdget(file_out, &real_out);
++	if (ret)
++		return ret;
++
++	ret = ovl_real_fdget(file_in, &real_in);
++	if (ret) {
++		fdput(real_out);
++		return ret;
++	}
++
++	old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
++	switch (op) {
++	case OVL_COPY:
++		ret = vfs_copy_file_range(real_in.file, pos_in,
++					  real_out.file, pos_out, len, flags);
++		break;
++
++	case OVL_CLONE:
++		ret = vfs_clone_file_range(real_in.file, pos_in,
++					   real_out.file, pos_out, len);
++		break;
++
++	case OVL_DEDUPE:
++		ret = vfs_dedupe_file_range_one(real_in.file, pos_in,
++						real_out.file, pos_out, len);
++		break;
++	}
++	revert_creds(old_cred);
++
++	/* Update size */
++	ovl_copyattr(ovl_inode_real(inode_out), inode_out);
++
++	fdput(real_in);
++	fdput(real_out);
++
++	return ret;
++}
++
++static ssize_t ovl_copy_file_range(struct file *file_in, loff_t pos_in,
++				   struct file *file_out, loff_t pos_out,
++				   size_t len, unsigned int flags)
++{
++	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, flags,
++			    OVL_COPY);
++}
++
++static int ovl_clone_file_range(struct file *file_in, loff_t pos_in,
++				struct file *file_out, loff_t pos_out, u64 len)
++{
++	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
++			    OVL_CLONE);
++}
++
++static s64 ovl_dedupe_file_range(struct file *file_in, loff_t pos_in,
++				 struct file *file_out, loff_t pos_out,
++				 u64 len)
++{
++	/*
++	 * Don't copy up because of a dedupe request, this wouldn't make sense
++	 * most of the time (data would be duplicated instead of deduplicated).
++	 */
++	if (!ovl_inode_upper(file_inode(file_in)) ||
++	    !ovl_inode_upper(file_inode(file_out)))
++		return -EPERM;
++
++	return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
++			    OVL_DEDUPE);
++}
++
+ const struct file_operations ovl_file_operations = {
+ 	.open		= ovl_open,
+ 	.release	= ovl_release,
+@@ -393,4 +477,8 @@ const struct file_operations ovl_file_operations = {
+ 	.fallocate	= ovl_fallocate,
+ 	.unlocked_ioctl	= ovl_ioctl,
+ 	.compat_ioctl	= ovl_compat_ioctl,
++
++	.copy_file_range	= ovl_copy_file_range,
++	.clone_file_range	= ovl_clone_file_range,
++	.dedupe_file_range	= ovl_dedupe_file_range,
+ };
 -- 
 2.14.3
