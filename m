@@ -1,79 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752457AbeEGQjS (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 12:39:18 -0400
-Received: from mail-it0-f51.google.com ([209.85.214.51]:50563 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751953AbeEGQjQ (ORCPT
+        id S1752490AbeEGQlB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 12:41:01 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:42223 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751923AbeEGQk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 12:39:16 -0400
-X-Google-Smtp-Source: AB8JxZpRBI1eG7DVoPj0W7ksyvb0Gl/qdA4RcjIS3lN/3JRqenXe5gyA2Rw+Es0rx5HqD0pqEYjrRw==
-Subject: Re: bug in tag handling in blk-mq?
-To: Paolo Valente <paolo.valente@linaro.org>,
-        Mike Galbraith <efault@gmx.de>, Christoph Hellwig <hch@lst.de>
-Cc: linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
-Date: Mon, 7 May 2018 10:39:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Mon, 7 May 2018 12:40:58 -0400
+X-Google-Smtp-Source: AB8JxZrqsJhqr9AQ9SKPYUZTBCPrc6m1q9gmz0joKnziZrpmxZ4acr4lBQyDIil2pHpcteHIRvVybw==
+Date: Mon, 7 May 2018 11:40:56 -0500
+From: Rob Herring <robh@kernel.org>
+To: Kiran Gunda <kgunda@codeaurora.org>
+Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Mark Rutland <mark.rutland@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH V2 1/5] backlight: qcom-wled: Rename pm8941-wled.c to
+ qcom-wled.c
+Message-ID: <20180507164056.GA21042@rob-hp-laptop>
+References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
+ <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525342352-25072-2-git-send-email-kgunda@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/7/18 8:03 AM, Paolo Valente wrote:
-> Hi Jens, Christoph, all,
-> Mike Galbraith has been experiencing hangs, on blk_mq_get_tag, only
-> with bfq [1].  Symptoms seem to clearly point to a problem in I/O-tag
-> handling, triggered by bfq because it limits the number of tags for
-> async and sync write requests (in bfq_limit_depth).
+On Thu, May 03, 2018 at 03:42:28PM +0530, Kiran Gunda wrote:
+> pm8941-wled.c driver is supporting the WLED peripheral
+> on pm8941. Rename it to qcom-wled.c so that it can support
+> WLED on multiple PMICs.
 > 
-> Fortunately, I just happened to find a way to apparently confirm it.
-> With the following one-liner for block/bfq-iosched.c:
-> 
-> @@ -554,8 +554,7 @@ static void bfq_limit_depth(unsigned int op, struct blk_mq_alloc_data *data)
->         if (unlikely(bfqd->sb_shift != bt->sb.shift))
->                 bfq_update_depths(bfqd, bt);
->  
-> -       data->shallow_depth =
-> -               bfqd->word_depths[!!bfqd->wr_busy_queues][op_is_sync(op)];
-> +       data->shallow_depth = 1;
->  
->         bfq_log(bfqd, "[%s] wr_busy %d sync %d depth %u",
->                         __func__, bfqd->wr_busy_queues, op_is_sync(op),
-> 
-> Mike's machine now crashes soon and systematically, while nothing bad
-> happens on my machines, even with heavy workloads (apart from an
-> expected throughput drop).
-> 
-> This change simply reduces to 1 the maximum possible value for the sum
-> of the number of async requests and of sync write requests.
-> 
-> This email is basically a request for help to knowledgeable people.  To
-> start, here are my first doubts/questions:
-> 1) Just to be certain, I guess it is not normal that blk-mq hangs if
-> async requests and sync write requests can be at most one, right?
-> 2) Do you have any hint to where I could look for, to chase this bug?
-> Of course, the bug may be in bfq, i.e, it may be a somehow unrelated
-> bfq bug that causes this hang in blk-mq, indirectly.  But it is hard
-> for me to understand how.
+> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+> ---
+>  .../bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt}    | 2 +-
 
-CC Omar, since he implemented the shallow part. But we'll need some
-traces to show where we are hung, probably also the value of the
-/sys/debug/kernel/block/<dev>/ directory. For the crash mentioned, a
-trace as well. Otherwise we'll be wasting a lot of time on this.
+Please split DT bindings from driver patches.
 
-Is there a reproducer?
-
--- 
-Jens Axboe
+>  drivers/video/backlight/Kconfig                                   | 8 ++++----
+>  drivers/video/backlight/Makefile                                  | 2 +-
+>  drivers/video/backlight/{pm8941-wled.c => qcom-wled.c}            | 0
+>  4 files changed, 6 insertions(+), 6 deletions(-)
+>  rename Documentation/devicetree/bindings/leds/backlight/{pm8941-wled.txt => qcom-wled.txt} (95%)
+>  rename drivers/video/backlight/{pm8941-wled.c => qcom-wled.c} (100%)
