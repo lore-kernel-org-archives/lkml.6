@@ -1,110 +1,63 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752221AbeEGMmk (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 08:42:40 -0400
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:40337 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751860AbeEGMmi (ORCPT
+        id S1752635AbeEGMsT (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 08:48:19 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45485 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752369AbeEGMrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 08:42:38 -0400
-Subject: Re: [PATCH v9 14/15] v4l: Add V4L2_CAP_FENCES to drivers
-To: Ezequiel Garcia <ezequiel@collabora.com>, linux-media@vger.kernel.org
-Cc: kernel@collabora.com, Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Shuah Khan <shuahkh@osg.samsung.com>, Pawel Osciak <pawel@osciak.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Brian Starkey <brian.starkey@arm.com>, linux-kernel@vger.kernel.org,
-        Gustavo Padovan <gustavo.padovan@collabora.com>
-References: <20180504200612.8763-1-ezequiel@collabora.com>
- <20180504200612.8763-15-ezequiel@collabora.com>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <1aafc4ae-2c43-a67f-e060-e3afc06c8716@xs4all.nl>
-Date: Mon, 7 May 2018 14:42:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 08:47:36 -0400
+X-Google-Smtp-Source: AB8JxZoS6QnevsZ5Jv7mCqrLVc38UM3tDscPXXw0S/9VMlk/7Z3Lu4ocSngRl9IkpK1qUsK1X/neTQ==
+Date: Mon, 7 May 2018 14:47:31 +0200
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: arm-soc <arm@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: [GIT PULL] tee driver fixes for v4.17
+Message-ID: <20180507124731.GA21011@jax.urgonet>
 MIME-Version: 1.0
-In-Reply-To: <20180504200612.8763-15-ezequiel@collabora.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfLnGYIXtLaj3HLOfmfQnxqPD44VQbBMB3NHxziiW57Nd6E/zwCB1+weg+QcbpUB9ngawp5rpw8BLZ/hUOEfWKq01vCFxLw97lgjLu3WD4Wx7+oZQEayQ
- ZU7Phy/j4QXQ80X1HAKt/3I5tIWHTuLxnfKnW3jxXUk5UqLSS/AGSLNNk69MtVx4QC7iIbbLTPVuKhyPAWvYk/JIU4IbYnm2c+SPXrCn3UFB6FloquJdW8cD
- WGn1rsH/90Rx5rDeqObRs4ngROhuUW2FcRW/UNHgyAB78XoRKKTnrrU6vUWDUHvm6oQ+2Rt18m4NhvdP5M15rwMQI/ocYkIO3aJk2g1dlyTnjL6PX3AaoaDi
- VYW+vuQ4m0ViU9U331nx+GhIGzELBwhE78PToWCqbldD/j8ooC41zt6jjA1SPgVNQmVcIuEEC8IQeZNedAYkMVmCFybdLZDxEA+3ZljwagxUYxf9o0CoxPUC
- /rbN/HNSStmFs6b51aRWLZNxAG9BA3Vwk+4eJkC1mTuWVKJyCLEuaE4jPTL2vby4E4CCi96XQ+RoW7fjeoILvzecHQUYsQ08yhbw3CWVFmvTuMp+50/DYP3Z
- Qs420H81twwrD4+YkDR1gmke
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/18 22:06, Ezequiel Garcia wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.com>
-> 
-> Drivers that use videobuf2 are capable of using fences and
-> should report that to userspace.
-> 
-> v9: Add in the core.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> ---
->  drivers/media/v4l2-core/v4l2-ioctl.c | 8 ++++++++
->  include/media/v4l2-fh.h              | 2 --
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index f75ad954a6f2..2ae527ef0bc7 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1002,12 +1002,20 @@ static int v4l_querycap(const struct v4l2_ioctl_ops *ops,
->  {
->  	struct v4l2_capability *cap = (struct v4l2_capability *)arg;
->  	struct video_device *vfd = video_devdata(file);
-> +	struct v4l2_fh *vfh =
-> +		test_bit(V4L2_FL_USES_V4L2_FH, &vfd->flags) ? fh : NULL;
->  	int ret;
->  
->  	cap->version = LINUX_VERSION_CODE;
->  	cap->device_caps = vfd->device_caps;
->  	cap->capabilities = vfd->device_caps | V4L2_CAP_DEVICE_CAPS;
->  
-> +	/* If it has a queue or a m2m context, then the
-> +	 * device supports fence synchronization.
-> +	 */
-> +	if (vfd->queue || (vfh && vfh->m2m_ctx))
-> +		cap->device_caps |= V4L2_CAP_FENCES;
+Hello arm-soc maintainers,
 
-This should also be set in cap->capabilities. I would actually do this
-after the ops->vidioc_querycap call to avoid drivers overwriting this
-capability flag. It also should only be set if device_caps has V4L2_CAP_STREAMING
-set (not all drivers do!).
+Please pull these tee driver fixes. Of particular interest is a fix for a
+use-after-free issue. There's also a fix making sure that memory references
+are kept within the used shm object.
 
-Note that not all m2m drivers use m2m_ctx, so some of them might have to
-set the capability manually in the driver.
+Thanks,
+Jens
 
-> +
->  	ret = ops->vidioc_querycap(file, fh, cap);
->  
->  	cap->capabilities |= V4L2_CAP_EXT_PIX_FORMAT;
-> diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h
-> index ea73fef8bdc0..e993ddc06991 100644
-> --- a/include/media/v4l2-fh.h
-> +++ b/include/media/v4l2-fh.h
-> @@ -57,9 +57,7 @@ struct v4l2_fh {
->  	unsigned int		navailable;
->  	u32			sequence;
->  
-> -#if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
+The following changes since commit 75bc37fefc4471e718ba8e651aa74673d4e0a9eb:
 
-I prefer is this #if was kept (so it needs to be added to v4l_querycap as well).
+  Linux 4.17-rc4 (2018-05-06 16:57:38 -1000)
 
->  	struct v4l2_m2m_ctx	*m2m_ctx;
-> -#endif
->  };
->  
->  /**
-> 
+are available in the Git repository at:
 
-Regards,
+  git://git.linaro.org/people/jens.wiklander/linux-tee.git/ tags/tee-drv-fixes-for-4.17
 
-	Hans
+for you to fetch changes up to ab9d3db5b320a052452b9cd035599ee3c84bbee9:
+
+  tee: check shm references are consistent in offset/size (2018-05-07 11:51:03 +0200)
+
+----------------------------------------------------------------
+Small fixes for tee subsystem
+
+* Fixes for use-after-free via temporarily dropped reference
+* Checks that passed shm references are consistent in offset/size
+  with regards to the shm object
+
+----------------------------------------------------------------
+Etienne Carriere (1):
+      tee: check shm references are consistent in offset/size
+
+Jann Horn (1):
+      tee: shm: fix use-after-free via temporarily dropped reference
+
+ drivers/tee/tee_core.c | 11 +++++++++++
+ drivers/tee/tee_shm.c  |  5 +++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
