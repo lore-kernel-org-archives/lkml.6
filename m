@@ -1,188 +1,163 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753448AbeEGXhy (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 19:37:54 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:41881 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752920AbeEGXhw (ORCPT
+        id S1753457AbeEGXmI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 19:42:08 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:49694 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752954AbeEGXmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 19:37:52 -0400
-X-Google-Smtp-Source: AB8JxZrZQnKN0oPrLGr3KFIN1Cx9Bka/5lPb4iEnxKVAfcyeN0/gs1iIj0YGHQxGa5LC/sAIOxHOXg==
-Date: Mon, 07 May 2018 16:37:45 -0700
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20180507215545.GA26088@linux.vnet.ibm.com>
-References: <20180507204143.13061-1-joelaf@google.com> <20180507204143.13061-5-joelaf@google.com> <20180507210801.GZ26088@linux.vnet.ibm.com> <20180507214514.GA13787@joelaf.mtv.corp.google.com> <20180507215545.GA26088@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Subject: Re: [PATCH RFC v6 4/5] tracepoint: Make rcuidle tracepoint callers use SRCU
-To: paulmck@linux.vnet.ibm.com,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-CC: Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zilstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Fenguang Wu <fengguang.wu@intel.com>,
-        Baohong Liu <baohong.liu@intel.com>,
-        Vedang Patel <vedang.patel@intel.com>, kernel-team@android.com
-From: Joel Fernandes <joel.opensrc@gmail.com>
-Message-ID: <700CDAD4-15FB-4AE7-868C-AE01B1F9FD62@gmail.com>
+        Mon, 7 May 2018 19:42:07 -0400
+From: Rohit Jain <rohit.k.jain@oracle.com>
+To: matt@codeblueprint.co.uk, peterz@infradead.org
+Cc: mingo@kernel.org, dhaval.giani@oracle.com, subhra.mazumdar@oracle.com,
+        steven.sistare@oracle.com, linux-kernel@vger.kernel.org
+Subject: [RFC] sched: Distinguish between idle_cpu calls based on desired effect
+Date: Mon,  7 May 2018 16:41:17 -0700
+Message-Id: <1525736477-8184-1-git-send-email-rohit.k.jain@oracle.com>
+X-Mailer: git-send-email 2.7.4
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805070228
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w47Nc0Ys028341
 
+In commit 247f2f6f3c706b40b5f3886646f3eb53671258bf we distinguish
+between idle_cpu when the vcpu is not running for scheduling threads.
+However, idle_cpu function is used at other places for actually checking
+whether the state of the CPU is idle or not. Hence splitting the use of
+that function based on the desired return value.
 
+Signed-off-by: Rohit Jain <rohit.k.jain@oracle.com>
+---
+ include/linux/sched.h |  1 +
+ kernel/sched/core.c   | 14 ++++++++++++++
+ kernel/sched/fair.c   | 20 ++++++++++----------
+ 3 files changed, 25 insertions(+), 10 deletions(-)
 
-On May 7, 2018 2:55:45 PM PDT, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
->On Mon, May 07, 2018 at 02:45:14PM -0700, Joel Fernandes wrote:
->> On Mon, May 07, 2018 at 02:08:01PM -0700, Paul E. McKenney wrote:
->> > On Mon, May 07, 2018 at 01:41:42PM -0700, Joel Fernandes wrote:
->> > > From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
->> > > 
->> > > In recent tests with IRQ on/off tracepoints, a large performance
->> > > overhead ~10% is noticed when running hackbench. This is root
->caused to
->> > > calls to rcu_irq_enter_irqson and rcu_irq_exit_irqson from the
->> > > tracepoint code. Following a long discussion on the list [1]
->about this,
->> > > we concluded that srcu is a better alternative for use during rcu
->idle.
->> > > Although it does involve extra barriers, its lighter than the
->sched-rcu
->> > > version which has to do additional RCU calls to notify RCU idle
->about
->> > > entry into RCU sections.
->> > > 
->> > > In this patch, we change the underlying implementation of the
->> > > trace_*_rcuidle API to use SRCU. This has shown to improve
->performance
->> > > alot for the high frequency irq enable/disable tracepoints.
->> [...]
->> >> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
->> > > ---
->> > >  include/linux/tracepoint.h | 46
->+++++++++++++++++++++++++++++++-------
->> > >  kernel/tracepoint.c        | 15 ++++++++++++-
->> > >  2 files changed, 52 insertions(+), 9 deletions(-)
->> > > 
->> > > diff --git a/include/linux/tracepoint.h
->b/include/linux/tracepoint.h
->> > > index c94f466d57ef..f56f290cf8eb 100644
->> > > --- a/include/linux/tracepoint.h
->> > > +++ b/include/linux/tracepoint.h
->> > > @@ -15,6 +15,7 @@
->> > >   */
->> > > 
->> > >  #include <linux/smp.h>
->> > > +#include <linux/srcu.h>
->> > >  #include <linux/errno.h>
->> > >  #include <linux/types.h>
->> > >  #include <linux/cpumask.h>
->> > > @@ -33,6 +34,8 @@ struct trace_eval_map {
->> > > 
->> > >  #define TRACEPOINT_DEFAULT_PRIO	10
->> > > 
->> > > +extern struct srcu_struct tracepoint_srcu;
->> > > +
->> > >  extern int
->> > >  tracepoint_probe_register(struct tracepoint *tp, void *probe,
->void *data);
->> > >  extern int
->> > > @@ -77,6 +80,9 @@ int
->unregister_tracepoint_module_notifier(struct notifier_block *nb)
->> > >   */
->> > >  static inline void tracepoint_synchronize_unregister(void)
->> > >  {
->> > > +#ifdef CONFIG_TRACEPOINTS
->> > > +	synchronize_srcu(&tracepoint_srcu);
->> > > +#endif
->> > >  	synchronize_sched();
->> > >  }
->> > > 
->> > > @@ -129,18 +135,38 @@ extern void syscall_unregfunc(void);
->> > >   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in
->just
->> > >   * "void *data", where as the DECLARE_TRACE() will pass in "void
->*data, proto".
->> > >   */
->> > > -#define __DO_TRACE(tp, proto, args, cond, rcucheck)			\
->> > > +#define __DO_TRACE(tp, proto, args, cond, rcuidle)			\
->> > >  	do {								\
->> > >  		struct tracepoint_func *it_func_ptr;			\
->> > >  		void *it_func;						\
->> > >  		void *__data;						\
->> > > +		int __maybe_unused idx = 0;				\
->> > >  									\
->> > >  		if (!(cond))						\
->> > >  			return;						\
->> > > -		if (rcucheck)						\
->> > > -			rcu_irq_enter_irqson();				\
->> > > -		rcu_read_lock_sched_notrace();				\
->> > > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
->> > > +									\
->> > > +		/*							\
->> > > +		 * For rcuidle callers, use srcu since sched-rcu	\
->> > > +		 * doesn't work from the idle path.			\
->> > > +		 */							\
->> > > +		if (rcuidle) {						\
->> > > +			if (in_nmi()) {					\
->> > > +				WARN_ON_ONCE(1);			\
->> > > +				return; /* no srcu from nmi */		\
->> > > +			}						\
->> > > +									\
->> > > +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
->> > > +			it_func_ptr =					\
->> > > +				srcu_dereference_notrace((tp)->funcs,	\
->> > > +						&tracepoint_srcu);	\
->> > > +			/* To keep it consistent with !rcuidle path */	\
->> > > +			preempt_disable_notrace();			\
->> > > +		} else {						\
->> > > +			rcu_read_lock_sched_notrace();			\
->> > > +			it_func_ptr =					\
->> > > +				rcu_dereference_sched((tp)->funcs);	\
->> > > +		}							\
->> > > +									\
->> > >  		if (it_func_ptr) {					\
->> > >  			do {						\
->> > >  				it_func = (it_func_ptr)->func;		\
->> > > @@ -148,9 +174,13 @@ extern void syscall_unregfunc(void);
->> > >  				((void(*)(proto))(it_func))(args);	\
->> > >  			} while ((++it_func_ptr)->func);		\
->> > >  		}							\
->> > > -		rcu_read_unlock_sched_notrace();			\
->> > > -		if (rcucheck)						\
->> > > -			rcu_irq_exit_irqson();				\
->> > > +									\
->> > > +		if (rcuidle) {						\
->> > 
->> > Don't we also need an in_nmi() check here in order to avoid
->unbalanced
->> > srcu_read_unlock_notrace() calls?
->> 
->>  The in_nmi() in the lock path should take care of making sure its
->balanced.
->> 
->>  The diff the way its formatted appears confusing as Mathieu pointed.
->
->Ah, right, I was for some reason thinking that the two hunks of the
->diff were two separate macros.  Apologies for my confusion!
->	
-
-No worries! Thanks for the great idea to use in_nmi in the first place.
-
-- Joel
-
->							Thanx, Paul
-
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index c241370..959a858 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1504,6 +1504,7 @@ static inline int task_nice(const struct task_struct *p)
+ extern int can_nice(const struct task_struct *p, const int nice);
+ extern int task_curr(const struct task_struct *p);
+ extern int idle_cpu(int cpu);
++extern int available_idle_cpu(int cpu);
+ extern int sched_setscheduler(struct task_struct *, int, const struct sched_param *);
+ extern int sched_setscheduler_nocheck(struct task_struct *, int, const struct sched_param *);
+ extern int sched_setattr(struct task_struct *, const struct sched_attr *);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 71bdb86..171e160 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4028,6 +4028,20 @@ int idle_cpu(int cpu)
+ 		return 0;
+ #endif
+ 
++	return 1;
++}
++
++/**
++ * idle_cpu - is a given CPU idle for enqueuing work.
++ * @cpu: the processor in question.
++ *
++ * Return: 1 if the CPU is currently idle. 0 otherwise.
++ */
++int available_idle_cpu(int cpu)
++{
++	if (!idle_cpu(cpu))
++		return 0;
++
+ 	if (vcpu_is_preempted(cpu))
+ 		return 0;
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 1f6a23a..a0b0da4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5870,8 +5870,8 @@ wake_affine_idle(int this_cpu, int prev_cpu, int sync)
+ 	 * a cpufreq perspective, it's better to have higher utilisation
+ 	 * on one CPU.
+ 	 */
+-	if (idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
+-		return idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
++	if (available_idle_cpu(this_cpu) && cpus_share_cache(this_cpu, prev_cpu))
++		return available_idle_cpu(prev_cpu) ? prev_cpu : this_cpu;
+ 
+ 	if (sync && cpu_rq(this_cpu)->nr_running == 1)
+ 		return this_cpu;
+@@ -6157,7 +6157,7 @@ find_idlest_group_cpu(struct sched_group *group, struct task_struct *p, int this
+ 
+ 	/* Traverse only the allowed CPUs */
+ 	for_each_cpu_and(i, sched_group_span(group), &p->cpus_allowed) {
+-		if (idle_cpu(i)) {
++		if (available_idle_cpu(i)) {
+ 			struct rq *rq = cpu_rq(i);
+ 			struct cpuidle_state *idle = idle_get_state(rq);
+ 			if (idle && idle->exit_latency < min_exit_latency) {
+@@ -6286,7 +6286,7 @@ void __update_idle_core(struct rq *rq)
+ 		if (cpu == core)
+ 			continue;
+ 
+-		if (!idle_cpu(cpu))
++		if (!available_idle_cpu(cpu))
+ 			goto unlock;
+ 	}
+ 
+@@ -6318,7 +6318,7 @@ static int select_idle_core(struct task_struct *p, struct sched_domain *sd, int
+ 
+ 		for_each_cpu(cpu, cpu_smt_mask(core)) {
+ 			cpumask_clear_cpu(cpu, cpus);
+-			if (!idle_cpu(cpu))
++			if (!available_idle_cpu(cpu))
+ 				idle = false;
+ 		}
+ 
+@@ -6347,7 +6347,7 @@ static int select_idle_smt(struct task_struct *p, struct sched_domain *sd, int t
+ 	for_each_cpu(cpu, cpu_smt_mask(target)) {
+ 		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+ 			continue;
+-		if (idle_cpu(cpu))
++		if (available_idle_cpu(cpu))
+ 			return cpu;
+ 	}
+ 
+@@ -6410,7 +6410,7 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+ 			return -1;
+ 		if (!cpumask_test_cpu(cpu, &p->cpus_allowed))
+ 			continue;
+-		if (idle_cpu(cpu))
++		if (available_idle_cpu(cpu))
+ 			break;
+ 	}
+ 
+@@ -6430,13 +6430,13 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	struct sched_domain *sd;
+ 	int i, recent_used_cpu;
+ 
+-	if (idle_cpu(target))
++	if (available_idle_cpu(target))
+ 		return target;
+ 
+ 	/*
+ 	 * If the previous CPU is cache affine and idle, don't be stupid:
+ 	 */
+-	if (prev != target && cpus_share_cache(prev, target) && idle_cpu(prev))
++	if (prev != target && cpus_share_cache(prev, target) && available_idle_cpu(prev))
+ 		return prev;
+ 
+ 	/* Check a recently used CPU as a potential idle candidate: */
+@@ -6444,7 +6444,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ 	if (recent_used_cpu != prev &&
+ 	    recent_used_cpu != target &&
+ 	    cpus_share_cache(recent_used_cpu, target) &&
+-	    idle_cpu(recent_used_cpu) &&
++	    available_idle_cpu(recent_used_cpu) &&
+ 	    cpumask_test_cpu(p->recent_used_cpu, &p->cpus_allowed)) {
+ 		/*
+ 		 * Replace recent_used_cpu with prev as it is a potential
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+2.7.4
