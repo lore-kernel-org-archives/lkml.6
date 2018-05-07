@@ -1,111 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751952AbeEGDco (ORCPT <rfc822;w@1wt.eu>);
-        Sun, 6 May 2018 23:32:44 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:26187 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751822AbeEGDcl (ORCPT
+        id S1751908AbeEGDln (ORCPT <rfc822;w@1wt.eu>);
+        Sun, 6 May 2018 23:41:43 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:47233 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751800AbeEGDlk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 6 May 2018 23:32:41 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180507033240epoutp0259854da55206c64b372c4fd2329a67e3~sP0nTTnJL2390723907epoutp02J
-X-AuditID: b6c32a4a-a79ff700000010d4-52-5aefc8d7664e
-From: Satendra Singh Thakur <satendra.t@samsung.com>
-To: robin.murphy@arm.com, Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: sst2005@gmail.com, madhur.verma@samsung.com,
-        Satendra Singh Thakur <satendra.t@samsung.com>,
-        Hemanshu Srivastava <hemanshu.s@samsung.com>
-Subject: [PATCH v2 03/13] drm/kms/mode/exynos-dsi: using helper func
- drm_display_mode_to_videomode for calculating timing parameters
-Date: Mon,  7 May 2018 09:02:17 +0530
-Message-Id: <1525663938-4172-1-git-send-email-satendra.t@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <920ac8d1-8d2d-1332-256d-21472f69fca5@arm.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrIJsWRmVeSWpSXmKPExsWy7bCmhu71E++jDHY9VLLoPXeSyeLK1/ds
-        Fq/Ov2G2mHR/AovFi3sXWSz6H79mtjh/fgO7xdmmN+wWmx5fY7W4vGsOm8WM8/uYLA5PXcJm
-        cfDDE1aLtedbWSyWn77ObDFj8ks2BwGPNfPWMHrsnHWX3WPTqk42j+3fHrB63O8+zuSxeUm9
-        R9+WVYwenzfJBXBEpdpkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5
-        +AToumXmAH2gpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVijY0NNIzNDDXMzIy0jMxjbUy
-        MgUqSUjN6Nl9ga3gE1fFsvULWBoYV3F2MXJySAiYSCxsWcQOYgsJ7GaUuH6TsYuRC8j+xChx
-        Y2I3lPONUeLs0TY2mI6upXfZIRJ7GSXe/DnKAuF8ZZRY8n46M0gVG1DV8zkzWEFsEYH1zBJ7
-        zxiAFDEL9DNKPO2/wwTiCAu0MUr8Wb4ZrIpFQFXi2aLZTCA2r4CrxLUXC9kh9slJ3DzXCTaV
-        U8Ba4sq7xWDrJAS+s0ms3LAMqshF4vq6V1AHCku8Or4FKi4l8bK/jR2ioZlR4sG6hVBOD6NE
-        R+cxqCp7iZYpB4DGcgAdqCmxfpc+RNhW4si+2WCbmQX4JHp/P2ECKZEQ4JXoaBOCKFGRWPni
-        MDPMrj8LulghbA+JrvuroaY7Stw8e4ANEkZ9jBKzXpxlm8AoPwth2wJGxlWMkqkFxbnpqcWm
-        BUZ5qeV6xYm5xaV56XrJ+bmbGMHJVctrB+Oycz6HGAU4GJV4eFdMeR8lxJpYVlyZe4hRgoNZ
-        SYSX/yhQiDclsbIqtSg/vqg0J7X4EKMpMGgnMkuJJucDE39eSbyhiaWBiZmZuaGBgaWJkjjv
-        zZP3ooQE0hNLUrNTUwtSi2D6mDg4pRoYOc9tbX/htWoul/eswFeKv79WRWhXeAa38S624t/+
-        fJlgzPVmQWGho/OnVN+49rVx+yUTaUGu6DWHJF8/qUpbVL2rwOC602puzgyDY1E2eYevXWZR
-        /3iabfPHeXFhsuw7LkUfv35bdcP6C9/rt97SdD1+dtlNgbDHrfbHF/5aEjjp11QfreZ7KUos
-        xRmJhlrMRcWJAPkESTHEAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsWy7bCSnO61E++jDA5/0rToPXeSyeLK1/ds
-        Fq/Ov2G2mHR/AovFi3sXWSz6H79mtjh/fgO7xdmmN+wWmx5fY7W4vGsOm8WM8/uYLA5PXcJm
-        cfDDE1aLtedbWSyWn77ObDFj8ks2BwGPNfPWMHrsnHWX3WPTqk42j+3fHrB63O8+zuSxeUm9
-        R9+WVYwenzfJBXBEcdmkpOZklqUW6dslcGX07L7AVvCJq2LZ+gUsDYyrOLsYOTkkBEwkupbe
-        Ze9i5OIQEtjNKHH03kR2iISUxLI329ggbGGJlf+eQxV9ZpQ4veQaWIINqPv5nBmsIAkRgd3M
-        Ehu2T2AFSTALTGaUuP0hCCQhLNDCKPG4/woLSIJFQFXi2aLZTCA2r4CrxLUXC6HWyUncPNfJ
-        DGJzClhLXHm3GKxeSMBK4tvUfcwTGPkWMDKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P
-        3cQIDngtzR2Ml5fEH2IU4GBU4uFdMeV9lBBrYllxZe4hRgkOZiURXv6jQCHelMTKqtSi/Pii
-        0pzU4kOM0hwsSuK8T/OORQoJpCeWpGanphakFsFkmTg4pRoYu9yk7Lx/P756cFZc6J6z+alq
-        5xLSPOV5BV/wOBq9nrawV3TXGhmtdMZT8bfalppZiBdOVuf+2u9ocLOxa4KyZ9WSJZ0KakWL
-        A08FZc/v9l/7TKSmOpYj/K5Q4Exp+cMX/x+O9GWrbV5QJ8Swf8o//swNz2NDvQxbHHOZp3/7
-        81Hvz/XGx4eUWIozEg21mIuKEwHP/S/xdAIAAA==
-X-CMS-MailID: 20180507033238epcas5p2601b5ccbba8fa02cdde4f1375e90abe9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180507033238epcas5p2601b5ccbba8fa02cdde4f1375e90abe9
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180507033238epcas5p2601b5ccbba8fa02cdde4f1375e90abe9
-X-RootMTR: 20180507033238epcas5p2601b5ccbba8fa02cdde4f1375e90abe9
-References: <920ac8d1-8d2d-1332-256d-21472f69fca5@arm.com>
-        <CGME20180507033238epcas5p2601b5ccbba8fa02cdde4f1375e90abe9@epcas5p2.samsung.com>
+        Sun, 6 May 2018 23:41:40 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w473fKiW029600
+X-Nifty-SrcIP: [209.85.217.170]
+X-Google-Smtp-Source: AB8JxZrsc38oJ+N8QdQqP1vn10+vZ05g7mkhWiwyLMCANGEWNB2JIGNKMdKOzSZhs0/9j3cpaE0S8XuOIV2eslAXiJI=
+MIME-Version: 1.0
+In-Reply-To: <1525350041-22995-2-git-send-email-absahu@codeaurora.org>
+References: <1525350041-22995-1-git-send-email-absahu@codeaurora.org> <1525350041-22995-2-git-send-email-absahu@codeaurora.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 7 May 2018 12:40:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASWErFrvW+_6Lsw-aqO4T3=iyRZLXG21ML+ebOX=po2Zw@mail.gmail.com>
+Message-ID: <CAK7LNASWErFrvW+_6Lsw-aqO4T3=iyRZLXG21ML+ebOX=po2Zw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/14] mtd: rawnand: helper function for setting up ECC parameters
+To: Abhishek Sahu <absahu@codeaurora.org>
+Cc: Boris Brezillon <boris.brezillon@bootlin.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Richard Weinberger <richard@nod.at>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid duplicate logic for the same
+2018-05-03 21:20 GMT+09:00 Abhishek Sahu <absahu@codeaurora.org>:
+> commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,
+> match, maximize ECC settings") provides generic helpers which
+> drivers can use for setting up ECC parameters.
+>
+> Since same board can have different ECC strength nand chips so
+> following is the logic for setting up ECC strength and ECC step
+> size, which can be used by most of the drivers.
+>
+> 1. If both ECC step size and ECC strength are already set
+>    (usually by DT) then just check whether this setting
+>    is supported by NAND controller.
+> 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
+>    supported by NAND controller.
+> 3. Otherwise, try to match the ECC step size and ECC strength closest
+>    to the chip's requirement. If available OOB size can't fit the chip
+>    requirement then select maximum ECC strength which can be fit with
+>    available OOB size with warning.
+>
+> This patch introduces nand_ecc_param_setup function which calls the
+> required helper functions for the above logic. The drivers can use
+> this single function instead of calling the 3 helper functions
+> individually.
+>
+> CC: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> ---
+> * Changes from v1:
+>
+>   NEW PATCH
+>
+>  drivers/mtd/nand/raw/nand_base.c | 42 ++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mtd/rawnand.h      |  3 +++
+>  2 files changed, 45 insertions(+)
+>
+> diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+> index 72f3a89..dd7a984 100644
+> --- a/drivers/mtd/nand/raw/nand_base.c
+> +++ b/drivers/mtd/nand/raw/nand_base.c
+> @@ -6249,6 +6249,48 @@ int nand_maximize_ecc(struct nand_chip *chip,
+>  }
+>  EXPORT_SYMBOL_GPL(nand_maximize_ecc);
+>
+> +/**
+> + * nand_ecc_param_setup - Set the ECC strength and ECC step size
+> + * @chip: nand chip info structure
+> + * @caps: ECC engine caps info structure
+> + * @oobavail: OOB size that the ECC engine can use
+> + *
+> + * Choose the ECC strength according to following logic
+> + *
+> + * 1. If both ECC step size and ECC strength are already set (usually by DT)
+> + *    then check if it is supported by this controller.
+> + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
+> + * 3. Otherwise, try to match the ECC step size and ECC strength closest
+> + *    to the chip's requirement. If available OOB size can't fit the chip
+> + *    requirement then fallback to the maximum ECC step size and ECC strength
+> + *    and print the warning.
+> + *
+> + * On success, the chosen ECC settings are set.
+> + */
+> +int nand_ecc_param_setup(struct nand_chip *chip,
+> +                        const struct nand_ecc_caps *caps, int oobavail)
+> +{
+> +       int ret;
+> +
+> +       if (chip->ecc.size && chip->ecc.strength)
+> +               return nand_check_ecc_caps(chip, caps, oobavail);
+> +
+> +       if (chip->ecc.options & NAND_ECC_MAXIMIZE)
+> +               return nand_maximize_ecc(chip, caps, oobavail);
+> +
+> +       if (!nand_match_ecc_req(chip, caps, oobavail))
+> +               return 0;
+> +
+> +       ret = nand_maximize_ecc(chip, caps, oobavail);
 
-Signed-off-by: Satendra Singh Thakur <satendra.t@samsung.com>
-Acked-by: Madhur Verma <madhur.verma@samsung.com>
-Cc: Hemanshu Srivastava <hemanshu.s@samsung.com>
----
 
- v2: Removed Mr Robin from reviewed-by field	
+Why two calls for nand_maximize_ecc()?
 
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+My code is simpler, and does not display
+false-positive warning.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 7904ffa..7fe84fd 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1490,17 +1490,8 @@ static void exynos_dsi_mode_set(struct drm_encoder *encoder,
- 				struct drm_display_mode *adjusted_mode)
- {
- 	struct exynos_dsi *dsi = encoder_to_dsi(encoder);
--	struct videomode *vm = &dsi->vm;
--	struct drm_display_mode *m = adjusted_mode;
--
--	vm->hactive = m->hdisplay;
--	vm->vactive = m->vdisplay;
--	vm->vfront_porch = m->vsync_start - m->vdisplay;
--	vm->vback_porch = m->vtotal - m->vsync_end;
--	vm->vsync_len = m->vsync_end - m->vsync_start;
--	vm->hfront_porch = m->hsync_start - m->hdisplay;
--	vm->hback_porch = m->htotal - m->hsync_end;
--	vm->hsync_len = m->hsync_end - m->hsync_start;
-+
-+	drm_display_mode_to_videomode(adjusted_mode, &dsi->vm);
- }
- 
- static const struct drm_encoder_helper_funcs exynos_dsi_encoder_helper_funcs = {
+
+> +       if (!ret)
+> +               pr_warn("ECC (step, strength) = (%d, %d) not supported on this controller. Fallback to (%d, %d)\n",
+> +                       chip->ecc_step_ds, chip->ecc_strength_ds,
+> +                       chip->ecc.size, chip->ecc.strength);
+
+
+This is annoying.
+
+{ecc_step_ds, ecc_strength_ds} are not provided by Non-ONFi devices.
+
+So,
+  ECC (step, strength) = (0, 0) not supported on this controller.
+
+will be always displayed.
+
+
+The strength will be checked by nand_ecc_strength_good() anyway.
+
+
+
+
+
+
+> +
+> +       return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(nand_ecc_param_setup);
+
+
+
 -- 
-2.7.4
+Best Regards
+Masahiro Yamada
