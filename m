@@ -1,32 +1,32 @@
 Return-Path: <fbarrat@linux.ibm.com>
-X-Google-Smtp-Source: AB8JxZrUOl3O/t9ThcTjOeYsw3gjwCfajmqBeMseeFZ1QusCJFjuQlYyvLitRP7EF3DwysKHgVJH
-ARC-Seal: i=1; a=rsa-sha256; t=1525714744; cv=none;
+X-Google-Smtp-Source: AB8JxZoqSPcIMyghan+Wm93eF94oCn21vrDbYv4YOC/2M5oE2uCRN97/RToN/xY4iY7d2JbAP4KD
+ARC-Seal: i=1; a=rsa-sha256; t=1525713604; cv=none;
         d=google.com; s=arc-20160816;
-        b=vGzWj5OPQK+etp5f5WZ1Vt6bu2drrlRy9AXbFAt6yBu0js1e4Pt3fNrzaxshzFotao
-         1WP0RCvVoAu9n2AVSRMwJU3YF4Tfkm311KmmAcpQl6te1B/Pivybrmb2QXsTph5IHKYQ
-         HHWvXbsPC94lHMeAF1WFcC4EwdMW7tbLKWAOiOEEDFmJQKAI5xCPe2pFh2SRxt6cflZr
-         uJDSvzogyRcVTTMBHFXgRK8K/dRc4urJLNVukgUPJkHQkVKZ8ZYzOsqEf/fHfEMS196m
-         9FV2Kng3HlsTaXkmhbiDBDL7L3yUSwIGD03Ikhhv3wnxYzeA7upilBAcF9Olx9trOOa0
-         doAQ==
+        b=F5/ScflC58+nLE5yYzHZ6OOMwqYSr1MltA7XMgigR907+Q1WINolVMkFalQFzfhoOB
+         PJhK9M4Y78X86OgZWAV0vQrOFjnKyfL4fS990HgOcCRmm/CnFLCvl8kMn4y+uZ1yw7TG
+         ku9Nnma69EoF3Hk78LoF8kBEiZLg9dOIo7e+sX3Ykop2skb8L4nupfLR24Ji3azsz0xH
+         cGROgb9g02UBuRZjI6iST8Nlxt4uXxjcQq7xhnNChImMSNUwQd2gWalypbgpN1UXu2Ip
+         fHx4cszZKGwmNQULvhZ3TOhyIkeXIZ8vbR1qKmFWnRCETguPKN9Bv79NjUGe37ILR1J7
+         nJvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=message-id:content-transfer-encoding:content-language:in-reply-to
          :mime-version:user-agent:date:from:references:cc:to:subject
          :arc-authentication-results;
-        bh=SPRyyF2GBAImC545HwFzaHN686xtynAcU4cL1/ql38Q=;
-        b=fmglfELGZ+Bla1AztSD7lFLsa6q62dxMIZZSjAOZfy8P8eHpnxTICH5qzo45Q5sFi9
-         BbWBWw+1uKLVgdF+FinHuqOofJ6syNsjuaZYchcQfKPRkx2vdHBU2KdPpd8cS0qZa69w
-         K/wDcKQbE/4Rj8CNm8kYb6FSheZ9ReaOzWnkYmQ9Unmj2nCX/Kuzk2vmbNrd0AvkM7cv
-         OEMUwKT0XRL/kQHOx8a/zKpa346MEKMZx6F/tyGe5NEK+SGq2Hrwr9J+DETJCup8IXgf
-         WvIbQcbtmSNg02k46oVS8TY2BObBq1iFdTnpaub5pFkgpf+h5U3gy60YfddRoMLumxuk
-         KluQ==
+        bh=c7D2eg2IGbfK8dR/9w5updnMQhkx5dpMxghed3+XGf8=;
+        b=NI+HtEswdUF8scGIMXuAI1JQzPynUObzns/oWfiz+PTlX/pix3uVHYUhwmBcHqh1he
+         wLwc98quvotzDc0hlxvD9TB4RMkmI0z86Ykt4hSoEyLEQjcYo+BqCPUb7pS2SqBxANJr
+         4gLLA7umff1xXQw35huHKPGeQ8Ps0VjGf/UfcLAZRHgvOJHd7G1LReEDRLyGBuVkkBPE
+         eEdVv8gw4Q0fjEVtEqmAV6ifIy16tePyphT4MeuzTXKEz/WCiH125VysnHKIS/tO+Nzh
+         fPjS4xf2jK2TfqdZZoUOfMELs5ZmBEh/cta26OsTENFmOqRVVoQH0lVV969yKLvGNdj7
+         jpUw==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
 Authentication-Results: mx.google.com;
        spf=pass (google.com: domain of fbarrat@linux.ibm.com designates 148.163.156.1 as permitted sender) smtp.mailfrom=fbarrat@linux.ibm.com;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=ibm.com
-Subject: Re: [PATCH v2 4/7] ocxl: Rename pnv_ocxl_spa_remove_pe to clarify
- it's action
+Subject: Re: [PATCH v2 2/7] powerpc: Use TIDR CPU feature to control TIDR
+ allocation
 To: "Alastair D'Silva" <alastair@au1.ibm.com>, linuxppc-dev@lists.ozlabs.org
 Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
         vaibhav@linux.vnet.ibm.com, aneesh.kumar@linux.vnet.ibm.com,
@@ -37,31 +37,31 @@ Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, mikey@neuling.org,
         corbet@lwn.net, "Alastair D'Silva" <alastair@d-silva.org>
 References: <20180417020950.21446-1-alastair@au1.ibm.com>
  <20180418010810.30937-1-alastair@au1.ibm.com>
- <20180418010810.30937-5-alastair@au1.ibm.com>
+ <20180418010810.30937-3-alastair@au1.ibm.com>
 From: Frederic Barrat <fbarrat@linux.ibm.com>
-Date: Mon, 7 May 2018 19:38:52 +0200
+Date: Mon, 7 May 2018 19:19:53 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180418010810.30937-5-alastair@au1.ibm.com>
+In-Reply-To: <20180418010810.30937-3-alastair@au1.ibm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: fr
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-x-cbid: 18050717-0020-0000-0000-0000041A0C4B
+x-cbid: 18050717-0020-0000-0000-0000041A0B20
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18050717-0021-0000-0000-000042AF40F4
-Message-Id: <80b45171-3708-d252-8f57-310f23eb18cd@linux.ibm.com>
+x-cbparentid: 18050717-0021-0000-0000-000042AF3FB8
+Message-Id: <772d6e5d-54c2-0512-b8e6-21d12d8c44cc@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
- definitions=main-1805070177
+ definitions=main-1805070174
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1597957549805591967?=
-X-GMAIL-MSGID: =?utf-8?q?1599827864127005282?=
+X-GMAIL-THRID: =?utf-8?q?1597957550458920157?=
+X-GMAIL-MSGID: =?utf-8?q?1599826668072549214?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -70,65 +70,47 @@ List-ID: <linux-kernel.vger.kernel.org>
 Le 18/04/2018 à 03:08, Alastair D'Silva a écrit :
 > From: Alastair D'Silva <alastair@d-silva.org>
 > 
-> The function removes the process element from NPU cache.
+> Switch the use of TIDR on it's CPU feature, rather than assuming it
+> is available based on architecture.
 > 
 > Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 > ---
 
-Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Reviewed-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
 
 
->   arch/powerpc/include/asm/pnv-ocxl.h   | 2 +-
->   arch/powerpc/platforms/powernv/ocxl.c | 4 ++--
->   drivers/misc/ocxl/link.c              | 2 +-
->   3 files changed, 4 insertions(+), 4 deletions(-)
+>   arch/powerpc/kernel/process.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/powerpc/include/asm/pnv-ocxl.h b/arch/powerpc/include/asm/pnv-ocxl.h
-> index f6945d3bc971..208b5503f4ed 100644
-> --- a/arch/powerpc/include/asm/pnv-ocxl.h
-> +++ b/arch/powerpc/include/asm/pnv-ocxl.h
-> @@ -28,7 +28,7 @@ extern int pnv_ocxl_map_xsl_regs(struct pci_dev *dev, void __iomem **dsisr,
->   extern int pnv_ocxl_spa_setup(struct pci_dev *dev, void *spa_mem, int PE_mask,
->   			void **platform_data);
->   extern void pnv_ocxl_spa_release(void *platform_data);
-> -extern int pnv_ocxl_spa_remove_pe(void *platform_data, int pe_handle);
-> +extern int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle);
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index 1237f13fed51..3b00da47699b 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -1154,7 +1154,7 @@ static inline void restore_sprs(struct thread_struct *old_thread,
+>   			mtspr(SPRN_TAR, new_thread->tar);
+>   	}
 > 
->   extern int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr);
->   extern void pnv_ocxl_free_xive_irq(u32 irq);
-> diff --git a/arch/powerpc/platforms/powernv/ocxl.c b/arch/powerpc/platforms/powernv/ocxl.c
-> index fa9b53af3c7b..8c65aacda9c8 100644
-> --- a/arch/powerpc/platforms/powernv/ocxl.c
-> +++ b/arch/powerpc/platforms/powernv/ocxl.c
-> @@ -475,7 +475,7 @@ void pnv_ocxl_spa_release(void *platform_data)
->   }
->   EXPORT_SYMBOL_GPL(pnv_ocxl_spa_release);
+> -	if (cpu_has_feature(CPU_FTR_ARCH_300) &&
+> +	if (cpu_has_feature(CPU_FTR_P9_TIDR) &&
+>   	    old_thread->tidr != new_thread->tidr)
+>   		mtspr(SPRN_TIDR, new_thread->tidr);
+>   #endif
+> @@ -1570,7 +1570,7 @@ void clear_thread_tidr(struct task_struct *t)
+>   	if (!t->thread.tidr)
+>   		return;
 > 
-> -int pnv_ocxl_spa_remove_pe(void *platform_data, int pe_handle)
-> +int pnv_ocxl_spa_remove_pe_from_cache(void *platform_data, int pe_handle)
+> -	if (!cpu_has_feature(CPU_FTR_ARCH_300)) {
+> +	if (!cpu_has_feature(CPU_FTR_P9_TIDR)) {
+>   		WARN_ON_ONCE(1);
+>   		return;
+>   	}
+> @@ -1593,7 +1593,7 @@ int set_thread_tidr(struct task_struct *t)
 >   {
->   	struct spa_data *data = (struct spa_data *) platform_data;
 >   	int rc;
-> @@ -483,7 +483,7 @@ int pnv_ocxl_spa_remove_pe(void *platform_data, int pe_handle)
->   	rc = opal_npu_spa_clear_cache(data->phb_opal_id, data->bdfn, pe_handle);
->   	return rc;
->   }
-> -EXPORT_SYMBOL_GPL(pnv_ocxl_spa_remove_pe);
-> +EXPORT_SYMBOL_GPL(pnv_ocxl_spa_remove_pe_from_cache);
 > 
->   int pnv_ocxl_alloc_xive_irq(u32 *irq, u64 *trigger_addr)
->   {
-> diff --git a/drivers/misc/ocxl/link.c b/drivers/misc/ocxl/link.c
-> index f30790582dc0..656e8610eec2 100644
-> --- a/drivers/misc/ocxl/link.c
-> +++ b/drivers/misc/ocxl/link.c
-> @@ -599,7 +599,7 @@ int ocxl_link_remove_pe(void *link_handle, int pasid)
->   	 * On powerpc, the entry needs to be cleared from the context
->   	 * cache of the NPU.
->   	 */
-> -	rc = pnv_ocxl_spa_remove_pe(link->platform_data, pe_handle);
-> +	rc = pnv_ocxl_spa_remove_pe_from_cache(link->platform_data, pe_handle);
->   	WARN_ON(rc);
+> -	if (!cpu_has_feature(CPU_FTR_ARCH_300))
+> +	if (!cpu_has_feature(CPU_FTR_P9_TIDR))
+>   		return -EINVAL;
 > 
->   	pe_data = radix_tree_delete(&spa->pe_tree, pe_handle);
+>   	if (t != current)
 > 
