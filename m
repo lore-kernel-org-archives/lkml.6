@@ -1,333 +1,273 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752763AbeEGUHi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 16:07:38 -0400
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:37358 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752081AbeEGUHh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 16:07:37 -0400
-X-Google-Smtp-Source: AB8JxZpqaizzMCQ4NcsVsGUQfpPcsBzZNZuFAm1OesT2bPUg+9/0+UmReLE8JMVeJ/LO62SIh+Fqwg==
-Date: Mon, 7 May 2018 22:07:33 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To: Mario.Limonciello@dell.com
-Cc: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 devices
-Message-ID: <20180507200733.s43zd2hfzw4f4wr2@pali>
-References: <20180124104121.7g3zfay5smc5v2tc@pali>
- <20180201192945.wrsqjq7f5ejhqj6m@dtor-ws>
- <20180506134733.zttaitnf6ej4tith@pali>
- <20180507084431.r2dipv32wt3vbx3k@pali>
- <20180507193306.GA31301@dtor-ws>
- <147aa25ad2d14bad975731a6c9cf9281@ausx13mpc124.AMER.DELL.COM>
+        id S1752770AbeEGUNq (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 16:13:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752158AbeEGUNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 16:13:44 -0400
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, David Ahern <dsahern@gmail.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Wang Nan <wangnan0@huawei.com>, William Cohen <wcohen@redhat.com>,
+        Yisheng Xie <xieyisheng1@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [GIT PULL 0/6] perf/urgent fixes
+Date: Mon,  7 May 2018 17:13:27 -0300
+Message-Id: <20180507201333.26990-1-acme@kernel.org>
+X-Mailer: git-send-email 2.14.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="4hhbsk2pwuhj2jrv"
-Content-Disposition: inline
-In-Reply-To: <147aa25ad2d14bad975731a6c9cf9281@ausx13mpc124.AMER.DELL.COM>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Ingo,
 
---4hhbsk2pwuhj2jrv
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	Please consider pulling,
 
-On Monday 07 May 2018 19:59:14 Mario.Limonciello@dell.com wrote:
-> > -----Original Message-----
-> > From: Dmitry Torokhov [mailto:dmitry.torokhov@gmail.com]
-> > Sent: Monday, May 7, 2018 2:33 PM
-> > To: Pali Roh=C3=A1r
-> > Cc: Limonciello, Mario; linux-input@vger.kernel.org; linux-kernel@vger.=
-kernel.org
-> > Subject: Re: Dell docking station & Dell Embedded Controller & PS/2 dev=
-ices
-> >=20
-> > On Mon, May 07, 2018 at 10:44:31AM +0200, Pali Roh=C3=A1r wrote:
-> > > On Sunday 06 May 2018 15:47:33 Pali Roh=C3=A1r wrote:
-> > > > On Thursday 01 February 2018 11:29:45 Dmitry Torokhov wrote:
-> > > > > Hi Pali,
-> > > > >
-> > > > > On Wed, Jan 24, 2018 at 11:41:21AM +0100, Pali Roh=C3=A1r wrote:
-> > > > > > Hi Dmitry!
-> > > > > >
-> > > > > > I'm observing a problem with internal touchpad (handled by psmo=
-use.ko)
-> > > > > > on Dell laptops connected to Dell E docking station. When I con=
-nect
-> > > > > > external PS/2 keyboard to docking station then internal laptop =
-touchpad
-> > > > > > switch from multitouch absolute mode to relative bare PS/2 mode.
-> > > > > >
-> > > > > > And because ALPS driver in psmouse.ko is capable to process int=
-erleaved
-> > > > > > bare 3-byte PS/2 packets with 6-byte ALPS packets (which handles
-> > > > > > trackstick data on some ALPS models), ALPS driver does not show=
- any
-> > > > > > message about this "downgrade" from multitouch to bare mode. And
-> > > > > > continue working in bare mode.
-> > > > > >
-> > > > > > When I rmmod psmouse and modprobe it again, then touchpad switc=
-h back
-> > to
-> > > > > > multitouch mode.
-> > > > > >
-> > > > > > Mario told me that Dell Embedded Controller, which handle inter=
-nal
-> > > > > > keyboard, internal touchpad and external PS/2 keyboard, automat=
-ically
-> > > > > > send RESET command to *all* those devices when external PS/2 ke=
-yboard is
-> > > > > > connected. Therefore this is reason why touchpad downgrade to t=
-o bare
-> > > > > > mode. And according to Mario, host system should issue vendor s=
-pecific
-> > > > > > PS/2 commands to re-initialize all PS/2 devices when this situa=
-tion
-> > > > > > happen. Mario also told me that Windows is doing this action.
-> > > > >
-> > > > > Yeah, I remember fun with Inspiron 8100 - when you dock it it wou=
-dl
-> > > > > silently switch Synaptics touchpad into standard mode and it woul=
-d not
-> > > > > come back as Synaptics until you disconnect. And there was no
-> > > > > notification to the kernel as far as I could tell.
-> > > > >
-> > > > > It could be that we need to monitor dock events and then kick rec=
-onnect
-> > > > > of serio port, either from userspace via udev (I think that would=
- be
-> > > > > preferred), or in kernel.
-> > > > >
-> > > > > >
-> > > > > > Every time when I connect external PS/2 keyboard to dock I see =
-this
-> > > > > > message in dmesg:
-> > > > > >
-> > > > > > Spurious ACK... Some program might be trying to access hardware=
- directly.
-> > > > > >
-> > > > > > I see it also every time when I dock laptop into docking statio=
-n (to
-> > > > > > which is keyboard already connected). And it happens also when =
-I connect
-> > > > > > external PS/2 mouse to dock.
-> > > > > >
-> > > > > > Dmitry, how to handle this situation to re-initialize psmouse.k=
-o when
-> > > > > > external PS/2 device is connected to Dell E docking station? Ac=
-cording
-> > > > > > to Mario, this is how Dell Embedded Controller is designed and =
-suppose
-> > > > > > how OS should work with it.
-> > > > > >
-> > > > > > Manually rmmoding and modprobing for every docking/undocking la=
-ptop is
-> > > > > > not ideal solution.
-> > > > > >
-> > > > > > Could it be possible to use that Spurious ATKBD_RET_ACK from at=
-kbd.c be
-> > > > > > handled on Dell systems (probably via DMI) as an event to reset=
- and
-> > > > > > reinitialize all PS/2 devices?
-> > > > >
-> > > > > So we need to figure out what exactly we are getting from the doc=
-king
-> > > > > station in this case. We do try to handle the new device 0xaa 0x00
-> > > > > announcements:
-> > > > >
-> > > > > 	/* Check if this is a new device announcement (0xAA 0x00) */
-> > > > > 	if (unlikely(psmouse->packet[0] =3D=3D PSMOUSE_RET_BAT && psmous=
-e-
-> > >pktcnt <=3D 2)) {
-> > > > > 		if (psmouse->pktcnt =3D=3D 1) {
-> > > > > 			psmouse->last =3D jiffies;
-> > > > > 			goto out;
-> > > > > 		}
-> > > > >
-> > > > > 		if (psmouse->packet[1] =3D=3D PSMOUSE_RET_ID ||
-> > > > > 		    (psmouse->protocol->type =3D=3D PSMOUSE_HGPK &&
-> > > > > 		     psmouse->packet[1] =3D=3D PSMOUSE_RET_BAT)) {
-> > > > > 			__psmouse_set_state(psmouse, PSMOUSE_IGNORE);
-> > > > > 			serio_reconnect(serio);
-> > > > > 			goto out;
-> > > > > 		}
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > I am not sure where the "spurious ACK comes from". Can you enable=
- i8042
-> > > > > debug before trying to dock and capture the data stream from the =
-mouse?
-> > > > >
-> > > > > Thanks.
-> > > > >
-> > > >
-> > > > Hi Dmitry!
-> > > >
-> > > > I enabled unmask_kbd_data and debug and here is output from dmesg.
-> > > >
-> > > > echo Y >=C2=A0/sys/module/i8042/parameters/debug
-> > > > echo Y > /sys/module/i8042/parameters/unmask_kbd_data
-> > > >
-> > > > PS/2 keyboard is already connected in dock and laptop was just dock=
-ed:
-> > > >
-> > > > [25461.552314] i8042: [6365474] fa <- i8042 (interrupt, 0, 1)
-> > > > [25461.552319] atkbd serio0: Spurious ACK on isa0060/serio0. Some p=
-rogram
-> > might be trying to access hardware directly.
-> > > > [25462.707296] i8042: [6365763] ed -> i8042 (kbd-data)
-> > > > [25462.851289] i8042: [6365799] fa <- i8042 (interrupt, 0, 1)
-> > > > [25462.851303] i8042: [6365799] 00 -> i8042 (kbd-data)
-> > > > [25462.858437] i8042: [6365801] fa <- i8042 (interrupt, 0, 1)
-> > > > [25462.869512] i8042: [6365804] fa <- i8042 (interrupt, 0, 1)
-> > > > [25462.869517] atkbd serio0: Spurious ACK on isa0060/serio0. Some p=
-rogram
-> > might be trying to access hardware directly.
-> > > > [25463.670515] i8042: [6366004] ed -> i8042 (kbd-data)
-> > > > [25463.670647] i8042: [6366004] fa <- i8042 (interrupt, 0, 1)
-> > > > [25463.670655] i8042: [6366004] 02 -> i8042 (kbd-data)
-> > > > [25463.676769] i8042: [6366005] fa <- i8042 (interrupt, 0, 1)
-> > > >
-> > > >
-> > > > Laptop is docked and PS/2 keyboard was just connected:
-> > > >
-> > > > [26571.014368] i8042: [6642848] fa <- i8042 (interrupt, 0, 1)
-> > > > [26571.014380] atkbd serio0: Spurious ACK on isa0060/serio0. Some p=
-rogram
-> > might be trying to access hardware directly.
-> > > >
-> > > >
-> > > > In both cases there is no events from touchpad, only from keyboard.=
- So
-> > > > Dell EC silently reset PS/2 touchpad when PS/2 keyboard is attached.
-> > > >
-> > > > So I think we should capture 0xFA and on Dell machines we should
-> > > > reinitialize PS/2 drivers. As there is really nothing more then 0xF=
-A.
-> > >
-> > > Info about PS/2 mouse:
-> > >
-> > > In case I have laptop already docked and just connect PS/2 mouse there
-> > > is absolutely no i8042 event.
-> > >
-> > > To check that mouse is worked I clicked button and then in dmesg
-> > > appeared:
-> > >
-> > > [ 3945.481403] i8042: [986322] 09 <- i8042 (interrupt, 1, 12)
-> > > [ 3945.482486] i8042: [986323] 00 <- i8042 (interrupt, 1, 12)
-> > > [ 3945.483667] i8042: [986323] 00 <- i8042 (interrupt, 1, 12)
-> > > [ 3945.483917] input: PS/2 ALPS Mouse as
-> > /devices/platform/i8042/serio1/input/input36
-> > > [ 3945.594926] i8042: [986351] 08 <- i8042 (interrupt, 1, 12)
-> > > [ 3945.596062] i8042: [986351] 00 <- i8042 (interrupt, 1, 12)
-> > > [ 3945.597203] i8042: [986351] 00 <- i8042 (interrupt, 1, 12)
-> > >
-> > > So we have no way to detect when external PS/2 mouse was connected to
-> > > dock. But ALPS driver can deal with it and process these mouse events.
-> > >
-> > > And when I have already connected PS/2 mouse to the dock and I'm just
-> > > putting laptop into dock, then I get following events:
-> > >
-> > > [ 4336.481381] i8042: [1084079] fa <- i8042 (interrupt, 0, 1)
-> > > [ 4336.481388] atkbd serio0: Spurious ACK on isa0060/serio0. Some pro=
-gram
-> > might be trying to access hardware directly.
-> > > [ 4337.653275] i8042: [1084372] ed -> i8042 (kbd-data)
-> >=20
-> > I wonder where this "set leds" command is coming from and where is the
-> > parameter... Can you add some more tracing? And maybe boot with
-> > libps2.dyndbg=3D+pf
-> >=20
-> > > [ 4337.949198] i8042: [1084446] fa <- i8042 (interrupt, 0, 1)
-> > > [ 4337.949202] atkbd serio0: Spurious ACK on isa0060/serio0. Some pro=
-gram
-> > might be trying to access hardware directly.
-> > > [ 4338.623167] i8042: [1084615] ed -> i8042 (kbd-data)
-> > >
-> > > So again, no event from mouse, just from keyboard.
-> > >
-> > > Note that in these tests I have disconnected my PS/2 keyboard from
-> > > dock.
-> >=20
-> > So I guess you could write a platform driver that would install i8042
-> > filter on Dell laptops/portables, monitor keyboard data stream and kick
-> > of rescans on serio ports. The problem is filter gets "serio" so you do
-> > not really know whether ACK is spurious or not. And I would really
-> > prefer keeping this crap out of atkbd proper... And all of this is racy
-> > as hell. What happens if we get keyboard reconnected as we reinitialize
-> > it?
->=20
-> If it's done as a platform driver I would suspect it's possible to tell w=
-hether
-> a dock is connected to at least give you some heuristic here to have a be=
-tter
-> guess whether it's spurious.
+- Arnaldo
 
-Apparently checking for docking station is not enough. There are also
-Dell Legacy Extenders (or how it is called) which exports internal PS/2,
-Parallel and Serial Ports. It is also connecting to bottom of laptop.
-But currently I do not have them for testing.
+Test results at the end of this message, as usual.
 
-> Pali on your system that supports this dock, check and see how many
-> System Enclosure SMBIOS tables (structure type 03) are present.
+The following changes since commit 1504269814263c9676b4605a6a91e14dc6ceac21:
 
-Do you mean DMI type 3 structure? Here is something from dmidecode:
+  Merge tag 'linux-kselftest-4.17-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest (2018-05-03 19:26:51 -1000)
 
-Handle 0x0003, DMI type 3, 22 bytes
-Chassis Information
-        Manufacturer: Dell Inc.
-        Type: Laptop
-        Lock: Not Present
-        Version: Not Specified
-        Serial Number: --REMOVED--
-        Asset Tag: Not Specified
-        Boot-up State: Safe
-        Power Supply State: Safe
-        Thermal State: Safe
-        Security Status: None
-        OEM Information: 0x00000000
-        Height: Unspecified
-        Number Of Power Cords: 1
-        Contained Elements: 0
-        SKU Number: To be filled by O.E.M.
+are available in the Git repository at:
 
-But probably you mean something different?
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf-urgent-for-mingo-4.17-20180507
 
-> There should be a separate one for the dock as far as I can tell with val=
-ues
-> that will vary based on whether it's attached.
->=20
-> Assuming that's true I think making a platform filter driver that only at=
-taches
-> to systems that actually support this type of dock should be possible too.
->=20
-> >=20
-> > Mario, how does Windows driver know when it should send "vendor"
-> > commands to reinitialize peripherals?
-> >=20
->=20
-> Sorry , I don't know.  It's "inbox" Windows drivers that are used here so
-> it's a "black box" to me how they work.
->=20
+for you to fetch changes up to 4a35a9027f64d588d2fd9436dda4126e8d5647d7:
 
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
+  Revert "perf pmu: Fix pmu events parsing rule" (2018-05-07 16:28:10 -0300)
 
---4hhbsk2pwuhj2jrv
-Content-Type: application/pgp-signature; name="signature.asc"
+----------------------------------------------------------------
+perf/urgent fixes:
 
------BEGIN PGP SIGNATURE-----
+. Revert "perf pmu: Fix pmu events parsing rule", as it broke Intel PT
+  event description parsing (Arnaldo Carvalho de Melo)
 
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCWvCyAwAKCRCL8Mk9A+RD
-UjCBAKCnmxdqGVPxB3EtFe1gsVwVw/xIqQCfRv9968XE7T1Sfw4DzHURy0999wk=
-=Lu0o
------END PGP SIGNATURE-----
+. Sync x86's cpufeatures.h and kvm UAPI headers with the kernel sources,
+  suppressing the ABI drift warnings (Arnaldo Carvalho de Melo)
 
---4hhbsk2pwuhj2jrv--
+- Remove duplicated entry for westmereep-dp in Intel's mapfile.csv (William Cohen)
+
+- Fix typo in 'perf bench numa' options description (Yisheng Xie)
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Arnaldo Carvalho de Melo (4):
+      tools headers: Sync x86 cpufeatures.h with the kernel sources
+      tools headers kvm: Sync uapi/linux/kvm.h with the kernel sources
+      tools headers kvm: Sync ARM UAPI headers with the kernel sources
+      Revert "perf pmu: Fix pmu events parsing rule"
+
+William Cohen (1):
+      perf vendor events intel: Remove duplicated entry for westmereep-dp in mapfile.csv
+
+Yisheng Xie (1):
+      perf bench numa: Fix typo in options
+
+ tools/arch/arm/include/uapi/asm/kvm.h      | 6 ++++++
+ tools/arch/arm64/include/uapi/asm/kvm.h    | 6 ++++++
+ tools/arch/x86/include/asm/cpufeatures.h   | 1 +
+ tools/include/uapi/linux/kvm.h             | 7 +++++++
+ tools/perf/bench/numa.c                    | 2 +-
+ tools/perf/pmu-events/arch/x86/mapfile.csv | 1 -
+ tools/perf/util/parse-events.y             | 8 ++++----
+ 7 files changed, 25 insertions(+), 6 deletions(-)
+
+Test results:
+
+The first ones are container (docker) based builds of tools/perf with
+and without libelf support.  Where clang is available, it is also used
+to build perf with/without libelf, and building with LIBCLANGLLVM=1
+(built-in clang) with gcc and clang when clang and its devel libraries
+are installed.
+
+The objtool and samples/bpf/ builds are disabled now that I'm switching from
+using the sources in a local volume to fetching them from a http server to
+build it inside the container, to make it easier to build in a container cluster.
+Those will come back later.
+
+Several are cross builds, the ones with -x-ARCH and the android one, and those
+may not have all the features built, due to lack of multi-arch devel packages,
+available and being used so far on just a few, like
+debian:experimental-x-{arm64,mipsel}.
+
+The 'perf test' one will perform a variety of tests exercising
+tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
+with a variety of command line event specifications to then intercept the
+sys_perf_event syscall to check that the perf_event_attr fields are set up as
+expected, among a variety of other unit tests.
+
+Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
+with a variety of feature sets, exercising the build with an incomplete set of
+features as well as with a complete one. It is planned to have it run on each
+of the containers mentioned above, using some container orchestration
+infrastructure. Get in contact if interested in helping having this in place.
+
+ # dm
+   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
+   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   5 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
+   6 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11)
+   7 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+   8 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+   9 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+  10 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+  11 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
+  12 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
+  13 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
+  14 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
+  15 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+  16 debian:experimental           : Ok   gcc (Debian 7.3.0-15) 7.3.0
+  17 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 7.3.0-15) 7.3.0
+  18 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
+  19 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 7.3.0-12) 7.3.0
+  20 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 7.3.0-12) 7.3.0
+  21 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+  22 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
+  23 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  24 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  25 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
+  26 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
+  27 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+  28 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+  29 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5) 
+
+  # uname -a
+  Linux jouet 4.17.0-rc3-00034-gf4ef6a438cee #18 SMP Thu May 3 11:49:35 -03 2018 x86_64 x86_64 x86_64 GNU/Linux
+  # perf test
+   1: vmlinux symtab matches kallsyms                       : Ok
+   2: Detect openat syscall event                           : Ok
+   3: Detect openat syscall event on all cpus               : Ok
+   4: Read samples using the mmap interface                 : Ok
+   5: Test data source output                               : Ok
+   6: Parse event definition strings                        : Ok
+   7: Simple expression parser                              : Ok
+   8: PERF_RECORD_* events & perf_sample fields             : Ok
+   9: Parse perf pmu format                                 : Ok
+  10: DSO data read                                         : Ok
+  11: DSO data cache                                        : Ok
+  12: DSO data reopen                                       : Ok
+  13: Roundtrip evsel->name                                 : Ok
+  14: Parse sched tracepoints fields                        : Ok
+  15: syscalls:sys_enter_openat event fields                : Ok
+  16: Setup struct perf_event_attr                          : Ok
+  17: Match and link multiple hists                         : Ok
+  18: 'import perf' in python                               : Ok
+  19: Breakpoint overflow signal handler                    : Ok
+  20: Breakpoint overflow sampling                          : Ok
+  21: Breakpoint accounting                                 : Ok
+  22: Number of exit events of a simple workload            : Ok
+  23: Software clock events period values                   : Ok
+  24: Object code reading                                   : Ok
+  25: Sample parsing                                        : Ok
+  26: Use a dummy software event to keep tracking           : Ok
+  27: Parse with no sample_id_all bit set                   : Ok
+  28: Filter hist entries                                   : Ok
+  29: Lookup mmap thread                                    : Ok
+  30: Share thread mg                                       : Ok
+  31: Sort output of hist entries                           : Ok
+  32: Cumulate child hist entries                           : Ok
+  33: Track with sched_switch                               : Ok
+  34: Filter fds with revents mask in a fdarray             : Ok
+  35: Add fd to a fdarray, making it autogrow               : Ok
+  36: kmod_path__parse                                      : Ok
+  37: Thread map                                            : Ok
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : Ok
+  39: Session topology                                      : Ok
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+  41: Synthesize thread map                                 : Ok
+  42: Remove thread map                                     : Ok
+  43: Synthesize cpu map                                    : Ok
+  44: Synthesize stat config                                : Ok
+  45: Synthesize stat                                       : Ok
+  46: Synthesize stat round                                 : Ok
+  47: Synthesize attr update                                : Ok
+  48: Event times                                           : Ok
+  49: Read backward ring buffer                             : Ok
+  50: Print cpu map                                         : Ok
+  51: Probe SDT events                                      : Ok
+  52: is_printable_array                                    : Ok
+  53: Print bitmap                                          : Ok
+  54: perf hooks                                            : Ok
+  55: builtin clang support                                 : Skip (not compiled in)
+  56: unit_number__scnprintf                                : Ok
+  57: mem2node                                              : Ok
+  58: x86 rdpmc                                             : Ok
+  59: Convert perf time to TSC                              : Ok
+  60: DWARF unwind                                          : Ok
+  61: x86 instruction decoder - new instructions            : Ok
+  62: Use vfs_getname probe to get syscall args filenames   : Ok
+  63: Check open filename arg using perf trace + vfs_getname: Ok
+  64: probe libc's inet_pton & backtrace it with ping       : Ok
+  65: Add vfs_getname probe to get syscall args filenames   : Ok
+  #
+  
+  $ make -C tools/perf build-test
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+  - tarpkg: ./tests/perf-targz-src-pkg .
+                make_no_gtk2_O: make NO_GTK2=1
+  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
+   make_install_prefix_slash_O: make install prefix=/tmp/krava/
+                 make_perf_o_O: make perf.o
+                 make_static_O: make LDFLAGS=-static
+             make_util_map_o_O: make util/map.o
+                   make_pure_O: make
+        make_with_babeltrace_O: make LIBBABELTRACE=1
+              make_clean_all_O: make clean all
+         make_install_prefix_O: make install prefix=/tmp/krava
+                make_no_newt_O: make NO_NEWT=1
+       make_util_pmu_bison_o_O: make util/pmu-bison.o
+            make_no_libaudit_O: make NO_LIBAUDIT=1
+            make_install_bin_O: make install-bin
+                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
+              make_no_libelf_O: make NO_LIBELF=1
+             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
+            make_no_auxtrace_O: make NO_AUXTRACE=1
+                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
+                   make_tags_O: make tags
+           make_no_libunwind_O: make NO_LIBUNWIND=1
+               make_no_slang_O: make NO_SLANG=1
+                    make_doc_O: make doc
+           make_no_libbionic_O: make NO_LIBBIONIC=1
+                   make_help_O: make help
+           make_no_backtrace_O: make NO_BACKTRACE=1
+           make_no_libpython_O: make NO_LIBPYTHON=1
+            make_no_demangle_O: make NO_DEMANGLE=1
+             make_no_libperl_O: make NO_LIBPERL=1
+                  make_debug_O: make DEBUG=1
+             make_no_libnuma_O: make NO_LIBNUMA=1
+                make_install_O: make install
+              make_no_libbpf_O: make NO_LIBBPF=1
+         make_with_clangllvm_O: make LIBCLANGLLVM=1
+  OK
+  make: Leaving directory '/home/acme/git/perf/tools/perf'
+  [acme@jouet perf]$
