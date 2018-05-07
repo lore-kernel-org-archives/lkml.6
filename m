@@ -1,77 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752045AbeEGIez (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 04:34:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:45894 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751940AbeEGIev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 04:34:51 -0400
-Date: Mon, 7 May 2018 10:34:49 +0200
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-To: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Radu Pirea <radu.pirea@microchip.com>, <cyrille.pitchen@wedev4u.fr>,
-        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Tudor Ambarus - M18064 <Tudor.Ambarus@microchip.com>
-Subject: Re: [PATCH] spi-nor: Add support for Atmel Dataflash memories
-Message-ID: <20180507103449.054ea41b@bbrezillon>
-In-Reply-To: <d9b3fffd-dded-b210-e058-13a326b4fb8f@microchip.com>
-References: <1519818901-7116-1-git-send-email-radu.pirea@microchip.com>
-        <20180504203844.0c09bf6d@bbrezillon>
-        <d9b3fffd-dded-b210-e058-13a326b4fb8f@microchip.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1752122AbeEGIiZ (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 04:38:25 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:40260 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752052AbeEGIiR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 04:38:17 -0400
+X-Google-Smtp-Source: AB8JxZpJ2Nfv6DUoMlC+hQDUY8IN5XL5Zf5fPGFMIYSqeHN4bwe/8mfE1kaODkO74ABGy2/Pmjx6gg==
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 03/35] vfs: add f_op->pre_mmap()
+Date: Mon,  7 May 2018 10:37:35 +0200
+Message-Id: <20180507083807.28792-4-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180507083807.28792-1-mszeredi@redhat.com>
+References: <20180507083807.28792-1-mszeredi@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+This is needed by overlayfs to be able to copy up a file from a read-only
+lower layer to a writable layer when being mapped shared.  When copying up,
+overlayfs takes VFS locks that would violate locking order when nested
+inside mmap_sem.
 
-On Mon, 7 May 2018 10:23:56 +0200
-Nicolas Ferre <nicolas.ferre@microchip.com> wrote:
+Add a new f_op->pre_mmap method, which is called before taking mmap_sem.
 
-> On 04/05/2018 at 20:38, Boris Brezillon wrote:
-> > Hi Radu,
-> > 
-> > Sorry for the late reply.
-> > 
-> > On Wed, 28 Feb 2018 13:55:01 +0200
-> > Radu Pirea <radu.pirea@microchip.com> wrote:
-> >   
-> >> This patch add support in spi-nor for allmost all dataflash memories
-> >> supported by old mtd_dataflash driver.  
-> > 
-> > Those devices clearly use a different instruction set, so I don't think
-> > they fit in this framework. Can you tell us why you want to move
-> > dataflash support to the SPI NOR framework. I think I know why, but I'd
-> > like to get your version. My guess is that some people want to connect
-> > dataflash chips to the Atmel QSPI controller, and it's not supported
-> > right now because the Atmel QSPI controller implements the SPI-NOR
-> > interface and not the generic SPI one, thus preventing anything that
-> > is not a SPI NOR from being connected to this controller.
-> > 
-> > If I'm right, then the solution is to convert the QSPI driver to the
-> > spi-mem interface [1] and move it to drivers/spi/.  
-> 
-> No, I we didn't think about this. Dataflash is not so popular those days 
-> and we don't want to revive it anyway. Our QSPI driver has already a lot 
-> of things to handle in QSPI-related topics to not mix it with oldies ;-)
-> 
-> The rationale behind this work is to get rid of the very old dataflash 
-> standalone driver and benefit from the whole spi-nor infrastructure like 
-> cache coherency management and DMA handling (which were broken in the 
-> old dataflash driver in recent kernels).
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+ Documentation/filesystems/Locking | 1 +
+ Documentation/filesystems/vfs.txt | 3 +++
+ include/linux/fs.h                | 1 +
+ mm/util.c                         | 5 +++++
+ 4 files changed, 10 insertions(+)
 
-Still don't think that's a good move, especially since those flashes are
-using a completely different instruction set and are not exactly
-behaving like SPI NORs. If we need some of the spi-nor logic to help
-handle dataflash chips in a more efficient/safe way, then those bits
-should be exposed as helpers at the MTD level instead of turning
-spi-nor into a Frankenstein framework.
-
-Regards,
-
-Boris
+diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
+index 75d2d57e2c44..60e76060baff 100644
+--- a/Documentation/filesystems/Locking
++++ b/Documentation/filesystems/Locking
+@@ -442,6 +442,7 @@ prototypes:
+ 	unsigned int (*poll) (struct file *, struct poll_table_struct *);
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
++	int (*pre_mmap) (struct file *, unsigned long, unsigned long);
+ 	int (*mmap) (struct file *, struct vm_area_struct *);
+ 	int (*open) (struct inode *, struct file *);
+ 	int (*flush) (struct file *);
+diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
+index 5fd325df59e2..2bc77ea8aef4 100644
+--- a/Documentation/filesystems/vfs.txt
++++ b/Documentation/filesystems/vfs.txt
+@@ -859,6 +859,7 @@ struct file_operations {
+ 	unsigned int (*poll) (struct file *, struct poll_table_struct *);
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
++	int (*pre_mmap) (struct file *, unsigned long, unsigned long);
+ 	int (*mmap) (struct file *, struct vm_area_struct *);
+ 	int (*mremap)(struct file *, struct vm_area_struct *);
+ 	int (*open) (struct inode *, struct file *);
+@@ -906,6 +907,8 @@ otherwise noted.
+   compat_ioctl: called by the ioctl(2) system call when 32 bit system calls
+  	 are used on 64 bit kernels.
+ 
++  pre_mmap: called before mmap, without mmap_sem being held yet.
++
+   mmap: called by the mmap(2) system call
+ 
+   open: called by the VFS when an inode should be opened. When the VFS
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index af49b55ff439..898fb798a3ff 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1716,6 +1716,7 @@ struct file_operations {
+ 	__poll_t (*poll) (struct file *, struct poll_table_struct *);
+ 	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+ 	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
++	int (*pre_mmap) (struct file *, unsigned long, unsigned long);
+ 	int (*mmap) (struct file *, struct vm_area_struct *);
+ 	unsigned long mmap_supported_flags;
+ 	int (*open) (struct inode *, struct file *);
+diff --git a/mm/util.c b/mm/util.c
+index 45fc3169e7b0..11cd375e1a19 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -352,6 +352,11 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
+ 
+ 	ret = security_mmap_file(file, prot, flag);
+ 	if (!ret) {
++		if (file && file->f_op->pre_mmap) {
++			ret = file->f_op->pre_mmap(file, prot, flag);
++			if (ret)
++				return ret;
++		}
+ 		if (down_write_killable(&mm->mmap_sem))
+ 			return -EINTR;
+ 		ret = do_mmap_pgoff(file, addr, len, prot, flag, pgoff,
+-- 
+2.14.3
