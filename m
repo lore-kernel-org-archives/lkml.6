@@ -1,97 +1,653 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752715AbeEGPNt (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 11:13:49 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:38252 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752691AbeEGPNg (ORCPT
+        id S1752726AbeEGPOI (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 11:14:08 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47618 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752253AbeEGPOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 11:13:36 -0400
-X-Google-Smtp-Source: AB8JxZpIBr7VDe6R6bBLDwK+cYmkB9RvAlVP8i4m495khMTrRIlNlN4f7OuVU2inKznAPWgvlefk+A==
-Subject: Re: [J-core] [PATCH v5 00/22] sh: LANDISK and R2Dplus convert to
- device tree
-To: Rich Felker <dalias@libc.org>
-Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <E7B2D113-C30D-4A32-AFB6-DC91DDADE0E8@physik.fu-berlin.de>
- <20171117191706.GF1627@brightrain.aerifal.cx>
- <7193aa1b-50e3-11d4-f93d-f567e2e06b8c@physik.fu-berlin.de>
- <20180105212857.GR1627@brightrain.aerifal.cx>
- <20180503013708.GC1392@brightrain.aerifal.cx>
- <20180503023320.GD1392@brightrain.aerifal.cx>
- <048ab147-21b8-045d-d21c-e1be2dd0e954@physik.fu-berlin.de>
- <87k1sgtf8t.wl-ysato@users.sourceforge.jp>
- <5f690985-e905-deb9-aa4f-51561463ae22@physik.fu-berlin.de>
- <9051f0a5-bc75-b49e-c8c3-aa877be1979e@landley.net>
- <20180507144306.GG1392@brightrain.aerifal.cx>
-From: Rob Landley <rob@landley.net>
-Message-ID: <775bc754-0181-6a13-d625-825bf601eb77@landley.net>
-Date: Mon, 7 May 2018 10:13:32 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180507144306.GG1392@brightrain.aerifal.cx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 7 May 2018 11:14:05 -0400
+From: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+To: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc: freude@de.ibm.com, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        borntraeger@de.ibm.com, cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com, pasic@linux.vnet.ibm.com,
+        berrange@redhat.com, fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        akrowiak@linux.vnet.ibm.com
+Subject: [PATCH v5 13/13] s390: doc: detailed specifications for AP virtualization
+Date: Mon,  7 May 2018 11:11:52 -0400
+X-Mailer: git-send-email 1.7.1
+In-Reply-To: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 18050715-0024-0000-0000-0000185BEF79
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00008987; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000258; SDB=6.01028859; UDB=6.00525678; IPR=6.00807992;
+ MB=3.00020972; MTD=3.00000008; XFM=3.00000015; UTC=2018-05-07 15:14:02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050715-0025-0000-0000-00004FDB78EA
+Message-Id: <1525705912-12815-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-07_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805070154
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch provides documentation describing the AP architecture and
+design concepts behind the virtualization of AP devices. It also
+includes an example of how to configure AP devices for exclusive
+use of KVM guests.
 
+Signed-off-by: Tony Krowiak <akrowiak@linux.vnet.ibm.com>
+---
+ Documentation/s390/vfio-ap.txt |  575 ++++++++++++++++++++++++++++++++++++++++
+ MAINTAINERS                    |    1 +
+ 2 files changed, 576 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/s390/vfio-ap.txt
 
-On 05/07/2018 09:43 AM, Rich Felker wrote:
-> On Mon, May 07, 2018 at 08:40:35AM -0500, Rob Landley wrote:
->> On 05/07/2018 06:00 AM, John Paul Adrian Glaubitz wrote:
->>> I have been able to boot my own kernel on my USL-5P device, but
->>> I could never get it to detect the IDE controller. Do I need
->>> an additional patch for that?
->>
->> On a related note, is there a list of boards anywhere? I'm working on a 7760
->> system at $DAYJOB, Rich has a landisk which according to
->> https://www.openbsd.org/landisk.html is an SH7751R, and Sato-san says that
->> QEMU's -r2d emulates that too? ("RTS7751R2Dplus is QEMU-SH4 target. So easy
->> trying.")
->>
->> What other boards do we need to covert to device tree? arch/sh/boards has 15 C
->> files and 19 subdirectories, but I dunno the status of any of them...
-> 
-> I think asking "what we need to convert" is at least slightly
-> mis-framed. Once the basics for device tree support are in place
-> (basically patches 06-09), which boards are supported by device tree
-> is mostly a matter of (1) whether the hardware drivers you want to use
-> have bindings and use modern kernel interfaces, and (2) someone
-> writing the dts files.
-
-(3) being able to test the result on real hardware.
-
-We can _add_ device tree support without that, but can we remove the old board
-files without it?
-
-> I don't mind holding off a little bit on removal of the legacy board
-> file support if it's hard to get enough hardware working right away
-> with device tree, but I do want to move towards getting rid of it as
-> soon as we can, since it's a large volume of code cutting into my
-> ability to have a good maintainer-level understanding of the arch/sh
-> tree and has a lot of crufty, unmaintained parallel infrastructure
-> duplicating stuff that can be done in cleaner and more modern ways
-> (see the threads on early platform device stuff, rtc drivers, etc.).
-
-The process may include a deprecation of hardware nobody has anymore, with call
-for testers, for a year or so before deleting stuff. (And then the old stuff's
-in git if somebody finds a board and wants to fish it out.)
-
-Also, I'd really like QEMU support to act as a first class board. At least 256
-megs of ram (so you can do native compiles on it), serial support that works
-(enabling the FIFO broke it because they don't implement the '15 bits of silence
-triggers a flush timer' part, so data gets stranded in the buffer until enough
-comes in to fill it the rest of the way which is a pain to type at when it's a
-serial console), multiple hard drives, and so on.
-
-I'd be fine with virtio but there's no virtio devices on that target I've
-noticed yet, although maybe I just haven't figured out how to enable it...
-
-> Rich
-
-Rob
+diff --git a/Documentation/s390/vfio-ap.txt b/Documentation/s390/vfio-ap.txt
+new file mode 100644
+index 0000000..79f3d43
+--- /dev/null
++++ b/Documentation/s390/vfio-ap.txt
+@@ -0,0 +1,575 @@
++Introduction:
++============
++The Adjunct Processor (AP) facility is an IBM Z cryptographic facility comprised
++of three AP instructions and from 1 up to 256 PCIe cryptographic adapter cards.
++The AP devices provide cryptographic functions to all CPUs assigned to a
++linux system running in an IBM Z system LPAR.
++
++The AP adapter cards are exposed via the AP bus. The motivation for vfio-ap
++is to make AP cards available to KVM guests using the VFIO mediated device
++framework. This implementation relies considerably on the s390 virtualization
++facilities which do most of the hard work of providing direct access to AP
++devices.
++
++AP Architectural Overview:
++=========================
++To facilitate the comprehension of the design, let's start with some
++definitions:
++
++* AP adapter
++
++  An AP adapter is an IBM Z adapter card that can perform cryptographic
++  functions. There can be from 0 to 256 adapters assigned to an LPAR. Adapters
++  assigned to the LPAR in which a linux host is running will be available to
++  the linux host. Each adapter is identified by a number from 0 to 255. When
++  installed, an AP adapter is accessed by AP instructions executed by any CPU.
++
++  The AP adapter cards are assigned to a given LPAR via the system's Activation
++  Profile which can be edited via the HMC. When the system is IPL'd, the AP bus
++  module is loaded and detects the AP adapter cards assigned to the LPAR. The AP
++  bus creates a sysfs device for each adapter as they are detected. For example,
++  if AP adapters 4 and 10 (0x0a) are assigned to the LPAR, the AP bus will
++  create the following sysfs entries:
++
++    /sys/devices/ap/card04
++    /sys/devices/ap/card0a
++
++  Symbolic links to these devices will also be created in the AP bus devices
++  sub-directory:
++
++    /sys/bus/ap/devices/[card04]
++    /sys/bus/ap/devices/[card04]
++
++* AP domain
++
++  An adapter is partitioned into domains. Each domain can be thought of as
++  a set of hardware registers for processing AP instructions. An adapter can
++  hold up to 256 domains. Each domain is identified by a number from 0 to 255.
++  Domains can be further classified into two types:
++
++    * Usage domains are domains that can be accessed directly to process AP
++      commands.
++
++    * Control domains are domains that are accessed indirectly by AP
++      commands sent to a usage domain to control or change the domain, for
++      example; to set a secure private key for the domain.
++
++  The AP usage and control domains are assigned to a given LPAR via the system's
++  Activation Profile which can be edited via the HMC. When the system is IPL'd,
++  the AP bus module is loaded and detects the AP usage and control domains
++  assigned to the LPAR. The domain number of each usage domain will be coupled
++  with the adapter number of each AP adapter assigned to the LPAR to identify
++  the AP queues (see AP Queue section below). The domain number of each control
++  domain will be represented in a bitmask and stored in a sysfs file
++  /sys/bus/ap/ap_control_domain_mask created by the bus. The bits in the mask,
++  from most to least significant bit, correspond to domains 0-255.
++
++  A domain may be assigned to a system as both a usage and control domain, or
++  as a control domain only. Consequently, all domains assigned as both a usage
++  and control domain can both process AP commands as well as be changed by an AP
++  command sent to any usage domain assigned to the same system. Domains assigned
++  only as control domains can not process AP commands but can be changed by AP
++  commands sent to any usage domain assigned to the system.
++
++* AP Queue
++
++  An AP queue is the means by which an AP command-request message is sent to a
++  usage domain inside a specific adapter. An AP queue is identified by a tuple
++  comprised of an AP adapter ID (APID) and an AP queue index (APQI). The
++  APQI corresponds to a given usage domain number within the adapter. This tuple
++  forms an AP Queue Number (APQN) uniquely identifying an AP queue. AP
++  instructions include a field containing the APQN to identify the AP queue to
++  which the AP command-request message is to be sent for processing.
++
++  The AP bus will create a sysfs device for each APQN that can be derived from
++  the intersection of the AP adapter and usage domain numbers detected when the
++  AP bus module is loaded. For example, if adapters 4 and 10 (0x0a) and usage
++  domains 6 and 71 (0x47) are assigned to the LPAR, the AP bus will create the
++  following sysfs entries:
++
++    /sys/devices/ap/card04/04.0006
++    /sys/devices/ap/card04/04.0047
++    /sys/devices/ap/card0a/0a.0006
++    /sys/devices/ap/card0a/0a.0047
++
++  The following symbolic links to these devices will be created in the AP bus
++  devices subdirectory:
++
++    /sys/bus/ap/devices/[04.0006]
++    /sys/bus/ap/devices/[04.0047]
++    /sys/bus/ap/devices/[0a.0006]
++    /sys/bus/ap/devices/[0a.0047]
++
++* AP Instructions:
++
++  There are three AP instructions:
++
++  * NQAP: to enqueue an AP command-request message to a queue
++  * DQAP: to dequeue an AP command-reply message from a queue
++  * PQAP: to administer the queues
++
++AP and SIE:
++==========
++Let's now see how AP instructions are interpreted by the hardware.
++
++A satellite control block called the Crypto Control Block is attached to our
++main hardware virtualization control block. The CRYCB contains three fields to
++identify the adapters, usage domains and control domains assigned to the KVM
++guest:
++
++* The AP Mask (APM) field is a bit mask that identifies the AP adapters assigned
++  to the KVM guest. Each bit in the mask, from most significant to least
++  significant bit, corresponds to an APID from 0-255. If a bit is set, the
++  corresponding adapter is valid for use by the KVM guest.
++
++* The AP Queue Mask (AQM) field is a bit mask identifying the AP usage domains
++  assigned to the KVM guest. Each bit in the mask, from most significant to
++  least significant bit, corresponds to an AP queue index (APQI) from 0-255. If
++  a bit is set, the corresponding queue is valid for use by the KVM guest.
++
++* The AP Domain Mask field is a bit mask that identifies the AP control domains
++  assigned to the KVM guest. The ADM bit mask controls which domains can be
++  changed by an AP command-request message sent to a usage domain from the
++  guest. Each bit in the mask, from least significant to most significant bit,
++  corresponds to a domain from 0-255. If a bit is set, the corresponding domain
++  can be modified by an AP command-request message sent to a usage domain
++  configured for the KVM guest.
++
++If you recall from the description of an AP Queue, AP instructions include
++an APQN to identify the AP adapter and AP queue to which an AP command-request
++message is to be sent (NQAP and PQAP instructions), or from which a
++command-reply message is to be received (DQAP instruction). The validity of an
++APQN is defined by the matrix calculated from the APM and AQM; it is the
++cross product of all assigned adapter numbers (APM) with all assigned queue
++indexes (AQM). For example, if adapters 1 and 2 and usage domains 5 and 6 are
++assigned to a guest, the APQNs (1,5), (1,6), (2,5) and (2,6) will be valid for
++the guest.
++
++The APQNs can provide secure key functionality - i.e., a private key is stored
++on the adapter card for each of its domains - so each APQN must be assigned to
++at most one guest or the linux host.
++
++   Example 1: Valid configuration:
++   ------------------------------
++   Guest1: adapters 1,2  domains 5,6
++   Guest2: adapter  1,2  domain 7
++
++   This is valid because both guests have a unique set of APQNs: Guest1 has
++   APQNs (1,5), (1,6), (2,5) and (2,6); Guest2 has APQNs (1,7) and (2,7).
++
++   Example 2: Invalid configuration:
++   --------------------------------is assigned by writing the adapter's number into the
++   Guest1: adapters 1,2  domains 5,6
++   Guest2: adapter  1    domains 6,7
++
++   This is an invalid configuration because both guests have access to
++   APQN (1,6).
++
++The Design:
++===========
++The design introduces three new objects:
++
++1. AP matrix device
++2. VFIO AP device driver (vfio_ap.ko)
++3. AP mediated matrix passthrough device
++
++The VFIO AP device driver
++-------------------------
++The VFIO AP (vfio_ap) device driver serves the following purposes:
++
++1. Provides the interfaces to reserve APQNs for exclusive use of KVM guests.
++
++2. Sets up the VFIO mediated device interfaces to manage the mediated matrix
++   device and create the sysfs interfaces for assigning adapters, usage domains,
++   and control domains comprising the matrix for a KVM guest.
++
++3. Configure the APM, AQM and ADM in the CRYCB referenced by a KVM guest's
++   SIE state description to grant the guest access to AP devices
++
++4. Initialize the CPU model feature indicating that a KVM guest may use
++   AP facilities installed on the linux host.
++
++5. Enable interpretive execution mode for the KVM guest.
++
++Reserve APQNs for exclusive use of KVM guests
++---------------------------------------------
++The following block diagram illustrates the mechanism by which APQNs are
++reserved:
++
++                              +------------------+
++                 remove       |                  |   unbind
++         +------------------->+ cex4queue driver +<-----------+
++         |                    |                  |            |
++         |                    +------------------+            |
++         |                                                    |
++         |                                                    |
++         |                                                    |
+++--------+---------+ register +------------------+      +-----+------+
++|                  +<---------+                  | bind |            |
++|      ap_bus      |          |  vfio_ap driver  +<-----+    admin   |
++|                  +--------->+                  |      |            |
+++------------------+  probe   +---+--------+-----+      +------------+
++                                  |        |
++                           create |        | store APQN
++                                  |        |
++                                  v        v
++                              +---+--------+-----+
++                              |                  |
++                              |  matrix device   |
++                              |                  |
++                              +------------------+
++
++The process for reserving an AP queue for use by a KVM guest is:
++
++* The vfio-ap driver during its initialization will perform the following:
++  * Create the 'vfio_ap' root device - /sys/devices/vfio_ap
++  * Create the 'matrix' device in the 'vfio_ap' root
++  * Register the matrix device with the device core
++* Register with the ap_bus for AP queue devices of type 10 devices (CEX4 and
++  newer) and to provide the vfio_ap driver's probe and remove callback
++  interfaces. The reason why older devices are not supported is because there
++  are no systems available on which to test.
++* The admin unbinds queue cc.qqqq from the cex4queue device driver. This results
++  in the ap_bus calling the the device driver's remove interface which
++  unbinds the cc.qqqq queue device from the driver.
++* The admin binds the cc.qqqq queue to the vfio_ap device driver. This results
++  in the ap_bus calling the device vfio_ap driver's probe interface to bind
++  queue cc.qqqq to the driver. The vfio_ap device driver will store the APQN for
++  the queue in the matrix device
++
++Set up the VFIO mediated device interfaces
++------------------------------------------
++The VFIO AP device driver utilizes the common interface of the VFIO mediated
++device core driver to:
++* Register an AP mediated bus driver to add a mediated matrix device to and
++  remove it from a VFIO group.
++* Create and destroy a mediated matrix device
++* Add a mediated matrix device to and remove it from the AP mediated bus driver
++* Add a mediated matrix device to and remove it from an IOMMU group
++
++The following high-level block diagram shows the main components and interfaces
++of the VFIO AP mediated matrix device driver:
++
++ +-------------+
++ |             |
++ | +---------+ | mdev_register_driver() +--------------+
++ | |  Mdev   | +<-----------------------+              |
++ | |  bus    | |                        | vfio_mdev.ko |
++ | | driver  | +----------------------->+              |<-> VFIO user
++ | +---------+ |    probe()/remove()    +--------------+    APIs
++ |             |
++ |  MDEV CORE  |
++ |   MODULE    |
++ |   mdev.ko   |
++ | +---------+ | mdev_register_device() +--------------+
++ | |Physical | +<-----------------------+              |
++ | | device  | |                        |  vfio_ap.ko  |<-> matrix
++ | |interface| +----------------------->+              |    device
++ | +---------+ |       callback         +--------------+
++ +-------------+
++
++During initialization of the vfio_ap module, the matrix device is registered
++with an 'mdev_parent_ops' structure that provides the sysfs attribute
++structures, mdev functions and callback interfaces for managing the mediated
++matrix device.
++
++* sysfs attribute structures:
++  * supported_type_groups
++    The VFIO mediated device framework supports creation of user-defined
++    mediated device types. These mediated device types are specified
++    via the 'supported_type_groups' structure when a device is registered
++    with the mediated device framework. The registration process creates the
++    sysfs structures for each mediated device type specified in the
++    'mdev_supported_types' sub-directory of the device being registered. Along
++    with the device type, the sysfs attributes of the mediated device type are
++    provided.
++
++    The VFIO AP device driver will register one mediated device type for
++    passthrough devices:
++        /sys/devices/vfio_ap/mdev_supported_types/vfio_ap-passthrough
++    Only the three read-only attributes required by the VFIO mdev framework will
++    be provided:
++        /sys/devices/vfio_ap/mdev_supported_types
++        ... name
++        ... device_api
++        ... available_instances
++        Where:
++        * name: specifies the name of the mediated device type
++        * device_api: the mediated device type's API
++        * available_instances: the number of mediated matrix passthrough devices
++                               that can be created
++  * mdev_attr_groups
++    This attribute group identifies the user-defined sysfs attributes of the
++    mediated device. When a device is registered with the VFIO mediated device
++    framework, the sysfs attributes files identified in the 'mdev_attr_groups'
++    structure will be created in the mediated matrix device's directory. The
++    sysfs attributes for a mediated matrix device are:
++    * assign_adapter:
++      A write-only file for assigning an AP adapter to the mediated matrix
++      device. To assign an adapter, the APID of the adapter is written to the
++      file.
++    * assign_domain:
++      A write-only file for assigning an AP usage domain to the mediated matrix
++      device. To assign a domain, the APQI of the AP queue corresponding to a
++      usage domain is written to the file.
++    * matrix:
++      A read-only file for displaying the APQNs derived from the adapters and
++      domains assigned to the mediated matrix device.
++    * assign_control_domain:
++      A write-only file for assigning an AP control domain to the mediated
++      matrix device. To assign a control domain, the ID of a domain to be
++      controlled is written to the file. For the initial implementation, the set
++      of control domains will always include the set of usage domains, so it is
++      only necessary to assign control domains that are not also assigned as
++      usage domains.
++    * control_domains:
++      A read-only file for displaying the control domain numbers assigned to the
++      mediated matrix device.
++
++* functions:
++  * create:
++    allocates the ap_matrix_mdev structure used by the vfio_ap driver to:
++    * Keep track of the available instances
++    * Store the reference to the struct kvm for the KVM guest
++    * Provide the notifier callback that will get invoked to handle the
++      VFIO_GROUP_NOTIFY_SET_KVM event. When received, the vfio_ap driver will
++      store the reference in the mediated matrix device's ap_matrix_mdev
++      structure and enable the interpretive execution mode for the KVM guest.
++  * remove:
++    deallocates the mediated matrix device's ap_matrix_mdev structure.
++
++* callback interfaces
++  * open:
++    The vfio_ap driver uses this callback to register a
++    VFIO_GROUP_NOTIFY_SET_KVM notifier callback function for the mdev matrix
++    device. The notifier is invoked when QEMU connects the VFIO iommu group
++    for the mdev matrix device to the MDEV bus. Access to the KVM structure used
++    to configure the KVM guest is provided via this callback. The KVM structure,
++    is used to configure the guest's access to the AP matrix defined via the
++    mediated matrix device's sysfs attribute files.
++  * release:
++    unregisters the VFIO_GROUP_NOTIFY_SET_KVM notifier callback function for the
++    mdev matrix device and deconfigures the guest's AP matrix.
++
++Configure the APM, AQM and ADM in the CRYCB:
++-------------------------------------------
++Configuring the AP matrix for a KVM guest will be performed when the
++VFIO_GROUP_NOTIFY_SET_KVM notifier callback is invoked. The notifier
++function is called when QEMU connects the VFIO iommu group for the mdev matrix
++device to the MDEV bus. The CRYCB is configured by:
++* Setting the bits in the APM corresponding to the APIDs assigned to the
++  mediated matrix device via its 'assign_adapter' interface.
++* Setting the bits in the AQM corresponding to the APQIs assigned to the
++  mediated matrix device via its 'assign_domain' interface.
++* Setting the bits in the ADM corresponding to the domain dIDs assigned to the
++  mediated matrix device via its 'assign_control_domains' interface.
++
++Initialize the CPU model feature for AP
++---------------------------------------
++A new CPU model feature, KVM_S390_VM_CPU_FEAT_AP, is introduced to indicate that
++AP instructions are available to the KVM guest. This feature will be enabled by
++KVM only if the AP instructions are installed on the linux host. The feature
++must be turned on for the guest in order to access AP devices from the guest.
++For example, to turn the AP facilities on from the QEMU command line:
++
++    /usr/bin/qemu-system-s390x ... -cpu xxx,ap=on
++
++    Where xxx is the CPU model being used.
++
++    If the CPU model feature is not enabled by the kernel, QEMU will fail and
++    report that the feature is not supported.
++
++Example:
++=======
++Let's now provide an example to illustrate how KVM guests may be given
++access to AP facilities. For this example, we will show how to configure
++two guests such that executing the lszcrypt command on the guests would
++look like this:
++
++Guest1
++------
++CARD.DOMAIN TYPE  MODE
++------------------------------
++05          CEX5C CCA-Coproc
++05.0004     CEX5C CCA-Coproc
++05.00ab     CEX5C CCA-Coproc
++06          CEX5A Accelerator
++06.0004     CEX5A Accelerator
++06.00ab     CEX5C CCA-Coproc
++
++Guest2
++------
++CARD.DOMAIN TYPE  MODE
++------------------------------
++05          CEX5A Accelerator
++05.0047     CEX5A Accelerator
++05.00ff     CEX5A Accelerator
++
++These are the steps:
++
++1. Install the vfio_ap module on the linux host. The dependency chain for the
++   vfio_ap module is:
++   * vfio
++   * mdev
++   * vfio_mdev
++   * KVM
++   * vfio_ap
++
++2. Secure the AP queues to be used by the two guests so that the host can not
++   access them. Only type 10 adapters (i.e., CEX4 and later) are supported
++   due to the fact that no test systems with older card types are available
++   for testing.
++
++   To secure the AP queues each, each AP Queue device must first be unbound from
++   the cex4queue device driver. The sysfs location of the driver is:
++
++   /sys/bus/ap
++   --- [drivers]
++   ------ [cex4queue]
++   --------- [05.0004]
++   --------- [05.0047]
++   --------- [05.00ab]
++   --------- [05.00ff]
++   --------- [06.0004]
++   --------- [06.00ab]
++   --------- unbind
++
++   To unbind AP queue 05.0004 from the cex4queue device driver:
++
++	echo 05.0004 > unbind
++
++   This must also be done for AP queues 05.00ab, 05.0047, 05.00ff, 06.0004,
++   and 06.00ab.
++
++   The AP Queues that were unbound must then be reserves for use by the two KVM
++   guests. This is accomplished by binding them to the vfio_ap device driver.
++   The sysfs location of the driver is:
++
++   /sys/bus/ap
++   ---[drivers]
++   ------ [vfio_ap]
++   ---------- bind
++
++   To bind queue 05.0004 to the vfio_ap driver:
++
++	echo 05.0004 > bind
++
++   This must also be done for AP queues 05.00ab, 05.0047, 05.00ff, 06.0004,
++   and 06.00ab.
++
++   Take note that the AP queues bound to the vfio_ap driver will be available
++   for guest usage until they are unbound from the driver, the vfio_ap module
++   is unloaded, or the host system is shut down.
++
++3. Create the mediated devices needed to configure the AP matrixes for the
++   two guests and to provide an interface to the vfio_ap driver for
++   use by the guests:
++
++   /sys/devices/
++   --- [vfio_ap]
++   ------ [matrix] (this is the matrix device)
++   --------- [mdev_supported_types]
++   ------------ [vfio_ap-passthrough] (passthrough mediated matrix device type)
++   --------------- create
++   --------------- [devices]
++
++   To create the mediated devices for the two guests:
++
++	uuidgen > create
++	uuidgen > create
++
++   This will create two mediated devices in the [devices] subdirectory named
++   with the UUID written to the create attribute file. We call them $uuid1
++   and $uuid2:
++
++   /sys/devices/
++   --- [vfio_ap]
++   ------ [matrix]
++   --------- [mdev_supported_types]
++   ------------ [vfio_ap-passthrough]
++   --------------- [devices]
++   ------------------ [$uuid1]
++   --------------------- assign_adapter
++   --------------------- assign_control_domain
++   --------------------- assign_domain
++   --------------------- matrix
++   --------------------- unassign_adapter
++   --------------------- unassign_control_domain
++   --------------------- unassign_domain
++
++   ------------------ [$uuid2]
++   --------------------- assign_adapter
++   --------------------- assign_cTo assign an adapter, the APID of the adapter is written to the
++      file. ontrol_domain
++   --------------------- assign_domain
++   --------------------- matrix
++   --------------------- unassign_adapter
++   --------------------- unassign_control_domain
++   --------------------- unassign_domain
++
++4. The administrator now needs to configure the matrixes for mediated
++   devices $uuid1 (for Guest1) and $uuid2 (for Guest2).
++
++   This is how the matrix is configured for Guest1:
++
++   echo 5 > assign_adapter
++   echo 6 > assign_adapter
++   echo 4 > assign_domain
++   echo 0xab > assign_domain
++
++   For this implementation, all usage domains - i.e., domains assigned
++   via the assign_domain attribute file - will also be configured in the ADM
++   field of the KVM guest's CRYCB, so there is no need to assign control
++   domains here unless you want to assign control domains that are not
++   assigned as usage domains.
++
++   If a mistake is made configuring an adapter, domain or control domain,
++   you can use the unassign_xxx files to unassign the adapter, domain or
++   control domain.
++
++   To display the matrix configuration for Guest1:
++
++   cat matrix
++
++   This is how the matrix is configured for Guest2:
++
++   echo 5 > assign_adapter
++   echo 0x47 > assign_domain
++   echo 0xff > assign_domain
++
++6. Start Guest1:
++
++   /usr/bin/qemu-system-s390x ... -cpu xxx,ap=on \
++      -device vfio-ap,sysfsdev=/sys/devices/vfio_ap/matrix/$uuid1 ...
++
++7. Start Guest2:
++
++   /usr/bin/qemu-system-s390x ... -cpu xxx,ap=on \
++      -device vfio-ap,sysfsdev=/sys/devices/vfio_ap/matrix/$uuid2 ...
++
++When the guest is shut down, the mediated matrix device may be removed.
++
++Using our example again, to remove the mediated matrix device $uuid1:
++
++   /sys/devices/
++      --- [vfio_ap]
++      ------ [matrix]
++      --------- [mdev_supported_types]
++      ------------ [vfio_ap-passthrough]
++      --------------- [devices]
++      ------------------ [$uuid1]
++      --------------------- remove
++
++   echo 1 > remove
++
++   This will remove all of the mdev matrix device's sysfs structures. To
++   recreate and reconfigure the mdev matrix device, all of the steps starting
++   with step 4 will have to be performed again.
++
++   It is not necessary to remove an mdev matrix device, but one may want to
++   remove it if no guest will use it during the lifetime of the linux host. If
++   the mdev matrix device is removed, one may want to unbind the AP queues the
++   guest was using from the vfio_ap device driver and bind them back to the
++   default driver. Alternatively, the AP queues can be configured for another
++   mdev matrix (i.e., guest). In either case, one must take care to change the
++   secure key configured for the domain to which the queue is connected.
+\ No newline at end of file
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cecadf2..f61f714 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12247,6 +12247,7 @@ S:	Supported
+ F:	drivers/s390/crypto/vfio_ap_drv.c
+ F:	drivers/s390/crypto/vfio_ap_private.h
+ F:	drivers/s390/crypto/vfio_ap_ops.c
++F:	Documentation/s390/vfio-ap.txt
+ 
+ S390 ZFCP DRIVER
+ M:	Steffen Maier <maier@linux.ibm.com>
+-- 
+1.7.1
