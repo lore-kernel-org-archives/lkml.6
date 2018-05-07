@@ -1,115 +1,92 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752774AbeEGS5N (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 14:57:13 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:40437 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752689AbeEGS5M (ORCPT
+        id S1752784AbeEGTCz (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 15:02:55 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:33752 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752335AbeEGTCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 14:57:12 -0400
-X-Google-Smtp-Source: AB8JxZqsS5HGl4hp+kfzxV7LVyorBUmU7qO92dUZNeX3ed10Cl2rHbfl/HL3Nhs/RJDsYcgQJ+s6NVLOKOZxaXiY+W4=
+        Mon, 7 May 2018 15:02:53 -0400
+X-Google-Smtp-Source: AB8JxZoSFMakJCyPUTWWVD9hhC3RKyd0k/vY6ypZ1Mf9vTnTAhtBuFduyezgUv9t14Csy8TnjlHXBea/zVFzyTXi9MI=
 MIME-Version: 1.0
-In-Reply-To: <20180507184622.GB12361@bombadil.infradead.org>
-References: <1525704627-30114-1-git-send-email-yehs1@lenovo.com> <20180507184622.GB12361@bombadil.infradead.org>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Mon, 7 May 2018 11:57:10 -0700
-Message-ID: <CAPcyv4hBJN3npXwg3Ur32JSWtKvBUZh7F8W+Exx3BB-uKWwPag@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/6] use mm to manage NVDIMM (pmem) zone
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Huaisheng Ye <yehs1@lenovo.com>, Michal Hocko <mhocko@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, chengnt@lenovo.com,
-        pasha.tatashin@oracle.com, Sasha Levin <alexander.levin@verizon.com>,
-        Linux MM <linux-mm@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>,
-        Andrew Morton <akpm@linux-foundation.org>, colyli@suse.de,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Vlastimil Babka <vbabka@suse.cz>, Dave Hansen <dave.hansen@intel.com>
+In-Reply-To: <d7fa9cf7-7c7e-b01c-8925-ce6dafc8721c@gmail.com>
+References: <1525706596-13601-1-git-send-email-s.mesoraca16@gmail.com> <d7fa9cf7-7c7e-b01c-8925-ce6dafc8721c@gmail.com>
+From: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Date: Mon, 7 May 2018 21:02:32 +0200
+Message-ID: <CAJHCu1KsvPEs9vpp5bY04OeVfMtqZzPuO=9c8e2QP-+n+VKUjQ@mail.gmail.com>
+Subject: Re: [PATCH v2] net: dsa: drop some VLAs in switch.c
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Kees Cook <keescook@chromium.org>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        David Laight <David.Laight@aculab.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w47IvKJI013489
 
-On Mon, May 7, 2018 at 11:46 AM, Matthew Wilcox <willy@infradead.org> wrote:
-> On Mon, May 07, 2018 at 10:50:21PM +0800, Huaisheng Ye wrote:
->> Traditionally, NVDIMMs are treated by mm(memory management) subsystem as
->> DEVICE zone, which is a virtual zone and both its start and end of pfn
->> are equal to 0, mm wouldn’t manage NVDIMM directly as DRAM, kernel uses
->> corresponding drivers, which locate at \drivers\nvdimm\ and
->> \drivers\acpi\nfit and fs, to realize NVDIMM memory alloc and free with
->> memory hot plug implementation.
+2018-05-07 20:14 GMT+02:00 Florian Fainelli <f.fainelli@gmail.com>:
+> On 05/07/2018 08:23 AM, Salvatore Mesoraca wrote:
+>> We avoid 2 VLAs by using a pre-allocated field in dsa_switch.
+>> We also try to avoid dynamic allocation whenever possible.
+>>
+>> Link: http://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>> Link: http://lkml.kernel.org/r/20180505185145.GB32630@lunn.ch
+>>
+>> Signed-off-by: Salvatore Mesoraca <s.mesoraca16@gmail.com>
+>> ---
+>>  include/net/dsa.h |  3 +++
+>>  net/dsa/dsa2.c    | 14 ++++++++++++++
+>>  net/dsa/switch.c  | 22 ++++++++++------------
+>>  3 files changed, 27 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/include/net/dsa.h b/include/net/dsa.h
+>> index 60fb4ec..576791d 100644
+>> --- a/include/net/dsa.h
+>> +++ b/include/net/dsa.h
+>> @@ -256,6 +256,9 @@ struct dsa_switch {
+>>       /* Number of switch port queues */
+>>       unsigned int            num_tx_queues;
+>>
+>> +     unsigned long           *bitmap;
+>> +     unsigned long           _bitmap;
+>> +
+>>       /* Dynamically allocated ports, keep last */
+>>       size_t num_ports;
+>>       struct dsa_port ports[];
+>> diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
+>> index adf50fb..cebf35f0 100644
+>> --- a/net/dsa/dsa2.c
+>> +++ b/net/dsa/dsa2.c
+>> @@ -748,6 +748,20 @@ struct dsa_switch *dsa_switch_alloc(struct device *dev, size_t n)
+>>       if (!ds)
+>>               return NULL;
+>>
+>> +     /* We avoid allocating memory outside dsa_switch
+>> +      * if it is not needed.
+>> +      */
+>> +     if (n <= sizeof(ds->_bitmap) * 8) {
+>> +             ds->bitmap = &ds->_bitmap;
 >
-> You probably want to let linux-nvdimm know about this patch set.
-> Adding to the cc.
+> Should not this be / BITS_PER_BYTE? If the sizeof(unsigned long) is <=
+> 8, then you don't need to allocate it, otherwise, you have to.
 
-Yes, thanks for that!
+No.
+We need one 1 bit per port, of course sizeof() returns size in bytes,
+hence the multiplication to get the number of bits.
+I might multiply per BITS_PER_BYTE instead of 8, but I doubt that
+Linux supports implementations where a byte is not an octet.
 
-> Also, I only received patch 0 and 4.  What happened
-> to 1-3,5 and 6?
->
->> With current kernel, many mm’s classical features like the buddy
->> system, swap mechanism and page cache couldn’t be supported to NVDIMM.
->> What we are doing is to expand kernel mm’s capacity to make it to handle
->> NVDIMM like DRAM. Furthermore we make mm could treat DRAM and NVDIMM
->> separately, that means mm can only put the critical pages to NVDIMM
->> zone, here we created a new zone type as NVM zone. That is to say for
->> traditional(or normal) pages which would be stored at DRAM scope like
->> Normal, DMA32 and DMA zones. But for the critical pages, which we hope
->> them could be recovered from power fail or system crash, we make them
->> to be persistent by storing them to NVM zone.
->>
->> We installed two NVDIMMs to Lenovo Thinksystem product as development
->> platform, which has 125GB storage capacity respectively. With these
->> patches below, mm can create NVM zones for NVDIMMs.
->>
->> Here is dmesg info,
->>  Initmem setup node 0 [mem 0x0000000000001000-0x000000237fffffff]
->>  On node 0 totalpages: 36879666
->>    DMA zone: 64 pages used for memmap
->>    DMA zone: 23 pages reserved
->>    DMA zone: 3999 pages, LIFO batch:0
->>  mminit::memmap_init Initialising map node 0 zone 0 pfns 1 -> 4096
->>    DMA32 zone: 10935 pages used for memmap
->>    DMA32 zone: 699795 pages, LIFO batch:31
->>  mminit::memmap_init Initialising map node 0 zone 1 pfns 4096 -> 1048576
->>    Normal zone: 53248 pages used for memmap
->>    Normal zone: 3407872 pages, LIFO batch:31
->>  mminit::memmap_init Initialising map node 0 zone 2 pfns 1048576 -> 4456448
->>    NVM zone: 512000 pages used for memmap
->>    NVM zone: 32768000 pages, LIFO batch:31
->>  mminit::memmap_init Initialising map node 0 zone 3 pfns 4456448 -> 37224448
->>  Initmem setup node 1 [mem 0x0000002380000000-0x00000046bfffffff]
->>  On node 1 totalpages: 36962304
->>    Normal zone: 65536 pages used for memmap
->>    Normal zone: 4194304 pages, LIFO batch:31
->>  mminit::memmap_init Initialising map node 1 zone 2 pfns 37224448 -> 41418752
->>    NVM zone: 512000 pages used for memmap
->>    NVM zone: 32768000 pages, LIFO batch:31
->>  mminit::memmap_init Initialising map node 1 zone 3 pfns 41418752 -> 74186752
->>
->> This comes /proc/zoneinfo
->> Node 0, zone      NVM
->>   pages free     32768000
->>         min      15244
->>         low      48012
->>         high     80780
->>         spanned  32768000
->>         present  32768000
->>         managed  32768000
->>         protection: (0, 0, 0, 0, 0, 0)
->>         nr_free_pages 32768000
->> Node 1, zone      NVM
->>   pages free     32768000
->>         min      15244
->>         low      48012
->>         high     80780
->>         spanned  32768000
->>         present  32768000
->>         managed  32768000
+> I would actually just always dynamically allocate the bitmap, optimizing
+> for the case where we have fewer than or 8 ports is not worth IMHO.
 
-I think adding yet one more mm-zone is the wrong direction. Instead,
-what we have been considering is a mechanism to allow a device-dax
-instance to be given back to the kernel as a distinct numa node
-managed by the VM. It seems it times to dust off those patches.
+This optimization will save us an allocation when number of ports is
+less than 32 or 64 (depending on arch).
+IMHO it's useful, if you consider that, right now, DSA works only with
+12-ports switches.
+
+Thank you for your time,
+
+Salvatore
