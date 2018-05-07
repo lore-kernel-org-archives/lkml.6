@@ -1,24 +1,24 @@
 Return-Path: <neilb@suse.com>
-X-Google-Smtp-Source: AB8JxZqsZ6YMonu/2t1PyR+d7tqODheAVlxsM9o16jQUzzFSar+nJX8vXAyB3i21WoEmbjh8W/P6
-ARC-Seal: i=1; a=rsa-sha256; t=1525654566; cv=none;
+X-Google-Smtp-Source: AB8JxZrmt2UA7og7fMBNUAiZ1aHd+4/hhBfBqhu2h+W9le1Tx4zP/oC9Dw5psHNEqG5ElU2tmRjl
+ARC-Seal: i=1; a=rsa-sha256; t=1525654558; cv=none;
         d=google.com; s=arc-20160816;
-        b=bxB5YSED8a2zshKKcSkfJQIYEPPFXTtiWspaC3wPyQdj6agVzokikB5ZTGjFqTk2i7
-         FMRHmu01xhf7QKFWfg0+70UGpDZgFlhkdpdYJwlymtZ6aCKxJdzBx75MeuWHZejsl6ru
-         tJs8XVNGu2kyFklNNZr4389iaFc5JhGASZU1KS9TyjWBvjmVJwHxa6a40xaisWYYh3sH
-         FbduJVjN97ciESYqFzweLmt0DgjAYEmeJuM4rH2Fk48A53lGPCXGNhrKupgrp2xPlXhk
-         2kwlVMwNCcHcMujSxT2KxdLMlIViycbppQ/B9xgmQXXlwxUuBMXPwgPdgnXGQ1aRH/Je
-         RUFQ==
+        b=qK91xJFney4ltkyXKIT9KKc6YyUr1vv494G3nPQUvTXT3zXTrEE3aYkZ7/BcyYOxQ/
+         1ICTGosu/w/XH45X60o/+n85sF1o7/hTng7gPx2uefNPfI7a8ug/vlHNNyrVeCOBN0LN
+         2WmF1YpU4W+76iZC7pQaW+DxDW9Xpo5fX29xNh9XbRigbNa19QacVcDCpJoxyX3Wdvki
+         6PaqrqK274jlmgd3TTXGbOhlTagiWLyPwKcn0sFLitNjSALtnB7abXoABD0OxoZPWKh2
+         c9WiaXG77/l9wfd0lMHUmjAUv7XheEuAKR9yLVSkteaknAaSdyMPaZYLkXvuOvIRhhz/
+         u//w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:message-id:cc:subject:date:to:from
          :arc-authentication-results;
-        bh=jb3DRaaL2EAWeHmvjK7kcnw9zsphicE9zB5Pc6IZwDo=;
-        b=nx8fQV/KevyW1WCwhN0GiCr10tPyrx/IAZmxGmQlWFw0di3ArJXFuGwswSlSth9plA
-         OsuEyM6/X4nXoHdPEGj6WMQ86OQjMXP07PaMz2a8MFCYnp1gye8ppw0DkvujwYc2C3ko
-         kfiWoYudNlPCXuYUay409ZpqHuggWcv5OlnZFyfv+rdFOCccKNRwUHr0Vv1vuRnB4udM
-         E1r+vYf/2jjWfFupBFAL3S4tuCnwmMmprWU7YL4snp91zUnESkrZYD2tPuTrkkJ/omtH
-         k+92PcSQf21SJlZw5EvFLdd/Hrl0R59U5hln4Mx4cOq8pGY2rhRXP5wDi7gGQ7p+rmMD
-         wW2A==
+        bh=CSsrwDkhjHKZAyJ7bDBT09e8Wgzyzf40DOTGrvYbJJQ=;
+        b=i17gPVZIXUXNdyNUAFjE6LDhF++ZIJk7EhsUBwYiU3kzzHu0b9uTrPZcGnQu1CqtXj
+         I++OHET+KF+JCV4xulVXwMOdf9g6Qqas22Mg/QNm6hsFc+ska1Ftzxv3Od3weUwBeNit
+         4YFevdMyxC13BFzohNcnlqTbEG3Vc9A+gVkWfEnHKnjG+2NVTUO8SupmqdA1YcnJf4I4
+         k7H7PfAI8Pr30vbTNgnvJiwaq5p2a2S4/jL6LKjJDTwNx8K4hAZ8a9IXJ247yeBhyrId
+         C/jJyXOi/HSH09GKrrhVVwiFPwbkyRBvZVcrWJFikPtvmiCxXqAfB3JBeYwEDhgEfTQD
+         J33A==
 ARC-Authentication-Results: i=1; mx.google.com;
        spf=pass (google.com: domain of neilb@suse.com designates 195.135.220.15 as permitted sender) smtp.mailfrom=neilb@suse.com
 Authentication-Results: mx.google.com;
@@ -29,11 +29,11 @@ To: Oleg Drokin <oleg.drokin@intel.com>,
  James Simmons <jsimmons@infradead.org>,
  Andreas Dilger <andreas.dilger@intel.com>
 Date: Mon, 07 May 2018 10:54:48 +1000
-Subject: [PATCH 06/10] staging: lustre: llite: use more private data in
- dump_pgcache
+Subject: [PATCH 05/10] staging: lustre: fold lu_object_new() into
+ lu_object_find_at()
 Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
  Lustre Development List <lustre-devel@lists.lustre.org>
-Message-ID: <152565448817.30131.2651163873160964801.stgit@noble>
+Message-ID: <152565448814.30131.1410451753531304804.stgit@noble>
 In-Reply-To: <152565436690.30131.2229703651041382739.stgit@noble>
 References: <152565436690.30131.2229703651041382739.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -41,228 +41,92 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599764762971715623?=
-X-GMAIL-MSGID: =?utf-8?q?1599764762971715623?=
+X-GMAIL-THRID: =?utf-8?q?1599764754993439206?=
+X-GMAIL-MSGID: =?utf-8?q?1599764754993439206?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The dump_page_cache debugfs file allocates and frees an 'env' in each
-call to vvp_pgcache_start,next,show.  This is likely to be fast, but
-does introduce the need to check for errors.
-
-It is reasonable to allocate a single 'env' when the file is opened,
-and use that throughout.
-
-So create 'seq_private' structure which stores the sbi, env, and
-refcheck, and attach this to the seqfile.
-
-Then use it throughout instead of allocating 'env' repeatedly.
+lu_object_new() duplicates a lot of code that is in
+lu_object_find_at().
+There is no real need for a separate function, it is simpler just
+to skip the bits of lu_object_find_at() that we don't
+want in the LOC_F_NEW case.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- drivers/staging/lustre/lustre/llite/vvp_dev.c |  148 ++++++++++++-------------
- 1 file changed, 72 insertions(+), 76 deletions(-)
+ drivers/staging/lustre/lustre/obdclass/lu_object.c |   44 +++++---------------
+ 1 file changed, 12 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/staging/lustre/lustre/llite/vvp_dev.c b/drivers/staging/lustre/lustre/llite/vvp_dev.c
-index 987c03b058e6..183ea3d0f336 100644
---- a/drivers/staging/lustre/lustre/llite/vvp_dev.c
-+++ b/drivers/staging/lustre/lustre/llite/vvp_dev.c
-@@ -390,6 +390,12 @@ struct vvp_pgcache_id {
- 	struct lu_object_header *vpi_obj;
- };
+diff --git a/drivers/staging/lustre/lustre/obdclass/lu_object.c b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+index 0c9419a6d5d6..7981c7d8ecc1 100644
+--- a/drivers/staging/lustre/lustre/obdclass/lu_object.c
++++ b/drivers/staging/lustre/lustre/obdclass/lu_object.c
+@@ -682,29 +682,6 @@ static void lu_object_limit(const struct lu_env *env, struct lu_device *dev)
+ 			      false);
+ }
  
-+struct seq_private {
-+	struct ll_sb_info	*sbi;
-+	struct lu_env		*env;
-+	u16			refcheck;
-+};
-+
- static void vvp_pgcache_id_unpack(loff_t pos, struct vvp_pgcache_id *id)
- {
- 	BUILD_BUG_ON(sizeof(pos) != sizeof(__u64));
-@@ -531,95 +537,72 @@ static void vvp_pgcache_page_show(const struct lu_env *env,
- 
- static int vvp_pgcache_show(struct seq_file *f, void *v)
- {
-+	struct seq_private	*priv = f->private;
- 	loff_t		   pos;
--	struct ll_sb_info       *sbi;
- 	struct cl_object	*clob;
--	struct lu_env	   *env;
- 	struct vvp_pgcache_id    id;
--	u16 refcheck;
--	int		      result;
- 
--	env = cl_env_get(&refcheck);
--	if (!IS_ERR(env)) {
--		pos = *(loff_t *)v;
--		vvp_pgcache_id_unpack(pos, &id);
--		sbi = f->private;
--		clob = vvp_pgcache_obj(env, &sbi->ll_cl->cd_lu_dev, &id);
--		if (clob) {
--			struct inode *inode = vvp_object_inode(clob);
--			struct cl_page *page = NULL;
--			struct page *vmpage;
+-static struct lu_object *lu_object_new(const struct lu_env *env,
+-				       struct lu_device *dev,
+-				       const struct lu_fid *f,
+-				       const struct lu_object_conf *conf)
+-{
+-	struct lu_object	*o;
+-	struct cfs_hash	      *hs;
+-	struct cfs_hash_bd	    bd;
 -
--			result = find_get_pages_contig(inode->i_mapping,
--						       id.vpi_index, 1,
--						       &vmpage);
--			if (result > 0) {
--				lock_page(vmpage);
--				page = cl_vmpage_page(vmpage, clob);
--				unlock_page(vmpage);
--				put_page(vmpage);
--			}
-+	pos = *(loff_t *)v;
-+	vvp_pgcache_id_unpack(pos, &id);
-+	clob = vvp_pgcache_obj(priv->env, &priv->sbi->ll_cl->cd_lu_dev, &id);
-+	if (clob) {
-+		struct inode *inode = vvp_object_inode(clob);
-+		struct cl_page *page = NULL;
-+		struct page *vmpage;
-+		int result;
-+
-+		result = find_get_pages_contig(inode->i_mapping,
-+					       id.vpi_index, 1,
-+					       &vmpage);
-+		if (result > 0) {
-+			lock_page(vmpage);
-+			page = cl_vmpage_page(vmpage, clob);
-+			unlock_page(vmpage);
-+			put_page(vmpage);
-+		}
- 
--			seq_printf(f, "%8x@" DFID ": ", id.vpi_index,
--				   PFID(lu_object_fid(&clob->co_lu)));
--			if (page) {
--				vvp_pgcache_page_show(env, f, page);
--				cl_page_put(env, page);
--			} else {
--				seq_puts(f, "missing\n");
--			}
--			lu_object_ref_del(&clob->co_lu, "dump", current);
--			cl_object_put(env, clob);
-+		seq_printf(f, "%8x@" DFID ": ", id.vpi_index,
-+			   PFID(lu_object_fid(&clob->co_lu)));
-+		if (page) {
-+			vvp_pgcache_page_show(priv->env, f, page);
-+			cl_page_put(priv->env, page);
- 		} else {
--			seq_printf(f, "%llx missing\n", pos);
-+			seq_puts(f, "missing\n");
- 		}
--		cl_env_put(env, &refcheck);
--		result = 0;
-+		lu_object_ref_del(&clob->co_lu, "dump", current);
-+		cl_object_put(priv->env, clob);
- 	} else {
--		result = PTR_ERR(env);
-+		seq_printf(f, "%llx missing\n", pos);
- 	}
--	return result;
-+	return 0;
- }
- 
- static void *vvp_pgcache_start(struct seq_file *f, loff_t *pos)
- {
--	struct ll_sb_info *sbi;
--	struct lu_env     *env;
--	u16 refcheck;
+-	o = lu_object_alloc(env, dev, f, conf);
+-	if (IS_ERR(o))
+-		return o;
 -
--	sbi = f->private;
-+	struct seq_private	*priv = f->private;
+-	hs = dev->ld_site->ls_obj_hash;
+-	cfs_hash_bd_get_and_lock(hs, (void *)f, &bd, 1);
+-	cfs_hash_bd_add_locked(hs, &bd, &o->lo_header->loh_hash);
+-	cfs_hash_bd_unlock(hs, &bd, 1);
+-
+-	lu_object_limit(env, dev);
+-
+-	return o;
+-}
+-
+ /**
+  * Much like lu_object_find(), but top level device of object is specifically
+  * \a dev rather than top level device of the site. This interface allows
+@@ -740,18 +717,18 @@ struct lu_object *lu_object_find_at(const struct lu_env *env,
+ 	 * just alloc and insert directly.
+ 	 *
+ 	 */
+-	if (conf && conf->loc_flags & LOC_F_NEW)
+-		return lu_object_new(env, dev, f, conf);
+-
+ 	s  = dev->ld_site;
+ 	hs = s->ls_obj_hash;
+-	cfs_hash_bd_get_and_lock(hs, (void *)f, &bd, 1);
+-	o = htable_lookup(s, &bd, f, &version);
+-	cfs_hash_bd_unlock(hs, &bd, 1);
  
--	env = cl_env_get(&refcheck);
--	if (!IS_ERR(env)) {
--		sbi = f->private;
--		if (sbi->ll_site->ls_obj_hash->hs_cur_bits >
--		    64 - PGC_OBJ_SHIFT) {
--			pos = ERR_PTR(-EFBIG);
--		} else {
--			*pos = vvp_pgcache_find(env, &sbi->ll_cl->cd_lu_dev,
--						*pos);
--			if (*pos == ~0ULL)
--				pos = NULL;
--		}
--		cl_env_put(env, &refcheck);
-+	if (priv->sbi->ll_site->ls_obj_hash->hs_cur_bits >
-+	    64 - PGC_OBJ_SHIFT) {
-+		pos = ERR_PTR(-EFBIG);
-+	} else {
-+		*pos = vvp_pgcache_find(priv->env, &priv->sbi->ll_cl->cd_lu_dev,
-+					*pos);
-+		if (*pos == ~0ULL)
-+			pos = NULL;
- 	}
-+
- 	return pos;
- }
+-	if (!IS_ERR(o) || PTR_ERR(o) != -ENOENT)
+-		return o;
++	cfs_hash_bd_get(hs, f, &bd);
++	if (!(conf && conf->loc_flags & LOC_F_NEW)) {
++		cfs_hash_bd_lock(hs, &bd, 1);
++		o = htable_lookup(s, &bd, f, &version);
++		cfs_hash_bd_unlock(hs, &bd, 1);
  
- static void *vvp_pgcache_next(struct seq_file *f, void *v, loff_t *pos)
- {
--	struct ll_sb_info *sbi;
--	struct lu_env     *env;
--	u16 refcheck;
-+	struct seq_private *priv = f->private;
-+
-+	*pos = vvp_pgcache_find(priv->env, &priv->sbi->ll_cl->cd_lu_dev,
-+				*pos + 1);
-+	if (*pos == ~0ULL)
-+		pos = NULL;
- 
--	env = cl_env_get(&refcheck);
--	if (!IS_ERR(env)) {
--		sbi = f->private;
--		*pos = vvp_pgcache_find(env, &sbi->ll_cl->cd_lu_dev, *pos + 1);
--		if (*pos == ~0ULL)
--			pos = NULL;
--		cl_env_put(env, &refcheck);
--	}
- 	return pos;
- }
- 
-@@ -637,23 +620,36 @@ static const struct seq_operations vvp_pgcache_ops = {
- 
- static int vvp_dump_pgcache_seq_open(struct inode *inode, struct file *filp)
- {
--	struct seq_file *seq;
--	int rc;
-+	struct seq_private *priv;
- 
--	rc = seq_open(filp, &vvp_pgcache_ops);
--	if (rc)
--		return rc;
-+	priv = __seq_open_private(filp, &vvp_pgcache_ops, sizeof(*priv));
-+	if (!priv)
-+		return -ENOMEM;
- 
--	seq = filp->private_data;
--	seq->private = inode->i_private;
-+	priv->sbi = inode->i_private;
-+	priv->env = cl_env_get(&priv->refcheck);
-+	if (IS_ERR(priv->env)) {
-+		int err = PTR_ERR(priv->env);
- 
-+		seq_release_private(inode, filp);
-+		return err;
++		if (!IS_ERR(o) || PTR_ERR(o) != -ENOENT)
++			return o;
 +	}
- 	return 0;
- }
+ 	/*
+ 	 * Allocate new object. This may result in rather complicated
+ 	 * operations, including fld queries, inode loading, etc.
+@@ -764,7 +741,10 @@ struct lu_object *lu_object_find_at(const struct lu_env *env,
  
-+static int vvp_dump_pgcache_seq_release(struct inode *inode, struct file *file)
-+{
-+	struct seq_file *seq = file->private_data;
-+	struct seq_private *priv = seq->private;
-+
-+	cl_env_put(priv->env, &priv->refcheck);
-+	return seq_release_private(inode, file);
-+}
-+
- const struct file_operations vvp_dump_pgcache_file_ops = {
- 	.owner   = THIS_MODULE,
- 	.open    = vvp_dump_pgcache_seq_open,
- 	.read    = seq_read,
- 	.llseek	 = seq_lseek,
--	.release = seq_release,
-+	.release = vvp_dump_pgcache_seq_release,
- };
+ 	cfs_hash_bd_lock(hs, &bd, 1);
+ 
+-	shadow = htable_lookup(s, &bd, f, &version);
++	if (conf && conf->loc_flags & LOC_F_NEW)
++		shadow = ERR_PTR(-ENOENT);
++	else
++		shadow = htable_lookup(s, &bd, f, &version);
+ 	if (likely(PTR_ERR(shadow) == -ENOENT)) {
+ 		cfs_hash_bd_add_locked(hs, &bd, &o->lo_header->loh_hash);
+ 		cfs_hash_bd_unlock(hs, &bd, 1);
