@@ -1,100 +1,81 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752800AbeEGRzN (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 13:55:13 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50166 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751976AbeEGRzL (ORCPT
+        id S1752662AbeEGSAP (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 14:00:15 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:61664 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752051AbeEGSAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 13:55:11 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFFA26022C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: edubezval@gmail.com, rui.zhang@intel.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH] drivers: thermal: do not clobber cooling dev state from userspace
-Date: Mon,  7 May 2018 11:55:05 -0600
-Message-Id: <20180507175505.2389-1-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
+        Mon, 7 May 2018 14:00:13 -0400
+X-IronPort-AV: E=Sophos;i="5.49,375,1520899200";
+   d="scan'208";a="343004303"
+From: "van der Linden, Frank" <fllinden@amazon.com>
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "jgross@suse.com" <jgross@suse.com>
+Subject: Re: [PATCH 1/1] x86/xen: Reset VCPU0 info pointer after shared_info
+ remap
+Thread-Topic: [PATCH 1/1] x86/xen: Reset VCPU0 info pointer after shared_info
+ remap
+Thread-Index: AQHT4+Qi8Y/Xj7e/qEORkG6cypvfEqQkZMKA//+4loA=
+Date: Mon, 7 May 2018 18:00:09 +0000
+Message-ID: <B3C02FE4-651D-4A89-90BB-78E389764688@amazon.com>
+References: <C508E5F5-024E-4F71-A91E-7BB0BE046F5D@amazon.com>
+ <965354d1-e2e7-1764-a14e-bb4258b9ed13@oracle.com>
+In-Reply-To: <965354d1-e2e7-1764-a14e-bb4258b9ed13@oracle.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.160.180]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <25A854A9F4885141B76DD53234C4FCB1@amazon.com>
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w47I0KjK009814
 
-From: Ram Chandrasekar <rkumbako@codeaurora.org>
+Hi Boris,
 
-Let userspace be another voter for cooling device state instead of the
-overriding authority. It is possible that the thermal governor may find
-a higher cooling state desirable than what is recommended by the
-userspace. Separate out the current cooling device state from the
-userspace request and aggregate the userspace request with the
-governors' recommendation.
+Thanks for the feedback.
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- drivers/thermal/thermal_core.c    | 1 +
- drivers/thermal/thermal_helpers.c | 2 +-
- drivers/thermal/thermal_sysfs.c   | 8 +++++++-
- include/linux/thermal.h           | 1 +
- 4 files changed, 10 insertions(+), 2 deletions(-)
+﻿On 5/7/18, 8:13 AM, "Boris Ostrovsky" <boris.ostrovsky@oracle.com> wrote:
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 589925ac0994..c2e13e122934 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -970,6 +970,7 @@ __thermal_cooling_device_register(struct device_node *np,
- 	cdev->updated = false;
- 	cdev->device.class = &thermal_class;
- 	cdev->devdata = devdata;
-+	cdev->sysfs_req = 0;
- 	thermal_cooling_device_setup_sysfs(cdev);
- 	dev_set_name(&cdev->device, "cooling_device%d", cdev->id);
- 	result = device_register(&cdev->device);
-diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
-index 2ba756af76b7..f550fdee0f9b 100644
---- a/drivers/thermal/thermal_helpers.c
-+++ b/drivers/thermal/thermal_helpers.c
-@@ -166,7 +166,7 @@ EXPORT_SYMBOL_GPL(thermal_zone_set_trips);
- void thermal_cdev_update(struct thermal_cooling_device *cdev)
- {
- 	struct thermal_instance *instance;
--	unsigned long target = 0;
-+	unsigned long target = cdev->sysfs_req;
+    > diff --git a/arch/x86/xen/enlighten_hvm.c b/arch/x86/xen/enlighten_hvm.c
+    > index 6b424da1ce75..c78b3e8fb2e5 100644
+    > --- a/arch/x86/xen/enlighten_hvm.c
+    > +++ b/arch/x86/xen/enlighten_hvm.c
+    > @@ -71,6 +71,19 @@ static void __init xen_hvm_init_mem_mapping(void)
+    >  {
+    >  	early_memunmap(HYPERVISOR_shared_info, PAGE_SIZE);
+    >  	HYPERVISOR_shared_info = __va(PFN_PHYS(shared_info_pfn));
+    > +
+    > +	/*
+    > +	 * The virtual address of the shared_info page has changed, so
+    > +	 * the vcpu_info pointer for VCPU 0 is now stale.
+    
+    Is it "has changed" or "has changed if kaslr is on"?
+
+It's "has changed".  See commit 4ca83dcf4e3bc0c98836dbb97553792ca7ea5429 .  It's a way to make kaslr work, but it's done regardless of whether it's enabled or not.
  
- 	mutex_lock(&cdev->lock);
- 	/* cooling device is updated*/
-diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
-index 275ffee292bf..eddada715ad2 100644
---- a/drivers/thermal/thermal_sysfs.c
-+++ b/drivers/thermal/thermal_sysfs.c
-@@ -719,7 +719,13 @@ thermal_cooling_device_cur_state_store(struct device *dev,
- 	result = cdev->ops->set_cur_state(cdev, state);
- 	if (result)
- 		return result;
--	thermal_cooling_device_stats_update(cdev, state);
-+
-+	cdev->sysfs_req = state;
-+	mutex_lock(&cdev->lock);
-+	cdev->updated = false;
-+	mutex_unlock(&cdev->lock);
-+	thermal_cdev_update(cdev);
-+
- 	return count;
- }
- 
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 5f4705f46c2f..7a133bd6ff86 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -139,6 +139,7 @@ struct thermal_cooling_device {
- 	struct mutex lock; /* protect thermal_instances list */
- 	struct list_head thermal_instances;
- 	struct list_head node;
-+	unsigned long sysfs_req;
- };
- 
- struct thermal_attr {
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+    > +	 *
+    > +	 * The prepare_boot_cpu callback will re-initialize it via
+    > +	 * xen_vcpu_setup, but we can't rely on that to be called for
+    > +	 * old Xen versions (xen_have_vector_callback == 0).
+    > +	 *
+    > +	 * It is, in any case, bad to have a stale vcpu_info pointer
+    > +	 * so reset it now.
+    > +	 */
+    > +	xen_vcpu_info_reset(0);
+    
+    
+    Why not xen_vcpu_setup(0)?
+    
+Basically, I wanted to be minimally invasive. xen_vcpu_setup does a little more work (tries to do the VCPU placement hypercall), and will be called later in any case. So doing just the basic xen_vcpu_info_reset for VCPU 0 seems like the best way to do it; it just re-iterates what is done for VCPU 0 earlier in boot, which is also a vcpu_info_reset.
+
+Frank
