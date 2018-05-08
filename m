@@ -1,5 +1,5 @@
 Return-Path: <linux-arch-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2552373-1525774951-2-18403714279756446619
+X-Cyrus-Session-Id: sloti22d1t05-2590916-1525772794-2-7045175710703977616
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-charsets: plain='utf-8'
@@ -7,27 +7,26 @@ X-Resolved-to: linux@kroah.com
 X-Delivered-to: linux@kroah.com
 X-Mail-from: linux-arch-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525774950; b=fTY2YG99pAtYhRHNQ/VR+YXaIz6mz94zgHOv/+YBiPVQB1qmSQ
-    jI0zpm5XVQiVhyQp/K8W0mQ03c31vb3asFyag7DKxIgX2tN1/h5rN6dPaoCt2xcW
-    5Au4TuCOi7pceyKYsMXWtsmlGxDAWGgooXRdyyakl65CcaxEOQIAvToBZirR/Vke
-    S/DOqQqPX0Zjhk0AwswiMzMoz7QGwOshHtfuYAk0YD1lVrf7Go06g901TS6kA03q
-    AtqYzF2x8+/Z5mspoh+utYUJ6LMmY5ucxVuvku1SsCvBxZOu/1j2iB4YAEP1dTfB
-    y/56qI1IMSpiTetWDlrmPP9zeNsPrbtR44sw==
+    1525772793; b=fgVW5nB6myLgxh9hAerUILJ3qxJTnUyrjNPS/A6SpWItaiMuEP
+    RlQAVZ2Kag9tPvaI+jne4aY4G0wmnV46trrYDGWCNwp0aUy0T4M7LkLY33L7d3hi
+    T/MWN9O6xmJYsHTv3lcRUBkmgj7eODSuXWlrp4RG1y2s1vi4FKYohMNl2vg9y/DB
+    wZr1QFcpziC8FIdBOcucBqnpbnbIXrPFK2unBsxgnkIMvrq2HH+QnfK7k3iiIIzR
+    DrRkhCVsupwpGz/BGAU3PUbRrciVkAPTQMqEzdUqVLJXmXz9fG3ezw6BDzoQ8jRU
+    3ojH+hj6VC7DwWUsqJtgzGg+/vUYbnVitpsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:from:message-id:date
-    :mime-version:in-reply-to:content-transfer-encoding:content-type
-    :references:sender:list-id; s=fm2; t=1525774950; bh=VoOhvMRqiAs7
-    Yw1/zwYAfIngCXcl2+XDJjSspFZ/J0Q=; b=WbXmZ7jdv7/PAtQUM+k3Ij2dlfvz
-    hFKqhfks/KBHeJGS5tcIi2M2hTX367EEpwpKRbOvfaP70+R/TU5hbrQJZriPsI67
-    +SmcBh3cnmmb8RbAu/2YBFZlcHY/hqzWKomxdAUNx5Y3h1Jx90JSz3C9G5UStOjy
-    ZNKwrkm51WlNAw0U2x2bneNXbM3974WslW4tgmGcTv+3Wy9rdVsqnXSLEmduKtmr
-    JrKwi2FzReKTDv8coVJNKzNKyoKsUt62N5OXiUgTbBZU0mTQaTHjk+fon+dzOjyj
-    A7NV5euKPJipdLRCY1ZQ7vqI8Def7uIDePevB2QglL+pZhjc13tz3F+Enw==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=samsung.com
-    header.i=@samsung.com header.b=UHxIc4IO x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525772793;
+    bh=drMk+ijtubpnZIup4N4AzXMdt5AHYDwBjr8OYpY3B+0=; b=R7A3PobCTwK+
+    NccIrkpnWrTg7F2YM+fgPFl17ss384NSavJ1n7YyhxpJk7XcL2DPJe1455PWsWt5
+    EU52BETgtcHHAAdTNDZ3mnZreZqmCI5OO1yZB2gNwOdvvLsE1/ALvAUyoRqO28cT
+    wqtrlWk77c47x7gczRfXVXKa3Bp1/puhGsB+Oul8G3Kp0/h8wDCdxyVX/JJ5FmEv
+    9mR0CN9mqUpnSZPvJbggkoYFBmAVgIQv5rcWsJBEvYSBkUuvkUSvK4aUyD5R+feb
+    4ir8cOhPRP6Szc2d/33yW4muR1/O5JvW7AyGXbnL+FjhOrxKs1T6aazhJj62GQ+T
+    7w6K3hNf1g==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
@@ -36,14 +35,12 @@ ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signature
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+    header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=samsung.com
-      header.i=@samsung.com header.b=UHxIc4IO x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=mail20170921;
-    dmarc=pass (p=none,has-list-id=yes,d=none) header.from=samsung.com;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=arm.com;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
     spf=none smtp.mailfrom=linux-arch-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
@@ -52,27 +49,24 @@ Authentication-Results: mx2.messagingengine.com;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=samsung.com header.result=pass header_is_org_domain=yes;
+      header.domain=arm.com header.result=pass header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfGUwrioghxxBBA/1fwLt7kpF6OKYvlWahlJ9/s29Wr4i+Cc6G2QJ+/fURP1o1e1f9is325p+acr3K/Pu8ZnW21xss9YgtAAgyl9sH1rCPBoUq+ayLx67
-    KeN9Fhu/2IK5/WY0uzeKWsXRuM02mRZkulIV6vKjdkRJxqmVkksJrtW/PcYwFyeTXIYr6h2Ximtsyquy2kblDwg5J5VPWW9y3LaAd3f5RFDP9WKLcCY/4rKJ
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfG7aGjoCJ0u7m5Z7xSKU9Jvu49A9+Wx4gAoXPLrsQD5xerSARnHVe2Cj/dtapNpBl6tVUajIODkObtGVkimGxnMXMGlmQFFSM7rmaYbxf2FS46bW15fu
+    b5QDwy1/R42rhbRosdwGyxUUK+VdgNeo6h7O/SdUhbiULiv98wWO0p8bAE6paFohTHi1j9i8wox1+hBnm7/ozTlzR+6N5+Zq5vJ8NEyFkQxUA3O31bqz1LY7
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8 a=Z0-ysB8EjMlbOY_JyNkA:9
-    a=myR77mvPcGtFW2Qc:21 a=k-apXxKib8BruAz5:21 a=QEXdDO2ut3YA:10
-    a=AjGcO6oz07-iQ99wixmX:22
+    a=7CQSdrXTAAAA:8 a=Z0-ysB8EjMlbOY_JyNkA:9 a=2dNoY-1PBtlrQBAd:21
+    a=a_hwzuXaMOj_KayW:21 a=QEXdDO2ut3YA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754702AbeEHKW0 (ORCPT <rfc822;linux@kroah.com>);
-        Tue, 8 May 2018 06:22:26 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:38516 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754716AbeEHKWW (ORCPT
-        <rfc822;linux-arch@vger.kernel.org>); Tue, 8 May 2018 06:22:22 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20180508102220euoutp02576b6eb9893ef85a0c00e78bd8268d10~spDlp4d6c0711707117euoutp02V
-X-AuditID: cbfec7f5-b45ff700000028a9-e0-5af17a599c4d
+        id S1754885AbeEHJqb (ORCPT <rfc822;linux@kroah.com>);
+        Tue, 8 May 2018 05:46:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55048 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754706AbeEHJq3 (ORCPT <rfc822;linux-arch@vger.kernel.org>);
+        Tue, 8 May 2018 05:46:29 -0400
 Subject: Re: [PATCH 1/3] dma-debug: move initialization to common code
 To: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org
 Cc: linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
@@ -86,85 +80,38 @@ Cc: linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         nios2-dev@lists.rocketboards.org,
         linux-snps-arc@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <d2ea505f-ef18-bed1-23b5-dad81032e775@samsung.com>
-Date: Tue, 8 May 2018 12:22:12 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.7.0
+References: <20180424140235.9125-1-hch@lst.de>
+ <20180424140235.9125-2-hch@lst.de>
+From: Robin Murphy <robin.murphy@arm.com>
+Message-ID: <f89e5ef3-d58a-ef2f-1695-e3a751cfe8a9@arm.com>
+Date: Tue, 8 May 2018 10:46:24 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
 In-Reply-To: <20180424140235.9125-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHe885Ox611XFae7IbzJCuTqngJdMCJQ4FFX0oHFEd82SSm7Kj
-        lkq2yERHRaR2WZYVyTSbxsxrdJuWqdky08wSoxTEtCWmJmmX7Vj57fdc/8//5WVIxXHal4nR
-        JQh6HR+roj2oiqfj9lURKUOawDOFnrjz+wDCoxVvZbio+AmBrz0Mxl+66hDOrBmhsPVTuwzX
-        XT5LYEd6FY1ba/JobO6xkPhj40sC503kkPjkewuBi5otbrhnqInCRlMvja1ZrTQ2NBTKNnpz
-        1aYuN67K+png+h5XklzZzWNc6Z0KxGV3mBHXcHKU4trMNwnu3lsDzU0ac0hu2Lpou6fGY32U
-        EBuTJOjVofs8DqbfeEbGt2mPjDd2EwaUFWFE7gywa8A6bKGMyINRsIUISvOzp4JvCKy547QU
-        DCM4XdxLGBHjGukyRUp5M4KL3X0yKXAgePqjn3Lu9WY3ge15uYt92HAwf2hxMcnepmCgYJGT
-        aTYIjING2slyNhSqDdmuHopdAvaJMRfPYXfD+atvCKnHCxou9VDOI9xZNbRfWSqtXAyVg3mk
-        xEro7MknnPcAW8VAU3kXLfkMh7z+11PsDf31d90kXgC/qvMJiY/BmbG6qeFTCO6n504VgqG2
-        vkXmFCbZZVBao5bSIfDiajklPcos6Bj0km6YBecqLpBSWg6ZGQqp2x9M9SX/VB+/fEWeRX6m
-        acZM09yYprkx/de9hqhbSCkkitpoQVytEw4HiLxWTNRFB+yP01rRn4/Z9LN+pAo9mIi0IZZB
-        qpny7/FfNQoZnyQma20IGFLlI/dbOKRRyKP45BRBH7dXnxgriDY0n6FUSvmepWkaBRvNJwiH
-        BCFe0P+tEoy7rwFt2NrsecEeJba3zg1bWfI5v3PF8ghvxSNFskNf4NMxp6yxP/LAzsiV27JG
-        0kp8j2psxfw5e1ha1K3rFnsmP8OdE9iB7Z9UtbrAzenGtbMdvUW5ji19Ld2550+oB6lOWS1x
-        WmlI1QSnFGJlRgET8m7dpP+8HS92qVPDfMt068XZKko8yActJ/Ui/xu648pmlAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUgTcRjH+93drtMcnVPzh73ZEgqj6U2Xv6mNqIijvwLBcBZ25TElt9nd
-        ZilEI9R0UGma5NLSmC4zsSb5FhEty6zMXkhSGpkpVr6URb6AVs4V+N+H5/l+Hp4HHgqXXZSE
-        UOkGEy8YuAw56Us8+93p3pqYM6mNPD+iQv0zYwBNNfdJUF39IwxV3Y9DE+4OgArafxHI+alX
-        gjouF2HoW24rid60V5DIMdSAo8GnLzFUMVeKo7z3DRiq625YjoYmnxHIahsmkbPwDYksXdcl
-        OwLYNpt7OdvqHMXYzw9acLbJfoptvNUM2JJ3DsB25U0R7FuHHWPv9llIdt5airM/nev2rdAq
-        4gWj2cSHphlF03Z5MoOUCkaNFMpotYKJijkYq1TJIzTxqXxGehYvRGgOKdJyrz3BM9/qT8w+
-        /YBZQGGSFVAUpKOh23bYCnwpGV0D4GDbD8wKfBbqa2BXmUXi5QA412slvaFxAGuH+wlPI4De
-        A13P7yxyIL0bOgZeEZ4QTt8koH3CjXkNB4ADp92LY0magdZxzygfSkprYJulZNEm6DDYMze9
-        yEH0ATjzyEp4M/6wq3yI8KzqQ0fA3srNnjJOb4NXmj7iXl4PW8Yr/nEw7B+6ihUBmW2JbVui
-        2JYotiVKFSBugEDeLOp1epFRiJxeNBt0iiNGvRMsvETz49mmVvD6doIL0BSQ+0lnMr9rZRIu
-        S8zWuwCkcHmgdOPaSa1Mmspl5/CCMUUwZ/CiC6gWbivGQ4KOGBcezGBKYVRMDFIzMVExUduQ
-        PFjaE5mtldE6zsQf5flMXvjvYZRPiAWEGmM3TdTcUaevr239s/ro8+7BhOrwaN1x9XxY2KV6
-        w/b6ntTbQtJ3+zE21I/THXg4R7l2OsxkR3nmhnz4wr5SP9bZeSZj70hyeGLxLnWPdlYsiyvf
-        r1nlX1mN93Wfm29UXiho49h700LJlrPJldOKL19Ptp93IZVt2XRc/qhFTohpHBOOCyL3F+0s
-        0fIoAwAA
-X-CMS-MailID: 20180508102215eucas1p13bf142bbf47e484eebff063c92fce569
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-MTR: 20180508102215eucas1p13bf142bbf47e484eebff063c92fce569
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180424140315epcas1p260a93a22d2b78db49274ec5c07664efe
-X-RootMTR: 20180424140315epcas1p260a93a22d2b78db49274ec5c07664efe
-References: <20180424140235.9125-1-hch@lst.de>
-        <CGME20180424140315epcas1p260a93a22d2b78db49274ec5c07664efe@epcas1p2.samsung.com>
-        <20180424140235.9125-2-hch@lst.de>
 Sender: linux-arch-owner@vger.kernel.org
 X-Mailing-List: linux-arch@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Christoph,
-
-On 2018-04-24 16:02, Christoph Hellwig wrote:
+On 24/04/18 15:02, Christoph Hellwig wrote:
 > Most mainstream architectures are using 65536 entries, so lets stick to
 > that.  If someone is really desperate to override it that can still be
 > done through <asm/dma-mapping.h>, but I'd rather see a really good
 > rationale for that.
->
+> 
 > dma_debug_init is now called as a core_initcall, which for many
 > architectures means much earlier, and provides dma-debug functionality
 > earlier in the boot process.  This should be safe as it only relies
 > on the memory allocator already being available.
->
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Nice! Unification of this is definitely needed and solves the issues
-reported some time ago:
-
-https://patchwork.kernel.org/patch/9429637/ (arm)
-https://patchwork.kernel.org/patch/9431161/ (arm64, rejected)
-
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
 > ---
 >   arch/arm/mm/dma-mapping-nommu.c |  9 ---------
 >   arch/arm/mm/dma-mapping.c       |  9 ---------
@@ -185,7 +132,7 @@ Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >   lib/dma-debug.c                 | 21 ++++++++++++++-------
 >   17 files changed, 14 insertions(+), 143 deletions(-)
 >   delete mode 100644 arch/sparc/kernel/dma.c
->
+> 
 > diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
 > index 619f24a42d09..f448a0663b10 100644
 > --- a/arch/arm/mm/dma-mapping-nommu.c
@@ -569,8 +516,4 @@ Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 >   
 >   static __init int dma_debug_cmdline(char *str)
 >   {
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> 
