@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpbU4gArM1GF8nvTkFeddRioZ7xD/gH6uxYcg76uJOKIbIYtwx7qI5zUFjKv0C0nOx/akGN
-ARC-Seal: i=1; a=rsa-sha256; t=1525767163; cv=none;
+X-Google-Smtp-Source: AB8JxZpbw2N7nKbSk/Hy9GiqBLE1Xjc8wFPiQt/cpAuRhDX2wjOlV4tcJHf0aG4MWAENv2v9rLAG
+ARC-Seal: i=1; a=rsa-sha256; t=1525767160; cv=none;
         d=google.com; s=arc-20160816;
-        b=q5ESbCHGKM4ff6/bJvnO7VHLGNanbqgx10I5oMiPQImxCTU9fceEpfwPgsjm4E5PIl
-         DE6Py62oi2H2fWvrpW57+nnvEjkuLycibsTcVkCNo8iJd+iZDbZNxWldVNkX0UyWIgue
-         guHvNbbpQwoSpYQV3IjtdbHeJmHJCAHd3PyQYrpmA6DCB5swmIXURnxbX23NtiJrfg+k
-         FSYkgro1D4k/RBnpuJ18wU7Q8aLnvqhqMKUJKPHB+2uhO4QnPFZUW+rH7t1NICa1VC0i
-         eEKBPOdurxIVtyHvwb95B2HVHYKwAQK8jfI9F4+sG2kmlrWfFO0xGi3CPMRgoAdTfOoT
-         YG7A==
+        b=P+vJF0WbzDelIodKoHi9rCByY29pjRAxpshL7H1Q4C8EgrQWzrNS1Dll1d1v4W68or
+         A4NjsVMYtIc+RWawJUACeur+W9UppZDEUL1kjIrRsGM8RAfQ0hdy4RFi9SvFmVYr2sRH
+         ZcJrfVaRVwJVIrGtSnucvNi/RNWyUTH9dIDKiraPaHy1YVgUdgXVJYgfd3XE5tsUV1Jd
+         YO594fZq1AltsyoHzn5z3QagXrEfB9Ie0tiKsPC7cjFGwywCA1rmENsF+vR6jHEk9eYU
+         UOZfr/bDmWWcu5lMZe514XZdGkWSh8E/dXBNll7CgL39zz9BFWtljBQO+cszoDIO+WIs
+         jIIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=kIKGCFibsyYlejizzZqmSJnuPszuINA0GkrFaO2H0IU=;
-        b=XbSqcD2G8qglRUHg16/0+Xrjv/vE4tynBF6y7yDU3RAdYjH6SoW9oi6IW8jYiq3jzh
-         ZhO+iyL53NqK6y0xuKRJvItns7PIRX1gD3bghiO2Dx/7Gf1BOB4y7XOpydDkcti4snvG
-         GlI2W8DI8DmYh2Aal9Ht7w5giIRyPWSAD+9NSXajxwBdi2R/S+n4Oa+KC/yeNeBtMGHO
-         Jqw09A5z0RLks7w7PCctcOQ0OjIqv8Q8Cup5tSBWzcSySe/nvZkF8ZMUy559/RODDjSs
-         TPZxRUT0QA746nHR2iVqCHt+nOpUit5Zg7nKdaeNbQ+Yb+FIDvoFhAQO32K63zki3C5q
-         uvvg==
+        bh=Tz5SYn7KHoY/YsG4+zAm+ryFxepEdmZH8BKrYdwRAAM=;
+        b=FNBPDCThc3MjxMIRFgt7EcSVw8h+Bpz+ysUrlcza96/lvRG5rOegE9E810qQBfrNbv
+         fvGNwAOVsthfVNN/aT9WJJtBbBRQPKD17fqC3E1AYiIwPEgZwtcvlj7n7Jk+nOwHX3Nq
+         dquXxMeaCxyYaApKrLlZ+xPcxbUVgChTcV78R4o4mIpd2pyxpu74LJtP+h6MazcHdRkZ
+         dVJ8NILmvlUdZuCFDck8iMb5aStyA3zDI3SyRfKU2rKjuDosTs5LEgjHBra7Y2ZLdldM
+         sJUEmcSrt4jQOuGpcsRbP16jTHfajRBOZkYtZzCsG8t8wIpc0EZadCweazNCEqzQbV27
+         DuQA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=u0NeHQCi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=lOvRYDUt;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=u0NeHQCi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=lOvRYDUt;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Peter Robinson <pbrobinson@gmail.com>,
-	Boris Brezillon <boris.brezillon@bootlin.com>,
-	Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4.16 31/52] drm/vc4: Make sure vc4_bo_{inc,dec}_usecnt() calls are balanced
-Date: Tue,  8 May 2018 10:10:29 +0200
-Message-Id: <20180508073932.363555470@linuxfoundation.org>
+	ethanwu <ethanwu@synology.com>,
+	David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.16 30/52] btrfs: Take trans lock before access running trans in check_delayed_ref
+Date: Tue,  8 May 2018 10:10:28 +0200
+Message-Id: <20180508073932.232169601@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882829357506462?=
-X-GMAIL-MSGID: =?utf-8?q?1599882829357506462?=
+X-GMAIL-THRID: =?utf-8?q?1599882826311602745?=
+X-GMAIL-MSGID: =?utf-8?q?1599882826311602745?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,121 +51,69 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: ethanwu <ethanwu@synology.com>
 
-commit f7aef1c207092770d06d0df21dceafdca2b49c39 upstream.
+commit 998ac6d21cfd6efd58f5edf420bae8839dda9f2a upstream.
 
-Commit b9f19259b84d ("drm/vc4: Add the DRM_IOCTL_VC4_GEM_MADVISE ioctl")
-introduced a mechanism to mark some BOs as purgeable to allow the driver
-to drop them under memory pressure. In order to implement this feature
-we had to add a mechanism to mark BOs as currently used by a piece of
-hardware which materialized through the ->usecnt counter.
+In preivous patch:
+Btrfs: kill trans in run_delalloc_nocow and btrfs_cross_ref_exist
+We avoid starting btrfs transaction and get this information from
+fs_info->running_transaction directly.
 
-Plane code is supposed to increment usecnt when it attaches a BO to a
-plane and decrement it when it's done with this BO, which was done in
-the ->prepare_fb() and ->cleanup_fb() hooks. The problem is, async page
-flip logic does not go through the regular atomic update path, and
-->prepare_fb() and ->cleanup_fb() are not called in this case.
+When accessing running_transaction in check_delayed_ref, there's a
+chance that current transaction will be freed by commit transaction
+after the NULL pointer check of running_transaction is passed.
 
-Fix that by manually calling vc4_bo_{inc,dec}_usecnt() in the
-async-page-flip path.
+After looking all the other places using fs_info->running_transaction,
+they are either protected by trans_lock or holding the transactions.
 
-Note that all this should go away as soon as we get generic async page
-flip support in the core, in the meantime, this fix should do the
-trick.
+Fix this by using trans_lock and increasing the use_count.
 
-Fixes: b9f19259b84d ("drm/vc4: Add the DRM_IOCTL_VC4_GEM_MADVISE ioctl")
-Reported-by: Peter Robinson <pbrobinson@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180430133232.32457-1-boris.brezillon@bootlin.com
-Link: https://patchwork.freedesktop.org/patch/msgid/20180430133232.32457-1-boris.brezillon@bootlin.com
+Fixes: e4c3b2dcd144 ("Btrfs: kill trans in run_delalloc_nocow and btrfs_cross_ref_exist")
+CC: stable@vger.kernel.org # 4.14+
+Signed-off-by: ethanwu <ethanwu@synology.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vc4/vc4_crtc.c |   46 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 1 deletion(-)
+ fs/btrfs/extent-tree.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/gpu/drm/vc4/vc4_crtc.c
-+++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-@@ -735,6 +735,7 @@ static irqreturn_t vc4_crtc_irq_handler(
- struct vc4_async_flip_state {
- 	struct drm_crtc *crtc;
- 	struct drm_framebuffer *fb;
-+	struct drm_framebuffer *old_fb;
- 	struct drm_pending_vblank_event *event;
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -3155,7 +3155,11 @@ static noinline int check_delayed_ref(st
+ 	struct rb_node *node;
+ 	int ret = 0;
  
- 	struct vc4_seqno_cb cb;
-@@ -764,6 +765,23 @@ vc4_async_page_flip_complete(struct vc4_
++	spin_lock(&root->fs_info->trans_lock);
+ 	cur_trans = root->fs_info->running_transaction;
++	if (cur_trans)
++		refcount_inc(&cur_trans->use_count);
++	spin_unlock(&root->fs_info->trans_lock);
+ 	if (!cur_trans)
+ 		return 0;
  
- 	drm_crtc_vblank_put(crtc);
- 	drm_framebuffer_put(flip_state->fb);
-+
-+	/* Decrement the BO usecnt in order to keep the inc/dec calls balanced
-+	 * when the planes are updated through the async update path.
-+	 * FIXME: we should move to generic async-page-flip when it's
-+	 * available, so that we can get rid of this hand-made cleanup_fb()
-+	 * logic.
-+	 */
-+	if (flip_state->old_fb) {
-+		struct drm_gem_cma_object *cma_bo;
-+		struct vc4_bo *bo;
-+
-+		cma_bo = drm_fb_cma_get_gem_obj(flip_state->old_fb, 0);
-+		bo = to_vc4_bo(&cma_bo->base);
-+		vc4_bo_dec_usecnt(bo);
-+		drm_framebuffer_put(flip_state->old_fb);
-+	}
-+
- 	kfree(flip_state);
- 
- 	up(&vc4->async_modeset);
-@@ -788,9 +806,22 @@ static int vc4_async_page_flip(struct dr
- 	struct drm_gem_cma_object *cma_bo = drm_fb_cma_get_gem_obj(fb, 0);
- 	struct vc4_bo *bo = to_vc4_bo(&cma_bo->base);
- 
-+	/* Increment the BO usecnt here, so that we never end up with an
-+	 * unbalanced number of vc4_bo_{dec,inc}_usecnt() calls when the
-+	 * plane is later updated through the non-async path.
-+	 * FIXME: we should move to generic async-page-flip when it's
-+	 * available, so that we can get rid of this hand-made prepare_fb()
-+	 * logic.
-+	 */
-+	ret = vc4_bo_inc_usecnt(bo);
-+	if (ret)
-+		return ret;
-+
- 	flip_state = kzalloc(sizeof(*flip_state), GFP_KERNEL);
--	if (!flip_state)
-+	if (!flip_state) {
-+		vc4_bo_dec_usecnt(bo);
- 		return -ENOMEM;
-+	}
- 
- 	drm_framebuffer_get(fb);
- 	flip_state->fb = fb;
-@@ -801,10 +832,23 @@ static int vc4_async_page_flip(struct dr
- 	ret = down_interruptible(&vc4->async_modeset);
- 	if (ret) {
- 		drm_framebuffer_put(fb);
-+		vc4_bo_dec_usecnt(bo);
- 		kfree(flip_state);
- 		return ret;
+@@ -3164,6 +3168,7 @@ static noinline int check_delayed_ref(st
+ 	head = btrfs_find_delayed_ref_head(delayed_refs, bytenr);
+ 	if (!head) {
+ 		spin_unlock(&delayed_refs->lock);
++		btrfs_put_transaction(cur_trans);
+ 		return 0;
  	}
  
-+	/* Save the current FB before it's replaced by the new one in
-+	 * drm_atomic_set_fb_for_plane(). We'll need the old FB in
-+	 * vc4_async_page_flip_complete() to decrement the BO usecnt and keep
-+	 * it consistent.
-+	 * FIXME: we should move to generic async-page-flip when it's
-+	 * available, so that we can get rid of this hand-made cleanup_fb()
-+	 * logic.
-+	 */
-+	flip_state->old_fb = plane->state->fb;
-+	if (flip_state->old_fb)
-+		drm_framebuffer_get(flip_state->old_fb);
-+
- 	WARN_ON(drm_crtc_vblank_get(crtc) != 0);
+@@ -3180,6 +3185,7 @@ static noinline int check_delayed_ref(st
+ 		mutex_lock(&head->mutex);
+ 		mutex_unlock(&head->mutex);
+ 		btrfs_put_delayed_ref_head(head);
++		btrfs_put_transaction(cur_trans);
+ 		return -EAGAIN;
+ 	}
+ 	spin_unlock(&delayed_refs->lock);
+@@ -3212,6 +3218,7 @@ static noinline int check_delayed_ref(st
+ 	}
+ 	spin_unlock(&head->lock);
+ 	mutex_unlock(&head->mutex);
++	btrfs_put_transaction(cur_trans);
+ 	return ret;
+ }
  
- 	/* Immediately update the plane's legacy fb pointer, so that later
