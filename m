@@ -1,56 +1,35 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932071AbeEHIIG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:08:06 -0400
-Received: from foss.arm.com ([217.140.101.70]:53944 "EHLO foss.arm.com"
+        id S1754533AbeEHIIS (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:08:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37329 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754345AbeEHIIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:08:04 -0400
-Subject: Re: [PATCH v9 07/12] ARM: sunxi: Add initialization of CNTVOFF
-To: =?UTF-8?Q?Myl=c3=a8ne_Josserand?= <mylene.josserand@bootlin.com>,
-        linux@armlinux.org.uk, maxime.ripard@bootlin.com, wens@csie.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com
-Cc: f.fainelli@gmail.com, opendmb@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        clabbe.montjoie@gmail.com, quentin.schulz@bootlin.com,
-        thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
- <20180504190545.5114-8-mylene.josserand@bootlin.com>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <71a9026d-1327-4948-5729-8d10cb7415f9@arm.com>
-Date: Tue, 8 May 2018 09:07:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1753856AbeEHIIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:08:15 -0400
+Date: Tue, 8 May 2018 10:08:13 +0200
+From: Johannes Thumshirn <jth@kernel.org>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: wim@linux-watchdog.org, linux@roeck-us.net,
+        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] watchdog: mena21_wdt: Drop unnecessary mutex lock
+Message-ID: <20180508080813.vhdkko2a4vmb4avz@linux-x5ow.site>
+References: <20180508071206.13375-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180504190545.5114-8-mylene.josserand@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180508071206.13375-1-baijiaju1990@gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/18 20:05, MylÃ¨ne Josserand wrote:
-> Add the initialization of CNTVOFF for sun8i-a83t.
-> 
-> For boot CPU, create a new machine that handles this
-> function's call in an "init_early" callback. We need to initialize
-> CNTVOFF before the arch timer's initialization otherwise, it will
-> not be taken into account and fails to boot correctly.
-> Because of that, this function can't be called in SMP's early_initcall
-> function which is called after timer's init.
-> 
-> For secondary CPUs, add this function into secondary_startup
-> assembly entry.
-> 
-> Signed-off-by: MylÃ¨ne Josserand <mylene.josserand@bootlin.com>
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-
-	M.
+Looks good,
+Reviewed-by: Johannes Thumshirn <jth@kernel.org>
 -- 
-Jazz is not dead. It just smells funny...
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
