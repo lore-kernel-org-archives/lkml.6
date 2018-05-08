@@ -1,72 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932880AbeEHIch (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:32:37 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:56332 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754799AbeEHIce (ORCPT
+        id S932929AbeEHIc5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:32:57 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:38867 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932784AbeEHIcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:32:34 -0400
-Subject: Re: [PATCH] nvme-rdma: fix double free in nvme_rdma_free_queue
-To: Christoph Hellwig <hch@lst.de>
-Cc: keith.busch@intel.com, axboe@fb.com, sagi@grimberg.me,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1525420938-9492-1-git-send-email-jianchao.w.wang@oracle.com>
- <20180507122736.GC27843@lst.de>
-From: "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <65152af5-9dc1-d6fb-6790-6055535f8048@oracle.com>
-Date: Tue, 8 May 2018 16:31:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 8 May 2018 04:32:52 -0400
+X-Google-Smtp-Source: AB8JxZpOpfYFVe+7hnnYPCn8aZ7jJMwS6II/JRDoVXDiSnwssVPPXzMy8ygX22UZYa8vuhnpTxsSRFsiY0lhUJswze0=
 MIME-Version: 1.0
-In-Reply-To: <20180507122736.GC27843@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805080084
+In-Reply-To: <20180508063006.aicgwalirnkjmeuf@ziepe.ca>
+References: <1525356274-736-1-git-send-email-lidongchen@tencent.com>
+ <20180503153310.GA9738@ziepe.ca> <CAOGPPbd8ysq3XDpa4TYQpWVMmpVo4NPhPw5NWyQS1OSc6rXjQQ@mail.gmail.com>
+ <CAOGPPbenmtuFwCuGMFJDZrqK+D5atkhK+srm+2yX=+CAwgjPHQ@mail.gmail.com>
+ <20180504182302.zunfryk2czge5adx@ziepe.ca> <CAOGPPbcF1m-ATdY-OCeXJDgsqXvn2-oD_OA8d3nyP_6YYd6ZMA@mail.gmail.com>
+ <20180508063006.aicgwalirnkjmeuf@ziepe.ca>
+From: 858585 jemmy <jemmy858585@gmail.com>
+Date: Tue, 8 May 2018 16:32:51 +0800
+Message-ID: <CAOGPPbd3BgLqyjXPwcpoYOH2N_kN2j+SkeOhSie4FriB9TRosg@mail.gmail.com>
+Subject: Re: [PATCH] IB/umem: use tgid instead of pid in ib_umem structure
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: dledford@redhat.com, akpm@linux-foundation.org, qing.huang@oracle.com,
+        Leon Romanovsky <leon@kernel.org>, artemyko@mellanox.com,
+        dan.j.williams@intel.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, adido@mellanox.com,
+        Gal Shachaf <galsha@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Lidong Chen <lidongchen@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph
-
-On 05/07/2018 08:27 PM, Christoph Hellwig wrote:
-> On Fri, May 04, 2018 at 04:02:18PM +0800, Jianchao Wang wrote:
->> BUG: KASAN: double-free or invalid-free in nvme_rdma_free_queue+0xf6/0x110 [nvme_rdma]
->> Workqueue: nvme-reset-wq nvme_rdma_reset_ctrl_work [nvme_rdma]
->> Call Trace:
->>  dump_stack+0x91/0xeb
->>  print_address_description+0x6b/0x290
->>  kasan_report_invalid_free+0x55/0x80
->>  __kasan_slab_free+0x176/0x190
->>  kfree+0xeb/0x310
->>  nvme_rdma_free_queue+0xf6/0x110 [nvme_rdma]
->>  nvme_rdma_configure_admin_queue+0x1a3/0x4d0 [nvme_rdma]
->>  nvme_rdma_reset_ctrl_work+0x4e/0xd0 [nvme_rdma]
->>  process_one_work+0x3ca/0xaa0
->>  worker_thread+0x4e2/0x6c0
->>  kthread+0x18d/0x1e0
->>  ret_from_fork+0x24/0x30
+On Tue, May 8, 2018 at 2:30 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Mon, May 07, 2018 at 09:38:53AM +0800, 858585 jemmy wrote:
+>> On Sat, May 5, 2018 at 2:23 AM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>> > On Fri, May 04, 2018 at 04:51:15PM +0800, 858585 jemmy wrote:
+>> >> On Fri, May 4, 2018 at 11:14 AM, 858585 jemmy <jemmy858585@gmail.com> wrote:
+>> >> > On Thu, May 3, 2018 at 11:33 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>> >> >> On Thu, May 03, 2018 at 10:04:34PM +0800, Lidong Chen wrote:
+>> >> >>> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+>> >> >>> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+>> >> >>> exited, get_pid_task will return NULL, ib_umem_release does not decrease
+>> >> >>> mm->pinned_vm. This patch fixes it by use tgid.
+>> >> >>>
+>> >> >>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+>> >> >>>  drivers/infiniband/core/umem.c | 12 ++++++------
+>> >> >>>  include/rdma/ib_umem.h         |  2 +-
+>> >> >>>  2 files changed, 7 insertions(+), 7 deletions(-)
+>> >> >>
+>> >> >> Why are we even using a struct pid for this? Does anyone know?
+>> >> >
+>> >> > commit 87773dd56d5405ac28119fcfadacefd35877c18f add pid in ib_umem structure.
+>> >> >
+>> >> > and the comment has such information:
+>> >> > Later a different process with a different mm_struct than the one that
+>> >> > allocated the ib_umem struct
+>> >> > ends up releasing it which results in decrementing the new processes
+>> >> > mm->pinned_vm count past
+>> >> > zero and wrapping.
+>> >>
+>> >> I think a different process should not have the permission to release ib_umem.
+>> >> so maybe the reason is not a different process?
+>> >> can ib_umem_release be invoked in interrupt context?
+>> >
+>> > We plan to restore fork support and add some way to share MRs between
+>> > processes, so we must consider having a different process release the
+>> > umem than acquired it.
 >>
->> The double free is on ctrl->async_event_sqe.
->> If nvme_rdma_start_queue in nvme_rdma_configure_admin_queue fails,
->> nvme_rdma_free_queue will be invoked. However, at the moment, the
->> ctrl->async_event_sqe has not been allocated and it has been freed
->> in
->> nvme_rdma_reset_ctrl_work
->>   -> nvme_rdma_shutdown_ctrl
->>     ->nvme_rdma_destroy_admin_queue
->>       -> nvme_rdma_free_queue
->>
->> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> 
-> Can you handle this in the caller instead, maybe including a comment?
-> 
-Yes, that will be clearer.
-Thanks for your suggestion.
+>> If restore fork support, what is the expected behavior?
+>> If parent process pinned_vm is x, what is the child process pinned_vm
+>> value after fork? It reset to zero now.
+>> If the parent process call ibv_dereg_mr after fork, should the child
+>> process decrease pinned_vm?
+>> If the child process call  ibv_dereg_mr after fork, should the parent
+>> process decrease pinned_vm?
+>
+> If I recall the purpose of accessing the MM during de-register is to
+> undo the pinned pages change (pinned_vm) that register performed.
+>
+> So, the semantic is simple, during deregister we must access excatly
+> the same MM that was used during register and undo the change to
+> pinned_vm.
+>
+> The approach should be to find the most reliably way to hold a
+> reference to the MM that was used during register.
+>
+> Apparently we can't just hold a ref on the mm (according to mm_get's
+> comment at least)
+>
+> tgid is clearly a better indirect reference to the mm than pid (pid is
+> so obviously wrong)
+>
+> But I am wondering why not just hold struct task here instead of tgid?
+> Isn't task->mm going to be more reliably than tgid->task->mm ??
 
-Jianchao
+I think get_task_struct(current->group_leader) is also work.
+But I find ib_ucontext structure already have a tgid field, so I think this not
+necessary to ib_umem have tgid again. we can use ib_ucontext->tgid.
+
+I will send a v2 patch.
+
+
+>
+> Jason
