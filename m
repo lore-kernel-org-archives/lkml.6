@@ -1,136 +1,158 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756146AbeEHWVW (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:21:22 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755941AbeEHWVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:21:20 -0400
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Stephen Bates <sbates@raithlin.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
- <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
- <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
- <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
- <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
- <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
- <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508144341.0441b676@w520.home>
- <a524127a-3557-3dff-971c-dfe94ba5a01c@deltatee.com>
- <20180508152631.50fd583c@w520.home>
- <354F7407-0DC7-470C-B9AA-74FDF9C46B08@raithlin.com>
- <20180508160336.0935ddde@w520.home>
-From: Don Dutile <ddutile@redhat.com>
-Message-ID: <11819753-af26-4632-8580-d4a47127a3b2@redhat.com>
-Date: Tue, 8 May 2018 18:21:15 -0400
+        id S1756118AbeEHWYQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:24:16 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:40966 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755658AbeEHWYO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 18:24:14 -0400
+Subject: Re: [PATCH V2] PCI/AER: add pcie TLP header information in the
+ tracepoint
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
+References: <1525809420-30576-1-git-send-email-thomas.tai@oracle.com>
+ <1525809420-30576-2-git-send-email-thomas.tai@oracle.com>
+ <20180508170739.1436c873@gandalf.local.home>
+From: Thomas Tai <thomas.tai@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <df99a2ad-8cbb-9e29-4f5e-79b46b57ddd1@oracle.com>
+Date: Tue, 8 May 2018 18:24:06 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180508160336.0935ddde@w520.home>
+In-Reply-To: <20180508170739.1436c873@gandalf.local.home>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=981
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805080207
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 06:03 PM, Alex Williamson wrote:
-> On Tue, 8 May 2018 21:42:27 +0000
-> "Stephen  Bates" <sbates@raithlin.com> wrote:
-> 
->> Hi Alex
->>
->>>     But it would be a much easier proposal to disable ACS when the
->>> IOMMU is not enabled, ACS has no real purpose in that case.
->>
->> I guess one issue I have with this is that it disables IOMMU groups
->> for all Root Ports and not just the one(s) we wish to do p2pdma on.
-> 
-> But as I understand this series, we're not really targeting specific
-> sets of devices either.  It's more of a shotgun approach that we
-> disable ACS on downstream switch ports and hope that we get the right
-> set of devices, but with the indecisiveness that we might later
-> white-list select root ports to further increase the blast radius.
-> 
->>>     The IOMMU and P2P are already not exclusive, we can bounce off
->>> the IOMMU or make use of ATS as we've previously discussed.  We were
->>>     previously talking about a build time config option that you
->>> didn't expect distros to use, so I don't think intervention for the
->>> user to disable the IOMMU if it's enabled by default is a serious
->>> concern either.
->>
->> ATS definitely makes things more interesting for the cases where the
->> EPs support it. However I don't really have a handle on how common
->> ATS support is going to be in the kinds of devices we have been
->> focused on (NVMe SSDs and RDMA NICs mostly).
->>
->>> What you're trying to do is enabled direct peer-to-peer for
->>> endpoints which do not support ATS when the IOMMU is enabled, which
->>> is not something that necessarily makes sense to me.
->>
->> As above the advantage of leaving the IOMMU on is that it allows for
->> both p2pdma PCI domains and IOMMU groupings PCI domains in the same
->> system. It is just that these domains will be separate to each other.
-> 
-> That argument makes sense if we had the ability to select specific sets
-> of devices, but that's not the case here, right?  With the shotgun
-> approach, we're clearly favoring one at the expense of the other and
-> it's not clear why we don't simple force the needle all the way in that
-> direction such that the results are at least predictable.
-> 
->>>   So that leaves avoiding bounce buffers as the remaining IOMMU
->>> feature
->>
->> I agree with you here that the devices we will want to use for p2p
->> will probably not require a bounce buffer and will support 64 bit DMA
->> addressing.
->>
->>> I'm still not seeing why it's terribly undesirable to require
->>> devices to support ATS if they want to do direct P2P with an IOMMU
->>> enabled.
->>
->> I think the one reason is for the use-case above. Allowing IOMMU
->> groupings on one domain and p2pdma on another domain....
-> 
-> If IOMMU grouping implies device assignment (because nobody else uses
-> it to the same extent as device assignment) then the build-time option
-> falls to pieces, we need a single kernel that can do both.  I think we
-> need to get more clever about allowing the user to specify exactly at
-> which points in the topology they want to disable isolation.  Thanks,
-> 
-> Alex
-
-+1/ack
-
-RDMA VFs lend themselves to NVMEoF w/device-assignment.... need a way to
-put NVME 'resources' into an assignable/manageable object for 'IOMMU-grouping',
-which is really a 'DMA security domain' and less an 'IOMMU grouping domain'.
 
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 2018-05-08 05:07 PM, Steven Rostedt wrote:
+> On Tue,  8 May 2018 15:57:00 -0400
+> Thomas Tai <thomas.tai@oracle.com> wrote:
+> 
+>> When a PCIe AER occurs, the TLP header information is
+>> printed in the kernel message but it is missing from
+>> the tracepoint. A userspace program can use this information
+>> in the tracepoint to better analyze problems.
+>>
+>> To enable the tracepoint:
+>> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
+>>
+>> Example tracepoint output:
+>> cat /sys/kernel/debug/tracing/trace
+>> aer_event: 0000:01:00.0
+>> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+>> TLP Header={0x0,0x1,0x2,0x3}
+>>
+>> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+>> ---
+>>   drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
+>>   include/ras/ras_event.h                | 22 ++++++++++++++++++----
+>>   2 files changed, 20 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> index cfc89dd..fd49a8d 100644
+>> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+>> @@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>>   		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
+>>   
+>>   	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+>> -			info->severity);
+>> +			info->severity, info->tlp_header_valid, &info->tlp);
+>>   }
+>>   
+>>   void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+>> @@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
+>>   		__print_tlp_header(dev, &aer->header_log);
+>>   
+>>   	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+>> -			aer_severity);
+>> +			aer_severity, tlp_header_valid, &aer->header_log);
+>>   }
+>>   #endif
+>> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+>> index 9c68986..f73b168 100644
+>> --- a/include/ras/ras_event.h
+>> +++ b/include/ras/ras_event.h
+>> @@ -298,30 +298,44 @@
+>>   TRACE_EVENT(aer_event,
+>>   	TP_PROTO(const char *dev_name,
+>>   		 const u32 status,
+>> -		 const u8 severity),
+>> +		 const u8 severity,
+>> +		 const u8 tlp_header_valid,
+>> +		 struct aer_header_log_regs *tlp),
+>>   
+>> -	TP_ARGS(dev_name, status, severity),
+>> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+>>   
+>>   	TP_STRUCT__entry(
+>>   		__string(	dev_name,	dev_name	)
+>>   		__field(	u32,		status		)
+>>   		__field(	u8,		severity	)
+>> +		__field(	u8, 		tlp_header_valid)
+>> +		__array(	u32, 		tlp_header, 4	)
+>>   	),
+>>   
+>>   	TP_fast_assign(
+>>   		__assign_str(dev_name, dev_name);
+>>   		__entry->status		= status;
+>>   		__entry->severity	= severity;
+>> +		__entry->tlp_header_valid = tlp_header_valid;
+>> +		if (__entry->tlp_header_valid) {
+> 
+> Although the compiler will probably optimize it anyway, but you
+> probably should have it be:
+> 
+> 		if (tlp_header_valid) {
+> 
+> because why add the extra dereference.
+
+Thanks Steven, good thinking. Will change and send v3.
+
+Thomas
+
+
+
+> 
+>> +			__entry->tlp_header[0] = tlp->dw0;
+>> +			__entry->tlp_header[1] = tlp->dw1;
+>> +			__entry->tlp_header[2] = tlp->dw2;
+>> +			__entry->tlp_header[3] = tlp->dw3;
+>> +		}
+>>   	),
+>>   
+>> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
+>> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+>>   		__get_str(dev_name),
+>>   		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+>>   			__entry->severity == AER_FATAL ?
+>>   			"Fatal" : "Uncorrected, non-fatal",
+>>   		__entry->severity == AER_CORRECTABLE ?
+>>   		__print_flags(__entry->status, "|", aer_correctable_errors) :
+>> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
+>> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
+>> +		__entry->tlp_header_valid ?
+>> +			__print_array(__entry->tlp_header, 4, 4) :
+>> +			"Not available")
+> 
+> The rest looks fine to me.
+> 
+> -- Steve
+> 
+>>   );
+>>   
+>>   /*
 > 
