@@ -1,97 +1,112 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525906870; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AB8JxZpcuG4iYw9HAgQzikL/6MF2Cmnc/PTs8szlAM22JdnVMsyvTUACpaLV9WqKy1GdEwiB9gCc
+ARC-Seal: i=1; a=rsa-sha256; t=1525803191; cv=none;
         d=google.com; s=arc-20160816;
-        b=SISrkovq24XS4Tui8unUDN6onKlfxsVnXBARgyCh9fEZ4rjHWkEpcvEnu8CXAMQeDX
-         Nv+rXz/zByzgsYZjY0/ywd5JSihGqXKNrDnYeRGBHi1RR2pLbFvTV68Pc4VHKnx5kzRw
-         I+O+jYqbrqLYgWFI6mw2RD/flRc7k2vMhrhBvyL3EgW7by9Qf6odYwLzij73rfxlmwlY
-         1Snp/XyAsQ3e/0NUDx4VUBFgal5Y47aM9FC+Uk1NTr5zTpW9OfT9jHMFOmL/0aA2iUk0
-         KWxb9AusairQEnjap85AETO00aSHLgDkQ5fDvNp4LsmSS03DkVCnkdjRkoJxu7s+HzZS
-         ysgw==
+        b=YR7TK9kWqeJma3i7h6EOP8A4U2PaFwxie41zbFkoioAEgJdCHvbygLkcGQfB0jtIuT
+         YFpplETcRh88eMK6OPsNZ2pRv4/ph2OIeeyYcWf6LJiaY39S3EPBUILSEb7o6zUq0OXJ
+         F3WmV6y7Gvwk3KYf/iKiElmxVVJ57MP8WDDC90yMUs4UunZrr2+ljLb8Qh/xhOUYYZ7i
+         XyH/oKXiSKgenmdOOsCLm20zf+/Dcd20I93VqjWPqRtQgW5b6rQOJMT6YvRX7OKBNnNr
+         ct+CjkWvzx55dpnZStI94oLkfHTVU/s1Rsosym+sKedSYzEIS/RX5yWlBgYfC3Qum1+p
+         /Tsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=c88J0plQn15b7ya247cNDrY1duaxE9AnhchJIC+bcOk=;
-        b=H2CiWXtZ0XZ+DiIZ60SCKO15TpXN/C7fNMrpfn2mMQ8tx/BNOnFtSgy1AMybOCu+2U
-         PLo8ndpVdcgQGrOIHIHIP3wYXYr1+q/ExLZiwe0Zax5tUxt4xufAGvruYEkNW6hsDgua
-         MIvowrmqxuYVthjtzR/gusM+9L/EJX5D4bTYBc9uCiP3Xj5rXXM8Q2tU+c4CsJn4qGiX
-         6+hr8VI3C3Rj+GNY4lkHifYhumWfl3Bn0kyc7C6H6vPDxp2KfghWHnBLUQwoluuIbaOC
-         +IJXCnLl7qTBh/ijTpJXDDZQ94o5/dISJBgssWWHkuuEPYUhU/X0kgw6IkzuP5RddMz7
-         PmEA==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=cICutjd7xctFwgpit4Fv4x6/AMw4C9M9DA5UPjdjlhw=;
+        b=x3uYPg+qFCWQ2EjsMG3XzaLe8cRrlDwL9V1chaGqARbP+7QY8Dupu1fWn77vYZAM5K
+         L/kWWDpKnnn+CQYz6yPcRl5bvHirZNYvE/niSyqbxwdDEwtZgJEwAnV/CBsjcC1tu6dA
+         vY05BzT/1Kz9Of0MtAPtgpkjQdDro9aAQKk8n7DO9ayqc/uO1RPtuZLehmIb0EnJfPe1
+         tzaitMB/0WscD5XJ/kNwJABpu5ROnkFR0R0pO2MlzkEc/hMp2K4Ph7zEdjecO8f5OPDT
+         ZL5oSfrkmRQHieO4SaQc9B+Yg952OKTEMywy0aDJ+MIPu0BZgc2eRRTYxZrkCwxtSYsb
+         ZKag==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=K+MixRI+;
-       dkim=pass header.i=@chromium.org header.s=google header.b=RX0B+rBh;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=MDknyoVk;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=K+MixRI+;
-       dkim=pass header.i=@chromium.org header.s=google header.b=RX0B+rBh;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AB8JxZrrq/vCrlp6SKjMRlzNUlugN+KMrE8gMfsAgcB36BFxkg57AvGUNVKNPbZQHWHbCuOB6qAYP7afyyJG/4Fgd0U=
-MIME-Version: 1.0
-Sender: keescook@google.com
-In-Reply-To: <20180509205544.GW27853@wotan.suse.de>
-References: <20180508181247.19431-1-mcgrof@kernel.org> <20180508181247.19431-6-mcgrof@kernel.org>
- <CAGXu5jJXMxx2Xna_M_g1wsS59XnYKqHAGdxhzDtk3PhnLL-gQQ@mail.gmail.com> <20180509205544.GW27853@wotan.suse.de>
-From: Kees Cook <keescook@chromium.org>
-Date: Wed, 9 May 2018 16:01:09 -0700
-X-Google-Sender-Auth: i_NHrvIrQLIOVPdj7hwzuU8PvoU
-Message-ID: <CAGXu5jLn0m_9j=r=x1JefRVEYMvR4Q--e8pCufZyoVQkWe507A@mail.gmail.com>
-Subject: Re: [PATCH v6 05/13] firmware_loader: enhance Kconfig documentation
- over FW_LOADER
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Josh Triplett <josh@joshtriplett.org>, maco@android.com,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	bjorn.andersson@linaro.org, Tom Gundersen <teg@jklm.no>, wagi@monom.org,
-	Hans de Goede <hdegoede@redhat.com>, Andres Rodriguez <andresx7@gmail.com>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>, Jakub Kicinski <kubakici@wp.pl>, Shuah Khan <shuah@kernel.org>,
-	Martin Fuzzey <mfuzzey@parkeon.com>, David Howells <dhowells@redhat.com>, pali.rohar@gmail.com,
-	Takashi Iwai <tiwai@suse.de>, Kalle Valo <kvalo@codeaurora.org>,
-	Arend van Spriel <arend.vanspriel@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Nicolas Broeking <nbroeking@me.com>, Vikram Mulukutla <markivx@codeaurora.org>,
-	Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Abhay_Salunke@dell.com, jewalt@lgsinnovations.com, oneukum@suse.com,
-	Bitterblue of Monsea <cantabile.desu@gmail.com>, Alexei Starovoitov <ast@fb.com>, hare <hare@suse.com>,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, khc@pm.waw.pl,
-	"David S. Miller" <davem@davemloft.net>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-	tkjos@android.com, Jonathan Corbet <corbet@lwn.net>, mchehab+samsung@kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, linux-scsi@vger.kernel.org,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+       dkim=pass header.i=@kernel.org header.s=default header.b=MDknyoVk;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	keescook@chromium.org,
+	josh@joshtriplett.org,
+	maco@android.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	bjorn.andersson@linaro.org,
+	teg@jklm.no,
+	wagi@monom.org,
+	hdegoede@redhat.com,
+	andresx7@gmail.com,
+	zohar@linux.vnet.ibm.com,
+	kubakici@wp.pl,
+	shuah@kernel.org,
+	mfuzzey@parkeon.com,
+	dhowells@redhat.com,
+	pali.rohar@gmail.com,
+	tiwai@suse.de,
+	kvalo@codeaurora.org,
+	arend.vanspriel@broadcom.com,
+	zajec5@gmail.com,
+	nbroeking@me.com,
+	markivx@codeaurora.org,
+	broonie@kernel.org,
+	dmitry.torokhov@gmail.com,
+	dwmw2@infradead.org,
+	torvalds@linux-foundation.org,
+	Abhay_Salunke@dell.com,
+	jewalt@lgsinnovations.com,
+	oneukum@suse.com,
+	cantabile.desu@gmail.com,
+	ast@fb.com,
+	hare@suse.com,
+	jejb@linux.vnet.ibm.com,
+	martin.petersen@oracle.com,
+	khc@pm.waw.pl,
+	davem@davemloft.net,
+	arve@android.com,
+	tkjos@android.com,
+	corbet@lwn.net,
+	mchehab+samsung@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v6 12/13] Documentation: remove stale firmware API reference
+Date: Tue,  8 May 2018 11:12:46 -0700
+Message-Id: <20180508181247.19431-13-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180508181247.19431-1-mcgrof@kernel.org>
+References: <20180508181247.19431-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599920594318435232?=
-X-GMAIL-MSGID: =?utf-8?q?1600029322523185613?=
+X-GMAIL-THRID: =?utf-8?q?1599920606656661836?=
+X-GMAIL-MSGID: =?utf-8?q?1599920606656661836?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Wed, May 9, 2018 at 1:55 PM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> On Tue, May 08, 2018 at 03:42:33PM -0700, Kees Cook wrote:
->> On Tue, May 8, 2018 at 11:12 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->> > +         This used to be the default firmware loading facility, and udev used
->> > +         to listen for uvents to load firmware for the kernel. The firmware
->> > +         loading facility functionality in udev has been removed, as such it
->> > +         can no longer be relied upon as a fallback mechanism. Linux no longer
->> > +         relies on or uses a fallback mechanism in userspace. If you need to
->> > +         rely on one refer to the permissively licensed firmwared:
->>
->> Typo: firmware
->
-> Thanks fixed all typos except this one, this one is meant to be firmwared as
-> that is the name of the project, the url is below.
->
->>
->> > +
->> > +         https://github.com/teg/firmwared
+It refers to a pending patch, but this was merged eons ago.
 
-Oh! Yes, hah. :) Thanks!
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ Documentation/dell_rbu.txt | 3 ---
+ 1 file changed, 3 deletions(-)
 
--Kees
-
+diff --git a/Documentation/dell_rbu.txt b/Documentation/dell_rbu.txt
+index 0fdb6aa2704c..077fdc29a0d0 100644
+--- a/Documentation/dell_rbu.txt
++++ b/Documentation/dell_rbu.txt
+@@ -121,9 +121,6 @@ read back the image downloaded.
+ 
+ .. note::
+ 
+-   This driver requires a patch for firmware_class.c which has the modified
+-   request_firmware_nowait function.
+-
+    Also after updating the BIOS image a user mode application needs to execute
+    code which sends the BIOS update request to the BIOS. So on the next reboot
+    the BIOS knows about the new image downloaded and it updates itself.
 -- 
-Kees Cook
-Pixel Security
+2.17.0
