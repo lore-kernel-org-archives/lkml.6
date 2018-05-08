@@ -1,31 +1,31 @@
 Return-Path: <andreyknvl@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525800101; cv=none;
+ARC-Seal: i=1; a=rsa-sha256; t=1525800096; cv=none;
         d=google.com; s=arc-20160816;
-        b=J9wTm0FHtIvqfH5x1cB9RL7IwDuTaeLGD74oJEFUi9z4waCjHjt93x0+yxtzZwthVV
-         ZXHTZHE2cF4J9OrOonQB2BjghA4eiH3tR7soCsuGXZSueEtAoznJcjKS21D/N7uMCOWv
-         bfe9aASYRX87qP5c8B0XjcDUTvNSdghznkch9XIgNGHgTL7iP4lwZRDV7uXvUjiiM3el
-         WworzYdG/9gh7VPWgemmET2nQV7bp86IU6E6LULNjAi7Z4WoMbUTaUVAgX5KvMN82PZ2
-         RRg8n9F0SivhkVqDBY+jMM1uQj1P4xP8nXY9g/Zln//8rtHv5BUSK7caJaKmYCYN/Bgx
-         fSnQ==
+        b=aC7Ndaay0vHjJkOZHPNlEuLzsYexOnGPly8plr927bIb0+G4p8x7C2fT+V1howBX8K
+         xQlJXTtzTU5ELeWxeL5UKDGSPm6jgPz6uEVnu0hxT5dCXwi6Jl9E/fDxbNyYq0Z7nAua
+         NKLdfsGTw6QNm9xIihglfHyXXap5aiEnQdSkHioFGdVz+MjuOnWOtSSFqEGNfcTfHcYM
+         KYUFKFdeQq6DbqpKyLCl75b0LN4ZG2nCvTm2Yf/4seuN/dNWcCHctnSLNaXeXKr/sg3n
+         eHurBk2x5adZ8vc0T4wT6w5wLUP+rpi7TXm+85FV8KMndnrB63vsdwlst34sIHHVvyiX
+         YDjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=vS/KcpwGXBxG8BJLX2GFFP0lc8l1Zpo/Yq8CpDQW390=;
-        b=QYimWUYo+C8Bv6SfLHbDaNdHq39CnWEqWMvvZ2h+RAv9M+3BmTLcDbWaSbkO9oS2rt
-         +9nxnr2xmx2av7E1VfTA3J3mDdDj/s+G2wVzf81JskbeNn/5IcecfDpE2TpREPSswxLt
-         KM7jmKa71t0PNWyq4Wp2llCTYhroNKwf2gOuwctkAtURoaBg1cPoJiHkn8JemfpRlyQl
-         PFLdDZvH7bWxeAW8Tc0tsOgxn531Irni6NvTLvjyUfO7Wtp8stAQnFLz7TowCZ19+cfn
-         l2AMD1tFCPAEHFEBr4KDuFMecNVSn3RtisRac4rPGymgu4bUC2LEjO3EYqtsctIk/8yY
-         v+MA==
+        bh=eBYOTNDzOJ/AEFeyEKP9NQWRFTjBXtEDfLLt3CwLefI=;
+        b=HQCaT3EQa1lpCDI6LFzwG76EHKRHL9J78Ww4Z6yhFYY1j/LXg002C6x+poz0XLaFgW
+         7rvYiJe+tifByeSCEwVxbWMreIBht0BmbcYFncEbqodsy4ZKmV/frbHExW9wttl4O+T/
+         VLrwvy7qfu21NNMRY9KQSV20xz949OXfE1UKj8l25buuUIsVM4wuu4Ihe08lhY5f2GYl
+         yZ7znVZJ7DUrwxPvY/cXRiTStAcQx0s7171BP0GMWgpihNNvRndUhvR/Ip6ltqH1EYcO
+         np6lvUCv7z/vBAbh+nOzXQD39ySnYotUYRvfdPTBJHULMfuHHAf9knzqQzHbTt9VE3db
+         iYTg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=ul6S41tq;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=hDtcMEva;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=ul6S41tq;
+       dkim=pass header.i=@google.com header.s=20161025 header.b=hDtcMEva;
        spf=pass (google.com: domain of andreyknvl@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andreyknvl@google.com;
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=google.com
-X-Google-Smtp-Source: AB8JxZpKN6RBJ8oAtKBSfCe/3cQvTikZbk+KQJzz8zRceOVeNe6OFwmu1XkjceChXUjz9vZWBj1tHQ==
+X-Google-Smtp-Source: AB8JxZqG+rEh7klQ+p6hE5DkJTRBX+DH3QTdOSw2sQcEXnuH68j8QvMwP85HAYkUicv1u3eHeb+Mkw==
 From: Andrey Konovalov <andreyknvl@google.com>
 To: Andrey Ryabinin <aryabinin@virtuozzo.com>,
 	Alexander Potapenko <glider@google.com>,
@@ -107,167 +107,225 @@ Cc: Kostya Serebryany <kcc@google.com>,
 	Jann Horn <jannh@google.com>,
 	Mark Brand <markbrand@google.com>,
 	Chintan Pandya <cpandya@codeaurora.org>
-Subject: [PATCH v1 14/16] khwasan, arm64: add brk handler for inline instrumentation
-Date: Tue,  8 May 2018 19:21:00 +0200
-Message-Id: <1259ed7ecd6e47925184964db90139bc9ef29426.1525798754.git.andreyknvl@google.com>
+Subject: [PATCH v1 12/16] khwasan: add bug reporting routines
+Date: Tue,  8 May 2018 19:20:58 +0200
+Message-Id: <0474f59eee0b14a7e72264efa2fcff276f03839f.1525798754.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
 References: <cover.1525798753.git.andreyknvl@google.com>
 In-Reply-To: <cover.1525798753.git.andreyknvl@google.com>
 References: <cover.1525798753.git.andreyknvl@google.com>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599917366659988730?=
-X-GMAIL-MSGID: =?utf-8?q?1599917366659988730?=
+X-GMAIL-THRID: =?utf-8?q?1599917362568177237?=
+X-GMAIL-MSGID: =?utf-8?q?1599917362568177237?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-KHWASAN inline instrumentation mode (which embeds checks of shadow memory
-into the generated code, instead of inserting a callback) generates a brk
-instruction when a tag mismatch is detected.
+This commit adds rountines, that print KHWASAN error reports. Those are
+quite similar to KASAN, the difference is:
 
-This commit add a KHWASAN brk handler, that decodes the immediate value
-passed to the brk instructions (to extract information about the memory
-access that triggered the mismatch), reads the register values (x0 contains
-the guilty address) and reports the bug.
+1. The way KHWASAN finds the first bad shadow cell (with a mismatching
+   tag). KHWASAN compares memory tags from the shadow memory to the pointer
+   tag.
+
+2. KHWASAN reports all bugs with the "KASAN: invalid-access" header. This
+   is done, so various external tools that already parse the kernel logs
+   looking for KASAN reports wouldn't need to be changed.
 
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- arch/arm64/include/asm/brk-imm.h |  2 +
- arch/arm64/kernel/traps.c        | 69 +++++++++++++++++++++++++++++++-
- 2 files changed, 69 insertions(+), 2 deletions(-)
+ include/linux/kasan.h     |  3 +++
+ mm/kasan/kasan.h          |  7 +++++
+ mm/kasan/kasan_report.c   |  7 ++---
+ mm/kasan/khwasan_report.c | 21 +++++++++++++++
+ mm/kasan/report.c         | 57 +++++++++++++++++++++------------------
+ 5 files changed, 64 insertions(+), 31 deletions(-)
 
-diff --git a/arch/arm64/include/asm/brk-imm.h b/arch/arm64/include/asm/brk-imm.h
-index ed693c5bcec0..e4a7013321dc 100644
---- a/arch/arm64/include/asm/brk-imm.h
-+++ b/arch/arm64/include/asm/brk-imm.h
-@@ -16,10 +16,12 @@
-  * 0x400: for dynamic BRK instruction
-  * 0x401: for compile time BRK instruction
-  * 0x800: kernel-mode BUG() and WARN() traps
-+ * 0x9xx: KHWASAN trap (allowed values 0x900 - 0x9ff)
-  */
- #define FAULT_BRK_IMM			0x100
- #define KGDB_DYN_DBG_BRK_IMM		0x400
- #define KGDB_COMPILED_DBG_BRK_IMM	0x401
- #define BUG_BRK_IMM			0x800
-+#define KHWASAN_BRK_IMM			0x900
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index d7624b879d86..e209027f3b52 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -161,6 +161,9 @@ void *khwasan_set_tag(const void *addr, u8 tag);
+ u8 khwasan_get_tag(const void *addr);
+ void *khwasan_reset_tag(const void *ptr);
  
- #endif
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 8bbdc17e49df..2234e3a4cc35 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -35,6 +35,7 @@
- #include <linux/sizes.h>
- #include <linux/syscalls.h>
- #include <linux/mm_types.h>
-+#include <linux/kasan.h>
++void kasan_report(unsigned long addr, size_t size,
++			bool write, unsigned long ip);
++
+ #else /* CONFIG_KASAN_HW */
  
- #include <asm/atomic.h>
- #include <asm/bug.h>
-@@ -269,10 +270,14 @@ void arm64_notify_die(const char *str, struct pt_regs *regs,
- 	}
- }
+ static inline void khwasan_init(void) { }
+diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
+index a76aee9e095f..620941d1e84f 100644
+--- a/mm/kasan/kasan.h
++++ b/mm/kasan/kasan.h
+@@ -128,8 +128,15 @@ void kasan_poison_shadow(const void *address, size_t size, u8 value);
+ void check_memory_region(unsigned long addr, size_t size, bool write,
+ 				unsigned long ret_ip);
  
--void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
-+void __arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
++void *find_first_bad_addr(void *addr, size_t size);
+ const char *get_bug_type(struct kasan_access_info *info);
+ 
++#ifdef CONFIG_KASAN_HW
++void print_tags(u8 addr_tag, const void *addr);
++#else
++static inline void print_tags(u8 addr_tag, const void *addr) { }
++#endif
++
+ void kasan_report(unsigned long addr, size_t size,
+ 		bool is_write, unsigned long ip);
+ void kasan_report_invalid_free(void *object, unsigned long ip);
+diff --git a/mm/kasan/kasan_report.c b/mm/kasan/kasan_report.c
+index 2d8decbecbd5..fdf2d77e3125 100644
+--- a/mm/kasan/kasan_report.c
++++ b/mm/kasan/kasan_report.c
+@@ -33,10 +33,10 @@
+ #include "kasan.h"
+ #include "../slab.h"
+ 
+-static const void *find_first_bad_addr(const void *addr, size_t size)
++void *find_first_bad_addr(void *addr, size_t size)
  {
- 	regs->pc += size;
-+}
+ 	u8 shadow_val = *(u8 *)kasan_mem_to_shadow(addr);
+-	const void *first_bad_addr = addr;
++	void *first_bad_addr = addr;
  
-+void arm64_skip_faulting_instruction(struct pt_regs *regs, unsigned long size)
-+{
-+	__arm64_skip_faulting_instruction(regs, size);
+ 	while (!shadow_val && first_bad_addr < addr + size) {
+ 		first_bad_addr += KASAN_SHADOW_SCALE_SIZE;
+@@ -50,9 +50,6 @@ static const char *get_shadow_bug_type(struct kasan_access_info *info)
+ 	const char *bug_type = "unknown-crash";
+ 	u8 *shadow_addr;
+ 
+-	info->first_bad_addr = find_first_bad_addr(info->access_addr,
+-						info->access_size);
+-
+ 	shadow_addr = (u8 *)kasan_mem_to_shadow(info->first_bad_addr);
+ 
  	/*
- 	 * If we were single stepping, we want to get the step exception after
- 	 * we return from the trap.
-@@ -790,7 +795,7 @@ static int bug_handler(struct pt_regs *regs, unsigned int esr)
- 	}
- 
- 	/* If thread survives, skip over the BUG instruction and continue: */
--	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-+	__arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
- 	return DBG_HOOK_HANDLED;
+diff --git a/mm/kasan/khwasan_report.c b/mm/kasan/khwasan_report.c
+index 2edbc3c76be5..51238b404b08 100644
+--- a/mm/kasan/khwasan_report.c
++++ b/mm/kasan/khwasan_report.c
+@@ -37,3 +37,24 @@ const char *get_bug_type(struct kasan_access_info *info)
+ {
+ 	return "invalid-access";
  }
- 
-@@ -800,6 +805,59 @@ static struct break_hook bug_break_hook = {
- 	.fn = bug_handler,
- };
- 
-+#ifdef CONFIG_KASAN_HW
 +
-+#define KHWASAN_ESR_RECOVER	0x20
-+#define KHWASAN_ESR_WRITE	0x10
-+#define KHWASAN_ESR_SIZE_MASK	0x0f
-+#define KHWASAN_ESR_SIZE(esr)	(1 << ((esr) & KHWASAN_ESR_SIZE_MASK))
-+
-+static int khwasan_handler(struct pt_regs *regs, unsigned int esr)
++void *find_first_bad_addr(void *addr, size_t size)
 +{
-+	bool recover = esr & KHWASAN_ESR_RECOVER;
-+	bool write = esr & KHWASAN_ESR_WRITE;
-+	size_t size = KHWASAN_ESR_SIZE(esr);
-+	u64 addr = regs->regs[0];
-+	u64 pc = regs->pc;
++	u8 tag = get_tag(addr);
++	void *untagged_addr = reset_tag(addr);
++	u8 *shadow = (u8 *)kasan_mem_to_shadow(untagged_addr);
++	void *first_bad_addr = untagged_addr;
 +
-+	if (user_mode(regs))
-+		return DBG_HOOK_ERROR;
-+
-+	kasan_report(addr, size, write, pc);
-+
-+	/*
-+	 * The instrumentation allows to control whether we can proceed after
-+	 * a crash was detected. This is done by passing the -recover flag to
-+	 * the compiler. Disabling recovery allows to generate more compact
-+	 * code.
-+	 *
-+	 * Unfortunately disabling recovery doesn't work for the kernel right
-+	 * now. KHWASAN reporting is disabled in some contexts (for example when
-+	 * the allocator accesses slab object metadata; same is true for KASAN;
-+	 * this is controlled by current->kasan_depth). All these accesses are
-+	 * detected by the tool, even though the reports for them are not
-+	 * printed.
-+	 *
-+	 * This is something that might be fixed at some point in the future.
-+	 */
-+	if (!recover)
-+		die("Oops - KHWASAN", regs, 0);
-+
-+	/* If thread survives, skip over the brk instruction and continue: */
-+	__arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
-+	return DBG_HOOK_HANDLED;
++	while (*shadow == tag && first_bad_addr < untagged_addr + size) {
++		first_bad_addr += KASAN_SHADOW_SCALE_SIZE;
++		shadow = (u8 *)kasan_mem_to_shadow(first_bad_addr);
++	}
++	return first_bad_addr;
 +}
 +
-+#define KHWASAN_ESR_VAL (0xf2000000 | KHWASAN_BRK_IMM)
-+#define KHWASAN_ESR_MASK 0xffffff00
++void print_tags(u8 addr_tag, const void *addr)
++{
++	u8 *shadow = (u8 *)kasan_mem_to_shadow(addr);
 +
-+static struct break_hook khwasan_break_hook = {
-+	.esr_val = KHWASAN_ESR_VAL,
-+	.esr_mask = KHWASAN_ESR_MASK,
-+	.fn = khwasan_handler,
-+};
-+#endif
-+
- /*
-  * Initial handler for AArch64 BRK exceptions
-  * This handler only used until debug_traps_init().
-@@ -807,6 +865,10 @@ static struct break_hook bug_break_hook = {
- int __init early_brk64(unsigned long addr, unsigned int esr,
- 		struct pt_regs *regs)
++	pr_err("Pointer tag: [%02x], memory tag: [%02x]\n", addr_tag, *shadow);
++}
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 155247a6f8a8..e031c78f2e52 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -64,11 +64,10 @@ static int __init kasan_set_multi_shot(char *str)
+ }
+ __setup("kasan_multi_shot", kasan_set_multi_shot);
+ 
+-static void print_error_description(struct kasan_access_info *info,
+-					const char *bug_type)
++static void print_error_description(struct kasan_access_info *info)
  {
-+#ifdef CONFIG_KASAN_HW
-+	if ((esr & KHWASAN_ESR_MASK) == KHWASAN_ESR_VAL)
-+		return khwasan_handler(regs, esr) != DBG_HOOK_HANDLED;
-+#endif
- 	return bug_handler(regs, esr) != DBG_HOOK_HANDLED;
+ 	pr_err("BUG: KASAN: %s in %pS\n",
+-		bug_type, (void *)info->ip);
++		get_bug_type(info), (void *)info->ip);
+ 	pr_err("%s of size %zu at addr %px by task %s/%d\n",
+ 		info->is_write ? "Write" : "Read", info->access_size,
+ 		info->access_addr, current->comm, task_pid_nr(current));
+@@ -272,6 +271,8 @@ void kasan_report_invalid_free(void *object, unsigned long ip)
+ 
+ 	start_report(&flags);
+ 	pr_err("BUG: KASAN: double-free or invalid-free in %pS\n", (void *)ip);
++	print_tags(get_tag(object), reset_tag(object));
++	object = reset_tag(object);
+ 	pr_err("\n");
+ 	print_address_description(object);
+ 	pr_err("\n");
+@@ -279,41 +280,45 @@ void kasan_report_invalid_free(void *object, unsigned long ip)
+ 	end_report(&flags);
  }
  
-@@ -814,4 +876,7 @@ int __init early_brk64(unsigned long addr, unsigned int esr,
- void __init trap_init(void)
+-static void kasan_report_error(struct kasan_access_info *info)
+-{
+-	unsigned long flags;
+-
+-	start_report(&flags);
+-
+-	print_error_description(info, get_bug_type(info));
+-	pr_err("\n");
+-
+-	if (!addr_has_shadow(info->access_addr)) {
+-		dump_stack();
+-	} else {
+-		print_address_description((void *)info->access_addr);
+-		pr_err("\n");
+-		print_shadow_for_address(info->first_bad_addr);
+-	}
+-
+-	end_report(&flags);
+-}
+-
+ void kasan_report(unsigned long addr, size_t size,
+ 		bool is_write, unsigned long ip)
  {
- 	register_break_hook(&bug_break_hook);
-+#ifdef CONFIG_KASAN_HW
-+	register_break_hook(&khwasan_break_hook);
-+#endif
+ 	struct kasan_access_info info;
++	void *tagged_addr;
++	void *untagged_addr;
++	unsigned long flags;
+ 
+ 	if (likely(!report_enabled()))
+ 		return;
+ 
+ 	disable_trace_on_warning();
+ 
+-	info.access_addr = (void *)addr;
+-	info.first_bad_addr = (void *)addr;
++	tagged_addr = (void *)addr;
++	untagged_addr = reset_tag(tagged_addr);
++
++	info.access_addr = tagged_addr;
++	if (addr_has_shadow(untagged_addr))
++		info.first_bad_addr = find_first_bad_addr(tagged_addr, size);
++	else
++		info.first_bad_addr = untagged_addr;
+ 	info.access_size = size;
+ 	info.is_write = is_write;
+ 	info.ip = ip;
+ 
+-	kasan_report_error(&info);
++	start_report(&flags);
++
++	print_error_description(&info);
++	if (addr_has_shadow(untagged_addr))
++		print_tags(get_tag(tagged_addr), info.first_bad_addr);
++	pr_err("\n");
++
++	if (addr_has_shadow(untagged_addr)) {
++		print_address_description(untagged_addr);
++		pr_err("\n");
++		print_shadow_for_address(info.first_bad_addr);
++	} else {
++		dump_stack();
++	}
++
++	end_report(&flags);
  }
 -- 
 2.17.0.441.gb46fe60e1d-goog
