@@ -1,128 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932634AbeEHQLA (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:11:00 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:63348 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932127AbeEHQK6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:10:58 -0400
-Subject: Re: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x
- driver
-To: "Andrew F. Davis" <afd@ti.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20180508141704.24271-1-dmurphy@ti.com>
- <554b283f-7c27-e2de-3052-e5119dba9396@ti.com>
-From: Dan Murphy <dmurphy@ti.com>
-Message-ID: <70e9b1ef-495b-a1ee-7abe-f7c719438b72@ti.com>
-Date: Tue, 8 May 2018 11:10:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932745AbeEHQLc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:11:32 -0400
+Received: from fieldses.org ([173.255.197.46]:50808 "EHLO fieldses.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932127AbeEHQLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:11:30 -0400
+Date: Tue, 8 May 2018 12:11:30 -0400
+From: "bfields@fieldses.org" <bfields@fieldses.org>
+To: Trond Myklebust <trondmy@hammer.space>
+Cc: "syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com"
+        <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: general protection fault in encode_rpcb_string
+Message-ID: <20180508161130.GC6151@fieldses.org>
+References: <f4f5e80803d08f47b9056a0366dd@google.com>
+ <20180417213308.GC18217@fieldses.org>
+ <1524002074.63751.5.camel@hammer.space>
 MIME-Version: 1.0
-In-Reply-To: <554b283f-7c27-e2de-3052-e5119dba9396@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524002074.63751.5.camel@hammer.space>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 10:32 AM, Andrew F. Davis wrote:
-> On 05/08/2018 09:17 AM, Dan Murphy wrote:
->> Introduce the device tree bindings for the lm3601x
->> family of LED torch, flash and IR drivers.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->> ---
->>
->> v2 - No changes - https://patchwork.kernel.org/patch/10384587/
->>
->>  .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
->>  1 file changed, 51 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->>
->> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->> new file mode 100644
->> index 000000000000..38cdabf6ca7e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
->> @@ -0,0 +1,51 @@
->> +* Texas Instruments - lm3601x Single-LED Flash Driver
->> +
->> +The LM3601X are ultra-small LED flash drivers that
->> +provides a high level of adjustability.
->> +
->> +Required properties:
->> +	- compatible : Can be one of the following
->> +		"ti,lm3601x"
-> 
-> 
-> No wildcard compatibles, drop this.
+From: "J. Bruce Fields" <bfields@redhat.com>
+Date: Tue, 8 May 2018 11:47:03 -0400
+Subject: [PATCH 2/2] sunrpc: convert unnecessary GFP_ATOMIC to GFP_NOFS
 
-Yeah I hmm and hawed about keeping this so I figured I would get community feedback on this.
-I can remove it.
+It's OK to sleep here, we just don't want to recurse into the filesystem
+as this writeout could be waiting on this.
 
-> 
-> 
->> +		"ti,lm36010"
->> +		"ti,lm36011"
->> +	- reg : I2C slave address
->> +	- #address-cells : 1
->> +	- #size-cells : 0
->> +
->> +Required child properties:
->> +	- reg : 0 - Indicates to support and register a torch interface
->> +		1 - Indicates to support and register a strobe interface
->> +		2 - Indicates to support and register an ir interface
->> +
->> +Optional child properties:
->> +	- label : see Documentation/devicetree/bindings/leds/common.txt
->> +
-> 
-> 
-> Relative path might work better here.
+As a next step: the documentation for GFP_NOFS says "Please try to avoid
+using this flag directly and instead use memalloc_nofs_{save,restore} to
+mark the whole scope which cannot/shouldn't recurse into the FS layer
+with a short explanation why. All allocation requests will inherit
+GFP_NOFS implicitly."
 
-I was following the other LED documentation.
+But I'm not sure where to do this.  Should the workqueue could be
+arranging that for us in the case of workqueues created with
+WQ_MEM_RECLAIM?
 
-Pretty much a copy and paste
+Reported-by: Trond Myklebust <trondmy@hammer.space>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+---
+ net/sunrpc/rpcb_clnt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> 
->> +Example:
->> +led-controller@64 {
->> +	compatible = "ti,lm3601x";
->> +	#address-cells = <1>;
->> +	#size-cells = <0>;
->> +	reg = <0x64>;
->> +
->> +	led@0 {
->> +		reg = <0>;
->> +		label = "white:torch";
->> +		led-max-microamp=<10000>;
->> +	};
->> +
->> +	led@1 {
->> +		reg = <1>;
->> +		label = "white:strobe";
->> +		flash-max-microamp=<10000>;
->> +		flash-max-timeout-us=<800>;
->> +	};
->> +
->> +	led@2 {
->> +		reg = <2>;
->> +		label = "invisible:ir";
->> +	};
->> +}
->> +
->> +For more product information please see the links below:
->> +http://www.ti.com/product/LM36010
->> +http://www.ti.com/product/LM36011
->>
+On Tue, Apr 17, 2018 at 09:54:36PM +0000, Trond Myklebust wrote:
+> Yes, and we can probably convert it, and the other GFP_ATOMIC
+> allocations in the rpcbind client to use GFP_NOFS in order to improve
+> reliability.
 
-
+diff --git a/net/sunrpc/rpcb_clnt.c b/net/sunrpc/rpcb_clnt.c
+index 82c120e51d64..576e84a1adee 100644
+--- a/net/sunrpc/rpcb_clnt.c
++++ b/net/sunrpc/rpcb_clnt.c
+@@ -752,7 +752,7 @@ void rpcb_getport_async(struct rpc_task *task)
+ 		goto bailout_nofree;
+ 	}
+ 
+-	map = kzalloc(sizeof(struct rpcbind_args), GFP_ATOMIC);
++	map = kzalloc(sizeof(struct rpcbind_args), GFP_NOFS);
+ 	if (!map) {
+ 		status = -ENOMEM;
+ 		dprintk("RPC: %5u %s: no memory available\n",
+@@ -770,7 +770,7 @@ void rpcb_getport_async(struct rpc_task *task)
+ 	case RPCBVERS_4:
+ 	case RPCBVERS_3:
+ 		map->r_netid = xprt->address_strings[RPC_DISPLAY_NETID];
+-		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
++		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_NOFS);
+ 		if (!map->r_addr) {
+ 			status = -ENOMEM;
+ 			dprintk("RPC: %5u %s: no memory available\n",
 -- 
-------------------
-Dan Murphy
+2.17.0
