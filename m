@@ -1,201 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753907AbeEHCvi (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:51:38 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:56784 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753529AbeEHCvf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:51:35 -0400
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180508025133epoutp0398d93c30ec2382dc9f0c6d986b635ab9~si6ABx1YB0389703897epoutp035
-X-AuditID: b6c32a46-145ff70000001024-2d-5af110b112d3
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="UTF-8"
-Message-id: <5AF110B0.1030206@samsung.com>
-Date: Tue, 08 May 2018 11:51:28 +0900
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>, linux-scsi@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: Re: [PATCH v2 2/2] scsi: ufs: Use freq table with devfreq
-In-reply-to: <20180504224427.32606-3-bjorn.andersson@linaro.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0gUURT27qyzo7R1W7UuSmYT/VBw20erY2aZiWxUID0gDFlHHXztw3ZW
-        qSBZ/ZFiPjOhtjINyfCBKT7WR5mraFpKpGn00F5aRJYimGZFMztG/brf+c53zrnn4xCYrAj3
-        JlKMFsZspPUk7i5u6/PXBDbBhRhFY2so9ajnq5gayfkioUp7RiTUWOd1nFos7AfUxUk7TtUM
-        /hZRL7Pv4JS96hz1cMWOhbtrx4oKRdoO22uJ9tVEN65dmHkh1ha11ALtYrNvNB7D7Elm6ETG
-        7McYE0yJKcakMPLQMd0BnSZIoQxUhlDBpJ+RNjBhZOTh6MCoFD33M9Ivk9ZncFQ0zbLkzr17
-        zKYMC+OXbGItYeQppVIlVyqC5SoV96pjd6s0nCSOSW7oCkpvJM8U9FJWMO+TD9wIBHehgWsP
-        xPnAnZBBO0C3vxa7CsF3gPLu8xlBNZT9ExcSdwF6sfwO4xNSuBEtl01xIoLA4FbU/zSNpzHo
-        j1q7GiU8lsHXAM2vHOclUhiA5qY38bQY7kBT32ZwHuMc3fPpuRNvgNvQs+X3gMde8CTquLkk
-        4cd6wlKAisqvivgAg6sA1cxVOis8YARaHP3lHOYGw9F163unCMFvOHLYrmHCBpHI+rJ9DXug
-        z4MtEgH7oNnaJiAU5AKUe68CE4LLAI1OTokElRrNVuWLhN3Wo7w+fhzB8VKUd0EmSLToyvCr
-        tab7UdVkISbYNQTQ2952SQnwtf3nmO2fY7b/HKsEWC3YxKSzhiSGVaWr5CxtYDOMSfIEk6EZ
-        OG8xIMoOqkcPOwAkALlOGs3Ox8hc6Uz2rMEBEIGRnlJ8O0dJE+mz5xizSWfO0DOsA2g4y0sx
-        b68EE3fZRotOqVGp1WpKExyiVoSQm6XWI49jZDCJtjBpDJPOmP/WiQg3bysIqy8lW26pqkVv
-        s+j4CnK6/kS4ITXIoRsodxCnDxp9Ot/Exqds84/YUseqn4RmhXedOWSWFyzoiIXKhqWSyL6P
-        /W4r8fqSmSUCK+vLylS4jNvjOqznm9pWp8d7xrtnAy4Vf/plOirZt1Q3cVWUg8WmDt8YmnD5
-        oMN+/CyYmg8hxWwyrQzAzCz9B1oInHOhAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t9jQd2NAh+jDF59F7A4vf8di8XZpjfs
-        FhP3n2W3uLxrDpvF594jjBbd13ewWSw//o/J4nbjCjaLHQurLE783MHswOVxua+XyWPnrLvs
-        Hneu7WHz+Pj0FotH35ZVjB6fN8kFsEVx2aSk5mSWpRbp2yVwZazdbVawXqmi56BFA+MH6S5G
-        Tg4JAROJk41/2LoYuTiEBNYxShz7/JsJJMErICjxY/I9li5GDg5mAXmJI5eyQcLMAuoSk+Yt
-        YgaxhQTuM0rcXKQOUsIroCXx9r4YSJhFQFXi3vunbCA2G1B4/4sbYDa/gKLE1R+PGUHKRQUi
-        JLpPVIJsFRGYzCjxe+IlJhCHWeA3o8TPmf/AGoQFnCQ+n/vLDrHrJKPE+04OEJtTwEFiTsNj
-        pgmMArOQXDoL4dJZSC5dwMi8ilEytaA4Nz232KjAKC+1XK84Mbe4NC9dLzk/dxMjMBa2Hdbq
-        38H4eEn8IUYBDkYlHt4fBR+ihFgTy4orcw8xSnAwK4nwsikDhXhTEiurUovy44tKc1KLDzFK
-        c7AoifPy5x+LFBJITyxJzU5NLUgtgskycXBKNTDK/TDNDf4xoc11tfIEtgunpLaf2tCbztW0
-        sT+k3Dh427+nsm3XQyTsgtsWLlXgeSkb5cLi+p1zy4Vz3W/MNhq+k/OWt1fYHzyJzXuv8uX7
-        e6wkFDTv7IkzcppcpdAw/aO5X56RqPijeJZXPz4ZOa/fydq38kXGvwc3gn4Gd6rsyWE2epDF
-        56LEUpyRaKjFXFScCAC5pz6+gQIAAA==
-X-CMS-MailID: 20180508025129epcas2p1e836dec99d2209af4b3dd4fb15ee97c2
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
+        id S1753794AbeEHCys (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:54:48 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59214 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753499AbeEHCyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 22:54:47 -0400
+Subject: Re: [PATCH] f2fs: fix to wait IO writeback in __revoke_inmem_pages()
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: Chao Yu <chao@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <20180426083247.86337-1-yuchao0@huawei.com>
+ <20180426154817.GF68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <7810a3a3-70f3-9b37-e64a-f26dba72b0f9@kernel.org>
+ <20180426163651.GL68594@jaegeuk-macbookpro.roam.corp.google.com>
+ <3cae6be6-365d-8e48-b1db-8b04f96634e4@huawei.com>
+ <20180507204630.GB83867@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <f986a4d9-e2d4-17d6-7179-53d353fae90d@huawei.com>
+Date: Tue, 8 May 2018 10:54:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20180507204630.GB83867@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180504224448epcas4p14166331ab890398af7fedab3b0cbb3b1
-X-RootMTR: 20180504224448epcas4p14166331ab890398af7fedab3b0cbb3b1
-References: <20180504224427.32606-1-bjorn.andersson@linaro.org>
-        <CGME20180504224448epcas4p14166331ab890398af7fedab3b0cbb3b1@epcas4p1.samsung.com>
-        <20180504224427.32606-3-bjorn.andersson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2018/5/8 4:46, Jaegeuk Kim wrote:
+> On 04/27, Chao Yu wrote:
+>> On 2018/4/27 0:36, Jaegeuk Kim wrote:
+>>> On 04/26, Chao Yu wrote:
+>>>> On 2018/4/26 23:48, Jaegeuk Kim wrote:
+>>>>> On 04/26, Chao Yu wrote:
+>>>>>> Thread A				Thread B
+>>>>>> - f2fs_ioc_commit_atomic_write
+>>>>>>  - commit_inmem_pages
+>>>>>>   - f2fs_submit_merged_write_cond
+>>>>>>   : write data
+>>>>>> 					- write_checkpoint
+>>>>>> 					 - do_checkpoint
+>>>>>> 					 : commit all node within CP
+>>>>>> 					 -> SPO
+>>>>>>   - f2fs_do_sync_file
+>>>>>>    - file_write_and_wait_range
+>>>>>>    : wait data writeback
+>>>>>>
+>>>>>> In above race condition, data/node can be flushed in reversed order when
+>>>>>> coming a checkpoint before f2fs_do_sync_file, after SPOR, it results in
+>>>>>> atomic written data being corrupted.
+>>>>>
+>>>>> Wait, what is the problem here? Thread B could succeed checkpoint, there is
+>>>>> no problem. If it fails, there is no fsync mark where we can recover it, so
+>>>>
+>>>> Node is flushed by checkpoint before data, with reversed order, that's the problem.
+>>>
+>>> What do you mean? Data should be in disk, in order to proceed checkpoint.
+>>
+>> 1. thread A: commit_inmem_pages submit data into block layer, but haven't waited
+>> it writeback.
+>> 2. thread A: commit_inmem_pages update related node.
+>> 3. thread B: do checkpoint, flush all nodes to disk
+> 
+> How about, in block_operations(),
+> 
+> 	down_read_trylock(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+> 	if (fail)
+> 		wait_on_all_pages_writeback(F2FS_WB_DATA);
+> 	else
+> 		up_read(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
 
-On 2018년 05월 05일 07:44, Bjorn Andersson wrote:
-> devfreq requires that the client operates on actual frequencies, not
-> only 0 and UMAX_INT and as such UFS brok with the introduction of
-> f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency").
-> 
-> This patch registers the frequencies of the first clock as opp levels
-> and use these to determine if we're trying to step up or down.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Chances since v1:
-> - Register min_freq and max_freq as opp levels.
-> - Unregister opp levels on removal, to make e.g. probe defer working
-> 
->  drivers/scsi/ufs/ufshcd.c | 47 +++++++++++++++++++++++++++++++++------
->  1 file changed, 40 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 2253f24309ec..257614b889bd 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -1168,16 +1168,13 @@ static int ufshcd_devfreq_target(struct device *dev,
->  	struct ufs_hba *hba = dev_get_drvdata(dev);
->  	ktime_t start;
->  	bool scale_up, sched_clk_scaling_suspend_work = false;
-> +	struct list_head *clk_list = &hba->clk_list_head;
-> +	struct ufs_clk_info *clki;
->  	unsigned long irq_flags;
->  
->  	if (!ufshcd_is_clkscaling_supported(hba))
->  		return -EINVAL;
->  
-> -	if ((*freq > 0) && (*freq < UINT_MAX)) {
-> -		dev_err(hba->dev, "%s: invalid freq = %lu\n", __func__, *freq);
-> -		return -EINVAL;
-> -	}
-> -
->  	spin_lock_irqsave(hba->host->host_lock, irq_flags);
->  	if (ufshcd_eh_in_progress(hba)) {
->  		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-> @@ -1187,7 +1184,13 @@ static int ufshcd_devfreq_target(struct device *dev,
->  	if (!hba->clk_scaling.active_reqs)
->  		sched_clk_scaling_suspend_work = true;
->  
-> -	scale_up = (*freq == UINT_MAX) ? true : false;
-> +	if (list_empty(clk_list)) {
-> +		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
-> +		goto out;
-> +	}
-> +
-> +	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
-> +	scale_up = (*freq == clki->max_freq) ? true : false;
->  	if (!ufshcd_is_devfreq_scaling_required(hba, scale_up)) {
->  		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
->  		ret = 0;
-> @@ -1257,16 +1260,29 @@ static struct devfreq_dev_profile ufs_devfreq_profile = {
->  
->  static int ufshcd_devfreq_init(struct ufs_hba *hba)
->  {
-> +	struct list_head *clk_list = &hba->clk_list_head;
-> +	struct ufs_clk_info *clki;
->  	struct devfreq *devfreq;
->  	int ret;
->  
-> -	devfreq = devm_devfreq_add_device(hba->dev,
-> +	/* Skip devfreq if we don't have any clocks in the list */
-> +	if (list_empty(clk_list))
-> +		return 0;
-> +
-> +	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
-> +	dev_pm_opp_add(hba->dev, clki->min_freq, 0);
-> +	dev_pm_opp_add(hba->dev, clki->max_freq, 0);
-> +
-> +	devfreq = devfreq_add_device(hba->dev,
->  			&ufs_devfreq_profile,
->  			"simple_ondemand",
->  			NULL);
->  	if (IS_ERR(devfreq)) {
->  		ret = PTR_ERR(devfreq);
->  		dev_err(hba->dev, "Unable to register with devfreq %d\n", ret);
-> +
-> +		dev_pm_opp_remove(hba->dev, clki->min_freq);
-> +		dev_pm_opp_remove(hba->dev, clki->max_freq);
->  		return ret;
->  	}
->  
-> @@ -1275,6 +1291,22 @@ static int ufshcd_devfreq_init(struct ufs_hba *hba)
->  	return 0;
->  }
->  
-> +static void ufshcd_devfreq_remove(struct ufs_hba *hba)
-> +{
-> +	struct list_head *clk_list = &hba->clk_list_head;
-> +	struct ufs_clk_info *clki;
-> +
-> +	if (!hba->devfreq)
-> +		return;
-> +
-> +	devfreq_remove_device(hba->devfreq);
-> +	hba->devfreq = NULL;
-> +
-> +	clki = list_first_entry(clk_list, struct ufs_clk_info, list);
-> +	dev_pm_opp_remove(hba->dev, clki->min_freq);
-> +	dev_pm_opp_remove(hba->dev, clki->max_freq);
-> +}
-> +
->  static void __ufshcd_suspend_clkscaling(struct ufs_hba *hba)
->  {
->  	unsigned long flags;
-> @@ -6966,6 +6998,7 @@ static void ufshcd_hba_exit(struct ufs_hba *hba)
->  			if (hba->devfreq)
->  				ufshcd_suspend_clkscaling(hba);
->  			destroy_workqueue(hba->clk_scaling.workq);
-> +			ufshcd_devfreq_remove(hba);
->  		}
->  		ufshcd_setup_clocks(hba, false);
->  		ufshcd_setup_hba_vreg(hba, false);
-> 
+I sent one patch for that, could you check it?
 
-For using OPP entries for devfreq:
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Adding wait_on_all_pages_writeback in block_operations() can make checkpoint()
+wait pages writeback one more time, which break IO flow, so what's your concern
+here?
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Thanks,
+
+> 
+> 
+>> 4. SPOR
+>>
+>> Then, atomic file becomes corrupted since nodes is flushed before data.
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> we can just ignore the last written data as nothing.
+>>>>>
+>>>>>>
+>>>>>> This patch adds f2fs_wait_on_page_writeback in __revoke_inmem_pages() to
+>>>>>> keep data and node of atomic file being flushed orderly.
+>>>>>>
+>>>>>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>>>>>> ---
+>>>>>>  fs/f2fs/file.c    | 4 ++++
+>>>>>>  fs/f2fs/segment.c | 3 +++
+>>>>>>  2 files changed, 7 insertions(+)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>>>> index be7578774a47..a352804af244 100644
+>>>>>> --- a/fs/f2fs/file.c
+>>>>>> +++ b/fs/f2fs/file.c
+>>>>>> @@ -217,6 +217,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>>>  
+>>>>>>  	trace_f2fs_sync_file_enter(inode);
+>>>>>>  
+>>>>>> +	if (atomic)
+>>>>>> +		goto write_done;
+>>>>>> +
+>>>>>>  	/* if fdatasync is triggered, let's do in-place-update */
+>>>>>>  	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+>>>>>>  		set_inode_flag(inode, FI_NEED_IPU);
+>>>>>> @@ -228,6 +231,7 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
+>>>>>>  		return ret;
+>>>>>>  	}
+>>>>>>  
+>>>>>> +write_done:
+>>>>>>  	/* if the inode is dirty, let's recover all the time */
+>>>>>>  	if (!f2fs_skip_inode_update(inode, datasync)) {
+>>>>>>  		f2fs_write_inode(inode, NULL);
+>>>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>>>>> index 584483426584..9ca3d0a43d93 100644
+>>>>>> --- a/fs/f2fs/segment.c
+>>>>>> +++ b/fs/f2fs/segment.c
+>>>>>> @@ -230,6 +230,8 @@ static int __revoke_inmem_pages(struct inode *inode,
+>>>>>>  
+>>>>>>  		lock_page(page);
+>>>>>>  
+>>>>>> +		f2fs_wait_on_page_writeback(page, DATA, true);
+>>>>>> +
+>>>>>>  		if (recover) {
+>>>>>>  			struct dnode_of_data dn;
+>>>>>>  			struct node_info ni;
+>>>>>> @@ -415,6 +417,7 @@ static int __commit_inmem_pages(struct inode *inode)
+>>>>>>  		/* drop all uncommitted pages */
+>>>>>>  		__revoke_inmem_pages(inode, &fi->inmem_pages, true, false);
+>>>>>>  	} else {
+>>>>>> +		/* wait all committed IOs writeback and release them from list */
+>>>>>>  		__revoke_inmem_pages(inode, &revoke_list, false, false);
+>>>>>>  	}
+>>>>>>  
+>>>>>> -- 
+>>>>>> 2.15.0.55.gc2ece9dc4de6
+>>>
+>>> .
+>>>
+> 
+> .
+> 
