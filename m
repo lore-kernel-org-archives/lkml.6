@@ -1,38 +1,39 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpbw2N7nKbSk/Hy9GiqBLE1Xjc8wFPiQt/cpAuRhDX2wjOlV4tcJHf0aG4MWAENv2v9rLAG
-ARC-Seal: i=1; a=rsa-sha256; t=1525767160; cv=none;
+X-Google-Smtp-Source: AB8JxZqdNekuumvjyH/fI1jlvyY6DVeUTH9l0eEXlE4Rcdds+17gaRUuis/eUAwweEJTXcaGRyw8
+ARC-Seal: i=1; a=rsa-sha256; t=1525767156; cv=none;
         d=google.com; s=arc-20160816;
-        b=P+vJF0WbzDelIodKoHi9rCByY29pjRAxpshL7H1Q4C8EgrQWzrNS1Dll1d1v4W68or
-         A4NjsVMYtIc+RWawJUACeur+W9UppZDEUL1kjIrRsGM8RAfQ0hdy4RFi9SvFmVYr2sRH
-         ZcJrfVaRVwJVIrGtSnucvNi/RNWyUTH9dIDKiraPaHy1YVgUdgXVJYgfd3XE5tsUV1Jd
-         YO594fZq1AltsyoHzn5z3QagXrEfB9Ie0tiKsPC7cjFGwywCA1rmENsF+vR6jHEk9eYU
-         UOZfr/bDmWWcu5lMZe514XZdGkWSh8E/dXBNll7CgL39zz9BFWtljBQO+cszoDIO+WIs
-         jIIg==
+        b=bDUjiQGDtel5EpIfsTKkPS6QHWxvt8k4HUQn3egoWDiSyqzmQQWJqCdgcaC75fctas
+         EQOH/QcQj/4QzbimG9eFa4xPPtiX2rpJTgeY1sX9G5kdjQqmBKOaJsB4WL4Bl9qlLSfk
+         3knsN3avXwlZdolnAdn45nvppfQ3A1L6HfzsEyyHkEWWsSbpjX3YvuqlhjaHxTUot7Xi
+         qrIDHjccFNXY6AJkguk1rwAWlTL6QMQ5iTUL1Ve3ScuK8MrOQiGgGEymWSQlZW+Ounm1
+         HZaKBhorJTOImFKJMIQAkPxlhvoI28JPMGlDJSaaPR0LmIsA9CcFsysceGU3gUO8j8Q/
+         xJKg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Tz5SYn7KHoY/YsG4+zAm+ryFxepEdmZH8BKrYdwRAAM=;
-        b=FNBPDCThc3MjxMIRFgt7EcSVw8h+Bpz+ysUrlcza96/lvRG5rOegE9E810qQBfrNbv
-         fvGNwAOVsthfVNN/aT9WJJtBbBRQPKD17fqC3E1AYiIwPEgZwtcvlj7n7Jk+nOwHX3Nq
-         dquXxMeaCxyYaApKrLlZ+xPcxbUVgChTcV78R4o4mIpd2pyxpu74LJtP+h6MazcHdRkZ
-         dVJ8NILmvlUdZuCFDck8iMb5aStyA3zDI3SyRfKU2rKjuDosTs5LEgjHBra7Y2ZLdldM
-         sJUEmcSrt4jQOuGpcsRbP16jTHfajRBOZkYtZzCsG8t8wIpc0EZadCweazNCEqzQbV27
-         DuQA==
+        bh=YhBc59nXY9FEqL7VZnZiFat6VQMzKXmGHRhPGYjQcc4=;
+        b=WnzOgm/Y0lNQtSkUB16xKyxTQUIxOSH9zsYuULwQ92GbJtNkipv8AkAwpxR30waiFN
+         nKBgLmr/CRCeCwM/wpQr87y8Xic6KVOIFODLpYue8ZR2kQ6lJwPTVAx3RgMZkHMIzpXn
+         Y62iaALWw1N0vdvEOgyd8gZbl+PRZCXF+Zd6hHvuHeO2fyNOcKkm2lKC5oGa5BHLeUKw
+         MVH+V9GVXiVocSYftGmMwfbYYmepZkEWXs6EnBB0mTtnxgFSEA+//TQuwUxx9w4sfDPB
+         Jg3EJqr4spcuPul0Eg3n2Wt5kQ3zLSy/Sj/+Kj5DZ5NgQoyT4+0Mna94ckUX2MIcC7ba
+         j+TA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lOvRYDUt;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0W2B1qSP;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=lOvRYDUt;
+       dkim=pass header.i=@kernel.org header.s=default header.b=0W2B1qSP;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	ethanwu <ethanwu@synology.com>,
-	David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.16 30/52] btrfs: Take trans lock before access running trans in check_delayed_ref
-Date: Tue,  8 May 2018 10:10:28 +0200
-Message-Id: <20180508073932.232169601@linuxfoundation.org>
+	Potnuri Bharat Teja <bharat@chelsio.com>,
+	Steve Wise <swise@opengridcomputing.com>,
+	Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.16 29/52] iw_cxgb4: Atomically flush per QP HW CQEs
+Date: Tue,  8 May 2018 10:10:27 +0200
+Message-Id: <20180508073932.083988972@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882826311602745?=
-X-GMAIL-MSGID: =?utf-8?q?1599882826311602745?=
+X-GMAIL-THRID: =?utf-8?q?1599882822484700177?=
+X-GMAIL-MSGID: =?utf-8?q?1599882822484700177?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,69 +52,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: ethanwu <ethanwu@synology.com>
+From: Bharat Potnuri <bharat@chelsio.com>
 
-commit 998ac6d21cfd6efd58f5edf420bae8839dda9f2a upstream.
+commit 2df19e19ae90d94fd8724083f161f368a2797537 upstream.
 
-In preivous patch:
-Btrfs: kill trans in run_delalloc_nocow and btrfs_cross_ref_exist
-We avoid starting btrfs transaction and get this information from
-fs_info->running_transaction directly.
+When a CQ is shared by multiple QPs, c4iw_flush_hw_cq() needs to acquire
+corresponding QP lock before moving the CQEs into its corresponding SW
+queue and accessing the SQ contents for completing a WR.
+Ignore CQEs if corresponding QP is already flushed.
 
-When accessing running_transaction in check_delayed_ref, there's a
-chance that current transaction will be freed by commit transaction
-after the NULL pointer check of running_transaction is passed.
-
-After looking all the other places using fs_info->running_transaction,
-they are either protected by trans_lock or holding the transactions.
-
-Fix this by using trans_lock and increasing the use_count.
-
-Fixes: e4c3b2dcd144 ("Btrfs: kill trans in run_delalloc_nocow and btrfs_cross_ref_exist")
-CC: stable@vger.kernel.org # 4.14+
-Signed-off-by: ethanwu <ethanwu@synology.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
+Reviewed-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/infiniband/hw/cxgb4/cq.c       |   11 ++++++++++-
+ drivers/infiniband/hw/cxgb4/iw_cxgb4.h |    2 +-
+ drivers/infiniband/hw/cxgb4/qp.c       |    4 ++--
+ 3 files changed, 13 insertions(+), 4 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -3155,7 +3155,11 @@ static noinline int check_delayed_ref(st
- 	struct rb_node *node;
- 	int ret = 0;
+--- a/drivers/infiniband/hw/cxgb4/cq.c
++++ b/drivers/infiniband/hw/cxgb4/cq.c
+@@ -315,7 +315,7 @@ static void advance_oldest_read(struct t
+  * Deal with out-of-order and/or completions that complete
+  * prior unsignalled WRs.
+  */
+-void c4iw_flush_hw_cq(struct c4iw_cq *chp)
++void c4iw_flush_hw_cq(struct c4iw_cq *chp, struct c4iw_qp *flush_qhp)
+ {
+ 	struct t4_cqe *hw_cqe, *swcqe, read_cqe;
+ 	struct c4iw_qp *qhp;
+@@ -339,6 +339,13 @@ void c4iw_flush_hw_cq(struct c4iw_cq *ch
+ 		if (qhp == NULL)
+ 			goto next_cqe;
  
-+	spin_lock(&root->fs_info->trans_lock);
- 	cur_trans = root->fs_info->running_transaction;
-+	if (cur_trans)
-+		refcount_inc(&cur_trans->use_count);
-+	spin_unlock(&root->fs_info->trans_lock);
- 	if (!cur_trans)
- 		return 0;
++		if (flush_qhp != qhp) {
++			spin_lock(&qhp->lock);
++
++			if (qhp->wq.flushed == 1)
++				goto next_cqe;
++		}
++
+ 		if (CQE_OPCODE(hw_cqe) == FW_RI_TERMINATE)
+ 			goto next_cqe;
  
-@@ -3164,6 +3168,7 @@ static noinline int check_delayed_ref(st
- 	head = btrfs_find_delayed_ref_head(delayed_refs, bytenr);
- 	if (!head) {
- 		spin_unlock(&delayed_refs->lock);
-+		btrfs_put_transaction(cur_trans);
- 		return 0;
+@@ -390,6 +397,8 @@ void c4iw_flush_hw_cq(struct c4iw_cq *ch
+ next_cqe:
+ 		t4_hwcq_consume(&chp->cq);
+ 		ret = t4_next_hw_cqe(&chp->cq, &hw_cqe);
++		if (qhp && flush_qhp != qhp)
++			spin_unlock(&qhp->lock);
  	}
- 
-@@ -3180,6 +3185,7 @@ static noinline int check_delayed_ref(st
- 		mutex_lock(&head->mutex);
- 		mutex_unlock(&head->mutex);
- 		btrfs_put_delayed_ref_head(head);
-+		btrfs_put_transaction(cur_trans);
- 		return -EAGAIN;
- 	}
- 	spin_unlock(&delayed_refs->lock);
-@@ -3212,6 +3218,7 @@ static noinline int check_delayed_ref(st
- 	}
- 	spin_unlock(&head->lock);
- 	mutex_unlock(&head->mutex);
-+	btrfs_put_transaction(cur_trans);
- 	return ret;
  }
  
+--- a/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
++++ b/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
+@@ -1053,7 +1053,7 @@ u32 c4iw_pblpool_alloc(struct c4iw_rdev
+ void c4iw_pblpool_free(struct c4iw_rdev *rdev, u32 addr, int size);
+ u32 c4iw_ocqp_pool_alloc(struct c4iw_rdev *rdev, int size);
+ void c4iw_ocqp_pool_free(struct c4iw_rdev *rdev, u32 addr, int size);
+-void c4iw_flush_hw_cq(struct c4iw_cq *chp);
++void c4iw_flush_hw_cq(struct c4iw_cq *chp, struct c4iw_qp *flush_qhp);
+ void c4iw_count_rcqes(struct t4_cq *cq, struct t4_wq *wq, int *count);
+ int c4iw_ep_disconnect(struct c4iw_ep *ep, int abrupt, gfp_t gfp);
+ int c4iw_flush_rq(struct t4_wq *wq, struct t4_cq *cq, int count);
+--- a/drivers/infiniband/hw/cxgb4/qp.c
++++ b/drivers/infiniband/hw/cxgb4/qp.c
+@@ -1343,12 +1343,12 @@ static void __flush_qp(struct c4iw_qp *q
+ 	qhp->wq.flushed = 1;
+ 	t4_set_wq_in_error(&qhp->wq);
+ 
+-	c4iw_flush_hw_cq(rchp);
++	c4iw_flush_hw_cq(rchp, qhp);
+ 	c4iw_count_rcqes(&rchp->cq, &qhp->wq, &count);
+ 	rq_flushed = c4iw_flush_rq(&qhp->wq, &rchp->cq, count);
+ 
+ 	if (schp != rchp)
+-		c4iw_flush_hw_cq(schp);
++		c4iw_flush_hw_cq(schp, qhp);
+ 	sq_flushed = c4iw_flush_sq(qhp);
+ 
+ 	spin_unlock(&qhp->lock);
