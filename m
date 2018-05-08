@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqGK2SFhHzbleFBKmweHuWJBeLBlUD9gFduM534VYaDK0Z9ALpfl8sQGB04lIIPHdzBD9C3
-ARC-Seal: i=1; a=rsa-sha256; t=1525767273; cv=none;
+X-Google-Smtp-Source: AB8JxZqo/ND5nE0/8uf9e4rN4dpxf5hjvTVS1IrKsnGjV07ZdmqOwc7Dg6wv9G/H4S97zggrkA4Y
+ARC-Seal: i=1; a=rsa-sha256; t=1525767269; cv=none;
         d=google.com; s=arc-20160816;
-        b=V2zfPqAK5p+u+CICJdPz0uZHc+Rrg/5uT75nS3fKMYSWq2v8DFp3glJYj8pjkOz51H
-         BP0+xS5MN+WEkFt1mCjz1+zTCm/KgwpamekoC4pN8eZKNvXhpMYCyqFuPTe8JXqQC98Q
-         7fbiUH0XDJ7pbTlu2MyOeVdtg2MYMJ3qRW7hPWmsscdbdV7zOjU5toNZD85A599Ilwlv
-         uAy81povSJi8cwyAMA8pnCodTjcn4+yJJufSEc+hf6FaE5dl/AHMB07Un6TbJASRtCyu
-         UBZ+chzDZ382vl6AJ+hT9/NontirdhkBd/eGrXufSCPv6HQorMrJGPDeqMIjhu6JVIOw
-         7cWw==
+        b=xHp1kvPOwEaAWVEeVSpf5GgMtKbPMjxaWubvxhjaiHUuPf76pMexYV1V+ozYeG6DqH
+         FGcFAHJoHz1rZeZJR18VoM3XCaYhOymIOu55EAu5IMj7ouwfTUKuiJla9RS8oPKXt4GB
+         MlvzcHrxdLsz5r8HVO0IFo21zs3P6RHwYgviQhoDAelGgeW6n5kbaMtVxWf3GfB2AqUw
+         SOJpr4rKs5vxhxL8ccB4ZbLEScvyCvOiuRnstUdTlpac+1XqQspBbeMvDTl85OEEa+Kg
+         +XCLDazE5BJTV7fwpAr2lvankajkdXVCkILYBoqM+cwHopzBcROXub8VyLe8Bp0WjGjB
+         x6rg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=HmDUu8ZPMFiasJh2f6CZBCVfGI9HCNjgE/z+w6PItzQ=;
-        b=x7HXZK7XKlSUedGNT+bMdQA8lrexoZL6Buhzozf5yhlSA/45+RJsFWqHKAYiRAlO53
-         LCE9pPSI3pMpjEvuoHkHpSEXMMo6dqJTXOph8sNfFy1Rg8Jz4zPwREzQY4/F3TxYLCfS
-         dpo/E3qiygBUqAHkKJg+ZmySD7AMaR0xqliN/tKdD13IrXxYGatIsvz/74TqKhJG3DU+
-         zpTck9eKq0mU1DO11bFN7Bgd5KRqhBZp3VdvFNAeiFFYMMK+03oThH2m5XGzFyZ8vzvb
-         1jW3A6E+qN8xM4bJ0xc1F8sqNEphhbjMvT4QB0QZLzsW2C62rYNJLXAnFMa2w3hB/LLo
-         QIBw==
+        bh=E4nxAE1Ew0+eDFXoDjvDsDrFM7rj9+GXaX+2A0V9GSA=;
+        b=v/iqbd0vEEy8FyE4Xc2kVBtKqMpk7aAl8MTgqqMWBuhq1Se/mhS+DRPSLETb8iFLNd
+         4vIKwp6qpycSxH4nT3av6sXMRzMXPsuf1byESrBQVDqurHSz/7jFySlu6c6IYoLK2gC7
+         TsEPcSiPG7w87hx0PZwgZN9LukV+cr5UHqFO/dIity++5BWUxDj+e63Get4jpbbjw9ZD
+         gtneHnEp5RCLkz4WFZgeS2RXPNPmVZumYVLm9hyITtTInqIlLrNS3qTrjgCLBDXkbf1B
+         yk+brQYulf6RMvyB2f141YzdaaabrO+nn8ah3Aab/AOmkBGS+tiroxOEvXdRBNPUSA4j
+         kVug==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fdoM5BaT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gR1GG9QW;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=fdoM5BaT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=gR1GG9QW;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Kristian Evensen <kristian.evensen@gmail.com>,
-	Johan Hovold <johan@kernel.org>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
-Subject: [PATCH 4.14 06/43] USB: serial: option: Add support for Quectel EP06
-Date: Tue,  8 May 2018 10:10:25 +0200
-Message-Id: <20180508074005.046629939@linuxfoundation.org>
+	Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.14 05/43] ACPI / button: make module loadable when booted in non-ACPI mode
+Date: Tue,  8 May 2018 10:10:24 +0200
+Message-Id: <20180508074004.906269422@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882944393877963?=
-X-GMAIL-MSGID: =?utf-8?q?1599882944393877963?=
+X-GMAIL-THRID: =?utf-8?q?1599882761919859892?=
+X-GMAIL-MSGID: =?utf-8?q?1599882940764519623?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,63 +51,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Kristian Evensen <kristian.evensen@gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 71a0483d56e784b1e11f38f10d7e22d265dbe244 upstream.
+commit ac1e55b1fdb27c1b07a0a6fe519f1291ff1e7d40 upstream.
 
-The Quectel EP06 is a Cat. 6 LTE modem, and the interface mapping is as
-follows:
+Modules such as nouveau.ko and i915.ko have a link time dependency on
+acpi_lid_open(), and due to its use of acpi_bus_register_driver(),
+the button.ko module that provides it is only loadable when booted in
+ACPI mode. However, the ACPI button driver can be built into the core
+kernel as well, in which case the dependency can always be satisfied,
+and the dependent modules can be loaded regardless of whether the
+system was booted in ACPI mode or not.
 
-0: Diag
-1: NMEA
-2: AT
-3: Modem
+So let's fix this asymmetry by making the ACPI button driver loadable
+as a module even if not booted in ACPI mode, so it can provide the
+acpi_lid_open() symbol in the same way as when built into the kernel.
 
-Interface 4 is QMI and interface 5 is ADB, so they are blacklisted.
-
-This patch should also be considered for -stable. The QMI-patch for this
-modem is already in the -stable-queue.
-
-v1->v2:
-* Updated commit prefix (thanks Johan Hovold)
-* Updated commit message slightly.
-
-Signed-off-by: Kristian Evensen <kristian.evensen@gmail.com>
-Acked-by: Johan Hovold <johan@kernel.org>
-Cc: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+[ rjw: Minor adjustments of comments, whitespace and names. ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/option.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/acpi/button.c |   24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -244,6 +244,7 @@ static void option_instat_callback(struc
- #define QUECTEL_PRODUCT_EC21			0x0121
- #define QUECTEL_PRODUCT_EC25			0x0125
- #define QUECTEL_PRODUCT_BG96			0x0296
-+#define QUECTEL_PRODUCT_EP06			0x0306
+--- a/drivers/acpi/button.c
++++ b/drivers/acpi/button.c
+@@ -595,4 +595,26 @@ module_param_call(lid_init_state,
+ 		  NULL, 0644);
+ MODULE_PARM_DESC(lid_init_state, "Behavior for reporting LID initial state");
  
- #define CMOTECH_VENDOR_ID			0x16d8
- #define CMOTECH_PRODUCT_6001			0x6001
-@@ -692,6 +693,10 @@ static const struct option_blacklist_inf
- 	.reserved = BIT(1) | BIT(4),
- };
- 
-+static const struct option_blacklist_info quectel_ep06_blacklist = {
-+	.reserved = BIT(4) | BIT(5),
-+};
+-module_acpi_driver(acpi_button_driver);
++static int acpi_button_register_driver(struct acpi_driver *driver)
++{
++	/*
++	 * Modules such as nouveau.ko and i915.ko have a link time dependency
++	 * on acpi_lid_open(), and would therefore not be loadable on ACPI
++	 * capable kernels booted in non-ACPI mode if the return value of
++	 * acpi_bus_register_driver() is returned from here with ACPI disabled
++	 * when this driver is built as a module.
++	 */
++	if (acpi_disabled)
++		return 0;
 +
- static const struct usb_device_id option_ids[] = {
- 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_COLT) },
- 	{ USB_DEVICE(OPTION_VENDOR_ID, OPTION_PRODUCT_RICOLA) },
-@@ -1206,6 +1211,8 @@ static const struct usb_device_id option
- 	  .driver_info = (kernel_ulong_t)&net_intf4_blacklist },
- 	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_BG96),
- 	  .driver_info = (kernel_ulong_t)&net_intf4_blacklist },
-+	{ USB_DEVICE(QUECTEL_VENDOR_ID, QUECTEL_PRODUCT_EP06),
-+	  .driver_info = (kernel_ulong_t)&quectel_ep06_blacklist },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6001) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_CMU_300) },
- 	{ USB_DEVICE(CMOTECH_VENDOR_ID, CMOTECH_PRODUCT_6003),
++	return acpi_bus_register_driver(driver);
++}
++
++static void acpi_button_unregister_driver(struct acpi_driver *driver)
++{
++	if (!acpi_disabled)
++		acpi_bus_unregister_driver(driver);
++}
++
++module_driver(acpi_button_driver, acpi_button_register_driver,
++	       acpi_button_unregister_driver);
