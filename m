@@ -1,92 +1,285 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755637AbeEHTqb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 15:46:31 -0400
-Received: from mail-ua0-f180.google.com ([209.85.217.180]:43086 "EHLO
-        mail-ua0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755446AbeEHTq2 (ORCPT
+        id S932215AbeEHTs0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 15:48:26 -0400
+Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:55432
+        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751723AbeEHTsX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 15:46:28 -0400
-X-Google-Smtp-Source: AB8JxZq67bf5EkZ3W1U3UBZuKuS9a9pJS6tv1QoxBuv2rHhi6D6jBlOzlRdhAR/pOJUUaCIsOUeXw2DxYchQC1nK2Pw=
-MIME-Version: 1.0
-In-Reply-To: <20180508015623.GA61455@rodete-desktop-imager.corp.google.com>
-References: <20180503065553.7762-1-jeffy.chen@rock-chips.com>
- <20180507221511.GA6448@rodete-desktop-imager.corp.google.com>
- <5AF0FF18.1050905@rock-chips.com> <20180508015623.GA61455@rodete-desktop-imager.corp.google.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 8 May 2018 12:46:25 -0700
-X-Google-Sender-Auth: dXY3dKqDkn_n4f_cpvNQzaXGhS4
-Message-ID: <CAD=FV=W_v+aoNT09k-2exVABTFzOp0heY-XWcLi95uPisZhiGQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH] pinctrl: rockchip: Disable interrupt when changing
- it's capability
-To: Brian Norris <briannorris@chromium.org>
-Cc: JeffyChen <jeffy.chen@rock-chips.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 8 May 2018 15:48:23 -0400
+x-originating-ip: 107.180.71.197
+From: Long Li <longli@linuxonhyperv.com>
+To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH 1/7 v2] cifs: smbd: Make upper layer decide when to destroy the transport
+Date: Tue,  8 May 2018 12:46:56 -0700
+Message-Id: <20180508194656.10586-1-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 2.15.1
+Reply-To: longli@microsoft.com
+X-CMAE-Envelope: MS4wfIUAzBK0xrcg77iAct8PUjtPDVKxVIB/f29pTp7jHvkKQOCGKgmYAvIQCkjhNjAbGhxL6Bp4lBHMYIXm/wxeHCF4F24Rb6iHnCF5WRLgzo1CA+jeBi2G
+ eofo6P27FwXo0Tdlql0OM1LbnX7rq4W5BHz4jjXeWXfoiyyKAA8kxxC6+9gFTagwWNxv5KRaKxuLKwb8C4rTTQDxE2DJQlTm8ThRT09+QFvcm8ub6ARpHomv
+ FeK8YtH2F07ZcULU0GP/QvsmxwZkz//+5295qhbP3zj39Zb9GKvzdkA43u03NUjM7tH9fakFTuVl/IqtneBNbDdY3VZ83jtjBfRSOltWX0iYrMDGEPFGDJ/O
+ 7okzLw8mfjU/Vizk9zG5D5PHac/XyZCapHcCwMDGZyNYmaWMl1YHPfLxs5Z+bp7EnOjZD8Gk
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Long Li <longli@microsoft.com>
 
-On Mon, May 7, 2018 at 6:56 PM, Brian Norris <briannorris@chromium.org> wrote:
-> On Tue, May 08, 2018 at 09:36:24AM +0800, Jeffy Chen wrote:
->> On 05/08/2018 06:15 AM, Brian Norris wrote:
->> > On the other hand...this also implies there may be a race condition
->> > there, where we might lose an interrupt if there is an edge between the
->> > re-configuration of the polarity in rockchip_irq_demux() and the
->> > clearing/handling of the interrupt (handle_edge_irq() ->
->> > chip->irq_ack()). If we have an edge between there, then we might ack
->> > it, but leave the polarity such that we aren't ready for the next
->> > (inverted) edge.
->>
->> if let me guess, the unexpected irq we saw is the hardware trying to avoid
->> losing irq? for example, we set a EDGE_RISING, and the hardware saw the gpio
->> is already high, then though it might lost an irq, so fake one for safe?
->
-> I won't pretend to know what the IC designers were doing, but I don't
-> think that would resolve the problem I'm talking about. The sequence is
-> something like:
-> 1. EDGE_BOTH IRQ occurs (e.g., low to high)
-> 2. reconfigure polarity in rockchip_irq_demux() (polarity=low)
-> 3. continue to handle_edge_irq()
-> 4. another HW edge occurs (e.g., high to low)
-> 5. handle_edge_irq() (from 3) acks (clears) IRQ (before a subsequent
->    rockchip_irq_demux() gets a chance to run and flip the polarity)
-> ...
->
-> Now the polarity is still low, but the next trigger should be a
-> low-to-high edge.
->
->> i'll try to confirm it with IC guys.
+On transport recoonect, upper layer CIFS code destroys the current
+transport and then recoonect. This code path is not used by SMBD, in that
+SMBD destroys its transport on RDMA disconnect notification independent of
+CIFS upper layer behavior.
 
-One note is that in the case Brian points at (where we need to
-simulate EDGE_BOTH by swapping edges) we purposely ignored the TRM and
-we needed to do that to avoid losing interrupts.  For details, see
-commit 53b1bfc76df2 ("pinctrl: rockchip: Avoid losing interrupts when
-supporting both edges").  We did this because:
+This approach adds some costs to SMBD layer to handle transport shutdown
+and restart, and to deal with several racing conditions on reconnecting
+transport.
 
-1. We believed that the IP block in Rockchip SoCs has nearly the same
-logic as "gpio-dwapb.c" and that's what "gpio-dwapb.c" did.
+Re-work this code path by introducing a new smbd_destroy. This function is
+called form upper layer to ask SMBD to destroy the transport. SMBD will no
+longer need to destroy the transport by itself while worrying about data
+transfer is in progress. The upper layer guarantees the transport is
+locked.
 
-2. We were actually losing real interrupts and this was the only way
-we could figure out how to fix it.
+change log:
+v2: fix build errors when CONFIG_CIFS_SMB_DIRECT is not configured
 
-When I tested that back in the day I was fairly convinced that we
-weren't losing any interrupts in the EDGE_BOTH case after my fix, but
-I certainly could have messed up.
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ fs/cifs/connect.c   |   9 ++---
+ fs/cifs/smbdirect.c | 114 +++++++++++++++++++++++++++++++++++++++++++---------
+ fs/cifs/smbdirect.h |   5 ++-
+ 3 files changed, 101 insertions(+), 27 deletions(-)
 
-
-For the EDGE_BOTH case it was important not to lose an interrupt
-because, as you guys are talking about, we could end up configured the
-wrong way.  I think in your case where you're just picking one
-polarity losing an interrupt shouldn't matter since it's undefined
-exactly if an edge happens while you're in the middle of executing
-rockchip_irq_set_type().  Is that right?
-
-
--Doug
+diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
+index 83b0234..5db3e9d 100644
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -377,7 +377,8 @@ cifs_reconnect(struct TCP_Server_Info *server)
+ 			 server->ssocket->state, server->ssocket->flags);
+ 		sock_release(server->ssocket);
+ 		server->ssocket = NULL;
+-	}
++	} else if (cifs_rdma_enabled(server))
++		smbd_destroy(server);
+ 	server->sequence_number = 0;
+ 	server->session_estab = false;
+ 	kfree(server->session_key.response);
+@@ -710,10 +711,8 @@ static void clean_demultiplex_info(struct TCP_Server_Info *server)
+ 	wake_up_all(&server->request_q);
+ 	/* give those requests time to exit */
+ 	msleep(125);
+-	if (cifs_rdma_enabled(server) && server->smbd_conn) {
+-		smbd_destroy(server->smbd_conn);
+-		server->smbd_conn = NULL;
+-	}
++	if (cifs_rdma_enabled(server))
++		smbd_destroy(server);
+ 	if (server->ssocket) {
+ 		sock_release(server->ssocket);
+ 		server->ssocket = NULL;
+diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
+index c62f7c9..1aa2d35 100644
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -318,6 +318,9 @@ static int smbd_conn_upcall(
+ 
+ 		info->transport_status = SMBD_DISCONNECTED;
+ 		smbd_process_disconnected(info);
++		wake_up(&info->disconn_wait);
++		wake_up_interruptible(&info->wait_reassembly_queue);
++		wake_up_interruptible_all(&info->wait_send_queue);
+ 		break;
+ 
+ 	default:
+@@ -1476,17 +1479,97 @@ static void idle_connection_timer(struct work_struct *work)
+ 			info->keep_alive_interval*HZ);
+ }
+ 
+-/* Destroy this SMBD connection, called from upper layer */
+-void smbd_destroy(struct smbd_connection *info)
++/*
++ * Destroy the transport and related RDMA and memory resources
++ * Need to go through all the pending counters and make sure on one is using
++ * the transport while it is destroyed
++ */
++void smbd_destroy(struct TCP_Server_Info *server)
+ {
++	struct smbd_connection *info = server->smbd_conn;
++	struct smbd_response *response;
++	unsigned long flags;
++
++	if (!info) {
++		log_rdma_event(INFO, "rdma session already destroyed\n");
++		return;
++	}
++
+ 	log_rdma_event(INFO, "destroying rdma session\n");
++	if (info->transport_status != SMBD_DISCONNECTED) {
++		rdma_disconnect(server->smbd_conn->id);
++		log_rdma_event(INFO, "wait for transport being disconnected\n");
++		wait_event(
++			info->disconn_wait,
++			info->transport_status == SMBD_DISCONNECTED);
++	}
+ 
+-	/* Kick off the disconnection process */
+-	smbd_disconnect_rdma_connection(info);
++	log_rdma_event(INFO, "destroying qp\n");
++	ib_drain_qp(info->id->qp);
++	rdma_destroy_qp(info->id);
++
++	log_rdma_event(INFO, "cancelling idle timer\n");
++	cancel_delayed_work_sync(&info->idle_timer_work);
++	log_rdma_event(INFO, "cancelling send immediate work\n");
++	cancel_delayed_work_sync(&info->send_immediate_work);
+ 
+-	log_rdma_event(INFO, "wait for transport being destroyed\n");
+-	wait_event(info->wait_destroy,
+-		info->transport_status == SMBD_DESTROYED);
++	log_rdma_event(INFO, "wait for all send posted to IB to finish\n");
++	wait_event(info->wait_send_pending,
++		atomic_read(&info->send_pending) == 0);
++	wait_event(info->wait_send_payload_pending,
++		atomic_read(&info->send_payload_pending) == 0);
++
++	/* It's not posssible for upper layer to get to reassembly */
++	log_rdma_event(INFO, "drain the reassembly queue\n");
++	do {
++		spin_lock_irqsave(&info->reassembly_queue_lock, flags);
++		response = _get_first_reassembly(info);
++		if (response) {
++			list_del(&response->list);
++			spin_unlock_irqrestore(
++				&info->reassembly_queue_lock, flags);
++			put_receive_buffer(info, response);
++		} else
++			spin_unlock_irqrestore(
++				&info->reassembly_queue_lock, flags);
++	} while (response);
++	info->reassembly_data_length = 0;
++
++	log_rdma_event(INFO, "free receive buffers\n");
++	wait_event(info->wait_receive_queues,
++		info->count_receive_queue + info->count_empty_packet_queue
++			== info->receive_credit_max);
++	destroy_receive_buffers(info);
++
++	/*
++	 * For performance reasons, memory registration and deregistration
++	 * are not locked by srv_mutex. It is possible some processes are
++	 * blocked on transport srv_mutex while holding memory registration.
++	 * Release the transport srv_mutex to allow them to hit the failure
++	 * path when sending data, and then release memory registartions.
++	 */
++	log_rdma_event(INFO, "freeing mr list\n");
++	wake_up_interruptible_all(&info->wait_mr);
++	while (atomic_read(&info->mr_used_count)) {
++		mutex_unlock(&server->srv_mutex);
++		msleep(1000);
++		mutex_lock(&server->srv_mutex);
++	}
++	destroy_mr_list(info);
++
++	ib_free_cq(info->send_cq);
++	ib_free_cq(info->recv_cq);
++	ib_dealloc_pd(info->pd);
++	rdma_destroy_id(info->id);
++
++	/* free mempools */
++	mempool_destroy(info->request_mempool);
++	kmem_cache_destroy(info->request_cache);
++
++	mempool_destroy(info->response_mempool);
++	kmem_cache_destroy(info->response_cache);
++
++	info->transport_status = SMBD_DESTROYED;
+ 
+ 	destroy_workqueue(info->workqueue);
+ 	kfree(info);
+@@ -1511,17 +1594,9 @@ int smbd_reconnect(struct TCP_Server_Info *server)
+ 	 */
+ 	if (server->smbd_conn->transport_status == SMBD_CONNECTED) {
+ 		log_rdma_event(INFO, "disconnecting transport\n");
+-		smbd_disconnect_rdma_connection(server->smbd_conn);
++		smbd_destroy(server);
+ 	}
+ 
+-	/* wait until the transport is destroyed */
+-	if (!wait_event_timeout(server->smbd_conn->wait_destroy,
+-		server->smbd_conn->transport_status == SMBD_DESTROYED, 5*HZ))
+-		return -EAGAIN;
+-
+-	destroy_workqueue(server->smbd_conn->workqueue);
+-	kfree(server->smbd_conn);
+-
+ create_conn:
+ 	log_rdma_event(INFO, "creating rdma session\n");
+ 	server->smbd_conn = smbd_get_connection(
+@@ -1730,12 +1805,13 @@ static struct smbd_connection *_smbd_get_connection(
+ 	conn_param.retry_count = SMBD_CM_RETRY;
+ 	conn_param.rnr_retry_count = SMBD_CM_RNR_RETRY;
+ 	conn_param.flow_control = 0;
+-	init_waitqueue_head(&info->wait_destroy);
+ 
+ 	log_rdma_event(INFO, "connecting to IP %pI4 port %d\n",
+ 		&addr_in->sin_addr, port);
+ 
+ 	init_waitqueue_head(&info->conn_wait);
++	init_waitqueue_head(&info->disconn_wait);
++	init_waitqueue_head(&info->wait_reassembly_queue);
+ 	rc = rdma_connect(info->id, &conn_param);
+ 	if (rc) {
+ 		log_rdma_event(ERR, "rdma_connect() failed with %i\n", rc);
+@@ -1759,8 +1835,6 @@ static struct smbd_connection *_smbd_get_connection(
+ 	}
+ 
+ 	init_waitqueue_head(&info->wait_send_queue);
+-	init_waitqueue_head(&info->wait_reassembly_queue);
+-
+ 	INIT_DELAYED_WORK(&info->idle_timer_work, idle_connection_timer);
+ 	INIT_DELAYED_WORK(&info->send_immediate_work, send_immediate_work);
+ 	queue_delayed_work(info->workqueue, &info->idle_timer_work,
+@@ -1801,7 +1875,7 @@ static struct smbd_connection *_smbd_get_connection(
+ 
+ allocate_mr_failed:
+ 	/* At this point, need to a full transport shutdown */
+-	smbd_destroy(info);
++	smbd_destroy(server);
+ 	return NULL;
+ 
+ negotiation_failed:
+diff --git a/fs/cifs/smbdirect.h b/fs/cifs/smbdirect.h
+index f9038da..898d762 100644
+--- a/fs/cifs/smbdirect.h
++++ b/fs/cifs/smbdirect.h
+@@ -71,6 +71,7 @@ struct smbd_connection {
+ 	struct completion ri_done;
+ 	wait_queue_head_t conn_wait;
+ 	wait_queue_head_t wait_destroy;
++	wait_queue_head_t disconn_wait;
+ 
+ 	struct completion negotiate_completion;
+ 	bool negotiate_done;
+@@ -288,7 +289,7 @@ struct smbd_connection *smbd_get_connection(
+ /* Reconnect SMBDirect session */
+ int smbd_reconnect(struct TCP_Server_Info *server);
+ /* Destroy SMBDirect session */
+-void smbd_destroy(struct smbd_connection *info);
++void smbd_destroy(struct TCP_Server_Info *server);
+ 
+ /* Interface for carrying upper layer I/O through send/recv */
+ int smbd_recv(struct smbd_connection *info, struct msghdr *msg);
+@@ -330,7 +331,7 @@ struct smbd_connection {};
+ static inline void *smbd_get_connection(
+ 	struct TCP_Server_Info *server, struct sockaddr *dstaddr) {return NULL;}
+ static inline int smbd_reconnect(struct TCP_Server_Info *server) {return -1; }
+-static inline void smbd_destroy(struct smbd_connection *info) {}
++static inline void smbd_destroy(struct TCP_Server_Info *server) {}
+ static inline int smbd_recv(struct smbd_connection *info, struct msghdr *msg) {return -1; }
+ static inline int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst) {return -1; }
+ #endif
+-- 
+2.7.4
