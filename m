@@ -1,31 +1,36 @@
-Return-Path: <tony@atomide.com>
-X-Google-Smtp-Source: AB8JxZqeHNp2FjBl7aDjyoWapVnSKM0PaUoOShCKyxmIJ15K7sXk/jMMeyq1bRHEZKNcMZ6L5fMP
-ARC-Seal: i=1; a=rsa-sha256; t=1526917717; cv=none;
+Return-Path: <sre@kernel.org>
+X-Google-Smtp-Source: AB8JxZofDftHHtnMr9uqixGuutMyNxW8+MSJ4DXx8RBZp8cMA34PVMqP30rflrv8v/AmCwtth6Wp
+ARC-Seal: i=1; a=rsa-sha256; t=1525794972; cv=none;
         d=google.com; s=arc-20160816;
-        b=vyijt9c27+2eLtPSJek/uHY4ZPVuME1dnVazJMJ3z2NS5xWvJ6U9TPzti92fGk8ib6
-         /WuON+1c1jnTiohNZDlILUs7SnOemkRHzzoKzeQpz2rvh4m8YJKOpAlesu7SquIoLRsH
-         nQ9+iAVtlsaEeTiAuxe+3yCosc5E3TEEan2D/ocHVfUzdmeiNYiTyM9yiEaF398IDiJD
-         zn2FD2pf1NxSFLzK80sKWaIsq5VkQ/M8AP/TBHz6sSKVuL7djijjOENQxXcR2DMNffqR
-         ENks6aRKao2ZgW1bnP8ZB4q4aYWgFfz4RkigQnC0dddb3Msl3wDzpUaiwlN/zd7BCRnh
-         bXtQ==
+        b=SmzJU4gMASpDrdDdIHEMb7N2CBi6qLwBgNfw0jogqbr2rAOYOe1rAZmOpmHeH/zuOL
+         5i40DkxY6PtFruBHyZqNZOBW6kmn4J12tbPdJE/rWcJBwdtinuCev3JrgkFqFgf/r9a0
+         G/ws0qk9tNHf4JeJtGJfGq8xK71HkiUIAFl6Ix0MPXaZQlsuSurVu1N8JmF5uERHOPkZ
+         fBxPCFCH46jwwNyDS2BhvXvEDYQGHDHhCf1qydELglJGensbbvsBzuS9MgfbpDTur1zd
+         4jR/qEQKq7qaqm7mR+WUMAh+DR3RQUQV7bWL/qRA4yG/I/7QaiMwPqAvesHdJhJsy7Q/
+         Kexg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:arc-authentication-results;
-        bh=aatZ1Eadu4UEtIWbuSS/XJf6rqV12qHzBQ9vcl2jxnE=;
-        b=EdfatdBGZWnl5uoEIA2OHuHnD7spblW5jb8ujkMnpO9glW/KHj/RZcrMA+Hih4bcE1
-         MPIwYiR/FlTZVmfoa35W4qOpxG83X2lXrsjkZmwB4GwV5yOjfrtAbkSSoRB5FI15xH67
-         yoVkrsK1v3yFQ8o4vb4d0HMf17/ZJ6BXdUSSfXlYopRIweMD8AJPNd4qW7RbCTuvFMcX
-         yQYJ4pxrQil5StDs0z05ESbTEuaxpg1pZSdB+XlsFUBG8DoUF61NoTIZPxMvUWcj3qjv
-         EiMCeKDN+I1tylKxtZxcBMBBTWSZKRxwXc9MBZ1Ya9Rn2H6/lcG224c6J+Zf9EEDtQNL
-         YDng==
+         :message-id:subject:cc:to:from:date:dkim-signature
+         :arc-authentication-results;
+        bh=ijOzT+aIQerZtYYsNljxHAOvSQ7f7JzGg0jiWhNW6/4=;
+        b=KkFK6C0ANyUx8wHnNUu4B04V38oJxdVZTAwP88BKgdOK0mUhsJ1B77Y2xW4FNJZ/Xm
+         C3HTMCnsSrSgvvedHOZuZaGIBvOu4zLPRfbrji7VLBmTAbPAJnoCPqdfKfUFg2Xt/1da
+         AoyQK20j/iS6OP6J5jFdzQd6AbDAzyKxAK4eQ1XEgrSTJ/wa5/0z1DNO5IV/V0Nmxxnz
+         fjT3V7NDi1H0M2vSBsoURowZtFGTiZCIVSvqpvX6cBK1ZEvJkLD0SfM9gVJA4jOAGqS2
+         nVZW6lSiaIb5toKZMAbI+TjkyW/A89fca9wyvbHfKjZhfI9IVMB/RnkHr4rWNuCaHWUH
+         2puA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
+       dkim=pass header.i=@kernel.org header.s=default header.b=mrqvaQU7;
+       spf=pass (google.com: domain of sre@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sre@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       spf=neutral (google.com: 72.249.23.125 is neither permitted nor denied by best guess record for domain of tony@atomide.com) smtp.mailfrom=tony@atomide.com
-Date: Mon, 21 May 2018 08:48:32 -0700
-From: Tony Lindgren <tony@atomide.com>
+       dkim=pass header.i=@kernel.org header.s=default header.b=mrqvaQU7;
+       spf=pass (google.com: domain of sre@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=sre@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Tue, 8 May 2018 17:56:08 +0200
+From: Sebastian Reichel <sre@kernel.org>
 To: Johan Hovold <johan@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>,
+Cc: Tony Lindgren <tony@atomide.com>,
 	"H. Nikolaus Schaller" <hns@goldelico.com>,
 	Andreas Kemnade <andreas@kemnade.info>,
 	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
@@ -33,127 +38,145 @@ Cc: Sebastian Reichel <sre@kernel.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
 	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh+dt@kernel.org>, linux-serial@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: OMAP serial runtime PM and autosuspend (was: Re: [PATCH 4/7]
- dt-bindings: gnss: add u-blox binding))
-Message-ID: <20180521154832.GY98604@atomide.com>
-References: <20180508065852.GW2285@localhost>
- <20180508152228.GV98604@atomide.com>
- <20180508154756.GW98604@atomide.com>
- <20180508155405.GX98604@atomide.com>
- <20180508164904.GZ98604@atomide.com>
- <20180509131003.GC2285@localhost>
- <20180509135706.GB98604@atomide.com>
- <20180517100948.GI30172@localhost>
- <20180517171038.GL98604@atomide.com>
- <20180521134830.GR30172@localhost>
+	Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH 4/7] dt-bindings: gnss: add u-blox binding
+Message-ID: <20180508155608.3bzcbepsmoskhlox@earth.universe>
+References: <20180426091018.GU4615@localhost>
+ <CAL_JsqK=xQBx2YCd0kDP0zLn_LAZb6Mi5UfSTQf2soooVz2unQ@mail.gmail.com>
+ <20180502081637.GE2285@localhost>
+ <5242FCAD-3139-4A9C-B9FA-7BBAA0E6AE57@goldelico.com>
+ <20180503205037.7be552c1@aktux>
+ <44A0BC7C-67C7-4116-849F-90FF7CF2B1F0@goldelico.com>
+ <20180504114213.3xlzqxe74n55tk5s@earth.universe>
+ <20180507100135.GS2285@localhost>
+ <20180507154515.GP98604@atomide.com>
+ <20180507163439.GV2285@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bb62bfpxgpire5os"
 Content-Disposition: inline
-In-Reply-To: <20180521134830.GR30172@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180507163439.GV2285@localhost>
+User-Agent: NeoMutt/20180323
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599992133232733602?=
-X-GMAIL-MSGID: =?utf-8?q?1601089272276565326?=
+X-GMAIL-THRID: =?utf-8?q?1598647064088300079?=
+X-GMAIL-MSGID: =?utf-8?q?1599911989125475609?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-* Johan Hovold <johan@kernel.org> [180521 13:50]:
-> On Thu, May 17, 2018 at 10:10:38AM -0700, Tony Lindgren wrote:
-> > * Johan Hovold <johan@kernel.org> [180517 10:12]:
-> > > No, defaulting to "on" (i.e. calling pm_runtime_forbid()) wouldn't work
-> > > either as that would also prevent the device from runtime suspending
-> > > just as the current negative autosuspend delay does.
-> > 
-> > Well in that case we should just stick with -1 value for the
-> > autosuspend. And just do pm_runtime_put_sync_suspend() after
-> > probe and on close.
-> 
-> That won't work either as a negative autosuspend delay prevents runtime
-> suspend completely (by grabbing an extra RPM reference).
 
-Well so negative autosuspend delay is working as documented then :)
+--bb62bfpxgpire5os
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > > I fail to see how we can implement this using the current toolbox. What
-> > > you're after here is really a mechanism for selecting between two
-> > > different runtime PM schemes at runtime:
-> > > 
-> > > 	1. normal serial RPM, where the controller is active while the
-> > > 	   port is open (this should be the safe default)
-> > 
-> > Agreed. And that is the case already.
-> 
-> Yes, but it's not really the case today as since omap-serial (and
-> 8250-omap) sets a negative autosuspend at probe and hence does not
-> runtime-suspend when the port is closed. So that's the long-standing bug
-> which needs fixing.
+Hi,
 
-Yes the bug for closed ports needs to be fixed for sure.
+On Mon, May 07, 2018 at 06:34:39PM +0200, Johan Hovold wrote:
+> On Mon, May 07, 2018 at 08:45:15AM -0700, Tony Lindgren wrote:
+> > * Johan Hovold <johan@kernel.org> [180507 03:03]:
+> > > On Fri, May 04, 2018 at 01:42:13PM +0200, Sebastian Reichel wrote:
+> > >=20
+> > > > Having said all of this, serdev does not yet support runtime PM (at
+> > > > all). Tony is currently looking into it. Fortunately serdev allows
+> > > > us to enable runtime PM by default (once implemented), since we know
+> > > > the remote side and can (hopefully) avoid losing characters (i.e.
+> > > > with sideband wakeup gpios).
+> > >=20
+> > > I'm not sure we want generic runtime-pm support for the controllers in
+> > > the sense that the slave device state is always reflected by the seri=
+al
+> > > controller. Similar as for i2c and spi, we really only want to keep t=
+he
+> > > controller active when we are doing I/O, but we may want to keep a
+> > > client active for longer.
+> >=20
+> > Yeah i2c seems to do the right thing where the bus takes care
+> > of runtime PM.
+>=20
+> Yeah, but since serial is async in contrast to i2c/spi, we may not be
+> able to push this entirely into core. The serdev drivers may need to
+> indicate when they expect or need to do I/O by opening and closing the
+> port. And this is how I implemented these first couple of gnss drivers.
+>
+> Also note that most serial driver do not do runtime pm while the port is
+> open (as OMAP does), and doing so also has the drawbacks of lost
+> characters etc. as Sebastian mentioned.
 
-> > > 	2. aggressive serial RPM, where the controller is allowed to
-> > > 	   suspend while the port is open even though this may result in
-> > > 	   lost characters when waking up on incoming data
-> > 
-> > In this case it seems that the only thing needed is to just
-> > configure the autosuspend delay for the parent port. The use of
-> > -1 has been around since the start of runtime PM AFAIK, so maybe
-> > we should just document it. I guess we could also introduce
-> > pm_runtime_block_autoidle_unless_configured() :)
-> 
-> The implications of a negative autosuspend delay are already documented
-> (in Documentation/power/runtime_pm.txt); it's just the omap drivers that
-> gets it wrong when trying to do things which aren't currently supported
-> (and never have been).
-> 
-> So I still think we need a new mechanism for this.
+I think using open/close for runtime pm is good enough for GPS,
+since it regularly sends data and draws lots of power anyways.
+But devices, that have an out-of-band wakeup signal can do proper
+runtime PM of the serial port without loosing characters.
 
-Well if you have some better mechanism in mind let's try it out. Short of
-sprinkling pm_runtime_force_suspend/resume calls all over, I'm out of ideas
-right now.
+Note, that OMAP does not reach deep idle states with active
+serial port. This is not acceptable for low power devices.
 
-> > > For normal ttys, we need a user-space interface for selecting between
-> > > the two, and for serdev we may want a way to select the RPM scheme from
-> > > within the kernel.
-> > > 
-> > > Note that with my serdev controller runtime PM patch, serdev core could
-> > > always opt for aggressive PM (as by default serdev core holds an RPM
-> > > reference for the controller while the port is open).
-> > 
-> > So if your serdev controller was to set the parent autosuspend
-> > delay on open() and set it back on close() this should work?
-> 
-> Is it really the job of a serdev driver to set the autosuspend delay of
-> a parent controller? Isn't this somethings which depends on the
-> characteristics of the controller (possibly configurable by user space)
-> such as the cost of runtime suspending and resuming?
+> > > Take the u-blox driver in this series for example. As I'm using runti=
+me
+> > > PM to manage device power, user-space can chose to prevent the receiv=
+er
+> > > from runtime suspending in order to avoid lengthy (re-)acquisition ti=
+mes
+> > > in setups without a backup battery (by means of the power/control
+> > > attribute).
+> >=20
+> > Sorry I don't seem to have that one, care to paste the subject
+> > line of that patch?
+>=20
+> 	"[PATCH 5/7] gnss: add driver for u-blox receivers"
+>=20
+> 	https://lkml.kernel.org/r/20180424163458.11947-6-johan@kernel.org
+>=20
+> > > Note that serdev not enabling runtime pm for controllers is roughly
+> > > equivalent to setting the .ignore_children flag, which is what we do =
+for
+> > > i2c and spi controller, and possibly what we want here too.
 
-Only in some cases will the serdev driver know it's safe to configure
-the parent controller. Configuring the parent controller from userspace
-works just fine as we've seen for years now.
+For I2C/SPI this works, since receive operations are initiated by
+the controller. Unfortunately its harder to implement for async
+serial. But I agree, that we may want to have runtime PM for the
+serdev client and .ignore_children is the way to go.
 
-> The patch I posted works with what we have today; if a parent serial
-> controller driver uses aggressive runtime PM by default or after having
-> been configured through sysfs to do so.
+I think the client API should allow two things:
 
-Yeah let's stick with configuring the parent controller from userspace
-for now at least.
+1. minimal runtime PM support: The controller is runtime enabled
+on serdev open and disabled on serdev close. This may be enough
+for some clients and useful for writing new drivers.
 
-> What I'm getting at here is that the delay should be set by the serial
-> driver implementing aggressive runtime PM. Then all we need is a
-> mechanism to determine whether an extra RPM reference should be taken at
-> tty open or not (configurable by user space, defaulting to yes).
+2. full runtime PM support: The controller is sleeping by default
+even with serdev open. The calls to write/change port settings/...
+automatically enables the device, similar to i2c/spi. But there
+must be additional functions to enable/disable runtime PM based
+on a wakeup gpio or similar out-of-band information. It may be
+enough to just provide:
 
-OK yeah some additional on/off switch seems to be missing here.
+int serdev_pm_runtime_get_sync(struct serdev_device *serdev) {
+    pm_runtime_get_sync(&serdev->dev);
+}
 
-> Specifically, the serial drivers themselves would always use
-> autosuspend and not have to deal with supporting the two RPM schemes
-> (normal vs aggressive runtime PM).
+int serdev_pm_runtime_put_autosuspend(struct serdev_device *serdev) {
+    pm_runtime_put_autosuspend(&serdev->dev);
+}
 
-OK. So if I understand your idea right, we could have autosuspend timeout
-set to 3000ms in the 8250_omap.c but still default to RPM blocked?
-Then user can enable aggressive PM via /sys as desired, right?
+-- Sebastian
 
-Regards,
+--bb62bfpxgpire5os
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Tony
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlrxyJYACgkQ2O7X88g7
++pqIHw/+M7vmp8dnlzGVLc2ieizD37GnGzygzVoj0YF75mA5E/lu4AXJhuG3hz5i
+np4v6QDhEjQBMfU4FUYNuRCQeGUaxcWeV+IgUGIm6ZF7vGb5E7JFErTrAMvAXoOz
+758e63iB6EXBtlRbs+E2Ju2OBhLhpUnlcYvCN/T9PRHXOT+qamq4VT9DqNZCOby1
+uH/4N66dteZphu+3FCRj/O+r1+lgj+y+tZ4AZH2zUoLxSWpOdB48FOTu/9O+N9oE
+aHd8nKbB1+aqae5yj855lFJPESfSFaMJUlcB50vdIsSmDAd6NXSRAsDP6mdoeRC0
+1aGgTCRG1lPju0RAdZD6qN81S2tteT1WGkCbcmW4VtyrHegrGimEDyLH7nU2hU6z
+I8G1tGFqZtJDmoUgzTscAq5PkJptzINeBMy9eFOxDy5j/V1sWXmgAzS9gfFbvnaW
+a9lBCBTnxgnHocx+bKDjYnL/72z8yf9dy2Z5rzbcEHLZrR6VNElu8YZyFYVIFDaO
+NPQeXrpTaWHl29cCsmVrWu0AZ/2cnRrIJcn5tj/R9biJGAicy0mlkMlqm6I0w7Tx
+5RS5GFzwD+5nRAo0ddXmAqEXiLX6qcKGZ8PidXO/f08KnWFcW9E2BC/1ypQFlLfH
+RMaCSxi5GD9Noiqh/40gVJ6A1Dx8hw9gWF+3wiNCXVVRLFsxT0o=
+=cJi6
+-----END PGP SIGNATURE-----
+
+--bb62bfpxgpire5os--
