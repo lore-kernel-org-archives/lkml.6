@@ -1,45 +1,56 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932962AbeEHPIM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:08:12 -0400
-Received: from mail.toke.dk ([52.28.52.200]:59901 "EHLO mail.toke.dk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932768AbeEHPIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:08:10 -0400
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-To: Kalle Valo <kvalo@codeaurora.org>, Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: ath9k-devel@qca.qualcomm.com, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: wireless: ath: ath9k: Fix a possible data race in ath_chanctx_set_next
-In-Reply-To: <87o9hqxktc.fsf@kamboji.qca.qualcomm.com>
-References: <20180508080636.13827-1-baijiaju1990@gmail.com> <87o9hqxktc.fsf@kamboji.qca.qualcomm.com>
-Date: Tue, 08 May 2018 17:08:08 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87h8ni423r.fsf@toke.dk>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1755098AbeEHPNJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:13:09 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39967 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754907AbeEHPNH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:13:07 -0400
+X-Google-Smtp-Source: AB8JxZrdxBdN+hhkf/Lg8UmubvmIb9UDkZyKTFEIbwdFIJBS1oO+gH9L5YEhkwoBsXagVdc913cxjg==
+From: Juri Lelli <juri.lelli@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH] Documentation/admin-guide/pm/intel_pstate: fix Active Mode w/o HWP paragraph
+Date: Tue,  8 May 2018 17:12:09 +0200
+Message-Id: <20180508151209.9314-1-juri.lelli@redhat.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kalle Valo <kvalo@codeaurora.org> writes:
+P-state selection algorithm (powersave or performance) is selected by
+echoing the desired choice to scaling_governor sysfs attribute and not
+to scaling_cur_freq (as currently stated).
 
-> Jia-Ju Bai <baijiaju1990@gmail.com> writes:
->
->> The write operation to "sc->next_chan" is protected by
->> the lock on line 1287, but the read operation to
->> this data on line 1262 is not protected by the lock.
->> Thus, there may exist a data race for "sc->next_chan".
->>
->> To fix this data race, the read operation to "sc->next_chan" 
->> should be also protected by the lock.
->>
->> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->
-> I need this reviewed by someone else before I'm willing to take it.
+Fix it.
 
-Only possible issue I can see is that it puts a call to
-getrawmonotonic() under the spinlock. Not sure if that has any bad
-implications...
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
 
--Toke
+---
+ Documentation/admin-guide/pm/intel_pstate.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/pm/intel_pstate.rst b/Documentation/admin-guide/pm/intel_pstate.rst
+index d2b6fda3d67b..ab2fe0eda1d7 100644
+--- a/Documentation/admin-guide/pm/intel_pstate.rst
++++ b/Documentation/admin-guide/pm/intel_pstate.rst
+@@ -145,7 +145,7 @@ feature enabled.]
+ 
+ In this mode ``intel_pstate`` registers utilization update callbacks with the
+ CPU scheduler in order to run a P-state selection algorithm, either
+-``powersave`` or ``performance``, depending on the ``scaling_cur_freq`` policy
++``powersave`` or ``performance``, depending on the ``scaling_governor`` policy
+ setting in ``sysfs``.  The current CPU frequency information to be made
+ available from the ``scaling_cur_freq`` policy attribute in ``sysfs`` is
+ periodically updated by those utilization update callbacks too.
+-- 
+2.14.3
