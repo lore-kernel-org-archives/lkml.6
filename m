@@ -1,26 +1,27 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932977AbeEHPeD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:34:03 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:50210 "EHLO
+        id S932851AbeEHPeb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:34:31 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:54091 "EHLO
         mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754460AbeEHPeB (ORCPT
+        with ESMTP id S932079AbeEHPea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:34:01 -0400
-Subject: Re: [PATCH] selftests: kvm: add .gitignore for generated files
+        Tue, 8 May 2018 11:34:30 -0400
+Subject: Re: [PATCH] selftests: kvm: update .gitignore with missing file
 To: Anders Roxell <anders.roxell@linaro.org>,
         Paolo Bonzini <pbonzini@redhat.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>
-References: <20180410134822.23990-1-anders.roxell@linaro.org>
- <CADYN=9L-CBLjG=mtOOfzBC4EZt02idZKgnrj5bSvsfPVSFZpsg@mail.gmail.com>
+Cc: linux-kselftest@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <20180423135725.3753-1-anders.roxell@linaro.org>
+ <CADYN=9KPSYmrAA_N-J-OLvn2+B1_hU5KK24-Q1V66j3cCmkNTw@mail.gmail.com>
 From: Shuah Khan <shuah@kernel.org>
-Message-ID: <4743ad90-6502-bf39-95bb-89759978784b@kernel.org>
-Date: Tue, 8 May 2018 09:33:53 -0600
+Message-ID: <62bdea19-17e2-82e9-c2bf-214f8219f7c6@kernel.org>
+Date: Tue, 8 May 2018 09:34:22 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <CADYN=9L-CBLjG=mtOOfzBC4EZt02idZKgnrj5bSvsfPVSFZpsg@mail.gmail.com>
+In-Reply-To: <CADYN=9KPSYmrAA_N-J-OLvn2+B1_hU5KK24-Q1V66j3cCmkNTw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -28,30 +29,30 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 02:21 AM, Anders Roxell wrote:
-> On 10 April 2018 at 15:48, Anders Roxell <anders.roxell@linaro.org> wrote:
+On 05/08/2018 02:22 AM, Anders Roxell wrote:
+> On 23 April 2018 at 15:57, Anders Roxell <anders.roxell@linaro.org> wrote:
+>> Fixes: d5edb7f8e7ab ("kvm: selftests: add vmx_tsc_adjust_test")
 >> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 >> ---
->>  tools/testing/selftests/kvm/.gitignore | 2 ++
->>  1 file changed, 2 insertions(+)
->>  create mode 100644 tools/testing/selftests/kvm/.gitignore
+>>  tools/testing/selftests/kvm/.gitignore | 1 +
+>>  1 file changed, 1 insertion(+)
 >>
 >> diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
->> new file mode 100644
->> index 000000000000..a546e052d19a
->> --- /dev/null
+>> index a546e052d19a..63fc1ab9248f 100644
+>> --- a/tools/testing/selftests/kvm/.gitignore
 >> +++ b/tools/testing/selftests/kvm/.gitignore
->> @@ -0,0 +1,2 @@
->> +set_sregs_test
->> +sync_regs_test
+>> @@ -1,2 +1,3 @@
+>>  set_sregs_test
+>>  sync_regs_test
+>> +vmx_tsc_adjust_test
 >> --
->> 2.16.3
+>> 2.17.0
 >>
 > 
 > ping.
 > 
 
-I plan to get this to inot 4.18-rc1.
+I plan to get this into 4.18-rc1
 
-thabks,
+thanks,
 -- Shuah
