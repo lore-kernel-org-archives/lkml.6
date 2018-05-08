@@ -1,74 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753765AbeEHAba (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:31:30 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:40244 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753085AbeEHAb2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:31:28 -0400
-X-Google-Smtp-Source: AB8JxZrb1bcUBp18pv8wGt6d4EONZIHBx0gkY7ZT47iF5A4MA4h1OLE1E4ymiLZztwZ6LcywyiRzltgo9hQ1avTBWJs=
+        id S1753750AbeEHAe0 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:34:26 -0400
+Received: from mga07.intel.com ([134.134.136.100]:24709 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753505AbeEHAeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 20:34:23 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,376,1520924400";
+   d="scan'208";a="53244021"
+Date: Mon, 7 May 2018 17:34:16 -0700
+From: Andi Kleen <ak@linux.intel.com>
+To: Josh Hunt <johunt@akamai.com>
+Cc: mingo@redhat.com, acme@kernel.org, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, wangnan0@huawei.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eranian@google.com, kirill.shutemov@linux.intel.com
+Subject: Re: [PATCH v2] perf tools: allow map files to specify DSO
+Message-ID: <20180508003416.GG4050@tassilo.jf.intel.com>
+References: <1525717456-21475-1-git-send-email-johunt@akamai.com>
+ <20180507184001.GE4050@tassilo.jf.intel.com>
+ <e6272e7c-25fd-0d2d-4199-fcf3ec604546@akamai.com>
 MIME-Version: 1.0
-In-Reply-To: <1525585714-17548-1-git-send-email-wang6495@umn.edu>
-References: <1525585714-17548-1-git-send-email-wang6495@umn.edu>
-From: adam radford <aradford@gmail.com>
-Date: Mon, 7 May 2018 17:31:27 -0700
-Message-ID: <CAHtARFFcrKnCtaH8hSLEFnia_pphL8UJ24Oxy=_r77fPRq5j0Q@mail.gmail.com>
-Subject: Re: [PATCH] scsi: 3w-xxxx: fix a missing-check bug
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6272e7c-25fd-0d2d-4199-fcf3ec604546@akamai.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 5, 2018 at 10:48 PM, Wenwen Wang <wang6495@umn.edu> wrote:
-> In tw_chrdev_ioctl(), the length of the data buffer is firstly copied from
-> the userspace pointer 'argp' and saved to the kernel object
-> 'data_buffer_length'. Then a security check is performed on it to make sure
-> that the length is not more than 'TW_MAX_IOCTL_SECTORS * 512'. Otherwise,
-> an error code -EINVAL is returned. If the security check is passed, the
-> entire ioctl command is copied again from the 'argp' pointer and saved to
-> the kernel object 'tw_ioctl'. Then, various operations are performed on
-> 'tw_ioctl' according to the 'cmd'. Given that the 'argp' pointer resides in
-> userspace, a malicious userspace process can race to change the buffer
-> length between the two copies. This way, the user can bypass the security
-> check and inject invalid data buffer length. This can cause potential
-> security issues in the following execution.
->
-> This patch checks the buffer length obtained in the second copy. An error
-> code -EINVAL will be returned if it is not same as the original one in the
-> first copy.
->
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-> ---
->  drivers/scsi/3w-xxxx.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
-> index 33261b6..ef79194 100644
-> --- a/drivers/scsi/3w-xxxx.c
-> +++ b/drivers/scsi/3w-xxxx.c
-> @@ -919,6 +919,10 @@ static long tw_chrdev_ioctl(struct file *file, unsigned int cmd, unsigned long a
->         /* Now copy down the entire ioctl */
->         if (copy_from_user(tw_ioctl, argp, data_buffer_length + sizeof(TW_New_Ioctl) - 1))
->                 goto out2;
-> +       if (tw_ioctl->data_buffer_length != data_buffer_length) {
-> +               retval = -EINVAL;
-> +               goto out2;
-> +       }
->
->         passthru = (TW_Passthru *)&tw_ioctl->firmware_command;
->
-> --
-> 2.7.4
->
+On Mon, May 07, 2018 at 02:30:32PM -0700, Josh Hunt wrote:
+> On 05/07/2018 11:40 AM, Andi Kleen wrote:
+> > On Mon, May 07, 2018 at 02:24:16PM -0400, Josh Hunt wrote:
+> > > Add the ability to specify a DSO in the /tmp/perf-<PID>.map file.
+> > > The DSO should be the first line in the file and readable by the
+> > > running user. If a valid DSO is found all other contents of the
+> > > file will be ignored. This allows things like callchain unwinding
+> > > with DWARF to work.
+> > 
+> > FWIW it's ok, but also obsolete with Kirill's large-pages-in-tmpfs
+> > work in newer kernels. With that you can just copy the executable into
+> > a 2MB tmpfs and disable the manual huge page copying and everything
+> > should work as usually.
+> > 
+> > So essentially it's only a hack for old kernels and old binaries.
+> > 
+> > But doesn't hurt I guess.
+> 
+> Ah, very interesting. I wasn't aware of this. Can you point me to some more
+> details on this process?
 
-I would drop this patch and check for !capable(CAP_SYS_ADMIN) in
-tw_chrdev_open() instead.
+See commit 5a6e75f8110c97e2a5488894d4e922187e6cb343
 
--Adam
+-Andi
