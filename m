@@ -1,39 +1,39 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpH3dw8PU7AjrEanaKxSebHJf6HR7z3ejl9opTEAJZyklAFVVL2cScUMI9orSfBVVQ7OoMq
-ARC-Seal: i=1; a=rsa-sha256; t=1525767142; cv=none;
+X-Google-Smtp-Source: AB8JxZpGKwsbwFBVvUSpGaJX+O4NDoRjR3Nbw34HRRPcuDe5zpINy7Tb1aX8lkEQ1Mc7iZweDzpF
+ARC-Seal: i=1; a=rsa-sha256; t=1525767136; cv=none;
         d=google.com; s=arc-20160816;
-        b=nlCeD0yav0Eszwib7cn2ctgs52YDwD7DwlELlUom+F2zO6eBwm92LaTgYDMLF6WrrA
-         8cIn6bAfU6XdxEJy7SUOAxywAhL6nKGGT0qRTXANBlICf0pTDTmfRKTKPUObs/n/MJTo
-         NwZRVT91H6yet7pPii1SxwTqOexJqbp2hZLS5h7QUEcQcUh+ktd7raRUf6wHADRdFn/n
-         czVKV6sgclk38xcBIuJDkOhof1ZMueTH67MBjtCwxKVodCWh0uWc4uuuHlYeMEi3LMzO
-         xXbUWe54DI4zMbvKdjpPu7aHhO/qIypSDbofZxImDBaAnzMi6VaAkQ32yBokv4k8OMyZ
-         JbDw==
+        b=eryGaUiCtWPaJLPd43XlM78AGw7pg7EAcQvoTNlSY2OEMjBR93h7M8YIYeQLQLR6DN
+         SseHDjCCm2n/aZMTdmW7cUbldkzSreRnosKx+ICRWuUg1EZ1Idzxc2dE/8LsZWNMVGpp
+         D62/vTxvsUvgsp7zdiRPv1zqfDdrJDzzNdvf5cOVBQDY8gQszbNQugAkREw2Qnm11RWL
+         oP4YIqnASyyxDPGhdrKms6COQgXYFnDZMwiHoGt3fqlXwCynDkwj1lMD9daZYSgVBRP4
+         kQaIRjYxd/QW3lctEzhZ6UWReXAxEGvJIVgGFhtqhoqvdxUkmstcl+roLE9GD/jb7ubl
+         lxiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=rPDKuSvY9PItdTyDbS20Y4k/j7oOakQto4Vs2ejonak=;
-        b=cO7sUlc3CsBjda7zU//bR3IANwjV0rkHQgW2oIYxovzuQRrJPNtU5+h1ppNwq3hE3a
-         nlOm5RptN85AFyKdoREzNvB/E1PuCPeXJhLTjo+hr5Dqq+UORDZyfM8VVBbIY5yDmIme
-         5j5GNLjpg0nMBdpD+UtnUDjZSA2iJzO5UJzBboTcoGYK/YXrpqpNCNt1AxhdYgj8CeFQ
-         6U1D/bGwuPvKussZ02tYMLCKSUluW+6vZ8o0oF9L53l4phKFoX7WtnzsCgODQbkLTEwu
-         39Zc5z2zMeIzIt3UwuON7/FvhjjE7VSWAgR3lG1p2Mm7zfHqk/ARUQiV5ddGvN445pT8
-         jW9w==
+        bh=eBwkeKMwWn+dfrAwVBEfJzzhdZO9AAzT+OlN4wDwQo0=;
+        b=fQKImkoD5JQK+EItGDL3+stA6M2S2i5669anJzdPdIoBI1+tmHQzvfmQ8OzRyivq4w
+         PEC1qLAYhyJRSFUpw2SqhkW464h1romNnCfzO9whrFPdd5XTb8kvAyxj8V8/Cdy3mN5a
+         nByvhX/qujEHoaI8Oc4aPtGT2OR+CNL5zh0ASTFoueS1FxS484Pz3h74GCQBEsGb3fUr
+         0kVJFBbZnrvPXt4Do1N20jZSYEMmngl6Em27MFDekMISuKRVe9L0yDHqX/eU4A9d889q
+         MWKHgFa7SEExQUQ7wPs/fgcjwTJ1N8PrzHKXoGTtbkv7VSOJxJStil4FmpIjN/5WwRJX
+         vohA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=RLo2C67T;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wwg9Q8ZO;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=RLo2C67T;
+       dkim=pass header.i=@kernel.org header.s=default header.b=wwg9Q8ZO;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Eric Biggers <ebiggers@google.com>,
-	Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: [PATCH 4.16 16/52] xfs: prevent creating negative-sized file via INSERT_RANGE
-Date: Tue,  8 May 2018 10:10:14 +0200
-Message-Id: <20180508073930.206710821@linuxfoundation.org>
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH 4.16 09/52] errseq: Always report a writeback error once
+Date: Tue,  8 May 2018 10:10:07 +0200
+Message-Id: <20180508073929.223263280@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882807260392086?=
-X-GMAIL-MSGID: =?utf-8?q?1599882807260392086?=
+X-GMAIL-THRID: =?utf-8?q?1599882801198490431?=
+X-GMAIL-MSGID: =?utf-8?q?1599882801198490431?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,68 +52,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Darrick J. Wong <darrick.wong@oracle.com>
+From: Matthew Wilcox <willy@infradead.org>
 
-commit 7d83fb14258b9961920cd86f0b921caaeb3ebe85 upstream.
+commit b4678df184b314a2bd47d2329feca2c2534aa12b upstream.
 
-During the "insert range" fallocate operation, i_size grows by the
-specified 'len' bytes.  XFS verifies that i_size + len < s_maxbytes, as
-it should.  But this comparison is done using the signed 'loff_t', and
-'i_size + len' can wrap around to a negative value, causing the check to
-incorrectly pass, resulting in an inode with "negative" i_size.  This is
-possible on 64-bit platforms, where XFS sets s_maxbytes = LLONG_MAX.
-ext4 and f2fs don't run into this because they set a smaller s_maxbytes.
+The errseq_t infrastructure assumes that errors which occurred before
+the file descriptor was opened are of no interest to the application.
+This turns out to be a regression for some applications, notably Postgres.
 
-Fix it by using subtraction instead.
+Before errseq_t, a writeback error would be reported exactly once (as
+long as the inode remained in memory), so Postgres could open a file,
+call fsync() and find out whether there had been a writeback error on
+that file from another process.
 
-Reproducer:
-    xfs_io -f file -c "truncate $(((1<<63)-1))" -c "finsert 0 4096"
+This patch changes the errseq infrastructure to report errors to all
+file descriptors which are opened after the error occurred, but before
+it was reported to any file descriptor.  This restores the user-visible
+behaviour.
 
-Fixes: a904b1ca5751 ("xfs: Add support FALLOC_FL_INSERT_RANGE for fallocate")
-Cc: <stable@vger.kernel.org> # v4.1+
-Originally-From: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-[darrick: fix signed integer addition overflow too]
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Cc: stable@vger.kernel.org
+Fixes: 5660e13d2fd6 ("fs: new infrastructure for writeback error handling and reporting")
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/xfs/xfs_file.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ lib/errseq.c |   23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -812,22 +812,26 @@ xfs_file_fallocate(
- 		if (error)
- 			goto out_unlock;
- 	} else if (mode & FALLOC_FL_INSERT_RANGE) {
--		unsigned int blksize_mask = i_blocksize(inode) - 1;
-+		unsigned int	blksize_mask = i_blocksize(inode) - 1;
-+		loff_t		isize = i_size_read(inode);
+--- a/lib/errseq.c
++++ b/lib/errseq.c
+@@ -111,27 +111,22 @@ EXPORT_SYMBOL(errseq_set);
+  * errseq_sample() - Grab current errseq_t value.
+  * @eseq: Pointer to errseq_t to be sampled.
+  *
+- * This function allows callers to sample an errseq_t value, marking it as
+- * "seen" if required.
++ * This function allows callers to initialise their errseq_t variable.
++ * If the error has been "seen", new callers will not see an old error.
++ * If there is an unseen error in @eseq, the caller of this function will
++ * see it the next time it checks for an error.
+  *
++ * Context: Any context.
+  * Return: The current errseq value.
+  */
+ errseq_t errseq_sample(errseq_t *eseq)
+ {
+ 	errseq_t old = READ_ONCE(*eseq);
+-	errseq_t new = old;
  
--		new_size = i_size_read(inode) + len;
- 		if (offset & blksize_mask || len & blksize_mask) {
- 			error = -EINVAL;
- 			goto out_unlock;
- 		}
+-	/*
+-	 * For the common case of no errors ever having been set, we can skip
+-	 * marking the SEEN bit. Once an error has been set, the value will
+-	 * never go back to zero.
+-	 */
+-	if (old != 0) {
+-		new |= ERRSEQ_SEEN;
+-		if (old != new)
+-			cmpxchg(eseq, old, new);
+-	}
+-	return new;
++	/* If nobody has seen this error yet, then we can be the first. */
++	if (!(old & ERRSEQ_SEEN))
++		old = 0;
++	return old;
+ }
+ EXPORT_SYMBOL(errseq_sample);
  
--		/* check the new inode size does not wrap through zero */
--		if (new_size > inode->i_sb->s_maxbytes) {
-+		/*
-+		 * New inode size must not exceed ->s_maxbytes, accounting for
-+		 * possible signed overflow.
-+		 */
-+		if (inode->i_sb->s_maxbytes - isize < len) {
- 			error = -EFBIG;
- 			goto out_unlock;
- 		}
-+		new_size = isize + len;
- 
- 		/* Offset should be less than i_size */
--		if (offset >= i_size_read(inode)) {
-+		if (offset >= isize) {
- 			error = -EINVAL;
- 			goto out_unlock;
- 		}
