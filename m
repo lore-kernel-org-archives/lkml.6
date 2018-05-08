@@ -1,118 +1,147 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754470AbeEHGva (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 02:51:30 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:58038 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754380AbeEHGv2 (ORCPT
+        id S1754431AbeEHGyl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 02:54:41 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43608 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754257AbeEHGyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 02:51:28 -0400
-Subject: Re: [PATCH v2 10/26] drm/bridge: panel: provide an owner .odev device
-To: Peter Rosin <peda@axentia.se>, <linux-kernel@vger.kernel.org>
-CC: Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-References: <20180504135212.26977-1-peda@axentia.se>
- <20180504135212.26977-11-peda@axentia.se>
-From: Jyri Sarha <jsarha@ti.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5130ea2e-e1cd-53dd-25da-038deb91a13d@ti.com>
-Date: Tue, 8 May 2018 09:51:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 8 May 2018 02:54:39 -0400
+X-Google-Smtp-Source: AB8JxZqqfSagPiETQb7/W8qynvidm40QVHTMNzELOzdE3dfLAz7EG7bbGSA3Rh/B+6DSD+IU894Ccw==
+Date: Tue, 8 May 2018 12:24:35 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Claudio Scordino <claudio@evidence.eu.com>
+Cc: linux-kernel@vger.kernel.org,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Luca Abeni <luca.abeni@santannapisa.it>,
+        Joel Fernandes <joelaf@google.com>, linux-pm@vger.kernel.org
+Subject: Re: [RFC PATCH] sched/cpufreq/schedutil: handling urgent frequency
+ requests
+Message-ID: <20180508065435.bcht6dyb3rpp6gk5@vireshk-i7>
+References: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
 MIME-Version: 1.0
-In-Reply-To: <20180504135212.26977-11-peda@axentia.se>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525704215-8683-1-git-send-email-claudio@evidence.eu.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/04/18 16:51, Peter Rosin wrote:
-> It gets rid of an #ifdef and the .of_node member is going away.
+On 07-05-18, 16:43, Claudio Scordino wrote:
+> At OSPM, it was mentioned the issue about urgent CPU frequency requests
+> arriving when a frequency switch is already in progress.
 > 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> Besides the various issues (physical time for switching frequency,
+> on-going kthread activity, etc.) one (minor) issue is the kernel
+> "forgetting" such request, thus waiting the next switch time for
+> recomputing the needed frequency and behaving accordingly.
+> 
+> This patch makes the kthread serve any urgent request occurred during
+> the previous frequency switch. It introduces a specific flag, only set
+> when the SCHED_DEADLINE scheduling class increases the CPU utilization,
+> aiming at decreasing the likelihood of a deadline miss.
+> 
+> Indeed, some preliminary tests in critical conditions (i.e.
+> SCHED_DEADLINE tasks with short periods) have shown reductions of more
+> than 10% of the average number of deadline misses. On the other hand,
+> the increase in terms of energy consumption when running SCHED_DEADLINE
+> tasks (not yet measured) is likely to be not negligible (especially in
+> case of critical scenarios like "ramp up" utilizations).
+> 
+> The patch is meant as follow-up discussion after OSPM.
+> 
+> Signed-off-by: Claudio Scordino <claudio@evidence.eu.com>
+> CC: Viresh Kumar <viresh.kumar@linaro.org>
+> CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> CC: Peter Zijlstra <peterz@infradead.org>
+> CC: Ingo Molnar <mingo@redhat.com>
+> CC: Patrick Bellasi <patrick.bellasi@arm.com>
+> CC: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Luca Abeni <luca.abeni@santannapisa.it>
+> CC: Joel Fernandes <joelaf@google.com>
+> CC: linux-pm@vger.kernel.org
 > ---
->  drivers/gpu/drm/bridge/panel.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  kernel/sched/cpufreq_schedutil.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
-> index 6d99d4a3beb3..f43d77b5ed20 100644
-> --- a/drivers/gpu/drm/bridge/panel.c
-> +++ b/drivers/gpu/drm/bridge/panel.c
-> @@ -169,10 +169,8 @@ struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
->  	panel_bridge->connector_type = connector_type;
->  	panel_bridge->panel = panel;
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index d2c6083..4de06b0 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -41,6 +41,7 @@ struct sugov_policy {
+>  	bool			work_in_progress;
 >  
-> +	panel_bridge->bridge.odev = panel->dev;
-
-I am afraid this approach will eventually conflict with my lately
-accepted patch[1].
-
-The panel already has a device pointer of its own, and technically the
-bridge element created here is created by the master drm device itself.
-
-I suggest assigning odev here to NULL or to master drm device itself.
-
-Best regards,
-Jyri
-
->  	panel_bridge->bridge.funcs = &panel_bridge_bridge_funcs;
-> -#ifdef CONFIG_OF
-> -	panel_bridge->bridge.of_node = panel->dev->of_node;
-> -#endif
+>  	bool			need_freq_update;
+> +	bool			urgent_freq_update;
+>  };
 >  
->  	drm_bridge_add(&panel_bridge->bridge);
+>  struct sugov_cpu {
+> @@ -92,6 +93,14 @@ static bool sugov_should_update_freq(struct sugov_policy *sg_policy, u64 time)
+>  	    !cpufreq_can_do_remote_dvfs(sg_policy->policy))
+>  		return false;
 >  
-> 
+> +	/*
+> +	 * Continue computing the new frequency. In case of work_in_progress,
+> +	 * the kthread will resched a change once the current transition is
+> +	 * finished.
+> +	 */
+> +	if (sg_policy->urgent_freq_update)
+> +		return true;
+> +
+>  	if (sg_policy->work_in_progress)
+>  		return false;
+>  
+> @@ -121,6 +130,9 @@ static void sugov_update_commit(struct sugov_policy *sg_policy, u64 time,
+>  	sg_policy->next_freq = next_freq;
+>  	sg_policy->last_freq_update_time = time;
+>  
+> +	if (sg_policy->work_in_progress)
+> +		return;
+> +
+>  	if (policy->fast_switch_enabled) {
+>  		next_freq = cpufreq_driver_fast_switch(policy, next_freq);
+>  		if (!next_freq)
+> @@ -274,7 +286,7 @@ static inline bool sugov_cpu_is_busy(struct sugov_cpu *sg_cpu) { return false; }
+>  static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu, struct sugov_policy *sg_policy)
+>  {
+>  	if (cpu_util_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->util_dl)
+> -		sg_policy->need_freq_update = true;
+> +		sg_policy->urgent_freq_update = true;
+>  }
+>  
+>  static void sugov_update_single(struct update_util_data *hook, u64 time,
+> @@ -383,8 +395,11 @@ static void sugov_work(struct kthread_work *work)
+>  	struct sugov_policy *sg_policy = container_of(work, struct sugov_policy, work);
+>  
+>  	mutex_lock(&sg_policy->work_lock);
+> -	__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
+> +	do {
+> +		sg_policy->urgent_freq_update = false;
+> +		__cpufreq_driver_target(sg_policy->policy, sg_policy->next_freq,
+>  				CPUFREQ_RELATION_L);
 
-[1] https://lists.freedesktop.org/archives/dri-devel/2018-April/174559.html
+If we are going to solve this problem, then maybe instead of the added
+complexity and a new flag we can look for need_freq_update flag at this location
+and re-calculate the next frequency if required.
+
+> +	} while (sg_policy->urgent_freq_update);
+>  	mutex_unlock(&sg_policy->work_lock);
+>  
+>  	sg_policy->work_in_progress = false;
+> @@ -673,6 +688,7 @@ static int sugov_start(struct cpufreq_policy *policy)
+>  	sg_policy->next_freq			= UINT_MAX;
+>  	sg_policy->work_in_progress		= false;
+>  	sg_policy->need_freq_update		= false;
+> +	sg_policy->urgent_freq_update		= false;
+>  	sg_policy->cached_raw_freq		= 0;
+>  
+>  	for_each_cpu(cpu, policy->cpus) {
+> -- 
+> 2.7.4
+
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+viresh
