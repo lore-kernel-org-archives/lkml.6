@@ -1,75 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756285AbeEHSgs (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:36:48 -0400
-Received: from mga02.intel.com ([134.134.136.20]:62098 "EHLO mga02.intel.com"
+        id S932721AbeEHShl (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:37:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53874 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756059AbeEHSgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:36:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
-   d="scan'208";a="52606104"
-Message-ID: <1525804604.49308.15.camel@linux.intel.com>
-Subject: Re: [PATCH] Documentation/admin-guide/pm/intel_pstate: fix Active
- Mode w/o HWP paragraph
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org
-Date: Tue, 08 May 2018 11:36:44 -0700
-In-Reply-To: <20180508151209.9314-1-juri.lelli@redhat.com>
-References: <20180508151209.9314-1-juri.lelli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.24.6 (3.24.6-1.fc26) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1755547AbeEHSFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:05:09 -0400
+From: Mark Fasheh <mfasheh@suse.de>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        Mark Fasheh <mfasheh@suse.de>
+Subject: [PATCH 14/76] fs/afs: Use inode_sb() helper instead of inode->i_sb
+Date: Tue,  8 May 2018 11:03:34 -0700
+Message-Id: <20180508180436.716-15-mfasheh@suse.de>
+X-Mailer: git-send-email 2.15.1
+In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
+References: <20180508180436.716-1-mfasheh@suse.de>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-08 at 17:12 +0200, Juri Lelli wrote:
-> P-state selection algorithm (powersave or performance) is selected by
-> echoing the desired choice to scaling_governor sysfs attribute and
-> not
-> to scaling_cur_freq (as currently stated).
-> 
-> Fix it.
-Thanks for the fix.
+Signed-off-by: Mark Fasheh <mfasheh@suse.de>
+---
+ fs/afs/callback.c | 2 +-
+ fs/afs/dir.c      | 8 ++++----
+ fs/afs/file.c     | 2 +-
+ fs/afs/write.c    | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-> 
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-pm@vger.kernel.org
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-
-
-> 
-> ---
->  Documentation/admin-guide/pm/intel_pstate.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/pm/intel_pstate.rst
-> b/Documentation/admin-guide/pm/intel_pstate.rst
-> index d2b6fda3d67b..ab2fe0eda1d7 100644
-> --- a/Documentation/admin-guide/pm/intel_pstate.rst
-> +++ b/Documentation/admin-guide/pm/intel_pstate.rst
-> @@ -145,7 +145,7 @@ feature enabled.]
->  
->  In this mode ``intel_pstate`` registers utilization update callbacks
-> with the
->  CPU scheduler in order to run a P-state selection algorithm, either
-> -``powersave`` or ``performance``, depending on the
-> ``scaling_cur_freq`` policy
-> +``powersave`` or ``performance``, depending on the
-> ``scaling_governor`` policy
->  setting in ``sysfs``.  The current CPU frequency information to be
-> made
->  available from the ``scaling_cur_freq`` policy attribute in
-> ``sysfs`` is
->  periodically updated by those utilization update callbacks too.
+diff --git a/fs/afs/callback.c b/fs/afs/callback.c
+index f4291b576054..73371c83b646 100644
+--- a/fs/afs/callback.c
++++ b/fs/afs/callback.c
+@@ -63,7 +63,7 @@ int afs_register_server_cb_interest(struct afs_vnode *vnode,
+ 			return -ENOMEM;
+ 
+ 		refcount_set(&new->usage, 1);
+-		new->sb = vnode->vfs_inode.i_sb;
++		new->sb = vnode->vfs_inode.i_view->v_sb;
+ 		new->vid = vnode->volume->vid;
+ 		new->server = afs_get_server(server);
+ 		INIT_LIST_HEAD(&new->cb_link);
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index ba2b458b36d1..1a828b1da90f 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -453,7 +453,7 @@ static int afs_lookup_filldir(struct dir_context *ctx, const char *name,
+ static int afs_do_lookup(struct inode *dir, struct dentry *dentry,
+ 			 struct afs_fid *fid, struct key *key)
+ {
+-	struct afs_super_info *as = dir->i_sb->s_fs_info;
++	struct afs_super_info *as = inode_sb(dir)->s_fs_info;
+ 	struct afs_lookup_cookie cookie = {
+ 		.ctx.actor = afs_lookup_filldir,
+ 		.name = dentry->d_name,
+@@ -533,7 +533,7 @@ static struct inode *afs_try_auto_mntpt(struct dentry *dentry,
+ 	if (ret < 0)
+ 		goto out;
+ 
+-	inode = afs_iget_pseudo_dir(dir->i_sb, false);
++	inode = afs_iget_pseudo_dir(inode_sb(dir), false);
+ 	if (IS_ERR(inode)) {
+ 		ret = PTR_ERR(inode);
+ 		goto out;
+@@ -614,7 +614,7 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
+ 	dentry->d_fsdata = (void *)(unsigned long) vnode->status.data_version;
+ 
+ 	/* instantiate the dentry */
+-	inode = afs_iget(dir->i_sb, key, &fid, NULL, NULL, NULL);
++	inode = afs_iget(inode_sb(dir), key, &fid, NULL, NULL, NULL);
+ 	key_put(key);
+ 	if (IS_ERR(inode)) {
+ 		_leave(" = %ld", PTR_ERR(inode));
+@@ -861,7 +861,7 @@ static void afs_vnode_new_inode(struct afs_fs_cursor *fc,
+ 
+ 	d_drop(new_dentry);
+ 
+-	inode = afs_iget(fc->vnode->vfs_inode.i_sb, fc->key,
++	inode = afs_iget(fc->vnode->vfs_inode.i_view->v_sb, fc->key,
+ 			 newfid, newstatus, newcb, fc->cbi);
+ 	if (IS_ERR(inode)) {
+ 		/* ENOMEM or EINTR at a really inconvenient time - just abandon
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index a39192ced99e..1abbe9f37163 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -376,7 +376,7 @@ static int afs_readpage(struct file *file, struct page *page)
+ 		ret = afs_page_filler(key, page);
+ 	} else {
+ 		struct inode *inode = page->mapping->host;
+-		key = afs_request_key(AFS_FS_S(inode->i_sb)->cell);
++		key = afs_request_key(AFS_FS_S(inode_sb(inode))->cell);
+ 		if (IS_ERR(key)) {
+ 			ret = PTR_ERR(key);
+ 		} else {
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 9370e2feb999..df5a30e0d46e 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -761,7 +761,7 @@ int afs_page_mkwrite(struct vm_fault *vmf)
+ 	_enter("{{%x:%u}},{%lx}",
+ 	       vnode->fid.vid, vnode->fid.vnode, vmf->page->index);
+ 
+-	sb_start_pagefault(inode->i_sb);
++	sb_start_pagefault(inode_sb(inode));
+ 
+ 	/* Wait for the page to be written to the cache before we allow it to
+ 	 * be modified.  We then assume the entire page will need writing back.
+@@ -790,7 +790,7 @@ int afs_page_mkwrite(struct vm_fault *vmf)
+ 	SetPagePrivate(vmf->page);
+ 	set_page_private(vmf->page, priv);
+ 
+-	sb_end_pagefault(inode->i_sb);
++	sb_end_pagefault(inode_sb(inode));
+ 	return VM_FAULT_LOCKED;
+ }
+ 
+-- 
+2.15.1
