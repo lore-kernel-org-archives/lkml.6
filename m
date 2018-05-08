@@ -1,59 +1,52 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932815AbeEHPuB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:50:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60308 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932127AbeEHPuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:50:00 -0400
-Subject: Re: [PATCH v2 12/27] coresight: tmc-etr: Allow commandline option to
- override SG use
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mike.leach@linaro.org, robert.walker@arm.com, mark.rutland@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com, sudeep.holla@arm.com,
-        frowand.list@gmail.com, robh@kernel.org, john.horley@arm.com
-References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
- <1525165857-11096-13-git-send-email-suzuki.poulose@arm.com>
- <20180503204035.GA15555@xps15>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <3610e97f-87aa-3bfe-c89d-161a6bd09047@arm.com>
-Date: Tue, 8 May 2018 16:49:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932905AbeEHPvT (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:51:19 -0400
+Received: from ms.lwn.net ([45.79.88.28]:35730 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932079AbeEHPvS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:51:18 -0400
+Date: Tue, 8 May 2018 09:51:14 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Michael Jamet <michael.jamet@intel.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 06/18] docs: core-api: add cgroup-v2 documentation
+Message-ID: <20180508095114.0da69ef3@lwn.net>
+In-Reply-To: <b45083a64578b661cabadcf99d509e7def7c21a5.1525684985.git.mchehab+samsung@kernel.org>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org>
+        <b45083a64578b661cabadcf99d509e7def7c21a5.1525684985.git.mchehab+samsung@kernel.org>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180503204035.GA15555@xps15>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/05/18 21:40, Mathieu Poirier wrote:
-> On Tue, May 01, 2018 at 10:10:42AM +0100, Suzuki K Poulose wrote:
->> The Coresight TMC-ETR SG mode could be unsafe on a platform where
->> the ETR is not properly connected to account for READ operations.
->> We use a DT node property to indicate if the system is safe.
->> This patch also provides a command line parameter to "force"
->> the use of SG mode to override the firmware information.
->>
->> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
->> Cc: Mike Leach <mike.leach@linaro.org>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->> Hi
->>
->> This is more of a debug patch for people who may want to
->> test their platform without too much of hacking. I am not
->> too keen on pushing this patch in.
+On Mon,  7 May 2018 06:35:42 -0300
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+
+> The cgroup-v2.txt is already in ReST format. So, move it to the
+> core-api guide, where it belongs.
 > 
-> I am not either nor do I personally need it to test this feature.  We can leave
-> it in for now (and subsequent version) if you need it but we agree that I won't
-> queue it to my tree when the time comes.
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-OK, I was expecting this view from most of us here. I will drop it from my series in
-the next version.
+Honestly, this seems to me like sysadmin material, so I think it should
+go into the admin guide instead.
 
-Cheers
-Suzuki
+Actually, looking at the patch, it seems you agree - it's just the
+changelog that's wrong :)
+
+I could fix that, but it should probably be posted with a CC to Tejun
+first.
+
+Thanks,
+
+jon
