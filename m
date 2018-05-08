@@ -1,100 +1,186 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755579AbeEHVEG (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:04:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56356 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751579AbeEHVEE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:04:04 -0400
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-To: Stephen Bates <sbates@raithlin.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
- <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
- <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
-From: Don Dutile <ddutile@redhat.com>
-Message-ID: <15433946-f7f5-f610-4e80-380fb59920e5@redhat.com>
-Date: Tue, 8 May 2018 17:04:01 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1755745AbeEHVEO (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:04:14 -0400
+Received: from mail-pl0-f44.google.com ([209.85.160.44]:45056 "EHLO
+        mail-pl0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755620AbeEHVEK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:04:10 -0400
+X-Google-Smtp-Source: AB8JxZqB6TTZl65gHJ63IHa2zURFiRmWdGHQxBMlZ13F2evT5QSD0HhzOnxTlVklA7Ft+kJg7bzBnw==
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: Proof-of-concept: better(?) page-table manipulation API
+From: Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15E302)
+In-Reply-To: <20180507113124.ewpbrfd3anyg7pli@kshutemo-mobl1>
+Date: Tue, 8 May 2018 14:04:07 -0700
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Message-Id: <C56B16CA-CADF-4270-85E5-776E9219D41A@amacapital.net>
+References: <20180424154355.mfjgkf47kdp2by4e@black.fi.intel.com> <CALCETrVzD8oPv=h2q91AMdCHn3S782GmvsY-+mwoaPUw=5N7HQ@mail.gmail.com> <20180507113124.ewpbrfd3anyg7pli@kshutemo-mobl1>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w48L4Lbv013447
 
-On 05/08/2018 10:44 AM, Stephen  Bates wrote:
-> Hi Dan
+
+
+>> On May 7, 2018, at 4:31 AM, Kirill A. Shutemov <kirill@shutemov.name> wrote:
+>> 
+>> On Mon, May 07, 2018 at 04:51:57AM +0000, Andy Lutomirski wrote:
+>> On Tue, Apr 24, 2018 at 8:44 AM Kirill A. Shutemov <
+>> kirill.shutemov@linux.intel.com> wrote:
+>> 
+>>> Hi everybody,
+>> 
+>>> I've proposed to talk about page able manipulation API on the LSF/MM'2018,
+>>> so I need something material to talk about.
+>> 
+>> 
+>> I gave it a quick read.  I like the concept a lot, and I have a few
+>> comments.
 > 
->>     It seems unwieldy that this is a compile time option and not a runtime
->>     option. Can't we have a kernel command line option to opt-in to this
->>     behavior rather than require a wholly separate kernel image?
->    
-> I think because of the security implications associated with p2pdma and ACS we wanted to make it very clear people were choosing one (p2pdma) or the other (IOMMU groupings and isolation). However personally I would prefer including the option of a run-time kernel parameter too. In fact a few months ago I proposed a small patch that did just that [1]. It never really went anywhere but if people were open to the idea we could look at adding it to the series.
+> Thank you for the input.
 > 
-It is clear if it is a kernel command-line option or a CONFIG option.
-One does not have access to the kernel command-line w/o a few privs.
-A CONFIG option prevents a distribution to have a default, locked-down kernel _and_ the ability to be 'unlocked' if the customer/site is 'secure' via other means.
-A run/boot-time option is more flexible and achieves the best of both.
-    
->> Why is this text added in a follow on patch and not the patch that
->>   introduced the config option?
+>>> +/*
+>>> + * How manu bottom level we account to mm->pgtables_bytes
+>>> + */
+>>> +#define PT_ACCOUNT_LVLS 3
+>>> +
+>>> +struct pt_ptr {
+>>> +       unsigned long *ptr;
+>>> +       int lvl;
+>>> +};
+>>> +
+>> 
+>> I think you've inherited something that I consider to be a defect in the
+>> old code: you're conflating page *tables* with page table *entries*.  Your
+>> 'struct pt_ptr' sounds like a pointer to an entire page table, but AFAICT
+>> you're using it to point to a specific entry within a table.  I think that
+>> both the new core code and the code that uses it would be clearer and less
+>> error prone if you made the distinction explicit.  I can think of two clean
+>> ways to do it:
+>> 
+>> 1. Add a struct pt_entry_ptr, and make it so that get_ptv(), etc take a
+>> pt_entry_ptr instead of a pt_ptr.  Add a helper to find a pt_entry_ptr
+>> given a pt_ptr and either an index or an address.
+>> 
+>> 2. Don't allow pointers to page table entries at all.  Instead, get_ptv()
+>> would take an address or an index parameter.
 > 
-> Because the ACS section was added later in the series and this information is associated with that additional functionality.
->      
->> I'm also wondering if that command line option can take a 'bus device
->> function' address of a switch to limit the scope of where ACS is
->> disabled.
+> Well, I'm not sure how useful pointer to whole page tables are.
+> Where do you them useful?
+
+Hmm, that’s a fair question. I guess that, in your patch, you pass around a ptv_t when you want to refer to a whole page table. That seems to work okay. Maybe still rename ptp_t to ptep_t or similar to emphasize that it points to an entry, not a table.
+
+That being said, once you implement map/unmap for real, it might be more natural for map to return a pointer to a table rather than a pointer to an entry.
+
 > 
-Well, p2p DMA is a function of a cooperating 'agent' somewhere above the two devices.
-That agent should 'request' to the kernel that ACS be removed/circumvented (p2p enabled) btwn two endpoints.
-I recommend doing so via a sysfs method.
-
-That way, the system can limit the 'unsecure' space btwn two devices, likely configured on a separate switch, from the rest of the still-secured/ACS-enabled PCIe tree.
-PCIe is pt-to-pt, effectively; maybe one would have multiple nics/fabrics p2p to/from NVME, but one could look at it as a list of pairs (nic1<->nvme1; nic2<->nvme2; ....).
-A pair-listing would be optimal, allowing the kernel to figure out the ACS path, and not making it endpoint-switch-switch...-switch-endpt error-entry prone.
-Additionally, systems that can/prefer to do so via a RP's IOMMU, albeit not optimal, but better then all the way to/from memory, and a security/iova-check possible,
-can modify the pt-to-pt ACS algorithm to accomodate over time (e.g., cap bits be they hw or device-driver/extension/quirk defined for each bridge/RP in a PCI domain).
-
-Kernels that never want to support P2P could build w/o it enabled.... cmdline option is moot.
-Kernels built with it on, *still* need cmdline option, to be blunt that the kernel is enabling a feature that could render the entire (IO sub)system unsecure.
-
-> By this you mean the address for either a RP, DSP, USP or MF EP below which we disable ACS? We could do that but I don't think it avoids the issue of changes in IOMMU groupings as devices are added/removed. It simply changes the problem from affecting and entire PCI domain to a sub-set of the domain. We can already handle this by doing p2pdma on one RP and normal IOMMU isolation on the other RPs in the system.
+>  In x86-64 case I pretend that CR3 is single-entry page table. It
+>  requires a special threatement in ptp_page_vaddr(), but works fine
+>  otherwise.
 > 
-as devices are added, they start in ACS-enabled, secured mode.
-As sysfs entry modifies p2p ability, IOMMU group is modified as well.
 
+Hmm. If you stick with that, it definitely needs better comments. Why do you need this, though?  What’s the benefit over simply starting with a pointer to the root table or a pointer to the first entry in the root table?  We certainly don’t want anyone to do ptp_set() on the fake CR3 entry.
 
-btw -- IOMMU grouping is a host/HV control issue, not a VM control/knowledge issue.
-        So I don't understand the comments why VMs should need to know.
-        -- configure p2p _before_ assigning devices to VMs. ... iommu groups are checked at assignment time.
-           -- so even if hot-add, separate iommu group, then enable p2p, becomes same IOMMU group, then can only assign to same VM.
-        -- VMs don't know IOMMU's & ACS are involved now, and won't later, even if device's dynamically added/removed
-
-Is there a thread I need to read up to explain /clear-up the thoughts above?
-
-> Stephen
 > 
-> [1] https://marc.info/?l=linux-doc&m=150907188310838&w=2
->      
+>> 
+>>> +/*
+>>> + * When walking page tables, get the address of the next boundary,
+>>> + * or the end address of the range if that comes earlier.  Although no
+>>> + * vma end wraps to 0, rounded up __boundary may wrap to 0 throughout.
+>>> + */
+>> 
+>> I read this comment twice, and I still don't get it.  Can you clarify what
+>> this function does and why you would use it?
 > 
+> That's basically ported variant of p?d_addr_end. It helps step address by
+> right value for the page table entry and handles wrapping properly.
+> 
+> See example in copy_pt_range().
+
+Ok
+
+> 
+>>> +/* Operations on page table pointers */
+>>> +
+>>> +/* Initialize ptp_t with pointer to top page table level. */
+>>> +static inline ptp_t ptp_init(struct mm_struct *mm)
+>>> +{
+>>> +       struct pt_ptr ptp ={
+>>> +               .ptr = (unsigned long *)mm->pgd,
+>>> +               .lvl = PT_TOP_LEVEL,
+>>> +       };
+>>> +
+>>> +       return ptp;
+>>> +}
+>>> +
+>> 
+>> On some architectures, there are multiple page table roots.  For example,
+>> ARM64 has a root for the kernel half of the address space and a root for
+>> the user half (at least -- I don't fully understand it).  x86 PAE sort-of
+>> has four roots.  Would it make sense to expose this in the API for
+>> real?
+> 
+> I will give it a thought.
+> 
+> Is there a reason not to threat it as an additional page table layer and
+> deal with it in a unified way?
+
+I was thinking that it would be more confusing to treat it as one table. After all, it doesn’t exist in memory. Also, if anyone ever makes the top half be per-cpu and the bottom half be per-mm (which would be awesome if x86 had hardware support, hint hint), then pretending that it’s one table gets even weirder.  The code that emulates it as a table would have to know what mm *and* what CPU it is faking.
+
+> 
+> 
+>>> +static inline void ptp_walk(ptp_t *ptp, unsigned long addr)
+>>> +{
+>>> +       ptp->ptr = (unsigned long *)ptp_page_vaddr(ptp);
+>>> +       ptp->ptr += __pt_index(addr, --ptp->lvl);
+>>> +}
+>> 
+>> Can you add a comment that says what this function does?
+> 
+> Okay, I will.
+> 
+>> Why does it not change the level?
+> 
+> It does. --ptp->lvl.
+
+Hmm.
+
+Maybe change this to ptp_t ptp_walk(ptp_t ptp, unsigned long addr)?  It’s less error prone and should generate identical code.
+
+> 
+>>> +
+>>> +static void ptp_free(struct mm_struct *mm, ptv_t ptv)
+>>> +{
+>>> +       if (ptv.lvl < PT_SPLIT_LOCK_LVLS)
+>>> +               ptlock_free(pfn_to_page(ptv_pfn(ptv)));
+>>> +}
+>>> +
+>> 
+>> As it stands, this is a function that seems easy easy to misuse given the
+>> confusion between page tables and page table entries.
+> 
+> Hm. I probably have a blind spot, but I don't see it.
+> 
+
+Hmm, I guess you’re right - it takes a ptv_t.
+
+>> Finally, a general comment.  Actually fully implementing this the way
+>> you've done it seems like a giant mess given that you need to support all
+>> architectures.  But couldn't you implement the new API as a wrapper around
+>> the old API so you automatically get all architectures?
+> 
+> I will look into this. But I'm not sure if it possbile without measurable
+> overhead.
+> 
+
+So what?  Make x86 fast and everything else slow but correct. POWER, ARM64, and s390 will make themes fast. Everyone else can, too, if they care.
