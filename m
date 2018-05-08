@@ -1,124 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933098AbeEHXFF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 19:05:05 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:58052 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932314AbeEHXFD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 19:05:03 -0400
-From: Thomas Tai <thomas.tai@oracle.com>
-To: bhelgaas@google.com, rostedt@goodmis.org, thomas.tai@oracle.com
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mr.nuke.me@gmail.com
-Subject: [PATCH V3 1/1] PCI/AER: add pcie TLP header information in the tracepoint
-Date: Tue,  8 May 2018 19:04:56 -0400
-Message-Id: <1525820696-31967-2-git-send-email-thomas.tai@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525820696-31967-1-git-send-email-thomas.tai@oracle.com>
-References: <1525820696-31967-1-git-send-email-thomas.tai@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=722
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805080212
+        id S933251AbeEHXGX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 19:06:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59850 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932961AbeEHXGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 19:06:20 -0400
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+To: Stephen Bates <sbates@raithlin.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180423233046.21476-5-logang@deltatee.com>
+ <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
+ <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
+ <15433946-f7f5-f610-4e80-380fb59920e5@redhat.com>
+ <3C9FB262-A93C-4C8F-B1E0-85C6D6F78BC2@raithlin.com>
+From: Don Dutile <ddutile@redhat.com>
+Message-ID: <c5f30ced-7bbf-9420-db1a-72519fc78b3a@redhat.com>
+Date: Tue, 8 May 2018 19:06:17 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <3C9FB262-A93C-4C8F-B1E0-85C6D6F78BC2@raithlin.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a PCIe AER occurs, the TLP header information is
-printed in the kernel message but it is missing from
-the tracepoint. A userspace program can use this information
-in the tracepoint to better analyze problems.
+On 05/08/2018 05:27 PM, Stephen  Bates wrote:
+> Hi Don
+> 
+>> Well, p2p DMA is a function of a cooperating 'agent' somewhere above the two devices.
+>>     That agent should 'request' to the kernel that ACS be removed/circumvented (p2p enabled) btwn two endpoints.
+>>     I recommend doing so via a sysfs method.
+> 
+> Yes we looked at something like this in the past but it does hit the IOMMU grouping issue I discussed earlier today which is not acceptable right now. In the long term, once we get IOMMU grouping callbacks to VMs we can look at extending p2pdma in this way. But I don't think this is viable for the initial series.
+> 
+>      
+>>             So I don't understand the comments why VMs should need to know.
+> 
+> As I understand it VMs need to know because VFIO passes IOMMU grouping up into the VMs. So if a IOMMU grouping changes the VM's view of its PCIe topology changes. I think we even have to be cognizant of the fact the OS running on the VM may not even support hot-plug of PCI devices.
+Alex:
+Really? IOMMU groups are created by the kernel, so don't know how they would be passed into the VMs, unless indirectly via  PCI(e) layout.
+At best, twiddling w/ACS enablement (emulation) would cause VMs to see different IOMMU groups, but again, VMs are not the security point/level, the host/HV's are.
 
-To enable the tracepoint:
-echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
-
-Example tracepoint output:
-cat /sys/kernel/debug/tracing/trace
-aer_event: 0000:01:00.0
-PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
-TLP Header={0x0,0x1,0x2,0x3}
-
-Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
----
- drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
- include/ras/ras_event.h                | 22 ++++++++++++++++++----
- 2 files changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-index cfc89dd..fd49a8d 100644
---- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-+++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-@@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
- 		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
- 
- 	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
--			info->severity);
-+			info->severity, info->tlp_header_valid, &info->tlp);
- }
- 
- void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
-@@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
- 		__print_tlp_header(dev, &aer->header_log);
- 
- 	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
--			aer_severity);
-+			aer_severity, tlp_header_valid, &aer->header_log);
- }
- #endif
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index 9c68986..a079463 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -298,30 +298,44 @@
- TRACE_EVENT(aer_event,
- 	TP_PROTO(const char *dev_name,
- 		 const u32 status,
--		 const u8 severity),
-+		 const u8 severity,
-+		 const u8 tlp_header_valid,
-+		 struct aer_header_log_regs *tlp),
- 
--	TP_ARGS(dev_name, status, severity),
-+	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
- 
- 	TP_STRUCT__entry(
- 		__string(	dev_name,	dev_name	)
- 		__field(	u32,		status		)
- 		__field(	u8,		severity	)
-+		__field(	u8, 		tlp_header_valid)
-+		__array(	u32, 		tlp_header, 4	)
- 	),
- 
- 	TP_fast_assign(
- 		__assign_str(dev_name, dev_name);
- 		__entry->status		= status;
- 		__entry->severity	= severity;
-+		__entry->tlp_header_valid = tlp_header_valid;
-+		if (tlp_header_valid) {
-+			__entry->tlp_header[0] = tlp->dw0;
-+			__entry->tlp_header[1] = tlp->dw1;
-+			__entry->tlp_header[2] = tlp->dw2;
-+			__entry->tlp_header[3] = tlp->dw3;
-+		}
- 	),
- 
--	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
-+	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
- 		__get_str(dev_name),
- 		__entry->severity == AER_CORRECTABLE ? "Corrected" :
- 			__entry->severity == AER_FATAL ?
- 			"Fatal" : "Uncorrected, non-fatal",
- 		__entry->severity == AER_CORRECTABLE ?
- 		__print_flags(__entry->status, "|", aer_correctable_errors) :
--		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
-+		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
-+		__entry->tlp_header_valid ?
-+			__print_array(__entry->tlp_header, 4, 4) :
-+			"Not available")
- );
- 
- /*
--- 
-1.8.3.1
+>      
+>> Is there a thread I need to read up to explain /clear-up the thoughts above?
+> 
+> If you search for p2pdma you should find the previous discussions. Thanks for the input!
+> 
+> Stephen
+>      
+>      
+> 
