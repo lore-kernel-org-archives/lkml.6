@@ -1,138 +1,225 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754734AbeEHHdy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 03:33:54 -0400
-Received: from foss.arm.com ([217.140.101.70]:53624 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754492AbeEHHdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 03:33:52 -0400
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-To: linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>
-Cc: linux-pm@vger.kernel.org, Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-Subject: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to related_cpus unnecessarily"
-Date: Tue,  8 May 2018 08:33:40 +0100
-Message-Id: <20180508073340.13114-1-dietmar.eggemann@arm.com>
-X-Mailer: git-send-email 2.11.0
+        id S1754755AbeEHHfF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 03:35:05 -0400
+Received: from mail-it0-f71.google.com ([209.85.214.71]:51443 "EHLO
+        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754492AbeEHHfD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 03:35:03 -0400
+X-Google-Smtp-Source: AB8JxZrHZ/XGTG8G68YQkJfNUpwae2NxTK3IXzi/jt///OZDPSbqzPXA56a2msb4YRoehc1Am8lFEXWCCNZAS+hSCwIaWqprkILK
+MIME-Version: 1.0
+Date: Tue, 08 May 2018 00:35:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000062c1c056bacd39f@google.com>
+Subject: INFO: rcu detected stall in sctp_generate_heartbeat_event
+From: syzbot <syzbot+e4a5bbd54260c93014f9@syzkaller.appspotmail.com>
+To: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
+Hello,
 
-Lifting the restriction that the sugov kthread is bound to the
-policy->related_cpus for a system with a slow switching cpufreq driver,
-which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
-only not beneficial it also harms Enery-Aware Scheduling (EAS) on
-systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
+syzbot found the following crash on:
 
-The sugov kthread which does the update for the little cpus could
-potentially run on a big cpu. It could prevent that the big cluster goes
-into deeper idle states although all the tasks are running on the little
-cluster.
+HEAD commit:    90278871d4b0 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=119a7237800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aea320d3af5ef99d
+dashboard link: https://syzkaller.appspot.com/bug?extid=e4a5bbd54260c93014f9
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Example: hikey960 w/ 4.16.0-rc6-+
-         Arm big.LITTLE with per-cluster DVFS
+Unfortunately, I don't have any reproducer for this crash yet.
 
-root@h960:~# cat /proc/cpuinfo | grep "^CPU part"
-CPU part        : 0xd03 (Cortex-A53, little cpu)
-CPU part        : 0xd03
-CPU part        : 0xd03
-CPU part        : 0xd03
-CPU part        : 0xd09 (Cortex-A73, big cpu)
-CPU part        : 0xd09
-CPU part        : 0xd09
-CPU part        : 0xd09
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e4a5bbd54260c93014f9@syzkaller.appspotmail.com
 
-root@h960:/sys/devices/system/cpu/cpufreq# ls
-policy0  policy4  schedutil
+device bridge0 left promiscuous mode
+IPVS: set_ctl: invalid protocol: 56 0.0.0.0:20003 fo
+IPVS: set_ctl: invalid protocol: 175 224.0.0.2:20003 dh
+INFO: rcu_sched self-detected stall on CPU
+	0-...!: (119824 ticks this GP) idle=4b6/1/4611686018427387908  
+softirq=23864/23864 fqs=5
+	 (t=125000 jiffies g=13072 c=13071 q=480954)
+NMI backtrace for cpu 0
+CPU: 0 PID: 4547 Comm: udevd Not tainted 4.17.0-rc3+ #34
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.4+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:156 [inline]
+  rcu_dump_cpu_stacks+0x175/0x1c2 kernel/rcu/tree.c:1376
+  print_cpu_stall kernel/rcu/tree.c:1525 [inline]
+  check_cpu_stall.isra.61.cold.80+0x36c/0x59a kernel/rcu/tree.c:1593
+  __rcu_pending kernel/rcu/tree.c:3356 [inline]
+  rcu_pending kernel/rcu/tree.c:3401 [inline]
+  rcu_check_callbacks+0x21b/0xad0 kernel/rcu/tree.c:2763
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+RIP: 0010:rep_nop arch/x86/include/asm/processor.h:667 [inline]
+RIP: 0010:cpu_relax arch/x86/include/asm/processor.h:672 [inline]
+RIP: 0010:virt_spin_lock arch/x86/include/asm/qspinlock.h:69 [inline]
+RIP: 0010:native_queued_spin_lock_slowpath+0x204/0xde0  
+kernel/locking/qspinlock.c:305
+RSP: 0018:ffff8801dae07390 EFLAGS: 00000202 ORIG_RAX: ffffffffffffff13
+RAX: 0000000000000000 RBX: ffffed003b5c0e8b RCX: 0000000000000004
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8801a9e9d088
+RBP: ffff8801dae07700 R08: ffffed00353d3a12 R09: ffffed00353d3a11
+R10: ffffed00353d3a11 R11: ffff8801a9e9d08b R12: ffff8801a9e9d088
+R13: ffff8801dae076d8 R14: 0000000000000001 R15: dffffc0000000000
+  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:674 [inline]
+  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:30 [inline]
+  queued_spin_lock include/asm-generic/qspinlock.h:90 [inline]
+  do_raw_spin_lock+0x1a7/0x200 kernel/locking/spinlock_debug.c:113
+  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
+  _raw_spin_lock+0x32/0x40 kernel/locking/spinlock.c:144
+  spin_lock include/linux/spinlock.h:310 [inline]
+  sctp_generate_heartbeat_event+0xa4/0x450 net/sctp/sm_sideeffect.c:386
+  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
+  expire_timers kernel/time/timer.c:1363 [inline]
+  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
+  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
+  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
+  invoke_softirq kernel/softirq.c:365 [inline]
+  irq_exit+0x1d1/0x200 kernel/softirq.c:405
+  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
+  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+RIP: 0010:rcu_is_watching+0x41/0x140 kernel/rcu/tree.c:1071
+RSP: 0018:ffff8801ad457848 EFLAGS: 00000296 ORIG_RAX: ffffffffffffff13
+RAX: ffffed0035a8af0a RBX: 1ffff10035a8af0a RCX: ffff8801ad4578f0
+RDX: 0000000000000000 RSI: ffff8801ad457f58 RDI: ffffffff897bf004
+RBP: ffff8801ad4578d8 R08: ffff8801ad457978 R09: ffff8801ad53e040
+R10: ffffed0035a8af32 R11: ffff8801ad457997 R12: ffff8801ad457988
+R13: 0000000000000000 R14: ffff8801ad4578b0 R15: dffffc0000000000
+syz-executor3 (7657) used greatest stack depth: 15968 bytes left
+  kernel_text_address+0x61/0xf0 kernel/extable.c:140
+  __kernel_text_address+0xd/0x40 kernel/extable.c:107
+  unwind_get_return_address+0x61/0xa0 arch/x86/kernel/unwind_frame.c:18
+  __save_stack_trace+0x7e/0xd0 arch/x86/kernel/stacktrace.c:45
+  save_stack_trace+0x1a/0x20 arch/x86/kernel/stacktrace.c:60
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  getname_flags+0xd0/0x5a0 fs/namei.c:140
+  getname+0x19/0x20 fs/namei.c:211
+  do_sys_open+0x39a/0x740 fs/open.c:1087
+  __do_sys_open fs/open.c:1111 [inline]
+  __se_sys_open fs/open.c:1106 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1106
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f7621c19120
+RSP: 002b:00007fff6a9646f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7621c19120
+RDX: 0000000000000124 RSI: 0000000000080000 RDI: 00007fff6a9647a0
+RBP: 0000000000ddd744 R08: 0000000000ddd744 R09: 00007f7621c6ec20
+R10: 7269762f73656369 R11: 0000000000000246 R12: 0000000000dc3810
+R13: 0000000000dc3900 R14: 0000000000dc3250 R15: 0000000000dc8e10
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+device bridge_slave_0 left promiscuous mode
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+device bridge_slave_0 left promiscuous mode
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+device bridge_slave_0 left promiscuous mode
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+device bridge_slave_0 left promiscuous mode
+bridge0: port 1(bridge_slave_0) entered disabled state
+IPVS: ftp: loaded support on port[0] = 21
+team0 (unregistering): Port device team_slave_1 removed
+team0 (unregistering): Port device team_slave_0 removed
+bond0 (unregistering): Releasing backup interface bond_slave_1
+bond0 (unregistering): Releasing backup interface bond_slave_0
+bond0 (unregistering): Released all slaves
+team0 (unregistering): Port device team_slave_1 removed
+team0 (unregistering): Port device team_slave_0 removed
+bond0 (unregistering): Releasing backup interface bond_slave_1
+bond0 (unregistering): Releasing backup interface bond_slave_0
+bond0 (unregistering): Released all slaves
+team0 (unregistering): Port device team_slave_1 removed
+team0 (unregistering): Port device team_slave_0 removed
+bond0 (unregistering): Releasing backup interface bond_slave_1
+bond0 (unregistering): Releasing backup interface bond_slave_0
+bond0 (unregistering): Released all slaves
+team0 (unregistering): Port device team_slave_1 removed
+team0 (unregistering): Port device team_slave_0 removed
+bond0 (unregistering): Releasing backup interface bond_slave_1
+bond0 (unregistering): Releasing backup interface bond_slave_0
+bond0 (unregistering): Released all slaves
+bridge0: port 1(bridge_slave_0) entered blocking state
+bridge0: port 1(bridge_slave_0) entered disabled state
+device bridge_slave_0 entered promiscuous mode
+bridge0: port 2(bridge_slave_1) entered blocking state
+bridge0: port 2(bridge_slave_1) entered disabled state
+device bridge_slave_1 entered promiscuous mode
+IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
+IPv6: ADDRCONF(NETDEV_UP): veth1_to_bridge: link is not ready
+bond0: Enslaving bond_slave_0 as an active interface with an up link
+bond0: Enslaving bond_slave_1 as an active interface with an up link
+IPv6: ADDRCONF(NETDEV_UP): veth1_to_bond: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bond: link becomes ready
+IPv6: ADDRCONF(NETDEV_UP): team_slave_0: link is not ready
+team0: Port device team_slave_0 added
+IPv6: ADDRCONF(NETDEV_UP): team_slave_1: link is not ready
+team0: Port device team_slave_1 added
+IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link becomes ready
+IPv6: ADDRCONF(NETDEV_UP): bridge_slave_0: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_0: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bridge: link becomes ready
+IPv6: ADDRCONF(NETDEV_UP): bridge_slave_1: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link becomes ready
+bridge0: port 2(bridge_slave_1) entered blocking state
+bridge0: port 2(bridge_slave_1) entered forwarding state
+bridge0: port 1(bridge_slave_0) entered blocking state
+bridge0: port 1(bridge_slave_0) entered forwarding state
+IPv6: ADDRCONF(NETDEV_UP): bridge0: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): bridge0: link becomes ready
 
-root@h960:/sys/devices/system/cpu/cpufreq# cat policy*/related_cpus
-0 1 2 3
-4 5 6 7
 
-(1) w/o the revert:
-
-root@h960:~# ps -eo pid,class,rtprio,pri,psr,comm | awk 'NR == 1 ||
-/sugov/'
-  PID CLS RTPRIO PRI PSR COMMAND
-  1489 #6      0 140   1 sugov:0
-  1490 #6      0 140   0 sugov:4
-
-The sugov kthread sugov:4 responsible for policy4 runs on cpu0. (In this
-case both sugov kthreads run on little cpus).
-
-cross policy (cluster) remote callback example:
-...
-migration/1-14 [001] enqueue_task_fair: this_cpu=1 cpu_of(rq)=5
-migration/1-14 [001] sugov_update_shared: this_cpu=1 sg_cpu->cpu=5
-                     sg_cpu->sg_policy->policy->related_cpus=4-7
-  sugov:4-1490 [000] sugov_work: this_cpu=0
-                     sg_cpu->sg_policy->policy->related_cpus=4-7
-...
-
-The remote callback (this_cpu=1, target_cpu=5) is executed on cpu=0.
-
-(2) w/ the revert:
-
-root@h960:~# ps -eo pid,class,rtprio,pri,psr,comm | awk 'NR == 1 ||
-/sugov/'
-  PID CLS RTPRIO PRI PSR COMMAND
-  1491 #6      0 140   2 sugov:0
-  1492 #6      0 140   4 sugov:4
-
-The sugov kthread sugov:4 responsible for policy4 runs on cpu4.
-
-cross policy (cluster) remote callback example:
-...
-migration/1-14 [001] enqueue_task_fair: this_cpu=1 cpu_of(rq)=7
-migration/1-14 [001] sugov_update_shared: this_cpu=1 sg_cpu->cpu=7
-                     sg_cpu->sg_policy->policy->related_cpus=4-7
-  sugov:4-1492 [004] sugov_work: this_cpu=4
-                     sg_cpu->sg_policy->policy->related_cpus=4-7
-...
-
-The remote callback (this_cpu=1, target_cpu=7) is executed on cpu=4.
-
-Now the sugov kthread executes again on the policy (cluster) for which
-the Operating Performance Point (OPP) should be changed.
-It avoids the problem that an otherwise idle policy (cluster) is running
-schedutil (the sugov kthread) for another one.
-
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Pavan Kondeti <pkondeti@codeaurora.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 ---
- kernel/sched/cpufreq_schedutil.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index d2c6083304b4..63014cff76a5 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -523,11 +523,7 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
- 	}
- 
- 	sg_policy->thread = thread;
--
--	/* Kthread is bound to all CPUs by default */
--	if (!policy->dvfs_possible_from_any_cpu)
--		kthread_bind_mask(thread, policy->related_cpus);
--
-+	kthread_bind_mask(thread, policy->related_cpus);
- 	init_irq_work(&sg_policy->irq_work, sugov_irq_work);
- 	mutex_init(&sg_policy->work_lock);
- 
--- 
-2.11.0
+syzbot will keep track of this bug report.
+If you forgot to add the Reported-by tag, once the fix for this bug is  
+merged
+into any tree, please reply to this email with:
+#syz fix: exact-commit-title
+To mark this as a duplicate of another syzbot report, please reply with:
+#syz dup: exact-subject-of-another-report
+If it's a one-off invalid bug report, please reply with:
+#syz invalid
+Note: if the crash happens again, it will cause creation of a new bug  
+report.
+Note: all commands must start from beginning of the line in the email body.
