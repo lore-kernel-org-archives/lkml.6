@@ -1,285 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932215AbeEHTs0 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 15:48:26 -0400
-Received: from a2nlsmtp01-02.prod.iad2.secureserver.net ([198.71.225.36]:55432
-        "EHLO a2nlsmtp01-02.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751723AbeEHTsX (ORCPT
+        id S932283AbeEHT5I (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 15:57:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:50398 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755233AbeEHT5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 15:48:23 -0400
-x-originating-ip: 107.180.71.197
-From: Long Li <longli@linuxonhyperv.com>
-To: Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH 1/7 v2] cifs: smbd: Make upper layer decide when to destroy the transport
-Date: Tue,  8 May 2018 12:46:56 -0700
-Message-Id: <20180508194656.10586-1-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 2.15.1
-Reply-To: longli@microsoft.com
-X-CMAE-Envelope: MS4wfIUAzBK0xrcg77iAct8PUjtPDVKxVIB/f29pTp7jHvkKQOCGKgmYAvIQCkjhNjAbGhxL6Bp4lBHMYIXm/wxeHCF4F24Rb6iHnCF5WRLgzo1CA+jeBi2G
- eofo6P27FwXo0Tdlql0OM1LbnX7rq4W5BHz4jjXeWXfoiyyKAA8kxxC6+9gFTagwWNxv5KRaKxuLKwb8C4rTTQDxE2DJQlTm8ThRT09+QFvcm8ub6ARpHomv
- FeK8YtH2F07ZcULU0GP/QvsmxwZkz//+5295qhbP3zj39Zb9GKvzdkA43u03NUjM7tH9fakFTuVl/IqtneBNbDdY3VZ83jtjBfRSOltWX0iYrMDGEPFGDJ/O
- 7okzLw8mfjU/Vizk9zG5D5PHac/XyZCapHcCwMDGZyNYmaWMl1YHPfLxs5Z+bp7EnOjZD8Gk
+        Tue, 8 May 2018 15:57:07 -0400
+From: Thomas Tai <thomas.tai@oracle.com>
+To: bhelgaas@google.com, rostedt@goodmis.org, thomas.tai@oracle.com
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mr.nuke.me@gmail.com
+Subject: [PATCH V2] PCI/AER: add pcie TLP header information in the tracepoint
+Date: Tue,  8 May 2018 15:57:00 -0400
+Message-Id: <1525809420-30576-2-git-send-email-thomas.tai@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525809420-30576-1-git-send-email-thomas.tai@oracle.com>
+References: <1525809420-30576-1-git-send-email-thomas.tai@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=717
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805080187
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+When a PCIe AER occurs, the TLP header information is
+printed in the kernel message but it is missing from
+the tracepoint. A userspace program can use this information
+in the tracepoint to better analyze problems.
 
-On transport recoonect, upper layer CIFS code destroys the current
-transport and then recoonect. This code path is not used by SMBD, in that
-SMBD destroys its transport on RDMA disconnect notification independent of
-CIFS upper layer behavior.
+To enable the tracepoint:
+echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
 
-This approach adds some costs to SMBD layer to handle transport shutdown
-and restart, and to deal with several racing conditions on reconnecting
-transport.
+Example tracepoint output:
+cat /sys/kernel/debug/tracing/trace
+aer_event: 0000:01:00.0
+PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+TLP Header={0x0,0x1,0x2,0x3}
 
-Re-work this code path by introducing a new smbd_destroy. This function is
-called form upper layer to ask SMBD to destroy the transport. SMBD will no
-longer need to destroy the transport by itself while worrying about data
-transfer is in progress. The upper layer guarantees the transport is
-locked.
-
-change log:
-v2: fix build errors when CONFIG_CIFS_SMB_DIRECT is not configured
-
-Signed-off-by: Long Li <longli@microsoft.com>
+Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
 ---
- fs/cifs/connect.c   |   9 ++---
- fs/cifs/smbdirect.c | 114 +++++++++++++++++++++++++++++++++++++++++++---------
- fs/cifs/smbdirect.h |   5 ++-
- 3 files changed, 101 insertions(+), 27 deletions(-)
+ drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
+ include/ras/ras_event.h                | 22 ++++++++++++++++++----
+ 2 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 83b0234..5db3e9d 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -377,7 +377,8 @@ cifs_reconnect(struct TCP_Server_Info *server)
- 			 server->ssocket->state, server->ssocket->flags);
- 		sock_release(server->ssocket);
- 		server->ssocket = NULL;
--	}
-+	} else if (cifs_rdma_enabled(server))
-+		smbd_destroy(server);
- 	server->sequence_number = 0;
- 	server->session_estab = false;
- 	kfree(server->session_key.response);
-@@ -710,10 +711,8 @@ static void clean_demultiplex_info(struct TCP_Server_Info *server)
- 	wake_up_all(&server->request_q);
- 	/* give those requests time to exit */
- 	msleep(125);
--	if (cifs_rdma_enabled(server) && server->smbd_conn) {
--		smbd_destroy(server->smbd_conn);
--		server->smbd_conn = NULL;
--	}
-+	if (cifs_rdma_enabled(server))
-+		smbd_destroy(server);
- 	if (server->ssocket) {
- 		sock_release(server->ssocket);
- 		server->ssocket = NULL;
-diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index c62f7c9..1aa2d35 100644
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -318,6 +318,9 @@ static int smbd_conn_upcall(
+diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+index cfc89dd..fd49a8d 100644
+--- a/drivers/pci/pcie/aer/aerdrv_errprint.c
++++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+@@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+ 		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
  
- 		info->transport_status = SMBD_DISCONNECTED;
- 		smbd_process_disconnected(info);
-+		wake_up(&info->disconn_wait);
-+		wake_up_interruptible(&info->wait_reassembly_queue);
-+		wake_up_interruptible_all(&info->wait_send_queue);
- 		break;
- 
- 	default:
-@@ -1476,17 +1479,97 @@ static void idle_connection_timer(struct work_struct *work)
- 			info->keep_alive_interval*HZ);
+ 	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+-			info->severity);
++			info->severity, info->tlp_header_valid, &info->tlp);
  }
  
--/* Destroy this SMBD connection, called from upper layer */
--void smbd_destroy(struct smbd_connection *info)
-+/*
-+ * Destroy the transport and related RDMA and memory resources
-+ * Need to go through all the pending counters and make sure on one is using
-+ * the transport while it is destroyed
-+ */
-+void smbd_destroy(struct TCP_Server_Info *server)
- {
-+	struct smbd_connection *info = server->smbd_conn;
-+	struct smbd_response *response;
-+	unsigned long flags;
-+
-+	if (!info) {
-+		log_rdma_event(INFO, "rdma session already destroyed\n");
-+		return;
-+	}
-+
- 	log_rdma_event(INFO, "destroying rdma session\n");
-+	if (info->transport_status != SMBD_DISCONNECTED) {
-+		rdma_disconnect(server->smbd_conn->id);
-+		log_rdma_event(INFO, "wait for transport being disconnected\n");
-+		wait_event(
-+			info->disconn_wait,
-+			info->transport_status == SMBD_DISCONNECTED);
-+	}
+ void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+@@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
+ 		__print_tlp_header(dev, &aer->header_log);
  
--	/* Kick off the disconnection process */
--	smbd_disconnect_rdma_connection(info);
-+	log_rdma_event(INFO, "destroying qp\n");
-+	ib_drain_qp(info->id->qp);
-+	rdma_destroy_qp(info->id);
-+
-+	log_rdma_event(INFO, "cancelling idle timer\n");
-+	cancel_delayed_work_sync(&info->idle_timer_work);
-+	log_rdma_event(INFO, "cancelling send immediate work\n");
-+	cancel_delayed_work_sync(&info->send_immediate_work);
- 
--	log_rdma_event(INFO, "wait for transport being destroyed\n");
--	wait_event(info->wait_destroy,
--		info->transport_status == SMBD_DESTROYED);
-+	log_rdma_event(INFO, "wait for all send posted to IB to finish\n");
-+	wait_event(info->wait_send_pending,
-+		atomic_read(&info->send_pending) == 0);
-+	wait_event(info->wait_send_payload_pending,
-+		atomic_read(&info->send_payload_pending) == 0);
-+
-+	/* It's not posssible for upper layer to get to reassembly */
-+	log_rdma_event(INFO, "drain the reassembly queue\n");
-+	do {
-+		spin_lock_irqsave(&info->reassembly_queue_lock, flags);
-+		response = _get_first_reassembly(info);
-+		if (response) {
-+			list_del(&response->list);
-+			spin_unlock_irqrestore(
-+				&info->reassembly_queue_lock, flags);
-+			put_receive_buffer(info, response);
-+		} else
-+			spin_unlock_irqrestore(
-+				&info->reassembly_queue_lock, flags);
-+	} while (response);
-+	info->reassembly_data_length = 0;
-+
-+	log_rdma_event(INFO, "free receive buffers\n");
-+	wait_event(info->wait_receive_queues,
-+		info->count_receive_queue + info->count_empty_packet_queue
-+			== info->receive_credit_max);
-+	destroy_receive_buffers(info);
-+
-+	/*
-+	 * For performance reasons, memory registration and deregistration
-+	 * are not locked by srv_mutex. It is possible some processes are
-+	 * blocked on transport srv_mutex while holding memory registration.
-+	 * Release the transport srv_mutex to allow them to hit the failure
-+	 * path when sending data, and then release memory registartions.
-+	 */
-+	log_rdma_event(INFO, "freeing mr list\n");
-+	wake_up_interruptible_all(&info->wait_mr);
-+	while (atomic_read(&info->mr_used_count)) {
-+		mutex_unlock(&server->srv_mutex);
-+		msleep(1000);
-+		mutex_lock(&server->srv_mutex);
-+	}
-+	destroy_mr_list(info);
-+
-+	ib_free_cq(info->send_cq);
-+	ib_free_cq(info->recv_cq);
-+	ib_dealloc_pd(info->pd);
-+	rdma_destroy_id(info->id);
-+
-+	/* free mempools */
-+	mempool_destroy(info->request_mempool);
-+	kmem_cache_destroy(info->request_cache);
-+
-+	mempool_destroy(info->response_mempool);
-+	kmem_cache_destroy(info->response_cache);
-+
-+	info->transport_status = SMBD_DESTROYED;
- 
- 	destroy_workqueue(info->workqueue);
- 	kfree(info);
-@@ -1511,17 +1594,9 @@ int smbd_reconnect(struct TCP_Server_Info *server)
- 	 */
- 	if (server->smbd_conn->transport_status == SMBD_CONNECTED) {
- 		log_rdma_event(INFO, "disconnecting transport\n");
--		smbd_disconnect_rdma_connection(server->smbd_conn);
-+		smbd_destroy(server);
- 	}
- 
--	/* wait until the transport is destroyed */
--	if (!wait_event_timeout(server->smbd_conn->wait_destroy,
--		server->smbd_conn->transport_status == SMBD_DESTROYED, 5*HZ))
--		return -EAGAIN;
--
--	destroy_workqueue(server->smbd_conn->workqueue);
--	kfree(server->smbd_conn);
--
- create_conn:
- 	log_rdma_event(INFO, "creating rdma session\n");
- 	server->smbd_conn = smbd_get_connection(
-@@ -1730,12 +1805,13 @@ static struct smbd_connection *_smbd_get_connection(
- 	conn_param.retry_count = SMBD_CM_RETRY;
- 	conn_param.rnr_retry_count = SMBD_CM_RNR_RETRY;
- 	conn_param.flow_control = 0;
--	init_waitqueue_head(&info->wait_destroy);
- 
- 	log_rdma_event(INFO, "connecting to IP %pI4 port %d\n",
- 		&addr_in->sin_addr, port);
- 
- 	init_waitqueue_head(&info->conn_wait);
-+	init_waitqueue_head(&info->disconn_wait);
-+	init_waitqueue_head(&info->wait_reassembly_queue);
- 	rc = rdma_connect(info->id, &conn_param);
- 	if (rc) {
- 		log_rdma_event(ERR, "rdma_connect() failed with %i\n", rc);
-@@ -1759,8 +1835,6 @@ static struct smbd_connection *_smbd_get_connection(
- 	}
- 
- 	init_waitqueue_head(&info->wait_send_queue);
--	init_waitqueue_head(&info->wait_reassembly_queue);
--
- 	INIT_DELAYED_WORK(&info->idle_timer_work, idle_connection_timer);
- 	INIT_DELAYED_WORK(&info->send_immediate_work, send_immediate_work);
- 	queue_delayed_work(info->workqueue, &info->idle_timer_work,
-@@ -1801,7 +1875,7 @@ static struct smbd_connection *_smbd_get_connection(
- 
- allocate_mr_failed:
- 	/* At this point, need to a full transport shutdown */
--	smbd_destroy(info);
-+	smbd_destroy(server);
- 	return NULL;
- 
- negotiation_failed:
-diff --git a/fs/cifs/smbdirect.h b/fs/cifs/smbdirect.h
-index f9038da..898d762 100644
---- a/fs/cifs/smbdirect.h
-+++ b/fs/cifs/smbdirect.h
-@@ -71,6 +71,7 @@ struct smbd_connection {
- 	struct completion ri_done;
- 	wait_queue_head_t conn_wait;
- 	wait_queue_head_t wait_destroy;
-+	wait_queue_head_t disconn_wait;
- 
- 	struct completion negotiate_completion;
- 	bool negotiate_done;
-@@ -288,7 +289,7 @@ struct smbd_connection *smbd_get_connection(
- /* Reconnect SMBDirect session */
- int smbd_reconnect(struct TCP_Server_Info *server);
- /* Destroy SMBDirect session */
--void smbd_destroy(struct smbd_connection *info);
-+void smbd_destroy(struct TCP_Server_Info *server);
- 
- /* Interface for carrying upper layer I/O through send/recv */
- int smbd_recv(struct smbd_connection *info, struct msghdr *msg);
-@@ -330,7 +331,7 @@ struct smbd_connection {};
- static inline void *smbd_get_connection(
- 	struct TCP_Server_Info *server, struct sockaddr *dstaddr) {return NULL;}
- static inline int smbd_reconnect(struct TCP_Server_Info *server) {return -1; }
--static inline void smbd_destroy(struct smbd_connection *info) {}
-+static inline void smbd_destroy(struct TCP_Server_Info *server) {}
- static inline int smbd_recv(struct smbd_connection *info, struct msghdr *msg) {return -1; }
- static inline int smbd_send(struct smbd_connection *info, struct smb_rqst *rqst) {return -1; }
+ 	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+-			aer_severity);
++			aer_severity, tlp_header_valid, &aer->header_log);
+ }
  #endif
+diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+index 9c68986..f73b168 100644
+--- a/include/ras/ras_event.h
++++ b/include/ras/ras_event.h
+@@ -298,30 +298,44 @@
+ TRACE_EVENT(aer_event,
+ 	TP_PROTO(const char *dev_name,
+ 		 const u32 status,
+-		 const u8 severity),
++		 const u8 severity,
++		 const u8 tlp_header_valid,
++		 struct aer_header_log_regs *tlp),
+ 
+-	TP_ARGS(dev_name, status, severity),
++	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+ 
+ 	TP_STRUCT__entry(
+ 		__string(	dev_name,	dev_name	)
+ 		__field(	u32,		status		)
+ 		__field(	u8,		severity	)
++		__field(	u8, 		tlp_header_valid)
++		__array(	u32, 		tlp_header, 4	)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__assign_str(dev_name, dev_name);
+ 		__entry->status		= status;
+ 		__entry->severity	= severity;
++		__entry->tlp_header_valid = tlp_header_valid;
++		if (__entry->tlp_header_valid) {
++			__entry->tlp_header[0] = tlp->dw0;
++			__entry->tlp_header[1] = tlp->dw1;
++			__entry->tlp_header[2] = tlp->dw2;
++			__entry->tlp_header[3] = tlp->dw3;
++		}
+ 	),
+ 
+-	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
++	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+ 		__get_str(dev_name),
+ 		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+ 			__entry->severity == AER_FATAL ?
+ 			"Fatal" : "Uncorrected, non-fatal",
+ 		__entry->severity == AER_CORRECTABLE ?
+ 		__print_flags(__entry->status, "|", aer_correctable_errors) :
+-		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
++		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
++		__entry->tlp_header_valid ?
++			__print_array(__entry->tlp_header, 4, 4) :
++			"Not available")
+ );
+ 
+ /*
 -- 
-2.7.4
+1.8.3.1
