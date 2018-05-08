@@ -1,206 +1,191 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754763AbeEHHjS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 03:39:18 -0400
-Received: from foss.arm.com ([217.140.101.70]:53656 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754737AbeEHHjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 03:39:16 -0400
-Subject: Re: [PATCH] irqchip/irq-ath79-intc: add irq cascade driver for
- QCA9556 SoCs
-To: John Crispin <john@phrozen.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc: linux-kernel@vger.kernel.org, linux-mips@linux-mips.org
-References: <20180507133714.17384-1-john@phrozen.org>
-From: Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <ec4da5fd-0ade-e6bb-e779-d70d56c0da55@arm.com>
-Date: Tue, 8 May 2018 08:39:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754810AbeEHHlQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 03:41:16 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37016 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754500AbeEHHlO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 03:41:14 -0400
+X-Google-Smtp-Source: AB8JxZpTx/wCXIemvIfV4obGEXZZjvYtxKCEQ+1iYVqXqyQznARUYP+1RkPW08XQd6gwl3dGirLw2g==
+Date: Tue, 8 May 2018 09:41:09 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Peter Rosin <peda@axentia.se>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
+        Vincent Abriou <vincent.abriou@st.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] drm/sti: do not remove the drm_bridge that was never
+ added
+Message-ID: <20180508074109.GL28661@phenom.ffwll.local>
+Mail-Followup-To: Peter Rosin <peda@axentia.se>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-rockchip@lists.infradead.org,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>, dri-devel@lists.freedesktop.org,
+        Vincent Abriou <vincent.abriou@st.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180502074025.12421-1-peda@axentia.se>
+ <20180502074025.12421-2-peda@axentia.se>
+ <20180503090648.GG12521@phenom.ffwll.local>
+ <bd8d12f7-0c71-c96b-80fa-54de7de39511@axentia.se>
+ <20180507133929.GG12521@phenom.ffwll.local>
+ <d378241f-7420-bbaf-c447-18cdfd4f9dd3@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <20180507133714.17384-1-john@phrozen.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d378241f-7420-bbaf-c447-18cdfd4f9dd3@axentia.se>
+X-Operating-System: Linux phenom 4.15.0-3-amd64 
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
-
-On 07/05/18 14:37, John Crispin wrote:
-> The QCA ATH79 MIPS target is being converted to pure OF. Right now the
-> platform code will setup the IRQ cascade found on the QCA9556 and newer
-> SoCs and uses fixed IRQ numbers for the peripherals attached to the
-> cascade. This patch adds a proper driver based on the code previously
-> located inside arch/mips/ath79/irq.c.
+On Mon, May 07, 2018 at 03:59:04PM +0200, Peter Rosin wrote:
+> On 2018-05-07 15:39, Daniel Vetter wrote:
+> > On Thu, May 03, 2018 at 11:12:21PM +0200, Peter Rosin wrote:
+> >> On 2018-05-03 11:06, Daniel Vetter wrote:
+> >>> On Wed, May 02, 2018 at 09:40:23AM +0200, Peter Rosin wrote:
+> >>>> The more natural approach would perhaps be to add an drm_bridge_add,
+> >>>> but there are several other bridges that never call drm_bridge_add.
+> >>>> Just removing the drm_bridge_remove is the easier fix.
+> >>>>
+> >>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >>>
+> >>> This mess is much bigger. There's 2 pairs of bridge functions:
+> >>>
+> >>> - drm_bridge_attach/detach. Those are meant to be called by the overall
+> >>>   drm driver to connect/disconnect a drm_bridge.
+> >>>
+> >>> - drm_bridge_add/remove. These are supposed to be called by the bridge
+> >>>   driver itself to register/unregister itself. Maybe we should rename
+> >>>   them, since the same issue happens with drm_panel, with the same
+> >>>   confusion.
+> >>>
+> >>> I thought someone was working on a cleanup series to fix this mess, but I
+> >>> didn't find anything.
+> >>
+> >> Ok, I just spotted the imbalance and didn't really dig into what
+> >> actually happens in these error paths. Now that I have done so I
+> >> believe that the removed drm_bridge_remove calls causes NULL
+> >> dereferences if/when the error paths are triggered.
+> >>
+> >> So, I don't think this can wait for some bigger cleanup.
+> >>
+> >> drm_bridge_remove calls list_del_init calls __list_del_entry calls
+> >> __list_del with NULL in both prev and next since the list member
+> >> is never initialized. prev and next are dereferenced by __list_del
+> >> and you have *boom*
+> >>
+> >> I recommend adding the tag
+> >>
+> >> Fixes: 84601dbdea36 ("drm: sti: rework init sequence")
+> >>
+> >> so that stable picks this one up.
+> > 
+> > I just wanted to correct your commit message text - the correct solution
+> > is definitely _not_ for sti here to call drm_bridge_add.
 > 
-> Signed-off-by: John Crispin <john@phrozen.org>
-> ---
->  drivers/irqchip/Makefile         |   1 +
->  drivers/irqchip/irq-ath79-intc.c | 108 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 109 insertions(+)
->  create mode 100644 drivers/irqchip/irq-ath79-intc.c
+> Ah, I see what you mean. Do you want me to respin?
 > 
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index d27e3e3619e0..f63c94a92e25 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -3,6 +3,7 @@ obj-$(CONFIG_IRQCHIP)			+= irqchip.o
->  
->  obj-$(CONFIG_ALPINE_MSI)		+= irq-alpine-msi.o
->  obj-$(CONFIG_ATH79)			+= irq-ath79-cpu.o
-> +obj-$(CONFIG_ATH79)			+= irq-ath79-intc.o
->  obj-$(CONFIG_ATH79)			+= irq-ath79-misc.o
->  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2835.o
->  obj-$(CONFIG_ARCH_BCM2835)		+= irq-bcm2836.o
-> diff --git a/drivers/irqchip/irq-ath79-intc.c b/drivers/irqchip/irq-ath79-intc.c
-> new file mode 100644
-> index 000000000000..ba15b1ac98b3
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-ath79-intc.c
-> @@ -0,0 +1,108 @@
-> +/*
-> + *  Atheros QCA955X specific interrupt cascade handling
-> + *
-> + *  Copyright (C) 2018 John Crispin <john@phrozen.org>
-> + *
-> + *  This program is free software; you can redistribute it and/or modify it
-> + *  under the terms of the GNU General Public License version 2 as published
-> + *  by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/interrupt.h>
-> +#include <linux/irqchip.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/irqdomain.h>
-> +
-> +#include <asm/irq_cpu.h>
-> +#include <asm/mach-ath79/ath79.h>
-> +#include <asm/mach-ath79/ar71xx_regs.h>
-> +
-> +#define ATH79_MAX_INTC_CASCADE	3
-
-Why 3? Is that a property of the HW? Or could it be inferred from the DT?
-
-> +
-> +struct ath79_intc {
-> +	struct irq_chip chip;
-> +	u32 irq;
-> +	u32 pending_mask;
-> +	u32 irq_mask[ATH79_MAX_INTC_CASCADE];
-> +};
-> +
-> +static void ath79_intc_irq_handler(struct irq_desc *desc)
-> +{
-> +	struct irq_domain *domain = irq_desc_get_handler_data(desc);
-> +	struct ath79_intc *intc = domain->host_data;
-> +	u32 pending;
-> +
-> +	pending = ath79_reset_rr(QCA955X_RESET_REG_EXT_INT_STATUS);
-> +	pending &= intc->pending_mask;
-
-Isn't this "pending_mask" more of an "enabled"?
-
-> +
-> +	if (pending) {
-> +		int i;
-> +
-> +		for (i = 0; i < domain->hwirq_max; i++)
-
-Don't. This is an implementation detail of the irq domain, and you're
-not supposed to access that field.
-
-> +			if (pending & intc->irq_mask[i])
-
-What are you trying to do here? Can't you directly infer the pending
-interrupt from the pending field?
-
-> +				generic_handle_irq(irq_find_mapping(domain, i));
-> +	} else {
-> +		spurious_interrupt();
-> +	}
-
-Missing chained_irq_enter/exit calls.
-
-> +}
-> +
-> +static void ath79_intc_irq_unmask(struct irq_data *d)
-> +{
-> +}
-> +
-> +static void ath79_intc_irq_mask(struct irq_data *d)
-> +{
-> +}
-
-So you cannot mask or unmask an interrupt? What is this thing? An OR gate?
-
-> +
-> +static int ath79_intc_map(struct irq_domain *d, unsigned int irq,
-> +			  irq_hw_number_t hw)
-> +{
-> +	struct ath79_intc *intc = d->host_data;
-> +
-> +	irq_set_chip_and_handler(irq, &intc->chip, handle_level_irq);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct irq_domain_ops ath79_irq_domain_ops = {
-> +	.xlate = irq_domain_xlate_onecell,
-> +	.map = ath79_intc_map,
-> +};
-> +
-> +static int __init qca9556_intc_of_init(
-> +	struct device_node *node, struct device_node *parent)
-> +{
-> +	struct irq_domain *domain;
-> +	struct ath79_intc *intc;
-> +	int cnt, i;
-> +
-> +	cnt = of_property_count_u32_elems(node, "qcom,pending-bits");
-
-Where is this binding documented? What does "pending_bits" even mean if
-it is statically defined?
-
-> +	if (cnt > ATH79_MAX_INTC_CASCADE)
-> +		panic("Too many INTC pending bits\n");
-> +
-> +	intc = kzalloc(sizeof(*intc), GFP_KERNEL);
-> +	if (!intc)
-> +		panic("Failed to allocate INTC memory\n");
-> +	intc->chip.name = "INTC";
-> +	intc->chip.irq_unmask = ath79_intc_irq_unmask,
-> +	intc->chip.irq_mask = ath79_intc_irq_mask,
-> +
-> +	of_property_read_u32_array(node, "qcom,pending-bits", intc->irq_mask,
-> +				   cnt);
-> +	for (i = 0; i < cnt; i++)
-> +		intc->pending_mask |= intc->irq_mask[i];
-> +
-> +	intc->irq = irq_of_parse_and_map(node, 0);
-> +	if (!intc->irq)
-> +		panic("Failed to get INTC IRQ");
-
-Do you really need the panics in this function? That seem a bit of a
-harsh treatment for something that is not necessarily fatal.
-
-> +
-> +	domain = irq_domain_add_linear(node, cnt, &ath79_irq_domain_ops,
-> +				       intc);
-> +	irq_set_chained_handler_and_data(intc->irq, ath79_intc_irq_handler,
-> +					 domain);
-> +
-> +	return 0;
-> +}
-> +IRQCHIP_DECLARE(qca9556_intc, "qcom,qca9556-intc",
-> +		qca9556_intc_of_init);
+> >                                                          It should call
+> > drm_bridge_attach/detach only, as a pair.
 > 
+> Alas, the attach/detach functions are generally not called from the same
+> level. After the bridge has been attached to an encoder, it is detached
+> in the generic code shutting down the encoder, i.e. the bridge consumer
+> is not explicitly involved with bridge detaching.
+> 
+> > I didn't check whether you instead have a _detach call missing or what's
+> > going on here.
+> 
+> So, even though there is no _detach call, it is still not "missing" as
+> it is not supposed to be there...
 
-Thanks,
+Oh, TIL. Totally missed that we've improved this to be closer to dwim()
+semantics. I think your patch is correct as-is and has my
 
-	M.
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+It'd be great to improve the kerneldoc for drm_bridge_attach though to
+mention that bridges get auto-detached on encoder cleanup as don in
+drm_encoder_cleanup(). Care to do that?
+
+And on that note I've again realized that most drivers totally get this
+wrong when they set their ->destroy callback to drm_encoder_cleanup
+(similar for other kms objects), because that one does _not_ do the final
+kfree. Oh well.
+-Daniel
+
+> 
+> Cheers,
+> Peter
+> 
+> > -Daniel
+> >>
+> >> Cheers,
+> >> Peter
+> >>
+> >>> -Daniel
+> >>>
+> >>>> ---
+> >>>>  drivers/gpu/drm/sti/sti_hda.c  | 1 -
+> >>>>  drivers/gpu/drm/sti/sti_hdmi.c | 1 -
+> >>>>  2 files changed, 2 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+> >>>> index 67bbdb49fffc..199db13f565c 100644
+> >>>> --- a/drivers/gpu/drm/sti/sti_hda.c
+> >>>> +++ b/drivers/gpu/drm/sti/sti_hda.c
+> >>>> @@ -721,7 +721,6 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+> >>>>  	return 0;
+> >>>>  
+> >>>>  err_sysfs:
+> >>>> -	drm_bridge_remove(bridge);
+> >>>>  	return -EINVAL;
+> >>>>  }
+> >>>>  
+> >>>> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
+> >>>> index 58f431102512..932724784942 100644
+> >>>> --- a/drivers/gpu/drm/sti/sti_hdmi.c
+> >>>> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
+> >>>> @@ -1315,7 +1315,6 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
+> >>>>  	return 0;
+> >>>>  
+> >>>>  err_sysfs:
+> >>>> -	drm_bridge_remove(bridge);
+> >>>>  	hdmi->drm_connector = NULL;
+> >>>>  	return -EINVAL;
+> >>>>  }
+> >>>> -- 
+> >>>> 2.11.0
+> >>>>
+> >>>> _______________________________________________
+> >>>> dri-devel mailing list
+> >>>> dri-devel@lists.freedesktop.org
+> >>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> >>>
+> >>
+> >> _______________________________________________
+> >> dri-devel mailing list
+> >> dri-devel@lists.freedesktop.org
+> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> > 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
 -- 
-Jazz is not dead. It just smells funny...
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
