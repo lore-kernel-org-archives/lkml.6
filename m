@@ -1,40 +1,39 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrtXm/Urbq3CJsr8SdB9gWlRDTlAHyNxgEnVhNh67n7AXrajs7AAt7SDzBZaB8iAPlgXO57
-ARC-Seal: i=1; a=rsa-sha256; t=1525767421; cv=none;
+X-Google-Smtp-Source: AB8JxZpGUJtH8EawkXP1yZntAosWvSjqDYGAzwdXVpfdpmmzfCg6/vyoZ9je6kdVZCqM7pACA29g
+ARC-Seal: i=1; a=rsa-sha256; t=1525767417; cv=none;
         d=google.com; s=arc-20160816;
-        b=omXx1gkx4hmUif/N7rW+VBqkAbc8ujI/C4EhJjgSHy/p1sOqt8+vf2vVgnhQs0yukl
-         oAPOlTERskKG4wxlfiT77qsEEJYvP26xt289ODdDYcRwxFTGvP3IGFrSTgUewdgBk5/G
-         /22w0MH1UBRU7Hxmg8WPO3ujFKGEnYs2zL4G7B5SDbpRRq1w1SEasflq7n08+DbmztQO
-         8KikLVlZ/9s8RmXTuAsGh8PNY3Lo89PgstX5ytSViGWyiJ7G62rmgYqO8lrudocc8M+A
-         BaJ4MVdGkQn+Umixny5NmCcsNc4lrDob706CiTaF7GROor8ex/qpqIxk2w6ci+GdcYdm
-         MmgA==
+        b=GULZfxCqfQ4GvTltNyUNN2KOoEBdKJOITVPhX5MtoiE8uBr49/9uw7ztpVoMflFXbf
+         8CvxU1wnX+DHc9B7bBTHGw1Wot4YPkWXq+Z+N2c60bgzeIIZEmF82hcoCvtydp9HChfa
+         g5jiWxJmEs1QqUd959U7bUbOTD9TzMEmguNlzDE1SZCougSy8ng/tMkqMTHTlyQBsqKb
+         PNKOsW3u8Y+8cnPQnzBRVqmHkNv0e/+KpGZFJJWdzIPzN0mVHMPgCd53pJx8GW7vemK1
+         rFTRYd20C2VEiJUT4sbrxpRlHKlz7fTp/gJ0xrXQpG8tx67O4BMuwQEaFn1UrtOU0DdZ
+         0TOQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=9+CqxS8SJGDArHkC4+XHR5RtDT9NRb4aYrPWCZm4Z8w=;
-        b=0vmXPTkloCJatAGACgy1id9svsYTZXd+teyVLXD/SWY2+0z+tNop7Aas1mAmG/A5R/
-         Z1UaZ26pyR7uHFmqmy89YFuWTFs2nH9SCdVe7RF1A4/bcbjKZxfWQDguPPK7gZQdTvhz
-         tt4aPjDcZ9Yl8gJwY9s+umT43/O1zXDHtc87gCrMvvH8bP+/3sIaq1/cLiEOHvUIU+Ho
-         kjCVLdeajc0Uoo8H4VQ195r1C2o+4sZI6Vbq4qB9EqmN1mF4VQT2xWzGXRADIRjew4Lg
-         8f4xSH0iX7PENI2tPuv9lwzRaVnEmNaqcbz1XcbSc3g1NSJLTRXrsFJ0WYFnwAfG3NWO
-         Cs1A==
+        bh=+xyqq0nFSm3hoFBUCBqsmISXUZPz+dq5zfxrZqWnSno=;
+        b=ouJZtgG5NtBLyD6Im/pItiX5CavsLQv+WzvhhsI6KwaYJdB/skciKKKmAchPM+9wuv
+         yPJB2d7BcufqJlOeqU5zAzrIXu6nj1EKyezJjg46q35Vn/MYPBmUosg01bcCNd1J+m/6
+         sogZ4TCwPY00TbktVv3zslMlNR8rSVFWgl5+h6s+aIRzwH7lPSL0Z7nDH78YTU7TykPI
+         BkC1jMI+uNdr5jkeNyHppi/DNatnB5WNTt1K+qeNBIHnsnlLROgXi57C9r2QLYeLiTrR
+         QBHfaZr1lKfgA1+KlWa3ZJAJMv5D/jGDviuZhuEMSyDmbFj2sMDQF83uueRcN8/ZRl+Q
+         se+Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NIQ0e1Kx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=nOJbfaPh;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NIQ0e1Kx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=nOJbfaPh;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Majd Dibbiny <majd@mellanox.com>,
-	Danit Goldberg <danitg@mellanox.com>,
-	Leon Romanovsky <leonro@mellanox.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 20/32] IB/mlx5: Use unlimited rate when static rate is not supported
-Date: Tue,  8 May 2018 10:11:00 +0200
-Message-Id: <20180508074012.188056532@linuxfoundation.org>
+	=?UTF-8?q?SZ=20Lin=20 ?= <sz.lin@moxa.com>,
+	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+	"David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 19/32] NET: usb: qmi_wwan: add support for ublox R410M PID 0x90b2
+Date: Tue,  8 May 2018 10:10:59 +0200
+Message-Id: <20180508074012.023797885@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
@@ -44,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882860729523531?=
-X-GMAIL-MSGID: =?utf-8?q?1599883099703795120?=
+X-GMAIL-THRID: =?utf-8?q?1599882858035853957?=
+X-GMAIL-MSGID: =?utf-8?q?1599883096388731346?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,56 +52,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Danit Goldberg <danitg@mellanox.com>
+From: SZ Lin (林上智) <sz.lin@moxa.com>
 
-commit 4f32ac2e452c2180cd2df581cbadac183e27ecd0 upstream.
+commit 9306b38e42cb266f98bff6f6f4c1c652aa79ba45 upstream.
 
-Before the change, if the user passed a static rate value different
-than zero and the FW doesn't support static rate,
-it would end up configuring rate of 2.5 GBps.
+This patch adds support for PID 0x90b2 of ublox R410M.
 
-Fix this by using rate 0; unlimited, in cases where FW
-doesn't support static rate configuration.
+qmicli -d /dev/cdc-wdm0 --dms-get-manufacturer
+[/dev/cdc-wdm0] Device manufacturer retrieved:
+        Manufacturer: 'u-blox'
 
-Cc: <stable@vger.kernel.org> # 3.10
-Fixes: e126ba97dba9 ("mlx5: Add driver for Mellanox Connect-IB adapters")
-Reviewed-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Danit Goldberg <danitg@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+qmicli -d /dev/cdc-wdm0 --dms-get-model
+[/dev/cdc-wdm0] Device model retrieved:
+        Model: 'SARA-R410M-02B'
+
+Signed-off-by: SZ Lin (林上智) <sz.lin@moxa.com>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Bjørn Mork <bjorn@mork.no>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/mlx5/qp.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/net/usb/qmi_wwan.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -2168,18 +2168,18 @@ enum {
- 
- static int ib_rate_to_mlx5(struct mlx5_ib_dev *dev, u8 rate)
- {
--	if (rate == IB_RATE_PORT_CURRENT) {
-+	if (rate == IB_RATE_PORT_CURRENT)
- 		return 0;
--	} else if (rate < IB_RATE_2_5_GBPS || rate > IB_RATE_300_GBPS) {
-+
-+	if (rate < IB_RATE_2_5_GBPS || rate > IB_RATE_300_GBPS)
- 		return -EINVAL;
--	} else {
--		while (rate != IB_RATE_2_5_GBPS &&
--		       !(1 << (rate + MLX5_STAT_RATE_OFFSET) &
--			 MLX5_CAP_GEN(dev->mdev, stat_rate_support)))
--			--rate;
--	}
- 
--	return rate + MLX5_STAT_RATE_OFFSET;
-+	while (rate != IB_RATE_PORT_CURRENT &&
-+	       !(1 << (rate + MLX5_STAT_RATE_OFFSET) &
-+		 MLX5_CAP_GEN(dev->mdev, stat_rate_support)))
-+		--rate;
-+
-+	return rate ? rate + MLX5_STAT_RATE_OFFSET : rate;
- }
- 
- static int modify_raw_packet_eth_prio(struct mlx5_core_dev *dev,
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -803,6 +803,7 @@ static const struct usb_device_id produc
+ 	{QMI_FIXED_INTF(0x05c6, 0x9080, 8)},
+ 	{QMI_FIXED_INTF(0x05c6, 0x9083, 3)},
+ 	{QMI_FIXED_INTF(0x05c6, 0x9084, 4)},
++	{QMI_FIXED_INTF(0x05c6, 0x90b2, 3)},    /* ublox R410M */
+ 	{QMI_FIXED_INTF(0x05c6, 0x920d, 0)},
+ 	{QMI_FIXED_INTF(0x05c6, 0x920d, 5)},
+ 	{QMI_QUIRK_SET_DTR(0x05c6, 0x9625, 4)},	/* YUGA CLM920-NC5 */
