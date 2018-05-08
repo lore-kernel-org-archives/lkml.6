@@ -1,157 +1,405 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933132AbeEHIXF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:23:05 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:36163 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932957AbeEHIXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:23:00 -0400
-X-UUID: 6448e33e911e40d0acb74e23aaf8dea7-20180508
-Message-ID: <1525767775.18877.22.camel@mtkswgap22>
-Subject: Re: [PATCH v1 6/7] Bluetooth: hci_mediatek: Add protocol support
- for MediaTek serial devices
-From: Sean Wang <sean.wang@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>
-CC: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        BlueZ development <linux-bluetooth@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Date: Tue, 8 May 2018 16:22:55 +0800
-In-Reply-To: <D474053D-6910-4B04-8B98-59B96FEB86BC@holtmann.org>
-References: <cover.1522736996.git.sean.wang@mediatek.com>
-         <f0e0a0b7f1dc3845dc6eafb4ccd60284d1675f8d.1522736996.git.sean.wang@mediatek.com>
-         <A7391E5D-2945-415B-8AB1-8DFBF2E65878@holtmann.org>
-         <1525762084.14468.20.camel@mtkswgap22>
-         <D474053D-6910-4B04-8B98-59B96FEB86BC@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-X-MTK: N
+        id S933199AbeEHIZA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:25:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933111AbeEHIY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:24:57 -0400
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 1/3] ARM: dts: tegra: Remove skeleton.dtsi and fix DTC warnings for /memory
+Date: Tue,  8 May 2018 10:24:39 +0200
+Message-Id: <1525767881-28516-2-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525767881-28516-1-git-send-email-krzk@kernel.org>
+References: <1525767881-28516-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Marcel
+Remove the usage of skeleton.dtsi and add necessary properties to /memory
+node to fix the DTC warnings:
 
-On Tue, 2018-05-08 at 09:27 +0200, Marcel Holtmann wrote:
-> Hi Sean,
-> 
-> >>> +
-> >>> +static int mtk_wmt_cmd_sync(struct hci_uart *hu, u8 opcode, u8 flag, u16 plen,
-> >>> +			    const void *param)
-> >>> +{
-> >>> +	struct mtk_bt_dev *btdev = hu->priv;
-> >>> +	struct hci_command_hdr *hhdr;
-> >>> +	struct hci_acl_hdr *ahdr;
-> >>> +	struct mtk_wmt_hdr *whdr;
-> >>> +	struct sk_buff *skb;
-> >>> +	int ret = 0;
-> >>> +
-> >>> +	init_completion(&btdev->wmt_cmd);
-> >>> +
-> >>> +	skb = bt_skb_alloc(plen + MTK_WMT_CMD_SIZE, GFP_KERNEL);
-> >>> +	if (!skb)
-> >>> +		return -ENOMEM;
-> >>> +
-> >>> +	/*
-> >>> +	 * WMT data is carried in either ACL or HCI format with op code as
-> >>> +	 * 0xfc6f and followed by a WMT header and its actual payload.
-> >>> +	 */
-> >> 
-> >> Please use net subsystem comment style.
-> >> 
-> >>> +	switch (opcode) {
-> >>> +	case MTK_WMT_PATCH_DWNLD:
-> >>> +		ahdr = skb_put(skb, HCI_ACL_HDR_SIZE);
-> >>> +		ahdr->handle = cpu_to_le16(0xfc6f);
-> >>> +		ahdr->dlen   = cpu_to_le16(plen + MTK_WMT_HDR_SIZE);
-> >>> +		break;
-> >>> +	default:
-> >>> +		hhdr = skb_put(skb, HCI_COMMAND_HDR_SIZE);
-> >>> +		hhdr->opcode = cpu_to_le16(0xfc6f);
-> >>> +		hhdr->plen = plen + MTK_WMT_HDR_SIZE;
-> >>> +		break;
-> >>> +	}
-> >>> +
-> >>> +	hci_skb_pkt_type(skb) = opcode == MTK_WMT_PATCH_DWNLD ?
-> >>> +				HCI_ACLDATA_PKT : HCI_COMMAND_PKT;
-> >> 
-> >> Why not move that into the switch statement above.
-> >> 
-> >>> +
-> >>> +	/* Start to build a WMT header and its actual payload. */
-> >>> +	whdr = skb_put(skb, MTK_WMT_HDR_SIZE);
-> >>> +	whdr->dir = 1;
-> >>> +	whdr->op = opcode;
-> >>> +	whdr->dlen = cpu_to_le16(plen + 1);
-> >>> +	whdr->flag = flag;
-> >>> +	skb_put_data(skb, param, plen);
-> >>> +
-> >>> +	mtk_enqueue(hu, skb);
-> >>> +	hci_uart_tx_wakeup(hu);
-> >>> +
-> >>> +	/*
-> >>> +	 * Waiting a WMT event response, while we must take care in case of
-> >>> +	 * failures for the wait.
-> >>> +	 */
-> >>> +	ret = wait_for_completion_interruptible_timeout(&btdev->wmt_cmd, HZ);
-> >>> +
-> >>> +	return ret > 0 ? 0 : ret < 0 ? ret : -ETIMEDOUT;
-> >>> +}
-> >> 
-> >> All in all I am not convinced that this is super clean. I get that we need something special for having this in the ACL data packets, but for the standard HCI command I prefer that __hci_cmd_sync is used. I addition, it seems that patch download is the only special case and that happens before at the setup stage. So we could make things special for that. I need to understand this a bit better. Can I get a btmon -w trace.log file from the whole init procedure.
-> >> 
-> > 
-> > While i was trying to rewrite the driver based on btuart.c. you posted
-> > on RFC, I used __hci_cmd_sync_ev to replace such kinds of SoC specific
-> > hci command sending which I've done previously with mtk_wmt_cmd_sync.
-> > 
-> > However, eventually, I got a cmd_timer timeout whose message printed
-> > on console as "Bluetooth: hci0: command 0xfc6f tx timeout".
-> > 
-> > The mtk soc specific cmd/event I posted below, I dumped directly in
-> > driver, always uses cmd as opcode 0xfc6f, and its event id as 0xe4.
-> > 
-> > It appears to the event id is not standard and thus it cannot cancel the
-> > cmd timer when the special hci event is being handled. This way can we
-> > can still use __hci_cmd_sync api ?
-> > 
-> > [    4.896200] hci tx: 00000000: 01 6f fc 05 01 07 01 00 04    
-> > [    4.904671] hci rx: 00000000: e4 05 02 07 01 00
-> > 00                             
-> > [    4.912859] Bluetooth: hci0 event 0xe4
-> > 
-> > 
-> > buildroot login: [    6.914509] Bluetooth: hci0: command 0xfc6f tx
-> > timeout
-> > [    6.919831] hci tx: 00000000: 01 6f fc 06 01 06 02 00 00
-> > 01                    .o........
-> > [    7.006631] hci rx: 00000000: e4 05 02 06 01 00
-> > 00                             .......
-> > [    7.014821] Bluetooth: hci0 event 0xe4
-> 
-> can you just start btmon before loading the module / driver? It makes it a lot easier since it will actually decode the basics for us. If there is a bug within __hci_cmd_sync_ev, then we are going to fix it.
-> 
+    arch/arm/boot/dts/tegra20-harmony.dtb: Warning (unit_address_vs_reg):
+        /memory: node has a reg or ranges property, but no unit name
 
-I'm happy to do with btmon. just the environment with buildroot the BT
-running on seems there's a missing support for btmon. I can start to use
-btmon once I change the environment to Debian.
+The DTB after the change is the same as before except adding
+unit-address to /memory node.
 
-> So all the MTK vendor commands respond with a vendor event? Or are there some that do the standard command status/complete handling?
-> 
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts      | 3 ++-
+ arch/arm/boot/dts/tegra114-roth.dts         | 3 ++-
+ arch/arm/boot/dts/tegra114-tn7.dts          | 3 ++-
+ arch/arm/boot/dts/tegra114.dtsi             | 4 ++--
+ arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi | 3 ++-
+ arch/arm/boot/dts/tegra124-apalis.dtsi      | 3 ++-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts   | 3 ++-
+ arch/arm/boot/dts/tegra124-nyan.dtsi        | 3 ++-
+ arch/arm/boot/dts/tegra124-venice2.dts      | 3 ++-
+ arch/arm/boot/dts/tegra124.dtsi             | 2 --
+ arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 3 ++-
+ arch/arm/boot/dts/tegra20-harmony.dts       | 3 ++-
+ arch/arm/boot/dts/tegra20-paz00.dts         | 3 ++-
+ arch/arm/boot/dts/tegra20-seaboard.dts      | 3 ++-
+ arch/arm/boot/dts/tegra20-tamonten.dtsi     | 3 ++-
+ arch/arm/boot/dts/tegra20-trimslice.dts     | 3 ++-
+ arch/arm/boot/dts/tegra20-ventana.dts       | 3 ++-
+ arch/arm/boot/dts/tegra20.dtsi              | 7 +++++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi       | 5 +++++
+ arch/arm/boot/dts/tegra30-beaver.dts        | 3 ++-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi       | 3 ++-
+ arch/arm/boot/dts/tegra30-colibri.dtsi      | 3 ++-
+ arch/arm/boot/dts/tegra30.dtsi              | 7 +++++--
+ 23 files changed, 53 insertions(+), 26 deletions(-)
 
-yes, mtk controller after mt7622 (included), its MTK vendors command
-(opcode 0xfc6f) always respond with a vendor event id 0xe4. And they
-don't do any standard status/complete handling.
-
-BTW, mtk controller before mt7622, such as mt7623, its MTK vendor
-command always go with completely specific format, not with hci format.
-
-> Regards
-> 
-> Marcel
-> 
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index eafff16765b4..5cdcedfc19cb 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -23,7 +23,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 7ed7370ee67a..b4f329a07c60 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -28,7 +28,8 @@
+ 		};
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		/* memory >= 0x79600000 is reserved for firmware usage */
+ 		reg = <0x80000000 0x79600000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 7fc4a8b31e45..12092d344ce8 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -28,7 +28,8 @@
+ 		};
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		/* memory >= 0x37e00000 is reserved for firmware usage */
+ 		reg = <0x80000000 0x37e00000>;
+ 	};
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index 0e4a13295d8a..b917784d3f97 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -5,11 +5,11 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra114";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
+ 
+ 	host1x@50000000 {
+ 		compatible = "nvidia,tegra114-host1x", "simple-bus";
+diff --git a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+index bb67edb016c5..80b52c612891 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi
+@@ -15,7 +15,8 @@
+ 	compatible = "toradex,apalis-tk1-v1.2", "toradex,apalis-tk1",
+ 		     "nvidia,tegra124";
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 65a2161b9b8e..3ca7601cafe9 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -50,7 +50,8 @@
+ 	model = "Toradex Apalis TK1";
+ 	compatible = "toradex,apalis-tk1", "nvidia,tegra124";
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 6dbcf84dafbc..8d9e6ee6c6a7 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -24,7 +24,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+index 3609367037a6..15a2b0e3237e 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -13,7 +13,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts/tegra124-venice2.dts
+index 89bcc178994d..241cdc4b6600 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 174092bfac90..df1642876a4c 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -7,8 +7,6 @@
+ #include <dt-bindings/reset/tegra124-car.h>
+ #include <dt-bindings/thermal/tegra124-soctherm.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra124";
+ 	interrupt-parent = <&lic>;
+diff --git a/arch/arm/boot/dts/tegra20-colibri-512.dtsi b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+index 5c202b3e3bb1..305efb275b48 100644
+--- a/arch/arm/boot/dts/tegra20-colibri-512.dtsi
++++ b/arch/arm/boot/dts/tegra20-colibri-512.dtsi
+@@ -10,7 +10,8 @@
+ 		rtc1 = "/rtc@7000e000";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index 628a55a9318b..5009a55ae15c 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 30436969adc0..e794ac5442ef 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -19,7 +19,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-seaboard.dts b/arch/arm/boot/dts/tegra20-seaboard.dts
+index 284aae351ff2..6cb832cfa4f3 100644
+--- a/arch/arm/boot/dts/tegra20-seaboard.dts
++++ b/arch/arm/boot/dts/tegra20-seaboard.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-tamonten.dtsi b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+index 872046d48709..6ceb1228fed3 100644
+--- a/arch/arm/boot/dts/tegra20-tamonten.dtsi
++++ b/arch/arm/boot/dts/tegra20-tamonten.dtsi
+@@ -15,7 +15,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x20000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dts/tegra20-trimslice.dts
+index d55c6b240a30..3f94be3da9e5 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20-ventana.dts b/arch/arm/boot/dts/tegra20-ventana.dts
+index ee3fbf941e79..c897a90289bc 100644
+--- a/arch/arm/boot/dts/tegra20-ventana.dts
++++ b/arch/arm/boot/dts/tegra20-ventana.dts
+@@ -18,7 +18,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@0 {
++		device_type = "memory";
+ 		reg = <0x00000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 0a7136462a1a..290ebbeb210f 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -4,11 +4,14 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra20";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	chosen { };
++	aliases { };
+ 
+ 	iram@40000000 {
+ 		compatible = "mmio-sram";
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index d1d21ec2a844..184f60c720fa 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -10,6 +10,11 @@
+ 	model = "Toradex Apalis T30";
+ 	compatible = "toradex,apalis_t30", "nvidia,tegra30";
+ 
++	memory@0 {
++		device_type = "memory";
++		reg = <0 0>;
++	};
++
+ 	pcie@3000 {
+ 		avdd-pexa-supply = <&vdd2_reg>;
+ 		vdd-pexa-supply = <&vdd2_reg>;
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index ae52a5039506..72369877d284 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -17,7 +17,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x7ff00000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+index 92a9740c533f..24c04d4c335d 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -40,7 +40,8 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index c44d8c40c410..cc46cedf80b9 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -10,7 +10,8 @@
+ 	model = "Toradex Colibri T30";
+ 	compatible = "toradex,colibri_t30", "nvidia,tegra30";
+ 
+-	memory {
++	memory@80000000 {
++		device_type = "memory";
+ 		reg = <0x80000000 0x40000000>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index a110cf84d85f..4383f0fd789d 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -5,11 +5,14 @@
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-#include "skeleton.dtsi"
+-
+ / {
+ 	compatible = "nvidia,tegra30";
+ 	interrupt-parent = <&lic>;
++	#address-cells = <1>;
++	#size-cells = <1>;
++
++	chosen { };
++	aliases { };
+ 
+ 	pcie@3000 {
+ 		compatible = "nvidia,tegra30-pcie";
+-- 
+2.7.4
