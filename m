@@ -1,143 +1,73 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754015AbeEHCtr (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:49:47 -0400
-Received: from regular1.263xmail.com ([211.150.99.131]:52868 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753771AbeEHCtp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:49:45 -0400
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-X-RL-SENDER: djw@t-chip.com.cn
-X-FST-TO: linux-rockchip@lists.infradead.org
-X-SENDER-IP: 59.33.107.187
-X-LOGIN-NAME: djw@t-chip.com.cn
-X-UNIQUE-TAG: <b02176f4dc6d782efe5d68c8c20fe328>
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 7
-From: djw@t-chip.com.cn
-To: linux-rockchip@lists.infradead.org
-Cc: Wayne Chou <zxf@t-chip.com.cn>, Levin Du <djw@t-chip.com.cn>,
-        devicetree@vger.kernel.org, David Wu <david.wu@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>, Liang Chen <cl@rock-chips.com>,
-        William Wu <william.wu@rock-chips.com>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, Rocky Hao <rocky.hao@rock-chips.com>,
-        Will Deacon <will.deacon@arm.com>, Joseph Chen <chenjh@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH v0 2/2] arm64: dts: rockchip: Add sdmmc UHS support for roc-rk3328-cc
-Date: Tue,  8 May 2018 10:48:24 +0800
-Message-Id: <1525747704-8537-3-git-send-email-djw@t-chip.com.cn>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn>
-References: <1525747704-8537-1-git-send-email-djw@t-chip.com.cn>
+        id S1754030AbeEHCuF (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:50:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55218 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753780AbeEHCuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 22:50:03 -0400
+X-Google-Smtp-Source: AB8JxZpvvELJ7tU7YTXrMkhcrHl32Lq4cTzBUShqwhwjXUtZmXVEJcrCN/PbAxx0RGCxmDS+12CcN46dV/7eqcJkbao=
+MIME-Version: 1.0
+References: <20180329180112.11055-1-labbott@redhat.com> <1522413619.15770.88.camel@fedoraproject.org>
+ <CAK7LNAR5ZtwWH1SPMJeVpPkB38+9FyZOAG4AmS7NQ8NqCo_t9Q@mail.gmail.com>
+In-Reply-To: <CAK7LNAR5ZtwWH1SPMJeVpPkB38+9FyZOAG4AmS7NQ8NqCo_t9Q@mail.gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
+Date: Tue, 08 May 2018 02:49:50 +0000
+X-Gmail-Original-Message-ID: <CALCETrWNrk-5GPEamVSwtnTxCOV4foreRUu789ZcOzykd0DYPA@mail.gmail.com>
+Message-ID: <CALCETrWNrk-5GPEamVSwtnTxCOV4foreRUu789ZcOzykd0DYPA@mail.gmail.com>
+Subject: Re: [RFCv2 PATCH 0/3] Salted build ids via linker sections
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Mark Wielaard <mjw@fedoraproject.org>,
+        Laura Abbott <labbott@redhat.com>, Andrew Lutomirski <luto@kernel.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>, Cary Coutant <ccoutant@gmail.com>,
+        linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Levin Du <djw@t-chip.com.cn>
+On Sun, May 6, 2018 at 11:59 PM Masahiro Yamada <
+yamada.masahiro@socionext.com> wrote:
 
-In roc-rk3328-cc board, the signal voltage of sdmmc is supplied by
-the vcc_sdio regulator, which is a mux between 1.8V and 3.3V,
-controlled by a special output only gpio pin.
+> 2018-03-30 21:40 GMT+09:00 Mark Wielaard <mjw@fedoraproject.org>:
+> > On Thu, 2018-03-29 at 11:01 -0700, Laura Abbott wrote:
+> >> I'm still mostly looking for feedback whether
+> >> this would be acceptable for merging or if we should just persue a
+> >> --build-id-salt in binutils.
+> >
+> > Personally I would go with this approach. It seems simple and it might
+> > take years before a new linker option is available everywhere.
 
-However, this pin,  not being a normal gpio in the rockchip pinctrl,
-is set by bit 1 of system register GRF_SOC_CON10. Therefore a new
-gpio controller using gpio-syscon driver is defined in order to use
-regulator-gpio.
 
-If the signal voltage changes, the io domain needs to change
-correspondingly.
+> Indeed.  This series is easier than --build-id-salt.
 
-To use this feature, the following options are required in kernel config:
- - CONFIG_GPIO_SYSCON=y
- - CONFIG_POWER_AVS=y
- - CONFIG_ROCKCHIP_IODOMAIN=y
+> If you do not see any better solution, I can accept this.
 
-Signed-off-by: Levin Du <djw@t-chip.com.cn>
 
----
+> BTW, when I read
+> https://fedoraproject.org/wiki/Changes/ParallelInstallableDebuginfo
+> I thought "we could reverse the symlink direction from debug file to
+> build-id file)"
+> sensible (but I understand it is not easy to change this way).
 
- arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts | 36 ++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-index 246c317..792cb04 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-cc.dts
-@@ -14,6 +14,12 @@
- 		stdout-path = "serial2:1500000n8";
- 	};
- 
-+	gpio_syscon10: gpio-syscon10 {
-+		compatible = "rockchip,rk3328-gpio-syscon10";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
- 	gmac_clkin: external-gmac-clock {
- 		compatible = "fixed-clock";
- 		clock-frequency = <125000000>;
-@@ -41,6 +47,19 @@
- 		vin-supply = <&vcc_io>;
- 	};
- 
-+	vcc_sdio: sdmmcio-regulator {
-+		compatible = "regulator-gpio";
-+		gpios = <&gpio_syscon10 1 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x1
-+			  3300000 0x0>;
-+		regulator-name = "vcc_sdio";
-+		regulator-type = "voltage";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		vin-supply = <&vcc_sys>;
-+	};
-+
- 	vcc_host1_5v: vcc_otg_5v: vcc-host1-5v-regulator {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -208,6 +227,18 @@
- 	};
- };
- 
-+&io_domains {
-+	status = "okay";
-+
-+	vccio1-supply = <&vcc_io>;
-+	vccio2-supply = <&vcc18_emmc>;
-+	vccio3-supply = <&vcc_sdio>;
-+	vccio4-supply = <&vcc_18>;
-+	vccio5-supply = <&vcc_io>;
-+	vccio6-supply = <&vcc_io>;
-+	pmuio-supply = <&vcc_io>;
-+};
-+
- &pinctrl {
- 	pmic {
- 		pmic_int_l: pmic-int-l {
-@@ -227,10 +258,15 @@
- 	cap-mmc-highspeed;
- 	cap-sd-highspeed;
- 	disable-wp;
-+	sd-uhs-sdr12;
-+	sd-uhs-sdr25;
-+	sd-uhs-sdr50;
-+	sd-uhs-sdr104;
- 	max-frequency = <150000000>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sdmmc0_clk &sdmmc0_cmd &sdmmc0_dectn &sdmmc0_bus4>;
- 	vmmc-supply = <&vcc_sd>;
-+	vqmmc-supply = <&vcc_sdio>;
- 	status = "okay";
- };
- 
--- 
-2.7.4
+> If two packages share an identical image,
+> one package can borrow the image from the other,
+> then the storage space will be saved.
+
+> So, having identical ID should be advantage,
+> but we actually see only disadvantage...
+
+
+
+
+> > To simplify things I think you could just always add the extra vdso
+> > .comment initialized to something like KERNELRELEASE. Which distros
+> > seem to update anyway to include their build number, so they wouldn't
+> > need to do anything special to "update the build salt".
+> >
+
+That's what I was thinking, too.  Would that solve Fedora's problem?
