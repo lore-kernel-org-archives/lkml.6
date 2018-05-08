@@ -1,67 +1,53 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932727AbeEHOzt (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:55:49 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42349 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932660AbeEHOzr (ORCPT
+        id S932774AbeEHO4T (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:56:19 -0400
+Received: from mail.micronovasrl.com ([212.103.203.10]:37882 "EHLO
+        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932689AbeEHO4R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:55:47 -0400
-X-Google-Smtp-Source: AB8JxZoYRBNAT/N5SMMiyWE62Tx6yXeqFOe3tA1Rslfn/VnljUWJK4B+aac9kg00tJ2cNxE31RwnOA==
-Subject: Re: bug in tag handling in blk-mq?
-To: Mike Galbraith <efault@gmx.de>,
-        Paolo Valente <paolo.valente@linaro.org>
-Cc: Christoph Hellwig <hch@lst.de>,
-        linux-block <linux-block@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleksandr Natalenko <oleksandr@natalenko.name>
-References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
- <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
- <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
- <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
-From: Jens Axboe <axboe@kernel.dk>
-Message-ID: <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
-Date: Tue, 8 May 2018 08:55:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <1525768632.5208.4.camel@gmx.de>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Tue, 8 May 2018 10:56:17 -0400
+Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
+X-Spam-Flag: NO
+X-Spam-Score: -2.899
+From: Giulio Benetti <giulio.benetti@micronovasrl.com>
+To: a.zummo@towertech.it
+Cc: alexandre.belloni@bootlin.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Giulio Benetti <giulio.benetti@micronovasrl.com>
+Subject: [PATCH 1/4] rtc: ds1307: fix data pointer to m41t0
+Date: Tue,  8 May 2018 16:56:08 +0200
+Message-Id: <20180508145611.49072-1-giulio.benetti@micronovasrl.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/8/18 2:37 AM, Mike Galbraith wrote:
-> On Tue, 2018-05-08 at 06:51 +0200, Mike Galbraith wrote:
->>
->> I'm deadlined ATM, but will get to it.
-> 
-> (Bah, even a zombie can type ccache -C; make -j8 and stare...)
-> 
-> kbuild again hung on the first go (yay), and post hang data written to
-> sdd1 survived (kernel source lives in sdb3).  Full ftrace buffer (echo
-> 1 > events/block/enable) available off list if desired.  dmesg.txt.xz
-> is dmesg from post hang crashdump, attached because it contains the
-> tail of trace buffer, so _might_ be useful.
-> 
-> homer:~ # df|grep sd
-> /dev/sdb3      959074776 785342824 172741072  82% /
-> /dev/sdc3      959074776 455464912 502618984  48% /backup
-> /dev/sdb1         159564      7980    151584   6% /boot/efi
-> /dev/sdd1      961301832 393334868 519112540  44% /abuild
-> 
-> Kernel is virgin modulo these...
-> 
-> patches/remove_irritating_plus.diff
-> patches/add-scm-version-to-EXTRAVERSION.patch
-> patches/block-bfq:-postpone-rq-preparation-to-insert-or-merge.patch
-> patches/block-bfq:-test.patch  (hang provocation hack from Paolo)
+data field points to m41t00, instead it should point to m41t0.
+Driver works correctly because on both cases(m41t0 and m41t00) chip_desc
+are equal.
 
-All the block debug files are empty...
+Point to right enum m41t0 instead of m41t00.
 
+Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+---
+ drivers/rtc/rtc-ds1307.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-ds1307.c b/drivers/rtc/rtc-ds1307.c
+index a13e59edff53..32aadcbc377f 100644
+--- a/drivers/rtc/rtc-ds1307.c
++++ b/drivers/rtc/rtc-ds1307.c
+@@ -298,7 +298,7 @@ static const struct of_device_id ds1307_of_match[] = {
+ 	},
+ 	{
+ 		.compatible = "st,m41t0",
+-		.data = (void *)m41t00
++		.data = (void *)m41t0
+ 	},
+ 	{
+ 		.compatible = "st,m41t00",
 -- 
-Jens Axboe
+2.17.0
