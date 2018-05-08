@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2483311-1525767563-2-16891669432417762517
+X-Cyrus-Session-Id: sloti22d1t05-2483311-1525767545-2-17067912382393756726
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525767562; b=Fzfo+AkNqlF0vtg5QVLec9SeI1bmVGzW8nQq4qTXngHzf1s0oZ
-    gReqqx2gT15nyWcH59C6HCPmamsPrrl6JHx0fNOoIX1OlSNPdTeCNgBwSgsIGy40
-    RohXWy06N245m55pP8/pDwSulhLPQ7Kn/orFrlgaDeaKewfcY7314pG78znreA9P
-    c19o6ZiH9STx9sxYIWmpMCR17HzWtgPrUyZYF6H3FPJWRvmt/ox63X7rlM8Y5BCe
-    1LVEJnUQSvSBIwyDamMfY065RkAc8/iw+2ZVeGRK7OHo2twPdDGZ8VfkeeLts740
-    hbiKfn+MULvZueHvditHm2v086JxDEqgxmqw==
+    1525767545; b=h1k3xDRK7EOYOOXlcfDrAbqjtRf/AoAPd/3l+HzF6lH18PHYS9
+    ZWxlZagoAv5PuLcOqz5C+EqTCGsnJkHW229RDr7r2BJqKmySmyXseh2MgypDNBkW
+    6gDOYDRQArZX++lJfqJhkbGrURJ8hcC9y5eg+KFbiHndbyd0mzhCpTEoYCno/M1d
+    iPNKr7fcWFNyE72KXLNd9dWajf1qGjhif8Q62IJu3RcycyTrBx1DNMMUNgzzKJ3Z
+    2MTi2/eO/S9cnQysB84wpPpMsKbZliXN4Yk9pqivpyBvKDe8JhJZjx3J7j2/oC3T
+    ycxTZih7yrcGWDUmHCpmHyfUkUqdJMY6RT4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525767562; bh=4KUK0ItAKLjxwmMeMc9Pvg45lC3gKr
-    GODd/IuwYyN3E=; b=I3Byhssu7v+dqEKtzI2WtZ+lrmdfM05c46tsLj3dFGUVHB
-    P2snuXG6K8u6laKudx47yvIYu2qmhY1O1mYmub/IBysOInn780HLhz8W5qwKDZyX
-    z8ecwC/sGQssBqdVZZjKliKRgD40rKnsVudDxRj4PHNTnHBbTS9+l110cv+F4Fmv
-    Vcas1R6Nc+zi+rKLSRLHwNxBIJIMI8EtBVSKGUotSGny5qlPQqrm/KwbqGVrMI9w
-    408kYj7yk3TArawPHx+IK/bXAxYTXyDPIXywDL14p2cc2wjW1SWfcbNS6dLFl5Df
-    n22esxrZdtvFX3MTO1w8JukGCe3WYekupYex+vZQ==
-ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1525767545; bh=nGTzBhLwv7uOn5JTomd7q9NPWvdpQd
+    xwIEs+aZDKPp0=; b=aaVfotjqsFTFVU0okeRHVWPThXpqfzv8rTs3VB+y1Caxg7
+    P7BEj3O//VCc/SIRDoMi4/nqOXBNY5xUkCYFHr3mc3ZXOsDgSLpvb9Hf+U4gRMQi
+    NyXwOtq+8Vq8MtgjOJOshDTSKNdm7H0NC3x4DaNLhy6c8DtNdBVASyLfXLyr8sgi
+    qk1Nr9rieyUrjSFn/MDcHYRyhXoWyXQ60tCkWBRtRtos+2VBnr6R4+dfy/FKjlBJ
+    lWpwtIVJPIB71nI+vYbgAWwOjkZThAdOq6eHx5u+Jm8vQ29W5u0IoOYAYYDkwm+M
+    wKim5Fct8C7S1udZKPCRkLO0i7WB1JReblfhPzfQ==
+ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=zsqgGMTV x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=tHUzfgC8 x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx6.messagingengine.com;
+Authentication-Results: mx3.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=zsqgGMTV x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=tHUzfgC8 x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,29 @@ Authentication-Results: mx6.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfFYchY/KAso1NH2rj97iEepbknlOD0PnIuu8jUqbVW5SF95tmpM6SYBRfG5PVv7HQfTl3M1MvjJsiigJUfMfnNRWGKUGrzywRLEKjs3uO8AGOuVUsY+y
-    EyOt3wbuz+YE+5/NAeZKCEuZxs7cUHI5YgaaVSQ3HwqwI0afnelUAASELvP25CniYw6nZhaZDEHGOPsjwH2TFfEtr0XcG/v8RFZl63fHNcrQ0uey1Cn0iouM
-X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfOmDoNqCRitFrOSlEK1pOFFL+d3SyR7LJPqblkojkmtqHFmdCNIi7mUB1nhJ7YoyRzXZhyVbcB/gXVlwPySLXFxwPckctsyiITp/6K4w3XFCzJIbH/Pa
+    yZlSdFqdT7TihK2C8G2YWmu+0xko7SKJlk8ZVPuinVxs0YE0VPhrLxIsFz/6YynHTHgHbDfO4FZjmzD0tjmM92IGC5SZppdHyFGq874hQPDaHnZymKYzNjLG
+X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=2hd5eYSZck0yHY4QgSwA:9
-    a=QEXdDO2ut3YA:10 a=aeg5Gbbo78KNqacMgKqU:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=ljRKxemVoM8RlQu1PiUA:9 a=QEXdDO2ut3YA:10
     a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933035AbeEHISB (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 04:18:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51400 "EHLO mail.kernel.org"
+        id S933049AbeEHISE (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 8 May 2018 04:18:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932999AbeEHIR4 (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 8 May 2018 04:17:56 -0400
+        id S932999AbeEHISD (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 8 May 2018 04:18:03 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.9 30/32] usb: musb: trace: fix NULL pointer dereference in musb_g_tx()
-Date: Tue,  8 May 2018 10:11:10 +0200
-Message-Id: <20180508074013.539917378@linuxfoundation.org>
+        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.9 32/32] s390/facilites: use stfle_fac_list array size for MAX_FACILITY_BIT
+Date: Tue,  8 May 2018 10:11:12 +0200
+Message-Id: <20180508074013.907510255@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
@@ -104,42 +104,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
 
-commit 9aea9b6cc78d2b99b23d84fb2e0bc6e464c6569e upstream.
+commit 6f5165e864d240d15675cc2fb5a369d57e1f60d0 upstream.
 
-The usb_request pointer could be NULL in musb_g_tx(), where the
-tracepoint call would trigger the NULL pointer dereference failure when
-parsing the members of the usb_request pointer.
+Use the actual size of the facility list array within the lowcore
+structure for the MAX_FACILITY_BIT define instead of a comment which
+states what this is good for. This makes it a bit harder to break
+things.
 
-Move the tracepoint call to where the usb_request pointer is already
-checked to solve the issue.
-
-Fixes: fc78003e5345 ("usb: musb: gadget: add usb-request tracepoints")
-Cc: stable@vger.kernel.org # v4.8+
-Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_gadget.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/s390/include/asm/facility.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/musb/musb_gadget.c
-+++ b/drivers/usb/musb/musb_gadget.c
-@@ -442,7 +442,6 @@ void musb_g_tx(struct musb *musb, u8 epn
- 	req = next_request(musb_ep);
- 	request = &req->request;
+--- a/arch/s390/include/asm/facility.h
++++ b/arch/s390/include/asm/facility.h
+@@ -15,7 +15,7 @@
+ #include <linux/preempt.h>
+ #include <asm/lowcore.h>
  
--	trace_musb_req_tx(req);
- 	csr = musb_readw(epio, MUSB_TXCSR);
- 	musb_dbg(musb, "<== %s, txcsr %04x", musb_ep->end_point.name, csr);
+-#define MAX_FACILITY_BIT (256*8)	/* stfle_fac_list has 256 bytes */
++#define MAX_FACILITY_BIT (sizeof(((struct lowcore *)0)->stfle_fac_list) * 8)
  
-@@ -481,6 +480,8 @@ void musb_g_tx(struct musb *musb, u8 epn
- 		u8	is_dma = 0;
- 		bool	short_packet = false;
- 
-+		trace_musb_req_tx(req);
-+
- 		if (dma && (csr & MUSB_TXCSR_DMAENAB)) {
- 			is_dma = 1;
- 			csr |= MUSB_TXCSR_P_WZC_BITS;
+ static inline void __set_facility(unsigned long nr, void *facilities)
+ {
