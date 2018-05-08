@@ -1,85 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756034AbeEHVjx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:39:53 -0400
-Received: from mga02.intel.com ([134.134.136.20]:10544 "EHLO mga02.intel.com"
+        id S1756060AbeEHVkp (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:40:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44082 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755739AbeEHVju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:39:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
-   d="scan'208";a="39462231"
-Subject: Re: [PATCH v6 3/6] kernel/reboot.c: export pm_power_off_prepare
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>
-References: <20180305102524.5905-1-o.rempel@pengutronix.de>
- <20180305102524.5905-4-o.rempel@pengutronix.de>
- <20180504185052.bjhfkvpgrblc7tfc@pengutronix.de>
- <20180504134956.36dc72a253d03e94a517a867@linux-foundation.org>
- <20180505070147.epsrglnypm72jr5u@pengutronix.de>
-From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Organization: Intel Technology Poland Sp. z o. o., KRS 101882, ul. Slowackiego
- 173, 80-298 Gdansk
-Message-ID: <c1f2e09d-f64b-afe6-59bf-c0742409e4d6@intel.com>
-Date: Tue, 8 May 2018 23:39:45 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755665AbeEHVkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:40:42 -0400
+Date: Tue, 8 May 2018 15:40:39 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Don Dutile <ddutile@redhat.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+Message-ID: <20180508154039.5c85a8f8@w520.home>
+In-Reply-To: <c16ecc49-a0f3-152d-785b-a646a3dab60d@redhat.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+        <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
+        <20180508105759.7dbaa8fe@w520.home>
+        <c16ecc49-a0f3-152d-785b-a646a3dab60d@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180505070147.epsrglnypm72jr5u@pengutronix.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5/5/2018 9:01 AM, Oleksij Rempel wrote:
-> Moving Rafael from Cc to To.
->
-> Hi Rafael,
->
-> can you please help here?
-> I need your ACK or NACK for this patch.
+On Tue, 8 May 2018 17:25:24 -0400
+Don Dutile <ddutile@redhat.com> wrote:
 
-Sorry for the delay, I'll have a closer look at it in the next couple of 
-days.
+> On 05/08/2018 12:57 PM, Alex Williamson wrote:
+> > On Mon, 7 May 2018 18:23:46 -0500
+> > Bjorn Helgaas <helgaas@kernel.org> wrote:
+> >   
+> >> On Mon, Apr 23, 2018 at 05:30:32PM -0600, Logan Gunthorpe wrote:  
+> >>> Hi Everyone,
+> >>>
+> >>> Here's v4 of our series to introduce P2P based copy offload to NVMe
+> >>> fabrics. This version has been rebased onto v4.17-rc2. A git repo
+> >>> is here:
+> >>>
+> >>> https://github.com/sbates130272/linux-p2pmem pci-p2p-v4
+> >>> ...  
+> >>  
+> >>> Logan Gunthorpe (14):
+> >>>    PCI/P2PDMA: Support peer-to-peer memory
+> >>>    PCI/P2PDMA: Add sysfs group to display p2pmem stats
+> >>>    PCI/P2PDMA: Add PCI p2pmem dma mappings to adjust the bus offset
+> >>>    PCI/P2PDMA: Clear ACS P2P flags for all devices behind switches
+> >>>    docs-rst: Add a new directory for PCI documentation
+> >>>    PCI/P2PDMA: Add P2P DMA driver writer's documentation
+> >>>    block: Introduce PCI P2P flags for request and request queue
+> >>>    IB/core: Ensure we map P2P memory correctly in
+> >>>      rdma_rw_ctx_[init|destroy]()
+> >>>    nvme-pci: Use PCI p2pmem subsystem to manage the CMB
+> >>>    nvme-pci: Add support for P2P memory in requests
+> >>>    nvme-pci: Add a quirk for a pseudo CMB
+> >>>    nvmet: Introduce helper functions to allocate and free request SGLs
+> >>>    nvmet-rdma: Use new SGL alloc/free helper for requests
+> >>>    nvmet: Optionally use PCI P2P memory
+> >>>
+> >>>   Documentation/ABI/testing/sysfs-bus-pci    |  25 +
+> >>>   Documentation/PCI/index.rst                |  14 +
+> >>>   Documentation/driver-api/index.rst         |   2 +-
+> >>>   Documentation/driver-api/pci/index.rst     |  20 +
+> >>>   Documentation/driver-api/pci/p2pdma.rst    | 166 ++++++
+> >>>   Documentation/driver-api/{ => pci}/pci.rst |   0
+> >>>   Documentation/index.rst                    |   3 +-
+> >>>   block/blk-core.c                           |   3 +
+> >>>   drivers/infiniband/core/rw.c               |  13 +-
+> >>>   drivers/nvme/host/core.c                   |   4 +
+> >>>   drivers/nvme/host/nvme.h                   |   8 +
+> >>>   drivers/nvme/host/pci.c                    | 118 +++--
+> >>>   drivers/nvme/target/configfs.c             |  67 +++
+> >>>   drivers/nvme/target/core.c                 | 143 ++++-
+> >>>   drivers/nvme/target/io-cmd.c               |   3 +
+> >>>   drivers/nvme/target/nvmet.h                |  15 +
+> >>>   drivers/nvme/target/rdma.c                 |  22 +-
+> >>>   drivers/pci/Kconfig                        |  26 +
+> >>>   drivers/pci/Makefile                       |   1 +
+> >>>   drivers/pci/p2pdma.c                       | 814 +++++++++++++++++++++++++++++
+> >>>   drivers/pci/pci.c                          |   6 +
+> >>>   include/linux/blk_types.h                  |  18 +-
+> >>>   include/linux/blkdev.h                     |   3 +
+> >>>   include/linux/memremap.h                   |  19 +
+> >>>   include/linux/pci-p2pdma.h                 | 118 +++++
+> >>>   include/linux/pci.h                        |   4 +
+> >>>   26 files changed, 1579 insertions(+), 56 deletions(-)
+> >>>   create mode 100644 Documentation/PCI/index.rst
+> >>>   create mode 100644 Documentation/driver-api/pci/index.rst
+> >>>   create mode 100644 Documentation/driver-api/pci/p2pdma.rst
+> >>>   rename Documentation/driver-api/{ => pci}/pci.rst (100%)
+> >>>   create mode 100644 drivers/pci/p2pdma.c
+> >>>   create mode 100644 include/linux/pci-p2pdma.h  
+> >>
+> >> How do you envison merging this?  There's a big chunk in drivers/pci, but
+> >> really no opportunity for conflicts there, and there's significant stuff in
+> >> block and nvme that I don't really want to merge.
+> >>
+> >> If Alex is OK with the ACS situation, I can ack the PCI parts and you could
+> >> merge it elsewhere?  
+> > 
+> > AIUI from previously questioning this, the change is hidden behind a
+> > build-time config option and only custom kernels or distros optimized
+> > for this sort of support would enable that build option.  I'm more than
+> > a little dubious though that we're not going to have a wave of distros
+> > enabling this only to get user complaints that they can no longer make
+> > effective use of their devices for assignment due to the resulting span
+> > of the IOMMU groups, nor is there any sort of compromise, configure
+> > the kernel for p2p or device assignment, not both.  Is this really such
+> > a unique feature that distro users aren't going to be asking for both
+> > features?  Thanks,
+> > 
+> > Alex  
+> At least 1/2 the cases presented to me by existing customers want it in a tunable kernel,
+> and tunable btwn two points, if the hw allows it to be 'contained' in that manner, which
+> a (layer of) switch(ing) provides.
+> To me, that means a kernel cmdline parameter to _enable_, and another sysfs (configfs? ... i'm not a configfs afficionato to say which is best),
+> method to make two points p2p dma capable.
 
-Thanks,
-Rafael
+That's not what's done here AIUI.  There are also some complications to
+making IOMMU groups dynamic, for instance could a downstream endpoint
+already be in use by a userspace tool as ACS is being twiddled in
+sysfs?  Probably the easiest solution would be that all devices
+affected by the ACS change are soft unplugged before and re-added after
+the ACS change.  Note that "affected" is not necessarily only the
+downstream devices if the downstream port at which we're playing with
+ACS is part of a multifunction device.  Thanks,
 
-
-> On Fri, May 04, 2018 at 01:49:56PM -0700, Andrew Morton wrote:
->> On Fri, 4 May 2018 20:50:52 +0200 Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->>
->>> Hallo Andrew,
->>> I need your ACK or NACK for this patch.
->>>
->>> This function is used to configure external PMIC to interpret
->>> signal which will be triggered by pm_power_off as power off.
->>> Since same signal can be used for stand by, I linked PMIC configuration
->>> with pm_power_off_prepare to avoid possible conflicts.
->>>
->>> ...
->>>
->>>> --- a/kernel/reboot.c
->>>> +++ b/kernel/reboot.c
->>>> @@ -49,6 +49,7 @@ int reboot_force;
->>>>    */
->>>>   
->>>>   void (*pm_power_off_prepare)(void);
->>>> +EXPORT_SYMBOL(pm_power_off_prepare);
->>>>   
->> OK by me, but it's more of a Rafael thing.
->>
+Alex
