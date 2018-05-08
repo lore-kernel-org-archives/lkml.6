@@ -1,136 +1,160 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754754AbeEHNZM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:25:12 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:34890 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751874AbeEHNZK (ORCPT
+        id S1755050AbeEHN0d (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:26:33 -0400
+Received: from forwardcorp1g.cmail.yandex.net ([87.250.241.190]:57391 "EHLO
+        forwardcorp1g.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754986AbeEHN0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:25:10 -0400
-Subject: Re: [PATCH] PCI/AER: add pcie TLP header information in the
- tracepoint
-To: Steven Rostedt <rostedt@goodmis.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Alexandru Gagniuc <mr.nuke.me@gmail.com>
-References: <20180402154708.5032-1-thomas.tai@oracle.com>
- <20180507222136.GD161390@bhelgaas-glaptop.roam.corp.google.com>
- <20180508090756.57f38d17@gandalf.local.home>
-From: Thomas Tai <thomas.tai@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <a5578a08-2434-af48-7910-6f858e5477d6@oracle.com>
-Date: Tue, 8 May 2018 09:25:01 -0400
+        Tue, 8 May 2018 09:26:32 -0400
+Authentication-Results: smtpcorp1o.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Subject: Re: [PATCH v2] mm: fix oom_kill event handling
+To: Roman Gushchin <guro@fb.com>, kernel-team@fb.com
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20180508124637.29984-1-guro@fb.com>
+From: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <c5ca700a-46f7-9ba9-2c2e-fd4fd1cb16ea@yandex-team.ru>
+Date: Tue, 8 May 2018 16:26:26 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180508090756.57f38d17@gandalf.local.home>
+In-Reply-To: <20180508124637.29984-1-guro@fb.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Language: en-CA
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805080129
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ ... ]
->>> --- a/include/ras/ras_event.h
->>> +++ b/include/ras/ras_event.h
->>> @@ -298,30 +298,42 @@ TRACE_EVENT(non_standard_event,
->>>   TRACE_EVENT(aer_event,
->>>   	TP_PROTO(const char *dev_name,
->>>   		 const u32 status,
->>> -		 const u8 severity),
->>> +		 const u8 severity,
->>> +		 const u32 tlp_header_valid,
->>> +		 struct aer_header_log_regs *tlp),
->>>   
->>> -	TP_ARGS(dev_name, status, severity),
->>> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
->>>   
->>>   	TP_STRUCT__entry(
->>>   		__string(	dev_name,	dev_name	)
->>>   		__field(	u32,		status		)
->>>   		__field(	u8,		severity	)
->>> +		__field(	u32, 		tlp_header_valid)
+On 08.05.2018 15:46, Roman Gushchin wrote:
+> Commit e27be240df53 ("mm: memcg: make sure memory.events is
+> uptodate when waking pollers") converted most of memcg event
+> counters to per-memcg atomics, which made them less confusing
+> for a user. The "oom_kill" counter remained untouched, so now
+> it behaves differently than other counters (including "oom").
+> This adds nothing but confusion.
 > 
-> I'm guessing tlp_header_valid is just a boolean. It's after severity
-> which is just one byte long. Why not make this one byte as well,
-> otherwise you are wasting 3 bytes.
+> Let's fix this by adding the MEMCG_OOM_KILL event, and follow
+> the MEMCG_OOM approach. This also removes a hack from
+> count_memcg_event_mm(), introduced earlier specially for the
+> OOM_KILL counter.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: cgroups@vger.kernel.org
+> Cc: linux-mm@kvack.org
 
-Thanks Steven. Yes boolean is fine.
+Acked-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
+> ---
+>   include/linux/memcontrol.h | 26 ++++++++++++++++++++++----
+>   mm/memcontrol.c            |  6 ++++--
+>   mm/oom_kill.c              |  2 +-
+>   3 files changed, 27 insertions(+), 7 deletions(-)
 > 
-> 
->>> +		__array(	u32, 		buf, 4		)
->>>   	),
->>>   
->>>   	TP_fast_assign(
->>>   		__assign_str(dev_name, dev_name);
->>>   		__entry->status		= status;
->>>   		__entry->severity	= severity;
->>> +		__entry->tlp_header_valid = tlp_header_valid;
-> 
->>> +		__entry->buf[0] = tlp->dw0;
->>> +		__entry->buf[1] = tlp->dw1;
->>> +		__entry->buf[2] = tlp->dw2;
->>> +		__entry->buf[3] = tlp->dw3;
-> 
-> Should this assignment be dependent on whether or not tlp_header_valid
-> is true? Could tlp be pointing to some random memory if it isn't? What
-> about:
-
-Good catch! will do so.
-
-> 
-> 	if ((__entry->tlp_header_valid = tlp_header_valid)) {
-> 		__entry->buf[0] = tlp->dw0;
-> 		__entry->buf[1] = tlp->dw1;
-> 		__entry->buf[2] = tlp->dw2;
-> 		__entry->buf[3] = tlp->dw3;
-> 	}
-> 
-> 
->>>   	),
->>>   
->>> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
->>> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
->>>   		__get_str(dev_name),
->>>   		__entry->severity == AER_CORRECTABLE ? "Corrected" :
->>>   			__entry->severity == AER_FATAL ?
->>>   			"Fatal" : "Uncorrected, non-fatal",
->>>   		__entry->severity == AER_CORRECTABLE ?
->>>   		__print_flags(__entry->status, "|", aer_correctable_errors) :
->>> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
->>> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
->>> +		__entry->tlp_header_valid ?
->>> +			__print_array(__entry->buf, 4, sizeof(unsigned int)) :
-> 
-> Note, "sizeof" will be shown in the format file that perf and trace-cmd
-> read to parse this event. They currently do not know how to parse that
-> (although I could add that in the future).
-> 
-> Since sizeof(unsigned int) is always 4 in Linux, just use 4.
-
-Yes, I will make the aboves changes and send out V2 patch. Thank you for 
-your time and comments.
-
-Thomas
-
-> 
-> 			__print_array(__entry->buf, 4, 4)
-> 
-> -- Steve
-> 
-> 
->>> +			"Not available")
->>>   );
->>>   
->>>   /*
->>> -- 
->>> 2.14.1
->>>    
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index 6cbea2f25a87..794475db7368 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -54,6 +54,7 @@ enum memcg_memory_event {
+>   	MEMCG_HIGH,
+>   	MEMCG_MAX,
+>   	MEMCG_OOM,
+> +	MEMCG_OOM_KILL,
+>   	MEMCG_SWAP_MAX,
+>   	MEMCG_SWAP_FAIL,
+>   	MEMCG_NR_MEMORY_EVENTS,
+> @@ -721,11 +722,8 @@ static inline void count_memcg_event_mm(struct mm_struct *mm,
+>   
+>   	rcu_read_lock();
+>   	memcg = rcu_dereference(mm->memcg);
+> -	if (likely(memcg)) {
+> +	if (likely(memcg))
+>   		count_memcg_events(memcg, idx, 1);
+> -		if (idx == OOM_KILL)
+> -			cgroup_file_notify(&memcg->events_file);
+> -	}
+>   	rcu_read_unlock();
+>   }
+>   
+> @@ -736,6 +734,21 @@ static inline void memcg_memory_event(struct mem_cgroup *memcg,
+>   	cgroup_file_notify(&memcg->events_file);
+>   }
+>   
+> +static inline void memcg_memory_event_mm(struct mm_struct *mm,
+> +					 enum memcg_memory_event event)
+> +{
+> +	struct mem_cgroup *memcg;
+> +
+> +	if (mem_cgroup_disabled())
+> +		return;
+> +
+> +	rcu_read_lock();
+> +	memcg = rcu_dereference(mm->memcg);
+> +	if (likely(memcg))
+> +		memcg_memory_event(memcg, event);
+> +	rcu_read_unlock();
+> +}
+> +
+>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>   void mem_cgroup_split_huge_fixup(struct page *head);
+>   #endif
+> @@ -757,6 +770,11 @@ static inline void memcg_memory_event(struct mem_cgroup *memcg,
+>   {
+>   }
+>   
+> +static inline void memcg_memory_event_mm(struct mm_struct *mm,
+> +					 enum memcg_memory_event event)
+> +{
+> +}
+> +
+>   static inline bool mem_cgroup_low(struct mem_cgroup *root,
+>   				  struct mem_cgroup *memcg)
+>   {
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 10973671e562..38717630305d 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -3772,7 +3772,8 @@ static int mem_cgroup_oom_control_read(struct seq_file *sf, void *v)
+>   
+>   	seq_printf(sf, "oom_kill_disable %d\n", memcg->oom_kill_disable);
+>   	seq_printf(sf, "under_oom %d\n", (bool)memcg->under_oom);
+> -	seq_printf(sf, "oom_kill %lu\n", memcg_sum_events(memcg, OOM_KILL));
+> +	seq_printf(sf, "oom_kill %lu\n",
+> +		   atomic_long_read(&memcg->memory_events[MEMCG_OOM_KILL]));
+>   	return 0;
+>   }
+>   
+> @@ -5529,7 +5530,8 @@ static int memory_events_show(struct seq_file *m, void *v)
+>   		   atomic_long_read(&memcg->memory_events[MEMCG_MAX]));
+>   	seq_printf(m, "oom %lu\n",
+>   		   atomic_long_read(&memcg->memory_events[MEMCG_OOM]));
+> -	seq_printf(m, "oom_kill %lu\n", memcg_sum_events(memcg, OOM_KILL));
+> +	seq_printf(m, "oom_kill %lu\n",
+> +		   atomic_long_read(&memcg->memory_events[MEMCG_OOM_KILL]));
+>   
+>   	return 0;
+>   }
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 8f7d8dd99e5d..6b74142a1259 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -868,7 +868,7 @@ static void __oom_kill_process(struct task_struct *victim)
+>   
+>   	/* Raise event before sending signal: task reaper must see this */
+>   	count_vm_event(OOM_KILL);
+> -	count_memcg_event_mm(mm, OOM_KILL);
+> +	memcg_memory_event_mm(mm, MEMCG_OOM_KILL);
+>   
+>   	/*
+>   	 * We should send SIGKILL before granting access to memory reserves
 > 
