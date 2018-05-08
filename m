@@ -1,79 +1,80 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932775AbeEHOs7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:48:59 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:38472 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932595AbeEHOs5 (ORCPT
+        id S932778AbeEHOuQ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:50:16 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:45518 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932452AbeEHOuO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:48:57 -0400
-X-Google-Smtp-Source: AB8JxZodrpMhurwvn7NqT5GsLUBJPhNLBXe29LYKiTXpBjzQPa49CHJQUFByYFAaZ6+nSTJH4n8hPw==
-Date: Tue, 8 May 2018 07:48:54 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org
-Subject: [GIT PULL] libata fixes for v4.17-rc4
-Message-ID: <20180508144854.GL2368884@devbig577.frc2.facebook.com>
+        Tue, 8 May 2018 10:50:14 -0400
+X-Google-Smtp-Source: AB8JxZpVSmaGejEu13jI7yxLBGRhC/32MGZtmmCcw17ZdaegCte1iT+VEZwg+pd5MOyPYyhLvUastbipbbVXWkZZ42M=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20180508121638.174022-1-glider@google.com> <1f69bdb6-df5e-d709-064a-4f6fdd6e11a7@linux.intel.com>
+In-Reply-To: <1f69bdb6-df5e-d709-064a-4f6fdd6e11a7@linux.intel.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 08 May 2018 14:50:02 +0000
+Message-ID: <CAG_fn=Xv74c80swzFjKyybQpRj7Qj9K1NVH-D6gcxcYEoUJ1xA@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot/64/clang: Use fixup_pointer() to access '__supported_pte_mask'
+To: dave.hansen@linux.intel.com
+Cc: Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Dmitriy Vyukov <dvyukov@google.com>, Michael Davidson <md@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w48EoJ4b022996
 
-Hello, Linus.
+On Tue, May 8, 2018 at 4:30 PM Dave Hansen <dave.hansen@linux.intel.com>
+wrote:
 
-An earlier commit to add reset control for embedded ahci controllers
-affected some of the hardware specific drivers and got reverted for
-now.  Other than that, just per-device workarounds and trivial
-changes.
+> On 05/08/2018 05:16 AM, Alexander Potapenko wrote:
+> > Similarly to commit 187e91fe5e91
+> > ("x86/boot/64/clang: Use fixup_pointer() to access 'next_early_pgt'"),
+> > '__supported_pte_mask' must be also accessed using fixup_pointer() to
+> > avoid position-dependent relocations.
+> >
+> > Signed-off-by: Alexander Potapenko <glider@google.com>
+> > Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
 
-Thanks.
+> In the interests of standalone changelogs, I'd really appreciate an
+> actual explanation of what's going on here.  Your patch makes the code
+> uglier and doesn't fix anything functional from what I can see.
+You're right, sure. I'll send a patch with an updated description.
 
-The following changes since commit fd3b36d275660c905da9900b078eea341847d5e4:
+> The other commit has some explanation, so it seems like the rules for
+> accessing globals in head64.c are different than other files because...
+> something.
+The problem as far as I understand it is that the code in __startup_64()
+can be relocated during execution, but the compiler doesn't have to
+generate PC-relative relocations when accessing globals from that function.
 
-  Merge branch 'work.namei' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs (2018-04-09 12:48:05 -0700)
+> The functional problem here is that it causes insta-reboots?
+True.
 
-are available in the git repository at:
+> Do we have anything we can do to keep us from recreating these kinds of
+> regressions all the time?
+I'm not really aware of the possible options in the kernel land. Looks like
+a task for some objtool-like utility?
+As long as these regressions are caught with Clang, setting up a 0day Clang
+builder might help.
+At least I should've added a comment regarding this to __startup_64() last
+time.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git for-4.17-fixes
 
-for you to fetch changes up to 0d74d872c3f8b9cb3d096fb932a063b43b37f188:
-
-  driver core: add __printf verification to __ata_ehi_pushv_desc (2018-05-07 08:32:20 -0700)
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      ata: fix spelling mistake: "directon" -> "direction"
-
-Evan Wang (2):
-      libahci: Allow drivers to override stop_engine
-      ata: ahci: mvebu: override ahci_stop_engine for mvebu AHCI
-
-Hans de Goede (2):
-      libata: Apply NOLPM quirk for SAMSUNG MZMPC128HBFU-000MV SSD
-      libata: Apply NOLPM quirk for SanDisk SD7UB3Q*G1001 SSDs
-
-Kunihiko Hayashi (1):
-      Revert "ata: ahci-platform: add reset control support"
-
-Mathieu Malaterre (1):
-      driver core: add __printf verification to __ata_ehi_pushv_desc
-
- .../devicetree/bindings/ata/ahci-platform.txt      |  1 -
- drivers/ata/ahci.c                                 |  6 +--
- drivers/ata/ahci.h                                 |  8 +++-
- drivers/ata/ahci_mvebu.c                           | 56 ++++++++++++++++++++++
- drivers/ata/ahci_qoriq.c                           |  2 +-
- drivers/ata/ahci_xgene.c                           |  4 +-
- drivers/ata/libahci.c                              | 20 ++++----
- drivers/ata/libahci_platform.c                     | 24 ++--------
- drivers/ata/libata-core.c                          |  6 +++
- drivers/ata/libata-eh.c                            |  4 +-
- drivers/ata/sata_highbank.c                        |  2 +-
- drivers/ata/sata_sil24.c                           |  4 +-
- 12 files changed, 95 insertions(+), 42 deletions(-)
 
 -- 
-tejun
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Straße, 33
+80636 München
+
+Geschäftsführer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
