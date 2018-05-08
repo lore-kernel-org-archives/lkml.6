@@ -1,76 +1,111 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754602AbeEHHDy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 03:03:54 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:38696 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754361AbeEHHDw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 03:03:52 -0400
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
-To: <lee.jones@linaro.org>, <daniel.thompson@linaro.org>,
-        <jingoohan1@gmail.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-fbdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND] backlight: gpio-backlight: Correct initial power state handling
-Date: Tue, 8 May 2018 10:04:26 +0300
-Message-ID: <20180508070426.32211-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.17.0
+        id S1754619AbeEHHED (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 03:04:03 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33654 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754412AbeEHHEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 03:04:01 -0400
+From: Yao Chen <chenyao11@huawei.com>
+To: <songxiaowei@hisilicon.com>, <wangbinghui@hisilicon.com>,
+        <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <xuwei5@hisilicon.com>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+CC: <dimitrysh@google.com>, <guodong.xu@linaro.org>,
+        <chenyao11@huawei.com>
+Subject: [PATCH] Kirin-PCIe: Add kirin pcie msi feature.
+Date: Tue, 8 May 2018 15:03:48 +0800
+Message-ID: <1525763028-107417-1-git-send-email-chenyao11@huawei.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [10.143.148.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The default-on property - or the def_value via legacy pdata) should be
-handled as:
-if it is 1, the backlight must be enabled (kept enabled)
-if it is 0, the backlight must be disabled (kept disabled)
+This patch adds kirin pcie msi feature.
 
-This only works for the case when default-on is set. If it is not set then
-the brightness of the backlight is set to 0. Now if the backlight is
-enabled by external driver (graphics) the backlight will stay disabled since
-the brightness is configured as 0. The backlight will not turn on.
-
-The correct action at probe time is to configure the props.power to
-FB_BLANK_UNBLANK if we want the backlight on by default or to
-FB_BLANK_POWERDOWN if the backlight should be off by default.
-
-The initial brightness should be set to 1.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Yao Chen <chenyao11@huawei.com>
 ---
-Hi,
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi |  2 ++
+ drivers/pci/dwc/pcie-kirin.c              | 38 +++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+)
 
-for some reason the original patch got lost:
-https://patchwork.kernel.org/patch/9445539/
-
-But it is still valid, so I'm resending it.
-
-Regards,
-Peter
-
- drivers/video/backlight/gpio_backlight.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/video/backlight/gpio_backlight.c b/drivers/video/backlight/gpio_backlight.c
-index e470da95d806..904a4462cefe 100644
---- a/drivers/video/backlight/gpio_backlight.c
-+++ b/drivers/video/backlight/gpio_backlight.c
-@@ -142,7 +142,9 @@ static int gpio_backlight_probe(struct platform_device *pdev)
- 		return PTR_ERR(bl);
- 	}
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index ec3eb8e..4ef684f 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -872,6 +872,8 @@
+ 				  0x0 0x02000000>;
+ 			num-lanes = <1>;
+ 			#interrupt-cells = <1>;
++			interrupts = <0 283 4>;
++			interrupts-names = "msi";
+ 			interrupt-map-mask = <0xf800 0 0 7>;
+ 			interrupt-map = <0x0 0 0 1
+ 					 &gic GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
+diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
+index d2970a0..2319c9c 100644
+--- a/drivers/pci/dwc/pcie-kirin.c
++++ b/drivers/pci/dwc/pcie-kirin.c
+@@ -426,9 +426,28 @@ static int kirin_pcie_establish_link(struct pcie_port *pp)
+ 	return 0;
+ }
  
--	bl->props.brightness = gbl->def_value;
-+	bl->props.power = gbl->def_value ? FB_BLANK_UNBLANK : FB_BLANK_POWERDOWN;
-+	bl->props.brightness = 1;
++static irqreturn_t kirin_pcie_msi_irq_handler(int irq, void *arg)
++{
++	struct pcie_port *pp = arg;
 +
- 	backlight_update_status(bl);
++	return dw_handle_msi_irq(pp);
++}
++
++static void kirin_pcie_msi_init(struct pcie_port *pp)
++{
++	dw_pcie_msi_init(pp);
++}
++
++static void kirin_pcie_enable_interrupts(struct pcie_port *pp)
++{
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		kirin_pcie_msi_init(pp);
++}
++
+ static int kirin_pcie_host_init(struct pcie_port *pp)
+ {
+ 	kirin_pcie_establish_link(pp);
++	kirin_pcie_enable_interrupts(pp);
  
- 	platform_set_drvdata(pdev, bl);
+ 	return 0;
+ }
+@@ -448,6 +467,25 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
+ static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+ 				      struct platform_device *pdev)
+ {
++	int ret;
++
++	if (IS_ENABLED(CONFIG_PCI_MSI)) {
++		pci->pp.msi_irq = platform_get_irq(pdev, 0);
++		if (!pci->pp.msi_irq) {
++			dev_err(&pdev->dev, "failed to get msi irq\n");
++			return -ENODEV;
++		}
++		ret = devm_request_irq(&pdev->dev, pci->pp.msi_irq,
++				       kirin_pcie_msi_irq_handler,
++				       IRQF_SHARED | IRQF_NO_THREAD,
++				       "kirin_pcie_msi", &pci->pp);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to request msi irq\n");
++			return ret;
++		}
++	}
++
++	pci->pp.root_bus_nr = -1;
+ 	pci->pp.ops = &kirin_pcie_host_ops;
+ 
+ 	return dw_pcie_host_init(&pci->pp);
 -- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+1.9.1
