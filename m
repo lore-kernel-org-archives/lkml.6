@@ -1,74 +1,39 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754022AbeEHD2l (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 23:28:41 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:44756 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753896AbeEHD2i (ORCPT
+        id S1754156AbeEHD3E (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 23:29:04 -0400
+Received: from shards.monkeyblade.net ([184.105.139.130]:51886 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753824AbeEHD3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 23:28:38 -0400
-X-Google-Smtp-Source: AB8JxZpXXdXvoP4YFyq9P7ts1e1IUDOCOXZJVElOs9/oBu9NZWj1/bHRZtL7d4n5R2VZD0vLz8xtag==
-Subject: Re: [PATCH] watchdog: mena21_wdt: Fix a possible data race in
- a21_wdt_set_timeout
-To: Jia-Ju Bai <baijiaju1990@gmail.com>, morbidrsa@gmail.com,
-        wim@linux-watchdog.org
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180508031825.12525-1-baijiaju1990@gmail.com>
-From: Guenter Roeck <linux@roeck-us.net>
-Message-ID: <64e08944-0578-ac4c-8dea-e1e704685e77@roeck-us.net>
-Date: Mon, 7 May 2018 20:28:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180508031825.12525-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Mon, 7 May 2018 23:29:03 -0400
+Date: Mon, 07 May 2018 23:29:01 -0400 (EDT)
+Message-Id: <20180507.232901.1578185927050716610.davem@davemloft.net>
+To: anders.roxell@linaro.org
+Cc: shuah@kernel.org, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: net: use TEST_PROGS_EXTENDED
+From: David Miller <davem@davemloft.net>
+In-Reply-To: <20180504164725.13516-1-anders.roxell@linaro.org>
+References: <20180504164725.13516-1-anders.roxell@linaro.org>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/07/2018 08:18 PM, Jia-Ju Bai wrote:
-> The write operation to "wdt->timeout" is protected by
-> the lock on line 118, but the read operation to
-> this data on line 105 is not protected by the lock.
-> Thus, there may exist a data race for "wdt->timeout".
-> 
-> To fix this data race, the read operation to "wdt->timeout"
-> should be also protected by the lock.
-> 
+From: Anders Roxell <anders.roxell@linaro.org>
+Date: Fri,  4 May 2018 18:47:25 +0200
 
-There is no race. There is already a mutex in the watchdog core which serializes
-calls to the various API functions. It would make more sense to drop drv->lock
-from the driver.
-
-Guenter
-
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->   drivers/watchdog/mena21_wdt.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
+> When a script file that isn't generated uses the variable
+> TEST_GEN_PROGS_EXTENDED and a 'make -C tools/testing/selftests clean' is
+> performed the script file gets removed and git shows the file as
+> deleted. For script files that isn't generated TEST_PROGS_EXTENDED
+> should be used.
 > 
-> diff --git a/drivers/watchdog/mena21_wdt.c b/drivers/watchdog/mena21_wdt.c
-> index 25d5d2b8cfbe..05ca69042829 100644
-> --- a/drivers/watchdog/mena21_wdt.c
-> +++ b/drivers/watchdog/mena21_wdt.c
-> @@ -102,14 +102,15 @@ static int a21_wdt_set_timeout(struct watchdog_device *wdt,
->   		return -EINVAL;
->   	}
->   
-> +	mutex_lock(&drv->lock);
-> +
->   	if (timeout == 30 && wdt->timeout == 1) {
-> +		mutex_unlock(&drv->lock);
->   		dev_err(wdt->parent,
->   			"Transition from fast to slow mode not allowed\n");
->   		return -EINVAL;
->   	}
->   
-> -	mutex_lock(&drv->lock);
-> -
->   	if (timeout == 1)
->   		gpio_set_value(drv->gpios[GPIO_WD_FAST], 1);
->   	else
-> 
+> Fixes: 9faedd643fd9 ("selftests: net: add in_netns.sh TEST_GEN_PROGS_EXTENDED")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+
+Applied.
