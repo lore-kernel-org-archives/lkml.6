@@ -1,335 +1,245 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755466AbeEHR2j (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:28:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753062AbeEHR2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:28:38 -0400
-From: Andy Lutomirski <luto@kernel.org>
-To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH] selftests/x86: Add mov_to_ss
-Date: Tue,  8 May 2018 10:28:35 -0700
-Message-Id: <67e08b69817171da8026e0eb3af0214b06b4d74f.1525800455.git.luto@kernel.org>
-X-Mailer: git-send-email 2.17.0
+        id S1755564AbeEHRfJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:35:09 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44184 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754460AbeEHRfG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 13:35:06 -0400
+X-Google-Smtp-Source: AB8JxZogNXzvs3q5+lb7Bwv61cpe0ThFzLcwDaxsPAXKHpwFa1/wgzHeopKjNDXgb6QSmPs4RoRo9A==
+From: Jagan Teki <jagan@amarulasolutions.com>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc: Icenowy Zheng <icenowy@aosc.io>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH] arm64: allwinner: a64: Add Amarula A64-Relic initial support
+Date: Tue,  8 May 2018 23:04:49 +0530
+Message-Id: <20180508173449.18009-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This exercises a nasty corner case of the x86 ISA.
+Amarula A64-Relic is Allwinner A64 based IoT device, which support
+- Allwinner A64 Cortex-A53
+- Mali-400MP2 GPU
+- AXP803 PMIC
+- 1GB DDR3 RAM
+- 8GB eMMC
+- AP6330 Wifi/BLE
+- MIPI-DSI
+- CSI: OV5640 sensor
+- USB OTG
+- 12V DC power supply
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- tools/testing/selftests/x86/Makefile      |   2 +-
- tools/testing/selftests/x86/mov_ss_trap.c | 285 ++++++++++++++++++++++
- 2 files changed, 286 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/x86/mov_ss_trap.c
+ arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+ .../dts/allwinner/sun50i-a64-amarula-relic.dts     | 182 +++++++++++++++++++++
+ 2 files changed, 183 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index d744991c0f4f..39f66bc29b82 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -11,7 +11,7 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
- 
- TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
- 			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
--			protection_keys test_vdso test_vsyscall
-+			protection_keys test_vdso test_vsyscall mov_ss_trap
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
-diff --git a/tools/testing/selftests/x86/mov_ss_trap.c b/tools/testing/selftests/x86/mov_ss_trap.c
+diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
+index c31f90a49481..67ce8c500b2e 100644
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-amarula-relic.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-bananapi-m64.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-nanopi-a64.dtb
+ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-a64-olinuxino.dtb
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
 new file mode 100644
-index 000000000000..3c3a022654f3
+index 000000000000..0e907e0e23c0
 --- /dev/null
-+++ b/tools/testing/selftests/x86/mov_ss_trap.c
-@@ -0,0 +1,285 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+@@ -0,0 +1,182 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 +/*
-+ * mov_ss_trap.c: Exercise the bizarre side effects of a watchpoint on MOV SS
-+ *
-+ * This does MOV SS from a watchpointed address followed by various
-+ * types of kernel entries.  A MOV SS that hits a watchpoint will queue
-+ * up a #DB trap but will not actually deliver that trap.  The trap
-+ * will be delivered after the next instruction instead.  The CPU's logic
-+ * seems to be:
-+ *
-+ *  - Any fault: drop the pending #DB trap.
-+ *  - INT $N, INT3, INTO, SYSCALL, SYSENTER: enter the kernel and then
-+ *    deliver #DB.
-+ *  - ICEBP: enter the kernel but do not deliver the watchpoint trap
-+ *  - breakpoint: only one #DB is delivered (phew!)
-+ *
-+ * There are plenty of ways for a kernel to handle this incorrectly.  This
-+ * test tries to exercise all the cases.
-+ *
-+ * This should mostly cover CVE-2018-1087 and CVE-2018-8897.
++ * Copyright (C) 2017 Amarula Solutions B.V.
++ * Author: Jagan Teki <jagan@amarulasolutions.com>
 + */
-+#define _GNU_SOURCE
 +
-+#include <stdlib.h>
-+#include <sys/ptrace.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <sys/user.h>
-+#include <sys/syscall.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stddef.h>
-+#include <stdio.h>
-+#include <err.h>
-+#include <string.h>
-+#include <setjmp.h>
-+#include <sys/prctl.h>
++/dts-v1/;
 +
-+#define X86_EFLAGS_RF (1UL << 16)
++#include "sun50i-a64.dtsi"
 +
-+#if __x86_64__
-+# define REG_IP REG_RIP
-+#else
-+# define REG_IP REG_EIP
-+#endif
++#include <dt-bindings/gpio/gpio.h>
 +
-+unsigned short ss;
-+extern unsigned char breakpoint_insn[];
-+sigjmp_buf jmpbuf;
-+static unsigned char altstack_data[SIGSTKSZ];
++/ {
++	model = "Amarula A64-Relic";
++	compatible = "amarula,a64-relic", "allwinner,sun50i-a64";
 +
-+static void enable_watchpoint(void)
-+{
-+	pid_t parent = getpid();
-+	int status;
++	aliases {
++		serial0 = &uart0;
++	};
 +
-+	pid_t child = fork();
-+	if (child < 0)
-+		err(1, "fork");
-+
-+	if (child) {
-+		if (waitpid(child, &status, 0) != child)
-+			err(1, "waitpid for child");
-+	} else {
-+		unsigned long dr0, dr1, dr7;
-+
-+		dr0 = (unsigned long)&ss;
-+		dr1 = (unsigned long)breakpoint_insn;
-+		dr7 = ((1UL << 1) |	/* G0 */
-+		       (3UL << 16) |	/* RW0 = read or write */
-+		       (1UL << 18) |	/* LEN0 = 2 bytes */
-+		       (1UL << 3));	/* G1, RW1 = insn */
-+
-+		if (ptrace(PTRACE_ATTACH, parent, NULL, NULL) != 0)
-+			err(1, "PTRACE_ATTACH");
-+
-+		if (waitpid(parent, &status, 0) != parent)
-+			err(1, "waitpid for child");
-+
-+		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[0]), dr0) != 0)
-+			err(1, "PTRACE_POKEUSER DR0");
-+
-+		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[1]), dr1) != 0)
-+			err(1, "PTRACE_POKEUSER DR1");
-+
-+		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[7]), dr7) != 0)
-+			err(1, "PTRACE_POKEUSER DR7");
-+
-+		printf("\tDR0 = %lx, DR1 = %lx, DR7 = %lx\n", dr0, dr1, dr7);
-+
-+		if (ptrace(PTRACE_DETACH, parent, NULL, NULL) != 0)
-+			err(1, "PTRACE_DETACH");
-+
-+		exit(0);
-+	}
-+}
-+
-+static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
-+		       int flags)
-+{
-+	struct sigaction sa;
-+	memset(&sa, 0, sizeof(sa));
-+	sa.sa_sigaction = handler;
-+	sa.sa_flags = SA_SIGINFO | flags;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(sig, &sa, 0))
-+		err(1, "sigaction");
-+}
-+
-+static char const * const signames[] = {
-+	[SIGSEGV] = "SIGSEGV",
-+	[SIGBUS] = "SIBGUS",
-+	[SIGTRAP] = "SIGTRAP",
-+	[SIGILL] = "SIGILL",
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
 +};
 +
-+static void sigtrap(int sig, siginfo_t *si, void *ctx_void)
-+{
-+	ucontext_t *ctx = ctx_void;
++&ehci0 {
++	status = "okay";
++};
 +
-+	printf("\tGot SIGTRAP with RIP=%lx, EFLAGS.RF=%d\n",
-+	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP],
-+	       !!(ctx->uc_mcontext.gregs[REG_EFL] & X86_EFLAGS_RF));
-+}
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_pins>;
++	vmmc-supply = <&reg_dcdc1>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
 +
-+static void handle_and_return(int sig, siginfo_t *si, void *ctx_void)
-+{
-+	ucontext_t *ctx = ctx_void;
++&ohci0 {
++	status = "okay";
++};
 +
-+	printf("\tGot %s with RIP=%lx\n", signames[sig],
-+	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP]);
-+}
++&r_rsb {
++	status = "okay";
 +
-+static void handle_and_longjmp(int sig, siginfo_t *si, void *ctx_void)
-+{
-+	ucontext_t *ctx = ctx_void;
++	axp803: pmic@3a3 {
++		compatible = "x-powers,axp803";
++		reg = <0x3a3>;
++		interrupt-parent = <&r_intc>;
++		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
++		x-powers,drive-vbus-en; /* set N_VBUSEN as output pin */
++	};
++};
 +
-+	printf("\tGot %s with RIP=%lx\n", signames[sig],
-+	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP]);
++#include "axp803.dtsi"
 +
-+	siglongjmp(jmpbuf, 1);
-+}
++&reg_aldo1 {
++	regulator-always-on;
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "avdd-csi";
++};
 +
-+int main()
-+{
-+	unsigned long nr;
++&reg_aldo2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++	regulator-name = "vcc-pl";
++};
 +
-+	asm volatile ("mov %%ss, %[ss]" : [ss] "=m" (ss));
-+	printf("\tSS = 0x%hx, &SS = 0x%p\n", ss, &ss);
++&reg_aldo3 {
++	regulator-always-on;
++	regulator-min-microvolt = <3000000>;
++	regulator-max-microvolt = <3000000>;
++	regulator-name = "vcc-pll-avcc";
++};
 +
-+	if (prctl(PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0) == 0)
-+		printf("\tPR_SET_PTRACER_ANY succeeded\n");
++&reg_dcdc1 {
++	regulator-always-on;
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-3v3";
++};
 +
-+	printf("\tSet up a watchpoint\n");
-+	sethandler(SIGTRAP, sigtrap, 0);
-+	enable_watchpoint();
++&reg_dcdc2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1040000>;
++	regulator-max-microvolt = <1300000>;
++	regulator-name = "vdd-cpux";
++};
 +
-+	printf("[RUN]\tRead from watched memory (should get SIGTRAP)\n");
-+	asm volatile ("mov %[ss], %[tmp]" : [tmp] "=r" (nr) : [ss] "m" (ss));
++/* DCDC3 is polyphased with DCDC2 */
 +
-+	printf("[RUN]\tMOV SS; INT3\n");
-+	asm volatile ("mov %[ss], %%ss; int3" :: [ss] "m" (ss));
++&reg_dcdc5 {
++	regulator-always-on;
++	regulator-min-microvolt = <1500000>;
++	regulator-max-microvolt = <1500000>;
++	regulator-name = "vcc-dram";
++};
 +
-+	printf("[RUN]\tMOV SS; INT 3\n");
-+	asm volatile ("mov %[ss], %%ss; .byte 0xcd, 0x3" :: [ss] "m" (ss));
++&reg_dcdc6 {
++	regulator-always-on;
++	regulator-min-microvolt = <1100000>;
++	regulator-max-microvolt = <1100000>;
++	regulator-name = "vdd-sys";
++};
 +
-+	printf("[RUN]\tMOV SS; CS CS INT3\n");
-+	asm volatile ("mov %[ss], %%ss; .byte 0x2e, 0x2e; int3" :: [ss] "m" (ss));
++&reg_dldo1 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-hdmi-dsi-sensor";
++};
 +
-+	printf("[RUN]\tMOV SS; CSx14 INT3\n");
-+	asm volatile ("mov %[ss], %%ss; .fill 14,1,0x2e; int3" :: [ss] "m" (ss));
++&reg_dldo2 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-mipi";
++};
 +
-+	printf("[RUN]\tMOV SS; INT 4\n");
-+	sethandler(SIGSEGV, handle_and_return, SA_RESETHAND);
-+	asm volatile ("mov %[ss], %%ss; int $4" :: [ss] "m" (ss));
++&reg_dldo3 {
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++	regulator-name = "vcc-gen";
++};
 +
-+#ifdef __i386__
-+	printf("[RUN]\tMOV SS; INTO\n");
-+	sethandler(SIGSEGV, handle_and_return, SA_RESETHAND);
-+	nr = -1;
-+	asm volatile ("add $1, %[tmp]; mov %[ss], %%ss; into"
-+		      : [tmp] "+r" (nr) : [ss] "m" (ss));
-+#endif
++&reg_dldo4 {
++	regulator-min-microvolt = <3300000>;
++	regulator-max-microvolt = <3300000>;
++	regulator-name = "vcc-wifi-io";
++};
 +
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; ICEBP\n");
++&reg_drivevbus {
++	regulator-name = "usb0-vbus";
++	status = "okay";
++};
 +
-+		/* Some emulators (e.g. QEMU TCG) don't emulate ICEBP. */
-+		sethandler(SIGILL, handle_and_longjmp, SA_RESETHAND);
++&reg_eldo1 {
++	regulator-always-on;
++	regulator-min-microvolt = <1800000>;
++	regulator-max-microvolt = <1800000>;
++	regulator-name = "cpvdd";
++};
 +
-+		asm volatile ("mov %[ss], %%ss; .byte 0xf1" :: [ss] "m" (ss));
-+	}
++&reg_fldo1 {
++	regulator-min-microvolt = <1200000>;
++	regulator-max-microvolt = <1200000>;
++	regulator-name = "vcc-1v2-hsic";
++};
 +
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; CLI\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		asm volatile ("mov %[ss], %%ss; cli" :: [ss] "m" (ss));
-+	}
++/*
++ * The A64 chip cannot work without this regulator off, although
++ * it seems to be only driving the AR100 core.
++ * Maybe we don't still know well about CPUs domain.
++ */
++&reg_fldo2 {
++	regulator-always-on;
++	regulator-min-microvolt = <1100000>;
++	regulator-max-microvolt = <1100000>;
++	regulator-name = "vdd-cpus";
++};
 +
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; #PF\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		asm volatile ("mov %[ss], %%ss; mov (-1), %[tmp]"
-+			      : [tmp] "=r" (nr) : [ss] "m" (ss));
-+	}
++&reg_rtc_ldo {
++	regulator-name = "vcc-rtc";
++};
 +
-+	/*
-+	 * INT $1: if #DB has DPL=3 and there isn't special handling,
-+	 * then the kernel will die.
-+	 */
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; INT 1\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		asm volatile ("mov %[ss], %%ss; int $1" :: [ss] "m" (ss));
-+	}
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
 +
-+#ifdef __x86_64__
-+	/*
-+	 * In principle, we should test 32-bit SYSCALL as well, but
-+	 * the calling convention is so unpredictable that it's
-+	 * not obviously worth the effort.
-+	 */
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; SYSCALL\n");
-+		sethandler(SIGILL, handle_and_longjmp, SA_RESETHAND);
-+		nr = SYS_getpid;
-+		/*
-+		 * Toggle the high bit of RSP to make it noncanonical to
-+		 * strengthen this test on non-SMAP systems.
-+		 */
-+		asm volatile ("btc $63, %%rsp\n\t"
-+			      "mov %[ss], %%ss; syscall\n\t"
-+			      "btc $63, %%rsp"
-+			      : "+a" (nr) : [ss] "m" (ss)
-+			      : "rcx"
-+#ifdef __x86_64__
-+				, "r11"
-+#endif
-+			);
-+	}
-+#endif
++&usb_otg {
++	dr_mode = "peripheral";
++	status = "okay";
++};
 +
-+	printf("[RUN]\tMOV SS; breakpointed NOP\n");
-+	asm volatile ("mov %[ss], %%ss; breakpoint_insn: nop" :: [ss] "m" (ss));
-+
-+	/*
-+	 * Invoking SYSENTER directly breaks all the rules.  Just handle
-+	 * the SIGSEGV.
-+	 */
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; SYSENTER\n");
-+		stack_t stack = {
-+			.ss_sp = altstack_data,
-+			.ss_size = SIGSTKSZ,
-+		};
-+		if (sigaltstack(&stack, NULL) != 0)
-+			err(1, "sigaltstack");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND | SA_ONSTACK);
-+		nr = SYS_getpid;
-+		asm volatile ("mov %[ss], %%ss; SYSENTER" : "+a" (nr)
-+			      : [ss] "m" (ss) : "flags", "rcx"
-+#ifdef __x86_64__
-+				, "r11"
-+#endif
-+			);
-+
-+		/* We're unreachable here.  SYSENTER forgets RIP. */
-+	}
-+
-+	if (sigsetjmp(jmpbuf, 1) == 0) {
-+		printf("[RUN]\tMOV SS; INT $0x80\n");
-+		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
-+		nr = 20;	/* compat getpid */
-+		asm volatile ("mov %[ss], %%ss; int $0x80"
-+			      : "+a" (nr) : [ss] "m" (ss)
-+			      : "flags"
-+#ifdef __x86_64__
-+				, "r8", "r9", "r10", "r11"
-+#endif
-+			);
-+	}
-+
-+	printf("[OK]\tI aten't dead\n");
-+	return 0;
-+}
++&usbphy {
++	usb0_id_det-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
++	usb0_vbus-supply = <&reg_drivevbus>;
++	status = "okay";
++};
 -- 
-2.17.0
+2.14.3
