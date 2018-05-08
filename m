@@ -1,12 +1,12 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932386AbeEHV1z (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:27:55 -0400
-Received: from a8-126.smtp-out.amazonses.com ([54.240.8.126]:56886 "EHLO
-        a8-126.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756018AbeEHV1t (ORCPT
+        id S932790AbeEHV3J (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:29:09 -0400
+Received: from a8-57.smtp-out.amazonses.com ([54.240.8.57]:37892 "EHLO
+        a8-57.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756024AbeEHV1r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:27:49 -0400
+        Tue, 8 May 2018 17:27:47 -0400
 From: Jeremy Cline <jeremy@jcline.org>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>
@@ -15,69 +15,62 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         "Herton R . Krzesinski" <herton@redhat.com>,
         linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
         Jeremy Cline <jeremy@jcline.org>
-Subject: [PATCH 6/8] perf scripts python: Add Python 3 support to sched-migration.py
-Date: Tue, 8 May 2018 21:27:47 +0000
-Message-ID: <0100016341a737a5-44ec436f-3440-4cac-a03f-ddfa589bf308-000000@email.amazonses.com>
+Subject: [PATCH 4/8] perf scripts python: Add Python 3 support to Util.py
+Date: Tue, 8 May 2018 21:27:46 +0000
+Message-ID: <0100016341a730c6-8db8b9b1-da2d-4ee3-96bf-47e0ae9796bd-000000@email.amazonses.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1525811971.git.jeremy@jcline.org>
 References: <cover.1525811971.git.jeremy@jcline.org>
-X-SES-Outgoing: 2018.05.08-54.240.8.126
+X-SES-Outgoing: 2018.05.08-54.240.8.57
 Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support both Python 2 and Python 3 in the sched-migration.py script.
-This should have no functional change.
+Support both Python 2 and Python 3 in Util.py. The dict class no longer
+has a ``has_key`` method and print is now a function rather than a
+statement. This should have no functional change.
 
 Signed-off-by: Jeremy Cline <jeremy@jcline.org>
 ---
- tools/perf/scripts/python/sched-migration.py | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ .../python/Perf-Trace-Util/lib/Perf/Trace/Util.py     | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/scripts/python/sched-migration.py b/tools/perf/scripts/python/sched-migration.py
-index de66cb3b72c9..3473e7f66081 100644
---- a/tools/perf/scripts/python/sched-migration.py
-+++ b/tools/perf/scripts/python/sched-migration.py
-@@ -9,13 +9,17 @@
- # This software is distributed under the terms of the GNU General
+diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
+index f6c84966e4f8..7384dcb628c4 100644
+--- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
++++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
+@@ -5,6 +5,7 @@
+ # This software may be distributed under the terms of the GNU General
  # Public License ("GPL") version 2 as published by the Free Software
  # Foundation.
--
 +from __future__ import print_function
  
- import os
- import sys
+ import errno, os
  
- from collections import defaultdict
--from UserList import UserList
-+try:
-+    from UserList import UserList
-+except ImportError:
-+    # Python 3: UserList moved to the collections package
-+    from collections import UserList
+@@ -33,7 +34,7 @@ def nsecs_str(nsecs):
+     return str
  
- sys.path.append(os.environ['PERF_EXEC_PATH'] + \
- 	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
-@@ -300,7 +304,7 @@ class TimeSliceList(UserList):
- 		if i == -1:
- 			return
+ def add_stats(dict, key, value):
+-	if not dict.has_key(key):
++	if key not in dict:
+ 		dict[key] = (value, value, value, 1)
+ 	else:
+ 		min, max, avg, count = dict[key]
+@@ -72,10 +73,10 @@ try:
+ except:
+ 	if not audit_package_warned:
+ 		audit_package_warned = True
+-		print "Install the audit-libs-python package to get syscall names.\n" \
+-                    "For example:\n  # apt-get install python-audit (Ubuntu)" \
+-                    "\n  # yum install audit-libs-python (Fedora)" \
+-                    "\n  etc.\n"
++		print("Install the audit-libs-python package to get syscall names.\n"
++                    "For example:\n  # apt-get install python-audit (Ubuntu)"
++                    "\n  # yum install audit-libs-python (Fedora)"
++                    "\n  etc.\n")
  
--		for i in xrange(i, len(self.data)):
-+		for i in range(i, len(self.data)):
- 			timeslice = self.data[i]
- 			if timeslice.start > end:
- 				return
-@@ -336,8 +340,8 @@ class SchedEventProxy:
- 		on_cpu_task = self.current_tsk[headers.cpu]
- 
- 		if on_cpu_task != -1 and on_cpu_task != prev_pid:
--			print "Sched switch event rejected ts: %s cpu: %d prev: %s(%d) next: %s(%d)" % \
--				(headers.ts_format(), headers.cpu, prev_comm, prev_pid, next_comm, next_pid)
-+			print("Sched switch event rejected ts: %s cpu: %d prev: %s(%d) next: %s(%d)" % \
-+				headers.ts_format(), headers.cpu, prev_comm, prev_pid, next_comm, next_pid)
- 
- 		threads[prev_pid] = prev_comm
- 		threads[next_pid] = next_comm
+ def syscall_name(id):
+ 	try:
 -- 
 2.17.0
