@@ -1,94 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754882AbeEHMmY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:42:24 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52450 "EHLO
+        id S1754718AbeEHMpM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:45:12 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52502 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752461AbeEHMmW (ORCPT
+        with ESMTP id S1751887AbeEHMpL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:42:22 -0400
-Date: Tue, 8 May 2018 13:42:00 +0100
+        Tue, 8 May 2018 08:45:11 -0400
+Date: Tue, 8 May 2018 13:44:57 +0100
 From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: =?iso-8859-1?Q?Myl=E8ne?= Josserand <mylene.josserand@bootlin.com>
-Cc: maxime.ripard@bootlin.com, wens@csie.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, horms@verge.net.au,
-        geert@linux-m68k.org, magnus.damm@gmail.com, f.fainelli@gmail.com,
-        opendmb@gmail.com, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, clabbe.montjoie@gmail.com,
-        quentin.schulz@bootlin.com, thomas.petazzoni@bootlin.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 01/12] ARM: Allow this header to be included by
- assembly files
-Message-ID: <20180508124200.GM16141@n2100.armlinux.org.uk>
-References: <20180504190545.5114-1-mylene.josserand@bootlin.com>
- <20180504190545.5114-2-mylene.josserand@bootlin.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: Re: [PATCH net-next] net: phy: sfp: handle cases where neither
+ BR,min nor BR,max is given
+Message-ID: <20180508124456.GN16141@n2100.armlinux.org.uk>
+References: <20180504152103.18152-1-antoine.tenart@bootlin.com>
+ <53A4DFE3-C335-49B2-89C5-061A96C6D99D@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180504190545.5114-2-mylene.josserand@bootlin.com>
+In-Reply-To: <53A4DFE3-C335-49B2-89C5-061A96C6D99D@gmail.com>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 09:05:34PM +0200, Mylène Josserand wrote:
-> From: Doug Berger <opendmb@gmail.com>
+On Sat, May 05, 2018 at 01:35:34PM -0700, Florian Fainelli wrote:
+> On May 4, 2018 8:21:03 AM PDT, Antoine Tenart <antoine.tenart@bootlin.com> wrote:
+> >When computing the bitrate using values read from an SFP module EEPROM,
+> >we use the nominal BR plus BR,min and BR,max to determine the
+> >boundaries. But in some cases BR,min and BR,max aren't provided, which
+> >led the SFP code to end up having the nominal value for both the
+> >minimum
+> >and maximum bitrate values. When using a passive cable, the nominal
+> >value should be used as the maximum one, and there is no minimum one
+> >so we should use 0.
+> >
+> >Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+> >---
+> >
+> >Hi Russell,
+> >
+> >I'm not completely sure about this patch as this case is not really
+> >specified in the specification. But the issue is there, and I've
+> >discuss
+> >this with others. It seemed logical (at least to us :)) to use the
+> >BR,nominal values as br_max and 0 as br_min when using a passive cable
+> >which only provides BR,nominal as this would be the highest rate at
+> >which the cable could work. And because it's passive, there should be
+> >no
+> >issues using it at a lower rate.
+> >
+> >I've tested this with one passive cable which only reports its
+> >BR,nominal (which was 10300) while it could be used when using
+> >1000baseX
+> >or 2500baseX modes.
 > 
-> The constants defined in this file are equally useful in assembly and C
-> source files. The arm64 architecture version of this file allows
-> inclusion in both assembly and C source files, so this this commit adds
-> that capability to the arm architecture version so that the constants
-> don't need to be defined in multiple places.
-> 
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> Signed-off-by: Mylène Josserand <mylene.josserand@bootlin.com>
+> Which SFP modules (vendor and model) exposed this out of curiosity?
+> Russell and I already saw the Cotsworks modules having so e issues
+> with checksums, so building a table of quirks would help. Thanks!
 
-Acked-by: Russell King <rmk+kernel@armlinux.org.uk>
-
-Thanks.
-
-> ---
->  arch/arm/include/asm/cputype.h | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
-> index cb546425da8a..e7632f536633 100644
-> --- a/arch/arm/include/asm/cputype.h
-> +++ b/arch/arm/include/asm/cputype.h
-> @@ -2,9 +2,6 @@
->  #ifndef __ASM_ARM_CPUTYPE_H
->  #define __ASM_ARM_CPUTYPE_H
->  
-> -#include <linux/stringify.h>
-> -#include <linux/kernel.h>
-> -
->  #define CPUID_ID	0
->  #define CPUID_CACHETYPE	1
->  #define CPUID_TCM	2
-> @@ -98,6 +95,11 @@
->  /* Qualcomm implemented cores */
->  #define ARM_CPU_PART_SCORPION		0x510002d0
->  
-> +#ifndef __ASSEMBLY__
-> +
-> +#include <linux/stringify.h>
-> +#include <linux/kernel.h>
-> +
->  extern unsigned int processor_id;
->  
->  #ifdef CONFIG_CPU_CP15
-> @@ -326,4 +328,6 @@ static inline int __attribute_const__ cpuid_feature_extract_field(u32 features,
->  #define cpuid_feature_extract(reg, field) \
->  	cpuid_feature_extract_field(read_cpuid_ext(reg), field)
->  
-> +#endif /* __ASSEMBLY__ */
-> +
->  #endif
-> -- 
-> 2.11.0
-> 
+I think this is just manufacturers being lazy with their EEPROM
+contents - looking around, most passive cables are specified to be
+"up to" some figure, and that's definitely what's specified by the
+SFP+ specification by way of the high-pass pole requirement of the
+coupling capacitors.
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
