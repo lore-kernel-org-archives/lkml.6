@@ -1,38 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZquIRAZKlewp5LWUlbdKIZ2+T8fdOzdz3yjnePpB3CJKP2HwXria7G/ch48XnsREy2Jx6qr
-ARC-Seal: i=1; a=rsa-sha256; t=1525767312; cv=none;
+X-Google-Smtp-Source: AB8JxZpji6TQw8HQ6FrPvGJIUuW+LbN1SP6mfcHUkzhSvL6KwsyP6KW05Y8CI5HjSrqFdEnmCIlW
+ARC-Seal: i=1; a=rsa-sha256; t=1525767310; cv=none;
         d=google.com; s=arc-20160816;
-        b=s8czka4yAK+coRdI/vg0uKRoje6C7uNcZrYLvmF4XP3mSYtB83R+Gxr0pyKivWEi2o
-         iGtXODDqoGqVn1/dp4TbEOvL7DTTxAbMNOe4vUiAZ9Gcvsq6g1Nwh/RfnHE7o1S4mtDx
-         lZSJUS+N29Hx6HfGtI4JtAyFZHcA4XS1Ig7bmJccS5afaJEVW0tfB9E6PECt6npcAlgr
-         9wBMbaNDqRImFtxpScKP1Yv9JRIr8EIJrIIua1gmGI6oVilqLSK4XuRvxrI/iqX3iqlF
-         ISfyUxwNaHxzuy+U9i9p+3F9bHaBR1m3TGgR71Q6hfDB6ShjHlTWSu7sZcUAXp1vixiS
-         qN7A==
+        b=NVNpfusxtZGstl6kpDM5gAiuyjkTJeQbjoGGL+Rqgz+Mx4il8yGD9lIEgKNR8BjSGM
+         r6+/3kUc2vDc0lfNrDfrTqCz3oHj6gL2jbjlQp2MYdTM7oQzgzc/eK/UZ1UITL6PoDF2
+         gpuokAy6Yu0YA+e845tgpNQqPX7GbdwYscrjTuISrRd04w8eSK4v6ClkEGHSEj/Xx4zh
+         DvSgPMejDeLPGHTaJzmB7Jqvz7fQ29whl+dPiWZ6ZRAdX5edHEyPIC2+XowicNsP12Ug
+         VqOhFBeq9VaS5lDzmChahPKs704H5d0MNRDdjQLmwS9a86U7mrLFEqjtUadhGzd/uefX
+         8DZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=MwvdR+T4dpYe6VTpfHbLnmTlEnpRB0vGji07QSzizag=;
-        b=glVIeSfoKD4ZbJxpcVZEPVwFKVAhNJTBqdTxPH/uhh0alU4KJPO079sJ8IVTmg7yuV
-         duAJ4ZO+UCeT3hqkQ6SxFK7TrPDEm8S4fEwwDiZRDUA3l+CAyHD6TU11ysPgGThfWQXp
-         OFvhFNN6kaZpDuUYpXa+U7xllWB2whvCF9cZ8QSQIm44fm8ICaOLylktOg0XnZdsBH4V
-         ciIM7tTvgGsjyn1A+wOVJxC2WM8ctwgin9H5LfE/H97hU3sSqz9YDplaS93JujfLqAKB
-         raJX8mNbT4iLZtcdpYUBhQ6eWrbugFUr63j2XPmmDT3HpoAJlV8d/BqgyyVBVVJeQFX2
-         Pavg==
+        bh=hfa07QeyvfW5sMZbosoOE4+dRY0LrUDhP0n0ILsAVF8=;
+        b=cEUwuBFf75zDOQSTcOj2S/zquSRxOhsekHMScKunLkwu+lq7H4unBt6KEyXFIIK5v0
+         1clVclPWRRc+p4EpQdxMJZmeGK1QOGkNb6TgyizvnVUGWcLfeUSEZkV/zsdiJr/s5bUp
+         JtLbd0+H85OoRq1HR8uszfu+ZjSRp4NnZAwdQRyLgYoYsVSN6vNPJcRXNrjgglmCD3q7
+         wiqLM4X0nE6WqFpLh9iHzzoCCBAbmH5IwLx5y+1tdPyVhZrUfw2eDVCVXYbPqjdgrHiS
+         bkSSng03RfzgKEl8LCORUqMyJSPlOn8Z9rAMMjcLv8lrXM3CdUGG1mMxz1ZvdNcBJ7HU
+         yoTA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=frTuCnLx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xIWZ36Vw;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=frTuCnLx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=xIWZ36Vw;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Robert Rosengren <robert.rosengren@axis.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 11/43] ALSA: aloop: Mark paused device as inactive
-Date: Tue,  8 May 2018 10:10:30 +0200
-Message-Id: <20180508074005.732715304@linuxfoundation.org>
+Subject: [PATCH 4.14 10/43] ALSA: dice: fix kernel NULL pointer dereference due to invalid calculation for array index
+Date: Tue,  8 May 2018 10:10:29 +0200
+Message-Id: <20180508074005.613358323@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882794600699949?=
-X-GMAIL-MSGID: =?utf-8?q?1599882985731674245?=
+X-GMAIL-THRID: =?utf-8?q?1599882791409620132?=
+X-GMAIL-MSGID: =?utf-8?q?1599882982762494032?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,57 +51,138 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Robert Rosengren <robert.rosengren@axis.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 306a4f3ca7f3c7dfa473ebd19d66e40e59d99734 upstream.
+commit 52759c0963510a2843774aac9b65ccaed3308dc0 upstream.
 
-Show paused ALSA aloop device as inactive, i.e. the control
-"PCM Slave Active" set as false. Notification sent upon state change.
+At a commit f91c9d7610a ('ALSA: firewire-lib: cache maximum length of
+payload to reduce function calls'), maximum size of payload for tx
+isochronous packet is cached to reduce the number of function calls.
 
-This makes it possible for client capturing from aloop device to know if
-data is expected. Without it the client expects data even if playback
-is paused.
+This cache was programmed to updated at a first callback of ohci1394 IR
+context. However, the maximum size is required to queueing packets before
+starting the isochronous context.
 
-Signed-off-by: Robert Rosengren <robert.rosengren@axis.com>
+As a result, the cached value is reused to queue packets in next time to
+starting the isochronous context. Then the cache is updated in a first
+callback of the isochronous context. This can cause kernel NULL pointer
+dereference in a below call graph:
+
+(sound/firewire/amdtp-stream.c)
+amdtp_stream_start()
+->queue_in_packet()
+  ->queue_packet()
+    (drivers/firewire/core-iso.c)
+    ->fw_iso_context_queue()
+      ->struct fw_card_driver.queue_iso()
+      (drivers/firewire/ohci.c)
+      = ohci_queue_iso()
+        ->queue_iso_packet_per_buffer()
+          buffer->pages[page]
+
+The issued dereference occurs in a case that:
+ - target unit supports different stream formats for sampling transmission
+   frequency.
+ - maximum length of payload for tx stream in a first trial is bigger
+   than the length in a second trial.
+
+In this case, correct number of pages are allocated for DMA and the 'pages'
+array has enough elements, while index of the element is wrongly calculated
+according to the old value of length of payload in a call of
+'queue_in_packet()'. Then it causes the issue.
+
+This commit fixes the critical bug. This affects all of drivers in ALSA
+firewire stack in Linux kernel v4.12 or later.
+
+[12665.302360] BUG: unable to handle kernel NULL pointer dereference at 0000000000000030
+[12665.302415] IP: ohci_queue_iso+0x47c/0x800 [firewire_ohci]
+[12665.302439] PGD 0
+[12665.302440] P4D 0
+[12665.302450]
+[12665.302470] Oops: 0000 [#1] SMP PTI
+[12665.302487] Modules linked in: ...
+[12665.303096] CPU: 1 PID: 12760 Comm: jackd Tainted: P           OE   4.13.0-38-generic #43-Ubuntu
+[12665.303154] Hardware name:                  /DH77DF, BIOS KCH7710H.86A.0069.2012.0224.1825 02/24/2012
+[12665.303215] task: ffff9ce87da2ae80 task.stack: ffffb5b8823d0000
+[12665.303258] RIP: 0010:ohci_queue_iso+0x47c/0x800 [firewire_ohci]
+[12665.303301] RSP: 0018:ffffb5b8823d3ab8 EFLAGS: 00010086
+[12665.303337] RAX: ffff9ce4f4876930 RBX: 0000000000000008 RCX: ffff9ce88a3955e0
+[12665.303384] RDX: 0000000000000000 RSI: 0000000034877f00 RDI: 0000000000000000
+[12665.303427] RBP: ffffb5b8823d3b68 R08: ffff9ce8ccb390a0 R09: ffff9ce877639ab0
+[12665.303475] R10: 0000000000000108 R11: 0000000000000000 R12: 0000000000000003
+[12665.303513] R13: 0000000000000000 R14: ffff9ce4f4876950 R15: 0000000000000000
+[12665.303554] FS:  00007f2ec467f8c0(0000) GS:ffff9ce8df280000(0000) knlGS:0000000000000000
+[12665.303600] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[12665.303633] CR2: 0000000000000030 CR3: 00000002dcf90004 CR4: 00000000000606e0
+[12665.303674] Call Trace:
+[12665.303698]  fw_iso_context_queue+0x18/0x20 [firewire_core]
+[12665.303735]  queue_packet+0x88/0xe0 [snd_firewire_lib]
+[12665.303770]  amdtp_stream_start+0x19b/0x270 [snd_firewire_lib]
+[12665.303811]  start_streams+0x276/0x3c0 [snd_dice]
+[12665.303840]  snd_dice_stream_start_duplex+0x1bf/0x480 [snd_dice]
+[12665.303882]  ? vma_gap_callbacks_rotate+0x1e/0x30
+[12665.303914]  ? __rb_insert_augmented+0xab/0x240
+[12665.303936]  capture_prepare+0x3c/0x70 [snd_dice]
+[12665.303961]  snd_pcm_do_prepare+0x1d/0x30 [snd_pcm]
+[12665.303985]  snd_pcm_action_single+0x3b/0x90 [snd_pcm]
+[12665.304009]  snd_pcm_action_nonatomic+0x68/0x70 [snd_pcm]
+[12665.304035]  snd_pcm_prepare+0x68/0x90 [snd_pcm]
+[12665.304058]  snd_pcm_common_ioctl1+0x4c0/0x940 [snd_pcm]
+[12665.304083]  snd_pcm_capture_ioctl1+0x19b/0x250 [snd_pcm]
+[12665.304108]  snd_pcm_capture_ioctl+0x27/0x40 [snd_pcm]
+[12665.304131]  do_vfs_ioctl+0xa8/0x630
+[12665.304148]  ? entry_SYSCALL_64_after_hwframe+0xe9/0x139
+[12665.304172]  ? entry_SYSCALL_64_after_hwframe+0xe2/0x139
+[12665.304195]  ? entry_SYSCALL_64_after_hwframe+0xdb/0x139
+[12665.304218]  ? entry_SYSCALL_64_after_hwframe+0xd4/0x139
+[12665.304242]  ? entry_SYSCALL_64_after_hwframe+0xcd/0x139
+[12665.304265]  ? entry_SYSCALL_64_after_hwframe+0xc6/0x139
+[12665.304288]  ? entry_SYSCALL_64_after_hwframe+0xbf/0x139
+[12665.304312]  ? entry_SYSCALL_64_after_hwframe+0xb8/0x139
+[12665.304335]  ? entry_SYSCALL_64_after_hwframe+0xb1/0x139
+[12665.304358]  SyS_ioctl+0x79/0x90
+[12665.304374]  ? entry_SYSCALL_64_after_hwframe+0x72/0x139
+[12665.304397]  entry_SYSCALL_64_fastpath+0x24/0xab
+[12665.304417] RIP: 0033:0x7f2ec3750ef7
+[12665.304433] RSP: 002b:00007fff99e31388 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[12665.304465] RAX: ffffffffffffffda RBX: 00007fff99e312f0 RCX: 00007f2ec3750ef7
+[12665.304494] RDX: 0000000000000000 RSI: 0000000000004140 RDI: 0000000000000007
+[12665.304522] RBP: 0000556ebc63fd60 R08: 0000556ebc640560 R09: 0000000000000000
+[12665.304553] R10: 0000000000000001 R11: 0000000000000246 R12: 0000556ebc63fcf0
+[12665.304584] R13: 0000000000000000 R14: 0000000000000007 R15: 0000000000000000
+[12665.304612] Code: 01 00 00 44 89 eb 45 31 ed 45 31 db 66 41 89 1e 66 41 89 5e 0c 66 45 89 5e 0e 49 8b 49 08 49 63 d4 4d 85 c0 49 63 ff 48 8b 14 d1 <48> 8b 72 30 41 8d 14 37 41 89 56 04 48 63 d3 0f 84 ce 00 00 00
+[12665.304713] RIP: ohci_queue_iso+0x47c/0x800 [firewire_ohci] RSP: ffffb5b8823d3ab8
+[12665.304743] CR2: 0000000000000030
+[12665.317701] ---[ end trace 9d55b056dd52a19f ]---
+
+Fixes: f91c9d7610a ('ALSA: firewire-lib: cache maximum length of payload to reduce function calls')
+Cc: <stable@vger.kernel.org> # v4.12+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/drivers/aloop.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ sound/firewire/amdtp-stream.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/sound/drivers/aloop.c
-+++ b/sound/drivers/aloop.c
-@@ -296,6 +296,8 @@ static int loopback_trigger(struct snd_p
- 		cable->pause |= stream;
- 		loopback_timer_stop(dpcm);
- 		spin_unlock(&cable->lock);
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+			loopback_active_notify(dpcm);
- 		break;
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
- 	case SNDRV_PCM_TRIGGER_RESUME:
-@@ -304,6 +306,8 @@ static int loopback_trigger(struct snd_p
- 		cable->pause &= ~stream;
- 		loopback_timer_start(dpcm);
- 		spin_unlock(&cable->lock);
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+			loopback_active_notify(dpcm);
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -893,9 +897,11 @@ static int loopback_active_get(struct sn
- 			[kcontrol->id.subdevice][kcontrol->id.device ^ 1];
- 	unsigned int val = 0;
+--- a/sound/firewire/amdtp-stream.c
++++ b/sound/firewire/amdtp-stream.c
+@@ -773,8 +773,6 @@ static void amdtp_stream_first_callback(
+ 	u32 cycle;
+ 	unsigned int packets;
  
--	if (cable != NULL)
--		val = (cable->running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ?
--									1 : 0;
-+	if (cable != NULL) {
-+		unsigned int running = cable->running ^ cable->pause;
+-	s->max_payload_length = amdtp_stream_get_max_payload(s);
+-
+ 	/*
+ 	 * For in-stream, first packet has come.
+ 	 * For out-stream, prepared to transmit first packet
+@@ -879,6 +877,9 @@ int amdtp_stream_start(struct amdtp_stre
+ 
+ 	amdtp_stream_update(s);
+ 
++	if (s->direction == AMDTP_IN_STREAM)
++		s->max_payload_length = amdtp_stream_get_max_payload(s);
 +
-+		val = (running & (1 << SNDRV_PCM_STREAM_PLAYBACK)) ? 1 : 0;
-+	}
- 	ucontrol->value.integer.value[0] = val;
- 	return 0;
- }
+ 	if (s->flags & CIP_NO_HEADER)
+ 		s->tag = TAG_NO_CIP_HEADER;
+ 	else
