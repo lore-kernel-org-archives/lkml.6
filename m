@@ -1,13 +1,16 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932460AbeEHUty (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 16:49:54 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:32932 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932283AbeEHUtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 16:49:51 -0400
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        id S932544AbeEHUuP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 16:50:15 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44030 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932283AbeEHUuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 16:50:13 -0400
+Date: Tue, 8 May 2018 16:50:06 -0400
+From: Jerome Glisse <jglisse@redhat.com>
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
         Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
         linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
         linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
@@ -17,10 +20,11 @@ Cc: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
         Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Message-ID: <20180508205005.GC15608@redhat.com>
+References: <20180423233046.21476-5-logang@deltatee.com>
  <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
  <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
  <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
@@ -30,45 +34,48 @@ References: <20180423233046.21476-1-logang@deltatee.com>
  <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
  <20180508141331.7cd737cb@w520.home>
  <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
- <20180508144341.0441b676@w520.home>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <a524127a-3557-3dff-971c-dfe94ba5a01c@deltatee.com>
-Date: Tue, 8 May 2018 14:49:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180508144341.0441b676@w520.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, helgaas@kernel.org, christian.koenig@amd.com, alex.williamson@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, May 08, 2018 at 02:19:05PM -0600, Logan Gunthorpe wrote:
+> 
+> 
+> On 08/05/18 02:13 PM, Alex Williamson wrote:
+> > Well, I'm a bit confused, this patch series is specifically disabling
+> > ACS on switches, but per the spec downstream switch ports implementing
+> > ACS MUST implement direct translated P2P.  So it seems the only
+> > potential gap here is the endpoint, which must support ATS or else
+> > there's nothing for direct translated P2P to do.  The switch port plays
+> > no part in the actual translation of the request, ATS on the endpoint
+> > has already cached the translation and is now attempting to use it.
+> > For the switch port, this only becomes a routing decision, the request
+> > is already translated, therefore ACS RR and EC can be ignored to
+> > perform "normal" (direct) routing, as if ACS were not present.  It would
+> > be a shame to go to all the trouble of creating this no-ACS mode to find
+> > out the target hardware supports ATS and should have simply used it, or
+> > we should have disabled the IOMMU altogether, which leaves ACS disabled.
+> 
+> Ah, ok, I didn't think it was the endpoint that had to implement ATS.
+> But in that case, for our application, we need NVMe cards and RDMA NICs
+> to all have ATS support and I expect that is just as unlikely. At least
+> none of the endpoints on my system support it. Maybe only certain GPUs
+> have this support.
 
+I think there is confusion here, Alex properly explained the scheme
+PCIE-device do a ATS request to the IOMMU which returns a valid
+translation for a virtual address. Device can then use that address
+directly without going through IOMMU for translation.
 
-On 08/05/18 02:43 PM, Alex Williamson wrote:
-> Yes, GPUs seem to be leading the pack in implementing ATS.  So now the
-> dumb question, why not simply turn off the IOMMU and thus ACS?  The
-> argument of using the IOMMU for security is rather diminished if we're
-> specifically enabling devices to poke one another directly and clearly
-> this isn't favorable for device assignment either.  Are there target
-> systems where this is not a simple kernel commandline option?  Thanks,
+ATS is implemented by the IOMMU not by the device (well device implement
+the client side of it). Also ATS is meaningless without something like
+PASID as far as i know.
 
-Well, turning off the IOMMU doesn't necessarily turn off ACS. We've run
-into some bios's that set the bits on boot (which is annoying).
-
-I also don't expect people will respond well to making the IOMMU and P2P
-exclusive. The IOMMU is often used for more than just security and on
-many platforms it's enabled by default. I'd much rather allow IOMMU use
-but have fewer isolation groups in much the same way as if you had PCI
-bridges that didn't support ACS.
-
-Logan
+Cheers,
+Jérôme
