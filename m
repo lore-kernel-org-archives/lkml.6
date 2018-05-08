@@ -1,87 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753716AbeEHAaI (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:30:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57858 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753503AbeEHAaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:30:05 -0400
-Subject: Re: [PATCH v7 3/5] cpuset: Add a root-only cpus.isolated v2 control
- file
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Ingo Molnar <mingo@redhat.com>,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>
-References: <1524145624-23655-1-git-send-email-longman@redhat.com>
- <1524145624-23655-4-git-send-email-longman@redhat.com>
- <20180502140835.GK12180@hirez.programming.kicks-ass.net>
-From: Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <04f33505-1256-461e-917c-175869d6dd24@redhat.com>
-Date: Mon, 7 May 2018 20:30:02 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1753765AbeEHAba (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:31:30 -0400
+Received: from mail-ot0-f193.google.com ([74.125.82.193]:40244 "EHLO
+        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753085AbeEHAb2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 20:31:28 -0400
+X-Google-Smtp-Source: AB8JxZrb1bcUBp18pv8wGt6d4EONZIHBx0gkY7ZT47iF5A4MA4h1OLE1E4ymiLZztwZ6LcywyiRzltgo9hQ1avTBWJs=
 MIME-Version: 1.0
-In-Reply-To: <20180502140835.GK12180@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+In-Reply-To: <1525585714-17548-1-git-send-email-wang6495@umn.edu>
+References: <1525585714-17548-1-git-send-email-wang6495@umn.edu>
+From: adam radford <aradford@gmail.com>
+Date: Mon, 7 May 2018 17:31:27 -0700
+Message-ID: <CAHtARFFcrKnCtaH8hSLEFnia_pphL8UJ24Oxy=_r77fPRq5j0Q@mail.gmail.com>
+Subject: Re: [PATCH] scsi: 3w-xxxx: fix a missing-check bug
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2018 10:08 AM, Peter Zijlstra wrote:
-> On Thu, Apr 19, 2018 at 09:47:02AM -0400, Waiman Long wrote:
->> diff --git a/Documentation/cgroup-v2.txt b/Documentation/cgroup-v2.txt
->> index c970bd7..8d89dc2 100644
->> --- a/Documentation/cgroup-v2.txt
->> +++ b/Documentation/cgroup-v2.txt
->> @@ -1484,6 +1484,31 @@ Cpuset Interface Files
->>  	a subset of "cpuset.cpus".  Its value will be affected by CPU
->>  	hotplug events.
->>  
->> +  cpuset.cpus.isolated
->> +	A read-write multiple values file which exists on root cgroup
->> +	only.
->> +
->> +	It lists the CPUs that have been withdrawn from the root cgroup
->> +	for load balancing.  These CPUs can still be allocated to child
->> +	cpusets with load balancing enabled, if necessary.
->> +
->> +	If a child cpuset contains only an exclusive set of CPUs that are
->> +	a subset of the isolated CPUs and with load balancing enabled,
->> +	these CPUs will be load balanced on a separate root domain from
->> +	the one in the root cgroup.
->> +
->> +	Just putting the CPUs into "cpuset.cpus.isolated" will be
->> +	enough to disable load balancing on those CPUs as long as they
->> +	do not appear in a child cpuset with load balancing enabled.
->> +	Fine-grained control of cpu isolation can also be done by
->> +	putting these isolated CPUs into child cpusets with load
->> +	balancing disabled.
->> +
->> +	The "cpuset.cpus.isolated" should be set up before child
->> +	cpusets are created.  Once child cpusets are present, changes
->> +	to "cpuset.cpus.isolated" will not be allowed if the CPUs that
->> +	change their states are in any of the child cpusets.
->> +
-> So I see why you did this, but it is _really_ ugly and breaks the
-> container invariant.
+On Sat, May 5, 2018 at 10:48 PM, Wenwen Wang <wang6495@umn.edu> wrote:
+> In tw_chrdev_ioctl(), the length of the data buffer is firstly copied from
+> the userspace pointer 'argp' and saved to the kernel object
+> 'data_buffer_length'. Then a security check is performed on it to make sure
+> that the length is not more than 'TW_MAX_IOCTL_SECTORS * 512'. Otherwise,
+> an error code -EINVAL is returned. If the security check is passed, the
+> entire ioctl command is copied again from the 'argp' pointer and saved to
+> the kernel object 'tw_ioctl'. Then, various operations are performed on
+> 'tw_ioctl' according to the 'cmd'. Given that the 'argp' pointer resides in
+> userspace, a malicious userspace process can race to change the buffer
+> length between the two copies. This way, the user can bypass the security
+> check and inject invalid data buffer length. This can cause potential
+> security issues in the following execution.
 >
-> Ideally we'd make the root group less special, not more special.
+> This patch checks the buffer length obtained in the second copy. An error
+> code -EINVAL will be returned if it is not same as the original one in the
+> first copy.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  drivers/scsi/3w-xxxx.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/scsi/3w-xxxx.c b/drivers/scsi/3w-xxxx.c
+> index 33261b6..ef79194 100644
+> --- a/drivers/scsi/3w-xxxx.c
+> +++ b/drivers/scsi/3w-xxxx.c
+> @@ -919,6 +919,10 @@ static long tw_chrdev_ioctl(struct file *file, unsigned int cmd, unsigned long a
+>         /* Now copy down the entire ioctl */
+>         if (copy_from_user(tw_ioctl, argp, data_buffer_length + sizeof(TW_New_Ioctl) - 1))
+>                 goto out2;
+> +       if (tw_ioctl->data_buffer_length != data_buffer_length) {
+> +               retval = -EINVAL;
+> +               goto out2;
+> +       }
+>
+>         passthru = (TW_Passthru *)&tw_ioctl->firmware_command;
+>
+> --
+> 2.7.4
+>
 
-Yes, I am planning to make the root cgroup less special by putting a new
-isolation flag into all the non-root cgroup.
+I would drop this patch and check for !capable(CAP_SYS_ADMIN) in
+tw_chrdev_open() instead.
 
-The container invariant thing, however, is a bit hard to do. Do we
-really need a container root to behave exactly like the real root? I
-guess we can make that happen if we really want to, but it will
-certainly make the code more complex. So it is a trade-off about what is
-worth to do and what is not.
-
-Cheers,
-Longman
+-Adam
