@@ -1,39 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqLY1+jFZ93joEY5XEhq/W9hrR2Ig+n5CQUDM2W3jJQUCrxeeZ8DV9n+j8ebK8+cDsFZUlp
-ARC-Seal: i=1; a=rsa-sha256; t=1525767285; cv=none;
+X-Google-Smtp-Source: AB8JxZqyAh9hu8f21fme+ZKVnbYM8k69Ty0cf8VEGo9MrmkvWzRjKMD34rcN8A6BqS+3wwoXn+XE
+ARC-Seal: i=1; a=rsa-sha256; t=1525767282; cv=none;
         d=google.com; s=arc-20160816;
-        b=yJbQx9WDr6nngave7xCGMsV/JJUW76Ix7HlXv0Thg+wfAziEyu318VHfSL3UUKEJIi
-         E0V1eLsK57Iw/TFAeK/8pwr/bmZkjFxVBo+YFO7B1PDHqlsGYI90PMU5liAMyl2byaIZ
-         09IMxl2w12wbJS8u+KSnV93YdSVJ3i0WbILn94Lkh5n2NtOQ3Y+aMcCYCvu9xXZiGWgk
-         L+VP2ZVGqmRcHttCbMbvpAvtBbKVPvektM6/oPVdollT91u+xeB+YpUmqn9JUrJg9BLA
-         gzikC2vXSz+M3IXcxmtznEeEhh397kPevKRJWCn0hJkMZ5UymITPaP9bf+gKKOIrwbeo
-         zPyw==
+        b=dTSbly7ogmlor0j97EdI7QCFGR256zn9JY6JVQLsNjSkgl4alvCcf74Tk7XIYL4kdx
+         +Hc7DC5ly9pRdtcKwfAORjZyx19l6rQMXgNK9HFNBhD+CLbM1twpK3Xju9tnnhiC1NnE
+         xB+8JklbAm3/WhTGlQie0M3g7c2TBsJOr+d0EW2UTKqdNudBtEJ5pD3I2DkSfczclSI0
+         yT/L4+zULdTbCFQI0QzlAGh46TNqzKUDi27buFoxZqhLyQkA10QFnxd10wRBRJP66sDZ
+         Cv2Chs9R+lf2wqvYWvrQKM3YgOHShtpuFt20KMYAU2StbcGNFCrXKdM68D+jEcZY/Ub/
+         HLsw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=GlqXTf5MGDedpQOKjc79Nkz0WzNNjxpP/iHvaNNh4b4=;
-        b=rhlkxVYAthtdgwRtI8pStDdVtyVsx4ra2JCvPaWDBKXonX0mGKhtMKhGr9MnHKoHp2
-         nrXUhZpv6OD5Gk9uf8u0jHS3ioDIz8eEpmp/vZOKE6nHNmt2C6ymJcDyOm9MgZ4Z+djH
-         43SAM3DeeFmUd5R+XPkGEnLs0VH72qNrgnUGYRDEyhtUUVwGUC1x2CA7MgCiT3n1a44Y
-         YXDb1RY5aJN25HhJLlU/TTJbHWcotizZbr0AevRdSIK6flbrnhv2yzq0FpRCpv2T2+3c
-         W7jsVwu6KLuoUy5xQU8beRjkFgid11CccY9ptPKRkIuinhji/TKZDK0gAR3CuzAH4NMJ
-         MsLQ==
+        bh=Yktpmr/G2GG36ojIGqS9BNaloENB5IRHp9pRJtmjl24=;
+        b=hrkyp5NMYwd84nP2OzT0TPYB3sF5S2fdkr+Y+rtcZNMchRZccZTvLISKqIAaNTLoi3
+         5EEnrldm2O5JWb/qI/DP3vQdrjEiNFHOg3wwuChBGdl8aP9rXppRWw2VYUTnoB3StzOc
+         K9DccauKM5/Rzhk6bbJUu3d9uAUab6nd6m7a7k8xmDLHIFXkl4JoEe8nUFYDc+eJck/C
+         6p465+6m/eYtH3Sdw8k5enRB1REah4SfW5K68DYzi9+C8W3Se5sDK6YGjftDSQVWRVEX
+         GiXhLk9j4BHduzS/zDbfyzgFi0+Kih15+X3rUCIRSAMbwNSu5lkLJCee9nljhx1UkCpb
+         cmTQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=e7YeDNUI;
+       dkim=pass header.i=@kernel.org header.s=default header.b=n07dnfsP;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=e7YeDNUI;
+       dkim=pass header.i=@kernel.org header.s=default header.b=n07dnfsP;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Larry Finger <Larry.Finger@lwfinger.net>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 18/43] rtlwifi: cleanup 8723be ant_sel definition
-Date: Tue,  8 May 2018 10:10:37 +0200
-Message-Id: <20180508074006.993025281@linuxfoundation.org>
+	DaeRyong Jeong <threeearcat@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 09/43] ALSA: seq: Fix races at MIDI encoding in snd_virmidi_output_trigger()
+Date: Tue,  8 May 2018 10:10:28 +0200
+Message-Id: <20180508074005.429935815@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -43,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882863603452089?=
-X-GMAIL-MSGID: =?utf-8?q?1599882957799287449?=
+X-GMAIL-THRID: =?utf-8?q?1599882788133987558?=
+X-GMAIL-MSGID: =?utf-8?q?1599882954744226598?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,144 +51,51 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit af8a41cccf8f469165c6debc8fe07c5fd2ca501a upstream.
+commit 8f22e52528cc372b218b5f100457469615c733ce upstream.
 
-Some HP laptops have only a single wifi antenna. This would not be a
-problem except that they were shipped with an incorrectly encoded
-EFUSE. It should have been possible to open the computer and transfer
-the antenna connection to the other terminal except that such action
-might void the warranty, and moving the antenna broke the Windows
-driver. The fix was to add a module option that would override the
-EFUSE encoding. That was done with commit c18d8f509571 ("rtlwifi:
-rtl8723be: Add antenna select module parameter"). There was still a
-problem with Bluetooth coexistence, which was addressed with commit
-baa170229095 ("rtlwifi: btcoexist: Implement antenna selection").
-There were still problems, thus there were commit 0ff78adeef11
-("rtlwifi: rtl8723be: fix ant_sel code") and commit 6d6226928369
-("rtlwifi: btcoexist: Fix antenna selection code"). Despite all these
-attempts at fixing the problem, the code is not yet right. A proper
-fix is important as there are now instances of laptops having
-RTL8723DE chips with the same problem.
+The sequencer virmidi code has an open race at its output trigger
+callback: namely, virmidi keeps only one event packet for processing
+while it doesn't protect for concurrent output trigger calls.
 
-The module parameter ant_sel is used to control antenna number and path.
-At present enum ANT_{X2,X1} is used to define the antenna number, but
-this choice is not intuitive, thus change to a new enum ANT_{MAIN,AUX}
-to make it more readable. This change showed examples where incorrect
-values were used. It was also possible to remove a workaround in
-halbtcoutsrc.c.
+snd_virmidi_output_trigger() tries to process the previously
+unfinished event before starting encoding the given MIDI stream, but
+this is done without any lock.  Meanwhile, if another rawmidi stream
+starts the output trigger, this proceeds further, and overwrites the
+event package that is being processed in another thread.  This
+eventually corrupts and may lead to the invalid memory access if the
+event type is like SYSEX.
 
-The experimental results with single antenna connected to specific path
-are now as follows:
-  ant_sel  ANT_MAIN(#1)  ANT_AUX(#2)
-     0        -8            -62
-     1        -62           -10
-     2        -6            -60
+The fix is just to move the spinlock to cover both the pending event
+and the new stream.
 
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Fixes: c18d8f509571 ("rtlwifi: rtl8723be: Add antenna select module parameter")
-Fixes: baa170229095 ("rtlwifi: btcoexist: Implement antenna selection")
-Fixes: 0ff78adeef11 ("rtlwifi: rtl8723be: fix ant_sel code")
-Fixes: 6d6226928369 ("rtlwifi: btcoexist: Fix antenna selection code")
-Cc: Stable <stable@vger.kernel.org> # 4.7+
-Reviewed-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The bug was spotted by a new fuzzer, RaceFuzzer.
+
+BugLink: http://lkml.kernel.org/r/20180426045223.GA15307@dragonet.kaist.ac.kr
+Reported-by: DaeRyong Jeong <threeearcat@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c |   15 ----------
- drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c           |   11 ++++---
- drivers/net/wireless/realtek/rtlwifi/wifi.h                   |    5 +++
- 3 files changed, 12 insertions(+), 19 deletions(-)
+ sound/core/seq/seq_virmidi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.c
-@@ -173,16 +173,6 @@ static u8 halbtc_get_wifi_central_chnl(s
- 
- u8 rtl_get_hwpg_single_ant_path(struct rtl_priv *rtlpriv)
- {
--	struct rtl_mod_params *mod_params = rtlpriv->cfg->mod_params;
--
--	/* override ant_num / ant_path */
--	if (mod_params->ant_sel) {
--		rtlpriv->btcoexist.btc_info.ant_num =
--			(mod_params->ant_sel == 1 ? ANT_X2 : ANT_X1);
--
--		rtlpriv->btcoexist.btc_info.single_ant_path =
--			(mod_params->ant_sel == 1 ? 0 : 1);
--	}
- 	return rtlpriv->btcoexist.btc_info.single_ant_path;
- }
- 
-@@ -193,7 +183,6 @@ u8 rtl_get_hwpg_bt_type(struct rtl_priv
- 
- u8 rtl_get_hwpg_ant_num(struct rtl_priv *rtlpriv)
- {
--	struct rtl_mod_params *mod_params = rtlpriv->cfg->mod_params;
- 	u8 num;
- 
- 	if (rtlpriv->btcoexist.btc_info.ant_num == ANT_X2)
-@@ -201,10 +190,6 @@ u8 rtl_get_hwpg_ant_num(struct rtl_priv
- 	else
- 		num = 1;
- 
--	/* override ant_num / ant_path */
--	if (mod_params->ant_sel)
--		num = (mod_params->ant_sel == 1 ? ANT_X2 : ANT_X1) + 1;
--
- 	return num;
- }
- 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8723be/hw.c
-@@ -846,6 +846,9 @@ static bool _rtl8723be_init_mac(struct i
- 		return false;
- 	}
- 
-+	if (rtlpriv->cfg->ops->get_btc_status())
-+		rtlpriv->btcoexist.btc_ops->btc_power_on_setting(rtlpriv);
-+
- 	bytetmp = rtl_read_byte(rtlpriv, REG_MULTI_FUNC_CTRL);
- 	rtl_write_byte(rtlpriv, REG_MULTI_FUNC_CTRL, bytetmp | BIT(3));
- 
-@@ -2696,21 +2699,21 @@ void rtl8723be_read_bt_coexist_info_from
- 		rtlpriv->btcoexist.btc_info.bt_type = BT_RTL8723B;
- 		rtlpriv->btcoexist.btc_info.ant_num = (value & 0x1);
- 		rtlpriv->btcoexist.btc_info.single_ant_path =
--			 (value & 0x40);	/*0xc3[6]*/
-+			 (value & 0x40 ? ANT_AUX : ANT_MAIN);	/*0xc3[6]*/
- 	} else {
- 		rtlpriv->btcoexist.btc_info.btcoexist = 0;
- 		rtlpriv->btcoexist.btc_info.bt_type = BT_RTL8723B;
- 		rtlpriv->btcoexist.btc_info.ant_num = ANT_X2;
--		rtlpriv->btcoexist.btc_info.single_ant_path = 0;
-+		rtlpriv->btcoexist.btc_info.single_ant_path = ANT_MAIN;
- 	}
- 
- 	/* override ant_num / ant_path */
- 	if (mod_params->ant_sel) {
- 		rtlpriv->btcoexist.btc_info.ant_num =
--			(mod_params->ant_sel == 1 ? ANT_X2 : ANT_X1);
-+			(mod_params->ant_sel == 1 ? ANT_X1 : ANT_X2);
- 
- 		rtlpriv->btcoexist.btc_info.single_ant_path =
--			(mod_params->ant_sel == 1 ? 0 : 1);
-+			(mod_params->ant_sel == 1 ? ANT_AUX : ANT_MAIN);
- 	}
- }
- 
---- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
-@@ -2708,6 +2708,11 @@ enum bt_ant_num {
- 	ANT_X1 = 1,
- };
- 
-+enum bt_ant_path {
-+	ANT_MAIN = 0,
-+	ANT_AUX = 1,
-+};
-+
- enum bt_co_type {
- 	BT_2WIRE = 0,
- 	BT_ISSC_3WIRE = 1,
+--- a/sound/core/seq/seq_virmidi.c
++++ b/sound/core/seq/seq_virmidi.c
+@@ -174,12 +174,12 @@ static void snd_virmidi_output_trigger(s
+ 			}
+ 			return;
+ 		}
++		spin_lock_irqsave(&substream->runtime->lock, flags);
+ 		if (vmidi->event.type != SNDRV_SEQ_EVENT_NONE) {
+ 			if (snd_seq_kernel_client_dispatch(vmidi->client, &vmidi->event, in_atomic(), 0) < 0)
+-				return;
++				goto out;
+ 			vmidi->event.type = SNDRV_SEQ_EVENT_NONE;
+ 		}
+-		spin_lock_irqsave(&substream->runtime->lock, flags);
+ 		while (1) {
+ 			count = __snd_rawmidi_transmit_peek(substream, buf, sizeof(buf));
+ 			if (count <= 0)
