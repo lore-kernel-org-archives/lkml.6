@@ -1,79 +1,71 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753611AbeEHAUo (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:20:44 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:41557 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753586AbeEHAUm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:20:42 -0400
-X-Google-Smtp-Source: AB8JxZquS8b8vpdP7YrzvxFzU388ZM1AxT1crEDT/hxnmJwHK8VCaT8CVlwRlgA+etA6yaTNwLVmlVi9fIdt3BdN/qA=
+        id S1753685AbeEHAVL (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:21:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:35153 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753660AbeEHAVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 20:21:09 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 8 May 2018 10:21:01 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>
+Subject: Re: linux-next: build warning after merge of the netfilter-next
+ tree
+Message-ID: <20180508102101.768d5c52@canb.auug.org.au>
+In-Reply-To: <20180507105519.1d34f19e@canb.auug.org.au>
+References: <20180507105519.1d34f19e@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <1525585856-17639-1-git-send-email-wang6495@umn.edu>
-References: <1525585856-17639-1-git-send-email-wang6495@umn.edu>
-From: adam radford <aradford@gmail.com>
-Date: Mon, 7 May 2018 17:20:41 -0700
-Message-ID: <CAHtARFHhLtG=LuQxqwB4eM5yUdZMkb4Xu0wkuu5nrOL6GQZVTw@mail.gmail.com>
-Subject: Re: [PATCH] scsi: 3ware: fix a missing-check bug
-To: Wenwen Wang <wang6495@umn.edu>
-Cc: Kangjie Lu <kjlu@umn.edu>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/DRyahoiRLh3pKKmFXe7CPkb"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 5, 2018 at 10:50 PM, Wenwen Wang <wang6495@umn.edu> wrote:
-> In twl_chrdev_ioctl(), the ioctl driver command is firstly copied from the
-> userspace pointer 'argp' and saved to the kernel object 'driver_command'.
-> Then a security check is performed on the data buffer size indicated by
-> 'driver_command', which is 'driver_command.buffer_length'. If the security
-> check is passed, the entire ioctl command is copied again from the 'argp'
-> pointer and saved to the kernel object 'tw_ioctl'. Then, various operations
-> are performed on 'tw_ioctl' according to the 'cmd'. Given that the 'argp'
-> pointer resides in userspace, a malicious userspace process can race to
-> change the buffer size between the two copies. This way, the user can
-> bypass the security check and inject invalid data buffer size. This can
-> cause potential security issues in the following execution.
->
-> This patch checks the buffer size obtained in the second copy. An error
-> code -EINVAL will be returned if it is not same as the original one in the
-> first copy.
->
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-> ---
->  drivers/scsi/3w-sas.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
-> index cf9f2a0..ea41969 100644
-> --- a/drivers/scsi/3w-sas.c
-> +++ b/drivers/scsi/3w-sas.c
-> @@ -757,6 +757,11 @@ static long twl_chrdev_ioctl(struct file *file, unsigned int cmd, unsigned long
->         /* Now copy down the entire ioctl */
->         if (copy_from_user(tw_ioctl, argp, driver_command.buffer_length + sizeof(TW_Ioctl_Buf_Apache) - 1))
->                 goto out3;
-> +       if (tw_ioctl->driver_command.buffer_length !=
-> +           driver_command.buffer_length) {
-> +               retval = -EINVAL;
-> +               goto out3;
-> +       }
->
->         /* See which ioctl we are doing */
->         switch (cmd) {
-> --
-> 2.7.4
->
+--Sig_/DRyahoiRLh3pKKmFXe7CPkb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-1. Returning -EINVAL after the copy_from_user() doesn't prevent any
-invalid copy down to kernel mode from happening.
-2. twl_chrdev_open() checks for capable(CAP_SYS_ADMIN):
+Hi all,
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/scsi/3w-sas.c#n834
+On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the netfilter-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>=20
+> ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type =
+without #include <linux/types.h>
+>=20
+> Introduced by commit
+>=20
+>   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure=
+ from xt_osf")
 
-I don't see the point in this patch.
+This warning now occurs after the merge of the net-next tree.
+--=20
+Cheers,
+Stephen Rothwell
 
--Adam
+--Sig_/DRyahoiRLh3pKKmFXe7CPkb
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw7W0ACgkQAVBC80lX
+0Gx8WwgAoQEm9540+l+yDdKza3hAvDXzRRnaA5Ie/W9ttfsz2xjbBgrV3nax1pZq
+tfi5UmrnoBicN9bpCCQ8AWFXQhqim5KhePVU3LfCCyHSwcOlJbOSnda6aAQxVrhN
+3LdEWFbLdQilRpJb7+FbacLmLTbU3y6vbwMe13pemB+m/F9lLH+sLdXBjW7ADWv5
+/ZDI3TJ40ynmjBGOfjJHTuQaKktZDNuDQXOMcoOz110jK4LU1y1LSV743iB3CnCD
+DZD1h8+bqaCCELhhtFsY13p5ESjRPixh2wd+QIIlJ66emH3nWr7sDYKohFd/f2h6
+2y3EXvPS03/Rj4K+SsAlte2/liiEpg==
+=t49L
+-----END PGP SIGNATURE-----
+
+--Sig_/DRyahoiRLh3pKKmFXe7CPkb--
