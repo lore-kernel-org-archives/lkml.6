@@ -1,176 +1,71 @@
-Return-Path: <lizhijian@cn.fujitsu.com>
-X-Google-Smtp-Source: AB8JxZoRsnF6EmkNjYNsJofK7aESmjCplbbvNH94UIeQDt+zJZ+WiYfSAbsgC09MI7W1Li6LmkLj
-ARC-Seal: i=1; a=rsa-sha256; t=1525770888; cv=none;
+Return-Path: <dave.hansen@intel.com>
+X-Google-Smtp-Source: AB8JxZph+A7dqruj5TG28ssP9E9bbveOn0Z79xBbcOL0LyxWceAITBBRov6iZw67n2ZQcgm2aLrh
+ARC-Seal: i=1; a=rsa-sha256; t=1525797007; cv=none;
         d=google.com; s=arc-20160816;
-        b=DA4wEH5lAMN+ErAP/tvkIY1Wkmq+5RRsuGUOUz6Ui/d9JH+OxweTrgCApTXjKS9UcE
-         dDgMtpE+N2Ul8V3mMBmYI2BBHLvUU/BQgvZUbkCryp8BhNbOZyhlyK/cIZVcXj7e3WTV
-         33PJ627VCLezq2hErNCTGwNncqDyftPK3ESPMw99kMnSvmAdY9Ocf0ByBpc8XUsBvMLS
-         lIXzF/SeQXS/E0xJwvunTMqpGPK8m7tZ4B1ue8O3MtczO98gd6kgIcZBo3/1aQQqvYME
-         OR5WK0i5w7FT6wp1puRFQElZ9WJd9Ls+1XFyBYyTZVt6Mq8/0bkmMXkyKn5tV/bRE/ZE
-         ZF3w==
+        b=WlwCO/UixTqT9AYMnrL62dBJw+lgfuUHKYDVMyQvDJ3D7if9AYHil0YneJF31wY0Hr
+         eU8g4tJcpeifwNOd1QrOJrNPJ+pW/DNwaBclU3DHvXQ7Y8AsUFFX4XUoJeb3QycM1Y9d
+         KxDq72qVAN0yPJl7rNb4StFmiBnA7oJSM8en5inaH4A1BSVoWbEARb7xCztIfyPhe4Wd
+         qbrtI3FJz5PSi3Ynw60SwXxKC6HV9gQvuAoHY8PlONAXfzMaeA1bD7VaQ7OAqkMbISlq
+         QTGwOutpwdSb+PnSX66b0Frl/VPXxR3F9q5n3zDAL00utyvalK57TFPrU3VLkp9kWiKh
+         Vs1A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
-         :from:arc-authentication-results;
-        bh=brFEqMnuExf2/K+8+4n1S/+f7oHwKdXMvaNs2mE3RAE=;
-        b=ng4JZVx9rGhlu6hk6b2cxaFqFlgV6f4h6N1o0oDPdnAdiqpqGDMNuH53qgItZ7gB0S
-         QrU66KJDElwtCwairxH6IEOHyrXZFc8uHytnZAP2yjIk70D82YSYRXZWK4dw6VEOSo1l
-         PpEUpiLlMOi2aR4FQXL0HaHL8KVDIth4IH1m0/MagqQG7YDrpM+bgiKxfvWHaevyeMDu
-         8ao+kv+aekR6o399yAtCKmjj9xE23/TKdglJdNchjsyVHLMtwqtPhgZJFtt8cMDJfs5/
-         7o70158aRRIFXUsndZrWKuPIr4hRVgC8q4Wvk5yZYYTDZzEA8v1+QA6wX7snSPlMhmYX
-         ZETQ==
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:openpgp:from:cc:references:to:subject
+         :arc-authentication-results;
+        bh=wGnwfO3FDAclkoHyuuNKwKho+KvoJOgzwAWnG7yKnrA=;
+        b=K3Q38HMTsEc8AxgKw9VWDjRYy48XDJINTqsjS73stJh+iwZqhPTofGVnrlq7EPN01m
+         z069OA4TFzSu/j5qPxJ/fo3ScEB33ZwGwUUjHLKNj9iYqOHZmK5Uh4P7bBa3hQJzYM8Z
+         Coyvr1j+VjYexwIBdBVELm7EFYlZLveXbxg0arKOgCcaY80YipSsKwxJ0cArQq+ixzTK
+         iUnwZVemjnnZb+sl17VYLxxYz9CH7giCP2Mm++rRudXd9PYz2fSI93+ngsRojW54H+i9
+         uROm9gy7L4R+lF3fOGg56o0FOe5mMKBU/o9xRM/p8pE8dHU0WOVOMjBiOYSAU5fyRrJH
+         bjNw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of lizhijian@cn.fujitsu.com designates 183.91.158.132 as permitted sender) smtp.mailfrom=lizhijian@cn.fujitsu.com
+       spf=pass (google.com: domain of dave.hansen@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of lizhijian@cn.fujitsu.com designates 183.91.158.132 as permitted sender) smtp.mailfrom=lizhijian@cn.fujitsu.com
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200";
-   d="scan'208";a="39685156"
-From: Li Zhijian <lizhijian@cn.fujitsu.com>
-To: <shuah@kernel.org>, <linux-kselftest@vger.kernel.org>
-CC: <mingo@kernel.org>, <tglx@linutronix.de>, <gregkh@linuxfoundation.org>,
-	<pombredanne@nexb.com>, <ebiederm@xmission.com>, <luto@kernel.org>,
-	<dave.hansen@linux.intel.com>, <linux-kernel@vger.kernel.org>,
-	<philip.li@intel.com>, <leist.fnst@cn.fujitsu.com>, <zhijianx.li@intel.com>,
-	Li Zhijian <lizhijian@cn.fujitsu.com>
-Subject: [PATCH 2/2] tools/testing/selftests/x86: fix error: conflicting types for 'pkey_get|pkey_set'
-Date: Tue, 8 May 2018 17:14:30 +0800
-Message-ID: <1525770870-19067-2-git-send-email-lizhijian@cn.fujitsu.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
+       spf=pass (google.com: domain of dave.hansen@intel.com designates 134.134.136.31 as permitted sender) smtp.mailfrom=dave.hansen@intel.com
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
+   d="scan'208";a="39654549"
+Subject: Re: [PATCH 2/2] tools/testing/selftests/x86: fix error: conflicting
+ types for 'pkey_get|pkey_set'
+To: Li Zhijian <lizhijian@cn.fujitsu.com>, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org
 References: <1525770870-19067-1-git-send-email-lizhijian@cn.fujitsu.com>
+ <1525770870-19067-2-git-send-email-lizhijian@cn.fujitsu.com>
+Cc: mingo@kernel.org, tglx@linutronix.de, gregkh@linuxfoundation.org,
+ pombredanne@nexb.com, ebiederm@xmission.com, luto@kernel.org,
+ linux-kernel@vger.kernel.org, philip.li@intel.com,
+ leist.fnst@cn.fujitsu.com, zhijianx.li@intel.com
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Message-ID: <125eb810-1d48-394d-9665-40da64326fbb@intel.com>
+Date: Tue, 8 May 2018 09:30:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.226.45]
-X-yoursite-MailScanner-ID: C6B9D472400A.A13C3
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: lizhijian@cn.fujitsu.com
+In-Reply-To: <1525770870-19067-2-git-send-email-lizhijian@cn.fujitsu.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599886734480796496?=
-X-GMAIL-MSGID: =?utf-8?q?1599886734480796496?=
+X-GMAIL-MSGID: =?utf-8?q?1599914122726463660?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-pkey_get() and pkey_set() are implemented since glibc-2.27, here just
-rename pkey_get|pkey_set to _pkey_get|_pkey_set simply
+On 05/08/2018 02:14 AM, Li Zhijian wrote:
+> -u32 pkey_get(int pkey, unsigned long flags)
+> +u32 _pkey_get(int pkey, unsigned long flags)
+>  {
+>  	u32 mask = (PKEY_DISABLE_ACCESS|PKEY_DISABLE_WRITE);
+>  	u32 pkru = __rdpkru();
+> @@ -422,7 +426,7 @@ u32 pkey_get(int pkey, unsigned long flags)
+>  	return masked_pkru;
+>  }
 
-the compiling errors are like:
-------------
-protection_keys.c:399:5: error: conflicting types for 'pkey_get'
- u32 pkey_get(int pkey, unsigned long flags)
-     ^
-In file included from /usr/include/bits/mman-linux.h:115:0,
-                 from /usr/include/bits/mman.h:45,
-                 from /usr/include/sys/mman.h:41,
-                 from protection_keys.c:37:
-/usr/include/bits/mman-shared.h:64:5: note: previous declaration of 'pkey_get' was here
- int pkey_get (int __key) __THROW;
-     ^
-protection_keys.c:421:5: error: conflicting types for 'pkey_set'
- int pkey_set(int pkey, unsigned long rights, unsigned long flags)
-     ^
-In file included from /usr/include/bits/mman-linux.h:115:0,
-                 from /usr/include/bits/mman.h:45,
-                 from /usr/include/sys/mman.h:41,
-                 from protection_keys.c:37:
-/usr/include/bits/mman-shared.h:60:5: note: previous declaration of 'pkey_set' was here
- int pkey_set (int __key, unsigned int __access_rights) __THROW;
-     ^
-------------
+I'm not a huge fan of random underscores for undocumented reasons.  But,
+oh well.
 
-Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
----
- tools/testing/selftests/x86/protection_keys.c | 32 +++++++++++++++------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
-
-diff --git a/tools/testing/selftests/x86/protection_keys.c b/tools/testing/selftests/x86/protection_keys.c
-index 757bb16..ccbd81f 100644
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -397,10 +397,14 @@ pid_t fork_lazy_child(void)
- 	return forkret;
- }
- 
--#define PKEY_DISABLE_ACCESS    0x1
--#define PKEY_DISABLE_WRITE     0x2
-+#ifndef PKEY_DISABLE_ACCESS
-+# define PKEY_DISABLE_ACCESS    0x1
-+#endif
-+#ifndef PKEY_DISABLE_WRITE
-+# define PKEY_DISABLE_WRITE     0x2
-+#endif
- 
--u32 pkey_get(int pkey, unsigned long flags)
-+u32 _pkey_get(int pkey, unsigned long flags)
- {
- 	u32 mask = (PKEY_DISABLE_ACCESS|PKEY_DISABLE_WRITE);
- 	u32 pkru = __rdpkru();
-@@ -422,7 +426,7 @@ u32 pkey_get(int pkey, unsigned long flags)
- 	return masked_pkru;
- }
- 
--int pkey_set(int pkey, unsigned long rights, unsigned long flags)
-+int _pkey_set(int pkey, unsigned long rights, unsigned long flags)
- {
- 	u32 mask = (PKEY_DISABLE_ACCESS|PKEY_DISABLE_WRITE);
- 	u32 old_pkru = __rdpkru();
-@@ -456,15 +460,15 @@ void pkey_disable_set(int pkey, int flags)
- 		pkey, flags);
- 	pkey_assert(flags & (PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE));
- 
--	pkey_rights = pkey_get(pkey, syscall_flags);
-+	pkey_rights = _pkey_get(pkey, syscall_flags);
- 
--	dprintf1("%s(%d) pkey_get(%d): %x\n", __func__,
-+	dprintf1("%s(%d) _pkey_get(%d): %x\n", __func__,
- 			pkey, pkey, pkey_rights);
- 	pkey_assert(pkey_rights >= 0);
- 
- 	pkey_rights |= flags;
- 
--	ret = pkey_set(pkey, pkey_rights, syscall_flags);
-+	ret = _pkey_set(pkey, pkey_rights, syscall_flags);
- 	assert(!ret);
- 	/*pkru and flags have the same format */
- 	shadow_pkru |= flags << (pkey * 2);
-@@ -472,8 +476,8 @@ void pkey_disable_set(int pkey, int flags)
- 
- 	pkey_assert(ret >= 0);
- 
--	pkey_rights = pkey_get(pkey, syscall_flags);
--	dprintf1("%s(%d) pkey_get(%d): %x\n", __func__,
-+	pkey_rights = _pkey_get(pkey, syscall_flags);
-+	dprintf1("%s(%d) _pkey_get(%d): %x\n", __func__,
- 			pkey, pkey, pkey_rights);
- 
- 	dprintf1("%s(%d) pkru: 0x%x\n", __func__, pkey, rdpkru());
-@@ -487,24 +491,24 @@ void pkey_disable_clear(int pkey, int flags)
- {
- 	unsigned long syscall_flags = 0;
- 	int ret;
--	int pkey_rights = pkey_get(pkey, syscall_flags);
-+	int pkey_rights = _pkey_get(pkey, syscall_flags);
- 	u32 orig_pkru = rdpkru();
- 
- 	pkey_assert(flags & (PKEY_DISABLE_ACCESS | PKEY_DISABLE_WRITE));
- 
--	dprintf1("%s(%d) pkey_get(%d): %x\n", __func__,
-+	dprintf1("%s(%d) _pkey_get(%d): %x\n", __func__,
- 			pkey, pkey, pkey_rights);
- 	pkey_assert(pkey_rights >= 0);
- 
- 	pkey_rights |= flags;
- 
--	ret = pkey_set(pkey, pkey_rights, 0);
-+	ret = _pkey_set(pkey, pkey_rights, 0);
- 	/* pkru and flags have the same format */
- 	shadow_pkru &= ~(flags << (pkey * 2));
- 	pkey_assert(ret >= 0);
- 
--	pkey_rights = pkey_get(pkey, syscall_flags);
--	dprintf1("%s(%d) pkey_get(%d): %x\n", __func__,
-+	pkey_rights = _pkey_get(pkey, syscall_flags);
-+	dprintf1("%s(%d) _pkey_get(%d): %x\n", __func__,
- 			pkey, pkey, pkey_rights);
- 
- 	dprintf1("%s(%d) pkru: 0x%x\n", __func__, pkey, rdpkru());
--- 
-2.7.4
+Acked-by: Dave Hansen <dave.hansen@intel.com>
