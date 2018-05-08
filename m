@@ -1,5 +1,5 @@
 Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2483311-1525767545-2-17067912382393756726
+X-Cyrus-Session-Id: sloti22d1t05-2479957-1525767513-2-10657890369357483642
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
@@ -12,25 +12,25 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: stable-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525767545; b=h1k3xDRK7EOYOOXlcfDrAbqjtRf/AoAPd/3l+HzF6lH18PHYS9
-    ZWxlZagoAv5PuLcOqz5C+EqTCGsnJkHW229RDr7r2BJqKmySmyXseh2MgypDNBkW
-    6gDOYDRQArZX++lJfqJhkbGrURJ8hcC9y5eg+KFbiHndbyd0mzhCpTEoYCno/M1d
-    iPNKr7fcWFNyE72KXLNd9dWajf1qGjhif8Q62IJu3RcycyTrBx1DNMMUNgzzKJ3Z
-    2MTi2/eO/S9cnQysB84wpPpMsKbZliXN4Yk9pqivpyBvKDe8JhJZjx3J7j2/oC3T
-    ycxTZih7yrcGWDUmHCpmHyfUkUqdJMY6RT4g==
+    1525767512; b=LQuxWeBC0utXItlp+gIspTdnsGgcstRcrlAcyKym7Kre2eLNGg
+    8c5ypnd1e/or3FfiTw3SmSnDQ3ooZxNUMheD15fKR6iRMOdXTBPz6pvyks7QBP19
+    Oc2aWaVTHhialG1sMOFxllZu/rNWo4fG/qxXEFm6WN/77+H8MPCWC6ER/pBenRTK
+    32FHzC9flhPsKnxMVNbHnSnUeotP9GCo41Q1A7OCs6pwBbLag1vjmBIrg34XWEvX
+    KWhTE7gt0isUaPpzkJ14aewThiyB918DMM9mooBbCADLGMoM4V6/Lp06vjUlQb8a
+    4HU99/UTYy9iXE/kFL+oJtaMZaExIfMnaQMQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
     :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525767545; bh=nGTzBhLwv7uOn5JTomd7q9NPWvdpQd
-    xwIEs+aZDKPp0=; b=aaVfotjqsFTFVU0okeRHVWPThXpqfzv8rTs3VB+y1Caxg7
-    P7BEj3O//VCc/SIRDoMi4/nqOXBNY5xUkCYFHr3mc3ZXOsDgSLpvb9Hf+U4gRMQi
-    NyXwOtq+8Vq8MtgjOJOshDTSKNdm7H0NC3x4DaNLhy6c8DtNdBVASyLfXLyr8sgi
-    qk1Nr9rieyUrjSFn/MDcHYRyhXoWyXQ60tCkWBRtRtos+2VBnr6R4+dfy/FKjlBJ
-    lWpwtIVJPIB71nI+vYbgAWwOjkZThAdOq6eHx5u+Jm8vQ29W5u0IoOYAYYDkwm+M
-    wKim5Fct8C7S1udZKPCRkLO0i7WB1JReblfhPzfQ==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
+    :list-id; s=fm2; t=1525767512; bh=/bF0cPHLUcVAnkKQz09UFFykQ+fA+4
+    QAhUcZmhkq7Ws=; b=MruLnK8Jx+05QbD8tKQy+GgXqRWW+HhulmenO3MIX0I+o+
+    tqPp84anpP8YfeX6Gyv5o8gdddNY4SoF86kc4H9noT6v+z4DX+osDcgyJbFjrfSS
+    9f1sVCrDalgRWHbwoMfOKrPb2Ga49iWfLpc6pMNc+V9ZU1NlkMzAP3FNL+a279kU
+    Res/zD+G0r8ZDyULuY7NBItAo8rdQqFBiSvUVj29VrkV8v/9rlRHsRkmyjnmfu1I
+    rk9X5Uv91zPOlGeMQLmJKNOBGoQmqfscje+YkNrnKbcrj2zGwKjdHbaHTQ6oARm3
+    SfXfQ507oVR6y9nWyN+dvrv41+RBWq1/ttz3HWhg==
+ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=tHUzfgC8 x-bits=1024 x-keytype=rsa
+    header.i=@kernel.org header.b=ZaJ+a+md x-bits=1024 x-keytype=rsa
     x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
     header.from=linuxfoundation.org;
@@ -45,10 +45,10 @@ ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signature
     header.domain=linuxfoundation.org header.result=pass
     header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
+Authentication-Results: mx5.messagingengine.com;
     arc=none (no signatures found);
     dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=tHUzfgC8 x-bits=1024 x-keytype=rsa
+      header.i=@kernel.org header.b=ZaJ+a+md x-bits=1024 x-keytype=rsa
       x-algorithm=sha256 x-selector=default;
     dmarc=none (p=none,has-list-id=yes,d=none)
       header.from=linuxfoundation.org;
@@ -64,29 +64,31 @@ Authentication-Results: mx3.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfOmDoNqCRitFrOSlEK1pOFFL+d3SyR7LJPqblkojkmtqHFmdCNIi7mUB1nhJ7YoyRzXZhyVbcB/gXVlwPySLXFxwPckctsyiITp/6K4w3XFCzJIbH/Pa
-    yZlSdFqdT7TihK2C8G2YWmu+0xko7SKJlk8ZVPuinVxs0YE0VPhrLxIsFz/6YynHTHgHbDfO4FZjmzD0tjmM92IGC5SZppdHyFGq874hQPDaHnZymKYzNjLG
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+X-CM-Envelope: MS4wfMaTnea5o+RBLvfdCXe8HXQonu8tbQKb0h7XfrRM2aKEfQ4tdHmTmZAoD1QYq2GeZyn6BF5kLcxDK3sL9MUNFcC2IYxdYFO9HrJ3yaYYSDU91SAhMH+l
+    JQs8j0LBKRuoUAnj4iwLLDV/leplFBFYMbt7prf8FdCvi4EG/3zKDqaR9JJp79zqlMDiVDDVq+gPKCMu6BCPQez9I35VQ3gkHnz6Cfz7vdkb5IwTTQ5QpMAF
+X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=VnNF1IyMAAAA:8 a=ag1SF4gXAAAA:8 a=ljRKxemVoM8RlQu1PiUA:9 a=QEXdDO2ut3YA:10
-    a=Yupwre4RP9_Eg_Bd0iYG:22
+    a=1EsaE_6oAAAA:8 a=VwQbUJbxAAAA:8 a=ag1SF4gXAAAA:8 a=0gpIwUixcRr1avNuft0A:9
+    a=hWusq4ecZzsTxdkz:21 a=NczbeVWSBY4agPSk:21 a=QEXdDO2ut3YA:10
+    a=3ZumFrijQQ-2J9H5h8ct:22 a=AjGcO6oz07-iQ99wixmX:22 a=Yupwre4RP9_Eg_Bd0iYG:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933049AbeEHISE (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 04:18:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51490 "EHLO mail.kernel.org"
+        id S933065AbeEHISI (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 8 May 2018 04:18:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932999AbeEHISD (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 8 May 2018 04:18:03 -0400
+        id S932999AbeEHISG (ORCPT <rfc822;stable@vger.kernel.org>);
+        Tue, 8 May 2018 04:18:06 -0400
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.9 32/32] s390/facilites: use stfle_fac_list array size for MAX_FACILITY_BIT
-Date: Tue,  8 May 2018 10:11:12 +0200
-Message-Id: <20180508074013.907510255@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH 4.9 24/32] test_firmware: fix setting old custom fw path back on exit, second try
+Date: Tue,  8 May 2018 10:11:04 +0200
+Message-Id: <20180508074012.770557266@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
@@ -104,31 +106,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit 6f5165e864d240d15675cc2fb5a369d57e1f60d0 upstream.
+commit e538409257d0217a9bc715686100a5328db75a15 upstream.
 
-Use the actual size of the facility list array within the lowcore
-structure for the MAX_FACILITY_BIT define instead of a comment which
-states what this is good for. This makes it a bit harder to break
-things.
+Commit 65c79230576 tried to clear the custom firmware path on exit by
+writing a single space to the firmware_class.path parameter.  This
+doesn't work because nothing strips this space from the value stored
+and fw_get_filesystem_firmware() only ignores zero-length paths.
 
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Instead, write a null byte.
+
+Fixes: 0a8adf58475 ("test: add firmware_class loader test")
+Fixes: 65c79230576 ("test_firmware: fix setting old custom fw path back on exit")
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- arch/s390/include/asm/facility.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/include/asm/facility.h
-+++ b/arch/s390/include/asm/facility.h
-@@ -15,7 +15,7 @@
- #include <linux/preempt.h>
- #include <asm/lowcore.h>
- 
--#define MAX_FACILITY_BIT (256*8)	/* stfle_fac_list has 256 bytes */
-+#define MAX_FACILITY_BIT (sizeof(((struct lowcore *)0)->stfle_fac_list) * 8)
- 
- static inline void __set_facility(unsigned long nr, void *facilities)
- {
+---
+ tools/testing/selftests/firmware/fw_filesystem.sh |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+--- a/tools/testing/selftests/firmware/fw_filesystem.sh
++++ b/tools/testing/selftests/firmware/fw_filesystem.sh
+@@ -29,9 +29,11 @@ test_finish()
+ 		echo "$OLD_TIMEOUT" >/sys/class/firmware/timeout
+ 	fi
+ 	if [ "$OLD_FWPATH" = "" ]; then
+-		OLD_FWPATH=" "
++		# A zero-length write won't work; write a null byte
++		printf '\000' >/sys/module/firmware_class/parameters/path
++	else
++		echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
+ 	fi
+-	echo -n "$OLD_FWPATH" >/sys/module/firmware_class/parameters/path
+ 	rm -f "$FW"
+ 	rmdir "$FWPATH"
+ }
