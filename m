@@ -1,116 +1,178 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756024AbeEHV3y (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:29:54 -0400
-Received: from mail-he1eur01on0094.outbound.protection.outlook.com ([104.47.0.94]:43808
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932572AbeEHV3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:29:42 -0400
-From: "Wan, Jane (Nokia - US/Sunnyvale)" <jane.wan@nokia.com>
-To: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-CC: "Boris.Brezillon@bootlin.com" <Boris.Brezillon@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        "prabhakar.kushwaha@nxp.com" <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "jagdish.gediya@nxp.com" <jagdish.gediya@nxp.com>,
-        "shreeya.patel23498@gmail.com" <shreeya.patel23498@gmail.com>,
-        "Bos, Ties (Nokia - US/Sunnyvale)" <ties.bos@nokia.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 2/2] mtd: rawnand: fsl_ifc: use bit-wise majority to
- recover the contents of ONFI parameter
-Thread-Topic: [PATCH v3 2/2] mtd: rawnand: fsl_ifc: use bit-wise majority to
- recover the contents of ONFI parameter
-Thread-Index: AQHT5iFM6au6Hr/JoEiTOkjp4NR4i6Ql0FuAgACJ/TA=
-Date: Tue, 8 May 2018 21:29:38 +0000
-Message-ID: <VI1PR07MB161510CAD11811A897BBB328819A0@VI1PR07MB1615.eurprd07.prod.outlook.com>
-References: <1525710855-8159-1-git-send-email-Jane.Wan@nokia.com>
- <20180508151309.40a78259@windsurf.home>
-In-Reply-To: <20180508151309.40a78259@windsurf.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-x-originating-ip: [131.228.32.185]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR07MB1615;7:2Cst0qLalUXVY1ejiws0QsrP0q7fz7atJ280cFI+wOwhk3kzayavdNXAvxe4cSVc/2a134KXhY1ERGD2JaMOW26VKEj1DbWcNudmxx+8QZ/ZwJnDESyuONifv+IavOBOL66OFzofezSlpaoeqh+bXMKyldC5wQhqchhpJhPAArmkG6RfwqHG6KSRcx9bs2EVT/EomI4s9G4GXGrGsrJwNdkuUDgNjWLPAV1bnG12dtftZP28ZxyPABIuJmK3hRFr
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(366004)(396003)(376002)(39860400002)(39380400002)(346002)(189003)(199004)(13464003)(6506007)(68736007)(54906003)(9686003)(7416002)(97736004)(316002)(8936002)(6916009)(6346003)(7736002)(74316002)(39060400002)(86362001)(81166006)(476003)(8656006)(102836004)(33656002)(7696005)(76176011)(305945005)(186003)(53936002)(106356001)(53546011)(81156014)(55016002)(26005)(105586002)(99286004)(8676002)(6246003)(446003)(5660300001)(6436002)(5250100002)(66066001)(229853002)(14454004)(966005)(478600001)(486006)(2900100001)(11346002)(3280700002)(4326008)(6116002)(3846002)(2906002)(6306002)(25786009)(3660700001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR07MB1615;H:VI1PR07MB1615.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:(109105607167333);BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(48565401081)(2017052603328)(7193020);SRVR:VI1PR07MB1615;
-x-ms-traffictypediagnostic: VI1PR07MB1615:
-x-microsoft-antispam-prvs: <VI1PR07MB1615D3BECC9AC580CB53DE8A819A0@VI1PR07MB1615.eurprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(82608151540597)(85827821059158)(109105607167333)(258649278758335);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231254)(11241501184)(806099)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:VI1PR07MB1615;BCL:0;PCL:0;RULEID:;SRVR:VI1PR07MB1615;
-x-forefront-prvs: 0666E15D35
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jane.wan@nokia.com;
-x-microsoft-antispam-message-info: UkeRDxymBq3S+DZj1m4G4af/Ew33JsXzsqXumjZ3yToNDWrhha+h2wj2NCK8EaW2ZwsIKb1Kos2XU1wszSYSbWIt9mG2GdkGUdP/AdPaWcomlMrdke+ZHvyqKlneM/MWS/loH5HrInq9ggPu8KHfDuWKXXlz+d/Eey2y21hIf5Mp9mB++2rfY/xQg1DoAUke9OSuzcYq2g40Jqy6MazZQ+yZQu5YxCSGrB5Pand+xjA7mkLEplw9wF32FNpLA47y
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: 304c1013-dac8-40c1-29b2-08d5b52acd79
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 304c1013-dac8-40c1-29b2-08d5b52acd79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2018 21:29:38.1985
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR07MB1615
+        id S1756091AbeEHVaN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:30:13 -0400
+Received: from a8-53.smtp-out.amazonses.com ([54.240.8.53]:41244 "EHLO
+        a8-53.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756020AbeEHV1p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:27:45 -0400
+From: Jeremy Cline <jeremy@jcline.org>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        "Herton R . Krzesinski" <herton@redhat.com>,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jeremy Cline <jeremy@jcline.org>
+Subject: [PATCH 1/8] perf tools: Generate a Python script compatible with Python 2 and 3
+Date: Tue, 8 May 2018 21:27:43 +0000
+Message-ID: <0100016341a7278a-d178c724-2b0f-49ca-be93-80a7d51aaa0d-000000@email.amazonses.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1525811971.git.jeremy@jcline.org>
+References: <cover.1525811971.git.jeremy@jcline.org>
+X-SES-Outgoing: 2018.05.08-54.240.8.53
+Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w48LU1FA013626
 
-Hi Thomas,
+When generating a Python script with "perf script -g python", produce
+one that is compatible with Python 2 and 3. The difference between the
+two generated scripts is:
 
-I've sent v4 of the patches based on the comments.
+  --- python2-perf-script.py	2018-05-08 15:35:00.865889705 -0400
+  +++ python3-perf-script.py	2018-05-08 15:34:49.019789564 -0400
+  @@ -7,6 +7,8 @@
+   # be retrieved using Python functions of the form common_*(context).
+   # See the perf-script-python Documentation for the list of available functions.
 
-Thank you.
-Jane
+  +from __future__ import print_function
+  +
+   import os
+   import sys
 
-> -----Original Message-----
-> From: Thomas Petazzoni [mailto:thomas.petazzoni@bootlin.com]
-> Sent: Tuesday, May 08, 2018 6:13 AM
-> To: Wan, Jane (Nokia - US/Sunnyvale) <jane.wan@nokia.com>
-> Cc: Boris.Brezillon@bootlin.com; miquel.raynal@bootlin.com;
-> dwmw2@infradead.org; computersforpeace@gmail.com; richard@nod.at;
-> marek.vasut@gmail.com; yamada.masahiro@socionext.com;
-> prabhakar.kushwaha@nxp.com; shawnguo@kernel.org;
-> jagdish.gediya@nxp.com; shreeya.patel23498@gmail.com; Bos, Ties (Nokia -
-> US/Sunnyvale) <ties.bos@nokia.com>; linux-mtd@lists.infradead.org; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH v3 2/2] mtd: rawnand: fsl_ifc: use bit-wise majority to
-> recover the contents of ONFI parameter
-> 
-> Hello,
-> 
-> On Mon,  7 May 2018 09:34:15 -0700, Jane Wan wrote:
-> > Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
-> > CRC values, the bit-wise majority may be used to recover the contents
-> > of the parameter pages from the parameter page copies present.
-> >
-> > Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
-> 
-> Minor nit: the commit title contains "fsl_ifc", but this commit doesn't change
-> anything in the fsl_ifc driver, it fixes the NAND core.
+  @@ -18,10 +20,10 @@
 
-[Jane] Removed the "fsl_ifc" from the subject in v4.
+   def trace_begin():
+  -	print "in trace_begin"
+  +	print("in trace_begin")
 
-> 
-> Best regards,
-> 
-> Thomas
-> --
-> Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons) Embedded Linux and
-> Kernel engineering https://bootlin.com
+   def trace_end():
+  -	print "in trace_end"
+  +	print("in trace_end")
+
+   def raw_syscalls__sys_enter(event_name, context, common_cpu,
+   	common_secs, common_nsecs, common_pid, common_comm,
+  @@ -29,26 +31,26 @@
+   		print_header(event_name, common_cpu, common_secs, common_nsecs,
+   			common_pid, common_comm)
+
+  -		print "id=%d, args=%s" % \
+  -		(id, args)
+  +		print("id=%d, args=%s" % \
+  +		(id, args))
+
+  -		print 'Sample: {'+get_dict_as_string(perf_sample_dict['sample'], ', ')+'}'
+  +		print('Sample: {'+get_dict_as_string(perf_sample_dict['sample'], ', ')+'}')
+
+   		for node in common_callchain:
+   			if 'sym' in node:
+  -				print "\t[%x] %s" % (node['ip'], node['sym']['name'])
+  +				print("\t[%x] %s" % (node['ip'], node['sym']['name']))
+   			else:
+  -				print "	[%x]" % (node['ip'])
+  +				print("	[%x]" % (node['ip']))
+
+  -		print "\n"
+  +		print()
+
+   def trace_unhandled(event_name, context, event_fields_dict, perf_sample_dict):
+  -		print get_dict_as_string(event_fields_dict)
+  -		print 'Sample: {'+get_dict_as_string(perf_sample_dict['sample'], ', ')+'}'
+  +		print(get_dict_as_string(event_fields_dict))
+  +		print('Sample: {'+get_dict_as_string(perf_sample_dict['sample'], ', ')+'}')
+
+   def print_header(event_name, cpu, secs, nsecs, pid, comm):
+  -	print "%-20s %5u %05u.%09u %8u %-20s " % \
+  -	(event_name, cpu, secs, nsecs, pid, comm),
+  +	print("%-20s %5u %05u.%09u %8u %-20s " % \
+  +	(event_name, cpu, secs, nsecs, pid, comm), end="")
+
+   def get_dict_as_string(a_dict, delimiter=' '):
+   	return delimiter.join(['%s=%s'%(k,str(v))for k,v in sorted(a_dict.items())])
+
+Signed-off-by: Jeremy Cline <jeremy@jcline.org>
+---
+ .../scripting-engines/trace-event-python.c    | 29 ++++++++++---------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 10dd5fce082b..01d5f255ef62 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -1393,6 +1393,7 @@ static int python_generate_script(struct pevent *pevent, const char *outfile)
+ 	fprintf(ofp, "# See the perf-script-python Documentation for the list "
+ 		"of available functions.\n\n");
+ 
++	fprintf(ofp, "from __future__ import print_function\n\n");
+ 	fprintf(ofp, "import os\n");
+ 	fprintf(ofp, "import sys\n\n");
+ 
+@@ -1402,10 +1403,10 @@ static int python_generate_script(struct pevent *pevent, const char *outfile)
+ 	fprintf(ofp, "from Core import *\n\n\n");
+ 
+ 	fprintf(ofp, "def trace_begin():\n");
+-	fprintf(ofp, "\tprint \"in trace_begin\"\n\n");
++	fprintf(ofp, "\tprint(\"in trace_begin\")\n\n");
+ 
+ 	fprintf(ofp, "def trace_end():\n");
+-	fprintf(ofp, "\tprint \"in trace_end\"\n\n");
++	fprintf(ofp, "\tprint(\"in trace_end\")\n\n");
+ 
+ 	while ((event = trace_find_next_event(pevent, event))) {
+ 		fprintf(ofp, "def %s__%s(", event->system, event->name);
+@@ -1441,7 +1442,7 @@ static int python_generate_script(struct pevent *pevent, const char *outfile)
+ 			"common_secs, common_nsecs,\n\t\t\t"
+ 			"common_pid, common_comm)\n\n");
+ 
+-		fprintf(ofp, "\t\tprint \"");
++		fprintf(ofp, "\t\tprint(\"");
+ 
+ 		not_first = 0;
+ 		count = 0;
+@@ -1502,31 +1503,31 @@ static int python_generate_script(struct pevent *pevent, const char *outfile)
+ 				fprintf(ofp, "%s", f->name);
+ 		}
+ 
+-		fprintf(ofp, ")\n\n");
++		fprintf(ofp, "))\n\n");
+ 
+-		fprintf(ofp, "\t\tprint 'Sample: {'+"
+-			"get_dict_as_string(perf_sample_dict['sample'], ', ')+'}'\n\n");
++		fprintf(ofp, "\t\tprint('Sample: {'+"
++			"get_dict_as_string(perf_sample_dict['sample'], ', ')+'}')\n\n");
+ 
+ 		fprintf(ofp, "\t\tfor node in common_callchain:");
+ 		fprintf(ofp, "\n\t\t\tif 'sym' in node:");
+-		fprintf(ofp, "\n\t\t\t\tprint \"\\t[%%x] %%s\" %% (node['ip'], node['sym']['name'])");
++		fprintf(ofp, "\n\t\t\t\tprint(\"\\t[%%x] %%s\" %% (node['ip'], node['sym']['name']))");
+ 		fprintf(ofp, "\n\t\t\telse:");
+-		fprintf(ofp, "\n\t\t\t\tprint \"\t[%%x]\" %% (node['ip'])\n\n");
+-		fprintf(ofp, "\t\tprint \"\\n\"\n\n");
++		fprintf(ofp, "\n\t\t\t\tprint(\"\t[%%x]\" %% (node['ip']))\n\n");
++		fprintf(ofp, "\t\tprint()\n\n");
+ 
+ 	}
+ 
+ 	fprintf(ofp, "def trace_unhandled(event_name, context, "
+ 		"event_fields_dict, perf_sample_dict):\n");
+ 
+-	fprintf(ofp, "\t\tprint get_dict_as_string(event_fields_dict)\n");
+-	fprintf(ofp, "\t\tprint 'Sample: {'+"
+-		"get_dict_as_string(perf_sample_dict['sample'], ', ')+'}'\n\n");
++	fprintf(ofp, "\t\tprint(get_dict_as_string(event_fields_dict))\n");
++	fprintf(ofp, "\t\tprint('Sample: {'+"
++		"get_dict_as_string(perf_sample_dict['sample'], ', ')+'}')\n\n");
+ 
+ 	fprintf(ofp, "def print_header("
+ 		"event_name, cpu, secs, nsecs, pid, comm):\n"
+-		"\tprint \"%%-20s %%5u %%05u.%%09u %%8u %%-20s \" %% \\\n\t"
+-		"(event_name, cpu, secs, nsecs, pid, comm),\n\n");
++		"\tprint(\"%%-20s %%5u %%05u.%%09u %%8u %%-20s \" %% \\\n\t"
++		"(event_name, cpu, secs, nsecs, pid, comm), end=\"\")\n\n");
+ 
+ 	fprintf(ofp, "def get_dict_as_string(a_dict, delimiter=' '):\n"
+ 		"\treturn delimiter.join"
+-- 
+2.17.0
