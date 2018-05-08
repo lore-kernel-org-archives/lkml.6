@@ -1,38 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqKqF1pIHSeqxUXnwB8/kRRnG9RLjP8yYFs3cgObYg0PhCsgtjoZKfiK1bnRHQitxfAIEUL
-ARC-Seal: i=1; a=rsa-sha256; t=1525767127; cv=none;
+X-Google-Smtp-Source: AB8JxZoBNINJHMZIMR3FvHZ9iaBUsUlwCRq55LpxgngBRZapTq/lo8jQ4a/eZWuWFJd6bpYjs4mR
+ARC-Seal: i=1; a=rsa-sha256; t=1525767121; cv=none;
         d=google.com; s=arc-20160816;
-        b=sWGW+NAwd/ShUns+g6uQcpe4cwIYXb5dNeO/wFi3h8oxjv+2pxqVK6yNqnRrkmD2+R
-         HweO2k8rmJwios9YeCDcwJ55PVbppdHNii23F7jmOTcol1mdsZRSu4Pb0eRQMfFUbNAf
-         pXZXeVV6De1bo/XZ4NeqyWBCnRfO3UnKB8UxTHJvEcfC5wZL0zHRQp74KePTcqE2piNZ
-         yE2/e37I3esnakGnYmx+S6b+wfYL7Ox9qga+X8POzLBPVEcFJO4nn40IUymBbJlFMfR6
-         kXmaKpVymzRoLepLV6FL4m9AMH4RTuDmdNsPuNAXQPIByxvx1O0ZPBbKixpsl9e0HRCV
-         snRg==
+        b=IGTHu8O4sViXWiSDd1uPIgAMyLAjdU6fguALyQTgLMXd4PO5rl5Re+AG0CqbUjG3bM
+         l0pG61jdLAUlOY/b/8iALuPz6IOwQUBcGQX8R8VarU/svR2RWpGLvjdlJ06qpOCQ2LOh
+         44a9yMXSzMu6bAcSuqpXKYXZSvIFhAzaCqhVJ9a8WR6EGxLQCOr8t0axieY9G7BG5bS7
+         txTYeoUWTZ1aLf5gHt9P4e6DCw4nm3P2n36HSinXoYHdaOrMVg8L6JwE6pn8aLXzwXG9
+         +bAMgFTOP2ALkyZFjQCYK19PBCAhZKBYFKK+35N5FonM/Q7bhYv1rI3zw1wjNV7RkSNO
+         s+kg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=ZrN4Ni1LzgW37/2uxEJSA2oDLcA+QmUcpL0hxaovegg=;
-        b=hOyEcQ+jX2gxjU0KQTJImXsroni3cCw64QNKY537ewlAj/CbPYw+9IUnjzroPKfvdx
-         hFN2k5aKvoNyVYc3IJlkaD1/Y/UrlPk2VinjtAwxl5qSgBGf4okriMEVyON7oGBWkZKF
-         B+WGdFJncw7THrutzI/5WjF9ko7BiuGfseVoDU8FAAYLc6zwPTsCT12y6k4UwgJbFYWo
-         8HkwVF2noe5JqFQzCxSnw0HyIWtTCLDVutiQ7BvKk7flOHrgheJvxCY5QplT6tZVxIyK
-         3aaxtahenVg0/lBxRJOexGsS249CBz53uu6q3iA6P9Iw7Iq2Qgw7drS8TKYt+b9LNed5
-         CVjw==
+        bh=TLsEWd9XEvlT5nLYROVq7uRnaTvJwEml7lURuEhS/Kc=;
+        b=WbR0BXGYa/36CBHkWA48b6Mbl2Yi0jeK5LOQG+UYKRwmZ85YyGBFGRiNk11iV2apBp
+         dS7kZeOK8d2n15LA3FFlqgGTeQZGc0zn9Ct1jPnySO8eBh5T2DqbgNMVozUbqMCA4rfy
+         WCnJjywP1AcjdvBqXjsW2ycBnr7uALzU/v8XT40/d0H984tTEilinghWW56sDckDBo+1
+         HHkFNj4y+5SfKMJ4Xaw//i8+awAZMBVR/sL6ivNz2Eu+5JK9VDSc5rawz/opSaoZy6LB
+         VSsmyc5kYDp6fyzAy7sv08JtfdogIZ6ia33GCHSplyPgZKJGo6+c3fVg8SkxxNRYCbfq
+         /mBA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DigS9BbR;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yEu21eWA;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=DigS9BbR;
+       dkim=pass header.i=@kernel.org header.s=default header.b=yEu21eWA;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 06/52] ALSA: dice: fix kernel NULL pointer dereference due to invalid calculation for array index
-Date: Tue,  8 May 2018 10:10:04 +0200
-Message-Id: <20180508073928.849975950@linuxfoundation.org>
+Subject: [PATCH 4.16 04/52] ALSA: pcm: Check PCM state at xfern compat ioctl
+Date: Tue,  8 May 2018 10:10:02 +0200
+Message-Id: <20180508073928.636680894@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882791409620132?=
-X-GMAIL-MSGID: =?utf-8?q?1599882791409620132?=
+X-GMAIL-THRID: =?utf-8?q?1599882785467298438?=
+X-GMAIL-MSGID: =?utf-8?q?1599882785467298438?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,138 +51,36 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 52759c0963510a2843774aac9b65ccaed3308dc0 upstream.
+commit f13876e2c33a657a71bcbb10f767c0951b165020 upstream.
 
-At a commit f91c9d7610a ('ALSA: firewire-lib: cache maximum length of
-payload to reduce function calls'), maximum size of payload for tx
-isochronous packet is cached to reduce the number of function calls.
+Since snd_pcm_ioctl_xfern_compat() has no PCM state check, it may go
+further and hit the sanity check pcm_sanity_check() when the ioctl is
+called right after open.  It may eventually spew a kernel warning, as
+triggered by syzbot, depending on kconfig.
 
-This cache was programmed to updated at a first callback of ohci1394 IR
-context. However, the maximum size is required to queueing packets before
-starting the isochronous context.
+The lack of PCM state check there was just an oversight.  Although
+it's no real crash, the spurious kernel warning is annoying, so let's
+add the proper check.
 
-As a result, the cached value is reused to queue packets in next time to
-starting the isochronous context. Then the cache is updated in a first
-callback of the isochronous context. This can cause kernel NULL pointer
-dereference in a below call graph:
-
-(sound/firewire/amdtp-stream.c)
-amdtp_stream_start()
-->queue_in_packet()
-  ->queue_packet()
-    (drivers/firewire/core-iso.c)
-    ->fw_iso_context_queue()
-      ->struct fw_card_driver.queue_iso()
-      (drivers/firewire/ohci.c)
-      = ohci_queue_iso()
-        ->queue_iso_packet_per_buffer()
-          buffer->pages[page]
-
-The issued dereference occurs in a case that:
- - target unit supports different stream formats for sampling transmission
-   frequency.
- - maximum length of payload for tx stream in a first trial is bigger
-   than the length in a second trial.
-
-In this case, correct number of pages are allocated for DMA and the 'pages'
-array has enough elements, while index of the element is wrongly calculated
-according to the old value of length of payload in a call of
-'queue_in_packet()'. Then it causes the issue.
-
-This commit fixes the critical bug. This affects all of drivers in ALSA
-firewire stack in Linux kernel v4.12 or later.
-
-[12665.302360] BUG: unable to handle kernel NULL pointer dereference at 0000000000000030
-[12665.302415] IP: ohci_queue_iso+0x47c/0x800 [firewire_ohci]
-[12665.302439] PGD 0
-[12665.302440] P4D 0
-[12665.302450]
-[12665.302470] Oops: 0000 [#1] SMP PTI
-[12665.302487] Modules linked in: ...
-[12665.303096] CPU: 1 PID: 12760 Comm: jackd Tainted: P           OE   4.13.0-38-generic #43-Ubuntu
-[12665.303154] Hardware name:                  /DH77DF, BIOS KCH7710H.86A.0069.2012.0224.1825 02/24/2012
-[12665.303215] task: ffff9ce87da2ae80 task.stack: ffffb5b8823d0000
-[12665.303258] RIP: 0010:ohci_queue_iso+0x47c/0x800 [firewire_ohci]
-[12665.303301] RSP: 0018:ffffb5b8823d3ab8 EFLAGS: 00010086
-[12665.303337] RAX: ffff9ce4f4876930 RBX: 0000000000000008 RCX: ffff9ce88a3955e0
-[12665.303384] RDX: 0000000000000000 RSI: 0000000034877f00 RDI: 0000000000000000
-[12665.303427] RBP: ffffb5b8823d3b68 R08: ffff9ce8ccb390a0 R09: ffff9ce877639ab0
-[12665.303475] R10: 0000000000000108 R11: 0000000000000000 R12: 0000000000000003
-[12665.303513] R13: 0000000000000000 R14: ffff9ce4f4876950 R15: 0000000000000000
-[12665.303554] FS:  00007f2ec467f8c0(0000) GS:ffff9ce8df280000(0000) knlGS:0000000000000000
-[12665.303600] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[12665.303633] CR2: 0000000000000030 CR3: 00000002dcf90004 CR4: 00000000000606e0
-[12665.303674] Call Trace:
-[12665.303698]  fw_iso_context_queue+0x18/0x20 [firewire_core]
-[12665.303735]  queue_packet+0x88/0xe0 [snd_firewire_lib]
-[12665.303770]  amdtp_stream_start+0x19b/0x270 [snd_firewire_lib]
-[12665.303811]  start_streams+0x276/0x3c0 [snd_dice]
-[12665.303840]  snd_dice_stream_start_duplex+0x1bf/0x480 [snd_dice]
-[12665.303882]  ? vma_gap_callbacks_rotate+0x1e/0x30
-[12665.303914]  ? __rb_insert_augmented+0xab/0x240
-[12665.303936]  capture_prepare+0x3c/0x70 [snd_dice]
-[12665.303961]  snd_pcm_do_prepare+0x1d/0x30 [snd_pcm]
-[12665.303985]  snd_pcm_action_single+0x3b/0x90 [snd_pcm]
-[12665.304009]  snd_pcm_action_nonatomic+0x68/0x70 [snd_pcm]
-[12665.304035]  snd_pcm_prepare+0x68/0x90 [snd_pcm]
-[12665.304058]  snd_pcm_common_ioctl1+0x4c0/0x940 [snd_pcm]
-[12665.304083]  snd_pcm_capture_ioctl1+0x19b/0x250 [snd_pcm]
-[12665.304108]  snd_pcm_capture_ioctl+0x27/0x40 [snd_pcm]
-[12665.304131]  do_vfs_ioctl+0xa8/0x630
-[12665.304148]  ? entry_SYSCALL_64_after_hwframe+0xe9/0x139
-[12665.304172]  ? entry_SYSCALL_64_after_hwframe+0xe2/0x139
-[12665.304195]  ? entry_SYSCALL_64_after_hwframe+0xdb/0x139
-[12665.304218]  ? entry_SYSCALL_64_after_hwframe+0xd4/0x139
-[12665.304242]  ? entry_SYSCALL_64_after_hwframe+0xcd/0x139
-[12665.304265]  ? entry_SYSCALL_64_after_hwframe+0xc6/0x139
-[12665.304288]  ? entry_SYSCALL_64_after_hwframe+0xbf/0x139
-[12665.304312]  ? entry_SYSCALL_64_after_hwframe+0xb8/0x139
-[12665.304335]  ? entry_SYSCALL_64_after_hwframe+0xb1/0x139
-[12665.304358]  SyS_ioctl+0x79/0x90
-[12665.304374]  ? entry_SYSCALL_64_after_hwframe+0x72/0x139
-[12665.304397]  entry_SYSCALL_64_fastpath+0x24/0xab
-[12665.304417] RIP: 0033:0x7f2ec3750ef7
-[12665.304433] RSP: 002b:00007fff99e31388 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[12665.304465] RAX: ffffffffffffffda RBX: 00007fff99e312f0 RCX: 00007f2ec3750ef7
-[12665.304494] RDX: 0000000000000000 RSI: 0000000000004140 RDI: 0000000000000007
-[12665.304522] RBP: 0000556ebc63fd60 R08: 0000556ebc640560 R09: 0000000000000000
-[12665.304553] R10: 0000000000000001 R11: 0000000000000246 R12: 0000556ebc63fcf0
-[12665.304584] R13: 0000000000000000 R14: 0000000000000007 R15: 0000000000000000
-[12665.304612] Code: 01 00 00 44 89 eb 45 31 ed 45 31 db 66 41 89 1e 66 41 89 5e 0c 66 45 89 5e 0e 49 8b 49 08 49 63 d4 4d 85 c0 49 63 ff 48 8b 14 d1 <48> 8b 72 30 41 8d 14 37 41 89 56 04 48 63 d3 0f 84 ce 00 00 00
-[12665.304713] RIP: ohci_queue_iso+0x47c/0x800 [firewire_ohci] RSP: ffffb5b8823d3ab8
-[12665.304743] CR2: 0000000000000030
-[12665.317701] ---[ end trace 9d55b056dd52a19f ]---
-
-Fixes: f91c9d7610a ('ALSA: firewire-lib: cache maximum length of payload to reduce function calls')
-Cc: <stable@vger.kernel.org> # v4.12+
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Reported-by: syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/amdtp-stream.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ sound/core/pcm_compat.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/firewire/amdtp-stream.c
-+++ b/sound/firewire/amdtp-stream.c
-@@ -773,8 +773,6 @@ static void amdtp_stream_first_callback(
- 	u32 cycle;
- 	unsigned int packets;
+--- a/sound/core/pcm_compat.c
++++ b/sound/core/pcm_compat.c
+@@ -423,6 +423,8 @@ static int snd_pcm_ioctl_xfern_compat(st
+ 		return -ENOTTY;
+ 	if (substream->stream != dir)
+ 		return -EINVAL;
++	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN)
++		return -EBADFD;
  
--	s->max_payload_length = amdtp_stream_get_max_payload(s);
--
- 	/*
- 	 * For in-stream, first packet has come.
- 	 * For out-stream, prepared to transmit first packet
-@@ -879,6 +877,9 @@ int amdtp_stream_start(struct amdtp_stre
- 
- 	amdtp_stream_update(s);
- 
-+	if (s->direction == AMDTP_IN_STREAM)
-+		s->max_payload_length = amdtp_stream_get_max_payload(s);
-+
- 	if (s->flags & CIP_NO_HEADER)
- 		s->tag = TAG_NO_CIP_HEADER;
- 	else
+ 	if ((ch = substream->runtime->channels) > 128)
+ 		return -EINVAL;
