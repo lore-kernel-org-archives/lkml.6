@@ -1,54 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932319AbeEHQIM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:08:12 -0400
-Received: from ms.lwn.net ([45.79.88.28]:35882 "EHLO ms.lwn.net"
+        id S932452AbeEHQJY (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:09:24 -0400
+Received: from fieldses.org ([173.255.197.46]:50786 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755069AbeEHQIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:08:10 -0400
-Date: Tue, 8 May 2018 10:08:05 -0600
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "Tobin C. Harding" <me@tobin.cc>, SeongJae Park <sj38.park@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, Helmut Grohne <h.grohne@intenta.de>
-Subject: Re: [PATCH 07/18] docs: core-api: add circular-buffers
- documentation
-Message-ID: <20180508100805.22def71a@lwn.net>
-In-Reply-To: <93ca8a46ed15b23d522ce514dbda62bd64d4584e.1525684985.git.mchehab+samsung@kernel.org>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org>
-        <93ca8a46ed15b23d522ce514dbda62bd64d4584e.1525684985.git.mchehab+samsung@kernel.org>
-Organization: LWN.net
-X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S932339AbeEHQJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:09:22 -0400
+Date: Tue, 8 May 2018 12:09:22 -0400
+From: "bfields@fieldses.org" <bfields@fieldses.org>
+To: Trond Myklebust <trondmy@hammer.space>
+Cc: "syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com"
+        <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: [PATCH 1/2] sunrpc: handle ENOMEM in rpcb_getport_async
+Message-ID: <20180508160922.GB6151@fieldses.org>
+References: <f4f5e80803d08f47b9056a0366dd@google.com>
+ <20180417213308.GC18217@fieldses.org>
+ <1524002074.63751.5.camel@hammer.space>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524002074.63751.5.camel@hammer.space>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  7 May 2018 06:35:43 -0300
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> wrote:
+From: "J. Bruce Fields" <bfields@redhat.com>
 
-> The circular-buffers.txt is already in ReST format. So, move it to the
-> core-api guide, where it belongs.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+If we ignore the error we'll hit a null dereference a little later.
 
-Applied, thanks.
+Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+---
+ net/sunrpc/rpcb_clnt.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-jon
+diff --git a/net/sunrpc/rpcb_clnt.c b/net/sunrpc/rpcb_clnt.c
+index c526f8fb37c9..82c120e51d64 100644
+--- a/net/sunrpc/rpcb_clnt.c
++++ b/net/sunrpc/rpcb_clnt.c
+@@ -771,6 +771,12 @@ void rpcb_getport_async(struct rpc_task *task)
+ 	case RPCBVERS_3:
+ 		map->r_netid = xprt->address_strings[RPC_DISPLAY_NETID];
+ 		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
++		if (!map->r_addr) {
++			status = -ENOMEM;
++			dprintk("RPC: %5u %s: no memory available\n",
++				task->tk_pid, __func__);
++			goto bailout_free_args;
++		}
+ 		map->r_owner = "";
+ 		break;
+ 	case RPCBVERS_2:
+@@ -793,6 +799,8 @@ void rpcb_getport_async(struct rpc_task *task)
+ 	rpc_put_task(child);
+ 	return;
+ 
++bailout_free_args:
++	kfree(map);
+ bailout_release_client:
+ 	rpc_release_client(rpcb_clnt);
+ bailout_nofree:
+-- 
+2.17.0
