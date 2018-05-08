@@ -1,66 +1,74 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932289AbeEHNgH (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:36:07 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43064 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932079AbeEHNgF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:36:05 -0400
-Subject: Re: [PATCH] PCI/AER: add pcie TLP header information in the
- tracepoint
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>
-References: <20180402154708.5032-1-thomas.tai@oracle.com>
- <20180507222136.GD161390@bhelgaas-glaptop.roam.corp.google.com>
- <20180508090756.57f38d17@gandalf.local.home>
- <a5578a08-2434-af48-7910-6f858e5477d6@oracle.com>
- <20180508093459.092988b6@gandalf.local.home>
-From: Thomas Tai <thomas.tai@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <24ef86b8-20d9-d654-2af5-159659a9eb76@oracle.com>
-Date: Tue, 8 May 2018 09:35:54 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932348AbeEHNgu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:36:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932095AbeEHNgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:36:49 -0400
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: mhiramat@kernel.org, Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>, Josef Bacik <jbacik@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>
+Subject: [RFC PATCH -tip 0/4] kprobes: x86: Remove jprobes related code
+Date: Tue,  8 May 2018 22:36:24 +0900
+Message-Id: <152578658468.31022.8952561651556318637.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180508093459.092988b6@gandalf.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805080132
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+This series is a core part of removing jprobes related
+code from generic part and x86 tree. This also simplifies
+the preparation code for function override by balancing
+preempt count and current kprobe setting inside
+kprobe_int3_handler and kprobe_ftrace_handler.
+
+ [1/4]: Trivial cleanup, remove a remaining "jps" word
+        from document.
+ [2/4]: Remove arch-independent jprobe code from
+        kernel/kprobes.c. This prevents link errors
+        after removing arch dependent jprobe ports.
+ [3/4]: Remove x86 jprobe port.
+ [4/4]: Simplify preempt count and current kprobe setting
+        inside kprobe_int3_handler and kprobe_ftrace_handler.
+
+I'm preparing similar patches for other archs. But I think
+this series can be (and should be) merged first, since
+the function override feature (which is the only in-tree
+component affected by this change) is implemented on x86.
+
+Thank you,
+
+---
+
+Masami Hiramatsu (4):
+      Documentation/kprobes: Fix to remove remaining jprobe
+      kprobes: Remove jprobe generic code
+      kprobes: x86: Remove jprobe x86 port
+      bpf: error-inject: x86: Fix unbalanced preempt-count for function override
 
 
-On 2018-05-08 09:34 AM, Steven Rostedt wrote:
-> On Tue, 8 May 2018 09:25:01 -0400
-> Thomas Tai <thomas.tai@oracle.com> wrote:
-> 
->>>>>    	TP_STRUCT__entry(
->>>>>    		__string(	dev_name,	dev_name	)
->>>>>    		__field(	u32,		status		)
->>>>>    		__field(	u8,		severity	)
->>>>> +		__field(	u32, 		tlp_header_valid)
->>>
->>> I'm guessing tlp_header_valid is just a boolean. It's after severity
->>> which is just one byte long. Why not make this one byte as well,
->>> otherwise you are wasting 3 bytes.
->>
->> Thanks Steven. Yes boolean is fine.
-> 
-> But don't use "bool", use u8, as bool can be various sizes on different
-> archs.
+ Documentation/kprobes.txt        |    2 -
+ arch/x86/include/asm/kprobes.h   |    3 -
+ arch/x86/kernel/kprobes/core.c   |  113 ++++----------------------------------
+ arch/x86/kernel/kprobes/ftrace.c |   16 +++--
+ kernel/fail_function.c           |    3 -
+ kernel/kprobes.c                 |   76 --------------------------
+ kernel/trace/trace_kprobe.c      |   11 +---
+ 7 files changed, 24 insertions(+), 200 deletions(-)
 
-Sure thing. Thank you.
-
-> 
-> -- Steve
-> 
+-- 
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
