@@ -1,116 +1,66 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754498AbeEHG7j (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 02:59:39 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:52021 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754479AbeEHG7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 02:59:38 -0400
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-To: Bjorn Helgaas <helgaas@kernel.org>, okaya@codeaurora.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
- <20180504024527.GE15790@bhelgaas-glaptop.roam.corp.google.com>
- <aa72d3ba089c76449600c22b58a2cafe@codeaurora.org>
- <20180504133327.GF15790@bhelgaas-glaptop.roam.corp.google.com>
- <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
-From: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-Message-ID: <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
-Date: Tue, 8 May 2018 08:59:34 +0200
+        id S1754479AbeEHHCL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 03:02:11 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47318 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754417AbeEHHCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 03:02:08 -0400
+Subject: Re: [PATCH] xen: xenbus: Fix a possible data race in xs_request_enter
+To: Jia-Ju Bai <baijiaju1990@gmail.com>, boris.ostrovsky@oracle.com,
+        simon@invisiblethingslab.com, joao.m.martins@oracle.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20180508033429.12749-1-baijiaju1990@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Message-ID: <ea5634a2-b0e2-0fac-e5ec-cef1083958fe@suse.com>
+Date: Tue, 8 May 2018 09:02:06 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20180508033429.12749-1-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Bjorn,
-
-
-Am 07.05.2018 um 23:33 schrieb Bjorn Helgaas:
-> On Fri, May 04, 2018 at 08:33:27AM -0500, Bjorn Helgaas wrote:
->> commit b0d6f2230e12c85ae3b65a854a53c67c7c1f6406
->> Author: Bjorn Helgaas <bhelgaas@google.com>
->> Date:   Thu May 3 18:39:38 2018 -0500
->>
->>      PCI: pciehp: Add quirk for Intel Command Completed erratum
->>      
->>      The Intel CF118 erratum means the controller does not set the Command
->>      Completed bit unless writes to the Slot Command register change "Control"
->>      bits.  Command Completed is never set for writes that only change software
->>      notification "Enable" bits.  This results in timeouts like this:
->>      
->>        pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued 65284 msec ago)
->>      
->>      When this erratum is present, avoid these timeouts by marking commands
->>      "completed" immediately unless they change the "Control" bits.
->>      
->>      Here's the text of the erratum from the Intel document:
->>      
->>        CF118        PCIe Slot Status Register Command Completed bit not always
->>                     updated on any configuration write to the Slot Control
->>                     Register
->>      
->>        Problem:     For PCIe root ports (devices 0 - 10) supporting hot-plug,
->>                     the Slot Status Register (offset AAh) Command Completed
->>                     (bit[4]) status is updated under the following condition:
->>                     IOH will set Command Completed bit after delivering the new
->>                     commands written in the Slot Controller register (offset
->>                     A8h) to VPP. The IOH detects new commands written in Slot
->>                     Control register by checking the change of value for Power
->>                     Controller Control (bit[10]), Power Indicator Control
->>                     (bits[9:8]), Attention Indicator Control (bits[7:6]), or
->>                     Electromechanical Interlock Control (bit[11]) fields. Any
->>                     other configuration writes to the Slot Control register
->>                     without changing the values of these fields will not cause
->>                     Command Completed bit to be set.
->>      
->>                     The PCIe Base Specification Revision 2.0 or later describes
->>                     the “Slot Control Register” in section 7.8.10, as follows
->>                     (Reference section 7.8.10, Slot Control Register, Offset
->>                     18h). In hot-plug capable Downstream Ports, a write to the
->>                     Slot Control register must cause a hot-plug command to be
->>                     generated (see Section 6.7.3.2 for details on hot-plug
->>                     commands). A write to the Slot Control register in a
->>                     Downstream Port that is not hotplug capable must not cause a
->>                     hot-plug command to be executed.
->>      
->>                     The PCIe Spec intended that every write to the Slot Control
->>                     Register is a command and expected a command complete status
->>                     to abstract the VPP implementation specific nuances from the
->>                     OS software. IOH PCIe Slot Control Register implementation
->>                     is not fully conforming to the PCIe Specification in this
->>                     respect.
->>      
->>        Implication: Software checking on the Command Completed status after
->>                     writing to the Slot Control register may time out.
->>      
->>        Workaround:  Software can read the Slot Control register and compare the
->>                     existing and new values to determine if it should check the
->>                     Command Completed status after writing to the Slot Control
->>                     register.
->>      
->>      Link: http://www.intel.com/content/www/us/en/processors/xeon/xeon-e7-v2-spec-update.html
->>      Link: https://lkml.kernel.org/r/8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de
->>      Reported-by: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
->>      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+On 08/05/18 05:34, Jia-Ju Bai wrote:
+> The read operation to "req->type" is protected by
+> the lock on line 128, but the write operation to
+> this data on line 118 is not protected by the lock.
+> Thus, there may exist a data race for "req->type".
 > 
-> I applied this with Paul's tested-by on pci/hotplug for v4.18.
+> To fix this data race, the write operation to "req->type" 
+> should be also protected by the lock.
 
-Thank you very much. Will this also be picked up by the stable Linux 
-kernel series?
-
-[…]
+No, xs_request_enter() is never called for a request already visible to
+another thread or processor. So no race exists.
 
 
-Kind regards,
+Juergen
 
-Paul
+> 
+> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+> ---
+>  drivers/xen/xenbus/xenbus_xs.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+> index 49a3874ae6bb..274cdfee08b1 100644
+> --- a/drivers/xen/xenbus/xenbus_xs.c
+> +++ b/drivers/xen/xenbus/xenbus_xs.c
+> @@ -115,10 +115,10 @@ static uint32_t xs_request_enter(struct xb_req_data *req)
+>  {
+>  	uint32_t rq_id;
+>  
+> -	req->type = req->msg.type;
+> -
+>  	spin_lock(&xs_state_lock);
+>  
+> +	req->type = req->msg.type;
+> +
+>  	while (!xs_state_users && xs_suspend_active) {
+>  		spin_unlock(&xs_state_lock);
+>  		wait_event(xs_state_enter_wq, xs_suspend_active == 0);
+> 
