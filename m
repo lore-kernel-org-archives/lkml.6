@@ -1,80 +1,106 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933185AbeEHIY7 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:24:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54702 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932928AbeEHIYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:24:54 -0400
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Stefan Agner <stefan@agner.ch>, Lucas Stach <dev@lynxeye.de>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 0/3] ARM: dts: tegra: Add 256 MB Colibri-T20 and cleanups
-Date: Tue,  8 May 2018 10:24:38 +0200
-Message-Id: <1525767881-28516-1-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1754832AbeEHI1H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:27:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52812 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754816AbeEHI1F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:27:05 -0400
+From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+To: Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH  02/17] powerpc/nohash: remove _PAGE_BUSY
+In-Reply-To: <7332568467307f9fc79eeef47507909ddc423c4b.1525435203.git.christophe.leroy@c-s.fr>
+References: <cover.1525435203.git.christophe.leroy@c-s.fr> <7332568467307f9fc79eeef47507909ddc423c4b.1525435203.git.christophe.leroy@c-s.fr>
+Date: Tue, 08 May 2018 13:56:59 +0530
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18050808-0008-0000-0000-000004F44293
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050808-0009-0000-0000-00001E8882AB
+Message-Id: <87o9hqsgbw.fsf@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-08_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805080083
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
+> _PAGE_BUSY is always 0, remove it
+>
 
-Changes since v2:
-1. Added patches 1/3 and 2/3 with cleanups and minor fixes.
-2. Patch 3/3: Do not add new compatible but use everywhere existing
-   "toradex,colibri_t20-512" (suggested by Rob).
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
 
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (3):
-  ARM: dts: tegra: Remove skeleton.dtsi and fix DTC warnings for /memory
-  ARM: dts: tegra: Fix unit_address_vs_reg and
-    avoid_unnecessary_addr_size DTC warnings
-  ARM: dts: tegra: Add support for 256 MB Colibri-T20 (plus such board
-    on Iris)
-
- arch/arm/boot/dts/Makefile                  |   1 +
- arch/arm/boot/dts/tegra114-dalmore.dts      |   3 +-
- arch/arm/boot/dts/tegra114-roth.dts         |   3 +-
- arch/arm/boot/dts/tegra114-tn7.dts          |   3 +-
- arch/arm/boot/dts/tegra114.dtsi             |   4 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi |   3 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi      |   3 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts   |   3 +-
- arch/arm/boot/dts/tegra124-nyan.dtsi        |   3 +-
- arch/arm/boot/dts/tegra124-venice2.dts      |   3 +-
- arch/arm/boot/dts/tegra124.dtsi             |   2 -
- arch/arm/boot/dts/tegra20-colibri-256.dtsi  |  11 +
- arch/arm/boot/dts/tegra20-colibri-512.dtsi  | 535 +--------------------------
- arch/arm/boot/dts/tegra20-colibri.dtsi      | 536 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/tegra20-harmony.dts       |   3 +-
- arch/arm/boot/dts/tegra20-iris-256.dts      |   9 +
- arch/arm/boot/dts/tegra20-iris-512.dts      |  99 +----
- arch/arm/boot/dts/tegra20-iris-common.dtsi  | 107 ++++++
- arch/arm/boot/dts/tegra20-paz00.dts         |   3 +-
- arch/arm/boot/dts/tegra20-seaboard.dts      |   3 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi     |   3 +-
- arch/arm/boot/dts/tegra20-trimslice.dts     |   3 +-
- arch/arm/boot/dts/tegra20-ventana.dts       |   3 +-
- arch/arm/boot/dts/tegra20.dtsi              |   7 +-
- arch/arm/boot/dts/tegra30-apalis.dtsi       |   9 +-
- arch/arm/boot/dts/tegra30-beaver.dts        |   6 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi       |   3 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi      |   5 +-
- arch/arm/boot/dts/tegra30.dtsi              |   7 +-
- 29 files changed, 720 insertions(+), 663 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra20-colibri-256.dtsi
- create mode 100644 arch/arm/boot/dts/tegra20-colibri.dtsi
- create mode 100644 arch/arm/boot/dts/tegra20-iris-256.dts
- create mode 100644 arch/arm/boot/dts/tegra20-iris-common.dtsi
-
--- 
-2.7.4
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/include/asm/nohash/64/pgtable.h | 10 +++-------
+>  arch/powerpc/include/asm/nohash/pte-book3e.h |  5 -----
+>  2 files changed, 3 insertions(+), 12 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/nohash/64/pgtable.h b/arch/powerpc/include/asm/nohash/64/pgtable.h
+> index 4f6f5a27bfb5..c3559d7a94fb 100644
+> --- a/arch/powerpc/include/asm/nohash/64/pgtable.h
+> +++ b/arch/powerpc/include/asm/nohash/64/pgtable.h
+> @@ -186,14 +186,12 @@ static inline unsigned long pte_update(struct mm_struct *mm,
+>  
+>  	__asm__ __volatile__(
+>  	"1:	ldarx	%0,0,%3		# pte_update\n\
+> -	andi.	%1,%0,%6\n\
+> -	bne-	1b \n\
+>  	andc	%1,%0,%4 \n\
+> -	or	%1,%1,%7\n\
+> +	or	%1,%1,%6\n\
+>  	stdcx.	%1,0,%3 \n\
+>  	bne-	1b"
+>  	: "=&r" (old), "=&r" (tmp), "=m" (*ptep)
+> -	: "r" (ptep), "r" (clr), "m" (*ptep), "i" (_PAGE_BUSY), "r" (set)
+> +	: "r" (ptep), "r" (clr), "m" (*ptep), "r" (set)
+>  	: "cc" );
+>  #else
+>  	unsigned long old = pte_val(*ptep);
+> @@ -290,13 +288,11 @@ static inline void __ptep_set_access_flags(struct mm_struct *mm,
+>  
+>  	__asm__ __volatile__(
+>  	"1:	ldarx	%0,0,%4\n\
+> -		andi.	%1,%0,%6\n\
+> -		bne-	1b \n\
+>  		or	%0,%3,%0\n\
+>  		stdcx.	%0,0,%4\n\
+>  		bne-	1b"
+>  	:"=&r" (old), "=&r" (tmp), "=m" (*ptep)
+> -	:"r" (bits), "r" (ptep), "m" (*ptep), "i" (_PAGE_BUSY)
+> +	:"r" (bits), "r" (ptep), "m" (*ptep)
+>  	:"cc");
+>  #else
+>  	unsigned long old = pte_val(*ptep);
+> diff --git a/arch/powerpc/include/asm/nohash/pte-book3e.h b/arch/powerpc/include/asm/nohash/pte-book3e.h
+> index 9ff51b4c0cac..12730b81cd98 100644
+> --- a/arch/powerpc/include/asm/nohash/pte-book3e.h
+> +++ b/arch/powerpc/include/asm/nohash/pte-book3e.h
+> @@ -57,13 +57,8 @@
+>  #define _PAGE_USER		(_PAGE_BAP_UR | _PAGE_BAP_SR) /* Can be read */
+>  #define _PAGE_PRIVILEGED	(_PAGE_BAP_SR)
+>  
+> -#define _PAGE_BUSY	0
+> -
+>  #define _PAGE_SPECIAL	_PAGE_SW0
+>  
+> -/* Flags to be preserved on PTE modifications */
+> -#define _PAGE_HPTEFLAGS	_PAGE_BUSY
+> -
+>  /* Base page size */
+>  #ifdef CONFIG_PPC_64K_PAGES
+>  #define _PAGE_PSIZE	_PAGE_PSIZE_64K
+> -- 
+> 2.13.3
