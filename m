@@ -1,89 +1,70 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754920AbeEHMgz (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:36:55 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:36274 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754123AbeEHMgx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:36:53 -0400
-X-Google-Smtp-Source: AB8JxZopPaxUMIkOO0ARypsRQh8YNPYGlze+gVa/EGW7aysuTdgmAE4XFJvG5Udgy+yPYtLXg2PZGCfDjC+VczC8zN4=
+        id S1754941AbeEHMho (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:37:44 -0400
+Received: from imap.thunk.org ([74.207.234.97]:56834 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751297AbeEHMhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:37:42 -0400
+Date: Tue, 8 May 2018 08:37:30 -0400
+From: "Theodore Y. Ts'o" <tytso@mit.edu>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jan Kara <jack@suse.cz>, Milan Broz <gmazyland@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: general protection fault in lo_ioctl (2)
+Message-ID: <20180508123730.GH999@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Jan Kara <jack@suse.cz>, Milan Broz <gmazyland@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <000000000000cbaaf6056b341859@google.com>
+ <CACT4Y+bTo34q4=7X8zGL_XVOGoYd7fqhfAbCAWUxsr-N96Kyxw@mail.gmail.com>
+ <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
+ <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 8 May 2018 14:36:51 +0200
-Message-ID: <CACRpkdY27sJ_kFg95ORKXBLrpzv3Yo-oc+c4tULJXvC-YP18mg@mail.gmail.com>
-Subject: [GIT PULL] GPIO fixes for v4.17 take one
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w48CbFpH012018
 
-Hi Linus,
+On Tue, May 08, 2018 at 08:05:12PM +0900, Tetsuo Handa wrote:
+> 
+> So, it is time to think how to solve this race condition, as well as how to solve
+> lockdep's deadlock warning (and I guess that syzbot is actually hitting deadlocks).
+> An approach which serializes loop operations using global lock was proposed at
+> https://groups.google.com/d/msg/syzkaller-bugs/2Rw8-OM6IbM/PzdobV8kAgAJ .
+> Please respond...
 
-sorry for lagging behind on sending the first batch of GPIO fixes for
-this cycle. Just too busy conferencing and the weather was too nice.
+I'm looking at your patch which you proposed on this, and the locking
+architecture still looks way too complex.  Things like
+loop_mutex_owner, and all of the infrastructure around
+lo->ioctl_in_progress should be removed, if at all possible.
 
-Here it is anyway: some real important polishing on the error path
-facing userspace (tagged for stable as well) and some normal
-driver fixes.
+I believe it should be possible to do things with a single global
+mutex, some code refactoring, and some unlocked versions of some of
+the functions.
 
-Please pull it in!
+Again, this requires root, and it requires someone deliberately trying
+to induce a race.  So "it's time" is not necessarily the priority I
+would set for this item.  But if we are going to fix it, let's fix it
+right, and not make the code more complex and less maintainable, all
+in the name of trying to make a rare, not-likely-to-happen-in-real-life
+syzbot reported problem to go away.
 
-Yours,
-Linus Walleij
+Cheers,
 
-
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v4.17-2
-
-for you to fetch changes up to e026646c178d8292de563fbecc247bada059c282:
-
-  gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop
-(2018-04-30 10:48:08 +0200)
-
-----------------------------------------------------------------
-GPIO fixes for v4.17:
-
-- Fix proper IRQ unmasking in the Aspeed driver.
-
-- Do not free unrequested descriptors on the errorpath when
-  creating line handles from the userspace chardev
-  requested GPIO lines.
-
-- Also fix the errorpath in the linehandle creation function.
-
-- Fix the get/set multiple GPIO lines for a few of the
-  funky industrial GPIO cards on the ISA bus.
-
-----------------------------------------------------------------
-Govert Overgaauw (1):
-      gpio: fix aspeed_gpio unmask irq
-
-Timur Tabi (1):
-      gpioib: do not free unrequested descriptors
-
-Uwe Kleine-König (1):
-      gpio: fix error path in lineevent_create
-
-William Breathitt Gray (3):
-      gpio: pci-idio-16: Fix port memory offset for get_multiple callback
-      gpio: pcie-idio-24: Fix port memory offset for
-get_multiple/set_multiple callbacks
-      gpio: pcie-idio-24: Fix off-by-one error in get_multiple loop
-
- drivers/gpio/gpio-aspeed.c       |  2 +-
- drivers/gpio/gpio-pci-idio-16.c  |  8 ++++----
- drivers/gpio/gpio-pcie-idio-24.c | 22 +++++++++++-----------
- drivers/gpio/gpiolib.c           |  7 ++++---
- 4 files changed, 20 insertions(+), 19 deletions(-)
+							- Ted
