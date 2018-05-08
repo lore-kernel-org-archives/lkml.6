@@ -1,73 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755507AbeEHQ2b (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:28:31 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59138 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754736AbeEHQ23 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:28:29 -0400
-To: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-block@vger.kernel.org,
-        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-References: <20180423233046.21476-1-logang@deltatee.com>
- <20180423233046.21476-5-logang@deltatee.com>
- <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
- <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
-From: Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
-Date: Tue, 8 May 2018 10:27:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, maxg@mellanox.com, jgg@mellanox.com, bhelgaas@google.com, sagi@grimberg.me, keith.busch@intel.com, axboe@kernel.dk, hch@lst.de, sbates@raithlin.com, linux-block@vger.kernel.org, linux-nvdimm@lists.01.org, linux-rdma@vger.kernel.org, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com, helgaas@kernel.org, christian.koenig@amd.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+        id S1755529AbeEHQ2i (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:28:38 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:42186 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754736AbeEHQ2f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:28:35 -0400
+X-Google-Smtp-Source: AB8JxZone6v8n+C+AXE3D4QMJ1XwPzqSpSQ+4v81iieu0KQ8Ezxy5CVR/wI2bcNAnv2jjCTchAYR1A==
+From: Alexander Potapenko <glider@google.com>
+To: dave.hansen@linux.intel.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, mka@chromium.org,
+        dvyukov@google.com, md@google.com
+Subject: [PATCH v2] x86/boot/64/clang: Use fixup_pointer() to access '__supported_pte_mask'
+Date: Tue,  8 May 2018 18:28:29 +0200
+Message-Id: <20180508162829.7729-1-glider@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Clang builds with defconfig started crashing after commit fb43d6cb91ef
+("x86/mm: Do not auto-massage page protections")
+This was caused by introducing a new global access in __startup_64().
 
+Code in __startup_64() can be relocated during execution, but the compiler
+doesn't have to generate PC-relative relocations when accessing globals
+from that function. Clang actually does not generate them, which leads
+to boot-time crashes. To work around this problem, every global pointer
+must be adjusted using fixup_pointer().
 
-On 08/05/18 01:17 AM, Christian König wrote:
-> AMD APUs mandatory need the ACS flag set for the GPU integrated in the 
-> CPU when IOMMU is enabled or otherwise you will break SVM.
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
+---
+ v2: better patch description, added a comment to __startup_64()
+---
+ arch/x86/kernel/head64.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-Well, given that the current set only disables ACS bits on bridges
-(previous versions were only on switches) this shouldn't be an issue for
-integrated devices. We do not disable ACS flags globally.
-
-> And what exactly is the problem here? I'm currently testing P2P with 
-> GPUs in different IOMMU domains and at least with AMD IOMMUs that works 
-> perfectly fine.
-
-In addition to Stephen's comments, seeing we've established a general
-need to avoid the root complex (until we have a whitelist at least) we
-must have ACS disabled along the path between the devices. Otherwise,
-all TLPs will go through the root complex and if there is no support it
-will fail.
-
-If the consensus is we want a command line option, then so be it. But
-we'll have to deny pretty much all P2P transactions unless the user
-correctly disables ACS along the path using the command line option and
-this is really annoying for users of this functionality to understand
-how to do that correctly.
-
-Logan
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 0c408f8c4ed4..9223792f6d0e 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -104,6 +104,13 @@ static bool __head check_la57_support(unsigned long physaddr)
+ }
+ #endif
+ 
++
++/* Code in __startup_64() can be relocated during execution, but the compiler
++ * doesn't have to generate PC-relative relocations when accessing globals from
++ * that function. Clang actually does not generate them, which leads to
++ * boot-time crashes. To work around this problem, every global pointer must
++ * be adjusted using fixup_pointer().
++ */
+ unsigned long __head __startup_64(unsigned long physaddr,
+ 				  struct boot_params *bp)
+ {
+@@ -113,6 +120,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	p4dval_t *p4d;
+ 	pudval_t *pud;
+ 	pmdval_t *pmd, pmd_entry;
++	pteval_t *mask_ptr;
+ 	bool la57;
+ 	int i;
+ 	unsigned int *next_pgt_ptr;
+@@ -196,7 +204,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 
+ 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
+ 	/* Filter out unsupported __PAGE_KERNEL_* bits: */
+-	pmd_entry &= __supported_pte_mask;
++	mask_ptr = (pteval_t *)fixup_pointer(&__supported_pte_mask, physaddr);
++	pmd_entry &= *mask_ptr;
+ 	pmd_entry += sme_get_me_mask();
+ 	pmd_entry +=  physaddr;
+ 
+-- 
+2.17.0.441.gb46fe60e1d-goog
