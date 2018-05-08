@@ -1,9 +1,9 @@
 Return-Path: <linux-usb-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-206431-1525860776-2-12682031782804930440
+X-Cyrus-Session-Id: sloti22d1t05-2036687-1525748935-2-7886710119667241750
 X-Sieve: CMU Sieve 3.0
 X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.249, MAILING_LIST_MULTI -1,
   ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, RCVD_IN_SORBS_WEB 1.5, LANGUAGES en,
   BAYES_USED global, SA_VERSION 3.4.0
 X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
@@ -13,22 +13,21 @@ X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
 X-Mail-from: linux-usb-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525860776; b=EuZobEcdzZA9v4Wa5pnN1btK1DNdgKUC12499YNqHIDUKip26b
-    SoFBMjsfkKlt+DKEtshb2W2lg9RVBIHHyt4olW2wvG7wZOfvvOGsy/jYatHEt0og
-    G5j89Wq/BN3uIudrcuXGRZKc9hLjeiTBNSbXm442jM+zAzhlDQpT2FL5Nebs3KyW
-    3bdjdt456f3iYdX0yCMgjCROuwsT6COHHP+MrLTzJlRaldWbsh8QnC+EqKih7tqO
-    l7NYRLbS/BvuWUIo3C1UTayDFlmATetz12h6MwGDOO3ikgxefkk9erKfynVS7lSo
-    Hz1Ar2A1n4iQsheY4vifcUOwYVCOaUIBInHA==
+    1525748935; b=Z18ORJX7aTItPsfBBLUyg0HM4IhQfFtztmaHd8bjShVEUITSoc
+    CT62mEBW8Er74XoSe5wXlFLYFBPrF6gGqaoUlpYUt694iOHeqFfY3VLmj8k8wSIb
+    Oxg3gcDrO1bDIHDA+6rnhOOiB6mAIXCdG8Jmna8M3I2n/enHMUTD1BZ3CWfeUG+A
+    m7TLVYoC6cfcqsNGcETrCauVQdtlpWBaipbu8hedu3aRrXmNdUZMmBU9HrcqAHJ0
+    QOWs7cw9La0j8U5IDi8fzF6dsiCdheuZfpz2iQwN0JILnxvM4nlps9vIZ3DH6GCf
+    /IrzKylZUtv1+YHFkxLHqCGJYFPOoz1VH1bw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525860776; bh=
-    2B6qjcWo/0MFCtJ2tQQ4rFwZF/3C6d5grZ/M7+3kkzk=; b=KTYUsUJuVBUaYc81
-    v+Dmd4YP0ANoQHT8o2oauKDhP4mLBbuvM27vzCSzyhjQ8HKnQGr5lSfQXum01e59
-    1m7t5Uk/p9pttKG5koZwGxQzQuVBPkQGemhAY9D23BBmloPo4ZEAD+dXsjjSvQZV
-    FZcV+u62cUlJFsDEvOeBnSmFRjcOQcfPBCnGxw56QcjQjzRtMkUOE/TlPqM8sHOq
-    tA6KP/BVo7zNf41HuOKYE15lpntSuFRhruxajqmVMpsQgJVmsC58lrubDxir7aQI
-    VN+dSWFVxal3dno2mDF+ibofboAKuYqL+ro2IdvlvdyD0RQsMTxleuq2iDu5q5b5
-    0GaRxw==
+    messagingengine.com; h=from:to:cc:subject:date:message-id:sender
+    :list-id; s=fm2; t=1525748935; bh=k3UTjXwChJ8JZ3KOkgM9MSWnyGeCBw
+    3Le//TnKMquVM=; b=J8Un+4QbDv9IY8kP50pev9ds7XlxH/UJDFv8/MYufNrmdO
+    DOasOnvkU9Yi2ylmyOs9yPwyMoyGvx8+HFYQJQp/okuQbmKCeUrbZO/XVObdRy57
+    iEAavW+5Fjk3mkn2YG+9HleFNydYpjONrV71XRB6+eULLFZpCznnqiTNhecIUhUd
+    5GsCWx+0sLdg2tbsQtGylsDXdhg/UePZICz4UrZzSqqxe+CHiUDxubxCkNooasrl
+    Eretr/lHHPb3y9ZitweQXVbXdABq4HjEonno0tJvCjQVdSJhcw+7I8+5XohfiIXw
+    B9Y8xby6k8PI676n5rxiKnc/RbNPbPtmQx/lMLQQ==
 ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
     dkim=none (no signatures found);
     dmarc=none (p=none,has-list-id=yes,d=none) header.from=rock-chips.com;
@@ -59,32 +58,32 @@ Authentication-Results: mx4.messagingengine.com;
       header_is_org_domain=yes;
     x-vs=clean score=0 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIwKsJqJgjrEKEq9Cc2FkTwHZ5LyYeXgz4dSyaSYlGHu4G0opvJvzl8IDHXnWjFcNuASTzFjCm3SzF6O2v6okMAM9dzJiE3nT/QGI5PITcatN3DCydT0
-    qByKOSqtKE9xKSOneDi84g9fOMWgWXsFbGKx0S4gYYpCJb2e2jLZYT7+zjqKzo+MO4k7D2Xk5TgAFjlwMY0eCJuh5QtG3xza2wt/jg6Vpp92i/KkRFcqhsWT
+X-CM-Envelope: MS4wfMEdSd+EA7WBSVCeiDn53GK3TtcLSLCPnkn43u0woyLGq9uzi/BYpvDI5gv7Kue57O7gy59f6/soebEDQzbIAoIkH4+s0H6LLlMrpuGbw6LYKaicTzSf
+    Z6v4kxwEXdjKqXmbPJwqFZWWCwS7UznZ6Zp0e/+r6/ATf0eVwLK7cuCKKdfqgr44fRDQ68o0BKYN/FegO+pqBjy5PR9cTy632acgbCAtzBlamqtOhu4dFmDD
 X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
     a=UK1r566ZdBxH71SXbqIOeA==:17 a=4_-BN3WEXhEA:10 a=VUJBJC2UJ8kA:10
-    a=s8YR1HE3AAAA:8 a=VwQbUJbxAAAA:8 a=ZvVp6P6bRAB-60_p9RoA:9
-    a=JUXAwFLBUM4cW0Se:21 a=BbKhak3R6c8ITP1t:21 a=x8gzFH9gYPwA:10
-    a=jGH_LyMDp9YhSvY-UuyI:22 a=AjGcO6oz07-iQ99wixmX:22
+    a=VwQbUJbxAAAA:8 a=2yCBVkMr0AGrh4y31QkA:9 a=x8gzFH9gYPwA:10
+    a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934479AbeEIKMl (ORCPT <rfc822;greg@kroah.com>);
-        Wed, 9 May 2018 06:12:41 -0400
-Received: from regular1.263xmail.com ([211.150.99.132]:36414 "EHLO
+        id S1754072AbeEHDIv (ORCPT <rfc822;greg@kroah.com>);
+        Mon, 7 May 2018 23:08:51 -0400
+Received: from regular1.263xmail.com ([211.150.99.135]:44725 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934288AbeEIKMc (ORCPT
-        <rfc822;linux-usb@vger.kernel.org>); Wed, 9 May 2018 06:12:32 -0400
+        with ESMTP id S1753896AbeEHDIu (ORCPT
+        <rfc822;linux-usb@vger.kernel.org>); Mon, 7 May 2018 23:08:50 -0400
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
+X-IP-DOMAINF: 1
 X-RL-SENDER: william.wu@rock-chips.com
 X-FST-TO: hminas@synopsys.com
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: william.wu@rock-chips.com
-X-UNIQUE-TAG: <2d80648360591190056a8074192f86fd>
+X-UNIQUE-TAG: <0095e97bf258a81e73bf4537b2056f7a>
 X-ATTACHMENT-NUM: 0
 X-DNS-TYPE: 0
 From: William Wu <william.wu@rock-chips.com>
@@ -102,73 +101,33 @@ Cc: sergei.shtylyov@cogentembedded.com, heiko@sntech.de,
         San.Lin@quantatw.com, Ren.Kuo@quantatw.com, davidhtwang@aopen.com,
         fonglin@aopen.com, stevencheng@aopen.com, tomchen@aopen.com,
         donchang@aopen.com, milesschofield@aopen.com
-Subject: [PATCH v4 2/2] usb: dwc2: fix isoc split in transfer with no data
-Date: Wed,  9 May 2018 18:11:01 +0800
-Message-Id: <1525860661-18619-3-git-send-email-william.wu@rock-chips.com>
+Subject: [PATCH v3 0/2] usb: dwc2: fix isoc split in transfer issue
+Date: Tue,  8 May 2018 11:07:24 +0800
+Message-Id: <1525748846-7767-1-git-send-email-william.wu@rock-chips.com>
 X-Mailer: git-send-email 2.0.0
-In-Reply-To: <1525860661-18619-1-git-send-email-william.wu@rock-chips.com>
-References: <1525860661-18619-1-git-send-email-william.wu@rock-chips.com>
 Sender: linux-usb-owner@vger.kernel.org
 X-Mailing-List: linux-usb@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-If isoc split in transfer with no data (the length of DATA0
-packet is zero), we can't simply return immediately. Because
-the DATA0 can be the first transaction or the second transaction
-for the isoc split in transaction. If the DATA0 packet with no
-data is in the first transaction, we can return immediately.
-But if the DATA0 packet with no data is in the second transaction
-of isoc split in transaction sequence, we need to increase the
-qtd->isoc_frame_index and giveback urb to device driver if needed,
-otherwise, the MDATA packet will be lost.
+This patch fix dma unaligned problem and data lost problem for
+isoc split in transfer.
 
-A typical test case is that connect the dwc2 controller with an
-usb hs Hub (GL852G-12), and plug an usb fs audio device (Plantronics
-headset) into the downstream port of Hub. Then use the usb mic
-to record, we can find noise when playback.
+Test on rk3288 platform, use an usb hs Hub (GL852G-12) and an usb
+fs audio device (Plantronics headset) to capture and playback.
 
-In the case, the isoc split in transaction sequence like this:
+William Wu (2):
+  usb: dwc2: alloc dma aligned buffer for isoc split in
+  usb: dwc2: fix isoc split in transfer with no data
 
-- SSPLIT IN transaction
-- CSPLIT IN transaction
-  - MDATA packet (176 bytes)
-- CSPLIT IN transaction
-  - DATA0 packet (0 byte)
+ drivers/usb/dwc2/core.h      |  3 ++
+ drivers/usb/dwc2/hcd.c       | 85 ++++++++++++++++++++++++++++++++++++++++++--
+ drivers/usb/dwc2/hcd.h       | 10 ++++++
+ drivers/usb/dwc2/hcd_intr.c  | 11 ++++--
+ drivers/usb/dwc2/hcd_queue.c |  3 ++
+ 5 files changed, 107 insertions(+), 5 deletions(-)
 
-This patch use both the length of DATA0 and qtd->isoc_split_offset
-to check if the DATA0 is in the second transaction.
-
-Signed-off-by: William Wu <william.wu@rock-chips.com>
----
-Changes in v4:
-- None
-
-Changes in v3:
-- Remove "qtd->isoc_split_offset = 0" in the if test
-
-Changes in v2:
-- Modify the commit message
-
- drivers/usb/dwc2/hcd_intr.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c
-index ba6229e..9751785 100644
---- a/drivers/usb/dwc2/hcd_intr.c
-+++ b/drivers/usb/dwc2/hcd_intr.c
-@@ -930,9 +930,8 @@ static int dwc2_xfercomp_isoc_split_in(struct dwc2_hsotg *hsotg,
- 	frame_desc = &qtd->urb->iso_descs[qtd->isoc_frame_index];
- 	len = dwc2_get_actual_xfer_length(hsotg, chan, chnum, qtd,
- 					  DWC2_HC_XFER_COMPLETE, NULL);
--	if (!len) {
-+	if (!len && !qtd->isoc_split_offset) {
- 		qtd->complete_split = 0;
--		qtd->isoc_split_offset = 0;
- 		return 0;
- 	}
- 
 -- 
 2.0.0
 
