@@ -1,80 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932634AbeEHQVw (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:21:52 -0400
-Received: from smtp2.provo.novell.com ([137.65.250.81]:41951 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755503AbeEHQVo (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Tue, 8 May 2018 12:21:44 -0400
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: davem@davemloft.net
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dave@stgolabs.net, Davidlohr Bueso <dbueso@suse.de>
-Subject: [PATCH 1/6] net/ipv4: Update ip_tunnel_metadata_cnt static key to modern api
-Date: Tue,  8 May 2018 09:06:58 -0700
-Message-Id: <20180508160703.8125-2-dave@stgolabs.net>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20180508160703.8125-1-dave@stgolabs.net>
-References: <20180508160703.8125-1-dave@stgolabs.net>
+        id S932905AbeEHQZF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:25:05 -0400
+Received: from mga18.intel.com ([134.134.136.126]:14953 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932707AbeEHQZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:25:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
+   d="scan'208";a="39652780"
+Subject: Re: [PATCH] x86/boot/64/clang: Use fixup_pointer() to access
+ '__supported_pte_mask'
+To: Alexander Potapenko <glider@google.com>
+References: <20180508121638.174022-1-glider@google.com>
+ <1f69bdb6-df5e-d709-064a-4f6fdd6e11a7@linux.intel.com>
+ <CAG_fn=Xv74c80swzFjKyybQpRj7Qj9K1NVH-D6gcxcYEoUJ1xA@mail.gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Dmitriy Vyukov <dvyukov@google.com>, Michael Davidson <md@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Message-ID: <d149aae8-6aba-bb31-ddd6-49244598a617@intel.com>
+Date: Tue, 8 May 2018 09:25:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <CAG_fn=Xv74c80swzFjKyybQpRj7Qj9K1NVH-D6gcxcYEoUJ1xA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No changes in refcount semantics -- key init is false; replace
+On 05/08/2018 07:50 AM, Alexander Potapenko wrote:
+>>> Similarly to commit 187e91fe5e91
+>>> ("x86/boot/64/clang: Use fixup_pointer() to access 'next_early_pgt'"),
+>>> '__supported_pte_mask' must be also accessed using fixup_pointer() to
+>>> avoid position-dependent relocations.
+>>>
+>>> Signed-off-by: Alexander Potapenko <glider@google.com>
+>>> Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
+> 
+>> In the interests of standalone changelogs, I'd really appreciate an
+>> actual explanation of what's going on here.  Your patch makes the code
+>> uglier and doesn't fix anything functional from what I can see.
+> You're right, sure. I'll send a patch with an updated description.
 
-static_key_slow_inc|dec   with   static_branch_inc|dec
-static_key_false          with   static_branch_unlikely
+Great, thanks!
 
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
----
- include/net/ip_tunnels.h  | 4 ++--
- net/ipv4/ip_tunnel_core.c | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+>> Do we have anything we can do to keep us from recreating these kinds of
+>> regressions all the time?
+> I'm not really aware of the possible options in the kernel land. Looks like
+> a task for some objtool-like utility?
+> As long as these regressions are caught with Clang, setting up a 0day Clang
+> builder might help.
 
-diff --git a/include/net/ip_tunnels.h b/include/net/ip_tunnels.h
-index 751646adc769..90ff430f5e9d 100644
---- a/include/net/ip_tunnels.h
-+++ b/include/net/ip_tunnels.h
-@@ -477,12 +477,12 @@ static inline struct ip_tunnel_info *lwt_tun_info(struct lwtunnel_state *lwtstat
- 	return (struct ip_tunnel_info *)lwtstate->data;
- }
- 
--extern struct static_key ip_tunnel_metadata_cnt;
-+DECLARE_STATIC_KEY_FALSE(ip_tunnel_metadata_cnt);
- 
- /* Returns > 0 if metadata should be collected */
- static inline int ip_tunnel_collect_metadata(void)
- {
--	return static_key_false(&ip_tunnel_metadata_cnt);
-+	return static_branch_unlikely(&ip_tunnel_metadata_cnt);
- }
- 
- void __init ip_tunnel_core_init(void);
-diff --git a/net/ipv4/ip_tunnel_core.c b/net/ipv4/ip_tunnel_core.c
-index 2f39479be92f..dde671e97829 100644
---- a/net/ipv4/ip_tunnel_core.c
-+++ b/net/ipv4/ip_tunnel_core.c
-@@ -423,17 +423,17 @@ void __init ip_tunnel_core_init(void)
- 	lwtunnel_encap_add_ops(&ip6_tun_lwt_ops, LWTUNNEL_ENCAP_IP6);
- }
- 
--struct static_key ip_tunnel_metadata_cnt = STATIC_KEY_INIT_FALSE;
-+DEFINE_STATIC_KEY_FALSE(ip_tunnel_metadata_cnt);
- EXPORT_SYMBOL(ip_tunnel_metadata_cnt);
- 
- void ip_tunnel_need_metadata(void)
- {
--	static_key_slow_inc(&ip_tunnel_metadata_cnt);
-+	static_branch_inc(&ip_tunnel_metadata_cnt);
- }
- EXPORT_SYMBOL_GPL(ip_tunnel_need_metadata);
- 
- void ip_tunnel_unneed_metadata(void)
- {
--	static_key_slow_dec(&ip_tunnel_metadata_cnt);
-+	static_branch_dec(&ip_tunnel_metadata_cnt);
- }
- EXPORT_SYMBOL_GPL(ip_tunnel_unneed_metadata);
--- 
-2.13.6
+I've asked the 0day folks if this is doable.  It would be great to see
+it added.
