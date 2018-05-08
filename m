@@ -1,305 +1,371 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754874AbeEHKfY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 06:35:24 -0400
-Received: from mail-db5eur01on0060.outbound.protection.outlook.com ([104.47.2.60]:39580
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754408AbeEHKfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 06:35:22 -0400
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Lowry.Li@arm.com;
-From: Lowry Li <lowry.li@arm.com>
-To: liviu.dudau@arm.com
-Cc: daniel.vetter@intel.com, jani.nikula@linux.intel.com,
-        seanpaul@chromium.org, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        brian.starkey@arm.com, nd@arm.com
-Subject: [RFC PATCH] drm: Add per-plane pixel blend mode property
-Date: Tue,  8 May 2018 18:34:36 +0800
-Message-Id: <1525775676-32158-1-git-send-email-lowry.li@arm.com>
-X-Mailer: git-send-email 1.9.1
+        id S932250AbeEHKfm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 06:35:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40084 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754408AbeEHKfj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 06:35:39 -0400
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [113.29.88.7]
-X-ClientProxiedBy: SG2PR06CA0086.apcprd06.prod.outlook.com
- (2603:1096:3:14::12) To DB6PR0801MB1973.eurprd08.prod.outlook.com
- (2603:10a6:4:75::18)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB6PR0801MB1973;
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1973;3:OPh7kzQUQ8G5mjgodkG6a+A1D/8K2alW24BfWU8/0UdUqPg8SsecZ/d8zQeNC/WsfzqYVvouW5GOHU1n2b7ZpK1YHJqAw914uBuHmvSJoBag9ulWqi2bz9BP2P3AwjjJMp5b9M8IhUcHmJau7CsFNmyI+4a9EpX46ZWeFFBQjaA5UBgyLpo/GHvN2km6QeaGNAvdFTwWy5UgnzYwJHd5p3HDi/cWzIo8Zg8K5vnkQYUt1By8yllh5LmENWSZqNvo;25:VI7H0BbSLpG0x1dgg+M+XbAdhOeOZKHrCYElMAhhqk/W0fpeKobdIDG49xnQ2lx49pwJyPvo8FZsBsbJq6UkmXwacuzt08omFDQFK7JIFBU5VSfBC21IYYau86goLilxVbTaNNp4MW3nQwAngKhzuKAMHDv3GopnqWTUFrd2GvbTJPqd/skamfwiGXtNKi0vH4dyhOmkMJlnNM9P/q1oPbrioMUDnqDSKjAk4K/5jwMnv6iCt9/rcGk/NpvlQwz2ydJq+30z1maPmQvgJBH35k9HsVQqM4CZN/6WUbG/rdyWJTQ45Misdt7UM3axLqIiSc+k1eEsHzoBa+oiV53Qdw==;31:4MNTiEdfZ0Cjr1Umf3S3DvlTazNsDQpJrZ9YZ/IZ1YSlF486nqk9S+BBvpQ/UdVakT19m+ZibYRnHnBFP8sGl8QOuwK1rK109A9HA0qJNAkyYzA1z47krdGX8VdtfQ8QFg0H0KX73Harf9fPX9c7Z7cHBiBHLIgfZGY1KUQbNYTmBYz9b4uUzgDYSaVqPyiF5Tk1XE8CKT3iR2ZSXWhUY2gKKi6SYt6G6PlTqZQYzHU=
-X-MS-TrafficTypeDiagnostic: DB6PR0801MB1973:
-NoDisclaimer: True
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1973;20:jU3v5NqsukbfOTVS+OrzsJ4Zl9gKazf8iKVRmUZinjTVQ1HyVyKby4f/u+qYNjmg6FS6Zj9g+v+nA7QIogseQiO7is7YdO01noBx16CKaQP5x4yMdzk5Yw+zH0WcBk1jFkH2xOpMxXvuPoA5JLwqRAV3kuxBjtDGQsGl5urRCXjH9cTtgkw0V52+Rm+nowJvnsSUC+aHV4z/4M3Y2w9fyYugqovISyPCN6Q+CPYeNOQltKutMXc87uLwX/yUV6zb;4:l/yHkC9nHK9lPsg5fYrmTeYMuZ7YVUoaa39XQ538q01itQ2uxmr9Ekj/muWFX0vwScLTOlHvCM6EdQBbXNBf6N9LtVDhuZZhB7Xh2F5r03C4PcvLx6uaw3FnqYlEwJWGs8fbduBL3T3GYiE3cDFBbxGIwYrdQGwKK9Dth/j835XvSmPV5REO9pTtgOTfS0cwwn+WX9Nk85dQa5+4Z74xihJIkNSKnYZ4RPBtQcmt99MN5TQRQq8d23fVpuXzO1Qs1NtAxIJpot2JvxrcF1ML+iU75R7lZ2WwjTz4kFZ0C+BhbKjUYNAE95cfZ4vOcIvE
-X-Microsoft-Antispam-PRVS: <DB6PR0801MB1973F042C8295488DE15A8FE9F9A0@DB6PR0801MB1973.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(180628864354917);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(6072148)(201708071742011);SRVR:DB6PR0801MB1973;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0801MB1973;
-X-Forefront-PRVS: 0666E15D35
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39860400002)(39380400002)(396003)(189003)(199004)(6486002)(6636002)(50466002)(386003)(25786009)(106356001)(72206003)(86362001)(7696005)(105586002)(66066001)(51416003)(52116002)(2616005)(47776003)(476003)(36756003)(48376002)(478600001)(6666003)(68736007)(956004)(8936002)(37006003)(316002)(5660300001)(53936002)(8676002)(81166006)(81156014)(44832011)(34206002)(97736004)(4326008)(16586007)(486006)(2906002)(7736002)(26005)(305945005)(16526019)(6116002)(3846002)(2361001)(2351001)(5890100001)(50226002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1973;H:lowry-ThinkStation-P300.shanghai.arm.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0801MB1973;23:m/j7HJcGs2jTxUzKbc4dgzCiT67AgmKrCRH2uXr?=
- =?us-ascii?Q?WYm8QXy1qI4+vy2ho5XEVU/MfxxLPt4EtKbFgQsaxGByMTETUsnW4ujrGvBS?=
- =?us-ascii?Q?ieru7YaZuSR00wWIshafFhtFLMdKFL/0h7H67AYQBCIL1ckFM09XYv6a0kbg?=
- =?us-ascii?Q?PD4gm21eDFWJSb6LLo+5r+EiuaAFo9mDCrdxM524Gvm5y47ptOp5czKThj2o?=
- =?us-ascii?Q?FnaeftZQBRU7dA75HR3bPTwWpSuspyAFzxqZODVpXNxSV4U2D5IIw/ysFH97?=
- =?us-ascii?Q?zF/yng5zLm3/vfI8efU42FxQSKdJHrfCsVKlqdUlqJEy2ZC2KNDiLMldkPUe?=
- =?us-ascii?Q?Y6bLwF6/RMXDqMJhKWLaB9hNB15L8Byyxx4lRAbTfNWoYko05yz9oKNuDlEg?=
- =?us-ascii?Q?cYYMobBMFvpaMe8raJlqubtBhXsFN40bUa+D3neZ9BZ1ccVigAmnPxJx0I9j?=
- =?us-ascii?Q?UQgpoIzantv6vqMZA7mj78yczQ7bIwKmPlOw4vP8s8YOOKmH0fDtZ1wLv4Js?=
- =?us-ascii?Q?o+22Z2wlBqudQLt7WJoeyOeOSXXOjsLymVtbUGRJFQhxUR2HKghZKFN6UQZS?=
- =?us-ascii?Q?tzPg9HNPOWIhhYMl7IlZeP+juM5tIqFKtbcP7sgyW9sH97V8/1xAPzrTLilA?=
- =?us-ascii?Q?MW3AIeuQtiZvDkUiBOCAYH0opnI3SVMBTXjbYmrQHyAw05xSlZv39mCAmPdk?=
- =?us-ascii?Q?c+Squ3FbSmoiU/NGJmqzvrzIjnKhmC0B/ewNVC+GpvCsAUnEgKFT5IpN1lkE?=
- =?us-ascii?Q?02dA6l3H7p2fGN9Vg+LdRANxEn/Z3n+syjcUf6RZuSpHKlTzoA0doGDd0FbT?=
- =?us-ascii?Q?8m+I0DzFAphANXwYSJyoa5VfURpbFa6oFyKSmWktIIQ4vDSYXQbqilRJDAAg?=
- =?us-ascii?Q?cAWeLqkwB6IpqJGCky0L1I/vN7Jvum8ooZ/MPjLGAGv8vGUBDU7facMMw+3q?=
- =?us-ascii?Q?n5Ti3GnpBwYGcshO5Vvo0UMngIrP2eb3LTFcOh73ukx4qpHeApafqUEFaVK7?=
- =?us-ascii?Q?ALSe9K2Qycl5gwhhgWPSo4QerZkt3Ls3M+aLi2om1aidEDUE7IrnEcjY6ml9?=
- =?us-ascii?Q?GOOO3aM//OgnpmAeZ1cRKCd11HyrXZFjMJqF0789XOsWgV765xjK/WRFHyvk?=
- =?us-ascii?Q?FdtYehw3dxqTqXvHc0kqOJN2gy3AZgsXf+ZgZLNdgJvr/5i+kz94Zz3cAEWL?=
- =?us-ascii?Q?Z6ao1pqcRsa+WB5XKQ3xTJBMYYkl6gIffQSKI80OBL28yPxIjCmtv41tZXQ?=
- =?us-ascii?Q?=3D=3D?=
-X-Microsoft-Antispam-Message-Info: cE3gUDBbrX9EZDvTogJTSA764qIp5+RGCC2yfG6I1WukY2t+C5o1gN9qftrrVF51f7FViGxfoEhSuojiDDKVg+kVfbFIQP5gLb6KeE8C6V39tnyPEFINvGgFg4K19kPOdE2/GngOZ5S7YAb1CE4cNqYUnbvmOhzkGYf/oJN5K/uRxujWGVoMjjp/nV1bsggH
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1973;6:6cncQVKR+s1XijBnzAIdMiCMj18E1ZpcLh8uKH24/nWXTcbNyeQcHUNKr76oiHyeZgteJr2mvMFb4ckyIlrOeZ+FHU8pBc1ymZrqq1sxKjgw7UVvqBCnz8HQMNM3EzXXHPBD4YEDQk+60FIJ1f9j46ObMhDJnWiGy1kVWhBZ2Bzo5Tqn57I/9I3OMK1TMlfAE5OAN+I4qT3ZiD2zcVTQSkcwx8uMNbQLfGuyJ1r2dpFWxqpFHV96nCjNhIatl75HqKjKc897gdSVEfpGmZd/668PCDi9QqptS51qXRWaQqKHqxmLpcUlPh7IuseiM5CpUREricxigETYLWgnLs2KD/V/1y51gFgp/vI7+j6Q7DZVJ4Vl2qmYxQ0tq2A8GOEhPUKu/ejvSTZrRWuMj5B+6D+q3jC+c5ullRUBaf5twBmPGBWmVYL8PydgHBFKp4inTMVz9E7Qm4jGlHxY6MNxkA==;5:CrJwzP7RZHlDb4ghFtFMfN79TnP/mad8QXt1Ow2wmlBq+s+AWcmcxhoBPaqeUkX6Lv4IWhXXPEU6EVJ0UL7gqWBCYd9oxAQu8x8w3M2H/WSq4hwTLfZIsMVySrkda54BPFfp5TTUhfKO4wtdJHz0XZh9srMtrPpaDdD8ftUbPzM=;24:CPvgXketKG5I96dmUwKM5pkZ/hPiUo1oXs+Ln7uJDeHe+4u1oAKNm8NkZSf9oQDscehMg5CeBEISqNYiHHOkszITGvZlZ4KZ272KMteC8nU=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DB6PR0801MB1973;7:PIr6g1K1frJJzdxoxOY3ynWldFP72YU451hl0gkXTGch1TxIkotcAq/Pnhu1MYdGmVkJPuZRxkVQCFyzAJb5uLPxBdnxr4MfcBLO+Uk8L6EZTXlORgyuiV2yHhK0ZKepMEIDWzixvPYK6hgU2MiTHFYnedalTIR0cMHxf0H3QVAFmSP5+9qMHpMV0pxd6Hkb49KuzGgmVZV5oezQAQpm0Co8bN1s3kb+TEuzsPKLJXfBl8iT3sxFf/WyabEn4vrz
-X-MS-Office365-Filtering-Correlation-Id: 13d95e9c-fe76-415d-9021-08d5b4cf65cd
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2018 10:35:16.9805
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13d95e9c-fe76-415d-9021-08d5b4cf65cd
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1973
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 08 May 2018 16:05:37 +0530
+From: kgunda@codeaurora.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH V1 3/5] backlight: qcom-wled: Add support for short
+ circuit handling
+In-Reply-To: <20180507170652.GC2259@tuxbook-pro>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-4-git-send-email-kgunda@codeaurora.org>
+ <20180507170652.GC2259@tuxbook-pro>
+Message-ID: <ddce683359d03dc7cf0ef3f032f3820b@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pixel blend modes represent the alpha blending equation
-selection, describing how the pixels from the current
-plane are composited with the background.
-
-Add a pixel_blend_mode to drm_plane_state and a
-blend_mode_property to drm_plane, and related support
-functions.
-
-Defines three blend modes in drm_blend.h.
-
-Signed-off-by: Lowry Li <lowry.li@arm.com>
----
- drivers/gpu/drm/drm_atomic.c        |  4 ++
- drivers/gpu/drm/drm_atomic_helper.c |  1 +
- drivers/gpu/drm/drm_blend.c         | 95 +++++++++++++++++++++++++++++++++++++
- include/drm/drm_blend.h             |  6 +++
- include/drm/drm_plane.h             |  7 +++
- 5 files changed, 113 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index a567310..0bb6de1 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -764,6 +764,8 @@ int drm_atomic_plane_set_property(struct drm_plane *plane,
- 		state->src_w = val;
- 	} else if (property == config->prop_src_h) {
- 		state->src_h = val;
-+	} else if (property == plane->blend_mode_property) {
-+		state->pixel_blend_mode = val;
- 	} else if (property == plane->rotation_property) {
- 		if (!is_power_of_2(val & DRM_ROTATE_MASK))
- 			return -EINVAL;
-@@ -826,6 +828,8 @@ int drm_atomic_plane_set_property(struct drm_plane *plane,
- 		*val = state->src_w;
- 	} else if (property == config->prop_src_h) {
- 		*val = state->src_h;
-+	} else if (property == plane->blend_mode_property) {
-+		*val = state->pixel_blend_mode;
- 	} else if (property == plane->rotation_property) {
- 		*val = state->rotation;
- 	} else if (property == plane->zpos_property) {
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index 01d936b..e4377fd 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -3133,6 +3133,7 @@ void drm_atomic_helper_plane_reset(struct drm_plane *plane)
- 	if (plane->state) {
- 		plane->state->plane = plane;
- 		plane->state->rotation = DRM_ROTATE_0;
-+		plane->state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
- 	}
- }
- EXPORT_SYMBOL(drm_atomic_helper_plane_reset);
-diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
-index 665aafc..bb938de 100644
---- a/drivers/gpu/drm/drm_blend.c
-+++ b/drivers/gpu/drm/drm_blend.c
-@@ -98,6 +98,12 @@
-  *   planes. Without this property the primary plane is always below the cursor
-  *   plane, and ordering between all other planes is undefined.
-  *
-+ * pixel blend mode:
-+ *	Pixel blend mode is set up with drm_plane_create_blend_mode_property().
-+ *	It adds a blend mode for alpha blending equation selection, describing
-+ *	how the pixels from the current plane are composited with the
-+ *	background.
-+ *
-  * Note that all the property extensions described here apply either to the
-  * plane or the CRTC (e.g. for the background color, which currently is not
-  * exposed and assumed to be black).
-@@ -405,3 +411,92 @@ int drm_atomic_normalize_zpos(struct drm_device *dev,
- 	return 0;
- }
- EXPORT_SYMBOL(drm_atomic_normalize_zpos);
-+
-+/**
-+ * drm_plane_create_blend_mode_property - create a new blend mode property
-+ * @plane: drm plane
-+ * @supported_modes: bitmask of supported modes, must include
-+ *		     BIT(DRM_MODE_BLEND_PREMULTI)
-+ *
-+ * This creates a new property describing the blend mode.
-+ *
-+ * The property exposed to userspace is an enumeration property (see
-+ * drm_property_create_enum()) called "pixel blend mode" and has the
-+ * following enumeration values:
-+ *
-+ * DRM_MODE_BLEND_PIXEL_NONE: Blend formula that ignores the pixel alpha.
-+ *	"None"
-+ *	out.rgb = plane.alpha * pixel.rgb + (1 - plane.alpha) * bg.rgb
-+ *
-+ * DRM_MODE_BLEND_PREMULTI: Blend formula that assumes the pixel color values
-+ *			    have been already pre-multiplied with the alpha
-+ *			    channel values.
-+ *	"Pre-multiplied"
-+ *	out.rgb = plane.alpha * pixel.rgb +
-+ *	      (1 - (plane.alpha * pixel.alpha)) * bg.rgb
-+ *
-+ * DRM_MODE_BLEND_COVERAGE: Blend formula that assumes the pixel color values
-+ *			    have not been pre-multiplied and will do so when
-+ *			    blending them to the background color values.
-+ *	"Coverage"
-+ *	out.rgb = plane.alpha * pixel.alpha * pixel.rgb +
-+ *	      (1 - (plane.alpha * pixel.alpha)) * bg.rgb
-+ *
-+ * This property has no effect on formats with no pixel alpha, as pixel.alpha
-+ * is assumed to be 1.0. If the plane does not expose the "alpha" property, then
-+ * plane.alpha is assumed to be 1.0, otherwise, it is the value of the "alpha"
-+ * property.
-+ *
-+ * RETURNS:
-+ * Zero for success or -errno
-+ */
-+int drm_plane_create_blend_mode_property(struct drm_plane *plane,
-+					 unsigned int supported_modes)
-+{
-+	struct drm_device *dev = plane->dev;
-+	struct drm_property *prop;
-+	static const struct drm_prop_enum_list props[] = {
-+		{ DRM_MODE_BLEND_PIXEL_NONE, "None" },
-+		{ DRM_MODE_BLEND_PREMULTI, "Pre-multiplied" },
-+		{ DRM_MODE_BLEND_COVERAGE, "Coverage" },
-+	};
-+	unsigned int valid_mode_mask = BIT(DRM_MODE_BLEND_PIXEL_NONE) |
-+				       BIT(DRM_MODE_BLEND_PREMULTI)   |
-+				       BIT(DRM_MODE_BLEND_COVERAGE);
-+	int i, j = 0;
-+
-+	if (WARN_ON((supported_modes & ~valid_mode_mask) ||
-+		    ((supported_modes & BIT(DRM_MODE_BLEND_PREMULTI)) == 0)))
-+		return -EINVAL;
-+
-+	prop = drm_property_create(dev, DRM_MODE_PROP_ENUM,
-+				   "pixel blend mode",
-+				   hweight32(supported_modes));
-+	if (!prop)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(props); i++) {
-+		int ret;
-+
-+		if (!(BIT(props[i].type) & supported_modes))
-+			continue;
-+
-+		ret = drm_property_add_enum(prop, j++, props[i].type,
-+					    props[i].name);
-+
-+		if (ret) {
-+			drm_property_destroy(dev, prop);
-+
-+			return ret;
-+		}
-+	}
-+
-+	drm_object_attach_property(&plane->base, prop, DRM_MODE_BLEND_PREMULTI);
-+	plane->blend_mode_property = prop;
-+
-+	if (plane->state)
-+		plane->state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(drm_plane_create_blend_mode_property);
-diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
-index 13221cf..6bf95a4 100644
---- a/include/drm/drm_blend.h
-+++ b/include/drm/drm_blend.h
-@@ -26,6 +26,10 @@
- #include <linux/list.h>
- #include <linux/ctype.h>
- 
-+#define DRM_MODE_BLEND_PIXEL_NONE	0
-+#define DRM_MODE_BLEND_PREMULTI		1
-+#define DRM_MODE_BLEND_COVERAGE		2
-+
- struct drm_device;
- struct drm_atomic_state;
- 
-@@ -65,4 +69,6 @@ int drm_plane_create_zpos_immutable_property(struct drm_plane *plane,
- 					     unsigned int zpos);
- int drm_atomic_normalize_zpos(struct drm_device *dev,
- 			      struct drm_atomic_state *state);
-+int drm_plane_create_blend_mode_property(struct drm_plane *plane,
-+					 unsigned int supported_modes);
- #endif
-diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
-index 20867b4..f9cbfee 100644
---- a/include/drm/drm_plane.h
-+++ b/include/drm/drm_plane.h
-@@ -41,6 +41,8 @@
-  *	plane (in 16.16)
-  * @src_w: width of visible portion of plane (in 16.16)
-  * @src_h: height of visible portion of plane (in 16.16)
-+ * @pixel_blend_mode: how the plane's framebuffer alpha channel is used when
-+ *	blending with the background colour.
-  * @rotation: rotation of the plane
-  * @zpos: priority of the given plane on crtc (optional)
-  *	Note that multiple active planes on the same crtc can have an identical
-@@ -104,6 +106,9 @@ struct drm_plane_state {
- 	uint32_t src_x, src_y;
- 	uint32_t src_h, src_w;
- 
-+	/* Plane pixel blend mode */
-+	uint16_t pixel_blend_mode;
-+
- 	/* Plane rotation */
- 	unsigned int rotation;
- 
-@@ -459,6 +464,7 @@ enum drm_plane_type {
-  * @state: current atomic state for this plane
-  * @zpos_property: zpos property for this plane
-  * @rotation_property: rotation property for this plane
-+ * @blend_mode_property: blend mode property for this plane
-  * @helper_private: mid-layer private data
-  */
- struct drm_plane {
-@@ -506,6 +512,7 @@ struct drm_plane {
- 
- 	struct drm_property *zpos_property;
- 	struct drm_property *rotation_property;
-+	struct drm_property *blend_mode_property;
- };
- 
- #define obj_to_plane(x) container_of(x, struct drm_plane, base)
--- 
-1.9.1
+On 2018-05-07 22:36, Bjorn Andersson wrote:
+> On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
+> 
+>> Handle the short circuit interrupt and check if the short circuit
+>> interrupt is valid. Re-enable the module to check if it goes
+>> away. Disable the module altogether if the short circuit event
+>> persists.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>>  drivers/video/backlight/qcom-wled.c | 134 
+>> ++++++++++++++++++++++++++++++++++--
+>>  1 file changed, 130 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>> b/drivers/video/backlight/qcom-wled.c
+>> index be8b8d3..2cfba77 100644
+>> --- a/drivers/video/backlight/qcom-wled.c
+>> +++ b/drivers/video/backlight/qcom-wled.c
+>> @@ -10,6 +10,9 @@
+>>   * GNU General Public License for more details.
+>>   */
+>> 
+>> +#include <linux/delay.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/ktime.h>
+>>  #include <linux/kernel.h>
+>>  #include <linux/backlight.h>
+>>  #include <linux/module.h>
+>> @@ -23,7 +26,9 @@
+>> 
+>>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
+>> 
+>> -/* Control registers */
+>> +/* WLED3 Control registers */
+> 
+> Minor nit, please move the change of this comment to the previous 
+> patch.
+> 
+Ok. Will do it the next series.
+>> +#define WLED3_CTRL_REG_FAULT_STATUS			0x08
+> 
+> Unused.
+> 
+Will remove it in the next series.
+>> +
+>>  #define WLED3_CTRL_REG_MOD_EN				0x46
+>>  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
+>> 
+>> @@ -36,7 +41,17 @@
+>>  #define WLED3_CTRL_REG_ILIMIT				0x4e
+>>  #define  WLED3_CTRL_REG_ILIMIT_MASK			GENMASK(2, 0)
+>> 
+>> -/* sink registers */
+> 
+> Please move comment change to previous commit.
+> 
+Will remove it in the next series.
+>> +/* WLED4 control registers */
+>> +#define WLED4_CTRL_REG_SHORT_PROTECT			0x5e
+>> +#define  WLED4_CTRL_REG_SHORT_EN_MASK			BIT(7)
+>> +
+>> +#define WLED4_CTRL_REG_SEC_ACCESS			0xd0
+>> +#define  WLED4_CTRL_REG_SEC_UNLOCK			0xa5
+>> +
+>> +#define WLED4_CTRL_REG_TEST1				0xe2
+>> +#define  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2		0x09
+>> +
+>> +/* WLED3 sink registers */
+>>  #define WLED3_SINK_REG_SYNC				0x47
+>>  #define  WLED3_SINK_REG_SYNC_MASK			GENMASK(2, 0)
+>>  #define  WLED4_SINK_REG_SYNC_MASK			GENMASK(3, 0)
+>> @@ -130,17 +145,23 @@ struct wled_config {
+>>  	bool cs_out_en;
+>>  	bool ext_gen;
+>>  	bool cabc;
+>> +	bool external_pfet;
+>>  };
+>> 
+>>  struct wled {
+>>  	const char *name;
+>>  	struct device *dev;
+>>  	struct regmap *regmap;
+>> +	struct mutex lock;	/* Lock to avoid race from ISR */
+>> +	ktime_t last_short_event;
+>>  	u16 ctrl_addr;
+>>  	u16 sink_addr;
+>>  	u32 brightness;
+>>  	u32 max_brightness;
+>> +	u32 short_count;
+>>  	const int *version;
+>> +	int short_irq;
+>> +	bool force_mod_disable;
+> 
+> "bool disabled_by_short" would describe what's going on better.
+> 
+Will rename it in the next series.
+>> 
+>>  	struct wled_config cfg;
+>>  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
+>> @@ -192,6 +213,9 @@ static int wled_module_enable(struct wled *wled, 
+>> int val)
+>>  {
+>>  	int rc;
+>> 
+>> +	if (wled->force_mod_disable)
+>> +		return 0;
+>> +
+> 
+> I don't fancy the idea of not telling user space that it's request to
+> turn on the backlight is ignored. Can we return some error here so that
+> it's possible for something to do something about this problem?
+> 
+Sure. Will do it in the next series.
+>>  	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+>>  				WLED3_CTRL_REG_MOD_EN,
+>>  				WLED3_CTRL_REG_MOD_EN_MASK,
+>> @@ -248,12 +272,13 @@ static int wled_update_status(struct 
+>> backlight_device *bl)
+>>  	    bl->props.state & BL_CORE_FBBLANK)
+>>  		brightness = 0;
+>> 
+>> +	mutex_lock(&wled->lock);
+>>  	if (brightness) {
+>>  		rc = wled->wled_set_brightness(wled, brightness);
+>>  		if (rc < 0) {
+>>  			dev_err(wled->dev, "wled failed to set brightness rc:%d\n",
+>>  				rc);
+>> -			return rc;
+>> +			goto unlock_mutex;
+>>  		}
+>> 
+>>  		rc = wled->wled_sync_toggle(wled);
+>> @@ -267,15 +292,60 @@ static int wled_update_status(struct 
+>> backlight_device *bl)
+>>  		rc = wled_module_enable(wled, !!brightness);
+>>  		if (rc < 0) {
+>>  			dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
+>> -			return rc;
+>> +			goto unlock_mutex;
+>>  		}
+>>  	}
+>> 
+>>  	wled->brightness = brightness;
+>> 
+>> +unlock_mutex:
+>> +	mutex_unlock(&wled->lock);
+>> +
+>>  	return rc;
+>>  }
+>> 
+>> +#define WLED_SHORT_DLY_MS			20
+>> +#define WLED_SHORT_CNT_MAX			5
+>> +#define WLED_SHORT_RESET_CNT_DLY_US	HZ
+> 
+> HZ is in the unit of jiffies, not micro seconds.
+> 
+Will address in next series.
+>> +static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
+>> +{
+>> +	struct wled *wled = _wled;
+>> +	int rc;
+>> +	s64 elapsed_time;
+>> +
+>> +	wled->short_count++;
+>> +	mutex_lock(&wled->lock);
+>> +	rc = wled_module_enable(wled, false);
+>> +	if (rc < 0) {
+>> +		dev_err(wled->dev, "wled disable failed rc:%d\n", rc);
+>> +		goto unlock_mutex;
+>> +	}
+>> +
+>> +	elapsed_time = ktime_us_delta(ktime_get(),
+>> +				      wled->last_short_event);
+>> +	if (elapsed_time > WLED_SHORT_RESET_CNT_DLY_US)
+>> +		wled->short_count = 0;
+>> +
+>> +	if (wled->short_count > WLED_SHORT_CNT_MAX) {
+>> +		dev_err(wled->dev, "Short trigged %d times, disabling WLED 
+>> forever!\n",
+>> +			wled->short_count);
+>> +		wled->force_mod_disable = true;
+>> +		goto unlock_mutex;
+>> +	}
+>> +
+>> +	wled->last_short_event = ktime_get();
+>> +
+>> +	msleep(WLED_SHORT_DLY_MS);
+>> +	rc = wled_module_enable(wled, true);
+>> +	if (rc < 0)
+>> +		dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
+>> +
+>> +unlock_mutex:
+>> +	mutex_unlock(&wled->lock);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>  static int wled3_setup(struct wled *wled)
+>>  {
+>>  	u16 addr;
+>> @@ -435,6 +505,21 @@ static int wled4_setup(struct wled *wled)
+>>  		return rc;
+>>  	}
+>> 
+>> +	if (wled->cfg.external_pfet) {
+>> +		/* Unlock the secure register access */
+>> +		rc = regmap_write(wled->regmap, wled->ctrl_addr +
+>> +				  WLED4_CTRL_REG_SEC_ACCESS,
+>> +				  WLED4_CTRL_REG_SEC_UNLOCK);
+>> +		if (rc < 0)
+>> +			return rc;
+>> +
+>> +		rc = regmap_write(wled->regmap,
+>> +				  wled->ctrl_addr + WLED4_CTRL_REG_TEST1,
+>> +				  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2);
+>> +		if (rc < 0)
+>> +			return rc;
+>> +	}
+>> +
+>>  	return 0;
+>>  }
+>> 
+>> @@ -446,6 +531,7 @@ static int wled4_setup(struct wled *wled)
+>>  	.switch_freq = 11,
+>>  	.enabled_strings = 0xf,
+>>  	.cabc = false,
+>> +	.external_pfet = true,
+> 
+> You added the "qcom,external-pfet" boolean to dt, but this forces it to
+> always be set - i.e. this is either wrong or you can omit the new dt
+> property.
+> 
+I will make it to false in the next series.
+>>  };
+>> 
+>>  static const u32 wled3_boost_i_limit_values[] = {
+>> @@ -628,6 +714,7 @@ static int wled_configure(struct wled *wled)
+>>  		{ "qcom,cs-out", &cfg->cs_out_en, },
+>>  		{ "qcom,ext-gen", &cfg->ext_gen, },
+>>  		{ "qcom,cabc", &cfg->cabc, },
+>> +		{ "qcom,external-pfet", &cfg->external_pfet, },
+>>  	};
+>> 
+>>  	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
+>> @@ -701,6 +788,39 @@ static int wled_configure(struct wled *wled)
+>>  	return 0;
+>>  }
+>> 
+>> +static int wled_configure_short_irq(struct wled *wled,
+>> +				    struct platform_device *pdev)
+>> +{
+>> +	int rc = 0;
+>> +
+>> +	/* PM8941 doesn't have the short detection support */
+>> +	if (*wled->version == WLED_PM8941)
+>> +		return 0;
+> 
+> If you attempt to acquire the "short" irq first in this function you
+> don't need this check - as "short" won't exist on pm8941.
+> 
+> Otherwise, it would be better if you add a "bool has_short_detect" to
+> the wled struct and check that, rather than sprinkling version checks
+> throughout.
+> 
+> 
+> Or...is cfg->external_pfet already denoting this?
+> 
+I think it is better to add the has_short_detect variable, as the 
+external_pfet is
+only specific to PMI8998.
+>> +
+>> +	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+>> +				WLED4_CTRL_REG_SHORT_PROTECT,
+>> +				WLED4_CTRL_REG_SHORT_EN_MASK,
+>> +				WLED4_CTRL_REG_SHORT_EN_MASK);
+> 
+> Do you really want to enable the short protect thing before figuring 
+> out
+> if you have a "short" irq.
+> 
+Yes. Irrespective of the interrupt, the short circuit detection should 
+be enabled
+to protect the HW from the short circuit.
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>> +	wled->short_irq = platform_get_irq_byname(pdev, "short");
+> 
+> short_irq isn't used outside this function, so preferably you turn it
+> into a local variable.
+> 
+Ok. Will do that in the next series.
+>> +	if (wled->short_irq < 0) {
+>> +		dev_dbg(&pdev->dev, "short irq is not used\n");
+>> +		return 0;
+>> +	}
+>> +
+>> +	rc = devm_request_threaded_irq(wled->dev, wled->short_irq,
+>> +				       NULL, wled_short_irq_handler,
+>> +				       IRQF_ONESHOT,
+>> +				       "wled_short_irq", wled);
+>> +	if (rc < 0)
+>> +		dev_err(wled->dev, "Unable to request short_irq (err:%d)\n",
+>> +			rc);
+>> +
+>> +	return rc;
+>> +}
+>> +
+>>  static const struct backlight_ops wled_ops = {
+>>  	.update_status = wled_update_status,
+>>  };
+>> @@ -733,6 +853,8 @@ static int wled_probe(struct platform_device 
+>> *pdev)
+>>  		return -ENODEV;
+>>  	}
+>> 
+>> +	mutex_init(&wled->lock);
+>> +
+>>  	rc = wled_configure(wled);
+>>  	if (rc)
+>>  		return rc;
+>> @@ -752,6 +874,10 @@ static int wled_probe(struct platform_device 
+>> *pdev)
+>>  		}
+>>  	}
+>> 
+>> +	rc = wled_configure_short_irq(wled, pdev);
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>>  	val = WLED_DEFAULT_BRIGHTNESS;
+>>  	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
+> 
+> Regards,
+> Bjorn
