@@ -1,81 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932544AbeEHUuP (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 16:50:15 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44030 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932283AbeEHUuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 16:50:13 -0400
-Date: Tue, 8 May 2018 16:50:06 -0400
-From: Jerome Glisse <jglisse@redhat.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
- behind switches
-Message-ID: <20180508205005.GC15608@redhat.com>
-References: <20180423233046.21476-5-logang@deltatee.com>
- <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
- <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
- <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
- <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
- <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
- <20180508133407.57a46902@w520.home>
- <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
- <20180508141331.7cd737cb@w520.home>
- <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
+        id S932499AbeEHUxC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 16:53:02 -0400
+Received: from ms.lwn.net ([45.79.88.28]:36954 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932105AbeEHUxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 16:53:01 -0400
+Date: Tue, 8 May 2018 14:52:58 -0600
+From: Jonathan Corbet <corbet@lwn.net>
+To: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Kees Cook <keescook@chromium.org>,
+        Elena Reshetova <elena.reshetova@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: refcount-vs-atomic: Update reference to
+ LKMM doc.
+Message-ID: <20180508145258.0fa05a85@lwn.net>
+In-Reply-To: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
+References: <1525468309-5310-1-git-send-email-andrea.parri@amarulasolutions.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 02:19:05PM -0600, Logan Gunthorpe wrote:
-> 
-> 
-> On 08/05/18 02:13 PM, Alex Williamson wrote:
-> > Well, I'm a bit confused, this patch series is specifically disabling
-> > ACS on switches, but per the spec downstream switch ports implementing
-> > ACS MUST implement direct translated P2P.  So it seems the only
-> > potential gap here is the endpoint, which must support ATS or else
-> > there's nothing for direct translated P2P to do.  The switch port plays
-> > no part in the actual translation of the request, ATS on the endpoint
-> > has already cached the translation and is now attempting to use it.
-> > For the switch port, this only becomes a routing decision, the request
-> > is already translated, therefore ACS RR and EC can be ignored to
-> > perform "normal" (direct) routing, as if ACS were not present.  It would
-> > be a shame to go to all the trouble of creating this no-ACS mode to find
-> > out the target hardware supports ATS and should have simply used it, or
-> > we should have disabled the IOMMU altogether, which leaves ACS disabled.
-> 
-> Ah, ok, I didn't think it was the endpoint that had to implement ATS.
-> But in that case, for our application, we need NVMe cards and RDMA NICs
-> to all have ATS support and I expect that is just as unlikely. At least
-> none of the endpoints on my system support it. Maybe only certain GPUs
-> have this support.
+On Fri,  4 May 2018 23:11:49 +0200
+Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
 
-I think there is confusion here, Alex properly explained the scheme
-PCIE-device do a ATS request to the IOMMU which returns a valid
-translation for a virtual address. Device can then use that address
-directly without going through IOMMU for translation.
+> The LKMM project has moved to 'tools/memory-model/'.
+> 
+> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
 
-ATS is implemented by the IOMMU not by the device (well device implement
-the client side of it). Also ATS is meaningless without something like
-PASID as far as i know.
+Applied, thanks.
 
-Cheers,
-Jérôme
+jon
