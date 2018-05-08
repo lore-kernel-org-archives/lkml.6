@@ -1,95 +1,102 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754830AbeEHKhE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 06:37:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55804 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754476AbeEHKhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 06:37:03 -0400
-Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
- related_cpus unnecessarily"
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
- <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
- <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
- <20180508094526.ajyjrwytguhv4xpe@vireshk-i7>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <7922d081-0bfb-0e55-7caf-ec9fb5d7bab0@arm.com>
-Date: Tue, 8 May 2018 12:36:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932219AbeEHKit (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 06:38:49 -0400
+Received: from mail-wr0-f173.google.com ([209.85.128.173]:36814 "EHLO
+        mail-wr0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754476AbeEHKiq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 06:38:46 -0400
+X-Google-Smtp-Source: AB8JxZrslpYP0XbqCN03qe3p34+c4I/nHFC9pkgkGJXcl/yfXGsH9EOxS+lGTfppYTyqbGCziBaBnA==
+Date: Tue, 8 May 2018 12:38:36 +0200
+From: Daniel Scheller <d.scheller.oss@gmail.com>
+To: Colin King <colin.king@canonical.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][media-next] media: ddbridge: avoid out-of-bounds write
+ on array demod_in_use
+Message-ID: <20180508123836.0b5c2f7f@lt530>
+In-Reply-To: <20180507230842.28409-1-colin.king@canonical.com>
+References: <20180507230842.28409-1-colin.king@canonical.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180508094526.ajyjrwytguhv4xpe@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 11:45 AM, Viresh Kumar wrote:
-> On 08-05-18, 11:09, Dietmar Eggemann wrote:
->> This would make sure that the kthreads are bound to the correct set of cpus
->> for platforms with those cpufreq drivers (cpufreq-dt (h960), scmi-cpufreq,
->> scpi-cpufreq) but it will also change the logic (e.g.
->> sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
+Hi Colin,
+
+Am Tue,  8 May 2018 00:08:42 +0100
+schrieb Colin King <colin.king@canonical.com>:
+
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Yeah, I misunderstood your patch a bit. So you are not disabling
-> remote updates but only limiting the CPUs where the kthread runs.
-
-Yes, remote updates are possible even if the sugov kthread is bound to 
-the cpus of the policy.
-
-cross policy (cluster) remote callback example:
-...
-migration/1-14 [001] enqueue_task_fair: this_cpu=1 cpu_of(rq)=7
-migration/1-14 [001] sugov_update_shared: this_cpu=1 sg_cpu->cpu=7
-                      sg_cpu->sg_policy->policy->related_cpus=4-7
-   sugov:4-1492 [004] sugov_work: this_cpu=4
-                      sg_cpu->sg_policy->policy->related_cpus=4-7
-...
-
-cpu=1 updates cpu=7 remotely. This is independent from where the actual 
-sugov kthread is running.
-
-> That still looks to be a big little specific problem to me right now
-> and I am not sure why should we specially handle these kthreads ?
-> Isn't the same true for any other threads/tasks in the kernel which
-> may end up running on big CPUs ? And this problem still occurs with
-> the EAS patches applied ? As I thought we may end up keeping such
-> small tasks on little cores then.
-
-Binding it to the cpus of the policy makes sense since if the OPP should 
-be changed for these cpus it should be done on one of these cpus, making 
-sure we don't disturb the others. EAS and big.LITTLE will profit from 
-this, but potentially every system with multiple frequency domains.
-
-Binding them on to little cpus is an overhead to me which will gain us 
-very little. Keeping the sugov threads to the cpus of the policy doesn't 
-cost much and helps a lot.
-
->> I'm still struggling to understand when a driver/platform should set
->> dvfs_possible_from_any_cpu to true and what the actual benefit would be.
+> In function stop there is a check to see if state->demod is a stopped
+> value of 0xff, however, later on, array demod_in_use is indexed with
+> this value causing an out-of-bounds write error.  Avoid this by only
+> writing to array demod_in_use if state->demod is not set to the stopped
+> sentinal value for this specific corner case.  Also, replace the magic
+> value 0xff with DEMOD_STOPPED to make code more readable.
 > 
-> Ideally it should be set by default for all ARM platforms at least
-> which have more than one cpufreq policy, as there is no hardware
-> limitation for changing frequency from other CPUs. If you look at the
-> commit logs of patches which added remote updates, you will see
-> interesting cases where this can be very useful.
+> Detected by CoverityScan, CID#1468550 ("Out-of-bounds write")
+> 
+> Fixes: daeeb1319e6f ("media: ddbridge: initial support for MCI-based MaxSX8 cards")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/media/pci/ddbridge/ddbridge-mci.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/pci/ddbridge/ddbridge-mci.c b/drivers/media/pci/ddbridge/ddbridge-mci.c
+> index a85ff3e6b919..1f5ed53c8d35 100644
+> --- a/drivers/media/pci/ddbridge/ddbridge-mci.c
+> +++ b/drivers/media/pci/ddbridge/ddbridge-mci.c
+> @@ -20,6 +20,8 @@
+>  #include "ddbridge-io.h"
+>  #include "ddbridge-mci.h"
+>  
+> +#define DEMOD_STOPPED	(0xff)
+> +
+>  static LIST_HEAD(mci_list);
+>  
+>  static const u32 MCLK = (1550000000 / 12);
+> @@ -193,7 +195,7 @@ static int stop(struct dvb_frontend *fe)
+>  	u32 input = state->tuner;
+>  
+>  	memset(&cmd, 0, sizeof(cmd));
+> -	if (state->demod != 0xff) {
+> +	if (state->demod != DEMOD_STOPPED) {
+>  		cmd.command = MCI_CMD_STOP;
+>  		cmd.demod = state->demod;
+>  		mci_cmd(state, &cmd, NULL);
+> @@ -209,10 +211,11 @@ static int stop(struct dvb_frontend *fe)
+>  	state->base->tuner_use_count[input]--;
+>  	if (!state->base->tuner_use_count[input])
+>  		mci_set_tuner(fe, input, 0);
+> -	state->base->demod_in_use[state->demod] = 0;
+> +	if (state->demod != DEMOD_STOPPED)
+> +		state->base->demod_in_use[state->demod] = 0;
+>  	state->base->used_ldpc_bitrate[state->nr] = 0;
+> -	state->demod = 0xff;
+> -	state->base->assigned_demod[state->nr] = 0xff;
+> +	state->demod = DEMOD_STOPPED;
+> +	state->base->assigned_demod[state->nr] = DEMOD_STOPPED;
+>  	state->base->iq_mode = 0;
+>  	mutex_unlock(&state->base->tuner_lock);
+>  	state->started = 0;
 
-That's true but where is the benefit by doing so? (Multiple) per-cluster 
-or per-cpu frequency domains, why should the sugov kthread run on a 
-foreign cpu?
+Thanks for the patch, or - better - pointing this out. While it's
+unlikely this will ever be an issue, I'm fine with changing the code
+like that, but I'd prefer to change it a bit differently (ie.
+DEMOD_STOPPED should be DEMOD_UNUSED, and I'd add defines for max.
+tuners and use/compare against them).
 
-> commit 674e75411fc2 ("sched: cpufreq: Allow remote cpufreq callbacks")
+I'll send out a different patch that will cover the potential
+coverityscan problem throughout the end of the week.
 
-IMHO, this describes the remote cpufreq callback functionality itself 
-which works perfectly fine even if we leave the sugov ktrhead bound to 
-the cpus of the policy.
+Best regards,
+Daniel Scheller
+-- 
+https://github.com/herrnst
