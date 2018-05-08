@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933323AbeEHSY5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:24:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54164 "EHLO mx2.suse.de"
+        id S933367AbeEHSZe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:25:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54041 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755771AbeEHSGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:06:05 -0400
+        id S1755019AbeEHSGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:06:02 -0400
 From: Mark Fasheh <mfasheh@suse.de>
 To: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
         Mark Fasheh <mfasheh@suse.de>
-Subject: [PATCH 53/76] fs/ntfs: Use inode_sb() helper instead of inode->i_sb
-Date: Tue,  8 May 2018 11:04:13 -0700
-Message-Id: <20180508180436.716-54-mfasheh@suse.de>
+Subject: [PATCH 51/76] fs/nilfs2: Use inode_sb() helper instead of inode->i_sb
+Date: Tue,  8 May 2018 11:04:11 -0700
+Message-Id: <20180508180436.716-52-mfasheh@suse.de>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
 References: <20180508180436.716-1-mfasheh@suse.de>
@@ -22,1253 +22,1320 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Fasheh <mfasheh@suse.de>
 ---
- fs/ntfs/aops.c    |  16 ++--
- fs/ntfs/bitmap.c  |  11 ++-
- fs/ntfs/dir.c     |  10 ++-
- fs/ntfs/file.c    |  30 ++++---
- fs/ntfs/inode.c   | 231 +++++++++++++++++++++++++++++++++---------------------
- fs/ntfs/inode.h   |   2 +-
- fs/ntfs/logfile.c |  46 ++++++-----
- fs/ntfs/namei.c   |   7 +-
- 8 files changed, 214 insertions(+), 139 deletions(-)
+ fs/nilfs2/alloc.c   | 10 ++++-----
+ fs/nilfs2/bmap.c    |  4 ++--
+ fs/nilfs2/btnode.c  |  6 +++---
+ fs/nilfs2/btree.c   | 12 +++++------
+ fs/nilfs2/cpfile.c  |  6 +++---
+ fs/nilfs2/dat.c     |  2 +-
+ fs/nilfs2/dir.c     | 24 ++++++++++-----------
+ fs/nilfs2/direct.c  |  4 ++--
+ fs/nilfs2/file.c    | 19 ++++++++--------
+ fs/nilfs2/gcinode.c |  6 +++---
+ fs/nilfs2/ifile.c   |  2 +-
+ fs/nilfs2/inode.c   | 62 ++++++++++++++++++++++++++---------------------------
+ fs/nilfs2/ioctl.c   | 60 +++++++++++++++++++++++++--------------------------
+ fs/nilfs2/mdt.c     | 10 ++++-----
+ fs/nilfs2/mdt.h     |  2 +-
+ fs/nilfs2/namei.c   | 54 +++++++++++++++++++++++-----------------------
+ fs/nilfs2/page.c    |  2 +-
+ fs/nilfs2/sufile.c  | 20 ++++++++---------
+ fs/nilfs2/sufile.h  |  2 +-
+ 19 files changed, 154 insertions(+), 153 deletions(-)
 
-diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
-index 3a2e509c77c5..f8817dfdc2b8 100644
---- a/fs/ntfs/aops.c
-+++ b/fs/ntfs/aops.c
-@@ -1400,14 +1400,16 @@ static int ntfs_writepage(struct page *page, struct writeback_control *wbc)
- 			// TODO: Implement and replace this with
- 			// return ntfs_write_compressed_block(page);
- 			unlock_page(page);
--			ntfs_error(vi->i_sb, "Writing to compressed files is "
-+			ntfs_error(inode_sb(vi),
-+					"Writing to compressed files is "
- 					"not supported yet.  Sorry.");
- 			return -EOPNOTSUPP;
- 		}
- 		// TODO: Implement and remove this check.
- 		if (NInoNonResident(ni) && NInoSparse(ni)) {
- 			unlock_page(page);
--			ntfs_error(vi->i_sb, "Writing to sparse files is not "
-+			ntfs_error(inode_sb(vi),
-+					"Writing to sparse files is not "
- 					"supported yet.  Sorry.");
- 			return -EOPNOTSUPP;
- 		}
-@@ -1437,7 +1439,7 @@ static int ntfs_writepage(struct page *page, struct writeback_control *wbc)
- 	BUG_ON(page_has_buffers(page));
- 	BUG_ON(!PageUptodate(page));
- 	if (unlikely(page->index > 0)) {
--		ntfs_error(vi->i_sb, "BUG()! page->index (0x%lx) > 0.  "
-+		ntfs_error(inode_sb(vi), "BUG()! page->index (0x%lx) > 0.  "
- 				"Aborting write.", page->index);
- 		BUG_ON(PageWriteback(page));
- 		set_page_writeback(page);
-@@ -1514,7 +1516,8 @@ static int ntfs_writepage(struct page *page, struct writeback_control *wbc)
- 	return 0;
- err_out:
- 	if (err == -ENOMEM) {
--		ntfs_warning(vi->i_sb, "Error allocating memory. Redirtying "
-+		ntfs_warning(inode_sb(vi),
-+				"Error allocating memory. Redirtying "
- 				"page so we try again later.");
- 		/*
- 		 * Put the page back on mapping->dirty_pages, but leave its
-@@ -1523,7 +1526,8 @@ static int ntfs_writepage(struct page *page, struct writeback_control *wbc)
- 		redirty_page_for_writepage(wbc, page);
- 		err = 0;
- 	} else {
--		ntfs_error(vi->i_sb, "Resident attribute write failed with "
-+		ntfs_error(inode_sb(vi),
-+				"Resident attribute write failed with "
- 				"error %i.", err);
- 		SetPageError(page);
- 		NVolSetErrors(ni->vol);
-@@ -1735,7 +1739,7 @@ void mark_ntfs_record_dirty(struct page *page, const unsigned int ofs) {
+diff --git a/fs/nilfs2/alloc.c b/fs/nilfs2/alloc.c
+index 03b8ba933eb2..3b3af2e7b2fb 100644
+--- a/fs/nilfs2/alloc.c
++++ b/fs/nilfs2/alloc.c
+@@ -622,7 +622,7 @@ void nilfs_palloc_commit_free_entry(struct inode *inode,
+ 	lock = nilfs_mdt_bgl_lock(inode, group);
  
- 	BUG_ON(!PageUptodate(page));
- 	end = ofs + ni->itype.index.block_size;
--	bh_size = VFS_I(ni)->i_sb->s_blocksize;
-+	bh_size = inode_sb(VFS_I(ni))->s_blocksize;
- 	spin_lock(&mapping->private_lock);
- 	if (unlikely(!page_has_buffers(page))) {
- 		spin_unlock(&mapping->private_lock);
-diff --git a/fs/ntfs/bitmap.c b/fs/ntfs/bitmap.c
-index ec130c588d2b..7584c413bdb5 100644
---- a/fs/ntfs/bitmap.c
-+++ b/fs/ntfs/bitmap.c
-@@ -75,7 +75,8 @@ int __ntfs_bitmap_set_bits_in_run(struct inode *vi, const s64 start_bit,
- 	page = ntfs_map_page(mapping, index);
- 	if (IS_ERR(page)) {
- 		if (!is_rollback)
--			ntfs_error(vi->i_sb, "Failed to map first page (error "
-+			ntfs_error(inode_sb(vi),
-+					"Failed to map first page (error "
- 					"%li), aborting.", PTR_ERR(page));
- 		return PTR_ERR(page);
- 	}
-@@ -177,15 +178,17 @@ int __ntfs_bitmap_set_bits_in_run(struct inode *vi, const s64 start_bit,
- 		pos = 0;
- 	if (!pos) {
- 		/* Rollback was successful. */
--		ntfs_error(vi->i_sb, "Failed to map subsequent page (error "
-+		ntfs_error(inode_sb(vi),
-+				"Failed to map subsequent page (error "
- 				"%li), aborting.", PTR_ERR(page));
- 	} else {
- 		/* Rollback failed. */
--		ntfs_error(vi->i_sb, "Failed to map subsequent page (error "
-+		ntfs_error(inode_sb(vi),
-+				"Failed to map subsequent page (error "
- 				"%li) and rollback failed (error %i).  "
- 				"Aborting and leaving inconsistent metadata.  "
- 				"Unmount and run chkdsk.", PTR_ERR(page), pos);
--		NVolSetErrors(NTFS_SB(vi->i_sb));
-+		NVolSetErrors(NTFS_SB(inode_sb(vi)));
- 	}
- 	return PTR_ERR(page);
- }
-diff --git a/fs/ntfs/dir.c b/fs/ntfs/dir.c
-index 1a24be9e8405..27505db99278 100644
---- a/fs/ntfs/dir.c
-+++ b/fs/ntfs/dir.c
-@@ -1101,7 +1101,7 @@ static int ntfs_readdir(struct file *file, struct dir_context *actor)
- 	s64 ia_pos, ia_start, prev_ia_pos, bmp_pos;
- 	loff_t i_size;
- 	struct inode *bmp_vi, *vdir = file_inode(file);
--	struct super_block *sb = vdir->i_sb;
-+	struct super_block *sb = inode_sb(vdir);
- 	ntfs_inode *ndir = NTFS_I(vdir);
- 	ntfs_volume *vol = NTFS_SB(sb);
- 	MFT_RECORD *m;
-@@ -1517,20 +1517,22 @@ static int ntfs_dir_fsync(struct file *filp, loff_t start, loff_t end,
- 	na.type = AT_BITMAP;
- 	na.name = I30;
- 	na.name_len = 4;
--	bmp_vi = ilookup5(vi->i_sb, vi->i_ino, (test_t)ntfs_test_inode, &na);
-+	bmp_vi = ilookup5(inode_sb(vi), vi->i_ino, (test_t)ntfs_test_inode,
-+			  &na);
- 	if (bmp_vi) {
-  		write_inode_now(bmp_vi, !datasync);
- 		iput(bmp_vi);
- 	}
- 	ret = __ntfs_write_inode(vi, 1);
- 	write_inode_now(vi, !datasync);
--	err = sync_blockdev(vi->i_sb->s_bdev);
-+	err = sync_blockdev(inode_sb(vi)->s_bdev);
- 	if (unlikely(err && !ret))
- 		ret = err;
- 	if (likely(!ret))
- 		ntfs_debug("Done.");
- 	else
--		ntfs_warning(vi->i_sb, "Failed to f%ssync inode 0x%lx.  Error "
-+		ntfs_warning(inode_sb(vi),
-+				"Failed to f%ssync inode 0x%lx.  Error "
- 				"%u.", datasync ? "data" : "", vi->i_ino, -ret);
- 	inode_unlock(vi);
- 	return ret;
-diff --git a/fs/ntfs/file.c b/fs/ntfs/file.c
-index 331910fa8442..8955ab0c2869 100644
---- a/fs/ntfs/file.c
-+++ b/fs/ntfs/file.c
-@@ -374,7 +374,7 @@ static ssize_t ntfs_prepare_file_for_write(struct kiocb *iocb,
- 		 * compression kick in.  This is in contrast to encrypted files
- 		 * (see above).
- 		 */
--		ntfs_error(vi->i_sb, "Writing to compressed files is not "
-+		ntfs_error(inode_sb(vi), "Writing to compressed files is not "
- 				"implemented yet.  Sorry.");
- 		err = -EOPNOTSUPP;
- 		goto out;
-@@ -439,7 +439,8 @@ static ssize_t ntfs_prepare_file_for_write(struct kiocb *iocb,
- 				iov_iter_truncate(from, ll - pos);
- 			} else {
- 				if (err != -ENOSPC)
--					ntfs_error(vi->i_sb, "Cannot perform "
-+					ntfs_error(inode_sb(vi),
-+							"Cannot perform "
- 							"write to inode "
- 							"0x%lx, attribute "
- 							"type 0x%x, because "
-@@ -479,7 +480,8 @@ static ssize_t ntfs_prepare_file_for_write(struct kiocb *iocb,
- 		inode_dio_wait(vi);
- 		err = ntfs_attr_extend_initialized(ni, pos);
- 		if (unlikely(err < 0))
--			ntfs_error(vi->i_sb, "Cannot perform write to inode "
-+			ntfs_error(inode_sb(vi),
-+					"Cannot perform write to inode "
- 					"0x%lx, attribute type 0x%x, because "
- 					"extending the initialized size "
- 					"failed (error %d).", vi->i_ino,
-@@ -1412,7 +1414,7 @@ static inline int ntfs_commit_pages_after_non_resident_write(
+ 	if (!nilfs_clear_bit_atomic(lock, group_offset, bitmap))
+-		nilfs_msg(inode->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 			  "%s (ino=%lu): entry number %llu already freed",
+ 			  __func__, inode->i_ino,
+ 			  (unsigned long long)req->pr_entry_nr);
+@@ -663,7 +663,7 @@ void nilfs_palloc_abort_alloc_entry(struct inode *inode,
+ 	lock = nilfs_mdt_bgl_lock(inode, group);
  
- 	vi = pages[0]->mapping->host;
- 	ni = NTFS_I(vi);
--	blocksize = vi->i_sb->s_blocksize;
-+	blocksize = inode_sb(vi)->s_blocksize;
- 	end = pos + bytes;
- 	u = 0;
- 	do {
-@@ -1507,7 +1509,8 @@ static inline int ntfs_commit_pages_after_non_resident_write(
- 		ntfs_attr_put_search_ctx(ctx);
- 	if (m)
- 		unmap_mft_record(base_ni);
--	ntfs_error(vi->i_sb, "Failed to update initialized_size/i_size (error "
-+	ntfs_error(inode_sb(vi),
-+			"Failed to update initialized_size/i_size (error "
- 			"code %i).", err);
- 	if (err != -ENOMEM)
- 		NVolSetErrors(ni->vol);
-@@ -1664,10 +1667,12 @@ static int ntfs_commit_pages_after_write(struct page **pages,
- 	return 0;
- err_out:
- 	if (err == -ENOMEM) {
--		ntfs_warning(vi->i_sb, "Error allocating memory required to "
-+		ntfs_warning(inode_sb(vi),
-+				"Error allocating memory required to "
- 				"commit the write.");
- 		if (PageUptodate(page)) {
--			ntfs_warning(vi->i_sb, "Page is uptodate, setting "
-+			ntfs_warning(inode_sb(vi),
-+					"Page is uptodate, setting "
- 					"dirty so the write will be retried "
- 					"later on by the VM.");
- 			/*
-@@ -1677,10 +1682,12 @@ static int ntfs_commit_pages_after_write(struct page **pages,
- 			__set_page_dirty_nobuffers(page);
- 			err = 0;
- 		} else
--			ntfs_error(vi->i_sb, "Page is not uptodate.  Written "
-+			ntfs_error(inode_sb(vi),
-+					"Page is not uptodate.  Written "
- 					"data has been lost.");
- 	} else {
--		ntfs_error(vi->i_sb, "Resident attribute commit write failed "
-+		ntfs_error(inode_sb(vi),
-+				"Resident attribute commit write failed "
- 				"with error %i.", err);
- 		NVolSetErrors(ni->vol);
- 	}
-@@ -2003,13 +2010,14 @@ static int ntfs_file_fsync(struct file *filp, loff_t start, loff_t end,
- 	 * fs/buffer.c) for dirty blocks then we could optimize the below to be
- 	 * sync_mapping_buffers(vi->i_mapping).
- 	 */
--	err = sync_blockdev(vi->i_sb->s_bdev);
-+	err = sync_blockdev(inode_sb(vi)->s_bdev);
- 	if (unlikely(err && !ret))
- 		ret = err;
- 	if (likely(!ret))
- 		ntfs_debug("Done.");
- 	else
--		ntfs_warning(vi->i_sb, "Failed to f%ssync inode 0x%lx.  Error "
-+		ntfs_warning(inode_sb(vi),
-+				"Failed to f%ssync inode 0x%lx.  Error "
- 				"%u.", datasync ? "data" : "", vi->i_ino, -ret);
- 	inode_unlock(vi);
- 	return ret;
-diff --git a/fs/ntfs/inode.c b/fs/ntfs/inode.c
-index 1c1ee489284b..cde6853c99ac 100644
---- a/fs/ntfs/inode.c
-+++ b/fs/ntfs/inode.c
-@@ -239,8 +239,9 @@ struct inode *ntfs_attr_iget(struct inode *base_vi, ATTR_TYPE type,
- 	na.name = name;
- 	na.name_len = name_len;
- 
--	vi = iget5_locked(base_vi->i_sb, na.mft_no, (test_t)ntfs_test_inode,
--			(set_t)ntfs_init_locked_inode, &na);
-+	vi = iget5_locked(inode_sb(base_vi), na.mft_no,
-+			  (test_t)ntfs_test_inode,
-+			  (set_t)ntfs_init_locked_inode, &na);
- 	if (unlikely(!vi))
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -294,8 +295,9 @@ struct inode *ntfs_index_iget(struct inode *base_vi, ntfschar *name,
- 	na.name = name;
- 	na.name_len = name_len;
- 
--	vi = iget5_locked(base_vi->i_sb, na.mft_no, (test_t)ntfs_test_inode,
--			(set_t)ntfs_init_locked_inode, &na);
-+	vi = iget5_locked(inode_sb(base_vi), na.mft_no,
-+			  (test_t)ntfs_test_inode,
-+			  (set_t)ntfs_init_locked_inode, &na);
- 	if (unlikely(!vi))
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -548,7 +550,7 @@ static int ntfs_is_extended_system_file(ntfs_attr_search_ctx *ctx)
-  */
- static int ntfs_read_locked_inode(struct inode *vi)
- {
--	ntfs_volume *vol = NTFS_SB(vi->i_sb);
-+	ntfs_volume *vol = NTFS_SB(inode_sb(vi));
- 	ntfs_inode *ni;
- 	struct inode *bvi;
- 	MFT_RECORD *m;
-@@ -584,11 +586,11 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 	}
- 
- 	if (!(m->flags & MFT_RECORD_IN_USE)) {
--		ntfs_error(vi->i_sb, "Inode is not in use!");
-+		ntfs_error(inode_sb(vi), "Inode is not in use!");
- 		goto unm_err_out;
- 	}
- 	if (m->base_mft_record) {
--		ntfs_error(vi->i_sb, "Inode is an extent inode!");
-+		ntfs_error(inode_sb(vi), "Inode is an extent inode!");
- 		goto unm_err_out;
- 	}
- 
-@@ -647,7 +649,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			 * recover mount option is set) by creating a new
- 			 * attribute.
- 			 */
--			ntfs_error(vi->i_sb, "$STANDARD_INFORMATION attribute "
-+			ntfs_error(inode_sb(vi),
-+					"$STANDARD_INFORMATION attribute "
- 					"is missing.");
- 		}
- 		goto unm_err_out;
-@@ -685,7 +688,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 	err = ntfs_attr_lookup(AT_ATTRIBUTE_LIST, NULL, 0, 0, 0, NULL, 0, ctx);
- 	if (err) {
- 		if (unlikely(err != -ENOENT)) {
--			ntfs_error(vi->i_sb, "Failed to lookup attribute list "
-+			ntfs_error(inode_sb(vi),
-+					"Failed to lookup attribute list "
- 					"attribute.");
- 			goto unm_err_out;
- 		}
-@@ -696,19 +700,21 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 		NInoSetAttrList(ni);
- 		a = ctx->attr;
- 		if (a->flags & ATTR_COMPRESSION_MASK) {
--			ntfs_error(vi->i_sb, "Attribute list attribute is "
-+			ntfs_error(inode_sb(vi),
-+					"Attribute list attribute is "
- 					"compressed.");
- 			goto unm_err_out;
- 		}
- 		if (a->flags & ATTR_IS_ENCRYPTED ||
- 				a->flags & ATTR_IS_SPARSE) {
- 			if (a->non_resident) {
--				ntfs_error(vi->i_sb, "Non-resident attribute "
-+				ntfs_error(inode_sb(vi),
-+						"Non-resident attribute "
- 						"list attribute is encrypted/"
- 						"sparse.");
- 				goto unm_err_out;
- 			}
--			ntfs_warning(vi->i_sb, "Resident attribute list "
-+			ntfs_warning(inode_sb(vi), "Resident attribute list "
- 					"attribute in inode 0x%lx is marked "
- 					"encrypted/sparse which is not true.  "
- 					"However, Windows allows this and "
-@@ -721,7 +727,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 		ni->attr_list_size = (u32)ntfs_attr_size(a);
- 		ni->attr_list = ntfs_malloc_nofs(ni->attr_list_size);
- 		if (!ni->attr_list) {
--			ntfs_error(vi->i_sb, "Not enough memory to allocate "
-+			ntfs_error(inode_sb(vi),
-+					"Not enough memory to allocate "
- 					"buffer for attribute list.");
- 			err = -ENOMEM;
- 			goto unm_err_out;
-@@ -729,7 +736,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 		if (a->non_resident) {
- 			NInoSetAttrListNonResident(ni);
- 			if (a->data.non_resident.lowest_vcn) {
--				ntfs_error(vi->i_sb, "Attribute list has non "
-+				ntfs_error(inode_sb(vi),
-+						"Attribute list has non "
- 						"zero lowest_vcn.");
- 				goto unm_err_out;
- 			}
-@@ -742,7 +750,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			if (IS_ERR(ni->attr_list_rl.rl)) {
- 				err = PTR_ERR(ni->attr_list_rl.rl);
- 				ni->attr_list_rl.rl = NULL;
--				ntfs_error(vi->i_sb, "Mapping pairs "
-+				ntfs_error(inode_sb(vi), "Mapping pairs "
- 						"decompression failed.");
- 				goto unm_err_out;
- 			}
-@@ -751,7 +759,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 					ni->attr_list, ni->attr_list_size,
- 					sle64_to_cpu(a->data.non_resident.
- 					initialized_size)))) {
--				ntfs_error(vi->i_sb, "Failed to load "
-+				ntfs_error(inode_sb(vi), "Failed to load "
- 						"attribute list attribute.");
- 				goto unm_err_out;
- 			}
-@@ -760,7 +768,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 					+ le32_to_cpu(
- 					a->data.resident.value_length) >
- 					(u8*)ctx->mrec + vol->mft_record_size) {
--				ntfs_error(vi->i_sb, "Corrupt attribute list "
-+				ntfs_error(inode_sb(vi),
-+						"Corrupt attribute list "
- 						"in inode.");
- 				goto unm_err_out;
- 			}
-@@ -791,7 +800,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 				// FIXME: File is corrupt! Hot-fix with empty
- 				// index root attribute if recovery option is
- 				// set.
--				ntfs_error(vi->i_sb, "$INDEX_ROOT attribute "
-+				ntfs_error(inode_sb(vi),
-+						"$INDEX_ROOT attribute "
- 						"is missing.");
- 			}
- 			goto unm_err_out;
-@@ -820,7 +830,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			NInoSetCompressed(ni);
- 		if (a->flags & ATTR_IS_ENCRYPTED) {
- 			if (a->flags & ATTR_COMPRESSION_MASK) {
--				ntfs_error(vi->i_sb, "Found encrypted and "
-+				ntfs_error(inode_sb(vi),
-+						"Found encrypted and "
- 						"compressed attribute.");
- 				goto unm_err_out;
- 			}
-@@ -832,23 +843,25 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 				le16_to_cpu(a->data.resident.value_offset));
- 		ir_end = (u8*)ir + le32_to_cpu(a->data.resident.value_length);
- 		if (ir_end > (u8*)ctx->mrec + vol->mft_record_size) {
--			ntfs_error(vi->i_sb, "$INDEX_ROOT attribute is "
-+			ntfs_error(inode_sb(vi), "$INDEX_ROOT attribute is "
- 					"corrupt.");
- 			goto unm_err_out;
- 		}
- 		index_end = (u8*)&ir->index +
- 				le32_to_cpu(ir->index.index_length);
- 		if (index_end > ir_end) {
--			ntfs_error(vi->i_sb, "Directory index is corrupt.");
-+			ntfs_error(inode_sb(vi),
-+				   "Directory index is corrupt.");
- 			goto unm_err_out;
- 		}
- 		if (ir->type != AT_FILE_NAME) {
--			ntfs_error(vi->i_sb, "Indexed attribute is not "
-+			ntfs_error(inode_sb(vi), "Indexed attribute is not "
- 					"$FILE_NAME.");
- 			goto unm_err_out;
- 		}
- 		if (ir->collation_rule != COLLATION_FILE_NAME) {
--			ntfs_error(vi->i_sb, "Index collation rule is not "
-+			ntfs_error(inode_sb(vi),
-+					"Index collation rule is not "
- 					"COLLATION_FILE_NAME.");
- 			goto unm_err_out;
- 		}
-@@ -856,13 +869,14 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 		ni->itype.index.block_size = le32_to_cpu(ir->index_block_size);
- 		if (ni->itype.index.block_size &
- 				(ni->itype.index.block_size - 1)) {
--			ntfs_error(vi->i_sb, "Index block size (%u) is not a "
-+			ntfs_error(inode_sb(vi),
-+					"Index block size (%u) is not a "
- 					"power of two.",
- 					ni->itype.index.block_size);
- 			goto unm_err_out;
- 		}
- 		if (ni->itype.index.block_size > PAGE_SIZE) {
--			ntfs_error(vi->i_sb, "Index block size (%u) > "
-+			ntfs_error(inode_sb(vi), "Index block size (%u) > "
- 					"PAGE_SIZE (%ld) is not "
- 					"supported.  Sorry.",
- 					ni->itype.index.block_size,
-@@ -871,7 +885,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			goto unm_err_out;
- 		}
- 		if (ni->itype.index.block_size < NTFS_BLOCK_SIZE) {
--			ntfs_error(vi->i_sb, "Index block size (%u) < "
-+			ntfs_error(inode_sb(vi), "Index block size (%u) < "
- 					"NTFS_BLOCK_SIZE (%i) is not "
- 					"supported.  Sorry.",
- 					ni->itype.index.block_size,
-@@ -914,18 +928,19 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 				CASE_SENSITIVE, 0, NULL, 0, ctx);
- 		if (unlikely(err)) {
- 			if (err == -ENOENT)
--				ntfs_error(vi->i_sb, "$INDEX_ALLOCATION "
-+				ntfs_error(inode_sb(vi), "$INDEX_ALLOCATION "
- 						"attribute is not present but "
- 						"$INDEX_ROOT indicated it is.");
- 			else
--				ntfs_error(vi->i_sb, "Failed to lookup "
-+				ntfs_error(inode_sb(vi), "Failed to lookup "
- 						"$INDEX_ALLOCATION "
- 						"attribute.");
- 			goto unm_err_out;
- 		}
- 		a = ctx->attr;
- 		if (!a->non_resident) {
--			ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute "
-+			ntfs_error(inode_sb(vi),
-+					"$INDEX_ALLOCATION attribute "
- 					"is resident.");
- 			goto unm_err_out;
- 		}
-@@ -942,22 +957,25 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			goto unm_err_out;
- 		}
- 		if (a->flags & ATTR_IS_ENCRYPTED) {
--			ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute "
-+			ntfs_error(inode_sb(vi),
-+					"$INDEX_ALLOCATION attribute "
- 					"is encrypted.");
- 			goto unm_err_out;
- 		}
- 		if (a->flags & ATTR_IS_SPARSE) {
--			ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute "
-+			ntfs_error(inode_sb(vi),
-+					"$INDEX_ALLOCATION attribute "
- 					"is sparse.");
- 			goto unm_err_out;
- 		}
- 		if (a->flags & ATTR_COMPRESSION_MASK) {
--			ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute "
-+			ntfs_error(inode_sb(vi),
-+					"$INDEX_ALLOCATION attribute "
- 					"is compressed.");
- 			goto unm_err_out;
- 		}
- 		if (a->data.non_resident.lowest_vcn) {
--			ntfs_error(vi->i_sb, "First extent of "
-+			ntfs_error(inode_sb(vi), "First extent of "
- 					"$INDEX_ALLOCATION attribute has non "
- 					"zero lowest_vcn.");
- 			goto unm_err_out;
-@@ -978,14 +996,16 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 		/* Get the index bitmap attribute inode. */
- 		bvi = ntfs_attr_iget(vi, AT_BITMAP, I30, 4);
- 		if (IS_ERR(bvi)) {
--			ntfs_error(vi->i_sb, "Failed to get bitmap attribute.");
-+			ntfs_error(inode_sb(vi),
-+				   "Failed to get bitmap attribute.");
- 			err = PTR_ERR(bvi);
- 			goto unm_err_out;
- 		}
- 		bni = NTFS_I(bvi);
- 		if (NInoCompressed(bni) || NInoEncrypted(bni) ||
- 				NInoSparse(bni)) {
--			ntfs_error(vi->i_sb, "$BITMAP attribute is compressed "
-+			ntfs_error(inode_sb(vi),
-+					"$BITMAP attribute is compressed "
- 					"and/or encrypted and/or sparse.");
- 			goto iput_unm_err_out;
- 		}
-@@ -993,7 +1013,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 		bvi_size = i_size_read(bvi);
- 		if ((bvi_size << 3) < (vi->i_size >>
- 				ni->itype.index.block_size_bits)) {
--			ntfs_error(vi->i_sb, "Index bitmap too small (0x%llx) "
-+			ntfs_error(inode_sb(vi),
-+					"Index bitmap too small (0x%llx) "
- 					"for index allocation (0x%llx).",
- 					bvi_size << 3, vi->i_size);
- 			goto iput_unm_err_out;
-@@ -1020,7 +1041,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			vi->i_size = ni->initialized_size =
- 					ni->allocated_size = 0;
- 			if (err != -ENOENT) {
--				ntfs_error(vi->i_sb, "Failed to lookup $DATA "
-+				ntfs_error(inode_sb(vi),
-+						"Failed to lookup $DATA "
- 						"attribute.");
- 				goto unm_err_out;
- 			}
-@@ -1043,7 +1065,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 				goto no_data_attr_special_case;
- 			// FIXME: File is corrupt! Hot-fix with empty data
- 			// attribute if recovery option is set.
--			ntfs_error(vi->i_sb, "$DATA attribute is missing.");
-+			ntfs_error(inode_sb(vi),
-+				   "$DATA attribute is missing.");
- 			goto unm_err_out;
- 		}
- 		a = ctx->attr;
-@@ -1052,7 +1075,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			if (a->flags & ATTR_COMPRESSION_MASK) {
- 				NInoSetCompressed(ni);
- 				if (vol->cluster_size > 4096) {
--					ntfs_error(vi->i_sb, "Found "
-+					ntfs_error(inode_sb(vi), "Found "
- 							"compressed data but "
- 							"compression is "
- 							"disabled due to "
-@@ -1063,7 +1086,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 				}
- 				if ((a->flags & ATTR_COMPRESSION_MASK)
- 						!= ATTR_IS_COMPRESSED) {
--					ntfs_error(vi->i_sb, "Found unknown "
-+					ntfs_error(inode_sb(vi),
-+							"Found unknown "
- 							"compression method "
- 							"or corrupt file.");
- 					goto unm_err_out;
-@@ -1074,7 +1098,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 		}
- 		if (a->flags & ATTR_IS_ENCRYPTED) {
- 			if (NInoCompressed(ni)) {
--				ntfs_error(vi->i_sb, "Found encrypted and "
-+				ntfs_error(inode_sb(vi),
-+						"Found encrypted and "
- 						"compressed data.");
- 				goto unm_err_out;
- 			}
-@@ -1085,7 +1110,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 			if (NInoCompressed(ni) || NInoSparse(ni)) {
- 				if (NInoCompressed(ni) && a->data.non_resident.
- 						compression_unit != 4) {
--					ntfs_error(vi->i_sb, "Found "
-+					ntfs_error(inode_sb(vi), "Found "
- 							"non-standard "
- 							"compression unit (%u "
- 							"instead of 4).  "
-@@ -1120,7 +1145,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 						compressed_size);
- 			}
- 			if (a->data.non_resident.lowest_vcn) {
--				ntfs_error(vi->i_sb, "First extent of $DATA "
-+				ntfs_error(inode_sb(vi),
-+						"First extent of $DATA "
- 						"attribute has non zero "
- 						"lowest_vcn.");
- 				goto unm_err_out;
-@@ -1138,7 +1164,8 @@ static int ntfs_read_locked_inode(struct inode *vi)
- 					le16_to_cpu(
- 					a->data.resident.value_offset);
- 			if (vi->i_size > ni->allocated_size) {
--				ntfs_error(vi->i_sb, "Resident data attribute "
-+				ntfs_error(inode_sb(vi),
-+						"Resident data attribute "
- 						"is corrupt (size exceeds "
- 						"allocation).");
- 				goto unm_err_out;
-@@ -1218,7 +1245,7 @@ static int ntfs_read_locked_inode(struct inode *vi)
-  */
- static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- {
--	ntfs_volume *vol = NTFS_SB(vi->i_sb);
-+	ntfs_volume *vol = NTFS_SB(inode_sb(vi));
- 	ntfs_inode *ni, *base_ni;
- 	MFT_RECORD *m;
- 	ATTR_RECORD *a;
-@@ -1265,7 +1292,7 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 			NInoSetCompressed(ni);
- 			if ((ni->type != AT_DATA) || (ni->type == AT_DATA &&
- 					ni->name_len)) {
--				ntfs_error(vi->i_sb, "Found compressed "
-+				ntfs_error(inode_sb(vi), "Found compressed "
- 						"non-data or named data "
- 						"attribute.  Please report "
- 						"you saw this message to "
-@@ -1274,7 +1301,7 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 				goto unm_err_out;
- 			}
- 			if (vol->cluster_size > 4096) {
--				ntfs_error(vi->i_sb, "Found compressed "
-+				ntfs_error(inode_sb(vi), "Found compressed "
- 						"attribute but compression is "
- 						"disabled due to cluster size "
- 						"(%i) > 4kiB.",
-@@ -1283,7 +1310,7 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 			}
- 			if ((a->flags & ATTR_COMPRESSION_MASK) !=
- 					ATTR_IS_COMPRESSED) {
--				ntfs_error(vi->i_sb, "Found unknown "
-+				ntfs_error(inode_sb(vi), "Found unknown "
- 						"compression method.");
- 				goto unm_err_out;
- 			}
-@@ -1293,7 +1320,8 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 		 * to compress all files.
- 		 */
- 		if (NInoMstProtected(ni) && ni->type != AT_INDEX_ROOT) {
--			ntfs_error(vi->i_sb, "Found mst protected attribute "
-+			ntfs_error(inode_sb(vi),
-+					"Found mst protected attribute "
- 					"but the attribute is %s.  Please "
- 					"report you saw this message to "
- 					"linux-ntfs-dev@lists.sourceforge.net",
-@@ -1306,7 +1334,8 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 	}
- 	if (a->flags & ATTR_IS_ENCRYPTED) {
- 		if (NInoCompressed(ni)) {
--			ntfs_error(vi->i_sb, "Found encrypted and compressed "
-+			ntfs_error(inode_sb(vi),
-+					"Found encrypted and compressed "
- 					"data.");
- 			goto unm_err_out;
- 		}
-@@ -1315,7 +1344,8 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 		 * encrypt all files.
- 		 */
- 		if (NInoMstProtected(ni) && ni->type != AT_INDEX_ROOT) {
--			ntfs_error(vi->i_sb, "Found mst protected attribute "
-+			ntfs_error(inode_sb(vi),
-+					"Found mst protected attribute "
- 					"but the attribute is encrypted.  "
- 					"Please report you saw this message "
- 					"to linux-ntfs-dev@lists.sourceforge."
-@@ -1323,7 +1353,7 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 			goto unm_err_out;
- 		}
- 		if (ni->type != AT_DATA) {
--			ntfs_error(vi->i_sb, "Found encrypted non-data "
-+			ntfs_error(inode_sb(vi), "Found encrypted non-data "
- 					"attribute.");
- 			goto unm_err_out;
- 		}
-@@ -1338,7 +1368,8 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 			goto unm_err_out;
- 		}
- 		if (NInoMstProtected(ni)) {
--			ntfs_error(vi->i_sb, "Found mst protected attribute "
-+			ntfs_error(inode_sb(vi),
-+					"Found mst protected attribute "
- 					"but the attribute is resident.  "
- 					"Please report you saw this message to "
- 					"linux-ntfs-dev@lists.sourceforge.net");
-@@ -1349,7 +1380,8 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 		ni->allocated_size = le32_to_cpu(a->length) -
- 				le16_to_cpu(a->data.resident.value_offset);
- 		if (vi->i_size > ni->allocated_size) {
--			ntfs_error(vi->i_sb, "Resident attribute is corrupt "
-+			ntfs_error(inode_sb(vi),
-+					"Resident attribute is corrupt "
- 					"(size exceeds allocation).");
- 			goto unm_err_out;
- 		}
-@@ -1369,7 +1401,7 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 		if (NInoCompressed(ni) || NInoSparse(ni)) {
- 			if (NInoCompressed(ni) && a->data.non_resident.
- 					compression_unit != 4) {
--				ntfs_error(vi->i_sb, "Found non-standard "
-+				ntfs_error(inode_sb(vi), "Found non-standard "
- 						"compression unit (%u instead "
- 						"of 4).  Cannot handle this.",
- 						a->data.non_resident.
-@@ -1397,7 +1429,8 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- 					a->data.non_resident.compressed_size);
- 		}
- 		if (a->data.non_resident.lowest_vcn) {
--			ntfs_error(vi->i_sb, "First extent of attribute has "
-+			ntfs_error(inode_sb(vi),
-+					"First extent of attribute has "
- 					"non-zero lowest_vcn.");
- 			goto unm_err_out;
- 		}
-@@ -1484,7 +1517,7 @@ static int ntfs_read_locked_attr_inode(struct inode *base_vi, struct inode *vi)
- static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- {
- 	loff_t bvi_size;
--	ntfs_volume *vol = NTFS_SB(vi->i_sb);
-+	ntfs_volume *vol = NTFS_SB(inode_sb(vi));
- 	ntfs_inode *ni, *base_ni, *bni;
- 	struct inode *bvi;
- 	MFT_RECORD *m;
-@@ -1524,7 +1557,7 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 			CASE_SENSITIVE, 0, NULL, 0, ctx);
- 	if (unlikely(err)) {
- 		if (err == -ENOENT)
--			ntfs_error(vi->i_sb, "$INDEX_ROOT attribute is "
-+			ntfs_error(inode_sb(vi), "$INDEX_ROOT attribute is "
- 					"missing.");
- 		goto unm_err_out;
- 	}
-@@ -1547,23 +1580,25 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 	 */
- 	if (a->flags & (ATTR_COMPRESSION_MASK | ATTR_IS_ENCRYPTED |
- 			ATTR_IS_SPARSE)) {
--		ntfs_error(vi->i_sb, "Found compressed/encrypted/sparse index "
-+		ntfs_error(inode_sb(vi),
-+				"Found compressed/encrypted/sparse index "
- 				"root attribute.");
- 		goto unm_err_out;
- 	}
- 	ir = (INDEX_ROOT*)((u8*)a + le16_to_cpu(a->data.resident.value_offset));
- 	ir_end = (u8*)ir + le32_to_cpu(a->data.resident.value_length);
- 	if (ir_end > (u8*)ctx->mrec + vol->mft_record_size) {
--		ntfs_error(vi->i_sb, "$INDEX_ROOT attribute is corrupt.");
-+		ntfs_error(inode_sb(vi), "$INDEX_ROOT attribute is corrupt.");
- 		goto unm_err_out;
- 	}
- 	index_end = (u8*)&ir->index + le32_to_cpu(ir->index.index_length);
- 	if (index_end > ir_end) {
--		ntfs_error(vi->i_sb, "Index is corrupt.");
-+		ntfs_error(inode_sb(vi), "Index is corrupt.");
- 		goto unm_err_out;
- 	}
- 	if (ir->type) {
--		ntfs_error(vi->i_sb, "Index type is not 0 (type is 0x%x).",
-+		ntfs_error(inode_sb(vi),
-+				"Index type is not 0 (type is 0x%x).",
- 				le32_to_cpu(ir->type));
- 		goto unm_err_out;
- 	}
-@@ -1572,19 +1607,21 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 			le32_to_cpu(ir->collation_rule));
- 	ni->itype.index.block_size = le32_to_cpu(ir->index_block_size);
- 	if (!is_power_of_2(ni->itype.index.block_size)) {
--		ntfs_error(vi->i_sb, "Index block size (%u) is not a power of "
-+		ntfs_error(inode_sb(vi),
-+				"Index block size (%u) is not a power of "
- 				"two.", ni->itype.index.block_size);
- 		goto unm_err_out;
- 	}
- 	if (ni->itype.index.block_size > PAGE_SIZE) {
--		ntfs_error(vi->i_sb, "Index block size (%u) > PAGE_SIZE "
-+		ntfs_error(inode_sb(vi), "Index block size (%u) > PAGE_SIZE "
- 				"(%ld) is not supported.  Sorry.",
- 				ni->itype.index.block_size, PAGE_SIZE);
- 		err = -EOPNOTSUPP;
- 		goto unm_err_out;
- 	}
- 	if (ni->itype.index.block_size < NTFS_BLOCK_SIZE) {
--		ntfs_error(vi->i_sb, "Index block size (%u) < NTFS_BLOCK_SIZE "
-+		ntfs_error(inode_sb(vi),
-+				"Index block size (%u) < NTFS_BLOCK_SIZE "
- 				"(%i) is not supported.  Sorry.",
- 				ni->itype.index.block_size, NTFS_BLOCK_SIZE);
- 		err = -EOPNOTSUPP;
-@@ -1617,17 +1654,18 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 			CASE_SENSITIVE, 0, NULL, 0, ctx);
- 	if (unlikely(err)) {
- 		if (err == -ENOENT)
--			ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute is "
-+			ntfs_error(inode_sb(vi),
-+					"$INDEX_ALLOCATION attribute is "
- 					"not present but $INDEX_ROOT "
- 					"indicated it is.");
- 		else
--			ntfs_error(vi->i_sb, "Failed to lookup "
-+			ntfs_error(inode_sb(vi), "Failed to lookup "
- 					"$INDEX_ALLOCATION attribute.");
- 		goto unm_err_out;
- 	}
- 	a = ctx->attr;
- 	if (!a->non_resident) {
--		ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute is "
-+		ntfs_error(inode_sb(vi), "$INDEX_ALLOCATION attribute is "
- 				"resident.");
- 		goto unm_err_out;
- 	}
-@@ -1642,21 +1680,22 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 		goto unm_err_out;
- 	}
- 	if (a->flags & ATTR_IS_ENCRYPTED) {
--		ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute is "
-+		ntfs_error(inode_sb(vi), "$INDEX_ALLOCATION attribute is "
- 				"encrypted.");
- 		goto unm_err_out;
- 	}
- 	if (a->flags & ATTR_IS_SPARSE) {
--		ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute is sparse.");
-+		ntfs_error(inode_sb(vi),
-+			   "$INDEX_ALLOCATION attribute is sparse.");
- 		goto unm_err_out;
- 	}
- 	if (a->flags & ATTR_COMPRESSION_MASK) {
--		ntfs_error(vi->i_sb, "$INDEX_ALLOCATION attribute is "
-+		ntfs_error(inode_sb(vi), "$INDEX_ALLOCATION attribute is "
- 				"compressed.");
- 		goto unm_err_out;
- 	}
- 	if (a->data.non_resident.lowest_vcn) {
--		ntfs_error(vi->i_sb, "First extent of $INDEX_ALLOCATION "
-+		ntfs_error(inode_sb(vi), "First extent of $INDEX_ALLOCATION "
- 				"attribute has non zero lowest_vcn.");
- 		goto unm_err_out;
- 	}
-@@ -1675,21 +1714,23 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 	/* Get the index bitmap attribute inode. */
- 	bvi = ntfs_attr_iget(base_vi, AT_BITMAP, ni->name, ni->name_len);
- 	if (IS_ERR(bvi)) {
--		ntfs_error(vi->i_sb, "Failed to get bitmap attribute.");
-+		ntfs_error(inode_sb(vi), "Failed to get bitmap attribute.");
- 		err = PTR_ERR(bvi);
- 		goto unm_err_out;
- 	}
- 	bni = NTFS_I(bvi);
- 	if (NInoCompressed(bni) || NInoEncrypted(bni) ||
- 			NInoSparse(bni)) {
--		ntfs_error(vi->i_sb, "$BITMAP attribute is compressed and/or "
-+		ntfs_error(inode_sb(vi),
-+				"$BITMAP attribute is compressed and/or "
- 				"encrypted and/or sparse.");
- 		goto iput_unm_err_out;
- 	}
- 	/* Consistency check bitmap size vs. index allocation size. */
- 	bvi_size = i_size_read(bvi);
- 	if ((bvi_size << 3) < (vi->i_size >> ni->itype.index.block_size_bits)) {
--		ntfs_error(vi->i_sb, "Index bitmap too small (0x%llx) for "
-+		ntfs_error(inode_sb(vi),
-+				"Index bitmap too small (0x%llx) for "
- 				"index allocation (0x%llx).", bvi_size << 3,
- 				vi->i_size);
- 		goto iput_unm_err_out;
-@@ -1719,7 +1760,8 @@ static int ntfs_read_locked_index_inode(struct inode *base_vi, struct inode *vi)
- 	if (m)
- 		unmap_mft_record(base_ni);
- err_out:
--	ntfs_error(vi->i_sb, "Failed with error code %i while reading index "
-+	ntfs_error(inode_sb(vi),
-+			"Failed with error code %i while reading index "
- 			"inode (mft_no 0x%lx, name_len %i.", err, vi->i_ino,
- 			ni->name_len);
- 	make_bad_inode(vi);
-@@ -1767,7 +1809,7 @@ int ntfs_read_inode_mount(struct inode *vi)
- {
- 	VCN next_vcn, last_vcn, highest_vcn;
- 	s64 block;
--	struct super_block *sb = vi->i_sb;
-+	struct super_block *sb = inode_sb(vi);
- 	ntfs_volume *vol = NTFS_SB(sb);
- 	struct buffer_head *bh;
- 	ntfs_inode *ni;
-@@ -2261,7 +2303,8 @@ void ntfs_evict_big_inode(struct inode *vi)
- 		ntfs_commit_inode(vi);
- 
- 		if (!was_bad && (is_bad_inode(vi) || NInoDirty(ni))) {
--			ntfs_error(vi->i_sb, "Failed to commit dirty inode "
-+			ntfs_error(inode_sb(vi),
-+					"Failed to commit dirty inode "
- 					"0x%lx.  Losing data!", vi->i_ino);
- 			// FIXME:  Do something!!!
- 		}
-@@ -2383,7 +2426,8 @@ int ntfs_truncate(struct inode *vi)
- 	m = map_mft_record(base_ni);
- 	if (IS_ERR(m)) {
- 		err = PTR_ERR(m);
--		ntfs_error(vi->i_sb, "Failed to map mft record for inode 0x%lx "
-+		ntfs_error(inode_sb(vi),
-+				"Failed to map mft record for inode 0x%lx "
- 				"(error code %d).%s", vi->i_ino, err, te);
- 		ctx = NULL;
- 		m = NULL;
-@@ -2391,7 +2435,8 @@ int ntfs_truncate(struct inode *vi)
- 	}
- 	ctx = ntfs_attr_get_search_ctx(base_ni, m);
- 	if (unlikely(!ctx)) {
--		ntfs_error(vi->i_sb, "Failed to allocate a search context for "
-+		ntfs_error(inode_sb(vi),
-+				"Failed to allocate a search context for "
- 				"inode 0x%lx (not enough memory).%s",
- 				vi->i_ino, te);
- 		err = -ENOMEM;
-@@ -2401,12 +2446,14 @@ int ntfs_truncate(struct inode *vi)
- 			CASE_SENSITIVE, 0, NULL, 0, ctx);
- 	if (unlikely(err)) {
- 		if (err == -ENOENT) {
--			ntfs_error(vi->i_sb, "Open attribute is missing from "
-+			ntfs_error(inode_sb(vi),
-+					"Open attribute is missing from "
- 					"mft record.  Inode 0x%lx is corrupt.  "
- 					"Run chkdsk.%s", vi->i_ino, te);
- 			err = -EIO;
- 		} else
--			ntfs_error(vi->i_sb, "Failed to lookup attribute in "
-+			ntfs_error(inode_sb(vi),
-+					"Failed to lookup attribute in "
- 					"inode 0x%lx (error code %d).%s",
- 					vi->i_ino, err, te);
- 		goto old_bad_out;
-@@ -2480,7 +2527,7 @@ int ntfs_truncate(struct inode *vi)
- 		}
- 	}
- 	if (NInoCompressed(ni) || NInoEncrypted(ni)) {
--		ntfs_warning(vi->i_sb, "Changes in inode size are not "
-+		ntfs_warning(inode_sb(vi), "Changes in inode size are not "
- 				"supported yet for %s files, ignoring.",
- 				NInoCompressed(ni) ? "compressed" :
- 				"encrypted");
-@@ -2889,7 +2936,8 @@ int ntfs_setattr(struct dentry *dentry, struct iattr *attr)
- 		goto out;
- 	/* We do not support NTFS ACLs yet. */
- 	if (ia_valid & (ATTR_UID | ATTR_GID | ATTR_MODE)) {
--		ntfs_warning(vi->i_sb, "Changes in user/group/mode are not "
-+		ntfs_warning(inode_sb(vi),
-+				"Changes in user/group/mode are not "
- 				"supported yet, ignoring.");
- 		err = -EOPNOTSUPP;
- 		goto out;
-@@ -2902,7 +2950,8 @@ int ntfs_setattr(struct dentry *dentry, struct iattr *attr)
- 			 * compressed or encrypted files yet.
- 			 */
- 			if (NInoCompressed(ni) || NInoEncrypted(ni)) {
--				ntfs_warning(vi->i_sb, "Changes in inode size "
-+				ntfs_warning(inode_sb(vi),
-+						"Changes in inode size "
- 						"are not supported yet for "
- 						"%s files, ignoring.",
- 						NInoCompressed(ni) ?
-@@ -2924,13 +2973,13 @@ int ntfs_setattr(struct dentry *dentry, struct iattr *attr)
- 	}
- 	if (ia_valid & ATTR_ATIME)
- 		vi->i_atime = timespec_trunc(attr->ia_atime,
--				vi->i_sb->s_time_gran);
-+				inode_sb(vi)->s_time_gran);
- 	if (ia_valid & ATTR_MTIME)
- 		vi->i_mtime = timespec_trunc(attr->ia_mtime,
--				vi->i_sb->s_time_gran);
-+				inode_sb(vi)->s_time_gran);
- 	if (ia_valid & ATTR_CTIME)
- 		vi->i_ctime = timespec_trunc(attr->ia_ctime,
--				vi->i_sb->s_time_gran);
-+				inode_sb(vi)->s_time_gran);
- 	mark_inode_dirty(vi);
- out:
- 	return err;
-@@ -3088,12 +3137,14 @@ int __ntfs_write_inode(struct inode *vi, int sync)
- 	unmap_mft_record(ni);
- err_out:
- 	if (err == -ENOMEM) {
--		ntfs_warning(vi->i_sb, "Not enough memory to write inode.  "
-+		ntfs_warning(inode_sb(vi),
-+				"Not enough memory to write inode.  "
- 				"Marking the inode dirty again, so the VFS "
- 				"retries later.");
- 		mark_inode_dirty(vi);
- 	} else {
--		ntfs_error(vi->i_sb, "Failed (error %i):  Run chkdsk.", -err);
-+		ntfs_error(inode_sb(vi), "Failed (error %i):  Run chkdsk.",
-+			   -err);
- 		NVolSetErrors(ni->vol);
- 	}
- 	return err;
-diff --git a/fs/ntfs/inode.h b/fs/ntfs/inode.h
-index b3c3469de6cb..d22743c94763 100644
---- a/fs/ntfs/inode.h
-+++ b/fs/ntfs/inode.h
-@@ -288,7 +288,7 @@ static inline void ntfs_init_big_inode(struct inode *vi)
- 	ntfs_inode *ni = NTFS_I(vi);
- 
- 	ntfs_debug("Entering.");
--	__ntfs_init_inode(vi->i_sb, ni);
-+	__ntfs_init_inode(inode_sb(vi), ni);
- 	ni->mft_no = vi->i_ino;
- }
- 
-diff --git a/fs/ntfs/logfile.c b/fs/ntfs/logfile.c
-index 353379ff6057..2cc0cac18ac5 100644
---- a/fs/ntfs/logfile.c
-+++ b/fs/ntfs/logfile.c
-@@ -68,7 +68,8 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
- 			logfile_system_page_size &
- 			(logfile_system_page_size - 1) ||
- 			!is_power_of_2(logfile_log_page_size)) {
--		ntfs_error(vi->i_sb, "$LogFile uses unsupported page size.");
-+		ntfs_error(inode_sb(vi),
-+			   "$LogFile uses unsupported page size.");
- 		return false;
- 	}
- 	/*
-@@ -76,14 +77,14 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
- 	 * size (2nd restart page).
- 	 */
- 	if (pos && pos != logfile_system_page_size) {
--		ntfs_error(vi->i_sb, "Found restart area in incorrect "
-+		ntfs_error(inode_sb(vi), "Found restart area in incorrect "
- 				"position in $LogFile.");
- 		return false;
- 	}
- 	/* We only know how to handle version 1.1. */
- 	if (sle16_to_cpu(rp->major_ver) != 1 ||
- 			sle16_to_cpu(rp->minor_ver) != 1) {
--		ntfs_error(vi->i_sb, "$LogFile version %i.%i is not "
-+		ntfs_error(inode_sb(vi), "$LogFile version %i.%i is not "
- 				"supported.  (This driver supports version "
- 				"1.1 only.)", (int)sle16_to_cpu(rp->major_ver),
- 				(int)sle16_to_cpu(rp->minor_ver));
-@@ -100,7 +101,7 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
- 	/* Verify the size of the update sequence array. */
- 	usa_count = 1 + (logfile_system_page_size >> NTFS_BLOCK_SIZE_BITS);
- 	if (usa_count != le16_to_cpu(rp->usa_count)) {
--		ntfs_error(vi->i_sb, "$LogFile restart page specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart page specifies "
- 				"inconsistent update sequence array count.");
- 		return false;
- 	}
-@@ -109,7 +110,7 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
- 	usa_end = usa_ofs + usa_count * sizeof(u16);
- 	if (usa_ofs < sizeof(RESTART_PAGE_HEADER) ||
- 			usa_end > NTFS_BLOCK_SIZE - sizeof(u16)) {
--		ntfs_error(vi->i_sb, "$LogFile restart page specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart page specifies "
- 				"inconsistent update sequence array offset.");
- 		return false;
- 	}
-@@ -124,7 +125,7 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
- 	if (ra_ofs & 7 || (have_usa ? ra_ofs < usa_end :
- 			ra_ofs < sizeof(RESTART_PAGE_HEADER)) ||
- 			ra_ofs > logfile_system_page_size) {
--		ntfs_error(vi->i_sb, "$LogFile restart page specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart page specifies "
- 				"inconsistent restart area offset.");
- 		return false;
- 	}
-@@ -133,7 +134,8 @@ static bool ntfs_check_restart_page_header(struct inode *vi,
- 	 * set.
- 	 */
- 	if (!ntfs_is_chkd_record(rp->magic) && sle64_to_cpu(rp->chkdsk_lsn)) {
--		ntfs_error(vi->i_sb, "$LogFile restart page is not modified "
-+		ntfs_error(inode_sb(vi),
-+				"$LogFile restart page is not modified "
- 				"by chkdsk but a chkdsk LSN is specified.");
- 		return false;
- 	}
-@@ -172,7 +174,7 @@ static bool ntfs_check_restart_area(struct inode *vi, RESTART_PAGE_HEADER *rp)
- 	 */
- 	if (ra_ofs + offsetof(RESTART_AREA, file_size) >
- 			NTFS_BLOCK_SIZE - sizeof(u16)) {
--		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart area specifies "
- 				"inconsistent file offset.");
- 		return false;
- 	}
-@@ -186,7 +188,7 @@ static bool ntfs_check_restart_area(struct inode *vi, RESTART_PAGE_HEADER *rp)
- 	ca_ofs = le16_to_cpu(ra->client_array_offset);
- 	if (((ca_ofs + 7) & ~7) != ca_ofs ||
- 			ra_ofs + ca_ofs > NTFS_BLOCK_SIZE - sizeof(u16)) {
--		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart area specifies "
- 				"inconsistent client array offset.");
- 		return false;
- 	}
-@@ -201,7 +203,8 @@ static bool ntfs_check_restart_area(struct inode *vi, RESTART_PAGE_HEADER *rp)
- 			ra_ofs + le16_to_cpu(ra->restart_area_length) >
- 			le32_to_cpu(rp->system_page_size) ||
- 			ra_len > le16_to_cpu(ra->restart_area_length)) {
--		ntfs_error(vi->i_sb, "$LogFile restart area is out of bounds "
-+		ntfs_error(inode_sb(vi),
-+				"$LogFile restart area is out of bounds "
- 				"of the system page size specified by the "
- 				"restart page header and/or the specified "
- 				"restart area length is inconsistent.");
-@@ -218,7 +221,7 @@ static bool ntfs_check_restart_area(struct inode *vi, RESTART_PAGE_HEADER *rp)
- 			(ra->client_in_use_list != LOGFILE_NO_CLIENT &&
- 			le16_to_cpu(ra->client_in_use_list) >=
- 			le16_to_cpu(ra->log_clients))) {
--		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart area specifies "
- 				"overflowing client free and/or in use lists.");
- 		return false;
- 	}
-@@ -233,21 +236,21 @@ static bool ntfs_check_restart_area(struct inode *vi, RESTART_PAGE_HEADER *rp)
- 		fs_bits++;
- 	}
- 	if (le32_to_cpu(ra->seq_number_bits) != 67 - fs_bits) {
--		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart area specifies "
- 				"inconsistent sequence number bits.");
- 		return false;
- 	}
- 	/* The log record header length must be a multiple of 8. */
- 	if (((le16_to_cpu(ra->log_record_header_length) + 7) & ~7) !=
- 			le16_to_cpu(ra->log_record_header_length)) {
--		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart area specifies "
- 				"inconsistent log record header length.");
- 		return false;
- 	}
- 	/* Dito for the log page data offset. */
- 	if (((le16_to_cpu(ra->log_page_data_offset) + 7) & ~7) !=
- 			le16_to_cpu(ra->log_page_data_offset)) {
--		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
-+		ntfs_error(inode_sb(vi), "$LogFile restart area specifies "
- 				"inconsistent log page data offset.");
- 		return false;
- 	}
-@@ -316,7 +319,7 @@ static bool ntfs_check_log_client_array(struct inode *vi,
- 	ntfs_debug("Done.");
- 	return true;
- err_out:
--	ntfs_error(vi->i_sb, "$LogFile log client array is corrupt.");
-+	ntfs_error(inode_sb(vi), "$LogFile log client array is corrupt.");
- 	return false;
- }
- 
-@@ -373,7 +376,8 @@ static int ntfs_check_and_load_restart_page(struct inode *vi,
- 	 */
- 	trp = ntfs_malloc_nofs(le32_to_cpu(rp->system_page_size));
- 	if (!trp) {
--		ntfs_error(vi->i_sb, "Failed to allocate memory for $LogFile "
-+		ntfs_error(inode_sb(vi),
-+				"Failed to allocate memory for $LogFile "
- 				"restart page buffer.");
- 		return -ENOMEM;
- 	}
-@@ -400,7 +404,8 @@ static int ntfs_check_and_load_restart_page(struct inode *vi,
+ 	if (!nilfs_clear_bit_atomic(lock, group_offset, bitmap))
+-		nilfs_msg(inode->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 			  "%s (ino=%lu): entry number %llu already freed",
+ 			  __func__, inode->i_ino,
+ 			  (unsigned long long)req->pr_entry_nr);
+@@ -772,7 +772,7 @@ int nilfs_palloc_freev(struct inode *inode, __u64 *entry_nrs, size_t nitems)
  		do {
- 			page = ntfs_map_page(vi->i_mapping, idx);
- 			if (IS_ERR(page)) {
--				ntfs_error(vi->i_sb, "Error mapping $LogFile "
-+				ntfs_error(inode_sb(vi),
-+						"Error mapping $LogFile "
- 						"page (index %lu).", idx);
- 				err = PTR_ERR(page);
- 				if (err != -EIO && err != -ENOMEM)
-@@ -430,7 +435,8 @@ static int ntfs_check_and_load_restart_page(struct inode *vi,
- 		if (le16_to_cpu(rp->restart_area_offset) +
- 				le16_to_cpu(ra->restart_area_length) >
- 				NTFS_BLOCK_SIZE - sizeof(u16)) {
--			ntfs_error(vi->i_sb, "Multi sector transfer error "
-+			ntfs_error(inode_sb(vi),
-+					"Multi sector transfer error "
- 					"detected in $LogFile restart page.");
- 			err = -EINVAL;
- 			goto err_out;
-@@ -486,7 +492,7 @@ bool ntfs_check_logfile(struct inode *log_vi, RESTART_PAGE_HEADER **rp)
+ 			if (!nilfs_clear_bit_atomic(lock, group_offset,
+ 						    bitmap)) {
+-				nilfs_msg(inode->i_sb, KERN_WARNING,
++				nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 					  "%s (ino=%lu): entry number %llu already freed",
+ 					  __func__, inode->i_ino,
+ 					  (unsigned long long)entry_nrs[j]);
+@@ -817,7 +817,7 @@ int nilfs_palloc_freev(struct inode *inode, __u64 *entry_nrs, size_t nitems)
+ 			ret = nilfs_palloc_delete_entry_block(inode,
+ 							      last_nrs[k]);
+ 			if (ret && ret != -ENOENT)
+-				nilfs_msg(inode->i_sb, KERN_WARNING,
++				nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 					  "error %d deleting block that object (entry=%llu, ino=%lu) belongs to",
+ 					  ret, (unsigned long long)last_nrs[k],
+ 					  inode->i_ino);
+@@ -835,7 +835,7 @@ int nilfs_palloc_freev(struct inode *inode, __u64 *entry_nrs, size_t nitems)
+ 		if (nfree == nilfs_palloc_entries_per_group(inode)) {
+ 			ret = nilfs_palloc_delete_bitmap_block(inode, group);
+ 			if (ret && ret != -ENOENT)
+-				nilfs_msg(inode->i_sb, KERN_WARNING,
++				nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 					  "error %d deleting bitmap block of group=%lu, ino=%lu",
+ 					  ret, group, inode->i_ino);
+ 		}
+diff --git a/fs/nilfs2/bmap.c b/fs/nilfs2/bmap.c
+index 01fb1831ca25..9d466fb6e65f 100644
+--- a/fs/nilfs2/bmap.c
++++ b/fs/nilfs2/bmap.c
+@@ -30,7 +30,7 @@
+ 
+ struct inode *nilfs_bmap_get_dat(const struct nilfs_bmap *bmap)
  {
- 	s64 size, pos;
- 	LSN rstr1_lsn, rstr2_lsn;
--	ntfs_volume *vol = NTFS_SB(log_vi->i_sb);
-+	ntfs_volume *vol = NTFS_SB(inode_sb(log_vi));
- 	struct address_space *mapping = log_vi->i_mapping;
- 	struct page *page = NULL;
- 	u8 *kaddr = NULL;
-@@ -679,7 +685,7 @@ bool ntfs_check_logfile(struct inode *log_vi, RESTART_PAGE_HEADER **rp)
+-	struct the_nilfs *nilfs = bmap->b_inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(bmap->b_inode)->s_fs_info;
+ 
+ 	return nilfs->ns_dat;
+ }
+@@ -41,7 +41,7 @@ static int nilfs_bmap_convert_error(struct nilfs_bmap *bmap,
+ 	struct inode *inode = bmap->b_inode;
+ 
+ 	if (err == -EINVAL) {
+-		__nilfs_error(inode->i_sb, fname,
++		__nilfs_error(inode_sb(inode), fname,
+ 			      "broken bmap (inode number=%lu)", inode->i_ino);
+ 		err = -EIO;
+ 	}
+diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
+index c21e0b4454a6..87bc94f23271 100644
+--- a/fs/nilfs2/btnode.c
++++ b/fs/nilfs2/btnode.c
+@@ -51,7 +51,7 @@ nilfs_btnode_create_block(struct address_space *btnc, __u64 blocknr)
+ 		BUG();
+ 	}
+ 	memset(bh->b_data, 0, i_blocksize(inode));
+-	bh->b_bdev = inode->i_sb->s_bdev;
++	bh->b_bdev = inode_sb(inode)->s_bdev;
+ 	bh->b_blocknr = blocknr;
+ 	set_buffer_mapped(bh);
+ 	set_buffer_uptodate(bh);
+@@ -83,7 +83,7 @@ int nilfs_btnode_submit_block(struct address_space *btnc, __u64 blocknr,
+ 	if (pblocknr == 0) {
+ 		pblocknr = blocknr;
+ 		if (inode->i_ino != NILFS_DAT_INO) {
+-			struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++			struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 
+ 			/* blocknr is a virtual block number */
+ 			err = nilfs_dat_translate(nilfs->ns_dat, blocknr,
+@@ -110,7 +110,7 @@ int nilfs_btnode_submit_block(struct address_space *btnc, __u64 blocknr,
+ 		goto found;
+ 	}
+ 	set_buffer_mapped(bh);
+-	bh->b_bdev = inode->i_sb->s_bdev;
++	bh->b_bdev = inode_sb(inode)->s_bdev;
+ 	bh->b_blocknr = pblocknr; /* set block address for read */
+ 	bh->b_end_io = end_buffer_read_sync;
+ 	get_bh(bh);
+diff --git a/fs/nilfs2/btree.c b/fs/nilfs2/btree.c
+index 16a7a67a11c9..e8c90e0b3f1f 100644
+--- a/fs/nilfs2/btree.c
++++ b/fs/nilfs2/btree.c
+@@ -360,7 +360,7 @@ static int nilfs_btree_node_broken(const struct nilfs_btree_node *node,
+ 		     (flags & NILFS_BTREE_NODE_ROOT) ||
+ 		     nchildren < 0 ||
+ 		     nchildren > NILFS_BTREE_NODE_NCHILDREN_MAX(size))) {
+-		nilfs_msg(inode->i_sb, KERN_CRIT,
++		nilfs_msg(inode_sb(inode), KERN_CRIT,
+ 			  "bad btree node (ino=%lu, blocknr=%llu): level = %d, flags = 0x%x, nchildren = %d",
+ 			  inode->i_ino, (unsigned long long)blocknr, level,
+ 			  flags, nchildren);
+@@ -390,7 +390,7 @@ static int nilfs_btree_root_broken(const struct nilfs_btree_node *node,
+ 		     level >= NILFS_BTREE_LEVEL_MAX ||
+ 		     nchildren < 0 ||
+ 		     nchildren > NILFS_BTREE_ROOT_NCHILDREN_MAX)) {
+-		nilfs_msg(inode->i_sb, KERN_CRIT,
++		nilfs_msg(inode_sb(inode), KERN_CRIT,
+ 			  "bad btree root (ino=%lu): level = %d, flags = 0x%x, nchildren = %d",
+ 			  inode->i_ino, level, flags, nchildren);
+ 		ret = 1;
+@@ -459,7 +459,7 @@ static int nilfs_btree_bad_node(const struct nilfs_bmap *btree,
+ {
+ 	if (unlikely(nilfs_btree_node_get_level(node) != level)) {
+ 		dump_stack();
+-		nilfs_msg(btree->b_inode->i_sb, KERN_CRIT,
++		nilfs_msg(inode_sb(btree->b_inode), KERN_CRIT,
+ 			  "btree level mismatch (ino=%lu): %d != %d",
+ 			  btree->b_inode->i_ino,
+ 			  nilfs_btree_node_get_level(node), level);
+@@ -517,7 +517,7 @@ static int __nilfs_btree_get_block(const struct nilfs_bmap *btree, __u64 ptr,
+ 
+  out_no_wait:
+ 	if (!buffer_uptodate(bh)) {
+-		nilfs_msg(btree->b_inode->i_sb, KERN_ERR,
++		nilfs_msg(inode_sb(btree->b_inode), KERN_ERR,
+ 			  "I/O error reading b-tree node block (ino=%lu, blocknr=%llu)",
+ 			  btree->b_inode->i_ino, (unsigned long long)ptr);
+ 		brelse(bh);
+@@ -2083,7 +2083,7 @@ static int nilfs_btree_propagate(struct nilfs_bmap *btree,
+ 	ret = nilfs_btree_do_lookup(btree, path, key, NULL, level + 1, 0);
+ 	if (ret < 0) {
+ 		if (unlikely(ret == -ENOENT))
+-			nilfs_msg(btree->b_inode->i_sb, KERN_CRIT,
++			nilfs_msg(inode_sb(btree->b_inode), KERN_CRIT,
+ 				  "writing node/leaf block does not appear in b-tree (ino=%lu) at key=%llu, level=%d",
+ 				  btree->b_inode->i_ino,
+ 				  (unsigned long long)key, level);
+@@ -2123,7 +2123,7 @@ static void nilfs_btree_add_dirty_buffer(struct nilfs_bmap *btree,
+ 	if (level < NILFS_BTREE_LEVEL_NODE_MIN ||
+ 	    level >= NILFS_BTREE_LEVEL_MAX) {
+ 		dump_stack();
+-		nilfs_msg(btree->b_inode->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(btree->b_inode), KERN_WARNING,
+ 			  "invalid btree level: %d (key=%llu, ino=%lu, blocknr=%llu)",
+ 			  level, (unsigned long long)key,
+ 			  btree->b_inode->i_ino,
+diff --git a/fs/nilfs2/cpfile.c b/fs/nilfs2/cpfile.c
+index a15a1601e931..c63985f7955e 100644
+--- a/fs/nilfs2/cpfile.c
++++ b/fs/nilfs2/cpfile.c
+@@ -331,7 +331,7 @@ int nilfs_cpfile_delete_checkpoints(struct inode *cpfile,
+ 	int ret, ncps, nicps, nss, count, i;
+ 
+ 	if (unlikely(start == 0 || start > end)) {
+-		nilfs_msg(cpfile->i_sb, KERN_ERR,
++		nilfs_msg(inode_sb(cpfile), KERN_ERR,
+ 			  "cannot delete checkpoints: invalid range [%llu, %llu)",
+ 			  (unsigned long long)start, (unsigned long long)end);
+ 		return -EINVAL;
+@@ -385,7 +385,7 @@ int nilfs_cpfile_delete_checkpoints(struct inode *cpfile,
+ 								   cpfile, cno);
+ 					if (ret == 0)
+ 						continue;
+-					nilfs_msg(cpfile->i_sb, KERN_ERR,
++					nilfs_msg(inode_sb(cpfile), KERN_ERR,
+ 						  "error %d deleting checkpoint block",
+ 						  ret);
+ 					break;
+@@ -918,7 +918,7 @@ int nilfs_cpfile_change_cpmode(struct inode *cpfile, __u64 cno, int mode)
+ 
+ 	switch (mode) {
+ 	case NILFS_CHECKPOINT:
+-		if (nilfs_checkpoint_is_mounted(cpfile->i_sb, cno))
++		if (nilfs_checkpoint_is_mounted(inode_sb(cpfile), cno))
+ 			/*
+ 			 * Current implementation does not have to protect
+ 			 * plain read-only mounts since they are exclusive
+diff --git a/fs/nilfs2/dat.c b/fs/nilfs2/dat.c
+index dffedb2f8817..7f90bce3750b 100644
+--- a/fs/nilfs2/dat.c
++++ b/fs/nilfs2/dat.c
+@@ -349,7 +349,7 @@ int nilfs_dat_move(struct inode *dat, __u64 vblocknr, sector_t blocknr)
+ 	kaddr = kmap_atomic(entry_bh->b_page);
+ 	entry = nilfs_palloc_block_get_entry(dat, vblocknr, entry_bh, kaddr);
+ 	if (unlikely(entry->de_blocknr == cpu_to_le64(0))) {
+-		nilfs_msg(dat->i_sb, KERN_CRIT,
++		nilfs_msg(inode_sb(dat), KERN_CRIT,
+ 			  "%s: invalid vblocknr = %llu, [%llu, %llu)",
+ 			  __func__, (unsigned long long)vblocknr,
+ 			  (unsigned long long)le64_to_cpu(entry->de_start),
+diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+index 582831ab3eb9..c805564d6893 100644
+--- a/fs/nilfs2/dir.c
++++ b/fs/nilfs2/dir.c
+@@ -70,7 +70,7 @@ static inline __le16 nilfs_rec_len_to_disk(unsigned int len)
   */
- bool ntfs_is_logfile_clean(struct inode *log_vi, const RESTART_PAGE_HEADER *rp)
+ static inline unsigned int nilfs_chunk_size(struct inode *inode)
  {
--	ntfs_volume *vol = NTFS_SB(log_vi->i_sb);
-+	ntfs_volume *vol = NTFS_SB(inode_sb(log_vi));
- 	RESTART_AREA *ra;
- 
- 	ntfs_debug("Entering.");
-diff --git a/fs/ntfs/namei.c b/fs/ntfs/namei.c
-index 4690cd75d8d7..b55c2fb0ed56 100644
---- a/fs/ntfs/namei.c
-+++ b/fs/ntfs/namei.c
-@@ -103,7 +103,7 @@
- static struct dentry *ntfs_lookup(struct inode *dir_ino, struct dentry *dent,
- 		unsigned int flags)
- {
--	ntfs_volume *vol = NTFS_SB(dir_ino->i_sb);
-+	ntfs_volume *vol = NTFS_SB(inode_sb(dir_ino));
- 	struct inode *dent_inode;
- 	ntfschar *uname;
- 	ntfs_name *name = NULL;
-@@ -326,7 +326,8 @@ static struct dentry *ntfs_get_parent(struct dentry *child_dent)
- 		ntfs_attr_put_search_ctx(ctx);
- 		unmap_mft_record(ni);
- 		if (err == -ENOENT)
--			ntfs_error(vi->i_sb, "Inode 0x%lx does not have a "
-+			ntfs_error(inode_sb(vi),
-+					"Inode 0x%lx does not have a "
- 					"file name attribute.  Run chkdsk.",
- 					vi->i_ino);
- 		return ERR_PTR(err);
-@@ -345,7 +346,7 @@ static struct dentry *ntfs_get_parent(struct dentry *child_dent)
- 	ntfs_attr_put_search_ctx(ctx);
- 	unmap_mft_record(ni);
- 
--	return d_obtain_alias(ntfs_iget(vi->i_sb, parent_ino));
-+	return d_obtain_alias(ntfs_iget(inode_sb(vi), parent_ino));
+-	return inode->i_sb->s_blocksize;
++	return inode_sb(inode)->s_blocksize;
  }
  
- static struct inode *ntfs_nfs_get_inode(struct super_block *sb,
+ static inline void nilfs_put_page(struct page *page)
+@@ -125,7 +125,7 @@ static void nilfs_commit_chunk(struct page *page,
+ static bool nilfs_check_page(struct page *page)
+ {
+ 	struct inode *dir = page->mapping->host;
+-	struct super_block *sb = dir->i_sb;
++	struct super_block *sb = inode_sb(dir);
+ 	unsigned int chunk_size = nilfs_chunk_size(dir);
+ 	char *kaddr = page_address(page);
+ 	unsigned int offs, rec_len;
+@@ -273,7 +273,7 @@ static int nilfs_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	loff_t pos = ctx->pos;
+ 	struct inode *inode = file_inode(file);
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	unsigned int offset = pos & ~PAGE_MASK;
+ 	unsigned long n = pos >> PAGE_SHIFT;
+ 	unsigned long npages = dir_pages(inode);
+@@ -363,8 +363,8 @@ nilfs_find_entry(struct inode *dir, const struct qstr *qstr,
+ 			kaddr += nilfs_last_byte(dir, n) - reclen;
+ 			while ((char *) de <= kaddr) {
+ 				if (de->rec_len == 0) {
+-					nilfs_error(dir->i_sb,
+-						"zero-length directory entry");
++					nilfs_error(inode_sb(dir),
++						    "zero-length directory entry");
+ 					nilfs_put_page(page);
+ 					goto out;
+ 				}
+@@ -378,10 +378,10 @@ nilfs_find_entry(struct inode *dir, const struct qstr *qstr,
+ 			n = 0;
+ 		/* next page is past the blocks we've got */
+ 		if (unlikely(n > (dir->i_blocks >> (PAGE_SHIFT - 9)))) {
+-			nilfs_error(dir->i_sb,
+-			       "dir %lu size %lld exceeds block count %llu",
+-			       dir->i_ino, dir->i_size,
+-			       (unsigned long long)dir->i_blocks);
++			nilfs_error(inode_sb(dir),
++				    "dir %lu size %lld exceeds block count %llu",
++				    dir->i_ino, dir->i_size,
++				    (unsigned long long)dir->i_blocks);
+ 			goto out;
+ 		}
+ 	} while (n != start);
+@@ -487,7 +487,7 @@ int nilfs_add_link(struct dentry *dentry, struct inode *inode)
+ 				goto got_it;
+ 			}
+ 			if (de->rec_len == 0) {
+-				nilfs_error(dir->i_sb,
++				nilfs_error(inode_sb(dir),
+ 					    "zero-length directory entry");
+ 				err = -EIO;
+ 				goto out_unlock;
+@@ -559,7 +559,7 @@ int nilfs_delete_entry(struct nilfs_dir_entry *dir, struct page *page)
+ 
+ 	while ((char *)de < (char *)dir) {
+ 		if (de->rec_len == 0) {
+-			nilfs_error(inode->i_sb,
++			nilfs_error(inode_sb(inode),
+ 				    "zero-length directory entry");
+ 			err = -EIO;
+ 			goto out;
+@@ -646,7 +646,7 @@ int nilfs_empty_dir(struct inode *inode)
+ 
+ 		while ((char *)de <= kaddr) {
+ 			if (de->rec_len == 0) {
+-				nilfs_error(inode->i_sb,
++				nilfs_error(inode_sb(inode),
+ 					    "zero-length directory entry (kaddr=%p, de=%p)",
+ 					    kaddr, de);
+ 				goto not_empty;
+diff --git a/fs/nilfs2/direct.c b/fs/nilfs2/direct.c
+index 96e3ed0d9652..5feca9aa47f4 100644
+--- a/fs/nilfs2/direct.c
++++ b/fs/nilfs2/direct.c
+@@ -337,14 +337,14 @@ static int nilfs_direct_assign(struct nilfs_bmap *bmap,
+ 
+ 	key = nilfs_bmap_data_get_key(bmap, *bh);
+ 	if (unlikely(key > NILFS_DIRECT_KEY_MAX)) {
+-		nilfs_msg(bmap->b_inode->i_sb, KERN_CRIT,
++		nilfs_msg(inode_sb(bmap->b_inode), KERN_CRIT,
+ 			  "%s (ino=%lu): invalid key: %llu", __func__,
+ 			  bmap->b_inode->i_ino, (unsigned long long)key);
+ 		return -EINVAL;
+ 	}
+ 	ptr = nilfs_direct_get_ptr(bmap, key);
+ 	if (unlikely(ptr == NILFS_BMAP_INVALID_PTR)) {
+-		nilfs_msg(bmap->b_inode->i_sb, KERN_CRIT,
++		nilfs_msg(inode_sb(bmap->b_inode), KERN_CRIT,
+ 			  "%s (ino=%lu): invalid pointer: %llu", __func__,
+ 			  bmap->b_inode->i_ino, (unsigned long long)ptr);
+ 		return -EINVAL;
+diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
+index c5fa3dee72fc..a4f813024483 100644
+--- a/fs/nilfs2/file.c
++++ b/fs/nilfs2/file.c
+@@ -38,13 +38,14 @@ int nilfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 
+ 	if (nilfs_inode_dirty(inode)) {
+ 		if (datasync)
+-			err = nilfs_construct_dsync_segment(inode->i_sb, inode,
++			err = nilfs_construct_dsync_segment(inode_sb(inode),
++							    inode,
+ 							    start, end);
+ 		else
+-			err = nilfs_construct_segment(inode->i_sb);
++			err = nilfs_construct_segment(inode_sb(inode));
+ 	}
+ 
+-	nilfs = inode->i_sb->s_fs_info;
++	nilfs = inode_sb(inode)->s_fs_info;
+ 	if (!err)
+ 		err = nilfs_flush_device(nilfs);
+ 
+@@ -59,10 +60,10 @@ static int nilfs_page_mkwrite(struct vm_fault *vmf)
+ 	struct nilfs_transaction_info ti;
+ 	int ret = 0;
+ 
+-	if (unlikely(nilfs_near_disk_full(inode->i_sb->s_fs_info)))
++	if (unlikely(nilfs_near_disk_full(inode_sb(inode)->s_fs_info)))
+ 		return VM_FAULT_SIGBUS; /* -ENOSPC */
+ 
+-	sb_start_pagefault(inode->i_sb);
++	sb_start_pagefault(inode_sb(inode));
+ 	lock_page(page);
+ 	if (page->mapping != inode->i_mapping ||
+ 	    page_offset(page) >= i_size_read(inode) || !PageUptodate(page)) {
+@@ -99,7 +100,7 @@ static int nilfs_page_mkwrite(struct vm_fault *vmf)
+ 	/*
+ 	 * fill hole blocks
+ 	 */
+-	ret = nilfs_transaction_begin(inode->i_sb, &ti, 1);
++	ret = nilfs_transaction_begin(inode_sb(inode), &ti, 1);
+ 	/* never returns -ENOMEM, but may return -ENOSPC */
+ 	if (unlikely(ret))
+ 		goto out;
+@@ -107,16 +108,16 @@ static int nilfs_page_mkwrite(struct vm_fault *vmf)
+ 	file_update_time(vma->vm_file);
+ 	ret = block_page_mkwrite(vma, vmf, nilfs_get_block);
+ 	if (ret) {
+-		nilfs_transaction_abort(inode->i_sb);
++		nilfs_transaction_abort(inode_sb(inode));
+ 		goto out;
+ 	}
+ 	nilfs_set_file_dirty(inode, 1 << (PAGE_SHIFT - inode->i_blkbits));
+-	nilfs_transaction_commit(inode->i_sb);
++	nilfs_transaction_commit(inode_sb(inode));
+ 
+  mapped:
+ 	wait_for_stable_page(page);
+  out:
+-	sb_end_pagefault(inode->i_sb);
++	sb_end_pagefault(inode_sb(inode));
+ 	return block_page_mkwrite_return(ret);
+ }
+ 
+diff --git a/fs/nilfs2/gcinode.c b/fs/nilfs2/gcinode.c
+index 853a831dcde0..af751dd4fa54 100644
+--- a/fs/nilfs2/gcinode.c
++++ b/fs/nilfs2/gcinode.c
+@@ -79,7 +79,7 @@ int nilfs_gccache_submit_read_data(struct inode *inode, sector_t blkoff,
+ 		goto out;
+ 
+ 	if (pbn == 0) {
+-		struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++		struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 
+ 		err = nilfs_dat_translate(nilfs->ns_dat, vbn, &pbn);
+ 		if (unlikely(err)) { /* -EIO, -ENOMEM, -ENOENT */
+@@ -95,7 +95,7 @@ int nilfs_gccache_submit_read_data(struct inode *inode, sector_t blkoff,
+ 	}
+ 
+ 	if (!buffer_mapped(bh)) {
+-		bh->b_bdev = inode->i_sb->s_bdev;
++		bh->b_bdev = inode_sb(inode)->s_bdev;
+ 		set_buffer_mapped(bh);
+ 	}
+ 	bh->b_blocknr = pbn;
+@@ -151,7 +151,7 @@ int nilfs_gccache_wait_and_mark_dirty(struct buffer_head *bh)
+ 	if (!buffer_uptodate(bh)) {
+ 		struct inode *inode = bh->b_page->mapping->host;
+ 
+-		nilfs_msg(inode->i_sb, KERN_ERR,
++		nilfs_msg(inode_sb(inode), KERN_ERR,
+ 			  "I/O error reading %s block for GC (ino=%lu, vblocknr=%llu)",
+ 			  buffer_nilfs_node(bh) ? "node" : "data",
+ 			  inode->i_ino, (unsigned long long)bh->b_blocknr);
+diff --git a/fs/nilfs2/ifile.c b/fs/nilfs2/ifile.c
+index b8fa45c20c63..841f7f6c5e29 100644
+--- a/fs/nilfs2/ifile.c
++++ b/fs/nilfs2/ifile.c
+@@ -141,7 +141,7 @@ int nilfs_ifile_delete_inode(struct inode *ifile, ino_t ino)
+ int nilfs_ifile_get_inode_block(struct inode *ifile, ino_t ino,
+ 				struct buffer_head **out_bh)
+ {
+-	struct super_block *sb = ifile->i_sb;
++	struct super_block *sb = inode_sb(ifile);
+ 	int err;
+ 
+ 	if (unlikely(!NILFS_VALID_INODE(sb, ino))) {
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index 6a612d832e7d..88f590eccdaa 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -80,7 +80,7 @@ int nilfs_get_block(struct inode *inode, sector_t blkoff,
+ 		    struct buffer_head *bh_result, int create)
+ {
+ 	struct nilfs_inode_info *ii = NILFS_I(inode);
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	__u64 blknum = 0;
+ 	int err = 0, ret;
+ 	unsigned int maxblocks = bh_result->b_size >> inode->i_blkbits;
+@@ -89,7 +89,7 @@ int nilfs_get_block(struct inode *inode, sector_t blkoff,
+ 	ret = nilfs_bmap_lookup_contig(ii->i_bmap, blkoff, &blknum, maxblocks);
+ 	up_read(&NILFS_MDT(nilfs->ns_dat)->mi_sem);
+ 	if (ret >= 0) {	/* found */
+-		map_bh(bh_result, inode->i_sb, blknum);
++		map_bh(bh_result, inode_sb(inode), blknum);
+ 		if (ret > 0)
+ 			bh_result->b_size = (ret << inode->i_blkbits);
+ 		goto out;
+@@ -99,7 +99,7 @@ int nilfs_get_block(struct inode *inode, sector_t blkoff,
+ 		struct nilfs_transaction_info ti;
+ 
+ 		bh_result->b_blocknr = 0;
+-		err = nilfs_transaction_begin(inode->i_sb, &ti, 1);
++		err = nilfs_transaction_begin(inode_sb(inode), &ti, 1);
+ 		if (unlikely(err))
+ 			goto out;
+ 		err = nilfs_bmap_insert(ii->i_bmap, blkoff,
+@@ -112,21 +112,21 @@ int nilfs_get_block(struct inode *inode, sector_t blkoff,
+ 				 * However, the page having this block must
+ 				 * be locked in this case.
+ 				 */
+-				nilfs_msg(inode->i_sb, KERN_WARNING,
++				nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 					  "%s (ino=%lu): a race condition while inserting a data block at offset=%llu",
+ 					  __func__, inode->i_ino,
+ 					  (unsigned long long)blkoff);
+ 				err = 0;
+ 			}
+-			nilfs_transaction_abort(inode->i_sb);
++			nilfs_transaction_abort(inode_sb(inode));
+ 			goto out;
+ 		}
+ 		nilfs_mark_inode_dirty_sync(inode);
+-		nilfs_transaction_commit(inode->i_sb); /* never fails */
++		nilfs_transaction_commit(inode_sb(inode)); /* never fails */
+ 		/* Error handling should be detailed */
+ 		set_buffer_new(bh_result);
+ 		set_buffer_delay(bh_result);
+-		map_bh(bh_result, inode->i_sb, 0);
++		map_bh(bh_result, inode_sb(inode), 0);
+ 		/* Disk block number must be changed to proper value */
+ 
+ 	} else if (ret == -ENOENT) {
+@@ -174,13 +174,13 @@ static int nilfs_writepages(struct address_space *mapping,
+ 	struct inode *inode = mapping->host;
+ 	int err = 0;
+ 
+-	if (sb_rdonly(inode->i_sb)) {
++	if (sb_rdonly(inode_sb(inode))) {
+ 		nilfs_clear_dirty_pages(mapping, false);
+ 		return -EROFS;
+ 	}
+ 
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+-		err = nilfs_construct_dsync_segment(inode->i_sb, inode,
++		err = nilfs_construct_dsync_segment(inode_sb(inode), inode,
+ 						    wbc->range_start,
+ 						    wbc->range_end);
+ 	return err;
+@@ -191,7 +191,7 @@ static int nilfs_writepage(struct page *page, struct writeback_control *wbc)
+ 	struct inode *inode = page->mapping->host;
+ 	int err;
+ 
+-	if (sb_rdonly(inode->i_sb)) {
++	if (sb_rdonly(inode_sb(inode))) {
+ 		/*
+ 		 * It means that filesystem was remounted in read-only
+ 		 * mode because of error or metadata corruption. But we
+@@ -207,11 +207,11 @@ static int nilfs_writepage(struct page *page, struct writeback_control *wbc)
+ 	unlock_page(page);
+ 
+ 	if (wbc->sync_mode == WB_SYNC_ALL) {
+-		err = nilfs_construct_segment(inode->i_sb);
++		err = nilfs_construct_segment(inode_sb(inode));
+ 		if (unlikely(err))
+ 			return err;
+ 	} else if (wbc->for_reclaim)
+-		nilfs_flush_segment(inode->i_sb, inode->i_ino);
++		nilfs_flush_segment(inode_sb(inode), inode->i_ino);
+ 
+ 	return 0;
+ }
+@@ -268,7 +268,7 @@ static int nilfs_write_begin(struct file *file, struct address_space *mapping,
+ 
+ {
+ 	struct inode *inode = mapping->host;
+-	int err = nilfs_transaction_begin(inode->i_sb, NULL, 1);
++	int err = nilfs_transaction_begin(inode_sb(inode), NULL, 1);
+ 
+ 	if (unlikely(err))
+ 		return err;
+@@ -277,7 +277,7 @@ static int nilfs_write_begin(struct file *file, struct address_space *mapping,
+ 				nilfs_get_block);
+ 	if (unlikely(err)) {
+ 		nilfs_write_failed(mapping, pos + len);
+-		nilfs_transaction_abort(inode->i_sb);
++		nilfs_transaction_abort(inode_sb(inode));
+ 	}
+ 	return err;
+ }
+@@ -296,7 +296,7 @@ static int nilfs_write_end(struct file *file, struct address_space *mapping,
+ 	copied = generic_write_end(file, mapping, pos, len, copied, page,
+ 				   fsdata);
+ 	nilfs_set_file_dirty(inode, nr_dirty);
+-	err = nilfs_transaction_commit(inode->i_sb);
++	err = nilfs_transaction_commit(inode_sb(inode));
+ 	return err ? : copied;
+ }
+ 
+@@ -339,7 +339,7 @@ static int nilfs_insert_inode_locked(struct inode *inode,
+ 
+ struct inode *nilfs_new_inode(struct inode *dir, umode_t mode)
+ {
+-	struct super_block *sb = dir->i_sb;
++	struct super_block *sb = inode_sb(dir);
+ 	struct the_nilfs *nilfs = sb->s_fs_info;
+ 	struct inode *inode;
+ 	struct nilfs_inode_info *ii;
+@@ -651,7 +651,7 @@ void nilfs_write_inode_common(struct inode *inode,
+ 	raw_inode->i_generation = cpu_to_le32(inode->i_generation);
+ 
+ 	if (NILFS_ROOT_METADATA_FILE(inode->i_ino)) {
+-		struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++		struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 
+ 		/* zero-fill unused portion in the case of super root block */
+ 		raw_inode->i_xattr = 0;
+@@ -717,13 +717,13 @@ static void nilfs_truncate_bmap(struct nilfs_inode_info *ii,
+ 
+ 	b -= min_t(__u64, NILFS_MAX_TRUNCATE_BLOCKS, b - from);
+ 	ret = nilfs_bmap_truncate(ii->i_bmap, b);
+-	nilfs_relax_pressure_in_lock(ii->vfs_inode.i_sb);
++	nilfs_relax_pressure_in_lock(inode_sb(&ii->vfs_inode));
+ 	if (!ret || (ret == -ENOMEM &&
+ 		     nilfs_bmap_truncate(ii->i_bmap, b) == 0))
+ 		goto repeat;
+ 
+ failed:
+-	nilfs_msg(ii->vfs_inode.i_sb, KERN_WARNING,
++	nilfs_msg(inode_sb(&ii->vfs_inode), KERN_WARNING,
+ 		  "error %d truncating bmap (ino=%lu)", ret,
+ 		  ii->vfs_inode.i_ino);
+ }
+@@ -733,7 +733,7 @@ void nilfs_truncate(struct inode *inode)
+ 	unsigned long blkoff;
+ 	unsigned int blocksize;
+ 	struct nilfs_transaction_info ti;
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	struct nilfs_inode_info *ii = NILFS_I(inode);
+ 
+ 	if (!test_bit(NILFS_I_BMAP, &ii->i_state))
+@@ -788,7 +788,7 @@ static void nilfs_clear_inode(struct inode *inode)
+ void nilfs_evict_inode(struct inode *inode)
+ {
+ 	struct nilfs_transaction_info ti;
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	struct nilfs_inode_info *ii = NILFS_I(inode);
+ 	int ret;
+ 
+@@ -826,7 +826,7 @@ int nilfs_setattr(struct dentry *dentry, struct iattr *iattr)
+ {
+ 	struct nilfs_transaction_info ti;
+ 	struct inode *inode = d_inode(dentry);
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	int err;
+ 
+ 	err = setattr_prepare(dentry, iattr);
+@@ -873,7 +873,7 @@ int nilfs_permission(struct inode *inode, int mask)
+ 
+ int nilfs_load_inode_block(struct inode *inode, struct buffer_head **pbh)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_inode_info *ii = NILFS_I(inode);
+ 	int err;
+ 
+@@ -902,7 +902,7 @@ int nilfs_load_inode_block(struct inode *inode, struct buffer_head **pbh)
+ int nilfs_inode_dirty(struct inode *inode)
+ {
+ 	struct nilfs_inode_info *ii = NILFS_I(inode);
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	int ret = 0;
+ 
+ 	if (!list_empty(&ii->i_dirty)) {
+@@ -917,7 +917,7 @@ int nilfs_inode_dirty(struct inode *inode)
+ int nilfs_set_file_dirty(struct inode *inode, unsigned int nr_dirty)
+ {
+ 	struct nilfs_inode_info *ii = NILFS_I(inode);
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 
+ 	atomic_add(nr_dirty, &nilfs->ns_ndirtyblks);
+ 
+@@ -936,7 +936,7 @@ int nilfs_set_file_dirty(struct inode *inode, unsigned int nr_dirty)
+ 			 * This will happen when somebody is freeing
+ 			 * this inode.
+ 			 */
+-			nilfs_msg(inode->i_sb, KERN_WARNING,
++			nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 				  "cannot set file dirty (ino=%lu): the file is being freed",
+ 				  inode->i_ino);
+ 			spin_unlock(&nilfs->ns_inode_lock);
+@@ -959,7 +959,7 @@ int __nilfs_mark_inode_dirty(struct inode *inode, int flags)
+ 
+ 	err = nilfs_load_inode_block(inode, &ibh);
+ 	if (unlikely(err)) {
+-		nilfs_msg(inode->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 			  "cannot mark inode dirty (ino=%lu): error %d loading inode block",
+ 			  inode->i_ino, err);
+ 		return err;
+@@ -987,7 +987,7 @@ void nilfs_dirty_inode(struct inode *inode, int flags)
+ 	struct nilfs_mdt_info *mdi = NILFS_MDT(inode);
+ 
+ 	if (is_bad_inode(inode)) {
+-		nilfs_msg(inode->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 			  "tried to mark bad_inode dirty. ignored.");
+ 		dump_stack();
+ 		return;
+@@ -996,15 +996,15 @@ void nilfs_dirty_inode(struct inode *inode, int flags)
+ 		nilfs_mdt_mark_dirty(inode);
+ 		return;
+ 	}
+-	nilfs_transaction_begin(inode->i_sb, &ti, 0);
++	nilfs_transaction_begin(inode_sb(inode), &ti, 0);
+ 	__nilfs_mark_inode_dirty(inode, flags);
+-	nilfs_transaction_commit(inode->i_sb); /* never fails */
++	nilfs_transaction_commit(inode_sb(inode)); /* never fails */
+ }
+ 
+ int nilfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ 		 __u64 start, __u64 len)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	__u64 logical = 0, phys = 0, size = 0;
+ 	__u32 flags = 0;
+ 	loff_t isize;
+diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
+index 1d2c3d7711fe..7f1877f959d7 100644
+--- a/fs/nilfs2/ioctl.c
++++ b/fs/nilfs2/ioctl.c
+@@ -166,7 +166,7 @@ static int nilfs_ioctl_setflags(struct inode *inode, struct file *filp,
+ 	    !capable(CAP_LINUX_IMMUTABLE))
+ 		goto out;
+ 
+-	ret = nilfs_transaction_begin(inode->i_sb, &ti, 0);
++	ret = nilfs_transaction_begin(inode_sb(inode), &ti, 0);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -179,7 +179,7 @@ static int nilfs_ioctl_setflags(struct inode *inode, struct file *filp,
+ 		nilfs_set_transaction_flag(NILFS_TI_SYNC);
+ 
+ 	nilfs_mark_inode_dirty(inode);
+-	ret = nilfs_transaction_commit(inode->i_sb);
++	ret = nilfs_transaction_commit(inode_sb(inode));
+ out:
+ 	inode_unlock(inode);
+ 	mnt_drop_write_file(filp);
+@@ -216,7 +216,7 @@ static int nilfs_ioctl_getversion(struct inode *inode, void __user *argp)
+ static int nilfs_ioctl_change_cpmode(struct inode *inode, struct file *filp,
+ 				     unsigned int cmd, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_transaction_info ti;
+ 	struct nilfs_cpmode cpmode;
+ 	int ret;
+@@ -234,13 +234,13 @@ static int nilfs_ioctl_change_cpmode(struct inode *inode, struct file *filp,
+ 
+ 	mutex_lock(&nilfs->ns_snapshot_mount_mutex);
+ 
+-	nilfs_transaction_begin(inode->i_sb, &ti, 0);
++	nilfs_transaction_begin(inode_sb(inode), &ti, 0);
+ 	ret = nilfs_cpfile_change_cpmode(
+ 		nilfs->ns_cpfile, cpmode.cm_cno, cpmode.cm_mode);
+ 	if (unlikely(ret < 0))
+-		nilfs_transaction_abort(inode->i_sb);
++		nilfs_transaction_abort(inode_sb(inode));
+ 	else
+-		nilfs_transaction_commit(inode->i_sb); /* never fails */
++		nilfs_transaction_commit(inode_sb(inode)); /* never fails */
+ 
+ 	mutex_unlock(&nilfs->ns_snapshot_mount_mutex);
+ out:
+@@ -271,7 +271,7 @@ static int
+ nilfs_ioctl_delete_checkpoint(struct inode *inode, struct file *filp,
+ 			      unsigned int cmd, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_transaction_info ti;
+ 	__u64 cno;
+ 	int ret;
+@@ -287,12 +287,12 @@ nilfs_ioctl_delete_checkpoint(struct inode *inode, struct file *filp,
+ 	if (copy_from_user(&cno, argp, sizeof(cno)))
+ 		goto out;
+ 
+-	nilfs_transaction_begin(inode->i_sb, &ti, 0);
++	nilfs_transaction_begin(inode_sb(inode), &ti, 0);
+ 	ret = nilfs_cpfile_delete_checkpoint(nilfs->ns_cpfile, cno);
+ 	if (unlikely(ret < 0))
+-		nilfs_transaction_abort(inode->i_sb);
++		nilfs_transaction_abort(inode_sb(inode));
+ 	else
+-		nilfs_transaction_commit(inode->i_sb); /* never fails */
++		nilfs_transaction_commit(inode_sb(inode)); /* never fails */
+ out:
+ 	mnt_drop_write_file(filp);
+ 	return ret;
+@@ -350,7 +350,7 @@ nilfs_ioctl_do_get_cpinfo(struct the_nilfs *nilfs, __u64 *posp, int flags,
+ static int nilfs_ioctl_get_cpstat(struct inode *inode, struct file *filp,
+ 				  unsigned int cmd, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_cpstat cpstat;
+ 	int ret;
+ 
+@@ -417,7 +417,7 @@ nilfs_ioctl_do_get_suinfo(struct the_nilfs *nilfs, __u64 *posp, int flags,
+ static int nilfs_ioctl_get_sustat(struct inode *inode, struct file *filp,
+ 				  unsigned int cmd, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_sustat sustat;
+ 	int ret;
+ 
+@@ -526,7 +526,7 @@ nilfs_ioctl_do_get_bdescs(struct the_nilfs *nilfs, __u64 *posp, int flags,
+ static int nilfs_ioctl_get_bdescs(struct inode *inode, struct file *filp,
+ 				  unsigned int cmd, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_argv argv;
+ 	int ret;
+ 
+@@ -583,7 +583,7 @@ static int nilfs_ioctl_move_inode_block(struct inode *inode,
+ 
+ 	if (unlikely(ret < 0)) {
+ 		if (ret == -ENOENT)
+-			nilfs_msg(inode->i_sb, KERN_CRIT,
++			nilfs_msg(inode_sb(inode), KERN_CRIT,
+ 				  "%s: invalid virtual block address (%s): ino=%llu, cno=%llu, offset=%llu, blocknr=%llu, vblocknr=%llu",
+ 				  __func__, vdesc->vd_flags ? "node" : "data",
+ 				  (unsigned long long)vdesc->vd_ino,
+@@ -594,7 +594,7 @@ static int nilfs_ioctl_move_inode_block(struct inode *inode,
+ 		return ret;
+ 	}
+ 	if (unlikely(!list_empty(&bh->b_assoc_buffers))) {
+-		nilfs_msg(inode->i_sb, KERN_CRIT,
++		nilfs_msg(inode_sb(inode), KERN_CRIT,
+ 			  "%s: conflicting %s buffer: ino=%llu, cno=%llu, offset=%llu, blocknr=%llu, vblocknr=%llu",
+ 			  __func__, vdesc->vd_flags ? "node" : "data",
+ 			  (unsigned long long)vdesc->vd_ino,
+@@ -916,7 +916,7 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
+ 		ret = PTR_ERR(kbufs[4]);
+ 		goto out;
+ 	}
+-	nilfs = inode->i_sb->s_fs_info;
++	nilfs = inode_sb(inode)->s_fs_info;
+ 
+ 	for (n = 0; n < 4; n++) {
+ 		ret = -EINVAL;
+@@ -959,15 +959,15 @@ static int nilfs_ioctl_clean_segments(struct inode *inode, struct file *filp,
+ 		goto out_free;
+ 	}
+ 
+-	ret = nilfs_ioctl_move_blocks(inode->i_sb, &argv[0], kbufs[0]);
++	ret = nilfs_ioctl_move_blocks(inode_sb(inode), &argv[0], kbufs[0]);
+ 	if (ret < 0) {
+-		nilfs_msg(inode->i_sb, KERN_ERR,
++		nilfs_msg(inode_sb(inode), KERN_ERR,
+ 			  "error %d preparing GC: cannot read source blocks",
+ 			  ret);
+ 	} else {
+ 		if (nilfs_sb_need_update(nilfs))
+ 			set_nilfs_discontinued(nilfs);
+-		ret = nilfs_clean_segments(inode->i_sb, argv, kbufs);
++		ret = nilfs_clean_segments(inode_sb(inode), argv, kbufs);
+ 	}
+ 
+ 	nilfs_remove_all_gcinodes(nilfs);
+@@ -1016,11 +1016,11 @@ static int nilfs_ioctl_sync(struct inode *inode, struct file *filp,
+ 	int ret;
+ 	struct the_nilfs *nilfs;
+ 
+-	ret = nilfs_construct_segment(inode->i_sb);
++	ret = nilfs_construct_segment(inode_sb(inode));
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	nilfs = inode->i_sb->s_fs_info;
++	nilfs = inode_sb(inode)->s_fs_info;
+ 	ret = nilfs_flush_device(nilfs);
+ 	if (ret < 0)
+ 		return ret;
+@@ -1060,7 +1060,7 @@ static int nilfs_ioctl_resize(struct inode *inode, struct file *filp,
+ 	if (copy_from_user(&newsize, argp, sizeof(newsize)))
+ 		goto out_drop_write;
+ 
+-	ret = nilfs_resize_fs(inode->i_sb, newsize);
++	ret = nilfs_resize_fs(inode_sb(inode), newsize);
+ 
+ out_drop_write:
+ 	mnt_drop_write_file(filp);
+@@ -1081,7 +1081,7 @@ static int nilfs_ioctl_resize(struct inode *inode, struct file *filp,
+  */
+ static int nilfs_ioctl_trim_fs(struct inode *inode, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct request_queue *q = bdev_get_queue(nilfs->ns_bdev);
+ 	struct fstrim_range range;
+ 	int ret;
+@@ -1123,7 +1123,7 @@ static int nilfs_ioctl_trim_fs(struct inode *inode, void __user *argp)
+  */
+ static int nilfs_ioctl_set_alloc_range(struct inode *inode, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	__u64 range[2];
+ 	__u64 minseg, maxseg;
+ 	unsigned long segbytes;
+@@ -1137,7 +1137,7 @@ static int nilfs_ioctl_set_alloc_range(struct inode *inode, void __user *argp)
+ 		goto out;
+ 
+ 	ret = -ERANGE;
+-	if (range[1] > i_size_read(inode->i_sb->s_bdev->bd_inode))
++	if (range[1] > i_size_read(inode_sb(inode)->s_bdev->bd_inode))
+ 		goto out;
+ 
+ 	segbytes = nilfs->ns_blocks_per_segment * nilfs->ns_blocksize;
+@@ -1183,7 +1183,7 @@ static int nilfs_ioctl_get_info(struct inode *inode, struct file *filp,
+ 						  void *, size_t, size_t))
+ 
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_argv argv;
+ 	int ret;
+ 
+@@ -1229,7 +1229,7 @@ static int nilfs_ioctl_get_info(struct inode *inode, struct file *filp,
+ static int nilfs_ioctl_set_suinfo(struct inode *inode, struct file *filp,
+ 				unsigned int cmd, void __user *argp)
+ {
+-	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(inode)->s_fs_info;
+ 	struct nilfs_transaction_info ti;
+ 	struct nilfs_argv argv;
+ 	size_t len;
+@@ -1276,13 +1276,13 @@ static int nilfs_ioctl_set_suinfo(struct inode *inode, struct file *filp,
+ 		goto out_free;
+ 	}
+ 
+-	nilfs_transaction_begin(inode->i_sb, &ti, 0);
++	nilfs_transaction_begin(inode_sb(inode), &ti, 0);
+ 	ret = nilfs_sufile_set_suinfo(nilfs->ns_sufile, kbuf, argv.v_size,
+ 			argv.v_nmembs);
+ 	if (unlikely(ret < 0))
+-		nilfs_transaction_abort(inode->i_sb);
++		nilfs_transaction_abort(inode_sb(inode));
+ 	else
+-		nilfs_transaction_commit(inode->i_sb); /* never fails */
++		nilfs_transaction_commit(inode_sb(inode)); /* never fails */
+ 
+ out_free:
+ 	vfree(kbuf);
+diff --git a/fs/nilfs2/mdt.c b/fs/nilfs2/mdt.c
+index c6bc1033e7d2..d208de0e8fd4 100644
+--- a/fs/nilfs2/mdt.c
++++ b/fs/nilfs2/mdt.c
+@@ -78,7 +78,7 @@ static int nilfs_mdt_create_block(struct inode *inode, unsigned long block,
+ 						     struct buffer_head *,
+ 						     void *))
+ {
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 	struct nilfs_transaction_info ti;
+ 	struct buffer_head *bh;
+ 	int err;
+@@ -153,7 +153,7 @@ nilfs_mdt_submit_block(struct inode *inode, unsigned long blkoff,
+ 		unlock_buffer(bh);
+ 		goto failed_bh;
+ 	}
+-	map_bh(bh, inode->i_sb, (sector_t)blknum);
++	map_bh(bh, inode_sb(inode), (sector_t)blknum);
+ 
+ 	bh->b_end_io = end_buffer_read_sync;
+ 	get_bh(bh);
+@@ -208,7 +208,7 @@ static int nilfs_mdt_read_block(struct inode *inode, unsigned long block,
+  out_no_wait:
+ 	err = -EIO;
+ 	if (!buffer_uptodate(first_bh)) {
+-		nilfs_msg(inode->i_sb, KERN_ERR,
++		nilfs_msg(inode_sb(inode), KERN_ERR,
+ 			  "I/O error reading meta-data file (ino=%lu, block-offset=%lu)",
+ 			  inode->i_ino, block);
+ 		goto failed_bh;
+@@ -413,7 +413,7 @@ nilfs_mdt_write_page(struct page *page, struct writeback_control *wbc)
+ 	struct super_block *sb;
+ 	int err = 0;
+ 
+-	if (inode && sb_rdonly(inode->i_sb)) {
++	if (inode && sb_rdonly(inode_sb(inode))) {
+ 		/*
+ 		 * It means that filesystem was remounted in read-only
+ 		 * mode because of error or metadata corruption. But we
+@@ -431,7 +431,7 @@ nilfs_mdt_write_page(struct page *page, struct writeback_control *wbc)
+ 	if (!inode)
+ 		return 0;
+ 
+-	sb = inode->i_sb;
++	sb = inode_sb(inode);
+ 
+ 	if (wbc->sync_mode == WB_SYNC_ALL)
+ 		err = nilfs_construct_segment(sb);
+diff --git a/fs/nilfs2/mdt.h b/fs/nilfs2/mdt.h
+index 3f67f3932097..cf9f18dd0b66 100644
+--- a/fs/nilfs2/mdt.h
++++ b/fs/nilfs2/mdt.h
+@@ -114,7 +114,7 @@ static inline void nilfs_mdt_clear_dirty(struct inode *inode)
+ 
+ static inline __u64 nilfs_mdt_cno(struct inode *inode)
+ {
+-	return ((struct the_nilfs *)inode->i_sb->s_fs_info)->ns_cno;
++	return ((struct the_nilfs *) inode_sb(inode)->s_fs_info)->ns_cno;
+ }
+ 
+ static inline spinlock_t *
+diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+index 1a2894aa0194..a66c98a508be 100644
+--- a/fs/nilfs2/namei.c
++++ b/fs/nilfs2/namei.c
+@@ -70,7 +70,7 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 
+ 	ino = nilfs_inode_by_name(dir, &dentry->d_name);
+-	inode = ino ? nilfs_iget(dir->i_sb, NILFS_I(dir)->i_root, ino) : NULL;
++	inode = ino ? nilfs_iget(inode_sb(dir), NILFS_I(dir)->i_root, ino) : NULL;
+ 	return d_splice_alias(inode, dentry);
+ }
+ 
+@@ -89,7 +89,7 @@ static int nilfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 	struct nilfs_transaction_info ti;
+ 	int err;
+ 
+-	err = nilfs_transaction_begin(dir->i_sb, &ti, 1);
++	err = nilfs_transaction_begin(inode_sb(dir), &ti, 1);
+ 	if (err)
+ 		return err;
+ 	inode = nilfs_new_inode(dir, mode);
+@@ -102,9 +102,9 @@ static int nilfs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 		err = nilfs_add_nondir(dentry, inode);
+ 	}
+ 	if (!err)
+-		err = nilfs_transaction_commit(dir->i_sb);
++		err = nilfs_transaction_commit(inode_sb(dir));
+ 	else
+-		nilfs_transaction_abort(dir->i_sb);
++		nilfs_transaction_abort(inode_sb(dir));
+ 
+ 	return err;
+ }
+@@ -116,7 +116,7 @@ nilfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t rdev)
+ 	struct nilfs_transaction_info ti;
+ 	int err;
+ 
+-	err = nilfs_transaction_begin(dir->i_sb, &ti, 1);
++	err = nilfs_transaction_begin(inode_sb(dir), &ti, 1);
+ 	if (err)
+ 		return err;
+ 	inode = nilfs_new_inode(dir, mode);
+@@ -127,9 +127,9 @@ nilfs_mknod(struct inode *dir, struct dentry *dentry, umode_t mode, dev_t rdev)
+ 		err = nilfs_add_nondir(dentry, inode);
+ 	}
+ 	if (!err)
+-		err = nilfs_transaction_commit(dir->i_sb);
++		err = nilfs_transaction_commit(inode_sb(dir));
+ 	else
+-		nilfs_transaction_abort(dir->i_sb);
++		nilfs_transaction_abort(inode_sb(dir));
+ 
+ 	return err;
+ }
+@@ -138,7 +138,7 @@ static int nilfs_symlink(struct inode *dir, struct dentry *dentry,
+ 			 const char *symname)
+ {
+ 	struct nilfs_transaction_info ti;
+-	struct super_block *sb = dir->i_sb;
++	struct super_block *sb = inode_sb(dir);
+ 	unsigned int l = strlen(symname) + 1;
+ 	struct inode *inode;
+ 	int err;
+@@ -146,7 +146,7 @@ static int nilfs_symlink(struct inode *dir, struct dentry *dentry,
+ 	if (l > sb->s_blocksize)
+ 		return -ENAMETOOLONG;
+ 
+-	err = nilfs_transaction_begin(dir->i_sb, &ti, 1);
++	err = nilfs_transaction_begin(inode_sb(dir), &ti, 1);
+ 	if (err)
+ 		return err;
+ 
+@@ -169,9 +169,9 @@ static int nilfs_symlink(struct inode *dir, struct dentry *dentry,
+ 	err = nilfs_add_nondir(dentry, inode);
+ out:
+ 	if (!err)
+-		err = nilfs_transaction_commit(dir->i_sb);
++		err = nilfs_transaction_commit(inode_sb(dir));
+ 	else
+-		nilfs_transaction_abort(dir->i_sb);
++		nilfs_transaction_abort(inode_sb(dir));
+ 
+ 	return err;
+ 
+@@ -190,7 +190,7 @@ static int nilfs_link(struct dentry *old_dentry, struct inode *dir,
+ 	struct nilfs_transaction_info ti;
+ 	int err;
+ 
+-	err = nilfs_transaction_begin(dir->i_sb, &ti, 1);
++	err = nilfs_transaction_begin(inode_sb(dir), &ti, 1);
+ 	if (err)
+ 		return err;
+ 
+@@ -201,11 +201,11 @@ static int nilfs_link(struct dentry *old_dentry, struct inode *dir,
+ 	err = nilfs_add_link(dentry, inode);
+ 	if (!err) {
+ 		d_instantiate(dentry, inode);
+-		err = nilfs_transaction_commit(dir->i_sb);
++		err = nilfs_transaction_commit(inode_sb(dir));
+ 	} else {
+ 		inode_dec_link_count(inode);
+ 		iput(inode);
+-		nilfs_transaction_abort(dir->i_sb);
++		nilfs_transaction_abort(inode_sb(dir));
+ 	}
+ 
+ 	return err;
+@@ -217,7 +217,7 @@ static int nilfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	struct nilfs_transaction_info ti;
+ 	int err;
+ 
+-	err = nilfs_transaction_begin(dir->i_sb, &ti, 1);
++	err = nilfs_transaction_begin(inode_sb(dir), &ti, 1);
+ 	if (err)
+ 		return err;
+ 
+@@ -247,9 +247,9 @@ static int nilfs_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 	unlock_new_inode(inode);
+ out:
+ 	if (!err)
+-		err = nilfs_transaction_commit(dir->i_sb);
++		err = nilfs_transaction_commit(inode_sb(dir));
+ 	else
+-		nilfs_transaction_abort(dir->i_sb);
++		nilfs_transaction_abort(inode_sb(dir));
+ 
+ 	return err;
+ 
+@@ -283,7 +283,7 @@ static int nilfs_do_unlink(struct inode *dir, struct dentry *dentry)
+ 		goto out;
+ 
+ 	if (!inode->i_nlink) {
+-		nilfs_msg(inode->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(inode), KERN_WARNING,
+ 			  "deleting nonexistent file (ino=%lu), %d",
+ 			  inode->i_ino, inode->i_nlink);
+ 		set_nlink(inode, 1);
+@@ -304,7 +304,7 @@ static int nilfs_unlink(struct inode *dir, struct dentry *dentry)
+ 	struct nilfs_transaction_info ti;
+ 	int err;
+ 
+-	err = nilfs_transaction_begin(dir->i_sb, &ti, 0);
++	err = nilfs_transaction_begin(inode_sb(dir), &ti, 0);
+ 	if (err)
+ 		return err;
+ 
+@@ -313,9 +313,9 @@ static int nilfs_unlink(struct inode *dir, struct dentry *dentry)
+ 	if (!err) {
+ 		nilfs_mark_inode_dirty(dir);
+ 		nilfs_mark_inode_dirty(d_inode(dentry));
+-		err = nilfs_transaction_commit(dir->i_sb);
++		err = nilfs_transaction_commit(inode_sb(dir));
+ 	} else
+-		nilfs_transaction_abort(dir->i_sb);
++		nilfs_transaction_abort(inode_sb(dir));
+ 
+ 	return err;
+ }
+@@ -326,7 +326,7 @@ static int nilfs_rmdir(struct inode *dir, struct dentry *dentry)
+ 	struct nilfs_transaction_info ti;
+ 	int err;
+ 
+-	err = nilfs_transaction_begin(dir->i_sb, &ti, 0);
++	err = nilfs_transaction_begin(inode_sb(dir), &ti, 0);
+ 	if (err)
+ 		return err;
+ 
+@@ -342,9 +342,9 @@ static int nilfs_rmdir(struct inode *dir, struct dentry *dentry)
+ 		}
+ 	}
+ 	if (!err)
+-		err = nilfs_transaction_commit(dir->i_sb);
++		err = nilfs_transaction_commit(inode_sb(dir));
+ 	else
+-		nilfs_transaction_abort(dir->i_sb);
++		nilfs_transaction_abort(inode_sb(dir));
+ 
+ 	return err;
+ }
+@@ -365,7 +365,7 @@ static int nilfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	if (flags & ~RENAME_NOREPLACE)
+ 		return -EINVAL;
+ 
+-	err = nilfs_transaction_begin(old_dir->i_sb, &ti, 1);
++	err = nilfs_transaction_begin(inode_sb(old_dir), &ti, 1);
+ 	if (unlikely(err))
+ 		return err;
+ 
+@@ -425,7 +425,7 @@ static int nilfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	nilfs_mark_inode_dirty(old_dir);
+ 	nilfs_mark_inode_dirty(old_inode);
+ 
+-	err = nilfs_transaction_commit(old_dir->i_sb);
++	err = nilfs_transaction_commit(inode_sb(old_dir));
+ 	return err;
+ 
+ out_dir:
+@@ -437,7 +437,7 @@ static int nilfs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	kunmap(old_page);
+ 	put_page(old_page);
+ out:
+-	nilfs_transaction_abort(old_dir->i_sb);
++	nilfs_transaction_abort(inode_sb(old_dir));
+ 	return err;
+ }
+ 
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 68241512d7c1..2c0a5bd69d72 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -397,7 +397,7 @@ void nilfs_clear_dirty_pages(struct address_space *mapping, bool silent)
+ void nilfs_clear_dirty_page(struct page *page, bool silent)
+ {
+ 	struct inode *inode = page->mapping->host;
+-	struct super_block *sb = inode->i_sb;
++	struct super_block *sb = inode_sb(inode);
+ 
+ 	BUG_ON(!PageLocked(page));
+ 
+diff --git a/fs/nilfs2/sufile.c b/fs/nilfs2/sufile.c
+index c7fa139d50e8..c280be52cea3 100644
+--- a/fs/nilfs2/sufile.c
++++ b/fs/nilfs2/sufile.c
+@@ -180,7 +180,7 @@ int nilfs_sufile_updatev(struct inode *sufile, __u64 *segnumv, size_t nsegs,
+ 	down_write(&NILFS_MDT(sufile)->mi_sem);
+ 	for (seg = segnumv; seg < segnumv + nsegs; seg++) {
+ 		if (unlikely(*seg >= nilfs_sufile_get_nsegments(sufile))) {
+-			nilfs_msg(sufile->i_sb, KERN_WARNING,
++			nilfs_msg(inode_sb(sufile), KERN_WARNING,
+ 				  "%s: invalid segment number: %llu",
+ 				  __func__, (unsigned long long)*seg);
+ 			nerr++;
+@@ -239,7 +239,7 @@ int nilfs_sufile_update(struct inode *sufile, __u64 segnum, int create,
+ 	int ret;
+ 
+ 	if (unlikely(segnum >= nilfs_sufile_get_nsegments(sufile))) {
+-		nilfs_msg(sufile->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(sufile), KERN_WARNING,
+ 			  "%s: invalid segment number: %llu",
+ 			  __func__, (unsigned long long)segnum);
+ 		return -EINVAL;
+@@ -419,7 +419,7 @@ void nilfs_sufile_do_cancel_free(struct inode *sufile, __u64 segnum,
+ 	kaddr = kmap_atomic(su_bh->b_page);
+ 	su = nilfs_sufile_block_get_segment_usage(sufile, segnum, su_bh, kaddr);
+ 	if (unlikely(!nilfs_segment_usage_clean(su))) {
+-		nilfs_msg(sufile->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(sufile), KERN_WARNING,
+ 			  "%s: segment %llu must be clean", __func__,
+ 			  (unsigned long long)segnum);
+ 		kunmap_atomic(kaddr);
+@@ -477,7 +477,7 @@ void nilfs_sufile_do_free(struct inode *sufile, __u64 segnum,
+ 	kaddr = kmap_atomic(su_bh->b_page);
+ 	su = nilfs_sufile_block_get_segment_usage(sufile, segnum, su_bh, kaddr);
+ 	if (nilfs_segment_usage_clean(su)) {
+-		nilfs_msg(sufile->i_sb, KERN_WARNING,
++		nilfs_msg(inode_sb(sufile), KERN_WARNING,
+ 			  "%s: segment %llu is already clean",
+ 			  __func__, (unsigned long long)segnum);
+ 		kunmap_atomic(kaddr);
+@@ -575,7 +575,7 @@ int nilfs_sufile_get_stat(struct inode *sufile, struct nilfs_sustat *sustat)
+ {
+ 	struct buffer_head *header_bh;
+ 	struct nilfs_sufile_header *header;
+-	struct the_nilfs *nilfs = sufile->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(sufile)->s_fs_info;
+ 	void *kaddr;
+ 	int ret;
+ 
+@@ -649,7 +649,7 @@ void nilfs_sufile_do_set_error(struct inode *sufile, __u64 segnum,
+ static int nilfs_sufile_truncate_range(struct inode *sufile,
+ 				       __u64 start, __u64 end)
+ {
+-	struct the_nilfs *nilfs = sufile->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(sufile)->s_fs_info;
+ 	struct buffer_head *header_bh;
+ 	struct buffer_head *su_bh;
+ 	struct nilfs_segment_usage *su, *su2;
+@@ -752,7 +752,7 @@ static int nilfs_sufile_truncate_range(struct inode *sufile,
+  */
+ int nilfs_sufile_resize(struct inode *sufile, __u64 newnsegs)
+ {
+-	struct the_nilfs *nilfs = sufile->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(sufile)->s_fs_info;
+ 	struct buffer_head *header_bh;
+ 	struct nilfs_sufile_header *header;
+ 	struct nilfs_sufile_info *sui = NILFS_SUI(sufile);
+@@ -825,7 +825,7 @@ ssize_t nilfs_sufile_get_suinfo(struct inode *sufile, __u64 segnum, void *buf,
+ 	struct nilfs_segment_usage *su;
+ 	struct nilfs_suinfo *si = buf;
+ 	size_t susz = NILFS_MDT(sufile)->mi_entry_size;
+-	struct the_nilfs *nilfs = sufile->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(sufile)->s_fs_info;
+ 	void *kaddr;
+ 	unsigned long nsegs, segusages_per_block;
+ 	ssize_t n;
+@@ -899,7 +899,7 @@ ssize_t nilfs_sufile_get_suinfo(struct inode *sufile, __u64 segnum, void *buf,
+ ssize_t nilfs_sufile_set_suinfo(struct inode *sufile, void *buf,
+ 				unsigned int supsz, size_t nsup)
+ {
+-	struct the_nilfs *nilfs = sufile->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(sufile)->s_fs_info;
+ 	struct buffer_head *header_bh, *bh;
+ 	struct nilfs_suinfo_update *sup, *supend = buf + supsz * nsup;
+ 	struct nilfs_segment_usage *su;
+@@ -1025,7 +1025,7 @@ ssize_t nilfs_sufile_set_suinfo(struct inode *sufile, void *buf,
+  */
+ int nilfs_sufile_trim_fs(struct inode *sufile, struct fstrim_range *range)
+ {
+-	struct the_nilfs *nilfs = sufile->i_sb->s_fs_info;
++	struct the_nilfs *nilfs = inode_sb(sufile)->s_fs_info;
+ 	struct buffer_head *su_bh;
+ 	struct nilfs_segment_usage *su;
+ 	void *kaddr;
+diff --git a/fs/nilfs2/sufile.h b/fs/nilfs2/sufile.h
+index 673a891350f4..0ed86ae80b32 100644
+--- a/fs/nilfs2/sufile.h
++++ b/fs/nilfs2/sufile.h
+@@ -26,7 +26,7 @@
+ 
+ static inline unsigned long nilfs_sufile_get_nsegments(struct inode *sufile)
+ {
+-	return ((struct the_nilfs *)sufile->i_sb->s_fs_info)->ns_nsegments;
++	return ((struct the_nilfs *) inode_sb(sufile)->s_fs_info)->ns_nsegments;
+ }
+ 
+ unsigned long nilfs_sufile_get_ncleansegs(struct inode *sufile);
 -- 
 2.15.1
