@@ -1,79 +1,85 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755529AbeEHQ2i (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:28:38 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42186 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754736AbeEHQ2f (ORCPT
+        id S1755545AbeEHQ2v (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:28:51 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:41503 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755467AbeEHQ2s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:28:35 -0400
-X-Google-Smtp-Source: AB8JxZone6v8n+C+AXE3D4QMJ1XwPzqSpSQ+4v81iieu0KQ8Ezxy5CVR/wI2bcNAnv2jjCTchAYR1A==
-From: Alexander Potapenko <glider@google.com>
-To: dave.hansen@linux.intel.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, mka@chromium.org,
-        dvyukov@google.com, md@google.com
-Subject: [PATCH v2] x86/boot/64/clang: Use fixup_pointer() to access '__supported_pte_mask'
-Date: Tue,  8 May 2018 18:28:29 +0200
-Message-Id: <20180508162829.7729-1-glider@google.com>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        Tue, 8 May 2018 12:28:48 -0400
+X-Google-Smtp-Source: AB8JxZo8RRgGNsvPT0BSa7TPFu0CHJ1Cymg7zm5pcq3fX2/JEVyo2r0HZDbAlq+a10olfxLqWTmx9Q==
+From: Dmitry Osipenko <digetx@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marcel Ziswiler <marcel@ziswiler.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] Restore ULPI USB on Tegra20
+Date: Tue,  8 May 2018 19:26:02 +0300
+Message-Id: <20180508162607.3500-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang builds with defconfig started crashing after commit fb43d6cb91ef
-("x86/mm: Do not auto-massage page protections")
-This was caused by introducing a new global access in __startup_64().
+Hello,
 
-Code in __startup_64() can be relocated during execution, but the compiler
-doesn't have to generate PC-relative relocations when accessing globals
-from that function. Clang actually does not generate them, which leads
-to boot-time crashes. To work around this problem, every global pointer
-must be adjusted using fixup_pointer().
+This series of patches fixes ULPI USB on Tegra20. The original problem
+was reported by Marcel Ziswiler, he found that "ulpi-link" clock was
+incorrectly set to CDEV2 instead of PLL_P_OUT4. Marcel made a patch
+that changed the "ulpi-link" clock to PLL_P_OUT4 and that fixed issue
+with the USB for the devices that have CDEV2 being enabled by bootloader.
+The patch got into the kernel and later Marc Dietrich found that USB
+stopped working on the "paz00" Tegra20 board. After a bit of discussion
+was revealed that PLL_P_OUT4 is the parent clock of the CDEV2 and clock
+driver was setting CDEV2's parent incorrectly. The parent clock is actually
+determined by the pinmuxing config of CDEV2 pingroup. This patchset fixes
+the parent of CDEV2 clock by making Tegra's pinctrl driver a clock provider,
+providing CDEV1/2 clock muxes (thanks to Peter De Schrijver for the
+suggestion), and then setting these clock muxes as parents for the CDEV1/2
+clocks. In the end Marcel's CDEV2->PLL_P_OUT4 change is reverted since CDEV2
+(aka MCLK2) is the actual clock source for "ulpi-link".
 
-Signed-off-by: Alexander Potapenko <glider@google.com>
-Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
----
- v2: better patch description, added a comment to __startup_64()
----
- arch/x86/kernel/head64.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+Changelog:
 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 0c408f8c4ed4..9223792f6d0e 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -104,6 +104,13 @@ static bool __head check_la57_support(unsigned long physaddr)
- }
- #endif
- 
-+
-+/* Code in __startup_64() can be relocated during execution, but the compiler
-+ * doesn't have to generate PC-relative relocations when accessing globals from
-+ * that function. Clang actually does not generate them, which leads to
-+ * boot-time crashes. To work around this problem, every global pointer must
-+ * be adjusted using fixup_pointer().
-+ */
- unsigned long __head __startup_64(unsigned long physaddr,
- 				  struct boot_params *bp)
- {
-@@ -113,6 +120,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 	p4dval_t *p4d;
- 	pudval_t *pud;
- 	pmdval_t *pmd, pmd_entry;
-+	pteval_t *mask_ptr;
- 	bool la57;
- 	int i;
- 	unsigned int *next_pgt_ptr;
-@@ -196,7 +204,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
- 
- 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
- 	/* Filter out unsupported __PAGE_KERNEL_* bits: */
--	pmd_entry &= __supported_pte_mask;
-+	mask_ptr = (pteval_t *)fixup_pointer(&__supported_pte_mask, physaddr);
-+	pmd_entry &= *mask_ptr;
- 	pmd_entry += sme_get_me_mask();
- 	pmd_entry +=  physaddr;
- 
+v3:
+	- Use clk DT ID's instead of comparing clk names and make
+	  custom of_src_onecell_get specific to Tegra20 clk provider
+	  in the "Add quirk for getting CDEV1/2 clocks on Tegra20" patch
+	  as was suggested by Peter De Schrijver for v2.
+
+v2:
+	- Added new patch "Add quirk for getting CDEV1/2 clocks", assuring
+	  that clk user won't get CDEV1/2 clocks until parent clk muxes
+	  are available, i.e. resolves potential issue with CDEV-user driver
+	  vs pinctrl driver probe order.
+
+	- Factored out "pinctrl" patch from the patchset as was requested by
+	  Linus Walleij.
+
+	- Addressed v1 review comments: fixed swapped DEV1/2 clk div bits,
+	  made DEV1/2 divs read-only, etc minor changes.
+
+Dmitry Osipenko (4):
+  clk: tegra20: Add DEV1/DEV2 OSC dividers
+  clk: tegra20: Correct parents of CDEV1/2 clocks
+  clk: tegra: Add quirk for getting CDEV1/2 clocks on Tegra20
+  ARM: dts: tegra20: Revert "Fix ULPI regression on Tegra20"
+
+ arch/arm/boot/dts/tegra20.dtsi   |  2 +-
+ drivers/clk/tegra/clk-tegra114.c |  2 +-
+ drivers/clk/tegra/clk-tegra124.c |  2 +-
+ drivers/clk/tegra/clk-tegra20.c  | 52 +++++++++++++++++++++++++++++---
+ drivers/clk/tegra/clk-tegra210.c |  2 +-
+ drivers/clk/tegra/clk-tegra30.c  |  2 +-
+ drivers/clk/tegra/clk.c          |  5 +--
+ drivers/clk/tegra/clk.h          |  2 +-
+ 8 files changed, 56 insertions(+), 13 deletions(-)
+
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.17.0
