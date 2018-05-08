@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755190AbeEHNik (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:38:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60036 "EHLO mail.kernel.org"
+        id S932354AbeEHNjH (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:39:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755133AbeEHNii (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:38:38 -0400
+        id S932115AbeEHNjE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:39:04 -0400
 From: Frederic Weisbecker <frederic@kernel.org>
 To: Ingo Molnar <mingo@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>,
@@ -22,9 +22,9 @@ Cc: LKML <linux-kernel@vger.kernel.org>,
         Rich Felker <dalias@libc.org>, Fenghua Yu <fenghua.yu@intel.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
         "James E . J . Bottomley" <jejb@parisc-linux.org>
-Subject: [PATCH 01/11] ia64: Convert local_softirq_pending() to per-cpu ops
-Date: Tue,  8 May 2018 15:38:16 +0200
-Message-Id: <1525786706-22846-2-git-send-email-frederic@kernel.org>
+Subject: [PATCH 07/11] parisc: Switch to generic local_softirq_pending() implementation
+Date: Tue,  8 May 2018 15:38:22 +0200
+Message-Id: <1525786706-22846-8-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525786706-22846-1-git-send-email-frederic@kernel.org>
 References: <1525786706-22846-1-git-send-email-frederic@kernel.org>
@@ -32,9 +32,8 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to consolidate and optimize generic softirq mask accesses, we
-first need to convert architectures to use per-cpu operations when
-possible.
+Remove the ad-hoc implementation, the generic code now allows us not to
+reinvent the wheel.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -54,21 +53,27 @@ Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
 Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
 Cc: Rich Felker <dalias@libc.org>
 ---
- arch/ia64/include/asm/hardirq.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/parisc/include/asm/hardirq.h | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/ia64/include/asm/hardirq.h b/arch/ia64/include/asm/hardirq.h
-index bdc4669..22fae71 100644
---- a/arch/ia64/include/asm/hardirq.h
-+++ b/arch/ia64/include/asm/hardirq.h
-@@ -13,7 +13,7 @@
+diff --git a/arch/parisc/include/asm/hardirq.h b/arch/parisc/include/asm/hardirq.h
+index 0778151..1a1235a 100644
+--- a/arch/parisc/include/asm/hardirq.h
++++ b/arch/parisc/include/asm/hardirq.h
+@@ -34,14 +34,6 @@ DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
+ #define __IRQ_STAT(cpu, member) (irq_stat[cpu].member)
+ #define inc_irq_stat(member)	this_cpu_inc(irq_stat.member)
+ #define __inc_irq_stat(member)	__this_cpu_inc(irq_stat.member)
+-#define local_softirq_pending()	this_cpu_read(irq_stat.__softirq_pending)
+-
+-#define __ARCH_SET_SOFTIRQ_PENDING
+-
+-#define set_softirq_pending(x)	\
+-		this_cpu_write(irq_stat.__softirq_pending, (x))
+-#define or_softirq_pending(x)	this_cpu_or(irq_stat.__softirq_pending, (x))
+-
+ #define ack_bad_irq(irq) WARN(1, "unexpected IRQ trap at vector %02x\n", irq)
  
- #define __ARCH_IRQ_STAT	1
- 
--#define local_softirq_pending()		(local_cpu_data->softirq_pending)
-+#define local_softirq_pending()	(*this_cpu_ptr(&ia64_cpu_info.softirq_pending))
- 
- #include <linux/threads.h>
- #include <linux/irq.h>
+ #endif /* _PARISC_HARDIRQ_H */
 -- 
 2.7.4
