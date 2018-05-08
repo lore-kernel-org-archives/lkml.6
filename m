@@ -1,90 +1,111 @@
-Return-Path: <hdegoede@redhat.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525779776; cv=none;
+Return-Path: <linux_dti@icloud.com>
+X-Google-Smtp-Source: AB8JxZq7iIly6fCLQU03YqaFg2LG2yzo/+FF1V0sgmxN2Hs++QWI9zUzV7M90ZnYYKgVSBSw2rAx
+ARC-Seal: i=1; a=rsa-sha256; t=1525808506; cv=none;
         d=google.com; s=arc-20160816;
-        b=gVe8n0Vn9FXlUelj6Ma3XgbPEfZ7+L+tNSu4YQVDLJUSvYsh3Vvoa2ux/ljLAoZVm7
-         5BtwdFsczYwgU4U0UFYAkIgq0gIAyjcksa7b3W0w/kCWmMKmD0jIq6WP7PnlMP/IsqIt
-         +bQpiPGftwW096JWWQj/pfplTJWpJiVJwOi0t61mgCLD82nosKcHM6maSrxQ2tGdSEci
-         7+Vha1Qj/FIt3oiSdIW0Z9I2abcNiBkFwmKeB5Lktq1SxzcU/wvfajYOkIIhcTv0AusT
-         MOCW3jeQnrJN+zUOSdzWNxV+T5l4YrMcpMGG7wsunRcKlvXtk/hbNr6SpznFuBfZcer2
-         L96Q==
+        b=Z5rRRDslTuB61BKmeSj3ULSAPYmyZzfPEMxY0wHm9D4QNuX7OJi3LY++sBVIDCg86T
+         qDY8jYBiqYXa/MSKHaAO8N7pBOiGKR0AU0HJsvh6J6ACyuGhDNoJ+X4zTgAv5uwZKI+j
+         Uh2cfWF61nuK9mteNgckjFhBHX46aE+by+nFbbSSstvEtMw52tGF8vtZGxXhiQNBwSNy
+         naXqFxji+QFTBQ3z5/CBM4SSfSJBkgYFQm13kVxuQQe3sFWQhItRK5vCDkWV3SIsb+HW
+         7Nvh+2JBLStvsQL2cvWfbfSpZFzPwBjRE8g+TF4owpKsPLCQ+ONA6ekC1NxOkPNXO46m
+         643g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=4D+FPBe14rz8CxlDxp3u+yUB6CxX/NB0EMCAcUy+0q0=;
-        b=JKXApdVfwthKkzKWfUJBZh9xhz0EjrjoKUUGBuS/BmxPvq+UzqMp4Wl4az3DFp0B7J
-         CzHyto3DivEZwx5zO2sSLn+ebSB7Joi2JXegdsqDTgQqpiXN0tFChvCW7uvOk8ZfLQDQ
-         kj0Q2m6gXGR3j9dhDhBx8lypNl3PKV0ZWYZ4BIaIGzNSIRhF3P+L+Msj6aDB5mCkvWno
-         Ub6wgf0E/XK53qWwSxj/R6jPLX5qXOAvU2BsQ+DsLHE4mr3G3iYblYHKCRaiAGVFqsdp
-         JJf2k2mlFW2J81mbFBI4JfykIPiw1u8oKpyNgf74ZzI5EBYk8N2Fh656h2lOE+en+5bU
-         wVSg==
+        bh=dPv9PGuPaJb3taWjombOEN0ff/CP5MLhBYSvZRetiEw=;
+        b=hgW0f8TdX+TxN6qzkoUP+eswFYM44CUR4QsbIF2N/2+Av4xszmrSIwTVnquuuSQEfl
+         +C/htwfJd5jDRh/vNNYbxOxRgoT0zR1xvjbJrnaN7uVpzIRdW5PAH92F+dpJaiHWpqAt
+         laXtr+IPPKAts7V84xEgwAfMhdTqS+iZo6Ai2SGF+Hncv+X3id4dcUfbltDnpZvPtZQ7
+         rzR7sxJ6rFjmQV2ewacug/Xk6HvwOPdIY9Wn+m+oVCCsXw4CuOhn67YYkncC8lQBlfLP
+         BLmC0vIubJZMeLqg26+3ZP7YJJ9qrzOGGht9PdjnMWN/T9PhUnTehlnCh2tgTQUHS6KN
+         p2sg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
+       dkim=pass header.i=@icloud.com header.s=04042017 header.b=qMVXuAbd;
+       spf=pass (google.com: domain of linux_dti@icloud.com designates 17.58.37.19 as permitted sender) smtp.mailfrom=linux_dti@icloud.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of hdegoede@redhat.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=hdegoede@redhat.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=redhat.com
-X-Google-Smtp-Source: AB8JxZo8yLM3Zly8DUwdNj0dS7J1EV+a0quSsMbRX6Oh92IZ5X/1xtWHVTaQnHLzims1qf4JO/jj+Q==
+       dkim=pass header.i=@icloud.com header.s=04042017 header.b=qMVXuAbd;
+       spf=pass (google.com: domain of linux_dti@icloud.com designates 17.58.37.19 as permitted sender) smtp.mailfrom=linux_dti@icloud.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=icloud.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-08_07:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1011 suspectscore=2 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805080185
+Date: Tue, 08 May 2018 21:41:36 +0200
+From: damian <linux_dti@icloud.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: gregkh@linuxfoundation.org, arnd@arndb.de, linux-kernel@vger.kernel.org
 Subject: Re: Bug in vboxguest: After commit Merge tag 'char-misc-4.17-rc3'
-To: Greg KH <gregkh@linuxfoundation.org>, arnd@arndb.de,
- linux-kernel@vger.kernel.org
+Message-id: <20180508194135.GA27020@zrhn9910b>
+Mail-followup-to: Hans de Goede <hdegoede@redhat.com>,
+ gregkh@linuxfoundation.org, arnd@arndb.de, linux-kernel@vger.kernel.org
 References: <20180502193735.GA2444@zrhn9910b>
  <20180502200615.GB16341@kroah.com> <20180502204612.GA2089@zrhn9910b>
-From: Hans de Goede <hdegoede@redhat.com>
-Message-ID: <c589f2f9-e8e3-7f54-e1ab-9ac3baf700bf@redhat.com>
-Date: Tue, 8 May 2018 13:42:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180502204612.GA2089@zrhn9910b>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+ <c589f2f9-e8e3-7f54-e1ab-9ac3baf700bf@redhat.com>
+MIME-version: 1.0
+Content-type: text/plain; charset=us-ascii
+Content-disposition: inline
+In-reply-to: <c589f2f9-e8e3-7f54-e1ab-9ac3baf700bf@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599382342256929089?=
-X-GMAIL-MSGID: =?utf-8?q?1599896055462115109?=
+X-GMAIL-MSGID: =?utf-8?q?1599926179892611772?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Hi Damian,
-
-On 02-05-18 22:46, damian wrote:
-> Hello Greg,
+On Tue, 08. May 13:42, Hans de Goede wrote:
+> Hi Damian,
 > 
-> it is PATCH 3 virt: vbox: Use __get_free_pages insteas of kmalloc for DMA32 memory.
+> On 02-05-18 22:46, damian wrote:
+> >Hello Greg,
+> >
+> >it is PATCH 3 virt: vbox: Use __get_free_pages insteas of kmalloc for DMA32 memory.
+> 
+> Thank you for the bug report, I've tried to reproduce this problem
+> but for me everything works fine.
+> 
+> Does your virtual-machine have more then 4G of RAM configured for its
+> use?  If yes then what is likely happening is that you also have
+> the out-of-tree version of the vboxguest modules installed and prior
+> to the commit in question the out of tree version of the driver is
+> loading, because before that commit the vboxguest driver in the
+> mainline kernel fails to load on machines with more then 4G.
+> 
+> Or alternatively before the commit in question you may not have
+> any version of the vboxguest driver loaded.
+> 
+> Using the upstream version of the driver should not make a noticeable
+> difference, but before the vboxguest driver became a part of the
+> mainline kernel the virtualbox upstream developers have done a
+> cleanup / redesign of the userspace API of the vboxguest driver,
+> so the vboxguest driver will only work with recent virtualbox-guest-additions
+> and since you are using Ubuntu 16.04 chances are that you are
+> using that with Ubuntu's quite old bundled virtualbox-guest-additions
+> which will not work with the new driver and may be causing this
+> issue.
+> 
+> Can you try upgrading your virtualbox-guest-additions to 5.2.10
+> please?
+> 
+> Also if the above does not help, a couple of follow up
+> questions to help this pin down further:
+> 
+> 1) Are you using vbox's 3d pass through functionality
+> 2) Which desktop-environment are you using?
+> 
+> Regards,
+> 
+> Hans
 
-Thank you for the bug report, I've tried to reproduce this problem
-but for me everything works fine.
+Hi Hans,
 
-Does your virtual-machine have more then 4G of RAM configured for its
-use?  If yes then what is likely happening is that you also have
-the out-of-tree version of the vboxguest modules installed and prior
-to the commit in question the out of tree version of the driver is
-loading, because before that commit the vboxguest driver in the
-mainline kernel fails to load on machines with more then 4G.
+i will check my configutation and will come back
+At the moment i dont use use the virtualbox-guest-additions, i use the driver from the staging area. 
 
-Or alternatively before the commit in question you may not have
-any version of the vboxguest driver loaded.
+because i had after every new kernel release problms with this driver. 
 
-Using the upstream version of the driver should not make a noticeable
-difference, but before the vboxguest driver became a part of the
-mainline kernel the virtualbox upstream developers have done a
-cleanup / redesign of the userspace API of the vboxguest driver,
-so the vboxguest driver will only work with recent virtualbox-guest-additions
-and since you are using Ubuntu 16.04 chances are that you are
-using that with Ubuntu's quite old bundled virtualbox-guest-additions
-which will not work with the new driver and may be causing this
-issue.
 
-Can you try upgrading your virtualbox-guest-additions to 5.2.10
-please?
-
-Also if the above does not help, a couple of follow up
-questions to help this pin down further:
-
-1) Are you using vbox's 3d pass through functionality
-2) Which desktop-environment are you using?
-
-Regards,
-
-Hans
+regards
+Damian
