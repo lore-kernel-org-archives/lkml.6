@@ -1,96 +1,48 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932277AbeEHORS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:17:18 -0400
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:19094 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752511AbeEHORQ (ORCPT
+        id S932391AbeEHOU3 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:20:29 -0400
+Received: from mail-yb0-f175.google.com ([209.85.213.175]:43977 "EHLO
+        mail-yb0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932104AbeEHOU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:17:16 -0400
-From: Dan Murphy <dmurphy@ti.com>
-To: <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH v2 1/2] dt: bindings: lm3601x: Introduce the lm3601x driver
-Date: Tue, 8 May 2018 09:17:03 -0500
-Message-ID: <20180508141704.24271-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
+        Tue, 8 May 2018 10:20:27 -0400
+X-Google-Smtp-Source: AB8JxZrSgMzp+iWXfgyk8+VNeaPiEd8H+FUrQvVLYpjvvTmXy7RVnktbvkfSRv+At51e/Wbnc/5ezQ==
+Date: Tue, 8 May 2018 07:20:23 -0700
+From: Tejun Heo <tj@kernel.org>
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ata: ata_piix: Fix a possible data race in
+ piix_pci_device_resume
+Message-ID: <20180508142023.GJ2368884@devbig577.frc2.facebook.com>
+References: <20180508034613.12969-1-baijiaju1990@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180508034613.12969-1-baijiaju1990@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce the device tree bindings for the lm3601x
-family of LED torch, flash and IR drivers.
+Hello,
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
+On Tue, May 08, 2018 at 11:46:13AM +0800, Jia-Ju Bai wrote:
+> The write operation to "host->flags" is protected by
+> the lock on line 1048, but the read operation to
+> this data on line 1046 is not protected by the lock.
+> Thus, there may exist a data race for "host->flags".
+> 
+> To fix this data race, the read operation to "host->flags" 
+> should be also protected by the lock.
 
-v2 - No changes - https://patchwork.kernel.org/patch/10384587/
+This isn't necessarily wrong.  It isn't different from atomic bitops -
+the modifications are synchronized but what the reads get is
+determined by memory ordering or other synchronization.  Here, the
+whole suspend / resume paths are always synchronized and the spinlocks
+are there just in case there are other writers to the field.
 
- .../devicetree/bindings/leds/leds-lm3601x.txt | 51 +++++++++++++++++++
- 1 file changed, 51 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3601x.txt
+Thanks.
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-new file mode 100644
-index 000000000000..38cdabf6ca7e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-@@ -0,0 +1,51 @@
-+* Texas Instruments - lm3601x Single-LED Flash Driver
-+
-+The LM3601X are ultra-small LED flash drivers that
-+provides a high level of adjustability.
-+
-+Required properties:
-+	- compatible : Can be one of the following
-+		"ti,lm3601x"
-+		"ti,lm36010"
-+		"ti,lm36011"
-+	- reg : I2C slave address
-+	- #address-cells : 1
-+	- #size-cells : 0
-+
-+Required child properties:
-+	- reg : 0 - Indicates to support and register a torch interface
-+		1 - Indicates to support and register a strobe interface
-+		2 - Indicates to support and register an ir interface
-+
-+Optional child properties:
-+	- label : see Documentation/devicetree/bindings/leds/common.txt
-+
-+Example:
-+led-controller@64 {
-+	compatible = "ti,lm3601x";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x64>;
-+
-+	led@0 {
-+		reg = <0>;
-+		label = "white:torch";
-+		led-max-microamp=<10000>;
-+	};
-+
-+	led@1 {
-+		reg = <1>;
-+		label = "white:strobe";
-+		flash-max-microamp=<10000>;
-+		flash-max-timeout-us=<800>;
-+	};
-+
-+	led@2 {
-+		reg = <2>;
-+		label = "invisible:ir";
-+	};
-+}
-+
-+For more product information please see the links below:
-+http://www.ti.com/product/LM36010
-+http://www.ti.com/product/LM36011
 -- 
-2.17.0.252.gfe0a9eaf3
+tejun
