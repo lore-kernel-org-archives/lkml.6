@@ -1,55 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932406AbeEHNh4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:37:56 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:33811 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932240AbeEHNhy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:37:54 -0400
-X-Google-Smtp-Source: AB8JxZoeSrLaanxHeE/EnvemO4oo8Lyw6QIuFeXY5tW7kcJU4AvfipmpVGw0ohO1JdiIdlNWjJp9Nw==
-Date: Tue, 8 May 2018 08:37:50 -0500
-From: Seth Forshee <seth.forshee@canonical.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>, Sargun Dhillon <sargun@sargun.me>,
-        Dongsu Park <dongsu@kinvolk.io>, "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH] fuse: Ensure posix acls are translated outside of
- init_user_ns
-Message-ID: <20180508133750.GA29084@ubuntu-xps13>
-References: <87r2mre5b3.fsf@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87r2mre5b3.fsf@xmission.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1755097AbeEHNif (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:38:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932132AbeEHNid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:38:33 -0400
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Michael Ellerman <mpe@ellerman.id.au>, Helge Deller <deller@gmx.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Rich Felker <dalias@libc.org>, Fenghua Yu <fenghua.yu@intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>
+Subject: [GIT PULL] 
+Date: Tue,  8 May 2018 15:38:15 +0200
+Message-Id: <1525786706-22846-1-git-send-email-frederic@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 04, 2018 at 11:47:28AM -0500, Eric W. Biederman wrote:
-> 
-> Ensure the translation happens by failing to read or write
-> posix acls when the filesystem has not indicated it supports
-> posix acls.
-> 
-> This ensures that modern cached posix acl support is available
-> and used when dealing with posix acls.  This is important
-> because only that path has the code to convernt the uids and
-> gids in posix acls into the user namespace of a fuse filesystem.
-> 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
-> 
-> Miklos after several attempts to handle this better last cycle.  I
-> figure we should go with the stupid version for now.  I think I know
-> how to do better but I don't want that to gate forward progress on
-> fully unprivileged fuse mounts.  Especially as this is the last known
-> issue to deal with.
+Ingo,
 
-This seems reasonable as a short-term measure.
+Please pull the softirq/mask-v4 branch that can be found at:
 
-Acked-by: Seth Forshee <seth.forshee@canonical.com>
+git://git.kernel.org/pub/scm/linux/kernel/git/frederic/linux-dynticks.git
+	softirq/mask-v4
+
+HEAD: dc06cbb5e1296938211040bccdacd7a361469116
+
+Changes since v3:
+
+* Rebase against v4.17-rc4
+* Fix build error on SH. (new patch "sh: Use nmi_count() on /proc/interrupts print out")
+
+--
+The softirq mask and its accessors/mutators have many implementations
+scattered around many architectures. Most do the same things consisting
+in a field in a per-cpu struct (often irq_cpustat_t) accessed through
+per-cpu ops. We can provide instead a generic efficient version that
+most of them can use. In fact s390 is the only exception because the
+field is stored in lowcore.
+
+Thanks,
+	Frederic
+---
+
+Frederic Weisbecker (11):
+      ia64: Convert local_softirq_pending() to per-cpu ops
+      sparc: Convert local_softirq_pending() to use per-cpu op
+      sh: Use nmi_count() on /proc/interrupts print out
+      softirq: Turn default irq_cpustat_t to standard per-cpu
+      softirq: Consolidate default local_softirq_pending() implementations
+      ia64: Switch to generic local_softirq_pending() implementation
+      parisc: Switch to generic local_softirq_pending() implementation
+      powerpc: Switch to generic local_softirq_pending() implementation
+      sparc: Switch to generic local_softirq_pending() implementation
+      x86: Switch to generic local_softirq_pending() implementation
+      softirq/s390: Move default mutators of overwritten softirq mask to s390
+
+
+ arch/ia64/include/asm/hardirq.h     |  2 +-
+ arch/parisc/include/asm/hardirq.h   |  8 --------
+ arch/powerpc/include/asm/hardirq.h  |  7 -------
+ arch/s390/include/asm/hardirq.h     |  2 ++
+ arch/sh/kernel/irq.c                |  2 +-
+ arch/sparc/include/asm/hardirq_64.h |  5 +++--
+ arch/x86/include/asm/hardirq.h      |  8 --------
+ include/linux/interrupt.h           | 13 ++++++++++---
+ include/linux/irq_cpustat.h         | 10 +++-------
+ kernel/softirq.c                    |  4 ++--
+ 10 files changed, 22 insertions(+), 39 deletions(-)
