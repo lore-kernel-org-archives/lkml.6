@@ -1,664 +1,212 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AB8JxZoX8rJY2kX+F7VNykEmCCh20KkPvKt2ahVHvJBNBqcvJFYQQj3v42s33WblpFEAHkXA/ZLJ
-ARC-Seal: i=1; a=rsa-sha256; t=1526917701; cv=none;
+Return-Path: <Vijendar.Mukunda@amd.com>
+X-Google-Smtp-Source: AB8JxZqYPEjxz0M6dlpHTahJfcBW+SXJLDmxJx4+FB0qf/L7xK7YaCllJrEOyaCm0j3q+M7KEECf
+ARC-Seal: i=1; a=rsa-sha256; t=1525754763; cv=none;
         d=google.com; s=arc-20160816;
-        b=eXmRVvpNs1nYOtYw4w9XfXBf2tTU9Mt+hIbTqwQEXmQdgXP4QsJml6HR+tSW6YWqQB
-         JmVftx2AEtTqaremWZZBt5PRohQwhH4gGRh94HhftciWXcqtxxvzmk8rr+BWibuFA7Wr
-         B2TEeptxmeb0Lqtib33fM6G6a4C3SGtb3DVztmsKN8J1VX8Q7+pmTF9Ws9uSZ4qv0s5v
-         xYMYRskSB6VDS60HU4JlzkdeP+EA/5OcxBiu8ES1jLafoWqx7gkxtQWdtw6c0wkmRBK9
-         2rqGVsHI/xcD0SAwMod3wXupQSBYopxSeWyq6aZ6xtHhBkbt1Erv5IqDYvQLxjrjnbwK
-         xUlw==
+        b=SnMTwTa9h0n5uVwIQfGmL++fV+DZLihHCE1ENayDnNj/lyMAhKpBchk9G8bqyYli53
+         sLqMFECbqiE7jKa+IZ/BPUKvgRc9xZ1azzKWQrp6wIal4kr4UCFyXJWjs4i5X+HZ8z57
+         ITx/tGxZHMO8kQsip2TyD4wLAJ5n9CLRjusjVzQtnAIACJP4eu4Ssa33gOTZP2ux7dUc
+         2CUVlgc2CetbbFlYRpYayyKcdEmBTZ5IsL9AGNkOwaBrw1s+UwBCaAtjGWu5xSY6gae1
+         taYnt7EJgbUoqJfrDmaoQehPcHOjlCo9je/GHsnMUD9oSEBqUyD1oZl0ddVTaMD++I5k
+         hDuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=date:message-id:in-reply-to:subject:cc:to:from:dkim-signature
+        h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
+         :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=XQWxGY7YGgxgA5to88sPaFU9HXoLvW8z18E2zeBt2KE=;
-        b=snNbHz7dU5qAt2JqnAi0VRKfGpDxSuouzGt+tcm78alPrvXas5LE0ZOq29NxxJCmTW
-         +Sx1qJc7AOEPwnMwYQvOu2sJPiw5Qv5DpRPhJRQZ2Vq4OZ6aA211xbkT0XTH4ogxcz5h
-         4q66seFZ6R4uTpyy/fgrXNVWVWoyf83YjDo82RtuCKcCwlJA8WL9M4OGy29hegKhBM7W
-         RLWMIRNJK6fyNIlU41IJNBNsBCWNv64mCOTPb+1rLWcub9GRpCQbFwvazqUMkbeRSoio
-         6M36JgMoG+q3bRQ7YKHXdItVLEgE/iYEvEwSmPDJt759VuvZyeUQohuAiY8tAAN4CiA3
-         XOFQ==
+        bh=UnULbNemday5GmSbpo2I9F0sSwEVaZnAe++h8hD2tiI=;
+        b=YIif4GBS8XF2fUL80AbOJiZqWbz+kFX0ddHJB/wzYhwWIIk4O4F1uR5NdbTcuTI29X
+         yqhEuV4xq0pHgrjquHSbG67oV6HxQJkd8vCxbkymZpMFEUvbMDQoQLDdW3NNbRNu2rL7
+         cF/i9E+dipwHPSDzPSFHyprf/jRZyCo9ykyUYCv7fkfurDjA5CAZqlQk8ScbIgCJqS5x
+         PGaD0Wdh8J8eMNk//5TbTu4HikrEh7QpQBQMYN5Q6LgIqmixwKv++CLiKCXxwwkflPFY
+         NSOv3bnjH5AEc88c4qtHALmFyztaVYn7fZgAnedPS6HRUOlRlzoF6M3cltZyBVcGSVFg
+         pb7Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=U7/CeUXo;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=mRVDD0YG;
+       spf=neutral (google.com: 104.47.42.49 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=U7/CeUXo;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-From: Mark Brown <broonie@kernel.org>
-To: Mukunda@sirena.org.uk, Vijendar <Vijendar.Mukunda@amd.com>
-Cc: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Mark Brown <broonie@kernel.org>, , "moderated list:SOUND - SOC, LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, open list <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Takashi Iwai <tiwai@suse.com>, Daniel Kurtz <djkurtz@chromium.org>, Jason Clinton <jclinton@chromium.org>, Mark Brown <broonie@kernel.org>, Wei Yongjun <weiyongjun1@huawei.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Guenter Roeck <linux@roeck-us.net>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: amd: dma driver changes for bt i2s instance" to the asoc tree
-In-Reply-To: <1525754888-14124-10-git-send-email-Vijendar.Mukunda@amd.com>
-Message-Id: <E1fKn2i-0007F0-G0@debutante>
-Date: Mon, 21 May 2018 16:48:12 +0100
+       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=mRVDD0YG;
+       spf=neutral (google.com: 104.47.42.49 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; linuxfoundation.org; dkim=none (message not signed)
+ header.d=none;linuxfoundation.org; dmarc=permerror action=none
+ header.from=amd.com;
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: 
+CC: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela
+	<perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Alex Deucher
+	<alexander.deucher@amd.com>, Daniel Kurtz <djkurtz@chromium.org>, "Akshu
+ Agrawal" <akshu.agrawal@amd.com>, Guenter Roeck <linux@roeck-us.net>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "moderated list:SOUND - SOC
+ LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, "open
+ list" <linux-kernel@vger.kernel.org>
+Subject: [PATCH V2 04/10] ASoC: amd: pte offset related dma driver changes
+Date: Tue, 8 May 2018 10:17:47 +0530
+Message-ID: <1525754888-14124-4-git-send-email-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1525754888-14124-1-git-send-email-Vijendar.Mukunda@amd.com>
+References: <1525754888-14124-1-git-send-email-Vijendar.Mukunda@amd.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(39380400002)(376002)(346002)(2980300002)(428003)(199004)(189003)(54906003)(48376002)(97736004)(7696005)(2906002)(81156014)(105586002)(5660300001)(486006)(8676002)(50226002)(16586007)(356003)(316002)(305945005)(446003)(8936002)(104016004)(68736007)(106466001)(53416004)(26005)(4326008)(47776003)(53936002)(478600001)(126002)(1671002)(51416003)(50466002)(11346002)(426003)(39060400002)(186003)(336012)(109986005)(2616005)(76176011)(81166006)(36756003)(476003)(86362001)(77096007)(72206003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR12MB0321;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT015;1:GomsoxTlNPrGPBkyLYIG0PsfNsMIGw86hcQq6uiY5AJVVFvLfhJSHOLX3hOBkiGe2nweKaD01NkxeXCHuz7627LQ3F2/QJsHns1fSOY3CBtvxnqNYOPrVwpEZ3uER5tC
+X-MS-PublicTrafficType: Email
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:BY2PR12MB0321;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0321;3:ORe4JHYxKn8Ymb2Im0aOx4GYzxtgoMBgNoS5UkYmuCh6mYdfjITeN+FkLFQEXhKX1j5oShLbedmPyv5Eczb1GRn2Rif2ZuRxyQkzWQVAsJd8jAfPqfUUO8TqKobJkwmRUqdQZgtP2Wfk5dzbSZFVrQCI1qmD1/REuDrGbkKf8Kb361rS0z4prF7OGIMaDNC9FxDnwI0QJqqwy+xrn0gJCHrsRaLT3JzlzxRwLbN8Wfajw43xK/b5tqsg1a2Fx3kuns1bL0t6dtSAnw1Os0mGyaQBb+ReFYpyYr2c5kd2JFFqfniX6gavZIDMVAeB+tpeDfuPsByEZbBNqqE1OvQgI4uZ73+X/52adYyN32ehRkE=;25:5muTnYqRB7+vqwaxBn2queMTxvKoEi6lY5rwqB6A22GyMW+7UHls6YdoPJHvudU9WdwYGsYeNhy1JkLKzUkkZ6CFnszr/QkBhMRw9xMbQei/CczCs2wPgLanGgHzEnMHiJglhEZmaLaM54/HWGWVkn8ycEwYCAofZTmi9O7HMpd47JCllQOPxHhkKTgi2a0r4+iLa3a1WL9aIRNXGELTWQxq9jlUkke7cOrhV78KK1wwC2SHhF0oRXeuPkrcH2eNadrg2waJg4zwyHteYP71QKVhS1wA2WhYco3p1Za+3vmIdZkWncQpLqt173IAa7UojMrHZxMd3v9IDbi5T61zMg==
+X-MS-TrafficTypeDiagnostic: BY2PR12MB0321:
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0321;31:Ir4kioI52VLrZpE3oRyLdQX1FeymNm06/inX/DRwlHNmuBwY1Ub/WcCl/Ah6Ev7JKSf9D8jFEU8OIxTo8kJsrzTouLdKiQ9ndSRL0u9VoQbkAISulDQ/k2E1j6Ha7xu0MlLvYfmP1dq0u+zlMYyTnA15ZWQpN90YX/Pp8eVZWjtz0AFXwECNoPNmZceL1rqt3qHVsfissMhdjrdhCq2nSg8rcJ4lidukIgAJmcSC7PE=;20:Uo3SfNSoajLM26+RQFjrchR4LsgAE+9Gds1wlEqtbESQC5IZTNzozmRmr6DMaU9SQSIRr9L5fNp4zH01NQQdwOSG7W8g0iWyAEVm7oMq5lONHkAITt5wZw8Ju+kcE68YT3u14l4RmcZJnLrLipf87rFQxW73ThNIjBpFqzj3w0swnhT2V5I6slwv6bdc2RXZLb9KSMylzhcbL6Z6b4EmdqXb6r7Ie8xzHnbGsXfJfdT/q2We9RwV2WW0D1+Mo4PoSbfYyGKMlElSDOch62SlLSskzmcTfDi8sssm44PgB11AXxnOonPq88c0h8vof+t683uPfTKaGQaWCX5zqdna0CWixYR5hyCGr0jYRwIjePReKMZm62xv+i7k4TPpeXzKu3PITP2WKdHY6wXEfpq63FU4NdfyVQch9CEaHaKUAfk1oIcOzNiGNO1MLc0xJ9l3rBrFW1y9JUJLWToOo6L/GgvN98ZN/a4C3XTByTdgNtsuHpIXvYi+eUlM4DKil8U2
+X-Microsoft-Antispam-PRVS: <BY2PR12MB03219C2DEA1CD13531CD78AF979A0@BY2PR12MB0321.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93003095)(3231254)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011);SRVR:BY2PR12MB0321;BCL:0;PCL:0;RULEID:;SRVR:BY2PR12MB0321;
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0321;4:tfoGKq6kgR/ZD/vuInm1bJmmjvY7tKhYjTlMHyg6T3gMKEU6AOrYVpnGigNCE+7vgSfhQpRaJmfIis9M5XUmOM5wxbYCBnsE6bUS8b8r7BAtdAxFPA6mW0RHtxek/CxnCSAl5s35KnXN8qvhnLRHh55zkB5WYnzTxymjthanIXlG2W9F52Wypiv0t9wlq7z/v+2XzrZo2H7dix6e50rrnk6i0weAdLlLflappaP/RC9m2NUcXBmQG9jCurhjeTMJ2KbZqJi1Xlf252sRcSLAXpjKQolbPIM5I8KHuJetAsTl8Cmzn0PyFHZQg+Dy8Ov8
+X-Forefront-PRVS: 0666E15D35
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY2PR12MB0321;23:lvAubCFDTMtXKY6TGjDdLmIpvlewQRZuV/OshXFm7?=
+ =?us-ascii?Q?unkpoRcFVRMwGyMI7PTsf+6kzM0MfsKo3w+SPYjhLe7eWS010bJaKc084gJv?=
+ =?us-ascii?Q?UHpL+awEREO3S5aBrMJMnA+C2TyOnjq/YZNDRfakyVsZSXifwfQkNQ/QoAb3?=
+ =?us-ascii?Q?tHE3zcbzXMarENnRlFTCl4wMhsRP+/9uOGb3wNWlq33ZJ0c8SG4ir+IFIgza?=
+ =?us-ascii?Q?dcgtym9J7m1OxzDfZxhxoHjMoGjoQ87iOCCf0rclTWn4j0R/+pjmAMp02Usc?=
+ =?us-ascii?Q?wrI+WdlB73WBBkg4RjHC8FbqiusEwEPV7XxWd5xDkl2FcU8y2V7d9sbUF8py?=
+ =?us-ascii?Q?BTSCYSElW2KRBYIKgNvmAYpFXCfnri1LlD4iV6yTWYUhcz1N5v8jsduu/6vo?=
+ =?us-ascii?Q?+LV6XrPfBGaidvznOq+wSbQmUMSa1VFaK2JkmoIspamsun1fxKQnYNfPX/dP?=
+ =?us-ascii?Q?KHYCSQtFMx8LLri7qyijJxDahf+GUD2FNCXGa7qiGFHugjawxM0nhJTg++RK?=
+ =?us-ascii?Q?Sh9silWeY7IRjQoDl+LOL8ZgGYDY4jGHLIw3JS7SBqWjFYR8s3W8SUloj9zE?=
+ =?us-ascii?Q?Fp0KHg+p4qJAL4Idognd0iVFSOQFYGnxjKUfeW8JZ2pmehFfL3E0N3z0ntkx?=
+ =?us-ascii?Q?MBeE1IqDdTXZUTb33MCslm3e01c91sPoe8Paa2u32pUu5tln6PmI7ER6HCm6?=
+ =?us-ascii?Q?lNTwaxDsxrYAD5h6KaN0hqW7dDEECrp8s4Bj/e/MB2NnPa3/LLvkehxHvM7D?=
+ =?us-ascii?Q?pRR3WemM8wBa6uWGknMEdjUKslsxgVSJ7euuJj1hECsHmvuJWBAGFOMB7yuG?=
+ =?us-ascii?Q?+X9kdTBjdbBtpGENSz9AVEZYFXsO9S5DvhRiL2uptS3xMzpkWm86/k2TOuVE?=
+ =?us-ascii?Q?Axu5bdokWvlntLLEzKYApUkuLZKG7qzR+r7Cod0HTESwBtOsglXf2HWHIBCT?=
+ =?us-ascii?Q?5FbJQ1hBxjZcBwn21ZtGDptlzW/NEprUxlLojv4zq9YW5hrvak6ZlzXv6CI2?=
+ =?us-ascii?Q?jM/fNHSj3Y3qof8f2C0HM6pdRxudcnjdhpccv0qBRfFfy1UZpCSyj1Bcns/I?=
+ =?us-ascii?Q?GoXbyfobkHn1pG/1EaDEIOdYxT+tCbHqK7f9aQZxWi04q9iah0wjS8+PyzxB?=
+ =?us-ascii?Q?Bc1c1x6cFVMBCIqlfylZjkdIZfcviF5kuF41A8jOh7RXjJrxhv2alHUT4agJ?=
+ =?us-ascii?Q?kJmm+5RtizYgmsGqMZwSrdLDb47DklUbTh8?=
+X-Microsoft-Antispam-Message-Info: U5Ad7nb2DlXqTobXGxAhqirb6zVlqZJbvmpTcQshti6fPesG/hZ5Z/dvyWNKmGHJmRape3nzFpUlR/7grAsPhZ0/PyQ7ZpKgjIiK4KUBwxo99QNUrhJb+O1QGXUU04+1S1em5SN/mE+TrV0X3i6dGAyxQ9S2UWnj7/sENmou7iL4HyNTOpepOPKArHNLkUym
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0321;6:M1A5DEnbzDqEombT8e3kIsdKb8ENYD0FVIfoALWN7gYsZP5fvMD29EPRTUXracJZZM6O9a5DpNCXngK+3TT1m7HbOO8DJH5WP2DBQ8k/E/Z9g8BGJxAgUKCjR5OgSFQyAD4w5eeLcFIcV2APHsv0xvxcfKSfynB7It2HqhSEEPWnWD/I2u0u3fLMg19R6c82LzPiiu3jtORMzacOPh56hsB2I+G0CR6pJaO8OT1NeQP64CAEZiOfDOkjpgK5kbd/eR8SA9LiDq8HcZMIaJr+njA9Aqn7KjO9odZbxhv+kVMVWmn1cHwaDAzQc3oobmp6+50Gla0q9pn2BPur2+CADsp3A0PrKLJNgQ4ZCbXLoMht0B3gdRURLEjLsHYmpTd63MBcdqDyZu3acL1DzqrGWIEEnbR9H//0orYwt1s5CJtPG1feoIAOkr10qcv4rAqfvVhZhsAVRAWOi24+bcmCLg==;5:jI+z1EtAUbanTgIFQMTqAP6vZH+HbRmbxMgJUaPdMG9kK0xe2M/P96wwRYRS268F6Ywa2yEOGBcBioNE23qoq+CTtDEt+bxcAMFC6TkZHRYRXdpribhjgiZvmJk6OKdF/sOCHNFcTjKdYZ4s31bfymn625W3FUoUZpGzTKUOR7Q=;24:5FffmcevVRuIihCIzUi46M6dNetvB4CUKbmNoq0ICUTU6mb87xzpE7xKLRbHgc2fInubvynJUBCM1Gh6TzRXTpw48nq/F7QbRyadRYi7HZk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BY2PR12MB0321;7:tjSGJUO8sDXfpHh38t/NPblRXIjQwdgoqUs62Ka597KONvqeixiLYVUQG+EHLCcYLE8GeAPb/e1/9LpQOS7cXxfqRL1TMpE3GhOO8SKSebVMZzRg3pwnrMTVJNGbcDss4SQVWhz8ka1250CB75y2oCA19gjQXNJsubOtRKcHmofVxnHPE9hAk0XzHMVOdb/Kk23Uo0aSYtYk145tl+OvBaEbN/eOG1g19395x3auklONCiTIKJ2ZMfOrz7MNRcZa;20:xAQ1TTTbmxRtFS4ccaMdAYIA02W+zFl+TTfYx7S1eLFdxK7nfeBHtqzhLe0NYPeMizlOQMVj9DPhe3jN2b08212Y4craQHNWXNF4xwrgnW7wR2aqgKZnwk4oo8Si4FNkDr0qHOeyhFpsBJ6ZHIOxXZW1TKLXut8yONYmiQear8MiXZReplod4l66C+qDW6c6EMtOsRuVFRVd7Xs9FwfHExdkB20sx37URkTFEaIGAKuiFN2m9sXmAr2kU2IiE6U1
+X-MS-Office365-Filtering-Correlation-Id: fe6f4b11-82db-42cb-2149-08d5b49e989c
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2018 04:45:59.6619
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe6f4b11-82db-42cb-2149-08d5b49e989c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR12MB0321
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1601089256338552789?=
-X-GMAIL-MSGID: =?utf-8?q?1601089256338552789?=
+X-GMAIL-THRID: =?utf-8?q?1599869826856023070?=
+X-GMAIL-MSGID: =?utf-8?q?1599869826856023070?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The patch
-
-   ASoC: amd: dma driver changes for bt i2s instance
-
-has been applied to the asoc tree at
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
->From ccfbb4f5723736bb6f548a319ab97e4c4f8ff2b4 Mon Sep 17 00:00:00 2001
-From: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>
-Date: Tue, 8 May 2018 10:17:53 +0530
-Subject: [PATCH] ASoC: amd: dma driver changes for bt i2s instance
-
-With in ACP, There are three I2S controllers can be
-configured/enabled ( I2S SP, I2S MICSP, I2S BT).
-Default enabled I2S controller instance is I2S SP.
-This patch provides required changes to support I2S BT
-controller Instance.
+Added pte offset variable in audio_substream_data structure.
+Added Stoney related PTE offset macros in acp header file.
+Modified hw_params callback to assign the pte offset value
+based on asic_type.
+PTE Offset macros used to calculate no of PTE entries
+need to be programmed when memory allocated for audio buffer.
+Depending upon allocated audio buffer size, PTE offset values
+will change.
+Compared to CZ, Stoney has SRAM memory limitation i.e 48k
+It is required to define separate PTE Offset macros for
+Stoney.
 
 Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/acp-da7219-max98357a.c |  24 +++
- sound/soc/amd/acp-pcm-dma.c          | 256 +++++++++++++++++++++------
- sound/soc/amd/acp.h                  |  40 +++++
- 3 files changed, 263 insertions(+), 57 deletions(-)
+v1->v2: Modified commit message
+ sound/soc/amd/acp-pcm-dma.c | 26 +++++++++++++++++++-------
+ sound/soc/amd/acp.h         |  5 +++++
+ 2 files changed, 24 insertions(+), 7 deletions(-)
 
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index 133139dbcb06..ccddc6650b9c 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -36,6 +36,7 @@
- #include <linux/input.h>
- #include <linux/acpi.h>
- 
-+#include "acp.h"
- #include "../codecs/da7219.h"
- #include "../codecs/da7219-aad.h"
- 
-@@ -44,6 +45,7 @@
- 
- static struct snd_soc_jack cz_jack;
- static struct clk *da7219_dai_clk;
-+extern int bt_uart_enable;
- 
- static int cz_da7219_init(struct snd_soc_pcm_runtime *rtd)
- {
-@@ -132,6 +134,9 @@ static const struct snd_pcm_hw_constraint_list constraints_channels = {
- static int cz_da7219_startup(struct snd_pcm_substream *substream)
- {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_card *card = rtd->card;
-+	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
- 
- 	/*
- 	 * On this platform for PCM device we support stereo
-@@ -143,6 +148,7 @@ static int cz_da7219_startup(struct snd_pcm_substream *substream)
- 	snd_pcm_hw_constraint_list(runtime, 0, SNDRV_PCM_HW_PARAM_RATE,
- 				   &constraints_rates);
- 
-+	machine->i2s_instance = I2S_BT_INSTANCE;
- 	return da7219_clk_enable(substream);
- }
- 
-@@ -153,6 +159,11 @@ static void cz_da7219_shutdown(struct snd_pcm_substream *substream)
- 
- static int cz_max_startup(struct snd_pcm_substream *substream)
- {
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_card *card = rtd->card;
-+	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
-+
-+	machine->i2s_instance = I2S_SP_INSTANCE;
- 	return da7219_clk_enable(substream);
- }
- 
-@@ -163,6 +174,11 @@ static void cz_max_shutdown(struct snd_pcm_substream *substream)
- 
- static int cz_dmic_startup(struct snd_pcm_substream *substream)
- {
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_card *card = rtd->card;
-+	struct acp_platform_info *machine = snd_soc_card_get_drvdata(card);
-+
-+	machine->i2s_instance = I2S_SP_INSTANCE;
- 	return da7219_clk_enable(substream);
- }
- 
-@@ -266,10 +282,16 @@ static int cz_probe(struct platform_device *pdev)
- {
- 	int ret;
- 	struct snd_soc_card *card;
-+	struct acp_platform_info *machine;
- 
-+	machine = devm_kzalloc(&pdev->dev, sizeof(struct acp_platform_info),
-+			       GFP_KERNEL);
-+	if (!machine)
-+		return -ENOMEM;
- 	card = &cz_card;
- 	cz_card.dev = &pdev->dev;
- 	platform_set_drvdata(pdev, card);
-+	snd_soc_card_set_drvdata(card, machine);
- 	ret = devm_snd_soc_register_card(&pdev->dev, &cz_card);
- 	if (ret) {
- 		dev_err(&pdev->dev,
-@@ -277,6 +299,8 @@ static int cz_probe(struct platform_device *pdev)
- 				cz_card.name, ret);
- 		return ret;
- 	}
-+	bt_uart_enable = !device_property_read_bool(&pdev->dev,
-+						    "bt-pad-enable");
- 	return 0;
- }
- 
 diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 1c44b26ad2db..ac32deaa9541 100644
+index 862c1cf..39597fb 100644
 --- a/sound/soc/amd/acp-pcm-dma.c
 +++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -37,12 +37,14 @@
- #define MAX_BUFFER (PLAYBACK_MAX_PERIOD_SIZE * PLAYBACK_MAX_NUM_PERIODS)
- #define MIN_BUFFER MAX_BUFFER
- 
--#define ST_PLAYBACK_MAX_PERIOD_SIZE 8192
-+#define ST_PLAYBACK_MAX_PERIOD_SIZE 4096
- #define ST_CAPTURE_MAX_PERIOD_SIZE  ST_PLAYBACK_MAX_PERIOD_SIZE
- #define ST_MAX_BUFFER (ST_PLAYBACK_MAX_PERIOD_SIZE * PLAYBACK_MAX_NUM_PERIODS)
- #define ST_MIN_BUFFER ST_MAX_BUFFER
- 
- #define DRV_NAME "acp_audio_dma"
-+bool bt_uart_enable = true;
-+EXPORT_SYMBOL(bt_uart_enable);
- 
- static const struct snd_pcm_hardware acp_pcm_hardware_playback = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
-@@ -357,6 +359,9 @@ static void acp_dma_start(void __iomem *acp_mmio,
- 	case ACP_TO_I2S_DMA_CH_NUM:
- 	case ACP_TO_SYSRAM_CH_NUM:
- 	case I2S_TO_ACP_DMA_CH_NUM:
-+	case ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM:
-+	case ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM:
-+	case I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM:
- 		dma_ctrl |= ACP_DMA_CNTL_0__DMAChIOCEn_MASK;
- 		break;
- 	default:
-@@ -519,6 +524,13 @@ static int acp_init(void __iomem *acp_mmio, u32 asic_type)
- 	val &= ~ACP_SOFT_RESET__SoftResetAud_MASK;
- 	acp_reg_write(val, acp_mmio, mmACP_SOFT_RESET);
- 
-+	/* For BT instance change pins from UART to BT */
-+	if (!bt_uart_enable) {
-+		val = acp_reg_read(acp_mmio, mmACP_BT_UART_PAD_SEL);
-+		val |= ACP_BT_UART_PAD_SELECT_MASK;
-+		acp_reg_write(val, acp_mmio, mmACP_BT_UART_PAD_SEL);
-+	}
-+
- 	/* initiailize Onion control DAGB register */
- 	acp_reg_write(ACP_ONION_CNTL_DEFAULT, acp_mmio,
- 		      mmACP_AXI2DAGB_ONION_CNTL);
-@@ -637,6 +649,24 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
-+	if ((intr_flag & BIT(ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM)) != 0) {
-+		valid_irq = true;
-+		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_9) ==
-+			PLAYBACK_START_DMA_DESCR_CH9)
-+			dscr_idx = PLAYBACK_END_DMA_DESCR_CH8;
-+		else
-+			dscr_idx = PLAYBACK_START_DMA_DESCR_CH8;
-+		config_acp_dma_channel(acp_mmio,
-+				       SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM,
-+				       dscr_idx, 1, 0);
-+		acp_dma_start(acp_mmio, SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM,
-+			      false);
-+		snd_pcm_period_elapsed(irq_data->play_i2sbt_stream);
-+		acp_reg_write((intr_flag &
-+			      BIT(ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM)) << 16,
-+			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
-+	}
-+
- 	if ((intr_flag & BIT(I2S_TO_ACP_DMA_CH_NUM)) != 0) {
- 		valid_irq = true;
- 		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_15) ==
-@@ -659,6 +689,31 @@ static irqreturn_t dma_irq_handler(int irq, void *arg)
- 			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
- 	}
- 
-+	if ((intr_flag & BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) != 0) {
-+		valid_irq = true;
-+		if (acp_reg_read(acp_mmio, mmACP_DMA_CUR_DSCR_11) ==
-+			CAPTURE_START_DMA_DESCR_CH11)
-+			dscr_idx = CAPTURE_END_DMA_DESCR_CH10;
-+		else
-+			dscr_idx = CAPTURE_START_DMA_DESCR_CH10;
-+		config_acp_dma_channel(acp_mmio,
-+				       ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
-+				       dscr_idx, 1, 0);
-+		acp_dma_start(acp_mmio, ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM,
-+			      false);
-+		acp_reg_write((intr_flag &
-+			      BIT(I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM)) << 16,
-+			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
-+	}
-+
-+	if ((intr_flag & BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) != 0) {
-+		valid_irq = true;
-+		snd_pcm_period_elapsed(irq_data->capture_i2sbt_stream);
-+		acp_reg_write((intr_flag &
-+			      BIT(ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM)) << 16,
-+			      acp_mmio, mmACP_EXTERNAL_INTR_STAT);
-+	}
-+
- 	if (valid_irq)
- 		return IRQ_HANDLED;
- 	else
-@@ -714,11 +769,11 @@ static int acp_dma_open(struct snd_pcm_substream *substream)
- 	 * This enablement is not required for another stream, if current
- 	 * stream is not closed
- 	 */
--	if (!intr_data->play_i2ssp_stream && !intr_data->capture_i2ssp_stream)
-+	if (!intr_data->play_i2ssp_stream && !intr_data->capture_i2ssp_stream &&
-+	    !intr_data->play_i2sbt_stream && !intr_data->capture_i2sbt_stream)
- 		acp_reg_write(1, adata->acp_mmio, mmACP_EXTERNAL_INTR_ENB);
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		intr_data->play_i2ssp_stream = substream;
- 		/*
- 		 * For Stoney, Memory gating is disabled,i.e SRAM Banks
- 		 * won't be turned off. The default state for SRAM banks is ON.
-@@ -730,7 +785,6 @@ static int acp_dma_open(struct snd_pcm_substream *substream)
- 							bank, true);
- 		}
- 	} else {
--		intr_data->capture_i2ssp_stream = substream;
- 		if (intr_data->asic_type != CHIP_STONEY) {
- 			for (bank = 5; bank <= 8; bank++)
- 				acp_set_sram_bank_state(intr_data->acp_mmio,
-@@ -754,6 +808,8 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_soc_component *component = snd_soc_rtdcom_lookup(prtd,
- 								    DRV_NAME);
- 	struct audio_drv_data *adata = dev_get_drvdata(component->dev);
-+	struct snd_soc_card *card = prtd->card;
-+	struct acp_platform_info *pinfo = snd_soc_card_get_drvdata(card);
- 
- 	runtime = substream->runtime;
- 	rtd = runtime->private_data;
-@@ -761,52 +817,109 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
- 	if (WARN_ON(!rtd))
- 		return -EINVAL;
- 
-+	rtd->i2s_instance = pinfo->i2s_instance;
- 	if (adata->asic_type == CHIP_STONEY) {
- 		val = acp_reg_read(adata->acp_mmio,
- 				   mmACP_I2S_16BIT_RESOLUTION_EN);
--		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--			val |= ACP_I2S_SP_16BIT_RESOLUTION_EN;
--		else
--			val |= ACP_I2S_MIC_16BIT_RESOLUTION_EN;
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
-+			switch (rtd->i2s_instance) {
-+			case I2S_BT_INSTANCE:
-+				val |= ACP_I2S_BT_16BIT_RESOLUTION_EN;
-+				break;
-+			case I2S_SP_INSTANCE:
-+			default:
-+				val |= ACP_I2S_SP_16BIT_RESOLUTION_EN;
-+			}
-+		} else {
-+			switch (rtd->i2s_instance) {
-+			case I2S_BT_INSTANCE:
-+				val |= ACP_I2S_BT_16BIT_RESOLUTION_EN;
-+				break;
-+			case I2S_SP_INSTANCE:
-+			default:
-+				val |= ACP_I2S_MIC_16BIT_RESOLUTION_EN;
-+			}
-+		}
- 		acp_reg_write(val, adata->acp_mmio,
- 			      mmACP_I2S_16BIT_RESOLUTION_EN);
- 	}
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		switch (adata->asic_type) {
--		case CHIP_STONEY:
--			rtd->pte_offset = ACP_ST_PLAYBACK_PTE_OFFSET;
-+		switch (rtd->i2s_instance) {
-+		case I2S_BT_INSTANCE:
-+			rtd->pte_offset = ACP_ST_BT_PLAYBACK_PTE_OFFSET;
-+			rtd->ch1 = SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM;
-+			rtd->ch2 = ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM;
-+			rtd->sram_bank = ACP_SRAM_BANK_3_ADDRESS;
-+			rtd->destination = TO_BLUETOOTH;
-+			rtd->dma_dscr_idx_1 = PLAYBACK_START_DMA_DESCR_CH8;
-+			rtd->dma_dscr_idx_2 = PLAYBACK_START_DMA_DESCR_CH9;
-+			rtd->byte_cnt_high_reg_offset =
-+					mmACP_I2S_BT_TRANSMIT_BYTE_CNT_HIGH;
-+			rtd->byte_cnt_low_reg_offset =
-+					mmACP_I2S_BT_TRANSMIT_BYTE_CNT_LOW;
-+			adata->play_i2sbt_stream = substream;
- 			break;
-+		case I2S_SP_INSTANCE:
- 		default:
--			rtd->pte_offset = ACP_PLAYBACK_PTE_OFFSET;
-+			switch (adata->asic_type) {
-+			case CHIP_STONEY:
-+				rtd->pte_offset = ACP_ST_PLAYBACK_PTE_OFFSET;
-+				break;
-+			default:
-+				rtd->pte_offset = ACP_PLAYBACK_PTE_OFFSET;
-+			}
-+			rtd->ch1 = SYSRAM_TO_ACP_CH_NUM;
-+			rtd->ch2 = ACP_TO_I2S_DMA_CH_NUM;
-+			rtd->sram_bank = ACP_SRAM_BANK_1_ADDRESS;
-+			rtd->destination = TO_ACP_I2S_1;
-+			rtd->dma_dscr_idx_1 = PLAYBACK_START_DMA_DESCR_CH12;
-+			rtd->dma_dscr_idx_2 = PLAYBACK_START_DMA_DESCR_CH13;
-+			rtd->byte_cnt_high_reg_offset =
-+					mmACP_I2S_TRANSMIT_BYTE_CNT_HIGH;
-+			rtd->byte_cnt_low_reg_offset =
-+					mmACP_I2S_TRANSMIT_BYTE_CNT_LOW;
-+			adata->play_i2ssp_stream = substream;
- 		}
--		rtd->ch1 = SYSRAM_TO_ACP_CH_NUM;
--		rtd->ch2 = ACP_TO_I2S_DMA_CH_NUM;
--		rtd->sram_bank = ACP_SRAM_BANK_1_ADDRESS;
--		rtd->destination = TO_ACP_I2S_1;
--		rtd->dma_dscr_idx_1 = PLAYBACK_START_DMA_DESCR_CH12;
--		rtd->dma_dscr_idx_2 = PLAYBACK_START_DMA_DESCR_CH13;
--		rtd->byte_cnt_high_reg_offset =
--				mmACP_I2S_TRANSMIT_BYTE_CNT_HIGH;
--		rtd->byte_cnt_low_reg_offset = mmACP_I2S_TRANSMIT_BYTE_CNT_LOW;
- 	} else {
--		switch (adata->asic_type) {
--		case CHIP_STONEY:
--			rtd->pte_offset = ACP_ST_CAPTURE_PTE_OFFSET;
--			rtd->sram_bank = ACP_SRAM_BANK_2_ADDRESS;
-+		switch (rtd->i2s_instance) {
-+		case I2S_BT_INSTANCE:
-+			rtd->pte_offset = ACP_ST_BT_CAPTURE_PTE_OFFSET;
-+			rtd->ch1 = ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM;
-+			rtd->ch2 = I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM;
-+			rtd->sram_bank = ACP_SRAM_BANK_4_ADDRESS;
-+			rtd->destination = FROM_BLUETOOTH;
-+			rtd->dma_dscr_idx_1 = CAPTURE_START_DMA_DESCR_CH10;
-+			rtd->dma_dscr_idx_2 = CAPTURE_START_DMA_DESCR_CH11;
-+			rtd->byte_cnt_high_reg_offset =
-+					mmACP_I2S_BT_RECEIVE_BYTE_CNT_HIGH;
-+			rtd->byte_cnt_low_reg_offset =
-+					mmACP_I2S_BT_RECEIVE_BYTE_CNT_LOW;
-+			adata->capture_i2sbt_stream = substream;
- 			break;
-+		case I2S_SP_INSTANCE:
- 		default:
- 			rtd->pte_offset = ACP_CAPTURE_PTE_OFFSET;
--			rtd->sram_bank = ACP_SRAM_BANK_5_ADDRESS;
-+			rtd->ch1 = ACP_TO_SYSRAM_CH_NUM;
-+			rtd->ch2 = I2S_TO_ACP_DMA_CH_NUM;
-+			switch (adata->asic_type) {
-+			case CHIP_STONEY:
-+				rtd->pte_offset = ACP_ST_CAPTURE_PTE_OFFSET;
-+				rtd->sram_bank = ACP_SRAM_BANK_2_ADDRESS;
-+				break;
-+			default:
-+				rtd->pte_offset = ACP_CAPTURE_PTE_OFFSET;
-+				rtd->sram_bank = ACP_SRAM_BANK_5_ADDRESS;
-+			}
-+			rtd->destination = FROM_ACP_I2S_1;
-+			rtd->dma_dscr_idx_1 = CAPTURE_START_DMA_DESCR_CH14;
-+			rtd->dma_dscr_idx_2 = CAPTURE_START_DMA_DESCR_CH15;
-+			rtd->byte_cnt_high_reg_offset =
-+					mmACP_I2S_RECEIVED_BYTE_CNT_HIGH;
-+			rtd->byte_cnt_low_reg_offset =
-+					mmACP_I2S_RECEIVED_BYTE_CNT_LOW;
-+			adata->capture_i2ssp_stream = substream;
- 		}
--		rtd->ch1 = ACP_TO_SYSRAM_CH_NUM;
--		rtd->ch2 = I2S_TO_ACP_DMA_CH_NUM;
--		rtd->destination = FROM_ACP_I2S_1;
--		rtd->dma_dscr_idx_1 = CAPTURE_START_DMA_DESCR_CH14;
--		rtd->dma_dscr_idx_2 = CAPTURE_START_DMA_DESCR_CH15;
--		rtd->byte_cnt_high_reg_offset =
--				mmACP_I2S_RECEIVED_BYTE_CNT_HIGH;
--		rtd->byte_cnt_low_reg_offset = mmACP_I2S_RECEIVED_BYTE_CNT_LOW;
- 	}
- 
- 	size = params_buffer_bytes(params);
-@@ -999,24 +1112,39 @@ static int acp_dma_close(struct snd_pcm_substream *substream)
- 	struct audio_drv_data *adata = dev_get_drvdata(component->dev);
- 
- 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		adata->play_i2ssp_stream = NULL;
--		/*
--		 * For Stoney, Memory gating is disabled,i.e SRAM Banks
--		 * won't be turned off. The default state for SRAM banks is ON.
--		 * Setting SRAM bank state code skipped for STONEY platform.
--		 * added condition checks for Carrizo platform only
--		 */
--		if (adata->asic_type != CHIP_STONEY) {
--			for (bank = 1; bank <= 4; bank++)
--				acp_set_sram_bank_state(adata->acp_mmio, bank,
--							false);
-+		switch (rtd->i2s_instance) {
-+		case I2S_BT_INSTANCE:
-+			adata->play_i2sbt_stream = NULL;
-+			break;
-+		case I2S_SP_INSTANCE:
-+		default:
-+			adata->play_i2ssp_stream = NULL;
-+			/*
-+			 * For Stoney, Memory gating is disabled,i.e SRAM Banks
-+			 * won't be turned off. The default state for SRAM banks
-+			 * is ON.Setting SRAM bank state code skipped for STONEY
-+			 * platform. Added condition checks for Carrizo platform
-+			 * only.
-+			 */
-+			if (adata->asic_type != CHIP_STONEY) {
-+				for (bank = 1; bank <= 4; bank++)
-+					acp_set_sram_bank_state(adata->acp_mmio,
-+								bank, false);
-+			}
- 		}
- 	} else  {
--		adata->capture_i2ssp_stream = NULL;
--		if (adata->asic_type != CHIP_STONEY) {
--			for (bank = 5; bank <= 8; bank++)
--				acp_set_sram_bank_state(adata->acp_mmio, bank,
--							false);
-+		switch (rtd->i2s_instance) {
-+		case I2S_BT_INSTANCE:
-+			adata->capture_i2sbt_stream = NULL;
-+			break;
-+		case I2S_SP_INSTANCE:
-+		default:
-+			adata->capture_i2ssp_stream = NULL;
-+			if (adata->asic_type != CHIP_STONEY) {
-+				for (bank = 5; bank <= 8; bank++)
-+					acp_set_sram_bank_state(adata->acp_mmio,
-+								bank, false);
-+			}
- 		}
- 	}
- 
-@@ -1024,7 +1152,8 @@ static int acp_dma_close(struct snd_pcm_substream *substream)
- 	 * Disable ACP irq, when the current stream is being closed and
- 	 * another stream is also not active.
- 	 */
--	if (!adata->play_i2ssp_stream && !adata->capture_i2ssp_stream)
-+	if (!adata->play_i2ssp_stream && !adata->capture_i2ssp_stream &&
-+	    !adata->play_i2sbt_stream && !adata->capture_i2sbt_stream)
- 		acp_reg_write(0, adata->acp_mmio, mmACP_EXTERNAL_INTR_ENB);
- 	kfree(rtd);
- 	return 0;
-@@ -1078,6 +1207,8 @@ static int acp_audio_probe(struct platform_device *pdev)
- 
- 	audio_drv_data->play_i2ssp_stream = NULL;
- 	audio_drv_data->capture_i2ssp_stream = NULL;
-+	audio_drv_data->play_i2sbt_stream = NULL;
-+	audio_drv_data->capture_i2sbt_stream = NULL;
- 
- 	audio_drv_data->asic_type =  *pdata;
- 
-@@ -1134,6 +1265,7 @@ static int acp_pcm_resume(struct device *dev)
+@@ -320,13 +320,11 @@ static void config_acp_dma(void __iomem *acp_mmio,
+ 			   struct audio_substream_data *rtd,
+ 			   u32 asic_type)
  {
- 	u16 bank;
- 	int status;
-+	struct audio_substream_data *rtd;
- 	struct audio_drv_data *adata = dev_get_drvdata(dev);
+-	u32 pte_offset, sram_bank;
++	u32 sram_bank;
  
- 	status = acp_init(adata->acp_mmio, adata->asic_type);
-@@ -1153,9 +1285,8 @@ static int acp_pcm_resume(struct device *dev)
- 				acp_set_sram_bank_state(adata->acp_mmio, bank,
- 							true);
+-	if (rtd->direction == SNDRV_PCM_STREAM_PLAYBACK) {
+-		pte_offset = ACP_PLAYBACK_PTE_OFFSET;
++	if (rtd->direction == SNDRV_PCM_STREAM_PLAYBACK)
+ 		sram_bank = ACP_SHARED_RAM_BANK_1_ADDRESS;
+-	} else {
+-		pte_offset = ACP_CAPTURE_PTE_OFFSET;
++	else {
+ 		switch (asic_type) {
+ 		case CHIP_STONEY:
+ 			sram_bank = ACP_SHARED_RAM_BANK_3_ADDRESS;
+@@ -336,10 +334,10 @@ static void config_acp_dma(void __iomem *acp_mmio,
  		}
--		config_acp_dma(adata->acp_mmio,
--			       adata->play_i2ssp_stream->runtime->private_data,
--			       adata->asic_type);
-+		rtd = adata->play_i2ssp_stream->runtime->private_data;
-+		config_acp_dma(adata->acp_mmio, rtd, adata->asic_type);
  	}
- 	if (adata->capture_i2ssp_stream &&
- 	    adata->capture_i2ssp_stream->runtime) {
-@@ -1164,9 +1295,20 @@ static int acp_pcm_resume(struct device *dev)
- 				acp_set_sram_bank_state(adata->acp_mmio, bank,
- 							true);
- 		}
--		config_acp_dma(adata->acp_mmio,
--			       adata->capture_i2ssp_stream->runtime->private_data,
--			       adata->asic_type);
-+		rtd =  adata->capture_i2ssp_stream->runtime->private_data;
-+		config_acp_dma(adata->acp_mmio, rtd, adata->asic_type);
-+	}
-+	if (adata->asic_type != CHIP_CARRIZO) {
-+		if (adata->play_i2sbt_stream &&
-+		    adata->play_i2sbt_stream->runtime) {
-+			rtd = adata->play_i2sbt_stream->runtime->private_data;
-+			config_acp_dma(adata->acp_mmio, rtd, adata->asic_type);
-+		}
-+		if (adata->capture_i2sbt_stream &&
-+		    adata->capture_i2sbt_stream->runtime) {
-+			rtd = adata->capture_i2sbt_stream->runtime->private_data;
-+			config_acp_dma(adata->acp_mmio, rtd, adata->asic_type);
-+		}
+ 	acp_pte_config(acp_mmio, rtd->pg, rtd->num_of_pages,
+-		       pte_offset);
++		       rtd->pte_offset);
+ 	/* Configure System memory <-> ACP SRAM DMA descriptors */
+ 	set_acp_sysmem_dma_descriptors(acp_mmio, rtd->size,
+-				       rtd->direction, pte_offset,
++				       rtd->direction, rtd->pte_offset,
+ 				       rtd->ch1, sram_bank,
+ 				       rtd->dma_dscr_idx_1, asic_type);
+ 	/* Configure ACP SRAM <-> I2S DMA descriptors */
+@@ -788,6 +786,13 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
  	}
- 	acp_reg_write(1, adata->acp_mmio, mmACP_EXTERNAL_INTR_ENB);
- 	return 0;
+ 
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
++		switch (adata->asic_type) {
++		case CHIP_STONEY:
++			rtd->pte_offset = ACP_ST_PLAYBACK_PTE_OFFSET;
++			break;
++		default:
++			rtd->pte_offset = ACP_PLAYBACK_PTE_OFFSET;
++		}
+ 		rtd->ch1 = SYSRAM_TO_ACP_CH_NUM;
+ 		rtd->ch2 = ACP_TO_I2S_DMA_CH_NUM;
+ 		rtd->destination = TO_ACP_I2S_1;
+@@ -797,6 +802,13 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
+ 				mmACP_I2S_TRANSMIT_BYTE_CNT_HIGH;
+ 		rtd->byte_cnt_low_reg_offset = mmACP_I2S_TRANSMIT_BYTE_CNT_LOW;
+ 	} else {
++		switch (adata->asic_type) {
++		case CHIP_STONEY:
++			rtd->pte_offset = ACP_ST_CAPTURE_PTE_OFFSET;
++			break;
++		default:
++			rtd->pte_offset = ACP_CAPTURE_PTE_OFFSET;
++		}
+ 		rtd->ch1 = ACP_TO_SYSRAM_CH_NUM;
+ 		rtd->ch2 = I2S_TO_ACP_DMA_CH_NUM;
+ 		rtd->destination = FROM_ACP_I2S_1;
 diff --git a/sound/soc/amd/acp.h b/sound/soc/amd/acp.h
-index 62695ede997d..9cd3e96c84d4 100644
+index 82470bc..2f48d1d 100644
 --- a/sound/soc/amd/acp.h
 +++ b/sound/soc/amd/acp.h
-@@ -13,6 +13,8 @@
- /* Playback and Capture Offset for Stoney */
- #define ACP_ST_PLAYBACK_PTE_OFFSET	0x04
- #define ACP_ST_CAPTURE_PTE_OFFSET	0x00
-+#define ACP_ST_BT_PLAYBACK_PTE_OFFSET	0x08
-+#define ACP_ST_BT_CAPTURE_PTE_OFFSET	0x0c
+@@ -10,6 +10,10 @@
+ #define ACP_PLAYBACK_PTE_OFFSET			10
+ #define ACP_CAPTURE_PTE_OFFSET			0
  
++/* Playback and Capture Offset for Stoney */
++#define ACP_ST_PLAYBACK_PTE_OFFSET	0x04
++#define ACP_ST_CAPTURE_PTE_OFFSET	0x00
++
  #define ACP_GARLIC_CNTL_DEFAULT			0x00000FB4
  #define ACP_ONION_CNTL_DEFAULT			0x00000FB4
-@@ -46,8 +48,13 @@
  
- #define TO_ACP_I2S_1   0x2
- #define TO_ACP_I2S_2   0x4
-+#define TO_BLUETOOTH   0x3
- #define FROM_ACP_I2S_1 0xa
- #define FROM_ACP_I2S_2 0xb
-+#define FROM_BLUETOOTH 0xb
-+
-+#define I2S_SP_INSTANCE                 0x01
-+#define I2S_BT_INSTANCE                 0x02
- 
- #define ACP_TILE_ON_MASK                0x03
- #define ACP_TILE_OFF_MASK               0x02
-@@ -68,6 +75,14 @@
- #define ACP_TO_SYSRAM_CH_NUM 14
- #define I2S_TO_ACP_DMA_CH_NUM 15
- 
-+/* Playback DMA Channels for I2S BT instance */
-+#define SYSRAM_TO_ACP_BT_INSTANCE_CH_NUM  8
-+#define ACP_TO_I2S_DMA_BT_INSTANCE_CH_NUM 9
-+
-+/* Capture DMA Channels for I2S BT Instance */
-+#define ACP_TO_SYSRAM_BT_INSTANCE_CH_NUM 10
-+#define I2S_TO_ACP_DMA_BT_INSTANCE_CH_NUM 11
-+
- #define NUM_DSCRS_PER_CHANNEL 2
- 
- #define PLAYBACK_START_DMA_DESCR_CH12 0
-@@ -80,9 +95,23 @@
- #define CAPTURE_START_DMA_DESCR_CH15 6
- #define CAPTURE_END_DMA_DESCR_CH15 7
- 
-+/* I2S BT Instance DMA Descriptors */
-+#define PLAYBACK_START_DMA_DESCR_CH8 8
-+#define PLAYBACK_END_DMA_DESCR_CH8 9
-+#define PLAYBACK_START_DMA_DESCR_CH9 10
-+#define PLAYBACK_END_DMA_DESCR_CH9 11
-+
-+#define CAPTURE_START_DMA_DESCR_CH10 12
-+#define CAPTURE_END_DMA_DESCR_CH10 13
-+#define CAPTURE_START_DMA_DESCR_CH11 14
-+#define CAPTURE_END_DMA_DESCR_CH11 15
-+
- #define mmACP_I2S_16BIT_RESOLUTION_EN       0x5209
- #define ACP_I2S_MIC_16BIT_RESOLUTION_EN 0x01
- #define ACP_I2S_SP_16BIT_RESOLUTION_EN	0x02
-+#define ACP_I2S_BT_16BIT_RESOLUTION_EN	0x04
-+#define ACP_BT_UART_PAD_SELECT_MASK	0x1
-+
- enum acp_dma_priority_level {
- 	/* 0x0 Specifies the DMA channel is given normal priority */
- 	ACP_DMA_PRIORITY_LEVEL_NORMAL = 0x0,
-@@ -95,6 +124,7 @@ struct audio_substream_data {
- 	struct page *pg;
- 	unsigned int order;
- 	u16 num_of_pages;
-+	u16 i2s_instance;
- 	u16 direction;
- 	u16 ch1;
- 	u16 ch2;
-@@ -113,10 +143,20 @@ struct audio_substream_data {
- struct audio_drv_data {
- 	struct snd_pcm_substream *play_i2ssp_stream;
- 	struct snd_pcm_substream *capture_i2ssp_stream;
-+	struct snd_pcm_substream *play_i2sbt_stream;
-+	struct snd_pcm_substream *capture_i2sbt_stream;
- 	void __iomem *acp_mmio;
- 	u32 asic_type;
- };
- 
-+/*
-+ * this structure used for platform data transfer between machine driver
-+ * and dma driver
-+ */
-+struct acp_platform_info {
-+	u16 i2s_instance;
-+};
-+
- union acp_dma_count {
- 	struct {
- 	u32 low;
+@@ -90,6 +94,7 @@ struct audio_substream_data {
+ 	u16 destination;
+ 	u16 dma_dscr_idx_1;
+ 	u16 dma_dscr_idx_2;
++	u32 pte_offset;
+ 	u32 byte_cnt_high_reg_offset;
+ 	u32 byte_cnt_low_reg_offset;
+ 	uint64_t size;
 -- 
-2.17.0
+2.7.4
