@@ -1,85 +1,91 @@
-Return-Path: <fthain@telegraphics.com.au>
-X-Google-Smtp-Source: AB8JxZpJDz7SLQtZTVljs77bV2rDsJlSIVE2HuX+my4fSZH4ILut5SHRh47qkA9/oI1ESJSecQs3
-ARC-Seal: i=1; a=rsa-sha256; t=1525766389; cv=none;
-        d=google.com; s=arc-20160816;
-        b=yf5EMelVo9jOMNoT4sec0w33YrTXCxpPWz+zX7hXaUJImDN+wCJs9HIulaS6nDcoDQ
-         BIbSOEk+rS9KuhnfrbA2Dcy1qGEzXmFaaJogWR3lFMdaOKBHKK9Z6kU7hnh/L3wJVrAZ
-         xqeOUdFbMFPnjP4XuEr5OyS7q+xohGxhrERbz6dPPLD25nCYbD6TsSEvPyVncNUft0EK
-         NKF4ytPgN2QmeoKT3/dOEiTbKT67NcB7Cy4sL9ls0h/QFtOAQaWKsnoiVeQhjBs9P7xP
-         6fgOJy2bfeAZbuj145fLlNkoCXtvqXZbEIW0+i62dNrdvKmhfsRQY1A5OAd0vStloKLP
-         Ebzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:arc-authentication-results;
-        bh=QriWg46DPFNw5k+CwxrcwviWfYW71mWTzfPt2gz+j30=;
-        b=rshB7m+zGymZzVExLmDY8uyCE2/nMIuv6IiuLAVV2rsi11DMPjYCfW/KCalnZDMAlW
-         tMU7zHJ89tlSrZcxJV0d1t9EeKsn6NOZwfg3HjSywHX+WPxw8BhexRAfXQNvOTKX3ovB
-         7P67tXUFFVn0IGllA+BrvGdNUNvc9RSRLPnCUr9KKZ4TPg+CvXRb5KW+RaBk7GzWfo5J
-         REm/0bQXli9pJZl6RIXFq6DvjUUqtBxbT7np4GQKMMowO4gMBw9ZZwae+QAeXhi4YOm9
-         VcBQQr3DJY8O47gnfKje6n3uBvcQ7f28jnsTuGeD3GySjOEhNe5JGkX9x83uPV/oRE03
-         NrGQ==
-ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: best guess record for domain of fthain@telegraphics.com.au designates 98.124.60.144 as permitted sender) smtp.mailfrom=fthain@telegraphics.com.au
-Authentication-Results: mx.google.com;
-       spf=pass (google.com: best guess record for domain of fthain@telegraphics.com.au designates 98.124.60.144 as permitted sender) smtp.mailfrom=fthain@telegraphics.com.au
-Date: Tue, 8 May 2018 17:59:52 +1000 (AEST)
-From: Finn Thain <fthain@telegraphics.com.au>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-    linux-m68k <linux-m68k@lists.linux-m68k.org>,
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date: Tue, 8 May 2018 09:01:29 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Finn Thain <fthain@telegraphics.com.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] nubus: Unconditionally register bus type
-In-Reply-To: <CAMuHMdUCEc0n1R6-=8fcw2xng7ETPUEs86PhC_0=1jY_AYV6Bg@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1805081638020.30@nippy.intranet>
-References: <5aee5ed3.1c69fb81.19d98.ef06SMTPIN_ADDED_MISSING@mx.google.com> <20180506045530.GA5328@kroah.com> <alpine.LNX.2.21.1805061544550.8@nippy.intranet> <20180506202018.GC8924@kroah.com> <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
- <alpine.LNX.2.21.1805080904460.8@nippy.intranet> <CAMuHMdUCEc0n1R6-=8fcw2xng7ETPUEs86PhC_0=1jY_AYV6Bg@mail.gmail.com>
+Message-ID: <20180508070129.GB4792@kroah.com>
+References: <5aee5ed3.1c69fb81.19d98.ef06SMTPIN_ADDED_MISSING@mx.google.com>
+ <20180506045530.GA5328@kroah.com>
+ <alpine.LNX.2.21.1805061544550.8@nippy.intranet>
+ <20180506202018.GC8924@kroah.com>
+ <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599677433904135296?=
-X-GMAIL-MSGID: =?utf-8?q?1599882017533775174?=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LNX.2.21.1805070930240.8@nippy.intranet>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, 8 May 2018, Geert Uytterhoeven wrote:
-
-> > This example is the sort of flag removal that I had in mind --
-> >
-> > diff --git a/drivers/base/driver.c b/drivers/base/driver.c
-> > index ba912558a510..4ee22fb3db92 100644
-> > --- a/drivers/base/driver.c
-> > +++ b/drivers/base/driver.c
-> > @@ -148,7 +148,8 @@ int driver_register(struct device_driver *drv)
-> >         int ret;
-> >         struct device_driver *other;
-> >
-> > -       BUG_ON(!drv->bus->p);
-> > +       if (!drv->bus->p)
-> > +               return -ENODEV;
+On Mon, May 07, 2018 at 09:57:22AM +1000, Finn Thain wrote:
+> On Sun, 6 May 2018, Greg Kroah-Hartman wrote:
 > 
-> If this is meant to handle the case where the device driver is registered
-> before the bus is registered, while the latter can still happen later,
-> then you want to return -EPROBE_DEFER.
+> > > > Why not just have an "bus is registered" flag in your driver 
+> > > > register function that refuses to let drivers register with the 
+> > > > driver core if it isn't set?
+> > > 
+> > > Perhaps that should happen in the core driver_register() function. 
+> > > BUG_ON is frowned upon, after all. Would that be acceptable?
+> > 
+> > I don't understand what you mean here, perhaps make a patch to show it?
+> > 
 > 
-
-Returning -EAGAIN might be appropriate if driver_register() could 
-reasonably expect the bus to come into existence.
-
-However, a separation of concerns would seem to imply that the driver core 
-has no way of knowing whether that might happen.
-
-Anyway, this discussion is academic. The patch was only meant to 
-illustrate a way to remove code instead of adding it, while achieving the 
-same goal.
-
-I'm not proposing this patch. I don't claim to understand all of the 
-considerations that apply here. I'm certain there are situations where 
-BUG_ON is appropriate. This may be one of those situations.
-
--- 
-
-> Gr{oetje,eeting}s,
+> As an alternative to your suggestion (add flag to avoid the BUG_ON):
 > 
->                         Geert
+> --- a/drivers/base/driver.c
+> +++ b/drivers/base/driver.c
+> @@ -148,7 +148,10 @@ int driver_register(struct device_driver *drv)
+>  	int ret;
+>  	struct device_driver *other;
+>  
+> -	BUG_ON(!drv->bus->p);
+> +	if (!drv->bus->p) {
+> +		WARN_ONCE(1, "Cannot register driver with invalid bus\n");
+> +		return -EPROBE_DEFER;
+> +	}
+>  
+>  	if ((drv->bus->probe && drv->probe) ||
+>  	    (drv->bus->remove && drv->remove) ||
 > 
+> I'm not actually proposing this change; just responding to your question.
 > 
+> For the bug at hand, I still prefer the patch at the beginning of this 
+> thread, because it seems to follow the conventional pattern.
+> 
+> > > I found a few drivers that set a flag the way you describe, which 
+> > > could then be simplified.
+> > > 
+> > > But that pattern is rare. Most buses use the postcore_initcall() 
+> > > pattern, and so my patch took the conventional approach.
+> > 
+> > It all depends on link order, not necessarily the postcore stuff.
+> > 
+> > > > And then fix your linking error, the bus should come first in link 
+> > > > order, before your drivers :)
+> > > > 
+> > > 
+> > > I didn't encounter any errors. How shall I reproduce this?
+> > 
+> > If you have not seen this error, then why change the code at all if it 
+> > is working properly?
+> 
+> I never saw the link error you mentioned.
+> 
+> Please see this thread for one example of how to hit the BUG_ON.
+> https://marc.info/?l=linux-m68k&m=152522162801182&w=2
+> 
+> Another way to trigger the BUG_ON is to set,
+> CONFIG_ATARI=y
+> CONFIG_MAC=y
+> CONFIG_NUBUS=y
+> CONFIG_MAC8390=y
+> and try to boot the result on aranym.
+
+See my other response in this thread describing the link order problem.
+But if you can't resolve this that way, then yes, your original patch
+should be fine.
+
+thanks,
+
+greg k-h
