@@ -1,153 +1,99 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932660AbeEHOic convert rfc822-to-8bit (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:38:32 -0400
-Received: from mga03.intel.com ([134.134.136.65]:18833 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932375AbeEHOi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:38:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,378,1520924400";
-   d="scan'208";a="53429297"
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Jeff Layton <jlayton@redhat.com>, Randy Dunlap <rdunlap@infradead.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        "Tobin C. Harding" <me@tobin.cc>, SeongJae Park <sj38.park@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, Helmut Grohne <h.grohne@intenta.de>
-Subject: Re: [PATCH 05/18] docs: core-api: add cachetlb documentation
-In-Reply-To: <20180507122937.GA5813@andrea>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1525684985.git.mchehab+samsung@kernel.org> <07b59879d34502828467f0190f941e23e08fdc81.1525684985.git.mchehab+samsung@kernel.org> <20180507122937.GA5813@andrea>
-Date: Tue, 08 May 2018 17:40:56 +0300
-Message-ID: <87y3gu43d3.fsf@intel.com>
+        id S932670AbeEHOow (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:44:52 -0400
+Received: from mail-eopbgr670122.outbound.protection.outlook.com ([40.107.67.122]:49997
+        "EHLO CAN01-TO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932141AbeEHOot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 10:44:49 -0400
+From: "Stephen  Bates" <sbates@raithlin.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "Christoph Hellwig" <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Thread-Topic: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+Thread-Index: AQHT21soiBVnp6SJuEuLCiH6kBzTLKQl+8wA//+fHIA=
+Date: Tue, 8 May 2018 14:44:43 +0000
+Message-ID: <64C231F5-DE36-415F-B308-3A423B0BBACB@raithlin.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+ <20180423233046.21476-5-logang@deltatee.com>
+ <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
+In-Reply-To: <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Microsoft-MacOutlook/10.c.0.180410
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=sbates@raithlin.com;
+x-originating-ip: [70.65.250.31]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;YTXPR0101MB1342;7:YbfraJUosNwG9BnIg8AL8xu8kTxj+AndlnUjYiK+T3l6qA7W3eJSdYrLegucmIft27VXhJNP/9w7gxGfiGOWIxOJAJsIdPAHPNyJooxYPPkMf4KSJIZ7dgBvc2SPLK1cZerDhd16o4PIr6ZqVLXPN3GmgZQKAuLWRBSTFojtkCIP5OkLJN3Sgu/1HWJSM8trDclsL4Myg0AqJEqv0AwU1Zs+LEsNItxPu2iujvgcs4B1BCk9+8AR4x6fTT2R5d4R
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(7021125)(5600026)(4534165)(7022125)(4603075)(4627221)(201702281549075)(7048125)(7024125)(7027125)(7028125)(7023125)(2017052603328)(7153060)(7193020);SRVR:YTXPR0101MB1342;
+x-ms-traffictypediagnostic: YTXPR0101MB1342:
+x-microsoft-antispam-prvs: <YTXPR0101MB134255B53CDEB9DBE3BA0579AA9A0@YTXPR0101MB1342.CANPRD01.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(192374486261705);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(2016111802025)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(6072148)(6043046)(201708071742011);SRVR:YTXPR0101MB1342;BCL:0;PCL:0;RULEID:;SRVR:YTXPR0101MB1342;
+x-forefront-prvs: 0666E15D35
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(376002)(366004)(39380400002)(39830400003)(199004)(189003)(2616005)(6246003)(478600001)(26005)(97736004)(486006)(2906002)(102836004)(53936002)(33656002)(6116002)(8666007)(83716003)(6306002)(6512007)(446003)(6436002)(11346002)(476003)(186003)(3846002)(3280700002)(8676002)(86362001)(81166006)(8936002)(7736002)(81156014)(4326008)(76176011)(3660700001)(106356001)(5250100002)(59450400001)(105586002)(2900100001)(6486002)(58126008)(54906003)(66066001)(14454004)(6506007)(966005)(5660300001)(68736007)(305945005)(7416002)(82746002)(229853002)(99286004)(110136005)(25786009)(316002)(36756003)(6606295002);DIR:OUT;SFP:1102;SCL:1;SRVR:YTXPR0101MB1342;H:YTXPR0101MB2045.CANPRD01.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: 8Jo20T3nUsSBOxARSjslBuwdw7spgWcosRprAyb4dO2zCKZcN8XyrkETRf6j0rF1gQlva3j3UzT7OchqVFdW4LktugYdEyQega+CAyX98LMmCQThY8w7Eo0zAhVPSuYIIwvA/NbUEYgyP60vB4HbxMtPDAvd2mQyAvy7ki8aW0SAa4atSoKDI7PutC5VInOD
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A40D802C654F474B960E4CD35F06776A@CANPRD01.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+X-MS-Office365-Filtering-Correlation-Id: da443437-79e3-41a5-aa36-08d5b4f23cf3
+X-OriginatorOrg: raithlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da443437-79e3-41a5-aa36-08d5b4f23cf3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2018 14:44:43.9699
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 18519031-7ff4-4cbb-bbcb-c3252d330f4b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YTXPR0101MB1342
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w48EjPsB019559
 
-On Mon, 07 May 2018, Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
-> On Mon, May 07, 2018 at 06:35:41AM -0300, Mauro Carvalho Chehab wrote:
->> The cachetlb.txt is already in ReST format. So, move it to the
->> core-api guide, where it belongs.
->> 
->> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
->> ---
->>  Documentation/00-INDEX                                | 2 --
->>  Documentation/{cachetlb.txt => core-api/cachetlb.rst} | 0
->>  Documentation/core-api/index.rst                      | 1 +
->>  Documentation/memory-barriers.txt                     | 2 +-
->>  Documentation/translations/ko_KR/memory-barriers.txt  | 2 +-
->>  5 files changed, 3 insertions(+), 4 deletions(-)
->>  rename Documentation/{cachetlb.txt => core-api/cachetlb.rst} (100%)
->
-> I see a few "inline" references to the .txt file in -rc4 (see below):
-> I am not sure if you managed to update them too.
+Hi Dan
 
-Side note, there's scripts/documentation-file-ref-check to grep the
-kernel tree for things that look like file references to Documentation/*
-and complain if they don't exist.
+>    It seems unwieldy that this is a compile time option and not a runtime
+>    option. Can't we have a kernel command line option to opt-in to this
+>    behavior rather than require a wholly separate kernel image?
+  
+I think because of the security implications associated with p2pdma and ACS we wanted to make it very clear people were choosing one (p2pdma) or the other (IOMMU groupings and isolation). However personally I would prefer including the option of a run-time kernel parameter too. In fact a few months ago I proposed a small patch that did just that [1]. It never really went anywhere but if people were open to the idea we could look at adding it to the series.
+  
+> Why is this text added in a follow on patch and not the patch that
+>  introduced the config option?
 
-I get about 350+ hits with that, patches welcome! ;)
+Because the ACS section was added later in the series and this information is associated with that additional functionality.
+    
+> I'm also wondering if that command line option can take a 'bus device
+> function' address of a switch to limit the scope of where ACS is
+> disabled.
 
+By this you mean the address for either a RP, DSP, USP or MF EP below which we disable ACS? We could do that but I don't think it avoids the issue of changes in IOMMU groupings as devices are added/removed. It simply changes the problem from affecting and entire PCI domain to a sub-set of the domain. We can already handle this by doing p2pdma on one RP and normal IOMMU isolation on the other RPs in the system.
 
-BR,
-Jani.
+Stephen
 
-
->
-> ./arch/microblaze/include/asm/cacheflush.h:/* Look at Documentation/cachetlb.txt */
-> ./arch/unicore32/include/asm/cacheflush.h: *	See Documentation/cachetlb.txt for more information.
-> ./arch/arm64/include/asm/cacheflush.h: *	See Documentation/cachetlb.txt for more information. Please note that
-> ./arch/arm/include/asm/cacheflush.h: *	See Documentation/cachetlb.txt for more information.
-> ./arch/xtensa/include/asm/cacheflush.h: * (see also Documentation/cachetlb.txt)
-> ./arch/xtensa/include/asm/cacheflush.h:/* This is not required, see Documentation/cachetlb.txt */
->
->   Andrea
->
->
->> 
->> diff --git a/Documentation/00-INDEX b/Documentation/00-INDEX
->> index 53699c79ee54..04074059bcdc 100644
->> --- a/Documentation/00-INDEX
->> +++ b/Documentation/00-INDEX
->> @@ -76,8 +76,6 @@ bus-devices/
->>  	- directory with info on TI GPMC (General Purpose Memory Controller)
->>  bus-virt-phys-mapping.txt
->>  	- how to access I/O mapped memory from within device drivers.
->> -cachetlb.txt
->> -	- describes the cache/TLB flushing interfaces Linux uses.
->>  cdrom/
->>  	- directory with information on the CD-ROM drivers that Linux has.
->>  cgroup-v1/
->> diff --git a/Documentation/cachetlb.txt b/Documentation/core-api/cachetlb.rst
->> similarity index 100%
->> rename from Documentation/cachetlb.txt
->> rename to Documentation/core-api/cachetlb.rst
->> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
->> index c670a8031786..d4d71ee564ae 100644
->> --- a/Documentation/core-api/index.rst
->> +++ b/Documentation/core-api/index.rst
->> @@ -14,6 +14,7 @@ Core utilities
->>     kernel-api
->>     assoc_array
->>     atomic_ops
->> +   cachetlb
->>     refcount-vs-atomic
->>     cpu_hotplug
->>     idr
->> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
->> index 6dafc8085acc..983249906fc6 100644
->> --- a/Documentation/memory-barriers.txt
->> +++ b/Documentation/memory-barriers.txt
->> @@ -2903,7 +2903,7 @@ is discarded from the CPU's cache and reloaded.  To deal with this, the
->>  appropriate part of the kernel must invalidate the overlapping bits of the
->>  cache on each CPU.
->>  
->> -See Documentation/cachetlb.txt for more information on cache management.
->> +See Documentation/core-api/cachetlb.rst for more information on cache management.
->>  
->>  
->>  CACHE COHERENCY VS MMIO
->> diff --git a/Documentation/translations/ko_KR/memory-barriers.txt b/Documentation/translations/ko_KR/memory-barriers.txt
->> index 0a0930ab4156..081937577c1a 100644
->> --- a/Documentation/translations/ko_KR/memory-barriers.txt
->> +++ b/Documentation/translations/ko_KR/memory-barriers.txt
->> @@ -2846,7 +2846,7 @@ CPU 의 캐시에서 RAM 으로 쓰여지는 더티 캐시 라인에 의해 덮
->>  문제를 해결하기 위해선, 커널의 적절한 부분에서 각 CPU 의 캐시 안의 문제가 되는
->>  비트들을 무효화 시켜야 합니다.
->>  
->> -캐시 관리에 대한 더 많은 정보를 위해선 Documentation/cachetlb.txt 를
->> +캐시 관리에 대한 더 많은 정보를 위해선 Documentation/core-api/cachetlb.rst 를
->>  참고하세요.
->>  
->>  
->> -- 
->> 2.17.0
->> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-doc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+[1] https://marc.info/?l=linux-doc&m=150907188310838&w=2
+    
