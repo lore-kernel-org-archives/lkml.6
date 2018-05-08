@@ -1,106 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932400AbeEHPsl (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:48:41 -0400
-Received: from foss.arm.com ([217.140.101.70]:60258 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755041AbeEHPsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:48:40 -0400
-Subject: Re: [PATCH v2 10/27] dts: bindings: Restrict coresight tmc-etr
- scatter-gather mode
-To: Rob Herring <robh@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        John Horley <john.horley@arm.com>,
-        Mathieu Poirier <matheiu.poirier@linaro.org>,
-        devicetree@vger.kernel.org
-References: <1525165857-11096-1-git-send-email-suzuki.poulose@arm.com>
- <1525165857-11096-11-git-send-email-suzuki.poulose@arm.com>
- <20180501131300.GA31425@rob-hp-laptop>
- <CANLsYkwozU7QC5EeEy46KrEd4X7J9S69SiNg8-GhSSuMkhQrBw@mail.gmail.com>
- <CAL_JsqJDTx2UWN7VdsvDctyXw_rco6Q8NmoWQ5EBx6uhwJu=0Q@mail.gmail.com>
-From: Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <514f69b1-2219-aa83-dfe8-09c26ed4f5b1@arm.com>
-Date: Tue, 8 May 2018 16:48:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932660AbeEHPtc (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:49:32 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:57158 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932127AbeEHPtb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:49:31 -0400
+Date: Tue, 8 May 2018 17:49:25 +0200 (CEST)
+From: Anna-Maria Gleixner <anna-maria@linutronix.de>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc: Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/signal: Remove no longer required
+ irqsave/restore
+In-Reply-To: <20180508145351.GC26088@linux.vnet.ibm.com>
+Message-ID: <alpine.DEB.2.20.1805081744090.2262@hypnos.tec.linutronix.de>
+References: <876043e3xb.fsf@xmission.com> <20180504175241.GT26088@linux.vnet.ibm.com> <87sh77b5w7.fsf@xmission.com> <20180504194510.GW26088@linux.vnet.ibm.com> <87vac39oaf.fsf@xmission.com> <20180504203713.GY26088@linux.vnet.ibm.com> <87k1siaf8y.fsf@xmission.com>
+ <20180505052500.GN26088@linux.vnet.ibm.com> <alpine.DEB.2.21.1805050755240.1685@nanos.tec.linutronix.de> <alpine.DEB.2.20.1805081539060.2262@hypnos.tec.linutronix.de> <20180508145351.GC26088@linux.vnet.ibm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJDTx2UWN7VdsvDctyXw_rco6Q8NmoWQ5EBx6uhwJu=0Q@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/05/18 23:56, Rob Herring wrote:
-> On Thu, May 3, 2018 at 3:32 PM, Mathieu Poirier
-> <mathieu.poirier@linaro.org> wrote:
->> On 1 May 2018 at 07:13, Rob Herring <robh@kernel.org> wrote:
->>> On Tue, May 01, 2018 at 10:10:40AM +0100, Suzuki K Poulose wrote:
->>>> We are about to add the support for ETR builtin scatter-gather mode
->>>> for dealing with large amount of trace buffers. However, on some of
->>>> the platforms, using the ETR SG mode can lock up the system due to
->>>> the way the ETR is connected to the memory subsystem.
->>>>
->>>> In SG mode, the ETR performs READ from the scatter-gather table to
->>>> fetch the next page and regular WRITE of trace data. If the READ
->>>> operation doesn't complete(due to the memory subsystem issues,
->>>> which we have seen on a couple of platforms) the trace WRITE
->>>> cannot proceed leading to issues. So, we by default do not
->>>> use the SG mode, unless it is known to be safe on the platform.
->>>> We define a DT property for the TMC node to specify whether we
->>>> have a proper SG mode.
+On Tue, 8 May 2018, Paul E. McKenney wrote:
 
-
->>>> ---
->>>>   Documentation/devicetree/bindings/arm/coresight.txt | 3 +++
->>>>   drivers/hwtracing/coresight/coresight-tmc.c         | 8 +++++++-
->>>>   2 files changed, 10 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
->>>> index cdd84d0..7c0c8f0 100644
->>>> --- a/Documentation/devicetree/bindings/arm/coresight.txt
->>>> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
->>>> @@ -88,6 +88,9 @@ its hardware characteristcs.
->>>>        * arm,buffer-size: size of contiguous buffer space for TMC ETR
->>>>         (embedded trace router)
->>>>
->>>> +     * scatter-gather: boolean. Indicates that the TMC-ETR can safely
->>>> +       use the SG mode on this system.
->>>> +
->>>
->>> Needs a vendor prefix.
->>>
->>
->> Thinking further on this, do we need to make it device specific as
->> well - something like "arm,etr-scatter-gather"?  That way we don't
->> have to redefine "scatter-gather" for other ARM devices if they happen
->> to need the same property but for different reasons.
+> On Tue, May 08, 2018 at 03:42:25PM +0200, Anna-Maria Gleixner wrote:
+> > On Sat, 5 May 2018, Thomas Gleixner wrote:
+> > 
+> > > On Fri, 4 May 2018, Paul E. McKenney wrote:
+> > > > On Fri, May 04, 2018 at 11:38:37PM -0500, Eric W. Biederman wrote:
+> > > > > > (Me, I would run rcutorture scenario TREE03 for an extended time period
+> > > > > > on b4abf91047cf with your patch applied.
+> > > > 
+> > > > And with lockdep enabled, which TREE03 does not do by default.
+> > > 
+> > > Will run that again to make sure.
+> > 
+> > I ran the rcutorture scenario TREE03 for 4 hours with the above
+> > described setup. It was successful and without any lockdep splats.
 > 
-> No. If we had a bunch of cases, then we'd probably want to have just
-> 'scatter-gather'.
-
-Does it mean "arm,scatter-gather" ? If we ever wanted to add the device
-specific information, I would prefer to go with "arm,tmc-scatter-gather"
-and not "etr-scatter-gather". They both could mean different things.
-
-> 
-> BTW, if SG had already been supported, then I'd say this is a quirk
-> and we should invert this property. Otherwise, you'd be disabling once
-> enabled SG and require working platforms to update their dtb. Of
-> course, I shouldn't really let the state of an OS driver influence the
-> DT binding.
+> Thank you for the testing, Anna-Maria!  If you give them a Tested-by,
+> I will give them an ack.  ;-)
 > 
 
-The SG support is added with this series. So, the OS has never made use
-of the feature.
+If it is ok to give a Tested-by to the patch I wrote, I will do this
+to get your ack :)
 
-Suzuki
+Tested-by: Anna-Maria Gleixner <anna-maria@linutronix.de>
