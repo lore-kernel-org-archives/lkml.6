@@ -1,68 +1,137 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755796AbeEHVGy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:06:54 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:57925 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755342AbeEHVGx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:06:53 -0400
-To: tytso@mit.edu
-Cc: syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com, axboe@kernel.dk,
-        syzkaller-bugs@googlegroups.com, jack@suse.cz, gmazyland@gmail.com,
-        dvyukov@google.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: general protection fault in lo_ioctl (2)
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <000000000000cbaaf6056b341859@google.com>
-        <CACT4Y+bTo34q4=7X8zGL_XVOGoYd7fqhfAbCAWUxsr-N96Kyxw@mail.gmail.com>
-        <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
-        <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
-        <20180508123730.GH999@thunk.org>
-In-Reply-To: <20180508123730.GH999@thunk.org>
-Message-Id: <201805090606.IBH69745.SOQVMFOOFHtFJL@I-love.SAKURA.ne.jp>
-X-Mailer: Winbiff [Version 2.51 PL2]
-X-Accept-Language: ja,en,zh
-Date: Wed, 9 May 2018 06:06:50 +0900
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        id S1755958AbeEHVHn (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:07:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751533AbeEHVHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:07:42 -0400
+Date: Tue, 8 May 2018 17:07:39 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thomas Tai <thomas.tai@oracle.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
+Subject: Re: [PATCH V2] PCI/AER: add pcie TLP header information in the
+ tracepoint
+Message-ID: <20180508170739.1436c873@gandalf.local.home>
+In-Reply-To: <1525809420-30576-2-git-send-email-thomas.tai@oracle.com>
+References: <1525809420-30576-1-git-send-email-thomas.tai@oracle.com>
+        <1525809420-30576-2-git-send-email-thomas.tai@oracle.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Theodore Y. Ts'o wrote:
-> On Tue, May 08, 2018 at 08:05:12PM +0900, Tetsuo Handa wrote:
-> > 
-> > So, it is time to think how to solve this race condition, as well as how to solve
-> > lockdep's deadlock warning (and I guess that syzbot is actually hitting deadlocks).
-> > An approach which serializes loop operations using global lock was proposed at
-> > https://groups.google.com/d/msg/syzkaller-bugs/2Rw8-OM6IbM/PzdobV8kAgAJ .
-> > Please respond...
+On Tue,  8 May 2018 15:57:00 -0400
+Thomas Tai <thomas.tai@oracle.com> wrote:
+
+> When a PCIe AER occurs, the TLP header information is
+> printed in the kernel message but it is missing from
+> the tracepoint. A userspace program can use this information
+> in the tracepoint to better analyze problems.
 > 
-> I'm looking at your patch which you proposed on this, and the locking
-> architecture still looks way too complex.  Things like
-> loop_mutex_owner, and all of the infrastructure around
-> lo->ioctl_in_progress should be removed, if at all possible.
-
-The patch in the above link no longer uses "lo->ioctl_in_progress".
-You looked at previous version rather than current version.
-
+> To enable the tracepoint:
+> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
 > 
-> I believe it should be possible to do things with a single global
-> mutex, some code refactoring, and some unlocked versions of some of
-> the functions.
-
-The patch in the above link uses single global mutex "loop_mutex".
-
+> Example tracepoint output:
+> cat /sys/kernel/debug/tracing/trace
+> aer_event: 0000:01:00.0
+> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
+> TLP Header={0x0,0x1,0x2,0x3}
 > 
-> Again, this requires root, and it requires someone deliberately trying
-> to induce a race.  So "it's time" is not necessarily the priority I
-> would set for this item.  But if we are going to fix it, let's fix it
-> right, and not make the code more complex and less maintainable, all
-> in the name of trying to make a rare, not-likely-to-happen-in-real-life
-> syzbot reported problem to go away.
+> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+> ---
+>  drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
+>  include/ras/ras_event.h                | 22 ++++++++++++++++++----
+>  2 files changed, 20 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> index cfc89dd..fd49a8d 100644
+> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
+> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
+> @@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
+>  		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
+>  
+>  	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
+> -			info->severity);
+> +			info->severity, info->tlp_header_valid, &info->tlp);
+>  }
+>  
+>  void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
+> @@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
+>  		__print_tlp_header(dev, &aer->header_log);
+>  
+>  	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
+> -			aer_severity);
+> +			aer_severity, tlp_header_valid, &aer->header_log);
+>  }
+>  #endif
+> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+> index 9c68986..f73b168 100644
+> --- a/include/ras/ras_event.h
+> +++ b/include/ras/ras_event.h
+> @@ -298,30 +298,44 @@
+>  TRACE_EVENT(aer_event,
+>  	TP_PROTO(const char *dev_name,
+>  		 const u32 status,
+> -		 const u8 severity),
+> +		 const u8 severity,
+> +		 const u8 tlp_header_valid,
+> +		 struct aer_header_log_regs *tlp),
+>  
+> -	TP_ARGS(dev_name, status, severity),
+> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
+>  
+>  	TP_STRUCT__entry(
+>  		__string(	dev_name,	dev_name	)
+>  		__field(	u32,		status		)
+>  		__field(	u8,		severity	)
+> +		__field(	u8, 		tlp_header_valid)
+> +		__array(	u32, 		tlp_header, 4	)
+>  	),
+>  
+>  	TP_fast_assign(
+>  		__assign_str(dev_name, dev_name);
+>  		__entry->status		= status;
+>  		__entry->severity	= severity;
+> +		__entry->tlp_header_valid = tlp_header_valid;
+> +		if (__entry->tlp_header_valid) {
 
-While NULL pointer dereference would be rare, deadlocks might not be rare
-enough to postpone the patch. Deadlocks can cause pile of false-positive
-hung task reports and can prevent syzbot from finding other bugs. That's
-why I say "it is time to think".
+Although the compiler will probably optimize it anyway, but you
+probably should have it be:
+
+		if (tlp_header_valid) {
+
+because why add the extra dereference.
+
+> +			__entry->tlp_header[0] = tlp->dw0;
+> +			__entry->tlp_header[1] = tlp->dw1;
+> +			__entry->tlp_header[2] = tlp->dw2;
+> +			__entry->tlp_header[3] = tlp->dw3;
+> +		}
+>  	),
+>  
+> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
+> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
+>  		__get_str(dev_name),
+>  		__entry->severity == AER_CORRECTABLE ? "Corrected" :
+>  			__entry->severity == AER_FATAL ?
+>  			"Fatal" : "Uncorrected, non-fatal",
+>  		__entry->severity == AER_CORRECTABLE ?
+>  		__print_flags(__entry->status, "|", aer_correctable_errors) :
+> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
+> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
+> +		__entry->tlp_header_valid ?
+> +			__print_array(__entry->tlp_header, 4, 4) :
+> +			"Not available")
+
+The rest looks fine to me.
+
+-- Steve
+
+>  );
+>  
+>  /*
