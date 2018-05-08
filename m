@@ -1,29 +1,29 @@
 Return-Path: <mcgrof@kernel.org>
-X-Google-Smtp-Source: AB8JxZpuXLDKFUGt6ZFrxfC+88TYsLuKWgvuNGRBoOOKUd9oE7G32Xt64KYljziJELx8ePldViAk
-ARC-Seal: i=1; a=rsa-sha256; t=1525803177; cv=none;
+X-Google-Smtp-Source: AB8JxZqKV0mH0Bgbga8X2bRhatGRSHdwOos+cIDimT1LcwnQC4g1ArjqkDthfKsyWSZpGKVAUmR5
+ARC-Seal: i=1; a=rsa-sha256; t=1525803175; cv=none;
         d=google.com; s=arc-20160816;
-        b=S618vbUEKnFGwfmbyhJgfQfTwHziQ6naksl1tgjh8FKv0tWmmfBQdcU5632JCaJYUR
-         G+eLApi9KKgxPt4Yv8zabQkcvtFs1ghZvQ8XSHM8Yci5wQmvB3HErip3wB/jqvArf8mk
-         hF+90i+4wm1CViiCylo0582j09uIwpN/huL2P2prnJPBeVcQ5Q+2wErOMQs3SiCJ2ErK
-         UN6xYZa9f3J7hTJBRnZcZZO4J6vv1PovuLsGU5JXaPd4jM8T9CX4GVWtyOOgmfNKz9qY
-         hTcBeEZVVy5DjPSCypa8nF/7f0HZJpFMB90oWcDcQJJo03Eo1yVWVVjdSc9a+vKU/vhv
-         Fekg==
+        b=AHts8Xn6Jj5dDK5sY798pU32aSP6jXjMCEJvuj1Zy51j3UVkigX9ix1oQA9IfFOtwX
+         S5cuKMxGNaM9DK6Lyt7GQmcUppkEDKocGY8g5UOWEeWe+38d+e3f6NR+vMzcBzT6OL6T
+         YPXLM+Yi7BBqDGKZJNScoa0pMOrgD2JdPdczdKgSKBu90o5ykwLNtNRKTV6cpz3lfOKK
+         7HZySnlpEy2p0+fY5es4BVdUG9WNxx6VY1jjf9ay5OCJFb0bXiNkFtIiRlsZrKkmXvy4
+         154O76eExIwlyR0OO333HT4lsFsudi4F+2zbR8XtnNioqyiY9W5GF39c3C/trn1Gt/J1
+         s8ZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=references:in-reply-to:message-id:date:subject:cc:to:from
          :dkim-signature:arc-authentication-results;
-        bh=N2w39fn0qSCONAahVlt03Xn4D3c00ai389PcHOx8/pA=;
-        b=eM+QMt+2xmVy72XhuHg2M/0OG0LzZjly58ux/Z0eT72pYA2/S5AxD2r9Sd4YWzZlnG
-         MeSFUEq5naboHu/1nJwlOxZsj5dRBXWxxEDL6KZ9a48fKrgGh4NslT/sRGYUYvtmUjbB
-         ymP2lcfHPavcevHxPT6z4W04c5obn3aYqRyBYHTDoPkByLGphYmTVn9NME7OfV5REQz9
-         06/H6ABIoThgPfNUI0J1fXG6V9mZwx9SAtlDRjVYJPfeF6RipKQ/kdFc/RJY7zJDB2fd
-         zeLZU5mjWBNIHs+aqwTDtxvrU1rqVwcu6dcAPrXTPAx7BzNV+n833FSrH/G8Oj+1hcLN
-         ZW9g==
+        bh=SycFKByadZOBIFiABBwJyKsDAIYtuUKuKoy4hFK4v9o=;
+        b=b0WhJx4onUoBnPnGvJNponHHlpn5beIitlZCCiKnbZA7Y2jNHBY/i42Rc48OZtALes
+         MQNTh3bBQdbKvTLKE+gDhTfzY22gzIvhCe1YZxxC1qzGJZKfspwBSj8f4mnd8uPPQwFq
+         Q8BMOejhOpkW1EhOdugTRLtXKCeVi7STM1B16XqUZLN8HO6cFiX67Y7BfSFG3qxGGGjr
+         owZ6Y9EylE9lOusXwJlkypFlxE9cDlagbeu5Au/eUx67PTXYhoX6fuS6F/caSw+Z5+ak
+         JIg7GX7ozG9cD54qsbYh9HyZRivR583govf0Rm2qcooAQPyf7DUwOMSEi0jQO3DKJQ7k
+         tsxg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=AnLD/m8g;
+       dkim=pass header.i=@kernel.org header.s=default header.b=b8HZj1Ze;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=AnLD/m8g;
+       dkim=pass header.i=@kernel.org header.s=default header.b=b8HZj1Ze;
        spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
        dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
@@ -74,57 +74,114 @@ Cc: akpm@linux-foundation.org,
 	linux-scsi@vger.kernel.org,
 	linux-wireless@vger.kernel.org,
 	netdev@vger.kernel.org,
-	"Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v6 04/13] firmware_loader: document firmware_sysfs_fallback()
-Date: Tue,  8 May 2018 11:12:38 -0700
-Message-Id: <20180508181247.19431-5-mcgrof@kernel.org>
+	"Luis R . Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v6 03/13] firmware: rename fw_sysfs_fallback to firmware_fallback_sysfs()
+Date: Tue,  8 May 2018 11:12:37 -0700
+Message-Id: <20180508181247.19431-4-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508181247.19431-1-mcgrof@kernel.org>
 References: <20180508181247.19431-1-mcgrof@kernel.org>
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599920593079167983?=
-X-GMAIL-MSGID: =?utf-8?q?1599920593079167983?=
+X-GMAIL-THRID: =?utf-8?q?1599920590559255742?=
+X-GMAIL-MSGID: =?utf-8?q?1599920590559255742?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This also sets the expecations for future fallback interfaces, even
-if they are not exported.
+From: Andres Rodriguez <andresx7@gmail.com>
 
+This is done since this call is now exposed through kernel-doc,
+and since this also paves the way for different future types of
+fallback mechanims.
+
+Signed-off-by: Andres Rodriguez <andresx7@gmail.com>
+Acked-by: Luis R. Rodriguez <mcgrof@kernel.org>
+[mcgrof: small coding style changes]
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- drivers/base/firmware_loader/fallback.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/base/firmware_loader/fallback.c |  8 ++++----
+ drivers/base/firmware_loader/fallback.h | 16 ++++++++--------
+ drivers/base/firmware_loader/firmware.h |  2 +-
+ drivers/base/firmware_loader/main.c     |  2 +-
+ 4 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/base/firmware_loader/fallback.c b/drivers/base/firmware_loader/fallback.c
-index 3db9e0f225ac..9169e7b9800c 100644
+index 529f7013616f..3db9e0f225ac 100644
 --- a/drivers/base/firmware_loader/fallback.c
 +++ b/drivers/base/firmware_loader/fallback.c
-@@ -662,6 +662,26 @@ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
+@@ -662,10 +662,10 @@ static bool fw_run_sysfs_fallback(enum fw_opt opt_flags)
  	return fw_force_sysfs_fallback(opt_flags);
  }
  
-+/**
-+ * firmware_fallback_sysfs() - use the fallback mechanism to find firmware
-+ * @fw: pointer to firmware image
-+ * @name: name of firmware file to look for
-+ * @device: device for which firmware is being loaded
-+ * @opt_flags: options to control firmware loading behaviour
-+ * @ret: return value from direct lookup which triggered the fallback mechanism
-+ *
-+ * This function is called if direct lookup for the firmware failed, it enables
-+ * a fallback mechanism through userspace by exposing a sysfs loading
-+ * interface. Userspace is in charge of loading the firmware through the syfs
-+ * loading interface. This syfs fallback mechanism may be disabled completely
-+ * on a system by setting the proc sysctl value ignore_sysfs_fallback to true.
-+ * If this false we check if the internal API caller set the @FW_OPT_NOFALLBACK
-+ * flag, if so it would also disable the fallback mechanism. A system may want
-+ * to enfoce the sysfs fallback mechanism at all times, it can do this by
-+ * setting ignore_sysfs_fallback to false and force_sysfs_fallback to true.
-+ * Enabling force_sysfs_fallback is functionally equivalent to build a kernel
-+ * with CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
-+ **/
- int firmware_fallback_sysfs(struct firmware *fw, const char *name,
- 			    struct device *device,
- 			    enum fw_opt opt_flags,
+-int fw_sysfs_fallback(struct firmware *fw, const char *name,
+-		      struct device *device,
+-		      enum fw_opt opt_flags,
+-		      int ret)
++int firmware_fallback_sysfs(struct firmware *fw, const char *name,
++			    struct device *device,
++			    enum fw_opt opt_flags,
++			    int ret)
+ {
+ 	if (!fw_run_sysfs_fallback(opt_flags))
+ 		return ret;
+diff --git a/drivers/base/firmware_loader/fallback.h b/drivers/base/firmware_loader/fallback.h
+index a3b73a09db6c..21063503e4ea 100644
+--- a/drivers/base/firmware_loader/fallback.h
++++ b/drivers/base/firmware_loader/fallback.h
+@@ -31,10 +31,10 @@ struct firmware_fallback_config {
+ };
+ 
+ #ifdef CONFIG_FW_LOADER_USER_HELPER
+-int fw_sysfs_fallback(struct firmware *fw, const char *name,
+-		      struct device *device,
+-		      enum fw_opt opt_flags,
+-		      int ret);
++int firmware_fallback_sysfs(struct firmware *fw, const char *name,
++			    struct device *device,
++			    enum fw_opt opt_flags,
++			    int ret);
+ void kill_pending_fw_fallback_reqs(bool only_kill_custom);
+ 
+ void fw_fallback_set_cache_timeout(void);
+@@ -43,10 +43,10 @@ void fw_fallback_set_default_timeout(void);
+ int register_sysfs_loader(void);
+ void unregister_sysfs_loader(void);
+ #else /* CONFIG_FW_LOADER_USER_HELPER */
+-static inline int fw_sysfs_fallback(struct firmware *fw, const char *name,
+-				    struct device *device,
+-				    enum fw_opt opt_flags,
+-				    int ret)
++static inline int firmware_fallback_sysfs(struct firmware *fw, const char *name,
++					  struct device *device,
++					  enum fw_opt opt_flags,
++					  int ret)
+ {
+ 	/* Keep carrying over the same error */
+ 	return ret;
+diff --git a/drivers/base/firmware_loader/firmware.h b/drivers/base/firmware_loader/firmware.h
+index 4f433b447367..4c1395f8e7ed 100644
+--- a/drivers/base/firmware_loader/firmware.h
++++ b/drivers/base/firmware_loader/firmware.h
+@@ -20,7 +20,7 @@
+  * @FW_OPT_NOWAIT: Used to describe the firmware request is asynchronous.
+  * @FW_OPT_USERHELPER: Enable the fallback mechanism, in case the direct
+  *	filesystem lookup fails at finding the firmware.  For details refer to
+- *	fw_sysfs_fallback().
++ *	firmware_fallback_sysfs().
+  * @FW_OPT_NO_WARN: Quiet, avoid printing warning messages.
+  * @FW_OPT_NOCACHE: Disables firmware caching. Firmware caching is used to
+  *	cache the firmware upon suspend, so that upon resume races against the
+diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+index 4d11efadb3a4..abdc4e4d55f1 100644
+--- a/drivers/base/firmware_loader/main.c
++++ b/drivers/base/firmware_loader/main.c
+@@ -581,7 +581,7 @@ _request_firmware(const struct firmware **firmware_p, const char *name,
+ 			dev_warn(device,
+ 				 "Direct firmware load for %s failed with error %d\n",
+ 				 name, ret);
+-		ret = fw_sysfs_fallback(fw, name, device, opt_flags, ret);
++		ret = firmware_fallback_sysfs(fw, name, device, opt_flags, ret);
+ 	} else
+ 		ret = assign_fw(fw, device, opt_flags);
+ 
 -- 
 2.17.0
