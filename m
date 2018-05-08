@@ -1,99 +1,246 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754460AbeEHMYm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:24:42 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57620 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751273AbeEHMYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:24:40 -0400
-Subject: Re: WARNING in __mutex_unlock_slowpath
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+35666cba7f0a337e2e79@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-Cc: hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        x86@kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        Cathy Avery <cavery@redhat.com>
-References: <000000000000170595056affab1c@google.com>
- <59d3e273-293d-7597-7d69-b5278318a026@redhat.com>
- <a92c15a3-ac06-c8b8-6f39-a5ad49dc2818@I-love.SAKURA.ne.jp>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7f2ca5eb-a052-bbae-155a-5961e3b0ee61@redhat.com>
-Date: Tue, 8 May 2018 14:24:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1754692AbeEHM0H (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:26:07 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42450 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751520AbeEHM0F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:26:05 -0400
 MIME-Version: 1.0
-In-Reply-To: <a92c15a3-ac06-c8b8-6f39-a5ad49dc2818@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date: Tue, 08 May 2018 17:56:04 +0530
+From: kgunda@codeaurora.org
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH V1 4/5] backlight: qcom-wled: Add support for OVP
+ interrupt handling
+In-Reply-To: <20180507172152.GD2259@tuxbook-pro>
+References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
+ <1525341432-15818-5-git-send-email-kgunda@codeaurora.org>
+ <20180507172152.GD2259@tuxbook-pro>
+Message-ID: <3736480b2712e2dd401fed0a635a25d7@codeaurora.org>
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/2018 23:49, Tetsuo Handa wrote:
-> On 2018/05/08 2:19, Paolo Bonzini wrote:
->>> ------------[ cut here ]------------
->>> DEBUG_LOCKS_WARN_ON(__owner_task(owner) != current)
->>> WARNING: CPU: 0 PID: 4525 at kernel/locking/mutex.c:1032
->>> __mutex_unlock_slowpath+0x62e/0x8a0 kernel/locking/mutex.c:1032
->>> Kernel panic - not syncing: panic_on_warn set ...
->>
->> This doesn't make much sense, unless it's a "generic" memory corruption,
->> but at least the reproducer seems to be simple, just (in pseudocode)
->>
->>   ioctl(kvm_vm_fd, KVM_HYPERV_EVENTFD,
->>         { fd = some_eventfd, conn_id = 0, flags = 0 })
->>   ioctl(kvm_vm_fd, KVM_HYPERV_EVENTFD,
->>         { fd = -1, conn_id = 5, flags = KVM_HYPERV_EVENTFD_DEASSIGN })
->>
+On 2018-05-07 22:51, Bjorn Andersson wrote:
+> On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
 > 
-> This makes much sense if this is use-after-free memory access which was
-> manifested differently due to reallocated after released.
+>> WLED peripheral has over voltage protection(OVP) circuitry and the OVP
+>> fault is notified through an interrupt. Though this fault condition 
+>> rising
+>> is due to an incorrect hardware configuration is mitigated in the 
+>> hardware,
+>> it still needs to be detected and handled. Add support for it.
+>> 
+>> When WLED module is enabled, keep OVP fault interrupt disabled for 10 
+>> ms to
+>> account for soft start delay.
+>> 
+>> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+>> ---
+>>  drivers/video/backlight/qcom-wled.c | 118 
+>> +++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 116 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/drivers/video/backlight/qcom-wled.c 
+>> b/drivers/video/backlight/qcom-wled.c
+>> index 2cfba77..80ae084 100644
+>> --- a/drivers/video/backlight/qcom-wled.c
+>> +++ b/drivers/video/backlight/qcom-wled.c
+>> @@ -23,14 +23,20 @@
+>> 
+>>  /* From DT binding */
+>>  #define WLED_DEFAULT_BRIGHTNESS				2048
+>> -
+>> +#define WLED_SOFT_START_DLY_US				10000
+>>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
+>> 
+>>  /* WLED3 Control registers */
+>>  #define WLED3_CTRL_REG_FAULT_STATUS			0x08
+>> +#define  WLED3_CTRL_REG_ILIM_FAULT_BIT			BIT(0)
+>> +#define  WLED3_CTRL_REG_OVP_FAULT_BIT			BIT(1)
+>> +#define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
+>> +
+>> +#define WLED3_CTRL_REG_INT_RT_STS			0x10
+>> 
+>>  #define WLED3_CTRL_REG_MOD_EN				0x46
+>>  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
+>> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
 > 
->   mutex_lock(&hv->hv_lock);
->   eventfd = idr_remove(&hv->conn_to_evt, conn_id); // <= Memory block containing hv->hv_lock was released by other thread and reallocated by other thread.
->   mutex_unlock(&hv->hv_lock); // <= Hence, __owner_task(owner) != current at this point.
-
-Yes, but hv is part of the "struct kvm" and it should only be freed
-after kvm_vm_fd (in the above pseudocode) is gone, so after both ioctls
-are finished.  Unlike other syzkaller testcases this one doesn't really
-require parallelism.
-
-Paolo
+> "BIT(7)" is not a "bit" it's a "mask", so perhaps you could use the
+> define with that name...which has the same value?
+> 
+Sure. I will change it in next series.
+>> 
+>>  #define WLED3_CTRL_REG_FREQ				0x4c
+>>  #define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
+>> @@ -161,9 +167,12 @@ struct wled {
+>>  	u32 short_count;
+>>  	const int *version;
+>>  	int short_irq;
+>> +	int ovp_irq;
+>>  	bool force_mod_disable;
+>> +	bool ovp_irq_disabled;
+>> 
+>>  	struct wled_config cfg;
+>> +	struct delayed_work ovp_work;
+>>  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
+>>  	int (*wled_sync_toggle)(struct wled *wled);
+>>  };
+>> @@ -209,6 +218,32 @@ static int wled4_set_brightness(struct wled 
+>> *wled, u16 brightness)
+>>  	return 0;
+>>  }
+>> 
+>> +static void wled_ovp_work(struct work_struct *work)
+>> +{
+>> +	u32 val;
+>> +	int rc;
+>> +
+>> +	struct wled *wled = container_of(work,
+>> +					 struct wled, ovp_work.work);
+>> +
+>> +	rc = regmap_read(wled->regmap, wled->ctrl_addr + 
+>> WLED3_CTRL_REG_MOD_EN,
+>> +			 &val);
+>> +	if (rc < 0)
+>> +		return;
+>> +
+>> +	if (val & WLED3_CTRL_REG_MOD_EN_BIT) {
+>> +		if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
+>> +			enable_irq(wled->ovp_irq);
+>> +			wled->ovp_irq_disabled = false;
+>> +		}
+>> +	} else {
+>> +		if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
+>> +			disable_irq(wled->ovp_irq);
+>> +			wled->ovp_irq_disabled = true;
+>> +		}
+>> +	}
+>> +}
+>> +
+>>  static int wled_module_enable(struct wled *wled, int val)
+>>  {
+>>  	int rc;
+>> @@ -220,7 +255,12 @@ static int wled_module_enable(struct wled *wled, 
+>> int val)
+>>  				WLED3_CTRL_REG_MOD_EN,
+>>  				WLED3_CTRL_REG_MOD_EN_MASK,
+>>  				WLED3_CTRL_REG_MOD_EN_MASK);
+>> -	return rc;
+>> +	if (rc < 0)
+>> +		return rc;
+>> +
+>> +	schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
+> 
+> Do you really want to delay the work on disable?
+> 
+> Wouldn't it be better to use a delay worker for the enablement and in
+> the disable case you cancel the work and just disable_irq() directly
+> here.
+> 
+Sure. Will do it in the next series.
+> But more importantly, if this is only related to auto detection, do you
+> really want to enable/disable the ovp_irq after you have detected the
+> string configuration?
+> 
+Ok. This is used for the genuine OVP detection and for the auto 
+detection as well.
+>> +
+>> +	return 0;
+>>  }
+>> 
+>>  static int wled3_sync_toggle(struct wled *wled)
+>> @@ -346,6 +386,36 @@ static irqreturn_t wled_short_irq_handler(int 
+>> irq, void *_wled)
+>>  	return IRQ_HANDLED;
+>>  }
+>> 
+>> +static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
+>> +{
+>> +	struct wled *wled = _wled;
+>> +	int rc;
+>> +	u32 int_sts, fault_sts;
+>> +
+>> +	rc = regmap_read(wled->regmap,
+>> +			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS, &int_sts);
+>> +	if (rc < 0) {
+>> +		dev_err(wled->dev, "Error in reading WLED3_INT_RT_STS rc=%d\n",
+>> +			rc);
+>> +		return IRQ_HANDLED;
+>> +	}
+>> +
+>> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
+>> +			 WLED3_CTRL_REG_FAULT_STATUS, &fault_sts);
+>> +	if (rc < 0) {
+>> +		dev_err(wled->dev, "Error in reading WLED_FAULT_STATUS rc=%d\n",
+>> +			rc);
+>> +		return IRQ_HANDLED;
+>> +	}
+>> +
+>> +	if (fault_sts &
+>> +		(WLED3_CTRL_REG_OVP_FAULT_BIT | WLED3_CTRL_REG_ILIM_FAULT_BIT))
+>> +		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= 
+>> %x\n",
+>> +			int_sts, fault_sts);
+>> +
+> 
+> It's hard to give a good review on this, as the actual logic comes in
+> the next patch. And as these two patches both implement auto detection
+> (without a clear separation) I think you should squash them.
+> Ok. I will squash them in the next series.
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>  static int wled3_setup(struct wled *wled)
+>>  {
+>>  	u16 addr;
+>> @@ -821,6 +891,44 @@ static int wled_configure_short_irq(struct wled 
+>> *wled,
+>>  	return rc;
+>>  }
+>> 
+>> +static int wled_configure_ovp_irq(struct wled *wled,
+>> +				  struct platform_device *pdev)
+>> +{
+>> +	int rc = 0;
+>> +	u32 val;
+>> +
+>> +	if (*wled->version == WLED_PM8941)
+>> +		return 0;
+>> +
+>> +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
+>> +	if (wled->ovp_irq < 0) {
+>> +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
+>> +		return 0;
+>> +	}
+>> +
+>> +	rc = devm_request_threaded_irq(wled->dev, wled->ovp_irq, NULL,
+>> +				       wled_ovp_irq_handler, IRQF_ONESHOT,
+>> +				       "wled_ovp_irq", wled);
+>> +	if (rc < 0) {
+>> +		dev_err(wled->dev, "Unable to request ovp_irq (err:%d)\n",
+>> +			rc);
+> 
+> wled->ovp_irq might be > 0 here which means wled_ovp_work() will find 
+> it
+> valid and call enabled_irq()/disable_irq() on it.
+> 
+Ok. I will make it '0' if the "request_threaded_irq" fails.
+>> +		return 0;
+>> +	}
+>> +
+> 
+> Regards,
+> Bjorn
