@@ -1,115 +1,117 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756034AbeEHXNM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 19:13:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34722 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755975AbeEHXNL (ORCPT
+        id S1756064AbeEHXOa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 19:14:30 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:33954 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755913AbeEHXO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 19:13:11 -0400
-Date: Tue, 8 May 2018 16:13:09 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mel Gorman <mgorman@suse.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, js1304@gmail.com,
-        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
-        Minchan Kim <minchan@kernel.org>, Ye Xiaolong <xiaolong.ye@intel.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
-Message-Id: <20180508161309.f8ef0a4962b1721863902e60@linux-foundation.org>
-In-Reply-To: <20180504103322.2nbadmnehwdxxaso@suse.de>
-References: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
-        <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
-        <20180504103322.2nbadmnehwdxxaso@suse.de>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 8 May 2018 19:14:27 -0400
+X-Google-Smtp-Source: AB8JxZrpjdOrsHyr8yHIIxDPZBO6Kv1zSjk1QgftQlNI6bAR77a0yUglCxXmBUHIU3wRhe1GaoWDrlW+fI/eESdC9EU=
+MIME-Version: 1.0
+In-Reply-To: <20180424202639.19830-1-tycho@tycho.ws>
+References: <20180424202639.19830-1-tycho@tycho.ws>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 8 May 2018 16:14:25 -0700
+X-Google-Sender-Auth: KyOrOiMal08mnUMGHkWX-mGZWuE
+Message-ID: <CAGXu5jLL7NeX+zUNqcYW_LDF87CPg-5Z4R5+FZ5uPDT-sTisng@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] big key: get rid of stack array allocation
+To: Tycho Andersen <tycho@tycho.ws>
+Cc: David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Eric Biggers <ebiggers3@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 May 2018 11:33:22 +0100 Mel Gorman <mgorman@suse.de> wrote:
+On Tue, Apr 24, 2018 at 1:26 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> We're interested in getting rid of all of the stack allocated arrays in the
+> kernel [1]. This patch simply hardcodes the iv length to match that of the
+> hardcoded cipher.
+>
+> [1]: https://lkml.org/lkml/2018/3/7/621
+>
+> v2: hardcode the length of the nonce to be the GCM AES IV length, and do a
+>     sanity check in init(), Eric Biggers
+> v3: * remember to free big_key_aead when sanity check fails
+>     * define a constant for big key IV size so it can be changed along side
+>       the algorithm in the code
+>
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+> CC: David Howells <dhowells@redhat.com>
+> CC: James Morris <jmorris@namei.org>
+> CC: "Serge E. Hallyn" <serge@hallyn.com>
+> CC: Jason A. Donenfeld <Jason@zx2c4.com>
+> CC: Eric Biggers <ebiggers3@gmail.com>
 
-> On Fri, May 04, 2018 at 09:03:02AM +0200, Vlastimil Babka wrote:
-> > > min watermark for NORMAL zone on node 0
-> > > allocation initiated on node 0: 750 + 4096 = 4846
-> > > allocation initiated on node 1: 750 + 0 = 750
-> > > 
-> > > This watermark difference could cause too many numa_miss allocation
-> > > in some situation and then performance could be downgraded.
-> > > 
-> > > Recently, there was a regression report about this problem on CMA patches
-> > > since CMA memory are placed in ZONE_MOVABLE by those patches. I checked
-> > > that problem is disappeared with this fix that uses high_zoneidx
-> > > for classzone_idx.
-> > > 
-> > > http://lkml.kernel.org/r/20180102063528.GG30397@yexl-desktop
-> > > 
-> > > Using high_zoneidx for classzone_idx is more consistent way than previous
-> > > approach because system's memory layout doesn't affect anything to it.
-> > 
-> > So to summarize;
-> > - ac->high_zoneidx is computed via the arcane gfp_zone(gfp_mask) and
-> > represents the highest zone the allocation can use
-> 
-> It's arcane but it was simply a fast-path calculation. A much older
-> definition would be easier to understand but it was slower.
-> 
-> > - classzone_idx was supposed to be the highest zone that the allocation
-> > can use, that is actually available in the system. Somehow that became
-> > the highest zone that is available on the preferred node (in the default
-> > node-order zonelist), which causes the watermark inconsistencies you
-> > mention.
-> > 
-> 
-> I think it *always* was the index of the first preferred zone of a
-> zonelist. The treatment of classzone has changed a lot over the years and
-> I didn't do a historical check but the general intent was always "protect
-> some pages in lower zones". This was particularly important for 32-bit
-> and highmem albeit that is less of a concern today. When it transferred to
-> NUMA, I don't think it ever was seriously considered if it should change
-> as the critical node was likely to be node 0 with all the zones and the
-> remote nodes all used the highest zone. CMA/MOVABLE changed that slightly
-> by allowing the possibility of node0 having a "higher" zone than every
-> other node. When MOVABLE was introduced, it wasn't much of a problem as
-> the purpose of MOVABLE was for systems that dynamically needed to allocate
-> hugetlbfs later in the runtime but for CMA, it was a lot more critical
-> for ordinary usage so this is primarily a CMA thing.
-> 
-> > I don't see a problem with your change. I would be worried about
-> > inflated reserves when e.g. ZONE_MOVABLE doesn't exist, but that doesn't
-> > seem to be the case. My laptop has empty ZONE_MOVABLE and the
-> > ZONE_NORMAL protection for movable is 0.
-> > 
-> > But there had to be some reason for classzone_idx to be like this and
-> > not simple high_zoneidx. Maybe Mel remembers? Maybe it was important
-> > then, but is not anymore? Sigh, it seems to be pre-git.
-> > 
-> 
-> classzone predates my involvement with Linux but I would be less concerneed
-> about what the original intent was and instead ensure that classzone index
-> is consistent, sane and potentially renamed while preserving the intent of
-> "reserve pages in lower zones when an allocation request can use higher
-> zones". While historically the critical intent was to preserve Normal and
-> to a lesser extent DMA on 32-bit systems, there still should be some care
-> of DMA32 so we should not lose that.
-> 
-> With the patch, the allocator looks like it would be fine as just
-> reservations change. I think it's unlikely that CMA usage will result
-> in lowmem starvation.  Compaction becomes a bit weird as classzone index
-> has no special meaning versis highmem and I think it'll be very easy to
-> forget. Similarly, vmscan can reclaim pages from remote nodes and zones
-> that are higher than the original request. That is not likely to be a
-> problem but it's a change in behaviour and easy to miss.
-> 
-> Fundamentally, I find it extremely weird we now have two variables that are
-> essentially the same thing. They should be collapsed into one variable,
-> renamed and documented on what the index means for page allocator,
-> compaction, vmscan and the special casing around CMA.
+Please consider this and patches 2 and 3:
 
-You're all so young ;)
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-classzone was Andrea.  Perhaps he can shed some light upon the
-questions which have been raised?
+James, are these something you can take into your tree?
+
+Thanks!
+
+-Kees
+
+> ---
+>  security/keys/big_key.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/keys/big_key.c b/security/keys/big_key.c
+> index 933623784ccd..2806e70d7f8f 100644
+> --- a/security/keys/big_key.c
+> +++ b/security/keys/big_key.c
+> @@ -22,6 +22,7 @@
+>  #include <keys/user-type.h>
+>  #include <keys/big_key-type.h>
+>  #include <crypto/aead.h>
+> +#include <crypto/gcm.h>
+>
+>  struct big_key_buf {
+>         unsigned int            nr_pages;
+> @@ -85,6 +86,7 @@ struct key_type key_type_big_key = {
+>   * Crypto names for big_key data authenticated encryption
+>   */
+>  static const char big_key_alg_name[] = "gcm(aes)";
+> +#define BIG_KEY_IV_SIZE                GCM_AES_IV_SIZE
+>
+>  /*
+>   * Crypto algorithms for big_key data authenticated encryption
+> @@ -109,7 +111,7 @@ static int big_key_crypt(enum big_key_op op, struct big_key_buf *buf, size_t dat
+>          * an .update function, so there's no chance we'll wind up reusing the
+>          * key to encrypt updated data. Simply put: one key, one encryption.
+>          */
+> -       u8 zero_nonce[crypto_aead_ivsize(big_key_aead)];
+> +       u8 zero_nonce[BIG_KEY_IV_SIZE];
+>
+>         aead_req = aead_request_alloc(big_key_aead, GFP_KERNEL);
+>         if (!aead_req)
+> @@ -425,6 +427,13 @@ static int __init big_key_init(void)
+>                 pr_err("Can't alloc crypto: %d\n", ret);
+>                 return ret;
+>         }
+> +
+> +       if (unlikely(crypto_aead_ivsize(big_key_aead) != BIG_KEY_IV_SIZE)) {
+> +               WARN(1, "big key algorithm changed?");
+> +               ret = -EINVAL;
+> +               goto free_aead;
+> +       }
+> +
+>         ret = crypto_aead_setauthsize(big_key_aead, ENC_AUTHTAG_SIZE);
+>         if (ret < 0) {
+>                 pr_err("Can't set crypto auth tag len: %d\n", ret);
+> --
+> 2.17.0
+>
+
+
+
+-- 
+Kees Cook
+Pixel Security
