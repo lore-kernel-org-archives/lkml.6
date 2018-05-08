@@ -1,44 +1,39 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrdPJehMwA8aOwZvQqENiSG3roV+mpO9mN0wXeMhAX/XEXS2WA+LgHA5VnN8rY50450FSMJ
-ARC-Seal: i=1; a=rsa-sha256; t=1525767372; cv=none;
+X-Google-Smtp-Source: AB8JxZpEU3633sCEEhLT/PqsUh3YMENXiHWtgpduPkbD3EqMMT8sfJXZ27BqGuqBDiQF6nZqAFba
+ARC-Seal: i=1; a=rsa-sha256; t=1525767369; cv=none;
         d=google.com; s=arc-20160816;
-        b=o8+u+uBOWXJVBwvrT51mSJTOzSRPUbyCp3xNw07AJ4c2rguIcqw6vSNboKLTdQ1zAb
-         Htus2sd/jEamEdmW0OY3pYTRKeqS74fCeE+atpz7vy/7ZDCVgLBzmrJ6wyhJ8WpYfnm6
-         p7uCahS6gOukX6yucwy0MM+rTE20egoFEf0xnw38mT2bjRlehUVQfFG3NdsT/eHoSCo2
-         KdT0gOkn4Kg7bx3YWbJoOXN0qIpr77yVrjwdtsOS36tbMW5Bt+koLGvCR+pJIL2rhAEM
-         Uqb3b1Uf+q9OfIA4xPtdOkG4GW82ibWyI/ArSQ2eV58OciLv/yAEZ4xedgpH3cxd5oqi
-         TefQ==
+        b=axEeSqHoA+wmmHASeq5NgwQE81oLP5X27tawfP6SzPdh2WkqmaV3ttuVgX+AbuPSyK
+         +FxaAw/h2S0XH6XeWp9JQCTpGl8/9yQKbmzh2YuvEVEAn8q75eTBbmJyPJPo+AtfKJMc
+         qo9e4WQ5iOidSCOlhCCprbGEo9pvkRLAemDDrJWPszGniDUgDtcOzDsUZxLIU5y9/L1U
+         IsgbLaCS5CphlFg7bNShPaz8zMBlXbW415JDpXBV2c6pyHG6hY6jv+yuQ3VwlDqEIDBA
+         O5uWFxjU5O/ZDM9ht24cyVTKNXxnrOlHCotfTi5HH77OWnuwDLg/ZgAo8kOskqpHziy+
+         DH0A==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=N8qjMYC/dCkmUJZ/LRc9QVFJOdEse6K2Gp8YRaCeAu8=;
-        b=wIC4VHiL9AP1l+Ehl2qXZejBPBk/muW8OsZ/pTnN4+0fIb3rCEKojIBy+s+YpOgz+a
-         +q0bVrt86dkiYsWmUWTBWjqxqZtACHX9bjrJGNCCzDCs8jnHs7pVEttxbFd5eiUq2AR1
-         QFJRVm8ejnP+/HzXcn+zOH58lM0EXSmA/NM7mfcBn/l5yZZQfvGJTyRRvTuUYfbTlAc2
-         ZxnmeQ7ypCPHoc58zPfUeVDLNuiz7L/vr88L3MBbAl3kg5u0dizY0Adh4t6JoTIMUJXo
-         695MfLKVTLL5T9XGGy/Lg7RXrWMegQk9Nu6tZqihXWIrj6jyOxidCfgzyDbXz+Zgsxl0
-         X2eQ==
+        bh=bQxp6qfE9LaEbbVqbgExdFsRha6Km2RLGyrpVXW1xtY=;
+        b=ypa2ohZFqpr1v9JIj8sHwsq7IyvM55GmPiIzrO7Qn5R7XsePRNtJfxXKWHcuzAdJf9
+         DTapnoApqlLrRUKmYdy0EzPfJENQ4vMYgF26N2EXIhrdV7qNomw2U8PoeaVZQ5pikUzI
+         LDK6uQzt/pPURREy6P8Pm4S9FedC6NXS82oBKzdxkSclitWYkrTwQPhbVEGhM85Wud0W
+         8FJ2PoKkwzZDFpIEdS16jnUUGa14fxOhmS1LKbB3EO/HErX27/GFDyzAmeCWmIPoUboY
+         +n2hssmibYddZ13GT24pIc9D1Bs0+74JyKbhbZV06S06u3qQY4DqRYT/m5QhJozdh9t+
+         PWKA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iJOwXbXx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=VP/sSsOM;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=iJOwXbXx;
+       dkim=pass header.i=@kernel.org header.s=default header.b=VP/sSsOM;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Sean Paul <seanpaul@chromium.org>,
-	Maxime Ripard <maxime.ripard@free-electrons.com>,
-	Archit Taneja <architt@codeaurora.org>,
-	Andrzej Hajda <a.hajda@samsung.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 4.14 31/43] drm/bridge: vga-dac: Fix edid memory leak
-Date: Tue,  8 May 2018 10:10:50 +0200
-Message-Id: <20180508074008.818953519@linuxfoundation.org>
+	Thomas Hellstrom <thellstrom@vmware.com>,
+	Deepak Rawat <drawat@vmware.com>,
+	Sinclair Yeh <syeh@vmware.com>
+Subject: [PATCH 4.14 30/43] drm/vmwgfx: Fix a buffer object leak
+Date: Tue,  8 May 2018 10:10:49 +0200
+Message-Id: <20180508074008.683243248@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -48,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882834521782034?=
-X-GMAIL-MSGID: =?utf-8?q?1599883048453591600?=
+X-GMAIL-THRID: =?utf-8?q?1599882831936000482?=
+X-GMAIL-MSGID: =?utf-8?q?1599883045768133448?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -57,40 +52,31 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Thomas Hellstrom <thellstrom@vmware.com>
 
-commit 49ceda9de2da4d1827941d06701f3017c27c1855 upstream.
+commit 13f149d47392782baafd96d54d4e65f3b5ca342f upstream.
 
-edid should be freed once it's finished being used.
+A buffer object leak was introduced when fixing a premature buffer
+object release. Fix this.
 
-Fixes: 56fe8b6f4991 ("drm/bridge: Add RGB to VGA bridge support")
-Cc: Rob Herring <robh@kernel.org>
-Cc: Sean Paul <seanpaul@chromium.org>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Archit Taneja <architt@codeaurora.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: <stable@vger.kernel.org> # v4.9+
-Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180420190007.1572-1-seanpaul@chromium.org
+Cc: <stable@vger.kernel.org>
+Fixes: 73a88250b709 ("Fix a destoy-while-held mutex problem.")
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Reviewed-by: Sinclair Yeh <syeh@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/bridge/dumb-vga-dac.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_kms.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-+++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-@@ -55,7 +55,9 @@ static int dumb_vga_get_modes(struct drm
- 	}
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_kms.c
+@@ -2612,6 +2612,7 @@ void vmw_kms_helper_resource_finish(stru
+ 		vmw_kms_helper_buffer_finish(res->dev_priv, NULL, ctx->buf,
+ 					     out_fence, NULL);
  
- 	drm_mode_connector_update_edid_property(connector, edid);
--	return drm_add_edid_modes(connector, edid);
-+	ret = drm_add_edid_modes(connector, edid);
-+	kfree(edid);
-+	return ret;
- 
- fallback:
- 	/*
++	vmw_dmabuf_unreference(&ctx->buf);
+ 	vmw_resource_unreserve(res, false, NULL, 0);
+ 	mutex_unlock(&res->dev_priv->cmdbuf_mutex);
+ }
