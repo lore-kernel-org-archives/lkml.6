@@ -1,124 +1,203 @@
-Return-Path: <bot@kernelci.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525794302; cv=none;
+Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZqpMKujOx3EtWCLpPaNioD11+xebGQzuwicCSiWpZDyL11NOfTosSe6zO2q9I5mq0qEbkly
+ARC-Seal: i=1; a=rsa-sha256; t=1525767253; cv=none;
         d=google.com; s=arc-20160816;
-        b=Iopr00KL1MyErIrIYa1I4acstrcnT048cPCX9KkkGRhCy7qRDE6ir25frwDM8m7GJX
-         PyDvlV8yHzu5RK5NW8bv8fLNgoXUkz9WQ038rFmyu1N8OQZSZuYN6sj5MMPgmTBPA4Bl
-         PfjCI5PseciLZA7y2kU16pgOYaXdeZRzB9yK9cwUIKUfGk+Vcbzt7V2qIHthYUUzuSeG
-         8kCnQoWey27lw6Xr4aK4BH2MDMYHUyswqmpNerMo0VToBTQAZPqwOO7y9vfdRPl3viYR
-         JABvnC1Y57QubrKXrGKzx4jl+QrbxEz4EU+UhKwmOXY+37cLviFHysiTYZNg8kVXiHiu
-         LJ2Q==
+        b=q/a7bEmjSs8HMhX6XK++OsUlks2pTH1QJrCTrgwPamdPhbEAW9q3rWtRtcPCIRuVzl
+         kWr3r6BnZjAQptEu2hKVrCNbnThJqXYyswsyIpkqYJLIOptzB5Y/EAMK2m39t2T2xSGR
+         fFe/C832uVPd3WyI40WUlyr/oBLPZ9ySUALc5UUXrtJ1X8YSfWBqQP1MoTGI/915mVHD
+         fTuR7LclisrYyMt7W5OEhlyJYIrTQhX2VJm47MiIZMl6kyHeZA3j8/wtjHe2hmPsksVb
+         RhSxqjMA+YjxEkkIqvCP+PgIL3YHtTLPdl0nWF1IGOnwBK1KdkOpKMP9Msdv6JFobOmx
+         OOQg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:from:to:subject:references:in-reply-to:content-transfer-encoding
-         :mime-version:date:message-id:arc-authentication-results;
-        bh=G+fn4hxgzWTqmz/zDKmy/McB3NVTV4EKthsRD4pVlUQ=;
-        b=aUSd6aB5YeoWXx2LXXWTFuNJ6xyMM5xJJDUn6ziF6JAZs47IXV7toRZ9w4AaObTyws
-         WVXL3RZawckR/ni5MJH5zdixdj4AgEEK0HyMIErOyl2pCDhr/EPQ/4eZjp1VL4As8i9B
-         GZwXDzbNLL5MLVN3LCix258cD/USLEGjMTYKe25qX//zAqmp7K1xPjUGpgeyBZ4/u81k
-         rbkqsbieK1rq/MYBR8Q5+VpFEzHv1aYhIMB7pP/ok5EBnkSX09+I/IwGrTML3+ea7PmC
-         2WoXcffRBzjMjGd2JC10MXvz3GWofwpSmeNs8iknG+3rWncN3GEygLf8qoB5MUMC5RhW
-         Ppew==
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=DpiEOoTaj/ZESbKfh+oSMivch2l8NDNnhnfR42Kxj7w=;
+        b=GtbKFx5NaUxPP27rLjKCxJkKCRJjlJL1X580L7lwtYHdzqz3fAgZfU0rmC7R9fVE96
+         SbgmMdlV0MO9KcGZkY6Nl4p1LYOJy+j83XM450rpKwyYmFKhUbWaoa37Cs+AhlBTx5BV
+         LEdEgHHkfJPnRbHnwRB94VUuNKEQ2hOxdgqBMxP74M3da/dui80Q1c1LK0ve1Pu91Lpg
+         RWxqDerzgl3YAtH+rjCEvJLKwLcVuXCYYb6XwRMeEBBYUHrny7RSjDOTWVPY/wNdb9Jb
+         w+eTiE035BxceoAAv2yAgfZh+6KHDF8PITZxo/38uYyY7WkBZV7NJbED3SrwC6NvMtzX
+         S3PQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=sR9kDG26;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of bot@kernelci.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=bot@kernelci.org
-X-Google-Smtp-Source: AB8JxZoMxmABHkylGaaaVMUeTjJ9B/CTpc6Pk/govpNbiIhdZ+x1fJ5XJKCCFyJQCxube178Qg8/Yw==
-Message-ID: <5af1c5fd.1c69fb81.fb7eb.5ee5@mx.google.com>
-Date: Tue, 08 May 2018 08:45:01 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: linux-4.16.y
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.16.7-53-g113b01a62036
+       dkim=pass header.i=@kernel.org header.s=default header.b=sR9kDG26;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	stable@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Howard McLauchlan <hmclauchlan@fb.com>,
+	Josef Bacik <jbacik@fb.com>,
+	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Song Liu <songliubraving@fb.com>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.16 52/52] tracing: Fix bad use of igrab in trace_uprobe.c
+Date: Tue,  8 May 2018 10:10:50 +0200
+Message-Id: <20180508073935.457157327@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
-Subject: Re: [PATCH 4.16 00/52] 4.16.8-stable review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-From: kernelci.org bot <bot@kernelci.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net,
- shuah@kernel.org, patches@kernelci.org, ben.hutchings@codethink.co.uk,
- lkft-triage@lists.linaro.org, stable@vger.kernel.org
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599882803803541095?=
-X-GMAIL-MSGID: =?utf-8?q?1599911286188648256?=
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599882923525854548?=
+X-GMAIL-MSGID: =?utf-8?q?1599882923525854548?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-stable-rc/linux-4.16.y boot: 111 boots: 4 failed, 102 passed with 5 offline=
- (v4.16.7-53-g113b01a62036)
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.16.y/kernel/v4.16.7-53-g113b01a62036/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.16.=
-y/kernel/v4.16.7-53-g113b01a62036/
+------------------
 
-Tree: stable-rc
-Branch: linux-4.16.y
-Git Describe: v4.16.7-53-g113b01a62036
-Git Commit: 113b01a62036d61f7ca3d8e6cff988df81700126
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 56 unique boards, 23 SoC families, 15 builds out of 186
+From: Song Liu <songliubraving@fb.com>
 
-Boot Regressions Detected:
+commit 0c92c7a3c5d416f47b32c5f20a611dfeca5d5f2e upstream.
 
-arm:
+As Miklos reported and suggested:
 
-    multi_v7_defconfig:
-        am335x-boneblack:
-            lab-collabora: failing since 3 days (last pass: v4.16.7-330-g42=
-715b2b2887 - first fail: v4.16.7-2-g3afbe8ca7a94)
-            lab-baylibre-seattle: new failure (last pass: v4.16.7-2-g3afbe8=
-ca7a94)
+  This pattern repeats two times in trace_uprobe.c and in
+  kernel/events/core.c as well:
 
-arm64:
+      ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+      if (ret)
+          goto fail_address_parse;
 
-    defconfig:
-        apq8016-sbc:
-            lab-mhart: new failure (last pass: v4.16.7-2-g3afbe8ca7a94)
+      inode = igrab(d_inode(path.dentry));
+      path_put(&path);
 
-x86:
+  And it's wrong.  You can only hold a reference to the inode if you
+  have an active ref to the superblock as well (which is normally
+  through path.mnt) or holding s_umount.
 
-    i386_defconfig:
-        x86-celeron:
-            lab-mhart: new failure (last pass: v4.16.7-2-g3afbe8ca7a94)
+  This way unmounting the containing filesystem while the tracepoint is
+  active will give you the "VFS: Busy inodes after unmount..." message
+  and a crash when the inode is finally put.
 
-Boot Failures Detected:
+  Solution: store path instead of inode.
 
-arm64:
+This patch fixes two instances in trace_uprobe.c. struct path is added to
+struct trace_uprobe to keep the inode and containing mount point
+referenced.
 
-    defconfig
-        apq8016-sbc: 1 failed lab
+Link: http://lkml.kernel.org/r/20180423172135.4050588-1-songliubraving@fb.com
 
-arm:
-
-    multi_v7_defconfig
-        am335x-boneblack: 2 failed labs
-
-x86:
-
-    i386_defconfig
-        x86-celeron: 1 failed lab
-
-Offline Platforms:
-
-arm:
-
-    multi_v7_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-    qcom_defconfig:
-        qcom-apq8064-cm-qs600: 1 offline lab
-        qcom-apq8064-ifc6410: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
+Fixes: f3f096cfedf8 ("tracing: Provide trace events interface for uprobes")
+Fixes: 33ea4b24277b ("perf/core: Implement the 'perf_uprobe' PMU")
+Cc: stable@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Howard McLauchlan <hmclauchlan@fb.com>
+Cc: Josef Bacik <jbacik@fb.com>
+Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+Reported-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
-For more info write to <info@kernelci.org>
+ kernel/trace/trace_uprobe.c |   24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -55,6 +55,7 @@ struct trace_uprobe {
+ 	struct list_head		list;
+ 	struct trace_uprobe_filter	filter;
+ 	struct uprobe_consumer		consumer;
++	struct path			path;
+ 	struct inode			*inode;
+ 	char				*filename;
+ 	unsigned long			offset;
+@@ -287,7 +288,7 @@ static void free_trace_uprobe(struct tra
+ 	for (i = 0; i < tu->tp.nr_args; i++)
+ 		traceprobe_free_probe_arg(&tu->tp.args[i]);
+ 
+-	iput(tu->inode);
++	path_put(&tu->path);
+ 	kfree(tu->tp.call.class->system);
+ 	kfree(tu->tp.call.name);
+ 	kfree(tu->filename);
+@@ -361,7 +362,6 @@ end:
+ static int create_trace_uprobe(int argc, char **argv)
+ {
+ 	struct trace_uprobe *tu;
+-	struct inode *inode;
+ 	char *arg, *event, *group, *filename;
+ 	char buf[MAX_EVENT_NAME_LEN];
+ 	struct path path;
+@@ -369,7 +369,6 @@ static int create_trace_uprobe(int argc,
+ 	bool is_delete, is_return;
+ 	int i, ret;
+ 
+-	inode = NULL;
+ 	ret = 0;
+ 	is_delete = false;
+ 	is_return = false;
+@@ -435,21 +434,16 @@ static int create_trace_uprobe(int argc,
+ 	}
+ 	/* Find the last occurrence, in case the path contains ':' too. */
+ 	arg = strrchr(argv[1], ':');
+-	if (!arg) {
+-		ret = -EINVAL;
+-		goto fail_address_parse;
+-	}
++	if (!arg)
++		return -EINVAL;
+ 
+ 	*arg++ = '\0';
+ 	filename = argv[1];
+ 	ret = kern_path(filename, LOOKUP_FOLLOW, &path);
+ 	if (ret)
+-		goto fail_address_parse;
+-
+-	inode = igrab(d_inode(path.dentry));
+-	path_put(&path);
++		return ret;
+ 
+-	if (!inode || !S_ISREG(inode->i_mode)) {
++	if (!d_is_reg(path.dentry)) {
+ 		ret = -EINVAL;
+ 		goto fail_address_parse;
+ 	}
+@@ -488,7 +482,7 @@ static int create_trace_uprobe(int argc,
+ 		goto fail_address_parse;
+ 	}
+ 	tu->offset = offset;
+-	tu->inode = inode;
++	tu->path = path;
+ 	tu->filename = kstrdup(filename, GFP_KERNEL);
+ 
+ 	if (!tu->filename) {
+@@ -556,7 +550,7 @@ error:
+ 	return ret;
+ 
+ fail_address_parse:
+-	iput(inode);
++	path_put(&path);
+ 
+ 	pr_info("Failed to parse address or file.\n");
+ 
+@@ -935,6 +929,7 @@ probe_event_enable(struct trace_uprobe *
+ 		goto err_flags;
+ 
+ 	tu->consumer.filter = filter;
++	tu->inode = d_real_inode(tu->path.dentry);
+ 	ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+ 	if (ret)
+ 		goto err_buffer;
+@@ -980,6 +975,7 @@ probe_event_disable(struct trace_uprobe
+ 	WARN_ON(!uprobe_filter_is_empty(&tu->filter));
+ 
+ 	uprobe_unregister(tu->inode, tu->offset, &tu->consumer);
++	tu->inode = NULL;
+ 	tu->tp.flags &= file ? ~TP_FLAG_TRACE : ~TP_FLAG_PROFILE;
+ 
+ 	uprobe_buffer_disable();
