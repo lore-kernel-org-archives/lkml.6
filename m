@@ -1,35 +1,120 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754533AbeEHIIS (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:08:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37329 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753856AbeEHIIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:08:15 -0400
-Date: Tue, 8 May 2018 10:08:13 +0200
-From: Johannes Thumshirn <jth@kernel.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net,
-        linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: mena21_wdt: Drop unnecessary mutex lock
-Message-ID: <20180508080813.vhdkko2a4vmb4avz@linux-x5ow.site>
-References: <20180508071206.13375-1-baijiaju1990@gmail.com>
+        id S932086AbeEHIIx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:08:53 -0400
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:53517 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754394AbeEHIIv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:08:51 -0400
+Subject: Re: [PATCH v2] media: media-device: fix ioctl function types
+To: Sami Tolvanen <samitolvanen@google.com>,
+        Sakari Ailus <sakari.ailus@iki.fi>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180507104509.lq4ep22fm6h53gra@valkosipuli.retiisi.org.uk>
+ <20180507180946.104340-1-samitolvanen@google.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <829b07f9-a41f-9c0f-c4c3-32056c91cd72@xs4all.nl>
+Date: Tue, 8 May 2018 10:08:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180508071206.13375-1-baijiaju1990@gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180507180946.104340-1-samitolvanen@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfAjARJtlAdMYQvFLWXQ1YreoX4AasCENsbESpu8r9fyUAggm2b7yDRp8nn6RKZMhlYh3JZDpIJVbMA9lCUZ91zrXsZ8Ya7x3IG8HdSLZjwEJz9yZm6yj
+ jgtc8Ec7FmeFnK0ObKS2AAVfAfBbRGZ7J8WxOxzeF7+Kchw0Uw2buk6ef4j700VX399V3THQAUODhgfrrBaLu2CXmYoSTazwQsBvMxZXcv+9FOTXVI8C1h3f
+ QLIEGsZwpXXrvNfDmAGw0g==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jth@kernel.org>
--- 
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Hi Sami,
+
+This is unchanged from the previous version, right? I've already added that to a
+pull request.
+
+If this v2 has changes, then let me know asap.
+
+Regards,
+
+	Hans
+
+On 05/07/2018 08:09 PM, Sami Tolvanen wrote:
+> This change fixes function types for media device ioctls to avoid
+> indirect call mismatches with Control-Flow Integrity checking.
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> ---
+>  drivers/media/media-device.c | 21 +++++++++++----------
+>  1 file changed, 11 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
+> index 35e81f7c0d2f1..ae59c31775557 100644
+> --- a/drivers/media/media-device.c
+> +++ b/drivers/media/media-device.c
+> @@ -54,9 +54,10 @@ static int media_device_close(struct file *filp)
+>  	return 0;
+>  }
+>  
+> -static int media_device_get_info(struct media_device *dev,
+> -				 struct media_device_info *info)
+> +static long media_device_get_info(struct media_device *dev, void *arg)
+>  {
+> +	struct media_device_info *info = arg;
+> +
+>  	memset(info, 0, sizeof(*info));
+>  
+>  	if (dev->driver_name[0])
+> @@ -93,9 +94,9 @@ static struct media_entity *find_entity(struct media_device *mdev, u32 id)
+>  	return NULL;
+>  }
+>  
+> -static long media_device_enum_entities(struct media_device *mdev,
+> -				       struct media_entity_desc *entd)
+> +static long media_device_enum_entities(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_entity_desc *entd = arg;
+>  	struct media_entity *ent;
+>  
+>  	ent = find_entity(mdev, entd->id);
+> @@ -146,9 +147,9 @@ static void media_device_kpad_to_upad(const struct media_pad *kpad,
+>  	upad->flags = kpad->flags;
+>  }
+>  
+> -static long media_device_enum_links(struct media_device *mdev,
+> -				    struct media_links_enum *links)
+> +static long media_device_enum_links(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_links_enum *links = arg;
+>  	struct media_entity *entity;
+>  
+>  	entity = find_entity(mdev, links->entity);
+> @@ -195,9 +196,9 @@ static long media_device_enum_links(struct media_device *mdev,
+>  	return 0;
+>  }
+>  
+> -static long media_device_setup_link(struct media_device *mdev,
+> -				    struct media_link_desc *linkd)
+> +static long media_device_setup_link(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_link_desc *linkd = arg;
+>  	struct media_link *link = NULL;
+>  	struct media_entity *source;
+>  	struct media_entity *sink;
+> @@ -225,9 +226,9 @@ static long media_device_setup_link(struct media_device *mdev,
+>  	return __media_entity_setup_link(link, linkd->flags);
+>  }
+>  
+> -static long media_device_get_topology(struct media_device *mdev,
+> -				      struct media_v2_topology *topo)
+> +static long media_device_get_topology(struct media_device *mdev, void *arg)
+>  {
+> +	struct media_v2_topology *topo = arg;
+>  	struct media_entity *entity;
+>  	struct media_interface *intf;
+>  	struct media_pad *pad;
+> 
