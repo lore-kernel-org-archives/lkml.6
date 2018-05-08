@@ -1,368 +1,103 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932199AbeEHMPR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:15:17 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57556 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932124AbeEHMPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:15:12 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/9] irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller
-Date: Tue,  8 May 2018 13:14:36 +0100
-Message-Id: <20180508121438.11301-8-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180508121438.11301-1-marc.zyngier@arm.com>
-References: <20180508121438.11301-1-marc.zyngier@arm.com>
+        id S932242AbeEHMP0 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:15:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39140 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932124AbeEHMPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:15:24 -0400
+Subject: Re: [PATCH] dt-bindings: Add vendor prefix for Avnet, Inc.
+To: Rob Herring <robh@kernel.org>, Michal Simek <michal.simek@xilinx.com>
+Cc: devicetree@vger.kernel.org,
+        =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>,
+        Thierry Reding <treding@nvidia.com>, linux-kernel@vger.kernel.org,
+        David Lechner <david@lechnology.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>, SZ Lin <sz.lin@moxa.com>
+References: <d860eb7551e343fa59b77fd3e144a633186a8378.1525249073.git.michal.simek@xilinx.com>
+ <20180507204937.GA21052@rob-hp-laptop>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Organization: SUSE Linux GmbH
+Message-ID: <933bb0a1-2ea2-3f23-492e-56805a804300@suse.de>
+Date: Tue, 8 May 2018 14:15:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180507204937.GA21052@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GICv3 offers the possibility to signal SPIs using a pair of doorbells
-(SETPI, CLRSPI) under the name of Message Based Interrupts (MBI).
-They can be used as either traditional (edge) MSIs, or the more exotic
-level-triggered flavour.
+Hi Michal,
 
-Let's implement support for platform MSI, which is the original intent
-for this feature.
+Am 07.05.2018 um 22:49 schrieb Rob Herring:
+> On Wed, May 02, 2018 at 10:17:57AM +0200, Michal Simek wrote:
+>> "Avnet, Inc. is one of the world's largest distributors of electronic
+>> components and embedded solutions." - Wikipedia.org
+>>
+>> Website: www.avnet.com
+>>
+>> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+>> ---
+>>
+>>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>>  1 file changed, 1 insertion(+)
+> 
+> Applied.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/Makefile           |   2 +-
- drivers/irqchip/irq-gic-v3-mbi.c   | 275 +++++++++++++++++++++++++++++++++++++
- drivers/irqchip/irq-gic-v3.c       |   6 +
- include/linux/irqchip/arm-gic-v3.h |   1 +
- 4 files changed, 283 insertions(+), 1 deletion(-)
- create mode 100644 drivers/irqchip/irq-gic-v3-mbi.c
+What is this standalone patch needed for? Looks fine, but it doesn't
+appear to be part of a series using it - is it for board compatibles?
 
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 5ed465ab1c76..15f268f646bf 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -27,7 +27,7 @@ obj-$(CONFIG_ARM_GIC)			+= irq-gic.o irq-gic-common.o
- obj-$(CONFIG_ARM_GIC_PM)		+= irq-gic-pm.o
- obj-$(CONFIG_ARCH_REALVIEW)		+= irq-gic-realview.o
- obj-$(CONFIG_ARM_GIC_V2M)		+= irq-gic-v2m.o
--obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-common.o
-+obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-v3-mbi.o irq-gic-common.o
- obj-$(CONFIG_ARM_GIC_V3_ITS)		+= irq-gic-v3-its.o irq-gic-v3-its-platform-msi.o irq-gic-v4.o
- obj-$(CONFIG_ARM_GIC_V3_ITS_PCI)	+= irq-gic-v3-its-pci-msi.o
- obj-$(CONFIG_ARM_GIC_V3_ITS_FSL_MC)	+= irq-gic-v3-its-fsl-mc-msi.o
-diff --git a/drivers/irqchip/irq-gic-v3-mbi.c b/drivers/irqchip/irq-gic-v3-mbi.c
-new file mode 100644
-index 000000000000..2b3b767050aa
---- /dev/null
-+++ b/drivers/irqchip/irq-gic-v3-mbi.c
-@@ -0,0 +1,275 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 ARM Limited, All Rights Reserved.
-+ * Author: Marc Zyngier <marc.zyngier@arm.com>
-+ */
-+
-+#define pr_fmt(fmt) "GICv3: " fmt
-+
-+#include <linux/dma-iommu.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/msi.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+
-+#include <linux/irqchip/arm-gic-v3.h>
-+
-+struct mbi_range {
-+	u32			spi_start;
-+	u32			nr_spis;
-+	unsigned long		*bm;
-+};
-+
-+static struct mutex		mbi_lock;
-+static phys_addr_t		mbi_phys_base;
-+static struct mbi_range		*mbi_ranges;
-+static unsigned int		mbi_range_nr;
-+
-+static struct irq_chip mbi_irq_chip = {
-+	.name			= "MBI",
-+	.irq_mask		= irq_chip_mask_parent,
-+	.irq_unmask		= irq_chip_unmask_parent,
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_set_type		= irq_chip_set_type_parent,
-+	.irq_set_affinity	= irq_chip_set_affinity_parent,
-+};
-+
-+static int mbi_irq_gic_domain_alloc(struct irq_domain *domain,
-+				       unsigned int virq,
-+				       irq_hw_number_t hwirq)
-+{
-+	struct irq_fwspec fwspec;
-+	struct irq_data *d;
-+	int err;
-+
-+	/*
-+	 * Using ACPI? There is no MBI support in the spec, you
-+	 * shouldn't even be here.
-+	 */
-+	if (!is_of_node(domain->parent->fwnode))
-+		return -EINVAL;
-+
-+	/*
-+	 * Let's default to edge. This is consistent with traditional
-+	 * MSIs, and systems requiring level signaling will just
-+	 * enforce the trigger on their own.
-+	 */
-+	fwspec.fwnode = domain->parent->fwnode;
-+	fwspec.param_count = 3;
-+	fwspec.param[0] = 0;
-+	fwspec.param[1] = hwirq - 32;
-+	fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
-+
-+	err = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
-+	if (err)
-+		return err;
-+
-+	d = irq_domain_get_irq_data(domain->parent, virq);
-+	return d->chip->irq_set_type(d, IRQ_TYPE_EDGE_RISING);
-+}
-+
-+static void mbi_free_msi(struct mbi_range *mbi, unsigned int hwirq,
-+			 int nr_irqs)
-+{
-+	mutex_lock(&mbi_lock);
-+	bitmap_release_region(mbi->bm, hwirq - mbi->spi_start,
-+			      get_count_order(nr_irqs));
-+	mutex_unlock(&mbi_lock);
-+}
-+
-+static int mbi_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+				   unsigned int nr_irqs, void *args)
-+{
-+	struct mbi_range *mbi = NULL;
-+	int hwirq, offset, i, err = 0;
-+
-+	mutex_lock(&mbi_lock);
-+	for (i = 0; i < mbi_range_nr; i++) {
-+		offset = bitmap_find_free_region(mbi_ranges[i].bm,
-+						 mbi_ranges[i].nr_spis,
-+						 get_count_order(nr_irqs));
-+		if (offset >= 0) {
-+			mbi = &mbi_ranges[i];
-+			break;
-+		}
-+	}
-+	mutex_unlock(&mbi_lock);
-+
-+	if (!mbi)
-+		return -ENOSPC;
-+
-+	hwirq = mbi->spi_start + offset;
-+
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = mbi_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
-+		if (err)
-+			goto fail;
-+
-+		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-+					      &mbi_irq_chip, mbi);
-+	}
-+
-+	return 0;
-+
-+fail:
-+	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
-+	mbi_free_msi(mbi, hwirq, nr_irqs);
-+	return err;
-+}
-+
-+static void mbi_irq_domain_free(struct irq_domain *domain,
-+				unsigned int virq, unsigned int nr_irqs)
-+{
-+	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
-+	struct mbi_range *mbi = irq_data_get_irq_chip_data(d);
-+
-+	mbi_free_msi(mbi, d->hwirq, nr_irqs);
-+	irq_domain_free_irqs_parent(domain, virq, nr_irqs);
-+}
-+
-+static const struct irq_domain_ops mbi_domain_ops = {
-+	.alloc			= mbi_irq_domain_alloc,
-+	.free			= mbi_irq_domain_free,
-+};
-+
-+static void mbi_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
-+{
-+	msg[0].address_hi = upper_32_bits(mbi_phys_base + GICD_SETSPI_NSR);
-+	msg[0].address_lo = lower_32_bits(mbi_phys_base + GICD_SETSPI_NSR);
-+	msg[0].data = data->parent_data->hwirq;
-+
-+	iommu_dma_map_msi_msg(data->irq, msg);
-+}
-+
-+static void mbi_compose_mbi_msg(struct irq_data *data, struct msi_msg *msg)
-+{
-+	mbi_compose_msi_msg(data, msg);
-+
-+	msg[1].address_hi = upper_32_bits(mbi_phys_base + GICD_CLRSPI_NSR);
-+	msg[1].address_lo = lower_32_bits(mbi_phys_base + GICD_CLRSPI_NSR);
-+	msg[1].data = data->parent_data->hwirq;
-+
-+	iommu_dma_map_msi_msg(data->irq, &msg[1]);
-+}
-+
-+/* Platform-MSI specific irqchip */
-+static struct irq_chip mbi_pmsi_irq_chip = {
-+	.name			= "pMSI",
-+	.irq_set_type		= irq_chip_set_type_parent,
-+	.irq_compose_msi_msg	= mbi_compose_mbi_msg,
-+	.flags			= IRQCHIP_SUPPORTS_LEVEL_MSI,
-+};
-+
-+static struct msi_domain_ops mbi_pmsi_ops = {
-+};
-+
-+static struct msi_domain_info mbi_pmsi_domain_info = {
-+	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
-+		   MSI_FLAG_LEVEL_CAPABLE),
-+	.ops	= &mbi_pmsi_ops,
-+	.chip	= &mbi_pmsi_irq_chip,
-+};
-+
-+static int mbi_allocate_domains(struct irq_domain *parent)
-+{
-+	struct irq_domain *nexus_domain, *plat_domain;
-+
-+	nexus_domain = irq_domain_create_tree(parent->fwnode,
-+					      &mbi_domain_ops, NULL);
-+	if (!nexus_domain)
-+		return -ENOMEM;
-+
-+	irq_domain_update_bus_token(nexus_domain, DOMAIN_BUS_NEXUS);
-+	nexus_domain->parent = parent;
-+
-+	plat_domain = platform_msi_create_irq_domain(parent->fwnode,
-+						     &mbi_pmsi_domain_info,
-+						     nexus_domain);
-+
-+	if (!plat_domain) {
-+		irq_domain_remove(plat_domain);
-+		irq_domain_remove(nexus_domain);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+int __init mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent)
-+{
-+	struct device_node *np;
-+	const __be32 *reg;
-+	int ret, n;
-+
-+	np = to_of_node(fwnode);
-+
-+	if (!of_property_read_bool(np, "msi-controller"))
-+		return 0;
-+
-+	n = of_property_count_elems_of_size(np, "mbi-ranges", sizeof(u32));
-+	if (n <= 0 || n % 2)
-+		return -EINVAL;
-+
-+	mbi_range_nr = n / 2;
-+	mbi_ranges = kcalloc(mbi_range_nr, sizeof(*mbi_ranges), GFP_KERNEL);
-+	if (!mbi_ranges)
-+		return -ENOMEM;
-+
-+	for (n = 0; n < mbi_range_nr; n++) {
-+		ret = of_property_read_u32_index(np, "mbi-ranges", n * 2,
-+						 &mbi_ranges[n].spi_start);
-+		if (ret)
-+			goto err_free_mbi;
-+		ret = of_property_read_u32_index(np, "mbi-ranges", n * 2 + 1,
-+						 &mbi_ranges[n].nr_spis);
-+		if (ret)
-+			goto err_free_mbi;
-+
-+		mbi_ranges[n].bm = kcalloc(BITS_TO_LONGS(mbi_ranges[n].nr_spis),
-+					   sizeof(long), GFP_KERNEL);
-+		if (!mbi_ranges[n].bm) {
-+			ret = -ENOMEM;
-+			goto err_free_mbi;
-+		}
-+		pr_info("MBI range [%d:%d]\n", mbi_ranges[n].spi_start,
-+			mbi_ranges[n].spi_start + mbi_ranges[n].nr_spis - 1);
-+	}
-+
-+	reg = of_get_property(np, "mbi-alias", NULL);
-+	if (reg) {
-+		mbi_phys_base = of_translate_address(np, reg);
-+		if (mbi_phys_base == OF_BAD_ADDR) {
-+			ret = -ENXIO;
-+			goto err_free_mbi;
-+		}
-+	} else {
-+		struct resource res;
-+
-+		if (of_address_to_resource(np, 0, &res)) {
-+			ret = -ENXIO;
-+			goto err_free_mbi;
-+		}
-+
-+		mbi_phys_base = res.start;
-+	}
-+
-+	pr_info("Using MBI frame %pa\n", &mbi_phys_base);
-+
-+	ret = mbi_allocate_domains(parent);
-+	if (ret)
-+		goto err_free_mbi;
-+
-+	return 0;
-+
-+err_free_mbi:
-+	if (mbi_ranges) {
-+		for (n = 0; n < mbi_range_nr; n++)
-+			kfree(mbi_ranges[n].bm);
-+		kfree(mbi_ranges);
-+	}
-+
-+	return ret;
-+}
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index 94164d7b87a6..5a67ec084588 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1113,6 +1113,12 @@ static int __init gic_init_bases(void __iomem *dist_base,
- 	pr_info("Distributor has %sRange Selector support\n",
- 		gic_data.has_rss ? "" : "no ");
- 
-+	if (typer & GICD_TYPER_MBIS) {
-+		err = mbi_init(handle, gic_data.domain);
-+		if (err)
-+			pr_err("Failed to initialize MBIs\n");
-+	}
-+
- 	set_handle_irq(gic_handle_irq);
- 
- 	gic_update_vlpi_properties();
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index f5af3b594e6e..cbb872c1b607 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -587,6 +587,7 @@ struct fwnode_handle;
- int its_cpu_init(void);
- int its_init(struct fwnode_handle *handle, struct rdists *rdists,
- 	     struct irq_domain *domain);
-+int mbi_init(struct fwnode_handle *fwnode, struct irq_domain *parent);
- 
- static inline bool gic_enable_sre(void)
- {
+Regards,
+Andreas
+
 -- 
-2.14.2
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
