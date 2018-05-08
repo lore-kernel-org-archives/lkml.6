@@ -1,41 +1,39 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZp31xnWbcBvXY1cWqeG9zEKYWzU2fwu0VXpdCSUVk5HPhAPlUaJjG7meTG4SqbYI1ozvxEG
-ARC-Seal: i=1; a=rsa-sha256; t=1525767386; cv=none;
+X-Google-Smtp-Source: AB8JxZqYZtQ5slepdi6NBPnDhRwdLkeFHolNK6ClekI4foEAIaIN5FVZnSGoKWyuBbahergbewJi
+ARC-Seal: i=1; a=rsa-sha256; t=1525767383; cv=none;
         d=google.com; s=arc-20160816;
-        b=DLv3dUEgKYFKjoN5SJXUQ0zhZH2OCz9lVVy6SvQ6DM0o1I/a+z7HQPeNaubXhfXxaK
-         LX7h5W+B1AopGpUyfKUGjKwwECypRdkpmuYKtYkebQ0/jYdqk1Vo7O4t46v1kYRSIWMu
-         Nyif+c6kNyeuvjL6frY3DAZ/kxnAYQc5cOWDATXx+DJrD1HbJM+bY5+Y1PQ1FYJTGezI
-         tgvx+gQXSIFWpYUn9ppaEozS1eMse5xDM0aY26Nuqa+z7g+cuxmMf+/DBQT2I4YracFW
-         he62C4j+WjRIyoYrhsFDoJ/Pkh91R4AQzr2aAP+Q45se2QDKi9C7IQBqjLWGe57aSzl2
-         z7/A==
+        b=i1dH1e9z1Y5YnaDOmjdk/9rDgFOdgPLonPs3G5Ke75ufQ89dsDAHImH+g8Frj794WS
+         nSx2s+gbNNGppRynePxatXer1I3y88xhCm/LAZJLQdtv2nWK8EPpD0nNubNPgdcoE/Jm
+         y9qQDH0WDsAKS7HeVDMoPyJbpwv0ByXzW2kSZkiKMr0zGjP1/yniOHINt67w2afiHXGj
+         sZS0M6ffmnMn8ufk5vMJy4LEbUjTjhNA8AQquVc0s4Jo+T1dzc2eVoWKDxhQvxZqIwaH
+         Sp3Cg586AAdo8Q4Go9U4KPQCZEXh2sxw5Y/cYmsCpkWi1X5FS2BHyzU4NXu67djimCTo
+         fiPQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=RlaksRLEXRGN1dHM4D0KCjx8VKpwZXTtk8XucOBPovc=;
-        b=EYlt2p83pf7UZbKAIt90/NQdK/l+l2hkTNFF+5IhzEuZ/MxcHWwM9vwKddFU1RaAt+
-         UfXicRjjnnFCuDTTkXBqRwBhDvArKmN8tNfFrZ2bxAkMymdDjF5jr34vW/1iBeIm0Kwd
-         HYgek8Jwfr1VSk2XQ4/VWA90whjziittLOUTnD0LfiHX5UMKEm/4mrSbASUCTFhuaF8Z
-         kghgRz7gGbnZi8wXvjXudu0nKQg5EOdA16sn+YRqNtYmI9lFgG7hABo5pkCvF4T3SCnK
-         JMnFFuZTrqaacbdcYAHnp7iYd259Y9Rst82WmrbTwI2cFRdmBvUOpZPU++lugXull2rZ
-         /+dw==
+        bh=qeXDAzJIfDU8VFiiHLbOFJQ8JNTnhDIGQwlK6PsLHgo=;
+        b=dixVW2ipLK5mBydPIePIWmzM662LSCgRCE+z+D/2+Z8arekBk/+KGItaylc+apfyC0
+         G1dDU07sIEWlJyHJK7p5FzDWLutSHArSioioaL9ghfPkHiZOrK8iSOcd4hsqSRpoCooM
+         h1UMivWgVT6HrHWybUfeZ45f8P+I3QNw2SHoWyNF9/7zTyCQG8TVGOO8aMHh8JzuxzgV
+         YkxZpwSzH8DGy1b9BBISqC2xZtjkJP6SJ85qsrW7h9cN9L9g8VOq5aZzFC3G0v5AshtS
+         gLyEoxW36pk06qPJUko7HBGnf3XOof6h2feeHVyf6KzLzkeI9a0DTnuoijWpZyejBZ2+
+         MFoA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=a5IIaZs8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=w0feZLli;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=a5IIaZs8;
+       dkim=pass header.i=@kernel.org header.s=default header.b=w0feZLli;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Don Hiatt <don.hiatt@intel.com>,
-	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Dennis Dalessandro <dennis.dalessandro@intel.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 26/43] IB/hfi1: Fix handling of FECN marked multicast packet
-Date: Tue,  8 May 2018 10:10:45 +0200
-Message-Id: <20180508074008.159103365@linuxfoundation.org>
+	Mayank Rana <mrana@codeaurora.org>,
+	Jack Pham <jackp@codeaurora.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.14 35/43] usb: dwc3: gadget: Fix list_del corruption in dwc3_ep_dequeue
+Date: Tue,  8 May 2018 10:10:54 +0200
+Message-Id: <20180508074009.451735824@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -45,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882813049072132?=
-X-GMAIL-MSGID: =?utf-8?q?1599883062892173727?=
+X-GMAIL-THRID: =?utf-8?q?1599882897810276471?=
+X-GMAIL-MSGID: =?utf-8?q?1599883060015289256?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -54,149 +52,42 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Mayank Rana <mrana@codeaurora.org>
 
-commit f59fb9e05109b836230813e45f71c9ecc2d5dbe6 upstream.
+commit 96bd39df29c29d348d65311e5954c0b7d3a2a790 upstream.
 
-The code for handling a marked UD packet unconditionally returns the
-dlid in the header of the FECN marked packet.  This is not correct
-for multicast packets where the DLID is in the multicast range.
+dwc3_ep_dequeue() waits for completion of End Transfer command using
+wait_event_lock_irq(), which will release the dwc3->lock while waiting
+and reacquire after completion. This allows a potential race condition
+with ep_disable() which also removes all requests from started_list
+and pending_list.
 
-The subsequent attempt to send the CNP with the multicast lid will
-cause the chip to halt the ack send context because the source
-lid doesn't match the chip programming.   The send context will
-be halted and flush any other pending packets in the pio ring causing
-the CNP to not be sent.
+The check for NULL r->trb should catch this but currently it exits to
+the wrong 'out1' label which calls dwc3_gadget_giveback(). Since its
+list entry was already removed, if CONFIG_DEBUG_LIST is enabled a
+'list_del corruption' bug is thrown since its next/prev pointers are
+already LIST_POISON1/2. If r->trb is NULL it should simply exit to
+'out0'.
 
-A part of investigating the fix, it was determined that the 16B work
-broke the FECN routine badly with inconsistent use of 16 bit and 32 bits
-types for lids and pkeys.  Since the port's source lid was correctly 32
-bits the type mixmatches need to be dealt with at the same time as
-fixing the CNP header issue.
-
-Fix these issues by:
-- Using the ports lid for as the SLID for responding to FECN marked UD
-  packets
-- Insure pkey is always 16 bit in this and subordinate routines
-- Insure lids are 32 bits in this and subordinate routines
-
-Cc: <stable@vger.kernel.org> # 4.14.x
-Fixes: 88733e3b8450 ("IB/hfi1: Add 16B UD support")
-Reviewed-by: Don Hiatt <don.hiatt@intel.com>
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Fixes: cf3113d893d4 ("usb: dwc3: gadget: properly increment dequeue pointer on ep_dequeue")
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Mayank Rana <mrana@codeaurora.org>
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/driver.c |   19 +++++++++++++++----
- drivers/infiniband/hw/hfi1/hfi.h    |    8 ++++----
- drivers/infiniband/hw/hfi1/ud.c     |    4 ++--
- 3 files changed, 21 insertions(+), 10 deletions(-)
+ drivers/usb/dwc3/gadget.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/hw/hfi1/driver.c
-+++ b/drivers/infiniband/hw/hfi1/driver.c
-@@ -437,31 +437,43 @@ void hfi1_process_ecn_slowpath(struct rv
- 			       bool do_cnp)
- {
- 	struct hfi1_ibport *ibp = to_iport(qp->ibqp.device, qp->port_num);
-+	struct hfi1_pportdata *ppd = ppd_from_ibp(ibp);
- 	struct ib_other_headers *ohdr = pkt->ohdr;
- 	struct ib_grh *grh = pkt->grh;
- 	u32 rqpn = 0, bth1;
--	u16 pkey, rlid, dlid = ib_get_dlid(pkt->hdr);
-+	u16 pkey;
-+	u32 rlid, slid, dlid = 0;
- 	u8 hdr_type, sc, svc_type;
- 	bool is_mcast = false;
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1444,7 +1444,7 @@ static int dwc3_gadget_ep_dequeue(struct
+ 					dwc->lock);
  
-+	/* can be called from prescan */
- 	if (pkt->etype == RHF_RCV_TYPE_BYPASS) {
- 		is_mcast = hfi1_is_16B_mcast(dlid);
- 		pkey = hfi1_16B_get_pkey(pkt->hdr);
- 		sc = hfi1_16B_get_sc(pkt->hdr);
-+		dlid = hfi1_16B_get_dlid(pkt->hdr);
-+		slid = hfi1_16B_get_slid(pkt->hdr);
- 		hdr_type = HFI1_PKT_TYPE_16B;
- 	} else {
- 		is_mcast = (dlid > be16_to_cpu(IB_MULTICAST_LID_BASE)) &&
- 			   (dlid != be16_to_cpu(IB_LID_PERMISSIVE));
- 		pkey = ib_bth_get_pkey(ohdr);
- 		sc = hfi1_9B_get_sc5(pkt->hdr, pkt->rhf);
-+		dlid = ib_get_dlid(pkt->hdr);
-+		slid = ib_get_slid(pkt->hdr);
- 		hdr_type = HFI1_PKT_TYPE_9B;
- 	}
+ 			if (!r->trb)
+-				goto out1;
++				goto out0;
  
- 	switch (qp->ibqp.qp_type) {
-+	case IB_QPT_UD:
-+		dlid = ppd->lid;
-+		rlid = slid;
-+		rqpn = ib_get_sqpn(pkt->ohdr);
-+		svc_type = IB_CC_SVCTYPE_UD;
-+		break;
- 	case IB_QPT_SMI:
- 	case IB_QPT_GSI:
--	case IB_QPT_UD:
--		rlid = ib_get_slid(pkt->hdr);
-+		rlid = slid;
- 		rqpn = ib_get_sqpn(pkt->ohdr);
- 		svc_type = IB_CC_SVCTYPE_UD;
- 		break;
-@@ -486,7 +498,6 @@ void hfi1_process_ecn_slowpath(struct rv
- 					      dlid, rlid, sc, grh);
- 
- 	if (!is_mcast && (bth1 & IB_BECN_SMASK)) {
--		struct hfi1_pportdata *ppd = ppd_from_ibp(ibp);
- 		u32 lqpn = bth1 & RVT_QPN_MASK;
- 		u8 sl = ibp->sc_to_sl[sc];
- 
---- a/drivers/infiniband/hw/hfi1/hfi.h
-+++ b/drivers/infiniband/hw/hfi1/hfi.h
-@@ -1523,13 +1523,13 @@ void set_link_ipg(struct hfi1_pportdata
- void process_becn(struct hfi1_pportdata *ppd, u8 sl, u32 rlid, u32 lqpn,
- 		  u32 rqpn, u8 svc_type);
- void return_cnp(struct hfi1_ibport *ibp, struct rvt_qp *qp, u32 remote_qpn,
--		u32 pkey, u32 slid, u32 dlid, u8 sc5,
-+		u16 pkey, u32 slid, u32 dlid, u8 sc5,
- 		const struct ib_grh *old_grh);
- void return_cnp_16B(struct hfi1_ibport *ibp, struct rvt_qp *qp,
--		    u32 remote_qpn, u32 pkey, u32 slid, u32 dlid,
-+		    u32 remote_qpn, u16 pkey, u32 slid, u32 dlid,
- 		    u8 sc5, const struct ib_grh *old_grh);
- typedef void (*hfi1_handle_cnp)(struct hfi1_ibport *ibp, struct rvt_qp *qp,
--				u32 remote_qpn, u32 pkey, u32 slid, u32 dlid,
-+				u32 remote_qpn, u16 pkey, u32 slid, u32 dlid,
- 				u8 sc5, const struct ib_grh *old_grh);
- 
- /* We support only two types - 9B and 16B for now */
-@@ -2431,7 +2431,7 @@ static inline void hfi1_make_16b_hdr(str
- 		((slid >> OPA_16B_SLID_SHIFT) << OPA_16B_SLID_HIGH_SHIFT);
- 	lrh2 = (lrh2 & ~OPA_16B_DLID_MASK) |
- 		((dlid >> OPA_16B_DLID_SHIFT) << OPA_16B_DLID_HIGH_SHIFT);
--	lrh2 = (lrh2 & ~OPA_16B_PKEY_MASK) | (pkey << OPA_16B_PKEY_SHIFT);
-+	lrh2 = (lrh2 & ~OPA_16B_PKEY_MASK) | ((u32)pkey << OPA_16B_PKEY_SHIFT);
- 	lrh2 = (lrh2 & ~OPA_16B_L4_MASK) | l4;
- 
- 	hdr->lrh[0] = lrh0;
---- a/drivers/infiniband/hw/hfi1/ud.c
-+++ b/drivers/infiniband/hw/hfi1/ud.c
-@@ -630,7 +630,7 @@ int hfi1_lookup_pkey_idx(struct hfi1_ibp
- }
- 
- void return_cnp_16B(struct hfi1_ibport *ibp, struct rvt_qp *qp,
--		    u32 remote_qpn, u32 pkey, u32 slid, u32 dlid,
-+		    u32 remote_qpn, u16 pkey, u32 slid, u32 dlid,
- 		    u8 sc5, const struct ib_grh *old_grh)
- {
- 	u64 pbc, pbc_flags = 0;
-@@ -688,7 +688,7 @@ void return_cnp_16B(struct hfi1_ibport *
- }
- 
- void return_cnp(struct hfi1_ibport *ibp, struct rvt_qp *qp, u32 remote_qpn,
--		u32 pkey, u32 slid, u32 dlid, u8 sc5,
-+		u16 pkey, u32 slid, u32 dlid, u8 sc5,
- 		const struct ib_grh *old_grh)
- {
- 	u64 pbc, pbc_flags = 0;
+ 			if (r->num_pending_sgs) {
+ 				struct dwc3_trb *trb;
