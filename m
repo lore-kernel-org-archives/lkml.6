@@ -1,156 +1,50 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932265AbeEHJfb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:35:31 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58928 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754827AbeEHJew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:34:52 -0400
-Subject: Re: [RFC v3 4/5] virtio_ring: add event idx support in packed ring
-To: Tiwei Bie <tiwei.bie@intel.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, wexu@redhat.com,
-        jfreimann@redhat.com
-References: <20180502184015-mutt-send-email-mst@kernel.org>
- <20180503011116.qvoyblcpklinrk26@debian>
- <20180503044218-mutt-send-email-mst@kernel.org>
- <20180503020949.5u3qz32gsk33z6vk@debian>
- <9f0b4e37-63ff-42f9-f2e6-3747a19a0206@redhat.com>
- <20180503135430.lbtvn4p4lyu3ksqo@debian>
- <fbe06940-1618-5d34-7321-f4888c5dd1ee@redhat.com>
- <12ede490-f674-2b89-d639-266b5fe15466@redhat.com>
- <20180508064409.kcn6amhsxu7nkuuc@debian>
- <34f2c690-7cb2-f9ea-2ce9-40f4ccb594c9@redhat.com>
- <20180508091628.d7jzpopqopq4abhy@debian>
-From: Jason Wang <jasowang@redhat.com>
-Message-ID: <122277c6-d103-e1f6-d695-4d64e6934a51@redhat.com>
-Date: Tue, 8 May 2018 17:34:40 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180508091628.d7jzpopqopq4abhy@debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1754854AbeEHJfa (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:35:30 -0400
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:51556 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754817AbeEHJe3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 05:34:29 -0400
+X-ME-Helo: ubuntu-CJ.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 08 May 2018 11:34:27 +0200
+X-ME-IP: 86.244.116.1
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: davem@davemloft.net, tariqt@mellanox.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net/mlx4_en: Fix an error handling path in 'mlx4_en_init_netdev()'
+Date: Tue,  8 May 2018 11:34:26 +0200
+Message-Id: <20180508093426.11550-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If the 2nd memory allocation of the loop fails, we must undo the
+memory allocation done so far.
 
+Fixes: 67f8b1dcb9ee ("net/mlx4_en: Refactor the XDP forwarding rings scheme")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 2018年05月08日 17:16, Tiwei Bie wrote:
-> On Tue, May 08, 2018 at 03:16:53PM +0800, Jason Wang wrote:
->> On 2018年05月08日 14:44, Tiwei Bie wrote:
->>> On Tue, May 08, 2018 at 01:40:40PM +0800, Jason Wang wrote:
->>>> On 2018年05月08日 11:05, Jason Wang wrote:
->>>>>> Because in virtqueue_enable_cb_delayed(), we may set an
->>>>>> event_off which is bigger than new and both of them have
->>>>>> wrapped. And in this case, although new is smaller than
->>>>>> event_off (i.e. the third param -- old), new shouldn't
->>>>>> add vq->num, and actually we are expecting a very big
->>>>>> idx diff.
->>>>> Yes, so to calculate distance correctly between event and new, we just
->>>>> need to compare the warp counter and return false if it doesn't match
->>>>> without the need to try to add vq.num here.
->>>>>
->>>>> Thanks
->>>> Sorry, looks like the following should work, we need add vq.num if
->>>> used_wrap_counter does not match:
->>>>
->>>> static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
->>>>                         __u16 off_wrap, __u16 new,
->>>>                         __u16 old)
->>>> {
->>>>       bool wrap = off_wrap >> 15;
->>>>       int off = off_wrap & ~(1 << 15);
->>>>       __u16 d1, d2;
->>>>
->>>>       if (wrap != vq->used_wrap_counter)
->>>>           d1 = new + vq->num - off - 1;
->>> Just to draw your attention (maybe you have already
->>> noticed this).
->> I miss this, thanks!
->>
->>> In this case (i.e. wrap != vq->used_wrap_counter),
->>> it's also possible that (off < new) is true. Because,
->>>
->>> when virtqueue_enable_cb_delayed_packed() is used,
->>> `off` is calculated in driver in a way like this:
->>>
->>> 	off = vq->last_used_idx + bufs;
->>> 	if (off >= vq->vring_packed.num) {
->>> 		off -= vq->vring_packed.num;
->>> 		wrap_counter ^= 1;
->>> 	}
->>>
->>> And when `new` (in vhost) is close to vq->num. The
->>> vq->last_used_idx + bufs (in driver) can be bigger
->>> than vq->vring_packed.num, and:
->>>
->>> 1. `off` will wrap;
->>> 2. wrap counters won't match;
->>> 3. off < new;
->>>
->>> And d1 (i.e. new + vq->num - off - 1) will be a value
->>> bigger than vq->num. I'm okay with this, although it's
->>> a bit weird.
->>
->> So I'm considering something more compact by reusing vring_need_event() by
->> pretending a larger queue size and adding vq->num back when necessary:
->>
->> static bool vhost_vring_packed_need_event(struct vhost_virtqueue *vq,
->>                        __u16 off_wrap, __u16 new,
->>                        __u16 old)
->> {
->>      bool wrap = vq->used_wrap_counter;
-> If the wrap counter is obtained from the vq,
-> I think `new` should also be obtained from
-> the vq. Or the wrap counter should be carried
-> in `new`.
->
->>      int off = off_wrap & ~(1 << 15);
->>      __u16 d1, d2;
->>
->>      if (new < old) {
->>          new += vq->num;
->>          wrap ^= 1;
->>      }
->>
->>      if (wrap != off_wrap >> 15)
->>          off += vq->num;
-> When `new` and `old` wraps, and `off` doesn't wrap,
-> wrap != (off_wrap >> 15) will be true. In this case,
-> `off` is bigger than `new`, and what we should do
-> is `off -= vq->num` instead of `off += vq->num`.
-
-If I understand this correctly, if we track old correctly, it won't 
-happen if guest driver behave correctly. That means it should only 
-happen for a buggy driver (e.g trying to move off_wrap back).
-
-Thanks
-
->
-> Best regards,
-> Tiwei Bie
->
->>      return vring_need_event(off, new, old);
->> }
->>
->>
->>> Best regards,
->>> Tiwei Bie
->>>
->>>>       else
->>>>           d1 = new - off - 1;
->>>>
->>>>       if (new > old)
->>>>           d2 = new - old;
->>>>       else
->>>>           d2 = new + vq->num - old;
->>>>
->>>>       return d1 < d2;
->>>> }
->>>>
->>>> Thanks
->>>>
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+index e0adac4a9a19..bf078244e467 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -3331,7 +3331,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+ 		if (!priv->tx_cq[t]) {
+ 			kfree(priv->tx_ring[t]);
+ 			err = -ENOMEM;
+-			goto out;
++			goto err_free_tx;
+ 		}
+ 	}
+ 	priv->rx_ring_num = prof->rx_ring_num;
+-- 
+2.17.0
