@@ -1,38 +1,39 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZosGXzfIMw3KcYSRxKP5J+9PMVJF824e2/Y+17tBcOCAwAVpj1IuBghggfZzS0rwgB7z9VW
-ARC-Seal: i=1; a=rsa-sha256; t=1525767380; cv=none;
+X-Google-Smtp-Source: AB8JxZph3vRtb7oWl6UEcYLt+RbxVAgk2iXMn4IQZw3xfjXnto/WXmva0FfdpagSEpfgQOwcDf6k
+ARC-Seal: i=1; a=rsa-sha256; t=1525767378; cv=none;
         d=google.com; s=arc-20160816;
-        b=QcJCNTmxEapMIgpIXV60bBLXdhM/s4Nt7YkbFATYIDHPh6PjIoGSVHit1oTGzc60ed
-         Nl/EtnH/kkj+6L8wTIX8VFsY9mwpa2ouUia0q5uMxl2g+Gx0mBQpjaE3ACs3sbkcaRvj
-         vDVFWeMEyDBSDjGP/t73tblmAOjXmKDWQCbHdkfJ9BChD/oINIdnNrIN3SITtrGFBQQO
-         cgsbNuXiW8gvQnGLP12gywN+x/QM4yOdg37oWuPufdRU9Mtcj+tad03kbLqiGX187+fc
-         VNiMHfAewJKOcfqEgW66kSG5u/zTxfzDG7N5s+SuDH6eYISGMw+Dna87AVosFueqILBu
-         DHtQ==
+        b=s2H66PVzh50d7CJ243IV6bYW6v0TDcAp7rHIHPUWJYg3B7UbFVK2hgLjTkW2PG3ZbS
+         kmsMkQAxJw1SUcnG9ODcjXil2BqbXn6OIN5aDe4320oI/xT3TCXXd79xmHz7jCKrorkv
+         Qpu/5wGfDpJqGU+AGV0nFHsm/wLijqfjaO8w+gQh+9OoxA/7q8mWndbr0oOzeBGF/4p8
+         fC3AXdOYiS2fF2PFybh7cmczWDgZh5w0/OnxJKsif8KEUvJ3t94Tq/GLN7y82NK9mtzS
+         axbQ7CI2paKeJk73GBAQtMGyBynEizzS444supM/ggqzM1ZKAQyrwgP0eggG8aN+fFli
+         rhZg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=eXLlw5aZDfw+yYh/USXIyOsfgNRj3M7tuRK5rK65wh4=;
-        b=dr4C0Ms/A/jRkhDV67Igaqf7otaXCELy/8q7zqnoRi8O+XJdqTsgiopkozxp1fmHAF
-         0ydTkSRUHQ+mp8S/Ep7olhpJXqg7ZqkWtYmrBOShGAfQwJI2Jeh14TyOfb6Oy3xRflWk
-         3yEq3ZzNjfeii0JTe2Hv67RORh4k/RqEtMLYM3xUSmaPhDZCAoh4KBuWOZwztQJ4xVqP
-         C6Slpe2KPjSpzTLzX2Z4Xo/KqhCqrrtdh3/3g0Llvvob5sschtmQyGGc81sxTTgVs3EZ
-         0I9J6oTRCDdxe/QJLN596XIH85SbL9smMNM9Gtt/yZubjRCfxRDAyM0KQukbzaYp/Sv6
-         0eWA==
+        bh=wGwtsouH/Asa/XynJR8xdqnrBiXazbhhQ4m4kBfPaEI=;
+        b=YnsTifLjfbT8zyMk6Ccw9OJayXl7hZYT9fC630BW3qUUI70y6uuJfi3JsLueta3jg+
+         GD9sARO3KBXyqRwya2i5TBNAjdTrrj+OmrsWKJQVdUHd7PLsuIFav5rgz1BJWU2VW17l
+         CggXveDBO5VW8CGXPJndeOvyj79IDYX6PeTiKcwXgg4vzxm7Fu/JQcvJlntpY2raa63g
+         HGilsTYgFjnP9iTVPy9RpYhVf/ssmOxRCqasAdmnAYGjLsHV3WB3hUkxaivKRhXvIjKn
+         Q2ImkzSh4Wm7IEo2MAnoGp8jLA9BW5QRzVL2IH3jZ/QaOa+Pa/FukpuX1RYW1A3ms7+x
+         M+Bw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=W0wmFtyT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Zz35M6Cw;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=W0wmFtyT;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Zz35M6Cw;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Andrey Konovalov <andreyknvl@google.com>,
-	Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 34/43] USB: serial: visor: handle potential invalid device configuration
-Date: Tue,  8 May 2018 10:10:53 +0200
-Message-Id: <20180508074009.257659065@linuxfoundation.org>
+	Matthew Wilcox <mawilcox@microsoft.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jeff Layton <jlayton@redhat.com>
+Subject: [PATCH 4.14 33/43] errseq: Always report a writeback error once
+Date: Tue,  8 May 2018 10:10:52 +0200
+Message-Id: <20180508074009.104216516@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -42,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882894176244438?=
-X-GMAIL-MSGID: =?utf-8?q?1599883056848028220?=
+X-GMAIL-THRID: =?utf-8?q?1599882801198490431?=
+X-GMAIL-MSGID: =?utf-8?q?1599883054553724628?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,113 +52,71 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Matthew Wilcox <willy@infradead.org>
 
-commit 4842ed5bfcb9daf6660537d70503c18d38dbdbb8 upstream.
+commit b4678df184b314a2bd47d2329feca2c2534aa12b upstream.
 
-If we get an invalid device configuration from a palm 3 type device, we
-might incorrectly parse things, and we have the potential to crash in
-"interesting" ways.
+The errseq_t infrastructure assumes that errors which occurred before
+the file descriptor was opened are of no interest to the application.
+This turns out to be a regression for some applications, notably Postgres.
 
-Fix this up by verifying the size of the configuration passed to us by
-the device, and only if it is correct, will we handle it.
+Before errseq_t, a writeback error would be reported exactly once (as
+long as the inode remained in memory), so Postgres could open a file,
+call fsync() and find out whether there had been a writeback error on
+that file from another process.
 
-Note that this also fixes an information leak of slab data.
+This patch changes the errseq infrastructure to report errors to all
+file descriptors which are opened after the error occurred, but before
+it was reported to any file descriptor.  This restores the user-visible
+behaviour.
 
-Reported-by: Andrey Konovalov <andreyknvl@google.com>
-Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[ johan: add comment about the info leak ]
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 5660e13d2fd6 ("fs: new infrastructure for writeback error handling and reporting")
+Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Jeff Layton <jlayton@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/visor.c |   69 ++++++++++++++++++++++-----------------------
- 1 file changed, 35 insertions(+), 34 deletions(-)
+ lib/errseq.c |   25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
---- a/drivers/usb/serial/visor.c
-+++ b/drivers/usb/serial/visor.c
-@@ -338,47 +338,48 @@ static int palm_os_3_probe(struct usb_se
- 		goto exit;
- 	}
+--- a/lib/errseq.c
++++ b/lib/errseq.c
+@@ -111,25 +111,22 @@ EXPORT_SYMBOL(errseq_set);
+  * errseq_sample - grab current errseq_t value
+  * @eseq: pointer to errseq_t to be sampled
+  *
+- * This function allows callers to sample an errseq_t value, marking it as
+- * "seen" if required.
++ * This function allows callers to initialise their errseq_t variable.
++ * If the error has been "seen", new callers will not see an old error.
++ * If there is an unseen error in @eseq, the caller of this function will
++ * see it the next time it checks for an error.
++ *
++ * Context: Any context.
++ * Return: The current errseq value.
+  */
+ errseq_t errseq_sample(errseq_t *eseq)
+ {
+ 	errseq_t old = READ_ONCE(*eseq);
+-	errseq_t new = old;
  
--	if (retval == sizeof(*connection_info)) {
--			connection_info = (struct visor_connection_info *)
--							transfer_buffer;
--
--		num_ports = le16_to_cpu(connection_info->num_ports);
--		for (i = 0; i < num_ports; ++i) {
--			switch (
--			   connection_info->connections[i].port_function_id) {
--			case VISOR_FUNCTION_GENERIC:
--				string = "Generic";
--				break;
--			case VISOR_FUNCTION_DEBUGGER:
--				string = "Debugger";
--				break;
--			case VISOR_FUNCTION_HOTSYNC:
--				string = "HotSync";
--				break;
--			case VISOR_FUNCTION_CONSOLE:
--				string = "Console";
--				break;
--			case VISOR_FUNCTION_REMOTE_FILE_SYS:
--				string = "Remote File System";
--				break;
--			default:
--				string = "unknown";
--				break;
--			}
--			dev_info(dev, "%s: port %d, is for %s use\n",
--				serial->type->description,
--				connection_info->connections[i].port, string);
--		}
-+	if (retval != sizeof(*connection_info)) {
-+		dev_err(dev, "Invalid connection information received from device\n");
-+		retval = -ENODEV;
-+		goto exit;
- 	}
 -	/*
--	* Handle devices that report invalid stuff here.
--	*/
-+
-+	connection_info = (struct visor_connection_info *)transfer_buffer;
-+
-+	num_ports = le16_to_cpu(connection_info->num_ports);
-+
-+	/* Handle devices that report invalid stuff here. */
- 	if (num_ports == 0 || num_ports > 2) {
- 		dev_warn(dev, "%s: No valid connect info available\n",
- 			serial->type->description);
- 		num_ports = 2;
- 	}
- 
-+	for (i = 0; i < num_ports; ++i) {
-+		switch (connection_info->connections[i].port_function_id) {
-+		case VISOR_FUNCTION_GENERIC:
-+			string = "Generic";
-+			break;
-+		case VISOR_FUNCTION_DEBUGGER:
-+			string = "Debugger";
-+			break;
-+		case VISOR_FUNCTION_HOTSYNC:
-+			string = "HotSync";
-+			break;
-+		case VISOR_FUNCTION_CONSOLE:
-+			string = "Console";
-+			break;
-+		case VISOR_FUNCTION_REMOTE_FILE_SYS:
-+			string = "Remote File System";
-+			break;
-+		default:
-+			string = "unknown";
-+			break;
-+		}
-+		dev_info(dev, "%s: port %d, is for %s use\n",
-+			serial->type->description,
-+			connection_info->connections[i].port, string);
-+	}
- 	dev_info(dev, "%s: Number of ports: %d\n", serial->type->description,
- 		num_ports);
+-	 * For the common case of no errors ever having been set, we can skip
+-	 * marking the SEEN bit. Once an error has been set, the value will
+-	 * never go back to zero.
+-	 */
+-	if (old != 0) {
+-		new |= ERRSEQ_SEEN;
+-		if (old != new)
+-			cmpxchg(eseq, old, new);
+-	}
+-	return new;
++	/* If nobody has seen this error yet, then we can be the first. */
++	if (!(old & ERRSEQ_SEEN))
++		old = 0;
++	return old;
+ }
+ EXPORT_SYMBOL(errseq_sample);
  
