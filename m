@@ -1,105 +1,137 @@
-Return-Path: <keescook@google.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525819503; cv=none;
+Return-Path: <mcgrof@kernel.org>
+X-Google-Smtp-Source: AB8JxZruMnUuYhzlj6jqevITgAygTO1zabU7S0w5ySeTOJ0DLhbXSGPInEEvqyY2gO4p1hz84oW4
+ARC-Seal: i=1; a=rsa-sha256; t=1525803190; cv=none;
         d=google.com; s=arc-20160816;
-        b=RIvNajJvHmh0YGJ+dl84At616ifrzfjbLmxuPx8uJ/VPoKymUPGmTDxNcEml3rGHCy
-         HTisgZELeV3iuvD+e9RZ1CM5Ikq4tckn+lideTlqvofdY37T7iSFvkDnsvLtSY7LNAcw
-         D3ijEwJkxOxLPFgX/iRq0Y2LSDQTesLWbGR8gqxonfqatP9VaB3h3xk+njh/kqYdRefI
-         nMpN03MfLjjmkVpynuXTxI6Z97l2zkjkOyCh+iuwGTFWhucpduVTrGR+t/Ss7DFTKRE2
-         Vt2RxcroJD1Lf/sfmp4cMQbMzj6yPPpYpYpTefRYCAHI7X37AR6gS5bK3uD8cmtmSQth
-         llIg==
+        b=RAUmx+fvaYbaPd+zqb+3gLBELmtozdYMgnkXo96NfYupFN8AIgssqDy1h5vZFPumHz
+         LrVW6REz9kJOetg5/2WXPmLi5zCqYUOwySZW8ma1onJo//+HpWe/mNo6e9W8tIuw9ir/
+         BY+yKHsRjXK2gtiJetJefGlQxOoNL2VX/alqijnMJx8wWzMCKnrff5LaPBh87Bc2nYQ5
+         c/7t7SXSxb+XbH0SPUqiOaOhIvEK3c7DU1wmFlVzL4LkscC/xU1qEDz2oL4Uio/z+6Uc
+         J0B0sLa3l9r88alTFomB26c26+jv1uiAjCjFx5UFeJ9Yyzyh8oQ2n9YQPqj/XbvwBF8q
+         JIqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
-         :mime-version:dkim-signature:dkim-signature
-         :arc-authentication-results;
-        bh=8+PAMaZ2dUHHu2rIqqLS0Hwl+HlnjpfN5UVb6BMCW4E=;
-        b=J+Gu9QFvYUOBaTw/jaQzQ/4lqsBifQAxdfHg35LYNXrbZPrPU3Qmfaq4AgUM9VqGnk
-         6ziwdrWyA2cZMVjAcb4WpKTys1YzR2Mws5Ltwp4avAXIeRIFkm4B0m+nsWJftXDZyHI6
-         IbOLxFpht4C/TtxJLmDhrHXC358iPIW0PO5gNhvPOWzMWfEkHRU8urXg1SH/BGHSYqWa
-         9I0arWd/Ma7PMS4GWU4Mj7V8t5ztCiRicjG6EnfvaSqghV9a6DasMn9I8JmVkvgCpDdh
-         mIRZfkk9sxKgnuaDpmIBI+kJ4TD5rqpGyw1w8UStSG2DXfx2N/aQKHeHa6kOyt26qH2I
-         oRew==
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :dkim-signature:arc-authentication-results;
+        bh=BxrQTlXE/rbdfk9UYBocWWQBdSqLVLIhbWDnrD/4L3o=;
+        b=aSdUmhbvd3LiY0mL/htQ9P9xKQTkdN9lQJUQ/7xLRF4Dsy8h+nG5HQ3kebfR1YcxjB
+         skYWngvoYQa9AGPWHbbepYqTNJE9GZywABd68j8BTJJRKI6VoPHPe9eXTY3fMktkJp4b
+         45sX+xp8e+ydhBpGoybGiyfO6MMGSRqvzLOPugJ+7IKWm2ikK3GypBYHe6IhIdB6m120
+         f/KC930p3dL75gB+RVk9RUUDaP7YWO1Cu5zdINEhMJc6RJYJOdIy/sNJUY1jA31ZdiLC
+         XQKxD/n5OZmvcdnOo0SKqqzz8BP3uWd5ecjh9/XVVj/PrzO8WD1jARQizWPN+sCOS30V
+         Rmvg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qbd47p10;
-       dkim=pass header.i=@chromium.org header.s=google header.b=ecg5rmn7;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=GlYxvr34;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@google.com header.s=20161025 header.b=qbd47p10;
-       dkim=pass header.i=@chromium.org header.s=google header.b=ecg5rmn7;
-       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
-X-Google-Smtp-Source: AB8JxZosZNB9fK8xqUv+aQZl9NRplF+3/5EsLQUtDro5lVAFiSCtUfl+Sa2bRmg4bDR6z/iUMkFUXEImtQHimP4L7bU=
-MIME-Version: 1.0
-Sender: keescook@google.com
+       dkim=pass header.i=@kernel.org header.s=default header.b=GlYxvr34;
+       spf=pass (google.com: domain of mcgrof@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=mcgrof@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	keescook@chromium.org,
+	josh@joshtriplett.org,
+	maco@android.com,
+	andy.gross@linaro.org,
+	david.brown@linaro.org,
+	bjorn.andersson@linaro.org,
+	teg@jklm.no,
+	wagi@monom.org,
+	hdegoede@redhat.com,
+	andresx7@gmail.com,
+	zohar@linux.vnet.ibm.com,
+	kubakici@wp.pl,
+	shuah@kernel.org,
+	mfuzzey@parkeon.com,
+	dhowells@redhat.com,
+	pali.rohar@gmail.com,
+	tiwai@suse.de,
+	kvalo@codeaurora.org,
+	arend.vanspriel@broadcom.com,
+	zajec5@gmail.com,
+	nbroeking@me.com,
+	markivx@codeaurora.org,
+	broonie@kernel.org,
+	dmitry.torokhov@gmail.com,
+	dwmw2@infradead.org,
+	torvalds@linux-foundation.org,
+	Abhay_Salunke@dell.com,
+	jewalt@lgsinnovations.com,
+	oneukum@suse.com,
+	cantabile.desu@gmail.com,
+	ast@fb.com,
+	hare@suse.com,
+	jejb@linux.vnet.ibm.com,
+	martin.petersen@oracle.com,
+	khc@pm.waw.pl,
+	davem@davemloft.net,
+	arve@android.com,
+	tkjos@android.com,
+	corbet@lwn.net,
+	mchehab+samsung@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	"Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH v6 11/13] Documentation: fix few typos and clarifications for the firmware loader
+Date: Tue,  8 May 2018 11:12:45 -0700
+Message-Id: <20180508181247.19431-12-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508181247.19431-1-mcgrof@kernel.org>
 References: <20180508181247.19431-1-mcgrof@kernel.org>
-From: Kees Cook <keescook@chromium.org>
-Date: Tue, 8 May 2018 15:45:02 -0700
-X-Google-Sender-Auth: iJNHZvLUFqa-cr_sDF8QYTaN0zM
-Message-ID: <CAGXu5jJ=9XKn=z1T16iV-BoN88QLh7q+OicZxc5TvEjioriGMA@mail.gmail.com>
-Subject: Re: [PATCH v6 00/13] firmware_loader changes for v4.18
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
-	Josh Triplett <josh@joshtriplett.org>, maco@android.com,
-	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
-	bjorn.andersson@linaro.org, teg@jklm.no, wagi@monom.org,
-	Hans de Goede <hdegoede@redhat.com>, Andres Rodriguez <andresx7@gmail.com>,
-	Mimi Zohar <zohar@linux.vnet.ibm.com>, Jakub Kicinski <kubakici@wp.pl>, Shuah Khan <shuah@kernel.org>,
-	Martin Fuzzey <mfuzzey@parkeon.com>, David Howells <dhowells@redhat.com>, pali.rohar@gmail.com,
-	Takashi Iwai <tiwai@suse.de>, Kalle Valo <kvalo@codeaurora.org>,
-	Arend van Spriel <arend.vanspriel@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Nicolas Broeking <nbroeking@me.com>, Vikram Mulukutla <markivx@codeaurora.org>,
-	Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	David Woodhouse <dwmw2@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Abhay_Salunke@dell.com, jewalt@lgsinnovations.com, oneukum@suse.com,
-	Bitterblue of Monsea <cantabile.desu@gmail.com>, Alexei Starovoitov <ast@fb.com>, hare <hare@suse.com>,
-	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, khc@pm.waw.pl,
-	"David S. Miller" <davem@davemloft.net>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-	tkjos@android.com, Jonathan Corbet <corbet@lwn.net>, mchehab+samsung@kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, linux-scsi@vger.kernel.org,
-	linux-wireless <linux-wireless@vger.kernel.org>,
-	Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599920585909697433?=
-X-GMAIL-MSGID: =?utf-8?q?1599937711573093485?=
+X-GMAIL-THRID: =?utf-8?q?1599920605966512508?=
+X-GMAIL-MSGID: =?utf-8?q?1599920605966512508?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 8, 2018 at 11:12 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
-> Greg,
->
-> Here is what I have queued up for the firmware_loader for v4.18. It
-> includes a slew of cleanup work, and the new firmware_request_nowarn()
-> which is quiet but enables the sysfs fallback mechanism. I've gone ahead
-> and also queued up a few minor fixes for the firmware loader documentation
-> which have come up recently. These changes are available on my git tree
-> both based on linux-next [0] and Linus' latest tree [1]. Folks working
-> on new developments for the firmware loader can use my linux-next
-> branch 20180508-firmware_loader_for-v4.18-try2 for now.
->
-> 0-day sends its blessings.
->
-> The patches from Mimi's series still require a bit more discussion and
-> review. The discussion over the EFI firmware fallback mechanism is still
-> ongoing.
->
-> As for the rename that you wanted, perhaps we can do this late in the
-> merge window considering we're at rc4 now. I can prep something up for
-> that later.
->
-> Question, and specially rants are warmly welcomed.
+Fix a few typos, and clarify a few sentences.
 
-I sent some typo catches, but with those fixed, please consider the
-whole series:
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ Documentation/driver-api/firmware/fallback-mechanisms.rst | 5 +++--
+ Documentation/driver-api/firmware/firmware_cache.rst      | 4 ++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
-Thanks!
-
--Kees
-
+diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+index f353783ae0be..a39323ef7d29 100644
+--- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
++++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
+@@ -83,7 +83,7 @@ and a file upload firmware into:
+   * /sys/$DEVPATH/data
+ 
+ To upload firmware you will echo 1 onto the loading file to indicate
+-you are loading firmware. You then cat the firmware into the data file,
++you are loading firmware. You then write the firmware into the data file,
+ and you notify the kernel the firmware is ready by echo'ing 0 onto
+ the loading file.
+ 
+@@ -136,7 +136,8 @@ by kobject uevents. This is specially exacerbated due to the fact that most
+ distributions today disable CONFIG_FW_LOADER_USER_HELPER_FALLBACK.
+ 
+ Refer to do_firmware_uevent() for details of the kobject event variables
+-setup. Variables passwdd with a kobject add event:
++setup. The variables currently passed to userspace with a "kobject add"
++event are:
+ 
+ * FIRMWARE=firmware name
+ * TIMEOUT=timeout value
+diff --git a/Documentation/driver-api/firmware/firmware_cache.rst b/Documentation/driver-api/firmware/firmware_cache.rst
+index 2210e5bfb332..c2e69d9c6bf1 100644
+--- a/Documentation/driver-api/firmware/firmware_cache.rst
++++ b/Documentation/driver-api/firmware/firmware_cache.rst
+@@ -29,8 +29,8 @@ Some implementation details about the firmware cache setup:
+ * If an asynchronous call is used the firmware cache is only set up for a
+   device if if the second argument (uevent) to request_firmware_nowait() is
+   true. When uevent is true it requests that a kobject uevent be sent to
+-  userspace for the firmware request. For details refer to the Fackback
+-  mechanism documented below.
++  userspace for the firmware request through the sysfs fallback mechanism
++  if the firmware file is not found.
+ 
+ * If the firmware cache is determined to be needed as per the above two
+   criteria the firmware cache is setup by adding a devres entry for the
 -- 
-Kees Cook
-Pixel Security
+2.17.0
