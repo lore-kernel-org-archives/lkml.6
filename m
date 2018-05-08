@@ -1,38 +1,37 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoBNINJHMZIMR3FvHZ9iaBUsUlwCRq55LpxgngBRZapTq/lo8jQ4a/eZWuWFJd6bpYjs4mR
-ARC-Seal: i=1; a=rsa-sha256; t=1525767121; cv=none;
+X-Google-Smtp-Source: AB8JxZqlNd6b0to5iLuBZV6uisY+5OxO+W09ibtPiVV7RU0meFaz8mofFA9rLMAMCnrlGXO2pd6r
+ARC-Seal: i=1; a=rsa-sha256; t=1525767118; cv=none;
         d=google.com; s=arc-20160816;
-        b=IGTHu8O4sViXWiSDd1uPIgAMyLAjdU6fguALyQTgLMXd4PO5rl5Re+AG0CqbUjG3bM
-         l0pG61jdLAUlOY/b/8iALuPz6IOwQUBcGQX8R8VarU/svR2RWpGLvjdlJ06qpOCQ2LOh
-         44a9yMXSzMu6bAcSuqpXKYXZSvIFhAzaCqhVJ9a8WR6EGxLQCOr8t0axieY9G7BG5bS7
-         txTYeoUWTZ1aLf5gHt9P4e6DCw4nm3P2n36HSinXoYHdaOrMVg8L6JwE6pn8aLXzwXG9
-         +bAMgFTOP2ALkyZFjQCYK19PBCAhZKBYFKK+35N5FonM/Q7bhYv1rI3zw1wjNV7RkSNO
-         s+kg==
+        b=q8ErbaQwLVnwhQUeuSf4noAn9U4cjHMITUzLUw0xdLlPNBSfMYkxNFSFfBnEIMZvLx
+         0wrwFzamm70jZqKWMx8Kz+3JQ7o3DMjtdYiBqbX1lxMIsmWxHVmo4770q/XvifPPLNiN
+         FtWLlyHgVnvSzRSABOx1n5eNM8EfFTGEn/sPjbMjbbTeCBTjkK7U6TjRqQ3+oDVdO39Q
+         W5mNl6obK+IF7I6iAos6XzG4V+RMqJ3F2kMlTsPIB5yxn2onEFMwWOSqQla5Xh7Li8Rd
+         UwE06zVCqkU3vlso1dOBgHBMe0GT8sF6jlAsRUJ7OA2jCEy2QE3uRkEQPMJuhj56pbwp
+         dlyQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=TLsEWd9XEvlT5nLYROVq7uRnaTvJwEml7lURuEhS/Kc=;
-        b=WbR0BXGYa/36CBHkWA48b6Mbl2Yi0jeK5LOQG+UYKRwmZ85YyGBFGRiNk11iV2apBp
-         dS7kZeOK8d2n15LA3FFlqgGTeQZGc0zn9Ct1jPnySO8eBh5T2DqbgNMVozUbqMCA4rfy
-         WCnJjywP1AcjdvBqXjsW2ycBnr7uALzU/v8XT40/d0H984tTEilinghWW56sDckDBo+1
-         HHkFNj4y+5SfKMJ4Xaw//i8+awAZMBVR/sL6ivNz2Eu+5JK9VDSc5rawz/opSaoZy6LB
-         VSsmyc5kYDp6fyzAy7sv08JtfdogIZ6ia33GCHSplyPgZKJGo6+c3fVg8SkxxNRYCbfq
-         /mBA==
+        bh=VoWI9t5JyBi2lOEMSuQzGXWdxCJD4HxtbU6BfXI6ICo=;
+        b=Vn/Bji77lheS210otnRkKRYjhBOK63Lg/nt9pvTNYdXFE6SRQj41OMT+w7DXyVEabA
+         4TnaaBEPlSk8DdXCJ+9wNVx5zKjBv7/CPltNGfWIUKILRpZEuH8qsb6nceR//EM/1u2R
+         IaHfxRSE8a3TZWsSP0SfIF97/d+ocgnsK+E6S4A0tTOFunbi1FWr6f6nOFWZSzblK9Ur
+         /155qAyKWvGX+hdoXoLBFOLe9SXQShYsDBfZjsKdFFaZCGbaXH9XonU7ualri8qsOQWe
+         nZ943k7CGGAaPGdPay3LuXUnyMtZ1A7lmcNsZEHzYEJ4UOINyJA6X+iFn3ZehHg0GK6c
+         A3EQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=yEu21eWA;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GkiqIucf;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=yEu21eWA;
+       dkim=pass header.i=@kernel.org header.s=default header.b=GkiqIucf;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com,
 	Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.16 04/52] ALSA: pcm: Check PCM state at xfern compat ioctl
-Date: Tue,  8 May 2018 10:10:02 +0200
-Message-Id: <20180508073928.636680894@linuxfoundation.org>
+Subject: [PATCH 4.16 03/52] ALSA: hda - Fix incorrect usage of IS_REACHABLE()
+Date: Tue,  8 May 2018 10:10:01 +0200
+Message-Id: <20180508073928.496691064@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -42,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882785467298438?=
-X-GMAIL-MSGID: =?utf-8?q?1599882785467298438?=
+X-GMAIL-THRID: =?utf-8?q?1599882781942424191?=
+X-GMAIL-MSGID: =?utf-8?q?1599882781942424191?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -53,34 +52,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Takashi Iwai <tiwai@suse.de>
 
-commit f13876e2c33a657a71bcbb10f767c0951b165020 upstream.
+commit 6a30abaa40b62aed46ef12ea4c16c48565bdb376 upstream.
 
-Since snd_pcm_ioctl_xfern_compat() has no PCM state check, it may go
-further and hit the sanity check pcm_sanity_check() when the ioctl is
-called right after open.  It may eventually spew a kernel warning, as
-triggered by syzbot, depending on kconfig.
+The commit c469652bb5e8 ("ALSA: hda - Use IS_REACHABLE() for
+dependency on input") simplified the dependencies with IS_REACHABLE()
+macro, but it broke due to its incorrect usage: it should have been
+IS_REACHABLE(CONFIG_INPUT) instead of IS_REACHABLE(INPUT).
 
-The lack of PCM state check there was just an oversight.  Although
-it's no real crash, the spurious kernel warning is annoying, so let's
-add the proper check.
-
-Reported-by: syzbot+1dac3a4f6bc9c1c675d4@syzkaller.appspotmail.com
+Fixes: c469652bb5e8 ("ALSA: hda - Use IS_REACHABLE() for dependency on input")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/core/pcm_compat.c |    2 ++
- 1 file changed, 2 insertions(+)
+ sound/pci/hda/patch_realtek.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/core/pcm_compat.c
-+++ b/sound/core/pcm_compat.c
-@@ -423,6 +423,8 @@ static int snd_pcm_ioctl_xfern_compat(st
- 		return -ENOTTY;
- 	if (substream->stream != dir)
- 		return -EINVAL;
-+	if (substream->runtime->status->state == SNDRV_PCM_STATE_OPEN)
-+		return -EBADFD;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -3832,7 +3832,7 @@ static void alc280_fixup_hp_gpio4(struct
+ 	}
+ }
  
- 	if ((ch = substream->runtime->channels) > 128)
- 		return -EINVAL;
+-#if IS_REACHABLE(INPUT)
++#if IS_REACHABLE(CONFIG_INPUT)
+ static void gpio2_mic_hotkey_event(struct hda_codec *codec,
+ 				   struct hda_jack_callback *event)
+ {
