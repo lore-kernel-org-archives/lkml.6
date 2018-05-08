@@ -1,66 +1,40 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933014AbeEHI1U (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:27:20 -0400
-Received: from la.guarana.org ([173.254.219.205]:41314 "EHLO la.guarana.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754816AbeEHI1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:27:17 -0400
-Date: Tue, 8 May 2018 04:27:16 -0400
-From: Kevin Easton <kevin@guarana.org>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH net] vhost: Use kzalloc() to allocate vhost_msg_node
-Message-ID: <20180508082716.GA21344@la.guarana.org>
-References: <000000000000a5b2b1056a86e98c@google.com>
- <20180427154502.GA22544@la.guarana.org>
- <20180507155534-mutt-send-email-mst@kernel.org>
+        id S1754843AbeEHI2Y (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:28:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36416 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932070AbeEHI2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:28:19 -0400
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <e2aa9491-c1e3-4ae1-1ab2-589a6642a24a@infradead.org>
+References: <e2aa9491-c1e3-4ae1-1ab2-589a6642a24a@infradead.org> <20180507231506.4891-1-mcgrof@kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: dhowells@redhat.com, "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        tglx@linutronix.de, arnd@arndb.de, cl@linux.com, keescook@chromium.org,
+        luto@amacapital.net, longman@redhat.com, viro@zeniv.linux.org.uk,
+        willy@infradead.org, ebiederm@xmission.com, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: expland documentation over __read_mostly
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507155534-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <32207.1525768094.1@warthog.procyon.org.uk>
+Date: Tue, 08 May 2018 09:28:14 +0100
+Message-ID: <32208.1525768094@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 04:03:25PM +0300, Michael S. Tsirkin wrote:
-> On Fri, Apr 27, 2018 at 11:45:02AM -0400, Kevin Easton wrote:
-> > The struct vhost_msg within struct vhost_msg_node is copied to userspace,
-> > so it should be allocated with kzalloc() to ensure all structure padding
-> > is zeroed.
-> > 
-> > Signed-off-by: Kevin Easton <kevin@guarana.org>
-> > Reported-by: syzbot+87cfa083e727a224754b@syzkaller.appspotmail.com
-> > ---
-> >  drivers/vhost/vhost.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > index f3bd8e9..1b84dcff 100644
-> > --- a/drivers/vhost/vhost.c
-> > +++ b/drivers/vhost/vhost.c
-> > @@ -2339,7 +2339,7 @@ EXPORT_SYMBOL_GPL(vhost_disable_notify);
-> >  /* Create a new message. */
-> >  struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type)
-> >  {
-> > -	struct vhost_msg_node *node = kmalloc(sizeof *node, GFP_KERNEL);
-> > +	struct vhost_msg_node *node = kzalloc(sizeof *node, GFP_KERNEL);
-> >  	if (!node)
-> >  		return NULL;
-> >  	node->vq = vq;
-> 
-> 
-> Let's just init the msg though.
-> 
-> OK it seems this is the best we can do for now,
-> we need a new feature bit to fix it for 32 bit
-> userspace on 64 bit kernels.
-> 
-> Does the following help?
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Yes, the reproducer doesn't trigger the error with that patch applied.
+> > + * execute a critial path. We should be mindful and selective if its use.
+> 
+>                                                                  of its use.
 
-    - Kevin
+                                                                   in its use.
+
+David
