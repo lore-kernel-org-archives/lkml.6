@@ -1,51 +1,138 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754400AbeEHGnp (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 02:43:45 -0400
-Received: from mail-pg0-f44.google.com ([74.125.83.44]:46106 "EHLO
-        mail-pg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754377AbeEHGnn (ORCPT
+        id S1754466AbeEHGo5 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 02:44:57 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:39704 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754257AbeEHGoz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 02:43:43 -0400
-X-Google-Smtp-Source: AB8JxZrfrkxNMtwskpvUY5bgjqwjdTMyoDBljvrXEaWDypiEoU6swwJzU2VniZPy3Wv0GaiwbLcP2g==
-Subject: Re: [PATCH 0/3] scsi: arcmsr: Add driver parameter cmd_timeout for
- scsi command timeout setting
-From: Ching Huang <ching2048@areca.com.tw>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dan.carpenter@oracle.com,
-        hch@infradead.org, colin.king@canonical.com
-In-Reply-To: <1525761166.4261.8.camel@Centos6.3-64>
-References: <1525675401.8876.9.camel@Centos6.3-64>
-         <yq1in7ywvo8.fsf@oracle.com>  <1525761166.4261.8.camel@Centos6.3-64>
-Content-Type: text/plain; charset="UTF-8"
-Date: Tue, 08 May 2018 14:43:38 +0800
-Message-ID: <1525761818.4261.12.camel@Centos6.3-64>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-37.el6) 
+        Tue, 8 May 2018 02:44:55 -0400
+X-Google-Smtp-Source: AB8JxZobIz23jSGzad8nrCCtKKOZOU5oBB6x2ZxGyorSRS4ZaJSq+iiYfzAtt6lPZnAdhLaW8g9kVw==
+Subject: Re: [PATCH 2/2] media: v4l: Add new 10-bit packed grayscale format
+To: Sakari Ailus <sakari.ailus@iki.fi>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1524829239-4664-1-git-send-email-todor.tomov@linaro.org>
+ <1524829239-4664-3-git-send-email-todor.tomov@linaro.org>
+ <20180507105956.o5fhjq7udmo7qt2z@valkosipuli.retiisi.org.uk>
+From: Todor Tomov <todor.tomov@linaro.org>
+Message-ID: <de236dfe-fba6-0f96-0144-e108136eef92@linaro.org>
+Date: Tue, 8 May 2018 09:44:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180507105956.o5fhjq7udmo7qt2z@valkosipuli.retiisi.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-05-08 at 14:32 +0800, Ching Huang wrote:
-> On Tue, 2018-05-08 at 01:41 -0400, Martin K. Petersen wrote:
-> > Hello Ching,
-> > 
-> > > 1. Add driver parameter cmd_timeout, default value is ARCMSR_DEFAULT_TIMEOUT.
-> > > 2. Add slave_configure callback function to set device command timeout value.
-> > > 3. Update driver version to v1.40.00.06-20180504.
-> > 
-> > I am not so keen on arcmsr overriding the timeout set by the admin or
-> > application.
-> > 
-> > Also, instead of introducing this module parameter, why not simply ask
-> > the user to change rq_timeout?
-> > 
-> This timeout setting only after device has been inquiry successfully.
-> Of course, user can set timeout value to /sys/block/sdX/device/timeout.
-> But user does not like to set this value once command timeout occurred.
-> They rather like timeout never happen.
+Hi Sakari,
+
+On  7.05.2018 13:59, Sakari Ailus wrote:
+> Hi Todor,
 > 
-This timeout setting apply to all devices, its better than user has to
-set one bye one for each device.
+> On Fri, Apr 27, 2018 at 02:40:39PM +0300, Todor Tomov wrote:
+>> The new format will be called V4L2_PIX_FMT_Y10P.
+>> It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
+>> but V4L2_PIX_FMT_Y10P is a grayscale format.
+>>
+>> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+>> ---
+>>  Documentation/media/uapi/v4l/pixfmt-y10p.rst | 31 ++++++++++++++++++++++++++++
+>>  Documentation/media/uapi/v4l/yuv-formats.rst |  1 +
+>>  drivers/media/v4l2-core/v4l2-ioctl.c         |  1 +
+>>  include/uapi/linux/videodev2.h               |  1 +
+>>  4 files changed, 34 insertions(+)
+>>  create mode 100644 Documentation/media/uapi/v4l/pixfmt-y10p.rst
+>>
+>> diff --git a/Documentation/media/uapi/v4l/pixfmt-y10p.rst b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+>> new file mode 100644
+>> index 0000000..0018fe7
+>> --- /dev/null
+>> +++ b/Documentation/media/uapi/v4l/pixfmt-y10p.rst
+>> @@ -0,0 +1,31 @@
+>> +.. -*- coding: utf-8; mode: rst -*-
+>> +
+>> +.. _V4L2-PIX-FMT-Y10P:
+>> +
+>> +******************************
+>> +V4L2_PIX_FMT_Y10P ('Y10P')
+>> +******************************
+>> +
+>> +Grey-scale image as a MIPI RAW10 packed array
+>> +
+>> +
+>> +Description
+>> +===========
+>> +
+>> +This is a packed grey-scale image format with a depth of 10 bits per
+>> +pixel. Every four consecutive pixels are packed into 5 bytes. Each of
+>> +the first 4 bytes contain the 8 high order bits of the pixels, and
+>> +the 5th byte contains the 2 least significants bits of each pixel,
+>> +in the same order.
+>> +
+>> +**Bit-packed representation.**
+>> +
+>> +.. flat-table::
+>> +    :header-rows:  0
+>> +    :stub-columns: 0
+>> +
+>> +    * - Y'\ :sub:`00[9:2]`
+>> +      - Y'\ :sub:`01[9:2]`
+>> +      - Y'\ :sub:`02[9:2]`
+>> +      - Y'\ :sub:`03[9:2]`
+>> +      - Y'\ :sub:`03[1:0]`\ Y'\ :sub:`02[1:0]`\ Y'\ :sub:`01[1:0]`\ Y'\ :sub:`00[1:0]`
+> 
+> Could you add which exact bits the two LSBs of each pixel go to in the last
+> byte, as in the 10-bit packed Bayer format documentation?
+
+Thank you for review. I'll add and send v2.
+
+Best regards,
+Todor
+
+> 
+>> diff --git a/Documentation/media/uapi/v4l/yuv-formats.rst b/Documentation/media/uapi/v4l/yuv-formats.rst
+>> index 3334ea4..9ab0592 100644
+>> --- a/Documentation/media/uapi/v4l/yuv-formats.rst
+>> +++ b/Documentation/media/uapi/v4l/yuv-formats.rst
+>> @@ -29,6 +29,7 @@ to brightness information.
+>>      pixfmt-y10
+>>      pixfmt-y12
+>>      pixfmt-y10b
+>> +    pixfmt-y10p
+>>      pixfmt-y16
+>>      pixfmt-y16-be
+>>      pixfmt-y8i
+>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> index f48c505..bdf2399 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> @@ -1147,6 +1147,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>>  	case V4L2_PIX_FMT_Y16:		descr = "16-bit Greyscale"; break;
+>>  	case V4L2_PIX_FMT_Y16_BE:	descr = "16-bit Greyscale BE"; break;
+>>  	case V4L2_PIX_FMT_Y10BPACK:	descr = "10-bit Greyscale (Packed)"; break;
+>> +	case V4L2_PIX_FMT_Y10P:		descr = "10-bit Greyscale (MIPI Packed)"; break;
+>>  	case V4L2_PIX_FMT_Y8I:		descr = "Interleaved 8-bit Greyscale"; break;
+>>  	case V4L2_PIX_FMT_Y12I:		descr = "Interleaved 12-bit Greyscale"; break;
+>>  	case V4L2_PIX_FMT_Z16:		descr = "16-bit Depth"; break;
+>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+>> index 600877b..b24ab720 100644
+>> --- a/include/uapi/linux/videodev2.h
+>> +++ b/include/uapi/linux/videodev2.h
+>> @@ -522,6 +522,7 @@ struct v4l2_pix_format {
+>>  
+>>  /* Grey bit-packed formats */
+>>  #define V4L2_PIX_FMT_Y10BPACK    v4l2_fourcc('Y', '1', '0', 'B') /* 10  Greyscale bit-packed */
+>> +#define V4L2_PIX_FMT_Y10P    v4l2_fourcc('Y', '1', '0', 'P') /* 10  Greyscale, MIPI RAW10 packed */
+>>  
+>>  /* Palette formats */
+>>  #define V4L2_PIX_FMT_PAL8    v4l2_fourcc('P', 'A', 'L', '8') /*  8  8-bit palette */
+>> -- 
+>> 2.7.4
+>>
+> 
