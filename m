@@ -1,186 +1,151 @@
-Return-Path: <minchan.kim@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525776535; cv=none;
+Return-Path: <wagi@monom.org>
+X-Google-Smtp-Source: AB8JxZr08I4985KlgbHszjym+iXC1hxN+h6/lfIfBkV4ZoVrh73XL9+wpcXWwlraJYmX+Q3wtqD9
+ARC-Seal: i=1; a=rsa-sha256; t=1525769717; cv=none;
         d=google.com; s=arc-20160816;
-        b=qLwKK/nHsDTQDIumZp4uxflGiGCsQUIIeFZM56Y+0WHB1zEiMNZ/xvJqAZQvD+Kgqv
-         vkZOGKimS+867+/JL2CAbIoiqJryTDD6pT2vNB5e++TEyKaMSIoxtBPwkcs3+ohlAfIN
-         ykMtT90KponAfZ0Q7A32r/z6TExpucAgRbUpOu9hHNkpquHb/ULKkzWNI+HURhWYn+rF
-         dkg2XkUL6GIiOcUfF5DEKv3QSa2WDPQEZBdNCbj9PbrjacWK7pE/DCdyMV9xZ1lZXa45
-         PaKUqqVFZymXIXVc3LXsb+eMsPq3ZDkHjRFgFcoTuNDpcTH4vNHaDvwLW03JWI+KfihA
-         JlQw==
+        b=fnV6CivkJpAOa/FLoFyPqFFq29S/kGvunCKAk4biCHnxugAi+pd6bWshpKmffvQPGx
+         fTPACaVBdkcnzkyFtEJvslYylhWiA5ccaGyKdyi6ahQoNHU9Bgpm+/s8WU1zDA9YZd4+
+         rn02zhbqFkZul12z7ea19nMdWvmN5uNSf8ReM1uPB3H3ZdG2J6+GpEYHW8TYJNipIIH4
+         TvXp146Wc86LzWM/iFmE4umjOkAlhcx0O4gB57WQgVyBgEgxyMV1vIZpMQSj5dgGaiHa
+         aHrekvr1mZlh2/PWnB8I3fVXpL7KWhLZH/wkZ6nxQ8pXL8kYsdzmquZXeoL+MpdynjdV
+         AJNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:sender:dkim-signature
-         :arc-authentication-results;
-        bh=XNfvqaVn2eTUao1sgVRFj1ClcqKQmDKIEY2+1Hod84c=;
-        b=Htm84p9kxDlHOwBMIXe2/mvvIXs3bEzbjoGNC77nXj5KEjaIdDNQYn5ZCsoHBV3NsH
-         lgEf4SrkM+ZfpaR5KAtkBxbn8fMiVt/0m0PuI5UCZO1ZcT6E7Rhvz3agqXVGFjp6i4/Q
-         4yZrIzcmdRINthUJ1Hpxrz56OHD2T9YWQknkOS0ZYV9RPVnXgPeOEvEI3ucbLlhh7VFc
-         3ZQznAOTNTqQCuKv574nZomktk5LkVmZ2oCsYBGTiOX29xtGk+94RVU/1FHprucUQmaR
-         2ZxyFS7spLrZm4qZSsWBtKxvHDzrP6AgwSYCp99MlPwy/Ga2fILp/ncHk++sJ7v/hsmj
-         DAng==
+        h=message-id:date:subject:cc:to:from:arc-authentication-results;
+        bh=Xb8uCgalpYkz2uo7gGPODUBgz8fRsA+uaQaQBDd0dQQ=;
+        b=q7gYTTsrIzbb/T62RyLcP77dSMQNEvsAeoc7tS/waRZI5cZyvSNzgf8OD621Vel8qv
+         57Pyy38xSPgCxi2t4If4Y2yuRuvifgbVZfl5dDs7ikE9CZ65//77Qi1+OENHjxWn74QQ
+         Fd0JPVBcuvC3cyDdjgYSK6x61qSKV4yz8VuT7oTOgo1zAODPYeV36pBMSSexw0dFz2Pu
+         bF8Jms/rLfo1upW+SZiA7mk+x50ZrUFHnpJCR7Nd7QZZKZ0fX/jo9cbs0pi8gHV2F8L1
+         VK10JjEpFGcvO44UfYA0cYChMk8invZ3sOUod6j3z6QctC3XldovGPRGi1wK2SUWEwvJ
+         JQMw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Jf0soNTi;
-       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       spf=pass (google.com: best guess record for domain of wagi@monom.org designates 188.138.9.77 as permitted sender) smtp.mailfrom=wagi@monom.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=monom.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=Jf0soNTi;
-       spf=pass (google.com: domain of minchan.kim@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=minchan.kim@gmail.com;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-X-Google-Smtp-Source: AB8JxZq3PRf6glzv1EOWmq4bVGgZMwQEVNfkwzCM/9mgBc6mkh3m1DqLxACVYi5YRkT6sGiH3WN1JA==
-Sender: Minchan Kim <minchan.kim@gmail.com>
-Date: Tue, 8 May 2018 19:48:49 +0900
-From: Minchan Kim <minchan@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux-Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Message-ID: <20180508104849.GA8209@rodete-desktop-imager.corp.google.com>
-References: <20180504141756.670dc3f3@canb.auug.org.au>
- <4fb39549-8902-950d-3076-82a11b1c5102@infradead.org>
- <20180507141039.GA1934@rodete-desktop-imager.corp.google.com>
- <f7c0ebfe-1986-6ce5-8641-5503ea6a05fb@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f7c0ebfe-1986-6ce5-8641-5503ea6a05fb@infradead.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+       spf=pass (google.com: best guess record for domain of wagi@monom.org designates 188.138.9.77 as permitted sender) smtp.mailfrom=wagi@monom.org;
+       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=monom.org
+From: Daniel Wagner <wagi@monom.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-rt-users@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	Daniel Wagner <daniel.wagner@siemens.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH v3] serial: sh-sci: Use spin_{try}lock_irqsave instead of open coding version
+Date: Tue,  8 May 2018 10:55:09 +0200
+Message-Id: <20180508085509.31384-1-wagi@monom.org>
+X-Mailer: git-send-email 2.14.3
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599505695773381278?=
-X-GMAIL-MSGID: =?utf-8?q?1599892656894537190?=
+X-GMAIL-THRID: =?utf-8?q?1599885506771266945?=
+X-GMAIL-MSGID: =?utf-8?q?1599885506771266945?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Mon, May 07, 2018 at 09:47:54AM -0700, Randy Dunlap wrote:
-> On 05/07/2018 07:10 AM, Minchan Kim wrote:
-> > On Fri, May 04, 2018 at 08:39:43AM -0700, Randy Dunlap wrote:
-> >> On 05/03/2018 09:17 PM, Stephen Rothwell wrote:
-> >>> Hi Andrew,
-> >>>
-> >>> After merging the akpm-current tree, today's linux-next build
-> >>> (x86_64_allmodconfig) produced this warning:
-> >>>
-> >>> drivers/block/zram/zram_drv.c: In function 'read_block_state':
-> >>> drivers/block/zram/zram_drv.c:674:16: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type '__kernel_time_t {aka long int}' [-Wformat=]
-> >>>     "%12lu %12llu.%06lu %c%c%c\n",
-> >>>            ~~~~~^
-> >>>            %12lu
-> >>>     (unsigned long)index, ts.tv_sec,
-> >>>                           ~~~~~~~~~
-> >>>
-> >>> Introduced by commit
-> >>>
-> >>>   827c7dbda8eb ("zram-introduce-zram-memory-tracking-update-fix-fix")
-> >>>
-> >>
-> >> typedef __s64 time64_t;
-> >>
-> >> struct timespec64 {
-> >> 	time64_t	tv_sec;			/* seconds */
-> >> 	long		tv_nsec;		/* nanoseconds */
-> >> };
-> >>
-> >> time64_t is signed. Also, %lu on i386 et al is for 32-bit longs.
-> >> I guess that "we" will need to cast ts.tv_sec to (s64) and use %lld to print it
-> >> in order to satisfy other $arch.
-> >>
-> >> Andrew, want to add a fix-fix-fix patch?
-> > 
-> > Thanks for the fix during I am absent, Andrew and Randy.
-> > Here goes fix.
-> > Andrew please fold this patchset.
-> > 
-> > From 16569c7abb641930b4e4ec66b4dc2005e6c87be8 Mon Sep 17 00:00:00 2001
-> > From: Minchan Kim <minchan@kernel.org>
-> > Date: Mon, 7 May 2018 23:00:16 +0900
-> > Subject: [PATCH] zram-introduce-zram-memory-tracking-update-fix-fix-fix
-> > 
-> > fix compile warning
-> > 
-> > drivers/block/zram/zram_drv.c: In function 'read_block_state':
-> > drivers/block/zram/zram_drv.c:674:16: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type '__kernel_time_t {aka long int}' [-Wformat=]
-> >     "%12lu %12llu.%06lu %c%c%c\n",
-> >            ~~~~~^
-> >            %12lu
-> >     (unsigned long)index, ts.tv_sec,
-> >                           ~~~~~~~~~
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Randy Dunlap <rdunlap@infradead.org>
-> > Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> > ---
-> >  drivers/block/zram/zram_drv.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> > index f2f3104b2b48..635307e3238b 100644
-> > --- a/drivers/block/zram/zram_drv.c
-> > +++ b/drivers/block/zram/zram_drv.c
-> > @@ -671,8 +671,8 @@ static ssize_t read_block_state(struct file *file, char __user *buf,
-> >  
-> >  		ts = ktime_to_timespec64(zram->table[index].ac_time);
-> >  		copied = snprintf(kbuf + written, count,
-> > -			"%12lu %12llu.%06lu %c%c%c\n",
-> > -			(unsigned long)index, ts.tv_sec,
-> > +			"%12lu %12lld.%06ld %c%c%c\n",
-> > +			(unsigned long)index, (s64)ts.tv_sec,
-> >  			ts.tv_nsec / NSEC_PER_USEC,
-> >  			zram_test_flag(zram, index, ZRAM_SAME) ? 's' : '.',
-> >  			zram_test_flag(zram, index, ZRAM_WB) ? 'w' : '.',
-> > 
-> 
-> 	ssize_t index,
-> 
-> 	so why not print it with %zd (or %12zd) and skip the cast?
+From: Daniel Wagner <daniel.wagner@siemens.com>
 
-Thanks for the suggestion.
-Resend.
+Commit 40f70c03e33a ("serial: sh-sci: add locking to console write
+function to avoid SMP lockup") copied the strategy to avoid locking
+problems in conjuncture with the console from the UART8250
+driver. Instead using directly spin_{try}lock_irqsave(),
+local_irq_save() followed by spin_{try}lock() was used. While this is
+correct on mainline, for -rt it is a problem. spin_{try}lock() will
+check if it is running in a valid context. Since the local_irq_save()
+has already been executed, the context has changed and
+spin_{try}lock() will complain. The reason why spin_{try}lock()
+complains is that on -rt the spin locks are turned into mutexes and
+therefore can sleep. Sleeping with interrupts disabled is not valid.
 
-Andrew, Could you pick up this?
+BUG: sleeping function called from invalid context at /home/wagi/work/rt/v4.4-cip-rt/kernel/locking/rtmutex.c:995
+in_atomic(): 0, irqs_disabled(): 128, pid: 778, name: irq/76-eth0
+CPU: 0 PID: 778 Comm: irq/76-eth0 Not tainted 4.4.126-test-cip22-rt14-00403-gcd03665c8318 #12
+Hardware name: Generic RZ/G1 (Flattened Device Tree)
+Backtrace:
+[<c00140a0>] (dump_backtrace) from [<c001424c>] (show_stack+0x18/0x1c)
+ r7:c06b01f0 r6:60010193 r5:00000000 r4:c06b01f0
+[<c0014234>] (show_stack) from [<c01d3c94>] (dump_stack+0x78/0x94)
+[<c01d3c1c>] (dump_stack) from [<c004c134>] (___might_sleep+0x134/0x194)
+ r7:60010113 r6:c06d3559 r5:00000000 r4:ffffe000
+[<c004c000>] (___might_sleep) from [<c04ded60>] (rt_spin_lock+0x20/0x74)
+ r5:c06f4d60 r4:c06f4d60
+[<c04ded40>] (rt_spin_lock) from [<c02577e4>] (serial_console_write+0x100/0x118)
+ r5:c06f4d60 r4:c06f4d60
+[<c02576e4>] (serial_console_write) from [<c0061060>] (call_console_drivers.constprop.15+0x10c/0x124)
+ r10:c06d2894 r9:c04e18b0 r8:00000028 r7:00000000 r6:c06d3559 r5:c06d2798
+ r4:c06b9914 r3:c02576e4
+[<c0060f54>] (call_console_drivers.constprop.15) from [<c0062984>] (console_unlock+0x32c/0x430)
+ r10:c06d30d8 r9:00000028 r8:c06dd518 r7:00000005 r6:00000000 r5:c06d2798
+ r4:c06d2798 r3:00000028
+[<c0062658>] (console_unlock) from [<c0062e1c>] (vprintk_emit+0x394/0x4f0)
+ r10:c06d2798 r9:c06d30ee r8:00000006 r7:00000005 r6:c06a78fc r5:00000027
+ r4:00000003
+[<c0062a88>] (vprintk_emit) from [<c0062fa0>] (vprintk+0x28/0x30)
+ r10:c060bd46 r9:00001000 r8:c06b9a90 r7:c06b9a90 r6:c06b994c r5:c06b9a3c
+ r4:c0062fa8
+[<c0062f78>] (vprintk) from [<c0062fb8>] (vprintk_default+0x10/0x14)
+[<c0062fa8>] (vprintk_default) from [<c009cd30>] (printk+0x78/0x84)
+[<c009ccbc>] (printk) from [<c025afdc>] (credit_entropy_bits+0x17c/0x2cc)
+ r3:00000001 r2:decade60 r1:c061a5ee r0:c061a523
+ r4:00000006
+[<c025ae60>] (credit_entropy_bits) from [<c025bf74>] (add_interrupt_randomness+0x160/0x178)
+ r10:466e7196 r9:1f536000 r8:fffeef74 r7:00000000 r6:c06b9a60 r5:c06b9a3c
+ r4:dfbcf680
+[<c025be14>] (add_interrupt_randomness) from [<c006536c>] (irq_thread+0x1e8/0x248)
+ r10:c006537c r9:c06cdf21 r8:c0064fcc r7:df791c24 r6:df791c00 r5:ffffe000
+ r4:df525180
+[<c0065184>] (irq_thread) from [<c003fba4>] (kthread+0x108/0x11c)
+ r10:00000000 r9:00000000 r8:c0065184 r7:df791c00 r6:00000000 r5:df791d00
+ r4:decac000
+[<c003fa9c>] (kthread) from [<c00101b8>] (ret_from_fork+0x14/0x3c)
+ r8:00000000 r7:00000000 r6:00000000 r5:c003fa9c r4:df791d00
 
->From 8af033804a8a7a0538629545957728c48d14d261 Mon Sep 17 00:00:00 2001
-From: Minchan Kim <minchan@kernel.org>
-Date: Mon, 7 May 2018 23:00:16 +0900
-Subject: [PATCH] zram-introduce-zram-memory-tracking-update-fix-fix-fix
-
-fix compile warning and use zd for ssize_t by Randy's suggestion.
-
-drivers/block/zram/zram_drv.c: In function 'read_block_state':
-drivers/block/zram/zram_drv.c:674:16: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 5 has type '__kernel_time_t {aka long int}' [-Wformat=]
-    "%12lu %12llu.%06lu %c%c%c\n",
-           ~~~~~^
-           %12lu
-    (unsigned long)index, ts.tv_sec,
-                          ~~~~~~~~~
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Daniel Wagner <daniel.wagner@siemens.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/block/zram/zram_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+changes since v2:
+ - dropped the local_irq_save() it's wrong as Sebastian pointed out
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index f2f3104b2b48..ceadcd1245b3 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -671,8 +671,8 @@ static ssize_t read_block_state(struct file *file, char __user *buf,
+changes since v1:
+ - Ported to current mainline (initial version was against v4.4.y)
+ - Left local_irq_save() in place when spinlocks are not used as suggested
+   by Geert.
+
+ drivers/tty/serial/sh-sci.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index fdbbff547106..8c8dcced1c25 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2890,16 +2890,15 @@ static void serial_console_write(struct console *co, const char *s,
+ 	unsigned long flags;
+ 	int locked = 1;
  
- 		ts = ktime_to_timespec64(zram->table[index].ac_time);
- 		copied = snprintf(kbuf + written, count,
--			"%12lu %12llu.%06lu %c%c%c\n",
--			(unsigned long)index, ts.tv_sec,
-+			"%12zd %12lld.%06ld %c%c%c\n",
-+			index, (s64)ts.tv_sec,
- 			ts.tv_nsec / NSEC_PER_USEC,
- 			zram_test_flag(zram, index, ZRAM_SAME) ? 's' : '.',
- 			zram_test_flag(zram, index, ZRAM_WB) ? 'w' : '.',
+-	local_irq_save(flags);
+ #if defined(SUPPORT_SYSRQ)
+ 	if (port->sysrq)
+ 		locked = 0;
+ 	else
+ #endif
+ 	if (oops_in_progress)
+-		locked = spin_trylock(&port->lock);
++		locked = spin_trylock_irqsave(&port->lock, flags);
+ 	else
+-		spin_lock(&port->lock);
++		spin_lock_irqsave(&port->lock, flags);
+ 
+ 	/* first save SCSCR then disable interrupts, keep clock source */
+ 	ctrl = serial_port_in(port, SCSCR);
+@@ -2919,8 +2918,7 @@ static void serial_console_write(struct console *co, const char *s,
+ 	serial_port_out(port, SCSCR, ctrl);
+ 
+ 	if (locked)
+-		spin_unlock(&port->lock);
+-	local_irq_restore(flags);
++		spin_unlock_irqrestore(&port->lock, flags);
+ }
+ 
+ static int serial_console_setup(struct console *co, char *options)
 -- 
-2.17.0.441.gb46fe60e1d-goog
+2.14.3
