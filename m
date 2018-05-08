@@ -1,99 +1,101 @@
-Return-Path: <broonie@sirena.org.uk>
-X-Google-Smtp-Source: AB8JxZqLiEbPp4iIjVchEzPr2Aj7LA9Ya3iuNTO9/U2XflR5kDsgcCnf67na0uTiuZJ0p9Fd5Q9K
-ARC-Seal: i=1; a=rsa-sha256; t=1525853640; cv=none;
+Return-Path: <jmforbes@linuxtx.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525787900; cv=none;
         d=google.com; s=arc-20160816;
-        b=SYHa0otvjFn0v2MX25htfk/q3RJk4X5r7ktIsx61bXs7q6FMhOvlK4Ksu1hEmrFQiC
-         xJGtt41N5ACRN0X+HSqdYgkun7u4AmotIVzhTYb0efEr7DDBzRjKv+rNzofGZSrHfrPL
-         qFSoqSPGTNwnY2vzsSX0N4Hgw8yfcJX/eL2NtfIwhLRFz60FX458JwJkMDTLK93Mk9xo
-         PIRThu1djiyR48JlP8XAGHveUnkVOxzN9duF2QGkc9rFLHbIb9bj1e/iM0TPOGzW8iUa
-         ROBcE3af9zCPZSt6K4vqpKJ7uMb/9gXEC15SzeIszy13eAduKebrHHsGD9HjVbHDJXqK
-         i41g==
+        b=HC1D8Azjz32rt8Lxg+Rjxy+bNVqgG5vO2e/nrAEgVPE5vLtHLzmT/481MlUYOLu4w3
+         /NcXWFn4847i4YO/Q5V8cnexrRkPi3h7MG8Tpc1Jntd6j58VW77IR0+Y3HrG+aYtFmhn
+         zf6orAvP9wRgC8va5F1rTyEibhBm8dK8/2ds0mkLi1JRb5DpxX0lj+7ABXzsQT3kqOHj
+         ADhBMYtqBWecwbKjAtzTJpLcvDPycKosFOxfjKAMCnzm39lbkQDtdLdAJaW0TU9BVx8G
+         BlMhJGhrk5+kRle7kU0ibF5n1HIj/hEUYd//GvsXTLYjlgFnZLrYbTOIAUfyHGS4AzLv
+         wewA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:dkim-signature
-         :arc-authentication-results;
-        bh=MJTc9DWwZFIzVIHMrBkyBE6mX3k7NXRPRfpbi19R/go=;
-        b=OHpSjrZiT1TDno8Bu0pzsA3OIhRNDNgCfwXdsZQnxCN/OZFML6XioedmjgCKOn9lpb
-         mP2Nk4X+2QnumXT7WEQUFodDShKT7p6DyHoIiUbeLFBFyU2Kutb4oe1HOppHKINXKaRd
-         JnBpM8ElMtbMi+NZrjsVaEcTCekgeu/CKvf710pfWHZ49uAM2sUlRPSCmvpGhPFmnK8n
-         ZB7GcQr/Z3eZga2Aa3waugcM/XGDd2fmf3pcPZvtxldsK8BKz1I+80snQOCW9lRlFlwf
-         sLHjeB6O6gKZqzfRQkGwm/wkdf5gRlNC8RShKreQtONTBlc7KfHKFpnjDEyzgkoaIfMY
-         tRuw==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=FucuCKgyXG7P70qY4mBUzqtTrV/6Bda92guL48WF0+U=;
+        b=ZlxbJrFJ0zEAvJElOdpfS8yKDJRvL4jrWCmBGOfFL4ad5NV7XRbam4oDer+z/6+L7C
+         9Ic4BNGfBa6uuDjVVrJ2WvPEDvduZm8+avJsLnmxJ3y4x/lZ7zI+LpdB6QfQ7J27XGh3
+         dXMIe6JIWz5sylaxBpGqNo4Aei5qSJ4MA33YEhidnqpCeI+QfttCrj2HD9rcNQgSGdyh
+         6AET1hucnx8PjherhcYLHzFwFsZOdtj+mFlBI+h25ctGfqubETnphGyCx52fKc1kNsoE
+         qiHMoZjo/kfHW1GFhIbIaEwgsL754oD3NG3O0OFCtPXi63jikX/Tl/cxtl+Nhyv1oznk
+         K9KA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=g9LKSuKF;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+       dkim=pass header.i=@linuxtx.org header.s=google header.b=LdEO3qV8;
+       spf=pass (google.com: domain of jmforbes@linuxtx.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=jmforbes@linuxtx.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@sirena.org.uk header.s=20170815-heliosphere header.b=g9LKSuKF;
-       spf=pass (google.com: domain of broonie@sirena.org.uk designates 2a01:7e01::f03c:91ff:fed4:a3b6 as permitted sender) smtp.mailfrom=broonie@sirena.org.uk;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=kernel.org
-Date: Wed, 9 May 2018 17:13:49 +0900
-From: Mark Brown <broonie@kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: "Theodore Y. Ts'o" <tytso@mit.edu>,
-	Sasha Levin <Alexander.Levin@microsoft.com>,
+       dkim=pass header.i=@linuxtx.org header.s=google header.b=LdEO3qV8;
+       spf=pass (google.com: domain of jmforbes@linuxtx.org designates 209.85.220.41 as permitted sender) smtp.mailfrom=jmforbes@linuxtx.org
+X-Google-Smtp-Source: AB8JxZr7sqH+eTMJ5giJIvRNkes90Zb4ELCIB5ITbkf+otVZ5Wa0MJf0pt/jnm67P3cH8Biq6GQKCwg1MkN+M5e/8Ec=
+MIME-Version: 1.0
+In-Reply-To: <20180508023439.GA8514@sasha-vm>
+References: <20180501200019.GA7397@sasha-vm> <20180501205448.GE10479@thunk.org>
+ <20180501211551.GI2714@sirena.org.uk> <CAKMK7uHjA27K8y-kwYFyhLy3cSkJJw8Oe1gP=3hZXdfxcWAcNQ@mail.gmail.com>
+ <20180502194632.GB18390@sasha-vm> <20180503020550.GP2714@sirena.org.uk>
+ <20180503031000.GC29205@thunk.org> <0276fcda-0385-8f22-dbdb-e063f7ed8bbe@roeck-us.net>
+ <20180503224217.GR2714@sirena.org.uk> <20180503230905.GA98604@atomide.com> <20180508023439.GA8514@sasha-vm>
+From: Justin Forbes <jmforbes@linuxtx.org>
+Date: Tue, 8 May 2018 08:58:19 -0500
+Message-ID: <CAFxkdAqEK3Kv1Q8Jy4KZ7AHPXAA7ux6CYsQ4m6grKwFGwzNrXQ@mail.gmail.com>
+Subject: Re: [Ksummit-discuss] bug-introducing patches
+To: Sasha Levin <Alexander.Levin@microsoft.com>
+Cc: Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>,
 	Greg KH <gregkh@linuxfoundation.org>, "w@1wt.eu" <w@1wt.eu>,
 	"ksummit-discuss@lists.linuxfoundation.org" <ksummit-discuss@lists.linuxfoundation.org>,
 	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [Ksummit-discuss] bug-introducing patches
-Message-ID: <20180509081349.GN13402@sirena.org.uk>
-References: <CAKMK7uHjA27K8y-kwYFyhLy3cSkJJw8Oe1gP=3hZXdfxcWAcNQ@mail.gmail.com>
- <20180502194632.GB18390@sasha-vm>
- <20180503020550.GP2714@sirena.org.uk>
- <20180503031000.GC29205@thunk.org>
- <0276fcda-0385-8f22-dbdb-e063f7ed8bbe@roeck-us.net>
- <20180503224217.GR2714@sirena.org.uk>
- <20180503230905.GA98604@atomide.com>
- <20180508023439.GA8514@sasha-vm>
- <20180508034820.GE999@thunk.org>
- <20180508144958.GU98604@atomide.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GoZzJvFfKjxI3RhA"
-Content-Disposition: inline
-In-Reply-To: <20180508144958.GU98604@atomide.com>
-X-Cookie: Advancement in position.
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599280464106480109?=
-X-GMAIL-MSGID: =?utf-8?q?1599973506277210031?=
+X-GMAIL-MSGID: =?utf-8?q?1599904573958181861?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Mon, May 7, 2018 at 9:34 PM, Sasha Levin
+<Alexander.Levin@microsoft.com> wrote:
+> On Thu, May 03, 2018 at 04:09:05PM -0700, Tony Lindgren wrote:
+>>* Mark Brown <broonie@kernel.org> [180503 22:44]:
+>>> On Wed, May 02, 2018 at 08:52:29PM -0700, Guenter Roeck wrote:
+>>>
+>>> > As for -next, me and others stopped reporting bugs in it, because when we do
+>>> > we tend to get flamed for the "noise". Is anyone aware (or cares) that mips
+>>> > and nds32 images don't build ? Soaking clothes in an empty bathtub won't make
+>>> > them wet, and bugs in code which no one builds, much less tests or uses, won't
+>>> > be found.
+>>>
+>>> You've been flamed for testing -next?  That's not been my experience and
+>>> frankly it's pretty horrifying that it's happening.  Testing is pretty
+>>> much the whole point of -next existing in the first place so you have to
+>>> wonder why people are putting their trees there if they don't want
+>>> testing.  I have seen a few issues with people reporting bugs on old
+>>> versions of -next but otherwise...
+>>
+>>Yes I agree testing Linux next is very important. That's the best way for
+>>maintainers to ensure a usable -rc1 after a merge window. And then for
+>>the -rc cycle, there not much of need for chasing bugs to get things working.
+>>
+>>Bugs reported for Linux next often seem to get fixed or reverted faster
+>>compared to the -rc cycle too. I think that's because people realize that
+>>their code will not get merged until it's been fixed.
+>>
+>>So some daily testing of Linux next can save a lot scrambling after the
+>>merge window :)
+>>
+>>Users don't usually upgrade kernels until after later -rc releases or only
+>>after major releases so that probably explains some of the -rc cycle fixes.
+>
+> Tony, I'm curious, how many users are you aware of who actually run
+> Linus's tree? All the users I've encountered so far on Azure seem to be
+> running something based on -stable.
 
---GoZzJvFfKjxI3RhA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I couldn't tell you the number of users we have running rawhide
+kernels (daily builds of Linus's tree), but it is a positive integer.
+We do get bug reports on things, sometimes a day after Linus commits
+them.
 
-On Tue, May 08, 2018 at 07:49:59AM -0700, Tony Lindgren wrote:
-> * Theodore Y. Ts'o <tytso@mit.edu> [180508 03:50]:
-
-> > The people who run Linus's tree and test -rc kernels tend to be kernel
-> > developers and individual users who want to run bleeding edge kernels
-> > and who generally are technically clueful.  If you were talking about
-> > SLR cameras, you'd call them the "prosumers" segment of the market.
-
-> Yup that's the category. People tinkering with their devices and
-> using bleeding edge kernels because of some new device driver only
-> being in thr -rc series for example.
-
-You also get some people who are intending to ship on stable kernels but
-are tracking upstream during product development so that they can be on
-the most current stable release when they go to production.
-
---GoZzJvFfKjxI3RhA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlryrboACgkQJNaLcl1U
-h9Dc+wf9F0r5XKEnBqY47HacZAQWOE4q7THQOV5bQCpuOCIwff7HNyX1jVBSX/ae
-ZQvShjCsxZzoMNK+W3U/89FjBeUF8q/mZwIocoJpcvZUlFdoFzIVQcrsVk9SH5HF
-DPdFjDvnu5KuT18T7d3wGobpyOr4w60tO8kzt9XjPIyrfdR9vwoQsLz4rtNVWJle
-FoIJXFmKSo41MllAC6pKYbj4iTkX52KyH/2yvxF/a/usMHVIzOOu2FbsttOHTX3P
-mYE2LgQgLD3mZvVp+MjYo7wpJ9Qn8Rj2X3xSP8SrPKHe5HtdXEBWNwo5s+lNIcvv
-MqKmdK3DO6LEiyUnV2yb+s0riEPvLA==
-=W2PF
------END PGP SIGNATURE-----
-
---GoZzJvFfKjxI3RhA--
+>
+> I can't really get any solid statistics about that on my end both
+> because I don't have visibility inside user VMs (I don't actually have
+> prod access believe it or not), and even if I had it would probably be
+> confidential, so I'm just basing this on reports from user's I've seen
+> so far.
+>
+> I think that a question we should be asking ourselves is whether we
+> should be basing our decisions here on the assumption that (pretty much)
+> no one runs Linus's tree anymore?
