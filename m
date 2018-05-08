@@ -1,89 +1,72 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755259AbeEHPq5 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:46:57 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34604 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755029AbeEHPqz (ORCPT
+        id S1755371AbeEHPrF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:47:05 -0400
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:44809 "EHLO
+        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932111AbeEHPrD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:46:55 -0400
-Subject: Re: PROBLEM: error due to conflicting types during build of
- kselftests
-From: Randy Dunlap <rdunlap@infradead.org>
-To: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Cc: lkml <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org
-References: <CAG=yYwnMXFxHxCnYNWCb-HhpAb21kc5_e_6q-N_DRGhMVurPMQ@mail.gmail.com>
- <bd125268-a685-ba6e-efc4-130a0621855f@infradead.org>
- <CAG=yYwnq1KwAmKL5t=KFTMcRY9rDFM_5XBDNpbvzM-8J-U7TKQ@mail.gmail.com>
- <49022295-d118-4aa7-c750-36f36b6b6821@infradead.org>
-Message-ID: <ccbfdf1b-ffd5-4b05-8b73-7726816da735@infradead.org>
-Date: Tue, 8 May 2018 08:46:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 8 May 2018 11:47:03 -0400
+X-Google-Smtp-Source: AB8JxZp4Ot6WLDN8yFvXPHEwdM5Wg3Y9o0/hXo/mAAE81jhBiXeRfHPPk/wbdXDAl4ojCtKS0T/h41HL4ubH61D0Uqc=
 MIME-Version: 1.0
-In-Reply-To: <49022295-d118-4aa7-c750-36f36b6b6821@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
+References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
+ <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com> <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
+From: Daniel Drake <drake@endlessm.com>
+Date: Tue, 8 May 2018 09:47:01 -0600
+Message-ID: <CAD8Lp46b+-B=xqSAqB+zV4xF6SRUGs46FkydS37UEuqav_jNog@mail.gmail.com>
+Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Chris Chiu <chiu@endlessm.com>, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Adrian Salido <salidoa@google.com>,
+        Jason Gerecke <killertofu@gmail.com>,
+        linux-input <linux-input@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/28/2018 02:54 PM, Randy Dunlap wrote:
-> On 04/28/2018 02:42 PM, Jeffrin Thalakkottoor wrote:
->> anyway my current is gcc (Debian 7.3.0-16) 7.3.0
+On Tue, May 8, 2018 at 8:31 AM, Jarkko Nikula
+<jarkko.nikula@linux.intel.com> wrote:
+>> Some update, we can make the touchpad work by simply modifying the
+>> clk_rate of spt_i2c_info from 120000000 to 133000000 in intel-lpss-pci.c for
+>> specific PCI ID 8086:a368 ~ a36a (CoffeeLake). Is the clock setting different
+>> for the CoffeeLake series?
 >>
->> may be you can try ... make -C tools/testing/selftests 2> error.txt
-> 
-> I have a much older gcc, so newer must be better.  :)
-> 
+> Hmm.. at quick look it looks like to be 133 MHz but I want to double check first from other specs. I'm also wondering why it results 600 kHz instead of expected 133/120 * 400 kHz = 443 kHz. Need to check timing parameters too.
 
-This patch (just posted) should fix the error that you are seeing:
+Thanks for looking at this. I believe we tried 133MHz just because
+some other platforms in the file have the clock at that speed.
 
-https://marc.info/?l=linux-kernel&m=152577091622065&w=2
+In the original/shipped setup, the scope shows the SDA clock is
+running at ~635kHz (rather than the intended 400kHz) and the debug
+logs from the kernel producing that waveform shows that HCNT=105 and
+LCNT=191
 
+105+191=296 parent clock ticks per cycle
 
-> 
->> On Sat, Apr 28, 2018 at 5:08 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->>> On 04/20/2018 11:03 AM, Jeffrin Thalakkottoor wrote:
->>>> hello,
->>>>
->>>> the following is the error found...
->>>> -----------------------------------------------------------------------------------
->>>> protection_keys.c:421:5: error: conflicting types for ‘pkey_set’
->>>>  int pkey_set(int pkey, unsigned long rights, unsigned long flags)
->>>>      ^~~~~~~~
->>>> ------------------------------------------------------------------------------------
->>>>
->>>> to reproduce this error...
->>>> make -C tools/testing/selftests
->>>
->>> Hi,
->>>
->>> I can't reproduce this problem.  What is your gcc --version?
->>>
->>> Thanks.
->>>
->>>> Details about software:
->>>>
->>>> Linux debian 4.17.0-rc1+ #1 SMP Thu Apr 19 18:59:45 IST 2018 x86_64 GNU/Linux
->>>>
->>>> GNU Make             4.2.1
->>>> Binutils             2.30
->>>> Util-linux           2.31.1
->>>> Mount                2.31.1
->>>> Linux C Library      2.27
->>>> Dynamic linker (ldd) 2.27
->>>> readlink: missing operand
->>>> Try 'readlink --help' for more information.
->>>> Procps               3.3.14
->>>> Kbd                  2.0.4
->>>> Console-tools        2.0.4
->>>> Sh-utils             8.28
->>>> Udev                 238
-> 
-> 
+At 635kHz, a single clock cycle is 1575ns. What is the speed of the
+parent clock if it ticks 296 times in 1575ns? I calculate this to be
+187960000Hz and further experiments indicate that clk_rate=187960000
+also makes the touchpad work. Unfortunately we don't have easy access
+to the scope to measure the effect on the waveform.
 
+Also through experimentation we tried i2c-sda-falling-time-ns=400ns
+(increasing from the default of 300ns) in order to make the HCNT
+increase to 117. This also makes the touchpad work.
 
--- 
-~Randy
+Please let us know if we can help further in finding an upstream fix
+for this issue.
+
+Thanks
+Daniel
