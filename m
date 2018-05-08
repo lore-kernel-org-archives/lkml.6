@@ -1,173 +1,57 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933275AbeEHIhn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:37:43 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:50748 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932644AbeEHIhh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:37:37 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w488bHhp029504, This message is accepted by code: ctloc85258
-From: Pkshih <pkshih@realtek.com>
-To: "jprvita@gmail.com" <jprvita@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Larry.Finger@lwfinger.net" <Larry.Finger@lwfinger.net>,
-        "jprvita@endlessm.com" <jprvita@endlessm.com>,
-        Birming Chiu <birming@realtek.com>,
-        "drake@endlessm.com" <drake@endlessm.com>,
-        Chaoming_Li <chaoming_li@realsil.com.cn>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        =?utf-8?B?6I6K5b2l5a6j?= <yhchuang@realtek.com>,
-        "derosier@gmail.com" <derosier@gmail.com>,
-        Steven Ting <steventing@realtek.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux@endlessm.com" <linux@endlessm.com>, Shaofu <shaofu@realtek.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Subject: Re: RTL8723BE performance regression
-Thread-Topic: RTL8723BE performance regression
-Thread-Index: AQHTy7eSN578mCBr2kKVBzf45sjLwaPvW7kAgAACkICAAAPHAIAru2GAgADJ6dD//7BOgIAI5T6AgAC1FQA=
-Date: Tue, 8 May 2018 08:37:16 +0000
-Message-ID: <1525768634.2885.11.camel@realtek.com>
-References: <CA+A7VXX+z8FrDhzW2BQ6AGMJ=_j_53wkUL_YNgkreEbWSh+jCw@mail.gmail.com>
-         <afdf0498-c0a9-936c-0c9b-1b6da6eb5957@lwfinger.net>
-         <CA+A7VXWjWaSSUiX3h_rpFXrSwtUkynKR9tpvnsSe=DZrC+mF-Q@mail.gmail.com>
-         <059b40f0-b8e2-b55f-92d5-a859ba4204a4@lwfinger.net>
-         <CA+A7VXUUsZHD2gr9TBcV6jZBOPGZv7_vK-wWZ0MvGgiCnAiUgQ@mail.gmail.com>
-         <5B2DA6FDDF928F4E855344EE0A5C39D13BEC14C0@RTITMBSV07.realtek.com.tw>
-         <1525240713.3735.3.camel@realtek.com>
-         <CA+A7VXWywjTVeb3DTjVMVTUw-vjAjD+3XTuVNk8S=8D7W=MkPQ@mail.gmail.com>
-In-Reply-To: <CA+A7VXWywjTVeb3DTjVMVTUw-vjAjD+3XTuVNk8S=8D7W=MkPQ@mail.gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.146]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <ED663171FB21B1499A757E074ADF3F21@realtek.com>
+        id S933301AbeEHIis (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:38:48 -0400
+Received: from verein.lst.de ([213.95.11.211]:36351 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932287AbeEHIio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 04:38:44 -0400
+Date: Tue, 8 May 2018 10:38:32 +0200
+From: Torsten Duwe <duwe@lst.de>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Jiri Kosina <jkosina@suse.cz>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Nicholas Piggin <npiggin@gmail.com>, live-patching@vger.kernel.org
+Subject: Re: [PATCH v3] ppc64le livepatch: implement reliable stacktrace for
+ newer consistency models
+Message-ID: <20180508103832.085378b9@blackhole.lan>
+In-Reply-To: <20180507154208.jo4s43olrf5a3hw4@treble>
+References: <20180305164928.GA17953@lst.de>
+        <20180308162616.yhbymodggnfzpskx@treble>
+        <20180309174718.2700b29e@blackhole.lan>
+        <20180312153536.7avozx64ku4lvd3e@treble>
+        <20180504123834.GA16581@lst.de>
+        <20180507154208.jo4s43olrf5a3hw4@treble>
+Organization: LST e.V.
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8bit
-X-MIME-Autoconverted: from base64 to 8bit by mail.home.local id w488bpg5029286
 
-On Mon, 2018-05-07 at 14:49 -0700, João Paulo Rechi Vita wrote:
-> On Tue, May 1, 2018 at 10:58 PM, Pkshih <pkshih@realtek.com> wrote:
-> > On Wed, 2018-05-02 at 05:44 +0000, Pkshih wrote:
-> >>
-> >> > -----Original Message-----
-> >> > From: João Paulo Rechi Vita [mailto:jprvita@gmail.com]
-> >> > Sent: Wednesday, May 02, 2018 6:41 AM
-> >> > To: Larry Finger
-> >> > Cc: Steve deRosier; 莊彥宣; Pkshih; Birming Chiu; Shaofu; Steven Ting; Chaoming_Li; Kalle Valo;
-> >> > linux-wireless; Network Development; LKML; Daniel Drake; João Paulo Rechi Vita; linux@endless
-> m.c
-> >> om
-> >> > Subject: Re: RTL8723BE performance regression
-> >> >
-> >> > On Tue, Apr 3, 2018 at 7:51 PM, Larry Finger <Larry.Finger@lwfinger.net> wrote:
-> >> > > On 04/03/2018 09:37 PM, João Paulo Rechi Vita wrote:
-> >> > >>
-> >> > >> On Tue, Apr 3, 2018 at 7:28 PM, Larry Finger <Larry.Finger@lwfinger.net>
-> >> > >> wrote:
-> >> > >>
-> >> > >> (...)
-> >> > >>
-> >> > >>> As the antenna selection code changes affected your first bisection, do
-> >> > >>> you
-> >> > >>> have one of those HP laptops with only one antenna and the incorrect
-> >> > >>> coding
-> >> > >>> in the FUSE?
-> >> > >>
-> >> > >>
-> >> > >> Yes, that is why I've been passing ant_sel=1 during my tests -- this
-> >> > >> was needed to achieve a good performance in the past, before this
-> >> > >> regression. I've also opened the laptop chassis and confirmed the
-> >> > >> antenna cable is plugged to the connector labeled with "1" on the
-> >> > >> card.
-> >> > >>
-> >> > >>> If so, please make sure that you still have the same signal
-> >> > >>> strength for good and bad cases. I have tried to keep the driver and the
-> >> > >>> btcoex code in sync, but there may be some combinations of antenna
-> >> > >>> configuration and FUSE contents that cause the code to fail.
-> >> > >>>
-> >> > >>
-> >> > >> What is the recommended way to monitor the signal strength?
-> >> > >
-> >> > >
-> >> > > The btcoex code is developed for multiple platforms by a different group
-> >> > > than the Linux driver. I think they made a change that caused ant_sel to
-> >> > > switch from 1 to 2. At least numerous comments at
-> >> > > github.com/lwfinger/rtlwifi_new claimed they needed to make that change.
-> >> > >
-> >> > > Mhy recommended method is to verify the wifi device name with "iw dev". Then
-> >> > > using that device
-> >> > >
-> >> > > sudo iw dev <dev_name> scan | egrep "SSID|signal"
-> >> > >
-> >> >
-> >> > I have confirmed that the performance regression is indeed tied to
-> >> > signal strength: on the good cases signal was between -16 and -8 dBm,
-> >> > whereas in bad cases signal was always between -50 to - 40 dBm. I've
-> >> > also switched to testing bandwidth in controlled LAN environment using
-> >> > iperf3, as suggested by Steve deRosier, with the DUT being the only
-> >> > machine connected to the 2.4 GHz radio and the machine running the
-> >> > iperf3 server connected via ethernet.
-> >> >
-> >>
-> >> We have new experimental results in commit af8a41cccf8f46 ("rtlwifi: cleanup
-> >> 8723be ant_sel definition"). You can use the above commit and do the same
-> >> experiments (with ant_sel=0, 1 and 2) in your side, and then share your results.
-> >> Since performance is tied to signal strength, you can only share signal strength.
-> >>
-> >
-> > Please pay attention to cold reboot once ant_sel is changed.
-> >
-> 
-> I've tested the commit mentioned above and it fixes the problem on top
-> of v4.16 (in addition to the latest wireless-drivers-next also been
-> fixed as it already contains such commit). On v4.15, we also need the
-> following commits before "af8a41cccf8f rtlwifi: cleanup 8723be ant_sel
-> definition" to have a good performance again:
-> 
->   874e837d67d0 rtlwifi: fill FW version and subversion
->   a44709bba70f rtlwifi: btcoex: Add power_on_setting routine
->   40d9dd4f1c5d rtlwifi: btcoex: Remove global variables from btcoex
+On Mon, 7 May 2018 10:42:08 -0500
+Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 
-v4.15 isn't longterm version and had been EOL.
+> The subject doesn't actively describe what the patch does, maybe
+> change it to something like:
+> 
+>   powerpc: Add support for HAVE_RELIABLE_STACKTRACE
+> 
+> or maybe
+> 
+>   powerpc: Add support for livepatch consistency model
 
-> 
-> Surprisingly, it seems forcing ant_sel=1 is not needed anymore on
-> these machines, as the shown by the numbers bellow (ant_sel=0 means
-> that actually no parameter was passed to the module). I have powered
-> off the machine and done a cold boot for every test. It seems
-> something have changed in the antenna auto-selection code since v4.11,
-> the latest point where I could confirm we definitely need to force
-> ant_sel=1. I've been trying to understand what causes this difference,
-> but haven't made progress on that so far, so any suggestions are
-> appreciated (we are trying to decide if we can confidently drop the
-> downstream DMI quirks for these specific machines).
-> 
-I think your rtl8723be module programed correct efuse content, so it
-works properly with ant_sel=0, and quirk isn't required for your
-machine.
+Maybe $SUBJECT? You're absolutely right, the old subject was just a
+leftover of my original attempt to just set the flag, before Miroslav
+corrected me. I just kept on copying it without a second thought. Thanks
+for noting.
 
->   w-d-n ant_sel=0: -14.00 dBm,  69.5 Mbps -> good
->   w-d-n ant_sel=1: -10.00 dBm,  41.1 Mbps -> good
->   w-d-n ant_sel=2: -44.00 dBm,   607 kbps -> bad
-> 
->   v4.16 ant_sel=0: -12.00 dBm,  63.0 Mbps -> good
->   v4.16 ant_sel=1: - 8.00 dBm,  69.0 Mbps -> good
->   v4.16 ant_sel=2: -50.00 dBm,   224 kbps -> bad
-> 
->   v4.15 ant_sel=0: - 8.00 dBm,  33.0 Mbps -> good
->   v4.15 ant_sel=1: -10.00 dBm,  38.1 Mbps -> good
->   v4.15 ant_sel=2: -48.00 dBm,   206 kbps -> bad
-> 
+> Otherwise it looks great to me.
+> 
+> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+> 
+Thanks.
 
-With your results, the efuse content is programmed as one or two antenna
-on AUX path.
-
-Regards,
-PK
+	Torsten
