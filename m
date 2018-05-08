@@ -1,24 +1,28 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754807AbeEHNLq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:11:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48316 "EHLO mail.kernel.org"
+        id S1754892AbeEHNNW (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:13:22 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53228 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752191AbeEHNLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:11:44 -0400
-Date: Tue, 8 May 2018 09:11:42 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alan Kao <alankao@andestech.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>, Albert Ou <albert@sifive.com>,
-        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Greentime Hu <greentime@andestech.com>,
-        Zong Li <zong@andestech.com>
-Subject: Re: [PATCH] riscv/ftrace: Fix the problem modules cannot find
- _mcount
-Message-ID: <20180508091142.12b5231a@gandalf.local.home>
-In-Reply-To: <1525749717-384-1-git-send-email-alankao@andestech.com>
-References: <1525749717-384-1-git-send-email-alankao@andestech.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1752191AbeEHNNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 09:13:21 -0400
+Date: Tue, 8 May 2018 15:13:09 +0200
+From: Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+To: Jane Wan <Jane.Wan@nokia.com>
+Cc: Boris.Brezillon@bootlin.com, miquel.raynal@bootlin.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com, richard@nod.at,
+        marek.vasut@gmail.com, yamada.masahiro@socionext.com,
+        prabhakar.kushwaha@nxp.com, shawnguo@kernel.org,
+        jagdish.gediya@nxp.com, shreeya.patel23498@gmail.com,
+        ties.bos@nokia.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] mtd: rawnand: fsl_ifc: use bit-wise majority to
+ recover the contents of ONFI parameter
+Message-ID: <20180508151309.40a78259@windsurf.home>
+In-Reply-To: <1525710855-8159-1-git-send-email-Jane.Wan@nokia.com>
+References: <1525710855-8159-1-git-send-email-Jane.Wan@nokia.com>
+Organization: Bootlin (formerly Free Electrons)
+X-Mailer: Claws Mail 3.15.1-dirty (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -26,36 +30,22 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 May 2018 11:21:57 +0800
-Alan Kao <alankao@andestech.com> wrote:
+Hello,
 
-> Enabling ftrace and module support at the same time fails the kernel
-> build process, because modules cannot find the _mcount symbol.  This
-> patch fixes this issue.
-
-I think you have a much bigger issue.
-
+On Mon,  7 May 2018 09:34:15 -0700, Jane Wan wrote:
+> Per ONFI specification (Rev. 4.0), if all parameter pages have invalid
+> CRC values, the bit-wise majority may be used to recover the contents of
+> the parameter pages from the parameter page copies present.
 > 
-> Signed-off-by: Alan Kao <alankao@andestech.com>
-> Cc: Greentime Hu <greentime@andestech.com>
-> Cc: Zong Li <zong@andestech.com>
-> ---
->  arch/riscv/kernel/mcount.S | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/kernel/mcount.S b/arch/riscv/kernel/mcount.S
-> index ce9bdc57a2a1..5721624886a1 100644
-> --- a/arch/riscv/kernel/mcount.S
-> +++ b/arch/riscv/kernel/mcount.S
-> @@ -126,5 +126,5 @@ do_trace:
->  	RESTORE_ABI_STATE
->  	ret
->  ENDPROC(_mcount)
-> -EXPORT_SYMBOL(_mcount)
->  #endif
-> +EXPORT_SYMBOL(_mcount)
+> Signed-off-by: Jane Wan <Jane.Wan@nokia.com>
 
-How does this work? How do you export _mcount if _mcount isn't even
-defined?
+Minor nit: the commit title contains "fsl_ifc", but this commit doesn't
+change anything in the fsl_ifc driver, it fixes the NAND core.
 
--- Steve
+Best regards,
+
+Thomas
+-- 
+Thomas Petazzoni, CTO, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
