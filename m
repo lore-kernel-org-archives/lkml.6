@@ -1,228 +1,123 @@
-Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoMwQXFpwYClWTX8p2rWhJTmofkrR+2zYg2cnN8sYWI/+UoCiiArIpsuAbqDKOVt5M6pZWr
-ARC-Seal: i=1; a=rsa-sha256; t=1525767400; cv=none;
-        d=google.com; s=arc-20160816;
-        b=z8+RWG8hw9i1/hMUw7juGfOstnFRTgARZChzuU45GGOivi+5m2/0TJtEerPjWRHOUL
-         4D2m8Ndq3pAysKkNTLGFSq6vOu4JtrkoeIbYR3YFzEkpChqNEnc7BUwGlgQuIkTCqTh0
-         3cUVghNmoXpwtcqAPg+aJAVUEWN2b3saVgGS86lcLHGRHTBaWmcro7dFdzXGNTyi1PXc
-         VGtdhI8bZm9G7+lBt/96UQ0Yf0n3wdyedwt5g77EuWuES7+uzPwJLiVCdwDT1BXjKrEx
-         jHcqiY/5Hlz5TWc0QDrqGR53Aoly7oLzo/LuF/LAI9TajVtaGUcYZwHfSJqJ+5h38miv
-         +ydw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:user-agent:mime-version:message-id:date
-         :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Sy6X7s8sr+hXZfqFEh4gOqoSvSXfatJFtDzxFGP+54k=;
-        b=gNBjsM6WPDv0T794yUGG3CEkExr4BWP5xozm9cjxMN7c1dVOm7bntjJ6RGMqt9AMFh
-         i5iZhoCHQ4dWdI33PtxYyVL1qsscfO+4NNP8UlFEISvK+pyvO+rvciyPPnuR/Zm2R4E0
-         pnXm1EhZaTf6gs0hhxDjQEpEnGnPIVKDT2g7uh26zMbqkwniOduclYFT82k2gq7t5HOk
-         6mEH81g5acKhOT6LBet8fUdzwDk0AjqkshcpOHtOoHX6DrH7y9DjXtfjFwIy8ujbiQV3
-         hkLuhreN77wYFba/kEWqG9486aVn2FqPwy6zXQW3hNqRsroMShcKLXll/nN4tMFs7hWm
-         1vvw==
-ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NI6HGwOE;
-       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
-Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=NI6HGwOE;
-       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	ben.hutchings@codethink.co.uk,
-	lkft-triage@lists.linaro.org,
-	stable@vger.kernel.org
-Subject: [PATCH 4.9 00/32] 4.9.99-stable review
-Date: Tue,  8 May 2018 10:10:40 +0200
-Message-Id: <20180508074008.800421598@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.0
+Return-Path: <stable-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-3628101-1525823784-2-7977831556939768351
+X-Sieve: CMU Sieve 3.0
+X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-score: 0.0
+X-Spam-hits: BAYES_00 -1.9, MAILING_LIST_MULTI -1, ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5,
+  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
+  FromHeader='org', MailFrom='org'
+X-Spam-charsets: plain='utf-8'
+X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Resolved-to: greg@kroah.com
+X-Delivered-to: greg@kroah.com
+X-Mail-from: stable-owner@vger.kernel.org
+ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
+    1525823783; b=Uik53UQpubKvIQ59RdaKdrm3DD0aV9EtBt9ycf2zSB7JS6N4zX
+    6f2p6xq83f9Uew0tReQ1b/ek8KGhFtqBtGIx84C30nE+ccxxPX1wluP8nkMiQNpi
+    HLTTB2mwXWc7qFudF3b1AphHrrvnLY7hm1cLFJWFFBiv85lO6udU/lyG9JXv0NyM
+    zexnEUauocBBAO7HkgOT1SVcY8785UpPRtpOmxyAzRu/l5WyWEA3KcpDau2f5u8I
+    EVB9Bt95O+a89dv7/5cu2R9GzWL7gr42K2U+b5UsYE4POiXx7bgmGVJxx5jF5brN
+    BsXJkTakiIyM0n6uiWKIsB9owjFkJjuqQ6Jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
+    messagingengine.com; h=subject:to:cc:references:from:message-id
+    :date:mime-version:in-reply-to:content-type
+    :content-transfer-encoding:sender:list-id; s=fm2; t=1525823783;
+    bh=j78Z3mvbpR4TXbeFeMhOk368ln/E4tGgkN1tvw8Sctw=; b=Lg3hGqYuglFk
+    9IzwC3rOB+ecR4cvy+OTSx7af/jbLYRWzodFqnYiE6zJNNzlpYMGCAuKkdEBlW3t
+    MRBswpzXzgYmFX54IPGn7A7xpZ9fAQuYHUWP7mO/KsCfJvjZ9t9kfHCKVgUneWcX
+    uHCaag6uW/WnXBUxfTsqZy/j8cY5a8eVAC6nQxPB4iyD0LRFZf+1tvNyk4jzywbH
+    dVnG15xYYCIJPQe5rUe282YTkQezU18L09l8XgudLJmA6s+5ZFjbv5MtznG29MBx
+    zZltnMV49Jef7idQJvt98RHh62Il+rX1tnsVy849izyga6cKxyWkuJJwNAf5+J6+
+    KUnnxYIEzg==
+ARC-Authentication-Results: i=1; mx1.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+    smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx1.messagingengine.com;
+    arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
+    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
+      smtp.helo=vger.kernel.org;
+    x-aligned-from=orgdomain_pass (Domain org match);
+    x-cm=none score=0;
+    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
+    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
+      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
+      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+X-ME-VSCategory: clean
+X-CM-Envelope: MS4wfGYslx/xqvGkSQhbnubsXke5v++eIISamqvaawrPwNrifn2ALqDRbylXm9dwn2+1T5OOG0HDKZbeWm0bPvLCihexA2iwKj/ZixO0B7dor6IUqOnHYGHU
+    j32FyCBf81VJ5ltgB+bMsdIEmCEBXgjEe887xVkV0ICwxsZf47MLvhUrWX3z4e03ipLp6zCGYiuPcyO0R/HEGepKyFvwpLV5oAHrIA2OaM2q44LquWhOI6gA
+X-CM-Analysis: v=2.3 cv=WaUilXpX c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=_GnF6dH6mMMA:10
+    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=8-vRK6DNSD7UNujOA5sA:9 a=QEXdDO2ut3YA:10
+    a=AjGcO6oz07-iQ99wixmX:22
+X-ME-CMScore: 0
+X-ME-CMCategory: none
+Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
+        id S932654AbeEHX4V (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 8 May 2018 19:56:21 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:45435 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932475AbeEHX4U (ORCPT
+        <rfc822;stable@vger.kernel.org>); Tue, 8 May 2018 19:56:20 -0400
+Subject: Re: [PATCH 4.9 00/32] 4.9.99-stable review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc: torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>
+References: <20180508074008.800421598@linuxfoundation.org>
+From: Shuah Khan <shuah@kernel.org>
+Message-ID: <fb5f52fc-d5d0-f03d-a47c-3f93dac55b81@kernel.org>
+Date: Tue, 8 May 2018 17:56:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-User-Agent: quilt/0.65
-X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.99-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.99-rc1
-X-KernelTest-Deadline: 2018-05-10T07:40+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+Sender: stable-owner@vger.kernel.org
+X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599883077500588538?=
-X-GMAIL-MSGID: =?utf-8?q?1599883077500588538?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-This is the start of the stable review cycle for the 4.9.99 release.
-There are 32 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On 05/08/2018 02:10 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.99 release.
+> There are 32 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu May 10 07:39:44 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.99-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Responses should be made by Thu May 10 07:39:44 UTC 2018.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.99-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
+Compiled and booted on my test system. No dmesg regressions.
 
 thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.99-rc1
-
-Heiko Carstens <heiko.carstens@de.ibm.com>
-    s390/facilites: use stfle_fac_list array size for MAX_FACILITY_BIT
-
-João Paulo Rechi Vita <jprvita@gmail.com>
-    platform/x86: asus-wireless: Fix NULL pointer dereference
-
-Bin Liu <b-liu@ti.com>
-    usb: musb: trace: fix NULL pointer dereference in musb_g_tx()
-
-Bin Liu <b-liu@ti.com>
-    usb: musb: host: fix potential NULL pointer dereference
-
-SZ Lin (林上智) <sz.lin@moxa.com>
-    USB: serial: option: adding support for ublox R410M
-
-Johan Hovold <johan@kernel.org>
-    USB: serial: option: reimplement interface masking
-
-Alan Stern <stern@rowland.harvard.edu>
-    USB: Accept bulk endpoints with 1024-byte maxpacket
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    USB: serial: visor: handle potential invalid device configuration
-
-Ben Hutchings <ben.hutchings@codethink.co.uk>
-    test_firmware: fix setting old custom fw path back on exit, second try
-
-Sean Paul <seanpaul@chromium.org>
-    drm/bridge: vga-dac: Fix edid memory leak
-
-Thomas Hellstrom <thellstrom@vmware.com>
-    drm/vmwgfx: Fix a buffer object leak
-
-Sebastian Sanchez <sebastian.sanchez@intel.com>
-    IB/hfi1: Fix NULL pointer dereference when invalid num_vls is used
-
-Danit Goldberg <danitg@mellanox.com>
-    IB/mlx5: Use unlimited rate when static rate is not supported
-
-SZ Lin (林上智) <sz.lin@moxa.com>
-    NET: usb: qmi_wwan: add support for ublox R410M PID 0x90b2
-
-Leon Romanovsky <leonro@mellanox.com>
-    RDMA/mlx5: Protect from shift operand overflow
-
-Roland Dreier <roland@purestorage.com>
-    RDMA/ucma: Allow resolving address w/o specifying source address
-
-Raju Rangoju <rajur@chelsio.com>
-    RDMA/cxgb4: release hw resources on device removal
-
-Darrick J. Wong <darrick.wong@oracle.com>
-    xfs: prevent creating negative-sized file via INSERT_RANGE
-
-Vittorio Gambaletta (VittGam) <linuxbugs@vittgam.net>
-    Input: atmel_mxt_ts - add touchpad button mapping for Samsung Chromebook Pro
-
-Dmitry Torokhov <dmitry.torokhov@gmail.com>
-    Input: leds - fix out of bound access
-
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-    tracepoint: Do not warn on ENOMEM
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: aloop: Add missing cable lock to ctl API callbacks
-
-Robert Rosengren <robert.rosengren@axis.com>
-    ALSA: aloop: Mark paused device as inactive
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: seq: Fix races at MIDI encoding in snd_virmidi_output_trigger()
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: pcm: Check PCM state at xfern compat ioctl
-
-Kristian Evensen <kristian.evensen@gmail.com>
-    USB: serial: option: Add support for Quectel EP06
-
-Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-    serial: imx: ensure UCR3 and UFCR are setup correctly
-
-LEROY Christophe <christophe.leroy@c-s.fr>
-    crypto: talitos - fix IPsec cipher in length
-
-Marc Zyngier <marc.zyngier@arm.com>
-    arm/arm64: KVM: Add PSCI version selection API
-
-Teng Qin <qinteng@fb.com>
-    bpf: map_get_next_key to return first key on NULL
-
-Tejun Heo <tj@kernel.org>
-    percpu: include linux/sched.h for cond_resched()
-
-Tan Xiaojun <tanxiaojun@huawei.com>
-    perf/core: Fix the perf_cpu_time_max_percent check
-
-
--------------
-
-Diffstat:
-
- Documentation/virtual/kvm/api.txt                 |   9 +-
- Documentation/virtual/kvm/arm/psci.txt            |  30 ++
- Makefile                                          |   4 +-
- arch/arm/include/asm/kvm_host.h                   |   3 +
- arch/arm/include/uapi/asm/kvm.h                   |   6 +
- arch/arm/kvm/guest.c                              |  13 +
- arch/arm/kvm/psci.c                               |  60 +++
- arch/arm64/include/asm/kvm_host.h                 |   3 +
- arch/arm64/include/uapi/asm/kvm.h                 |   6 +
- arch/arm64/kvm/guest.c                            |  14 +-
- arch/s390/include/asm/facility.h                  |   2 +-
- drivers/crypto/talitos.c                          |  41 +-
- drivers/gpu/drm/bridge/dumb-vga-dac.c             |   4 +-
- drivers/gpu/drm/vmwgfx/vmwgfx_kms.c               |   1 +
- drivers/infiniband/core/ucma.c                    |   2 +-
- drivers/infiniband/hw/cxgb4/device.c              |   9 +-
- drivers/infiniband/hw/cxgb4/iw_cxgb4.h            |   4 +
- drivers/infiniband/hw/cxgb4/resource.c            |  26 +-
- drivers/infiniband/hw/hfi1/init.c                 |   2 +
- drivers/infiniband/hw/hfi1/pcie.c                 |   3 -
- drivers/infiniband/hw/mlx5/qp.c                   |  22 +-
- drivers/input/input-leds.c                        |   8 +-
- drivers/input/touchscreen/atmel_mxt_ts.c          |   9 +
- drivers/net/usb/qmi_wwan.c                        |   1 +
- drivers/platform/x86/asus-wireless.c              |   4 +-
- drivers/tty/serial/imx.c                          |  14 +-
- drivers/usb/core/config.c                         |   4 +-
- drivers/usb/musb/musb_gadget.c                    |   3 +-
- drivers/usb/musb/musb_host.c                      |   4 +-
- drivers/usb/serial/option.c                       | 448 ++++++++--------------
- drivers/usb/serial/visor.c                        |  69 ++--
- fs/xfs/xfs_file.c                                 |  14 +-
- include/kvm/arm_psci.h                            |  16 +-
- kernel/bpf/arraymap.c                             |   2 +-
- kernel/bpf/hashtab.c                              |   9 +-
- kernel/bpf/syscall.c                              |  20 +-
- kernel/events/core.c                              |   2 +-
- kernel/tracepoint.c                               |   4 +-
- mm/percpu.c                                       |   1 +
- sound/core/pcm_compat.c                           |   2 +
- sound/core/seq/seq_virmidi.c                      |   4 +-
- sound/drivers/aloop.c                             |  29 +-
- tools/testing/selftests/firmware/fw_filesystem.sh |   6 +-
- 43 files changed, 530 insertions(+), 407 deletions(-)
+-- Shuah
