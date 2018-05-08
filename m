@@ -1,126 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754929AbeEHJQo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:16:44 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46088 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754223AbeEHJQl (ORCPT
+        id S932231AbeEHJ2t (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:28:49 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49281 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932125AbeEHJ2n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:16:41 -0400
-Date: Tue, 8 May 2018 12:16:38 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Sami Tolvanen <samitolvanen@google.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: media-device: fix ioctl function types
-Message-ID: <20180508091638.td5soyelqhdarkaf@valkosipuli.retiisi.org.uk>
-References: <20180507104509.lq4ep22fm6h53gra@valkosipuli.retiisi.org.uk>
- <20180507180946.104340-1-samitolvanen@google.com>
- <829b07f9-a41f-9c0f-c4c3-32056c91cd72@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <829b07f9-a41f-9c0f-c4c3-32056c91cd72@xs4all.nl>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 8 May 2018 05:28:43 -0400
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net, linux-can@vger.kernel.org, kernel@pengutronix.de,
+        Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
+        linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 1/7] can: dev: increase bus-off message severity
+Date: Tue,  8 May 2018 11:28:25 +0200
+Message-Id: <20180508092831.28247-2-mkl@pengutronix.de>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180508092831.28247-1-mkl@pengutronix.de>
+References: <20180508092831.28247-1-mkl@pengutronix.de>
+X-SA-Exim-Connect-IP: 2001:67c:670:205:1d::14
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 10:08:41AM +0200, Hans Verkuil wrote:
-> Hi Sami,
-> 
-> This is unchanged from the previous version, right? I've already added that to a
-> pull request.
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
 
-Casting has been removed from the void pointers as I suggested. That's the
-difference.
+bus-off is usually caused by hardware malfunction or configuration error
+(baud rate mismatch) and causes a complete loss of communication.
 
-> 
-> If this v2 has changes, then let me know asap.
-> 
-> Regards,
-> 
-> 	Hans
-> 
-> On 05/07/2018 08:09 PM, Sami Tolvanen wrote:
-> > This change fixes function types for media device ioctls to avoid
-> > indirect call mismatches with Control-Flow Integrity checking.
-> > 
-> > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> > ---
-> >  drivers/media/media-device.c | 21 +++++++++++----------
-> >  1 file changed, 11 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/drivers/media/media-device.c b/drivers/media/media-device.c
-> > index 35e81f7c0d2f1..ae59c31775557 100644
-> > --- a/drivers/media/media-device.c
-> > +++ b/drivers/media/media-device.c
-> > @@ -54,9 +54,10 @@ static int media_device_close(struct file *filp)
-> >  	return 0;
-> >  }
-> >  
-> > -static int media_device_get_info(struct media_device *dev,
-> > -				 struct media_device_info *info)
-> > +static long media_device_get_info(struct media_device *dev, void *arg)
-> >  {
-> > +	struct media_device_info *info = arg;
-> > +
-> >  	memset(info, 0, sizeof(*info));
-> >  
-> >  	if (dev->driver_name[0])
-> > @@ -93,9 +94,9 @@ static struct media_entity *find_entity(struct media_device *mdev, u32 id)
-> >  	return NULL;
-> >  }
-> >  
-> > -static long media_device_enum_entities(struct media_device *mdev,
-> > -				       struct media_entity_desc *entd)
-> > +static long media_device_enum_entities(struct media_device *mdev, void *arg)
-> >  {
-> > +	struct media_entity_desc *entd = arg;
-> >  	struct media_entity *ent;
-> >  
-> >  	ent = find_entity(mdev, entd->id);
-> > @@ -146,9 +147,9 @@ static void media_device_kpad_to_upad(const struct media_pad *kpad,
-> >  	upad->flags = kpad->flags;
-> >  }
-> >  
-> > -static long media_device_enum_links(struct media_device *mdev,
-> > -				    struct media_links_enum *links)
-> > +static long media_device_enum_links(struct media_device *mdev, void *arg)
-> >  {
-> > +	struct media_links_enum *links = arg;
-> >  	struct media_entity *entity;
-> >  
-> >  	entity = find_entity(mdev, links->entity);
-> > @@ -195,9 +196,9 @@ static long media_device_enum_links(struct media_device *mdev,
-> >  	return 0;
-> >  }
-> >  
-> > -static long media_device_setup_link(struct media_device *mdev,
-> > -				    struct media_link_desc *linkd)
-> > +static long media_device_setup_link(struct media_device *mdev, void *arg)
-> >  {
-> > +	struct media_link_desc *linkd = arg;
-> >  	struct media_link *link = NULL;
-> >  	struct media_entity *source;
-> >  	struct media_entity *sink;
-> > @@ -225,9 +226,9 @@ static long media_device_setup_link(struct media_device *mdev,
-> >  	return __media_entity_setup_link(link, linkd->flags);
-> >  }
-> >  
-> > -static long media_device_get_topology(struct media_device *mdev,
-> > -				      struct media_v2_topology *topo)
-> > +static long media_device_get_topology(struct media_device *mdev, void *arg)
-> >  {
-> > +	struct media_v2_topology *topo = arg;
-> >  	struct media_entity *entity;
-> >  	struct media_interface *intf;
-> >  	struct media_pad *pad;
-> > 
-> 
+Increase the "bus-off" message's severity from netdev_dbg() to
+netdev_info() to make it visible to the user.
 
+A can interface going into bus-off is similar in severity to ethernet's
+"Link is Down" message, which is also printed at info level.
+
+It is debatable whether the the "restarted" message should also be
+changed to netdev_info() to make the interface state changes
+comprehensible from the kernel log. I have chosen to keep the
+"restarted" message at dbg for now as the "bus-off" message should be
+enough for the user to notice and investigate the problem.
+
+Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: linux-can@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+---
+ drivers/net/can/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/can/dev.c b/drivers/net/can/dev.c
+index b1779566c5bb..3c71f1cb205f 100644
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -605,7 +605,7 @@ void can_bus_off(struct net_device *dev)
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
+ 
+-	netdev_dbg(dev, "bus-off\n");
++	netdev_info(dev, "bus-off\n");
+ 
+ 	netif_carrier_off(dev);
+ 
 -- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+2.17.0
