@@ -1,82 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933393AbeEHSSx (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:18:53 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45916 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932982AbeEHSRh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:17:37 -0400
-X-Google-Smtp-Source: AB8JxZr88zmYhDwiWx6ECJk38A7wfGPOR/HUpvs4D/ZjMQuglL/M6AkV2imSfvb3P8OMMj8LmQN3Rw==
-From: Dmitry Osipenko <digetx@gmail.com>
-To: Joerg Roedel <joro@8bytes.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
+        id S933595AbeEHSTG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:19:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932870AbeEHSTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 14:19:04 -0400
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+To: Jacky Bai <ping.bai@nxp.com>, Stefan Agner <stefan@agner.ch>
+From: Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
+Cc: Shawn Guo <shawnguo@kernel.org>, kernel@pengutronix.de,
+        Fabio Estevam <fabio.estevam@nxp.com>, mturquette@baylibre.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 9/9] iommu/tegra: gart: Optimize mapping / unmapping performance
-Date: Tue,  8 May 2018 21:17:00 +0300
-Message-Id: <20180508181700.5169-10-digetx@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180508181700.5169-1-digetx@gmail.com>
-References: <20180508181700.5169-1-digetx@gmail.com>
+References: <20180418124908.3079-1-stefan@agner.ch> <20180502073807.GE3443@dragon>
+ <56a409cf76a3eaa713cb4f0bbe1e39b6@agner.ch>
+ <HE1PR04MB311395765D3DC03D5960DBA3879A0@HE1PR04MB3113.eurprd04.prod.outlook.com>
+ <4188ee25bd5179b57d09e4624dcfbfbb@agner.ch>
+Message-ID: <152580354289.138124.13657232356773397650@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: imx6ull: use OSC clock during AXI rate change
+Date: Tue, 08 May 2018 11:19:02 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w48IJCsX002430
 
-Currently GART writes one page entry at a time. More optimal would be to
-aggregate the writes and flush BUS buffer in the end, this gives map/unmap
-10-40% (depending on size of mapping) performance boost compared to a
-flushing after each entry update.
+Quoting Stefan Agner (2018-05-08 06:20:03)
+> On 08.05.2018 09:32, Jacky Bai wrote:
+> > 
+> > I have tried two 6ULL board, I don't meet such issue. System can boot
+> > up successfully with commit 6f9575e55632 included.
+> > Anyway, the change in this patch is ok for me. it is no harm to the
+> > BUS clock change flow.
+> 
+> Hm, that is interesting, maybe it is because we use a different SKU? Or
+> maybe bootloader?
+> 
+> I tested here with a 800 MHz clocked variant on a Colibri iMX6ULL using
+> U-Boot 2016.11.
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/iommu/tegra-gart.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index ebc105c201bd..26d8735d26e8 100644
---- a/drivers/iommu/tegra-gart.c
-+++ b/drivers/iommu/tegra-gart.c
-@@ -226,7 +226,6 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
- 		}
- 	}
- 	gart_set_pte(gart, iova, GART_PTE(pfn));
--	FLUSH_GART_REGS(gart);
- 	spin_unlock_irqrestore(&gart->pte_lock, flags);
- 	return 0;
- }
-@@ -243,7 +242,6 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
- 
- 	spin_lock_irqsave(&gart->pte_lock, flags);
- 	gart_set_pte(gart, iova, 0);
--	FLUSH_GART_REGS(gart);
- 	spin_unlock_irqrestore(&gart->pte_lock, flags);
- 	return bytes;
- }
-@@ -319,6 +317,14 @@ static int gart_iommu_of_xlate(struct device *dev,
- 	return 0;
- }
- 
-+static void gart_iommu_sync(struct iommu_domain *domain)
-+{
-+	struct gart_domain *gart_domain = to_gart_domain(domain);
-+	struct gart_device *gart = gart_domain->gart;
-+
-+	FLUSH_GART_REGS(gart);
-+}
-+
- static const struct iommu_ops gart_iommu_ops = {
- 	.capable	= gart_iommu_capable,
- 	.domain_alloc	= gart_iommu_domain_alloc,
-@@ -334,6 +340,8 @@ static const struct iommu_ops gart_iommu_ops = {
- 	.iova_to_phys	= gart_iommu_iova_to_phys,
- 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
- 	.of_xlate	= gart_iommu_of_xlate,
-+	.iotlb_sync_map	= gart_iommu_sync,
-+	.iotlb_sync	= gart_iommu_sync,
- };
- 
- static int gart_iommu_check_device(struct gart_device *gart,
--- 
-2.17.0
+I'll throw this into fixes today because it fixes something to be
+useful. It's still interesting to see what's different between the two
+setups though.
