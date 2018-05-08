@@ -1,65 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932905AbeEHQZF (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:25:05 -0400
-Received: from mga18.intel.com ([134.134.136.126]:14953 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932707AbeEHQZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:25:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
-   d="scan'208";a="39652780"
-Subject: Re: [PATCH] x86/boot/64/clang: Use fixup_pointer() to access
- '__supported_pte_mask'
-To: Alexander Potapenko <glider@google.com>
-References: <20180508121638.174022-1-glider@google.com>
- <1f69bdb6-df5e-d709-064a-4f6fdd6e11a7@linux.intel.com>
- <CAG_fn=Xv74c80swzFjKyybQpRj7Qj9K1NVH-D6gcxcYEoUJ1xA@mail.gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Dmitriy Vyukov <dvyukov@google.com>, Michael Davidson <md@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Message-ID: <d149aae8-6aba-bb31-ddd6-49244598a617@intel.com>
-Date: Tue, 8 May 2018 09:25:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1755485AbeEHQ11 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:27:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51160 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755349AbeEHQ10 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:27:26 -0400
+Date: Tue, 8 May 2018 09:27:15 -0700
+From: Ram Pai <linuxram@us.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: mingo@redhat.com, linuxppc-dev@ozlabs.org, linux-mm@kvack.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org, dave.hansen@intel.com
+Subject: Re: [PATCH 4/8] mm/pkeys, powerpc, x86: Provide an empty vma_pkey()
+ in linux/pkeys.h
+Reply-To: Ram Pai <linuxram@us.ibm.com>
+References: <20180508145948.9492-1-mpe@ellerman.id.au>
+ <20180508145948.9492-5-mpe@ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <CAG_fn=Xv74c80swzFjKyybQpRj7Qj9K1NVH-D6gcxcYEoUJ1xA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180508145948.9492-5-mpe@ellerman.id.au>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-TM-AS-GCONF: 00
+x-cbid: 18050816-0008-0000-0000-000004F47248
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18050816-0009-0000-0000-00001E88B4F6
+Message-Id: <20180508162715.GB5474@ram.oc3035372033.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-05-08_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1709140000
+ definitions=main-1805080158
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 07:50 AM, Alexander Potapenko wrote:
->>> Similarly to commit 187e91fe5e91
->>> ("x86/boot/64/clang: Use fixup_pointer() to access 'next_early_pgt'"),
->>> '__supported_pte_mask' must be also accessed using fixup_pointer() to
->>> avoid position-dependent relocations.
->>>
->>> Signed-off-by: Alexander Potapenko <glider@google.com>
->>> Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
+On Wed, May 09, 2018 at 12:59:44AM +1000, Michael Ellerman wrote:
+> Consolidate the pkey handling by providing a common empty definition
+> of vma_pkey() in pkeys.h when CONFIG_ARCH_HAS_PKEYS=n.
 > 
->> In the interests of standalone changelogs, I'd really appreciate an
->> actual explanation of what's going on here.  Your patch makes the code
->> uglier and doesn't fix anything functional from what I can see.
-> You're right, sure. I'll send a patch with an updated description.
+> This also removes another entanglement of pkeys.h and
+> asm/mmu_context.h.
+>
 
-Great, thanks!
+Reviewed-by: Ram Pai <linuxram@us.ibm.com>
 
->> Do we have anything we can do to keep us from recreating these kinds of
->> regressions all the time?
-> I'm not really aware of the possible options in the kernel land. Looks like
-> a task for some objtool-like utility?
-> As long as these regressions are caught with Clang, setting up a 0day Clang
-> builder might help.
 
-I've asked the 0day folks if this is doable.  It would be great to see
-it added.
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  arch/powerpc/include/asm/mmu_context.h | 5 -----
+>  arch/x86/include/asm/mmu_context.h     | 5 -----
+>  include/linux/pkeys.h                  | 5 +++++
+>  3 files changed, 5 insertions(+), 10 deletions(-)
+
+RP
