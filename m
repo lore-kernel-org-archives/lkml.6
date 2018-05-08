@@ -1,310 +1,95 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932358AbeEHKfy (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 06:35:54 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34983 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932262AbeEHKfv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 06:35:51 -0400
-X-Google-Smtp-Source: AB8JxZpwJSWpq+73xW+uTkWFNAHGtZ9dQrWNUrCaYflCHf69Fpl5+qrbYum2jG5Ko5dGaPoYffbq5w==
-Date: Tue, 8 May 2018 11:35:47 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH V2 3/5] backlight: qcom-wled: Add support for short
- circuit handling
-Message-ID: <20180508103547.kv4bbrwxui6yihvs@holly.lan>
-References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
- <1525342352-25072-4-git-send-email-kgunda@codeaurora.org>
+        id S1754830AbeEHKhE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 06:37:04 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55804 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754476AbeEHKhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 06:37:03 -0400
+Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
+ related_cpus unnecessarily"
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
+        Pavan Kondeti <pkondeti@codeaurora.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>
+References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
+ <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
+ <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
+ <20180508094526.ajyjrwytguhv4xpe@vireshk-i7>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <7922d081-0bfb-0e55-7caf-ec9fb5d7bab0@arm.com>
+Date: Tue, 8 May 2018 12:36:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525342352-25072-4-git-send-email-kgunda@codeaurora.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180508094526.ajyjrwytguhv4xpe@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 03:42:30PM +0530, Kiran Gunda wrote:
-> Handle the short circuit interrupt and check if the short circuit
-> interrupt is valid. Re-enable the module to check if it goes
-> away. Disable the module altogether if the short circuit event
-> persists.
+On 05/08/2018 11:45 AM, Viresh Kumar wrote:
+> On 08-05-18, 11:09, Dietmar Eggemann wrote:
+>> This would make sure that the kthreads are bound to the correct set of cpus
+>> for platforms with those cpufreq drivers (cpufreq-dt (h960), scmi-cpufreq,
+>> scpi-cpufreq) but it will also change the logic (e.g.
+>> sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
 > 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> ---
->  drivers/video/backlight/qcom-wled.c | 134 ++++++++++++++++++++++++++++++++++--
->  1 file changed, 130 insertions(+), 4 deletions(-)
+> Yeah, I misunderstood your patch a bit. So you are not disabling
+> remote updates but only limiting the CPUs where the kthread runs.
+
+Yes, remote updates are possible even if the sugov kthread is bound to 
+the cpus of the policy.
+
+cross policy (cluster) remote callback example:
+...
+migration/1-14 [001] enqueue_task_fair: this_cpu=1 cpu_of(rq)=7
+migration/1-14 [001] sugov_update_shared: this_cpu=1 sg_cpu->cpu=7
+                      sg_cpu->sg_policy->policy->related_cpus=4-7
+   sugov:4-1492 [004] sugov_work: this_cpu=4
+                      sg_cpu->sg_policy->policy->related_cpus=4-7
+...
+
+cpu=1 updates cpu=7 remotely. This is independent from where the actual 
+sugov kthread is running.
+
+> That still looks to be a big little specific problem to me right now
+> and I am not sure why should we specially handle these kthreads ?
+> Isn't the same true for any other threads/tasks in the kernel which
+> may end up running on big CPUs ? And this problem still occurs with
+> the EAS patches applied ? As I thought we may end up keeping such
+> small tasks on little cores then.
+
+Binding it to the cpus of the policy makes sense since if the OPP should 
+be changed for these cpus it should be done on one of these cpus, making 
+sure we don't disturb the others. EAS and big.LITTLE will profit from 
+this, but potentially every system with multiple frequency domains.
+
+Binding them on to little cpus is an overhead to me which will gain us 
+very little. Keeping the sugov threads to the cpus of the policy doesn't 
+cost much and helps a lot.
+
+>> I'm still struggling to understand when a driver/platform should set
+>> dvfs_possible_from_any_cpu to true and what the actual benefit would be.
 > 
-> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-> index be8b8d3..2cfba77 100644
-> --- a/drivers/video/backlight/qcom-wled.c
-> +++ b/drivers/video/backlight/qcom-wled.c
-> @@ -10,6 +10,9 @@
->   * GNU General Public License for more details.
->   */
->  
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/ktime.h>
->  #include <linux/kernel.h>
->  #include <linux/backlight.h>
->  #include <linux/module.h>
-> @@ -23,7 +26,9 @@
->  
->  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->  
-> -/* Control registers */
-> +/* WLED3 Control registers */
-> +#define WLED3_CTRL_REG_FAULT_STATUS			0x08
-> +
->  #define WLED3_CTRL_REG_MOD_EN				0x46
->  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
->  
-> @@ -36,7 +41,17 @@
->  #define WLED3_CTRL_REG_ILIMIT				0x4e
->  #define  WLED3_CTRL_REG_ILIMIT_MASK			GENMASK(2, 0)
->  
-> -/* sink registers */
-> +/* WLED4 control registers */
-> +#define WLED4_CTRL_REG_SHORT_PROTECT			0x5e
-> +#define  WLED4_CTRL_REG_SHORT_EN_MASK			BIT(7)
-> +
-> +#define WLED4_CTRL_REG_SEC_ACCESS			0xd0
-> +#define  WLED4_CTRL_REG_SEC_UNLOCK			0xa5
-> +
-> +#define WLED4_CTRL_REG_TEST1				0xe2
-> +#define  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2		0x09
-> +
-> +/* WLED3 sink registers */
->  #define WLED3_SINK_REG_SYNC				0x47
->  #define  WLED3_SINK_REG_SYNC_MASK			GENMASK(2, 0)
->  #define  WLED4_SINK_REG_SYNC_MASK			GENMASK(3, 0)
-> @@ -130,17 +145,23 @@ struct wled_config {
->  	bool cs_out_en;
->  	bool ext_gen;
->  	bool cabc;
-> +	bool external_pfet;
->  };
->  
->  struct wled {
->  	const char *name;
->  	struct device *dev;
->  	struct regmap *regmap;
-> +	struct mutex lock;	/* Lock to avoid race from ISR */
-> +	ktime_t last_short_event;
->  	u16 ctrl_addr;
->  	u16 sink_addr;
->  	u32 brightness;
->  	u32 max_brightness;
-> +	u32 short_count;
->  	const int *version;
-> +	int short_irq;
-> +	bool force_mod_disable;
->  
->  	struct wled_config cfg;
->  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
-> @@ -192,6 +213,9 @@ static int wled_module_enable(struct wled *wled, int val)
->  {
->  	int rc;
->  
-> +	if (wled->force_mod_disable)
-> +		return 0;
-> +
->  	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
->  				WLED3_CTRL_REG_MOD_EN,
->  				WLED3_CTRL_REG_MOD_EN_MASK,
-> @@ -248,12 +272,13 @@ static int wled_update_status(struct backlight_device *bl)
->  	    bl->props.state & BL_CORE_FBBLANK)
->  		brightness = 0;
->  
-> +	mutex_lock(&wled->lock);
->  	if (brightness) {
->  		rc = wled->wled_set_brightness(wled, brightness);
->  		if (rc < 0) {
->  			dev_err(wled->dev, "wled failed to set brightness rc:%d\n",
->  				rc);
-> -			return rc;
-> +			goto unlock_mutex;
->  		}
->  
->  		rc = wled->wled_sync_toggle(wled);
-> @@ -267,15 +292,60 @@ static int wled_update_status(struct backlight_device *bl)
->  		rc = wled_module_enable(wled, !!brightness);
->  		if (rc < 0) {
->  			dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
-> -			return rc;
-> +			goto unlock_mutex;
->  		}
->  	}
->  
->  	wled->brightness = brightness;
->  
-> +unlock_mutex:
-> +	mutex_unlock(&wled->lock);
-> +
->  	return rc;
->  }
->  
-> +#define WLED_SHORT_DLY_MS			20
-> +#define WLED_SHORT_CNT_MAX			5
-> +#define WLED_SHORT_RESET_CNT_DLY_US	HZ
+> Ideally it should be set by default for all ARM platforms at least
+> which have more than one cpufreq policy, as there is no hardware
+> limitation for changing frequency from other CPUs. If you look at the
+> commit logs of patches which added remote updates, you will see
+> interesting cases where this can be very useful.
 
-So we think a short report every quarter second is harmless?
+That's true but where is the benefit by doing so? (Multiple) per-cluster 
+or per-cpu frequency domains, why should the sugov kthread run on a 
+foreign cpu?
 
+> commit 674e75411fc2 ("sched: cpufreq: Allow remote cpufreq callbacks")
 
-> +static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
-> +{
-> +	struct wled *wled = _wled;
-> +	int rc;
-> +	s64 elapsed_time;
-> +
-> +	wled->short_count++;
-> +	mutex_lock(&wled->lock);
-> +	rc = wled_module_enable(wled, false);
-> +	if (rc < 0) {
-> +		dev_err(wled->dev, "wled disable failed rc:%d\n", rc);
-> +		goto unlock_mutex;
-> +	}
-> +
-> +	elapsed_time = ktime_us_delta(ktime_get(),
-> +				      wled->last_short_event);
-> +	if (elapsed_time > WLED_SHORT_RESET_CNT_DLY_US)
-> +		wled->short_count = 0;
-> +
-> +	if (wled->short_count > WLED_SHORT_CNT_MAX) {
-> +		dev_err(wled->dev, "Short trigged %d times, disabling WLED forever!\n",
-> +			wled->short_count);
-> +		wled->force_mod_disable = true;
-> +		goto unlock_mutex;
-> +	}
-> +
-> +	wled->last_short_event = ktime_get();
-> +
-> +	msleep(WLED_SHORT_DLY_MS);
-> +	rc = wled_module_enable(wled, true);
-> +	if (rc < 0)
-> +		dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
-> +
-> +unlock_mutex:
-> +	mutex_unlock(&wled->lock);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  static int wled3_setup(struct wled *wled)
->  {
->  	u16 addr;
-> @@ -435,6 +505,21 @@ static int wled4_setup(struct wled *wled)
->  		return rc;
->  	}
->  
-> +	if (wled->cfg.external_pfet) {
-> +		/* Unlock the secure register access */
-> +		rc = regmap_write(wled->regmap, wled->ctrl_addr +
-> +				  WLED4_CTRL_REG_SEC_ACCESS,
-> +				  WLED4_CTRL_REG_SEC_UNLOCK);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		rc = regmap_write(wled->regmap,
-> +				  wled->ctrl_addr + WLED4_CTRL_REG_TEST1,
-> +				  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2);
-> +		if (rc < 0)
-> +			return rc;
-> +	}
-> +
->  	return 0;
->  }
->  
-> @@ -446,6 +531,7 @@ static int wled4_setup(struct wled *wled)
->  	.switch_freq = 11,
->  	.enabled_strings = 0xf,
->  	.cabc = false,
-> +	.external_pfet = true,
->  };
->  
->  static const u32 wled3_boost_i_limit_values[] = {
-> @@ -628,6 +714,7 @@ static int wled_configure(struct wled *wled)
->  		{ "qcom,cs-out", &cfg->cs_out_en, },
->  		{ "qcom,ext-gen", &cfg->ext_gen, },
->  		{ "qcom,cabc", &cfg->cabc, },
-> +		{ "qcom,external-pfet", &cfg->external_pfet, },
->  	};
->  
->  	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
-> @@ -701,6 +788,39 @@ static int wled_configure(struct wled *wled)
->  	return 0;
->  }
->  
-> +static int wled_configure_short_irq(struct wled *wled,
-> +				    struct platform_device *pdev)
-> +{
-> +	int rc = 0;
-> +
-> +	/* PM8941 doesn't have the short detection support */
-> +	if (*wled->version == WLED_PM8941)
-> +		return 0;
-> +
-> +	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-> +				WLED4_CTRL_REG_SHORT_PROTECT,
-> +				WLED4_CTRL_REG_SHORT_EN_MASK,
-> +				WLED4_CTRL_REG_SHORT_EN_MASK);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	wled->short_irq = platform_get_irq_byname(pdev, "short");
-> +	if (wled->short_irq < 0) {
-> +		dev_dbg(&pdev->dev, "short irq is not used\n");
-> +		return 0;
-> +	}
-> +
-> +	rc = devm_request_threaded_irq(wled->dev, wled->short_irq,
-> +				       NULL, wled_short_irq_handler,
-
-NULL? There's no register we can check to make sure the interrupt
-handler did not enter spuriously?
-
-
-> +				       IRQF_ONESHOT,
-> +				       "wled_short_irq", wled);
-> +	if (rc < 0)
-> +		dev_err(wled->dev, "Unable to request short_irq (err:%d)\n",
-> +			rc);
-> +
-> +	return rc;
-> +}
-> +
->  static const struct backlight_ops wled_ops = {
->  	.update_status = wled_update_status,
->  };
-> @@ -733,6 +853,8 @@ static int wled_probe(struct platform_device *pdev)
->  		return -ENODEV;
->  	}
->  
-> +	mutex_init(&wled->lock);
-> +
->  	rc = wled_configure(wled);
->  	if (rc)
->  		return rc;
-> @@ -752,6 +874,10 @@ static int wled_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	rc = wled_configure_short_irq(wled, pdev);
-> +	if (rc < 0)
-> +		return rc;
-> +
->  	val = WLED_DEFAULT_BRIGHTNESS;
->  	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->  a Linux Foundation Collaborative Project
-> 
+IMHO, this describes the remote cpufreq callback functionality itself 
+which works perfectly fine even if we leave the sugov ktrhead bound to 
+the cpus of the policy.
