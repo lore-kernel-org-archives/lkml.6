@@ -1,75 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753738AbeEHA0m (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:26:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:55965 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753416AbeEHA0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:26:41 -0400
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-Date: Tue, 8 May 2018 10:26:38 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the bpf-next tree with the s390 tree
-Message-ID: <20180508102638.1e19b7f2@canb.auug.org.au>
+        id S1753714AbeEHA11 (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:27:27 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44949 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753448AbeEHA1Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 20:27:25 -0400
+X-Google-Smtp-Source: AB8JxZpVKvTvTpd9Pw4zjWWoNEI7wWVHutwkQS5KtM8of3dnDdNZR3uZLovjHt4Hb+Oa3weeQUg7Lzt4ZguhV2rhOYM=
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kXzFUC_=Cczq4v52YPlNUFN"; protocol="application/pgp-signature"
+In-Reply-To: <1525578221-16283-1-git-send-email-wang6495@umn.edu>
+References: <1525578221-16283-1-git-send-email-wang6495@umn.edu>
+From: adam radford <aradford@gmail.com>
+Date: Mon, 7 May 2018 17:27:24 -0700
+Message-ID: <CAHtARFFEH3Q5BPL+36i_UHn5+yDfe8QyMQe_n-b1Q87fsZQOpQ@mail.gmail.com>
+Subject: Re: [PATCH] scsi: 3w-9xxx: fix a missing-check bug
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/kXzFUC_=Cczq4v52YPlNUFN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, May 5, 2018 at 8:43 PM, Wenwen Wang <wang6495@umn.edu> wrote:
+> In twa_chrdev_ioctl(), the ioctl driver command is firstly copied from the
+> userspace pointer 'argp' and saved to the kernel object 'driver_command'.
+> Then a security check is performed on the data buffer size indicated by
+> 'driver_command', which is 'driver_command.buffer_length'. If the security
+> check is passed, the entire ioctl command is copied again from the 'argp'
+> pointer and saved to the kernel object 'tw_ioctl'. Then, various operations
+> are performed on 'tw_ioctl' according to the 'cmd'. Given that the 'argp'
+> pointer resides in userspace, a malicious userspace process can race to
+> change the buffer size between the two copies. This way, the user can
+> bypass the security check and inject invalid data buffer size. This can
+> cause potential security issues in the following execution.
+>
+> This patch checks the buffer size obtained in the second copy. An error
+> code -EINVAL will be returned if it is not same as the original one in the
+> first copy.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  drivers/scsi/3w-9xxx.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/scsi/3w-9xxx.c b/drivers/scsi/3w-9xxx.c
+> index b42c9c4..8bc43db 100644
+> --- a/drivers/scsi/3w-9xxx.c
+> +++ b/drivers/scsi/3w-9xxx.c
+> @@ -684,6 +684,12 @@ static long twa_chrdev_ioctl(struct file *file, unsigned int cmd, unsigned long
+>         if (copy_from_user(tw_ioctl, argp, driver_command.buffer_length + sizeof(TW_Ioctl_Buf_Apache) - 1))
+>                 goto out3;
+>
+> +       if (tw_ioctl->driver_command.buffer_length
+> +                != driver_command.buffer_length) {
+> +               retval = TW_IOCTL_ERROR_OS_EINVAL;
+> +               goto out3;
+> +       }
+> +
+>         /* See which ioctl we are doing */
+>         switch (cmd) {
+>         case TW_IOCTL_FIRMWARE_PASS_THROUGH:
+> --
+> 2.7.4
+>
 
-Hi all,
+Drop this patch and create a new one that checks for:  if
+!capable(CAP_SYS_ADMIN) in twa_chrdev_ioctl() (like 3w-sas.c does) and
+I'll ack it.
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
-
-  arch/s390/net/bpf_jit.S
-
-between commit:
-
-  de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
-
-from the s390 tree and commit:
-
-  e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
-
-from the bpf-next tree.
-
-I fixed it up (I just removed the file as the latter does) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kXzFUC_=Cczq4v52YPlNUFN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw7r4ACgkQAVBC80lX
-0Gy4PAf8DgK2t+x5p9ltMzupAQvkJvFQ0YnwQ+AVZx2PUsoWQdPe/ucpwl8s3DJa
-zxtDzbPFY6gauE4tLVMOZJPO6wMMtK2cE17h/VRMIvPZVO8TWhehIOPeFmzffBtB
-qbKIP2aywKUwvOEzL4n+rNCvY9D1cNZzdljaJBeDU4iVZwHTmnx65+ldZK6jSmc7
-ox/Ns986SwztFk8kGM65ywYz8u4NP3g5JlXQCKE1cOeW8eF27Ni7C/gknsoqXKHH
-ai01w3xM6rD4S+K4D3FFW3BVw960VkE4gxjXimenI1qQnt4+w4sKQVmT8KDu/nXg
-af44oXT7nWpfGg52X8eor9jEZJf1vA==
-=VLxK
------END PGP SIGNATURE-----
-
---Sig_/kXzFUC_=Cczq4v52YPlNUFN--
+-Adam
