@@ -1,85 +1,79 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753546AbeEHARD (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:17:03 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46954 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753149AbeEHARB (ORCPT
+        id S1753611AbeEHAUo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:20:44 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:41557 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753586AbeEHAUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:17:01 -0400
-X-Google-Smtp-Source: AB8JxZrWHxMxXdaQS4jLVjz+LWeaBg89Hr2a7PnY47YQWwQ7oGhH1es4qXbNSnQfXNeBOQJZLqY6Vw==
-Subject: Re: [PATCH v2] MAINTAINERS: add keyword for devicetree overlay
- notifiers
-From: Frank Rowand <frowand.list@gmail.com>
-To: Rob Herring <robh+dt@kernel.org>, pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jan Kiszka <jan.kiszka@siemens.com>
-References: <1524879080-27111-1-git-send-email-frowand.list@gmail.com>
-Message-ID: <0d6a7e46-f659-ae6d-c25d-978f17aa2e63@gmail.com>
-Date: Mon, 7 May 2018 17:16:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Mon, 7 May 2018 20:20:42 -0400
+X-Google-Smtp-Source: AB8JxZquS8b8vpdP7YrzvxFzU388ZM1AxT1crEDT/hxnmJwHK8VCaT8CVlwRlgA+etA6yaTNwLVmlVi9fIdt3BdN/qA=
 MIME-Version: 1.0
-In-Reply-To: <1524879080-27111-1-git-send-email-frowand.list@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1525585856-17639-1-git-send-email-wang6495@umn.edu>
+References: <1525585856-17639-1-git-send-email-wang6495@umn.edu>
+From: adam radford <aradford@gmail.com>
+Date: Mon, 7 May 2018 17:20:41 -0700
+Message-ID: <CAHtARFHhLtG=LuQxqwB4eM5yUdZMkb4Xu0wkuu5nrOL6GQZVTw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: 3ware: fix a missing-check bug
+To: Wenwen Wang <wang6495@umn.edu>
+Cc: Kangjie Lu <kjlu@umn.edu>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-Do you want to take this or should I route it through Andrew?
-
--Frank
-
-
-On 04/27/18 18:31, frowand.list@gmail.com wrote:
-> From: Frank Rowand <frank.rowand@sony.com>
-> 
-> Devicetree overlay notifiers have a chance to potentially get
-> pointers into the overlay unflattened devicetree and overlay FDT.
-> The only protection against these pointers being accessed after
-> the underlying data has been released by kfree() is by source
-> code review of patches.  Add a keyword line to the devicetree
-> overlay maintainers entry to try to catch overlay notifier
-> related patches.
-> 
-> The keyword line is added to the devicetree overlay entry instead
-> of the devicetree entry so that not all maintainers will receive
-> the additional review traffic.  Add Frank Rowand (already a
-> maintainer in the devicetree entry) so that he will receive
-> the additional review traffic.
-> 
-> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+On Sat, May 5, 2018 at 10:50 PM, Wenwen Wang <wang6495@umn.edu> wrote:
+> In twl_chrdev_ioctl(), the ioctl driver command is firstly copied from the
+> userspace pointer 'argp' and saved to the kernel object 'driver_command'.
+> Then a security check is performed on the data buffer size indicated by
+> 'driver_command', which is 'driver_command.buffer_length'. If the security
+> check is passed, the entire ioctl command is copied again from the 'argp'
+> pointer and saved to the kernel object 'tw_ioctl'. Then, various operations
+> are performed on 'tw_ioctl' according to the 'cmd'. Given that the 'argp'
+> pointer resides in userspace, a malicious userspace process can race to
+> change the buffer size between the two copies. This way, the user can
+> bypass the security check and inject invalid data buffer size. This can
+> cause potential security issues in the following execution.
+>
+> This patch checks the buffer size obtained in the second copy. An error
+> code -EINVAL will be returned if it is not same as the original one in the
+> first copy.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
 > ---
-> 
-> changes from version 1:
->    - removed extraneous "From:" tags at top of patch description
-> 
-> 
->  MAINTAINERS | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 92be777d060a..aca3956694f8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10422,12 +10422,14 @@ F:	drivers/infiniband/ulp/opa_vnic
->  
->  OPEN FIRMWARE AND DEVICE TREE OVERLAYS
->  M:	Pantelis Antoniou <pantelis.antoniou@konsulko.com>
-> +M:	Frank Rowand <frowand.list@gmail.com>
->  L:	devicetree@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/devicetree/dynamic-resolution-notes.txt
->  F:	Documentation/devicetree/overlay-notes.txt
->  F:	drivers/of/overlay.c
->  F:	drivers/of/resolver.c
-> +K:	of_overlay_notifier_
->  
->  OPEN FIRMWARE AND FLATTENED DEVICE TREE
->  M:	Rob Herring <robh+dt@kernel.org>
-> 
+>  drivers/scsi/3w-sas.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/scsi/3w-sas.c b/drivers/scsi/3w-sas.c
+> index cf9f2a0..ea41969 100644
+> --- a/drivers/scsi/3w-sas.c
+> +++ b/drivers/scsi/3w-sas.c
+> @@ -757,6 +757,11 @@ static long twl_chrdev_ioctl(struct file *file, unsigned int cmd, unsigned long
+>         /* Now copy down the entire ioctl */
+>         if (copy_from_user(tw_ioctl, argp, driver_command.buffer_length + sizeof(TW_Ioctl_Buf_Apache) - 1))
+>                 goto out3;
+> +       if (tw_ioctl->driver_command.buffer_length !=
+> +           driver_command.buffer_length) {
+> +               retval = -EINVAL;
+> +               goto out3;
+> +       }
+>
+>         /* See which ioctl we are doing */
+>         switch (cmd) {
+> --
+> 2.7.4
+>
+
+1. Returning -EINVAL after the copy_from_user() doesn't prevent any
+invalid copy down to kernel mode from happening.
+2. twl_chrdev_open() checks for capable(CAP_SYS_ADMIN):
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/scsi/3w-sas.c#n834
+
+I don't see the point in this patch.
+
+-Adam
