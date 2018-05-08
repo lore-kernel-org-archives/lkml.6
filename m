@@ -1,75 +1,47 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755193AbeEHNat (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 09:30:49 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34505 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755124AbeEHNas (ORCPT
+        id S1755202AbeEHNby (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 09:31:54 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:33570 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754754AbeEHNbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 09:30:48 -0400
-X-Google-Smtp-Source: AB8JxZoNW4ZDWoc34uj90iwYDzrfsEuifpYqFiQP6SdQxqh2FNaWrQgViLnnKU9MXur5XqQkGOQvMm7BKNHgCA+BJvA=
+        Tue, 8 May 2018 09:31:52 -0400
+X-Google-Smtp-Source: AB8JxZpnvKaH8uDrAlrUmV9vHTrebA54khjhSF5a1cGhb9Z8v058VcDAirPg/3YMLx3qs9peWQuH4g==
+Date: Tue, 8 May 2018 09:06:43 -0300
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: syzbot <syzbot+e4a5bbd54260c93014f9@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        nhorman@tuxdriver.com, syzkaller-bugs@googlegroups.com,
+        vyasevich@gmail.com
+Subject: Re: INFO: rcu detected stall in sctp_generate_heartbeat_event
+Message-ID: <20180508120643.GM4977@localhost.localdomain>
+References: <000000000000062c1c056bacd39f@google.com>
 MIME-Version: 1.0
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 8 May 2018 15:30:45 +0200
-Message-ID: <CACRpkdYnfUZ7_KhMw675tkdNY5DnKwNk=r+a1yYrBT9EGg4KVw@mail.gmail.com>
-Subject: [GIT PULL] pin control fixes for v4.17 take one
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000062c1c056bacd39f@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Tue, May 08, 2018 at 12:35:02AM -0700, syzbot wrote:
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    90278871d4b0 Merge git://git.kernel.org/pub/scm/linux/kern..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=119a7237800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=aea320d3af5ef99d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e4a5bbd54260c93014f9
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>
+> Unfortunately, I don't have any reproducer for this crash yet.
 
-here are some three pin control fixes, the Intel fixes are the most serious
-and important things I had queued since it affects a large portion of
-deployed Chromebooks.
+A reproducer will be welcomed. With just these traces, I don't think
+we have enough information.
 
-Please pull it in, some details are in the signed tag and individula commits.
-
-Again, this should have been sent earlier, sorry :(
-
-Yours,
-Linus Walleij
-
-
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
-
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
-tags/pinctrl-v4.17-2
-
-for you to fetch changes up to c41eb2c7f93531b8ea689b1e2bfe7e6b884a7213:
-
-  pinctrl: sunrisepoint: Align GPIO number space with Windows
-(2018-05-02 14:36:00 +0200)
-
-----------------------------------------------------------------
-Pin control fixes for v4.17:
-
-- Two major fixes for the Intel Cherryview and Sunrisepoint
-  pin controllers, adjusting numberspaces so that they do
-  get aligned with various messed-up numbers encoded into
-  the BIOS.
-
-- A fix for the Meson driver GPIO pin range.
-
-----------------------------------------------------------------
-Mika Westerberg (2):
-      pinctrl: cherryview: Associate IRQ descriptors to irqdomain
-      pinctrl: sunrisepoint: Align GPIO number space with Windows
-
-Yixun Lan (1):
-      pinctrl: meson-axg: fix the range of aobus bank
-
- drivers/pinctrl/intel/pinctrl-cherryview.c   | 16 +++++++---
- drivers/pinctrl/intel/pinctrl-sunrisepoint.c | 45 ++++++++++++++++++++++++++--
- drivers/pinctrl/meson/pinctrl-meson-axg.c    |  2 +-
- 3 files changed, 55 insertions(+), 8 deletions(-)
+  Marcelo
