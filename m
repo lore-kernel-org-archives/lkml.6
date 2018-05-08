@@ -1,13 +1,13 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754000AbeEHCWc (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:22:32 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:19579 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753668AbeEHCVF (ORCPT
+        id S1754009AbeEHCWo (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:22:44 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:21646 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753645AbeEHCVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 7 May 2018 22:21:05 -0400
-X-UUID: 4c0299ca664f4b5095dd8fb1aa0268c5-20180508
+X-UUID: 170cf6c8188d4796a5c9896da225e9fc-20180508
 From: Bibby Hsieh <bibby.hsieh@mediatek.com>
 To: David Airlie <airlied@linux.ie>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -22,11 +22,10 @@ CC: Yingjoe Chen <yingjoe.chen@mediatek.com>,
         Thierry Reding <thierry.reding@gmail.com>, CK Hu <ck.hu@mediatek.com>,
         Mao Huang <littlecvr@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        chunhui dai <chunhui.dai@mediatek.com>
-Subject: [PATCH 2/7] drm/mediatek: fix to get right bridge for dpi encoder
-Date: Tue, 8 May 2018 10:20:52 +0800
-Message-ID: <20180508022057.29379-3-bibby.hsieh@mediatek.com>
+        Sascha Hauer <kernel@pengutronix.de>
+Subject: [PATCH 5/7] drm/mediatek: implement connection from BLS to DPI0
+Date: Tue, 8 May 2018 10:20:55 +0800
+Message-ID: <20180508022057.29379-6-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.12.5
 In-Reply-To: <20180508022057.29379-1-bibby.hsieh@mediatek.com>
 References: <20180508022057.29379-1-bibby.hsieh@mediatek.com>
@@ -37,75 +36,54 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: chunhui dai <chunhui.dai@mediatek.com>
+Modify display driver to support connection from BLS to DPI.
 
-1, dpi is an encoder, there is an bridge in the struct
-of decoder, we could use it.
-2, using of_graph_get_remote_port_parent to get right
-bridge in device tree.
-
-Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dpi.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dpi.c b/drivers/gpu/drm/mediatek/mtk_dpi.c
-index 0a44ab175422..2b8b34c72697 100644
---- a/drivers/gpu/drm/mediatek/mtk_dpi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dpi.c
-@@ -63,7 +63,6 @@ enum mtk_dpi_out_color_format {
- struct mtk_dpi {
- 	struct mtk_ddp_comp ddp_comp;
- 	struct drm_encoder encoder;
--	struct drm_bridge *bridge;
- 	void __iomem *regs;
- 	struct device *dev;
- 	struct clk *engine_clk;
-@@ -643,8 +642,8 @@ static int mtk_dpi_bind(struct device *dev, struct device *master, void *data)
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+index 8130f3dab661..289a68c6731f 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+@@ -35,6 +35,7 @@
+ #define DISP_REG_CONFIG_DISP_OVL_MOUT_EN	0x030
+ #define DISP_REG_CONFIG_OUT_SEL			0x04c
+ #define DISP_REG_CONFIG_DSI_SEL			0x050
++#define DISP_REG_CONFIG_DPI_SEL			0x064
  
- 	/* Currently DPI0 is fixed to be driven by OVL1 */
- 	dpi->encoder.possible_crtcs = BIT(1);
--
--	ret = drm_bridge_attach(&dpi->encoder, dpi->bridge, NULL);
-+	dpi->encoder.bridge->encoder = &dpi->encoder;
-+	ret = drm_bridge_attach(&dpi->encoder, dpi->encoder.bridge, NULL);
- 	if (ret) {
- 		dev_err(dev, "Failed to attach bridge: %d\n", ret);
- 		goto err_cleanup;
-@@ -709,7 +708,7 @@ static int mtk_dpi_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct mtk_dpi *dpi;
- 	struct resource *mem;
--	struct device_node *bridge_node;
-+	struct device_node *ep, *bridge_node;
- 	int comp_id;
- 	const struct of_device_id *match;
- 	int ret;
-@@ -759,15 +758,21 @@ static int mtk_dpi_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
+ #define DISP_REG_MUTEX_EN(n)	(0x20 + 0x20 * (n))
+ #define DISP_REG_MUTEX(n)	(0x24 + 0x20 * (n))
+@@ -84,7 +85,10 @@
  
--	bridge_node = of_graph_get_remote_node(dev->of_node, 0, 0);
--	if (!bridge_node)
-+	ep = of_graph_get_next_endpoint(dev->of_node, NULL);
-+	if (ep) {
-+		bridge_node = of_graph_get_remote_port_parent(ep);
-+		of_node_put(ep);
+ #define OVL_MOUT_EN_RDMA		0x1
+ #define BLS_TO_DSI_RDMA1_TO_DPI1	0x8
++#define BLS_TO_DPI_RDMA1_TO_DSI		0x2
+ #define DSI_SEL_IN_BLS			0x0
++#define DPI_SEL_IN_BLS			0x0
++#define DSI_SEL_IN_RDMA			0x1
+ 
+ struct mtk_disp_mutex {
+ 	int id;
+@@ -189,9 +193,17 @@ static void mtk_ddp_sout_sel(void __iomem *config_regs,
+ 			     enum mtk_ddp_comp_id cur,
+ 			     enum mtk_ddp_comp_id next)
+ {
+-	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0)
++	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0) {
+ 		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
+ 			       config_regs + DISP_REG_CONFIG_OUT_SEL);
++	} else if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DPI0) {
++		writel_relaxed(BLS_TO_DPI_RDMA1_TO_DSI,
++			       config_regs + DISP_REG_CONFIG_OUT_SEL);
++		writel_relaxed(DSI_SEL_IN_RDMA,
++			       config_regs + DISP_REG_CONFIG_DSI_SEL);
++		writel_relaxed(DPI_SEL_IN_BLS,
++			       config_regs + DISP_REG_CONFIG_DPI_SEL);
 +	}
-+	if (!bridge_node) {
-+		dev_err(dev, "Failed to find bridge node\n");
- 		return -ENODEV;
-+	}
+ }
  
- 	dev_info(dev, "Found bridge node: %pOF\n", bridge_node);
- 
--	dpi->bridge = of_drm_find_bridge(bridge_node);
-+	dpi->encoder.bridge = of_drm_find_bridge(bridge_node);
- 	of_node_put(bridge_node);
--	if (!dpi->bridge)
-+	if (!dpi->encoder.bridge)
- 		return -EPROBE_DEFER;
- 
- 	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DPI);
+ void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
 -- 
 2.12.5
