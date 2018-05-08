@@ -1,221 +1,148 @@
-Return-Path: <linux-api-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2910789-1525994091-2-11595468854125770671
+Return-Path: <linux-serial-owner@vger.kernel.org>
+X-Cyrus-Session-Id: sloti22d1t05-2552373-1525773960-2-3343243231224465035
 X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no ("Email failed DMARC policy for domain")
+X-Spam-known-sender: no
 X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, DCC_CHECK 1.1, MAILING_LIST_MULTI -1, RCVD_IN_DNSWL_HI -5,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: 
-X-IgnoreVacation: yes ("Email failed DMARC policy for domain")
+X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
+  ME_NOAUTH 0.01, RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global,
+  SA_VERSION 3.4.0
+X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='de',
+  MailFrom='org'
+X-Spam-charsets: from='UTF-8', plain='UTF-8'
 X-Resolved-to: greg@kroah.com
 X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-api-owner@vger.kernel.org
+X-Mail-from: linux-serial-owner@vger.kernel.org
 ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525994091; b=iIuBcSwWkqzdY8kP114PIlXTiYQHFJvWaD/DvMCFu3l+k67XqU
-    m6xmtfwXcsd0wtJhBoCvKiM/3j6gItrfkWRMCwuwY4D5cU7LCqy4RPMMEVouYCls
-    Js64bW1CvFcIdoF0eJx4b+Jd6z4WYnA/hKk6iGUiG4SuAPpk0SPnKC7736X7JpPy
-    aSaIsOhHzwkS9ij1Lonqn3qPKWnqJ6Gzg4Z0PvvAIN5khcYziCnd1GIkmkkxRBzV
-    BiK2H0aKdQrKsGwGJNwh2uJXvnTcS3FwsDwXVPbQCS8XZQoUkjToaWotKENDxu8/
-    umfk6UMijWUsRXS89uX/oIJ0uQIDHNTWoE5g==
+    1525773959; b=Lotbnz0chxQ/r33tXRZKHauAt/OL/uAT6zbmYgjuOV8k65TJ0n
+    MdjG32InTqgxShpIgXUutE2QmYqSE/OZdUvo3TmEWiXoY/kEwpT6ewi6SNyBTeAe
+    RcKhg9WULCQgsz4I6UQcR5iQIkA8i3WOLjFgKiuUcx5ihaUE+jHWgy1rOpSlfQom
+    aiXNLf7Za+ytNHhj2kGhq70nduIeU4s0vMpC/pQoEtWzPU1kTyEd6cN704D6OU04
+    QygrQfyzfc16YL9Qst0cd6DeyVYjEDKrbU4VI/vnzssQPHP6kcVY1TInSYnTyGO2
+    92d0OIvF35cRWwhx+sDOlWvNply7L8mSFBpg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
     messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:sender:list-id; s=fm2; t=1525994091; bh=
-    Qv43QBWYjPF6QR01lgQ02HZiysSDrsIyr4QfMZBh8jA=; b=R4mdgiGN+6c2rhK+
-    HZpJOaEuyxV+ZDYVi04AaDL+yGKaa7aZUMcBuECpw8R411b9j41pEI6eug7HCuZt
-    aLZxYEhSjQ1UASLQZ/gOMkvyLrKJuGDVHBWGTNQpNaVF/ipaE8J/QIYBlOYQhYw8
-    QqA5lbrWv2CjWOMPPteOOoygKivao7UOZOHf5o+YH+PVVmA/auzUAgKi+hgsjVXy
-    P1jxDd7ITpfbLaJPUiadxrODyaNTb6/HSJ6A/8tBJJuJb82t7z1928rgSIV00Rd9
-    M2x7jkfl0orN9x7goMWtGleZ82wXgxRntAKIL1Xkx3Q/wge2rD1LbBEVcEZ++D51
-    AC2VlQ==
-ARC-Authentication-Results: i=1; mx5.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-    header.d=kernel.org header.i=@kernel.org header.b=2csDFq8r x-bits=1024
-    x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    :mime-version:content-type:content-transfer-encoding:sender
+    :list-id; s=fm2; t=1525773959; bh=IHbmAdkszzsuwOXwfuKzdLD35UBzLi
+    a/+gSdNwQ0Mb0=; b=PUrVLOZbuejdwoNg4GAud0O1gaJcZvtOsuFKPNjJm1l/uS
+    +1HTkS4ubYdXBltqGCj8SyxixI4Z+OtVrokoSfZ+8x90xNePw0clOt4r+qhnDIck
+    94FEYw+yoUyQI1SGHnxGpSFtMB8p4eKZwGn9/Vfp59im2jtL/urKIGOK1L/5DKcU
+    tAafMUIe68XM0Tb6U/lMQazCZSDjmQJphOVo4tS08+jjl1M5CJU0tYmDBxffNygq
+    VDHCMPFL2qaQTausyryyp6N3fYdW5kMYyChtFQLvVgZfNWI4Iizq+7iIb3U+T/17
+    Nfa+r1EAcWEmBfOJyZ/f+gUuDUThLO31N79yp+rQ==
+ARC-Authentication-Results: i=1; mx6.messagingengine.com; arc=none (no signatures found);
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
     smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
     smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
-Authentication-Results: mx5.messagingengine.com;
+    header.domain=pengutronix.de header.result=pass
+    header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
+Authentication-Results: mx6.messagingengine.com;
     arc=none (no signatures found);
-    dkim=fail (body has been altered, 1024-bit rsa key sha256)
-      header.d=kernel.org header.i=@kernel.org header.b=2csDFq8r x-bits=1024
-      x-keytype=rsa x-algorithm=sha256 x-selector=default;
-    dmarc=fail (p=none,has-list-id=yes,d=none) header.from=kernel.org;
+    dkim=none (no signatures found);
+    dmarc=none (p=none,has-list-id=yes,d=none) header.from=pengutronix.de;
     iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-api-owner@vger.kernel.org
+    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
       smtp.helo=vger.kernel.org;
-    x-aligned-from=orgdomain_pass (Domain org match);
+    x-aligned-from=fail;
     x-cm=none score=0;
     x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
     x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
       smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kernel.org header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=0 state=0
+      header.domain=pengutronix.de header.result=pass
+      header_is_org_domain=yes;
+    x-vs=clean score=-100 state=0
 X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfJayUFgePmwg/8w/vQ4OAAu4VDqYlkO70QM5jsWXGSYjb83C8iKMrh2jGTbeJI2M4KTKKEiHYyIKRDvlIu+os1QGesoF5wj/opC0dnvaDzXrV9EDtZ0n
-    YnrQzqewTQfFcHU4gwz+MzmFtNijVt8YYrP42dVtECZMercpcEnL/8Kt56FfYH+MQwjP6haQmvdnuB3/d/Jj0EdMCxzv8xfjTeT+/bk5pwzQTfLxqIWmBVhX
-X-CM-Analysis: v=2.3 cv=NPP7BXyg c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=VUJBJC2UJ8kA:10 a=xNf9USuDAAAA:8
-    a=VwQbUJbxAAAA:8 a=-M3FdVsweQnkJg63cyUA:9 a=x8gzFH9gYPwA:10
-    a=SEwjQc04WA-l_NiBhQ7s:22 a=AjGcO6oz07-iQ99wixmX:22
+X-CM-Envelope: MS4wfMeiadgKdxByjChu9gc3FBGfXiwZpDdcf6aF020YBi2hQxf2ZbqAsIKIJuFoD3uhd+rBiy07/4Yu/ABDFNminSnLz9tJeLX+KTR5kZUxrxI9VVmaghGz
+    fLKr1BjVOs5A9NzDYv21QQs3cZHN/6EkX8f3SSC5hnHMvgZqM7IGTNhmqy1ArQlgbVkwiqqugIlGlSIsFuNsxFYhenjPgP5W+tbw4vM0yLuOzvu45IGXy3ah
+X-CM-Analysis: v=2.3 cv=FKU1Odgs c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
+    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=xqWC_Br6kY4A:10
+    a=VUJBJC2UJ8kA:10 a=VwQbUJbxAAAA:8 a=T56u2SMLJXeTU8k1wZ8A:9 a=QEXdDO2ut3YA:10
+    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
 X-ME-CMScore: 0
 X-ME-CMCategory: none
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751698AbeEJXOI (ORCPT <rfc822;greg@kroah.com>);
-        Thu, 10 May 2018 19:14:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750798AbeEJXOG (ORCPT <rfc822;linux-api@vger.kernel.org>);
-        Thu, 10 May 2018 19:14:06 -0400
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-To: viro@zeniv.linux.org.uk, darrick.wong@oracle.com, tytso@mit.edu,
-        adilger.kernel@dilger.ca, clm@fb.com, jbacik@fb.com,
-        dsterba@suse.com
-Cc: sandeen@sandeen.net, dhowells@redhat.com, fliu@suse.com,
-        jack@suse.cz, jeffm@suse.com, nborisov@suse.com,
-        jake.norris@suse.com, mtk.manpages@gmail.com,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [RFC v2 1/4] vfs: skip extra attributes check on removal for symlinks
-Date: Thu, 10 May 2018 16:13:56 -0700
-Message-Id: <20180510231359.16899-2-mcgrof@kernel.org>
+        id S932086AbeEHKF4 (ORCPT <rfc822;greg@kroah.com>);
+        Tue, 8 May 2018 06:05:56 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55389 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754757AbeEHKFz (ORCPT
+        <rfc822;linux-serial@vger.kernel.org>);
+        Tue, 8 May 2018 06:05:55 -0400
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+        <u.kleine-koenig@pengutronix.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc: linux-serial@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-can@vger.kernel.org, kernel@pengutronix.de,
+        One Thousand Gnomes <gnomes@lxorguk.ukuu.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        linux-kernel@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/3] led_trigger_register_format and tty triggers
+Date: Tue,  8 May 2018 12:05:40 +0200
+Message-Id: <20180508100543.12559-1-u.kleine-koenig@pengutronix.de>
 X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180510231359.16899-1-mcgrof@kernel.org>
-References: <20180510231359.16899-1-mcgrof@kernel.org>
-Sender: linux-api-owner@vger.kernel.org
-X-Mailing-List: linux-api@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-serial@vger.kernel.org
+Sender: linux-serial-owner@vger.kernel.org
+X-Mailing-List: linux-serial@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Linux filesystems cannot set extra file attributes (stx_attributes as per
-statx(2)) on a symbolic link. To set extra file attributes you issue
-ioctl(2) with FS_IOC_SETFLAGS, *all* ioctl(2) calls on a symbolic link
-yield EBADF.
+Hello,
 
-This is because ioctl(2) tries to obtain struct fd from the symbolic link
-file descriptor passed using fdget(), fdget() in turn always returns no
-file set when a file descriptor is open with O_PATH. As per symlink(2)
-O_PATH and O_NOFOLLOW must *always* be used when you want to get the file
-descriptor of a symbolic link, and this holds true for Linux, as such extra
-file attributes cannot possibly be set on symbolic links on Linux.
+while working on a patch that adds led triggers to drivers/tty (patch 3)
+I thought that being able to pass a format string (and the respective
+parameters) to led_trigger_register_simple instead of a constant string
+would be nice. This is implemented in the first patch. The second patch
+converts the can leds to this new function which demonstrates nicely the
+added benefit for users. Both patches are new in v3.
 
-Filesystems repair utilities should be updated to detect this as
-corruption and correct this, however, the VFS *does* respect these
-extra attributes on symlinks for removal.
+The third patch finally implements the triggers for the tty framework.
+Compared to v2 I reduced the need for #ifdefs, make use of
+led_trigger_register_format() and excluded serdev devices from
+triggering as suggested by Johan Hovold.
 
-Since we cannot set these attributes we should special-case the
-immutable/append on delete for symlinks, this would be consistent with
-what we *do* allow on Linux for all filesystems. Since this is a clear
-sign to the VFS the filesystem must be corrupted filesystems can
-implement a verifier to catch this earlier. A generic warning issued for
-filesystems which don't implement these verifiers, and the VFS also lets
-users delete these pesky symlinks as otherwise users cannot get rid of
-them.
+Also code cleanup in the error case is done now and hopefully the kbuild
+test robot is happy now.
 
-The userspace utility chattr(1) cannot set these attributes on symlinks
-*and* other special files as well:
+Best regards
+Uwe
 
-	# chattr -a symlink
-	chattr: Operation not supported while reading flags on b
+Uwe Kleine-König (3):
+  leds: triggers: provide led_trigger_register_format()
+  can: simplify LED trigger handling
+  tty: implement led triggers
 
-The reason for this is different though. Refer to commit 023d111e92195
-("chattr.1.in: Document the compression attribute flags E, X, and ...")
-merged on e2fsprogs v1.28 since August 2002. This commit prevented
-issuing the ioctl() for symlink *and* special files in consideration for
-a buggy DRM driver where issuing lsattr on their special files crashed
-the system. For details refer to Debian bug 152029 [0].
+ arch/arm/boot/dts/imx25-logitech-baby.dts | 192 ++++++++++++++++++++++
+ drivers/leds/led-triggers.c               |  84 +++++++---
+ drivers/net/can/led.c                     |  30 +---
+ drivers/tty/Kconfig                       |   7 +
+ drivers/tty/tty_buffer.c                  |   2 +
+ drivers/tty/tty_io.c                      |   3 +
+ drivers/tty/tty_port.c                    |  32 +++-
+ include/linux/can/dev.h                   |   3 -
+ include/linux/leds.h                      |  30 ++--
+ include/linux/tty.h                       |  22 +++
+ 10 files changed, 341 insertions(+), 64 deletions(-)
+ create mode 100644 arch/arm/boot/dts/imx25-logitech-baby.dts
 
-You can craft your own tool to query the extra file attributes with
-the new shiny statx(2) tool, statx(2) will list the attributes if
-they were set for instance on a corrupt filesystem. However statx(2)
-is only used for *querying* -- not for setting the attributes.
-
-If you implement issuing your own ioctl() for FS_IOC_FSGETXATTR or
-FS_IOC_FSSETXATTR on special files (block, char, fifo) it will fail
-returning -1 and errno is set to ENOTTY (Inappropriate ioctl for
-device). The reason for this is different than for symlinks.
-For special files this fails on vfs_ioctl() when the filesystem
-f_op callbacks are not set for these special files:
-
-long vfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-{
-	int error = -ENOTTY;
-
-        if (!filp->f_op->unlocked_ioctl)
-		goto out;
-
-	error = filp->f_op->unlocked_ioctl(filp, cmd, arg);
-	if (error == -ENOIOCTLCMD)
-		error = -ENOTTY;
-out:
-	return error;
-}
-
-The same applies to PF_LOCAL named sockets. Since this varies by
-filesystem for special files, only make a special rule to respect
-the immutable and append attribute on symlinks.
-
-[0] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=152029
-
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- fs/namei.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index e861b409c241..23ebc14805dc 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2760,6 +2760,26 @@ int __check_sticky(struct inode *dir, struct inode *inode)
- }
- EXPORT_SYMBOL(__check_sticky);
- 
-+/* Process extra file attributes only when they make sense */
-+static bool may_delete_stx_attributes(struct inode *inode)
-+{
-+	/*
-+	 * The VFS does not allow setting append/immutable on symlinks.
-+	 *
-+	 * Filesystems can implement their own verifier which would avoid this
-+	 * generic splat, this generic splat is desirable if the respective
-+	 * filesystem repair utility won't implement a fix for this, otherwise
-+	 * users end up with a nagging dangling file which is impossible to
-+	 * fix in userspace.
-+	 */
-+	if (S_ISLNK(inode->i_mode)) {
-+		WARN_ONCE((IS_APPEND(inode) || IS_IMMUTABLE(inode)),
-+		 "Immutable or append flag set on symlink. VFS does not allow this, must be a filesystem corruption. Allowing deletion though");
-+	} else if (IS_APPEND(inode) || IS_IMMUTABLE(inode))
-+		return  false;
-+	return  true;
-+}
-+
- /*
-  *	Check whether we can remove a link victim from directory dir, check
-  *  whether the type of victim is right.
-@@ -2798,8 +2818,8 @@ static int may_delete(struct inode *dir, struct dentry *victim, bool isdir)
- 	if (IS_APPEND(dir))
- 		return -EPERM;
- 
--	if (check_sticky(dir, inode) || IS_APPEND(inode) ||
--	    IS_IMMUTABLE(inode) || IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
-+	if (check_sticky(dir, inode) || !may_delete_stx_attributes(inode) ||
-+	    IS_SWAPFILE(inode) || HAS_UNMAPPED_ID(inode))
- 		return -EPERM;
- 	if (isdir) {
- 		if (!d_is_dir(victim))
 -- 
 2.17.0
 
