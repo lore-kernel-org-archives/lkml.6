@@ -1,49 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756021AbeEHVmY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:42:24 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:47988 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755489AbeEHVmX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:42:23 -0400
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-To: arm@kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: khilman@kernel.org, arnd@arndb.de, olof@lixom.net,
-        linux-kernel@vger.kernel.org, santosh.shilimkar@oracle.com
-Subject: [GIT PULL 2/2] ARM: Keystone DTS update for v4.18
-Date: Tue,  8 May 2018 14:41:37 -0700
-Message-Id: <1525815697-6338-2-git-send-email-santosh.shilimkar@oracle.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1525815697-6338-1-git-send-email-santosh.shilimkar@oracle.com>
-References: <1525815697-6338-1-git-send-email-santosh.shilimkar@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=407
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805080202
+        id S1755881AbeEHVot (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:44:49 -0400
+Received: from mga11.intel.com ([192.55.52.93]:45971 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755433AbeEHVos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:44:48 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
+   d="scan'208";a="38429320"
+Date: Wed, 9 May 2018 00:44:45 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: dave.hansen@linux.intel.com, mingo@kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mka@chromium.org, dvyukov@google.com,
+        md@google.com
+Subject: Re: [PATCH v2] x86/boot/64/clang: Use fixup_pointer() to access
+ '__supported_pte_mask'
+Message-ID: <20180508214445.lnqbct6dgrhyxp4a@black.fi.intel.com>
+References: <20180508162829.7729-1-glider@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180508162829.7729-1-glider@google.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+On Tue, May 08, 2018 at 04:28:29PM +0000, Alexander Potapenko wrote:
+> @@ -196,7 +204,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
+>  
+>  	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
+>  	/* Filter out unsupported __PAGE_KERNEL_* bits: */
+> -	pmd_entry &= __supported_pte_mask;
+> +	mask_ptr = (pteval_t *)fixup_pointer(&__supported_pte_mask, physaddr);
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+Do we really need the cast here?
 
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/keystone_dts_for_4.18
-
-for you to fetch changes up to 84cfd2c4f3b159b308976ccd0501985524fd6ee1:
-
-  ARM: dts: k2g-evm: Add DCAN dt nodes (2018-05-04 23:11:49 -0700)
-
-----------------------------------------------------------------
-ARM: DTS: Add DCAN support for Keystone K2G
-
-----------------------------------------------------------------
-Faiz Abbas (1):
-      ARM: dts: k2g-evm: Add DCAN dt nodes
-
- arch/arm/boot/dts/keystone-k2g-evm.dts | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+-- 
+ Kirill A. Shutemov
