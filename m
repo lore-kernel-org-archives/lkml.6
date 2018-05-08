@@ -1,39 +1,67 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932716AbeEHOwq (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:52:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:34215 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932375AbeEHOwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:52:43 -0400
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 0ea5ee035133aeb549883ddc604a6507c9493b9e
-In-Reply-To: <20180502112948.1747-1-mpe@ellerman.id.au>
-To: Michael Ellerman <mpe@ellerman.id.au>, rostedt@goodmis.org,
-        mingo@redhat.com
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc: linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: tracing: Remove PPC32 wart from config TRACING_SUPPORT
-Message-Id: <40gMsj6lvLz9s0W@ozlabs.org>
-Date: Wed,  9 May 2018 00:52:40 +1000 (AEST)
+        id S932727AbeEHOzt (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:55:49 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42349 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932660AbeEHOzr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 10:55:47 -0400
+X-Google-Smtp-Source: AB8JxZoYRBNAT/N5SMMiyWE62Tx6yXeqFOe3tA1Rslfn/VnljUWJK4B+aac9kg00tJ2cNxE31RwnOA==
+Subject: Re: bug in tag handling in blk-mq?
+To: Mike Galbraith <efault@gmx.de>,
+        Paolo Valente <paolo.valente@linaro.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+        linux-block <linux-block@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>
+References: <999DF2B3-4EE8-4BDF-89C5-EB0C2D8BF69E@linaro.org>
+ <7760d23b-7a4c-a645-1c7a-da7569bb44dc@kernel.dk>
+ <84145CD7-B917-4B32-8A5C-310C1910DB71@linaro.org>
+ <1525755090.24338.1.camel@gmx.de> <1525768632.5208.4.camel@gmx.de>
+From: Jens Axboe <axboe@kernel.dk>
+Message-ID: <ffd0c030-43f8-0dbe-42b3-03bb9c410bea@kernel.dk>
+Date: Tue, 8 May 2018 08:55:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <1525768632.5208.4.camel@gmx.de>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-05-02 at 11:29:48 UTC, Michael Ellerman wrote:
-> config TRACING_SUPPORT has an exception for PPC32, because PPC32
-> didn't have irqflags tracing support.
+On 5/8/18 2:37 AM, Mike Galbraith wrote:
+> On Tue, 2018-05-08 at 06:51 +0200, Mike Galbraith wrote:
+>>
+>> I'm deadlined ATM, but will get to it.
 > 
-> But that hasn't been true since commit 5d38902c4838 ("powerpc: Add
-> irqtrace support for 32-bit powerpc") (Jun 2009).
+> (Bah, even a zombie can type ccache -C; make -j8 and stare...)
 > 
-> So remove the exception for PPC32 and the comment.
+> kbuild again hung on the first go (yay), and post hang data written to
+> sdd1 survived (kernel source lives in sdb3).  Full ftrace buffer (echo
+> 1 > events/block/enable) available off list if desired.  dmesg.txt.xz
+> is dmesg from post hang crashdump, attached because it contains the
+> tail of trace buffer, so _might_ be useful.
 > 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> homer:~ # df|grep sd
+> /dev/sdb3      959074776 785342824 172741072  82% /
+> /dev/sdc3      959074776 455464912 502618984  48% /backup
+> /dev/sdb1         159564      7980    151584   6% /boot/efi
+> /dev/sdd1      961301832 393334868 519112540  44% /abuild
+> 
+> Kernel is virgin modulo these...
+> 
+> patches/remove_irritating_plus.diff
+> patches/add-scm-version-to-EXTRAVERSION.patch
+> patches/block-bfq:-postpone-rq-preparation-to-insert-or-merge.patch
+> patches/block-bfq:-test.patch  (hang provocation hack from Paolo)
 
-Applied to powerpc next.
+All the block debug files are empty...
 
-https://git.kernel.org/powerpc/c/0ea5ee035133aeb549883ddc604a65
-
-cheers
+-- 
+Jens Axboe
