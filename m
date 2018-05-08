@@ -1,132 +1,270 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753880AbeEHB4g (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 21:56:36 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36081 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753737AbeEHB4c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 21:56:32 -0400
-X-Google-Smtp-Source: AB8JxZqoXrLVe8iVhkTezpcPcWaepCkU6G2hQbb+jmnnV0LB7VjvqMcXTkXt7CZ1anhlzcAMkACxQw==
-Subject: Re: [PATCH] net: 8390: Fix possible data races in __ei_get_stats
-To: Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>, davem@davemloft.net,
-        fthain@telegraphics.com.au, joe@perches.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180507140809.28847-1-baijiaju1990@gmail.com>
- <e48345b4-fe9f-d267-777b-6a51baba0307@gmail.com>
- <d4de4f6c-c697-fde5-9d31-d8792621bfb5@gmail.com>
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <c336fdb9-4865-4729-d34b-84dd0bfc9af5@gmail.com>
-Date: Mon, 7 May 2018 18:56:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1753907AbeEHB4o (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 21:56:44 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37842 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753737AbeEHB4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 21:56:41 -0400
+Subject: Re: [PATCH v4] f2fs: fix to avoid race during access gc_thread
+ pointer
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20180507122659.86536-1-yuchao0@huawei.com>
+ <20180507213610.GC83867@jaegeuk-macbookpro.roam.corp.google.com>
+From: Chao Yu <yuchao0@huawei.com>
+Message-ID: <afc69260-b07d-107a-20e2-132c171ce85f@huawei.com>
+Date: Tue, 8 May 2018 09:56:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <d4de4f6c-c697-fde5-9d31-d8792621bfb5@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20180507213610.GC83867@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 05/07/2018 05:51 PM, Jia-Ju Bai wrote:
-> 
-> 
-> On 2018/5/7 22:15, Eric Dumazet wrote:
+On 2018/5/8 5:36, Jaegeuk Kim wrote:
+> On 05/07, Chao Yu wrote:
+>> Thread A			Thread B		Thread C
+>> - f2fs_remount
+>>  - stop_gc_thread
+>> 				- f2fs_sbi_store
+>> 							- issue_discard_thread
+>>    sbi->gc_thread = NULL;
+>> 				  sbi->gc_thread->gc_wake = 1
+>> 							  access sbi->gc_thread->gc_urgent
 >>
->> On 05/07/2018 07:08 AM, Jia-Ju Bai wrote:
->>> The write operations to "dev->stats" are protected by
->>> the spinlock on line 862-864, but the read operations to
->>> this data on line 858 and 867 are not protected by the spinlock.
->>> Thus, there may exist data races for "dev->stats".
->>>
->>> To fix the data races, the read operations to "dev->stats" are
->>> protected by the spinlock, and a local variable is used for return.
->>>
->>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
->>> ---
->>>   drivers/net/ethernet/8390/lib8390.c | 14 ++++++++++----
->>>   1 file changed, 10 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/net/ethernet/8390/lib8390.c b/drivers/net/ethernet/8390/lib8390.c
->>> index c9c55c9eab9f..198952247d30 100644
->>> --- a/drivers/net/ethernet/8390/lib8390.c
->>> +++ b/drivers/net/ethernet/8390/lib8390.c
->>> @@ -852,19 +852,25 @@ static struct net_device_stats *__ei_get_stats(struct net_device *dev)
->>>       unsigned long ioaddr = dev->base_addr;
->>>       struct ei_device *ei_local = netdev_priv(dev);
->>>       unsigned long flags;
->>> +    struct net_device_stats *stats;
->>> +
->>> +    spin_lock_irqsave(&ei_local->page_lock, flags);
->>>         /* If the card is stopped, just return the present stats. */
->>> -    if (!netif_running(dev))
->>> -        return &dev->stats;
->>> +    if (!netif_running(dev)) {
->>> +        stats = &dev->stats;
->>> +        spin_unlock_irqrestore(&ei_local->page_lock, flags);
->>> +        return stats;
->>> +    }
->>>   -    spin_lock_irqsave(&ei_local->page_lock, flags);
->>>       /* Read the counter registers, assuming we are in page 0. */
->>>       dev->stats.rx_frame_errors  += ei_inb_p(ioaddr + EN0_COUNTER0);
->>>       dev->stats.rx_crc_errors    += ei_inb_p(ioaddr + EN0_COUNTER1);
->>>       dev->stats.rx_missed_errors += ei_inb_p(ioaddr + EN0_COUNTER2);
->>> +    stats = &dev->stats;
->>>       spin_unlock_irqrestore(&ei_local->page_lock, flags);
->>>   -    return &dev->stats;
->>> +    return stats;
->>>   }
->>>     /*
->>>
->> dev->stats is not a pointer, it is an array embedded in the
->> struct net_device
+>> Previously, we allocate memory for sbi->gc_thread based on background
+>> gc thread mount option, the memory can be released if we turn off
+>> that mount option, but still there are several places access gc_thread
+>> pointer without considering race condition, result in NULL point
+>> dereference.
 >>
->> So this patch is not needed, since dev->stats can not change.
+>> In order to fix this issue, introduce gc_rwsem to exclude those operations.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>> v4:
+>> - use introduced sbi.gc_rwsem lock instead of sb.s_umount.
 > 
-> Thanks for your reply :)
+> We can use this first.
 > 
-> I do not understand that why "dev->stats can not change".
-> Its data is indeed changed by the code:
->      dev->stats.rx_frame_errors  += ei_inb_p(ioaddr + EN0_COUNTER0);
->      dev->stats.rx_crc_errors    += ei_inb_p(ioaddr + EN0_COUNTER1);
->      dev->stats.rx_missed_errors += ei_inb_p(ioaddr + EN0_COUNTER2);
-
-So ?
-
+>>From e62e8d3ece6ee8a4aeac8ffd6161d25851f8b3f0 Mon Sep 17 00:00:00 2001
+> From: Jaegeuk Kim <jaegeuk@kernel.org>
+> Date: Mon, 7 May 2018 14:22:40 -0700
+> Subject: [PATCH] f2fs: introduce sbi->gc_mode to determine the policy
 > 
-> So I think a data race may occur when returning "dev->stats" without lock protection.
-
-&dev->stats is a stable value.
-
-It wont change over the lifetime of net_device object.
-
-Adding a barrier before or after getting &dev->stats is useless, confusing and really not needed.
-
-
-
+> This is to avoid sbi->gc_thread pointer access.
 > 
-> By the way, I find this possible data race is similar to the previous commit 7b31b4deda76 for the tg3 driver.
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/f2fs.h    |  8 ++++++++
+>  fs/f2fs/gc.c      | 28 ++++++++++++----------------
+>  fs/f2fs/gc.h      |  2 --
+>  fs/f2fs/segment.c |  4 ++--
+>  fs/f2fs/sysfs.c   | 33 +++++++++++++++++++++++++--------
+>  5 files changed, 47 insertions(+), 28 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 80490a7991a7..779d8b26878c 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -1065,6 +1065,13 @@ enum {
+>  	MAX_TIME,
+>  };
+>  
+> +enum {
+> +	GC_NORMAL,
+> +	GC_IDLE_CB,
+> +	GC_IDLE_GREEDY,
+> +	GC_URGENT,
+> +};
+> +
+>  enum {
+>  	WHINT_MODE_OFF,		/* not pass down write hints */
+>  	WHINT_MODE_USER,	/* try to pass down hints given by users */
+> @@ -1193,6 +1200,7 @@ struct f2fs_sb_info {
+>  	struct mutex gc_mutex;			/* mutex for GC */
+>  	struct f2fs_gc_kthread	*gc_thread;	/* GC thread */
+>  	unsigned int cur_victim_sec;		/* current victim section num */
+> +	unsigned int gc_mode;			/* current GC state */
+>  
+>  	/* threshold for gc trials on pinned files */
+>  	u64 gc_pin_file_threshold;
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 9bb2ddbbed1e..7ec8ea75dfde 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -76,7 +76,7 @@ static int gc_thread_func(void *data)
+>  		 * invalidated soon after by user update or deletion.
+>  		 * So, I'd like to wait some time to collect dirty segments.
+>  		 */
+> -		if (gc_th->gc_urgent) {
+> +		if (sbi->gc_mode == GC_URGENT) {
+>  			wait_ms = gc_th->urgent_sleep_time;
+>  			mutex_lock(&sbi->gc_mutex);
+>  			goto do_gc;
+> @@ -131,8 +131,6 @@ int start_gc_thread(struct f2fs_sb_info *sbi)
+>  	gc_th->max_sleep_time = DEF_GC_THREAD_MAX_SLEEP_TIME;
+>  	gc_th->no_gc_sleep_time = DEF_GC_THREAD_NOGC_SLEEP_TIME;
+>  
+> -	gc_th->gc_idle = 0;
+> -	gc_th->gc_urgent = 0;
+>  	gc_th->gc_wake= 0;
+>  
+>  	sbi->gc_thread = gc_th;
+> @@ -158,21 +156,19 @@ void stop_gc_thread(struct f2fs_sb_info *sbi)
+>  	sbi->gc_thread = NULL;
+>  }
+>  
+> -static int select_gc_type(struct f2fs_gc_kthread *gc_th, int gc_type)
+> +static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
+>  {
+>  	int gc_mode = (gc_type == BG_GC) ? GC_CB : GC_GREEDY;
+>  
+> -	if (!gc_th)
+> -		return gc_mode;
+> -
+> -	if (gc_th->gc_idle) {
+> -		if (gc_th->gc_idle == 1)
+> -			gc_mode = GC_CB;
+> -		else if (gc_th->gc_idle == 2)
+> -			gc_mode = GC_GREEDY;
+> -	}
+> -	if (gc_th->gc_urgent)
+> +	switch (sbi->gc_mode) {
+> +	case GC_IDLE_CB:
+> +		gc_mode = GC_CB;
+> +		break;
+> +	case GC_IDLE_GREEDY:
+> +	case GC_URGENT:
+>  		gc_mode = GC_GREEDY;
+> +		break;
+> +	}
+>  	return gc_mode;
+>  }
+>  
+> @@ -187,7 +183,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>  		p->max_search = dirty_i->nr_dirty[type];
+>  		p->ofs_unit = 1;
+>  	} else {
+> -		p->gc_mode = select_gc_type(sbi->gc_thread, gc_type);
+> +		p->gc_mode = select_gc_type(sbi, gc_type);
+>  		p->dirty_segmap = dirty_i->dirty_segmap[DIRTY];
+>  		p->max_search = dirty_i->nr_dirty[DIRTY];
+>  		p->ofs_unit = sbi->segs_per_sec;
+> @@ -195,7 +191,7 @@ static void select_policy(struct f2fs_sb_info *sbi, int gc_type,
+>  
+>  	/* we need to check every dirty segments in the FG_GC case */
+>  	if (gc_type != FG_GC &&
+> -			(sbi->gc_thread && !sbi->gc_thread->gc_urgent) &&
+> +			(sbi->gc_mode != GC_URGENT) &&
+>  			p->max_search > sbi->max_victim_search)
+>  		p->max_search = sbi->max_victim_search;
+>  
+> diff --git a/fs/f2fs/gc.h b/fs/f2fs/gc.h
+> index b0045d4c8d1e..c8619e408009 100644
+> --- a/fs/f2fs/gc.h
+> +++ b/fs/f2fs/gc.h
+> @@ -36,8 +36,6 @@ struct f2fs_gc_kthread {
+>  	unsigned int no_gc_sleep_time;
+>  
+>  	/* for changing gc mode */
+> -	unsigned int gc_idle;
+> -	unsigned int gc_urgent;
+>  	unsigned int gc_wake;
+>  };
+>  
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 503a98abdb2f..5a7ed06291e0 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -177,7 +177,7 @@ bool need_SSR(struct f2fs_sb_info *sbi)
+>  
+>  	if (test_opt(sbi, LFS))
+>  		return false;
+> -	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+> +	if (sbi->gc_mode == GC_URGENT)
+>  		return true;
+>  
+>  	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
+> @@ -1418,7 +1418,7 @@ static int issue_discard_thread(void *data)
+>  		if (dcc->discard_wake)
+>  			dcc->discard_wake = 0;
+>  
+> -		if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
+> +		if (sbi->gc_mode == GC_URGENT)
+>  			init_discard_policy(&dpolicy, DPOLICY_FORCE, 1);
+>  
+>  		sb_start_intwrite(sbi->sb);
+> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> index 6d8d8f41e517..dd940d156af6 100644
+> --- a/fs/f2fs/sysfs.c
+> +++ b/fs/f2fs/sysfs.c
+> @@ -248,16 +248,33 @@ static ssize_t f2fs_sbi_store(struct f2fs_attr *a,
+>  	if (!strcmp(a->attr.name, "trim_sections"))
+>  		return -EINVAL;
+>  
+> +	if (!strcmp(a->attr.name, "gc_urgent")) {
+> +		if (t >= 1) {
+> +			sbi->gc_mode = GC_URGENT;
+> +			if (sbi->gc_thread) {
+> +				wake_up_interruptible_all(
+> +					&sbi->gc_thread->gc_wait_queue_head);
+> +				wake_up_discard_thread(sbi, true);
+> +			}
+> +		} else {
+> +			sbi->gc_mode = GC_NORMAL;
+> +		}
+> +		return count;
+> +	}
+> +	if (!strcmp(a->attr.name, "gc_idle")) {
+> +		if (t == GC_IDLE_CB)
+> +			sbi->gc_mode = GC_IDLE_CB;
+> +		else if (t == GC_IDLE_GREEDY)
+> +			sbi->gc_mode = GC_IDLE_GREEDY;
+> +		else
+> +			sbi->gc_mode = GC_NORMAL;
+> +		return count;
+> +	}
+> +
+>  	*ui = t;
+>  
+>  	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
+>  		f2fs_reset_iostat(sbi);
+> -	if (!strcmp(a->attr.name, "gc_urgent") && t == 1 && sbi->gc_thread) {
+> -		sbi->gc_thread->gc_wake = 1;
+> -		wake_up_interruptible_all(&sbi->gc_thread->gc_wait_queue_head);
+> -		wake_up_discard_thread(sbi, true);
+> -	}
+> -
+>  	return count;
+>  }
+>  
+> @@ -349,8 +366,8 @@ F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent_sleep_time,
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_min_sleep_time, min_sleep_time);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_max_sleep_time, max_sleep_time);
+>  F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_no_gc_sleep_time, no_gc_sleep_time);
 
-Very different things really.
+All above parameters will be accessed via '*ui = t;', in order to avoid that, we
+need to move all gc_* configuration fields into sbi, so leaving f2fs_gc_kthread
+all most empty. IMO, just merge my v1 patch is OK? since that patch makes better
+encapsulation, so that background GC related parameter can still locate in
+independent f2fs_gc_kthread structure rather in common f2fs_sb_info structure.
 
-This does a copy of the whole stats, not the pointer :
+Thanks,
 
-*stats = tp->net_stats_prev;
-
-
-I guess you are confusing simple C semantics about returning the address of a structure,
-instead of returning a whole structure.
-
-If __ei_get_stats(struct net_device *dev) prototype was :
-
-struct net_device_stats __ei_get_stats(struct net_device *dev) 
-
-instead of :
-
-struct net_device_stats *__ei_get_stats(struct net_device *dev) 
-
-Then sure, your patch might been needed.
+> -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_idle, gc_idle);
+> -F2FS_RW_ATTR(GC_THREAD, f2fs_gc_kthread, gc_urgent, gc_urgent);
+> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle, gc_mode);
+> +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_urgent, gc_mode);
+>  F2FS_RW_ATTR(SM_INFO, f2fs_sm_info, reclaim_segments, rec_prefree_segments);
+>  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, max_small_discards, max_discards);
+>  F2FS_RW_ATTR(DCC_INFO, discard_cmd_control, discard_granularity, discard_granularity);
+> 
