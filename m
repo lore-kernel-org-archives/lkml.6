@@ -1,100 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755933AbeEHXMB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 19:12:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57532 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754148AbeEHXL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 19:11:59 -0400
-Date: Tue, 8 May 2018 17:11:50 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: "Stephen  Bates" <sbates@raithlin.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        "Bjorn Helgaas" <helgaas@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all
- devices behind switches
-Message-ID: <20180508171150.0e8fd291@w520.home>
-In-Reply-To: <C3CEE4DB-A001-4E4C-B9B9-4B160E4C5367@raithlin.com>
-References: <20180423233046.21476-1-logang@deltatee.com>
-        <20180423233046.21476-5-logang@deltatee.com>
-        <20180507231306.GG161390@bhelgaas-glaptop.roam.corp.google.com>
-        <e58e8d27-42a5-ca69-3b68-c409a2922cd1@amd.com>
-        <0b4183ef-e720-204b-9e85-b9eaf7a4136a@deltatee.com>
-        <a943a92d-15cd-fb2d-21c3-5e5cfccd9eff@amd.com>
-        <3584a6ac-95c7-5d23-1859-aee30605776e@deltatee.com>
-        <20180508133407.57a46902@w520.home>
-        <5fc9b1c1-9208-06cc-0ec5-1f54c2520494@deltatee.com>
-        <20180508141331.7cd737cb@w520.home>
-        <d70cf286-f7b7-99a5-1042-022506298fed@deltatee.com>
-        <20180508144341.0441b676@w520.home>
-        <a524127a-3557-3dff-971c-dfe94ba5a01c@deltatee.com>
-        <20180508152631.50fd583c@w520.home>
-        <354F7407-0DC7-470C-B9AA-74FDF9C46B08@raithlin.com>
-        <20180508160336.0935ddde@w520.home>
-        <20905682-9440-7d4b-0260-99d3dc794c3d@deltatee.com>
-        <C3CEE4DB-A001-4E4C-B9B9-4B160E4C5367@raithlin.com>
-MIME-Version: 1.0
+        id S1756034AbeEHXNM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 19:13:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34722 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755975AbeEHXNL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 19:13:11 -0400
+Date: Tue, 8 May 2018 16:13:09 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mel Gorman <mgorman@suse.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>, js1304@gmail.com,
+        Michal Hocko <mhocko@suse.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>,
+        Minchan Kim <minchan@kernel.org>, Ye Xiaolong <xiaolong.ye@intel.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Subject: Re: [PATCH] mm/page_alloc: use ac->high_zoneidx for classzone_idx
+Message-Id: <20180508161309.f8ef0a4962b1721863902e60@linux-foundation.org>
+In-Reply-To: <20180504103322.2nbadmnehwdxxaso@suse.de>
+References: <1525408246-14768-1-git-send-email-iamjoonsoo.kim@lge.com>
+        <8b06973c-ef82-17d2-a83d-454368de75e6@suse.cz>
+        <20180504103322.2nbadmnehwdxxaso@suse.de>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 May 2018 22:25:06 +0000
-"Stephen  Bates" <sbates@raithlin.com> wrote:
+On Fri, 4 May 2018 11:33:22 +0100 Mel Gorman <mgorman@suse.de> wrote:
 
-> >    Yeah, so based on the discussion I'm leaning toward just having a
-> >    command line option that takes a list of BDFs and disables ACS
-> > for them. (Essentially as Dan has suggested.) This avoids the
-> > shotgun.  
+> On Fri, May 04, 2018 at 09:03:02AM +0200, Vlastimil Babka wrote:
+> > > min watermark for NORMAL zone on node 0
+> > > allocation initiated on node 0: 750 + 4096 = 4846
+> > > allocation initiated on node 1: 750 + 0 = 750
+> > > 
+> > > This watermark difference could cause too many numa_miss allocation
+> > > in some situation and then performance could be downgraded.
+> > > 
+> > > Recently, there was a regression report about this problem on CMA patches
+> > > since CMA memory are placed in ZONE_MOVABLE by those patches. I checked
+> > > that problem is disappeared with this fix that uses high_zoneidx
+> > > for classzone_idx.
+> > > 
+> > > http://lkml.kernel.org/r/20180102063528.GG30397@yexl-desktop
+> > > 
+> > > Using high_zoneidx for classzone_idx is more consistent way than previous
+> > > approach because system's memory layout doesn't affect anything to it.
+> > 
+> > So to summarize;
+> > - ac->high_zoneidx is computed via the arcane gfp_zone(gfp_mask) and
+> > represents the highest zone the allocation can use
 > 
-> I concur that this seems to be where the conversation is taking us.
+> It's arcane but it was simply a fast-path calculation. A much older
+> definition would be easier to understand but it was slower.
 > 
-> @Alex - Before we go do this can you provide input on the approach? I
-> don't want to re-spin only to find we are still not converging on the
-> ACS issue....
+> > - classzone_idx was supposed to be the highest zone that the allocation
+> > can use, that is actually available in the system. Somehow that became
+> > the highest zone that is available on the preferred node (in the default
+> > node-order zonelist), which causes the watermark inconsistencies you
+> > mention.
+> > 
+> 
+> I think it *always* was the index of the first preferred zone of a
+> zonelist. The treatment of classzone has changed a lot over the years and
+> I didn't do a historical check but the general intent was always "protect
+> some pages in lower zones". This was particularly important for 32-bit
+> and highmem albeit that is less of a concern today. When it transferred to
+> NUMA, I don't think it ever was seriously considered if it should change
+> as the critical node was likely to be node 0 with all the zones and the
+> remote nodes all used the highest zone. CMA/MOVABLE changed that slightly
+> by allowing the possibility of node0 having a "higher" zone than every
+> other node. When MOVABLE was introduced, it wasn't much of a problem as
+> the purpose of MOVABLE was for systems that dynamically needed to allocate
+> hugetlbfs later in the runtime but for CMA, it was a lot more critical
+> for ordinary usage so this is primarily a CMA thing.
+> 
+> > I don't see a problem with your change. I would be worried about
+> > inflated reserves when e.g. ZONE_MOVABLE doesn't exist, but that doesn't
+> > seem to be the case. My laptop has empty ZONE_MOVABLE and the
+> > ZONE_NORMAL protection for movable is 0.
+> > 
+> > But there had to be some reason for classzone_idx to be like this and
+> > not simple high_zoneidx. Maybe Mel remembers? Maybe it was important
+> > then, but is not anymore? Sigh, it seems to be pre-git.
+> > 
+> 
+> classzone predates my involvement with Linux but I would be less concerneed
+> about what the original intent was and instead ensure that classzone index
+> is consistent, sane and potentially renamed while preserving the intent of
+> "reserve pages in lower zones when an allocation request can use higher
+> zones". While historically the critical intent was to preserve Normal and
+> to a lesser extent DMA on 32-bit systems, there still should be some care
+> of DMA32 so we should not lose that.
+> 
+> With the patch, the allocator looks like it would be fine as just
+> reservations change. I think it's unlikely that CMA usage will result
+> in lowmem starvation.  Compaction becomes a bit weird as classzone index
+> has no special meaning versis highmem and I think it'll be very easy to
+> forget. Similarly, vmscan can reclaim pages from remote nodes and zones
+> that are higher than the original request. That is not likely to be a
+> problem but it's a change in behaviour and easy to miss.
+> 
+> Fundamentally, I find it extremely weird we now have two variables that are
+> essentially the same thing. They should be collapsed into one variable,
+> renamed and documented on what the index means for page allocator,
+> compaction, vmscan and the special casing around CMA.
 
-I can envision numerous implementation details that makes this less
-trivial than it sounds, but it seems like the thing we need to decide
-first is if intentionally leaving windows between devices with the
-intention of exploiting them for direct P2P DMA in an otherwise IOMMU
-managed address space is something we want to do.  From a security
-perspective, we already handle this with IOMMU groups because many
-devices do not support ACS, the new thing is embracing this rather than
-working around it.  It makes me a little twitchy, but so long as the
-IOMMU groups match the expected worst case routing between devices,
-it's really no different than if we could wipe the ACS capability from
-the device.
+You're all so young ;)
 
-On to the implementation details... I already mentioned the BDF issue
-in my other reply.  If we had a way to persistently identify a device,
-would we specify the downstream points at which we want to disable ACS
-or the endpoints that we want to connect?  The latter has a problem
-that the grouping upstream of an endpoint is already set by the time we
-discover the endpoint, so we might need to unwind to get the grouping
-correct.  The former might be more difficult for users to find the
-necessary nodes, but easier for the kernel to deal with during
-discovery.  A runtime, sysfs approach has some benefits here,
-especially in identifying the device assuming we're ok with leaving
-the persistence problem to userspace tools.  I'm still a little fond of
-the idea of exposing an acs_flags attribute for devices in sysfs where
-a write would do a soft unplug and re-add of all affected devices to
-automatically recreate the proper grouping.  Any dynamic change in
-routing and grouping would require all DMA be re-established anyway and
-a soft hotplug seems like an elegant way of handling it.  Thanks,
-
-Alex
+classzone was Andrea.  Perhaps he can shed some light upon the
+questions which have been raised?
