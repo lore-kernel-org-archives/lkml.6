@@ -1,42 +1,45 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZrZp4huahzsfSueJTKJiN3knwkK0w1ewT4qmsMvfTV3Yhi+7U+OvaChClQGgZIYma/YCIbf
-ARC-Seal: i=1; a=rsa-sha256; t=1525767322; cv=none;
+X-Google-Smtp-Source: AB8JxZoh7wiegs3KPfA+DtqiBL+d7UhIEw5anK9U29Fzd5+O/s501EDIEKekTDfJvaW/TK3rzlj5
+ARC-Seal: i=1; a=rsa-sha256; t=1525767318; cv=none;
         d=google.com; s=arc-20160816;
-        b=xDTt1B6VSKJy9DK4jx1V5HtqtXVc52l12RSC1171DedBj1cmFTOicsJxp7RNZjNx4f
-         ZiNNvKuSUXiD1BkUpwRXyd4nq5kQ/T9mQRiOw8HEeA3LTLF0Ihbs2iZT68ZGgUM6Jyml
-         lvfbFXAR8uqe6VdOgQrgNFsIf8rg5G4nShMHv6008OVdNHmN11ls+mP9AKYnYWrhRs+S
-         86tgKyJfITGBiHocgEiRml3qf4Wco7dXJqgHMPoxU3zG3VElXEiqKhKCpWdOn5QaZAiq
-         wxYQATUECXtiv/uJlSn7X551giAKjzxx6esDNx61t8E4IEtRW6+FvxsoeFlf4IA2qzOJ
-         7Vog==
+        b=wxhbqbyhQSC9lC6ZxstSw3fjNgwrvmdSHzcMJHTreNMrF8Vb8xwluTv4XbpR+VF/BH
+         r7QlJWT/vudPK7GFg9jcWxSpR49r1Ld4KoWpcXLuLOJ+YSDnStgaW+kxwhhKTH/y97yW
+         gUXZXau9p9OqP3hp/DBX4TF8wYISVuYun3x456LIOwFWAzkjGK3sZO4ayTuuUrFD8BvD
+         daQKXgIOQNfLivoRyyDHNgV1bfRSTIJZr38vFUDt1FbIJRZWB14YDT1e1eEYE0RpW7et
+         7p8a2iDkwUiALCU7K00PnI+tLNx9fJDDrUy9LKOfQMzhD9dSVLDvYitNgnDqAp2W3qCd
+         31qw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=oIdiNrqd3mcnFPrHLnHRjJebTAcdRBAPZg3nia+QgkY=;
-        b=r7kwE0iaeCkkHOhcNYhSr3s9Fnl7piR5kJT+wsvE9fjC4rK+GkwOc32NDH5lgVFKbq
-         lqyUP3yzDoIK0x21fY6UM3Qer4vT7fiKwQDAeymyRpw1XqYDjMH7y2sM6Yru00ENhsce
-         wdaiQQ7/emV216pVdzSGFCqGbMTuYbSvggR1fgR4rD42E8UNLvOOQi4CCjPZapiNchrt
-         B08dxOXghMAGrphTpRjMWbiiFpMDUtzBoTBbIIR4aQDCm2PTXXO8B9vhcOmCQrYQiIXB
-         PXbjT2cE7cZBmImeXAzcgOftm5+zj1+Erv63RxXdddBJx0d/R6wVbP08lTbxFrMQhKmM
-         8WRQ==
+        bh=mYANIHUYq4fv7daDsbU+EEj1QvFKy24Cu/2Eo4pOqIs=;
+        b=uaMGz6NYa8lPDL81zj3ils0bL+48pzbkYMc7RZLQCoHI8n3c9N61xEGmphrXByk+IJ
+         H3YT/2z7SicJH0iOmD3Y8dnUG7JzzJ3M5j8HNfu6PvOnb6J2CdVY4r22c+TKB0fjucpU
+         5BS8mzidZjWtyszn+fh180chlDHjAFPw0Sin6+Z/9ctU/MIzjgFbyhOJhFW752N18sIs
+         39sifq0G4xTtGXC5izqW3ZfzCySc+2AJAbfobAUfSjyBAl0LmmXVxpUNVbySiRFPqr1T
+         QdIBXUbmseuerHd6g7Q5+CchSqFQdbl/IUQDAqqM5ipp4asx12eE9JMRYrbKGPv5MUrE
+         eD8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=CePaBeWi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=A3it6iKY;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=CePaBeWi;
+       dkim=pass header.i=@kernel.org header.s=default header.b=A3it6iKY;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
-	Steven Royer <seroyer@linux.vnet.ibm.com>,
-	Taylor Jakobson <tjakobs@us.ibm.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Nicholas Bellinger <nab@linux-iscsi.org>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 14/43] scsi: target: Fix fortify_panic kernel exception
-Date: Tue,  8 May 2018 10:10:33 +0200
-Message-Id: <20180508074006.273835011@linuxfoundation.org>
+	Peter Zijlstra <peterz@infradead.org>,
+	Jiri Olsa <jolsa@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com,
+	syzbot+4e9ae7fa46233396f64d@syzkaller.appspotmail.com,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 13/43] tracepoint: Do not warn on ENOMEM
+Date: Tue,  8 May 2018 10:10:32 +0200
+Message-Id: <20180508074006.151315030@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -46,8 +49,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882767356757708?=
-X-GMAIL-MSGID: =?utf-8?q?1599882995657599039?=
+X-GMAIL-THRID: =?utf-8?q?1599882764347607574?=
+X-GMAIL-MSGID: =?utf-8?q?1599882992216371766?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -55,72 +58,58 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bryant G Ly <bryantly@linux.vnet.ibm.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-commit f5957dade4f373b04fa1f5315a489f18cc2c4cb4 upstream.
+commit d66a270be3310d7aa132fec0cea77d3d32a0ff75 upstream.
 
-memcmp() requires the two buffers passed as arguments to be at least
-'size' bytes long, otherwise a fortify_panic will trigger.
+Tracepoint should only warn when a kernel API user does not respect the
+required preconditions (e.g. same tracepoint enabled twice, or called
+to remove a tracepoint that does not exist).
 
-Use memchr_inv() instead of memcmp() to determine whether the received
-payload is zeroed or not.
+Silence warning in out-of-memory conditions, given that the error is
+returned to the caller.
 
-The bug was found by running a block backstore via LIO.
+This ensures that out-of-memory error-injection testing does not trigger
+warnings in tracepoint.c, which were seen by syzbot.
 
-[  496.212958] Call Trace:
-[  496.212960] [c0000007e58e3800] [c000000000cbbefc] fortify_panic+0x24/0x38 (unreliable)
-[  496.212965] [c0000007e58e3860] [d00000000f150c28] iblock_execute_write_same+0x3b8/0x3c0 [target_core_iblock]
-[  496.212976] [c0000007e58e3910] [d000000006c737d4] __target_execute_cmd+0x54/0x150 [target_core_mod]
-[  496.212982] [c0000007e58e3940] [d000000006d32ce4] ibmvscsis_write_pending+0x74/0xe0 [ibmvscsis]
-[  496.212991] [c0000007e58e39b0] [d000000006c74fc8] transport_generic_new_cmd+0x318/0x370 [target_core_mod]
-[  496.213001] [c0000007e58e3a30] [d000000006c75084] transport_handle_cdb_direct+0x64/0xd0 [target_core_mod]
-[  496.213011] [c0000007e58e3aa0] [d000000006c75298] target_submit_cmd_map_sgls+0x1a8/0x320 [target_core_mod]
-[  496.213021] [c0000007e58e3b30] [d000000006c75458] target_submit_cmd+0x48/0x60 [target_core_mod]
-[  496.213026] [c0000007e58e3bd0] [d000000006d34c20] ibmvscsis_scheduler+0x370/0x600 [ibmvscsis]
-[  496.213031] [c0000007e58e3c90] [c00000000013135c] process_one_work+0x1ec/0x580
-[  496.213035] [c0000007e58e3d20] [c000000000131798] worker_thread+0xa8/0x600
-[  496.213039] [c0000007e58e3dc0] [c00000000013a468] kthread+0x168/0x1b0
-[  496.213044] [c0000007e58e3e30] [c00000000000b528] ret_from_kernel_thread+0x5c/0xb4
+Link: https://lkml.kernel.org/r/001a114465e241a8720567419a72@google.com
+Link: https://lkml.kernel.org/r/001a1140e0de15fc910567464190@google.com
+Link: http://lkml.kernel.org/r/20180315124424.32319-1-mathieu.desnoyers@efficios.com
 
-[mkp: tweaked commit message]
-
-Fixes: 2237498f0b5c ("target/iblock: Convert WRITE_SAME to blkdev_issue_zeroout")
-Signed-off-by: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
-Reviewed-by: Steven Royer <seroyer@linux.vnet.ibm.com>
-Tested-by: Taylor Jakobson <tjakobs@us.ibm.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Nicholas Bellinger <nab@linux-iscsi.org>
-Cc: <stable@vger.kernel.org> # v4.13+
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Jiri Olsa <jolsa@redhat.com>
+CC: Arnaldo Carvalho de Melo <acme@kernel.org>
+CC: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+CC: Namhyung Kim <namhyung@kernel.org>
+CC: stable@vger.kernel.org
+Fixes: de7b2973903c6 ("tracepoint: Use struct pointer instead of name hash for reg/unreg tracepoints")
+Reported-by: syzbot+9c0d616860575a73166a@syzkaller.appspotmail.com
+Reported-by: syzbot+4e9ae7fa46233396f64d@syzkaller.appspotmail.com
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/target_core_iblock.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/tracepoint.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -427,8 +427,8 @@ iblock_execute_zero_out(struct block_dev
- {
- 	struct se_device *dev = cmd->se_dev;
- 	struct scatterlist *sg = &cmd->t_data_sg[0];
--	unsigned char *buf, zero = 0x00, *p = &zero;
--	int rc, ret;
-+	unsigned char *buf, *not_zero;
-+	int ret;
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -207,7 +207,7 @@ static int tracepoint_add_func(struct tr
+ 			lockdep_is_held(&tracepoints_mutex));
+ 	old = func_add(&tp_funcs, func, prio);
+ 	if (IS_ERR(old)) {
+-		WARN_ON_ONCE(1);
++		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
+ 		return PTR_ERR(old);
+ 	}
  
- 	buf = kmap(sg_page(sg)) + sg->offset;
- 	if (!buf)
-@@ -437,10 +437,10 @@ iblock_execute_zero_out(struct block_dev
- 	 * Fall back to block_execute_write_same() slow-path if
- 	 * incoming WRITE_SAME payload does not contain zeros.
- 	 */
--	rc = memcmp(buf, p, cmd->data_length);
-+	not_zero = memchr_inv(buf, 0x00, cmd->data_length);
- 	kunmap(sg_page(sg));
+@@ -240,7 +240,7 @@ static int tracepoint_remove_func(struct
+ 			lockdep_is_held(&tracepoints_mutex));
+ 	old = func_remove(&tp_funcs, func);
+ 	if (IS_ERR(old)) {
+-		WARN_ON_ONCE(1);
++		WARN_ON_ONCE(PTR_ERR(old) != -ENOMEM);
+ 		return PTR_ERR(old);
+ 	}
  
--	if (rc)
-+	if (not_zero)
- 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
- 
- 	ret = blkdev_issue_zeroout(bdev,
