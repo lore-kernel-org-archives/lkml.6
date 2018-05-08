@@ -1,137 +1,82 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755958AbeEHVHn (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:07:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751533AbeEHVHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:07:42 -0400
-Date: Tue, 8 May 2018 17:07:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thomas Tai <thomas.tai@oracle.com>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mr.nuke.me@gmail.com
-Subject: Re: [PATCH V2] PCI/AER: add pcie TLP header information in the
- tracepoint
-Message-ID: <20180508170739.1436c873@gandalf.local.home>
-In-Reply-To: <1525809420-30576-2-git-send-email-thomas.tai@oracle.com>
-References: <1525809420-30576-1-git-send-email-thomas.tai@oracle.com>
-        <1525809420-30576-2-git-send-email-thomas.tai@oracle.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1755900AbeEHVLA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:11:00 -0400
+Received: from mail-pf0-f173.google.com ([209.85.192.173]:33031 "EHLO
+        mail-pf0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755342AbeEHVK7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:10:59 -0400
+X-Google-Smtp-Source: AB8JxZoXgRh+5Sel+bYyVEo6wHOStFBCIfvP3J6R5kv5bl3CMrH/fPSBdZX7sHvwWrum7vGQb7l9wg==
+Date: Tue, 8 May 2018 14:10:57 -0700
+From: Joel Fernandes <joel@joelfernandes.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Joel Fernandes <joelaf@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        rostedt <rostedt@goodmis.org>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        fweisbec <fweisbec@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        kbuild test robot <fengguang.wu@intel.com>,
+        baohong liu <baohong.liu@intel.com>,
+        vedang patel <vedang.patel@intel.com>,
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH RFC v6 4/5] tracepoint: Make rcuidle tracepoint callers
+ use SRCU
+Message-ID: <20180508211057.GA77668@joelaf.mtv.corp.google.com>
+References: <20180507204143.13061-1-joelaf@google.com>
+ <20180507204143.13061-5-joelaf@google.com>
+ <568999860.209.1525727141943.JavaMail.zimbra@efficios.com>
+ <20180507214611.GB13787@joelaf.mtv.corp.google.com>
+ <581097661.279.1525739874243.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <581097661.279.1525739874243.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  8 May 2018 15:57:00 -0400
-Thomas Tai <thomas.tai@oracle.com> wrote:
-
-> When a PCIe AER occurs, the TLP header information is
-> printed in the kernel message but it is missing from
-> the tracepoint. A userspace program can use this information
-> in the tracepoint to better analyze problems.
+On Mon, May 07, 2018 at 08:37:54PM -0400, Mathieu Desnoyers wrote:
+> ----- On May 7, 2018, at 5:46 PM, Joel Fernandes, Google joel@joelfernandes.org wrote:
 > 
-> To enable the tracepoint:
-> echo 1 > /sys/kernel/debug/tracing/events/ras/aer_event/enable
+> > On Mon, May 07, 2018 at 05:05:41PM -0400, Mathieu Desnoyers wrote:
+> >> ----- On May 7, 2018, at 4:41 PM, Joel Fernandes joelaf@google.com wrote:
+> >> [...]
+> >> > +extern struct srcu_struct tracepoint_srcu;
+> >> > +
+> >> > extern int
+> >> > tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+> >> > extern int
+> >> > @@ -77,6 +80,9 @@ int unregister_tracepoint_module_notifier(struct
+> >> > notifier_block *nb)
+> >> >  */
+> >> > static inline void tracepoint_synchronize_unregister(void)
+> >> > {
+> >> > +#ifdef CONFIG_TRACEPOINTS
+> >> > +	synchronize_srcu(&tracepoint_srcu);
+> >> > +#endif
+> >> > 	synchronize_sched();
+> >> 
+> >> Why is this ifdef needed ?
+> > 
+> > tracepoint_srcu is defined in tracepoint.c so if we don't protect usage here, it
+> > would cause a build error.
 > 
-> Example tracepoint output:
-> cat /sys/kernel/debug/tracing/trace
-> aer_event: 0000:01:00.0
-> PCIe Bus Error: severity=Uncorrected, non-fatal, Completer Abort
-> TLP Header={0x0,0x1,0x2,0x3}
-> 
-> Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
-> ---
->  drivers/pci/pcie/aer/aerdrv_errprint.c |  4 ++--
->  include/ras/ras_event.h                | 22 ++++++++++++++++++----
->  2 files changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer/aerdrv_errprint.c b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> index cfc89dd..fd49a8d 100644
-> --- a/drivers/pci/pcie/aer/aerdrv_errprint.c
-> +++ b/drivers/pci/pcie/aer/aerdrv_errprint.c
-> @@ -189,7 +189,7 @@ void aer_print_error(struct pci_dev *dev, struct aer_err_info *info)
->  		pci_err(dev, "  Error of this Agent(%04x) is reported first\n", id);
->  
->  	trace_aer_event(dev_name(&dev->dev), (info->status & ~info->mask),
-> -			info->severity);
-> +			info->severity, info->tlp_header_valid, &info->tlp);
->  }
->  
->  void aer_print_port_info(struct pci_dev *dev, struct aer_err_info *info)
-> @@ -249,6 +249,6 @@ void cper_print_aer(struct pci_dev *dev, int aer_severity,
->  		__print_tlp_header(dev, &aer->header_log);
->  
->  	trace_aer_event(dev_name(&dev->dev), (status & ~mask),
-> -			aer_severity);
-> +			aer_severity, tlp_header_valid, &aer->header_log);
->  }
->  #endif
-> diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-> index 9c68986..f73b168 100644
-> --- a/include/ras/ras_event.h
-> +++ b/include/ras/ras_event.h
-> @@ -298,30 +298,44 @@
->  TRACE_EVENT(aer_event,
->  	TP_PROTO(const char *dev_name,
->  		 const u32 status,
-> -		 const u8 severity),
-> +		 const u8 severity,
-> +		 const u8 tlp_header_valid,
-> +		 struct aer_header_log_regs *tlp),
->  
-> -	TP_ARGS(dev_name, status, severity),
-> +	TP_ARGS(dev_name, status, severity, tlp_header_valid, tlp),
->  
->  	TP_STRUCT__entry(
->  		__string(	dev_name,	dev_name	)
->  		__field(	u32,		status		)
->  		__field(	u8,		severity	)
-> +		__field(	u8, 		tlp_header_valid)
-> +		__array(	u32, 		tlp_header, 4	)
->  	),
->  
->  	TP_fast_assign(
->  		__assign_str(dev_name, dev_name);
->  		__entry->status		= status;
->  		__entry->severity	= severity;
-> +		__entry->tlp_header_valid = tlp_header_valid;
-> +		if (__entry->tlp_header_valid) {
+> Then we should ifdef the entire implementation of tracepoint_synchronize_unregister().
+> There is no point in issuing synchronize_sched() when code invokes that
+> function on a CONFIG_TRACEPOINTS=n config.
 
-Although the compiler will probably optimize it anyway, but you
-probably should have it be:
+Ok I'll do it this way in the next rev. Could you also share any thoughts on
+patch 6/6 if you had some time? Development of it has also been complete for
+some time.
 
-		if (tlp_header_valid) {
+thanks,
 
-because why add the extra dereference.
-
-> +			__entry->tlp_header[0] = tlp->dw0;
-> +			__entry->tlp_header[1] = tlp->dw1;
-> +			__entry->tlp_header[2] = tlp->dw2;
-> +			__entry->tlp_header[3] = tlp->dw3;
-> +		}
->  	),
->  
-> -	TP_printk("%s PCIe Bus Error: severity=%s, %s\n",
-> +	TP_printk("%s PCIe Bus Error: severity=%s, %s, TLP Header=%s\n",
->  		__get_str(dev_name),
->  		__entry->severity == AER_CORRECTABLE ? "Corrected" :
->  			__entry->severity == AER_FATAL ?
->  			"Fatal" : "Uncorrected, non-fatal",
->  		__entry->severity == AER_CORRECTABLE ?
->  		__print_flags(__entry->status, "|", aer_correctable_errors) :
-> -		__print_flags(__entry->status, "|", aer_uncorrectable_errors))
-> +		__print_flags(__entry->status, "|", aer_uncorrectable_errors),
-> +		__entry->tlp_header_valid ?
-> +			__print_array(__entry->tlp_header, 4, 4) :
-> +			"Not available")
-
-The rest looks fine to me.
-
--- Steve
-
->  );
->  
->  /*
+- Joel
