@@ -1,210 +1,154 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754023AbeEHCfT (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:35:19 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:41618 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753971AbeEHCcL (ORCPT
+        id S1754034AbeEHCff (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:35:35 -0400
+Received: from mail1.bemta12.messagelabs.com ([216.82.251.11]:28972 "EHLO
+        mail1.bemta12.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753919AbeEHCfc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:32:11 -0400
-X-Google-Smtp-Source: AB8JxZp+Jywm3/oGMnwUTHWvea32ZGfWhz9LAxc4haInIMBAdNDrHe7qFmxNTje7KqyYhzstv32AUA==
-From: Connor McAdams <conmanx360@gmail.com>
-Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
-        <jeremy.lefaure@lse.epita.fr>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 04/13] ALSA: hda/ca0132: Add extra exit functions for R3Di and SBZ
-Date: Mon,  7 May 2018 22:31:12 -0400
-Message-Id: <1525746683-18535-5-git-send-email-conmanx360@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
-References: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
-To: unlisted-recipients:; (no To-header on input)
+        Mon, 7 May 2018 22:35:32 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA1WTbUwUVxSG987Hzog77WUROW6FpFsbFQUFEzP
+  1h6XGH5M2GtMmttKqHdphZ+N+4M5Ct9EEUUCrSMFWVFhbaJWULRsUsS5IICAWtFYNWjCIoqip
+  UoQCNlRR6gyDVv89533fnHNuci5LmrczFlbyeSWPS3RYjWGUfPcmETdsGkpeGAzE8P6qSiP/Q
+  4PM78u6wPA/V6/gL9X5jfz1yv9oflvhVYYPHW4g+J78JD7nVC3Fl2QP0HxJVj7ix/71G5M44V
+  T/ICnUBgOEcOynWKF6eA8jtO0fo4RdJeOUMHSnixKqav6ghHOlLYxw7LdNwvFHS4Wc0UhhpDp
+  mFZdM210pbt+ntNwaukKknce+I6P/0FtQIbcThbFm/CeCYPbfjF60IBj88RtSKyicR8JoRxHS
+  nXwC2r67OhnrRlBVX6E6U1gjngtn+jtIjafhVGh/WEdoIRLn0tCZs3fCiMAyXCwspPSQEy7nH
+  lVDrMqJ0HtP0WQKz4Lbj7tpTebwJzBSE6fJZuyDA1lVRk2egpdBwa9YkxGOhqLeHkJjEkfBwa
+  JiWmPAGA7VXyB1joR7t8YnOiL8PgzUrNNlKxQ3HZqMR0P797smngi4gIa2plqjbiRAa0UjqRt
+  9NJw43MHoxS8IHjb6JyfEQqj7DqNNALwBLnVadPkt2NF+hdI5BgK7b05yBQl942/qPBP81xqo
+  ArSg+IU36DwfSk8OG3WeB+Vlf5Eaczgczhy4TZUiKoDmKJInQ/LELeLjUzx2m+x1inZHXEJCY
+  rxTUhTRJjnEFCX+M7ezGqnnmGkwoBC62/hxM5rBEtZILoMaSja/kuL+/EtZVOT1nnSHpDSjmS
+  xrBe70VNUL90g2yZdqd6g3/cwG1mSdxoWpV23mlDTRqdhtunUWLWK7c/PySLayZk8eaaZcbpd
+  kieIuap2wFpXTXc8bPfsf7SjaEsEhg8FgNqVJHqfd+7Lfh6JYZI3gerUuJrvL+3xen7oKoa4S
+  fmNQW8Ur/m9ZtqDodWXLg5sDvy99tYy43MOtGVl8P/Or5eUr6l57+8Ebr38QSi//umVv05qVT
+  2jvrI/un7+2oDlx+3t4qlcZ23+LecDZ3s3OOufuX7taiPgiszVp29GY/p2zO4NL6v1buwyj/s
+  Vb3ab1dSfeMXfMb7u+4cn0s10bwZbh+3D1wW8j1w6kzhk/YqUUWUyIJT2K+BR4kOb5GgQAAA=
+  =
+X-Env-Sender: yehs1@lenovo.com
+X-Msg-Ref: server-2.tower-47.messagelabs.com!1525746927!48446338!1
+X-Originating-IP: [104.232.225.2]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+From: Huaisheng HS1 Ye <yehs1@lenovo.com>
+To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC: "mhocko@suse.com" <mhocko@suse.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+        <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
+        "Ocean HY1 He" <hehy1@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: [External]  [RFC PATCH v1 6/6] arch/x86/mm: create page table mapping
+ for DRAM and NVDIMM both
+Thread-Topic: [External]  [RFC PATCH v1 6/6] arch/x86/mm: create page table
+ mapping for DRAM and NVDIMM both
+Thread-Index: AQHT5nLo8hbgzoGgok+c55ua3SkdRaQlHUeA
+Date: Tue, 8 May 2018 02:35:13 +0000
+Message-ID: <HK2PR03MB1684101846A9D9639BE00001929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+References: <1525746628-114136-1-git-send-email-yehs1@lenovo.com>
+ <1525746628-114136-7-git-send-email-yehs1@lenovo.com>
+In-Reply-To: <1525746628-114136-7-git-send-email-yehs1@lenovo.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [111.197.250.78]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HK2PR03MB0802;7:K7u+0t/QHo5KVnegafuy9WP+X98tLm7qbLFieOFIhDK40lwULIkxUjZHQbei2LKjECti1DJunypwZw/xMZeWpOeveu1pTuAuxIU5AoZDkeDyCwcKsBL4x3CsrHU9GcLMbyoTrFFGhGUOyYssXhCyoWxwasoV39NkvYA6e5TcJuIDoXJ64iIojs5+hbYv9RjT6E4bOhj0vad7OqQinXKLjXzwt9EZ/PTvLYU8aUPqun2244xpNXBba6vLEyWAlRo6;20:aPsLzq8EBmrMfZSocJ6rmBEHHgu/LW7T5r/mCCuylKtBzclTnYcrF3qgu4PwHi7Y7+glYbog5ciyhGSJ0Jew8hbr43QfL9KgLm0rDor0kLKfkEwIKSHAn7Fk+JceKaCPRo4k7+dTwhEzRqb5G6tJ3IeVHMISeEVMum2pf60fuaTVL6iny1/R/SXwSCY3fkUpv1vL80f6T+ElPklXHZJ1TyGR5uwu4wQwxvBBtRUHJITy0ZMDvQ2WTD9z8R4OfeRVOJ1D1txmEBQu4qsrSN+7Txm/wNV9XpF7KjpdPymoVqA9UOhCbxH3V+ogo0rUrbdWLTTDdSE0qHEwnLElHU6whA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(366004)(39380400002)(376002)(39850400004)(396003)(346002)(199004)(189003)(14454004)(68736007)(6436002)(106356001)(8676002)(81166006)(81156014)(25786009)(478600001)(66066001)(8936002)(2906002)(110136005)(7736002)(97736004)(305945005)(54906003)(86362001)(3660700001)(3280700002)(105586002)(26005)(55016002)(102836004)(53936002)(7696005)(186003)(76176011)(6506007)(3846002)(9686003)(7416002)(74316002)(5660300001)(446003)(11346002)(33656002)(476003)(486006)(2900100001)(4326008)(316002)(5250100002)(2501003)(99286004)(6116002)(13296004)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR03MB0802;H:HK2PR03MB1684.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(2017052603328)(7153060)(7193020);SRVR:HK2PR03MB0802;
+x-ms-traffictypediagnostic: HK2PR03MB0802:
+x-microsoft-antispam-prvs: <HK2PR03MB08029E6BDBD51516661419CB929A0@HK2PR03MB0802.apcprd03.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(3940261145250);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:HK2PR03MB0802;BCL:0;PCL:0;RULEID:;SRVR:HK2PR03MB0802;
+x-forefront-prvs: 0666E15D35
+x-microsoft-antispam-message-info: 5nb14QRHMH9lJV4ZQZc0/ywtGMxOvfF/I7P1vEBes/s7akaScbc4zza3WKLf4B0SFYAdzsgvjB0rzuEl6x/BZtiiUsBPYJUZubzhIVLCOoiki13JqZqTIUZMMK8jjFhoczeQGjqfZmEO2n4vZ4URMYzJ4mNNxs7QM/q3X07fzqfMt3pOt9FhKdT8pXtu3V6R
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: 46c7d637-def9-43c7-5aef-08d5b48c53aa
+X-MS-Exchange-CrossTenant-Network-Message-Id: 46c7d637-def9-43c7-5aef-08d5b48c53aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2018 02:35:13.3396
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR03MB0802
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w482ZetV006713
 
-This patch adds extra functions for shutdown on the Sound Blaster Z and
-Recon3Di. The Recon3Di only has one specific functions, which sets the
-GPIO data pins to 0 to prevent a popping noise.
+Create PTE, PMD, PUD and P4D levels page table mapping for physical
+addresses of DRAM and NVDIMM both. Here E820_TYPE_PMEM represents
+the region of e820_table.
 
-The Sound Blaster Z exit sequence was taken from Windows. Without this
-exit function, the card will not reload properly unless the PC has been
-shutdown to clear the onboard memory. There are commented out functions
-currently in the sbz_exit_chip function that are added in a later patch.
-
-Also, a reboot notify function has been added, to make sure these
-functions are ran before a reboot. This helps when using the card
-through VFIO in a virtual machine, to make sure the card reloads the DSP
-properly.
-
-Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Signed-off-by: Ocean He <hehy1@lenovo.com>
 ---
- sound/pci/hda/patch_ca0132.c | 131 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 129 insertions(+), 2 deletions(-)
+ arch/x86/mm/init_64.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 78d2c26..5cda7a5 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -4641,6 +4641,115 @@ static void ca0132_init_chip(struct hda_codec *codec)
- #endif
- }
- 
-+/*
-+ * Recon3Di exit specific commands.
-+ */
-+/* prevents popping noise on shutdown */
-+static void r3di_gpio_shutdown(struct hda_codec *codec)
-+{
-+	snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA, 0x00);
-+}
-+
-+/*
-+ * Sound Blaster Z exit specific commands.
-+ */
-+static void sbz_region2_exit(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int i;
-+
-+	for (i = 0; i < 4; i++)
-+		writeb(0x0, spec->mem_base + 0x100);
-+	for (i = 0; i < 8; i++)
-+		writeb(0xb3, spec->mem_base + 0x304);
-+	/*
-+	 * I believe these are GPIO, with the right most hex digit being the
-+	 * gpio pin, and the second digit being on or off. We see this more in
-+	 * the input/output select functions.
-+	 */
-+	writew(0x0000, spec->mem_base + 0x320);
-+	writew(0x0001, spec->mem_base + 0x320);
-+	writew(0x0104, spec->mem_base + 0x320);
-+	writew(0x0005, spec->mem_base + 0x320);
-+	writew(0x0007, spec->mem_base + 0x320);
-+}
-+
-+static void sbz_set_pin_ctl_default(struct hda_codec *codec)
-+{
-+	hda_nid_t pins[5] = {0x0B, 0x0C, 0x0E, 0x12, 0x13};
-+	unsigned int i;
-+
-+	snd_hda_codec_write(codec, 0x11, 0,
-+			AC_VERB_SET_PIN_WIDGET_CONTROL, 0x40);
-+
-+	for (i = 0; i < 5; i++)
-+		snd_hda_codec_write(codec, pins[i], 0,
-+				AC_VERB_SET_PIN_WIDGET_CONTROL, 0x00);
-+}
-+
-+static void sbz_clear_unsolicited(struct hda_codec *codec)
-+{
-+	hda_nid_t pins[7] = {0x0B, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13};
-+	unsigned int i;
-+
-+	for (i = 0; i < 7; i++) {
-+		snd_hda_codec_write(codec, pins[i], 0,
-+				AC_VERB_SET_UNSOLICITED_ENABLE, 0x00);
-+	}
-+}
-+
-+/* On shutdown, sends commands in sets of three */
-+static void sbz_gpio_shutdown_commands(struct hda_codec *codec, int dir,
-+							int mask, int data)
-+{
-+	if (dir >= 0)
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DIRECTION, dir);
-+	if (mask >= 0)
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_MASK, mask);
-+
-+	if (data >= 0)
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DATA, data);
-+}
-+
-+static void sbz_exit_chip(struct hda_codec *codec)
-+{
-+
-+	/* Mess with GPIO */
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, -1);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x05);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x01);
-+
-+
-+	chipio_set_conn_rate(codec, 0x41, SR_192_000);
-+	chipio_set_conn_rate(codec, 0x91, SR_192_000);
-+
-+	chipio_write(codec, 0x18a020, 0x00000083);
-+
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x03);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x07);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x06);
-+
-+
-+	chipio_set_control_param(codec, 0x0D, 0x24);
-+
-+	sbz_clear_unsolicited(codec);
-+	sbz_set_pin_ctl_default(codec);
-+
-+	snd_hda_codec_write(codec, 0x0B, 0,
-+		AC_VERB_SET_EAPD_BTLENABLE, 0x00);
-+
-+	if (dspload_is_loaded(codec))
-+		dsp_reset(codec);
-+
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+		VENDOR_CHIPIO_CT_EXTENSIONS_ENABLE, 0x00);
-+
-+	sbz_region2_exit(codec);
-+}
-+
- static void ca0132_exit_chip(struct hda_codec *codec)
- {
- 	/* put any chip cleanup stuffs here. */
-@@ -4701,8 +4810,20 @@ static void ca0132_free(struct hda_codec *codec)
- 
- 	cancel_delayed_work_sync(&spec->unsol_hp_work);
- 	snd_hda_power_up(codec);
--	snd_hda_sequence_write(codec, spec->base_exit_verbs);
--	ca0132_exit_chip(codec);
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		sbz_exit_chip(codec);
-+		break;
-+	case QUIRK_R3DI:
-+		r3di_gpio_shutdown(codec);
-+		snd_hda_sequence_write(codec, spec->base_exit_verbs);
-+		ca0132_exit_chip(codec);
-+		break;
-+	default:
-+		snd_hda_sequence_write(codec, spec->base_exit_verbs);
-+		ca0132_exit_chip(codec);
-+		break;
-+	}
- 	snd_hda_power_down(codec);
- 	if (spec->mem_base)
- 		iounmap(spec->mem_base);
-@@ -4710,12 +4831,18 @@ static void ca0132_free(struct hda_codec *codec)
- 	kfree(codec->spec);
- }
- 
-+static void ca0132_reboot_notify(struct hda_codec *codec)
-+{
-+	codec->patch_ops.free(codec);
-+}
-+
- static const struct hda_codec_ops ca0132_patch_ops = {
- 	.build_controls = ca0132_build_controls,
- 	.build_pcms = ca0132_build_pcms,
- 	.init = ca0132_init,
- 	.free = ca0132_free,
- 	.unsol_event = snd_hda_jack_unsol_event,
-+	.reboot_notify = ca0132_reboot_notify,
- };
- 
- static void ca0132_config(struct hda_codec *codec)
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index af11a28..c03c2091 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -420,6 +420,10 @@ void __init cleanup_highmap(void)
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
++#ifdef CONFIG_ZONE_NVM
++			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
++					     E820_TYPE_PMEM) &&
++#endif
+ 			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
+ 					     E820_TYPE_RESERVED_KERN))
+ 				set_pte(pte, __pte(0));
+@@ -475,6 +479,10 @@ void __init cleanup_highmap(void)
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
++#ifdef CONFIG_ZONE_NVM
++			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
++					     E820_TYPE_PMEM) &&
++#endif
+ 			    !e820__mapped_any(paddr & PMD_MASK, paddr_next,
+ 					     E820_TYPE_RESERVED_KERN))
+ 				set_pmd(pmd, __pmd(0));
+@@ -561,6 +569,10 @@ void __init cleanup_highmap(void)
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
++#ifdef CONFIG_ZONE_NVM
++			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
++					     E820_TYPE_PMEM) &&
++#endif
+ 			    !e820__mapped_any(paddr & PUD_MASK, paddr_next,
+ 					     E820_TYPE_RESERVED_KERN))
+ 				set_pud(pud, __pud(0));
+@@ -647,6 +659,10 @@ void __init cleanup_highmap(void)
+ 			if (!after_bootmem &&
+ 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+ 					     E820_TYPE_RAM) &&
++#ifdef CONFIG_ZONE_NVM
++			    !e820__mapped_any(paddr & PAGE_MASK, paddr_next,
++					     E820_TYPE_PMEM) &&
++#endif
+ 			    !e820__mapped_any(paddr & P4D_MASK, paddr_next,
+ 					     E820_TYPE_RESERVED_KERN))
+ 				set_p4d(p4d, __p4d(0));
 -- 
-2.7.4
+1.8.3.1
