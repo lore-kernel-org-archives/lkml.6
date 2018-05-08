@@ -1,241 +1,153 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932367AbeEHKjv (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 06:39:51 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44391 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932261AbeEHKjs (ORCPT
+        id S932419AbeEHKkC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 06:40:02 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59070 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932233AbeEHKj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 06:39:48 -0400
-X-Google-Smtp-Source: AB8JxZrM+lxTgeP4VNvJk9C9IhxpUPZHqxXGWEmrzso3L9590XATKADvdd9+YopesMBZSdu3avqSuQ==
-Date: Tue, 8 May 2018 11:39:44 +0100
-From: Daniel Thompson <daniel.thompson@linaro.org>
-To: Kiran Gunda <kgunda@codeaurora.org>
-Cc: bjorn.andersson@linaro.org, Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH V2 4/5] backlight: qcom-wled: Add support for OVP
- interrupt handling
-Message-ID: <20180508103944.qib7ax3sgzhzacmb@holly.lan>
-References: <1525342352-25072-1-git-send-email-kgunda@codeaurora.org>
- <1525342352-25072-5-git-send-email-kgunda@codeaurora.org>
+        Tue, 8 May 2018 06:39:58 -0400
+Subject: Re: [PATCH][media-next] media: ddbridge: avoid out-of-bounds write on
+ array demod_in_use
+To: Daniel Scheller <d.scheller.oss@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180507230842.28409-1-colin.king@canonical.com>
+ <20180508123836.0b5c2f7f@lt530>
+From: Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c7ea26b7-d743-f2bd-fd0d-41421ae2778d@canonical.com>
+Date: Tue, 8 May 2018 11:39:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1525342352-25072-5-git-send-email-kgunda@codeaurora.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <20180508123836.0b5c2f7f@lt530>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, May 03, 2018 at 03:42:31PM +0530, Kiran Gunda wrote:
-> WLED peripheral has over voltage protection(OVP) circuitry and the OVP
-> fault is notified through an interrupt. Though this fault condition rising
-> is due to an incorrect hardware configuration is mitigated in the hardware,
-> it still needs to be detected and handled. Add support for it.
-
-Why detect and handle it? The interrupt handler doesn't appear to do
-anything other than clear the interrupt... and it appears that the 
-interrupt can be masked.
-
-
-> When WLED module is enabled, keep OVP fault interrupt disabled for 10 ms to
-> account for soft start delay.
+On 08/05/18 11:38, Daniel Scheller wrote:
+> Hi Colin,
 > 
-> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
-> ---
->  drivers/video/backlight/qcom-wled.c | 118 +++++++++++++++++++++++++++++++++++-
->  1 file changed, 116 insertions(+), 2 deletions(-)
+> Am Tue,  8 May 2018 00:08:42 +0100
+> schrieb Colin King <colin.king@canonical.com>:
 > 
-> diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-> index 2cfba77..80ae084 100644
-> --- a/drivers/video/backlight/qcom-wled.c
-> +++ b/drivers/video/backlight/qcom-wled.c
-> @@ -23,14 +23,20 @@
->  
->  /* From DT binding */
->  #define WLED_DEFAULT_BRIGHTNESS				2048
-> -
-> +#define WLED_SOFT_START_DLY_US				10000
->  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->  
->  /* WLED3 Control registers */
->  #define WLED3_CTRL_REG_FAULT_STATUS			0x08
-> +#define  WLED3_CTRL_REG_ILIM_FAULT_BIT			BIT(0)
-> +#define  WLED3_CTRL_REG_OVP_FAULT_BIT			BIT(1)
-> +#define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
-> +
-> +#define WLED3_CTRL_REG_INT_RT_STS			0x10
->  
->  #define WLED3_CTRL_REG_MOD_EN				0x46
->  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
-> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
->  
->  #define WLED3_CTRL_REG_FREQ				0x4c
->  #define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
-> @@ -161,9 +167,12 @@ struct wled {
->  	u32 short_count;
->  	const int *version;
->  	int short_irq;
-> +	int ovp_irq;
->  	bool force_mod_disable;
-> +	bool ovp_irq_disabled;
->  
->  	struct wled_config cfg;
-> +	struct delayed_work ovp_work;
->  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
->  	int (*wled_sync_toggle)(struct wled *wled);
->  };
-> @@ -209,6 +218,32 @@ static int wled4_set_brightness(struct wled *wled, u16 brightness)
->  	return 0;
->  }
->  
-> +static void wled_ovp_work(struct work_struct *work)
-> +{
-> +	u32 val;
-> +	int rc;
-> +
-> +	struct wled *wled = container_of(work,
-> +					 struct wled, ovp_work.work);
-> +
-> +	rc = regmap_read(wled->regmap, wled->ctrl_addr + WLED3_CTRL_REG_MOD_EN,
-> +			 &val);
-> +	if (rc < 0)
-> +		return;
-> +
-> +	if (val & WLED3_CTRL_REG_MOD_EN_BIT) {
-> +		if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
-> +			enable_irq(wled->ovp_irq);
-> +			wled->ovp_irq_disabled = false;
-> +		}
-> +	} else {
-> +		if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
-> +			disable_irq(wled->ovp_irq);
-> +			wled->ovp_irq_disabled = true;
-> +		}
-> +	}
-> +}
-> +
->  static int wled_module_enable(struct wled *wled, int val)
->  {
->  	int rc;
-> @@ -220,7 +255,12 @@ static int wled_module_enable(struct wled *wled, int val)
->  				WLED3_CTRL_REG_MOD_EN,
->  				WLED3_CTRL_REG_MOD_EN_MASK,
->  				WLED3_CTRL_REG_MOD_EN_MASK);
-> -	return rc;
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
-> +
-> +	return 0;
->  }
->  
->  static int wled3_sync_toggle(struct wled *wled)
-> @@ -346,6 +386,36 @@ static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
->  	return IRQ_HANDLED;
->  }
->  
-> +static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
-> +{
-> +	struct wled *wled = _wled;
-> +	int rc;
-> +	u32 int_sts, fault_sts;
-> +
-> +	rc = regmap_read(wled->regmap,
-> +			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS, &int_sts);
-> +	if (rc < 0) {
-> +		dev_err(wled->dev, "Error in reading WLED3_INT_RT_STS rc=%d\n",
-> +			rc);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
-> +			 WLED3_CTRL_REG_FAULT_STATUS, &fault_sts);
-> +	if (rc < 0) {
-> +		dev_err(wled->dev, "Error in reading WLED_FAULT_STATUS rc=%d\n",
-> +			rc);
-> +		return IRQ_HANDLED;
-> +	}
-> +
-> +	if (fault_sts &
-> +		(WLED3_CTRL_REG_OVP_FAULT_BIT | WLED3_CTRL_REG_ILIM_FAULT_BIT))
-> +		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= %x\n",
-> +			int_sts, fault_sts);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
->  static int wled3_setup(struct wled *wled)
->  {
->  	u16 addr;
-> @@ -821,6 +891,44 @@ static int wled_configure_short_irq(struct wled *wled,
->  	return rc;
->  }
->  
-> +static int wled_configure_ovp_irq(struct wled *wled,
-> +				  struct platform_device *pdev)
-> +{
-> +	int rc = 0;
-> +	u32 val;
-> +
-> +	if (*wled->version == WLED_PM8941)
-> +		return 0;
-> +
-> +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
-> +	if (wled->ovp_irq < 0) {
-> +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
-> +		return 0;
-> +	}
-> +
-> +	rc = devm_request_threaded_irq(wled->dev, wled->ovp_irq, NULL,
-> +				       wled_ovp_irq_handler, IRQF_ONESHOT,
-> +				       "wled_ovp_irq", wled);
-> +	if (rc < 0) {
-> +		dev_err(wled->dev, "Unable to request ovp_irq (err:%d)\n",
-> +			rc);
-> +		return 0;
-> +	}
-> +
-> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
-> +			 WLED3_CTRL_REG_MOD_EN, &val);
-> +	if (rc < 0)
-> +		return rc;
-> +
-> +	/* Keep OVP irq disabled until module is enabled */
-> +	if (!rc && !(val & WLED3_CTRL_REG_MOD_EN_MASK)) {
-> +		disable_irq(wled->ovp_irq);
-> +		wled->ovp_irq_disabled = true;
-> +	}
-> +
-> +	return rc;
-> +}
-> +
->  static const struct backlight_ops wled_ops = {
->  	.update_status = wled_update_status,
->  };
-> @@ -874,10 +982,16 @@ static int wled_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> +	INIT_DELAYED_WORK(&wled->ovp_work, wled_ovp_work);
-> +
->  	rc = wled_configure_short_irq(wled, pdev);
->  	if (rc < 0)
->  		return rc;
->  
-> +	rc = wled_configure_ovp_irq(wled, pdev);
-> +	if (rc < 0)
-> +		return rc;
-> +
->  	val = WLED_DEFAULT_BRIGHTNESS;
->  	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
->  
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
->  a Linux Foundation Collaborative Project
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> In function stop there is a check to see if state->demod is a stopped
+>> value of 0xff, however, later on, array demod_in_use is indexed with
+>> this value causing an out-of-bounds write error.  Avoid this by only
+>> writing to array demod_in_use if state->demod is not set to the stopped
+>> sentinal value for this specific corner case.  Also, replace the magic
+>> value 0xff with DEMOD_STOPPED to make code more readable.
+>>
+>> Detected by CoverityScan, CID#1468550 ("Out-of-bounds write")
+>>
+>> Fixes: daeeb1319e6f ("media: ddbridge: initial support for MCI-based MaxSX8 cards")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/media/pci/ddbridge/ddbridge-mci.c | 11 +++++++----
+>>  1 file changed, 7 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/media/pci/ddbridge/ddbridge-mci.c b/drivers/media/pci/ddbridge/ddbridge-mci.c
+>> index a85ff3e6b919..1f5ed53c8d35 100644
+>> --- a/drivers/media/pci/ddbridge/ddbridge-mci.c
+>> +++ b/drivers/media/pci/ddbridge/ddbridge-mci.c
+>> @@ -20,6 +20,8 @@
+>>  #include "ddbridge-io.h"
+>>  #include "ddbridge-mci.h"
+>>  
+>> +#define DEMOD_STOPPED	(0xff)
+>> +
+>>  static LIST_HEAD(mci_list);
+>>  
+>>  static const u32 MCLK = (1550000000 / 12);
+>> @@ -193,7 +195,7 @@ static int stop(struct dvb_frontend *fe)
+>>  	u32 input = state->tuner;
+>>  
+>>  	memset(&cmd, 0, sizeof(cmd));
+>> -	if (state->demod != 0xff) {
+>> +	if (state->demod != DEMOD_STOPPED) {
+>>  		cmd.command = MCI_CMD_STOP;
+>>  		cmd.demod = state->demod;
+>>  		mci_cmd(state, &cmd, NULL);
+>> @@ -209,10 +211,11 @@ static int stop(struct dvb_frontend *fe)
+>>  	state->base->tuner_use_count[input]--;
+>>  	if (!state->base->tuner_use_count[input])
+>>  		mci_set_tuner(fe, input, 0);
+>> -	state->base->demod_in_use[state->demod] = 0;
+>> +	if (state->demod != DEMOD_STOPPED)
+>> +		state->base->demod_in_use[state->demod] = 0;
+>>  	state->base->used_ldpc_bitrate[state->nr] = 0;
+>> -	state->demod = 0xff;
+>> -	state->base->assigned_demod[state->nr] = 0xff;
+>> +	state->demod = DEMOD_STOPPED;
+>> +	state->base->assigned_demod[state->nr] = DEMOD_STOPPED;
+>>  	state->base->iq_mode = 0;
+>>  	mutex_unlock(&state->base->tuner_lock);
+>>  	state->started = 0;
+> 
+> Thanks for the patch, or - better - pointing this out. While it's
+> unlikely this will ever be an issue, I'm fine with changing the code
+> like that, but I'd prefer to change it a bit differently (ie.
+> DEMOD_STOPPED should be DEMOD_UNUSED, and I'd add defines for max.
+> tuners and use/compare against them).
+
+Sounds like a good idea.
+
+> 
+> I'll send out a different patch that will cover the potential
+> coverityscan problem throughout the end of the week.
+
+Great. Thanks!
+
+> 
+> Best regards,
+> Daniel Scheller
 > 
