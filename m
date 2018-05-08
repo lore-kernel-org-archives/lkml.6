@@ -1,138 +1,84 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933235AbeEHXip (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 19:38:45 -0400
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:2612 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755853AbeEHXio (ORCPT
+        id S933246AbeEHXwy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 19:52:54 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:53900 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933022AbeEHXww (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 19:38:44 -0400
-Date: Wed, 9 May 2018 09:38:40 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Mark Fasheh <mfasheh@suse.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [RFC][PATCH 0/76] vfs: 'views' for filesystems with more than
- one root
-Message-ID: <20180508233840.GM10363@dastard>
-References: <20180508180436.716-1-mfasheh@suse.de>
+        Tue, 8 May 2018 19:52:52 -0400
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w48NqOTB009719
+X-Nifty-SrcIP: [209.85.217.171]
+X-Google-Smtp-Source: AB8JxZrfMZ+3xvYEhiKz+YcKKMwkkVxKYpM8RVdq2sJbrBPUfBKYg1t7sb7SyGDOfAv9CIQ9mhWEnbzy4pIfcPmBpcA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508180436.716-1-mfasheh@suse.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180508135150.27762-2-robh@kernel.org>
+References: <20180508135150.27762-1-robh@kernel.org> <20180508135150.27762-2-robh@kernel.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Wed, 9 May 2018 08:51:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQnFrZNJetQRrB_KuV_=oRneSFXj-KJ=SK6ZTZWjdn1tg@mail.gmail.com>
+Message-ID: <CAK7LNAQnFrZNJetQRrB_KuV_=oRneSFXj-KJ=SK6ZTZWjdn1tg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kbuild: disable new dtc graph and unit-address warnings
+To: Rob Herring <robh@kernel.org>
+Cc: DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 11:03:20AM -0700, Mark Fasheh wrote:
-> Hi,
-> 
-> The VFS's super_block covers a variety of filesystem functionality. In
-> particular we have a single structure representing both I/O and
-> namespace domains.
-> 
-> There are requirements to de-couple this functionality. For example,
-> filesystems with more than one root (such as btrfs subvolumes) can
-> have multiple inode namespaces. This starts to confuse userspace when
-> it notices multiple inodes with the same inode/device tuple on a
-> filesystem.
+Hi Rob,
 
-Devil's Advocate - I'm not looking at the code, I'm commenting on
-architectural issues I see here.
+2018-05-08 22:51 GMT+09:00 Rob Herring <robh@kernel.org>:
+> dtc gained some new warnings for OF graphs and unique unit addresses,
+> but they are currently much too noisy. So turn off
+> 'graph_child_address', 'graph_port', and 'unique_unit_address' warnings
+> by default. They can be enabled by building dtbs with W=1.
+>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: linux-kbuild@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> I plan to take this via DT tree as it is dependent on a dtc update in
+> patch 1.
 
-The XFS subvolume work I've been doing explicitly uses a superblock
-per subvolume. That's because subvolumes are designed to be
-completely independent of the backing storage - they know nothing
-about the underlying storage except to share a BDI for writeback
-purposes and write to whatever block device the remapping layer
-gives them at IO time.  Hence XFS subvolumes have (at this point)
-their own unique s_dev, on-disk format configuration, journal, space
-accounting, etc. i.e. They are fully independent filesystems in
-their own right, and as such we do not have multiple inode
-namespaces per superblock.
 
-So this doesn't sound like a "subvolume problem" - it's a "how do we
-sanely support multiple independent namespaces per superblock"
-problem. AFAICT, this same problem exists with bind mounts and mount
-namespaces - they are effectively multiple roots on a single
-superblock, but it's done at the vfsmount level and so the
-superblock knows nothing about them.
+Yes, please do so.
 
-So this kinda feel like there's still a impedence mismatch between
-btrfs subvolumes being mounted as subtrees on the underlying root
-vfsmount rather than being created as truly independent vfs
-namespaces that share a superblock. To put that as a question: why
-aren't btrfs subvolumes vfsmounts in their own right, and the unique
-information subvolume information get stored in (or obtained from)
-the vfsmount?
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> In addition, it's currently impossible for a filesystem subvolume to
-> have a different security context from it's parent. If we could allow
-> for subvolumes to optionally specify their own security context, we
-> could use them as containers directly instead of having to go through
-> an overlay.
 
-Again, XFS subvolumes don't have this problem. So really we need to
-frame this discussion in terms of supporting multiple namespaces
-within a superblock sanely, not subvolumes.
 
-> I ran into this particular problem with respect to Btrfs some years
-> ago and sent out a very naive set of patches which were (rightfully)
-> not incorporated:
-> 
-> https://marc.info/?l=linux-btrfs&m=130074451403261&w=2
-> https://marc.info/?l=linux-btrfs&m=130532890824992&w=2
-> 
-> During the discussion, one question did come up - why can't
-> filesystems like Btrfs use a superblock per subvolume? There's a
-> couple of problems with that:
-> 
-> - It's common for a single Btrfs filesystem to have thousands of
->   subvolumes. So keeping a superblock for each subvol in memory would
->   get prohibively expensive - imagine having 8000 copies of struct
->   super_block for a file system just because we wanted some separation
->   of say, s_dev.
 
-That's no different to using individual overlay mounts for the
-thousands of containers that are on the system. This doesn't seem to
-be a major problem...
 
-> - Writeback would also have to walk all of these superblocks -
->   again not very good for system performance.
+>  scripts/Makefile.lib | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 5af34a2b0cd9..1bb594fcfe12 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -251,6 +251,9 @@ DTC_FLAGS += -Wno-unit_address_vs_reg \
+>         -Wno-unit_address_format \
+>         -Wno-avoid_unnecessary_addr_size \
+>         -Wno-alias_paths \
+> +       -Wno-graph_child_address \
+> +       -Wno-graph_port \
+> +       -Wno-unique_unit_address \
+>         -Wno-pci_device_reg
+>  endif
+>
+> --
+> 2.17.0
+>
 
-Background writeback is backing device focussed, not superblock
-focussed. It will only iterate the superblocks that have dirty
-inodes on the bdi writeback lists, not all the superblocks on the
-bdi. IOWs, this isn't a major problem except for sync() operations
-that iterate superblocks.....
 
-> - Anyone wanting to lock down I/O on a filesystem would have to
-> freeze all the superblocks. This goes for most things related to
-> I/O really - we simply can't afford to have the kernel walking
-> thousands of superblocks to sync a single fs.
 
-Not with XFS subvolumes. Freezing the underlying parent filesystem
-will effectively stop all IO from the mounted subvolumes by freezing
-remapping calls before IO. Sure, those subvolumes aren't in a
-consistent state, but we don't freeze userspace so none of the
-application data is ever in a consistent state when filesystems are
-frozen.
-
-So, again, I'm not sure there's /subvolume/ problem here. There's
-definitely a "freeze heirarchy" problem, but that already exists and
-it's something we talked about at LSFMM because we need to solve it
-for reliable hibernation.
-
-> It's far more efficient then to pull those fields we need for a
-> subvolume namespace into their own structure.
-
-I'm not convinced yet - it still feels like it's the wrong layer to
-be solving the multiple namespace per superblock problem....
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Best Regards
+Masahiro Yamada
