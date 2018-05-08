@@ -1,37 +1,37 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZo6fnZ0j79pp8FrKnhOz4Hl5yBPYy+TiYEcMSRC6AuJXHpr4xO3yoh0w6HTR4eYyD3Oew/d
-ARC-Seal: i=1; a=rsa-sha256; t=1525767244; cv=none;
+X-Google-Smtp-Source: AB8JxZrBgeU8QjD9aa+pnKiGIBZqJae3hrbc9qNBSM9H3vDeAA8BYh1V8QjRIR75C6hz/q9Es5n8
+ARC-Seal: i=1; a=rsa-sha256; t=1525767241; cv=none;
         d=google.com; s=arc-20160816;
-        b=zofAKpQkZ4ikyHXlhltt6Fo4kgIngowYLC5EslxUTKhkixYAANSSpY2LzdJRtrbXzH
-         D/FFosUd1C8vzRl11bNWEKRnAkUXO3tmd0EDPGcrsXkj0d7MEADt3flsJMk5ePfohgdF
-         LkVw3Cou1NzGb9Fd3mfvIL+PXRZa4oo3I8g+u7aQ83zFyaSbBNq0hJwpwrjvpIUlDeST
-         K/BFSFlQjcmaVpwrkJDlKoUCN+NCq6dPjVLJU5NDI4bvsrcV4aa+WydvhKFXoXvRnQMg
-         EwTvVe42LOMF2V4wh2a8aCbkd8GhG+8loj7W0rfQgagGBHKcVBaHHAosfHhUpKhYQzb+
-         bX+w==
+        b=dcYvQIW4kigLFH5ZPpQoLB6gz40xlt7haFeIg2cGMU5U2pQD/vqe5Jm1uV38HW+NoU
+         RPqJQeWSJH65YKAxUS0asALmk94/MNNQscDGMuLvQ7GjBYoAZhBZop5fpmoHkugGl06R
+         2HDph+ik+VRHD7L8OKjh4fd73i0hyoJnFOtcdYkmVG9TNIXM38IstXIFfuUSUSe3clK7
+         FfJ9F9aXOKqFK7hBkZgDnkSs8IXohSIFrDiQNySP7rjHiKZR9X7ekZfwi8tfA7TT4Zq3
+         IskFPzxZItt7A/0hmpiGSbXju5WyFIpoqqbn7J0zgW5004ZWQ0TJjaLPqlPUl0NIyH2J
+         i7dA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=fxPaL3Ad6/5SP0CePpxBZW48DOb7DfP9106cRyVo2po=;
-        b=oMfKleAzdRvEud6ovvBbjk3351S7Um5nIgLfZcu9vCOuLnBuqo2yySVfp72B7cGYD3
-         /XQGDjXFeK9TwRU25s+0qv4EIbQHEF7lUo+xUSZNXTWTfxwPJFl0s8CaE3gOtHX99Prg
-         D+mAaQ83R6lW1x7JD88o7RX+7ur3qLljzkXmdQ0Tf1FjDQn+lvrT31Ov65FPflypefHZ
-         l93eU/8KtcNLaa5G0t4aBa50j9/VR1IfbZewEtSvB+v4krwpKpDNuCqH7IVDdreAxL9f
-         FC8+2G0agwk9Cp3L+Zkjkto4jH5Ud66ANMbmuaL+/UTyRiO+bzCxVgjpKJBngj8vaOMN
-         Soaw==
+        bh=wVarb8H+OcLb4ibPDyBH4JGwAmX3f/3BLhZIlwGo+Vo=;
+        b=fxbUNxvhAok1h4aZbQWZ0E6gLPuvP3ofY8J2MfS67ro7wdtZwq2zoEhHRro9iq3F0D
+         bTztmxBECctDgs/gu86s5pUj5+7PHUM+LSJAr+xT8nMl3V6yxzZCtPS2d+iiulgDEJRn
+         94WbhQvxNtPMegLu/fwSGL9QGKR2ayvyDjZBMh5zaZHmCDHQWB1XiaKpkPFlsvsJKY0M
+         NGshgvYCY8ueE7jbF6F5OKe51YEAZW/VshARIa2o3sG41DCq9SlmHMLAw8e0t8BQp1mb
+         n3XAaOcbRXf4i1cvVvAiJU9B8Q+wcHunreE8I7xfm7qVnqgHT0JhysqvJ3IUbYOpC4q2
+         5S2Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=2hz+5oQZ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Dq0gTDuo;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=2hz+5oQZ;
+       dkim=pass header.i=@kernel.org header.s=default header.b=Dq0gTDuo;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
 	Bin Liu <b-liu@ti.com>
-Subject: [PATCH 4.16 42/52] usb: musb: trace: fix NULL pointer dereference in musb_g_tx()
-Date: Tue,  8 May 2018 10:10:40 +0200
-Message-Id: <20180508073934.008038060@linuxfoundation.org>
+Subject: [PATCH 4.16 41/52] usb: musb: host: fix potential NULL pointer dereference
+Date: Tue,  8 May 2018 10:10:39 +0200
+Message-Id: <20180508073933.893538391@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -41,8 +41,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882913684302891?=
-X-GMAIL-MSGID: =?utf-8?q?1599882913684302891?=
+X-GMAIL-THRID: =?utf-8?q?1599882910647736531?=
+X-GMAIL-MSGID: =?utf-8?q?1599882910647736531?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,40 +52,34 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 From: Bin Liu <b-liu@ti.com>
 
-commit 9aea9b6cc78d2b99b23d84fb2e0bc6e464c6569e upstream.
+commit 2b63f1329df2cd814c1f8353fae4853ace6521d1 upstream.
 
-The usb_request pointer could be NULL in musb_g_tx(), where the
-tracepoint call would trigger the NULL pointer dereference failure when
-parsing the members of the usb_request pointer.
+musb_start_urb() doesn't check the pass-in parameter if it is NULL.  But
+in musb_bulk_nak_timeout() the parameter passed to musb_start_urb() is
+returned from first_qh(), which could be NULL.
 
-Move the tracepoint call to where the usb_request pointer is already
-checked to solve the issue.
+So wrap the musb_start_urb() call here with a if condition check to
+avoid the potential NULL pointer dereference.
 
-Fixes: fc78003e5345 ("usb: musb: gadget: add usb-request tracepoints")
-Cc: stable@vger.kernel.org # v4.8+
+Fixes: f283862f3b5c ("usb: musb: NAK timeout scheme on bulk TX endpoint")
+Cc: stable@vger.kernel.org # v3.7+
 Signed-off-by: Bin Liu <b-liu@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/musb/musb_gadget.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/musb/musb_host.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/musb/musb_gadget.c
-+++ b/drivers/usb/musb/musb_gadget.c
-@@ -417,7 +417,6 @@ void musb_g_tx(struct musb *musb, u8 epn
- 	req = next_request(musb_ep);
- 	request = &req->request;
- 
--	trace_musb_req_tx(req);
- 	csr = musb_readw(epio, MUSB_TXCSR);
- 	musb_dbg(musb, "<== %s, txcsr %04x", musb_ep->end_point.name, csr);
- 
-@@ -456,6 +455,8 @@ void musb_g_tx(struct musb *musb, u8 epn
- 		u8	is_dma = 0;
- 		bool	short_packet = false;
- 
-+		trace_musb_req_tx(req);
+--- a/drivers/usb/musb/musb_host.c
++++ b/drivers/usb/musb/musb_host.c
+@@ -996,7 +996,9 @@ static void musb_bulk_nak_timeout(struct
+ 			/* set tx_reinit and schedule the next qh */
+ 			ep->tx_reinit = 1;
+ 		}
+-		musb_start_urb(musb, is_in, next_qh);
 +
- 		if (dma && (csr & MUSB_TXCSR_DMAENAB)) {
- 			is_dma = 1;
- 			csr |= MUSB_TXCSR_P_WZC_BITS;
++		if (next_qh)
++			musb_start_urb(musb, is_in, next_qh);
+ 	}
+ }
+ 
