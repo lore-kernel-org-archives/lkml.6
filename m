@@ -1,82 +1,273 @@
-Return-Path: <linux-kselftest-owner@vger.kernel.org>
-X-Google-Smtp-Source: AB8JxZpP5ffOa8RmJm0tnwvErYJeP/tfMQCtOCPMw2MmX/DxR3DAm5MF1uMEG2yk4phDrObQDnYf
-ARC-Seal: i=1; a=rsa-sha256; t=1525425466; cv=none;
+Return-Path: <dougso@me.com>
+X-Google-Smtp-Source: AB8JxZrAXiOKuXJuz6DwfWnd9wkm0mVXuoO6A5dKzaZbTyK2Br4dZMt2SDHUzwsLhMj49R2XBzv0
+ARC-Seal: i=1; a=rsa-sha256; t=1525749516; cv=none;
         d=google.com; s=arc-20160816;
-        b=kdTT6H4e0P243FEKSltjs+r3spfmFJrH6xYfyoydkkzR8NHUm5VMDepuVjXWn/+TUu
-         /1sumyrk5/beXfYvjp4L/Ap6h17KP/hKFUAopJEBXGw7gr2XxSfWpsN1bsvDRKr8DlAZ
-         lpBiidWFN1iMxCffLR9iIG9Nwi0EopJmtpekCLCy4HHthCKdzida9jAygj8WE0CcCqc4
-         NhFI8jfH8DsrDLuAxubiBCpSvRhfufphNaaKW9dJGdVxsp8sRy4zJz0aJgED8KnVgrqS
-         V8KUSEcikd5oAAkG56to96pbfFyR/nUX/Kbw1Ojn+lORoLM0Ac/MuE+ad0iOpMhpiN6L
-         MQDw==
+        b=OzcXgXYB1w2b65qy/DuuberdYtUdWLT6klSbhNl4TlrmDhy6fBvQulD4hwljbc0Lt0
+         QH7UMNAfsfTwvZ/QdZfgg3vuKAdbB2oqxfwx5VvyLJ1MXgWmCdqd3owojZkrWN5ceN9P
+         Sn2ljE++7KcvJW5ZNWPd5G1SOYvmOaUdlYE4fLEhKeGWwNQnYdBPZbWv69y20NObKdZb
+         rFdygmY35gruM7v1siGluOBfNUr9hW038+cAFOmJVhx++qbK8lnncJU5D5NgYUnnvWW1
+         EoFub10bYJpRVx67+id/pe6KpfQVC6HqRvc2LLduI844/rOKVdpz8T5K4uZ3PeebieY8
+         XOqg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=list-id:precedence:sender:message-id:date:subject:cc:to:from
-         :dkim-signature:arc-authentication-results;
-        bh=mcc8ADVlmcLDJd0ceAG53ZF/5WVQZNbS8PIzJjwxbQI=;
-        b=oYkwsl+R4NN/Y+zZzgr3r6UtSvdifQfh4mRnwcG+wD0YRc4YDG0an+q5ePNNmuzhQJ
-         c1fGuWxSTR9J/y9gSNITGgJg5dfob4yDpx0a/tfcSIbk2EVJLJb2QBNpGZaW9dqBhdKt
-         I0n3u5XSRxK/ICnhe8r71hQ+QWFlqeL7i2yls0b/Bsup++NrsOKlU8Cyt/0bDsGSv4N9
-         T1dhhlCsFSaVxgo7bkHknAAuoYxxhwmCyOeYMao0nFsmL1Q78HNhRx5NGUqdaJVqQSWj
-         usDKFzXCHxvvVALCcofv1sc9mqtTSXpQHfpYN6+4LF+PND/iPe13GRod721+BeFMe5xD
-         1i7Q==
+        h=message-id:date:subject:cc:to:from:dkim-signature
+         :arc-authentication-results;
+        bh=5AFAP/t7uTgEQ2oYO0+igkrKlAsP/X/yez34Jpp7+xc=;
+        b=UEHUsBd7avP/orZJRyEQuzrq1fjSJvMyaKkTgda+It1IhN/VVQKUpgkLnAWbiWklnS
+         pe7C5/RGR3kK59vQGCNEWH6J9/QgrcZZc0lpAeFFDZGLp/H8VL2jr1558SXHtTS5S58m
+         FkHitwZMYvhfhoXIf6yJ5VlqPep5y7n2ibpC9mPJNzkX3Ae9SZZrfHJMz0uDWEy7PKWm
+         l1PpbKGDlicP3xhlyagEolCcGOjxhrM1lQUWRBbTUb/lJWHmxcJ8W2xYfNmj4EHgtPwP
+         ANZKG2hxygZaqzPWSEhKg6itSYAqoy0vFV8nn1GHNc53/FB5Q7zWtpJ7gs9KJWdRQ20r
+         MUbg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=M8kKuhSb;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@me.com header.s=04042017 header.b=Hs7XfFNj;
+       spf=pass (google.com: domain of dougso@me.com designates 17.172.80.95 as permitted sender) smtp.mailfrom=dougso@me.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
 Authentication-Results: mx.google.com;
-       dkim=neutral (body hash did not verify) header.i=@linaro.org header.s=google header.b=M8kKuhSb;
-       spf=pass (google.com: best guess record for domain of linux-kselftest-owner@vger.kernel.org designates 209.132.180.67 as permitted sender) smtp.mailfrom=linux-kselftest-owner@vger.kernel.org;
-       dmarc=fail (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751326AbeEDJRc (ORCPT <rfc822;gregkh@linuxfoundation.org>);
-        Fri, 4 May 2018 05:17:32 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:42192 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751301AbeEDJRb (ORCPT
-        <rfc822;linux-kselftest@vger.kernel.org>);
-        Fri, 4 May 2018 05:17:31 -0400
-From: Anders Roxell <anders.roxell@linaro.org>
-To: davem@davemloft.net, shuah@kernel.org
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests: net: add udpgso* to TEST_GEN_FILES
-Date: Fri,  4 May 2018 11:17:25 +0200
-Message-Id: <20180504091725.24977-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.11.0
-Sender: linux-kselftest-owner@vger.kernel.org
-X-Mailing-List: linux-kselftest@vger.kernel.org
+       dkim=pass header.i=@me.com header.s=04042017 header.b=Hs7XfFNj;
+       spf=pass (google.com: domain of dougso@me.com designates 17.172.80.95 as permitted sender) smtp.mailfrom=dougso@me.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
+ definitions=2018-05-08_01:,, signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
+ clxscore=1015 suspectscore=2 malwarescore=0 phishscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1707230000 definitions=main-1805080031
+From: Doug Oucharek <dougso@me.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ devel@driverdev.osuosl.org, Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>,
+ James Simmons <jsimmons@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Lustre Development List <lustre-devel@lists.lustre.org>,
+ Doug Oucharek <dougso@me.com>, Doug Oucharek <doug.s.oucharek@intel.com>
+Subject: [PATCH v3] staging: lustre: o2iblnd: Enable Multiple OPA Endpoints
+ between Nodes
+Date: Mon, 07 May 2018 20:18:06 -0700
+Message-id: <1525749486-14168-1-git-send-email-dougso@me.com>
+X-Mailer: git-send-email 1.8.3.1
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599524533579135762?=
-X-GMAIL-MSGID: =?utf-8?q?1599524533579135762?=
+X-GMAIL-THRID: =?utf-8?q?1599864325620036079?=
+X-GMAIL-MSGID: =?utf-8?q?1599864325620036079?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-The generated files udpgso* shouldn't be part of TEST_PROGS, they are
-used by udpgso.sh and udpgsp_bench.sh. They should be added to the
-TEST_GEN_FILES to get installed without being added to the main
-run_kselftest.sh script.
+OPA driver optimizations are based on the MPI model where it is
+expected to have multiple endpoints between two given nodes. To
+enable this optimization for Lustre, we need to make it possible,
+via an LND-specific tuneable, to create multiple endpoints and to
+balance the traffic over them.
 
-Fixes: 3a687bef148d ("selftests: udp gso benchmark")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Both sides of a connection must have this patch for it to work.
+Only the active side of the connection (usually the client)
+needs to have the new tuneable set > 1.
+
+Signed-off-by: Doug Oucharek <doug.s.oucharek@intel.com>
+Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8943
+Reviewed-on: https://review.whamcloud.com/25168
+Reviewed-by: Amir Shehata <amir.shehata@intel.com>
+Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
+Reviewed-by: James Simmons <uja.ornl@yahoo.com>
+Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
+Signed-off-by: Doug Oucharek <dougso@me.com>
 ---
- tools/testing/selftests/net/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v1: Original patch
+Changes in v2: Fixed checkpatch issues
+Changes in v3: Properly added version change log
 
-diff --git a/tools/testing/selftests/net/Makefile b/tools/testing/selftests/net/Makefile
-index 44895de1a0c4..f0363387ef2f 100644
---- a/tools/testing/selftests/net/Makefile
-+++ b/tools/testing/selftests/net/Makefile
-@@ -11,9 +11,9 @@ TEST_GEN_PROGS_EXTENDED := in_netns.sh
- TEST_GEN_FILES =  socket
- TEST_GEN_FILES += psock_fanout psock_tpacket msg_zerocopy
- TEST_GEN_FILES += tcp_mmap tcp_inq
-+TEST_GEN_FILES += udpgso udpgso_bench_tx udpgso_bench_rx
- TEST_GEN_PROGS = reuseport_bpf reuseport_bpf_cpu reuseport_bpf_numa
- TEST_GEN_PROGS += reuseport_dualstack reuseaddr_conflict
--TEST_GEN_PROGS += udpgso udpgso_bench_tx udpgso_bench_rx
+ .../lustre/include/uapi/linux/lnet/lnet-dlc.h      |  3 ++-
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    | 17 ++++++++++++---
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c | 25 +++++++++++++++-------
+ .../lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c  |  9 ++++++++
+ 4 files changed, 42 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
+index e45d828..c1619f4 100644
+--- a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
++++ b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
+@@ -53,7 +53,8 @@ struct lnet_ioctl_config_o2iblnd_tunables {
+ 	__u32 lnd_fmr_pool_size;
+ 	__u32 lnd_fmr_flush_trigger;
+ 	__u32 lnd_fmr_cache;
+-	__u32 pad;
++	__u16 lnd_conns_per_peer;
++	__u16 pad;
+ };
  
- include ../lib.mk
+ struct lnet_ioctl_config_lnd_tunables {
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
+index ca6e09d..bb663d6 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
+@@ -568,6 +568,8 @@ struct kib_peer {
+ 	lnet_nid_t       ibp_nid;         /* who's on the other end(s) */
+ 	struct lnet_ni	*ibp_ni;         /* LNet interface */
+ 	struct list_head ibp_conns;       /* all active connections */
++	struct kib_conn	*ibp_next_conn;  /* next connection to send on for
++					  * round robin */
+ 	struct list_head ibp_tx_queue;    /* msgs waiting for a conn */
+ 	__u64            ibp_incarnation; /* incarnation of peer */
+ 	/* when (in jiffies) I was last alive */
+@@ -581,7 +583,7 @@ struct kib_peer {
+ 	/* current active connection attempts */
+ 	unsigned short		ibp_connecting;
+ 	/* reconnect this peer later */
+-	unsigned short		ibp_reconnecting:1;
++	unsigned char		ibp_reconnecting;
+ 	/* counter of how many times we triggered a conn race */
+ 	unsigned char		ibp_races;
+ 	/* # consecutive reconnection attempts to this peer */
+@@ -744,10 +746,19 @@ struct kib_peer {
+ static inline struct kib_conn *
+ kiblnd_get_conn_locked(struct kib_peer *peer)
+ {
++	struct list_head *next;
++
+ 	LASSERT(!list_empty(&peer->ibp_conns));
  
+-	/* just return the first connection */
+-	return list_entry(peer->ibp_conns.next, struct kib_conn, ibc_list);
++	/* Advance to next connection, be sure to skip the head node */
++	if (!peer->ibp_next_conn ||
++	    peer->ibp_next_conn->ibc_list.next == &peer->ibp_conns)
++		next = peer->ibp_conns.next;
++	else
++		next = peer->ibp_next_conn->ibc_list.next;
++	peer->ibp_next_conn = list_entry(next, struct kib_conn, ibc_list);
++
++	return peer->ibp_next_conn;
+ }
+ 
+ static inline int
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+index b4a182d..77b3ae6 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
+@@ -1250,7 +1250,6 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	LASSERT(net);
+ 	LASSERT(peer->ibp_connecting > 0);
+-	LASSERT(!peer->ibp_reconnecting);
+ 
+ 	cmid = kiblnd_rdma_create_id(kiblnd_cm_callback, peer, RDMA_PS_TCP,
+ 				     IB_QPT_RC);
+@@ -1332,7 +1331,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	LASSERT(!peer->ibp_accepting && !peer->ibp_connecting &&
+ 		list_empty(&peer->ibp_conns));
+-	peer->ibp_reconnecting = 0;
++	peer->ibp_reconnecting--;
+ 
+ 	if (!kiblnd_peer_active(peer)) {
+ 		list_splice_init(&peer->ibp_tx_queue, &txs);
+@@ -1365,6 +1364,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	rwlock_t *g_lock = &kiblnd_data.kib_global_lock;
+ 	unsigned long flags;
+ 	int rc;
++	int		   i;
++	struct lnet_ioctl_config_o2iblnd_tunables *tunables;
+ 
+ 	/*
+ 	 * If I get here, I've committed to send, so I complete the tx with
+@@ -1461,7 +1462,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	/* Brand new peer */
+ 	LASSERT(!peer->ibp_connecting);
+-	peer->ibp_connecting = 1;
++	tunables = &peer->ibp_ni->ni_lnd_tunables->lt_tun_u.lt_o2ib;
++	peer->ibp_connecting = tunables->lnd_conns_per_peer;
+ 
+ 	/* always called with a ref on ni, which prevents ni being shutdown */
+ 	LASSERT(!((struct kib_net *)ni->ni_data)->ibn_shutdown);
+@@ -1474,7 +1476,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	write_unlock_irqrestore(g_lock, flags);
+ 
+-	kiblnd_connect_peer(peer);
++	for (i = 0; i < tunables->lnd_conns_per_peer; i++)
++		kiblnd_connect_peer(peer);
+ 	kiblnd_peer_decref(peer);
+ }
+ 
+@@ -1923,6 +1926,9 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	}
+ 
+ 	dev = ((struct kib_net *)peer->ibp_ni->ni_data)->ibn_dev;
++	if (peer->ibp_next_conn == conn)
++		/* clear next_conn so it won't be used */
++		peer->ibp_next_conn = NULL;
+ 	list_del(&conn->ibc_list);
+ 	/* connd (see below) takes over ibc_list's ref */
+ 
+@@ -2192,7 +2198,11 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	kiblnd_conn_addref(conn);
+ 	write_unlock_irqrestore(&kiblnd_data.kib_global_lock, flags);
+ 
+-	/* Schedule blocked txs */
++	/* Schedule blocked txs
++	 * Note: if we are running with conns_per_peer > 1, these blocked
++	 * txs will all get scheduled to the first connection which gets
++	 * scheduled.  We won't be using round robin on this first batch.
++	 */
+ 	spin_lock(&conn->ibc_lock);
+ 	list_for_each_entry_safe(tx, tmp, &txs, tx_list) {
+ 		list_del(&tx->tx_list);
+@@ -2561,7 +2571,6 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 
+ 	LASSERT(conn->ibc_state == IBLND_CONN_ACTIVE_CONNECT);
+ 	LASSERT(peer->ibp_connecting > 0);     /* 'conn' at least */
+-	LASSERT(!peer->ibp_reconnecting);
+ 
+ 	if (cp) {
+ 		msg_size = cp->ibcp_max_msg_size;
+@@ -2579,7 +2588,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	 */
+ 	reconnect = (!list_empty(&peer->ibp_tx_queue) ||
+ 		     peer->ibp_version != version) &&
+-		    peer->ibp_connecting == 1 &&
++		    peer->ibp_connecting &&
+ 		    !peer->ibp_accepting;
+ 	if (!reconnect) {
+ 		reason = "no need";
+@@ -2640,7 +2649,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
+ 	}
+ 
+ 	conn->ibc_reconnect = 1;
+-	peer->ibp_reconnecting = 1;
++	peer->ibp_reconnecting++;
+ 	peer->ibp_version = version;
+ 	if (incarnation)
+ 		peer->ibp_incarnation = incarnation;
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
+index b923540..39d0792 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
+@@ -57,6 +57,10 @@
+ module_param(nscheds, int, 0444);
+ MODULE_PARM_DESC(nscheds, "number of threads in each scheduler pool");
+ 
++static unsigned int conns_per_peer = 1;
++module_param(conns_per_peer, uint, 0444);
++MODULE_PARM_DESC(conns_per_peer, "number of connections per peer");
++
+ /* NB: this value is shared by all CPTs, it can grow at runtime */
+ static int ntx = 512;
+ module_param(ntx, int, 0444);
+@@ -271,6 +275,10 @@ int kiblnd_tunables_setup(struct lnet_ni *ni)
+ 		tunables->lnd_fmr_flush_trigger = fmr_flush_trigger;
+ 	if (!tunables->lnd_fmr_cache)
+ 		tunables->lnd_fmr_cache = fmr_cache;
++	if (!tunables->lnd_conns_per_peer) {
++		tunables->lnd_conns_per_peer = (conns_per_peer) ?
++			conns_per_peer : 1;
++	}
+ 
+ 	return 0;
+ }
+@@ -284,4 +292,5 @@ void kiblnd_tunables_init(void)
+ 	default_tunables.lnd_fmr_pool_size = fmr_pool_size;
+ 	default_tunables.lnd_fmr_flush_trigger = fmr_flush_trigger;
+ 	default_tunables.lnd_fmr_cache = fmr_cache;
++	default_tunables.lnd_conns_per_peer = conns_per_peer;
+ }
 -- 
-2.11.0
-
+1.8.3.1
