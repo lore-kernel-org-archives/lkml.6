@@ -1,39 +1,38 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932777AbeEHJOm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:14:42 -0400
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46028 "EHLO
+        id S1754889AbeEHJQA (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:16:00 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46060 "EHLO
         hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754465AbeEHJOl (ORCPT
+        by vger.kernel.org with ESMTP id S1754285AbeEHJP4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:14:41 -0400
-Date: Tue, 8 May 2018 12:14:39 +0300
+        Tue, 8 May 2018 05:15:56 -0400
+Date: Tue, 8 May 2018 12:15:54 +0300
 From: Sakari Ailus <sakari.ailus@iki.fi>
 To: Todor Tomov <todor.tomov@linaro.org>
 Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
         laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: v4l: Add new 2X8 10-bit grayscale media bus
- code
-Message-ID: <20180508091439.oeuxeh74vaaj7fvm@valkosipuli.retiisi.org.uk>
-References: <1524829239-4664-1-git-send-email-todor.tomov@linaro.org>
- <1524829239-4664-2-git-send-email-todor.tomov@linaro.org>
+Subject: Re: [PATCH v2] media: v4l: Add new 10-bit packed grayscale format
+Message-ID: <20180508091554.7j45kylakhnuannv@valkosipuli.retiisi.org.uk>
+References: <1525769177-6328-1-git-send-email-todor.tomov@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1524829239-4664-2-git-send-email-todor.tomov@linaro.org>
+In-Reply-To: <1525769177-6328-1-git-send-email-todor.tomov@linaro.org>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Apr 27, 2018 at 02:40:38PM +0300, Todor Tomov wrote:
-> The code will be called MEDIA_BUS_FMT_Y10_2X8_PADHI_LE.
-> It is similar to MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE
-> but MEDIA_BUS_FMT_Y10_2X8_PADHI_LE describes grayscale
-> data.
+On Tue, May 08, 2018 at 11:46:17AM +0300, Todor Tomov wrote:
+> The new format will be called V4L2_PIX_FMT_Y10P.
+> It is similar to the V4L2_PIX_FMT_SBGGR10P family formats
+> but V4L2_PIX_FMT_Y10P is a grayscale format.
 > 
 > Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+
+Thanks!
 
 Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
