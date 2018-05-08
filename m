@@ -1,129 +1,142 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755336AbeEHOLY (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:11:24 -0400
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:58850 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752252AbeEHOLW (ORCPT
+        id S1755352AbeEHONE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:13:04 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34886 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755133AbeEHONC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:11:22 -0400
-From: Dan Murphy <dmurphy@ti.com>
-To: <andrew@lunn.ch>, <f.fainelli@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dan Murphy <dmurphy@ti.com>
-Subject: [PATCH] net: phy: DP83811: Add support for the phy
-Date: Tue, 8 May 2018 09:11:05 -0500
-Message-ID: <20180508141105.23867-1-dmurphy@ti.com>
-X-Mailer: git-send-email 2.12.2
+        Tue, 8 May 2018 10:13:02 -0400
+X-Google-Smtp-Source: AB8JxZoT0D83YmgnpShGXHFaxW8kEiPtGJrX9knktO2MwKuUJW0ZSBfXnEWUDGKZoTYvh0yRWu8LsCI5j4LrkWjTVWQ=
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Originating-IP: [176.63.54.97]
+In-Reply-To: <20180507204350.GB9510@magnolia>
+References: <20180507083807.28792-1-mszeredi@redhat.com> <20180507083807.28792-22-mszeredi@redhat.com>
+ <20180507204350.GB9510@magnolia>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 8 May 2018 16:13:01 +0200
+Message-ID: <CAJfpegu_iYLUeYU_OgZryFmCqa_a9MHt32nnsu7h_+JVXJ2d4w@mail.gmail.com>
+Subject: Re: [PATCH v2 21/35] ovl: add reflink/copyfile/dedup support
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the DP83811 phy by extending
-the DP83822 driver to recognize the PHY IDs.
+On Mon, May 7, 2018 at 10:43 PM, Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+> On Mon, May 07, 2018 at 10:37:53AM +0200, Miklos Szeredi wrote:
+>> Since set of arguments are so similar, handle in a common helper.
+>>
+>> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>> ---
+>>  fs/overlayfs/file.c | 88 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 88 insertions(+)
+>>
+>> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+>> index ce871a15e185..2ac95c95e8e6 100644
+>> --- a/fs/overlayfs/file.c
+>> +++ b/fs/overlayfs/file.c
+>> @@ -382,6 +382,90 @@ static long ovl_compat_ioctl(struct file *file, unsigned int cmd,
+>>       return ovl_ioctl(file, cmd, arg);
+>>  }
+>>
+>> +enum ovl_copyop {
+>> +     OVL_COPY,
+>> +     OVL_CLONE,
+>> +     OVL_DEDUPE,
+>> +};
+>> +
+>> +static s64 ovl_copyfile(struct file *file_in, loff_t pos_in,
+>> +                     struct file *file_out, loff_t pos_out,
+>> +                     u64 len, unsigned int flags, enum ovl_copyop op)
+>> +{
+>> +     struct inode *inode_out = file_inode(file_out);
+>> +     struct fd real_in, real_out;
+>> +     const struct cred *old_cred;
+>> +     s64 ret;
+>> +
+>> +     ret = ovl_real_fdget(file_out, &real_out);
+>> +     if (ret)
+>> +             return ret;
+>> +
+>> +     ret = ovl_real_fdget(file_in, &real_in);
+>> +     if (ret) {
+>> +             fdput(real_out);
+>> +             return ret;
+>> +     }
+>> +
+>> +     old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
+>> +     switch (op) {
+>> +     case OVL_COPY:
+>> +             ret = vfs_copy_file_range(real_in.file, pos_in,
+>> +                                       real_out.file, pos_out, len, flags);
+>> +             break;
+>> +
+>> +     case OVL_CLONE:
+>> +             ret = vfs_clone_file_range(real_in.file, pos_in,
+>> +                                        real_out.file, pos_out, len);
+>> +             break;
+>> +
+>> +     case OVL_DEDUPE:
+>> +             ret = vfs_dedupe_file_range_one(real_in.file, pos_in,
+>> +                                             real_out.file, pos_out, len);
+>> +             break;
+>> +     }
+>> +     revert_creds(old_cred);
+>> +
+>> +     /* Update size */
+>> +     ovl_copyattr(ovl_inode_real(inode_out), inode_out);
+>> +
+>> +     fdput(real_in);
+>> +     fdput(real_out);
+>> +
+>> +     return ret;
+>> +}
+>> +
+>> +static ssize_t ovl_copy_file_range(struct file *file_in, loff_t pos_in,
+>> +                                struct file *file_out, loff_t pos_out,
+>> +                                size_t len, unsigned int flags)
+>> +{
+>> +     return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, flags,
+>> +                         OVL_COPY);
+>> +}
+>> +
+>> +static int ovl_clone_file_range(struct file *file_in, loff_t pos_in,
+>> +                             struct file *file_out, loff_t pos_out, u64 len)
+>> +{
+>> +     return ovl_copyfile(file_in, pos_in, file_out, pos_out, len, 0,
+>> +                         OVL_CLONE);
+>> +}
+>> +
+>> +static s64 ovl_dedupe_file_range(struct file *file_in, loff_t pos_in,
+>> +                              struct file *file_out, loff_t pos_out,
+>> +                              u64 len)
+>> +{
+>> +     /*
+>> +      * Don't copy up because of a dedupe request, this wouldn't make sense
+>> +      * most of the time (data would be duplicated instead of deduplicated).
+>> +      */
+>> +     if (!ovl_inode_upper(file_inode(file_in)) ||
+>> +         !ovl_inode_upper(file_inode(file_out)))
+>> +             return -EPERM;
+>
+> /me wonders, why not EOPNOTSUPP?  That's what we've been using (in xfs
+> anyway) for "filesystem doesn't want to let you do this".
 
-The DP83811 supports both rgmii and sgmii interfaces.
-There are 2 part numbers for this the DP83811R does not
-reliably support the SGMII interface but the DP83811S will.
+EOPNOTSUPP might be interpreted as "this filesystem doesn't support
+dedupe", even though here it's just "these two particular files don't
+support dedupe".
 
-There is not a way to differentiate these parts from the
-hardware or register set.  So this is controlled via the DT
-to indicate which phy mode is required.  Or the part can be
-strapped to a certain interface.
+>
+> (Or I guess EXDEV, but "cross-device link not supported" might not be
+> quite what you want users to see...)
 
-Data sheet can be found here:
-http://www.ti.com/product/DP83TC811S-Q1/description
-http://www.ti.com/product/DP83TC811R-Q1/description
+Hmm, I like EPERM better.   EPERM means something like  "you can't do
+this for some unspecified reason".  This is exactly the case here.
 
-Signed-off-by: Dan Murphy <dmurphy@ti.com>
----
- drivers/net/phy/dp83822.c | 42 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index 6e8a2a4f3a6e..5c379ff25dac 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -23,8 +23,10 @@
- #include <linux/netdevice.h>
- 
- #define DP83822_PHY_ID	        0x2000a240
-+#define DP83811_PHY_ID		0x2000a253
- #define DP83822_DEVADDR		0x1f
- 
-+#define MII_DP83811_SGMII_CTRL	0x09
- #define MII_DP83822_PHYSCR	0x11
- #define MII_DP83822_MISR1	0x12
- #define MII_DP83822_MISR2	0x13
-@@ -79,6 +81,13 @@
- #define DP83822_WOL_INDICATION_SEL BIT(8)
- #define DP83822_WOL_CLR_INDICATION BIT(11)
- 
-+/* DP83811 SGMII CTRL bits */
-+#define DP83811_TDR_AUTO		BIT(8)
-+#define DP83811_SGMII_EN		BIT(12)
-+#define DP83811_SGMII_AUTO_NEG_EN	BIT(13)
-+#define DP83811_SGMII_TX_ERR_DIS	BIT(14)
-+#define DP83811_SGMII_SOFT_RESET	BIT(15)
-+
- static int dp83822_ack_interrupt(struct phy_device *phydev)
- {
- 	int err;
-@@ -267,6 +276,17 @@ static int dp83822_config_init(struct phy_device *phydev)
- 	if (err < 0)
- 		return err;
- 
-+	if ((phydev->interface == PHY_INTERFACE_MODE_SGMII &&
-+	     phydev->phy_id == DP83811_PHY_ID)) {
-+		value = phy_read(phydev, MII_DP83811_SGMII_CTRL);
-+		if (!(value & DP83811_SGMII_EN)) {
-+			err = phy_write(phydev, MII_DP83811_SGMII_CTRL,
-+					(DP83811_SGMII_EN | value));
-+			if (err < 0)
-+				return err;
-+		}
-+	}
-+
- 	value = DP83822_WOL_MAGIC_EN | DP83822_WOL_SECURE_ON | DP83822_WOL_EN;
- 
- 	return phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG,
-@@ -328,15 +348,31 @@ static struct phy_driver dp83822_driver[] = {
- 		.suspend = dp83822_suspend,
- 		.resume = dp83822_resume,
- 	 },
-+	{
-+		.phy_id = DP83811_PHY_ID,
-+		.phy_id_mask = 0xfffffff0,
-+		.name = "TI DP83811",
-+		.features = PHY_BASIC_FEATURES,
-+		.flags = PHY_HAS_INTERRUPT,
-+		.config_init = genphy_config_init,
-+		.soft_reset = dp83822_phy_reset,
-+		.get_wol = dp83822_get_wol,
-+		.set_wol = dp83822_set_wol,
-+		.ack_interrupt = dp83822_ack_interrupt,
-+		.config_intr = dp83822_config_intr,
-+		.suspend = dp83822_suspend,
-+		.resume = dp83822_resume,
-+	 },
- };
- module_phy_driver(dp83822_driver);
- 
- static struct mdio_device_id __maybe_unused dp83822_tbl[] = {
--	{ DP83822_PHY_ID, 0xfffffff0 },
--	{ },
-+	{DP83822_PHY_ID, 0xfffffff0},
-+	{DP83811_PHY_ID, 0xfffffff0},
-+	{}
- };
- MODULE_DEVICE_TABLE(mdio, dp83822_tbl);
- 
--MODULE_DESCRIPTION("Texas Instruments DP83822 PHY driver");
-+MODULE_DESCRIPTION("Texas Instruments DP83811/22 PHY driver");
- MODULE_AUTHOR("Dan Murphy <dmurphy@ti.com");
- MODULE_LICENSE("GPL");
--- 
-2.17.0.252.gfe0a9eaf3
+Thanks,
+Miklos
