@@ -1,145 +1,357 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753396AbeEHLFe (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 07:05:34 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:25809 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752231AbeEHLFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 07:05:33 -0400
-Subject: Re: general protection fault in lo_ioctl (2)
-To: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        Milan Broz <gmazyland@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <000000000000cbaaf6056b341859@google.com>
- <CACT4Y+bTo34q4=7X8zGL_XVOGoYd7fqhfAbCAWUxsr-N96Kyxw@mail.gmail.com>
- <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
-Date: Tue, 8 May 2018 20:05:12 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1752461AbeEHLNf (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 07:13:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:56480 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751270AbeEHLNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 07:13:33 -0400
+Date: Tue, 8 May 2018 12:13:23 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Chris Zankel <chris@zankel.net>, Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Rich Felker <dalias@libc.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: Re: [PATCH 4/9] arm: Split breakpoint validation into "check" and
+ "commit"
+Message-ID: <20180508111323.mmjo4ky4txzi4gx4@lakrids.cambridge.arm.com>
+References: <1525634395-23380-1-git-send-email-frederic@kernel.org>
+ <1525634395-23380-5-git-send-email-frederic@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1525634395-23380-5-git-send-email-frederic@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/05/08 5:56, Tetsuo Handa wrote:
-> On 2018/05/02 20:23, Dmitry Vyukov wrote:
->> #syz dup: INFO: rcu detected stall in blkdev_ioctl
+Hi Frederick,
+
+On Sun, May 06, 2018 at 09:19:50PM +0200, Frederic Weisbecker wrote:
+> The breakpoint code mixes up attribute check and commit into a single
+> code entity. Therefore the validation may return an error due to
+> incorrect atributes while still leaving halfway modified architecture
+> breakpoint struct.
 > 
-> The cause of stall turned out to be ioctl(loop_fd, LOOP_CHANGE_FD, loop_fd).
-> 
-> But we haven't explained the cause of NULL pointer dereference which can
-> occur when raced with ioctl(LOOP_CLR_FD). Therefore,
-> 
-> #syz undup
-> 
+> Prepare fox fixing this misdesign and separate both logics.
 
-Using sleep injection patch and reproducer shown below, I can reproduce
-the crashes. It is a race between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
-ioctl(other_loop_fd, LOOP_SET_FD, loop_fd).
+Could you elaborate on what the problem is? I would have expected that
+when arch_build_bp_info() returns an error code, we wouldn't
+subsequently use the arch_hw_breakpoint information. Where does that
+happen?
 
-Unless we hold corresponding lo->lo_ctl_mutex (or keep corresponding
-lo->lo_refcnt elevated) when traversing other loop devices,
-"/* Avoid recursion */" loop from loop_set_fd()/loop_change_fd() will
-suffer from races by loop_clr_fd().
+I understand that there was a problem on x86 -- I'm just having
+difficulty figuring it out.
 
-So, it is time to think how to solve this race condition, as well as how to solve
-lockdep's deadlock warning (and I guess that syzbot is actually hitting deadlocks).
-An approach which serializes loop operations using global lock was proposed at
-https://groups.google.com/d/msg/syzkaller-bugs/2Rw8-OM6IbM/PzdobV8kAgAJ .
-Please respond...
+I also see that the check and commit hooks have to duplicate a
+reasonable amount of logic, e.g. the switch on bp->attr.type. Can we
+instead refactor the existing arch_build_bp_info() hooks to use a
+temporary arch_hw_breakpoint, and then struct assign it after all the
+error cases, e.g.
 
-------------------------------------------------------------
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -909,6 +909,9 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 			error = -EINVAL;
- 			goto out_putf;
- 		}
-+		pr_err("Start sleeping\n");
-+		schedule_timeout_killable(3 * HZ);
-+		pr_err("End sleeping\n");
- 		f = l->lo_backing_file;
- 	}
- 
-------------------------------------------------------------
-
-------------------------------------------------------------
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <linux/loop.h>
-#include <sys/ioctl.h>
-
-int main(int argc, char *argv[])
+static int arch_build_bp_info(struct perf_event *bp)
 {
-	int fd0 = open("/dev/loop0", O_RDONLY);
-	int fd1 = open("/dev/loop1", O_RDONLY);
-	int fd2 = open("/tmp/file", O_RDWR | O_CREAT | O_TRUNC, 0600);
-	ioctl(fd1, LOOP_SET_FD, fd2);
-	if (fork() == 0) {
-		sleep(1);
-		ioctl(fd1, LOOP_CLR_FD, 0);
-		_exit(0);
-	}
-	ioctl(fd0, LOOP_SET_FD, fd1);
-	return 0;
-}
-------------------------------------------------------------
+	struct arch_hw_breakpoint hbp;
+	
+	if (some_condition(bp))
+		hbp->field = 0xf00;
 
-------------------------------------------------------------
-[   14.119073] loop: module loaded
-[   17.363610] Start sleeping
-[   20.383442] End sleeping
-[   20.386511] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[   20.394779] PGD 13377d067 P4D 13377d067 PUD 131509067 PMD 0 
-[   20.400847] Oops: 0000 [#1] SMP
-[   20.403875] Modules linked in: loop
-[   20.406188] CPU: 6 PID: 6470 Comm: a.out Tainted: G                T 4.17.0-rc4+ #540
-[   20.411266] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-[   20.418169] RIP: 0010:lo_ioctl+0x7ef/0x840 [loop]
-[   20.421272] RSP: 0018:ffffc90000bbbd88 EFLAGS: 00010282
-[   20.424661] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff83679478
-[   20.429271] RDX: ffff8801332e9c00 RSI: 0000000000000086 RDI: 0000000000000286
-[   20.434517] RBP: ffffc90000bbbdd8 R08: 0000000000000638 R09: 0000000000000000
-[   20.436879] R10: 0000000000000190 R11: 0720072007200720 R12: ffff8801314ab118
-[   20.439076] R13: ffff880138deae40 R14: ffff8801311f7780 R15: ffff8801314ab000
-[   20.441144] FS:  00007f0b57743740(0000) GS:ffff88013a780000(0000) knlGS:0000000000000000
-[   20.443588] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   20.445284] CR2: 0000000000000008 CR3: 0000000138efb002 CR4: 00000000000606e0
-[   20.447381] Call Trace:
-[   20.448149]  blkdev_ioctl+0x88d/0x950
-[   20.449237]  block_ioctl+0x38/0x40
-[   20.450269]  do_vfs_ioctl+0xaa/0x650
-[   20.451479]  ? handle_mm_fault+0x108/0x250
-[   20.452704]  ksys_ioctl+0x70/0x80
-[   20.453737]  __x64_sys_ioctl+0x15/0x20
-[   20.454887]  do_syscall_64+0x5d/0x100
-[   20.456014]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[   20.457519] RIP: 0033:0x7f0b57267107
-[   20.458644] RSP: 002b:00007fff8a0fd698 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[   20.460853] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f0b57267107
-[   20.462952] RDX: 0000000000000004 RSI: 0000000000004c00 RDI: 0000000000000003
-[   20.465023] RBP: 0000000000000003 R08: 00007f0b57743740 R09: 0000000000000000
-[   20.467091] R10: 00007f0b57743a10 R11: 0000000000000246 R12: 00000000004005ef
-[   20.469361] R13: 00007fff8a0fd790 R14: 0000000000000000 R15: 0000000000000000
-[   20.471657] Code: a0 48 89 55 d0 e8 e0 5f 1d e1 bf b8 0b 00 00 e8 78 9e 7c e2 48 c7 c7 a9 40 00 a0 e8 ca 5f 1d e1 48 8b 55 d0 48 8b 82 f0 00 00 00 <48> 8b 40 08 48 8b 40 68 48 85 c0 0f 84 15 fd ff ff 0f b7 90 b8 
-[   20.477207] RIP: lo_ioctl+0x7ef/0x840 [loop] RSP: ffffc90000bbbd88
-[   20.479027] CR2: 0000000000000008
-[   20.480063] ---[ end trace 925bc1b992d96cb3 ]---
-[   20.481441] Kernel panic - not syncing: Fatal exception
-[   20.483119] Kernel Offset: disabled
-[   20.489564] Rebooting in 86400 seconds..
-------------------------------------------------------------
+	switch (bp->attr.type) {
+	case FOO:
+		return -EINVAL;
+	case BAR:
+		hbp->other_field = 7;
+		break;
+	};
+
+	if (failure_case(foo))
+		return err;
+	
+	*counter_arch_bp(bp) = hbp;
+}
+
+... or is that also problematic?
+
+Thanks,
+Mark.
+
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+> Cc: Rich Felker <dalias@libc.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Max Filippov <jcmvbkbc@gmail.com>
+> Cc: Chris Zankel <chris@zankel.net>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Jiri Olsa <jolsa@redhat.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  arch/arm/kernel/hw_breakpoint.c | 176 +++++++++++++++++++++++-----------------
+>  1 file changed, 103 insertions(+), 73 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/hw_breakpoint.c b/arch/arm/kernel/hw_breakpoint.c
+> index 629e251..1769d3a 100644
+> --- a/arch/arm/kernel/hw_breakpoint.c
+> +++ b/arch/arm/kernel/hw_breakpoint.c
+> @@ -515,45 +515,33 @@ int arch_bp_generic_fields(struct arch_hw_breakpoint_ctrl ctrl,
+>  	return 0;
+>  }
+>  
+> -/*
+> - * Construct an arch_hw_breakpoint from a perf_event.
+> - */
+> -static int arch_build_bp_info(struct perf_event *bp)
+> +static int hw_breakpoint_arch_check(struct perf_event *bp,
+> +				    const struct perf_event_attr *attr)
+>  {
+> -	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+> +	u32 offset, alignment_mask = 0x3;
+> +
+> +	/* Ensure that we are in monitor debug mode. */
+> +	if (!monitor_mode_enabled())
+> +		return -ENODEV;
+>  
+>  	/* Type */
+> -	switch (bp->attr.bp_type) {
+> +	switch (attr->bp_type) {
+>  	case HW_BREAKPOINT_X:
+> -		info->ctrl.type = ARM_BREAKPOINT_EXECUTE;
+> -		break;
+>  	case HW_BREAKPOINT_R:
+> -		info->ctrl.type = ARM_BREAKPOINT_LOAD;
+> -		break;
+>  	case HW_BREAKPOINT_W:
+> -		info->ctrl.type = ARM_BREAKPOINT_STORE;
+> -		break;
+>  	case HW_BREAKPOINT_RW:
+> -		info->ctrl.type = ARM_BREAKPOINT_LOAD | ARM_BREAKPOINT_STORE;
+>  		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+>  
+>  	/* Len */
+> -	switch (bp->attr.bp_len) {
+> +	switch (attr->bp_len) {
+>  	case HW_BREAKPOINT_LEN_1:
+> -		info->ctrl.len = ARM_BREAKPOINT_LEN_1;
+> -		break;
+>  	case HW_BREAKPOINT_LEN_2:
+> -		info->ctrl.len = ARM_BREAKPOINT_LEN_2;
+> -		break;
+>  	case HW_BREAKPOINT_LEN_4:
+> -		info->ctrl.len = ARM_BREAKPOINT_LEN_4;
+> -		break;
+>  	case HW_BREAKPOINT_LEN_8:
+> -		info->ctrl.len = ARM_BREAKPOINT_LEN_8;
+> -		if ((info->ctrl.type != ARM_BREAKPOINT_EXECUTE)
+> +		if ((attr->bp_type != HW_BREAKPOINT_X)
+>  			&& max_watchpoint_len >= 8)
+>  			break;
+>  	default:
+> @@ -566,50 +554,17 @@ static int arch_build_bp_info(struct perf_event *bp)
+>  	 * by the hardware and must be aligned to the appropriate number of
+>  	 * bytes.
+>  	 */
+> -	if (info->ctrl.type == ARM_BREAKPOINT_EXECUTE &&
+> -	    info->ctrl.len != ARM_BREAKPOINT_LEN_2 &&
+> -	    info->ctrl.len != ARM_BREAKPOINT_LEN_4)
+> +	if (attr->bp_type == HW_BREAKPOINT_X &&
+> +	    attr->bp_len != HW_BREAKPOINT_LEN_2 &&
+> +	    attr->bp_len != HW_BREAKPOINT_LEN_4)
+>  		return -EINVAL;
+>  
+> -	/* Address */
+> -	info->address = bp->attr.bp_addr;
+> -
+> -	/* Privilege */
+> -	info->ctrl.privilege = ARM_BREAKPOINT_USER;
+> -	if (arch_check_bp_in_kernelspace(bp))
+> -		info->ctrl.privilege |= ARM_BREAKPOINT_PRIV;
+> -
+> -	/* Enabled? */
+> -	info->ctrl.enabled = !bp->attr.disabled;
+> -
+> -	/* Mismatch */
+> -	info->ctrl.mismatch = 0;
+> -
+> -	return 0;
+> -}
+> -
+> -/*
+> - * Validate the arch-specific HW Breakpoint register settings.
+> - */
+> -int arch_validate_hwbkpt_settings(struct perf_event *bp)
+> -{
+> -	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+> -	int ret = 0;
+> -	u32 offset, alignment_mask = 0x3;
+> -
+> -	/* Ensure that we are in monitor debug mode. */
+> -	if (!monitor_mode_enabled())
+> -		return -ENODEV;
+> -
+> -	/* Build the arch_hw_breakpoint. */
+> -	ret = arch_build_bp_info(bp);
+> -	if (ret)
+> -		goto out;
+> -
+>  	/* Check address alignment. */
+> -	if (info->ctrl.len == ARM_BREAKPOINT_LEN_8)
+> +	if (attr->bp_len == HW_BREAKPOINT_LEN_8)
+>  		alignment_mask = 0x7;
+> -	offset = info->address & alignment_mask;
+> +
+> +	offset = attr->bp_addr & alignment_mask;
+> +
+>  	switch (offset) {
+>  	case 0:
+>  		/* Aligned */
+> @@ -617,20 +572,16 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+>  	case 1:
+>  	case 2:
+>  		/* Allow halfword watchpoints and breakpoints. */
+> -		if (info->ctrl.len == ARM_BREAKPOINT_LEN_2)
+> +		if (attr->bp_len == HW_BREAKPOINT_LEN_2)
+>  			break;
+>  	case 3:
+>  		/* Allow single byte watchpoint. */
+> -		if (info->ctrl.len == ARM_BREAKPOINT_LEN_1)
+> +		if (attr->bp_len == HW_BREAKPOINT_LEN_1)
+>  			break;
+>  	default:
+> -		ret = -EINVAL;
+> -		goto out;
+> +		return -EINVAL;
+>  	}
+>  
+> -	info->address &= ~alignment_mask;
+> -	info->ctrl.len <<= offset;
+> -
+>  	if (is_default_overflow_handler(bp)) {
+>  		/*
+>  		 * Mismatch breakpoints are required for single-stepping
+> @@ -655,13 +606,92 @@ int arch_validate_hwbkpt_settings(struct perf_event *bp)
+>  		 * reports them.
+>  		 */
+>  		if (!debug_exception_updates_fsr() &&
+> -		    (info->ctrl.type == ARM_BREAKPOINT_LOAD ||
+> -		     info->ctrl.type == ARM_BREAKPOINT_STORE))
+> +		    (attr->bp_type == HW_BREAKPOINT_R ||
+> +		     attr->bp_type == HW_BREAKPOINT_W))
+>  			return -EINVAL;
+>  	}
+>  
+> -out:
+> -	return ret;
+> +	return 0;
+> +}
+> +
+> +static void hw_breakpoint_arch_commit(struct perf_event *bp)
+> +{
+> +	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
+> +	struct perf_event_attr *attr = &bp->attr;
+> +	u32 offset, alignment_mask = 0x3;
+> +
+> +	/* Type */
+> +	switch (attr->bp_type) {
+> +	case HW_BREAKPOINT_X:
+> +		info->ctrl.type = ARM_BREAKPOINT_EXECUTE;
+> +		break;
+> +	case HW_BREAKPOINT_R:
+> +		info->ctrl.type = ARM_BREAKPOINT_LOAD;
+> +		break;
+> +	case HW_BREAKPOINT_W:
+> +		info->ctrl.type = ARM_BREAKPOINT_STORE;
+> +		break;
+> +	case HW_BREAKPOINT_RW:
+> +		info->ctrl.type = ARM_BREAKPOINT_LOAD | ARM_BREAKPOINT_STORE;
+> +		break;
+> +	default:
+> +		WARN_ON_ONCE(1);
+> +	}
+> +
+> +	/* Len */
+> +	switch (attr->bp_len) {
+> +	case HW_BREAKPOINT_LEN_1:
+> +		info->ctrl.len = ARM_BREAKPOINT_LEN_1;
+> +		break;
+> +	case HW_BREAKPOINT_LEN_2:
+> +		info->ctrl.len = ARM_BREAKPOINT_LEN_2;
+> +		break;
+> +	case HW_BREAKPOINT_LEN_4:
+> +		info->ctrl.len = ARM_BREAKPOINT_LEN_4;
+> +		break;
+> +	case HW_BREAKPOINT_LEN_8:
+> +		info->ctrl.len = ARM_BREAKPOINT_LEN_8;
+> +		break;
+> +	default:
+> +		WARN_ON_ONCE(1);
+> +	}
+> +
+> +	/* Address */
+> +	info->address = attr->bp_addr;
+> +
+> +	/* Privilege */
+> +	info->ctrl.privilege = ARM_BREAKPOINT_USER;
+> +	if (arch_check_bp_in_kernelspace(bp))
+> +		info->ctrl.privilege |= ARM_BREAKPOINT_PRIV;
+> +
+> +	/* Enabled? */
+> +	info->ctrl.enabled = !attr->disabled;
+> +
+> +	/* Mismatch */
+> +	info->ctrl.mismatch = 0;
+> +
+> +	if (info->ctrl.len == ARM_BREAKPOINT_LEN_8)
+> +		alignment_mask = 0x7;
+> +
+> +	offset = info->address & alignment_mask;
+> +	info->address &= ~alignment_mask;
+> +	info->ctrl.len <<= offset;
+> +}
+> +
+> +/*
+> + * Validate the arch-specific HW Breakpoint register settings.
+> + */
+> +int arch_validate_hwbkpt_settings(struct perf_event *bp)
+> +{
+> +	int err;
+> +
+> +	err = hw_breakpoint_arch_check(bp, &bp->attr);
+> +	if (err)
+> +		return err;
+> +
+> +	hw_breakpoint_arch_commit(bp);
+> +
+> +	return 0;
+>  }
+>  
+>  /*
+> -- 
+> 2.7.4
+> 
