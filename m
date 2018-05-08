@@ -1,42 +1,45 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932430AbeEHOU6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:20:58 -0400
-Received: from mail-yb0-f172.google.com ([209.85.213.172]:33761 "EHLO
-        mail-yb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932104AbeEHOUz (ORCPT
+        id S932436AbeEHOWC (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:22:02 -0400
+Received: from mail-wr0-f182.google.com ([209.85.128.182]:42240 "EHLO
+        mail-wr0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755328AbeEHOWB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:20:55 -0400
-X-Google-Smtp-Source: AB8JxZqBMvPzO/qphLIsONclkXAmBP8bS9/4FqIpTUMUxW6V+Cx8j3N91mEsRK96aQC5J1kNMUi79g==
-Date: Tue, 8 May 2018 07:20:52 -0700
-From: Tejun Heo <tj@kernel.org>
-To: Jia-Ju Bai <baijiaju1990@gmail.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ata: libata-pmp: Fix a possible data race in
- sata_pmp_handle_link_fail
-Message-ID: <20180508142052.GK2368884@devbig577.frc2.facebook.com>
-References: <20180508082140.14038-1-baijiaju1990@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508082140.14038-1-baijiaju1990@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 8 May 2018 10:22:01 -0400
+X-Google-Smtp-Source: AB8JxZpYEusWC5HfE/TB4p29Hp16H4IdtXmgyLwyShLxuDaasOSF48LwPN2TQKbII3Y8EOl3p0CiGw==
+Date: Tue, 8 May 2018 16:21:57 +0200
+From: Ahmed Abdelsalam <amsalam20@gmail.com>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: fw@strlen.de, davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+Subject: Re: [iptables v2] extensions: libip6t_srh: support matching
+ previous, next and last SID
+Message-Id: <20180508162157.ddc38d47331b1bf615dbe31d@gmail.com>
+In-Reply-To: <20180508123632.2wgwnk2d2cax66fq@salvia>
+References: <1524652247-1749-1-git-send-email-amsalam20@gmail.com>
+        <20180508123632.2wgwnk2d2cax66fq@salvia>
+X-Mailer: Sylpheed 3.4.1 (GTK+ 2.24.21; x86_64-apple-darwin10.8.0)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 04:21:40PM +0800, Jia-Ju Bai wrote:
-> The write operation to "link->flags" is protected by
-> the lock on line 898, but the read operation to
-> this data on line 892 is not protected by the lock.
-> Thus, there may exist a data race for "link->flags".
+On Tue, 8 May 2018 14:36:32 +0200
+Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+
+> On Wed, Apr 25, 2018 at 05:30:47AM -0500, Ahmed Abdelsalam wrote:
+> > This patch extends the libip6t_srh shared library to support matching
+> > previous SID, next SID, and last SID.
 > 
-> To fix this data race, the read operation to "link->flags" 
-> should be also protected by the lock.
+> Applied, thanks.
+> 
+> Please, send us a patch to add tests for extensions/libip6t_srh.t
 
-Same as the previous patch.
-
-Thanks.
+Thanks pablo!
+I will send you a patch with some test cases. 
 
 -- 
-tejun
+Ahmed Abdelsalam <amsalam20@gmail.com>
