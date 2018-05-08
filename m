@@ -1,62 +1,58 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754935AbeEHMQm (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:16:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57524 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932085AbeEHMPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:15:07 -0400
-From: Marc Zyngier <marc.zyngier@arm.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/9] dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
-Date: Tue,  8 May 2018 13:14:33 +0100
-Message-Id: <20180508121438.11301-5-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.14.2
-In-Reply-To: <20180508121438.11301-1-marc.zyngier@arm.com>
-References: <20180508121438.11301-1-marc.zyngier@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1754976AbeEHMQv (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:16:51 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35123 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754950AbeEHMQt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:16:49 -0400
+X-Google-Smtp-Source: AB8JxZqwNfFLaZygmI1QivyUJbbWQnDYASG2afF4n/Y6TS35LQn9mNKyW8UhTx8iXiumSw+k2rZmog==
+From: Alexander Potapenko <glider@google.com>
+To: dave.hansen@linux.intel.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, mka@chromium.org,
+        dvyukov@google.com, md@google.com
+Subject: [PATCH] x86/boot/64/clang: Use fixup_pointer() to access '__supported_pte_mask'
+Date: Tue,  8 May 2018 14:16:38 +0200
+Message-Id: <20180508121638.174022-1-glider@google.com>
+X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Inclusion of include/dma-iommu.h when CONFIG_IOMMU_DMA is not selected
-results in the following splat:
+Similarly to commit 187e91fe5e91
+("x86/boot/64/clang: Use fixup_pointer() to access 'next_early_pgt'"),
+'__supported_pte_mask' must be also accessed using fixup_pointer() to
+avoid position-dependent relocations.
 
-In file included from drivers/irqchip/irq-gic-v3-mbi.c:20:0:
-./include/linux/dma-iommu.h:95:69: error: unknown type name ‘dma_addr_t’
- static inline int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
-                                                                     ^~~~~~~~~~
-./include/linux/dma-iommu.h:108:74: warning: ‘struct list_head’ declared inside parameter list will not be visible outside of this definition or declaration
- static inline void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
-                                                                          ^~~~~~~~~
-scripts/Makefile.build:312: recipe for target 'drivers/irqchip/irq-gic-v3-mbi.o' failed
-
-Fix it by including linux/types.h.
-
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Alexander Potapenko <glider@google.com>
+Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
 ---
- include/linux/dma-iommu.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/head64.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
-index 92f20832fd28..e8ca5e654277 100644
---- a/include/linux/dma-iommu.h
-+++ b/include/linux/dma-iommu.h
-@@ -17,6 +17,7 @@
- #define __DMA_IOMMU_H
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index 0c408f8c4ed4..1b36ae4d0035 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -113,6 +113,7 @@ unsigned long __head __startup_64(unsigned long physaddr,
+ 	p4dval_t *p4d;
+ 	pudval_t *pud;
+ 	pmdval_t *pmd, pmd_entry;
++	pteval_t *mask_ptr;
+ 	bool la57;
+ 	int i;
+ 	unsigned int *next_pgt_ptr;
+@@ -196,7 +197,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
  
- #ifdef __KERNEL__
-+#include <linux/types.h>
- #include <asm/errno.h>
+ 	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
+ 	/* Filter out unsupported __PAGE_KERNEL_* bits: */
+-	pmd_entry &= __supported_pte_mask;
++	mask_ptr = (pteval_t *)fixup_pointer(&__supported_pte_mask, physaddr);
++	pmd_entry &= *mask_ptr;
+ 	pmd_entry += sme_get_me_mask();
+ 	pmd_entry +=  physaddr;
  
- #ifdef CONFIG_IOMMU_DMA
 -- 
-2.14.2
+2.17.0.441.gb46fe60e1d-goog
