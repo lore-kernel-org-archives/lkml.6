@@ -1,273 +1,169 @@
-Return-Path: <dougso@me.com>
-X-Google-Smtp-Source: AB8JxZrAXiOKuXJuz6DwfWnd9wkm0mVXuoO6A5dKzaZbTyK2Br4dZMt2SDHUzwsLhMj49R2XBzv0
-ARC-Seal: i=1; a=rsa-sha256; t=1525749516; cv=none;
+Return-Path: <udknight@gmail.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525742462; cv=none;
         d=google.com; s=arc-20160816;
-        b=OzcXgXYB1w2b65qy/DuuberdYtUdWLT6klSbhNl4TlrmDhy6fBvQulD4hwljbc0Lt0
-         QH7UMNAfsfTwvZ/QdZfgg3vuKAdbB2oqxfwx5VvyLJ1MXgWmCdqd3owojZkrWN5ceN9P
-         Sn2ljE++7KcvJW5ZNWPd5G1SOYvmOaUdlYE4fLEhKeGWwNQnYdBPZbWv69y20NObKdZb
-         rFdygmY35gruM7v1siGluOBfNUr9hW038+cAFOmJVhx++qbK8lnncJU5D5NgYUnnvWW1
-         EoFub10bYJpRVx67+id/pe6KpfQVC6HqRvc2LLduI844/rOKVdpz8T5K4uZ3PeebieY8
-         XOqg==
+        b=txzu7dUZ9a9PRF4R1dmAJqKS25Hq1qqDZU/wTbX1FFqAgU/bR/MQrOnGZMma6JWmYM
+         ZdaFYr/1iqbhpfFW0nX88kiBvBWlWCNK2Fck+UrEHWAs3ZujGrSgihUScg9DsTfji5Md
+         r8JiqjlAqbnRV/ALYBmQf7qP7BqNxc81ra++newmXOEfDTpUpt/Dkj0U7KBQ/pYcYDqc
+         cAbUDgLox9ZVn/SYFYPQwGhBqssYsvw1aPLfau2hRlidMb/AF87t1cyXqVJPhY3pnelM
+         Vj5WNBToq1RQ6zukZ9oKW74HybdGRXsvzxOdksPlwCtouKu3BhJL/vT0XsxkxIDXKF0I
+         LY3Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
+        h=user-agent:content-disposition:mime-version:mail-followup-to
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=5AFAP/t7uTgEQ2oYO0+igkrKlAsP/X/yez34Jpp7+xc=;
-        b=UEHUsBd7avP/orZJRyEQuzrq1fjSJvMyaKkTgda+It1IhN/VVQKUpgkLnAWbiWklnS
-         pe7C5/RGR3kK59vQGCNEWH6J9/QgrcZZc0lpAeFFDZGLp/H8VL2jr1558SXHtTS5S58m
-         FkHitwZMYvhfhoXIf6yJ5VlqPep5y7n2ibpC9mPJNzkX3Ae9SZZrfHJMz0uDWEy7PKWm
-         l1PpbKGDlicP3xhlyagEolCcGOjxhrM1lQUWRBbTUb/lJWHmxcJ8W2xYfNmj4EHgtPwP
-         ANZKG2hxygZaqzPWSEhKg6itSYAqoy0vFV8nn1GHNc53/FB5Q7zWtpJ7gs9KJWdRQ20r
-         MUbg==
+        bh=1QIVFGH5lPctwDaF7fHDfptrremFADx/6d+vYFs/Eao=;
+        b=t2MPxknCiKwNqnVpx8fnK1k/pxVWrUafeMgvLVOjTQLu7tYABMxcVVZp4g9hyJ+4L/
+         /GcUVrpzMxs+nK0WZ1gfKViNbAS8OHC9d4+7ozjcejXtbZp9UpSGLpqqSMLPCkhZltQY
+         X/CIIelhUix+wM2UO3qjXmTRXu3qBoXJoHIyF9YACpkRrepB0YdDWVAICDSjLILskcMo
+         5M8ON3NB4qFyuFaspS8sljDfKREsEPllJdJEPS784lW7qpiuqK3SaVG1iMhB1ls48o1q
+         fC8n8qNkjh/hvfHozJNMDtVbBzdDHRd6cQzf3Gx4iomXIgn9sg1AwI/Fr4p5kRWXMwkD
+         So0Q==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@me.com header.s=04042017 header.b=Hs7XfFNj;
-       spf=pass (google.com: domain of dougso@me.com designates 17.172.80.95 as permitted sender) smtp.mailfrom=dougso@me.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YqEeioPC;
+       spf=pass (google.com: domain of udknight@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=udknight@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@me.com header.s=04042017 header.b=Hs7XfFNj;
-       spf=pass (google.com: domain of dougso@me.com designates 17.172.80.95 as permitted sender) smtp.mailfrom=dougso@me.com;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=me.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10432:,,
- definitions=2018-05-08_01:,, signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
- clxscore=1015 suspectscore=2 malwarescore=0 phishscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1707230000 definitions=main-1805080031
-From: Doug Oucharek <dougso@me.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- devel@driverdev.osuosl.org, Oleg Drokin <oleg.drokin@intel.com>,
- Andreas Dilger <andreas.dilger@intel.com>,
- James Simmons <jsimmons@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Lustre Development List <lustre-devel@lists.lustre.org>,
- Doug Oucharek <dougso@me.com>, Doug Oucharek <doug.s.oucharek@intel.com>
-Subject: [PATCH v3] staging: lustre: o2iblnd: Enable Multiple OPA Endpoints
- between Nodes
-Date: Mon, 07 May 2018 20:18:06 -0700
-Message-id: <1525749486-14168-1-git-send-email-dougso@me.com>
-X-Mailer: git-send-email 1.8.3.1
+       dkim=pass header.i=@gmail.com header.s=20161025 header.b=YqEeioPC;
+       spf=pass (google.com: domain of udknight@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=udknight@gmail.com;
+       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+X-Google-Smtp-Source: AB8JxZqFYsYpz4KE9h8mQIdMbDi8M6iLupLTR2+SVhrcCFupLO/1mNhmCPwQgA/ePlv7GLSDjHwxqg==
+Date: Tue, 8 May 2018 09:21:06 +0800
+From: Wang YanQing <udknight@gmail.com>
+To: axboe@kernel.dk
+Cc: gregkh@linuxfoundation.org, pombredanne@nexb.com, tglx@linutronix.de,
+        caizhiyong@hisilicon.com, rdunlap@infradead.org,
+        jiangheng@hisilicon.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4] block: add verifier for cmdline partition
+Message-ID: <20180508012106.GA4158@udknight>
+Mail-Followup-To: Wang YanQing <udknight@gmail.com>, axboe@kernel.dk,
+	gregkh@linuxfoundation.org, pombredanne@nexb.com,
+	tglx@linutronix.de, caizhiyong@hisilicon.com, rdunlap@infradead.org,
+	jiangheng@hisilicon.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.7.1 (2016-10-04)
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599864325620036079?=
-X-GMAIL-MSGID: =?utf-8?q?1599864325620036079?=
+X-GMAIL-THRID: =?utf-8?q?1599856927992265512?=
+X-GMAIL-MSGID: =?utf-8?q?1599856927992265512?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-OPA driver optimizations are based on the MPI model where it is
-expected to have multiple endpoints between two given nodes. To
-enable this optimization for Lustre, we need to make it possible,
-via an LND-specific tuneable, to create multiple endpoints and to
-balance the traffic over them.
+I meet strange filesystem corruption issue recently, the reason
+is there are overlaps partitions in cmdline partition argument.
 
-Both sides of a connection must have this patch for it to work.
-Only the active side of the connection (usually the client)
-needs to have the new tuneable set > 1.
+This patch add verifier for cmdline partition, then if there are
+overlaps partitions, cmdline_partition will log a warning. We don't
+treat overlaps partition as a error:
+"
+Caizhiyong <caizhiyong@hisilicon.com> said:
+Partition overlap was intentionally designed in this cmdline partition.
+reference http://lists.infradead.org/pipermail/linux-mtd/2013-August/048092.html
+"
 
-Signed-off-by: Doug Oucharek <doug.s.oucharek@intel.com>
-Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-8943
-Reviewed-on: https://review.whamcloud.com/25168
-Reviewed-by: Amir Shehata <amir.shehata@intel.com>
-Reviewed-by: Dmitry Eremin <dmitry.eremin@intel.com>
-Reviewed-by: James Simmons <uja.ornl@yahoo.com>
-Reviewed-by: Oleg Drokin <oleg.drokin@intel.com>
-Signed-off-by: Doug Oucharek <dougso@me.com>
+Signed-off-by: Wang YanQing <udknight@gmail.com>
 ---
-Changes in v1: Original patch
-Changes in v2: Fixed checkpatch issues
-Changes in v3: Properly added version change log
+ Changes
+ v3-v4:
+ 1:Fix grammar typo, reported by Randy Dunlap.
+ 2:Delete unnecessary type casting, reported by Caizhiyong.
+ 3:Record the reason why we can't treat overlapping partitions
+   as errors into changelog.
 
- .../lustre/include/uapi/linux/lnet/lnet-dlc.h      |  3 ++-
- .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    | 17 ++++++++++++---
- .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c | 25 +++++++++++++++-------
- .../lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c  |  9 ++++++++
- 4 files changed, 42 insertions(+), 12 deletions(-)
+ v2-v3:
+ 1:Fix log one pair of overlaps partitions twice in cmdline_parts_verifier.
+ 2:Fix out of bound access in cmdline_parts_verifier.
 
-diff --git a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
-index e45d828..c1619f4 100644
---- a/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
-+++ b/drivers/staging/lustre/include/uapi/linux/lnet/lnet-dlc.h
-@@ -53,7 +53,8 @@ struct lnet_ioctl_config_o2iblnd_tunables {
- 	__u32 lnd_fmr_pool_size;
- 	__u32 lnd_fmr_flush_trigger;
- 	__u32 lnd_fmr_cache;
--	__u32 pad;
-+	__u16 lnd_conns_per_peer;
-+	__u16 pad;
- };
- 
- struct lnet_ioctl_config_lnd_tunables {
-diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
-index ca6e09d..bb663d6 100644
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h
-@@ -568,6 +568,8 @@ struct kib_peer {
- 	lnet_nid_t       ibp_nid;         /* who's on the other end(s) */
- 	struct lnet_ni	*ibp_ni;         /* LNet interface */
- 	struct list_head ibp_conns;       /* all active connections */
-+	struct kib_conn	*ibp_next_conn;  /* next connection to send on for
-+					  * round robin */
- 	struct list_head ibp_tx_queue;    /* msgs waiting for a conn */
- 	__u64            ibp_incarnation; /* incarnation of peer */
- 	/* when (in jiffies) I was last alive */
-@@ -581,7 +583,7 @@ struct kib_peer {
- 	/* current active connection attempts */
- 	unsigned short		ibp_connecting;
- 	/* reconnect this peer later */
--	unsigned short		ibp_reconnecting:1;
-+	unsigned char		ibp_reconnecting;
- 	/* counter of how many times we triggered a conn race */
- 	unsigned char		ibp_races;
- 	/* # consecutive reconnection attempts to this peer */
-@@ -744,10 +746,19 @@ struct kib_peer {
- static inline struct kib_conn *
- kiblnd_get_conn_locked(struct kib_peer *peer)
- {
-+	struct list_head *next;
-+
- 	LASSERT(!list_empty(&peer->ibp_conns));
- 
--	/* just return the first connection */
--	return list_entry(peer->ibp_conns.next, struct kib_conn, ibc_list);
-+	/* Advance to next connection, be sure to skip the head node */
-+	if (!peer->ibp_next_conn ||
-+	    peer->ibp_next_conn->ibc_list.next == &peer->ibp_conns)
-+		next = peer->ibp_conns.next;
-+	else
-+		next = peer->ibp_next_conn->ibc_list.next;
-+	peer->ibp_next_conn = list_entry(next, struct kib_conn, ibc_list);
-+
-+	return peer->ibp_next_conn;
+ v1-v2:
+ 1:Don't treat overlaps partition as a error, but log a warning.
+ block/partitions/cmdline.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 66 insertions(+)
+
+diff --git a/block/partitions/cmdline.c b/block/partitions/cmdline.c
+index e333583..2fd1b99 100644
+--- a/block/partitions/cmdline.c
++++ b/block/partitions/cmdline.c
+@@ -58,6 +58,71 @@ static int __init cmdline_parts_setup(char *s)
  }
+ __setup("blkdevparts=", cmdline_parts_setup);
  
- static inline int
-diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-index b4a182d..77b3ae6 100644
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c
-@@ -1250,7 +1250,6 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 
- 	LASSERT(net);
- 	LASSERT(peer->ibp_connecting > 0);
--	LASSERT(!peer->ibp_reconnecting);
- 
- 	cmid = kiblnd_rdma_create_id(kiblnd_cm_callback, peer, RDMA_PS_TCP,
- 				     IB_QPT_RC);
-@@ -1332,7 +1331,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 
- 	LASSERT(!peer->ibp_accepting && !peer->ibp_connecting &&
- 		list_empty(&peer->ibp_conns));
--	peer->ibp_reconnecting = 0;
-+	peer->ibp_reconnecting--;
- 
- 	if (!kiblnd_peer_active(peer)) {
- 		list_splice_init(&peer->ibp_tx_queue, &txs);
-@@ -1365,6 +1364,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 	rwlock_t *g_lock = &kiblnd_data.kib_global_lock;
- 	unsigned long flags;
- 	int rc;
-+	int		   i;
-+	struct lnet_ioctl_config_o2iblnd_tunables *tunables;
- 
- 	/*
- 	 * If I get here, I've committed to send, so I complete the tx with
-@@ -1461,7 +1462,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 
- 	/* Brand new peer */
- 	LASSERT(!peer->ibp_connecting);
--	peer->ibp_connecting = 1;
-+	tunables = &peer->ibp_ni->ni_lnd_tunables->lt_tun_u.lt_o2ib;
-+	peer->ibp_connecting = tunables->lnd_conns_per_peer;
- 
- 	/* always called with a ref on ni, which prevents ni being shutdown */
- 	LASSERT(!((struct kib_net *)ni->ni_data)->ibn_shutdown);
-@@ -1474,7 +1476,8 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 
- 	write_unlock_irqrestore(g_lock, flags);
- 
--	kiblnd_connect_peer(peer);
-+	for (i = 0; i < tunables->lnd_conns_per_peer; i++)
-+		kiblnd_connect_peer(peer);
- 	kiblnd_peer_decref(peer);
- }
- 
-@@ -1923,6 +1926,9 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 	}
- 
- 	dev = ((struct kib_net *)peer->ibp_ni->ni_data)->ibn_dev;
-+	if (peer->ibp_next_conn == conn)
-+		/* clear next_conn so it won't be used */
-+		peer->ibp_next_conn = NULL;
- 	list_del(&conn->ibc_list);
- 	/* connd (see below) takes over ibc_list's ref */
- 
-@@ -2192,7 +2198,11 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 	kiblnd_conn_addref(conn);
- 	write_unlock_irqrestore(&kiblnd_data.kib_global_lock, flags);
- 
--	/* Schedule blocked txs */
-+	/* Schedule blocked txs
-+	 * Note: if we are running with conns_per_peer > 1, these blocked
-+	 * txs will all get scheduled to the first connection which gets
-+	 * scheduled.  We won't be using round robin on this first batch.
-+	 */
- 	spin_lock(&conn->ibc_lock);
- 	list_for_each_entry_safe(tx, tmp, &txs, tx_list) {
- 		list_del(&tx->tx_list);
-@@ -2561,7 +2571,6 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 
- 	LASSERT(conn->ibc_state == IBLND_CONN_ACTIVE_CONNECT);
- 	LASSERT(peer->ibp_connecting > 0);     /* 'conn' at least */
--	LASSERT(!peer->ibp_reconnecting);
- 
- 	if (cp) {
- 		msg_size = cp->ibcp_max_msg_size;
-@@ -2579,7 +2588,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 	 */
- 	reconnect = (!list_empty(&peer->ibp_tx_queue) ||
- 		     peer->ibp_version != version) &&
--		    peer->ibp_connecting == 1 &&
-+		    peer->ibp_connecting &&
- 		    !peer->ibp_accepting;
- 	if (!reconnect) {
- 		reason = "no need";
-@@ -2640,7 +2649,7 @@ static int kiblnd_resolve_addr(struct rdma_cm_id *cmid,
- 	}
- 
- 	conn->ibc_reconnect = 1;
--	peer->ibp_reconnecting = 1;
-+	peer->ibp_reconnecting++;
- 	peer->ibp_version = version;
- 	if (incarnation)
- 		peer->ibp_incarnation = incarnation;
-diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
-index b923540..39d0792 100644
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_modparams.c
-@@ -57,6 +57,10 @@
- module_param(nscheds, int, 0444);
- MODULE_PARM_DESC(nscheds, "number of threads in each scheduler pool");
- 
-+static unsigned int conns_per_peer = 1;
-+module_param(conns_per_peer, uint, 0444);
-+MODULE_PARM_DESC(conns_per_peer, "number of connections per peer");
++static bool has_overlaps(sector_t from, sector_t size,
++			 sector_t from2, sector_t size2)
++{
++	sector_t end = from + size;
++	sector_t end2 = from2 + size2;
 +
- /* NB: this value is shared by all CPTs, it can grow at runtime */
- static int ntx = 512;
- module_param(ntx, int, 0444);
-@@ -271,6 +275,10 @@ int kiblnd_tunables_setup(struct lnet_ni *ni)
- 		tunables->lnd_fmr_flush_trigger = fmr_flush_trigger;
- 	if (!tunables->lnd_fmr_cache)
- 		tunables->lnd_fmr_cache = fmr_cache;
-+	if (!tunables->lnd_conns_per_peer) {
-+		tunables->lnd_conns_per_peer = (conns_per_peer) ?
-+			conns_per_peer : 1;
++	if (from >= from2 && from < end2)
++		return true;
++
++	if (end > from2 && end <= end2)
++		return true;
++
++	if (from2 >= from && from2 < end)
++		return true;
++
++	if (end2 > from && end2 <= end)
++		return true;
++
++	return false;
++}
++
++static inline void overlaps_warns_header(void)
++{
++	pr_warn("\n");
++	pr_warn("Overlapping partitions are used in command line partitions.\n");
++	pr_warn("Don't use filesystems on overlapping partitions:\n");
++}
++
++static inline void overlaps_warns_tailer(void)
++{
++	pr_warn("\n");
++}
++
++static void cmdline_parts_verifier(int slot, struct parsed_partitions *state)
++{
++	int i;
++	bool header = true;
++
++	for (; slot < state->limit && state->parts[slot].has_info; slot++) {
++		for (i = slot+1; i < state->limit && state->parts[i].has_info;
++		     i++) {
++			if (has_overlaps(state->parts[slot].from,
++					 state->parts[slot].size,
++					 state->parts[i].from,
++					 state->parts[i].size)) {
++				if (header) {
++					header = false;
++					overlaps_warns_header();
++				}
++				pr_warn("%s[%llu,%llu] overlaps with "
++					"%s[%llu,%llu].\n",
++					state->parts[slot].info.volname,
++					(u64)state->parts[slot].from << 9,
++					(u64)state->parts[slot].size << 9,
++					state->parts[i].info.volname,
++					(u64)state->parts[i].from << 9,
++					(u64)state->parts[i].size << 9);
++			}
++		}
 +	}
++
++	if (!header)
++		overlaps_warns_tailer();
++}
++
+ /*
+  * Purpose: allocate cmdline partitions.
+  * Returns:
+@@ -93,6 +158,7 @@ int cmdline_partition(struct parsed_partitions *state)
+ 	disk_size = get_capacity(state->bdev->bd_disk) << 9;
  
- 	return 0;
- }
-@@ -284,4 +292,5 @@ void kiblnd_tunables_init(void)
- 	default_tunables.lnd_fmr_pool_size = fmr_pool_size;
- 	default_tunables.lnd_fmr_flush_trigger = fmr_flush_trigger;
- 	default_tunables.lnd_fmr_cache = fmr_cache;
-+	default_tunables.lnd_conns_per_peer = conns_per_peer;
- }
+ 	cmdline_parts_set(parts, disk_size, 1, add_part, (void *)state);
++	cmdline_parts_verifier(1, state);
+ 
+ 	strlcat(state->pp_buf, "\n", PAGE_SIZE);
+ 
 -- 
-1.8.3.1
+1.8.5.6.2.g3d8a54e.dirty
