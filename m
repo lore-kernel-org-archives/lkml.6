@@ -1,65 +1,129 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753886AbeEHCij (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:38:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54168 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753525AbeEHCih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:38:37 -0400
-X-Google-Smtp-Source: AB8JxZpEpf76IY65Pnehx9Jo2dHiIcD2DEYSQs4XAiQX4sU1UJPP98Bjwyhjw4+xfYx9E/WfRuPHQlkuyVRDd1gTj7s=
+        id S1753962AbeEHClB (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:41:01 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7237 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753525AbeEHCk7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 22:40:59 -0400
+From: Chao Yu <yuchao0@huawei.com>
+To: <jaegeuk@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to wait atomic pages writeback in block_operations()
+Date: Tue, 8 May 2018 10:40:37 +0800
+Message-ID: <20180508024037.16636-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.17.0.391.g1f1cddd558b5
 MIME-Version: 1.0
-References: <5AF03EBD02000078001C1303@prv1-mh.provo.novell.com>
-In-Reply-To: <5AF03EBD02000078001C1303@prv1-mh.provo.novell.com>
-From: Andy Lutomirski <luto@kernel.org>
-Date: Tue, 08 May 2018 02:38:25 +0000
-X-Gmail-Original-Message-ID: <CALCETrX=SM=YBSpRv53Qmxk2PkHcTFWWvw-JGOh0C4UpvTReAA@mail.gmail.com>
-Message-ID: <CALCETrX=SM=YBSpRv53Qmxk2PkHcTFWWvw-JGOh0C4UpvTReAA@mail.gmail.com>
-Subject: Re: [PATCH] x86-64/Xen: fix stack switching
-To: Jan Beulich <JBeulich@suse.com>
-Cc: Ingo Molnar <mingo@elte.hu>, Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andrew Lutomirski <luto@kernel.org>,
-        xen-devel@lists.xenproject.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 5:16 AM Jan Beulich <JBeulich@suse.com> wrote:
+1. thread A: commit_inmem_pages submit data into block layer, but
+haven't waited it writeback.
+2. thread A: commit_inmem_pages update related node.
+3. thread B: do checkpoint, flush all nodes to disk.
+4. SPOR
 
-> While on native entry into the kernel happens on the trampoline stack,
-> PV Xen kernels are being entered with the current thread stack right
-> away. Hence source and destination stacks are identical in that case,
-> and special care is needed.
+Then, atomic file becomes corrupted since nodes is flushed before data.
 
-> Other than in sync_regs() the copying done on the INT80 path as well as
-> on the NMI path itself isn't NMI / #MC safe, as either of these events
-> occurring in the middle of the stack copying would clobber data on the
-> (source) stack. (Of course, in the NMI case only #MC could break
-> things.)
+This patch fixes to try to wait all atomic pages writeback in
+block_operations().
 
-I think I'd rather fix this by changing the stack switch code or
-alternativing around it on non-stack-switching kernels.  Or make Xen use a
-trampoline stack just like native.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/checkpoint.c |  4 +++-
+ fs/f2fs/data.c       |  2 ++
+ fs/f2fs/f2fs.h       |  2 ++
+ fs/f2fs/segment.c    | 17 +++++++++++++++++
+ 4 files changed, 24 insertions(+), 1 deletion(-)
 
-
-> I'm not altering the similar code in interrupt_entry(), as that code
-> path is unreachable when running an PV Xen guest afaict.
-
-> Signed-off-by: Jan Beulich <jbeulich@suse.com>
-> Cc: stable@kernel.org
-> ---
-> There would certainly have been the option of using alternatives
-> patching, but afaict the patching code isn't NMI / #MC safe, so I'd
-> rather stay away from patching the NMI path. And I thought it would be
-> better to use similar code in both cases.
-
-I would hope we do the patching before we enable any NMIs.
-
-
-> Another option would be to make the Xen case match the native one, by
-> going through the trampoline stack, but to me this would look like extra
-> overhead for no gain.
-
-Avoiding even more complexity in the nmi code seems like a big gain to me.
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 33d2da006789..d53d53f55c51 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1067,6 +1067,8 @@ static int block_operations(struct f2fs_sb_info *sbi)
+ 		goto retry_flush_dents;
+ 	}
+ 
++	wait_inmem_pages_writeback(sbi);
++
+ 	/*
+ 	 * POR: we should ensure that there are no dirty node pages
+ 	 * until finishing nat/sit flush. inode->i_blocks can be updated.
+@@ -1115,7 +1117,7 @@ static void unblock_operations(struct f2fs_sb_info *sbi)
+ 	f2fs_unlock_all(sbi);
+ }
+ 
+-static void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
++void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi)
+ {
+ 	DEFINE_WAIT(wait);
+ 
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 5a979b5ee278..c181f58948c0 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -48,6 +48,8 @@ static bool __is_cp_guaranteed(struct page *page)
+ 	if (inode->i_ino == F2FS_META_INO(sbi) ||
+ 			inode->i_ino ==  F2FS_NODE_INO(sbi) ||
+ 			S_ISDIR(inode->i_mode) ||
++			(S_ISREG(inode->i_mode) &&
++			is_inode_flag_set(inode, FI_ATOMIC_FILE)) ||
+ 			is_cold_data(page))
+ 		return true;
+ 	return false;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index bda9c3ce08ef..adfd512ae4a1 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2839,6 +2839,7 @@ void destroy_node_manager_caches(void);
+ bool need_SSR(struct f2fs_sb_info *sbi);
+ void register_inmem_page(struct inode *inode, struct page *page);
+ void drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure);
++void wait_inmem_pages_writeback(struct f2fs_sb_info *sbi);
+ void drop_inmem_pages(struct inode *inode);
+ void drop_inmem_page(struct inode *inode, struct page *page);
+ int commit_inmem_pages(struct inode *inode);
+@@ -2926,6 +2927,7 @@ int get_valid_checkpoint(struct f2fs_sb_info *sbi);
+ void update_dirty_page(struct inode *inode, struct page *page);
+ void remove_dirty_inode(struct inode *inode);
+ int sync_dirty_inodes(struct f2fs_sb_info *sbi, enum inode_type type);
++void wait_on_all_pages_writeback(struct f2fs_sb_info *sbi);
+ int write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+ void init_ino_entry_info(struct f2fs_sb_info *sbi);
+ int __init create_checkpoint_caches(void);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 24b71d450374..e8a81cbd6808 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -305,6 +305,23 @@ void drop_inmem_pages_all(struct f2fs_sb_info *sbi, bool gc_failure)
+ 	goto next;
+ }
+ 
++void wait_inmem_pages_writeback(struct f2fs_sb_info *sbi)
++{
++	struct list_head *head = &sbi->inode_list[ATOMIC_FILE];
++	struct f2fs_inode_info *fi;
++
++	spin_lock(&sbi->inode_lock[ATOMIC_FILE]);
++	list_for_each_entry(fi, head, inmem_ilist) {
++		if (!down_read_trylock(&fi->i_gc_rwsem[WRITE])) {
++			spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++			wait_on_all_pages_writeback(sbi);
++			return;
++		}
++		up_read(&fi->i_gc_rwsem[WRITE]);
++	}
++	spin_unlock(&sbi->inode_lock[ATOMIC_FILE]);
++}
++
+ void drop_inmem_pages(struct inode *inode)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+-- 
+2.17.0.391.g1f1cddd558b5
