@@ -1,24 +1,23 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755624AbeEHRtQ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:49:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38868 "EHLO
+        id S1755604AbeEHRtP (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:49:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39008 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755325AbeEHRtI (ORCPT
+        with ESMTP id S1755452AbeEHRtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:49:08 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 535E26022C
+        Tue, 8 May 2018 13:49:09 -0400
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5354860881
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
 From: Lina Iyer <ilina@codeaurora.org>
 To: edubezval@gmail.com, rui.zhang@intel.com
 Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, daniel.lezcano@linaro.org,
-        amit.kucheria@linaro.org, Lina Iyer <ilina@codeaurora.org>,
-        Ram Chandrasekar <rkumbako@codeaurora.org>
-Subject: [PATCH RFC 1/4] drivers: of-thermal: abstract sensor related information
-Date: Tue,  8 May 2018 11:48:56 -0600
-Message-Id: <20180508174859.26539-2-ilina@codeaurora.org>
+        amit.kucheria@linaro.org, Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH RFC 3/4] drivers: of-thermal: aggregate sensor trips across thermal zones
+Date: Tue,  8 May 2018 11:48:58 -0600
+Message-Id: <20180508174859.26539-4-ilina@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508174859.26539-1-ilina@codeaurora.org>
 References: <20180508174859.26539-1-ilina@codeaurora.org>
@@ -26,225 +25,145 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sensor related information like the sensor callback ops and sensor data
-live in the thermal zone data structure along with other parameters.
-In preparation to use the same sensor across multiple thermal zones
-separate out the sensor specific information into its own data
-structure.
+Aggregate thermal trip based on the trip points of the thermal zones
+that use this sensor as the source.
 
-Signed-off-by: Ram Chandrasekar <rkumbako@codeaurora.org>
 Signed-off-by: Lina Iyer <ilina@codeaurora.org>
 ---
- drivers/thermal/of-thermal.c | 72 ++++++++++++++++++++++++------------
- 1 file changed, 49 insertions(+), 23 deletions(-)
+ drivers/thermal/of-thermal.c      | 28 ++++++++++++++++++++++-
+ drivers/thermal/thermal_helpers.c | 37 ++++++++++++++++++-------------
+ include/linux/thermal.h           |  4 ++++
+ 3 files changed, 53 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index eea2fce82bf7..b402edd09ed1 100644
+index 06e581a37c67..6fb2eeb5b6cf 100644
 --- a/drivers/thermal/of-thermal.c
 +++ b/drivers/thermal/of-thermal.c
-@@ -35,6 +35,16 @@ struct __thermal_bind_params {
- 	unsigned long max;
- };
- 
-+/**
-+ * struct thermal_sensor - Holds individual sensor data
-+ * @sensor_data: sensor driver private data passed as input argument
-+ * @ops: sensor driver ops
-+ */
-+struct thermal_sensor {
-+	void *sensor_data;
-+	const struct thermal_zone_of_device_ops *ops;
-+};
-+
- /**
-  * struct __thermal_zone - internal representation of a thermal zone
-  * @mode: current thermal zone device mode (enabled/disabled)
-@@ -46,8 +56,7 @@ struct __thermal_bind_params {
-  * @trips: an array of trip points (0..ntrips - 1)
-  * @num_tbps: number of thermal bind params
-  * @tbps: an array of thermal bind params (0..num_tbps - 1)
-- * @sensor_data: sensor private data used while reading temperature and trend
-- * @ops: set of callbacks to handle the thermal zone based on DT
-+ * @sensor: sensor related parameters
-  */
- 
- struct __thermal_zone {
-@@ -66,8 +75,7 @@ struct __thermal_zone {
- 	struct __thermal_bind_params *tbps;
- 
- 	/* sensor interface */
--	void *sensor_data;
--	const struct thermal_zone_of_device_ops *ops;
-+	struct thermal_sensor *sensor;
- };
- 
- /***   DT thermal zone device callbacks   ***/
-@@ -76,22 +84,24 @@ static int of_thermal_get_temp(struct thermal_zone_device *tz,
- 			       int *temp)
- {
- 	struct __thermal_zone *data = tz->devdata;
-+	struct thermal_sensor *sensor = data->sensor;
- 
--	if (!data->ops->get_temp)
-+	if (!sensor || !sensor->ops->get_temp)
- 		return -EINVAL;
- 
--	return data->ops->get_temp(data->sensor_data, temp);
-+	return sensor->ops->get_temp(sensor->sensor_data, temp);
+@@ -96,16 +96,42 @@ static int of_thermal_get_temp(struct thermal_zone_device *tz,
+ 	return sensor->ops->get_temp(sensor->sensor_data, temp);
  }
  
++static void __of_thermal_agg_trip(struct thermal_sensor *sensor,
++				 int *floor, int *ceil)
++{
++	int low, high;
++	int max_lo = INT_MIN;
++	int min_hi = INT_MAX;
++	struct thermal_zone_device *tz;
++
++	list_for_each_entry(tz, &sensor->tz_list, sensor_tzd) {
++		thermal_zone_get_trip(tz, &low, &high);
++		if (low > max_lo)
++			max_lo = low;
++		if (high < min_hi)
++			min_hi = high;
++	}
++
++	*floor = max_lo;
++	*ceil = min_hi;
++}
++
  static int of_thermal_set_trips(struct thermal_zone_device *tz,
  				int low, int high)
  {
  	struct __thermal_zone *data = tz->devdata;
-+	struct thermal_sensor *sensor = data->sensor;
+ 	struct thermal_sensor *sensor = data->sensor;
++	int ret;
  
--	if (!data->ops || !data->ops->set_trips)
-+	if (!sensor || !sensor->ops->set_trips)
+ 	if (!sensor || !sensor->ops->set_trips)
  		return -EINVAL;
  
--	return data->ops->set_trips(data->sensor_data, low, high);
-+	return sensor->ops->set_trips(sensor->sensor_data, low, high);
+-	return sensor->ops->set_trips(sensor->sensor_data, low, high);
++	mutex_lock(&sensor->lock);
++	__of_thermal_agg_trip(sensor, &low, &high);
++	ret = sensor->ops->set_trips(sensor->sensor_data, low, high);
++	mutex_unlock(&sensor->lock);
++
++	return ret;
  }
  
  /**
-@@ -173,19 +183,24 @@ static int of_thermal_set_emul_temp(struct thermal_zone_device *tz,
- 				    int temp)
- {
- 	struct __thermal_zone *data = tz->devdata;
-+	struct thermal_sensor *sensor = data->sensor;
+diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
+index f550fdee0f9b..d4fa125f8799 100644
+--- a/drivers/thermal/thermal_helpers.c
++++ b/drivers/thermal/thermal_helpers.c
+@@ -113,32 +113,39 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
+ }
+ EXPORT_SYMBOL_GPL(thermal_zone_get_temp);
+ 
+-void thermal_zone_set_trips(struct thermal_zone_device *tz)
 +
-+	if (!sensor || !sensor->ops->set_emul_temp)
-+		return -EINVAL;
- 
--	return data->ops->set_emul_temp(data->sensor_data, temp);
-+	return sensor->ops->set_emul_temp(sensor->sensor_data, temp);
- }
- 
- static int of_thermal_get_trend(struct thermal_zone_device *tz, int trip,
- 				enum thermal_trend *trend)
++void thermal_zone_get_trip(struct thermal_zone_device *tz, int *low, int *high)
  {
- 	struct __thermal_zone *data = tz->devdata;
-+	struct thermal_sensor *sensor = data->sensor;
+-	int low = -INT_MAX;
+-	int high = INT_MAX;
+-	int trip_temp, hysteresis;
+-	int i, ret;
++	int i, trip_low, trip_temp, hysteresis;
  
--	if (!data->ops->get_trend)
-+	if (!sensor || !sensor->ops->get_trend)
- 		return -EINVAL;
+-	mutex_lock(&tz->lock);
+-
+-	if (!tz->ops->set_trips || !tz->ops->get_trip_hyst)
+-		goto exit;
++	*low = -INT_MAX;
++	*high = INT_MAX;
  
--	return data->ops->get_trend(data->sensor_data, trip, trend);
-+	return sensor->ops->get_trend(sensor->sensor_data, trip, trend);
- }
+ 	for (i = 0; i < tz->trips; i++) {
+-		int trip_low;
+-
+ 		tz->ops->get_trip_temp(tz, i, &trip_temp);
+ 		tz->ops->get_trip_hyst(tz, i, &hysteresis);
  
- static int of_thermal_bind(struct thermal_zone_device *thermal,
-@@ -303,14 +318,16 @@ static int of_thermal_set_trip_temp(struct thermal_zone_device *tz, int trip,
- 				    int temp)
- {
- 	struct __thermal_zone *data = tz->devdata;
-+	struct thermal_sensor *sensor = data->sensor;
+ 		trip_low = trip_temp - hysteresis;
  
- 	if (trip >= data->ntrips || trip < 0)
- 		return -EDOM;
+-		if (trip_low < tz->temperature && trip_low > low)
+-			low = trip_low;
++		if (trip_low < tz->temperature && trip_low > *low)
++			*low = trip_low;
  
--	if (data->ops->set_trip_temp) {
-+	if (sensor && sensor->ops->set_trip_temp) {
- 		int ret;
- 
--		ret = data->ops->set_trip_temp(data->sensor_data, trip, temp);
-+		ret = sensor->ops->set_trip_temp(sensor->sensor_data,
-+						trip, temp);
- 		if (ret)
- 			return ret;
+-		if (trip_temp > tz->temperature && trip_temp < high)
+-			high = trip_temp;
++		if (trip_temp > tz->temperature && trip_temp < *high)
++			*high = trip_temp;
  	}
-@@ -382,8 +399,8 @@ static struct thermal_zone_device_ops of_thermal_ops = {
++}
++
++void thermal_zone_set_trips(struct thermal_zone_device *tz)
++{
++	int low, high;
++	int ret;
++
++	mutex_lock(&tz->lock);
++
++	if (!tz->ops->set_trips || !tz->ops->get_trip_hyst)
++		goto exit;
++
++	thermal_zone_get_trip(tz, &low, &high);
  
- static struct thermal_zone_device *
- thermal_zone_of_add_sensor(struct device_node *zone,
--			   struct device_node *sensor, void *data,
--			   const struct thermal_zone_of_device_ops *ops)
-+			   struct device_node *sensor_np,
-+			   struct thermal_sensor *sensor)
- {
- 	struct thermal_zone_device *tzd;
- 	struct __thermal_zone *tz;
-@@ -394,12 +411,11 @@ thermal_zone_of_add_sensor(struct device_node *zone,
+ 	/* No need to change trip points */
+ 	if (tz->prev_low_trip == low && tz->prev_high_trip == high)
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index 09e1669a4919..000ae6a97678 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -443,6 +443,7 @@ int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
+ 				       struct thermal_cooling_device *);
+ void thermal_zone_device_update(struct thermal_zone_device *,
+ 				enum thermal_notify_event);
++void thermal_zone_get_trip(struct thermal_zone_device *tz, int *low, int *high);
+ void thermal_zone_set_trips(struct thermal_zone_device *);
  
- 	tz = tzd->devdata;
- 
--	if (!ops)
-+	if (!sensor->ops)
- 		return ERR_PTR(-EINVAL);
- 
- 	mutex_lock(&tzd->lock);
--	tz->ops = ops;
--	tz->sensor_data = data;
-+	tz->sensor = sensor;
- 
- 	tzd->ops->get_temp = of_thermal_get_temp;
- 	tzd->ops->get_trend = of_thermal_get_trend;
-@@ -408,10 +424,10 @@ thermal_zone_of_add_sensor(struct device_node *zone,
- 	 * The thermal zone core will calculate the window if they have set the
- 	 * optional set_trips pointer.
- 	 */
--	if (ops->set_trips)
-+	if (sensor->ops->set_trips)
- 		tzd->ops->set_trips = of_thermal_set_trips;
- 
--	if (ops->set_emul_temp)
-+	if (sensor->ops->set_emul_temp)
- 		tzd->ops->set_emul_temp = of_thermal_set_emul_temp;
- 
- 	mutex_unlock(&tzd->lock);
-@@ -457,6 +473,7 @@ thermal_zone_of_sensor_register(struct device *dev, int sensor_id, void *data,
- {
- 	struct device_node *np, *child, *sensor_np;
- 	struct thermal_zone_device *tzd = ERR_PTR(-ENODEV);
-+	struct thermal_sensor *sensor = NULL;
- 
- 	np = of_find_node_by_name(NULL, "thermal-zones");
- 	if (!np)
-@@ -467,6 +484,13 @@ thermal_zone_of_sensor_register(struct device *dev, int sensor_id, void *data,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-+	sensor = kzalloc(sizeof(*sensor), GFP_KERNEL);
-+	if (!sensor) {
-+		of_node_put(np);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+	sensor->sensor_data = data;
-+	sensor->ops = ops;
- 	sensor_np = of_node_get(dev->of_node);
- 
- 	for_each_available_child_of_node(np, child) {
-@@ -491,7 +515,7 @@ thermal_zone_of_sensor_register(struct device *dev, int sensor_id, void *data,
- 
- 		if (sensor_specs.np == sensor_np && id == sensor_id) {
- 			tzd = thermal_zone_of_add_sensor(child, sensor_np,
--							 data, ops);
-+							 sensor);
- 			if (!IS_ERR(tzd))
- 				tzd->ops->set_mode(tzd, THERMAL_DEVICE_ENABLED);
- 
-@@ -505,6 +529,8 @@ thermal_zone_of_sensor_register(struct device *dev, int sensor_id, void *data,
- 	of_node_put(sensor_np);
- 	of_node_put(np);
- 
-+	if (tzd == ERR_PTR(-ENODEV))
-+		kfree(sensor);
- 	return tzd;
- }
- EXPORT_SYMBOL_GPL(thermal_zone_of_sensor_register);
-@@ -543,8 +569,8 @@ void thermal_zone_of_sensor_unregister(struct device *dev,
- 	tzd->ops->get_trend = NULL;
- 	tzd->ops->set_emul_temp = NULL;
- 
--	tz->ops = NULL;
--	tz->sensor_data = NULL;
-+	kfree(tz->sensor);
-+	tz->sensor = NULL;
- 	mutex_unlock(&tzd->lock);
- }
- EXPORT_SYMBOL_GPL(thermal_zone_of_sensor_unregister);
+ struct thermal_cooling_device *thermal_cooling_device_register(char *, void *,
+@@ -496,6 +497,9 @@ static inline int thermal_zone_unbind_cooling_device(
+ static inline void thermal_zone_device_update(struct thermal_zone_device *tz,
+ 					      enum thermal_notify_event event)
+ { }
++static inline void thermal_zone_get_trip(struct thermal_zone_device *tz,
++					 int *low, int *high)
++{ }
+ static inline void thermal_zone_set_trips(struct thermal_zone_device *tz)
+ { }
+ static inline struct thermal_cooling_device *
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
