@@ -1,11 +1,11 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754611AbeEHMPB (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:15:01 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57468 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751699AbeEHMPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:15:00 -0400
+        id S932083AbeEHMPF (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:15:05 -0400
+Received: from foss.arm.com ([217.140.101.70]:57502 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754851AbeEHMPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:15:03 -0400
 From: Marc Zyngier <marc.zyngier@arm.com>
 To: Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>
@@ -14,78 +14,81 @@ Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/9]  Level-triggered MSI support
-Date: Tue,  8 May 2018 13:14:29 +0100
-Message-Id: <20180508121438.11301-1-marc.zyngier@arm.com>
+Subject: [PATCH v2 2/9] genirq/msi: Limit level-triggered MSI to platform devices
+Date: Tue,  8 May 2018 13:14:31 +0100
+Message-Id: <20180508121438.11301-3-marc.zyngier@arm.com>
 X-Mailer: git-send-email 2.14.2
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180508121438.11301-1-marc.zyngier@arm.com>
+References: <20180508121438.11301-1-marc.zyngier@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is a first shot at teaching the kernel about the oxymoron
-expressed in $SUBJECT. Over the past couple of years, we've seen some
-SoCs coming up with ways of signalling level interrupts using a new
-flavor of MSIs, where the MSI controller uses two distinct messages:
-one that raises a virtual line, and one that lowers it. The target MSI
-controller is in charge of maintaining the state of the line.
+Nobody would be insane enough to try and use level triggered
+MSIs on PCI, but let's make sure it doesn't happen. Also,
+let's mandate that the irqchip backing the platform MSI domain
+is providing the IRQCHIP_SUPPORTS_LEVEL_MSI flag.
 
-This allows for a much simplified HW signal routing (no need to have
-hundreds of discrete lines to signal level interrupts if you already
-have a memory bus), but results in a departure from the current idea
-the kernel has of MSIs.
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ drivers/base/platform-msi.c     | 3 +++
+ drivers/bus/fsl-mc/fsl-mc-msi.c | 2 ++
+ drivers/pci/msi.c               | 3 +++
+ include/linux/irq.h             | 1 +
+ 4 files changed, 9 insertions(+)
 
-This series takes a minimal approach to the problem, which is to allow
-MSI controllers to use not only one, but up to two messages at a
-time. This is controlled by a flag exposed at MSI irq domain creation,
-and is only supported with platform MSI.
-
-The rest of the series repaints the Marvell ICU/GICP drivers which
-already make use of this feature with a side-channel, and adds support
-for the same feature in GICv3. A side effect of the last GICv3 patch
-is that you can also use SPIs to signal PCI MSIs. This is a last
-resort measure for SoCs where the ITS is unusable for unspeakable
-reasons.
-
-* From v1:
-  - irq_find_host now defaults to DOMAIN_BUS_WIRED
-  - Introduced a new irqchip flag indicating support for Level MSI
-  - Turned GICv3 MBI allocator spinlock into a mutex
-  - Exclude fsl-mc from Level MSI
-
-Marc Zyngier (9):
-  genirq/msi: Allow level-triggered MSIs to be exposed by MSI providers
-  genirq/msi: Limit level-triggered MSI to platform devices
-  irqchip/mvebu-gicp: Use level-triggered MSIs between ICU and GICP
-  dma-iommu: Fix compilation when !CONFIG_IOMMU_DMA
-  irqdomain: Let irq_find_host default to DOMAIN_BUS_WIRED
-  irqchip/gic-v3: Mark the base irq domain as DOMAIN_BUS_WIRED
-  irqchip/gic-v3: Add support for Message Based Interrupts as an MSI
-    controller
-  irqchip/gic-v3: Add PCI/MSI support to the GICv3 MBI sub-driver
-  dt-bindings/gic-v3: Add documentation for MBI support
-
- .../bindings/interrupt-controller/arm,gic-v3.txt   |  17 ++
- drivers/base/platform-msi.c                        |   3 +
- drivers/bus/fsl-mc/fsl-mc-msi.c                    |   2 +
- drivers/irqchip/Makefile                           |   2 +-
- drivers/irqchip/irq-gic-v3-mbi.c                   | 331 +++++++++++++++++++++
- drivers/irqchip/irq-gic-v3.c                       |   7 +
- drivers/irqchip/irq-mvebu-gicp.c                   |  38 +--
- drivers/irqchip/irq-mvebu-gicp.h                   |  12 -
- drivers/irqchip/irq-mvebu-icu.c                    |  33 +-
- drivers/pci/msi.c                                  |   3 +
- include/linux/dma-iommu.h                          |   1 +
- include/linux/irq.h                                |   1 +
- include/linux/irqchip/arm-gic-v3.h                 |   1 +
- include/linux/irqdomain.h                          |   8 +-
- include/linux/msi.h                                |   2 +
- kernel/irq/msi.c                                   |  33 +-
- 16 files changed, 428 insertions(+), 66 deletions(-)
- create mode 100644 drivers/irqchip/irq-gic-v3-mbi.c
- delete mode 100644 drivers/irqchip/irq-mvebu-gicp.h
-
+diff --git a/drivers/base/platform-msi.c b/drivers/base/platform-msi.c
+index 8e22073aeeed..60d6cc618f1c 100644
+--- a/drivers/base/platform-msi.c
++++ b/drivers/base/platform-msi.c
+@@ -101,6 +101,9 @@ static void platform_msi_update_chip_ops(struct msi_domain_info *info)
+ 		chip->irq_set_affinity = msi_domain_set_affinity;
+ 	if (!chip->irq_write_msi_msg)
+ 		chip->irq_write_msi_msg = platform_msi_write_msg;
++	if (WARN_ON((info->flags & MSI_FLAG_LEVEL_CAPABLE) &&
++		    !(chip->flags & IRQCHIP_SUPPORTS_LEVEL_MSI)))
++		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
+ }
+ 
+ static void platform_msi_free_descs(struct device *dev, int base, int nvec)
+diff --git a/drivers/bus/fsl-mc/fsl-mc-msi.c b/drivers/bus/fsl-mc/fsl-mc-msi.c
+index ec35e255b496..8b9c66d7c4ff 100644
+--- a/drivers/bus/fsl-mc/fsl-mc-msi.c
++++ b/drivers/bus/fsl-mc/fsl-mc-msi.c
+@@ -163,6 +163,8 @@ struct irq_domain *fsl_mc_msi_create_irq_domain(struct fwnode_handle *fwnode,
+ {
+ 	struct irq_domain *domain;
+ 
++	if (WARN_ON((info->flags & MSI_FLAG_LEVEL_CAPABLE)))
++		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
+ 	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
+ 		fsl_mc_msi_update_dom_ops(info);
+ 	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index 30250631efe7..f45b74fcc059 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -1434,6 +1434,9 @@ struct irq_domain *pci_msi_create_irq_domain(struct fwnode_handle *fwnode,
+ {
+ 	struct irq_domain *domain;
+ 
++	if (WARN_ON(info->flags & MSI_FLAG_LEVEL_CAPABLE))
++		info->flags &= ~MSI_FLAG_LEVEL_CAPABLE;
++
+ 	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
+ 		pci_msi_domain_update_dom_ops(info);
+ 	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index 65916a305f3d..b2067083aa94 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -512,6 +512,7 @@ enum {
+ 	IRQCHIP_SKIP_SET_WAKE		= (1 <<  4),
+ 	IRQCHIP_ONESHOT_SAFE		= (1 <<  5),
+ 	IRQCHIP_EOI_THREADED		= (1 <<  6),
++	IRQCHIP_SUPPORTS_LEVEL_MSI	= (1 <<  7),
+ };
+ 
+ #include <linux/irqdesc.h>
 -- 
 2.14.2
