@@ -1,48 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754862AbeEHKmd (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 06:42:33 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:43959 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754476AbeEHKmb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 06:42:31 -0400
-X-Google-Smtp-Source: AB8JxZobKhb0Orb83wvXOEIjB3nhG4r/H9uCweHCBtah4dTnMJL4Qk+mH27m3Ynn1AgQKrsgPFjbPQ==
-From: Minchan Kim <minchan@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>, LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Minchan Kim <minchan@kernel.org>
-Subject: [PATCH] mm/memblock: print memblock_remove
-Date: Tue,  8 May 2018 19:42:23 +0900
-Message-Id: <20180508104223.8028-1-minchan@kernel.org>
-X-Mailer: git-send-email 2.17.0.441.gb46fe60e1d-goog
+        id S1754909AbeEHKmj (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 06:42:39 -0400
+Received: from verein.lst.de ([213.95.11.211]:36869 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754476AbeEHKmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 06:42:36 -0400
+Date: Tue, 8 May 2018 12:45:56 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        linux-arch@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Michal Simek <monstr@monstr.eu>, Vincent Chen <deanbo422@gmail.com>,
+        linux-c6x-dev@linux-c6x.org, linux-parisc@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@vger.kernel.org,
+        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/3] dma-debug: unexport dma_debug_resize_entries and
+        debug_dma_dump_mappings
+Message-ID: <20180508104556.GA26841@lst.de>
+References: <20180424140235.9125-1-hch@lst.de> <20180424140235.9125-4-hch@lst.de> <bb5bb25f-24da-9729-a39b-3b88c65ef628@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bb5bb25f-24da-9729-a39b-3b88c65ef628@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-memblock_remove report is useful to see why MemTotal of /proc/meminfo
-between two kernels makes difference.
+On Tue, May 08, 2018 at 11:05:20AM +0100, Robin Murphy wrote:
+> On 24/04/18 15:02, Christoph Hellwig wrote:
+>> Only used by the AMD GART driver, which must be built in.
+>
+> FWIW debug_dma_dump_mappings() is also called by the Intel VT-d driver, but 
+> the same reasoning still applies.
 
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- mm/memblock.c | 5 +++++
- 1 file changed, 5 insertions(+)
+I'll update the changelog.
 
-diff --git a/mm/memblock.c b/mm/memblock.c
-index 5228f594b13c..03d48d8835ba 100644
---- a/mm/memblock.c
-+++ b/mm/memblock.c
-@@ -697,6 +697,11 @@ static int __init_memblock memblock_remove_range(struct memblock_type *type,
- 
- int __init_memblock memblock_remove(phys_addr_t base, phys_addr_t size)
- {
-+	phys_addr_t end = base + size - 1;
-+
-+	memblock_dbg("memblock_remove: [%pa-%pa] %pS\n",
-+		     &base, &end, (void *)_RET_IP_);
-+
- 	return memblock_remove_range(&memblock.memory, base, size);
- }
- 
--- 
-2.17.0.441.gb46fe60e1d-goog
+> This does rather beg the question of 
+> whether it's right to have bits of low-level dma-debug internals *only* 
+> called by a couple of IOMMU drivers, but that can wait for another day.
+
+My gut feeling is that it is wrong, but I didn't have time to look into
+the details and history of how this happened.
