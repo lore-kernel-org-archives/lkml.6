@@ -1,56 +1,174 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755098AbeEHPNJ (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:13:09 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:39967 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754907AbeEHPNH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 11:13:07 -0400
-X-Google-Smtp-Source: AB8JxZrdxBdN+hhkf/Lg8UmubvmIb9UDkZyKTFEIbwdFIJBS1oO+gH9L5YEhkwoBsXagVdc913cxjg==
-From: Juri Lelli <juri.lelli@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [PATCH] Documentation/admin-guide/pm/intel_pstate: fix Active Mode w/o HWP paragraph
-Date: Tue,  8 May 2018 17:12:09 +0200
-Message-Id: <20180508151209.9314-1-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.14.3
+        id S932139AbeEHPPw (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54304 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751723AbeEHPPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:15:51 -0400
+Message-ID: <129bf5c889e3317d6372a2f251cbd56458347224.camel@kernel.org>
+Subject: Re: [PATCH v2 32/35] Partially revert "locks: fix file locking on
+ overlayfs"
+From: Jeff Layton <jlayton@kernel.org>
+To: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date: Tue, 08 May 2018 11:15:47 -0400
+In-Reply-To: <20180507083807.28792-33-mszeredi@redhat.com>
+References: <20180507083807.28792-1-mszeredi@redhat.com>
+         <20180507083807.28792-33-mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-P-state selection algorithm (powersave or performance) is selected by
-echoing the desired choice to scaling_governor sysfs attribute and not
-to scaling_cur_freq (as currently stated).
+On Mon, 2018-05-07 at 10:38 +0200, Miklos Szeredi wrote:
+> This partially reverts commit c568d68341be7030f5647def68851e469b21ca11.
+> 
+> Overlayfs files will now automatically get the correct locks, no need to
+> hack overlay support in VFS.
+> 
+> It is a partial revert, because it leaves the locks_inode() calls in place
+> and defines locks_inode() to file_inode().  We could revert those as well,
+> but it would be unnecessary code churn and it makes sense to document that
+> we are getting the inode for locking purposes.
+> 
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/locks.c              | 17 ++++++-----------
+>  fs/overlayfs/super.c    |  2 +-
+>  include/linux/fs.h      | 13 +------------
+>  include/uapi/linux/fs.h |  1 -
+>  4 files changed, 8 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 9c0e5f3da66c..40bcbaaa3f52 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -139,11 +139,6 @@
+>  #define IS_OFDLCK(fl)	(fl->fl_flags & FL_OFDLCK)
+>  #define IS_REMOTELCK(fl)	(fl->fl_pid <= 0)
+>  
+> -static inline bool is_remote_lock(struct file *filp)
+> -{
+> -	return likely(!(filp->f_path.dentry->d_sb->s_flags & SB_NOREMOTELOCK));
+> -}
+> -
+>  static bool lease_breaking(struct file_lock *fl)
+>  {
+>  	return fl->fl_flags & (FL_UNLOCK_PENDING | FL_DOWNGRADE_PENDING);
+> @@ -1875,7 +1870,7 @@ EXPORT_SYMBOL(generic_setlease);
+>  int
+>  vfs_setlease(struct file *filp, long arg, struct file_lock **lease, void **priv)
+>  {
+> -	if (filp->f_op->setlease && is_remote_lock(filp))
+> +	if (filp->f_op->setlease)
+>  		return filp->f_op->setlease(filp, arg, lease, priv);
+>  	else
+>  		return generic_setlease(filp, arg, lease, priv);
+> @@ -2022,7 +2017,7 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+>  	if (error)
+>  		goto out_free;
+>  
+> -	if (f.file->f_op->flock && is_remote_lock(f.file))
+> +	if (f.file->f_op->flock)
+>  		error = f.file->f_op->flock(f.file,
+>  					  (can_sleep) ? F_SETLKW : F_SETLK,
+>  					  lock);
+> @@ -2048,7 +2043,7 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned int, cmd)
+>   */
+>  int vfs_test_lock(struct file *filp, struct file_lock *fl)
+>  {
+> -	if (filp->f_op->lock && is_remote_lock(filp))
+> +	if (filp->f_op->lock)
+>  		return filp->f_op->lock(filp, F_GETLK, fl);
+>  	posix_test_lock(filp, fl);
+>  	return 0;
+> @@ -2191,7 +2186,7 @@ int fcntl_getlk(struct file *filp, unsigned int cmd, struct flock *flock)
+>   */
+>  int vfs_lock_file(struct file *filp, unsigned int cmd, struct file_lock *fl, struct file_lock *conf)
+>  {
+> -	if (filp->f_op->lock && is_remote_lock(filp))
+> +	if (filp->f_op->lock)
+>  		return filp->f_op->lock(filp, cmd, fl);
+>  	else
+>  		return posix_lock_file(filp, fl, conf);
+> @@ -2513,7 +2508,7 @@ locks_remove_flock(struct file *filp, struct file_lock_context *flctx)
+>  	if (list_empty(&flctx->flc_flock))
+>  		return;
+>  
+> -	if (filp->f_op->flock && is_remote_lock(filp))
+> +	if (filp->f_op->flock)
+>  		filp->f_op->flock(filp, F_SETLKW, &fl);
+>  	else
+>  		flock_lock_inode(inode, &fl);
+> @@ -2600,7 +2595,7 @@ EXPORT_SYMBOL(posix_unblock_lock);
+>   */
+>  int vfs_cancel_lock(struct file *filp, struct file_lock *fl)
+>  {
+> -	if (filp->f_op->lock && is_remote_lock(filp))
+> +	if (filp->f_op->lock)
+>  		return filp->f_op->lock(filp, F_CANCELLK, fl);
+>  	return 0;
+>  }
+> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+> index 7779fc610767..f2a83fabe2eb 100644
+> --- a/fs/overlayfs/super.c
+> +++ b/fs/overlayfs/super.c
+> @@ -1479,7 +1479,7 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
+>  	sb->s_op = &ovl_super_operations;
+>  	sb->s_xattr = ovl_xattr_handlers;
+>  	sb->s_fs_info = ofs;
+> -	sb->s_flags |= SB_POSIXACL | SB_NOREMOTELOCK;
+> +	sb->s_flags |= SB_POSIXACL;
+>  
+>  	err = -ENOMEM;
+>  	root_dentry = d_make_root(ovl_new_inode(sb, S_IFDIR, 0));
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index ba3078693d4a..417e692a606a 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1050,17 +1050,7 @@ struct file_lock_context {
+>  
+>  extern void send_sigio(struct fown_struct *fown, int fd, int band);
+>  
+> -/*
+> - * Return the inode to use for locking
+> - *
+> - * For overlayfs this should be the overlay inode, not the real inode returned
+> - * by file_inode().  For any other fs file_inode(filp) and locks_inode(filp) are
+> - * equal.
+> - */
+> -static inline struct inode *locks_inode(const struct file *f)
+> -{
+> -	return f->f_path.dentry->d_inode;
+> -}
+> +#define locks_inode(f) file_inode(f)
+>  
+>  #ifdef CONFIG_FILE_LOCKING
+>  extern int fcntl_getlk(struct file *, unsigned int, struct flock *);
+> @@ -1300,7 +1290,6 @@ extern int send_sigurg(struct fown_struct *fown);
+>  
+>  /* These sb flags are internal to the kernel */
+>  #define SB_SUBMOUNT     (1<<26)
+> -#define SB_NOREMOTELOCK	(1<<27)
+>  #define SB_NOSEC	(1<<28)
+>  #define SB_BORN		(1<<29)
+>  #define SB_ACTIVE	(1<<30)
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index d2a8313fabd7..2840ddcece73 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -134,7 +134,6 @@ struct inodes_stat_t {
+>  
+>  /* These sb flags are internal to the kernel */
+>  #define MS_SUBMOUNT     (1<<26)
+> -#define MS_NOREMOTELOCK	(1<<27)
+>  #define MS_NOSEC	(1<<28)
+>  #define MS_BORN		(1<<29)
+>  #define MS_ACTIVE	(1<<30)
 
-Fix it.
-
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-
----
- Documentation/admin-guide/pm/intel_pstate.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/admin-guide/pm/intel_pstate.rst b/Documentation/admin-guide/pm/intel_pstate.rst
-index d2b6fda3d67b..ab2fe0eda1d7 100644
---- a/Documentation/admin-guide/pm/intel_pstate.rst
-+++ b/Documentation/admin-guide/pm/intel_pstate.rst
-@@ -145,7 +145,7 @@ feature enabled.]
- 
- In this mode ``intel_pstate`` registers utilization update callbacks with the
- CPU scheduler in order to run a P-state selection algorithm, either
--``powersave`` or ``performance``, depending on the ``scaling_cur_freq`` policy
-+``powersave`` or ``performance``, depending on the ``scaling_governor`` policy
- setting in ``sysfs``.  The current CPU frequency information to be made
- available from the ``scaling_cur_freq`` policy attribute in ``sysfs`` is
- periodically updated by those utilization update callbacks too.
--- 
-2.14.3
+Acked-by: Jeff Layton <jlayton@kernel.org>
