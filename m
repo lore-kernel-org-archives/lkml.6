@@ -1,826 +1,296 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754086AbeEHCda (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 22:33:30 -0400
-Received: from mail-io0-f171.google.com ([209.85.223.171]:44061 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753526AbeEHCcZ (ORCPT
+        id S1754096AbeEHCdr (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 22:33:47 -0400
+Received: from mail1.bemta8.messagelabs.com ([216.82.243.208]:33116 "EHLO
+        mail1.bemta8.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753723AbeEHCdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 22:32:25 -0400
-X-Google-Smtp-Source: AB8JxZq3BXGF3YxRjtPhda2IXauOTU7KiuRCpQkT/8wyb9GHsZvjACp3x+W2JDjHnZ9koHrBYMMGCQ==
-From: Connor McAdams <conmanx360@gmail.com>
-Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
-        <jeremy.lefaure@lse.epita.fr>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 10/13] ALSA: hda/ca0132: add alt_select_in/out for R3Di + SBZ
-Date: Mon,  7 May 2018 22:31:18 -0400
-Message-Id: <1525746683-18535-11-git-send-email-conmanx360@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
-References: <1525746683-18535-1-git-send-email-conmanx360@gmail.com>
-To: unlisted-recipients:; (no To-header on input)
+        Mon, 7 May 2018 22:33:43 -0400
+X-Brightmail-Tracker: H4sIAAAAAAAAA1WTb1AUZRjA793d21svVl8WkScUP9w4Vld3I2c
+  f1v4Nac7sTDXRRykH9mK927o/zO3JXOlMMHRMAf6dwew49SpFRBgKKBQVJsgBwWI6JEsNUjAN
+  SDy1QTmybm9Pq2+/5/09z/M+z867DMkFDdmMFPBLPo/oMtFGynn9MmGpTIsVrLpZ/xwfbmmi+
+  c+6nPzH5UMG/mjrq/xwZ5jmR5v+1vMVuy4a+GOHugh+bHseH+w9TvF1H9zQ83Xl2xEfvxum81
+  ihd3qGFI43NxJCW4NZaL212yD0741TQnXdfUqIXb1ACS3tI5RwNvKtQWgb3CJ8NfeCEJzNFG6
+  3Ls9nC/Syx+4NFOmdU1+2USWzfOD2/Dxdhq5aqpCR4fAEgr7Rs0gLehBcnJym1YDCNSS0lEcI
+  zWwj4LfTlaQWXEIwNl1HVaEFDI2fgDPTP5IqL8abIHqvM1lB4ko9nA/WJkUGLobamgFCS5Jh/
+  /WyBDMJtkHo85XqMYVXwEddvcl0Fr8J586PG1TmcAAic4eTvACvhb3XriQZ4RzYc2Us2ZLEWb
+  BvT0ivMmAMB08OkRpnwu/j91PnJgh9czDFORA9UJ3cGfBOPXRc+4vWRC70HekmNVFNw0BNBaU
+  FXyMYPj2YKjfDoe8vURq/A5P3hlO8Bj6M/pTi5dC47XKq+AgJP7SfQJpYBuFfuih1fQ7boTku
+  70TW0H+20PgpiJy4RWv8JNR/OkWGkl8mHc58MkFFENWIHlckX6nks9iettp9ssPpd4uyy5K7i
+  re6JUURHZJLtCvWt7zuVpR4ku/rdOgY+m5qQw96lCFMmWwpFSvgFtq9xe86RcVZ6NvskpQetI
+  xhTMC+/kjCpfskhxTYJLsS7/qBBibNtJgdNSY0q5SIbkV2aGoAWZim9t01JEd5vB4pO4tdovb
+  AapJzs+dhiwd/RxTlZGewSKfTcWklks8t+//vJ1EWg0wZrFntkiZ7/A9vmkwMQSSGSP91Rh3C
+  L/6rssvQEi9XPD80s2713I74xoFC4tkVq5dufTFoXrd+34YvHAcm8u7aonndzA7jKaLI9Fhs0
+  S7rqZPvObj+3vG+kY7wrPLMRNXKO/W22pGXnl+I85v/HOxeUxpMD24pdNyI57fk/+x9pWLjG/
+  1vbw0VvWy8ea6hYe2dsqMd62MNrxlsSzsv/IFNlOIUc82kTxH/AdpOw28YBAAA
+X-Env-Sender: yehs1@lenovo.com
+X-Msg-Ref: server-8.tower-128.messagelabs.com!1525746822!68836764!1
+X-Originating-IP: [104.232.225.2]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+From: Huaisheng HS1 Ye <yehs1@lenovo.com>
+To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC: "mhocko@suse.com" <mhocko@suse.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
+        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
+        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "penguin-kernel@I-love.SAKURA.ne.jp"
+        <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
+        "Ocean HY1 He" <hehy1@lenovo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: [External]  [RFC PATCH v1 3/6] mm, zone_type: create ZONE_NVM and
+ fill into GFP_ZONE_TABLE
+Thread-Topic: [External]  [RFC PATCH v1 3/6] mm, zone_type: create ZONE_NVM
+ and fill into GFP_ZONE_TABLE
+Thread-Index: AQHT5nLzy/4k5ASDlU6ANqYChIyrIKQlHNwQ
+Date: Tue, 8 May 2018 02:33:30 +0000
+Message-ID: <HK2PR03MB1684653383FFEDAE9B41A548929A0@HK2PR03MB1684.apcprd03.prod.outlook.com>
+References: <1525746628-114136-1-git-send-email-yehs1@lenovo.com>
+ <1525746628-114136-4-git-send-email-yehs1@lenovo.com>
+In-Reply-To: <1525746628-114136-4-git-send-email-yehs1@lenovo.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [111.197.250.78]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HK2PR03MB1490;7:NVihKtGCXJgQLXP9Z2Ojm2OOgUkq0W/8Gb5nudkko3FFO3oAiZt0s4EqR0g4f07Es0ssDYpeFLR3BpZx7Hvz0yKVpg5Mq/HexfDer1IG48XoNyfoaaocOBugaVEQ/mE5+hryC8BMetflSFzD2602q+x09kXI3e1Fjd2Tqdgnq0noPweB4Z/k9DSvlXa9lni1RLy0tSxZYy/XUCRG6y06a79quRqLYAAUkzUl6DVKwtdfZjBqp73uiCnO6WBuvSo7;20:mixslv69UXj+IK8YsDyfHRCLUOLqKVSVcPG9fHky6soWuVNwbOKERl0a9ezoVRnDcM6VoZ2Dtg5ON4rwMb0JF2yo/4bRbzbh9DU43RzgqG6qu/Z9Whem3W5+lS5EvrNHYhe5KWipxEgreLWNY3aIkQa4B+79btkbsDPnJsH0IEnVzY0KmAmNZM4H0S7vb3Xzl8xT10uQSWZDL7N4FVR7lBVz/SMD6VBT7QjKNGZqHSTX8CQaYLc7yy0p0NZ0Ntk/IburJTpxEzVFKUAc6OQE6f798qDaD2UlDujPX7xsXNW/z7fEncmiIOMvq6ttMvl/gorD899NUKH0CPM9wHCvAA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(39850400004)(39380400002)(376002)(199004)(189003)(186003)(4326008)(68736007)(11346002)(476003)(99286004)(33656002)(6346003)(446003)(25786009)(6436002)(102836004)(53936002)(9686003)(7736002)(81166006)(8936002)(26005)(81156014)(8676002)(316002)(55016002)(486006)(54906003)(110136005)(305945005)(76176011)(59450400001)(7416002)(2900100001)(6506007)(6116002)(3846002)(2906002)(14454004)(66066001)(5660300001)(74316002)(86362001)(3660700001)(105586002)(106356001)(478600001)(97736004)(5250100002)(2501003)(575784001)(7696005)(3280700002)(13296004)(217873001);DIR:OUT;SFP:1102;SCL:1;SRVR:HK2PR03MB1490;H:HK2PR03MB1684.apcprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:HK2PR03MB1490;
+x-ms-traffictypediagnostic: HK2PR03MB1490:
+x-microsoft-antispam-prvs: <HK2PR03MB14903DF04331466ADBBEE303929A0@HK2PR03MB1490.apcprd03.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(3940261145250);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011);SRVR:HK2PR03MB1490;BCL:0;PCL:0;RULEID:;SRVR:HK2PR03MB1490;
+x-forefront-prvs: 0666E15D35
+x-microsoft-antispam-message-info: aDa7kJL8Ls2wySFCbNREZqE3TV+2u0WpZaCpnVQ5U8zE0HDkFxoKFfg9ZqyNRq1HrEnMsPjVgfCgbY2MAjTGmjL44in61XBuicB6r6GxUJkFd7KsgLuv7C0GoTxq2oNs4u4/6uQwrvx63elhy2mNGtf3/gjpN3NcB+PXzhi8Mjri+i8OI+cjqHulM2lc+9Kw
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-Office365-Filtering-Correlation-Id: b38e2dde-16af-4b9e-d70f-08d5b48c16aa
+X-MS-Exchange-CrossTenant-Network-Message-Id: b38e2dde-16af-4b9e-d70f-08d5b48c16aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 May 2018 02:33:30.9837
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5c7d0b28-bdf8-410c-aa93-4df372b16203
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HK2PR03MB1490
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-MIME-Autoconverted: from quoted-printable to 8bit by mail.home.local id w482Xqt6006681
 
-Add functions ca0132_alt_select_out and ca0132_alt_select_in for
-switching outputs and inputs for r3di and sbz. Also, add enumerated
-controls for selecting output and input source.
+Expand ZONE_NVM into enum zone_type, and create GFP_NVM
+which represents gfp_t flag for NVM zone.
 
-Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+Because there is no lower plain integer GFP bitmask can be
+used for ___GFP_NVM, a workable way is to get space from
+GFP_ZONE_BAD to fill ZONE_NVM into GFP_ZONE_TABLE.
+
+Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
+Signed-off-by: Ocean He <hehy1@lenovo.com>
 ---
- sound/pci/hda/patch_ca0132.c | 625 +++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 607 insertions(+), 18 deletions(-)
+ include/linux/gfp.h    | 57 +++++++++++++++++++++++++++++++++++++++++++++++---
+ include/linux/mmzone.h |  3 +++
+ mm/Kconfig             | 16 ++++++++++++++
+ mm/page_alloc.c        |  3 +++
+ 4 files changed, 76 insertions(+), 3 deletions(-)
 
-diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 878bbf7..2a42faf 100644
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -46,6 +46,7 @@
- #define FLOAT_ONE	0x3f800000
- #define FLOAT_TWO	0x40000000
- #define FLOAT_THREE     0x40400000
-+#define FLOAT_EIGHT     0x41000000
- #define FLOAT_MINUS_5	0xc0a00000
- 
- #define UNSOL_TAG_DSP	0x16
-@@ -87,9 +88,11 @@ MODULE_FIRMWARE(R3DI_EFX_FILE);
- 
- static const char *dirstr[2] = { "Playback", "Capture" };
- 
-+#define NUM_OF_OUTPUTS 3
- enum {
- 	SPEAKER_OUT,
--	HEADPHONE_OUT
-+	HEADPHONE_OUT,
-+	SURROUND_OUT
- };
- 
- enum {
-@@ -97,6 +100,15 @@ enum {
- 	LINE_MIC_IN
- };
- 
-+/* Strings for Input Source Enum Control */
-+static const char *in_src_str[3] = {"Rear Mic", "Line", "Front Mic" };
-+#define IN_SRC_NUM_OF_INPUTS 3
-+enum {
-+	REAR_MIC,
-+	REAR_LINE_IN,
-+	FRONT_MIC,
-+};
-+
- enum {
- #define VNODE_START_NID    0x80
- 	VNID_SPK = VNODE_START_NID,			/* Speaker vnid */
-@@ -130,7 +142,9 @@ enum {
- 	VOICEFX = IN_EFFECT_END_NID,
- 	PLAY_ENHANCEMENT,
- 	CRYSTAL_VOICE,
--	EFFECT_END_NID
-+	EFFECT_END_NID,
-+	OUTPUT_SOURCE_ENUM,
-+	INPUT_SOURCE_ENUM
- #define EFFECTS_COUNT  (EFFECT_END_NID - EFFECT_START_NID)
- };
- 
-@@ -480,6 +494,49 @@ static struct ct_voicefx_preset ca0132_voicefx_presets[] = {
- 	}
- };
- 
-+/* DSP command sequences for ca0132_alt_select_out */
-+#define ALT_OUT_SET_MAX_COMMANDS 9 /* Max number of commands in sequence */
-+struct ca0132_alt_out_set {
-+	char *name; /*preset name*/
-+	unsigned char commands;
-+	unsigned int mids[ALT_OUT_SET_MAX_COMMANDS];
-+	unsigned int reqs[ALT_OUT_SET_MAX_COMMANDS];
-+	unsigned int vals[ALT_OUT_SET_MAX_COMMANDS];
-+};
-+
-+static const struct ca0132_alt_out_set alt_out_presets[] = {
-+	{ .name = "Line Out",
-+	  .commands = 7,
-+	  .mids = { 0x96, 0x96, 0x96, 0x8F,
-+		    0x96, 0x96, 0x96 },
-+	  .reqs = { 0x19, 0x17, 0x18, 0x01,
-+		    0x1F, 0x15, 0x3A },
-+	  .vals = { 0x3F000000, 0x42A00000, 0x00000000,
-+		    0x00000000, 0x00000000, 0x00000000,
-+		    0x00000000 }
-+	},
-+	{ .name = "Headphone",
-+	  .commands = 7,
-+	  .mids = { 0x96, 0x96, 0x96, 0x8F,
-+		    0x96, 0x96, 0x96 },
-+	  .reqs = { 0x19, 0x17, 0x18, 0x01,
-+		    0x1F, 0x15, 0x3A },
-+	  .vals = { 0x3F000000, 0x42A00000, 0x00000000,
-+		    0x00000000, 0x00000000, 0x00000000,
-+		    0x00000000 }
-+	},
-+	{ .name = "Surround",
-+	  .commands = 8,
-+	  .mids = { 0x96, 0x8F, 0x96, 0x96,
-+		    0x96, 0x96, 0x96, 0x96 },
-+	  .reqs = { 0x18, 0x01, 0x1F, 0x15,
-+		    0x3A, 0x1A, 0x1B, 0x1C },
-+	  .vals = { 0x00000000, 0x00000000, 0x00000000,
-+		    0x00000000, 0x00000000, 0x00000000,
-+		    0x00000000, 0x00000000 }
-+	}
-+};
-+
- enum hda_cmd_vendor_io {
- 	/* for DspIO node */
- 	VENDOR_DSPIO_SCP_WRITE_DATA_LOW      = 0x000,
-@@ -759,6 +816,9 @@ struct ca0132_spec {
- 	long effects_switch[EFFECTS_COUNT];
- 	long voicefx_val;
- 	long cur_mic_boost;
-+	/* ca0132_alt control related values */
-+	unsigned char in_enum_val;
-+	unsigned char out_enum_val;
- 
- 	struct hda_codec *codec;
- 	struct delayed_work unsol_hp_work;
-@@ -2955,6 +3015,47 @@ enum r3di_dsp_status {
- 	R3DI_DSP_DOWNLOADED = 1
- };
- 
-+
-+static void r3di_gpio_mic_set(struct hda_codec *codec,
-+		enum r3di_mic_select cur_mic)
-+{
-+	unsigned int cur_gpio;
-+
-+	/* Get the current GPIO Data setup */
-+	cur_gpio = snd_hda_codec_read(codec, 0x01, 0, AC_VERB_GET_GPIO_DATA, 0);
-+
-+	switch (cur_mic) {
-+	case R3DI_REAR_MIC:
-+		cur_gpio &= ~(1 << R3DI_MIC_SELECT_BIT);
-+		break;
-+	case R3DI_FRONT_MIC:
-+		cur_gpio |= (1 << R3DI_MIC_SELECT_BIT);
-+		break;
-+	}
-+	snd_hda_codec_write(codec, codec->core.afg, 0,
-+			    AC_VERB_SET_GPIO_DATA, cur_gpio);
-+}
-+
-+static void r3di_gpio_out_set(struct hda_codec *codec,
-+		enum r3di_out_select cur_out)
-+{
-+	unsigned int cur_gpio;
-+
-+	/* Get the current GPIO Data setup */
-+	cur_gpio = snd_hda_codec_read(codec, 0x01, 0, AC_VERB_GET_GPIO_DATA, 0);
-+
-+	switch (cur_out) {
-+	case R3DI_HEADPHONE_OUT:
-+		cur_gpio &= ~(1 << R3DI_OUT_SELECT_BIT);
-+		break;
-+	case R3DI_LINE_OUT:
-+		cur_gpio |= (1 << R3DI_OUT_SELECT_BIT);
-+		break;
-+	}
-+	snd_hda_codec_write(codec, codec->core.afg, 0,
-+			    AC_VERB_SET_GPIO_DATA, cur_gpio);
-+}
-+
- static void r3di_gpio_dsp_status_set(struct hda_codec *codec,
- 		enum r3di_dsp_status dsp_status)
- {
-@@ -3546,13 +3647,209 @@ static int ca0132_select_out(struct hda_codec *codec)
- 	return err < 0 ? err : 0;
- }
- 
-+/*
-+ * This function behaves similarly to the ca0132_select_out funciton above,
-+ * except with a few differences. It adds the ability to select the current
-+ * output with an enumerated control "output source" if the auto detect
-+ * mute switch is set to off. If the auto detect mute switch is enabled, it
-+ * will detect either headphone or lineout(SPEAKER_OUT) from jack detection.
-+ * It also adds the ability to auto-detect the front headphone port. The only
-+ * way to select surround is to disable auto detect, and set Surround with the
-+ * enumerated control.
-+ */
-+static int ca0132_alt_select_out(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int pin_ctl;
-+	int jack_present;
-+	int auto_jack;
-+	unsigned int i;
-+	unsigned int tmp;
-+	int err;
-+	/* Default Headphone is rear headphone */
-+	hda_nid_t headphone_nid = spec->out_pins[1];
-+
-+	codec_dbg(codec, "%s\n", __func__);
-+
-+	snd_hda_power_up_pm(codec);
-+
-+	auto_jack = spec->vnode_lswitch[VNID_HP_ASEL - VNODE_START_NID];
-+
-+	/*
-+	 * If headphone rear or front is plugged in, set to headphone.
-+	 * If neither is plugged in, set to rear line out. Only if
-+	 * hp/speaker auto detect is enabled.
-+	 */
-+	if (auto_jack) {
-+		jack_present = snd_hda_jack_detect(codec, spec->unsol_tag_hp) ||
-+			   snd_hda_jack_detect(codec, spec->unsol_tag_front_hp);
-+
-+		if (jack_present)
-+			spec->cur_out_type = HEADPHONE_OUT;
-+		else
-+			spec->cur_out_type = SPEAKER_OUT;
-+	} else
-+		spec->cur_out_type = spec->out_enum_val;
-+
-+	/* Begin DSP output switch */
-+	tmp = FLOAT_ONE;
-+	err = dspio_set_uint_param(codec, 0x96, 0x3A, tmp);
-+	if (err < 0)
-+		goto exit;
-+
-+	switch (spec->cur_out_type) {
-+	case SPEAKER_OUT:
-+		codec_dbg(codec, "%s speaker\n", __func__);
-+		/*speaker out config*/
-+		switch (spec->quirk) {
-+		case QUIRK_SBZ:
-+			writew(0x0007, spec->mem_base + 0x320);
-+			writew(0x0104, spec->mem_base + 0x320);
-+			writew(0x0101, spec->mem_base + 0x320);
-+			chipio_set_control_param(codec, 0x0D, 0x18);
-+			break;
-+		case QUIRK_R3DI:
-+			chipio_set_control_param(codec, 0x0D, 0x24);
-+			r3di_gpio_out_set(codec, R3DI_LINE_OUT);
-+			break;
-+		}
-+
-+		/* disable headphone node */
-+		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[1], 0,
-+					AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, spec->out_pins[1],
-+				    pin_ctl & ~PIN_HP);
-+		/* enable line-out node */
-+		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
-+				AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, spec->out_pins[0],
-+				    pin_ctl | PIN_OUT);
-+		/* Enable EAPD */
-+		snd_hda_codec_write(codec, spec->out_pins[0], 0,
-+			AC_VERB_SET_EAPD_BTLENABLE, 0x01);
-+
-+		/* If PlayEnhancement is enabled, set different source */
-+		if (spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID])
-+			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_ONE);
-+		else
-+			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_EIGHT);
-+		break;
-+	case HEADPHONE_OUT:
-+		codec_dbg(codec, "%s hp\n", __func__);
-+		/* Headphone out config*/
-+		switch (spec->quirk) {
-+		case QUIRK_SBZ:
-+			writew(0x0107, spec->mem_base + 0x320);
-+			writew(0x0104, spec->mem_base + 0x320);
-+			writew(0x0001, spec->mem_base + 0x320);
-+			chipio_set_control_param(codec, 0x0D, 0x12);
-+			break;
-+		case QUIRK_R3DI:
-+			chipio_set_control_param(codec, 0x0D, 0x21);
-+			r3di_gpio_out_set(codec, R3DI_HEADPHONE_OUT);
-+			break;
-+		}
-+
-+		snd_hda_codec_write(codec, spec->out_pins[0], 0,
-+			AC_VERB_SET_EAPD_BTLENABLE, 0x00);
-+
-+		/* disable speaker*/
-+		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
-+					AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, spec->out_pins[0],
-+				pin_ctl & ~PIN_HP);
-+
-+		/* enable headphone, either front or rear */
-+
-+		if (snd_hda_jack_detect(codec, spec->unsol_tag_front_hp))
-+			headphone_nid = spec->out_pins[2];
-+		else if (snd_hda_jack_detect(codec, spec->unsol_tag_hp))
-+			headphone_nid = spec->out_pins[1];
-+
-+		pin_ctl = snd_hda_codec_read(codec, headphone_nid, 0,
-+					AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, headphone_nid,
-+				    pin_ctl | PIN_HP);
-+
-+		if (spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID])
-+			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_ONE);
-+		else
-+			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_ZERO);
-+		break;
-+	case SURROUND_OUT:
-+		codec_dbg(codec, "%s surround\n", __func__);
-+		/* Surround out config*/
-+		switch (spec->quirk) {
-+		case QUIRK_SBZ:
-+			writew(0x0007, spec->mem_base + 0x320);
-+			writew(0x0104, spec->mem_base + 0x320);
-+			writew(0x0101, spec->mem_base + 0x320);
-+			chipio_set_control_param(codec, 0x0D, 0x18);
-+			break;
-+		case QUIRK_R3DI:
-+			chipio_set_control_param(codec, 0x0D, 0x24);
-+			r3di_gpio_out_set(codec, R3DI_LINE_OUT);
-+			break;
-+		}
-+		/* enable line out node */
-+		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[0], 0,
-+				AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, spec->out_pins[0],
-+						pin_ctl | PIN_OUT);
-+		/* Disable headphone out */
-+		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[1], 0,
-+					AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, spec->out_pins[1],
-+				    pin_ctl & ~PIN_HP);
-+		/* Enable EAPD on line out */
-+		snd_hda_codec_write(codec, spec->out_pins[0], 0,
-+			AC_VERB_SET_EAPD_BTLENABLE, 0x01);
-+		/* enable center/lfe out node */
-+		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[2], 0,
-+					AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, spec->out_pins[2],
-+				    pin_ctl | PIN_OUT);
-+		/* Now set rear surround node as out. */
-+		pin_ctl = snd_hda_codec_read(codec, spec->out_pins[3], 0,
-+					AC_VERB_GET_PIN_WIDGET_CONTROL, 0);
-+		snd_hda_set_pin_ctl(codec, spec->out_pins[3],
-+				    pin_ctl | PIN_OUT);
-+
-+		if (spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID])
-+			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_ONE);
-+		else
-+			dspio_set_uint_param(codec, 0x80, 0x04, FLOAT_EIGHT);
-+		break;
-+	}
-+
-+	/* run through the output dsp commands for line-out */
-+	for (i = 0; i < alt_out_presets[spec->cur_out_type].commands; i++) {
-+		err = dspio_set_uint_param(codec,
-+		alt_out_presets[spec->cur_out_type].mids[i],
-+		alt_out_presets[spec->cur_out_type].reqs[i],
-+		alt_out_presets[spec->cur_out_type].vals[i]);
-+
-+		if (err < 0)
-+			goto exit;
-+	}
-+
-+exit:
-+	snd_hda_power_down_pm(codec);
-+
-+	return err < 0 ? err : 0;
-+}
-+
- static void ca0132_unsol_hp_delayed(struct work_struct *work)
- {
- 	struct ca0132_spec *spec = container_of(
- 		to_delayed_work(work), struct ca0132_spec, unsol_hp_work);
- 	struct hda_jack_tbl *jack;
- 
--	ca0132_select_out(spec->codec);
-+	if (spec->use_alt_functions)
-+		ca0132_alt_select_out(spec->codec);
-+	else
-+		ca0132_select_out(spec->codec);
-+
- 	jack = snd_hda_jack_tbl_get(spec->codec, spec->unsol_tag_hp);
- 	if (jack) {
- 		jack->block_report = 0;
-@@ -3658,6 +3955,122 @@ static int ca0132_select_mic(struct hda_codec *codec)
- }
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index 1a4582b..9e4d867 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -39,6 +39,9 @@
+ #define ___GFP_DIRECT_RECLAIM	0x400000u
+ #define ___GFP_WRITE		0x800000u
+ #define ___GFP_KSWAPD_RECLAIM	0x1000000u
++#ifdef CONFIG_ZONE_NVM
++#define ___GFP_NVM		0x4000000u
++#endif
+ #ifdef CONFIG_LOCKDEP
+ #define ___GFP_NOLOCKDEP	0x2000000u
+ #else
+@@ -57,7 +60,12 @@
+ #define __GFP_HIGHMEM	((__force gfp_t)___GFP_HIGHMEM)
+ #define __GFP_DMA32	((__force gfp_t)___GFP_DMA32)
+ #define __GFP_MOVABLE	((__force gfp_t)___GFP_MOVABLE)  /* ZONE_MOVABLE allowed */
++#ifdef CONFIG_ZONE_NVM
++#define __GFP_NVM	((__force gfp_t)___GFP_NVM)  /* ZONE_NVM allowed */
++#define GFP_ZONEMASK	(__GFP_DMA|__GFP_HIGHMEM|__GFP_DMA32|__GFP_MOVABLE|__GFP_NVM)
++#else
+ #define GFP_ZONEMASK	(__GFP_DMA|__GFP_HIGHMEM|__GFP_DMA32|__GFP_MOVABLE)
++#endif
  
  /*
-+ * Select the active input.
-+ * Mic detection isn't used, because it's kind of pointless on the SBZ.
-+ * The front mic has no jack-detection, so the only way to switch to it
-+ * is to do it manually in alsamixer.
-+ */
-+static int ca0132_alt_select_in(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int tmp;
-+
-+	codec_dbg(codec, "%s\n", __func__);
-+
-+	snd_hda_power_up_pm(codec);
-+
-+	chipio_set_stream_control(codec, 0x03, 0);
-+	chipio_set_stream_control(codec, 0x04, 0);
-+
-+	spec->cur_mic_type = spec->in_enum_val;
-+
-+	switch (spec->cur_mic_type) {
-+	case REAR_MIC:
-+		switch (spec->quirk) {
-+		case QUIRK_SBZ:
-+			writew(0x0000, spec->mem_base + 0x320);
-+			tmp = FLOAT_THREE;
-+			break;
-+		case QUIRK_R3DI:
-+			r3di_gpio_mic_set(codec, R3DI_REAR_MIC);
-+			tmp = FLOAT_ONE;
-+			break;
-+		default:
-+			tmp = FLOAT_ONE;
-+			break;
-+		}
-+
-+		chipio_set_conn_rate(codec, MEM_CONNID_MICIN1, SR_96_000);
-+		chipio_set_conn_rate(codec, MEM_CONNID_MICOUT1, SR_96_000);
-+		if (spec->quirk == QUIRK_R3DI)
-+			chipio_set_conn_rate(codec, 0x0F, SR_96_000);
-+
-+		dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+
-+		chipio_set_stream_control(codec, 0x03, 1);
-+		chipio_set_stream_control(codec, 0x04, 1);
-+
-+		if (spec->quirk == QUIRK_SBZ) {
-+			chipio_write(codec, 0x18B098, 0x0000000C);
-+			chipio_write(codec, 0x18B09C, 0x0000000C);
-+		}
-+		break;
-+	case REAR_LINE_IN:
-+		ca0132_mic_boost_set(codec, 0);
-+		switch (spec->quirk) {
-+		case QUIRK_SBZ:
-+			writew(0x0000, spec->mem_base + 0x320);
-+			break;
-+		case QUIRK_R3DI:
-+			r3di_gpio_mic_set(codec, R3DI_REAR_MIC);
-+			break;
-+		}
-+
-+		chipio_set_conn_rate(codec, MEM_CONNID_MICIN1, SR_96_000);
-+		chipio_set_conn_rate(codec, MEM_CONNID_MICOUT1, SR_96_000);
-+		if (spec->quirk == QUIRK_R3DI)
-+			chipio_set_conn_rate(codec, 0x0F, SR_96_000);
-+
-+		tmp = FLOAT_ZERO;
-+		dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+
-+		if (spec->quirk == QUIRK_SBZ) {
-+			chipio_write(codec, 0x18B098, 0x00000000);
-+			chipio_write(codec, 0x18B09C, 0x00000000);
-+		}
-+
-+		chipio_set_stream_control(codec, 0x03, 1);
-+		chipio_set_stream_control(codec, 0x04, 1);
-+		break;
-+	case FRONT_MIC:
-+		switch (spec->quirk) {
-+		case QUIRK_SBZ:
-+			writew(0x0100, spec->mem_base + 0x320);
-+			writew(0x0005, spec->mem_base + 0x320);
-+			tmp = FLOAT_THREE;
-+			break;
-+		case QUIRK_R3DI:
-+			r3di_gpio_mic_set(codec, R3DI_FRONT_MIC);
-+			tmp = FLOAT_ONE;
-+			break;
-+		default:
-+			tmp = FLOAT_ONE;
-+			break;
-+		}
-+
-+		chipio_set_conn_rate(codec, MEM_CONNID_MICIN1, SR_96_000);
-+		chipio_set_conn_rate(codec, MEM_CONNID_MICOUT1, SR_96_000);
-+		if (spec->quirk == QUIRK_R3DI)
-+			chipio_set_conn_rate(codec, 0x0F, SR_96_000);
-+
-+		dspio_set_uint_param(codec, 0x80, 0x00, tmp);
-+
-+		chipio_set_stream_control(codec, 0x03, 1);
-+		chipio_set_stream_control(codec, 0x04, 1);
-+
-+		if (spec->quirk == QUIRK_SBZ) {
-+			chipio_write(codec, 0x18B098, 0x0000000C);
-+			chipio_write(codec, 0x18B09C, 0x000000CC);
-+		}
-+		break;
-+	}
-+
-+	snd_hda_power_down_pm(codec);
-+	return 0;
-+
-+}
-+
-+/*
-  * Check if VNODE settings take effect immediately.
-  */
- static bool ca0132_is_vnode_effective(struct hda_codec *codec,
-@@ -3739,7 +4152,8 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- 			val = 0;
+  * Page mobility and placement hints
+@@ -205,7 +213,8 @@
+ #define __GFP_NOLOCKDEP ((__force gfp_t)___GFP_NOLOCKDEP)
  
- 		/* If Voice Focus on SBZ, set to two channel. */
--		if ((nid == VOICE_FOCUS) && (spec->quirk == QUIRK_SBZ)) {
-+		if ((nid == VOICE_FOCUS) && (spec->quirk == QUIRK_SBZ)
-+				&& (spec->cur_mic_type != REAR_LINE_IN)) {
- 			if (spec->effects_switch[CRYSTAL_VOICE -
- 						 EFFECT_START_NID]) {
- 
-@@ -3757,7 +4171,8 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- 		 * For SBZ noise reduction, there's an extra command
- 		 * to module ID 0x47. No clue why.
- 		 */
--		if ((nid == NOISE_REDUCTION) && (spec->quirk == QUIRK_SBZ)) {
-+		if ((nid == NOISE_REDUCTION) && (spec->quirk == QUIRK_SBZ)
-+				&& (spec->cur_mic_type != REAR_LINE_IN)) {
- 			if (spec->effects_switch[CRYSTAL_VOICE -
- 						 EFFECT_START_NID]) {
- 				if (spec->effects_switch[NOISE_REDUCTION -
-@@ -3770,6 +4185,11 @@ static int ca0132_effects_set(struct hda_codec *codec, hda_nid_t nid, long val)
- 
- 			dspio_set_uint_param(codec, 0x47, 0x00, tmp);
- 		}
-+
-+		/* If rear line in disable effects. */
-+		if (spec->use_alt_functions &&
-+				spec->in_enum_val == REAR_LINE_IN)
-+			val = 0;
- 	}
- 
- 	codec_dbg(codec, "ca0132_effect_set: nid=0x%x, val=%ld\n",
-@@ -3797,6 +4217,9 @@ static int ca0132_pe_switch_set(struct hda_codec *codec)
- 	codec_dbg(codec, "ca0132_pe_switch_set: val=%ld\n",
- 		    spec->effects_switch[PLAY_ENHANCEMENT - EFFECT_START_NID]);
- 
-+	if (spec->use_alt_functions)
-+		ca0132_alt_select_out(codec);
-+
- 	i = OUT_EFFECT_START_NID - EFFECT_START_NID;
- 	nid = OUT_EFFECT_START_NID;
- 	/* PE affects all out effects */
-@@ -3888,8 +4311,12 @@ static int ca0132_vnode_switch_set(struct snd_kcontrol *kcontrol,
- 	if (nid == VNID_HP_SEL) {
- 		auto_jack =
- 			spec->vnode_lswitch[VNID_HP_ASEL - VNODE_START_NID];
--		if (!auto_jack)
--			ca0132_select_out(codec);
-+		if (!auto_jack) {
-+			if (spec->use_alt_functions)
-+				ca0132_alt_select_out(codec);
-+			else
-+				ca0132_select_out(codec);
-+		}
- 		return 1;
- 	}
- 
-@@ -3902,7 +4329,10 @@ static int ca0132_vnode_switch_set(struct snd_kcontrol *kcontrol,
- 	}
- 
- 	if (nid == VNID_HP_ASEL) {
--		ca0132_select_out(codec);
-+		if (spec->use_alt_functions)
-+			ca0132_alt_select_out(codec);
-+		else
-+			ca0132_select_out(codec);
- 		return 1;
- 	}
- 
-@@ -3931,6 +4361,104 @@ static int ca0132_vnode_switch_set(struct snd_kcontrol *kcontrol,
- }
- /* End of control change helpers. */
- 
-+/*
-+ * Input Select Control for alternative ca0132 codecs. This exists because
-+ * front microphone has no auto-detect, and we need a way to set the rear
-+ * as line-in
-+ */
-+static int ca0132_alt_input_source_info(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_info *uinfo)
-+{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
-+	uinfo->count = 1;
-+	uinfo->value.enumerated.items = IN_SRC_NUM_OF_INPUTS;
-+	if (uinfo->value.enumerated.item >= IN_SRC_NUM_OF_INPUTS)
-+		uinfo->value.enumerated.item = IN_SRC_NUM_OF_INPUTS - 1;
-+	strcpy(uinfo->value.enumerated.name,
-+			in_src_str[uinfo->value.enumerated.item]);
-+	return 0;
-+}
-+
-+static int ca0132_alt_input_source_get(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	ucontrol->value.enumerated.item[0] = spec->in_enum_val;
-+	return 0;
-+}
-+
-+static int ca0132_alt_input_source_put(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct ca0132_spec *spec = codec->spec;
-+	int sel = ucontrol->value.enumerated.item[0];
-+	unsigned int items = IN_SRC_NUM_OF_INPUTS;
-+
-+	if (sel >= items)
-+		return 0;
-+
-+	codec_dbg(codec, "ca0132_alt_input_select: sel=%d, preset=%s\n",
-+		    sel, in_src_str[sel]);
-+
-+	spec->in_enum_val = sel;
-+
-+	ca0132_alt_select_in(codec);
-+
-+	return 1;
-+}
-+
-+/* Sound Blaster Z Output Select Control */
-+static int ca0132_alt_output_select_get_info(struct snd_kcontrol *kcontrol,
-+				 struct snd_ctl_elem_info *uinfo)
-+{
-+	uinfo->type = SNDRV_CTL_ELEM_TYPE_ENUMERATED;
-+	uinfo->count = 1;
-+	uinfo->value.enumerated.items = NUM_OF_OUTPUTS;
-+	if (uinfo->value.enumerated.item >= NUM_OF_OUTPUTS)
-+		uinfo->value.enumerated.item = NUM_OF_OUTPUTS - 1;
-+	strcpy(uinfo->value.enumerated.name,
-+			alt_out_presets[uinfo->value.enumerated.item].name);
-+	return 0;
-+}
-+
-+static int ca0132_alt_output_select_get(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	ucontrol->value.enumerated.item[0] = spec->out_enum_val;
-+	return 0;
-+}
-+
-+static int ca0132_alt_output_select_put(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
-+	struct ca0132_spec *spec = codec->spec;
-+	int sel = ucontrol->value.enumerated.item[0];
-+	unsigned int items = NUM_OF_OUTPUTS;
-+	unsigned int auto_jack;
-+
-+	if (sel >= items)
-+		return 0;
-+
-+	codec_dbg(codec, "ca0132_alt_output_select: sel=%d, preset=%s\n",
-+		    sel, alt_out_presets[sel].name);
-+
-+	spec->out_enum_val = sel;
-+
-+	auto_jack = spec->vnode_lswitch[VNID_HP_ASEL - VNODE_START_NID];
-+
-+	if (!auto_jack)
-+		ca0132_alt_select_out(codec);
-+
-+	return 1;
-+}
-+
- static int ca0132_voicefx_info(struct snd_kcontrol *kcontrol,
- 				 struct snd_ctl_elem_info *uinfo)
- {
-@@ -4081,10 +4609,15 @@ static int ca0132_switch_put(struct snd_kcontrol *kcontrol,
- 	/* mic boost */
- 	if (nid == spec->input_pins[0]) {
- 		spec->cur_mic_boost = *valp;
-+		if (spec->use_alt_functions) {
-+			if (spec->in_enum_val != REAR_LINE_IN)
-+				changed = ca0132_mic_boost_set(codec, *valp);
-+		} else {
-+			/* Mic boost does not apply to Digital Mic */
-+			if (spec->cur_mic_type != DIGITAL_MIC)
-+				changed = ca0132_mic_boost_set(codec, *valp);
-+		}
- 
--		/* Mic boost does not apply to Digital Mic */
--		if (spec->cur_mic_type != DIGITAL_MIC)
--			changed = ca0132_mic_boost_set(codec, *valp);
- 		goto exit;
- 	}
- 
-@@ -4258,6 +4791,39 @@ static int add_voicefx(struct hda_codec *codec)
- }
+ /* Room for N __GFP_FOO bits */
+-#define __GFP_BITS_SHIFT (25 + IS_ENABLED(CONFIG_LOCKDEP))
++#define __GFP_BITS_SHIFT (25 + IS_ENABLED(CONFIG_LOCKDEP) + \
++				(IS_ENABLED(CONFIG_ZONE_NVM) << 1))
+ #define __GFP_BITS_MASK ((__force gfp_t)((1 << __GFP_BITS_SHIFT) - 1))
  
  /*
-+ * Create an Output Select enumerated control for codecs with surround
-+ * out capabilities.
-+ */
-+static int ca0132_alt_add_output_enum(struct hda_codec *codec)
-+{
-+	struct snd_kcontrol_new knew =
-+		HDA_CODEC_MUTE_MONO("Output Select",
-+				    OUTPUT_SOURCE_ENUM, 1, 0, HDA_OUTPUT);
-+	knew.info = ca0132_alt_output_select_get_info;
-+	knew.get = ca0132_alt_output_select_get;
-+	knew.put = ca0132_alt_output_select_put;
-+	return snd_hda_ctl_add(codec, OUTPUT_SOURCE_ENUM,
-+				snd_ctl_new1(&knew, codec));
-+}
-+
-+/*
-+ * Create an Input Source enumerated control for the alternate ca0132 codecs
-+ * because the front microphone has no auto-detect, and Line-in has to be set
-+ * somehow.
-+ */
-+static int ca0132_alt_add_input_enum(struct hda_codec *codec)
-+{
-+	struct snd_kcontrol_new knew =
-+		HDA_CODEC_MUTE_MONO("Input Source",
-+				    INPUT_SOURCE_ENUM, 1, 0, HDA_INPUT);
-+	knew.info = ca0132_alt_input_source_info;
-+	knew.get = ca0132_alt_input_source_get;
-+	knew.put = ca0132_alt_input_source_put;
-+	return snd_hda_ctl_add(codec, INPUT_SOURCE_ENUM,
-+				snd_ctl_new1(&knew, codec));
-+}
-+
-+/*
-  * When changing Node IDs for Mixer Controls below, make sure to update
-  * Node IDs in ca0132_config() as well.
-  */
-@@ -4318,6 +4884,15 @@ static int ca0132_build_controls(struct hda_codec *codec)
+@@ -283,6 +292,9 @@
+ #define GFP_TRANSHUGE_LIGHT	((GFP_HIGHUSER_MOVABLE | __GFP_COMP | \
+ 			 __GFP_NOMEMALLOC | __GFP_NOWARN) & ~__GFP_RECLAIM)
+ #define GFP_TRANSHUGE	(GFP_TRANSHUGE_LIGHT | __GFP_DIRECT_RECLAIM)
++#ifdef CONFIG_ZONE_NVM
++#define GFP_NVM		__GFP_NVM
++#endif
  
- 	add_voicefx(codec);
- 
-+	/*
-+	 * If the codec uses alt_functions, you need the enumerated controls
-+	 * to select the new outputs and inputs, plus add the new mic boost
-+	 * setting control.
-+	 */
-+	if (spec->use_alt_functions) {
-+		ca0132_alt_add_output_enum(codec);
-+		ca0132_alt_add_input_enum(codec);
-+	}
- #ifdef ENABLE_TUNING_CONTROLS
- 	add_tuning_ctls(codec);
+ /* Convert GFP flags to their corresponding migrate type */
+ #define GFP_MOVABLE_MASK (__GFP_RECLAIMABLE|__GFP_MOVABLE)
+@@ -342,7 +354,7 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+  *       0x0    => NORMAL
+  *       0x1    => DMA or NORMAL
+  *       0x2    => HIGHMEM or NORMAL
+- *       0x3    => BAD (DMA+HIGHMEM)
++ *       0x3    => NVM (DMA+HIGHMEM), now it is used by NVDIMM zone
+  *       0x4    => DMA32 or DMA or NORMAL
+  *       0x5    => BAD (DMA+DMA32)
+  *       0x6    => BAD (HIGHMEM+DMA32)
+@@ -370,6 +382,29 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+ #error GFP_ZONES_SHIFT too large to create GFP_ZONE_TABLE integer
  #endif
-@@ -5262,7 +5837,11 @@ static void ca0132_init_chip(struct hda_codec *codec)
- 	mutex_init(&spec->chipio_mutex);
  
- 	spec->cur_out_type = SPEAKER_OUT;
--	spec->cur_mic_type = DIGITAL_MIC;
-+	if (!spec->use_alt_functions)
-+		spec->cur_mic_type = DIGITAL_MIC;
-+	else
-+		spec->cur_mic_type = REAR_MIC;
-+
- 	spec->cur_mic_boost = 0;
++#ifdef CONFIG_ZONE_NVM
++#define ___GFP_NVM_BIT (___GFP_DMA | ___GFP_HIGHMEM)
++#define GFP_ZONE_TABLE ( \
++	((__force unsigned long)ZONE_NORMAL <<				       \
++			0 * GFP_ZONES_SHIFT)				       \
++	| ((__force unsigned long)OPT_ZONE_DMA <<			       \
++			___GFP_DMA * GFP_ZONES_SHIFT)			       \
++	| ((__force unsigned long)OPT_ZONE_HIGHMEM <<			       \
++			___GFP_HIGHMEM * GFP_ZONES_SHIFT)		       \
++	| ((__force unsigned long)OPT_ZONE_DMA32 <<			       \
++			___GFP_DMA32 * GFP_ZONES_SHIFT)			       \
++	| ((__force unsigned long)ZONE_NORMAL <<			       \
++			___GFP_MOVABLE * GFP_ZONES_SHIFT)		       \
++	| ((__force unsigned long)OPT_ZONE_DMA <<			       \
++			(___GFP_MOVABLE | ___GFP_DMA) * GFP_ZONES_SHIFT)       \
++	| ((__force unsigned long)ZONE_MOVABLE <<			       \
++			(___GFP_MOVABLE | ___GFP_HIGHMEM) * GFP_ZONES_SHIFT)   \
++	| ((__force unsigned long)OPT_ZONE_DMA32 <<			       \
++			(___GFP_MOVABLE | ___GFP_DMA32) * GFP_ZONES_SHIFT)     \
++	| ((__force unsigned long)ZONE_NVM <<				       \
++			___GFP_NVM_BIT * GFP_ZONES_SHIFT)                      \
++)
++#else
+ #define GFP_ZONE_TABLE ( \
+ 	(ZONE_NORMAL << 0 * GFP_ZONES_SHIFT)				       \
+ 	| (OPT_ZONE_DMA << ___GFP_DMA * GFP_ZONES_SHIFT)		       \
+@@ -380,6 +415,7 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+ 	| (ZONE_MOVABLE << (___GFP_MOVABLE | ___GFP_HIGHMEM) * GFP_ZONES_SHIFT)\
+ 	| (OPT_ZONE_DMA32 << (___GFP_MOVABLE | ___GFP_DMA32) * GFP_ZONES_SHIFT)\
+ )
++#endif
  
- 	for (i = 0; i < VNODES_COUNT; i++) {
-@@ -5689,15 +6268,25 @@ static int ca0132_init(struct hda_codec *codec)
- 			    VENDOR_CHIPIO_PARAM_EX_VALUE_SET, 0x20);
- 	}
+ /*
+  * GFP_ZONE_BAD is a bitmap for all combinations of __GFP_DMA, __GFP_DMA32
+@@ -387,6 +423,17 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+  * entry starting with bit 0. Bit is set if the combination is not
+  * allowed.
+  */
++#ifdef CONFIG_ZONE_NVM
++#define GFP_ZONE_BAD ( \
++	1 << (___GFP_DMA | ___GFP_DMA32)				      \
++	| 1 << (___GFP_DMA32 | ___GFP_HIGHMEM)				      \
++	| 1 << (___GFP_DMA | ___GFP_DMA32 | ___GFP_HIGHMEM)		      \
++	| 1 << (___GFP_MOVABLE | ___GFP_HIGHMEM | ___GFP_DMA)		      \
++	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_DMA)		      \
++	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_HIGHMEM)		      \
++	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_DMA | ___GFP_HIGHMEM)  \
++)
++#else
+ #define GFP_ZONE_BAD ( \
+ 	1 << (___GFP_DMA | ___GFP_HIGHMEM)				      \
+ 	| 1 << (___GFP_DMA | ___GFP_DMA32)				      \
+@@ -397,12 +444,16 @@ static inline bool gfpflags_allow_blocking(const gfp_t gfp_flags)
+ 	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_HIGHMEM)		      \
+ 	| 1 << (___GFP_MOVABLE | ___GFP_DMA32 | ___GFP_DMA | ___GFP_HIGHMEM)  \
+ )
++#endif
  
--	if (spec->quirk == QUIRK_SBZ) {
-+	if (spec->quirk == QUIRK_SBZ)
- 		ca0132_gpio_setup(codec);
--		sbz_setup_defaults(codec);
--	}
- 
- 	snd_hda_sequence_write(codec, spec->spec_init_verbs);
+ static inline enum zone_type gfp_zone(gfp_t flags)
+ {
+ 	enum zone_type z;
+ 	int bit = (__force int) (flags & GFP_ZONEMASK);
 -
--	ca0132_select_out(codec);
--	ca0132_select_mic(codec);
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		sbz_setup_defaults(codec);
-+		ca0132_alt_select_out(codec);
-+		ca0132_alt_select_in(codec);
-+		break;
-+	case QUIRK_R3DI:
-+		ca0132_alt_select_out(codec);
-+		ca0132_alt_select_in(codec);
-+		break;
-+	default:
-+		ca0132_select_out(codec);
-+		ca0132_select_mic(codec);
-+		break;
-+	}
++#ifdef CONFIG_ZONE_NVM
++	if (bit & __GFP_NVM)
++		bit = (__force int)___GFP_NVM_BIT;
++#endif
+ 	z = (GFP_ZONE_TABLE >> (bit * GFP_ZONES_SHIFT)) &
+ 					 ((1 << GFP_ZONES_SHIFT) - 1);
+ 	VM_BUG_ON((GFP_ZONE_BAD >> bit) & 1);
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 7522a69..f38e4a0 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -345,6 +345,9 @@ enum zone_type {
+ 	 */
+ 	ZONE_HIGHMEM,
+ #endif
++#ifdef CONFIG_ZONE_NVM
++	ZONE_NVM,
++#endif
+ 	ZONE_MOVABLE,
+ #ifdef CONFIG_ZONE_DEVICE
+ 	ZONE_DEVICE,
+diff --git a/mm/Kconfig b/mm/Kconfig
+index c782e8f..5fe1f63 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -687,6 +687,22 @@ config ZONE_DEVICE
  
- 	snd_hda_jack_report_sync(codec);
+ 	  If FS_DAX is enabled, then say Y.
  
++config ZONE_NVM
++	bool "Manage NVDIMM (pmem) by memory management (EXPERIMENTAL)"
++	depends on NUMA && X86_64
++	depends on HAVE_MEMBLOCK_NODE_MAP
++	depends on HAVE_MEMBLOCK
++	depends on !IA32_EMULATION
++	default n
++
++	help
++	  This option allows you to use memory management subsystem to manage
++	  NVDIMM (pmem). With it mm can arrange NVDIMMs into real physical zones
++	  like NORMAL and DMA32. That means buddy system and swap can be used
++	  directly to NVDIMM zone. This feature is beneficial to recover
++	  dirty pages from power fail or system crash by storing write cache
++	  to NVDIMM zone.
++
+ config ARCH_HAS_HMM
+ 	bool
+ 	default y
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 266c065..d8bd20d 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -228,6 +228,9 @@ bool pm_suspended_storage(void)
+ 	 "DMA32",
+ #endif
+ 	 "Normal",
++#ifdef CONFIG_ZONE_NVM
++	 "NVM",
++#endif
+ #ifdef CONFIG_HIGHMEM
+ 	 "HighMem",
+ #endif
 -- 
-2.7.4
+1.8.3.1
