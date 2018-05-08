@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932957AbeEHPA2 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:00:28 -0400
-Received: from ozlabs.org ([203.11.71.1]:35025 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932897AbeEHPAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932902AbeEHPAD (ORCPT <rfc822;w@1wt.eu>);
         Tue, 8 May 2018 11:00:03 -0400
+Received: from ozlabs.org ([203.11.71.1]:44627 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932599AbeEHPAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 11:00:00 -0400
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: linuxram@us.ibm.com
 Cc: mingo@redhat.com, linuxppc-dev@ozlabs.org, linux-mm@kvack.org,
         x86@kernel.org, linux-kernel@vger.kernel.org, dave.hansen@intel.com
-Subject: [PATCH 8/8] mm/pkeys, x86, powerpc: Display pkey in smaps if arch supports pkeys
-Date: Wed,  9 May 2018 00:59:48 +1000
-Message-Id: <20180508145948.9492-9-mpe@ellerman.id.au>
+Subject: [PATCH 5/8] x86/pkeys: Move vma_pkey() into asm/pkeys.h
+Date: Wed,  9 May 2018 00:59:45 +1000
+Message-Id: <20180508145948.9492-6-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180508145948.9492-1-mpe@ellerman.id.au>
 References: <20180508145948.9492-1-mpe@ellerman.id.au>
@@ -20,75 +20,65 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ram Pai <linuxram@us.ibm.com>
+Move the last remaining pkey helper, vma_pkey() into asm/pkeys.h
 
-Currently the architecture specific code is expected to display the
-protection keys in smap for a given vma. This can lead to redundant
-code and possibly to divergent formats in which the key gets
-displayed.
-
-This patch changes the implementation. It displays the pkey only if
-the architecture support pkeys, i.e arch_pkeys_enabled() returns true.
-
-x86 arch_show_smap() function is not needed anymore, delete it.
-
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Signed-off-by: Ram Pai <linuxram@us.ibm.com>
-[mpe: Split out from larger patch, rebased on header changes]
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- arch/x86/kernel/setup.c | 8 --------
- fs/proc/task_mmu.c      | 8 +++-----
- 2 files changed, 3 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/mmu_context.h | 10 ----------
+ arch/x86/include/asm/pkeys.h       |  8 ++++++++
+ include/linux/pkeys.h              |  2 +-
+ 3 files changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 5c623dfe39d1..2f86d883dd95 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1312,11 +1312,3 @@ static int __init register_kernel_offset_dumper(void)
- 	return 0;
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 3d748bdf44a7..59e1fadef401 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -288,16 +288,6 @@ static inline void arch_unmap(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		mpx_notify_unmap(mm, vma, start, end);
  }
- __initcall(register_kernel_offset_dumper);
--
--void arch_show_smap(struct seq_file *m, struct vm_area_struct *vma)
--{
--	if (!boot_cpu_has(X86_FEATURE_OSPKE))
--		return;
--
--	seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
--}
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index c2163606e6fb..93cea7b07a80 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -18,6 +18,7 @@
- #include <linux/page_idle.h>
- #include <linux/shmem_fs.h>
- #include <linux/uaccess.h>
-+#include <linux/pkeys.h>
  
- #include <asm/elf.h>
- #include <asm/tlb.h>
-@@ -730,10 +731,6 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned long hmask,
- }
- #endif /* HUGETLB_PAGE */
- 
--void __weak arch_show_smap(struct seq_file *m, struct vm_area_struct *vma)
+-#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+-static inline int vma_pkey(struct vm_area_struct *vma)
 -{
--}
+-	unsigned long vma_pkey_mask = VM_PKEY_BIT0 | VM_PKEY_BIT1 |
+-				      VM_PKEY_BIT2 | VM_PKEY_BIT3;
 -
- #define SEQ_PUT_DEC(str, val) \
- 		seq_put_decimal_ull_width(m, str, (val) >> 10, 8)
- static int show_smap(struct seq_file *m, void *v, int is_pid)
-@@ -838,7 +835,8 @@ static int show_smap(struct seq_file *m, void *v, int is_pid)
- 		seq_puts(m, " kB\n");
- 	}
- 	if (!rollup_mode) {
--		arch_show_smap(m, vma);
-+		if (arch_pkeys_enabled())
-+			seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
- 		show_smap_vma_flags(m, vma);
- 	}
- 	m_cache_vma(m, vma);
+-	return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
+-}
+-#endif
+-
+ /*
+  * We only want to enforce protection keys on the current process
+  * because we effectively have no access to PKRU for other
+diff --git a/arch/x86/include/asm/pkeys.h b/arch/x86/include/asm/pkeys.h
+index a0ba1ffda0df..0e5f749158e4 100644
+--- a/arch/x86/include/asm/pkeys.h
++++ b/arch/x86/include/asm/pkeys.h
+@@ -106,4 +106,12 @@ extern int __arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 		unsigned long init_val);
+ extern void copy_init_pkru_to_fpregs(void);
+ 
++static inline int vma_pkey(struct vm_area_struct *vma)
++{
++	unsigned long vma_pkey_mask = VM_PKEY_BIT0 | VM_PKEY_BIT1 |
++				      VM_PKEY_BIT2 | VM_PKEY_BIT3;
++
++	return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
++}
++
+ #endif /*_ASM_X86_PKEYS_H */
+diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
+index aad54663763b..946cb773b79f 100644
+--- a/include/linux/pkeys.h
++++ b/include/linux/pkeys.h
+@@ -2,7 +2,7 @@
+ #ifndef _LINUX_PKEYS_H
+ #define _LINUX_PKEYS_H
+ 
+-#include <linux/mm_types.h>
++#include <linux/mm.h>
+ 
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+ #include <asm/pkeys.h>
 -- 
 2.14.1
