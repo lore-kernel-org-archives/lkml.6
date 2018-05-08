@@ -1,176 +1,175 @@
-Return-Path: <linux-serial-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-3438615-1526234803-2-6549552064649659675
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US', FromHeader='fi',
-  MailFrom='org'
-X-Spam-charsets: plain='utf-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: linux-serial-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1526234802; b=ADh2eENXGmCtjopg0b174hBTw405pZr4wJUrWbVB2vxJHCmUs0
-    nDg8FDldxjzCMR+ydV9qEMDE5X3mi9CdJK8hAtf8YCrlQ8NXgGH8HDaC8JHr9GBv
-    FBa0Xpba4Skq7v31jNAYHsohIF2NsaPtujsbGCfbVSA/GzVDHnsyPgbHNd2IusaH
-    i+rxalHsBDQ4KuOcuEWuK/ulhhp/stNN41CTdp+oeiRZgZOLB+pm5oAIU95SOYGJ
-    cqvWSBo/9DtE7vZ5FxzzAfZ5y6u8VpYztER5sioedgC7IBKBvELeCbCK8xliD0hL
-    UmSfnUq+NlHdzUR9VwAesGL3tmBfFtYhd/lA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=subject:to:cc:references:from:message-id
-    :date:mime-version:in-reply-to:content-type
-    :content-transfer-encoding:sender:list-id; s=fm2; t=1526234802;
-    bh=lnwl+E/lx+DYcKBxdjX/cYlId0m1DFHET6QiIurSPIU=; b=e5K2H1RDAovn
-    v/HLzjumEtd669jKOqMFNDqS7DKz3ok+nBAlJFYYzYuly8lLttSNMpb0SwuFRaQc
-    GHhPpLiCpPR7AEYeTpzKW7p6joJhIjwNbDM5OWtGAk+7423xKUsSzJbTZanwx2+D
-    n6fiA8XiJ61OD+ihWTKKEXblYA1LeYiE6nIBhxLIp231LwzZL8Byv8t3Hf7zoeZH
-    WriV6jiQHG4zzS2z8Kai4EzPQAdaXfqYpo+1anBbAbPGaIFJtEuXBVxoCFzTQzY8
-    DJHF2elTiDgYTJdzWeet5ngzwSqsYAividYmSxvNtRv78CYefqYWCCsQlToe7nmb
-    KVzqd1OHCQ==
-ARC-Authentication-Results: i=1; mx2.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-    header.d=kapsi.fi header.i=@kapsi.fi header.b=Ayp0Usg2 x-bits=2048
-    x-keytype=rsa x-algorithm=sha256 x-selector=20161220;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kapsi.fi;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=kapsi.fi header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx2.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (body has been altered, 2048-bit rsa key sha256)
-      header.d=kapsi.fi header.i=@kapsi.fi header.b=Ayp0Usg2 x-bits=2048
-      x-keytype=rsa x-algorithm=sha256 x-selector=20161220;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=kapsi.fi;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=linux-serial-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=kapsi.fi header.result=pass header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfCpTYMm8GOMVdN0InfxQVy3686il9NDlWk0I5TrVcQO1hE6J/cESKm5IKQcHLaXYruv6zc9/emr7Wy8xt3tu80rP8PIj987uYKIcUGrwo3ZYUWQu3Urd
-    iQW2oBYsSYCGTnek1WkVunoA1vWu5tEM/DEgRpMHn5o04Dag5FMrqkqXosC6ifmnpJ7xkVJNxBakFqBSQn9EGR0ejkBmJS4NJxfaunKUz2Lg2C+5PJ9rfhCc
-X-CM-Analysis: v=2.3 cv=E8HjW5Vl c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=Ikd4Dj_1AAAA:8 a=VwQbUJbxAAAA:8 a=9bLPFV2sn-Yrdq1Y9-wA:9 a=QEXdDO2ut3YA:10
-    a=x8gzFH9gYPwA:10 a=AjGcO6oz07-iQ99wixmX:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751457AbeEMSGk (ORCPT <rfc822;greg@kroah.com>);
-        Sun, 13 May 2018 14:06:40 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:60699 "EHLO mail.kapsi.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751295AbeEMSGj (ORCPT <rfc822;linux-serial@vger.kernel.org>);
-        Sun, 13 May 2018 14:06:39 -0400
-Subject: Re: [PATCH 6/8] serial: Add Tegra Combined UART driver
-To: Jassi Brar <jassisinghbrar@gmail.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>, araza@nvidia.com,
-        Devicetree List <devicetree@vger.kernel.org>,
-        linux-serial@vger.kernel.org, linux-tegra@vger.kernel.org,
-        ", linux-arm-kernel"@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        srv_heupstream <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-Path: <mperttunen@nvidia.com>
+X-Google-Smtp-Source: AB8JxZo3zS5vABOBioGJ3FPlOUvk67ErOQwRL4pWgrR3MOLsgs8Z/uyHkmlvBSZFcEscrud+u1FF
+ARC-Seal: i=1; a=rsa-sha256; t=1525780171; cv=none;
+        d=google.com; s=arc-20160816;
+        b=loeOnq7czSs4w+9/BQ/fObqXFcyc/0JxEztDYEjvNu7BW2Tu6vrKB0/n+E1s/nXK/a
+         m+4kMGWVXPIVpqo7M6Fq81EerwW609lxFoBXquruOsEBMN0/MUYCHzP33WJQ+IrSZejX
+         usUa1gTn12P7R8mQVYo6OPkPdtKVkvd4oyPeebb9mfyTt6kT20N2XrEW6YiZebzAVuQk
+         GQyZ5Ln2ZKLhryM6Si8YTjPjEWLHBYG+nWpkB4S8HmjCRuMCyYcLAKl1eaC8+eJOc6Kr
+         UNyo1CUlIS9pAH6CvaAqxeGE+iDA7IfHO0VSGQ2GhKLZYc+WugAK9rUhzZkcBcIg9O/Y
+         kg9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:references:in-reply-to:message-id:date:subject:cc:to
+         :from:arc-authentication-results;
+        bh=3oXg2sChChfKPhPNCmHoFnlC04ifsi9a2IcLNL+n090=;
+        b=QUqlcI1h696BlDODw0XeYQPRCyj2+a8y576ixCewCUwykhH6+k4dZMfHBL4uL0wxOS
+         pE40zC6HsXRrNupr542BQ8Dl9gwHNEVx7qHk3meXbR3W3aMRRTtgMuAvmVu+tLnEYhyt
+         MCGIu9iWqvzX0zMpbx76qlPswSCz/90owIreSKhqrrUay+XgEhD0gPE6iAyxCgDltM3v
+         fx0CNKTJ2zj4VvvAClu5hvYKy/5eKTBDefpZhXgwdfl9O/P6PHeRDLHnfC8j4rBHl9vn
+         eFrvptNAZOUzAJbYBSPX+IBswpqKd2Pzr6//rE8tW1z+1pqclYU59UUeUAy8/7W2vnH1
+         1meg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of mperttunen@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=mperttunen@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+Authentication-Results: mx.google.com;
+       spf=pass (google.com: domain of mperttunen@nvidia.com designates 216.228.121.65 as permitted sender) smtp.mailfrom=mperttunen@nvidia.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=nvidia.com
+X-PGP-Universal: processed;
+	by hqpgpgate101.nvidia.com on Tue, 08 May 2018 04:49:30 -0700
+From: Mikko Perttunen <mperttunen@nvidia.com>
+To: <robh+dt@kernel.org>, <mark.rutland@arm.com>, <jassisinghbrar@gmail.com>,
+	<gregkh@linuxfoundation.org>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>
+CC: <araza@nvidia.com>, <devicetree@vger.kernel.org>,
+	<linux-serial@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	"Mikko Perttunen" <mperttunen@nvidia.com>
+Subject: [PATCH 3/8] mailbox: Add transmit done by blocking option
+Date: Tue, 8 May 2018 14:43:58 +0300
+Message-ID: <20180508114403.14499-4-mperttunen@nvidia.com>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180508114403.14499-1-mperttunen@nvidia.com>
 References: <20180508114403.14499-1-mperttunen@nvidia.com>
- <20180508114403.14499-7-mperttunen@nvidia.com>
- <CABb+yY3snB9o4e14by4xui+o_Vhqpe2zh6Pp_e0t-DCTKvMHWA@mail.gmail.com>
-From: Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <4d6aab52-9c99-8dd8-556d-86f32d9f6234@kapsi.fi>
-Date: Sun, 13 May 2018 21:06:37 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <CABb+yY3snB9o4e14by4xui+o_Vhqpe2zh6Pp_e0t-DCTKvMHWA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.250.162.250
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
-Sender: linux-serial-owner@vger.kernel.org
-X-Mailing-List: linux-serial@vger.kernel.org
+Content-Type: text/plain
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599896468962132530?=
+X-GMAIL-MSGID: =?utf-8?q?1599896468962132530?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On 05/13/2018 06:36 PM, Jassi Brar wrote:
-> On Tue, May 8, 2018 at 5:14 PM, Mikko Perttunen <mperttunen@nvidia.com> wrote:
-> 
-> ....
->>
->> +config SERIAL_TEGRA_TCU
->> +       tristate "NVIDIA Tegra Combined UART"
->> +       depends on ARCH_TEGRA && MAILBOX
->> +       select SERIAL_CORE
->> +       help
->> +         Support for the mailbox-based TCU (Tegra Combined UART) serial port.
->> +         TCU is a virtual serial port that allows multiplexing multiple data
->> +         streams into a single hardware serial port.
->> +
-> Maybe make it depend upon TEGRA_HSP_MBOX ?
+Add a new TXDONE option, TXDONE_BY_BLOCK. With this option, the
+send_data function of the mailbox driver is expected to block until
+the message has been sent. The new option is used with the Tegra
+Combined UART driver to minimize unnecessary overhead when transmitting
+data.
 
-Yeah, that probably makes more sense. MAILBOX is enough to build it but 
-it won't be of any use without TEGRA_HSP_MBOX.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+ drivers/mailbox/mailbox.c | 30 +++++++++++++++++++++---------
+ drivers/mailbox/mailbox.h |  1 +
+ 2 files changed, 22 insertions(+), 9 deletions(-)
 
-> 
-> ......
-> 
->> +
->> +static void tegra_tcu_write(const char *s, unsigned int count)
->> +{
->> +       struct tegra_tcu *tcu = tegra_tcu_uart_port.private_data;
->> +       unsigned int written = 0, i = 0;
->> +       bool insert_nl = false;
->> +       uint32_t value = 0;
->> +
->> +       while (i < count) {
->> +               if (insert_nl) {
->> +                       value |= '\n' << (written++ * 8);
->> +                       insert_nl = false;
->> +                       i++;
->> +               } else if (s[i] == '\n') {
->> +                       value |= '\r' << (written++ * 8);
->> +                       insert_nl = true;
->> +               } else {
->> +                       value |= s[i++] << (written++ * 8);
->> +               }
->> +
->> +               if (written == 3) {
->> +                       value |= 3 << 24;
->> +                       value |= BIT(26);
->> +                       mbox_send_message(tcu->tx, &value);
->>
-> How is this supposed to work? tegra_hsp_doorbell_send_data() ignores
-> the second argument.
-
-The previous patch in the series adds support for what are called 
-"shared mailboxes" to the tegra-hsp driver. For these the second 
-argument is used.
-
-Thanks,
-Mikko
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index 674b35f402f5..5c76b70e673c 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -53,6 +53,8 @@ static int add_to_rbuf(struct mbox_chan *chan, void *mssg)
+ 	return idx;
+ }
+ 
++static void tx_tick(struct mbox_chan *chan, int r, bool submit_next);
++
+ static void msg_submit(struct mbox_chan *chan)
+ {
+ 	unsigned count, idx;
+@@ -60,10 +62,13 @@ static void msg_submit(struct mbox_chan *chan)
+ 	void *data;
+ 	int err = -EBUSY;
+ 
++next:
+ 	spin_lock_irqsave(&chan->lock, flags);
+ 
+-	if (!chan->msg_count || chan->active_req)
+-		goto exit;
++	if (!chan->msg_count || chan->active_req) {
++		spin_unlock_irqrestore(&chan->lock, flags);
++		return;
++	}
+ 
+ 	count = chan->msg_count;
+ 	idx = chan->msg_free;
+@@ -82,15 +87,21 @@ static void msg_submit(struct mbox_chan *chan)
+ 		chan->active_req = data;
+ 		chan->msg_count--;
+ 	}
+-exit:
++
+ 	spin_unlock_irqrestore(&chan->lock, flags);
+ 
+ 	if (!err && (chan->txdone_method & TXDONE_BY_POLL))
+ 		/* kick start the timer immediately to avoid delays */
+ 		hrtimer_start(&chan->mbox->poll_hrt, 0, HRTIMER_MODE_REL);
++
++	if (chan->txdone_method & TXDONE_BY_BLOCK) {
++		tx_tick(chan, err, false);
++		if (!err)
++			goto next;
++	}
+ }
+ 
+-static void tx_tick(struct mbox_chan *chan, int r)
++static void tx_tick(struct mbox_chan *chan, int r, bool submit_next)
+ {
+ 	unsigned long flags;
+ 	void *mssg;
+@@ -101,7 +112,8 @@ static void tx_tick(struct mbox_chan *chan, int r)
+ 	spin_unlock_irqrestore(&chan->lock, flags);
+ 
+ 	/* Submit next message */
+-	msg_submit(chan);
++	if (submit_next)
++		msg_submit(chan);
+ 
+ 	if (!mssg)
+ 		return;
+@@ -127,7 +139,7 @@ static enum hrtimer_restart txdone_hrtimer(struct hrtimer *hrtimer)
+ 		if (chan->active_req && chan->cl) {
+ 			txdone = chan->mbox->ops->last_tx_done(chan);
+ 			if (txdone)
+-				tx_tick(chan, 0);
++				tx_tick(chan, 0, true);
+ 			else
+ 				resched = true;
+ 		}
+@@ -176,7 +188,7 @@ void mbox_chan_txdone(struct mbox_chan *chan, int r)
+ 		return;
+ 	}
+ 
+-	tx_tick(chan, r);
++	tx_tick(chan, r, true);
+ }
+ EXPORT_SYMBOL_GPL(mbox_chan_txdone);
+ 
+@@ -196,7 +208,7 @@ void mbox_client_txdone(struct mbox_chan *chan, int r)
+ 		return;
+ 	}
+ 
+-	tx_tick(chan, r);
++	tx_tick(chan, r, true);
+ }
+ EXPORT_SYMBOL_GPL(mbox_client_txdone);
+ 
+@@ -275,7 +287,7 @@ int mbox_send_message(struct mbox_chan *chan, void *mssg)
+ 		ret = wait_for_completion_timeout(&chan->tx_complete, wait);
+ 		if (ret == 0) {
+ 			t = -ETIME;
+-			tx_tick(chan, t);
++			tx_tick(chan, t, true);
+ 		}
+ 	}
+ 
+diff --git a/drivers/mailbox/mailbox.h b/drivers/mailbox/mailbox.h
+index 456ba68513bb..ec68e2e28cd6 100644
+--- a/drivers/mailbox/mailbox.h
++++ b/drivers/mailbox/mailbox.h
+@@ -10,5 +10,6 @@
+ #define TXDONE_BY_IRQ	BIT(0) /* controller has remote RTR irq */
+ #define TXDONE_BY_POLL	BIT(1) /* controller can read status of last TX */
+ #define TXDONE_BY_ACK	BIT(2) /* S/W ACK recevied by Client ticks the TX */
++#define TXDONE_BY_BLOCK	BIT(3) /* mailbox driver send_data blocks until done */
+ 
+ #endif /* __MAILBOX_H */
+-- 
+2.16.1
