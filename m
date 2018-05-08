@@ -1,57 +1,55 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754182AbeEHDca (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 23:32:30 -0400
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:39431 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753785AbeEHDc2 (ORCPT
+        id S1754088AbeEHDei (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 23:34:38 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:42409 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753846AbeEHDeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 23:32:28 -0400
-X-Google-Smtp-Source: AB8JxZpbH/jDHk9ZXMNqHxqZMbP9nlv+cMxxK7aQKE0DVSJuS5I6oTwFngZgNt7vzNHggIs6iC6N4g==
-Subject: Re: [PATCH] watchdog: mena21_wdt: Fix a possible data race in
- a21_wdt_set_timeout
-To: Guenter Roeck <linux@roeck-us.net>, morbidrsa@gmail.com,
-        wim@linux-watchdog.org
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180508031825.12525-1-baijiaju1990@gmail.com>
- <64e08944-0578-ac4c-8dea-e1e704685e77@roeck-us.net>
+        Mon, 7 May 2018 23:34:37 -0400
+X-Google-Smtp-Source: AB8JxZphflkY/MBgANqzzsU/EuJLDg9Gu3EKq6tV3jvHEmO/KZ7fWk3hT686EZf2d1RMQDCPln7IzQ==
 From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <26fde8a3-fb78-e12f-2f0f-c9b5bb2158e0@gmail.com>
-Date: Tue, 8 May 2018 11:32:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <64e08944-0578-ac4c-8dea-e1e704685e77@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+To: boris.ostrovsky@oracle.com, jgross@suse.com,
+        simon@invisiblethingslab.com, joao.m.martins@oracle.com
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] xen: xenbus: Fix a possible data race in xs_request_enter
+Date: Tue,  8 May 2018 11:34:29 +0800
+Message-Id: <20180508033429.12749-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The read operation to "req->type" is protected by
+the lock on line 128, but the write operation to
+this data on line 118 is not protected by the lock.
+Thus, there may exist a data race for "req->type".
 
+To fix this data race, the write operation to "req->type" 
+should be also protected by the lock.
 
-On 2018/5/8 11:28, Guenter Roeck wrote:
-> On 05/07/2018 08:18 PM, Jia-Ju Bai wrote:
->> The write operation to "wdt->timeout" is protected by
->> the lock on line 118, but the read operation to
->> this data on line 105 is not protected by the lock.
->> Thus, there may exist a data race for "wdt->timeout".
->>
->> To fix this data race, the read operation to "wdt->timeout"
->> should be also protected by the lock.
->>
->
-> There is no race. There is already a mutex in the watchdog core which 
-> serializes
-> calls to the various API functions. It would make more sense to drop 
-> drv->lock
-> from the driver.
->
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/xen/xenbus/xenbus_xs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for your reply :)
-Need I submit a patch of dropping all calls to "drv->lock"?
-
-
-Best wishes,
-Jia-Ju Bai
+diff --git a/drivers/xen/xenbus/xenbus_xs.c b/drivers/xen/xenbus/xenbus_xs.c
+index 49a3874ae6bb..274cdfee08b1 100644
+--- a/drivers/xen/xenbus/xenbus_xs.c
++++ b/drivers/xen/xenbus/xenbus_xs.c
+@@ -115,10 +115,10 @@ static uint32_t xs_request_enter(struct xb_req_data *req)
+ {
+ 	uint32_t rq_id;
+ 
+-	req->type = req->msg.type;
+-
+ 	spin_lock(&xs_state_lock);
+ 
++	req->type = req->msg.type;
++
+ 	while (!xs_state_users && xs_suspend_active) {
+ 		spin_unlock(&xs_state_lock);
+ 		wait_event(xs_state_enter_wq, xs_suspend_active == 0);
+-- 
+2.17.0
