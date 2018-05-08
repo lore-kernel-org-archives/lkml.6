@@ -1,65 +1,98 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932534AbeEHObD (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:31:03 -0400
-Received: from mga17.intel.com ([192.55.52.151]:40612 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932334AbeEHObB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:31:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,378,1520924400";
-   d="scan'208";a="38333571"
-Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
-To: Chris Chiu <chiu@endlessm.com>, Jian-Hong Pan <jian-hong@endlessm.com>
-Cc: Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Adrian Salido <salidoa@google.com>,
-        Jason Gerecke <killertofu@gmail.com>, linux-input@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Daniel Drake <drake@endlessm.com>,
-        Linux Upstreaming Team <linux@endlessm.com>
-References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
- <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Message-ID: <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
-Date: Tue, 8 May 2018 17:31:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932576AbeEHObe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:31:34 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:33498 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932549AbeEHObb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 10:31:31 -0400
+X-Google-Smtp-Source: AB8JxZo4en/GOvqPwZIweMWGYjzEToRU9Doa4tkgrQcOT8gu59+3+mmYICTPGp34C5pAe+kDnKRKuGBjOv4khBNgypY=
 MIME-Version: 1.0
-In-Reply-To: <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180423233046.21476-5-logang@deltatee.com>
+References: <20180423233046.21476-1-logang@deltatee.com> <20180423233046.21476-5-logang@deltatee.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Date: Tue, 8 May 2018 07:31:30 -0700
+Message-ID: <CAPcyv4g+5N_n03J-VhmJfrr60Sqk95ZapLKBkwSsGvV4nQ+ZRw@mail.gmail.com>
+Subject: Re: [PATCH v4 04/14] PCI/P2PDMA: Clear ACS P2P flags for all devices
+ behind switches
+To: Logan Gunthorpe <logang@deltatee.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, linux-block@vger.kernel.org,
+        Stephen Bates <sbates@raithlin.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+On Mon, Apr 23, 2018 at 4:30 PM, Logan Gunthorpe <logang@deltatee.com> wrote:
+> For peer-to-peer transactions to work the downstream ports in each
+> switch must not have the ACS flags set. At this time there is no way
+> to dynamically change the flags and update the corresponding IOMMU
+> groups so this is done at enumeration time before the groups are
+> assigned.
+>
+> This effectively means that if CONFIG_PCI_P2PDMA is selected then
+> all devices behind any PCIe switch heirarchy will be in the same IOMMU
+> group. Which implies that individual devices behind any switch
+> heirarchy will not be able to be assigned to separate VMs because
+> there is no isolation between them. Additionally, any malicious PCIe
+> devices will be able to DMA to memory exposed by other EPs in the same
+> domain as TLPs will not be checked by the IOMMU.
+>
+> Given that the intended use case of P2P Memory is for users with
+> custom hardware designed for purpose, we do not expect distributors
+> to ever need to enable this option. Users that want to use P2P
+> must have compiled a custom kernel with this configuration option
+> and understand the implications regarding ACS. They will either
+> not require ACS or will have design the system in such a way that
+> devices that require isolation will be separate from those using P2P
+> transactions.
 
-On 05/07/2018 11:07 AM, Chris Chiu wrote:
+>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>  drivers/pci/Kconfig        |  9 +++++++++
+>  drivers/pci/p2pdma.c       | 45 ++++++++++++++++++++++++++++++---------------
+>  drivers/pci/pci.c          |  6 ++++++
+>  include/linux/pci-p2pdma.h |  5 +++++
+>  4 files changed, 50 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
+> index b2396c22b53e..b6db41d4b708 100644
+> --- a/drivers/pci/Kconfig
+> +++ b/drivers/pci/Kconfig
+> @@ -139,6 +139,15 @@ config PCI_P2PDMA
+>           transations must be between devices behind the same root port.
+>           (Typically behind a network of PCIe switches).
+>
+> +         Enabling this option will also disable ACS on all ports behind
+> +         any PCIe switch. This effectively puts all devices behind any
+> +         switch heirarchy into the same IOMMU group. Which implies that
+> +         individual devices behind any switch will not be able to be
+> +         assigned to separate VMs because there is no isolation between
+> +         them. Additionally, any malicious PCIe devices will be able to
+> +         DMA to memory exposed by other EPs in the same domain as TLPs
+> +         will not be checked by the IOMMU.
+> +
+>           If unsure, say N.
 
->> Besides, according to ASUS's input, they observed that after entering
->> the OS, the frequency of SCL is too fast (about 600kHz) and the SCL High
->> time is around 450ns, not following I2C spec which is 0.6us.
->> https://pasteboard.co/HjzSWXd.png
->>
-> Some update, we can make the touchpad work by simply modifying the
-> clk_rate of spt_i2c_info from 120000000 to 133000000 in intel-lpss-pci.c for
-> specific PCI ID 8086:a368 ~ a36a (CoffeeLake). Is the clock setting different
-> for the CoffeeLake series?
-> 
-Hmm.. at quick look it looks like to be 133 MHz but I want to double 
-check first from other specs. I'm also wondering why it results 600 kHz 
-instead of expected 133/120 * 400 kHz = 443 kHz. Need to check timing 
-parameters too.
+It seems unwieldy that this is a compile time option and not a runtime
+option. Can't we have a kernel command line option to opt-in to this
+behavior rather than require a wholly separate kernel image?
 
--- 
-Jarkko
+Why is this text added in a follow on patch and not the patch that
+introduced the config option?
+
+I'm also wondering if that command line option can take a 'bus device
+function' address of a switch to limit the scope of where ACS is
+disabled.
