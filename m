@@ -1,108 +1,119 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933207AbeEHQ57 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:57:59 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51810 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932368AbeEHQ55 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:57:57 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B085D6019F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [v8] clk: qcom: clk-rpmh: Add QCOM RPMh clock driver
-To: Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc: Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Amit Nischal <anischal@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1525428158-29147-1-git-send-email-tdas@codeaurora.org>
- <1525428158-29147-2-git-send-email-tdas@codeaurora.org>
- <152545267793.138124.15345698220033125655@swboyd.mtv.corp.google.com>
- <a926924f-2033-acd6-67cb-210a5e487ebb@codeaurora.org>
- <152573930157.138124.12994299541712205183@swboyd.mtv.corp.google.com>
-From: Taniya Das <tdas@codeaurora.org>
-Message-ID: <ebdc6b56-f6d6-7e63-ebc2-6d60f5d1b690@codeaurora.org>
-Date: Tue, 8 May 2018 22:27:36 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933227AbeEHQ6F (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 12:58:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:39984 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932368AbeEHQ6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 12:58:01 -0400
+Date: Tue, 8 May 2018 10:57:59 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Logan Gunthorpe <logang@deltatee.com>, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-rdma@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-block@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagi@grimberg.me>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, Max Gurtovoy <maxg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v4 00/14] Copy Offload in NVMe Fabrics with P2P PCI
+ Memory
+Message-ID: <20180508105759.7dbaa8fe@w520.home>
+In-Reply-To: <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180423233046.21476-1-logang@deltatee.com>
+        <20180507232346.GI161390@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <152573930157.138124.12994299541712205183@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+On Mon, 7 May 2018 18:23:46 -0500
+Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-Thanks for your review comments, please check my comments below,  so 
-that I could submit the next patch series.
-
-On 5/8/2018 5:58 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2018-05-07 03:48:06)
->> Hello Stephen,
->>
->> Could you please let me know your comments on the below.
->>
->> On 5/4/2018 10:21 PM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2018-05-04 03:02:38)
->>>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
->>>> new file mode 100644
->>>> index 0000000..944fe04
->>>> --- /dev/null
->>>> +++ b/drivers/clk/qcom/clk-rpmh.c
->>>> @@ -0,0 +1,334 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->>>> + */
->>>> +
->>>> +};
->>>> +
->>>> +struct clk_rpmh_desc {
->>>> +       struct clk_hw **clks;
->>>> +       size_t num_clks;
->>>> +};
->>>
->>> This could be replaced with the clk_hw_onecell_data struct and then the
->>> only problem becomes the const part which seems pretty impossible to fix
->>> at this point. One "workaround" is to memdup the structure. Ugh.
->>>
->>
->> Will be okay, if I can the following?
->>
->> _probe...
->> {
->>          struct clk_rpmh_desc *hw_desc_data;
->>          ....
->>
->>          hw_desc_data = kmemdup(desc, sizeof(*desc), GFP_KERNEL);
->>
->>          ...
->>          ret = devm_of_clk_add_hw_provider(&pdev->dev,     of_clk_rpmh_hw_get,
->> hw_desc_data);
->>           ....
->>
->> }
->>
->> And also I fix the "getter" function.
+> On Mon, Apr 23, 2018 at 05:30:32PM -0600, Logan Gunthorpe wrote:
+> > Hi Everyone,
+> > 
+> > Here's v4 of our series to introduce P2P based copy offload to NVMe
+> > fabrics. This version has been rebased onto v4.17-rc2. A git repo
+> > is here:
+> > 
+> > https://github.com/sbates130272/linux-p2pmem pci-p2p-v4
+> > ...  
 > 
-> I'd rather see the check for out of bounds number just go away, unless
-> that's helping something. The kmemdup() doesn't look good.
+> > Logan Gunthorpe (14):
+> >   PCI/P2PDMA: Support peer-to-peer memory
+> >   PCI/P2PDMA: Add sysfs group to display p2pmem stats
+> >   PCI/P2PDMA: Add PCI p2pmem dma mappings to adjust the bus offset
+> >   PCI/P2PDMA: Clear ACS P2P flags for all devices behind switches
+> >   docs-rst: Add a new directory for PCI documentation
+> >   PCI/P2PDMA: Add P2P DMA driver writer's documentation
+> >   block: Introduce PCI P2P flags for request and request queue
+> >   IB/core: Ensure we map P2P memory correctly in
+> >     rdma_rw_ctx_[init|destroy]()
+> >   nvme-pci: Use PCI p2pmem subsystem to manage the CMB
+> >   nvme-pci: Add support for P2P memory in requests
+> >   nvme-pci: Add a quirk for a pseudo CMB
+> >   nvmet: Introduce helper functions to allocate and free request SGLs
+> >   nvmet-rdma: Use new SGL alloc/free helper for requests
+> >   nvmet: Optionally use PCI P2P memory
+> > 
+> >  Documentation/ABI/testing/sysfs-bus-pci    |  25 +
+> >  Documentation/PCI/index.rst                |  14 +
+> >  Documentation/driver-api/index.rst         |   2 +-
+> >  Documentation/driver-api/pci/index.rst     |  20 +
+> >  Documentation/driver-api/pci/p2pdma.rst    | 166 ++++++
+> >  Documentation/driver-api/{ => pci}/pci.rst |   0
+> >  Documentation/index.rst                    |   3 +-
+> >  block/blk-core.c                           |   3 +
+> >  drivers/infiniband/core/rw.c               |  13 +-
+> >  drivers/nvme/host/core.c                   |   4 +
+> >  drivers/nvme/host/nvme.h                   |   8 +
+> >  drivers/nvme/host/pci.c                    | 118 +++--
+> >  drivers/nvme/target/configfs.c             |  67 +++
+> >  drivers/nvme/target/core.c                 | 143 ++++-
+> >  drivers/nvme/target/io-cmd.c               |   3 +
+> >  drivers/nvme/target/nvmet.h                |  15 +
+> >  drivers/nvme/target/rdma.c                 |  22 +-
+> >  drivers/pci/Kconfig                        |  26 +
+> >  drivers/pci/Makefile                       |   1 +
+> >  drivers/pci/p2pdma.c                       | 814 +++++++++++++++++++++++++++++
+> >  drivers/pci/pci.c                          |   6 +
+> >  include/linux/blk_types.h                  |  18 +-
+> >  include/linux/blkdev.h                     |   3 +
+> >  include/linux/memremap.h                   |  19 +
+> >  include/linux/pci-p2pdma.h                 | 118 +++++
+> >  include/linux/pci.h                        |   4 +
+> >  26 files changed, 1579 insertions(+), 56 deletions(-)
+> >  create mode 100644 Documentation/PCI/index.rst
+> >  create mode 100644 Documentation/driver-api/pci/index.rst
+> >  create mode 100644 Documentation/driver-api/pci/p2pdma.rst
+> >  rename Documentation/driver-api/{ => pci}/pci.rst (100%)
+> >  create mode 100644 drivers/pci/p2pdma.c
+> >  create mode 100644 include/linux/pci-p2pdma.h  
 > 
+> How do you envison merging this?  There's a big chunk in drivers/pci, but
+> really no opportunity for conflicts there, and there's significant stuff in
+> block and nvme that I don't really want to merge.
+> 
+> If Alex is OK with the ACS situation, I can ack the PCI parts and you could
+> merge it elsewhere?
 
-I think it is better to copy the desc data to "clk_hw_onecell_data", as 
-I would also have to fix the "getter" function to check for out of bound 
-numbers (idx >= num_clks).
+AIUI from previously questioning this, the change is hidden behind a
+build-time config option and only custom kernels or distros optimized
+for this sort of support would enable that build option.  I'm more than
+a little dubious though that we're not going to have a wave of distros
+enabling this only to get user complaints that they can no longer make
+effective use of their devices for assignment due to the resulting span
+of the IOMMU groups, nor is there any sort of compromise, configure
+the kernel for p2p or device assignment, not both.  Is this really such
+a unique feature that distro users aren't going to be asking for both
+features?  Thanks,
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Alex
