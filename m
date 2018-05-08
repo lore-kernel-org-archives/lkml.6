@@ -1,100 +1,86 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933400AbeEHIu3 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 04:50:29 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46952 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932157AbeEHIu0 (ORCPT
+        id S933425AbeEHIvM (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 04:51:12 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:50354 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932130AbeEHIND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 04:50:26 -0400
-X-Google-Smtp-Source: AB8JxZrlynyar4lRDqNmRe/Aakd9Nvwt8OR1cb0fUEjWM71RqzP11jVA8bFCwEEGUDdbvtZzhxiX7Q==
-From: Lidong Chen <jemmy858585@gmail.com>
-X-Google-Original-From: Lidong Chen <lidongchen@tencent.com>
-To: dledford@redhat.com, jgg@ziepe.ca, akpm@linux-foundation.org,
-        qing.huang@oracle.com, leon@kernel.org, artemyko@mellanox.com,
-        dan.j.williams@intel.com
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        adido@mellanox.com, galsha@mellanox.com, aviadye@mellanox.com,
-        Lidong Chen <lidongchen@tencent.com>
-Subject: [PATCH v2] IB/umem: ib_ucontext already have tgid, remove pid from ib_umem structure
-Date: Tue,  8 May 2018 16:50:16 +0800
-Message-Id: <1525769416-14596-1-git-send-email-lidongchen@tencent.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 8 May 2018 04:13:03 -0400
+From: Florian Westphal <fw@strlen.de>
+To: <netfilter-devel@vger.kernel.org>
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ffmancera@riseup.net,
+        Florian Westphal <fw@strlen.de>
+Subject: [PATCH nf-next] netfilter: fix fallout from xt/nf osf separation
+Date: Tue,  8 May 2018 10:05:38 +0200
+Message-Id: <20180508080538.31992-1-fw@strlen.de>
+X-Mailer: git-send-email 2.16.1
+In-Reply-To: <20180508102101.768d5c52@canb.auug.org.au>
+References: <20180508102101.768d5c52@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
-If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
-exited, get_pid_task will return NULL, ib_umem_release does not decrease
-mm->pinned_vm. This patch fixes it by use tgid in ib_ucontext struct.
+Stephen Rothwell says:
+  today's linux-next build (x86_64 allmodconfig) produced this warning:
+  ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
 
-Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+Fix that up and also move kernel-private struct out of uapi (it was not
+exposed in any released kernel version).
+
+tested via allmodconfig build + make headers_check.
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
+Signed-off-by: Florian Westphal <fw@strlen.de>
 ---
- [v2]
- - use ib_ucontext tgid instread of tgid in ib_umem structure
- 
- drivers/infiniband/core/umem.c | 7 +------
- include/rdma/ib_umem.h         | 1 -
- 2 files changed, 1 insertion(+), 7 deletions(-)
+ include/linux/netfilter/nf_osf.h      | 6 ++++++
+ include/uapi/linux/netfilter/nf_osf.h | 8 ++------
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index 9a4e899..2b6c9b5 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -119,7 +119,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
- 	umem->length     = size;
- 	umem->address    = addr;
- 	umem->page_shift = PAGE_SHIFT;
--	umem->pid	 = get_task_pid(current, PIDTYPE_PID);
- 	/*
- 	 * We ask for writable memory if any of the following
- 	 * access flags are set.  "Local write" and "remote write"
-@@ -132,7 +131,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
- 		 IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
+diff --git a/include/linux/netfilter/nf_osf.h b/include/linux/netfilter/nf_osf.h
+index a2b39602e87d..0e114c492fb8 100644
+--- a/include/linux/netfilter/nf_osf.h
++++ b/include/linux/netfilter/nf_osf.h
+@@ -21,6 +21,12 @@ enum osf_fmatch_states {
+ 	FMATCH_OPT_WRONG,
+ };
  
- 	if (access & IB_ACCESS_ON_DEMAND) {
--		put_pid(umem->pid);
- 		ret = ib_umem_odp_get(context, umem, access);
- 		if (ret) {
- 			kfree(umem);
-@@ -148,7 +146,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
++struct nf_osf_finger {
++	struct rcu_head			rcu_head;
++	struct list_head		finger_entry;
++	struct nf_osf_user_finger	finger;
++};
++
+ bool nf_osf_match(const struct sk_buff *skb, u_int8_t family,
+ 		  int hooknum, struct net_device *in, struct net_device *out,
+ 		  const struct nf_osf_info *info, struct net *net,
+diff --git a/include/uapi/linux/netfilter/nf_osf.h b/include/uapi/linux/netfilter/nf_osf.h
+index 45376eae31ef..8f2f2f403183 100644
+--- a/include/uapi/linux/netfilter/nf_osf.h
++++ b/include/uapi/linux/netfilter/nf_osf.h
+@@ -1,6 +1,8 @@
+ #ifndef _NF_OSF_H
+ #define _NF_OSF_H
  
- 	page_list = (struct page **) __get_free_page(GFP_KERNEL);
- 	if (!page_list) {
--		put_pid(umem->pid);
- 		kfree(umem);
- 		return ERR_PTR(-ENOMEM);
- 	}
-@@ -231,7 +228,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
- 	if (ret < 0) {
- 		if (need_release)
- 			__ib_umem_release(context->device, umem, 0);
--		put_pid(umem->pid);
- 		kfree(umem);
- 	} else
- 		current->mm->pinned_vm = locked;
-@@ -274,8 +270,7 @@ void ib_umem_release(struct ib_umem *umem)
++#include <linux/types.h>
++
+ #define MAXGENRELEN	32
  
- 	__ib_umem_release(umem->context->device, umem, 1);
+ #define NF_OSF_GENRE	(1 << 0)
+@@ -57,12 +59,6 @@ struct nf_osf_user_finger {
+ 	struct nf_osf_opt	opt[MAX_IPOPTLEN];
+ };
  
--	task = get_pid_task(umem->pid, PIDTYPE_PID);
--	put_pid(umem->pid);
-+	task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
- 	if (!task)
- 		goto out;
- 	mm = get_task_mm(task);
-diff --git a/include/rdma/ib_umem.h b/include/rdma/ib_umem.h
-index 23159dd..a1fd638 100644
---- a/include/rdma/ib_umem.h
-+++ b/include/rdma/ib_umem.h
-@@ -48,7 +48,6 @@ struct ib_umem {
- 	int                     writable;
- 	int                     hugetlb;
- 	struct work_struct	work;
--	struct pid             *pid;
- 	struct mm_struct       *mm;
- 	unsigned long		diff;
- 	struct ib_umem_odp     *odp_data;
+-struct nf_osf_finger {
+-	struct rcu_head			rcu_head;
+-	struct list_head		finger_entry;
+-	struct nf_osf_user_finger	finger;
+-};
+-
+ struct nf_osf_nlmsg {
+ 	struct nf_osf_user_finger	f;
+ 	struct iphdr			ip;
 -- 
-1.8.3.1
+2.16.1
