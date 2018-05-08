@@ -1,70 +1,76 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754941AbeEHMho (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:37:44 -0400
-Received: from imap.thunk.org ([74.207.234.97]:56834 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751297AbeEHMhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:37:42 -0400
-Date: Tue, 8 May 2018 08:37:30 -0400
-From: "Theodore Y. Ts'o" <tytso@mit.edu>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jan Kara <jack@suse.cz>, Milan Broz <gmazyland@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: general protection fault in lo_ioctl (2)
-Message-ID: <20180508123730.GH999@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jan Kara <jack@suse.cz>, Milan Broz <gmazyland@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <000000000000cbaaf6056b341859@google.com>
- <CACT4Y+bTo34q4=7X8zGL_XVOGoYd7fqhfAbCAWUxsr-N96Kyxw@mail.gmail.com>
- <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
- <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
+        id S1754460AbeEHMk6 (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:40:58 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52394 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752461AbeEHMkz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:40:55 -0400
+Date: Tue, 8 May 2018 13:40:33 +0100
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Shawn Guo <shawnguo@kernel.org>, Mark Brown <broonie@kernel.org>,
+        kernel@pengutronix.de, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Subject: Re: [PATCH v6 2/6] ARM: imx6: register pm_power_off handler if
+ "fsl,pmic-stby-poweroff" is set
+Message-ID: <20180508124033.GL16141@n2100.armlinux.org.uk>
+References: <20180305102524.5905-1-o.rempel@pengutronix.de>
+ <20180305102524.5905-3-o.rempel@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <20180305102524.5905-3-o.rempel@pengutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 08:05:12PM +0900, Tetsuo Handa wrote:
+On Mon, Mar 05, 2018 at 11:25:19AM +0100, Oleksij Rempel wrote:
+> One of the Freescale recommended sequences for power off with external
+> PMIC is the following:
+> ...
+> 3.  SoC is programming PMIC for power off when standby is asserted.
+> 4.  In CCM STOP mode, Standby is asserted, PMIC gates SoC supplies.
 > 
-> So, it is time to think how to solve this race condition, as well as how to solve
-> lockdep's deadlock warning (and I guess that syzbot is actually hitting deadlocks).
-> An approach which serializes loop operations using global lock was proposed at
-> https://groups.google.com/d/msg/syzkaller-bugs/2Rw8-OM6IbM/PzdobV8kAgAJ .
-> Please respond...
+> See:
+> http://www.nxp.com/assets/documents/data/en/reference-manuals/IMX6DQRM.pdf
+> page 5083
+> 
+> This patch implements step 4. of this sequence.
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> ---
+>  arch/arm/mach-imx/pm-imx6.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/arch/arm/mach-imx/pm-imx6.c b/arch/arm/mach-imx/pm-imx6.c
+> index ecdf071653d4..24689260a2a5 100644
+> --- a/arch/arm/mach-imx/pm-imx6.c
+> +++ b/arch/arm/mach-imx/pm-imx6.c
+> @@ -604,6 +604,28 @@ static void __init imx6_pm_common_init(const struct imx6_pm_socdata
+>  				   IMX6Q_GPR1_GINT);
+>  }
+>  
+> +static void imx6_pm_stby_poweroff(void)
+> +{
+> +	imx6_set_lpm(STOP_POWER_OFF);
+> +	cpu_suspend(0, imx6q_suspend_finish);
 
-I'm looking at your patch which you proposed on this, and the locking
-architecture still looks way too complex.  Things like
-loop_mutex_owner, and all of the infrastructure around
-lo->ioctl_in_progress should be removed, if at all possible.
+Do you actually need to save the processor state etc here - the request
+is after all to power down the system and not to suspend.  Would calling
+imx6q_suspend_finish() directly work (and hence simplify the code) ?
 
-I believe it should be possible to do things with a single global
-mutex, some code refactoring, and some unlocked versions of some of
-the functions.
-
-Again, this requires root, and it requires someone deliberately trying
-to induce a race.  So "it's time" is not necessarily the priority I
-would set for this item.  But if we are going to fix it, let's fix it
-right, and not make the code more complex and less maintainable, all
-in the name of trying to make a rare, not-likely-to-happen-in-real-life
-syzbot reported problem to go away.
-
-Cheers,
-
-							- Ted
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 8.8Mbps down 630kbps up
+According to speedtest.net: 8.21Mbps down 510kbps up
