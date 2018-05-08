@@ -1,75 +1,83 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754718AbeEHMpM (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:45:12 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52502 "EHLO
+        id S1754955AbeEHMqJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:46:09 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:52540 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751887AbeEHMpL (ORCPT
+        with ESMTP id S1754444AbeEHMqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:45:11 -0400
-Date: Tue, 8 May 2018 13:44:57 +0100
+        Tue, 8 May 2018 08:46:08 -0400
+Date: Tue, 8 May 2018 13:45:53 +0100
 From: Russell King - ARM Linux <linux@armlinux.org.uk>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next] net: phy: sfp: handle cases where neither
- BR,min nor BR,max is given
-Message-ID: <20180508124456.GN16141@n2100.armlinux.org.uk>
-References: <20180504152103.18152-1-antoine.tenart@bootlin.com>
- <53A4DFE3-C335-49B2-89C5-061A96C6D99D@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, mw@semihalf.com,
+        ymarkman@marvell.com, jason@lakedaemon.net,
+        Antoine Tenart <antoine.tenart@bootlin.com>, netdev@vger.kernel.org,
+        gregory.clement@bootlin.com, kishon@ti.com, nadavh@marvell.com,
+        linux-arm-kernel@lists.infradead.org, thomas.petazzoni@bootlin.com,
+        miquel.raynal@bootlin.com, stefanc@marvell.com,
+        maxime.chevallier@bootlin.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, sebastian.hesselbarth@gmail.com
+Subject: Re: [PATCH net-next v2 03/13] net: phy: sfp: warn the user when no
+ tx_disable pin is available
+Message-ID: <20180508124553.GO16141@n2100.armlinux.org.uk>
+References: <20180504135643.23466-1-antoine.tenart@bootlin.com>
+ <20180504135643.23466-4-antoine.tenart@bootlin.com>
+ <ed267042-1a61-7fcc-13ee-3cad2c05c658@gmail.com>
+ <20180504171425.GA17233@lunn.ch>
+ <44545AF4-64E3-4772-B5BA-43CCF2321025@gmail.com>
+ <20180505205242.GA2876@lunn.ch>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <53A4DFE3-C335-49B2-89C5-061A96C6D99D@gmail.com>
+In-Reply-To: <20180505205242.GA2876@lunn.ch>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, May 05, 2018 at 01:35:34PM -0700, Florian Fainelli wrote:
-> On May 4, 2018 8:21:03 AM PDT, Antoine Tenart <antoine.tenart@bootlin.com> wrote:
-> >When computing the bitrate using values read from an SFP module EEPROM,
-> >we use the nominal BR plus BR,min and BR,max to determine the
-> >boundaries. But in some cases BR,min and BR,max aren't provided, which
-> >led the SFP code to end up having the nominal value for both the
-> >minimum
-> >and maximum bitrate values. When using a passive cable, the nominal
-> >value should be used as the maximum one, and there is no minimum one
-> >so we should use 0.
-> >
-> >Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
-> >---
-> >
-> >Hi Russell,
-> >
-> >I'm not completely sure about this patch as this case is not really
-> >specified in the specification. But the issue is there, and I've
-> >discuss
-> >this with others. It seemed logical (at least to us :)) to use the
-> >BR,nominal values as br_max and 0 as br_min when using a passive cable
-> >which only provides BR,nominal as this would be the highest rate at
-> >which the cable could work. And because it's passive, there should be
-> >no
-> >issues using it at a lower rate.
-> >
-> >I've tested this with one passive cable which only reports its
-> >BR,nominal (which was 10300) while it could be used when using
-> >1000baseX
-> >or 2500baseX modes.
+On Sat, May 05, 2018 at 10:52:42PM +0200, Andrew Lunn wrote:
+> On Sat, May 05, 2018 at 01:38:31PM -0700, Florian Fainelli wrote:
+> > On May 4, 2018 10:14:25 AM PDT, Andrew Lunn <andrew@lunn.ch> wrote:
+> > >On Fri, May 04, 2018 at 10:07:53AM -0700, Florian Fainelli wrote:
+> > >> On 05/04/2018 06:56 AM, Antoine Tenart wrote:
+> > >> > In case no Tx disable pin is available the SFP modules will always
+> > >be
+> > >> > emitting. This could be an issue when using modules using laser as
+> > >their
+> > >> > light source as we would have no way to disable it when the fiber
+> > >is
+> > >> > removed. This patch adds a warning when registering an SFP cage
+> > >which do
+> > >> > not have its tx_disable pin wired or available.
+> > >> 
+> > >> Is this something that was done in a possibly earlier revision of a
+> > >> given board design and which was finally fixed? Nothing wrong with
+> > >the
+> > >> patch, but this seems like a pretty serious board design mistake,
+> > >that
+> > >> needs to be addressed.
+> > >
+> > >Hi Florian
+> > >
+> > >Zii Devel B is like this. Only the "Signal Detect" pin is wired to a
+> > >GPIO.
+> > 
 > 
-> Which SFP modules (vendor and model) exposed this out of curiosity?
-> Russell and I already saw the Cotsworks modules having so e issues
-> with checksums, so building a table of quirks would help. Thanks!
+> > Good point, indeed. BTW what do you think about exposing the SFF's
+> > EEPROM and diagnostics through the standard ethtool operations even
+> > if we have to keep the description of the SFF as a fixed link in
+> > Device Tree because of the unfortunate wiring?
+> 
+> I believe in Antoine case, all the control plane is broken. He cannot
+> read the EEPROM, nor any of the modules pins via GPIOs.
 
-I think this is just manufacturers being lazy with their EEPROM
-contents - looking around, most passive cables are specified to be
-"up to" some figure, and that's definitely what's specified by the
-SFP+ specification by way of the high-pass pole requirement of the
-coupling capacitors.
+Correct.
+
+> For Zii Devel B, the EEPROM is accessible, and so is the SD pin. What
+> is missing is transmit disable. So i would expose it as an SFF module.
+
+Agreed.
 
 -- 
 RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
