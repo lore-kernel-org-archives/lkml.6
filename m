@@ -1,170 +1,92 @@
-Return-Path: <ksummit-discuss-bounces@lists.linuxfoundation.org>
-X-Cyrus-Session-Id: sloti22d1t05-3450219-1525816296-2-990037230431840411
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_MED -2.3, SPF_HELO_PASS -0.001, SPF_PASS -0.001,
-  LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='140.211.169.12', Host='mail.linuxfoundation.org', Country='US',
-  FromHeader='com', MailFrom='org'
-X-Spam-charsets: plain='us-ascii'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: ksummit-discuss-bounces@lists.linuxfoundation.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525816295; b=C5wZ/FhvWjoJm+QTZl5YEib59zMDN8hpruURMbQPjF9cuzciRT
-    nYzp7Np+iLq4POwfqWpSCWr3AXQj7n4xstussDsZIRjo3UAVcTrNrBypbh47ITCI
-    4l81TQ+DNWiu2+wF686MuvGYpKKtQsV2QCAiKWmow/r16VnQU3PUq3svQTORa19P
-    X4GPHR3InNdefRlnDtp9IBzpfck5DbKFICdpFE2jLwHTywNwoeLyLkoSuCpBbJQf
-    bFopE6ckFG7KmXmSWxRJChi9jjttZohz836sFPN6uB+frK7sRWOTc+B6USBD0Ymj
-    i+wlkGesAbWQxStNVvOxbaJ5Hzz6x65T1AcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=mime-version:in-reply-to:references:from
-    :date:message-id:to:cc:subject:list-id:list-unsubscribe
-    :list-archive:list-post:list-help:list-subscribe:content-type
-    :content-transfer-encoding:sender; s=fm2; t=1525816295; bh=8sZW2
-    WX/wYIaSHEnrvZqJAcapH/HgRGNZMOZt+aOozk=; b=UNOyMcP8e5UgXxNIeDvaj
-    yZl5xxdMMrh88KQzN9XP1GrqXGPbS75XZUysUZI5lij4e/mjctXO2IZSVBzpd1P/
-    tO/1sGJjxOoh9GIQ6xvrEOkka77GoeWZ0yR9yv13BLl6UqyCcLBE5yfJJgQ/za7o
-    kWSrtz6TMaYXDxL5IgYITr3xX7vaDQzofBY2zQPlsnZuDyxA+2P4xPoliiyxDR76
-    yQV9lyvgsQcx/+yKndIfWjYpXvdtv9uCb2skFzR0Kp9V4dfdhk/MoMwxy+s2WpRf
-    9umW3U30821HF+CQq2mtkTvbNFQM9YOEYqBsKcBsmlK9cKJMboviT+6JnhMpxtkG
-    g==
-ARC-Authentication-Results: i=1; mx4.messagingengine.com; arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-    header.d=intel-com.20150623.gappssmtp.com
-    header.i=@intel-com.20150623.gappssmtp.com header.b=wtUHaXLx
-    x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
-    spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
-    smtp.helo=mail.linuxfoundation.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-    header.d=1e100.net header.i=@1e100.net header.b=NNdck+mr;
-    x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
-    x-ptr-lookup=mail.linuxfoundation.org;
-    x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
-    smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-    smtp_is_org_domain=no header.domain=intel.com header.result=pass
-    header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-    bits=128/128;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx4.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=fail (message has been altered, 2048-bit rsa key sha256)
-      header.d=intel-com.20150623.gappssmtp.com
-      header.i=@intel-com.20150623.gappssmtp.com header.b=wtUHaXLx
-      x-bits=2048 x-keytype=rsa x-algorithm=sha256 x-selector=20150623;
-    dmarc=none (p=none,has-list-id=yes,d=none) header.from=intel.com;
-    iprev=pass policy.iprev=140.211.169.12 (mail.linuxfoundation.org);
-    spf=pass smtp.mailfrom=ksummit-discuss-bounces@lists.linuxfoundation.org
-      smtp.helo=mail.linuxfoundation.org;
-    x-aligned-from=fail;
-    x-cm=discussion score=0;
-    x-google-dkim=fail (message has been altered, 2048-bit rsa key)
-      header.d=1e100.net header.i=@1e100.net header.b=NNdck+mr;
-    x-ptr=pass x-ptr-helo=mail.linuxfoundation.org
-      x-ptr-lookup=mail.linuxfoundation.org;
-    x-return-mx=pass smtp.domain=lists.linuxfoundation.org smtp.result=pass
-      smtp_org.domain=linuxfoundation.org smtp_org.result=pass
-      smtp_is_org_domain=no header.domain=intel.com header.result=pass
-      header_is_org_domain=yes;
-    x-tls=pass version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256
-      bits=128/128;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfIrF12oaqgIqGMZynZq2QSZDycpd5BkwUPC6cz8/XYCf8Ot5iwKivPywtQVvXSZHBq4nlQEVWfI7LusSpT8yJ0cd0P7sNxN+GgTyYMvrGuHp0OfM/n4J
-    JvSaaq5ukVoUb3aBExXE1KPbGEj95miCncYl7ByHieFUjDo3tx6vx8pX9xPnLVDFJfJmKim3WFkvSFRyvarkywq+vTGLve37glKYJVdGRH+sxodJrRHMlW5d
-    LHd+eRz6U0fc6b19xf9LRQ==
-X-CM-Analysis: v=2.3 cv=JLoVTfCb c=1 sm=1 tr=0 a=5MPDoNpceV4HFXFrvkM3CQ==:117
-    a=5MPDoNpceV4HFXFrvkM3CQ==:17 a=kj9zAlcOel0A:10 a=VUJBJC2UJ8kA:10
-    a=-uNXE31MpBQA:10 a=jJxKW8Ag-pUA:10 a=ag1SF4gXAAAA:8 a=wCXprHnjtRepXGjx8sAA:9
-    a=CjuIK1q_8ugA:10 a=Yupwre4RP9_Eg_Bd0iYG:22 cc=dsc
-X-ME-CMScore: 0
-X-ME-CMCategory: discussion
-X-Remote-Delivered-To: ksummit-discuss@mail.linuxfoundation.org
-X-Google-Smtp-Source: AB8JxZq3kLrOvb3dMpNxMptVa2NT6Cq+H0VOd+t4ZT45NldopXM7iUyI320Mfy1StDd8jZDPmZ0rDj/Seb29m2sLcdY=
+Return-Path: <jmforbes@linuxtx.org>
+ARC-Seal: i=1; a=rsa-sha256; t=1525814765; cv=none;
+        d=google.com; s=arc-20160816;
+        b=f/uUvGLQe2Jf0iHymKBryHslFc7zOCFOZr6qH/wMqBsKshRih5tp3xilyfo3ijuBJI
+         WxVRcF8RjMKx5v3yUDUo/M30+yEOYuYTLVuOfAqkMN0nu16W7oevC098GOn1b3sFt8Xk
+         BuXo9cLFc7bBCkjgJmmOMKcBudeKah0mAXag6uU8mD1HYmvFy/28lou8lYO9YvrEPaSq
+         MJFEF3RmnCf0vke3eGY9Z2p0eToPCUn8ORZfWk0eh5LYrg7KjBa0muPbtC9ghhcWFgog
+         KT9d6Je/gAUpMful9QZZSjucR4m0+L92iNVQ6iY5CaKiM03j5OI8rnWKYTigFFw8GnUr
+         XgTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=cc:to:subject:message-id:date:from:references:in-reply-to
+         :mime-version:dkim-signature:arc-authentication-results;
+        bh=P4bac4MI3sVOGdaZv4QLIuetfffcA0k5+deXXnGrvlo=;
+        b=O2KHuGjgYGFFKOe32GKEeoYKX86VWSAZVj1X6RKG+goUdPy4FHt1NC2t35pmvpzQIU
+         7BdAEiHYEXKv9mrCCtslIYVtznM9Kxh0A1CQ6IT3MEkphyGbk1BnNRmXdfv/HUYEOWqJ
+         M0eHnmoFssf5Qh+MZqfmwQjXy3sDVIpCHkzuOI9ev8uZ6Be4+5v3HVkFNUPhBjgud86d
+         WbVxkbNbOR1Unz6m6IXvTrjGBGcrjy7slxIDJJmhivfiAIquIcNl40HLdVFkCfot/VR9
+         Km62FnqT0j9lhOB260u0SOqZE0h7FFCc0zwlsO8TvGkV/774vycYCNde63SW1afp9+S+
+         j/9A==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@linuxtx.org header.s=google header.b=cHQZSmGB;
+       spf=pass (google.com: domain of jmforbes@linuxtx.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=jmforbes@linuxtx.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@linuxtx.org header.s=google header.b=cHQZSmGB;
+       spf=pass (google.com: domain of jmforbes@linuxtx.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=jmforbes@linuxtx.org
+X-Google-Smtp-Source: AB8JxZpIyC1l1P9vT5mWrDxePF3KWr3zl1jgXIJ9MnfVHgEJebe7PkzGt81VD3DybSsCEPySCmxES5zgOj2e9CuzLrs=
 MIME-Version: 1.0
-In-Reply-To: <20180508214339.GE8514@sasha-vm>
-References: <20180503031000.GC29205@thunk.org>
-	<0276fcda-0385-8f22-dbdb-e063f7ed8bbe@roeck-us.net>
-	<20180503224217.GR2714@sirena.org.uk>
-	<20180503230905.GA98604@atomide.com>
-	<20180508023439.GA8514@sasha-vm> <20180508034820.GE999@thunk.org>
-	<20180508202912.GC8514@sasha-vm>
-	<CAFhKne-aDcMKD8FjfROGZ-=ffmq3Xa+7n0dm8uvzKJ_7WO-qCQ@mail.gmail.com>
-	<20180508205505.GD8514@sasha-vm>
-	<alpine.DEB.2.02.1805081357451.31825@nftneq.ynat.uz>
-	<20180508214339.GE8514@sasha-vm>
-From: Dan Williams <dan.j.williams@intel.com>
-Date: Tue, 8 May 2018 14:51:18 -0700
-Message-ID: <CAPcyv4jTmvYDz=2Fc1HmopqK1R=eNjCvbqT3VCkeC8VEwNjjnw@mail.gmail.com>
-To: Sasha Levin <Alexander.Levin@microsoft.com>
-X-Remote-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,RCVD_IN_DNSWL_NONE autolearn=ham version=3.3.1
-X-Remote-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on
-	smtp1.linux-foundation.org
-Cc: David Lang <david@lang.hm>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"ksummit-discuss@lists.linuxfoundation.org"
-	<ksummit-discuss@lists.linuxfoundation.org>, "w@1wt.eu" <w@1wt.eu>
+In-Reply-To: <20180508205505.GD8514@sasha-vm>
+References: <20180502194632.GB18390@sasha-vm> <20180503020550.GP2714@sirena.org.uk>
+ <20180503031000.GC29205@thunk.org> <0276fcda-0385-8f22-dbdb-e063f7ed8bbe@roeck-us.net>
+ <20180503224217.GR2714@sirena.org.uk> <20180503230905.GA98604@atomide.com>
+ <20180508023439.GA8514@sasha-vm> <20180508034820.GE999@thunk.org>
+ <20180508202912.GC8514@sasha-vm> <CAFhKne-aDcMKD8FjfROGZ-=ffmq3Xa+7n0dm8uvzKJ_7WO-qCQ@mail.gmail.com>
+ <20180508205505.GD8514@sasha-vm>
+From: Justin Forbes <jmforbes@linuxtx.org>
+Date: Tue, 8 May 2018 16:26:04 -0500
+Message-ID: <CAFxkdAow8=tK86c=AtkWhhzy_iE_sNX0uUGY+xjLC=njvBynBQ@mail.gmail.com>
 Subject: Re: [Ksummit-discuss] bug-introducing patches
-X-BeenThere: ksummit-discuss@lists.linuxfoundation.org
-X-Mailman-Version: 2.1.12
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/ksummit-discuss>,
-	<mailto:ksummit-discuss-request@lists.linuxfoundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/ksummit-discuss/>
-List-Post: <mailto:ksummit-discuss@lists.linuxfoundation.org>
-List-Help: <mailto:ksummit-discuss-request@lists.linuxfoundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss>,
-	<mailto:ksummit-discuss-request@lists.linuxfoundation.org?subject=subscribe>
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Sender: ksummit-discuss-bounces@lists.linuxfoundation.org
-Errors-To: ksummit-discuss-bounces@lists.linuxfoundation.org
+To: Sasha Levin <Alexander.Levin@microsoft.com>
+Cc: Matthew Wilcox <willy6545@gmail.com>, "Theodore Y. Ts'o" <tytso@mit.edu>, Tony Lindgren <tony@atomide.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "w@1wt.eu" <w@1wt.eu>,
+	"ksummit-discuss@lists.linuxfoundation.org" <ksummit-discuss@lists.linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Hutchings <ben@decadent.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-THRID: =?utf-8?q?1599280464106480109?=
+X-GMAIL-MSGID: =?utf-8?q?1599932743441773001?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-On Tue, May 8, 2018 at 2:43 PM, Sasha Levin via Ksummit-discuss
-<ksummit-discuss@lists.linuxfoundation.org> wrote:
-> On Tue, May 08, 2018 at 01:59:18PM -0700, David Lang wrote:
->>On Tue, 8 May 2018, Sasha Levin wrote:
->>
->>>There's no one, for example, who picked up vanilla v4.16 and plans to
->>>keep using it for a year.
->>
->>Actually, at a prior job I would do almost exactly that.
->>
->>I never intended to go a year without updating, but it would happen if
->>nothing came up that was related to the hardware/features I was
->>running.
->>
->>so 'no one uses the Linus kernel is false.
+On Tue, May 8, 2018 at 3:55 PM, Sasha Levin
+<Alexander.Levin@microsoft.com> wrote:
+> On Tue, May 08, 2018 at 08:40:02PM +0000, Matthew Wilcox wrote:
+>>I think your sample size omits some people. I run Debian Testing on my
+>>laptop. That gets something akin to a Linus release pretty soon after he
+>>releases it, and while it gets some amount of -stable patches, it
+>>progresses to the next release fairly rapidly.
 >
-> My point is not that "no one ever uses Linus kernel" but that no one
-> takes one of those kernels and plans to stick with it for 3 months until
-> the next one comes up, even if there are updates relevant to that user.
+> Debian testing is pretty much a -stable tree, see the git log history:
 >
-> Yes, some users will use a .0 release until either Greg releases a
-> -stable, or until the next -rc is out.
+> https://salsa.debian.org/kernel-team/linux/commits/sid
 >
-> What I'm trying to say is that there is that the .0 release makes some
-> people rush poorly tested commits in it even though the .0 release is
-> not significant in any way.
+> It follows a current stable tree, and moves on to the next one once it's
+> available (about a week after Linus releases a new kernel).
+>
+>>Added Ben to the cc for more updates.
+>>
+>>I think Fedora does something similar.
+>
+> Fedora's rawhide is just (daily?) builds of Linus's tree, they don't
+> care what stage the tree is in at any point.
 
-I think we should take pride in our releases, so I disagree that it is
-insignificant. If a maintainer is rushing things into late rc's and
-breaking things then they need that feedback, not de-emphasize the
-importance of ".0" releases. Could the bar be raised higher on late
-fixes, perhaps. I otherwise think the message is already clear
-"changes at -rc6,7,8 had better be worthy of and coming in late and be
-accompanied with good explanation".
-_______________________________________________
-Ksummit-discuss mailing list
-Ksummit-discuss@lists.linuxfoundation.org
-https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
+It is, but there is a branch point when Linus releases. If we are
+working on a new Fedora release, such as F28, all testing stayed on
+4.16.0 until stable updates were released. If there is no release
+deadline nearing, we have a "stabilization" repository where people
+are using and testing the .0 release until stable updates happen. In
+either case, the Linus release is really only tested until the stable
+.1 happens, but there are users and testers of .0.
+
+>
+> My point is that no one picks a release and sticks with it more than a
+> week. If someone plans to use a release for longer term they use a
+> -stable tree, and if they are interested in testing, they move on to the
+> next release once it's available.
+>
+> There's no one, for example, who picked up vanilla v4.16 and plans to
+> keep using it for a year.
+>
+> This leads to my point about rushing fixes: -stable releases for v4.16 are
+> done weekly, there's no need to rush them in during v4.16-rc8 just to
+> make some imaginary release no one will pick up.
