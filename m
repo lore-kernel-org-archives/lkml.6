@@ -1,57 +1,54 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932925AbeEHWj4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:39:56 -0400
-Received: from mail-pg0-f65.google.com ([74.125.83.65]:44489 "EHLO
-        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932133AbeEHWjy (ORCPT
+        id S933121AbeEHWmJ (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:42:09 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:43592 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932759AbeEHWmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:39:54 -0400
-X-Google-Smtp-Source: AB8JxZoYDugyy2VAou6zKg+R/sRlgV+2JTrlvF4Vq0PiS0s60Ay2Hjcz0sulxKOY6xWJDYAX4JTlVw==
-Date: Tue, 8 May 2018 15:39:50 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: trivial@kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ville Syrjala <syrjala@sci.fi>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/9] input: ati_remote2: fix typo 'can by' to 'can be'
-Message-ID: <20180508223950.GD129015@dtor-ws>
-References: <20180506112404.24872-1-wsa+renesas@sang-engineering.com>
- <20180506112404.24872-6-wsa+renesas@sang-engineering.com>
+        Tue, 8 May 2018 18:42:08 -0400
+From: Colin King <colin.king@canonical.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        John Hsu <KCHSU0@nuvoton.com>, alsa-devel@alsa-project.org
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: nau8824: fix spelling mistake: "semaphone" -> "semaphore"
+Date: Tue,  8 May 2018 23:41:55 +0100
+Message-Id: <20180508224155.26486-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180506112404.24872-6-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 06, 2018 at 01:23:49PM +0200, Wolfram Sang wrote:
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thank you.
+Trivial fix to spelling mistake in dev_warn messages
 
-> ---
->  drivers/input/misc/ati_remote2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/misc/ati_remote2.c b/drivers/input/misc/ati_remote2.c
-> index ded5b84e336dae..d8fd58fdf05086 100644
-> --- a/drivers/input/misc/ati_remote2.c
-> +++ b/drivers/input/misc/ati_remote2.c
-> @@ -22,7 +22,7 @@ MODULE_LICENSE("GPL");
->  /*
->   * ATI Remote Wonder II Channel Configuration
->   *
-> - * The remote control can by assigned one of sixteen "channels" in order to facilitate
-> + * The remote control can be assigned one of sixteen "channels" in order to facilitate
->   * the use of multiple remote controls within range of each other.
->   * A remote's "channel" may be altered by pressing and holding the "PC" button for
->   * approximately 3 seconds, after which the button will slowly flash the count of the
-> -- 
-> 2.11.0
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ sound/soc/codecs/nau8824.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/sound/soc/codecs/nau8824.c b/sound/soc/codecs/nau8824.c
+index 76502c090654..6bd14453f06e 100644
+--- a/sound/soc/codecs/nau8824.c
++++ b/sound/soc/codecs/nau8824.c
+@@ -205,11 +205,11 @@ static int nau8824_sema_acquire(struct nau8824 *nau8824, long timeout)
+ 	if (timeout) {
+ 		ret = down_timeout(&nau8824->jd_sem, timeout);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone timeout\n");
++			dev_warn(nau8824->dev, "Acquire semaphore timeout\n");
+ 	} else {
+ 		ret = down_interruptible(&nau8824->jd_sem);
+ 		if (ret < 0)
+-			dev_warn(nau8824->dev, "Acquire semaphone fail\n");
++			dev_warn(nau8824->dev, "Acquire semaphore fail\n");
+ 	}
+ 
+ 	return ret;
 -- 
-Dmitry
+2.17.0
