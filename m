@@ -1,39 +1,115 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754156AbeEHD3E (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 23:29:04 -0400
-Received: from shards.monkeyblade.net ([184.105.139.130]:51886 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753824AbeEHD3D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 23:29:03 -0400
-Date: Mon, 07 May 2018 23:29:01 -0400 (EDT)
-Message-Id: <20180507.232901.1578185927050716610.davem@davemloft.net>
-To: anders.roxell@linaro.org
-Cc: shuah@kernel.org, netdev@vger.kernel.org,
+        id S1754172AbeEHD3O (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 23:29:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753824AbeEHD3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 23:29:12 -0400
+Date: Tue, 8 May 2018 12:29:09 +0900
+From: Masami Hiramatsu <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>, mhiramat@kernel.org,
         linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: net: use TEST_PROGS_EXTENDED
-From: David Miller <davem@davemloft.net>
-In-Reply-To: <20180504164725.13516-1-anders.roxell@linaro.org>
-References: <20180504164725.13516-1-anders.roxell@linaro.org>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Subject: Re: [PATCH 09/24] selftests: ftrace: return Kselftest Skip code for
+ skipped tests
+Message-Id: <20180508122909.e64612790be5a62cefbf1476@kernel.org>
+In-Reply-To: <20180507111721.7f8a6b35@gandalf.local.home>
+References: <20180505011328.32078-1-shuah@kernel.org>
+        <20180505011328.32078-9-shuah@kernel.org>
+        <20180507111721.7f8a6b35@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Fri,  4 May 2018 18:47:25 +0200
+On Mon, 7 May 2018 11:17:21 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-> When a script file that isn't generated uses the variable
-> TEST_GEN_PROGS_EXTENDED and a 'make -C tools/testing/selftests clean' is
-> performed the script file gets removed and git shows the file as
-> deleted. For script files that isn't generated TEST_PROGS_EXTENDED
-> should be used.
+> On Fri,  4 May 2018 19:13:13 -0600
+> "Shuah Khan (Samsung OSG)" <shuah@kernel.org> wrote:
 > 
-> Fixes: 9faedd643fd9 ("selftests: net: add in_netns.sh TEST_GEN_PROGS_EXTENDED")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > When ftrace test is skipped because of unmet dependencies and/or
+> > unsupported configuration, it returns 0 which is treated as a pass
+> > by the Kselftest framework. This leads to false positive result even
+> > when the test could not be run.
+> > 
+> > Change it to return kselftest skip code when a test gets skipped to
+> > clearly report that the test could not be run.
+> > 
+> > Kselftest framework SKIP code is 4 and the framework prints appropriate
+> > messages to indicate that the test is skipped.
+> > 
+> 
+> I'm fine with this change, but I believe Masami and perhaps others
+> have scripts that expect zero return.
 
-Applied.
+Oh, I'm happy with updating my script to follow the kselftest
+framework spec, since that is the standard.
+
+Shuah, is there any document which describe the return code for
+kselftest framework? (And I think it should report some FAIL/PASS counts
+to kselftest
+
+However, this patch seems not working as you expected.
+If kselftest framework would like to get the SKIP code from ftrace script,
+you need to update TOTAL_RESULT before leave.
+
+> If anything, we probably need to have a way to override the ksft_skip
+> via a command line argument.
+> 
+> Masami?
+
+Agreed. Maybe we can pass the option via an environment variable.
+
+Thanks,
+
+> 
+> -- Steve
+> 
+> > Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+> > ---
+> >  tools/testing/selftests/ftrace/ftracetest | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/ftrace/ftracetest b/tools/testing/selftests/ftrace/ftracetest
+> > index f9a9d424c980..b731c8cdcffb 100755
+> > --- a/tools/testing/selftests/ftrace/ftracetest
+> > +++ b/tools/testing/selftests/ftrace/ftracetest
+> > @@ -23,6 +23,9 @@ echo "		            If <dir> is -, all logs output in console only"
+> >  exit $1
+> >  }
+> >  
+> > +# Kselftest framework requirement - SKIP code is 4.
+> > +ksft_skip=4
+> > +
+> >  errexit() { # message
+> >    echo "Error: $1" 1>&2
+> >    exit 1
+> > @@ -30,7 +33,8 @@ errexit() { # message
+> >  
+> >  # Ensuring user privilege
+> >  if [ `id -u` -ne 0 ]; then
+> > -  errexit "this must be run by root user"
+> > +  echo "Skipping: test must be run by root user"
+> > +  exit $ksft_skip
+> >  fi
+> >  
+> >  # Utilities
+> > @@ -249,7 +253,7 @@ trap 'SIG_RESULT=$UNTESTED' $SIG_UNTESTED
+> >  SIG_UNSUPPORTED=$((SIG_BASE + UNSUPPORTED))
+> >  exit_unsupported () {
+> >    kill -s $SIG_UNSUPPORTED $SIG_PID
+> > -  exit 0
+> > +  exit $ksft_skip
+> >  }
+> >  trap 'SIG_RESULT=$UNSUPPORTED' $SIG_UNSUPPORTED
+> >  
+> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
