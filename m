@@ -1,39 +1,41 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZqdNekuumvjyH/fI1jlvyY6DVeUTH9l0eEXlE4Rcdds+17gaRUuis/eUAwweEJTXcaGRyw8
-ARC-Seal: i=1; a=rsa-sha256; t=1525767156; cv=none;
+X-Google-Smtp-Source: AB8JxZpXU6V9OX/cUC96OZ5R0Kw6vfzT30u10n0q3OP5ChYNACDFlPvgu9m8ZQ5u7jh6fgmxuPSD
+ARC-Seal: i=1; a=rsa-sha256; t=1525767153; cv=none;
         d=google.com; s=arc-20160816;
-        b=bDUjiQGDtel5EpIfsTKkPS6QHWxvt8k4HUQn3egoWDiSyqzmQQWJqCdgcaC75fctas
-         EQOH/QcQj/4QzbimG9eFa4xPPtiX2rpJTgeY1sX9G5kdjQqmBKOaJsB4WL4Bl9qlLSfk
-         3knsN3avXwlZdolnAdn45nvppfQ3A1L6HfzsEyyHkEWWsSbpjX3YvuqlhjaHxTUot7Xi
-         qrIDHjccFNXY6AJkguk1rwAWlTL6QMQ5iTUL1Ve3ScuK8MrOQiGgGEymWSQlZW+Ounm1
-         HZaKBhorJTOImFKJMIQAkPxlhvoI28JPMGlDJSaaPR0LmIsA9CcFsysceGU3gUO8j8Q/
-         xJKg==
+        b=K1ntf/dsZaK31cb9+99mKAbm3tLSJWnQ6voRjMt7HcNs+wMivQcH5Dw/db7ltcobgT
+         fxMWnkXGGHT0rJbeeEBX724K6IvLyxnTVLZkYvjTUngpR8FAKONWk5z4qAk9956wYpuZ
+         T8OfyLjyDWqEGC9ZUmyndu0gUlCYKWLXXYSrhJ75ecKdTiXiI8yRObiS9RcL4DWZZigU
+         6mD384bVAFDZ0Efu5FcACR2/XoWlo4xKODviCV2tikogQLTM3fgta2iCVYUuiU/1nAQs
+         HiXY4luXJk2JOfUerVvz90P0TiJbqNNkcfivcGWRvgIw/mbEnWFmWRZrrrNg3YqO5rS6
+         eSDA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=YhBc59nXY9FEqL7VZnZiFat6VQMzKXmGHRhPGYjQcc4=;
-        b=WnzOgm/Y0lNQtSkUB16xKyxTQUIxOSH9zsYuULwQ92GbJtNkipv8AkAwpxR30waiFN
-         nKBgLmr/CRCeCwM/wpQr87y8Xic6KVOIFODLpYue8ZR2kQ6lJwPTVAx3RgMZkHMIzpXn
-         Y62iaALWw1N0vdvEOgyd8gZbl+PRZCXF+Zd6hHvuHeO2fyNOcKkm2lKC5oGa5BHLeUKw
-         MVH+V9GVXiVocSYftGmMwfbYYmepZkEWXs6EnBB0mTtnxgFSEA+//TQuwUxx9w4sfDPB
-         Jg3EJqr4spcuPul0Eg3n2Wt5kQ3zLSy/Sj/+Kj5DZ5NgQoyT4+0Mna94ckUX2MIcC7ba
-         j+TA==
+        bh=/GClnKo6bNa9CmyP4Rvxl+4Gp0o6OUhuj4NoN7A2PFE=;
+        b=p1ErN5JaejNUuSjPmJKOdt4Hpo3YiWKcBx7v/68zekb/c3En2LCSx7kbqRDi0xy6bk
+         JOR5OLGdB+XxfPOHcTW6C6T5iPm3aQiwukHWsw4+nLz8c6gJJpYo2DYIfocjDsltPx+1
+         C4K1XGDdrv6mRD3NuYEFgx4hGYW1cHdMnLed6i5ER2TAna0gFbCwTsXngpwyVHoITqXl
+         eQ++775roYx7bMk8WY0twehcxDSZf4zYPiOh6T6x9rcAN0immmb51+JP7p7akqbeGzqN
+         +KqlBhbzyIxlJVfnh/IuYfcWGlUnPnN2U0IdP5Ni3dZs2sNtdRwNVdcumgOAlVKjoQ+3
+         5kFg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0W2B1qSP;
+       dkim=pass header.i=@kernel.org header.s=default header.b=tyF64hSr;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=0W2B1qSP;
+       dkim=pass header.i=@kernel.org header.s=default header.b=tyF64hSr;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Potnuri Bharat Teja <bharat@chelsio.com>,
-	Steve Wise <swise@opengridcomputing.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	"Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+	Sebastian Sanchez <sebastian.sanchez@intel.com>,
+	Dennis Dalessandro <dennis.dalessandro@intel.com>,
 	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.16 29/52] iw_cxgb4: Atomically flush per QP HW CQEs
-Date: Tue,  8 May 2018 10:10:27 +0200
-Message-Id: <20180508073932.083988972@linuxfoundation.org>
+Subject: [PATCH 4.16 28/52] IB/hfi1: Fix NULL pointer dereference when invalid num_vls is used
+Date: Tue,  8 May 2018 10:10:26 +0200
+Message-Id: <20180508073931.927946109@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
@@ -43,8 +45,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882822484700177?=
-X-GMAIL-MSGID: =?utf-8?q?1599882822484700177?=
+X-GMAIL-THRID: =?utf-8?q?1599882819236175981?=
+X-GMAIL-MSGID: =?utf-8?q?1599882819236175981?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,86 +54,77 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Bharat Potnuri <bharat@chelsio.com>
+From: Sebastian Sanchez <sebastian.sanchez@intel.com>
 
-commit 2df19e19ae90d94fd8724083f161f368a2797537 upstream.
+commit 45d924571a5e1329580811f2419da61b07ac3613 upstream.
 
-When a CQ is shared by multiple QPs, c4iw_flush_hw_cq() needs to acquire
-corresponding QP lock before moving the CQEs into its corresponding SW
-queue and accessing the SQ contents for completing a WR.
-Ignore CQEs if corresponding QP is already flushed.
+When an invalid num_vls is used as a module parameter, the code
+execution follows an exception path where the macro dd_dev_err()
+expects dd->pcidev->dev not to be NULL in hfi1_init_dd(). This
+causes a NULL pointer dereference.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Potnuri Bharat Teja <bharat@chelsio.com>
-Reviewed-by: Steve Wise <swise@opengridcomputing.com>
+Fix hfi1_init_dd() by initializing dd->pcidev and dd->pcidev->dev
+earlier in the code. If a dd exists, then dd->pcidev and
+dd->pcidev->dev always exists.
+
+BUG: unable to handle kernel NULL pointer dereference
+at 00000000000000f0
+IP: __dev_printk+0x15/0x90
+Workqueue: events work_for_cpu_fn
+RIP: 0010:__dev_printk+0x15/0x90
+Call Trace:
+ dev_err+0x6c/0x90
+ ? hfi1_init_pportdata+0x38d/0x3f0 [hfi1]
+ hfi1_init_dd+0xdd/0x2530 [hfi1]
+ ? pci_conf1_read+0xb2/0xf0
+ ? pci_read_config_word.part.9+0x64/0x80
+ ? pci_conf1_write+0xb0/0xf0
+ ? pcie_capability_clear_and_set_word+0x57/0x80
+ init_one+0x141/0x490 [hfi1]
+ local_pci_probe+0x3f/0xa0
+ work_for_cpu_fn+0x10/0x20
+ process_one_work+0x152/0x350
+ worker_thread+0x1cf/0x3e0
+ kthread+0xf5/0x130
+ ? max_active_store+0x80/0x80
+ ? kthread_bind+0x10/0x10
+ ? do_syscall_64+0x6e/0x1a0
+ ? SyS_exit_group+0x10/0x10
+ ret_from_fork+0x35/0x40
+
+Cc: <stable@vger.kernel.org> # 4.9.x
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Sebastian Sanchez <sebastian.sanchez@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/cxgb4/cq.c       |   11 ++++++++++-
- drivers/infiniband/hw/cxgb4/iw_cxgb4.h |    2 +-
- drivers/infiniband/hw/cxgb4/qp.c       |    4 ++--
- 3 files changed, 13 insertions(+), 4 deletions(-)
+ drivers/infiniband/hw/hfi1/init.c |    2 ++
+ drivers/infiniband/hw/hfi1/pcie.c |    3 ---
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/infiniband/hw/cxgb4/cq.c
-+++ b/drivers/infiniband/hw/cxgb4/cq.c
-@@ -315,7 +315,7 @@ static void advance_oldest_read(struct t
-  * Deal with out-of-order and/or completions that complete
-  * prior unsignalled WRs.
-  */
--void c4iw_flush_hw_cq(struct c4iw_cq *chp)
-+void c4iw_flush_hw_cq(struct c4iw_cq *chp, struct c4iw_qp *flush_qhp)
- {
- 	struct t4_cqe *hw_cqe, *swcqe, read_cqe;
- 	struct c4iw_qp *qhp;
-@@ -339,6 +339,13 @@ void c4iw_flush_hw_cq(struct c4iw_cq *ch
- 		if (qhp == NULL)
- 			goto next_cqe;
+--- a/drivers/infiniband/hw/hfi1/init.c
++++ b/drivers/infiniband/hw/hfi1/init.c
+@@ -1265,6 +1265,8 @@ struct hfi1_devdata *hfi1_alloc_devdata(
+ 		return ERR_PTR(-ENOMEM);
+ 	dd->num_pports = nports;
+ 	dd->pport = (struct hfi1_pportdata *)(dd + 1);
++	dd->pcidev = pdev;
++	pci_set_drvdata(pdev, dd);
  
-+		if (flush_qhp != qhp) {
-+			spin_lock(&qhp->lock);
-+
-+			if (qhp->wq.flushed == 1)
-+				goto next_cqe;
-+		}
-+
- 		if (CQE_OPCODE(hw_cqe) == FW_RI_TERMINATE)
- 			goto next_cqe;
+ 	INIT_LIST_HEAD(&dd->list);
+ 	idr_preload(GFP_KERNEL);
+--- a/drivers/infiniband/hw/hfi1/pcie.c
++++ b/drivers/infiniband/hw/hfi1/pcie.c
+@@ -163,9 +163,6 @@ int hfi1_pcie_ddinit(struct hfi1_devdata
+ 	resource_size_t addr;
+ 	int ret = 0;
  
-@@ -390,6 +397,8 @@ void c4iw_flush_hw_cq(struct c4iw_cq *ch
- next_cqe:
- 		t4_hwcq_consume(&chp->cq);
- 		ret = t4_next_hw_cqe(&chp->cq, &hw_cqe);
-+		if (qhp && flush_qhp != qhp)
-+			spin_unlock(&qhp->lock);
- 	}
- }
+-	dd->pcidev = pdev;
+-	pci_set_drvdata(pdev, dd);
+-
+ 	addr = pci_resource_start(pdev, 0);
+ 	len = pci_resource_len(pdev, 0);
  
---- a/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
-+++ b/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
-@@ -1053,7 +1053,7 @@ u32 c4iw_pblpool_alloc(struct c4iw_rdev
- void c4iw_pblpool_free(struct c4iw_rdev *rdev, u32 addr, int size);
- u32 c4iw_ocqp_pool_alloc(struct c4iw_rdev *rdev, int size);
- void c4iw_ocqp_pool_free(struct c4iw_rdev *rdev, u32 addr, int size);
--void c4iw_flush_hw_cq(struct c4iw_cq *chp);
-+void c4iw_flush_hw_cq(struct c4iw_cq *chp, struct c4iw_qp *flush_qhp);
- void c4iw_count_rcqes(struct t4_cq *cq, struct t4_wq *wq, int *count);
- int c4iw_ep_disconnect(struct c4iw_ep *ep, int abrupt, gfp_t gfp);
- int c4iw_flush_rq(struct t4_wq *wq, struct t4_cq *cq, int count);
---- a/drivers/infiniband/hw/cxgb4/qp.c
-+++ b/drivers/infiniband/hw/cxgb4/qp.c
-@@ -1343,12 +1343,12 @@ static void __flush_qp(struct c4iw_qp *q
- 	qhp->wq.flushed = 1;
- 	t4_set_wq_in_error(&qhp->wq);
- 
--	c4iw_flush_hw_cq(rchp);
-+	c4iw_flush_hw_cq(rchp, qhp);
- 	c4iw_count_rcqes(&rchp->cq, &qhp->wq, &count);
- 	rq_flushed = c4iw_flush_rq(&qhp->wq, &rchp->cq, count);
- 
- 	if (schp != rchp)
--		c4iw_flush_hw_cq(schp);
-+		c4iw_flush_hw_cq(schp, qhp);
- 	sq_flushed = c4iw_flush_sq(qhp);
- 
- 	spin_unlock(&qhp->lock);
