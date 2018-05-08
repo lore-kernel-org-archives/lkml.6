@@ -1,67 +1,61 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752511AbeEHLAI (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 07:00:08 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56250 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750973AbeEHLAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 07:00:07 -0400
-Date: Tue, 8 May 2018 12:00:03 +0100
-From: Quentin Perret <quentin.perret@arm.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
- related_cpus unnecessarily"
-Message-ID: <20180508110003.GC3752@e108498-lin.cambridge.arm.com>
-References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
- <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
- <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
- <20180508094526.ajyjrwytguhv4xpe@vireshk-i7>
- <20180508100227.GB3752@e108498-lin.cambridge.arm.com>
- <20180508103427.w2rq3vz3f66y4cxh@vireshk-i7>
+        id S1752612AbeEHLDo (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 07:03:44 -0400
+Received: from forward3j.cmail.yandex.net ([5.255.227.21]:41816 "EHLO
+        forward3j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750973AbeEHLDn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 07:03:43 -0400
+Authentication-Results: mxback6j.mail.yandex.net; dkim=pass header.i=@yandex.ru
+From: Evgeniy Polyakov <zbr@ioremap.net>
+Envelope-From: drustafa@yandex.ru
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+In-Reply-To: <cd5b6e6a8d51820ee158127cdd50e44645c44ee7.1525684985.git.mchehab+samsung@kernel.org>
+References: <cover.1525684985.git.mchehab+samsung@kernel.org><cover.1525684985.git.mchehab+samsung@kernel.org> <cd5b6e6a8d51820ee158127cdd50e44645c44ee7.1525684985.git.mchehab+samsung@kernel.org>
+Subject: Re: [PATCH 18/18] w1: w1_io.c: fix a kernel-doc warning
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180508103427.w2rq3vz3f66y4cxh@vireshk-i7>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+Message-Id: <702861525777419@web22j.yandex.ru>
+X-Mailer: Yamail [ http://yandex.ru ] 5.0
+Date: Tue, 08 May 2018 14:03:39 +0300
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 08 May 2018 at 16:04:27 (+0530), Viresh Kumar wrote:
-> On 08-05-18, 11:02, Quentin Perret wrote:
-> > The sugov kthreads are DL tasks so they're not impacted by EAS. But even
-> > if you take EAS out of the picture, those kthreads are assigned to a
-> > "random" CPU at boot time and stay there forever (because that's how DL
-> > works). Is this what we want ?
-> 
-> Okay, I didn't knew that DL threads don't migrate at all. I don't
-> think that's what we want then specially for big LITTLE platforms. But
-> for the rest, I don't know. Take example of Qcom krait. Each CPU has a
-> separate policy, why shouldn't we allow other CPUs to run the kthread?
+Hi
 
-Right, I see your point. Now, with the current implementation, why should
-we randomly force a CPU to manage the kthread of another ? IIUC deadline
-should assign the kthreads to CPUs depending on the state of the system
-when the task is created. So, from one boot to another, you could
-theoretically end up with varying configurations, and varying power/perf
-numbers.
+07.05.2018, 12:36, "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>:
+> Add a blank line to avoid this Sphinx warning:
+>         ./drivers/w1/w1_io.c:197: WARNING: Definition list ends without a blank line; unexpected unindent.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-> 
-> > Looking at the commit you mention below it seems that you did the
-> > testing on the old hikey which has only one cpufreq policy. Did you try
-> > on other platforms as well ?
-> 
-> Yeah, the testing wasn't performance oriented but rather corner case
-> oriented and it made sense to allow other CPUs to go update the freq
-> for remote CPUs. And that's true for big LITTLE as well, the only
-> question here is which CPUs we want the thread to run on.
-> 
-> -- 
-> viresh
+Looks good to me, thank you!
+What tree should this be forwarded to, or folks from linux doc will pick it up?
+
+Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
+
+> ---
+>  drivers/w1/w1_io.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/w1/w1_io.c b/drivers/w1/w1_io.c
+> index 075d120e7b88..0364d3329c52 100644
+> --- a/drivers/w1/w1_io.c
+> +++ b/drivers/w1/w1_io.c
+> @@ -194,6 +194,7 @@ static u8 w1_read_bit(struct w1_master *dev)
+>   * bit 0 = id_bit
+>   * bit 1 = comp_bit
+>   * bit 2 = dir_taken
+> + *
+>   * If both bits 0 & 1 are set, the search should be restarted.
+>   *
+>   * Return: bit fields - see above
+> --
+> 2.17.0
