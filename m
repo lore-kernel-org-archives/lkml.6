@@ -1,117 +1,123 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754611AbeEHMej (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:34:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34586 "EHLO mail.kernel.org"
+        id S1754856AbeEHMfu (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:35:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751805AbeEHMef (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:34:35 -0400
-Date: Tue, 8 May 2018 07:34:32 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-Cc: okaya@codeaurora.org, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lukas Wunner <lukas@wunner.de>
-Subject: Re: pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038
- (issued 65284 msec ago)
-Message-ID: <20180508123432.GJ161390@bhelgaas-glaptop.roam.corp.google.com>
-References: <8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de>
- <20180427192207.GG8199@bhelgaas-glaptop.roam.corp.google.com>
- <43b8ab4a-f8ee-dc96-40ec-e6fdfedd8309@molgen.mpg.de>
- <20180504024527.GE15790@bhelgaas-glaptop.roam.corp.google.com>
- <aa72d3ba089c76449600c22b58a2cafe@codeaurora.org>
- <20180504133327.GF15790@bhelgaas-glaptop.roam.corp.google.com>
- <20180507213344.GA133147@bhelgaas-glaptop.roam.corp.google.com>
- <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
+        id S1752390AbeEHMfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 08:35:48 -0400
+X-Google-Smtp-Source: AB8JxZq7uVdPuKsllMNmAnITB4Tf6/8Ir2hf/TIog7zN1r3cvu896kwz8Z2ZW95Wp2jghP94+dDh1zoCFy9lfUadnOY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <903e7c20-fdd7-9cbf-debb-a90e70240c7c@molgen.mpg.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1525428885.6296.18.camel@toradex.com>
+References: <1525360112-9893-1-git-send-email-krzk@kernel.org>
+ <c47c07b2c112219093b668c0b4d46ac8@agner.ch> <CAJKOXPeb+DmKVQ1uXkBOjaGMpxtPVFp54SBWm6h=+o30z9K3aQ@mail.gmail.com>
+ <1525428885.6296.18.camel@toradex.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Tue, 8 May 2018 14:35:45 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPetgqJgGHwdSzZeujM2KEDMWqffYMAJdBS3MXPd3Thb5w@mail.gmail.com>
+Message-ID: <CAJKOXPetgqJgGHwdSzZeujM2KEDMWqffYMAJdBS3MXPd3Thb5w@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: tegra: Add support for 256 MB Colibri-T20
+ (plus such board on Iris)
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: "stefan@agner.ch" <stefan@agner.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dev@lynxeye.de" <dev@lynxeye.de>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 08:59:34AM +0200, Paul Menzel wrote:
-> Dear Bjorn,
-> 
-> 
-> Am 07.05.2018 um 23:33 schrieb Bjorn Helgaas:
-> > On Fri, May 04, 2018 at 08:33:27AM -0500, Bjorn Helgaas wrote:
-> > > commit b0d6f2230e12c85ae3b65a854a53c67c7c1f6406
-> > > Author: Bjorn Helgaas <bhelgaas@google.com>
-> > > Date:   Thu May 3 18:39:38 2018 -0500
-> > > 
-> > >      PCI: pciehp: Add quirk for Intel Command Completed erratum
-> > >      The Intel CF118 erratum means the controller does not set the Command
-> > >      Completed bit unless writes to the Slot Command register change "Control"
-> > >      bits.  Command Completed is never set for writes that only change software
-> > >      notification "Enable" bits.  This results in timeouts like this:
-> > >        pciehp 0000:00:1c.0:pcie004: Timeout on hotplug command 0x1038 (issued 65284 msec ago)
-> > >      When this erratum is present, avoid these timeouts by marking commands
-> > >      "completed" immediately unless they change the "Control" bits.
-> > >      Here's the text of the erratum from the Intel document:
-> > >        CF118        PCIe Slot Status Register Command Completed bit not always
-> > >                     updated on any configuration write to the Slot Control
-> > >                     Register
-> > >        Problem:     For PCIe root ports (devices 0 - 10) supporting hot-plug,
-> > >                     the Slot Status Register (offset AAh) Command Completed
-> > >                     (bit[4]) status is updated under the following condition:
-> > >                     IOH will set Command Completed bit after delivering the new
-> > >                     commands written in the Slot Controller register (offset
-> > >                     A8h) to VPP. The IOH detects new commands written in Slot
-> > >                     Control register by checking the change of value for Power
-> > >                     Controller Control (bit[10]), Power Indicator Control
-> > >                     (bits[9:8]), Attention Indicator Control (bits[7:6]), or
-> > >                     Electromechanical Interlock Control (bit[11]) fields. Any
-> > >                     other configuration writes to the Slot Control register
-> > >                     without changing the values of these fields will not cause
-> > >                     Command Completed bit to be set.
-> > >                     The PCIe Base Specification Revision 2.0 or later describes
-> > >                     the “Slot Control Register” in section 7.8.10, as follows
-> > >                     (Reference section 7.8.10, Slot Control Register, Offset
-> > >                     18h). In hot-plug capable Downstream Ports, a write to the
-> > >                     Slot Control register must cause a hot-plug command to be
-> > >                     generated (see Section 6.7.3.2 for details on hot-plug
-> > >                     commands). A write to the Slot Control register in a
-> > >                     Downstream Port that is not hotplug capable must not cause a
-> > >                     hot-plug command to be executed.
-> > >                     The PCIe Spec intended that every write to the Slot Control
-> > >                     Register is a command and expected a command complete status
-> > >                     to abstract the VPP implementation specific nuances from the
-> > >                     OS software. IOH PCIe Slot Control Register implementation
-> > >                     is not fully conforming to the PCIe Specification in this
-> > >                     respect.
-> > >        Implication: Software checking on the Command Completed status after
-> > >                     writing to the Slot Control register may time out.
-> > >        Workaround:  Software can read the Slot Control register and compare the
-> > >                     existing and new values to determine if it should check the
-> > >                     Command Completed status after writing to the Slot Control
-> > >                     register.
-> > >      Link: http://www.intel.com/content/www/us/en/processors/xeon/xeon-e7-v2-spec-update.html
-> > >      Link: https://lkml.kernel.org/r/8770820b-85a0-172b-7230-3a44524e6c9f@molgen.mpg.de
-> > >      Reported-by: Paul Menzel <pmenzel+linux-pci@molgen.mpg.de>
-> > >      Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> > 
-> > I applied this with Paul's tested-by on pci/hotplug for v4.18.
-> 
-> Thank you very much. Will this also be picked up by the stable Linux kernel
-> series?
+On Fri, May 4, 2018 at 12:14 PM, Marcel Ziswiler
+<marcel.ziswiler@toradex.com> wrote:
+> Hi Krzysztof
+>
+> On Fri, 2018-05-04 at 12:03 +0200, Krzysztof Kozlowski wrote:
+>> On Fri, May 4, 2018 at 11:19 AM, Stefan Agner <stefan@agner.ch>
+>> wrote:
+>> > On 03.05.2018 17:08, Krzysztof Kozlowski wrote:
+>> > > Colibri-T20 can come in 256 MB RAM (with 512 MB NAND) or 512 MB
+>> > > RAM
+>> > > (with 1024 MB NAND) flavors.  Add support for the 256 MB version
+>> > > on Iris
+>> > > evaluation board.
+>> >
+>> > To we really need to specify memory size these days? I think all
+>> > common
+>> > boot loaders fill the memory node anyway.
+>> >
+>> > arch/arm/boot/dts/imx6qdl-apalis.dtsi:
+>> >         /* Will be filled by the bootloader */
+>> >         memory@10000000 {
+>> >                 reg = <0x10000000 0>;
+>> >         };
+>> >
+>> >
+>> > I think we should just rename tegra20-colibri-512.dtsi =>
+>> > tegra20-colibri.dtsi and tegra20-iris-512.dts => tegra20-iris.dts
+>> > to
+>> > avoid confusion and add such an empty node.
+>>
+>> Having memory node is requirement of DeviceTree specification (at
+>> least one cpu and memory node). Of course if bootloader fills it,
+>> then
+>> we could assume that specification is satisfied... but what if some
+>> bootloader skips it? This creates quite specific dependency between
+>> kernel's DTS and bootloader.
+>
+> Yes, no system boots without any boot loader e.g. initialising the
+> memory and what not. So there are obviously quite specific
+> dependencies.
 
-I did not tag it for stable because I didn't think it was a serious enough
-problem, based on this from Documentation/process/stable-kernel-rules.rst:
+Sorry for late reply, I missed your emails because unfortunately
+Google marks messages coming for Toradex as spam ("This message has a
+from address in toradex.com but has failed toradex.com's required
+tests for authentication."). Therefore I did not include your comments
+and sent v3.
 
- - It must fix a problem that causes a build error (but not for things
-   marked CONFIG_BROKEN), an oops, a hang, data corruption, a real
-   security issue, or some "oh, that's not good" issue.  In short, something
-   critical.
+>
+>> One safe solution would be to specify 256 MB memory node for both
+>> boards and assume that bootloader will bump it to 512 MB for specific
+>> module.
+>
+> Like I mentioned this actually used to be how it was done however
+> lately it has been agreed that any boot loader anyway needs to do the
+> device tree dance (e.g. even just loading and passing it).
 
-I know I'm on the conservative end of the stable-tagging spectrum, so maybe
-I could be convinced to add a stable tag.
+Then the safest way is to provide /memory node with 256 MB. If some
+bootloader omits it (e.g. because it is too old or by any mistake) the
+FDT will be still usable with reduced memory in case of 512 board.
 
-My impression was that this bug caused annoying messages and annoying
-delays of a couple seconds during shutdown and resume.  Is it more serious
-than that?
+>> > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+>> > >
+>> > > ---
+>> > >
+>> > > Changes since v1:
+>> > > 1. Fix memory size in tegra20-colibri-256.dtsi (was working fine
+>> > > because
+>> > >    my bootloader uses mem= argument).
+>> >
+>> > What boot loader are you using? You even can omit mem= if your boot
+>> > loader fills the memory node properly.
+>>
+>> I use the one provided by vendor - Toradex. By default it passes both
+>> mem= and few other mem-like arguments (for FB and video processor) to
+>> command line. I believe it does not adjust the DTB itself because
+>> Toradex prepared this bootloader for... 3.1 kernel without DTB. 7
+>> years old kernel. :)
+>
+> Remember our regular BSP is still based on NVIDIA's downstream Linux
+> for Tegra aka L4T R16.5 based on Linux kernel 3.1.10 which does not
+> even use any device tree yet.
 
-Bjorn
+Yes, I noticed. I am trying to bring it fully on new kernels but no
+huge successes so far... I'm stuck on NAND trying Lucas Stach's old
+patchset.
+
+Best regards,
+Krzysztof
