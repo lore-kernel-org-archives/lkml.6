@@ -1,39 +1,39 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoIz/iNKGPIa0juqkVQwPg/bcrSOb9rdix5fNF43/WtYJq1QJ/MUFw1Ez1ybqC5RDh2eJqX
-ARC-Seal: i=1; a=rsa-sha256; t=1525767408; cv=none;
+X-Google-Smtp-Source: AB8JxZpnGIkxjIib6SfIUKaEOnyIFjotxKcJTnWFw4/qa1QMlqCqLCqOdfdd23URkmokkxeI3nvx
+ARC-Seal: i=1; a=rsa-sha256; t=1525767405; cv=none;
         d=google.com; s=arc-20160816;
-        b=nFAMReZDhf+7DdobjAXUbU9LErf5zcgif+R1K0xzKnfA7OUAu6DdhhSKJacB7J6mNY
-         X1J1+saQ9V4dYseKm6UayOgeNbWZYsHM0J+ReXOSOsDvemumxnczIp22fSOx6rkfbXvA
-         zcBktHdmXF76VLdtbaQfONW3ZW2MAcgZMJXbSukEsXEm/qGPtyWIBWxT2XxJgazjz4lM
-         VRZcEIB9ZFlbk9eCmqgr+I206JWo+yxnSmFe6D5qpVN5fleiDO8BBTb2srWNag24B+nY
-         Akn1ATdOIKnufNO/abLfCRqZZOhB4ki3wzjbbrX4+zEV1x501jMGtnvbd6s/lhF+yJE+
-         lCFQ==
+        b=rF+T2BHJshvLsvBfHVHyQZnXw+CAc6q0F/4A2EeMuka6MbDQ08MmXM3LbMW/GQcvN5
+         YGYLw1GfOF0aN/NEb0QEraQCLoyqvRpWg7kjWOilG92RiZmnCRsqyE2qIpWdxfkypU3Z
+         /CiE1S51i7mNKOIA9rdlGEsg39yHuKLKoIvO+hT6f+5fB0n1fvjU+MjQdg13ej/tLvG2
+         rImJ+aF8CtlOuBkYdxf43oSmfpytm8Asqo8WtrxmUYAJXAMQOotttw9stE9hcenzeSJu
+         HVuiq1mB5028vZ61U1Fl30F7SIuBbm9uENey0HAPO/TYff2o5Z5G/vV0Kv4oufm7WvkW
+         GQMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=Ap6z/Zxyg0hLvhVD5nQoNfXgTAn9vTkepAGuvZieoCk=;
-        b=YQPgZhU6h6uHiabxpSXaHcPr8agCw2M/wcVOPusRN9FnFwKPiVZn1lzGKX928hYbBK
-         xsr0kDcKzLHTwy6WC+0R+zZHA8IwIR2cJQRl0nf+SLl/26oRNpByBAth4QZ9LAhbRx+h
-         pxmRLM8DC1uM+fJXKR6D6GhPE3Q4qeQGJ/4hQbs8VKoUVCCQnsD9Gdt/tXNaEnctCMu6
-         LQy4QZzLgtuU/Gk7QXCzTZ3i8QVKq+6sRqPCevmalB1wNojRRfOHQ3HM4WRMoGEc3lj/
-         Q5PJ/yQ+XWncYBNXhZwic7PVho0+1clccE84RbD0NLZ2AjGxSZO7jNVnkJzzNvxtRcnZ
-         42Hg==
+        bh=mTLeLVqar61OuuXugwb5fPp4KoPzHylVu0hGe2XRQJ4=;
+        b=eu5gRV+CZrMMwV5GKwhfMvQO2fjaDQXRQb5HFvNm0s/7I3X13vfW+/a7LjYrUz9h7o
+         mqP/VHZiIQ9hjCOVf27h2HYuvk50TWZCa1dkiT+w9ekDFYwz3Mxi6lZfAZZ/5fmopx0t
+         0IXWKbBD5ddsSFWHFOCfEZJgPXtXDtE+WJod+MUaI+dXyxJFX/ph4PM0Oli0xFujr6la
+         nQ3dEJ3SAlxCGiqyF4Z197u9k/37DWEyjV7ndfxnqc8NIFu7j14Eb0BezxCMxCeKq2oM
+         IwKLX0ZA8jGOEa4MxIJPzMudKQtM9dA1uqpx0ne4TJoAEJLkxTlGcTVwuwzMVwdTgouy
+         SxDg==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aMiHfV1R;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sRb9OCg3;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=aMiHfV1R;
+       dkim=pass header.i=@kernel.org header.s=default header.b=sRb9OCg3;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Raju Rangoju <rajur@chelsio.com>,
-	Steve Wise <swise@opengridcomputing.com>,
-	Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.9 16/32] RDMA/cxgb4: release hw resources on device removal
-Date: Tue,  8 May 2018 10:10:56 +0200
-Message-Id: <20180508074011.416605197@linuxfoundation.org>
+	Eric Biggers <ebiggers@google.com>,
+	Christoph Hellwig <hch@lst.de>,
+	"Darrick J. Wong" <darrick.wong@oracle.com>
+Subject: [PATCH 4.9 15/32] xfs: prevent creating negative-sized file via INSERT_RANGE
+Date: Tue,  8 May 2018 10:10:55 +0200
+Message-Id: <20180508074011.243681000@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
@@ -43,8 +43,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882841899832567?=
-X-GMAIL-MSGID: =?utf-8?q?1599883086516019512?=
+X-GMAIL-THRID: =?utf-8?q?1599882807260392086?=
+X-GMAIL-MSGID: =?utf-8?q?1599883083335675426?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -52,153 +52,68 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Raju Rangoju <rajur@chelsio.com>
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-commit 26bff1bd74a4f7417509a83295614e9dab995b2a upstream.
+commit 7d83fb14258b9961920cd86f0b921caaeb3ebe85 upstream.
 
-The c4iw_rdev_close() logic was not releasing all the hw
-resources (PBL and RQT memory) during the device removal
-event (driver unload / system reboot). This can cause panic
-in gen_pool_destroy().
+During the "insert range" fallocate operation, i_size grows by the
+specified 'len' bytes.  XFS verifies that i_size + len < s_maxbytes, as
+it should.  But this comparison is done using the signed 'loff_t', and
+'i_size + len' can wrap around to a negative value, causing the check to
+incorrectly pass, resulting in an inode with "negative" i_size.  This is
+possible on 64-bit platforms, where XFS sets s_maxbytes = LLONG_MAX.
+ext4 and f2fs don't run into this because they set a smaller s_maxbytes.
 
-The module remove function will wait for all the hw
-resources to be released during the device removal event.
+Fix it by using subtraction instead.
 
-Fixes c12a67fe(iw_cxgb4: free EQ queue memory on last deref)
-Signed-off-by: Raju Rangoju <rajur@chelsio.com>
-Reviewed-by: Steve Wise <swise@opengridcomputing.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Reproducer:
+    xfs_io -f file -c "truncate $(((1<<63)-1))" -c "finsert 0 4096"
+
+Fixes: a904b1ca5751 ("xfs: Add support FALLOC_FL_INSERT_RANGE for fallocate")
+Cc: <stable@vger.kernel.org> # v4.1+
+Originally-From: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+[darrick: fix signed integer addition overflow too]
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/cxgb4/device.c   |    9 ++++++++-
- drivers/infiniband/hw/cxgb4/iw_cxgb4.h |    4 ++++
- drivers/infiniband/hw/cxgb4/resource.c |   26 ++++++++++++++++++++++++--
- 3 files changed, 36 insertions(+), 3 deletions(-)
+ fs/xfs/xfs_file.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/drivers/infiniband/hw/cxgb4/device.c
-+++ b/drivers/infiniband/hw/cxgb4/device.c
-@@ -856,6 +856,11 @@ static int c4iw_rdev_open(struct c4iw_rd
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -846,22 +846,26 @@ xfs_file_fallocate(
+ 		if (error)
+ 			goto out_unlock;
+ 	} else if (mode & FALLOC_FL_INSERT_RANGE) {
+-		unsigned int blksize_mask = i_blocksize(inode) - 1;
++		unsigned int	blksize_mask = i_blocksize(inode) - 1;
++		loff_t		isize = i_size_read(inode);
  
- 	rdev->status_page->db_off = 0;
+-		new_size = i_size_read(inode) + len;
+ 		if (offset & blksize_mask || len & blksize_mask) {
+ 			error = -EINVAL;
+ 			goto out_unlock;
+ 		}
  
-+	init_completion(&rdev->rqt_compl);
-+	init_completion(&rdev->pbl_compl);
-+	kref_init(&rdev->rqt_kref);
-+	kref_init(&rdev->pbl_kref);
-+
- 	return 0;
- err_free_status_page:
- 	free_page((unsigned long)rdev->status_page);
-@@ -872,12 +877,14 @@ destroy_resource:
+-		/* check the new inode size does not wrap through zero */
+-		if (new_size > inode->i_sb->s_maxbytes) {
++		/*
++		 * New inode size must not exceed ->s_maxbytes, accounting for
++		 * possible signed overflow.
++		 */
++		if (inode->i_sb->s_maxbytes - isize < len) {
+ 			error = -EFBIG;
+ 			goto out_unlock;
+ 		}
++		new_size = isize + len;
  
- static void c4iw_rdev_close(struct c4iw_rdev *rdev)
- {
--	destroy_workqueue(rdev->free_workq);
- 	kfree(rdev->wr_log);
- 	free_page((unsigned long)rdev->status_page);
- 	c4iw_pblpool_destroy(rdev);
- 	c4iw_rqtpool_destroy(rdev);
-+	wait_for_completion(&rdev->pbl_compl);
-+	wait_for_completion(&rdev->rqt_compl);
- 	c4iw_destroy_resource(&rdev->resource);
-+	destroy_workqueue(rdev->free_workq);
- }
- 
- static void c4iw_dealloc(struct uld_ctx *ctx)
---- a/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
-+++ b/drivers/infiniband/hw/cxgb4/iw_cxgb4.h
-@@ -186,6 +186,10 @@ struct c4iw_rdev {
- 	struct wr_log_entry *wr_log;
- 	int wr_log_size;
- 	struct workqueue_struct *free_workq;
-+	struct completion rqt_compl;
-+	struct completion pbl_compl;
-+	struct kref rqt_kref;
-+	struct kref pbl_kref;
- };
- 
- static inline int c4iw_fatal_error(struct c4iw_rdev *rdev)
---- a/drivers/infiniband/hw/cxgb4/resource.c
-+++ b/drivers/infiniband/hw/cxgb4/resource.c
-@@ -260,12 +260,22 @@ u32 c4iw_pblpool_alloc(struct c4iw_rdev
- 		rdev->stats.pbl.cur += roundup(size, 1 << MIN_PBL_SHIFT);
- 		if (rdev->stats.pbl.cur > rdev->stats.pbl.max)
- 			rdev->stats.pbl.max = rdev->stats.pbl.cur;
-+		kref_get(&rdev->pbl_kref);
- 	} else
- 		rdev->stats.pbl.fail++;
- 	mutex_unlock(&rdev->stats.lock);
- 	return (u32)addr;
- }
- 
-+static void destroy_pblpool(struct kref *kref)
-+{
-+	struct c4iw_rdev *rdev;
-+
-+	rdev = container_of(kref, struct c4iw_rdev, pbl_kref);
-+	gen_pool_destroy(rdev->pbl_pool);
-+	complete(&rdev->pbl_compl);
-+}
-+
- void c4iw_pblpool_free(struct c4iw_rdev *rdev, u32 addr, int size)
- {
- 	PDBG("%s addr 0x%x size %d\n", __func__, addr, size);
-@@ -273,6 +283,7 @@ void c4iw_pblpool_free(struct c4iw_rdev
- 	rdev->stats.pbl.cur -= roundup(size, 1 << MIN_PBL_SHIFT);
- 	mutex_unlock(&rdev->stats.lock);
- 	gen_pool_free(rdev->pbl_pool, (unsigned long)addr, size);
-+	kref_put(&rdev->pbl_kref, destroy_pblpool);
- }
- 
- int c4iw_pblpool_create(struct c4iw_rdev *rdev)
-@@ -312,7 +323,7 @@ int c4iw_pblpool_create(struct c4iw_rdev
- 
- void c4iw_pblpool_destroy(struct c4iw_rdev *rdev)
- {
--	gen_pool_destroy(rdev->pbl_pool);
-+	kref_put(&rdev->pbl_kref, destroy_pblpool);
- }
- 
- /*
-@@ -333,12 +344,22 @@ u32 c4iw_rqtpool_alloc(struct c4iw_rdev
- 		rdev->stats.rqt.cur += roundup(size << 6, 1 << MIN_RQT_SHIFT);
- 		if (rdev->stats.rqt.cur > rdev->stats.rqt.max)
- 			rdev->stats.rqt.max = rdev->stats.rqt.cur;
-+		kref_get(&rdev->rqt_kref);
- 	} else
- 		rdev->stats.rqt.fail++;
- 	mutex_unlock(&rdev->stats.lock);
- 	return (u32)addr;
- }
- 
-+static void destroy_rqtpool(struct kref *kref)
-+{
-+	struct c4iw_rdev *rdev;
-+
-+	rdev = container_of(kref, struct c4iw_rdev, rqt_kref);
-+	gen_pool_destroy(rdev->rqt_pool);
-+	complete(&rdev->rqt_compl);
-+}
-+
- void c4iw_rqtpool_free(struct c4iw_rdev *rdev, u32 addr, int size)
- {
- 	PDBG("%s addr 0x%x size %d\n", __func__, addr, size << 6);
-@@ -346,6 +367,7 @@ void c4iw_rqtpool_free(struct c4iw_rdev
- 	rdev->stats.rqt.cur -= roundup(size << 6, 1 << MIN_RQT_SHIFT);
- 	mutex_unlock(&rdev->stats.lock);
- 	gen_pool_free(rdev->rqt_pool, (unsigned long)addr, size << 6);
-+	kref_put(&rdev->rqt_kref, destroy_rqtpool);
- }
- 
- int c4iw_rqtpool_create(struct c4iw_rdev *rdev)
-@@ -383,7 +405,7 @@ int c4iw_rqtpool_create(struct c4iw_rdev
- 
- void c4iw_rqtpool_destroy(struct c4iw_rdev *rdev)
- {
--	gen_pool_destroy(rdev->rqt_pool);
-+	kref_put(&rdev->rqt_kref, destroy_rqtpool);
- }
- 
- /*
+ 		/* Offset should be less than i_size */
+-		if (offset >= i_size_read(inode)) {
++		if (offset >= isize) {
+ 			error = -EINVAL;
+ 			goto out_unlock;
+ 		}
