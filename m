@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933559AbeEHSRi (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 14:17:38 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:46400 "EHLO
+        id S933393AbeEHSSx (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 14:18:53 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45916 "EHLO
         mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933316AbeEHSRa (ORCPT
+        with ESMTP id S932982AbeEHSRh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 14:17:30 -0400
-X-Google-Smtp-Source: AB8JxZrs286w4Y/66mAhIDIdnDmg3qkism56JPnH1Pta5ViY42yVPNd5NxslKzhJFtSQ4xATo7hvuw==
+        Tue, 8 May 2018 14:17:37 -0400
+X-Google-Smtp-Source: AB8JxZr88zmYhDwiWx6ECJk38A7wfGPOR/HUpvs4D/ZjMQuglL/M6AkV2imSfvb3P8OMMj8LmQN3Rw==
 From: Dmitry Osipenko <digetx@gmail.com>
 To: Joerg Roedel <joro@8bytes.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>
 Cc: linux-tegra@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/9] iommu/tegra: gart: Provide access to Memory Controller driver
-Date: Tue,  8 May 2018 21:16:53 +0300
-Message-Id: <20180508181700.5169-3-digetx@gmail.com>
+Subject: [PATCH v1 9/9] iommu/tegra: gart: Optimize mapping / unmapping performance
+Date: Tue,  8 May 2018 21:17:00 +0300
+Message-Id: <20180508181700.5169-10-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508181700.5169-1-digetx@gmail.com>
 References: <20180508181700.5169-1-digetx@gmail.com>
@@ -24,82 +24,59 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GART contains registers needed by the Memory Controller driver. Provide
-access to the MC driver by utilizing its GART-integration facility.
+Currently GART writes one page entry at a time. More optimal would be to
+aggregate the writes and flush BUS buffer in the end, this gives map/unmap
+10-40% (depending on size of mapping) performance boost compared to a
+flushing after each entry update.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/iommu/tegra-gart.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ drivers/iommu/tegra-gart.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index 89ec24c6952c..de48943bf843 100644
+index ebc105c201bd..26d8735d26e8 100644
 --- a/drivers/iommu/tegra-gart.c
 +++ b/drivers/iommu/tegra-gart.c
-@@ -31,6 +31,8 @@
- #include <linux/iommu.h>
- #include <linux/of.h>
+@@ -226,7 +226,6 @@ static int gart_iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 		}
+ 	}
+ 	gart_set_pte(gart, iova, GART_PTE(pfn));
+-	FLUSH_GART_REGS(gart);
+ 	spin_unlock_irqrestore(&gart->pte_lock, flags);
+ 	return 0;
+ }
+@@ -243,7 +242,6 @@ static size_t gart_iommu_unmap(struct iommu_domain *domain, unsigned long iova,
  
-+#include <soc/tegra/mc.h>
+ 	spin_lock_irqsave(&gart->pte_lock, flags);
+ 	gart_set_pte(gart, iova, 0);
+-	FLUSH_GART_REGS(gart);
+ 	spin_unlock_irqrestore(&gart->pte_lock, flags);
+ 	return bytes;
+ }
+@@ -319,6 +317,14 @@ static int gart_iommu_of_xlate(struct device *dev,
+ 	return 0;
+ }
+ 
++static void gart_iommu_sync(struct iommu_domain *domain)
++{
++	struct gart_domain *gart_domain = to_gart_domain(domain);
++	struct gart_device *gart = gart_domain->gart;
 +
- #include <asm/cacheflush.h>
- 
- /* bitmap of the page sizes currently supported */
-@@ -41,6 +43,8 @@
- #define GART_ENTRY_ADDR		(0x28 - GART_REG_BASE)
- #define GART_ENTRY_DATA		(0x2c - GART_REG_BASE)
- #define GART_ENTRY_PHYS_ADDR_VALID	(1 << 31)
-+#define GART_ERROR_REQ		(0x30 - GART_REG_BASE)
-+#define GART_ERROR_ADDR		(0x34 - GART_REG_BASE)
- 
- #define GART_PAGE_SHIFT		12
- #define GART_PAGE_SIZE		(1 << GART_PAGE_SHIFT)
-@@ -63,6 +67,8 @@ struct gart_device {
- 	struct device		*dev;
- 
- 	struct iommu_device	iommu;		/* IOMMU Core handle */
++	FLUSH_GART_REGS(gart);
++}
 +
-+	struct tegra_mc_gart_handle mc_gart_handle;
+ static const struct iommu_ops gart_iommu_ops = {
+ 	.capable	= gart_iommu_capable,
+ 	.domain_alloc	= gart_iommu_domain_alloc,
+@@ -334,6 +340,8 @@ static const struct iommu_ops gart_iommu_ops = {
+ 	.iova_to_phys	= gart_iommu_iova_to_phys,
+ 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
+ 	.of_xlate	= gart_iommu_of_xlate,
++	.iotlb_sync_map	= gart_iommu_sync,
++	.iotlb_sync	= gart_iommu_sync,
  };
  
- struct gart_domain {
-@@ -408,6 +414,20 @@ static int tegra_gart_resume(struct device *dev)
- 	return 0;
- }
- 
-+static u32 tegra_gart_error_addr(struct tegra_mc_gart_handle *handle)
-+{
-+	struct gart_device *gart = container_of(handle, struct gart_device,
-+						mc_gart_handle);
-+	return readl(gart->regs + GART_ERROR_ADDR);
-+}
-+
-+static u32 tegra_gart_error_req(struct tegra_mc_gart_handle *handle)
-+{
-+	struct gart_device *gart = container_of(handle, struct gart_device,
-+						mc_gart_handle);
-+	return readl(gart->regs + GART_ERROR_REQ);
-+}
-+
- static int tegra_gart_probe(struct platform_device *pdev)
- {
- 	struct gart_device *gart;
-@@ -464,6 +484,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart->regs = gart_regs;
- 	gart->iovmm_base = (dma_addr_t)res_remap->start;
- 	gart->page_count = (resource_size(res_remap) >> GART_PAGE_SHIFT);
-+	gart->mc_gart_handle.error_addr = tegra_gart_error_addr;
-+	gart->mc_gart_handle.error_req = tegra_gart_error_req;
- 
- 	gart->savedata = vmalloc(sizeof(u32) * gart->page_count);
- 	if (!gart->savedata) {
-@@ -475,6 +497,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	do_gart_setup(gart, NULL);
- 
- 	gart_handle = gart;
-+	tegra_mc_register_gart(&gart->mc_gart_handle);
- 
- 	return 0;
- }
+ static int gart_iommu_check_device(struct gart_device *gart,
 -- 
 2.17.0
