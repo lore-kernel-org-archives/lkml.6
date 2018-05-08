@@ -1,79 +1,44 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755609AbeEHRof (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:44:35 -0400
-Received: from fieldses.org ([173.255.197.46]:50958 "EHLO fieldses.org"
+        id S1755642AbeEHRoz (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:44:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755438AbeEHRoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:44:32 -0400
-Date: Tue, 8 May 2018 13:44:31 -0400
-From: Bruce Fields <bfields@fieldses.org>
-To: Chuck Lever <chucklever@gmail.com>
-Cc: Trond Myklebust <trondmy@hammer.space>,
-        "syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com"
-        <syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com>,
-        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: general protection fault in encode_rpcb_string
-Message-ID: <20180508174431.GE6151@fieldses.org>
-References: <f4f5e80803d08f47b9056a0366dd@google.com>
- <20180417213308.GC18217@fieldses.org>
- <1524002074.63751.5.camel@hammer.space>
- <20180508161529.GD6151@fieldses.org>
- <4B24FAE4-C7E8-4D01-9808-B8F4E9E59D64@gmail.com>
+        id S1755587AbeEHRoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 13:44:34 -0400
+X-Google-Smtp-Source: AB8JxZoFf6FqynU0Zvfm4AL5xe5R+2lrzUdvsaNges1yohV4rNPXYHcGKJ3ki73b7XsB7gck5AEINg+3imtuNOhZf6c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4B24FAE4-C7E8-4D01-9808-B8F4E9E59D64@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180508145611.49072-4-giulio.benetti@micronovasrl.com>
+References: <20180508145611.49072-1-giulio.benetti@micronovasrl.com> <20180508145611.49072-4-giulio.benetti@micronovasrl.com>
+From: Rob Herring <robh+dt@kernel.org>
+Date: Tue, 8 May 2018 12:44:12 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKb9aLxjQbOc1PFRQhbVL2a3Ti2oJ8Gm8Ojn0a39LxajA@mail.gmail.com>
+Message-ID: <CAL_JsqKb9aLxjQbOc1PFRQhbVL2a3Ti2oJ8Gm8Ojn0a39LxajA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] rtc: ds1307: add frequency-test property to check
+ calibration on m41txx
+To: Giulio Benetti <giulio.benetti@micronovasrl.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM"
+        <linux-rtc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 12:34:48PM -0400, Chuck Lever wrote:
-> 
-> 
-> > On May 8, 2018, at 12:15 PM, bfields@fieldses.org wrote:
-> > 
-> > On Tue, Apr 17, 2018 at 09:54:36PM +0000, Trond Myklebust wrote:
-> >> Yes, and we can probably convert it, and the other GFP_ATOMIC
-> >> allocations in the rpcbind client to use GFP_NOFS in order to improve
-> >> reliability.
-> > 
-> > Chuck, I think the GFP_ATOMIC is unnecessary here as well?
-> > 
-> > --b.
-> > 
-> > diff --git a/net/sunrpc/xprtrdma/rpc_rdma.c b/net/sunrpc/xprtrdma/rpc_rdma.c
-> > index e8adad33d0bb..de90c6c90cde 100644
-> > --- a/net/sunrpc/xprtrdma/rpc_rdma.c
-> > +++ b/net/sunrpc/xprtrdma/rpc_rdma.c
-> > @@ -228,7 +228,7 @@ rpcrdma_convert_iovs(struct rpcrdma_xprt *r_xprt, struct xdr_buf *xdrbuf,
-> > 			/* XXX: Certain upper layer operations do
-> > 			 *	not provide receive buffer pages.
-> > 			 */
-> > -			*ppages = alloc_page(GFP_ATOMIC);
-> > +			*ppages = alloc_page(GFP_NOFS);
-> > 			if (!*ppages)
-> > 				return -EAGAIN;
-> > 		}
-> 
-> This code can't sleep, as I understand it. Caller is holding
-> the transport write lock. This logic was copied from
-> xdr_partial_copy_from_skb, which uses GFP_ATOMIC.
+On Tue, May 8, 2018 at 9:56 AM, Giulio Benetti
+<giulio.benetti@micronovasrl.com> wrote:
+> On m41txx you can enable open-drain OUT pin to check if calibration is ok.
+> Enabling OUT pin with frequency-test bool property, OUT pin will tick
+> 512 times faster than 1s tick base.
+>
+> Enable FT bit on CONTROL register if calibration is active.
 
-OK.
+A DT is (or should be) a pretty static thing, so I don't think this
+belongs. A kernel command line option (via module params) or a
+sysfs/debugfs file would make more sense IMO.
 
-> Recall that this is here because of GETACL. As I've stated in
-> the past, the correct solution is to ensure that these pages
-> are provided in every case by the upper layer, making this
-> alloc_page call site unnecessary.
-
-Got it.
-
---b.
+Rob
