@@ -1,62 +1,121 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932623AbeEHQ7S (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 12:59:18 -0400
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:35970 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932204AbeEHQ7Q (ORCPT
+        id S1754168AbeEHRBd (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:01:33 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:51095 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751934AbeEHRBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 12:59:16 -0400
-X-Google-Smtp-Source: AB8JxZq0Es7awOZy5TX6IweHeeicbD5jgCRoUpSNWzKz/zc6/ruHC33vebS/u7a6nIixL0U3ipqLDUTB2sxsY1N1jt0=
+        Tue, 8 May 2018 13:01:31 -0400
+X-Google-Smtp-Source: AB8JxZptWSmg3ZLOiJASqcDtaynsDRoaFsTMTSkO/kd5EKLL5NhqYQbVuEm3b1pW/dOt5Fi4nL1v1iXPbmoOSKbvP6E=
 MIME-Version: 1.0
-In-Reply-To: <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
-References: <CAFkk2KRTnRpi5thUGTM2+LZMyitggdJtiOBO7E0pTn93fz6-SQ@mail.gmail.com>
- <d4c3b2ab-385d-fe7a-bdb1-2d497d620de5@infradead.org> <CAFkk2KRozscmd4kQSJKwKmY3WpTody7S5XZZObf8SKLF62k6+w@mail.gmail.com>
- <CAFkk2KRkEt3+786QvyjzPPAm+3HDe2+ydzZJpshfdKyUDQVfuw@mail.gmail.com>
- <CAFkk2KRvSxu+x-nb045=3L63KEk5h9URr5QYLPoYp6rqqTR4qA@mail.gmail.com> <3d9be2f2-3fbe-411b-8529-0e0847f01346@infradead.org>
-From: Ulf Magnusson <ulfalizer@gmail.com>
-Date: Tue, 8 May 2018 18:59:15 +0200
-Message-ID: <CAFkk2KRWon_S--dxYw82cDyGXKTFA6jxrrQwstzLvHPs=6-dqQ@mail.gmail.com>
-Subject: Re: [ANNOUNCE] Kconfiglib menuconfig implementation
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <1525360703-26159-1-git-send-email-leo.yan@linaro.org>
+References: <1525360703-26159-1-git-send-email-leo.yan@linaro.org>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Tue, 8 May 2018 11:01:30 -0600
+Message-ID: <CANLsYky4QatoCv_4k1r8eb4Rjugx9g2YZLG1dtHKJy9AsHtCSg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf cs-etm: Support unknown_thread in cs_etm_auxtrace
+To: Leo Yan <leo.yan@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, coresight@lists.linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-I've added incremental search for jumping directly to a symbol now.
-Regular expressions are supported as well.
-
-Some screenshots below:
-
-https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss10.png
-https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss11.png
-https://raw.githubusercontent.com/ulfalizer/Kconfiglib/screenshots/screenshots/ss13.png
-
-The last screenshot shows how things might look after you jump to a
-symbol. The jumped-to symbol wasn't visible in this case, so show-all
-mode was turned on automatically.
-
-On Thu, May 3, 2018 at 10:28 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
-> Hi,
+On 3 May 2018 at 09:18, Leo Yan <leo.yan@linaro.org> wrote:
+> CoreSight doesn't allocate thread structure for unknown_thread in etm
+> auxtrace, so unknown_thread is NULL pointer.  If the perf data doesn't
+> contain valid tid and then cs_etm__mem_access() uses unknown_thread
+> instead as thread handler, this results in segmentation fault when
+> thread__find_addr_map() accesses thread handler.
 >
-> (with new kconfiglib.py and menuconfig.py)
+> This commit creates new thread data which is used by unknown_thread, so
+> CoreSight tracing can roll back to use unknown_thread if perf data
+> doesn't include valid thread info.  This commit also releases thread
+> data for initialization failure case and for normal auxtrace free flow.
 >
-> Thanks for the fixes.
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  tools/perf/util/cs-etm.c | 25 +++++++++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
 >
-> If I use "LC_CTYPE=C.UTF-8" then I get the down arrows in the bottom colored
-> bar.  Without that, I get an upside-down T (that is 193, 0xc1, line drawing
-> character in the IBM extended character set).
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index 6533b1a..417302c 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -239,6 +239,7 @@ static void cs_etm__free(struct perf_session *session)
+>         for (i = 0; i < aux->num_cpu; i++)
+>                 zfree(&aux->metadata[i]);
+>
+> +       thread__zput(aux->unknown_thread);
+>         zfree(&aux->metadata);
+>         zfree(&aux);
+>  }
+> @@ -266,6 +267,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
+>         if (!thread) {
+>                 if (cpumode != PERF_RECORD_MISC_KERNEL)
+>                         return -EINVAL;
+> +
 
-It now automatically tries to convert LC_CTYPE to a UTF-8 locale if it
-is set to the C locale, similar to what PEP 538 does. I took the list
-of locales to try from the CPython implementation.
+Extra line, please remove.
 
-That will save a bunch of pain in practice.
+With this change:
 
-Cheers,
-Ulf
+Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+
+>                 thread = etmq->etm->unknown_thread;
+>         }
+>
+> @@ -1355,6 +1357,23 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+>         etm->auxtrace.free = cs_etm__free;
+>         session->auxtrace = &etm->auxtrace;
+>
+> +       etm->unknown_thread = thread__new(999999999, 999999999);
+> +       if (!etm->unknown_thread)
+> +               goto err_free_queues;
+> +
+> +       /*
+> +        * Initialize list node so that at thread__zput() we can avoid
+> +        * segmentation fault at list_del_init().
+> +        */
+> +       INIT_LIST_HEAD(&etm->unknown_thread->node);
+> +
+> +       err = thread__set_comm(etm->unknown_thread, "unknown", 0);
+> +       if (err)
+> +               goto err_delete_thread;
+> +
+> +       if (thread__init_map_groups(etm->unknown_thread, etm->machine))
+> +               goto err_delete_thread;
+> +
+>         if (dump_trace) {
+>                 cs_etm__print_auxtrace_info(auxtrace_info->priv, num_cpu);
+>                 return 0;
+> @@ -1369,16 +1388,18 @@ int cs_etm__process_auxtrace_info(union perf_event *event,
+>
+>         err = cs_etm__synth_events(etm, session);
+>         if (err)
+> -               goto err_free_queues;
+> +               goto err_delete_thread;
+>
+>         err = auxtrace_queues__process_index(&etm->queues, session);
+>         if (err)
+> -               goto err_free_queues;
+> +               goto err_delete_thread;
+>
+>         etm->data_queued = etm->queues.populated;
+>
+>         return 0;
+>
+> +err_delete_thread:
+> +       thread__zput(etm->unknown_thread);
+>  err_free_queues:
+>         auxtrace_queues__free(&etm->queues);
+>         session->auxtrace = NULL;
+> --
+> 2.7.4
+>
