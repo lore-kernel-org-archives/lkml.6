@@ -1,199 +1,134 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755987AbeEHWFU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 18:05:20 -0400
-Received: from 6.mo69.mail-out.ovh.net ([46.105.50.107]:52388 "EHLO
-        6.mo69.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755734AbeEHWFS (ORCPT
+        id S932400AbeEHWGX (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 18:06:23 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52483 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755741AbeEHWGV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 18:05:18 -0400
-Date: Wed, 9 May 2018 06:49:09 +0900
-From: Andi Shyti <andi@etezian.org>
-To: Philipp Puschmann <pp@emlix.com>
-Cc: dmitry.torokhov@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        rydberg@bitmath.org, andi@etezian.org, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: ili251x - add support for Ilitek ILI251x
- touchscreens
-Message-ID: <20180508214909.GB4974@jack.zhora.eu>
-References: <20180507131823.28800-1-pp@emlix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507131823.28800-1-pp@emlix.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Ovh-Tracer-Id: 1968073037594346124
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedthedrudeggddtfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+        Tue, 8 May 2018 18:06:21 -0400
+X-Google-Smtp-Source: AB8JxZqlqbqlmNJOASqdb6YHDVML3n+UvQT4JDgcTYmH4OKbkdmKv5jr1er2xcYYE5A4V7pIC2AyUQ==
+From: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
+To: jramirez@baylibre.com, broonie@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [RFC] regmap: allow volatile register writes with cached only read maps
+Date: Wed,  9 May 2018 00:06:09 +0200
+Message-Id: <1525817169-29233-1-git-send-email-jramirez@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Philipp,
+Regmap only allows volatile access to registers when the client
+supports both reads and writes.
 
-I had a fast look to your driver and I have few comments.
+This commit bypasses that limitation and enables volatile writes to
+selected registers while maintaining cached accesses on all reads. For
+this, the client does not need to configure the reg_read callback.
 
->  .../bindings/input/touchscreen/ili251x.txt    |  35 ++
->  drivers/input/touchscreen/Kconfig             |  12 +
->  drivers/input/touchscreen/Makefile            |   1 +
->  drivers/input/touchscreen/ili251x.c           | 350 ++++++++++++++++++
->  4 files changed, 398 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/ili251x.txt
->  create mode 100644 drivers/input/touchscreen/ili251x.c
+Signed-off-by: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
+---
+ drivers/base/regmap/internal.h       |  1 +
+ drivers/base/regmap/regcache.c       | 10 +++++++++-
+ drivers/base/regmap/regmap-debugfs.c | 17 +++++++++++++++--
+ drivers/base/regmap/regmap.c         | 11 +++++++++++
+ 4 files changed, 36 insertions(+), 3 deletions(-)
 
-Please split the patch, the bindig should be on a separate patch
-and must come before the driver.
-
-> +#define MAX_FINGERS		10
-> +#define REG_TOUCHDATA		0x10
-> +#define TOUCHDATA_FINGERS	6
-> +#define REG_TOUCHDATA2		0x14
-> +#define TOUCHDATA2_FINGERS	4
-> +#define REG_PANEL_INFO		0x20
-> +#define REG_FIRMWARE_VERSION	0x40
-> +#define REG_PROTO_VERSION	0x42
-> +#define REG_CALIBRATE		0xcc
-
-Can you please group and sort these definitions by type? REGs
-with REGs and others together?
-
-Please start the defines names with a unique identifier,
-ILI251X_REG_* instead of just REG_*
-
-> +struct finger {
-> +	u8 x_high:6;
-> +	u8 dummy:1;
-> +	u8 status:1;
-> +	u8 x_low;
-> +	u8 y_high;
-> +	u8 y_low;
-> +	u8 pressure;
-> +} __packed;
-> +
-> +struct touchdata {
-> +	u8 status;
-> +	struct finger fingers[MAX_FINGERS];
-> +} __packed;
-> +
-> +struct panel_info {
-> +	u8 x_low;
-> +	u8 x_high;
-> +	u8 y_low;
-> +	u8 y_high;
-> +	u8 xchannel_num;
-> +	u8 ychannel_num;
-> +	u8 max_fingers;
-> +} __packed;
-> +
-> +struct firmware_version {
-> +	u8 id;
-> +	u8 major;
-> +	u8 minor;
-> +} __packed;
-> +
-> +struct protocol_version {
-> +	u8 major;
-> +	u8 minor;
-> +} __packed;
-
-panel_info, firmware_version and protocol_version are used very
-little in the driver (just in probe). Is it really necessary to
-keep a definition?
-
-Is there a way to get rid of them?
-
-> +struct ili251x_data {
-> +	struct i2c_client *client;
-> +	struct input_dev *input;
-> +	unsigned int max_fingers;
-> +	bool use_pressure;
-> +	struct gpio_desc *reset_gpio;
-> +};
-
-Please start also the strct definitions with the unique
-identifier ili251x_* like you did with ili251x_data.
-
-> +
-> +static int ili251x_read_reg(struct i2c_client *client, u8 reg, void *buf,
-> +			    size_t len)
-> +{
-> +	struct i2c_msg msg[2] = {
-> +		{
-> +			.addr	= client->addr,
-> +			.flags	= 0,
-> +			.len	= 1,
-> +			.buf	= &reg,
-> +		},
-> +		{
-> +			.addr	= client->addr,
-> +			.flags	= I2C_M_RD,
-> +			.len	= len,
-> +			.buf	= buf,
-> +		}
-> +	};
-> +
-> +	if (i2c_transfer(client->adapter, msg, 2) != 2) {
-> +		dev_err(&client->dev, "i2c transfer failed\n");
-> +		return -EIO;
-> +	}
-> +
-> +	return 0;
-> +}
-
-I do not see the need for a ili251x_read_reg function. You are
-not reading more than 240 bytes per time, am I right?
-
-In this case I would use the smbus functions (at least whenever
-possible in case I miscalculated the 240b), this is ju a
-duplicated code.
-
-> +static void ili251x_report_events(struct ili251x_data *data,
-> +				  const struct touchdata *touchdata)
-> +{
-> +	struct input_dev *input = data->input;
-> +	unsigned int i;
-> +	bool touch;
-> +	unsigned int x, y;
-> +	const struct finger *finger;
-> +	unsigned int reported_fingers = 0;
-> +
-> +	/* the touch chip does not count the real fingers but switches between
-> +	 * 0, 6 and 10 reported fingers *
-> +	 *
-> +	 * FIXME: With a tested ili2511 we received only garbage for fingers
-> +	 *        6-9. As workaround we add a device tree option to limit the
-> +	 *        handled number of fingers
-> +	 */
-> +	if (touchdata->status == 1)
-> +		reported_fingers = 6;
-> +	else if (touchdata->status == 2)
-> +		reported_fingers = 10;
-> +
-> +	for (i = 0; i < reported_fingers && i < data->max_fingers; i++) {
-> +		input_mt_slot(input, i);
-> +
-> +		finger = &touchdata->fingers[i];
-> +
-> +		touch = finger->status;
-> +		input_mt_report_slot_state(input, MT_TOOL_FINGER, touch);
-> +		x = finger->x_low | (finger->x_high << 8);
-> +		y = finger->y_low | (finger->y_high << 8);
-
-the x and y calculation can go uinside the if() below, right?
-
-> +		if (touch) {
-> +			input_report_abs(input, ABS_MT_POSITION_X, x);
-> +			input_report_abs(input, ABS_MT_POSITION_Y, y);
-> +			if (data->use_pressure)
-> +				input_report_abs(input, ABS_MT_PRESSURE,
-> +						 finger->pressure);
-> +
-> +		}
-
-just a small nitpick, that is more a matter of preference, with
-
-  if(!touch)
-    continue;
-
-we save a level of indentation.
+diff --git a/drivers/base/regmap/internal.h b/drivers/base/regmap/internal.h
+index 53785e0..496c825 100644
+--- a/drivers/base/regmap/internal.h
++++ b/drivers/base/regmap/internal.h
+@@ -180,6 +180,7 @@ bool regmap_cached(struct regmap *map, unsigned int reg);
+ bool regmap_writeable(struct regmap *map, unsigned int reg);
+ bool regmap_readable(struct regmap *map, unsigned int reg);
+ bool regmap_volatile(struct regmap *map, unsigned int reg);
++bool regmap_volatile_writes(struct regmap *map, unsigned int reg);
+ bool regmap_precious(struct regmap *map, unsigned int reg);
+ 
+ int _regmap_write(struct regmap *map, unsigned int reg,
+diff --git a/drivers/base/regmap/regcache.c b/drivers/base/regmap/regcache.c
+index 7735603..51cceaa 100644
+--- a/drivers/base/regmap/regcache.c
++++ b/drivers/base/regmap/regcache.c
+@@ -273,8 +273,16 @@ int regcache_write(struct regmap *map,
+ 
+ 	BUG_ON(!map->cache_ops);
+ 
+-	if (!regmap_volatile(map, reg))
++	if (!regmap_volatile(map, reg)) {
++
++		if (!regmap_readable(map, reg)) {
++			/* check if the client configured volatile writes */
++			if (regmap_volatile_writes(map, reg))
++				return 0;
++		}
++
+ 		return map->cache_ops->write(map, reg, value);
++	}
+ 
+ 	return 0;
+ }
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index 87b562e..89fb771 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -415,20 +415,33 @@ static const struct file_operations regmap_reg_ranges_fops = {
+ static int regmap_access_show(struct seq_file *s, void *ignored)
+ {
+ 	struct regmap *map = s->private;
++	char reg_volatile;
+ 	int i, reg_len;
+ 
+ 	reg_len = regmap_calc_reg_len(map->max_register);
+ 
+ 	for (i = 0; i <= map->max_register; i += map->reg_stride) {
+-		/* Ignore registers which are neither readable nor writable */
++		 reg_volatile = 'n';
++
++		 /* Ignore registers which are neither readable nor writable */
+ 		if (!regmap_readable(map, i) && !regmap_writeable(map, i))
+ 			continue;
+ 
++		if (regmap_volatile(map, i)) {
++			reg_volatile = 'y';
++			goto done;
++		}
++
++		if (!regmap_readable(map, i)) {
++			if (regmap_volatile_writes(map, i))
++				reg_volatile = 'y';
++		}
++done:
+ 		/* Format the register */
+ 		seq_printf(s, "%.*x: %c %c %c %c\n", reg_len, i,
+ 			   regmap_readable(map, i) ? 'y' : 'n',
+ 			   regmap_writeable(map, i) ? 'y' : 'n',
+-			   regmap_volatile(map, i) ? 'y' : 'n',
++			   reg_volatile,
+ 			   regmap_precious(map, i) ? 'y' : 'n');
+ 	}
+ 
+diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+index 3bc8488..7d4b671 100644
+--- a/drivers/base/regmap/regmap.c
++++ b/drivers/base/regmap/regmap.c
+@@ -154,6 +154,17 @@ bool regmap_volatile(struct regmap *map, unsigned int reg)
+ 		return true;
+ }
+ 
++bool regmap_volatile_writes(struct regmap *map, unsigned int reg)
++{
++	if (map->volatile_reg)
++		return map->volatile_reg(map->dev, reg);
++
++	if (map->volatile_table)
++		return regmap_check_range_table(map, reg, map->volatile_table);
++
++	return false;
++}
++
+ bool regmap_precious(struct regmap *map, unsigned int reg)
+ {
+ 	if (!regmap_readable(map, reg))
+-- 
+2.7.4
