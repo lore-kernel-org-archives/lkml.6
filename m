@@ -1,63 +1,42 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932760AbeEHJKE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 05:10:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54662 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932308AbeEHJKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 05:10:02 -0400
-Subject: Re: [PATCH] Revert "cpufreq: schedutil: Don't restrict kthread to
- related_cpus unnecessarily"
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-pm@vger.kernel.org,
-        Pavan Kondeti <pkondeti@codeaurora.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>
-References: <20180508073340.13114-1-dietmar.eggemann@arm.com>
- <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <8cf21b1a-ca6e-fed7-43c5-94c66ff5986b@arm.com>
-Date: Tue, 8 May 2018 11:09:57 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S932777AbeEHJOm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 05:14:42 -0400
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:46028 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754465AbeEHJOl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 05:14:41 -0400
+Date: Tue, 8 May 2018 12:14:39 +0300
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Todor Tomov <todor.tomov@linaro.org>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: v4l: Add new 2X8 10-bit grayscale media bus
+ code
+Message-ID: <20180508091439.oeuxeh74vaaj7fvm@valkosipuli.retiisi.org.uk>
+References: <1524829239-4664-1-git-send-email-todor.tomov@linaro.org>
+ <1524829239-4664-2-git-send-email-todor.tomov@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20180508082242.bre6sjfvefhz6xc3@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1524829239-4664-2-git-send-email-todor.tomov@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 10:22 AM, Viresh Kumar wrote:
-> On 08-05-18, 08:33, Dietmar Eggemann wrote:
->> This reverts commit e2cabe48c20efb174ce0c01190f8b9c5f3ea1d13.
->>
->> Lifting the restriction that the sugov kthread is bound to the
->> policy->related_cpus for a system with a slow switching cpufreq driver,
->> which is able to perform DVFS from any cpu (e.g. cpufreq-dt), is not
->> only not beneficial it also harms Enery-Aware Scheduling (EAS) on
->> systems with asymmetric cpu capacities (e.g. Arm big.LITTLE).
->>
->> The sugov kthread which does the update for the little cpus could
->> potentially run on a big cpu. It could prevent that the big cluster goes
->> into deeper idle states although all the tasks are running on the little
->> cluster.
+On Fri, Apr 27, 2018 at 02:40:38PM +0300, Todor Tomov wrote:
+> The code will be called MEDIA_BUS_FMT_Y10_2X8_PADHI_LE.
+> It is similar to MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE
+> but MEDIA_BUS_FMT_Y10_2X8_PADHI_LE describes grayscale
+> data.
 > 
-> I think the original patch did the right thing, but that doesn't suit
-> everybody as you explained.
-> 
-> I wouldn't really revert the patch but fix my platform's cpufreq
-> driver to set dvfs_possible_from_any_cpu = false, so that other
-> platforms can still benefit from the original commit.
+> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 
-This would make sure that the kthreads are bound to the correct set of 
-cpus for platforms with those cpufreq drivers (cpufreq-dt (h960), 
-scmi-cpufreq, scpi-cpufreq) but it will also change the logic (e.g. 
-sugov_should_update_freq() -> cpufreq_can_do_remote_dvfs()).
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-I'm still struggling to understand when a driver/platform should set 
-dvfs_possible_from_any_cpu to true and what the actual benefit would be.
+-- 
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
