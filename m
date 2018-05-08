@@ -1,89 +1,145 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753062AbeEHLEg (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 07:04:36 -0400
-Received: from foss.arm.com ([217.140.101.70]:56356 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752239AbeEHLEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 07:04:35 -0400
-From: Punit Agrawal <punit.agrawal@arm.com>
-To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
-        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
-        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
-        sergey.senozhatsky.work@gmail.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Ganesh Mahendran <opensource.ganesh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
-        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
-        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
-        x86@kernel.org
-Subject: Re: [PATCH v10 02/25] x86/mm: define ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
-References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
-        <1523975611-15978-3-git-send-email-ldufour@linux.vnet.ibm.com>
-Date: Tue, 08 May 2018 12:04:32 +0100
-In-Reply-To: <1523975611-15978-3-git-send-email-ldufour@linux.vnet.ibm.com>
-        (Laurent Dufour's message of "Tue, 17 Apr 2018 16:33:08 +0200")
-Message-ID: <87sh72jtmn.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1753396AbeEHLFe (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 07:05:34 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:25809 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752231AbeEHLFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 07:05:33 -0400
+Subject: Re: general protection fault in lo_ioctl (2)
+To: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Milan Broz <gmazyland@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <000000000000cbaaf6056b341859@google.com>
+ <CACT4Y+bTo34q4=7X8zGL_XVOGoYd7fqhfAbCAWUxsr-N96Kyxw@mail.gmail.com>
+ <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
+Date: Tue, 8 May 2018 20:05:12 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laurent,
+On 2018/05/08 5:56, Tetsuo Handa wrote:
+> On 2018/05/02 20:23, Dmitry Vyukov wrote:
+>> #syz dup: INFO: rcu detected stall in blkdev_ioctl
+> 
+> The cause of stall turned out to be ioctl(loop_fd, LOOP_CHANGE_FD, loop_fd).
+> 
+> But we haven't explained the cause of NULL pointer dereference which can
+> occur when raced with ioctl(LOOP_CLR_FD). Therefore,
+> 
+> #syz undup
+> 
 
-Laurent Dufour <ldufour@linux.vnet.ibm.com> writes:
+Using sleep injection patch and reproducer shown below, I can reproduce
+the crashes. It is a race between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
+ioctl(other_loop_fd, LOOP_SET_FD, loop_fd).
 
-> Set ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT which turns on the
-> Speculative Page Fault handler when building for 64bit.
->
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> ---
->  arch/x86/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index d8983df5a2bc..ebdeb48e4a4a 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -30,6 +30,7 @@ config X86_64
->  	select MODULES_USE_ELF_RELA
->  	select X86_DEV_DMA_OPS
->  	select ARCH_HAS_SYSCALL_WRAPPER
-> +	select ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+Unless we hold corresponding lo->lo_ctl_mutex (or keep corresponding
+lo->lo_refcnt elevated) when traversing other loop devices,
+"/* Avoid recursion */" loop from loop_set_fd()/loop_change_fd() will
+suffer from races by loop_clr_fd().
 
-I'd suggest merging this patch with the one making changes to the
-architectural fault handler towards the end of the series.
+So, it is time to think how to solve this race condition, as well as how to solve
+lockdep's deadlock warning (and I guess that syzbot is actually hitting deadlocks).
+An approach which serializes loop operations using global lock was proposed at
+https://groups.google.com/d/msg/syzkaller-bugs/2Rw8-OM6IbM/PzdobV8kAgAJ .
+Please respond...
 
-The Kconfig change is closely tied to the architectural support for SPF
-and makes sense to be in a single patch.
+------------------------------------------------------------
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -909,6 +909,9 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
+ 			error = -EINVAL;
+ 			goto out_putf;
+ 		}
++		pr_err("Start sleeping\n");
++		schedule_timeout_killable(3 * HZ);
++		pr_err("End sleeping\n");
+ 		f = l->lo_backing_file;
+ 	}
+ 
+------------------------------------------------------------
 
-If there's a good reason to keep them as separate patches, please move
-the architecture Kconfig changes after the patch adding fault handler
-changes.
+------------------------------------------------------------
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <linux/loop.h>
+#include <sys/ioctl.h>
 
-It's better to enable the feature once the core infrastructure is merged
-rather than at the beginning of the series to avoid potential bad
-fallout from incomplete functionality during bisection.
+int main(int argc, char *argv[])
+{
+	int fd0 = open("/dev/loop0", O_RDONLY);
+	int fd1 = open("/dev/loop1", O_RDONLY);
+	int fd2 = open("/tmp/file", O_RDWR | O_CREAT | O_TRUNC, 0600);
+	ioctl(fd1, LOOP_SET_FD, fd2);
+	if (fork() == 0) {
+		sleep(1);
+		ioctl(fd1, LOOP_CLR_FD, 0);
+		_exit(0);
+	}
+	ioctl(fd0, LOOP_SET_FD, fd1);
+	return 0;
+}
+------------------------------------------------------------
 
-All the comments here definitely hold for the arm64 patches that you
-plan to include with the next update.
-
-Thanks,
-Punit
-
->  
->  #
->  # Arch settings
+------------------------------------------------------------
+[   14.119073] loop: module loaded
+[   17.363610] Start sleeping
+[   20.383442] End sleeping
+[   20.386511] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[   20.394779] PGD 13377d067 P4D 13377d067 PUD 131509067 PMD 0 
+[   20.400847] Oops: 0000 [#1] SMP
+[   20.403875] Modules linked in: loop
+[   20.406188] CPU: 6 PID: 6470 Comm: a.out Tainted: G                T 4.17.0-rc4+ #540
+[   20.411266] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
+[   20.418169] RIP: 0010:lo_ioctl+0x7ef/0x840 [loop]
+[   20.421272] RSP: 0018:ffffc90000bbbd88 EFLAGS: 00010282
+[   20.424661] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff83679478
+[   20.429271] RDX: ffff8801332e9c00 RSI: 0000000000000086 RDI: 0000000000000286
+[   20.434517] RBP: ffffc90000bbbdd8 R08: 0000000000000638 R09: 0000000000000000
+[   20.436879] R10: 0000000000000190 R11: 0720072007200720 R12: ffff8801314ab118
+[   20.439076] R13: ffff880138deae40 R14: ffff8801311f7780 R15: ffff8801314ab000
+[   20.441144] FS:  00007f0b57743740(0000) GS:ffff88013a780000(0000) knlGS:0000000000000000
+[   20.443588] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   20.445284] CR2: 0000000000000008 CR3: 0000000138efb002 CR4: 00000000000606e0
+[   20.447381] Call Trace:
+[   20.448149]  blkdev_ioctl+0x88d/0x950
+[   20.449237]  block_ioctl+0x38/0x40
+[   20.450269]  do_vfs_ioctl+0xaa/0x650
+[   20.451479]  ? handle_mm_fault+0x108/0x250
+[   20.452704]  ksys_ioctl+0x70/0x80
+[   20.453737]  __x64_sys_ioctl+0x15/0x20
+[   20.454887]  do_syscall_64+0x5d/0x100
+[   20.456014]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[   20.457519] RIP: 0033:0x7f0b57267107
+[   20.458644] RSP: 002b:00007fff8a0fd698 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+[   20.460853] RAX: ffffffffffffffda RBX: 0000000000000004 RCX: 00007f0b57267107
+[   20.462952] RDX: 0000000000000004 RSI: 0000000000004c00 RDI: 0000000000000003
+[   20.465023] RBP: 0000000000000003 R08: 00007f0b57743740 R09: 0000000000000000
+[   20.467091] R10: 00007f0b57743a10 R11: 0000000000000246 R12: 00000000004005ef
+[   20.469361] R13: 00007fff8a0fd790 R14: 0000000000000000 R15: 0000000000000000
+[   20.471657] Code: a0 48 89 55 d0 e8 e0 5f 1d e1 bf b8 0b 00 00 e8 78 9e 7c e2 48 c7 c7 a9 40 00 a0 e8 ca 5f 1d e1 48 8b 55 d0 48 8b 82 f0 00 00 00 <48> 8b 40 08 48 8b 40 68 48 85 c0 0f 84 15 fd ff ff 0f b7 90 b8 
+[   20.477207] RIP: lo_ioctl+0x7ef/0x840 [loop] RSP: ffffc90000bbbd88
+[   20.479027] CR2: 0000000000000008
+[   20.480063] ---[ end trace 925bc1b992d96cb3 ]---
+[   20.481441] Kernel panic - not syncing: Fatal exception
+[   20.483119] Kernel Offset: disabled
+[   20.489564] Rebooting in 86400 seconds..
+------------------------------------------------------------
