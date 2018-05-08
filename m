@@ -1,246 +1,124 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754692AbeEHM0H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 08:26:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42450 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751520AbeEHM0F (ORCPT
+        id S1754818AbeEHM0N (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 08:26:13 -0400
+Received: from lelnx193.ext.ti.com ([198.47.27.77]:55031 "EHLO
+        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751520AbeEHM0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 08:26:05 -0400
+        Tue, 8 May 2018 08:26:09 -0400
+Subject: Re: [PATCH v2 10/26] drm/bridge: panel: provide an owner .odev device
+To: Peter Rosin <peda@axentia.se>, <linux-kernel@vger.kernel.org>
+CC: Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20180504135212.26977-1-peda@axentia.se>
+ <20180504135212.26977-11-peda@axentia.se>
+ <5130ea2e-e1cd-53dd-25da-038deb91a13d@ti.com>
+ <c446bdec-bf31-f192-c270-d672011d4503@axentia.se>
+From: Jyri Sarha <jsarha@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jsarha@ti.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b842c0d0-ff2e-d35a-60bb-c414f8f6d273@ti.com>
+Date: Tue, 8 May 2018 15:25:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date: Tue, 08 May 2018 17:56:04 +0530
-From: kgunda@codeaurora.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH V1 4/5] backlight: qcom-wled: Add support for OVP
- interrupt handling
-In-Reply-To: <20180507172152.GD2259@tuxbook-pro>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-5-git-send-email-kgunda@codeaurora.org>
- <20180507172152.GD2259@tuxbook-pro>
-Message-ID: <3736480b2712e2dd401fed0a635a25d7@codeaurora.org>
-User-Agent: Roundcube Webmail/1.2.5
+In-Reply-To: <c446bdec-bf31-f192-c270-d672011d4503@axentia.se>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-05-07 22:51, Bjorn Andersson wrote:
-> On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
+On 05/08/18 10:58, Peter Rosin wrote:
+> On 2018-05-08 08:51, Jyri Sarha wrote:
+>> On 05/04/18 16:51, Peter Rosin wrote:
+>>> It gets rid of an #ifdef and the .of_node member is going away.
+>>>
+>>> Signed-off-by: Peter Rosin <peda@axentia.se>
+>>> ---
+>>>  drivers/gpu/drm/bridge/panel.c | 4 +---
+>>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
+>>> index 6d99d4a3beb3..f43d77b5ed20 100644
+>>> --- a/drivers/gpu/drm/bridge/panel.c
+>>> +++ b/drivers/gpu/drm/bridge/panel.c
+>>> @@ -169,10 +169,8 @@ struct drm_bridge *drm_panel_bridge_add(struct drm_panel *panel,
+>>>  	panel_bridge->connector_type = connector_type;
+>>>  	panel_bridge->panel = panel;
+>>>  
+>>> +	panel_bridge->bridge.odev = panel->dev;
+>> I am afraid this approach will eventually conflict with my lately
+>> accepted patch[1].
+> I don't see how? The links are refcounted. So, if there is one link
+> each for the panel and bridge between the drm device and the panel
+> device that link will simply get two references. If/when the panel
+> device then goes away, the drm device will be brought down because
+> of that link (with two references, but that is irrelevant). When
+> the drm device is brought down, it will (presumably) bring down the
+> bridge as well (which will fix the refcount as the bridge link is
+> killed as part of that).
 > 
->> WLED peripheral has over voltage protection(OVP) circuitry and the OVP
->> fault is notified through an interrupt. Though this fault condition 
->> rising
->> is due to an incorrect hardware configuration is mitigated in the 
->> hardware,
->> it still needs to be detected and handled. Add support for it.
->> 
->> When WLED module is enabled, keep OVP fault interrupt disabled for 10 
->> ms to
->> account for soft start delay.
->> 
->> Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
->> ---
->>  drivers/video/backlight/qcom-wled.c | 118 
->> +++++++++++++++++++++++++++++++++++-
->>  1 file changed, 116 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/video/backlight/qcom-wled.c 
->> b/drivers/video/backlight/qcom-wled.c
->> index 2cfba77..80ae084 100644
->> --- a/drivers/video/backlight/qcom-wled.c
->> +++ b/drivers/video/backlight/qcom-wled.c
->> @@ -23,14 +23,20 @@
->> 
->>  /* From DT binding */
->>  #define WLED_DEFAULT_BRIGHTNESS				2048
->> -
->> +#define WLED_SOFT_START_DLY_US				10000
->>  #define WLED3_SINK_REG_BRIGHT_MAX			0xFFF
->> 
->>  /* WLED3 Control registers */
->>  #define WLED3_CTRL_REG_FAULT_STATUS			0x08
->> +#define  WLED3_CTRL_REG_ILIM_FAULT_BIT			BIT(0)
->> +#define  WLED3_CTRL_REG_OVP_FAULT_BIT			BIT(1)
->> +#define  WLED4_CTRL_REG_SC_FAULT_BIT			BIT(2)
->> +
->> +#define WLED3_CTRL_REG_INT_RT_STS			0x10
->> 
->>  #define WLED3_CTRL_REG_MOD_EN				0x46
->>  #define  WLED3_CTRL_REG_MOD_EN_MASK			BIT(7)
->> +#define  WLED3_CTRL_REG_MOD_EN_BIT			BIT(7)
+
+I guess you are right. If everything is done correctly the both links
+should get removed in the tear down situation and all should be fine.
+
+
+> Or have you done some test and seen an actual problem?
 > 
-> "BIT(7)" is not a "bit" it's a "mask", so perhaps you could use the
-> define with that name...which has the same value?
-> 
-Sure. I will change it in next series.
->> 
->>  #define WLED3_CTRL_REG_FREQ				0x4c
->>  #define  WLED3_CTRL_REG_FREQ_MASK			GENMASK(3, 0)
->> @@ -161,9 +167,12 @@ struct wled {
->>  	u32 short_count;
->>  	const int *version;
->>  	int short_irq;
->> +	int ovp_irq;
->>  	bool force_mod_disable;
->> +	bool ovp_irq_disabled;
->> 
->>  	struct wled_config cfg;
->> +	struct delayed_work ovp_work;
->>  	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
->>  	int (*wled_sync_toggle)(struct wled *wled);
->>  };
->> @@ -209,6 +218,32 @@ static int wled4_set_brightness(struct wled 
->> *wled, u16 brightness)
->>  	return 0;
->>  }
->> 
->> +static void wled_ovp_work(struct work_struct *work)
->> +{
->> +	u32 val;
->> +	int rc;
->> +
->> +	struct wled *wled = container_of(work,
->> +					 struct wled, ovp_work.work);
->> +
->> +	rc = regmap_read(wled->regmap, wled->ctrl_addr + 
->> WLED3_CTRL_REG_MOD_EN,
->> +			 &val);
->> +	if (rc < 0)
->> +		return;
->> +
->> +	if (val & WLED3_CTRL_REG_MOD_EN_BIT) {
->> +		if (wled->ovp_irq > 0 && wled->ovp_irq_disabled) {
->> +			enable_irq(wled->ovp_irq);
->> +			wled->ovp_irq_disabled = false;
->> +		}
->> +	} else {
->> +		if (wled->ovp_irq > 0 && !wled->ovp_irq_disabled) {
->> +			disable_irq(wled->ovp_irq);
->> +			wled->ovp_irq_disabled = true;
->> +		}
->> +	}
->> +}
->> +
->>  static int wled_module_enable(struct wled *wled, int val)
->>  {
->>  	int rc;
->> @@ -220,7 +255,12 @@ static int wled_module_enable(struct wled *wled, 
->> int val)
->>  				WLED3_CTRL_REG_MOD_EN,
->>  				WLED3_CTRL_REG_MOD_EN_MASK,
->>  				WLED3_CTRL_REG_MOD_EN_MASK);
->> -	return rc;
->> +	if (rc < 0)
->> +		return rc;
->> +
->> +	schedule_delayed_work(&wled->ovp_work, WLED_SOFT_START_DLY_US);
-> 
-> Do you really want to delay the work on disable?
-> 
-> Wouldn't it be better to use a delay worker for the enablement and in
-> the disable case you cancel the work and just disable_irq() directly
-> here.
-> 
-Sure. Will do it in the next series.
-> But more importantly, if this is only related to auto detection, do you
-> really want to enable/disable the ovp_irq after you have detected the
-> string configuration?
-> 
-Ok. This is used for the genuine OVP detection and for the auto 
-detection as well.
->> +
->> +	return 0;
->>  }
->> 
->>  static int wled3_sync_toggle(struct wled *wled)
->> @@ -346,6 +386,36 @@ static irqreturn_t wled_short_irq_handler(int 
->> irq, void *_wled)
->>  	return IRQ_HANDLED;
->>  }
->> 
->> +static irqreturn_t wled_ovp_irq_handler(int irq, void *_wled)
->> +{
->> +	struct wled *wled = _wled;
->> +	int rc;
->> +	u32 int_sts, fault_sts;
->> +
->> +	rc = regmap_read(wled->regmap,
->> +			 wled->ctrl_addr + WLED3_CTRL_REG_INT_RT_STS, &int_sts);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Error in reading WLED3_INT_RT_STS rc=%d\n",
->> +			rc);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	rc = regmap_read(wled->regmap, wled->ctrl_addr +
->> +			 WLED3_CTRL_REG_FAULT_STATUS, &fault_sts);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Error in reading WLED_FAULT_STATUS rc=%d\n",
->> +			rc);
->> +		return IRQ_HANDLED;
->> +	}
->> +
->> +	if (fault_sts &
->> +		(WLED3_CTRL_REG_OVP_FAULT_BIT | WLED3_CTRL_REG_ILIM_FAULT_BIT))
->> +		dev_dbg(wled->dev, "WLED OVP fault detected, int_sts=%x fault_sts= 
->> %x\n",
->> +			int_sts, fault_sts);
->> +
-> 
-> It's hard to give a good review on this, as the actual logic comes in
-> the next patch. And as these two patches both implement auto detection
-> (without a clear separation) I think you should squash them.
-> Ok. I will squash them in the next series.
->> +	return IRQ_HANDLED;
->> +}
->> +
->>  static int wled3_setup(struct wled *wled)
->>  {
->>  	u16 addr;
->> @@ -821,6 +891,44 @@ static int wled_configure_short_irq(struct wled 
->> *wled,
->>  	return rc;
->>  }
->> 
->> +static int wled_configure_ovp_irq(struct wled *wled,
->> +				  struct platform_device *pdev)
->> +{
->> +	int rc = 0;
->> +	u32 val;
->> +
->> +	if (*wled->version == WLED_PM8941)
->> +		return 0;
->> +
->> +	wled->ovp_irq = platform_get_irq_byname(pdev, "ovp");
->> +	if (wled->ovp_irq < 0) {
->> +		dev_dbg(&pdev->dev, "ovp irq is not used\n");
->> +		return 0;
->> +	}
->> +
->> +	rc = devm_request_threaded_irq(wled->dev, wled->ovp_irq, NULL,
->> +				       wled_ovp_irq_handler, IRQF_ONESHOT,
->> +				       "wled_ovp_irq", wled);
->> +	if (rc < 0) {
->> +		dev_err(wled->dev, "Unable to request ovp_irq (err:%d)\n",
->> +			rc);
-> 
-> wled->ovp_irq might be > 0 here which means wled_ovp_work() will find 
-> it
-> valid and call enabled_irq()/disable_irq() on it.
-> 
-Ok. I will make it '0' if the "request_threaded_irq" fails.
->> +		return 0;
->> +	}
->> +
-> 
-> Regards,
-> Bjorn
+
+No testing, just a hunch.
+
+BR,
+Jyri
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
