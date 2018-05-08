@@ -1,40 +1,335 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755501AbeEHR1H (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:27:07 -0400
-Received: from mail-pf0-f172.google.com ([209.85.192.172]:41982 "EHLO
-        mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755328AbeEHR1G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:27:06 -0400
-X-Google-Smtp-Source: AB8JxZoNDr0WlGtzMmGxfjxWk74OXPNXZF9lFD0Ur1AfXZpEOCZis30puWI8x9qDwkkGP7daixahaw==
-Date: Tue, 8 May 2018 10:27:03 -0700
-From: Sami Tolvanen <samitolvanen@google.com>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-ioctl: fix function types for
- IOCTL_INFO_STD
-Message-ID: <20180508172703.GA5503@samitolvanen.mtv.corp.google.com>
-References: <44310a2b-2797-223c-fab4-0214490e5201@xs4all.nl>
- <20180507205135.88398-1-samitolvanen@google.com>
- <a627c61e-f227-297c-087e-c2a701b46a64@xs4all.nl>
- <20180508171759.GA184279@samitolvanen.mtv.corp.google.com>
- <2a04c948-82ba-c69f-891e-303db85b66a4@xs4all.nl>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2a04c948-82ba-c69f-891e-303db85b66a4@xs4all.nl>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1755466AbeEHR2j (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:28:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753062AbeEHR2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 13:28:38 -0400
+From: Andy Lutomirski <luto@kernel.org>
+To: x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH] selftests/x86: Add mov_to_ss
+Date: Tue,  8 May 2018 10:28:35 -0700
+Message-Id: <67e08b69817171da8026e0eb3af0214b06b4d74f.1525800455.git.luto@kernel.org>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 07:22:21PM +0200, Hans Verkuil wrote:
-> This looks good, I would just rename DEFINE_IOCTL_FNC to DEFINE_V4L_STUB_FUNC.
-> This makes it clear that it defines a v4l stub function.
+This exercises a nasty corner case of the x86 ISA.
 
-Sure, sounds good. I'll send v3 shortly. Thanks for the reviews!
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+---
+ tools/testing/selftests/x86/Makefile      |   2 +-
+ tools/testing/selftests/x86/mov_ss_trap.c | 285 ++++++++++++++++++++++
+ 2 files changed, 286 insertions(+), 1 deletion(-)
+ create mode 100644 tools/testing/selftests/x86/mov_ss_trap.c
 
-	Sami
+diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
+index d744991c0f4f..39f66bc29b82 100644
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@ -11,7 +11,7 @@ CAN_BUILD_X86_64 := $(shell ./check_cc.sh $(CC) trivial_64bit_program.c)
+ 
+ TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
+ 			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
+-			protection_keys test_vdso test_vsyscall
++			protection_keys test_vdso test_vsyscall mov_ss_trap
+ TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
+ 			test_FCMOV test_FCOMI test_FISTTP \
+ 			vdso_restorer
+diff --git a/tools/testing/selftests/x86/mov_ss_trap.c b/tools/testing/selftests/x86/mov_ss_trap.c
+new file mode 100644
+index 000000000000..3c3a022654f3
+--- /dev/null
++++ b/tools/testing/selftests/x86/mov_ss_trap.c
+@@ -0,0 +1,285 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * mov_ss_trap.c: Exercise the bizarre side effects of a watchpoint on MOV SS
++ *
++ * This does MOV SS from a watchpointed address followed by various
++ * types of kernel entries.  A MOV SS that hits a watchpoint will queue
++ * up a #DB trap but will not actually deliver that trap.  The trap
++ * will be delivered after the next instruction instead.  The CPU's logic
++ * seems to be:
++ *
++ *  - Any fault: drop the pending #DB trap.
++ *  - INT $N, INT3, INTO, SYSCALL, SYSENTER: enter the kernel and then
++ *    deliver #DB.
++ *  - ICEBP: enter the kernel but do not deliver the watchpoint trap
++ *  - breakpoint: only one #DB is delivered (phew!)
++ *
++ * There are plenty of ways for a kernel to handle this incorrectly.  This
++ * test tries to exercise all the cases.
++ *
++ * This should mostly cover CVE-2018-1087 and CVE-2018-8897.
++ */
++#define _GNU_SOURCE
++
++#include <stdlib.h>
++#include <sys/ptrace.h>
++#include <sys/types.h>
++#include <sys/wait.h>
++#include <sys/user.h>
++#include <sys/syscall.h>
++#include <unistd.h>
++#include <errno.h>
++#include <stddef.h>
++#include <stdio.h>
++#include <err.h>
++#include <string.h>
++#include <setjmp.h>
++#include <sys/prctl.h>
++
++#define X86_EFLAGS_RF (1UL << 16)
++
++#if __x86_64__
++# define REG_IP REG_RIP
++#else
++# define REG_IP REG_EIP
++#endif
++
++unsigned short ss;
++extern unsigned char breakpoint_insn[];
++sigjmp_buf jmpbuf;
++static unsigned char altstack_data[SIGSTKSZ];
++
++static void enable_watchpoint(void)
++{
++	pid_t parent = getpid();
++	int status;
++
++	pid_t child = fork();
++	if (child < 0)
++		err(1, "fork");
++
++	if (child) {
++		if (waitpid(child, &status, 0) != child)
++			err(1, "waitpid for child");
++	} else {
++		unsigned long dr0, dr1, dr7;
++
++		dr0 = (unsigned long)&ss;
++		dr1 = (unsigned long)breakpoint_insn;
++		dr7 = ((1UL << 1) |	/* G0 */
++		       (3UL << 16) |	/* RW0 = read or write */
++		       (1UL << 18) |	/* LEN0 = 2 bytes */
++		       (1UL << 3));	/* G1, RW1 = insn */
++
++		if (ptrace(PTRACE_ATTACH, parent, NULL, NULL) != 0)
++			err(1, "PTRACE_ATTACH");
++
++		if (waitpid(parent, &status, 0) != parent)
++			err(1, "waitpid for child");
++
++		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[0]), dr0) != 0)
++			err(1, "PTRACE_POKEUSER DR0");
++
++		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[1]), dr1) != 0)
++			err(1, "PTRACE_POKEUSER DR1");
++
++		if (ptrace(PTRACE_POKEUSER, parent, (void *)offsetof(struct user, u_debugreg[7]), dr7) != 0)
++			err(1, "PTRACE_POKEUSER DR7");
++
++		printf("\tDR0 = %lx, DR1 = %lx, DR7 = %lx\n", dr0, dr1, dr7);
++
++		if (ptrace(PTRACE_DETACH, parent, NULL, NULL) != 0)
++			err(1, "PTRACE_DETACH");
++
++		exit(0);
++	}
++}
++
++static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
++		       int flags)
++{
++	struct sigaction sa;
++	memset(&sa, 0, sizeof(sa));
++	sa.sa_sigaction = handler;
++	sa.sa_flags = SA_SIGINFO | flags;
++	sigemptyset(&sa.sa_mask);
++	if (sigaction(sig, &sa, 0))
++		err(1, "sigaction");
++}
++
++static char const * const signames[] = {
++	[SIGSEGV] = "SIGSEGV",
++	[SIGBUS] = "SIBGUS",
++	[SIGTRAP] = "SIGTRAP",
++	[SIGILL] = "SIGILL",
++};
++
++static void sigtrap(int sig, siginfo_t *si, void *ctx_void)
++{
++	ucontext_t *ctx = ctx_void;
++
++	printf("\tGot SIGTRAP with RIP=%lx, EFLAGS.RF=%d\n",
++	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP],
++	       !!(ctx->uc_mcontext.gregs[REG_EFL] & X86_EFLAGS_RF));
++}
++
++static void handle_and_return(int sig, siginfo_t *si, void *ctx_void)
++{
++	ucontext_t *ctx = ctx_void;
++
++	printf("\tGot %s with RIP=%lx\n", signames[sig],
++	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP]);
++}
++
++static void handle_and_longjmp(int sig, siginfo_t *si, void *ctx_void)
++{
++	ucontext_t *ctx = ctx_void;
++
++	printf("\tGot %s with RIP=%lx\n", signames[sig],
++	       (unsigned long)ctx->uc_mcontext.gregs[REG_IP]);
++
++	siglongjmp(jmpbuf, 1);
++}
++
++int main()
++{
++	unsigned long nr;
++
++	asm volatile ("mov %%ss, %[ss]" : [ss] "=m" (ss));
++	printf("\tSS = 0x%hx, &SS = 0x%p\n", ss, &ss);
++
++	if (prctl(PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0) == 0)
++		printf("\tPR_SET_PTRACER_ANY succeeded\n");
++
++	printf("\tSet up a watchpoint\n");
++	sethandler(SIGTRAP, sigtrap, 0);
++	enable_watchpoint();
++
++	printf("[RUN]\tRead from watched memory (should get SIGTRAP)\n");
++	asm volatile ("mov %[ss], %[tmp]" : [tmp] "=r" (nr) : [ss] "m" (ss));
++
++	printf("[RUN]\tMOV SS; INT3\n");
++	asm volatile ("mov %[ss], %%ss; int3" :: [ss] "m" (ss));
++
++	printf("[RUN]\tMOV SS; INT 3\n");
++	asm volatile ("mov %[ss], %%ss; .byte 0xcd, 0x3" :: [ss] "m" (ss));
++
++	printf("[RUN]\tMOV SS; CS CS INT3\n");
++	asm volatile ("mov %[ss], %%ss; .byte 0x2e, 0x2e; int3" :: [ss] "m" (ss));
++
++	printf("[RUN]\tMOV SS; CSx14 INT3\n");
++	asm volatile ("mov %[ss], %%ss; .fill 14,1,0x2e; int3" :: [ss] "m" (ss));
++
++	printf("[RUN]\tMOV SS; INT 4\n");
++	sethandler(SIGSEGV, handle_and_return, SA_RESETHAND);
++	asm volatile ("mov %[ss], %%ss; int $4" :: [ss] "m" (ss));
++
++#ifdef __i386__
++	printf("[RUN]\tMOV SS; INTO\n");
++	sethandler(SIGSEGV, handle_and_return, SA_RESETHAND);
++	nr = -1;
++	asm volatile ("add $1, %[tmp]; mov %[ss], %%ss; into"
++		      : [tmp] "+r" (nr) : [ss] "m" (ss));
++#endif
++
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		printf("[RUN]\tMOV SS; ICEBP\n");
++
++		/* Some emulators (e.g. QEMU TCG) don't emulate ICEBP. */
++		sethandler(SIGILL, handle_and_longjmp, SA_RESETHAND);
++
++		asm volatile ("mov %[ss], %%ss; .byte 0xf1" :: [ss] "m" (ss));
++	}
++
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		printf("[RUN]\tMOV SS; CLI\n");
++		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
++		asm volatile ("mov %[ss], %%ss; cli" :: [ss] "m" (ss));
++	}
++
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		printf("[RUN]\tMOV SS; #PF\n");
++		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
++		asm volatile ("mov %[ss], %%ss; mov (-1), %[tmp]"
++			      : [tmp] "=r" (nr) : [ss] "m" (ss));
++	}
++
++	/*
++	 * INT $1: if #DB has DPL=3 and there isn't special handling,
++	 * then the kernel will die.
++	 */
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		printf("[RUN]\tMOV SS; INT 1\n");
++		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
++		asm volatile ("mov %[ss], %%ss; int $1" :: [ss] "m" (ss));
++	}
++
++#ifdef __x86_64__
++	/*
++	 * In principle, we should test 32-bit SYSCALL as well, but
++	 * the calling convention is so unpredictable that it's
++	 * not obviously worth the effort.
++	 */
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		printf("[RUN]\tMOV SS; SYSCALL\n");
++		sethandler(SIGILL, handle_and_longjmp, SA_RESETHAND);
++		nr = SYS_getpid;
++		/*
++		 * Toggle the high bit of RSP to make it noncanonical to
++		 * strengthen this test on non-SMAP systems.
++		 */
++		asm volatile ("btc $63, %%rsp\n\t"
++			      "mov %[ss], %%ss; syscall\n\t"
++			      "btc $63, %%rsp"
++			      : "+a" (nr) : [ss] "m" (ss)
++			      : "rcx"
++#ifdef __x86_64__
++				, "r11"
++#endif
++			);
++	}
++#endif
++
++	printf("[RUN]\tMOV SS; breakpointed NOP\n");
++	asm volatile ("mov %[ss], %%ss; breakpoint_insn: nop" :: [ss] "m" (ss));
++
++	/*
++	 * Invoking SYSENTER directly breaks all the rules.  Just handle
++	 * the SIGSEGV.
++	 */
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		printf("[RUN]\tMOV SS; SYSENTER\n");
++		stack_t stack = {
++			.ss_sp = altstack_data,
++			.ss_size = SIGSTKSZ,
++		};
++		if (sigaltstack(&stack, NULL) != 0)
++			err(1, "sigaltstack");
++		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND | SA_ONSTACK);
++		nr = SYS_getpid;
++		asm volatile ("mov %[ss], %%ss; SYSENTER" : "+a" (nr)
++			      : [ss] "m" (ss) : "flags", "rcx"
++#ifdef __x86_64__
++				, "r11"
++#endif
++			);
++
++		/* We're unreachable here.  SYSENTER forgets RIP. */
++	}
++
++	if (sigsetjmp(jmpbuf, 1) == 0) {
++		printf("[RUN]\tMOV SS; INT $0x80\n");
++		sethandler(SIGSEGV, handle_and_longjmp, SA_RESETHAND);
++		nr = 20;	/* compat getpid */
++		asm volatile ("mov %[ss], %%ss; int $0x80"
++			      : "+a" (nr) : [ss] "m" (ss)
++			      : "flags"
++#ifdef __x86_64__
++				, "r8", "r9", "r10", "r11"
++#endif
++			);
++	}
++
++	printf("[OK]\tI aten't dead\n");
++	return 0;
++}
+-- 
+2.17.0
