@@ -1,61 +1,89 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752612AbeEHLDo (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 07:03:44 -0400
-Received: from forward3j.cmail.yandex.net ([5.255.227.21]:41816 "EHLO
-        forward3j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750973AbeEHLDn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 07:03:43 -0400
-Authentication-Results: mxback6j.mail.yandex.net; dkim=pass header.i=@yandex.ru
-From: Evgeniy Polyakov <zbr@ioremap.net>
-Envelope-From: drustafa@yandex.ru
-To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-In-Reply-To: <cd5b6e6a8d51820ee158127cdd50e44645c44ee7.1525684985.git.mchehab+samsung@kernel.org>
-References: <cover.1525684985.git.mchehab+samsung@kernel.org><cover.1525684985.git.mchehab+samsung@kernel.org> <cd5b6e6a8d51820ee158127cdd50e44645c44ee7.1525684985.git.mchehab+samsung@kernel.org>
-Subject: Re: [PATCH 18/18] w1: w1_io.c: fix a kernel-doc warning
+        id S1753062AbeEHLEg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 07:04:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:56356 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752239AbeEHLEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 07:04:35 -0400
+From: Punit Agrawal <punit.agrawal@arm.com>
+To: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, peterz@infradead.org,
+        kirill@shutemov.name, ak@linux.intel.com, dave@stgolabs.net,
+        jack@suse.cz, Matthew Wilcox <willy@infradead.org>,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, paulus@samba.org,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        hpa@zytor.com, Will Deacon <will.deacon@arm.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>, kemi.wang@intel.com,
+        sergey.senozhatsky.work@gmail.com,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Ganesh Mahendran <opensource.ganesh@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        haren@linux.vnet.ibm.com, khandual@linux.vnet.ibm.com,
+        npiggin@gmail.com, bsingharora@gmail.com, paulmck@linux.vnet.ibm.com,
+        Tim Chen <tim.c.chen@linux.intel.com>, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org
+Subject: Re: [PATCH v10 02/25] x86/mm: define ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+References: <1523975611-15978-1-git-send-email-ldufour@linux.vnet.ibm.com>
+        <1523975611-15978-3-git-send-email-ldufour@linux.vnet.ibm.com>
+Date: Tue, 08 May 2018 12:04:32 +0100
+In-Reply-To: <1523975611-15978-3-git-send-email-ldufour@linux.vnet.ibm.com>
+        (Laurent Dufour's message of "Tue, 17 Apr 2018 16:33:08 +0200")
+Message-ID: <87sh72jtmn.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Message-Id: <702861525777419@web22j.yandex.ru>
-X-Mailer: Yamail [ http://yandex.ru ] 5.0
-Date: Tue, 08 May 2018 14:03:39 +0300
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Hi Laurent,
 
-07.05.2018, 12:36, "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>:
-> Add a blank line to avoid this Sphinx warning:
->         ./drivers/w1/w1_io.c:197: WARNING: Definition list ends without a blank line; unexpected unindent.
+Laurent Dufour <ldufour@linux.vnet.ibm.com> writes:
+
+> Set ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT which turns on the
+> Speculative Page Fault handler when building for 64bit.
 >
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
-Looks good to me, thank you!
-What tree should this be forwarded to, or folks from linux doc will pick it up?
-
-Acked-by: Evgeniy Polyakov <zbr@ioremap.net>
-
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
 > ---
->  drivers/w1/w1_io.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/x86/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> diff --git a/drivers/w1/w1_io.c b/drivers/w1/w1_io.c
-> index 075d120e7b88..0364d3329c52 100644
-> --- a/drivers/w1/w1_io.c
-> +++ b/drivers/w1/w1_io.c
-> @@ -194,6 +194,7 @@ static u8 w1_read_bit(struct w1_master *dev)
->   * bit 0 = id_bit
->   * bit 1 = comp_bit
->   * bit 2 = dir_taken
-> + *
->   * If both bits 0 & 1 are set, the search should be restarted.
->   *
->   * Return: bit fields - see above
-> --
-> 2.17.0
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index d8983df5a2bc..ebdeb48e4a4a 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -30,6 +30,7 @@ config X86_64
+>  	select MODULES_USE_ELF_RELA
+>  	select X86_DEV_DMA_OPS
+>  	select ARCH_HAS_SYSCALL_WRAPPER
+> +	select ARCH_SUPPORTS_SPECULATIVE_PAGE_FAULT
+
+I'd suggest merging this patch with the one making changes to the
+architectural fault handler towards the end of the series.
+
+The Kconfig change is closely tied to the architectural support for SPF
+and makes sense to be in a single patch.
+
+If there's a good reason to keep them as separate patches, please move
+the architecture Kconfig changes after the patch adding fault handler
+changes.
+
+It's better to enable the feature once the core infrastructure is merged
+rather than at the beginning of the series to avoid potential bad
+fallout from incomplete functionality during bisection.
+
+All the comments here definitely hold for the arm64 patches that you
+plan to include with the next update.
+
+Thanks,
+Punit
+
+>  
+>  #
+>  # Arch settings
