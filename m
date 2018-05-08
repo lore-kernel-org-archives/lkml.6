@@ -1,38 +1,38 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZoV6Ob8/Vfs9PukfU7njS2wm/k4G3s7ESSBL6kjCSITc+An4jXDclHFOa4sqWncOH7mbVQH
-ARC-Seal: i=1; a=rsa-sha256; t=1525767464; cv=none;
+X-Google-Smtp-Source: AB8JxZqQj+nccOrgXbZa8lSbRZh775UPAExge6R5OsEDTYJ/ffcClI9lslYXNl2SNqjuahEAlMtY
+ARC-Seal: i=1; a=rsa-sha256; t=1525767461; cv=none;
         d=google.com; s=arc-20160816;
-        b=ffqimNV8uHnFdCXDGuTaDgrJpBvuvBDi4q7IyHigCjmk4hLNXNJvB/ShvQxkRcfCA6
-         j5Iz3Ddkg9/VTTwAxwmprQ6IHZ2cZaSKAfAHx+eZoK1qZ2HGcA9NRYAWb19/Kv/cdUFK
-         L46sQ6U4pArRG+yAtDcni3j+RTAHT/4PSaR6tYGdtSMG3jcSu7OQsWfsMA4ANMVomp6M
-         yoKrsHwJ7cQ3vlcBZSGiQURZ1bs/fvTIyDXtoZ7wrheqmvJKTGQbxjwR8kIIXtu47zAn
-         GqM+83ACN2e/VmzwLagZjd0HcEHve3pxy5Azh5d6JIbhdkIrqhn8ULumWgIxtch0TaCb
-         68hg==
+        b=WXn+jEz/eGMaP/Yfp4hAaLBaHYRQbjKZMGCnOoKEEPvjMyddjiD9NgAQsUYXc3IvFW
+         JVNongv8uREJ9Bt9YUItEkuiFFSvCZHYZqzcC9C/fY82CR4nrIUrCkq4hyHUep4H96Tt
+         h4dFeO1bt6a0lV82RJlqJVpkTUqCvnkh1FJdBZySk6pvpornsuVfRR+ibhhaBQDvqALf
+         zboViZt4RWMQIiBeH/vvVx9i3lcxeCbGDsSza3EfiaVkxx7Kfiue9DrPdPworUda3Msa
+         xXFONSCrd28dQixg8T4ec+sHOfzU/UaThXidRY83162Taq/vaxLuvpwXGtfhQ0pewAbN
+         4rHQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=IacX2BzvetAa1EfsHtmEW4NCd/osMzi/BmMgVdbvMao=;
-        b=hdaNrZNHwa8kP6dDkpZMVMiDv+ctqbYzHWCLyE22AmO8sh8O8upw36VNErD0mfRAY1
-         q02mRbS93cRqW20ChvKH9/uz76WlatuBeY7aKLFncPf9h63V8y7iBzvzaaoc4maabDKo
-         DjsfVoAfbE6hx0haPHQivNvwOBTcx+wAE2/ouCxQLzNkB+9v3ynKHf8xXQA57simvWKL
-         8NTXE9Ud1/zTv6554d3L4Coqlg1MftfHQef639gYvU4M2DrSE9jEtR6D5kHKXflNEN/K
-         +cnvHqdVuS9rwb5tOGJLfGidTwTZukH0jaIjEP2VtQldaNTM3DEc1uZWZErfdse3YN8h
-         lCsA==
+        bh=MNbwDK4dosvT/jymdRXYbPPOhsBQ0KhVHMOhAKvLQdQ=;
+        b=PKwZPda/KZb3vK5NO/pTOgCxo9y4bqchjvePTAFEx654O9aux0G9cqpadbK1L/Q29r
+         rUwsbUuJ8XtjQniBxQWLuWlvSrjd3z6UfIuCcqi1u96CBGmaMcySJCzcJg8PvcIiK6of
+         v0pJop4punnC+SELQvjmd0OsvSKYbFfQ7hwtTQwkh1e5/4x8aImQLXyoo9fvImD3g90B
+         p7oQ3vjJp89hoH/QpcKUg4e9PaocBv2R9CHObQXtIO7BGTTpqlGrxmQTp0eO90sqw1gD
+         t6G33MtlGF4AGigoNJ7PpoxodmOIBkqCUkcMAdEPgEeFaImcZofRk+dNIUN1P4YYZ/uT
+         2DQA==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=l935z0vk;
+       dkim=pass header.i=@kernel.org header.s=default header.b=z4sig5fx;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=l935z0vk;
+       dkim=pass header.i=@kernel.org header.s=default header.b=z4sig5fx;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Elvinas <elvinas@veikia.lt>
-Subject: [PATCH 4.9 26/32] USB: Accept bulk endpoints with 1024-byte maxpacket
-Date: Tue,  8 May 2018 10:11:06 +0200
-Message-Id: <20180508074012.987088720@linuxfoundation.org>
+	Andrey Konovalov <andreyknvl@google.com>,
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 25/32] USB: serial: visor: handle potential invalid device configuration
+Date: Tue,  8 May 2018 10:11:05 +0200
+Message-Id: <20180508074012.883778471@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074008.800421598@linuxfoundation.org>
 References: <20180508074008.800421598@linuxfoundation.org>
@@ -42,8 +42,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599882900535348958?=
-X-GMAIL-MSGID: =?utf-8?q?1599883145240046537?=
+X-GMAIL-THRID: =?utf-8?q?1599882894176244438?=
+X-GMAIL-MSGID: =?utf-8?q?1599883142016107543?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,40 +51,113 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Alan Stern <stern@rowland.harvard.edu>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit fb5ee84ea72c5f1b6cabdd1c9d6e8648995ca7c6 upstream.
+commit 4842ed5bfcb9daf6660537d70503c18d38dbdbb8 upstream.
 
-Some non-compliant high-speed USB devices have bulk endpoints with a
-1024-byte maxpacket size.  Although such endpoints don't work with
-xHCI host controllers, they do work with EHCI controllers.  We used to
-accept these invalid sizes (with a warning), but we no longer do
-because of an unintentional change introduced by commit aed9d65ac327
-("USB: validate wMaxPacketValue entries in endpoint descriptors").
+If we get an invalid device configuration from a palm 3 type device, we
+might incorrectly parse things, and we have the potential to crash in
+"interesting" ways.
 
-This patch restores the old behavior, so that people with these
-peculiar devices can use them without patching their kernels by hand.
+Fix this up by verifying the size of the configuration passed to us by
+the device, and only if it is correct, will we handle it.
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Suggested-by: Elvinas <elvinas@veikia.lt>
-Fixes: aed9d65ac327 ("USB: validate wMaxPacketValue entries in endpoint descriptors")
-CC: <stable@vger.kernel.org>
+Note that this also fixes an information leak of slab data.
+
+Reported-by: Andrey Konovalov <andreyknvl@google.com>
+Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[ johan: add comment about the info leak ]
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/config.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/serial/visor.c |   69 ++++++++++++++++++++++-----------------------
+ 1 file changed, 35 insertions(+), 34 deletions(-)
 
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -186,7 +186,9 @@ static const unsigned short full_speed_m
- static const unsigned short high_speed_maxpacket_maxes[4] = {
- 	[USB_ENDPOINT_XFER_CONTROL] = 64,
- 	[USB_ENDPOINT_XFER_ISOC] = 1024,
--	[USB_ENDPOINT_XFER_BULK] = 512,
+--- a/drivers/usb/serial/visor.c
++++ b/drivers/usb/serial/visor.c
+@@ -338,47 +338,48 @@ static int palm_os_3_probe(struct usb_se
+ 		goto exit;
+ 	}
+ 
+-	if (retval == sizeof(*connection_info)) {
+-			connection_info = (struct visor_connection_info *)
+-							transfer_buffer;
+-
+-		num_ports = le16_to_cpu(connection_info->num_ports);
+-		for (i = 0; i < num_ports; ++i) {
+-			switch (
+-			   connection_info->connections[i].port_function_id) {
+-			case VISOR_FUNCTION_GENERIC:
+-				string = "Generic";
+-				break;
+-			case VISOR_FUNCTION_DEBUGGER:
+-				string = "Debugger";
+-				break;
+-			case VISOR_FUNCTION_HOTSYNC:
+-				string = "HotSync";
+-				break;
+-			case VISOR_FUNCTION_CONSOLE:
+-				string = "Console";
+-				break;
+-			case VISOR_FUNCTION_REMOTE_FILE_SYS:
+-				string = "Remote File System";
+-				break;
+-			default:
+-				string = "unknown";
+-				break;
+-			}
+-			dev_info(dev, "%s: port %d, is for %s use\n",
+-				serial->type->description,
+-				connection_info->connections[i].port, string);
+-		}
++	if (retval != sizeof(*connection_info)) {
++		dev_err(dev, "Invalid connection information received from device\n");
++		retval = -ENODEV;
++		goto exit;
+ 	}
+-	/*
+-	* Handle devices that report invalid stuff here.
+-	*/
 +
-+	/* Bulk should be 512, but some devices use 1024: we will warn below */
-+	[USB_ENDPOINT_XFER_BULK] = 1024,
- 	[USB_ENDPOINT_XFER_INT] = 1024,
- };
- static const unsigned short super_speed_maxpacket_maxes[4] = {
++	connection_info = (struct visor_connection_info *)transfer_buffer;
++
++	num_ports = le16_to_cpu(connection_info->num_ports);
++
++	/* Handle devices that report invalid stuff here. */
+ 	if (num_ports == 0 || num_ports > 2) {
+ 		dev_warn(dev, "%s: No valid connect info available\n",
+ 			serial->type->description);
+ 		num_ports = 2;
+ 	}
+ 
++	for (i = 0; i < num_ports; ++i) {
++		switch (connection_info->connections[i].port_function_id) {
++		case VISOR_FUNCTION_GENERIC:
++			string = "Generic";
++			break;
++		case VISOR_FUNCTION_DEBUGGER:
++			string = "Debugger";
++			break;
++		case VISOR_FUNCTION_HOTSYNC:
++			string = "HotSync";
++			break;
++		case VISOR_FUNCTION_CONSOLE:
++			string = "Console";
++			break;
++		case VISOR_FUNCTION_REMOTE_FILE_SYS:
++			string = "Remote File System";
++			break;
++		default:
++			string = "unknown";
++			break;
++		}
++		dev_info(dev, "%s: port %d, is for %s use\n",
++			serial->type->description,
++			connection_info->connections[i].port, string);
++	}
+ 	dev_info(dev, "%s: Number of ports: %d\n", serial->type->description,
+ 		num_ports);
+ 
