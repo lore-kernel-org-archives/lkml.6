@@ -1,246 +1,84 @@
-Return-Path: <baolin.wang@linaro.org>
-ARC-Seal: i=1; a=rsa-sha256; t=1525685380; cv=none;
+Return-Path: <jhogan@kernel.org>
+X-Google-Smtp-Source: AB8JxZpm1MPU7C9hZyAok9nYRwv8ID75pKzqq9/i7vWkZYiD1K12kaD9l7S8z50dNq4CyEyLeu+Q
+ARC-Seal: i=1; a=rsa-sha256; t=1525819525; cv=none;
         d=google.com; s=arc-20160816;
-        b=RcqWUkQ2P/g2Uz/3uD3gbtBreN/JT98x358PQF77bYK3QqFBopiwyMxf+HwuU1YvYR
-         P1U5oNk2WrlC3hyuYBmd0QDDPqji65yzpn85P535QOQVKmFw0G8NIv88DnbL1CNXlgMB
-         QHZpXZNtFazAP2Sg9FTKrpcpdrq65oPFx7P+T1l0Arqj2/g0b2qxGnBGKheB08+7NGQu
-         ZRlPf9acT6QB5vR7Sg4KAvfzfAQ4p6tkL7a7EJwOEpjlF9st2JQZyBbKkyfsmt1NobPr
-         N3d6ABC7XpjtqN9AhVHs870HsXrNFdfk1HFDkX2bbaJE94ni5zw9yUJNw7Ie8neCoY7Y
-         UIPg==
+        b=srCHKcf/TK/6dOfZM75wJZKoMmjNjokv5inrlzIXZ0NsMw3cQeXRPhMIEgLtXfwO4g
+         hfXIh5oBH+n/jB1dfkD7jGxS7b+sWBrhZFwdV6J+cNXl4Xu9ynzu+sUfOIPNASKvMYq9
+         J7NoyaQGO+IsRi90h7Wi1YU52tSGyFeBrMmBjHY34p6+N2EWY+2CTteB+gmXbDnXMVbr
+         YaBE4l7HK/VARpF1krfZJmrvhTjLrvhJM/KAbiXRzwflhEnBMVDhL1sZGXQ0/3kkgWXv
+         LDyJWAHAy9w2KBke7R6rvrHoAvBM1X8v8s6h6TyBXhuT3746XbD8bQiu7U++YCFYweYP
+         OdFg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=message-id:date:subject:cc:to:from:dkim-signature
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:dkim-signature
          :arc-authentication-results;
-        bh=2rJNs4E1e+dE9mJC2hUBQACnIonHWogaCNotKEm3Mog=;
-        b=njdmHsjnZtNwVosxjjPIrdXqmf/b5YGR/O7JB0Mfg4FqD4kFu35D2R+PWq4eTQVvli
-         igESrtw77xVLfGf2B8FaOe3+kuRBaIhYaESHdvXhy8DifE2JWkMwqKPkXBB/fWDDMQaP
-         2B/iRmDFrfGsSjpKLswVpqtnYZCWVlFn/e2wLtdhm2rtsAlJTa9bjQGyrwsmjmPpTIh2
-         l7ed7i9OlQEhY9l3krYklCJNnOKHxOPz2cwol+HMa1zBMz4yu9ckh1MJYSnkhea/hKft
-         npncytaHv0sQ6dgPWPEpM/qCR9ILT29GUPdDFE9t1MYCJlJvwOIfUO7ceXvatcYx1XR9
-         udRg==
+        bh=bWzQB5Pav3J3AR4KDRiDYlErkM3fc1Ngu1YdgM2oPyI=;
+        b=XmZy0aaYKIUNauO4GkFEaSZYoAmGl8Md9xklx0jrG3EIKYVwvh7tpn8wpscjvYSzE4
+         S/jZlG/8XY7ycdxa3iVxVsAS4MWJsvwbgaeHu5w8gXg+9HbRoQfjNQOK7nK/ArvSRC0D
+         sCTqIBw9XqEqnLDcWapP4lUaGe6EEP/sXlgtG3yMM6MQjGGhBWZUt8Xv8JcDD07r69bR
+         E0uvDQ7tZkT1YCyHfl/nwGvWadDVI40ThUrRTPA/7Rx1bAQyVuldvCUv9gepesQcYtUJ
+         ni7MWZ6GzMug4bR/X1MFGHLw+FgXZ0rK8/b260/HSy8cKWSBiZaqr+UVr/WxKSb/ZwyS
+         k1rw==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=daou/Fxq;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
+       dkim=pass header.i=@kernel.org header.s=default header.b=vbqLFbBY;
+       spf=pass (google.com: domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@linaro.org header.s=google header.b=daou/Fxq;
-       spf=pass (google.com: domain of baolin.wang@linaro.org designates 209.85.220.65 as permitted sender) smtp.mailfrom=baolin.wang@linaro.org;
-       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=linaro.org
-X-Google-Smtp-Source: AB8JxZpoWD0xrc3qigqYUPsQHVPeLBWa4paIaTtKwcg1q8CgKiBE+nPEcDO7a2xzcJd0oXDCyZnsWA==
-From: Baolin Wang <baolin.wang@linaro.org>
-To: macro@linux-mips.org,
-	ralf@linux-mips.org,
-	jhogan@kernel.org,
-	chenhc@lemote.com
-Cc: kstewart@linuxfoundation.org,
-	gregkh@linuxfoundation.org,
-	tglx@linutronix.de,
-	pombredanne@nexb.com,
-	arnd@arndb.de,
-	broonie@kernel.org,
-	paul.burton@mips.com,
-	heiko@sntech.de,
-	daniel.lezcano@linaro.org,
-	viresh.kumar@linaro.org,
-	baolin.wang@linaro.org,
-	linux-mips@linux-mips.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] MIPS: Convert read_persistent_clock() to read_persistent_clock64()
-Date: Mon,  7 May 2018 17:28:27 +0800
-Message-Id: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525682212.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+       dkim=pass header.i=@kernel.org header.s=default header.b=vbqLFbBY;
+       spf=pass (google.com: domain of jhogan@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=jhogan@kernel.org;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=kernel.org
+Date: Tue, 8 May 2018 23:45:19 +0100
+From: James Hogan <jhogan@kernel.org>
+To: Baolin Wang <baolin.wang@linaro.org>
+Cc: macro@linux-mips.org, ralf@linux-mips.org, chenhc@lemote.com,
+	kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+	tglx@linutronix.de, pombredanne@nexb.com, arnd@arndb.de,
+	broonie@kernel.org, paul.burton@mips.com, heiko@sntech.de,
+	daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
+	linux-mips@linux-mips.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] MIPS: Convert read_persistent_clock() to
+ read_persistent_clock64()
+Message-ID: <20180508224519.GB14903@jamesdev>
+References: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525682212.git.baolin.wang@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="NDin8bjvE/0mNLFQ"
+Content-Disposition: inline
+In-Reply-To: <c26982955db16b8f790e7f5f2a5b63e42bc78192.1525682212.git.baolin.wang@linaro.org>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-THRID: =?utf-8?q?1599797073537984267?=
-X-GMAIL-MSGID: =?utf-8?q?1599797073537984267?=
+X-GMAIL-MSGID: =?utf-8?q?1599937735045488334?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Since struct timespec is not y2038 safe on 32bit machines, this patch
-converts read_persistent_clock() to read_persistent_clock64() using
-struct timespec64, as well as converting mktime() to mktime64().
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes since v2;
- - No updates.
+--NDin8bjvE/0mNLFQ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes since v1:
- - No updates.
----
- arch/mips/dec/time.c                   |    4 ++--
- arch/mips/include/asm/mc146818-time.h  |    4 ++--
- arch/mips/lasat/ds1603.c               |    2 +-
- arch/mips/loongson64/common/time.c     |    2 +-
- arch/mips/mti-malta/malta-time.c       |    2 +-
- arch/mips/sibyte/swarm/rtc_m41t81.c    |    4 ++--
- arch/mips/sibyte/swarm/rtc_xicor1241.c |    4 ++--
- arch/mips/sibyte/swarm/setup.c         |   10 +++++-----
- 8 files changed, 16 insertions(+), 16 deletions(-)
+On Mon, May 07, 2018 at 05:28:27PM +0800, Baolin Wang wrote:
+> Since struct timespec is not y2038 safe on 32bit machines, this patch
+> converts read_persistent_clock() to read_persistent_clock64() using
+> struct timespec64, as well as converting mktime() to mktime64().
+>=20
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 
-diff --git a/arch/mips/dec/time.c b/arch/mips/dec/time.c
-index a2a150e..9e992cf 100644
---- a/arch/mips/dec/time.c
-+++ b/arch/mips/dec/time.c
-@@ -19,7 +19,7 @@
- #include <asm/dec/ioasic.h>
- #include <asm/dec/machtype.h>
- 
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
- 	unsigned int year, mon, day, hour, min, sec, real_year;
- 	unsigned long flags;
-@@ -54,7 +54,7 @@ void read_persistent_clock(struct timespec *ts)
- 
- 	year += real_year - 72 + 2000;
- 
--	ts->tv_sec = mktime(year, mon, day, hour, min, sec);
-+	ts->tv_sec = mktime64(year, mon, day, hour, min, sec);
- 	ts->tv_nsec = 0;
- }
- 
-diff --git a/arch/mips/include/asm/mc146818-time.h b/arch/mips/include/asm/mc146818-time.h
-index 9e1ad26..cbf5cec 100644
---- a/arch/mips/include/asm/mc146818-time.h
-+++ b/arch/mips/include/asm/mc146818-time.h
-@@ -86,7 +86,7 @@ static inline int mc146818_set_rtc_mmss(unsigned long nowtime)
- 	return retval;
- }
- 
--static inline unsigned long mc146818_get_cmos_time(void)
-+static inline time64_t mc146818_get_cmos_time(void)
- {
- 	unsigned int year, mon, day, hour, min, sec;
- 	unsigned long flags;
-@@ -113,7 +113,7 @@ static inline unsigned long mc146818_get_cmos_time(void)
- 	spin_unlock_irqrestore(&rtc_lock, flags);
- 	year = mc146818_decode_year(year);
- 
--	return mktime(year, mon, day, hour, min, sec);
-+	return mktime64(year, mon, day, hour, min, sec);
- }
- 
- #endif /* __ASM_MC146818_TIME_H */
-diff --git a/arch/mips/lasat/ds1603.c b/arch/mips/lasat/ds1603.c
-index 8bd5cf8..d75c887 100644
---- a/arch/mips/lasat/ds1603.c
-+++ b/arch/mips/lasat/ds1603.c
-@@ -136,7 +136,7 @@ static void rtc_end_op(void)
- 	lasat_ndelay(1000);
- }
- 
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
- 	unsigned long word;
- 	unsigned long flags;
-diff --git a/arch/mips/loongson64/common/time.c b/arch/mips/loongson64/common/time.c
-index e1a5382a..0ba53c5 100644
---- a/arch/mips/loongson64/common/time.c
-+++ b/arch/mips/loongson64/common/time.c
-@@ -29,7 +29,7 @@ void __init plat_time_init(void)
- #endif
- }
- 
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
- 	ts->tv_sec = mc146818_get_cmos_time();
- 	ts->tv_nsec = 0;
-diff --git a/arch/mips/mti-malta/malta-time.c b/arch/mips/mti-malta/malta-time.c
-index 66c8667..d22b7ed 100644
---- a/arch/mips/mti-malta/malta-time.c
-+++ b/arch/mips/mti-malta/malta-time.c
-@@ -134,7 +134,7 @@ static void __init estimate_frequencies(void)
- 	}
- }
- 
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
- 	ts->tv_sec = mc146818_get_cmos_time();
- 	ts->tv_nsec = 0;
-diff --git a/arch/mips/sibyte/swarm/rtc_m41t81.c b/arch/mips/sibyte/swarm/rtc_m41t81.c
-index e624664..aa27a22 100644
---- a/arch/mips/sibyte/swarm/rtc_m41t81.c
-+++ b/arch/mips/sibyte/swarm/rtc_m41t81.c
-@@ -188,7 +188,7 @@ int m41t81_set_time(unsigned long t)
- 	return 0;
- }
- 
--unsigned long m41t81_get_time(void)
-+time64_t m41t81_get_time(void)
- {
- 	unsigned int year, mon, day, hour, min, sec;
- 	unsigned long flags;
-@@ -218,7 +218,7 @@ unsigned long m41t81_get_time(void)
- 
- 	year += 2000;
- 
--	return mktime(year, mon, day, hour, min, sec);
-+	return mktime64(year, mon, day, hour, min, sec);
- }
- 
- int m41t81_probe(void)
-diff --git a/arch/mips/sibyte/swarm/rtc_xicor1241.c b/arch/mips/sibyte/swarm/rtc_xicor1241.c
-index 50a82c4..a2121c1 100644
---- a/arch/mips/sibyte/swarm/rtc_xicor1241.c
-+++ b/arch/mips/sibyte/swarm/rtc_xicor1241.c
-@@ -168,7 +168,7 @@ int xicor_set_time(unsigned long t)
- 	return 0;
- }
- 
--unsigned long xicor_get_time(void)
-+time64_t xicor_get_time(void)
- {
- 	unsigned int year, mon, day, hour, min, sec, y2k;
- 	unsigned long flags;
-@@ -201,7 +201,7 @@ unsigned long xicor_get_time(void)
- 
- 	year += (y2k * 100);
- 
--	return mktime(year, mon, day, hour, min, sec);
-+	return mktime64(year, mon, day, hour, min, sec);
- }
- 
- int xicor_probe(void)
-diff --git a/arch/mips/sibyte/swarm/setup.c b/arch/mips/sibyte/swarm/setup.c
-index 494fb0a..7073940 100644
---- a/arch/mips/sibyte/swarm/setup.c
-+++ b/arch/mips/sibyte/swarm/setup.c
-@@ -58,11 +58,11 @@
- 
- extern int xicor_probe(void);
- extern int xicor_set_time(unsigned long);
--extern unsigned long xicor_get_time(void);
-+extern time64_t xicor_get_time(void);
- 
- extern int m41t81_probe(void);
- extern int m41t81_set_time(unsigned long);
--extern unsigned long m41t81_get_time(void);
-+extern time64_t m41t81_get_time(void);
- 
- const char *get_system_type(void)
- {
-@@ -87,9 +87,9 @@ enum swarm_rtc_type {
- 
- enum swarm_rtc_type swarm_rtc_type;
- 
--void read_persistent_clock(struct timespec *ts)
-+void read_persistent_clock64(struct timespec64 *ts)
- {
--	unsigned long sec;
-+	time64_t sec;
- 
- 	switch (swarm_rtc_type) {
- 	case RTC_XICOR:
-@@ -102,7 +102,7 @@ void read_persistent_clock(struct timespec *ts)
- 
- 	case RTC_NONE:
- 	default:
--		sec = mktime(2000, 1, 1, 0, 0, 0);
-+		sec = mktime64(2000, 1, 1, 0, 0, 0);
- 		break;
- 	}
- 	ts->tv_sec = sec;
--- 
-1.7.9.5
+Thanks, both applied for 4.18
+
+Cheers
+James
+
+--NDin8bjvE/0mNLFQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYIAB0WIQS7lRNBWUYtqfDOVL41zuSGKxAj8gUCWvIofgAKCRA1zuSGKxAj
+8lCAAQD2Yqz1A+LNvd4Ccu6BSMvg/mBzTF06itJxvH2+d8GIlQD5AX+UDPiQGbvE
+iLK9CKDHu1wilodh7gUJsbZfVfdF5wQ=
+=O4XH
+-----END PGP SIGNATURE-----
+
+--NDin8bjvE/0mNLFQ--
