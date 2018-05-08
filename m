@@ -1,67 +1,68 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755853AbeEHVFE (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:05:04 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54908 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751533AbeEHVFC (ORCPT
+        id S1755796AbeEHVGy (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:06:54 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57925 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755342AbeEHVGx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:05:02 -0400
-Subject: Re: crosstool requirements?
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <1b8328d1-4e41-c4f9-c07b-87530e85eb7c@infradead.org>
- <CAK8P3a1fPK0eqfkehphXF9aeL0sbryzOyqD3rXej6YSrySSMwA@mail.gmail.com>
-From: Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f5405552-455d-6b68-d378-2ae87120019f@infradead.org>
-Date: Tue, 8 May 2018 14:04:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a1fPK0eqfkehphXF9aeL0sbryzOyqD3rXej6YSrySSMwA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 8 May 2018 17:06:53 -0400
+To: tytso@mit.edu
+Cc: syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com, axboe@kernel.dk,
+        syzkaller-bugs@googlegroups.com, jack@suse.cz, gmazyland@gmail.com,
+        dvyukov@google.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: general protection fault in lo_ioctl (2)
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <000000000000cbaaf6056b341859@google.com>
+        <CACT4Y+bTo34q4=7X8zGL_XVOGoYd7fqhfAbCAWUxsr-N96Kyxw@mail.gmail.com>
+        <2030b2cf-29f9-7bfd-8266-b39abc19bdfe@I-love.SAKURA.ne.jp>
+        <4d91224a-ecba-3696-1116-3da2e48ec4d3@I-love.SAKURA.ne.jp>
+        <20180508123730.GH999@thunk.org>
+In-Reply-To: <20180508123730.GH999@thunk.org>
+Message-Id: <201805090606.IBH69745.SOQVMFOOFHtFJL@I-love.SAKURA.ne.jp>
+X-Mailer: Winbiff [Version 2.51 PL2]
+X-Accept-Language: ja,en,zh
+Date: Wed, 9 May 2018 06:06:50 +0900
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/05/2018 07:35 PM, Arnd Bergmann wrote:
-> On Sat, May 5, 2018 at 2:20 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> Hi Arnd,
->>
->> I was trying to use the x86_64 hosted openrisc/or1k gcc compiler (7.3.0-nolibc)
->> but I mostly what I get are errors like the following:
->>
->> crosstool/gcc-7.3.0-nolibc/or1k-linux/bin/../libexec/gcc/or1k-linux/7.3.0/cc1: error while loading shared libraries: libisl.so.15: cannot open shared object file: No such file or directory
->>
->>
->> I do have /usr/lib64/libisl.so.10 (not .15) installed on my system.
->> Am I just outofluck for doing this?
+Theodore Y. Ts'o wrote:
+> On Tue, May 08, 2018 at 08:05:12PM +0900, Tetsuo Handa wrote:
+> > 
+> > So, it is time to think how to solve this race condition, as well as how to solve
+> > lockdep's deadlock warning (and I guess that syzbot is actually hitting deadlocks).
+> > An approach which serializes loop operations using global lock was proposed at
+> > https://groups.google.com/d/msg/syzkaller-bugs/2Rw8-OM6IbM/PzdobV8kAgAJ .
+> > Please respond...
 > 
-> This has been pointed out by some others before, sorry for not having addressed
-> it yet. I'll be back from travelling on May 22 and should be able to build a set
-> of gcc-8.1 binaries without this problem, and also rebuild some of the older
-> compilers to fix it (gcc-4.8 is already fixed, but IIRC doesn't
-> support openrisc)
-> 
-> What happened here is that I built against the libraries that came
-> with Ubuntu 16.04,
-> intentionally picking a somewhat older distro in the hope that this
-> would produce
-> binaries that work on a wider range of systems, but I had it use the
-> system libisl,
-> libgmp, libmpfc, and libmpc rather than using the one provided by the
-> gcc project
-> for static linking.
-> 
-> You should be able to just install the binaries from
-> https://launchpad.net/ubuntu/xenial/amd64/libisl15/0.16.1-1
-> as well as any others you might need along with the toolchain (either
-> using dpkg on Debian or Ubuntu, or extracting the .so file into an
-> appropriate directory for others) until then.
+> I'm looking at your patch which you proposed on this, and the locking
+> architecture still looks way too complex.  Things like
+> loop_mutex_owner, and all of the infrastructure around
+> lo->ioctl_in_progress should be removed, if at all possible.
 
-Thanks.  That is working for me now.
+The patch in the above link no longer uses "lo->ioctl_in_progress".
+You looked at previous version rather than current version.
 
--- 
-~Randy
+> 
+> I believe it should be possible to do things with a single global
+> mutex, some code refactoring, and some unlocked versions of some of
+> the functions.
+
+The patch in the above link uses single global mutex "loop_mutex".
+
+> 
+> Again, this requires root, and it requires someone deliberately trying
+> to induce a race.  So "it's time" is not necessarily the priority I
+> would set for this item.  But if we are going to fix it, let's fix it
+> right, and not make the code more complex and less maintainable, all
+> in the name of trying to make a rare, not-likely-to-happen-in-real-life
+> syzbot reported problem to go away.
+
+While NULL pointer dereference would be rare, deadlocks might not be rare
+enough to postpone the patch. Deadlocks can cause pile of false-positive
+hung task reports and can prevent syzbot from finding other bugs. That's
+why I say "it is time to think".
