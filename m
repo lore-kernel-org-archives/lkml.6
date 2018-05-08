@@ -1,56 +1,65 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932452AbeEHOau (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:30:50 -0400
-Received: from mga07.intel.com ([134.134.136.100]:34572 "EHLO mga07.intel.com"
+        id S932534AbeEHObD (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:31:03 -0400
+Received: from mga17.intel.com ([192.55.52.151]:40612 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932334AbeEHOat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:30:49 -0400
+        id S932334AbeEHObB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 10:31:01 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.49,378,1520924400";
-   d="scan'208";a="47654572"
-Subject: Re: [PATCH] x86/boot/64/clang: Use fixup_pointer() to access
- '__supported_pte_mask'
-To: Alexander Potapenko <glider@google.com>, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com
-References: <20180508121638.174022-1-glider@google.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, mka@chromium.org,
-        dvyukov@google.com, md@google.com
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Message-ID: <1f69bdb6-df5e-d709-064a-4f6fdd6e11a7@linux.intel.com>
-Date: Tue, 8 May 2018 07:30:48 -0700
+   d="scan'208";a="38333571"
+Subject: Re: [BUG] i2c-hid: ELAN Touchpad does not work on ASUS X580GD
+To: Chris Chiu <chiu@endlessm.com>, Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Adrian Salido <salidoa@google.com>,
+        Jason Gerecke <killertofu@gmail.com>, linux-input@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Daniel Drake <drake@endlessm.com>,
+        Linux Upstreaming Team <linux@endlessm.com>
+References: <CAPpJ_ed-JPOzQPtyCdH4_C7dzEeM3fznus8XDuaojaiM_4nFpw@mail.gmail.com>
+ <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Message-ID: <a9e1f1cb-b823-8690-930f-f7346798341a@linux.intel.com>
+Date: Tue, 8 May 2018 17:31:16 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180508121638.174022-1-glider@google.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <CAB4CAwcKu88xP0R9P-3csd6SE2fZ-Vb6OrQD9AmBDh6p77VFDQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/08/2018 05:16 AM, Alexander Potapenko wrote:
-> Similarly to commit 187e91fe5e91
-> ("x86/boot/64/clang: Use fixup_pointer() to access 'next_early_pgt'"),
-> '__supported_pte_mask' must be also accessed using fixup_pointer() to
-> avoid position-dependent relocations.
+Hi
+
+On 05/07/2018 11:07 AM, Chris Chiu wrote:
+
+>> Besides, according to ASUS's input, they observed that after entering
+>> the OS, the frequency of SCL is too fast (about 600kHz) and the SCL High
+>> time is around 450ns, not following I2C spec which is 0.6us.
+>> https://pasteboard.co/HjzSWXd.png
+>>
+> Some update, we can make the touchpad work by simply modifying the
+> clk_rate of spt_i2c_info from 120000000 to 133000000 in intel-lpss-pci.c for
+> specific PCI ID 8086:a368 ~ a36a (CoffeeLake). Is the clock setting different
+> for the CoffeeLake series?
 > 
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> Fixes: fb43d6cb91ef ("x86/mm: Do not auto-massage page protections")
+Hmm.. at quick look it looks like to be 133 MHz but I want to double 
+check first from other specs. I'm also wondering why it results 600 kHz 
+instead of expected 133/120 * 400 kHz = 443 kHz. Need to check timing 
+parameters too.
 
-In the interests of standalone changelogs, I'd really appreciate an
-actual explanation of what's going on here.  Your patch makes the code
-uglier and doesn't fix anything functional from what I can see.
-
-The other commit has some explanation, so it seems like the rules for
-accessing globals in head64.c are different than other files because...
-something.
-
-The functional problem here is that it causes insta-reboots?
-
-Do we have anything we can do to keep us from recreating these kinds of
-regressions all the time?
+-- 
+Jarkko
