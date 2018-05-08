@@ -1,22 +1,22 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755520AbeEHRYU (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:24:20 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:46275 "EHLO
+        id S1755551AbeEHRYm (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:24:42 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:46255 "EHLO
         mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932411AbeEHRUx (ORCPT
+        with ESMTP id S932339AbeEHRUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:20:53 -0400
-X-Google-Smtp-Source: AB8JxZoHarXhT6VUHUSAPb5fxFdi72+580a9Q0ktXa3uO9yth/9mPo0sfY701Fk+U9wrI40oQJB5Vg==
+        Tue, 8 May 2018 13:20:48 -0400
+X-Google-Smtp-Source: AB8JxZosQAFmowilpDHZqySMtiyc/NMp47BdfFN4N+vjObvaLSx88YQTwcc31YCBIs73qKRTpts2Vw==
 From: Connor McAdams <conmanx360@gmail.com>
 Cc: o-takashi@sakamocchi.jp, Connor McAdams <conmanx360@gmail.com>,
         Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
         =?UTF-8?q?J=C3=A9r=C3=A9my=20Lefaure?=
         <jeremy.lefaure@lse.epita.fr>,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 04/13] ALSA: hda/ca0132: Add extra exit functions for R3Di and SBZ
-Date: Tue,  8 May 2018 13:20:04 -0400
-Message-Id: <1525800015-2920-5-git-send-email-conmanx360@gmail.com>
+Subject: [PATCH v5 02/13] ALSA: hda/ca0132: Add pincfg for SBZ + R3Di, add fp hp auto-detect
+Date: Tue,  8 May 2018 13:20:02 -0400
+Message-Id: <1525800015-2920-3-git-send-email-conmanx360@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
 References: <1525800015-2920-1-git-send-email-conmanx360@gmail.com>
@@ -25,186 +25,176 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds extra functions for shutdown on the Sound Blaster Z and
-Recon3Di. The Recon3Di only has one specific functions, which sets the
-GPIO data pins to 0 to prevent a popping noise.
+This patch adds an unsolicited response tag for the front headphone
+panel which uses the same hp_callback as the rear headphone detection.
 
-The Sound Blaster Z exit sequence was taken from Windows. Without this
-exit function, the card will not reload properly unless the PC has been
-shutdown to clear the onboard memory. There are commented out functions
-currently in the sbz_exit_chip function that are added in a later patch.
-
-Also, a reboot notify function has been added, to make sure these
-functions are ran before a reboot. This helps when using the card
-through VFIO in a virtual machine, to make sure the card reloads the DSP
-properly.
+This patch also adds pincfgs for the R3Di and SBZ which were taken from
+the Windows driver. The pins are also defined in the function
+ca0132_config. Both the R3Di and SBZ are also given a max out channel
+value of 6 to handle 5.1 surround sound in later patches.
 
 Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 ---
- sound/pci/hda/patch_ca0132.c | 131 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 129 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_ca0132.c | 111 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 108 insertions(+), 3 deletions(-)
 
 diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
-index 78d2c26..5cda7a5 100644
+index 8346100..02238fe 100644
 --- a/sound/pci/hda/patch_ca0132.c
 +++ b/sound/pci/hda/patch_ca0132.c
-@@ -4641,6 +4641,115 @@ static void ca0132_init_chip(struct hda_codec *codec)
- #endif
- }
+@@ -723,6 +723,7 @@ struct ca0132_spec {
+ 	hda_nid_t shared_mic_nid;
+ 	hda_nid_t shared_out_nid;
+ 	hda_nid_t unsol_tag_hp;
++	hda_nid_t unsol_tag_front_hp; /* for desktop ca0132 codecs */
+ 	hda_nid_t unsol_tag_amic1;
  
-+/*
-+ * Recon3Di exit specific commands.
-+ */
-+/* prevents popping noise on shutdown */
-+static void r3di_gpio_shutdown(struct hda_codec *codec)
-+{
-+	snd_hda_codec_write(codec, 0x01, 0, AC_VERB_SET_GPIO_DATA, 0x00);
-+}
-+
-+/*
-+ * Sound Blaster Z exit specific commands.
-+ */
-+static void sbz_region2_exit(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+	unsigned int i;
-+
-+	for (i = 0; i < 4; i++)
-+		writeb(0x0, spec->mem_base + 0x100);
-+	for (i = 0; i < 8; i++)
-+		writeb(0xb3, spec->mem_base + 0x304);
-+	/*
-+	 * I believe these are GPIO, with the right most hex digit being the
-+	 * gpio pin, and the second digit being on or off. We see this more in
-+	 * the input/output select functions.
-+	 */
-+	writew(0x0000, spec->mem_base + 0x320);
-+	writew(0x0001, spec->mem_base + 0x320);
-+	writew(0x0104, spec->mem_base + 0x320);
-+	writew(0x0005, spec->mem_base + 0x320);
-+	writew(0x0007, spec->mem_base + 0x320);
-+}
-+
-+static void sbz_set_pin_ctl_default(struct hda_codec *codec)
-+{
-+	hda_nid_t pins[5] = {0x0B, 0x0C, 0x0E, 0x12, 0x13};
-+	unsigned int i;
-+
-+	snd_hda_codec_write(codec, 0x11, 0,
-+			AC_VERB_SET_PIN_WIDGET_CONTROL, 0x40);
-+
-+	for (i = 0; i < 5; i++)
-+		snd_hda_codec_write(codec, pins[i], 0,
-+				AC_VERB_SET_PIN_WIDGET_CONTROL, 0x00);
-+}
-+
-+static void sbz_clear_unsolicited(struct hda_codec *codec)
-+{
-+	hda_nid_t pins[7] = {0x0B, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13};
-+	unsigned int i;
-+
-+	for (i = 0; i < 7; i++) {
-+		snd_hda_codec_write(codec, pins[i], 0,
-+				AC_VERB_SET_UNSOLICITED_ENABLE, 0x00);
-+	}
-+}
-+
-+/* On shutdown, sends commands in sets of three */
-+static void sbz_gpio_shutdown_commands(struct hda_codec *codec, int dir,
-+							int mask, int data)
-+{
-+	if (dir >= 0)
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DIRECTION, dir);
-+	if (mask >= 0)
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_MASK, mask);
-+
-+	if (data >= 0)
-+		snd_hda_codec_write(codec, 0x01, 0,
-+				AC_VERB_SET_GPIO_DATA, data);
-+}
-+
-+static void sbz_exit_chip(struct hda_codec *codec)
-+{
-+
-+	/* Mess with GPIO */
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, -1);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x05);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x01);
-+
-+
-+	chipio_set_conn_rate(codec, 0x41, SR_192_000);
-+	chipio_set_conn_rate(codec, 0x91, SR_192_000);
-+
-+	chipio_write(codec, 0x18a020, 0x00000083);
-+
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x03);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x07);
-+	sbz_gpio_shutdown_commands(codec, 0x07, 0x07, 0x06);
-+
-+
-+	chipio_set_control_param(codec, 0x0D, 0x24);
-+
-+	sbz_clear_unsolicited(codec);
-+	sbz_set_pin_ctl_default(codec);
-+
-+	snd_hda_codec_write(codec, 0x0B, 0,
-+		AC_VERB_SET_EAPD_BTLENABLE, 0x00);
-+
-+	if (dspload_is_loaded(codec))
-+		dsp_reset(codec);
-+
-+	snd_hda_codec_write(codec, WIDGET_CHIP_CTRL, 0,
-+		VENDOR_CHIPIO_CT_EXTENSIONS_ENABLE, 0x00);
-+
-+	sbz_region2_exit(codec);
-+}
-+
- static void ca0132_exit_chip(struct hda_codec *codec)
- {
- 	/* put any chip cleanup stuffs here. */
-@@ -4701,8 +4810,20 @@ static void ca0132_free(struct hda_codec *codec)
- 
- 	cancel_delayed_work_sync(&spec->unsol_hp_work);
- 	snd_hda_power_up(codec);
--	snd_hda_sequence_write(codec, spec->base_exit_verbs);
--	ca0132_exit_chip(codec);
-+	switch (spec->quirk) {
-+	case QUIRK_SBZ:
-+		sbz_exit_chip(codec);
-+		break;
-+	case QUIRK_R3DI:
-+		r3di_gpio_shutdown(codec);
-+		snd_hda_sequence_write(codec, spec->base_exit_verbs);
-+		ca0132_exit_chip(codec);
-+		break;
-+	default:
-+		snd_hda_sequence_write(codec, spec->base_exit_verbs);
-+		ca0132_exit_chip(codec);
-+		break;
-+	}
- 	snd_hda_power_down(codec);
- 	if (spec->mem_base)
- 		iounmap(spec->mem_base);
-@@ -4710,12 +4831,18 @@ static void ca0132_free(struct hda_codec *codec)
- 	kfree(codec->spec);
- }
- 
-+static void ca0132_reboot_notify(struct hda_codec *codec)
-+{
-+	codec->patch_ops.free(codec);
-+}
-+
- static const struct hda_codec_ops ca0132_patch_ops = {
- 	.build_controls = ca0132_build_controls,
- 	.build_pcms = ca0132_build_pcms,
- 	.init = ca0132_init,
- 	.free = ca0132_free,
- 	.unsol_event = snd_hda_jack_unsol_event,
-+	.reboot_notify = ca0132_reboot_notify,
+ 	/* chip access */
+@@ -785,6 +786,36 @@ static const struct hda_pintbl alienware_pincfgs[] = {
+ 	{}
  };
  
- static void ca0132_config(struct hda_codec *codec)
++/* Sound Blaster Z pin configs taken from Windows Driver */
++static const struct hda_pintbl sbz_pincfgs[] = {
++	{ 0x0b, 0x01017010 }, /* Port G -- Lineout FRONT L/R */
++	{ 0x0c, 0x014510f0 }, /* SPDIF Out 1 */
++	{ 0x0d, 0x014510f0 }, /* Digital Out */
++	{ 0x0e, 0x01c510f0 }, /* SPDIF In */
++	{ 0x0f, 0x0221701f }, /* Port A -- BackPanel HP */
++	{ 0x10, 0x01017012 }, /* Port D -- Center/LFE or FP Hp */
++	{ 0x11, 0x01017014 }, /* Port B -- LineMicIn2 / Rear L/R */
++	{ 0x12, 0x01a170f0 }, /* Port C -- LineIn1 */
++	{ 0x13, 0x908700f0 }, /* What U Hear In*/
++	{ 0x18, 0x50d000f0 }, /* N/A */
++	{}
++};
++
++/* Recon3D integrated pin configs taken from Windows Driver */
++static const struct hda_pintbl r3di_pincfgs[] = {
++	{ 0x0b, 0x01014110 }, /* Port G -- Lineout FRONT L/R */
++	{ 0x0c, 0x014510f0 }, /* SPDIF Out 1 */
++	{ 0x0d, 0x014510f0 }, /* Digital Out */
++	{ 0x0e, 0x41c520f0 }, /* SPDIF In */
++	{ 0x0f, 0x0221401f }, /* Port A -- BackPanel HP */
++	{ 0x10, 0x01016011 }, /* Port D -- Center/LFE or FP Hp */
++	{ 0x11, 0x01011014 }, /* Port B -- LineMicIn2 / Rear L/R */
++	{ 0x12, 0x02a090f0 }, /* Port C -- LineIn1 */
++	{ 0x13, 0x908700f0 }, /* What U Hear In*/
++	{ 0x18, 0x500000f0 }, /* N/A */
++	{}
++};
++
+ static const struct snd_pci_quirk ca0132_quirks[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0685, "Alienware 15 2015", QUIRK_ALIENWARE),
+ 	SND_PCI_QUIRK(0x1028, 0x0688, "Alienware 17 2015", QUIRK_ALIENWARE),
+@@ -4503,6 +4534,10 @@ static void ca0132_init_unsol(struct hda_codec *codec)
+ 					    amic_callback);
+ 	snd_hda_jack_detect_enable_callback(codec, UNSOL_TAG_DSP,
+ 					    ca0132_process_dsp_response);
++	/* Front headphone jack detection */
++	if (spec->quirk == QUIRK_SBZ || spec->quirk == QUIRK_R3DI)
++		snd_hda_jack_detect_enable_callback(codec,
++			spec->unsol_tag_front_hp, hp_callback);
+ }
+ 
+ /*
+@@ -4684,9 +4719,14 @@ static void ca0132_config(struct hda_codec *codec)
+ 
+ 	spec->multiout.dac_nids = spec->dacs;
+ 	spec->multiout.num_dacs = 3;
+-	spec->multiout.max_channels = 2;
+ 
+-	if (spec->quirk == QUIRK_ALIENWARE) {
++	if (spec->quirk == QUIRK_NONE || spec->quirk == QUIRK_ALIENWARE)
++		spec->multiout.max_channels = 2;
++	else
++		spec->multiout.max_channels = 6;
++
++	switch (spec->quirk) {
++	case QUIRK_ALIENWARE:
+ 		codec_dbg(codec, "ca0132_config: QUIRK_ALIENWARE applied.\n");
+ 		snd_hda_apply_pincfgs(codec, alienware_pincfgs);
+ 
+@@ -4706,7 +4746,71 @@ static void ca0132_config(struct hda_codec *codec)
+ 		spec->input_pins[2] = 0x13;
+ 		spec->shared_mic_nid = 0x7;
+ 		spec->unsol_tag_amic1 = 0x11;
+-	} else {
++		break;
++	case QUIRK_SBZ:
++		codec_dbg(codec, "%s: QUIRK_SBZ applied.\n", __func__);
++		snd_hda_apply_pincfgs(codec, sbz_pincfgs);
++
++		spec->num_outputs = 2;
++		spec->out_pins[0] = 0x0B; /* Line out */
++		spec->out_pins[1] = 0x0F; /* Rear headphone out */
++		spec->out_pins[2] = 0x10; /* Front Headphone / Center/LFE*/
++		spec->out_pins[3] = 0x11; /* Rear surround */
++		spec->shared_out_nid = 0x2;
++		spec->unsol_tag_hp = spec->out_pins[1];
++		spec->unsol_tag_front_hp = spec->out_pins[2];
++
++		spec->adcs[0] = 0x7; /* Rear Mic / Line-in */
++		spec->adcs[1] = 0x8; /* Front Mic, but only if no DSP */
++		spec->adcs[2] = 0xa; /* what u hear */
++
++		spec->num_inputs = 2;
++		spec->input_pins[0] = 0x12; /* Rear Mic / Line-in */
++		spec->input_pins[1] = 0x13; /* What U Hear */
++		spec->shared_mic_nid = 0x7;
++		spec->unsol_tag_amic1 = spec->input_pins[0];
++
++		/* SPDIF I/O */
++		spec->dig_out = 0x05;
++		spec->multiout.dig_out_nid = spec->dig_out;
++		cfg->dig_out_pins[0] = 0x0c;
++		cfg->dig_outs = 1;
++		cfg->dig_out_type[0] = HDA_PCM_TYPE_SPDIF;
++		spec->dig_in = 0x09;
++		cfg->dig_in_pin = 0x0e;
++		cfg->dig_in_type = HDA_PCM_TYPE_SPDIF;
++		break;
++	case QUIRK_R3DI:
++		codec_dbg(codec, "%s: QUIRK_R3DI applied.\n", __func__);
++		snd_hda_apply_pincfgs(codec, r3di_pincfgs);
++
++		spec->num_outputs = 2;
++		spec->out_pins[0] = 0x0B; /* Line out */
++		spec->out_pins[1] = 0x0F; /* Rear headphone out */
++		spec->out_pins[2] = 0x10; /* Front Headphone / Center/LFE*/
++		spec->out_pins[3] = 0x11; /* Rear surround */
++		spec->shared_out_nid = 0x2;
++		spec->unsol_tag_hp = spec->out_pins[1];
++		spec->unsol_tag_front_hp = spec->out_pins[2];
++
++		spec->adcs[0] = 0x07; /* Rear Mic / Line-in */
++		spec->adcs[1] = 0x08; /* Front Mic, but only if no DSP */
++		spec->adcs[2] = 0x0a; /* what u hear */
++
++		spec->num_inputs = 2;
++		spec->input_pins[0] = 0x12; /* Rear Mic / Line-in */
++		spec->input_pins[1] = 0x13; /* What U Hear */
++		spec->shared_mic_nid = 0x7;
++		spec->unsol_tag_amic1 = spec->input_pins[0];
++
++		/* SPDIF I/O */
++		spec->dig_out = 0x05;
++		spec->multiout.dig_out_nid = spec->dig_out;
++		cfg->dig_out_pins[0] = 0x0c;
++		cfg->dig_outs = 1;
++		cfg->dig_out_type[0] = HDA_PCM_TYPE_SPDIF;
++		break;
++	default:
+ 		spec->num_outputs = 2;
+ 		spec->out_pins[0] = 0x0b; /* speaker out */
+ 		spec->out_pins[1] = 0x10; /* headphone out */
+@@ -4733,6 +4837,7 @@ static void ca0132_config(struct hda_codec *codec)
+ 		spec->dig_in = 0x09;
+ 		cfg->dig_in_pin = 0x0e;
+ 		cfg->dig_in_type = HDA_PCM_TYPE_SPDIF;
++		break;
+ 	}
+ }
+ 
 -- 
 2.7.4
