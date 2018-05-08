@@ -1,183 +1,112 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755678AbeEHRt4 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:49:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39118 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755466AbeEHRtK (ORCPT
+        id S932133AbeEHRvk (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:51:40 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:37753 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751806AbeEHRvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:49:10 -0400
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A7E06085F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From: Lina Iyer <ilina@codeaurora.org>
-To: edubezval@gmail.com, rui.zhang@intel.com
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, daniel.lezcano@linaro.org,
-        amit.kucheria@linaro.org, Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH RFC 4/4] drivers: of-thermal: notify framework when sensor is tripped
-Date: Tue,  8 May 2018 11:48:59 -0600
-Message-Id: <20180508174859.26539-5-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180508174859.26539-1-ilina@codeaurora.org>
-References: <20180508174859.26539-1-ilina@codeaurora.org>
+        Tue, 8 May 2018 13:51:38 -0400
+X-Google-Smtp-Source: AB8JxZqNfBNx4g4gJ/4/uFCzz5I+NijtqqPXS2rBN4/rTO5Y1HWff//dm4nQ3BzvB5ZPF0cBWDO9tg==
+Date: Tue, 8 May 2018 12:51:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Philipp Puschmann <pp@emlix.com>
+Cc: dmitry.torokhov@gmail.com, mark.rutland@arm.com, rydberg@bitmath.org,
+        andi@etezian.org, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Input: ili251x - add support for Ilitek ILI251x
+ touchscreens
+Message-ID: <20180508175136.GA26802@rob-hp-laptop>
+References: <20180507131823.28800-1-pp@emlix.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180507131823.28800-1-pp@emlix.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Notify all related thermal zones when the sensor reports a thermal trip.
+On Mon, May 07, 2018 at 03:18:23PM +0200, Philipp Puschmann wrote:
+> The driver supports at least the ili2511 chipset but may support other
+> Ilitek chipsets using Ilitek i2c protocol v3.x.
+> 
+> The tested ili2511-based touchscreen delivers garbage for more than 6
+> fingers while it should support up to 10 fingers. The reason is still
+> unclear and this remains a FIXME in the driver for now.
+> 
+> The usage of pressure is optional. Touchscreens may deliver constant
+> and so useless pressure data.
+> 
+> Signed-off-by: Philipp Puschmann <pp@emlix.com>
+> ---
+>  .../bindings/input/touchscreen/ili251x.txt    |  35 ++
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
----
- drivers/thermal/of-thermal.c | 83 ++++++++++++++++++++++++++++++++++--
- include/linux/thermal.h      |  4 ++
- 2 files changed, 84 insertions(+), 3 deletions(-)
+Please make the binding a separate patch.
 
-diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index 6fb2eeb5b6cf..9b42bfed78bf 100644
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -41,12 +41,18 @@ struct __thermal_bind_params {
-  * @ops: sensor driver ops
-  * @tz_list: list of thermal zones for this sensor
-  * @lock: lock sensor during operations
-+ * @low_trip: sensor's low trip temp
-+ * @high_trip: sensor's high trip temp
-+ * @low_tz: the thermal zone whose low trip is used as @low_trip
-+ * @high_tz: the thermal zone whose high trip is used as @high_trip
-  */
- struct thermal_sensor {
- 	void *sensor_data;
- 	const struct thermal_zone_of_device_ops *ops;
- 	struct list_head tz_list;
- 	struct mutex lock;
-+	int low_trip, high_trip;
-+	struct thermal_zone_device *low_tz, *high_tz;
- };
- 
- /**
-@@ -102,18 +108,26 @@ static void __of_thermal_agg_trip(struct thermal_sensor *sensor,
- 	int low, high;
- 	int max_lo = INT_MIN;
- 	int min_hi = INT_MAX;
--	struct thermal_zone_device *tz;
-+	struct thermal_zone_device *tz, *lo_tz = NULL, *hi_tz = NULL;
- 
- 	list_for_each_entry(tz, &sensor->tz_list, sensor_tzd) {
- 		thermal_zone_get_trip(tz, &low, &high);
--		if (low > max_lo)
-+		if (low > max_lo) {
- 			max_lo = low;
--		if (high < min_hi)
-+			lo_tz = tz;
-+		}
-+		if (high < min_hi) {
- 			min_hi = high;
-+			hi_tz = tz;
-+		}
- 	}
- 
- 	*floor = max_lo;
- 	*ceil = min_hi;
-+	sensor->low_trip = max_lo;
-+	sensor->high_trip = min_hi;
-+	sensor->low_tz = lo_tz;
-+	sensor->high_tz = hi_tz;
- }
- 
- static int of_thermal_set_trips(struct thermal_zone_device *tz,
-@@ -427,6 +441,69 @@ static struct thermal_zone_device_ops of_thermal_ops = {
- 
- /***   sensor API   ***/
- 
-+static void thermal_zone_of_get_trip(struct thermal_zone_device *tz,
-+				     int temp, int *low_trip, int *hi_trip)
-+{
-+	struct __thermal_zone *data = tz->devdata;
-+	int low = INT_MIN;
-+	int hi = INT_MAX;
-+	int i;
-+
-+	for (i = 0; i < data->ntrips; i++) {
-+		int trip_temp = data->trips[i].temperature;
-+
-+		if (trip_temp < temp && trip_temp > low)
-+			*low_trip = i;
-+		if (trip_temp > temp && trip_temp < hi)
-+			*hi_trip = i;
-+	}
-+}
-+
-+/**
-+ * thermal_zone_of_sensor_notify - notify framework of a trip
-+ * @tzd: the thermal zone device
-+ *
-+ * Sensor drivers may use this API to notify the thermal framework that the
-+ * temperature has crossed the trip threshold. This function is akin to
-+ * thermal_notify_framework() call, but is expected to be called by a sensor
-+ * that registered itself with the framework using the
-+ * thermal_zone_of_add_sensor() function.
-+ */
-+void thermal_zone_of_sensor_notify(struct thermal_zone_device *tzd)
-+{
-+	struct __thermal_zone *tz = tzd->devdata;
-+	struct thermal_sensor *sensor = tz->sensor;
-+	int temp, low_trip, hi_trip, *trip;
-+	struct thermal_zone_device *trip_tz = NULL;
-+
-+	if (!tz->sensor)
-+		return;
-+
-+	if (of_thermal_get_temp(tzd, &temp))
-+		return;
-+
-+	mutex_lock(&sensor->lock);
-+	if (tzd->temperature < sensor->low_trip && sensor->low_tz) {
-+		trip_tz = sensor->low_tz;
-+		trip = &low_trip;
-+	}
-+	if (tzd->temperature > sensor->high_trip && sensor->high_tz) {
-+		trip_tz = sensor->high_tz;
-+		trip = &hi_trip;
-+	}
-+
-+	if (trip_tz)
-+		thermal_zone_of_get_trip(trip_tz, temp, &low_trip, &hi_trip);
-+
-+	mutex_unlock(&sensor->lock);
-+
-+	if (!trip_tz)
-+		return;
-+
-+	thermal_notify_framework(trip_tz, *trip);
-+}
-+EXPORT_SYMBOL(thermal_zone_of_sensor_notify);
-+
- static struct thermal_zone_device *
- thermal_zone_of_add_sensor(struct device_node *zone,
- 			   struct device_node *sensor_np,
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 000ae6a97678..603bf8065d7d 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -388,6 +388,7 @@ struct thermal_zone_device *devm_thermal_zone_of_sensor_register(
- 		const struct thermal_zone_of_device_ops *ops);
- void devm_thermal_zone_of_sensor_unregister(struct device *dev,
- 					    struct thermal_zone_device *tz);
-+void thermal_zone_of_sensor_notify(struct thermal_zone_device *tzd);
- #else
- static inline struct thermal_zone_device *
- thermal_zone_of_sensor_register(struct device *dev, int id, void *data,
-@@ -415,6 +416,9 @@ void devm_thermal_zone_of_sensor_unregister(struct device *dev,
- {
- }
- 
-+static inline
-+void thermal_zone_of_sensor_notify(struct thermal_zone_device *tzd)
-+{ }
- #endif
- 
- #if IS_ENABLED(CONFIG_THERMAL)
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>  drivers/input/touchscreen/Kconfig             |  12 +
+>  drivers/input/touchscreen/Makefile            |   1 +
+>  drivers/input/touchscreen/ili251x.c           | 350 ++++++++++++++++++
+>  4 files changed, 398 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/ili251x.txt
+>  create mode 100644 drivers/input/touchscreen/ili251x.c
+> 
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ili251x.txt b/Documentation/devicetree/bindings/input/touchscreen/ili251x.txt
+> new file mode 100644
+> index 000000000000..f21ad93d3bdd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/ili251x.txt
+> @@ -0,0 +1,35 @@
+> +Ilitek ili251x touchscreen driver
+
+Bindings are not drivers.
+> +
+> +This driver uses protocol version 3 and should be compatible with other
+> +Ilitek touch controllers that use protocol 3.x
+> +
+> +Required properties:
+> + - compatible:  "ili251x"
+
+Needs a vendor prefix.
+
+Don't use wildcards in compatible strings. Maybe you want to incorporate 
+the protocol version into the compatible string.
+
+> + - reg:         I2C slave address of the chip (0x41)
+> + - interrupt-parent: a phandle pointing to the interrupt controller
+> +                     serving the interrupt for this chip
+> + - interrupts:       interrupt specification for the touchdetect
+> +                     interrupt
+> +
+> +Optional properties:
+> + - reset-gpios: GPIO specification for the RESET input
+> +
+> + - pinctrl-names: should be "default"
+> + - pinctrl-0:   a phandle pointing to the pin settings for the
+> +                control gpios
+> + - max-fingers: the maximum number of fingers to handle
+
+We already have 'silead,max-fingers', so probably time for a common 
+property.
+
+> + - pressure: support pressure data
+
+This should be implied by the compatible string.
+
+> + - generic options	   : See touchscreen.txt
+> +
+> +Example:
+> +
+> +	ili251x@41 {
+
+touchscreen@41
+
+> +		compatible = "ili251x";
+> +		reg = <0x41>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_touchpanel>;
+> +		interrupt-parent = <&gpio5>;
+> +		interrupts = <20 IRQ_TYPE_EDGE_FALLING>;
+> +		reset-gpios = <&gpio5 18 GPIO_ACTIVE_HIGH>;
+> +		max-fingers = <6>;
+> +	};
