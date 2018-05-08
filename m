@@ -1,70 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932683AbeEHOpb (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 10:45:31 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47016 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932141AbeEHOp3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:45:29 -0400
-X-Google-Smtp-Source: AB8JxZrCwQW3PzvJ4X/dukPkBaF3au/jKEsaEIIA5hd0szua9IrIiOPELxqB+L97uvuh0vija3JFYapfjWWaBNTQmiE=
+        id S932735AbeEHOrN (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 10:47:13 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59436 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932706AbeEHOrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 10:47:09 -0400
+Subject: Re: [PATCH 01/11] irqchip: stm32: Optimizes and cleans up stm32-exti
+ irq_domain
+To: Ludovic Barre <ludovic.Barre@st.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        Loic PALLARDY <loic.pallardy@st.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        radek <radoslaw.pietrzyk@gmail.com>
+References: <1524759514-12392-1-git-send-email-ludovic.Barre@st.com>
+ <1524759514-12392-2-git-send-email-ludovic.Barre@st.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <20a1b5f0-7494-01a9-635f-c46c337a23b3@arm.com>
+Date: Tue, 8 May 2018 15:47:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <20180426202619.2768-1-pasha.tatashin@oracle.com> <20180430162658.598dd5dcdd0c67e36953281c@linux-foundation.org>
-In-Reply-To: <20180430162658.598dd5dcdd0c67e36953281c@linux-foundation.org>
-From: Pavel Tatashin <pasha.tatashin@oracle.com>
-Date: Tue, 08 May 2018 14:44:51 +0000
-X-Gmail-Original-Message-ID: <CAGM2reauOET_PUPA94WXhjKgL1cUHcKyY+R+auxvTfd4srhaFw@mail.gmail.com>
-Message-ID: <CAGM2reauOET_PUPA94WXhjKgL1cUHcKyY+R+auxvTfd4srhaFw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: access to uninitialized struct page
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>, tglx@linutronix.de,
-        Michal Hocko <mhocko@suse.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        mgorman@techsingularity.net, mingo@kernel.org, peterz@infradead.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Dennis Zhou <dennisszhou@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8887 signatures=668698
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=458
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1711220000 definitions=main-1805080140
+In-Reply-To: <1524759514-12392-2-git-send-email-ludovic.Barre@st.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Gulp.  Let's hope that nothing in mm_init() requires that trap_init()
-> has been run.  What happens if something goes wrong during mm_init()
-> and the architecture attempts to raise a software exception, hits a bus
-> error, div-by-zero, etc, etc?  Might there be hard-to-discover
-> dependencies in such a case?
+On 26/04/18 17:18, Ludovic Barre wrote:
+> From: radek <radoslaw.pietrzyk@gmail.com>
+> 
+> - In stm32_exti_alloc function, discards irq_domain_set_info
+>   with handle_simple_irq. This overwrite the setting defined while init
+>   of generic chips. Exti controller manages edge irq type.
+> - Removes acking in chained irq handler as this is done by
+>   irq_chip itself inside handle_edge_irq
+> - removes unneeded irq_domain_ops.xlate callback
+> 
+> Signed-off-by: Radoslaw Pietrzyk <radoslaw.pietrzyk@gmail.com>
+> Acked-by: Ludovic Barre <ludovic.barre@st.com>
+> Tested-by: Ludovic Barre <ludovic.barre@st.com>
+> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
 
-Hi Andrew,
+Nit: the "From:" should match the SoB line (the address does, but not
+the name). I can fix that up when I apply the series.
 
-Unfortunately, mm_init() requires trap_init(). And, because trap_init() is
-arch specific, I do not see a way to simply fix  trap_init(). So, we need
-to find a different fix for the above problem. And, the current fix needs
-to be removed from mm.
+Thanks,
 
-BTW, the bug was not introduced by:
-c9e97a1997fb ("mm: initialize pages on demand during boot")
-
-Fengguang Wu, reproduced this bug with builds prior to when this patch was
-added. So, I think that while my patch may make this problem happen more
-frequently, the problem itself is older. Basically, it depends on value of
-KASLR.
-
-One way to quickly fix this issue is to disable deferred struct pages when
-the following combination is true:
-CONFIG_RANDOMIZE_BASE && CONFIG_SPARSEMEM && !CONFIG_SPARSEMEM_VMEMMAP
-
-RANDOMIZE_BASE means we do not know from what PFN struct pages are going to
-be required before mm_init().
-CONFIG_SPARSEMEM && !CONFIG_SPARSEMEM_VMEMMAP means that page_to_pfn() will
-use information from page->flags to get section number, and thus require
-accessing "struct pages"
-
-Pavel
+	M.
+-- 
+Jazz is not dead. It just smells funny...
