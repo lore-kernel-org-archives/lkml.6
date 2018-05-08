@@ -1,104 +1,105 @@
-Return-Path: <andresx7@gmail.com>
-ARC-Seal: i=1; a=rsa-sha256; t=1525805624; cv=none;
+Return-Path: <keescook@google.com>
+ARC-Seal: i=1; a=rsa-sha256; t=1525819503; cv=none;
         d=google.com; s=arc-20160816;
-        b=rPJxDm0KGKLekeStf5xwHm8HbwG/msL/8itxATOE33vlmRjG6JO2LtHo9FHOTlyJnE
-         pxfu4/UVK02BTQU5MaQN6vkjhiZuJ0/ltCNCBRX0WICGttPFuXM4RjHmbHXVR4uKjtmS
-         hSCyZvarZp8RA5ltXvCa8j3tRPnkxOBvFmbnXPsNdmRzV1Mq8D+ThLyMY4f8BtMYe3Wp
-         wCeWaetgA3gh1TJIg/z6kGTiHuA/6u+4A5kCbAcBW/9nORDNfOKktognzhJ09iAIbQlB
-         +GpoKazzqkUjw4yFvcbN/dr4f0vyIjf3WlLRmIvb7+OJYmaE6znUBLrpWSe+mBchGm3O
-         PtCg==
+        b=RIvNajJvHmh0YGJ+dl84At616ifrzfjbLmxuPx8uJ/VPoKymUPGmTDxNcEml3rGHCy
+         HTisgZELeV3iuvD+e9RZ1CM5Ikq4tckn+lideTlqvofdY37T7iSFvkDnsvLtSY7LNAcw
+         D3ijEwJkxOxLPFgX/iRq0Y2LSDQTesLWbGR8gqxonfqatP9VaB3h3xk+njh/kqYdRefI
+         nMpN03MfLjjmkVpynuXTxI6Z97l2zkjkOyCh+iuwGTFWhucpduVTrGR+t/Ss7DFTKRE2
+         Vt2RxcroJD1Lf/sfmp4cMQbMzj6yPPpYpYpTefRYCAHI7X37AR6gS5bK3uD8cmtmSQth
+         llIg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject:cc
-         :dkim-signature:arc-authentication-results;
-        bh=2bjSg1L5xcqD10nFoDAVMLyoc6zOammPwOiz/FKvI1E=;
-        b=stmMGcQrptrQzCZRkXdTSp7pbedsRssZxbeQW04Q28F16xrNPlYJJuSMWC7E97wX5B
-         S7H9mMcRgxOZcT51pvQvJ0/7kqpvL4Q2q1bwM0sG7gV0DfssKQ9aGnqb5utEshZWoyo1
-         f+X6+vgGu+zrNvk7J5JZgzTLOzPELc6zY8Upg7tCTlcxZQNyDVY30Hhg2zoyIKixu9rn
-         +n5Mu6Jiq4jcLBWnZ+FS/J+Y3eVinJVWCDK9Z2He+xWBDw97Fsv6TXIxMBHivMVlqV/G
-         +a/6O5vRa3g2FqrU4uCz6JM78Az3B+tTEKoVo9GBiqCJTBASUboTvgTOzrh4MLbW7HYT
-         857A==
+        h=cc:to:subject:message-id:date:from:references:in-reply-to:sender
+         :mime-version:dkim-signature:dkim-signature
+         :arc-authentication-results;
+        bh=8+PAMaZ2dUHHu2rIqqLS0Hwl+HlnjpfN5UVb6BMCW4E=;
+        b=J+Gu9QFvYUOBaTw/jaQzQ/4lqsBifQAxdfHg35LYNXrbZPrPU3Qmfaq4AgUM9VqGnk
+         6ziwdrWyA2cZMVjAcb4WpKTys1YzR2Mws5Ltwp4avAXIeRIFkm4B0m+nsWJftXDZyHI6
+         IbOLxFpht4C/TtxJLmDhrHXC358iPIW0PO5gNhvPOWzMWfEkHRU8urXg1SH/BGHSYqWa
+         9I0arWd/Ma7PMS4GWU4Mj7V8t5ztCiRicjG6EnfvaSqghV9a6DasMn9I8JmVkvgCpDdh
+         mIRZfkk9sxKgnuaDpmIBI+kJ4TD5rqpGyw1w8UStSG2DXfx2N/aQKHeHa6kOyt26qH2I
+         oRew==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nGJy/toz;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
+       dkim=pass header.i=@google.com header.s=20161025 header.b=qbd47p10;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ecg5rmn7;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@gmail.com header.s=20161025 header.b=nGJy/toz;
-       spf=pass (google.com: domain of andresx7@gmail.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=andresx7@gmail.com;
-       dmarc=pass (p=NONE sp=QUARANTINE dis=NONE) header.from=gmail.com
-X-Google-Smtp-Source: AB8JxZqQAPiDjSElEiedd3RUJMUvma9J5lqHRZfsK7qoruAXyJMHgAZzGDtIlzREMq2B5vP2WXgugg==
-Cc: andresx7@gmail.com, akpm@linux-foundation.org, keescook@chromium.org,
- josh@joshtriplett.org, maco@android.com, andy.gross@linaro.org,
- david.brown@linaro.org, bjorn.andersson@linaro.org, teg@jklm.no,
- wagi@monom.org, hdegoede@redhat.com, zohar@linux.vnet.ibm.com,
- kubakici@wp.pl, shuah@kernel.org, mfuzzey@parkeon.com, dhowells@redhat.com,
- pali.rohar@gmail.com, tiwai@suse.de, kvalo@codeaurora.org,
- arend.vanspriel@broadcom.com, zajec5@gmail.com, nbroeking@me.com,
- markivx@codeaurora.org, broonie@kernel.org, dmitry.torokhov@gmail.com,
- dwmw2@infradead.org, torvalds@linux-foundation.org, Abhay_Salunke@dell.com,
- jewalt@lgsinnovations.com, oneukum@suse.com, cantabile.desu@gmail.com,
- ast@fb.com, hare@suse.com, jejb@linux.vnet.ibm.com,
- martin.petersen@oracle.com, khc@pm.waw.pl, davem@davemloft.net,
- arve@android.com, tkjos@android.com, corbet@lwn.net,
- mchehab+samsung@kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v6 13/13] Documentation: clarify firmware_class provenance
- and why we can't rename the module
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>, gregkh@linuxfoundation.org
-References: <20180508181247.19431-1-mcgrof@kernel.org>
- <20180508181247.19431-14-mcgrof@kernel.org>
-From: Andres Rodriguez <andresx7@gmail.com>
-Message-ID: <10c2aa7d-eaa5-80f9-f831-7e31762ff149@gmail.com>
-Date: Tue, 8 May 2018 14:53:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+       dkim=pass header.i=@google.com header.s=20161025 header.b=qbd47p10;
+       dkim=pass header.i=@chromium.org header.s=google header.b=ecg5rmn7;
+       spf=pass (google.com: domain of keescook@google.com designates 209.85.220.65 as permitted sender) smtp.mailfrom=keescook@google.com;
+       dmarc=pass (p=NONE sp=NONE dis=NONE) header.from=chromium.org
+X-Google-Smtp-Source: AB8JxZosZNB9fK8xqUv+aQZl9NRplF+3/5EsLQUtDro5lVAFiSCtUfl+Sa2bRmg4bDR6z/iUMkFUXEImtQHimP4L7bU=
 MIME-Version: 1.0
-In-Reply-To: <20180508181247.19431-14-mcgrof@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Sender: keescook@google.com
+In-Reply-To: <20180508181247.19431-1-mcgrof@kernel.org>
+References: <20180508181247.19431-1-mcgrof@kernel.org>
+From: Kees Cook <keescook@chromium.org>
+Date: Tue, 8 May 2018 15:45:02 -0700
+X-Google-Sender-Auth: iJNHZvLUFqa-cr_sDF8QYTaN0zM
+Message-ID: <CAGXu5jJ=9XKn=z1T16iV-BoN88QLh7q+OicZxc5TvEjioriGMA@mail.gmail.com>
+Subject: Re: [PATCH v6 00/13] firmware_loader changes for v4.18
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Josh Triplett <josh@joshtriplett.org>, maco@android.com,
+	Andy Gross <andy.gross@linaro.org>, David Brown <david.brown@linaro.org>,
+	bjorn.andersson@linaro.org, teg@jklm.no, wagi@monom.org,
+	Hans de Goede <hdegoede@redhat.com>, Andres Rodriguez <andresx7@gmail.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>, Jakub Kicinski <kubakici@wp.pl>, Shuah Khan <shuah@kernel.org>,
+	Martin Fuzzey <mfuzzey@parkeon.com>, David Howells <dhowells@redhat.com>, pali.rohar@gmail.com,
+	Takashi Iwai <tiwai@suse.de>, Kalle Valo <kvalo@codeaurora.org>,
+	Arend van Spriel <arend.vanspriel@broadcom.com>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Nicolas Broeking <nbroeking@me.com>, Vikram Mulukutla <markivx@codeaurora.org>,
+	Mark Brown <broonie@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	David Woodhouse <dwmw2@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Abhay_Salunke@dell.com, jewalt@lgsinnovations.com, oneukum@suse.com,
+	Bitterblue of Monsea <cantabile.desu@gmail.com>, Alexei Starovoitov <ast@fb.com>, hare <hare@suse.com>,
+	"James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, khc@pm.waw.pl,
+	"David S. Miller" <davem@davemloft.net>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+	tkjos@android.com, Jonathan Corbet <corbet@lwn.net>, mchehab+samsung@kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, linux-scsi@vger.kernel.org,
+	linux-wireless <linux-wireless@vger.kernel.org>,
+	Network Development <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599920608674205681?=
-X-GMAIL-MSGID: =?utf-8?q?1599923158407235247?=
+X-GMAIL-THRID: =?utf-8?q?1599920585909697433?=
+X-GMAIL-MSGID: =?utf-8?q?1599937711573093485?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
+On Tue, May 8, 2018 at 11:12 AM, Luis R. Rodriguez <mcgrof@kernel.org> wrote:
+> Greg,
+>
+> Here is what I have queued up for the firmware_loader for v4.18. It
+> includes a slew of cleanup work, and the new firmware_request_nowarn()
+> which is quiet but enables the sysfs fallback mechanism. I've gone ahead
+> and also queued up a few minor fixes for the firmware loader documentation
+> which have come up recently. These changes are available on my git tree
+> both based on linux-next [0] and Linus' latest tree [1]. Folks working
+> on new developments for the firmware loader can use my linux-next
+> branch 20180508-firmware_loader_for-v4.18-try2 for now.
+>
+> 0-day sends its blessings.
+>
+> The patches from Mimi's series still require a bit more discussion and
+> review. The discussion over the EFI firmware fallback mechanism is still
+> ongoing.
+>
+> As for the rename that you wanted, perhaps we can do this late in the
+> merge window considering we're at rc4 now. I can prep something up for
+> that later.
+>
+> Question, and specially rants are warmly welcomed.
 
+I sent some typo catches, but with those fixed, please consider the
+whole series:
 
-On 2018-05-08 02:12 PM, Luis R. Rodriguez wrote:
-> Clarify the provenance of the firmware loader firmware_class module name
-> and why we cannot rename the module in the future.
-> 
-> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> ---
->   .../driver-api/firmware/fallback-mechanisms.rst          | 9 ++++++---
->   1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/driver-api/firmware/fallback-mechanisms.rst b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> index a39323ef7d29..a8047be4a96e 100644
-> --- a/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> +++ b/Documentation/driver-api/firmware/fallback-mechanisms.rst
-> @@ -72,9 +72,12 @@ the firmware requested, and establishes it in the device hierarchy by
->   associating the device used to make the request as the device's parent.
->   The sysfs directory's file attributes are defined and controlled through
->   the new device's class (firmware_class) and group (fw_dev_attr_groups).
-> -This is actually where the original firmware_class.c file name comes from,
-> -as originally the only firmware loading mechanism available was the
-> -mechanism we now use as a fallback mechanism.
-> +This is actually where the original firmware_class module name came from,
-> +given that originally the only firmware loading mechanism available was the
-> +mechanism we now use as a fallback mechanism, which which registers a
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Just a tiny repeated word here, "which which".
+Thanks!
 
--Andres
+-Kees
 
-
-> +struct class firmware_class. Because the attributes exposed are part of the
-> +module name, the module name firmware_class cannot be renamed in the future, to
-> +ensure backward compatibilty with old userspace.
->   
->   To load firmware using the sysfs interface we expose a loading indicator,
->   and a file upload firmware into:
-> 
+-- 
+Kees Cook
+Pixel Security
