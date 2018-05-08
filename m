@@ -1,38 +1,40 @@
 Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
-X-Google-Smtp-Source: AB8JxZpUW9lLphETSbgICuJqSeplvlTwRMkyxvIst+LYHC1bj609tCqqX2Vg45B1DzwnNx71CILY
-ARC-Seal: i=1; a=rsa-sha256; t=1525767330; cv=none;
+X-Google-Smtp-Source: AB8JxZrGlYQJK5UXxfduhv62EWyAX3fGFeRhoCF7itAsSEk0RmcRi4p1E6MWBrR1E0bksSq1N/+l
+ARC-Seal: i=1; a=rsa-sha256; t=1525767327; cv=none;
         d=google.com; s=arc-20160816;
-        b=TdsnKdMSijdVX1YmD/JGWpDGDWywY8hidOxHfyYCVTQrEkIhGhf8MMaUparMuCgQ05
-         2n4Yd1Sxxry3R2Z6OD+L8R39jtgot98S1deJwyh/nGL8HILWMNd+r/QoIXCuuQ9hZMS/
-         rxa4wSGmmAZrBD2wTbyZPsmQPYCq2teHkytnvZVtbNDE1ZHPK89S5yCCy3y443ncfUCf
-         Uyv2WUHhr+9kFbB/UDxmD6UZQgZ5kBUywNKVl8Zjrk1YJlCb4AyLyi2tV6nbIWTEwqMB
-         TSoL2bDMyLLM7xO56ruiC9oRjVYeNV9CQKHE2T3ZU+kg5t//4R4p4VWWnT25TKeNOVei
-         Voqg==
+        b=UC4/a+aoZyTjpQwLqdXwp6+rSeUHsgrVYbSnx2iVsGedi4sroSO4OxWrlqQ5aAfgqv
+         R9LXXy9wIGc6EzkiI8wnq/xfD1el1C8n81TNyuPiLDZeS3XlFscGZkZaSpcpsGtsmLvk
+         iaO/O/jwCP/4LFbOb8gB1EYGTF3RsZ6bqnaKdjgnaDuBfDhfOIM20cj1O9lrUgZuULgU
+         B1e9bBmvv1jzQNUHslJXSbQFpYh1GFu3/08n1HVyQ9nxqRtYfnjQYhvOvJZwQvDiXO14
+         USn8MwiTMOU1+WszggREzKBabkxib3hM3sDeHQz2ognOC95j8Aras5bUOn96MjTCcv5T
+         tNnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=mime-version:user-agent:references:in-reply-to:message-id:date
          :subject:cc:to:from:dkim-signature:arc-authentication-results;
-        bh=wd+okw/h2OqBk8nlTTDBGXkY1vmDFdH0vM+4SNDkhhs=;
-        b=yckY909LJExX+to0KMWZXlFHQIkanGhjElgKWReD5RE2Ijlh2+JP5vca3sTb5DmWLz
-         ao4CfzOh6vhNYnPhDS4/ifIOwRuxHfe8taXKFiT91mswmqJ722/pNeJu1AL0i1Kj4SI5
-         KoVV2Uc1suMn1/PWL35flYwp49Y9hfjkfre3EQYQ5FD1bt5bu9mqhyfZdxtDy8X0+1ZE
-         3kSZGVa/DO+Gy8L/9cCZmE5t6fGQd63zCHSqQrnkllNgrBttUb/p0XmGDUUwCukw0Cmt
-         heT3c89bA8awgcAls62kTdRhq4ar0fkm2Nih2e0mjQDKTbNkf0sKUnhpFxPZ+qf3R8uB
-         Df2g==
+        bh=AsjLbaLi5tKn1lopw0DWh608IpdHBBIuNoHAhSjoj3E=;
+        b=yxBD4GDOtFYuHZFUnM2atLW0q+AuQ9rxafVsE/LlbrDwpna4M/c2ymwIZlXkT/6KC3
+         pjJfPIB+SBKkC3AFcRBYak8ml5ePsx785Rz0/p1qIdQdLRj3FzklJD1D2FHRvMoz8d6s
+         M8floJbLtMgPvlBxYbLRlg1lAWMyqp65N1Kf27kLnsz+DyXSmNoDjhqwW87gJlkyjjYy
+         t/PvTv5zJPXFlRQaw0obXj3fKuH1Oqg8kiQ7+fIfGV88GPr8F+IQQPhk2JpPtZaa4hS1
+         tP0OHx2vlp+yTXGzFRStLKmKxAlZGtuYbPsoBixDs8M5JqvVVUjSitlLxHFIpOMhi4+J
+         JPrQ==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=o5j/0LVE;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1aHaYDy1;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@kernel.org header.s=default header.b=o5j/0LVE;
+       dkim=pass header.i=@kernel.org header.s=default header.b=1aHaYDy1;
        spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	stable@vger.kernel.org,
-	Ping-Ke Shih <pkshih@realtek.com>,
-	Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 17/43] rtlwifi: btcoex: Add power_on_setting routine
-Date: Tue,  8 May 2018 10:10:36 +0200
-Message-Id: <20180508074006.884700959@linuxfoundation.org>
+	Vittorio Gambaletta <linuxbugs@vittgam.net>,
+	Salvatore Bellizzi <lkml@seppia.net>,
+	Guenter Roeck <groeck@chromium.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 16/43] Input: atmel_mxt_ts - add touchpad button mapping for Samsung Chromebook Pro
+Date: Tue,  8 May 2018 10:10:35 +0200
+Message-Id: <20180508074006.666745209@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508074003.984433784@linuxfoundation.org>
 References: <20180508074003.984433784@linuxfoundation.org>
@@ -42,8 +44,8 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-getmail-retrieved-from-mailbox: INBOX
 X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
-X-GMAIL-THRID: =?utf-8?q?1599883004150165615?=
-X-GMAIL-MSGID: =?utf-8?q?1599883004150165615?=
+X-GMAIL-THRID: =?utf-8?q?1599882773685082917?=
+X-GMAIL-MSGID: =?utf-8?q?1599883001572961360?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -51,74 +53,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+From: Vittorio Gambaletta (VittGam) <linuxbugs@vittgam.net>
 
-commit a44709bba70fb9badc44b6a551415b152db13182 upstream.
+commit f372b81101e6895252298e563d634d5e44ae81e7 upstream.
 
-After mac power-on sequence, wifi will start to work so notify btcoex the
-event to configure registers especially related to antenna. This will not
-only help to assign antenna but also to yield better user experience.
+This patch adds the correct platform data information for the Caroline
+Chromebook, so that the mouse button does not get stuck in pressed state
+after the first click.
 
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+The Samus button keymap and platform data definition are the correct
+ones for Caroline, so they have been reused here.
+
+Signed-off-by: Vittorio Gambaletta <linuxbugs@vittgam.net>
+Signed-off-by: Salvatore Bellizzi <lkml@seppia.net>
+Tested-by: Guenter Roeck <groeck@chromium.org>
+Cc: stable@vger.kernel.org
+[dtor: adjusted vendor spelling to match shipping firmware]
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h |    1 +
- drivers/net/wireless/realtek/rtlwifi/btcoexist/rtl_btc.c      |    6 ++++++
- drivers/net/wireless/realtek/rtlwifi/btcoexist/rtl_btc.h      |    1 +
- drivers/net/wireless/realtek/rtlwifi/wifi.h                   |    1 +
- 4 files changed, 9 insertions(+)
+ drivers/input/touchscreen/atmel_mxt_ts.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/halbtcoutsrc.h
-@@ -601,6 +601,7 @@ extern struct btc_coexist gl_bt_coexist;
- 
- bool exhalbtc_initlize_variables(void);
- bool exhalbtc_bind_bt_coex_withadapter(void *adapter);
-+void exhalbtc_power_on_setting(struct btc_coexist *btcoexist);
- void exhalbtc_init_hw_config(struct btc_coexist *btcoexist, bool wifi_only);
- void exhalbtc_init_coex_dm(struct btc_coexist *btcoexist);
- void exhalbtc_ips_notify(struct btc_coexist *btcoexist, u8 type);
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/rtl_btc.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/rtl_btc.c
-@@ -32,6 +32,7 @@
- static struct rtl_btc_ops rtl_btc_operation = {
- 	.btc_init_variables = rtl_btc_init_variables,
- 	.btc_init_hal_vars = rtl_btc_init_hal_vars,
-+	.btc_power_on_setting = rtl_btc_power_on_setting,
- 	.btc_init_hw_config = rtl_btc_init_hw_config,
- 	.btc_ips_notify = rtl_btc_ips_notify,
- 	.btc_lps_notify = rtl_btc_lps_notify,
-@@ -110,6 +111,11 @@ void rtl_btc_init_hal_vars(struct rtl_pr
- 	 */
- }
- 
-+void rtl_btc_power_on_setting(struct rtl_priv *rtlpriv)
-+{
-+	exhalbtc_power_on_setting(&gl_bt_coexist);
-+}
-+
- void rtl_btc_init_hw_config(struct rtl_priv *rtlpriv)
- {
- 	u8 bt_exist;
---- a/drivers/net/wireless/realtek/rtlwifi/btcoexist/rtl_btc.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/btcoexist/rtl_btc.h
-@@ -29,6 +29,7 @@
- 
- void rtl_btc_init_variables(struct rtl_priv *rtlpriv);
- void rtl_btc_init_hal_vars(struct rtl_priv *rtlpriv);
-+void rtl_btc_power_on_setting(struct rtl_priv *rtlpriv);
- void rtl_btc_init_hw_config(struct rtl_priv *rtlpriv);
- void rtl_btc_ips_notify(struct rtl_priv *rtlpriv, u8 type);
- void rtl_btc_lps_notify(struct rtl_priv *rtlpriv, u8 type);
---- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
-@@ -2545,6 +2545,7 @@ struct bt_coexist_info {
- struct rtl_btc_ops {
- 	void (*btc_init_variables) (struct rtl_priv *rtlpriv);
- 	void (*btc_init_hal_vars) (struct rtl_priv *rtlpriv);
-+	void (*btc_power_on_setting)(struct rtl_priv *rtlpriv);
- 	void (*btc_init_hw_config) (struct rtl_priv *rtlpriv);
- 	void (*btc_ips_notify) (struct rtl_priv *rtlpriv, u8 type);
- 	void (*btc_lps_notify)(struct rtl_priv *rtlpriv, u8 type);
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -3031,6 +3031,15 @@ static const struct dmi_system_id mxt_dm
+ 		.driver_data = samus_platform_data,
+ 	},
+ 	{
++		/* Samsung Chromebook Pro */
++		.ident = "Samsung Chromebook Pro",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Google"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Caroline"),
++		},
++		.driver_data = samus_platform_data,
++	},
++	{
+ 		/* Other Google Chromebooks */
+ 		.ident = "Chromebook",
+ 		.matches = {
