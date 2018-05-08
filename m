@@ -1,96 +1,75 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753703AbeEHA0B (ORCPT <rfc822;w@1wt.eu>);
-        Mon, 7 May 2018 20:26:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49966 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753615AbeEHA0A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 May 2018 20:26:00 -0400
-Date: Mon, 7 May 2018 17:25:47 -0700
-From: Matthew Wilcox <willy@infradead.org>
-To: dsterba@suse.cz, Huaisheng HS1 Ye <yehs1@lenovo.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "mgorman@techsingularity.net" <mgorman@techsingularity.net>,
-        "pasha.tatashin@oracle.com" <pasha.tatashin@oracle.com>,
-        "alexander.levin@verizon.com" <alexander.levin@verizon.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "penguin-kernel@I-love.SAKURA.ne.jp"
-        <penguin-kernel@I-love.SAKURA.ne.jp>,
-        "colyli@suse.de" <colyli@suse.de>, NingTing Cheng <chengnt@lenovo.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [External]  Re: [PATCH 2/3] include/linux/gfp.h: use unsigned
- int in gfp_zone
-Message-ID: <20180508002547.GA16338@bombadil.infradead.org>
-References: <1525416729-108201-3-git-send-email-yehs1@lenovo.com>
- <20180504133533.GR4535@dhcp22.suse.cz>
- <20180504154004.GB29829@bombadil.infradead.org>
- <HK2PR03MB168459A1C4FB2B7D3E1F6A4A92840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506134814.GB7362@bombadil.infradead.org>
- <HK2PR03MB168447008C658172FFDA402992840@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180506185532.GA13604@bombadil.infradead.org>
- <HK2PR03MB1684BF10B3B515BFABD35F8B929B0@HK2PR03MB1684.apcprd03.prod.outlook.com>
- <20180507184410.GA12361@bombadil.infradead.org>
- <20180507212500.bdphwfhk55w6vlbb@twin.jikos.cz>
+        id S1753738AbeEHA0m (ORCPT <rfc822;w@1wt.eu>);
+        Mon, 7 May 2018 20:26:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:55965 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753416AbeEHA0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 May 2018 20:26:41 -0400
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+Date: Tue, 8 May 2018 10:26:38 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the bpf-next tree with the s390 tree
+Message-ID: <20180508102638.1e19b7f2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180507212500.bdphwfhk55w6vlbb@twin.jikos.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kXzFUC_=Cczq4v52YPlNUFN"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 07, 2018 at 11:25:01PM +0200, David Sterba wrote:
-> On Mon, May 07, 2018 at 11:44:10AM -0700, Matthew Wilcox wrote:
-> > But something like btrfs should almost certainly be using ~GFP_ZONEMASK.
-> 
-> Agreed, the direct use of __GFP_DMA32 was added in 3ba7ab220e8918176c6f
-> to substitute GFP_NOFS, so the allocation flags are less restrictive but
-> still acceptable for allocation from slab.
-> 
-> The requirement from btrfs is to avoid highmem, the 'must be acceptable
-> for slab' requirement is more MM internal and should have been hidden
-> under some opaque flag mask. There was no strong need for that at the
-> time.
+--Sig_/kXzFUC_=Cczq4v52YPlNUFN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The GFP flags encode a multiple of different requirements.  There's
-"What can the allocator do to free memory" and "what area of memory
-can the allocation come from".  btrfs doesn't actually want to
-allocate memory from ZONE_MOVABLE or ZONE_DMA either.  It's probably never
-been called with those particular flags set, but in the spirit of
-future-proofing btrfs, perhaps a patch like this is in order?
+Hi all,
 
----- >8 ----
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-Subject: btrfs: Allocate extents from ZONE_NORMAL
-From: Matthew Wilcox <mawilcox@microsoft.com>
+  arch/s390/net/bpf_jit.S
 
-If anyone ever passes a GFP_DMA or GFP_MOVABLE allocation flag to
-allocate_extent_state, it will try to allocate memory from the wrong zone.
-We just want to allocate memory from ZONE_NORMAL, so use GFP_RECLAIM_MASK
-to get what we want.
+between commit:
 
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+  de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index e99b329002cf..4e4a67b7b29d 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -216,12 +216,7 @@ static struct extent_state *alloc_extent_state(gfp_t mask)
- {
- 	struct extent_state *state;
- 
--	/*
--	 * The given mask might be not appropriate for the slab allocator,
--	 * drop the unsupported bits
--	 */
--	mask &= ~(__GFP_DMA32|__GFP_HIGHMEM);
--	state = kmem_cache_alloc(extent_state_cache, mask);
-+	state = kmem_cache_alloc(extent_state_cache, mask & GFP_RECLAIM_MASK);
- 	if (!state)
- 		return state;
- 	state->state = 0;
+from the s390 tree and commit:
+
+  e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
+
+from the bpf-next tree.
+
+I fixed it up (I just removed the file as the latter does) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/kXzFUC_=Cczq4v52YPlNUFN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw7r4ACgkQAVBC80lX
+0Gy4PAf8DgK2t+x5p9ltMzupAQvkJvFQ0YnwQ+AVZx2PUsoWQdPe/ucpwl8s3DJa
+zxtDzbPFY6gauE4tLVMOZJPO6wMMtK2cE17h/VRMIvPZVO8TWhehIOPeFmzffBtB
+qbKIP2aywKUwvOEzL4n+rNCvY9D1cNZzdljaJBeDU4iVZwHTmnx65+ldZK6jSmc7
+ox/Ns986SwztFk8kGM65ywYz8u4NP3g5JlXQCKE1cOeW8eF27Ni7C/gknsoqXKHH
+ai01w3xM6rD4S+K4D3FFW3BVw960VkE4gxjXimenI1qQnt4+w4sKQVmT8KDu/nXg
+af44oXT7nWpfGg52X8eor9jEZJf1vA==
+=VLxK
+-----END PGP SIGNATURE-----
+
+--Sig_/kXzFUC_=Cczq4v52YPlNUFN--
