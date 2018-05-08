@@ -1,101 +1,53 @@
-Return-Path: <stable-owner@vger.kernel.org>
-X-Cyrus-Session-Id: sloti22d1t05-2483313-1525767104-2-17898696487687951522
-X-Sieve: CMU Sieve 3.0
-X-Spam-known-sender: no
-X-Spam-score: 0.0
-X-Spam-hits: BAYES_00 -1.9, HEADER_FROM_DIFFERENT_DOMAINS 0.25, MAILING_LIST_MULTI -1,
-  RCVD_IN_DNSWL_HI -5, LANGUAGES en, BAYES_USED global, SA_VERSION 3.4.0
-X-Spam-source: IP='209.132.180.67', Host='vger.kernel.org', Country='US',
-  FromHeader='org', MailFrom='org'
-X-Spam-charsets: plain='UTF-8'
-X-Resolved-to: greg@kroah.com
-X-Delivered-to: greg@kroah.com
-X-Mail-from: stable-owner@vger.kernel.org
-ARC-Seal: i=1; a=rsa-sha256; cv=none; d=messagingengine.com; s=fm2; t=
-    1525767104; b=OczuRCDUAvPhQtR7keI3VXy2zkWShZrCjwRwNA/K9FmzJseuIV
-    L07W81oUuL7cZviTG/HPyyfzzvE2PmUNRZwZC8Oy9rjlXbnyAyY8R99sUx5cQ6m+
-    HoWOU80AQiAyaswtRGCd0Lf9H0cmarVb2xB9xbNxnNm28+9NgnQcsgJzBFgY1nxK
-    i9M04oHwqxhEr4ZQCjeX0N0JQwn3ZB8DDnko4uYeiXAEk5fGedOKPsv0qjC94oKb
-    dm1jck/Ka0K7qs5MmwkjCrMvb783lUjSnJjdzaLJh9yh2y4f67Wxu1LNEAkdniqL
-    PkWMWLo352eGi1c+vQL89drgvC4oo9DaSn7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=
-    messagingengine.com; h=from:to:cc:subject:date:message-id
-    :in-reply-to:references:mime-version:content-type:sender
-    :list-id; s=fm2; t=1525767104; bh=KeSeHYyJFFqlt5/QUp8LLz4N1zz6OO
-    x3xXP8nfi3Zks=; b=L0luRvMc6WOmuD2Eu6XhfkhZPYUZthsGTm8BMlgY/LF9GF
-    PWluoHQf+V79HkB7PJh4UwDsh1Ox92ysq9znlNf4ueAMC7IMesPfUhUVWh/uADqe
-    lAxi66xOfix+wkO/F7MZ6+EzE29odhnc8xyIWtbj4a0PEnrsoTyb0NIyShX7L8hd
-    uvjIj+DzfUne6F8VAcVmZ7S38Mgl4wznvp5BkPJIez8fAAizVtzotVTQI3E7w4IS
-    AYloshXwsPYWhJ3FPtm8Qlk9ZbcB8EBXWdn7bWoTYSoi4oGI+tYXHUVgdGKGa+cr
-    fOnSAZU7QYmRnO9qQTCh8x0wpr+a7TWcU58p6lyg==
-ARC-Authentication-Results: i=1; mx3.messagingengine.com; arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-    header.i=@kernel.org header.b=FK8IkH0v x-bits=1024 x-keytype=rsa
-    x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-    header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-    smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-    smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-    header.domain=linuxfoundation.org header.result=pass
-    header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-Authentication-Results: mx3.messagingengine.com;
-    arc=none (no signatures found);
-    dkim=pass (1024-bit rsa key sha256) header.d=kernel.org
-      header.i=@kernel.org header.b=FK8IkH0v x-bits=1024 x-keytype=rsa
-      x-algorithm=sha256 x-selector=default;
-    dmarc=none (p=none,has-list-id=yes,d=none)
-      header.from=linuxfoundation.org;
-    iprev=pass policy.iprev=209.132.180.67 (vger.kernel.org);
-    spf=none smtp.mailfrom=stable-owner@vger.kernel.org
-      smtp.helo=vger.kernel.org;
-    x-aligned-from=fail;
-    x-cm=none score=0;
-    x-ptr=pass x-ptr-helo=vger.kernel.org x-ptr-lookup=vger.kernel.org;
-    x-return-mx=pass smtp.domain=vger.kernel.org smtp.result=pass
-      smtp_org.domain=kernel.org smtp_org.result=pass smtp_is_org_domain=no
-      header.domain=linuxfoundation.org header.result=pass
-      header_is_org_domain=yes;
-    x-vs=clean score=-100 state=0
-X-ME-VSCategory: clean
-X-CM-Envelope: MS4wfEHYyQSQGTexcpxeQs5QGrQ5sQEiqrDOG+tEb9OLJNzk397OX/mKOOQa8u+5JXy9+mwy0k2XCRLtJ1USpkVQQ7bAwJSJ51HCAcoiBvDf1XZVOX8miumZ
-    NU14WlyOIJbAs7jxdXXeUKyZEFFtQuy/OlL4LSiY1D7Ay1NCAWSjE0lt/Nw10/Z+yDkKPOTSIfCHjWG92GZGiGDcRgdEXyoRDWRpXoD79D3YBbPZJYYGpbIM
-X-CM-Analysis: v=2.3 cv=Tq3Iegfh c=1 sm=1 tr=0 a=UK1r566ZdBxH71SXbqIOeA==:117
-    a=UK1r566ZdBxH71SXbqIOeA==:17 a=IkcTkHD0fZMA:10 a=VUJBJC2UJ8kA:10
-    a=KKAkSRfTAAAA:8 a=QyXUC8HyAAAA:8 a=ag1SF4gXAAAA:8 a=UPSWH-VeF1jkfTB6omMA:9
-    a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=Yupwre4RP9_Eg_Bd0iYG:22
-X-ME-CMScore: 0
-X-ME-CMCategory: none
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754188AbeEHILk (ORCPT <rfc822;greg@kroah.com>);
-        Tue, 8 May 2018 04:11:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754183AbeEHILj (ORCPT <rfc822;stable@vger.kernel.org>);
-        Tue, 8 May 2018 04:11:39 -0400
+Return-Path: <SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org>
+X-Google-Smtp-Source: AB8JxZr+Ep+ugoaNfu2UpEuG29KY+x4mo5OmtHdbHguauVzgINfp1X7Izxn+IJi9MbAQwyGea1v9
+ARC-Seal: i=1; a=rsa-sha256; t=1525767104; cv=none;
+        d=google.com; s=arc-20160816;
+        b=wyDYs32Tt54TjPwq1RTtPiq/xhglZjpzh5CFjq+j5BGeYeTXlN6v+SzDiiHfWgz0gX
+         LzKgOrNok21csCs1M+5AdtlxaaqcYyUS+6oc9WQi25cIjNmevlmHU0v3bSm9tFFjEVuD
+         GUckza0z/XNwsgRitK+iWFrQRcl1jLdXT2mBtF2gdnuzq9wRmlYwB2vpnbdLSS6QvQcV
+         WHV1g1qz0N7TN9LGlR+zg7r3RKtjsp31xocI1TV+0KI2M7WB+lqC1fN8FPSS0xDzf/vM
+         m0e5t8k2O9h4KsKE+e44fisZvPywUwHGOmr7Mwkb92dAsete2KIfxaZGPBBAXfBmdqtU
+         dlLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:user-agent:references:in-reply-to:message-id:date
+         :subject:cc:to:from:dkim-signature:arc-authentication-results;
+        bh=0nv2aHDto5FbI1HMPjp3aBBPtI7kMoCfvjyhJSVOr/k=;
+        b=W53AfeVCx6l6hPfYbGmDYZs/xgYj8eprh80GkM8gBDHGkpXDukGwEYOAHKGR1hRAHb
+         1Ce2lhuGw/hyjo3JUFL6NXYIiZFrfmm+K5LYjIcGp/5iK4iQIlk9Pkrx7jEP440nJidU
+         /NlLafPeWF3KMbGqulSdg+tbWvOVIgU9PfXyApo6yE+9eil0TvlZxVZg8yTefsqLMgiW
+         m4WttpuqKdXK0T2PU0IAEKFsyPT5Vto3GORC1In+6LsJzcv0j/caLTLytEr4Z9tWwzSy
+         XIsObQmvAJT2TUX0Tv3jS/rIUGqu79e/Dl7jeUizrziHZj9JGgtkaeHL0vJ5hDaZcpAY
+         6Gig==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=SPcOBt4V;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@kernel.org header.s=default header.b=SPcOBt4V;
+       spf=pass (google.com: domain of srs0=4in3=h3=linuxfoundation.org=gregkh@kernel.org designates 198.145.29.99 as permitted sender) smtp.mailfrom=SRS0=4In3=H3=linuxfoundation.org=gregkh@kernel.org
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: linux-kernel@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.16 01/52] ACPI / button: make module loadable when booted in non-ACPI mode
-Date: Tue,  8 May 2018 10:09:59 +0200
-Message-Id: <20180508073928.253312412@linuxfoundation.org>
+	stable@vger.kernel.org,
+	"Bryant G. Ly" <bryantly@linux.vnet.ibm.com>,
+	Steven Royer <seroyer@linux.vnet.ibm.com>,
+	Taylor Jakobson <tjakobs@us.ibm.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Nicholas Bellinger <nab@linux-iscsi.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.16 11/52] scsi: target: Fix fortify_panic kernel exception
+Date: Tue,  8 May 2018 10:10:09 +0200
+Message-Id: <20180508073929.533623320@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180508073928.058320984@linuxfoundation.org>
 References: <20180508073928.058320984@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Sender: stable-owner@vger.kernel.org
-X-Mailing-List: stable@vger.kernel.org
 X-getmail-retrieved-from-mailbox: INBOX
+X-GMAIL-LABELS: =?utf-8?b?IlxcU2VudCI=?=
+X-GMAIL-THRID: =?utf-8?q?1599882767356757708?=
+X-GMAIL-MSGID: =?utf-8?q?1599882767356757708?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
@@ -103,58 +55,72 @@ List-ID: <linux-kernel.vger.kernel.org>
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Bryant G Ly <bryantly@linux.vnet.ibm.com>
 
-commit ac1e55b1fdb27c1b07a0a6fe519f1291ff1e7d40 upstream.
+commit f5957dade4f373b04fa1f5315a489f18cc2c4cb4 upstream.
 
-Modules such as nouveau.ko and i915.ko have a link time dependency on
-acpi_lid_open(), and due to its use of acpi_bus_register_driver(),
-the button.ko module that provides it is only loadable when booted in
-ACPI mode. However, the ACPI button driver can be built into the core
-kernel as well, in which case the dependency can always be satisfied,
-and the dependent modules can be loaded regardless of whether the
-system was booted in ACPI mode or not.
+memcmp() requires the two buffers passed as arguments to be at least
+'size' bytes long, otherwise a fortify_panic will trigger.
 
-So let's fix this asymmetry by making the ACPI button driver loadable
-as a module even if not booted in ACPI mode, so it can provide the
-acpi_lid_open() symbol in the same way as when built into the kernel.
+Use memchr_inv() instead of memcmp() to determine whether the received
+payload is zeroed or not.
 
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-[ rjw: Minor adjustments of comments, whitespace and names. ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The bug was found by running a block backstore via LIO.
+
+[  496.212958] Call Trace:
+[  496.212960] [c0000007e58e3800] [c000000000cbbefc] fortify_panic+0x24/0x38 (unreliable)
+[  496.212965] [c0000007e58e3860] [d00000000f150c28] iblock_execute_write_same+0x3b8/0x3c0 [target_core_iblock]
+[  496.212976] [c0000007e58e3910] [d000000006c737d4] __target_execute_cmd+0x54/0x150 [target_core_mod]
+[  496.212982] [c0000007e58e3940] [d000000006d32ce4] ibmvscsis_write_pending+0x74/0xe0 [ibmvscsis]
+[  496.212991] [c0000007e58e39b0] [d000000006c74fc8] transport_generic_new_cmd+0x318/0x370 [target_core_mod]
+[  496.213001] [c0000007e58e3a30] [d000000006c75084] transport_handle_cdb_direct+0x64/0xd0 [target_core_mod]
+[  496.213011] [c0000007e58e3aa0] [d000000006c75298] target_submit_cmd_map_sgls+0x1a8/0x320 [target_core_mod]
+[  496.213021] [c0000007e58e3b30] [d000000006c75458] target_submit_cmd+0x48/0x60 [target_core_mod]
+[  496.213026] [c0000007e58e3bd0] [d000000006d34c20] ibmvscsis_scheduler+0x370/0x600 [ibmvscsis]
+[  496.213031] [c0000007e58e3c90] [c00000000013135c] process_one_work+0x1ec/0x580
+[  496.213035] [c0000007e58e3d20] [c000000000131798] worker_thread+0xa8/0x600
+[  496.213039] [c0000007e58e3dc0] [c00000000013a468] kthread+0x168/0x1b0
+[  496.213044] [c0000007e58e3e30] [c00000000000b528] ret_from_kernel_thread+0x5c/0xb4
+
+[mkp: tweaked commit message]
+
+Fixes: 2237498f0b5c ("target/iblock: Convert WRITE_SAME to blkdev_issue_zeroout")
+Signed-off-by: Bryant G. Ly <bryantly@linux.vnet.ibm.com>
+Reviewed-by: Steven Royer <seroyer@linux.vnet.ibm.com>
+Tested-by: Taylor Jakobson <tjakobs@us.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: <stable@vger.kernel.org> # v4.13+
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/button.c |   24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ drivers/target/target_core_iblock.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/acpi/button.c
-+++ b/drivers/acpi/button.c
-@@ -635,4 +635,26 @@ module_param_call(lid_init_state,
- 		  NULL, 0644);
- MODULE_PARM_DESC(lid_init_state, "Behavior for reporting LID initial state");
+--- a/drivers/target/target_core_iblock.c
++++ b/drivers/target/target_core_iblock.c
+@@ -427,8 +427,8 @@ iblock_execute_zero_out(struct block_dev
+ {
+ 	struct se_device *dev = cmd->se_dev;
+ 	struct scatterlist *sg = &cmd->t_data_sg[0];
+-	unsigned char *buf, zero = 0x00, *p = &zero;
+-	int rc, ret;
++	unsigned char *buf, *not_zero;
++	int ret;
  
--module_acpi_driver(acpi_button_driver);
-+static int acpi_button_register_driver(struct acpi_driver *driver)
-+{
-+	/*
-+	 * Modules such as nouveau.ko and i915.ko have a link time dependency
-+	 * on acpi_lid_open(), and would therefore not be loadable on ACPI
-+	 * capable kernels booted in non-ACPI mode if the return value of
-+	 * acpi_bus_register_driver() is returned from here with ACPI disabled
-+	 * when this driver is built as a module.
-+	 */
-+	if (acpi_disabled)
-+		return 0;
-+
-+	return acpi_bus_register_driver(driver);
-+}
-+
-+static void acpi_button_unregister_driver(struct acpi_driver *driver)
-+{
-+	if (!acpi_disabled)
-+		acpi_bus_unregister_driver(driver);
-+}
-+
-+module_driver(acpi_button_driver, acpi_button_register_driver,
-+	       acpi_button_unregister_driver);
+ 	buf = kmap(sg_page(sg)) + sg->offset;
+ 	if (!buf)
+@@ -437,10 +437,10 @@ iblock_execute_zero_out(struct block_dev
+ 	 * Fall back to block_execute_write_same() slow-path if
+ 	 * incoming WRITE_SAME payload does not contain zeros.
+ 	 */
+-	rc = memcmp(buf, p, cmd->data_length);
++	not_zero = memchr_inv(buf, 0x00, cmd->data_length);
+ 	kunmap(sg_page(sg));
+ 
+-	if (rc)
++	if (not_zero)
+ 		return TCM_LOGICAL_UNIT_COMMUNICATION_FAILURE;
+ 
+ 	ret = blkdev_issue_zeroout(bdev,
