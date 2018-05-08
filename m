@@ -1,221 +1,345 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755368AbeEHRlK (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:41:10 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:39466 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754628AbeEHRlG (ORCPT
+        id S1755544AbeEHRnL (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:43:11 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:46034 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754846AbeEHRnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:41:06 -0400
-X-Google-Smtp-Source: AB8JxZqmcesagJlwyGoTTV5Z8rEswKK6CEv25fp/Lfsr9m1xrHS12BIAFbnkHM6htverbvabGidWSYTFYTlLH58V2f4=
+        Tue, 8 May 2018 13:43:06 -0400
+Subject: Re: [PATCH v3] media: v4l2-ioctl: fix function types for
+ IOCTL_INFO_STD
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <2a04c948-82ba-c69f-891e-303db85b66a4@xs4all.nl>
+ <20180508173501.22578-1-samitolvanen@google.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9c66c21c-616e-24a3-4da9-ea5130528739@xs4all.nl>
+Date: Tue, 8 May 2018 19:43:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <000000000000c10690056bb22ccd@google.com>
-References: <000000000000c10690056bb22ccd@google.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Wed, 9 May 2018 01:41:03 +0800
-Message-ID: <CADvbK_d8O7b9OCfCKGhaaQuBafi6rgkKEQh9Bk7pvZKX3KDKCg@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_do_sm
-To: syzbot <syzbot+141d898c5f24489db4aa@syzkaller.appspotmail.com>
-Cc: davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>, syzkaller-bugs@googlegroups.com,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180508173501.22578-1-samitolvanen@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfFVPhlN61qdpsz9mr4KNRqGPFmf+tmGB2LPYaCZBsoFnz6D4+pGpJk9Jodc+ah/OBK5jsBKT+aY7PBY5tXjulK/vv3CyWIzH+X7s3j33iY8WkEg0Ymer
+ IwJsfR2otz7CGMxiL2pzwNajzwpEklKcEDwdvqTqpRfvDq7kmYsBqFIDMh4YFC44F/onLekfFlqKUpT5WSdcPtXTcmLBC1UPBUweQyF7VHxLPAbD/Oqh4/kP
+ TpSXt0tPveA05hM+URaIuduIcXT+J4ViJOK7MMdpMFdQgEHKtQbUwekYuDUThDZGi6XBwHBnDUPyMzL7+ChDug==
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 8, 2018 at 9:58 PM, syzbot
-<syzbot+141d898c5f24489db4aa@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    f142f08bf7ec Fix typo in comment.
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1159ade7800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=31f4b3733894ef79
-> dashboard link: https://syzkaller.appspot.com/bug?extid=141d898c5f24489db4aa
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+141d898c5f24489db4aa@syzkaller.appspotmail.com
->
-> RDX: 0000000000000008 RSI: 0000000020000000 RDI: 0000000000000014
-> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000015
-> R13: 000000000000071e R14: 00000000006feb70 R15: 0000000000000007
-> ==================================================================
-> BUG: KASAN: use-after-free in sctp_cmd_interpreter
-> net/sctp/sm_sideeffect.c:1817 [inline]
-> BUG: KASAN: use-after-free in sctp_side_effects
-> net/sctp/sm_sideeffect.c:1220 [inline]
-> BUG: KASAN: use-after-free in sctp_do_sm+0x6015/0x7160
-> net/sctp/sm_sideeffect.c:1191
-> Read of size 1 at addr ffff8801c7883cb8 by task syz-executor6/18616
->
-> CPU: 1 PID: 18616 Comm: syz-executor6 Not tainted 4.17.0-rc4+ #38
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
->  print_address_description+0x6c/0x20b mm/kasan/report.c:256
->  kasan_report_error mm/kasan/report.c:354 [inline]
->  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
->  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1817 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->  sctp_do_sm+0x6015/0x7160 net/sctp/sm_sideeffect.c:1191
->  sctp_assoc_bh_rcv+0x30f/0x520 net/sctp/associola.c:1065
->  sctp_inq_push+0x263/0x320 net/sctp/inqueue.c:95
->  sctp_backlog_rcv+0x192/0xc00 net/sctp/input.c:350
->  sk_backlog_rcv include/net/sock.h:909 [inline]
->  __release_sock+0x12f/0x3a0 net/core/sock.c:2335
->  release_sock+0xa4/0x2b0 net/core/sock.c:2850
->  sctp_sendmsg+0x13cc/0x1d70 net/sctp/socket.c:2128
->  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
->  sock_sendmsg_nosec net/socket.c:629 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:639
->  sock_write_iter+0x35a/0x5a0 net/socket.c:908
->  call_write_iter include/linux/fs.h:1784 [inline]
->  new_sync_write fs/read_write.c:474 [inline]
->  __vfs_write+0x64d/0x960 fs/read_write.c:487
->  vfs_write+0x1f8/0x560 fs/read_write.c:549
->  ksys_write+0xf9/0x250 fs/read_write.c:598
->  __do_sys_write fs/read_write.c:610 [inline]
->  __se_sys_write fs/read_write.c:607 [inline]
->  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x455979
-> RSP: 002b:00007f6fad842c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 00007f6fad8436d4 RCX: 0000000000455979
-> RDX: 0000000000000008 RSI: 0000000020000000 RDI: 0000000000000014
-> RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000015
-> R13: 000000000000071e R14: 00000000006feb70 R15: 0000000000000007
->
-> Allocated by task 18616:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
->  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
->  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
->  kmem_cache_zalloc include/linux/slab.h:691 [inline]
->  sctp_chunkify+0xce/0x400 net/sctp/sm_make_chunk.c:1355
->  sctp_rcv+0xc65/0x3a60 net/sctp/input.c:221
->  sctp6_rcv+0x15/0x30 net/sctp/ipv6.c:1045
->  ip6_input_finish+0x3ff/0x1a30 net/ipv6/ip6_input.c:284
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ip6_input+0xe1/0x5e0 net/ipv6/ip6_input.c:327
->  dst_input include/net/dst.h:450 [inline]
->  ip6_rcv_finish+0x29c/0xa10 net/ipv6/ip6_input.c:71
->  NF_HOOK include/linux/netfilter.h:288 [inline]
->  ipv6_rcv+0xed6/0x22a0 net/ipv6/ip6_input.c:208
->  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
->  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
->  process_backlog+0x219/0x760 net/core/dev.c:5337
->  napi_poll net/core/dev.c:5735 [inline]
->  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
->  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
->
-> Freed by task 18616:
->  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->  set_track mm/kasan/kasan.c:460 [inline]
->  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
->  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->  __cache_free mm/slab.c:3498 [inline]
->  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
->  sctp_chunk_destroy net/sctp/sm_make_chunk.c:1481 [inline]
->  sctp_chunk_put+0x321/0x440 net/sctp/sm_make_chunk.c:1504
->  sctp_ulpevent_make_rcvmsg+0x955/0xd40 net/sctp/ulpevent.c:718
-There's no reason to put the chunk in sctp_ulpevent_make_rcvmsg's
-fail_mark err path before holding this chunk later there.
+On 05/08/2018 07:35 PM, Sami Tolvanen wrote:
+> This change fixes indirect call mismatches with Control-Flow Integrity
+> checking, which are caused by calling standard ioctls using a function
+> pointer that doesn't match the type of the actual function.
 
-We should just remove it.
+I really like the patch, but we've drifted away quite a bit from the original
+patch, and I think the commit message needs to be updated a bit.
 
-@@ -715,7 +715,6 @@ struct sctp_ulpevent
-*sctp_ulpevent_make_rcvmsg(struct sctp_association *asoc,
-        return event;
+Just mention that IOCTL_INFO_STD has been removed, we now always call a function
+and that DEFINE_V4L_STUB_FUNC is used to create stub functions where needed.
 
- fail_mark:
--       sctp_chunk_put(chunk);
-        kfree_skb(skb);
- fail:
-        return NULL;
+Basically the current message describes the problem (good), but it doesn't
+describe the chosen solution (bad).
 
->  sctp_ulpq_tail_data+0xa8/0x12b0 net/sctp/ulpqueue.c:108
->  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1478 [inline]
->  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->  sctp_do_sm+0x1658/0x7160 net/sctp/sm_sideeffect.c:1191
->  sctp_assoc_bh_rcv+0x30f/0x520 net/sctp/associola.c:1065
->  sctp_inq_push+0x263/0x320 net/sctp/inqueue.c:95
->  sctp_backlog_rcv+0x192/0xc00 net/sctp/input.c:350
->  sk_backlog_rcv include/net/sock.h:909 [inline]
->  __release_sock+0x12f/0x3a0 net/core/sock.c:2335
->  release_sock+0xa4/0x2b0 net/core/sock.c:2850
->  sctp_sendmsg+0x13cc/0x1d70 net/sctp/socket.c:2128
->  inet_sendmsg+0x19f/0x690 net/ipv4/af_inet.c:798
->  sock_sendmsg_nosec net/socket.c:629 [inline]
->  sock_sendmsg+0xd5/0x120 net/socket.c:639
->  sock_write_iter+0x35a/0x5a0 net/socket.c:908
->  call_write_iter include/linux/fs.h:1784 [inline]
->  new_sync_write fs/read_write.c:474 [inline]
->  __vfs_write+0x64d/0x960 fs/read_write.c:487
->  vfs_write+0x1f8/0x560 fs/read_write.c:549
->  ksys_write+0xf9/0x250 fs/read_write.c:598
->  __do_sys_write fs/read_write.c:610 [inline]
->  __se_sys_write fs/read_write.c:607 [inline]
->  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
->  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8801c7883bc0
->  which belongs to the cache sctp_chunk of size 256
-> The buggy address is located 248 bytes inside of
->  256-byte region [ffff8801c7883bc0, ffff8801c7883cc0)
-> The buggy address belongs to the page:
-> page:ffffea00071e20c0 count:1 mapcount:0 mapping:ffff8801c7883080 index:0x0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffff8801c7883080 0000000000000000 000000010000000c
-> raw: ffffea000723a220 ffff8801cdb66f48 ffff8801cdb65600 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff8801c7883b80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
->  ffff8801c7883c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->>
->> ffff8801c7883c80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->
->                                         ^
->  ffff8801c7883d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff8801c7883d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
->
->
+Sorry for asking for a v4, but this is core v4l2 code, so we're more careful
+about this.
+
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
 > ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report.
-> If you forgot to add the Reported-by tag, once the fix for this bug is
-> merged
-> into any tree, please reply to this email with:
-> #syz fix: exact-commit-title
-> To mark this as a duplicate of another syzbot report, please reply with:
-> #syz dup: exact-subject-of-another-report
-> If it's a one-off invalid bug report, please reply with:
-> #syz invalid
-> Note: if the crash happens again, it will cause creation of a new bug
-> report.
-> Note: all commands must start from beginning of the line in the email body.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-sctp" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>  drivers/media/v4l2-core/v4l2-ioctl.c | 245 ++++++++++++++-------------
+>  1 file changed, 130 insertions(+), 115 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index de5d96dbe69e0..a40dbec271f1d 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -2489,11 +2489,8 @@ struct v4l2_ioctl_info {
+>  	unsigned int ioctl;
+>  	u32 flags;
+>  	const char * const name;
+> -	union {
+> -		u32 offset;
+> -		int (*func)(const struct v4l2_ioctl_ops *ops,
+> -				struct file *file, void *fh, void *p);
+> -	} u;
+> +	int (*func)(const struct v4l2_ioctl_ops *ops, struct file *file,
+> +		    void *fh, void *p);
+>  	void (*debug)(const void *arg, bool write_only);
+>  };
+>  
+> @@ -2501,121 +2498,145 @@ struct v4l2_ioctl_info {
+>  #define INFO_FL_PRIO		(1 << 0)
+>  /* This control can be valid if the filehandle passes a control handler. */
+>  #define INFO_FL_CTRL		(1 << 1)
+> -/* This is a standard ioctl, no need for special code */
+> -#define INFO_FL_STD		(1 << 2)
+> -/* This is ioctl has its own function */
+> -#define INFO_FL_FUNC		(1 << 3)
+>  /* Queuing ioctl */
+> -#define INFO_FL_QUEUE		(1 << 4)
+> +#define INFO_FL_QUEUE		(1 << 2)
+>  /* Always copy back result, even on error */
+> -#define INFO_FL_ALWAYS_COPY	(1 << 5)
+> +#define INFO_FL_ALWAYS_COPY	(1 << 3)
+>  /* Zero struct from after the field to the end */
+>  #define INFO_FL_CLEAR(v4l2_struct, field)			\
+>  	((offsetof(struct v4l2_struct, field) +			\
+>  	  sizeof(((struct v4l2_struct *)0)->field)) << 16)
+>  #define INFO_FL_CLEAR_MASK	(_IOC_SIZEMASK << 16)
+>  
+> -#define IOCTL_INFO_STD(_ioctl, _vidioc, _debug, _flags)			\
+> -	[_IOC_NR(_ioctl)] = {						\
+> -		.ioctl = _ioctl,					\
+> -		.flags = _flags | INFO_FL_STD,				\
+> -		.name = #_ioctl,					\
+> -		.u.offset = offsetof(struct v4l2_ioctl_ops, _vidioc),	\
+> -		.debug = _debug,					\
+> +#define DEFINE_V4L_STUB_FUNC(_vidioc)				\
+> +	static int v4l_stub_ ## _vidioc(			\
+> +			const struct v4l2_ioctl_ops *ops,	\
+> +			struct file *file, void *fh, void *p)	\
+> +	{							\
+> +		return ops->vidioc_ ## _vidioc(file, fh, p);	\
+>  	}
+>  
+> -#define IOCTL_INFO_FNC(_ioctl, _func, _debug, _flags)			\
+> -	[_IOC_NR(_ioctl)] = {						\
+> -		.ioctl = _ioctl,					\
+> -		.flags = _flags | INFO_FL_FUNC,				\
+> -		.name = #_ioctl,					\
+> -		.u.func = _func,					\
+> -		.debug = _debug,					\
+> +#define IOCTL_INFO(_ioctl, _func, _debug, _flags)		\
+> +	[_IOC_NR(_ioctl)] = {					\
+> +		.ioctl = _ioctl,				\
+> +		.flags = _flags,				\
+> +		.name = #_ioctl,				\
+> +		.func = _func,					\
+> +		.debug = _debug,				\
+>  	}
+>  
+> +DEFINE_V4L_STUB_FUNC(g_fbuf)
+> +DEFINE_V4L_STUB_FUNC(s_fbuf)
+> +DEFINE_V4L_STUB_FUNC(expbuf)
+> +DEFINE_V4L_STUB_FUNC(g_std)
+> +DEFINE_V4L_STUB_FUNC(g_audio)
+> +DEFINE_V4L_STUB_FUNC(s_audio)
+> +DEFINE_V4L_STUB_FUNC(g_input)
+> +DEFINE_V4L_STUB_FUNC(g_edid)
+> +DEFINE_V4L_STUB_FUNC(s_edid)
+> +DEFINE_V4L_STUB_FUNC(g_output)
+> +DEFINE_V4L_STUB_FUNC(g_audout)
+> +DEFINE_V4L_STUB_FUNC(s_audout)
+> +DEFINE_V4L_STUB_FUNC(g_jpegcomp)
+> +DEFINE_V4L_STUB_FUNC(s_jpegcomp)
+> +DEFINE_V4L_STUB_FUNC(enumaudio)
+> +DEFINE_V4L_STUB_FUNC(enumaudout)
+> +DEFINE_V4L_STUB_FUNC(enum_framesizes)
+> +DEFINE_V4L_STUB_FUNC(enum_frameintervals)
+> +DEFINE_V4L_STUB_FUNC(g_enc_index)
+> +DEFINE_V4L_STUB_FUNC(encoder_cmd)
+> +DEFINE_V4L_STUB_FUNC(try_encoder_cmd)
+> +DEFINE_V4L_STUB_FUNC(decoder_cmd)
+> +DEFINE_V4L_STUB_FUNC(try_decoder_cmd)
+> +DEFINE_V4L_STUB_FUNC(s_dv_timings)
+> +DEFINE_V4L_STUB_FUNC(g_dv_timings)
+> +DEFINE_V4L_STUB_FUNC(enum_dv_timings)
+> +DEFINE_V4L_STUB_FUNC(query_dv_timings)
+> +DEFINE_V4L_STUB_FUNC(dv_timings_cap)
+> +
+>  static struct v4l2_ioctl_info v4l2_ioctls[] = {
+> -	IOCTL_INFO_FNC(VIDIOC_QUERYCAP, v4l_querycap, v4l_print_querycap, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_ENUM_FMT, v4l_enum_fmt, v4l_print_fmtdesc, INFO_FL_CLEAR(v4l2_fmtdesc, type)),
+> -	IOCTL_INFO_FNC(VIDIOC_G_FMT, v4l_g_fmt, v4l_print_format, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_S_FMT, v4l_s_fmt, v4l_print_format, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_REQBUFS, v4l_reqbufs, v4l_print_requestbuffers, INFO_FL_PRIO | INFO_FL_QUEUE),
+> -	IOCTL_INFO_FNC(VIDIOC_QUERYBUF, v4l_querybuf, v4l_print_buffer, INFO_FL_QUEUE | INFO_FL_CLEAR(v4l2_buffer, length)),
+> -	IOCTL_INFO_STD(VIDIOC_G_FBUF, vidioc_g_fbuf, v4l_print_framebuffer, 0),
+> -	IOCTL_INFO_STD(VIDIOC_S_FBUF, vidioc_s_fbuf, v4l_print_framebuffer, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_OVERLAY, v4l_overlay, v4l_print_u32, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_QBUF, v4l_qbuf, v4l_print_buffer, INFO_FL_QUEUE),
+> -	IOCTL_INFO_STD(VIDIOC_EXPBUF, vidioc_expbuf, v4l_print_exportbuffer, INFO_FL_QUEUE | INFO_FL_CLEAR(v4l2_exportbuffer, flags)),
+> -	IOCTL_INFO_FNC(VIDIOC_DQBUF, v4l_dqbuf, v4l_print_buffer, INFO_FL_QUEUE),
+> -	IOCTL_INFO_FNC(VIDIOC_STREAMON, v4l_streamon, v4l_print_buftype, INFO_FL_PRIO | INFO_FL_QUEUE),
+> -	IOCTL_INFO_FNC(VIDIOC_STREAMOFF, v4l_streamoff, v4l_print_buftype, INFO_FL_PRIO | INFO_FL_QUEUE),
+> -	IOCTL_INFO_FNC(VIDIOC_G_PARM, v4l_g_parm, v4l_print_streamparm, INFO_FL_CLEAR(v4l2_streamparm, type)),
+> -	IOCTL_INFO_FNC(VIDIOC_S_PARM, v4l_s_parm, v4l_print_streamparm, INFO_FL_PRIO),
+> -	IOCTL_INFO_STD(VIDIOC_G_STD, vidioc_g_std, v4l_print_std, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_S_STD, v4l_s_std, v4l_print_std, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_ENUMSTD, v4l_enumstd, v4l_print_standard, INFO_FL_CLEAR(v4l2_standard, index)),
+> -	IOCTL_INFO_FNC(VIDIOC_ENUMINPUT, v4l_enuminput, v4l_print_enuminput, INFO_FL_CLEAR(v4l2_input, index)),
+> -	IOCTL_INFO_FNC(VIDIOC_G_CTRL, v4l_g_ctrl, v4l_print_control, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_control, id)),
+> -	IOCTL_INFO_FNC(VIDIOC_S_CTRL, v4l_s_ctrl, v4l_print_control, INFO_FL_PRIO | INFO_FL_CTRL),
+> -	IOCTL_INFO_FNC(VIDIOC_G_TUNER, v4l_g_tuner, v4l_print_tuner, INFO_FL_CLEAR(v4l2_tuner, index)),
+> -	IOCTL_INFO_FNC(VIDIOC_S_TUNER, v4l_s_tuner, v4l_print_tuner, INFO_FL_PRIO),
+> -	IOCTL_INFO_STD(VIDIOC_G_AUDIO, vidioc_g_audio, v4l_print_audio, 0),
+> -	IOCTL_INFO_STD(VIDIOC_S_AUDIO, vidioc_s_audio, v4l_print_audio, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_QUERYCTRL, v4l_queryctrl, v4l_print_queryctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_queryctrl, id)),
+> -	IOCTL_INFO_FNC(VIDIOC_QUERYMENU, v4l_querymenu, v4l_print_querymenu, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_querymenu, index)),
+> -	IOCTL_INFO_STD(VIDIOC_G_INPUT, vidioc_g_input, v4l_print_u32, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_S_INPUT, v4l_s_input, v4l_print_u32, INFO_FL_PRIO),
+> -	IOCTL_INFO_STD(VIDIOC_G_EDID, vidioc_g_edid, v4l_print_edid, INFO_FL_ALWAYS_COPY),
+> -	IOCTL_INFO_STD(VIDIOC_S_EDID, vidioc_s_edid, v4l_print_edid, INFO_FL_PRIO | INFO_FL_ALWAYS_COPY),
+> -	IOCTL_INFO_STD(VIDIOC_G_OUTPUT, vidioc_g_output, v4l_print_u32, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_S_OUTPUT, v4l_s_output, v4l_print_u32, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_ENUMOUTPUT, v4l_enumoutput, v4l_print_enumoutput, INFO_FL_CLEAR(v4l2_output, index)),
+> -	IOCTL_INFO_STD(VIDIOC_G_AUDOUT, vidioc_g_audout, v4l_print_audioout, 0),
+> -	IOCTL_INFO_STD(VIDIOC_S_AUDOUT, vidioc_s_audout, v4l_print_audioout, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_G_MODULATOR, v4l_g_modulator, v4l_print_modulator, INFO_FL_CLEAR(v4l2_modulator, index)),
+> -	IOCTL_INFO_FNC(VIDIOC_S_MODULATOR, v4l_s_modulator, v4l_print_modulator, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_G_FREQUENCY, v4l_g_frequency, v4l_print_frequency, INFO_FL_CLEAR(v4l2_frequency, tuner)),
+> -	IOCTL_INFO_FNC(VIDIOC_S_FREQUENCY, v4l_s_frequency, v4l_print_frequency, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_CROPCAP, v4l_cropcap, v4l_print_cropcap, INFO_FL_CLEAR(v4l2_cropcap, type)),
+> -	IOCTL_INFO_FNC(VIDIOC_G_CROP, v4l_g_crop, v4l_print_crop, INFO_FL_CLEAR(v4l2_crop, type)),
+> -	IOCTL_INFO_FNC(VIDIOC_S_CROP, v4l_s_crop, v4l_print_crop, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_G_SELECTION, v4l_g_selection, v4l_print_selection, INFO_FL_CLEAR(v4l2_selection, r)),
+> -	IOCTL_INFO_FNC(VIDIOC_S_SELECTION, v4l_s_selection, v4l_print_selection, INFO_FL_PRIO | INFO_FL_CLEAR(v4l2_selection, r)),
+> -	IOCTL_INFO_STD(VIDIOC_G_JPEGCOMP, vidioc_g_jpegcomp, v4l_print_jpegcompression, 0),
+> -	IOCTL_INFO_STD(VIDIOC_S_JPEGCOMP, vidioc_s_jpegcomp, v4l_print_jpegcompression, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_QUERYSTD, v4l_querystd, v4l_print_std, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_TRY_FMT, v4l_try_fmt, v4l_print_format, 0),
+> -	IOCTL_INFO_STD(VIDIOC_ENUMAUDIO, vidioc_enumaudio, v4l_print_audio, INFO_FL_CLEAR(v4l2_audio, index)),
+> -	IOCTL_INFO_STD(VIDIOC_ENUMAUDOUT, vidioc_enumaudout, v4l_print_audioout, INFO_FL_CLEAR(v4l2_audioout, index)),
+> -	IOCTL_INFO_FNC(VIDIOC_G_PRIORITY, v4l_g_priority, v4l_print_u32, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_S_PRIORITY, v4l_s_priority, v4l_print_u32, INFO_FL_PRIO),
+> -	IOCTL_INFO_FNC(VIDIOC_G_SLICED_VBI_CAP, v4l_g_sliced_vbi_cap, v4l_print_sliced_vbi_cap, INFO_FL_CLEAR(v4l2_sliced_vbi_cap, type)),
+> -	IOCTL_INFO_FNC(VIDIOC_LOG_STATUS, v4l_log_status, v4l_print_newline, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_G_EXT_CTRLS, v4l_g_ext_ctrls, v4l_print_ext_controls, INFO_FL_CTRL),
+> -	IOCTL_INFO_FNC(VIDIOC_S_EXT_CTRLS, v4l_s_ext_ctrls, v4l_print_ext_controls, INFO_FL_PRIO | INFO_FL_CTRL),
+> -	IOCTL_INFO_FNC(VIDIOC_TRY_EXT_CTRLS, v4l_try_ext_ctrls, v4l_print_ext_controls, INFO_FL_CTRL),
+> -	IOCTL_INFO_STD(VIDIOC_ENUM_FRAMESIZES, vidioc_enum_framesizes, v4l_print_frmsizeenum, INFO_FL_CLEAR(v4l2_frmsizeenum, pixel_format)),
+> -	IOCTL_INFO_STD(VIDIOC_ENUM_FRAMEINTERVALS, vidioc_enum_frameintervals, v4l_print_frmivalenum, INFO_FL_CLEAR(v4l2_frmivalenum, height)),
+> -	IOCTL_INFO_STD(VIDIOC_G_ENC_INDEX, vidioc_g_enc_index, v4l_print_enc_idx, 0),
+> -	IOCTL_INFO_STD(VIDIOC_ENCODER_CMD, vidioc_encoder_cmd, v4l_print_encoder_cmd, INFO_FL_PRIO | INFO_FL_CLEAR(v4l2_encoder_cmd, flags)),
+> -	IOCTL_INFO_STD(VIDIOC_TRY_ENCODER_CMD, vidioc_try_encoder_cmd, v4l_print_encoder_cmd, INFO_FL_CLEAR(v4l2_encoder_cmd, flags)),
+> -	IOCTL_INFO_STD(VIDIOC_DECODER_CMD, vidioc_decoder_cmd, v4l_print_decoder_cmd, INFO_FL_PRIO),
+> -	IOCTL_INFO_STD(VIDIOC_TRY_DECODER_CMD, vidioc_try_decoder_cmd, v4l_print_decoder_cmd, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_DBG_S_REGISTER, v4l_dbg_s_register, v4l_print_dbg_register, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_DBG_G_REGISTER, v4l_dbg_g_register, v4l_print_dbg_register, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_S_HW_FREQ_SEEK, v4l_s_hw_freq_seek, v4l_print_hw_freq_seek, INFO_FL_PRIO),
+> -	IOCTL_INFO_STD(VIDIOC_S_DV_TIMINGS, vidioc_s_dv_timings, v4l_print_dv_timings, INFO_FL_PRIO | INFO_FL_CLEAR(v4l2_dv_timings, bt.flags)),
+> -	IOCTL_INFO_STD(VIDIOC_G_DV_TIMINGS, vidioc_g_dv_timings, v4l_print_dv_timings, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_DQEVENT, v4l_dqevent, v4l_print_event, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_SUBSCRIBE_EVENT, v4l_subscribe_event, v4l_print_event_subscription, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_UNSUBSCRIBE_EVENT, v4l_unsubscribe_event, v4l_print_event_subscription, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_CREATE_BUFS, v4l_create_bufs, v4l_print_create_buffers, INFO_FL_PRIO | INFO_FL_QUEUE),
+> -	IOCTL_INFO_FNC(VIDIOC_PREPARE_BUF, v4l_prepare_buf, v4l_print_buffer, INFO_FL_QUEUE),
+> -	IOCTL_INFO_STD(VIDIOC_ENUM_DV_TIMINGS, vidioc_enum_dv_timings, v4l_print_enum_dv_timings, INFO_FL_CLEAR(v4l2_enum_dv_timings, pad)),
+> -	IOCTL_INFO_STD(VIDIOC_QUERY_DV_TIMINGS, vidioc_query_dv_timings, v4l_print_dv_timings, INFO_FL_ALWAYS_COPY),
+> -	IOCTL_INFO_STD(VIDIOC_DV_TIMINGS_CAP, vidioc_dv_timings_cap, v4l_print_dv_timings_cap, INFO_FL_CLEAR(v4l2_dv_timings_cap, pad)),
+> -	IOCTL_INFO_FNC(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
+> -	IOCTL_INFO_FNC(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
+> -	IOCTL_INFO_FNC(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
+> +	IOCTL_INFO(VIDIOC_QUERYCAP, v4l_querycap, v4l_print_querycap, 0),
+> +	IOCTL_INFO(VIDIOC_ENUM_FMT, v4l_enum_fmt, v4l_print_fmtdesc, INFO_FL_CLEAR(v4l2_fmtdesc, type)),
+> +	IOCTL_INFO(VIDIOC_G_FMT, v4l_g_fmt, v4l_print_format, 0),
+> +	IOCTL_INFO(VIDIOC_S_FMT, v4l_s_fmt, v4l_print_format, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_REQBUFS, v4l_reqbufs, v4l_print_requestbuffers, INFO_FL_PRIO | INFO_FL_QUEUE),
+> +	IOCTL_INFO(VIDIOC_QUERYBUF, v4l_querybuf, v4l_print_buffer, INFO_FL_QUEUE | INFO_FL_CLEAR(v4l2_buffer, length)),
+> +	IOCTL_INFO(VIDIOC_G_FBUF, v4l_stub_g_fbuf, v4l_print_framebuffer, 0),
+> +	IOCTL_INFO(VIDIOC_S_FBUF, v4l_stub_s_fbuf, v4l_print_framebuffer, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_OVERLAY, v4l_overlay, v4l_print_u32, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_QBUF, v4l_qbuf, v4l_print_buffer, INFO_FL_QUEUE),
+> +	IOCTL_INFO(VIDIOC_EXPBUF, v4l_stub_expbuf, v4l_print_exportbuffer, INFO_FL_QUEUE | INFO_FL_CLEAR(v4l2_exportbuffer, flags)),
+> +	IOCTL_INFO(VIDIOC_DQBUF, v4l_dqbuf, v4l_print_buffer, INFO_FL_QUEUE),
+> +	IOCTL_INFO(VIDIOC_STREAMON, v4l_streamon, v4l_print_buftype, INFO_FL_PRIO | INFO_FL_QUEUE),
+> +	IOCTL_INFO(VIDIOC_STREAMOFF, v4l_streamoff, v4l_print_buftype, INFO_FL_PRIO | INFO_FL_QUEUE),
+> +	IOCTL_INFO(VIDIOC_G_PARM, v4l_g_parm, v4l_print_streamparm, INFO_FL_CLEAR(v4l2_streamparm, type)),
+> +	IOCTL_INFO(VIDIOC_S_PARM, v4l_s_parm, v4l_print_streamparm, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_G_STD, v4l_stub_g_std, v4l_print_std, 0),
+> +	IOCTL_INFO(VIDIOC_S_STD, v4l_s_std, v4l_print_std, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_ENUMSTD, v4l_enumstd, v4l_print_standard, INFO_FL_CLEAR(v4l2_standard, index)),
+> +	IOCTL_INFO(VIDIOC_ENUMINPUT, v4l_enuminput, v4l_print_enuminput, INFO_FL_CLEAR(v4l2_input, index)),
+> +	IOCTL_INFO(VIDIOC_G_CTRL, v4l_g_ctrl, v4l_print_control, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_control, id)),
+> +	IOCTL_INFO(VIDIOC_S_CTRL, v4l_s_ctrl, v4l_print_control, INFO_FL_PRIO | INFO_FL_CTRL),
+> +	IOCTL_INFO(VIDIOC_G_TUNER, v4l_g_tuner, v4l_print_tuner, INFO_FL_CLEAR(v4l2_tuner, index)),
+> +	IOCTL_INFO(VIDIOC_S_TUNER, v4l_s_tuner, v4l_print_tuner, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_G_AUDIO, v4l_stub_g_audio, v4l_print_audio, 0),
+> +	IOCTL_INFO(VIDIOC_S_AUDIO, v4l_stub_s_audio, v4l_print_audio, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_QUERYCTRL, v4l_queryctrl, v4l_print_queryctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_queryctrl, id)),
+> +	IOCTL_INFO(VIDIOC_QUERYMENU, v4l_querymenu, v4l_print_querymenu, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_querymenu, index)),
+> +	IOCTL_INFO(VIDIOC_G_INPUT, v4l_stub_g_input, v4l_print_u32, 0),
+> +	IOCTL_INFO(VIDIOC_S_INPUT, v4l_s_input, v4l_print_u32, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_G_EDID, v4l_stub_g_edid, v4l_print_edid, INFO_FL_ALWAYS_COPY),
+> +	IOCTL_INFO(VIDIOC_S_EDID, v4l_stub_s_edid, v4l_print_edid, INFO_FL_PRIO | INFO_FL_ALWAYS_COPY),
+> +	IOCTL_INFO(VIDIOC_G_OUTPUT, v4l_stub_g_output, v4l_print_u32, 0),
+> +	IOCTL_INFO(VIDIOC_S_OUTPUT, v4l_s_output, v4l_print_u32, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_ENUMOUTPUT, v4l_enumoutput, v4l_print_enumoutput, INFO_FL_CLEAR(v4l2_output, index)),
+> +	IOCTL_INFO(VIDIOC_G_AUDOUT, v4l_stub_g_audout, v4l_print_audioout, 0),
+> +	IOCTL_INFO(VIDIOC_S_AUDOUT, v4l_stub_s_audout, v4l_print_audioout, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_G_MODULATOR, v4l_g_modulator, v4l_print_modulator, INFO_FL_CLEAR(v4l2_modulator, index)),
+> +	IOCTL_INFO(VIDIOC_S_MODULATOR, v4l_s_modulator, v4l_print_modulator, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_G_FREQUENCY, v4l_g_frequency, v4l_print_frequency, INFO_FL_CLEAR(v4l2_frequency, tuner)),
+> +	IOCTL_INFO(VIDIOC_S_FREQUENCY, v4l_s_frequency, v4l_print_frequency, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_CROPCAP, v4l_cropcap, v4l_print_cropcap, INFO_FL_CLEAR(v4l2_cropcap, type)),
+> +	IOCTL_INFO(VIDIOC_G_CROP, v4l_g_crop, v4l_print_crop, INFO_FL_CLEAR(v4l2_crop, type)),
+> +	IOCTL_INFO(VIDIOC_S_CROP, v4l_s_crop, v4l_print_crop, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_G_SELECTION, v4l_g_selection, v4l_print_selection, INFO_FL_CLEAR(v4l2_selection, r)),
+> +	IOCTL_INFO(VIDIOC_S_SELECTION, v4l_s_selection, v4l_print_selection, INFO_FL_PRIO | INFO_FL_CLEAR(v4l2_selection, r)),
+> +	IOCTL_INFO(VIDIOC_G_JPEGCOMP, v4l_stub_g_jpegcomp, v4l_print_jpegcompression, 0),
+> +	IOCTL_INFO(VIDIOC_S_JPEGCOMP, v4l_stub_s_jpegcomp, v4l_print_jpegcompression, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_QUERYSTD, v4l_querystd, v4l_print_std, 0),
+> +	IOCTL_INFO(VIDIOC_TRY_FMT, v4l_try_fmt, v4l_print_format, 0),
+> +	IOCTL_INFO(VIDIOC_ENUMAUDIO, v4l_stub_enumaudio, v4l_print_audio, INFO_FL_CLEAR(v4l2_audio, index)),
+> +	IOCTL_INFO(VIDIOC_ENUMAUDOUT, v4l_stub_enumaudout, v4l_print_audioout, INFO_FL_CLEAR(v4l2_audioout, index)),
+> +	IOCTL_INFO(VIDIOC_G_PRIORITY, v4l_g_priority, v4l_print_u32, 0),
+> +	IOCTL_INFO(VIDIOC_S_PRIORITY, v4l_s_priority, v4l_print_u32, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_G_SLICED_VBI_CAP, v4l_g_sliced_vbi_cap, v4l_print_sliced_vbi_cap, INFO_FL_CLEAR(v4l2_sliced_vbi_cap, type)),
+> +	IOCTL_INFO(VIDIOC_LOG_STATUS, v4l_log_status, v4l_print_newline, 0),
+> +	IOCTL_INFO(VIDIOC_G_EXT_CTRLS, v4l_g_ext_ctrls, v4l_print_ext_controls, INFO_FL_CTRL),
+> +	IOCTL_INFO(VIDIOC_S_EXT_CTRLS, v4l_s_ext_ctrls, v4l_print_ext_controls, INFO_FL_PRIO | INFO_FL_CTRL),
+> +	IOCTL_INFO(VIDIOC_TRY_EXT_CTRLS, v4l_try_ext_ctrls, v4l_print_ext_controls, INFO_FL_CTRL),
+> +	IOCTL_INFO(VIDIOC_ENUM_FRAMESIZES, v4l_stub_enum_framesizes, v4l_print_frmsizeenum, INFO_FL_CLEAR(v4l2_frmsizeenum, pixel_format)),
+> +	IOCTL_INFO(VIDIOC_ENUM_FRAMEINTERVALS, v4l_stub_enum_frameintervals, v4l_print_frmivalenum, INFO_FL_CLEAR(v4l2_frmivalenum, height)),
+> +	IOCTL_INFO(VIDIOC_G_ENC_INDEX, v4l_stub_g_enc_index, v4l_print_enc_idx, 0),
+> +	IOCTL_INFO(VIDIOC_ENCODER_CMD, v4l_stub_encoder_cmd, v4l_print_encoder_cmd, INFO_FL_PRIO | INFO_FL_CLEAR(v4l2_encoder_cmd, flags)),
+> +	IOCTL_INFO(VIDIOC_TRY_ENCODER_CMD, v4l_stub_try_encoder_cmd, v4l_print_encoder_cmd, INFO_FL_CLEAR(v4l2_encoder_cmd, flags)),
+> +	IOCTL_INFO(VIDIOC_DECODER_CMD, v4l_stub_decoder_cmd, v4l_print_decoder_cmd, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_TRY_DECODER_CMD, v4l_stub_try_decoder_cmd, v4l_print_decoder_cmd, 0),
+> +	IOCTL_INFO(VIDIOC_DBG_S_REGISTER, v4l_dbg_s_register, v4l_print_dbg_register, 0),
+> +	IOCTL_INFO(VIDIOC_DBG_G_REGISTER, v4l_dbg_g_register, v4l_print_dbg_register, 0),
+> +	IOCTL_INFO(VIDIOC_S_HW_FREQ_SEEK, v4l_s_hw_freq_seek, v4l_print_hw_freq_seek, INFO_FL_PRIO),
+> +	IOCTL_INFO(VIDIOC_S_DV_TIMINGS, v4l_stub_s_dv_timings, v4l_print_dv_timings, INFO_FL_PRIO | INFO_FL_CLEAR(v4l2_dv_timings, bt.flags)),
+> +	IOCTL_INFO(VIDIOC_G_DV_TIMINGS, v4l_stub_g_dv_timings, v4l_print_dv_timings, 0),
+> +	IOCTL_INFO(VIDIOC_DQEVENT, v4l_dqevent, v4l_print_event, 0),
+> +	IOCTL_INFO(VIDIOC_SUBSCRIBE_EVENT, v4l_subscribe_event, v4l_print_event_subscription, 0),
+> +	IOCTL_INFO(VIDIOC_UNSUBSCRIBE_EVENT, v4l_unsubscribe_event, v4l_print_event_subscription, 0),
+> +	IOCTL_INFO(VIDIOC_CREATE_BUFS, v4l_create_bufs, v4l_print_create_buffers, INFO_FL_PRIO | INFO_FL_QUEUE),
+> +	IOCTL_INFO(VIDIOC_PREPARE_BUF, v4l_prepare_buf, v4l_print_buffer, INFO_FL_QUEUE),
+> +	IOCTL_INFO(VIDIOC_ENUM_DV_TIMINGS, v4l_stub_enum_dv_timings, v4l_print_enum_dv_timings, INFO_FL_CLEAR(v4l2_enum_dv_timings, pad)),
+> +	IOCTL_INFO(VIDIOC_QUERY_DV_TIMINGS, v4l_stub_query_dv_timings, v4l_print_dv_timings, INFO_FL_ALWAYS_COPY),
+> +	IOCTL_INFO(VIDIOC_DV_TIMINGS_CAP, v4l_stub_dv_timings_cap, v4l_print_dv_timings_cap, INFO_FL_CLEAR(v4l2_dv_timings_cap, pad)),
+> +	IOCTL_INFO(VIDIOC_ENUM_FREQ_BANDS, v4l_enum_freq_bands, v4l_print_freq_band, 0),
+> +	IOCTL_INFO(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
+> +	IOCTL_INFO(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
+>  };
+>  #define V4L2_IOCTLS ARRAY_SIZE(v4l2_ioctls)
+>  
+> @@ -2717,14 +2738,8 @@ static long __video_do_ioctl(struct file *file,
+>  	}
+>  
+>  	write_only = _IOC_DIR(cmd) == _IOC_WRITE;
+> -	if (info->flags & INFO_FL_STD) {
+> -		typedef int (*vidioc_op)(struct file *file, void *fh, void *p);
+> -		const void *p = vfd->ioctl_ops;
+> -		const vidioc_op *vidioc = p + info->u.offset;
+> -
+> -		ret = (*vidioc)(file, fh, arg);
+> -	} else if (info->flags & INFO_FL_FUNC) {
+> -		ret = info->u.func(ops, file, fh, arg);
+> +	if (info != &default_info) {
+> +		ret = info->func(ops, file, fh, arg);
+>  	} else if (!ops->vidioc_default) {
+>  		ret = -ENOTTY;
+>  	} else {
+> 
