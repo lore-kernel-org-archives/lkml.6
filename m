@@ -1,18 +1,18 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932997AbeEHPBO (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 11:01:14 -0400
-Received: from ozlabs.org ([203.11.71.1]:44627 "EHLO ozlabs.org"
+        id S933011AbeEHPBg (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 11:01:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:37343 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932765AbeEHO77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 10:59:59 -0400
+        id S932683AbeEHO75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 10:59:57 -0400
 From: Michael Ellerman <mpe@ellerman.id.au>
 To: linuxram@us.ibm.com
 Cc: mingo@redhat.com, linuxppc-dev@ozlabs.org, linux-mm@kvack.org,
         x86@kernel.org, linux-kernel@vger.kernel.org, dave.hansen@intel.com
-Subject: [PATCH 3/8] mm/pkeys: Remove include of asm/mmu_context.h from pkeys.h
-Date: Wed,  9 May 2018 00:59:43 +1000
-Message-Id: <20180508145948.9492-4-mpe@ellerman.id.au>
+Subject: [PATCH 1/8] mm, powerpc, x86: define VM_PKEY_BITx bits if CONFIG_ARCH_HAS_PKEYS is enabled
+Date: Wed,  9 May 2018 00:59:41 +1000
+Message-Id: <20180508145948.9492-2-mpe@ellerman.id.au>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180508145948.9492-1-mpe@ellerman.id.au>
 References: <20180508145948.9492-1-mpe@ellerman.id.au>
@@ -20,42 +20,81 @@ Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While trying to unify the pkey handling in show_smap() between x86 and
-powerpc we stumbled across various build failures due to the order of
-includes between the two arches.
+From: Ram Pai <linuxram@us.ibm.com>
 
-Part of the problem is that linux/pkeys.h includes asm/mmu_context.h,
-and the relationship between asm/mmu_context.h and asm/pkeys.h is not
-consistent between the two arches.
+VM_PKEY_BITx are defined only if CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
+is enabled. Powerpc also needs these bits. Hence lets define the
+VM_PKEY_BITx bits for any architecture that enables
+CONFIG_ARCH_HAS_PKEYS.
 
-It would be cleaner if linux/pkeys.h only included asm/pkeys.h,
-creating a single integration point for the arch pkey definitions.
-
-So this patch removes the include of asm/mmu_context.h from
-linux/pkeys.h.
-
-We can't prove that this is safe in the general case, but it passes
-all the build tests I've thrown at it. Also asm/mmu_context.h is
-included widely while linux/pkeys.h is not, so most likely any code
-that is including linux/pkeys.h is already getting asm/mmu_context.h
-from elsewhere.
-
+Reviewed-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Ram Pai <linuxram@us.ibm.com>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 ---
- include/linux/pkeys.h | 1 -
- 1 file changed, 1 deletion(-)
+ arch/powerpc/include/asm/pkeys.h | 2 ++
+ fs/proc/task_mmu.c               | 4 ++--
+ include/linux/mm.h               | 9 +++++----
+ 3 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
-index 0794ca78c379..ed06e1a67bfa 100644
---- a/include/linux/pkeys.h
-+++ b/include/linux/pkeys.h
-@@ -3,7 +3,6 @@
- #define _LINUX_PKEYS_H
+diff --git a/arch/powerpc/include/asm/pkeys.h b/arch/powerpc/include/asm/pkeys.h
+index 0409c80c32c0..18ef59a9886d 100644
+--- a/arch/powerpc/include/asm/pkeys.h
++++ b/arch/powerpc/include/asm/pkeys.h
+@@ -26,6 +26,8 @@ extern u32 initial_allocation_mask; /* bits set for reserved keys */
+ # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+ # define VM_PKEY_BIT4	VM_HIGH_ARCH_4
++#elif !defined(VM_PKEY_BIT4)
++# define VM_PKEY_BIT4	VM_HIGH_ARCH_4
+ #endif
  
- #include <linux/mm_types.h>
--#include <asm/mmu_context.h>
+ #define ARCH_VM_PKEY_FLAGS (VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 | \
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index c486ad4b43f0..541392a62608 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -673,13 +673,13 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ 		[ilog2(VM_MERGEABLE)]	= "mg",
+ 		[ilog2(VM_UFFD_MISSING)]= "um",
+ 		[ilog2(VM_UFFD_WP)]	= "uw",
+-#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ 		/* These come out via ProtectionKey: */
+ 		[ilog2(VM_PKEY_BIT0)]	= "",
+ 		[ilog2(VM_PKEY_BIT1)]	= "",
+ 		[ilog2(VM_PKEY_BIT2)]	= "",
+ 		[ilog2(VM_PKEY_BIT3)]	= "",
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
+ 	};
+ 	size_t i;
  
- #ifdef CONFIG_ARCH_HAS_PKEYS
- #include <asm/pkeys.h>
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ac1f06a4be6..c6a6f2492c1b 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -228,15 +228,16 @@ extern unsigned int kobjsize(const void *objp);
+ #define VM_HIGH_ARCH_4	BIT(VM_HIGH_ARCH_BIT_4)
+ #endif /* CONFIG_ARCH_USES_HIGH_VMA_FLAGS */
+ 
+-#if defined(CONFIG_X86)
+-# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+-#if defined (CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS)
++#ifdef CONFIG_ARCH_HAS_PKEYS
+ # define VM_PKEY_SHIFT	VM_HIGH_ARCH_BIT_0
+ # define VM_PKEY_BIT0	VM_HIGH_ARCH_0	/* A protection key is a 4-bit value */
+ # define VM_PKEY_BIT1	VM_HIGH_ARCH_1
+ # define VM_PKEY_BIT2	VM_HIGH_ARCH_2
+ # define VM_PKEY_BIT3	VM_HIGH_ARCH_3
+-#endif
++#endif /* CONFIG_ARCH_HAS_PKEYS */
++
++#if defined(CONFIG_X86)
++# define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+ #elif defined(CONFIG_PPC)
+ # define VM_SAO		VM_ARCH_1	/* Strong Access Ordering (powerpc) */
+ #elif defined(CONFIG_PARISC)
 -- 
 2.14.1
