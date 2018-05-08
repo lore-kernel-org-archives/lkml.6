@@ -1,34 +1,30 @@
 Return-Path: <Vijendar.Mukunda@amd.com>
-X-Google-Smtp-Source: AB8JxZqvMZxChAUk3x+55WudWempwdaBU/lTbx62yc8jhEB6g1yaXZGunp1cesVndqaDtkKILkPp
-ARC-Seal: i=1; a=rsa-sha256; t=1525754783; cv=none;
+X-Google-Smtp-Source: AB8JxZoJC1fhUsyTHQf/o+RkbB3iSf9nuN+hLT57OcWiJJBWeVnJdxC0guLWeWlY0GXShIOhUX+C
+ARC-Seal: i=1; a=rsa-sha256; t=1525754714; cv=none;
         d=google.com; s=arc-20160816;
-        b=vFSo3qL+uSNDZPJRDoItW+BTFWfwVYyYO1rcP4n9uHjqYxE1N6Tb4eqq6aBuQwssF3
-         a7PivrN+f92R21mDNsCLQ184IiF3DRKzzlzJDjCQxMBsY5S+Ek4Yqji4hAHOZFVk2Gc2
-         ahuVhixayvdBk2aSEWbldUhpxBJKsEocxRYnozvOL0uWxgCCml181aCe1w62gsJYJidf
-         4vHcLrTsD465KiirBxxXz7BvpDMXHsNr3ebB1tuGYIq7BZorRwCXnENXRzBQ2O6VW480
-         S6YN1B/RpA9mp8D7ppv4uxi4P2oJVXxLCXUukNTQQGSvVmgmU/8/1wUy95mvVWiodv1m
-         SZcg==
+        b=fPBvWPwBRvoZOT2BbOYA6MOdL1c6/qpLZEkRl2Y4FUrURLH7DprUw5Ruqb2HTY/0xD
+         DrK8S5Q4WqCvRorYK8lScu5hSRkUOlSf5Vo+yoKClllm0Tg/652wyRWmS9ZxLuUlSPt4
+         gD/qD3ScstdyPVHDBM351hnz/wkves77G2H+RGp/QQoxttcIkRu3h//Klg28ANq6oSil
+         HHbFRgrHt6PQkk4oLdJMgKVy7r8O7IRxfSMz+qtY2YxQWEauWiSOgDPOIK9mrRJls7PL
+         v9HFKZjqshiFmHtznKp6pWyOlMMwV1JeGtqvCLJfD+OvQan7LUigpi26vk7jKJa9mZHE
+         9zYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
         h=spamdiagnosticmetadata:spamdiagnosticoutput:mime-version:references
          :in-reply-to:message-id:date:subject:cc:to:from:dkim-signature
          :arc-authentication-results;
-        bh=hug+f1PkxHWLTcZAPsvjEKEapIGc7tyVWeUuwvIOarw=;
-        b=u//rNmSBYPCibvGkU4ztXuiQqCc39zyJ9NkTVDdJwL/4JbiS+5A7JJYi1MQzmkbMg/
-         vokfB9zNTLiuczzLgoCLZN45KDAjzxkJ03ELy3VSYrNRqweaDEj6M/rsW5ObexsAdVit
-         9I2yYzZCzS1fBMsFoE2XdFAJhHQyJdu7/RqqBNSwtszuQyUHcZbjAZTwPnPihhhdqwyC
-         NQCvsBcg2k2oDGEVD4XgmdRCajAOFDYeOxd60Eaq4flit02ouHtrw0oy8MHa07qdiXX7
-         0vPRFOu2DqKSIPwrqR6MtXiI+G90xjSUTQxDf6sAfmUPP8qbjQ/juUv8BdtlumnSoubv
-         vHJw==
+        bh=bl0GQPvHEDwTxrsDh7bvbFOHIRUXS3eDSkIaPPTUWcM=;
+        b=I234+gUS4ALrsyVCv1pERawUysa7j4OIJ000IfUMzVP3K+16Si/Ha2LKxi4ha1VZIC
+         NQjiWy/LfW2CStjZplxAJ35hP0XsNtLySu9RW1trih1WcB1lL5Ux8yb6qTpi6QZI2zYq
+         wzfrXh8cAdzjaA3N/WmlB9+zPbzv+EBtExdV5jus2/sQS6VrKCxB0YUvtupobYe5vTQP
+         d7PJwQ342cGrI6jA8FT7v8xAQArIoTpq1vDHxHD1B34ddgEDi+Q1u84T6+TYNWo1SO/d
+         gpV7pOn4hbJnu5TYhwWYfV98vuitp/k5VX6abhFiM5Fz+AZYIrHsbsHhOSMKEoR2Z3jY
+         iw8A==
 ARC-Authentication-Results: i=1; mx.google.com;
-       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=RqFitHnI;
-       spf=neutral (google.com: 104.47.38.68 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
+       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=Cos9G8eR;
+       spf=neutral (google.com: 104.47.36.84 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
 Authentication-Results: mx.google.com;
-       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=RqFitHnI;
-       spf=neutral (google.com: 104.47.38.68 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; linuxfoundation.org; dkim=none (message not signed)
- header.d=none;linuxfoundation.org; dmarc=permerror action=none
- header.from=amd.com;
+       dkim=pass header.i=@amdcloud.onmicrosoft.com header.s=selector1-amd-com header.b=Cos9G8eR;
+       spf=neutral (google.com: 104.47.36.84 is neither permitted nor denied by best guess record for domain of vijendar.mukunda@amd.com) smtp.mailfrom=Vijendar.Mukunda@amd.com
 From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 To: 
 CC: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Liam Girdwood
@@ -39,9 +35,9 @@ CC: Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Liam Girdwood
  Kroah-Hartman" <gregkh@linuxfoundation.org>, "moderated list:SOUND - SOC
  LAYER / DYNAMIC AUDIO POWER MANAGEM..." <alsa-devel@alsa-project.org>, "open
  list" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 05/10] ASoC: amd: sram bank update changes
-Date: Tue, 8 May 2018 10:17:48 +0530
-Message-ID: <1525754888-14124-5-git-send-email-Vijendar.Mukunda@amd.com>
+Subject: [PATCH V2 03/10] ASoC: amd: removed separate byte count variables for playback and capture
+Date: Tue, 8 May 2018 10:17:46 +0530
+Message-ID: <1525754888-14124-3-git-send-email-Vijendar.Mukunda@amd.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1525754888-14124-1-git-send-email-Vijendar.Mukunda@amd.com>
 References: <1525754888-14124-1-git-send-email-Vijendar.Mukunda@amd.com>
@@ -49,163 +45,140 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39380400002)(376002)(396003)(346002)(39860400002)(2980300002)(428003)(199004)(189003)(11346002)(47776003)(316002)(53936002)(105586002)(50226002)(76176011)(2906002)(36756003)(51416003)(86362001)(7696005)(104016004)(6666003)(53416004)(426003)(72206003)(97736004)(5660300001)(478600001)(106466001)(486006)(476003)(2616005)(446003)(81156014)(15650500001)(4326008)(77096007)(26005)(48376002)(16586007)(336012)(1671002)(356003)(54906003)(186003)(8936002)(305945005)(50466002)(39060400002)(68736007)(81166006)(126002)(8676002)(109986005)(172123003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM3PR12MB0761;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT039;1:14YQ39Ep3UYSS73jFfKZ7zCZ1XulOOxtTmi5KIIZzsTfbJ6C6vJPRPNlduBaIzKQ+fYU1FiOhkkrrNoIWi8uP/V90VF0963y7wn1jOy98sJlYr4/jDhOPZ9+OWJD2/LZ
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(376002)(39380400002)(2980300002)(428003)(189003)(199004)(2906002)(356003)(97736004)(104016004)(48376002)(86362001)(8676002)(68736007)(81166006)(486006)(2616005)(50466002)(446003)(36756003)(81156014)(11346002)(4326008)(5660300001)(336012)(7696005)(126002)(426003)(476003)(39060400002)(6666003)(478600001)(72206003)(54906003)(53416004)(26005)(53936002)(77096007)(105586002)(305945005)(8936002)(50226002)(106466001)(76176011)(6346003)(47776003)(109986005)(186003)(16586007)(316002)(51416003)(1671002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR12MB0327;H:SATLEXCHOV02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT028;1:7YgWQeeawY+A7k3AgxHZ/QTtZmqvzdwotMFQ2swsw5UXZH//464j8uaegFAotdRVzKYMXuV5VYG8Uctydo94pNkW6rrQu4b4uSwJQIcksZP60SHRfNvXa+19pqajBFBu
 X-MS-PublicTrafficType: Email
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM3PR12MB0761;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0761;3:qZIoqbAepT0s0/MBui6XXFLPiQMRMahh3r3ZmzI5qFX3pU9FFipc5WTBT/u/r4Y3Fc5bptT+WFwgK9IlW8aXM0sISxFxf0zO2rI28nQQbpoPOyGoMDvuaHtv4wzTjH/AndNTii5ZpydGwUDud4telZoTDzFRSOaphH5PhQn6ia7KOZOVLxxbp48cV44/RZHDpV8WXWDRRq+RycbJvAAb/Z1pNy203OORyL3r9yeaKzq+ObmPD6rLI0IK4CPlaD8LEUqjYLoMF60Nh2XhQ8NNWkgGaK9czqPQvve0zqn81idi5iaBIVeN15hJdlnTn1fg01T06yeWpnf2Okhf3KIgFcIXaxeA/OgsLicmEB6QqGw=;25:dP0lAHQ5nuWdJ/8qsDZjq3nslIbq+l3MPPDMVuG2bdTPgz8kyAj2F62W9Y4QYcXhobViLh961cFp1gLWd4kMMx1IoNRpT5p8qh2IQIshd0zhPa3RbSRUuYJaKN8l84hJRIVuHVdBfGlzvIBfNo8Pbi/ovkHuqr8WqSrpQkDzdXJe6vaoAK8z46QUhuAG2iVqCZ5hZ9Kz7/UoerROwQGuy67JtGUoJ1XohNo5i5SkZSXxqDPAuzduzydSB+fy60WyxnyP6daBgaSTfhJN6CfpxSQgOFQ3K49/gAw9anZgTPG8EncV8BQaVQXMiRb89PEGU+x0vFJsUzwFP35qCxFDVg==
-X-MS-TrafficTypeDiagnostic: DM3PR12MB0761:
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0761;31:vQ2FMrlknfz8u/fcVMm+ZkFZmTt1Y8YCMYVYnAwMrxucIZ4U2SUPFin0KN4QwDw03IYgI/XbFBXAjxZknn9SiSoZsrLPigevCOgC/ovObwkC2RzeH44Oqw4I9wvZCY15MkRTFzoRs2tSZbp7xcCyKRSBCLeBVqtveqKYjcfoIFcvk4doNPKic75n/NWMUtU6ombtwsQ5UWDcFgvHN9TWeNBw98BuZsGxOem1ckeUmXg=;20:bcjJo7RtyHuybubmLsHHml5V6m9SNBChPmzBgrUp2Ll4ZNd+Z3O6A4R1oG/79lXBTQNa1A3PgyQuMOqxqBV20BgTgnBP4NS95hKfkeZJPp1O/GpYqibWOebBvoFMzpS91vpm40RNqR7E4TYBgygIueB7PGciRUSNkznpp8p7xiNsaivCu6XvYqX65D0VJJknoNVlLKjJLAjLua3OeIrxm9UVQVBrQrwjByXvGAUC0GEgUugr3iCmiZYGvH+tRDIeisqcpvWzXxK9EN1WPpAoJ4qJiOvedg0LsMQk9O+GoyO2xyq4hAZMSxLTynNfYludIM3tvxUHq6hBtdTYJCWjy3NvOl2zllWEo3D2xkSUb9UjDJwv1+5/oMiHCwYgH4JOfxkzp/d5/nIKX3VFJoCFOabvS44kifi+v29icxvgZEL5cOyBsOU1ehZeFqzmE1PPa9xbvbjiwNq73jXonWYflWGpx/loTT5Zn2cZRs9jJa2DEK+pBkeSTgCt/0/BL0l0
-X-Microsoft-Antispam-PRVS: <DM3PR12MB07613D46EED003EFD32039B3979A0@DM3PR12MB0761.namprd12.prod.outlook.com>
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:CY1PR12MB0327;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0327;3:1IgUOYTq/UKyjVSHhsuKfiKgS1F3l+A1ep8f9Xtb/yWUIQHj19SzSor03nKn1nd8rO8sBl1gWZGNhykXofd1ia733ZmjbwukUfq1vbBBxScEVszxW83/rEXb7A2B73grgEd04PEE6WTgC7L8SQwSxYYqOHzGYF3wePXcKQuVFbDS5uSF558xFSC0J9GLTy5YA06QzQeOHMWH/5Ku2rEKx8kN3kW3Wqzg27nLjU7JMB6udh8eU78r05R9ZJdlOurGaJOaTGBo7VcSy66LZ1rLrHEgNru2PXt4rmL1AaOMHxklY9Lj0l3O9EkIzGjr8csAf91KJ4M577+NSOFEvyqPVKIXH1WTawUOx3SY0LyqnIk=;25:UBXTh4yVy/a0IXiQnHNbR0c8SkmSkVqapbK1AbgA6GX19Q26t9f8hejRxVLezgT08l0bgw4eGgJsmCF5/unXwxlsvEafaMMfjlR3Q2sXVJPOknbyPZXBz2TRdwE3khpLMxUPmo4DrIgF8sFcBTst0u6U+BEOucBd5+OQjQmGgftzPb6SXRUQ9l8jATsMOynSWBaShIkHc5vhhlJ3wyvT5xwf1G16ZCAQcjXeMZiuS3/I1k4OFW4grFoun+KDSSV70zoem8x1NkTj5LYDVWdSKyq/MrAu5I2xk5f9atGGeEwxieJ3L3nWCW41zWGRiUozckEb3SwHsBmAmx2d/ZYHSQ==
+X-MS-TrafficTypeDiagnostic: CY1PR12MB0327:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0327;31:j6Jz9wiFB89QIoupi6jWOACh27BwMUMdJ7G6uyPdtzYsSUA9Xt7evNY5CEvVLrNRYC3tfKF4Bp/kUu03AnSxOB86TPCbF2xNDi0P/rG51c1rAg1JyI7w9MoEapA34AAp8S6duN7Nm+pGCAI0pb9MHj4a5XlTmBOOCgi/m0iZyA99nKT6BvSpx9Du2IbWDnKqWWoWuammA5AUW0n37HRQi7TjYAlMhVEeFqq8k/f0wzE=;20:mWjGe/6zaX2X1cggO658aawnBtI9PbVOB3P5v07hqYL9iFXzxZGyC38pVkJGSbMY6RaNwwZm7+tFrd9vZV6nvIIQK7N5LalGlaZnGvVvp4t8ye147FxOGQ9ix92YnHys3vcN0RvOmRM9o60aQoCkDh6kkyyMc0RVNyxDzZP0rgAuOVOiBlt46qVZxAM9Sodmp+8IzgCGb9X3zMELc7c2eWR/inaPHa6Flks60UONjnq+5ENHdvho9mNj68PzdwPyxSgDUiyS96i4HZklW1knKp3E8bSiiZEi/WaK/WaBlo6EEB8dFUv+Tyl3bpMN1kIG5hGMj9Fd3F6357tnwNgEVrZhQJUvfm7hD8g521WJWwhSInvVuMrRpcHYo/PgLi0uoQ1QOaoTybrrH4Oqd48ZHTtfQeHFyl2NgiCQlBGtZRyXKMWcjitmkd+b7VOPBsEC0oGtbKdJlIYtC91dcDe0HktqPMpGc/JGCAIT4sjOXzezUUHv32YEEaxVxE6CSCuL
+X-Microsoft-Antispam-PRVS: <CY1PR12MB0327947A121DDB30B9DDE335979A0@CY1PR12MB0327.namprd12.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231254)(944501410)(52105095)(3002001)(93006095)(93003095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011);SRVR:DM3PR12MB0761;BCL:0;PCL:0;RULEID:;SRVR:DM3PR12MB0761;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0761;4:iH94U5CjBKjeh4YhphmGjkl1dwaqtnkxTcJSjcGZebfoaz0LyIFWbsHztkXaz39Ikg7cQqkN5RlHkPHOtaxvxXgmByh/HyGOst16NwG4vGRh1xkXIEvYgaDf+rVgk6u9iCmqMlUKRb1KMo4bl1vN4zE1BXjZJDGK1+fvrPUm31Fcxy4H9/G12IkgdCbD8jiNGbL0Xkye84K2UeS5J4bMrMkXXA6OfLObitCapcQH/qGNvs89DVH5F7VNXeggaZWoppSfrZIkDcyK2HP/MrzTOCQY0Dh6qyCVvq3IG5mN+86wNCECrbpnQ4hARcE4r9zE
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93003095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011);SRVR:CY1PR12MB0327;BCL:0;PCL:0;RULEID:;SRVR:CY1PR12MB0327;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0327;4:Ud5NIywEP7Talq1cv9AqWY1JddZCq+lXiP/SEskeLC/AwZxowfrpEgbuqk0BfSSkF49o6rq8BzzTR5jBAYAjLLHsWeCCFxREanrIiX6IPdDEz5MURWHgKE4RF34kmIFjAq6ACtTIOlBvpVwD4tI7vW0t0CnnPNEdX95mx5df50H4JV4rs6VJDVeb10KdyrgM4edxBjD+HqHsgEFGH1xKYn1qq2pIQaDRlhreNKrnbPKdQzW8wXq712Ts2ZqcaN4up/mt8iUC1nzxBgugtOsMhZda1WqY2SbHRz2AGEaLI6GcW93cStnURi8BCEJ1feRd
 X-Forefront-PRVS: 0666E15D35
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM3PR12MB0761;23:E1YBi+sNBdSWx5DV8o/R3dZsFT1juHZKuSaEYJtSK?=
- =?us-ascii?Q?g33NAJfvDMDhzuuzisWWYcxJeZ1Gbm9RkV+SOc6EcdnJt4KOLW/Q3+W73rsK?=
- =?us-ascii?Q?SPHWcWmq4sUPajxxGF8hMU7wrZKsPLdSUIMx9lUSfOSXzZINXVDFd2ZIwLy8?=
- =?us-ascii?Q?U19y+DE6au+MXZ9ng8vTzxFTUK5yjgpS3zIrXXshEbvgNSixTbQMINJ44Tr9?=
- =?us-ascii?Q?xS86TX5XBqFxiTZbXy9gyYy2tQ3k+U709rVy6YlnYgRnoTTAVFH3F97z+XGb?=
- =?us-ascii?Q?wLIcKeQmDCUXsfZPyii7xM3Jd53Ztqx2POc0yHRAWcUQSpLvmiTPL5k1jF0b?=
- =?us-ascii?Q?Boh5CwReP3soJ+9R4PzONCspTzCH7UVhtMzD8W07bEd5hM8r4wyRCrvnZW/J?=
- =?us-ascii?Q?cwCSlxAK76YvkrI7wKH3Y9IXj7F79sFEgW33p3Y9+gvlev9AlfEMaM+7qYfH?=
- =?us-ascii?Q?hDcZdT/a2ODGGFux8+xMYQ7g6w4UQNErn7bGeu7X8pcjNH75um7VOOOKgVeQ?=
- =?us-ascii?Q?a6sYvw34KQiene22bFgdcHjZD7dBSSlpqIL5uBKSt6CwcDqOCVyBuj63eNME?=
- =?us-ascii?Q?joT35zAIaYPR/FbzYgqNFH0J3P5cjZsVd9EgiiC6dNOCND2W37mhEpU8oRlb?=
- =?us-ascii?Q?bkpv67WW2X6vJjG1hw3eoW61SSpT99U0kV/p6JGP2nJ7b3HUao88r9HYvKQa?=
- =?us-ascii?Q?1SCYq367T+R9VQbkrzsKQN27+ORCw2NH9IcHj8EsI9Ji50V123yAoymCYfCl?=
- =?us-ascii?Q?13N8z+5HT6h9O11F1AIrUEE8IPd8UsLp6v/wlkEdNzs4yJuksEBK5m8Q/ew4?=
- =?us-ascii?Q?Z8wD9J23xfcVxuK0pNOc1/4kSjU7fY20i9yksKqycApcQuI2USdWi9ofJI+s?=
- =?us-ascii?Q?ObfFbiIUNcAfkrjSnovWzLAoUDoZhF66hs8VuJ5y1rkqpuOUBz76b56j07hS?=
- =?us-ascii?Q?dbG88LlTYoi6qZvtrH1WIXLjTRQv17zaKafDu0cNmQJpv2GELEbIvurj/+m5?=
- =?us-ascii?Q?d7H0RaFAw54yl+kgXLSOlXrjw5salllQCKiM7CIu+QcDbFzUz+R9ingAMI2O?=
- =?us-ascii?Q?6/X9XAzAdvW5pKwjZFyn6dQrPWQx0pSlY0Jd4an6cGacAIpks0/tnLhBPcqv?=
- =?us-ascii?Q?GXXMeE/wg64wJSg7USAcX2gqof300PnAmkV6R4LE/38r4KYa+Fmih1oP011V?=
- =?us-ascii?Q?w6qQk/yzubmEiEAg2SctUHxuo3fKiSxBtzvuN4BZQYzopz+/uMmCDw73NLxU?=
- =?us-ascii?Q?EX3dDVREHvIofTHyIj43nKzzexMaEG8Z2b9kFgO?=
-X-Microsoft-Antispam-Message-Info: xSnW5cc98+iast08Lw/m6ogmJdW7JNIUlZ/sawtrTA/gOkFxZKdGIMOqE5vfWhTXb9610aWf/jB6MmJ1t5I9cGMjZxL4ik55bqVdUupa2GhD9k/nNGdyCH9MFRiuIP+lTv0G0OJ79j4siCLRg62ivNwsHysItlWtAJYYS5GpRtYEhd4r/TKIDRuds7WiTjaR
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0761;6:t0uErKRaMrjpcLuhXuHkjDK15hsmQklJejW35zw8McIcQuGlV93mba7nVlLdF1hI3I+MRxdSfz8JTfoBvYvrJo4qVgOznWFUHi1HLgPaq6JQpw90+oRyoUuens9SYDdxjv+AuoEukiO9RijY5OZRrBeYApJ+sGs7p8d7yR0tKnZaqW7SwNOrKmHpYtMdU/5lQhrybr90apm0C6gHKW+HwwRWVCiX6qrpPyH1eTEAk3SvKECGSghaW1N2uS5qFAAvsFoW5sWwm7KfjoM4cogLjX8o2oNlkkvX+vVcdcHaX9wrFGPhEm39W/2HP/hN2ERxainB6IPdpwPO25KOU5vGN2NPkEzzWV4uK89MGZP7/NuwQvwRzh8rh0trBJlBmlaWM8F722fpNrD2xtyN3La+cxJAgWsglHRvCbC00mD5sg+3k0bU8Et7UQSUIFzzr7sd2D+ACG7meIRwl5W6tSGhWw==;5:T/sl5Cggnqq2en0FBV7xjPBold+Sn6meT2RsWkkFSTRRIe6Uvp5TRp9X9HPnujZQAquWdWEfXdm5TWMQa4tOOCDCs2CY55LZ8baZI5SUUcVYII6FS2UabtMO2Z5Vcxe9iYAOT8YQs9lBOQK0RZn8dHzmu6Z6XQD/svbUOqtb12U=;24:HYhkswvfpN5B+QclBz+FVw9XIFZLziR26JZKZ0wF4fjEaMe0yKqHjv+gUr9TMA+VSB5EKRMLNtvLfp+oTVvNiuWxnP67rBoYDMR9cprvJog=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY1PR12MB0327;23:7jIEtGbTrDkripj76637iICUf3k+PK/XZfgfFXxjk?=
+ =?us-ascii?Q?mnF3XYqFKohdZ3tPOnJyAgiRJFdhu46FCH7oAu5LlLp65rlRmN7TC0JygPHL?=
+ =?us-ascii?Q?TpaNNY6xsK4rpGrl3CRjLmn9A0JimCYdi5YK2Oj/lZGNIIOKhein1sIQy+la?=
+ =?us-ascii?Q?plCl6xCUJZlw7XQV1gmiYYwMfA4jheUMIyS0VqELFskwC4QKG0UQu5Xtwbyz?=
+ =?us-ascii?Q?4cqJN6Akz2dKmL37tKfEHuaYFZVhA6oEvut/Dt9T4yk1zdfARLL52BeSgz/f?=
+ =?us-ascii?Q?MiwInq5++BN8n/nd5BzVq4jforbc/5TBDLF/xcYjVmTnaW5HoDd83h462Kzt?=
+ =?us-ascii?Q?MggqU6whTtloOSXssleD5zrqdcmBV7FxpP6x+yST70/mi0LkjcjipZLL2U6z?=
+ =?us-ascii?Q?oll8HUpYvNRP28Pxx9VIln+Q+fY5iWVHgbW9AC59L+redUlsPxkaTVChsANA?=
+ =?us-ascii?Q?jIYE4ZjRqYM6nvxEoZeCRVYNOHPXpkvCMJbCjT8tNWMBhKY+iUiyUoS3Osct?=
+ =?us-ascii?Q?EKw/FOZDWLIDFkV3yKRX3RliFWyRE6BQXIuFlsYgMwjhdNZKr7j1l87V+NHq?=
+ =?us-ascii?Q?q8MTJeKYAuHO5UlUbSEX0hy9I76Xty4cGDJKIq16B3BAsoUGTnAFyPluoVQh?=
+ =?us-ascii?Q?hhNvykZ/1os91MHaPZtmf3ipf/LYsUe/EDm9RRlNzAslVDAGqTyeU8VfJux5?=
+ =?us-ascii?Q?Tzf9XGcfeAQDggP4xQn6gyFQIPMDBDiF+9V4+mgTxsjD5LB3KFQ7bGLiaY/Z?=
+ =?us-ascii?Q?clNw6ePn/fvXTDeAeCUwlg+nr/y5h74hiOj9jScMsl1QFpABkeGg/EOpJKqU?=
+ =?us-ascii?Q?tsZ4npZpEdaXt2YP5EhMeckvBq4FeGaWWxPsUZk+Auv6IoMwVUUezkGyBHQ2?=
+ =?us-ascii?Q?swM6GAWVHr+zXwyXVB3ZW+jUubu80dFu5iW+/k07YZPTxq12Y/2/ABtX6QWJ?=
+ =?us-ascii?Q?ncKFHBCd2stgLV5zrGHFu/tKBp8AchuL4CSyU2gz2LFhrWlXguvoM+GICPba?=
+ =?us-ascii?Q?4DdZHyJRHHSgHee1TANvgbTOASHtYWzbZxT8KT0vQIbUXx9u6JGlamwc6boR?=
+ =?us-ascii?Q?fYlAPwiyuKMFfiwQwlKOqN3CqA1isyohU/3odDt4OyBPFfmkjhLOmmMRxpFT?=
+ =?us-ascii?Q?zgc1mKo3O4nrnlWfsbg39KDaxV9Ewi4A6oJ6bP93yJH/ud5P47Ic1ddZ7Cmh?=
+ =?us-ascii?Q?IcTNjvNkUSVUUQnnvUQiKgz6eSip1s/hYsP24TK1B6KTo6WAB+LgpeQNDVT0?=
+ =?us-ascii?Q?c57l7BNNIk/tTcsCwM=3D?=
+X-Microsoft-Antispam-Message-Info: bjBVm1skiZYuNUh5xP7/ZCyaGPsWRvRUxyTYo6nRXrSLerM3sstyFT3YlSMzdsKOq12Qov4V6ia9TxYlWt/e+x+iNdDCE1IuEjOjO32HI92welrTTrTbaVobtoABHkUaJhuNpwyB1igp3zj7spI+dRk0LXPA7PB/eIt4YYkCUcUFbmLOdnI7wdH4HLcEoPsC
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0327;6:t6FNkDPDUh6TABAvIu5U+Itf5AX0DbK+2sxezWtyThzlrZKhC4M2/wP/ZSgsO3nLPjBKbW6HWnKG7+F2Zhr8w27p8bJ6a167qRmhhopd0vV8ZEGqKEA5IJUY7eQjnY9+NS6z6lQuk3MgyRsFhsafmSfX/kFXmRgBs1vMwUJOWFpNKQ+pJ9hFBhv2m+Et+iV85WtjblVTHRRq8gMpgBWFW2H2RSJOSr6EDb0jVpW9sVJQViwe7HJ+l7EnjiAWegCjMTdB4NtPWEu+4tLzSFLp5I8PZlvUH8VYIHR2KPWElZODJ9ZVKRr1AibEJyobDMgrTN9ccqMSbZt6WJXY7A25WBVXYSzigMqeTZ02iSwzok+SUWpZ3wMDVtBUFIEMVSWi+fspMY36Y8NhYqsx4LlY0Ll1u+pe93eFCOPKBsplx1mpy0K79LfZvA8XyT+LQLBrroI/C7+BYwf3XoOfDviCyQ==;5:lHb8fCjvwPetxlbCYPVOQ+xg70CW+FeFsNtCJ5pP5nDUbXU4ZJ4gEiS1Z99J8gjoOkjJIW1r7sMyqNb5vDijTMqgxLExVMuX3FNmSVNEyXBwECWGFK9qJu5v4gxpjwOf0jN6ORL0TzCGJ62OoL/1pMKmxm0epd4Ijq13qLrWdY0=;24:ZKli6a5GlyUH5dYNcMsSTtiOVU6zx3TmW+j7T0h1AfP3LoMTLTVs4FvSVjkh5rklw9828GEGlHMZa7jl4XZtIRFDBePEX9aHmg9eYG3x4ao=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0761;7:GaORyhFAzttHQEfHLvpuCny5CFrgpgSz3EDNP1QiwEamnu/0ozu/n72gRVTX27FZTRgyhjdpGYKgzXA/dBYgFyJtZqVSJHPqAFlbExLYtT1phs+uqLW/X0/uA9Wn/hq0rbO4BOz2hgviraxB18QPjlqhExjO09u9O766S7mJguf6SR7C7uECXRt9IL7GZwbDt3/qtWNkKp3fCuc5RF4YzAPdP0p0Njl7FQX3PAewd1B6gArtZg+E+Kwsk7Y2oElU;20:nG+VS5Oa0ivN90TWyaOxIBpN+uFtLa1fVUpgDIfNem0NTZyQ/AyqYuJ1uK41hWiXYZuBwnhUIblHIoPppeJwG58yQpe3I9wZ8NE5bUnx0zVsiZZ9bfxhxC3BiM+/t+Reij24fH2pVh4anB3+TN0h0WOU3AmcMcT5H4bBYW4hteE6CuzxzR/+zrgrLf/F1gW8+htD5b4qjzOETSl7Pu6yOcwdkX2+WQM4QzeWxarf/xvqru6u0jwvkg/XU0KSy7r6
-X-MS-Office365-Filtering-Correlation-Id: 93192a2c-ad72-480b-d5e9-08d5b49ea5e1
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR12MB0327;7:NCCJhnJ3/s6XWgrRBnPycKWubFY+ZNkR4lxIQVdco5DghENy7OszV4KbXfdsEePCQgA0iVAYuSfs+gG3s7TQO1NFX24XUQGX1GBUTiD4jdJvRk7qmYW55Ha6e4lni4uCh3c2HzhCUAtaiWFi+xtlbE4Q4kNmAeWKIu6wVd1ADcBszh3OZIplvwsZSoZCeTXakLWtLE+aTneAqW0ddBiYQLor2tGjTDzCdoUvt17YH6bDcO3JCYhsjJ5vSmToAbtg;20:eA28j3VZODqV24XPJr411Z2sIYTCwbPEXcHTI194K/lvXhG/2qtUbrzAfpFHhct6HjIbcWS7l8B5GC+hXIjhJ833Sf1Q4SDNY3R2dM+yTtVJ2EHuk9k53bj/1u2McEcb0n103avpk/7nNQ3/ei+ifDOFwe/wDE52as/Sz9SQ2XEwvHionyiBRulz9NoaoqhxfWhsCmqHJJyFHcA5E12g5aRP0KRS2adrK1a+uIlm5AjGtGEjgEQDiies0XSq9b9f
+X-MS-Office365-Filtering-Correlation-Id: 1fa59a2b-2c8a-4a1e-b4c1-08d5b49e7b32
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2018 04:46:21.7572
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2018 04:45:10.1764
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93192a2c-ad72-480b-d5e9-08d5b49ea5e1
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fa59a2b-2c8a-4a1e-b4c1-08d5b49e7b32
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV02.amd.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB0761
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB0327
 X-getmail-retrieved-from-mailbox: INBOX
-X-GMAIL-THRID: =?utf-8?q?1599869848215623702?=
-X-GMAIL-MSGID: =?utf-8?q?1599869848215623702?=
+X-GMAIL-THRID: =?utf-8?q?1599869775255711131?=
+X-GMAIL-MSGID: =?utf-8?q?1599869775255711131?=
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 
-Added sram bank variable to audio_substream_data structure.
+Removed separate byte count variables for playback and capture.
 
 Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 Reviewed-by: Daniel Kurtz <djkurtz@chromium.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 20 +++++---------------
- sound/soc/amd/acp.h         | 20 ++++++++++++++------
- 2 files changed, 19 insertions(+), 21 deletions(-)
+v1->v2: Fixed review comment in acp_dma_pointer callback
+ sound/soc/amd/acp-pcm-dma.c | 19 +++++--------------
+ sound/soc/amd/acp.h         |  3 +--
+ 2 files changed, 6 insertions(+), 16 deletions(-)
 
 diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index 39597fb..8236116 100644
+index 6e338fe..862c1cf 100644
 --- a/sound/soc/amd/acp-pcm-dma.c
 +++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -320,29 +320,16 @@ static void config_acp_dma(void __iomem *acp_mmio,
- 			   struct audio_substream_data *rtd,
- 			   u32 asic_type)
- {
--	u32 sram_bank;
--
--	if (rtd->direction == SNDRV_PCM_STREAM_PLAYBACK)
--		sram_bank = ACP_SHARED_RAM_BANK_1_ADDRESS;
--	else {
--		switch (asic_type) {
--		case CHIP_STONEY:
--			sram_bank = ACP_SHARED_RAM_BANK_3_ADDRESS;
--			break;
--		default:
--			sram_bank = ACP_SHARED_RAM_BANK_5_ADDRESS;
--		}
+@@ -866,13 +866,8 @@ static snd_pcm_uframes_t acp_dma_pointer(struct snd_pcm_substream *substream)
+ 	buffersize = frames_to_bytes(runtime, runtime->buffer_size);
+ 	bytescount = acp_get_byte_count(rtd);
+ 
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		if (bytescount > rtd->i2ssp_renderbytescount)
+-			bytescount = bytescount - rtd->i2ssp_renderbytescount;
+-	} else {
+-		if (bytescount > rtd->i2ssp_capturebytescount)
+-			bytescount = bytescount - rtd->i2ssp_capturebytescount;
 -	}
- 	acp_pte_config(acp_mmio, rtd->pg, rtd->num_of_pages,
- 		       rtd->pte_offset);
- 	/* Configure System memory <-> ACP SRAM DMA descriptors */
- 	set_acp_sysmem_dma_descriptors(acp_mmio, rtd->size,
- 				       rtd->direction, rtd->pte_offset,
--				       rtd->ch1, sram_bank,
-+				       rtd->ch1, rtd->sram_bank,
- 				       rtd->dma_dscr_idx_1, asic_type);
- 	/* Configure ACP SRAM <-> I2S DMA descriptors */
- 	set_acp_to_i2s_dma_descriptors(acp_mmio, rtd->size,
--				       rtd->direction, sram_bank,
-+				       rtd->direction, rtd->sram_bank,
- 				       rtd->destination, rtd->ch2,
- 				       rtd->dma_dscr_idx_2, asic_type);
++	if (bytescount > rtd->bytescount)
++		bytescount -= rtd->bytescount;
+ 	pos = do_div(bytescount, buffersize);
+ 	return bytes_to_frames(runtime, pos);
  }
-@@ -795,6 +782,7 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
+@@ -921,9 +916,9 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 		bytescount = acp_get_byte_count(rtd);
++		if (rtd->bytescount == 0)
++			rtd->bytescount = bytescount;
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-			if (rtd->i2ssp_renderbytescount == 0)
+-				rtd->i2ssp_renderbytescount = bytescount;
+ 			acp_dma_start(rtd->acp_mmio, rtd->ch1, false);
+ 			while (acp_reg_read(rtd->acp_mmio, mmACP_DMA_CH_STS) &
+ 				BIT(rtd->ch1)) {
+@@ -934,9 +929,6 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 				}
+ 				cpu_relax();
+ 			}
+-		} else {
+-			if (rtd->i2ssp_capturebytescount == 0)
+-				rtd->i2ssp_capturebytescount = bytescount;
  		}
- 		rtd->ch1 = SYSRAM_TO_ACP_CH_NUM;
- 		rtd->ch2 = ACP_TO_I2S_DMA_CH_NUM;
-+		rtd->sram_bank = ACP_SRAM_BANK_1_ADDRESS;
- 		rtd->destination = TO_ACP_I2S_1;
- 		rtd->dma_dscr_idx_1 = PLAYBACK_START_DMA_DESCR_CH12;
- 		rtd->dma_dscr_idx_2 = PLAYBACK_START_DMA_DESCR_CH13;
-@@ -805,9 +793,11 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
- 		switch (adata->asic_type) {
- 		case CHIP_STONEY:
- 			rtd->pte_offset = ACP_ST_CAPTURE_PTE_OFFSET;
-+			rtd->sram_bank = ACP_SRAM_BANK_2_ADDRESS;
- 			break;
- 		default:
- 			rtd->pte_offset = ACP_CAPTURE_PTE_OFFSET;
-+			rtd->sram_bank = ACP_SRAM_BANK_5_ADDRESS;
+ 		acp_dma_start(rtd->acp_mmio, rtd->ch2, true);
+ 		ret = 0;
+@@ -955,12 +947,11 @@ static int acp_dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+ 			acp_dma_stop(rtd->acp_mmio, rtd->ch1);
+ 			ret =  acp_dma_stop(rtd->acp_mmio, rtd->ch2);
+-			rtd->i2ssp_renderbytescount = 0;
+ 		} else {
+ 			acp_dma_stop(rtd->acp_mmio, rtd->ch2);
+ 			ret = acp_dma_stop(rtd->acp_mmio, rtd->ch1);
+-			rtd->i2ssp_capturebytescount = 0;
  		}
- 		rtd->ch1 = ACP_TO_SYSRAM_CH_NUM;
- 		rtd->ch2 = I2S_TO_ACP_DMA_CH_NUM;
++		rtd->bytescount = 0;
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
 diff --git a/sound/soc/amd/acp.h b/sound/soc/amd/acp.h
-index 2f48d1d..62695ed 100644
+index 3b076c6..82470bc 100644
 --- a/sound/soc/amd/acp.h
 +++ b/sound/soc/amd/acp.h
-@@ -19,12 +19,19 @@
- 
- #define ACP_PHYSICAL_BASE			0x14000
- 
--/* Playback SRAM address (as a destination in dma descriptor) */
--#define ACP_SHARED_RAM_BANK_1_ADDRESS		0x4002000
--
--/* Capture SRAM address (as a source in dma descriptor) */
--#define ACP_SHARED_RAM_BANK_5_ADDRESS		0x400A000
--#define ACP_SHARED_RAM_BANK_3_ADDRESS		0x4006000
-+/*
-+ * In case of I2S SP controller instance, Stoney uses SRAM bank 1 for
-+ * playback and SRAM Bank 2 for capture where as in case of BT I2S
-+ * Instance, Stoney uses SRAM Bank 3 for playback & SRAM Bank 4 will
-+ * be used for capture. Carrizo uses I2S SP controller instance. SRAM Banks
-+ * 1, 2, 3, 4 will be used for playback & SRAM Banks 5, 6, 7, 8 will be used
-+ * for capture scenario.
-+ */
-+#define ACP_SRAM_BANK_1_ADDRESS		0x4002000
-+#define ACP_SRAM_BANK_2_ADDRESS		0x4004000
-+#define ACP_SRAM_BANK_3_ADDRESS		0x4006000
-+#define ACP_SRAM_BANK_4_ADDRESS		0x4008000
-+#define ACP_SRAM_BANK_5_ADDRESS		0x400A000
- 
- #define ACP_DMA_RESET_TIME			10000
- #define ACP_CLOCK_EN_TIME_OUT_VALUE		0x000000FF
-@@ -95,6 +102,7 @@ struct audio_substream_data {
- 	u16 dma_dscr_idx_1;
- 	u16 dma_dscr_idx_2;
- 	u32 pte_offset;
-+	u32 sram_bank;
+@@ -93,8 +93,7 @@ struct audio_substream_data {
  	u32 byte_cnt_high_reg_offset;
  	u32 byte_cnt_low_reg_offset;
  	uint64_t size;
+-	u64 i2ssp_renderbytescount;
+-	u64 i2ssp_capturebytescount;
++	u64 bytescount;
+ 	void __iomem *acp_mmio;
+ };
+ 
 -- 
 2.7.4
