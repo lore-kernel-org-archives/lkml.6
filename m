@@ -1,53 +1,49 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754000AbeEHFO6 (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 01:14:58 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:39807 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753556AbeEHFOy (ORCPT
+        id S1754009AbeEHFQb (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 01:16:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:46582 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750745AbeEHFQa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 01:14:54 -0400
-X-Google-Smtp-Source: AB8JxZqiVObrGurfW8rWSKsNOjggIkGjB8tOkUVdf9mTBT/RCPA9e9nrqt8Gf8JpM9C7oMrk9ZGQckWfxRIv3ZSKtAA=
+        Tue, 8 May 2018 01:16:30 -0400
+To: John Garry <john.garry@huawei.com>
+Cc: <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 00/11] hisi_sas: some misc patches
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1525276594-92173-1-git-send-email-john.garry@huawei.com>
+Date: Tue, 08 May 2018 01:16:17 -0400
+In-Reply-To: <1525276594-92173-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Wed, 2 May 2018 23:56:23 +0800")
+Message-ID: <yq1tvriybfi.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180507083807.28792-16-mszeredi@redhat.com>
-References: <20180507083807.28792-1-mszeredi@redhat.com> <20180507083807.28792-16-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 8 May 2018 08:14:52 +0300
-Message-ID: <CAOQ4uxhFzFFpF+ghACKTzzU_UrrJ3_+U6LwCOVXhgUyGe6=fVQ@mail.gmail.com>
-Subject: Re: [PATCH v2 15/35] ovl: add ovl_fsync()
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8886 signatures=668698
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=475
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1711220000 definitions=main-1805080051
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, May 7, 2018 at 11:37 AM, Miklos Szeredi <mszeredi@redhat.com> wrote:
-> Implement stacked fsync().
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/overlayfs/file.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
->
-> diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> index a7af56861aa5..419aa3f9967b 100644
-> --- a/fs/overlayfs/file.c
-> +++ b/fs/overlayfs/file.c
-> @@ -233,10 +233,30 @@ static ssize_t ovl_write_iter(struct kiocb *iocb, struct iov_iter *iter)
->         return ret;
->  }
->
-> +static int ovl_fsync(struct file *file, loff_t start, loff_t end, int datasync)
-> +{
-> +       struct fd real;
-> +       const struct cred *old_cred;
-> +       int ret;
-> +
 
-Don't sync non-upper. same as ovl_dir_fsync()
+John,
 
-Thanks,
-Amir.
+> This patchset introduces some misc changes for the
+> driver. These include:
+> - fixes for potential problems related to SCSI EH
+>   and device removal races
+> - fix protection info size for all hw versions
+> - some SoC bug workarounds
+> - minor optimisations
+> - other more minor things
+
+Applied to 4.18/scsi-queue. Thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
