@@ -1,45 +1,77 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755881AbeEHVot (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 17:44:49 -0400
-Received: from mga11.intel.com ([192.55.52.93]:45971 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755433AbeEHVos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 17:44:48 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.49,379,1520924400";
-   d="scan'208";a="38429320"
-Date: Wed, 9 May 2018 00:44:45 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: dave.hansen@linux.intel.com, mingo@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mka@chromium.org, dvyukov@google.com,
-        md@google.com
-Subject: Re: [PATCH v2] x86/boot/64/clang: Use fixup_pointer() to access
- '__supported_pte_mask'
-Message-ID: <20180508214445.lnqbct6dgrhyxp4a@black.fi.intel.com>
-References: <20180508162829.7729-1-glider@google.com>
+        id S1756010AbeEHVvG (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 17:51:06 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37686 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755504AbeEHVvF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 May 2018 17:51:05 -0400
+Date: Tue, 8 May 2018 23:51:02 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: ofono@ofono.org, kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: Incoming sms problem on Motorola Droid 4
+Message-ID: <20180508215102.GA5253@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Content-Disposition: inline
-In-Reply-To: <20180508162829.7729-1-glider@google.com>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, May 08, 2018 at 04:28:29PM +0000, Alexander Potapenko wrote:
-> @@ -196,7 +204,8 @@ unsigned long __head __startup_64(unsigned long physaddr,
->  
->  	pmd_entry = __PAGE_KERNEL_LARGE_EXEC & ~_PAGE_GLOBAL;
->  	/* Filter out unsupported __PAGE_KERNEL_* bits: */
-> -	pmd_entry &= __supported_pte_mask;
-> +	mask_ptr = (pteval_t *)fixup_pointer(&__supported_pte_mask, physaddr);
 
-Do we really need the cast here?
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
- Kirill A. Shutemov
+Hi!
+
+I have problems with incoming SMS. ofono tries to use +CNMI=3D1,2,2,1,0
+
+> AT+CNMI=3D?
+< +CNMI: (0,1,2),(0,1,2,3),(0,2),(0,1,2),(0,1)
+< OK
+ofonod[3070]: drivers/atmodem/sms.c:build_cnmi_string()
+ofonod[3070]: drivers/atmodem/sms.c:construct_ack_pdu()
+> AT+CNMI=3D1,2,2,1,0
+< OK
+ofonod[3070]: src/network.c:__ofono_netreg_add_status_watch() 0x5bbbf0
+
+=2E.. unfortunately, with that configuration no messages are comming to
+ofono and the other phone sees them as "delievery failed".
+
+I had some luck with unicsy_demo using AT+CNMI=3D1,2 with text mode (not
+PDU) messages. That works well enough for me.
+
+Unfortunately, if I force ofono to pass "AT+CNMI=3D1,2", it does not
+work well, either.
+
+Any ideas how to debug this / what to try?
+
+Thanks,
+
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlryG8YACgkQMOfwapXb+vJMHQCfcLKpuvMsUeL+lwd58tMFjiZE
+mqIAnRukPDQMkJTHVz/nUgIGM1ckM6eX
+=QLm9
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
