@@ -1,77 +1,59 @@
 Return-Path: <linux-kernel-owner@vger.kernel.org>
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755343AbeEHRQR (ORCPT <rfc822;w@1wt.eu>);
-        Tue, 8 May 2018 13:16:17 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46989 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754099AbeEHRQP (ORCPT
+        id S1755301AbeEHRSE (ORCPT <rfc822;w@1wt.eu>);
+        Tue, 8 May 2018 13:18:04 -0400
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:34618 "EHLO
+        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751806AbeEHRSC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 May 2018 13:16:15 -0400
-X-Google-Smtp-Source: AB8JxZpEEDdjv18Arh8DLVDbvHU5innDJf+pgWVSWksgWWGDLEhK+FPUqGjQFHBB3CtPz3fb0WqOaA==
-Date: Tue, 8 May 2018 10:17:36 -0700
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-To: kgunda@codeaurora.org
-Cc: Lee Jones <lee.jones@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH V1 2/5] backlight: qcom-wled: Add support for WLED4
- peripheral
-Message-ID: <20180508171736.GJ2259@tuxbook-pro>
-References: <1525341432-15818-1-git-send-email-kgunda@codeaurora.org>
- <1525341432-15818-3-git-send-email-kgunda@codeaurora.org>
- <20180507162004.GB2259@tuxbook-pro>
- <f970143860bd64624e7fad58333df1be@codeaurora.org>
+        Tue, 8 May 2018 13:18:02 -0400
+X-Google-Smtp-Source: AB8JxZoxV7soEmQ2ZGkO1qWbvT6cBEo3Ld4EMCHqc0ENv3EoGabEQu73XsSPDa/jv1ibtt1w2zmWYw==
+Date: Tue, 8 May 2018 10:17:59 -0700
+From: Sami Tolvanen <samitolvanen@google.com>
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Kees Cook <keescook@chromium.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: v4l2-ioctl: fix function types for
+ IOCTL_INFO_STD
+Message-ID: <20180508171759.GA184279@samitolvanen.mtv.corp.google.com>
+References: <44310a2b-2797-223c-fab4-0214490e5201@xs4all.nl>
+ <20180507205135.88398-1-samitolvanen@google.com>
+ <a627c61e-f227-297c-087e-c2a701b46a64@xs4all.nl>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f970143860bd64624e7fad58333df1be@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a627c61e-f227-297c-087e-c2a701b46a64@xs4all.nl>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 08 May 03:25 PDT 2018, kgunda@codeaurora.org wrote:
-
-> On 2018-05-07 21:50, Bjorn Andersson wrote:
-> > On Thu 03 May 02:57 PDT 2018, Kiran Gunda wrote:
-[..]
-> > > +- qcom,ovp
-> > > +	Usage:        optional
-> > > +	Value type:   <u32>
-> > > +	Definition:   mV; Over-voltage protection limit;
-> > 
-> > The existing users of qcom,pm8941-wled depends on this being in V, so
-> > you can't change the unit. I suggest that you add a new "qcom,ovp-mv"
-> > property and make the driver fall back to looking for qcom,ovp if that
-> > isn't specified.
-> > 
-> > PS. This is a very good example of why it is a good idea to not
-> > restructure and make changes at the same time - I almost missed this.
-> > 
-> Actually I have checked the current kernel and none of the properties are
-> being configured from the device tree node. Hence, i thought it is the right
-> time modify the units to mV to support the PMI8998.
+On Tue, May 08, 2018 at 10:18:24AM +0200, Hans Verkuil wrote:
+> Just call this v4l_stub_g_fbuf, conform the naming of the other functions.
 > 
+> So just replace vidioc_ by v4l_stub_ in all these DEFINE_IOCTL_FNC macros.
+> 
+> This way the function name in the big array matches the name in this macro,
+> and the 'stub' part indicates that it is just a stub function.
 
-arch/arm/boot/dts/qcom-msm8974-sony-xperia-honami.dts does.
+vidioc_ is actually part of the function name in struct v4l2_ioctl_ops,
+which the stub needs to call. I can change the stub name to start with
+v4l_stub_, but if you prefer to drop vidioc_ entirely from the name,
+the macro still wouldn't end up matching the array. It would have to be
+something like this:
 
-> You still want to have the qcom,ovp-mv, even though it is not being
-> configured from device tree ?
+  #define DEFINE_IOCTL_FNC(_vidioc) \
+	static int v4l_stub_ ## _vidioc( \
+	...
+		return ops->vidioc_ ## _vidioc(file, fh, p); \
+  ...
+  DEFINE_IOCTL_FNC(g_fbuf)
+  ...
+  static struct v4l2_ioctl_info v4l2_ioctls[] = {
+	...
+	IOCTL_INFO(VIDIOC_G_FBUF, v4l_stub_g_fbuf, ...),
 
-Yes, please.
+Any thoughts?
 
-> > > +		      For pm8941:  one of 27000, 29000, 32000, 35000
-> > > +				  Default: 29000 mV
-> > > +		      For pmi8998: one of 18100, 19600, 29600, 31100
-> > > +				  Default: 29600 mV
-> > > +
-
-Regards,
-Bjorn
+	Sami
